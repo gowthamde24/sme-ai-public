@@ -40,6 +40,16 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Archived contacts keep their unique email.** Decide whether re-creating an archived contact's address should be possible (partial unique index) once the anonymise procedure exists. | ADR 0005 limits | **Pilot data** |
 | [ ] | **Terminal opportunities are only status-locked.** Decide whether won/lost opportunities should freeze other fields. | ADR 0005 limits | **Customer Zero** |
 
+## Evidence model (T004)
+
+| | Item | Source | Gate |
+| --- | --- | --- | --- |
+| [ ] | **Erasure/anonymise must reach evidence, claims and links.** `evidence.url`, `.snippet`, `.reference` and `claims.value` are PII-classified, immutable (only `archived_at` changes) and found by following `evidence_links` from the person's records (company / lead / claim). The anonymise procedure must (a) enumerate evidence by link, (b) overwrite those columns through ONE privileged, audited exception to `app.guard_immutable_record` (replace the function in its own migration), (c) relax the "url or reference" CHECK with an `erased_at` marker, (d) treat evidence shared by several targets as erased for all, and (e) include evidence with no link (milestone 2 creates evidence and its link atomically to avoid orphans). Test it like the consent tombstone. | ADR 0008 #8 | **Before T012** (part of the erasure hard gate) |
+| [ ] | **ADR on the agent write path (identity and permission model for non-human actors) is a precondition for the T005 plan.** Decide between a per-tenant agent principal with a membership, short-lived delegation tokens minted by the API, or a SECURITY DEFINER write function authenticated by a signed run token. Never a service-role key. T004 only keeps all options open (`created_via = agent`, nullable `created_by`, writer-declared `retrieved_at`, `reference = run:<uuid>`). | ADR 0008 #9 | **Before the T005 plan** |
+| [ ] | **Agent prompts must treat evidence as data.** Snippets, URLs and claim values are stored verbatim and may contain instructions. Any prompt built from them must delimit them as untrusted data and ignore embedded instructions (CLAUDE.md #6); add an eval for it in the agent ticket. | ADR 0008 #5 | First agent ticket |
+| [ ] | **Claims shape is provisional.** Revisit predicate, value and the 4-level confidence when the research agent produces real claims; decide whether "confidence above `unverified` requires an evidence link" belongs in the atomic agent write function. | ADR 0008 #2 | First agent ticket |
+| [ ] | **Writer-declared `provider` / `retrieved_at` are not verified**, and there is no per-tenant quota or rate limit on evidence rows. | ADR 0008 limits | **External pilot** |
+
 ## CRM API (T003 milestone 2)
 
 | | Item | Source | Gate |

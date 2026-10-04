@@ -7,6 +7,7 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 select tests.seed_crm();
+select tests.seed_evidence();
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
@@ -80,9 +81,12 @@ begin
     p_missing := pg_temp.err_shape(format(upd, missing_v));
     -- Append-only tables (the consent ledger) refuse ANY update before a foreign key is even
     -- consulted; their insert path is attacked in section B.
-    immutable_row := exists (select 1 from pg_trigger t
+    -- T004 tables are immutable apart from archived_at (app.guard_immutable_record): the same.
+    immutable_row := exists (select 1 from pg_trigger t join pg_proc fp on fp.oid = t.tgfoid
                               where t.tgrelid = format('public.%I', k.child)::regclass
-                                and t.tgfoid = 'app.append_only()'::regprocedure);
+                                and not t.tgisinternal
+                                and fp.pronamespace = 'app'::regnamespace
+                                and fp.proname in ('append_only', 'guard_immutable_record'));
     return next ok(p_foreign like (case when immutable_row then '42501:%' else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');

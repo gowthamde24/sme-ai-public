@@ -49,6 +49,18 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('consent_events',
    $$insert into public.consent_events (id, tenant_id, contact_id, event_type, channel) values (%2$L, %1$L, %4$L, 'withdrawn', 'email')$$,
    'channel = channel', $$delete from public.consent_events where id = %2$L$$, true),
+  -- T004. evidence_links builds its own evidence row in the same statement (a CTE) so that every
+  -- generated insert is a new (company, evidence) pair; the link and the evidence share the id.
+  ('evidence',
+   $$insert into public.evidence (id, tenant_id, kind, provider, url, snippet) values (%2$L, %1$L, 'web_page', 'manual', 'https://example.test/generic', 'Generic snippet')$$,
+   'archived_at = archived_at', $$delete from public.evidence where id = %2$L$$, true),
+  ('evidence_links',
+   $$with e as (insert into public.evidence (id, tenant_id, kind, provider, url) values (%2$L, %1$L, 'web_page', 'manual', 'https://example.test/generic-link') returning id)
+     insert into public.evidence_links (id, tenant_id, evidence_id, company_id) select %2$L, %1$L, e.id, %3$L from e$$,
+   'archived_at = archived_at', $$delete from public.evidence_links where id = %2$L$$, true),
+  ('claims',
+   $$insert into public.claims (id, tenant_id, company_id, predicate, value, confidence) values (%2$L, %1$L, %3$L, 'exports_to', 'Generic value', 'low')$$,
+   'archived_at = archived_at', $$delete from public.claims where id = %2$L$$, true),
   ('memberships',
    $$insert into public.memberships (tenant_id, user_id, role) values (%1$L, %5$L, 'viewer')$$,
    'role = role', $$delete from public.memberships where tenant_id = %1$L and user_id = %5$L$$, false),
@@ -74,6 +86,14 @@ select t, r, s, i, u, d from (values
   -- Consent ledger: everyone reads; nobody writes directly (the SECURITY DEFINER functions do)
   ('consent_events','owner',  true, false, false, false), ('consent_events','admin',  true, false, false, false),
   ('consent_events','sales',  true, false, false, false), ('consent_events','viewer', true, false, false, false),
+  -- T004 evidence model: everyone reads; Owner/Admin/Sales write; nobody deletes. (Archive is Admin+: a
+  -- column-level rule tested in 19.) Content columns are not updatable by anybody (tested in 19).
+  ('evidence',      'owner',  true, true,  true,  false), ('evidence',      'admin',  true, true,  true,  false),
+  ('evidence',      'sales',  true, true,  true,  false), ('evidence',      'viewer', true, false, false, false),
+  ('evidence_links','owner',  true, true,  true,  false), ('evidence_links','admin',  true, true,  true,  false),
+  ('evidence_links','sales',  true, true,  true,  false), ('evidence_links','viewer', true, false, false, false),
+  ('claims',        'owner',  true, true,  true,  false), ('claims',        'admin',  true, true,  true,  false),
+  ('claims',        'sales',  true, true,  true,  false), ('claims',        'viewer', true, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

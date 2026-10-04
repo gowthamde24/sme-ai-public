@@ -182,6 +182,27 @@ begin
   end loop;
 end $$;
 
+-- T004: one evidence row, one claim (about the company) and two links per fixture tenant.
+-- Prefix 'a' / 'b': tests.rid('a_evidence'), tests.rid('a_claim'), tests.rid('a_link_company'),
+-- tests.rid('a_link_claim'). Requires seed_two_tenants() and seed_crm().
+create or replace function tests.seed_evidence() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.evidence (id, tenant_id, kind, provider, url, snippet)
+    values (tests.rid(p || '_evidence'), tests.tid(p), 'web_page', 'manual',
+            'https://example.test/' || p, 'Fixture snippet for tenant ' || p);
+    insert into public.claims (id, tenant_id, company_id, predicate, value, confidence)
+    values (tests.rid(p || '_claim'), tests.tid(p), tests.rid(p || '_company'), 'exports_to', 'Fixture value ' || p, 'low');
+    insert into public.evidence_links (id, tenant_id, evidence_id, company_id)
+    values (tests.rid(p || '_link_company'), tests.tid(p), tests.rid(p || '_evidence'), tests.rid(p || '_company'));
+    insert into public.evidence_links (id, tenant_id, evidence_id, claim_id, stance)
+    values (tests.rid(p || '_link_claim'), tests.tid(p), tests.rid(p || '_evidence'), tests.rid(p || '_claim'), 'supports');
+  end loop;
+end $$;
+
 -- Return the EXPLAIN plan (no costs) of one statement as the given identity.
 create or replace function tests.explain_as(p_uid uuid, p_sql text) returns text
 language plpgsql as $$
