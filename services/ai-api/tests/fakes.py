@@ -127,7 +127,9 @@ def seeded_repository() -> FakeRepository:
 
 
 def make_client(
-    repo: FakeRepository | None = None, crm: FakeCrmRepository | None = None
+    repo: FakeRepository | None = None,
+    crm: FakeCrmRepository | None = None,
+    evidence: FakeEvidenceRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -139,7 +141,12 @@ def make_client(
     )
     app = create_app(
         Settings(_env_file=None, api_env="development"),  # type: ignore[call-arg]
-        runtime=Runtime(verifier=verifier, repository=repo, crm=crm or FakeCrmRepository()),
+        runtime=Runtime(
+            verifier=verifier,
+            repository=repo,
+            crm=crm or FakeCrmRepository(),
+            evidence=evidence or FakeEvidenceRepository(),
+        ),
     )
     return TestClient(app), repo
 
@@ -326,3 +333,150 @@ class FakeCrmRepository:
         if contact not in self._store("contacts", tenant):
             raise NotFoundError("P0002")
         return uuid.uuid4()
+
+
+# ============================================================================ evidence fake
+from app.evidence.models import (  # noqa: E402
+    HUMAN_PROVIDER,
+    EvidenceLinkOut,
+    derive_link_id,
+)
+from app.evidence.repository import retry_matches  # noqa: E402
+
+
+class FakeEvidenceRepository:
+    """In-memory EvidenceRepository (links with the evidence embedded), per tenant. Cross-tenant
+    ids behave like RLS: invisible, and the same generic conflict on create."""
+
+    def __init__(self) -> None:
+        self.links: dict[uuid.UUID, dict[uuid.UUID, EvidenceLinkOut]] = {}
+        self.targets: dict[
+            uuid.UUID, tuple[uuid.UUID, str, uuid.UUID]
+        ] = {}  # link -> (tenant, kind, target)
+        self.tokens_seen: list[str] = []
+        self.calls: list[str] = []
+        self.payloads: list[dict[str, _Any]] = []
+        self._tick = 0
+        self.error: Exception | None = None
+
+    def _store(self, tenant_id: uuid.UUID) -> dict[uuid.UUID, EvidenceLinkOut]:
+        return self.links.setdefault(tenant_id, {})
+
+    def _maybe_raise(self) -> None:
+        if self.error is not None:
+            err, self.error = self.error, None
+            raise err
+
+    def list_for_target(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        target_kind: str,
+        target_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+        include_archived: bool,
+    ) -> _Any:
+        self.tokens_seen.append(token)
+        self.calls.append("list")
+        self._maybe_raise()
+        rows = [
+            link
+            for link_id, link in self._store(tenant_id).items()
+            if self.targets[link_id][1:] == (target_kind, target_id)
+        ]
+        rows.sort(key=lambda r: (r.created_at, r.id), reverse=True)
+        if not include_archived:
+            rows = [r for r in rows if r.archived_at is None and r.evidence.archived_at is None]
+        if cursor is not None:
+            c_at, c_id = cursor
+            rows = [r for r in rows if (r.created_at.isoformat(), str(r.id)) < (c_at, str(c_id))]
+        from app.crm.models import encode_cursor
+
+        page = rows[:limit]
+        nxt = encode_cursor(page[-1].created_at, page[-1].id) if len(rows) > limit else None
+        return Page[EvidenceLinkOut](items=page, next_cursor=nxt)
+
+    def get_link(
+        self, token: str, tenant_id: uuid.UUID, link_id: uuid.UUID
+    ) -> EvidenceLinkOut | None:
+        self.tokens_seen.append(token)
+        self.calls.append("get")
+        self._maybe_raise()
+        return self._store(tenant_id).get(link_id)
+
+    def create_for_target(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        target_kind: str,
+        target_id: uuid.UUID,
+        payload: dict[str, _Any],
+    ) -> tuple[EvidenceLinkOut, bool]:
+        self.tokens_seen.append(token)
+        self.calls.append("create")
+        self.payloads.append(payload)
+        self._maybe_raise()
+        evidence_id = uuid.UUID(payload["id"])
+        link_id = derive_link_id(evidence_id, target_kind, target_id)
+        existing = self._store(tenant_id).get(link_id)
+        if existing is not None:
+            if retry_matches(payload, existing):
+                return existing, False
+            raise ConflictError("23505")
+        taken_here = any(x.evidence.id == evidence_id for x in self._store(tenant_id).values())
+        taken_elsewhere = any(
+            x.evidence.id == evidence_id
+            for t, links in self.links.items()
+            if t != tenant_id
+            for x in links.values()
+        )
+        if taken_here or taken_elsewhere:
+            raise ConflictError("23505")  # the same generic conflict either way
+        self._tick += 1
+        stamp = _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC) + _dt.timedelta(seconds=self._tick)
+        link = EvidenceLinkOut.model_validate(
+            {
+                "id": link_id,
+                "company_id": target_id if target_kind == "company" else None,
+                "lead_id": target_id if target_kind == "lead" else None,
+                "claim_id": None,
+                "stance": None,
+                "created_by": None,
+                "created_via": "manual",
+                "created_at": stamp,
+                "archived_at": None,
+                "evidence": {
+                    "id": evidence_id,
+                    "kind": payload["kind"],
+                    "provider": HUMAN_PROVIDER,
+                    "url": payload.get("url"),
+                    "reference": payload.get("reference"),
+                    "snippet": payload.get("snippet"),
+                    "retrieved_at": payload.get("retrieved_at", stamp),
+                    "published_at": payload.get("published_at"),
+                    "created_by": None,
+                    "created_via": "manual",
+                    "created_at": stamp,
+                    "archived_at": None,
+                },
+            }
+        )
+        self._store(tenant_id)[link_id] = link
+        self.targets[link_id] = (tenant_id, target_kind, target_id)
+        return link, True
+
+    def set_link_archived(
+        self, token: str, tenant_id: uuid.UUID, link_id: uuid.UUID, archived: bool
+    ) -> EvidenceLinkOut:
+        self.tokens_seen.append(token)
+        self.calls.append("archive" if archived else "restore")
+        self._maybe_raise()
+        link = self._store(tenant_id).get(link_id)
+        if link is None:
+            raise NotFoundError("x")
+        stamp = _dt.datetime(2026, 2, 1, tzinfo=_dt.UTC) if archived else None
+        updated = link.model_copy(update={"archived_at": stamp})
+        self._store(tenant_id)[link_id] = updated
+        return updated

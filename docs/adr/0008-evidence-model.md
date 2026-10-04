@@ -1,8 +1,8 @@
 # ADR 0008: Evidence model (T004)
 
-Status: accepted for milestone 1 (database). Builds on ADR 0004 (RLS pattern), ADR 0005 (PII-aware
-audit, `created_via`) and ADR 0006 (SQLSTATE-only error classification). API and web are milestones 2
-and 3.
+Status: accepted for milestones 1 (database), the text-hygiene hardening, and 2 (API). Builds on ADR 0004
+(RLS pattern), ADR 0005 (PII-aware audit, `created_via`) and ADR 0006 (SQLSTATE-only error
+classification). The web slice and the demo seed are milestone 3.
 
 ## Why
 
@@ -47,10 +47,9 @@ page, scores a lead, or runs an agent.**
 5. **Untrusted content (CLAUDE.md #6).** `url`, `reference`, `snippet` and `claims.value` are data:
    stored verbatim, never fetched, followed or interpreted. Database limits (CHECK constraints, tested
    with a table of accepted and rejected inputs, as privileged user and as a client):
-   - `url`: 8..2048 characters, `http://` or `https://` only, no userinfo, no whitespace, control,
-     bidi (U+202A..202E, U+2066..2069) or `<>"'\` characters. Excludes `javascript:`, `data:`, `file:`.
-   - `snippet`: 1..1000 characters, non-blank, tab / newline / CR are the only control characters,
-     no C1 controls, no bidi overrides. `claims.value`: the same, 500 characters.
+   - `url`: 8..2048 characters, `http://` or `https://` only, no userinfo, no whitespace or `<>"'\`
+     characters, and clean text (decision 13). Excludes `javascript:`, `data:`, `file:`.
+   - `snippet`: 1..1000 characters, non-blank, clean text. `claims.value`: the same, 500 characters.
    - `reference`: the T003 typed-reference pattern `<kind>:<token>`; `provider` and `predicate` are
      constrained slugs.
    - Text that looks like an instruction is **not** stripped (it is data); consumers must delimit it
@@ -91,14 +90,71 @@ page, scores a lead, or runs an agent.**
     pair is already linked); `23502` missing required value (`confidence`); `22P02` invalid enum label;
     `42501` forbidden or immutable (RLS, column privilege, archive by a non-Admin, update of a content
     column). No new custom SQLSTATE was needed.
-11. **Atomic create (milestone 2).** A SECURITY **INVOKER** function with `search_path = ''` creates
-    evidence and its first link in one transaction; RLS still applies. A test calls it directly through
-    PostgREST to show it gives no power beyond the tables' own policies.
+11. **Atomic create.** `public.create_evidence_with_link(...)` is SECURITY **INVOKER** with
+    `search_path = ''`: it inserts the evidence and its first link in one transaction with the CALLER's
+    privileges, so RLS, column grants, CHECKs and triggers apply exactly as for two plain inserts. It has
+    no parameter for provenance, archive state, stance or a claim target (target kinds: `company`,
+    `lead`), so it cannot do more than the tables allow. Its own refusals use `22023` (NULL id, unknown
+    target kind). pgTAP (`22_...`) and a direct-PostgREST integration test prove: Viewer, outsider, anon
+    and other tenants are refused; a foreign target fails like a nonexistent one (`23503`) and rolls the
+    evidence insert back; forged parameters are rejected by PostgREST; the table rules (URL, hygiene,
+    future `retrieved_at`) hold inside it. Catalog guards: only the allow-listed functions are executable
+    by `authenticated`, and every invoker function in `public` pins `search_path`.
 12. **Acceptance test (milestone 3): `make seed-demo`.** A clearly fake demo seed builds a synthetic SME
     (company, contacts, products, lead, opportunity, claims with evidence) **through the API only**,
     with invented names and no real person or Customer Zero data. Acceptance: "a synthetic SME can be
     represented end-to-end and every researched fact can carry evidence." Where the milestone-2 API does
     not yet expose claims, the seed's scope is decided then (see the milestone-3 plan).
+
+13. **Invisible Unicode (hardening migration `..._t004_text_hygiene.sql`).** Free text can hide
+    instructions for language models in characters that render as nothing. One shared IMMUTABLE
+    function, `app.text_is_clean` (text, `text[]` and `jsonb` overloads; `search_path = ''`; EXECUTE for
+    `authenticated` because CHECKs run as the inserting role), is false for: C0 controls except tab /
+    LF / CR; DEL and C1 controls (U+007F..009F); U+200B; U+2028 / U+2029; bidi embeddings and
+    overrides U+202A..202E and isolates U+2066..2069; U+2060..2064; U+FEFF; and the tag characters
+    U+E0000..E007F. **Not** blocked: U+200C / U+200D (needed for Indic and Persian scripts) and
+    U+200E / U+200F. It is used in CHECK constraints on `evidence.url`, `.snippet`, `claims.value` and
+    on **every free-text column of every tenant-owned table**, enumerated from the catalog in the
+    migration (`companies`, `contacts`, `products`, `leads`, `opportunities`: 24 columns in total).
+    Exempt, with a `CLEAN-EXEMPT:` reason in the column comment: columns limited by a strict anchored
+    pattern (`consent_events.evidence_ref`, `evidence.provider`, `.reference`, `claims.predicate`) and
+    `audit_events.*` (written only by the SECURITY DEFINER audit writer). The one client-influenced audit
+    column, `request_id` (the `X-Request-Id` header), is dropped by the writer when it is not clean.
+    A catalog guard fails the suite for any text / `text[]` / `jsonb` column of a tenant-owned table
+    that has neither a `text_is_clean` CHECK nor a documented exemption (strict pattern or not
+    client-writable), so tables added by later tickets are policed automatically. The `jsonb` overload
+    also detects JSON-escaped C0 controls (an even-backslash-aware scan of the text form).
+    The API mirrors the same character set (`app.evidence.models.text_is_clean`) only to fail early with a
+    field-level 422; the database is the authority.
+14. **API (milestone 2).** Under `/v1/tenants/{tenant_id}/`:
+    - `POST companies/{id}/evidence`, `POST leads/{id}/evidence`: create evidence and its first link
+      atomically. `GET` on the same paths lists the target's links with the evidence embedded (keyset
+      pagination, `limit` 50 default / 100 max, newest first, archived links AND links to archived
+      evidence hidden unless `include_archived=true`). `POST evidence-links/{id}/archive` and
+      `/restore` (Owner / Admin; idempotent). No delete, no supersede, no claims endpoints.
+    - Authorization order: JWT (401) -> membership of the path tenant (404) -> role (403) -> the
+      company / lead in the path must exist for the caller (404: unknown, malformed and foreign ids
+      are indistinguishable; evidence is never touched before this) -> the database decides again.
+      An archived target refuses new evidence (409 `archived`).
+    - The client sends `id` (UUID), `kind`, `url`, `reference`, `snippet`, optional `retrieved_at` and
+      `published_at`. `provider` is **set by the API** (`manual`) and is not accepted; `created_by`,
+      `created_via`, `tenant_id`, `archived_at` and the target are never accepted (`extra="forbid"`).
+    - Idempotency: the link id is `uuid5(evidence_id, "<kind>:<target_id>")`, so a retry targets the
+      same rows. The RPC's `23505` is followed by a read: if the caller's tenant holds exactly that
+      evidence, linked to that target, with the same content (and the same `retrieved_at` if the client
+      sent one), the answer is **200** with the stored item; a different payload, a different target, or
+      an id owned by another tenant (invisible to the caller) is the **same generic 409**.
+    - Errors are classified by SQLSTATE only: `23514` -> 422 `invalid_value`, `23503` -> 422
+      `invalid_reference`, `22P02` / `22023` / `23502` -> 422, `42501` -> 403, `23505` -> the idempotency
+      path above. Data-layer text (which can contain a URL or snippet) is read only to classify, never
+      returned, logged or chained.
+    - Logging: the access log keeps method and status and replaces every path segment that is not a
+      route word of this API or a canonical UUID with `<redacted>` (found by the live-log canary test:
+      a value pasted where an id belongs was logged verbatim). A unit test proves every literal route
+      segment is on the allow-list.
+    - Contracts: `packages/contracts/evidence.schema.json` and `evidence.ts` are generated by
+      `make contracts` from the models (drift test); integration tests validate real responses against
+      the schema. The web must show `url` / `snippet` / `reference` as plain text.
 
 ## Out of scope (T004)
 
@@ -112,5 +168,11 @@ per-tenant quotas or rate limits; the erasure procedure itself; the agent identi
 - Evidence rows are shared by id within a tenant: one row may support several companies / claims, so
   erasing a person's evidence anonymises the shared row for all of them (conservative).
 - Quotation length is capped, but nothing here checks copyright or licence of the quoted source.
+- `text_is_clean` is a deny-list of known invisible characters, not a proof that a string is
+  harmless: visible instructions ("ignore previous instructions") are legal data and stay the prompt
+  builder's problem. New invisible code points added by future Unicode versions need a migration.
+- `tenants.name` and `users.display_name` are free text outside the tenant-owned tables the guard
+  covers (see the checklist).
+- A stored `url` is never fetched here. A future fetcher must treat it as hostile (SSRF; checklist).
 - A tenant member with write access can add rows without limit (no quota yet).
 - `url` can still contain personal data in the path or query (it is classified PII and shown as text).

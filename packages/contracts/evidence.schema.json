@@ -1,0 +1,376 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "evidence.schema.json",
+  "title": "Evidence API contracts (T004)",
+  "description": "Generated from services/ai-api/app/evidence/models.py by `make contracts`. url, reference and snippet are UNTRUSTED text: show them as plain text, never as a link, and never follow or fetch them. The request forbids unknown properties: provider, created_by, created_via, tenant_id, archived_at and the link target can never be sent.",
+  "$defs": {
+    "EvidenceCreate": {
+      "additionalProperties": false,
+      "description": "Create one evidence row and attach it to the company / lead in the URL.\n\n`provider` is not accepted: the API records human callers as `manual`. `retrieved_at` defaults\nto the server's now(); `published_at` is optional and stays NULL when unknown.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 8,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Url"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "pattern": "^[a-z][a-z0-9_-]{1,19}:[A-Za-z0-9._#/-]{1,96}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "snippet": {
+          "anyOf": [
+            {
+              "maxLength": 1000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snippet"
+        },
+        "retrieved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Retrieved At"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Published At"
+        }
+      },
+      "required": [
+        "id",
+        "kind"
+      ],
+      "title": "EvidenceCreate",
+      "type": "object"
+    },
+    "EvidenceKind": {
+      "enum": [
+        "web_page",
+        "document",
+        "email",
+        "listing",
+        "registry",
+        "note"
+      ],
+      "title": "EvidenceKind",
+      "type": "string"
+    },
+    "EvidenceLinkOut": {
+      "additionalProperties": false,
+      "description": "One evidence row attached to one target, with the evidence embedded. `archived_at` is the\nLINK's; the evidence carries its own.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Company Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "claim_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Claim Id"
+        },
+        "stance": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/EvidenceStance"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_via": {
+          "$ref": "#/$defs/RecordOrigin"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Archived At"
+        },
+        "evidence": {
+          "$ref": "#/$defs/EvidenceOut"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "lead_id",
+        "claim_id",
+        "stance",
+        "created_by",
+        "created_via",
+        "created_at",
+        "archived_at",
+        "evidence"
+      ],
+      "title": "EvidenceLinkOut",
+      "type": "object"
+    },
+    "EvidenceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/EvidenceKind"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Url"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reference"
+        },
+        "snippet": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Snippet"
+        },
+        "retrieved_at": {
+          "format": "date-time",
+          "title": "Retrieved At",
+          "type": "string"
+        },
+        "published_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Published At"
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_via": {
+          "$ref": "#/$defs/RecordOrigin"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Archived At"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "provider",
+        "url",
+        "reference",
+        "snippet",
+        "retrieved_at",
+        "published_at",
+        "created_by",
+        "created_via",
+        "created_at",
+        "archived_at"
+      ],
+      "title": "EvidenceOut",
+      "type": "object"
+    },
+    "EvidenceStance": {
+      "enum": [
+        "supports",
+        "contradicts",
+        "context"
+      ],
+      "title": "EvidenceStance",
+      "type": "string"
+    },
+    "Page_EvidenceLinkOut_": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/EvidenceLinkOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "Page[EvidenceLinkOut]",
+      "type": "object"
+    },
+    "RecordOrigin": {
+      "enum": [
+        "manual",
+        "import",
+        "agent"
+      ],
+      "title": "RecordOrigin",
+      "type": "string"
+    }
+  }
+}

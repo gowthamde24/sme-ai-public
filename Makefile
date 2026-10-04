@@ -43,7 +43,7 @@ db-reset:
 db-test:
 	supabase test db
 
-# Regenerate packages/contracts/crm.schema.json + crm.ts from the API models (a test fails if stale).
+# Regenerate packages/contracts/{crm,evidence}.schema.json + .ts from the API models (a test fails if stale).
 contracts:
 	cd $(API) && .venv/bin/python ../../scripts/export-contracts.py
 

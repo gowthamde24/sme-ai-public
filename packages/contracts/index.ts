@@ -53,3 +53,7 @@ export interface AuditEventList {
 
 /** CRM contracts (T003): generated from the API models by `make contracts`. */
 export * from "./crm";
+
+/** Evidence contracts (T004): generated from the API models by `make contracts`. url, reference and
+ * snippet are UNTRUSTED text: render as plain text only, never as a link. */
+export * from "./evidence";

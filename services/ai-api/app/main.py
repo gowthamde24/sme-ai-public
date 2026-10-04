@@ -14,6 +14,8 @@ from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
 from app.errors import ApiError, install_error_handlers
+from app.evidence.repository import PostgrestEvidenceRepository
+from app.evidence.routes import router as evidence_router
 from app.logging_safety import install_log_redaction
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
@@ -52,6 +54,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
         crm=PostgrestCrmRepository(config.rest_url, config.anon_key),
+        evidence=PostgrestEvidenceRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -92,8 +95,13 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
         if runtime is not None:
-            for repository in (runtime.repository, runtime.crm):
-                if isinstance(repository, PostgrestTenantRepository | PostgrestCrmRepository):
+            for repository in (runtime.repository, runtime.crm, runtime.evidence):
+                if isinstance(
+                    repository,
+                    PostgrestTenantRepository
+                    | PostgrestCrmRepository
+                    | PostgrestEvidenceRepository,
+                ):
                     repository.close()
 
     app = FastAPI(title="SME AI Revenue Engine API", version=SERVICE_VERSION, lifespan=lifespan)
@@ -134,6 +142,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
 
     app.include_router(tenancy_router)
     app.include_router(crm_router)
+    app.include_router(evidence_router)
     return app
 
 

@@ -131,3 +131,114 @@ def test_no_log_line_of_a_real_server_contains_the_canary(
         "PII canary found in the server's logs"
     )
     assert "nope" not in lowered, "a rejected value was logged"
+
+
+EVIDENCE_URL = f"https://evcanary-qq77-{uid()[:6]}.example/in/jane-evcanary?token=evcanary-qq77"
+EVIDENCE_SNIPPET = "Jane Evcanary Qq77 said something personal"
+
+
+def test_no_log_line_of_a_real_server_contains_an_evidence_canary(
+    crm_world: World, server: tuple[str, Path]
+) -> None:
+    """URLs, snippets and references are untrusted, possibly personal, text: validation failures,
+    duplicates, conflicts, database refusals, 404s and 403s must not write them to any log, and none
+    of them may come back in an error body."""
+    base, log = server
+    w = crm_world
+    sales, viewer = w.a.users["sales"], w.a.users["viewer"]
+    h = bearer(sales)
+    company = w.a.rows["companies"]["id"]
+    url = f"{base}/v1/tenants/{w.a.id}/companies/{company}/evidence"
+    good = {
+        "id": uid(),
+        "kind": "web_page",
+        "url": EVIDENCE_URL,
+        "snippet": EVIDENCE_SNIPPET,
+        "reference": "doc:evcanary-qq77",
+    }
+    created = httpx.post(url, headers=h, timeout=15, json=good)
+    assert created.status_code == 201
+    link = created.json()["id"]
+    responses = [
+        httpx.post(
+            url, headers=h, timeout=15, json={**good, "id": uid(), "url": EVIDENCE_URL + " nope"}
+        ),
+        httpx.post(
+            url, headers=h, timeout=15, json={**good, "id": uid(), "snippet": EVIDENCE_SNIPPET + "​"}
+        ),
+        httpx.post(
+            url, headers=h, timeout=15, json={**good, "id": uid(), "bogus": EVIDENCE_SNIPPET}
+        ),
+        httpx.post(
+            url, headers=h, timeout=15, json={**good, "id": uid(), "provider": EVIDENCE_SNIPPET}
+        ),
+        httpx.post(
+            url,
+            headers={**h, "Content-Type": "application/json"},
+            timeout=15,
+            content=f'{{"snippet": "{EVIDENCE_SNIPPET}", '.encode(),
+        ),
+        # a database-level refusal (the API accepts any aware date; the database bounds it)
+        httpx.post(
+            url,
+            headers=h,
+            timeout=15,
+            json={**good, "id": uid(), "retrieved_at": "2999-01-01T00:00:00Z"},
+        ),
+        # an id conflict: same id, different payload; and the same id from another tenant's path
+        httpx.post(
+            url, headers=h, timeout=15, json={**good, "snippet": "different " + EVIDENCE_SNIPPET}
+        ),
+        httpx.post(
+            f"{base}/v1/tenants/{w.b.id}/companies/{w.b.rows['companies']['id']}/evidence",
+            headers=h,
+            timeout=15,
+            json=good,
+        ),
+        # unknown target, role too low, unauthenticated, bad list parameters
+        httpx.post(
+            f"{base}/v1/tenants/{w.a.id}/companies/{uid()}/evidence",
+            headers=h,
+            timeout=15,
+            json=good,
+        ),
+        httpx.post(url, headers=bearer(viewer), timeout=15, json=good),
+        httpx.post(url, timeout=15, json=good),
+        httpx.get(url, headers=h, timeout=15, params={"cursor": EVIDENCE_URL}),
+        httpx.get(url, headers=h, timeout=15, params={"limit": EVIDENCE_SNIPPET}),
+        httpx.post(
+            f"{base}/v1/tenants/{w.a.id}/evidence-links/{EVIDENCE_URL}/archive",
+            headers=bearer(w.a.users["admin"]),
+            timeout=15,
+        ),
+    ]
+    assert [r.status_code for r in responses] == [
+        422,
+        422,
+        422,
+        422,
+        422,
+        422,
+        409,
+        404,
+        404,
+        403,
+        401,
+        422,
+        422,
+        404,
+    ]
+    for r in responses:
+        assert "evcanary" not in r.text.lower() and "qq77" not in r.text.lower(), r.text
+    # reading it back works and is the only place the text legitimately appears
+    listed = httpx.get(url, headers=h, timeout=15)
+    assert listed.status_code == 200 and EVIDENCE_SNIPPET in listed.text
+    assert link
+
+    time.sleep(0.5)  # let the server flush
+    lowered = log.read_text().lower()
+    assert "/evidence" in lowered, "access logging was active"
+    assert "evcanary" not in lowered and "qq77" not in lowered, (
+        "evidence text found in the server's logs"
+    )
+    assert "nope" not in lowered, "a rejected value was logged"
