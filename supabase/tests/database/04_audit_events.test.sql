@@ -13,7 +13,7 @@ select is(
 select is(
   (select count(*) from public.audit_events
     where tenant_id = tests.tid('a') and action = 'membership.create'),
-  5::bigint, 'each seeded membership of tenant A produced one audit event');
+  6::bigint, 'each seeded membership of tenant A produced one audit event');
 select is(
   (select new_values ->> 'role' from public.audit_events
     where tenant_id = tests.tid('a') and action = 'membership.create'
@@ -133,6 +133,32 @@ select throws_ok(
   format($$delete from public.tenants where id = %L$$, tests.tid('a')), '23503', null,
   'deleting a tenant with audit history is refused (ON DELETE RESTRICT)');
 select cmp_ok((select count(*) from public.audit_events), '>', 0::bigint, 'audit rows survived every attempt');
+
+-- ----------------------------------------------------------------- request_id handling
+select set_config('request.headers', json_build_object('x-request-id', repeat('r', 300))::text, true);
+select app.write_audit_event(tests.tid('a'), 'test.long_request_id', 'test', null, null, null);
+select is(
+  (select char_length(request_id) from public.audit_events where action = 'test.long_request_id'),
+  100, 'request_id from a client header is capped at 100 characters');
+
+select set_config('request.headers', json_build_object('x-request-id', 'req-123')::text, true);
+select app.write_audit_event(tests.tid('a'), 'test.short_request_id', 'test', null, null, null);
+select is(
+  (select request_id from public.audit_events where action = 'test.short_request_id'),
+  'req-123', 'a normal request id is stored unchanged');
+
+select set_config('request.headers', 'not json at all', true);
+select lives_ok(
+  $$select app.write_audit_event(tests.tid('a'), 'test.bad_headers', 'test', null, null, null)$$,
+  'malformed request.headers never blocks an audit write');
+select is(
+  (select request_id from public.audit_events where action = 'test.bad_headers'),
+  null, 'malformed request.headers yields a null request_id');
+
+select throws_ok(
+  format($$insert into public.audit_events (tenant_id, actor_type, action, entity_type, request_id)
+           values (%L, 'system', 'test.direct', 'test', repeat('r', 101))$$, tests.tid('a')),
+  '23514', null, 'the column itself also rejects request_id over 100 characters');
 
 select * from finish();
 rollback;

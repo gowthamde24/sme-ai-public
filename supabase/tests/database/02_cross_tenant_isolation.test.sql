@@ -125,10 +125,10 @@ select is((select count(*) from public.tenants), 2::bigint, 'no tenant was added
 select is(
   (select array_agg(name order by name) from public.tenants),
   array['Tenant A', 'Tenant B'], 'tenant names unchanged');
-select is((select count(*) from public.memberships), 9::bigint, 'membership rows unchanged');
+select is((select count(*) from public.memberships), 11::bigint, 'membership rows unchanged');
 select is(
   (select count(*) from public.memberships where role = 'viewer' and user_id not in
-     (select tests.uid('a_viewer') union select tests.uid('b_viewer'))),
+     (select tests.uid('a_viewer') union select tests.uid('b_viewer') union select tests.uid('dual'))),
   0::bigint, 'no role was downgraded to viewer by a cross-tenant write');
 select is(
   (select count(*) from public.users where display_name = 'pwned'), 0::bigint, 'no profile was edited');

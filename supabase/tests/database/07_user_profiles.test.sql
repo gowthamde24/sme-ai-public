@@ -3,7 +3,7 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 
-select is((select count(*) from public.users), 16::bigint, 'signup trigger created one profile per auth user');
+select is((select count(*) from public.users), 17::bigint, 'signup trigger created one profile per auth user');
 select is((select display_name from public.users where id = tests.uid('a_owner')), 'a_owner',
   'display_name is taken from signup metadata');
 
@@ -45,9 +45,9 @@ select is(tests.sqlstate_as(tests.uid('a_owner'), format(
 
 -- visibility is exactly "myself + people who share a tenant with me"
 select is(tests.rows_as(tests.uid('a_viewer'), 'select 1 from public.users'),
-  5::bigint, 'viewer A sees exactly the 5 members of tenant A');
+  6::bigint, 'viewer A sees exactly the 6 members of tenant A');
 select is(tests.rows_as(tests.uid('b_viewer'), 'select 1 from public.users'),
-  4::bigint, 'viewer B sees exactly the 4 members of tenant B');
+  5::bigint, 'viewer B sees exactly the 5 members of tenant B');
 select is(tests.rows_as(tests.uid('outsider'), 'select 1 from public.users'),
   1::bigint, 'outsider sees only themselves');
 

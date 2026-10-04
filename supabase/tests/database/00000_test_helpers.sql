@@ -77,11 +77,33 @@ begin
   return state;
 end $$;
 
+-- Run one single-value query as the given identity and return its first column as text.
+create or replace function tests.scalar_as(p_uid uuid, p_sql text) returns text
+language plpgsql as $$
+declare
+  v text;
+begin
+  perform tests.set_identity(p_uid);
+  begin
+    execute p_sql into v;
+  exception when others then
+    reset role;
+    perform set_config('request.jwt.claims', '', true);
+    perform set_config('request.jwt.claim.sub', '', true);
+    raise;
+  end;
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  return v;
+end $$;
+
 -- Two tenants with every role, plus unaffiliated users. Runs as the privileged session user,
 -- so it exercises the same triggers (audit, profile creation) a real signup would.
 --
---   Tenant A: a_owner, a_owner2 (owners), a_admin, a_sales, a_viewer   (5 memberships)
---   Tenant B: b_owner (sole owner), b_admin, b_sales, b_viewer         (4 memberships)
+--   Tenant A: a_owner, a_owner2, dual (owners), a_admin, a_sales, a_viewer   (6 memberships)
+--   Tenant B: b_owner (sole owner), b_admin, b_sales, b_viewer, dual (viewer) (5 memberships)
+--   dual     : Owner of A and Viewer of B (multi-tenant user, different role per tenant)
 --   No tenant: outsider, x1..x6
 create or replace function tests.seed_two_tenants() returns void
 language plpgsql as $$
@@ -91,7 +113,7 @@ begin
   foreach n in array array[
     'a_owner', 'a_owner2', 'a_admin', 'a_sales', 'a_viewer',
     'b_owner', 'b_admin', 'b_sales', 'b_viewer',
-    'outsider', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6'
+    'dual', 'outsider', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6'
   ] loop
     insert into auth.users (
       id, instance_id, aud, role, email, raw_user_meta_data, created_at, updated_at
@@ -108,13 +130,15 @@ begin
   insert into public.memberships (tenant_id, user_id, role) values
     (tests.tid('a'), tests.uid('a_owner'),  'owner'),
     (tests.tid('a'), tests.uid('a_owner2'), 'owner'),
+    (tests.tid('a'), tests.uid('dual'),     'owner'),
     (tests.tid('a'), tests.uid('a_admin'),  'admin'),
     (tests.tid('a'), tests.uid('a_sales'),  'sales'),
     (tests.tid('a'), tests.uid('a_viewer'), 'viewer'),
     (tests.tid('b'), tests.uid('b_owner'),  'owner'),
     (tests.tid('b'), tests.uid('b_admin'),  'admin'),
     (tests.tid('b'), tests.uid('b_sales'),  'sales'),
-    (tests.tid('b'), tests.uid('b_viewer'), 'viewer');
+    (tests.tid('b'), tests.uid('b_viewer'), 'viewer'),
+    (tests.tid('b'), tests.uid('dual'),     'viewer');
 end $$;
 
 -- `supabase test db` expects every file to emit TAP output.

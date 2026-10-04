@@ -19,7 +19,7 @@ create table public.audit_events (
   old_values    jsonb,           -- row BEFORE the change (null for create)
   new_values    jsonb,           -- row AFTER the change (null for delete)
   metadata      jsonb not null default '{}'::jsonb,
-  request_id    text,            -- X-Request-Id when the change came through PostgREST
+  request_id    text check (request_id is null or char_length(request_id) <= 100), -- X-Request-Id via PostgREST
   created_at    timestamptz not null default now()
 );
 
@@ -70,7 +70,8 @@ declare
   v_request_id text;
 begin
   begin
-    v_request_id := nullif(current_setting('request.headers', true), '')::jsonb ->> 'x-request-id';
+    -- Client-supplied header: cap its length so it cannot bloat the audit table.
+    v_request_id := left(nullif(current_setting('request.headers', true), '')::jsonb ->> 'x-request-id', 100);
   exception when others then
     v_request_id := null;
   end;

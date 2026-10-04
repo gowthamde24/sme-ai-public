@@ -105,8 +105,9 @@ create policy users_update on public.users
 -- ---------------------------------------------------------------------------------------------
 -- memberships
 --   read   : any member of the tenant
---   write  : Owner manages everyone; Admin manages non-owners and cannot create/modify/remove an
---            Owner or promote anyone (including self) to Owner. Sales/Viewer cannot write.
+--   write  : Owner manages everyone. Admin manages ONLY sales/viewer rows: an Admin cannot add,
+--            demote or remove an Admin or an Owner, cannot promote anyone to Admin or Owner, and
+--            cannot change their own row. Sales/Viewer cannot write.
 --   Only `role` is updatable; tenant_id and user_id are fixed at insert (column privileges, plus
 --   the forbid_tenant_id_change trigger underneath).
 --   The "last owner" invariant is enforced by trigger, not policy.
@@ -124,27 +125,27 @@ create policy memberships_insert on public.memberships
   for insert to authenticated
   with check (
     (select app.has_tenant_role(tenant_id, array['owner']::public.app_role[]))
-    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role <> 'owner')
+    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role in ('sales', 'viewer'))
   );
 
--- USING judges the row as it is (an Admin cannot touch an Owner row); WITH CHECK judges the row as
--- it would become (an Admin cannot turn a row into an Owner row).
+-- USING judges the row as it is (an Admin cannot touch an Admin or Owner row); WITH CHECK judges
+-- the row as it would become (an Admin cannot turn a row into an Admin or Owner row).
 create policy memberships_update on public.memberships
   for update to authenticated
   using (
     (select app.has_tenant_role(tenant_id, array['owner']::public.app_role[]))
-    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role <> 'owner')
+    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role in ('sales', 'viewer'))
   )
   with check (
     (select app.has_tenant_role(tenant_id, array['owner']::public.app_role[]))
-    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role <> 'owner')
+    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role in ('sales', 'viewer'))
   );
 
 create policy memberships_delete on public.memberships
   for delete to authenticated
   using (
     (select app.has_tenant_role(tenant_id, array['owner']::public.app_role[]))
-    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role <> 'owner')
+    or ((select app.has_tenant_role(tenant_id, array['admin']::public.app_role[])) and role in ('sales', 'viewer'))
   );
 
 -- ---------------------------------------------------------------------------------------------
