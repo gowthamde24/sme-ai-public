@@ -203,6 +203,25 @@ begin
   end loop;
 end $$;
 
+-- T005: one ICP config version, one import batch and one lead label per fixture tenant.
+-- Prefix 'a' / 'b': tests.rid('a_icp1'), tests.rid('a_batch'), tests.rid('a_label').
+-- Requires seed_two_tenants() and seed_crm().
+create or replace function tests.seed_t005() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.icp_config_versions (id, tenant_id, engine, schema_version, config)
+    values (tests.rid(p || '_icp1'), tests.tid(p), 'icp-rules', 1,
+            '{"factors":[{"id":"fit","max_points":100}],"bands":[]}'::jsonb);
+    insert into public.import_batches (id, tenant_id, content_sha256, row_count, rejected_count)
+    values (tests.rid(p || '_batch'), tests.tid(p), repeat('3', 64), 1, 1);
+    insert into public.lead_labels (id, tenant_id, lead_id, label)
+    values (tests.rid(p || '_label'), tests.tid(p), tests.rid(p || '_lead'), 'good');
+  end loop;
+end $$;
+
 -- Return the EXPLAIN plan (no costs) of one statement as the given identity.
 create or replace function tests.explain_as(p_uid uuid, p_sql text) returns text
 language plpgsql as $$

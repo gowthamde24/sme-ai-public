@@ -1,0 +1,262 @@
+"""API models for Lead Review Queue and ICP (T005 milestone 2).
+
+Mirrors packages/contracts/leads.schema.json.
+Rules:
+- extra="forbid" on all models.
+- Canonical UUIDs only.
+- Strict validation of enums, reason codes, and payloads.
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime
+from enum import StrEnum
+from typing import Annotated, Any
+
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    field_validator,
+    model_validator,
+)
+
+from app.crm.models import ApiUuid, RecordOrigin
+from app.evidence.models import text_is_clean
+from app.leads.scoring import validate_icp_config
+
+# ----------------------------------------------------------------------------- enums
+
+
+class LeadLabel(StrEnum):
+    GOOD = "good"
+    BAD = "bad"
+    MAYBE = "maybe"
+
+
+class LeadLabelReason(StrEnum):
+    NOT_OUR_MARKET = "not_our_market"
+    WRONG_PRODUCT = "wrong_product"
+    TOO_SMALL = "too_small"
+    TOO_LARGE = "too_large"
+    INACTIVE = "inactive"
+    NOT_A_BUSINESS = "not_a_business"
+    NO_CONTACT_ROUTE = "no_contact_route"
+    ALREADY_CUSTOMER = "already_customer"
+    DUPLICATE = "duplicate"
+    INSUFFICIENT_INFO = "insufficient_info"
+    PAYMENT_RISK = "payment_risk"
+
+
+class ExportKind(StrEnum):
+    LEAD_LABELS = "lead_labels"
+
+
+class ExportFormat(StrEnum):
+    CSV = "csv"
+    JSON = "json"
+
+
+class ImportOutcome(StrEnum):
+    CREATED = "created"
+    SKIPPED_DUPLICATE = "skipped_duplicate"
+    AMBIGUOUS = "ambiguous"
+    REJECTED = "rejected"
+
+
+# ----------------------------------------------------------------------------- constraints
+EngineSlug = Annotated[
+    str, StringConstraints(strip_whitespace=True, pattern=r"^[a-z][a-z0-9_.-]{1,39}$")
+]
+BatchLabel = Annotated[
+    str, StringConstraints(strip_whitespace=True, pattern=r"^[A-Za-z0-9][A-Za-z0-9 ._-]{0,59}$")
+]
+
+# ----------------------------------------------------------------------------- ICP Config
+
+
+class IcpConfigCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    engine: EngineSlug = "icp-rules"
+    schema_version: int = Field(default=1, ge=1, le=1000)
+    config: dict[str, Any]
+
+    @field_validator("config")
+    @classmethod
+    def _validate_config(cls, v: dict[str, Any]) -> dict[str, Any]:
+        validate_icp_config(v)
+        raw = json.dumps(v, ensure_ascii=False)
+        if len(raw.encode("utf-8")) > 32768:
+            raise ValueError("config exceeds maximum allowed size of 32 KB")
+        if not text_is_clean(raw):
+            raise ValueError("config contains disallowed hidden Unicode characters")
+        return v
+
+
+class IcpConfigOut(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: ApiUuid
+    tenant_id: ApiUuid
+    version_no: int
+    engine: str
+    schema_version: int
+    config: dict[str, Any]
+    config_sha256: str
+    created_by: ApiUuid | None
+    created_via: RecordOrigin
+    created_at: datetime
+
+
+# ----------------------------------------------------------------------------- Lead Import
+
+
+class ImportRowInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    company_name: Annotated[
+        str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)
+    ]
+    website: str | None = None
+    country: str | None = None
+    city: str | None = None
+    industry: str | None = None
+    categories: list[str] = Field(default_factory=list)
+    contact_name: str | None = None
+    contact_email: str | None = None
+    contact_phone: str | None = None
+    contact_job_title: str | None = None
+    source: str | None = None
+    buyer_type: str | None = None
+    size_band: str | None = None
+    operating_status: str | None = None
+    order_scale: str | None = None
+
+
+class ImportBatchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    batch_id: ApiUuid
+    label: BatchLabel | None = None
+    rows: list[ImportRowInput] = Field(min_length=1, max_length=500)
+
+
+class ImportBatchCounts(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    rows: int
+    created: int
+    skipped_duplicate: int
+    ambiguous: int
+    rejected: int
+    companies_created: int
+    contacts_created: int
+    claims_created: int
+
+
+class ImportRowOutcome(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    row: int
+    outcome: ImportOutcome
+    reason: str | None = None
+    constraint: str | None = None
+    sqlstate: str | None = None
+    company_created: bool
+    contact_created: bool
+    attributes_written: int
+    attributes_kept: int
+    company_id: ApiUuid | None = None
+    contact_id: ApiUuid | None = None
+    lead_id: ApiUuid | None = None
+
+
+class ImportBatchReport(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    batch_id: ApiUuid | None
+    replayed: bool
+    dry_run: bool
+    counts: ImportBatchCounts
+    rows: list[ImportRowOutcome]
+
+
+# ----------------------------------------------------------------------------- Lead Labels
+
+
+class LeadLabelCreate(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    label: LeadLabel
+    reason_code: LeadLabelReason | None = None
+
+    @model_validator(mode="after")
+    def _verify_bad_reason(self) -> LeadLabelCreate:
+        if self.label == LeadLabel.BAD and self.reason_code is None:
+            raise ValueError("reason_code is required when label is 'bad'")
+        if self.label != LeadLabel.BAD and self.reason_code is not None:
+            raise ValueError("reason_code must be omitted when label is not 'bad'")
+        return self
+
+
+class LeadLabelOut(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: ApiUuid
+    tenant_id: ApiUuid
+    lead_id: ApiUuid
+    label: LeadLabel
+    reason_code: LeadLabelReason | None
+    icp_version_id: ApiUuid | None
+    score: int | None
+    score_max_reachable: int | None
+    snapshot: dict[str, Any] | None
+    created_by: ApiUuid | None
+    created_via: RecordOrigin
+    created_at: datetime
+
+
+# ----------------------------------------------------------------------------- Review Queue
+
+
+class ReviewQueueLeadOut(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    lead_id: ApiUuid
+    status: str
+    source: str | None
+    created_at: datetime
+    company: dict[str, Any]
+    contact: dict[str, Any] | None
+    latest_label: LeadLabelOut | None
+    score: int | None = None
+    score_max_reachable: int | None = None
+    score_band: str | None = None
+    snapshot: dict[str, Any] | None = None
+
+
+# ----------------------------------------------------------------------------- Exports
+
+
+class ExportRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    kind: ExportKind = ExportKind.LEAD_LABELS
+    format: ExportFormat = ExportFormat.CSV
+
+
+class ExportRecordOut(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    id: ApiUuid
+    tenant_id: ApiUuid
+    kind: ExportKind
+    format: ExportFormat
+    row_count: int
+    content_sha256: str
+    created_by: ApiUuid | None
+    created_via: RecordOrigin
+    created_at: datetime

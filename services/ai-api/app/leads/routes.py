@@ -1,0 +1,334 @@
+"""Lead review, import, ICP config, and export endpoints under /v1/tenants/{tenant_id}/...
+
+Authorization order:
+  1. Valid JWT (401)
+  2. Membership of path tenant (404 if foreign/unknown)
+  3. Role check (403)
+  4. Target lead exists (404)
+  5. PostgREST / Postgres RLS decides
+"""
+
+import uuid
+from typing import Annotated, Any
+
+from fastapi import APIRouter, Depends, Query, Response
+
+from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
+from app.crm.models import CursorError, Page, decode_cursor, parse_uuid
+from app.errors import ApiError, not_found
+from app.leads.export import build_lead_labels_csv, build_lead_labels_json
+from app.leads.models import (
+    ExportFormat,
+    ExportRequest,
+    IcpConfigCreate,
+    IcpConfigOut,
+    ImportBatchReport,
+    ImportBatchRequest,
+    LeadLabelCreate,
+    LeadLabelOut,
+    ReviewQueueLeadOut,
+)
+from app.leads.scoring import score_lead
+from app.tenancy.models import Role
+
+router = APIRouter(prefix="/v1/tenants/{tenant_id}")
+
+SALES_PLUS: tuple[Role, ...] = (Role.OWNER, Role.ADMIN, Role.SALES)
+ADMIN_PLUS: tuple[Role, ...] = (Role.OWNER, Role.ADMIN)
+
+RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
+AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
+SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(*SALES_PLUS))]
+AdminPlus = Annotated[TenantContext, Depends(require_tenant_role(*ADMIN_PLUS))]
+
+
+def _parse_id(raw: str) -> uuid.UUID:
+    parsed = parse_uuid(raw)
+    if parsed is None:
+        raise not_found()
+    return parsed
+
+
+# ----------------------------------------------------------------------------- ICP Configs
+
+
+@router.post("/icp-configs", response_model=IcpConfigOut, status_code=201)
+def publish_icp_config(
+    payload: IcpConfigCreate,
+    ctx: AdminPlus,
+    runtime: RuntimeDep,
+) -> IcpConfigOut:
+    return runtime.leads.publish_icp_config(
+        ctx.principal.token,
+        ctx.tenant.id,
+        payload.model_dump(),
+    )
+
+
+@router.get("/icp-configs", response_model=Page[IcpConfigOut])
+def list_icp_configs(
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+    limit: int = Query(default=50, ge=1, le=100),
+    cursor: str | None = Query(default=None),
+) -> Page[IcpConfigOut]:
+    try:
+        decoded = decode_cursor(cursor) if cursor else None
+    except CursorError:
+        raise ApiError(422, "invalid_cursor", "Invalid pagination cursor.") from None
+    return runtime.leads.list_icp_configs(
+        ctx.principal.token,
+        ctx.tenant.id,
+        limit=limit,
+        cursor=decoded,
+    )
+
+
+@router.get("/icp-configs/active", response_model=IcpConfigOut)
+def get_active_icp_config(
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+) -> IcpConfigOut:
+    cfg = runtime.leads.get_active_icp_config(ctx.principal.token, ctx.tenant.id)
+    if cfg is None:
+        raise not_found()
+    return cfg
+
+
+@router.get("/icp-configs/{version_id}", response_model=IcpConfigOut)
+def get_icp_config(
+    version_id: str,
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+) -> IcpConfigOut:
+    vid = _parse_id(version_id)
+    cfg = runtime.leads.get_icp_config(ctx.principal.token, ctx.tenant.id, vid)
+    if cfg is None:
+        raise not_found()
+    return cfg
+
+
+# ----------------------------------------------------------------------------- Lead Import
+
+
+@router.post("/leads/import/preview", response_model=ImportBatchReport, status_code=200)
+def preview_lead_import(
+    payload: ImportBatchRequest,
+    ctx: SalesPlus,
+    runtime: RuntimeDep,
+) -> ImportBatchReport:
+    rows = [r.model_dump(exclude_none=True) for r in payload.rows]
+    return runtime.leads.import_leads(
+        ctx.principal.token,
+        ctx.tenant.id,
+        payload.batch_id,
+        rows,
+        dry_run=True,
+        label=payload.label,
+    )
+
+
+@router.post("/leads/import", response_model=ImportBatchReport, status_code=201)
+def commit_lead_import(
+    payload: ImportBatchRequest,
+    ctx: SalesPlus,
+    runtime: RuntimeDep,
+    response: Response,
+) -> ImportBatchReport:
+    rows = [r.model_dump(exclude_none=True) for r in payload.rows]
+    report = runtime.leads.import_leads(
+        ctx.principal.token,
+        ctx.tenant.id,
+        payload.batch_id,
+        rows,
+        dry_run=False,
+        label=payload.label,
+    )
+    if report.replayed:
+        response.status_code = 200
+    return report
+
+
+# ----------------------------------------------------------------------------- Review Queue
+
+
+@router.get("/leads/review-queue", response_model=Page[ReviewQueueLeadOut])
+def get_review_queue(
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+    limit: int = Query(default=20, ge=1, le=100),
+    cursor: str | None = Query(default=None),
+    score_band: str | None = Query(default=None),
+    blind: bool = Query(default=True),
+) -> Page[ReviewQueueLeadOut]:
+    try:
+        decoded = decode_cursor(cursor) if cursor else None
+    except CursorError:
+        raise ApiError(422, "invalid_cursor", "Invalid pagination cursor.") from None
+
+    return runtime.leads.get_review_queue(
+        ctx.principal.token,
+        ctx.tenant.id,
+        limit=limit,
+        cursor=decoded,
+        score_band=score_band,
+        include_blind_scores=not blind,
+    )
+
+
+# ----------------------------------------------------------------------------- Lead Labels
+
+
+@router.post("/leads/{lead_id}/labels", response_model=LeadLabelOut, status_code=201)
+def create_lead_label(
+    lead_id: str,
+    payload: LeadLabelCreate,
+    ctx: SalesPlus,
+    runtime: RuntimeDep,
+) -> LeadLabelOut:
+    lid = _parse_id(lead_id)
+    # Check lead exists in this tenant
+    lead = runtime.crm.get_row(ctx.principal.token, "leads", ctx.tenant.id, lid)
+    if lead is None:
+        raise not_found()
+
+    # Calculate score snapshot using active ICP config
+    active_icp = runtime.leads.get_active_icp_config(ctx.principal.token, ctx.tenant.id)
+    score_snapshot: dict[str, Any] | None = None
+    icp_version_id: uuid.UUID | None = None
+
+    if active_icp is not None:
+        icp_version_id = active_icp.id
+        cid = (
+            getattr(lead, "company_id", None)
+            if not isinstance(lead, dict)
+            else lead.get("company_id")
+        )
+        comp_row = (
+            runtime.crm.get_row(ctx.principal.token, "companies", ctx.tenant.id, cid)
+            if cid
+            else None
+        )
+        company: dict[str, Any] = (
+            comp_row.model_dump(mode="json")
+            if comp_row is not None and hasattr(comp_row, "model_dump")
+            else (comp_row or {})
+        )
+
+        ctid = (
+            getattr(lead, "contact_id", None)
+            if not isinstance(lead, dict)
+            else lead.get("contact_id")
+        )
+        cont_row = (
+            runtime.crm.get_row(ctx.principal.token, "contacts", ctx.tenant.id, ctid)
+            if ctid
+            else None
+        )
+        contact: dict[str, Any] | None = (
+            cont_row.model_dump(mode="json")
+            if cont_row is not None and hasattr(cont_row, "model_dump")
+            else cont_row
+        )
+
+        claims = (
+            runtime.crm.list_claims(ctx.principal.token, ctx.tenant.id, company_id=cid)
+            if hasattr(runtime.crm, "list_claims") and cid
+            else []
+        )
+        ev_page = runtime.evidence.list_for_target(
+            ctx.principal.token,
+            ctx.tenant.id,
+            "lead",
+            lid,
+            limit=50,
+            cursor=None,
+            include_archived=False,
+        )
+        evidence_items = [
+            {"kind": el.evidence.kind.value, "url": el.evidence.url}
+            for el in ev_page.items
+            if el.evidence is not None
+        ]
+        sc_res = score_lead(
+            active_icp.config, company, contact=contact, claims=claims, evidence=evidence_items
+        )
+        score_snapshot = sc_res.to_snapshot()
+
+    return runtime.leads.create_lead_label(
+        ctx.principal.token,
+        ctx.tenant.id,
+        lid,
+        payload.model_dump(),
+        score_snapshot,
+        icp_version_id,
+    )
+
+
+@router.get("/leads/{lead_id}/labels", response_model=Page[LeadLabelOut])
+def list_lead_labels(
+    lead_id: str,
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+    limit: int = Query(default=20, ge=1, le=100),
+    cursor: str | None = Query(default=None),
+) -> Page[LeadLabelOut]:
+    lid = _parse_id(lead_id)
+    lead = runtime.crm.get_row(ctx.principal.token, "leads", ctx.tenant.id, lid)
+    if lead is None:
+        raise not_found()
+
+    try:
+        decoded = decode_cursor(cursor) if cursor else None
+    except CursorError:
+        raise ApiError(422, "invalid_cursor", "Invalid pagination cursor.") from None
+
+    return runtime.leads.list_lead_labels(
+        ctx.principal.token,
+        ctx.tenant.id,
+        lead_id=lid,
+        limit=limit,
+        cursor=decoded,
+    )
+
+
+# ----------------------------------------------------------------------------- Exports
+
+
+@router.post("/exports")
+def export_dataset(
+    payload: ExportRequest,
+    ctx: AdminPlus,
+    runtime: RuntimeDep,
+) -> Response:
+    rows = runtime.leads.fetch_export_rows(ctx.principal.token, ctx.tenant.id, payload.kind)
+
+    if payload.format == ExportFormat.CSV:
+        content, row_count, content_sha256 = build_lead_labels_csv(rows)
+        media_type = "text/csv; charset=utf-8"
+        filename = "lead_labels.csv"
+    else:
+        content, row_count, content_sha256 = build_lead_labels_json(rows)
+        media_type = "application/json; charset=utf-8"
+        filename = "lead_labels.json"
+
+    # Record export in data_exports
+    runtime.leads.record_data_export(
+        ctx.principal.token,
+        ctx.tenant.id,
+        payload.kind.value,
+        payload.format.value,
+        row_count,
+        content_sha256,
+    )
+
+    return Response(
+        content=content,
+        media_type=media_type,
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "X-Export-Sha256": content_sha256,
+            "X-Export-Rows": str(row_count),
+        },
+    )
+

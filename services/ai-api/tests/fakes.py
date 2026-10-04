@@ -130,6 +130,7 @@ def make_client(
     repo: FakeRepository | None = None,
     crm: FakeCrmRepository | None = None,
     evidence: FakeEvidenceRepository | None = None,
+    leads: FakeLeadsRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -146,6 +147,7 @@ def make_client(
             repository=repo,
             crm=crm or FakeCrmRepository(),
             evidence=evidence or FakeEvidenceRepository(),
+            leads=leads or FakeLeadsRepository(),
         ),
     )
     return TestClient(app), repo
@@ -480,3 +482,274 @@ class FakeEvidenceRepository:
         updated = link.model_copy(update={"archived_at": stamp})
         self._store(tenant_id)[link_id] = updated
         return updated
+
+
+# ========================================================================== Leads fake
+import hashlib as _hashlib  # noqa: E402
+import json as _json  # noqa: E402
+
+from app.crm.models import RecordOrigin, encode_cursor  # noqa: E402
+from app.leads.models import (  # noqa: E402
+    ExportFormat,
+    ExportKind,
+    ExportRecordOut,
+    IcpConfigOut,
+    ImportBatchCounts,
+    ImportBatchReport,
+    ImportOutcome,
+    ImportRowOutcome,
+    LeadLabelOut,
+    ReviewQueueLeadOut,
+)
+
+
+@dataclass
+class FakeLeadsRepository:
+    icp_configs: dict[uuid.UUID, list[IcpConfigOut]] = field(default_factory=dict)
+    labels: dict[uuid.UUID, list[LeadLabelOut]] = field(default_factory=dict)
+    exports: dict[uuid.UUID, list[ExportRecordOut]] = field(default_factory=dict)
+    review_queue_leads: dict[uuid.UUID, list[ReviewQueueLeadOut]] = field(default_factory=dict)
+    tokens_seen: list[str] = field(default_factory=list)
+    calls: list[str] = field(default_factory=list)
+    raise_on_next: Exception | None = None
+
+    def _maybe_raise(self) -> None:
+        if self.raise_on_next is not None:
+            err, self.raise_on_next = self.raise_on_next, None
+            raise err
+
+    def publish_icp_config(
+        self, token: str, tenant_id: uuid.UUID, payload: dict[str, Any]
+    ) -> IcpConfigOut:
+        self.tokens_seen.append(token)
+        self.calls.append("publish_icp_config")
+        self._maybe_raise()
+        configs = self.icp_configs.setdefault(tenant_id, [])
+        v_no = len(configs) + 1
+        raw_cfg = payload["config"]
+        sha = _hashlib.sha256(_json.dumps(raw_cfg, sort_keys=True).encode()).hexdigest()
+        cfg_out = IcpConfigOut(
+            id=uuid.uuid4(),
+            tenant_id=tenant_id,
+            version_no=v_no,
+            engine=payload.get("engine", "icp-rules"),
+            schema_version=payload.get("schema_version", 1),
+            config=raw_cfg,
+            config_sha256=sha,
+            created_by=None,
+            created_via=RecordOrigin.MANUAL,
+            created_at=_dt.datetime.now(_dt.UTC),
+        )
+        configs.append(cfg_out)
+        return cfg_out
+
+    def list_icp_configs(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+    ) -> Page[IcpConfigOut]:
+        self.tokens_seen.append(token)
+        self.calls.append("list_icp_configs")
+        self._maybe_raise()
+        configs = list(reversed(self.icp_configs.get(tenant_id, [])))
+        page = configs[:limit]
+        nxt = encode_cursor(page[-1].created_at, page[-1].id) if len(configs) > limit else None
+        return Page(items=page, next_cursor=nxt)
+
+    def get_icp_config(
+        self, token: str, tenant_id: uuid.UUID, version_id: uuid.UUID
+    ) -> IcpConfigOut | None:
+        self.tokens_seen.append(token)
+        self.calls.append("get_icp_config")
+        self._maybe_raise()
+        for cfg in self.icp_configs.get(tenant_id, []):
+            if cfg.id == version_id:
+                return cfg
+        return None
+
+    def get_active_icp_config(self, token: str, tenant_id: uuid.UUID) -> IcpConfigOut | None:
+        self.tokens_seen.append(token)
+        self.calls.append("get_active_icp_config")
+        self._maybe_raise()
+        configs = self.icp_configs.get(tenant_id, [])
+        return configs[-1] if configs else None
+
+    def import_leads(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        batch_id: uuid.UUID,
+        rows: list[dict[str, Any]],
+        *,
+        dry_run: bool,
+        label: str | None,
+    ) -> ImportBatchReport:
+        self.tokens_seen.append(token)
+        self.calls.append("import_leads")
+        self._maybe_raise()
+        outcomes = []
+        for i, r in enumerate(rows):
+            has_contact = bool(
+                r.get("contact_name") or r.get("contact_email") or r.get("contact_phone")
+            )
+            outcomes.append(
+                ImportRowOutcome(
+                    row=i + 1,
+                    outcome=ImportOutcome.CREATED,
+                    company_created=True,
+                    contact_created=has_contact,
+                    attributes_written=0,
+                    attributes_kept=0,
+                    company_id=uuid.uuid4(),
+                    contact_id=uuid.uuid4() if has_contact else None,
+                    lead_id=uuid.uuid4(),
+                )
+            )
+        contacts_num = sum(1 for o in outcomes if o.contact_created)
+        counts = ImportBatchCounts(
+            rows=len(rows),
+            created=len(rows),
+            skipped_duplicate=0,
+            ambiguous=0,
+            rejected=0,
+            companies_created=len(rows),
+            contacts_created=contacts_num,
+            claims_created=0,
+        )
+        return ImportBatchReport(
+            batch_id=batch_id if not dry_run else None,
+            replayed=False,
+            dry_run=dry_run,
+            counts=counts,
+            rows=outcomes,
+        )
+
+    def create_lead_label(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        lead_id: uuid.UUID,
+        payload: dict[str, Any],
+        score_snapshot: dict[str, Any] | None,
+        icp_version_id: uuid.UUID | None,
+    ) -> LeadLabelOut:
+        self.tokens_seen.append(token)
+        self.calls.append("create_lead_label")
+        self._maybe_raise()
+        label_out = LeadLabelOut(
+            id=uuid.uuid4(),
+            tenant_id=tenant_id,
+            lead_id=lead_id,
+            label=payload["label"],
+            reason_code=payload.get("reason_code"),
+            icp_version_id=icp_version_id,
+            score=score_snapshot.get("score") if score_snapshot else None,
+            score_max_reachable=(
+                score_snapshot.get("score_max_reachable") if score_snapshot else None
+            ),
+            snapshot=score_snapshot,
+            created_by=None,
+            created_via=RecordOrigin.MANUAL,
+            created_at=_dt.datetime.now(_dt.UTC),
+        )
+        self.labels.setdefault(tenant_id, []).append(label_out)
+        return label_out
+
+    def list_lead_labels(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        lead_id: uuid.UUID | None,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+    ) -> Page[LeadLabelOut]:
+        self.tokens_seen.append(token)
+        self.calls.append("list_lead_labels")
+        self._maybe_raise()
+        lbls = [
+            label_row
+            for label_row in reversed(self.labels.get(tenant_id, []))
+            if lead_id is None or label_row.lead_id == lead_id
+        ]
+        page = lbls[:limit]
+        nxt = encode_cursor(page[-1].created_at, page[-1].id) if len(lbls) > limit else None
+        return Page(items=page, next_cursor=nxt)
+
+    def get_review_queue(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+        score_band: str | None,
+        include_blind_scores: bool,
+    ) -> Page[ReviewQueueLeadOut]:
+        self.tokens_seen.append(token)
+        self.calls.append("get_review_queue")
+        self._maybe_raise()
+        leads = self.review_queue_leads.get(tenant_id, [])
+        if score_band:
+            leads = [item for item in leads if item.score_band == score_band]
+        page = leads[:limit]
+        nxt = encode_cursor(page[-1].created_at, page[-1].lead_id) if len(leads) > limit else None
+        return Page(items=page, next_cursor=nxt)
+
+    def record_data_export(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        kind: str,
+        export_format: str,
+        row_count: int,
+        content_sha256: str,
+    ) -> ExportRecordOut:
+        self.tokens_seen.append(token)
+        self.calls.append("record_data_export")
+        self._maybe_raise()
+        rec = ExportRecordOut(
+            id=uuid.uuid4(),
+            tenant_id=tenant_id,
+            kind=ExportKind(kind),
+            format=ExportFormat(export_format),
+            row_count=row_count,
+            content_sha256=content_sha256,
+            created_by=None,
+            created_via=RecordOrigin.MANUAL,
+            created_at=_dt.datetime.now(_dt.UTC),
+        )
+        self.exports.setdefault(tenant_id, []).append(rec)
+        return rec
+
+    def fetch_export_rows(
+        self, token: str, tenant_id: uuid.UUID, kind: ExportKind
+    ) -> list[dict[str, Any]]:
+        self.tokens_seen.append(token)
+        self.calls.append("fetch_export_rows")
+        self._maybe_raise()
+        lbls = self.labels.get(tenant_id, [])
+        rows: list[dict[str, Any]] = []
+        for label_row in lbls:
+            rows.append(
+                {
+                    "lead_id": str(label_row.lead_id),
+                    "company_name": "Test Co",
+                    "company_city": "Bengaluru",
+                    "lead_source": "manual",
+                    "label": label_row.label.value,
+                    "reason_code": label_row.reason_code.value if label_row.reason_code else "",
+                    "score": label_row.score if label_row.score is not None else "",
+                    "score_max_reachable": (
+                        label_row.score_max_reachable
+                        if label_row.score_max_reachable is not None
+                        else ""
+                    ),
+                    "score_band": "priority" if (label_row.score or 0) >= 80 else "low_priority",
+                    "created_at": label_row.created_at.isoformat(),
+                }
+            )
+        return rows

@@ -90,6 +90,15 @@ export default async function TenantPage({
         Your role: <strong>{tenant.role}</strong>
       </p>
 
+      <nav aria-label="Lead actions" style={{ marginBottom: "1rem" }}>
+        <Link
+          href={`/app/tenants/${tenantId}/review`}
+          style={{ fontWeight: 600 }}
+        >
+          Lead Review Queue →
+        </Link>
+      </nav>
+
       <nav aria-label="Records" className="tabs">
         {ENTITY_KEYS.map((key) => (
           <Link

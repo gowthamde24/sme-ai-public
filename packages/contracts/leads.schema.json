@@ -1,0 +1,1009 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "leads.schema.json",
+  "title": "Lead Review and ICP API contracts (T005)",
+  "description": "Generated from services/ai-api/app/leads/models.py by `make contracts`. Defines contracts for ICP configurations, lead import batches, candidate review queue, human lead labeling with scoring snapshots, and dataset exports.",
+  "$defs": {
+    "ExportFormat": {
+      "enum": [
+        "csv",
+        "json"
+      ],
+      "title": "ExportFormat",
+      "type": "string"
+    },
+    "ExportKind": {
+      "enum": [
+        "lead_labels"
+      ],
+      "title": "ExportKind",
+      "type": "string"
+    },
+    "ExportRecordOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "tenant_id": {
+          "format": "uuid",
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "kind": {
+          "$ref": "#/$defs/ExportKind"
+        },
+        "format": {
+          "$ref": "#/$defs/ExportFormat"
+        },
+        "row_count": {
+          "title": "Row Count",
+          "type": "integer"
+        },
+        "content_sha256": {
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_via": {
+          "$ref": "#/$defs/RecordOrigin"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "tenant_id",
+        "kind",
+        "format",
+        "row_count",
+        "content_sha256",
+        "created_by",
+        "created_via",
+        "created_at"
+      ],
+      "title": "ExportRecordOut",
+      "type": "object"
+    },
+    "ExportRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/$defs/ExportKind",
+          "default": "lead_labels"
+        },
+        "format": {
+          "$ref": "#/$defs/ExportFormat",
+          "default": "csv"
+        }
+      },
+      "title": "ExportRequest",
+      "type": "object"
+    },
+    "IcpConfigCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "engine": {
+          "default": "icp-rules",
+          "pattern": "^[a-z][a-z0-9_.-]{1,39}$",
+          "title": "Engine",
+          "type": "string"
+        },
+        "schema_version": {
+          "default": 1,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "config": {
+          "additionalProperties": true,
+          "title": "Config",
+          "type": "object"
+        }
+      },
+      "required": [
+        "config"
+      ],
+      "title": "IcpConfigCreate",
+      "type": "object"
+    },
+    "IcpConfigOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "tenant_id": {
+          "format": "uuid",
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "version_no": {
+          "title": "Version No",
+          "type": "integer"
+        },
+        "engine": {
+          "title": "Engine",
+          "type": "string"
+        },
+        "schema_version": {
+          "title": "Schema Version",
+          "type": "integer"
+        },
+        "config": {
+          "additionalProperties": true,
+          "title": "Config",
+          "type": "object"
+        },
+        "config_sha256": {
+          "title": "Config Sha256",
+          "type": "string"
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_via": {
+          "$ref": "#/$defs/RecordOrigin"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "tenant_id",
+        "version_no",
+        "engine",
+        "schema_version",
+        "config",
+        "config_sha256",
+        "created_by",
+        "created_via",
+        "created_at"
+      ],
+      "title": "IcpConfigOut",
+      "type": "object"
+    },
+    "ImportBatchCounts": {
+      "additionalProperties": false,
+      "properties": {
+        "rows": {
+          "title": "Rows",
+          "type": "integer"
+        },
+        "created": {
+          "title": "Created",
+          "type": "integer"
+        },
+        "skipped_duplicate": {
+          "title": "Skipped Duplicate",
+          "type": "integer"
+        },
+        "ambiguous": {
+          "title": "Ambiguous",
+          "type": "integer"
+        },
+        "rejected": {
+          "title": "Rejected",
+          "type": "integer"
+        },
+        "companies_created": {
+          "title": "Companies Created",
+          "type": "integer"
+        },
+        "contacts_created": {
+          "title": "Contacts Created",
+          "type": "integer"
+        },
+        "claims_created": {
+          "title": "Claims Created",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rows",
+        "created",
+        "skipped_duplicate",
+        "ambiguous",
+        "rejected",
+        "companies_created",
+        "contacts_created",
+        "claims_created"
+      ],
+      "title": "ImportBatchCounts",
+      "type": "object"
+    },
+    "ImportBatchReport": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Batch Id"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        },
+        "dry_run": {
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "counts": {
+          "$ref": "#/$defs/ImportBatchCounts"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ImportRowOutcome"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "replayed",
+        "dry_run",
+        "counts",
+        "rows"
+      ],
+      "title": "ImportBatchReport",
+      "type": "object"
+    },
+    "ImportBatchRequest": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9 ._-]{0,59}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ImportRowInput"
+          },
+          "maxItems": 500,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "rows"
+      ],
+      "title": "ImportBatchRequest",
+      "type": "object"
+    },
+    "ImportOutcome": {
+      "enum": [
+        "created",
+        "skipped_duplicate",
+        "ambiguous",
+        "rejected"
+      ],
+      "title": "ImportOutcome",
+      "type": "string"
+    },
+    "ImportRowInput": {
+      "additionalProperties": false,
+      "properties": {
+        "company_name": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Company Name",
+          "type": "string"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "industry": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Industry"
+        },
+        "categories": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Categories",
+          "type": "array"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Name"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Email"
+        },
+        "contact_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Phone"
+        },
+        "contact_job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Job Title"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source"
+        },
+        "buyer_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Buyer Type"
+        },
+        "size_band": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Size Band"
+        },
+        "operating_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Operating Status"
+        },
+        "order_scale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Scale"
+        }
+      },
+      "required": [
+        "company_name"
+      ],
+      "title": "ImportRowInput",
+      "type": "object"
+    },
+    "ImportRowOutcome": {
+      "additionalProperties": false,
+      "properties": {
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "outcome": {
+          "$ref": "#/$defs/ImportOutcome"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "constraint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Constraint"
+        },
+        "sqlstate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sqlstate"
+        },
+        "company_created": {
+          "title": "Company Created",
+          "type": "boolean"
+        },
+        "contact_created": {
+          "title": "Contact Created",
+          "type": "boolean"
+        },
+        "attributes_written": {
+          "title": "Attributes Written",
+          "type": "integer"
+        },
+        "attributes_kept": {
+          "title": "Attributes Kept",
+          "type": "integer"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lead Id"
+        }
+      },
+      "required": [
+        "row",
+        "outcome",
+        "company_created",
+        "contact_created",
+        "attributes_written",
+        "attributes_kept"
+      ],
+      "title": "ImportRowOutcome",
+      "type": "object"
+    },
+    "LeadLabel": {
+      "enum": [
+        "good",
+        "bad",
+        "maybe"
+      ],
+      "title": "LeadLabel",
+      "type": "string"
+    },
+    "LeadLabelCreate": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "$ref": "#/$defs/LeadLabel"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LeadLabelReason"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "LeadLabelCreate",
+      "type": "object"
+    },
+    "LeadLabelOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "tenant_id": {
+          "format": "uuid",
+          "title": "Tenant Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "label": {
+          "$ref": "#/$defs/LeadLabel"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LeadLabelReason"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "icp_version_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Icp Version Id"
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Score"
+        },
+        "score_max_reachable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Score Max Reachable"
+        },
+        "snapshot": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Snapshot"
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_via": {
+          "$ref": "#/$defs/RecordOrigin"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "tenant_id",
+        "lead_id",
+        "label",
+        "reason_code",
+        "icp_version_id",
+        "score",
+        "score_max_reachable",
+        "snapshot",
+        "created_by",
+        "created_via",
+        "created_at"
+      ],
+      "title": "LeadLabelOut",
+      "type": "object"
+    },
+    "LeadLabelReason": {
+      "enum": [
+        "not_our_market",
+        "wrong_product",
+        "too_small",
+        "too_large",
+        "inactive",
+        "not_a_business",
+        "no_contact_route",
+        "already_customer",
+        "duplicate",
+        "insufficient_info",
+        "payment_risk"
+      ],
+      "title": "LeadLabelReason",
+      "type": "string"
+    },
+    "Page_IcpConfigOut_": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/IcpConfigOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "Page[IcpConfigOut]",
+      "type": "object"
+    },
+    "Page_LeadLabelOut_": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/LeadLabelOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "Page[LeadLabelOut]",
+      "type": "object"
+    },
+    "Page_ReviewQueueLeadOut_": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ReviewQueueLeadOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "Page[ReviewQueueLeadOut]",
+      "type": "object"
+    },
+    "RecordOrigin": {
+      "enum": [
+        "manual",
+        "import",
+        "agent"
+      ],
+      "title": "RecordOrigin",
+      "type": "string"
+    },
+    "ReviewQueueLeadOut": {
+      "additionalProperties": false,
+      "properties": {
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Source"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "company": {
+          "additionalProperties": true,
+          "title": "Company",
+          "type": "object"
+        },
+        "contact": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact"
+        },
+        "latest_label": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LeadLabelOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "score": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score"
+        },
+        "score_max_reachable": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score Max Reachable"
+        },
+        "score_band": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Score Band"
+        },
+        "snapshot": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Snapshot"
+        }
+      },
+      "required": [
+        "lead_id",
+        "status",
+        "source",
+        "created_at",
+        "company",
+        "contact",
+        "latest_label"
+      ],
+      "title": "ReviewQueueLeadOut",
+      "type": "object"
+    }
+  }
+}

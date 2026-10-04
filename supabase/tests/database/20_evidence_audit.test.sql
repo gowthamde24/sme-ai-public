@@ -80,7 +80,7 @@ select is(
     where to_jsonb(a)::text ~* '(canary-|quasimodo|zephyrine|serper-secret|in/zephyrine|token=)'),
   0::bigint, 'no url, snippet, reference or claim value appears ANYWHERE in audit_events (whole row as text)');
 select is(
-  (select count(*) from public.audit_events a where a.entity_type in ('evidence', 'evidence_link', 'claim')),
+  (select count(*) from public.audit_events a where a.tenant_id = tests.tid('a') and a.entity_type in ('evidence', 'evidence_link', 'claim')),
   5::bigint, 'five audit rows exist for the evidence tables (2 evidence creates, 1 archive, 1 claim, 1 link)');
 
 -- audit rows are tenant-scoped and readable only by Owner / Admin (T002 policy, unchanged)

@@ -14,6 +14,7 @@ from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.crm.repository import CrmRepository
 from app.errors import ApiError, forbidden, not_found, unauthorized
 from app.evidence.repository import EvidenceRepository
+from app.leads.repository import LeadsRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
 
@@ -28,6 +29,7 @@ class Runtime:
     repository: TenantRepository
     crm: CrmRepository
     evidence: EvidenceRepository
+    leads: LeadsRepository
 
 
 @dataclass(frozen=True)

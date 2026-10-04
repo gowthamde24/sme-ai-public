@@ -1,0 +1,795 @@
+{
+  "template": {
+    "id": "silk-wholesale",
+    "template_version": 1,
+    "schema_version": 1,
+    "engine": "icp-rules",
+    "purpose": "Starting point for a silk-saree wholesaler's ICP. Generic structure only: no customer data, no price list.",
+    "verification": "unverified",
+    "source": "owner placeholder, not yet confirmed by the family",
+    "contains_real_customer_data": false,
+    "contains_prices": false,
+    "how_it_is_used": "Published as version 1 of a tenant's ICP profile through the API; the tenant then publishes its own versions. The family's answers replace the placeholders as tenant data, never here."
+  },
+  "human_labels_override_score": true,
+  "factors": [
+    {
+      "id": "silk_saree_fit",
+      "label": "Silk / saree product fit",
+      "max_points": 25,
+      "verification": "unverified",
+      "rule": {
+        "type": "keyword_fit",
+        "fields": [
+          "industry",
+          "tags",
+          "name"
+        ],
+        "strong_vocabulary": "silk_saree_strong",
+        "weak_vocabulary": "textile_weak",
+        "points_percent": {
+          "strong_in_industry_or_tags": 100,
+          "strong_in_name_only": 70,
+          "weak_only": 35,
+          "none": 0
+        }
+      }
+    },
+    {
+      "id": "buyer_type_fit",
+      "label": "Buyer type",
+      "max_points": 20,
+      "verification": "unverified",
+      "rule": {
+        "type": "attribute_fraction",
+        "attribute": "buyer_type",
+        "when_missing": "unknown"
+      }
+    },
+    {
+      "id": "geography_fit",
+      "label": "Geography",
+      "max_points": 20,
+      "verification": "unverified",
+      "rule": {
+        "type": "place_tier",
+        "fields": [
+          "city",
+          "region"
+        ],
+        "tiers": "geography",
+        "when_missing": "unknown",
+        "when_not_listed": "unknown"
+      }
+    },
+    {
+      "id": "business_scale",
+      "label": "Can take 5 or more mid / premium silk pieces per order",
+      "max_points": 15,
+      "verification": "unverified",
+      "rule": {
+        "type": "attribute_max",
+        "attributes": [
+          "order_scale",
+          "size_band"
+        ],
+        "when_missing": "unknown"
+      }
+    },
+    {
+      "id": "reachability",
+      "label": "Contact reachability",
+      "max_points": 10,
+      "verification": "unverified",
+      "rule": {
+        "type": "contact_quality",
+        "email_points": 4,
+        "phone_points": 3,
+        "decision_maker_points": 3,
+        "decision_maker_vocabulary": "decision_maker_titles",
+        "suppressed_or_bounced_points": 0
+      }
+    },
+    {
+      "id": "evidence_quality",
+      "label": "Evidence attached",
+      "max_points": 10,
+      "verification": "unverified",
+      "rule": {
+        "type": "evidence_count",
+        "any_points": 4,
+        "two_or_more_points": 3,
+        "two_or_more_kinds_points": 3
+      }
+    }
+  ],
+  "vocabularies": {
+    "silk_saree_strong": {
+      "verification": "unverified",
+      "note": "Native-script aliases are the owner's placeholders and need a native-speaker review.",
+      "terms": [
+        {
+          "term": "saree",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "sari",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "sarees",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "silk saree",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "silk sarees",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "silk",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "kanjivaram",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "kanchipuram",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "banarasi",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "mysore silk",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "pattu",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "pattu saree",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "dharmavaram",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "uppada",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "mangalagiri",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "gadwal",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "ilkal",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "paithani",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "tussar",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "kora",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "organza silk",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "చీర",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "చీరలు",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "పట్టు",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "పట్టు చీర",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "పట్టు చీరలు",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "పట్టుచీర",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "ಸೀರೆ",
+          "lang": "kn",
+          "verification": "unverified"
+        },
+        {
+          "term": "ಸೀರೆಗಳು",
+          "lang": "kn",
+          "verification": "unverified"
+        },
+        {
+          "term": "ರೇಷ್ಮೆ",
+          "lang": "kn",
+          "verification": "unverified"
+        },
+        {
+          "term": "ರೇಷ್ಮೆ ಸೀರೆ",
+          "lang": "kn",
+          "verification": "unverified"
+        },
+        {
+          "term": "ರೇಷ್ಮೆ ಸೀರೆಗಳು",
+          "lang": "kn",
+          "verification": "unverified"
+        },
+        {
+          "term": "साड़ी",
+          "lang": "hi",
+          "verification": "unverified"
+        },
+        {
+          "term": "साडी",
+          "lang": "hi",
+          "verification": "unverified"
+        },
+        {
+          "term": "साड़ियाँ",
+          "lang": "hi",
+          "verification": "unverified"
+        },
+        {
+          "term": "रेशम",
+          "lang": "hi",
+          "verification": "unverified"
+        },
+        {
+          "term": "रेशमी",
+          "lang": "hi",
+          "verification": "unverified"
+        },
+        {
+          "term": "रेशमी साड़ी",
+          "lang": "hi",
+          "verification": "unverified"
+        }
+      ]
+    },
+    "textile_weak": {
+      "verification": "unverified",
+      "terms": [
+        {
+          "term": "textile",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "textiles",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "fabric",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "fabrics",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "ethnic wear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "ethnic",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "boutique",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "traditional wear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "bridal wear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "festive wear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "cloth",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "clothing",
+          "lang": "en",
+          "verification": "unverified"
+        }
+      ]
+    },
+    "unrelated_apparel": {
+      "verification": "unverified",
+      "terms": [
+        {
+          "term": "menswear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "men's wear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "kids wear",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "readymade",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "ready made",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "jeans",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "t-shirt",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "uniform",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "innerwear",
+          "lang": "en",
+          "verification": "unverified"
+        }
+      ]
+    },
+    "decision_maker_titles": {
+      "verification": "unverified",
+      "terms": [
+        {
+          "term": "owner",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "proprietor",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "partner",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "director",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "managing",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "founder",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "purchase",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "purchasing",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "buyer",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "merchandiser",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "procurement",
+          "lang": "en",
+          "verification": "unverified"
+        },
+        {
+          "term": "యజమాని",
+          "lang": "te",
+          "verification": "unverified"
+        },
+        {
+          "term": "ಮಾಲೀಕ",
+          "lang": "kn",
+          "verification": "unverified"
+        },
+        {
+          "term": "मालिक",
+          "lang": "hi",
+          "verification": "unverified"
+        }
+      ]
+    }
+  },
+  "geography": {
+    "verification": "unverified",
+    "note": "First matching tier wins, in this order. A location that is missing or not listed is UNKNOWN, never silently 0.",
+    "tiers": [
+      {
+        "id": "tier1",
+        "label": "Tier 1: Bengaluru",
+        "points_percent": 100,
+        "verification": "unverified",
+        "places": [
+          {
+            "canonical": "bengaluru",
+            "kind": "city",
+            "verification": "unverified",
+            "aliases": [
+              {
+                "term": "bengaluru",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "bangalore",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "blr",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "బెంగళూరు",
+                "lang": "te",
+                "verification": "unverified"
+              },
+              {
+                "term": "ಬೆಂಗಳೂರು",
+                "lang": "kn",
+                "verification": "unverified"
+              },
+              {
+                "term": "बेंगलुरु",
+                "lang": "hi",
+                "verification": "unverified"
+              },
+              {
+                "term": "बैंगलोर",
+                "lang": "hi",
+                "verification": "unverified"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "tier2",
+        "label": "Tier 2: Dharmavaram and Andhra Pradesh",
+        "points_percent": 60,
+        "verification": "unverified",
+        "places": [
+          {
+            "canonical": "dharmavaram",
+            "kind": "city",
+            "verification": "unverified",
+            "aliases": [
+              {
+                "term": "dharmavaram",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "ధర్మవరం",
+                "lang": "te",
+                "verification": "unverified"
+              },
+              {
+                "term": "धर्मावरम",
+                "lang": "hi",
+                "verification": "unverified"
+              }
+            ]
+          },
+          {
+            "canonical": "andhra pradesh",
+            "kind": "region",
+            "verification": "unverified",
+            "aliases": [
+              {
+                "term": "andhra pradesh",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "andhra",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "ఆంధ్ర ప్రదేశ్",
+                "lang": "te",
+                "verification": "unverified"
+              },
+              {
+                "term": "आंध्र प्रदेश",
+                "lang": "hi",
+                "verification": "unverified"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "tier3",
+        "label": "Tier 3: the rest of Karnataka",
+        "points_percent": 40,
+        "verification": "unverified",
+        "places": [
+          {
+            "canonical": "karnataka",
+            "kind": "region",
+            "verification": "unverified",
+            "aliases": [
+              {
+                "term": "karnataka",
+                "lang": "en",
+                "verification": "unverified"
+              },
+              {
+                "term": "ಕರ್ನಾಟಕ",
+                "lang": "kn",
+                "verification": "unverified"
+              },
+              {
+                "term": "कर्नाटक",
+                "lang": "hi",
+                "verification": "unverified"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "attributes": {
+    "buyer_type": {
+      "verification": "unverified",
+      "values": [
+        {
+          "value": "saree_shop",
+          "points_percent": 100
+        },
+        {
+          "value": "wholesaler",
+          "points_percent": 100
+        },
+        {
+          "value": "boutique",
+          "points_percent": 50
+        },
+        {
+          "value": "multi_brand_store",
+          "points_percent": 0
+        },
+        {
+          "value": "regional_chain",
+          "points_percent": 0
+        },
+        {
+          "value": "other",
+          "points_percent": 0
+        },
+        {
+          "value": "consumer",
+          "points_percent": 0
+        }
+      ]
+    },
+    "order_scale": {
+      "verification": "unverified",
+      "values": [
+        {
+          "value": "five_or_more_per_order",
+          "points_percent": 100
+        },
+        {
+          "value": "fewer_than_five_per_order",
+          "points_percent": 25
+        }
+      ]
+    },
+    "size_band": {
+      "verification": "unverified",
+      "values": [
+        {
+          "value": "large",
+          "points_percent": 100
+        },
+        {
+          "value": "medium",
+          "points_percent": 70
+        },
+        {
+          "value": "small",
+          "points_percent": 35
+        },
+        {
+          "value": "micro",
+          "points_percent": 10
+        }
+      ]
+    },
+    "operating_status": {
+      "verification": "unverified",
+      "values": [
+        {
+          "value": "active",
+          "points_percent": 0
+        },
+        {
+          "value": "inactive",
+          "points_percent": 0
+        },
+        {
+          "value": "closed",
+          "points_percent": 0
+        }
+      ]
+    }
+  },
+  "bands": [
+    {
+      "min": 80,
+      "label": "priority"
+    },
+    {
+      "min": 65,
+      "label": "worth_reviewing"
+    },
+    {
+      "min": 50,
+      "label": "maybe"
+    },
+    {
+      "min": 0,
+      "label": "low_priority"
+    }
+  ],
+  "exclusions": [
+    {
+      "field": "company.type",
+      "equals": "customer",
+      "reason": "already_customer",
+      "verification": "unverified"
+    }
+  ],
+  "flags": [
+    {
+      "id": "no_saree_evidence",
+      "when": {
+        "factor": "silk_saree_fit",
+        "points": 0
+      }
+    },
+    {
+      "id": "unrelated_apparel_only",
+      "when": {
+        "vocabulary": "unrelated_apparel",
+        "strong_vocabulary_absent": true
+      }
+    },
+    {
+      "id": "consumer",
+      "when": {
+        "attribute": "buyer_type",
+        "equals": "consumer"
+      }
+    },
+    {
+      "id": "closed_or_inactive",
+      "when": {
+        "attribute": "operating_status",
+        "in": [
+          "inactive",
+          "closed"
+        ]
+      }
+    },
+    {
+      "id": "unreliable_contact",
+      "when": {
+        "contact": "bounced_or_suppressed"
+      }
+    },
+    {
+      "id": "no_evidence",
+      "when": {
+        "evidence_count": 0
+      }
+    }
+  ],
+  "examples": []
+}

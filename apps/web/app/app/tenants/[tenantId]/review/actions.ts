@@ -1,0 +1,177 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { isCanonicalUuid } from "@/lib/api/crm";
+import {
+  createLeadLabel,
+  importLeads,
+  LEAD_LABEL_REASONS,
+  type ImportBatchReport,
+  type ImportRowInput,
+  type LeadLabel,
+  type LeadLabelReason,
+} from "@/lib/api/leads";
+import { requireUser } from "@/lib/auth/session";
+
+export interface LabelActionState {
+  ok?: boolean;
+  error?: string;
+  message?: string;
+}
+
+export interface ImportActionState {
+  ok?: boolean;
+  error?: string;
+  report?: ImportBatchReport;
+}
+
+function field(formData: FormData, name: string): string {
+  const value = formData.get(name);
+  return typeof value === "string" ? value.trim() : "";
+}
+
+export async function labelLeadAction(
+  tenantId: string,
+  leadId: string,
+  _prev: LabelActionState,
+  formData: FormData,
+): Promise<LabelActionState> {
+  const user = await requireUser();
+
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(leadId)) {
+    return { ok: false, error: "Invalid workspace or lead reference." };
+  }
+
+  const rawLabel = field(formData, "label");
+  if (!["good", "bad", "maybe"].includes(rawLabel)) {
+    return { ok: false, error: "Choose a valid label (Good, Bad, or Maybe)." };
+  }
+  const label = rawLabel as LeadLabel;
+
+  let reasonCode: LeadLabelReason | null = null;
+  if (label === "bad") {
+    const rawReason = field(formData, "reason_code");
+    if (!rawReason || !(LEAD_LABEL_REASONS as readonly string[]).includes(rawReason)) {
+      return { ok: false, error: "Select a reason code when marking a lead as Bad." };
+    }
+    reasonCode = rawReason as LeadLabelReason;
+  }
+
+  try {
+    await createLeadLabel(user.accessToken, tenantId, leadId, {
+      label,
+      reason_code: reasonCode,
+    });
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError) {
+      if (error.status === 403) return { ok: false, error: "Your role cannot label leads." };
+      if (error.status === 404) return { ok: false, error: "Lead or workspace not found." };
+      if (error.status === 422) return { ok: false, error: "Invalid label or reason code." };
+    }
+    return { ok: false, error: "Could not save the label. Try again." };
+  }
+
+  revalidatePath(`/app/tenants/${tenantId}/review`);
+  return { ok: true, message: `Lead marked as ${label}.` };
+}
+
+export async function importLeadsAction(
+  tenantId: string,
+  _prev: ImportActionState,
+  formData: FormData,
+): Promise<ImportActionState> {
+  const user = await requireUser();
+
+  if (!isCanonicalUuid(tenantId)) {
+    return { ok: false, error: "Invalid workspace reference." };
+  }
+
+  const rawJson = field(formData, "raw_json");
+  const batchLabel = field(formData, "batch_label") || null;
+  const isDryRun = formData.get("dry_run") === "true";
+
+  if (!rawJson) {
+    return { ok: false, error: "Provide lead rows in JSON format." };
+  }
+
+  let parsedRows: unknown;
+  try {
+    parsedRows = JSON.parse(rawJson);
+  } catch {
+    return { ok: false, error: "Invalid JSON format: please check the input." };
+  }
+
+  if (!Array.isArray(parsedRows) || parsedRows.length === 0) {
+    return { ok: false, error: "JSON must be a non-empty array of lead rows." };
+  }
+
+  if (parsedRows.length > 500) {
+    return { ok: false, error: "Batch size cannot exceed 500 rows." };
+  }
+
+  const rows: ImportRowInput[] = [];
+  for (let i = 0; i < parsedRows.length; i++) {
+    const row = parsedRows[i];
+    if (typeof row !== "object" || row === null || Array.isArray(row)) {
+      return { ok: false, error: `Row ${i + 1} must be an object.` };
+    }
+    const companyName = typeof row.company_name === "string" ? row.company_name.trim() : "";
+    if (!companyName) {
+      return { ok: false, error: `Row ${i + 1} is missing a company_name.` };
+    }
+
+    rows.push({
+      company_name: companyName,
+      website: typeof row.website === "string" ? row.website.trim() : null,
+      country: typeof row.country === "string" ? row.country.trim() : null,
+      city: typeof row.city === "string" ? row.city.trim() : null,
+      industry: typeof row.industry === "string" ? row.industry.trim() : null,
+      categories: Array.isArray(row.categories)
+        ? row.categories.filter((c: unknown) => typeof c === "string")
+        : [],
+      contact_name: typeof row.contact_name === "string" ? row.contact_name.trim() : null,
+      contact_email: typeof row.contact_email === "string" ? row.contact_email.trim() : null,
+      contact_phone: typeof row.contact_phone === "string" ? row.contact_phone.trim() : null,
+      contact_job_title: typeof row.contact_job_title === "string" ? row.contact_job_title.trim() : null,
+      source: typeof row.source === "string" ? row.source.trim() : null,
+      buyer_type: typeof row.buyer_type === "string" ? row.buyer_type.trim() : null,
+      size_band: typeof row.size_band === "string" ? row.size_band.trim() : null,
+      operating_status: typeof row.operating_status === "string" ? row.operating_status.trim() : null,
+      order_scale: typeof row.order_scale === "string" ? row.order_scale.trim() : null,
+    });
+  }
+
+  const batchId = crypto.randomUUID();
+  let report: ImportBatchReport;
+  try {
+    report = await importLeads(
+      user.accessToken,
+      tenantId,
+      {
+        batch_id: batchId,
+        label: batchLabel,
+        rows,
+      },
+      isDryRun,
+    );
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError) {
+      if (error.status === 403) return { ok: false, error: "Your role cannot import leads." };
+      if (error.status === 404) return { ok: false, error: "Workspace not found." };
+      if (error.status === 422) return { ok: false, error: "Check row values and real-data restrictions." };
+    }
+    return { ok: false, error: "Lead import failed. Try again." };
+  }
+
+  if (!isDryRun) {
+    revalidatePath(`/app/tenants/${tenantId}/review`);
+    revalidatePath(`/app/tenants/${tenantId}`);
+  }
+
+  return { ok: true, report };
+}

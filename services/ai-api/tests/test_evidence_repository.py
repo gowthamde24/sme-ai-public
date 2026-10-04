@@ -462,6 +462,7 @@ def test_the_application_closes_every_http_client_on_shutdown() -> None:
     from app.auth.jwt import StaticKeyProvider, TokenVerifier
     from app.config import Settings
     from app.crm.repository import PostgrestCrmRepository
+    from app.leads.repository import PostgrestLeadsRepository
     from app.main import create_app
     from app.tenancy.repository import PostgrestTenantRepository
     from tests.fakes import KEY
@@ -473,7 +474,7 @@ def test_the_application_closes_every_http_client_on_shutdown() -> None:
             transport=httpx.MockTransport(lambda r: httpx.Response(200)),
         )
 
-    clients = [http(), http(), http()]
+    clients = [http(), http(), http(), http()]
     runtime = Runtime(
         verifier=TokenVerifier(
             issuer=ISSUER,
@@ -485,6 +486,7 @@ def test_the_application_closes_every_http_client_on_shutdown() -> None:
         repository=PostgrestTenantRepository("http://postgrest.test", ANON, client=clients[0]),
         crm=PostgrestCrmRepository("http://postgrest.test", ANON, client=clients[1]),
         evidence=r.PostgrestEvidenceRepository("http://postgrest.test", ANON, client=clients[2]),
+        leads=PostgrestLeadsRepository("http://postgrest.test", ANON, client=clients[3]),
     )
     app = create_app(Settings(_env_file=None, api_env="development"), runtime=runtime)  # type: ignore[call-arg]
     with TestClient(app):

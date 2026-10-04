@@ -127,13 +127,17 @@ select is(
         'public.lift_suppression',
         'app.can_contact',
         'app.text_is_clean',
-        'public.create_evidence_with_link')),
+        'public.create_evidence_with_link',
+        'public.import_lead_rows',
+        'app.match_key',
+        'app.website_host')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where nspname = 'public' and prosecdef
-      and fq not in ('public.create_tenant', 'public.record_consent', 'public.suppress_contact', 'public.lift_suppression')),
-  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant and the three consent functions');
+      and fq not in ('public.create_tenant', 'public.record_consent', 'public.suppress_contact', 'public.lift_suppression',
+                     'public.import_lead_rows')),
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions and import_lead_rows');
 
 -- Functions the API schema exposes to clients and that are NOT SECURITY DEFINER run with the
 -- caller's rights; they must still pin search_path (no hijack through a caller-controlled path).

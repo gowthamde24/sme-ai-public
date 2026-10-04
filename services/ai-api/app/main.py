@@ -16,6 +16,8 @@ from app.crm.routes import router as crm_router
 from app.errors import ApiError, install_error_handlers
 from app.evidence.repository import PostgrestEvidenceRepository
 from app.evidence.routes import router as evidence_router
+from app.leads.repository import PostgrestLeadsRepository
+from app.leads.routes import router as leads_router
 from app.logging_safety import install_log_redaction
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
@@ -55,6 +57,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
         crm=PostgrestCrmRepository(config.rest_url, config.anon_key),
         evidence=PostgrestEvidenceRepository(config.rest_url, config.anon_key),
+        leads=PostgrestLeadsRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -95,12 +98,18 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
         if runtime is not None:
-            for repository in (runtime.repository, runtime.crm, runtime.evidence):
+            for repository in (
+                runtime.repository,
+                runtime.crm,
+                runtime.evidence,
+                runtime.leads,
+            ):
                 if isinstance(
                     repository,
                     PostgrestTenantRepository
                     | PostgrestCrmRepository
-                    | PostgrestEvidenceRepository,
+                    | PostgrestEvidenceRepository
+                    | PostgrestLeadsRepository,
                 ):
                     repository.close()
 
@@ -141,8 +150,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         )
 
     app.include_router(tenancy_router)
-    app.include_router(crm_router)
+    app.include_router(leads_router)
     app.include_router(evidence_router)
+    app.include_router(crm_router)
     return app
 
 

@@ -162,3 +162,64 @@ export async function createTenant(
     }),
   );
 }
+
+export interface ExportDownloadResult {
+  content: string;
+  sha256: string;
+  rowCount: number;
+  contentType: string;
+}
+
+export async function apiExportRequest(
+  path: string,
+  accessToken: string,
+  body: unknown,
+): Promise<ExportDownloadResult> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, {
+      method: "POST",
+      cache: "no-store",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiRequestError(
+      503,
+      "api_unreachable",
+      "The API is unreachable.",
+    );
+  }
+
+  if (response.status === 401)
+    throw new ApiAuthError("The API rejected the session.");
+  if (!response.ok) {
+    let errBody: unknown = null;
+    try {
+      errBody = await response.json();
+    } catch {
+      // non-JSON body
+    }
+    const err =
+      isRecord(errBody) && isRecord(errBody.error)
+        ? (errBody.error as ApiError["error"])
+        : null;
+    throw new ApiRequestError(
+      response.status,
+      err && isString(err.code) ? err.code : "http_error",
+      err && isString(err.message) ? err.message : "Request failed.",
+    );
+  }
+
+  const content = await response.text();
+  const sha256 = response.headers.get("X-Export-Sha256") || "";
+  const rowCount = parseInt(response.headers.get("X-Export-Rows") || "0", 10);
+  const contentType =
+    response.headers.get("Content-Type") || "text/csv; charset=utf-8";
+
+  return { content, sha256, rowCount, contentType };
+}

@@ -8,6 +8,7 @@ select no_plan();
 select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.seed_evidence();
+select tests.seed_t005();
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text

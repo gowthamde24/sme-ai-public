@@ -81,7 +81,8 @@ page, scores a lead, or runs an agent.**
    `created_via` already has `agent`; `created_by` is nullable and never joined to a human profile;
    policies work for any authenticated principal with a membership; `retrieved_at` comes from the
    writer; `reference` can carry `run:<uuid>`. **An ADR on the agent write path (identity and permission
-   model for non-human actors) is a precondition for the T005 plan** (checklist).
+   model for non-human actors) is a precondition for the T006 (agent runtime) plan** (checklist); T005, lead
+   review, contains no agent and is not blocked by it.
 10. **SQLSTATE contract** (the API classifies by SQLSTATE only, never by message text, and tests assert
     these exactly): `23514` invalid value or structure (including the exactly-one CHECKs and the
     future-`retrieved_at` trigger, constraint `evidence_retrieved_at_not_future`); `23503` invalid
