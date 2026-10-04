@@ -1,0 +1,8 @@
+{
+  "name": "@sme-ai/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared schemas/types. JSON Schema files are the source of truth.",
+  "main": "index.ts",
+  "types": "index.ts"
+}
