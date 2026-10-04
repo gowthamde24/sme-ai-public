@@ -27,6 +27,19 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Email confirmation and password policy.** The local stack has confirmations off and a 6-character minimum. Turn confirmations on and raise the minimum on the hosted project. | `supabase/config.toml` | **Pilot data** |
 | [ ] | **Invitations by email.** No invite flow: members can only be added by user id. Needs a design that does not leak which emails have accounts. | ADR 0001 #7 | **External pilot** |
 
+## Web app
+
+| | Item | Source | Gate |
+| --- | --- | --- | --- |
+| [ ] | **Email confirmation callback.** No `/auth/confirm` route handler exists, so turning on confirmations (required for a hosted project) would leave sign-ups unable to complete. Build it, validate its redirect target with `safeRedirectPath`, and configure the project's Site URL and redirect allow-list. | ADR 0003 | **Pilot data** |
+| [ ] | **Password reset and account recovery UI.** Not built. | ADR 0003 | **Pilot data** |
+| [ ] | **Security headers and CSP** (frame-ancestors, nosniff, referrer policy, a nonce-based CSP per the Next.js CSP guide). | ADR 0003 | **Pilot data** |
+| [ ] | **Login abuse controls.** Only Supabase Auth's built-in rate limits. Add CAPTCHA/lockout or edge rate limiting for sign-in and sign-up. | ADR 0003 | **External pilot** |
+| [ ] | **Proxy latency.** `getUser()` runs on every `/app` and `/login` request. Measure; consider verifying the JWT locally (asymmetric keys) with a short cache. | ADR 0003 | **Scale** |
+| [ ] | **Production cookie and URL config.** Verify `Secure` cookies, https-only `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_API_BASE_URL`, and the deployed domain for session cookies. | ADR 0003 | **Pilot data** |
+| [ ] | **Dev-tooling audit findings.** `npm audit` reports 5 high issues in dev dependencies (`braces`); production dependencies report 0. Update when upstream fixes land; keep `npm audit --omit=dev` clean. | ADR 0003 | Ongoing |
+| [ ] | **Tenant-scoped pages.** `/app` lists workspaces only. Later pages must live under `/app/tenants/{id}/...` and rely on the API's 404 for foreign tenants. | ADR 0003 | **T003** |
+
 ## Data lifecycle and privacy (India: DPDP Rules 2025, TRAI)
 
 | | Item | Source | Gate |

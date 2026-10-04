@@ -57,7 +57,8 @@ make install     # install web + api dependencies
 make lint        # eslint + ruff
 make typecheck   # tsc + mypy
 make test        # vitest + pytest
-make check       # lint + typecheck + test (the definition of done)
+make check       # lint + typecheck + unit + pgTAP (db-test) + integration (the definition of done; needs Docker + `supabase start`)
+make check-fast  # lint + typecheck + unit tests only (no Docker)
 make dev-web     # Next.js on :3000
 make dev-api     # FastAPI on :8000
 ```
@@ -72,5 +73,5 @@ make dev-api     # FastAPI on :8000
 ## Ticket status
 
 - T001 Bootstrap monorepo: DONE (make check passes; both apps boot locally).
-- T002 Tenant/Auth/RLS foundation: NEXT. Start it with a plan first. Security gate: automated tests must prove Tenant A cannot read or write Tenant B data before any T003+ work.
+- T002 Tenant/Auth/RLS foundation: milestones 1-3 (DB + RLS tests, API auth, web auth) implemented; awaiting final owner review. Security gate: automated tests prove Tenant A cannot read or write Tenant B data. Do not start T003 until the owner approves T002. Open risks live in `docs/pre-pilot-checklist.md`.
 - Do not start Lead Agent, Command Center animation, WhatsApp, Tally or investor materials before T001 and T002 are complete.
