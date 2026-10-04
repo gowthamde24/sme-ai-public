@@ -126,6 +126,17 @@ class CrmRepository(Protocol):
 
     def consent_rpc(self, token: str, function: str, args: dict[str, Any]) -> uuid.UUID | None: ...
 
+    def list_claims(
+        self, token: str, tenant_id: uuid.UUID, *, company_id: uuid.UUID
+    ) -> list[dict[str, Any]]: ...
+
+
+# What a claim read returns and in which order: ONE definition, used by every reader that feeds the
+# ICP score (this repository for the label snapshot, the review queue for the reviewer's view).
+CLAIM_SELECT = "id,company_id,predicate,value,confidence"
+CLAIM_ORDER = "created_at.desc,id.desc"
+CLAIMS_PER_COMPANY = 200
+
 
 # ----------------------------------------------------------------------------- classification
 _CONSTRAINT = re.compile(r'constraint "([A-Za-z0-9_]+)"')
@@ -348,6 +359,28 @@ class PostgrestCrmRepository:
         if not isinstance(rows, list) or len(rows) != 1:
             raise UpstreamError("unexpected insert result")
         return self._parse(spec, rows[0]), True
+
+    def list_claims(
+        self, token: str, tenant_id: uuid.UUID, *, company_id: uuid.UUID
+    ) -> list[dict[str, Any]]:
+        """The company's live (non-archived) claims, newest first. The caller's JWT only: RLS
+        decides what is visible; the tenant filter is belt and braces."""
+        rows = self._send(
+            "GET",
+            "/claims",
+            token,
+            params={
+                "select": CLAIM_SELECT,
+                "tenant_id": f"eq.{tenant_id}",
+                "company_id": f"eq.{company_id}",
+                "archived_at": "is.null",
+                "order": CLAIM_ORDER,
+                "limit": str(CLAIMS_PER_COMPANY),
+            },
+        )
+        if not isinstance(rows, list):
+            raise UpstreamError("unexpected claims shape")
+        return [dict(row) for row in rows]
 
     def update_row(
         self,

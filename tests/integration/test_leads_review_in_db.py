@@ -247,6 +247,57 @@ def test_review_queue_and_lead_labeling(w: World) -> None:
     assert [lh["label"] for lh in label_history[:2]] == ["bad", "good"]
 
 
+def test_label_snapshot_equals_the_score_the_queue_showed(w: World) -> None:
+    """Imported attributes are claims about the company. The score stored with a label must be the
+    one the reviewer's queue view computed from the same claims, evidence and ICP version."""
+    admin, sales = bearer(w.a.users["admin"]), bearer(w.a.users["sales"])
+    published = w.client.post(
+        f"/v1/tenants/{w.a.id}/icp-configs", json={"config": ICP_TEMPLATE}, headers=admin
+    )
+    assert published.status_code in (200, 201)
+    active = w.client.get(f"/v1/tenants/{w.a.id}/icp-configs/active", headers=admin).json()
+
+    batch = uid()
+    imported = w.client.post(
+        f"/v1/tenants/{w.a.id}/leads/import",
+        json={
+            "batch_id": batch,
+            "rows": [
+                {
+                    "company_name": f"DEMO Claims Silks {batch[:6]}",
+                    "city": "Bengaluru",
+                    "industry": "Silk sarees",
+                    "buyer_type": "saree_shop",
+                    "size_band": "large",
+                    "order_scale": "five_or_more_per_order",
+                }
+            ],
+        },
+        headers=sales,
+    )
+    assert imported.status_code == 201
+    row = imported.json()["rows"][0]
+    assert row["attributes_written"] == 3
+    lead_id = row["lead_id"]
+
+    queue = w.client.get(
+        f"/v1/tenants/{w.a.id}/leads/review-queue?blind=false&limit=100", headers=sales
+    ).json()["items"]
+    shown = next(i for i in queue if i["lead_id"] == lead_id)
+    assert shown["score"] is not None
+
+    label = w.client.post(
+        f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels", json={"label": "good"}, headers=sales
+    ).json()
+    assert label["icp_version_id"] == active["id"]
+    assert (label["score"], label["score_max_reachable"]) == (
+        shown["score"],
+        shown["score_max_reachable"],
+    )
+    assert label["snapshot"] == shown["snapshot"]
+    assert label["snapshot"]["band"] == shown["score_band"]
+
+
 def test_data_exports_csv_and_json_with_formula_sanitization(w: World) -> None:
     # 0. Ensure a lead exists and is labeled for Tenant A
     batch_id = uid()

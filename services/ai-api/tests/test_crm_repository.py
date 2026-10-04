@@ -544,3 +544,33 @@ def test_no_classified_exception_carries_any_part_of_the_database_text(
     err = r.classify_error(status, body)
     for text in (str(err), repr(err), str(err.args)):
         assert CANARY not in text and CANARY_NAME not in text and "canary" not in text.lower()
+
+
+# ==== claims (inputs of the ICP score) ====
+def test_list_claims_is_tenant_scoped_user_jwt_only_and_returns_the_scoring_fields() -> None:
+    company = uuid.uuid4()
+    rows = [
+        {"id": str(uuid.uuid4()), "company_id": str(company), "predicate": "buyer_type",
+         "value": "saree_shop", "confidence": "unverified"},
+    ]
+    repo, seen = repo_with(lambda req: httpx.Response(200, json=rows))
+    got = repo.list_claims(TOKEN, TENANT, company_id=company)
+    assert got == rows
+    (req,) = seen
+    assert req.url.path.endswith("/claims")
+    assert req.headers["authorization"] == f"Bearer {TOKEN}"
+    assert req.headers["apikey"] == ANON
+    q = dict(req.url.params)
+    assert q["tenant_id"] == f"eq.{TENANT}" and q["company_id"] == f"eq.{company}"
+    assert q["archived_at"] == "is.null"
+    assert q["order"] == "created_at.desc,id.desc"
+    assert set(q["select"].split(",")) == {"id", "company_id", "predicate", "value", "confidence"}
+
+
+def test_list_claims_failures_are_classified_like_every_other_read() -> None:
+    repo, _ = repo_with(lambda req: pg_error("42501", "permission denied", 403))
+    with pytest.raises(Forbidden):
+        repo.list_claims(TOKEN, TENANT, company_id=uuid.uuid4())
+    repo, _ = repo_with(lambda req: httpx.Response(200, json={"not": "a list"}))
+    with pytest.raises(UpstreamError):
+        repo.list_claims(TOKEN, TENANT, company_id=uuid.uuid4())

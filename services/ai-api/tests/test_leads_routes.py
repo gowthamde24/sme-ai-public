@@ -335,6 +335,41 @@ def test_lead_labeling_validation_and_scoring(env: Env) -> None:
     assert len(res_list.json()["items"]) >= 2
 
 
+def test_label_snapshot_is_scored_from_the_same_claims_as_the_queue(env: Env) -> None:
+    """The score stored with a label must be what the reviewer's queue view computed: same ICP
+    version, same claims, same evidence. Imported attributes are claims; a snapshot that ignores
+    them silently under-reports the lead."""
+    from app.leads.review import score_inputs
+
+    base = env.base_url()
+    env.client.post(f"{base}/icp-configs", json={"config": ICP_TEMPLATE}, headers=auth("a_admin"))
+    company_id, lead_id = uuid.uuid4(), uuid.uuid4()
+    env.crm.seed("companies", TENANT_A.id, company_id, name="Sri Balaji Sarees", city="bengaluru")
+    env.crm.seed("leads", TENANT_A.id, lead_id, company_id=str(company_id))
+    env.crm.seed_claim(TENANT_A.id, company_id, "buyer_type", "saree_shop")
+    env.crm.seed_claim(TENANT_A.id, company_id, "size_band", "large")
+
+    company = env.crm.get_row("t", "companies", TENANT_A.id, company_id)
+    claims = env.crm.claims[(TENANT_A.id, company_id)]
+    with_claims = score_inputs(ICP_TEMPLATE, company, None, claims, [])
+    without_claims = score_inputs(ICP_TEMPLATE, company, None, [], [])
+    assert with_claims.score != without_claims.score or (
+        with_claims.score_max_reachable != without_claims.score_max_reachable
+    ), "the fixture must make the claims matter"
+
+    res = env.client.post(
+        f"{base}/leads/{lead_id}/labels", json={"label": "good"}, headers=auth("a_sales")
+    )
+    assert res.status_code == 201
+    out = res.json()
+    assert (out["score"], out["score_max_reachable"]) == (
+        with_claims.score,
+        with_claims.score_max_reachable,
+    )
+    assert out["snapshot"] == with_claims.to_snapshot()
+    assert ("claims", "list") in env.crm.calls
+
+
 def test_labeling_nonexistent_lead_returns_404(env: Env) -> None:
     base = env.base_url()
     missing_lead = uuid.uuid4()

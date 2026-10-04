@@ -15,6 +15,8 @@ from pydantic import ValidationError
 
 from app.crm.models import Page, encode_cursor
 from app.crm.repository import (
+    CLAIM_ORDER,
+    CLAIM_SELECT,
     classify_error,
 )
 from app.leads.models import (
@@ -25,7 +27,7 @@ from app.leads.models import (
     LeadLabelOut,
     ReviewQueueLeadOut,
 )
-from app.leads.scoring import score_lead
+from app.leads.review import score_inputs
 from app.tenancy.repository import UpstreamError
 
 logger = logging.getLogger("app.leads.repository")
@@ -403,8 +405,8 @@ class PostgrestLeadsRepository:
                     "tenant_id": f"eq.{tenant_id}",
                     "company_id": f"in.({','.join(str(cid) for cid in comp_ids)})",
                     "archived_at": "is.null",
-                    "order": "created_at.desc",
-                    "select": "id,company_id,predicate,value,confidence",
+                    "order": CLAIM_ORDER,
+                    "select": CLAIM_SELECT,
                 },
             )
             if cresp.status_code == 200:
@@ -424,6 +426,7 @@ class PostgrestLeadsRepository:
                     "tenant_id": f"eq.{tenant_id}",
                     "lead_id": f"in.({','.join(str(lid) for lid in lead_ids)})",
                     "archived_at": "is.null",
+                    "order": "created_at.desc,id.desc",
                     "select": "lead_id,evidence:evidence(kind,url)",
                 },
             )
@@ -471,12 +474,8 @@ class PostgrestLeadsRepository:
             snap_val = None
 
             if active_icp:
-                sc_res = score_lead(
-                    active_icp.config,
-                    company,
-                    contact=contact,
-                    claims=comp_claims,
-                    evidence=lead_evidence,
+                sc_res = score_inputs(
+                    active_icp.config, company, contact, comp_claims, lead_evidence
                 )
                 score_val = sc_res.score
                 max_reachable = sc_res.score_max_reachable

@@ -227,6 +227,21 @@ class FakeCrmRepository:
         self.calls: list[tuple[str, str]] = []
         self._tick = 0
         self.rpc_error: Exception | None = None
+        self.claims: dict[tuple[uuid.UUID, uuid.UUID], list[dict[str, _Any]]] = {}
+
+    def seed_claim(
+        self, tenant_id: uuid.UUID, company_id: uuid.UUID, predicate: str, value: str
+    ) -> None:
+        """A researched / imported fact about a company (newest last)."""
+        self.claims.setdefault((tenant_id, company_id), []).append(
+            {
+                "id": str(uuid.uuid4()),
+                "company_id": str(company_id),
+                "predicate": predicate,
+                "value": value,
+                "confidence": "unverified",
+            }
+        )
 
     def _store(self, entity: str, tenant_id: uuid.UUID) -> dict[uuid.UUID, _Any]:
         return self.rows.setdefault((entity, tenant_id), {})
@@ -324,6 +339,13 @@ class FakeCrmRepository:
     ) -> _Any:
         stamp = _dt.datetime(2026, 2, 1, tzinfo=_dt.UTC).isoformat() if archived else None
         return self.update_row(token, entity, tenant_id, row_id, {"archived_at": stamp})
+
+    def list_claims(
+        self, token: str, tenant_id: uuid.UUID, *, company_id: uuid.UUID
+    ) -> list[dict[str, _Any]]:
+        self.tokens_seen.append(token)
+        self.calls.append(("claims", "list"))
+        return list(reversed(self.claims.get((tenant_id, company_id), [])))  # newest first
 
     def consent_rpc(self, token: str, function: str, args: dict[str, _Any]) -> uuid.UUID | None:
         self.tokens_seen.append(token)

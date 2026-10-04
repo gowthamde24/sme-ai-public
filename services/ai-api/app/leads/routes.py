@@ -28,7 +28,7 @@ from app.leads.models import (
     LeadLabelOut,
     ReviewQueueLeadOut,
 )
-from app.leads.scoring import score_lead
+from app.leads.review import MAX_EVIDENCE_INPUTS, score_inputs
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}")
@@ -204,36 +204,26 @@ def create_lead_label(
             if not isinstance(lead, dict)
             else lead.get("company_id")
         )
-        comp_row = (
+        company = (
             runtime.crm.get_row(ctx.principal.token, "companies", ctx.tenant.id, cid)
             if cid
             else None
         )
-        company: dict[str, Any] = (
-            comp_row.model_dump(mode="json")
-            if comp_row is not None and hasattr(comp_row, "model_dump")
-            else (comp_row or {})
-        )
-
         ctid = (
             getattr(lead, "contact_id", None)
             if not isinstance(lead, dict)
             else lead.get("contact_id")
         )
-        cont_row = (
+        contact = (
             runtime.crm.get_row(ctx.principal.token, "contacts", ctx.tenant.id, ctid)
             if ctid
             else None
         )
-        contact: dict[str, Any] | None = (
-            cont_row.model_dump(mode="json")
-            if cont_row is not None and hasattr(cont_row, "model_dump")
-            else cont_row
-        )
 
+        # The very inputs the review queue scores with (app.leads.review): claims, evidence, ICP.
         claims = (
             runtime.crm.list_claims(ctx.principal.token, ctx.tenant.id, company_id=cid)
-            if hasattr(runtime.crm, "list_claims") and cid
+            if cid
             else []
         )
         ev_page = runtime.evidence.list_for_target(
@@ -241,18 +231,16 @@ def create_lead_label(
             ctx.tenant.id,
             "lead",
             lid,
-            limit=50,
+            limit=MAX_EVIDENCE_INPUTS,
             cursor=None,
             include_archived=False,
         )
         evidence_items = [
-            {"kind": el.evidence.kind.value, "url": el.evidence.url}
+            {"kind": el.evidence.kind, "url": el.evidence.url}
             for el in ev_page.items
             if el.evidence is not None
         ]
-        sc_res = score_lead(
-            active_icp.config, company, contact=contact, claims=claims, evidence=evidence_items
-        )
+        sc_res = score_inputs(active_icp.config, company, contact, claims, evidence_items)
         score_snapshot = sc_res.to_snapshot()
 
     return runtime.leads.create_lead_label(
