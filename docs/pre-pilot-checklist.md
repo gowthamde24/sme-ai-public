@@ -47,9 +47,17 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Proxy / CDN / load-balancer logs must drop query strings.** The API redacts its own access log, but `?q=<a person's name>` is still in the request line any front-end component sees. Configure every hop, and consider moving search to a POST body. | ADR 0006 #10 | **Pilot data** |
 | [ ] | **Rate limiting and request-size limits** for the CRM endpoints (list, create, consent actions; large bodies, bulk creation loops). | ADR 0002, 0006 | **External pilot** |
 | [ ] | **Production access-log redaction.** The filter attaches to `uvicorn.access` when the app is created. Verify it under the real process manager (gunicorn/uvicorn workers) and that no other access logger is enabled. | ADR 0006 #10 | **Pilot data** |
-| [ ] | **Dedicated SQLSTATE for the opportunity terminal-state error** instead of matching message text. | ADR 0006 limits | Next DB migration touching opportunities |
+| [x] | **Dedicated SQLSTATE for the opportunity terminal-state error** (SM001) and for granting consent to a suppressed contact (SM002); the API no longer matches message text. | ADR 0006 | closed in 1d |
 | [ ] | **Contacts expose e-mail and phone to every role** (including Viewer). Decide whether some roles should see masked values. | ADR 0006 limits | **Customer Zero** |
 | [ ] | **Read-then-write race on archived rows** (`PATCH` checks `archived_at`, the database does not enforce "no edits while archived"). Add a trigger if it matters. | ADR 0006 limits | **Customer Zero** |
+
+## 1d / direct data-layer access (T003)
+
+| | Item | Source | Gate |
+| --- | --- | --- | --- |
+| [ ] | **Review hosted rate limits before ANY `supabase config push`.** `supabase/config.toml` carries local-only values (e.g. `sign_in_sign_ups = 200`, email confirmations off, 6-character passwords). Pushing this file to a hosted project would apply them. Prefer configuring hosted Auth by hand or from a separate, reviewed file. | config.toml comment | **Pilot data** (before the first config push) |
+| [ ] | **Decide whether to restrict direct PostgREST access in production.** Any signed-in user can talk to PostgREST directly with their JWT and the public anon key. `tests/integration/test_direct_postgrest.py` proves the database refuses every attack we model (cross-tenant reads/writes, forged provenance, consent columns, DELETE, consent functions, Viewer writes, Sales archiving), but the API is the intended single door: audit-friendly errors, rate limits, and logging only exist there. Options: network/gateway rules, a separate Postgres role for the API, or accept the exposure with the tests as the guarantee. | ADR 0006 | **Pilot data** |
+| [ ] | **Archived-record edits are blocked in the API only.** The API refuses `PATCH` on archived rows; the database does not, so direct PostgREST writes to an archived row succeed. Also: the database does not stop consent withdrawals on archived contacts (deliberately: "stop contacting me" must always be recordable). If "archived = read-only" must hold at the data layer, add a trigger (and an explicit exception for withdrawals/suppression). | ADR 0006 | **Customer Zero** |
 
 ## Web app
 

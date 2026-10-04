@@ -330,8 +330,19 @@ def test_an_id_that_exists_only_in_another_tenant_is_the_same_conflict() -> None
         ),
         (
             400,
-            {"code": "23514", "message": "won and lost are terminal: reopen the opportunity first"},
+            {"code": "SM001", "message": "won and lost are terminal: reopen the opportunity first"},
             r.InvalidTransitionError,
+        ),
+        (
+            400,
+            {"code": "SM002", "message": "contact is suppressed; lift the suppression first"},
+            r.ContactSuppressedError,
+        ),
+        # no message-text matching: the same words under an ordinary code are just invalid
+        (
+            400,
+            {"code": "23514", "message": "won and lost are terminal: reopen the opportunity first"},
+            r.InvalidValueError,
         ),
         (
             403,

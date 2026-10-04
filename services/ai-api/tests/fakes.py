@@ -217,6 +217,7 @@ class FakeCrmRepository:
         self.tokens_seen: list[str] = []
         self.calls: list[tuple[str, str]] = []
         self._tick = 0
+        self.rpc_error: Exception | None = None
 
     def _store(self, entity: str, tenant_id: uuid.UUID) -> dict[uuid.UUID, _Any]:
         return self.rows.setdefault((entity, tenant_id), {})
@@ -319,6 +320,8 @@ class FakeCrmRepository:
         self.tokens_seen.append(token)
         self.calls.append(("rpc", function))
         self.last_rpc = (function, args)
+        if self.rpc_error is not None:
+            raise self.rpc_error
         tenant, contact = uuid.UUID(args["p_tenant_id"]), uuid.UUID(args["p_contact_id"])
         if contact not in self._store("contacts", tenant):
             raise NotFoundError("P0002")

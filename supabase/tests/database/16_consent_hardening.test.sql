@@ -75,8 +75,11 @@ select is(pg_temp.events('a_contact', 'suppressed'), 2::bigint, '(second suppres
 select is(pg_temp.suppress('opted_out'), 'rows:1', 'a retry of the same opt-out succeeds');
 select is(pg_temp.events('a_contact', 'suppressed'), 2::bigint, '... and writes no new suppressed row');
 select is(pg_temp.events('a_contact', 'withdrawn'), 4::bigint, '... or withdrawn row (3 from the first opt-out + 1 for the re-granted email)');
-select is(pg_temp.grant('phone', 'form:5'), 'rows:1', 'someone records a grant while the contact is suppressed');
-select is(pg_temp.can('a_contact', 'phone'), 'false', '... which is useless while suppressed');
+-- 1d (F1): the function now refuses a grant while suppressed, so the "stray grant" is simulated by a
+-- privileged write: the suppress function must still defend itself by withdrawing it again.
+select is(pg_temp.grant('phone', 'form:5'), 'SM002', 'a grant while the contact is suppressed is refused (SM002)');
+update public.contacts set phone_consent = 'granted' where id = tests.rid('a_contact');
+select is(pg_temp.can('a_contact', 'phone'), 'false', '... and a granted channel is useless while suppressed');
 select is(pg_temp.suppress('opted_out'), 'rows:1', 'the opt-out is repeated');
 select is(pg_temp.state(), 'withdrawn/withdrawn/withdrawn/opted_out', 'R1: the stray grant was withdrawn again');
 select is(pg_temp.events('a_contact', 'withdrawn'), 5::bigint, 'R1: ... with its own withdrawn ledger row');

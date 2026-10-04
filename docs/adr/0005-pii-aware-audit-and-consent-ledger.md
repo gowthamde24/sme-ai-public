@@ -63,7 +63,9 @@ Mutation: letting `audit_row_change` stop stripping makes six assertions fail.
   withdrawn stays withdrawn, so `can_contact` stays false until a fresh `record_consent` grant. The
   reasons `bounced` and `manual` keep the earlier behaviour (suppress only; lifting restores
   contactability because consent was never withdrawn). A withdrawing reason arriving later upgrades a
-  `bounced`/`manual` suppression; a weaker reason never downgrades.
+  `bounced`/`manual` suppression; a weaker reason never downgrades. While a contact is suppressed,
+  `record_consent` refuses a grant with SQLSTATE `SM002` (1d); withdrawals are always accepted, also on
+  suppressed and archived contacts.
 - `consent_events` is **append-only** (UPDATE, DELETE and TRUNCATE are blocked by trigger, for every
   role including the owner; clients have no write grant at all). It contains **no personal data**:
   ids, enums, and `evidence_ref`, a typed opaque reference `<kind>:<token>` (pattern

@@ -207,7 +207,10 @@ anonymous_users = 30
 # Number of sessions that can be refreshed in a 5 minute interval per IP address.
 token_refresh = 150
 # Number of sign up and sign-in requests that can be made in a 5 minute interval per IP address (excludes anonymous users).
-# Local stack only: the integration suite signs up ~15 users per run and runs back to back.
+# LOCAL STACK ONLY. The integration suite signs up ~15 users per run and runs back to back, so the
+# local limit was raised from 30. NEVER apply this value to a hosted project: do not run
+# `supabase config push` (or copy this file's [auth] section) without first reviewing the rate limits
+# below; a limit this high on a real project removes a brute-force / abuse control.
 sign_in_sign_ups = 200
 # Number of OTP / Magic link verifications that can be made in a 5 minute interval per IP address.
 token_verifications = 30

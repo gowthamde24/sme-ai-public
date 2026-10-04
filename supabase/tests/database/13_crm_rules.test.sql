@@ -119,7 +119,7 @@ select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.opportun
   'rows:1', 'ALLOW: sales closes as lost with a reason');
 select ok((select closed_at is not null from public.opportunities where id = tests.rid('a_opp')), 'closed_at was set by the server');
 select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.opportunities set status = 'won', lost_reason = null where id = %L$$, tests.rid('a_opp'))),
-  '23514', 'lost -> won is refused (terminal)');
+  'SM001', 'lost -> won is refused (terminal, SM001)');
 select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.opportunities set status = 'open', lost_reason = null where id = %L$$, tests.rid('a_opp'))),
   '42501', 'sales cannot reopen');
 select is(tests.outcome_as(tests.uid('a_admin'), format($$update public.opportunities set status = 'open' where id = %L$$, tests.rid('a_opp'))),
@@ -129,7 +129,7 @@ select is((select lost_reason from public.opportunities where id = tests.rid('a_
 select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.opportunities set status = 'won' where id = %L$$, tests.rid('a_opp'))),
   'rows:1', 'ALLOW: sales closes as won');
 select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.opportunities set status = 'lost', lost_reason = 'changed mind' where id = %L$$, tests.rid('a_opp'))),
-  '23514', 'won -> lost is refused (terminal)');
+  'SM001', 'won -> lost is refused (terminal, SM001)');
 select is(tests.outcome_as(tests.uid('a_owner'), format($$update public.opportunities set status = 'open' where id = %L$$, tests.rid('a_opp'))),
   'rows:1', 'ALLOW: owner reopens a won opportunity');
 select is(tests.outcome_as(tests.uid('a_sales'), format(

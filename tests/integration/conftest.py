@@ -94,3 +94,11 @@ def bearer(user: User) -> dict[str, str]:
 
 def unique_slug(prefix: str) -> str:
     return f"{prefix}-{uuid.uuid4().hex[:10]}"
+
+
+@pytest.fixture(scope="session")
+def crm_world(client: TestClient, stack: Stack, signup: Any) -> Any:
+    """Two tenants, seven users, one base row per entity: built once, shared by the CRM suites."""
+    from crm_support import World
+
+    return World(client, stack, signup)

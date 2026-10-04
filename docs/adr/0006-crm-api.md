@@ -33,9 +33,11 @@ Status: accepted for milestone 2. Builds on ADR 0002 (auth), 0003 (web), 0005 (c
    message; the body names no field and no id.
 7. **Archive.** Archive and restore are idempotent Admin+ endpoints. Updating an archived record is
    409 `archived` (even for admins); lists hide archived rows unless asked.
-8. **Opportunity transitions** follow the database rules and surface as stable codes: closing as lost
-   without a reason is 422 (also caught by the model), won<->lost is 409 `invalid_transition`,
-   reopening by a non-admin is 403.
+8. **Opportunity transitions and suppressed contacts** follow the database rules and surface as stable
+   codes, keyed on dedicated SQLSTATEs (1d), never on message text: closing as lost without a reason is
+   422 (also caught by the model); won<->lost is `SM001` -> 409 `invalid_transition`; granting consent to
+   a suppressed contact is `SM002` -> 409 `contact_suppressed` (withdrawals stay allowed, including on
+   suppressed and archived contacts); reopening by a non-admin is 403.
 9. **Errors never carry data.** PostgREST errors contain Postgres text with row values (a unique
    violation prints the e-mail). `classify_error` reads that text ONLY to derive a SQLSTATE and a
    constraint name; the text is never returned, never logged, and never chained (`raise ... from
@@ -44,7 +46,17 @@ Status: accepted for milestone 2. Builds on ADR 0002 (auth), 0003 (web), 0005 (c
 10. **Logs.** The data-layer logger records `http`, `sqlstate`, `constraint` only. The uvicorn access
     log drops the query string (`?<redacted>`), because `?q=` can hold a person's name; `httpx` /
     `httpcore` are held at WARNING because their INFO line prints the full URL. Verified against the real server.
-11. **Tests.** Unit: models (every server-owned field refused on every model, UUID forms, sizes,
+11. **Direct data-layer tests.** `tests/integration/test_direct_postgrest.py` skips our API and attacks
+    PostgREST directly with real user JWTs: cross-tenant reads and writes, inserts with another tenant's
+    `tenant_id` (using `return=minimal`, so a RETURNING/select policy cannot mask an open insert
+    policy), forged `created_by`/`created_via`, consent/suppression columns, DELETE, consent functions
+    on another tenant's contact, Viewer writes, Sales archiving. Each is refused (42501 or 0 rows) and
+    the victim data is unchanged; 8 deliberate database weakenings each fail a test.
+12. **Live log test.** `test_live_server_logs.py` runs a real uvicorn with the root logger at DEBUG and
+    sends a PII canary through validation failures, a search term, bad JSON and a duplicate (whose
+    Postgres detail prints the address); the process's whole output must be free of it. Removing the
+    access-log filter or the httpx muting fails it.
+13. **Tests.** Unit: models (every server-owned field refused on every model, UUID forms, sizes,
     cursor tampering), routes against an in-memory data layer (all roles x all endpoints x both
     tenants), the adapter with canary-laden errors, log redaction, contracts in sync. Integration
     (real stack, 7 users in 2 tenants): every endpoint family looped over every user of both tenants,
@@ -55,8 +67,8 @@ Status: accepted for milestone 2. Builds on ADR 0002 (auth), 0003 (web), 0005 (c
 
 ## Known limits
 
-- The transition error is recognised by its message text (`terminal`). A dedicated SQLSTATE in a
-  future migration would be sturdier.
+- Archived-record edits are refused by the API only (the database also lets consent withdrawals through
+  on archived contacts, deliberately); see the checklist.
 - Searching puts the term in the URL. Application logs and the uvicorn access log are redacted, but any
   reverse proxy / CDN / load balancer in front must drop query strings from its logs (checklist).
 - There is no request-size limit or rate limiting in the API yet (checklist).

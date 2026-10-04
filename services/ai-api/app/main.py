@@ -78,6 +78,9 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     crm_repo.InvalidTransitionError: ApiError(
         409, "invalid_transition", "That status change is not allowed."
     ),
+    crm_repo.ContactSuppressedError: ApiError(
+        409, "contact_suppressed", "The contact is suppressed; lift the suppression first."
+    ),
 }
 
 

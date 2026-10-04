@@ -63,7 +63,11 @@ class InvalidValueError(RepositoryError):
 
 
 class InvalidTransitionError(RepositoryError):
-    pass
+    """SM001: won / lost are terminal."""
+
+
+class ContactSuppressedError(RepositoryError):
+    """SM002: consent cannot be granted while the contact is suppressed."""
 
 
 # ----------------------------------------------------------------------------- entities
@@ -158,9 +162,11 @@ def classify_error(status: int, body: Any) -> Exception:
         return InvalidReferenceError(code)
     if code == "P0002":
         return NotFoundError(code)
+    if code == "SM001":  # dedicated SQLSTATEs: nothing here ever matches message text
+        return InvalidTransitionError(code)
+    if code == "SM002":
+        return ContactSuppressedError(code)
     if code == "23514":
-        if "violates check constraint" not in message and "terminal" in message:
-            return InvalidTransitionError(code)
         return InvalidValueError(code)
     if code in _VALUE_CODES:
         return InvalidValueError(code)

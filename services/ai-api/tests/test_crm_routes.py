@@ -675,3 +675,32 @@ def test_openapi_documents_every_request_model(env: tuple[TestClient, FakeCrmRep
         "LiftSuppressionIn",
     ):
         assert name in schemas and schemas[name].get("additionalProperties") is False, name
+
+
+def test_a_grant_for_a_suppressed_contact_is_a_stable_409(
+    env: tuple[TestClient, FakeCrmRepository],
+) -> None:
+    from app.crm.repository import ContactSuppressedError, InvalidTransitionError
+
+    client, crm = env
+    cid = seed(crm, "contacts")
+    grant = {
+        "channel": "email",
+        "status": "granted",
+        "basis": "explicit_consent",
+        "evidence_type": "web_form",
+        "evidence_ref": "form:1",
+    }
+    crm.rpc_error = ContactSuppressedError("SM002")
+    response = client.post(
+        url("contacts", suffix=f"/{cid}/record-consent"), headers=auth("a_sales"), json=grant
+    )
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "contact_suppressed"
+    crm.rpc_error = InvalidTransitionError("SM001")
+    response = client.post(
+        url("contacts", suffix=f"/{cid}/suppress"),
+        headers=auth("a_sales"),
+        json={"reason": "manual"},
+    )
+    assert (response.status_code, response.json()["error"]["code"]) == (409, "invalid_transition")
