@@ -39,6 +39,7 @@ from app.agents.registry import AGENTS
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import CursorError, Page, decode_cursor, parse_uuid
 from app.errors import ApiError, not_found
+from app.leads.scoring import scored_attributes
 from app.tenancy.models import Role
 
 logger = logging.getLogger("app.agent_runs.routes")
@@ -188,9 +189,12 @@ def _register_claims(segment: str, kind: str) -> None:
             is None
         ):
             raise not_found()
-        return _agents(runtime).repository.list_claims(
+        claims = _agents(runtime).repository.list_claims(
             ctx.principal.token, ctx.tenant.id, target_kind=kind, target_id=tid, limit=limit
         )
+        icp = runtime.leads.get_active_icp_config(ctx.principal.token, ctx.tenant.id)
+        scored = scored_attributes(icp.config) if icp is not None else frozenset()
+        return [c.model_copy(update={"counts_toward_score": c.predicate in scored}) for c in claims]
 
     router.add_api_route(
         f"/{segment}/{{target_id}}/claims",

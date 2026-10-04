@@ -262,6 +262,7 @@ export async function fetchReviewQueue(
     cursor?: string | null;
     score_band?: string | null;
     blind?: boolean;
+    unreviewed?: boolean;
   } = {},
 ): Promise<PageReviewQueueLeadOut> {
   const params = new URLSearchParams();
@@ -269,6 +270,7 @@ export async function fetchReviewQueue(
   if (options.cursor) params.set("cursor", options.cursor);
   if (options.score_band) params.set("score_band", options.score_band);
   params.set("blind", options.blind === false ? "false" : "true");
+  if (options.unreviewed) params.set("unreviewed", "true");
 
   const qs = params.toString();
   const path = `/v1/tenants/${encodeURIComponent(tenantId)}/leads/review-queue${qs ? `?${qs}` : ""}`;

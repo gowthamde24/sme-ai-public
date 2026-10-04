@@ -763,6 +763,7 @@ class FakeLeadsRepository:
         cursor: tuple[str, uuid.UUID] | None,
         score_band: str | None,
         include_blind_scores: bool,
+        unreviewed_only: bool = False,
     ) -> Page[ReviewQueueLeadOut]:
         self.tokens_seen.append(token)
         self.calls.append("get_review_queue")
@@ -771,6 +772,7 @@ class FakeLeadsRepository:
                 "caller_id": caller_id,
                 "score_band": score_band,
                 "include_blind_scores": include_blind_scores,
+                "unreviewed_only": unreviewed_only,
             }
         )
         self._maybe_raise()

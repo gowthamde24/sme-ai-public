@@ -33,6 +33,8 @@ function field(formData: FormData, name: string): string {
  * - The decision, the confidence (low / medium / high: chosen by the person) and the reason are re-validated here and again
  *   by the API and the database. The browser cannot name an origin, a tenant or a confidence of the agent's own.
  * - Only an owner or admin may review; the forms are hidden for everyone else AND the API refuses them (403).
+ * - The success message only says "counts toward the score" when the API reported that the workspace's profile reads this
+ *   predicate (`countsTowardScore`); otherwise it says the note is not part of any score.
  * - Every failure becomes a short generic message.
  */
 export async function reviewClaimAction(
@@ -40,6 +42,7 @@ export async function reviewClaimAction(
   target: SuggestionTarget,
   targetId: string,
   claimId: string,
+  countsTowardScore: boolean,
   _prev: ReviewActionState,
   formData: FormData,
 ): Promise<ReviewActionState> {
@@ -94,6 +97,11 @@ export async function reviewClaimAction(
   revalidatePath(`/app/tenants/${tenantId}/${target}/${targetId}`);
   return {
     ok: true,
-    message: decision === "accepted" ? "Accepted. It now counts toward the score." : "Rejected.",
+    message:
+      decision === "accepted"
+        ? countsTowardScore
+          ? "Accepted. It now counts toward the score."
+          : "Accepted and recorded as checked by a person. This kind of note is not part of any score yet."
+        : "Rejected.",
   };
 }

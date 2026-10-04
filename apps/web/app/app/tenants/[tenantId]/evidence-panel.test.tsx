@@ -43,11 +43,14 @@ function panel(over: Partial<React.ComponentProps<typeof EvidencePanel>> = {}) {
 describe("EvidencePanel", () => {
   it("shows kind, provider, dates, origin, URL, reference and snippet", () => {
     panel();
+    // the retrieved time is a <time> element (the browser shows it in the viewer's timezone; UTC stays in the tooltip)
+    const stamp = document.querySelector("time");
+    expect(stamp?.getAttribute("datetime")).toBe("2026-01-02T03:04:05+00:00");
+    expect(stamp?.getAttribute("title")).toBe("2026-01-02 03:04 UTC");
     const list = screen.getByRole("list");
     for (const text of [
       "Web page",
       "manual",
-      "2026-01-02 03:04 UTC",
       "2026-01-01",
       "agent",
       "https://example.test/catalogue",

@@ -207,6 +207,11 @@
             }
           ],
           "title": "Reviewed At"
+        },
+        "counts_toward_score": {
+          "default": false,
+          "title": "Counts Toward Score",
+          "type": "boolean"
         }
       },
       "required": [

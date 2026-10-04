@@ -163,6 +163,7 @@ def get_review_queue(
     cursor: str | None = Query(default=None),
     score_band: str | None = Query(default=None),
     blind: bool = Query(default=True),
+    unreviewed: bool = Query(default=False),
 ) -> Page[ReviewQueueLeadOut]:
     """Blind review is the default: scores of leads the CALLER has not labelled are hidden, the
     order does not depend on any score, and a score band cannot be requested.
@@ -192,6 +193,7 @@ def get_review_queue(
         cursor=decoded,
         score_band=score_band,
         include_blind_scores=not blind,
+        unreviewed_only=unreviewed,
     )
 
 

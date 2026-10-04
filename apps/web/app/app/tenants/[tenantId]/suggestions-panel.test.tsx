@@ -105,4 +105,31 @@ describe("SuggestionsPanel", () => {
     renderPanel({ claims: [] });
     expect(screen.getByText("No suggestions yet.")).toBeTruthy();
   });
+
+  it("hides Accept and Reject behind 'Change decision' once a person has decided, and not before", () => {
+    renderPanel({ canReview: true });
+    const decided = screen.getAllByText("Change decision");
+    expect(decided).toHaveLength(2); // the accepted and the rejected suggestion
+    for (const summary of decided) {
+      const details = summary.closest("details");
+      expect(details).not.toBeNull();
+      expect(details).not.toHaveAttribute("open");
+      expect(details?.querySelectorAll("form")).toHaveLength(2);
+    }
+    // the unreviewed suggestion's forms are NOT inside a details element
+    const unreviewed = screen.getByText(/agent suggestion, unreviewed/).closest("li");
+    expect(unreviewed?.querySelector("details")).toBeNull();
+    expect(unreviewed?.querySelectorAll("form")).toHaveLength(2);
+  });
+
+  it("nothing is preselected in any review form", () => {
+    renderPanel({ canReview: true });
+    for (const select of Array.from(document.querySelectorAll("select"))) expect(select.value).toBe("");
+  });
+
+  it("shows the date as a <time> element in the viewer's timezone", () => {
+    renderPanel();
+    const stamp = document.querySelector("time");
+    expect(stamp?.getAttribute("datetime")).toBe("2026-10-04T12:00:00+00:00");
+  });
 });

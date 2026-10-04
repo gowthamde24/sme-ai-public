@@ -4,6 +4,7 @@ import {
   type SuggestionTarget,
 } from "@/lib/api/agents";
 
+import { LocalTime } from "../../local-time";
 import { ReviewClaimForms } from "./review-claim-form";
 import { reviewClaimAction } from "./suggestion-actions";
 
@@ -27,8 +28,16 @@ type Props = {
   reviewIds: Record<string, { accept: string; reject: string }>;
 };
 
-function day(iso: string): string {
-  return iso.slice(0, 10);
+/** Once a person has decided, the forms hide behind an explicit control, so a stray tap cannot change the decision. */
+function ReviewControl({ decided, children }: { decided: boolean; children: React.ReactNode }) {
+  if (!decided) return <>{children}</>;
+  return (
+    <details>
+      <summary className="tap">Change decision</summary>
+      <p className="hint">Choose a new decision below. It is recorded as a new review; the earlier one stays in the history.</p>
+      {children}
+    </details>
+  );
 }
 
 export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview, reviewIds }: Props) {
@@ -58,16 +67,18 @@ export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview
                   `Approved by a person${claim.review_confidence ? ` · ${CONFIDENCE_LABELS[claim.review_confidence]}` : ""}`}
                 {claim.review_state === "rejected" && "Rejected by a person"}
                 {" · "}
-                {claim.predicate} · {day(claim.created_at)}
+                {claim.predicate} · <LocalTime iso={claim.created_at} />
               </p>
               {canReview && reviewIds[claim.id] && (
-                <ReviewClaimForms
-                  claimId={claim.id}
-                  acceptId={reviewIds[claim.id].accept}
-                  rejectId={reviewIds[claim.id].reject}
-                  accept={reviewClaimAction.bind(null, tenantId, target, targetId, claim.id)}
-                  reject={reviewClaimAction.bind(null, tenantId, target, targetId, claim.id)}
-                />
+                <ReviewControl decided={claim.review_state === "accepted" || claim.review_state === "rejected"}>
+                  <ReviewClaimForms
+                    claimId={claim.id}
+                    acceptId={reviewIds[claim.id].accept}
+                    rejectId={reviewIds[claim.id].reject}
+                    accept={reviewClaimAction.bind(null, tenantId, target, targetId, claim.id, claim.counts_toward_score === true)}
+                    reject={reviewClaimAction.bind(null, tenantId, target, targetId, claim.id, claim.counts_toward_score === true)}
+                  />
+                </ReviewControl>
               )}
             </li>
           ))}

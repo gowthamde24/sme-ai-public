@@ -464,11 +464,12 @@ def test_twenty_synthetic_leads_are_ready_for_the_walkthrough(
     imported = [names[row["company_name"]] for row in seed.DEMO_LEADS]
     assert len({i["lead_id"] for i in imported}) == 20
     assert all(i["status"] == "new" and i["score"] is not None for i in imported)
-    assert all(i["latest_label"] is None for i in imported), "nothing is pre-labelled"
+    # (the seed labels nothing; a developer who has since labelled leads by hand, or run e2e/, has labels of their own)
     assert len({i["score_band"] for i in imported}) >= 3, "a spread of bands to review"
     # the blind view (the default) shows none of those scores
     blind = {i["lead_id"]: i for i in queue_items(client, user, summary.tenant_id)}
-    assert all(blind[i["lead_id"]]["score"] is None for i in imported)
+    unlabelled = [i for i in imported if i["latest_label"] is None]
+    assert all(blind[i["lead_id"]]["score"] is None for i in unlabelled)
 
 
 def test_the_synthetic_leads_cover_the_cases_a_reviewer_must_see() -> None:

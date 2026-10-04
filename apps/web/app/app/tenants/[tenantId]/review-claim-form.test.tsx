@@ -40,15 +40,26 @@ describe("ReviewClaimForms", () => {
   it("offers exactly low, medium and high to accept as, and the five reasons to reject with", () => {
     renderForms();
     const confidence = screen.getByLabelText(/accept as/i) as HTMLSelectElement;
-    expect(Array.from(confidence.options).map((o) => o.value)).toEqual(["low", "medium", "high"]);
+    expect(Array.from(confidence.options).map((o) => o.value)).toEqual(["", "low", "medium", "high"]);
+    expect(confidence.value).toBe(""); // NOTHING is preselected
     const reason = screen.getByLabelText(/reject because/i) as HTMLSelectElement;
+    expect(reason.value).toBe("");
     expect(Array.from(reason.options).map((o) => o.value)).toEqual([
+      "",
       "incorrect",
       "unsupported_by_evidence",
       "outdated",
       "duplicate",
       "not_relevant",
     ]);
+  });
+
+  it("a tap on Accept or Reject with nothing chosen submits nothing", () => {
+    renderForms();
+    fireEvent.click(screen.getByRole("button", { name: "Accept" }));
+    fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+    expect(accept).not.toHaveBeenCalled();
+    expect(reject).not.toHaveBeenCalled();
   });
 
   it("accept submits the accept id, the decision and the chosen confidence", async () => {
@@ -81,9 +92,12 @@ describe("ReviewClaimForms", () => {
   it("a retry re-sends the SAME review id (the server turns it into one review)", async () => {
     accept.mockResolvedValue({ ok: false, error: "Could not save the review. Try again." });
     renderForms();
+    fireEvent.change(screen.getByLabelText(/accept as/i), { target: { value: "low" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
     await waitFor(() => expect(accept).toHaveBeenCalledTimes(1));
     await screen.findByRole("alert");
+    // the browser clears the form after an action: the person chooses again (nothing is preselected), the id is unchanged
+    fireEvent.change(screen.getByLabelText(/accept as/i), { target: { value: "low" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
     await waitFor(() => expect(accept).toHaveBeenCalledTimes(2));
     const sent = accept.mock.calls.map((c) => (c[1] as FormData).get("review_id"));
@@ -93,6 +107,7 @@ describe("ReviewClaimForms", () => {
   it("shows the server's short message, as text", async () => {
     accept.mockResolvedValue({ ok: false, error: "<b>Only an owner or admin</b>" });
     renderForms();
+    fireEvent.change(screen.getByLabelText(/accept as/i), { target: { value: "low" } });
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
     const alert = await screen.findByRole("alert");
     expect(within(alert).queryByText("Only an owner or admin")).toBeNull();

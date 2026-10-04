@@ -13,6 +13,7 @@ import {
 } from "@/lib/api/leads";
 import { requireUser } from "@/lib/auth/session";
 
+import { FactorBreakdown } from "./factor-breakdown";
 import { ImportLeadsForm } from "./import-leads-form";
 import { LeadLabelForm } from "./lead-label-form";
 
@@ -60,6 +61,8 @@ export default async function ReviewQueuePage({
       ? (rawBand as ScoreBand)
       : undefined;
 
+  const unreviewed = pick(query.unreviewed) === "true";
+
   const rawCursor = pick(query.cursor);
   const cursor = rawCursor && rawCursor.length <= MAX_CURSOR ? rawCursor : null;
 
@@ -77,6 +80,7 @@ export default async function ReviewQueuePage({
       cursor,
       score_band: scoreBand,
       blind,
+      unreviewed,
     });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
@@ -84,13 +88,29 @@ export default async function ReviewQueuePage({
     return <ApiDown />;
   }
 
+  // One place builds every link of this page, so a filter (blind, band, unreviewed) is never silently dropped.
+  const here = (over: { blind?: boolean; band?: ScoreBand | null; unreviewed?: boolean; cursor?: string | null } = {}) => {
+    const b = over.blind ?? blind;
+    const band = over.band === undefined ? scoreBand : over.band;
+    const u = over.unreviewed ?? unreviewed;
+    const params = new URLSearchParams();
+    if (band && !b) params.set("score_band", band);
+    params.set("blind", b ? "true" : "false");
+    if (u) params.set("unreviewed", "true");
+    if (over.cursor) params.set("cursor", over.cursor);
+    return `/app/tenants/${tenantId}/review?${params.toString()}`;
+  };
+  const firstUnreviewed = queue.items.find((item) => item.latest_label === null);
+
   const canWrite = WRITE_ROLES.includes(tenant.role);
   const canExport = ADMIN_ROLES.includes(tenant.role);
 
   return (
     <main className="shell wide">
       <p>
-        <Link href={`/app/tenants/${tenantId}`}>← Workspace</Link>
+        <Link href={`/app/tenants/${tenantId}`} className="tap">
+          ← Workspace
+        </Link>
       </p>
 
       <div className="review-card-header">
@@ -120,23 +140,29 @@ export default async function ReviewQueuePage({
             )}
           </div>
           {canExport && (
-            <div className="row">
-              <a
-                href={`/app/tenants/${tenantId}/review/export?format=csv`}
-                className="badge badge-priority"
-                style={{ textDecoration: "none", cursor: "pointer" }}
-                download
-              >
-                Export CSV
-              </a>
-              <a
-                href={`/app/tenants/${tenantId}/review/export?format=json`}
-                className="badge badge-worth-reviewing"
-                style={{ textDecoration: "none", cursor: "pointer" }}
-                download
-              >
-                Export JSON
-              </a>
+            <div>
+              <div className="row">
+                <a
+                  href={`/app/tenants/${tenantId}/review/export?format=csv`}
+                  className="badge badge-priority tap"
+                  style={{ textDecoration: "none", cursor: "pointer" }}
+                  download
+                >
+                  Export CSV
+                </a>
+                <a
+                  href={`/app/tenants/${tenantId}/review/export?format=json`}
+                  className="badge badge-worth-reviewing tap"
+                  style={{ textDecoration: "none", cursor: "pointer" }}
+                  download
+                >
+                  Export JSON
+                </a>
+              </div>
+              <p className="hint">
+                The file lists every label with its reason, score, and the company&apos;s name, city and lead source. Every export
+                is logged (who, when, how many rows).
+              </p>
             </div>
           )}
         </div>
@@ -148,23 +174,17 @@ export default async function ReviewQueuePage({
           <span className="hint" style={{ marginRight: "0.5rem" }}>
             Filter:
           </span>
-          <Link
-            href={`/app/tenants/${tenantId}/review?blind=${blind ? "true" : "false"}`}
-            aria-current={!scoreBand ? "page" : undefined}
-          >
+          <Link href={here({ band: null, unreviewed: false })} className="tap" aria-current={!scoreBand && !unreviewed ? "page" : undefined}>
             All
           </Link>
+          <Link href={here({ unreviewed: true })} className="tap" aria-current={unreviewed ? "page" : undefined}>
+            Unreviewed only
+          </Link>
           {blind ? (
-            <span className="hint">
-              Score filters are available only with Blind Scoring off.
-            </span>
+            <span className="hint">Score filters are available only with Blind Scoring off.</span>
           ) : (
             SCORE_BANDS.map((band) => (
-              <Link
-                key={band}
-                href={`/app/tenants/${tenantId}/review?score_band=${band}&blind=false`}
-                aria-current={band === scoreBand ? "page" : undefined}
-              >
+              <Link key={band} href={here({ band })} className="tap" aria-current={band === scoreBand ? "page" : undefined}>
                 {SCORE_BAND_LABELS[band]}
               </Link>
             ))
@@ -173,8 +193,8 @@ export default async function ReviewQueuePage({
 
         <div className="row">
           <Link
-            href={`/app/tenants/${tenantId}/review?${scoreBand ? `score_band=${scoreBand}&` : ""}blind=${blind ? "false" : "true"}`}
-            className={`badge ${blind ? "badge-priority" : "badge-hidden"}`}
+            href={here({ blind: !blind })}
+            className={`badge tap ${blind ? "badge-priority" : "badge-hidden"}`}
             style={{ textDecoration: "none" }}
           >
             {blind ? "Blind Scoring: ON" : "Blind Scoring: OFF"}
@@ -188,6 +208,22 @@ export default async function ReviewQueuePage({
       {/* Queue items */}
       <section aria-labelledby="queue-heading" style={{ marginTop: "1.5rem" }}>
         <h2 id="queue-heading">Candidate Leads ({queue.items.length})</h2>
+
+        {canWrite && queue.items.length > 0 && (
+          <div className="sticky-actions sticky">
+            {firstUnreviewed ? (
+              <a href={`#lead-${firstUnreviewed.lead_id}`} className="button tap">
+                Next unreviewed ↓
+              </a>
+            ) : queue.next_cursor ? (
+              <Link href={here({ cursor: queue.next_cursor })} className="button tap">
+                All reviewed here · load more →
+              </Link>
+            ) : (
+              <span className="hint">Everything in this view is reviewed.</span>
+            )}
+          </div>
+        )}
 
         {queue.items.length === 0 ? (
           <p className="hint">
@@ -203,7 +239,7 @@ export default async function ReviewQueuePage({
               const reason = item.latest_label?.reason_code;
 
               return (
-                <article key={item.lead_id} className="review-card">
+                <article key={item.lead_id} id={`lead-${item.lead_id}`} className="review-card">
                   <div className="review-card-header">
                     <div>
                       <h3 style={{ margin: "0 0 0.25rem" }}>
@@ -244,11 +280,14 @@ export default async function ReviewQueuePage({
                     <dt>Contact</dt>
                     <dd>
                       {cont ? (
-                        <span>
-                          {String(cont.full_name || "—")}{" "}
-                          {cont.job_title ? `(${String(cont.job_title)})` : ""} ·{" "}
-                          {String(cont.email || "—")} · {String(cont.phone || "—")}
-                        </span>
+                        <details className="card-compact">
+                          <summary className="tap">Contact details</summary>
+                          <span>
+                            {String(cont.full_name || "—")}{" "}
+                            {cont.job_title ? `(${String(cont.job_title)})` : ""} ·{" "}
+                            {String(cont.email || "—")} · {String(cont.phone || "—")}
+                          </span>
+                        </details>
                       ) : (
                         <span className="hint">No contact information attached</span>
                       )}
@@ -256,32 +295,19 @@ export default async function ReviewQueuePage({
 
                     <dt>Evidence</dt>
                     <dd>
-                      <Link href={`/app/tenants/${tenantId}/leads/${item.lead_id}`}>
-                        View Evidence & Details →
+                      <Link href={`/app/tenants/${tenantId}/leads/${item.lead_id}`} className="tap">
+                        View evidence &amp; details →
                       </Link>
                     </dd>
                   </dl>
 
                   {/* Factor breakdown if score is unblinded */}
-                  {item.snapshot && isRecord(item.snapshot.factors) && (
-                    <details style={{ fontSize: "0.875rem", margin: "0.25rem 0" }}>
-                      <summary style={{ cursor: "pointer", color: "var(--muted)" }}>
-                        Deterministic ICP Score Breakdown (Max Reachable: {item.score_max_reachable}/100)
-                      </summary>
-                      <div className="factors-grid">
-                        {Object.entries(
-                          item.snapshot.factors as Record<
-                            string,
-                            { points?: number; max_points?: number; unknown?: boolean }
-                          >,
-                        ).map(([fid, fval]) => (
-                          <div key={fid} className="factor-item">
-                            <strong>{fid}</strong>: {fval?.points ?? 0}/{fval?.max_points ?? "—"}
-                            {fval?.unknown && <span className="hint"> (unknown)</span>}
-                          </div>
-                        ))}
-                      </div>
-                    </details>
+                  {item.snapshot && (
+                    <FactorBreakdown
+                      factors={item.snapshot.factors}
+                      flags={item.snapshot.flags}
+                      maxReachable={item.score_max_reachable ?? null}
+                    />
                   )}
 
                   {/* Review Labeling Actions */}
@@ -302,10 +328,7 @@ export default async function ReviewQueuePage({
 
         {queue.next_cursor && (
           <p>
-            <Link
-              href={`/app/tenants/${tenantId}/review?${scoreBand ? `score_band=${scoreBand}&` : ""}blind=${blind ? "true" : "false"}&cursor=${encodeURIComponent(queue.next_cursor)}`}
-              rel="next"
-            >
+            <Link href={here({ cursor: queue.next_cursor })} rel="next" className="tap">
               Load more leads
             </Link>
           </p>
@@ -313,9 +336,7 @@ export default async function ReviewQueuePage({
 
         {cursor && (
           <p>
-            <Link
-              href={`/app/tenants/${tenantId}/review?${scoreBand ? `score_band=${scoreBand}&` : ""}blind=${blind ? "true" : "false"}`}
-            >
+            <Link href={here()} className="tap">
               Back to first page
             </Link>
           </p>
@@ -333,6 +354,3 @@ function ApiDown() {
   );
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null && !Array.isArray(value);
-}

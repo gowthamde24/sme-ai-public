@@ -10,6 +10,7 @@ import {
   isCleanText,
   KINDS_ARE_EXHAUSTIVE,
   parseEvidencePage,
+  referenceText,
   validateEvidenceForm,
 } from "./evidence";
 
@@ -391,5 +392,19 @@ describe("validateEvidenceForm", () => {
       const result = validateEvidenceForm({ ...base, ...over }, NOW);
       expect(JSON.stringify(result)).not.toMatch(/canary|zq91/i);
     }
+  });
+});
+
+
+describe("referenceText", () => {
+  const RUN = "77ad4d19-79ca-535a-8af4-ad6be59d49d1";
+  it("shows an agent note's run as a short, readable label", () => {
+    expect(referenceText({ provider: "agent.selftest", reference: `run:${RUN}` })).toBe("Agent note (run 77ad4d19)");
+  });
+  it("leaves every other reference alone, including a person's lookalike", () => {
+    expect(referenceText({ provider: "manual", reference: `run:${RUN}` })).toBe(`run:${RUN}`);
+    expect(referenceText({ provider: "agent.selftest", reference: "doc:abc-1" })).toBe("doc:abc-1");
+    expect(referenceText({ provider: "agent.selftest", reference: "run:not-a-uuid" })).toBe("run:not-a-uuid");
+    expect(referenceText({ provider: "manual", reference: null })).toBe("");
   });
 });

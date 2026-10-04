@@ -139,3 +139,27 @@ def test_exclusion_rule_flags_existing_customer() -> None:
     }
     res = score_lead(TEMPLATE, company)
     assert "already_customer" in res.exclusions
+
+
+# ---- which claim predicates can change a score (the web says "counts toward the score" for these)
+def test_scored_attributes_are_exactly_the_predicates_the_profile_reads() -> None:
+    import json
+    from pathlib import Path
+
+    from app.leads.scoring import scored_attributes
+
+    template = json.loads(
+        (
+            Path(__file__).resolve().parents[3] / "config" / "icp" / "silk-wholesale.v1.json"
+        ).read_text()
+    )
+    assert scored_attributes(template) == {
+        "buyer_type",
+        "operating_status",
+        "size_band",
+        "order_scale",
+    }
+    assert "selftest.observation" not in scored_attributes(template)
+    assert scored_attributes({}) == frozenset()
+    config = {"rules": [{"attribute": "x"}, {"attributes": ["y", 5]}]}
+    assert scored_attributes(config) == {"x", "y"}

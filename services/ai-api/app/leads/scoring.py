@@ -454,3 +454,28 @@ def score_lead(
         flags=flags,
         exclusions=exclusions,
     )
+
+
+def scored_attributes(config: dict[str, Any]) -> frozenset[str]:
+    """The claim predicates a tenant's ICP profile actually reads: every `attribute` / `attributes`
+    entry its rules and exclusions name.
+    A suggestion with any other predicate cannot change a score, whatever its review state."""
+    found: set[str] = set()
+
+    def walk(node: Any) -> None:
+        if isinstance(node, dict):
+            attribute = node.get("attribute")
+            if isinstance(attribute, str):
+                found.add(attribute)
+            names = node.get("attributes")
+            # a rule that reads several predicates (the config's own `attributes` MAP is a dict)
+            if isinstance(names, list):
+                found.update(n for n in names if isinstance(n, str))
+            for value in node.values():
+                walk(value)
+        elif isinstance(node, list):
+            for item in node:
+                walk(item)
+
+    walk(config)
+    return frozenset(found)

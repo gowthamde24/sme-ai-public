@@ -229,3 +229,12 @@ export function validateEvidenceForm(
     },
   };
 }
+
+/**
+ * The reference as a person should read it. An agent's note points at the run that wrote it (`run:<uuid>`): show "Agent note
+ * (run 77ad4d19)" instead of the raw id. Any other reference is returned unchanged (and rendered as plain text by the panel).
+ */
+export function referenceText(item: Pick<EvidenceItem, "provider" | "reference">): string {
+  const match = /^run:([0-9a-f]{8})-[0-9a-f-]{27}$/.exec(item.reference ?? "");
+  return item.provider.startsWith("agent.") && match ? `Agent note (run ${match[1]})` : (item.reference ?? "");
+}

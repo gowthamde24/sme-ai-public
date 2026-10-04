@@ -390,3 +390,28 @@ def test_the_queue_and_the_label_snapshot_read_evidence_from_the_same_filtered_v
     assert label_request.url.path.endswith("/evidence_for_scoring")
     qa, la = dict(queue_evidence[0].url.params), dict(label_request.url.params)
     assert (qa["select"], qa["order"]) == (la["select"], la["order"])
+
+
+# ------------------------------------------------------------------- unreviewed only
+def test_unreviewed_only_returns_unlabelled_leads_and_still_fills_the_page() -> None:
+    leads = [lead_row(n, strong=n % 2 == 0) for n in range(1, 13)]
+    newest_first = sorted(leads, key=lambda r: r["created_at"], reverse=True)
+    labelled = [lead for i, lead in enumerate(newest_first) if i % 2 == 0]  # every other one
+    server = Server(leads, labels=[label_row(lead, CALLER) for lead in labelled])
+    labelled_ids = {lead["id"] for lead in labelled}
+    wanted = [lead["id"] for lead in newest_first if lead["id"] not in labelled_ids]
+    first = queue(server, unreviewed_only=True, limit=4)
+    assert [str(i.lead_id) for i in first.items] == wanted[:4]
+    assert all(i.latest_label is None for i in first.items)
+    assert first.next_cursor is not None
+    second = queue(server, unreviewed_only=True, limit=4, cursor=decode_cursor(first.next_cursor))
+    assert [str(i.lead_id) for i in second.items] == wanted[4:]
+    assert second.next_cursor is None
+
+
+def test_another_reviewers_label_does_not_hide_a_lead_from_my_unreviewed_view() -> None:
+    leads = [lead_row(1, strong=True), lead_row(2, strong=False)]
+    other = uuid.uuid4()
+    server = Server(leads, labels=[label_row(leads[0], other)])
+    page = queue(server, unreviewed_only=True)
+    assert len(page.items) == 2

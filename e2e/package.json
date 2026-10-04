@@ -1,0 +1,19 @@
+{
+  "name": "sme-ai-e2e",
+  "private": true,
+  "version": "0.0.0",
+  "description": "On-demand browser walkthroughs of the running local app (NOT part of make check or CI). See README.md.",
+  "type": "module",
+  "scripts": {
+    "install-browser": "playwright install chromium",
+    "setup-users": "node setup-local-users.mjs",
+    "agents": "node agents.mjs",
+    "review:desktop": "node review.mjs desktop labeler1",
+    "review:phone": "node review.mjs phone labeler2",
+    "export": "node export.mjs",
+    "all": "node run-all.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.50.0"
+  }
+}

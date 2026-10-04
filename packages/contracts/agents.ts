@@ -29,6 +29,7 @@ export interface ClaimSuggestionOut {
   review_confidence: "low" | "medium" | "high" | null;
   reviewed_by: string | null;
   reviewed_at: string | null;
+  counts_toward_score?: boolean;
 }
 
 export interface PageRunOut {

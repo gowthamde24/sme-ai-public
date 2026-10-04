@@ -28,7 +28,7 @@ function form(values: Record<string, string>): FormData {
   return data;
 }
 const run = (values: Record<string, string>, target: "companies" | "leads" = "companies") =>
-  reviewClaimAction(TENANT, target, TARGET, CLAIM, undefined, form(values));
+  reviewClaimAction(TENANT, target, TARGET, CLAIM, true, undefined, form(values));
 
 describe("reviewClaimAction", () => {
   beforeEach(() => {
@@ -57,6 +57,14 @@ describe("reviewClaimAction", () => {
       reason_code: "outdated",
     });
     expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${TENANT}/leads/${TARGET}`);
+  });
+
+  it("only says 'counts toward the score' when the predicate is one the profile reads", async () => {
+    const scored = await reviewClaimAction(TENANT, "companies", TARGET, CLAIM, true, undefined, form({ review_id: REVIEW, decision: "accepted", confidence: "low" }));
+    expect(scored?.message).toMatch(/counts toward the score/);
+    const unscored = await reviewClaimAction(TENANT, "companies", TARGET, CLAIM, false, undefined, form({ review_id: REVIEW, decision: "accepted", confidence: "low" }));
+    expect(unscored?.message).not.toMatch(/counts toward the score/);
+    expect(unscored?.message).toMatch(/not part of any score/);
   });
 
   it("never sends more than the decision: no origin, tenant, confidence of the agent's own or extra fields", async () => {
@@ -100,6 +108,7 @@ describe("reviewClaimAction", () => {
         args[1] as "companies",
         args[2],
         args[3],
+        true,
         undefined,
         form({ review_id: REVIEW, decision: "rejected", reason_code: "duplicate" }),
       );

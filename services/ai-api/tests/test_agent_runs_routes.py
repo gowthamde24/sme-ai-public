@@ -419,3 +419,32 @@ def test_the_callers_token_is_the_only_credential_the_repository_ever_sees(w: Wo
     w.client.get(w.url("/agent-runs"), headers=headers)
     w.client.put(w.url("/agent-settings"), json={"enabled": True}, headers=headers)
     assert w.repo.tokens_seen and set(w.repo.tokens_seen) == {token}
+
+
+def test_a_suggestion_says_whether_its_predicate_can_change_a_score(w: World) -> None:
+    import json
+    from pathlib import Path
+
+    template = json.loads(
+        (
+            Path(__file__).resolve().parents[3] / "config" / "icp" / "silk-wholesale.v1.json"
+        ).read_text()
+    )
+    w.repo.seed_claim(TENANT_A.id, claim_row(CLAIM, COMPANY))
+    w.repo.seed_claim(
+        TENANT_A.id,
+        claim_row(uuid.UUID(int=0xC1A2), COMPANY, predicate="buyer_type", value="saree_shop"),
+    )
+
+    def flags() -> dict[str, bool]:
+        r = w.client.get(w.url(f"/companies/{COMPANY}/claims"), headers=auth("a_viewer"))
+        assert r.status_code == 200
+        return {c["predicate"]: c["counts_toward_score"] for c in r.json()}
+
+    unscored = {"selftest.observation": False, "buyer_type": False}
+    assert flags() == unscored, "no profile: none scored"
+    published = w.client.post(
+        w.url("/icp-configs"), json={"config": template}, headers=auth("a_admin")
+    )
+    assert published.status_code == 201, published.text
+    assert flags() == {"selftest.observation": False, "buyer_type": True}

@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import {
   fetchAgentSettings,
   fetchRuns,
+  RUN_ERROR_LABELS,
   RUN_STATUS_LABELS,
   type AgentSettingsOut,
   type PageRunOut,
@@ -12,6 +13,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
+import { LocalTime } from "../../../local-time";
 import { cancelRunAction, startRunAction, toggleAgentsAction } from "./actions";
 import { AgentToggleForm, CancelRunForm, StartRunForm } from "./agent-forms";
 
@@ -21,10 +23,6 @@ export const dynamic = "force-dynamic";
 
 const ADMIN_ROLES = ["owner", "admin"];
 const START_ROLES = ["owner", "admin", "sales"];
-
-function moment(iso: string): string {
-  return iso.slice(0, 16).replace("T", " ") + " UTC";
-}
 
 /**
  * /app/tenants/[tenantId]/agents: the workspace switch, the start form and the runs. Real backend state only: every
@@ -140,7 +138,9 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
             <tbody>
               {runs.items.map((run) => (
                 <tr key={run.id}>
-                  <td>{moment(run.created_at)}</td>
+                  <td>
+                    <LocalTime iso={run.created_at} />
+                  </td>
                   <td>{run.agent_name}</td>
                   <td>
                     {run.company_id ? (
@@ -153,7 +153,7 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
                   </td>
                   <td>
                     {RUN_STATUS_LABELS[run.status]}
-                    {run.error_code ? ` (${run.error_code})` : ""}
+                    {run.status === "failed" && run.error_code ? `: ${RUN_ERROR_LABELS[run.error_code]}` : ""}
                   </td>
                   <td>
                     {run.writes_used}/{run.max_writes}

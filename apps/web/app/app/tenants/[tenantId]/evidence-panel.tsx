@@ -5,8 +5,10 @@ import {
   type EvidencePage,
   type EvidenceTarget,
   KIND_LABELS,
+  referenceText,
 } from "@/lib/api/evidence";
 
+import { LocalTime } from "../../local-time";
 import { AddEvidenceForm } from "./add-evidence-form";
 import { addEvidenceAction } from "./evidence-actions";
 
@@ -30,9 +32,6 @@ type Props = {
   formId: string;
 };
 
-function moment(iso: string): string {
-  return iso.slice(0, 16).replace("T", " ") + " UTC";
-}
 function day(iso: string): string {
   return iso.slice(0, 10);
 }
@@ -104,7 +103,9 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
         <dt>Provider</dt>
         <dd>{item.provider}</dd>
         <dt>Retrieved</dt>
-        <dd>{moment(item.retrievedAt)}</dd>
+        <dd>
+          <LocalTime iso={item.retrievedAt} />
+        </dd>
         {item.publishedAt && (
           <>
             <dt>Published</dt>
@@ -125,7 +126,7 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
           <>
             <dt>Reference</dt>
             <dd className="plain-text" data-evidence="reference">
-              {item.reference}
+              {referenceText(item)}
             </dd>
           </>
         )}

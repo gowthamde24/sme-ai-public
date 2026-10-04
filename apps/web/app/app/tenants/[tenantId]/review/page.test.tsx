@@ -128,10 +128,13 @@ const sampleLead2: ReviewQueueLeadOut = {
   score_max_reachable: 100,
   score_band: "low_priority",
   snapshot: {
-    factors: {
-      silk_saree_fit: { points: 0, max_points: 25, unknown: false },
-      geography_fit: { points: 12, max_points: 20, unknown: false },
-    },
+    // the shape the API really sends: a LIST
+    factors: [
+      { id: "silk_saree_fit", points: 0, max_points: 25, unknown: false },
+      { id: "buyer_type_fit", points: 0, max_points: 20, unknown: true },
+      { id: "geography_fit", points: 12, max_points: 20, unknown: false },
+    ],
+    flags: ["no_evidence"],
   },
 };
 
@@ -290,7 +293,7 @@ describe("ReviewQueuePage", () => {
   it("shows evidence link pointing to the lead detail page", async () => {
     render(await ReviewQueuePage(props()));
     const evidenceLinks = screen.getAllByRole("link", {
-      name: "View Evidence & Details →",
+      name: "View evidence & details →",
     });
     expect(evidenceLinks[0]).toHaveAttribute(
       "href",
@@ -362,5 +365,78 @@ describe("ReviewQueuePage", () => {
     expect(
       screen.getByText(/Could not load the review queue from the API/i),
     ).toBeInTheDocument();
+  });
+
+  // ---------------------------------------------------------------------- T006b M0: phone-friendly queue
+  it("draws the factor breakdown the API sends, including 'not known yet' factors", async () => {
+    render(await ReviewQueuePage(props({ query: { blind: "false" } })));
+    expect(screen.getByText(/How this score was worked out/)).toBeInTheDocument();
+    expect(document.querySelector('[data-unknown="true"]')).toHaveTextContent("Type of buyer: not known yet");
+    expect(screen.getByText("Sells silk sarees", { exact: false })).toBeInTheDocument();
+  });
+
+  it("collapses contact details by default", async () => {
+    render(await ReviewQueuePage(props()));
+    const details = screen.getByText("Contact details").closest("details");
+    expect(details).not.toBeNull();
+    expect(details).not.toHaveAttribute("open");
+  });
+
+  it("offers an 'Unreviewed only' filter that keeps blindness, and asks the API for it", async () => {
+    render(await ReviewQueuePage(props()));
+    expect(screen.getByRole("link", { name: "Unreviewed only" })).toHaveAttribute(
+      "href",
+      `/app/tenants/${TENANT}/review?blind=true&unreviewed=true`,
+    );
+    render(await ReviewQueuePage(props({ query: { unreviewed: "true" } })));
+    expect(fetchReviewQueue).toHaveBeenLastCalledWith(
+      "tok",
+      TENANT,
+      expect.objectContaining({ unreviewed: true, blind: true }),
+    );
+  });
+
+  it("keeps 'unreviewed' when turning blindness off and when paging", async () => {
+    fetchReviewQueue.mockResolvedValue({ ...standardQueue, next_cursor: "cur-1" });
+    render(await ReviewQueuePage(props({ query: { unreviewed: "true" } })));
+    expect(screen.getByRole("link", { name: /Blind Scoring: ON/i })).toHaveAttribute(
+      "href",
+      `/app/tenants/${TENANT}/review?blind=false&unreviewed=true`,
+    );
+    expect(screen.getByRole("link", { name: "Load more leads" })).toHaveAttribute(
+      "href",
+      `/app/tenants/${TENANT}/review?blind=true&unreviewed=true&cursor=cur-1`,
+    );
+  });
+
+  it("'Next unreviewed' jumps to the first card without a label, and says when all are reviewed", async () => {
+    render(await ReviewQueuePage(props()));
+    expect(screen.getByRole("link", { name: /Next unreviewed/ })).toHaveAttribute("href", `#lead-${LEAD_1}`);
+    expect(document.getElementById(`lead-${LEAD_1}`)).not.toBeNull();
+  });
+
+  it("when everything on the page is reviewed it points at the next page, or says so", async () => {
+    fetchReviewQueue.mockResolvedValue({ items: [sampleLead2], next_cursor: "cur-2" });
+    const first = render(await ReviewQueuePage(props()));
+    expect(screen.getByRole("link", { name: /All reviewed here/ })).toHaveAttribute(
+      "href",
+      `/app/tenants/${TENANT}/review?blind=true&cursor=cur-2`,
+    );
+    first.unmount();
+    fetchReviewQueue.mockResolvedValue({ items: [sampleLead2], next_cursor: null });
+    render(await ReviewQueuePage(props()));
+    expect(screen.getByText("Everything in this view is reviewed.")).toBeInTheDocument();
+  });
+
+  it("states what an export contains and that it is logged", async () => {
+    render(await ReviewQueuePage(props()));
+    expect(screen.getByText(/lists every label with its reason, score/)).toBeInTheDocument();
+    expect(screen.getByText(/Every export\s+is logged/)).toBeInTheDocument();
+  });
+
+  it("a Viewer gets no 'Next unreviewed' bar (they cannot label)", async () => {
+    fetchTenant.mockResolvedValue(tenant("viewer"));
+    render(await ReviewQueuePage(props()));
+    expect(screen.queryByRole("link", { name: /Next unreviewed/ })).toBeNull();
   });
 });

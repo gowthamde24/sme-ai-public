@@ -62,6 +62,18 @@ export const RUN_STATUS_LABELS: Record<RunStatus, string> = {
   killed: "Failed (switched off)",
 };
 
+/** Why a run failed, in words (shown only for a run that failed; a cancelled or switched-off run says so by its status). */
+export const RUN_ERROR_LABELS: Record<NonNullable<RunOut["error_code"]>, string> = {
+  budget: "it used up its budget",
+  expired: "it ran out of time",
+  killed: "agents were switched off",
+  cancelled: "it was cancelled",
+  disabled: "agents were off",
+  tool_failed: "a step failed",
+  model_failed: "the model did not answer",
+  invalid_output: "the model's answer was unusable",
+};
+
 // ----------------------------------------------------------------------------- parsing
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -171,6 +183,7 @@ export function parseClaim(json: unknown): ClaimSuggestionOut {
     review_confidence: oneOfOrNull(json, "review_confidence", REVIEW_CONFIDENCES),
     reviewed_by: strOrNull(json, "reviewed_by"),
     reviewed_at: strOrNull(json, "reviewed_at"),
+    counts_toward_score: json.counts_toward_score === true,
   };
 }
 

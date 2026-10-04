@@ -128,6 +128,7 @@ class LeadsRepository(Protocol):
         cursor: tuple[str, uuid.UUID] | None,
         score_band: str | None,
         include_blind_scores: bool,
+        unreviewed_only: bool = False,
     ) -> Page[ReviewQueueLeadOut]: ...
 
     def record_data_export(
@@ -488,6 +489,7 @@ class PostgrestLeadsRepository:
         cursor: tuple[str, uuid.UUID] | None,
         score_band: str | None,
         include_blind_scores: bool,
+        unreviewed_only: bool = False,
     ) -> Page[ReviewQueueLeadOut]:
         """One page of the queue, always newest first by (created_at, id): the order is
         independent of every score.
@@ -506,7 +508,8 @@ class PostgrestLeadsRepository:
         # Without a filter one extra row tells us whether another page exists. With a filter
         # some rows are dropped, so scan forward (bounded) until a full page and one more has
         # matched.
-        page_size = limit + 1 if score_band is None else max(2 * limit, 50)
+        filtered = score_band is not None or unreviewed_only
+        page_size = max(2 * limit, 50) if filtered else limit + 1
         matched: list[ReviewQueueLeadOut] = []
         position = cursor
         scan_cursor: tuple[str, uuid.UUID] | None = None
@@ -517,7 +520,9 @@ class PostgrestLeadsRepository:
             for row in rows:
                 item = self._queue_item(row, context, active_icp, include_blind_scores)
                 position = (row["created_at"], uuid.UUID(row["id"]))
-                if score_band is None or item.score_band == score_band:
+                if (score_band is None or item.score_band == score_band) and (
+                    not unreviewed_only or item.latest_label is None
+                ):
                     matched.append(item)
                 if len(matched) > limit:
                     break

@@ -170,4 +170,27 @@ describe("/app/tenants/[tenantId]/agents", () => {
     expect(screen.getAllByRole("alert").length).toBeGreaterThan(0);
     expect(screen.queryByText("Running")).toBeNull();
   });
+
+  it("a cancelled run says 'Cancelled', and a failed one says why in words", async () => {
+    fetchRuns.mockResolvedValue({
+      items: [
+        run({ status: "cancelled", error_code: "cancelled" }),
+        run({ status: "failed", error_code: "budget" }),
+        run({ status: "failed", error_code: "model_failed" }),
+      ],
+      next_cursor: null,
+    });
+    const { container } = render(await AgentsPage(props()));
+    const text = container.querySelector("table")?.textContent ?? "";
+    expect(text).toContain("Cancelled");
+    expect(text).not.toContain("Cancelled (cancelled)");
+    expect(text).toContain("Failed: it used up its budget");
+    expect(text).toContain("Failed: the model did not answer");
+  });
+
+  it("shows run times as <time> elements with the UTC time in the tooltip", async () => {
+    const { container } = render(await AgentsPage(props()));
+    const stamp = container.querySelector("table time");
+    expect(stamp?.getAttribute("title")).toBe("2026-10-04 12:00 UTC");
+  });
 });

@@ -95,6 +95,9 @@ class ClaimSuggestionOut(_Strict):
     review_confidence: Literal["low", "medium", "high"] | None
     reviewed_by: uuid.UUID | None
     reviewed_at: datetime | None
+    # True when the workspace's active ICP profile reads this predicate
+    # (an accepted suggestion can then change a score)
+    counts_toward_score: bool = False
 
 
 class ReviewIn(_Strict):

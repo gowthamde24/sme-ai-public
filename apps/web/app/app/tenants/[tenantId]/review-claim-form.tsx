@@ -31,7 +31,7 @@ function Result({ state }: { state: ReviewActionState }) {
 
 /**
  * Accept (low / medium / high, chosen by the person) or reject (with a reason) ONE agent suggestion. Rendered only for an
- * owner or admin. The page gives each of the two buttons its own review id, generated once per render: a retry or a double
+ * owner or admin. NOTHING is preselected: a stray tap cannot approve (or downgrade an approval) by accident. The page gives each of the two buttons its own review id, generated once per render: a retry or a double
  * click re-sends the same id and is one review.
  */
 export function ReviewClaimForms({
@@ -57,7 +57,10 @@ export function ReviewClaimForms({
         <label htmlFor={`confidence-${claimId}`} className="hint">
           Accept as
         </label>{" "}
-        <select id={`confidence-${claimId}`} name="confidence" defaultValue="low" disabled={accepting}>
+        <select id={`confidence-${claimId}`} name="confidence" defaultValue="" required disabled={accepting}>
+          <option value="" disabled>
+            Choose…
+          </option>
           {REVIEW_CONFIDENCES.map((c) => (
             <option key={c} value={c}>
               {CONFIDENCE_LABELS[c]}
@@ -75,7 +78,10 @@ export function ReviewClaimForms({
         <label htmlFor={`reason-${claimId}`} className="hint">
           Reject because
         </label>{" "}
-        <select id={`reason-${claimId}`} name="reason_code" defaultValue={REVIEW_REASONS[0]} disabled={rejecting}>
+        <select id={`reason-${claimId}`} name="reason_code" defaultValue="" required disabled={rejecting}>
+          <option value="" disabled>
+            Choose…
+          </option>
           {REVIEW_REASONS.map((r) => (
             <option key={r} value={r}>
               {REVIEW_REASON_LABELS[r]}
