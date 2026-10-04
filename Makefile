@@ -71,12 +71,19 @@ eval-live:
 # A clearly fictional business (company, contacts, products, lead, opportunity, evidence, claims) in a
 # local workspace, built through the API (claims through PostgREST with the demo user's own JWT).
 # Refuses to run against anything but a local stack. Needs `make db-start` and `make dev-api`.
+#
+# The last two steps are the T006 agent walkthrough, LOCAL ONLY: the operator switches for the DEMO workspace, then one selftest
+# run under the scripted fake model. The run needs the API started with AGENTS_ENABLED=true:
+#     AGENTS_ENABLED=true make dev-api
 seed-demo:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py
 	./scripts/dev-enable-selftest.sh demo-synthetic-sme
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py --agents
 
 dev-web:
 	cd $(WEB) && npm run dev
 
+# Agents are OFF unless you start the API with AGENTS_ENABLED=true (and, locally, the scripted fake model):
+#     AGENTS_ENABLED=true make dev-api
 dev-api:
 	cd $(API) && .venv/bin/uvicorn app.main:app --reload --port 8000

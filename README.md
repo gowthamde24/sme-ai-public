@@ -40,6 +40,8 @@ SUPABASE_ANON_KEY=<ANON_KEY from supabase status>
 
 ```
 make dev-api    # http://localhost:8000/health
+                # agents are OFF unless you start it with:  AGENTS_ENABLED=true make dev-api
+                # (the scripted fake model is for local development only; `make seed-demo` then runs one demo agent run)
 make dev-web    # http://localhost:3000  ->  /login, then /app
 ```
 

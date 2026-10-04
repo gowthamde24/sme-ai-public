@@ -27,7 +27,13 @@ SAFETY
   * The demo login is a fixed fake user on a reserved domain; its password is a constant below that is
     only ever valid against a local stack (the script refuses any other host).
 
-Run: `make dev-api` in one terminal, then `make seed-demo`.
+T006 adds the agent walkthrough (`make seed-demo` runs it as its last step, `--agents`): the operator switches are turned on
+for the DEMO workspace only (scripts/dev-enable-selftest.sh, local database container), the workspace switch is turned on through
+the API, and ONE selftest run is started on the demo company under the scripted fake model. It needs the API to be started with
+`AGENTS_ENABLED=true` (the fake model is refused outside development). The run's note and observations appear on the company
+page as "agent suggestion, unreviewed"; nothing counts toward a score until an owner accepts it.
+
+Run: `make dev-api` (with AGENTS_ENABLED=true for the agent step) in one terminal, then `make seed-demo`.
 """
 
 from __future__ import annotations
@@ -36,6 +42,7 @@ import hashlib
 import json
 import os
 import sys
+import time
 import uuid
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -624,7 +631,9 @@ class Seeder:
             "GET",
             f"/v1/tenants/{self.summary.tenant_id}/companies/{self.summary.company_id}/evidence?limit=100",
         )
-        if listed.status_code != 200 or len(listed.json()["items"]) != len(COMPANY_EVIDENCE):
+        # evidence an AGENT added later (the agent walkthrough) is not part of the seeded facts
+        seeded = [i for i in listed.json()["items"] if i["evidence"]["created_via"] != "agent"] if listed.status_code == 200 else []
+        if listed.status_code != 200 or len(seeded) != len(COMPANY_EVIDENCE):
             raise SeedError("Acceptance failed: the company's evidence is not listed by the API.")
         queue = self._api(
             "GET",
@@ -640,6 +649,65 @@ class Seeder:
             raise SeedError(
                 f"Acceptance failed: {len(missing)} demo leads are not in the review queue."
             )
+
+
+    def agents(self) -> str:
+        """Turn the workspace switch on (through the API) and start ONE selftest run on the demo company. Returns the run's
+        final state. The run id is fixed, so a second `make seed-demo` replays the same run instead of starting another."""
+        base = f"/v1/tenants/{self.summary.tenant_id}"
+        on = self._api("PUT", f"{base}/agent-settings", {"enabled": True})
+        if on.status_code != 200:
+            raise SeedError(f"Could not turn agents on for the demo workspace (HTTP {on.status_code}).")
+        run_id = demo_id("agent-run-selftest")
+        started = self._api(
+            "POST",
+            f"{base}/agent-runs",
+            {"id": run_id, "agent": "selftest", "target_kind": "company", "target_id": self.summary.company_id},
+        )
+        if started.status_code == 503:
+            raise SeedError(
+                "The API is not running agents. Restart it with `AGENTS_ENABLED=true make dev-api` "
+                "(the scripted fake model is for local development only), then run this again."
+            )
+        if started.status_code == 409:
+            code = started.json().get("error", {}).get("code", "")
+            if code == "agents_disabled":
+                raise SeedError(
+                    "The platform switch is off for this workspace. Run `./scripts/dev-enable-selftest.sh demo-synthetic-sme`."
+                )
+        if started.status_code not in (200, 202):
+            raise SeedError(f"Could not start the demo agent run (HTTP {started.status_code}).")
+        status = started.json().get("status", "running")
+        for _ in range(60):
+            if status != "running":
+                break
+            time.sleep(0.5)
+            polled = self._api("GET", f"{base}/agent-runs/{run_id}")
+            if polled.status_code != 200:
+                raise SeedError(f"Could not read the demo agent run (HTTP {polled.status_code}).")
+            status = polled.json().get("status", "running")
+        return str(status)
+
+
+def run_agents(
+    config: Config, *, api: httpx.Client | None = None, http: httpx.Client | None = None
+) -> tuple[Summary, str]:
+    """The agent step on its own (the data must already be seeded): sign in, find the workspace, run the demo agent."""
+    require_local(config.supabase_url, "Supabase URL")
+    require_local(config.api_url, "API URL")
+    api_client = httpx.Client() if api is None else api
+    http_client = httpx.Client() if http is None else http
+    try:
+        seeder = Seeder(config, api_client, http_client)
+        seeder.sign_in()
+        seeder.workspace()
+        seeder.summary.company_id = demo_id("company")  # the fixed id records() gave the demo company
+        return seeder.summary, seeder.agents()
+    finally:
+        if api is None:
+            api_client.close()
+        if http is None:
+            http_client.close()
 
 
 def run(
@@ -670,7 +738,22 @@ def run(
             http_client.close()
 
 
+def main_agents() -> int:
+    try:
+        s, status = run_agents(load_config())
+    except SeedError as exc:
+        print(f"seed-demo (agents): {exc}", file=sys.stderr)
+        return 1
+    base = "http://localhost:3000/app/tenants"
+    print(f"seed-demo (agents): the demo selftest run finished as '{status}' (scripted fake model, local only).")
+    print(f"  agents page:  {base}/{s.tenant_id}/agents")
+    print(f"  company page: {base}/{s.tenant_id}/companies/{s.company_id}  (see 'Agent suggestions')")
+    return 0 if status == "succeeded" else 1
+
+
 def main() -> int:
+    if "--agents" in sys.argv[1:]:
+        return main_agents()
     try:
         s = run(load_config())
     except SeedError as exc:

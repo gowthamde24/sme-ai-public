@@ -61,7 +61,9 @@ make check       # lint + typecheck + unit + pgTAP (db-test) + integration (the 
 make check-fast  # lint + typecheck + unit tests only (no Docker)
 make dev-web     # Next.js on :3000
 make contracts   # regenerate packages/contracts/{crm,evidence,leads}.* from the API models (a test fails if stale)
-make seed-demo   # a clearly fictional business + the generic ICP profile + 20 synthetic leads, in the LOCAL stack (needs db + make dev-api; refuses non-local URLs)
+make seed-demo   # a clearly fictional business + the generic ICP profile + 20 synthetic leads + one agent run, in the LOCAL stack (needs db + `AGENTS_ENABLED=true make dev-api`; refuses non-local URLs)
+make eval        # T006 agent containment evals (scripted models that obey every injection, real local stack; part of make check)
+make eval-live   # OPT-IN, never in make check: the live-capable evals against the real model; refuses unless the adapter's gates are satisfied
 make dev-api     # FastAPI on :8000
 ```
 
@@ -79,5 +81,5 @@ make dev-api     # FastAPI on :8000
 - T003 CRM core (companies, contacts, products, leads, opportunities + consent ledger + PII-aware audit): DONE (owner-approved; ADRs 0004-0007). Migrations are append-only: new files only. Hard gate: the erasure/anonymise workflow must exist before T012 (see `docs/pre-pilot-checklist.md`).
 - T004 Evidence model (evidence, evidence_links, claims; text hygiene; evidence API; company/lead evidence pages; `make seed-demo`): DONE (owner-approved; ADRs 0008-0009).
 - T005 Lead review (lead import, review queue with blind scoring, Good/Bad/Maybe labels with reason codes, pure deterministic ICP score, evidence display, CSV/JSON export with formula injection sanitisation; ADRs 0010-0012): built, audited and fixed (fix round F, commits `T005-F(A..G)`); APPROVED by the owner, pending the human 20-lead walkthrough. `make check`: vitest 468, pytest 942, pgTAP 4,141, integration 384 (= 5,935). Deferred items: `docs/pre-pilot-checklist.md`.
-- T006 Agent runtime (the runtime INTERFACE, not the Research Agent): ADR 0013 (agent write path and non-human actor identity) is ACCEPTED. Option A (delegated runs) for v1; option B (dedicated principal) is required before the first scheduled agent and before any external customer. M1 (database) APPROVED after the review fixes. M2 (sandboxed runtime `app/agents`, run API `app/agent_runs`, the fake model and the one real Anthropic adapter, never run live) is built and awaits the owner's review. M3 (eval harness, minimal web) is NOT started: it needs the owner's approval.
+- T006 Agent runtime (the runtime INTERFACE, not the Research Agent): ADR 0013 is ACCEPTED. Option A (delegated runs) for v1; option B (dedicated principal) is required before the first scheduled agent and before any external customer. M1 (database), the review fixes and M2 (sandboxed runtime, run API, fake model, the one real Anthropic adapter) are APPROVED. M3 (containment evals `make eval`, minimal web, seed, runbook) is built and awaits the owner's review. The real adapter has never run live (`make eval-live` is the owner's opt-in step once the key and spend cap exist). Do not start T007 before the owner approves.
 - Do not start Lead Agent, Command Center animation, WhatsApp, Tally or investor materials before T001 and T002 are complete.

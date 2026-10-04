@@ -2,6 +2,8 @@
 every researched fact can carry evidence". Run here against the real stack with the real
 application, as the demo user; then a second user in another workspace proves none of it leaks."""
 
+# ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
+
 from __future__ import annotations
 
 import importlib.util
@@ -646,3 +648,78 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
         ), "idempotent"
     finally:
         operator_sql.restore_switches(saved)
+
+
+# ==== the agent walkthrough step (T006): a smoke test ====
+def test_the_agent_step_refuses_a_non_local_stack(stack: Stack) -> None:
+    with pytest.raises(seed.SeedError, match="not on this machine"):
+        seed.run_agents(
+            config(stack, api_url="https://api.example.com"), api=NOT_A_NETWORK, http=NOT_A_NETWORK
+        )
+
+
+def test_the_agent_step_says_how_to_enable_agents_when_the_api_has_them_off(
+    stack: Stack, client: TestClient, demo: Any
+) -> None:
+    with pytest.raises(seed.SeedError, match="AGENTS_ENABLED=true"):
+        seed.run_agents(config(stack), api=client, http=httpx.Client())
+
+
+def test_the_agent_step_runs_one_selftest_run_on_the_demo_company_and_a_second_call_replays_it(
+    stack: Stack, demo: Any
+) -> None:
+    import operator_sql
+    from fastapi.testclient import TestClient as AppClient
+
+    from app.config import Settings
+    from app.main import build_runtime, create_app
+
+    first, _ = demo
+    saved = operator_sql.snapshot_switches()
+    operator_sql.sql(f"select app.operator_enable_selftest('{seed.DEMO_WORKSPACE_SLUG}')")
+    settings = Settings(  # type: ignore[call-arg]
+        _env_file=None,
+        api_env="development",
+        supabase_url=stack.url,
+        supabase_anon_key=stack.anon_key,
+        agents_enabled=True,
+        llm_provider="fake",
+    )
+    try:
+        with AppClient(create_app(settings, runtime=build_runtime(settings))) as agents_client:
+            summary, status = seed.run_agents(config(stack), api=agents_client, http=httpx.Client())
+            assert status == "succeeded" and summary.tenant_id == first.tenant_id
+            again_summary, again_status = seed.run_agents(
+                config(stack), api=agents_client, http=httpx.Client()
+            )
+            assert again_status == "succeeded"
+            runs = operator_sql.sql(
+                f"select count(*) from public.agent_runs where id = '{seed.demo_id('agent-run-selftest')}'"
+            )
+            assert runs == "1", "a second call replays the same run"
+            claims = operator_sql.sql(
+                f"select count(*) from public.claims where created_via = 'agent' and company_id = '{summary.company_id}' and agent_run_id = '{seed.demo_id('agent-run-selftest')}'"
+            )
+            assert claims == "2"
+    finally:
+        operator_sql.restore_switches(saved)
+
+
+# ==== the kill-switch runbook (T006): its SQL must run against the real schema ====
+def test_every_sql_block_of_the_kill_switch_runbook_runs_against_the_real_schema() -> None:
+    """A smoke test: each fenced sql block is executed inside a transaction that is rolled back, with the placeholders filled in
+    from the demo workspace, so a renamed column or table breaks the build instead of the operator at 3 a.m."""
+    import operator_sql
+
+    runbook = (
+        Path(__file__).resolve().parents[2] / "docs" / "runbooks" / "agents-kill-switch.md"
+    ).read_text()
+    blocks = re.findall(r"```sql\n(.*?)```", runbook, re.S)
+    assert len(blocks) >= 7, "the three levels, their verifications and the listing"
+    slug = seed.DEMO_WORKSPACE_SLUG
+    for block in blocks:
+        statement = block.replace(":RUN_ID", "00000000-0000-4000-8000-000000000000").replace(
+            ":SLUG", slug
+        )
+        out = operator_sql.sql(f"begin; {statement} rollback;")
+        assert "ERROR" not in out
