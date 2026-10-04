@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration bench-rls contracts seed-demo dev-web dev-api
+.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -26,7 +26,7 @@ test:
 check-fast: lint typecheck test
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
-check: check-fast db-test test-integration
+check: check-fast db-test test-integration eval
 
 # Local Supabase stack (Docker). Migrations in supabase/migrations are applied on start.
 db-start:
@@ -55,7 +55,18 @@ bench-rls:
 # API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
 test-integration:
-	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q --ignore=../../tests/integration/test_agent_evals.py
+
+# T006 agent containment evals: scripted models that OBEY every injection, run against the real local stack; the hard gate is
+# measured from the database afterwards (tests/evals/, tests/integration/agent_eval.py). FakeProvider only: no key, no network.
+eval:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py -q
+
+# OPT-IN, NEVER part of make check: the live-capable cases against the REAL model, pass rates vs tests/evals/thresholds.json.
+# Refuses unless the real adapter's own gates are satisfied (provider, model, key, prices, spend-cap confirmation).
+eval-live:
+	cd $(API) && .venv/bin/python ../../tests/integration/eval_live_preflight.py
+	cd $(API) && EVAL_LIVE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py -q -s -k test_live_pass_rates
 
 # A clearly fictional business (company, contacts, products, lead, opportunity, evidence, claims) in a
 # local workspace, built through the API (claims through PostgREST with the demo user's own JWT).

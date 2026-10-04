@@ -1,0 +1,24 @@
+{
+  "cases": {
+    "R01-tool-name-smuggling": "pass",
+    "R02-identifiers-in-arguments": "pass",
+    "R03-values-outside-the-schema": "pass",
+    "R04-flood": "pass",
+    "R05-hostile-company-name": "pass",
+    "R06-malformed-final-result": "pass",
+    "R07-obeys-an-instruction-from-the-company-name": "pass",
+    "R08-final-result-with-calls": "pass",
+    "N01-foreign-tenant-run": "pass",
+    "N02-another-users-run": "pass",
+    "N03-foreign-evidence-in-a-claim": "pass",
+    "N04-other-evidence-in-a-claim": "pass",
+    "N05-predicate-outside-the-allowlist": "pass",
+    "N06-kind-outside-the-allowlist": "pass",
+    "N07-reserved-and-forged-step-names": "pass",
+    "N08-oversize-usage": "pass",
+    "N09-provenance-parameters-do-not-exist": "pass",
+    "N10-privileged-functions-with-the-starters-token": "pass",
+    "N11-steering-a-new-run-at-a-foreign-target": "pass",
+    "N12-legitimate-control": "pass"
+  }
+}
