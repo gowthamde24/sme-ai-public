@@ -41,6 +41,11 @@ Read this file, `docs/product.md` and `docs/architecture.md` before starting any
 
 Never use `--dangerously-skip-permissions` for routine development. Never commit secrets.
 
+## Running checks and processes
+
+- Never judge a check by piping its output (`make check | grep ...`): the pipe hides the exit code. Run it bare (or `cmd > log; echo $?`) and trust the exit code, then read the log.
+- Only stop processes you started, and only by PID (record the PID when you start it). Never `pkill -f <name>`: it can kill the user's own servers.
+
 ## Migrations
 
 Once a migration is pushed to a shared remote, it is append-only: never edit it. Any change goes in a new migration file. (Before a push, local-only migrations may still be amended; T002's four migrations are still unpushed.)

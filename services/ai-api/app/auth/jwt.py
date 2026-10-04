@@ -44,11 +44,33 @@ class KeyProvider(Protocol):
 
 
 class JwksKeyProvider:
-    """Fetches (and caches) public keys from the Supabase Auth JWKS endpoint."""
+    """Fetches public keys from the Supabase Auth JWKS endpoint.
 
-    def __init__(self, jwks_url: str, *, timeout: int = 5, lifespan: int = 600) -> None:
+    Caching and key-rotation behaviour (all of it deliberate):
+    - The whole key set is cached for `lifespan` seconds. The per-key LRU cache is OFF: it has no
+      expiry, so a key removed from the JWKS would keep verifying until restart.
+    - A token naming an unknown `kid` triggers at most ONE forced re-fetch of the JWKS, and only if
+      the last fetch was more than `cooldown` seconds ago; otherwise it is rejected without any
+      network call. A stream of junk-`kid` tokens therefore costs at most one JWKS request per
+      cooldown window, and cannot be used to hammer the identity provider.
+    - After the re-fetch the `kid` is still unknown -> the token is rejected (fail closed).
+    """
+
+    def __init__(
+        self,
+        jwks_url: str,
+        *,
+        timeout: int = 5,
+        lifespan: float = 600,
+        cooldown: float = 30,
+    ) -> None:
         self._client = PyJWKClient(
-            jwks_url, cache_keys=True, cache_jwk_set=True, lifespan=lifespan, timeout=timeout
+            jwks_url,
+            cache_keys=False,
+            cache_jwk_set=True,
+            lifespan=lifespan,
+            timeout=timeout,
+            cooldown_duration=cooldown,
         )
 
     def key_for(self, token: str, algorithm: str) -> Any:

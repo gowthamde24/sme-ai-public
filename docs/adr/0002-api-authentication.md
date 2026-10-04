@@ -20,7 +20,7 @@ Status: accepted for milestone 2. Builds on ADR 0001.
 
 ## Known limits
 
-- JWKS keys are cached for 10 minutes. A key rotation is picked up on the next unknown `kid`, but a revoked key can still verify tokens for up to that window. Access tokens are short-lived (1h default) anyway.
+- JWKS handling (`JwksKeyProvider`, covered by `tests/test_jwks_rotation.py` against a real local HTTP server): the key set is cached for 10 minutes; a token with an unknown `kid` triggers at most ONE forced re-fetch, and only if the last fetch is older than a 30 s cooldown, otherwise it is rejected with no network call; if the `kid` is still unknown after the re-fetch it is rejected. A flood of junk-`kid` tokens therefore costs at most one JWKS request per cooldown. A key removed from the JWKS stops verifying within the 10-minute cache lifetime. (An earlier draft enabled PyJWT's per-key LRU cache, which has no expiry and would have kept a revoked key valid until restart; it is now off and a test guards it.) Access tokens are short-lived (1h default) anyway.
 - The synchronous `httpx` client runs in FastAPI's threadpool. Fine at V1 scale; revisit if the API becomes I/O heavy.
 - No rate limiting on the API yet (T002 non-goal).
 - Concurrent last-owner races are covered at the HTTP level against the real stack. Two Owners acting on their own memberships deterministically yield one success and one `23514`; Owners acting on each other yield one success and either `23514` or "no rows" (the winner already removed their authority). Removing the tenant row lock from the trigger makes the deterministic cases fail.
