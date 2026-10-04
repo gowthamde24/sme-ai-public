@@ -48,10 +48,19 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **ADR on the agent write path (identity and permission model for non-human actors) is a precondition for the T005 plan.** Decide between a per-tenant agent principal with a membership, short-lived delegation tokens minted by the API, or a SECURITY DEFINER write function authenticated by a signed run token. Never a service-role key. T004 only keeps all options open (`created_via = agent`, nullable `created_by`, writer-declared `retrieved_at`, `reference = run:<uuid>`). | ADR 0008 #9 | **Before the T005 plan** |
 | [ ] | **Agent prompts must treat evidence as data.** Snippets, URLs and claim values are stored verbatim and may contain instructions. Any prompt built from them must delimit them as untrusted data and ignore embedded instructions (CLAUDE.md #6); add an eval for it in the agent ticket. | ADR 0008 #5 | First agent ticket |
 | [ ] | **A stored URL is not a URL safe to fetch (SSRF).** `evidence.url` only proves "http(s), no userinfo, clean text". The future fetcher must itself block private, loopback and link-local addresses (including IPv6 and DNS names that resolve to them), re-check the address after every redirect and limit redirects, restrict ports, set size and time limits, and never send credentials or cookies. Build it behind an interface (CLAUDE.md #9) and test it with a hostile-URL suite before the first research ticket fetches anything. | ADR 0008 #5 | First ticket that fetches a URL |
-| [ ] | **Free text outside the tenant-owned tables is not covered by the hygiene guard.** `tenants.name` and `users.display_name` (set from sign-up metadata) can still contain invisible Unicode and are shown to other members. Add `app.text_is_clean` CHECKs in a new migration (and review the web display). | ADR 0008 #13 | **Pilot data** |
+| [ ] | **`tenants.name` and `users.display_name` are not covered by the text-hygiene guard.** They are free text outside the tenant-owned tables the guard polices (`users.display_name` comes from sign-up metadata), so they can still hold invisible Unicode and are shown to other members. Fold `app.text_is_clean` CHECKs for both into the next migration that touches those tables (and review where the web displays them). | ADR 0008 #13, ADR 0009 | Next migration that touches `tenants` or `users`; at the latest **Pilot data** |
 | [ ] | **Invisible-character list is a deny-list.** Re-read the Unicode "default ignorable" and tag ranges when upgrading Postgres/Unicode; a new invisible code point needs a migration (and the API mirror). | ADR 0008 #13 | Ongoing |
 | [ ] | **Claims shape is provisional.** Revisit predicate, value and the 4-level confidence when the research agent produces real claims; decide whether "confidence above `unverified` requires an evidence link" belongs in the atomic agent write function. | ADR 0008 #2 | First agent ticket |
 | [ ] | **Writer-declared `provider` / `retrieved_at` are not verified**, and there is no per-tenant quota or rate limit on evidence rows. | ADR 0008 limits | **External pilot** |
+
+## Evidence UI and demo seed (T004 milestone 3)
+
+| | Item | Source | Gate |
+| --- | --- | --- | --- |
+| [ ] | **Production web refuses a non-https Supabase URL (by design), and its session cookies are `Secure`.** A local production build therefore needs a TLS front for the local stack (verified with a throwaway self-signed proxy). Document the local recipe or add a `make` target before anyone else runs a production build locally; hosted projects are https already. | ADR 0009 | **Pilot data** |
+| [ ] | **The demo seed's user has a fixed password in `scripts/seed_demo.py`.** Safe only because the script refuses every non-local Supabase/API URL (tested). Never copy the pattern for a hosted project; delete the demo workspace and user from any database that is ever promoted to hold real data. | ADR 0009 | Before the local database is reused for real data |
+| [ ] | **The demo seed is the only writer of claims.** Claims have no API and no UI. The research-agent ticket decides the claims write path (and its atomic "claim + first evidence link" function); until then claims exist only in the database tests and the seed. | ADR 0008 #2, ADR 0009 | First agent ticket |
+| [ ] | **No-JS clients see an empty not-found body** for the new detail pages too (framework behaviour, as for the tenant page). | ADR 0007, 0009 | **Customer Zero** |
 
 ## CRM API (T003 milestone 2)
 
@@ -87,7 +96,7 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Not-found UI is JavaScript-rendered.** `notFound()` in a dynamic page returns 404 + noindex but the server-rendered body is empty in this Next.js version (framework behaviour). Decide whether no-JS clients matter; if so, move the tenant check into a rendering path that flushes the 404 shell, or accept. | ADR 0007 | **Customer Zero** |
 | [ ] | **Never expose `next dev`.** The development server puts a stack trace (with file paths) in a `<template>` of error/not-found responses. Production builds do not. | ADR 0007 | Ongoing |
 | [ ] | **Contacts page shows e-mail and phone to every role**, same as the API. Decide on masking for Viewers. | ADR 0006/0007 | **Customer Zero** |
-| [ ] | **CRM UI is read-only plus "create company".** Edit/archive/restore, consent actions, other creates and a "previous page" are not built. | ADR 0007 | Later tickets |
+| [ ] | **CRM UI is read-only plus "create company" and "add evidence".** Edit/archive/restore (including archiving evidence links, which the API supports), consent actions, other creates, claims, and a "previous page" are not built. | ADR 0007, 0009 | Later tickets |
 
 ## Data lifecycle and privacy (India: DPDP Rules 2025, TRAI)
 

@@ -40,8 +40,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "S105", "S106"]
 "../../tests/integration/*" = ["S101", "S105", "S106"]
+# a script of readable data tables and a long explanatory header
+"../../scripts/seed_demo.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
 strict = true
-files = ["app", "tests", "../../tests/integration"]
+files = ["app", "tests", "../../tests/integration", "../../scripts/seed_demo.py"]

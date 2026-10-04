@@ -113,7 +113,7 @@ export default async function TenantPage({
               : `No ${LABELS[tab].toLowerCase()} yet.`}
           </p>
         ) : (
-          <RecordsTable page={page} />
+          <RecordsTable page={page} tenantId={tenantId} />
         )}
         {page?.nextCursor && (
           <p>
@@ -159,7 +159,7 @@ function day(iso: string): string {
   return iso.slice(0, 10);
 }
 
-function RecordsTable({ page }: { page: CrmPage }) {
+function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
   switch (page.entity) {
     case "companies":
       return (
@@ -179,7 +179,13 @@ function RecordsTable({ page }: { page: CrmPage }) {
           <tbody>
             {page.items.map((c) => (
               <tr key={c.id}>
-                <td>{c.name}</td>
+                <td>
+                  <Link
+                    href={`/app/tenants/${tenantId}/companies/${encodeURIComponent(c.id)}`}
+                  >
+                    {c.name}
+                  </Link>
+                </td>
                 <td>{c.type}</td>
                 <td>{c.website ?? "—"}</td>
                 <td>{c.country ?? "—"}</td>
@@ -264,7 +270,13 @@ function RecordsTable({ page }: { page: CrmPage }) {
           <tbody>
             {page.items.map((l) => (
               <tr key={l.id}>
-                <td>{l.status}</td>
+                <td>
+                  <Link
+                    href={`/app/tenants/${tenantId}/leads/${encodeURIComponent(l.id)}`}
+                  >
+                    {l.status}
+                  </Link>
+                </td>
                 <td>{l.source ?? "—"}</td>
                 <td>{day(l.created_at)}</td>
                 <td>{l.created_via}</td>

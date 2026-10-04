@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration bench-rls contracts dev-web dev-api
+.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration bench-rls contracts seed-demo dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../scripts/seed_demo.py
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -56,6 +56,12 @@ bench-rls:
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
 test-integration:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q
+
+# A clearly fictional business (company, contacts, products, lead, opportunity, evidence, claims) in a
+# local workspace, built through the API (claims through PostgREST with the demo user's own JWT).
+# Refuses to run against anything but a local stack. Needs `make db-start` and `make dev-api`.
+seed-demo:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py
 
 dev-web:
 	cd $(WEB) && npm run dev

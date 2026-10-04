@@ -230,3 +230,37 @@ export async function createCompany(
     body: JSON.stringify(input),
   });
 }
+
+/**
+ * One company / lead by id (the detail pages). The API answers 404 for an unknown, malformed or
+ * foreign id; callers turn that into the same not-found page as every other missing record.
+ */
+export async function fetchCompany(
+  accessToken: string,
+  tenantId: string,
+  companyId: string,
+): Promise<CompanyRow> {
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(companyId))
+    throw new ApiContractError("id");
+  const json = await apiRequest(
+    `/v1/tenants/${tenantId}/companies/${companyId}`,
+    accessToken,
+  );
+  return isRecord(json)
+    ? (ROW_PARSERS.companies(json) as CompanyRow)
+    : bad("company");
+}
+
+export async function fetchLead(
+  accessToken: string,
+  tenantId: string,
+  leadId: string,
+): Promise<LeadRow> {
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(leadId))
+    throw new ApiContractError("id");
+  const json = await apiRequest(
+    `/v1/tenants/${tenantId}/leads/${leadId}`,
+    accessToken,
+  );
+  return isRecord(json) ? (ROW_PARSERS.leads(json) as LeadRow) : bad("lead");
+}

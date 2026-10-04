@@ -403,3 +403,56 @@ describe("/app/tenants/[tenantId]", () => {
     expect(fetchPage).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("links to the detail pages (T004)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.stubGlobal("crypto", { randomUUID: () => FORM_ID });
+    requireUser.mockResolvedValue(USER);
+    fetchTenant.mockResolvedValue(tenant("owner"));
+    fetchPage.mockImplementation(
+      async (_t: string, _id: string, entity: string) => PAGES[entity],
+    );
+  });
+
+  it("each company name links to that company's page", async () => {
+    render(await TenantPage(props({ query: { tab: "companies" } })));
+    expect(
+      within(screen.getByRole("table")).getByRole("link", {
+        name: "Acme Silks",
+      }),
+    ).toHaveAttribute("href", `/app/tenants/${TENANT}/companies/c1`);
+  });
+
+  it("each lead's status links to that lead's page", async () => {
+    render(await TenantPage(props({ query: { tab: "leads" } })));
+    expect(
+      within(screen.getByRole("table")).getByRole("link", {
+        name: "qualified",
+      }),
+    ).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/l1`);
+  });
+
+  it("the link target is built from the row id only, URL-encoded", async () => {
+    fetchPage.mockResolvedValue({
+      entity: "companies",
+      items: [{ ...company, id: "../x?y=1", name: "Odd" }],
+      nextCursor: null,
+    });
+    render(await TenantPage(props({ query: { tab: "companies" } })));
+    expect(screen.getByRole("link", { name: "Odd" })).toHaveAttribute(
+      "href",
+      `/app/tenants/${TENANT}/companies/${encodeURIComponent("../x?y=1")}`,
+    );
+  });
+
+  it("the other tables have no detail links", async () => {
+    for (const tab of ["contacts", "products", "opportunities"]) {
+      const { unmount } = render(await TenantPage(props({ query: { tab } })));
+      expect(within(screen.getByRole("table")).queryAllByRole("link")).toEqual(
+        [],
+      );
+      unmount();
+    }
+  });
+});

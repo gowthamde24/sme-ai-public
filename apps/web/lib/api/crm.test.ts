@@ -4,6 +4,8 @@ import { ApiAuthError, ApiContractError, ApiRequestError } from "./client";
 import {
   createCompany,
   ENTITY_KEYS,
+  fetchCompany,
+  fetchLead,
   fetchPage,
   isCanonicalUuid,
   PAGE_SIZE,
@@ -271,5 +273,64 @@ describe("isCanonicalUuid", () => {
     ]) {
       expect(isCanonicalUuid(bad)).toBe(false);
     }
+  });
+});
+
+describe("fetchCompany / fetchLead", () => {
+  const original = globalThis.fetch;
+  const ID = "44444444-4444-4444-4444-444444444444";
+  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://api.test"));
+  afterEach(() => {
+    globalThis.fetch = original;
+    vi.unstubAllEnvs();
+  });
+
+  it("reads one company from OUR API with the user's token", async () => {
+    const fetchMock = respond(200, ROW.companies);
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const company = await fetchCompany("user-token", TENANT, ID);
+    expect(company.name).toBe("Acme");
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [
+      string,
+      RequestInit,
+    ];
+    expect(url).toBe(`http://api.test/v1/tenants/${TENANT}/companies/${ID}`);
+    expect((init.headers as Record<string, string>).Authorization).toBe(
+      "Bearer user-token",
+    );
+  });
+
+  it("reads one lead", async () => {
+    globalThis.fetch = respond(200, ROW.leads) as unknown as typeof fetch;
+    expect((await fetchLead("t", TENANT, ID)).status).toBe("new");
+  });
+
+  it("refuses malformed ids before any request", async () => {
+    const fetchMock = respond(200, ROW.companies);
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    await expect(fetchCompany("t", "../me", ID)).rejects.toBeInstanceOf(
+      ApiContractError,
+    );
+    await expect(fetchLead("t", TENANT, "x")).rejects.toBeInstanceOf(
+      ApiContractError,
+    );
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("a 404 stays a 404 and a malformed body is a contract error", async () => {
+    globalThis.fetch = respond(404, {
+      error: { code: "not_found", message: "Not found." },
+    }) as unknown as typeof fetch;
+    await expect(fetchCompany("t", TENANT, ID)).rejects.toMatchObject({
+      status: 404,
+    });
+    globalThis.fetch = respond(200, { nope: 1 }) as unknown as typeof fetch;
+    await expect(fetchCompany("t", TENANT, ID)).rejects.toBeInstanceOf(
+      ApiContractError,
+    );
+    globalThis.fetch = respond(200, [1]) as unknown as typeof fetch;
+    await expect(fetchLead("t", TENANT, ID)).rejects.toBeInstanceOf(
+      ApiContractError,
+    );
   });
 });

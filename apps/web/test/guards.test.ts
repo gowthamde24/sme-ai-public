@@ -221,6 +221,159 @@ describe("server-only code stays on the server", () => {
     for (const file of crm) expect(read(file)).not.toMatch(/supabase/i);
   });
 
+  // ---- T004: evidence is untrusted text, shown as plain text and never turned into anything else
+  describe("evidence is rendered as plain text", () => {
+    const evidenceFiles = sourceFiles.filter((f) => {
+      const r = rel(f);
+      return (
+        /evidence/i.test(path.basename(r)) ||
+        r.startsWith(
+          path.join("app", "app", "tenants", "[tenantId]", "companies"),
+        ) ||
+        r.startsWith(path.join("app", "app", "tenants", "[tenantId]", "leads"))
+      );
+    });
+    const rendering = evidenceFiles.filter(
+      (f) => /\.tsx$/.test(f) && !/evidence\.ts$/.test(f),
+    );
+
+    it("finds the evidence files it is meant to police", () => {
+      const names = evidenceFiles.map(rel).sort();
+      for (const expected of [
+        path.join("app", "app", "tenants", "[tenantId]", "evidence-panel.tsx"),
+        path.join(
+          "app",
+          "app",
+          "tenants",
+          "[tenantId]",
+          "add-evidence-form.tsx",
+        ),
+        path.join("app", "app", "tenants", "[tenantId]", "evidence-actions.ts"),
+        path.join("lib", "api", "evidence.ts"),
+        path.join(
+          "app",
+          "app",
+          "tenants",
+          "[tenantId]",
+          "companies",
+          "[companyId]",
+          "page.tsx",
+        ),
+        path.join(
+          "app",
+          "app",
+          "tenants",
+          "[tenantId]",
+          "leads",
+          "[leadId]",
+          "page.tsx",
+        ),
+      ])
+        expect(names, expected).toContain(expected);
+      expect(rendering.length).toBeGreaterThanOrEqual(4);
+    });
+
+    it("never builds an anchor, image, frame, media, preview or script element", () => {
+      const forbidden =
+        /<\s*(a|img|iframe|frame|object|embed|video|audio|source|track|script|link|base|meta)\b/;
+      const offenders = rendering
+        .filter((f) => forbidden.test(read(f)))
+        .map(rel);
+      expect(offenders).toEqual([]);
+    });
+
+    it("never uses next/image, dangerouslySetInnerHTML, innerHTML or window.open", () => {
+      const patterns: [string, RegExp][] = [
+        ["next/image", /next\/image/],
+        ["dangerouslySetInnerHTML", /dangerouslySetInnerHTML/],
+        ["innerHTML", /\.innerHTML\b/],
+        ["window.open", /window\.open/],
+        ["a link target attribute", /\btarget=\{?["']_(blank|self|top|parent)/],
+        ["an <Image", /<\s*Image\b/],
+      ];
+      for (const [label, pattern] of patterns) {
+        const offenders = evidenceFiles
+          .filter((f) => pattern.test(read(f)))
+          .map(rel);
+        expect(offenders, label).toEqual([]);
+      }
+    });
+
+    it("never prefetches, preloads or fetches a source", () => {
+      const patterns: [string, RegExp][] = [
+        ["prefetch", /prefetch/i],
+        ["preload", /preload/i],
+        ["a rel=preconnect", /preconnect/i],
+        ["router.push of data", /router\.(push|replace)\(/],
+      ];
+      for (const [label, pattern] of patterns) {
+        const offenders = evidenceFiles
+          .filter((f) => pattern.test(read(f)))
+          // the explanatory comments say "prefetch" in prose; code lines are what count
+          .filter((f) =>
+            read(f)
+              .split("\n")
+              .some((l) => pattern.test(l) && !/^\s*(\/\/|\*|\/\*)/.test(l)),
+          )
+          .map(rel);
+        expect(offenders, label).toEqual([]);
+      }
+    });
+
+    it("every href in the evidence UI is an internal path built from validated ids and the opaque cursor", () => {
+      const bad: string[] = [];
+      let seen = 0;
+      for (const file of rendering) {
+        for (const match of read(file).matchAll(/href=(\{[^}]*\}|"[^"]*")/g)) {
+          seen += 1;
+          const expr = match[1];
+          const internal =
+            /^\{`\$\{here\}|^\{here\}|^\{`\/app\//.test(expr) ||
+            /^"\/app/.test(expr);
+          const fromEvidence =
+            /\b(item|evidence|snippet|url|reference|e)\./.test(expr);
+          if (!internal || fromEvidence) bad.push(`${rel(file)}: ${expr}`);
+        }
+      }
+      expect(seen).toBeGreaterThan(0);
+      expect(bad).toEqual([]);
+    });
+
+    it("the evidence row component reads evidence fields only as element children", () => {
+      const panel = read(
+        path.join(WEB_ROOT, "app/app/tenants/[tenantId]/evidence-panel.tsx"),
+      );
+      // {item.url}, {item.snippet}, {item.reference} appear only as JSX text children
+      for (const field of ["url", "reference", "snippet"]) {
+        const uses = [...panel.matchAll(new RegExp(`item\\.${field}\\b`, "g"))];
+        expect(uses.length, field).toBeGreaterThan(0);
+        for (const use of uses) {
+          const before = panel.slice(Math.max(0, use.index - 40), use.index);
+          const after = panel.slice(use.index, use.index + 40);
+          const isChild = /\{\s*$/.test(before) && /^[^}]*\}/.test(after);
+          const isGuard = /&&\s*\(?\s*$/.test(before) || /^[^}]*&&/.test(after);
+          expect(
+            isChild || isGuard,
+            `${field} used as: ${before}${after}`,
+          ).toBe(true);
+        }
+      }
+      expect(panel).toMatch(/data-evidence="snippet"/);
+    });
+
+    it("the snippet keeps its line breaks through CSS, not markup", () => {
+      const css = read(path.join(WEB_ROOT, "app/globals.css"));
+      expect(css).toMatch(/\.plain-text\s*\{[^}]*white-space:\s*pre-wrap/);
+    });
+
+    it("the evidence client lives in lib/api and uses the shared API client only", () => {
+      const lib = read(path.join(WEB_ROOT, "lib/api/evidence.ts"));
+      expect(lib).toMatch(/from "\.\/client"/);
+      expect(lib).not.toMatch(/\bfetch\(/);
+      expect(lib).not.toMatch(/supabase/i);
+    });
+  });
+
   it("session cookies are written HttpOnly", () => {
     expect(read(path.join(WEB_ROOT, "lib/supabase/cookies.ts"))).toMatch(
       /httpOnly:\s*true/,

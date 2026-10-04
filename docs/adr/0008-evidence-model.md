@@ -100,12 +100,16 @@ page, scores a lead, or runs an agent.**
     evidence insert back; forged parameters are rejected by PostgREST; the table rules (URL, hygiene,
     future `retrieved_at`) hold inside it. Catalog guards: only the allow-listed functions are executable
     by `authenticated`, and every invoker function in `public` pins `search_path`.
-12. **Acceptance test (milestone 3): `make seed-demo`.** A clearly fake demo seed builds a synthetic SME
-    (company, contacts, products, lead, opportunity, claims with evidence) **through the API only**,
-    with invented names and no real person or Customer Zero data. Acceptance: "a synthetic SME can be
-    represented end-to-end and every researched fact can carry evidence." Where the milestone-2 API does
-    not yet expose claims, the seed's scope is decided then (see the milestone-3 plan).
-
+12. **Acceptance test: `make seed-demo` (implemented in milestone 3; see ADR 0009).** A clearly fake
+    demo seed builds a synthetic SME (company, contacts, products, lead, opportunity, evidence, claims),
+    with invented names (every one starts with "DEMO", every address is on a reserved `.test` domain) and
+    no real person or Customer Zero data. Acceptance: "a synthetic SME can be represented end-to-end and
+    every researched fact can carry evidence."
+    **How it writes, stated plainly:** everything goes through OUR API (the demo user's own access
+    token) **except claims**, which have no API. The seed creates the claims and their evidence links
+    through PostgREST using the demo user's **own JWT and the public anon key, under row-level security
+    like any signed-in user**. There is **no service-role key** in the script, the repository or the
+    environment it reads. The script refuses to run unless the Supabase URL and the API URL are local.
 13. **Invisible Unicode (hardening migration `..._t004_text_hygiene.sql`).** Free text can hide
     instructions for language models in characters that render as nothing. One shared IMMUTABLE
     function, `app.text_is_clean` (text, `text[]` and `jsonb` overloads; `search_path = ''`; EXECUTE for
