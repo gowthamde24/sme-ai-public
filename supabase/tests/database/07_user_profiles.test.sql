@@ -3,7 +3,7 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 
-select is((select count(*) from public.users), 17::bigint, 'signup trigger created one profile per auth user');
+select is((select count(*) from public.users where created_at >= now()), 17::bigint, 'signup trigger created one profile per auth user');
 select is((select display_name from public.users where id = tests.uid('a_owner')), 'a_owner',
   'display_name is taken from signup metadata');
 

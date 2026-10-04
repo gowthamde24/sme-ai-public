@@ -121,13 +121,17 @@ select is(
 from actors;
 
 -- ----------------------------------- invariant: none of the above landed
-select is((select count(*) from public.tenants), 2::bigint, 'no tenant was added or removed');
+-- Scoped to rows created in this transaction (created_at = now()), so data left behind by other
+-- suites (e.g. the integration tests) in the local database cannot affect the result.
+select is((select count(*) from public.tenants where created_at >= now()), 2::bigint,
+  'no tenant was added or removed');
 select is(
-  (select array_agg(name order by name) from public.tenants),
+  (select array_agg(name order by name) from public.tenants where created_at >= now()),
   array['Tenant A', 'Tenant B'], 'tenant names unchanged');
-select is((select count(*) from public.memberships), 11::bigint, 'membership rows unchanged');
+select is((select count(*) from public.memberships where created_at >= now()), 11::bigint,
+  'membership rows unchanged');
 select is(
-  (select count(*) from public.memberships where role = 'viewer' and user_id not in
+  (select count(*) from public.memberships where created_at >= now() and role = 'viewer' and user_id not in
      (select tests.uid('a_viewer') union select tests.uid('b_viewer') union select tests.uid('dual'))),
   0::bigint, 'no role was downgraded to viewer by a cross-tenant write');
 select is(
