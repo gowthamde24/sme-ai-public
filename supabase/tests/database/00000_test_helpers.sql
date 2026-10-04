@@ -1,0 +1,123 @@
+-- Test helpers for the RLS/isolation suite. Installed into the LOCAL test database only
+-- (schema `tests`); never part of a migration. Runs first (file name sorts first).
+--
+-- Why helper functions instead of `set local role` in test files: pgTAP keeps its state in
+-- temp tables owned by the session user, which the `authenticated` role cannot touch. These
+-- helpers switch role inside a function, run exactly one statement as that identity, switch
+-- back, and return a plain value so every assertion itself runs as the privileged session user.
+--
+-- Identity convention: a NULL uid means the `anon` role (no JWT). A uuid means `authenticated`
+-- with that uuid as the JWT `sub`, exactly the claims PostgREST would set from a Supabase JWT.
+
+create schema if not exists tests;
+
+-- Deterministic ids so tests read as prose: tests.uid('a_owner'), tests.tid('a').
+create or replace function tests.uid(p_name text) returns uuid
+language sql immutable as $$ select md5('tests.uid:' || p_name)::uuid $$;
+
+create or replace function tests.tid(p_name text) returns uuid
+language sql immutable as $$ select md5('tests.tid:' || p_name)::uuid $$;
+
+create or replace function tests.set_identity(p_uid uuid) returns void
+language plpgsql as $$
+begin
+  if p_uid is null then
+    perform set_config('request.jwt.claims', '', true);
+    perform set_config('request.jwt.claim.sub', '', true);
+    perform set_config('role', 'anon', true);
+  else
+    perform set_config(
+      'request.jwt.claims',
+      json_build_object('sub', p_uid, 'role', 'authenticated', 'aud', 'authenticated')::text,
+      true
+    );
+    perform set_config('request.jwt.claim.sub', p_uid::text, true);
+    perform set_config('role', 'authenticated', true);
+  end if;
+end $$;
+
+-- Run one statement as the given identity and return the number of rows it returned/affected.
+-- Errors propagate (the caller expects success).
+create or replace function tests.rows_as(p_uid uuid, p_sql text) returns bigint
+language plpgsql as $$
+declare
+  n bigint;
+begin
+  perform tests.set_identity(p_uid);
+  begin
+    execute p_sql;
+    get diagnostics n = row_count;
+  exception when others then
+    reset role;
+    perform set_config('request.jwt.claims', '', true);
+    perform set_config('request.jwt.claim.sub', '', true);
+    raise;
+  end;
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  return n;
+end $$;
+
+-- Run one statement as the given identity and return 'ok' or the SQLSTATE it failed with.
+create or replace function tests.sqlstate_as(p_uid uuid, p_sql text) returns text
+language plpgsql as $$
+declare
+  state text := 'ok';
+begin
+  perform tests.set_identity(p_uid);
+  begin
+    execute p_sql;
+  exception when others then
+    state := sqlstate;
+  end;
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  return state;
+end $$;
+
+-- Two tenants with every role, plus unaffiliated users. Runs as the privileged session user,
+-- so it exercises the same triggers (audit, profile creation) a real signup would.
+--
+--   Tenant A: a_owner, a_owner2 (owners), a_admin, a_sales, a_viewer   (5 memberships)
+--   Tenant B: b_owner (sole owner), b_admin, b_sales, b_viewer         (4 memberships)
+--   No tenant: outsider, x1..x6
+create or replace function tests.seed_two_tenants() returns void
+language plpgsql as $$
+declare
+  n text;
+begin
+  foreach n in array array[
+    'a_owner', 'a_owner2', 'a_admin', 'a_sales', 'a_viewer',
+    'b_owner', 'b_admin', 'b_sales', 'b_viewer',
+    'outsider', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6'
+  ] loop
+    insert into auth.users (
+      id, instance_id, aud, role, email, raw_user_meta_data, created_at, updated_at
+    ) values (
+      tests.uid(n), '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
+      n || '@test.local', jsonb_build_object('display_name', n), now(), now()
+    );
+  end loop;
+
+  insert into public.tenants (id, name, slug) values
+    (tests.tid('a'), 'Tenant A', 'tenant-a'),
+    (tests.tid('b'), 'Tenant B', 'tenant-b');
+
+  insert into public.memberships (tenant_id, user_id, role) values
+    (tests.tid('a'), tests.uid('a_owner'),  'owner'),
+    (tests.tid('a'), tests.uid('a_owner2'), 'owner'),
+    (tests.tid('a'), tests.uid('a_admin'),  'admin'),
+    (tests.tid('a'), tests.uid('a_sales'),  'sales'),
+    (tests.tid('a'), tests.uid('a_viewer'), 'viewer'),
+    (tests.tid('b'), tests.uid('b_owner'),  'owner'),
+    (tests.tid('b'), tests.uid('b_admin'),  'admin'),
+    (tests.tid('b'), tests.uid('b_sales'),  'sales'),
+    (tests.tid('b'), tests.uid('b_viewer'), 'viewer');
+end $$;
+
+-- `supabase test db` expects every file to emit TAP output.
+select plan(1);
+select pass('test helpers installed');
+select * from finish();
