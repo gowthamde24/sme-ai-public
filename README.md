@@ -17,7 +17,7 @@ tests/               integration, evals
 
 ## Quick start
 
-Requirements: Node 20+ (22 recommended), Python 3.11+, Git, Docker (or OrbStack/Colima) and the [Supabase CLI](https://supabase.com/docs/guides/local-development) (`brew install supabase/tap/supabase`).
+Requirements: Node 22.13.0 (pinned in `.nvmrc`; run `nvm install` to match CI), Python 3.11+, Git, Docker (or OrbStack/Colima) and the [Supabase CLI](https://supabase.com/docs/guides/local-development) (`brew install supabase/tap/supabase`).
 
 ```
 make install
