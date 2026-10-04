@@ -75,5 +75,5 @@ make dev-api     # FastAPI on :8000
 
 - T001 Bootstrap monorepo: DONE (make check passes; both apps boot locally).
 - T002 Tenant/Auth/RLS foundation: DONE (CI green).
-- T003 CRM core (companies, contacts, products, leads, opportunities + consent ledger + PII-aware audit): IN PROGRESS. Milestones 1a, 1b approved; 1c (review changes R1-R4) and milestone 2 (API, ADR 0006) implemented, awaiting owner review. Then 3 (web: read-only tables + create-company form), with a hard stop. Migrations are append-only: new files only. Hard gate: the erasure/anonymise workflow must exist before T012 (see `docs/pre-pilot-checklist.md`).
+- T003 CRM core (companies, contacts, products, leads, opportunities + consent ledger + PII-aware audit): IMPLEMENTED across milestones 1a-3 (DB, API, web; ADRs 0004-0007), awaiting final owner review. Do not start T004 until the owner approves T003. Migrations are append-only: new files only. Hard gate: the erasure/anonymise workflow must exist before T012 (see `docs/pre-pilot-checklist.md`).
 - Do not start Lead Agent, Command Center animation, WhatsApp, Tally or investor materials before T001 and T002 are complete.

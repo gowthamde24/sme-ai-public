@@ -71,6 +71,10 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Production cookie and URL config.** Verify `Secure` cookies, https-only `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_API_BASE_URL`, and the deployed domain for session cookies. | ADR 0003 | **Pilot data** |
 | [ ] | **Dev-tooling audit findings.** `npm audit` reports 5 high issues in dev dependencies (`braces`); production dependencies report 0. Update when upstream fixes land; keep `npm audit --omit=dev` clean. | ADR 0003 | Ongoing |
 | [ ] | **Tenant-scoped pages.** `/app` lists workspaces only. Later pages must live under `/app/tenants/{id}/...` and rely on the API's 404 for foreign tenants. | ADR 0003 | **T003** |
+| [ ] | **Not-found UI is JavaScript-rendered.** `notFound()` in a dynamic page returns 404 + noindex but the server-rendered body is empty in this Next.js version (framework behaviour). Decide whether no-JS clients matter; if so, move the tenant check into a rendering path that flushes the 404 shell, or accept. | ADR 0007 | **Customer Zero** |
+| [ ] | **Never expose `next dev`.** The development server puts a stack trace (with file paths) in a `<template>` of error/not-found responses. Production builds do not. | ADR 0007 | Ongoing |
+| [ ] | **Contacts page shows e-mail and phone to every role**, same as the API. Decide on masking for Viewers. | ADR 0006/0007 | **Customer Zero** |
+| [ ] | **CRM UI is read-only plus "create company".** Edit/archive/restore, consent actions, other creates and a "previous page" are not built. | ADR 0007 | Later tickets |
 
 ## Data lifecycle and privacy (India: DPDP Rules 2025, TRAI)
 

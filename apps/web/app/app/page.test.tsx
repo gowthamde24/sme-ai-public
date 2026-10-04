@@ -53,6 +53,18 @@ describe("/app page", () => {
     expect(screen.getByText(/owner@example.test/)).toBeInTheDocument();
   });
 
+  it("links each workspace to its tenant page", async () => {
+    fetchMe.mockResolvedValue({
+      user_id: USER.id,
+      memberships: [{ role: "owner", tenant: TENANT }],
+    });
+    render(await AppPage());
+    expect(screen.getByRole("link", { name: "Acme Silks" })).toHaveAttribute(
+      "href",
+      `/app/tenants/${TENANT.id}`,
+    );
+  });
+
   it("explains an empty state instead of inventing data", async () => {
     fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [] });
     render(await AppPage());

@@ -1,4 +1,5 @@
 import type { Me } from "@contracts";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchMe } from "@/lib/api/client";
@@ -54,7 +55,9 @@ export default async function AppPage() {
           <tbody>
             {me.memberships.map(({ tenant, role }) => (
               <tr key={tenant.id}>
-                <td>{tenant.name}</td>
+                <td>
+                  <Link href={`/app/tenants/${tenant.id}`}>{tenant.name}</Link>
+                </td>
                 <td>{tenant.slug}</td>
                 <td>{role}</td>
               </tr>

@@ -7,9 +7,32 @@ export class RedirectError extends Error {
   }
 }
 
+/** Mimics next/navigation's notFound(): it throws, so nothing after it renders. */
+export class NotFoundSignal extends Error {
+  constructor() {
+    super("NEXT_NOT_FOUND");
+  }
+}
+
+export const notFoundMock = vi.fn((): never => {
+  throw new NotFoundSignal();
+});
+
 export const redirectMock = vi.fn((to: string): never => {
   throw new RedirectError(to);
 });
+
+export async function isNotFound(
+  run: () => Promise<unknown>,
+): Promise<boolean> {
+  try {
+    await run();
+    return false;
+  } catch (error) {
+    if (error instanceof NotFoundSignal) return true;
+    throw error;
+  }
+}
 
 export async function redirectTarget(
   run: () => Promise<unknown>,

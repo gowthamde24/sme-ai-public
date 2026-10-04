@@ -86,7 +86,7 @@ function apiBaseUrl(): string {
   return base.replace(/\/+$/, "");
 }
 
-async function request(
+export async function apiRequest(
   path: string,
   accessToken: string,
   init: RequestInit = {},
@@ -134,7 +134,20 @@ async function request(
 }
 
 export async function fetchMe(accessToken: string): Promise<Me> {
-  return parseMe(await request("/v1/me", accessToken));
+  return parseMe(await apiRequest("/v1/me", accessToken));
+}
+
+/** One workspace as the caller sees it (name, slug and the caller's role). 404 = not found / not a member. */
+export async function fetchTenant(
+  accessToken: string,
+  tenantId: string,
+): Promise<TenantDetail> {
+  return parseTenantDetail(
+    await apiRequest(
+      `/v1/tenants/${encodeURIComponent(tenantId)}`,
+      accessToken,
+    ),
+  );
 }
 
 export async function createTenant(
@@ -143,7 +156,7 @@ export async function createTenant(
   slug: string,
 ): Promise<TenantDetail> {
   return parseTenantDetail(
-    await request("/v1/tenants", accessToken, {
+    await apiRequest("/v1/tenants", accessToken, {
       method: "POST",
       body: JSON.stringify({ name, slug }),
     }),

@@ -174,6 +174,53 @@ describe("server-only code stays on the server", () => {
     );
   });
 
+  it("the web never talks to Supabase PostgREST: OUR API is the only door", () => {
+    const patterns: [string, RegExp][] = [
+      ["a /rest/v1 URL", /\/rest\/v1/],
+      ["an .rpc() call", /\.rpc\(/],
+      ["a supabase.from() query", /supabase\s*\.\s*from\(/],
+      ["createClient from supabase-js", /\bcreateClient\b/],
+    ];
+    for (const [label, pattern] of patterns) {
+      const offenders = sourceFiles
+        .filter((f) => pattern.test(read(f)))
+        .map(rel);
+      expect(offenders, label).toEqual([]);
+    }
+  });
+
+  it("only lib/api/client.ts calls fetch(), always to the configured API base", () => {
+    const callers = sourceFiles
+      .filter((f) => /\bfetch\(/.test(read(f)))
+      .map(rel);
+    expect(callers).toEqual([path.join("lib", "api", "client.ts")]);
+    const client = read(path.join(WEB_ROOT, "lib/api/client.ts"));
+    expect(client).toMatch(/fetch\(`\$\{base\}\$\{path\}`/);
+  });
+
+  it("the Supabase client is imported only by the auth plumbing, never by CRM pages or clients", () => {
+    const importers = sourceFiles
+      .filter((f) => !rel(f).startsWith(path.join("lib", "supabase")))
+      .filter((f) => /@\/lib\/supabase\//.test(read(f)))
+      .map(rel)
+      .sort();
+    expect(importers).toEqual(
+      [
+        path.join("app", "app", "actions.ts"),
+        path.join("app", "login", "actions.ts"),
+        path.join("lib", "auth", "session.ts"),
+        "proxy.ts",
+      ].sort(),
+    );
+    const crm = sourceFiles.filter(
+      (f) =>
+        rel(f).startsWith(path.join("app", "app", "tenants")) ||
+        rel(f).startsWith(path.join("lib", "api")),
+    );
+    expect(crm.length).toBeGreaterThanOrEqual(4);
+    for (const file of crm) expect(read(file)).not.toMatch(/supabase/i);
+  });
+
   it("session cookies are written HttpOnly", () => {
     expect(read(path.join(WEB_ROOT, "lib/supabase/cookies.ts"))).toMatch(
       /httpOnly:\s*true/,
