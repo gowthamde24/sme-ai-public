@@ -27,6 +27,18 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Email confirmation and password policy.** The local stack has confirmations off and a 6-character minimum. Turn confirmations on and raise the minimum on the hosted project. | `supabase/config.toml` | **Pilot data** |
 | [ ] | **Invitations by email.** No invite flow: members can only be added by user id. Needs a design that does not leak which emails have accounts. | ADR 0001 #7 | **External pilot** |
 
+## CRM, consent and personal data (T003)
+
+| | Item | Source | Gate |
+| --- | --- | --- | --- |
+| [ ] | **Erasure workflow must also cover `consent_events.evidence_ref`.** The ledger is append-only and keeps its rows when a contact is anonymised, so `evidence_ref` (a short opaque reference, restricted character set, but still capable of being a person-linked pointer such as a form-submission id) needs a documented rule: pointers into systems that are themselves erased, or a rule that references are non-identifying tokens only. Decide before the anonymisation procedure is built. | ADR 0005 #2, #3 | **Before T012** (part of the erasure hard gate) |
+| [ ] | **Free-text columns policy.** Free text defaults to PII (audited by field name only). Review each `SAFE:` classification when columns are added or loosened, and re-check that `products.attributes` (4 KB jsonb) and `companies.name` stay free of personal data (sole proprietors name their companies after themselves). Guards enforce classification, not truth. | ADR 0005 #1 | Ongoing; **Pilot data** |
+| [ ] | **Legal review of the consent model.** Channels (email, whatsapp, phone), the basis list (`explicit_consent`, `contractual`, `legitimate_use`, `other`), who may record/lift, ledger retention, and `can_contact` semantics against DPDP Rules 2025 and TRAI rules. | ADR 0005 #2 | **Pilot data** |
+| [ ] | **Anonymise-in-place procedure for contacts and linked free text** (leads.source, disqualified_reason, opportunities.title, lost_reason, products.description, company tags). Must be privileged, audited by field name, tested, and cover backups. Clients can only archive. | ADR 0005 #3 | **Before T012** |
+| [ ] | **Importer / agent provenance.** `created_via` accepts `import` / `agent` only from trusted server code via `set local app.created_via`. The first ticket that adds an importer or agent must use that path, test it, and keep clients on `manual`. | ADR 0005 #5 | First importer/agent ticket |
+| [ ] | **Archived contacts keep their unique email.** Decide whether re-creating an archived contact's address should be possible (partial unique index) once the anonymise procedure exists. | ADR 0005 limits | **Pilot data** |
+| [ ] | **Terminal opportunities are only status-locked.** Decide whether won/lost opportunities should freeze other fields. | ADR 0005 limits | **Customer Zero** |
+
 ## Web app
 
 | | Item | Source | Gate |

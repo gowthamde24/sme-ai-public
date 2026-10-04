@@ -78,18 +78,26 @@ select is(tests.rows_as(tests.uid('a_sales'), 'select 1 from public.tenants'), 0
 -- ------------------------------------------------------------------------ plans + privileges
 select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.tenants') like '%InitPlan%',
   'tenants: tenant list is an InitPlan');
-select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.memberships') not like '%SubPlan%',
-  'memberships: no per-row SubPlan');
-select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.audit_events') not like '%SubPlan%',
-  'audit_events: no per-row SubPlan');
-select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.users') not like '%SubPlan%',
-  'users: no per-row SubPlan');
+select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.memberships') like '%InitPlan%'
+    and tests.explain_as(tests.uid('a_owner'), 'select * from public.memberships') not like '%SubPlan%',
+  'memberships: tenant list is an InitPlan and there is no per-row SubPlan');
+select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.audit_events') like '%InitPlan%'
+    and tests.explain_as(tests.uid('a_owner'), 'select * from public.audit_events') not like '%SubPlan%',
+  'audit_events: tenant list is an InitPlan and there is no per-row SubPlan');
+select ok(tests.explain_as(tests.uid('a_owner'), 'select * from public.users') like '%InitPlan%'
+    and tests.explain_as(tests.uid('a_owner'), 'select * from public.users') not like '%SubPlan%',
+  'users: tenant list is an InitPlan and there is no per-row SubPlan');
 
 select ok(has_function_privilege('authenticated', 'app.my_tenant_ids()', 'execute'), 'authenticated may call my_tenant_ids');
 select ok(not has_function_privilege('anon', 'app.my_tenant_ids()', 'execute'), 'anon may not call my_tenant_ids');
 select ok(not has_function_privilege('anon', 'app.my_tenant_ids_with_role(public.app_role[])', 'execute'),
   'anon may not call my_tenant_ids_with_role');
 select ok(not has_function_privilege('anon', 'app.my_co_member_ids()', 'execute'), 'anon may not call my_co_member_ids');
+select is(
+  (select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+    where n.nspname = 'app' and p.proname in ('my_tenant_ids', 'my_tenant_ids_with_role', 'my_co_member_ids')
+      and p.prosecdef and 'search_path=""' = any (p.proconfig)),
+  3::bigint, 'all three tenant-list helpers are SECURITY DEFINER with search_path pinned to empty');
 select is_definer('app', 'my_tenant_ids', array[]::text[], 'my_tenant_ids is SECURITY DEFINER');
 select is_definer('app', 'my_co_member_ids', array[]::text[], 'my_co_member_ids is SECURITY DEFINER');
 

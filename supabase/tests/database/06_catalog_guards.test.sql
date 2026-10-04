@@ -121,12 +121,17 @@ select is(
         'app.has_tenant_role',
         'app.my_tenant_ids',
         'app.my_tenant_ids_with_role',
-        'app.my_co_member_ids')),
+        'app.my_co_member_ids',
+        'public.record_consent',
+        'public.suppress_contact',
+        'public.lift_suppression',
+        'app.can_contact')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
-    where nspname = 'public' and prosecdef and fq <> 'public.create_tenant'),
-  '', 'the only SECURITY DEFINER function reachable through the API schema is create_tenant');
+    where nspname = 'public' and prosecdef
+      and fq not in ('public.create_tenant', 'public.record_consent', 'public.suppress_contact', 'public.lift_suppression')),
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant and the three consent functions');
 
 -- ---- RLS policy pattern (performance AND correctness; see ADR 0004)
 -- Per-row helpers take the row's tenant_id, so Postgres evaluates them once per ROW OF THE TABLE
@@ -159,6 +164,146 @@ select is(
     where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
       and tests.explain_as(tests.uid('a_owner'), format('select * from public.%I', c.relname)) !~ 'InitPlan'),
   '', 'every public table plans its RLS filter as an InitPlan');
+
+-- ---- T003 guards: composite keys, audit/PII classification, registry coverage, grants vs matrix
+-- Every FK from a tenant-owned table to another tenant-owned table must be COMPOSITE, start with
+-- tenant_id on both sides, and never cascade (a SET NULL must name its columns, never tenant_id).
+select is(
+  (select coalesce(string_agg(c.conname, ', '), '')
+     from pg_constraint c
+    where c.contype = 'f' and c.connamespace = 'public'::regnamespace
+      and c.conrelid in (select relid from tenant_tables)
+      and c.confrelid in (select relid from tenant_tables)
+      and not (
+            cardinality(c.conkey) >= 2
+        and (select attname from pg_attribute where attrelid = c.conrelid and attnum = c.conkey[1]) = 'tenant_id'
+        and (select attname from pg_attribute where attrelid = c.confrelid and attnum = c.confkey[1]) = 'tenant_id'
+      )),
+  '', 'every FK between tenant-owned tables is composite and starts with tenant_id');
+select cmp_ok(
+  (select count(*) from pg_constraint c
+    where c.contype = 'f' and c.conrelid in (select relid from tenant_tables) and c.confrelid in (select relid from tenant_tables)),
+  '>=', 10::bigint, 'the composite-FK guard is not vacuous');
+select is(
+  (select coalesce(string_agg(c.conname, ', '), '')
+     from pg_constraint c
+    where c.contype = 'f' and c.connamespace = 'public'::regnamespace
+      and c.conrelid in (select relid from tenant_tables)
+      -- parents that are tenant-owned (or tenants itself). The one deliberate exception is
+      -- memberships.user_id -> users ON DELETE CASCADE (account deletion; ADR 0001 #2).
+      and (c.confrelid in (select relid from tenant_tables) or c.confrelid = 'public.tenants'::regclass)
+      and (c.confdeltype in ('c', 'd')
+           or c.confupdtype in ('c', 'n', 'd')
+           or (c.confdeltype = 'n' and (c.confdelsetcols is null
+                or (select attnum from pg_attribute where attrelid = c.conrelid and attname = 'tenant_id') = any (c.confdelsetcols))))),
+  '', 'no foreign key cascades, sets a default, or nulls tenant_id');
+select is(
+  (select coalesce(string_agg(c.conname, ', '), '')
+     from pg_constraint c
+    where c.contype = 'f' and c.connamespace = 'public'::regnamespace
+      and c.conrelid in (select relid from tenant_tables)
+      and not exists (
+        select 1 from pg_index i
+         where i.indrelid = c.conrelid
+           and (i.indkey::int2[])[0:cardinality(c.conkey) - 1] = c.conkey)),
+  '', 'the child side of every foreign key on a tenant-owned table is indexed');
+
+-- Every tenant-owned table except the audit trail itself has an audit trigger.
+select is(
+  (select coalesce(string_agg(t.relname, ', '), '') from tenant_tables t
+    where t.relname <> 'audit_events'
+      and not exists (select 1 from pg_trigger g where g.tgrelid = t.relid and not g.tgisinternal
+                        and g.tgfoid = 'app.audit_row_change()'::regprocedure)),
+  '', 'every tenant-owned table (except audit_events) has an audit trigger');
+
+-- PII classification. audited = tables with app.audit_row_change; the trigger's 2nd argument is the
+-- PII column list; column comments 'PII: ...' / 'SAFE: ...' are the registry.
+create temp table audited as
+select c.oid as relid, c.relname,
+       coalesce((regexp_split_to_array(encode(g.tgargs, 'escape'), '\\000'))[2], '') as pii_csv
+  from pg_trigger g join pg_class c on c.oid = g.tgrelid
+ where g.tgfoid = 'app.audit_row_change()'::regprocedure and not g.tgisinternal and c.relnamespace = 'public'::regnamespace;
+
+select cmp_ok((select count(*) from audited), '>=', 8::bigint, 'audit-trigger table list is not vacuous');
+select is(
+  (select coalesce(string_agg(a.relname || '.' || at.attname, ', '), '')
+     from audited a join pg_attribute at on at.attrelid = a.relid and at.attnum > 0 and not at.attisdropped
+    where at.atttypid in ('text'::regtype, 'varchar'::regtype, 'text[]'::regtype, 'jsonb'::regtype)
+      and coalesce(col_description(a.relid, at.attnum), '') !~ '^(PII|SAFE):'),
+  '', 'every text / text[] / jsonb column of an audited table is classified PII or SAFE (free text defaults to PII)');
+select is(
+  (select coalesce(string_agg(x.relname || '.' || x.col, ', '), '') from (
+     (select a.relname, at.attname::text as col
+        from audited a join pg_attribute at on at.attrelid = a.relid and at.attnum > 0 and not at.attisdropped
+       where col_description(a.relid, at.attnum) like 'PII:%'
+      except
+      select a.relname, unnest(case when a.pii_csv = '' then '{}'::text[] else string_to_array(a.pii_csv, ',') end) from audited a)
+   ) x),
+  '', 'every column marked PII is on its table''s audit-trigger PII list (so it is never audited by value)');
+select is(
+  (select coalesce(string_agg(x.relname || '.' || x.col, ', '), '') from (
+     (select a.relname, unnest(case when a.pii_csv = '' then '{}'::text[] else string_to_array(a.pii_csv, ',') end) as col from audited a
+      except
+      select a.relname, at.attname::text
+        from audited a join pg_attribute at on at.attrelid = a.relid and at.attnum > 0 and not at.attisdropped
+       where col_description(a.relid, at.attnum) like 'PII:%')
+   ) x),
+  '', 'the audit-trigger PII lists contain only columns that are marked PII (no stale entries)');
+
+-- Registry coverage for the generic cross-tenant test (an unregistered table = a failing guard).
+select is(
+  (select coalesce(string_agg(t.relname, ', '), '') from tenant_tables t
+    where not exists (select 1 from tests.tenant_table_registry r where r.table_name = t.relname)),
+  '', 'every tenant-owned table is registered in tests.tenant_table_registry (fixture builder)');
+select is(
+  (select coalesce(string_agg(r.table_name, ', '), '') from tests.tenant_table_registry r
+    where (select count(*) from tests.role_matrix m where m.table_name = r.table_name) <> 4),
+  '', 'every registered table has a role_matrix row for each of the four roles');
+select is(
+  (select coalesce(string_agg(r.table_name, ', '), '') from tests.tenant_table_registry r
+    where not exists (select 1 from tenant_tables t where t.relname = r.table_name)),
+  '', 'the registry lists only existing tenant-owned tables');
+
+-- Keyset-pagination index where the registry says it is required.
+select is(
+  (select coalesce(string_agg(r.table_name, ', '), '') from tests.tenant_table_registry r
+    where r.keyset_index_required
+      and not exists (
+        select 1 from pg_index i
+         where i.indrelid = format('public.%I', r.table_name)::regclass
+           and (select array_agg(a.attname::text order by k.ord)
+                  from unnest(i.indkey::int2[]) with ordinality k(attnum, ord)
+                  join pg_attribute a on a.attrelid = i.indrelid and a.attnum = k.attnum)
+               = array['tenant_id', 'created_at', 'id'])),
+  '', 'every table that needs it has an index (tenant_id, created_at, id) for keyset pagination');
+
+-- The privileges granted to authenticated agree with the role matrix.
+select is(
+  (select coalesce(string_agg(r.table_name || ':' || p.priv, ', '), '') from tests.tenant_table_registry r,
+     (values ('INSERT'), ('UPDATE'), ('DELETE')) p(priv)
+    where (case p.priv when 'DELETE' then has_table_privilege('authenticated', format('public.%I', r.table_name)::regclass, 'DELETE')
+                       else has_any_column_privilege('authenticated', format('public.%I', r.table_name)::regclass, p.priv) end)
+          is distinct from (select bool_or(case p.priv when 'INSERT' then can_insert when 'UPDATE' then can_update else can_delete end)
+                              from tests.role_matrix m where m.table_name = r.table_name)),
+  '', 'authenticated holds INSERT / UPDATE / DELETE on exactly the tables the role matrix lets some role write');
+select is(
+  (select coalesce(string_agg(t.relname, ', '), '') from tenant_tables t
+    where has_column_privilege('authenticated', t.relid, 'tenant_id', 'UPDATE')),
+  '', 'no client can UPDATE tenant_id on any tenant-owned table');
+select is(
+  (select coalesce(string_agg(t.relname || '.' || a.attname || ':' || p.priv, ', '), '')
+     from tenant_tables t
+     join pg_attribute a on a.attrelid = t.relid and a.attname in ('created_by', 'created_via', 'created_at', 'updated_at')
+    cross join (values ('INSERT'), ('UPDATE')) p(priv)
+    where has_column_privilege('authenticated', t.relid, a.attname, p.priv)),
+  '', 'server-owned provenance / timestamp columns are not writable by clients on any tenant-owned table');
+
+-- Every policy on a tenant-owned table is for the authenticated role only.
+select is(
+  (select coalesce(string_agg(t.relname || '.' || p.polname, ', '), '')
+     from tenant_tables t join pg_policy p on p.polrelid = t.relid
+    where p.polroles <> array[(select oid from pg_roles where rolname = 'authenticated')]),
+  '', 'every policy on a tenant-owned table is TO authenticated only');
 
 -- ---- views bypass RLS unless security_invoker
 select is(
