@@ -1,11 +1,12 @@
 # ADR 0014: Erasure and anonymisation of personal data
 
-Status: proposed (2026-10-05). Built in T006b milestone 1; the owner approved the design decisions listed below, this text and the
-two migrations await review.
+Status: **accepted** (2026-10-05). Built in T006b milestone 1 and approved by the owner with a fix batch (migration
+`20261010090200_t006b_review_fixes.sql`: phone prefix, `www.`, statement timeout; typed confirmation on the Privacy page).
 Related: ADR 0001 (tenancy), 0005 (PII-aware audit and the consent ledger), 0008 (evidence), 0013 (agents),
 `docs/pre-pilot-checklist.md` (HARD GATE before T012).
 Code: `supabase/migrations/20261010090000_t006b_erasure_foundation.sql` (tables, registry, guards),
 `supabase/migrations/20261010090100_t006b_erasure_functions.sql` (the three functions and the scope handlers),
+`supabase/migrations/20261010090200_t006b_review_fixes.sql` (sweep patterns, statement timeout),
 `services/ai-api/app/erasure/`, `apps/web/app/app/tenants/[tenantId]/privacy/`.
 Tests: `supabase/tests/database/39..43_erasure_*.test.sql`, `tests/integration/test_erasure_direct_postgrest.py`.
 
@@ -109,10 +110,14 @@ For every registered free-text column of the workspace, except the four company 
 rewrite another business's name):
 
 * **e-mail:** a case-insensitive exact match that does not start or end inside a longer address;
-* **phone:** the last ten digits of the number, with up to two separators (space `.` `_` `(` `)` `-`) between digits, not inside a longer run of
-  digits; a number of fewer than seven digits identifies nobody and is not searched; `+91 98765 43210` leaves `+91 erased-1`;
-* **website host (company scope):** the host, case-insensitive, not inside a longer host; a host many businesses share (social pages,
-  marketplaces, site builders: `app.is_shared_host`) identifies nobody and is not searched;
+* **phone:** the last ten digits of the number, with up to two separators (space `.` `_` `(` `)` `-`) between digits, an optional attached
+  country prefix (`+91`, `91` or `0`, with optional separators), and no digit directly before the start of the whole match or after its end.
+  Swept: `+91 98765 43210`, `919876543210`, `wa.me/919876543210`, `09876543210`, `+91-9876543210`, `(98765) 43210`, `98765.43210`. Not swept:
+  `119876543210`, `987654321012`, `9876543211`. The prefix goes with the number (`call +91 98765 43210` becomes `call erased-1`). A number of
+  fewer than seven digits identifies nobody and is not searched. **Known limit: non-ASCII numerals (Telugu, Devanagari digits) are not matched.**
+* **website host (company scope):** the host, case-insensitive, with an optional `www.` in front, not inside a longer host (a subdomain is
+  a different host); a host many businesses share (social pages, marketplaces, site builders: `app.is_shared_host`) identifies nobody and is
+  not searched;
 * **name:** see "The limit of names". A name shorter than three characters is not compared at all.
 
 Another *contact* that carries the same e-mail or number in its own structured column is the same person in a duplicate record: it is
@@ -158,6 +163,16 @@ Errors follow the agent functions' contract: every refusal before the caller's r
 another tenant's request, wrong role, null id) is the same generic `42501` ("erasure action not permitted"); afterwards fixed states:
 `22023` invalid argument, `23503` invalid reference, `23505` request id already used (the same answer for another tenant's id), `SM301`
 not pending, `SM302` window not elapsed, `SM303` already executed (cannot cancel), `SM304` cancelled. No message carries a value.
+
+### Scale
+
+A workspace-wide erasure costs about 0.3 ms per row (updates, guard triggers and one audit row per change), linear (measured on the
+local stack with `scripts/scale_erasure.py`: 5,100 rows 1.3 s, 15,300 rows 4.1 s, 51,000 rows 15-16 s). The client roles have
+`statement_timeout = 8s` (hosted Supabase and local alike), which would cut the call off at about 25,000 rows, roll everything back and
+leave the request pending: safe, but it would never finish. `execute_erasure` therefore carries its own `statement_timeout = '300s'` (a
+function-level setting, honoured for the running statement: measured), good for roughly 900,000 rows; the API client waits up to 120 s.
+Above about 100,000 rows run it as the operator (runbook). Each change writes an audit row, so the audit log grows by about the number of
+changed columns.
 
 ### What stays, and what is outside
 
@@ -209,13 +224,15 @@ that holds one execute open while a second arrives.
 
 ## Open questions (for the owner; none blocks M1)
 
-1. **Re-import after erasure.** Erasing a contact removes its e-mail, so a later import of the same address creates a new contact with no
-   suppression. If the person had **opted out**, they could be contacted again. The usual remedy is a minimal, salted hash of the address
-   on a suppression list kept after erasure (a hash of an e-mail is still personal data under DPDP, though far less exposed). Not built
-   in M1; needed before any outreach (T012).
-2. **Who is the Owner when the Owner is the data principal?** A workspace whose only Owner is the person to be erased needs the operator.
-   Out of scope for M1.
-3. **Retention of the request log.** It holds no personal data and is kept.
+1. **Re-import after erasure (decided, not built).** Erasing a contact removes its e-mail and phone, so a later import of the same address
+   would create a new contact with no suppression, and a person who opted out could be contacted again. Decision: keep an **HMAC** of the
+   erased e-mail and phone (keyed, with a secret key held **outside the database**; NOT a plain salted hash, which can be brute-forced
+   over the small space of phone numbers) so a re-import is flagged as previously erased or suppressed. Not built; a **HARD GATE before the
+   first outreach (T010)**. The HMAC is arguably still personal data, so the DPDP review must cover it. The request log must never hold it.
+2. **Who is the Owner when the Owner is the data principal? (decided)** The app blocks the last Owner from erasing their own contact record
+   (ownership is transferred first); the exception goes through the operator after out-of-band identity verification, with a recorded
+   reason. Enforced and documented in T006b M2.
+3. **Retention of the request log (accepted).** It holds ids, counts and statuses only, and is kept.
 4. **A phone number shared by two people** (an office line) is swept from free text for everyone when one contact is erased; the other
    contact is listed under review. Acceptable for a family business; revisit if contacts share lines often.
 5. **Whole-field vs substring for names** (decision 3) is stated, not a bug. If the first real run shows too many manual-review rows, the

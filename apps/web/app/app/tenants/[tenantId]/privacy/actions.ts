@@ -7,7 +7,10 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import {
   cancelErasure,
+  confirmationPhrase,
   executeErasure,
+  fetchErasureRequest,
+  phraseMatches,
   requestErasure,
   type ErasureResultOut,
   type ErasureScope,
@@ -123,7 +126,10 @@ export async function previewErasureAction(
   }
 }
 
-/** Owner only. Irreversible, so the form must carry the confirmation the Owner ticked. */
+/**
+ * Owner only. Irreversible, so the Owner must type the words (ERASE plus the subject's name, or the workspace slug). The expected words
+ * are derived here, from the API, never taken from the form.
+ */
 export async function executeErasureAction(
   tenantId: string,
   requestId: string,
@@ -133,18 +139,12 @@ export async function executeErasureAction(
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(requestId))
     return { ok: false, error: "This request is not available." };
-  if (field(formData, "confirm") !== "yes")
-    return {
-      ok: false,
-      error: "Tick the box to confirm. This cannot be undone.",
-    };
   try {
-    const result = await executeErasure(
-      user.accessToken,
-      tenantId,
-      requestId,
-      false,
-    );
+    const request = await fetchErasureRequest(user.accessToken, tenantId, requestId);
+    const phrase = await confirmationPhrase(user.accessToken, tenantId, request);
+    if (!phraseMatches(field(formData, "confirm_text"), phrase))
+      return { ok: false, error: "Type the words shown exactly to confirm. This cannot be undone." };
+    const result = await executeErasure(user.accessToken, tenantId, requestId, false);
     revalidatePath(`/app/tenants/${tenantId}/privacy`);
     return { ok: true, message: "Done. The personal data was erased.", result };
   } catch (error) {

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiRequestError } from "@/lib/api/client";
@@ -13,6 +13,7 @@ const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const fetchErasureRequests = vi.fn();
 const fetchPage = vi.fn();
+const confirmationPhrase = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
@@ -26,6 +27,7 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 vi.mock("@/lib/api/erasure", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/erasure")>()),
   fetchErasureRequests: (...a: unknown[]) => fetchErasureRequests(...a),
+  confirmationPhrase: (...a: unknown[]) => confirmationPhrase(...a),
 }));
 vi.mock("@/lib/api/crm", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/crm")>()),
@@ -90,6 +92,7 @@ describe("/app/tenants/[tenantId]/privacy", () => {
     vi.stubGlobal("crypto", { randomUUID: () => FORM_ID });
     requireUser.mockResolvedValue({ id: ME, email: "e", accessToken: "tok" });
     fetchTenant.mockResolvedValue(tenant("owner"));
+    confirmationPhrase.mockResolvedValue("ERASE Asha Rao");
     fetchErasureRequests.mockResolvedValue({
       items: [request()],
       next_cursor: null,
@@ -142,7 +145,7 @@ describe("/app/tenants/[tenantId]/privacy", () => {
     expect(fetchErasureRequests).not.toHaveBeenCalled();
   });
 
-  it("the owner can ask, preview, erase (with a confirmation box) and cancel; the id comes from the page", async () => {
+  it("the owner can ask, preview, erase (with typed words) and cancel; the id comes from the page", async () => {
     render(await PrivacyPage(props()));
     expect(
       screen.getByRole("button", { name: "Request erasure" }),
@@ -156,13 +159,35 @@ describe("/app/tenants/[tenantId]/privacy", () => {
     expect(
       screen.getByRole("button", { name: "Erase now" }),
     ).toBeInTheDocument();
+    expect(screen.getByText("ERASE Asha Rao")).toBeInTheDocument();
     expect(
-      screen.getByRole("checkbox", { name: /cannot be undone/ }),
+      screen.getByRole("textbox", { name: /type ERASE Asha Rao/i }),
     ).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox")).toBeNull();
     expect(
       screen.getByRole("button", { name: "Cancel request" }),
     ).toBeInTheDocument();
     expect(screen.getByText("you")).toBeInTheDocument();
+  });
+
+  it("the erase button stays disabled until the exact words are typed", async () => {
+    render(await PrivacyPage(props()));
+    const erase = screen.getByRole("button", { name: "Erase now" });
+    const box = screen.getByRole("textbox", { name: /type ERASE Asha Rao/i });
+    expect(erase).toBeDisabled();
+    for (const wrong of ["ERASE", "erase asha rao", "ERASE Asha Rao please", "Asha Rao"]) {
+      fireEvent.change(box, { target: { value: wrong } });
+      expect(erase, wrong).toBeDisabled();
+    }
+    fireEvent.change(box, { target: { value: "ERASE  Asha Rao " } });
+    expect(erase).toBeEnabled();
+  });
+
+  it("the words are fetched only for the owner, and only for requests that are waiting", async () => {
+    fetchTenant.mockResolvedValue(tenant("admin"));
+    render(await PrivacyPage(props()));
+    expect(confirmationPhrase).not.toHaveBeenCalled();
+    expect(screen.queryByRole("textbox")).toBeNull();
   });
 
   it("an admin can ask and cancel but cannot run", async () => {

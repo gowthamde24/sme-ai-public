@@ -4,8 +4,8 @@ import type {
   PageErasureRequestOut,
 } from "@contracts";
 
-import { ApiContractError, apiRequest } from "./client";
-import { isCanonicalUuid } from "./crm";
+import { ApiContractError, apiRequest, fetchTenant } from "./client";
+import { fetchCompany, fetchContact, isCanonicalUuid } from "./crm";
 
 /**
  * Server-side client for the erasure endpoints of OUR API (T006b, ADR 0014).
@@ -196,4 +196,44 @@ export async function cancelErasure(
       { method: "POST" },
     ),
   );
+}
+
+export async function fetchErasureRequest(
+  accessToken: string,
+  tenantId: string,
+  requestId: string,
+): Promise<ErasureRequestOut> {
+  checked(tenantId, requestId);
+  return parseRequest(
+    await apiRequest(`/v1/tenants/${tenantId}/erasure-requests/${requestId}`, accessToken),
+  );
+}
+
+function collapse(text: string): string {
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/**
+ * The words the Owner must type before an erasure runs: ERASE plus the subject's display name (the contact's name, the company's
+ * name) or, for the whole workspace, its slug. Derived on the SERVER from the API, both to show it and to check what was typed: the
+ * browser is never trusted to say what the phrase is.
+ */
+export async function confirmationPhrase(
+  accessToken: string,
+  tenantId: string,
+  request: Pick<ErasureRequestOut, "scope" | "subject_id">,
+): Promise<string> {
+  checked(tenantId);
+  if (request.scope === "tenant") return `ERASE ${collapse((await fetchTenant(accessToken, tenantId)).slug)}`;
+  if (request.subject_id === null) throw new ApiContractError("subject");
+  const name =
+    request.scope === "contact"
+      ? (await fetchContact(accessToken, tenantId, request.subject_id)).full_name
+      : (await fetchCompany(accessToken, tenantId, request.subject_id)).name;
+  return `ERASE ${collapse(name)}`;
+}
+
+/** Whether what was typed is the phrase (whitespace-insensitive, case-sensitive). */
+export function phraseMatches(typed: string, phrase: string): boolean {
+  return collapse(typed) === phrase;
 }

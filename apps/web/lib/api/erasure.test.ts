@@ -3,6 +3,9 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiContractError } from "./client";
 import {
   cancelErasure,
+  confirmationPhrase,
+  fetchErasureRequest,
+  phraseMatches,
   executeErasure,
   fetchErasureRequests,
   parseRequest,
@@ -40,6 +43,41 @@ const REQUEST_JSON = {
   cancelled_by: null,
   cancelled_at: null,
   result: null,
+};
+
+const CONTACT_ROW = {
+  id: CONTACT,
+  company_id: null,
+  full_name: "x",
+  email: null,
+  phone: null,
+  job_title: null,
+  email_consent: "unknown",
+  whatsapp_consent: "unknown",
+  phone_consent: "unknown",
+  suppressed_at: null,
+  suppression_reason: null,
+  created_at: "2026-10-05T12:00:00+00:00",
+  updated_at: "2026-10-05T12:00:00+00:00",
+  archived_at: null,
+  created_via: "manual",
+  created_by: null,
+};
+const COMPANY_ROW = {
+  id: CONTACT,
+  name: "x",
+  type: "prospect",
+  website: null,
+  country: null,
+  region: null,
+  city: null,
+  industry: null,
+  tags: [],
+  created_at: "2026-10-05T12:00:00+00:00",
+  updated_at: "2026-10-05T12:00:00+00:00",
+  archived_at: null,
+  created_via: "manual",
+  created_by: null,
 };
 
 function respond(body: unknown, status = 200) {
@@ -172,5 +210,32 @@ describe("erasure API client", () => {
     await expect(executeErasure("tok", TENANT, "x", false)).rejects.toThrow(
       ApiContractError,
     );
+  });
+
+  it("reads one request", async () => {
+    const f = respond(REQUEST_JSON);
+    globalThis.fetch = f as unknown as typeof fetch;
+    expect((await fetchErasureRequest("tok", TENANT, REQ)).id).toBe(REQ);
+    expect(f.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/erasure-requests/${REQ}`);
+  });
+
+  it("builds the confirmation words from the subject's name, or the workspace slug", async () => {
+    const contact = respond({ ...CONTACT_ROW, full_name: "  Asha   Rao " });
+    globalThis.fetch = contact as unknown as typeof fetch;
+    expect(await confirmationPhrase("tok", TENANT, { scope: "contact", subject_id: CONTACT })).toBe("ERASE Asha Rao");
+    expect(contact.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/contacts/${CONTACT}`);
+    const company = respond({ ...COMPANY_ROW, name: "Acme Silks" });
+    globalThis.fetch = company as unknown as typeof fetch;
+    expect(await confirmationPhrase("tok", TENANT, { scope: "company", subject_id: CONTACT })).toBe("ERASE Acme Silks");
+    const tenant = respond({ id: TENANT, name: "Acme", slug: "acme-co", role: "owner" });
+    globalThis.fetch = tenant as unknown as typeof fetch;
+    expect(await confirmationPhrase("tok", TENANT, { scope: "tenant", subject_id: null })).toBe("ERASE acme-co");
+    await expect(confirmationPhrase("tok", TENANT, { scope: "contact", subject_id: null })).rejects.toThrow(ApiContractError);
+  });
+
+  it("matches typed words ignoring spacing but not case", () => {
+    expect(phraseMatches(" ERASE   Asha Rao", "ERASE Asha Rao")).toBe(true);
+    for (const wrong of ["erase Asha Rao", "ERASE asha rao", "ERASE Asha", "", "ERASE Asha Rao!"])
+      expect(phraseMatches(wrong, "ERASE Asha Rao")).toBe(false);
   });
 });

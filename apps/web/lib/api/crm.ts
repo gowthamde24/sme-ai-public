@@ -251,6 +251,23 @@ export async function fetchCompany(
     : bad("company");
 }
 
+/** One contact by id (404 for an unknown, malformed or foreign id). */
+export async function fetchContact(
+  accessToken: string,
+  tenantId: string,
+  contactId: string,
+): Promise<ContactRow> {
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(contactId))
+    throw new ApiContractError("id");
+  const json = await apiRequest(
+    `/v1/tenants/${tenantId}/contacts/${contactId}`,
+    accessToken,
+  );
+  return isRecord(json)
+    ? (ROW_PARSERS.contacts(json) as ContactRow)
+    : bad("contact");
+}
+
 export async function fetchLead(
   accessToken: string,
   tenantId: string,

@@ -13,6 +13,8 @@ create temp table fns as select p.oid, p.proname, p.prosecdef, p.proconfig, p.pr
 select is((select count(*) from fns), 3::bigint, 'one overload each of the three functions');
 select is((select count(*) from fns where prosecdef and 'search_path=""' = any (proconfig) and owner = 'postgres'), 3::bigint, 'SECURITY DEFINER, empty search_path, owned by the migration role');
 select is((select count(*) from fns where has_function_privilege('authenticated', oid, 'execute') and not has_function_privilege('anon', oid, 'execute')), 3::bigint, 'authenticated may execute, anon may not');
+select is((select proconfig from fns where proname = 'execute_erasure') @> array['statement_timeout=300s'], true, 'execute_erasure carries its own statement_timeout (the client roles have 8 s; a large workspace needs longer)');
+select is((select count(*) from fns where proname <> 'execute_erasure' and proconfig::text like '%statement_timeout%'), 0::bigint, 'the other two functions keep the role default');
 
 create function pg_temp.req(p_user text, p_id text, p_tenant text, p_scope text, p_subject text default null) returns text language sql as $$
   select tests.error_full_as(tests.uid(p_user), format('select public.request_erasure(%L, %L, %L, %L)', tests.rid(p_id), tests.tid(p_tenant), p_scope, case when p_subject is null then null else tests.rid(p_subject) end)) $$;

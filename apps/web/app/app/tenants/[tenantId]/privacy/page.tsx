@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
 import {
+  confirmationPhrase,
   fetchErasureRequests,
   SCOPE_LABELS,
   STATUS_LABELS,
@@ -68,8 +69,13 @@ export default async function PrivacyPage({
   let requests: PageErasureRequestOut | null = null;
   let contacts: { id: string; name: string }[] = [];
   let companies: { id: string; name: string }[] = [];
+  const phrases = new Map<string, string>();
   try {
     requests = await fetchErasureRequests(user.accessToken, tenantId);
+    if (isOwner)
+      for (const request of requests.items)
+        if (request.status === "pending")
+          phrases.set(request.id, await confirmationPhrase(user.accessToken, tenantId, request));
     const contactPage = await fetchPage(user.accessToken, tenantId, "contacts");
     if (contactPage.entity === "contacts")
       contacts = contactPage.items.map((row) => ({
@@ -185,6 +191,7 @@ export default async function PrivacyPage({
                                 tenantId,
                                 request.id,
                               )}
+                              phrase={phrases.get(request.id) ?? "ERASE"}
                             />
                           </>
                         )}

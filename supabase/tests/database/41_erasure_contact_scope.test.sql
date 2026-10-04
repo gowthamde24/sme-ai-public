@@ -45,8 +45,8 @@ select results_eq(format($$select source, disqualified_reason from public.leads 
 select is((select title from public.opportunities where id = tests.rid('a_er_opp2')), 'Call erased-1 re order', 'a phone written with a space is found');
 select is((select description from public.products where id = tests.rid('a_product')), 'Sold by erased-1', 'a product description');
 select results_eq(format($$select url, reference, snippet from public.evidence where id = %L$$, tests.rid('a_er_e1')),
-  $$values ('https://example.test/p?e=erased-1'::text, 'call:erased-1'::text, 'Mail erased-1 or call +91 erased-1 today'::text)$$, 'evidence url, reference and snippet: identifiers replaced, the shapes stay valid');
-select is((select value from public.claims where id = tests.rid('a_er_c1')), 'Phone +91 erased-1', 'a claim value with the phone written with a dash');
+  $$values ('https://example.test/p?e=erased-1'::text, 'call:erased-1'::text, 'Mail erased-1 or call erased-1 today'::text)$$, 'evidence url, reference and snippet: identifiers replaced, the shapes stay valid');
+select is((select value from public.claims where id = tests.rid('a_er_c1')), 'Phone erased-1', 'a claim value with the phone written with a dash');
 select is((select tags::text from public.companies where id = tests.rid('a_er_company2')), '{erased-1,vip}', 'a tag that is the e-mail');
 
 -- ---- names: equality is tombstoned, containment is only listed

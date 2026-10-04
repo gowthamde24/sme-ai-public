@@ -175,16 +175,30 @@ export function PreviewForm({ action }: { action: BareAction }) {
   );
 }
 
-/** Owner only. Irreversible: the box must be ticked. */
-export function ExecuteForm({ action }: { action: Action }) {
+/**
+ * Owner only. Irreversible: the Owner types the words shown (ERASE plus the subject's name, or the workspace slug). The button stays
+ * disabled until they match; the server checks the words again against what the API says, so this is only a convenience.
+ */
+export function ExecuteForm({ action, phrase }: { action: Action; phrase: string }) {
   const [state, formAction, pending] = useActionState(action, undefined);
+  const [typed, setTyped] = useState("");
+  const matches = typed.replace(/\s+/g, " ").trim() === phrase;
   return (
     <form action={formAction}>
       <label>
-        <input type="checkbox" name="confirm" value="yes" disabled={pending} />{" "}
-        I understand this cannot be undone
+        To confirm, type <strong>{phrase}</strong>. This cannot be undone.
+        <input
+          type="text"
+          name="confirm_text"
+          value={typed}
+          onChange={(event) => setTyped(event.target.value)}
+          autoComplete="off"
+          autoCapitalize="off"
+          spellCheck={false}
+          disabled={pending}
+        />
       </label>{" "}
-      <button type="submit" disabled={pending}>
+      <button type="submit" disabled={pending || !matches}>
         {pending ? "Erasing..." : "Erase now"}
       </button>
       <Result state={state} />

@@ -45,16 +45,17 @@ try {
   const prev = (await pending.locator('[role="status"]').innerText()).replace(/\s+/g, " ");
   record("P5 preview shows counts and changes nothing", /Preview only/.test(prev) && /Would change/.test(prev) && /Waiting for the owner/.test(await pending.innerText()) ? "PASS" : "FAIL", prev.slice(0, 200), s);
 
-  // erase without ticking the box
+  // erasing needs the typed words
   const ownerRow = () => page.locator("table tbody tr", { hasText: "Waiting for the owner" }).first();
-  await ownerRow().locator('button:has-text("Erase now")').click();
-  await page.waitForSelector('table [role="alert"]', { timeout: 15000 });
-  const noTick = (await page.locator('table [role="alert"]').first().innerText()).trim();
-  record("P6 erasing needs the confirmation", /Tick the box/.test(noTick) ? "PASS" : "FAIL", `message: "${noTick}"`, await shot(page, "P6-needs-confirmation"));
+  const phrase = (await ownerRow().locator("form strong").first().innerText()).trim();
+  const eraseBtn = ownerRow().locator('button:has-text("Erase now")');
+  await ownerRow().locator('input[name="confirm_text"]').fill("ERASE");
+  const wrongDisabled = await eraseBtn.isDisabled();
+  record("P6 erasing needs the typed words", wrongDisabled && phrase === `ERASE ${contactName}` ? "PASS" : "FAIL", `the button is disabled for a wrong phrase: ${wrongDisabled}; the words shown: "${phrase}" (ERASE plus the contact's name)`, await shot(page, "P6-needs-typed-words"));
 
   // erase for real
-  await ownerRow().locator('input[name="confirm"]').check();
-  await ownerRow().locator('button:has-text("Erase now")').click();
+  await ownerRow().locator('input[name="confirm_text"]').fill(phrase);
+  await eraseBtn.click();
   await page.waitForFunction(() => !/Waiting for the owner/.test(document.body.innerText), null, { timeout: 20000 });
   await page.reload();
   s = await shot(page, "P7-completed");
@@ -74,11 +75,12 @@ try {
   await page.waitForSelector('form [role="status"], form [role="alert"]', { timeout: 15000 });
   await page.reload();
   const wide = page.locator("table tbody tr", { hasText: "The whole workspace" }).filter({ hasText: "Waiting for the owner" }).first();
-  await wide.locator('input[name="confirm"]').check();
+  const widePhrase = (await wide.locator("form strong").first().innerText()).trim();
+  await wide.locator('input[name="confirm_text"]').fill(widePhrase);
   await wide.locator('button:has-text("Erase now")').click();
   await page.waitForSelector('table [role="alert"]', { timeout: 15000 });
   const windowMsg = (await page.locator('table [role="alert"]').first().innerText()).trim();
-  record("P9 a workspace erasure is refused inside 24 hours", /24 hours/.test(windowMsg) ? "PASS" : "FAIL", `message: "${windowMsg}"`, await shot(page, "P9-window"));
+  record("P9 a workspace erasure is refused inside 24 hours", /24 hours/.test(windowMsg) && /^ERASE [a-z0-9-]+$/.test(widePhrase) ? "PASS" : "FAIL", `words: "${widePhrase}" (ERASE plus the workspace slug); message: "${windowMsg}"`, await shot(page, "P9-window"));
   await wide.locator('button:has-text("Cancel request")').click();
   await page.waitForFunction(() => /Cancelled/.test(document.body.innerText), null, { timeout: 15000 });
   await page.reload();

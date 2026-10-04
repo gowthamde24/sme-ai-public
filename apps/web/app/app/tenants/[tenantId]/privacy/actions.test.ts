@@ -7,6 +7,8 @@ const requireUser = vi.fn();
 const requestErasure = vi.fn();
 const executeErasure = vi.fn();
 const cancelErasure = vi.fn();
+const fetchErasureRequest = vi.fn();
+const confirmationPhrase = vi.fn();
 const revalidatePath = vi.fn();
 
 vi.mock("next/navigation", () => ({
@@ -21,6 +23,8 @@ vi.mock("@/lib/api/erasure", async (importOriginal) => ({
   requestErasure: (...a: unknown[]) => requestErasure(...a),
   executeErasure: (...a: unknown[]) => executeErasure(...a),
   cancelErasure: (...a: unknown[]) => cancelErasure(...a),
+  fetchErasureRequest: (...a: unknown[]) => fetchErasureRequest(...a),
+  confirmationPhrase: (...a: unknown[]) => confirmationPhrase(...a),
 }));
 
 import {
@@ -60,6 +64,8 @@ describe("privacy actions", () => {
     requestErasure.mockResolvedValue({});
     executeErasure.mockResolvedValue(RESULT);
     cancelErasure.mockResolvedValue({});
+    fetchErasureRequest.mockResolvedValue({ scope: "contact", subject_id: CONTACT });
+    confirmationPhrase.mockResolvedValue("ERASE Asha Rao");
   });
 
   it("requests one contact, one company or the workspace, with the id from the form", async () => {
@@ -139,30 +145,45 @@ describe("privacy actions", () => {
     expect(revalidatePath).not.toHaveBeenCalled();
   });
 
-  it("will not erase until the box is ticked", async () => {
-    expect(
-      (await executeErasureAction(TENANT, REQ, undefined, form({})))?.ok,
-    ).toBe(false);
-    expect(
-      (
-        await executeErasureAction(
-          TENANT,
-          REQ,
-          undefined,
-          form({ confirm: "no" }),
-        )
-      )?.ok,
-    ).toBe(false);
+  it("will not erase until the exact words are typed", async () => {
+    for (const typed of [undefined, "", "ERASE", "erase asha rao", "ERASE Asha", "ERASE Someone Else", "yes"]) {
+      const res = await executeErasureAction(
+        TENANT,
+        REQ,
+        undefined,
+        form(typed === undefined ? {} : { confirm_text: typed }),
+      );
+      expect(res?.ok, String(typed)).toBe(false);
+      expect(res?.error).toMatch(/Type the words shown exactly/);
+    }
     expect(executeErasure).not.toHaveBeenCalled();
     const done = await executeErasureAction(
       TENANT,
       REQ,
       undefined,
-      form({ confirm: "yes" }),
+      form({ confirm_text: "  ERASE   Asha Rao " }),
     );
     expect(done?.ok).toBe(true);
     expect(executeErasure).toHaveBeenCalledWith("tok", TENANT, REQ, false);
     expect(revalidatePath).toHaveBeenCalled();
+  });
+
+  it("derives the expected words on the server: a phrase sent by the browser is ignored", async () => {
+    const res = await executeErasureAction(
+      TENANT,
+      REQ,
+      undefined,
+      form({ confirm_text: "ERASE forged", phrase: "ERASE forged", expected: "ERASE forged" }),
+    );
+    expect(res?.ok).toBe(false);
+    expect(confirmationPhrase).toHaveBeenCalledWith("tok", TENANT, { scope: "contact", subject_id: CONTACT });
+    expect(executeErasure).not.toHaveBeenCalled();
+  });
+
+  it("asks the API about THIS request before it asks to erase", async () => {
+    await executeErasureAction(TENANT, REQ, undefined, form({ confirm_text: "ERASE Asha Rao" }));
+    expect(fetchErasureRequest).toHaveBeenCalledWith("tok", TENANT, REQ);
+    expect(fetchErasureRequest.mock.invocationCallOrder[0]).toBeLessThan(executeErasure.mock.invocationCallOrder[0]);
   });
 
   it("cancels a request, and refuses malformed ids", async () => {
@@ -192,7 +213,7 @@ describe("privacy actions", () => {
         TENANT,
         REQ,
         undefined,
-        form({ confirm: "yes" }),
+        form({ confirm_text: "ERASE Asha Rao" }),
       );
       expect(res?.ok).toBe(false);
       expect(res?.error).toMatch(message);

@@ -117,7 +117,7 @@ class PostgrestErasureRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
         self._anon_key = anon_key
         self._client = client or httpx.Client(
-            base_url=rest_url, timeout=httpx.Timeout(30.0, connect=5.0)
+            base_url=rest_url, timeout=httpx.Timeout(120.0, connect=5.0)
         )
 
     def close(self) -> None:
