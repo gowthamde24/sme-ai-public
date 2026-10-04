@@ -80,11 +80,14 @@ select is(
 -- ================================================ the other tables follow the same rule
 insert into public.companies (id, tenant_id, name, tags) values (tests.rid('co1'), tests.tid('a'), 'Visible Trading Co', array['secret-tag-xyz']);
 update public.companies set name = 'Visible Trading Ltd', tags = array['another-secret-tag'] where id = tests.rid('co1');
+-- T006b (ADR 0014): a company's name, website, city and region are PII (a sole proprietor's business name is their name)
 select results_eq(
   format($$select old_values ->> 'name', new_values ->> 'name', metadata -> 'pii_fields_changed' from public.audit_events
            where entity_id = %L and action = 'company.update'$$, tests.rid('co1')),
-  $$values ('Visible Trading Co'::text, 'Visible Trading Ltd'::text, '["tags"]'::jsonb)$$,
-  'company: the name is audited with values, tags by name only');
+  $$values (null::text, null::text, '["name", "tags"]'::jsonb)$$,
+  'company: name and tags are audited by name only (the name is PII since ADR 0014)');
+select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and (old_values::text ~* 'visible trading|secret-tag' or new_values::text ~* 'visible trading|secret-tag')),
+  0::bigint, 'company: no business name or tag value reaches audit_events');
 insert into public.products (id, tenant_id, sku, name, description) values (tests.rid('p1'), tests.tid('a'), 'AUD-1', 'Audited Product', 'zzz-confidential-description');
 update public.products set name = 'Audited Product v2' where id = tests.rid('p1');
 select is((select new_values ->> 'name' from public.audit_events where entity_id = tests.rid('p1') and action = 'product.update'),

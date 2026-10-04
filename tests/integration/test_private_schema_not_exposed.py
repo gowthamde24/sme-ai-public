@@ -32,8 +32,19 @@ APP_FUNCTIONS = [
     "handle_new_user",
     "forbid_tenant_id_change",
     "set_updated_at",
+    # T006b (ADR 0014): the erasure internals
+    "erase_column",
+    "erasure_sweep",
+    "erase_contact",
+    "erase_company",
+    "erase_tenant",
+    "erasure_running",
+    "erasure_columns",
+    "guard_consent_update",
+    "guard_audit_update",
+    "guard_erased_row",
 ]
-HIDDEN_SCHEMAS = ["app", "auth", "extensions", "tests", "storage", "graphql_public"]
+HIDDEN_SCHEMAS = ["app", "auth", "extensions", "tests", "storage", "graphql_public", "erasure"]
 
 
 @pytest.fixture(scope="module")

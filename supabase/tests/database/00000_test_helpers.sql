@@ -337,3 +337,100 @@ end $$;
 select plan(1);
 select pass('test helpers installed');
 select * from finish();
+
+-- ============================================================================ erasure (T006b M1, ADR 0014)
+-- Plant a PII canary in EVERY column the erasure registry knows, through plain inserts/updates (the privileged session), for
+-- fixture tenant p ('a' / 'b'). Requires seed_two_tenants() and seed_crm(). Two tokens:
+--   qxjv  the PERSON: contact "Zed Qxjv", zed.qxjv@canary.test, +91 98765 43210 (digits 9876543210)
+--   kzv9  the COMPANY: "Kzv9 Silks", kzv9-silks.test, city, region, tag
+-- Row ids: tests.rid(p || '_er_<name>').
+create or replace function tests.er_plant(p text) returns void
+language plpgsql as $$
+declare
+  t uuid := tests.tid(p);
+  c uuid := tests.rid(p || '_company');
+  c2 uuid := tests.rid(p || '_er_company2');
+  k uuid := tests.rid(p || '_contact');
+  l uuid := tests.rid(p || '_lead');
+begin
+  update public.contacts set full_name = 'Zed Qxjv', email = 'zed.qxjv@canary.test', phone = '+91 98765 43210', job_title = 'Qxjv director' where id = k;
+  update public.companies set name = 'Kzv9 Silks', website = 'https://kzv9-silks.test/shop', city = 'Kzv9pur', region = 'Kzv9 State', tags = array['kzv9'] where id = c;
+  insert into public.companies (id, tenant_id, name, tags) values (c2, t, 'Other Co', array['zed.qxjv@canary.test', 'vip']);
+  insert into public.consent_events (id, tenant_id, contact_id, event_type, channel, basis, evidence_type, evidence_ref)
+  values (tests.rid(p || '_er_consent'), t, k, 'granted', 'email', 'explicit_consent', 'web_form', 'form:qxjv-9876543210');
+  update public.leads set source = 'Intro by Zed Qxjv at Kzv9 fair', disqualified_reason = 'Zed Qxjv declined' where id = l;
+  insert into public.leads (id, tenant_id, company_id, source, disqualified_reason)
+  values (tests.rid(p || '_er_lead2'), t, c2, 'fwd zed.qxjv@canary.test', 'ref 9876543210');
+  update public.opportunities set title = 'Deal Zed Qxjv', status = 'lost', lost_reason = 'Kzv9 lost it' where id = tests.rid(p || '_opp');
+  insert into public.opportunities (id, tenant_id, company_id, title) values (tests.rid(p || '_er_opp2'), t, c2, 'Call 98765 43210 re order');
+  update public.products set description = 'Sold by zed.qxjv@canary.test' where id = tests.rid(p || '_product');
+  insert into public.import_batches (id, tenant_id, label, content_sha256, row_count, rejected_count)
+  values (tests.rid(p || '_er_batch'), t, 'Zed Qxjv import', repeat('4', 64), 1, 1);
+  -- evidence
+  insert into public.evidence (id, tenant_id, kind, provider, url, reference, snippet) values
+    (tests.rid(p || '_er_e1'), t, 'web_page', 'manual', 'https://example.test/p?e=zed.qxjv@canary.test', 'call:9876543210', 'Mail zed.qxjv@canary.test or call +91 98765 43210 today'),
+    (tests.rid(p || '_er_e2'), t, 'note', 'manual', null, 'note:e2', 'Zed Qxjv'),
+    (tests.rid(p || '_er_e3'), t, 'note', 'manual', null, 'note:e3', 'Run by Zed Qxjv Textiles Ltd'),
+    (tests.rid(p || '_er_e4'), t, 'web_page', 'manual', 'https://kzv9-silks.test/c', 'doc:kzv9-cat', 'Kzv9 Silks catalogue'),
+    (tests.rid(p || '_er_e5'), t, 'note', 'manual', null, 'note:e5', 'Lead note kzv9'),
+    (tests.rid(p || '_er_e6'), t, 'note', 'manual', null, 'note:e6', 'support kzv9'),
+    (tests.rid(p || '_er_e7'), t, 'note', 'manual', null, 'note:e7', 'Kzv9 Silks'),
+    (tests.rid(p || '_er_e8'), t, 'note', 'manual', null, 'note:e8', 'Visit kzv9-silks.test for more'),
+    (tests.rid(p || '_er_e9'), t, 'note', 'manual', null, 'note:e9', 'Kzv9 Silks Pvt Ltd range');
+  -- claims
+  insert into public.claims (id, tenant_id, company_id, lead_id, predicate, value, confidence) values
+    (tests.rid(p || '_er_c1'), t, c2, null, 'exports_to', 'Phone +91 98765-43210', 'low'),
+    (tests.rid(p || '_er_c2'), t, c2, null, 'exports_to', 'zed qxjv', 'low'),
+    (tests.rid(p || '_er_c3'), t, c2, null, 'exports_to', 'Proprietor Zed Qxjv here', 'low'),
+    (tests.rid(p || '_er_c4'), t, c, null, 'exports_to', 'Kzv9 exports silk', 'low'),
+    (tests.rid(p || '_er_c5'), t, null, l, 'exports_to', 'Lead claim kzv9', 'low');
+  insert into public.evidence_links (id, tenant_id, evidence_id, company_id, lead_id, claim_id, stance) values
+    (tests.rid(p || '_er_l4'), t, tests.rid(p || '_er_e4'), c, null, null, null),
+    (tests.rid(p || '_er_l5'), t, tests.rid(p || '_er_e5'), null, l, null, null),
+    (tests.rid(p || '_er_l6'), t, tests.rid(p || '_er_e6'), null, null, tests.rid(p || '_er_c4'), 'supports');
+end $$;
+
+-- Every place a pattern still appears in tenant p, as 'table.column#row id' strings (text, text[] and jsonb columns of EVERY table with a
+-- tenant_id, registered or not). p_regex is a case-insensitive POSIX regex.
+create or replace function tests.er_hits(p text, p_regex text) returns text[]
+language plpgsql as $$
+declare
+  r record;
+  v text;
+  out text[] := '{}';
+begin
+  for r in
+    select c.table_name, c.column_name
+      from information_schema.columns c
+      join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name and t.table_type = 'BASE TABLE'
+     where c.table_schema = 'public' and c.data_type in ('text', 'character varying', 'jsonb', 'ARRAY')
+       and exists (select 1 from information_schema.columns k where k.table_schema = 'public' and k.table_name = c.table_name and k.column_name = 'tenant_id')
+     order by 1, 2
+  loop
+    execute format('select string_agg(%L || ''#'' || coalesce(to_jsonb(x)->>''id'', ''-''), '','' order by to_jsonb(x)->>''id'') from public.%I x where x.tenant_id = $1 and x.%I::text ~* $2',
+                   r.table_name || '.' || r.column_name, r.table_name, r.column_name) into v using tests.tid(p), p_regex;
+    if v is not null then
+      out := out || string_to_array(v, ',');
+    end if;
+  end loop;
+  return out;
+end $$;
+
+-- A digest of everything the tenant owns (every table with a tenant_id, every row, as text): proves "untouched".
+create or replace function tests.er_digest(p text) returns text
+language plpgsql as $$
+declare
+  r record;
+  v text;
+  acc text := '';
+begin
+  for r in
+    select c.table_name from information_schema.columns c
+      join information_schema.tables t on t.table_schema = c.table_schema and t.table_name = c.table_name and t.table_type = 'BASE TABLE'
+     where c.table_schema = 'public' and c.column_name = 'tenant_id' order by 1
+  loop
+    execute format('select coalesce(md5(string_agg(x::text, ''~'' order by x::text)), '''') from public.%I x where x.tenant_id = $1', r.table_name) into v using tests.tid(p);
+    acc := acc || r.table_name || ':' || v || ';';
+  end loop;
+  return md5(acc);
+end $$;
