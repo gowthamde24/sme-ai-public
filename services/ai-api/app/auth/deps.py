@@ -10,6 +10,7 @@ from typing import Annotated
 
 from fastapi import Depends, Request
 
+from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.crm.repository import CrmRepository
 from app.errors import ApiError, forbidden, not_found, unauthorized
@@ -30,6 +31,7 @@ class Runtime:
     crm: CrmRepository
     evidence: EvidenceRepository
     leads: LeadsRepository
+    agents: AgentsRuntime | None = None
 
 
 @dataclass(frozen=True)

@@ -7,6 +7,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel
 
+from app.agent_runs import repository as runs_repo
+from app.agent_runs.repository import PostgrestAgentRunsRepository
+from app.agent_runs.routes import router as agent_runs_router
+from app.agent_runs.wiring import build_agents_runtime
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.config import ConfigurationError, Settings, build_auth_config, get_settings
@@ -58,6 +62,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         crm=PostgrestCrmRepository(config.rest_url, config.anon_key),
         evidence=PostgrestEvidenceRepository(config.rest_url, config.anon_key),
         leads=PostgrestLeadsRepository(config.rest_url, config.anon_key),
+        agents=build_agents_runtime(settings, config),
     )
 
 
@@ -87,6 +92,17 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     crm_repo.ContactSuppressedError: ApiError(
         409, "contact_suppressed", "The contact is suppressed; lift the suppression first."
     ),
+    # Agent runs (T006). Fixed messages: no field name, no value, nothing from the data layer.
+    runs_repo.AgentsDisabledError: ApiError(
+        409, "agents_disabled", "Agents are not enabled for this workspace."
+    ),
+    runs_repo.RunLimitError: ApiError(
+        429, "run_limit_reached", "Too many agent runs. Try again later."
+    ),
+    runs_repo.TokenExpiringError: ApiError(
+        409, "token_expiring", "Your session is about to expire. Sign in again and retry."
+    ),
+    runs_repo.RunNotRunningError: ApiError(409, "run_not_running", "That run is not running."),
 }
 
 
@@ -98,18 +114,22 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
         if runtime is not None:
+            if runtime.agents is not None and runtime.agents.executor is not None:
+                runtime.agents.executor.shutdown()
             for repository in (
                 runtime.repository,
                 runtime.crm,
                 runtime.evidence,
                 runtime.leads,
+                runtime.agents.repository if runtime.agents is not None else None,
             ):
                 if isinstance(
                     repository,
                     PostgrestTenantRepository
                     | PostgrestCrmRepository
                     | PostgrestEvidenceRepository
-                    | PostgrestLeadsRepository,
+                    | PostgrestLeadsRepository
+                    | PostgrestAgentRunsRepository,
                 ):
                     repository.close()
 
@@ -136,7 +156,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_methods=["GET", "POST", "PATCH"],
+        allow_methods=["GET", "POST", "PATCH", "PUT"],
         allow_headers=["*"],
     )
 
@@ -153,6 +173,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(leads_router)
     app.include_router(evidence_router)
     app.include_router(crm_router)
+    app.include_router(agent_runs_router)
     return app
 
 

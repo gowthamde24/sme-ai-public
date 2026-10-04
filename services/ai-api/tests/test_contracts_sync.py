@@ -102,6 +102,57 @@ def test_the_label_request_carries_a_client_id_and_nothing_server_owned() -> Non
     assert "id" in create["properties"] and "id" in create["required"]
     assert create["additionalProperties"] is False
     assert not set(create["properties"]) & {
-        "tenant_id", "lead_id", "created_by", "created_via", "created_at", "score", "snapshot",
+        "tenant_id",
+        "lead_id",
+        "created_by",
+        "created_via",
+        "created_at",
+        "score",
+        "snapshot",
         "icp_version_id",
     }
+
+
+# ==== agent runs (T006) ====
+def test_agents_schema_and_typescript_are_up_to_date() -> None:
+    from app.agent_runs import contracts
+
+    assert (CONTRACTS / "agents.schema.json").read_text() == contracts.schema_text(), (
+        "run `make contracts`"
+    )
+    assert (CONTRACTS / "agents.ts").read_text() == contracts.ts_text(), "run `make contracts`"
+
+
+def test_the_barrel_exports_the_agents_types_without_duplicating_other_names() -> None:
+    import re
+
+    assert 'export * from "./agents"' in (CONTRACTS / "index.ts").read_text()
+    names = {
+        f: set(re.findall(r"export (?:interface|type) (\w+)", (CONTRACTS / f"{f}.ts").read_text()))
+        for f in ("crm", "evidence", "leads", "agents")
+    }
+    for other in ("crm", "evidence", "leads"):
+        assert not names["agents"] & names[other], f"duplicate export names with {other}"
+
+
+def test_agent_requests_forbid_unknown_and_server_owned_properties() -> None:
+    defs = json.loads((CONTRACTS / "agents.schema.json").read_text())["$defs"]
+    server_owned = {
+        "tenant_id",
+        "created_by",
+        "created_via",
+        "started_by",
+        "agent_version",
+        "agent_run_id",
+        "claim_confidence",
+        "self_review",
+        "budgets",
+        "model",
+        "provider",
+    }
+    for name in ("RunStart", "AgentSettingsIn", "ReviewIn"):
+        assert defs[name]["additionalProperties"] is False, name
+        assert not set(defs[name]["properties"]) & server_owned, name
+    for name, node in defs.items():
+        if name.endswith("Out"):
+            assert node["additionalProperties"] is False, name

@@ -73,7 +73,8 @@ select results_eq(
 -- ============================== THE ASSERTION: no PII value anywhere in the audit table
 select is(
   (select count(*) from public.audit_events a
-    where to_jsonb(a)::text ~* '(quasimodo|zephyr|98765|91234|56789|pretzel|second\.addr|qux|erasable|form:abc-999)'),
+    where a.tenant_id in (tests.tid('a'), tests.tid('b'))   -- this test's own tenants: other suites leave rows whose ids/timestamps can contain digits like 98765
+      and to_jsonb(a)::text ~* '(quasimodo|zephyr|98765|91234|56789|pretzel|second\.addr|qux|erasable|form:abc-999)'),
   0::bigint, 'no contact name, email, phone, title or evidence reference appears ANYWHERE in audit_events (whole row as text)');
 
 -- ================================================ the other tables follow the same rule
@@ -98,7 +99,8 @@ select results_eq(
   'opportunity: the status change is audited with values, the reason by name only');
 select is(
   (select count(*) from public.audit_events a
-    where to_jsonb(a)::text ~* '(secret-tag|another-secret|zzz-confidential|xylo|yara|zorblax)'),
+    where a.tenant_id in (tests.tid('a'), tests.tid('b'))   -- this test's own tenants: other suites leave rows whose ids/timestamps can contain digits like 98765
+      and to_jsonb(a)::text ~* '(secret-tag|another-secret|zzz-confidential|xylo|yara|zorblax)'),
   0::bigint, 'no tag, description, lead source/reason, opportunity title/reason value appears in audit_events');
 
 -- ===================================================== T002 behaviour is unchanged

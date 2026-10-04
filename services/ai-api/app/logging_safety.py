@@ -25,6 +25,7 @@ ROUTE_WORDS = frozenset(
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
         "evidence", "evidence-links",
         "icp-configs", "active", "import", "preview", "review-queue", "labels", "exports",
+        "agent-runs", "agent-settings", "cancel", "claims", "reviews",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }
 )  # fmt: skip

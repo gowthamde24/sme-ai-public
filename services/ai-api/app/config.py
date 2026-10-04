@@ -39,6 +39,14 @@ class Settings(BaseSettings):
     # Legacy HS256 shared secret. Only used if HS256 is explicitly listed in the algorithms.
     supabase_jwt_secret: SecretStr | None = None
 
+    # Agents (T006). OFF unless switched on here; the platform and tenant switches live in the
+    # database.
+    agents_enabled: bool = False
+    # "fake" is a scripted model for development only; it is refused outside development.
+    llm_provider: str = "fake"
+    agents_max_workers: int = 2
+    agents_max_queue: int = 8
+
     @property
     def cors_origins(self) -> list[str]:
         return [o.strip() for o in self.api_cors_origins.split(",") if o.strip()]

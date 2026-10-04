@@ -16,5 +16,6 @@ class AgentSpec:
     system_prompt: str
     turn_hints: tuple[str, ...]
     tools: tuple[Tool, ...]
+    claim_predicate: str
     max_turns: int = 4
     max_calls_per_turn: int = 5

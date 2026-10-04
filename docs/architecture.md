@@ -19,7 +19,7 @@ Email | WhatsApp | Web | Files | Tally/Zoho | APIs
 | AI/backend | Python + FastAPI (`services/ai-api`) |
 | DB/Auth/Storage | PostgreSQL via Supabase, Supabase Auth, RLS (from T002) |
 | LLM runtime | Provider-neutral adapter behind an internal interface (from T006) |
-| Agent orchestration | OpenAI Agents SDK or explicit app-owned loops; decide in T006, do not mix frameworks |
+| Agent orchestration | Explicit app-owned loop (decided in T006, ADR 0013 M2 note 1); no agent framework |
 | Durable workflows | Temporal only when multi-day approvals/retries appear. Deferred. |
 | Email | Resend or Postmark behind `EmailProvider`; benchmark one, then choose |
 | WhatsApp | Official Business Platform/BSP only. Never unofficial automation. |

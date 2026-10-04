@@ -60,3 +60,7 @@ export * from "./evidence";
 
 /** Leads contracts (T005): generated from the API models by `make contracts`. */
 export * from "./leads";
+
+/** Agent-run contracts (T006): generated from the API models by `make contracts`. An agent claim is a
+ * SUGGESTION until a human accepts it; claim values are UNTRUSTED text: render as plain text only. */
+export * from "./agents";

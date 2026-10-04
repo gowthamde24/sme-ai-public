@@ -33,4 +33,5 @@ SELFTEST = AgentSpec(
     system_prompt=SYSTEM_PROMPT,
     turn_hints=TURN_HINTS,
     tools=(WRITE_NOTE, WRITE_OBSERVATION),
+    claim_predicate="selftest.observation",
 )

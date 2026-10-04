@@ -9,6 +9,7 @@ from typing import Any
 
 from fastapi.testclient import TestClient
 
+from app.agent_runs.wiring import AgentsRuntime
 from app.auth.deps import Runtime
 from app.auth.jwt import StaticKeyProvider, TokenVerifier
 from app.config import Settings
@@ -131,6 +132,7 @@ def make_client(
     crm: FakeCrmRepository | None = None,
     evidence: FakeEvidenceRepository | None = None,
     leads: FakeLeadsRepository | None = None,
+    agents: AgentsRuntime | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -148,6 +150,7 @@ def make_client(
             crm=crm or FakeCrmRepository(),
             evidence=evidence or FakeEvidenceRepository(),
             leads=leads or FakeLeadsRepository(),
+            agents=agents,
         ),
     )
     return TestClient(app), repo

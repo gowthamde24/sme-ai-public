@@ -561,6 +561,50 @@ The owner's review of the first two migrations led to one more migration (the ap
 5. **`review_claim` locks the claim row** (after the role check, before the replay lookup), so concurrent reviews of one claim
    serialise: the review that acts last is the effective one, and an overlapping retry is a replay, not "review id already used".
 
+## M2 implementation notes (T006 milestone 2, runtime and API)
+
+Code: `services/ai-api/app/agents/` (the sandbox), `services/ai-api/app/agent_runs/` (the HTTP side). Where it decides a detail
+the ADR left open:
+
+1. **Orchestration is an explicit, app-owned loop** (`app/agents/runtime.py`), no agent framework: one run is at most four turns;
+   each turn re-reads the run (status, cancel flag, expiry) before the model call, records usage, then handles what the model
+   asked for. The model can only ASK: a tool call is looked up by exact name in the agent's own allowlist, its arguments are parsed
+   with a closed schema (`extra=forbid`), and what happens is a call to one of the definer functions, which re-check everything.
+   An unknown tool or invalid arguments is recorded as a `refused_call` step (a fixed name, never the model's text). Extra calls
+   beyond five per turn are ignored.
+2. **The runtime is a sandbox**, enforced by reading its source (`tests/test_agents_boundary.py`): `app/agents` imports nothing
+   from the application except itself (no auth, tenancy, repository, review or configuration code), `httpx` appears only in `db.py`
+   and the model adapter, the user's token is a word only `db.py` may use, and there is no environment access, process, socket or
+   dynamic code.
+3. **What a model may see is a constant allowlist** (`app/agents/inputs.py`): company name, city, region and website HOST. No
+   contact field, no note, no raw cell, no tag, no evidence snippet. The input is hashed into `agent_runs.input_sha256` at start;
+   the runtime recomputes it from its own read and fails the run (`tool_failed`) if the company changed in between.
+4. **Untrusted data is delimited, never in the system role** (`app/agents/prompts.py`): one UNTRUSTED block between a per-run
+   random delimiter that the content cannot contain, values flattened to one line with control characters removed. Only fixed
+   phrases (`app/agents/notes.py`) flow back to the model as trusted text: never a database message, a model reply or an
+   exception.
+5. **Step keys are deterministic** (`usage-N`, `tN-cI`), so a restarted runner replays instead of repeating (proved on the real
+   stack: crash after turn 2, a second runner resumes, no second note, usage not charged twice).
+6. **Execution is an in-process bounded pool** (`app/agent_runs/executor.py`): workers plus a small queue, `ExecutorBusy` when full
+   (the start answers 503 `agents_busy` and creates nothing). The task holds the starter's token (not in `repr`, never logged, not
+   passed to a tool). A restart loses the runs in flight; they read as `expired` lazily. No sweeper, so no privileged principal.
+7. **Fail-closed configuration.** `AGENTS_ENABLED` defaults to false (the platform and tenant switches live in the database
+   regardless). `LLM_PROVIDER=fake` (a scripted model, development only) is refused outside development at startup; an unknown
+   provider is refused. When agents cannot run, everything that only reads the database still works and a start answers 503
+   `agents_unavailable`.
+8. **API errors are fixed.** The agent repository classifies by SQLSTATE alone; any SQLSTATE nobody planned for (22003, XX000, a
+   new one) becomes ONE fixed upstream error, and no database text reaches a response, a log line or an exception. A generic
+   `42501` on a review is a 404 (no existence oracle). New fixed codes: `agents_disabled` 409, `run_limit_reached` 429,
+   `token_expiring` 409, `run_not_running` 409, `agents_unavailable` 503, `agents_busy` 503.
+9. **Endpoints** (`/v1/tenants/{id}/...`): `POST agent-runs` (Sales+, client id, 202; replay 200; conflict 409), `GET agent-runs`,
+   `GET agent-runs/{id}`, `POST agent-runs/{id}/cancel`, `GET/PUT agent-settings` (read: any member; write: Owner/Admin),
+   `GET companies|leads/{id}/claims` (the effective view: `unreviewed`, `accepted`, `rejected`), `POST claims/{id}/reviews`
+   (Owner/Admin, idempotent on the client id). There is no endpoint for the platform switch and none that takes a tenant, an
+   origin or a confidence from a body.
+10. **Every database read added in M2 has a real-stack test** (`tests/integration/test_agent_runs_api.py`): the run row, the
+    target's four columns (company and lead), the settings row, the `claims_effective` view. Mutation checks confirm that a column
+    the table or view does not have passes the mocked tests and fails the real-stack ones.
+
 ## Resolved questions (the open questions of the proposal)
 
 | # | Question | Decision |

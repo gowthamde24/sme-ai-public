@@ -1,0 +1,557 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "agents.schema.json",
+  "title": "Agent run API contracts (T006)",
+  "description": "Generated from services/ai-api/app/agent_runs/models.py by `make contracts`. An agent claim is a SUGGESTION until a human accepts it: show it as 'agent suggestion, unreviewed'. Claim values are UNTRUSTED text: show them as plain text. Requests forbid unknown properties: a tenant, an origin, a confidence of the agent's own or a provider can never be sent.",
+  "$defs": {
+    "AgentSettingsIn": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "title": "AgentSettingsIn",
+      "type": "object"
+    },
+    "AgentSettingsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "title": "AgentSettingsOut",
+      "type": "object"
+    },
+    "CancelOut": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled",
+            "expired",
+            "killed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "status",
+        "replayed"
+      ],
+      "title": "CancelOut",
+      "type": "object"
+    },
+    "ClaimSuggestionOut": {
+      "additionalProperties": false,
+      "description": "A claim with its effective review state. An agent claim is a SUGGESTION until a human\naccepts it.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Company Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "predicate": {
+          "title": "Predicate",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        },
+        "confidence": {
+          "enum": [
+            "unverified",
+            "low",
+            "medium",
+            "high"
+          ],
+          "title": "Confidence",
+          "type": "string"
+        },
+        "claim_confidence": {
+          "enum": [
+            "unverified",
+            "low",
+            "medium",
+            "high"
+          ],
+          "title": "Claim Confidence",
+          "type": "string"
+        },
+        "created_via": {
+          "enum": [
+            "manual",
+            "import",
+            "agent"
+          ],
+          "title": "Created Via",
+          "type": "string"
+        },
+        "agent_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Agent Run Id"
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "review_state": {
+          "enum": [
+            "not_applicable",
+            "unreviewed",
+            "accepted",
+            "rejected"
+          ],
+          "title": "Review State",
+          "type": "string"
+        },
+        "review_confidence": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Review Confidence"
+        },
+        "reviewed_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reviewed By"
+        },
+        "reviewed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reviewed At"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "lead_id",
+        "predicate",
+        "value",
+        "confidence",
+        "claim_confidence",
+        "created_via",
+        "agent_run_id",
+        "created_by",
+        "created_at",
+        "review_state",
+        "review_confidence",
+        "reviewed_by",
+        "reviewed_at"
+      ],
+      "title": "ClaimSuggestionOut",
+      "type": "object"
+    },
+    "Page_RunOut_": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/RunOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "Page[RunOut]",
+      "type": "object"
+    },
+    "ReviewIn": {
+      "additionalProperties": false,
+      "description": "A human's decision on one agent claim. Mirrors the database rules; the database remains\nthe authority.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "decision": {
+          "enum": [
+            "accepted",
+            "rejected"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "confidence": {
+          "anyOf": [
+            {
+              "enum": [
+                "low",
+                "medium",
+                "high"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Confidence"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "incorrect",
+                "unsupported_by_evidence",
+                "outdated",
+                "duplicate",
+                "not_relevant"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        }
+      },
+      "required": [
+        "id",
+        "decision"
+      ],
+      "title": "ReviewIn",
+      "type": "object"
+    },
+    "ReviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "review_id": {
+          "format": "uuid",
+          "title": "Review Id",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        },
+        "self_review": {
+          "title": "Self Review",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "review_id",
+        "replayed",
+        "self_review"
+      ],
+      "title": "ReviewOut",
+      "type": "object"
+    },
+    "RunOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "agent_name": {
+          "title": "Agent Name",
+          "type": "string"
+        },
+        "agent_version": {
+          "title": "Agent Version",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled",
+            "expired",
+            "killed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "started_by": {
+          "format": "uuid",
+          "title": "Started By",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Company Id"
+        },
+        "lead_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Id"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "expires_at": {
+          "format": "date-time",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "finished_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Finished At"
+        },
+        "error_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "budget",
+                "expired",
+                "killed",
+                "cancelled",
+                "disabled",
+                "tool_failed",
+                "model_failed",
+                "invalid_output"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Error Code"
+        },
+        "cancel_requested": {
+          "title": "Cancel Requested",
+          "type": "boolean"
+        },
+        "max_writes": {
+          "title": "Max Writes",
+          "type": "integer"
+        },
+        "writes_used": {
+          "title": "Writes Used",
+          "type": "integer"
+        },
+        "max_tool_calls": {
+          "title": "Max Tool Calls",
+          "type": "integer"
+        },
+        "tool_calls_used": {
+          "title": "Tool Calls Used",
+          "type": "integer"
+        },
+        "max_input_tokens": {
+          "title": "Max Input Tokens",
+          "type": "integer"
+        },
+        "input_tokens_used": {
+          "title": "Input Tokens Used",
+          "type": "integer"
+        },
+        "max_output_tokens": {
+          "title": "Max Output Tokens",
+          "type": "integer"
+        },
+        "output_tokens_used": {
+          "title": "Output Tokens Used",
+          "type": "integer"
+        },
+        "max_cost_micros": {
+          "title": "Max Cost Micros",
+          "type": "integer"
+        },
+        "cost_micros_used": {
+          "title": "Cost Micros Used",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "agent_name",
+        "agent_version",
+        "status",
+        "started_by",
+        "company_id",
+        "lead_id",
+        "created_at",
+        "expires_at",
+        "finished_at",
+        "error_code",
+        "cancel_requested",
+        "max_writes",
+        "writes_used",
+        "max_tool_calls",
+        "tool_calls_used",
+        "max_input_tokens",
+        "input_tokens_used",
+        "max_output_tokens",
+        "output_tokens_used",
+        "max_cost_micros",
+        "cost_micros_used"
+      ],
+      "title": "RunOut",
+      "type": "object"
+    },
+    "RunStart": {
+      "additionalProperties": false,
+      "description": "Start one run of one agent on one company or lead. The id is chosen by the caller\n(idempotent start).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "agent": {
+          "const": "selftest",
+          "title": "Agent",
+          "type": "string"
+        },
+        "target_kind": {
+          "enum": [
+            "company",
+            "lead"
+          ],
+          "title": "Target Kind",
+          "type": "string"
+        },
+        "target_id": {
+          "format": "uuid",
+          "title": "Target Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "agent",
+        "target_kind",
+        "target_id"
+      ],
+      "title": "RunStart",
+      "type": "object"
+    }
+  }
+}
