@@ -8,6 +8,7 @@ Authorization order:
   5. PostgREST / Postgres RLS decides
 """
 
+import logging
 import uuid
 from typing import Annotated, Any
 
@@ -30,6 +31,8 @@ from app.leads.models import (
 )
 from app.leads.review import MAX_EVIDENCE_INPUTS, score_inputs
 from app.tenancy.models import Role
+
+audit_log = logging.getLogger("app.leads.audit")
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}")
 
@@ -161,14 +164,29 @@ def get_review_queue(
     score_band: str | None = Query(default=None),
     blind: bool = Query(default=True),
 ) -> Page[ReviewQueueLeadOut]:
+    """Blind review is the default: scores of leads the CALLER has not labelled are hidden, the
+    order does not depend on any score, and a score band cannot be requested. `blind=false` is a
+    deliberate opt-in, and every such request is logged (who, which tenant; nothing else)."""
+    if blind and score_band is not None:
+        raise ApiError(
+            422,
+            "score_band_requires_unblinded_view",
+            "A score band can only be requested with blind=false.",
+        )
     try:
         decoded = decode_cursor(cursor) if cursor else None
     except CursorError:
         raise ApiError(422, "invalid_cursor", "Invalid pagination cursor.") from None
 
+    if not blind:
+        audit_log.info(
+            "non_blind_review_queue tenant=%s user=%s", ctx.tenant.id, ctx.principal.user_id
+        )
+
     return runtime.leads.get_review_queue(
         ctx.principal.token,
         ctx.tenant.id,
+        caller_id=ctx.principal.user_id,
         limit=limit,
         cursor=decoded,
         score_band=score_band,
@@ -274,6 +292,7 @@ def list_lead_labels(
     return runtime.leads.list_lead_labels(
         ctx.principal.token,
         ctx.tenant.id,
+        viewer_id=ctx.principal.user_id,
         lead_id=lid,
         limit=limit,
         cursor=decoded,

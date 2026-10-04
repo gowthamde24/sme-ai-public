@@ -8,6 +8,8 @@ from __future__ import annotations
 
 import logging
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any, Protocol
 
 import httpx
@@ -27,13 +29,27 @@ from app.leads.models import (
     LeadLabelOut,
     ReviewQueueLeadOut,
 )
-from app.leads.review import score_inputs
+from app.leads.review import hide_scores, score_inputs
 from app.tenancy.repository import UpstreamError
 
 logger = logging.getLogger("app.leads.repository")
 
 _ICP_FIELDS = ",".join(IcpConfigOut.model_fields)
 _LABEL_FIELDS = ",".join(LeadLabelOut.model_fields)
+_QUEUE_LEAD_SELECT = (
+    "id,tenant_id,status,source,created_at,company_id,contact_id,"
+    "company:companies(id,name,city,region,country,industry,tags,type,website),"
+    "contact:contacts!leads_tenant_id_contact_id_fkey(id,full_name,email,phone,job_title)"
+)
+# A band-filtered scan reads at most this many pages of leads per request.
+MAX_SCAN_PAGES = 10
+
+
+@dataclass
+class _QueueContext:
+    claims: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
+    evidence: dict[str, list[dict[str, Any]]] = field(default_factory=dict)
+    own_labels: dict[str, LeadLabelOut] = field(default_factory=dict)
 
 
 class LeadsRepository(Protocol):
@@ -82,7 +98,8 @@ class LeadsRepository(Protocol):
         token: str,
         tenant_id: uuid.UUID,
         *,
-        lead_id: uuid.UUID | None,
+        viewer_id: uuid.UUID,
+        lead_id: uuid.UUID,
         limit: int,
         cursor: tuple[str, uuid.UUID] | None,
     ) -> Page[LeadLabelOut]: ...
@@ -92,6 +109,7 @@ class LeadsRepository(Protocol):
         token: str,
         tenant_id: uuid.UUID,
         *,
+        caller_id: uuid.UUID,
         limit: int,
         cursor: tuple[str, uuid.UUID] | None,
         score_band: str | None,
@@ -312,18 +330,21 @@ class PostgrestLeadsRepository:
         token: str,
         tenant_id: uuid.UUID,
         *,
-        lead_id: uuid.UUID | None,
+        viewer_id: uuid.UUID,
+        lead_id: uuid.UUID,
         limit: int,
         cursor: tuple[str, uuid.UUID] | None,
     ) -> Page[LeadLabelOut]:
+        """A lead's label history, newest first. Blind review applies here too: until the VIEWER
+        has labelled this lead themselves, other reviewers' labels show their verdict but not the
+        score, score ceiling or factor snapshot stored with them."""
         params: dict[str, str] = {
             "tenant_id": f"eq.{tenant_id}",
+            "lead_id": f"eq.{lead_id}",
             "order": "created_at.desc,id.desc",
             "limit": str(limit + 1),
             "select": _LABEL_FIELDS,
         }
-        if lead_id:
-            params["lead_id"] = f"eq.{lead_id}"
         if cursor:
             created_at, cid = cursor
             params["or"] = (
@@ -340,8 +361,10 @@ class PostgrestLeadsRepository:
 
         rows = resp.json()
         has_more = len(rows) > limit
-        page_rows = rows[:limit]
-        items = [LeadLabelOut.model_validate(r) for r in page_rows]
+        items = [LeadLabelOut.model_validate(r) for r in rows[:limit]]
+
+        if items and not self._viewer_has_labelled(token, tenant_id, lead_id, viewer_id, items):
+            items = [hide_scores(item) for item in items]
 
         next_cursor = None
         if has_more and items:
@@ -350,176 +373,224 @@ class PostgrestLeadsRepository:
 
         return Page(items=items, next_cursor=next_cursor)
 
+    def _viewer_has_labelled(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        lead_id: uuid.UUID,
+        viewer_id: uuid.UUID,
+        page: list[LeadLabelOut],
+    ) -> bool:
+        if any(item.created_by == viewer_id for item in page):
+            return True
+        resp = self._client.get(
+            f"{self._url}/lead_labels",
+            headers=self._headers(token),
+            params={
+                "tenant_id": f"eq.{tenant_id}",
+                "lead_id": f"eq.{lead_id}",
+                "created_by": f"eq.{viewer_id}",
+                "select": "id",
+                "limit": "1",
+            },
+        )
+        if resp.status_code != 200:
+            raise self._error(resp)
+        return bool(resp.json())
+
     # ------------------------------------------------------------------------- Review Queue
     def get_review_queue(
         self,
         token: str,
         tenant_id: uuid.UUID,
         *,
+        caller_id: uuid.UUID,
         limit: int,
         cursor: tuple[str, uuid.UUID] | None,
         score_band: str | None,
         include_blind_scores: bool,
     ) -> Page[ReviewQueueLeadOut]:
-        lead_select = (
-            "id,tenant_id,status,source,created_at,company_id,contact_id,"
-            "company:companies(id,name,city,region,country,industry,tags,type,website),"
-            "contact:contacts!leads_tenant_id_contact_id_fkey(id,full_name,email,phone,job_title)"
+        """One page of the queue, always newest first by (created_at, id): the order is
+        independent of every score.
+
+        Blind review (include_blind_scores=False, the default): a lead's score, band and factor
+        snapshot are shown only for leads the CALLER has labelled; another reviewer's label
+        changes nothing for this caller, and a score band cannot be requested at all (filtering on
+        a hidden value would reveal it). The non-blind view is a deliberate opt-in.
+        """
+        if score_band is not None and not include_blind_scores:
+            raise ValueError("a score band can only be requested in a non-blind view")
+
+        active_icp = self.get_active_icp_config(token, tenant_id)
+        # Without a filter one extra row tells us whether another page exists. With a filter some
+        # rows are dropped, so scan forward (bounded) until a full page and one more has matched.
+        page_size = limit + 1 if score_band is None else max(2 * limit, 50)
+        matched: list[ReviewQueueLeadOut] = []
+        position = cursor
+        scan_cursor: tuple[str, uuid.UUID] | None = None
+        exhausted = False
+        for _ in range(MAX_SCAN_PAGES):
+            rows = self._lead_page(token, tenant_id, position, page_size)
+            context = self._scoring_context(token, tenant_id, rows, caller_id)
+            for row in rows:
+                item = self._queue_item(row, context, active_icp, include_blind_scores)
+                position = (row["created_at"], uuid.UUID(row["id"]))
+                if score_band is None or item.score_band == score_band:
+                    matched.append(item)
+                if len(matched) > limit:
+                    break
+            if len(matched) > limit or len(rows) < page_size:
+                exhausted = len(matched) <= limit
+                break
+            scan_cursor = position
+        else:
+            exhausted = False
+
+        if len(matched) > limit:
+            items = matched[:limit]
+            last = items[-1]
+            return Page(items=items, next_cursor=encode_cursor(last.created_at, last.lead_id))
+        if exhausted:
+            return Page(items=matched, next_cursor=None)
+        # scan budget spent with rows left: resume after the last row looked at
+        resume = scan_cursor or cursor
+        return Page(
+            items=matched,
+            next_cursor=(
+                encode_cursor(datetime.fromisoformat(resume[0]), resume[1]) if resume else None
+            ),
         )
+
+    def _lead_page(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        position: tuple[str, uuid.UUID] | None,
+        size: int,
+    ) -> list[dict[str, Any]]:
         params: dict[str, str] = {
             "tenant_id": f"eq.{tenant_id}",
             "archived_at": "is.null",
             "order": "created_at.desc,id.desc",
-            "limit": str(limit * 2),  # overfetch to allow post-scoring band filtering
-            "select": lead_select,
+            "limit": str(size),
+            "select": _QUEUE_LEAD_SELECT,
         }
-        if cursor:
-            created_at, lid = cursor
+        if position:
+            created_at, lid = position
             params["or"] = (
                 f"(created_at.lt.{created_at},and(created_at.eq.{created_at},id.lt.{lid}))"
             )
-
-        resp = self._client.get(
-            f"{self._url}/leads",
-            headers=self._headers(token),
-            params=params,
-        )
+        resp = self._client.get(f"{self._url}/leads", headers=self._headers(token), params=params)
         if resp.status_code != 200:
             raise self._error(resp)
+        rows: list[dict[str, Any]] = resp.json()
+        return rows
 
-        lead_rows = resp.json()
+    def _scoring_context(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        lead_rows: list[dict[str, Any]],
+        caller_id: uuid.UUID,
+    ) -> _QueueContext:
+        """Everything the score of these leads depends on, plus the CALLER's own labels. A failed
+        read raises: scoring with some inputs missing would silently under-report a lead."""
+        context = _QueueContext()
         if not lead_rows:
-            return Page(items=[], next_cursor=None)
-
-        # 1. Fetch active ICP config
-        active_icp = self.get_active_icp_config(token, tenant_id)
-
-        # 2. Fetch newest claims for companies
-        comp_ids = list({r["company_id"] for r in lead_rows if r.get("company_id")})
-        claims_by_company: dict[str, list[dict[str, Any]]] = {}
-        if comp_ids:
-            cresp = self._client.get(
+            return context
+        company_ids = sorted({str(r["company_id"]) for r in lead_rows if r.get("company_id")})
+        lead_ids = [str(r["id"]) for r in lead_rows]
+        if company_ids:
+            resp = self._client.get(
                 f"{self._url}/claims",
                 headers=self._headers(token),
                 params={
                     "tenant_id": f"eq.{tenant_id}",
-                    "company_id": f"in.({','.join(str(cid) for cid in comp_ids)})",
+                    "company_id": f"in.({','.join(company_ids)})",
                     "archived_at": "is.null",
                     "order": CLAIM_ORDER,
                     "select": CLAIM_SELECT,
                 },
             )
-            if cresp.status_code == 200:
-                for c in cresp.json():
-                    cid = c.get("company_id")
-                    if cid:
-                        claims_by_company.setdefault(str(cid), []).append(c)
+            if resp.status_code != 200:
+                raise self._error(resp)
+            for claim in resp.json():
+                context.claims.setdefault(str(claim["company_id"]), []).append(claim)
 
-        # 3. Fetch evidence links for leads
-        lead_ids = [r["id"] for r in lead_rows]
-        evidence_by_lead: dict[str, list[dict[str, Any]]] = {}
-        if lead_ids:
-            eresp = self._client.get(
-                f"{self._url}/evidence_links",
-                headers=self._headers(token),
-                params={
-                    "tenant_id": f"eq.{tenant_id}",
-                    "lead_id": f"in.({','.join(str(lid) for lid in lead_ids)})",
-                    "archived_at": "is.null",
-                    "order": "created_at.desc,id.desc",
-                    "select": "lead_id,evidence:evidence(kind,url)",
-                },
+        resp = self._client.get(
+            f"{self._url}/evidence_links",
+            headers=self._headers(token),
+            params={
+                "tenant_id": f"eq.{tenant_id}",
+                "lead_id": f"in.({','.join(lead_ids)})",
+                "archived_at": "is.null",
+                "order": "created_at.desc,id.desc",
+                "select": "lead_id,evidence:evidence(kind,url)",
+            },
+        )
+        if resp.status_code != 200:
+            raise self._error(resp)
+        for link in resp.json():
+            if link.get("lead_id") and link.get("evidence"):
+                context.evidence.setdefault(str(link["lead_id"]), []).append(link["evidence"])
+
+        # Only the caller's own labels: another reviewer's label must neither unblind a lead for
+        # this caller nor appear (with its stored score) in their queue.
+        resp = self._client.get(
+            f"{self._url}/lead_labels",
+            headers=self._headers(token),
+            params={
+                "tenant_id": f"eq.{tenant_id}",
+                "lead_id": f"in.({','.join(lead_ids)})",
+                "created_by": f"eq.{caller_id}",
+                "order": "created_at.desc,id.desc",
+                "select": _LABEL_FIELDS,
+            },
+        )
+        if resp.status_code != 200:
+            raise self._error(resp)
+        for row in resp.json():
+            lead_key = str(row["lead_id"])
+            if lead_key not in context.own_labels:  # newest first: keep the newest
+                context.own_labels[lead_key] = LeadLabelOut.model_validate(row)
+        return context
+
+    @staticmethod
+    def _queue_item(
+        row: dict[str, Any],
+        context: _QueueContext,
+        active_icp: IcpConfigOut | None,
+        include_blind_scores: bool,
+    ) -> ReviewQueueLeadOut:
+        lead_key = str(row["id"])
+        company = row.get("company") or {}
+        contact = row.get("contact")
+        own_label = context.own_labels.get(lead_key)
+        result = (
+            score_inputs(
+                active_icp.config,
+                company,
+                contact,
+                context.claims.get(str(row.get("company_id")), []),
+                context.evidence.get(lead_key, []),
             )
-            if eresp.status_code == 200:
-                for el in eresp.json():
-                    lid = el.get("lead_id")
-                    ev = el.get("evidence")
-                    if lid and ev:
-                        evidence_by_lead.setdefault(str(lid), []).append(ev)
-
-        # 4. Fetch latest labels for these leads
-        labels_by_lead: dict[str, LeadLabelOut] = {}
-        if lead_ids:
-            lresp = self._client.get(
-                f"{self._url}/lead_labels",
-                headers=self._headers(token),
-                params={
-                    "tenant_id": f"eq.{tenant_id}",
-                    "lead_id": f"in.({','.join(str(lid) for lid in lead_ids)})",
-                    "order": "created_at.desc",
-                    "select": _LABEL_FIELDS,
-                },
-            )
-            if lresp.status_code == 200:
-                for row in lresp.json():
-                    lid = row.get("lead_id")
-                    if lid and str(lid) not in labels_by_lead:
-                        try:
-                            labels_by_lead[str(lid)] = LeadLabelOut.model_validate(row)
-                        except ValidationError:
-                            pass
-
-        # 5. Score and filter leads
-        queue_items: list[ReviewQueueLeadOut] = []
-        for r in lead_rows:
-            lid = r["id"]
-            company = r.get("company") or {}
-            contact = r.get("contact")
-            comp_claims = claims_by_company.get(str(r.get("company_id")), [])
-            lead_evidence = evidence_by_lead.get(str(lid), [])
-
-            score_val = None
-            max_reachable = None
-            band_val = None
-            snap_val = None
-
-            if active_icp:
-                sc_res = score_inputs(
-                    active_icp.config, company, contact, comp_claims, lead_evidence
-                )
-                score_val = sc_res.score
-                max_reachable = sc_res.score_max_reachable
-                band_val = sc_res.band
-                snap_val = sc_res.to_snapshot()
-
-            if score_band and band_val != score_band:
-                continue
-
-            latest_lbl = labels_by_lead.get(str(lid))
-
-            # Blind scoring: if not include_blind_scores and lead is unlabeled, hide score
-            visible_score = score_val if (include_blind_scores or latest_lbl is not None) else None
-            visible_max = (
-                max_reachable if (include_blind_scores or latest_lbl is not None) else None
-            )
-            visible_band = band_val if (include_blind_scores or latest_lbl is not None) else None
-            visible_snap = snap_val if (include_blind_scores or latest_lbl is not None) else None
-
-            queue_items.append(
-                ReviewQueueLeadOut(
-                    lead_id=r["id"],
-                    status=r["status"],
-                    source=r.get("source"),
-                    created_at=r["created_at"],
-                    company=company,
-                    contact=contact,
-                    latest_label=latest_lbl,
-                    score=visible_score,
-                    score_max_reachable=visible_max,
-                    score_band=visible_band,
-                    snapshot=visible_snap,
-                )
-            )
-            if len(queue_items) == limit:
-                break
-
-        has_more = len(queue_items) == limit and len(lead_rows) > limit
-        next_cursor = None
-        if has_more and queue_items:
-            last = queue_items[-1]
-            next_cursor = encode_cursor(last.created_at, last.lead_id)
-
-        return Page(items=queue_items, next_cursor=next_cursor)
+            if active_icp
+            else None
+        )
+        visible = result if (include_blind_scores or own_label is not None) else None
+        return ReviewQueueLeadOut(
+            lead_id=row["id"],
+            status=row["status"],
+            source=row.get("source"),
+            created_at=row["created_at"],
+            company=company,
+            contact=contact,
+            latest_label=own_label,
+            score=visible.score if visible else None,
+            score_max_reachable=visible.score_max_reachable if visible else None,
+            score_band=visible.band if visible else None,
+            snapshot=visible.to_snapshot() if visible else None,
+        )
 
     # ------------------------------------------------------------------------- Exports
     def record_data_export(

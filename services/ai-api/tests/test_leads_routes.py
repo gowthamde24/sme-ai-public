@@ -418,6 +418,57 @@ def test_review_queue_blind_scoring(env: Env) -> None:
     validate(items[0], "ReviewQueueLeadOut")
 
 
+def test_review_queue_refuses_a_score_band_while_blind(env: Env) -> None:
+    """A band filter on a hidden value is an oracle for it. Blind is the default."""
+    base = env.base_url()
+    for params in ("?score_band=priority", "?score_band=priority&blind=true"):
+        res = env.client.get(f"{base}/leads/review-queue{params}", headers=auth("a_sales"))
+        assert res.status_code == 422, params
+        assert res.json()["error"]["code"] == "score_band_requires_unblinded_view"
+    assert env.leads.queue_calls == [], "refused before anything is fetched"
+
+    res = env.client.get(
+        f"{base}/leads/review-queue?score_band=priority&blind=false", headers=auth("a_sales")
+    )
+    assert res.status_code == 200
+    assert env.leads.queue_calls[-1]["score_band"] == "priority"
+
+
+def test_review_queue_is_scoped_to_the_calling_reviewer(env: Env) -> None:
+    from tests.fakes import USERS
+
+    base = env.base_url()
+    for user in ("a_sales", "a_admin", "a_viewer"):
+        assert env.client.get(f"{base}/leads/review-queue", headers=auth(user)).status_code == 200
+        assert env.leads.queue_calls[-1]["caller_id"] == USERS[user]
+        assert env.leads.queue_calls[-1]["include_blind_scores"] is False
+    env.client.get(f"{base}/leads/{uuid.uuid4()}/labels", headers=auth("a_sales"))
+    lead_id = uuid.uuid4()
+    env.crm.seed("leads", TENANT_A.id, lead_id, company_id=str(uuid.uuid4()))
+    env.client.get(f"{base}/leads/{lead_id}/labels", headers=auth("a_viewer"))
+    assert env.leads.label_list_viewers == [USERS["a_viewer"]]
+
+
+def test_a_non_blind_view_is_recorded_without_leaking_anything(
+    env: Env, caplog: pytest.LogCaptureFixture
+) -> None:
+    from tests.fakes import USERS
+
+    base = env.base_url()
+    with caplog.at_level("INFO", logger="app.leads.audit"):
+        env.client.get(f"{base}/leads/review-queue", headers=auth("a_sales"))
+        env.client.get(f"{base}/leads/review-queue?blind=true", headers=auth("a_sales"))
+        assert [r for r in caplog.records if r.name == "app.leads.audit"] == []
+        env.client.get(
+            f"{base}/leads/review-queue?blind=false&score_band=priority", headers=auth("a_admin")
+        )
+    (record,) = [r for r in caplog.records if r.name == "app.leads.audit"]
+    text = record.getMessage()
+    assert "non_blind_review_queue" in text
+    assert str(TENANT_A.id) in text and str(USERS["a_admin"]) in text
+    assert "priority" not in text and "Authorization" not in text
+
+
 # ============================================================================= Data Export
 def test_export_csv_and_json(env: Env) -> None:
     base = env.base_url()

@@ -225,6 +225,28 @@ describe("ReviewQueuePage", () => {
     );
   });
 
+  it("never asks for a score band, or offers band filters, while blind", async () => {
+    render(await ReviewQueuePage(props({ query: { score_band: "priority" } })));
+    const options = fetchReviewQueue.mock.calls[0][2];
+    expect(options.blind).toBe(true);
+    expect(options.score_band).toBeUndefined();
+    expect(screen.queryByRole("link", { name: "Priority (80+)" })).not.toBeInTheDocument();
+    expect(screen.getByText(/Score filters are available only/i)).toBeInTheDocument();
+  });
+
+  it("offers band filters only in the deliberate non-blind view", async () => {
+    render(
+      await ReviewQueuePage(props({ query: { blind: "false", score_band: "priority" } })),
+    );
+    expect(fetchReviewQueue).toHaveBeenCalledWith(
+      "tok",
+      TENANT,
+      expect.objectContaining({ blind: false, score_band: "priority" }),
+    );
+    expect(screen.getByRole("link", { name: "Priority (80+)" })).toBeInTheDocument();
+    expect(screen.queryByText(/Score filters are available only/i)).not.toBeInTheDocument();
+  });
+
   it("renders lead cards with company and contact information", async () => {
     render(await ReviewQueuePage(props()));
     expect(

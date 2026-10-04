@@ -533,6 +533,8 @@ class FakeLeadsRepository:
     review_queue_leads: dict[uuid.UUID, list[ReviewQueueLeadOut]] = field(default_factory=dict)
     tokens_seen: list[str] = field(default_factory=list)
     calls: list[str] = field(default_factory=list)
+    queue_calls: list[dict[str, Any]] = field(default_factory=list)
+    label_list_viewers: list[uuid.UUID] = field(default_factory=list)
     raise_on_next: Exception | None = None
 
     def _maybe_raise(self) -> None:
@@ -685,12 +687,14 @@ class FakeLeadsRepository:
         token: str,
         tenant_id: uuid.UUID,
         *,
-        lead_id: uuid.UUID | None,
+        viewer_id: uuid.UUID,
+        lead_id: uuid.UUID,
         limit: int,
         cursor: tuple[str, uuid.UUID] | None,
     ) -> Page[LeadLabelOut]:
         self.tokens_seen.append(token)
         self.calls.append("list_lead_labels")
+        self.label_list_viewers.append(viewer_id)
         self._maybe_raise()
         lbls = [
             label_row
@@ -706,6 +710,7 @@ class FakeLeadsRepository:
         token: str,
         tenant_id: uuid.UUID,
         *,
+        caller_id: uuid.UUID,
         limit: int,
         cursor: tuple[str, uuid.UUID] | None,
         score_band: str | None,
@@ -713,6 +718,13 @@ class FakeLeadsRepository:
     ) -> Page[ReviewQueueLeadOut]:
         self.tokens_seen.append(token)
         self.calls.append("get_review_queue")
+        self.queue_calls.append(
+            {
+                "caller_id": caller_id,
+                "score_band": score_band,
+                "include_blind_scores": include_blind_scores,
+            }
+        )
         self._maybe_raise()
         leads = self.review_queue_leads.get(tenant_id, [])
         if score_band:

@@ -13,6 +13,7 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from app.leads.models import LeadLabelOut
 from app.leads.scoring import ScoringResult, score_lead
 
 # What the scoring engine reads. Anything else a row carries (ids, timestamps, notes) is dropped
@@ -74,4 +75,11 @@ def score_inputs(
         contact=contact_input(contact),
         claims=claim_inputs(claims),
         evidence=evidence_inputs(evidence),
+    )
+
+
+def hide_scores(label: LeadLabelOut) -> LeadLabelOut:
+    """A label as a blind reviewer may see it: the verdict stays, its stored score does not."""
+    return label.model_copy(
+        update={"score": None, "score_max_reachable": None, "snapshot": None}
     )

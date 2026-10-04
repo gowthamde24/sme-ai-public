@@ -52,12 +52,13 @@ export default async function ReviewQueuePage({
   const rawBlind = pick(query.blind);
   const blind = rawBlind !== "false"; // default is true for blind review
 
+  // A score band is a filter on a hidden value, so it exists only in the deliberate non-blind view
+  // (the API refuses it otherwise).
   const rawBand = pick(query.score_band);
-  const scoreBand: ScoreBand | undefined = (SCORE_BANDS as readonly string[]).includes(
-    rawBand ?? "",
-  )
-    ? (rawBand as ScoreBand)
-    : undefined;
+  const scoreBand: ScoreBand | undefined =
+    !blind && (SCORE_BANDS as readonly string[]).includes(rawBand ?? "")
+      ? (rawBand as ScoreBand)
+      : undefined;
 
   const rawCursor = pick(query.cursor);
   const cursor = rawCursor && rawCursor.length <= MAX_CURSOR ? rawCursor : null;
@@ -153,15 +154,21 @@ export default async function ReviewQueuePage({
           >
             All
           </Link>
-          {SCORE_BANDS.map((band) => (
-            <Link
-              key={band}
-              href={`/app/tenants/${tenantId}/review?score_band=${band}&blind=${blind ? "true" : "false"}`}
-              aria-current={band === scoreBand ? "page" : undefined}
-            >
-              {SCORE_BAND_LABELS[band]}
-            </Link>
-          ))}
+          {blind ? (
+            <span className="hint">
+              Score filters are available only with Blind Scoring off.
+            </span>
+          ) : (
+            SCORE_BANDS.map((band) => (
+              <Link
+                key={band}
+                href={`/app/tenants/${tenantId}/review?score_band=${band}&blind=false`}
+                aria-current={band === scoreBand ? "page" : undefined}
+              >
+                {SCORE_BAND_LABELS[band]}
+              </Link>
+            ))
+          )}
         </div>
 
         <div className="row">

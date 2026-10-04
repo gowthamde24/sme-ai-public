@@ -15,6 +15,7 @@ import csv
 import io
 import json
 from pathlib import Path
+from typing import Any
 
 import httpx
 import pytest
@@ -296,6 +297,82 @@ def test_label_snapshot_equals_the_score_the_queue_showed(w: World) -> None:
     )
     assert label["snapshot"] == shown["snapshot"]
     assert label["snapshot"]["band"] == shown["score_band"]
+
+
+def test_blind_review_is_per_reviewer_and_cannot_be_filtered_around(w: World) -> None:
+    """Real stack, two reviewers (an Admin and a Sales user, both may label). Reviewer A's label
+    must not reveal the score to reviewer B: not in the queue, the label history or a filter."""
+    admin, sales = bearer(w.a.users["admin"]), bearer(w.a.users["sales"])
+    t = f"/v1/tenants/{w.a.id}"
+    assert w.client.post(
+        f"{t}/icp-configs", json={"config": ICP_TEMPLATE}, headers=admin
+    ).status_code in (200, 201)
+    batch = uid()
+    row = w.client.post(
+        f"{t}/leads/import",
+        json={
+            "batch_id": batch,
+            "rows": [
+                {
+                    "company_name": f"DEMO Blind Silks {batch[:6]}",
+                    "city": "Bengaluru",
+                    "industry": "Silk sarees",
+                    "buyer_type": "saree_shop",
+                    "size_band": "large",
+                }
+            ],
+        },
+        headers=sales,
+    ).json()["rows"][0]
+    lead = row["lead_id"]
+
+    def queue_item(headers: dict[str, str], **params: str) -> dict[str, Any]:
+        qs = "&".join(f"{k}={v}" for k, v in {"limit": "100", **params}.items())
+        res = w.client.get(f"{t}/leads/review-queue?{qs}", headers=headers)
+        assert res.status_code == 200, res.text
+        return next(i for i in res.json()["items"] if i["lead_id"] == lead)
+
+    # reviewer A (admin) labels the lead
+    labelled = w.client.post(f"{t}/leads/{lead}/labels", json={"label": "good"}, headers=admin)
+    assert labelled.status_code == 201 and labelled.json()["score"] is not None
+
+    # reviewer B (sales) is still blind: no score, no band, no snapshot, no one else's label
+    seen = queue_item(sales)
+    assert (seen["score"], seen["score_band"], seen["snapshot"], seen["latest_label"]) == (
+        None,
+        None,
+        None,
+        None,
+    )
+    history = w.client.get(f"{t}/leads/{lead}/labels", headers=sales).json()["items"]
+    assert [h["label"] for h in history] == ["good"]
+    assert (history[0]["score"], history[0]["score_max_reachable"], history[0]["snapshot"]) == (
+        None,
+        None,
+        None,
+    )
+
+    # ...and cannot learn it by filtering on it
+    refused = w.client.get(f"{t}/leads/review-queue?score_band=priority", headers=sales)
+    assert refused.status_code == 422
+    assert refused.json()["error"]["code"] == "score_band_requires_unblinded_view"
+    deliberate = w.client.get(
+        f"{t}/leads/review-queue?score_band=priority&blind=false", headers=sales
+    )
+    assert deliberate.status_code == 200
+
+    # the labeller sees their own score; once B labels, B is unblinded for this lead
+    assert queue_item(admin)["score"] is not None
+    assert (
+        w.client.post(
+            f"{t}/leads/{lead}/labels", json={"label": "maybe"}, headers=sales
+        ).status_code
+        == 201
+    )
+    unblinded = queue_item(sales)
+    assert unblinded["score"] is not None and unblinded["latest_label"]["label"] == "maybe"
+    both = w.client.get(f"{t}/leads/{lead}/labels", headers=sales).json()["items"]
+    assert all(h["score"] is not None for h in both) and len(both) == 2
 
 
 def test_data_exports_csv_and_json_with_formula_sanitization(w: World) -> None:
