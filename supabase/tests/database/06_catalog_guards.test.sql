@@ -117,15 +117,48 @@ select is(
     where has_function_privilege('authenticated', oid, 'execute')
       and fq not in (
         'public.create_tenant',
-        'app.current_user_id',
         'app.is_tenant_member',
         'app.has_tenant_role',
-        'app.shares_tenant_with')),
+        'app.my_tenant_ids',
+        'app.my_tenant_ids_with_role',
+        'app.my_co_member_ids')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where nspname = 'public' and prosecdef and fq <> 'public.create_tenant'),
   '', 'the only SECURITY DEFINER function reachable through the API schema is create_tenant');
+
+-- ---- RLS policy pattern (performance AND correctness; see ADR 0004)
+-- Per-row helpers take the row's tenant_id, so Postgres evaluates them once per ROW OF THE TABLE
+-- (all tenants' rows). They remain for one-row checks inside functions, never for policies.
+select is(
+  (select coalesce(string_agg(p.tablename || '.' || p.policyname, ', '), '') from pg_policies p
+    where p.schemaname = 'public'
+      and (coalesce(p.qual, '') || ' ' || coalesce(p.with_check, ''))
+          ~* '(is_tenant_member|has_tenant_role|shares_tenant_with)'),
+  '', 'no policy calls a per-row membership helper');
+select is(
+  (select coalesce(string_agg(t.relname || '.' || p.polname, ', '), '')
+     from tenant_tables t
+     join pg_policy p on p.polrelid = t.relid
+    where (coalesce(pg_get_expr(p.polqual, p.polrelid), '') || ' ' ||
+           coalesce(pg_get_expr(p.polwithcheck, p.polrelid), '')) !~ 'my_tenant_ids'),
+  '', 'every policy on a tenant-owned table uses app.my_tenant_ids / my_tenant_ids_with_role');
+
+-- Plan-level proof, for every public table with RLS: the caller's tenant list is an InitPlan
+-- (once per statement) and there is no per-row SubPlan.
+select is(
+  (select coalesce(string_agg(c.relname, ', '), '')
+     from pg_class c join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
+      and tests.explain_as(tests.uid('a_owner'), format('select * from public.%I', c.relname)) ~ 'SubPlan'),
+  '', 'no public table plans a per-row SubPlan for its RLS filter');
+select is(
+  (select coalesce(string_agg(c.relname, ', '), '')
+     from pg_class c join pg_namespace n on n.oid = c.relnamespace
+    where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
+      and tests.explain_as(tests.uid('a_owner'), format('select * from public.%I', c.relname)) !~ 'InitPlan'),
+  '', 'every public table plans its RLS filter as an InitPlan');
 
 -- ---- views bypass RLS unless security_invoker
 select is(

@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration dev-web dev-api
+.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration bench-rls dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -42,6 +42,11 @@ db-reset:
 # pgTAP suite in supabase/tests/database (RLS isolation, roles, audit, catalog guards).
 db-test:
 	supabase test db
+
+# RLS policy-cost benchmark (rolled back; local stack only). Compares the T002 per-row pattern
+# with the shipped once-per-statement pattern. See ADR 0004. Override size: make bench-rls ARGS="-v tenants=1000"
+bench-rls:
+	psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -X $(ARGS) -f supabase/bench/rls_policy_cost.sql
 
 # API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.

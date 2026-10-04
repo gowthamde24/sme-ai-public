@@ -10,8 +10,8 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 
 | | Item | Source | Gate |
 | --- | --- | --- | --- |
-| [ ] | **Benchmark RLS per-row cost.** Every policy calls a `SECURITY DEFINER` helper that probes `memberships`. Run `EXPLAIN (ANALYZE, BUFFERS)` on select, join and write paths with many tenants and ~10^5 rows per tenant-owned table; confirm the helper runs as an InitPlan; fall back to a `tenant_id IN (SELECT ...)` form if not. | ADR 0001 #4 | **T003** |
-| [ ] | **CI has never run.** The `db` job (`supabase/setup-cli` pinned to 2.119.0, pgTAP, integration tests) and the web/api jobs are untested on GitHub. Push a branch, get CI green, make it a required check. | ADR 0001, 0002 | **T003** |
+| [x] | **Benchmark RLS per-row cost.** Measured in T003 1a: the T002 pattern ran the helper once per table row (550 ms to 4 s on 120k to 500k rows); replaced by the once-per-statement pattern (0.2 to 0.5 ms). Re-run `make bench-rls` on production-like hardware before the pilot. | ADR 0001 #4, ADR 0004 | **T003** (closed in 1a) |
+| [x] | **CI has never run.** Closed after T002: CI is green on GitHub (the lockfile and Node pin were fixed in `89edc4a`). | ADR 0001, 0002 | **T003** |
 | [ ] | **BYPASSRLS dependency.** `postgres` (owner, runs every `SECURITY DEFINER` function) and `service_role` bypass RLS. A bug in any definer function is a cross-tenant bug. Keep the catalog guard's allow-list reviewed in every migration PR; never add a service-role key without explicit approval. | ADR 0001 #1 | Ongoing; review at every migration |
 | [ ] | **Concurrent last-owner race.** Covered over HTTP against the real stack, and shown to fail if the tenant row lock is removed. Re-run when the trigger changes. | ADR 0002 | Ongoing |
 
@@ -44,6 +44,7 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 
 | | Item | Source | Gate |
 | --- | --- | --- | --- |
+| [ ] | **HARD GATE: erasure / anonymisation workflow for personal data, before T012.** CRM contacts (T003) hold personal data and humans can only archive, never delete. Build and test a privileged, audited procedure that anonymises a contact (and free-text fields that may mention them) on request, keeps the PII-free consent ledger and audit rows, and covers backups. No ticket from T012 on may start until it exists. | T003 plan (owner decision #4) | **Before T012** |
 | [ ] | **Audit rows vs erasure of personal data.** `audit_events` is immutable and stores whole row snapshots; `actor_user_id` is a bare uuid with no FK. Decide retention, whether actor ids are pseudonymised on erasure (a privileged, audited procedure as the one sanctioned exception to append-only), and keep personal data out of audited columns (never add email/phone to audited tables without revisiting). | ADR 0001 #3 | **Pilot data** |
 | [ ] | **Account deletion vs last-owner rule.** Deleting an auth user who is the sole Owner of a tenant is refused (23514) by design. The deletion flow must first transfer ownership or run tenant closure. | ADR 0001 #2 | **Pilot data** |
 | [ ] | **Tenant data export and deletion workflow.** The audit FK deliberately blocks a naive tenant delete. Required by `docs/architecture.md` before external pilots. | ADR 0001 #6, architecture.md | **External pilot** |

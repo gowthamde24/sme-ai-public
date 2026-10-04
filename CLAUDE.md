@@ -73,5 +73,6 @@ make dev-api     # FastAPI on :8000
 ## Ticket status
 
 - T001 Bootstrap monorepo: DONE (make check passes; both apps boot locally).
-- T002 Tenant/Auth/RLS foundation: milestones 1-3 (DB + RLS tests, API auth, web auth) implemented; awaiting final owner review. Security gate: automated tests prove Tenant A cannot read or write Tenant B data. Do not start T003 until the owner approves T002. Open risks live in `docs/pre-pilot-checklist.md`.
+- T002 Tenant/Auth/RLS foundation: DONE (CI green).
+- T003 CRM core (companies, contacts, products, leads, opportunities + consent ledger + audit): IN PROGRESS. Milestone 1a (RLS policy pattern, ADR 0004) done and awaiting review; then 1b (tables + tests), 2 (API), 3 (web), each with a hard stop for owner review. Hard gate: the erasure/anonymise workflow must exist before T012 (see `docs/pre-pilot-checklist.md`). Open risks live in that checklist.
 - Do not start Lead Agent, Command Center animation, WhatsApp, Tally or investor materials before T001 and T002 are complete.

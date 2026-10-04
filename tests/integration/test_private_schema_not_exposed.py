@@ -12,12 +12,14 @@ import httpx
 import pytest
 from conftest import Stack, User
 
-# Every function in schema `app` (migrations 1-3). Calling any of them as an API RPC must fail.
+# Every function in schema `app` (T002 and T003 migrations).
+# Calling any of them as an API RPC must fail.
 APP_FUNCTIONS = [
-    "current_user_id",
     "is_tenant_member",
     "has_tenant_role",
-    "shares_tenant_with",
+    "my_tenant_ids",
+    "my_tenant_ids_with_role",
+    "my_co_member_ids",
     "write_audit_event",
     "audit_row_change",
     "audit_events_append_only",

@@ -98,6 +98,30 @@ begin
   return v;
 end $$;
 
+-- Return the EXPLAIN plan (no costs) of one statement as the given identity.
+create or replace function tests.explain_as(p_uid uuid, p_sql text) returns text
+language plpgsql as $$
+declare
+  line text;
+  plan text := '';
+begin
+  perform tests.set_identity(p_uid);
+  begin
+    for line in execute 'explain (costs off) ' || p_sql loop
+      plan := plan || line || E'\n';
+    end loop;
+  exception when others then
+    reset role;
+    perform set_config('request.jwt.claims', '', true);
+    perform set_config('request.jwt.claim.sub', '', true);
+    raise;
+  end;
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  return plan;
+end $$;
+
 -- Two tenants with every role, plus unaffiliated users. Runs as the privileged session user,
 -- so it exercises the same triggers (audit, profile creation) a real signup would.
 --
