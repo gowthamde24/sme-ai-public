@@ -444,6 +444,9 @@ select set_config('app.created_via', 'agent', true);
 select is(tests.outcome_as(tests.uid('a_sales'), format($q$insert into public.evidence (id, tenant_id, kind, provider, url) values (%L, %L, 'web_page', 'manual', 'https://example.test/guc')$q$, tests.rid('ev_guc'), tests.tid('a'))), 'rows:1', 'setup: client insert with the GUC set');
 select is(pg_temp.prov('evidence', tests.rid('ev_guc')), 'manual/' || tests.uid('a_sales'), 'the app.created_via GUC is ignored for the authenticated role');
 -- trusted (non-client) code can declare the origin; with no user the actor is NULL (no assumption of a human)
+-- since T006 an 'agent' row must name its run (CHECK + composite FK); trusted code sets app.agent_run_id too
+select tests.seed_agents();
+select set_config('app.agent_run_id', tests.rid('a_run_sales')::text, true);
 insert into public.evidence (id, tenant_id, kind, provider, url) values (tests.rid('ev_agent'), tests.tid('a'), 'web_page', 'agent.run', 'https://example.test/agent');
 select is(pg_temp.prov('evidence', tests.rid('ev_agent')), 'agent/null', 'trusted code can declare created_via = agent, with created_by NULL (no human assumed)');
 insert into public.claims (id, tenant_id, company_id, predicate, value, confidence) values (tests.rid('claim_agent'), tests.tid('a'), tests.rid('a_company'), 'agent_found', 'v', 'unverified');
@@ -451,6 +454,7 @@ insert into public.evidence_links (id, tenant_id, evidence_id, claim_id, stance)
 select is(pg_temp.prov('claims', tests.rid('claim_agent')) || ' ' || pg_temp.prov('evidence_links', tests.rid('link_agent')), 'agent/null agent/null',
   'claims and links carry the declared origin too');
 select set_config('app.created_via', '', true);
+select set_config('app.agent_run_id', '', true);
 select is(pg_temp.shape(format($q$insert into public.evidence (id, tenant_id, kind, provider, url) values (gen_random_uuid(), %L, 'web_page', 'manual', 'https://example.test/default-origin')$q$, tests.tid('a'))), 'ok', 'without the GUC trusted code defaults to manual');
 select is((select created_via::text from public.evidence where url = 'https://example.test/default-origin'), 'manual', '... and the origin is manual');
 

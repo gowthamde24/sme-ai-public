@@ -79,6 +79,25 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with b as (insert into public.import_batches (id, tenant_id, content_sha256, row_count, rejected_count) values (%2$L, %1$L, repeat('2', 64), 1, 1) returning id)
      insert into public.import_rows (id, tenant_id, batch_id, row_no, outcome, reason) select %2$L, %1$L, b.id, 1, 'rejected', 'invalid_row' from b$$,
    'row_no = row_no', $$delete from public.import_rows where id = %2$L$$, true),
+  -- T006 (ADR 0013). Written only by SECURITY DEFINER functions: no role inserts, updates or deletes directly.
+  -- tenant_agent_settings has one row per tenant, so its fixture builder is an upsert.
+  ('tenant_agent_settings',
+   $$insert into public.tenant_agent_settings (tenant_id, enabled) values (%1$L, true) on conflict (tenant_id) do update set enabled = true$$,
+   'enabled = enabled', $$delete from public.tenant_agent_settings where tenant_id = %1$L$$, false),
+  ('agent_runs',
+   $$insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, company_id, expires_at, input_sha256, input_refs)
+     values (%2$L, %1$L, %5$L, 'selftest', 'v1', %3$L, now() + interval '15 minutes', repeat('0', 64), '{}'::jsonb)$$,
+   'status = status', $$delete from public.agent_runs where id = %2$L$$, true),
+  ('agent_run_steps',
+   $$with r as (insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, company_id, expires_at, input_sha256, input_refs)
+                values (%2$L, %1$L, %5$L, 'selftest', 'v1', %3$L, now() + interval '15 minutes', repeat('0', 64), '{}'::jsonb) returning id)
+     insert into public.agent_run_steps (id, tenant_id, run_id, started_by, step_key, kind, status)
+     select %2$L, %1$L, r.id, %5$L, 'step-' || left(%2$L, 8), 'tool_call', 'ok' from r$$,
+   'status = status', $$delete from public.agent_run_steps where id = %2$L$$, true),
+  ('claim_reviews',
+   $$with c as (insert into public.claims (id, tenant_id, company_id, predicate, value, confidence) values (%2$L, %1$L, %3$L, 'exports_to', 'Generic value', 'low') returning id)
+     insert into public.claim_reviews (id, tenant_id, claim_id, decision, confidence, self_review) select %2$L, %1$L, c.id, 'accepted', 'low', false from c$$,
+   'decision = decision', $$delete from public.claim_reviews where id = %2$L$$, true),
   ('memberships',
    $$insert into public.memberships (tenant_id, user_id, role) values (%1$L, %5$L, 'viewer')$$,
    'role = role', $$delete from public.memberships where tenant_id = %1$L and user_id = %5$L$$, false),
@@ -124,6 +143,16 @@ select t, r, s, i, u, d from (values
   ('import_batches','sales',  true, false, false, false), ('import_batches','viewer', true, false, false, false),
   ('import_rows',   'owner',  true, false, false, false), ('import_rows',   'admin',  true, false, false, false),
   ('import_rows',   'sales',  true, false, false, false), ('import_rows',   'viewer', true, false, false, false),
+  -- T006: nobody writes directly. tenant_agent_settings and claim_reviews are readable by every member; agent_runs and
+  -- agent_run_steps by Owner / Admin for every row (Sales and Viewer see only the runs they started: tested in 30).
+  ('tenant_agent_settings','owner',  true, false, false, false), ('tenant_agent_settings','admin',  true, false, false, false),
+  ('tenant_agent_settings','sales',  true, false, false, false), ('tenant_agent_settings','viewer', true, false, false, false),
+  ('agent_runs',    'owner',  true, false, false, false), ('agent_runs',    'admin',  true, false, false, false),
+  ('agent_runs',    'sales',  false, false, false, false), ('agent_runs',   'viewer', false, false, false, false),
+  ('agent_run_steps','owner', true, false, false, false), ('agent_run_steps','admin', true, false, false, false),
+  ('agent_run_steps','sales', false, false, false, false), ('agent_run_steps','viewer', false, false, false, false),
+  ('claim_reviews', 'owner',  true, false, false, false), ('claim_reviews', 'admin',  true, false, false, false),
+  ('claim_reviews', 'sales',  true, false, false, false), ('claim_reviews', 'viewer', true, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

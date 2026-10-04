@@ -70,15 +70,15 @@ select fk_ok('public', 'claims', array['tenant_id', 'lead_id'], 'public', 'leads
 select is(
   (select count(*) from pg_constraint c
     where c.contype = 'f' and c.conrelid = 'public.evidence_links'::regclass and c.confrelid <> 'public.tenants'::regclass),
-  4::bigint, 'evidence_links has exactly four references besides the tenant (evidence, company, lead, claim)');
+  5::bigint, 'evidence_links has exactly five references besides the tenant (evidence, company, lead, claim, and since T006 the agent run)');
 select is(
   (select count(*) from pg_constraint c
     where c.contype = 'f' and c.conrelid = 'public.claims'::regclass and c.confrelid <> 'public.tenants'::regclass),
-  2::bigint, 'claims has exactly two references besides the tenant (company, lead)');
+  3::bigint, 'claims has exactly three references besides the tenant (company, lead, and since T006 the agent run)');
 select is(
   (select count(*) from pg_constraint c
     where c.contype = 'f' and c.conrelid = 'public.evidence'::regclass and c.confrelid <> 'public.tenants'::regclass),
-  0::bigint, 'evidence references no other tenant-owned table (links point at it, never the other way)');
+  1::bigint, 'evidence references only agent_runs (T006 provenance); links point at it, never the other way');
 
 -- No cascade of any kind: a parent cannot be removed out from under its evidence.
 select is(

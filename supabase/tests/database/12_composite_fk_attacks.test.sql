@@ -9,6 +9,7 @@ select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.seed_evidence();
 select tests.seed_t005();
+select tests.seed_agents();
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
@@ -88,7 +89,12 @@ begin
                                 and not t.tgisinternal
                                 and fp.pronamespace = 'app'::regnamespace
                                 and fp.proname in ('append_only', 'guard_immutable_record'));
-    return next ok(p_foreign like (case when immutable_row then '42501:%' else '23503:%' end),
+    -- agent_runs.lead_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
+    -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
+    -- same references is attacked in 30_agent_runs_schema.
+    return next ok(p_foreign like (case when immutable_row then '42501:%'
+                                        when k.child = 'agent_runs' and k.child_col = 'lead_id' then '23514:%'
+                                        else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');
 

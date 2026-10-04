@@ -28,7 +28,10 @@ begin
   else
     perform set_config(
       'request.jwt.claims',
-      json_build_object('sub', p_uid, 'role', 'authenticated', 'aud', 'authenticated')::text,
+      -- 'exp' only when a test set tests.jwt_exp (the agent functions bound a run's life by the token's exp)
+      (json_build_object('sub', p_uid, 'role', 'authenticated', 'aud', 'authenticated')::jsonb
+        || case when nullif(current_setting('tests.jwt_exp', true), '') is null then '{}'::jsonb
+                else jsonb_build_object('exp', current_setting('tests.jwt_exp', true)::bigint) end)::text,
       true
     );
     perform set_config('request.jwt.claim.sub', p_uid::text, true);
@@ -220,6 +223,25 @@ begin
     insert into public.lead_labels (id, tenant_id, lead_id, label)
     values (tests.rid(p || '_label'), tests.tid(p), tests.rid(p || '_lead'), 'good');
   end loop;
+end $$;
+
+-- T006: agents switched on for tenant A (and the platform), the selftest agent allowed for tenant A only, and
+-- two running runs in tenant A against its base company: tests.rid('a_run_sales') started by a_sales,
+-- tests.rid('a_run_admin') by a_admin, and tests.rid('b_run') in tenant B (started by b_sales). Requires seed_two_tenants() and seed_crm().
+create or replace function tests.seed_agents() returns void
+language plpgsql as $$
+begin
+  update public.platform_flags set enabled = true where key in ('agents_enabled', 'selftest_enabled');
+  update public.agent_definitions set allowed_tenants = array[tests.tid('a')] where agent_name = 'selftest';
+  insert into public.tenant_agent_settings (tenant_id, enabled) values (tests.tid('a'), true);
+  insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, company_id, expires_at, input_sha256, input_refs)
+  values (tests.rid('a_run_sales'), tests.tid('a'), tests.uid('a_sales'), 'selftest', 'v1', tests.rid('a_company'),
+          now() + interval '15 minutes', repeat('1', 64), '{}'::jsonb),
+         (tests.rid('a_run_admin'), tests.tid('a'), tests.uid('a_admin'), 'selftest', 'v1', tests.rid('a_company'),
+          now() + interval '15 minutes', repeat('2', 64), '{}'::jsonb),
+         -- tenant B has a run too (a foreign parent for the cross-tenant tests); agents are NOT enabled for B
+         (tests.rid('b_run'), tests.tid('b'), tests.uid('b_sales'), 'selftest', 'v1', tests.rid('b_company'),
+          now() + interval '15 minutes', repeat('3', 64), '{}'::jsonb);
 end $$;
 
 -- Return the EXPLAIN plan (no costs) of one statement as the given identity.

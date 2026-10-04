@@ -171,12 +171,16 @@ select is(
   (select coalesce(string_agg(c.relname, ', '), '')
      from pg_class c join pg_namespace n on n.oid = c.relnamespace
     where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
+      -- operator-managed tables (agent limits, flags, definitions) grant clients nothing: there is no client plan to inspect
+      and has_table_privilege('authenticated', c.oid, 'select')
       and tests.explain_as(tests.uid('a_owner'), format('select * from public.%I', c.relname)) ~ 'SubPlan'),
   '', 'no public table plans a per-row SubPlan for its RLS filter');
 select is(
   (select coalesce(string_agg(c.relname, ', '), '')
      from pg_class c join pg_namespace n on n.oid = c.relnamespace
     where n.nspname = 'public' and c.relkind = 'r' and c.relrowsecurity
+      -- operator-managed tables (agent limits, flags, definitions) grant clients nothing: there is no client plan to inspect
+      and has_table_privilege('authenticated', c.oid, 'select')
       and tests.explain_as(tests.uid('a_owner'), format('select * from public.%I', c.relname)) !~ 'InitPlan'),
   '', 'every public table plans its RLS filter as an InitPlan');
 
