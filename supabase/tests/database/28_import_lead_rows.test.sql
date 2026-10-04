@@ -548,7 +548,7 @@ select is((select count(*) from (select to_jsonb(x)::text t from public.import_r
 -- ============================================================================ N. the function source is the audit trail of what it can write
 create temp table src as select pg_get_functiondef('public.import_lead_rows(uuid,uuid,jsonb,text,boolean)'::regprocedure) as def;
 select is((select string_agg(distinct m[1], ',' order by m[1]) from src, regexp_matches(def, 'insert\s+into\s+public\.(\w+)', 'gi') m),
-  'claims,companies,contacts,import_batches,import_rows,leads', 'N1 it inserts into exactly: claims, companies, contacts, import_batches, import_rows, leads');
+  'claims,companies,contacts,evidence,evidence_links,import_batches,import_rows,leads', 'N1 it inserts into exactly: claims, companies, contacts, evidence, evidence_links, import_batches, import_rows, leads');
 select is((select count(*) from src where def ~* '\mupdate\s+(public\.)?\w+\s+set\M'), 0::bigint, 'N2 it never UPDATEs anything');
 select is((select count(*) from src where def ~* '\mdelete\s+from\M'), 0::bigint, 'N3 it never DELETEs anything');
 select is((select count(*) from src where def ~* '\mtruncate\M'), 0::bigint, 'N4 it never TRUNCATEs');

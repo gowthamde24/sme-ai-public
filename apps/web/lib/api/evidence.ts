@@ -19,19 +19,28 @@ export const EVIDENCE_KINDS = [
   "note",
 ] as const satisfies readonly EvidenceKind[];
 
-// Compile-time check: every kind the API knows is offered (adding one to the contract fails here).
-type MissingKinds = Exclude<EvidenceKind, (typeof EVIDENCE_KINDS)[number]>;
+// Kinds only the system writes (the lead import records the provenance of imported claims). A person
+// cannot record them, so the add-evidence form never offers them.
+export const SYSTEM_EVIDENCE_KINDS = ["import_batch"] as const satisfies readonly EvidenceKind[];
+
+// Compile-time check: every kind the API knows is either offered or system-only (adding one to the
+// contract fails here until it is placed).
+type MissingKinds = Exclude<
+  EvidenceKind,
+  (typeof EVIDENCE_KINDS)[number] | (typeof SYSTEM_EVIDENCE_KINDS)[number]
+>;
 export const KINDS_ARE_EXHAUSTIVE: [MissingKinds] extends [never]
   ? true
   : never = true;
 
-export const KIND_LABELS: Record<(typeof EVIDENCE_KINDS)[number], string> = {
+export const KIND_LABELS: Record<EvidenceKind, string> = {
   web_page: "Web page",
   document: "Document",
   email: "Email",
   listing: "Listing",
   registry: "Registry",
   note: "Note",
+  import_batch: "Import batch",
 };
 
 export type EvidenceTarget = "companies" | "leads";

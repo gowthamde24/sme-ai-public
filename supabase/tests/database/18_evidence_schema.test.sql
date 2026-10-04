@@ -6,7 +6,7 @@ select no_plan();
 select has_table('public', t, t || ' exists') from unnest(array['evidence', 'evidence_links', 'claims']) t;
 
 -- ---------------------------------------------------------------- enums
-select enum_has_labels('public', 'evidence_kind', array['web_page', 'document', 'email', 'listing', 'registry', 'note']);
+select enum_has_labels('public', 'evidence_kind', array['web_page', 'document', 'email', 'listing', 'registry', 'note', 'import_batch']);
 select enum_has_labels('public', 'evidence_stance', array['supports', 'contradicts', 'context']);
 select enum_has_labels('public', 'claim_confidence', array['unverified', 'low', 'medium', 'high']);
 

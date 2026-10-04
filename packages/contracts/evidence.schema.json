@@ -99,7 +99,8 @@
         "email",
         "listing",
         "registry",
-        "note"
+        "note",
+        "import_batch"
       ],
       "title": "EvidenceKind",
       "type": "string"

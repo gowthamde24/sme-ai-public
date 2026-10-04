@@ -70,10 +70,19 @@ def test_the_id_must_be_a_canonical_uuid() -> None:
 
 def test_kind_is_a_closed_enum() -> None:
     for kind in EvidenceKind:
-        assert ok(kind=kind.value).kind == kind
+        if kind is not EvidenceKind.IMPORT_BATCH:
+            assert ok(kind=kind.value).kind == kind
     bad(kind="carrier_pigeon")
     with pytest.raises(ValidationError):
         EvidenceCreate.model_validate({"id": ID, "url": "https://example.test/a"})
+
+
+def test_import_batch_provenance_cannot_be_created_by_a_client() -> None:
+    """The import writes this kind itself (and the database refuses it from anyone else): the API
+    says so up front instead of passing it on."""
+    assert EvidenceKind.IMPORT_BATCH.value == "import_batch"  # readable: the import wrote it
+    bad(kind="import_batch")
+    bad(kind="import_batch", url=None, reference="import:00000000-0000-0000-0000-000000000000")
 
 
 # ==== a source must be locatable ====

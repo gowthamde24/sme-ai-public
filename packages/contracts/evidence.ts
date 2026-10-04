@@ -11,7 +11,7 @@ export interface EvidenceCreate {
   published_at?: string | null;
 }
 
-export type EvidenceKind = "web_page" | "document" | "email" | "listing" | "registry" | "note";
+export type EvidenceKind = "web_page" | "document" | "email" | "listing" | "registry" | "note" | "import_batch";
 
 export interface EvidenceLinkOut {
   id: string;

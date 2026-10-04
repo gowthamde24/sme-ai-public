@@ -27,6 +27,7 @@ from pydantic import (
     BaseModel,
     ConfigDict,
     StringConstraints,
+    field_validator,
     model_validator,
 )
 
@@ -89,6 +90,9 @@ class EvidenceKind(StrEnum):
     LISTING = "listing"
     REGISTRY = "registry"
     NOTE = "note"
+    # Written by the lead import only (provenance of imported claims); the database refuses it from
+    # anyone else and EvidenceCreate rejects it up front.
+    IMPORT_BATCH = "import_batch"
 
 
 class EvidenceStance(StrEnum):
@@ -153,6 +157,13 @@ class EvidenceCreate(_Strict):
     snippet: EvidenceSnippet | None = None
     retrieved_at: AwareDatetime | None = None
     published_at: AwareDatetime | None = None
+
+    @field_validator("kind")
+    @classmethod
+    def _not_system_provenance(cls, kind: EvidenceKind) -> EvidenceKind:
+        if kind is EvidenceKind.IMPORT_BATCH:
+            raise ValueError("this kind is recorded by the lead import only")
+        return kind
 
     @model_validator(mode="after")
     def _shape(self) -> EvidenceCreate:

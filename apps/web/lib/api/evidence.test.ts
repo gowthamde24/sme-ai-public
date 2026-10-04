@@ -4,6 +4,7 @@ import { ApiContractError, ApiRequestError } from "./client";
 import {
   createEvidence,
   EVIDENCE_KINDS,
+  SYSTEM_EVIDENCE_KINDS,
   EVIDENCE_PAGE_SIZE,
   fetchEvidencePage,
   isCleanText,
@@ -275,6 +276,9 @@ describe("kinds", () => {
     expect([...EVIDENCE_KINDS].sort()).toEqual(
       ["document", "email", "listing", "note", "registry", "web_page"].sort(),
     );
+    // import_batch is written by the lead import only: the form never offers it
+    expect([...EVIDENCE_KINDS]).not.toContain("import_batch");
+    expect([...SYSTEM_EVIDENCE_KINDS]).toEqual(["import_batch"]);
   });
 });
 
