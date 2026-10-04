@@ -145,6 +145,29 @@ begin
   return result;
 end $$;
 
+-- The WHOLE error a caller can see: sqlstate | message | detail | hint | constraint | table. Two refusals are
+-- indistinguishable (no existence oracle) only if this entire string is identical.
+create or replace function tests.error_full_as(p_uid uuid, p_sql text) returns text
+language plpgsql as $$
+declare
+  result text := 'ok';
+  v_msg text; v_detail text; v_hint text; v_constraint text; v_table text;
+begin
+  perform tests.set_identity(p_uid);
+  begin
+    execute p_sql;
+  exception when others then
+    get stacked diagnostics v_msg = message_text, v_detail = pg_exception_detail, v_hint = pg_exception_hint,
+                            v_constraint = constraint_name, v_table = table_name;
+    result := sqlstate || '|' || v_msg || '|' || coalesce(v_detail, '') || '|' || coalesce(v_hint, '') || '|' ||
+              coalesce(v_constraint, '') || '|' || coalesce(v_table, '');
+  end;
+  reset role;
+  perform set_config('request.jwt.claims', '', true);
+  perform set_config('request.jwt.claim.sub', '', true);
+  return result;
+end $$;
+
 -- Deterministic ids for CRM fixtures: tests.rid('a_company').
 create or replace function tests.rid(p_name text) returns uuid
 language sql immutable as $$ select md5('tests.rid:' || p_name)::uuid $$;

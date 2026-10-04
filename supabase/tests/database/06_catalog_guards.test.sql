@@ -129,6 +129,16 @@ select is(
         'app.text_is_clean',
         'public.create_evidence_with_link',
         'public.import_lead_rows',
+        -- T006 (ADR 0013): the agent write path. Every one derives the tenant from the run (or the claim) it is given.
+        'public.start_agent_run',
+        'public.agent_write_evidence',
+        'public.agent_write_claim',
+        'public.agent_record_step',
+        'public.agent_record_usage',
+        'public.finish_agent_run',
+        'public.cancel_agent_run',
+        'public.set_tenant_agents_enabled',
+        'public.review_claim',
         'app.match_key',
         'app.website_host')),
   '', 'authenticated can execute only the allow-listed functions');
@@ -136,8 +146,18 @@ select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where nspname = 'public' and prosecdef
       and fq not in ('public.create_tenant', 'public.record_consent', 'public.suppress_contact', 'public.lift_suppression',
-                     'public.import_lead_rows')),
-  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions and import_lead_rows');
+                     'public.import_lead_rows',
+                     'public.start_agent_run', 'public.agent_write_evidence', 'public.agent_write_claim', 'public.agent_record_step',
+                     'public.agent_record_usage', 'public.finish_agent_run', 'public.cancel_agent_run',
+                     'public.set_tenant_agents_enabled', 'public.review_claim')),
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows and the nine agent functions (ADR 0013)');
+-- Nothing in the private schema that is operator-only may be callable by a client.
+select is(
+  (select coalesce(string_agg(sig, ', '), '') from our_functions
+    where fq in ('app.operator_enable_selftest', 'app.agent_open_run', 'app.agent_assert_enabled', 'app.agent_args_sha',
+                 'app.agent_derived_id', 'app.agent_step_replay')
+      and (has_function_privilege('authenticated', oid, 'execute') or has_function_privilege('anon', oid, 'execute'))),
+  '', 'the agent helpers and the operator function are callable by no client role');
 
 -- Functions the API schema exposes to clients and that are NOT SECURITY DEFINER run with the
 -- caller's rights; they must still pin search_path (no hijack through a caller-controlled path).
