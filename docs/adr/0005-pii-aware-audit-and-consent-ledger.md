@@ -54,11 +54,22 @@ Mutation: letting `audit_row_change` stop stripping makes six assertions fail.
   - `suppress_contact` (Sales+): do-not-contact, any channel.
   - `lift_suppression` (**Admin+ only**): evidence mandatory.
   All are idempotent: repeating the current state returns the existing ledger row id and writes
-  nothing.
+  nothing. All three reject NULL arguments explicitly (`22023`), so an omitted channel can never fall
+  through to a default branch.
+- **An opt-out must not leave consent behind (1c, R1).** `suppress_contact` with reason `opted_out`,
+  `complained` or `legal` also sets every `granted` channel to `withdrawn` in the same transaction,
+  with one `withdrawn` ledger row per changed channel (channels that were `unknown` or already
+  `withdrawn` are untouched). `lift_suppression` only clears the suppression flags: consent that was
+  withdrawn stays withdrawn, so `can_contact` stays false until a fresh `record_consent` grant. The
+  reasons `bounced` and `manual` keep the earlier behaviour (suppress only; lifting restores
+  contactability because consent was never withdrawn). A withdrawing reason arriving later upgrades a
+  `bounced`/`manual` suppression; a weaker reason never downgrades.
 - `consent_events` is **append-only** (UPDATE, DELETE and TRUNCATE are blocked by trigger, for every
   role including the owner; clients have no write grant at all). It contains **no personal data**:
-  ids, enums, and `evidence_ref`, a short opaque reference (<= 120 chars, restricted character set:
-  no spaces, no `@`) to evidence stored elsewhere. There is deliberately **no free-text evidence
+  ids, enums, and `evidence_ref`, a typed opaque reference `<kind>:<token>` (pattern
+  `^[a-z][a-z0-9_-]{1,19}:[A-Za-z0-9._#/-]{1,96}$`, e.g. `form:8841`, `ticket:2201`) to evidence
+  stored elsewhere. The format makes accidental personal data unlikely (no spaces, no `@`, a
+  mandatory kind); it **does not prevent** it, and the comment on the column says so. There is deliberately **no free-text evidence
   note**: free text would defeat a PII-free ledger. `evidence_ref` is still classified `PII:` so it is
   never copied into `audit_events` by value (the ledger itself is the record).
 - `app.can_contact(contact, channel)` is the single read-only gate future outreach must call:
@@ -77,8 +88,13 @@ Mutation: letting `audit_row_change` stop stripping makes six assertions fail.
   consent and survives the person.
 - The erasure workflow (a hard gate before T012, see the checklist) will therefore **anonymise in
   place**: overwrite the contact's PII columns (and free-text fields that may mention the person)
-  with fixed placeholders, keep ids, consent state and the PII-free ledger, and record the action in
-  the audit trail by field name. Because the audit trail never held the values, it needs no rewrite.
+  with fixed placeholders, keep ids, consent state and the ledger, and record the action in the audit
+  trail by field name. Because the audit trail never held the values, it needs no rewrite.
+- **`consent_events.evidence_ref` is erased by tombstone.** A reference may still point at something
+  person-linked, so the erasure procedure overwrites it with a tombstone that satisfies the same
+  pattern (e.g. `erased:1`) through a **controlled exception to append-only**: a single privileged,
+  audited function that is the only code allowed to bypass the ledger's UPDATE trigger, touching
+  `evidence_ref` and nothing else. That exception does not exist yet; it is part of the pre-T012 gate.
 
 ## 4. Cross-tenant references
 
@@ -95,6 +111,12 @@ never null `tenant_id`); nothing cascades.
 - `created_by` / `created_via` are set by a trigger from `auth.uid()` and cannot be supplied or
   changed by a client. Signed-in clients are always `manual`; trusted server code (not the
   `authenticated` / `anon` roles) may declare `import` or `agent` with `set local app.created_via`.
+  **Rule for future code:** the trigger decides by `current_user`. Inside a `SECURITY DEFINER`
+  function `current_user` is the function owner, not `authenticated`, so such a function inherits the
+  GUC (default `manual`). Any future SECURITY DEFINER code that inserts CRM rows must therefore set
+  `app.created_via` explicitly, never rely on the default.
+- Leads and opportunities cannot be inserted with a chosen status (no INSERT grant on `status`):
+  records start `new` / `open`; `status` stays updatable under the usual rules (1c, R3).
 - Opportunities: `won` / `lost` are terminal, `lost` needs a reason, `closed_at` is server-owned,
   reopening is Admin+. There are no price columns anywhere (CLAUDE.md #4) and no pipeline stages or
   value estimate yet (deferred).
@@ -114,4 +136,5 @@ never null `tenant_id`); nothing cascades.
   explicitly because `users` is not tenant-owned.
 - Terminal opportunities are not frozen apart from their status; other columns remain editable.
 - The consent model, the basis list and the retention of the ledger are not legally reviewed.
+- The controlled append-only exception for the evidence tombstone is specified here but not built.
 - Moving a contact to another company is refused while a lead/opportunity links that pair.

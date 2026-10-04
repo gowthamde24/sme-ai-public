@@ -47,7 +47,7 @@ select ok(not exists (select 1 from public.audit_events a where a.entity_id = te
 
 -- consent changes are NOT personal data: before / after status is kept
 select is(tests.outcome_as(tests.uid('a_sales'), format(
-  $q$select public.record_consent(%L, %L, 'email', 'granted', 'explicit_consent', 'web_form', 'form-abc-999')$q$, tests.tid('a'), tests.rid('c1'))), 'rows:1', 'setup: consent granted');
+  $q$select public.record_consent(%L, %L, 'email', 'granted', 'explicit_consent', 'web_form', 'form:abc-999')$q$, tests.tid('a'), tests.rid('c1'))), 'rows:1', 'setup: consent granted');
 select results_eq(
   format($$select old_values ->> 'email_consent', new_values ->> 'email_consent', metadata -> 'pii_fields_changed'
            from public.audit_events where entity_id = %L and action = 'contact.update' and new_values ->> 'email_consent' = 'granted'$$, tests.rid('c1')),
@@ -73,7 +73,7 @@ select results_eq(
 -- ============================== THE ASSERTION: no PII value anywhere in the audit table
 select is(
   (select count(*) from public.audit_events a
-    where to_jsonb(a)::text ~* '(quasimodo|zephyr|98765|91234|56789|pretzel|second\.addr|qux|erasable|form-abc-999)'),
+    where to_jsonb(a)::text ~* '(quasimodo|zephyr|98765|91234|56789|pretzel|second\.addr|qux|erasable|form:abc-999)'),
   0::bigint, 'no contact name, email, phone, title or evidence reference appears ANYWHERE in audit_events (whole row as text)');
 
 -- ================================================ the other tables follow the same rule

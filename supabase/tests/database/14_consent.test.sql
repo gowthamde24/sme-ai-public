@@ -12,7 +12,7 @@ language sql as $$ select count(*) from public.consent_events where contact_id =
 
 -- ================================================================ authorization
 -- who may call record_consent (grant)
-create function pg_temp.grant_sql(p_tenant text, p_contact text, p_ref text default 'form-123') returns text
+create function pg_temp.grant_sql(p_tenant text, p_contact text, p_ref text default 'form:123') returns text
 language sql as $$
   select format($q$select public.record_consent(%L, %L, 'email', 'granted', 'explicit_consent', 'web_form', %L)$q$,
                 tests.tid(p_tenant), tests.rid(p_contact), p_ref)
@@ -36,7 +36,7 @@ select is((select suppressed_at is null from public.contacts where id = tests.ri
 select is(tests.outcome_as(tests.uid('a_owner'), format($q$select public.suppress_contact(%L, %L, 'manual')$q$, tests.tid('b'), tests.rid('b_contact'))),
   '42501', 'suppress: tenant-A owner stating tenant B -> DENY (not a member there)');
 update public.contacts set suppressed_at = now(), suppression_reason = 'legal' where id = tests.rid('b_contact');
-select is(tests.outcome_as(tests.uid('a_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'x-1')$q$, tests.tid('a'), tests.rid('b_contact'))),
+select is(tests.outcome_as(tests.uid('a_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'ref:1')$q$, tests.tid('a'), tests.rid('b_contact'))),
   'P0002', 'lift: tenant-A owner naming a tenant-B contact -> not found');
 select is((select suppressed_at is not null from public.contacts where id = tests.rid('b_contact')), true, '... and tenant B''s suppression is intact');
 update public.contacts set suppressed_at = null, suppression_reason = null where id = tests.rid('b_contact');
@@ -63,7 +63,7 @@ select is((select whatsapp_consent::text from public.contacts where id = tests.r
 select results_eq(
   format($$select event_type::text, channel::text, basis::text, evidence_type::text, evidence_ref, recorded_by
            from public.consent_events where contact_id = %L$$, tests.rid('a_contact')),
-  format($$values ('granted'::text, 'email'::text, 'explicit_consent'::text, 'web_form'::text, 'form-123'::text, %L::uuid)$$, tests.uid('a_sales')),
+  format($$values ('granted'::text, 'email'::text, 'explicit_consent'::text, 'web_form'::text, 'form:123'::text, %L::uuid)$$, tests.uid('a_sales')),
   'ledger row records event, channel, basis, evidence and who recorded it');
 
 -- idempotent: repeating the current state adds nothing and returns the SAME ledger row
@@ -95,38 +95,41 @@ select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'ca
 select is(pg_temp.ledger(), 2::bigint, 'withdrawal appended a second ledger row');
 
 -- grant again, then suppression
-select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.grant_sql('a', 'a_contact', 'form-456')), 'rows:1', 're-grant');
+select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.grant_sql('a', 'a_contact', 'form:456')), 'rows:1', 're-grant');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'true', 'can_contact: granted again -> true');
 
 select is(tests.outcome_as(tests.uid('a_viewer'), format($q$select public.suppress_contact(%L, %L, 'opted_out')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'viewer: DENY suppress');
-select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'call-789')$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.suppress_contact(%L, %L, 'opted_out', 'verbal', 'call:789')$q$, tests.tid('a'), tests.rid('a_contact'))),
   'rows:1', 'ALLOW: sales suppresses a contact');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'can_contact: suppressed -> false even though consent was granted');
 select ok((select suppressed_at is not null and suppression_reason = 'opted_out' from public.contacts where id = tests.rid('a_contact')), 'suppression state recorded');
-select is(pg_temp.ledger(), 4::bigint, 'ledger: grant, withdraw, grant, suppress');
+select is(pg_temp.ledger(), 5::bigint, 'ledger: grant, withdraw, grant, suppressed, and the withdrawn row the opt-out produced (R1)');
+select is((select email_consent::text from public.contacts where id = tests.rid('a_contact')), 'withdrawn', 'opted_out withdrew the granted email consent (R1)');
 select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.suppress_contact(%L, %L, 'manual')$q$, tests.tid('a'), tests.rid('a_contact'))),
   'rows:1', 'suppressing again is accepted');
-select is(pg_temp.ledger(), 4::bigint, '... and adds nothing (idempotent)');
+select is(pg_temp.ledger(), 5::bigint, '... and adds nothing (idempotent)');
 select is((select suppression_reason::text from public.contacts where id = tests.rid('a_contact')), 'opted_out', '... the original reason is kept');
 
 -- lifting: Admin+ only, evidence required
-select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter-1')$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'sales: DENY lifting a suppression');
-select is(tests.outcome_as(tests.uid('a_viewer'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter-1')$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.outcome_as(tests.uid('a_viewer'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'viewer: DENY lifting a suppression');
 select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, null, null)$q$, tests.tid('a'), tests.rid('a_contact'))),
   '22023', 'admin: lifting without evidence is refused');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'still suppressed after the refusals');
-select is(tests.outcome_as(tests.uid('b_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter-1')$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.outcome_as(tests.uid('b_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'owner of tenant B: DENY lifting A''s suppression');
-select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter-1')$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
   'rows:1', 'ALLOW: admin lifts the suppression with evidence');
-select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'true', 'can_contact: true again once lifted (consent was still granted)');
+select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'can_contact: STILL false after the lift: an opt-out withdrew consent and lifting does not revive it (R1)');
+select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.grant_sql('a', 'a_contact', 'form:789')), 'rows:1', 'a fresh grant is required');
+select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'true', 'can_contact: true only after a fresh record_consent grant');
 select ok((select suppressed_at is null and suppression_reason is null from public.contacts where id = tests.rid('a_contact')), 'suppression state cleared');
-select is(tests.scalar_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter-2') is null$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.scalar_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:2') is null$q$, tests.tid('a'), tests.rid('a_contact'))),
   'true', 'lifting a suppression that is not set is a no-op (returns NULL)');
-select is(pg_temp.ledger(), 5::bigint, '... and adds no ledger row');
+select is(pg_temp.ledger(), 7::bigint, '... and adds no ledger row (7 = through the fresh grant)');
 
 -- archived contacts are never contactable
 update public.contacts set archived_at = now() where id = tests.rid('a_contact');
@@ -135,7 +138,7 @@ update public.contacts set archived_at = null where id = tests.rid('a_contact');
 -- a channel needs an address of that kind
 insert into public.contacts (id, tenant_id, full_name) values (tests.rid('a_noaddr'), tests.tid('a'), 'No address');
 select tests.scalar_as(tests.uid('a_owner'), format(
-  $q$select public.record_consent(%L, %L, 'email', 'granted', 'explicit_consent', 'web_form', 'f-1')::text$q$, tests.tid('a'), tests.rid('a_noaddr')));
+  $q$select public.record_consent(%L, %L, 'email', 'granted', 'explicit_consent', 'web_form', 'form:1')::text$q$, tests.tid('a'), tests.rid('a_noaddr')));
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_noaddr', 'email'), 'false', 'can_contact: consent without an email address -> false');
 
 -- ================================================================ the ledger is append-only
