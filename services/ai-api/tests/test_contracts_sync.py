@@ -1,5 +1,6 @@
 """packages/contracts/crm.schema.json and crm.ts are generated from the API models."""
 
+import json
 from pathlib import Path
 
 from app.crm.contracts import schema_text, ts_text
@@ -83,3 +84,24 @@ def test_the_evidence_request_forbids_unknown_and_server_owned_properties() -> N
         "stance",
     }
     assert defs["EvidenceCreate"]["properties"]["snippet"]["anyOf"][0]["maxLength"] == 1000
+
+
+# ==== leads (T005) ====
+def test_leads_schema_and_typescript_are_up_to_date() -> None:
+    from app.leads import contracts
+
+    assert (CONTRACTS / "leads.schema.json").read_text() == contracts.schema_text(), (
+        "run `make contracts`"
+    )
+    assert (CONTRACTS / "leads.ts").read_text() == contracts.ts_text(), "run `make contracts`"
+
+
+def test_the_label_request_carries_a_client_id_and_nothing_server_owned() -> None:
+    defs = json.loads((CONTRACTS / "leads.schema.json").read_text())["$defs"]
+    create = defs["LeadLabelCreate"]
+    assert "id" in create["properties"] and "id" in create["required"]
+    assert create["additionalProperties"] is False
+    assert not set(create["properties"]) & {
+        "tenant_id", "lead_id", "created_by", "created_via", "created_at", "score", "snapshot",
+        "icp_version_id",
+    }

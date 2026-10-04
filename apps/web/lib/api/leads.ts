@@ -295,7 +295,10 @@ export async function createLeadLabel(
   accessToken: string,
   tenantId: string,
   leadId: string,
+  // `id` is generated once per submit attempt: the same id with the same payload is a retry (the
+  // server answers 200 with the stored label), anything else under a used id is a 409.
   payload: {
+    id: string;
     label: LeadLabel;
     reason_code?: LeadLabelReason | null;
   },

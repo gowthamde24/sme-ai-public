@@ -88,7 +88,7 @@ def test_all_endpoints_require_token(env: Env) -> None:
     assert (
         env.client.post(
             f"{base}/leads/{uuid.uuid4()}/labels",
-            json={"label": "good"},
+            json={"id": str(uuid.uuid4()), "label": "good"},
         ).status_code
         == 401
     )
@@ -135,7 +135,7 @@ def test_foreign_tenant_is_404_for_every_role(env: Env, user: str) -> None:
     assert (
         env.client.post(
             f"{foreign}/leads/{uuid.uuid4()}/labels",
-            json={"label": "good"},
+            json={"id": str(uuid.uuid4()), "label": "good"},
             headers=headers,
         ).status_code
         == 404
@@ -293,7 +293,7 @@ def test_lead_labeling_validation_and_scoring(env: Env) -> None:
     # 3. Label "good" without reason code -> 201
     res_good = env.client.post(
         f"{base}/leads/{lead_id}/labels",
-        json={"label": "good"},
+        json={"id": str(uuid.uuid4()), "label": "good"},
         headers=auth("a_sales"),
     )
     assert res_good.status_code == 201
@@ -307,7 +307,7 @@ def test_lead_labeling_validation_and_scoring(env: Env) -> None:
     # 4. Label "bad" without reason code -> 422
     res_bad_no_reason = env.client.post(
         f"{base}/leads/{lead_id}/labels",
-        json={"label": "bad"},
+        json={"id": str(uuid.uuid4()), "label": "bad"},
         headers=auth("a_sales"),
     )
     assert res_bad_no_reason.status_code == 422
@@ -315,7 +315,7 @@ def test_lead_labeling_validation_and_scoring(env: Env) -> None:
     # 5. Label "bad" with reason code -> 201
     res_bad = env.client.post(
         f"{base}/leads/{lead_id}/labels",
-        json={"label": "bad", "reason_code": "not_our_market"},
+        json={"id": str(uuid.uuid4()), "label": "bad", "reason_code": "not_our_market"},
         headers=auth("a_sales"),
     )
     assert res_bad.status_code == 201
@@ -324,7 +324,7 @@ def test_lead_labeling_validation_and_scoring(env: Env) -> None:
     # 6. Label "good" with reason code -> 422
     res_good_with_reason = env.client.post(
         f"{base}/leads/{lead_id}/labels",
-        json={"label": "good", "reason_code": "not_our_market"},
+        json={"id": str(uuid.uuid4()), "label": "good", "reason_code": "not_our_market"},
         headers=auth("a_sales"),
     )
     assert res_good_with_reason.status_code == 422
@@ -358,7 +358,9 @@ def test_label_snapshot_is_scored_from_the_same_claims_as_the_queue(env: Env) ->
     ), "the fixture must make the claims matter"
 
     res = env.client.post(
-        f"{base}/leads/{lead_id}/labels", json={"label": "good"}, headers=auth("a_sales")
+        f"{base}/leads/{lead_id}/labels",
+        json={"id": str(uuid.uuid4()), "label": "good"},
+        headers=auth("a_sales")
     )
     assert res.status_code == 201
     out = res.json()
@@ -370,12 +372,110 @@ def test_label_snapshot_is_scored_from_the_same_claims_as_the_queue(env: Env) ->
     assert ("claims", "list") in env.crm.calls
 
 
+# ----------------------------------------------------------------------------- label idempotency
+def label_env(env: Env) -> tuple[str, uuid.UUID]:
+    base = env.base_url()
+    env.client.post(f"{base}/icp-configs", json={"config": ICP_TEMPLATE}, headers=auth("a_admin"))
+    company_id, lead_id = uuid.uuid4(), uuid.uuid4()
+    env.crm.seed("companies", TENANT_A.id, company_id, name="Sri Balaji Sarees", city="bengaluru")
+    env.crm.seed("leads", TENANT_A.id, lead_id, company_id=str(company_id))
+    return base, lead_id
+
+
+def test_a_label_needs_a_client_generated_id(env: Env) -> None:
+    base, lead_id = label_env(env)
+    res = env.client.post(
+        f"{base}/leads/{lead_id}/labels", json={"label": "good"}, headers=auth("a_sales")
+    )
+    assert res.status_code == 422
+    bad = env.client.post(
+        f"{base}/leads/{lead_id}/labels",
+        json={"id": "not-a-uuid", "label": "good"},
+        headers=auth("a_sales"),
+    )
+    assert bad.status_code == 422
+    assert env.leads.labels.get(TENANT_A.id, []) == []
+
+
+def test_label_create_is_idempotent_201_then_200_then_409(env: Env) -> None:
+    base, lead_id = label_env(env)
+    label_id = str(uuid.uuid4())
+    body = {"id": label_id, "label": "bad", "reason_code": "not_our_market"}
+    first = env.client.post(f"{base}/leads/{lead_id}/labels", json=body, headers=auth("a_sales"))
+    assert first.status_code == 201
+    validate(first.json(), "LeadLabelOut")
+    assert first.json()["id"] == label_id
+
+    again = env.client.post(f"{base}/leads/{lead_id}/labels", json=body, headers=auth("a_sales"))
+    assert again.status_code == 200, "same id, same payload: a retry, not a second label"
+    assert again.json() == first.json()
+    assert len(env.leads.labels[TENANT_A.id]) == 1
+
+    different = env.client.post(
+        f"{base}/leads/{lead_id}/labels",
+        json={"id": label_id, "label": "good"},
+        headers=auth("a_sales"),
+    )
+    assert different.status_code == 409
+    other_reason = env.client.post(
+        f"{base}/leads/{lead_id}/labels",
+        json={**body, "reason_code": "too_small"},
+        headers=auth("a_sales"),
+    )
+    assert other_reason.status_code == 409
+    assert len(env.leads.labels[TENANT_A.id]) == 1, "a conflict writes nothing"
+
+
+def test_double_submit_creates_one_label(env: Env) -> None:
+    base, lead_id = label_env(env)
+    body = {"id": str(uuid.uuid4()), "label": "maybe"}
+    statuses = [
+        env.client.post(
+            f"{base}/leads/{lead_id}/labels", json=body, headers=auth("a_sales")
+        ).status_code
+        for _ in range(3)
+    ]
+    assert statuses == [201, 200, 200]
+    assert len(env.leads.labels[TENANT_A.id]) == 1
+
+
+def test_a_label_id_owned_by_another_tenant_gets_the_same_generic_409(env: Env) -> None:
+    base, lead_id = label_env(env)
+    foreign_id = str(uuid.uuid4())
+    # tenant B already holds a label with this id (the fake behaves like RLS: A cannot see it)
+    env.leads.labels[TENANT_B.id] = [
+        env.leads.make_label(TENANT_B.id, uuid.uuid4(), foreign_id, "good", None)
+    ]
+    mine = str(uuid.uuid4())
+    assert (
+        env.client.post(
+            f"{base}/leads/{lead_id}/labels",
+            json={"id": mine, "label": "good"},
+            headers=auth("a_sales"),
+        ).status_code
+        == 201
+    )
+    foreign = env.client.post(
+        f"{base}/leads/{lead_id}/labels",
+        json={"id": foreign_id, "label": "good"},
+        headers=auth("a_sales"),
+    )
+    different = env.client.post(
+        f"{base}/leads/{lead_id}/labels",
+        json={"id": mine, "label": "maybe"},
+        headers=auth("a_sales"),
+    )
+    assert foreign.status_code == different.status_code == 409
+    assert foreign.json() == different.json(), "no oracle for ids that exist in another tenant"
+    assert len(env.leads.labels[TENANT_A.id]) == 1
+
+
 def test_labeling_nonexistent_lead_returns_404(env: Env) -> None:
     base = env.base_url()
     missing_lead = uuid.uuid4()
     res = env.client.post(
         f"{base}/leads/{missing_lead}/labels",
-        json={"label": "good"},
+        json={"id": str(uuid.uuid4()), "label": "good"},
         headers=auth("a_sales"),
     )
     assert res.status_code == 404

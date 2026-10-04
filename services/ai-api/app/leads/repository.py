@@ -19,6 +19,7 @@ from app.crm.models import Page, encode_cursor
 from app.crm.repository import (
     CLAIM_ORDER,
     CLAIM_SELECT,
+    ConflictError,
     classify_error,
 )
 from app.leads.models import (
@@ -91,7 +92,7 @@ class LeadsRepository(Protocol):
         payload: dict[str, Any],
         score_snapshot: dict[str, Any] | None,
         icp_version_id: uuid.UUID | None,
-    ) -> LeadLabelOut: ...
+    ) -> tuple[LeadLabelOut, bool]: ...
 
     def list_lead_labels(
         self,
@@ -297,13 +298,18 @@ class PostgrestLeadsRepository:
         payload: dict[str, Any],
         score_snapshot: dict[str, Any] | None,
         icp_version_id: uuid.UUID | None,
-    ) -> LeadLabelOut:
-        label_id = uuid.uuid4()
+    ) -> tuple[LeadLabelOut, bool]:
+        """Insert one label under the CLIENT's id. Returns (label, created).
+
+        The id makes a retry harmless: if it is already used and THIS tenant's label with that id
+        carries the same lead / label / reason, the stored label is returned with created=False.
+        Every other use of the id (a different payload, or an id another tenant holds, which RLS
+        hides from the lookup) raises the same ConflictError: nothing reveals which case it was."""
         score = score_snapshot.get("score") if score_snapshot else None
         score_max = score_snapshot.get("score_max_reachable") if score_snapshot else None
 
         body = {
-            "id": str(label_id),
+            "id": str(payload["id"]),
             "tenant_id": str(tenant_id),
             "lead_id": str(lead_id),
             "label": payload["label"],
@@ -318,12 +324,44 @@ class PostgrestLeadsRepository:
             headers=self._headers(token, Prefer="return=representation"),
             json=body,
         )
-        if resp.status_code != 201:
+        if resp.status_code == 201:
+            data = resp.json()
+            if not data:
+                raise UpstreamError("No representation returned by PostgREST")
+            return LeadLabelOut.model_validate(data[0]), True
+
+        error = self._error(resp)
+        if not isinstance(error, ConflictError):
+            raise error
+        existing = self._label_by_id(token, tenant_id, str(payload["id"]))
+        if existing is not None and self._same_label(existing, lead_id, payload):
+            return existing, False
+        raise error
+
+    def _label_by_id(self, token: str, tenant_id: uuid.UUID, label_id: str) -> LeadLabelOut | None:
+        resp = self._client.get(
+            f"{self._url}/lead_labels",
+            headers=self._headers(token),
+            params={
+                "tenant_id": f"eq.{tenant_id}",
+                "id": f"eq.{label_id}",
+                "select": _LABEL_FIELDS,
+                "limit": "1",
+            },
+        )
+        if resp.status_code != 200:
             raise self._error(resp)
-        data = resp.json()
-        if not data:
-            raise UpstreamError("No representation returned by PostgREST")
-        return LeadLabelOut.model_validate(data[0])
+        rows = resp.json()
+        return LeadLabelOut.model_validate(rows[0]) if rows else None
+
+    @staticmethod
+    def _same_label(existing: LeadLabelOut, lead_id: uuid.UUID, payload: dict[str, Any]) -> bool:
+        return (
+            existing.lead_id == lead_id
+            and existing.label.value == payload["label"]
+            and (existing.reason_code.value if existing.reason_code else None)
+            == payload.get("reason_code")
+        )
 
     def list_lead_labels(
         self,

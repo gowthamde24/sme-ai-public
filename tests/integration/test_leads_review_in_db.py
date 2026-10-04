@@ -14,6 +14,7 @@ from __future__ import annotations
 import csv
 import io
 import json
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -200,7 +201,7 @@ def test_review_queue_and_lead_labeling(w: World) -> None:
     # 5. Labeling validation: viewer cannot label (403)
     r_view_label = w.client.post(
         f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels",
-        json={"label": "good"},
+        json={"id": uid(), "label": "good"},
         headers=bearer(w.a.users["viewer"]),
     )
     assert r_view_label.status_code == 403
@@ -208,7 +209,7 @@ def test_review_queue_and_lead_labeling(w: World) -> None:
     # 6. Bad label requires reason code (422)
     r_bad_missing = w.client.post(
         f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels",
-        json={"label": "bad"},
+        json={"id": uid(), "label": "bad"},
         headers=bearer(w.a.users["sales"]),
     )
     assert r_bad_missing.status_code == 422
@@ -216,7 +217,7 @@ def test_review_queue_and_lead_labeling(w: World) -> None:
     # 7. Good label succeeds without reason code
     r_good = w.client.post(
         f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels",
-        json={"label": "good"},
+        json={"id": uid(), "label": "good"},
         headers=bearer(w.a.users["sales"]),
     )
     assert r_good.status_code == 201
@@ -229,7 +230,7 @@ def test_review_queue_and_lead_labeling(w: World) -> None:
     # 8. Changed mind: label as bad with reason_code succeeds
     r_bad = w.client.post(
         f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels",
-        json={"label": "bad", "reason_code": "not_our_market"},
+        json={"id": uid(), "label": "bad", "reason_code": "not_our_market"},
         headers=bearer(w.a.users["sales"]),
     )
     assert r_bad.status_code == 201
@@ -288,7 +289,9 @@ def test_label_snapshot_equals_the_score_the_queue_showed(w: World) -> None:
     assert shown["score"] is not None
 
     label = w.client.post(
-        f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels", json={"label": "good"}, headers=sales
+        f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels",
+        json={"id": uid(), "label": "good"},
+        headers=sales,
     ).json()
     assert label["icp_version_id"] == active["id"]
     assert (label["score"], label["score_max_reachable"]) == (
@@ -297,6 +300,87 @@ def test_label_snapshot_equals_the_score_the_queue_showed(w: World) -> None:
     )
     assert label["snapshot"] == shown["snapshot"]
     assert label["snapshot"]["band"] == shown["score_band"]
+
+
+def test_label_create_is_idempotent_and_survives_a_double_submit(w: World) -> None:
+    """Real stack. A retry of the same attempt (same client id, same payload) is a 200 with the
+    ORIGINAL label, not a second one; a different payload under the same id, or an id that
+    belongs to another tenant, is the same generic 409; concurrent double submits create one row."""
+    admin, sales = bearer(w.a.users["admin"]), bearer(w.a.users["sales"])
+    t = f"/v1/tenants/{w.a.id}"
+    w.client.post(f"{t}/icp-configs", json={"config": ICP_TEMPLATE}, headers=admin)
+    batch = uid()
+    lead = w.client.post(
+        f"{t}/leads/import",
+        json={
+            "batch_id": batch,
+            "rows": [{"company_name": f"DEMO Idem Silks {batch[:6]}", "buyer_type": "saree_shop"}],
+        },
+        headers=sales,
+    ).json()["rows"][0]["lead_id"]
+    path = f"{t}/leads/{lead}/labels"
+
+    label_id = uid()
+    body = {"id": label_id, "label": "bad", "reason_code": "not_our_market"}
+    first = w.client.post(path, json=body, headers=sales)
+    assert first.status_code == 201 and first.json()["id"] == label_id
+    again = w.client.post(path, json=body, headers=sales)
+    assert again.status_code == 200 and again.json() == first.json()
+    history = w.client.get(path, headers=sales).json()["items"]
+    assert [h["id"] for h in history] == [label_id]
+
+    different = w.client.post(path, json={"id": label_id, "label": "good"}, headers=sales)
+    assert different.status_code == 409 and different.json()["error"]["code"] == "conflict"
+    assert len(w.client.get(path, headers=sales).json()["items"]) == 1
+
+    # an id that tenant B already uses: the same answer as a different payload, no oracle
+    b_icp = w.client.post(
+        f"/v1/tenants/{w.b.id}/icp-configs",
+        json={"config": ICP_TEMPLATE},
+        headers=bearer(w.b.users["owner"]),
+    )
+    assert b_icp.status_code in (200, 201)
+    b_label = uid()
+    made = w.client.post(
+        f"/v1/tenants/{w.b.id}/leads/{w.b.rows['leads']['id']}/labels",
+        json={"id": b_label, "label": "good"},
+        headers=bearer(w.b.users["sales"]),
+    )
+    assert made.status_code == 201, made.text
+    foreign = w.client.post(path, json={"id": b_label, "label": "good"}, headers=sales)
+    assert foreign.status_code == 409 and foreign.json() == different.json()
+    b_history = w.client.get(
+        f"/v1/tenants/{w.b.id}/leads/{w.b.rows['leads']['id']}/labels",
+        headers=bearer(w.b.users["owner"]),
+    ).json()["items"]
+    assert b_label in [h["id"] for h in b_history], "tenant B's label is untouched"
+
+    # a missing / malformed id, a Viewer, Bad without a reason
+    assert w.client.post(path, json={"label": "good"}, headers=sales).status_code == 422
+    assert (
+        w.client.post(path, json={"id": "nope", "label": "good"}, headers=sales).status_code == 422
+    )
+    assert (
+        w.client.post(
+            path, json={"id": uid(), "label": "good"}, headers=bearer(w.a.users["viewer"])
+        ).status_code
+        == 403
+    )
+    assert w.client.post(path, json={"id": uid(), "label": "bad"}, headers=sales).status_code == 422
+
+    # concurrent double submit: one 201, the rest 200, exactly one row
+    racer = {"id": uid(), "label": "maybe"}
+    with ThreadPoolExecutor(max_workers=6) as pool:
+        results = list(pool.map(lambda _: w.client.post(path, json=racer, headers=sales), range(6)))
+    codes = sorted(r.status_code for r in results)
+    assert codes == [200] * 5 + [201], codes
+    assert len({r.json()["id"] for r in results}) == 1
+    rows = [
+        h
+        for h in w.client.get(f"{path}?limit=100", headers=sales).json()["items"]
+        if h["id"] == racer["id"]
+    ]
+    assert len(rows) == 1
 
 
 def test_blind_review_is_per_reviewer_and_cannot_be_filtered_around(w: World) -> None:
@@ -333,7 +417,9 @@ def test_blind_review_is_per_reviewer_and_cannot_be_filtered_around(w: World) ->
         return next(i for i in res.json()["items"] if i["lead_id"] == lead)
 
     # reviewer A (admin) labels the lead
-    labelled = w.client.post(f"{t}/leads/{lead}/labels", json={"label": "good"}, headers=admin)
+    labelled = w.client.post(
+        f"{t}/leads/{lead}/labels", json={"id": uid(), "label": "good"}, headers=admin
+    )
     assert labelled.status_code == 201 and labelled.json()["score"] is not None
 
     # reviewer B (sales) is still blind: no score, no band, no snapshot, no one else's label
@@ -365,7 +451,7 @@ def test_blind_review_is_per_reviewer_and_cannot_be_filtered_around(w: World) ->
     assert queue_item(admin)["score"] is not None
     assert (
         w.client.post(
-            f"{t}/leads/{lead}/labels", json={"label": "maybe"}, headers=sales
+            f"{t}/leads/{lead}/labels", json={"id": uid(), "label": "maybe"}, headers=sales
         ).status_code
         == 201
     )
@@ -396,7 +482,7 @@ def test_data_exports_csv_and_json_with_formula_sanitization(w: World) -> None:
     lead_id = r_commit.json()["rows"][0]["lead_id"]
     w.client.post(
         f"/v1/tenants/{w.a.id}/leads/{lead_id}/labels",
-        json={"label": "bad", "reason_code": "not_our_market"},
+        json={"id": uid(), "label": "bad", "reason_code": "not_our_market"},
         headers=bearer(w.a.users["sales"]),
     )
 

@@ -289,6 +289,7 @@ export default async function ReviewQueuePage({
                     <LeadLabelForm
                       tenantId={tenantId}
                       leadId={item.lead_id}
+                      labelId={crypto.randomUUID()}
                       currentLabel={label}
                       currentReason={reason}
                     />

@@ -203,7 +203,10 @@ def create_lead_label(
     payload: LeadLabelCreate,
     ctx: SalesPlus,
     runtime: RuntimeDep,
+    response: Response,
 ) -> LeadLabelOut:
+    """Idempotent on the client's `id`: 201 the first time, 200 with the stored label for a retry of
+    the same payload, 409 (one generic answer) for any other use of an id."""
     lid = _parse_id(lead_id)
     # Check lead exists in this tenant
     lead = runtime.crm.get_row(ctx.principal.token, "leads", ctx.tenant.id, lid)
@@ -261,14 +264,16 @@ def create_lead_label(
         sc_res = score_inputs(active_icp.config, company, contact, claims, evidence_items)
         score_snapshot = sc_res.to_snapshot()
 
-    return runtime.leads.create_lead_label(
+    label, created = runtime.leads.create_lead_label(
         ctx.principal.token,
         ctx.tenant.id,
         lid,
-        payload.model_dump(),
+        payload.model_dump(mode="json"),
         score_snapshot,
         icp_version_id,
     )
+    response.status_code = 201 if created else 200
+    return label
 
 
 @router.get("/leads/{lead_id}/labels", response_model=Page[LeadLabelOut])

@@ -307,6 +307,7 @@ describe("leads API methods", () => {
     globalThis.fetch = mock as unknown as typeof fetch;
 
     const res = await createLeadLabel("tok", TENANT, LEAD_ID, {
+      id: "55555555-5555-4555-8555-555555555555",
       label: "bad",
       reason_code: "duplicate",
     });
@@ -319,6 +320,7 @@ describe("leads API methods", () => {
     );
     expect(init.method).toBe("POST");
     expect(JSON.parse(init.body as string)).toEqual({
+      id: "55555555-5555-4555-8555-555555555555",
       label: "bad",
       reason_code: "duplicate",
     });

@@ -651,24 +651,22 @@ class FakeLeadsRepository:
             rows=outcomes,
         )
 
-    def create_lead_label(
+    def make_label(
         self,
-        token: str,
         tenant_id: uuid.UUID,
         lead_id: uuid.UUID,
-        payload: dict[str, Any],
-        score_snapshot: dict[str, Any] | None,
-        icp_version_id: uuid.UUID | None,
+        label_id: str | uuid.UUID,
+        label: str,
+        reason_code: str | None,
+        score_snapshot: dict[str, Any] | None = None,
+        icp_version_id: uuid.UUID | None = None,
     ) -> LeadLabelOut:
-        self.tokens_seen.append(token)
-        self.calls.append("create_lead_label")
-        self._maybe_raise()
-        label_out = LeadLabelOut(
-            id=uuid.uuid4(),
+        return LeadLabelOut(
+            id=uuid.UUID(str(label_id)),
             tenant_id=tenant_id,
             lead_id=lead_id,
-            label=payload["label"],
-            reason_code=payload.get("reason_code"),
+            label=label,  # type: ignore[arg-type]
+            reason_code=reason_code,  # type: ignore[arg-type]
             icp_version_id=icp_version_id,
             score=score_snapshot.get("score") if score_snapshot else None,
             score_max_reachable=(
@@ -679,8 +677,47 @@ class FakeLeadsRepository:
             created_via=RecordOrigin.MANUAL,
             created_at=_dt.datetime.now(_dt.UTC),
         )
+
+    def create_lead_label(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        lead_id: uuid.UUID,
+        payload: dict[str, Any],
+        score_snapshot: dict[str, Any] | None,
+        icp_version_id: uuid.UUID | None,
+    ) -> tuple[LeadLabelOut, bool]:
+        """Like the real adapter: the client supplies the id; the same id with the same payload is a
+        replay (the ORIGINAL label, created=False); anything else under a used id (a different
+        payload, or an id another tenant holds and RLS hides) is the same generic conflict."""
+        self.tokens_seen.append(token)
+        self.calls.append("create_lead_label")
+        self._maybe_raise()
+        label_id = uuid.UUID(str(payload["id"]))
+        existing = next((x for x in self.labels.get(tenant_id, []) if x.id == label_id), None)
+        if existing is not None:
+            same = (
+                existing.lead_id == lead_id
+                and existing.label.value == str(payload["label"])
+                and (existing.reason_code.value if existing.reason_code else None)
+                == payload.get("reason_code")
+            )
+            if same:
+                return existing, False
+            raise ConflictError("23505")
+        if any(x.id == label_id for t, held in self.labels.items() if t != tenant_id for x in held):
+            raise ConflictError("23505")
+        label_out = self.make_label(
+            tenant_id,
+            lead_id,
+            label_id,
+            str(payload["label"]),
+            payload.get("reason_code"),
+            score_snapshot,
+            icp_version_id,
+        )
         self.labels.setdefault(tenant_id, []).append(label_out)
-        return label_out
+        return label_out, True
 
     def list_lead_labels(
         self,

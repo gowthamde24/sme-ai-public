@@ -247,6 +247,23 @@ describe("ReviewQueuePage", () => {
     expect(screen.queryByText(/Score filters are available only/i)).not.toBeInTheDocument();
   });
 
+  it("gives every lead card its own label id, generated per render", async () => {
+    fetchReviewQueue.mockResolvedValue({
+      items: [
+        { ...standardQueue.items[0], lead_id: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa" },
+        { ...standardQueue.items[0], lead_id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb" },
+      ],
+      next_cursor: null,
+    });
+    render(await ReviewQueuePage(props()));
+    const ids = [...document.querySelectorAll('input[name="label_id"]')].map(
+      (el) => (el as HTMLInputElement).value,
+    );
+    expect(ids).toHaveLength(2);
+    expect(new Set(ids).size).toBe(2);
+    for (const id of ids) expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+  });
+
   it("renders lead cards with company and contact information", async () => {
     render(await ReviewQueuePage(props()));
     expect(

@@ -104,6 +104,7 @@ export interface ImportRowOutcome {
 export type LeadLabel = "good" | "bad" | "maybe";
 
 export interface LeadLabelCreate {
+  id: string;
   label: LeadLabel;
   reason_code?: LeadLabelReason | null;
 }

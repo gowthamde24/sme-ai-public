@@ -25,6 +25,7 @@ import { importLeadsAction, labelLeadAction } from "./actions";
 
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const LEAD_ID = "33333333-3333-3333-3333-333333333333";
+const LABEL_ID = "55555555-5555-4555-8555-555555555555";
 
 function form(values: Record<string, string>): FormData {
   const data = new FormData();
@@ -48,10 +49,11 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "good" }),
+      form({ label_id: LABEL_ID, label: "good" }),
     );
     expect(res).toEqual({ ok: true, message: "Lead marked as good." });
     expect(createLeadLabel).toHaveBeenCalledWith("tok", TENANT, LEAD_ID, {
+      id: LABEL_ID,
       label: "good",
       reason_code: null,
     });
@@ -65,10 +67,11 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "maybe" }),
+      form({ label_id: LABEL_ID, label: "maybe" }),
     );
     expect(res.ok).toBe(true);
     expect(createLeadLabel).toHaveBeenCalledWith("tok", TENANT, LEAD_ID, {
+      id: LABEL_ID,
       label: "maybe",
       reason_code: null,
     });
@@ -79,13 +82,39 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "bad", reason_code: "not_our_market" }),
+      form({ label_id: LABEL_ID, label: "bad", reason_code: "not_our_market" }),
     );
     expect(res).toEqual({ ok: true, message: "Lead marked as bad." });
     expect(createLeadLabel).toHaveBeenCalledWith("tok", TENANT, LEAD_ID, {
+      id: LABEL_ID,
       label: "bad",
       reason_code: "not_our_market",
     });
+  });
+
+  it.each([
+    ["missing", {}],
+    ["empty", { label_id: "" }],
+    ["not a uuid", { label_id: "label-1" }],
+  ])("refuses a submission whose label id is %s, before any request", async (_name, extra) => {
+    const res = await labelLeadAction(TENANT, LEAD_ID, {}, form({ label: "good", ...extra }));
+    expect(res.ok).toBe(false);
+    expect(res.error).toMatch(/reload the page/i);
+    expect(createLeadLabel).not.toHaveBeenCalled();
+  });
+
+  it("sends the same id again when the form is submitted again (a retry, not a new label)", async () => {
+    await labelLeadAction(TENANT, LEAD_ID, {}, form({ label_id: LABEL_ID, label: "good" }));
+    await labelLeadAction(TENANT, LEAD_ID, {}, form({ label_id: LABEL_ID, label: "good" }));
+    expect(createLeadLabel).toHaveBeenCalledTimes(2);
+    expect(createLeadLabel.mock.calls.map((c) => c[3].id)).toEqual([LABEL_ID, LABEL_ID]);
+  });
+
+  it("explains a 409 (the id was used for a different label) without echoing anything", async () => {
+    createLeadLabel.mockRejectedValue(new ApiRequestError(409, "conflict", "Conflict"));
+    const res = await labelLeadAction(TENANT, LEAD_ID, {}, form({ label_id: LABEL_ID, label: "good" }));
+    expect(res.ok).toBe(false);
+    expect(res.error).toMatch(/reload the page/i);
   });
 
   it("rejects bad label if reason code is missing", async () => {
@@ -93,7 +122,7 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "bad" }),
+      form({ label_id: LABEL_ID, label: "bad" }),
     );
     expect(res.ok).toBe(false);
     expect(res.error).toMatch(/Select a reason code/i);
@@ -105,7 +134,7 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "bad", reason_code: "fake_reason" }),
+      form({ label_id: LABEL_ID, label: "bad", reason_code: "fake_reason" }),
     );
     expect(res.ok).toBe(false);
     expect(res.error).toMatch(/Select a reason code/i);
@@ -117,7 +146,7 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "unknown" }),
+      form({ label_id: LABEL_ID, label: "unknown" }),
     );
     expect(res.ok).toBe(false);
     expect(res.error).toMatch(/valid label/i);
@@ -128,7 +157,7 @@ describe("labelLeadAction", () => {
       "bad-tenant",
       LEAD_ID,
       {},
-      form({ label: "good" }),
+      form({ label_id: LABEL_ID, label: "good" }),
     );
     expect(res.ok).toBe(false);
     expect(res.error).toMatch(/Invalid workspace or lead reference/i);
@@ -137,7 +166,7 @@ describe("labelLeadAction", () => {
   it("redirects on ApiAuthError", async () => {
     createLeadLabel.mockRejectedValue(new ApiAuthError("expired"));
     const target = await redirectTarget(() =>
-      labelLeadAction(TENANT, LEAD_ID, {}, form({ label: "good" })),
+      labelLeadAction(TENANT, LEAD_ID, {}, form({ label_id: LABEL_ID, label: "good" })),
     );
     expect(target).toBe("/login");
   });
@@ -150,7 +179,7 @@ describe("labelLeadAction", () => {
       TENANT,
       LEAD_ID,
       {},
-      form({ label: "good" }),
+      form({ label_id: LABEL_ID, label: "good" }),
     );
     expect(res.ok).toBe(false);
     expect(res.error).toBe("Your role cannot label leads.");
