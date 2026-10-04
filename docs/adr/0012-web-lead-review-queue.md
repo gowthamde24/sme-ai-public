@@ -35,6 +35,7 @@ Ticket T005 Milestone 3 delivers the user-facing web interface for human lead qu
   - While blind, the page offers no score-band filters (the API refuses them with 422, because filtering on a hidden value reveals it) and ignores a `score_band` in the URL.
   - Once the caller has labelled a lead, its score and deterministic factor breakdown are rendered.
   - Reviewers can toggle blind mode off using the header badge button (`?blind=false`); the API logs that each such view was requested.
+  - **Blinding is an API-level workflow control against reviewer bias, not a confidentiality boundary; members can read other reviewers' labels and scores via RLS by design.** A member who talks to PostgREST directly with their own JWT can read the `lead_labels` rows (scores and snapshots included) of every reviewer in the workspace. The control exists so the product's own screens do not prime a reviewer; it is not a secret kept from colleagues. (Checklist: "Lead review: deferred items" (g).)
 
 ### 4. Guard Rails & Defense in Depth
 - **Formula Injection Immunity:** Export route handler delegates file generation to backend `/v1/tenants/{tenantId}/exports`, which prefixes dangerous spreadsheet characters with a single quote (`'`).
