@@ -17,6 +17,9 @@ from app.config import ConfigurationError, Settings, build_auth_config, get_sett
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
+from app.erasure import repository as erasure_repo
+from app.erasure.repository import PostgrestErasureRepository
+from app.erasure.routes import router as erasure_router
 from app.errors import ApiError, install_error_handlers
 from app.evidence.repository import PostgrestEvidenceRepository
 from app.evidence.routes import router as evidence_router
@@ -63,6 +66,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         evidence=PostgrestEvidenceRepository(config.rest_url, config.anon_key),
         leads=PostgrestLeadsRepository(config.rest_url, config.anon_key),
         agents=build_agents_runtime(settings, config),
+        erasure=PostgrestErasureRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -103,6 +107,21 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409, "token_expiring", "Your session is about to expire. Sign in again and retry."
     ),
     runs_repo.RunNotRunningError: ApiError(409, "run_not_running", "That run is not running."),
+    # Erasure (T006b, ADR 0014). Fixed messages: nothing from the data layer reaches the client.
+    erasure_repo.NotPendingError: ApiError(
+        409, "erasure_not_pending", "That erasure request is not pending."
+    ),
+    erasure_repo.WindowNotElapsedError: ApiError(
+        409,
+        "erasure_window_open",
+        "A workspace-wide erasure can only run 24 hours after it was requested.",
+    ),
+    erasure_repo.AlreadyExecutedError: ApiError(
+        409, "erasure_already_executed", "That erasure has already been carried out."
+    ),
+    erasure_repo.RequestCancelledError: ApiError(
+        409, "erasure_cancelled", "That erasure request was cancelled."
+    ),
 }
 
 
@@ -122,6 +141,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.evidence,
                 runtime.leads,
                 runtime.agents.repository if runtime.agents is not None else None,
+                runtime.erasure,
             ):
                 if isinstance(
                     repository,
@@ -129,7 +149,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestCrmRepository
                     | PostgrestEvidenceRepository
                     | PostgrestLeadsRepository
-                    | PostgrestAgentRunsRepository,
+                    | PostgrestAgentRunsRepository
+                    | PostgrestErasureRepository,
                 ):
                     repository.close()
 
@@ -174,6 +195,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(evidence_router)
     app.include_router(crm_router)
     app.include_router(agent_runs_router)
+    app.include_router(erasure_router)
     return app
 
 

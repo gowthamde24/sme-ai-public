@@ -98,9 +98,23 @@ export default async function TenantPage({
           Lead Review Queue →
         </Link>
         {" · "}
-        <Link href={`/app/tenants/${tenantId}/agents`} style={{ fontWeight: 600 }}>
+        <Link
+          href={`/app/tenants/${tenantId}/agents`}
+          style={{ fontWeight: 600 }}
+        >
           Agents →
         </Link>
+        {(tenant.role === "owner" || tenant.role === "admin") && (
+          <>
+            {" · "}
+            <Link
+              href={`/app/tenants/${tenantId}/privacy`}
+              style={{ fontWeight: 600 }}
+            >
+              Privacy →
+            </Link>
+          </>
+        )}
       </nav>
 
       <nav aria-label="Records" className="tabs">

@@ -156,3 +156,44 @@ def test_agent_requests_forbid_unknown_and_server_owned_properties() -> None:
     for name, node in defs.items():
         if name.endswith("Out"):
             assert node["additionalProperties"] is False, name
+
+
+# ==== erasure (T006b, ADR 0014) ====
+def test_erasure_schema_and_typescript_are_up_to_date() -> None:
+    from app.erasure import contracts
+
+    assert (CONTRACTS / "erasure.schema.json").read_text() == contracts.schema_text(), (
+        "run `make contracts`"
+    )
+    assert (CONTRACTS / "erasure.ts").read_text() == contracts.ts_text(), "run `make contracts`"
+
+
+def test_the_barrel_exports_the_erasure_types_without_duplicating_other_names() -> None:
+    import re
+
+    assert 'export * from "./erasure"' in (CONTRACTS / "index.ts").read_text()
+    names = {
+        f: set(re.findall(r"export (?:interface|type) (\w+)", (CONTRACTS / f"{f}.ts").read_text()))
+        for f in ("crm", "evidence", "leads", "agents", "erasure")
+    }
+    for other in ("crm", "evidence", "leads", "agents"):
+        assert not names["erasure"] & names[other], f"duplicate export names with {other}"
+
+
+def test_erasure_requests_forbid_unknown_and_server_owned_properties() -> None:
+    defs = json.loads((CONTRACTS / "erasure.schema.json").read_text())["$defs"]
+    server_owned = {"tenant_id", "status", "result", "requested_by", "executed_by", "execute_after"}
+    for name in ("ErasureRequestIn", "ExecuteIn"):
+        assert defs[name].get("additionalProperties") is False, name
+        assert not set(defs[name]["properties"]) & server_owned, name
+    for name, node in defs.items():
+        if name.endswith("Out"):
+            assert node.get("additionalProperties") is False, name
+
+
+def test_an_erasure_result_cannot_carry_a_value() -> None:
+    """The result model has counts (numbers), row ids and fixed text: no free-form string map."""
+    defs = json.loads((CONTRACTS / "erasure.schema.json").read_text())["$defs"]
+    result = defs["ErasureResultOut"]["properties"]
+    assert result["counts"]["additionalProperties"] == {"type": "integer"}
+    assert set(defs["ReviewItem"]["properties"]) == {"table", "column", "id"}

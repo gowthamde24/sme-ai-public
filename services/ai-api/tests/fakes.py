@@ -13,6 +13,7 @@ from app.agent_runs.wiring import AgentsRuntime
 from app.auth.deps import Runtime
 from app.auth.jwt import StaticKeyProvider, TokenVerifier
 from app.config import Settings
+from app.erasure.repository import ErasureRepository
 from app.main import create_app
 from app.tenancy.models import (
     AuditEventListOut,
@@ -133,6 +134,7 @@ def make_client(
     evidence: FakeEvidenceRepository | None = None,
     leads: FakeLeadsRepository | None = None,
     agents: AgentsRuntime | None = None,
+    erasure: ErasureRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -151,6 +153,7 @@ def make_client(
             evidence=evidence or FakeEvidenceRepository(),
             leads=leads or FakeLeadsRepository(),
             agents=agents,
+            erasure=erasure,
         ),
     )
     return TestClient(app), repo

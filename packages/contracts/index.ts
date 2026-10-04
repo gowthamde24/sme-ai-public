@@ -64,3 +64,7 @@ export * from "./leads";
 /** Agent-run contracts (T006): generated from the API models by `make contracts`. An agent claim is a
  * SUGGESTION until a human accepts it; claim values are UNTRUSTED text: render as plain text only. */
 export * from "./agents";
+
+/** Erasure contracts (T006b, ADR 0014): generated from the API models by `make contracts`. A result holds counts
+ * per column and row ids for manual review, never a value. */
+export * from "./erasure";

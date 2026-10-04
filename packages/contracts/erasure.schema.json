@@ -1,0 +1,320 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "erasure.schema.json",
+  "title": "Erasure API contracts (T006b)",
+  "description": "Generated from services/ai-api/app/erasure/models.py by `make contracts`. A result holds counts per column and row ids for manual review, never a value. Requests forbid unknown properties: a tenant, a status or a requester can never be sent.",
+  "$defs": {
+    "ErasureRequestIn": {
+      "additionalProperties": false,
+      "description": "Ask for one contact, one company or the whole workspace to be erased. The id is chosen by the\ncaller (a retry with the same id and payload is a replay, never a second request).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "contact",
+            "company",
+            "tenant"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject Id"
+        }
+      },
+      "required": [
+        "id",
+        "scope"
+      ],
+      "title": "ErasureRequestIn",
+      "type": "object"
+    },
+    "ErasureRequestOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "contact",
+            "company",
+            "tenant"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "subject_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Subject Id"
+        },
+        "status": {
+          "enum": [
+            "pending",
+            "executing",
+            "executed",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "requested_by": {
+          "format": "uuid",
+          "title": "Requested By",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "execute_after": {
+          "format": "date-time",
+          "title": "Execute After",
+          "type": "string"
+        },
+        "executed_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Executed By"
+        },
+        "executed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Executed At"
+        },
+        "cancelled_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cancelled By"
+        },
+        "cancelled_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cancelled At"
+        },
+        "result": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ErasureResultOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "scope",
+        "subject_id",
+        "status",
+        "requested_by",
+        "created_at",
+        "execute_after",
+        "executed_by",
+        "executed_at",
+        "cancelled_by",
+        "cancelled_at",
+        "result"
+      ],
+      "title": "ErasureRequestOut",
+      "type": "object"
+    },
+    "ErasureResultOut": {
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "format": "uuid",
+          "title": "Request Id",
+          "type": "string"
+        },
+        "scope": {
+          "enum": [
+            "contact",
+            "company",
+            "tenant"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "executed",
+            "dry_run"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "dry_run": {
+          "title": "Dry Run",
+          "type": "boolean"
+        },
+        "counts": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Counts",
+          "type": "object"
+        },
+        "review": {
+          "items": {
+            "$ref": "#/$defs/ReviewItem"
+          },
+          "title": "Review",
+          "type": "array"
+        },
+        "review_truncated": {
+          "title": "Review Truncated",
+          "type": "boolean"
+        },
+        "exports_logged": {
+          "title": "Exports Logged",
+          "type": "integer"
+        },
+        "note": {
+          "title": "Note",
+          "type": "string"
+        },
+        "replayed": {
+          "default": false,
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "request_id",
+        "scope",
+        "status",
+        "dry_run",
+        "counts",
+        "review",
+        "review_truncated",
+        "exports_logged",
+        "note"
+      ],
+      "title": "ErasureResultOut",
+      "type": "object"
+    },
+    "ExecuteIn": {
+      "additionalProperties": false,
+      "description": "dry_run previews the counts and the review list and changes nothing.",
+      "properties": {
+        "dry_run": {
+          "default": false,
+          "title": "Dry Run",
+          "type": "boolean"
+        }
+      },
+      "title": "ExecuteIn",
+      "type": "object"
+    },
+    "Page_ErasureRequestOut_": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ErasureRequestOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "Page[ErasureRequestOut]",
+      "type": "object"
+    },
+    "ReviewItem": {
+      "additionalProperties": false,
+      "description": "A row whose free text merely CONTAINS the erased name: left untouched, listed for the\nOwner. Never a value.",
+      "properties": {
+        "table": {
+          "title": "Table",
+          "type": "string"
+        },
+        "column": {
+          "title": "Column",
+          "type": "string"
+        },
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table",
+        "column",
+        "id"
+      ],
+      "title": "ReviewItem",
+      "type": "object"
+    }
+  }
+}
