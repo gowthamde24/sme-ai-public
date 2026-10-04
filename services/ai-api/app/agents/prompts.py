@@ -10,11 +10,25 @@ import unicodedata
 from collections.abc import Sequence
 
 from app.agents.inputs import ModelInput
-from app.agents.llm.interface import Block, LlmRequest, Trust
+from app.agents.llm.interface import Block, LlmRequest, ToolSpec, Trust
 from app.agents.notes import FIXED_NOTES, NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR
+from app.agents.schemas import FinalResult
 from app.agents.spec import AgentSpec
 
-__all__ = ["NOTE_RECORDED", "NOTE_REFUSED", "NOTE_REPAIR", "build_request", "escape_value"]
+__all__ = [
+    "FINAL_RESULT",
+    "NOTE_RECORDED",
+    "NOTE_REFUSED",
+    "NOTE_REPAIR",
+    "build_request",
+    "escape_value",
+]
+
+FINAL_RESULT = ToolSpec(
+    "final_result",
+    "Report that you are done: a short summary and your uncertainty.",
+    FinalResult.model_json_schema(),
+)
 
 _MARKS = re.compile(r"<{3,}|>{3,}")
 
@@ -63,4 +77,5 @@ def build_request(
         blocks=tuple(blocks),
         tools=tuple(t.spec() for t in spec.tools),
         max_output_tokens=max_output_tokens,
+        final_result=FINAL_RESULT,
     )

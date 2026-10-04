@@ -37,6 +37,10 @@ class LlmRequest:
     blocks: tuple[Block, ...]
     tools: tuple[ToolSpec, ...]
     max_output_tokens: int
+    # How the model reports that it is DONE: a structured result in this shape (an adapter
+    # offers it as a tool of this name and returns the arguments as `LlmResponse.structured`).
+    # Never an instruction to do anything.
+    final_result: ToolSpec | None = None
 
 
 @dataclass(frozen=True)

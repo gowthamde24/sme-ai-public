@@ -15,6 +15,7 @@ from dataclasses import dataclass
 from app.agent_runs.executor import RunSubmitter, RunTask, ThreadRunExecutor
 from app.agent_runs.repository import AgentRunsRepository, PostgrestAgentRunsRepository
 from app.agents.db import AgentDb
+from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig
 from app.agents.llm.fake import FakeProvider, selftest_script
 from app.agents.llm.interface import LlmClient
 from app.agents.registry import AGENTS
@@ -23,7 +24,7 @@ from app.config import AuthConfig, ConfigurationError, Settings
 
 logger = logging.getLogger("app.agent_runs.wiring")
 
-PROVIDERS = frozenset({"fake"})
+PROVIDERS = frozenset({"fake", "anthropic"})
 
 
 class AgentSettingsError(ConfigurationError):
@@ -37,6 +38,33 @@ class AgentsRuntime:
     unavailable: str | None  # why a run cannot start (None = it can)
 
 
+def _anthropic_config(settings: Settings) -> AnthropicConfig | str:
+    """The adapter's configuration, or the reason it is not available (a short code)."""
+    model = (settings.llm_model or "").strip()
+    key = (
+        settings.anthropic_api_key.get_secret_value().strip() if settings.anthropic_api_key else ""
+    )
+    input_price, output_price = (
+        settings.llm_input_micros_per_mtok,
+        settings.llm_output_micros_per_mtok,
+    )
+    if not model or not key or input_price is None or output_price is None:
+        return "llm_not_configured"
+    if not settings.llm_spend_cap_confirmed:
+        # the owner sets the provider's hard cap first (pre-pilot checklist)
+        return "llm_spend_cap_unconfirmed"
+    try:
+        return AnthropicConfig(
+            api_key=key,
+            model=model,
+            input_micros_per_mtok=input_price,
+            output_micros_per_mtok=output_price,
+            base_url=settings.anthropic_base_url,
+        )
+    except ValueError:
+        raise AgentSettingsError("the model adapter configuration is invalid") from None
+
+
 def llm_unavailable_reason(settings: Settings) -> str | None:
     """None when agents may run; otherwise a short code. Raises AgentSettingsError for an unsafe
     or unknown setting."""
@@ -45,9 +73,12 @@ def llm_unavailable_reason(settings: Settings) -> str | None:
     provider = settings.llm_provider
     if provider not in PROVIDERS:
         raise AgentSettingsError(f"unknown LLM_PROVIDER {provider!r}")
-    if provider == "fake" and not settings.is_development:
-        raise AgentSettingsError("LLM_PROVIDER=fake is refused outside development")
-    return None
+    if provider == "fake":
+        if not settings.is_development:
+            raise AgentSettingsError("LLM_PROVIDER=fake is refused outside development")
+        return None
+    outcome = _anthropic_config(settings)
+    return outcome if isinstance(outcome, str) else None
 
 
 def build_llm_factory(settings: Settings) -> Callable[[], LlmClient]:
@@ -55,6 +86,12 @@ def build_llm_factory(settings: Settings) -> Callable[[], LlmClient]:
     reason = llm_unavailable_reason(settings)
     if reason is not None:
         raise AgentSettingsError(reason)
+    if settings.llm_provider == "anthropic":
+        outcome = _anthropic_config(settings)
+        if isinstance(outcome, str):  # not reachable: llm_unavailable_reason returned None
+            raise AgentSettingsError(outcome)
+        config = outcome
+        return lambda: AnthropicClient(config)
     return lambda: FakeProvider(selftest_script())
 
 

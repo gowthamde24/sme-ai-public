@@ -44,6 +44,16 @@ class Settings(BaseSettings):
     agents_enabled: bool = False
     # "fake" is a scripted model for development only; it is refused outside development.
     llm_provider: str = "fake"
+    # The real adapter (provider "anthropic"). No default model: the owner chooses it. The key
+    # comes ONLY from the environment. Prices are per million tokens, in millionths of the
+    # billing currency, set by the owner from the provider's price list; the spend cap must be
+    # set at the provider and confirmed here before the first real call.
+    llm_model: str | None = None
+    anthropic_api_key: SecretStr | None = None
+    anthropic_base_url: str = "https://api.anthropic.com"
+    llm_input_micros_per_mtok: int | None = None
+    llm_output_micros_per_mtok: int | None = None
+    llm_spend_cap_confirmed: bool = False
     agents_max_workers: int = 2
     agents_max_queue: int = 8
 

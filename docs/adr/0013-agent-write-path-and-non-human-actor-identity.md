@@ -605,6 +605,17 @@ the ADR left open:
     target's four columns (company and lead), the settings row, the `claims_effective` view. Mutation checks confirm that a column
     the table or view does not have passes the mocked tests and fails the real-stack ones.
 
+11. **The one real model adapter** (`app/agents/llm/anthropic.py`, its own commit): the Anthropic Messages API over `httpx`
+    (already a dependency: no new package, no vendor SDK type outside this file). It is OFF unless `LLM_PROVIDER=anthropic` AND the
+    model id (`LLM_MODEL`, no default), the key (`ANTHROPIC_API_KEY`, environment only), both prices
+    (`LLM_INPUT_MICROS_PER_MTOK`, `LLM_OUTPUT_MICROS_PER_MTOK`, from the provider's price list) and the owner's confirmation that a
+    hard spend cap exists at the provider (`LLM_SPEND_CAP_CONFIRMED=true`) are set; otherwise a start answers 503
+    `agents_unavailable`. It puts our constant policy text in `system`, everything else in the user turn with the untrusted block
+    last, offers the agent's tools plus a `final_result` tool for the structured result, makes one request per call (no retries),
+    maps 429 / 5xx / timeout / other 4xx / malformed bodies to constant codes, and never puts the key, the URL, the request or the
+    response body into an exception or a log line. Every test uses `httpx.MockTransport`; **it has not been run against the real
+    provider** (no key was supplied). The first live run is the owner's opt-in step.
+
 ## Resolved questions (the open questions of the proposal)
 
 | # | Question | Decision |
