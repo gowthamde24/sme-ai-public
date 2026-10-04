@@ -23,6 +23,7 @@ npm run all                                    # or one at a time:
 npm run agents                                 # agents click-through (7 steps)
 npm run review:desktop                         # label 20 leads as labeler1 (desktop)
 npm run export                                 # Admin CSV export; Sales / Viewer refused
+npm run privacy                                # the Owner's erasure page (WRITES: erases one synthetic demo contact)
 npm run review:phone                           # the same walkthrough at 390x844 as labeler2, with touch-target measurements
 ```
 
@@ -37,6 +38,9 @@ Screenshots and the downloaded CSV go to `e2e/shots/` (git-ignored). Override wi
   with different reasons, 4 Maybe, 12 Good); labels persist after reload; a double click makes one label (checked in the local
   database through `docker exec`); "Unreviewed only"; blindness off shows scores, bands and the plain-language breakdown. On the
   phone it also measures horizontal scroll, text overflow and touch targets under 44px.
+- **privacy.mjs:** the Privacy link and page (Owner/Admin only), asking erases nothing, the Admin can cancel but not run, preview changes
+  nothing, erasing needs the ticked confirmation, the completed row shows counts and the names note but no value, the erased contact is
+  gone from the list, a workspace-wide request is refused inside 24 hours and can be cancelled, Sales and Viewer get a refusal.
 - **export.mjs:** the CSV has a reason on every Bad row and no formula cells; only Owner/Admin can export.
 
 A label belongs to one reviewer, so each labelling run needs a reviewer who has not labelled yet: re-seed the database
