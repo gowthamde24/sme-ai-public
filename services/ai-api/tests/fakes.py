@@ -126,7 +126,9 @@ def seeded_repository() -> FakeRepository:
     return repo
 
 
-def make_client(repo: FakeRepository | None = None) -> tuple[TestClient, FakeRepository]:
+def make_client(
+    repo: FakeRepository | None = None, crm: FakeCrmRepository | None = None
+) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
         issuer=ISSUER,
@@ -137,7 +139,7 @@ def make_client(repo: FakeRepository | None = None) -> tuple[TestClient, FakeRep
     )
     app = create_app(
         Settings(_env_file=None, api_env="development"),  # type: ignore[call-arg]
-        runtime=Runtime(verifier=verifier, repository=repo),
+        runtime=Runtime(verifier=verifier, repository=repo, crm=crm or FakeCrmRepository()),
     )
     return TestClient(app), repo
 
@@ -145,3 +147,179 @@ def make_client(repo: FakeRepository | None = None) -> tuple[TestClient, FakeRep
 def auth(user: str | uuid.UUID, **overrides: Any) -> dict[str, str]:
     sub = USERS[user] if isinstance(user, str) else user
     return {"Authorization": "Bearer " + mint(KEY, claims(str(sub), **overrides))}
+
+
+# ============================================================================ CRM fake
+import datetime as _dt  # noqa: E402
+from typing import Any as _Any  # noqa: E402
+
+from app.crm.models import Page, decode_cursor  # noqa: E402,F401
+from app.crm.repository import (  # noqa: E402
+    ENTITIES,
+    ConflictError,
+    NotFoundError,
+    payload_matches,
+)
+
+_SERVER_DEFAULTS: dict[str, dict[str, _Any]] = {
+    "companies": {
+        "type": "prospect",
+        "website": None,
+        "country": None,
+        "region": None,
+        "city": None,
+        "industry": None,
+        "tags": [],
+    },
+    "contacts": {
+        "company_id": None,
+        "email": None,
+        "phone": None,
+        "job_title": None,
+        "email_consent": "unknown",
+        "whatsapp_consent": "unknown",
+        "phone_consent": "unknown",
+        "suppressed_at": None,
+        "suppression_reason": None,
+    },
+    "products": {
+        "description": None,
+        "unit": None,
+        "category": None,
+        "attributes": {},
+        "active": True,
+    },
+    "leads": {
+        "company_id": None,
+        "contact_id": None,
+        "owner_user_id": None,
+        "status": "new",
+        "source": None,
+        "disqualified_reason": None,
+    },
+    "opportunities": {
+        "contact_id": None,
+        "lead_id": None,
+        "owner_user_id": None,
+        "status": "open",
+        "lost_reason": None,
+        "closed_at": None,
+    },
+}
+
+
+class FakeCrmRepository:
+    """In-memory CrmRepository: just enough behaviour to exercise the routes (the integration
+    suite exercises the real database rules)."""
+
+    def __init__(self) -> None:
+        self.rows: dict[tuple[str, uuid.UUID], dict[uuid.UUID, _Any]] = {}
+        self.tokens_seen: list[str] = []
+        self.calls: list[tuple[str, str]] = []
+        self._tick = 0
+
+    def _store(self, entity: str, tenant_id: uuid.UUID) -> dict[uuid.UUID, _Any]:
+        return self.rows.setdefault((entity, tenant_id), {})
+
+    def seed(self, entity: str, tenant_id: uuid.UUID, row_id: uuid.UUID, **fields: _Any) -> _Any:
+        row, _ = self.create_row("seed", entity, tenant_id, {"id": str(row_id), **fields})
+        return row
+
+    def list_rows(
+        self,
+        token: str,
+        entity: str,
+        tenant_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+        q: str | None,
+        include_archived: bool,
+    ) -> _Any:
+        self.tokens_seen.append(token)
+        self.calls.append(("list", entity))
+        rows = sorted(
+            self._store(entity, tenant_id).values(),
+            key=lambda r: (r.created_at, r.id),
+            reverse=True,
+        )
+        if not include_archived:
+            rows = [r for r in rows if r.archived_at is None]
+        if cursor is not None:
+            c_at, c_id = cursor
+            rows = [r for r in rows if (r.created_at.isoformat(), str(r.id)) < (c_at, str(c_id))]
+        if q:
+            rows = [r for r in rows if q.lower() in r.name.lower()]
+        from app.crm.models import encode_cursor
+
+        page = rows[:limit]
+        nxt = encode_cursor(page[-1].created_at, page[-1].id) if len(rows) > limit else None
+        return Page[_Any](items=page, next_cursor=nxt)
+
+    def get_row(
+        self, token: str, entity: str, tenant_id: uuid.UUID, row_id: uuid.UUID
+    ) -> _Any | None:
+        self.tokens_seen.append(token)
+        self.calls.append(("get", entity))
+        return self._store(entity, tenant_id).get(row_id)
+
+    def create_row(
+        self, token: str, entity: str, tenant_id: uuid.UUID, payload: dict[str, _Any]
+    ) -> tuple[_Any, bool]:
+        self.tokens_seen.append(token)
+        self.calls.append(("create", entity))
+        rid = uuid.UUID(payload["id"])
+        existing = self._store(entity, tenant_id).get(rid)
+        if existing is not None:
+            if payload_matches(payload, existing.model_dump(mode="json")):
+                return existing, False
+            raise ConflictError("23505")
+        if any(rid in rows for (e, t), rows in self.rows.items() if e == entity and t != tenant_id):
+            raise ConflictError("23505")  # another tenant's id: the same generic conflict
+        self._tick += 1
+        base = {
+            "id": rid,
+            "created_by": None,
+            "created_via": "manual",
+            "created_at": _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC)
+            + _dt.timedelta(seconds=self._tick),
+            "updated_at": _dt.datetime(2026, 1, 1, tzinfo=_dt.UTC),
+            "archived_at": None,
+            **_SERVER_DEFAULTS[entity],
+            **{k: v for k, v in payload.items() if k not in ("id", "tenant_id")},
+        }
+        row = ENTITIES[entity].out.model_validate(base)
+        self._store(entity, tenant_id)[rid] = row
+        return row, True
+
+    def update_row(
+        self,
+        token: str,
+        entity: str,
+        tenant_id: uuid.UUID,
+        row_id: uuid.UUID,
+        changes: dict[str, _Any],
+    ) -> _Any:
+        self.tokens_seen.append(token)
+        self.calls.append(("update", entity))
+        row = self._store(entity, tenant_id).get(row_id)
+        if row is None:
+            raise NotFoundError("x")
+        updated = ENTITIES[entity].out.model_validate({**row.model_dump(mode="json"), **changes})
+        self._store(entity, tenant_id)[row_id] = updated
+        return updated
+
+    def set_archived(
+        self, token: str, entity: str, tenant_id: uuid.UUID, row_id: uuid.UUID, archived: bool
+    ) -> _Any:
+        stamp = _dt.datetime(2026, 2, 1, tzinfo=_dt.UTC).isoformat() if archived else None
+        return self.update_row(token, entity, tenant_id, row_id, {"archived_at": stamp})
+
+    def consent_rpc(self, token: str, function: str, args: dict[str, _Any]) -> uuid.UUID | None:
+        self.tokens_seen.append(token)
+        self.calls.append(("rpc", function))
+        self.last_rpc = (function, args)
+        tenant, contact = uuid.UUID(args["p_tenant_id"]), uuid.UUID(args["p_contact_id"])
+        if contact not in self._store("contacts", tenant):
+            raise NotFoundError("P0002")
+        return uuid.uuid4()

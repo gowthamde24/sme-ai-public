@@ -61,7 +61,12 @@ begin
     -- a child row in tenant A (privileged), and a real tenant-B value for the parent column
     child_id := gen_random_uuid();
     execute format(reg.insert_sql, tests.tid('a'), child_id, tests.rid('a_company'), tests.rid('a_contact'), tests.pool_uid(1));
-    execute format('select %I from public.%I where tenant_id = %L limit 1', k.parent_col, k.parent, tests.tid('b')) into foreign_v;
+    -- A tenant-B value that is NOT also a value of tenant A (the fixture user `dual` belongs to both
+    -- tenants, so pointing at it would be a legitimate reference, not an attack).
+    execute format(
+      'select p.%1$I from public.%2$I p where p.tenant_id = %3$L
+          and not exists (select 1 from public.%2$I q where q.tenant_id = %4$L and q.%1$I = p.%1$I) limit 1',
+      k.parent_col, k.parent, tests.tid('b'), tests.tid('a')) into foreign_v;
     if foreign_v is null then
       return next fail(label || ': no tenant-B parent row to aim at');
       continue;

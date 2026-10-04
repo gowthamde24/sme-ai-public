@@ -11,6 +11,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.crm.repository import CrmRepository
 from app.errors import ApiError, forbidden, not_found, unauthorized
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
@@ -24,6 +25,7 @@ class Runtime:
 
     verifier: TokenVerifier
     repository: TenantRepository
+    crm: CrmRepository
 
 
 @dataclass(frozen=True)

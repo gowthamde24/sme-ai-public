@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration bench-rls dev-web dev-api
+.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration bench-rls contracts dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -42,6 +42,10 @@ db-reset:
 # pgTAP suite in supabase/tests/database (RLS isolation, roles, audit, catalog guards).
 db-test:
 	supabase test db
+
+# Regenerate packages/contracts/crm.schema.json + crm.ts from the API models (a test fails if stale).
+contracts:
+	cd $(API) && .venv/bin/python ../../scripts/export-contracts.py
 
 # RLS policy-cost benchmark (rolled back; local stack only). Compares the T002 per-row pattern
 # with the shipped once-per-statement pattern. See ADR 0004. Override size: make bench-rls ARGS="-v tenants=1000"

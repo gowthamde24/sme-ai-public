@@ -50,3 +50,6 @@ export interface AuditEventList {
   /** Pass as ?before_id= for the next (older) page; null when there is no more. */
   next_before_id: number | null;
 }
+
+/** CRM contracts (T003): generated from the API models by `make contracts`. */
+export * from "./crm";

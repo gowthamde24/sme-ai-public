@@ -10,7 +10,11 @@ from pydantic import BaseModel
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.config import ConfigurationError, Settings, build_auth_config, get_settings
+from app.crm import repository as crm_repo
+from app.crm.repository import PostgrestCrmRepository
+from app.crm.routes import router as crm_router
 from app.errors import ApiError, install_error_handlers
+from app.logging_safety import install_log_redaction
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -47,7 +51,34 @@ def build_runtime(settings: Settings) -> Runtime | None:
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
+        crm=PostgrestCrmRepository(config.rest_url, config.anon_key),
     )
+
+
+_REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
+    repo.TokenRejected: ApiError(
+        401,
+        "unauthorized",
+        "Invalid or missing credentials.",
+        headers={"WWW-Authenticate": "Bearer"},
+    ),
+    repo.Forbidden: ApiError(403, "forbidden", "Your role does not allow this action."),
+    repo.InvalidInput: ApiError(422, "validation_error", "Invalid input."),
+    repo.SlugUnavailable: ApiError(409, "slug_unavailable", "That slug is not available."),
+    # CRM. Deliberately generic: none of these bodies carries a field name, a value, or a hint
+    # about whether an id exists in another tenant.
+    crm_repo.NotFoundError: ApiError(404, "not_found", "Not found."),
+    crm_repo.ConflictError: ApiError(
+        409, "conflict", "The request conflicts with an existing record."
+    ),
+    crm_repo.InvalidReferenceError: ApiError(
+        422, "invalid_reference", "A referenced record does not exist."
+    ),
+    crm_repo.InvalidValueError: ApiError(422, "invalid_value", "A value was not accepted."),
+    crm_repo.InvalidTransitionError: ApiError(
+        409, "invalid_transition", "That status change is not allowed."
+    ),
+}
 
 
 def create_app(settings: Settings | None = None, *, runtime: Runtime | None = None) -> FastAPI:
@@ -57,26 +88,25 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     @asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         yield
-        if runtime is not None and isinstance(runtime.repository, PostgrestTenantRepository):
-            runtime.repository.close()
+        if runtime is not None:
+            for repository in (runtime.repository, runtime.crm):
+                if isinstance(repository, PostgrestTenantRepository | PostgrestCrmRepository):
+                    repository.close()
 
     app = FastAPI(title="SME AI Revenue Engine API", version=SERVICE_VERSION, lifespan=lifespan)
     app.state.runtime = runtime
+    install_log_redaction()
     install_error_handlers(app)
 
     @app.exception_handler(repo.RepositoryError)
     async def _repository_error(_: Request, exc: repo.RepositoryError) -> JSONResponse:
-        mapped = {
-            repo.TokenRejected: ApiError(
-                401,
-                "unauthorized",
-                "Invalid or missing credentials.",
-                headers={"WWW-Authenticate": "Bearer"},
-            ),
-            repo.Forbidden: ApiError(403, "forbidden", "Your role does not allow this action."),
-            repo.InvalidInput: ApiError(422, "validation_error", "Invalid input."),
-            repo.SlugUnavailable: ApiError(409, "slug_unavailable", "That slug is not available."),
-        }.get(type(exc), ApiError(502, "upstream_error", "The data layer failed."))
+        mapped = _REPOSITORY_ERRORS.get(type(exc))
+        if isinstance(exc, crm_repo.DuplicateValueError):
+            mapped = ApiError(
+                409, "duplicate_value", f"That {exc.field} is already used.", headers={}
+            )
+        if mapped is None:
+            mapped = ApiError(502, "upstream_error", "The data layer failed.")
         return JSONResponse(
             {"error": {"code": mapped.code, "message": mapped.message}},
             status_code=mapped.status_code,
@@ -86,7 +116,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.add_middleware(
         CORSMiddleware,
         allow_origins=settings.cors_origins,
-        allow_methods=["GET", "POST"],
+        allow_methods=["GET", "POST", "PATCH"],
         allow_headers=["*"],
     )
 
@@ -100,6 +130,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         )
 
     app.include_router(tenancy_router)
+    app.include_router(crm_router)
     return app
 
 

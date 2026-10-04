@@ -40,6 +40,17 @@ Status key: `[ ]` open, `[x]` done. Add the ticket or ADR that closed it. Add ne
 | [ ] | **Archived contacts keep their unique email.** Decide whether re-creating an archived contact's address should be possible (partial unique index) once the anonymise procedure exists. | ADR 0005 limits | **Pilot data** |
 | [ ] | **Terminal opportunities are only status-locked.** Decide whether won/lost opportunities should freeze other fields. | ADR 0005 limits | **Customer Zero** |
 
+## CRM API (T003 milestone 2)
+
+| | Item | Source | Gate |
+| --- | --- | --- | --- |
+| [ ] | **Proxy / CDN / load-balancer logs must drop query strings.** The API redacts its own access log, but `?q=<a person's name>` is still in the request line any front-end component sees. Configure every hop, and consider moving search to a POST body. | ADR 0006 #10 | **Pilot data** |
+| [ ] | **Rate limiting and request-size limits** for the CRM endpoints (list, create, consent actions; large bodies, bulk creation loops). | ADR 0002, 0006 | **External pilot** |
+| [ ] | **Production access-log redaction.** The filter attaches to `uvicorn.access` when the app is created. Verify it under the real process manager (gunicorn/uvicorn workers) and that no other access logger is enabled. | ADR 0006 #10 | **Pilot data** |
+| [ ] | **Dedicated SQLSTATE for the opportunity terminal-state error** instead of matching message text. | ADR 0006 limits | Next DB migration touching opportunities |
+| [ ] | **Contacts expose e-mail and phone to every role** (including Viewer). Decide whether some roles should see masked values. | ADR 0006 limits | **Customer Zero** |
+| [ ] | **Read-then-write race on archived rows** (`PATCH` checks `archived_at`, the database does not enforce "no edits while archived"). Add a trigger if it matters. | ADR 0006 limits | **Customer Zero** |
+
 ## Web app
 
 | | Item | Source | Gate |
