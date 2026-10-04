@@ -57,7 +57,7 @@ select is(pg_temp.err('b_owner', pg_temp.rv('s4', 'c_sales', 'accepted', 'low'))
 select is(tests.error_full_as(tests.uid('a_owner'), format($q$select public.review_claim(%L, %L, 'accepted', 'low', null)$q$, tests.rid('s5'), gen_random_uuid())), '42501|agent action not permitted||||', 'an Owner and a claim that does not exist: identical');
 select is(pg_temp.err('dual', pg_temp.rv('s6', 'c_b', 'accepted', 'low')), '42501|agent action not permitted||||', 'dual (Viewer of B) on B''s claim: identical');
 select is(pg_temp.err(null, pg_temp.rv('s7', 'c_sales', 'accepted', 'low')), '42501|permission denied for function review_claim||||', 'anon: no EXECUTE');
-select is((select count(*) from public.claim_reviews), 2::bigint, 'none of the refusals wrote a review');
+select is((select count(*) from public.claim_reviews where tenant_id in (tests.tid('a'), tests.tid('b'))), 2::bigint, 'none of the refusals wrote a review');
 
 -- ============================================================================ C. rules
 select is(substr(pg_temp.err('a_owner', pg_temp.rv('c1', 'c_manual', 'accepted', 'low')), 1, 5), '23514', 'only AGENT claims are reviewed: a manual claim is refused (23514)');

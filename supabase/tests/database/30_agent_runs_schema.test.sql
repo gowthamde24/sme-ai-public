@@ -9,13 +9,25 @@ select tests.seed_two_tenants();
 select tests.seed_crm();
 
 -- ============================================================================ 0. what the MIGRATION leaves behind: everything OFF
--- (checked before seed_agents switches things on for the rest of the file)
-select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, false), ('selftest_enabled', false)$$,
-  'a fresh database: both platform switches are OFF');
-select is((select count(*) from public.tenant_agent_settings), 0::bigint, 'a fresh database: no tenant has agents enabled');
-select results_eq($$select agent_name, allowed_tenants from public.agent_definitions$$, $$values ('selftest'::text, '{}'::uuid[])$$,
-  'a fresh database: the selftest agent is allowed for NO tenant (not for every tenant: NULL would mean that)');
-select is((select count(*) from public.agent_runs), 0::bigint, 'a fresh database: no runs');
+-- (checked before seed_agents switches things on for the rest of the file). A local database may legitimately differ in exactly one
+-- way: `make seed-demo` ran scripts/dev-enable-selftest.sh, which switches the platform on and allows selftest for the DEMO
+-- workspace ONLY. Anything else fails: all OFF and nobody allowed, or exactly that footprint.
+create function pg_temp.operator_state() returns text language sql as $$
+  select case
+    when (select bool_and(not enabled) from public.platform_flags)
+         and (select allowed_tenants = '{}'::uuid[] from public.agent_definitions where agent_name = 'selftest') then 'pristine'
+    when (select bool_and(enabled) from public.platform_flags)
+         and (select allowed_tenants = coalesce((select array_agg(id) from public.tenants where slug = 'demo-synthetic-sme'), '{}'::uuid[])
+                     and cardinality(allowed_tenants) = 1
+                from public.agent_definitions where agent_name = 'selftest') then 'dev-seeded'
+    else 'UNEXPECTED' end
+$$;
+select ok(pg_temp.operator_state() in ('pristine', 'dev-seeded'),
+  'the platform switches are OFF and selftest is allowed for NO tenant (or, on a dev database, exactly the DEMO workspace); found ' || pg_temp.operator_state());
+select is((select count(*) from public.tenant_agent_settings where tenant_id in (tests.tid('a'), tests.tid('b'))), 0::bigint, 'a new tenant has agents OFF (no settings row)');
+select results_eq($$select agent_name, allowed_tenants is null from public.agent_definitions$$, $$values ('selftest'::text, false)$$,
+  'selftest is never open to every tenant (allowed_tenants is not NULL)');
+select is((select count(*) from public.agent_runs where tenant_id in (tests.tid('a'), tests.tid('b'))), 0::bigint, 'a new tenant has no runs');
 
 select tests.seed_agents();
 

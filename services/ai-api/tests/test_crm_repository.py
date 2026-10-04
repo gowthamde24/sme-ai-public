@@ -557,12 +557,13 @@ def test_list_claims_is_tenant_scoped_user_jwt_only_and_returns_the_scoring_fiel
     got = repo.list_claims(TOKEN, TENANT, company_id=company)
     assert got == rows
     (req,) = seen
-    assert req.url.path.endswith("/claims")
+    # scoring input: manual / import claims and ACCEPTED agent claims (the view)
+    assert req.url.path.endswith("/claims_for_scoring")
     assert req.headers["authorization"] == f"Bearer {TOKEN}"
     assert req.headers["apikey"] == ANON
     q = dict(req.url.params)
     assert q["tenant_id"] == f"eq.{TENANT}" and q["company_id"] == f"eq.{company}"
-    assert q["archived_at"] == "is.null"
+    assert "archived_at" not in q, "the view has no such column; it returns live claims only"
     assert q["order"] == "created_at.desc,id.desc"
     assert set(q["select"].split(",")) == {"id", "company_id", "predicate", "value", "confidence"}
 

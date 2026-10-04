@@ -140,7 +140,8 @@ class Server:
                 at, rid = m.group(1), m.group(2)
                 rows = [r for r in rows if (r["created_at"], r["id"]) < (at, rid)]
             return httpx.Response(200, json=rows[: int(q["limit"])])
-        if name == "claims":
+        assert name != "claims", "scoring reads the claims_for_scoring view, never the raw table"
+        if name == "claims_for_scoring":
             ids = in_list(q["company_id"])
             return httpx.Response(200, json=[c for c in self.claims if c["company_id"] in ids])
         if name == "evidence_links":
@@ -314,3 +315,37 @@ def test_label_history_shows_scores_once_the_caller_has_labelled_that_lead() -> 
     )
     scores = sorted(label.score or 0 for label in labels_page(server, lead))
     assert scores == [61, 88]
+
+
+# ------------------------------------------------------------------- one source of claims
+def test_the_queue_and_the_label_snapshot_read_claims_from_the_same_filtered_source() -> None:
+    """Decision 5: unaccepted agent claims do not count toward a score, and the review queue and
+    the label snapshot must use the same filtered inputs. Both read the claims_for_scoring view
+    with the same select and order; neither may read the raw claims table."""
+    from app.crm.repository import PostgrestCrmRepository
+
+    leads = [lead_row(1, strong=True)]
+    server = Server(leads)
+    queue(server, include_blind_scores=True)
+    queue_claims = [r for r in server.requests if r.url.path.endswith("/claims_for_scoring")]
+    assert len(queue_claims) == 1
+    assert not any(r.url.path.endswith("/claims") for r in server.requests)
+
+    seen: list[httpx.Request] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen.append(req)
+        return httpx.Response(200, json=[])
+
+    client = httpx.Client(
+        base_url="http://postgrest.test/rest/v1", transport=httpx.MockTransport(handler)
+    )
+    PostgrestCrmRepository("http://postgrest.test/rest/v1", "anon", client=client).list_claims(
+        TOKEN, TENANT, company_id=uuid.UUID(leads[0]["company_id"])
+    )
+    (label_claims,) = seen
+    a, b = dict(queue_claims[0].url.params), dict(label_claims.url.params)
+    assert label_claims.url.path == queue_claims[0].url.path
+    assert (a["select"], a["order"]) == (b["select"], b["order"])
+    # the view has no archived_at column (it returns live claims only): asking for one is an error
+    assert "archived_at" not in a and "archived_at" not in b

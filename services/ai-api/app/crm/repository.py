@@ -133,6 +133,10 @@ class CrmRepository(Protocol):
 
 # What a claim read returns and in which order: ONE definition, used by every reader that feeds the
 # ICP score (this repository for the label snapshot, the review queue for the reviewer's view).
+# What scoring may read is the claims_for_scoring VIEW (ADR 0013, decision 5): live manual and
+# import claims, and agent claims only once a human accepted them. Never the raw claims table:
+# the review queue and the label snapshot both use this one source.
+CLAIMS_FOR_SCORING = "claims_for_scoring"
 CLAIM_SELECT = "id,company_id,predicate,value,confidence"
 CLAIM_ORDER = "created_at.desc,id.desc"
 CLAIMS_PER_COMPANY = 200
@@ -367,13 +371,13 @@ class PostgrestCrmRepository:
         decides what is visible; the tenant filter is belt and braces."""
         rows = self._send(
             "GET",
-            "/claims",
+            f"/{CLAIMS_FOR_SCORING}",
             token,
             params={
                 "select": CLAIM_SELECT,
                 "tenant_id": f"eq.{tenant_id}",
                 "company_id": f"eq.{company_id}",
-                "archived_at": "is.null",
+                # no archived_at filter: the view only returns live claims (and has no such column)
                 "order": CLAIM_ORDER,
                 "limit": str(CLAIMS_PER_COMPANY),
             },

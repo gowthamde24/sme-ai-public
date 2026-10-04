@@ -19,6 +19,7 @@ from app.crm.models import Page, encode_cursor
 from app.crm.repository import (
     CLAIM_ORDER,
     CLAIM_SELECT,
+    CLAIMS_FOR_SCORING,
     ConflictError,
     classify_error,
 )
@@ -540,12 +541,12 @@ class PostgrestLeadsRepository:
         lead_ids = [str(r["id"]) for r in lead_rows]
         if company_ids:
             resp = self._client.get(
-                f"{self._url}/claims",
+                f"{self._url}/{CLAIMS_FOR_SCORING}",
                 headers=self._headers(token),
                 params={
                     "tenant_id": f"eq.{tenant_id}",
                     "company_id": f"in.({','.join(company_ids)})",
-                    "archived_at": "is.null",
+                    # no archived_at filter: the view returns live claims only
                     "order": CLAIM_ORDER,
                     "select": CLAIM_SELECT,
                 },
