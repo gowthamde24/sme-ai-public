@@ -1,0 +1,406 @@
+{
+ "about": "Golden vectors for app.match_key (SQL, supabase/migrations/20261007090000_t005_match_keys.sql) and app.leads.keys.match_key (Python). ONE file, two readers: tests/test_match_key_vectors.py runs every row against the production Python function; supabase/tests/database/27_match_key.test.sql carries a generated copy (scripts/gen_match_key_fixture.py; a drift test fails when it is stale). 'expected' is what SQL returns; 'python_expected' overrides it only where Python deliberately differs.",
+ "vectors": [
+  {
+   "label": "ascii: lower-cases",
+   "input": "Sri Lakshmi Silks",
+   "expected": "sri lakshmi silks"
+  },
+  {
+   "label": "ascii: collapses blanks, tabs and newlines",
+   "input": "  Sri   Lakshmi\tSilks\n",
+   "expected": "sri lakshmi silks"
+  },
+  {
+   "label": "ascii: vertical tab and form feed are blanks",
+   "input": "a\u000bb\fc",
+   "expected": "a b c"
+  },
+  {
+   "label": "ascii: already clean",
+   "input": "sri lakshmi silks",
+   "expected": "sri lakshmi silks"
+  },
+  {
+   "label": "ascii: only blanks",
+   "input": "   \t \n",
+   "expected": ""
+  },
+  {
+   "label": "empty",
+   "input": "",
+   "expected": ""
+  },
+  {
+   "label": "NFKC: full-width Latin",
+   "input": "\uff21\uff22\uff23\u3000\uff33\uff49\uff4c\uff4b\uff53",
+   "expected": "abc silks"
+  },
+  {
+   "label": "NFKC: ligatures",
+   "input": "\ufb01ne \ufb02ax",
+   "expected": "fine flax"
+  },
+  {
+   "label": "NFKC: circled digits",
+   "input": "\u2460\u2461\u2462",
+   "expected": "123"
+  },
+  {
+   "label": "NFKC: superscript",
+   "input": "x\u00b2 m\u00b3",
+   "expected": "x2 m3"
+  },
+  {
+   "label": "NFKC: no-break space",
+   "input": "a\u00a0b",
+   "expected": "a b"
+  },
+  {
+   "label": "NFKC: em space",
+   "input": "a\u2003b",
+   "expected": "a b"
+  },
+  {
+   "label": "NFKC: ideographic space",
+   "input": "a\u3000b",
+   "expected": "a b"
+  },
+  {
+   "label": "NFKC: narrow no-break space",
+   "input": "a\u202fb",
+   "expected": "a b"
+  },
+  {
+   "label": "NFKC: long compatibility expansion",
+   "input": "\ufdfa",
+   "expected": "\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 \u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645"
+  },
+  {
+   "label": "Latin: accented capitals",
+   "input": "\u00c9COLE \u00d1AND\u00da",
+   "expected": "\u00e9cole \u00f1and\u00fa"
+  },
+  {
+   "label": "Latin: composed form",
+   "input": "\u00e9cole",
+   "expected": "\u00e9cole"
+  },
+  {
+   "label": "Latin: decomposed form (e + acute) equals the composed key",
+   "input": "e\u0301cole",
+   "expected": "\u00e9cole"
+  },
+  {
+   "label": "Latin: sharp s stays",
+   "input": "Stra\u00dfe",
+   "expected": "stra\u00dfe"
+  },
+  {
+   "label": "Latin: capital I with dot above (full mapping, two code points)",
+   "input": "\u0130stanbul",
+   "expected": "i\u0307stanbul"
+  },
+  {
+   "label": "Latin: titlecase digraph",
+   "input": "\u01c5emal",
+   "expected": "d\u017eemal"
+  },
+  {
+   "label": "Latin: Polish / Czech letters",
+   "input": "\u0141\u00d3D\u0179 \u0158EKA",
+   "expected": "\u0142\u00f3d\u017a \u0159eka"
+  },
+  {
+   "label": "Latin: Vietnamese stacked marks",
+   "input": "\u1ebe \u1ec6",
+   "expected": "\u1ebf \u1ec7"
+  },
+  {
+   "label": "Greek: final sigma",
+   "input": "\u039f\u0394\u039f\u03a3",
+   "expected": "\u03bf\u03b4\u03bf\u03c2"
+  },
+  {
+   "label": "Greek: word with an inner sigma",
+   "input": "\u03a3\u03af\u03c3\u03c5\u03c6\u03bf\u03c2",
+   "expected": "\u03c3\u03af\u03c3\u03c5\u03c6\u03bf\u03c2"
+  },
+  {
+   "label": "Cyrillic",
+   "input": "\u041c\u041e\u0421\u041a\u0412\u0410",
+   "expected": "\u043c\u043e\u0441\u043a\u0432\u0430"
+  },
+  {
+   "label": "Arabic",
+   "input": "\u0645\u0631\u062d\u0628\u0627 \u0628\u0643\u0645",
+   "expected": "\u0645\u0631\u062d\u0628\u0627 \u0628\u0643\u0645"
+  },
+  {
+   "label": "Hebrew",
+   "input": "\u05e9\u05dc\u05d5\u05dd \u05e2\u05d5\u05dc\u05dd",
+   "expected": "\u05e9\u05dc\u05d5\u05dd \u05e2\u05d5\u05dc\u05dd"
+  },
+  {
+   "label": "CJK",
+   "input": "\u65e5\u672c\u8a9e\u3000\u30c6\u30b9\u30c8",
+   "expected": "\u65e5\u672c\u8a9e \u30c6\u30b9\u30c8"
+  },
+  {
+   "label": "emoji are untouched",
+   "input": "silk \ud83d\ude00 house",
+   "expected": "silk \ud83d\ude00 house"
+  },
+  {
+   "label": "Telugu (no case): kept as is",
+   "input": "DEMO \u0c36\u0c4d\u0c30\u0c40 \u0c38\u0c3f\u0c32\u0c4d\u0c15\u0c4d\u0c38\u0c4d (\u0c15\u0c32\u0c4d\u0c2a\u0c3f\u0c24)",
+   "expected": "demo \u0c36\u0c4d\u0c30\u0c40 \u0c38\u0c3f\u0c32\u0c4d\u0c15\u0c4d\u0c38\u0c4d (\u0c15\u0c32\u0c4d\u0c2a\u0c3f\u0c24)"
+  },
+  {
+   "label": "Telugu with a ZWNJ inside a word",
+   "input": "DEMO \u0c38\u0c3f\u0c32\u0c4d\u0c15\u0c4d\u200c\u0c38\u0c4d (\u0c15\u0c32\u0c4d\u0c2a\u0c3f\u0c24)",
+   "expected": "demo \u0c38\u0c3f\u0c32\u0c4d\u0c15\u0c4d\u0c38\u0c4d (\u0c15\u0c32\u0c4d\u0c2a\u0c3f\u0c24)"
+  },
+  {
+   "label": "Kannada (no case): kept as is",
+   "input": "DEMO \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd \u0cb9\u0ccc\u0cb8\u0ccd (\u0c95\u0cbe\u0cb2\u0ccd\u0caa\u0ca8\u0cbf\u0c95)",
+   "expected": "demo \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd \u0cb9\u0ccc\u0cb8\u0ccd (\u0c95\u0cbe\u0cb2\u0ccd\u0caa\u0ca8\u0cbf\u0c95)"
+  },
+  {
+   "label": "Kannada with a ZWJ",
+   "input": "DEMO \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd\u200d \u0cb9\u0ccc\u0cb8\u0ccd",
+   "expected": "demo \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd \u0cb9\u0ccc\u0cb8\u0ccd"
+  },
+  {
+   "label": "Devanagari with a precomposed nukta letter (NFKC decomposes it)",
+   "input": "\u0921\u0947\u092e\u094b \u0938\u093e\u0921\u093c\u0940",
+   "expected": "\u0921\u0947\u092e\u094b \u0938\u093e\u0921\u093c\u0940"
+  },
+  {
+   "label": "Devanagari conjunct with a ZWJ",
+   "input": "\u0915\u094d\u200d\u0937",
+   "expected": "\u0915\u094d\u0937"
+  },
+  {
+   "label": "Persian with a ZWNJ",
+   "input": "\u0645\u06cc\u200c\u062e\u0648\u0627\u0647\u0645",
+   "expected": "\u0645\u06cc\u062e\u0648\u0627\u0647\u0645"
+  },
+  {
+   "label": "Tamil",
+   "input": "DEMO \u0ba4\u0bae\u0bbf\u0bb4\u0bcd \u0baa\u0b9f\u0bcd\u0b9f\u0bc1\u0baa\u0bcd \u0baa\u0bc1\u0b9f\u0bb5\u0bc8",
+   "expected": "demo \u0ba4\u0bae\u0bbf\u0bb4\u0bcd \u0baa\u0b9f\u0bcd\u0b9f\u0bc1\u0baa\u0bcd \u0baa\u0bc1\u0b9f\u0bb5\u0bc8"
+  },
+  {
+   "label": "Malayalam",
+   "input": "DEMO \u0d2e\u0d32\u0d2f\u0d3e\u0d33\u0d02 \u0d38\u0d3f\u0d7d\u0d15\u0d4d\u0d15\u0d4d",
+   "expected": "demo \u0d2e\u0d32\u0d2f\u0d3e\u0d33\u0d02 \u0d38\u0d3f\u0d7d\u0d15\u0d4d\u0d15\u0d4d"
+  },
+  {
+   "label": "mixed script",
+   "input": "DEMO Silks \u0c36\u0c4d\u0c30\u0c40 \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd \u0938\u093e\u0921\u093c\u0940",
+   "expected": "demo silks \u0c36\u0c4d\u0c30\u0c40 \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd \u0938\u093e\u0921\u093c\u0940"
+  },
+  {
+   "label": "a ZWJ between Latin letters is dropped",
+   "input": "a\u200db",
+   "expected": "ab"
+  },
+  {
+   "label": "a ZWNJ between Latin letters is dropped",
+   "input": "a\u200cb",
+   "expected": "ab"
+  },
+  {
+   "label": "only joiners",
+   "input": "\u200c\u200d\u200c",
+   "expected": ""
+  },
+  {
+   "label": "joiners around blanks: stripped BEFORE blanks collapse",
+   "input": " a \u200d b ",
+   "expected": "a b"
+  },
+  {
+   "label": "LRM and RLM are NOT stripped (only ZWNJ / ZWJ are)",
+   "input": "a\u200eb\u200fc",
+   "expected": "a\u200eb\u200fc"
+  },
+  {
+   "label": "zero-width space is NOT stripped (hygiene rejects it elsewhere)",
+   "input": "a\u200bb",
+   "expected": "a\u200bb"
+  },
+  {
+   "label": "combining mark alone",
+   "input": "\u0301",
+   "expected": "\u0301"
+  },
+  {
+   "label": "digits and punctuation",
+   "input": "No. 12-B, 3rd Cross (Main) / Road",
+   "expected": "no. 12-b, 3rd cross (main) / road"
+  },
+  {
+   "label": "a long value",
+   "input": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+   "expected": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+  },
+  {
+   "label": "casefold: German sharp s stays (casefold would give ss)",
+   "input": "Gro\u00dfe Seide",
+   "expected": "gro\u00dfe seide"
+  },
+  {
+   "label": "casefold: capital sharp s lowers to sharp s",
+   "input": "STRA\u1e9eE",
+   "expected": "stra\u00dfe"
+  },
+  {
+   "label": "casefold: Turkish dotted capital I keeps its dot (two code points)",
+   "input": "\u0130ZM\u0130R",
+   "expected": "i\u0307zmi\u0307r"
+  },
+  {
+   "label": "casefold: Turkish dotless i is kept, capital I becomes plain i",
+   "input": "ISPARTA \u0131l\u0131k",
+   "expected": "isparta \u0131l\u0131k"
+  },
+  {
+   "label": "casefold: Greek capital sigma at the end of a word",
+   "input": "\u03a3\u0391\u03a3",
+   "expected": "\u03c3\u03b1\u03c2"
+  },
+  {
+   "label": "casefold: Georgian capital letters lower to Mkhedruli",
+   "input": "\u1c90\u1c91\u1c92",
+   "expected": "\u10d0\u10d1\u10d2"
+  },
+  {
+   "label": "casefold: Cherokee small letters are kept (casefold would upper-case them)",
+   "input": "\uab70\uab71",
+   "expected": "\uab70\uab71"
+  },
+  {
+   "label": "NFKC: full-width digits, point and hyphen",
+   "input": "\uff2e\uff4f\uff0e\uff11\uff12\uff0d\uff22",
+   "expected": "no.12-b"
+  },
+  {
+   "label": "NFKC: ffi ligature",
+   "input": "o\ufb03ce",
+   "expected": "office"
+  },
+  {
+   "label": "NFKC: roman numeral",
+   "input": "\u216b",
+   "expected": "xii"
+  },
+  {
+   "label": "NFKC: half-width katakana",
+   "input": "\uff83\uff7d\uff84",
+   "expected": "\u30c6\u30b9\u30c8"
+  },
+  {
+   "label": "NFKC: squared unit sign",
+   "input": "\u338f",
+   "expected": "kg"
+  },
+  {
+   "label": "NFKC: Kelvin sign is a plain k",
+   "input": "\u212a",
+   "expected": "k"
+  },
+  {
+   "label": "NFKC: Angstrom sign is a-ring",
+   "input": "\u212b",
+   "expected": "\u00e5"
+  },
+  {
+   "label": "NFKC: Ohm sign is omega",
+   "input": "\u2126",
+   "expected": "\u03c9"
+  },
+  {
+   "label": "NFKC: long s",
+   "input": "\u017filk",
+   "expected": "silk"
+  },
+  {
+   "label": "joiner: ZWNJ and ZWJ at the ends of a name",
+   "input": "\u200cSilks\u200d",
+   "expected": "silks"
+  },
+  {
+   "label": "joiner: word joiner is NOT stripped",
+   "input": "a\u2060b",
+   "expected": "a\u2060b"
+  },
+  {
+   "label": "joiner: ZWNJ inside a Devanagari conjunct is ignored for matching",
+   "input": "\u0915\u094d\u200c\u0937",
+   "expected": "\u0915\u094d\u0937"
+  },
+  {
+   "label": "blank: leading and trailing tabs and line breaks",
+   "input": "\t\nSilks\r\n",
+   "expected": "silks"
+  },
+  {
+   "label": "blank: non-ASCII spaces become one blank",
+   "input": "a\u00a0\u2003 b",
+   "expected": "a b"
+  },
+  {
+   "label": "blank: NEL is not a blank",
+   "input": "a\u0085b",
+   "expected": "a\u0085b"
+  },
+  {
+   "label": "blank: line separator is not a blank",
+   "input": "a\u2028b",
+   "expected": "a\u2028b"
+  },
+  {
+   "label": "Telugu: business name with extra blanks",
+   "input": "  \u0c36\u0c4d\u0c30\u0c40   \u0c32\u0c15\u0c4d\u0c37\u0c4d\u0c2e\u0c3f  \u0c38\u0c3f\u0c32\u0c4d\u0c15\u0c4d\u0c38\u0c4d ",
+   "expected": "\u0c36\u0c4d\u0c30\u0c40 \u0c32\u0c15\u0c4d\u0c37\u0c4d\u0c2e\u0c3f \u0c38\u0c3f\u0c32\u0c4d\u0c15\u0c4d\u0c38\u0c4d"
+  },
+  {
+   "label": "Telugu: mixed with Latin capitals",
+   "input": "SRI \u0c36\u0c4d\u0c30\u0c40 Silks",
+   "expected": "sri \u0c36\u0c4d\u0c30\u0c40 silks"
+  },
+  {
+   "label": "Kannada: business name",
+   "input": "\u0cb6\u0ccd\u0cb0\u0cc0 \u0cb2\u0c95\u0ccd\u0cb7\u0ccd\u0cae\u0cbf \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd\u0cb8\u0ccd",
+   "expected": "\u0cb6\u0ccd\u0cb0\u0cc0 \u0cb2\u0c95\u0ccd\u0cb7\u0ccd\u0cae\u0cbf \u0cb8\u0cbf\u0cb2\u0ccd\u0c95\u0ccd\u0cb8\u0ccd"
+  },
+  {
+   "label": "Kannada: city name with a ZWNJ",
+   "input": "\u0cac\u0cc6\u0c82\u0c97\u0cb3\u0cc2\u0cb0\u0cc1\u200c",
+   "expected": "\u0cac\u0cc6\u0c82\u0c97\u0cb3\u0cc2\u0cb0\u0cc1"
+  },
+  {
+   "label": "Devanagari: business name",
+   "input": "\u0936\u094d\u0930\u0940 \u0932\u0915\u094d\u0937\u094d\u092e\u0940 \u0938\u093f\u0932\u094d\u0915\u094d\u0938",
+   "expected": "\u0936\u094d\u0930\u0940 \u0932\u0915\u094d\u0937\u094d\u092e\u0940 \u0938\u093f\u0932\u094d\u0915\u094d\u0938"
+  },
+  {
+   "label": "Devanagari: city name with tab",
+   "input": "\u092e\u0941\u0902\u092c\u0908\t",
+   "expected": "\u092e\u0941\u0902\u092c\u0908"
+  },
+  {
+   "label": "empty: only a ZWJ",
+   "input": "\u200d",
+   "expected": ""
+  },
+  {
+   "label": "null: NULL in, NULL out in SQL (Python returns the empty key for a missing value)",
+   "input": null,
+   "expected": null,
+   "python_expected": ""
+  }
+ ]
+}

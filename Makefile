@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../scripts/seed_demo.py
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../scripts/seed_demo.py ../../scripts/gen_match_key_fixture.py
 
 typecheck:
 	cd $(WEB) && npm run typecheck
