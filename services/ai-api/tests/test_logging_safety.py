@@ -80,13 +80,54 @@ def test_route_words_and_uuids_survive() -> None:
     assert redact_path("/v1/me") == "/v1/me"
 
 
+def registered_paths() -> list[str]:
+    """Every path the application serves. From the OpenAPI schema, NOT `app.routes`: routers are
+    mounted as `_IncludedRouter` objects, which expose no `.path`, so walking `app.routes` silently
+    sees only the handful of top-level routes (this test once passed while checking five words)."""
+    client, _ = make_client()
+    return sorted(client.app.openapi()["paths"])  # type: ignore[attr-defined]
+
+
+def test_the_guard_sees_the_routers_of_every_module() -> None:
+    paths = registered_paths()
+    assert len(paths) >= 40, f"only {len(paths)} paths: the guard has gone blind again"
+    for needle in (
+        "/v1/me",
+        "/v1/tenants/{tenant_id}/companies",
+        "/v1/tenants/{tenant_id}/companies/{target_id}/evidence",
+        "/v1/tenants/{tenant_id}/leads/review-queue",
+        "/v1/tenants/{tenant_id}/leads/import",
+        "/v1/tenants/{tenant_id}/icp-configs/active",
+        "/v1/tenants/{tenant_id}/exports",
+    ):
+        assert needle in paths, needle
+
+
 def test_every_literal_route_segment_is_on_the_allow_list() -> None:
     """A new route word that is missing here would be logged as <redacted>: safe, but unhelpful.
     This test makes the omission loud."""
-    client, _ = make_client()
     words: set[str] = set()
-    for route in client.app.routes:  # type: ignore[attr-defined]
-        for segment in getattr(route, "path", "").split("/"):
+    for path in registered_paths():
+        for segment in path.split("/"):
             if segment and not segment.startswith("{"):
                 words.add(segment)
     assert words - ROUTE_WORDS == set(), f"add to ROUTE_WORDS: {sorted(words - ROUTE_WORDS)}"
+
+
+def test_the_t005_routes_are_logged_with_their_words_and_never_their_ids_or_terms() -> None:
+    tenant = uuid.uuid4()
+    lead = uuid.uuid4()
+    for path in (
+        f"/v1/tenants/{tenant}/leads/review-queue",
+        f"/v1/tenants/{tenant}/leads/import",
+        f"/v1/tenants/{tenant}/leads/import/preview",
+        f"/v1/tenants/{tenant}/leads/{lead}/labels",
+        f"/v1/tenants/{tenant}/icp-configs",
+        f"/v1/tenants/{tenant}/icp-configs/active",
+        f"/v1/tenants/{tenant}/exports",
+    ):
+        assert redact_path(path) == path, path
+    # an unknown word in the same position (a search term, a name) is still redacted
+    assert redact_path(f"/v1/tenants/{tenant}/leads/jane.canary@example.test/labels").endswith(
+        "/leads/<redacted>/labels"
+    )

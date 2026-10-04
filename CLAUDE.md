@@ -60,8 +60,8 @@ make test        # vitest + pytest
 make check       # lint + typecheck + unit + pgTAP (db-test) + integration (the definition of done; needs Docker + `supabase start`)
 make check-fast  # lint + typecheck + unit tests only (no Docker)
 make dev-web     # Next.js on :3000
-make contracts   # regenerate packages/contracts/{crm,evidence}.* from the API models (a test fails if stale)
-make seed-demo   # a clearly fictional business in the LOCAL stack (needs db + make dev-api; refuses non-local URLs)
+make contracts   # regenerate packages/contracts/{crm,evidence,leads}.* from the API models (a test fails if stale)
+make seed-demo   # a clearly fictional business + the generic ICP profile + 20 synthetic leads, in the LOCAL stack (needs db + make dev-api; refuses non-local URLs)
 make dev-api     # FastAPI on :8000
 ```
 
@@ -78,6 +78,6 @@ make dev-api     # FastAPI on :8000
 - T002 Tenant/Auth/RLS foundation: DONE (CI green).
 - T003 CRM core (companies, contacts, products, leads, opportunities + consent ledger + PII-aware audit): DONE (owner-approved; ADRs 0004-0007). Migrations are append-only: new files only. Hard gate: the erasure/anonymise workflow must exist before T012 (see `docs/pre-pilot-checklist.md`).
 - T004 Evidence model (evidence, evidence_links, claims; text hygiene; evidence API; company/lead evidence pages; `make seed-demo`): DONE (owner-approved; ADRs 0008-0009).
-- T005 Lead review (lead import, review queue with blind scoring, Good/Bad/Maybe labels with reason codes, pure deterministic ICP score, evidence display, CSV/JSON export with formula injection sanitisation): DONE (all 3 milestones complete; ADRs 0010-0012; 5,636 tests passing).
+- T005 Lead review (lead import, review queue with blind scoring, Good/Bad/Maybe labels with reason codes, pure deterministic ICP score, evidence display, CSV/JSON export with formula injection sanitisation; ADRs 0010-0012): built, then audited (commit 0ccb40c). FIX ROUND F IN PROGRESS: groups A-G are committed one by one (label snapshot inputs, blind scoring, import provenance, direct-PostgREST tests, match_key parity, label idempotency, seed + small items); the owner reviews the round before T005 is marked DONE. `make check` now: vitest 468, pytest 942, pgTAP 4,141, integration 384 (= 5,935).
 - T006 Agent runtime: NEXT. BLOCKED until an ADR on the agent write path (identity and permission model for non-human actors) exists (`docs/pre-pilot-checklist.md`). PLAN ONLY first.
 - Do not start Lead Agent, Command Center animation, WhatsApp, Tally or investor materials before T001 and T002 are complete.

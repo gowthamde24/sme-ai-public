@@ -225,11 +225,12 @@ def test_every_claim_has_evidence_and_one_contradicts(demo: Any, stack: Stack) -
         stack,
         user,
         "GET",
-        f"/claims?tenant_id=eq.{summary.tenant_id}&select=id,predicate,confidence,company_id,lead_id",
+        f"/claims?tenant_id=eq.{summary.tenant_id}&created_via=eq.manual"
+        "&select=id,predicate,confidence,company_id,lead_id",
     )
     assert claims.status_code == 200
     rows = claims.json()
-    assert len(rows) == 4 == summary.claims  # only the seed writes claims
+    assert len(rows) == 4 == summary.claims  # the seed's own, hand-written claims
     assert {r["confidence"] for r in rows} >= {"low", "medium", "unverified"}
     assert (
         sum(1 for r in rows if r["lead_id"]) == 1 and sum(1 for r in rows if r["company_id"]) == 3
@@ -238,7 +239,8 @@ def test_every_claim_has_evidence_and_one_contradicts(demo: Any, stack: Stack) -
         stack,
         user,
         "GET",
-        f"/evidence_links?tenant_id=eq.{summary.tenant_id}&claim_id=not.is.null&select=claim_id,evidence_id,stance",
+        f"/evidence_links?tenant_id=eq.{summary.tenant_id}&claim_id=not.is.null&created_via=eq.manual"
+        "&select=claim_id,evidence_id,stance",
     )
     per_claim: dict[str, list[str]] = {}
     for link in links.json():
@@ -364,3 +366,166 @@ def test_a_second_user_in_another_workspace_sees_none_of_it(
         },
     )
     assert forged.status_code in (401, 403)
+
+
+# ==== T005 fix round F / G: the ICP profile and the 20-lead walkthrough ====
+TEMPLATE_FILE = Path(__file__).resolve().parents[2] / "config" / "icp" / "silk-wholesale.v1.json"
+
+
+def test_the_template_is_the_active_icp_version_and_rerunning_publishes_nothing(
+    demo: Any, stack: Stack, client: TestClient
+) -> None:
+    import json
+
+    summary, second = demo
+    user = demo_token(stack)
+    base = f"/v1/tenants/{summary.tenant_id}"
+    template = json.loads(TEMPLATE_FILE.read_text(encoding="utf-8"))
+    active = client.get(f"{base}/icp-configs/active", headers=bearer(user))
+    assert active.status_code == 200
+    assert active.json()["config"] == template
+    assert active.json()["id"] == summary.icp_version_id == second.icp_version_id
+    versions = client.get(f"{base}/icp-configs", headers=bearer(user), params={"limit": 100})
+    before = [v["id"] for v in versions.json()["items"]]
+    assert active.json()["id"] in before and active.json()["created_via"] == "manual"
+    # a third run, here and now: still no new version
+    third = seed.run(config(stack), api=client, http=httpx.Client())
+    assert third.icp_version_id == active.json()["id"] and third.created == 0
+    after = client.get(f"{base}/icp-configs", headers=bearer(user), params={"limit": 100})
+    assert [v["id"] for v in after.json()["items"]] == before
+
+
+def test_a_changed_template_is_a_new_version_and_an_old_version_is_never_edited(
+    stack: Stack, client: TestClient
+) -> None:
+    """On a throwaway workspace of the demo user (the demo workspace itself stays as seeded)."""
+    user = demo_token(stack)
+    made = client.post(
+        "/v1/tenants",
+        json={"name": "DEMO scratch (fictional)", "slug": f"demo-scratch-{uid()[:8]}"},
+        headers=bearer(user),
+    )
+    assert made.status_code == 200
+    tenant = made.json()["id"]
+    base = f"/v1/tenants/{tenant}"
+    seeder = seed.Seeder(config(stack), client, httpx.Client())
+    seeder.token, seeder.summary = user.token, seed.Summary(tenant, "", "")
+
+    def versions() -> list[Any]:
+        r = client.get(f"{base}/icp-configs", headers=bearer(user), params={"limit": 100})
+        return list(r.json()["items"])
+
+    seeder.icp()
+    seeder.icp()  # unchanged template: a no-op
+    assert [v["version_no"] for v in versions()] == [1]
+    original = seeder.template()
+    changed = {
+        **original,
+        "human_labels_override_score": not original["human_labels_override_score"],
+    }
+    seeder.template = lambda: changed
+    seeder.icp()
+    assert [v["version_no"] for v in versions()] == [2, 1], "newest first; version 1 stays"
+    assert versions()[1]["config"] == original
+    seeder.template = lambda: original
+    seeder.icp()  # the ACTIVE one differs from the template again: version 3
+    final = client.get(f"{base}/icp-configs/active", headers=bearer(user)).json()
+    assert final["version_no"] == 3 and final["config"] == original
+
+
+def queue_items(client: TestClient, user: User, tenant_id: str, **params: str) -> list[Any]:
+    items: list[Any] = []
+    cursor: str | None = None
+    while True:
+        query = {"limit": "100", **params, **({"cursor": cursor} if cursor else {})}
+        r = client.get(
+            f"/v1/tenants/{tenant_id}/leads/review-queue", headers=bearer(user), params=query
+        )
+        assert r.status_code == 200, r.text
+        items += r.json()["items"]
+        cursor = r.json()["next_cursor"]
+        if not cursor:
+            return items
+
+
+def test_twenty_synthetic_leads_are_ready_for_the_walkthrough(
+    demo: Any, stack: Stack, client: TestClient
+) -> None:
+    summary, second = demo
+    assert len(seed.DEMO_LEADS) == 20
+    assert summary.leads_imported == 20 and second.leads_imported == 20
+    user = demo_token(stack)
+    items = queue_items(client, user, summary.tenant_id, blind="false")
+    names = {i["company"]["name"]: i for i in items}
+    for row in seed.DEMO_LEADS:
+        assert row["company_name"] in names, f"{row['company_name']} is not in the review queue"
+    imported = [names[row["company_name"]] for row in seed.DEMO_LEADS]
+    assert len({i["lead_id"] for i in imported}) == 20
+    assert all(i["status"] == "new" and i["score"] is not None for i in imported)
+    assert all(i["latest_label"] is None for i in imported), "nothing is pre-labelled"
+    assert len({i["score_band"] for i in imported}) >= 3, "a spread of bands to review"
+    # the blind view (the default) shows none of those scores
+    blind = {i["lead_id"]: i for i in queue_items(client, user, summary.tenant_id)}
+    assert all(blind[i["lead_id"]]["score"] is None for i in imported)
+
+
+def test_the_synthetic_leads_cover_the_cases_a_reviewer_must_see() -> None:
+    rows = seed.DEMO_LEADS
+    cities = {str(r.get("city")) for r in rows}
+    assert {"Bengaluru", "Dharmavaram", "Chennai"} <= cities
+    text = " ".join(str(r.get("industry", "")) + " " + r["company_name"] for r in rows).lower()
+    assert "silk" in text and "hardware" in text, "silk businesses and clearly non-silk ones"
+    assert any("not a business" in r["company_name"].lower() for r in rows), "non-business rows"
+    assert any("contact_email" in r for r in rows) and any("contact_email" not in r for r in rows)
+
+
+def test_the_synthetic_leads_contain_nothing_real() -> None:
+    import re
+
+    for row in seed.DEMO_LEADS:
+        assert row["company_name"].startswith("DEMO "), row["company_name"]
+        website = row.get("website")
+        assert website is None or re.fullmatch(
+            r"https://[a-z0-9.-]+\.test(/[a-z0-9/-]*)?", website
+        ), website
+        if "contact_email" in row:
+            assert row["contact_email"].endswith(".test"), row["contact_email"]
+            assert row["contact_name"].startswith("DEMO "), row["contact_name"]
+            assert row["contact_phone"].startswith("+00 "), row["contact_phone"]
+        assert str(row.get("source", "DEMO")).startswith("DEMO")
+        assert not re.search(r"\b(gmail|yahoo|hotmail|outlook)\b", str(row), re.I)
+        assert not re.search(r"\+91|\b[6-9]\d{9}\b", str(row)), "no real-looking phone number"
+
+
+def test_every_synthetic_lead_passes_the_real_data_gate_and_the_import_is_a_replay_on_rerun(
+    demo: Any, stack: Stack, client: TestClient
+) -> None:
+    summary, _ = demo
+    user = demo_token(stack)
+    base = f"/v1/tenants/{summary.tenant_id}"
+    again = client.post(
+        f"{base}/leads/import/preview",
+        headers=bearer(user),
+        json={"batch_id": uid(), "rows": seed.DEMO_LEADS},
+    )
+    assert again.status_code == 200
+    outcomes = {row["outcome"] for row in again.json()["rows"]}
+    assert outcomes == {"skipped_duplicate"}, "all 20 already exist as open leads"
+    assert not any(
+        row.get("reason") == "contact_domain_not_reserved" for row in again.json()["rows"]
+    )
+    # imported attributes carry their provenance: claims linked to the batch evidence
+    claims = pg(
+        stack,
+        user,
+        "GET",
+        f"/claims?tenant_id=eq.{summary.tenant_id}&created_via=eq.import&select=id",
+    ).json()
+    assert claims, "the attribute columns became claims"
+    links = pg(
+        stack,
+        user,
+        "GET",
+        f"/evidence_links?tenant_id=eq.{summary.tenant_id}&created_via=eq.import&select=claim_id",
+    ).json()
+    assert {c["id"] for c in claims} == {link["claim_id"] for link in links}

@@ -4,6 +4,10 @@ Acceptance test for T004 (ADR 0008 / 0009): "a synthetic SME can be represented 
 researched fact can carry evidence". Everything here is invented (every name starts with "DEMO", every
 address is on a reserved .test domain). No real person, no real company, no Customer Zero data.
 
+T005 adds the review walkthrough: the generic ICP template (config/icp/silk-wholesale.v1.json, no real
+values) is published as the DEMO workspace's active ICP version, and 20 synthetic leads are imported
+through the import API, so a human can review 20 leads and label them straight away.
+
 HOW IT TALKS TO THE SYSTEM
   * Everything goes through OUR API (the demo user's own access token): workspace, company, contacts,
     products, lead, opportunity, and the evidence attached to the company and the lead.
@@ -28,6 +32,8 @@ Run: `make dev-api` in one terminal, then `make seed-demo`.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import sys
 import uuid
@@ -47,6 +53,7 @@ DEMO_EMAIL = "demo-owner@demo.example.test"
 DEMO_PASSWORD = "Demo-Only-Local-Password-1!"  # noqa: S105 - synthetic user, local stack only
 DEMO_WORKSPACE_NAME = "DEMO Synthetic Sarees Co (fictional)"
 DEMO_WORKSPACE_SLUG = "demo-synthetic-sme"
+ICP_TEMPLATE = ROOT / "config" / "icp" / "silk-wholesale.v1.json"
 _NAMESPACE = uuid.UUID("5d3f1c7e-9a3b-4a52-8f0e-0d3e6c1b7a11")  # arbitrary, fixed
 
 
@@ -80,6 +87,8 @@ class Summary:
     claims: int = 0
     claim_links: dict[str, int] = field(default_factory=dict)
     stances: set[str] = field(default_factory=set)
+    icp_version_id: str = ""
+    leads_imported: int = 0
 
 
 # ----------------------------------------------------------------------------- config and safety
@@ -208,6 +217,89 @@ LEAD_EVIDENCE = [
     ),
 ]
 
+
+# ~20 fully synthetic leads for the review walkthrough. Fictional names ("DEMO ..."), reserved .test
+# domains, the reserved +00 phone prefix; real PLACES (Bengaluru, Dharmavaram, Chennai ...) because the
+# ICP's geography tiers are about places. A spread of fits on purpose: strong silk businesses, partial
+# fits, clearly non-silk businesses, and rows that are not businesses at all.
+def _lead(
+    n: int,
+    name: str,
+    city: str | None,
+    industry: str | None = None,
+    tags: tuple[str, ...] = (),
+    *,
+    buyer: str | None = None,
+    size: str | None = None,
+    scale: str | None = None,
+    status: str | None = None,
+    contact: tuple[str, str] | None = None,
+    website: bool = True,
+) -> dict[str, Any]:
+    row: dict[str, Any] = {
+        "company_name": f"DEMO {name}",
+        "country": "IN",
+        "source": "DEMO trade fair (synthetic)",
+    }
+    if city:
+        row["city"] = city
+    if industry:
+        row["industry"] = industry
+    if tags:
+        row["categories"] = list(tags)
+    if website:
+        row["website"] = f"https://demo-lead-{n:02d}.example.test"
+    for key, value in (
+        ("buyer_type", buyer),
+        ("size_band", size),
+        ("order_scale", scale),
+        ("operating_status", status),
+    ):
+        if value:
+            row[key] = value
+    if contact:
+        first, title = contact
+        row["contact_name"] = f"DEMO {first} Testperson"
+        row["contact_email"] = f"buyer@demo-lead-{n:02d}.example.test"
+        row["contact_phone"] = f"+00 000 000 {100 + n:04d}"
+        row["contact_job_title"] = title
+    return row
+
+
+DEMO_LEADS: list[dict[str, Any]] = [
+    _lead(1, "Sri Lakshmi Silk House", "Bengaluru", "Silk sarees wholesale", ("saree", "silk"),
+          buyer="saree_shop", size="large", scale="five_or_more_per_order", status="active", contact=("Asha", "Owner")),
+    _lead(2, "Dharmavaram Pattu Emporium", "Dharmavaram", "Silk sarees", ("saree", "silk", "pattu"),
+          buyer="saree_shop", size="medium", scale="five_or_more_per_order", status="active", contact=("Ravi", "Proprietor")),
+    _lead(3, "Chennai Kanchi Silks Wholesale", "Chennai", "Silk sarees wholesale", ("silk", "saree"),
+          buyer="wholesaler", size="large", scale="five_or_more_per_order", contact=("Mei", "Director")),
+    _lead(4, "Kanchipuram Weavers Collective", "Kanchipuram", "Handloom silk", ("silk", "handloom"),
+          buyer="boutique", size="small", scale="fewer_than_five_per_order"),
+    _lead(5, "Hyderabad Boutique Sarees", "Hyderabad", "Boutique sarees", ("saree",),
+          buyer="boutique", size="small", contact=("Sam", "Manager")),
+    _lead(6, "Mysuru Silk Traders", "Mysuru", "Silk fabric trading", ("silk",), buyer="wholesaler", size="medium"),
+    _lead(7, "Varanasi Brocade Bazaar", "Varanasi", "Brocade and silk", ("brocade", "silk"),
+          buyer="wholesaler", size="medium", scale="five_or_more_per_order"),
+    _lead(8, "Surat Synthetic Textiles", "Surat", "Polyester textiles", ("textile",), buyer="other", size="medium"),
+    _lead(9, "Mumbai Multi-Brand Fashion", "Mumbai", "Fashion retail", ("apparel",),
+          buyer="multi_brand_store", size="large", contact=("Kim", "Buyer")),
+    _lead(10, "Delhi Ethnic Wear Chain", "Delhi", "Ethnic wear retail chain", ("apparel", "saree"),
+          buyer="regional_chain", size="large"),
+    _lead(11, "Pune Cotton Mart", "Pune", "Cotton textiles", ("cotton", "textile"), buyer="boutique", size="small"),
+    _lead(12, "Kolkata Handloom House", "Kolkata", "Handloom sarees", ("saree", "handloom"),
+          buyer="saree_shop", size="micro", contact=("Lee", "Partner")),
+    _lead(13, "Coimbatore Uniform Cloth", "Coimbatore", "School uniform cloth", ("uniform",), buyer="other", size="small"),
+    _lead(14, "Jaipur Block Print Studio", "Jaipur", "Block-print home decor", ("print",), buyer="consumer", size="micro"),
+    _lead(15, "Anantapur Saree Centre", "Anantapur", "Saree retail", ("saree",), buyer="saree_shop", size="small"),
+    _lead(16, "Madurai Pattu Mahal", "Madurai", "Silk sarees", ("silk", "saree"),
+          buyer="saree_shop", size="medium", status="active", contact=("Dev", "Owner")),
+    _lead(17, "Bolt and Nut Hardware", "Bengaluru", "Hardware and tools", ("hardware",),
+          buyer="other", size="small", contact=("Jo", "Manager")),
+    _lead(18, "Happy Paws Pet Store", "Chennai", "Pet supplies", ("pets",), buyer="consumer", size="micro"),
+    _lead(19, "Neighbourhood Cricket Club (not a business)", "Dharmavaram", website=False),
+    _lead(20, "Test Residence (not a business)", "Bengaluru", website=False),
+]  # fmt: skip
+
 # Claims: (key, subject, predicate, value, confidence, [(evidence key, stance), ...])
 CLAIMS = [
     ("claim-exports", "company", "exports_to", "DEMO: ships sample lots to Germany (invented)", "low",
@@ -311,6 +403,56 @@ class Seeder:
         if r.status_code != 200:
             raise SeedError(f"Could not create the demo workspace (HTTP {r.status_code}).")
         self.summary.tenant_id = str(r.json()["id"])
+
+    def template(self) -> dict[str, Any]:
+        """The generic ICP template shipped in the repository (no customer values)."""
+        loaded = json.loads(ICP_TEMPLATE.read_text(encoding="utf-8"))
+        if not isinstance(loaded, dict):
+            raise SeedError("The ICP template file is not a JSON object.")
+        return loaded
+
+    def icp(self) -> None:
+        """Publish the template as the workspace's ACTIVE ICP version, unless the active one already
+        IS the template. A changed template becomes the next version; versions are never edited."""
+        t = f"/v1/tenants/{self.summary.tenant_id}"
+        template = self.template()
+        active = self._api("GET", f"{t}/icp-configs/active")
+        if active.status_code == 200 and active.json()["config"] == template:
+            self.summary.icp_version_id = str(active.json()["id"])
+            self.summary.reused += 1
+            return
+        if active.status_code not in (200, 404):
+            raise SeedError(f"Could not read the active ICP profile (HTTP {active.status_code}).")
+        published = self._api("POST", f"{t}/icp-configs", {"config": template})
+        if published.status_code != 201:
+            raise SeedError(f"Could not publish the ICP profile (HTTP {published.status_code}).")
+        self.summary.icp_version_id = str(published.json()["id"])
+        self.summary.created += 1
+
+    def leads(self) -> None:
+        """Import the 20 synthetic leads through the import API. The batch id is derived from the
+        rows, so re-running replays the same batch (HTTP 200) and changes nothing."""
+        t = f"/v1/tenants/{self.summary.tenant_id}"
+        digest = hashlib.sha256(json.dumps(DEMO_LEADS, sort_keys=True).encode()).hexdigest()
+        r = self._api(
+            "POST",
+            f"{t}/leads/import",
+            {
+                "batch_id": demo_id(f"lead-import:{digest}"),
+                "label": "DEMO seed leads",
+                "rows": DEMO_LEADS,
+            },
+        )
+        if r.status_code == 201:
+            self.summary.created += 1
+        elif r.status_code == 200:
+            self.summary.reused += 1
+        else:
+            raise SeedError(f"Could not import the demo leads (HTTP {r.status_code}).")
+        counts = r.json()["counts"]
+        if counts["rejected"] or counts["ambiguous"]:
+            raise SeedError("Some demo leads were refused by the import; see the review queue.")
+        self.summary.leads_imported = int(counts["rows"])
 
     def records(self) -> None:
         t = f"/v1/tenants/{self.summary.tenant_id}"
@@ -484,6 +626,20 @@ class Seeder:
         )
         if listed.status_code != 200 or len(listed.json()["items"]) != len(COMPANY_EVIDENCE):
             raise SeedError("Acceptance failed: the company's evidence is not listed by the API.")
+        queue = self._api(
+            "GET",
+            f"/v1/tenants/{self.summary.tenant_id}/leads/review-queue?blind=false&limit=100",
+        )
+        names = (
+            {item["company"].get("name") for item in queue.json()["items"]}
+            if queue.status_code == 200
+            else set()
+        )
+        missing = [row["company_name"] for row in DEMO_LEADS if row["company_name"] not in names]
+        if missing:
+            raise SeedError(
+                f"Acceptance failed: {len(missing)} demo leads are not in the review queue."
+            )
 
 
 def run(
@@ -503,6 +659,8 @@ def run(
         seeder.records()
         seeder.evidence()
         seeder.claims()
+        seeder.icp()
+        seeder.leads()
         seeder.verify()
         return seeder.summary
     finally:
@@ -526,6 +684,8 @@ def main() -> int:
         f"  claims: {s.claims}, each with evidence (stances used: {', '.join(sorted(s.stances))})"
     )
     base = "http://localhost:3000/app/tenants"
+    print(f"  review walkthrough: ICP profile published (version id {s.icp_version_id[:8]}...) and")
+    print(f"    {s.leads_imported} synthetic leads imported: {base}/{s.tenant_id}/review")
     print(f"  company page: {base}/{s.tenant_id}/companies/{s.company_id}")
     print(f"  lead page:    {base}/{s.tenant_id}/leads/{s.lead_id}")
     print(

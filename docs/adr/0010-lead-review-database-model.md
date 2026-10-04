@@ -51,6 +51,7 @@ T005 introduces human-in-the-loop lead qualification. Before any automated resea
    - Per-row savepoints: each row runs in its own sub-transaction; an error on one row (e.g. malformed data or duplicate contact belonging to another company) records a rejection without aborting the batch.
    - Dry run support: `p_dry_run = true` executes all validation and matching logic and builds the report, then rolls back all writes via internal SQLSTATE `SM100`.
    - Provenance: explicitly sets `app.created_via = 'import'`.
+   - Provenance of those claims (fix round F, migrations `20261008090000` / `20261008090100`): each batch writes ONE `evidence` row (kind `import_batch`, provider `import.csv`, reference `import:<batch uuid>`, a count sentence as snippet: no cell value, label or personal data) and every claim the batch creates is linked to it (`evidence_links`, stance `supports`). Claims that already existed are kept and NOT linked (this batch did not source them). A CHECK (`evidence_import_batch_needs_import_origin`) lets only the import path write that kind.
    - Attribute claims: company attributes (`buyer_type`, `size_band`, `operating_status`, `order_scale`) are written as `claims` with `confidence = 'unverified'` only if no non-archived claim for that predicate already exists.
 
 6. **Audit and Integrity Triggers**
