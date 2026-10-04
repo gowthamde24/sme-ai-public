@@ -221,6 +221,63 @@ describe("server-only code stays on the server", () => {
     for (const file of crm) expect(read(file)).not.toMatch(/supabase/i);
   });
 
+  // ---- T006: agent suggestions are untrusted text written by a model, shown as plain text only
+  describe("agent suggestions are rendered as plain text and reviewed only through the API", () => {
+    const suggestionFiles = sourceFiles.filter((f) =>
+      /(suggestions-panel|review-claim-form|suggestion-actions)\.tsx?$|[\\/]agents[\\/][^\\/]+\.tsx?$|lib[\\/]api[\\/]agents\.ts$/.test(rel(f)),
+    );
+    const rendering = suggestionFiles.filter((f) => /\.tsx$/.test(f));
+
+    it("finds the files it is meant to police", () => {
+      const names = suggestionFiles.map(rel);
+      for (const expected of [
+        path.join("app", "app", "tenants", "[tenantId]", "suggestions-panel.tsx"),
+        path.join("app", "app", "tenants", "[tenantId]", "review-claim-form.tsx"),
+        path.join("app", "app", "tenants", "[tenantId]", "suggestion-actions.ts"),
+        path.join("app", "app", "tenants", "[tenantId]", "agents", "page.tsx"),
+        path.join("app", "app", "tenants", "[tenantId]", "agents", "actions.ts"),
+        path.join("lib", "api", "agents.ts"),
+      ])
+        expect(names, expected).toContain(expected);
+    });
+
+    it("never builds an anchor, image, frame, media or script element from a suggestion", () => {
+      const forbidden = /<\s*(img|iframe|frame|object|embed|video|audio|source|track|script|link|base|meta)\b/;
+      expect(rendering.filter((f) => forbidden.test(read(f))).map(rel)).toEqual([]);
+      // the suggestions panel and the review forms have no anchor at all; the agents page only links to internal pages
+      for (const name of ["suggestions-panel.tsx", "review-claim-form.tsx"])
+        expect(rendering.filter((f) => f.endsWith(name) && /<\s*a\b/.test(read(f))).map(rel)).toEqual([]);
+    });
+
+    it("never uses dangerouslySetInnerHTML, innerHTML, next/image or window.open", () => {
+      for (const pattern of [/dangerouslySetInnerHTML/, /\.innerHTML\b/, /next\/image/, /window\.open/])
+        expect(suggestionFiles.filter((f) => pattern.test(read(f))).map(rel)).toEqual([]);
+    });
+
+    it("a review is always the server action's call to OUR API: no fetch, no PostgREST, no supabase", () => {
+      for (const file of suggestionFiles) {
+        const text = read(file);
+        expect(text, rel(file)).not.toMatch(/\bfetch\(|\/rest\/v1|\.rpc\(|supabase/i);
+      }
+    });
+
+    it("the review forms (client component) import no server-only module", () => {
+      const text = read(
+        path.join(WEB_ROOT, "app/app/tenants/[tenantId]/review-claim-form.tsx"),
+      );
+      expect(text).not.toMatch(/@\/lib\/api\/client|@\/lib\/auth\/session|next\/headers/);
+    });
+
+    it("every href in the agents UI is an internal path built from validated ids", () => {
+      for (const file of rendering) {
+        for (const match of read(file).matchAll(/href=(\{[^}]*\}|"[^"]*")/g)) {
+          const expr = match[1];
+          expect(/^"\/|^\{`\/app\//.test(expr) || /^\{`\/app\/tenants\/\$\{tenantId\}/.test(expr), `${rel(file)}: ${expr}`).toBe(true);
+        }
+      }
+    });
+  });
+
   // ---- T004: evidence is untrusted text, shown as plain text and never turned into anything else
   describe("evidence is rendered as plain text", () => {
     const evidenceFiles = sourceFiles.filter((f) => {

@@ -3,16 +3,19 @@ import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { fetchLead, isCanonicalUuid } from "@/lib/api/crm";
+import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { requireUser } from "@/lib/auth/session";
 
 import { EvidencePanel } from "../../evidence-panel";
+import { SuggestionsPanel } from "../../suggestions-panel";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
 const WRITE_ROLES = ["owner", "admin", "sales"];
+const REVIEW_ROLES = ["owner", "admin"];
 const MAX_CURSOR = 300;
 
 function pick(value: string | string[] | undefined): string | undefined {
@@ -64,6 +67,18 @@ export default async function LeadPage({
     // anything else: the evidence section shows an error, never placeholder data
   }
 
+  // Agent suggestions: a failure here shows an error in that section only, never placeholder data.
+  let claims: ClaimSuggestionOut[] | null = null;
+  try {
+    claims = await fetchClaims(user.accessToken, tenantId, "leads", leadId);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError && error.status === 404) notFound();
+  }
+  const reviewIds = Object.fromEntries(
+    (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
+  );
+
   return (
     <main className="shell wide">
       <p>
@@ -96,6 +111,15 @@ export default async function LeadPage({
         cursor={cursor}
         canWrite={WRITE_ROLES.includes(tenant.role)}
         formId={crypto.randomUUID()}
+      />
+
+      <SuggestionsPanel
+        tenantId={tenantId}
+        target="leads"
+        targetId={leadId}
+        claims={claims}
+        canReview={REVIEW_ROLES.includes(tenant.role)}
+        reviewIds={reviewIds}
       />
     </main>
   );

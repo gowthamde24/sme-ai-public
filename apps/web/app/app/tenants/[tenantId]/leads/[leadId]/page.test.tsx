@@ -17,6 +17,7 @@ const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const fetchLead = vi.fn();
 const fetchEvidencePage = vi.fn();
+const fetchClaims = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
@@ -35,6 +36,11 @@ vi.mock("@/lib/api/evidence", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/evidence")>()),
   fetchEvidencePage: (...a: unknown[]) => fetchEvidencePage(...a),
 }));
+vi.mock("@/lib/api/agents", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api/agents")>()),
+  fetchClaims: (...a: unknown[]) => fetchClaims(...a),
+}));
+vi.mock("../../suggestion-actions", () => ({ reviewClaimAction: vi.fn(async () => undefined) }));
 vi.mock("../../evidence-actions", () => ({
   addEvidenceAction: vi.fn(async () => undefined),
 }));
@@ -91,6 +97,24 @@ const evidence = {
   nextCursor: "next-1",
 };
 
+const suggestion = {
+  id: "88888888-8888-4888-8888-888888888888",
+  company_id: null,
+  lead_id: null,
+  predicate: "selftest.observation",
+  value: "DEMO <i>suggestion</i>",
+  confidence: "unverified",
+  claim_confidence: "unverified",
+  created_via: "agent",
+  agent_run_id: "99999999-9999-4999-8999-999999999999",
+  created_by: "u",
+  created_at: "2026-10-04T12:00:00+00:00",
+  review_state: "unreviewed",
+  review_confidence: null,
+  reviewed_by: null,
+  reviewed_at: null,
+};
+
 describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -99,6 +123,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     fetchTenant.mockResolvedValue(tenant("owner"));
     fetchLead.mockResolvedValue(lead);
     fetchEvidencePage.mockResolvedValue(evidence);
+    fetchClaims.mockResolvedValue([suggestion]);
   });
 
   it("authenticates FIRST: with no session nothing else is called", async () => {
@@ -228,6 +253,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
   });
 
   it("API down for the evidence only: the summary stays, the evidence section shows an error", async () => {
+    fetchClaims.mockResolvedValue([]);
     fetchEvidencePage.mockRejectedValue(
       new ApiRequestError(502, "upstream_error", "x"),
     );
@@ -265,5 +291,51 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     expect(
       screen.queryByRole("button", { name: /archive|delete/i }),
     ).toBeNull();
+  });
+
+  // ---------------------------------------------------------------------- agent suggestions (T006)
+  it("asks OUR API for the lead's claims with the user's token and shows them as 'agent suggestion, unreviewed'", async () => {
+    render(await LeadPage(props()));
+    expect(fetchClaims).toHaveBeenCalledWith("tok", TENANT, "leads", LEAD);
+    expect(screen.getByText(/agent suggestion, unreviewed/)).toBeInTheDocument();
+    expect(screen.getByText("DEMO <i>suggestion</i>")).toBeInTheDocument();
+  });
+
+  it("shows the review forms to an owner or admin only; Sales and Viewers see the suggestion but no forms", async () => {
+    for (const role of ["owner", "admin"]) {
+      fetchTenant.mockResolvedValue(tenant(role));
+      const { unmount } = render(await LeadPage(props()));
+      expect(screen.getByRole("button", { name: "Accept" })).toBeInTheDocument();
+      unmount();
+    }
+    for (const role of ["sales", "viewer"]) {
+      fetchTenant.mockResolvedValue(tenant(role));
+      const { unmount } = render(await LeadPage(props()));
+      expect(screen.getByText(/agent suggestion, unreviewed/)).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Accept" })).toBeNull();
+      unmount();
+    }
+  });
+
+  it("generates the review ids on the server, one pair per suggestion per render", async () => {
+    let n = 0;
+    vi.stubGlobal("crypto", { randomUUID: () => `id-${n++}` });
+    fetchTenant.mockResolvedValue(tenant("owner"));
+    render(await LeadPage(props()));
+    const ids = Array.from(document.querySelectorAll<HTMLInputElement>('input[name="review_id"]')).map((i) => i.value);
+    expect(ids).toHaveLength(2);
+    expect(new Set(ids).size).toBe(2); // accept and reject never share an id
+  });
+
+  it("a failing claims request shows an error in that section only; the rest of the page is intact", async () => {
+    fetchClaims.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await LeadPage(props()));
+    expect(screen.getByText(/Could not load the suggestions/)).toBeInTheDocument();
+    expect(screen.getByText("Catalogue says <b>silk</b>")).toBeInTheDocument();
+  });
+
+  it("the claims request turning 404 is the not-found page", async () => {
+    fetchClaims.mockRejectedValue(new ApiRequestError(404, "not_found", "Not found."));
+    expect(await isNotFound(() => LeadPage(props()))).toBe(true);
   });
 });

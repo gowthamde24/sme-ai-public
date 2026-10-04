@@ -97,6 +97,10 @@ export default async function TenantPage({
         >
           Lead Review Queue →
         </Link>
+        {" · "}
+        <Link href={`/app/tenants/${tenantId}/agents`} style={{ fontWeight: 600 }}>
+          Agents →
+        </Link>
       </nav>
 
       <nav aria-label="Records" className="tabs">
