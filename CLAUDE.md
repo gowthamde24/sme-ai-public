@@ -77,5 +77,7 @@ make dev-api     # FastAPI on :8000
 - T001 Bootstrap monorepo: DONE (make check passes; both apps boot locally).
 - T002 Tenant/Auth/RLS foundation: DONE (CI green).
 - T003 CRM core (companies, contacts, products, leads, opportunities + consent ledger + PII-aware audit): DONE (owner-approved; ADRs 0004-0007). Migrations are append-only: new files only. Hard gate: the erasure/anonymise workflow must exist before T012 (see `docs/pre-pilot-checklist.md`).
-- T004 Evidence model (evidence, evidence_links, claims; text hygiene; evidence API; company/lead evidence pages; `make seed-demo`): IMPLEMENTED across milestones 1-3 (ADRs 0008-0009), awaiting final owner review; mark DONE after approval. Do not start T005 until the owner approves T004 AND an ADR on the agent write path (identity and permission model for non-human actors) exists (`docs/pre-pilot-checklist.md`).
+- T004 Evidence model (evidence, evidence_links, claims; text hygiene; evidence API; company/lead evidence pages; `make seed-demo`): DONE (owner-approved; ADRs 0008-0009).
+- T005 Lead review (CSV/manual lead import, candidate queue, Good/Bad/Maybe labels, deterministic ICP score, evidence display; success = a human can review 20 leads and export/store labels for evaluation): NEXT. Contains NO agent. PLAN ONLY first; no edits until the owner approves the plan. Synthetic data only until the erasure/anonymise workflow exists (pre-T012 hard gate).
+- T006 Agent runtime: BLOCKED until an ADR on the agent write path (identity and permission model for non-human actors) exists (`docs/pre-pilot-checklist.md`).
 - Do not start Lead Agent, Command Center animation, WhatsApp, Tally or investor materials before T001 and T002 are complete.
