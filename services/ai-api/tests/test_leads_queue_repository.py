@@ -1,14 +1,13 @@
 """The review queue's blind scoring, tested where it is implemented: the PostgREST adapter.
 
 A tiny stand-in for PostgREST serves leads, claims, evidence links and labels (honouring the
-filters the adapter sends, e.g. `created_by=eq.<caller>`), so a leak in WHAT the adapter asks for
-or WHAT it returns shows up here without a database. The real-stack twin is
+filters the adapter sends, e.g. `created_by=eq.<caller>`), so a leak in WHAT the adapter asks
+for or WHAT it returns shows up here without a database. The real-stack twin is
 tests/integration/test_leads_review_in_db.py.
 
-Blind review means the caller must not learn a lead's score (or band, or factor snapshot) before
-they have labelled that lead THEMSELVES: not by reading it, not by filtering on it, not by the order
-of the list, and not because a different reviewer already labelled it.
-"""
+Blind review means the caller must not learn a lead's score (or band, or factor snapshot)
+before they have labelled that lead THEMSELVES: not by reading it, not by filtering on it, not
+by the order of the list, and not because a different reviewer already labelled it."""
 
 from __future__ import annotations
 
@@ -144,7 +143,10 @@ class Server:
         if name == "claims_for_scoring":
             ids = in_list(q["company_id"])
             return httpx.Response(200, json=[c for c in self.claims if c["company_id"] in ids])
-        if name == "evidence_links":
+        assert name != "evidence_links", (
+            "scoring reads the evidence_for_scoring view, never the raw table"
+        )
+        if name == "evidence_for_scoring":
             return httpx.Response(200, json=[])
         if name == "lead_labels":
             rows = list(self.labels)
@@ -195,7 +197,8 @@ def band_of(lead: dict[str, Any], server: Server) -> str:
     return score_inputs(TEMPLATE, lead["company"], None, claims, []).band
 
 
-# ------------------------------------------------------------------------------ blind by default
+# ------------------------------------------------------------------------------ blind by
+# default
 def test_blind_queue_hides_every_score_field_of_unlabelled_leads() -> None:
     leads = [lead_row(1, strong=True), lead_row(2, strong=False)]
     page = queue(Server(leads))
@@ -217,7 +220,8 @@ def test_non_blind_queue_shows_scores() -> None:
     assert item.score_band == band_of(server.leads[0], server)
 
 
-# ------------------------------------------------------------------------------ band-filter leak
+# ------------------------------------------------------------------------------ band-filter
+# leak
 def test_a_band_filter_is_refused_while_blind() -> None:
     """Filtering on a hidden value reveals it (ask for 'priority', see who comes back)."""
     server = Server([lead_row(1, strong=True), lead_row(2, strong=False)])
@@ -266,7 +270,8 @@ def test_the_order_never_depends_on_the_score() -> None:
     assert {dict(r.url.params)["order"] for r in lead_requests} == {"created_at.desc,id.desc"}
 
 
-# ------------------------------------------------------------------------------ other-reviewer leak
+# ------------------------------------------------------------------------------
+# other-reviewer leak
 def test_another_reviewers_label_does_not_unblind_this_caller() -> None:
     leads = [lead_row(1, strong=True), lead_row(2, strong=True)]
     server = Server(leads, labels=[label_row(leads[0], OTHER)])
@@ -292,7 +297,8 @@ def test_the_callers_own_label_unblinds_that_lead_only() -> None:
     assert still_blind.score is None and still_blind.latest_label is None
 
 
-# ------------------------------------------------------------------------------ the labels list
+# ------------------------------------------------------------------------------ the labels
+# list
 def labels_page(server: Server, lead: dict[str, Any]) -> list[LeadLabelOut]:
     page = server.repo.list_lead_labels(
         TOKEN, TENANT, viewer_id=CALLER, lead_id=uuid.UUID(lead["id"]), limit=20, cursor=None
@@ -320,7 +326,8 @@ def test_label_history_shows_scores_once_the_caller_has_labelled_that_lead() -> 
 # ------------------------------------------------------------------- one source of claims
 def test_the_queue_and_the_label_snapshot_read_claims_from_the_same_filtered_source() -> None:
     """Decision 5: unaccepted agent claims do not count toward a score, and the review queue and
-    the label snapshot must use the same filtered inputs. Both read the claims_for_scoring view
+    the label snapshot must use the same filtered inputs. Both read the claims_for_scoring
+    view
     with the same select and order; neither may read the raw claims table."""
     from app.crm.repository import PostgrestCrmRepository
 
@@ -347,5 +354,39 @@ def test_the_queue_and_the_label_snapshot_read_claims_from_the_same_filtered_sou
     a, b = dict(queue_claims[0].url.params), dict(label_claims.url.params)
     assert label_claims.url.path == queue_claims[0].url.path
     assert (a["select"], a["order"]) == (b["select"], b["order"])
-    # the view has no archived_at column (it returns live claims only): asking for one is an error
+    # the view has no archived_at column (it returns live claims only): asking for one is an
+    # error
     assert "archived_at" not in a and "archived_at" not in b
+
+
+# ------------------------------------------------------------------- one source of evidence
+def test_the_queue_and_the_label_snapshot_read_evidence_from_the_same_filtered_view() -> None:
+    """Unaccepted agent evidence must not count toward a score, in the review queue or in the label
+    snapshot: both read the
+        evidence_for_scoring view with the same select and order; neither may read the raw
+        evidence_links table."""
+    from app.leads.repository import PostgrestLeadsRepository
+
+    leads = [lead_row(1, strong=True)]
+    server = Server(leads)
+    queue(server, include_blind_scores=True)
+    queue_evidence = [r for r in server.requests if r.url.path.endswith("/evidence_for_scoring")]
+    assert len(queue_evidence) == 1
+    assert not any(r.url.path.endswith("/evidence_links") for r in server.requests)
+
+    seen: list[httpx.Request] = []
+
+    def handler(req: httpx.Request) -> httpx.Response:
+        seen.append(req)
+        return httpx.Response(200, json=[{"lead_id": leads[0]["id"], "kind": "note", "url": None}])
+
+    client = httpx.Client(
+        base_url="http://postgrest.test/rest/v1", transport=httpx.MockTransport(handler)
+    )
+    repo = PostgrestLeadsRepository("http://postgrest.test/rest/v1", "anon", client=client)
+    rows = repo.list_scoring_evidence(TOKEN, TENANT, uuid.UUID(leads[0]["id"]))
+    assert rows == [{"lead_id": leads[0]["id"], "kind": "note", "url": None}]
+    (label_request,) = seen
+    assert label_request.url.path.endswith("/evidence_for_scoring")
+    qa, la = dict(queue_evidence[0].url.params), dict(label_request.url.params)
+    assert (qa["select"], qa["order"]) == (la["select"], la["order"])

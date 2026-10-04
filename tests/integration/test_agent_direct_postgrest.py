@@ -1,14 +1,17 @@
-"""PostgREST is reachable by anyone holding a user JWT and the public anon key. These tests skip OUR API and attack the agent
-tables, the nine agent functions and the claim views directly, as real signed-in users (ADR 0013): anon; a foreign tenant; a
-Viewer; Sales where Owner / Admin is required; smuggled provenance (created_via, agent_run_id, created_by, confidence) on the
-tables an agent writes to; direct INSERT / UPDATE / DELETE on every agent table and counter tampering; the operator tables;
-function calls with names that do not exist; steering (a foreign target, run or evidence id); a budget race over HTTP; expiry;
-a starter removed mid-run; the tenant switch turned off mid-run; promotion by the wrong role.
+"""PostgREST is reachable by anyone holding a user JWT and the public anon key. These tests skip
+OUR API and attack the agent tables, the nine agent functions and the claim views directly, as
+real signed-in users (ADR 0013): anon; a foreign tenant; a Viewer; Sales where Owner / Admin
+is required; smuggled provenance (created_via, agent_run_id, created_by, confidence) on the
+tables an agent writes to; direct INSERT / UPDATE / DELETE on every agent table and counter
+tampering; the operator tables; function calls with names that do not exist; steering (a
+foreign target, run or evidence id); a budget race over HTTP; expiry; a starter removed
+mid-run; the tenant switch turned off mid-run; promotion by the wrong role.
 
-Writes of attacks use `Prefer: return=minimal` (nothing is read back by accident); what an attack achieved is judged by the
-victim data afterwards, never by the response alone. The agent switches are OFF by default and only the operator (a migration,
-or here the local database owner) can turn them on, so this module turns them on for its own two tenants and restores the
-previous state exactly afterwards."""
+Writes of attacks use `Prefer: return=minimal` (nothing is read back by accident); what an
+attack achieved is judged by the victim data afterwards, never by the response alone. The
+agent switches are OFF by default and only the operator (a migration, or here the local
+database owner) can turn them on, so this module turns them on for its own two tenants and
+restores the previous state exactly afterwards."""
 
 # ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
 
@@ -94,12 +97,14 @@ def started(w: World, user: User, tenant: Tenant, **over: Any) -> str:
     return str(r.json()["run_id"])
 
 
-# ------------------------------------------------------------------------------ module setup: the operator turns agents on
+# ------------------------------------------------------------------------------ module setup:
+# the operator turns agents on
 @pytest.fixture(scope="module")
 def on(crm_world: World) -> Iterator[World]:
     w = crm_world
     saved = operator_sql.snapshot_switches()
-    # these tests start dozens of runs; the hourly start cap itself is covered in pgTAP (31_start_agent_run)
+    # these tests start dozens of runs; the hourly start cap itself is covered in pgTAP
+    # (31_start_agent_run)
     saved_rate = operator_sql.sql(
         "select limit_value from public.agent_limits where limit_key = 'max_runs_per_hour'"
     )
@@ -126,7 +131,8 @@ def on(crm_world: World) -> Iterator[World]:
 
 @pytest.fixture
 def run_a(on: World) -> Iterator[str]:
-    """A fresh running run of tenant A started by its Sales user; cancelled afterwards (the concurrency cap is 3)."""
+    """A fresh running run of tenant A started by its Sales user; cancelled afterwards (the
+    concurrency cap is 3)."""
     run = started(on, on.a.users["sales"], on.a)
     yield run
     rpc(on, on.a.users["owner"], "cancel_agent_run", p_run_id=run)
@@ -224,7 +230,8 @@ ANON_CALLS: dict[str, dict[str, Any]] = {
 
 @pytest.mark.parametrize("name", FUNCTIONS)
 def test_anon_cannot_call_any_agent_function(on: World, run_a: str, name: str) -> None:
-    """A COMPLETE, well-formed call, so that only the missing EXECUTE privilege can be what refuses it."""
+    """A COMPLETE, well-formed call, so that only the missing EXECUTE privilege can be what
+    refuses it."""
     body: dict[str, Any] = {}
     for key, value in ANON_CALLS[name].items():
         body[key] = (
@@ -244,7 +251,14 @@ def test_anon_cannot_call_any_agent_function(on: World, run_a: str, name: str) -
 
 
 @pytest.mark.parametrize(
-    "table", [*AGENT_TABLES, *OPERATOR_TABLES, "claims_effective", "claims_for_scoring"]
+    "table",
+    [
+        *AGENT_TABLES,
+        *OPERATOR_TABLES,
+        "claims_effective",
+        "claims_for_scoring",
+        "evidence_for_scoring",
+    ],
 )
 def test_anon_reads_and_writes_no_agent_table(on: World, table: str) -> None:
     r = get(on, None, f"/{table}?select=*")
@@ -291,7 +305,8 @@ def test_no_role_touches_the_operator_tables(on: World, table: str) -> None:
         r = get(on, user, f"/{table}?select=*")
         assert r.status_code == 403 and code_of(r) == "42501", (role, table)
         for method, body in (("POST", insert), ("PATCH", patch), ("DELETE", None)):
-            # (a PATCH / DELETE needs a filter, or PostgREST refuses it before any privilege is consulted)
+            # (a PATCH / DELETE needs a filter, or PostgREST refuses it before any privilege
+            # is consulted)
             key = {
                 "platform_flags": "key",
                 "agent_limits": "limit_key",
@@ -499,8 +514,9 @@ def test_what_a_plain_insert_records_is_decided_by_the_server_whatever_the_reque
 
 
 def test_a_client_cannot_set_the_provenance_settings_through_the_api(on: World, run_a: str) -> None:
-    """The two settings the write functions use are database settings. PostgREST exposes only the public schema, so there is no
-    set_config to call; the pg_catalog function is not reachable."""
+    """The two settings the write functions use are database settings. PostgREST exposes only the
+    public schema, so there is no
+        set_config to call; the pg_catalog function is not reachable."""
     for name in ("set_config", "pg_catalog.set_config", "current_setting"):
         r = rpc(
             on,
@@ -678,7 +694,8 @@ def test_a_run_cannot_be_steered_into_another_run_tenant_or_evidence(on: World, 
         assert write_evidence(on, on.a.users["admin"], run_a, "steer").json() == unknown.json(), (
             "another user of the SAME tenant: identical"
         )
-        # evidence ids: another tenant's, a manual one, one written by ANOTHER run of the same user
+        # evidence ids: another tenant's, a manual one, one written by ANOTHER run of the same
+        # user
         mine = write_evidence(on, sales_a, run_a, "own-ev").json()["evidence_id"]
         theirs = write_evidence(on, sales_b, run_b, "their-ev").json()["evidence_id"]
         manual = uid()
@@ -1031,9 +1048,11 @@ def test_kinds_reserved_tool_names_and_oversized_usage_are_refused_over_http(
 def test_only_accepted_agent_claims_reach_the_score_input_and_carry_the_reviewers_confidence(
     on: World, run_a: str
 ) -> None:
-    """The score input is what the REAL reader (the repository the review queue and the label snapshot use) gets from the
-    real stack: an accepted agent claim at the confidence the human chose (low / medium / high); unreviewed and rejected
-    ones contribute nothing."""
+    """The score input is what the REAL reader (the repository the review queue and the label
+    snapshot use) gets from the
+        real stack: an accepted agent claim at the confidence the human chose (low / medium /
+        high); unreviewed and rejected
+        ones contribute nothing."""
     from app.crm.repository import PostgrestCrmRepository
 
     sales, admin, viewer = on.a.users["sales"], on.a.users["admin"], on.a.users["viewer"]
@@ -1082,7 +1101,8 @@ def test_only_accepted_agent_claims_reach_the_score_input_and_carry_the_reviewer
             "DEMO score input medium": "medium",
             "DEMO score input high": "high",
         }, f"{who.label}: unreviewed and rejected claims must contribute nothing; got {seen}"
-    # a foreign tenant's member cannot read tenant A's claims through the same reader, by any company id
+    # a foreign tenant's member cannot read tenant A's claims through the same reader, by any
+    # company id
     assert repo.list_claims(on.b.users["owner"].token, uuid.UUID(on.a.id), company_id=company) == []
 
 
@@ -1096,7 +1116,8 @@ def _review_sql(review_id: str, claim: str, decision: str, extra: str = "") -> s
 def _concurrent_reviews(
     first: tuple[str, str], second: tuple[str, str], hold: float = 4.0, delay: float = 1.5
 ) -> tuple[tuple[int, str, str], tuple[int, str, str]]:
-    """Session 1 runs its review and HOLDS its transaction open; session 2 starts `delay` seconds later, while it is held."""
+    """Session 1 runs its review and HOLDS its transaction open; session 2 starts `delay` seconds
+    later, while it is held."""
     with ThreadPoolExecutor(max_workers=2) as pool:
         f1 = pool.submit(
             operator_sql.sql_result,
@@ -1130,9 +1151,12 @@ def _make_reviewable_claim(on: World, run: str) -> str:
 def test_two_simultaneous_reviews_of_one_claim_end_in_a_deterministic_latest(
     on: World, run_a: str
 ) -> None:
-    """The reviewer who acts LAST (commits last) wins, whatever the interleaving: review_claim locks the claim row before it
-    inserts, so the second review waits for the first and gets the later timestamp. Without the lock the second review
-    could insert (with a later timestamp) and commit FIRST, and the stale review would then be committed last."""
+    """The reviewer who acts LAST (commits last) wins, whatever the interleaving: review_claim locks
+    the claim row before it
+        inserts, so the second review waits for the first and gets the later timestamp.
+        Without the lock the second review
+        could insert (with a later timestamp) and commit FIRST, and the stale review would
+        then be committed last."""
     claim = _make_reviewable_claim(on, run_a)
     admin, owner = on.a.users["admin"], on.a.users["owner"]
     r_accept, r_reject = uid(), uid()
@@ -1162,8 +1186,9 @@ def test_two_simultaneous_reviews_of_one_claim_end_in_a_deterministic_latest(
 def test_a_retry_that_overlaps_the_original_review_is_a_replay_not_a_conflict(
     on: World, run_a: str
 ) -> None:
-    """The same review id sent twice at once (a double click, a retry racing the first request): the second must wait for
-    the first and then replay it, never fail with 'review id already used'."""
+    """The same review id sent twice at once (a double click, a retry racing the first request): the
+    second must wait for
+        the first and then replay it, never fail with 'review id already used'."""
     claim = _make_reviewable_claim(on, run_a)
     admin = on.a.users["admin"]
     rid = uid()

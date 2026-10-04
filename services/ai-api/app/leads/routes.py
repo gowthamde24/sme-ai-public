@@ -29,7 +29,7 @@ from app.leads.models import (
     LeadLabelOut,
     ReviewQueueLeadOut,
 )
-from app.leads.review import MAX_EVIDENCE_INPUTS, score_inputs
+from app.leads.review import score_inputs
 from app.tenancy.models import Role
 
 audit_log = logging.getLogger("app.leads.audit")
@@ -165,7 +165,8 @@ def get_review_queue(
     blind: bool = Query(default=True),
 ) -> Page[ReviewQueueLeadOut]:
     """Blind review is the default: scores of leads the CALLER has not labelled are hidden, the
-    order does not depend on any score, and a score band cannot be requested. `blind=false` is a
+    order does not depend on any score, and a score band cannot be requested.
+    `blind=false` is a
     deliberate opt-in, and every such request is logged (who, which tenant; nothing else)."""
     if blind and score_band is not None:
         raise ApiError(
@@ -241,26 +242,18 @@ def create_lead_label(
             else None
         )
 
-        # The very inputs the review queue scores with (app.leads.review): claims, evidence, ICP.
+        # The very inputs the review queue scores with (app.leads.review): claims, evidence,
+        # ICP.
         claims = (
             runtime.crm.list_claims(ctx.principal.token, ctx.tenant.id, company_id=cid)
             if cid
             else []
         )
-        ev_page = runtime.evidence.list_for_target(
-            ctx.principal.token,
-            ctx.tenant.id,
-            "lead",
-            lid,
-            limit=MAX_EVIDENCE_INPUTS,
-            cursor=None,
-            include_archived=False,
+        # the same reader the review queue uses (evidence_for_scoring): unaccepted agent
+        # evidence never counts
+        evidence_items = runtime.leads.list_scoring_evidence(
+            ctx.principal.token, ctx.tenant.id, lid
         )
-        evidence_items = [
-            {"kind": el.evidence.kind, "url": el.evidence.url}
-            for el in ev_page.items
-            if el.evidence is not None
-        ]
         sc_res = score_inputs(active_icp.config, company, contact, claims, evidence_items)
         score_snapshot = sc_res.to_snapshot()
 
@@ -343,4 +336,3 @@ def export_dataset(
             "X-Export-Rows": str(row_count),
         },
     )
-

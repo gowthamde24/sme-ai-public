@@ -1,9 +1,8 @@
 """HTTP behaviour of the lead review, import, ICP config, and export endpoints.
 
 Tests authorization order (401 -> 404 for foreign tenant -> 403 for role), schema validation,
-dry-run vs commit import, review queue blind scoring, label validation rules (bad requires reason),
-and CSV / JSON exports.
-"""
+dry-run vs commit import, review queue blind scoring, label validation rules (bad requires
+reason), and CSV / JSON exports."""
 
 from __future__ import annotations
 
@@ -51,9 +50,7 @@ class Env:
         self.crm = FakeCrmRepository()
         self.evidence = FakeEvidenceRepository()
         self.leads = FakeLeadsRepository()
-        self.client, self.repo = make_client(
-            crm=self.crm, evidence=self.evidence, leads=self.leads
-        )
+        self.client, self.repo = make_client(crm=self.crm, evidence=self.evidence, leads=self.leads)
 
     def base_url(self, tenant: Any = TENANT_A.id) -> str:
         return f"/v1/tenants/{tenant}"
@@ -141,8 +138,7 @@ def test_foreign_tenant_is_404_for_every_role(env: Env, user: str) -> None:
         == 404
     )
     assert (
-        env.client.get(f"{foreign}/leads/{uuid.uuid4()}/labels", headers=headers).status_code
-        == 404
+        env.client.get(f"{foreign}/leads/{uuid.uuid4()}/labels", headers=headers).status_code == 404
     )
     assert (
         env.client.post(
@@ -175,9 +171,7 @@ def test_lead_import_role_matrix(env: Env) -> None:
         "rows": [{"company_name": "Test Co", "city": "Bengaluru"}],
     }
     for user in SALES_PLUS:
-        res_preview = env.client.post(
-            f"{base}/leads/import/preview", json=body, headers=auth(user)
-        )
+        res_preview = env.client.post(f"{base}/leads/import/preview", json=body, headers=auth(user))
         assert res_preview.status_code == 200, f"{user} should be able to preview import"
         validate(res_preview.json(), "ImportBatchReport")
 
@@ -337,7 +331,8 @@ def test_lead_labeling_validation_and_scoring(env: Env) -> None:
 
 def test_label_snapshot_is_scored_from_the_same_claims_as_the_queue(env: Env) -> None:
     """The score stored with a label must be what the reviewer's queue view computed: same ICP
-    version, same claims, same evidence. Imported attributes are claims; a snapshot that ignores
+    version, same claims, same evidence. Imported attributes are claims; a snapshot that
+    ignores
     them silently under-reports the lead."""
     from app.leads.review import score_inputs
 
@@ -360,7 +355,7 @@ def test_label_snapshot_is_scored_from_the_same_claims_as_the_queue(env: Env) ->
     res = env.client.post(
         f"{base}/leads/{lead_id}/labels",
         json={"id": str(uuid.uuid4()), "label": "good"},
-        headers=auth("a_sales")
+        headers=auth("a_sales"),
     )
     assert res.status_code == 201
     out = res.json()
@@ -372,7 +367,8 @@ def test_label_snapshot_is_scored_from_the_same_claims_as_the_queue(env: Env) ->
     assert ("claims", "list") in env.crm.calls
 
 
-# ----------------------------------------------------------------------------- label idempotency
+# ----------------------------------------------------------------------------- label
+# idempotency
 def label_env(env: Env) -> tuple[str, uuid.UUID]:
     base = env.base_url()
     env.client.post(f"{base}/icp-configs", json={"config": ICP_TEMPLATE}, headers=auth("a_admin"))
@@ -621,3 +617,28 @@ def test_export_csv_and_json(env: Env) -> None:
     json_data = json.loads(res_json.text)
     assert len(json_data) >= 1
     assert json_data[0]["label"] == "bad"
+
+
+def test_the_label_snapshot_scores_the_evidence_the_scoring_reader_returns(env: Env) -> None:
+    """The snapshot's evidence is whatever the shared scoring reader (evidence_for_scoring) returns
+    for the lead, not what
+        the evidence list endpoint would show: unaccepted agent evidence is filtered there."""
+    from app.leads.review import score_inputs
+
+    base, lead_id = label_env(env)
+    lead = env.crm.get_row("t", "leads", TENANT_A.id, lead_id)
+    assert lead is not None
+    company = env.crm.get_row("t", "companies", TENANT_A.id, lead.company_id)
+    env.leads.scoring_evidence[lead_id] = [
+        {"kind": "web_page", "url": "https://x.test"},
+        {"kind": "note", "url": None},
+    ]
+    res = env.client.post(
+        f"{base}/leads/{lead_id}/labels",
+        json={"id": str(uuid.uuid4()), "label": "good"},
+        headers=auth("a_sales"),
+    )
+    assert res.status_code == 201
+    expected = score_inputs(ICP_TEMPLATE, company, None, [], env.leads.scoring_evidence[lead_id])
+    assert res.json()["snapshot"] == expected.to_snapshot()
+    assert "list_scoring_evidence" in env.leads.calls

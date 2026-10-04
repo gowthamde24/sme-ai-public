@@ -31,10 +31,18 @@ from app.leads.models import (
     LeadLabelOut,
     ReviewQueueLeadOut,
 )
-from app.leads.review import hide_scores, score_inputs
+from app.leads.review import MAX_EVIDENCE_INPUTS, hide_scores, score_inputs
 from app.tenancy.repository import UpstreamError
 
 logger = logging.getLogger("app.leads.repository")
+
+# What the evidence-quality factor of the score reads, for the review queue AND the label
+# snapshot (ONE definition, like CLAIMS_FOR_SCORING): the evidence_for_scoring VIEW. Evidence
+# written by an agent counts only once a human accepted a claim that cites it as support.
+# Never the raw evidence_links table.
+EVIDENCE_FOR_SCORING = "evidence_for_scoring"
+EVIDENCE_SELECT = "lead_id,kind,url"
+EVIDENCE_ORDER = "created_at.desc,link_id.desc"
 
 _ICP_FIELDS = ",".join(IcpConfigOut.model_fields)
 _LABEL_FIELDS = ",".join(LeadLabelOut.model_fields)
@@ -84,6 +92,10 @@ class LeadsRepository(Protocol):
         dry_run: bool,
         label: str | None,
     ) -> ImportBatchReport: ...
+
+    def list_scoring_evidence(
+        self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID
+    ) -> list[dict[str, Any]]: ...
 
     def create_lead_label(
         self,
@@ -138,6 +150,7 @@ class PostgrestLeadsRepository:
         self._url = rest_url.rstrip("/")
         self._anon = anon_key
         self._client = client or httpx.Client(timeout=20.0)
+
     def close(self) -> None:
         self._client.close()
 
@@ -290,6 +303,28 @@ class PostgrestLeadsRepository:
             raise self._error(resp)
         return ImportBatchReport.model_validate(resp.json())
 
+    # ------------------------------------------------------------------------- scoring
+    # evidence
+    def list_scoring_evidence(
+        self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID
+    ) -> list[dict[str, Any]]:
+        """The evidence a lead's score is computed from: the same view, order and columns the
+        queue uses."""
+        resp = self._client.get(
+            f"{self._url}/{EVIDENCE_FOR_SCORING}",
+            headers=self._headers(token),
+            params={
+                "tenant_id": f"eq.{tenant_id}",
+                "lead_id": f"eq.{lead_id}",
+                "order": EVIDENCE_ORDER,
+                "select": EVIDENCE_SELECT,
+                "limit": str(MAX_EVIDENCE_INPUTS),
+            },
+        )
+        if resp.status_code != 200:
+            raise self._error(resp)
+        return [dict(row) for row in resp.json()]
+
     # ------------------------------------------------------------------------- Lead Labels
     def create_lead_label(
         self,
@@ -302,10 +337,14 @@ class PostgrestLeadsRepository:
     ) -> tuple[LeadLabelOut, bool]:
         """Insert one label under the CLIENT's id. Returns (label, created).
 
-        The id makes a retry harmless: if it is already used and THIS tenant's label with that id
-        carries the same lead / label / reason, the stored label is returned with created=False.
-        Every other use of the id (a different payload, or an id another tenant holds, which RLS
-        hides from the lookup) raises the same ConflictError: nothing reveals which case it was."""
+        The id makes a retry harmless: if it is already used and THIS tenant's label
+        with that id
+        carries the same lead / label / reason, the stored label is returned with
+        created=False.
+        Every other use of the id (a different payload, or an id another tenant holds,
+        which RLS
+        hides from the lookup) raises the same ConflictError: nothing reveals which
+        case it was."""
         score = score_snapshot.get("score") if score_snapshot else None
         score_max = score_snapshot.get("score_max_reachable") if score_snapshot else None
 
@@ -375,7 +414,8 @@ class PostgrestLeadsRepository:
         cursor: tuple[str, uuid.UUID] | None,
     ) -> Page[LeadLabelOut]:
         """A lead's label history, newest first. Blind review applies here too: until the VIEWER
-        has labelled this lead themselves, other reviewers' labels show their verdict but not the
+        has labelled this lead themselves, other reviewers' labels show their verdict
+        but not the
         score, score ceiling or factor snapshot stored with them."""
         params: dict[str, str] = {
             "tenant_id": f"eq.{tenant_id}",
@@ -452,17 +492,20 @@ class PostgrestLeadsRepository:
         """One page of the queue, always newest first by (created_at, id): the order is
         independent of every score.
 
-        Blind review (include_blind_scores=False, the default): a lead's score, band and factor
+        Blind review (include_blind_scores=False, the default): a lead's score, band
+        and factor
         snapshot are shown only for leads the CALLER has labelled; another reviewer's label
-        changes nothing for this caller, and a score band cannot be requested at all (filtering on
+        changes nothing for this caller, and a score band cannot be requested at all
+        (filtering on
         a hidden value would reveal it). The non-blind view is a deliberate opt-in.
         """
         if score_band is not None and not include_blind_scores:
             raise ValueError("a score band can only be requested in a non-blind view")
 
         active_icp = self.get_active_icp_config(token, tenant_id)
-        # Without a filter one extra row tells us whether another page exists. With a filter some
-        # rows are dropped, so scan forward (bounded) until a full page and one more has matched.
+        # Without a filter one extra row tells us whether another page exists. With a filter
+        # some rows are dropped, so scan forward (bounded) until a full page and one more has
+        # matched.
         page_size = limit + 1 if score_band is None else max(2 * limit, 50)
         matched: list[ReviewQueueLeadOut] = []
         position = cursor
@@ -557,24 +600,25 @@ class PostgrestLeadsRepository:
                 context.claims.setdefault(str(claim["company_id"]), []).append(claim)
 
         resp = self._client.get(
-            f"{self._url}/evidence_links",
+            f"{self._url}/{EVIDENCE_FOR_SCORING}",
             headers=self._headers(token),
             params={
                 "tenant_id": f"eq.{tenant_id}",
                 "lead_id": f"in.({','.join(lead_ids)})",
-                "archived_at": "is.null",
-                "order": "created_at.desc,id.desc",
-                "select": "lead_id,evidence:evidence(kind,url)",
+                "order": EVIDENCE_ORDER,
+                "select": EVIDENCE_SELECT,
             },
         )
         if resp.status_code != 200:
             raise self._error(resp)
-        for link in resp.json():
-            if link.get("lead_id") and link.get("evidence"):
-                context.evidence.setdefault(str(link["lead_id"]), []).append(link["evidence"])
+        for row in resp.json():
+            if row.get("lead_id"):
+                context.evidence.setdefault(str(row["lead_id"]), []).append(
+                    {"kind": row.get("kind"), "url": row.get("url")}
+                )
 
-        # Only the caller's own labels: another reviewer's label must neither unblind a lead for
-        # this caller nor appear (with its stored score) in their queue.
+        # Only the caller's own labels: another reviewer's label must neither unblind a lead
+        # for this caller nor appear (with its stored score) in their queue.
         resp = self._client.get(
             f"{self._url}/lead_labels",
             headers=self._headers(token),
@@ -722,4 +766,3 @@ class PostgrestLeadsRepository:
                 }
             )
         return flat_rows
-

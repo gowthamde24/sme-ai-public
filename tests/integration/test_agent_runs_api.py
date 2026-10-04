@@ -1,13 +1,16 @@
-"""The agent runtime and its HTTP API against the REAL local stack (GoTrue, PostgREST, Postgres), with the scripted FakeProvider.
+"""The agent runtime and its HTTP API against the REAL local stack (GoTrue, PostgREST, Postgres),
+with the scripted FakeProvider.
 
-Every database read the runtime and the API add is exercised here against the real views and tables: a mock cannot see a
-column a view does not have (an earlier mock-only test missed exactly that). The agent switches are OFF by default and only the
-operator (a migration, or here the local database owner) can turn them on, so this module turns them on for its own two tenants
-and restores the previous state afterwards.
+Every database read the runtime and the API add is exercised here against the real views and
+tables: a mock cannot see a column a view does not have (an earlier mock-only test missed
+exactly that). The agent switches are OFF by default and only the operator (a migration, or
+here the local database owner) can turn them on, so this module turns them on for its own two
+tenants and restores the previous state afterwards.
 
-What is proved end to end: a run is started by a signed-in user, executed in the background with that user's token, writes only
-through the definer functions, and leaves UNVERIFIED suggestions that count toward a score only after an Owner / Admin accepts
-them; a cancel, a switch, a lost role and a model that OBEYS an injection each stop or contain a run."""
+What is proved end to end: a run is started by a signed-in user, executed in the background
+with that user's token, writes only through the definer functions, and leaves UNVERIFIED
+suggestions that count toward a score only after an Owner / Admin accepts them; a cancel, a
+switch, a lost role and a model that OBEYS an injection each stop or contain a run."""
 
 # ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
 
@@ -108,7 +111,8 @@ def app_client(
 
 @pytest.fixture(scope="module")
 def operator_on(crm_world: World) -> Iterator[World]:
-    """The operator turns agents on for this module's two tenants (and raises the hourly start cap for the whole module)."""
+    """The operator turns agents on for this module's two tenants (and raises the hourly start
+    cap for the whole module)."""
     w = crm_world
     saved = operator_sql.snapshot_switches()
     saved_rate = operator_sql.sql(
@@ -137,8 +141,9 @@ OWN: dict[str, dict[str, str]] = {}
 
 @pytest.fixture(scope="module", autouse=True)
 def own_targets(operator_on: World) -> Iterator[None]:
-    """This module's own company and lead per tenant: agent notes are linked to their target, and the shared CRM world's base
-    rows are read by other suites that must not see them."""
+    """This module's own company and lead per tenant: agent notes are linked to their target, and the
+    shared CRM world's base
+        rows are read by other suites that must not see them."""
     w = operator_on
     for t in (w.a, w.b):
         owner = t.users["owner"]
@@ -297,7 +302,8 @@ def test_suggestions_reach_the_score_input_only_after_a_human_accepts_them(api: 
     assert not {c["id"] for c in suggestions} & set(score_input()), (
         "unreviewed: nothing reaches scoring"
     )
-    # medium / high need a SUPPORTING link: observation one has one, observation two is only context
+    # medium / high need a SUPPORTING link: observation one has one, observation two is only
+    # context
     first = next(c for c in suggestions if "one" in c["value"])
     second = next(c for c in suggestions if "two" in c["value"])
     review = {"id": uid(), "decision": "accepted", "confidence": "high"}
@@ -388,7 +394,8 @@ def test_foreign_tenants_viewers_and_sales_are_refused_by_the_real_database(api:
     assert r.status_code == 404 and r.json() == {
         "error": {"code": "not_found", "message": "Not found."}
     }
-    # a Viewer cannot start, a Sales user cannot flip the switch, a Sales user cannot see another's run
+    # a Viewer cannot start, a Sales user cannot flip the switch, a Sales user cannot see
+    # another's run
     assert start(api, w.a.users["viewer"], w.a).status_code == 403
     assert (
         api.client.put(
@@ -452,7 +459,8 @@ def test_reviewing_needs_owner_or_admin_and_a_claim_of_this_tenant(api: Rig) -> 
         ).status_code
         == 404
     )
-    # the Admin may; a reused review id with another decision is a conflict, not a silent overwrite
+    # the Admin may; a reused review id with another decision is a conflict, not a silent
+    # overwrite
     ok = api.client.post(
         url(w.a, f"/claims/{claim['id']}/reviews"), json=body, headers=bearer(w.a.users["admin"])
     )
@@ -657,7 +665,8 @@ def test_a_crash_between_turns_is_resumed_by_a_second_runner_without_duplicates(
 
 # ==== 6. kill flags, a lost role, a busy pool: runs gated mid-way ====
 def gated_script(gate: threading.Event, reached: threading.Event) -> list[Step]:
-    """Turn 1 writes the note; turn 2 WAITS at `gate` (the test changes the world meanwhile), then asks for observations."""
+    """Turn 1 writes the note; turn 2 WAITS at `gate` (the test changes the world meanwhile),
+    then asks for observations."""
     steps = selftest_responses()
 
     def turn_two(_: LlmRequest) -> LlmResponse:
@@ -778,7 +787,8 @@ def test_a_starter_who_loses_the_role_mid_run_writes_nothing_more(
         assert removed.status_code in (200, 204)
         gate.set()
         time.sleep(2.0)
-        # the removed user can no longer see the run; the Owner can: it never got past the note, and is cancellable
+        # the removed user can no longer see the run; the Owner can: it never got past the
+        # note, and is cancellable
         seen = client.get(url(w.a, f"/agent-runs/{run_id}"), headers=bearer(owner)).json()
         assert seen["writes_used"] == 1 and seen["status"] == "running", seen
         claims = client.get(
@@ -940,3 +950,149 @@ def test_the_agent_endpoints_never_echo_a_token_or_a_database_message(api: Rig) 
     assert bad.status_code == 422 and sales.token not in bad.text
     r = start(api, sales, w.a, target_id="00000000-0000-0000-0000-000000000000")
     assert r.status_code == 404 and sales.token not in r.text
+
+
+# ==== 9. unaccepted agent EVIDENCE never changes a score (queue and label snapshot, real
+# reader) ====
+ICP_TEMPLATE = json.loads(
+    (ROOT / "config" / "icp" / "silk-wholesale.v1.json").read_text(encoding="utf-8")
+)
+
+
+def queue_score(api: Rig, user: User, t: Tenant, lead_id: str) -> int:
+    """The lead's score as the REVIEW QUEUE computes it (unblinded view, real reader)."""
+    cursor: str | None = None
+    for _ in range(30):
+        r = api.client.get(
+            url(t, "/leads/review-queue"),
+            params={"blind": "false", "limit": 100, **({"cursor": cursor} if cursor else {})},
+            headers=bearer(user),
+        )
+        assert r.status_code == 200, r.text
+        page = r.json()
+        for item in page["items"]:
+            if item["lead_id"] == lead_id:
+                assert isinstance(item["score"], int)
+                return int(item["score"])
+        cursor = page["next_cursor"]
+        if not cursor:
+            break
+    pytest.fail("the lead is not in the review queue")
+
+
+def label_score(api: Rig, user: User, t: Tenant, lead_id: str) -> int:
+    """The lead's score as the LABEL SNAPSHOT computes it (every label stores the score it was
+    made with)."""
+    r = api.client.post(
+        url(t, f"/leads/{lead_id}/labels"),
+        json={"id": uid(), "label": "maybe"},
+        headers=bearer(user),
+    )
+    assert r.status_code == 201, r.text
+    return int(r.json()["score"])
+
+
+def test_unaccepted_agent_evidence_does_not_change_a_score_and_accepted_evidence_does(
+    api: Rig,
+) -> None:
+    w, sales, owner = api.world, api.world.a.users["sales"], api.world.a.users["owner"]
+    lead = OWN[w.a.id]["lead"]
+    published = api.client.post(
+        url(w.a, "/icp-configs"), json={"config": ICP_TEMPLATE}, headers=bearer(owner)
+    )
+    assert published.status_code == 201, published.text
+    before_queue, before_label = (
+        queue_score(api, sales, w.a, lead),
+        label_score(api, sales, w.a, lead),
+    )
+    assert before_queue == before_label
+
+    # an agent run on the LEAD writes a note linked to the lead and two claims citing it
+    run_id = start(api, sales, w.a, target_kind="lead", target_id=lead).json()["id"]
+    assert wait_run(api.client, w.a, sales, run_id)["status"] == "succeeded"
+    assert (
+        operator_sql.sql(
+            f"select count(*) from public.evidence_links where lead_id = '{lead}' and agent_run_id = '{run_id}'"
+        )
+        == "1"
+    ), "the agent note is attached to the lead"
+    assert queue_score(api, sales, w.a, lead) == before_queue, (
+        "queue: unaccepted agent evidence changes nothing"
+    )
+    assert label_score(api, sales, w.a, lead) == before_label, "label snapshot: the same"
+
+    claims = [
+        c
+        for c in api.client.get(url(w.a, f"/leads/{lead}/claims"), headers=bearer(sales)).json()
+        if c["agent_run_id"] == run_id
+    ]
+    supports = next(c for c in claims if "one" in c["value"])
+    context = next(c for c in claims if "two" in c["value"])
+    # a claim accepted that cites the note only as CONTEXT does not make it count
+    r = api.client.post(
+        url(w.a, f"/claims/{context['id']}/reviews"),
+        json={"id": uid(), "decision": "accepted", "confidence": "low"},
+        headers=bearer(owner),
+    )
+    assert r.status_code == 201, r.text
+    assert queue_score(api, sales, w.a, lead) == before_queue
+    # accepted with a supporting link: the note counts, in both readers
+    r = api.client.post(
+        url(w.a, f"/claims/{supports['id']}/reviews"),
+        json={"id": uid(), "decision": "accepted", "confidence": "medium"},
+        headers=bearer(owner),
+    )
+    assert r.status_code == 201, r.text
+    after_queue, after_label = (
+        queue_score(api, sales, w.a, lead),
+        label_score(api, sales, w.a, lead),
+    )
+    assert after_queue == after_label == before_queue + 4, (
+        "the evidence-quality factor's 'any evidence' points"
+    )
+    # rejected afterwards: it stops counting
+    r = api.client.post(
+        url(w.a, f"/claims/{supports['id']}/reviews"),
+        json={"id": uid(), "decision": "rejected", "reason_code": "outdated"},
+        headers=bearer(owner),
+    )
+    assert r.status_code == 201, r.text
+    assert queue_score(api, sales, w.a, lead) == label_score(api, sales, w.a, lead) == before_queue
+
+
+def test_a_link_citing_a_claim_under_review_is_not_blocked_by_the_review_lock(api: Rig) -> None:
+    """review_claim locks the claim FOR NO KEY UPDATE: concurrent reviews still serialise, but an
+    insert that only REFERENCES
+        the claim (a link citing it) does not wait for the review to finish."""
+    w, sales, admin = api.world, api.world.a.users["sales"], api.world.a.users["admin"]
+    run_id = start(api, sales, w.a).json()["id"]
+    wait_run(api.client, w.a, sales, run_id)
+    claim = next(
+        c
+        for c in api.client.get(
+            url(w.a, f"/companies/{OWN[w.a.id]['company']}/claims"), headers=bearer(sales)
+        ).json()
+        if c["agent_run_id"] == run_id
+    )
+    evidence, link_id = uid(), uid()
+    reference = (
+        "insert into public.evidence (id, tenant_id, kind, provider, reference) "
+        f"values ('{evidence}', '{w.a.id}', 'note', 'manual', 'ref:lock-test'); "
+        "insert into public.evidence_links (id, tenant_id, evidence_id, claim_id, stance) "
+        f"values ('{link_id}', '{w.a.id}', '{evidence}', '{claim['id']}', 'context');"
+    )
+    review = (
+        f"select public.review_claim('{uid()}', '{claim['id']}', 'rejected', null, 'duplicate');"
+    )
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        held = pool.submit(
+            operator_sql.sql_result,
+            operator_sql.as_user(str(admin.id), review, hold_seconds=4.0),
+        )
+        time.sleep(1.5)  # the review holds its lock now
+        started_at = time.monotonic()
+        rc, out, err = operator_sql.sql_result(reference, timeout=30)
+        waited = time.monotonic() - started_at
+        assert held.result()[0] == 0
+    assert rc == 0, err
+    assert waited < 2.5, f"the reference waited {waited:.1f}s for the review's lock"

@@ -538,12 +538,20 @@ class FakeLeadsRepository:
     calls: list[str] = field(default_factory=list)
     queue_calls: list[dict[str, Any]] = field(default_factory=list)
     label_list_viewers: list[uuid.UUID] = field(default_factory=list)
+    scoring_evidence: dict[uuid.UUID, list[dict[str, Any]]] = field(default_factory=dict)
     raise_on_next: Exception | None = None
 
     def _maybe_raise(self) -> None:
         if self.raise_on_next is not None:
             err, self.raise_on_next = self.raise_on_next, None
             raise err
+
+    def list_scoring_evidence(
+        self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID
+    ) -> list[dict[str, Any]]:
+        self.tokens_seen.append(token)
+        self.calls.append("list_scoring_evidence")
+        return list(self.scoring_evidence.get(lead_id, []))
 
     def publish_icp_config(
         self, token: str, tenant_id: uuid.UUID, payload: dict[str, Any]
