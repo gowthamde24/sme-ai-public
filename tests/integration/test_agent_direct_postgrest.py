@@ -14,6 +14,8 @@ previous state exactly afterwards."""
 
 from __future__ import annotations
 
+import time
+import uuid
 from collections.abc import Iterator
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
@@ -989,6 +991,191 @@ def test_an_agent_claim_counts_toward_scoring_only_after_an_owner_or_admin_accep
         conflict.text,
     )
     assert "review id already used" == conflict.json()["message"]
+
+
+def test_kinds_reserved_tool_names_and_oversized_usage_are_refused_over_http(
+    on: World, run_a: str
+) -> None:
+    sales = on.a.users["sales"]
+    kind = write_evidence(
+        on, sales, run_a, "rf-kind", p_kind="web_page", p_url="https://demo.test/x"
+    )
+    assert kind.status_code == 400 and code_of(kind) == "23514", kind.text
+    assert kind.json()["message"] == "value not allowed"
+    for name in ("agent_write_evidence", "usage", "Agent_Write_Anything"):
+        r = rpc(
+            on,
+            sales,
+            "agent_record_step",
+            p_run_id=run_a,
+            p_step_key=f"rf-{name}",
+            p_tool_name=name,
+            p_args_sha256="a" * 64,
+        )
+        assert r.status_code == 400 and code_of(r) == "23514", (name, r.text)
+    for field in ("p_tokens_in", "p_tokens_out", "p_cost_micros"):
+        body = {
+            "p_run_id": run_a,
+            "p_step_key": f"rf-{field}",
+            "p_tokens_in": 1,
+            "p_tokens_out": 1,
+            "p_cost_micros": 1,
+        }
+        body[field] = 9223372036854775807
+        r = rpc(on, sales, "agent_record_usage", **body)
+        assert is_state(r, "SM203"), (field, r.status_code, r.text)
+    steps = get(on, on.a.users["owner"], f"/agent_run_steps?run_id=eq.{run_a}&select=id").json()
+    assert steps == [], "none of the refusals left a step behind"
+
+
+def test_only_accepted_agent_claims_reach_the_score_input_and_carry_the_reviewers_confidence(
+    on: World, run_a: str
+) -> None:
+    """The score input is what the REAL reader (the repository the review queue and the label snapshot use) gets from the
+    real stack: an accepted agent claim at the confidence the human chose (low / medium / high); unreviewed and rejected
+    ones contribute nothing."""
+    from app.crm.repository import PostgrestCrmRepository
+
+    sales, admin, viewer = on.a.users["sales"], on.a.users["admin"], on.a.users["viewer"]
+    ev = write_evidence(on, sales, run_a, "si-ev").json()["evidence_id"]
+    claims: dict[str, str] = {}
+    for name in ("low", "medium", "high", "rejected", "unreviewed"):
+        r = rpc(
+            on,
+            sales,
+            "agent_write_claim",
+            p_run_id=run_a,
+            p_step_key=f"si-{name}",
+            p_predicate="selftest.observation",
+            p_value=f"DEMO score input {name}",
+            p_evidence_ids=[ev],
+        )
+        assert r.status_code == 200, r.text
+        claims[name] = r.json()["claim_id"]
+
+    def review(name: str, decision: str, **kw: str) -> None:
+        r = rpc(
+            on,
+            admin,
+            "review_claim",
+            p_review_id=uid(),
+            p_claim_id=claims[name],
+            p_decision=decision,
+            **kw,
+        )
+        assert r.status_code == 200, r.text
+
+    for level in ("low", "medium", "high"):
+        review(level, "accepted", p_confidence=level)
+    review("rejected", "rejected", p_reason_code="incorrect")
+
+    repo = PostgrestCrmRepository(on.stack.rest, on.stack.anon_key)
+    company = uuid.UUID(on.a.rows["companies"]["id"])
+    for who in (sales, viewer, admin):  # every member of the tenant reads the same score input
+        seen = {
+            c["value"]: c["confidence"]
+            for c in repo.list_claims(who.token, uuid.UUID(on.a.id), company_id=company)
+            if str(c["value"]).startswith("DEMO score input")
+        }
+        assert seen == {
+            "DEMO score input low": "low",
+            "DEMO score input medium": "medium",
+            "DEMO score input high": "high",
+        }, f"{who.label}: unreviewed and rejected claims must contribute nothing; got {seen}"
+    # a foreign tenant's member cannot read tenant A's claims through the same reader, by any company id
+    assert repo.list_claims(on.b.users["owner"].token, uuid.UUID(on.a.id), company_id=company) == []
+
+
+def _review_sql(review_id: str, claim: str, decision: str, extra: str = "") -> str:
+    return (
+        "select public.review_claim("
+        f"'{review_id}', '{claim}', '{decision}'::public.claim_review_decision{extra});"
+    )
+
+
+def _concurrent_reviews(
+    first: tuple[str, str], second: tuple[str, str], hold: float = 4.0, delay: float = 1.5
+) -> tuple[tuple[int, str, str], tuple[int, str, str]]:
+    """Session 1 runs its review and HOLDS its transaction open; session 2 starts `delay` seconds later, while it is held."""
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        f1 = pool.submit(
+            operator_sql.sql_result,
+            operator_sql.as_user(first[0], first[1], hold_seconds=hold),
+            timeout=60,
+        )
+        time.sleep(delay)
+        f2 = pool.submit(
+            operator_sql.sql_result, operator_sql.as_user(second[0], second[1]), timeout=60
+        )
+        return f1.result(), f2.result()
+
+
+def _make_reviewable_claim(on: World, run: str) -> str:
+    sales = on.a.users["sales"]
+    ev = write_evidence(on, sales, run, "cc-ev").json()["evidence_id"]
+    r = rpc(
+        on,
+        sales,
+        "agent_write_claim",
+        p_run_id=run,
+        p_step_key="cc-claim",
+        p_predicate="selftest.observation",
+        p_value="DEMO concurrent review",
+        p_evidence_ids=[ev],
+    )
+    assert r.status_code == 200, r.text
+    return str(r.json()["claim_id"])
+
+
+def test_two_simultaneous_reviews_of_one_claim_end_in_a_deterministic_latest(
+    on: World, run_a: str
+) -> None:
+    """The reviewer who acts LAST (commits last) wins, whatever the interleaving: review_claim locks the claim row before it
+    inserts, so the second review waits for the first and gets the later timestamp. Without the lock the second review
+    could insert (with a later timestamp) and commit FIRST, and the stale review would then be committed last."""
+    claim = _make_reviewable_claim(on, run_a)
+    admin, owner = on.a.users["admin"], on.a.users["owner"]
+    r_accept, r_reject = uid(), uid()
+    one, two = _concurrent_reviews(
+        (str(admin.id), _review_sql(r_accept, claim, "accepted", ", 'medium'")),
+        (str(owner.id), _review_sql(r_reject, claim, "rejected", ", null, 'outdated'")),
+    )
+    assert one[0] == 0 and two[0] == 0, (one, two)
+    committed_one, committed_two = one[1].splitlines()[-1], two[1].splitlines()[-1]
+    # ISO timestamps with the same offset order lexicographically
+    last_committed = "accepted" if committed_one > committed_two else "rejected"
+    rows = operator_sql.sql(
+        "select string_agg(decision::text, ',' order by created_at, id) "
+        f"from public.claim_reviews where claim_id = '{claim}'"
+    )
+    assert sorted(rows.split(",")) == ["accepted", "rejected"], "both reviews are recorded"
+    latest = operator_sql.sql(
+        f"select review_state from public.claims_effective where id = '{claim}'"
+    )
+    assert latest == last_committed, (
+        f"the effective review ({latest}) must be the one committed last ({last_committed}); "
+        f"commits: {committed_one} / {committed_two}"
+    )
+    assert rows.split(",")[-1] == last_committed, "...and it has the newest timestamp"
+
+
+def test_a_retry_that_overlaps_the_original_review_is_a_replay_not_a_conflict(
+    on: World, run_a: str
+) -> None:
+    """The same review id sent twice at once (a double click, a retry racing the first request): the second must wait for
+    the first and then replay it, never fail with 'review id already used'."""
+    claim = _make_reviewable_claim(on, run_a)
+    admin = on.a.users["admin"]
+    rid = uid()
+    call = _review_sql(rid, claim, "accepted", ", 'low'")
+    one, two = _concurrent_reviews((str(admin.id), call), (str(admin.id), call))
+    assert one[0] == 0, one
+    assert two[0] == 0, f"the overlapping retry must succeed (replay), got: {two}"
+    assert '"replayed": true' in two[1], two
+    assert (
+        operator_sql.sql(f"select count(*) from public.claim_reviews where claim_id = '{claim}'")
+        == "1"
+    )
 
 
 def test_a_manual_claim_cannot_be_promoted_and_reviews_cannot_be_written_directly(

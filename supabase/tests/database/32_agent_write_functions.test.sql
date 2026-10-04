@@ -151,13 +151,13 @@ select is(substr(pg_temp.ev_e('e-zw', 'a' || chr(8203) || 'b'), 1, 5), '23514', 
 select is(substr(pg_temp.ev_e('e-bidi', 'a' || chr(8238) || 'b'), 1, 5), '23514', 'a bidi override: 23514');
 select is(substr(pg_temp.ev_e('e-tag', 'a' || chr(917536) || 'b'), 1, 5), '23514', 'a tag character: 23514');
 select is(substr(pg_temp.ev_e('e-big', repeat('x', 1001)), 1, 5), '23514', 'a snippet over 1000 characters: 23514');
-select is(substr(pg_temp.ev_e('e-js', 'x', 'web_page', 'javascript:alert(1)'), 1, 5), '23514', 'a javascript: URL: 23514');
+select is(substr(pg_temp.ev_e('e-js', 'x', 'note', 'javascript:alert(1)'), 1, 5), '23514', 'a javascript: URL: 23514');
 select is(substr(pg_temp.ev_e('e-ref', 'x', 'note', null, 'Not A Reference'), 1, 5), '23514', 'a malformed reference: 23514');
-select is(substr(pg_temp.ev_e('e-import', 'x', 'import_batch'), 1, 5), '23514', 'the import_batch kind cannot be written by an agent: 23514');
+select is(substr(pg_temp.ev_e('e-import', 'x', 'import_batch'), 1, 5), '23514', 'the import_batch kind cannot be written by an agent: 23514 (it is not on the definition''s list)');
 select is(pg_temp.snapshot(), '3/3/0/3', 'none of those wrote anything (the whole call rolled back, the step ledger included)');
 select is(pg_temp.j(tests.scalar_as(tests.uid('a_sales'), pg_temp.ev_sql(tests.rid('e_run'), 'e-default-ref', 'x', 'note')), 'replayed'), 'false', 'with neither URL nor reference the call succeeds');
 select is((select reference from public.evidence where agent_run_id = tests.rid('e_run')), 'run:' || tests.rid('e_run'), '...and the evidence gets reference run:<run id>');
-select count(pg_temp.ev_e('e-url', 'x', 'web_page', 'https://example.test/agent-found'));
+select count(pg_temp.ev_e('e-url', 'x', 'note', 'https://example.test/agent-found'));
 select is((select url from public.evidence where agent_run_id = tests.rid('e_run') and url is not null), 'https://example.test/agent-found', 'a valid https URL is kept (never fetched)');
 
 -- claims: predicates, stances, evidence ids

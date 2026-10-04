@@ -543,6 +543,24 @@ What was built (migrations `20261009090000_t006_agent_foundation.sql`, `20261009
 10. **What scoring reads** is the `claims_for_scoring` view for both the review queue and the label snapshot (one constant,
     `CLAIMS_FOR_SCORING`, in `app/crm/repository.py`; a unit test asserts both requests are identical).
 
+### M1 review fixes (migration `20261009090300_t006_review_fixes.sql`)
+
+The owner's review of the first two migrations led to one more migration (the applied ones are untouched):
+
+1. **Allowed evidence kinds.** `agent_definitions.allowed_evidence_kinds` (`evidence_kind[]`, not null, no default); selftest is
+   `{note}`. `agent_write_evidence` refuses any other kind with the fixed `23514` "value not allowed".
+2. **One trusted-role predicate.** `app.set_created_meta` and `app.set_agent_run_id` both decide on the allow-list
+   `current_user = 'postgres'` (the owner of the definer functions) instead of deny-listing `authenticated` / `anon`. Any other role
+   (service_role, a BYPASSRLS role, a future role) gets origin `manual` and no run id whatever the settings say. A pgTAP test
+   reads both function bodies and requires the identical predicate.
+3. **Reserved step names.** `agent_record_step` refuses `usage` and every name starting `agent_write` (any letter case): a
+   pre-registered step key could otherwise make a later real write "replay" a forged result and write nothing.
+4. **Oversized usage is a budget refusal.** `agent_record_usage` takes `bigint` parameters and compares in `numeric`, so a huge
+   value is `SM203`, never `22003`. (A JSON number beyond bigint never reaches the function; the API maps any unexpected SQLSTATE
+   to one fixed error.)
+5. **`review_claim` locks the claim row** (after the role check, before the replay lookup), so concurrent reviews of one claim
+   serialise: the review that acts last is the effective one, and an overlapping retry is a replay, not "review id already used".
+
 ## Resolved questions (the open questions of the proposal)
 
 | # | Question | Decision |

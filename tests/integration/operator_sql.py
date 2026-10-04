@@ -63,6 +63,49 @@ def sql(statement: str) -> str:
     return result.stdout.strip()
 
 
+def sql_result(statement: str, *, timeout: int = 60) -> tuple[int, str, str]:
+    """Like sql() but returns (exit code, stdout, stderr) instead of failing the test: for sessions that are EXPECTED to be
+    able to fail, or that must run concurrently with another (a held transaction)."""
+    docker = shutil.which("docker")
+    if docker is None:
+        pytest.fail("docker is required for the agent integration tests")
+    result = subprocess.run(  # noqa: S603 - fixed argv, our own container, our own SQL text
+        [
+            docker,
+            "exec",
+            "-i",
+            container(),
+            "psql",
+            "-U",
+            "postgres",
+            "-d",
+            "postgres",
+            "-X",
+            "-q",
+            "-At",
+            "-c",
+            statement,
+        ],
+        capture_output=True,
+        text=True,
+        timeout=timeout,
+    )
+    return result.returncode, result.stdout.strip(), result.stderr.strip()
+
+
+def as_user(user_id: str, body: str, *, hold_seconds: float = 0.0) -> str:
+    """One transaction that runs `body` (SQL statements) as the authenticated user `user_id`, the way PostgREST would
+    (role + JWT claims), optionally HOLDING the transaction open for `hold_seconds` before it commits, then prints the
+    commit time. The output is the statement results followed by the commit timestamp (the last line)."""
+    claims = json.dumps({"sub": user_id, "role": "authenticated"})
+    hold = f"select pg_sleep({hold_seconds});" if hold_seconds else ""
+    return (
+        "begin; set local role authenticated; "
+        f"select set_config('request.jwt.claims', '{claims}', true); "
+        f"{body} {hold} commit; select clock_timestamp();"
+    )
+
+
 def snapshot_switches() -> dict[str, object]:
     """The current platform switches and the selftest allow-list, to restore them exactly afterwards."""
     raw = sql(
