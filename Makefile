@@ -62,6 +62,7 @@ test-integration:
 # Refuses to run against anything but a local stack. Needs `make db-start` and `make dev-api`.
 seed-demo:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py
+	./scripts/dev-enable-selftest.sh demo-synthetic-sme
 
 dev-web:
 	cd $(WEB) && npm run dev

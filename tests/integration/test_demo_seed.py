@@ -529,3 +529,120 @@ def test_every_synthetic_lead_passes_the_real_data_gate_and_the_import_is_a_repl
         f"/evidence_links?tenant_id=eq.{summary.tenant_id}&created_via=eq.import&select=claim_id",
     ).json()
     assert {c["id"] for c in claims} == {link["claim_id"] for link in links}
+
+
+# ==== T006 (c): selftest is enabled for the DEMO workspace ONLY, by the local dev script ====
+DEV_SCRIPT = Path(__file__).resolve().parents[2] / "scripts" / "dev-enable-selftest.sh"
+
+
+def test_the_dev_script_is_local_only_and_uses_no_key() -> None:
+    text = DEV_SCRIPT.read_text()
+    assert "docker exec" in text and "app.operator_enable_selftest" in text
+    assert not re.search(r"SERVICE_ROLE|service_role|JWT_SECRET|supabase\.co|https?://", text), (
+        "no key and no network address"
+    )
+    assert "demo-synthetic-sme" in (Path(__file__).resolve().parents[2] / "Makefile").read_text(), (
+        "make seed-demo calls it for the DEMO workspace"
+    )
+    assert seed.DEMO_WORKSPACE_SLUG == "demo-synthetic-sme"
+
+
+def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
+    demo: Any, stack: Stack, client: TestClient
+) -> None:
+    import subprocess
+
+    import operator_sql
+
+    summary, _ = demo
+    saved = operator_sql.snapshot_switches()
+    user = demo_token(stack)
+    try:
+        operator_sql.sql(
+            "update public.platform_flags set enabled = false; "  # noqa: S608
+            "update public.agent_definitions set allowed_tenants = '{}' "
+            "where agent_name = 'selftest'; "
+            f"delete from public.tenant_agent_settings where tenant_id = '{summary.tenant_id}'"
+        )
+        bad = subprocess.run(  # noqa: S603 - our own script, fixed argv
+            [str(DEV_SCRIPT), "x'; drop table public.tenants; --"],
+            capture_output=True,
+            text=True,
+            cwd=DEV_SCRIPT.parent.parent,
+        )
+        assert bad.returncode == 2, "a slug with SQL metacharacters is refused before anything runs"
+        unknown = subprocess.run(  # noqa: S603 - our own script, fixed argv
+            [str(DEV_SCRIPT), "no-such-workspace"],
+            capture_output=True,
+            text=True,
+            cwd=DEV_SCRIPT.parent.parent,
+        )
+        assert unknown.returncode != 0
+        assert (
+            operator_sql.sql("select string_agg(enabled::text, ',') from public.platform_flags")
+            == "false,false"
+        ), "an unknown slug changed nothing"
+
+        done = subprocess.run(  # noqa: S603 - our own script, fixed argv
+            [str(DEV_SCRIPT), seed.DEMO_WORKSPACE_SLUG],
+            capture_output=True,
+            text=True,
+            cwd=DEV_SCRIPT.parent.parent,
+        )
+        assert done.returncode == 0, done.stderr
+        assert (
+            operator_sql.sql("select string_agg(enabled::text, ',') from public.platform_flags")
+            == "true,true"
+        )
+        allowed = operator_sql.sql(
+            "select array_to_string(allowed_tenants, ',') from public.agent_definitions "
+            "where agent_name = 'selftest'"
+        )
+        assert allowed == summary.tenant_id, "the allow-list holds exactly the DEMO workspace"
+        r = pg(
+            stack,
+            user,
+            "GET",
+            f"/tenant_agent_settings?tenant_id=eq.{summary.tenant_id}&select=enabled",
+        )
+        assert r.json() == [{"enabled": True}]
+        # and the demo user (an Owner) can now start a selftest run; a second workspace cannot
+        started = pg(
+            stack,
+            user,
+            "POST",
+            "/rpc/start_agent_run",
+            json={
+                "p_run_id": uid(),
+                "p_tenant_id": summary.tenant_id,
+                "p_agent_name": "selftest",
+                "p_agent_version": "dev-seed",
+                "p_target_kind": "company",
+                "p_target_id": summary.company_id,
+                "p_input_sha256": "d" * 64,
+            },
+        )
+        assert started.status_code == 200, started.text
+        pg(
+            stack,
+            user,
+            "POST",
+            "/rpc/cancel_agent_run",
+            json={"p_run_id": started.json()["run_id"]},
+        )
+        again = subprocess.run(  # noqa: S603 - our own script, fixed argv
+            [str(DEV_SCRIPT), seed.DEMO_WORKSPACE_SLUG],
+            capture_output=True,
+            text=True,
+            cwd=DEV_SCRIPT.parent.parent,
+        )
+        assert again.returncode == 0
+        assert (
+            operator_sql.sql(
+                "select cardinality(allowed_tenants) from public.agent_definitions "
+                "where agent_name = 'selftest'"
+            )
+            == "1"
+        ), "idempotent"
+    finally:
+        operator_sql.restore_switches(saved)

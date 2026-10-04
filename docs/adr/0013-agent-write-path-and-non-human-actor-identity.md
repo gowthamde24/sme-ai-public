@@ -504,6 +504,45 @@ The runtime itself, the LLM interface, prompts, the fetcher (SSRF suite), any ou
 the dedicated principal (B; required later, see decision 4), approvals for external communication (CLAUDE.md #3),
 the erasure procedure's reach into `agent_runs` / `claim_reviews` (checklist), `pgsodium` / option C (decision 12).
 
+## M1 implementation notes (T006 milestone 1, database)
+
+What was built (migrations `20261009090000_t006_agent_foundation.sql`, `20261009090100_t006_agent_functions.sql`,
+`20261009090200_t006_agent_audit_and_scoring.sql`) follows this ADR. Where it deviates or decides a detail the ADR left open:
+
+1. **The tenant switch is written by a function**, `set_tenant_agents_enabled(tenant, bool)` (Owner / Admin, audited), not by direct
+   RLS writes: `tenant_agent_settings` has no client write grant, like every other agent table.
+2. **The selftest tenant allow-list is a column** (`agent_definitions.allowed_tenants uuid[]`, `'{}'` = nobody, NULL = any), not a
+   table, so that operator data never carries a `tenant_id` that the tenant-table guards would have to police. The migration seeds
+   `'{}'`.
+3. **`agent_run_steps.started_by`** is copied from the run so that "a user reads the steps of their own runs" is a plain column test
+   in the policy (no per-row sub-select).
+4. **Provenance is decided by role AND origin**: the `agent_run_id` trigger gives a client role NULL whatever the setting says, reads
+   the setting for other roles only when the origin is `agent`, and a composite foreign key plus a CHECK tie origin `agent` to a
+   run of the same tenant. A pgTAP test sets both settings as Sales / Owner / anon and shows the row comes out manual with no run.
+5. **Reviews apply to AGENT claims only** (a manual or imported claim is refused, 23514), need a live supporting link for
+   medium / high, and record `self_review`. `claim_reviews.created_at` defaults to `clock_timestamp()` so the newest review of a
+   claim is unambiguous even inside one transaction.
+6. **Expiry is lazy** (decision 5 of the plan): `expires_at` is the earlier of the TTL and the starter's token `exp`
+   (`auth.jwt()`), every write checks it, and `finish_agent_run(... 'expired')` records it once true. No sweeper, hence no
+   privileged principal.
+7. **Error contract.** Before ownership of the run is proven (unknown run, someone else's, a foreign tenant, a removed or demoted
+   starter, a Viewer) every function answers the same `42501` "agent action not permitted" (identical sqlstate, message, detail,
+   hint, constraint, table: a pgTAP test compares the whole string). After it: `SM201` not running, `SM202` expired, `SM203`
+   budget, `SM204` disabled, `SM205` step key reused with other arguments, `SM206` limit; `23505` for a used id is raised with a
+   constant message so a foreign id looks exactly like a payload conflict. Content problems (hygiene, size, URL) are the tables'
+   own CHECKs (`23514`); PostgreSQL puts the failing row in that error's DETAIL, so **the API (M2) must classify by SQLSTATE and
+   never forward a database message**, as it already does.
+8. **Audit.** Evidence, links and claims an agent writes are `actor_type = 'agent'`, name the run, and keep the starting human as
+   `actor_user_id`. Bookkeeping the functions do (run counters, the step ledger) is audited as that human. Documented limit: a
+   caller that could set the run setting itself (PostgREST cannot; plain SQL could) could label its OWN audit row with its OWN
+   running run; the writer ignores any run that is not of the same tenant and started by the same actor.
+9. **Operator access.** `app.operator_enable_selftest(slug)` (no application role can execute it) is what the local dev script
+   `scripts/dev-enable-selftest.sh` calls, through `docker exec` into the local database container, for the DEMO workspace only
+   (`make seed-demo` runs it last). The integration tests use the same route (`tests/integration/operator_sql.py`) to turn the
+   switches on for their own tenants and restore the previous state exactly. Neither path uses a key of any kind.
+10. **What scoring reads** is the `claims_for_scoring` view for both the review queue and the label snapshot (one constant,
+    `CLAIMS_FOR_SCORING`, in `app/crm/repository.py`; a unit test asserts both requests are identical).
+
 ## Resolved questions (the open questions of the proposal)
 
 | # | Question | Decision |
