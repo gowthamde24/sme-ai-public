@@ -54,3 +54,12 @@ jobs:
           version: 2.119.0
       - run: supabase start
       - run: supabase test db
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: services/ai-api/pyproject.toml
+      - run: pip install -e "services/ai-api[dev]"
+      - name: Integration tests (API + local Supabase)
+        working-directory: services/ai-api
+        run: ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml ../../tests/integration -q

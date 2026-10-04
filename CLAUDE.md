@@ -41,6 +41,10 @@ Read this file, `docs/product.md` and `docs/architecture.md` before starting any
 
 Never use `--dangerously-skip-permissions` for routine development. Never commit secrets.
 
+## Migrations
+
+Once a migration is pushed to a shared remote, it is append-only: never edit it. Any change goes in a new migration file. (Before a push, local-only migrations may still be amended; T002's four migrations are still unpushed.)
+
 ## Commands
 
 ```

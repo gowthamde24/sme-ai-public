@@ -1,0 +1,118 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "tenancy.schema.json",
+  "title": "Tenancy API contracts (T002)",
+  "description": "Response shapes of /v1/me, /v1/tenants and friends. Each $def is one response body. The Python models in services/ai-api/app/tenancy/models.py must match; tests validate real responses against these definitions.",
+  "$defs": {
+    "Role": { "type": "string", "enum": ["owner", "admin", "sales", "viewer"] },
+    "Uuid": { "type": "string", "format": "uuid" },
+    "Error": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["error"],
+      "properties": {
+        "error": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["code", "message"],
+          "properties": {
+            "code": { "type": "string" },
+            "message": { "type": "string" }
+          }
+        }
+      }
+    },
+    "Tenant": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "slug"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Uuid" },
+        "name": { "type": "string" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$" }
+      }
+    },
+    "TenantDetail": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "slug", "role"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Uuid" },
+        "name": { "type": "string" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$" },
+        "role": { "$ref": "#/$defs/Role" }
+      }
+    },
+    "Me": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["user_id", "memberships"],
+      "properties": {
+        "user_id": { "$ref": "#/$defs/Uuid" },
+        "memberships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["tenant", "role"],
+            "properties": {
+              "tenant": { "$ref": "#/$defs/Tenant" },
+              "role": { "$ref": "#/$defs/Role" }
+            }
+          }
+        }
+      }
+    },
+    "MemberList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["members"],
+      "properties": {
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["user_id", "role", "display_name"],
+            "properties": {
+              "user_id": { "$ref": "#/$defs/Uuid" },
+              "role": { "$ref": "#/$defs/Role" },
+              "display_name": { "type": ["string", "null"] }
+            }
+          }
+        }
+      }
+    },
+    "AuditEventList": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["events", "next_before_id"],
+      "properties": {
+        "next_before_id": { "type": ["integer", "null"] },
+        "events": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id", "actor_user_id", "actor_type", "action", "entity_type", "entity_id",
+              "old_values", "new_values", "request_id", "created_at"
+            ],
+            "properties": {
+              "id": { "type": "integer" },
+              "actor_user_id": { "type": ["string", "null"], "format": "uuid" },
+              "actor_type": { "type": "string", "enum": ["user", "system", "agent"] },
+              "action": { "type": "string" },
+              "entity_type": { "type": "string" },
+              "entity_id": { "type": ["string", "null"], "format": "uuid" },
+              "old_values": { "type": ["object", "null"] },
+              "new_values": { "type": ["object", "null"] },
+              "request_id": { "type": ["string", "null"], "maxLength": 100 },
+              "created_at": { "type": "string", "format": "date-time" }
+            }
+          }
+        }
+      }
+    }
+  }
+}

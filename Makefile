@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test dev-web dev-api
+.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check .
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -26,8 +26,7 @@ test:
 check-fast: lint typecheck test
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
-# Integration tests join this target in the API milestone.
-check: check-fast db-test
+check: check-fast db-test test-integration
 
 # Local Supabase stack (Docker). Migrations in supabase/migrations are applied on start.
 db-start:
@@ -43,6 +42,11 @@ db-reset:
 # pgTAP suite in supabase/tests/database (RLS isolation, roles, audit, catalog guards).
 db-test:
 	supabase test db
+
+# API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
+# exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
+test-integration:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q
 
 dev-web:
 	cd $(WEB) && npm run dev

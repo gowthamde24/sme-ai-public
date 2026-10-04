@@ -1,19 +1,151 @@
 from functools import lru_cache
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Supabase Auth signs access tokens with ES256 (JWKS) by default; legacy projects use HS256.
+SUPPORTED_JWT_ALGORITHMS = frozenset({"ES256", "RS256", "HS256"})
+ASYMMETRIC_JWT_ALGORITHMS = frozenset({"ES256", "RS256"})
+MIN_HS256_SECRET_LENGTH = 32
+
+# The Supabase CLI local stack. Used as a default ONLY when API_ENV is exactly "development".
+LOCAL_SUPABASE_URL = "http://127.0.0.1:54321"
+
+
+class ConfigurationError(RuntimeError):
+    """Required configuration is missing or unsafe. Raised at startup outside development."""
 
 
 class Settings(BaseSettings):
-    """Server-side settings. Secrets live here only, never in browser code."""
+    """Server-side settings. Secrets live here only, never in browser code.
+
+    There is deliberately no service-role key: the API acts only with the caller's own JWT so
+    row-level security always applies.
+    """
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     api_env: str = "development"
     api_cors_origins: str = "http://localhost:3000"
 
+    # Supabase (T002). The anon/publishable key is public by design: it identifies the project
+    # to PostgREST; it grants nothing without a user JWT.
+    supabase_url: str | None = None
+    supabase_anon_key: str | None = None
+    supabase_jwt_issuer: str | None = None
+    supabase_jwt_audience: str | None = None
+    supabase_jwks_url: str | None = None
+    supabase_jwt_algorithms: str | None = None
+    # Legacy HS256 shared secret. Only used if HS256 is explicitly listed in the algorithms.
+    supabase_jwt_secret: SecretStr | None = None
+
     @property
     def cors_origins(self) -> list[str]:
         return [o.strip() for o in self.api_cors_origins.split(",") if o.strip()]
+
+    @property
+    def is_development(self) -> bool:
+        # Exact match: "prod", "production", "staging", "" and typos are all NOT development.
+        return self.api_env == "development"
+
+
+class AuthConfig:
+    """Fully resolved, validated auth settings. Immutable once built."""
+
+    def __init__(
+        self,
+        *,
+        supabase_url: str,
+        anon_key: str,
+        issuer: str,
+        audience: str,
+        jwks_url: str | None,
+        algorithms: tuple[str, ...],
+        hs256_secret: str | None,
+    ) -> None:
+        self.supabase_url = supabase_url
+        self.anon_key = anon_key
+        self.issuer = issuer
+        self.audience = audience
+        self.jwks_url = jwks_url
+        self.algorithms = algorithms
+        self.hs256_secret = hs256_secret
+
+    @property
+    def rest_url(self) -> str:
+        return f"{self.supabase_url}/rest/v1"
+
+
+def _csv(value: str) -> tuple[str, ...]:
+    return tuple(part.strip() for part in value.split(",") if part.strip())
+
+
+def build_auth_config(settings: Settings) -> AuthConfig:
+    """Resolve auth settings, or raise ConfigurationError.
+
+    Development fills gaps from the local Supabase stack. Everything else must be explicit:
+    missing issuer, audience, key material, or anon key means the process refuses to start.
+    """
+    dev = settings.is_development
+    problems: list[str] = []
+
+    url = (settings.supabase_url or (LOCAL_SUPABASE_URL if dev else "")).rstrip("/")
+    if not url:
+        problems.append("SUPABASE_URL is required")
+    anon_key = settings.supabase_anon_key or ""
+    if not anon_key:
+        problems.append("SUPABASE_ANON_KEY is required")
+
+    issuer = settings.supabase_jwt_issuer or (f"{url}/auth/v1" if dev and url else "")
+    if not issuer:
+        problems.append("SUPABASE_JWT_ISSUER is required")
+    audience = settings.supabase_jwt_audience or ("authenticated" if dev else "")
+    if not audience:
+        problems.append("SUPABASE_JWT_AUDIENCE is required")
+
+    algorithms = _csv(settings.supabase_jwt_algorithms or ("ES256" if dev else ""))
+    if not algorithms:
+        problems.append("SUPABASE_JWT_ALGORITHMS is required (e.g. ES256)")
+    unsupported = [a for a in algorithms if a not in SUPPORTED_JWT_ALGORITHMS]
+    if unsupported:
+        problems.append(f"unsupported JWT algorithm(s): {', '.join(unsupported)}")
+
+    jwks_url = settings.supabase_jwks_url or (
+        f"{issuer}/.well-known/jwks.json" if dev and issuer else None
+    )
+    if any(a in ASYMMETRIC_JWT_ALGORITHMS for a in algorithms) and not jwks_url:
+        problems.append("SUPABASE_JWKS_URL is required for asymmetric algorithms")
+
+    secret = (
+        settings.supabase_jwt_secret.get_secret_value() if settings.supabase_jwt_secret else None
+    )
+    if "HS256" in algorithms:
+        if not secret:
+            problems.append("SUPABASE_JWT_SECRET is required when HS256 is enabled")
+        elif len(secret) < MIN_HS256_SECRET_LENGTH:
+            problems.append("SUPABASE_JWT_SECRET is too short")
+
+    if not dev:
+        for name, value in (
+            ("SUPABASE_URL", url),
+            ("SUPABASE_JWT_ISSUER", issuer),
+            ("SUPABASE_JWKS_URL", jwks_url or ""),
+        ):
+            if value and not value.startswith("https://"):
+                problems.append(f"{name} must use https outside development")
+
+    if problems:
+        raise ConfigurationError("invalid auth configuration: " + "; ".join(problems))
+
+    return AuthConfig(
+        supabase_url=url,
+        anon_key=anon_key,
+        issuer=issuer,
+        audience=audience,
+        jwks_url=jwks_url,
+        algorithms=algorithms,
+        hs256_secret=secret if "HS256" in algorithms else None,
+    )
 
 
 @lru_cache
