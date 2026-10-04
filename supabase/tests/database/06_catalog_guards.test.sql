@@ -125,13 +125,24 @@ select is(
         'public.record_consent',
         'public.suppress_contact',
         'public.lift_suppression',
-        'app.can_contact')),
+        'app.can_contact',
+        'app.text_is_clean',
+        'public.create_evidence_with_link')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where nspname = 'public' and prosecdef
       and fq not in ('public.create_tenant', 'public.record_consent', 'public.suppress_contact', 'public.lift_suppression')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant and the three consent functions');
+
+-- Functions the API schema exposes to clients and that are NOT SECURITY DEFINER run with the
+-- caller's rights; they must still pin search_path (no hijack through a caller-controlled path).
+select is(
+  (select coalesce(string_agg(sig, ', '), '') from our_functions
+    where nspname = 'public' and not prosecdef
+      and has_function_privilege('authenticated', oid, 'execute')
+      and not coalesce('search_path=""' = any (proconfig), false)),
+  '', 'every SECURITY INVOKER function in the API schema pins search_path to empty');
 
 -- ---- RLS policy pattern (performance AND correctness; see ADR 0004)
 -- Per-row helpers take the row's tenant_id, so Postgres evaluates them once per ROW OF THE TABLE
@@ -249,6 +260,45 @@ select is(
        where col_description(a.relid, at.attnum) like 'PII:%')
    ) x),
   '', 'the audit-trigger PII lists contain only columns that are marked PII (no stale entries)');
+
+-- Invisible-Unicode hygiene (T004 hardening, ADR 0008): every text / text[] / jsonb column of a
+-- tenant-owned table is guarded by a CHECK that calls app.text_is_clean, OR carries an explicit
+-- "CLEAN-EXEMPT: <reason>" comment AND is either limited by a strict anchored pattern (a CHECK
+-- `col ~ '^...'`) or cannot be written by any client at all.
+select is(
+  (select coalesce(string_agg(t.relname || '.' || a.attname, ', ' order by t.relname, a.attname), '')
+     from tenant_tables t
+     join pg_attribute a on a.attrelid = t.relid and a.attnum > 0 and not a.attisdropped
+    where a.atttypid in ('text'::regtype, 'varchar'::regtype, 'bpchar'::regtype, 'text[]'::regtype, 'jsonb'::regtype)
+      and not exists (select 1 from pg_constraint k
+                       where k.conrelid = t.relid and k.contype = 'c' and a.attnum = any (k.conkey)
+                         and pg_get_constraintdef(k.oid) like '%text_is_clean(%')
+      and not (
+            coalesce(col_description(t.relid, a.attnum), '') ~ 'CLEAN-EXEMPT: .{10,}'
+        and (
+              exists (select 1 from pg_constraint k
+                       where k.conrelid = t.relid and k.contype = 'c' and a.attnum = any (k.conkey)
+                         and pg_get_constraintdef(k.oid) ~ '~ ''\^')
+           or not (has_column_privilege('authenticated', t.relid, a.attnum, 'INSERT')
+                   or has_column_privilege('authenticated', t.relid, a.attnum, 'UPDATE'))
+        ))),
+  '', 'every free-text column of a tenant-owned table has a text_is_clean CHECK or a documented CLEAN-EXEMPT (strict pattern or not client-writable)');
+select cmp_ok(
+  (select count(*) from tenant_tables t
+     join pg_attribute a on a.attrelid = t.relid and a.attnum > 0 and not a.attisdropped
+    where exists (select 1 from pg_constraint k
+                   where k.conrelid = t.relid and k.contype = 'c' and a.attnum = any (k.conkey)
+                     and pg_get_constraintdef(k.oid) like '%text_is_clean(%')),
+  '>=', 24::bigint, 'the hygiene guard is not vacuous (24+ guarded columns)');
+select is(
+  (select coalesce(string_agg(t.relname || '.' || a.attname, ', ' order by t.relname, a.attname), '')
+     from tenant_tables t
+     join pg_attribute a on a.attrelid = t.relid and a.attnum > 0 and not a.attisdropped
+    where col_description(t.relid, a.attnum) like '%CLEAN-EXEMPT%'
+      and exists (select 1 from pg_constraint k
+                   where k.conrelid = t.relid and k.contype = 'c' and a.attnum = any (k.conkey)
+                     and pg_get_constraintdef(k.oid) like '%text_is_clean(%')),
+  '', 'no column is both guarded and marked exempt (a stale exemption would hide a gap later)');
 
 -- Registry coverage for the generic cross-tenant test (an unregistered table = a failing guard).
 select is(
