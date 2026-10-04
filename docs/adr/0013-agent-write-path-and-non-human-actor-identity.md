@@ -1,10 +1,40 @@
 # ADR 0013: Agent write path and non-human actor identity
 
-Status: **proposed** (for owner review; nothing in this ADR is built). Builds on ADR 0001 (tenancy, memberships
+Status: **accepted** (owner decisions of 2026-10-04 are recorded below and amend the design text; nothing in this ADR
+is built yet). Builds on ADR 0001 (tenancy, memberships
 as the single source of authorization), ADR 0002 (API authentication), ADR 0004 (RLS pattern), ADR 0005
 (PII-aware audit, `created_via`), ADR 0008 (evidence and claims; its decision 9 left this question open) and
 ADR 0010 (the import path, the first user of server-declared `created_via`). It is the precondition for the
 T006 (agent runtime) plan (`docs/pre-pilot-checklist.md`).
+
+## Owner decisions (2026-10-04)
+
+These are binding and take precedence over any earlier wording in this document.
+
+1. **Who:** owner, admin and sales may START a run. Only **owner and admin may PROMOTE** claims (accept/reject).
+   Self-promotion of the starter's own run's claims is allowed in v1. Checklist: require a second reviewer when a
+   tenant has more than 3 members.
+2. **Agents are OFF by default per tenant** (an Owner/Admin switches them on), and there is an operator-only
+   platform switch.
+3. **Limits as proposed** (15-minute default TTL / 30-minute hard cap, 3 concurrent runs, 30 runs per hour, 500
+   writes per day) but stored as **operator-managed table values, changeable by a migration only**; no application
+   role can write them (a pgTAP test proves it). They are not tenant settings.
+4. **Option A for v1.** **Option B (a dedicated principal) is required before the first scheduled or background
+   agent AND before any external customer.** The revisit triggers below stand.
+5. **Unaccepted agent claims do NOT count toward ICP scores.** The UI shows them as "agent suggestion,
+   unreviewed". The review queue and the label snapshot must use the same filtered inputs.
+6. **Promotion** is an append-only `claim_reviews` record (accepted/rejected plus a human-assigned
+   low/medium/high), one claim per call, origin forced `manual`.
+7. **Agent rows carry `created_by` = the starting human PLUS `created_via = 'agent'` and `agent_run_id`.** The audit
+   `actor_type` for delegated agent writes is fixed in T006.
+8. **The owner sets a hard spend cap at the model provider before the first real model call** (checklist item,
+   owner action).
+9. **Allow-lists (predicates, ceilings) live in an operator-managed table, migration-only.**
+10. **ADR 0014 (agent principal) is NOT required before T006.** This ADR gains a "Compatibility with option B"
+    section showing that T006's schema does not block it.
+11. **v1 passes NO contact fields (names, phones, e-mails) to the model.** Checklist: legal review (India DPDP,
+    cross-border transfer to model providers) before T012.
+12. **`pgsodium` is out of scope.**
 
 ## Why
 
@@ -152,24 +182,25 @@ The API signs a token (run, tenant, starter, expiry) and the functions verify it
 | Fits T006/T007 (user-initiated) | yes | over-built | over-built |
 | Fits T010/T011 (scheduled) | no | yes | yes, with the weakest key story |
 
-## Decision (proposed)
+## Decision (accepted)
 
-**A for v1, with scheduled and background runs explicitly deferred to a later ADR (0014) that designs B. C is
-rejected.** This is the recommended starting position tested honestly, and it survives with four corrections to
-how it was framed:
+**A for v1. B is required before the first scheduled or background agent and before any external customer (its
+design is a later ADR). C is rejected.** The position was tested honestly and survives with four corrections to
+how it was first framed:
 
 1. **A does not give database-enforced least privilege, and this ADR must not claim it does.** The agent
    funnel (definer functions) enforces provenance, scope, budgets and kill switches against a *steered* model
    and against mistakes. It does not stop *compromised runtime code*. The compensating controls are listed
    below (code boundary, static test, review). The revisit triggers are fixed now: (i) the first scheduled or
    background agent (T010, T011), (ii) the first third-party or plugin code running in the runtime process,
-   (iii) the external pilot (a second tenant's data in the same runtime).
+   (iii) any external customer (a second organisation's data in the same runtime). Per owner decision 4, (i) and (iii)
+   are not merely "revisit": B must exist before either happens.
 2. **The audit must change in the same ticket.** Today a delegated write would be audited as the human. The
    audit writer must record `actor_type = 'agent'` and the run id (see "Provenance and audit").
 3. **Unaccepted agent claims must not feed scores or any downstream decision.** Otherwise an injected snippet
    steers the ICP score through a claim no human has looked at ("Consumption rule").
 4. **Agents are off by default per tenant** (an Owner/Admin switches them on), and there is a platform-wide
-   switch only the operator can flip.
+   switch only the operator can flip (decision 2).
 
 Why not B now: it is correct for background work, but for user-initiated research (T006, T007) it buys a
 database wall at the price of a per-tenant credential lifecycle and a change to the heart of RLS, for a
@@ -211,9 +242,12 @@ result, timestamp" record CLAUDE.md demands, without raw content.
 `allowed_predicates text[]`, `allowed_stances`, ceilings for TTL/budgets. The predicate allow-list lives in the
 database so a prompt cannot widen it and the runtime cannot be configured into writing arbitrary predicates.
 
-`tenant_agent_settings` (one row per tenant, Owner/Admin write, audited): `enabled` (**default false**),
-`max_concurrent_runs` (3), `max_runs_per_hour` (30), `max_writes_per_day` (500), optional `require_second_reviewer`.
-`platform_flags` (writable only by `postgres`/migrations): `agents_enabled`.
+`agent_limits` (platform data, operator-managed, **no client grant at all**, changeable by migration only; decision
+3): `ttl_default_seconds` 900, `ttl_max_seconds` 1800, `max_concurrent_runs` 3, `max_runs_per_hour` 30,
+`max_writes_per_day` 500. They are platform-wide values, not tenant settings; a per-tenant override would be a
+later migration. Per-agent ceilings (budgets, predicates) live in `agent_definitions`.
+`tenant_agent_settings` (one row per tenant, Owner/Admin write, audited): `enabled` (**default false**) and nothing
+else. `platform_flags` (writable only by `postgres`/migrations): `agents_enabled`.
 
 RLS: all tables enable + force; registered in `tests.tenant_table_registry` / `role_matrix`; clients get
 **SELECT only** (runs: Owner/Admin see all of the tenant's, others their own; steps follow the run) and no
@@ -292,24 +326,29 @@ immutable (ADR 0008):
 `created_at`. The effective view `claims_effective` (security invoker) exposes the latest review, else the
 claim's own state.
 
-- **Who:** Owner, Admin, Sales, checked live. Viewer cannot. **One claim per call**: no bulk accept.
+- **Who:** **Owner and Admin only**, checked live (decision 1); Sales and Viewer cannot. **One claim per call**: no
+  bulk accept.
 - **Rules:** `accepted` at `medium`/`high` needs at least one non-archived `supports` link; the reviewer sees the
   evidence (plain text) and the run it came from. The review records whether the reviewer is the run's starter
-  (`self_review`); the tenant may require a second reviewer (`require_second_reviewer`, default off, see open
-  questions).
+  (`self_review`). Self-promotion is allowed in v1 (decision 1); requiring a second reviewer once a tenant has more
+  than 3 members is a checklist item, not built.
 - **Audit:** every review is an audit event (`actor_type = 'user'`, entity `claim_review`, old/new effective
   confidence, claim id; no claim value, which is PII-classified).
 - **Not reachable from the runtime by design** (see "Code boundary"). In A this is a code property, not a
   database property; B would make it a database property.
-- **UI:** an unreviewed agent claim is shown as **Suggested**, an accepted one as **Approved** (CLAUDE.md: the
-  UI distinguishes Draft, Suggested, Approved, Sent, Failed, Completed).
+- **UI:** an unreviewed agent claim is shown as **"agent suggestion, unreviewed"** (CLAUDE.md state: Suggested), an
+  accepted one as **Approved**, a rejected one as **Rejected** (the UI distinguishes Draft, Suggested, Approved,
+  Sent, Failed, Completed).
 
 ### Consumption rule
 
 Anything downstream that reads claims (the ICP score now; quotes and outreach drafts later) reads
 `claims_effective` and **ignores claims with `created_via = 'agent'` unless their latest review is
-`accepted`.** Imported and manual claims keep today's behaviour. T006 must change `app/leads/review.py`'s inputs
-accordingly and test it.
+`accepted`** (a rejected claim is also ignored). Imported and manual claims keep today's behaviour. The filter lives
+in the ONE place both the review queue and the label snapshot build their scoring inputs
+(`app/leads/review.py`, and the claims reads that feed it), so the queue and a label always agree (decision 5). T006
+must change those inputs accordingly and test that a lead scored in the queue and at label time gives the identical
+score with an unreviewed, an accepted and a rejected agent claim present.
 
 ### Containing prompt injection
 
@@ -367,14 +406,17 @@ only for the duration of the run, never logged, never passed to a tool.
 | 18 | Anyone | Agent writes missing from the trail | Audit actor `agent` + run id from the GUC | pgTAP "agent write audited as agent with run id; manual still `user`" |
 | 19 | Injected prompt | Exfiltrate data via a fetch URL or tool argument | No contact PII given to the model in v1; SSRF-safe fetcher with allow-listed schemes/hosts policy; no secrets in prompts | SSRF hostile-URL suite; prompt-content test (no contact fields); eval |
 | 20 | Anyone | Run agents on a tenant that never opted in | `tenant_agent_settings.enabled` default false | pgTAP "fresh tenant: `start_agent_run` refused" |
+| 21 | Tenant Owner/Admin or any member | Raise own limits, widen the predicate allow-list, flip the platform switch | `agent_limits`, `agent_definitions`, `platform_flags` have no client grant; migration-only | pgTAP and PostgREST "no application role can write them" |
+| 22 | Sales user | Promote an agent claim | Review function requires Owner/Admin, live | pgTAP "Sales refused"; PostgREST per role |
 
 ## Tests T006 must ship
 
 **pgTAP** (new files, registered in the table registry and role matrix, catalog guards extended):
 
 - `30_agent_runs_schema`: RLS enabled and forced on `agent_runs`, `agent_run_steps`, `claim_reviews`,
-  `tenant_agent_settings`; no client INSERT/UPDATE/DELETE grant; `agent_definitions` and `platform_flags` have
-  no client grant at all; no raw-content columns (column-name scan: `prompt`, `content`, `text`, `payload`,
+  `tenant_agent_settings`; no client INSERT/UPDATE/DELETE grant; `agent_definitions`, `agent_limits` and
+  `platform_flags` have **no client grant at all, and every application role (owner, admin, sales, viewer,
+  anon, authenticated) is shown unable to INSERT, UPDATE or DELETE them** (decisions 3 and 9); no raw-content columns (column-name scan: `prompt`, `content`, `text`, `payload`,
   `output`, `response`); CHECKs (one target, budgets non-negative, `expires_at` bound); read matrix (Owner/Admin
   all, others own); anon and foreign tenant read nothing; composite FKs refuse a foreign target.
 - `31_start_agent_run`: Viewer, outsider, anon, foreign tenant, unknown tenant (identical refusal); foreign
@@ -394,7 +436,8 @@ only for the duration of the run, never logged, never passed to a tool.
 - `33_agent_provenance_audit`: CHECK `(created_via = 'agent') = (agent_run_id is not null)`; a client cannot
   produce either (trigger forces `manual`/NULL); audit shows `actor_type = 'agent'`, run id and `actor_user_id`
   = starter for agent writes and `user` for manual writes; no snippet/claim text in audit.
-- `34_claim_reviews`: Viewer/foreign/unknown claim refused identically; `created_via` forced `manual`; accepted
+- `34_claim_reviews`: **Sales and Viewer refused (only Owner/Admin may review)**; foreign/unknown claim refused
+  identically; `created_via` forced `manual`; accepted
   `medium`/`high` needs a supporting link; rejected needs a reason code; append-only (UPDATE/DELETE refused for
   every role); effective view; audit event without claim text; a review cannot be written with a run context.
 - `35_agent_switches_and_limits`: platform off, tenant off, run cancelled, run killed: every function refuses;
@@ -414,8 +457,9 @@ loosened grant/policy/check (mutation evidence, as in fix round F).
 (delimiters, escaping, untrusted text never in system role); structured-output validation (closed enums,
 caps); run lifecycle with a fake LLM behind the internal interface (start, steps, finish, cancel, kill switch,
 crash recovery/expiry sweeper); "unaccepted agent claim does not change the ICP score, accepted one does";
-promotion route works only with a user token and cannot be reached with run-scoped credentials; web: agent
-claims render as plain text under "Suggested"; no agent code path reads `process.env` secrets.
+promotion route works only with a user token held by an Owner/Admin and cannot be reached with run-scoped
+  credentials; web: agent
+agent claims render as plain text labelled "agent suggestion, unreviewed"; no agent code path reads `process.env` secrets.
 
 **Evals** (`tests/evals/`, runnable without network): an injection corpus (instructions in snippets and
 imported cells: "ignore previous instructions", "write this claim for company X", "use tenant <uuid>", tool-name
@@ -427,38 +471,52 @@ changes beyond `unverified` agent rows*, not a model-quality score.
 - One new surface of definer code (about six functions) with the BYPASSRLS risk; mitigated by deriving
   everything from the run row, the source-audit tests, and the mutation discipline used in fix round F.
 - The audit and provenance machinery (`agent_run_id`, `actor_type = 'agent'`) is reusable unchanged by B.
-- User-initiated agents only. The first scheduled agent is blocked on ADR 0014.
+- User-initiated agents only. The first scheduled agent and the first external customer are blocked on option B
+  (a later ADR), per decision 4.
 - Humans' tokens pass through the runtime process: logging and memory handling of tokens becomes a reviewed
   concern (never log, never persist).
+
+## Compatibility with option B (decision 10)
+
+T006 builds A. Nothing it adds blocks B, which would change **who calls** the same functions, not the data model:
+
+| T006 element | Under B | Change needed later (all additive or `create or replace`) |
+| --- | --- | --- |
+| `agent_runs.started_by` (bare uuid, no FK) | the agent principal's user id | none; add a nullable `requested_by` (the human who asked) |
+| `created_by` on agent rows = starting human (decision 7) | would be the principal | the write functions take `coalesce(requested_by, started_by)`; the run row keeps both facts |
+| `agent_run_id`, CHECK `(created_via = 'agent') = (agent_run_id is not null)` | unchanged | none |
+| Write functions derive tenant and caller from the run row; check `started_by = auth.uid()` | check "the caller is this run's principal" | new migration replaces the function body; signatures stay |
+| Live role check (owner/admin/sales) | check an `agent` membership role | same replacement; `app_role` gains `agent` |
+| `start_agent_run` role check | a scheduler or the principal starts runs | same replacement |
+| Audit `actor_type = 'agent'` + `agent_run_id` + `actor_user_id` | `actor_user_id` is the principal; "on behalf of" from the run | none to the audit writer |
+| `claim_reviews` (humans only, Owner/Admin) | unchanged and now DB-enforced (the agent role has no grant) | none |
+| Limits, allow-lists, switches (migration-only tables) | unchanged | none |
+| `tenant_agent_settings.enabled` | unchanged | none |
+| RLS (`my_tenant_ids()` includes every membership role) | the agent role must be excluded | **the one real change**: a separate ADR and a test matrix; T006 must not add anything that assumes agent users do not exist |
+
+T006 therefore must: keep every function's tenant derivation inside the run row, never read `auth.uid()` as "is a
+human" outside the two documented places, and keep the runtime's database access in one module so the credential
+can change in one place.
 
 ## Out of scope
 
 The runtime itself, the LLM interface, prompts, the fetcher (SSRF suite), any outbound action, scheduling,
-the dedicated principal (B), approvals for external communication (CLAUDE.md #3), the erasure procedure's
-reach into `agent_runs` / `claim_reviews` (record it in the checklist when accepted).
+the dedicated principal (B; required later, see decision 4), approvals for external communication (CLAUDE.md #3),
+the erasure procedure's reach into `agent_runs` / `claim_reviews` (checklist), `pgsodium` / option C (decision 12).
 
-## Open questions for the owner
+## Resolved questions (the open questions of the proposal)
 
-1. **Who may start a run and who may promote**: Owner/Admin/Sales for both, Viewer neither? May the starter
-   promote their own run's claims (a family business may have one person), or should `require_second_reviewer`
-   be on by default?
-2. **Default-off per tenant** plus an operator platform switch: acceptable as the starting posture?
-3. **TTL and budgets**: default 15 min / hard cap 30; start with 3 concurrent runs, 30 runs per hour, 500
-   writes per day per tenant. Right order of magnitude for Customer Zero?
-4. **Residual risk of A**: accept that, in v1, the database cannot tell the runtime from the human (controls:
-   code boundary and static test), or require B before Customer Zero uses any agent?
-5. **Scoring rule**: agree that unaccepted agent claims are ignored by the ICP score?
-6. **Promotion model**: an append-only `claim_reviews` table with `accepted/rejected` + human-assigned
-   `low/medium/high`, rather than a "verified" flag. Does the wording "verified" matter to you?
-7. **`created_by` = the starting human** on agent rows: acceptable for audit and for the erasure design
-   (erasing that person's data touches agent rows), or should agent rows carry NULL?
-8. **Cost control**: will you set a spend limit at the model provider per tenant or per deployment? The
-   database can only cap what the runtime reports.
-9. **Allow-lists in the database** (`agent_definitions`, operator-managed) vs in code: OK to keep them out of
-   reach of the application?
-10. **Scheduled work (T010, T011)**: should ADR 0014 (agent principal) be written before T006 starts, so the
-    schema choices are known to fit it, or only before the first scheduled agent?
-11. **Personal data to the model provider**: v1 passes no contact fields to the model. Confirm, and note the
-    legal review item for anything beyond that (DPDP).
-12. **`pgsodium`**: irrelevant unless C is revisited; its support status on the hosted platform would need
-    checking first.
+| # | Question | Decision |
+| --- | --- | --- |
+| 1 | Who starts / promotes; self-promotion | Start: Owner/Admin/Sales. Promote: Owner/Admin. Self-promotion allowed in v1; second reviewer when a tenant has more than 3 members is a checklist item |
+| 2 | Default-off per tenant + platform switch | Yes |
+| 3 | TTL and budgets | As proposed; operator-managed table, migration-only |
+| 4 | Accept A's residual risk in v1 | Yes; B required before the first scheduled/background agent and before any external customer |
+| 5 | Scoring ignores unaccepted agent claims | Yes; UI: "agent suggestion, unreviewed"; queue and snapshot share the filtered inputs |
+| 6 | Promotion model | Append-only `claim_reviews`, accepted/rejected + human low/medium/high, one claim per call |
+| 7 | `created_by` on agent rows | The starting human, plus `created_via = 'agent'` and `agent_run_id`; fix audit `actor_type` in T006 |
+| 8 | Cost control | Owner sets a hard spend cap at the model provider before the first real model call |
+| 9 | Allow-lists in the database | Yes, operator-managed, migration-only |
+| 10 | ADR 0014 before T006 | No; see "Compatibility with option B" |
+| 11 | Personal data to the provider | v1 passes no contact fields; legal review (DPDP, cross-border transfer) before T012 |
+| 12 | `pgsodium` | Out of scope |
