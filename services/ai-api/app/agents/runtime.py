@@ -119,7 +119,11 @@ class AgentRunner:
             if run.status != "running" or run.agent_name != self._spec.name:
                 return RunOutcome("not_running")
             self._check_clock(run.expires_at)
-            model_input = model_input_from_company(self._db.read_target(run))
+            target = self._db.read_target(run)
+            if not target:
+                # no company to read (a lead without one): nothing to research, and no model call
+                raise _Stop("failed", "tool_failed")
+            model_input = model_input_from_company(target)
             if input_sha256(model_input) != run.input_sha256:
                 raise _Stop(
                     "failed", "tool_failed"

@@ -188,6 +188,22 @@ def test_a_lead_target_records_the_lead_and_hashes_its_companys_fields(w: World)
     )
 
 
+def test_a_lead_without_a_company_is_refused_before_any_run_exists(w: World) -> None:
+    orphan = uuid.UUID(int=0x1E)
+    w.crm.seed("leads", TENANT_A.id, orphan, company_id=None)
+    r = post_start(w, target_kind="lead", target_id=str(orphan))
+    assert r.status_code == 409 and r.json()["error"]["code"] == "lead_has_no_company", r.text
+    assert not w.executor.tasks and "start" not in w.repo.calls, "no run, nothing queued"
+
+
+def test_a_lead_whose_company_cannot_be_read_is_a_404_not_an_empty_run(w: World) -> None:
+    ghost = uuid.UUID(int=0x1F)
+    w.crm.seed("leads", TENANT_A.id, ghost, company_id=str(uuid.UUID(int=0xDEAD)))
+    r = post_start(w, target_kind="lead", target_id=str(ghost))
+    assert r.status_code == 404, r.text
+    assert not w.executor.tasks and "start" not in w.repo.calls
+
+
 def test_a_retry_with_the_same_id_is_a_replay_and_runs_nothing_twice(w: World) -> None:
     assert post_start(w).status_code == 202
     again = post_start(w)

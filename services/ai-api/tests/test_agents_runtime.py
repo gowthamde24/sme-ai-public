@@ -275,6 +275,15 @@ def test_an_unreachable_data_layer_ends_the_run_as_failed() -> None:
     assert out.status == "failed" and out.error_code == "tool_failed"
 
 
+def test_a_run_with_no_company_to_read_ends_before_any_reservation_or_model_call() -> None:
+    db, provider = make_db(), FakeProvider(selftest_script())
+    db.facts = {}  # a lead without a company: the database layer has nothing to read
+    out = run_agent(db, provider)
+    assert out.status == "failed" and out.error_code == "tool_failed"
+    assert provider.requests == [] and db.reserve_requests == [], "no model call, no reservation"
+    assert db.finished == [("failed", "tool_failed")]
+
+
 # ---- the daily cost cap: the worst case of every call is reserved BEFORE the call
 class _OtherModel(FakeProvider):
     model_id = "some-model-nobody-priced"

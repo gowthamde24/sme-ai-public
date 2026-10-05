@@ -735,3 +735,29 @@ tenant's start lock by counting the tenant's runs that are `running`, unexpired 
 **Not built.** No API route or screen for the cap (the Owner calls the function; a UI comes with the Owner Agent), no per-agent cap, no refund of a
 failed call, no cap on token counts per day. A raised tenant cap applies to the tenant's own spending against a key the operator pays for: before
 any external customer it should become operator-only (checklist row).
+
+## T007 M2 note: claim-home follow-ups (2026-10-05)
+
+Migration `20261014090200_t007_claim_home_followups.sql`; tests `supabase/tests/database/50_claim_home_followups.test.sql`, `tests/integration/test_claim_home.py`,
+`services/ai-api/tests/test_claim_readers.py`.
+
+- **A lead with no company is refused at start** (23503, the same answer as an unknown lead), in the database and, with a clear message
+  (`409 lead_has_no_company`), in the API, so no run exists and no fetch or model call can be made for it. The runtime also ends a run whose
+  target has nothing to read before any reservation or model call.
+- **A run naming both a company and a lead** (the run table forbids it today) must name a lead *of that company*, or `agent_write_claim` gives the
+  generic reference refusal.
+- **Erasure** of a company (or of a lead's contact) whose lead runs left claims with `source_lead_id` still succeeds: the claim's free text is
+  anonymised, the ids (home company, source lead, run) are untouched, and nothing is deleted (real-stack test).
+- **A client cannot forge an agent claim.** A signed-in session that sets `app.created_via = 'agent'` and `app.agent_run_id` and inserts directly still
+  gets a manual claim with no run and no source lead; the columns `created_via`, `agent_run_id` and `source_lead_id` are not writable by a client at all.
+- **Every reader of the two claim views** (pinned by `test_claim_readers.py`; a new reader fails that test until it is reviewed):
+
+| Reader | View | Looks up by | Purpose |
+| --- | --- | --- | --- |
+| `crm/repository.py` `list_claims` (single-lead score, `leads/routes.py`) | `claims_for_scoring` | `company_id` (the derived home) | score |
+| `leads/repository.py` queue context (review queue and label snapshot) | `claims_for_scoring` | `company_id in (...)` | score |
+| `agent_runs/repository.py` `list_claims` | `claims_effective` | `home_company_id` (company page) or `about_lead_id` (lead page) | display only |
+| `agent_runs/repository.py` `get_claim` | `claims_effective` | `id` | review |
+
+  No scoring reader filters by `lead_id`; so two leads of one company see the same accepted claim. The SQL functions that read `public.claims`
+  directly (the two import functions and the real-data gate scan) look up by `company_id` or scan every row, and none is a score.

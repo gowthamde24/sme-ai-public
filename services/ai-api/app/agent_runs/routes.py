@@ -86,11 +86,15 @@ def _target_company(
     if body.target_kind == "company":
         return target.model_dump(), {"company_id": str(body.target_id)}
     refs: dict[str, Any] = {"lead_id": str(body.target_id)}
+    # a lead with no company has nothing to research and no home for a claim: refused BEFORE the run
+    # exists, so no fetch and no model call can ever be made for it
     if target.company_id is None:
-        return {}, refs
+        raise ApiError(
+            409, "lead_has_no_company", "This lead has no company yet. Link a company first."
+        )
     company = runtime.crm.get_row(token, "companies", tenant, target.company_id)
     if company is None:
-        return {}, refs
+        raise not_found()
     refs["company_id"] = str(target.company_id)
     return company.model_dump(), refs
 
