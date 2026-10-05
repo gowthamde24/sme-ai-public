@@ -36,8 +36,11 @@ select is((select allowed_evidence_kinds::text from public.agent_definitions whe
 select ok((select pg_get_expr(d.adbin, d.adrelid) is null from pg_attribute a left join pg_attrdef d on d.adrelid = a.attrelid and d.adnum = a.attnum
             where a.attrelid = 'public.agent_definitions'::regclass and a.attname = 'allowed_evidence_kinds'),
           '...with no column default: a new agent definition must state its kinds');
+-- T008: an empty list is now allowed on purpose: it means "writes NO evidence" (the requirement agent writes requirement fields only)
+select lives_ok($$insert into public.agent_definitions (agent_name, allowed_predicates, max_writes, max_tool_calls, max_input_tokens, max_output_tokens, max_cost_micros, allowed_evidence_kinds)
+                   values ('zz_empty', array['x.y'], 1, 1, 1, 1, 1, '{}')$$, 'an empty list of kinds means the agent writes no evidence at all (T008)');
 select throws_ok($$insert into public.agent_definitions (agent_name, allowed_predicates, max_writes, max_tool_calls, max_input_tokens, max_output_tokens, max_cost_micros, allowed_evidence_kinds)
-                   values ('zz_empty', array['x.y'], 1, 1, 1, 1, 1, '{}')$$, '23514', null, 'an empty list of kinds is refused');
+                   values ('zz_many', array['x.y'], 1, 1, 1, 1, 1, array['note','note','note','note','note','note','note','note']::public.evidence_kind[])$$, '23514', null, 'more than seven kinds is still refused');
 
 select pg_temp.newrun('k_run');
 select is(pg_temp.rows(), '0/0/0', 'sanity: nothing written yet');

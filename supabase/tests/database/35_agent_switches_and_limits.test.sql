@@ -115,7 +115,7 @@ select ok(not has_function_privilege('service_role', 'app.operator_enable_selfte
 select is(tests.outcome_as(tests.uid('a_owner'), $q$select app.operator_enable_selftest('tenant-a')$q$), '42501', 'an Owner calling it: permission denied (and app is not even a schema they can use)');
 select is(pg_temp.err('a_sales', pg_temp.start_sql(gen_random_uuid(), tests.tid('a'))), 'SM204|agents are disabled||||', 'before the operator acts: tenant A''s Sales cannot start a selftest run');
 select lives_ok($q$select app.operator_enable_selftest('tenant-a')$q$, 'the operator enables selftest for the tenant with slug tenant-a');
-select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, true), ('research_enabled', false), ('selftest_enabled', true)$$, 'agents and selftest are now ON; research was not touched');
+select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, true), ('requirement_enabled', false), ('research_enabled', false), ('selftest_enabled', true)$$, 'agents and selftest are now ON; research and requirement were not touched');
 select results_eq($$select allowed_tenants from public.agent_definitions where agent_name = 'selftest'$$, format($$values (array[%L]::uuid[])$$, tests.tid('a')), 'the selftest allow-list holds exactly tenant A');
 select results_eq($$select tenant_id, enabled from public.tenant_agent_settings$$, format($$values (%L::uuid, true)$$, tests.tid('a')), 'only tenant A has agents enabled');
 select lives_ok($q$select app.operator_enable_selftest('tenant-a')$q$, 'it is idempotent');

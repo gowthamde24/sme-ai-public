@@ -1,9 +1,15 @@
 # Handoff: resume here
 
-T007 is complete on fakes (M1-M3 and the M3b cost-cap review fixes are committed; see `git log`). The T008 Requirement Agent PLAN is written
-(`docs/plans/t008-requirement-agent.md`) and **awaits the owner's review**: plan only, no T008 code exists. Do not start T008 commit 1 before the owner approves
-the plan and answers section 12 (scrub before store, template questions, who confirms, required fields, languages, retention).
+T008 (Requirement Agent) is in progress; the plan is `docs/plans/t008-requirement-agent.md` (ACCEPTED with the owner's changes A-J).
 
-Traps: never run `ruff format` on a directory (it reformats `services/ai-api/app/leads/review.py` and `scoring.py`); format only the files you edit.
-If `make check` fails in pgTAP file 28 ("no part of the rejected contact appears..."), the local database holds leftover committed audit rows from an earlier
-integration run: `supabase db reset` and rerun.
+* Commit 1 (schema, contact guard, scrubber), commit 2 (deterministic services) and commit 3 (migration 20261015090100: the requirement agent's
+  definition and flag, `agent_write_requirement_field` with the database-verified quote, `decide_requirement_field`, `confirm_requirement`,
+  `discard_requirement`, the enquiry run target) are committed. **STOP: commit 3 awaits the owner's review.** Do not start commit 4 before the owner says go.
+* Remaining after the review: 4 the agent on fakes, 5 API and the paste screen, 6 evals and golden set, 7 ADR 0018 + checklist rows + handoff, then the
+  FULL `make check` and the mutation pass ONCE (the owner's process for T008), and stop.
+* Process for T008: between commits `make check-fast` plus the new tests; the full check and the mutation pass only at the end.
+
+Traps: never run `ruff format` on a directory outside `app/requirements` (it reformats `services/ai-api/app/leads/review.py` and `scoring.py`); format only
+the files you edit. `make check` now resets the local database before pgTAP (audit rows are append-only). Migrations 20261015090000 / 090100 are generated
+from templates kept outside the repo; edit the .sql files directly from now on (the scrubber patterns in 090000 must stay equal to
+`app/requirements/scrub.py`; `tests/test_requirements_scrub.py` checks it).

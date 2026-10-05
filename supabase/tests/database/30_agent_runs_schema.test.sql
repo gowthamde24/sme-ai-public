@@ -25,7 +25,7 @@ $$;
 select ok(pg_temp.operator_state() in ('pristine', 'dev-seeded'),
   'the platform switches are OFF and selftest is allowed for NO tenant (or, on a dev database, exactly the DEMO workspace); found ' || pg_temp.operator_state());
 select is((select count(*) from public.tenant_agent_settings where tenant_id in (tests.tid('a'), tests.tid('b'))), 0::bigint, 'a new tenant has agents OFF (no settings row)');
-select results_eq($$select agent_name, allowed_tenants is null from public.agent_definitions order by agent_name$$, $$values ('research'::text, false), ('selftest', false)$$,
+select results_eq($$select agent_name, allowed_tenants is null from public.agent_definitions order by agent_name$$, $$values ('requirement'::text, false), ('research', false), ('selftest', false)$$,
   'no agent is ever open to every tenant (allowed_tenants is not NULL)');
 select is((select count(*) from public.agent_runs where tenant_id in (tests.tid('a'), tests.tid('b'))), 0::bigint, 'a new tenant has no runs');
 
@@ -101,12 +101,13 @@ select throws_ok($$update public.agent_limits set limit_value = 500 where limit_
 select is((select column_default from information_schema.columns where table_schema = 'public' and table_name = 'platform_flags' and column_name = 'enabled'), 'false', 'platform switches default to OFF');
 select is((select column_default from information_schema.columns where table_schema = 'public' and table_name = 'tenant_agent_settings' and column_name = 'enabled'), 'false', 'the per-tenant switch defaults to OFF');
 select is((select count(*) from public.platform_flags where key in ('agents_enabled', 'selftest_enabled', 'research_enabled')), 3::bigint, 'the three platform switches exist');
-select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, true), ('research_enabled', false), ('selftest_enabled', true)$$,
-  'sanity: seed_agents switched agents and selftest on for the tests; research stays OFF');
+select results_eq($$select key, enabled from public.platform_flags order by key$$, $$values ('agents_enabled'::text, true), ('requirement_enabled', false), ('research_enabled', false), ('selftest_enabled', true)$$,
+  'sanity: seed_agents switched agents and selftest on for the tests; research and requirement stay OFF');
 select results_eq(
   $$select agent_name, requires_flag, coalesce(array_length(allowed_tenants, 1), 0), allowed_predicates, max_writes
       from public.agent_definitions order by agent_name$$,
-  $$values ('research'::text, 'research_enabled'::text, 0, array['buyer_type', 'order_scale', 'size_band', 'operating_status']::text[], 7),
+  $$values ('requirement'::text, 'requirement_enabled'::text, 0, array[]::text[], 45),
+           ('research'::text, 'research_enabled'::text, 0, array['buyer_type', 'order_scale', 'size_band', 'operating_status']::text[], 7),
            ('selftest', 'selftest_enabled', 1, array['selftest.observation']::text[], 6)$$,
   'each agent is gated by its own flag and tenant-restricted (research: no tenant at all yet; selftest: one), with its own predicates and a small write ceiling');
 select throws_ok($$insert into public.platform_flags (key, enabled) values ('anything_else', true)$$, '23514', null, 'only the known flags exist');
