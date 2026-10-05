@@ -74,7 +74,7 @@ select is(
 select is(
   (select count(*) from pg_constraint c
     where c.contype = 'f' and c.conrelid = 'public.claims'::regclass and c.confrelid <> 'public.tenants'::regclass),
-  3::bigint, 'claims has exactly three references besides the tenant (company, lead, and since T006 the agent run)');
+  4::bigint, 'claims has exactly four references besides the tenant (company, lead, the agent run since T006, the source lead since T007)');
 select is(
   (select count(*) from pg_constraint c
     where c.contype = 'f' and c.conrelid = 'public.evidence'::regclass and c.confrelid <> 'public.tenants'::regclass),

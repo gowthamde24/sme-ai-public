@@ -352,7 +352,9 @@ class PostgrestAgentRunsRepository:
         target_id: uuid.UUID,
         limit: int,
     ) -> list[ClaimSuggestionOut]:
-        column = "company_id" if target_kind == "company" else "lead_id"
+        # T007: a claim about a lead lives on the lead's company; the lead is its provenance. The
+        # view derives both (and reads claims stored the old way): home_company_id, about_lead_id.
+        column = "home_company_id" if target_kind == "company" else "about_lead_id"
         rows = self._rows(
             f"/{CLAIMS_EFFECTIVE}",
             token,

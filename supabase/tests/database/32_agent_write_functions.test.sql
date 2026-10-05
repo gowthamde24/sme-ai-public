@@ -219,7 +219,7 @@ select pg_temp.newrun('f_lead', 'a_sales', 'lead');
 create temp table fl as select tests.scalar_as(tests.uid('a_sales'), pg_temp.ev_sql(tests.rid('f_lead'), 'l1')) as r;
 select is((select count(*) from public.evidence_links where evidence_id = (select (r::jsonb ->> 'evidence_id')::uuid from fl) and lead_id = tests.rid('a_lead') and company_id is null), 1::bigint, 'a run on a LEAD links its evidence to that lead');
 create temp table flc as select tests.scalar_as(tests.uid('a_sales'), pg_temp.cl_sql(tests.rid('f_lead'), 'lc', array[(select (r::jsonb ->> 'evidence_id')::uuid from fl)])) as r;
-select is((select count(*) from public.claims where id = (select (r::jsonb ->> 'claim_id')::uuid from flc) and lead_id = tests.rid('a_lead') and company_id is null), 1::bigint, '...and a claim about that lead');
+select is((select count(*) from public.claims where id = (select (r::jsonb ->> 'claim_id')::uuid from flc) and lead_id is null and source_lead_id = tests.rid('a_lead') and company_id = tests.rid('a_company')), 1::bigint, '...and its claim is stored on the lead''s COMPANY (T007: the claim home), the lead kept as source_lead_id');
 
 -- ============================================================================ G. idempotency
 select pg_temp.newrun('g_run');

@@ -663,3 +663,11 @@ as follows. Each deviation is deliberate.
 | 10 | ADR 0014 before T006 | No; see "Compatibility with option B" |
 | 11 | Personal data to the provider | v1 passes no contact fields; legal review (DPDP, cross-border transfer) before T012 |
 | 12 | `pgsodium` | Out of scope |
+
+## T007 M2 note: the claim home (2026-10-05)
+
+`agent_write_claim` stores the claim of a lead-target run on the **lead's company** (resolved inside the database from the run row, after
+the same ownership proof as before); the lead is recorded as `claims.source_lead_id`. A lead without a company cannot receive a claim. Old
+rows are not rewritten: `claims_effective` gains `home_company_id` and `about_lead_id`, and `claims_for_scoring` exposes the home as
+`company_id`. Evidence of a lead run is still linked to the lead, so `evidence_for_scoring` is unchanged. Migration
+`20261013090000_t007_claim_home.sql`; tests `supabase/tests/database/48_claim_home.test.sql`, `tests/integration/test_claim_home.py`.

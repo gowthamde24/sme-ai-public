@@ -178,13 +178,14 @@ def test_claims_come_from_the_effective_view_for_one_target_without_archived_row
     req = server.requests[0]
     params = dict(req.url.params)
     assert req.url.path == "/rest/v1/claims_effective"
-    assert params["tenant_id"] == f"eq.{TENANT}" and params["company_id"] == f"eq.{COMPANY}"
+    assert params["tenant_id"] == f"eq.{TENANT}" and params["home_company_id"] == f"eq.{COMPANY}"
     assert params["archived_at"] == "is.null" and params["limit"] == "50"
     assert "agent_run_id" in params["select"] and "review_state" in params["select"]
     assert claims[0].review_state == "unreviewed"
     lead_server = Server((200, []))
     make(lead_server).list_claims(TOKEN, TENANT, target_kind="lead", target_id=COMPANY, limit=5)
-    assert "lead_id" in dict(lead_server.requests[0].url.params)
+    lead_params = dict(lead_server.requests[0].url.params)
+    assert lead_params["about_lead_id"] == f"eq.{COMPANY}" and "home_company_id" not in lead_params
 
 
 def test_a_review_is_a_function_call_with_the_claim_and_the_decision_only() -> None:
