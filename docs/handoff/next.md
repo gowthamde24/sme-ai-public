@@ -1,6 +1,6 @@
 # Handoff: resume here
 
-T008 (Requirement Agent) is in progress. Commit 4 (the agent on fakes) and commit 3b (migration 20261015090200, the owner's review changes) are committed; commit 5 (API + paste screen + review screen) is committed; NEXT is commit 6 (evals and the golden set); the plan is `docs/plans/t008-requirement-agent.md` (ACCEPTED with the owner's changes A-J).
+T008 (Requirement Agent) is in progress. Commit 4 (the agent on fakes) and commit 3b (migration 20261015090200, the owner's review changes) are committed; commits 5 (API + paste screen + review screen) and 6 (injection evals E01-E15 + naive N20-N31, the golden set of 20 enquiries and its report) are committed; NEXT is commit 7 (ADR 0018, checklist rows, plan updates), then the FULL make check and ONE mutation pass; the plan is `docs/plans/t008-requirement-agent.md` (ACCEPTED with the owner's changes A-J).
 
 * Commit 1 (schema, contact guard, scrubber), commit 2 (deterministic services) and commit 3 (migration 20261015090100: the requirement agent's
   definition and flag, `agent_write_requirement_field` with the database-verified quote, `decide_requirement_field`, `confirm_requirement`,

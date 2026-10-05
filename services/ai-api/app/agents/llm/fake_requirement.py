@@ -40,6 +40,8 @@ def _requirement_plan(text: str) -> list[ToolCall]:  # noqa: C901 - a deliberate
     from app.requirements import vocabulary as V
 
     calls: list[ToolCall] = []
+    # a careful reader does not take an order from a quoted earlier message ("> On Mon, Ravi wrote: ...")
+    text = re.split(r"(?:^|\s)>\s", text, maxsplit=1)[0]
     clauses = [c for c in re.split(r"(?<=[.!?;])\s+|\s+\|\s+", text) if c.strip()]
     clauses = [c for c in clauses if not _ADDRESSED_TO_AN_AI.search(c)]
     types = _alternation([w for ws in V.SYNONYMS["saree_type"].values() for w in ws])

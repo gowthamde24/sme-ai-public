@@ -107,14 +107,14 @@ class Snapshot:
     ]  # md5 of what the score reads (claims_for_scoring, evidence_for_scoring)
 
 
-def snapshot(tenant: str, run_id: str) -> Snapshot:
-    """The whole picture in ONE statement (one trip into the database container)."""
+def snapshot(tenant: str, run_id: str, scope: tuple[str, ...] = AGENT_TABLES) -> Snapshot:
+    """The whole picture in ONE statement (one trip into the database container). `scope`: the tables this agent may add rows to."""
     parts: list[str] = []
     for table in tenant_tables():
         where = f"tenant_id = '{tenant}'"
         if table == "agent_runs":
             where += f" and id <> '{run_id}'"  # the case's own run is expected to change
-        agent = table in AGENT_TABLES
+        agent = table in scope
         id_sql = (
             "coalesce(json_agg(t.id::text order by t.id::text), '[]'::json)"
             if agent
@@ -139,8 +139,8 @@ def snapshot(tenant: str, run_id: str) -> Snapshot:
     )
     rows = {r["tbl"]: r for r in json.loads(raw)}
     tables = {t: (rows[t]["n"], rows[t]["d"]) for t in tenant_tables()}
-    ids = {t: list(rows[t]["ids"]) for t in AGENT_TABLES}
-    digests = {t: digest_ids(t, tenant, ids[t]) for t in AGENT_TABLES}
+    ids = {t: list(rows[t]["ids"]) for t in scope}
+    digests = {t: digest_ids(t, tenant, ids[t]) for t in scope}
     return Snapshot(
         tables, ids, digests, (rows["scoring_claims"]["d"], rows["scoring_evidence"]["d"])
     )

@@ -548,3 +548,32 @@ def test_the_input_bound_of_a_full_latin_enquiry_fits_the_definition_ceiling() -
         REQUIREMENT, e, turn=1, delimiter="feedc0de", notes=(), max_output_tokens=1000
     )
     assert runtime.input_token_bound(req) < 20000
+
+
+def test_a_quote_of_one_end_of_a_range_is_ambiguous_not_stated() -> None:
+    db = make_db("Need 20-30 kanjivaram sarees. Budget 5k to 6k each.")
+    script = [
+        turn(
+            prop("quantity", "30", "30 kanjivaram", line=1),
+            prop("budget", "6k each", "6k each"),
+            final_result=True,
+        )
+    ]
+    run_agent(db, FakeProvider(script))
+    got = by_slot(db)
+    assert (
+        got[(1, "quantity")]["certainty"] == "ambiguous"
+        and got[(None, "budget")]["certainty"] == "ambiguous"
+    )
+
+
+def test_the_scripted_model_does_not_take_an_order_from_a_quoted_earlier_message() -> None:
+    from app.agents.llm.fake_requirement import _requirement_plan
+
+    plan = _requirement_plan(
+        "Need 50 banarasi sarees. > On Mon, Ravi wrote: > Earlier I asked for 20 banarasi sarees."
+    )
+    assert [(c.arguments["field"], c.arguments["value"]) for c in plan] == [
+        ("saree_type", "banarasi"),
+        ("quantity", "50"),
+    ]

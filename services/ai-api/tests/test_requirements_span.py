@@ -99,3 +99,20 @@ def test_injected_instructions_support_nothing() -> None:
     )  # the number IS in the text...
     with pytest.raises(Refused):  # ...but the cap refuses it before any write
         normalise("quantity", "1,000,000", RECEIVED)
+
+
+def test_a_quote_that_is_one_end_of_a_range_is_in_range_context() -> None:
+    from app.requirements.span import in_range_context
+
+    body = "Need 20-30 kanjivaram sarees, budget 5k to 6k each, 50 percent advance"
+    first, second = body.index("20"), body.index("30")
+    assert in_range_context(body, second, second + 2)  # "30" after "20-"
+    assert in_range_context(body, first, first + 2)  # "20" before "-30"
+    five, six = body.index("5k"), body.index("6k")
+    assert in_range_context(body, five, five + 2) and in_range_context(body, six, six + 2)
+    fifty = body.index("50 percent")
+    assert not in_range_context(body, fifty, fifty + 10)
+    assert not in_range_context("Need 30 sarees", 5, 7)
+    assert not in_range_context(
+        "2026-11-15 and 30 sarees", 15, 17
+    )  # a date's hyphen is not a range of quantities

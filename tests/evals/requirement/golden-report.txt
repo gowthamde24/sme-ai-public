@@ -1,0 +1,137 @@
+T008 requirement golden report (scripted model, 20 synthetic enquiries; the real database functions)
+A stand-in model: these numbers prove the pipeline and give a baseline. Real quality is measured only with a real model.
+THE GATE: wrong_STATED and extra_STATED are zero.
+
+field           |        expected |        proposed |         matched | matched_flagged |    wrong_STATED |   wrong_flagged |    extra_STATED |   extra_flagged |          missed
+saree_type      |              19 |              19 |              19 |               0 |               0 |               0 |               0 |               0 |               0
+fabric          |               1 |               0 |               0 |               0 |               0 |               0 |               0 |               0 |               1
+colour          |               8 |               7 |               7 |               0 |               0 |               0 |               0 |               0 |               1
+quantity        |              20 |              18 |              17 |               0 |               0 |               0 |               0 |               1 |               3
+budget          |               3 |               3 |               2 |               1 |               0 |               1 |               0 |               0 |               0
+deadline        |               7 |               7 |               6 |               1 |               0 |               1 |               0 |               0 |               0
+delivery_city   |              15 |              13 |              13 |               0 |               0 |               0 |               0 |               0 |               2
+payment_terms   |               4 |               4 |               4 |               0 |               0 |               0 |               0 |               0 |               0
+TOTAL           |              77 |              71 |              68 |               2 |               0 |               2 |               0 |               1 |               7
+
+reviewer: approved 68, corrected 2, rejected 1
+
+G01 a tidy e-mail with everything
+    -:budget: matched
+    -:deadline: matched
+    -:delivery_city: matched
+    -:payment_terms: matched
+    1:colour: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=yes; questions: -
+G02 a terse WhatsApp line
+    -:delivery_city: missed
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_delivery_city, missing_deadline, missing_payment_terms
+G03 Hinglish in Latin script
+    -:delivery_city: missed
+    -:payment_terms: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_delivery_city, missing_deadline
+G04 an order with two lines
+    -:delivery_city: matched
+    1:colour: matched
+    1:quantity: matched
+    1:saree_type: matched
+    2:colour: matched
+    2:quantity: matched
+    2:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G05 an order with three colours of one saree
+    -:delivery_city: matched
+    1:colour: matched
+    1:quantity: matched
+    1:saree_type: matched
+    2:colour: matched
+    2:quantity: matched
+    2:saree_type: matched
+    3:colour: matched
+    3:quantity: matched
+    3:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G06 a quantity in words
+    -:deadline: matched
+    1:quantity: missed
+    1:saree_type: matched
+    after review: can approve=no, ready for quote=no; questions: missing_quantity@1, missing_delivery_city, missing_payment_terms
+G07 a festival is not a date
+    -:delivery_city: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G08 a total budget, no basis stated
+    -:budget: matched (flagged)
+    -:delivery_city: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G09 a per-piece budget
+    -:budget: WRONG (flagged): proposed {'code': None, 'int': 450000, 'date': None, 'text': None, 'basis': 'total'}, expected {'code': None, 'int': 450000, 'date': None, 'text': None, 'basis': 'per_piece'}
+    -:delivery_city: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G10 two deadlines that conflict
+    -:deadline: WRONG (flagged): proposed {'code': None, 'int': None, 'date': '2026-11-10', 'text': None, 'basis': None}, expected {'code': None, 'int': None, 'date': '2026-11-25', 'text': None, 'basis': None}
+    -:delivery_city: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_payment_terms
+G11 a forwarded chain with an old quantity
+    -:deadline: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_delivery_city, missing_payment_terms
+G12 a signature with a phone number
+    -:delivery_city: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G13 nothing usable
+    (nothing expected, nothing proposed)
+    after review: can approve=no, ready for quote=no; questions: missing_saree_type@1, missing_quantity@1, missing_delivery_city, missing_deadline, missing_payment_terms
+G14 injected instructions
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_delivery_city, missing_deadline, missing_payment_terms
+G15 text in Kannada
+    -:deadline: matched
+    -:delivery_city: matched
+    1:quantity: missed
+    after review: can approve=no, ready for quote=no; questions: missing_saree_type@1, missing_quantity@1, missing_payment_terms
+G16 an unrelated message
+    (nothing expected, nothing proposed)
+    after review: can approve=no, ready for quote=no; questions: missing_saree_type@1, missing_quantity@1, missing_delivery_city, missing_deadline, missing_payment_terms
+G17 cash on delivery and a relative date
+    -:deadline: matched (flagged)
+    -:delivery_city: matched
+    -:payment_terms: matched
+    1:colour: missed
+    1:fabric: missed
+    1:quantity: missed
+    after review: can approve=no, ready for quote=no; questions: missing_saree_type@1, missing_quantity@1
+G18 a range is not a quantity
+    -:delivery_city: matched
+    1:quantity: extra (flagged): proposed {'code': None, 'int': 30, 'date': None, 'text': None, 'basis': 'piece'}
+    1:saree_type: matched
+    after review: can approve=no, ready for quote=no; questions: missing_quantity@1, missing_deadline, missing_payment_terms
+G19 a quantity in dozens
+    -:delivery_city: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=no; questions: missing_deadline, missing_payment_terms
+G20 everything a quote needs
+    -:deadline: matched
+    -:delivery_city: matched
+    -:payment_terms: matched
+    1:colour: matched
+    1:quantity: matched
+    1:saree_type: matched
+    after review: can approve=yes, ready for quote=yes; questions: -

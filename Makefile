@@ -64,7 +64,7 @@ bench-rls:
 # API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
 test-integration:
-	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q --ignore=../../tests/integration/test_agent_evals.py --ignore=../../tests/integration/test_research_evals.py --ignore=../../tests/integration/test_research_golden.py
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q --ignore=../../tests/integration/test_agent_evals.py --ignore=../../tests/integration/test_research_evals.py --ignore=../../tests/integration/test_research_golden.py --ignore=../../tests/integration/test_requirement_evals.py --ignore=../../tests/integration/test_requirement_golden.py
 
 # T006 agent containment evals: scripted models that OBEY every injection, run against the real local stack; the hard gate is
 # measured from the database afterwards (tests/evals/, tests/integration/agent_eval.py). FakeProvider only: no key, no network.
@@ -74,6 +74,10 @@ eval:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py ../../tests/integration/test_research_evals.py -q
 	# T007 M3: the Research Agent golden set (20 synthetic businesses). Prints the report; FAILS on any wrong claim that is accepted.
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_research_golden.py -q -s
+	# T008: the Requirement Agent's injection cases (tests/evals/requirement/cases.jsonl; scripted models that obey every injection) and its golden
+	# set (20 synthetic enquiries). Prints the report; FAILS on any `stated` field that is wrong or unasked for, on any containment invariant, and on a changed report.
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_requirement_evals.py -q
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_requirement_golden.py -q -s
 
 # OPT-IN, NEVER part of make check: the live-capable cases against the REAL model, pass rates vs tests/evals/thresholds.json.
 # Refuses unless the real adapter's own gates are satisfied (provider, model, key, prices, spend-cap confirmation).

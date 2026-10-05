@@ -11,6 +11,7 @@ A value the quote does not support is refused: a model cannot attach a number or
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from decimal import Decimal
 
@@ -43,3 +44,18 @@ def supports(key: str, value: Value, quote: str, received_at: datetime) -> bool:
             )
         return True
     return False
+
+
+_RANGE_BEFORE = re.compile(
+    r"\d[\d,.]*\s*(?:k|lakh|lac|crore|cr)?\s*(?:-|–|—|to)\s*$", re.IGNORECASE
+)
+_RANGE_AFTER = re.compile(r"^\s*(?:-|–|—|to)\s*\d")
+
+
+def in_range_context(body: str, start: int, end: int) -> bool:
+    """Is the quoted number one end of a range in the enquiry ("20-30 sarees": a quote of "30 sarees" alone)? A model may quote only
+    one end; the text around the quote says it is not a single number, so the field cannot be `stated`."""
+    return bool(
+        _RANGE_BEFORE.search(body[max(0, start - 24) : start])
+        or _RANGE_AFTER.search(body[end : end + 24])
+    )

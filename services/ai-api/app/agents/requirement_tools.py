@@ -8,7 +8,7 @@ What the runtime does BEFORE anything is kept (the model only points at words):
   * the value must be SUPPORTED by the quote (owner change D): a number or date must appear in it, a choice needs a synonym,
     a city must appear. Otherwise refused.
   * the certainty is the worse of the model's and the normaliser's (a relative date is `implied`; a range or a missing budget
-    basis is `ambiguous`).
+    basis is `ambiguous`), and a number that is one end of a range in the text around its quote ("20-30", quoted as "30") is `ambiguous`.
 Proposals are held in memory per (line, field). At the END of a run that finished well (`flush_proposals`, called by the runtime
 after a valid final result) each slot is written once through the database function, which verifies the quote again against the
 stored text and the value again against its shape and caps. A slot proposed twice with DIFFERENT values is written once, as
@@ -25,7 +25,7 @@ from app.agents.tools import Proposal, Tool, ToolContext
 from app.requirements.normalise import Refused, normalise, worse
 from app.requirements.policy import QUESTION_ORDER
 from app.requirements.quote import find_quote, normalise_ws
-from app.requirements.span import supports
+from app.requirements.span import in_range_context, supports
 
 MAX_FIELDS = 40  # distinct (line, field) slots; the database allows the same
 MAX_PROPOSALS = 60  # every call counted, so a loop cannot spin
@@ -48,9 +48,12 @@ def _propose_field(ctx: ToolContext, args: ProposeFieldArgs) -> str:
         return NOTE_VALUE_REFUSED
     if not supports(args.field, normalised.value, quote, enquiry.received_at):
         return NOTE_VALUE_REFUSED
+    certainty = worse(args.certainty, normalised.certainty)
+    if args.field in ("quantity", "budget", "payment_terms") and in_range_context(enquiry.body, *span):
+        certainty = worse(certainty, "ambiguous")  # one end of a range is not a stated number
     proposal = Proposal(
         value=normalised.value,
-        certainty=worse(args.certainty, normalised.certainty),
+        certainty=certainty,
         quote=quote,
         start=span[0],
         end=span[1],
