@@ -26,6 +26,13 @@ __pycache__/
 .vscode/*
 !.vscode/extensions.json
 
+# leftovers of editors, patches and macOS `sed -i -E` (also checked by `make check-leftovers`)
+*-E
+*.orig
+*.rej
+*.bak
+*~
+
 # local
 *.log
 tmp/

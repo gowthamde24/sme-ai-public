@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
+.PHONY: install lint typecheck test check check-fast check-leftovers db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -23,7 +23,11 @@ test:
 	cd $(API) && .venv/bin/pytest -q
 
 # Inner loop: no Docker needed.
-check-fast: lint typecheck test
+# Fails when a tracked file is an editor / patch / `sed -i` leftover (*-E, *.orig, *.rej, *.bak, *~).
+check-leftovers:
+	./scripts/check-no-leftovers.sh
+
+check-fast: check-leftovers lint typecheck test
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
 check: check-fast db-test test-integration eval
