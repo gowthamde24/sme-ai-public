@@ -115,3 +115,24 @@ Final suite: 29 passing tests (27 before batch 2), including 250 seeded cases;
 `make check-leftovers` passes. Only lane C files changed; no push/network/stack/
 ports. Approval, authoritative catalog lookup, persistence/provenance and audit
 remain lane A work; CI and integration/security verification remain outstanding.
+
+## T010 — pure follow-up cadence decision engine
+
+- Discovery verified before implementation: unchanged `make test-packages`
+  discovered `pure/followup_cadence/tests` and passed its nested package import.
+  No runner or scripts changes. New code lives in `packages/pure/followup_cadence`.
+- Baseline implementation: 28 cadence tests plus 29 existing quote tests pass;
+  `make check-leftovers` passes. Includes 250 fresh seeded cases for suppression/
+  inbound/closed/limit precedence, eligibility, determinism, immutability and
+  monotonicity at the same touch number; bounds and huge inputs are covered.
+- Pure decide(request) returns only stop/wait/draft_followup or rejection.
+  Policy supplies cadence/calendar numbers; explicit UTC as_of and fixed offset,
+  integer-only JSON, version 1.0.0, canonical hash and calculation trace.
+- Assumptions: initial outbound counts toward max_touches; gap_days[0] is before
+  touch 2; no outbound means initial_outreach_required; equal quiet endpoints
+  disable quiet hours; all outbound attempts count; any inbound means takeover.
+- API/rules/bounds and owner decisions: `docs/plans/t010-followup-cadence.md`.
+  Legality (consent, DND, opt-in and HMAC suppression list) is NOT decided here;
+  lane A must supply authoritative flags before first outreach and owns approval,
+  lookup, reply handling, persistence, provenance, audit and integration/security.
+- Manual mutation pass evidence follows. No database/network/ports or real data.

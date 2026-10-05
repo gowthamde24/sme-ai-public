@@ -1,0 +1,7 @@
+{
+  "as_of": "2026-10-05T06:00:00Z",
+  "recipient_utc_offset_minutes": 330,
+  "lead": {"do_not_contact": false, "opted_out": false, "replied": false, "bounced": false, "won": false, "lost": false},
+  "history": [{"timestamp": "2026-10-03T06:00:00Z", "channel": "synthetic_email", "direction": "out", "outcome": "synthetic_delivered"}],
+  "policy": {"gap_days": [2, 4, 7], "max_touches": 4, "quiet_hours": {"start": "20:00", "end": "09:00"}, "allowed_weekdays": [0, 1, 2, 3, 4], "holidays": [], "min_gap_hours": 24}
+}
