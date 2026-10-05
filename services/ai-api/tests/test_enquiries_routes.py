@@ -592,3 +592,40 @@ def test_there_is_no_endpoint_that_sends_or_stores_a_question() -> None:
     paths = " ".join(r.path for r in app.routes if hasattr(r, "path"))
     for word in ("send", "question", "message", "email", "whatsapp"):
         assert word not in paths.replace("enquiries", "")
+
+
+def test_a_retry_with_the_same_id_is_the_same_enquiry_only_when_every_field_matches() -> None:
+    from app.enquiries.models import EnquiryOut
+    from app.enquiries.repository import _same_enquiry
+
+    lead, received = uuid.uuid4(), datetime(2026, 10, 5, 10, 0, tzinfo=UTC)
+    existing = EnquiryOut(
+        id=uuid.uuid4(),
+        lead_id=lead,
+        company_id=None,
+        contact_id=None,
+        channel="whatsapp",
+        received_at=received,
+        subject="Sarees",
+        body="Need 20 sarees",
+        truncated_from=None,
+        created_by=None,
+        created_at=received,
+        archived_at=None,
+    )
+    same: dict[str, Any] = {
+        "lead_id": str(lead),
+        "channel": "whatsapp",
+        "received_at": received.isoformat(),
+        "subject": "Sarees",
+        "body": "Need 20 sarees",
+    }
+    assert _same_enquiry(existing, same)
+    for field, other in [
+        ("lead_id", str(uuid.uuid4())),
+        ("channel", "email"),
+        ("received_at", (received + timedelta(minutes=1)).isoformat()),
+        ("subject", "Other"),
+        ("body", "Need 30 sarees"),
+    ]:
+        assert not _same_enquiry(existing, {**same, field: other}), field
