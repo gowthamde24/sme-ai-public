@@ -4,9 +4,10 @@ operator-managed allow-lists and ceilings.)"""
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import dataclass
 
-from app.agents.tools import Tool
+from app.agents.tools import Tool, ToolContext
 
 
 @dataclass(frozen=True)
@@ -22,3 +23,8 @@ class AgentSpec:
     # reads the company's own website through a PageFetcher (the runtime refuses to start such a run
     # without a fetcher or without a website host, before any model call)
     uses_web: bool = False
+    # what the run is about: a company or lead (the default) or an enquiry (the requirement agent)
+    target_kind: str = "company"
+    # run once, after a valid final result and before the run is closed as succeeded: the
+    # requirement agent writes its buffered proposals here (returns how many the database refused)
+    finalize: Callable[[ToolContext], int] | None = None

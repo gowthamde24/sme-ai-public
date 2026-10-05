@@ -35,7 +35,12 @@ from app.agent_runs.models import (
     RunStart,
 )
 from app.agent_runs.wiring import AgentsRuntime
-from app.agents.inputs import input_sha256, model_input_from_company
+from app.agents.inputs import (
+    enquiry_input_from_row,
+    enquiry_input_sha256,
+    input_sha256,
+    model_input_from_company,
+)
 from app.agents.registry import AGENTS
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import CursorError, Page, decode_cursor, parse_uuid
@@ -100,6 +105,25 @@ def _target_company(
     return company.model_dump(), refs
 
 
+def _target_enquiry(
+    runtime: Runtime, ctx: TenantContext, body: RunStart
+) -> tuple[str, dict[str, Any]]:
+    """(the input hash, the typed refs of the run) for an enquiry the CALLER can see. The hash is
+    of the four allowlisted fields the model will be shown; the runtime re-reads the enquiry and
+    refuses a run whose text changed in between."""
+    if runtime.enquiries is None:
+        raise ApiError(503, "agents_unavailable", "Agents are not available right now.")
+    row = runtime.enquiries.get(ctx.principal.token, ctx.tenant.id, body.target_id)
+    if row is None:
+        raise not_found()
+    if row.archived_at is not None:
+        raise ApiError(409, "archived", "This record is archived; an admin must restore it first.")
+    usable = enquiry_input_from_row(row.model_dump())
+    if usable is None:
+        raise ApiError(409, "enquiry_unusable", "This enquiry cannot be read by an agent.")
+    return enquiry_input_sha256(usable), {"enquiry_id": str(body.target_id)}
+
+
 @router.post("/agent-runs", response_model=RunOut, status_code=202)
 def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Response) -> RunOut:
     agents = _agents(runtime)
@@ -108,12 +132,22 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     if not agents.executor.has_capacity():
         raise ApiError(503, "agents_busy", "Agents are busy. Try again shortly.")
     spec = AGENTS[body.agent]
+    # the requirement agent works on an enquiry and every other agent on a company or a lead: a
+    # mismatch is refused BEFORE the run exists
+    if (spec.target_kind == "enquiry") != (body.target_kind == "enquiry"):
+        raise ApiError(422, "invalid_target", "This agent cannot work on that kind of record.")
     if spec.uses_web and not agents.research_available:
         raise ApiError(503, "agents_unavailable", "Agents are not available right now.")
-    company, refs = _target_company(runtime, ctx, body)
-    if spec.uses_web and not model_input_from_company(company).website_host:
-        # nothing to read: refused BEFORE the run exists (no fetch, no model call)
-        raise ApiError(409, "company_has_no_website", "This company has no website to research.")
+    if spec.target_kind == "enquiry":
+        digest, refs = _target_enquiry(runtime, ctx, body)
+    else:
+        company, refs = _target_company(runtime, ctx, body)
+        if spec.uses_web and not model_input_from_company(company).website_host:
+            # nothing to read: refused BEFORE the run exists (no fetch, no model call)
+            raise ApiError(
+                409, "company_has_no_website", "This company has no website to research."
+            )
+        digest = input_sha256(model_input_from_company(company))
     started = agents.repository.start_run(
         ctx.principal.token,
         ctx.tenant.id,
@@ -122,7 +156,7 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
         agent_version=spec.version,
         target_kind=body.target_kind,
         target_id=body.target_id,
-        input_sha256=input_sha256(model_input_from_company(company)),
+        input_sha256=digest,
         input_refs=refs,
     )
     if not started.replayed:

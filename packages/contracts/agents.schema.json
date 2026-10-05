@@ -576,6 +576,19 @@
           ],
           "title": "Lead Id"
         },
+        "enquiry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enquiry Id"
+        },
         "created_at": {
           "format": "date-time",
           "title": "Created At",
@@ -693,7 +706,7 @@
     },
     "RunStart": {
       "additionalProperties": false,
-      "description": "Start one run of one agent on one company or lead. The id is chosen by the caller\n(idempotent start).",
+      "description": "Start one run of one agent on one company, lead or enquiry (the requirement agent works on\nan enquiry, the others on a company or a lead). The id is chosen by the caller (idempotent\nstart).",
       "properties": {
         "id": {
           "format": "uuid",
@@ -703,7 +716,8 @@
         "agent": {
           "enum": [
             "selftest",
-            "research"
+            "research",
+            "requirement"
           ],
           "title": "Agent",
           "type": "string"
@@ -711,7 +725,8 @@
         "target_kind": {
           "enum": [
             "company",
-            "lead"
+            "lead",
+            "enquiry"
           ],
           "title": "Target Kind",
           "type": "string"

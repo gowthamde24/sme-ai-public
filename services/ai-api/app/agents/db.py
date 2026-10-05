@@ -34,7 +34,11 @@ from app.agents.ports import RunView
 
 logger = logging.getLogger("app.agents.db")
 
-RUN_COLUMNS = "id,agent_name,status,expires_at,cancel_requested_at,input_sha256,company_id,lead_id"
+RUN_COLUMNS = (
+    "id,agent_name,status,expires_at,cancel_requested_at,input_sha256,company_id,lead_id,enquiry_id"
+)
+ENQUIRY_COLUMNS = "channel,received_at,subject,body"  # the enquiry model-input allowlist, no others
+ENQUIRY_KEYS = tuple(ENQUIRY_COLUMNS.split(","))
 TARGET_COLUMNS = "name,city,region,website"  # the model-input allowlist's source columns, no others
 TARGET_KEYS = tuple(TARGET_COLUMNS.split(","))
 _SQLSTATE = re.compile(r"^[0-9A-Z]{5}$")
@@ -150,6 +154,7 @@ class AgentDb:
                 input_sha256=str(row["input_sha256"]),
                 company_id=self._uuid(row["company_id"]) if row["company_id"] else None,
                 lead_id=self._uuid(row["lead_id"]) if row["lead_id"] else None,
+                enquiry_id=self._uuid(row["enquiry_id"]) if row.get("enquiry_id") else None,
             )
         except (KeyError, ValueError, TypeError):
             raise DataLayerUnavailable from None
@@ -171,6 +176,16 @@ class AgentDb:
         if not rows:
             raise ReferenceRefused
         return {key: rows[0].get(key) for key in TARGET_KEYS}
+
+    def read_enquiry(self, run: RunView) -> dict[str, Any]:
+        if run.enquiry_id is None:
+            return {}
+        rows = self._rows(
+            "read_enquiry", "/enquiries", {"select": ENQUIRY_COLUMNS, "id": f"eq.{run.enquiry_id}"}
+        )
+        if not rows:
+            raise ReferenceRefused
+        return {key: rows[0].get(key) for key in ENQUIRY_KEYS}
 
     # ------------------------------------------------------------------ writes (all through
     # the definer functions)
@@ -276,6 +291,44 @@ class AgentDb:
             },
         )
         return self._uuid(result.get("claim_id"))
+
+    def write_requirement_field(
+        self,
+        step_key: str,
+        *,
+        line: int | None,
+        key: str,
+        value_code: str | None,
+        value_int: int | None,
+        value_date: str | None,
+        value_text: str | None,
+        basis: str | None,
+        certainty: str,
+        quote: str,
+        start: int,
+        end: int,
+        conflict: bool,
+    ) -> uuid.UUID:
+        result = self._rpc(
+            "agent_write_requirement_field",
+            {
+                "p_run_id": str(self._run),
+                "p_step_key": step_key,
+                "p_line": line,
+                "p_key": key,
+                "p_value_code": value_code,
+                "p_value_int": value_int,
+                "p_value_date": value_date,
+                "p_value_text": value_text,
+                "p_basis": basis,
+                "p_certainty": certainty,
+                "p_quote": quote,
+                "p_start": start,
+                "p_end": end,
+                "p_conflict": conflict,
+            },
+        )
+        return self._uuid(result.get("field_id"))
 
     def finish(self, status: str, error_code: str | None) -> None:
         self._rpc(

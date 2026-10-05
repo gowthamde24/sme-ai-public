@@ -98,13 +98,13 @@ def phrase_in(text: str, phrase: str) -> bool:
     return any(have[i : i + len(want)] == want for i in range(len(have) - len(want) + 1))
 
 
-def code_for(key: str, token: str) -> str | None:
+def code_for(key: str, word_or_phrase: str) -> str | None:
     """A vocabulary code for a code or a synonym ('Kanchipuram' -> 'kanjivaram'), else None.
 
     A phrase that CONTAINS a synonym ('mehendi green saree') maps to the code of the longest synonym it contains;
     two codes with equally long matches are ambiguous and map to nothing.
     """
-    cleaned = " ".join(tokens(token.replace("_", " ")))
+    cleaned = " ".join(tokens(word_or_phrase.replace("_", " ")))
     if not cleaned:
         return None
     for code in VOCAB.get(key, ()):

@@ -85,6 +85,7 @@ export interface RunOut {
   started_by: string;
   company_id: string | null;
   lead_id: string | null;
+  enquiry_id?: string | null;
   created_at: string;
   expires_at: string;
   finished_at: string | null;
@@ -104,7 +105,7 @@ export interface RunOut {
 
 export interface RunStart {
   id: string;
-  agent: "selftest" | "research";
-  target_kind: "company" | "lead";
+  agent: "selftest" | "research" | "requirement";
+  target_kind: "company" | "lead" | "enquiry";
   target_id: string;
 }

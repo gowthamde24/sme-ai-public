@@ -32,6 +32,7 @@ from app.agents.ports import RunView
 
 RUN_ID = uuid.UUID("11111111-1111-4111-8111-111111111111")
 COMPANY_ID = uuid.UUID("22222222-2222-4222-8222-222222222222")
+ENQUIRY_ID = uuid.UUID("33333333-3333-4333-8333-333333333333")
 T0 = datetime(2026, 10, 4, 12, 0, tzinfo=UTC)
 
 
@@ -63,8 +64,13 @@ class FakeAgentDb:
         max_output_tokens: int = 4000,
         ttl_seconds: int = 900,
         agent_name: str = "selftest",
+        enquiry: dict[str, Any] | None = None,
     ) -> None:
         self.agent_name = agent_name
+        # the Requirement Agent's enquiry (channel, received_at, subject, body); None otherwise
+        self.enquiry = enquiry
+        self.fields: list[dict[str, Any]] = []
+        self.refuse_fields: set[str] = set()
         self.clock = clock or Clock()
         self.facts = facts or {
             "name": "DEMO Silk House",
@@ -141,13 +147,77 @@ class FakeAgentDb:
             expires_at=self.expires_at,
             cancel_requested_at=self.cancel_requested_at,
             input_sha256=self.input_sha256 or "",
-            company_id=COMPANY_ID,
+            company_id=None if self.enquiry is not None else COMPANY_ID,
             lead_id=None,
+            enquiry_id=ENQUIRY_ID if self.enquiry is not None else None,
         )
 
     def read_target(self, run: RunView) -> dict[str, Any]:
         self.calls.append("read_target")
         return dict(self.facts)
+
+    def read_enquiry(self, run: RunView) -> dict[str, Any]:
+        self.calls.append("read_enquiry")
+        return dict(self.enquiry or {})
+
+    def write_requirement_field(
+        self,
+        step_key: str,
+        *,
+        line: int | None,
+        key: str,
+        value_code: str | None,
+        value_int: int | None,
+        value_date: str | None,
+        value_text: str | None,
+        basis: str | None,
+        certainty: str,
+        quote: str,
+        start: int,
+        end: int,
+        conflict: bool,
+    ) -> uuid.UUID:
+        """Models the database rules that matter to the runtime: the quote must be the span of the
+        stored enquiry text, one field per (line, key), a write budget, an idempotent step key."""
+        from app.requirements.quote import verify
+
+        self._open("write_requirement_field")
+        args = {
+            "line": line,
+            "key": key,
+            "code": value_code,
+            "int": value_int,
+            "date": value_date,
+            "text": value_text,
+            "basis": basis,
+            "certainty": certainty,
+            "quote": quote,
+            "start": start,
+            "end": end,
+            "conflict": conflict,
+        }
+        digest = sha(args)
+        found = self._replay(step_key, "agent_write_requirement_field", digest)
+        if found is not None:
+            return uuid.UUID(found["result"]["field_id"])
+        body = str((self.enquiry or {}).get("body") or "")
+        if key in self.refuse_fields or not verify(body, start, end, quote):
+            raise ValueRefused
+        if any(f["line"] == line and f["key"] == key for f in self.fields):
+            raise ValueRefused
+        if self.used["writes"] >= self.max["writes"]:
+            raise BudgetExhausted
+        self.used["writes"] += 1
+        new_id = uuid.uuid5(RUN_ID, f"field:{step_key}")
+        self.fields.append(
+            {"id": new_id, "run": self.run_id, "state": "proposed", "created_via": "agent", **args}
+        )
+        self.steps[step_key] = {
+            "tool": "agent_write_requirement_field",
+            "sha": digest,
+            "result": {"field_id": str(new_id)},
+        }
+        return new_id
 
     def reserve_cost(
         self, step_key: str, *, model: str, max_input_tokens: int, max_output_tokens: int

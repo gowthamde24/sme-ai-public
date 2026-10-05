@@ -8,9 +8,18 @@ import unicodedata
 from typing import Annotated, Literal
 from urllib.parse import unquote
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, StringConstraints, model_validator
+from pydantic import (
+    AfterValidator,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StrictInt,
+    StringConstraints,
+    model_validator,
+)
 
 from app.agents.research_vocab import CLAIM_VOCAB
+from app.requirements.vocabulary import LINE_KEYS
 
 _ALLOWED_FORMAT = {"‌", "‍", "‎", "‏"}  # joiners and direction marks: legal in Indic scripts
 
@@ -101,4 +110,29 @@ class ProposeClaimArgs(_Closed):
     def _value_is_in_the_predicates_vocabulary(self) -> ProposeClaimArgs:
         if self.value not in CLAIM_VOCAB[self.predicate]:
             raise ValueError("the value is not in this predicate's vocabulary")
+        return self
+
+
+# ---- the Requirement Agent's one tool (T008). Closed schema: no id, no offset, no free-text field
+# of ours. The model gives the line, the field, the value AS THE ENQUIRY WORDS IT, how sure it is
+# and the QUOTE (a string): the runtime finds the offsets.
+FieldName = Literal[
+    "saree_type", "fabric", "colour", "quantity", "budget", "deadline", "delivery_city",
+    "payment_terms"
+]  # fmt: skip
+FieldValue = Annotated[Clean, StringConstraints(min_length=1, max_length=120)]
+FieldQuote = Annotated[Clean, StringConstraints(min_length=1, max_length=300)]
+
+
+class ProposeFieldArgs(_Closed):
+    line: Annotated[StrictInt, Field(ge=1, le=5)] | None = None
+    field: FieldName
+    value: FieldValue
+    certainty: Literal["stated", "implied", "ambiguous"]
+    quote: FieldQuote
+
+    @model_validator(mode="after")
+    def _a_line_field_names_its_line_and_an_order_field_does_not(self) -> ProposeFieldArgs:
+        if (self.field in LINE_KEYS) != (self.line is not None):
+            raise ValueError("line fields need a line (1-5); order fields have none")
         return self

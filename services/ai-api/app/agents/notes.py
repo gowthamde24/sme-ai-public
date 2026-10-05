@@ -18,6 +18,20 @@ NOTE_EVIDENCE_REFUSED = (
     "That quote was refused: it must be copied exactly from a page you were shown, and contain "
     "no contact details."
 )
+NOTE_QUOTE_REFUSED = (
+    "That quote was refused: it must be copied exactly from the enquiry text you were shown."
+)
+NOTE_VALUE_REFUSED = (
+    "That field was refused: its value must be one the quoted words support, in the allowed form."
+)
 FIXED_NOTES = frozenset(
-    {NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR, NOTE_FETCH_FAILED, NOTE_EVIDENCE_REFUSED}
+    {
+        NOTE_RECORDED,
+        NOTE_REFUSED,
+        NOTE_REPAIR,
+        NOTE_FETCH_FAILED,
+        NOTE_EVIDENCE_REFUSED,
+        NOTE_QUOTE_REFUSED,
+        NOTE_VALUE_REFUSED,
+    }
 )

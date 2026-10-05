@@ -9,12 +9,13 @@ import re
 import unicodedata
 from collections.abc import Sequence
 
-from app.agents.inputs import ModelInput
+from app.agents.inputs import EnquiryInput, ModelInput
 from app.agents.llm.interface import Block, LlmRequest, ToolSpec, Trust
 from app.agents.notes import FIXED_NOTES, NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR
 from app.agents.schemas import FinalResult
 from app.agents.spec import AgentSpec
 from app.agents.tools import PageRecord
+from app.requirements.normalise import received_day
 
 __all__ = [
     "FINAL_RESULT",
@@ -47,7 +48,7 @@ def escape_value(value: str | None, delimiter: str) -> str:
 
 def build_request(
     spec: AgentSpec,
-    model_input: ModelInput,
+    model_input: ModelInput | EnquiryInput,
     *,
     turn: int,
     delimiter: str,
@@ -64,16 +65,31 @@ def build_request(
     blocks = [Block(Trust.SYSTEM, spec.system_prompt), Block(Trust.TRUSTED, f"Turn {turn}. {hint}")]
     if notes:
         blocks.append(Block(Trust.TRUSTED, " ".join(dict.fromkeys(notes))))
-    data = "\n".join(
-        (
-            f"<<<DATA {delimiter}",
-            f"company_name: {escape_value(model_input.company_name, delimiter)}",
-            f"city: {escape_value(model_input.city, delimiter)}",
-            f"region: {escape_value(model_input.region, delimiter)}",
-            f"website_host: {escape_value(model_input.website_host, delimiter)}",
-            f"DATA {delimiter}>>>",
+    if isinstance(model_input, EnquiryInput):
+        # ONE untrusted block: the channel, the day it arrived (in India), the subject and the
+        # text, each flattened to a single line (the text can neither close the block nor fake a
+        # marker)
+        data = "\n".join(
+            (
+                f"<<<DATA {delimiter}",
+                f"channel: {escape_value(model_input.channel, delimiter)}",
+                f"received_on: {received_day(model_input.received_at).isoformat()}",
+                f"subject: {escape_value(model_input.subject, delimiter)}",
+                f"text: {escape_value(model_input.body, delimiter)}",
+                f"DATA {delimiter}>>>",
+            )
         )
-    )
+    else:
+        data = "\n".join(
+            (
+                f"<<<DATA {delimiter}",
+                f"company_name: {escape_value(model_input.company_name, delimiter)}",
+                f"city: {escape_value(model_input.city, delimiter)}",
+                f"region: {escape_value(model_input.region, delimiter)}",
+                f"website_host: {escape_value(model_input.website_host, delimiter)}",
+                f"DATA {delimiter}>>>",
+            )
+        )
     blocks.append(Block(Trust.UNTRUSTED, data))
     # each page this run fetched: untrusted text, one block per page, inside the same per-run
     # delimiter, flattened to one line (it can neither close the block nor fake a marker)

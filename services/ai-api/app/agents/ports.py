@@ -22,6 +22,7 @@ class RunView:
     input_sha256: str
     company_id: uuid.UUID | None
     lead_id: uuid.UUID | None
+    enquiry_id: uuid.UUID | None = None
 
 
 class AgentDbPort(Protocol):
@@ -30,6 +31,11 @@ class AgentDbPort(Protocol):
     def read_target(self, run: RunView) -> dict[str, Any]:
         """The target company's name, city, region and website: exactly those four columns, never a
         contact field."""
+        ...
+
+    def read_enquiry(self, run: RunView) -> dict[str, Any]:
+        """The run's enquiry: exactly channel, received_at, subject and body (already scrubbed of
+        contact details), never a lead, a contact or a company."""
         ...
 
     def reserve_cost(
@@ -72,6 +78,27 @@ class AgentDbPort(Protocol):
         predicate: str | None = None,
     ) -> uuid.UUID:
         """`predicate=None` uses the agent's own single predicate (the selftest agent)."""
+        ...
+
+    def write_requirement_field(
+        self,
+        step_key: str,
+        *,
+        line: int | None,
+        key: str,
+        value_code: str | None,
+        value_int: int | None,
+        value_date: str | None,
+        value_text: str | None,
+        basis: str | None,
+        certainty: str,
+        quote: str,
+        start: int,
+        end: int,
+        conflict: bool,
+    ) -> uuid.UUID:
+        """One proposed field of the requirement agent. The database verifies the quote against the
+        stored enquiry text and the value's shape and caps."""
         ...
 
     def finish(self, status: str, error_code: str | None) -> None: ...

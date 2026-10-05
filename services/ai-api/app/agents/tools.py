@@ -13,11 +13,13 @@ from typing import Any
 
 from pydantic import BaseModel
 
+from app.agents.inputs import EnquiryInput
 from app.agents.llm.interface import ToolSpec
 from app.agents.notes import NOTE_RECORDED, NOTE_REFUSED
 from app.agents.ports import AgentDbPort
 from app.agents.schemas import WriteNoteArgs, WriteObservationArgs
 from app.agents.web import PageFetcher
+from app.requirements.normalise import Value
 
 MAX_OBSERVATIONS = 3
 
@@ -40,6 +42,19 @@ class EvidenceRecord:
     page_handle: str
 
 
+@dataclass(frozen=True)
+class Proposal:
+    """One field the Requirement Agent proposed, ALREADY normalised and checked by the runtime (the
+    quote was found in the enquiry text, the value parsed and supported by the quote). Kept in
+    memory until the run ends well."""
+
+    value: Value
+    certainty: str
+    quote: str
+    start: int
+    end: int
+
+
 @dataclass
 class RunState:
     """What the runtime remembers between tool calls of one run (never the model)."""
@@ -53,6 +68,11 @@ class RunState:
     evidence: dict[str, EvidenceRecord] = field(default_factory=dict)
     quotes: set[tuple[str, str]] = field(default_factory=set)
     claims: set[tuple[str, str, str]] = field(default_factory=set)
+    # the Requirement Agent: the enquiry it was shown, and its proposals by (line, field), in the
+    # order proposed
+    enquiry: EnquiryInput | None = None
+    proposals: dict[tuple[int | None, str], list[Proposal]] = field(default_factory=dict)
+    proposal_count: int = 0
 
 
 @dataclass(frozen=True)

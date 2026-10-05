@@ -17,6 +17,7 @@ from app.config import ConfigurationError, Settings, build_auth_config, get_sett
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
+from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.erasure import repository as erasure_repo
 from app.erasure.repository import PostgrestErasureRepository
 from app.erasure.routes import router as erasure_router
@@ -67,6 +68,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         leads=PostgrestLeadsRepository(config.rest_url, config.anon_key),
         agents=build_agents_runtime(settings, config),
         erasure=PostgrestErasureRepository(config.rest_url, config.anon_key),
+        enquiries=PostgrestEnquiriesRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -119,6 +121,11 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409, "token_expiring", "Your session is about to expire. Sign in again and retry."
     ),
     runs_repo.RunNotRunningError: ApiError(409, "run_not_running", "That run is not running."),
+    runs_repo.RequirementConfirmedError: ApiError(
+        409,
+        "requirement_confirmed",
+        "This enquiry already has a confirmed requirement. Discard it first.",
+    ),
     # Erasure (T006b, ADR 0014). Fixed messages: nothing from the data layer reaches the client.
     erasure_repo.NotPendingError: ApiError(
         409, "erasure_not_pending", "That erasure request is not pending."

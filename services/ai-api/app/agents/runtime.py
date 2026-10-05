@@ -38,13 +38,22 @@ from app.agents.errors import (
     RunNotRunning,
     ValueRefused,
 )
-from app.agents.inputs import input_sha256, model_input_from_company
+from app.agents.inputs import (
+    EnquiryInput,
+    ModelInput,
+    enquiry_input_from_row,
+    enquiry_input_sha256,
+    input_sha256,
+    model_input_from_company,
+)
 from app.agents.llm.interface import LlmClient, LlmError, LlmRequest, LlmResponse, ToolCall
 from app.agents.notes import (
     FIXED_NOTES,
     NOTE_EVIDENCE_REFUSED,
+    NOTE_QUOTE_REFUSED,
     NOTE_REFUSED,
     NOTE_REPAIR,
+    NOTE_VALUE_REFUSED,
 )
 from app.agents.ports import AgentDbPort
 from app.agents.schemas import FinalResult
@@ -151,23 +160,40 @@ class AgentRunner:
             if run.status != "running" or run.agent_name != self._spec.name:
                 return RunOutcome("not_running")
             self._check_clock(run.expires_at)
-            target = self._db.read_target(run)
-            if not target:
-                # no company to read (a lead without one): nothing to research, and no model call
-                raise _Stop("failed", "tool_failed")
-            model_input = model_input_from_company(target)
-            if self._spec.uses_web:
+            state = tools.RunState()
+            model_input: ModelInput | EnquiryInput
+            if self._spec.target_kind == "enquiry":
+                # the Requirement Agent reads ONE enquiry: the four allowlisted columns, nothing
+                # about the lead, the contact or the company. A run that is not about an enquiry
+                # ends before any model call.
+                enquiry = (
+                    enquiry_input_from_row(self._db.read_enquiry(run))
+                    if run.enquiry_id is not None
+                    else None
+                )
+                if enquiry is None or enquiry_input_sha256(enquiry) != run.input_sha256:
+                    raise _Stop("failed", "tool_failed")
+                state.enquiry = model_input = enquiry
+            else:
+                target = self._db.read_target(run)
+                if not target:
+                    # no company to read (a lead without one): nothing to research, no model call
+                    raise _Stop("failed", "tool_failed")
+                model_input = model_input_from_company(target)
+            if self._spec.uses_web and isinstance(model_input, ModelInput):
                 # the host scope is decided HERE, from the run's company, never by the model; a run
                 # that cannot read the web (no fetcher, no website) ends before any model call
                 host = model_input.website_host
                 if self._fetcher is None or not host:
                     raise _Stop("failed", "tool_failed")
                 self._host, self._allowed_hosts = host, allowed_hosts_for(host)
-            if input_sha256(model_input) != run.input_sha256:
+            if (
+                isinstance(model_input, ModelInput)
+                and input_sha256(model_input) != run.input_sha256
+            ):
                 raise _Stop(
                     "failed", "tool_failed"
                 )  # what the model would see is not what the run recorded
-            state = tools.RunState()
             notes: tuple[str, ...] = ()
             repaired = False
             for turn in range(1, self._spec.max_turns + 1):
@@ -199,6 +225,7 @@ class AgentRunner:
                 self._db.record_usage(f"usage-{turn}", response.usage)
                 notes = self._handle_calls(response, turn, state)
                 if self._final_is_valid(response):
+                    self._finalize(state)
                     self._db.finish("succeeded", None)
                     return RunOutcome("succeeded", None, turns, self._refused)
                 if response.structured is not None or not response.tool_calls:
@@ -213,6 +240,12 @@ class AgentRunner:
         except AgentDbError as exc:
             status, code, finish = self._classify(exc)
             return self._end(status, code, turns, finish)
+
+    def _finalize(self, state: tools.RunState) -> None:
+        """After a valid final result: the agent's own end-of-run write (the Requirement Agent
+        writes its proposals here)."""
+        if self._spec.finalize is not None:
+            self._refused += self._spec.finalize(tools.ToolContext(self._db, state, "flush"))
 
     def _release_if_not_billed(self, step_key: str, code: str) -> None:
         """Settle the call's reservation at ZERO when the failure proves the provider never billed
@@ -281,7 +314,7 @@ class AgentRunner:
             self._db.record_step(key, FAILED_TOOL, digest, "failed", None)
             self._refused += 1
             return NOTE_REFUSED
-        if note in (NOTE_REFUSED, NOTE_EVIDENCE_REFUSED):
+        if note in (NOTE_REFUSED, NOTE_EVIDENCE_REFUSED, NOTE_QUOTE_REFUSED, NOTE_VALUE_REFUSED):
             self._db.record_step(key, REFUSED_TOOL, digest, "refused", None)
             self._refused += 1
         return note if note in FIXED_NOTES else NOTE_REFUSED

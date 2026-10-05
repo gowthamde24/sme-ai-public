@@ -3,8 +3,13 @@
 
 from __future__ import annotations
 
+from app.agents.requirement import REQUIREMENT
 from app.agents.research import RESEARCH
 from app.agents.selftest import SELFTEST
 from app.agents.spec import AgentSpec
 
-AGENTS: dict[str, AgentSpec] = {SELFTEST.name: SELFTEST, RESEARCH.name: RESEARCH}
+AGENTS: dict[str, AgentSpec] = {
+    SELFTEST.name: SELFTEST,
+    RESEARCH.name: RESEARCH,
+    REQUIREMENT.name: REQUIREMENT,
+}

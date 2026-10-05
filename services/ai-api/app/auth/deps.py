@@ -13,6 +13,7 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.crm.repository import CrmRepository
+from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
 from app.evidence.repository import EvidenceRepository
@@ -34,6 +35,7 @@ class Runtime:
     leads: LeadsRepository
     agents: AgentsRuntime | None = None
     erasure: ErasureRepository | None = None
+    enquiries: EnquiriesRepository | None = None
 
 
 @dataclass(frozen=True)

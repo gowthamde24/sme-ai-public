@@ -39,7 +39,7 @@ from app.tenancy.repository import (
 logger = logging.getLogger("app.agent_runs.repository")
 
 RUN_SELECT = (
-    "id,agent_name,agent_version,status,started_by,company_id,lead_id,created_at,expires_at,"
+    "id,agent_name,agent_version,status,started_by,company_id,lead_id,enquiry_id,created_at,expires_at,"
     "finished_at,error_code,cancel_requested_at,max_writes,writes_used,max_tool_calls,"
     "tool_calls_used,max_input_tokens,input_tokens_used,max_output_tokens,output_tokens_used,"
     "max_cost_micros,cost_micros_used"
@@ -70,6 +70,10 @@ class TokenExpiringError(RepositoryError):
 
 class RunNotRunningError(RepositoryError):
     """SM201"""
+
+
+class RequirementConfirmedError(RepositoryError):
+    """SM208: the enquiry already has a confirmed requirement; a human discards it first."""
 
 
 @dataclass(frozen=True)
@@ -158,6 +162,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM204": AgentsDisabledError,
         "SM206": RunLimitError,
         "SM207": CostCapError,
+        "SM208": RequirementConfirmedError,
         "SM306": MfaRequired,
         "23505": ConflictError,
         "23503": NotFoundError,

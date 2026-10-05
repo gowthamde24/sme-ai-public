@@ -4,11 +4,14 @@
 The real PostgREST is exercised by tests/integration/test_agent_runs_api.py (mocks cannot see
 a view or column mismatch, so every read here also has a real-stack test there)."""
 
+# ruff: noqa: E501
+
 from __future__ import annotations
 
 import json
 import logging
 import uuid
+from datetime import UTC, datetime
 from typing import Any
 
 import httpx
@@ -81,6 +84,7 @@ def test_read_run_asks_for_exactly_the_columns_it_needs_of_its_own_run() -> None
         "input_sha256",
         "company_id",
         "lead_id",
+        "enquiry_id",
     }
     assert isinstance(run, RunView) and run.company_id == COMPANY and run.status == "running"
     assert run.expires_at.isoformat() == "2026-10-04T12:15:00+00:00"
@@ -304,3 +308,48 @@ def _now() -> Any:
     from datetime import UTC, datetime
 
     return datetime(2026, 10, 4, 12, 0, tzinfo=UTC)
+
+
+def test_read_enquiry_asks_for_exactly_the_four_allowlisted_columns() -> None:
+    enquiry = uuid.UUID("44444444-4444-4444-8444-444444444444")
+    row = {"channel": "email", "received_at": "2026-10-01T09:00:00+00:00", "subject": None, "body": "Need 20 sarees",
+           "lead_id": str(LEAD), "company_id": str(COMPANY), "contact_id": "x"}  # fmt: skip
+    server = Server((200, [row]))
+    run = RunView(id=RUN, agent_name="requirement", status="running", expires_at=datetime.now(UTC),
+                  cancel_requested_at=None, input_sha256="a" * 64, company_id=None, lead_id=None, enquiry_id=enquiry)  # fmt: skip
+    got = make(server).read_enquiry(run)
+    req = server.requests[0]
+    assert req.url.path == "/rest/v1/enquiries" and dict(req.url.params)["id"] == f"eq.{enquiry}"
+    assert set(dict(req.url.params)["select"].split(",")) == {
+        "channel",
+        "received_at",
+        "subject",
+        "body",
+    }
+    assert set(got) == {
+        "channel",
+        "received_at",
+        "subject",
+        "body",
+    }  # nothing about the lead, company or contact
+
+
+def test_write_requirement_field_calls_the_one_definer_function_with_the_run_and_the_quote() -> (
+    None
+):
+    field = uuid.UUID("55555555-5555-4555-8555-555555555555")
+    server = Server((200, {"field_id": str(field), "requirement_id": str(RUN), "replayed": False}))
+    out = make(server).write_requirement_field(
+        "f1-quantity", line=1, key="quantity", value_code=None, value_int=20, value_date=None, value_text=None,
+        basis="piece", certainty="stated", quote="20 sarees", start=5, end=14, conflict=False,
+    )  # fmt: skip
+    assert out == field
+    req = server.requests[0]
+    assert req.url.path == "/rest/v1/rpc/agent_write_requirement_field"
+    body = body_of(req)
+    assert (
+        body["p_run_id"] == str(RUN)
+        and body["p_quote"] == "20 sarees"
+        and (body["p_start"], body["p_end"]) == (5, 14)
+    )
+    assert "tenant" not in json.dumps(body)  # the run alone names the tenant

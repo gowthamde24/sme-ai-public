@@ -29,12 +29,13 @@ ErrorCode = Literal[
 
 
 class RunStart(_Strict):
-    """Start one run of one agent on one company or lead. The id is chosen by the caller
-    (idempotent start)."""
+    """Start one run of one agent on one company, lead or enquiry (the requirement agent works on
+    an enquiry, the others on a company or a lead). The id is chosen by the caller (idempotent
+    start)."""
 
     id: ApiUuid
-    agent: Literal["selftest", "research"]
-    target_kind: Literal["company", "lead"]
+    agent: Literal["selftest", "research", "requirement"]
+    target_kind: Literal["company", "lead", "enquiry"]
     target_id: ApiUuid
 
 
@@ -46,6 +47,7 @@ class RunOut(_Strict):
     started_by: uuid.UUID
     company_id: uuid.UUID | None
     lead_id: uuid.UUID | None
+    enquiry_id: uuid.UUID | None = None
     created_at: datetime
     expires_at: datetime
     finished_at: datetime | None

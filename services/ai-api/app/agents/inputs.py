@@ -12,6 +12,7 @@ import hashlib
 import json
 from collections.abc import Mapping
 from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -59,5 +60,62 @@ def model_input_from_company(row: Mapping[str, Any]) -> ModelInput:
 def input_sha256(model_input: ModelInput) -> str:
     canonical = json.dumps(
         asdict(model_input), sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+# ---- the Requirement Agent's input (T008): ONE enquiry, already scrubbed of contact details. A
+# constant allowlist again: the channel, when it arrived, the subject and the text. No lead,
+# contact, company, price, catalogue or other enquiry.
+ENQUIRY_CHANNELS = frozenset({"email", "whatsapp", "form", "other"})
+SUBJECT_MAX, BODY_MAX = 200, 6000
+
+
+@dataclass(frozen=True)
+class EnquiryInput:
+    channel: str
+    received_at: datetime  # always aware, in UTC
+    subject: str | None
+    body: str
+
+
+def _instant(value: Any) -> datetime | None:
+    try:
+        parsed = value if isinstance(value, datetime) else datetime.fromisoformat(str(value))
+    except ValueError:
+        return None
+    return parsed.astimezone(UTC) if parsed.tzinfo is not None else None
+
+
+def enquiry_input_from_row(row: Mapping[str, Any]) -> EnquiryInput | None:
+    """Copy the four allowed fields out of an enquiry row; None when the row is not a usable
+    enquiry. Every other key is ignored, whatever it holds."""
+    channel, received = row.get("channel"), _instant(row.get("received_at"))
+    body, subject = row.get("body"), row.get("subject")
+    if (
+        channel not in ENQUIRY_CHANNELS
+        or received is None
+        or not isinstance(body, str)
+        or not body.strip()
+        or len(body) > BODY_MAX
+        or (subject is not None and (not isinstance(subject, str) or len(subject) > SUBJECT_MAX))
+    ):
+        return None
+    return EnquiryInput(
+        channel=str(channel), received_at=received, subject=subject or None, body=body
+    )
+
+
+def enquiry_input_sha256(enquiry: EnquiryInput) -> str:
+    canonical = json.dumps(
+        {
+            "channel": enquiry.channel,
+            "received_at": enquiry.received_at.isoformat(),
+            "subject": enquiry.subject,
+            "body": enquiry.body,
+        },
+        sort_keys=True,
+        ensure_ascii=False,
+        separators=(",", ":"),
     )
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()

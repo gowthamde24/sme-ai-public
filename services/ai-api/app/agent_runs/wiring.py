@@ -18,6 +18,7 @@ from app.agent_runs.repository import AgentRunsRepository, PostgrestAgentRunsRep
 from app.agents.db import AgentDb
 from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig
 from app.agents.llm.fake import FakeProvider, research_script, selftest_script
+from app.agents.llm.fake_requirement import requirement_script
 from app.agents.llm.interface import LlmClient
 from app.agents.registry import AGENTS
 from app.agents.runtime import AgentRunner
@@ -143,6 +144,14 @@ def build_agents_runtime(settings: Settings, config: AuthConfig) -> AgentsRuntim
                     spec=spec,
                     fetcher=FixturePageFetcher(fixtures),
                 ).run()
+            elif spec.target_kind == "enquiry":
+                # the scripted model under the fake provider (development only); else the adapter
+                llm = (
+                    FakeProvider(requirement_script())
+                    if settings.llm_provider == "fake"
+                    else factory()
+                )
+                AgentRunner(db=db, llm=llm, spec=spec).run()
             else:
                 AgentRunner(db=db, llm=factory(), spec=spec).run()
         finally:
