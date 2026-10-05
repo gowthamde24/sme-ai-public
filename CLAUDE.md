@@ -2,7 +2,7 @@
 
 An AI workforce for SMEs. V1 is the **AI Revenue Engine**: lead discovery -> research -> qualification -> enquiry/RFQ -> quote -> follow-up -> order, with explicit human approval at risky steps. Customer Zero is a family wholesale silk-saree business.
 
-Read this file, `docs/product.md` and `docs/architecture.md` before starting any ticket. If something is not in those docs, ask; do not invent scope.
+Read `AGENTS.md` and `docs/lanes.md` first; their owner rules govern agent work. Read this file, `docs/product.md` and `docs/architecture.md` before starting any ticket. If something is not in those docs, ask; do not invent scope.
 
 ## NON-NEGOTIABLES
 
@@ -15,7 +15,7 @@ Read this file, `docs/product.md` and `docs/architecture.md` before starting any
 7. Add tests for authorization, idempotency and agent structured outputs.
 8. Do not add dependencies/frameworks without explaining why.
 9. Keep provider integrations behind interfaces.
-10. After each ticket run lint, type-check, unit/integration tests and summarize risks.
+10. Follow AGENTS.md testing tiers: run relevant checks only and summarize risks; CI runs the full suite.
 
 ## Additional architecture rules
 
@@ -32,9 +32,9 @@ Read this file, `docs/product.md` and `docs/architecture.md` before starting any
 1. Start one ticket only. Read this file and the docs first.
 2. Inspect the repo and produce a plan before editing.
 3. Implement that ticket only. No unrelated refactors or features.
-4. Run lint, type-check, unit and integration tests, and relevant agent evals.
+4. Run relevant checks under the AGENTS.md testing tiers; database checks run in CI.
 5. Manually inspect security-sensitive migrations, RLS and tool permissions.
-6. Run the feature locally and verify the flow.
+6. Verify the flow with mocks or relevant tests; obey the no-local-database and reserved-port rules.
 7. Update docs/ADR if an architectural decision changed.
 8. Commit with the ticket ID (for example `T001: ...`).
 9. Only then start the next ticket.
@@ -51,6 +51,8 @@ Never use `--dangerously-skip-permissions` for routine development. Never commit
 Once a migration is pushed to a shared remote, it is append-only: never edit it. Any change goes in a new migration file. (Before a push, local-only migrations may still be amended; T002's four migrations are still unpushed.)
 
 ## Commands
+
+Historical owner-operated commands below are not permission for agents to start the database, use reserved ports, access env files, deploy or run `make check`. Follow AGENTS.md.
 
 ```
 make install     # install web + api dependencies
@@ -70,7 +72,7 @@ make dev-api     # FastAPI on :8000
 
 ## Definition of done (every ticket)
 
-- `make check` passes.
+- CI’s full suite passes before the owner merges; agents never run `make check`.
 - New behaviour has tests; auth, idempotency and structured-output paths are covered.
 - Docs updated if scope or architecture changed.
 - A short implementation summary with unresolved risks is written.
