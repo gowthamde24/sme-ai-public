@@ -15,7 +15,7 @@ Read `AGENTS.md` and `docs/lanes.md` first; their owner rules govern agent work.
 7. Add tests for authorization, idempotency and agent structured outputs.
 8. Do not add dependencies/frameworks without explaining why.
 9. Keep provider integrations behind interfaces.
-10. Follow AGENTS.md testing tiers: run relevant checks only and summarize risks; CI runs the full suite.
+10. Run lint, type-check, unit/integration tests and relevant evals per AGENTS.md tiers; summarize risks. Lane A runs `make check` once before each commit. CI is a second check, not a replacement for lane A's local checks.
 
 ## Additional architecture rules
 
@@ -32,9 +32,9 @@ Read `AGENTS.md` and `docs/lanes.md` first; their owner rules govern agent work.
 1. Start one ticket only. Read this file and the docs first.
 2. Inspect the repo and produce a plan before editing.
 3. Implement that ticket only. No unrelated refactors or features.
-4. Run relevant checks under the AGENTS.md testing tiers; database checks run in CI.
+4. Run lint, type-check, unit/integration tests and relevant agent evals under AGENTS.md tiers. Lane A performs mandatory security-tier checks against its local stack and runs `make check` once before each commit.
 5. Manually inspect security-sensitive migrations, RLS and tool permissions.
-6. Verify the flow with mocks or relevant tests; obey the no-local-database and reserved-port rules.
+6. Run the feature locally and verify the flow. Lane A may use its local stack and ports 8000/3000/54321; B and C use mocks with no local database or shared ports.
 7. Update docs/ADR if an architectural decision changed.
 8. Commit with the ticket ID (for example `T001: ...`).
 9. Only then start the next ticket.
@@ -52,7 +52,7 @@ Once a migration is pushed to a shared remote, it is append-only: never edit it.
 
 ## Commands
 
-Historical owner-operated commands below are not permission for agents to start the database, use reserved ports, access env files, deploy or run `make check`. Follow AGENTS.md.
+Lane A may use the local-stack commands and reserved ports below and runs `make check` once before each commit. B and C must not start the stack, use reserved ports or run `make check`. All lanes still obey the secret-file and no-deployment rules in AGENTS.md.
 
 ```
 make install     # install web + api dependencies
@@ -72,7 +72,7 @@ make dev-api     # FastAPI on :8000
 
 ## Definition of done (every ticket)
 
-- CI’s full suite passes before the owner merges; agents never run `make check`.
+- Lane A: `make check` passes locally once before each commit, including mandatory security-tier checks. B and C: relevant checks pass without a database. CI’s full suite also passes before the owner merges.
 - New behaviour has tests; auth, idempotency and structured-output paths are covered.
 - Docs updated if scope or architecture changed.
 - A short implementation summary with unresolved risks is written.
