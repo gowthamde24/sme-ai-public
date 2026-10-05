@@ -284,6 +284,12 @@ select pg_temp.newrun('i_use');
 update public.agent_runs set max_input_tokens = 100, max_output_tokens = 50, max_cost_micros = 1000 where id = tests.rid('i_use');
 create function pg_temp.use_sql(p_run uuid, p_key text, p_in integer, p_out integer, p_cost bigint) returns text language sql as $$
   select format('select public.agent_record_usage(%L, %L, %s, %s, %s)', p_run, p_key, p_in, p_out, p_cost) $$;
+create function pg_temp.resv(p_run uuid, p_key text, p_micros bigint) returns void language sql as $$
+  insert into public.agent_cost_reservations (tenant_id, run_id, step_key, cost_day, model, input_micros_per_mtok, output_micros_per_mtok, max_input_tokens, max_output_tokens, reserved_micros, args_sha256)
+  select tenant_id, id, p_key, app.agent_utc_today(), 'fake-selftest', 1000000, 1000000, 0, 0, p_micros, repeat('0', 64) from public.agent_runs where id = p_run $$;
+-- (T007: a usage record settles a RESERVATION; the daily-cost-cap tests are 49)
+select pg_temp.resv(tests.rid('i_use'), 'u1', 800);
+select pg_temp.resv(tests.rid('i_use'), 'u6', 800);
 select is(pg_temp.out_sales(pg_temp.use_sql(tests.rid('i_use'), 'u1', 60, 20, 400)), 'rows:1', 'usage is recorded');
 select results_eq(format($$select input_tokens_used, output_tokens_used, cost_micros_used from public.agent_runs where id = %L$$, tests.rid('i_use')), $$values (60, 20, 400::bigint)$$, '...and added to the run');
 select is(pg_temp.j(tests.scalar_as(tests.uid('a_sales'), pg_temp.use_sql(tests.rid('i_use'), 'u1', 60, 20, 400)), 'replayed'), 'true', 'a replay');
@@ -310,8 +316,8 @@ select is((select count(*) from public.evidence e where e.agent_run_id is not nu
 
 -- ============================================================================ K. source audit of the four functions
 create temp table src as select proname, prosrc from pg_proc where pronamespace = 'public'::regnamespace and proname in ('agent_write_evidence', 'agent_write_claim', 'agent_record_step', 'agent_record_usage');
-select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, 'insert\s+into\s+public\.(\w+)', 'gi') m), 'agent_cost_reservations,agent_run_steps,claims,evidence,evidence_links',
-  'between them they insert only into evidence, evidence_links, claims, agent_run_steps and (T007, the daily cost ledger) agent_cost_reservations');
+select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, 'insert\s+into\s+public\.(\w+)', 'gi') m), 'agent_run_steps,claims,evidence,evidence_links',
+  'between them they insert only into evidence, evidence_links, claims and agent_run_steps (a usage record settles a reservation; it never creates one)');
 select is((select count(*) from src where prosrc ~* '\mdelete\s+from\M'), 0::bigint, 'none deletes anything');
 select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, '\mupdate\s+public\.(\w+)', 'gi') m), 'agent_cost_reservations,agent_runs', 'the only tables they update are agent_runs (the counters) and agent_cost_reservations (settling a reservation)');
 select is((select count(*) from src where prosrc ~* 'set_config\(''role''|\mset\s+role\M'), 0::bigint, 'none switches role');

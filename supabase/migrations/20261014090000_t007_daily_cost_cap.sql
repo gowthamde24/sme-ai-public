@@ -25,8 +25,8 @@
 -- 0 .. 20.00 per day (CHECK constraints on both the tenant column and the operator default). The change is audited by the
 -- audit trigger of tenant_agent_settings (who, old value, new value).
 --
--- The legacy path stays, and is capped too: agent_record_usage for a step key that has NO reservation charges the reported cost
--- and refuses (SM207) when it would not fit. (A raise cannot also write an audit event; reservations are the audited path.)
+-- (The legacy path of this migration, a usage record with no reservation, was REMOVED by 20261014090100_t007_cost_cap_hardening.sql,
+-- which also bounds the reported cost and the reservation size. Read that file for the final functions.)
 --
 -- Maximum overshoot of the cap: see ADR 0013 (the section "Daily cost cap"). In short: none while the provider's usage stays
 -- inside the declared bounds; the ledger records the true cost, with an audit event, when it does not.

@@ -149,6 +149,10 @@ select is(pg_temp.err(pg_temp.use_sql(tests.rid('u_run'), 'u5', '922337203685477
 select is(pg_temp.err(pg_temp.use_sql(tests.rid('u_run'), 'u6', '-1', '1', '1')), '22023|invalid argument||||', 'a negative value is still an invalid argument');
 select is((select input_tokens_used::text || '/' || output_tokens_used || '/' || cost_micros_used from public.agent_runs where id = tests.rid('u_run')), '5/5/100', 'no refusal changed a counter');
 select is((select count(*) from public.agent_run_steps where run_id = tests.rid('u_run')), 0::bigint, '...or left a step');
+create function pg_temp.resv(p_run uuid, p_key text, p_micros bigint) returns void language sql as $$
+  insert into public.agent_cost_reservations (tenant_id, run_id, step_key, cost_day, model, input_micros_per_mtok, output_micros_per_mtok, max_input_tokens, max_output_tokens, reserved_micros, args_sha256)
+  select tenant_id, id, p_key, app.agent_utc_today(), 'fake-selftest', 1000000, 1000000, 0, 0, p_micros, repeat('0', 64) from public.agent_runs where id = p_run $$;
+select pg_temp.resv(tests.rid('u_run'), 'u7', 20);
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.use_sql(tests.rid('u_run'), 'u7', '10', '10', '10'))::jsonb ->> 'replayed')), 'false', 'a normal usage record still works');
 select is((select input_tokens_used::text || '/' || output_tokens_used || '/' || cost_micros_used from public.agent_runs where id = tests.rid('u_run')), '15/15/110', '...and adds up');
 

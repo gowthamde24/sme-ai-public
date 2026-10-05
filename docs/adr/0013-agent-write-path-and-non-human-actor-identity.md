@@ -691,9 +691,14 @@ audited by the `tenant_agent_settings` audit trigger (who, old value, new value)
    `failed / budget` before any model call was made.
 3. `agent_record_usage` **settles** the reservation: the call's real tokens at the reserved price snapshot, rounded up, or the runtime's reported
    cost if that is larger. The unused part of the reservation is released at once.
-4. Legacy path: a usage record for a step key with no reservation is charged at the reported cost under the same lock and refused (SM207) if it does
-   not fit. (A raise cannot also write an audit event, so reservations are the audited path.) The run's own token and cost budgets are unchanged
-   and still count what the runtime *reported*.
+4. There is **no unreserved path** (migration `20261014090100_t007_cost_cap_hardening.sql`): a usage record for a step key nobody reserved is refused
+   (23503), so nothing reaches the day's ledger that was not reserved first, and settling takes the same per-tenant lock as reserving. The run's own
+   token and cost budgets still count what the runtime *reported*.
+5. **Bounds against a lock-out by a member who calls the functions directly.** A reported cost may be at most **twice the reserved worst case**
+   (23514 otherwise; the reservation stays open and keeps counting); what is charged to the day may not exceed the run's own cost budget (SM203);
+   and a reservation must fit what is left of the run's token budgets, counting the run's other open reservations (SM203, before any model call), so
+   one call on one run cannot reserve a day's cap. A member can still start runs and use their budgets, which is what a member is for; one run can
+   reserve at most the cost of its own token budgets (selftest: 20,000 in + 4,000 out).
 
 **Fail closed.** No price row for the model, a zero price (the table CHECK forbids it and the function refuses it too), a zero cap, a missing
 operator default: each is a refusal, never "free". No real model has a price until the operator adds it (the migration seeds only the scripted
@@ -718,11 +723,14 @@ billed); it is not released. The run ends as `failed / model_failed`.
 
 **Maximum overshoot of the cap.** The reservation is a true upper bound whenever each call's usage stays inside the bounds it declared, so the
 overshoot is then **0**. The database cannot see what a provider bills, so if a call is reported **beyond** its bounds the ledger records the true
-cost (settled > reserved), writes an `agent_cost.overshoot` audit event, and the next reservation refuses. In that case the largest the ledger can
-exceed the cap is `max_concurrent_runs × the agent's per-run max_cost_micros`: only calls that were in flight when the last reservation was
-granted can settle above their reservation, there are at most `max_concurrent_runs` of them (3), and the run's own budget stops a call from being
-recorded above that run's cap (SM203). For the `selftest` agent: 3 × 250,000 = **750,000 (0.75)**, so a day's ledger can read at most 2.75 with the
-default cap. A bill above even that is not visible to the database; the provider-side hard cap (checklist) is the backstop.
+cost (settled > reserved), writes an `agent_cost.overshoot` audit event, and the next reservation refuses. The largest the ledger can then exceed the
+cap is **`max_concurrent_runs × the agent's per-run max_cost_micros`**: only calls in flight when the last reservation was granted can settle above
+their reservation; a recorded call can never exceed its run's cost budget (SM203); and at most `max_concurrent_runs` runs are in flight at once.
+For the `selftest` agent: 3 × 250,000 = **750,000 (0.75)**, so a day's ledger can read at most 2.75 with the default cap.
+*Where the 3 comes from:* `agent_limits.max_concurrent_runs` (operator-managed, migration-only, default 3), enforced in `start_agent_run` under the
+tenant's start lock by counting the tenant's runs that are `running`, unexpired and not cancelled. A cancelled or expired run cannot settle
+(SM201 / SM202), so its in-flight call adds nothing to the ledger (the reservation stays counted). Changing that limit or an agent's
+`max_cost_micros` changes the figure. A bill above it is not visible to the database; the provider-side hard cap (checklist) is the backstop.
 
 **Not built.** No API route or screen for the cap (the Owner calls the function; a UI comes with the Owner Agent), no per-agent cap, no refund of a
 failed call, no cap on token counts per day. A raised tenant cap applies to the tenant's own spending against a key the operator pays for: before
