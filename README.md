@@ -2,6 +2,8 @@
 
 An AI workforce for SMEs. V1: lead discovery -> research -> qualification -> enquiry/RFQ -> quote -> follow-up -> order, with human approval at every risky step.
 
+Agents: start with `AGENTS.md` and [parallel lanes](docs/lanes.md). The quick start below is owner-operated; agents follow the lane restrictions.
+
 Start with `CLAUDE.md` (rules and working rhythm), then `docs/product.md` and `docs/architecture.md`.
 
 ## Layout

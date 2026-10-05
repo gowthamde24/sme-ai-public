@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -22,12 +22,16 @@ test:
 	cd $(WEB) && npm test
 	cd $(API) && .venv/bin/pytest -q
 
+# Pure package tests: stdlib unittest, no database or network.
+test-packages:
+	python3 scripts/test-packages.py
+
 # Inner loop: no Docker needed.
 # Fails when a tracked file is an editor / patch / `sed -i` leftover (*-E, *.orig, *.rej, *.bak, *~).
 check-leftovers:
 	./scripts/check-no-leftovers.sh
 
-check-fast: check-leftovers lint typecheck test
+check-fast: check-leftovers lint typecheck test test-packages
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
 check: check-fast db-test test-integration eval

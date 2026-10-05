@@ -2,7 +2,7 @@
 
 An AI workforce for SMEs. V1 is the **AI Revenue Engine**: lead discovery -> research -> qualification -> enquiry/RFQ -> quote -> follow-up -> order, with explicit human approval at risky steps. Customer Zero is a family wholesale silk-saree business.
 
-Read this file, `docs/product.md` and `docs/architecture.md` before starting any ticket. If something is not in those docs, ask; do not invent scope.
+Read `AGENTS.md` and `docs/lanes.md` first; their owner rules govern agent work. Read this file, `docs/product.md` and `docs/architecture.md` before starting any ticket. If something is not in those docs, ask; do not invent scope.
 
 ## NON-NEGOTIABLES
 
@@ -15,7 +15,7 @@ Read this file, `docs/product.md` and `docs/architecture.md` before starting any
 7. Add tests for authorization, idempotency and agent structured outputs.
 8. Do not add dependencies/frameworks without explaining why.
 9. Keep provider integrations behind interfaces.
-10. After each ticket run lint, type-check, unit/integration tests and summarize risks.
+10. Run lint, type-check, unit/integration tests and relevant evals per AGENTS.md tiers; summarize risks. Lane A runs `make check` once before each commit. CI is a second check, not a replacement for lane A's local checks.
 
 ## Additional architecture rules
 
@@ -32,9 +32,9 @@ Read this file, `docs/product.md` and `docs/architecture.md` before starting any
 1. Start one ticket only. Read this file and the docs first.
 2. Inspect the repo and produce a plan before editing.
 3. Implement that ticket only. No unrelated refactors or features.
-4. Run lint, type-check, unit and integration tests, and relevant agent evals.
+4. Run lint, type-check, unit/integration tests and relevant agent evals under AGENTS.md tiers. Lane A performs mandatory security-tier checks against its local stack and runs `make check` once before each commit.
 5. Manually inspect security-sensitive migrations, RLS and tool permissions.
-6. Run the feature locally and verify the flow.
+6. Run the feature locally and verify the flow. Lane A may use its local stack and ports 8000/3000/54321; B and C use mocks with no local database or shared ports.
 7. Update docs/ADR if an architectural decision changed.
 8. Commit with the ticket ID (for example `T001: ...`).
 9. Only then start the next ticket.
@@ -51,6 +51,8 @@ Never use `--dangerously-skip-permissions` for routine development. Never commit
 Once a migration is pushed to a shared remote, it is append-only: never edit it. Any change goes in a new migration file. (Before a push, local-only migrations may still be amended; T002's four migrations are still unpushed.)
 
 ## Commands
+
+Lane A may use the local-stack commands and reserved ports below and runs `make check` once before each commit. B and C must not start the stack, use reserved ports or run `make check`. All lanes still obey the secret-file and no-deployment rules in AGENTS.md.
 
 ```
 make install     # install web + api dependencies
@@ -70,7 +72,7 @@ make dev-api     # FastAPI on :8000
 
 ## Definition of done (every ticket)
 
-- `make check` passes.
+- Lane A: `make check` passes locally once before each commit, including mandatory security-tier checks. B and C: relevant checks pass without a database. CI’s full suite also passes before the owner merges.
 - New behaviour has tests; auth, idempotency and structured-output paths are covered.
 - Docs updated if scope or architecture changed.
 - A short implementation summary with unresolved risks is written.

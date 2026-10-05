@@ -9,11 +9,21 @@ permissions:
   contents: read
 
 jobs:
+  packages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: make test-packages
+
   hygiene:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - run: ./scripts/check-no-leftovers.sh
+      - run: python3 scripts/test-lanes.py
 
   web:
     runs-on: ubuntu-latest
