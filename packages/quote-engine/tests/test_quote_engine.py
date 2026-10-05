@@ -54,6 +54,16 @@ class QuoteTests(unittest.TestCase):
         self.r["policy"]["payment_terms"]["new_advance_bps"] = 5000
         self.assertEqual(quote(self.r)["payment_terms"]["advance_amount"], 1)
 
+    def test_down_non_half_rounding(self):
+        # 3 * 2500 / 10000 = 0.75 paise; down must not become nearest.
+        self.simple(price=3, tax=2500)
+        for mode, expected in (("down", 0), ("half_even", 1), ("half_up", 1)):
+            self.r["policy"]["rounding_mode"] = mode
+            self.assertEqual(quote(self.r)["lines"][0]["tax"], expected)
+            self.r["order_lines"][0]["discount_bps"] = 2500
+            self.assertEqual(quote(self.r)["lines"][0]["discount"], expected)
+            self.r["order_lines"][0].pop("discount_bps")
+
     def test_tax_known_values(self):
         self.simple(price=10000, tax=1250)
         exclusive = quote(self.r)
@@ -156,9 +166,11 @@ class QuoteTests(unittest.TestCase):
             with self.subTest(code=code):
                 self.assertEqual(quote(r)["codes"], [code])
         self.r["order_lines"].append(copy.deepcopy(self.r["order_lines"][0]))
+        self.assertEqual(quote(self.r)["status"], "rejected")
         self.assertEqual(quote(self.r)["codes"], ["DUPLICATE_ORDER_SKU"])
         self.r["order_lines"].pop()
         self.r["price_list"].append(copy.deepcopy(self.r["price_list"][0]))
+        self.assertEqual(quote(self.r)["status"], "rejected")
         self.assertEqual(quote(self.r)["codes"], ["DUPLICATE_SKU"])
         self.r["price_list"].pop()
         self.r["policy"]["margin_floor_bps"] = 0
@@ -224,6 +236,9 @@ class QuoteTests(unittest.TestCase):
             r["price_list"].append(second)
             r["order_lines"].append({"sku": "SYN-B", "qty": rng.randrange(1, 40)})
             r["policy"]["shipping"]["tax_bps"] = rng.randrange(10001)
+            r["policy"]["shipping"].update(flat_fee=rng.randrange(10000), free_above=rng.randrange(500000))
+            r["policy"]["payment_terms"].update(new_advance_bps=rng.randrange(10001), repeat_advance_bps=rng.randrange(10001))
+            r["customer"] = {"kind": rng.choice(["new", "repeat"]), "credit_limit": rng.randrange(500000)}
             before = copy.deepcopy(r)
             q = quote(r)
             again = quote(r)
@@ -231,6 +246,7 @@ class QuoteTests(unittest.TestCase):
             self.assertEqual(q["canonical_hash"], again["canonical_hash"])
             self.assertEqual(r, before)
             totals = q["totals"]
+            self.assertEqual(totals["total"], totals["net"] + totals["tax"] + totals["shipping"])
             self.assertEqual(totals["total"], sum(line["net"] + line["tax"] for line in q["lines"]) + totals["shipping"] + totals["shipping_tax"])
             self.assertEqual(totals["total"], sum(line["gross"] for line in q["lines"]) + totals["shipping_gross"])
             self.assertEqual(totals["tax"], sum(line["tax"] for line in q["lines"]) + totals["shipping_tax"])
@@ -253,10 +269,12 @@ class QuoteTests(unittest.TestCase):
             unit_request["order_lines"][0]["qty"] = 1
             unit_request["policy"].update(tax_mode="exclusive", rounding_mode="half_up")
             unit_request["policy"]["shipping"] = {"flat_fee": 0}
+            original_net = unit_request["price_list"][0]["unit_price"]
             gross = quote(unit_request)["lines"][0]["gross"]
             unit_request["policy"]["tax_mode"] = "inclusive"
             unit_request["price_list"][0]["unit_price"] = gross
             self.assertEqual(quote(unit_request)["lines"][0]["gross"], gross)
+            self.assertEqual(quote(unit_request)["lines"][0]["net"], original_net)
 
 
 if __name__ == "__main__":

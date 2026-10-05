@@ -1,5 +1,4 @@
 # T009 pure quote engine (lane C)
-
 ## API
 Stdlib only. Add `packages/quote-engine/src` to the caller's import path;
 `from quote_engine import quote, canonical_json, ENGINE_VERSION`.

@@ -38,3 +38,47 @@
 - Owner must confirm GST on shipping, advance rates, rounding mode, MOQ exception
   policy and operational limits. This is pure calculation; approval, authoritative
   catalog lookup, persistence, provenance and durable audit remain lane A work.
+
+### Manual deliberate-mutation evidence
+
+Each row was a temporary edit in the lane C engine, followed by
+`make test-packages`, inspection of a failing test, and reversion. No mutation
+script was added or run. The engine diff was empty after all reversions.
+"Added test" means introduced in response to a surviving mutation; other tests
+already existed when that mutation ran (including batch 1 shipping/bound tests).
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| Swap half_up/half_even tie labels | test_half_paise_rounding | no |
+| Treat half_even as down | test_half_paise_rounding | no |
+| Remove down branch (nearest instead of floor) | test_down_non_half_rounding | yes |
+| free_above: > to >= | test_payment_dates_shipping | no |
+| MOQ: qty < minimum to <= (minimum > qty to >=) | test_price_edges_and_minimum | no |
+| discount ceiling: > to >= | test_each_flag_and_boundaries | no |
+| credit limit: > to >= | test_each_flag_and_boundaries | no |
+| Inclusive item denominator: 10000 + rate to 10000 | test_tax_known_values | no |
+| Inclusive shipping denominator: 10000 + rate to 10000 | test_shipping_tax_modes_and_default | no |
+| Margin: net - cost to net + cost | test_each_flag_and_boundaries | no |
+| Advance: bps to 10000 - bps | test_payment_dates_shipping | no |
+| Balance: total - advance to total + advance | test_seeded_properties | no |
+| Suppress DISCOUNT_ABOVE_CEILING flag (trace only) | test_each_flag_and_boundaries | no |
+| Suppress BELOW_MINIMUM_ORDER_QUANTITY flag | test_price_edges_and_minimum | no |
+| Suppress MARGIN_BELOW_FLOOR flag | test_each_flag_and_boundaries | no |
+| Suppress CREDIT_LIMIT_EXCEEDED flag | test_each_flag_and_boundaries | no |
+| Suppress UNKNOWN_SKU flag | test_each_flag_and_boundaries | no |
+| Disable catalog DUPLICATE_SKU check | test_rejections | no |
+| Disable DUPLICATE_ORDER_SKU check | test_rejections | no |
+| Due date net_days + 1 | test_payment_dates_shipping | no |
+| Valid-until validity_days + 1 | test_payment_dates_shipping | no |
+| Omit engine_version from hash payload | test_round_trip_determinism_hash_and_no_mutation | no |
+| Freeze hash input as_of leaf to fixture date | test_round_trip_determinism_hash_and_no_mutation | no |
+| Remove break >= MOQ requirement | test_first_break_moq | no |
+
+The down-branch mutation initially passed all 26 tests. A non-half 0.75-paise
+rounding test was added while it was still applied, and failed (1 versus 0).
+All 24 distinct mutations were killed and reverted; none remain. Duplicate-SKU
+tests initially killed removal via missing rejection fields; explicit rejected
+status assertions were added for clearer failures, then both removals rerun.
+Final suite: 27 passing tests (9 before batch 1), plus 250 fresh seeded property
+cases. `make check-leftovers` passes. Owner still needs green CI and lane A's
+integration/security checks; no stack/database/network/ports were used.
