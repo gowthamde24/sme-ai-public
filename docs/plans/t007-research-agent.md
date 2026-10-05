@@ -136,6 +136,5 @@ Out of T007: search, contact enrichment, e-mail, scheduling (option B principal 
   by the runtime. The database enforces the lead's host and the 300-character quote again (`agent_write_evidence`) and a slug value shape.
 * `max_input_tokens` 120,000, not 40,000 (the cost-cap reservation counts bytes); `max_cost_micros` 150,000 as planned. The per-day cap is the commit-3
   daily cost cap, not a new column.
-* The review screen (M3 in the plan) is not built here; the agents page has a "Research a lead" start form, and the existing suggestion lists show the
-  claims as "agent suggestion, unreviewed". The golden set and its precision report are not built (they need the owner's labelled expectations).
+* The review screen and the golden set are built in M3 (see ADR 0013, "T007 note: the review screen and the golden set").
 * DNS lookups are bounded (`FetchConfig.max_dns_lookups`).

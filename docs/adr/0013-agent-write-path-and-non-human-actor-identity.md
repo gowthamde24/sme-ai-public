@@ -791,3 +791,23 @@ reads (`buyer_type`, `order_scale`, `size_band`, `operating_status`), each a val
   injection; the pass condition is a diff of the whole tenant (I1-I9 in `research_eval.py`). While building them an empty-list bug in the shared eval helper
   `new_rows` (`NOT IN (NULL)`, which hides every new row when nothing was seen before) was found and fixed; the selftest evals pass with the fix.
 - **Score test.** `tests/integration/test_research_e2e.py` runs the agent through the API and shows the score moving only after a human accepts.
+
+## T007 note: the review screen and the golden set (M3, 2026-10-05)
+
+- **Review screen** (`/app/tenants/<id>/suggestions`, `GET /v1/tenants/{t}/agent-claims`). Every member sees the workspace's agent suggestions; only an
+  Owner or Admin gets the controls. Each suggestion shows its company, predicate, value, the evidence QUOTE as plain text, the source HOST and PATH as
+  text (never a link) and the sentence "Quote checked by the agent runtime, not by the database." Suggestions that disagree about one predicate of one
+  company sit side by side (a grid that wraps to one column on a phone). Accept needs a confidence (low / medium / high; medium and high need a supporting
+  evidence link, as before); **a rejection needs no reason** (migration `20261014090400_t007_m3_reject_without_reason.sql`; a reason, when given, is
+  still one of the closed codes). The newest review of a claim wins, as before. The same evidence is shown on company and lead pages.
+- **Golden set** (`tests/golden/research`, `tests/integration/test_research_golden.py`, part of `make eval`): 20 synthetic businesses with a known answer
+  and the hard cases (no website text, contradictory pages, visible and hidden injected instructions, a sister company, the wrong site, a fact past the page
+  cap, robots.txt, contact details). A scripted careful reviewer accepts or rejects each claim through the real review function. The report (committed:
+  `tests/evals/research/golden-report.txt`) gives, per predicate, expected / proposed / accepted ok / **accepted wrong** / rejected / missing / abstained ok.
+  **The gate fails on any wrong claim that is accepted**, on a stored quote that is not verbatim or holds a contact detail, on a broken containment
+  invariant, on a fall below the floor of correct accepted claims, and on any change of the report that was not made on purpose (`UPDATE_GOLDEN=1`).
+  Today: 26 correct accepted, 0 wrong accepted, 5 rejected, 3 missing (the 8,000-character page cap, robots.txt, the 3-evidence cap).
+- **What the golden numbers are NOT.** The model is a scripted stand-in with blunt keyword rules (written to play a careful reader) and the reviewer is a
+  script. They prove the pipeline (fetch scope, quote checks, review, the database rules) and give a baseline that a real model must beat; the agent's real
+  precision is measured only at M4, with the owner's approval (checklist row "BEFORE THE FIRST LIVE CALL").
+- **Two known limits** (checklist): the database does not verify quotes (the screen says so); evidence is counted per lead while claims are per company.

@@ -21,9 +21,16 @@ Branch: `main` (nothing is on a wip branch: everything committed is green). Noth
    **commit 4: the Research Agent on fakes** (tools, verbatim quotes, lead-site-only fetch, bounded DNS lookups, API start for a lead, the "Research a lead"
    form, the end-to-end score test, W01-W11 and the lead-host evals). See ADR 0013 ("T007 note: the Research Agent") and the plan's commit-4 notes.
 
+5. **T007 M3** (2026-10-05): **the claim review screen** (`/app/tenants/<id>/suggestions`: quote as plain text, source host and path, "Quote checked by the
+   agent runtime, not by the database", conflicting suggestions side by side, a phone-safe grid, accept needs a confidence, reject needs no reason) and
+   **the golden set** (20 synthetic businesses; `make eval` prints the report; the gate fails on any wrong accepted claim). See ADR 0013 ("T007 note: the
+   review screen and the golden set").
+
 ## Not done
-The review screen (plan M3), the golden set and its report, anything live (M4: needs the owner's written approval of provider, key, model id, prices and
-a provider-side cap), search (T007b). The next ticket is T007b; start it only after the owner approves.
+Anything live (M4). **Before the first live call the owner approves** (checklist row "BEFORE THE FIRST LIVE CALL"): the provider and model id, the
+`agent_model_prices` row, the provider-side hard spend cap and key, the workspace's daily cap and the single allowed workspace, the real fetcher's wiring,
+and the budget of the live subset. Also not done: search (T007b), the known limits (the database does not verify quotes; evidence is counted per lead).
+The next ticket is T007b; start it only after the owner approves.
 
 ## Tests run / not run
 Run (green): `make check` (full) at the end of commits 1, 2 and 3 (counts are in the commit 3 message). Mutation: commit 2 (17/17) and commit 3
