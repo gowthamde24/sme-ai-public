@@ -4,9 +4,11 @@ import { notFound, redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { fetchLead, isCanonicalUuid } from "@/lib/api/crm";
 import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
+import { type Enquiry, fetchLeadEnquiries } from "@/lib/api/enquiries";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { requireUser } from "@/lib/auth/session";
 
+import { EnquiriesPanel } from "../../enquiries/enquiries-panel";
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 
@@ -75,6 +77,14 @@ export default async function LeadPage({
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
   }
+  // Enquiries pasted onto this lead: a failure shows an error in that section only.
+  let enquiries: Enquiry[] | null = null;
+  try {
+    enquiries = await fetchLeadEnquiries(user.accessToken, tenantId, leadId);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError && error.status === 404) notFound();
+  }
   const reviewIds = Object.fromEntries(
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
   );
@@ -102,6 +112,14 @@ export default async function LeadPage({
           <dd>{lead.created_via}</dd>
         </dl>
       </section>
+
+      <EnquiriesPanel
+        tenantId={tenantId}
+        leadId={leadId}
+        enquiries={enquiries}
+        canWrite={WRITE_ROLES.includes(tenant.role)}
+        formId={crypto.randomUUID()}
+      />
 
       <EvidencePanel
         tenantId={tenantId}

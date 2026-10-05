@@ -1,0 +1,104 @@
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+
+import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { isCanonicalUuid } from "@/lib/api/crm";
+import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
+import { requireUser } from "@/lib/auth/session";
+
+import { LocalTime } from "../../../../local-time";
+import { EnquiryText } from "../enquiry-text";
+import { RequirementPanel } from "../requirement-panel";
+
+export const metadata = { title: "Enquiry · SME AI Revenue Engine" };
+// Per-user data from the API: never statically rendered or cached.
+export const dynamic = "force-dynamic";
+
+const WRITE_ROLES = ["owner", "admin", "sales"];
+const NOTICES: Record<string, string> = {
+  changed: "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
+  truncated: "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
+  stored: "Saved.",
+};
+
+function pick(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/**
+ * /app/tenants/[tenantId]/enquiries/[enquiryId]: the stored text of one enquiry (plain text, the words each field cites marked) beside its
+ * requirement. Server-side only; requireUser() runs FIRST and every call goes to OUR API with the user's own token. A tenant or enquiry that
+ * does not exist, is malformed or belongs to someone else produces the SAME not-found page.
+ */
+export default async function EnquiryPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/enquiries/[enquiryId]">) {
+  const user = await requireUser();
+  const { tenantId, enquiryId } = await params;
+  const query = await searchParams;
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) notFound();
+
+  let tenant;
+  let enquiry: Enquiry;
+  let view: RequirementView;
+  try {
+    tenant = await fetchTenant(user.accessToken, tenantId);
+    enquiry = await fetchEnquiry(user.accessToken, tenantId, enquiryId);
+    view = await fetchRequirement(user.accessToken, tenantId, enquiryId);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    if (error instanceof ApiRequestError && error.status === 404) notFound();
+    return <ApiDown />;
+  }
+  const notice = NOTICES[pick(query.captured) ?? ""];
+  return (
+    <main className="shell wide">
+      <p>
+        <Link href={`/app/tenants/${tenantId}/leads/${enquiry.lead_id}`}>← Lead</Link>
+      </p>
+      <h1>Enquiry</h1>
+      <p>
+        Your role: <strong>{tenant.role}</strong>
+      </p>
+      {notice ? (
+        <p role="status" className="hint">
+          {notice}
+        </p>
+      ) : null}
+      <section aria-labelledby="enquiry-heading">
+        <h2 id="enquiry-heading">What the customer wrote</h2>
+        <dl className="summary">
+          <dt>Channel</dt>
+          <dd>{CHANNEL_LABELS[enquiry.channel]}</dd>
+          <dt>Received</dt>
+          <dd>
+            <LocalTime iso={enquiry.received_at} />
+          </dd>
+          {enquiry.subject ? (
+            <>
+              <dt>Subject</dt>
+              <dd className="plain-text">{enquiry.subject}</dd>
+            </>
+          ) : null}
+        </dl>
+        <EnquiryText body={enquiry.body} fields={view.fields} />
+        <p className="hint">
+          This is the customer&apos;s text, shown as plain text. Contact details were removed before it was saved
+          {enquiry.truncated_from ? `; it was cut from ${enquiry.truncated_from} characters` : ""}. Marked words are the ones a field relies on.
+        </p>
+      </section>
+      <RequirementPanel tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
+    </main>
+  );
+}
+
+function ApiDown() {
+  return (
+    <main className="shell wide">
+      <p role="alert" className="error">
+        Could not load this from the API. Try again shortly.
+      </p>
+      <p>
+        <Link href="/app">Back to your workspaces</Link>
+      </p>
+    </main>
+  );
+}

@@ -18,6 +18,7 @@ const fetchTenant = vi.fn();
 const fetchLead = vi.fn();
 const fetchEvidencePage = vi.fn();
 const fetchClaims = vi.fn();
+const fetchLeadEnquiries = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
@@ -40,6 +41,11 @@ vi.mock("@/lib/api/agents", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/agents")>()),
   fetchClaims: (...a: unknown[]) => fetchClaims(...a),
 }));
+vi.mock("@/lib/api/enquiries", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api/enquiries")>()),
+  fetchLeadEnquiries: (...a: unknown[]) => fetchLeadEnquiries(...a),
+}));
+vi.mock("../../enquiries/actions", () => ({ captureEnquiryAction: vi.fn(async () => undefined) }));
 vi.mock("../../suggestion-actions", () => ({ reviewClaimAction: vi.fn(async () => undefined) }));
 vi.mock("../../evidence-actions", () => ({
   addEvidenceAction: vi.fn(async () => undefined),
@@ -124,6 +130,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     fetchLead.mockResolvedValue(lead);
     fetchEvidencePage.mockResolvedValue(evidence);
     fetchClaims.mockResolvedValue([suggestion]);
+    fetchLeadEnquiries.mockResolvedValue([]);
   });
 
   it("authenticates FIRST: with no session nothing else is called", async () => {
@@ -337,5 +344,19 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
   it("the claims request turning 404 is the not-found page", async () => {
     fetchClaims.mockRejectedValue(new ApiRequestError(404, "not_found", "Not found."));
     expect(await isNotFound(() => LeadPage(props()))).toBe(true);
+  });
+
+  it("shows the lead's enquiries section and asks the API for the lead's enquiries with the user's token", async () => {
+    render(await LeadPage(props()));
+    expect(screen.getByRole("heading", { name: "Enquiries" })).toBeInTheDocument();
+    expect(fetchLeadEnquiries).toHaveBeenCalledWith("tok", TENANT, LEAD);
+    expect(screen.getByText("Paste a new enquiry")).toBeInTheDocument();
+  });
+
+  it("an API failure on the enquiries shows an error in that section only", async () => {
+    fetchLeadEnquiries.mockRejectedValue(new ApiRequestError(502, "upstream_error", "x"));
+    render(await LeadPage(props()));
+    expect(screen.getByRole("alert")).toHaveTextContent(/Could not load the enquiries/);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Lead");
   });
 });

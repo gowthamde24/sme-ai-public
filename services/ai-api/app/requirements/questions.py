@@ -21,7 +21,7 @@ FIELD_NAMES = {
     "saree_type": "saree type", "fabric": "fabric", "colour": "colour", "quantity": "quantity", "budget": "budget",
     "deadline": "delivery date", "delivery_city": "delivery city", "payment_terms": "payment terms",
 }  # fmt: skip
-_MONTHS = (
+MONTHS = (
     "January",
     "February",
     "March",
@@ -49,7 +49,7 @@ def _date_text(value: Value) -> str:
     d = value.date_value
     if d is None:
         return ""
-    return f"{d.day} {_MONTHS[d.month - 1]} {d.year}"
+    return f"{d.day} {MONTHS[d.month - 1]} {d.year}"
 
 
 def _item(line: int | None, multi: bool) -> str:

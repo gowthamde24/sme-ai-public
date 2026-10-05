@@ -17,7 +17,9 @@ from app.config import ConfigurationError, Settings, build_auth_config, get_sett
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
+from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
+from app.enquiries.routes import router as enquiries_router
 from app.erasure import repository as erasure_repo
 from app.erasure.repository import PostgrestErasureRepository
 from app.erasure.routes import router as erasure_router
@@ -121,6 +123,19 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409, "token_expiring", "Your session is about to expire. Sign in again and retry."
     ),
     runs_repo.RunNotRunningError: ApiError(409, "run_not_running", "That run is not running."),
+    enquiries_repo.RequirementConfirmedError: ApiError(
+        409,
+        "requirement_confirmed",
+        "This enquiry already has a confirmed requirement. Discard it first.",
+    ),
+    enquiries_repo.RequirementNotDraftError: ApiError(
+        409, "requirement_not_draft", "That requirement is no longer a draft."
+    ),
+    enquiries_repo.NotConfirmableError: ApiError(
+        409,
+        "not_confirmable",
+        "A line needs a saree type and a quantity that a person confirmed or corrected.",
+    ),
     runs_repo.RequirementConfirmedError: ApiError(
         409,
         "requirement_confirmed",
@@ -224,6 +239,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(evidence_router)
     app.include_router(crm_router)
     app.include_router(agent_runs_router)
+    app.include_router(enquiries_router)
     app.include_router(erasure_router)
     return app
 

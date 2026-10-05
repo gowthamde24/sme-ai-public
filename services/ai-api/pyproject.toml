@@ -46,6 +46,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/requirements/*" = ["E501"]
 # the requirement agent: its policy text and a long explanatory docstring per file
 "app/agents/requirement*.py" = ["E501"]
+# T008: the enquiry API (long docstrings and fixed messages)
+"app/enquiries/*" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 
 [tool.mypy]

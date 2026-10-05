@@ -4,6 +4,66 @@
   "title": "Agent run API contracts (T006)",
   "description": "Generated from services/ai-api/app/agent_runs/models.py by `make contracts`. An agent claim is a SUGGESTION until a human accepts it: show it as 'agent suggestion, unreviewed'. Claim values are UNTRUSTED text: show them as plain text. Requests forbid unknown properties: a tenant, an origin, a confidence of the agent's own or a provider can never be sent.",
   "$defs": {
+    "AddFieldIn": {
+      "additionalProperties": false,
+      "description": "A human adds a field the extraction missed. `line` (1-5) for saree_type, fabric, colour and quantity; none for the others.\n`quote`, if given, must be words of the stored enquiry text.",
+      "properties": {
+        "line": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Line"
+        },
+        "field": {
+          "enum": [
+            "saree_type",
+            "fabric",
+            "colour",
+            "quantity",
+            "budget",
+            "deadline",
+            "delivery_city",
+            "payment_terms"
+          ],
+          "title": "Field",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Value",
+          "type": "string"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quote"
+        }
+      },
+      "required": [
+        "field",
+        "value"
+      ],
+      "title": "AddFieldIn",
+      "type": "object"
+    },
     "AgentCostOut": {
       "additionalProperties": false,
       "description": "Today's (UTC) agent spending of a workspace, for its Owner / Admin. Amounts are millionths of\nthe billing currency. `open_micros` is counted at the worst case, not at what was spent.",
@@ -96,6 +156,83 @@
         "replayed"
       ],
       "title": "CancelOut",
+      "type": "object"
+    },
+    "CaptureIn": {
+      "additionalProperties": false,
+      "description": "Paste an enquiry onto a lead. The id is chosen by the caller (idempotent create). `text` and `subject` are what the person\npasted: the API strips invisible characters and scrubs e-mail addresses and Indian mobile numbers BEFORE storing, and the\noriginal is kept nowhere (owner decision 1).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "channel": {
+          "enum": [
+            "email",
+            "whatsapp",
+            "form",
+            "other"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "maxLength": 2000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Subject"
+        },
+        "text": {
+          "maxLength": 200000,
+          "minLength": 1,
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "channel",
+        "received_at",
+        "text"
+      ],
+      "title": "CaptureIn",
+      "type": "object"
+    },
+    "CaptureOut": {
+      "additionalProperties": false,
+      "description": "What was stored, and whether it differs from what was pasted (so the person sees what changed).",
+      "properties": {
+        "enquiry": {
+          "$ref": "#/$defs/EnquiryOut"
+        },
+        "text_changed": {
+          "title": "Text Changed",
+          "type": "boolean"
+        },
+        "truncated": {
+          "title": "Truncated",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enquiry",
+        "text_changed",
+        "truncated"
+      ],
+      "title": "CaptureOut",
       "type": "object"
     },
     "ClaimEvidenceOut": {
@@ -359,6 +496,338 @@
       "title": "ClaimSuggestionOut",
       "type": "object"
     },
+    "DecisionIn": {
+      "additionalProperties": false,
+      "description": "confirm | correct | reject one field. `value` is the corrected value in the person's own words ('30 days credit', 'Rs 5k\neach', 'next Friday'); the same normalisers as the agent's read it. A confirm and a reject carry none.",
+      "properties": {
+        "decision": {
+          "enum": [
+            "confirm",
+            "correct",
+            "reject"
+          ],
+          "title": "Decision",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "maxLength": 120,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "required": [
+        "decision"
+      ],
+      "title": "DecisionIn",
+      "type": "object"
+    },
+    "EnquiryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Id"
+        },
+        "channel": {
+          "enum": [
+            "email",
+            "whatsapp",
+            "form",
+            "other"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "received_at": {
+          "format": "date-time",
+          "title": "Received At",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Subject"
+        },
+        "body": {
+          "title": "Body",
+          "type": "string"
+        },
+        "truncated_from": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Truncated From"
+        },
+        "created_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Created By"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "archived_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Archived At"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "company_id",
+        "contact_id",
+        "channel",
+        "received_at",
+        "subject",
+        "body",
+        "truncated_from",
+        "created_by",
+        "created_at",
+        "archived_at"
+      ],
+      "title": "EnquiryOut",
+      "type": "object"
+    },
+    "FieldAddedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "format": "uuid",
+          "title": "Field Id",
+          "type": "string"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "field_id",
+        "requirement_id",
+        "replayed"
+      ],
+      "title": "FieldAddedOut",
+      "type": "object"
+    },
+    "FieldDecisionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "field_id": {
+          "format": "uuid",
+          "title": "Field Id",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "proposed",
+            "confirmed",
+            "corrected",
+            "rejected"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "field_id",
+        "state",
+        "replayed"
+      ],
+      "title": "FieldDecisionOut",
+      "type": "object"
+    },
+    "FieldValueOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Code"
+        },
+        "int_value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Int Value"
+        },
+        "date_value": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Date Value"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Text"
+        },
+        "basis": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Basis"
+        }
+      },
+      "required": [
+        "code",
+        "int_value",
+        "date_value",
+        "text",
+        "basis"
+      ],
+      "title": "FieldValueOut",
+      "type": "object"
+    },
+    "FlagOut": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "missing",
+            "low_certainty",
+            "conflicting"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "field_key": {
+          "enum": [
+            "saree_type",
+            "fabric",
+            "colour",
+            "quantity",
+            "budget",
+            "deadline",
+            "delivery_city",
+            "payment_terms"
+          ],
+          "title": "Field Key",
+          "type": "string"
+        },
+        "line_no": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line No"
+        }
+      },
+      "required": [
+        "kind",
+        "field_key",
+        "line_no"
+      ],
+      "title": "FlagOut",
+      "type": "object"
+    },
     "OpenReservationOut": {
       "additionalProperties": false,
       "description": "A model call that was reserved and never settled: it keeps counting at its worst case until\nits UTC day ends. `run_status` says whether its run is still running.",
@@ -431,6 +900,378 @@
         "next_cursor"
       ],
       "title": "Page[RunOut]",
+      "type": "object"
+    },
+    "QuestionOut": {
+      "additionalProperties": false,
+      "description": "A clarifying question DRAFT, derived at read time from the flags through closed templates. Nothing about it is stored and\nnothing is ever sent: the screen shows the text and a Copy button.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "field_key": {
+          "enum": [
+            "saree_type",
+            "fabric",
+            "colour",
+            "quantity",
+            "budget",
+            "deadline",
+            "delivery_city",
+            "payment_terms"
+          ],
+          "title": "Field Key",
+          "type": "string"
+        },
+        "line_no": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line No"
+        }
+      },
+      "required": [
+        "code",
+        "text",
+        "field_key",
+        "line_no"
+      ],
+      "title": "QuestionOut",
+      "type": "object"
+    },
+    "RequirementActionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "requirement_id": {
+          "format": "uuid",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "confirmed",
+            "superseded",
+            "discarded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "requirement_id",
+        "status",
+        "replayed"
+      ],
+      "title": "RequirementActionOut",
+      "type": "object"
+    },
+    "RequirementFieldOut": {
+      "additionalProperties": false,
+      "description": "One field. `quote` is UNTRUSTED text from the enquiry (plain text only); `display` is our own wording of the typed value\n(the city is customer text: shown as text too). A manual field has no quote.",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "line_no": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Line No"
+        },
+        "field_key": {
+          "enum": [
+            "saree_type",
+            "fabric",
+            "colour",
+            "quantity",
+            "budget",
+            "deadline",
+            "delivery_city",
+            "payment_terms"
+          ],
+          "title": "Field Key",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FieldValueOut"
+        },
+        "display": {
+          "title": "Display",
+          "type": "string"
+        },
+        "certainty": {
+          "enum": [
+            "stated",
+            "implied",
+            "ambiguous"
+          ],
+          "title": "Certainty",
+          "type": "string"
+        },
+        "state": {
+          "enum": [
+            "proposed",
+            "confirmed",
+            "corrected",
+            "rejected"
+          ],
+          "title": "State",
+          "type": "string"
+        },
+        "conflict": {
+          "title": "Conflict",
+          "type": "boolean"
+        },
+        "created_via": {
+          "enum": [
+            "manual",
+            "import",
+            "agent"
+          ],
+          "title": "Created Via",
+          "type": "string"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote"
+        },
+        "quote_start": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote Start"
+        },
+        "quote_end": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote End"
+        },
+        "decided_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Decided By"
+        },
+        "decided_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Decided At"
+        }
+      },
+      "required": [
+        "id",
+        "line_no",
+        "field_key",
+        "value",
+        "display",
+        "certainty",
+        "state",
+        "conflict",
+        "created_via",
+        "quote",
+        "quote_start",
+        "quote_end",
+        "decided_by",
+        "decided_at"
+      ],
+      "title": "RequirementFieldOut",
+      "type": "object"
+    },
+    "RequirementOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "confirmed",
+            "superseded",
+            "discarded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "created_via": {
+          "enum": [
+            "manual",
+            "import",
+            "agent"
+          ],
+          "title": "Created Via",
+          "type": "string"
+        },
+        "agent_run_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Agent Run Id"
+        },
+        "confirmed_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Confirmed By"
+        },
+        "confirmed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Confirmed At"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "created_via",
+        "agent_run_id",
+        "confirmed_by",
+        "confirmed_at",
+        "created_at"
+      ],
+      "title": "RequirementOut",
+      "type": "object"
+    },
+    "RequirementViewOut": {
+      "additionalProperties": false,
+      "description": "The requirement of an enquiry as a person reviews it. `confirmable`: a line whose saree type AND quantity a human confirmed\nor corrected. `ready_for_quote`: also the delivery city, deadline and payment terms. Neither is computed by a model.",
+      "properties": {
+        "requirement": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RequirementOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/RequirementFieldOut"
+          },
+          "title": "Fields",
+          "type": "array"
+        },
+        "lines": {
+          "items": {
+            "type": "integer"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "confirmable": {
+          "title": "Confirmable",
+          "type": "boolean"
+        },
+        "ready_for_quote": {
+          "title": "Ready For Quote",
+          "type": "boolean"
+        },
+        "flags": {
+          "items": {
+            "$ref": "#/$defs/FlagOut"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "questions": {
+          "items": {
+            "$ref": "#/$defs/QuestionOut"
+          },
+          "title": "Questions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "requirement",
+        "fields",
+        "lines",
+        "confirmable",
+        "ready_for_quote",
+        "flags",
+        "questions"
+      ],
+      "title": "RequirementViewOut",
       "type": "object"
     },
     "ReviewIn": {
