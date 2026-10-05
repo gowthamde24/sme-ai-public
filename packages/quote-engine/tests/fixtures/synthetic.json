@@ -1,0 +1,7 @@
+{
+  "as_of": "2026-01-30",
+  "price_list": [{"sku": "SYN-A", "name": "Synthetic item", "unit_price": 10000, "minimum_order_quantity": 3, "price_breaks": [{"min_qty": 5, "unit_price": 9000}, {"min_qty": 10, "unit_price": 8000}], "tax_bps": 1250, "cost": 5000}],
+  "customer": {"kind": "new"},
+  "order_lines": [{"sku": "SYN-A", "qty": 3}],
+  "policy": {"discount_ceiling_bps": 1000, "shipping": {"flat_fee": 200, "free_above": 50000}, "validity_days": 7, "payment_terms": {"new_advance_bps": 2500, "repeat_advance_bps": 0, "net_days": 15}, "tax_mode": "exclusive"}
+}
