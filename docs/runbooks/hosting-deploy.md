@@ -1,5 +1,7 @@
 # Runbook: deploying the staging environment (manual, by the owner)
 
+> **Deferred (2026-10-05):** This runbook is for the Customer Zero stage (T012). Nothing is deployed before; the hosting recommendation is deferred, re-check prices then (ADR 0017).
+
 Nothing here has been run. It needs accounts only the owner can create (ADR 0015 recommends Supabase Pro in Mumbai plus Google Cloud Run
 in `asia-south1`). Every command is printed by `deploy/cloudrun.sh` before it runs; the script is a **dry run unless you pass `--execute`**.
 

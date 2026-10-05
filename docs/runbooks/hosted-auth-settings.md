@@ -1,5 +1,7 @@
 # Runbook: hosted Supabase Auth and API settings (checklist)
 
+> **Deferred (2026-10-05):** The hosted settings are applied in the Customer Zero stage (T012). Nothing is hosted before (ADR 0017).
+
 **Never run `supabase config push` against a hosted project without the owner's explicit approval.** `supabase/config.toml` carries
 local-only values (`sign_in_sign_ups = 200`, e-mail confirmation off, 6-character passwords). Pushing it would apply them. Set the hosted
 project by hand from this list, then run `scripts/verify_hosted.py`, which checks the parts it can see.

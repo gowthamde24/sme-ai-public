@@ -1,5 +1,7 @@
 # Runbook: backup and restore drill (and the erasures that must be re-applied)
 
+> **Deferred (2026-10-05):** The restore drill belongs to the Customer Zero stage (T012), with the owner's accounts (ADR 0017).
+
 Purpose: prove that a backup restores into a working, **safe** database, and that people who were erased after the backup are erased
 again. It is the fourth prerequisite of the real-data gate (`restore_drill_ref`). Do it on a **throwaway** project, never on production.
 M3 runs it with the owner's accounts; this is the procedure.

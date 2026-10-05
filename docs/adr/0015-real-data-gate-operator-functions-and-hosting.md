@@ -10,6 +10,10 @@ Tests: `supabase/tests/database/45_real_data_gate.test.sql`, `46_sole_owner_and_
 `tests/integration/test_real_data_gate_direct_postgrest.py`, `tests/integration/test_verify_hosted_sql.py`,
 `services/ai-api/tests/test_verify_hosted.py`.
 
+> **Note, 2026-10-05 (ADR 0017): local-first.** The owner decided that nothing is deployed, bought or opened until the full Revenue Engine works
+> locally on synthetic data. The hosting recommendation below stays as written but is **deferred; re-check prices when the Customer Zero stage
+> (T012) starts**. The gate stays closed by default. The deploy files, the hosted verifier and the runbooks stay in the repository for T012.
+
 ## Context
 
 Until the erasure workflow existed, the only thing keeping real people's data out was a constant inside `import_lead_rows`
