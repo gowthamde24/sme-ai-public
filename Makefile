@@ -34,7 +34,8 @@ check-leftovers:
 check-fast: check-leftovers lint typecheck test test-packages
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
-check: check-fast db-test test-integration eval
+# db-reset first: audit rows of earlier integration runs are append-only, so a stale database could trip a pgTAP canary (T008 owner change I).
+check: check-fast db-reset db-test test-integration eval
 
 # Local Supabase stack (Docker). Migrations in supabase/migrations are applied on start.
 db-start:

@@ -149,7 +149,11 @@ select is(
         'public.execute_erasure',
         'public.cancel_erasure',
         'app.match_key',
-        'app.website_host')),
+        'app.website_host',
+        -- T008: pure, immutable CHECK helpers of enquiries / requirement_fields (they read nothing)
+        'app.text_has_contact',
+        'app.requirement_vocab',
+        'app.requirement_value_ok')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions

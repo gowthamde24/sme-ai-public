@@ -233,6 +233,21 @@ begin
   end loop;
 end $$;
 
+-- T008: one enquiry and one requirement per fixture tenant (parents for the composite-foreign-key attacks of 12).
+-- Prefix 'a' / 'b': tests.rid('a_enquiry'), tests.rid('a_requirement'). Requires seed_two_tenants() and seed_crm().
+create or replace function tests.seed_t008() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body)
+    values (tests.rid(p || '_enquiry'), tests.tid(p), tests.rid(p || '_lead'), 'email', now() - interval '1 hour', 'Fixture enquiry for tenant ' || p);
+    insert into public.requirements (id, tenant_id, enquiry_id)
+    values (tests.rid(p || '_requirement'), tests.tid(p), tests.rid(p || '_enquiry'));
+  end loop;
+end $$;
+
 -- T005: one ICP config version, one import batch and one lead label per fixture tenant.
 -- Prefix 'a' / 'b': tests.rid('a_icp1'), tests.rid('a_batch'), tests.rid('a_label').
 -- Requires seed_two_tenants() and seed_crm().
@@ -393,6 +408,14 @@ begin
     (tests.rid(p || '_er_l4'), t, tests.rid(p || '_er_e4'), c, null, null, null),
     (tests.rid(p || '_er_l5'), t, tests.rid(p || '_er_e5'), null, l, null, null),
     (tests.rid(p || '_er_l6'), t, tests.rid(p || '_er_e6'), null, null, tests.rid(p || '_er_c4'), 'supports');
+  -- T008: an enquiry captured on the lead (company c, contact k) and the fields extracted from it
+  insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, subject, body)
+  values (tests.rid(p || '_er_enq'), t, l, 'email', now() - interval '1 hour', 'Re: Kzv9 order from Zed Qxjv', 'Zed Qxjv here from Kzv9pur: need 20 sarees');
+  insert into public.requirements (id, tenant_id, enquiry_id) values (tests.rid(p || '_er_req'), t, tests.rid(p || '_er_enq'));
+  insert into public.requirement_fields (id, tenant_id, requirement_id, line_no, field_key, value_int, basis, certainty, quote, quote_start, quote_end) values
+    (tests.rid(p || '_er_f1'), t, tests.rid(p || '_er_req'), 1, 'quantity', 20, 'piece', 'stated', 'Zed Qxjv here from Kzv9pur: need 20 sarees', 0, 41);
+  insert into public.requirement_fields (id, tenant_id, requirement_id, line_no, field_key, value_text, certainty, quote, quote_start, quote_end) values
+    (tests.rid(p || '_er_f2'), t, tests.rid(p || '_er_req'), null, 'delivery_city', 'Kzv9pur', 'stated', 'Kzv9pur', 20, 27);
 end $$;
 
 -- Every place a pattern still appears in tenant p, as 'table.column#row id' strings (text, text[] and jsonb columns of EVERY table with a

@@ -111,6 +111,20 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    $$with c as (insert into public.claims (id, tenant_id, company_id, predicate, value, confidence) values (%2$L, %1$L, %3$L, 'exports_to', 'Generic value', 'low') returning id)
      insert into public.claim_reviews (id, tenant_id, claim_id, decision, confidence, self_review) select %2$L, %1$L, c.id, 'accepted', 'low', false from c$$,
    'decision = decision', $$delete from public.claim_reviews where id = %2$L$$, true),
+  -- T008. Enquiries are inserted by Owner / Admin / Sales (already scrubbed: app.text_has_contact); requirements and their fields are written
+  -- only by the definer functions, so no role inserts, updates or deletes them directly.
+  ('enquiries',
+   $$insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, subject, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Saree enquiry', 'Need 20 kanjivaram sarees by 15 November')$$,
+   'archived_at = archived_at', $$delete from public.enquiries where id = %2$L$$, true),
+  ('requirements',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id)
+     insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e$$,
+   'status = status', $$delete from public.requirements where id = %2$L$$, true),
+  ('requirement_fields',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id)
+     insert into public.requirement_fields (id, tenant_id, requirement_id, line_no, field_key, value_int, basis, certainty, quote, quote_start, quote_end) select %2$L, %1$L, r.id, 1, 'quantity', 20, 'piece', 'stated', '20 kanjivaram sarees', 5, 25 from r$$,
+   'state = state', $$delete from public.requirement_fields where id = %2$L$$, true),
   ('memberships',
    $$insert into public.memberships (tenant_id, user_id, role) values (%1$L, %5$L, 'viewer')$$,
    'role = role', $$delete from public.memberships where tenant_id = %1$L and user_id = %5$L$$, false),
@@ -174,6 +188,13 @@ select t, r, s, i, u, d from (values
   ('tenant_data_policy','sales', true, false, false, false), ('tenant_data_policy','viewer', true, false, false, false),
   ('claim_reviews', 'owner',  true, false, false, false), ('claim_reviews', 'admin',  true, false, false, false),
   ('claim_reviews', 'sales',  true, false, false, false), ('claim_reviews', 'viewer', true, false, false, false),
+  -- T008: everyone reads; Owner / Admin / Sales capture an enquiry (and Owner / Admin archive it); requirements and fields are written only by definer functions.
+  ('enquiries',     'owner',  true, true,  true,  false), ('enquiries',     'admin',  true, true,  true,  false),
+  ('enquiries',     'sales',  true, true,  true,  false), ('enquiries',     'viewer', true, false, false, false),
+  ('requirements',  'owner',  true, false, false, false), ('requirements',  'admin',  true, false, false, false),
+  ('requirements',  'sales',  true, false, false, false), ('requirements',  'viewer', true, false, false, false),
+  ('requirement_fields','owner', true, false, false, false), ('requirement_fields','admin', true, false, false, false),
+  ('requirement_fields','sales', true, false, false, false), ('requirement_fields','viewer', true, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

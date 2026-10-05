@@ -71,8 +71,12 @@ select is(pg_temp.d($$select md5(x::text) from public.contacts x where id = test
 select is(pg_temp.d($$select md5(string_agg(x::text, '~' order by x::text)) from public.lead_labels x where tenant_id = tests.tid('a')$$), (select labels_digest from pre), 'labels are untouched');
 select is(tests.er_digest('b'), (select b_digest from pre), 'tenant b is byte-identical');
 select is((select array_agg(h order by h) from unnest(tests.er_hits('a', 'kzv9')) h),
-          (select array_agg(h order by h) from unnest((select kzv9_before from pre)) h where h not in ('leads.source#' || tests.rid('a_lead'), 'opportunities.lost_reason#' || tests.rid('a_opp'))),
-          'the company''s own canary is still there (only the two contact-linked rows that mentioned it were tombstoned)');
+          (select array_agg(h order by h) from unnest((select kzv9_before from pre)) h where h not in ('leads.source#' || tests.rid('a_lead'), 'opportunities.lost_reason#' || tests.rid('a_opp'),
+                                                                                                       -- T008: the enquiry captured on the contact's lead and the fields extracted from it
+                                                                                                       'enquiries.subject#' || tests.rid('a_er_enq'), 'enquiries.body#' || tests.rid('a_er_enq'),
+                                                                                                       'requirement_fields.quote#' || tests.rid('a_er_f1'), 'requirement_fields.quote#' || tests.rid('a_er_f2'),
+                                                                                                       'requirement_fields.value_text#' || tests.rid('a_er_f2'))),
+          'the company''s own canary is still there (only the contact-linked rows that mentioned it were tombstoned)');
 
 -- ---- the result and the log
 select ok((select r -> 'counts' ->> 'contacts.full_name' = '1' and r -> 'counts' ->> 'contacts.email' = '1' from res), 'the counts say what changed');

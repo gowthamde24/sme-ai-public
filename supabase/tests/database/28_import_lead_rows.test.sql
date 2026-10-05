@@ -183,7 +183,9 @@ select is(pg_temp.out(pg_temp.imp('a_sales', 'a', jsonb_build_array('just text',
 select is(pg_temp.why(pg_temp.imp('a_sales', 'a', jsonb_build_array('just text', 5, null, jsonb_build_array(1), pg_temp.row('DEMO After Junk')), gen_random_uuid(), true), 3), 'invalid_row', 'a null row -> invalid_row');
 select is(pg_temp.out(pg_temp.imp('a_sales', 'a', jsonb_build_array('just text', 5, null, jsonb_build_array(1), pg_temp.row('DEMO After Junk')), gen_random_uuid(), true), 5), 'created', '...and a good row after junk is still handled');
 
--- the gate canary: a real-looking person never reaches a table, a report or the audit trail
+-- the gate canary: a real-looking person never reaches a table, a report or the audit trail.
+-- (Only audit rows written by THIS transaction are scanned: committed rows of earlier integration runs are append-only and may hold
+-- any digits, including this canary's. `make check` also resets the database before this step.)
 select is(pg_temp.cnt('a'), '3,1,3,0,2,2', 'every gate case was a dry run: nothing written');
 create temp table gate_canary as
 select pg_temp.imp('a_sales', 'a', jsonb_build_array(pg_temp.row('DEMO Canary Co', jsonb_build_object('contact_name', 'Zephyrine Quasimodo', 'contact_email', 'zephyrine.quasi@gmail-canary.example.in', 'contact_phone', '+91 98765 43210', 'contact_job_title', 'Chief Pretzel Officer'))), gen_random_uuid()) as report;
@@ -193,7 +195,7 @@ select is((select count(*) from public.companies where name = 'DEMO Canary Co'),
 select is(
   (select count(*) from (
      select to_jsonb(x)::text t from public.import_rows x union all select to_jsonb(x)::text from public.import_batches x
-     union all select to_jsonb(x)::text from public.audit_events x union all select (select report from gate_canary)::text) s
+     union all select to_jsonb(x)::text from public.audit_events x where x.created_at >= now() union all select (select report from gate_canary)::text) s
     where t ~* '(zephyrine|quasimodo|gmail-canary|98765|pretzel)'),
   0::bigint, 'no part of the rejected contact appears in the report, the batch / row records or the audit trail');
 
