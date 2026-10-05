@@ -181,6 +181,18 @@ class FakeAgentRunsRepository:
             if t == tenant_id and getattr(c, column) == target_id
         ][:limit]
 
+    def list_agent_claims(
+        self, token: str, tenant_id: uuid.UUID, *, state: str, limit: int
+    ) -> list[ClaimSuggestionOut]:
+        self._seen(token, "list_agent_claims")
+        return [
+            c
+            for (t, c) in self.claims.values()
+            if t == tenant_id
+            and c.created_via == "agent"
+            and (state == "all" or c.review_state == "unreviewed")
+        ][:limit]
+
     def get_claim(
         self, token: str, tenant_id: uuid.UUID, claim_id: uuid.UUID
     ) -> ClaimSuggestionOut | None:

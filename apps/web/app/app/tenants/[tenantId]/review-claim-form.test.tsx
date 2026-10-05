@@ -37,13 +37,14 @@ describe("ReviewClaimForms", () => {
     expect(new Set(ids.map((i) => i.value)).size).toBe(2);
   });
 
-  it("offers exactly low, medium and high to accept as, and the five reasons to reject with", () => {
+  it("offers exactly low, medium and high to accept as, and an OPTIONAL reason to reject with", () => {
     renderForms();
     const confidence = screen.getByLabelText(/accept as/i) as HTMLSelectElement;
     expect(Array.from(confidence.options).map((o) => o.value)).toEqual(["", "low", "medium", "high"]);
     expect(confidence.value).toBe(""); // NOTHING is preselected
-    const reason = screen.getByLabelText(/reject because/i) as HTMLSelectElement;
+    const reason = screen.getByLabelText(/reject \(a reason is optional\)/i) as HTMLSelectElement;
     expect(reason.value).toBe("");
+    expect(reason.required).toBe(false);
     expect(Array.from(reason.options).map((o) => o.value)).toEqual([
       "",
       "incorrect",
@@ -54,12 +55,20 @@ describe("ReviewClaimForms", () => {
     ]);
   });
 
-  it("a tap on Accept or Reject with nothing chosen submits nothing", () => {
+  it("a tap on Accept with nothing chosen submits nothing (a confidence is required)", () => {
     renderForms();
     fireEvent.click(screen.getByRole("button", { name: "Accept" }));
-    fireEvent.click(screen.getByRole("button", { name: "Reject" }));
     expect(accept).not.toHaveBeenCalled();
     expect(reject).not.toHaveBeenCalled();
+  });
+
+  it("a tap on Reject needs no choice at all: one tap says no", async () => {
+    renderForms();
+    fireEvent.click(screen.getByRole("button", { name: "Reject" }));
+    await waitFor(() => expect(reject).toHaveBeenCalledTimes(1));
+    const data = reject.mock.calls[0][1] as FormData;
+    expect([data.get("review_id"), data.get("decision"), data.get("reason_code")]).toEqual([REJECT_ID, "rejected", ""]);
+    expect(accept).not.toHaveBeenCalled();
   });
 
   it("accept submits the accept id, the decision and the chosen confidence", async () => {
@@ -78,7 +87,7 @@ describe("ReviewClaimForms", () => {
 
   it("reject submits the reject id, the decision and the chosen reason", async () => {
     renderForms();
-    fireEvent.change(screen.getByLabelText(/reject because/i), { target: { value: "duplicate" } });
+    fireEvent.change(screen.getByLabelText(/reject \(a reason is optional\)/i), { target: { value: "duplicate" } });
     fireEvent.click(screen.getByRole("button", { name: "Reject" }));
     await waitFor(() => expect(reject).toHaveBeenCalledTimes(1));
     const data = reject.mock.calls[0][1] as FormData;

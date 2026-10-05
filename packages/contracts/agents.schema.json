@@ -59,6 +59,72 @@
       "title": "CancelOut",
       "type": "object"
     },
+    "ClaimEvidenceOut": {
+      "additionalProperties": false,
+      "description": "What a suggestion rests on, for a reviewer. Everything here is UNTRUSTED text (a model chose\nthe quote from a page a stranger controls): clients render it as plain text. No link is\noffered: the source is a host and a path, shown as text.\n\nThe runtime checked that the quote appears in the page it names; the DATABASE did not (it\nnever sees the page): a client says so next to the quote.",
+      "properties": {
+        "kind": {
+          "title": "Kind",
+          "type": "string"
+        },
+        "stance": {
+          "enum": [
+            "supports",
+            "context",
+            "contradicts"
+          ],
+          "title": "Stance",
+          "type": "string"
+        },
+        "provider": {
+          "title": "Provider",
+          "type": "string"
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Host"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Path"
+        },
+        "quote": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Quote"
+        }
+      },
+      "required": [
+        "kind",
+        "stance",
+        "provider",
+        "host",
+        "path",
+        "quote"
+      ],
+      "title": "ClaimEvidenceOut",
+      "type": "object"
+    },
     "ClaimSuggestionOut": {
       "additionalProperties": false,
       "description": "A claim with its effective review state. An agent claim is a SUGGESTION until a human\naccepts it.",
@@ -212,6 +278,26 @@
           "default": false,
           "title": "Counts Toward Score",
           "type": "boolean"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "evidence": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/ClaimEvidenceOut"
+          },
+          "title": "Evidence",
+          "type": "array"
         }
       },
       "required": [

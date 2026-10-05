@@ -116,6 +116,13 @@ export default async function TenantPage({
         </Link>
         {" · "}
         <Link
+          href={`/app/tenants/${tenantId}/suggestions`}
+          style={{ fontWeight: 600 }}
+        >
+          Review suggestions →
+        </Link>
+        {" · "}
+        <Link
           href={`/app/tenants/${tenantId}/agents`}
           style={{ fontWeight: 600 }}
         >

@@ -383,3 +383,182 @@ def test_a_second_tenant_never_sees_the_first_tenants_research(
 
 
 _ = dataclasses
+
+
+# ------------------------------------------------------------------------------ the reviewer's screen (T007 M3): the API behind it
+HOSTILE_QUOTE = '<img src=x onerror=alert(1)> <script>alert(2)</script> javascript:alert(3) "q" &lt;b&gt;'
+
+
+def agent_claims(
+    client: TestClient, t: Tenant, user: str = "owner", state: str = "unreviewed"
+) -> list[dict[str, Any]]:
+    r = client.get(
+        f"/v1/tenants/{t.id}/agent-claims",
+        params={"state": state, "limit": 100},
+        headers=bearer(t.users[user]),
+    )
+    assert r.status_code == 200, r.text
+    return [dict(c) for c in r.json()]
+
+
+def plant_agent_claim(
+    t: Tenant, run_id: str, company_id: str, lead_id: str, predicate: str, value: str, quote: str
+) -> str:
+    """A second agent claim (a different value) and its evidence, written the way the agent function writes them (the trusted role with
+    the agent settings), so that a reviewer sees two suggestions that disagree."""
+    evidence, claim, link = uid(), uid(), uid()
+    operator_sql.sql(
+        "select set_config('app.created_via', 'agent', false), set_config('app.agent_run_id', "
+        f"'{run_id}', false); "
+        f"insert into public.evidence (id, tenant_id, kind, provider, url, snippet) values ('{evidence}', '{t.id}', 'web_page', 'agent.research', 'https://saree-house.test/about', $q${quote}$q$); "
+        f"insert into public.claims (id, tenant_id, company_id, predicate, value, confidence, source_lead_id) values ('{claim}', '{t.id}', '{company_id}', '{predicate}', '{value}', 'unverified', '{lead_id}'); "
+        f"insert into public.evidence_links (id, tenant_id, evidence_id, claim_id, stance) values ('{link}', '{t.id}', '{evidence}', '{claim}', 'supports')"
+    )
+    return claim
+
+
+def test_the_reviewers_list_shows_each_claim_with_its_company_the_quote_and_the_source(
+    api: tuple[TestClient, World],
+) -> None:
+    client, w = api
+    t = w.a
+    cid = company(client, t, "Saree House Review", "https://saree-house.test/")
+    lid = lead(client, t, cid)
+    run = research(client, t, lid)
+    assert run["status"] == "succeeded"
+    mine = [c for c in agent_claims(client, t) if c["company_name"] == "Saree House Review"]
+    assert {c["predicate"] for c in mine} == {"buyer_type", "order_scale"}
+    buyer = next(c for c in mine if c["predicate"] == "buyer_type")
+    assert (
+        buyer["review_state"] == "unreviewed"
+        and buyer["created_via"] == "agent"
+        and buyer["counts_toward_score"] is True
+    )
+    (e,) = buyer["evidence"]
+    assert (e["kind"], e["provider"], e["stance"]) == ("web_page", "agent.research", "supports")
+    assert e["host"] == "saree-house.test" and e["path"] == "/"
+    assert "url" not in e, "a host and a path, never a link"
+    page = (FIXTURES / "saree-house.test" / "index.html").read_text()
+    assert (
+        " ".join(e["quote"].split()) in " ".join(page.replace("<", " <").split())
+        or e["quote"].split(" - ")[0] in page
+    )
+    # every member sees them (a viewer too); the list is the caller's own view, per tenant
+    assert {c["id"] for c in agent_claims(client, t, "viewer")} >= {c["id"] for c in mine}
+    assert all(c["id"] not in {x["id"] for x in agent_claims(client, w.b, "owner")} for c in mine)
+    assert client.get(f"/v1/tenants/{t.id}/agent-claims").status_code == 401
+
+
+def test_a_hostile_quote_comes_back_verbatim_as_json_data(api: tuple[TestClient, World]) -> None:
+    client, w = api
+    t = w.a
+    cid = company(client, t, "Hostile Quote Co", "https://saree-house.test/")
+    lid = lead(client, t, cid)
+    run = research(client, t, lid)
+    plant_agent_claim(t, run["id"], cid, lid, "buyer_type", "boutique", HOSTILE_QUOTE)
+    listed = [c for c in agent_claims(client, t) if c["company_name"] == "Hostile Quote Co"]
+    quotes = {e["quote"] for c in listed for e in c["evidence"]}
+    assert HOSTILE_QUOTE in quotes, "the exact characters, as data"
+    raw = client.get(
+        f"/v1/tenants/{t.id}/agent-claims", params={"limit": 100}, headers=bearer(t.users["owner"])
+    )
+    assert raw.headers["content-type"].startswith("application/json")
+
+
+def test_two_suggestions_that_disagree_are_both_listed_and_the_newest_review_wins(
+    api: tuple[TestClient, World],
+) -> None:
+    client, w = api
+    t = w.a
+    cid = company(client, t, "Conflict Co", "https://saree-house.test/")
+    lid = lead(client, t, cid)
+    base = score(client, t, lid)
+    run = research(client, t, lid)
+    plant_agent_claim(t, run["id"], cid, lid, "buyer_type", "consumer", "We sell to shoppers.")
+    mine = [
+        c
+        for c in agent_claims(client, t)
+        if c["company_name"] == "Conflict Co" and c["predicate"] == "buyer_type"
+    ]
+    assert {c["value"] for c in mine} == {"wholesaler", "consumer"}, (
+        "side by side: both are in the list"
+    )
+    wholesaler = next(c for c in mine if c["value"] == "wholesaler")
+    consumer = next(c for c in mine if c["value"] == "consumer")
+    # accept one with a confidence; reject the other with NO reason (one tap)
+    review(client, t, wholesaler["id"], "accepted", "high")
+    r = client.post(
+        f"/v1/tenants/{t.id}/claims/{consumer['id']}/reviews",
+        json={"id": uid(), "decision": "rejected"},
+        headers=bearer(t.users["owner"]),
+    )
+    assert r.status_code == 201, r.text
+    states = {
+        c["value"]: c["review_state"]
+        for c in agent_claims(client, t, state="all")
+        if c["company_name"] == "Conflict Co" and c["predicate"] == "buyer_type"
+    }
+    assert states == {"wholesaler": "accepted", "consumer": "rejected"}
+    assert score(client, t, lid) > base
+    # the newest review wins: reject the accepted one, accept the other
+    r = client.post(
+        f"/v1/tenants/{t.id}/claims/{wholesaler['id']}/reviews",
+        json={"id": uid(), "decision": "rejected"},
+        headers=bearer(t.users["owner"]),
+    )
+    assert r.status_code == 201, r.text
+    states = {
+        c["value"]: c["review_state"]
+        for c in agent_claims(client, t, state="all")
+        if c["company_name"] == "Conflict Co" and c["predicate"] == "buyer_type"
+    }
+    assert states["wholesaler"] == "rejected"
+    # and the reason is OPTIONAL but, when given, a closed code
+    r = client.post(
+        f"/v1/tenants/{t.id}/claims/{consumer['id']}/reviews",
+        json={"id": uid(), "decision": "rejected", "reason_code": "free text"},
+        headers=bearer(t.users["owner"]),
+    )
+    assert r.status_code == 422
+    r = client.post(
+        f"/v1/tenants/{t.id}/claims/{consumer['id']}/reviews",
+        json={"id": uid(), "decision": "rejected", "reason_code": "duplicate"},
+        headers=bearer(t.users["owner"]),
+    )
+    assert r.status_code == 201, r.text
+
+
+def test_only_an_owner_or_admin_can_review_and_a_rejection_alone_changes_nothing_else(
+    api: tuple[TestClient, World],
+) -> None:
+    client, w = api
+    t = w.a
+    cid = company(client, t, "Role Co", "https://saree-house.test/")
+    lid = lead(client, t, cid)
+    base = score(client, t, lid)
+    research(client, t, lid)
+    claim_id = next(
+        c["id"]
+        for c in agent_claims(client, t)
+        if c["company_name"] == "Role Co" and c["predicate"] == "buyer_type"
+    )
+    for role in ("sales", "viewer"):
+        r = client.post(
+            f"/v1/tenants/{t.id}/claims/{claim_id}/reviews",
+            json={"id": uid(), "decision": "rejected"},
+            headers=bearer(t.users[role]),
+        )
+        assert r.status_code == 403, (role, r.text)
+    stranger = client.post(
+        f"/v1/tenants/{t.id}/claims/{claim_id}/reviews",
+        json={"id": uid(), "decision": "rejected"},
+        headers=bearer(w.b.users["owner"]),
+    )
+    assert stranger.status_code in (403, 404)
+    r = client.post(
+        f"/v1/tenants/{t.id}/claims/{claim_id}/reviews",
+        json={"id": uid(), "decision": "rejected"},
+        headers=bearer(t.users["admin"]),
+    )
+    assert r.status_code == 201, r.text
+    assert score(client, t, lid) == base, "a rejection moves no score"

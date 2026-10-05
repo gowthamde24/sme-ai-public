@@ -46,13 +46,43 @@ export async function reviewClaimAction(
   _prev: ReviewActionState,
   formData: FormData,
 ): Promise<ReviewActionState> {
+  if (!isCanonicalUuid(targetId) || !TARGETS.includes(target))
+    return { ok: false, error: "This suggestion is not available." };
+  return submitReview(
+    tenantId,
+    claimId,
+    countsTowardScore,
+    formData,
+    `/app/tenants/${tenantId}/${target}/${targetId}`,
+  );
+}
+
+/** The same review, from the workspace's review screen (it revalidates that screen, not a company or lead page). */
+export async function reviewQueueClaimAction(
+  tenantId: string,
+  claimId: string,
+  countsTowardScore: boolean,
+  _prev: ReviewActionState,
+  formData: FormData,
+): Promise<ReviewActionState> {
+  return submitReview(
+    tenantId,
+    claimId,
+    countsTowardScore,
+    formData,
+    `/app/tenants/${tenantId}/suggestions`,
+  );
+}
+
+async function submitReview(
+  tenantId: string,
+  claimId: string,
+  countsTowardScore: boolean,
+  formData: FormData,
+  revalidate: string,
+): Promise<ReviewActionState> {
   const user = await requireUser();
-  if (
-    !isCanonicalUuid(tenantId) ||
-    !isCanonicalUuid(targetId) ||
-    !isCanonicalUuid(claimId) ||
-    !TARGETS.includes(target)
-  )
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(claimId))
     return { ok: false, error: "This suggestion is not available." };
   const id = field(formData, "review_id");
   if (!isCanonicalUuid(id))
@@ -66,10 +96,12 @@ export async function reviewClaimAction(
       return { ok: false, error: "Choose how confident you are: low, medium or high." };
     input = { id, decision, confidence: confidence as ReviewConfidence };
   } else if (decision === "rejected") {
+    // a rejection needs no reason; one that is given must be one of the closed codes
     const reason = field(formData, "reason_code");
-    if (!(REVIEW_REASONS as readonly string[]).includes(reason))
-      return { ok: false, error: "Choose a reason for rejecting." };
-    input = { id, decision, reason_code: reason as ReviewReason };
+    if (reason === "") input = { id, decision };
+    else if ((REVIEW_REASONS as readonly string[]).includes(reason))
+      input = { id, decision, reason_code: reason as ReviewReason };
+    else return { ok: false, error: "That reason is not one of the choices." };
   } else {
     return { ok: false, error: "Choose accept or reject." };
   }
@@ -94,7 +126,7 @@ export async function reviewClaimAction(
     return { ok: false, error: "Could not save the review. Try again." };
   }
 
-  revalidatePath(`/app/tenants/${tenantId}/${target}/${targetId}`);
+  revalidatePath(revalidate);
   return {
     ok: true,
     message:

@@ -1,5 +1,6 @@
 import type {
   AgentSettingsOut,
+  ClaimEvidenceOut,
   ClaimSuggestionOut,
   PageRunOut,
   ReviewIn,
@@ -19,6 +20,7 @@ import { isCanonicalUuid } from "./crm";
  */
 export type {
   AgentSettingsOut,
+  ClaimEvidenceOut,
   ClaimSuggestionOut,
   PageRunOut,
   ReviewOut,
@@ -165,8 +167,26 @@ export function parseRunPage(json: unknown): PageRunOut {
   return { items: json.items.map(parseRun), next_cursor: next };
 }
 
+const STANCES = ["supports", "context", "contradicts"] as const;
+
+/** One cited piece of evidence. EVERY field is untrusted text (a model chose the quote from a page a stranger controls):
+ * the screens render it as plain text and never build a link, an image or a frame from it. */
+export function parseClaimEvidence(json: unknown): ClaimEvidenceOut {
+  if (!isRecord(json)) return bad("evidence");
+  return {
+    kind: str(json, "kind"),
+    stance: oneOf(json, "stance", STANCES),
+    provider: str(json, "provider"),
+    host: strOrNull(json, "host"),
+    path: strOrNull(json, "path"),
+    quote: strOrNull(json, "quote"),
+  };
+}
+
 export function parseClaim(json: unknown): ClaimSuggestionOut {
   if (!isRecord(json)) return bad("claim");
+  const evidence = json.evidence;
+  if (evidence !== undefined && !Array.isArray(evidence)) return bad("evidence");
   return {
     id: str(json, "id"),
     company_id: strOrNull(json, "company_id"),
@@ -184,6 +204,8 @@ export function parseClaim(json: unknown): ClaimSuggestionOut {
     reviewed_by: strOrNull(json, "reviewed_by"),
     reviewed_at: strOrNull(json, "reviewed_at"),
     counts_toward_score: json.counts_toward_score === true,
+    company_name: json.company_name === undefined ? null : strOrNull(json, "company_name"),
+    evidence: (evidence ?? []).map(parseClaimEvidence),
   };
 }
 
@@ -313,11 +335,27 @@ export async function fetchClaims(
   return json.map(parseClaim);
 }
 
+/** The workspace's agent suggestions (newest first), each with its company's name and the evidence it cites. */
+export async function fetchAgentClaims(
+  accessToken: string,
+  tenantId: string,
+  state: "unreviewed" | "all" = "unreviewed",
+  limit = 50,
+): Promise<ClaimSuggestionOut[]> {
+  checked(tenantId);
+  const json = await apiRequest(
+    `/v1/tenants/${tenantId}/agent-claims?state=${state}&limit=${limit}`,
+    accessToken,
+  );
+  if (!Array.isArray(json)) return bad("claims");
+  return json.map(parseClaim);
+}
+
 export type ReviewInput = {
   id: string;
 } & (
   | { decision: "accepted"; confidence: ReviewConfidence }
-  | { decision: "rejected"; reason_code: ReviewReason }
+  | { decision: "rejected"; reason_code?: ReviewReason }
 );
 
 /** Idempotent on `id`: an identical retry answers 200 (replayed), a changed one 409. */

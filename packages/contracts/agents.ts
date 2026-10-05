@@ -13,6 +13,15 @@ export interface CancelOut {
   replayed: boolean;
 }
 
+export interface ClaimEvidenceOut {
+  kind: string;
+  stance: "supports" | "context" | "contradicts";
+  provider: string;
+  host: string | null;
+  path: string | null;
+  quote: string | null;
+}
+
 export interface ClaimSuggestionOut {
   id: string;
   company_id: string | null;
@@ -30,6 +39,8 @@ export interface ClaimSuggestionOut {
   reviewed_by: string | null;
   reviewed_at: string | null;
   counts_toward_score?: boolean;
+  company_name?: string | null;
+  evidence?: ClaimEvidenceOut[];
 }
 
 export interface PageRunOut {

@@ -12,6 +12,7 @@ import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any, Protocol
+from urllib.parse import urlsplit
 
 import httpx
 from pydantic import ValidationError
@@ -19,6 +20,7 @@ from pydantic import ValidationError
 from app.agent_runs.models import (
     AgentSettingsOut,
     CancelOut,
+    ClaimEvidenceOut,
     ClaimSuggestionOut,
     ReviewOut,
     RunOut,
@@ -43,7 +45,7 @@ RUN_SELECT = (
 )
 CLAIM_SELECT = (
     "id,company_id,lead_id,predicate,value,confidence,claim_confidence,created_via,agent_run_id,"
-    "created_by,created_at,review_state,review_confidence,reviewed_by,reviewed_at"
+    "created_by,created_at,review_state,review_confidence,reviewed_by,reviewed_at,home_company_id"
 )
 CLAIMS_EFFECTIVE = "claims_effective"
 _SQLSTATE = re.compile(r"^(?:[0-9A-Z]{5}|PGRST\d{3})$")
@@ -114,6 +116,10 @@ class AgentRunsRepository(Protocol):
         limit: int,
     ) -> list[ClaimSuggestionOut]: ...
 
+    def list_agent_claims(
+        self, token: str, tenant_id: uuid.UUID, *, state: str, limit: int
+    ) -> list[ClaimSuggestionOut]: ...
+
     def get_claim(
         self, token: str, tenant_id: uuid.UUID, claim_id: uuid.UUID
     ) -> ClaimSuggestionOut | None: ...
@@ -181,9 +187,40 @@ def parse_run(row: Any, *, now: datetime | None = None) -> RunOut:
     return run
 
 
+def _evidence_out(item: dict[str, Any], link: dict[str, Any]) -> ClaimEvidenceOut:
+    """One cited piece of evidence as a reviewer sees it: a host and a path (never a link) and the
+    quote as stored."""
+    host: str | None = None
+    path: str | None = None
+    url = item.get("url")
+    if isinstance(url, str):
+        try:
+            parts = urlsplit(url)
+            host, path = parts.hostname, parts.path or "/"
+        except ValueError:
+            host = path = None
+    snippet = item.get("snippet")
+    try:
+        return ClaimEvidenceOut(
+            kind=str(item["kind"]),
+            stance=link["stance"],
+            provider=str(item["provider"]),
+            host=host,
+            path=path,
+            quote=snippet if isinstance(snippet, str) else None,
+        )
+    except (ValidationError, KeyError):
+        logger.error("agent runs data layer returned evidence that does not match ClaimEvidenceOut")
+        raise UpstreamError("unexpected row shape") from None
+
+
 def _parse_claim(row: Any) -> ClaimSuggestionOut:
     try:
-        return ClaimSuggestionOut.model_validate(row)
+        data = dict(row)
+        data.pop(
+            "home_company_id", None
+        )  # used to look up the company's name, not part of the answer
+        return ClaimSuggestionOut.model_validate(data)
     except (ValidationError, TypeError, ValueError):
         logger.error(
             "agent runs data layer returned a claim that does not match ClaimSuggestionOut"
@@ -372,7 +409,97 @@ class PostgrestAgentRunsRepository:
                 "limit": str(limit),
             },
         )
-        return [_parse_claim(row) for row in rows]
+        return self._with_context(token, tenant_id, rows)
+
+    def list_agent_claims(
+        self, token: str, tenant_id: uuid.UUID, *, state: str, limit: int
+    ) -> list[ClaimSuggestionOut]:
+        """Agent claims of the whole workspace, newest first: `state` is 'unreviewed' or 'all'.
+        What the caller may see is decided by RLS (their own JWT)."""
+        params = {
+            "select": CLAIM_SELECT,
+            "tenant_id": f"eq.{tenant_id}",
+            "created_via": "eq.agent",
+            "archived_at": "is.null",
+            "order": "created_at.desc,id.desc",
+            "limit": str(limit),
+        }
+        if state == "unreviewed":
+            params["review_state"] = "eq.unreviewed"
+        return self._with_context(
+            token, tenant_id, self._rows(f"/{CLAIMS_EFFECTIVE}", token, params)
+        )
+
+    def _with_context(
+        self, token: str, tenant_id: uuid.UUID, rows: list[Any]
+    ) -> list[ClaimSuggestionOut]:
+        """The claims, each with its company's name and the evidence it cites (live links only)."""
+        claims = [_parse_claim(row) for row in rows]
+        if not claims:
+            return claims
+        ids = ",".join(str(c.id) for c in claims)
+        links = self._rows(
+            "/evidence_links",
+            token,
+            {
+                "select": "claim_id,evidence_id,stance",
+                "tenant_id": f"eq.{tenant_id}",
+                "claim_id": f"in.({ids})",
+                "archived_at": "is.null",
+                "limit": "1000",
+            },
+        )
+        evidence_ids = sorted({str(link["evidence_id"]) for link in links})
+        found: dict[str, dict[str, Any]] = {}
+        if evidence_ids:
+            for item in self._rows(
+                "/evidence",
+                token,
+                {
+                    "select": "id,kind,provider,url,snippet",
+                    "tenant_id": f"eq.{tenant_id}",
+                    "id": f"in.({','.join(evidence_ids)})",
+                    "limit": "1000",
+                },
+            ):
+                found[str(item["id"])] = item
+        company_ids = sorted(
+            {
+                str(r["home_company_id"])
+                for r in rows
+                if isinstance(r, dict) and r.get("home_company_id")
+            }
+        )
+        names: dict[str, str] = {}
+        if company_ids:
+            for item in self._rows(
+                "/companies",
+                token,
+                {
+                    "select": "id,name",
+                    "tenant_id": f"eq.{tenant_id}",
+                    "id": f"in.({','.join(company_ids)})",
+                    "limit": "1000",
+                },
+            ):
+                names[str(item["id"])] = str(item["name"])
+        by_claim: dict[str, list[ClaimEvidenceOut]] = {}
+        for link in links:
+            item = found.get(str(link["evidence_id"]))
+            if item is not None:
+                by_claim.setdefault(str(link["claim_id"]), []).append(_evidence_out(item, link))
+        out: list[ClaimSuggestionOut] = []
+        for claim, row in zip(claims, rows, strict=True):
+            home = row.get("home_company_id") if isinstance(row, dict) else None
+            out.append(
+                claim.model_copy(
+                    update={
+                        "company_name": names.get(str(home)) if home else None,
+                        "evidence": by_claim.get(str(claim.id), []),
+                    }
+                )
+            )
+        return out
 
     def get_claim(
         self, token: str, tenant_id: uuid.UUID, claim_id: uuid.UUID

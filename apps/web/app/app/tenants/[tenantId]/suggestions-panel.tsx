@@ -6,6 +6,7 @@ import {
 
 import { LocalTime } from "../../local-time";
 import { ReviewClaimForms } from "./review-claim-form";
+import { SuggestionEvidence } from "./suggestion-evidence";
 import { reviewClaimAction } from "./suggestion-actions";
 
 /**
@@ -69,6 +70,7 @@ export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview
                 {" · "}
                 {claim.predicate} · <LocalTime iso={claim.created_at} />
               </p>
+              <SuggestionEvidence evidence={claim.evidence} />
               {canReview && reviewIds[claim.id] && (
                 <ReviewControl decided={claim.review_state === "accepted" || claim.review_state === "rejected"}>
                   <ReviewClaimForms

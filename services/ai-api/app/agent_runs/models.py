@@ -76,6 +76,22 @@ class AgentSettingsIn(_Strict):
     enabled: bool
 
 
+class ClaimEvidenceOut(_Strict):
+    """What a suggestion rests on, for a reviewer. Everything here is UNTRUSTED text (a model chose
+    the quote from a page a stranger controls): clients render it as plain text. No link is
+    offered: the source is a host and a path, shown as text.
+
+    The runtime checked that the quote appears in the page it names; the DATABASE did not (it
+    never sees the page): a client says so next to the quote."""
+
+    kind: str
+    stance: Literal["supports", "context", "contradicts"]
+    provider: str
+    host: str | None
+    path: str | None
+    quote: str | None
+
+
 class ClaimSuggestionOut(_Strict):
     """A claim with its effective review state. An agent claim is a SUGGESTION until a human
     accepts it."""
@@ -98,6 +114,10 @@ class ClaimSuggestionOut(_Strict):
     # True when the workspace's active ICP profile reads this predicate
     # (an accepted suggestion can then change a score)
     counts_toward_score: bool = False
+    # the company the claim is about (its home), for the reviewer's list
+    company_name: str | None = None
+    # the evidence this claim cites (live links only)
+    evidence: list[ClaimEvidenceOut] = []
 
 
 class ReviewIn(_Strict):
@@ -118,10 +138,8 @@ class ReviewIn(_Strict):
             self.confidence is None or self.reason_code is not None
         ):
             raise ValueError("accepted needs a confidence and no reason")
-        if self.decision == "rejected" and (
-            self.reason_code is None or self.confidence is not None
-        ):
-            raise ValueError("rejected needs a reason and no confidence")
+        if self.decision == "rejected" and self.confidence is not None:
+            raise ValueError("rejected carries no confidence (a reason is optional)")
         return self
 
 

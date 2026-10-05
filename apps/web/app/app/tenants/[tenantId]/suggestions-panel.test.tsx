@@ -132,4 +132,18 @@ describe("SuggestionsPanel", () => {
     const stamp = document.querySelector("time");
     expect(stamp?.getAttribute("datetime")).toBe("2026-10-04T12:00:00+00:00");
   });
+
+  it("shows each suggestion's quote and source as plain text, with what was checked", () => {
+    renderPanel({
+      claims: [
+        claim(UNREVIEWED, {
+          evidence: [{ kind: "web_page", stance: "supports", provider: "agent.research", host: "h.test", path: "/p", quote: "<img src=x onerror=alert(1)>" }],
+        }),
+      ],
+    });
+    expect(screen.getByText("<img src=x onerror=alert(1)>")).toBeInTheDocument();
+    expect(document.querySelector("img")).toBeNull();
+    expect(screen.getByText(/source: h\.test\/p/)).toBeInTheDocument();
+    expect(screen.getByText(/not by the database/)).toBeInTheDocument();
+  });
 });

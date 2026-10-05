@@ -432,8 +432,9 @@ def test_a_review_of_an_unknown_or_foreign_claim_is_a_404(w: World) -> None:
         {"decision": "accepted"},
         {"decision": "accepted", "confidence": "unverified"},
         {"decision": "accepted", "confidence": "low", "reason_code": "incorrect"},
-        {"decision": "rejected"},
+        {"decision": "rejected", "confidence": "low"},
         {"decision": "rejected", "reason_code": "incorrect", "confidence": "low"},
+        {"decision": "rejected", "reason_code": "free text, not a code"},
         {"decision": "maybe", "confidence": "low"},
         {"decision": "accepted", "confidence": "low", "created_via": "manual"},
         {"decision": "accepted", "confidence": "low", "self_review": False},
@@ -500,3 +501,82 @@ def test_a_suggestion_says_whether_its_predicate_can_change_a_score(w: World) ->
     )
     assert published.status_code == 201, published.text
     assert flags() == {"selftest.observation": False, "buyer_type": True}
+
+
+# ---- the reviewer's list (T007 M3)
+HOSTILE = '<img src=x onerror=alert(1)> "quoted" </script> javascript:alert(1) \u202e'
+
+
+def evidence_row(**over: Any) -> dict[str, Any]:
+    base: dict[str, Any] = {
+        "kind": "web_page",
+        "stance": "supports",
+        "provider": "agent.research",
+        "host": "saree-house.test",
+        "path": "/about",
+        "quote": "We sell silk sarees in bulk.",
+    }
+    return {**base, **over}
+
+
+def test_the_reviewers_list_shows_every_unreviewed_agent_claim_with_its_company_and_evidence(
+    w: World,
+) -> None:
+    other = uuid.UUID(int=0xD1)
+    w.repo.seed_claim(
+        TENANT_A.id,
+        claim_row(
+            CLAIM,
+            COMPANY,
+            predicate="buyer_type",
+            value="wholesaler",
+            company_name="DEMO Silks",
+            evidence=[evidence_row()],
+        ),
+    )
+    w.repo.seed_claim(TENANT_A.id, claim_row(other, COMPANY, review_state="accepted"))
+    w.repo.seed_claim(TENANT_A.id, claim_row(uuid.UUID(int=0xD2), COMPANY, created_via="manual"))
+    for user in ("a_owner", "a_sales", "a_viewer"):  # any member may SEE them
+        r = w.client.get(w.url("/agent-claims"), headers=auth(user))
+        assert r.status_code == 200, (user, r.text)
+        assert [c["id"] for c in r.json()] == [str(CLAIM)], "unreviewed agent claims only"
+    body = w.client.get(w.url("/agent-claims"), headers=auth("a_owner")).json()[0]
+    assert body["company_name"] == "DEMO Silks"
+    assert body["evidence"] == [evidence_row()]
+    assert "url" not in body["evidence"][0], "a host and a path, never a link"
+    everything = w.client.get(w.url("/agent-claims?state=all"), headers=auth("a_owner")).json()
+    assert {c["id"] for c in everything} == {str(CLAIM), str(other)}
+
+
+def test_the_reviewers_list_is_per_tenant_and_authenticated(w: World) -> None:
+    w.repo.seed_claim(TENANT_A.id, claim_row(CLAIM, COMPANY))
+    assert w.client.get(
+        w.url("/agent-claims", TENANT_B.id), headers=auth("a_owner")
+    ).status_code in (403, 404)
+    assert w.client.get(w.url("/agent-claims")).status_code == 401
+    assert (
+        w.client.get(w.url("/agent-claims?state=bogus"), headers=auth("a_owner")).status_code == 422
+    )
+    assert w.client.get(w.url("/agent-claims?limit=0"), headers=auth("a_owner")).status_code == 422
+
+
+def test_hostile_quote_text_is_returned_as_data_not_interpreted(w: World) -> None:
+    w.repo.seed_claim(
+        TENANT_A.id,
+        claim_row(CLAIM, COMPANY, evidence=[evidence_row(quote=HOSTILE, path="/a%22%3E%3Cscript")]),
+    )
+    r = w.client.get(w.url("/agent-claims"), headers=auth("a_owner"))
+    assert r.status_code == 200
+    assert r.json()[0]["evidence"][0]["quote"] == HOSTILE
+    assert r.headers["content-type"].startswith("application/json")
+
+
+def test_a_rejection_needs_no_reason_and_a_reason_when_given_is_a_closed_code(w: World) -> None:
+    w.repo.seed_claim(TENANT_A.id, claim_row(CLAIM, COMPANY))
+    ok = w.client.post(
+        w.url(f"/claims/{CLAIM}/reviews"),
+        json={"id": str(uuid.uuid4()), "decision": "rejected"},
+        headers=auth("a_owner"),
+    )
+    assert ok.status_code == 201, ok.text
+    assert [v["r"] for v in w.repo.reviews.values()] == [None]

@@ -18,7 +18,7 @@ NOTE: no `from __future__ import annotations` here, for the same reason as app/c
 
 import logging
 import uuid
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response
 
@@ -220,6 +220,23 @@ def _register_claims(segment: str, kind: str) -> None:
 
 _register_claims("companies", "company")
 _register_claims("leads", "lead")
+
+
+@router.get("/agent-claims", response_model=list[ClaimSuggestionOut])
+def list_agent_claims(
+    ctx: AnyMember,
+    runtime: RuntimeDep,
+    state: Annotated[Literal["unreviewed", "all"], Query()] = "unreviewed",
+    limit: Annotated[int, Query(ge=1, le=100)] = 50,
+) -> list[ClaimSuggestionOut]:
+    """The workspace's agent suggestions, newest first, each with the company it is about and the
+    evidence it cites: the reviewer's list. Reviewing is a separate, Owner / Admin action."""
+    claims = _agents(runtime).repository.list_agent_claims(
+        ctx.principal.token, ctx.tenant.id, state=state, limit=limit
+    )
+    icp = runtime.leads.get_active_icp_config(ctx.principal.token, ctx.tenant.id)
+    scored = scored_attributes(icp.config) if icp is not None else frozenset()
+    return [c.model_copy(update={"counts_toward_score": c.predicate in scored}) for c in claims]
 
 
 @router.post("/claims/{claim_id}/reviews", response_model=ReviewOut, status_code=201)

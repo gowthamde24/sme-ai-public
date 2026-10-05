@@ -218,7 +218,7 @@ $$;
 select is(pg_temp.err(pg_temp.review_sql('accepted', 'medium', null)), 'ok', 'accepted + a human-assigned confidence is a valid review');
 select is(substr(pg_temp.err(pg_temp.review_sql('accepted', null, null)), 1, 5), '23514', 'accepted needs a confidence');
 select is(substr(pg_temp.err(pg_temp.review_sql('accepted', 'medium', 'incorrect')), 1, 5), '23514', 'accepted carries no rejection reason');
-select is(substr(pg_temp.err(pg_temp.review_sql('rejected', null, null)), 1, 5), '23514', 'rejected needs a reason code');
+select is(pg_temp.err(pg_temp.review_sql('rejected', null, null)), 'ok', 'rejected needs NO reason (T007 M3: one tap to say no)');
 select is(pg_temp.err(pg_temp.review_sql('rejected', null, 'incorrect')), 'ok', 'rejected + a reason is valid');
 select is(substr(pg_temp.err(pg_temp.review_sql('rejected', 'high', 'incorrect')), 1, 5), '23514', 'rejected carries no confidence');
 select is(substr(pg_temp.err(pg_temp.review_sql('accepted', 'unverified', null)), 1, 5), '23514', 'a human cannot "accept" at confidence unverified');

@@ -15,7 +15,7 @@ vi.mock("@/lib/api/agents", async (importOriginal) => ({
   reviewClaim: (...args: unknown[]) => reviewClaim(...args),
 }));
 
-import { reviewClaimAction } from "./suggestion-actions";
+import { reviewClaimAction, reviewQueueClaimAction } from "./suggestion-actions";
 
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const TARGET = "33333333-3333-3333-3333-333333333333";
@@ -88,7 +88,6 @@ describe("reviewClaimAction", () => {
     ["accept without a confidence", { review_id: REVIEW, decision: "accepted" }],
     ["accept as 'unverified'", { review_id: REVIEW, decision: "accepted", confidence: "unverified" }],
     ["accept as 'certain'", { review_id: REVIEW, decision: "accepted", confidence: "certain" }],
-    ["reject without a reason", { review_id: REVIEW, decision: "rejected" }],
     ["reject with an unknown reason", { review_id: REVIEW, decision: "rejected", reason_code: "because" }],
   ])("refuses %s without calling the API", async (_label, values) => {
     const res = await run(values);
@@ -147,5 +146,26 @@ describe("reviewClaimAction", () => {
     requireUser.mockRejectedValueOnce(new Error("NEXT_REDIRECT"));
     await expect(run({ review_id: REVIEW, decision: "accepted", confidence: "low" })).rejects.toThrow();
     expect(reviewClaim).not.toHaveBeenCalled();
+  });
+
+  it("a rejection needs NO reason: none is sent, and the API gets only the id and the decision", async () => {
+    const res = await run({ review_id: REVIEW, decision: "rejected" });
+    expect(res?.ok).toBe(true);
+    expect(reviewClaim).toHaveBeenCalledWith("tok", TENANT, CLAIM, { id: REVIEW, decision: "rejected" });
+    reviewClaim.mockClear();
+    const blank = await run({ review_id: REVIEW, decision: "rejected", reason_code: "" });
+    expect(blank?.ok).toBe(true);
+    expect(reviewClaim).toHaveBeenCalledWith("tok", TENANT, CLAIM, { id: REVIEW, decision: "rejected" });
+  });
+
+  it("the review screen's action reviews the same way and revalidates THAT screen", async () => {
+    const res = await reviewQueueClaimAction(TENANT, CLAIM, true, undefined, form({ review_id: REVIEW, decision: "accepted", confidence: "medium" }));
+    expect(res?.ok).toBe(true);
+    expect(reviewClaim).toHaveBeenCalledWith("tok", TENANT, CLAIM, { id: REVIEW, decision: "accepted", confidence: "medium" });
+    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${TENANT}/suggestions`);
+    const bad = await reviewQueueClaimAction(TENANT, "nope", true, undefined, form({ review_id: REVIEW, decision: "rejected" }));
+    expect(bad?.ok).toBe(false);
+    const none = await reviewQueueClaimAction(TENANT, CLAIM, true, undefined, form({ review_id: REVIEW, decision: "accepted" }));
+    expect(none?.ok).toBe(false);
   });
 });

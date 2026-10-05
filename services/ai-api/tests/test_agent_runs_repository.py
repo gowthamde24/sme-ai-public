@@ -298,3 +298,92 @@ def test_a_row_of_the_wrong_shape_is_an_upstream_error_that_does_not_quote_it(
     with pytest.raises(UpstreamError):
         make(Server((200, [bad]))).get_run(TOKEN, TENANT, RUN)
     assert CANARY not in caplog.text
+
+
+# ---- the reviewer's list: each claim with its company's name and the evidence it cites (T007 M3)
+EVIDENCE_ID = uuid.UUID(int=0xE1)
+HOSTILE_QUOTE = '<script>alert(1)</script> "x" ‮ javascript:alert(1)'
+
+
+def test_agent_claims_come_with_their_companys_name_and_the_evidence_they_cite() -> None:
+    row = {**CLAIM_ROW, "home_company_id": str(COMPANY), "created_via": "agent"}
+    server = Server(
+        (200, [row]),
+        (200, [{"claim_id": str(CLAIM), "evidence_id": str(EVIDENCE_ID), "stance": "supports"}]),
+        (
+            200,
+            [
+                {
+                    "id": str(EVIDENCE_ID),
+                    "kind": "web_page",
+                    "provider": "agent.research",
+                    "url": "https://saree-house.test/about?utm=1#top",
+                    "snippet": HOSTILE_QUOTE,
+                }
+            ],
+        ),
+        (200, [{"id": str(COMPANY), "name": "Saree House"}]),
+    )
+    (claim,) = make(server).list_agent_claims(TOKEN, TENANT, state="unreviewed", limit=20)
+    assert claim.company_name == "Saree House"
+    (evidence,) = claim.evidence
+    assert (evidence.host, evidence.path, evidence.stance) == (
+        "saree-house.test",
+        "/about",
+        "supports",
+    )
+    assert evidence.quote == HOSTILE_QUOTE, "the quote is passed through verbatim, as data"
+    claims_req, links_req, evidence_req, company_req = server.requests
+    params = dict(claims_req.url.params)
+    assert claims_req.url.path == "/rest/v1/claims_effective"
+    assert params["created_via"] == "eq.agent" and params["review_state"] == "eq.unreviewed"
+    assert params["archived_at"] == "is.null" and params["tenant_id"] == f"eq.{TENANT}"
+    assert links_req.url.path == "/rest/v1/evidence_links"
+    assert dict(links_req.url.params)["archived_at"] == "is.null"
+    assert (
+        evidence_req.url.path == "/rest/v1/evidence"
+        and company_req.url.path == "/rest/v1/companies"
+    )
+    for req in server.requests:
+        assert req.headers["authorization"] == f"Bearer {TOKEN}", "every read is the caller's own"
+        assert dict(req.url.params)["tenant_id"] == f"eq.{TENANT}"
+
+
+def test_state_all_does_not_filter_by_review_state_and_an_empty_list_asks_nothing_more() -> None:
+    server = Server((200, []))
+    assert make(server).list_agent_claims(TOKEN, TENANT, state="all", limit=5) == []
+    assert "review_state" not in dict(server.requests[0].url.params)
+    assert len(server.requests) == 1
+
+
+def test_a_claim_without_evidence_or_company_still_lists() -> None:
+    row = {**CLAIM_ROW, "home_company_id": None, "created_via": "agent"}
+    server = Server((200, [row]), (200, []))
+    (claim,) = make(server).list_agent_claims(TOKEN, TENANT, state="all", limit=5)
+    assert claim.evidence == [] and claim.company_name is None
+
+
+def test_a_url_that_does_not_parse_gives_no_host_and_the_quote_is_kept() -> None:
+    row = {**CLAIM_ROW, "home_company_id": None, "created_via": "agent"}
+    server = Server(
+        (200, [row]),
+        (200, [{"claim_id": str(CLAIM), "evidence_id": str(EVIDENCE_ID), "stance": "context"}]),
+        (
+            200,
+            [
+                {
+                    "id": str(EVIDENCE_ID),
+                    "kind": "web_page",
+                    "provider": "agent.research",
+                    "url": "http://[bad",
+                    "snippet": "q",
+                }
+            ],
+        ),
+    )
+    (claim,) = make(server).list_agent_claims(TOKEN, TENANT, state="all", limit=5)
+    assert (claim.evidence[0].host, claim.evidence[0].path, claim.evidence[0].quote) == (
+        None,
+        None,
+        "q",
+    )

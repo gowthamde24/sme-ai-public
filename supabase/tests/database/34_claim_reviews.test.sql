@@ -66,7 +66,7 @@ select is(substr(pg_temp.err('a_owner', pg_temp.rv('c2', 'c_nolink', 'accepted',
 update public.claims set archived_at = null where id = tests.rid('c_nolink');
 select is(substr(pg_temp.err('a_owner', pg_temp.rv('c3', 'c_sales', 'accepted')), 1, 5), '22023', 'accepted without a confidence: 22023');
 select is(substr(pg_temp.err('a_owner', pg_temp.rv('c4', 'c_sales', 'accepted', 'unverified')), 1, 5), '22023', 'a human cannot accept at "unverified": 22023');
-select is(substr(pg_temp.err('a_owner', pg_temp.rv('c5', 'c_sales', 'rejected', null, null)), 1, 5), '22023', 'rejected without a reason: 22023');
+select is(pg_temp.err('a_owner', pg_temp.rv('c5', 'c_sales', 'rejected', null, null)), 'ok', 'rejected without a reason is a valid review (T007 M3)');
 select is(substr(pg_temp.err('a_owner', pg_temp.rv('c6', 'c_sales', 'rejected', 'high', 'incorrect')), 1, 5), '22023', 'rejected with a confidence: 22023');
 select is(substr(pg_temp.err('a_owner', pg_temp.rv('c7', 'c_sales', 'accepted', 'low', 'incorrect')), 1, 5), '22023', 'accepted with a rejection reason: 22023');
 select is(pg_temp.err('a_owner', pg_temp.rv('c8', 'c_nolink', 'accepted', 'high')), '23514|value not allowed||||', 'medium / high needs at least one SUPPORTING evidence link (only a context link exists): 23514');

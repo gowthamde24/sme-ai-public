@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   cancelRun,
+  fetchAgentClaims,
   fetchAgentSettings,
   fetchClaims,
   fetchRuns,
@@ -187,5 +188,34 @@ describe("agents API client", () => {
     });
     await expect(startResearchRun("tok", TENANT, { id: "x", leadId: TARGET })).rejects.toThrow(ApiContractError);
     await expect(startResearchRun("tok", TENANT, { id: RUN, leadId: "y" })).rejects.toThrow(ApiContractError);
+  });
+
+  it("parses the evidence a suggestion cites and the company it is about, as data", () => {
+    const base = {
+      id: RUN, company_id: TARGET, lead_id: null, predicate: "buyer_type", value: "wholesaler", confidence: "unverified",
+      claim_confidence: "unverified", created_via: "agent", agent_run_id: RUN, created_by: null, created_at: "2026-10-04T12:00:00+00:00",
+      review_state: "unreviewed", review_confidence: null, reviewed_by: null, reviewed_at: null,
+    };
+    const claim = parseClaim({
+      ...base,
+      company_name: "Saree House",
+      evidence: [{ kind: "web_page", stance: "supports", provider: "agent.research", host: "h.test", path: "/a", quote: "<script>x</script>" }],
+    });
+    expect(claim.company_name).toBe("Saree House");
+    expect(claim.evidence?.[0]).toEqual({ kind: "web_page", stance: "supports", provider: "agent.research", host: "h.test", path: "/a", quote: "<script>x</script>" });
+    expect(parseClaim(base).evidence).toEqual([]);
+    expect(parseClaim(base).company_name).toBeNull();
+    expect(() => parseClaim({ ...base, evidence: "x" })).toThrow(ApiContractError);
+    expect(() => parseClaim({ ...base, evidence: [{ kind: "web_page", stance: "maybe", provider: "p", host: null, path: null, quote: null }] })).toThrow(ApiContractError);
+  });
+
+  it("GETs the workspace's agent suggestions with a state and a limit", async () => {
+    const f = respond([]);
+    globalThis.fetch = f as unknown as typeof fetch;
+    expect(await fetchAgentClaims("tok", TENANT, "all", 100)).toEqual([]);
+    expect(f.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/agent-claims?state=all&limit=100`);
+    await expect(fetchAgentClaims("tok", "x")).rejects.toThrow(ApiContractError);
+    globalThis.fetch = respond({ not: "a list" }) as unknown as typeof fetch;
+    await expect(fetchAgentClaims("tok", TENANT)).rejects.toThrow(ApiContractError);
   });
 });
