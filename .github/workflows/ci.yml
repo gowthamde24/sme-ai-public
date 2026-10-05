@@ -9,6 +9,24 @@ permissions:
   contents: read
 
 jobs:
+  lane-paths:
+    if: github.event_name == 'pull_request' && startsWith(github.head_ref, 'lane/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Check lane ownership
+        env:
+          LANE_BRANCH: ${{ github.head_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: ./scripts/check-lane-paths.sh "${LANE_BRANCH#lane/}" "$BASE_SHA"
+      - run: python3 scripts/test-lanes.py
+
   hygiene:
     runs-on: ubuntu-latest
     steps:
