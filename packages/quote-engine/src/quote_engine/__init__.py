@@ -3,11 +3,11 @@ from datetime import date, timedelta
 import hashlib
 import json
 
-ENGINE_VERSION = "1.0.0"
+ENGINE_VERSION = "1.1.0"
 
 # Operational limits, not catalog prices or tax/business rules.
 MAX_QUANTITY_PER_LINE = 10_000
-MAX_UNIT_PRICE = 10_000_000
+MAX_UNIT_PRICE = 100_000_000
 MAX_TAX_BPS = 10_000
 MAX_DISCOUNT_BPS = 10_000
 MAX_SHIPPING_AMOUNT = 100_000_000

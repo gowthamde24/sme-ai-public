@@ -2,14 +2,12 @@
 ## API
 Stdlib only. Add `packages/quote-engine/src` to the caller's import path;
 `from quote_engine import quote, canonical_json, ENGINE_VERSION`.
-`quote(request: dict) -> dict` accepts JSON-shaped values and returns a structured
-Quote (`status: draft`) or Rejection (`status: rejected`, `codes`). No approval
-state is produced. `canonical_json(result)` gives deterministic JSON text.
+`quote(request: dict) -> dict`: JSON-shaped inputs return a draft Quote or a
+Rejection (`status: rejected`, `codes`); `canonical_json(result)` is deterministic.
 Use `canonical_json(result).encode("utf-8")` for byte-identical bytes; no clock/I/O.
 Currency is INR; all money is nonnegative integer paise, rates integer bps.
 - `as_of`: canonical ISO date, e.g. `2026-01-30`.
-- `price_list`: list of `{sku, name, unit_price, minimum_order_quantity,
-  price_breaks: [{min_qty, unit_price}], tax_bps, cost?}`.
+- `price_list`: `[{sku, name, unit_price, minimum_order_quantity, price_breaks: [{min_qty, unit_price}], tax_bps, cost?}]`.
 - `customer`: `{kind: "new" | "repeat", credit_limit?}`.
 - `order_lines`: nonempty list of `{sku, qty, discount_bps?}`.
 - `policy`: `{discount_ceiling_bps, shipping: {flat_fee, free_above?, tax_bps?},
@@ -27,9 +25,8 @@ Quote fields:
 - `engine_version`, `canonical_hash`: sha256 of canonical JSON containing
   `{"engine_version": ENGINE_VERSION, "inputs": request}` (including unused
   descriptive fields). Canonical JSON sorts keys, uses compact separators and
-  ASCII escaping. Batch 1 retains version/hash compatibility for existing inputs;
-  the fixture shape and pinned hash are unchanged. Adding explicit shipping
-  tax_bps (even zero) changes the input/hash. Future incompatible rules need a version.
+  ASCII escaping. Version 1.1.0 changes every bounded request hash; the fixture
+  shape is unchanged. Explicit shipping tax_bps (even zero) also changes the hash.
 Rejections retain version, codes, flags and trace; no partial totals. Oversized
 inputs rejected by preflight have canonical_hash null: they are never serialized.
 
@@ -45,9 +42,8 @@ inputs rejected by preflight have canonical_hash null: they are never serialized
 - Rounding is integer division, default half_up; half_even and down also work.
 - tax_mode applies to the whole order, including shipping.
 - Exclusive: net = subtotal - discount; tax = round(net * tax_bps / 10000).
-- Inclusive: gross = subtotal - discount;
-  net = round(gross * 10000 / (10000 + tax_bps)); tax = gross - net.
-  This allocates the residual paise to tax and preserves the supplied gross.
+- Inclusive: gross = subtotal - discount; net = round(gross * 10000 / (10000 + tax_bps)); tax = gross - net.
+  Residual paise go to tax, preserving gross.
 - Margin is measured against discounted net revenue excluding tax/shipping:
   flag if `(net - qty * cost) * 10000 < net * margin_floor_bps`.
   A configured floor requires cost for every catalog item; missing cost rejects.
@@ -56,6 +52,7 @@ inputs rejected by preflight have canonical_hash null: they are never serialized
   flat_fee is net, tax = round(fee * tax_bps / 10000). Inclusive: flat_fee already
   includes tax; net = round(fee * 10000 / (10000 + tax_bps)), tax = fee - net.
   Free shipping has zero tax. The shipping.tax trace records fee/net/tax/gross.
+  Shipping uses one GST rate per policy; for mixed-rate orders the owner/accountant must decide how freight is taxed.
 - tax = item_tax + shipping_tax; total = merchandise net + shipping net + tax.
   Subtotal/discount are catalog-mode values; inclusive subtotal already has tax.
 - Configured customer-kind advance applies to the complete total. Balance is
@@ -79,22 +76,25 @@ inputs rejected by preflight have canonical_hash null: they are never serialized
 | Module constant | Maximum |
 | --- | --- |
 | MAX_QUANTITY_PER_LINE (also MOQ/break min_qty) | 10,000 |
-| MAX_UNIT_PRICE (also cost/break price) | 10,000,000 paise (INR 100,000) |
+| MAX_UNIT_PRICE (also cost/break price) | 100,000,000 paise (INR 1,000,000) |
 | MAX_TAX_BPS (item/shipping) / MAX_DISCOUNT_BPS (also margin/advance) | 10,000 each |
 | MAX_SHIPPING_AMOUNT (flat_fee/free_above) | 100,000,000 paise (INR 1,000,000) |
 | MAX_ORDER_LINES / MAX_CATALOG_ITEMS / MAX_PRICE_BREAKS_PER_ITEM | 100 / 1,000 / 20 |
 | MAX_PAYMENT_NET_DAYS / MAX_VALIDITY_DAYS | 180 / 365 |
 | MAX_IDENTIFIER_LENGTH (SKU/name/strings/keys, Unicode characters) | 128 |
 | MAX_CREDIT_LIMIT | 1,000,000,000 paise (INR 10,000,000) |
-Collection sizes are checked before item work or hashing. OUT_OF_RANGE contains
-oversized scalars/collections; malformed JSON is also limited to depth 8, 100,000
-nodes and 16 object fields before serialization (MAX_INPUT_DEPTH/NODES, MAX_OBJECT_FIELDS).
-These conservative wholesale operating limits are owner-reviewable, not prices.
+Sizes are checked before item work/hashing; oversized scalars/collections reject OUT_OF_RANGE.
+Malformed JSON limits: depth 8, 100,000 nodes, 16 object fields (MAX_INPUT_DEPTH/NODES, MAX_OBJECT_FIELDS).
+All per-field maxima must fit the generic integer cap MAX_CREDIT_LIMIT (tested).
 
 ## Owner decisions and lane A handoff
 Owner must confirm GST on shipping, advance rates, rounding mode, MOQ exception
 policy, due-date anchor/credit, shipping threshold, margin, GST mode and validity.
 Pure calculation only: approval, authoritative catalog lookup, persistence,
 provenance and durable audit belong to lane A. Trace is calculation evidence;
-the hash recognizes inputs, authenticates neither catalog nor actor. Lane A also
-owns order/payment integration and security checks; owner requires green CI.
+The hash authenticates neither catalog nor actor. Lane A owns integration/security;
+owner requires green CI.
+
+## Changelog
+- 1.1.0: bounds, below-MOQ break rejection and shipping-tax totals change valid behavior/schema; unit-price max INR 1,000,000.
+  pinned fixture hash changes solely because ENGINE_VERSION is now 1.1.0.

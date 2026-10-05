@@ -101,6 +101,19 @@ class QuoteTests(unittest.TestCase):
         free = quote(self.r)["totals"]
         self.assertEqual((free["shipping"], free["shipping_tax"], free["shipping_gross"]), (0, 0, 0))
 
+    def test_shipping_threshold_uses_discounted_merchandise_net(self):
+        self.simple(price=10000, tax=2500)
+        for tax_mode, discount_bps, threshold, expected_net in (
+                ("exclusive", 1000, 9500, 9000), ("inclusive", 0, 9000, 8000)):
+            with self.subTest(tax_mode=tax_mode):
+                self.r["policy"]["tax_mode"] = tax_mode
+                self.r["policy"]["shipping"] = {"flat_fee": 200, "free_above": threshold}
+                self.r["order_lines"][0]["discount_bps"] = discount_bps
+                q = quote(self.r)
+                self.assertEqual(q["totals"]["net"], expected_net)
+                self.assertEqual(q["totals"]["subtotal"], 10000)
+                self.assertEqual(q["totals"]["shipping"], 200)
+
     def test_shipping_half_paise_rounding(self):
         self.simple(price=0)
         for mode, expected in (("half_up", 1), ("half_even", 0), ("down", 0)):
@@ -202,7 +215,8 @@ class QuoteTests(unittest.TestCase):
         self.assertEqual(q, quote(reordered))
         self.assertEqual(q["canonical_hash"], hashlib.sha256(canonical_json(
             {"engine_version": ENGINE_VERSION, "inputs": self.r}).encode("utf-8")).hexdigest())
-        self.assertEqual(q["canonical_hash"], "92eb047bc231e4004c9dd2bbbab0f54340ddc225dc8351e2d56a839954e15aa7")
+        self.assertEqual(ENGINE_VERSION, "1.1.0")
+        self.assertEqual(q["canonical_hash"], "03cf0189ba0aab67d49fdebaa800b0985499d1781b3482d953a3f4a740e2dbc9")
         # Change every scalar leaf, including descriptive/unused input fields.
         def paths(value, path=()):
             if isinstance(value, dict):

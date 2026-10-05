@@ -31,6 +31,15 @@ class BoundsTests(unittest.TestCase):
                           lambda r, v: r["price_list"][0].update(price_breaks=[]))
         self.assert_bound(("price_list", 0, "price_breaks", 1, "min_qty"), engine.MAX_QUANTITY_PER_LINE)
 
+    def test_field_maxima_fit_preflight_integer_cap(self):
+        maxima = {name: value for name, value in vars(engine).items() if name.startswith("MAX_")}
+        self.assertIn("MAX_UNIT_PRICE", maxima)
+        for name, maximum in maxima.items():
+            with self.subTest(constant=name):
+                self.assertIs(type(maximum), int)
+                self.assertGreater(maximum, 0)
+                self.assertLessEqual(maximum, engine.MAX_CREDIT_LIMIT)
+
     def test_unit_price_bound(self):
         for field in ("unit_price", "cost"):
             self.assert_bound(("price_list", 0, field), engine.MAX_UNIT_PRICE)

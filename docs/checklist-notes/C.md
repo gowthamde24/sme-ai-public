@@ -82,3 +82,36 @@ status assertions were added for clearer failures, then both removals rerun.
 Final suite: 27 passing tests (9 before batch 1), plus 250 fresh seeded property
 cases. `make check-leftovers` passes. Owner still needs green CI and lane A's
 integration/security checks; no stack/database/network/ports were used.
+
+## T009 fix batch 2 — version 1.1.0 and six additional mutations
+
+- ENGINE_VERSION is 1.1.0: bounds, below-MOQ break rejection and new totals keys
+  changed previously valid inputs/output. The fixture shape is unchanged; its new
+  pinned hash is `03cf0189ba0aab67d49fdebaa800b0985499d1781b3482d953a3f4a740e2dbc9`,
+  changed solely by the version in the canonical payload.
+- MAX_UNIT_PRICE is 100,000,000 paise (INR 1,000,000), including costs and break
+  prices. The existing at/above-limit tests exercise the raised bound. Added
+  test_field_maxima_fit_preflight_integer_cap checks every named MAX_ constant
+  against MAX_CREDIT_LIMIT so per-field maxima cannot outgrow the preflight cap.
+- Shipping uses one GST rate per policy. For mixed-rate orders, the owner/accountant
+  must decide how freight is taxed; this calculation engine does not decide it.
+- Each mutation below was applied manually, tested with `make test-packages`,
+  inspected and reverted. No script was added or run. "Added test" means added
+  after the mutation survived the existing suite.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| (a) Swap new/repeat advance rate selection | test_payment_dates_shipping | no |
+| (b) Check credit against total instead of balance | test_payment_dates_shipping | no |
+| (c) Use subtotal instead of merchandise net for free shipping | test_shipping_threshold_uses_discounted_merchandise_net | yes |
+| (d) Omit shipping tax from total | test_shipping_tax_modes_and_default; test_seeded_properties | no |
+| (e) Force down rounding for exclusive shipping tax | test_shipping_half_paise_rounding | no |
+| (f) Stop at first qualifying price break | test_price_edges_and_minimum | no |
+
+Mutation (c) initially passed all 28 tests. Added discounted-exclusive and
+inclusive-tax cases with subtotal above threshold but net below threshold;
+both failed while the mutation was applied. All six were killed and reverted.
+Final suite: 29 passing tests (27 before batch 2), including 250 seeded cases;
+`make check-leftovers` passes. Only lane C files changed; no push/network/stack/
+ports. Approval, authoritative catalog lookup, persistence/provenance and audit
+remain lane A work; CI and integration/security verification remain outstanding.
