@@ -31,7 +31,11 @@ begin
       -- 'exp' only when a test set tests.jwt_exp (the agent functions bound a run's life by the token's exp)
       (json_build_object('sub', p_uid, 'role', 'authenticated', 'aud', 'authenticated')::jsonb
         || case when nullif(current_setting('tests.jwt_exp', true), '') is null then '{}'::jsonb
-                else jsonb_build_object('exp', current_setting('tests.jwt_exp', true)::bigint) end)::text,
+                else jsonb_build_object('exp', current_setting('tests.jwt_exp', true)::bigint) end
+        -- the session's assurance level (ADR 0016): aal2 unless a test sets tests.jwt_aal to 'aal1', or to 'absent' to omit the claim
+        || case coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2')
+             when 'absent' then '{}'::jsonb
+             else jsonb_build_object('aal', coalesce(nullif(current_setting('tests.jwt_aal', true), ''), 'aal2')) end)::text,
       true
     );
     perform set_config('request.jwt.claim.sub', p_uid::text, true);
@@ -444,4 +448,12 @@ language plpgsql as $$
 begin
   perform app.operator_open_real_data_gate((select slug from public.tenants where id = tests.tid(p)),
     'adr:0014', 'doc:hosting-staging', 'doc:dpdp-review', 'doc:restore-drill');
+end $$;
+
+
+-- Run following statements at a given assurance level (ADR 0016): tests.as_aal('aal1') / 'aal2' / 'absent'. Transaction-local.
+create or replace function tests.as_aal(p text) returns void
+language plpgsql as $$
+begin
+  perform set_config('tests.jwt_aal', p, true);
 end $$;

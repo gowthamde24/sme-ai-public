@@ -74,6 +74,22 @@ checks(check_name, ok, detail) as (
          exists (select 1 from pg_proc where proname = 'guard_immutable_record' and pronamespace = 'app'::regnamespace and prosrc like '%erasure_running%'),
          'app.guard_immutable_record calls app.erasure_running'
   union all
+  select 'the second-factor enforcement is installed (ADR 0016)',
+         to_regprocedure('app.require_aal2()') is not null
+         and (select count(*) from pg_trigger where not tgisinternal and tgname in ('memberships_guard_aal2', 'tenants_guard_aal2')) = 2
+         and (select count(*) from pg_proc where pronamespace = 'public'::regnamespace
+                 and proname in ('request_erasure', 'execute_erasure', 'cancel_erasure', 'set_tenant_agents_enabled')
+                 and prosrc like '%require_aal2%') = 4,
+         'require_aal2, the memberships and tenants triggers, and the four definer functions that call it'
+  union all
+  select 'every Owner and Admin has a verified authenticator',
+         not exists (select 1 from public.memberships m
+                      where m.role in ('owner', 'admin')
+                        and not exists (select 1 from auth.mfa_factors f where f.user_id = m.user_id and f.status = 'verified' and f.factor_type = 'totp')),
+         (select count(distinct m.user_id)::text from public.memberships m where m.role in ('owner', 'admin')
+             and not exists (select 1 from auth.mfa_factors f where f.user_id = m.user_id and f.status = 'verified' and f.factor_type = 'totp'))
+         || ' Owner / Admin account(s) without one: they are refused erasure, export, member and settings changes until they enrol'
+  union all
   select 'no operator-only table is readable by anon',
          not has_table_privilege('anon', 'public.tenant_data_policy', 'select') and not has_table_privilege('anon', 'public.erasure_requests', 'select'),
          'tenant_data_policy, erasure_requests'

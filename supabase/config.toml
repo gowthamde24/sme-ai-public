@@ -306,9 +306,11 @@ auth_token = "env(SUPABASE_AUTH_SMS_TWILIO_AUTH_TOKEN)"
 max_enrolled_factors = 10
 
 # Control MFA via App Authenticator (TOTP)
+# LOCAL DEVELOPMENT ONLY (T006b M3a, ADR 0016): on, so the MFA flows and the aal2 enforcement can be tested against the real Auth server.
+# The HOSTED project is set by hand from docs/runbooks/hosted-auth-settings.md; never `supabase config push` this file.
 [auth.mfa.totp]
-enroll_enabled = false
-verify_enabled = false
+enroll_enabled = true
+verify_enabled = true
 
 # Configure MFA via Phone Messaging
 [auth.mfa.phone]
