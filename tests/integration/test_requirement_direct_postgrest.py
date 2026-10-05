@@ -265,7 +265,7 @@ def test_the_finder_and_the_database_agree_on_whitespace_and_non_bmp_text(on: Wo
 
 
 # ------------------------------------------------------------------------------ attacks
-def test_anon_can_call_none_of_the_four(on: World) -> None:
+def test_anon_can_call_none_of_the_five(on: World) -> None:
     calls: dict[str, dict[str, Any]] = {
         "agent_write_requirement_field": {"p_run_id": uid(), "p_step_key": "s", "p_line": 1, "p_key": "colour", "p_value_code": "red", "p_value_int": None,
                                           "p_value_date": None, "p_value_text": None, "p_basis": None, "p_certainty": "stated", "p_quote": "red",
@@ -273,6 +273,7 @@ def test_anon_can_call_none_of_the_four(on: World) -> None:
         "decide_requirement_field": {"p_field_id": uid(), "p_decision": "confirm"},
         "confirm_requirement": {"p_requirement_id": uid()},
         "discard_requirement": {"p_requirement_id": uid()},
+        "add_requirement_field": {"p_enquiry_id": uid(), "p_line": 1, "p_key": "colour", "p_value_code": "red"},
     }  # fmt: skip
     for name, body in calls.items():
         r = rpc(on, None, name, **body)
@@ -480,3 +481,116 @@ def test_a_run_id_cannot_be_reused_across_tenants_or_enquiries(
     other = start(on, on.a.users["sales"], on.a, capture(on, on.a), p_run_id=drafted["run"])
     assert code_of(other) == "23505", other.text
     assert str(uuid.UUID(drafted["run"])) == drafted["run"]
+
+
+# ------------------------------------------------------------------------------ add_requirement_field (commit 3b)
+def add(
+    w: World, user: User | None, enquiry: str, line: int | None, key: str, **value: Any
+) -> httpx.Response:
+    args: dict[str, Any] = {"p_enquiry_id": enquiry, "p_line": line, "p_key": key}
+    args.update({f"p_{k}": v for k, v in value.items()})
+    return rpc(w, user, "add_requirement_field", **args)
+
+
+def test_a_human_adds_a_missing_field_and_it_is_theirs(on: World) -> None:
+    sales = on.a.users["sales"]
+    eid = capture(on, on.a)
+    r = add(on, sales, eid, 1, "saree_type", value_code="kanjivaram")
+    assert r.status_code == 200 and r.json()["replayed"] is False, r.text
+    q = "Need  20 kanjivaram   sarees"
+    s = BODY.index(q)
+    r2 = add(
+        on, sales, eid, 1, "quantity", value_int=20, basis="piece", quote=q, start=s, end=s + len(q)
+    )
+    assert r2.status_code == 200, r2.text
+    assert add(on, sales, eid, 1, "saree_type", value_code="kanjivaram").json()["replayed"] is True
+    rows = pg(
+        on.stack,
+        sales,
+        "GET",
+        f"/requirement_fields?requirement_id=eq.{r.json()['requirement_id']}&select=field_key,state,created_via,created_by,decided_by,certainty,quote",
+    ).json()
+    assert {x["field_key"] for x in rows} == {"saree_type", "quantity"}
+    assert all(
+        x["state"] == "corrected"
+        and x["created_via"] == "manual"
+        and x["created_by"] == str(sales.id)
+        and x["decided_by"] == str(sales.id)
+        for x in rows
+    )
+    assert {x["quote"] for x in rows} == {None, "Need 20 kanjivaram sarees"}
+    done = rpc(on, sales, "confirm_requirement", p_requirement_id=r.json()["requirement_id"])
+    assert done.status_code == 200 and done.json()["status"] == "confirmed", (
+        done.text
+    )  # type + quantity by a human: confirmable
+    after = add(on, sales, eid, None, "delivery_city", value_text="Hyderabad")
+    assert code_of(after) == "SM208", after.text
+
+
+def test_add_requirement_field_attacks(on: World) -> None:
+    eid = capture(on, on.a)
+    anon = add(on, None, eid, 1, "saree_type", value_code="kanjivaram")
+    assert anon.status_code in (401, 403), anon.text
+    for user in (on.a.users["viewer"], on.b.users["owner"], on.b.users["sales"]):
+        r = add(on, user, eid, 1, "saree_type", value_code="kanjivaram")
+        assert (
+            r.status_code in (401, 403) and code_of(r) == "42501" and r.json()["message"] == GENERIC
+        ), r.text
+    unknown = add(on, on.b.users["owner"], uid(), 1, "saree_type", value_code="kanjivaram")
+    foreign = add(on, on.b.users["owner"], eid, 1, "saree_type", value_code="kanjivaram")
+    assert (unknown.status_code, unknown.json()) == (foreign.status_code, foreign.json())
+    sales = on.a.users["sales"]
+    for key, line, value in (
+        ("quantity", 1, {"value_int": 10001, "basis": "piece"}),
+        ("saree_type", 1, {"value_code": "plastic"}),
+        ("colour", 6, {"value_code": "red"}),
+        ("budget", None, {"value_int": 1_000_000_001, "basis": "total"}),
+        ("payment_terms", None, {"value_code": "net_days", "value_int": 181, "basis": "days"}),
+    ):
+        r = add(on, sales, eid, line, key, **value)
+        assert r.status_code == 400 and code_of(r) == "23514", (key, r.text)
+    bad = add(
+        on, sales, eid, 1, "fabric", value_code="silk", quote="Need 99 sarees", start=0, end=10
+    )
+    assert code_of(bad) == "23514", bad.text
+    half = add(on, sales, eid, 1, "fabric", value_code="silk", quote="Hello,")
+    assert code_of(half) == "22023", half.text
+    nothing = pg(
+        on.stack,
+        sales,
+        "GET",
+        f"/requirement_fields?select=id&tenant_id=eq.{on.a.id}&requirement_id=in.({','.join(r['id'] for r in pg(on.stack, sales, 'GET', f'/requirements?enquiry_id=eq.{eid}&select=id').json())})",
+    ).json()
+    assert nothing == [], "every refused add left nothing behind"
+
+
+def test_property_add_requirement_field_accepts_a_quote_exactly_when_the_python_check_does(
+    on: World,
+) -> None:
+    rng = random.Random(20261009)
+    sales = on.a.users["sales"]
+    body = _random_body(rng)
+    eid = capture(on, on.a, body)
+    accepted = refused = 0
+    for slot in range(15):
+        key, line = ("saree_type", "fabric", "colour")[slot // 5], slot % 5 + 1
+        a = rng.randrange(0, len(body))
+        b = rng.randrange(a + 1, min(len(body), a + 80) + 1)
+        quote = normalise_ws(body[a:b])
+        if rng.random() < 0.4 and quote:
+            quote = quote[:-1] + ("Q" if quote[-1] != "Q" else "R")
+        expected = verify(body, a, b, quote) and 1 <= len(quote) <= 300
+        r = add(on, sales, eid, line, key, value_code="other", quote=quote or " ", start=a, end=b)
+        if expected:
+            accepted += 1
+            assert r.status_code == 200, (body, a, b, quote, r.text)
+        else:
+            refused += 1
+            assert r.status_code == 400 and code_of(r) in ("23514", "22023"), (
+                body,
+                a,
+                b,
+                quote,
+                r.text,
+            )
+    assert accepted >= 3 and refused >= 3, (accepted, refused)

@@ -158,7 +158,9 @@ select is(
         'public.agent_write_requirement_field',
         'public.decide_requirement_field',
         'public.confirm_requirement',
-        'public.discard_requirement')),
+        'public.discard_requirement',
+        -- T008 commit 3b: a human adds a field the extraction missed
+        'public.add_requirement_field')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -170,8 +172,9 @@ select is(
                      'public.set_tenant_agents_enabled', 'public.review_claim',
                      'public.agent_reserve_cost', 'public.set_tenant_daily_cost_cap', 'public.agent_release_cost', 'public.agent_cost_summary',
                      'public.request_erasure', 'public.execute_erasure', 'public.cancel_erasure',
-                     'public.agent_write_requirement_field', 'public.decide_requirement_field', 'public.confirm_requirement', 'public.discard_requirement')),
-  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the four requirement functions (T008) and the three erasure functions (ADR 0014)');
+                     'public.agent_write_requirement_field', 'public.decide_requirement_field', 'public.confirm_requirement', 'public.discard_requirement',
+                     'public.add_requirement_field')),
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008) and the three erasure functions (ADR 0014)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions

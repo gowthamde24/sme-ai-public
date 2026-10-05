@@ -39,7 +39,7 @@ create function pg_temp.fields(p_req uuid) returns text language sql as $$
 -- ============================================================================ A. definition, flag, operator switch
 select results_eq($$select agent_name, requires_flag, allowed_predicates, allowed_evidence_kinds::text[], max_writes, max_tool_calls, max_input_tokens, max_output_tokens, max_cost_micros
                       from public.agent_definitions where agent_name = 'requirement'$$,
-  $$values ('requirement'::text, 'requirement_enabled'::text, array[]::text[], array[]::text[], 45, 60, 20000, 4000, 100000::bigint)$$,
+  $$values ('requirement'::text, 'requirement_enabled'::text, array[]::text[], array[]::text[], 45, 60, 40000, 4000, 100000::bigint)$$,
   'the requirement definition: its own flag, NO claim predicates, NO evidence kinds, the ceilings');
 select is((select enabled from public.platform_flags where key = 'requirement_enabled'), false, 'the requirement switch is OFF');
 select is((select cardinality(allowed_tenants) from public.agent_definitions where agent_name = 'requirement'), 0, 'and no tenant may use it yet');

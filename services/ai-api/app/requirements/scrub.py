@@ -28,7 +28,8 @@ import re
 
 CONTACT_MARKER = "[contact removed]"
 
-EMAIL_PATTERN = r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+"
+# starts only at the START of a run of address characters (a position inside a long run fails at once: no quadratic scan)
+EMAIL_PATTERN = r"(?<![A-Za-z0-9._%+-])[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+"
 
 # words that make a following number an amount, a reference or an identifier, never a phone
 _CONTEXT_WORDS = (
@@ -41,7 +42,8 @@ _CONTEXT_SEPARATORS = (" ", ".", ". ", ":", ": ", "-", "- ", "#", "# ")
 def _lookbehinds() -> str:
     # each (word, separator) is its own fixed-width lookbehind, so the same text works in Python
     # and in PostgreSQL
-    parts = [r"(?<![A-Za-z0-9₹#/])", r"(?<![0-9][,.])"]
+    # the cheap test first: only a digit or a plus can start a phone, so every other position fails at once
+    parts = [r"(?=[+0-9])", r"(?<![A-Za-z0-9₹#/])", r"(?<![0-9][,.])"]
     for word in _CONTEXT_WORDS:
         for sep in _CONTEXT_SEPARATORS:
             parts.append("(?<!" + re.escape(word) + re.escape(sep) + ")")

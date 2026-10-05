@@ -87,8 +87,16 @@ def test_property_plain_texts_are_untouched() -> None:
 
 
 def test_the_database_guard_uses_exactly_these_patterns() -> None:
-    migration = (
-        ROOT / "supabase" / "migrations" / "20261015090000_t008_enquiries_requirements.sql"
-    ).read_text()
-    assert f"p ~* '{EMAIL_PATTERN}'" in migration
-    assert f"p ~* '{PHONE_PATTERN}'" in migration
+    # the LATEST definition of app.text_has_contact among the T008 migrations is the one in force
+    migrations = sorted((ROOT / "supabase" / "migrations").glob("202610150*_t008_*.sql"))
+    body = ""
+    for path in migrations:
+        text = path.read_text()
+        start = text.find("function app.text_has_contact")
+        while start != -1:
+            end = text.index("$$;", text.index("as $$", start))
+            body = text[start:end]
+            start = text.find("function app.text_has_contact", end)
+    assert body, "no definition of app.text_has_contact found"
+    assert f"p ~* '{EMAIL_PATTERN}'" in body
+    assert f"p ~* '{PHONE_PATTERN}'" in body

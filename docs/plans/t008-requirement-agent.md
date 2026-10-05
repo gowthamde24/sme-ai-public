@@ -161,3 +161,21 @@ cap, `requirement_enabled` for one named workspace, and a decision on **what enq
 * The runtime finds the quote (C), but a real span may still not support the value; D, certainty labels, human confirmation of every field and the wrong-confirmed gate cover it.
 * As ADR 0013 states, the caps and the delegated-token model guard against bugs and honest mistakes, not a malicious member; option B and the provider-side cap stay the real answer before any external customer.
 * Scope creep toward quoting: held by the NOT-building list and the `requirement_v1` contract.
+
+## 14. Owner review of commits 1-3: commit 3b (migration `20261015090200`, a new migration; nothing earlier is amended)
+1. `public.add_requirement_field` (Owner / Admin / Sales): a human adds a field the extraction missed. Creates the draft if none exists (enquiry row locked, SM208 when a
+   confirmed requirement exists), stores the field as `corrected`, decided by the caller, `created_via = 'manual'`, one field per (line, key), the same shape and caps as the agent
+   path. The quote is optional; when given it is verified exactly like the agent's. `quote` / `quote_start` / `quote_end` are nullable only for a manual field. The API and the
+   screen use it for "add missing field".
+2. `agent_write_requirement_field`: a delivery city must appear in its quote (whitespace-normalised, lower-cased). A human correction stays free.
+3. A `unique_violation` on `requirements_one_active_key` (a confirm / insert race) becomes SM208.
+4. The three functions this ticket replaces (`start_agent_run`, `erase_contact`, `erase_company`) were diffed against their latest earlier definitions: only the T008 lines differ.
+   `tests/test_migration_copies.py` keeps it that way (the T008 copy must be the LAST definition, and may only ADD lines apart from a named list).
+5. `app.text_has_contact` timing on adversarial 6,000-character inputs is tested (pgTAP 55, unit tests). The e-mail pattern was quadratic on a long run of address characters; the
+   same rule now uses linear-time patterns (new definition in 3b, identical to `app/requirements/scrub.py`). Capture only scrubs a bounded head of a paste.
+6. Capture strips zero-width and bidi characters and stores the stripped text (`app/requirements/capture_text.py`); the database accepted ZWJ / ZWNJ / LRM / RLM and refused the
+   rest (it still does). The cost for Indic scripts, and the switch `KEEP_INDIC_JOINERS`, are in the module's docstring; the default strips them, as decided.
+7. `public.requirement_v1` (security invoker): only the confirmed / corrected fields of a CONFIRMED requirement; no quote, no enquiry text. **ADR 0018 records: discarding a
+   confirmed requirement must be blocked once a quote depends on it (the T009 integration adds that check), and persisted question drafts belong to T010.**
+8. The requirement definition's input ceiling is 40,000 tokens (it was 20,000): a 6,000-character Devanagari / Kannada / Telugu text is up to 18,000 bytes and the reservation bounds a
+   call's input by its bytes.

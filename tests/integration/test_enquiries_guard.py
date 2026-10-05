@@ -147,3 +147,94 @@ def test_stored_text_is_never_edited_and_a_stack_has_no_stray_bytes(w: World, st
         json={"body": "edited"},
     )
     assert patch.status_code in (401, 403)
+
+
+# ---- invisible characters: what the database does with raw text, and what capture stores (owner review of commit 3)
+INDIC = {
+    "telugu": "క్‌ష",
+    "kannada": "ಕ್‍ಷ",
+    "devanagari": "क्‍ष",
+    "devanagari_zwnj": "क्‌ष",
+}
+
+
+@pytest.mark.parametrize("name", list(INDIC))
+def test_the_database_accepts_raw_indic_joiners_and_capture_stores_the_stripped_text(
+    w: World, name: str
+) -> None:
+    from app.requirements.capture_text import prepare_body
+
+    raw = f"నమస్కారం 20 sarees {INDIC[name]} deliver to Hyderabad"
+    assert stored(w, raw), "ZWJ / ZWNJ are legal in the database (Indic scripts spell with them)"
+    cleaned = prepare_body(raw).text
+    assert "‌" not in cleaned and "‍" not in cleaned
+    assert stored(w, cleaned), "what capture stores always passes"
+
+
+@pytest.mark.parametrize(
+    "hidden",
+    ["​", "‮", "‪", "⁦", "⁠", "﻿", "\U000e0041", " ", "\x01", "\x7f", "\x85"],
+    ids=[
+        "zwsp",
+        "rlo",
+        "lre",
+        "lri",
+        "word_joiner",
+        "bom",
+        "tag",
+        "line_sep",
+        "ctrl1",
+        "del",
+        "nel",
+    ],
+)
+def test_the_database_refuses_raw_hidden_characters_and_capture_strips_them_instead(
+    w: World, hidden: str
+) -> None:
+    from app.requirements.capture_text import prepare_body
+
+    raw = f"Need 20 saree{hidden}s by 15 November"
+    assert not stored(w, raw), "the database refuses it (23514)"
+    prepared = prepare_body(raw).text
+    # a line / paragraph separator becomes a line feed; every other hidden character simply goes
+    assert prepared == (
+        "Need 20 saree\ns by 15 November" if hidden == "\u2028" else "Need 20 sarees by 15 November"
+    )
+    assert stored(w, prepared)
+
+
+def test_property_what_capture_stores_always_passes_the_database(w: World) -> None:
+    from app.requirements.capture_text import prepare_body
+
+    rng = random.Random(20261008)
+    pool = [
+        "a",
+        "b",
+        " ",
+        "\n",
+        "\t",
+        "क्",
+        "‍",
+        "‌",
+        "క్",
+        "‎",
+        "‏",
+        "​",
+        "‮",
+        "﻿",
+        "\U000e0041",
+        "\x7f",
+        "😀",
+        "é",
+        "9876543210",
+        "a@b.in",
+        "Rs 5,00,000",
+        " ",
+        "20",
+        "sarees",
+    ]
+    for _ in range(80):
+        raw = "".join(rng.choice(pool) for _ in range(rng.randint(1, 30)))
+        prepared = prepare_body(raw).text
+        if prepared:
+            assert stored(w, prepared), (raw, prepared)
