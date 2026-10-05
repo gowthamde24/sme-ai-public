@@ -1,8 +1,6 @@
 """Which resolved addresses the fetcher may connect to: every refused class has a vector, and the
 public addresses a research run really needs are allowed (the guard is not "block everything")."""
 
-# ruff: noqa: S104
-
 from __future__ import annotations
 
 import ipaddress
@@ -12,7 +10,7 @@ import pytest
 from app.webfetch.netguard import DENIED_V4, DENIED_V6, address_allowed, parse_address
 
 BLOCKED_V4 = [
-    ("0.0.0.0", "unspecified"),
+    ("0.0.0.0", "unspecified"),  # noqa: S104
     ("0.1.2.3", "this network"),
     ("10.0.0.1", "private 10/8"),
     ("10.255.255.255", "private 10/8 top"),

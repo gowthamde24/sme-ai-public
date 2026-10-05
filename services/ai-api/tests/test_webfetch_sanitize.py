@@ -1,7 +1,5 @@
 """The sanitiser: visible text only, nothing hidden, contact details removed, characters cleaned."""
 
-# ruff: noqa: E501, S311
-
 from __future__ import annotations
 
 import random
@@ -24,7 +22,7 @@ def text_of(html: str) -> str:
 
 
 def test_visible_text_survives_with_block_structure() -> None:
-    html = "<html><head><title>Acme Silks</title></head><body><h1>Sarees</h1><p>Wholesale silk sarees.</p><ul><li>Kanjivaram</li><li>Banarasi</li></ul></body></html>"
+    html = "<html><head><title>Acme Silks</title></head><body><h1>Sarees</h1><p>Wholesale silk sarees.</p><ul><li>Kanjivaram</li><li>Banarasi</li></ul></body></html>"  # noqa: E501
     assert text_of(html) == "Acme Silks\nSarees\nWholesale silk sarees.\nKanjivaram\nBanarasi"
 
 
@@ -129,7 +127,7 @@ def test_ordinary_elements_are_kept(attrs: str) -> None:
 
 def test_hidden_inside_hidden_and_visible_lookalikes_inside_hidden() -> None:
     html = (
-        "<div style='display:none'><p>one</p><div><span>two</span></div><p style='display:block'>three</p></div>"
+        "<div style='display:none'><p>one</p><div><span>two</span></div><p style='display:block'>three</p></div>"  # noqa: E501
         "<p>shown</p>"
     )
     assert text_of(html) == "shown"
@@ -249,7 +247,7 @@ def test_deeply_nested_and_huge_input_is_handled_in_bounded_time() -> None:
 
 
 def test_malformed_markup_never_raises() -> None:
-    rng = random.Random(7)
+    rng = random.Random(7)  # noqa: S311
     pieces = [
         "<",
         ">",

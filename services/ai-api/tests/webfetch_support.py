@@ -1,7 +1,5 @@
 """Helpers for the fetcher tests: a local HTTP(S) server, a resolver stub and a test CA."""
 
-# ruff: noqa: S104, S105
-
 from __future__ import annotations
 
 import datetime

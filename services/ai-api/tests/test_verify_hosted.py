@@ -183,6 +183,18 @@ def test_it_fails_closed_when_not_configured_or_not_https(
     assert "not configured" in capsys.readouterr().out
 
 
+def test_the_publishable_name_is_accepted_and_either_key_name_is_required(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    new = {k: v for k, v in ENV.items() if k != "HOSTED_SUPABASE_ANON_KEY"}
+    new["HOSTED_SUPABASE_PUBLISHABLE_KEY"] = ANON
+    assert go(Hosted(), new) == 0
+    assert (
+        go(Hosted(), {k: v for k, v in new.items() if k != "HOSTED_SUPABASE_PUBLISHABLE_KEY"}) == 2
+    )
+    assert "HOSTED_SUPABASE_PUBLISHABLE_KEY" in capsys.readouterr().out
+
+
 def test_no_key_and_no_connection_string_is_ever_printed(
     capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:

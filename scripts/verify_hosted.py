@@ -5,7 +5,8 @@ supabase/hosted/verify.sql with default_transaction_read_only forced on.
 Everything comes from the environment YOU set for this run (never from a .env file, never from the repository):
 
   HOSTED_SUPABASE_URL        https://<ref>.supabase.co                  (public)
-  HOSTED_SUPABASE_ANON_KEY   the project's public anon / publishable key (public)
+  HOSTED_SUPABASE_PUBLISHABLE_KEY   the project's public publishable key (public); the legacy
+                             HOSTED_SUPABASE_ANON_KEY is still accepted
   HOSTED_API_URL             https://<your API>                         (public)
   HOSTED_WEB_ORIGIN          https://<your web app>                     (the ONLY origin the API may allow)
   HOSTED_DATABASE_URL        optional: a postgres:// URL as the postgres role. Without it (or without psql) the script prints how to
@@ -265,13 +266,10 @@ def check_database(report: Report) -> None:
 
 def run(env: dict[str, str] | None = None, client: httpx.Client | None = None) -> int:
     env = env if env is not None else dict(os.environ)
-    needed = [
-        "HOSTED_SUPABASE_URL",
-        "HOSTED_SUPABASE_ANON_KEY",
-        "HOSTED_API_URL",
-        "HOSTED_WEB_ORIGIN",
-    ]
+    needed = ["HOSTED_SUPABASE_URL", "HOSTED_API_URL", "HOSTED_WEB_ORIGIN"]
     missing = [k for k in needed if not env.get(k)]
+    if not (env.get("HOSTED_SUPABASE_PUBLISHABLE_KEY") or env.get("HOSTED_SUPABASE_ANON_KEY")):
+        missing.append("HOSTED_SUPABASE_PUBLISHABLE_KEY")
     if missing:
         print(
             "verify_hosted: not configured. Set "
@@ -283,7 +281,8 @@ def run(env: dict[str, str] | None = None, client: httpx.Client | None = None) -
         env["HOSTED_SUPABASE_URL"].rstrip("/"),
         env["HOSTED_API_URL"].rstrip("/"),
     )
-    web_origin, anon_key = env["HOSTED_WEB_ORIGIN"].rstrip("/"), env["HOSTED_SUPABASE_ANON_KEY"]
+    web_origin = env["HOSTED_WEB_ORIGIN"].rstrip("/")
+    anon_key = env.get("HOSTED_SUPABASE_PUBLISHABLE_KEY") or env["HOSTED_SUPABASE_ANON_KEY"]
     insecure = [u for u in (supabase_url, api_url, web_origin) if not _is_https(u)]
     if insecure:
         print(

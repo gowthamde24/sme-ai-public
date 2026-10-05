@@ -43,6 +43,7 @@ const FORBIDDEN_NAMES: [string, RegExp][] = [
   ["service-role key", /service[_-]?role/i],
   ["JWT secret", /jwt[_-]?secret/i],
   ["Supabase secret key", /SUPABASE_SECRET/i],
+  ["Supabase secret key (new naming)", /sb_secret|secret[_-]?key/i],
   [
     "database URL / password",
     /(SUPABASE_)?DB_(URL|PASSWORD)|DATABASE_URL|POSTGRES_PASSWORD/,
@@ -54,7 +55,8 @@ const FORBIDDEN_NAMES: [string, RegExp][] = [
 const ALLOWED_PUBLIC = new Set([
   "NEXT_PUBLIC_API_BASE_URL",
   "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+  "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY", // legacy name, still accepted
 ]);
 
 describe("no secrets in apps/web", () => {
@@ -83,7 +85,9 @@ describe("no secrets in apps/web", () => {
   it("no NEXT_PUBLIC_ name hints at a secret", () => {
     const secretish = /(SECRET|SERVICE|PRIVATE|PASSWORD|TOKEN|JWT|ROLE)/;
     for (const name of ALLOWED_PUBLIC)
-      expect(secretish.test(name.replace("ANON_KEY", ""))).toBe(false);
+      expect(
+        secretish.test(name.replace("ANON_KEY", "").replace("PUBLISHABLE_KEY", "")),
+      ).toBe(false);
   });
 
   it(".env.example keeps secrets out of NEXT_PUBLIC_ variables and holds no real values", () => {

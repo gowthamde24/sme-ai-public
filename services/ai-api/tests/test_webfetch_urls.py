@@ -1,7 +1,5 @@
 """URL rules: what the fetcher will even consider, in one normal form."""
 
-# ruff: noqa: S104
-
 from __future__ import annotations
 
 import pytest
@@ -122,7 +120,7 @@ def test_userinfo_is_refused(url: str) -> None:
         "8.8.8.8",
         "10.0.0.1",
         "169.254.169.254",
-        "0.0.0.0",
+        "0.0.0.0",  # noqa: S104
         "2130706433",
         "0x7f000001",
         "0x7f.0.0.1",

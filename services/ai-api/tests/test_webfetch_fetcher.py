@@ -1,8 +1,6 @@
 """The real fetcher against a LOCAL server: every guard has a vector that must be refused, and
 must-allow vectors prove the guard is not "block everything". Nothing here leaves 127.0.0.1."""
 
-# ruff: noqa: E501, S104
-
 from __future__ import annotations
 
 import gzip
@@ -37,7 +35,7 @@ TLS_CODES = {
     "tls_failed",
     "robots_unavailable",
 }  # a failed handshake on robots.txt means the site cannot be asked
-PAGE = b"<html><head><title>Acme Silks</title></head><body><p>Wholesale silk sarees.</p><script>bad()</script></body></html>"
+PAGE = b"<html><head><title>Acme Silks</title></head><body><p>Wholesale silk sarees.</p><script>bad()</script></body></html>"  # noqa: E501
 
 
 @pytest.fixture
@@ -461,7 +459,7 @@ def test_a_redirect_off_the_site_is_refused_when_a_scope_is_set(server: LocalSer
     scope = frozenset({"site.example.net", "www.site.example.net"})
     assert refused(fetcher, url(server), allowed_hosts=scope).code == "off_host"
     assert "/x" not in server.seen.paths()
-    # without a scope the same redirect is followed (the guard is about addresses, the scope about the lead's site)
+    # without a scope the same redirect is followed (the guard is about addresses, the scope about the lead's site)  # noqa: E501
     assert fetcher.fetch(url(server)).text == "other"
 
 
@@ -522,7 +520,7 @@ def test_a_missing_or_malformed_location_is_a_constant_refusal(
     assert refused(fetcher, url(server)).code == "bad_redirect"
 
 
-# ============================================================================ DNS rebinding and the peer address
+# ============================================================================ DNS rebinding and the peer address  # noqa: E501
 
 
 def test_the_name_is_resolved_once_per_request_and_the_connection_goes_to_that_answer(
@@ -565,7 +563,7 @@ def test_a_later_private_answer_is_caught_on_the_next_request_not_trusted_from_t
 
 def test_the_peer_address_actually_connected_to_is_checked_again(server: LocalServer) -> None:
     """The name resolves to a PUBLIC address, but the socket we get is connected to loopback (a
-    transparent redirect, a proxy, a poisoned route). The peer check refuses before any byte is sent."""
+    transparent redirect, a proxy, a poisoned route). The peer check refuses before any byte is sent."""  # noqa: E501
     server.route("/", body=PAGE)
     spy = Spy(redirect_to=server.port)
     peer = SafeFetcher(
@@ -771,7 +769,7 @@ def test_the_cap_is_exact_at_the_boundary(server: LocalServer) -> None:
 def test_a_compression_bomb_stops_at_the_decoded_cap_quickly(
     server: LocalServer, kind: str
 ) -> None:
-    """About 200 MB of zeros in a few hundred KB. The decoder is bounded: it never builds the output."""
+    """About 200 MB of zeros in a few hundred KB. The decoder is bounded: it never builds the output."""  # noqa: E501
     if kind == "gzip":
         compressor = zlib.compressobj(9, zlib.DEFLATED, 31)
     else:

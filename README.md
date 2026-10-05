@@ -31,11 +31,11 @@ Run the apps locally against the stack. `supabase status -o env` prints the publ
 ```
 # apps/web/.env.local
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<ANON_KEY from supabase status>
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<PUBLISHABLE_KEY from supabase status>   # the legacy NEXT_PUBLIC_SUPABASE_ANON_KEY is still accepted
 NEXT_PUBLIC_API_BASE_URL=http://localhost:8000
 
 # services/ai-api/.env      (API_ENV=development fills in the rest from the local stack)
-SUPABASE_ANON_KEY=<ANON_KEY from supabase status>
+SUPABASE_PUBLISHABLE_KEY=<PUBLISHABLE_KEY from supabase status>   # the legacy SUPABASE_ANON_KEY is still accepted
 ```
 
 ```

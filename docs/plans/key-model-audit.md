@@ -26,7 +26,7 @@ changed. `.env` was not read; `.env.example` was.
 * Conclusion: user-JWT verification does not depend on which key name is configured. Side effect: one local user
   `keycheck-<hex>@example.test` now exists in the local database (next `supabase db reset` removes it).
 
-## Proposed rename (not applied: this is a docs-only task)
+## Rename: APPLIED in T007 M2 commit 1 (originally proposed here)
 Support both names, new first: `SUPABASE_PUBLISHABLE_KEY` (API, scripts), `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (web),
 `HOSTED_SUPABASE_PUBLISHABLE_KEY` (verifier). Fall back to the old name silently.
 * `app/config.py`: one setting with `AliasChoices("supabase_publishable_key", "supabase_anon_key")`; the fail-closed test covers both names.

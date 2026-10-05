@@ -19,7 +19,7 @@ trusted role must own the definer functions (the migrations run as `postgres`, s
 
 ## Deploy
 ```
-export PROJECT_ID=...  SUPABASE_URL=https://<ref>.supabase.co  SUPABASE_ANON_KEY=<public anon key>  WEB_ORIGIN=https://<web url>
+export PROJECT_ID=...  SUPABASE_URL=https://<ref>.supabase.co  SUPABASE_PUBLISHABLE_KEY=<public publishable key>  WEB_ORIGIN=https://<web url>
 ./deploy/cloudrun.sh api              # dry run: read it
 ./deploy/cloudrun.sh api --execute    # then:
 export API_URL=https://<api url printed by gcloud>
@@ -34,7 +34,7 @@ without `CPU_ALWAYS=true`, because agent threads stall when the CPU is throttled
 
 ## Verify (read-only)
 ```
-export HOSTED_SUPABASE_URL=...  HOSTED_SUPABASE_ANON_KEY=...  HOSTED_API_URL=...  HOSTED_WEB_ORIGIN=...
+export HOSTED_SUPABASE_URL=...  HOSTED_SUPABASE_PUBLISHABLE_KEY=...  HOSTED_API_URL=...  HOSTED_WEB_ORIGIN=...
 export HOSTED_DATABASE_URL=postgresql://postgres:<password>@db.<ref>.supabase.co:5432/postgres   # optional
 python scripts/verify_hosted.py
 ```

@@ -20,14 +20,14 @@ for (const url of [BASE, API]) {
   }
 }
 
-/** The local stack's public URL and anon key, from `supabase status` (the same public values the app itself uses). */
+/** The local stack's public URL and publishable key (legacy anon as a fallback), from `supabase status` (the same public values the app itself uses). */
 export function supabasePublic() {
   const out = execFileSync("supabase", ["status", "-o", "env"], { encoding: "utf8" });
   const env = Object.fromEntries(out.split("\n").filter((l) => l.includes("=")).map((l) => {
     const i = l.indexOf("=");
     return [l.slice(0, i), l.slice(i + 1).replace(/^"|"$/g, "")];
   }));
-  return { url: env.API_URL, anon: env.ANON_KEY };
+  return { url: env.API_URL, anon: env.PUBLISHABLE_KEY || env.ANON_KEY };
 }
 
 export const results = [];

@@ -35,9 +35,11 @@ class Settings(BaseSettings):
     # (scheme://host[:port], no path, no "*"); https outside development.
     api_cors_origins: str = ""
 
-    # Supabase (T002). The anon/publishable key is public by design: it identifies the project
-    # to PostgREST; it grants nothing without a user JWT.
+    # Supabase (T002). The publishable key (formerly "anon") is public by design: it identifies
+    # the project to PostgREST and grants nothing without a user JWT. Use SUPABASE_PUBLISHABLE_KEY;
+    # the legacy SUPABASE_ANON_KEY is still accepted (the new name wins when both are set).
     supabase_url: str | None = None
+    supabase_publishable_key: str | None = None
     supabase_anon_key: str | None = None
     supabase_jwt_issuer: str | None = None
     supabase_jwt_audience: str | None = None
@@ -128,9 +130,9 @@ def build_auth_config(settings: Settings) -> AuthConfig:
     url = (settings.supabase_url or (LOCAL_SUPABASE_URL if dev else "")).rstrip("/")
     if not url:
         problems.append("SUPABASE_URL is required")
-    anon_key = settings.supabase_anon_key or ""
+    anon_key = settings.supabase_publishable_key or settings.supabase_anon_key or ""
     if not anon_key:
-        problems.append("SUPABASE_ANON_KEY is required")
+        problems.append("SUPABASE_PUBLISHABLE_KEY (or the legacy SUPABASE_ANON_KEY) is required")
 
     issuer = settings.supabase_jwt_issuer or (f"{url}/auth/v1" if dev and url else "")
     if not issuer:

@@ -13,7 +13,7 @@ HOW IT TALKS TO THE SYSTEM
     products, lead, opportunity, and the evidence attached to the company and the lead.
   * EXCEPT claims. They have no API yet (the research-agent ticket decides how claims are written), so
     this script creates the demo claims and their evidence links through PostgREST using the demo
-    user's OWN JWT and the public anon key, under row-level security like any signed-in user. There is
+    user's OWN JWT and the public (publishable) key, under row-level security like any signed-in user. There is
     NO service-role key anywhere in this script, in the repository, or in the environment it reads.
 
 SAFETY
@@ -22,7 +22,7 @@ SAFETY
   * Idempotent: every row has a fixed id derived from a name, so re-running creates nothing twice
     (the API answers 200 for an identical retry; claims and links are looked up before being created).
   * Config comes from the environment, or from the usual env files (services/ai-api/.env and
-    apps/web/.env.local), read for exactly the public values it needs: SUPABASE_URL, SUPABASE_ANON_KEY,
+    apps/web/.env.local), read for exactly the public values it needs: SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY (or the legacy SUPABASE_ANON_KEY),
     NEXT_PUBLIC_API_BASE_URL / SEED_API_URL. No value is ever printed.
   * The demo login is a fixed fake user on a reserved domain; its password is a constant below that is
     only ever valid against a local stack (the script refuses any other host).
@@ -122,14 +122,14 @@ def _read_env_file(path: Path, wanted: set[str]) -> dict[str, str]:
 
 def load_config(environ: dict[str, str] | None = None) -> Config:
     env = dict(os.environ if environ is None else environ)
-    wanted = {"SUPABASE_URL", "SUPABASE_ANON_KEY", "NEXT_PUBLIC_API_BASE_URL"}
+    wanted = {"SUPABASE_URL", "SUPABASE_PUBLISHABLE_KEY", "SUPABASE_ANON_KEY", "NEXT_PUBLIC_API_BASE_URL"}
     files: dict[str, str] = {}
     for candidate in (ROOT / "apps/web/.env.local", ROOT / "services/ai-api/.env"):
         files.update(_read_env_file(candidate, wanted))
     merged = {**files, **{k: v for k, v in env.items() if v}}  # the environment wins
     return Config(
         supabase_url=merged.get("SUPABASE_URL", DEFAULT_SUPABASE_URL).rstrip("/"),
-        anon_key=merged.get("SUPABASE_ANON_KEY", ""),
+        anon_key=merged.get("SUPABASE_PUBLISHABLE_KEY") or merged.get("SUPABASE_ANON_KEY", ""),
         api_url=(
             merged.get("SEED_API_URL") or merged.get("NEXT_PUBLIC_API_BASE_URL") or DEFAULT_API_URL
         ).rstrip("/"),
@@ -408,7 +408,7 @@ class Seeder:
     def sign_in(self) -> None:
         if not self.c.anon_key:
             raise SeedError(
-                "SUPABASE_ANON_KEY is not set. Run `make seed-demo` (it takes the local stack's "
+                "SUPABASE_PUBLISHABLE_KEY (or the legacy SUPABASE_ANON_KEY) is not set. Run `make seed-demo` (it takes the local stack's "
                 "public key), or put it in services/ai-api/.env."
             )
         auth = f"{self.c.supabase_url}/auth/v1"

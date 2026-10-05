@@ -1,6 +1,6 @@
 """Integration fixtures: a real local Supabase stack (GoTrue + PostgREST + Postgres).
 
-Run with `make test-integration` (starts from `supabase start`). Only the public URL and anon key
+Run with `make test-integration` (starts from `supabase start`). Only the public URL and public keys
 are available here; there is no service-role key. Every user is created through the public signup
 endpoint, exactly like a real client, and every request uses that user's own JWT.
 """
@@ -58,10 +58,12 @@ class Stack:
 
 @pytest.fixture(scope="session")
 def stack() -> Stack:
-    url, anon = os.environ.get("SUPABASE_URL"), os.environ.get("SUPABASE_ANON_KEY")
+    # The suite runs with the PUBLISHABLE key; the legacy anon key is the fallback.
+    url = os.environ.get("SUPABASE_URL")
+    anon = os.environ.get("SUPABASE_PUBLISHABLE_KEY") or os.environ.get("SUPABASE_ANON_KEY")
     if not url or not anon:
         pytest.exit(
-            "SUPABASE_URL / SUPABASE_ANON_KEY not set. Run `supabase start`, then "
+            "SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY not set. Run `supabase start`, then "
             "`make test-integration` (it wires the environment for you).",
             returncode=2,
         )

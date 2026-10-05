@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tests" / "integrat
 import operator_sql  # noqa: E402  (talks to the LOCAL database container only)
 
 URL = os.environ["SUPABASE_URL"].rstrip("/")
-ANON = os.environ["SUPABASE_ANON_KEY"]
+ANON = os.environ.get("SUPABASE_PUBLISHABLE_KEY") or os.environ["SUPABASE_ANON_KEY"]
 if not URL.startswith(("http://127.0.0.1", "http://localhost")):
     sys.exit("scale_erasure: refusing a non-local stack")
 UNIT = int(sys.argv[1]) if len(sys.argv) > 1 else 1000  # 1000 -> about 53,000 rows

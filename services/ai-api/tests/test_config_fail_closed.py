@@ -14,6 +14,7 @@ ENV_NAMES = [
     "API_ENV",
     "SUPABASE_URL",
     "SUPABASE_ANON_KEY",
+    "SUPABASE_PUBLISHABLE_KEY",
     "SUPABASE_JWT_ISSUER",
     "SUPABASE_JWT_AUDIENCE",
     "SUPABASE_JWKS_URL",
@@ -45,6 +46,34 @@ def settings(**overrides: Any) -> Settings:
 def test_valid_production_config_starts() -> None:
     app = create_app(settings())
     assert app.state.runtime is not None
+
+
+def test_the_publishable_name_and_the_legacy_anon_name_are_both_accepted() -> None:
+    legacy = settings()  # VALID_PROD sets only the legacy name
+    assert build_auth_config(legacy).anon_key == "public-anon-key"
+    new = settings(supabase_anon_key=None, supabase_publishable_key="public-publishable-key")
+    assert build_auth_config(new).anon_key == "public-publishable-key"
+    assert create_app(new).state.runtime is not None
+
+
+def test_the_publishable_name_wins_when_both_are_set() -> None:
+    both = settings(supabase_publishable_key="new-name-key")
+    assert build_auth_config(both).anon_key == "new-name-key"
+
+
+def test_both_names_are_read_from_the_environment(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("SUPABASE_ANON_KEY", "from-legacy-env")
+    assert Settings(_env_file=None).supabase_anon_key == "from-legacy-env"  # type: ignore[call-arg]
+    monkeypatch.setenv("SUPABASE_PUBLISHABLE_KEY", "from-new-env")
+    assert Settings(_env_file=None).supabase_publishable_key == "from-new-env"  # type: ignore[call-arg]
+
+
+def test_no_key_under_either_name_refuses_to_start_and_names_both() -> None:
+    with pytest.raises(ConfigurationError) as caught:
+        create_app(settings(supabase_anon_key=None, supabase_publishable_key=None))
+    assert "SUPABASE_PUBLISHABLE_KEY" in str(caught.value) and "SUPABASE_ANON_KEY" in str(
+        caught.value
+    )
 
 
 @pytest.mark.parametrize(
