@@ -1,0 +1,32 @@
+name: Lane paths
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  lane-paths:
+    if: startsWith(github.head_ref, 'lane/')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Check ownership with the base commit's guard
+        env:
+          LANE_BRANCH: ${{ github.head_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          LANE_POLICY_FROM_BASE: "1"
+        shell: bash
+        run: |
+          set -euo pipefail
+          guard=$(mktemp)
+          trap 'rm -f "$guard"' EXIT
+          git show "$BASE_SHA:scripts/check-lane-paths.sh" > "$guard"
+          bash "$guard" "${LANE_BRANCH#lane/}" "$BASE_SHA"
