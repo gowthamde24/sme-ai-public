@@ -64,6 +64,44 @@ class QuoteTests(unittest.TestCase):
         self.assertEqual(inclusive["lines"][0]["net"], 10000)
         self.assertEqual(inclusive["totals"]["total"], exclusive["totals"]["total"])
 
+    def test_shipping_tax_modes_and_default(self):
+        self.simple(price=10000, tax=1250)
+        self.r["policy"]["shipping"] = {"flat_fee": 10000}
+        default = quote(self.r)
+        self.r["policy"]["shipping"]["tax_bps"] = 0
+        explicit = quote(self.r)
+        self.assertEqual(default["totals"], explicit["totals"])
+        self.assertNotEqual(default["canonical_hash"], explicit["canonical_hash"])
+        self.r["policy"]["shipping"]["tax_bps"] = 1250
+        exclusive = quote(self.r)
+        self.assertEqual(exclusive["totals"], {"subtotal": 10000, "discount": 0,
+                         "net": 10000, "item_tax": 1250, "shipping_tax": 1250,
+                         "tax": 2500, "shipping": 10000, "shipping_gross": 11250, "total": 22500})
+        shipping_trace = next(t for t in exclusive["trace"] if t["rule_id"] == "shipping.tax.exclusive")
+        self.assertEqual(shipping_trace["inputs"], {"fee": 10000, "tax_bps": 1250,
+                         "net": 10000, "tax": 1250, "gross": 11250, "rounding": "half_up"})
+        self.r["policy"]["tax_mode"] = "inclusive"
+        self.r["price_list"][0]["unit_price"] = 11250
+        self.r["policy"]["shipping"]["flat_fee"] = 11250
+        inclusive = quote(self.r)
+        for key in ("net", "item_tax", "shipping_tax", "tax", "shipping", "shipping_gross", "total"):
+            self.assertEqual(inclusive["totals"][key], exclusive["totals"][key])
+        self.assertTrue(any(t["rule_id"] == "shipping.tax.inclusive" for t in inclusive["trace"]))
+        self.r["policy"]["shipping"]["free_above"] = 9999
+        free = quote(self.r)["totals"]
+        self.assertEqual((free["shipping"], free["shipping_tax"], free["shipping_gross"]), (0, 0, 0))
+
+    def test_shipping_half_paise_rounding(self):
+        self.simple(price=0)
+        for mode, expected in (("half_up", 1), ("half_even", 0), ("down", 0)):
+            self.r["policy"].update(rounding_mode=mode, tax_mode="exclusive")
+            self.r["policy"]["shipping"] = {"flat_fee": 1, "tax_bps": 5000}
+            self.assertEqual(quote(self.r)["totals"]["shipping_tax"], expected)
+            self.r["policy"]["tax_mode"] = "inclusive"
+            self.r["policy"]["shipping"]["tax_bps"] = 10000
+            self.assertEqual(quote(self.r)["totals"]["shipping"], expected)
+            self.assertEqual(quote(self.r)["totals"]["shipping_tax"], 1 - expected)
+
     def test_each_flag_and_boundaries(self):
         self.r["order_lines"][0]["discount_bps"] = 1000
         self.assertNotIn("DISCOUNT_ABOVE_CEILING", self.codes(quote(self.r)))
@@ -175,6 +213,7 @@ class QuoteTests(unittest.TestCase):
     def test_seeded_properties(self):
         rng = random.Random(9009)
         for _ in range(250):
+            # Every case owns fresh requests; no calls to the mutable simple helper.
             r = copy.deepcopy(self.r)
             r["policy"]["tax_mode"] = rng.choice(["exclusive", "inclusive"])
             r["policy"]["rounding_mode"] = rng.choice(["half_up", "half_even", "down"])
@@ -184,25 +223,40 @@ class QuoteTests(unittest.TestCase):
             second["sku"] = "SYN-B"
             r["price_list"].append(second)
             r["order_lines"].append({"sku": "SYN-B", "qty": rng.randrange(1, 40)})
+            r["policy"]["shipping"]["tax_bps"] = rng.randrange(10001)
+            before = copy.deepcopy(r)
             q = quote(r)
+            again = quote(r)
+            self.assertEqual(q, again)
+            self.assertEqual(q["canonical_hash"], again["canonical_hash"])
+            self.assertEqual(r, before)
             totals = q["totals"]
-            self.assertEqual(totals["total"], sum(line["net"] + line["tax"] for line in q["lines"]) + totals["shipping"])
-            self.assertEqual(totals["total"], sum(line["gross"] for line in q["lines"]) + totals["shipping"])
-            for key in ("net", "tax", "discount"):
+            self.assertEqual(totals["total"], sum(line["net"] + line["tax"] for line in q["lines"]) + totals["shipping"] + totals["shipping_tax"])
+            self.assertEqual(totals["total"], sum(line["gross"] for line in q["lines"]) + totals["shipping_gross"])
+            self.assertEqual(totals["tax"], sum(line["tax"] for line in q["lines"]) + totals["shipping_tax"])
+            self.assertEqual(totals["item_tax"], sum(line["tax"] for line in q["lines"]))
+            for key in ("net", "discount"):
                 self.assertEqual(totals[key], sum(line[key] for line in q["lines"]))
             self.assertEqual(q["payment_terms"]["advance_amount"] + q["payment_terms"]["balance"], totals["total"])
             self.assertTrue(all(amount >= 0 for amount in totals.values()))
             self.assertTrue(all(line[key] >= 0 for line in q["lines"] for key in ("net", "tax", "discount", "gross")))
+            permuted = copy.deepcopy(r)
+            permuted["order_lines"].reverse()
+            self.assertEqual(quote(permuted)["totals"], totals)
             price = q["lines"][0]["unit_price_applied"]
             r["order_lines"][0]["qty"] += 1
             self.assertLessEqual(quote(r)["lines"][0]["unit_price_applied"], price)
             # A unit exclusive gross becomes the inclusive catalog input.
-            self.simple(price=rng.randrange(100000), tax=rng.randrange(10001))
-            self.r["policy"]["tax_mode"] = "exclusive"
-            gross = quote(self.r)["lines"][0]["gross"]
-            self.r["policy"]["tax_mode"] = "inclusive"
-            self.r["price_list"][0]["unit_price"] = gross
-            self.assertEqual(quote(self.r)["lines"][0]["gross"], gross)
+            unit_request = copy.deepcopy(self.r)
+            unit_request["price_list"][0].update(unit_price=rng.randrange(100000),
+                tax_bps=rng.randrange(10001), price_breaks=[], minimum_order_quantity=1)
+            unit_request["order_lines"][0]["qty"] = 1
+            unit_request["policy"].update(tax_mode="exclusive", rounding_mode="half_up")
+            unit_request["policy"]["shipping"] = {"flat_fee": 0}
+            gross = quote(unit_request)["lines"][0]["gross"]
+            unit_request["policy"]["tax_mode"] = "inclusive"
+            unit_request["price_list"][0]["unit_price"] = gross
+            self.assertEqual(quote(unit_request)["lines"][0]["gross"], gross)
 
 
 if __name__ == "__main__":
