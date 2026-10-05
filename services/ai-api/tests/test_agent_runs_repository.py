@@ -387,3 +387,35 @@ def test_a_url_that_does_not_parse_gives_no_host_and_the_quote_is_kept() -> None
         None,
         "q",
     )
+
+
+# ---- the Owner's view of today's spending (T007 M3b)
+def test_the_cost_summary_is_one_function_call_with_the_callers_token_and_a_hidden_denial() -> None:
+    body = {
+        "day": "2026-10-04",
+        "cap_micros": 2_000_000,
+        "settled_micros": 400,
+        "open_micros": 900,
+        "open": [
+            {
+                "run_id": str(RUN),
+                "step_key": "usage-2",
+                "reserved_micros": 700,
+                "run_status": "killed",
+                "created_at": "2026-10-04T12:00:00+00:00",
+            }
+        ],
+    }
+    server = Server((200, body))
+    out = make(server).cost_summary(TOKEN, TENANT)
+    assert (out.settled_micros, out.open_micros, out.open[0].run_status) == (400, 900, "killed")
+    req = server.requests[0]
+    assert req.url.path == "/rest/v1/rpc/agent_cost_summary"
+    assert json.loads(req.content) == {"p_tenant_id": str(TENANT)}
+    assert req.headers["authorization"] == f"Bearer {TOKEN}"
+    with pytest.raises(NotFoundError):  # a refusal reads as "not found": no oracle
+        make(
+            Server((403, {"code": "42501", "message": "agent action not permitted"}))
+        ).cost_summary(TOKEN, TENANT)
+    with pytest.raises(UpstreamError):
+        make(Server((200, {"day": "x"}))).cost_summary(TOKEN, TENANT)

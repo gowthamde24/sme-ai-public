@@ -2,10 +2,12 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import {
+  fetchAgentCost,
   fetchAgentSettings,
   fetchRuns,
   RUN_ERROR_LABELS,
   RUN_STATUS_LABELS,
+  type AgentCostOut,
   type AgentSettingsOut,
   type PageRunOut,
 } from "@/lib/api/agents";
@@ -20,6 +22,7 @@ import {
   startRunAction,
   toggleAgentsAction,
 } from "./actions";
+import { CostPanel } from "./cost-panel";
 import { AgentToggleForm, CancelRunForm, StartResearchForm, StartRunForm } from "./agent-forms";
 
 export const metadata = { title: "Agents · SME AI Revenue Engine" };
@@ -53,6 +56,7 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   let runs: PageRunOut | null = null;
   let companies: { id: string; name: string }[] = [];
   let leads: { id: string; label: string }[] = [];
+  let cost: AgentCostOut | null = null;
   try {
     settings = await fetchAgentSettings(user.accessToken, tenantId);
     runs = await fetchRuns(user.accessToken, tenantId);
@@ -74,6 +78,14 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   }
 
   const canManage = ADMIN_ROLES.includes(tenant.role);
+  if (canManage) {
+    try {
+      cost = await fetchAgentCost(user.accessToken, tenantId);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      // anything else: the panel says so, never placeholder numbers
+    }
+  }
   const canStart = START_ROLES.includes(tenant.role);
 
   return (
@@ -144,6 +156,8 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
           />
         </section>
       )}
+
+      {canManage && <CostPanel cost={cost} />}
 
       <section aria-labelledby="runs-heading">
         <h2 id="runs-heading">Runs</h2>

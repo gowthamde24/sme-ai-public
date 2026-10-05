@@ -4,6 +4,45 @@
   "title": "Agent run API contracts (T006)",
   "description": "Generated from services/ai-api/app/agent_runs/models.py by `make contracts`. An agent claim is a SUGGESTION until a human accepts it: show it as 'agent suggestion, unreviewed'. Claim values are UNTRUSTED text: show them as plain text. Requests forbid unknown properties: a tenant, an origin, a confidence of the agent's own or a provider can never be sent.",
   "$defs": {
+    "AgentCostOut": {
+      "additionalProperties": false,
+      "description": "Today's (UTC) agent spending of a workspace, for its Owner / Admin. Amounts are millionths of\nthe billing currency. `open_micros` is counted at the worst case, not at what was spent.",
+      "properties": {
+        "day": {
+          "format": "date",
+          "title": "Day",
+          "type": "string"
+        },
+        "cap_micros": {
+          "title": "Cap Micros",
+          "type": "integer"
+        },
+        "settled_micros": {
+          "title": "Settled Micros",
+          "type": "integer"
+        },
+        "open_micros": {
+          "title": "Open Micros",
+          "type": "integer"
+        },
+        "open": {
+          "items": {
+            "$ref": "#/$defs/OpenReservationOut"
+          },
+          "title": "Open",
+          "type": "array"
+        }
+      },
+      "required": [
+        "day",
+        "cap_micros",
+        "settled_micros",
+        "open_micros",
+        "open"
+      ],
+      "title": "AgentCostOut",
+      "type": "object"
+    },
     "AgentSettingsIn": {
       "additionalProperties": false,
       "properties": {
@@ -318,6 +357,51 @@
         "reviewed_at"
       ],
       "title": "ClaimSuggestionOut",
+      "type": "object"
+    },
+    "OpenReservationOut": {
+      "additionalProperties": false,
+      "description": "A model call that was reserved and never settled: it keeps counting at its worst case until\nits UTC day ends. `run_status` says whether its run is still running.",
+      "properties": {
+        "run_id": {
+          "format": "uuid",
+          "title": "Run Id",
+          "type": "string"
+        },
+        "step_key": {
+          "title": "Step Key",
+          "type": "string"
+        },
+        "reserved_micros": {
+          "title": "Reserved Micros",
+          "type": "integer"
+        },
+        "run_status": {
+          "enum": [
+            "running",
+            "succeeded",
+            "failed",
+            "cancelled",
+            "expired",
+            "killed"
+          ],
+          "title": "Run Status",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id",
+        "step_key",
+        "reserved_micros",
+        "run_status",
+        "created_at"
+      ],
+      "title": "OpenReservationOut",
       "type": "object"
     },
     "Page_RunOut_": {

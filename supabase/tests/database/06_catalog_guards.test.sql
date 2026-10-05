@@ -142,6 +142,8 @@ select is(
         -- T007 M2 / 3: the daily cost cap. Both take a run (or prove the Owner role in the tenant they are given).
         'public.agent_reserve_cost',
         'public.set_tenant_daily_cost_cap',
+        'public.agent_release_cost',
+        'public.agent_cost_summary',
         -- T006b (ADR 0014): erasure. Each derives the tenant from the request (or proves the role in the tenant it is given).
         'public.request_erasure',
         'public.execute_erasure',
@@ -157,9 +159,9 @@ select is(
                      'public.start_agent_run', 'public.agent_write_evidence', 'public.agent_write_claim', 'public.agent_record_step',
                      'public.agent_record_usage', 'public.finish_agent_run', 'public.cancel_agent_run',
                      'public.set_tenant_agents_enabled', 'public.review_claim',
-                     'public.agent_reserve_cost', 'public.set_tenant_daily_cost_cap',
+                     'public.agent_reserve_cost', 'public.set_tenant_daily_cost_cap', 'public.agent_release_cost', 'public.agent_cost_summary',
                      'public.request_erasure', 'public.execute_erasure', 'public.cancel_erasure')),
-  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the eleven agent functions (ADR 0013, T007) and the three erasure functions (ADR 0014)');
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007) and the three erasure functions (ADR 0014)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions

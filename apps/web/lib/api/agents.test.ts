@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   cancelRun,
   fetchAgentClaims,
+  fetchAgentCost,
+  parseAgentCost,
   fetchAgentSettings,
   fetchClaims,
   fetchRuns,
@@ -217,5 +219,17 @@ describe("agents API client", () => {
     await expect(fetchAgentClaims("tok", "x")).rejects.toThrow(ApiContractError);
     globalThis.fetch = respond({ not: "a list" }) as unknown as typeof fetch;
     await expect(fetchAgentClaims("tok", TENANT)).rejects.toThrow(ApiContractError);
+  });
+
+  it("GETs today's agent spending and parses it strictly", async () => {
+    const body = { day: "2026-10-04", cap_micros: 2000000, settled_micros: 400, open_micros: 900, open: [{ run_id: RUN, step_key: "usage-2", reserved_micros: 700, run_status: "cancelled", created_at: "2026-10-04T12:00:00+00:00" }] };
+    const f = respond(body);
+    globalThis.fetch = f as unknown as typeof fetch;
+    expect((await fetchAgentCost("tok", TENANT)).open[0].run_status).toBe("cancelled");
+    expect(f.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/agent-cost`);
+    expect(() => parseAgentCost({ ...body, open: [{ ...body.open[0], run_status: "paused" }] })).toThrow(ApiContractError);
+    expect(() => parseAgentCost({ ...body, settled_micros: "400" })).toThrow(ApiContractError);
+    expect(() => parseAgentCost({ day: "x" })).toThrow(ApiContractError);
+    await expect(fetchAgentCost("tok", "x")).rejects.toThrow(ApiContractError);
   });
 });

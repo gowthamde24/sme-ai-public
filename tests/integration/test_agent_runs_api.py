@@ -248,7 +248,8 @@ def test_a_run_is_executed_in_the_background_and_leaves_unverified_suggestions(a
         and run["input_tokens_used"] == 300
         and run["output_tokens_used"] == 150
     )
-    assert run["cost_micros_used"] == 0 and run["cancel_requested"] is False
+    # the fake model reports a cost of 0; the run counts the CHARGE: 450 real tokens at one micro per token (T007 M3b)
+    assert run["cost_micros_used"] == 450 and run["cancel_requested"] is False
 
     # the suggestions: unverified, attributed to the agent run and the starting human
     viewer = w.a.users["viewer"]
@@ -1185,3 +1186,157 @@ def test_a_full_day_refuses_a_new_run_with_a_fixed_message_and_creates_nothing(a
         wait_run(api.client, w.b, w.b.users["owner"], b.json()["id"])
     finally:
         _cap(w.a, None)
+
+
+# ==== a reservation that is never settled, and the Owner's view (T007 M3b) ====
+def _reservation(run_id: str) -> tuple[int, int | None, str | None]:
+    raw = operator_sql.sql(
+        "select coalesce(json_agg(json_build_array(reserved_micros, settled_micros, outcome)), '[]') "
+        f"from public.agent_cost_reservations where run_id = '{run_id}' and step_key = 'usage-1'"
+    )
+    ((reserved, settled, outcome),) = json.loads(raw)
+    return int(reserved), None if settled is None else int(settled), outcome
+
+
+def _run_with_model(api: Rig, step: Any) -> str:
+    """One research-free selftest run whose FIRST model call fails the way `step` says; returns the run id."""
+    w, owner = api.world, api.world.a.users["owner"]
+    for client in app_client(w.stack, lambda: FakeProvider([step])):
+        r = client.post(
+            url(w.a, "/agent-runs"),
+            json={
+                "id": uid(),
+                "agent": "selftest",
+                "target_kind": "company",
+                "target_id": OWN[w.a.id]["company"],
+            },
+            headers=bearer(owner),
+        )
+        assert r.status_code == 202, r.text
+        run_id = r.json()["id"]
+        run = wait_run(client, w.a, owner, run_id)
+        assert (
+            run["status"] == "failed"
+            and run["error_code"] == "budget"
+            or run["error_code"] == "model_failed"
+        ), run
+        return str(run_id)
+    raise AssertionError("no client")
+
+
+def test_a_call_that_provably_never_reached_billing_is_released_and_one_that_may_have_been_billed_stays_open(
+    api: Rig,
+) -> None:
+    from app.agents.llm.interface import LlmRateLimited, LlmTimeout
+
+    released = _run_with_model(api, LlmRateLimited())
+    reserved, settled, outcome = _reservation(released)
+    assert reserved > 0 and settled == 0 and outcome == "not_billed", "429: released at zero"
+    open_run = _run_with_model(api, LlmTimeout())
+    reserved, settled, outcome = _reservation(open_run)
+    assert reserved > 0 and settled is None and outcome is None, (
+        "a timeout may have been billed: it stays OPEN at its worst case"
+    )
+
+
+def test_the_owners_view_shows_open_next_to_settled_and_nobody_else_may_read_it(api: Rig) -> None:
+    from app.agents.llm.interface import LlmTimeout
+
+    w = api.world
+    owner = w.a.users["owner"]
+    before = api.client.get(url(w.a, "/agent-cost"), headers=bearer(owner))
+    assert before.status_code == 200, before.text
+    run_id = _run_with_model(api, LlmTimeout())
+    after = api.client.get(url(w.a, "/agent-cost"), headers=bearer(owner)).json()
+    reserved, _, _ = _reservation(run_id)
+    assert after["open_micros"] == before.json()["open_micros"] + reserved
+    mine = [o for o in after["open"] if o["run_id"] == run_id]
+    assert (
+        mine
+        and mine[0]["reserved_micros"] == reserved
+        and mine[0]["run_status"] in ("failed", "running")
+    )
+    assert after["cap_micros"] > 0 and after["settled_micros"] >= 0
+    assert (
+        api.client.get(url(w.a, "/agent-cost"), headers=bearer(w.a.users["admin"])).status_code
+        == 200
+    )
+    for who in (w.a.users["sales"], w.a.users["viewer"], w.b.users["owner"]):
+        assert api.client.get(url(w.a, "/agent-cost"), headers=bearer(who)).status_code in (
+            403,
+            404,
+        ), who.label
+    assert api.client.get(url(w.a, "/agent-cost")).status_code == 401
+
+
+def test_a_member_who_releases_a_reservation_while_the_provider_call_is_in_flight_makes_that_call_unrecorded(
+    api: Rig,
+) -> None:
+    """THE RACE, stated plainly (ADR 0013, "What the caps do not do"): the runtime reserves, then calls the provider. A member who holds the
+    starter's token calls agent_release_cost on that reservation DURING the call. The database cannot know the call started, so it believes
+    the member: the reservation is settled at zero. The provider answers (and bills); the runtime's agent_record_usage then finds a settled
+    reservation and is REFUSED (23503), so the run ends failed / tool_failed. The call's cost is on NO ledger: the day, the run and the steps
+    all show zero for it. The only record is the audit event of the release. The caps guard against bugs and honest mistakes, not against a
+    malicious member; the provider-side spend cap is the hard backstop; a separate agent identity (option B) is the real fix."""
+    w, owner = api.world, api.world.a.users["owner"]
+    seen: dict[str, Any] = {}
+
+    def in_flight(_request: LlmRequest) -> LlmResponse:
+        run = operator_sql.sql(
+            "select run_id from public.agent_cost_reservations where settled_micros is null "
+            f"and tenant_id = '{w.a.id}' and step_key = 'usage-1' order by created_at desc limit 1"
+        )
+        r = pg(
+            w.stack,
+            owner,
+            "POST",
+            "/rpc/agent_release_cost",
+            json={"p_run_id": run, "p_step_key": "usage-1", "p_reason": "rejected"},
+        )
+        seen.update(run=run, status=r.status_code, body=r.json())
+        return selftest_responses()[
+            0
+        ]  # the provider answered, and billed, 100 tokens in and 50 out
+
+    day_before = int(
+        operator_sql.sql(f"select app.agent_day_spend('{w.a.id}', app.agent_utc_today())")
+    )
+    for client in app_client(w.stack, lambda: FakeProvider([in_flight])):
+        r = client.post(
+            url(w.a, "/agent-runs"),
+            json={
+                "id": uid(),
+                "agent": "selftest",
+                "target_kind": "company",
+                "target_id": OWN[w.a.id]["company"],
+            },
+            headers=bearer(owner),
+        )
+        assert r.status_code == 202, r.text
+        run = wait_run(client, w.a, owner, r.json()["id"])
+    assert seen["status"] == 200 and seen["body"]["released"] is True, seen
+    assert run["id"] == seen["run"]
+    # the later agent_record_usage was REFUSED: the run failed, its usage was never recorded
+    assert run["status"] == "failed" and run["error_code"] == "tool_failed", run
+    assert (
+        run["input_tokens_used"] == 0
+        and run["output_tokens_used"] == 0
+        and run["cost_micros_used"] == 0
+    )
+    assert (
+        operator_sql.sql(
+            f"select count(*) from public.agent_run_steps where run_id = '{run['id']}' and kind = 'usage'"
+        )
+        == "0"
+    )
+    # the ledger: settled at ZERO, "not_billed"; the day did not move by the call's real cost (150 micros at one micro per token)
+    assert _reservation(run["id"])[1:] == (0, "not_billed")
+    day_after = int(
+        operator_sql.sql(f"select app.agent_day_spend('{w.a.id}', app.agent_utc_today())")
+    )
+    assert day_after == day_before, "the provider billed a call that no ledger shows"
+    # the only trace is the audit event, with who released it
+    events = operator_sql.sql(
+        f"select count(*) from public.audit_events where entity_id = '{run['id']}' and action = 'agent_cost.released' and actor_user_id = '{owner.id}'"
+    )
+    assert events == "1"

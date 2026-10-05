@@ -580,3 +580,45 @@ def test_a_rejection_needs_no_reason_and_a_reason_when_given_is_a_closed_code(w:
     )
     assert ok.status_code == 201, ok.text
     assert [v["r"] for v in w.repo.reviews.values()] == [None]
+
+
+# ---- the Owner's view of today's agent spending (T007 M3b)
+def test_the_cost_summary_is_for_owner_and_admin_only_and_shows_open_next_to_settled(
+    w: World,
+) -> None:
+    from app.agent_runs.models import AgentCostOut
+
+    w.repo.cost[TENANT_A.id] = AgentCostOut.model_validate(
+        {
+            "day": "2026-10-04",
+            "cap_micros": 2_000_000,
+            "settled_micros": 400,
+            "open_micros": 900,
+            "open": [
+                {
+                    "run_id": str(RUN),
+                    "step_key": "usage-2",
+                    "reserved_micros": 700,
+                    "run_status": "cancelled",
+                    "created_at": "2026-10-04T12:00:00+00:00",
+                }
+            ],
+        }
+    )
+    for user in ("a_owner", "a_admin"):
+        r = w.client.get(w.url("/agent-cost"), headers=auth(user))
+        assert r.status_code == 200, (user, r.text)
+        body = r.json()
+        assert (body["settled_micros"], body["open_micros"], body["cap_micros"]) == (
+            400,
+            900,
+            2_000_000,
+        )
+        assert body["open"][0]["run_status"] == "cancelled"
+    for user in ("a_sales", "a_viewer"):
+        assert w.client.get(w.url("/agent-cost"), headers=auth(user)).status_code == 403, user
+    assert w.client.get(w.url("/agent-cost")).status_code == 401
+    assert w.client.get(w.url("/agent-cost", TENANT_B.id), headers=auth("a_owner")).status_code in (
+        403,
+        404,
+    )

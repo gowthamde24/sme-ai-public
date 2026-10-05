@@ -192,6 +192,12 @@ class AgentDb:
         if result.get("granted") is not True:
             raise CostCapReached
 
+    def release_cost(self, step_key: str, *, reason: str) -> None:
+        self._rpc(
+            "agent_release_cost",
+            {"p_run_id": str(self._run), "p_step_key": step_key, "p_reason": reason},
+        )
+
     def record_usage(self, step_key: str, usage: Usage) -> None:
         self._rpc(
             "agent_record_usage",

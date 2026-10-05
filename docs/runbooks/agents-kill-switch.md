@@ -110,6 +110,18 @@ select created_at, entity_id as run_id, new_values from public.audit_events
  order by id desc limit 20;
 ```
 
+Open (never settled) reservations of a workspace, with their run's status. An open reservation counts at its WORST case until its UTC day ends
+(a cancelled, expired or crashed run, or a call whose outcome is unknown); the Owner sees the same in the Agents page and `GET /agent-cost`:
+
+```sql
+select r.created_at, r.run_id, r.step_key, r.cost_day, r.reserved_micros, a.status as run_status
+  from public.agent_cost_reservations r
+  join public.agent_runs a on a.tenant_id = r.tenant_id and a.id = r.run_id
+  join public.tenants t on t.id = r.tenant_id
+ where t.slug = ':SLUG' and r.settled_micros is null
+ order by r.created_at desc;
+```
+
 Stop a workspace's agents spending at once (a zero cap refuses every start and every model call; it applies from the next call):
 
 ```sql

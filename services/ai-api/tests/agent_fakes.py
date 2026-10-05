@@ -20,6 +20,7 @@ from app.agents.errors import (
     AgentsDisabled,
     BudgetExhausted,
     CostCapReached,
+    ReferenceRefused,
     RunDenied,
     RunExpired,
     RunNotRunning,
@@ -94,6 +95,7 @@ class FakeAgentDb:
         self.day_spend_micros: int = 0
         self.reservations: dict[str, int] = {}
         self.reserve_requests: list[tuple[str, str, int, int]] = []
+        self.released: list[tuple[str, str]] = []
         self.evidence: list[dict[str, Any]] = []
         self.claims: list[dict[str, Any]] = []
         self.calls: list[str] = []
@@ -160,6 +162,16 @@ class FakeAgentDb:
         self.day_spend_micros += worst
         self.reservations[step_key] = worst
         self.reserve_requests.append((step_key, model, max_input_tokens, max_output_tokens))
+
+    def release_cost(self, step_key: str, *, reason: str) -> None:
+        self._open("release_cost")
+        if reason not in ("rate_limited", "rejected", "not_configured"):
+            raise ValueRefused
+        released = self.reservations.pop(step_key, None)
+        if released is None:
+            raise ReferenceRefused
+        self.day_spend_micros -= released
+        self.released.append((step_key, reason))
 
     def record_usage(self, step_key: str, usage: Usage) -> None:
         self._open("record_usage")

@@ -61,4 +61,13 @@ describe("SuggestionEvidence", () => {
     expect(container.querySelector("blockquote")?.getAttribute("style")).toMatch(/overflow-wrap:\s*anywhere/);
     expect(container.querySelector("ul")?.getAttribute("style")).toMatch(/overflow-wrap:\s*anywhere/);
   });
+
+  it("shows a URL-looking source (any scheme) as text and never as a link or a script", () => {
+    for (const host of ["javascript:alert(1)", "data:text/html,<script>x()</script>", "ftp://evil.test", "file:///etc/passwd", "HTTP://EVIL.TEST"]) {
+      const { container, unmount } = render(<SuggestionEvidence evidence={[evidence({ host, path: "/x?d=secret" })]} />);
+      expect(container.querySelectorAll("a, [href], [src], script, iframe, img, form")).toHaveLength(0);
+      expect(container.textContent).toContain(`source: ${host}/x?d=secret`);
+      unmount();
+    }
+  });
 });

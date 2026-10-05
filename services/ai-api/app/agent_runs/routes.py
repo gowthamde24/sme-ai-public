@@ -24,6 +24,7 @@ from fastapi import APIRouter, Depends, Query, Response
 
 from app.agent_runs.executor import ExecutorBusy, RunTask
 from app.agent_runs.models import (
+    AgentCostOut,
     AgentSettingsIn,
     AgentSettingsOut,
     CancelOut,
@@ -220,6 +221,13 @@ def _register_claims(segment: str, kind: str) -> None:
 
 _register_claims("companies", "company")
 _register_claims("leads", "lead")
+
+
+@router.get("/agent-cost", response_model=AgentCostOut)
+def get_agent_cost(ctx: AdminPlus, runtime: RuntimeDep) -> AgentCostOut:
+    """Today's (UTC) agent spending of the workspace: the cap, what is settled, and what is still
+    open (counted at its worst case until midnight UTC). Owner / Admin only."""
+    return _agents(runtime).repository.cost_summary(ctx.principal.token, ctx.tenant.id)
 
 
 @router.get("/agent-claims", response_model=list[ClaimSuggestionOut])

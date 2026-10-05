@@ -73,6 +73,19 @@ class _Stop(Exception):
         self.status, self.error_code, self.finish = status, error_code, finish
 
 
+# A model call that failed with one of these provably never reached billing, so its reservation is
+# released (settled at zero):
+#   rate_limited    HTTP 429: the provider refused before processing
+#   rejected        any other 4xx: the request itself was refused (bad key, bad request)
+#   not_configured  nothing was sent at all
+# Every OTHER failure leaves the reservation open at its worst case until its UTC day ends:
+#   unavailable     a transport error or a 5xx: the request may have been processed
+#   timeout         the provider may have finished the call after we stopped waiting
+#   bad_response    the call completed and was billed, but its usage could not be read
+# And a call that completed but could not be recorded (the run was cancelled or expired while it
+# was in flight) also stays open: a terminal run settles nothing.
+NOT_BILLED = frozenset({"rate_limited", "rejected", "not_configured"})
+
 # What the provider adds around our text (message framing, the tool-use preamble, the tool
 # definitions' own overhead) is not in the bytes we send. The bound below adds this on top.
 INPUT_TOKEN_OVERHEAD = 2048
@@ -93,6 +106,15 @@ def input_token_bound(request: LlmRequest) -> int:
             )
         )
     return size + INPUT_TOKEN_OVERHEAD
+
+
+def allowed_hosts_for(host: str) -> frozenset[str]:
+    """THE host rule of the web agents: the company's website host and its `www.` twin, and nothing
+    else (no other subdomain, no parent domain). The database applies the same rule again to every
+    stored web URL (`agent_write_evidence`: `app.website_host` strips ONE leading `www.`); the same
+    table of cases is tested on both sides (tests/test_research_agent.py and pgTAP 52)."""
+    twin = host[4:] if host.startswith("www.") else f"www.{host}"
+    return frozenset({host, twin})
 
 
 def _canonical_sha(obj: Any) -> str:
@@ -140,8 +162,7 @@ class AgentRunner:
                 host = model_input.website_host
                 if self._fetcher is None or not host:
                     raise _Stop("failed", "tool_failed")
-                twin = host[4:] if host.startswith("www.") else f"www.{host}"
-                self._host, self._allowed_hosts = host, frozenset({host, twin})
+                self._host, self._allowed_hosts = host, allowed_hosts_for(host)
             if input_sha256(model_input) != run.input_sha256:
                 raise _Stop(
                     "failed", "tool_failed"
@@ -173,6 +194,7 @@ class AgentRunner:
                     response = self._llm.complete(request)
                 except LlmError as exc:
                     logger.warning("run %s: model call failed (%s)", run.id, exc.code)
+                    self._release_if_not_billed(f"usage-{turn}", exc.code)
                     raise _Stop("failed", "model_failed") from None
                 self._db.record_usage(f"usage-{turn}", response.usage)
                 notes = self._handle_calls(response, turn, state)
@@ -191,6 +213,17 @@ class AgentRunner:
         except AgentDbError as exc:
             status, code, finish = self._classify(exc)
             return self._end(status, code, turns, finish)
+
+    def _release_if_not_billed(self, step_key: str, code: str) -> None:
+        """Settle the call's reservation at ZERO when the failure proves the provider never billed
+        it. Every other failure leaves the reservation OPEN: it keeps counting at its worst case
+        until its UTC day ends (ADR 0013, "Open reservations"). See NOT_BILLED."""
+        if code not in NOT_BILLED:
+            return
+        try:
+            self._db.release_cost(step_key, reason=code)
+        except AgentDbError as exc:  # best effort: an unreleased reservation only costs headroom
+            logger.warning("reservation could not be released (%s)", exc.code)
 
     # ---- the guard, between every step
     def _check_clock(self, expires_at: datetime) -> None:

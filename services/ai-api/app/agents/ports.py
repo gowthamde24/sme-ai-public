@@ -39,6 +39,11 @@ class AgentDbPort(Protocol):
         when the tenant's daily cost cap has no room for it (or the model has no price)."""
         ...
 
+    def release_cost(self, step_key: str, *, reason: str) -> None:
+        """Settle a reservation at ZERO because the call provably never reached a billing provider
+        (`reason`: rate_limited, rejected or not_configured). Any other failure leaves it open."""
+        ...
+
     def record_usage(self, step_key: str, usage: Usage) -> None: ...
 
     def record_step(

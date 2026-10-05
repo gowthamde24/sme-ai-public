@@ -9,6 +9,7 @@ from typing import Any
 
 from app.agent_runs.executor import ExecutorBusy, RunTask
 from app.agent_runs.models import (
+    AgentCostOut,
     AgentSettingsOut,
     CancelOut,
     ClaimSuggestionOut,
@@ -81,6 +82,7 @@ class FakeAgentRunsRepository:
         self.enabled: dict[uuid.UUID, bool] = {}
         self.claims: dict[uuid.UUID, tuple[uuid.UUID, ClaimSuggestionOut]] = {}
         self.reviews: dict[uuid.UUID, dict[str, Any]] = {}
+        self.cost: dict[uuid.UUID, AgentCostOut] = {}
         self.start_error: Exception | None = None
         self.cancel_error: Exception | None = None
         self.review_error: Exception | None = None
@@ -180,6 +182,12 @@ class FakeAgentRunsRepository:
             for (t, c) in self.claims.values()
             if t == tenant_id and getattr(c, column) == target_id
         ][:limit]
+
+    def cost_summary(self, token: str, tenant_id: uuid.UUID) -> AgentCostOut:
+        self._seen(token, "cost_summary")
+        return self.cost.get(tenant_id) or AgentCostOut(
+            day=NOW.date(), cap_micros=2_000_000, settled_micros=0, open_micros=0, open=[]
+        )
 
     def list_agent_claims(
         self, token: str, tenant_id: uuid.UUID, *, state: str, limit: int

@@ -718,19 +718,69 @@ interrupted run replays steps instead of duplicating them) re-calls the model fo
 usage records replay without a new charge, so a resume can spend up to the earlier turns' cost once more, unrecorded. v1 has no automatic resume (a
 restart drops runs; only the tests resume one), so this is a known gap, not a path users reach; closing it is a checklist row.
 
-**A failed model call is not refunded.** If the provider call fails after the reservation, the reservation keeps counting (the call may have been
-billed); it is not released. The run ends as `failed / model_failed`.
+**A failed model call: see "Open reservations" below.** (It is no longer "never refunded": a failure that proves the provider never billed the call is released at zero; every other one stays open at its worst case.)
 
 **Maximum overshoot of the cap.** The reservation is a true upper bound whenever each call's usage stays inside the bounds it declared, so the
 overshoot is then **0**. The database cannot see what a provider bills, so if a call is reported **beyond** its bounds the ledger records the true
 cost (settled > reserved), writes an `agent_cost.overshoot` audit event, and the next reservation refuses. The largest the ledger can then exceed the
 cap is **`max_concurrent_runs × the agent's per-run max_cost_micros`**: only calls in flight when the last reservation was granted can settle above
 their reservation; a recorded call can never exceed its run's cost budget (SM203); and at most `max_concurrent_runs` runs are in flight at once.
-For the `selftest` agent: 3 × 250,000 = **750,000 (0.75)**, so a day's ledger can read at most 2.75 with the default cap.
+**The bound is per agent definition** (`max_concurrent_runs × that agent's max_cost_micros`), and the two agents differ:
+
+| Agent | per-run cap | × 3 concurrent runs | ledger at most, with the default 2.00 cap | where it can run |
+| --- | --- | --- | --- | --- |
+| `research` | 0.15 (150,000) | **0.45** | **2.45** | production |
+| `selftest` | 0.25 (250,000) | **0.75** | **2.75** | development only (its flag `selftest_enabled` is off and it is allowed for no tenant by default; never enabled in production) |
+
+*The maximum, stated once:* in production (research only) a workspace's ledger can read at most **cap + 0.45** after an overshoot (2.45 with the default
+cap). In development with selftest enabled it is cap + 0.75 (2.75). If both agents were ever enabled for one workspace the bound is
+`3 × max(0.15, 0.25) = 0.75`, because the 3 concurrent runs are shared across agents.
 *Where the 3 comes from:* `agent_limits.max_concurrent_runs` (operator-managed, migration-only, default 3), enforced in `start_agent_run` under the
 tenant's start lock by counting the tenant's runs that are `running`, unexpired and not cancelled. A cancelled or expired run cannot settle
 (SM201 / SM202), so its in-flight call adds nothing to the ledger (the reservation stays counted). Changing that limit or an agent's
 `max_cost_micros` changes the figure. A bill above it is not visible to the database; the provider-side hard cap (checklist) is the backstop.
+
+**Open reservations (one rule).** A reservation that is never settled stays **open at its worst case until its UTC day ends**; the day is fixed when the
+reservation is made, so it simply stops counting at midnight UTC. This is the single rule for every way a call can end without a settlement: its run was
+cancelled, expired, killed or finished with the reservation open, the process crashed mid-call, or the call completed but could not be recorded because the run
+went terminal while it was in flight (a terminal run settles nothing). *Why:* nobody can tell afterwards whether the provider billed the call, so the worst
+case is the only number that never undercounts; the cost of being wrong is bounded (one call's worst case per interrupted run) and it expires on its own.
+The alternative (settle at zero once the run is terminal) would undercount exactly when something went wrong.
+The runtime settles what it **knows**:
+
+| Outcome of the model call | What the runtime does | Why |
+| --- | --- | --- |
+| it answered (usage known) | `agent_record_usage`: settled at the charge (real tokens at the reserved price, or the reported cost if larger) | known |
+| `rate_limited` (HTTP 429) | `agent_release_cost`: settled at **zero** | the provider refused before processing |
+| `rejected` (any other 4xx: bad key, bad request) | released at zero | the request itself was refused |
+| `not_configured` | released at zero | nothing was sent |
+| `unavailable` (a transport error or a 5xx) | **stays open** | the request may have been processed |
+| `timeout` | **stays open** | the provider may have finished after we stopped waiting |
+| `bad_response` | **stays open** | the call completed and was billed, but its usage could not be read |
+| the run was cancelled or expired while the call was in flight | **stays open** | a terminal run settles nothing |
+
+`agent_cost_summary` / `GET /agent-cost` (Owner and Admin) show today's settled and open amounts and each open reservation with its run's status; the agents
+page has the panel; `agent_cost_reservations.outcome` is `used` or `not_billed`. A run that is still running when its call fails can be released; a terminal one cannot.
+The run's own `cost_micros_used` and its usage step count the **charge**, not the reported cost (a runtime that reports 0 for real tokens still spends the run's
+cost budget).
+
+**Evidence URLs.** `agent_write_evidence` refuses, with the clean `value` error and before the host rule, a URL that is not `http://` or `https://` (any case;
+`website_host` strips any scheme, so `ftp://host/x` would otherwise pass), a port other than 80 or 443, and any `@`, backslash, whitespace or control character
+(`https://user@host:443/` passes the scheme, port and host rules). `evidence_url_check` stays as the second layer. The host rule is the company's website host or its
+`www.` twin and nothing else (no other subdomain, no parent domain); the runtime applies the same rule (`runtime.allowed_hosts_for`) and the same table of cases is
+tested on both sides. A percent-encoded `%40` is data, not userinfo.
+
+**What the caps do NOT do: they guard against bugs and honest mistakes, not against a malicious member.** Every number the database uses is reported by the
+caller: the tokens, the cost, the "declared bounds" of a reservation, and even "this call never reached the provider". Under option A the caller holds the
+starting human's token, so a member who wants to can lie. The race that proves it (`tests/integration/test_agent_runs_api.py`,
+`test_a_member_who_releases_a_reservation_while_the_provider_call_is_in_flight_...`): the runtime reserves and then calls the provider; the member calls
+`agent_release_cost` on that reservation **during** the call (the database cannot know the call started, so it believes them) and the reservation is settled at zero;
+the provider answers and bills; the runtime's later `agent_record_usage` finds a settled reservation and is **refused (23503)**, so the run ends
+`failed / tool_failed`. The call's cost is then on **no ledger**: the day, the run and its steps show zero for it. The only trace is the audit event
+`agent_cost.released` (with who released it). The member can repeat this for every call of their own runs, so the daily cap does not stop a determined member.
+The **provider-side hard spend cap** (a dedicated key with a monthly limit, set by the owner before the first live call) is the real backstop for money.
+**Option B (a separate agent identity that holds the runtime's authority, so a member cannot call these functions at all) is the real fix**, and is already required before
+any external customer (checklist). Until then the caps and the review screens protect a workspace whose members the owner trusts.
 
 **Not built.** No API route or screen for the cap (the Owner calls the function; a UI comes with the Owner Agent), no per-agent cap, no refund of a
 failed call, no cap on token counts per day. A raised tenant cap applies to the tenant's own spending against a key the operator pays for: before

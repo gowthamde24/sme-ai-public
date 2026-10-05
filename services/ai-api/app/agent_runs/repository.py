@@ -18,6 +18,7 @@ import httpx
 from pydantic import ValidationError
 
 from app.agent_runs.models import (
+    AgentCostOut,
     AgentSettingsOut,
     CancelOut,
     ClaimEvidenceOut,
@@ -103,6 +104,8 @@ class AgentRunsRepository(Protocol):
     def cancel_run(self, token: str, run_id: uuid.UUID) -> CancelOut: ...
 
     def get_enabled(self, token: str, tenant_id: uuid.UUID) -> AgentSettingsOut: ...
+
+    def cost_summary(self, token: str, tenant_id: uuid.UUID) -> AgentCostOut: ...
 
     def set_enabled(self, token: str, tenant_id: uuid.UUID, enabled: bool) -> AgentSettingsOut: ...
 
@@ -375,6 +378,16 @@ class PostgrestAgentRunsRepository:
             {"select": "enabled", "tenant_id": f"eq.{tenant_id}", "limit": "1"},
         )
         return AgentSettingsOut(enabled=bool(rows[0].get("enabled")) if rows else False)
+
+    def cost_summary(self, token: str, tenant_id: uuid.UUID) -> AgentCostOut:
+        result = self._rpc(
+            token, "agent_cost_summary", {"p_tenant_id": str(tenant_id)}, hide_denial=True
+        )
+        try:
+            return AgentCostOut.model_validate(result)
+        except ValidationError:
+            logger.error("agent runs data layer returned a cost summary that does not match")
+            raise UpstreamError("unexpected row shape") from None
 
     def set_enabled(self, token: str, tenant_id: uuid.UUID, enabled: bool) -> AgentSettingsOut:
         result = self._rpc(

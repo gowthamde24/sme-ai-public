@@ -7,7 +7,7 @@ column added to the database cannot leak by accident."""
 from __future__ import annotations
 
 import uuid
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
 
 from pydantic import model_validator
@@ -66,6 +66,28 @@ class RunOut(_Strict):
 class CancelOut(_Strict):
     status: RunStatus
     replayed: bool
+
+
+class OpenReservationOut(_Strict):
+    """A model call that was reserved and never settled: it keeps counting at its worst case until
+    its UTC day ends. `run_status` says whether its run is still running."""
+
+    run_id: uuid.UUID
+    step_key: str
+    reserved_micros: int
+    run_status: RunStatus
+    created_at: datetime
+
+
+class AgentCostOut(_Strict):
+    """Today's (UTC) agent spending of a workspace, for its Owner / Admin. Amounts are millionths of
+    the billing currency. `open_micros` is counted at the worst case, not at what was spent."""
+
+    day: date
+    cap_micros: int
+    settled_micros: int
+    open_micros: int
+    open: list[OpenReservationOut]
 
 
 class AgentSettingsOut(_Strict):

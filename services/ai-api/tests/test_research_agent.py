@@ -515,3 +515,29 @@ def test_the_in_memory_database_models_the_hosts_rule_and_the_vocab() -> None:
             )
         ),
     )
+
+
+# ---- the host rule, the same table as pgTAP 52 (section E): the site's host or its www. twin, nothing else
+HOST_RULE = [
+    ("saree-house.test", "saree-house.test", True),
+    ("saree-house.test", "www.saree-house.test", True),
+    ("www.saree-house.test", "saree-house.test", True),
+    ("saree-house.test", "blog.saree-house.test", False),
+    ("saree-house.test", "api.saree-house.test", False),
+    ("saree-house.test", "www.blog.saree-house.test", False),
+    ("saree-house.test", "www.www.saree-house.test", False),
+    ("saree-house.test", "saree-house.test.evil.test", False),
+    ("saree-house.test", "evilsaree-house.test", False),
+    ("blog.saree-house.test", "saree-house.test", False),
+    ("blog.saree-house.test", "blog.saree-house.test", True),
+]
+
+
+@pytest.mark.parametrize(("site", "url_host", "allowed"), HOST_RULE)
+def test_the_runtimes_host_rule_is_the_databases(site: str, url_host: str, allowed: bool) -> None:
+    assert (url_host in runtime.allowed_hosts_for(site)) is allowed
+    fetcher = FixturePageFetcher(FIXTURES)
+    if not allowed:
+        with pytest.raises(FetchError) as caught:
+            fetcher.fetch(f"https://{url_host}/", allowed_hosts=runtime.allowed_hosts_for(site))
+        assert caught.value.code == "off_host"

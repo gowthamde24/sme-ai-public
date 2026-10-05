@@ -377,9 +377,11 @@ def test_a_zero_price_fails_closed_too() -> None:
     assert provider.requests == []
 
 
-def test_a_failed_model_call_is_not_refunded() -> None:
+def test_a_failed_model_call_of_unknown_outcome_is_not_refunded() -> None:
+    from app.agents.llm.interface import LlmTimeout
+
     db = make_db()
-    out = run_agent(db, FakeProvider([LlmRateLimited()]))
+    out = run_agent(db, FakeProvider([LlmTimeout()]))
     assert out.error_code == "model_failed"
     assert db.reservations.get("usage-1", 0) > 0 and db.day_spend_micros > 0, (
         "the call may have been billed before it failed, so its reservation keeps counting"
@@ -403,3 +405,53 @@ def test_model_output_never_reaches_the_ledger_or_the_logs_except_inside_the_not
         assert (
             CANARY not in key and CANARY not in step["tool"] and CANARY not in str(step["result"])
         )
+
+
+# ---- a reservation that is never settled (ADR 0013, "Open reservations")
+@pytest.mark.parametrize("error_code", ["rate_limited", "rejected", "not_configured"])
+def test_a_call_that_provably_never_reached_billing_is_released_at_zero(error_code: str) -> None:
+    from app.agents.llm import interface
+
+    errors = {
+        "rate_limited": interface.LlmRateLimited,
+        "rejected": interface.LlmRejected,
+        "not_configured": interface.LlmNotConfigured,
+    }
+    db = make_db()
+    out = run_agent(db, FakeProvider([errors[error_code]()]))
+    assert out.status == "failed" and out.error_code == "model_failed"
+    assert db.released == [("usage-1", error_code)]
+    assert db.reservations == {} and db.day_spend_micros == 0, "nothing stays counted"
+
+
+@pytest.mark.parametrize("error_code", ["unavailable", "timeout", "bad_response"])
+def test_a_call_that_may_have_been_billed_stays_open_at_its_worst_case(error_code: str) -> None:
+    from app.agents.llm import interface
+
+    errors = {
+        "unavailable": interface.LlmUnavailable,
+        "timeout": interface.LlmTimeout,
+        "bad_response": interface.LlmBadResponse,
+    }
+    db = make_db()
+    out = run_agent(db, FakeProvider([errors[error_code]()]))
+    assert out.error_code == "model_failed"
+    assert db.released == [], "an unknown outcome is never released"
+    assert db.reservations.get("usage-1", 0) > 0 and db.day_spend_micros > 0
+
+
+def test_the_not_billed_list_is_exactly_the_documented_three() -> None:
+    assert runtime.NOT_BILLED == {"rate_limited", "rejected", "not_configured"}
+
+
+def test_a_failed_release_never_hides_the_model_failure() -> None:
+    from app.agents.llm import interface
+
+    db = make_db()
+
+    def boom(d: FakeAgentDb) -> None:
+        raise DataLayerUnavailable
+
+    db.before["release_cost"] = boom
+    out = run_agent(db, FakeProvider([interface.LlmRateLimited()]))
+    assert out.status == "failed" and out.error_code == "model_failed"

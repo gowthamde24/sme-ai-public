@@ -120,7 +120,7 @@ select is((select settled_micros from public.agent_cost_reservations where run_i
   '...charges what the database computes from the tokens at the reserved price (700), not the reported 0');
 select is(pg_temp.spent('a'), 800::numeric, '...so the day now holds 700 + 100 (the unused 200 of the reservation is released)');
 select is((select cost_day from public.agent_cost_reservations where run_id = tests.rid('a_run_sales') and step_key = 'usage-1'), app.agent_utc_today(), '...on the same day');
-select is((select cost_micros_used from public.agent_runs where id = tests.rid('a_run_sales')), 0::bigint, 'the run''s own cost counter still records what the runtime REPORTED (unchanged behaviour)');
+select is((select cost_micros_used from public.agent_runs where id = tests.rid('a_run_sales')), 700::bigint, 'the run counts the CHARGE (700, computed from the tokens), not the 0 the runtime reported (T007 M3b)');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.use(tests.rid('a_run_sales'), 'usage-1', 500, 200, 0)), 'replayed'), 'true', 'a replay of the usage record changes nothing');
 select is(pg_temp.spent('a'), 800::numeric, '...spend unchanged');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv(tests.rid('a_run_sales'), 'usage-1', 600, 300)), 'replayed'), 'true', 'reserving a SETTLED key again with the same arguments is a replay (a resumed run replays its turns)');
@@ -321,7 +321,7 @@ select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.use(tests.rid('a_ru
 select is((select settled_micros from public.agent_cost_reservations where run_id = tests.rid('a_run_sales') and step_key = 'cb-1'), 400::bigint, '...and charged as reported (the larger of 400 and the 200 computed)');
 -- the lock-out attempt: a huge cost on a tiny reservation, directly, by a member
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv(tests.rid('a_run_sales'), 'cb-2', 10, 10)), 'reserved_micros'), '20', 'reserve 20');
-select is(pg_temp.err('a_sales', pg_temp.use(tests.rid('a_run_sales'), 'cb-2', 10, 10, 249000)), '23514|value not allowed||||', 'a member reporting 249,000 (within the run''s budget) against a reservation of 20: refused');
+select is(pg_temp.err('a_sales', pg_temp.use(tests.rid('a_run_sales'), 'cb-2', 10, 10, 200000)), '23514|value not allowed||||', 'a member reporting 200,000 (within the run''s budget) against a reservation of 20: refused');
 select is(pg_temp.spent('a'), 420::numeric, '...the day moved by nothing (400 settled + 20 open)');
 select is(pg_temp.err('a_sales', pg_temp.use(tests.rid('a_run_sales'), 'cb-2', 10, 10, 41)), '23514|value not allowed||||', 'twice-plus-one on a small reservation: refused too');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv(tests.rid('a_run_sales'), 'cb-3', 0, 0)), 'reserved_micros'), '0', 'a reservation worth nothing...');

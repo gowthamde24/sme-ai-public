@@ -155,7 +155,7 @@ create function pg_temp.resv(p_run uuid, p_key text, p_micros bigint) returns vo
   select tenant_id, id, p_key, app.agent_utc_today(), 'fake-selftest', 1000000, 1000000, 0, 0, p_micros, repeat('0', 64) from public.agent_runs where id = p_run $$;
 select pg_temp.resv(tests.rid('u_run'), 'u7', 20);
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.use_sql(tests.rid('u_run'), 'u7', '10', '10', '10'))::jsonb ->> 'replayed')), 'false', 'a normal usage record still works');
-select is((select input_tokens_used::text || '/' || output_tokens_used || '/' || cost_micros_used from public.agent_runs where id = tests.rid('u_run')), '15/15/110', '...and adds up');
+select is((select input_tokens_used::text || '/' || output_tokens_used || '/' || cost_micros_used from public.agent_runs where id = tests.rid('u_run')), '15/15/120', '...and adds up (the run counts the CHARGE: the larger of the reported 10 and the 20 computed from the tokens)');
 
 select * from finish();
 rollback;

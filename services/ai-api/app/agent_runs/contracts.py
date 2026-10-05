@@ -24,6 +24,7 @@ RESPONSES: list[type[BaseModel]] = [
     m.RunOut,
     m.CancelOut,
     m.AgentSettingsOut,
+    m.AgentCostOut,
     m.ClaimSuggestionOut,
     m.ReviewOut,
     Page[m.RunOut],

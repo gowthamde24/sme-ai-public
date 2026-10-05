@@ -1,7 +1,7 @@
 import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { ApiRequestError } from "@/lib/api/client";
+import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isNotFound, notFoundMock, redirectMock, redirectTarget } from "@/test/helpers";
 
 const requireUser = vi.fn();
@@ -9,6 +9,7 @@ const fetchTenant = vi.fn();
 const fetchAgentSettings = vi.fn();
 const fetchRuns = vi.fn();
 const fetchPage = vi.fn();
+const fetchAgentCost = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
@@ -23,6 +24,7 @@ vi.mock("@/lib/api/agents", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/agents")>()),
   fetchAgentSettings: (...a: unknown[]) => fetchAgentSettings(...a),
   fetchRuns: (...a: unknown[]) => fetchRuns(...a),
+  fetchAgentCost: (...a: unknown[]) => fetchAgentCost(...a),
 }));
 vi.mock("@/lib/api/crm", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/crm")>()),
@@ -72,6 +74,7 @@ describe("/app/tenants/[tenantId]/agents", () => {
     fetchTenant.mockResolvedValue(tenant("owner"));
     fetchAgentSettings.mockResolvedValue({ enabled: true });
     fetchRuns.mockResolvedValue({ items: [run()], next_cursor: null });
+    fetchAgentCost.mockResolvedValue({ day: "2026-10-04", cap_micros: 2_000_000, settled_micros: 400, open_micros: 900, open: [] });
     fetchPage.mockResolvedValue({ entity: "companies", items: [{ id: COMPANY, name: "DEMO Silks" }], nextCursor: null });
   });
 
@@ -247,6 +250,36 @@ describe("/app/tenants/[tenantId]/agents", () => {
       );
       render(await AgentsPage(props()));
       expect(screen.queryByRole("region", { name: "Research a lead" })).toBeNull();
+    });
+  });
+
+  describe("today's spending", () => {
+    it("is shown to an owner or admin, with open next to settled", async () => {
+      for (const role of ["owner", "admin"]) {
+        fetchTenant.mockResolvedValue(tenant(role));
+        const { unmount } = render(await AgentsPage(props()));
+        expect(screen.getByRole("region", { name: /Today's agent spending/ })).toHaveTextContent(/Settled 0\.0004 \+ open 0\.0009/);
+        unmount();
+      }
+    });
+
+    it("is not asked for, nor shown, to sales or a viewer", async () => {
+      for (const role of ["sales", "viewer"]) {
+        fetchAgentCost.mockClear();
+        fetchTenant.mockResolvedValue(tenant(role));
+        const { unmount } = render(await AgentsPage(props()));
+        expect(screen.queryByRole("region", { name: /Today's agent spending/ })).toBeNull();
+        expect(fetchAgentCost).not.toHaveBeenCalled();
+        unmount();
+      }
+    });
+
+    it("says so when the API fails, never placeholder numbers; an expired session goes to login", async () => {
+      fetchAgentCost.mockRejectedValue(new ApiRequestError(500, "http_error", "x"));
+      render(await AgentsPage(props()));
+      expect(screen.getByRole("region", { name: /Today's agent spending/ })).toHaveTextContent(/Could not load the spending/);
+      fetchAgentCost.mockRejectedValue(new ApiAuthError("expired"));
+      expect(await redirectTarget(() => AgentsPage(props()))).toBe("/login");
     });
   });
 });

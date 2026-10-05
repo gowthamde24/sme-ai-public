@@ -44,6 +44,8 @@ FUNCTIONS = [
     "review_claim",
     "agent_reserve_cost",
     "set_tenant_daily_cost_cap",
+    "agent_release_cost",
+    "agent_cost_summary",
 ]
 GENERIC = "agent action not permitted"
 
@@ -235,6 +237,8 @@ ANON_CALLS: dict[str, dict[str, Any]] = {
         "p_max_output_tokens": 1,
     },
     "set_tenant_daily_cost_cap": {"p_tenant_id": "T", "p_cap_micros": 1},
+    "agent_release_cost": {"p_run_id": "R", "p_step_key": "anon-6", "p_reason": "rejected"},
+    "agent_cost_summary": {"p_tenant_id": "T"},
 }
 
 

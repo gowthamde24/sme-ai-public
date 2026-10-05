@@ -1,4 +1,5 @@
 import type {
+  AgentCostOut,
   AgentSettingsOut,
   ClaimEvidenceOut,
   ClaimSuggestionOut,
@@ -19,6 +20,7 @@ import { isCanonicalUuid } from "./crm";
  * (a guard test enforces that). Types come from packages/contracts/agents.ts (generated).
  */
 export type {
+  AgentCostOut,
   AgentSettingsOut,
   ClaimEvidenceOut,
   ClaimSuggestionOut,
@@ -373,4 +375,32 @@ export async function reviewClaim(
       { method: "POST", body: JSON.stringify(input) },
     ),
   );
+}
+
+const RUN_STATUSES = ["running", "succeeded", "failed", "cancelled", "expired", "killed"] as const;
+
+export function parseAgentCost(json: unknown): AgentCostOut {
+  if (!isRecord(json) || !Array.isArray(json.open)) return bad("cost");
+  return {
+    day: str(json, "day"),
+    cap_micros: num(json, "cap_micros"),
+    settled_micros: num(json, "settled_micros"),
+    open_micros: num(json, "open_micros"),
+    open: json.open.map((o) => {
+      if (!isRecord(o)) return bad("open reservation");
+      return {
+        run_id: str(o, "run_id"),
+        step_key: str(o, "step_key"),
+        reserved_micros: num(o, "reserved_micros"),
+        run_status: oneOf(o, "run_status", RUN_STATUSES),
+        created_at: str(o, "created_at"),
+      };
+    }),
+  };
+}
+
+/** Today's (UTC) agent spending of the workspace, for its Owner / Admin: settled, and still open (counted at the worst case). */
+export async function fetchAgentCost(accessToken: string, tenantId: string): Promise<AgentCostOut> {
+  checked(tenantId);
+  return parseAgentCost(await apiRequest(`/v1/tenants/${tenantId}/agent-cost`, accessToken));
 }
