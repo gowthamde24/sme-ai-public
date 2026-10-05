@@ -59,7 +59,9 @@ class CadenceTests(unittest.TestCase):
                              ("12:59:59", "2026-10-05T13:00:00Z"),
                              ("13:00:00", "2026-10-05T13:00:00Z")):
             self.r["as_of"] = "2026-10-05T" + at + "Z"
-            self.assertEqual(decide(self.r)["next_eligible_at"], expected)
+            result = decide(self.r)
+            self.assertTrue("codes" not in result)
+            self.assertEqual(result["next_eligible_at"], expected)
 
     def test_quiet_wrap_boundaries_and_india_offset(self):
         # India local quiet 20:00--09:00, represented in UTC at +05:30.
@@ -69,6 +71,7 @@ class CadenceTests(unittest.TestCase):
                              ("2026-10-06T03:30:00Z", "2026-10-06T03:30:00Z")):
             self.r["as_of"] = at
             result = decide(self.r)
+            self.assertTrue("codes" not in result)
             self.assertEqual(result["next_eligible_at"], expected)
             self.assertEqual(result["action"], "draft_followup" if at == expected else "wait")
 
@@ -126,6 +129,11 @@ class CadenceTests(unittest.TestCase):
         self.r["history"] = []
         self.assertEqual(decide(self.r)["reason_code"], "initial_outreach_required")
         self.assertEqual(decide(self.r)["touch_number"], 1)
+
+    def test_zero_limit_without_history(self):
+        self.r["history"] = []
+        self.r["policy"].update(max_touches=0, gap_days=[])
+        self.assertEqual(decide(self.r)["reason_code"], "max_touches_reached")
 
     def test_gap_index_and_latest_outbound(self):
         self.open_calendar()
@@ -227,6 +235,23 @@ class CadenceTests(unittest.TestCase):
         r["history"][0]["outcome"] = "synthetic_changed"
         self.assertNotEqual(decide(r)["canonical_hash"], first["canonical_hash"])
 
+    def test_nested_wrong_types(self):
+        for path, value in ((("recipient_utc_offset_minutes",), True),
+                            (("policy", "allowed_weekdays", 0), False),
+                            (("policy", "holidays"), None),
+                            (("policy", "quiet_hours", "start"), 900),
+                            (("history", 0, "timestamp"), 0),
+                            (("history", 0, "outcome"), None),
+                            (("history",), ())):
+            r = fixture()
+            target = r
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            with self.subTest(path=path):
+                with self.assertRaises(TypeError):
+                    decide(r)
+
     def test_seeded_properties(self):
         rng = random.Random(1010)
         now = datetime(2026, 10, 5, 6, tzinfo=timezone.utc)
@@ -243,6 +268,7 @@ class CadenceTests(unittest.TestCase):
             r["history"][0]["timestamp"] = iso(last)
             before = copy.deepcopy(r)
             q = decide(r)
+            self.assertTrue("codes" not in q)
             self.assertEqual(r, before)
             self.assertEqual(q, decide(r))
             self.assertEqual(q["canonical_hash"], decide(r)["canonical_hash"])

@@ -136,3 +136,50 @@ remain lane A work; CI and integration/security verification remain outstanding.
   lane A must supply authoritative flags before first outreach and owns approval,
   lookup, reply handling, persistence, provenance, audit and integration/security.
 - Manual mutation pass evidence follows. No database/network/ports or real data.
+
+### T010 manual mutation evidence
+
+Each mutation was applied individually to the real engine, checked using
+`make test-packages`, inspected and reverted. All 28 distinct mutations were
+killed; no survivor remained. No mutation scripts were added or run. Engine
+diff against the baseline commit is empty after reverting every temporary edit.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| Ignore do_not_contact suppression | test_suppression_precedence_each_flag | no |
+| Ignore opted_out suppression | test_suppression_precedence_each_flag | no |
+| Ignore bounced suppression | test_suppression_precedence_each_flag | no |
+| Ignore inbound history takeover | test_inbound_and_replied_precedence | no |
+| Ignore replied flag takeover | test_inbound_and_replied_precedence | no |
+| Ignore won before touch limit | test_closed_precedence | no |
+| Ignore lost before touch limit | test_closed_precedence | no |
+| max_touches reached: >= to > | test_max_touches_boundary; test_zero_limit_without_history | yes (clarity) |
+| eligible <= as_of to < | test_exact_gap_boundary | no |
+| Same-day quiet start: <= to < | test_quiet_same_day_boundaries | no |
+| Same-day quiet end: < to <= | test_quiet_same_day_boundaries | no (assertion clarified) |
+| Wrapped quiet start: >= to > | test_quiet_wrap_boundaries_and_india_offset | no |
+| Wrapped quiet end: < to <= | test_quiet_wrap_boundaries_and_india_offset | no |
+| Wrapped quiet OR to AND | test_quiet_wrap_boundaries_and_india_offset | no |
+| Quiet next-day boundary: >= to > | test_quiet_wrap_boundaries_and_india_offset | no |
+| Ignore holiday skipping | test_weekday_and_holiday_chain | no |
+| Ignore weekday skipping | test_weekday_and_holiday_chain | no |
+| Gap index number-2 to number-1 | test_gap_index_and_latest_outbound | no |
+| Remove minimum-gap floor | test_min_gap_boundary | no |
+| Remove as_of floor | test_exact_gap_boundary; test_seeded_properties | no |
+| Omit history from hash inputs | test_determinism_hash_and_immutability | no |
+| Change ENGINE_VERSION to 1.0.1 | test_nested_package_import_and_version | no |
+| Future-history boundary: > to >= | test_timestamp_rejections | no |
+| Anchor earliest instead of latest outbound | test_gap_index_and_latest_outbound | no |
+| Subtract instead of add recipient offset | test_quiet_wrap_boundaries_and_india_offset | no |
+| Omit engine_version from hash payload | test_determinism_hash_and_immutability | no |
+| Collection upper boundary: > to >= | test_list_limits | no |
+| Integer field upper boundary: > to >= | test_scalar_limits | no |
+
+The max-touch and quiet-end mutants initially caused test errors rather than
+assertion failures; these were already killed (nonzero test exit). Added an
+explicit zero-limit/empty-history test and rejection assertions, then reran
+those mutants to confirm clear failures. No mutation survived a green suite.
+Added separate nested wrong-type coverage as well. Final: 30 cadence tests + 29
+quote tests (59 total), including 250 cadence property cases. Both permitted
+Make checks pass. Owner must still confirm cadence/calendar/reply decisions;
+lane A integration, legal/authoritative flags, approval and CI remain outstanding.
