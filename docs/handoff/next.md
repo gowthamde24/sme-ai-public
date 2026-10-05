@@ -1,15 +1,11 @@
 # Handoff: resume here
 
-T008 (Requirement Agent) is in progress. Commit 4 (the agent on fakes) and commit 3b (migration 20261015090200, the owner's review changes) are committed; commits 5 (API + paste screen + review screen) and 6 (injection evals E01-E15 + naive N20-N31, the golden set of 20 enquiries and its report) are committed; NEXT is commit 7 (ADR 0018, checklist rows, plan updates), then the FULL make check and ONE mutation pass; the plan is `docs/plans/t008-requirement-agent.md` (ACCEPTED with the owner's changes A-J).
+T008 (Requirement Agent) is BUILT: commits 1-7 are committed locally (nothing pushed); ADR 0018 and the checklist rows are written. What remains is the owner's review, then the NEXT ticket.
 
-* Commit 1 (schema, contact guard, scrubber), commit 2 (deterministic services) and commit 3 (migration 20261015090100: the requirement agent's
-  definition and flag, `agent_write_requirement_field` with the database-verified quote, `decide_requirement_field`, `confirm_requirement`,
-  `discard_requirement`, the enquiry run target) are committed. **STOP: commit 3 awaits the owner's review.** Do not start commit 4 before the owner says go.
-* Remaining after the review: 4 the agent on fakes, 5 API and the paste screen, 6 evals and golden set, 7 ADR 0018 + checklist rows + handoff, then the
-  FULL `make check` and the mutation pass ONCE (the owner's process for T008), and stop.
-* Process for T008: between commits `make check-fast` plus the new tests; the full check and the mutation pass only at the end.
+* Full `make check` and ONE mutation pass were the last steps (see the T008 report); results are in the commit message of the last T008 commit.
+* **Do not start T009 or any live call** before the owner approves. Before the first live call: the approvals in `docs/pre-pilot-checklist.md`, section "Enquiries and requirements".
+* Plan and as-built notes: `docs/plans/t008-requirement-agent.md` (sections 14 and 15). Decisions: `docs/adr/0018-...`.
 
-Traps: never run `ruff format` on a directory outside `app/requirements` (it reformats `services/ai-api/app/leads/review.py` and `scoring.py`); format only
-the files you edit. `make check` now resets the local database before pgTAP (audit rows are append-only). Migrations 20261015090000 / 090100 are generated
-from templates kept outside the repo; edit the .sql files directly from now on (the scrubber patterns in 090000 must stay equal to
-`app/requirements/scrub.py`; `tests/test_requirements_scrub.py` checks it).
+Traps: never run `ruff format` on a directory outside `app/requirements`, `app/enquiries`, `app/agents/requirement*`; format only the files you edit (it reformats `services/ai-api/app/leads/review.py` and `scoring.py`).
+`make check` resets the local database before pgTAP (audit rows are append-only). The T008 migrations were generated from templates that are not in the repository: edit the `.sql` files directly. The scrubber patterns in
+`app/requirements/scrub.py` must stay equal to the LAST definition of `app.text_has_contact` (`tests/test_requirements_scrub.py` checks it).

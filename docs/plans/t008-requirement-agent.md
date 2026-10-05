@@ -1,6 +1,6 @@
 # T008 plan: Requirement Agent
 
-Status: **ACCEPTED 2026-10-05 with the owner's decisions and changes A-J below** (this text is the accepted version). Read first: CLAUDE.md, ADR 0013 (agents; its T007
+Status: **BUILT (commits 1-7) and ACCEPTED 2026-10-05 with the owner's decisions and changes A-J below; the decisions are recorded in ADR 0018.** (Commit 3b: section 14.) Read first: CLAUDE.md, ADR 0013 (agents; its T007
 notes: reservations, cost cap, open reservations, what the caps do not do), ADR 0014 (erasure), ADR 0015 (real-data gate), ADR 0017 (local-first, provider approval),
 `docs/plans/t007-research-agent.md`, `docs/plans/roadmap.md`, `docs/plans/t009-quote-engine.md` and `docs/plans/t010-followup-cadence.md` (lane C).
 Rules in force: synthetic data only, fakes only, **no live provider and no key**, no deployment, no new dependency without a reason, one ticket at a time, no push.
@@ -179,3 +179,9 @@ cap, `requirement_enabled` for one named workspace, and a decision on **what enq
    confirmed requirement must be blocked once a quote depends on it (the T009 integration adds that check), and persisted question drafts belong to T010.**
 8. The requirement definition's input ceiling is 40,000 tokens (it was 20,000): a 6,000-character Devanagari / Kannada / Telugu text is up to 18,000 bytes and the reservation bounds a
    call's input by its bytes.
+
+## 15. As built
+Commits: 1 schema, contact guard, scrubber; 2 deterministic services; 3 database functions (stop for review); 3b the owner's review changes; 4 the agent on fakes; 5 API and the paste / review screen;
+6 injection evals and the golden set; 7 this record (ADR 0018, checklist rows, handoff). Differences from the plan: the model is given a one-line text block and gives quotes as strings (change C); the agent writes its proposals once, at
+the end of a run that finished well; the delivery-city quote rule and the "range context" rule were added after review and after the first golden run; a rejected slot is corrected, not added to; a city in a
+non-Latin script abstains.

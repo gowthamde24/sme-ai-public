@@ -176,6 +176,20 @@ Accepted when T005 was approved pending the human walkthrough. None blocks the w
 | [ ] | **Admin scope.** Admins manage only `sales` and `viewer`; they cannot add or remove Admins or Owners, and cannot leave a tenant themselves (an Owner must remove them). Confirm this matches how Customer Zero runs. | ADR 0001 #4, #8 | **Customer Zero** | Before real data |
 | [ ] | **Slug claim leak.** `create_tenant` returns 409 for a slug owned by someone else, which confirms the slug exists (nothing else). Accept, or move to server-generated slugs. | ADR 0002 | **External pilot** | Later |
 
+## Enquiries and requirements (ADR 0018, T008)
+
+| | Item | Source | Gate | Phase |
+| --- | --- | --- | --- | --- |
+| [ ] | **BEFORE THE FIRST LIVE CALL of the Requirement Agent:** the owner's written approval of the provider and model id, the `agent_model_prices` row, the provider-side hard spend cap, one named workspace, and a decision on **what enquiry text may be sent to a provider** (names remain in the text after contact scrubbing). Until then: fakes only. | ADR 0018, 0017 b | Live call | Before deploy |
+| [ ] | **Measure real quality.** The golden set (20 synthetic enquiries, `make eval`) proves the pipeline with a scripted stand-in; run it against the real model once approved and read the report (THE GATE: zero `stated` fields wrong or unasked for). | ADR 0018 | Live call | Before deploy |
+| [ ] | **Contact scrubber against real data.** It is conservative (e-mail, Indian mobile numbers; never amounts, GSTINs, pincodes, PO numbers). An unusual phone grouping is stored. Review a sample of real enquiries at T012 and decide whether to widen it (the database guard must change with it: they share one pattern). | ADR 0018 | Pilot data | Before real data |
+| [ ] | **Enquiry text retention.** Kept until erased; `enquiries.retain_until` is the hook. Decide the rule (and write its function and job) at T012. | ADR 0018, 0014 | Pilot data | Before real data |
+| [ ] | **Indic joiners.** Capture strips ZWJ / ZWNJ (owner decision); `KEEP_INDIC_JOINERS` keeps them between Indic letters. Confirm with the family after seeing real Telugu / Kannada / Devanagari enquiries. | ADR 0018 | Pilot data | Before real data |
+| [ ] | **Block discarding a confirmed requirement once a quote depends on it** (T009 integration). Until then a person may discard it. | ADR 0018 | T009 | Next ticket |
+| [ ] | **Persisted question drafts and their approval state** belong to the T010 integration; today questions are derived at read time and only copied. | ADR 0018 | T010 | Next ticket |
+| [ ] | **Decision functions are reachable with the delegated token** (option A), like `review_claim`; the sandbox has no path to them. Option B (a separate agent identity) is required before any scheduled run or external customer. | ADR 0013, 0018 | External pilot | Later |
+| [ ] | **Scope of the value-in-span check.** A city in a non-Latin script abstains (a person adds it); Hindi quantity words are a short list. Extend with the family's real wording at T012. | ADR 0018 | Pilot data | Before real data |
+
 ## Local-first sequence (ADR 0017, 2026-10-05)
 
 | | Item | Source | Gate | Phase |
