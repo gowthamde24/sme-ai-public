@@ -310,10 +310,10 @@ select is((select count(*) from public.evidence e where e.agent_run_id is not nu
 
 -- ============================================================================ K. source audit of the four functions
 create temp table src as select proname, prosrc from pg_proc where pronamespace = 'public'::regnamespace and proname in ('agent_write_evidence', 'agent_write_claim', 'agent_record_step', 'agent_record_usage');
-select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, 'insert\s+into\s+public\.(\w+)', 'gi') m), 'agent_run_steps,claims,evidence,evidence_links',
-  'between them they insert only into evidence, evidence_links, claims and agent_run_steps');
+select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, 'insert\s+into\s+public\.(\w+)', 'gi') m), 'agent_cost_reservations,agent_run_steps,claims,evidence,evidence_links',
+  'between them they insert only into evidence, evidence_links, claims, agent_run_steps and (T007, the daily cost ledger) agent_cost_reservations');
 select is((select count(*) from src where prosrc ~* '\mdelete\s+from\M'), 0::bigint, 'none deletes anything');
-select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, '\mupdate\s+public\.(\w+)', 'gi') m), 'agent_runs', 'the only table they update is agent_runs (the counters)');
+select is((select coalesce(string_agg(distinct m[1], ',' order by m[1]), '') from src, regexp_matches(prosrc, '\mupdate\s+public\.(\w+)', 'gi') m), 'agent_cost_reservations,agent_runs', 'the only tables they update are agent_runs (the counters) and agent_cost_reservations (settling a reservation)');
 select is((select count(*) from src where prosrc ~* 'set_config\(''role''|\mset\s+role\M'), 0::bigint, 'none switches role');
 select is((select count(*) from src where prosrc ~* 'p_tenant|tenant_id\s*:=\s*p_'), 0::bigint, 'none takes or assigns a tenant from an argument');
 select is((select count(*) from src where prosrc ~* 'created_via\s*:=|created_by\s*:=|confidence\s*:=\s*p_'), 0::bigint, 'none assigns provenance or confidence from an argument (only the GUC route)');

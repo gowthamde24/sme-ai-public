@@ -1,4 +1,4 @@
-# T007 M2 status (handoff, 2026-10-05)
+# T007 M2 status (handoff, 2026-10-05; updated after commit 3)
 
 Branch: `main` (nothing is on a wip branch: everything committed is green). Nothing pushed. Never read `.env`; no accounts, keys or model calls.
 
@@ -11,21 +11,25 @@ Branch: `main` (nothing is on a wip branch: everything committed is green). Noth
    `company_id`). Tests: pgTAP `48_claim_home`, `tests/integration/test_claim_home.py`; API `list_claims` uses the derived columns. Mutation: 17 of 17 killed.
    Checklist row (lead-claim home) closed; ADR 0013 note added.
 
+3. **Commit 3: the per-tenant daily cost cap** (owner-amended plan: a worst-case reservation before EVERY model call under a per-tenant advisory
+   lock, settled afterwards; UTC-day attribution = the day the call was authorised; Owner-only, aal2, 20.00 ceiling; cap hits audited; fail closed on
+   missing / zero prices and unknown models; SM207). Migration `20261014090000_t007_daily_cost_cap.sql`, pgTAP `49_daily_cost_cap`,
+   `tests/integration/test_daily_cost_cap.py` (a real two-session race), ADR 0013 note "daily cost cap" (states the maximum overshoot), runbook
+   "Spending cap". Mutation pass: see the commit message / report.
+
 ## Not done
-3. **Commit 3: daily per-tenant cost cap** (new operator limit, default 2.00 USD per UTC day; enforce in `start_agent_run` and `agent_record_usage` under a
-   per-tenant advisory lock; fail closed on missing/zero prices; dedicated SQLSTATE; API fixed message; UI text; tests incl. a real two-connection race). Not started.
 4. **Commit 4: the Research Agent on fakes** (definition with the four predicates; tools `fetch_page` + `report_finding`; lead-site-only fetch decided
    server-side; verbatim-quote check; API start for a lead and the start form; bounded DNS lookups in `app/webfetch` with a concurrency cap; end-to-end
    score test; W-cases for the lead-host rule). Not started. Checklist rows still open: e2e score test, agents start form for leads, SSRF follow-up (DNS thread cap).
+   Note for commit 4: every model call now reserves first (`AgentDbPort.reserve_cost`); a new agent needs no price work (prices are per MODEL), but
+   a new fake in tests must implement `reserve_cost` (see `tests/agent_fakes.py`).
 
 ## Exact next step
-Start commit 3. Read `supabase/migrations/20261009090100_t006_agent_functions.sql` (`start_agent_run`, `agent_record_usage`, `app.agent_limit`) and
-`20261009090300_t006_review_fixes.sql` (`agent_record_usage` replacement), `agent_limits` in `20261009090000_t006_agent_foundation.sql` (limit keys are checked), then
-write the migration `20261014090000_t007_daily_cost_cap.sql` and pgTAP `49_daily_cost_cap`.
+Start commit 4 only after the owner's "go".
 
 ## Tests run / not run
-Run (green): `make check` (full) at the end of commit 1 and of commit 2; pgTAP 5,679; pytest 2,046; vitest 756; integration 570; evals 24 (1 skipped).
-Mutation: commit 2 only (17/17). Not run: anything for commits 3 and 4; no web mutation run for the key rename (unit tests only).
+Run (green): `make check` (full) at the end of commits 1, 2 and 3 (counts are in the commit 3 message). Mutation: commit 2 (17/17) and commit 3
+(see its message). Not run: anything for commit 4; no web mutation run for the key rename (unit tests only).
 
 ## Local database
 Fine as is, but it holds claims/runs written by `test_claim_home.py` and earlier integration runs; `supabase db reset` before the next full check is

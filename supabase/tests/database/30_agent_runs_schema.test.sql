@@ -89,9 +89,9 @@ select is(pg_temp.operator_attack(tests.uid('dual')),      repeat('42501,', 12) 
 -- the values the owner decided (decision 3), exactly
 select results_eq(
   $$select limit_key, limit_value from public.agent_limits order by limit_key$$,
-  $$values ('max_concurrent_runs'::text, 3), ('max_runs_per_hour', 30), ('max_writes_per_day', 500),
+  $$values ('daily_cost_micros'::text, 2000000), ('max_concurrent_runs', 3), ('max_runs_per_hour', 30), ('max_writes_per_day', 500),
            ('ttl_default_seconds', 900), ('ttl_max_seconds', 1800)$$,
-  'agent_limits holds the owner-approved values: 15 min default TTL, 30 min hard cap, 3 concurrent, 30 runs / hour, 500 writes / day');
+  'agent_limits holds the owner-approved values: 15 min default TTL, 30 min hard cap, 3 concurrent, 30 runs / hour, 500 writes / day, 2.00 per tenant per UTC day (T007)');
 select throws_ok($$insert into public.agent_limits (limit_key, limit_value) values ('something_else', 1)$$, '23514', null, 'only the known limit keys exist');
 select throws_ok($$update public.agent_limits set limit_value = 0 where limit_key = 'ttl_max_seconds'$$, '23514', null, 'a limit must be positive');
 select throws_ok($$update public.agent_limits set limit_value = 5000 where limit_key = 'ttl_default_seconds'$$, '23514', null, 'the default TTL cannot exceed the hard cap');

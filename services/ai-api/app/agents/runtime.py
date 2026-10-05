@@ -30,6 +30,7 @@ from app.agents.errors import (
     AgentDbError,
     AgentsDisabled,
     BudgetExhausted,
+    CostCapReached,
     LimitReached,
     ReferenceRefused,
     RunDenied,
@@ -38,7 +39,7 @@ from app.agents.errors import (
     ValueRefused,
 )
 from app.agents.inputs import input_sha256, model_input_from_company
-from app.agents.llm.interface import LlmClient, LlmError, LlmResponse, ToolCall
+from app.agents.llm.interface import LlmClient, LlmError, LlmRequest, LlmResponse, ToolCall
 from app.agents.notes import NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR
 from app.agents.ports import AgentDbPort
 from app.agents.schemas import FinalResult
@@ -64,6 +65,28 @@ class _Stop(Exception):
     def __init__(self, status: str, error_code: str | None = None, *, finish: bool = True) -> None:
         super().__init__(status)
         self.status, self.error_code, self.finish = status, error_code, finish
+
+
+# What the provider adds around our text (message framing, the tool-use preamble, the tool
+# definitions' own overhead) is not in the bytes we send. The bound below adds this on top.
+INPUT_TOKEN_OVERHEAD = 2048
+
+
+def input_token_bound(request: LlmRequest) -> int:
+    """An UPPER bound on the input tokens of one model call, for the cost reservation.
+
+    A token is at least one UTF-8 byte of what is sent, so the bytes of every block and of every
+    tool definition bound the tokens of the text; INPUT_TOKEN_OVERHEAD covers the provider's own
+    framing. Deliberately generous: the reservation is released down to the real cost when the
+    call is settled, so a loose bound only costs headroom for a moment."""
+    size = sum(len(block.text.encode("utf-8")) for block in request.blocks)
+    for tool in (*request.tools, *([request.final_result] if request.final_result else [])):
+        size += len(
+            json.dumps([tool.name, tool.description, tool.input_schema], ensure_ascii=False).encode(
+                "utf-8"
+            )
+        )
+    return size + INPUT_TOKEN_OVERHEAD
 
 
 def _canonical_sha(obj: Any) -> str:
@@ -114,6 +137,14 @@ class AgentRunner:
                     delimiter=self._delimiter,
                     notes=notes,
                     max_output_tokens=self._max_output_tokens,
+                )
+                # the worst case of THIS call is reserved under the tenant's daily cost cap BEFORE
+                # the model is called (CostCapReached ends the run: nothing was spent)
+                self._db.reserve_cost(
+                    f"usage-{turn}",
+                    model=self._llm.model_id,
+                    max_input_tokens=input_token_bound(request),
+                    max_output_tokens=request.max_output_tokens,
                 )
                 try:
                     response = self._llm.complete(request)
@@ -214,7 +245,7 @@ class AgentRunner:
             return "expired", "expired", True
         if isinstance(exc, AgentsDisabled):
             return "killed", "killed", True
-        if isinstance(exc, BudgetExhausted | LimitReached):
+        if isinstance(exc, BudgetExhausted | LimitReached | CostCapReached):
             return "failed", "budget", True
         return "failed", "tool_failed", True
 

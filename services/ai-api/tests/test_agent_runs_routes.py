@@ -12,6 +12,7 @@ import pytest
 from app.agent_runs.executor import RunTask
 from app.agent_runs.repository import (
     AgentsDisabledError,
+    CostCapError,
     RunLimitError,
     TokenExpiringError,
 )
@@ -245,6 +246,7 @@ def test_database_refusals_have_fixed_messages_and_no_database_text(w: World) ->
     cases: list[tuple[Exception, int, str]] = [
         (AgentsDisabledError("SM204"), 409, "agents_disabled"),
         (RunLimitError("SM206"), 429, "run_limit_reached"),
+        (CostCapError("SM207"), 429, "cost_cap_reached"),
         (TokenExpiringError("SM202"), 409, "token_expiring"),
         (Forbidden("42501"), 403, "forbidden"),
         (InvalidValueError("23514"), 422, "invalid_value"),

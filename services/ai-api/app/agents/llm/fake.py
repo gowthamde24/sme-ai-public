@@ -60,7 +60,12 @@ def selftest_script() -> list[Step]:
     return list(selftest_responses())
 
 
+FAKE_MODEL_ID = "fake-selftest"  # the one development model the migration prices
+
+
 class FakeProvider:
+    model_id = FAKE_MODEL_ID
+
     def __init__(self, script: Sequence[Step]) -> None:
         self._script = list(script)
         self.requests: list[LlmRequest] = []

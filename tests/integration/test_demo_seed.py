@@ -733,8 +733,10 @@ def test_every_sql_block_of_the_kill_switch_runbook_runs_against_the_real_schema
     assert len(blocks) >= 7, "the three levels, their verifications and the listing"
     slug = seed.DEMO_WORKSPACE_SLUG
     for block in blocks:
-        statement = block.replace(":RUN_ID", "00000000-0000-4000-8000-000000000000").replace(
-            ":SLUG", slug
+        statement = (
+            block.replace(":RUN_ID", "00000000-0000-4000-8000-000000000000")
+            .replace(":SLUG", slug)
+            .replace(":MODEL_ID", "smoke-model")
         )
         out = operator_sql.sql(f"begin; {statement} rollback;")
         assert "ERROR" not in out

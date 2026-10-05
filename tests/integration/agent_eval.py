@@ -48,6 +48,7 @@ AGENT_TABLES = (
     "agent_run_steps",
     "audit_events",
     "agent_runs",
+    "agent_cost_reservations",  # the daily cost ledger: a run reserves and settles its model calls
 )
 PREDICATES = {"selftest.observation"}
 

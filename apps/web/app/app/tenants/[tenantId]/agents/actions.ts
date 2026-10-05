@@ -33,6 +33,8 @@ function explain(error: unknown, whatFor: string): string {
       return "That record is archived, so it cannot be a target.";
     if (error.status === 409)
       return "This form is out of date. Reload the page and try again.";
+    if (error.status === 429 && error.code === "cost_cap_reached")
+      return "This workspace's agents have used today's spending limit. Try again tomorrow (UTC).";
     if (error.status === 429) return "Too many agent runs right now. Try again later.";
     if (error.status === 503)
       return "Agents are not available right now (not configured, or busy). Try again later.";

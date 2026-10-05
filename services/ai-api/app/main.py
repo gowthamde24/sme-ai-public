@@ -110,6 +110,11 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     runs_repo.RunLimitError: ApiError(
         429, "run_limit_reached", "Too many agent runs. Try again later."
     ),
+    runs_repo.CostCapError: ApiError(
+        429,
+        "cost_cap_reached",
+        "This workspace's agents have used today's spending limit. Try again tomorrow (UTC).",
+    ),
     runs_repo.TokenExpiringError: ApiError(
         409, "token_expiring", "Your session is about to expire. Sign in again and retry."
     ),

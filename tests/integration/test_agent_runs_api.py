@@ -1096,3 +1096,92 @@ def test_a_link_citing_a_claim_under_review_is_not_blocked_by_the_review_lock(ap
         assert held.result()[0] == 0
     assert rc == 0, err
     assert waited < 2.5, f"the reference waited {waited:.1f}s for the review's lock"
+
+
+# ==== the daily cost cap, end to end (T007 M2 / 3) ====
+def _cap(tenant: Tenant, cap: int | None) -> None:
+    value = "null" if cap is None else str(cap)
+    operator_sql.sql(
+        f"insert into public.tenant_agent_settings (tenant_id, daily_cost_cap_micros) values ('{tenant.id}', {value}) "
+        "on conflict (tenant_id) do update set daily_cost_cap_micros = excluded.daily_cost_cap_micros"
+    )
+
+
+def _spent(tenant: Tenant) -> int:
+    return int(
+        operator_sql.sql(f"select app.agent_day_spend('{tenant.id}', app.agent_utc_today())")
+    )
+
+
+def _ledger(run_id: str) -> list[tuple[str, int, int | None]]:
+    raw = operator_sql.sql(
+        "select coalesce(json_agg(json_build_array(step_key, reserved_micros, settled_micros) order by step_key), '[]') "
+        f"from public.agent_cost_reservations where run_id = '{run_id}'"
+    )
+    return [(k, int(r), None if s is None else int(s)) for k, r, s in json.loads(raw)]
+
+
+def test_every_model_call_is_reserved_first_and_settled_at_what_it_really_used(api: Rig) -> None:
+    w, owner = api.world, api.world.a.users["owner"]
+    r = start(api, owner, w.a)
+    assert r.status_code == 202, r.text
+    run_id = r.json()["id"]
+    assert wait_run(api.client, w.a, owner, run_id)["status"] == "succeeded"
+    ledger = _ledger(run_id)
+    assert [k for k, _, _ in ledger] == ["usage-1", "usage-2", "usage-3"]
+    for key, reserved, settled in ledger:
+        # the fake model reports 100 in + 50 out and a cost of 0; the fake's price is one micro per token
+        assert settled == 150, (key, settled)
+        assert reserved > settled, (key, "a worst case is larger than the real call")
+
+
+def test_a_day_that_fills_up_mid_run_stops_the_run_before_the_next_model_call(api: Rig) -> None:
+    w, owner = api.world, api.world.a.users["owner"]
+    probe = start(api, owner, w.a)
+    probe_id = probe.json()["id"]
+    assert wait_run(api.client, w.a, owner, probe_id)["status"] == "succeeded"
+    first_worst = _ledger(probe_id)[0][1]
+    try:
+        # room for the first call's worst case and not for a second one
+        _cap(w.a, _spent(w.a) + first_worst + 1)
+        r = start(api, owner, w.a)
+        assert r.status_code == 202, r.text
+        run_id = r.json()["id"]
+        run = wait_run(api.client, w.a, owner, run_id)
+        assert run["status"] == "failed" and run["error_code"] == "budget", run
+        ledger = _ledger(run_id)
+        assert [(k, s) for k, _, s in ledger] == [("usage-1", 150)], (
+            "one call was made and settled; the second was never reserved"
+        )
+        assert run["input_tokens_used"] == 100 and run["writes_used"] == 1, (
+            "what the first call produced was kept"
+        )
+        events = operator_sql.sql(
+            f"select count(*) from public.audit_events where entity_id = '{run_id}' and action = 'agent_cost.refused'"
+        )
+        assert events == "1", "the cap hit is audited"
+    finally:
+        _cap(w.a, None)
+
+
+def test_a_full_day_refuses_a_new_run_with_a_fixed_message_and_creates_nothing(api: Rig) -> None:
+    w, owner = api.world, api.world.a.users["owner"]
+    before = api.client.get(url(w.a, "/agent-runs"), headers=bearer(owner)).json()["items"]
+    try:
+        _cap(w.a, 0)
+        r = start(api, owner, w.a)
+        assert r.status_code == 429, r.text
+        body = r.json()["error"]
+        assert body["code"] == "cost_cap_reached"
+        assert body["message"] == (
+            "This workspace's agents have used today's spending limit. Try again tomorrow (UTC)."
+        )
+        assert "SM207" not in r.text and "micros" not in r.text
+        after = api.client.get(url(w.a, "/agent-runs"), headers=bearer(owner)).json()["items"]
+        assert [x["id"] for x in after] == [x["id"] for x in before], "no run was created"
+        # tenant B is unaffected
+        b = start(api, w.b.users["owner"], w.b)
+        assert b.status_code == 202, b.text
+        wait_run(api.client, w.b, w.b.users["owner"], b.json()["id"])
+    finally:
+        _cap(w.a, None)

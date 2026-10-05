@@ -671,3 +671,59 @@ the same ownership proof as before); the lead is recorded as `claims.source_lead
 rows are not rewritten: `claims_effective` gains `home_company_id` and `about_lead_id`, and `claims_for_scoring` exposes the home as
 `company_id`. Evidence of a lead run is still linked to the lead, so `evidence_for_scoring` is unchanged. Migration
 `20261013090000_t007_claim_home.sql`; tests `supabase/tests/database/48_claim_home.test.sql`, `tests/integration/test_claim_home.py`.
+
+## T007 M2 note: the daily cost cap (2026-10-05)
+
+A tenant's agents may spend at most **2.00 per UTC day** (operator default `agent_limits.daily_cost_micros = 2,000,000`, in millionths of the
+billing currency). The tenant's **Owner** (not Admin, second factor required, ADR 0016) can set its own value with
+`set_tenant_daily_cost_cap` to anything from 0 to **20.00**; both the default and the override carry that ceiling as a CHECK, and the change is
+audited by the `tenant_agent_settings` audit trigger (who, old value, new value). Migration `20261014090000_t007_daily_cost_cap.sql`; tests
+`supabase/tests/database/49_daily_cost_cap.test.sql`, `tests/integration/test_daily_cost_cap.py` and three tests in
+`tests/integration/test_agent_runs_api.py`.
+
+**Where it is enforced (before the money is spent, not after).**
+1. `start_agent_run` refuses (SM207) when today's spend already fills the cap (`spent >= cap`; a zero or missing cap fills it). A cheap early refusal.
+2. `agent_reserve_cost`, called by the runtime **before every model call**, takes the tenant's advisory lock, computes the call's worst case
+   `R = ceil((max_input × input price + max_output × output price) / 1,000,000)` (rounded **up**; prices from the operator table
+   `agent_model_prices`, keyed by the model id the client reports), and grants only if `spent_today + R <= cap`. A grant stores a reservation
+   (`agent_cost_reservations`); a refusal is **returned** as `{granted: false, reason: daily_cap | no_price}` (a raise would roll back the audit
+   event, so the cap hit's `agent_cost.refused` audit row would be lost) and the API port turns it into the SM207 exception, which ends the run as
+   `failed / budget` before any model call was made.
+3. `agent_record_usage` **settles** the reservation: the call's real tokens at the reserved price snapshot, rounded up, or the runtime's reported
+   cost if that is larger. The unused part of the reservation is released at once.
+4. Legacy path: a usage record for a step key with no reservation is charged at the reported cost under the same lock and refused (SM207) if it does
+   not fit. (A raise cannot also write an audit event, so reservations are the audited path.) The run's own token and cost budgets are unchanged
+   and still count what the runtime *reported*.
+
+**Fail closed.** No price row for the model, a zero price (the table CHECK forbids it and the function refuses it too), a zero cap, a missing
+operator default: each is a refusal, never "free". No real model has a price until the operator adds it (the migration seeds only the scripted
+development model `fake-selftest`, one micro per token, so local runs and the evals work).
+
+**Which UTC day a cost belongs to.** The day the call was **authorised** (the reservation), from `app.agent_utc_today()`. Settling never moves it:
+a call reserved at 23:59:58 and settled at 00:00:03 stays on the earlier day; a run started on day D that calls the model on D+1 is charged to
+D+1. The daily sum is an index range scan on `(tenant_id, cost_day)`. The clock helper is a function that tests replace inside their rolled-back
+transaction; there is no override hook in production code, and no client role can execute it (nor any other helper).
+
+**The input bound.** The runtime declares `max_input_tokens` as the UTF-8 byte length of everything it sends (blocks, tool definitions) plus 2,048
+for the provider's own framing. A token is at least one byte, so this bounds the tokens of the text. `max_output_tokens` is the request's `max_tokens`,
+which the provider enforces. Whether 2,048 covers a real provider's framing is **unverified** until `make eval-live` has run (checklist row).
+
+**A resumed run replays its earlier turns, and those model calls are not charged again.** The runtime's resume contract (a second runner on an
+interrupted run replays steps instead of duplicating them) re-calls the model for turns whose usage is already recorded; their reservations and
+usage records replay without a new charge, so a resume can spend up to the earlier turns' cost once more, unrecorded. v1 has no automatic resume (a
+restart drops runs; only the tests resume one), so this is a known gap, not a path users reach; closing it is a checklist row.
+
+**A failed model call is not refunded.** If the provider call fails after the reservation, the reservation keeps counting (the call may have been
+billed); it is not released. The run ends as `failed / model_failed`.
+
+**Maximum overshoot of the cap.** The reservation is a true upper bound whenever each call's usage stays inside the bounds it declared, so the
+overshoot is then **0**. The database cannot see what a provider bills, so if a call is reported **beyond** its bounds the ledger records the true
+cost (settled > reserved), writes an `agent_cost.overshoot` audit event, and the next reservation refuses. In that case the largest the ledger can
+exceed the cap is `max_concurrent_runs × the agent's per-run max_cost_micros`: only calls that were in flight when the last reservation was
+granted can settle above their reservation, there are at most `max_concurrent_runs` of them (3), and the run's own budget stops a call from being
+recorded above that run's cap (SM203). For the `selftest` agent: 3 × 250,000 = **750,000 (0.75)**, so a day's ledger can read at most 2.75 with the
+default cap. A bill above even that is not visible to the database; the provider-side hard cap (checklist) is the backstop.
+
+**Not built.** No API route or screen for the cap (the Owner calls the function; a UI comes with the Owner Agent), no per-agent cap, no refund of a
+failed call, no cap on token counts per day. A raised tenant cap applies to the tenant's own spending against a key the operator pays for: before
+any external customer it should become operator-only (checklist row).

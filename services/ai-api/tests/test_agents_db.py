@@ -190,6 +190,38 @@ def test_each_call_names_the_run_and_nothing_that_could_name_a_tenant_or_an_acto
         assert req.headers["apikey"] == "anon-key"
 
 
+def test_reserve_cost_sends_the_run_the_model_and_the_bounds_and_nothing_else() -> None:
+    server = Server((200, {"granted": True, "reserved_micros": 5, "replayed": False}))
+    make(server).reserve_cost(
+        "usage-1", model="fake-selftest", max_input_tokens=7, max_output_tokens=3
+    )
+    assert [r.url.path.rsplit("/", 1)[1] for r in server.requests] == ["agent_reserve_cost"]
+    assert body_of(server.requests[0]) == {
+        "p_run_id": str(RUN),
+        "p_step_key": "usage-1",
+        "p_model": "fake-selftest",
+        "p_max_input_tokens": 7,
+        "p_max_output_tokens": 3,
+    }
+
+
+@pytest.mark.parametrize(
+    "answer",
+    [
+        {"granted": False, "reason": "daily_cap"},
+        {"granted": False, "reason": "no_price"},
+        {"granted": "true"},
+        {"reason": "daily_cap"},
+        {},
+    ],
+)
+def test_anything_but_an_explicit_grant_is_a_cost_cap_refusal(answer: dict[str, object]) -> None:
+    with pytest.raises(errors.CostCapReached):
+        make(Server((200, answer))).reserve_cost(
+            "usage-1", model="m", max_input_tokens=1, max_output_tokens=1
+        )
+
+
 def test_a_replayed_write_returns_the_stored_ids() -> None:
     server = Server((200, {"evidence_id": str(COMPANY), "link_id": str(LEAD), "replayed": True}))
     assert make(server).write_evidence("t1-c0", text="x") == COMPANY
@@ -206,6 +238,7 @@ def test_a_replayed_write_returns_the_stored_ids() -> None:
         (400, "SM204", errors.AgentsDisabled),
         (400, "SM205", errors.StepConflict),
         (400, "SM206", errors.LimitReached),
+        (400, "SM207", errors.CostCapReached),
         (400, "23514", errors.ValueRefused),
         (400, "22023", errors.ValueRefused),
         (409, "23503", errors.ReferenceRefused),

@@ -67,6 +67,12 @@ class LlmResponse:
 
 
 class LlmClient(Protocol):
+    @property
+    def model_id(self) -> str:
+        """The model this client calls: the key of the operator's price table (the daily cost cap
+        reserves a worst-case cost at THAT price before every call)."""
+        ...
+
     def complete(self, request: LlmRequest) -> LlmResponse: ...
 
 

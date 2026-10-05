@@ -18,6 +18,7 @@ from typing import Any
 from app.agents.errors import (
     AgentsDisabled,
     BudgetExhausted,
+    CostCapReached,
     RunDenied,
     RunExpired,
     RunNotRunning,
@@ -83,6 +84,13 @@ class FakeAgentDb:
         }
         self.used = {"writes": 0, "tool_calls": 0, "in": 0, "out": 0}
         self.steps: dict[str, dict[str, Any]] = {}
+        # the daily cost cap (the real rules are the database's; tests/integration prove them):
+        # a price per model in micros per Mtok, the tenant's cap and what today already holds
+        self.prices: dict[str, tuple[int, int]] = {"fake-selftest": (1_000_000, 1_000_000)}
+        self.cap_micros: int = 2_000_000
+        self.day_spend_micros: int = 0
+        self.reservations: dict[str, int] = {}
+        self.reserve_requests: list[tuple[str, str, int, int]] = []
         self.evidence: list[dict[str, Any]] = []
         self.claims: list[dict[str, Any]] = []
         self.calls: list[str] = []
@@ -135,6 +143,20 @@ class FakeAgentDb:
     def read_target(self, run: RunView) -> dict[str, Any]:
         self.calls.append("read_target")
         return dict(self.facts)
+
+    def reserve_cost(
+        self, step_key: str, *, model: str, max_input_tokens: int, max_output_tokens: int
+    ) -> None:
+        self._open("reserve_cost")
+        price = self.prices.get(model)
+        if price is None or price[0] <= 0 or price[1] <= 0:
+            raise CostCapReached  # no usable price: fail closed
+        worst = -(-(max_input_tokens * price[0] + max_output_tokens * price[1]) // 1_000_000)
+        if self.day_spend_micros + worst > self.cap_micros:
+            raise CostCapReached
+        self.day_spend_micros += worst
+        self.reservations[step_key] = worst
+        self.reserve_requests.append((step_key, model, max_input_tokens, max_output_tokens))
 
     def record_usage(self, step_key: str, usage: Usage) -> None:
         self._open("record_usage")

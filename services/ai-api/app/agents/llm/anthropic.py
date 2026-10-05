@@ -47,8 +47,9 @@ class AnthropicConfig:
     def __post_init__(self) -> None:
         if not self.api_key.strip() or not self.model.strip():
             raise ValueError("an API key and a model id are required")
-        if self.input_micros_per_mtok < 0 or self.output_micros_per_mtok < 0:
-            raise ValueError("prices must not be negative")
+        if self.input_micros_per_mtok <= 0 or self.output_micros_per_mtok <= 0:
+            # a zero price would make every call look free to the spend cap: fail closed
+            raise ValueError("prices must be positive")
         if self.timeout_seconds <= 0:
             raise ValueError("the timeout must be positive")
         if not self.base_url.startswith("https://"):
@@ -68,6 +69,10 @@ class AnthropicClient:
 
     def __repr__(self) -> str:
         return f"AnthropicClient(model={self._config.model})"
+
+    @property
+    def model_id(self) -> str:
+        return self._config.model
 
     # ------------------------------------------------------------------ request
     def _payload(self, request: LlmRequest) -> dict[str, Any]:

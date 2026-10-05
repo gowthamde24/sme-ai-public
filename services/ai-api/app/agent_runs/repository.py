@@ -57,6 +57,10 @@ class RunLimitError(RepositoryError):
     """SM206"""
 
 
+class CostCapError(RepositoryError):
+    """SM207: today's spending cap for this workspace's agents is used up."""
+
+
 class TokenExpiringError(RepositoryError):
     """SM202 at start: the caller's session is about to end, so no run could finish."""
 
@@ -144,6 +148,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM202": TokenExpiringError,
         "SM204": AgentsDisabledError,
         "SM206": RunLimitError,
+        "SM207": CostCapError,
         "SM306": MfaRequired,
         "23505": ConflictError,
         "23503": NotFoundError,

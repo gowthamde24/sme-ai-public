@@ -70,6 +70,7 @@ describe("agent actions", () => {
       [409, "token_expiring", /session/],
       [409, "conflict", /out of date/],
       [429, "run_limit_reached", /Too many/],
+      [429, "cost_cap_reached", /spending limit/],
       [503, "agents_unavailable", /not available right now/],
       [500, "http_error", /Could not start/],
     ];

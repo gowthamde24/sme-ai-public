@@ -32,6 +32,13 @@ class AgentDbPort(Protocol):
         contact field."""
         ...
 
+    def reserve_cost(
+        self, step_key: str, *, model: str, max_input_tokens: int, max_output_tokens: int
+    ) -> None:
+        """Reserve the worst-case cost of ONE model call, before it is made. Raises CostCapReached
+        when the tenant's daily cost cap has no room for it (or the model has no price)."""
+        ...
+
     def record_usage(self, step_key: str, usage: Usage) -> None: ...
 
     def record_step(

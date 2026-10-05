@@ -43,6 +43,12 @@ APP_FUNCTIONS = [
     "guard_consent_update",
     "guard_audit_update",
     "guard_erased_row",
+    # T007 M2 / 3: the daily cost cap (the clock helper among them)
+    "agent_utc_today",
+    "agent_cost_micros",
+    "agent_daily_cap",
+    "agent_day_spend",
+    "agent_cost_lock",
 ]
 HIDDEN_SCHEMAS = ["app", "auth", "extensions", "tests", "storage", "graphql_public", "erasure"]
 
