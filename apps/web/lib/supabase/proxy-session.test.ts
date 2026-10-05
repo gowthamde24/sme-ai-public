@@ -90,4 +90,23 @@ describe("refreshSession", () => {
     vi.stubEnv("NEXT_PUBLIC_SUPABASE_URL", "");
     await expect(refreshSession(request())).rejects.toThrow(/not configured/);
   });
+
+  describe("needsSecondFactor", () => {
+    const enrolled = { id: "u", factors: [{ status: "verified", factor_type: "totp" }] };
+
+    it("is false for a person with no authenticator", async () => {
+      getUser.mockResolvedValue({ data: { user: { id: "u" } }, error: null });
+      expect((await refreshSession(request())).needsSecondFactor).toBe(false);
+    });
+
+    it("is false for an unverified (unfinished) factor", async () => {
+      getUser.mockResolvedValue({ data: { user: { id: "u", factors: [{ status: "unverified", factor_type: "totp" }] } }, error: null });
+      expect((await refreshSession(request())).needsSecondFactor).toBe(false);
+    });
+
+    it("is true for an enrolled person whose session is not aal2, and fails closed when the level is unreadable", async () => {
+      getUser.mockResolvedValue({ data: { user: enrolled }, error: null });
+      expect((await refreshSession(request())).needsSecondFactor).toBe(true);
+    });
+  });
 });

@@ -52,6 +52,16 @@ type AuthMock = {
   signInWithPassword: ReturnType<typeof vi.fn>;
   signUp: ReturnType<typeof vi.fn>;
   signOut: ReturnType<typeof vi.fn>;
+  verifyOtp: ReturnType<typeof vi.fn>;
+  updateUser: ReturnType<typeof vi.fn>;
+  resetPasswordForEmail: ReturnType<typeof vi.fn>;
+  mfa: {
+    getAuthenticatorAssuranceLevel: ReturnType<typeof vi.fn>;
+    listFactors: ReturnType<typeof vi.fn>;
+    enroll: ReturnType<typeof vi.fn>;
+    challengeAndVerify: ReturnType<typeof vi.fn>;
+    unenroll: ReturnType<typeof vi.fn>;
+  };
 };
 
 /** A fake Supabase client. getSession() is only allowed to be read, never to authenticate. */
@@ -68,6 +78,22 @@ export function fakeSupabase(overrides: Partial<AuthMock> = {}) {
     })),
     signUp: vi.fn(async () => ({ data: { session: null }, error: null })),
     signOut: vi.fn(async () => ({ error: null })),
+    verifyOtp: vi.fn(async () => ({ data: {}, error: null })),
+    updateUser: vi.fn(async () => ({ data: {}, error: null })),
+    resetPasswordForEmail: vi.fn(async () => ({ data: {}, error: null })),
+    mfa: {
+      getAuthenticatorAssuranceLevel: vi.fn(async () => ({
+        data: { currentLevel: "aal1", nextLevel: "aal1" },
+        error: null,
+      })),
+      listFactors: vi.fn(async () => ({
+        data: { all: [], totp: [] },
+        error: null,
+      })),
+      enroll: vi.fn(async () => ({ data: null, error: { message: "x" } })),
+      challengeAndVerify: vi.fn(async () => ({ data: {}, error: null })),
+      unenroll: vi.fn(async () => ({ data: {}, error: null })),
+    },
     ...overrides,
   };
   return { auth };

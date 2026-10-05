@@ -15,7 +15,12 @@ import { hardenCookieOptions } from "./cookies";
  */
 export async function refreshSession(
   request: NextRequest,
-): Promise<{ response: NextResponse; user: User | null }> {
+): Promise<{
+  response: NextResponse;
+  user: User | null;
+  /** The person has an authenticator but this session is password-only (aal1): the app must send them to the challenge. */
+  needsSecondFactor: boolean;
+}> {
   let response = NextResponse.next({ request });
   const { url, anonKey } = getSupabasePublicConfig();
 
@@ -37,8 +42,30 @@ export async function refreshSession(
 
   try {
     const { data, error } = await supabase.auth.getUser();
-    return { response, user: error ? null : data.user };
+    const user = error ? null : data.user;
+    return { response, user, needsSecondFactor: user ? await needsChallenge(supabase, user) : false };
   } catch {
-    return { response, user: null };
+    return { response, user: null, needsSecondFactor: false };
   }
+}
+
+type Factor = { status?: string; factor_type?: string };
+
+/** An enrolled person on a password-only session. Fails closed: if the level cannot be read it counts as aal1. */
+async function needsChallenge(
+  supabase: ReturnType<typeof createServerClient>,
+  user: User,
+): Promise<boolean> {
+  const enrolled = ((user.factors ?? []) as Factor[]).some(
+    (f) => f.status === "verified" && f.factor_type === "totp",
+  );
+  if (!enrolled) return false;
+  let level: string | null = null;
+  try {
+    const result = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+    level = result.data?.currentLevel ?? null;
+  } catch {
+    level = null; // unreadable: counts as password-only
+  }
+  return level !== "aal2";
 }

@@ -10,7 +10,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: () => createClient(),
 }));
 
-import { requireUser } from "./session";
+import { requireUser, requireUserBeforeSecondFactor } from "./session";
 
 const USER = {
   id: "11111111-1111-1111-1111-111111111111",
@@ -35,6 +35,8 @@ describe("requireUser", () => {
       id: USER.id,
       email: USER.email,
       accessToken: "tok",
+      aal: "aal1",
+      hasSecondFactor: false,
     });
     expect(supabase.auth.getUser).toHaveBeenCalledTimes(1);
   });
@@ -73,5 +75,57 @@ describe("requireUser", () => {
     });
     createClient.mockResolvedValue(supabase);
     expect(await redirectTarget(() => requireUser())).toBe("/login");
+  });
+
+  describe("the second factor (ADR 0016)", () => {
+    const enrolled = {
+      ...USER,
+      factors: [{ status: "verified", factor_type: "totp" }],
+    };
+    const withLevel = (user: object, currentLevel: string | null) =>
+      fakeSupabase({
+        getUser: vi.fn(async () => ({ data: { user }, error: null })),
+        getSession: vi.fn(async () => ({
+          data: { session: { access_token: "tok" } },
+        })),
+        mfa: {
+          ...fakeSupabase().auth.mfa,
+          getAuthenticatorAssuranceLevel: vi.fn(async () =>
+            currentLevel === null
+              ? { data: null, error: { message: "x" } }
+              : { data: { currentLevel, nextLevel: "aal2" }, error: null },
+          ),
+        },
+      });
+
+    it("sends an enrolled person on a password-only session to the challenge", async () => {
+      createClient.mockResolvedValue(withLevel(enrolled, "aal1"));
+      expect(await redirectTarget(() => requireUser())).toBe("/auth/mfa");
+    });
+
+    it("fails closed: an unreadable level counts as password-only", async () => {
+      createClient.mockResolvedValue(withLevel(enrolled, null));
+      expect(await redirectTarget(() => requireUser())).toBe("/auth/mfa");
+    });
+
+    it("lets an aal2 session through and reports it", async () => {
+      createClient.mockResolvedValue(withLevel(enrolled, "aal2"));
+      await expect(requireUser()).resolves.toMatchObject({ aal: "aal2", hasSecondFactor: true });
+    });
+
+    it("does not ask a person with no authenticator", async () => {
+      createClient.mockResolvedValue(withLevel(USER, "aal1"));
+      await expect(requireUser()).resolves.toMatchObject({ aal: "aal1", hasSecondFactor: false });
+    });
+
+    it("ignores an unverified factor (setup that was never finished)", async () => {
+      createClient.mockResolvedValue(withLevel({ ...USER, factors: [{ status: "unverified", factor_type: "totp" }] }, "aal1"));
+      await expect(requireUser()).resolves.toMatchObject({ hasSecondFactor: false });
+    });
+
+    it("the challenge page itself loads for a password-only session", async () => {
+      createClient.mockResolvedValue(withLevel(enrolled, "aal1"));
+      await expect(requireUserBeforeSecondFactor()).resolves.toMatchObject({ aal: "aal1", hasSecondFactor: true });
+    });
   });
 });

@@ -207,6 +207,11 @@ describe("server-only code stays on the server", () => {
     expect(importers).toEqual(
       [
         path.join("app", "app", "actions.ts"),
+        path.join("app", "app", "security", "actions.ts"),
+        path.join("app", "auth", "confirm", "actions.ts"),
+        path.join("app", "auth", "forgot", "actions.ts"),
+        path.join("app", "auth", "mfa", "actions.ts"),
+        path.join("app", "auth", "set-password", "actions.ts"),
         path.join("app", "login", "actions.ts"),
         path.join("lib", "auth", "session.ts"),
         "proxy.ts",
@@ -435,5 +440,45 @@ describe("server-only code stays on the server", () => {
     expect(read(path.join(WEB_ROOT, "lib/supabase/cookies.ts"))).toMatch(
       /httpOnly:\s*true/,
     );
+  });
+});
+
+describe("sign-up stays closed and the page stays under its policy", () => {
+  const code = files.filter((f) => /\.(ts|tsx)$/.test(f) && !f.endsWith(".test.ts") && !f.endsWith(".test.tsx"));
+
+  it("nothing in the app can create an account", () => {
+    for (const file of code) expect(read(file), rel(file)).not.toMatch(/auth\.signUp\s*\(|signInWithOtp|shouldCreateUser|admin\.createUser/);
+  });
+
+  it("no component injects raw HTML or an inline script", () => {
+    for (const file of code) {
+      expect(read(file), rel(file)).not.toMatch(/dangerouslySetInnerHTML/);
+      expect(read(file), rel(file)).not.toMatch(/<script[\s>]/);
+    }
+  });
+
+  it("only the confirm, forgot and security flows talk to the Auth server's factor and recovery endpoints", () => {
+    const users = code.filter((f) => /auth\.(mfa|verifyOtp|resetPasswordForEmail|updateUser)/.test(read(f))).map(rel).sort();
+    expect(users).toEqual(
+      [
+        path.join("app", "app", "security", "actions.ts"),
+        path.join("app", "auth", "confirm", "actions.ts"),
+        path.join("app", "auth", "forgot", "actions.ts"),
+        path.join("app", "auth", "mfa", "actions.ts"),
+        path.join("app", "auth", "set-password", "actions.ts"),
+        path.join("app", "login", "actions.ts"),
+        path.join("lib", "auth", "session.ts"),
+        path.join("lib", "supabase", "proxy-session.ts"),
+      ].sort(),
+    );
+  });
+
+  it("a 'use server' module exports only async functions (anything else breaks the build at run time)", () => {
+    for (const file of code.filter((f) => /^\s*["']use server["']/.test(read(f)))) {
+      const src = read(file);
+      const exported = [...src.matchAll(/^export\s+(async\s+function|function|const|let|class)\s+(\w+)/gm)];
+      for (const [, kind, name] of exported)
+        expect(kind, `${rel(file)}: ${name}`).toBe("async function");
+    }
   });
 });

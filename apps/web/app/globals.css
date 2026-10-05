@@ -409,6 +409,26 @@ select {
     min-width: 44px;
   }
 
+  /* T006b M3a: every link in a page, and the label around a radio or a checkbox, is a 44px target (the first pass only
+     covered the review queue). A link inside a sentence stays inline: it becomes an inline box that is 44px tall. */
+  main a,
+  main label:has(> input[type="radio"]),
+  main label:has(> input[type="checkbox"]) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+  }
+
+  input[type="radio"],
+  input[type="checkbox"] {
+    width: 24px;
+    height: 24px;
+    margin-right: 0.5rem;
+  }
+
   .review-actions button {
     flex: 1 1 5.5rem;
   }

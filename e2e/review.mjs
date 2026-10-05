@@ -8,7 +8,7 @@ const MODE = process.argv[2] || "desktop";
 const ROLE = process.argv[3] || "labeler1";
 const P = MODE === "phone" ? "C" : "B";
 const phone = MODE === "phone";
-const { browser, context } = await launch(phone ? { width: 390, height: 844 } : { width: 1280, height: 900 }, phone ? { hasTouch: true, isMobile: true } : {});
+const { browser, context } = await launch(phone ? { width: Number(process.env.E2E_PHONE_WIDTH || 390), height: 844 } : { width: 1280, height: 900 }, phone ? { hasTouch: true, isMobile: true } : {});
 const page = await context.newPage();
 const psql = (sql) => execFileSync("docker", ["exec", "-i", `supabase_db_${process.env.E2E_SUPABASE_PROJECT || "sme-ai"}`, "psql", "-U", "postgres", "-d", "postgres", "-Atc", sql], { encoding: "utf8" }).trim();
 let s;
@@ -56,10 +56,10 @@ try {
       await card.locator("select").selectOption(p.reason);
       await card.locator('button:has-text("Confirm Bad")').click();
     } else await card.locator(`button:text-is("${p.kind === "good" ? "Good" : "Maybe"}")`).click();
-    await card.locator(`.badge-${p.kind}`).waitFor({ timeout: 15000 });
+    await card.locator(`.badge-${p.kind}`).first().waitFor({ timeout: 15000 });
   }
   await cardOf(last.n).locator('button:text-is("Good")').dblclick();
-  await cardOf(last.n).locator(".badge-good").waitFor({ timeout: 15000 });
+  await cardOf(last.n).locator(".badge-good").first().waitFor({ timeout: 15000 });
   s = await shot(page, `${P}3-after-labelling-${ROLE}`);
 
   await page.reload();

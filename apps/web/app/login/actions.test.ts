@@ -10,7 +10,7 @@ vi.mock("@/lib/supabase/server", () => ({
   createSupabaseServerClient: () => createClient(),
 }));
 
-import { signIn, signUp } from "./actions";
+import { signIn } from "./actions";
 
 function form(values: Record<string, string>): FormData {
   const data = new FormData();
@@ -111,50 +111,67 @@ describe("signIn", () => {
   });
 });
 
-describe("signUp", () => {
+describe("sign-in with an authenticator (ADR 0016)", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("requires a minimum password length server-side", async () => {
-    const supabase = fakeSupabase();
-    createClient.mockResolvedValue(supabase);
-    const result = await signUp(
-      undefined,
-      form({ email: "a@example.test", password: "short" }),
-    );
-    expect(result?.error).toMatch(/at least 8/);
-    expect(supabase.auth.signUp).not.toHaveBeenCalled();
-  });
+  const okSignIn = vi.fn(async () => ({ data: {}, error: null }));
 
-  it("redirects to a validated target when a session is issued immediately", async () => {
-    const supabase = fakeSupabase({
-      signUp: vi.fn(async () => ({ data: { session: {} }, error: null })),
-    });
-    createClient.mockResolvedValue(supabase);
-    expect(
-      await redirectTarget(() =>
-        signUp(undefined, form({ ...OK, next: "//evil.example" })),
-      ),
-    ).toBe("/app");
-  });
-
-  it("asks the user to confirm their email when no session is issued", async () => {
-    createClient.mockResolvedValue(fakeSupabase());
-    const result = await signUp(undefined, form(OK));
-    expect(result?.message).toMatch(/Check your email/);
-  });
-
-  it("reports a generic failure without revealing whether the account exists", async () => {
-    const supabase = fakeSupabase({
-      signUp: vi.fn(async () => ({
-        data: {},
-        error: {
-          message: "User already registered",
-          code: "user_already_exists",
+  it("sends a person who has an authenticator to the challenge, keeping a validated next", async () => {
+    createClient.mockResolvedValue(
+      fakeSupabase({
+        signInWithPassword: okSignIn,
+        mfa: {
+          ...fakeSupabase().auth.mfa,
+          getAuthenticatorAssuranceLevel: vi.fn(async () => ({
+            data: { currentLevel: "aal1", nextLevel: "aal2" },
+            error: null,
+          })),
         },
-      })),
-    });
-    createClient.mockResolvedValue(supabase);
-    const result = await signUp(undefined, form(OK));
-    expect(result).toEqual({ error: "Could not create the account." });
+      }),
+    );
+    expect(
+      await redirectTarget(() => signIn(undefined, form({ ...OK, next: "/app/tenants?x=1" }))),
+    ).toBe("/auth/mfa?next=%2Fapp%2Ftenants%3Fx%3D1");
+  });
+
+  it("never carries an untrusted next into the challenge", async () => {
+    createClient.mockResolvedValue(
+      fakeSupabase({
+        signInWithPassword: okSignIn,
+        mfa: {
+          ...fakeSupabase().auth.mfa,
+          getAuthenticatorAssuranceLevel: vi.fn(async () => ({
+            data: { currentLevel: "aal1", nextLevel: "aal2" },
+            error: null,
+          })),
+        },
+      }),
+    );
+    expect(
+      await redirectTarget(() => signIn(undefined, form({ ...OK, next: "//evil.example" }))),
+    ).toBe("/auth/mfa?next=%2Fapp");
+  });
+
+  it("goes straight to the app when no second step is needed, or the level cannot be read", async () => {
+    createClient.mockResolvedValue(fakeSupabase({ signInWithPassword: okSignIn }));
+    expect(await redirectTarget(() => signIn(undefined, form(OK)))).toBe("/app");
+    createClient.mockResolvedValue(
+      fakeSupabase({
+        signInWithPassword: okSignIn,
+        mfa: {
+          ...fakeSupabase().auth.mfa,
+          getAuthenticatorAssuranceLevel: vi.fn(async () => {
+            throw new Error("down");
+          }),
+        },
+      }),
+    );
+    // not reading the level never grants anything: the app's own gate (requireUser) sends an enrolled person to the challenge
+    expect(await redirectTarget(() => signIn(undefined, form(OK)))).toBe("/app");
+  });
+
+  it("has no sign-up: the module exports no signUp and the form has no way to create an account", async () => {
+    const actions = await import("./actions");
+    expect(Object.keys(actions)).toEqual(["signIn"]);
   });
 });

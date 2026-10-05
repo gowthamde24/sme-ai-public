@@ -1,24 +1,20 @@
 "use client";
 
+import Link from "next/link";
 import { useActionState } from "react";
 
-import { type AuthFormState, signIn, signUp } from "./actions";
+import { type AuthFormState, signIn } from "./actions";
 
-export function LoginForm({ next }: { next: string }) {
-  const [signInState, signInAction, signingIn] = useActionState<
-    AuthFormState,
-    FormData
-  >(signIn, undefined);
-  const [signUpState, signUpAction, signingUp] = useActionState<
-    AuthFormState,
-    FormData
-  >(signUp, undefined);
-  const state = signUpState ?? signInState;
-  const pending = signingIn || signingUp;
+export function LoginForm({ next, notice }: { next: string; notice?: string }) {
+  const [state, action, pending] = useActionState<AuthFormState, FormData>(
+    signIn,
+    undefined,
+  );
 
   return (
-    <form className="card" action={signInAction}>
+    <form className="card" action={action}>
       <input type="hidden" name="next" value={next} />
+      {notice && <p role="status">{notice}</p>}
       <label htmlFor="email">Email</label>
       <input
         id="email"
@@ -42,20 +38,17 @@ export function LoginForm({ next }: { next: string }) {
           {state.error}
         </p>
       )}
-      {state?.message && <p role="status">{state.message}</p>}
       <div className="row">
         <button type="submit" disabled={pending}>
           Sign in
         </button>
-        <button
-          type="submit"
-          formAction={signUpAction}
-          disabled={pending}
-          className="secondary"
-        >
-          Create account
-        </button>
+        <Link href="/auth/forgot" className="hint">
+          Forgot your password?
+        </Link>
       </div>
+      <p className="hint">
+        Accounts are by invitation. Ask the owner of your workspace if you need one.
+      </p>
     </form>
   );
 }

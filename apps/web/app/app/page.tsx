@@ -35,7 +35,16 @@ export default async function AppPage() {
           </button>
         </form>
       </header>
-      <p>Signed in as {user.email ?? "your account"}.</p>
+      <p>
+        Signed in as {user.email ?? "your account"}. <Link href="/app/security">Security</Link>
+      </p>
+      {me?.memberships.some((m) => m.role === "owner" || m.role === "admin") &&
+        !user.hasSecondFactor && (
+          <p role="note" className="hint" style={{ borderLeft: "4px solid #b45309", paddingLeft: "0.75rem" }}>
+            <strong>Set up your authenticator app.</strong> As an owner or admin you need it to erase data, export, change members or roles, and
+            change workspace settings. <Link href="/app/security">Set it up</Link>
+          </p>
+        )}
 
       {me === null ? (
         <p role="alert" className="error">

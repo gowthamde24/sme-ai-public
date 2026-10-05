@@ -23,6 +23,11 @@ describe("touch targets", () => {
     expect(withoutTap.map((l) => l.replace(/\s+/g, " ").slice(0, 70))).toEqual([]);
   });
 
+  it("every link on every page, and the label of every radio and checkbox, is a 44px target on a phone", () => {
+    expect(phone).toMatch(/main a,\s*main label:has\(> input\[type="radio"\]\),\s*main label:has\(> input\[type="checkbox"\]\) \{[^}]*min-height: 44px;[^}]*min-width: 44px;/);
+    expect(phone).toMatch(/input\[type="radio"\],\s*input\[type="checkbox"\] \{\s*width: 24px;/);
+  });
+
   it("the label buttons stretch to fill the row on a phone", () => {
     expect(phone).toMatch(/\.review-actions button \{\s*flex: 1 1 5\.5rem;/);
   });
