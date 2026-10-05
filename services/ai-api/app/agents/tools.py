@@ -17,8 +17,27 @@ from app.agents.llm.interface import ToolSpec
 from app.agents.notes import NOTE_RECORDED, NOTE_REFUSED
 from app.agents.ports import AgentDbPort
 from app.agents.schemas import WriteNoteArgs, WriteObservationArgs
+from app.agents.web import PageFetcher
 
 MAX_OBSERVATIONS = 3
+
+
+@dataclass(frozen=True)
+class PageRecord:
+    """One page this run fetched. The TEXT is kept in memory for the run only (it is untrusted data:
+    shown to the model between delimiters, and the source a quote is verified against); it is never
+    stored."""
+
+    handle: str
+    url: str
+    text: str
+
+
+@dataclass(frozen=True)
+class EvidenceRecord:
+    handle: str
+    evidence_id: uuid.UUID
+    page_handle: str
 
 
 @dataclass
@@ -28,6 +47,12 @@ class RunState:
     note_evidence_id: uuid.UUID | None = None
     observations: int = 0
     notes: list[str] = field(default_factory=list)
+    # the Research Agent
+    pages: dict[str, PageRecord] = field(default_factory=dict)
+    fetched_urls: set[str] = field(default_factory=set)
+    evidence: dict[str, EvidenceRecord] = field(default_factory=dict)
+    quotes: set[tuple[str, str]] = field(default_factory=set)
+    claims: set[tuple[str, str, str]] = field(default_factory=set)
 
 
 @dataclass(frozen=True)
@@ -35,6 +60,12 @@ class ToolContext:
     db: AgentDbPort
     state: RunState
     step_key: str
+    # Set only for an agent that reads the web. The host scope is decided by the RUNTIME from the
+    # run's company (never by the model): `host` is the company's website host, `allowed_hosts` it
+    # and its www twin.
+    fetcher: PageFetcher | None = None
+    host: str | None = None
+    allowed_hosts: frozenset[str] = frozenset()
 
 
 Handler = Callable[[ToolContext, Any], str]

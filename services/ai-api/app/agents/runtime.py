@@ -40,10 +40,16 @@ from app.agents.errors import (
 )
 from app.agents.inputs import input_sha256, model_input_from_company
 from app.agents.llm.interface import LlmClient, LlmError, LlmRequest, LlmResponse, ToolCall
-from app.agents.notes import NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR
+from app.agents.notes import (
+    FIXED_NOTES,
+    NOTE_EVIDENCE_REFUSED,
+    NOTE_REFUSED,
+    NOTE_REPAIR,
+)
 from app.agents.ports import AgentDbPort
 from app.agents.schemas import FinalResult
 from app.agents.spec import AgentSpec
+from app.agents.web import PageFetcher
 
 logger = logging.getLogger("app.agents.runtime")
 
@@ -104,8 +110,12 @@ class AgentRunner:
         now: Callable[[], datetime] | None = None,
         delimiter: str | None = None,
         max_output_tokens: int = 1000,
+        fetcher: PageFetcher | None = None,
     ) -> None:
         self._db, self._llm, self._spec = db, llm, spec
+        self._fetcher = fetcher
+        self._host: str | None = None
+        self._allowed_hosts: frozenset[str] = frozenset()
         self._now = now or (lambda: datetime.now(UTC))
         self._delimiter = delimiter or secrets.token_hex(8)
         self._max_output_tokens = max_output_tokens
@@ -124,6 +134,14 @@ class AgentRunner:
                 # no company to read (a lead without one): nothing to research, and no model call
                 raise _Stop("failed", "tool_failed")
             model_input = model_input_from_company(target)
+            if self._spec.uses_web:
+                # the host scope is decided HERE, from the run's company, never by the model; a run
+                # that cannot read the web (no fetcher, no website) ends before any model call
+                host = model_input.website_host
+                if self._fetcher is None or not host:
+                    raise _Stop("failed", "tool_failed")
+                twin = host[4:] if host.startswith("www.") else f"www.{host}"
+                self._host, self._allowed_hosts = host, frozenset({host, twin})
             if input_sha256(model_input) != run.input_sha256:
                 raise _Stop(
                     "failed", "tool_failed"
@@ -141,6 +159,7 @@ class AgentRunner:
                     delimiter=self._delimiter,
                     notes=notes,
                     max_output_tokens=self._max_output_tokens,
+                    pages=tuple(state.pages.values()),
                 )
                 # the worst case of THIS call is reserved under the tenant's daily cost cap BEFORE
                 # the model is called (CostCapReached ends the run: nothing was spent)
@@ -216,15 +235,23 @@ class AgentRunner:
             return NOTE_REFUSED
         self._guard()
         try:
-            note = tool.handler(tools.ToolContext(self._db, state, key), args)
+            context = tools.ToolContext(
+                self._db,
+                state,
+                key,
+                fetcher=self._fetcher,
+                host=self._host,
+                allowed_hosts=self._allowed_hosts,
+            )
+            note = tool.handler(context, args)
         except (ValueRefused, ReferenceRefused):
             self._db.record_step(key, FAILED_TOOL, digest, "failed", None)
             self._refused += 1
             return NOTE_REFUSED
-        if note == NOTE_REFUSED:
+        if note in (NOTE_REFUSED, NOTE_EVIDENCE_REFUSED):
             self._db.record_step(key, REFUSED_TOOL, digest, "refused", None)
             self._refused += 1
-        return note if note in (NOTE_RECORDED, NOTE_REFUSED) else NOTE_REFUSED
+        return note if note in FIXED_NOTES else NOTE_REFUSED
 
     # ---- the final result
     @staticmethod

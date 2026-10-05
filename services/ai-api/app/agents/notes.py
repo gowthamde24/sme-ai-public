@@ -10,4 +10,14 @@ NOTE_REPAIR = (
     "Your previous reply did not match the required format. "
     "Reply again using only the listed tools, or the final result format."
 )
-FIXED_NOTES = frozenset({NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR})
+NOTE_FETCH_FAILED = (
+    "The page could not be fetched (it is missing, blocked by the site's robots.txt, or not "
+    "readable). Try another path of the same website, or finish."
+)
+NOTE_EVIDENCE_REFUSED = (
+    "That quote was refused: it must be copied exactly from a page you were shown, and contain "
+    "no contact details."
+)
+FIXED_NOTES = frozenset(
+    {NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR, NOTE_FETCH_FAILED, NOTE_EVIDENCE_REFUSED}
+)

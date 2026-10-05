@@ -51,7 +51,8 @@ select is((select count(*) from unnest(enum_range(null::public.evidence_kind)) k
 select is(pg_temp.rows(), '0/0/0', 'none of the refused kinds wrote a row, a link or a step');
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.ev_sql(tests.rid('k_run'), 'k-note', 'note'))::jsonb ->> 'replayed')), 'false', 'a note is written');
 select is(pg_temp.rows(), '1/1/1', '...exactly one evidence row, one link, one step');
--- the allow-list is the DEFINITION's: widen it and the kind passes
+-- the allow-list is the DEFINITION's: widen it and the kind passes (a web_page row must sit on the target company's own host: T007 research)
+update public.companies set website = 'https://demo.test' where id = tests.rid('a_company');
 update public.agent_definitions set allowed_evidence_kinds = array['note', 'web_page']::public.evidence_kind[] where agent_name = 'selftest';
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.ev_sql(tests.rid('k_run'), 'k-web2', 'web_page', 'https://demo.test/x'))::jsonb ->> 'replayed')), 'false', 'widening the definition lets web_page through (the list, not the code, decides)');
 update public.agent_definitions set allowed_evidence_kinds = array['note']::public.evidence_kind[] where agent_name = 'selftest';

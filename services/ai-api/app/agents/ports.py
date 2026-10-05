@@ -52,8 +52,21 @@ class AgentDbPort(Protocol):
 
     def write_evidence(self, step_key: str, *, text: str) -> uuid.UUID: ...
 
+    def write_web_evidence(self, step_key: str, *, url: str, quote: str) -> uuid.UUID:
+        """Evidence of kind web_page: the URL of a page this run fetched and a verified quote. The
+        database refuses a URL that is not on the run target's own website."""
+        ...
+
     def write_claim(
-        self, step_key: str, *, value: str, stance: str, evidence_id: uuid.UUID
-    ) -> uuid.UUID: ...
+        self,
+        step_key: str,
+        *,
+        value: str,
+        stance: str,
+        evidence_id: uuid.UUID,
+        predicate: str | None = None,
+    ) -> uuid.UUID:
+        """`predicate=None` uses the agent's own single predicate (the selftest agent)."""
+        ...
 
     def finish(self, status: str, error_code: str | None) -> None: ...

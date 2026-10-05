@@ -147,10 +147,12 @@ def snapshot(tenant: str, run_id: str) -> Snapshot:
 
 
 def new_rows(table: str, tenant: str, old_ids: list[str], columns: str) -> list[dict[str, Any]]:
-    in_list = ",".join(f"'{i}'" for i in old_ids) or "null"
+    # NOT IN (NULL) is never true: with nothing seen before, EVERY row is new (an empty list must not hide them)
+    seen = ",".join(f"'{i}'" for i in old_ids)
+    unseen = f" and id::text not in ({seen})" if old_ids else ""
     raw = _q(
         f"select coalesce(json_agg(r), '[]'::json) from (select {columns} from public.{table} "
-        f"where tenant_id = '{tenant}' and id::text not in ({in_list}) order by id) r"
+        f"where tenant_id = '{tenant}'{unseen} order by id) r"
     )
     rows: list[dict[str, Any]] = json.loads(raw)
     return rows

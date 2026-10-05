@@ -77,7 +77,7 @@ export interface RunOut {
 
 export interface RunStart {
   id: string;
-  agent: string;
+  agent: "selftest" | "research";
   target_kind: "company" | "lead";
   target_id: string;
 }

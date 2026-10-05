@@ -9,6 +9,7 @@ import {
   parseRun,
   reviewClaim,
   setAgentsEnabled,
+  startResearchRun,
   startSelftestRun,
 } from "./agents";
 import { ApiContractError, ApiRequestError } from "./client";
@@ -170,5 +171,21 @@ describe("agents API client", () => {
       code: "agents_disabled",
     });
     expect(ApiRequestError).toBeDefined();
+  });
+
+  it("POSTs a research run on a LEAD with the caller's id", async () => {
+    const start = respond(RUN_JSON, 202);
+    globalThis.fetch = start as unknown as typeof fetch;
+    await startResearchRun("tok", TENANT, { id: RUN, leadId: TARGET });
+    const [url, init] = start.mock.calls[0];
+    expect(url).toBe(`http://api.test/v1/tenants/${TENANT}/agent-runs`);
+    expect(JSON.parse(String(init?.body))).toEqual({
+      id: RUN,
+      agent: "research",
+      target_kind: "lead",
+      target_id: TARGET,
+    });
+    await expect(startResearchRun("tok", TENANT, { id: "x", leadId: TARGET })).rejects.toThrow(ApiContractError);
+    await expect(startResearchRun("tok", TENANT, { id: RUN, leadId: "y" })).rejects.toThrow(ApiContractError);
   });
 });

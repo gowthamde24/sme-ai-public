@@ -68,7 +68,7 @@ To turn it back on: set `enabled = true` (or use the button).
 update public.platform_flags set enabled = false where key = 'agents_enabled';
 ```
 
-One agent only (for example the selftest agent), leaving the rest: `where key = 'selftest_enabled'` instead.
+One agent only, leaving the rest: `where key = 'selftest_enabled'` (the selftest agent) or `where key = 'research_enabled'` (the Research Agent, which is also OFF and allowed for no workspace until the operator runs `app.operator_enable_research('<slug>')` in a LOCAL database) instead.
 
 Verify it took effect:
 

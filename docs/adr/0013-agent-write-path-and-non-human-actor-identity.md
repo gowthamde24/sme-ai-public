@@ -761,3 +761,33 @@ Migration `20261014090200_t007_claim_home_followups.sql`; tests `supabase/tests/
 
   No scoring reader filters by `lead_id`; so two leads of one company see the same accepted claim. The SQL functions that read `public.claims`
   directly (the two import functions and the real-data gate scan) look up by `company_id` or scan every row, and none is a score.
+
+## T007 note: the Research Agent (commit 4, 2026-10-05)
+
+The Research Agent (`app/agents/research.py`, tools in `research_tools.py`) reads ONE lead's (or company's) own website and proposes unreviewed
+suggestions: web evidence (a URL on that website and a verified quote of at most 300 characters) and claims about the four predicates the ICP profile
+reads (`buyer_type`, `order_scale`, `size_band`, `operating_status`), each a value from that predicate's closed vocabulary. It runs on FAKES only here
+(the scripted model and the synthetic fixture sites); no real fetcher, model or key is wired to it. Migration `20261014090300_t007_research_agent.sql`.
+
+- **Tools** (closed schemas, run-local handles, no id or URL from the model): `fetch_page(path)`, `record_evidence(page, quote)`,
+  `propose_claim(predicate, value, stance, evidence)` and the final result. At most 5 pages, 3 evidence rows and 4 claims per run (7 writes, 14 tool calls).
+- **Fetch only the lead's own site, decided server-side.** The model gives a PATH (no scheme, host, query, fragment, dot segment, `//` or encoded
+  smuggling, closed pattern plus a decoded check); the runtime builds `https://<the company's website host><path>` and passes the host and its `www.`
+  twin as `allowed_hosts`. A run whose company has no website (or has no fetcher) ends `failed / tool_failed` before any reservation or model call; the API
+  refuses it earlier (`409 company_has_no_website`), and a lead with no company (`409 lead_has_no_company`).
+- **Verbatim quotes.** A quote must appear in the sanitised text of the page it names (whitespace-normalised, case-sensitive), be 12 to 300 characters,
+  carry no e-mail, phone number or removal marker. The stored URL is the runtime's own record of the page, never the model's text.
+- **The database enforces the host again.** `agent_write_evidence` for `web_page` requires a URL whose host equals the run target company's website host
+  (or its `www.` twin; no userinfo, query string or fragment) and a quote of at most 300 characters; `agent_write_claim` checks the value against the agent's
+  `claim_value_pattern` (a lowercase slug). `research` is gated by its own platform flag `research_enabled` (OFF) and is allowed for no tenant until
+  `app.operator_enable_research(slug)`.
+- **Ceilings.** `max_input_tokens` is 120,000 (the plan said 40,000): the cost-cap reservation bounds a call's input by the bytes sent, and up to five
+  8,000-character pages are re-sent each turn. The money ceiling stays 150,000 per run (0.15).
+- **Page text is data.** Each fetched page is one UNTRUSTED block inside the per-run delimiter, flattened to one line, so it can neither close the block nor
+  fake a marker; it is never stored (memory only).
+- **Evals.** `make eval` now also runs `tests/integration/test_research_evals.py` (cases in `tests/evals/research/cases.jsonl`): W01-W11 (hidden text,
+  visible and fake-system instructions, exfiltration, redirect to a private address, oversized page, fabricated quote, another company and contact details,
+  robots, title/meta, bidi and homoglyphs), the lead-only-host cases L01-L04 and two database-layer cases N20/N21. Each is a scripted model that OBEYS the
+  injection; the pass condition is a diff of the whole tenant (I1-I9 in `research_eval.py`). While building them an empty-list bug in the shared eval helper
+  `new_rows` (`NOT IN (NULL)`, which hides every new row when nothing was seen before) was found and fixed; the selftest evals pass with the fix.
+- **Score test.** `tests/integration/test_research_e2e.py` runs the agent through the API and shows the score moving only after a human accepts.

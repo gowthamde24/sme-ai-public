@@ -44,6 +44,7 @@ FETCH_ERROR_CODES = frozenset(
         "robots_crawl_delay",
         "rate_limited",
         "daily_limit",
+        "resolver_busy",
     }
 )
 

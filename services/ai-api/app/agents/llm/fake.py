@@ -8,6 +8,7 @@ model's behaviour. Use is refused outside development by the API's configuration
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable, Sequence
 from typing import Any
 
@@ -80,3 +81,62 @@ class FakeProvider:
         if isinstance(step, LlmResponse):
             return step
         return step(request)
+
+
+# ---- a scripted RESEARCH model: reads the page blocks it is shown and abstains when they say
+# nothing. For local development and tests only (like selftest_script); it follows no
+# instruction in a page.
+_PAGE_BLOCK = re.compile(r"page: (p\d)\nurl: [^\n]*\ntext: ([^\n]*)", re.DOTALL)
+# (what a sentence must contain, the predicate and value it supports): deliberately blunt keywords
+_RESEARCH_RULES: tuple[tuple[re.Pattern[str], str, str], ...] = (
+    (re.compile(r"closed permanently|permanently closed", re.I), "operating_status", "closed"),
+    (re.compile(r"wholesale", re.I), "buyer_type", "wholesaler"),
+    (
+        re.compile(r"minimum (?:of )?five pieces|five or more pieces", re.I),
+        "order_scale",
+        "five_or_more_per_order",
+    ),
+    (re.compile(r"mid-sized", re.I), "size_band", "medium"),
+)
+
+
+def pages_in(request: LlmRequest) -> dict[str, str]:
+    """handle -> text of every page block in a request."""
+    found: dict[str, str] = {}
+    for block in request.blocks:
+        match = _PAGE_BLOCK.search(block.text)
+        if match:
+            found[match.group(1)] = match.group(2)
+    return found
+
+
+def _research_reading(request: LlmRequest) -> LlmResponse:
+    calls: list[ToolCall] = []
+    evidence = 0
+    for handle, text in pages_in(request).items():
+        for sentence in (s.strip() for s in re.split(r"(?<=[.!?])\s+", text)):
+            if evidence >= 2 or not 12 <= len(sentence) <= 300:
+                continue
+            for pattern, predicate, value in _RESEARCH_RULES:
+                if pattern.search(sentence) and evidence < 2:
+                    evidence += 1
+                    calls.append(call("record_evidence", page=handle, quote=sentence))
+                    calls.append(
+                        call(
+                            "propose_claim",
+                            predicate=predicate,
+                            value=value,
+                            stance="supports",
+                            evidence=f"e{evidence}",
+                        )
+                    )
+                    break
+    return respond(*calls[:5], tokens_in=400, tokens_out=120)
+
+
+def research_script() -> list[Step]:
+    return [
+        respond(call("fetch_page", path="/"), call("fetch_page", path="/about")),
+        _research_reading,
+        final(),
+    ]

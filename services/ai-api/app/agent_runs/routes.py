@@ -107,7 +107,12 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     if not agents.executor.has_capacity():
         raise ApiError(503, "agents_busy", "Agents are busy. Try again shortly.")
     spec = AGENTS[body.agent]
+    if spec.uses_web and not agents.research_available:
+        raise ApiError(503, "agents_unavailable", "Agents are not available right now.")
     company, refs = _target_company(runtime, ctx, body)
+    if spec.uses_web and not model_input_from_company(company).website_host:
+        # nothing to read: refused BEFORE the run exists (no fetch, no model call)
+        raise ApiError(409, "company_has_no_website", "This company has no website to research.")
     started = agents.repository.start_run(
         ctx.principal.token,
         ctx.tenant.id,
@@ -121,7 +126,9 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     )
     if not started.replayed:
         try:
-            agents.executor.submit(RunTask(run_id=started.run_id, token=ctx.principal.token))
+            agents.executor.submit(
+                RunTask(run_id=started.run_id, token=ctx.principal.token, agent=spec.name)
+            )
         except ExecutorBusy:
             logger.warning("agent run %s could not be queued; cancelling it", started.run_id)
             try:

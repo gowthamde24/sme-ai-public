@@ -14,6 +14,7 @@ import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from urllib.parse import urlsplit
 
 from app.agents.errors import (
     AgentsDisabled,
@@ -60,7 +61,9 @@ class FakeAgentDb:
         max_input_tokens: int = 20000,
         max_output_tokens: int = 4000,
         ttl_seconds: int = 900,
+        agent_name: str = "selftest",
     ) -> None:
+        self.agent_name = agent_name
         self.clock = clock or Clock()
         self.facts = facts or {
             "name": "DEMO Silk House",
@@ -131,7 +134,7 @@ class FakeAgentDb:
             raise RunDenied
         return RunView(
             id=self.run_id,
-            agent_name="selftest",
+            agent_name=self.agent_name,
             status=self.status,
             expires_at=self.expires_at,
             cancel_requested_at=self.cancel_requested_at,
@@ -216,11 +219,54 @@ class FakeAgentDb:
             hook(self)
         return new_id
 
+    def write_web_evidence(self, step_key: str, *, url: str, quote: str) -> uuid.UUID:
+        """Models the database rule: a web_page row needs a quote of at most 300 characters and a
+        URL on the run target's own website host, with no query string or fragment."""
+        self._open("write_web_evidence")
+        digest = sha({"kind": "web_page", "url": url, "snippet": quote})
+        found = self._replay(step_key, "agent_write_evidence", digest)
+        if found is not None:
+            return uuid.UUID(found["result"]["evidence_id"])
+        own = urlsplit(str(self.facts.get("website") or "")).hostname or ""
+        host = urlsplit(url).hostname or ""
+
+        def bare(name: str) -> str:
+            return name[4:] if name.startswith("www.") else name
+
+        if not own or bare(host) != bare(own) or "?" in url or "#" in url or len(quote) > 300:
+            raise ValueRefused
+        if self.used["writes"] >= self.max["writes"]:
+            raise BudgetExhausted
+        self.used["writes"] += 1
+        new_id = uuid.uuid5(RUN_ID, f"evidence:{step_key}")
+        self.evidence.append(
+            {"id": new_id, "text": quote, "url": url, "run": self.run_id, "kind": "web_page"}
+        )
+        self.steps[step_key] = {
+            "tool": "agent_write_evidence",
+            "sha": digest,
+            "result": {"evidence_id": str(new_id)},
+        }
+        return new_id
+
     def write_claim(
-        self, step_key: str, *, value: str, stance: str, evidence_id: uuid.UUID
+        self,
+        step_key: str,
+        *,
+        value: str,
+        stance: str,
+        evidence_id: uuid.UUID,
+        predicate: str | None = None,
     ) -> uuid.UUID:
         self._open("write_claim")
-        digest = sha({"value": value, "stance": stance, "evidence": [str(evidence_id)]})
+        digest = sha(
+            {
+                "value": value,
+                "stance": stance,
+                "evidence": [str(evidence_id)],
+                **({"predicate": predicate} if predicate else {}),
+            }
+        )
         found = self._replay(step_key, "agent_write_claim", digest)
         if found is not None:
             return uuid.UUID(found["result"]["claim_id"])
@@ -233,6 +279,7 @@ class FakeAgentDb:
         self.claims.append(
             {
                 "id": new_id,
+                "predicate": predicate,
                 "value": value,
                 "stance": stance,
                 "evidence_id": evidence_id,

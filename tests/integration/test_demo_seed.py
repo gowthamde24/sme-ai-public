@@ -596,8 +596,10 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
         )
         assert unknown.returncode != 0
         assert (
-            operator_sql.sql("select string_agg(enabled::text, ',') from public.platform_flags")
-            == "false,false"
+            operator_sql.sql(
+                "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
+            )
+            == "false,false,false"
         ), "an unknown slug changed nothing"
 
         done = subprocess.run(  # noqa: S603 - our own script, fixed argv
@@ -608,8 +610,12 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
         )
         assert done.returncode == 0, done.stderr
         assert (
-            operator_sql.sql("select string_agg(enabled::text, ',') from public.platform_flags")
-            == "true,true"
+            operator_sql.sql(
+                "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
+            )
+            == "true,false,true"
+        ), (
+            "agents and selftest are on; the research switch (agents_enabled, research_enabled, selftest_enabled) is not touched"
         )
         allowed = operator_sql.sql(
             "select array_to_string(allowed_tenants, ',') from public.agent_definitions "

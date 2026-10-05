@@ -17,15 +17,13 @@ Branch: `main` (nothing is on a wip branch: everything committed is green). Noth
    `tests/integration/test_daily_cost_cap.py` (a real two-session race), ADR 0013 note "daily cost cap" (states the maximum overshoot), runbook
    "Spending cap". Mutation pass: see the commit message / report.
 
-## Not done
-4. **Commit 4: the Research Agent on fakes** (definition with the four predicates; tools `fetch_page` + `report_finding`; lead-site-only fetch decided
-   server-side; verbatim-quote check; API start for a lead and the start form; bounded DNS lookups in `app/webfetch` with a concurrency cap; end-to-end
-   score test; W-cases for the lead-host rule). Not started. Checklist rows still open: e2e score test, agents start form for leads, SSRF follow-up (DNS thread cap).
-   Note for commit 4: every model call now reserves first (`AgentDbPort.reserve_cost`); a new agent needs no price work (prices are per MODEL), but
-   a new fake in tests must implement `reserve_cost` (see `tests/agent_fakes.py`).
+4. **Commit 3b** (cost cap hardening: no unreserved usage, reported cost bounded, reservation bounded by the run), **the claim-home follow-ups**, and
+   **commit 4: the Research Agent on fakes** (tools, verbatim quotes, lead-site-only fetch, bounded DNS lookups, API start for a lead, the "Research a lead"
+   form, the end-to-end score test, W01-W11 and the lead-host evals). See ADR 0013 ("T007 note: the Research Agent") and the plan's commit-4 notes.
 
-## Exact next step
-Start commit 4 only after the owner's "go".
+## Not done
+The review screen (plan M3), the golden set and its report, anything live (M4: needs the owner's written approval of provider, key, model id, prices and
+a provider-side cap), search (T007b). The next ticket is T007b; start it only after the owner approves.
 
 ## Tests run / not run
 Run (green): `make check` (full) at the end of commits 1, 2 and 3 (counts are in the commit 3 message). Mutation: commit 2 (17/17) and commit 3

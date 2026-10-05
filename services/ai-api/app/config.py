@@ -65,6 +65,10 @@ class Settings(BaseSettings):
     llm_spend_cap_confirmed: bool = False
     agents_max_workers: int = 2
     agents_max_queue: int = 8
+    # The Research Agent (T007) reads web pages. Until a real fetcher and a real model are approved
+    # (M4), it runs ONLY in development, with the scripted model, on the synthetic fixture sites in
+    # this directory (a path; no network). Unset = the research agent cannot start.
+    research_fixture_dir: str | None = None
 
     @property
     def cors_origins(self) -> list[str]:

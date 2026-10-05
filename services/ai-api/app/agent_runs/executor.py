@@ -27,6 +27,7 @@ class ExecutorBusy(Exception):
 class RunTask:
     run_id: uuid.UUID
     token: str = field(repr=False)
+    agent: str = "selftest"
 
 
 class RunSubmitter(Protocol):

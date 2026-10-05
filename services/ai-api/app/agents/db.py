@@ -236,15 +236,34 @@ class AgentDb:
         )
         return self._uuid(result.get("evidence_id"))
 
+    def write_web_evidence(self, step_key: str, *, url: str, quote: str) -> uuid.UUID:
+        result = self._rpc(
+            "agent_write_evidence",
+            {
+                "p_run_id": str(self._run),
+                "p_step_key": step_key,
+                "p_kind": "web_page",
+                "p_url": url,
+                "p_snippet": quote,
+            },
+        )
+        return self._uuid(result.get("evidence_id"))
+
     def write_claim(
-        self, step_key: str, *, value: str, stance: str, evidence_id: uuid.UUID
+        self,
+        step_key: str,
+        *,
+        value: str,
+        stance: str,
+        evidence_id: uuid.UUID,
+        predicate: str | None = None,
     ) -> uuid.UUID:
         result = self._rpc(
             "agent_write_claim",
             {
                 "p_run_id": str(self._run),
                 "p_step_key": step_key,
-                "p_predicate": self._predicate,
+                "p_predicate": predicate or self._predicate,
                 "p_value": value,
                 "p_evidence_ids": [str(evidence_id)],
                 "p_stance": stance,
