@@ -166,6 +166,8 @@ def _validate(r):
         raise _Invalid("INVALID_GAP_COUNT")
     _fields(p["quiet_hours"], ("start", "end"))
     start, end = _minute(p["quiet_hours"]["start"]), _minute(p["quiet_hours"]["end"])
+    if start == end:
+        raise _Invalid("INVALID_QUIET_HOURS")
     for weekday in p["allowed_weekdays"]:
         _integer(weekday, 0, 6)
     if not p["allowed_weekdays"]:
@@ -217,7 +219,9 @@ def decide(request):
     number = len(outbound) + 1
 
     def result(action, reason, eligible=None):
-        return {"action": action, "reason_code": reason, "touch_number": number,
+        terminal = reason in ("do_not_contact", "opted_out", "bounced", "human_takeover",
+                              "won", "lost", "max_touches_reached")
+        return {"action": action, "reason_code": reason, "terminal": terminal, "touch_number": number,
                 "next_eligible_at": _iso(eligible) if eligible is not None else None,
                 "engine_version": ENGINE_VERSION, "canonical_hash": digest, "trace": trace}
 
@@ -259,7 +263,7 @@ def decide(request):
                 continue
             minute = local.hour * 60 + local.minute
             quiet = (start <= minute < end if start < end else
-                     (minute >= start or minute < end) if start > end else False)
+                     (minute >= start or minute < end))
             if quiet:
                 next_day = start > end and minute >= start
                 rule("calendar.quiet", local_at=_iso(local), start=start, end=end, next_day=next_day)

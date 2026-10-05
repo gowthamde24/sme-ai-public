@@ -17,7 +17,7 @@ Request (exact fields; booleans only for flags, integers only for numbers):
 - `policy`: `{gap_days, max_touches, quiet_hours: {start: "HH:MM", end: "HH:MM"},
   allowed_weekdays, holidays, min_gap_hours}`. Holidays are local ISO dates.
 
-Result: `{action, reason_code, touch_number, next_eligible_at, trace,
+Result: `{action, reason_code, terminal, touch_number, next_eligible_at, trace,
 engine_version, canonical_hash}`. Action is wait, draft_followup or stop, never
 send. Stopped decisions have null next_eligible_at. Trace entries contain rule_id,
 operands and readable text; local_at has no UTC suffix, UTC times end in Z.
@@ -29,6 +29,10 @@ No input mutation. Wrong types (including floats/bools in number fields) raise
 TypeError; invalid values return `{status: "rejected", codes, engine_version,
 canonical_hash, trace}`. Preflight oversize rejection has null hash to avoid
 serialization. Other invalid values retain the request hash.
+Every non-rejected result has boolean terminal: true for do_not_contact,
+opted_out, bounced, human_takeover, won, lost and max_touches_reached; false for
+initial_outreach_required, wait and draft_followup. A nonterminal stop needs an
+initial outbound anchor, not permanent closure. Rejections have no terminal field.
 
 ## Rules and smallest safe assumptions
 
@@ -47,7 +51,7 @@ serialization. Other invalid values retain the request hash.
 8. Move only forward in recipient local time. Weekdays use Monday=0..Sunday=6;
    allowed_weekdays is nonempty/unique; holidays are unique local dates.
 9. Quiet hours are [start,end); start is quiet, end is allowed. Wrapping windows
-   cross midnight; equal endpoints disable quiet hours. Seconds are preserved
+   cross midnight; equal endpoints reject INVALID_QUIET_HOURS. Seconds are preserved
    outside quiet periods; skips land exactly at local quiet end or midnight.
 10. eligible == as_of gives draft_followup/eligible_now; future gives
     wait/not_yet_eligible. next_eligible_at is never earlier than as_of/minimum gap.
@@ -80,10 +84,14 @@ contain malformed unknown fields. Tests cover limit/one-above and huge inputs.
 ## Owner decisions and lane A handoff
 
 Owner must confirm gap days/indexing, max touches/counting attempts, quiet hours
-(including equal endpoints), weekdays, local holidays, minimum gap and who handles
+(distinct endpoints), weekdays, local holidays, minimum gap and who handles
 replies. Fixed offset is caller-supplied; India has no DST. Outcomes do not infer
 suppression flags: lane A supplies authoritative flags and observed history.
 Legality (consent, DND, opt-in rules and suppression list with HMAC) is NOT decided
 here: lane A must supply the flags before first outreach. This is pure scheduling;
 lane A owns authorization, approval, persistence, authoritative lookup, provenance,
 durable audit, reply handling and integration. A hash authenticates no actor/data.
+decide() keeps returning draft_followup for the same touch number until an outbound
+touch is recorded in history, so lane A must de-duplicate drafts by (lead, touch_number).
+Weekday numbering is Monday=0. Every outbound counts as a touch regardless of
+channel and outcome, including failed attempts.

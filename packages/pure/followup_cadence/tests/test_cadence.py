@@ -30,7 +30,7 @@ class CadenceTests(unittest.TestCase):
     def open_calendar(self):
         self.r["recipient_utc_offset_minutes"] = 0
         self.r["policy"].update(allowed_weekdays=list(range(7)),
-            quiet_hours={"start": "00:00", "end": "00:00"}, min_gap_hours=0)
+            quiet_hours={"start": "00:00", "end": "00:01"}, min_gap_hours=0)
 
     def test_exact_gap_boundary(self):
         self.open_calendar()
@@ -145,12 +145,68 @@ class CadenceTests(unittest.TestCase):
         self.r["history"].reverse()
         self.assertEqual(decide(self.r)["next_eligible_at"], result["next_eligible_at"])
 
-    def test_zero_gap_and_equal_quiet_endpoints(self):
+    def test_zero_gap(self):
         self.open_calendar()
-        self.r["policy"].update(gap_days=[0, 0, 0], quiet_hours={"start": "12:00", "end": "12:00"})
+        self.r["policy"]["gap_days"] = [0, 0, 0]
         self.r["as_of"] = "2026-10-05T12:00:00Z"
         self.assertEqual(decide(self.r)["next_eligible_at"], self.r["as_of"])
         self.assertEqual(decide(self.r)["action"], "draft_followup")
+
+    def test_equal_quiet_endpoints_reject(self):
+        for endpoint in ("00:00", "12:00", "23:59"):
+            for suppressed in (False, True):
+                r = fixture()
+                r["policy"]["quiet_hours"] = {"start": endpoint, "end": endpoint}
+                r["lead"]["do_not_contact"] = suppressed
+                with self.subTest(endpoint=endpoint, suppressed=suppressed):
+                    q = decide(r)
+                    self.assertEqual(q.get("status"), "rejected")
+                    self.assertEqual(q["codes"], ["INVALID_QUIET_HOURS"])
+                    self.assertNotIn("terminal", q)
+                    self.assertNotIn("action", q)
+
+    def test_terminal_for_every_reason(self):
+        cases = []
+        for flag in ("do_not_contact", "opted_out", "bounced", "won", "lost"):
+            r = fixture()
+            r["lead"][flag] = True
+            cases.append((r, "stop", flag, True))
+        for inbound in (False, True):
+            r = fixture()
+            if inbound:
+                r["history"].append(dict(r["history"][0], direction="in"))
+            else:
+                r["lead"]["replied"] = True
+            cases.append((r, "stop", "human_takeover", True))
+        r = fixture()
+        r["policy"].update(max_touches=1, gap_days=[])
+        cases.append((r, "stop", "max_touches_reached", True))
+        r = fixture()
+        r["history"] = []
+        cases.append((r, "stop", "initial_outreach_required", False))
+        r = fixture()
+        r["as_of"] = "2026-10-04T06:00:00Z"
+        cases.append((r, "wait", "not_yet_eligible", False))
+        cases.append((fixture(), "draft_followup", "eligible_now", False))
+        for r, action, reason, terminal in cases:
+            with self.subTest(reason=reason):
+                q = decide(r)
+                self.assertEqual((q["action"], q["reason_code"]), (action, reason))
+                self.assertIs(type(q["terminal"]), bool)
+                self.assertIs(q["terminal"], terminal)
+
+    def test_draft_repeats_until_outbound_is_recorded(self):
+        first = decide(self.r)
+        self.assertEqual((first["action"], first["touch_number"]), ("draft_followup", 2))
+        self.r["as_of"] = "2026-10-05T06:00:01Z"
+        repeated = decide(self.r)
+        self.assertEqual((repeated["action"], repeated["touch_number"]), ("draft_followup", 2))
+        self.assertFalse(repeated["terminal"])
+        self.r["history"].append({"timestamp": self.r["as_of"], "channel": "synthetic_sms",
+                                  "direction": "out", "outcome": "synthetic_failed"})
+        recorded = decide(self.r)
+        self.assertEqual((recorded["action"], recorded["touch_number"]), ("wait", 3))
+        self.assertFalse(recorded["terminal"])
 
     def test_no_send_and_trace(self):
         result = decide(self.r)
@@ -261,7 +317,8 @@ class CadenceTests(unittest.TestCase):
             r["policy"].update(gap_days=[rng.randrange(8) for _ in range(3)],
                 min_gap_hours=rng.randrange(73), allowed_weekdays=sorted(rng.sample(range(7), rng.randrange(1, 8))),
                 holidays=[(now.date() + timedelta(days=d)).isoformat() for d in rng.sample(range(15), 4)])
-            start, end = rng.randrange(1440), rng.randrange(1440)
+            start, end = rng.sample(range(1440), 2)
+            self.assertNotEqual(start, end)
             r["policy"]["quiet_hours"] = {"start": f"{start // 60:02d}:{start % 60:02d}",
                                            "end": f"{end // 60:02d}:{end % 60:02d}"}
             last = now - timedelta(hours=rng.randrange(1, 120))
@@ -273,12 +330,13 @@ class CadenceTests(unittest.TestCase):
             self.assertEqual(q, decide(r))
             self.assertEqual(q["canonical_hash"], decide(r)["canonical_hash"])
             self.assertIn(q["action"], ("wait", "draft_followup"))
+            self.assertIs(q["terminal"], False)
             eligible = datetime.fromisoformat(q["next_eligible_at"])
             self.assertGreaterEqual(eligible, max(now, last + timedelta(days=r["policy"]["gap_days"][0]),
                 last + timedelta(hours=r["policy"]["min_gap_hours"])))
             local = eligible + timedelta(minutes=r["recipient_utc_offset_minutes"])
             minute = local.hour * 60 + local.minute
-            quiet = start <= minute < end if start < end else (minute >= start or minute < end) if start > end else False
+            quiet = start <= minute < end if start < end else (minute >= start or minute < end)
             self.assertFalse(quiet)
             self.assertIn(local.weekday(), r["policy"]["allowed_weekdays"])
             self.assertNotIn(local.date().isoformat(), r["policy"]["holidays"])
@@ -307,6 +365,7 @@ class CadenceTests(unittest.TestCase):
             self.assertEqual(stopped["action"], "stop")
             self.assertIn(stopped["reason_code"], ("do_not_contact", "opted_out", "bounced"))
             self.assertIsNone(stopped["next_eligible_at"])
+            self.assertIs(stopped["terminal"], True)
             takeover = copy.deepcopy(r)
             takeover["lead"].update(won=bool(rng.randrange(2)), lost=bool(rng.randrange(2)))
             takeover["history"].append(dict(takeover["history"][0], direction="in"))

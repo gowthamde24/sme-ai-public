@@ -130,7 +130,7 @@ remain lane A work; CI and integration/security verification remain outstanding.
   integer-only JSON, version 1.0.0, canonical hash and calculation trace.
 - Assumptions: initial outbound counts toward max_touches; gap_days[0] is before
   touch 2; no outbound means initial_outreach_required; equal quiet endpoints
-  disable quiet hours; all outbound attempts count; any inbound means takeover.
+  now reject INVALID_QUIET_HOURS (T010 fix); all outbound attempts count; any inbound means takeover.
 - API/rules/bounds and owner decisions: `docs/plans/t010-followup-cadence.md`.
   Legality (consent, DND, opt-in and HMAC suppression list) is NOT decided here;
   lane A must supply authoritative flags before first outreach and owns approval,
@@ -183,3 +183,31 @@ Added separate nested wrong-type coverage as well. Final: 30 cadence tests + 29
 quote tests (59 total), including 250 cadence property cases. Both permitted
 Make checks pass. Owner must still confirm cadence/calendar/reply decisions;
 lane A integration, legal/authoritative flags, approval and CI remain outstanding.
+
+### T010 fix — terminal decisions and distinct quiet endpoints
+
+- Every non-rejected decision includes boolean terminal. It is true for
+  do_not_contact, opted_out, bounced, human_takeover, won, lost and
+  max_touches_reached; false for initial_outreach_required and wait/draft_followup.
+  Rejections have no terminal field. Tests cover every reason, including inbound
+  and replied takeover paths; seeded properties assert terminal/nonterminal cases.
+- Equal quiet-hours endpoints now reject INVALID_QUIET_HOURS, including when
+  suppression flags are set (invalid requests reject before decision rules).
+  Former equal-endpoint acceptance became rejection tests; seeded cases sample
+  distinct endpoints. Zero-gap testing remains covered with valid quiet hours.
+- Lane A handoff explicitly requires draft de-duplication by (lead, touch_number):
+  decide() repeats draft_followup until an outbound is recorded. Added a repeat/
+  record test, including a failed outbound on another channel, which still counts.
+  Weekday numbering is Monday=0; every outbound counts regardless of channel/outcome.
+- Both mutations below were applied individually to the real code, run through
+  `make test-packages`, observed failing, and reverted. No survivors or scripts.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| Flip terminal to true for initial_outreach_required | test_terminal_for_every_reason | yes (this fix) |
+| Bypass equal-endpoint quiet-hours validation | test_equal_quiet_endpoints_reject | yes (this fix) |
+
+Final checks: 33 cadence + 29 quote tests pass (62 total; 59 before fix), including
+250 seeded cadence cases; `make check-leftovers` passes. Pure lane C changes only;
+no push/network/database/ports. API and handoff updated in the T010 plan. Lane A
+legal/authoritative flags, approval, persistence/audit and integration/CI remain pending.
