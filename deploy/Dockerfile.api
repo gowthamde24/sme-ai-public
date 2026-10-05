@@ -1,0 +1,17 @@
+# The FastAPI service (T006b M2, ADR 0015). Build from the REPOSITORY ROOT:
+#   docker build -f deploy/Dockerfile.api -t sme-api .
+# No secret is baked in: every setting arrives as an environment variable at run time (see docs/runbooks/hosting-deploy.md).
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
+WORKDIR /srv
+COPY services/ai-api/pyproject.toml ./pyproject.toml
+COPY services/ai-api/app ./app
+RUN pip install . && useradd --system --no-create-home --uid 10001 api
+USER 10001
+
+# Cloud Run sets PORT. API_ENV must NOT be "development" in a deployment: the API then refuses to start unless the Supabase issuer,
+# audience and JWKS settings are present and https.
+ENV PORT=8080
+EXPOSE 8080
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips='*'"]

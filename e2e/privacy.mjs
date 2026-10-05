@@ -11,7 +11,9 @@ try {
   const { tenant: T } = await discover(page);
 
   await page.goto(`${BASE}/app/tenants/${T}`);
-  record("P1 workspace page links to Privacy", (await text(page)).includes("Privacy →") ? "PASS" : "FAIL", "the 'Privacy →' link for the owner", await shot(page, "P1-workspace-owner"));
+  const home = await text(page);
+  record("P1 workspace page links to Privacy", home.includes("Privacy →") ? "PASS" : "FAIL", "the 'Privacy →' link for the owner", await shot(page, "P1-workspace-owner"));
+  record("P1b the closed real-data gate is announced", /Synthetic data only/.test(home) && /\+00/.test(home) ? "PASS" : "FAIL", "banner: synthetic data only, reserved address, +00 phone (the demo workspace is closed)");
 
   await page.goto(`${BASE}/app/tenants/${T}/privacy`);
   let s = await shot(page, "P2-privacy-page-owner");
@@ -47,16 +49,17 @@ try {
 
   // erasing needs the typed words
   const ownerRow = () => page.locator("table tbody tr", { hasText: "Waiting for the owner" }).first();
-  const phrase = (await ownerRow().locator("form strong").first().innerText()).trim();
+  const phrase = (await ownerRow().locator('label:has(input[name="confirm_text"]) strong').first().innerText()).trim();
   const eraseBtn = ownerRow().locator('button:has-text("Erase now")');
   await ownerRow().locator('input[name="confirm_text"]').fill("ERASE");
   const wrongDisabled = await eraseBtn.isDisabled();
   record("P6 erasing needs the typed words", wrongDisabled && phrase === `ERASE ${contactName}` ? "PASS" : "FAIL", `the button is disabled for a wrong phrase: ${wrongDisabled}; the words shown: "${phrase}" (ERASE plus the contact's name)`, await shot(page, "P6-needs-typed-words"));
 
   // erase for real
+  const completedBefore = await page.locator("table tbody tr", { hasText: "Completed" }).count();
   await ownerRow().locator('input[name="confirm_text"]').fill(phrase);
   await eraseBtn.click();
-  await page.waitForFunction(() => !/Waiting for the owner/.test(document.body.innerText), null, { timeout: 20000 });
+  await page.waitForFunction((n) => [...document.querySelectorAll("table tbody tr")].filter((r) => /Completed/.test(r.innerText)).length > n, completedBefore, { timeout: 20000 });
   await page.reload();
   s = await shot(page, "P7-completed");
   const done = (await page.locator("table tbody tr", { hasText: "Completed" }).first().innerText()).replace(/\s+/g, " ");
@@ -75,7 +78,7 @@ try {
   await page.waitForSelector('form [role="status"], form [role="alert"]', { timeout: 15000 });
   await page.reload();
   const wide = page.locator("table tbody tr", { hasText: "The whole workspace" }).filter({ hasText: "Waiting for the owner" }).first();
-  const widePhrase = (await wide.locator("form strong").first().innerText()).trim();
+  const widePhrase = (await wide.locator('label:has(input[name="confirm_text"]) strong').first().innerText()).trim();
   await wide.locator('input[name="confirm_text"]').fill(widePhrase);
   await wide.locator('button:has-text("Erase now")').click();
   await page.waitForSelector('table [role="alert"]', { timeout: 15000 });

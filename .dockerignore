@@ -1,0 +1,17 @@
+# The build context is the repository root. Nothing secret, nothing local, nothing heavy goes into an image.
+**/.env
+**/.env.*
+!**/.env.example
+**/.git
+**/node_modules
+**/.venv
+**/.next
+**/__pycache__
+**/*.egg-info
+supabase
+docs
+e2e
+tests
+scripts
+.claude
+**/*.log
