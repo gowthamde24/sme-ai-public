@@ -22,12 +22,17 @@ def main():
                                          for part in p.relative_to(package).parts)})
             for folder in folders:
                 print(f'Package tests: {folder.relative_to(root)}', flush=True)
-                result = subprocess.run([sys.executable, __file__, str(folder)])
+                result = subprocess.run([sys.executable, __file__, str(folder), str(package)])
                 successful = result.returncode == 0 and successful
         return 0 if successful else 1
     socket.socket = no_network
     socket.create_connection = no_network
     socket.getaddrinfo = no_network
+    package = Path(sys.argv[2])
+    import_paths = [str(package)]
+    if (package / 'src').is_dir():
+        import_paths.append(str(package / 'src'))
+    sys.path[:0] = import_paths
     suite = unittest.TestLoader().discover(sys.argv[1], pattern='test_*.py')
     result = unittest.TextTestRunner(verbosity=2).run(suite)
     return 0 if result.wasSuccessful() else 1

@@ -1,10 +1,10 @@
 # Parallel working lanes
 
-One agent per folder, in its own git worktree; at most three product agents. AGENTS.md governs all agents. The machine-readable source of path ownership is lanes.json; patterns match the whole path, `*` spans slashes, `?` matches one character and brackets are literal. Deny rules win. Unknown lanes fail closed. A path grant never permits forbidden behavior.
+One agent per folder; at most three product agents. Lane A normally works in the owner’s main checkout on `main`, which already has its environment. Worktrees are for B and C; `lane/a` remains available in its own worktree if the owner wants A guarded. No agent may touch another agent’s working folder. AGENTS.md governs all agents. The machine-readable source of path ownership is lanes.json; patterns match the whole path, `*` spans slashes, `?` matches one character and brackets are literal. Deny rules win. Unknown lanes fail closed. A path grant never permits forbidden behavior. Lane A’s deny rules still apply when working on main; the automated PR guard runs only for lane/* branches.
 
 | Branch / agent | Owned paths and responsibility | ADRs |
 | --- | --- | --- |
-| lane/a / A (Claude Code) | Everything except guard integrity files and exclusive B/C paths; includes Makefile, deploy/, root config, any backend scripts, ci.yml, docs/plans/, database-facing and security-tier code, runtime and evals | 0017–0039; 0017 exists, next is 0018 |
+| main normally; optional lane/a / A (Claude Code) | Everything except guard integrity files and exclusive B/C paths; includes Makefile, deploy/, root config, any backend scripts, ci.yml, docs/plans/, database-facing and security-tier code, runtime and evals | 0017–0039; 0017 exists, next is 0018 |
 | lane/b / B (web/UI) | Existing globals.css, favicon, local-time component/tests, review/factor-breakdown component/tests, touch-targets test; new apps/web/components/ui/ and components/mocks/; new e2e/ui/ and e2e/mocks/, e2e README/package metadata; docs/contracts/B/ | 0040–0049 |
 | lane/c / C (pure libraries) | New packages/quote-engine/ and packages/pure/ under the existing packages/ layout; docs/plans/ shared with A by ticket coordination | 0050–0059 |
 
@@ -20,18 +20,19 @@ Each lane writes docs/checklist-notes/A.md, B.md or C.md with ticket, checklist 
 
 ## Owner commands
 
-Run from a clean checkout of this repo. First ensure local main contains the owner-approved latest commits (the script uses local main, never fetches or pushes). The commands below create all three folders; use only those needed:
+Run from a clean checkout of this repo. First ensure local main contains the owner-approved latest commits (the script uses local main, never fetches or pushes). Create B and C worktrees below. A normally stays in the owner’s main checkout; the optional A commands create a separate guarded folder:
 
 ```sh
-./scripts/new-lane.sh a
 ./scripts/new-lane.sh b
 ./scripts/new-lane.sh c
-code ../sme-ai-a
 code ../sme-ai-b
 code ../sme-ai-c
+# Optional guarded A worktree:
+./scripts/new-lane.sh a
+code ../sme-ai-a
 ```
 
-`code` is the VS Code CLI; another editor can open the same absolute folder. Open exactly one lane folder per agent, then read AGENTS.md there. Names a/b/c map to A/B/C; custom names may create a worktree but fail CI until an owner-approved policy exists. lane/setup is a temporary docs/plumbing exception restricted to the files listed in lanes.json, not a fourth product lane. Only owner/setup maintenance may change lanes.json, root AGENTS.md, scripts/check-lane-paths.sh, scripts/new-lane.sh, scripts/test-lanes.py and .github/workflows/lane-paths.yml. A may freely edit .github/workflows/ci.yml, Makefile, deploy/ and root config within the standing behavior rules (deploy/ permission is not authorization to deploy). A and C coordinate ticket ownership before editing the shared docs/plans/ paths.
+`code` is the VS Code CLI; another editor can open the same absolute folder. Open exactly one lane folder per agent, then read AGENTS.md there. Names a/b/c map to A/B/C; custom names may create a worktree but fail CI until an owner-approved policy exists. lane/setup is a temporary docs/plumbing exception restricted to the files listed in lanes.json, not a fourth product lane. Edits to CLAUDE.md, AGENTS.md and docs/lanes.md come through a setup branch approved by the owner. Only owner/setup maintenance may change lanes.json, root AGENTS.md, CLAUDE.md, docs/lanes.md, scripts/check-lane-paths.sh, scripts/new-lane.sh, scripts/test-lanes.py and .github/workflows/lane-paths.yml. A may freely edit .github/workflows/ci.yml, Makefile, deploy/ and root config within the standing behavior rules (deploy/ permission is not authorization to deploy). A and C coordinate ticket ownership before editing the shared docs/plans/ paths.
 
 ## Develop, hand back and merge
 
@@ -50,11 +51,21 @@ git branch -d lane/b
 
 Substitute a or c as needed. No `--force`: dirty worktrees must be reviewed and committed first. For squash merges, `-d` may refuse because ancestry differs; retain the branch until the owner verifies the squash contains all work. Never delete another active agent's worktree.
 
+## Owner merge checklist
+
+Before merging any lane PR, run this command with its actual lane name:
+
+```sh
+git diff --stat main...lane/<name> -- .github lanes.json AGENTS.md CLAUDE.md docs/lanes.md scripts Makefile
+```
+
+For lanes B and C the output must be empty. For A or setup, review every listed change, ensuring protected instructions and guard changes come only through an owner-approved setup branch. Confirm the pushed branch name is exactly the one scripts/new-lane.sh created (for example, lane/b for name b); CI uses the branch name as the lane identity. Do not relabel a B/C branch as lane/a or lane/setup to bypass its restrictions. Confirm lane-paths and the full CI suite are green before merging. Lane A on main has no lane PR guard; the owner reviews its changes and mandatory local checks directly.
+
 ## Guard integrity and bootstrap
 
-B and C use strict path allow-lists and may not add or modify symlinks, submodules, Git control files (.gitmodules, .gitattributes or hooks), file modes or new executable bits. The guard inspects `git diff --raw -z`; ordinary regular-file additions/deletions remain allowed. A uses allow-everything minus deny: protected guard files and exclusive B/C paths, including their ADR ranges and checklist notes. docs/plans/ is deliberately shared with C; coordinate edits before work.
+B and C use strict path allow-lists and may not add or modify symlinks, submodules, Git control files (.gitmodules, .gitattributes, .githooks or .husky), file modes or new executable bits. The guard inspects `git diff --raw -z`; ordinary regular-file additions/deletions remain allowed. Plain hooks/ directories, including React hooks, are allowed within the lane’s paths. A uses allow-everything minus deny: protected guard files and exclusive B/C paths, including their ADR ranges and checklist notes. docs/plans/ is deliberately shared with C; coordinate edits before work.
 
-Pull requests from branches not named lane/* are not guarded. The owner must accept other agents’ work only from lane/* branches and make the **lane-paths** check a required status check in the GitHub branch rules for main. This docs-only setup does not change GitHub settings. Review changes to the guard workflow itself; branch rules do not make modified workflow definitions trustworthy automatically.
+Pull requests from branches not named lane/* are not guarded. The owner must accept B/C and other agents’ PR work only from lane/* branches; A’s owner-directed work on main is the explicit unguarded exception. The owner must make the **lane-paths** check a required status check in the GitHub branch rules for main. This docs-only setup does not change GitHub settings. Review changes to the guard workflow itself; branch rules do not make modified workflow definitions trustworthy automatically.
 
 Bootstrap: when the base has no lanes.json or trusted guard, fail closed. The first merge is done locally by the owner after reviewing and testing this setup; do not fall back to the PR head. Before subsequent guard changes, the owner validates them locally with the proposed script tests. For a trusted local check, extract the checker from the base rather than executing a potentially edited working-tree script:
 
@@ -67,4 +78,4 @@ rm -f "$lane_guard"
 
 ## Pure package tests
 
-`make test-packages` discovers `test_*.py` stdlib unittest tests under every packages/* directory, excluding dependency/cache folders, with no new dependencies. CI runs it from day one in its packages job; lane A’s `make check` includes it too. Tests must be pure, synthetic and database/network-free; the runner blocks Python socket access. Use unittest (pytest-only tests are not supported); new packages should include tests. The runner is not a sandbox against shell commands or native extensions, so review must preserve the pure-library contract.
+`make test-packages` discovers `test_*.py` stdlib unittest tests under every packages/* directory, excluding dependency/cache folders, with no new dependencies. CI runs it from day one in its packages job; lane A’s `make check` includes it too. Before discovery, each package’s root and its src/ directory (when present) are added to sys.path, supporting tests/ imports and flat sibling imports. Tests must be pure, synthetic and database/network-free; the runner blocks Python socket access. Use unittest (pytest-only tests are not supported); new packages should include tests. The runner is not a sandbox against shell commands or native extensions, so review must preserve the pure-library contract.

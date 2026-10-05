@@ -20,4 +20,4 @@ fi
 git show-ref --verify --quiet refs/heads/main || { echo 'Refusing: local main is missing.' >&2; exit 1; }
 git worktree add -b "lane/$name" "$target" refs/heads/main
 printf 'Created %s on lane/%s from local main.\n' "$target" "$name"
-printf '%s\n' 'One agent per worktree. Read AGENTS.md and docs/lanes.md; stay in your lane.' 'No secrets, deployment or pushes. B/C: no stack, reserved ports or make check.' 'A alone owns one local stack and reserved ports; make check once before each commit. Commit often.'
+printf '%s\n' 'One agent per folder. B/C use worktrees; A normally uses the owner’s main checkout. Read AGENTS.md and docs/lanes.md; stay in your lane.' 'No secrets, deployment or pushes. B/C: no stack, reserved ports or make check.' 'A alone owns one local stack and reserved ports; make check once before each commit. Commit often.'

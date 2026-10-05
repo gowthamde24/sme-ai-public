@@ -2,12 +2,13 @@
 
 Read this file, CLAUDE.md, docs/product.md, docs/architecture.md and docs/lanes.md before work. These owner rules govern every tool and override older local-stack and blanket test instructions in existing docs.
 
-- One agent per working folder, always in its own git worktree. Write only inside your opened worktree; never touch another agent’s folder. Stay inside your lane’s paths in lanes.json. At most three product agents (A, B, C).
+- One agent per working folder. B and C always use their own git worktrees; lane A normally works in the owner’s main checkout on `main`, with its existing environment. An optional `lane/a` worktree provides lane guarding for A. Write only inside your opened working folder; never touch another agent’s folder. Stay inside your lane’s paths in lanes.json. At most three product agents (A, B, C).
 - Never read or print .env files or any secret file. Never put keys into code, docs or tests. No service-role or secret keys.
 - No `supabase config push`, deployment, cloud accounts, paid dependencies or real customer data. Use synthetic fixtures only.
 - Never push to GitHub or change remotes. The owner pushes and merges.
 - Lanes B and C must not start the Docker Supabase stack, run `make check`, or use ports 8000, 3000 or 54321. Lane A alone may start the local stack (one stack at a time), use these ports and must run `make check` once before each commit. Start and stop only your own processes, recording their PIDs; record ownership of Docker containers started by the stack as well. Never stop another lane’s processes or containers.
 - Commit often so work cannot be lost. Use the repo’s ticket-prefixed style: `T009: deterministic quote fixtures`, `T007 M2: ...`; setup work uses `Setup: ...` (like the existing `Hygiene: ...` maintenance commits).
+- Edits to CLAUDE.md, AGENTS.md and docs/lanes.md come through a setup branch approved by the owner; product lanes must not edit them.
 - Make the smallest safe choice when unclear and state it in the report. A path allow-list does not authorize security work in B or C; move that work to A.
 
 ## Testing tiers

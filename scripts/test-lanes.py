@@ -203,6 +203,15 @@ class LaneTests(unittest.TestCase):
                 self.commit()
                 self.check('A', ok=False)
 
+    def test_a_cannot_edit_agent_instructions(self):
+        for index, path in enumerate(('CLAUDE.md', 'docs/lanes.md')):
+            with self.subTest(path=path):
+                self.run_cmd('git', 'switch', '-c', f'instructions-{index}', 'main')
+                self.write(path)
+                self.commit()
+                result = self.check('A', ok=False)
+                self.assertIn(f"Outside lane A: {path!r}", result.stderr)
+
     def test_symlink_refused(self):
         for lane, path in (('B', 'apps/web/components/ui/link'),
                            ('C', 'packages/pure/link')):
@@ -265,6 +274,45 @@ class LaneTests(unittest.TestCase):
         self.commit()
         result = self.check('B', ok=False)
         self.assertIn('Forbidden Git control path', result.stderr)
+
+    def test_react_hooks_directory_allowed(self):
+        self.run_cmd('git', 'switch', '-c', 'lane/b')
+        self.write('apps/web/components/ui/hooks/use-thing.ts')
+        self.commit()
+        self.check('B')
+
+    def test_husky_refused(self):
+        self.run_cmd('git', 'switch', '-c', 'lane/b')
+        self.write('.husky/pre-commit')
+        self.commit()
+        result = self.check('B', ok=False)
+        self.assertIn('Forbidden Git control path', result.stderr)
+
+    def check_package_import_layout(self, code_path, test_path, module):
+        shutil.copy2(SOURCE / 'Makefile', self.repo / 'Makefile')
+        shutil.copy2(SOURCE / 'scripts/test-packages.py', self.repo / 'scripts/test-packages.py')
+        self.write(code_path, 'def total(quantity, price):\n    return quantity * price\n')
+        self.write(test_path,
+                   f'from {module} import total\nimport unittest\n'
+                   'class ImportedCode(unittest.TestCase):\n'
+                   '    def test_total(self):\n        self.assertEqual(total(6, 7), 42)\n')
+        result = self.run_cmd('make', 'test-packages')
+        self.assertIn('test_total', result.stderr)
+        # A defect in imported code must fail the package target.
+        self.write(code_path, 'def total(quantity, price):\n    return quantity + price\n')
+        self.run_cmd('make', 'test-packages', ok=False)
+
+    def test_package_root_import_layout(self):
+        self.check_package_import_layout('packages/example/p_mod/__init__.py',
+                                         'packages/example/tests/test_total.py', 'p_mod')
+
+    def test_package_src_import_layout(self):
+        self.check_package_import_layout('packages/example/src/p_mod/__init__.py',
+                                         'packages/example/tests/test_total.py', 'p_mod')
+
+    def test_package_flat_sibling_import_layout(self):
+        self.check_package_import_layout('packages/example/p_mod.py',
+                                         'packages/example/test_total.py', 'p_mod')
 
     def test_package_target_discovers_all_packages_and_propagates_failure(self):
         shutil.copy2(SOURCE / 'Makefile', self.repo / 'Makefile')

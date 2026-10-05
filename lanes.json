@@ -9,6 +9,8 @@
       "deny": [
         "lanes.json",
         "AGENTS.md",
+        "CLAUDE.md",
+        "docs/lanes.md",
         "scripts/check-lane-paths.sh",
         "scripts/new-lane.sh",
         "scripts/test-lanes.py",

@@ -47,7 +47,7 @@ for index in range(0, len(records) - 1, 2):
         bad.append(f'Outside lane {lane}: {path!r}')
     if lane in ('B', 'C'):
         parts = path.split('/')
-        if any(p in ('.gitmodules', '.gitattributes', '.githooks', 'hooks') for p in parts):
+        if any(p in ('.gitmodules', '.gitattributes', '.githooks', '.husky') for p in parts):
             bad.append(f'Forbidden Git control path: {path!r}')
         if '120000' in (old_mode, new_mode) or '160000' in (old_mode, new_mode):
             bad.append(f'Symlink or submodule refused: {path!r}')
