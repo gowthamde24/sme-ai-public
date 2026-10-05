@@ -223,4 +223,59 @@ legal/authoritative flags, approval, persistence/audit and integration/CI remain
 - `make test-packages`: 27 lifecycle + 33 cadence + 29 quote tests pass (89 total;
   62 before this task). `make check-leftovers` passes. No external services used.
 - API, matrix, conservative bounds and owner decisions: docs/plans/order-lifecycle.md.
-- Manual mutation results will be recorded below after the baseline commit.
+- Manual mutation results follow; all mutations were reverted to the baseline.
+
+### Order lifecycle deliberate-mutation pass
+
+Applied each mutation separately to the real library by hand, ran
+`make test-packages`, observed exit 2 with the named test failing, then reverted
+before the next mutation. No mutation scripts added. All 36 were killed by
+baseline tests; no survivors or extra tests needed. “Added test” means added
+because a mutation survived, rather than tests introduced with this package.
+Final engine diff against baseline is empty.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| 01 Expire <= becomes < (expiry equality succeeds) | test_expiry_boundary_and_before_accepted | no |
+| 02 Send/accept > becomes >= at valid_until | test_send_and_accept_validity_boundary | no |
+| 03 Cancel window > becomes >= | test_cancel_window_and_post_dispatch | no |
+| 04 Preparation advance < becomes <= | test_advance_preparation_guard | no |
+| 05 Dispatch advance < becomes <= | test_full_state_event_matrix (in_preparation, dispatch) | no |
+| 06 Ignore owner_override on dispatch | test_dispatch_advance_and_override | no |
+| 07 Ignore dispatch_requires_advance policy | test_dispatch_advance_and_override | no |
+| 08 Ignore advance_required preparation policy | test_advance_preparation_guard | no |
+| 09 Omit ADVANCE_OVERRIDE flag | test_dispatch_advance_and_override | no |
+| 10 Ledger net adds refunds instead of subtracting | test_money_payment_refund_and_conservation | no |
+| 11 Snapshot balance adds net instead of subtracting | test_overpayment_rejects_and_flags | no |
+| 12 Incoming payment subtracts amount | test_money_payment_refund_and_conservation | no |
+| 13 Incoming refund adds amount | test_money_payment_refund_and_conservation | no |
+| 14 Proposed overpayment > becomes >= | test_overpayment_rejects_and_flags | no |
+| 15 Snapshot overpayment > becomes >= | test_closed_only_delivered_and_exactly_paid | no |
+| 16 Refund amount > becomes >= net paid | test_refund_cannot_exceed_paid | no |
+| 17 Negative snapshot net < becomes <= zero | test_zero_total | no |
+| 18 Disable historical duplicate payment check | test_idempotency_history_and_incoming | no |
+| 19 Disable historical duplicate refund check | test_idempotency_history_and_incoming | no |
+| 20 Disable incoming payment replay check | test_idempotency_history_and_incoming | no |
+| 21 Disable incoming refund replay check | test_idempotency_history_and_incoming | no |
+| 22 Advance payment >= becomes > | test_advance_payment_and_refund_threshold | no |
+| 23 Refund below advance < becomes <= | test_advance_payment_and_refund_threshold | no |
+| 24 Closure balance == 0 becomes != 0 | test_closed_only_delivered_and_exactly_paid | no |
+| 25 Close any fully paid state before delivery | test_closed_only_delivered_and_exactly_paid | no |
+| 26 Disable CLOSED_UNPAID snapshot guard | test_closed_only_delivered_and_exactly_paid | no |
+| 27 Delete quote_approved/send_quote matrix entry | test_full_state_event_matrix (quote_approved, send_quote) | no |
+| 28 Add declined/deliver terminal matrix entry | test_full_state_event_matrix (declined, deliver) | no |
+| 29 Omit payments from canonical hash input | test_hash_determinism_roundtrip_and_immutability | no |
+| 30 Change engine version to 1.0.1 | test_hash_determinism_roundtrip_and_immutability | no |
+| 31 Incoming payment capacity >= becomes > | test_proposed_entry_capacity_and_allowed_events | no |
+| 32 Preflight amount cap > becomes >= | test_amount_upper_bound | no |
+| 33 Omit REFUND_REQUIRES_OWNER_APPROVAL flag | test_money_payment_refund_and_conservation | no |
+| 34 Omit CANCELLATION_WITH_FUNDS flag | test_cancel_window_and_post_dispatch | no |
+| 35 Disable invalid advance amount guard | test_invalid_values_and_types | no |
+| 36 Omit incoming OVERPAYMENT flag | test_overpayment_rejects_and_flags | no |
+
+After all reversions: 27 lifecycle + 33 cadence + 29 quote tests (89 total),
+including the full 132-pair matrix and 250 seeded lifecycle sequences.
+`make test-packages` and `make check-leftovers` pass. No database, network,
+ports or pushes; integration, approvals and real payment verification belong to A.
+`./scripts/check-lane-paths.sh c main` output:
+`Lane C: changed paths allowed under base policy` (exit 0).
