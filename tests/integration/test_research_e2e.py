@@ -282,7 +282,9 @@ def test_a_site_that_says_nothing_gives_no_suggestion_and_no_score_change(
 ) -> None:
     client, w = api
     t = w.a
-    cid = company(client, t, "Metro Fabrics", "https://metro-fabrics.test/")
+    cid = company(
+        client, t, "Plain Silks", "https://fabricate.test/"
+    )  # a page that says nothing the profile reads
     lid = lead(client, t, cid)
     base = score(client, t, lid)
     run = research(client, t, lid)
@@ -386,7 +388,9 @@ _ = dataclasses
 
 
 # ------------------------------------------------------------------------------ the reviewer's screen (T007 M3): the API behind it
-HOSTILE_QUOTE = '<img src=x onerror=alert(1)> <script>alert(2)</script> javascript:alert(3) "q" &lt;b&gt;'
+HOSTILE_QUOTE = (
+    '<img src=x onerror=alert(1)> <script>alert(2)</script> javascript:alert(3) "q" &lt;b&gt;'
+)
 
 
 def agent_claims(
@@ -427,7 +431,7 @@ def test_the_reviewers_list_shows_each_claim_with_its_company_the_quote_and_the_
     run = research(client, t, lid)
     assert run["status"] == "succeeded"
     mine = [c for c in agent_claims(client, t) if c["company_name"] == "Saree House Review"]
-    assert {c["predicate"] for c in mine} == {"buyer_type", "order_scale"}
+    assert {c["predicate"] for c in mine} == {"buyer_type", "order_scale", "size_band"}
     buyer = next(c for c in mine if c["predicate"] == "buyer_type")
     assert (
         buyer["review_state"] == "unreviewed"

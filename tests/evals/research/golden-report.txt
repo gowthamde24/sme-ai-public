@@ -1,0 +1,35 @@
+Research Agent golden set: 20 synthetic businesses, scripted model, scripted careful reviewer (offline)
+
+predicate         expected proposed accepted ok ACCEPTED WRONG rejected missing abstained ok
+--------------------------------------------------------------------------------------------
+buyer_type              15       17          13              0        4       2            3
+order_scale              4        5           4              0        1       0           15
+size_band                6        5           5              0        0       1           14
+operating_status         4        4           4              0        0       0           16
+--------------------------------------------------------------------------------------------
+all                     29       31          26              0        5       3           48
+
+precision of ACCEPTED claims: 26/26   recall of expected answers: 26/29   agent claims equal to the expected answer: 26/31
+(accepted = accepted by the scripted reviewer through the real review function; missing = an answer was expected and no accepted claim has it)
+
+per business (+ accepted, - rejected):
+G01 Aarthi Silks         buyer_type=wholesaler+ (expected wholesaler); order_scale=five_or_more_per_order+ (expected five_or_more_per_order); size_band=medium+ (expected medium); operating_status=active+ (expected active)
+G02 Balaji Saree Mart    buyer_type=saree_shop+ (expected saree_shop); order_scale=fewer_than_five_per_order+ (expected fewer_than_five_per_order); size_band=none (expected small); operating_status=active+ (expected active)
+G03 Chitra Boutique      buyer_type=boutique+ (expected boutique); size_band=micro+ (expected micro)
+G04 Homesilk Retail      buyer_type=consumer+ (expected consumer); order_scale=fewer_than_five_per_order+ (expected fewer_than_five_per_order)
+G05 Old Weavers          operating_status=closed+ (expected closed)
+G06 Renovation Silks     buyer_type=saree_shop+ (expected saree_shop); operating_status=inactive+ (expected inactive)
+G07 All Brands Emporium  buyer_type=multi_brand_store+ (expected multi_brand_store)
+G08 Southern Chain       buyer_type=regional_chain+ (expected regional_chain); size_band=large+ (expected large)
+G09 Homeloom             order_scale=fewer_than_five_per_order+ (expected fewer_than_five_per_order); size_band=micro+ (expected micro)
+G10 Trusted Textiles     buyer_type=wholesaler+ (expected wholesaler); size_band=small+ (expected small)
+G11 Campus Fabrics       buyer_type=other+ (expected other)
+G12 Image Gallery Silks  abstained: nothing expected, nothing proposed
+G13 Mixed Signals Silks  buyer_type=wholesaler-,saree_shop- (expected None)
+G14 Bright Sarees        buyer_type=saree_shop+ (expected saree_shop)
+G15 Hidden Silks         buyer_type=wholesaler+ (expected wholesaler)
+G16 Pune Boutique        buyer_type=boutique+,wholesaler- (expected boutique)
+G17 Aarti Sarees         buyer_type=wholesaler- (expected None); order_scale=five_or_more_per_order- (expected None)
+G18 Buried Silks         buyer_type=none (expected wholesaler)
+G19 Locked Silks         buyer_type=none (expected wholesaler)
+G20 Sales Corner Silks   buyer_type=wholesaler+ (expected wholesaler)

@@ -125,6 +125,7 @@ def test_a_run_reads_the_leads_own_site_and_proposes_unreviewed_claims() -> None
     assert {(c["predicate"], c["value"]) for c in db.claims} == {
         ("buyer_type", "wholesaler"),
         ("order_scale", "five_or_more_per_order"),
+        ("size_band", "medium"),
     }
     assert all(c["confidence"] == "unverified" and c["created_via"] == "agent" for c in db.claims)
 

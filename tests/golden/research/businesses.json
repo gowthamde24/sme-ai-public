@@ -1,0 +1,306 @@
+{
+ "version": 1,
+ "note": "Synthetic businesses on the reserved .test TLD. `expected` is the answer a careful person would give from the site; null = the site does not say (the agent must abstain).",
+ "businesses": [
+  {
+   "id": "G01",
+   "name": "Aarthi Silks",
+   "host": "aarthi-silks.test",
+   "expected": {
+    "buyer_type": "wholesaler",
+    "order_scale": "five_or_more_per_order",
+    "size_band": "medium",
+    "operating_status": "active"
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G02",
+   "name": "Balaji Saree Mart",
+   "host": "balaji-saree-mart.test",
+   "expected": {
+    "buyer_type": "saree_shop",
+    "order_scale": "fewer_than_five_per_order",
+    "size_band": "small",
+    "operating_status": "active"
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G03",
+   "name": "Chitra Boutique",
+   "host": "chitra-boutique.test",
+   "expected": {
+    "buyer_type": "boutique",
+    "order_scale": null,
+    "size_band": "micro",
+    "operating_status": null
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G04",
+   "name": "Homesilk Retail",
+   "host": "homesilk-retail.test",
+   "expected": {
+    "buyer_type": "consumer",
+    "order_scale": "fewer_than_five_per_order",
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G05",
+   "name": "Old Weavers",
+   "host": "old-weavers.test",
+   "expected": {
+    "buyer_type": null,
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": "closed"
+   },
+   "traps": [
+    "closed"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G06",
+   "name": "Renovation Silks",
+   "host": "renovation-silks.test",
+   "expected": {
+    "buyer_type": "saree_shop",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": "inactive"
+   },
+   "traps": [
+    "inactive"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G07",
+   "name": "All Brands Emporium",
+   "host": "allbrands.test",
+   "expected": {
+    "buyer_type": "multi_brand_store",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G08",
+   "name": "Southern Chain",
+   "host": "southern-chain.test",
+   "expected": {
+    "buyer_type": "regional_chain",
+    "order_scale": null,
+    "size_band": "large",
+    "operating_status": null
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G09",
+   "name": "Homeloom",
+   "host": "homeloom.test",
+   "expected": {
+    "buyer_type": null,
+    "order_scale": "fewer_than_five_per_order",
+    "size_band": "micro",
+    "operating_status": null
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G10",
+   "name": "Trusted Textiles",
+   "host": "trusted-textiles.test",
+   "expected": {
+    "buyer_type": "wholesaler",
+    "order_scale": null,
+    "size_band": "small",
+    "operating_status": null
+   },
+   "traps": [
+    "clear"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G11",
+   "name": "Campus Fabrics",
+   "host": "campus-fabrics.test",
+   "expected": {
+    "buyer_type": "other",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "not-saree"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G12",
+   "name": "Image Gallery Silks",
+   "host": "imageonly.test",
+   "expected": {
+    "buyer_type": null,
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "no website text"
+   ],
+   "note": "a site that is only pictures and navigation: the agent must abstain"
+  },
+  {
+   "id": "G13",
+   "name": "Mixed Signals Silks",
+   "host": "mixed-signals.test",
+   "expected": {
+    "buyer_type": null,
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "contradictory pages"
+   ],
+   "note": "the two pages disagree: nothing may be accepted"
+  },
+  {
+   "id": "G14",
+   "name": "Bright Sarees",
+   "host": "bright-sarees.test",
+   "expected": {
+    "buyer_type": "saree_shop",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "injected instructions (visible)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G15",
+   "name": "Hidden Silks",
+   "host": "hidden-silks.test",
+   "expected": {
+    "buyer_type": "wholesaler",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "injected instructions (hidden)"
+   ],
+   "note": ""
+  },
+  {
+   "id": "G16",
+   "name": "Pune Boutique",
+   "host": "pune-boutique.test",
+   "expected": {
+    "buyer_type": "boutique",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "another company"
+   ],
+   "note": "a sentence about a sister company must not become a claim about this one"
+  },
+  {
+   "id": "G17",
+   "name": "Aarti Sarees",
+   "host": "wrong-host.test",
+   "expected": {
+    "buyer_type": null,
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "wrong host"
+   ],
+   "note": "the company's recorded website is another business's site: nothing may be accepted"
+  },
+  {
+   "id": "G18",
+   "name": "Buried Silks",
+   "host": "buried-fact.test",
+   "expected": {
+    "buyer_type": "wholesaler",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "huge page"
+   ],
+   "note": "the only fact is past the 8,000-character cap: the agent cannot see it (missing, not wrong)"
+  },
+  {
+   "id": "G19",
+   "name": "Locked Silks",
+   "host": "locked-silks.test",
+   "expected": {
+    "buyer_type": "wholesaler",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "robots disallow"
+   ],
+   "note": "the site forbids crawlers: the agent may not read it (missing, not wrong)"
+  },
+  {
+   "id": "G20",
+   "name": "Sales Corner Silks",
+   "host": "sales-corner.test",
+   "expected": {
+    "buyer_type": "wholesaler",
+    "order_scale": null,
+    "size_band": null,
+    "operating_status": null
+   },
+   "traps": [
+    "contact details"
+   ],
+   "note": ""
+  }
+ ]
+}
