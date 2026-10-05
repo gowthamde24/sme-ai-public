@@ -43,15 +43,22 @@ def check_schema(instance: Any, definition: str) -> None:
     ).validate(instance)
 
 
+def with_open_gate(world: World) -> World:
+    """The erasure suites plant real-looking phone numbers: the gate is opened for their own workspaces (ADR 0015)."""
+    for tenant in (world.a, world.b):
+        operator_sql.open_real_data_gate(tenant.id)
+    return world
+
+
 @pytest.fixture(scope="module")
 def w(client: TestClient, stack: Any, signup: Any) -> World:
-    return World(client, stack, signup)
+    return with_open_gate(World(client, stack, signup))
 
 
 @pytest.fixture(scope="module")
 def w2(client: TestClient, stack: Any, signup: Any) -> World:
     """A second pair of tenants, for the destructive workspace-wide erasure."""
-    return World(client, stack, signup)
+    return with_open_gate(World(client, stack, signup))
 
 
 # ------------------------------------------------------------------------------ plumbing

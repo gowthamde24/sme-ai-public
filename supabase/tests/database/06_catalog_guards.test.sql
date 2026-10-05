@@ -162,7 +162,9 @@ select is(
     where fq in ('app.operator_enable_selftest', 'app.agent_open_run', 'app.agent_assert_enabled', 'app.agent_args_sha',
                  'app.agent_derived_id', 'app.agent_step_replay',
                  'app.erase_column', 'app.erasure_sweep', 'app.erase_contact', 'app.erase_company', 'app.erase_tenant',
-                 'app.erasure_running', 'app.erasure_columns', 'app.guard_consent_update', 'app.guard_audit_update')
+                 'app.erasure_running', 'app.erasure_columns', 'app.guard_consent_update', 'app.guard_audit_update',
+                 'app.operator_open_real_data_gate', 'app.operator_close_real_data_gate', 'app.operator_add_member',
+                 'app.operator_add_owner_exception', 'app.real_data_gate_open', 'app.guard_real_data')
       and (has_function_privilege('authenticated', oid, 'execute') or has_function_privilege('anon', oid, 'execute'))),
   '', 'the agent helpers and the operator function are callable by no client role');
 

@@ -97,6 +97,9 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('erasure_requests',
    $$insert into public.erasure_requests (id, tenant_id, scope, requested_by, execute_after) values (%2$L, %1$L, 'tenant', %5$L, now())$$,
    'status = status', $$delete from public.erasure_requests where id = %2$L$$, true),
+  ('tenant_data_policy',
+   $$insert into public.tenant_data_policy (tenant_id) values (%1$L) on conflict (tenant_id) do nothing$$,
+   'real_data_allowed = real_data_allowed', $$delete from public.tenant_data_policy where tenant_id = %1$L$$, false),
   ('claim_reviews',
    $$with c as (insert into public.claims (id, tenant_id, company_id, predicate, value, confidence) values (%2$L, %1$L, %3$L, 'exports_to', 'Generic value', 'low') returning id)
      insert into public.claim_reviews (id, tenant_id, claim_id, decision, confidence, self_review) select %2$L, %1$L, c.id, 'accepted', 'low', false from c$$,
@@ -157,6 +160,9 @@ select t, r, s, i, u, d from (values
   -- T006b M1: the erasure log is read by Owner / Admin only and written by nobody directly.
   ('erasure_requests','owner', true, false, false, false), ('erasure_requests','admin', true, false, false, false),
   ('erasure_requests','sales', false, false, false, false), ('erasure_requests','viewer', false, false, false, false),
+  -- T006b M2: every member reads the gate (the web shows "synthetic data only" while it is closed); nobody writes it from a request.
+  ('tenant_data_policy','owner', true, false, false, false), ('tenant_data_policy','admin', true, false, false, false),
+  ('tenant_data_policy','sales', true, false, false, false), ('tenant_data_policy','viewer', true, false, false, false),
   ('claim_reviews', 'owner',  true, false, false, false), ('claim_reviews', 'admin',  true, false, false, false),
   ('claim_reviews', 'sales',  true, false, false, false), ('claim_reviews', 'viewer', true, false, false, false),
   -- T002 tables

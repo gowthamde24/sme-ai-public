@@ -12,7 +12,7 @@ language sql as $$ select coalesce(string_agg(to_jsonb(a)::text, E'\n'), '') fro
 -- created through the real client path, as a tenant-A sales user
 select is(tests.outcome_as(tests.uid('a_sales'), format(
   $q$insert into public.contacts (id, tenant_id, full_name, email, phone, job_title)
-     values (%L, %L, 'Quasimodo Zephyrine', 'zephyr.quasi@example.test', '+91 98765 43210', 'Chief Pretzel Officer')$q$,
+     values (%L, %L, 'Quasimodo Zephyrine', 'zephyr.quasi@example.test', '+00 98765 43210', 'Chief Pretzel Officer')$q$,
   tests.rid('c1'), tests.tid('a'))), 'rows:1', 'setup: sales creates a contact with personal data');
 
 select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and action = 'contact.create' and entity_id = tests.rid('c1')),
@@ -32,7 +32,7 @@ select ok((select new_values ? 'company_id' and new_values ? 'tenant_id' and new
 -- updates: email, then job_title ONLY (a PII-only change must still be recorded), then phone
 select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.contacts set email = 'second.addr@example.test' where id = %L$$, tests.rid('c1'))), 'rows:1', 'setup: email changes');
 select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.contacts set job_title = 'Pretzel Emeritus' where id = %L$$, tests.rid('c1'))), 'rows:1', 'setup: only the title changes');
-select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.contacts set phone = '+91 91234 56789' where id = %L$$, tests.rid('c1'))), 'rows:1', 'setup: phone changes');
+select is(tests.outcome_as(tests.uid('a_sales'), format($$update public.contacts set phone = '+00 91234 56789' where id = %L$$, tests.rid('c1'))), 'rows:1', 'setup: phone changes');
 
 select is(
   (select array_agg(m order by id) from (

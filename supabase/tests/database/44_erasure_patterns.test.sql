@@ -5,6 +5,8 @@ begin;
 select no_plan();
 select tests.seed_two_tenants();
 select tests.seed_crm();
+select tests.open_gate('a');
+select tests.open_gate('b');
 
 -- ================================================================ phone: unit vectors
 create temp table pv (v text primary key, hit boolean not null);

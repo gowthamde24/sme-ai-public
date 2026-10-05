@@ -197,7 +197,7 @@ begin
     values (tests.rid(p || '_company'), tests.tid(p), 'Company ' || p);
     insert into public.contacts (id, tenant_id, company_id, full_name, email, phone)
     values (tests.rid(p || '_contact'), tests.tid(p), tests.rid(p || '_company'),
-            'Contact ' || p, p || '.contact@example.test', '+91 90000 0000' || (case p when 'a' then 1 else 2 end));
+            'Contact ' || p, p || '.contact@example.test', '+00 90000 0000' || (case p when 'a' then 1 else 2 end));
     insert into public.products (id, tenant_id, sku, name)
     values (tests.rid(p || '_product'), tests.tid(p), 'SKU-1', 'Product ' || p);
     insert into public.leads (id, tenant_id, company_id, contact_id)
@@ -353,6 +353,7 @@ declare
   k uuid := tests.rid(p || '_contact');
   l uuid := tests.rid(p || '_lead');
 begin
+  perform tests.open_gate(p);  -- the canary phone is a real-looking number: this is the world where erasure matters
   update public.contacts set full_name = 'Zed Qxjv', email = 'zed.qxjv@canary.test', phone = '+91 98765 43210', job_title = 'Qxjv director' where id = k;
   update public.companies set name = 'Kzv9 Silks', website = 'https://kzv9-silks.test/shop', city = 'Kzv9pur', region = 'Kzv9 State', tags = array['kzv9'] where id = c;
   insert into public.companies (id, tenant_id, name, tags) values (c2, t, 'Other Co', array['zed.qxjv@canary.test', 'vip']);
@@ -433,4 +434,14 @@ begin
     acc := acc || r.table_name || ':' || v || ';';
   end loop;
   return md5(acc);
+end $$;
+
+-- ============================================================================ real-data gate (T006b M2, ADR 0015)
+-- Open the real-data gate for fixture tenant p ('a' / 'b') the way the operator does (as the database owner). Tests that plant real-looking
+-- phone numbers or addresses (the erasure canaries) call this first: it is the world in which erasure matters.
+create or replace function tests.open_gate(p text) returns void
+language plpgsql as $$
+begin
+  perform app.operator_open_real_data_gate((select slug from public.tenants where id = tests.tid(p)),
+    'adr:0014', 'doc:hosting-staging', 'doc:dpdp-review', 'doc:restore-drill');
 end $$;

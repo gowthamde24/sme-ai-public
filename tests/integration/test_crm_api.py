@@ -690,7 +690,7 @@ def test_consent_flows_including_the_optout_withdrawal(world: World) -> None:
             "id": uid(),
             "full_name": "Consent Flow",
             "email": f"cf-{uid()}@it.example.test",
-            "phone": "+91 90000 33333",
+            "phone": "+00 90000 33333",
             "company_id": w.a.rows["companies"]["id"],
         },
     ).json()["id"]
@@ -877,7 +877,7 @@ def test_consent_flows_including_the_optout_withdrawal(world: World) -> None:
 # ============================================================================= PII canary
 CANARY_EMAIL = "canary.zq91@it.example.test"
 CANARY_NAME = "Canary Zq91"
-CANARY_PHONE = "+91 98765 00091"
+CANARY_PHONE = "+00 98765 00091"
 
 
 def test_personal_data_never_appears_in_an_error_body_or_a_log_line(

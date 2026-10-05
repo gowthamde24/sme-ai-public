@@ -135,3 +135,18 @@ def restore_switches(saved: dict[str, object]) -> None:
         sql(
             f"update public.agent_definitions set allowed_tenants = array[{items}]::uuid[] where agent_name = 'selftest'"
         )
+
+
+def open_real_data_gate(tenant_id: str) -> None:
+    """Open the real-data gate for one LOCAL workspace, the way the operator does (ADR 0015). Tests that plant real-looking contact data
+    (the erasure suites) call this for their own tenants; everything else runs with the gate closed, as a new workspace does."""
+    sql(
+        f"select app.operator_open_real_data_gate((select slug from public.tenants where id = '{tenant_id}'), "
+        "'adr:0014', 'doc:it-hosting', 'doc:it-dpdp', 'doc:it-restore')"
+    )
+
+
+def close_real_data_gate(tenant_id: str) -> None:
+    sql(
+        f"select app.operator_close_real_data_gate((select slug from public.tenants where id = '{tenant_id}'))"
+    )

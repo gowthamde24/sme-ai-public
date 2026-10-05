@@ -86,7 +86,7 @@ select is(pg_temp.events('a_contact', 'withdrawn'), 5::bigint, 'R1: ... with its
 
 -- only the channels that were granted are touched
 insert into public.contacts (id, tenant_id, company_id, full_name, email, phone)
-values (tests.rid('a_partial'), tests.tid('a'), tests.rid('a_company'), 'Partial', 'partial@example.test', '+91 90000 11111');
+values (tests.rid('a_partial'), tests.tid('a'), tests.rid('a_company'), 'Partial', 'partial@example.test', '+00 90000 11111');
 select is(pg_temp.grant('email', 'form:6', 'a_partial'), 'rows:1', 'setup: only email granted; one channel withdrawn earlier');
 select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.record_consent(%L, %L, 'phone', 'withdrawn')$q$, tests.tid('a'), tests.rid('a_partial'))),
   'rows:1', 'setup: phone explicitly withdrawn');
@@ -137,7 +137,7 @@ select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.lift_su
   '42501', 'sales still cannot lift');
 
 -- ====================================================================== R2
-insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values (tests.rid('a_null'), tests.tid('a'), tests.rid('a_company'), 'Null Guard', 'null@example.test', '+91 90000 22222');
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values (tests.rid('a_null'), tests.tid('a'), tests.rid('a_company'), 'Null Guard', 'null@example.test', '+00 90000 22222');
 create function pg_temp.null_case(p_label text, p_sql text) returns setof text
 language plpgsql as $$
 begin
