@@ -29,6 +29,12 @@ def failures(rows: dict[str, tuple[str, str]]) -> list[str]:
 
 
 ENROLLED = "every Owner and Admin has a verified authenticator"
+GUARDS = "the contacts guards are installed and enabled (gate and erased-row)"
+IMMUTABLE = "the immutability, consent and audit guards are installed and enabled"
+NO_DISABLED = "no trigger in public is disabled"
+BYPASSRLS = "role postgres bypasses RLS (the definer functions read forced-RLS tables as postgres)"
+SERVICE_WRITES = "service_role holds no write privilege on any public table or view"
+OPERATOR_CLOSED = "operator functions are not executable by any client role"
 NO_OWNER_WITHOUT_FACTOR = (
     "set session_replication_role = replica; "  # (no triggers: this is a throwaway transaction)
     "delete from public.memberships m where m.role in ('owner', 'admin') and not exists "
@@ -98,11 +104,63 @@ def test_the_local_schema_fails_only_the_enrolment_check_today() -> None:
         ),
         (
             "drop trigger contacts_guard_real_data on public.contacts;",
-            "the contacts guards are in place (gate and erased-row)",
+            GUARDS,
         ),
         (
             "drop trigger contacts_guard_erased on public.contacts;",
-            "the contacts guards are in place (gate and erased-row)",
+            GUARDS,
+        ),
+        (
+            "alter table public.contacts disable trigger contacts_guard_real_data;",
+            GUARDS,
+        ),
+        (
+            "alter table public.contacts disable trigger contacts_guard_real_data;",
+            NO_DISABLED,
+        ),
+        (
+            "alter table public.contacts disable trigger contacts_guard_erased;",
+            GUARDS,
+        ),
+        (
+            "alter table public.audit_events disable trigger audit_events_no_update;",
+            IMMUTABLE,
+        ),
+        (
+            "alter table public.consent_events disable trigger consent_events_no_delete;",
+            IMMUTABLE,
+        ),
+        (
+            "drop trigger evidence_guard_immutable on public.evidence;",
+            IMMUTABLE,
+        ),
+        (
+            "alter table public.claims disable trigger claims_guard_immutable;",
+            NO_DISABLED,
+        ),
+        (
+            "grant insert on public.audit_events to service_role;",
+            SERVICE_WRITES,
+        ),
+        (
+            "grant truncate on public.tenant_data_policy to service_role;",
+            SERVICE_WRITES,
+        ),
+        (
+            "grant update on public.erasure_requests to service_role;",
+            SERVICE_WRITES,
+        ),
+        (
+            "grant execute on function app.operator_add_member(text, text, text, text) to service_role;",
+            OPERATOR_CLOSED,
+        ),
+        (
+            "grant execute on function app.operator_close_real_data_gate(text) to anon;",
+            OPERATOR_CLOSED,
+        ),
+        (
+            "grant execute on function app.operator_reset_mfa(text, text) to public;",
+            OPERATOR_CLOSED,
         ),
         (
             "alter function public.execute_erasure(uuid, boolean) reset statement_timeout;",
@@ -135,3 +193,14 @@ def test_a_changed_provenance_predicate_is_caught() -> None:
     assert "the provenance predicate is intact (set_created_meta, set_agent_run_id)" in failures(
         rows
     )
+
+
+def test_a_trusted_role_without_bypassrls_is_caught() -> None:
+    """The verifier's role is not a superuser (as on a hosted project), so the role cannot be altered here: ask the same question of a role
+    that really lacks the attribute (authenticated) and the check must fail."""
+    assert "where r.rolname = 'postgres'" in SQL
+    out = operator_sql.sql(
+        "begin;\n" + SQL.replace("where r.rolname = 'postgres'", "where r.rolname = 'authenticated'") + "\nrollback;"
+    )
+    verdicts = {line.split("|")[0]: line.split("|")[1] for line in out.splitlines() if line.count("|") >= 2}
+    assert verdicts[BYPASSRLS] == "f"

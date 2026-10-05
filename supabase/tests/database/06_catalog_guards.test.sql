@@ -407,5 +407,17 @@ select is(
     where n.nspname = 'app' and c.relkind in ('r', 'v', 'm', 'p')),
   0::bigint, 'schema app holds functions only: no tables or views to expose');
 
+-- ---- service_role (Supabase's key that bypasses RLS) writes nothing in public: the app never uses it (CLAUDE.md non-negotiable 2)
+select is(
+  (select coalesce(string_agg(c.relname || ':' || p.priv, ', ' order by c.relname, p.priv), '') from pg_class c
+     cross join unnest(array['INSERT', 'UPDATE', 'DELETE', 'TRUNCATE']) as p(priv)
+    where c.relnamespace = 'public'::regnamespace and c.relkind in ('r', 'p', 'v', 'm') and has_table_privilege('service_role', c.oid, p.priv)),
+  '', 'service_role holds no INSERT / UPDATE / DELETE / TRUNCATE on any public table or view');
+select is(has_table_privilege('service_role', 'public.tenants', 'SELECT'), true, '...it keeps SELECT (read-only operator access)');
+create table public.zz_guard_probe (id int);
+select is(
+  (select coalesce(string_agg(p.priv, ','), '') from unnest(array['INSERT', 'UPDATE', 'DELETE', 'TRUNCATE']) as p(priv) where has_table_privilege('service_role', 'public.zz_guard_probe', p.priv)),
+  '', 'a table created later does not grant service_role writes either (default privileges)');
+
 select * from finish();
 rollback;

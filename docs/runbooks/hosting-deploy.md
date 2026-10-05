@@ -39,8 +39,15 @@ python scripts/verify_hosted.py
 Exit 0 and `ALL CHECKS PASSED`. Keep the output: it backs the gate's `hosting_ref`. The script sends only GET and OPTIONS requests and its
 database step is read-only.
 
+## Erasure timeout on the hosted project (measure once, before any real data)
+`execute_erasure` carries a 300 s statement timeout, and the web waits 120 s for it (measured locally: about 0.3 ms per row). A hosted
+gateway may cut a long request earlier than either. On the hosted **staging** project, with a synthetic workspace of about 30,000 rows
+(`scripts/scale_erasure.py` builds one), run a workspace-wide erasure from the Privacy page and note the time and any 5xx or timeout. If
+the gateway cuts it earlier, an erasure that big is run by the operator in SQL (as `postgres`, no gateway), and the Privacy page says so.
+Record the result with the hosting reference. (Not measured yet: no hosted project exists.)
+
 ## Monitoring
 An uptime check on `https://<api>/health` with an e-mail alert; the Cloud Run budget alert; Supabase's spend cap.
 
 ## Not built yet (M3 and later)
-`/auth/confirm` and set-password routes; security headers and CSP on the web app; MFA enrolment; API rate limiting. See the checklist.
+API rate limiting. (The `/auth/confirm` and set-password routes, MFA and the security headers were built in M3a.) See the checklist.

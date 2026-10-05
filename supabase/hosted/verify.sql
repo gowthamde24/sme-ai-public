@@ -65,10 +65,39 @@ checks(check_name, ok, detail) as (
          exists (select 1 from pg_proc where proname = 'execute_erasure' and pronamespace = 'public'::regnamespace and proconfig::text like '%statement_timeout%'),
          'a large workspace needs longer than the client roles'' 8 s'
   union all
-  select 'the contacts guards are in place (gate and erased-row)',
-         (select count(*) from pg_trigger where tgrelid = 'public.contacts'::regclass and not tgisinternal
+  select 'the contacts guards are installed and enabled (gate and erased-row)',
+         (select count(*) from pg_trigger where tgrelid = 'public.contacts'::regclass and not tgisinternal and tgenabled = 'O'
              and tgname in ('contacts_guard_real_data', 'contacts_guard_erased')) = 2,
-         'contacts_guard_real_data, contacts_guard_erased'
+         'contacts_guard_real_data, contacts_guard_erased: present and tgenabled = O (a disabled trigger silently opens the gate)'
+  union all
+  select 'the immutability, consent and audit guards are installed and enabled',
+         (select count(*) from pg_trigger t where t.tgrelid in (select c.oid from pg_class c where c.relnamespace = 'public'::regnamespace) and not t.tgisinternal
+             and t.tgenabled = 'O' and t.tgname = any (array[
+               'audit_events_no_update', 'audit_events_no_delete', 'audit_events_no_truncate',
+               'consent_events_no_update', 'consent_events_no_delete', 'consent_events_no_truncate',
+               'claims_guard_immutable', 'claim_reviews_guard_immutable', 'evidence_guard_immutable', 'evidence_links_guard_immutable',
+               'lead_labels_guard_immutable', 'import_batches_guard_immutable', 'import_rows_guard_immutable', 'data_exports_guard_immutable',
+               'agent_run_steps_guard_immutable', 'icp_config_versions_guard_immutable', 'memberships_protect_last_owner',
+               'audit_tenants', 'audit_memberships', 'audit_contacts', 'audit_consent_events', 'audit_tenant_data_policy', 'audit_erasure_requests'])) = 23,
+         (select count(*)::text from pg_trigger t where t.tgrelid in (select c.oid from pg_class c where c.relnamespace = 'public'::regnamespace) and not t.tgisinternal
+             and t.tgenabled = 'O') || ' enabled triggers in public; 23 named guards expected present'
+  union all
+  select 'no trigger in public is disabled',
+         not exists (select 1 from pg_trigger t where t.tgrelid in (select c.oid from pg_class c where c.relnamespace = 'public'::regnamespace)
+                        and not t.tgisinternal and t.tgenabled <> 'O'),
+         coalesce((select string_agg(t.tgrelid::regclass::text || '.' || t.tgname, ', ') from pg_trigger t
+                    where t.tgrelid in (select c.oid from pg_class c where c.relnamespace = 'public'::regnamespace) and not t.tgisinternal and t.tgenabled <> 'O'), 'none')
+  union all
+  select 'role postgres bypasses RLS (the definer functions read forced-RLS tables as postgres)',
+         coalesce((select r.rolbypassrls from pg_roles r where r.rolname = 'postgres'), false),
+         'if false, the gate and every definer function silently see nothing: the gate stays closed'
+  union all
+  select 'service_role holds no write privilege on any public table or view',
+         not exists (select 1 from pg_class c cross join unnest(array['INSERT', 'UPDATE', 'DELETE', 'TRUNCATE']) as p(priv)
+                      where c.relnamespace = 'public'::regnamespace and c.relkind in ('r', 'p', 'v', 'm') and has_table_privilege('service_role', c.oid, p.priv)),
+         coalesce((select string_agg(distinct c.relname, ', ') from pg_class c cross join unnest(array['INSERT', 'UPDATE', 'DELETE', 'TRUNCATE']) as p(priv)
+                    where c.relnamespace = 'public'::regnamespace and c.relkind in ('r', 'p', 'v', 'm') and has_table_privilege('service_role', c.oid, p.priv)),
+                  'the key that bypasses RLS can read, never write')
   union all
   select 'the immutable-record guard knows the erasure exception',
          exists (select 1 from pg_proc where proname = 'guard_immutable_record' and pronamespace = 'app'::regnamespace and prosrc like '%erasure_running%'),

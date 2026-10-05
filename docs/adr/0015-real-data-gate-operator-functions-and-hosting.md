@@ -1,9 +1,10 @@
 # ADR 0015: The real-data gate, the operator functions, and the staging hosting recommendation
 
-Status: proposed (2026-10-05; T006b milestone 2). The gate, the operator functions and the verifier are built and tested. The hosting
+Status: accepted (2026-10-05; T006b milestone 2, owner review fixes applied in `20261012090100_t006b_m2_review_fixes.sql`). The gate, the operator functions and the verifier are built and tested. The hosting
 choice is a **recommendation for the owner**: nothing was deployed and no account exists.
 Related: ADR 0010 (the old import-only gate), ADR 0013 (agents), ADR 0014 (erasure), `docs/pre-pilot-checklist.md`, `docs/runbooks/`.
 Code: `supabase/migrations/20261011090000_t006b_real_data_gate.sql`, `20261011090100_t006b_sole_owner_and_members.sql`,
+`20261012090100_t006b_m2_review_fixes.sql` (members must have accepted; the gate fails closed; service_role writes revoked),
 `supabase/hosted/verify.sql`, `scripts/verify_hosted.py`, `deploy/`.
 Tests: `supabase/tests/database/45_real_data_gate.test.sql`, `46_sole_owner_and_operator_members.test.sql`,
 `tests/integration/test_real_data_gate_direct_postgrest.py`, `tests/integration/test_verify_hosted_sql.py`,
@@ -103,6 +104,8 @@ local schema and must catch each (14 cases). Connection details travel in the en
 
 * It does not make the data legal to hold. The DPDP review is a prerequisite the operator records; it is not mine to close.
 * It does not hide a real name typed next to a reserved address.
+* The gate is a tripwire for contact identifiers, not a data classifier. Company names and free text (lead source, notes, evidence snippets)
+  are not checked. The real controls are the banner, the rule for the family, and the review before opening.
 * It does not cover backups of real data held before an erasure (the restore drill, M3).
 * It deploys nothing and creates no account. `deploy/cloudrun.sh` is a dry run unless `--execute` is given; I never ran it with it.
 

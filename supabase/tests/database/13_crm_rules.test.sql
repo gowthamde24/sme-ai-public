@@ -166,7 +166,7 @@ select is(tests.outcome_as(tests.uid('a_sales'), format($$insert into public.com
 select is(tests.outcome_as(tests.uid('a_sales'), format($$insert into public.companies (tenant_id, name, type) values (%L, 'Bad', 'investor')$$, tests.tid('a'))),
   '22P02', 'unknown company type is refused');
 select is(tests.outcome_as(tests.uid('a_sales'), format($$insert into public.contacts (tenant_id, full_name, email) values (%L, 'Bad Mail', 'not-an-email')$$, tests.tid('a'))),
-  '23514', 'malformed email is refused');
+  'SM401', 'malformed email is refused (the real-data gate refuses it first while the workspace is closed; the table CHECK is the second line)');
 select is(tests.outcome_as(tests.uid('a_sales'), format($$insert into public.companies (id, tenant_id, name) values ('not-a-uuid', %L, 'x')$$, tests.tid('a'))),
   '22P02', 'a malformed client-supplied id is refused');
 -- client-supplied ids make create idempotent: the same id twice is a primary-key conflict

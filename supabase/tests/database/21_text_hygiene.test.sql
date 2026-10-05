@@ -8,6 +8,9 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+-- These tests exercise the table CHECKs themselves. The real-data gate (a trigger on contacts) refuses first while a workspace is closed, so it is
+-- switched off here for the transaction; its own behaviour is tested in 45_real_data_gate.test.sql.
+alter table public.contacts disable trigger contacts_guard_real_data;
 select tests.seed_crm();
 select tests.seed_evidence();
 

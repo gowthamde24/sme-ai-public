@@ -13,9 +13,13 @@ create temp table pv (v text primary key, hit boolean not null);
 insert into pv values
   ('+91 98765 43210', true), ('919876543210', true), ('wa.me/919876543210', true), ('09876543210', true), ('+91-9876543210', true),
   ('(98765) 43210', true), ('98765.43210', true), ('call 9876543210 now', true), ('+919876543210', true), ('tel:+91 98765-43210;', true),
+  ('0091 98765 43210', true), ('00 91 98765 43210', true), ('00919876543210', true), ('00-91-98765-43210', true), ('0091-9876543210', true),
+  ('wa.me/00919876543210', true), ('+ 91 98765 43210', true),
   ('119876543210', false), ('987654321012', false), ('9876543211', false), ('8876543210', false), ('98765 4321', false);
 select is(ok.hit, pv.hit, 'phone pattern: ' || quote_literal(pv.v) || case when pv.hit then ' is swept' else ' is NOT swept' end)
   from pv, lateral (select pv.v ~* app.erasure_phone_pattern('+91 98765 43210') as hit) ok order by pv.hit desc, pv.v;
+select is(regexp_replace('call 0091 98765 43210 now, 00 91-9876543210, +91 9876543210', app.erasure_phone_pattern('+91 98765 43210'), '#', 'gi'), 'call # now, #, #',
+          'the international prefix is consumed with the number: no "0091" is left behind');
 select is(app.erasure_phone_pattern('+91 98765 43210'), app.erasure_phone_pattern('09876543210'), 'the same number written two ways gives one pattern (the last ten digits)');
 select is(app.erasure_phone_pattern('12345'), null, 'a number of fewer than seven digits identifies nobody');
 select is(app.erasure_phone_pattern(null), null, 'no number, no pattern');

@@ -464,6 +464,8 @@ select is(
   'J21 and the same outcome and reason for every row');
 
 -- ============================================================================ K. one bad row never takes a neighbour down, or leaves a fragment
+-- (the gate is opened for this block: it refuses a malformed e-mail first while closed; here the table's own CHECK is what is being reported)
+select tests.open_gate('a');
 create temp table iso as
 select pg_temp.imp('a_sales', 'a', jsonb_build_array(
   pg_temp.row('DEMO Iso Good One'),
@@ -481,6 +483,7 @@ select is(pg_temp.why((select report from iso), 2) || '/' || (select report -> '
 select is((select report -> 'rows' -> 3 ->> 'constraint' from iso), 'companies_name_clean', 'K3 a zero-width space: the hygiene constraint');
 select is((select report -> 'rows' -> 4 ->> 'constraint' from iso), 'contacts_email_check', 'K4 a malformed e-mail: the contacts e-mail constraint');
 select is((select report -> 'rows' -> 5 ->> 'constraint' from iso), 'companies_website_check', 'K5 a 200+ character website: the website constraint');
+select app.operator_close_real_data_gate('tenant-a');
 select is((select report -> 'rows' -> 6 ->> 'constraint' from iso), 'companies_industry_clean', 'K6 a tag character: the hygiene constraint');
 select is((select report -> 'rows' -> 7 ->> 'constraint' from iso), 'companies_tags_check', 'K7 21 categories: the tags constraint');
 select is((select report -> 'rows' -> 1 ->> 'sqlstate' from iso), '23514', 'K8 and the SQLSTATE');

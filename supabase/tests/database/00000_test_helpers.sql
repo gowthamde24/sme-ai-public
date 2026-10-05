@@ -312,10 +312,10 @@ begin
     'dual', 'outsider', 'x1', 'x2', 'x3', 'x4', 'x5', 'x6'
   ] loop
     insert into auth.users (
-      id, instance_id, aud, role, email, raw_user_meta_data, created_at, updated_at
+      id, instance_id, aud, role, email, email_confirmed_at, raw_user_meta_data, created_at, updated_at
     ) values (
       tests.uid(n), '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated',
-      n || '@test.local', jsonb_build_object('display_name', n), now(), now()
+      n || '@test.local', now(), jsonb_build_object('display_name', n), now(), now()
     );
   end loop;
 

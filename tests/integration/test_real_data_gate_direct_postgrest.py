@@ -149,6 +149,41 @@ def test_closed_gate_straight_through_postgrest(w: World) -> None:
     assert contact_count(w, a) == before
 
 
+MALFORMED = (
+    ("zero-width character in the e-mail", {"email": "x\u200b@example.test"}),
+    ("no dot in the domain", {"email": "a@b"}),
+    ("whitespace inside the e-mail", {"email": "a b@example.test"}),
+    ("trailing dot after the domain", {"email": "a@example.com."}),
+    ("Cyrillic look-alike of example.com", {"email": "a@ex\u0430mple.com"}),
+    ("a domain that only ends like a reserved one", {"email": "a@notexample.com"}),
+    ("zero-width character in the phone", {"email": "x@example.test", "phone": "+00 12\u200b34 567"}),
+    ("a space after the plus", {"email": "x@example.test", "phone": "+ 00 1234 567"}),
+)
+
+
+def test_a_closed_gate_fails_closed_on_malformed_values_too(w: World) -> None:
+    """A value the table's CHECKs would also refuse is refused by the gate itself (SM401), through PostgREST and through our API."""
+    a = w.a
+    owner = a.users["owner"]
+    company = a.rows["companies"]["id"]
+    before = contact_count(w, a)
+    for label, extra in MALFORMED:
+        body = {"id": uid(), "tenant_id": a.id, "company_id": company, "full_name": "DEMO Malformed", **extra}
+        r = pg(w.stack, owner, "POST", "/contacts", json=body, representation=False)
+        assert refused_by_gate(r), (label, r.status_code, r.text)
+        api = api_contact(w, a, **extra)
+        # our API may refuse a malformed value earlier still (422 validation); either way it is refused and nothing is created
+        assert api.status_code in (409, 422), (label, api.status_code, api.text)
+        if api.status_code == 409:
+            assert api.json()["error"]["code"] == "real_data_gate_closed", (label, api.text)
+    assert contact_count(w, a) == before
+    # what is allowed stays allowed: upper case, and a bare "+00"
+    for extra in ({"email": f"{uid()}@EXAMPLE.COM"}, {"phone": "+00"}):
+        body = {"id": uid(), "tenant_id": a.id, "company_id": company, "full_name": "DEMO Fine", **extra}
+        r = pg(w.stack, owner, "POST", "/contacts", json=body, representation=False)
+        assert r.status_code in (200, 201, 204), (extra, r.status_code, r.text)
+
+
 def test_nobody_can_open_the_gate_from_a_request(w: World) -> None:
     a, b = w.a, w.b
     forged = {

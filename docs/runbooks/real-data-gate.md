@@ -1,11 +1,24 @@
 # Runbook: opening and closing the real-data gate
 
 Each workspace starts **closed**: its contacts may carry only a reserved e-mail domain (`example.test` and friends) and a phone that
-starts `+00` (ADR 0015). Opening it lets real contact details in. Only the **operator** (a person with the database-owner login) can,
+starts `+00` (ADR 0015). While closed, anything else is refused by the gate itself (`SM401`), including a malformed e-mail or one with
+invisible characters. Opening it lets real contact details in. Only the **operator** (a person with the database-owner login) can,
 and only with four recorded prerequisites. Everything here is plain SQL run as the `postgres` role.
 
 Where to run it: **local** `docker exec -i supabase_db_<project_id> psql -U postgres -d postgres`; **hosted** the SQL editor. Confirm first:
 `select current_user;` must say `postgres`.
+
+## Which workspace (Customer Zero)
+
+Customer Zero uses a **new workspace created after the hosted deploy**. The demo / synthetic workspace is **never opened**: it holds
+fictional data and must stay closed (or be deleted) for good.
+
+How a new workspace is created today: **there is no operator function for it.** The family's Owner signs in to the hosted web app and
+creates it on the Workspaces page ("Create a workspace"); that person becomes its Owner, and it starts **closed**. Nothing was built for
+the operator to create one on someone's behalf, and none is needed yet. Then add the family at limited roles (`add-family-member.md`).
+
+Before you open it: run the hosted verifier (`scripts/verify_hosted.py`, `hosting-deploy.md`) and record its output with the hosting
+reference. `hosting_ref` points at that record: the deployment AND the verifier's `ALL CHECKS PASSED` for the day you open.
 
 ## The four prerequisites (all four, every time)
 
@@ -51,4 +64,6 @@ person asks for the workspace to be erased. Close first, then act.
 
 ## What the gate does not do
 
-It does not check names or job titles, and does not make the data lawful. See ADR 0015, "What this does not do".
+It does not check names or job titles, and does not make the data lawful. **It is a tripwire for contact identifiers, not a data
+classifier:** company names and free text (lead source, notes, evidence snippets) are not checked. The real controls are the banner, the
+rule for the family, and the review before opening. See ADR 0015, "What this does not do".

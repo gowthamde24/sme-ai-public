@@ -76,5 +76,41 @@ select pg_temp.req('b_owner', 'b', 'so4', 'b_self');
 select is(tests.error_full_as(tests.uid('b_owner'), format('select public.execute_erasure(%L, false)', tests.rid('so4'))), 'ok', 'with a second Owner in place the first Owner''s record can be erased');
 select is((select full_name from public.contacts where id = tests.rid('b_self')), 'erased:1', '...and is');
 
+-- ============================================================ 4. only an account that accepted its invitation (SM403)
+create function pg_temp.err(p_sql text) returns text language plpgsql as $$
+begin execute p_sql; return 'ok'; exception when others then return sqlstate || '|' || sqlerrm; end $$;
+create function pg_temp.addm(p_email text) returns text language sql as $$
+  select pg_temp.err(format($q$select app.operator_add_member('tenant-b', %L, 'viewer', 'family member')$q$, p_email)) $$;
+create function pg_temp.addo(p_email text) returns text language sql as $$
+  select pg_temp.err(format($q$select app.operator_add_owner_exception('tenant-b', %L, 'identity verified by video call with the Owner 2026-10-05')$q$, p_email)) $$;
+create function pg_temp.members(p_user text) returns bigint language sql as $$ select count(*) from public.memberships where user_id = tests.uid(p_user) $$;
+
+-- invited but has not accepted yet
+update auth.users set email_confirmed_at = null, invited_at = now() where id = tests.uid('x2');
+select is(pg_temp.addm('x2@test.local'), 'SM403|the person must accept their invitation first', 'operator_add_member: an account that has not accepted its invitation is refused, with a fixed message');
+select is(pg_temp.addo('x2@test.local'), 'SM403|the person must accept their invitation first', 'operator_add_owner_exception: the same');
+select is(pg_temp.members('x2'), 0::bigint, '...and nothing was added');
+-- deleted
+update auth.users set deleted_at = now() where id = tests.uid('x3');
+select is(pg_temp.addm('x3@test.local'), 'SM403|the person must accept their invitation first', 'operator_add_member: a deleted account is refused');
+select is(pg_temp.addo('x3@test.local'), 'SM403|the person must accept their invitation first', 'operator_add_owner_exception: a deleted account is refused');
+select is(pg_temp.members('x3'), 0::bigint, '...and nothing was added');
+-- banned (in the future)
+update auth.users set banned_until = now() + interval '1 day' where id = tests.uid('x4');
+select is(pg_temp.addm('x4@test.local'), 'SM403|the person must accept their invitation first', 'operator_add_member: a banned account is refused');
+select is(pg_temp.addo('x4@test.local'), 'SM403|the person must accept their invitation first', 'operator_add_owner_exception: a banned account is refused');
+select is(pg_temp.members('x4'), 0::bigint, '...and nothing was added');
+-- a ban that has run out does not count; neither does a NULL one
+update auth.users set banned_until = now() - interval '1 day' where id = tests.uid('x5');
+select is(pg_temp.addm('x5@test.local'), 'ok', 'a ban in the past does not block (operator_add_member)');
+update auth.users set banned_until = now() - interval '1 day' where id = tests.uid('x6');
+select is(pg_temp.addo('x6@test.local'), 'ok', 'a ban in the past does not block (operator_add_owner_exception)');
+select is(pg_temp.addm('nobody@test.local'), '23503|no such account: invite the person first', 'an unknown e-mail still reports 23503, not SM403');
+-- the person accepts: now the operator can add them
+update auth.users set email_confirmed_at = now() where id = tests.uid('x2');
+select is(pg_temp.addm('x2@test.local'), 'ok', 'once the invitation is accepted (e-mail confirmed) the member is added');
+select is(pg_temp.members('x2'), 1::bigint, '...as a member');
+select is(pg_temp.err($q$select app.operator_add_member('tenant-b', 'x3@test.local', 'viewer', 'family member')$q$) like 'SM403|%', true, '(the deleted account stays refused)');
+
 select * from finish();
 rollback;

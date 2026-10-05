@@ -9,7 +9,9 @@ possible (the Owner cannot sign in, or the person asking is not at the keyboard)
    already knew, or have a second family member who knows them confirm. Do not proceed on a message alone.
 2. **Write down how you verified** (who, how, when). This text becomes the audit reason, so it must contain **no personal data**: no phone
    number, no address, no full name. "Verified by video call with the Owner's sibling, 2026-10-05" is fine.
-3. The person to be erased must have a **successor**: an existing account (invited, confirmed) of someone who will own the workspace.
+3. The person to be erased must have a **successor**: an existing account of someone who will own the workspace. Order: **invite -> the
+   successor accepts and sets a password -> only then** the operator adds the membership. The function refuses an account that has not
+   accepted (`SM403`), is deleted or is banned.
 
 ## Steps (SQL as `postgres`; hosted: the SQL editor)
 ```sql
@@ -20,7 +22,8 @@ select app.operator_add_owner_exception('family-silks', 'successor@example.com',
 ```
 Then, if the person is leaving the workspace, remove their membership in the dashboard or with the members API, **after** the erasure.
 
-Errors: `22023` reason shorter than 20 characters; `23503` unknown workspace or no such account (invite the successor first);
+Errors: `22023` reason shorter than 20 characters; `23503` unknown workspace or no such account (invite the successor first); `SM403` the
+successor has not accepted the invitation yet (or is deleted or banned);
 `23505` already a member.
 
 The audit log records `membership.operator_added_owner` with the reason, as the system.
