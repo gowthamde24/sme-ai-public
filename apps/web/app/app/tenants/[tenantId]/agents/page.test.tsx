@@ -31,6 +31,7 @@ vi.mock("@/lib/api/crm", async (importOriginal) => ({
 vi.mock("./actions", () => ({
   toggleAgentsAction: vi.fn(async () => undefined),
   startRunAction: vi.fn(async () => undefined),
+  startResearchRunAction: vi.fn(async () => undefined),
   cancelRunAction: vi.fn(async () => undefined),
 }));
 
@@ -192,5 +193,60 @@ describe("/app/tenants/[tenantId]/agents", () => {
     const { container } = render(await AgentsPage(props()));
     const stamp = container.querySelector("table time");
     expect(stamp?.getAttribute("title")).toBe("2026-10-04 12:00 UTC");
+  });
+
+  describe("research a lead", () => {
+    const LEAD = "77777777-7777-4777-8777-777777777777";
+    const LEAD_NO_COMPANY = "88888888-8888-4888-8888-888888888888";
+    const withLeads = () =>
+      fetchPage.mockImplementation(async (_t: string, _tenant: string, entity: string) =>
+        entity === "leads"
+          ? {
+              entity: "leads",
+              items: [
+                { id: LEAD, company_id: COMPANY },
+                { id: LEAD_NO_COMPANY, company_id: null },
+              ],
+              nextCursor: null,
+            }
+          : { entity: "companies", items: [{ id: COMPANY, name: "DEMO Silks" }], nextCursor: null },
+      );
+
+    it("offers only leads that have a company, labelled by that company", async () => {
+      withLeads();
+      render(await AgentsPage(props()));
+      const region = screen.getByRole("region", { name: "Research a lead" });
+      const options = within(region).getAllByRole("option");
+      expect(options).toHaveLength(1);
+      expect(options[0]).toHaveTextContent("DEMO Silks");
+      expect(options[0]).toHaveValue(LEAD);
+      expect(within(region).getByRole("button", { name: "Start research run" })).toBeInTheDocument();
+      expect(region).toHaveTextContent(/unreviewed/);
+      expect(region).toHaveTextContent(/contacts no one/);
+    });
+
+    it("is hidden from a viewer, when agents are off, and when there is no usable lead", async () => {
+      withLeads();
+      fetchTenant.mockResolvedValue(tenant("viewer"));
+      render(await AgentsPage(props()));
+      expect(screen.queryByRole("region", { name: "Research a lead" })).toBeNull();
+    });
+
+    it("is hidden when agents are switched off for the workspace", async () => {
+      withLeads();
+      fetchAgentSettings.mockResolvedValue({ enabled: false });
+      render(await AgentsPage(props()));
+      expect(screen.queryByRole("region", { name: "Research a lead" })).toBeNull();
+    });
+
+    it("is hidden when no lead has a company", async () => {
+      fetchPage.mockImplementation(async (_t: string, _tenant: string, entity: string) =>
+        entity === "leads"
+          ? { entity: "leads", items: [{ id: LEAD_NO_COMPANY, company_id: null }], nextCursor: null }
+          : { entity: "companies", items: [{ id: COMPANY, name: "DEMO Silks" }], nextCursor: null },
+      );
+      render(await AgentsPage(props()));
+      expect(screen.queryByRole("region", { name: "Research a lead" })).toBeNull();
+    });
   });
 });

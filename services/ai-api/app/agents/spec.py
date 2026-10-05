@@ -19,3 +19,6 @@ class AgentSpec:
     claim_predicate: str
     max_turns: int = 4
     max_calls_per_turn: int = 5
+    # reads the company's own website through a PageFetcher (the runtime refuses to start such a run
+    # without a fetcher or without a website host, before any model call)
+    uses_web: bool = False

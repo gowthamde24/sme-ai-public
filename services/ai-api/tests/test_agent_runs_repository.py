@@ -234,6 +234,7 @@ def test_a_running_run_past_its_expiry_reads_as_expired_without_a_sweeper() -> N
         (403, "42501", True, NotFoundError),
         (400, "SM204", False, repo.AgentsDisabledError),
         (400, "SM206", False, repo.RunLimitError),
+        (400, "SM207", False, repo.CostCapError),
         (400, "SM202", False, repo.TokenExpiringError),
         (400, "SM201", False, repo.RunNotRunningError),
         (409, "23505", False, ConflictError),

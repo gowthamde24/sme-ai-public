@@ -275,6 +275,117 @@ def test_an_unreachable_data_layer_ends_the_run_as_failed() -> None:
     assert out.status == "failed" and out.error_code == "tool_failed"
 
 
+def test_a_run_with_no_company_to_read_ends_before_any_reservation_or_model_call() -> None:
+    db, provider = make_db(), FakeProvider(selftest_script())
+    db.facts = {}  # a lead without a company: the database layer has nothing to read
+    out = run_agent(db, provider)
+    assert out.status == "failed" and out.error_code == "tool_failed"
+    assert provider.requests == [] and db.reserve_requests == [], "no model call, no reservation"
+    assert db.finished == [("failed", "tool_failed")]
+
+
+# ---- the daily cost cap: the worst case of every call is reserved BEFORE the call
+class _OtherModel(FakeProvider):
+    model_id = "some-model-nobody-priced"
+
+
+def test_the_worst_case_is_reserved_before_every_model_call() -> None:
+    db = make_db()
+    seen: list[int] = []
+
+    def check(provider_request: LlmRequest) -> LlmResponse:
+        # at the moment the model is called, this call's reservation must already exist
+        seen.append(len(db.reserve_requests))
+        return selftest_responses()[len(seen) - 1]
+
+    out = run_agent(db, FakeProvider([check, check, check]))
+    assert out.status == "succeeded"
+    assert seen == [1, 2, 3], "reserve (turn N) happens before the Nth model call"
+    assert [r[0] for r in db.reserve_requests] == ["usage-1", "usage-2", "usage-3"]
+    assert all(STEP_KEY.fullmatch(r[0]) for r in db.reserve_requests)
+
+
+def test_the_reservation_names_the_clients_model_and_declares_its_bounds() -> None:
+    db, provider = make_db(), FakeProvider(selftest_script())
+    run_agent(db, provider)
+    for (_, model, max_in, max_out), request in zip(
+        db.reserve_requests, provider.requests, strict=True
+    ):
+        assert model == "fake-selftest" == provider.model_id
+        assert max_out == request.max_output_tokens
+        assert max_in == runtime.input_token_bound(request)
+        sent = sum(len(b.text.encode("utf-8")) for b in request.blocks)
+        assert max_in >= sent + runtime.INPUT_TOKEN_OVERHEAD, "bytes bound the tokens"
+
+
+def test_the_input_bound_counts_bytes_and_tool_definitions() -> None:
+    from app.agents.llm.interface import Block, ToolSpec, Trust
+
+    plain = LlmRequest(
+        blocks=(Block(Trust.SYSTEM, "abc"),), tools=(), max_output_tokens=10, final_result=None
+    )
+    assert runtime.input_token_bound(plain) == 3 + runtime.INPUT_TOKEN_OVERHEAD
+    multibyte = LlmRequest(
+        blocks=(Block(Trust.UNTRUSTED, "é€"),), tools=(), max_output_tokens=10, final_result=None
+    )
+    assert runtime.input_token_bound(multibyte) == 2 + 3 + runtime.INPUT_TOKEN_OVERHEAD
+    tool = ToolSpec("t", "d", {"type": "object"})
+    with_tools = LlmRequest(
+        blocks=(Block(Trust.SYSTEM, "abc"),),
+        tools=(tool,),
+        max_output_tokens=10,
+        final_result=tool,
+    )
+    assert runtime.input_token_bound(with_tools) > runtime.input_token_bound(plain) + 20
+
+
+def test_a_full_day_stops_the_run_before_the_model_is_ever_called() -> None:
+    db, provider = make_db(), FakeProvider(selftest_script())
+    db.cap_micros = 0
+    out = run_agent(db, provider)
+    assert out.status == "failed" and out.error_code == "budget"
+    assert provider.requests == [], "no model call, so nothing was spent"
+    assert db.finished == [("failed", "budget")]
+    assert db.evidence == []
+
+
+def test_the_cap_filling_mid_run_stops_before_the_next_call_and_keeps_what_was_written() -> None:
+    db, provider = make_db(), FakeProvider(selftest_script())
+    probe = FakeProvider(selftest_script())
+    run_agent(make_db(), probe)
+    first_worst = runtime.input_token_bound(probe.requests[0]) + probe.requests[0].max_output_tokens
+    db.cap_micros = first_worst + 1  # room for the first call's worst case, not for a second one
+    out = run_agent(db, provider)
+    assert out.status == "failed" and out.error_code == "budget"
+    assert len(provider.requests) == 1
+    assert len(db.evidence) == 1, "what the first call produced stays (and stays 'unverified')"
+    assert db.finished == [("failed", "budget")]
+
+
+def test_a_model_with_no_price_fails_closed_before_any_call() -> None:
+    db, provider = make_db(), _OtherModel(selftest_script())
+    out = run_agent(db, provider)
+    assert out.status == "failed" and out.error_code == "budget"
+    assert provider.requests == []
+
+
+def test_a_zero_price_fails_closed_too() -> None:
+    db, provider = make_db(), FakeProvider(selftest_script())
+    db.prices["fake-selftest"] = (0, 1_000_000)
+    out = run_agent(db, provider)
+    assert out.status == "failed" and out.error_code == "budget"
+    assert provider.requests == []
+
+
+def test_a_failed_model_call_is_not_refunded() -> None:
+    db = make_db()
+    out = run_agent(db, FakeProvider([LlmRateLimited()]))
+    assert out.error_code == "model_failed"
+    assert db.reservations.get("usage-1", 0) > 0 and db.day_spend_micros > 0, (
+        "the call may have been billed before it failed, so its reservation keeps counting"
+    )
+
+
 # ---- nothing the model says is kept or logged
 def test_model_output_never_reaches_the_ledger_or_the_logs_except_inside_the_note_itself(
     caplog: pytest.LogCaptureFixture,

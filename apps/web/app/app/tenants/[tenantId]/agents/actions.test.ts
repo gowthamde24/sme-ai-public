@@ -6,6 +6,7 @@ import { redirectMock, redirectTarget } from "@/test/helpers";
 const requireUser = vi.fn();
 const setAgentsEnabled = vi.fn();
 const startSelftestRun = vi.fn();
+const startResearchRun = vi.fn();
 const cancelRun = vi.fn();
 const revalidatePath = vi.fn();
 
@@ -16,10 +17,12 @@ vi.mock("@/lib/api/agents", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/agents")>()),
   setAgentsEnabled: (...a: unknown[]) => setAgentsEnabled(...a),
   startSelftestRun: (...a: unknown[]) => startSelftestRun(...a),
+  startResearchRun: (...a: unknown[]) => startResearchRun(...a),
   cancelRun: (...a: unknown[]) => cancelRun(...a),
 }));
 
-import { cancelRunAction, startRunAction, toggleAgentsAction } from "./actions";
+import { cancelRunAction, startRunAction,
+  startResearchRunAction, toggleAgentsAction } from "./actions";
 
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const COMPANY = "33333333-3333-3333-3333-333333333333";
@@ -37,6 +40,7 @@ describe("agent actions", () => {
     requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok" });
     setAgentsEnabled.mockResolvedValue({ enabled: true });
     startSelftestRun.mockResolvedValue({});
+    startResearchRun.mockResolvedValue({});
     cancelRun.mockResolvedValue(undefined);
   });
 
@@ -70,6 +74,7 @@ describe("agent actions", () => {
       [409, "token_expiring", /session/],
       [409, "conflict", /out of date/],
       [429, "run_limit_reached", /Too many/],
+      [429, "cost_cap_reached", /spending limit/],
       [503, "agents_unavailable", /not available right now/],
       [500, "http_error", /Could not start/],
     ];
@@ -91,5 +96,33 @@ describe("agent actions", () => {
   it("sends an expired session to the login page", async () => {
     cancelRun.mockRejectedValueOnce(new ApiAuthError("expired"));
     expect(await redirectTarget(() => cancelRunAction(TENANT, RUN))).toBe("/login");
+  });
+
+  it("starts a research run on a lead with the caller's id, and refuses a bad id or lead without calling the API", async () => {
+    const LEAD = "99999999-9999-4999-8999-999999999999";
+    const res = await startResearchRunAction(TENANT, undefined, form({ run_id: RUN, lead_id: LEAD }));
+    expect(res?.ok).toBe(true);
+    expect(startResearchRun).toHaveBeenCalledWith("tok", TENANT, { id: RUN, leadId: LEAD });
+    startResearchRun.mockClear();
+    expect((await startResearchRunAction(TENANT, undefined, form({ lead_id: LEAD })))?.ok).toBe(false);
+    expect((await startResearchRunAction(TENANT, undefined, form({ run_id: RUN, lead_id: "x" })))?.ok).toBe(false);
+    expect(startResearchRun).not.toHaveBeenCalled();
+  });
+
+  it("explains the research refusals in fixed words, never the API's text", async () => {
+    const LEAD = "99999999-9999-4999-8999-999999999999";
+    const cases: [number, string, RegExp][] = [
+      [409, "lead_has_no_company", /no company/],
+      [409, "company_has_no_website", /no website/],
+      [503, "agents_unavailable", /not available right now/],
+      [429, "cost_cap_reached", /spending limit/],
+    ];
+    for (const [status, code, message] of cases) {
+      startResearchRun.mockRejectedValueOnce(new ApiRequestError(status, code, "CANARY-body"));
+      const res = await startResearchRunAction(TENANT, undefined, form({ run_id: RUN, lead_id: LEAD }));
+      expect(res?.ok).toBe(false);
+      expect(res?.error).toMatch(message);
+      expect(JSON.stringify(res)).not.toContain("CANARY");
+    }
   });
 });

@@ -265,6 +265,26 @@ export async function startSelftestRun(
   );
 }
 
+/** The Research Agent on one LEAD (it reads the lead's company's own website). Idempotent on `id`. */
+export async function startResearchRun(
+  accessToken: string,
+  tenantId: string,
+  input: { id: string; leadId: string },
+): Promise<RunOut> {
+  checked(tenantId, input.id, input.leadId);
+  return parseRun(
+    await apiRequest(`/v1/tenants/${tenantId}/agent-runs`, accessToken, {
+      method: "POST",
+      body: JSON.stringify({
+        id: input.id,
+        agent: "research",
+        target_kind: "lead",
+        target_id: input.leadId,
+      }),
+    }),
+  );
+}
+
 export async function cancelRun(
   accessToken: string,
   tenantId: string,

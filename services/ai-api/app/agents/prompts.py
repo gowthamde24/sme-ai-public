@@ -14,6 +14,7 @@ from app.agents.llm.interface import Block, LlmRequest, ToolSpec, Trust
 from app.agents.notes import FIXED_NOTES, NOTE_RECORDED, NOTE_REFUSED, NOTE_REPAIR
 from app.agents.schemas import FinalResult
 from app.agents.spec import AgentSpec
+from app.agents.tools import PageRecord
 
 __all__ = [
     "FINAL_RESULT",
@@ -52,6 +53,7 @@ def build_request(
     delimiter: str,
     notes: Sequence[str],
     max_output_tokens: int,
+    pages: Sequence[PageRecord] = (),
 ) -> LlmRequest:
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
         raise ValueError("the delimiter must be a random hex string")
@@ -73,6 +75,23 @@ def build_request(
         )
     )
     blocks.append(Block(Trust.UNTRUSTED, data))
+    # each page this run fetched: untrusted text, one block per page, inside the same per-run
+    # delimiter, flattened to one line (it can neither close the block nor fake a marker)
+    for page in pages:
+        blocks.append(
+            Block(
+                Trust.UNTRUSTED,
+                "\n".join(
+                    (
+                        f"<<<DATA {delimiter}",
+                        f"page: {page.handle}",
+                        f"url: {escape_value(page.url, delimiter)}",
+                        f"text: {escape_value(page.text, delimiter)}",
+                        f"DATA {delimiter}>>>",
+                    )
+                ),
+            )
+        )
     return LlmRequest(
         blocks=tuple(blocks),
         tools=tuple(t.spec() for t in spec.tools),

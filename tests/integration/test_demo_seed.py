@@ -596,8 +596,10 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
         )
         assert unknown.returncode != 0
         assert (
-            operator_sql.sql("select string_agg(enabled::text, ',') from public.platform_flags")
-            == "false,false"
+            operator_sql.sql(
+                "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
+            )
+            == "false,false,false"
         ), "an unknown slug changed nothing"
 
         done = subprocess.run(  # noqa: S603 - our own script, fixed argv
@@ -608,8 +610,12 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
         )
         assert done.returncode == 0, done.stderr
         assert (
-            operator_sql.sql("select string_agg(enabled::text, ',') from public.platform_flags")
-            == "true,true"
+            operator_sql.sql(
+                "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
+            )
+            == "true,false,true"
+        ), (
+            "agents and selftest are on; the research switch (agents_enabled, research_enabled, selftest_enabled) is not touched"
         )
         allowed = operator_sql.sql(
             "select array_to_string(allowed_tenants, ',') from public.agent_definitions "
@@ -733,8 +739,10 @@ def test_every_sql_block_of_the_kill_switch_runbook_runs_against_the_real_schema
     assert len(blocks) >= 7, "the three levels, their verifications and the listing"
     slug = seed.DEMO_WORKSPACE_SLUG
     for block in blocks:
-        statement = block.replace(":RUN_ID", "00000000-0000-4000-8000-000000000000").replace(
-            ":SLUG", slug
+        statement = (
+            block.replace(":RUN_ID", "00000000-0000-4000-8000-000000000000")
+            .replace(":SLUG", slug)
+            .replace(":MODEL_ID", "smoke-model")
         )
         out = operator_sql.sql(f"begin; {statement} rollback;")
         assert "ERROR" not in out

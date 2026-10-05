@@ -86,11 +86,15 @@ def _target_company(
     if body.target_kind == "company":
         return target.model_dump(), {"company_id": str(body.target_id)}
     refs: dict[str, Any] = {"lead_id": str(body.target_id)}
+    # a lead with no company has nothing to research and no home for a claim: refused BEFORE the run
+    # exists, so no fetch and no model call can ever be made for it
     if target.company_id is None:
-        return {}, refs
+        raise ApiError(
+            409, "lead_has_no_company", "This lead has no company yet. Link a company first."
+        )
     company = runtime.crm.get_row(token, "companies", tenant, target.company_id)
     if company is None:
-        return {}, refs
+        raise not_found()
     refs["company_id"] = str(target.company_id)
     return company.model_dump(), refs
 
@@ -103,7 +107,12 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     if not agents.executor.has_capacity():
         raise ApiError(503, "agents_busy", "Agents are busy. Try again shortly.")
     spec = AGENTS[body.agent]
+    if spec.uses_web and not agents.research_available:
+        raise ApiError(503, "agents_unavailable", "Agents are not available right now.")
     company, refs = _target_company(runtime, ctx, body)
+    if spec.uses_web and not model_input_from_company(company).website_host:
+        # nothing to read: refused BEFORE the run exists (no fetch, no model call)
+        raise ApiError(409, "company_has_no_website", "This company has no website to research.")
     started = agents.repository.start_run(
         ctx.principal.token,
         ctx.tenant.id,
@@ -117,7 +126,9 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     )
     if not started.replayed:
         try:
-            agents.executor.submit(RunTask(run_id=started.run_id, token=ctx.principal.token))
+            agents.executor.submit(
+                RunTask(run_id=started.run_id, token=ctx.principal.token, agent=spec.name)
+            )
         except ExecutorBusy:
             logger.warning("agent run %s could not be queued; cancelling it", started.run_id)
             try:

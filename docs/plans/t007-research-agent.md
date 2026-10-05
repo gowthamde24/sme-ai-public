@@ -128,3 +128,14 @@ Out of T007: search, contact enrichment, e-mail, scheduling (option B principal 
 * Fixture hosts end in `.test`; the real fetcher refuses that suffix by name, only the fake serves them.
 * `make smoke-fetch` (opt-in) fetches example.com and example.org through the real fetcher and prints numbers only. Not run by me.
 
+
+## Commit 4 implementation notes (built 2026-10-05; deviations from the plan above)
+* Fakes only: the scripted research model (`research_script`), `FixturePageFetcher`, the synthetic sites under `tests/fixtures/web/`. The agent is
+  startable through the API only in development with `RESEARCH_FIXTURE_DIR` set; there is no real fetcher or model wiring (M4 is still the owner's step).
+* Tools: `fetch_page(path)`, `record_evidence(page, quote)`, `propose_claim(predicate, value, stance, evidence)`; handles p1..p5 and e1..e3 are issued
+  by the runtime. The database enforces the lead's host and the 300-character quote again (`agent_write_evidence`) and a slug value shape.
+* `max_input_tokens` 120,000, not 40,000 (the cost-cap reservation counts bytes); `max_cost_micros` 150,000 as planned. The per-day cap is the commit-3
+  daily cost cap, not a new column.
+* The review screen (M3 in the plan) is not built here; the agents page has a "Research a lead" start form, and the existing suggestion lists show the
+  claims as "agent suggestion, unreviewed". The golden set and its precision report are not built (they need the owner's labelled expectations).
+* DNS lookups are bounded (`FetchConfig.max_dns_lookups`).

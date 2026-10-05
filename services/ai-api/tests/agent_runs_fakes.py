@@ -17,6 +17,7 @@ from app.agent_runs.models import (
 )
 from app.agent_runs.repository import (
     AgentsDisabledError,
+    CostCapError,
     RunLimitError,
     StartResult,
 )
@@ -236,6 +237,7 @@ def claim_row(claim_id: uuid.UUID, company_id: uuid.UUID, **over: Any) -> ClaimS
 
 
 __all__ = [
+    "CostCapError",
     "FakeAgentRunsRepository",
     "FakeExecutor",
     "Forbidden",

@@ -14,8 +14,13 @@ import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../local-time";
-import { cancelRunAction, startRunAction, toggleAgentsAction } from "./actions";
-import { AgentToggleForm, CancelRunForm, StartRunForm } from "./agent-forms";
+import {
+  cancelRunAction,
+  startResearchRunAction,
+  startRunAction,
+  toggleAgentsAction,
+} from "./actions";
+import { AgentToggleForm, CancelRunForm, StartResearchForm, StartRunForm } from "./agent-forms";
 
 export const metadata = { title: "Agents · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -47,12 +52,21 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   let settings: AgentSettingsOut | null = null;
   let runs: PageRunOut | null = null;
   let companies: { id: string; name: string }[] = [];
+  let leads: { id: string; label: string }[] = [];
   try {
     settings = await fetchAgentSettings(user.accessToken, tenantId);
     runs = await fetchRuns(user.accessToken, tenantId);
     const page = await fetchPage(user.accessToken, tenantId, "companies");
     if (page.entity === "companies")
       companies = page.items.map((row) => ({ id: row.id, name: row.name }));
+    const leadPage = await fetchPage(user.accessToken, tenantId, "leads");
+    if (leadPage.entity === "leads") {
+      const names = new Map(companies.map((c) => [c.id, c.name]));
+      // a lead with no company has nothing to research: it is not offered
+      leads = leadPage.items
+        .filter((row) => row.company_id !== null && names.has(row.company_id))
+        .map((row) => ({ id: row.id, label: names.get(row.company_id as string) ?? "Lead" }));
+    }
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -110,6 +124,23 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
             action={startRunAction.bind(null, tenantId)}
             runId={crypto.randomUUID()}
             companies={companies}
+          />
+        </section>
+      )}
+
+      {canStart && settings?.enabled && leads.length > 0 && (
+        <section aria-labelledby="research-heading">
+          <h2 id="research-heading">Research a lead</h2>
+          <p className="hint">
+            The research agent reads only the lead&apos;s company&apos;s own website, quotes what it finds, and suggests what it
+            says about the buyer type, order size, size and whether the business is open. Every suggestion stays
+            &quot;agent suggestion, unreviewed&quot; until an owner or admin accepts it. It contacts no one. (Development: it
+            runs on synthetic demo sites only.)
+          </p>
+          <StartResearchForm
+            action={startResearchRunAction.bind(null, tenantId)}
+            runId={crypto.randomUUID()}
+            leads={leads}
           />
         </section>
       )}

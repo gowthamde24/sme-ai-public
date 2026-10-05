@@ -23,6 +23,7 @@ import httpx
 from app.agents.errors import (
     BY_SQLSTATE,
     AgentDbError,
+    CostCapReached,
     DataLayerUnavailable,
     ReferenceRefused,
     RunDenied,
@@ -173,6 +174,24 @@ class AgentDb:
 
     # ------------------------------------------------------------------ writes (all through
     # the definer functions)
+    def reserve_cost(
+        self, step_key: str, *, model: str, max_input_tokens: int, max_output_tokens: int
+    ) -> None:
+        result = self._rpc(
+            "agent_reserve_cost",
+            {
+                "p_run_id": str(self._run),
+                "p_step_key": step_key,
+                "p_model": model,
+                "p_max_input_tokens": max_input_tokens,
+                "p_max_output_tokens": max_output_tokens,
+            },
+        )
+        # a refusal is RETURNED (not raised) so the database keeps its audit event; anything
+        # but an explicit grant is a refusal
+        if result.get("granted") is not True:
+            raise CostCapReached
+
     def record_usage(self, step_key: str, usage: Usage) -> None:
         self._rpc(
             "agent_record_usage",
@@ -217,15 +236,34 @@ class AgentDb:
         )
         return self._uuid(result.get("evidence_id"))
 
+    def write_web_evidence(self, step_key: str, *, url: str, quote: str) -> uuid.UUID:
+        result = self._rpc(
+            "agent_write_evidence",
+            {
+                "p_run_id": str(self._run),
+                "p_step_key": step_key,
+                "p_kind": "web_page",
+                "p_url": url,
+                "p_snippet": quote,
+            },
+        )
+        return self._uuid(result.get("evidence_id"))
+
     def write_claim(
-        self, step_key: str, *, value: str, stance: str, evidence_id: uuid.UUID
+        self,
+        step_key: str,
+        *,
+        value: str,
+        stance: str,
+        evidence_id: uuid.UUID,
+        predicate: str | None = None,
     ) -> uuid.UUID:
         result = self._rpc(
             "agent_write_claim",
             {
                 "p_run_id": str(self._run),
                 "p_step_key": step_key,
-                "p_predicate": self._predicate,
+                "p_predicate": predicate or self._predicate,
                 "p_value": value,
                 "p_evidence_ids": [str(evidence_id)],
                 "p_stance": stance,

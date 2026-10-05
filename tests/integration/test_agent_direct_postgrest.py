@@ -31,7 +31,7 @@ from crm_support import Tenant, World
 from evidence_support import code_of, pg, uid
 
 AGENT_TABLES = ["tenant_agent_settings", "agent_runs", "agent_run_steps", "claim_reviews"]
-OPERATOR_TABLES = ["platform_flags", "agent_limits", "agent_definitions"]
+OPERATOR_TABLES = ["platform_flags", "agent_limits", "agent_definitions", "agent_model_prices"]
 FUNCTIONS = [
     "start_agent_run",
     "agent_write_evidence",
@@ -42,6 +42,8 @@ FUNCTIONS = [
     "cancel_agent_run",
     "set_tenant_agents_enabled",
     "review_claim",
+    "agent_reserve_cost",
+    "set_tenant_daily_cost_cap",
 ]
 GENERIC = "agent action not permitted"
 
@@ -225,6 +227,14 @@ ANON_CALLS: dict[str, dict[str, Any]] = {
         "p_decision": "accepted",
         "p_confidence": "low",
     },
+    "agent_reserve_cost": {
+        "p_run_id": "R",
+        "p_step_key": "anon-5",
+        "p_model": "fake-selftest",
+        "p_max_input_tokens": 1,
+        "p_max_output_tokens": 1,
+    },
+    "set_tenant_daily_cost_cap": {"p_tenant_id": "T", "p_cap_micros": 1},
 }
 
 
@@ -283,6 +293,10 @@ OPERATOR_BODIES: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {
         {"limit_key": "max_runs_per_hour", "limit_value": 99999},
         {"limit_value": 99999},
     ),
+    "agent_model_prices": (
+        {"model": "rogue-model", "input_micros_per_mtok": 1, "output_micros_per_mtok": 1},
+        {"input_micros_per_mtok": 1},
+    ),
     "agent_definitions": (
         {
             "agent_name": "rogue",
@@ -311,6 +325,7 @@ def test_no_role_touches_the_operator_tables(on: World, table: str) -> None:
                 "platform_flags": "key",
                 "agent_limits": "limit_key",
                 "agent_definitions": "agent_name",
+                "agent_model_prices": "model",
             }[table]
             path = f"/{table}" if method == "POST" else f"/{table}?{key}=not.is.null"
             w = pg(on.stack, user, method, path, json=body, representation=False)
@@ -324,8 +339,8 @@ def test_no_role_touches_the_operator_tables(on: World, table: str) -> None:
     assert operator_sql.sql(
         "select string_agg(limit_key || '=' || limit_value, ',' order by limit_key) from public.agent_limits"
     ) in {
-        "max_concurrent_runs=3,max_runs_per_hour=30,max_writes_per_day=500,ttl_default_seconds=900,ttl_max_seconds=1800",
-        "max_concurrent_runs=3,max_runs_per_hour=100000,max_writes_per_day=500,ttl_default_seconds=900,ttl_max_seconds=1800",
+        "daily_cost_micros=2000000,max_concurrent_runs=3,max_runs_per_hour=30,max_writes_per_day=500,ttl_default_seconds=900,ttl_max_seconds=1800",
+        "daily_cost_micros=2000000,max_concurrent_runs=3,max_runs_per_hour=100000,max_writes_per_day=500,ttl_default_seconds=900,ttl_max_seconds=1800",
     }  # (the module raises the hourly START cap for its own runs and restores it)
 
 

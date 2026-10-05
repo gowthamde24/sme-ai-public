@@ -173,6 +173,26 @@ def test_plain_text_from_the_model_is_not_data() -> None:
     assert out.tool_calls == () and out.structured is None
 
 
+@pytest.mark.parametrize(
+    "prices",
+    [
+        {"input_micros_per_mtok": 0},
+        {"output_micros_per_mtok": 0},
+        {"input_micros_per_mtok": -1},
+        {"output_micros_per_mtok": -1},
+    ],
+)
+def test_a_zero_or_negative_price_is_refused_the_spend_cap_would_see_free_calls(
+    prices: dict[str, int],
+) -> None:
+    with pytest.raises(ValueError, match="positive"):
+        config(**prices)
+
+
+def test_the_client_names_its_model_for_the_price_table() -> None:
+    assert make(Server()).model_id == MODEL
+
+
 def test_usage_and_cost_are_computed_from_the_configured_prices_rounded_up() -> None:
     server = Server(reply(tool_use("write_note", text="n"), tokens_in=1000, tokens_out=200))
     out = make(server).complete(request())

@@ -107,4 +107,13 @@ def test_a_tool_handler_takes_exactly_a_context_and_its_arguments() -> None:
 def test_the_tool_context_holds_no_token_tenant_or_table() -> None:
     from app.agents.tools import ToolContext
 
-    assert set(inspect.signature(ToolContext).parameters) == {"db", "state", "step_key"}
+    # the run's database module, the run's own state and step key; and, for an agent that reads the
+    # web, a PageFetcher plus the host scope the RUNTIME decided. No token, no tenant, no table.
+    assert set(inspect.signature(ToolContext).parameters) == {
+        "db",
+        "state",
+        "step_key",
+        "fetcher",
+        "host",
+        "allowed_hosts",
+    }

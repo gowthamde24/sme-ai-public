@@ -33,7 +33,7 @@ class RunStart(_Strict):
     (idempotent start)."""
 
     id: ApiUuid
-    agent: Literal["selftest"]
+    agent: Literal["selftest", "research"]
     target_kind: Literal["company", "lead"]
     target_id: ApiUuid
 

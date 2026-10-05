@@ -68,7 +68,7 @@ To turn it back on: set `enabled = true` (or use the button).
 update public.platform_flags set enabled = false where key = 'agents_enabled';
 ```
 
-One agent only (for example the selftest agent), leaving the rest: `where key = 'selftest_enabled'` instead.
+One agent only, leaving the rest: `where key = 'selftest_enabled'` (the selftest agent) or `where key = 'research_enabled'` (the Research Agent, which is also OFF and allowed for no workspace until the operator runs `app.operator_enable_research('<slug>')` in a LOCAL database) instead.
 
 Verify it took effect:
 
@@ -82,8 +82,60 @@ select status, count(*) from public.agent_runs where created_at > now() - interv
 To turn agents back on, set the flag back to `true`, **and** check that the workspace switches and the agent's allow-list
 (`agent_definitions.allowed_tenants`) are what you intend: a platform flag never opens an agent to a workspace by itself.
 
+## Spending cap (per workspace, per UTC day)
+
+Each workspace's agents may spend at most the **daily cost cap** (default 2.00; the Owner can set 0 to 20.00 for their workspace with
+`set_tenant_daily_cost_cap`). A model call is reserved **before** it is made; when the day is full runs end as `failed` / `budget`, new
+starts answer 429 `cost_cap_reached`, and each refusal leaves an `agent_cost.refused` audit event. Amounts are millionths of the billing
+currency (2,000,000 = 2.00). Run as the database owner.
+
+Today's spend and cap, per workspace:
+
+```sql
+select t.slug as workspace,
+       app.agent_day_spend(t.id, app.agent_utc_today()) as spent_today,
+       app.agent_daily_cap(t.id)                        as cap_today
+  from public.tenants t
+ order by spent_today desc;
+```
+
+The calls behind it (newest first), and what was refused:
+
+```sql
+select r.created_at, r.run_id, r.step_key, r.cost_day, r.model, r.reserved_micros, r.settled_micros
+  from public.agent_cost_reservations r join public.tenants t on t.id = r.tenant_id
+ where t.slug = ':SLUG' order by r.created_at desc limit 20;
+select created_at, entity_id as run_id, new_values from public.audit_events
+ where tenant_id = (select id from public.tenants where slug = ':SLUG') and action in ('agent_cost.refused', 'agent_cost.overshoot')
+ order by id desc limit 20;
+```
+
+Stop a workspace's agents spending at once (a zero cap refuses every start and every model call; it applies from the next call):
+
+```sql
+insert into public.tenant_agent_settings (tenant_id, daily_cost_cap_micros)
+values ((select id from public.tenants where slug = ':SLUG'), 0)
+on conflict (tenant_id) do update set daily_cost_cap_micros = 0, updated_at = now();
+-- back to the operator default: set daily_cost_cap_micros = null
+```
+
+The operator default (applies to every workspace without its own value; at most 20,000,000):
+
+```sql
+update public.agent_limits set limit_value = 2000000 where limit_key = 'daily_cost_micros';
+```
+
+Prices: **a model without a price row is refused** (fail closed). Add the real model's price from the provider's price list, and keep it equal
+to `LLM_INPUT_MICROS_PER_MTOK` / `LLM_OUTPUT_MICROS_PER_MTOK`; prices must be above zero:
+
+```sql
+insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values (':MODEL_ID', 3000000, 15000000)
+on conflict (model) do update set input_micros_per_mtok = excluded.input_micros_per_mtok,
+                                  output_micros_per_mtok = excluded.output_micros_per_mtok, updated_at = now();
+```
+
 ## Belt and braces
 
 If the API process itself must stop (for example a runaway cost at the model provider): stop the process (this ends every
 in-flight run), set `AGENTS_ENABLED=false` for the next start, **and** set the provider-side spend cap (the real limit; see
-`docs/pre-pilot-checklist.md`). The database caps only what the runtime reports.
+`docs/pre-pilot-checklist.md`). The database's daily cap limits what the runtime reserves and reports; it cannot see what the provider bills.

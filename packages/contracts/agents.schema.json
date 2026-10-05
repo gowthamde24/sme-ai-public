@@ -531,7 +531,10 @@
           "type": "string"
         },
         "agent": {
-          "const": "selftest",
+          "enum": [
+            "selftest",
+            "research"
+          ],
           "title": "Agent",
           "type": "string"
         },

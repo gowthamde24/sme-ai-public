@@ -336,6 +336,7 @@ def test_the_queue_and_the_label_snapshot_read_claims_from_the_same_filtered_sou
     queue(server, include_blind_scores=True)
     queue_claims = [r for r in server.requests if r.url.path.endswith("/claims_for_scoring")]
     assert len(queue_claims) == 1
+    assert "lead_id" not in dict(queue_claims[0].url.params), "scoring never filters claims by lead"
     assert not any(r.url.path.endswith("/claims") for r in server.requests)
 
     seen: list[httpx.Request] = []

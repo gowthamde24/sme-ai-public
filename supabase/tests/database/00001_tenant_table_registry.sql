@@ -94,6 +94,13 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      insert into public.agent_run_steps (id, tenant_id, run_id, started_by, step_key, kind, status)
      select %2$L, %1$L, r.id, %5$L, 'step-' || left(%2$L, 8), 'tool_call', 'ok' from r$$,
    'status = status', $$delete from public.agent_run_steps where id = %2$L$$, true),
+  -- T007 M2 / 3: the daily cost ledger. Owner / Admin read it, nobody writes it directly; never paginated.
+  ('agent_cost_reservations',
+   $$with r as (insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, company_id, expires_at, input_sha256, input_refs)
+                values (%2$L, %1$L, %5$L, 'selftest', 'v1', %3$L, now() + interval '15 minutes', repeat('0', 64), '{}'::jsonb) returning id)
+     insert into public.agent_cost_reservations (id, tenant_id, run_id, step_key, cost_day, max_input_tokens, max_output_tokens, reserved_micros, args_sha256)
+     select %2$L, %1$L, r.id, 'usage-' || left(%2$L, 8), current_date, 1, 1, 1, repeat('0', 64) from r$$,
+   'reserved_micros = reserved_micros', $$delete from public.agent_cost_reservations where id = %2$L$$, false),
   ('erasure_requests',
    $$insert into public.erasure_requests (id, tenant_id, scope, requested_by, execute_after) values (%2$L, %1$L, 'tenant', %5$L, now())$$,
    'status = status', $$delete from public.erasure_requests where id = %2$L$$, true),
@@ -157,6 +164,8 @@ select t, r, s, i, u, d from (values
   ('agent_runs',    'sales',  false, false, false, false), ('agent_runs',   'viewer', false, false, false, false),
   ('agent_run_steps','owner', true, false, false, false), ('agent_run_steps','admin', true, false, false, false),
   ('agent_run_steps','sales', false, false, false, false), ('agent_run_steps','viewer', false, false, false, false),
+  ('agent_cost_reservations','owner', true, false, false, false), ('agent_cost_reservations','admin', true, false, false, false),
+  ('agent_cost_reservations','sales', false, false, false, false), ('agent_cost_reservations','viewer', false, false, false, false),
   -- T006b M1: the erasure log is read by Owner / Admin only and written by nobody directly.
   ('erasure_requests','owner', true, false, false, false), ('erasure_requests','admin', true, false, false, false),
   ('erasure_requests','sales', false, false, false, false), ('erasure_requests','viewer', false, false, false, false),

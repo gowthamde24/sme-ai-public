@@ -55,6 +55,7 @@ const ROW = {
   },
   leads: {
     id: "a",
+    company_id: null,
     status: "new",
     source: null,
     created_via: "manual",

@@ -50,6 +50,14 @@ class LimitReached(AgentDbError):
     code = "limit_reached"
 
 
+class CostCapReached(AgentDbError):
+    """SM207: the tenant's daily cost cap has no room for the model call (or the model has no
+    usable price: fail closed, the same refusal)."""
+
+    sqlstate = "SM207"
+    code = "cost_cap_reached"
+
+
 class ValueRefused(AgentDbError):
     """22023 / 23514: an argument or a value the database does not accept."""
 
@@ -79,6 +87,7 @@ BY_SQLSTATE: dict[str, type[AgentDbError]] = {
         AgentsDisabled,
         StepConflict,
         LimitReached,
+        CostCapReached,
         ValueRefused,
         ReferenceRefused,
     )

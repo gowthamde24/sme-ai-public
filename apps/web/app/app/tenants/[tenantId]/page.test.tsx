@@ -108,6 +108,7 @@ const PAGES: Record<string, CrmPage> = {
     items: [
       {
         id: "l1",
+        company_id: null,
         status: "qualified",
         source: "trade fair",
         created_via: "manual",

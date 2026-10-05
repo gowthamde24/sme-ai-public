@@ -63,12 +63,14 @@ bench-rls:
 # API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
 test-integration:
-	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q --ignore=../../tests/integration/test_agent_evals.py
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration -q --ignore=../../tests/integration/test_agent_evals.py --ignore=../../tests/integration/test_research_evals.py
 
 # T006 agent containment evals: scripted models that OBEY every injection, run against the real local stack; the hard gate is
 # measured from the database afterwards (tests/evals/, tests/integration/agent_eval.py). FakeProvider only: no key, no network.
+# T007 adds the Research Agent's web-injection cases (tests/evals/research/, tests/integration/research_eval.py): synthetic fixture
+# sites only, no network.
 eval:
-	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py -q
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py ../../tests/integration/test_research_evals.py -q
 
 # OPT-IN, NEVER part of make check: the live-capable cases against the REAL model, pass rates vs tests/evals/thresholds.json.
 # Refuses unless the real adapter's own gates are satisfied (provider, model, key, prices, spend-cap confirmation).

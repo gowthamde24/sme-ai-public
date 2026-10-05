@@ -74,6 +74,10 @@ class FetchConfig:
     min_interval: float = 2.0
     daily_cap: int = 20
     max_crawl_delay: float = 10.0
+    # DNS lookups cannot be cancelled once started: a name server that never answers would leak
+    # one thread per request. At most this many lookups exist at once (a stuck one keeps its slot
+    # until it ends); more are refused.
+    max_dns_lookups: int = 4
     user_agent: str = USER_AGENT
     ssl_context: ssl.SSLContext | None = field(default=None, compare=False)
 
@@ -133,6 +137,42 @@ class _Watchdog:
         self._timer.cancel()
 
 
+class _BoundedResolver:
+    """DNS lookups on a fixed pool of threads with a hard cap on how many can be in flight.
+
+    `getaddrinfo` cannot be interrupted, so a caller that gives up (its deadline passed) leaves
+    the lookup running. The old code started a fresh single-thread pool per lookup, so a name
+    server that never answers made the process grow one stuck thread per request, without limit.
+    Here the number of threads is fixed, a slot is released only when the LOOKUP itself finishes
+    (not when the caller stops waiting), and a lookup that finds no free slot is refused at once
+    (`resolver_busy`) instead of queueing."""
+
+    def __init__(self, resolver: Resolver, slots: int) -> None:
+        if slots < 1:
+            raise ValueError("at least one DNS lookup slot is required")
+        self._resolver = resolver
+        self._slots = threading.BoundedSemaphore(slots)
+        self._pool = ThreadPoolExecutor(max_workers=slots, thread_name_prefix="dns")
+
+    def lookup(self, host: str, port: int, deadline: Deadline) -> list[str]:
+        if not self._slots.acquire(blocking=False):
+            raise FetchError("resolver_busy")
+        try:
+            future = self._pool.submit(self._resolver, host, port)
+        except RuntimeError:
+            self._slots.release()
+            raise FetchError("resolver_busy") from None
+        future.add_done_callback(lambda _f: self._slots.release())
+        try:
+            return future.result(timeout=deadline.remaining())
+        except TimeoutError:
+            raise FetchError("timeout") from None
+        except FetchError:
+            raise
+        except Exception:  # noqa: BLE001  (any resolver failure is one constant code)
+            raise FetchError("resolve_failed") from None
+
+
 class SafeFetcher:
     def __init__(
         self,
@@ -146,6 +186,7 @@ class SafeFetcher:
     ) -> None:
         self._cfg = config or FetchConfig()
         self._resolver = resolver or _system_resolver
+        self._dns = _BoundedResolver(self._resolver, self._cfg.max_dns_lookups)
         self._socket_factory = socket_factory or _system_socket_factory
         self._clock = clock
         self._limiter = HostLimiter(
@@ -254,19 +295,7 @@ class SafeFetcher:
     # ------------------------------------------------------------------ one request
 
     def _resolve_and_pin(self, host: str, port: int, deadline: Deadline) -> Address:
-        pool = ThreadPoolExecutor(max_workers=1)
-        try:
-            future = pool.submit(self._resolver, host, port)
-            try:
-                answers = future.result(timeout=deadline.remaining())
-            except TimeoutError:
-                raise FetchError("timeout") from None
-            except FetchError:
-                raise
-            except Exception:  # noqa: BLE001  (any resolver failure is one constant code)
-                raise FetchError("resolve_failed") from None
-        finally:
-            pool.shutdown(wait=False, cancel_futures=True)
+        answers = self._dns.lookup(host, port, deadline)
         if not answers:
             raise FetchError("resolve_failed")
         addresses: list[Address] = []

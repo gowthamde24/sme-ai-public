@@ -671,3 +671,123 @@ the same ownership proof as before); the lead is recorded as `claims.source_lead
 rows are not rewritten: `claims_effective` gains `home_company_id` and `about_lead_id`, and `claims_for_scoring` exposes the home as
 `company_id`. Evidence of a lead run is still linked to the lead, so `evidence_for_scoring` is unchanged. Migration
 `20261013090000_t007_claim_home.sql`; tests `supabase/tests/database/48_claim_home.test.sql`, `tests/integration/test_claim_home.py`.
+
+## T007 M2 note: the daily cost cap (2026-10-05)
+
+A tenant's agents may spend at most **2.00 per UTC day** (operator default `agent_limits.daily_cost_micros = 2,000,000`, in millionths of the
+billing currency). The tenant's **Owner** (not Admin, second factor required, ADR 0016) can set its own value with
+`set_tenant_daily_cost_cap` to anything from 0 to **20.00**; both the default and the override carry that ceiling as a CHECK, and the change is
+audited by the `tenant_agent_settings` audit trigger (who, old value, new value). Migration `20261014090000_t007_daily_cost_cap.sql`; tests
+`supabase/tests/database/49_daily_cost_cap.test.sql`, `tests/integration/test_daily_cost_cap.py` and three tests in
+`tests/integration/test_agent_runs_api.py`.
+
+**Where it is enforced (before the money is spent, not after).**
+1. `start_agent_run` refuses (SM207) when today's spend already fills the cap (`spent >= cap`; a zero or missing cap fills it). A cheap early refusal.
+2. `agent_reserve_cost`, called by the runtime **before every model call**, takes the tenant's advisory lock, computes the call's worst case
+   `R = ceil((max_input × input price + max_output × output price) / 1,000,000)` (rounded **up**; prices from the operator table
+   `agent_model_prices`, keyed by the model id the client reports), and grants only if `spent_today + R <= cap`. A grant stores a reservation
+   (`agent_cost_reservations`); a refusal is **returned** as `{granted: false, reason: daily_cap | no_price}` (a raise would roll back the audit
+   event, so the cap hit's `agent_cost.refused` audit row would be lost) and the API port turns it into the SM207 exception, which ends the run as
+   `failed / budget` before any model call was made.
+3. `agent_record_usage` **settles** the reservation: the call's real tokens at the reserved price snapshot, rounded up, or the runtime's reported
+   cost if that is larger. The unused part of the reservation is released at once.
+4. There is **no unreserved path** (migration `20261014090100_t007_cost_cap_hardening.sql`): a usage record for a step key nobody reserved is refused
+   (23503), so nothing reaches the day's ledger that was not reserved first, and settling takes the same per-tenant lock as reserving. The run's own
+   token and cost budgets still count what the runtime *reported*.
+5. **Bounds against a lock-out by a member who calls the functions directly.** A reported cost may be at most **twice the reserved worst case**
+   (23514 otherwise; the reservation stays open and keeps counting); what is charged to the day may not exceed the run's own cost budget (SM203);
+   and a reservation must fit what is left of the run's token budgets, counting the run's other open reservations (SM203, before any model call), so
+   one call on one run cannot reserve a day's cap. A member can still start runs and use their budgets, which is what a member is for; one run can
+   reserve at most the cost of its own token budgets (selftest: 20,000 in + 4,000 out).
+
+**Fail closed.** No price row for the model, a zero price (the table CHECK forbids it and the function refuses it too), a zero cap, a missing
+operator default: each is a refusal, never "free". No real model has a price until the operator adds it (the migration seeds only the scripted
+development model `fake-selftest`, one micro per token, so local runs and the evals work).
+
+**Which UTC day a cost belongs to.** The day the call was **authorised** (the reservation), from `app.agent_utc_today()`. Settling never moves it:
+a call reserved at 23:59:58 and settled at 00:00:03 stays on the earlier day; a run started on day D that calls the model on D+1 is charged to
+D+1. The daily sum is an index range scan on `(tenant_id, cost_day)`. The clock helper is a function that tests replace inside their rolled-back
+transaction; there is no override hook in production code, and no client role can execute it (nor any other helper).
+
+**The input bound.** The runtime declares `max_input_tokens` as the UTF-8 byte length of everything it sends (blocks, tool definitions) plus 2,048
+for the provider's own framing. A token is at least one byte, so this bounds the tokens of the text. `max_output_tokens` is the request's `max_tokens`,
+which the provider enforces. Whether 2,048 covers a real provider's framing is **unverified** until `make eval-live` has run (checklist row).
+
+**A resumed run replays its earlier turns, and those model calls are not charged again.** The runtime's resume contract (a second runner on an
+interrupted run replays steps instead of duplicating them) re-calls the model for turns whose usage is already recorded; their reservations and
+usage records replay without a new charge, so a resume can spend up to the earlier turns' cost once more, unrecorded. v1 has no automatic resume (a
+restart drops runs; only the tests resume one), so this is a known gap, not a path users reach; closing it is a checklist row.
+
+**A failed model call is not refunded.** If the provider call fails after the reservation, the reservation keeps counting (the call may have been
+billed); it is not released. The run ends as `failed / model_failed`.
+
+**Maximum overshoot of the cap.** The reservation is a true upper bound whenever each call's usage stays inside the bounds it declared, so the
+overshoot is then **0**. The database cannot see what a provider bills, so if a call is reported **beyond** its bounds the ledger records the true
+cost (settled > reserved), writes an `agent_cost.overshoot` audit event, and the next reservation refuses. The largest the ledger can then exceed the
+cap is **`max_concurrent_runs × the agent's per-run max_cost_micros`**: only calls in flight when the last reservation was granted can settle above
+their reservation; a recorded call can never exceed its run's cost budget (SM203); and at most `max_concurrent_runs` runs are in flight at once.
+For the `selftest` agent: 3 × 250,000 = **750,000 (0.75)**, so a day's ledger can read at most 2.75 with the default cap.
+*Where the 3 comes from:* `agent_limits.max_concurrent_runs` (operator-managed, migration-only, default 3), enforced in `start_agent_run` under the
+tenant's start lock by counting the tenant's runs that are `running`, unexpired and not cancelled. A cancelled or expired run cannot settle
+(SM201 / SM202), so its in-flight call adds nothing to the ledger (the reservation stays counted). Changing that limit or an agent's
+`max_cost_micros` changes the figure. A bill above it is not visible to the database; the provider-side hard cap (checklist) is the backstop.
+
+**Not built.** No API route or screen for the cap (the Owner calls the function; a UI comes with the Owner Agent), no per-agent cap, no refund of a
+failed call, no cap on token counts per day. A raised tenant cap applies to the tenant's own spending against a key the operator pays for: before
+any external customer it should become operator-only (checklist row).
+
+## T007 M2 note: claim-home follow-ups (2026-10-05)
+
+Migration `20261014090200_t007_claim_home_followups.sql`; tests `supabase/tests/database/50_claim_home_followups.test.sql`, `tests/integration/test_claim_home.py`,
+`services/ai-api/tests/test_claim_readers.py`.
+
+- **A lead with no company is refused at start** (23503, the same answer as an unknown lead), in the database and, with a clear message
+  (`409 lead_has_no_company`), in the API, so no run exists and no fetch or model call can be made for it. The runtime also ends a run whose
+  target has nothing to read before any reservation or model call.
+- **A run naming both a company and a lead** (the run table forbids it today) must name a lead *of that company*, or `agent_write_claim` gives the
+  generic reference refusal.
+- **Erasure** of a company (or of a lead's contact) whose lead runs left claims with `source_lead_id` still succeeds: the claim's free text is
+  anonymised, the ids (home company, source lead, run) are untouched, and nothing is deleted (real-stack test).
+- **A client cannot forge an agent claim.** A signed-in session that sets `app.created_via = 'agent'` and `app.agent_run_id` and inserts directly still
+  gets a manual claim with no run and no source lead; the columns `created_via`, `agent_run_id` and `source_lead_id` are not writable by a client at all.
+- **Every reader of the two claim views** (pinned by `test_claim_readers.py`; a new reader fails that test until it is reviewed):
+
+| Reader | View | Looks up by | Purpose |
+| --- | --- | --- | --- |
+| `crm/repository.py` `list_claims` (single-lead score, `leads/routes.py`) | `claims_for_scoring` | `company_id` (the derived home) | score |
+| `leads/repository.py` queue context (review queue and label snapshot) | `claims_for_scoring` | `company_id in (...)` | score |
+| `agent_runs/repository.py` `list_claims` | `claims_effective` | `home_company_id` (company page) or `about_lead_id` (lead page) | display only |
+| `agent_runs/repository.py` `get_claim` | `claims_effective` | `id` | review |
+
+  No scoring reader filters by `lead_id`; so two leads of one company see the same accepted claim. The SQL functions that read `public.claims`
+  directly (the two import functions and the real-data gate scan) look up by `company_id` or scan every row, and none is a score.
+
+## T007 note: the Research Agent (commit 4, 2026-10-05)
+
+The Research Agent (`app/agents/research.py`, tools in `research_tools.py`) reads ONE lead's (or company's) own website and proposes unreviewed
+suggestions: web evidence (a URL on that website and a verified quote of at most 300 characters) and claims about the four predicates the ICP profile
+reads (`buyer_type`, `order_scale`, `size_band`, `operating_status`), each a value from that predicate's closed vocabulary. It runs on FAKES only here
+(the scripted model and the synthetic fixture sites); no real fetcher, model or key is wired to it. Migration `20261014090300_t007_research_agent.sql`.
+
+- **Tools** (closed schemas, run-local handles, no id or URL from the model): `fetch_page(path)`, `record_evidence(page, quote)`,
+  `propose_claim(predicate, value, stance, evidence)` and the final result. At most 5 pages, 3 evidence rows and 4 claims per run (7 writes, 14 tool calls).
+- **Fetch only the lead's own site, decided server-side.** The model gives a PATH (no scheme, host, query, fragment, dot segment, `//` or encoded
+  smuggling, closed pattern plus a decoded check); the runtime builds `https://<the company's website host><path>` and passes the host and its `www.`
+  twin as `allowed_hosts`. A run whose company has no website (or has no fetcher) ends `failed / tool_failed` before any reservation or model call; the API
+  refuses it earlier (`409 company_has_no_website`), and a lead with no company (`409 lead_has_no_company`).
+- **Verbatim quotes.** A quote must appear in the sanitised text of the page it names (whitespace-normalised, case-sensitive), be 12 to 300 characters,
+  carry no e-mail, phone number or removal marker. The stored URL is the runtime's own record of the page, never the model's text.
+- **The database enforces the host again.** `agent_write_evidence` for `web_page` requires a URL whose host equals the run target company's website host
+  (or its `www.` twin; no userinfo, query string or fragment) and a quote of at most 300 characters; `agent_write_claim` checks the value against the agent's
+  `claim_value_pattern` (a lowercase slug). `research` is gated by its own platform flag `research_enabled` (OFF) and is allowed for no tenant until
+  `app.operator_enable_research(slug)`.
+- **Ceilings.** `max_input_tokens` is 120,000 (the plan said 40,000): the cost-cap reservation bounds a call's input by the bytes sent, and up to five
+  8,000-character pages are re-sent each turn. The money ceiling stays 150,000 per run (0.15).
+- **Page text is data.** Each fetched page is one UNTRUSTED block inside the per-run delimiter, flattened to one line, so it can neither close the block nor
+  fake a marker; it is never stored (memory only).
+- **Evals.** `make eval` now also runs `tests/integration/test_research_evals.py` (cases in `tests/evals/research/cases.jsonl`): W01-W11 (hidden text,
+  visible and fake-system instructions, exfiltration, redirect to a private address, oversized page, fabricated quote, another company and contact details,
+  robots, title/meta, bidi and homoglyphs), the lead-only-host cases L01-L04 and two database-layer cases N20/N21. Each is a scripted model that OBEYS the
+  injection; the pass condition is a diff of the whole tenant (I1-I9 in `research_eval.py`). While building them an empty-list bug in the shared eval helper
+  `new_rows` (`NOT IN (NULL)`, which hides every new row when nothing was seen before) was found and fixed; the selftest evals pass with the fix.
+- **Score test.** `tests/integration/test_research_e2e.py` runs the agent through the API and shows the score moving only after a human accepts.

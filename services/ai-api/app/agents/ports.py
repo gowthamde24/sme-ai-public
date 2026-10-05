@@ -32,6 +32,13 @@ class AgentDbPort(Protocol):
         contact field."""
         ...
 
+    def reserve_cost(
+        self, step_key: str, *, model: str, max_input_tokens: int, max_output_tokens: int
+    ) -> None:
+        """Reserve the worst-case cost of ONE model call, before it is made. Raises CostCapReached
+        when the tenant's daily cost cap has no room for it (or the model has no price)."""
+        ...
+
     def record_usage(self, step_key: str, usage: Usage) -> None: ...
 
     def record_step(
@@ -45,8 +52,21 @@ class AgentDbPort(Protocol):
 
     def write_evidence(self, step_key: str, *, text: str) -> uuid.UUID: ...
 
+    def write_web_evidence(self, step_key: str, *, url: str, quote: str) -> uuid.UUID:
+        """Evidence of kind web_page: the URL of a page this run fetched and a verified quote. The
+        database refuses a URL that is not on the run target's own website."""
+        ...
+
     def write_claim(
-        self, step_key: str, *, value: str, stance: str, evidence_id: uuid.UUID
-    ) -> uuid.UUID: ...
+        self,
+        step_key: str,
+        *,
+        value: str,
+        stance: str,
+        evidence_id: uuid.UUID,
+        predicate: str | None = None,
+    ) -> uuid.UUID:
+        """`predicate=None` uses the agent's own single predicate (the selftest agent)."""
+        ...
 
     def finish(self, status: str, error_code: str | None) -> None: ...

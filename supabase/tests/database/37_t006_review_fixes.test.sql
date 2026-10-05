@@ -51,7 +51,8 @@ select is((select count(*) from unnest(enum_range(null::public.evidence_kind)) k
 select is(pg_temp.rows(), '0/0/0', 'none of the refused kinds wrote a row, a link or a step');
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.ev_sql(tests.rid('k_run'), 'k-note', 'note'))::jsonb ->> 'replayed')), 'false', 'a note is written');
 select is(pg_temp.rows(), '1/1/1', '...exactly one evidence row, one link, one step');
--- the allow-list is the DEFINITION's: widen it and the kind passes
+-- the allow-list is the DEFINITION's: widen it and the kind passes (a web_page row must sit on the target company's own host: T007 research)
+update public.companies set website = 'https://demo.test' where id = tests.rid('a_company');
 update public.agent_definitions set allowed_evidence_kinds = array['note', 'web_page']::public.evidence_kind[] where agent_name = 'selftest';
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.ev_sql(tests.rid('k_run'), 'k-web2', 'web_page', 'https://demo.test/x'))::jsonb ->> 'replayed')), 'false', 'widening the definition lets web_page through (the list, not the code, decides)');
 update public.agent_definitions set allowed_evidence_kinds = array['note']::public.evidence_kind[] where agent_name = 'selftest';
@@ -149,6 +150,10 @@ select is(pg_temp.err(pg_temp.use_sql(tests.rid('u_run'), 'u5', '922337203685477
 select is(pg_temp.err(pg_temp.use_sql(tests.rid('u_run'), 'u6', '-1', '1', '1')), '22023|invalid argument||||', 'a negative value is still an invalid argument');
 select is((select input_tokens_used::text || '/' || output_tokens_used || '/' || cost_micros_used from public.agent_runs where id = tests.rid('u_run')), '5/5/100', 'no refusal changed a counter');
 select is((select count(*) from public.agent_run_steps where run_id = tests.rid('u_run')), 0::bigint, '...or left a step');
+create function pg_temp.resv(p_run uuid, p_key text, p_micros bigint) returns void language sql as $$
+  insert into public.agent_cost_reservations (tenant_id, run_id, step_key, cost_day, model, input_micros_per_mtok, output_micros_per_mtok, max_input_tokens, max_output_tokens, reserved_micros, args_sha256)
+  select tenant_id, id, p_key, app.agent_utc_today(), 'fake-selftest', 1000000, 1000000, 0, 0, p_micros, repeat('0', 64) from public.agent_runs where id = p_run $$;
+select pg_temp.resv(tests.rid('u_run'), 'u7', 20);
 select is((select (tests.scalar_as(tests.uid('a_sales'), pg_temp.use_sql(tests.rid('u_run'), 'u7', '10', '10', '10'))::jsonb ->> 'replayed')), 'false', 'a normal usage record still works');
 select is((select input_tokens_used::text || '/' || output_tokens_used || '/' || cost_micros_used from public.agent_runs where id = tests.rid('u_run')), '15/15/110', '...and adds up');
 

@@ -12,6 +12,7 @@ import pytest
 from app.agent_runs.executor import RunTask
 from app.agent_runs.repository import (
     AgentsDisabledError,
+    CostCapError,
     RunLimitError,
     TokenExpiringError,
 )
@@ -34,7 +35,13 @@ CANARY = "CANARY-5b0e77"
 
 
 class World:
-    def __init__(self, *, unavailable: str | None = None, with_executor: bool = True) -> None:
+    def __init__(
+        self,
+        *,
+        unavailable: str | None = None,
+        with_executor: bool = True,
+        research: bool = False,
+    ) -> None:
         self.repo = FakeAgentRunsRepository()
         self.repo.enabled[TENANT_A.id] = True
         self.executor = FakeExecutor()
@@ -52,6 +59,7 @@ class World:
             repository=self.repo,
             executor=self.executor if with_executor else None,
             unavailable=unavailable,
+            research_available=research,
         )
         self.client, _ = make_client(crm=self.crm, agents=self.agents)
 
@@ -187,6 +195,49 @@ def test_a_lead_target_records_the_lead_and_hashes_its_companys_fields(w: World)
     )
 
 
+def test_the_research_agent_is_unavailable_unless_the_runtime_says_so(w: World) -> None:
+    r = post_start(w, agent="research", target_kind="lead", target_id=str(LEAD))
+    assert r.status_code == 503 and r.json()["error"]["code"] == "agents_unavailable"
+    assert not w.executor.tasks and "start" not in w.repo.calls
+
+
+def test_a_research_run_on_a_lead_queues_the_research_agent() -> None:
+    w = World(research=True)
+    r = post_start(w, agent="research", target_kind="lead", target_id=str(LEAD))
+    assert r.status_code == 202, r.text
+    (task,) = w.executor.tasks
+    assert task.agent == "research" and task.run_id == RUN
+
+
+def test_a_research_run_on_a_company_without_a_website_is_refused_before_any_run() -> None:
+    w = World(research=True)
+    w.crm.seed("companies", TENANT_A.id, uuid.UUID(int=0xC9), name="No Site Ltd")
+    r = post_start(w, agent="research", target_kind="company", target_id=str(uuid.UUID(int=0xC9)))
+    assert r.status_code == 409 and r.json()["error"]["code"] == "company_has_no_website"
+    assert not w.executor.tasks and "start" not in w.repo.calls
+
+
+def test_a_selftest_run_still_queues_the_selftest_agent(w: World) -> None:
+    assert post_start(w).status_code == 202
+    assert w.executor.tasks[0].agent == "selftest"
+
+
+def test_a_lead_without_a_company_is_refused_before_any_run_exists(w: World) -> None:
+    orphan = uuid.UUID(int=0x1E)
+    w.crm.seed("leads", TENANT_A.id, orphan, company_id=None)
+    r = post_start(w, target_kind="lead", target_id=str(orphan))
+    assert r.status_code == 409 and r.json()["error"]["code"] == "lead_has_no_company", r.text
+    assert not w.executor.tasks and "start" not in w.repo.calls, "no run, nothing queued"
+
+
+def test_a_lead_whose_company_cannot_be_read_is_a_404_not_an_empty_run(w: World) -> None:
+    ghost = uuid.UUID(int=0x1F)
+    w.crm.seed("leads", TENANT_A.id, ghost, company_id=str(uuid.UUID(int=0xDEAD)))
+    r = post_start(w, target_kind="lead", target_id=str(ghost))
+    assert r.status_code == 404, r.text
+    assert not w.executor.tasks and "start" not in w.repo.calls
+
+
 def test_a_retry_with_the_same_id_is_a_replay_and_runs_nothing_twice(w: World) -> None:
     assert post_start(w).status_code == 202
     again = post_start(w)
@@ -245,6 +296,7 @@ def test_database_refusals_have_fixed_messages_and_no_database_text(w: World) ->
     cases: list[tuple[Exception, int, str]] = [
         (AgentsDisabledError("SM204"), 409, "agents_disabled"),
         (RunLimitError("SM206"), 429, "run_limit_reached"),
+        (CostCapError("SM207"), 429, "cost_cap_reached"),
         (TokenExpiringError("SM202"), 409, "token_expiring"),
         (Forbidden("42501"), 403, "forbidden"),
         (InvalidValueError("23514"), 422, "invalid_value"),

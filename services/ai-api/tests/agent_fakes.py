@@ -14,10 +14,12 @@ import uuid
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta
 from typing import Any
+from urllib.parse import urlsplit
 
 from app.agents.errors import (
     AgentsDisabled,
     BudgetExhausted,
+    CostCapReached,
     RunDenied,
     RunExpired,
     RunNotRunning,
@@ -59,7 +61,9 @@ class FakeAgentDb:
         max_input_tokens: int = 20000,
         max_output_tokens: int = 4000,
         ttl_seconds: int = 900,
+        agent_name: str = "selftest",
     ) -> None:
+        self.agent_name = agent_name
         self.clock = clock or Clock()
         self.facts = facts or {
             "name": "DEMO Silk House",
@@ -83,6 +87,13 @@ class FakeAgentDb:
         }
         self.used = {"writes": 0, "tool_calls": 0, "in": 0, "out": 0}
         self.steps: dict[str, dict[str, Any]] = {}
+        # the daily cost cap (the real rules are the database's; tests/integration prove them):
+        # a price per model in micros per Mtok, the tenant's cap and what today already holds
+        self.prices: dict[str, tuple[int, int]] = {"fake-selftest": (1_000_000, 1_000_000)}
+        self.cap_micros: int = 2_000_000
+        self.day_spend_micros: int = 0
+        self.reservations: dict[str, int] = {}
+        self.reserve_requests: list[tuple[str, str, int, int]] = []
         self.evidence: list[dict[str, Any]] = []
         self.claims: list[dict[str, Any]] = []
         self.calls: list[str] = []
@@ -123,7 +134,7 @@ class FakeAgentDb:
             raise RunDenied
         return RunView(
             id=self.run_id,
-            agent_name="selftest",
+            agent_name=self.agent_name,
             status=self.status,
             expires_at=self.expires_at,
             cancel_requested_at=self.cancel_requested_at,
@@ -135,6 +146,20 @@ class FakeAgentDb:
     def read_target(self, run: RunView) -> dict[str, Any]:
         self.calls.append("read_target")
         return dict(self.facts)
+
+    def reserve_cost(
+        self, step_key: str, *, model: str, max_input_tokens: int, max_output_tokens: int
+    ) -> None:
+        self._open("reserve_cost")
+        price = self.prices.get(model)
+        if price is None or price[0] <= 0 or price[1] <= 0:
+            raise CostCapReached  # no usable price: fail closed
+        worst = -(-(max_input_tokens * price[0] + max_output_tokens * price[1]) // 1_000_000)
+        if self.day_spend_micros + worst > self.cap_micros:
+            raise CostCapReached
+        self.day_spend_micros += worst
+        self.reservations[step_key] = worst
+        self.reserve_requests.append((step_key, model, max_input_tokens, max_output_tokens))
 
     def record_usage(self, step_key: str, usage: Usage) -> None:
         self._open("record_usage")
@@ -194,11 +219,54 @@ class FakeAgentDb:
             hook(self)
         return new_id
 
+    def write_web_evidence(self, step_key: str, *, url: str, quote: str) -> uuid.UUID:
+        """Models the database rule: a web_page row needs a quote of at most 300 characters and a
+        URL on the run target's own website host, with no query string or fragment."""
+        self._open("write_web_evidence")
+        digest = sha({"kind": "web_page", "url": url, "snippet": quote})
+        found = self._replay(step_key, "agent_write_evidence", digest)
+        if found is not None:
+            return uuid.UUID(found["result"]["evidence_id"])
+        own = urlsplit(str(self.facts.get("website") or "")).hostname or ""
+        host = urlsplit(url).hostname or ""
+
+        def bare(name: str) -> str:
+            return name[4:] if name.startswith("www.") else name
+
+        if not own or bare(host) != bare(own) or "?" in url or "#" in url or len(quote) > 300:
+            raise ValueRefused
+        if self.used["writes"] >= self.max["writes"]:
+            raise BudgetExhausted
+        self.used["writes"] += 1
+        new_id = uuid.uuid5(RUN_ID, f"evidence:{step_key}")
+        self.evidence.append(
+            {"id": new_id, "text": quote, "url": url, "run": self.run_id, "kind": "web_page"}
+        )
+        self.steps[step_key] = {
+            "tool": "agent_write_evidence",
+            "sha": digest,
+            "result": {"evidence_id": str(new_id)},
+        }
+        return new_id
+
     def write_claim(
-        self, step_key: str, *, value: str, stance: str, evidence_id: uuid.UUID
+        self,
+        step_key: str,
+        *,
+        value: str,
+        stance: str,
+        evidence_id: uuid.UUID,
+        predicate: str | None = None,
     ) -> uuid.UUID:
         self._open("write_claim")
-        digest = sha({"value": value, "stance": stance, "evidence": [str(evidence_id)]})
+        digest = sha(
+            {
+                "value": value,
+                "stance": stance,
+                "evidence": [str(evidence_id)],
+                **({"predicate": predicate} if predicate else {}),
+            }
+        )
         found = self._replay(step_key, "agent_write_claim", digest)
         if found is not None:
             return uuid.UUID(found["result"]["claim_id"])
@@ -211,6 +279,7 @@ class FakeAgentDb:
         self.claims.append(
             {
                 "id": new_id,
+                "predicate": predicate,
                 "value": value,
                 "stance": stance,
                 "evidence_id": evidence_id,

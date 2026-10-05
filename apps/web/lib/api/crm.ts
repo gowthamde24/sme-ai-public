@@ -56,7 +56,7 @@ export type ProductRow = Pick<
 >;
 export type LeadRow = Pick<
   LeadOut,
-  "id" | "status" | "source" | "created_via" | "created_at"
+  "id" | "company_id" | "status" | "source" | "created_via" | "created_at"
 >;
 export type OpportunityRow = Pick<
   OpportunityOut,
@@ -165,6 +165,7 @@ const ROW_PARSERS: Record<EntityKey, (r: Record<string, unknown>) => unknown> =
     }),
     leads: (r): LeadRow => ({
       id: str(r, "id"),
+      company_id: strOrNull(r, "company_id"),
       status: oneOf(r, "status", [
         "new",
         "in_review",
