@@ -20,6 +20,7 @@ up, refuses an anonymous call, and allows CORS from the web origin only (never "
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -195,6 +196,42 @@ def psql_environment(url: str, base: dict[str, str]) -> dict[str, str]:
     return env
 
 
+def check_web_headers(client: httpx.Client, web_origin: str, report: Report) -> None:
+    """The web app's security headers (ADR 0016 / T006b M3a), read from one GET of the sign-in page."""
+    r = client.get(f"{web_origin}/login")
+    if r.status_code != 200:
+        report.add("FAIL", "the web app answers", f"HTTP {r.status_code}")
+        return
+    h = {k.lower(): v for k, v in r.headers.items()}
+    csp = h.get("content-security-policy", "")
+    script = next((d for d in csp.split(";") if d.strip().startswith("script-src")), "")
+    report.add("PASS" if csp else "FAIL", "Content-Security-Policy is sent", "present" if csp else "missing")
+    report.add(
+        "PASS" if "'nonce-" in script and "'unsafe-inline'" not in script and "'unsafe-eval'" not in script else "FAIL",
+        "scripts run only by nonce (no unsafe-inline, no unsafe-eval)",
+        script.strip()[:60] or "no script-src",
+    )
+    report.add("PASS" if "frame-ancestors 'none'" in csp else "FAIL", "the app cannot be framed", "frame-ancestors")
+    report.add("PASS" if "object-src 'none'" in csp and "base-uri 'self'" in csp else "FAIL", "no plugins, no base-tag tricks", "object-src, base-uri")
+    hsts = h.get("strict-transport-security", "")
+    match = re.search(r"max-age=(\d+)", hsts)
+    report.add(
+        "PASS" if match and int(match.group(1)) >= 15768000 and "includesubdomains" in hsts.lower() else "FAIL",
+        "HSTS for at least six months, subdomains included",
+        hsts or "missing",
+    )
+    report.add("PASS" if h.get("x-content-type-options") == "nosniff" else "FAIL", "X-Content-Type-Options: nosniff", h.get("x-content-type-options", "missing"))
+    report.add("PASS" if h.get("referrer-policy", "") not in ("", "unsafe-url", "no-referrer-when-downgrade") else "FAIL", "Referrer-Policy is restrictive", h.get("referrer-policy", "missing"))
+    report.add("PASS" if h.get("permissions-policy") else "FAIL", "Permissions-Policy is sent", "present" if h.get("permissions-policy") else "missing")
+    report.add("PASS" if h.get("x-frame-options", "").upper() == "DENY" else "FAIL", "X-Frame-Options: DENY", h.get("x-frame-options", "missing"))
+    report.add("PASS" if "x-powered-by" not in h else "FAIL", "the framework is not advertised", h.get("x-powered-by", "no X-Powered-By"))
+    report.add(
+        "INFO",
+        "second factor (MFA) on the project",
+        "cannot be read from outside: confirm Authentication > Multi-factor > TOTP is ON (docs/runbooks/hosted-auth-settings.md); the database check below proves every Owner and Admin has enrolled",
+    )
+
+
 def check_database(report: Report) -> None:
     url = os.environ.get("HOSTED_DATABASE_URL", "")
     psql = shutil.which("psql")
@@ -259,6 +296,7 @@ def run(env: dict[str, str] | None = None, client: httpx.Client | None = None) -
         check_auth_settings(c, supabase_url, anon_key, report)
         check_anon_surface(c, supabase_url, anon_key, report)
         check_api(c, api_url, web_origin, report)
+        check_web_headers(c, web_origin, report)
     finally:
         if client is None:
             c.close()

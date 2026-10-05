@@ -39,6 +39,9 @@ def claims(sub: str | None = None, **overrides: Any) -> dict[str, Any]:
         "is_anonymous": False,
         "iat": now,
         "exp": now + 3600,
+        # most tests are about something else: they hold a second-factor session unless told
+        # otherwise (ADR 0016)
+        "aal": "aal2",
     }
     base.update(overrides)
     return {k: v for k, v in base.items() if v is not None}

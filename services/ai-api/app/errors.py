@@ -45,6 +45,16 @@ def not_found() -> ApiError:
     return ApiError(404, "not_found", "Not found.")
 
 
+def mfa_required() -> ApiError:
+    """ADR 0016: a password-only (aal1) Owner or Admin meets an action needing a second factor."""
+    return ApiError(
+        403,
+        "mfa_required",
+        "Confirm with your authenticator app to do this: sign in again and enter your code, "
+        "or set up the app first.",
+    )
+
+
 def forbidden() -> ApiError:
     return ApiError(403, "forbidden", "Your role does not allow this action.")
 

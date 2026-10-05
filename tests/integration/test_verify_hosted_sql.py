@@ -1,7 +1,7 @@
 """supabase/hosted/verify.sql is what the operator runs on a hosted project. Here it runs against the LOCAL schema, which must pass every
 check, and against deliberately broken copies (inside a transaction that is rolled back), each of which it must catch."""
 
-# ruff: noqa: E501
+# ruff: noqa: E501, S608
 
 from __future__ import annotations
 
@@ -28,10 +28,40 @@ def failures(rows: dict[str, tuple[str, str]]) -> list[str]:
     return sorted(name for name, (ok, _) in rows.items() if ok == "f")
 
 
-def test_the_local_schema_passes_every_check() -> None:
-    rows = run()
-    assert len(rows) >= 18
+ENROLLED = "every Owner and Admin has a verified authenticator"
+NO_OWNER_WITHOUT_FACTOR = (
+    "set session_replication_role = replica; "  # (no triggers: this is a throwaway transaction)
+    "delete from public.memberships m where m.role in ('owner', 'admin') and not exists "
+    "(select 1 from auth.mfa_factors f where f.user_id = m.user_id and f.status = 'verified' and f.factor_type = 'totp'); "
+)
+
+
+def test_the_local_schema_passes_every_check_once_every_owner_and_admin_has_an_authenticator() -> (
+    None
+):
+    rows = run(NO_OWNER_WITHOUT_FACTOR)
+    assert len(rows) >= 20
     assert failures(rows) == []
+    assert rows[ENROLLED][0] == "t"
+    assert rows["the second-factor enforcement is installed (ADR 0016)"][0] == "t"
+
+
+def test_an_owner_without_an_authenticator_is_a_failure_with_a_count() -> None:
+    rows = run(
+        NO_OWNER_WITHOUT_FACTOR
+        + "insert into auth.users (id, instance_id, aud, role, email, created_at, updated_at) values "
+        "('00000000-0000-0000-0000-00000000aa01', '00000000-0000-0000-0000-000000000000', 'authenticated', 'authenticated', 'probe-owner@it.example.test', now(), now()); "
+        "insert into public.tenants (id, name, slug) values ('00000000-0000-0000-0000-00000000bb01', 'Probe', 'probe-verify'); "
+        "insert into public.memberships (tenant_id, user_id, role) values ('00000000-0000-0000-0000-00000000bb01', '00000000-0000-0000-0000-00000000aa01', 'owner'); "
+    )
+    assert failures(rows) == [ENROLLED]
+    assert rows[ENROLLED][1].startswith("1 Owner / Admin account(s) without one")
+
+
+def test_the_local_schema_fails_only_the_enrolment_check_today() -> None:
+    """Tests create Owners without an authenticator on purpose; every OTHER check passes on the real schema."""
+    rows = run()
+    assert set(failures(rows)) <= {ENROLLED}
     assert rows["connected as the trusted role"][0] == "t"
     assert rows["INFO workspaces with the real-data gate OPEN"][0] == "", (
         "an INFO row has no verdict"

@@ -22,7 +22,13 @@ from app.crm.repository import (
     NotFoundError,
 )
 from app.erasure.models import DataPolicyOut, ErasureRequestOut, ErasureResultOut
-from app.tenancy.repository import Forbidden, RepositoryError, TokenRejected, UpstreamError
+from app.tenancy.repository import (
+    Forbidden,
+    MfaRequired,
+    RepositoryError,
+    TokenRejected,
+    UpstreamError,
+)
 
 logger = logging.getLogger("app.erasure.repository")
 
@@ -100,6 +106,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM303": AlreadyExecutedError,
         "SM304": RequestCancelledError,
         "SM305": OwnerTransferFirstError,
+        "SM306": MfaRequired,
         "23505": ConflictError,
         "23503": InvalidReferenceError,
         "22023": InvalidValueError,

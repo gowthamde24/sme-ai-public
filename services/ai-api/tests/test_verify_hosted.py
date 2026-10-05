@@ -30,6 +30,19 @@ ENV = {
 }
 
 
+GOOD_WEB_HEADERS = {
+    "content-security-policy": (
+        "default-src 'self'; script-src 'self' 'nonce-abc' 'strict-dynamic'; "
+        "style-src 'self' 'nonce-abc'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+    ),
+    "strict-transport-security": "max-age=63072000; includeSubDomains",
+    "x-content-type-options": "nosniff",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "permissions-policy": "camera=(), microphone=()",
+    "x-frame-options": "DENY",
+}
+
+
 class Hosted:
     """A fake deployment; flip an attribute to break one thing."""
 
@@ -47,6 +60,8 @@ class Hosted:
         self.cors_star = False
         self.rest_doc = "{}"
         self.methods: list[str] = []
+        self.web_headers: dict[str, str] = dict(GOOD_WEB_HEADERS)
+        self.web_status = 200
         self.__dict__.update(over)
 
     def __call__(self, request: httpx.Request) -> httpx.Response:
@@ -74,6 +89,8 @@ class Hosted:
             if origin == WEB and self.cors_ok or origin != WEB and not self.cors_ok:
                 return httpx.Response(200, headers={"access-control-allow-origin": origin or ""})
             return httpx.Response(400)
+        if url == f"{WEB}/login":
+            return httpx.Response(self.web_status, headers=self.web_headers)
         if url == f"{API}/docs":
             return httpx.Response(404)
         return httpx.Response(404)
@@ -120,6 +137,34 @@ def test_a_correct_deployment_passes_and_sends_only_read_methods(
         {"me_status": 200},
         {"cors_ok": False},
         {"cors_star": True},
+        {"web_status": 500},
+        {
+            "web_headers": {
+                **GOOD_WEB_HEADERS,
+                "content-security-policy": GOOD_WEB_HEADERS["content-security-policy"].replace(
+                    "'strict-dynamic'", "'strict-dynamic' 'unsafe-eval'"
+                ),
+            }
+        },
+        {
+            "web_headers": {
+                **GOOD_WEB_HEADERS,
+                "content-security-policy": GOOD_WEB_HEADERS["content-security-policy"].replace(
+                    "; frame-ancestors 'none'", ""
+                ),
+            }
+        },
+        {"web_headers": {**GOOD_WEB_HEADERS, "strict-transport-security": "max-age=300"}},
+        {"web_headers": {**GOOD_WEB_HEADERS, "strict-transport-security": "max-age=63072000"}},
+        {
+            "web_headers": {
+                k: v for k, v in GOOD_WEB_HEADERS.items() if k != "x-content-type-options"
+            }
+        },
+        {"web_headers": {**GOOD_WEB_HEADERS, "referrer-policy": "unsafe-url"}},
+        {"web_headers": {k: v for k, v in GOOD_WEB_HEADERS.items() if k != "permissions-policy"}},
+        {"web_headers": {**GOOD_WEB_HEADERS, "x-frame-options": "SAMEORIGIN"}},
+        {"web_headers": {**GOOD_WEB_HEADERS, "x-powered-by": "Next.js"}},
     ],
 )
 def test_each_misconfiguration_is_a_failure(

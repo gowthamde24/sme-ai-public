@@ -93,11 +93,11 @@ def sql_result(statement: str, *, timeout: int = 60) -> tuple[int, str, str]:
     return result.returncode, result.stdout.strip(), result.stderr.strip()
 
 
-def as_user(user_id: str, body: str, *, hold_seconds: float = 0.0) -> str:
+def as_user(user_id: str, body: str, *, hold_seconds: float = 0.0, aal: str = "aal2") -> str:
     """One transaction that runs `body` (SQL statements) as the authenticated user `user_id`, the way PostgREST would
     (role + JWT claims), optionally HOLDING the transaction open for `hold_seconds` before it commits, then prints the
     commit time. The output is the statement results followed by the commit timestamp (the last line)."""
-    claims = json.dumps({"sub": user_id, "role": "authenticated"})
+    claims = json.dumps({"sub": user_id, "role": "authenticated", "aal": aal})
     hold = f"select pg_sleep({hold_seconds});" if hold_seconds else ""
     return (
         "begin; set local role authenticated; "

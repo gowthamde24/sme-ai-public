@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import time
 import uuid
+from typing import Any
 
 import jwt
 import pytest
@@ -183,3 +184,23 @@ def test_key_lookup_failure_rejected() -> None:
     )
     with pytest.raises(AuthError):
         v.verify(mint(KEY, claims()))
+
+
+# ---- the assurance level (ADR 0016)
+@pytest.mark.parametrize(
+    ("claim", "expected"),
+    [
+        ("aal2", "aal2"),
+        ("aal1", "aal1"),
+        (None, "aal1"),
+        ("AAL2", "aal1"),
+        ("aal3", "aal1"),
+        ("", "aal1"),
+        (2, "aal1"),
+    ],
+)
+def test_the_assurance_level_is_read_from_the_signed_claim_and_defaults_to_aal1(
+    claim: Any, expected: str
+) -> None:
+    token = mint(KEY, claims(str(uuid.uuid4()), aal=claim))
+    assert verifier().verify(token).aal == expected

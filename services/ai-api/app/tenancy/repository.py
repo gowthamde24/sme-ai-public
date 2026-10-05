@@ -39,6 +39,10 @@ class Forbidden(RepositoryError):
     pass
 
 
+class MfaRequired(RepositoryError):
+    """SM306: the database refused a privileged action to a password-only session (ADR 0016)."""
+
+
 class InvalidInput(RepositoryError):
     pass
 

@@ -53,6 +53,8 @@ RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(*SALES_PLUS))]
 AdminPlus = Annotated[TenantContext, Depends(require_tenant_role(*ADMIN_PLUS))]
+# ADR 0016: the workspace's agents switch needs a second factor from an Owner or Admin
+AdminStrong = Annotated[TenantContext, Depends(require_tenant_role(*ADMIN_PLUS, strong=True))]
 
 TARGET_ENTITY = {"company": "companies", "lead": "leads"}
 
@@ -172,7 +174,7 @@ def get_settings(ctx: AnyMember, runtime: RuntimeDep) -> AgentSettingsOut:
 
 
 @router.put("/agent-settings", response_model=AgentSettingsOut)
-def put_settings(body: AgentSettingsIn, ctx: AdminPlus, runtime: RuntimeDep) -> AgentSettingsOut:
+def put_settings(body: AgentSettingsIn, ctx: AdminStrong, runtime: RuntimeDep) -> AgentSettingsOut:
     return _agents(runtime).repository.set_enabled(ctx.principal.token, ctx.tenant.id, body.enabled)
 
 

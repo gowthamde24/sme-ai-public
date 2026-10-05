@@ -35,6 +35,10 @@ class Principal:
 
     user_id: uuid.UUID
     token: str = field(repr=False)
+    # The session's assurance level from the SIGNED token (ADR 0016): "aal2" only after a valid TOTP
+    # code. Anything else, or a missing claim, is "aal1". It is the one claim read besides the
+    # subject; roles and tenants still come from the database.
+    aal: str = "aal1"
 
 
 class KeyProvider(Protocol):
@@ -176,4 +180,5 @@ def _principal_from_claims(claims: dict[str, Any], token: str) -> Principal:
         user_id = uuid.UUID(subject)
     except ValueError as exc:
         raise AuthError("subject is not a uuid") from exc
-    return Principal(user_id=user_id, token=token)
+    aal = "aal2" if claims.get("aal") == "aal2" else "aal1"
+    return Principal(user_id=user_id, token=token, aal=aal)

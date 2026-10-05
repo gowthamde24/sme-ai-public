@@ -43,6 +43,8 @@ RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
 SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(*SALES_PLUS))]
 AdminPlus = Annotated[TenantContext, Depends(require_tenant_role(*ADMIN_PLUS))]
+# ADR 0016: publishing a profile and exporting need a second factor from an Owner or Admin
+AdminStrong = Annotated[TenantContext, Depends(require_tenant_role(*ADMIN_PLUS, strong=True))]
 
 
 def _parse_id(raw: str) -> uuid.UUID:
@@ -58,7 +60,7 @@ def _parse_id(raw: str) -> uuid.UUID:
 @router.post("/icp-configs", response_model=IcpConfigOut, status_code=201)
 def publish_icp_config(
     payload: IcpConfigCreate,
-    ctx: AdminPlus,
+    ctx: AdminStrong,
     runtime: RuntimeDep,
 ) -> IcpConfigOut:
     return runtime.leads.publish_icp_config(
@@ -305,7 +307,7 @@ def list_lead_labels(
 @router.post("/exports")
 def export_dataset(
     payload: ExportRequest,
-    ctx: AdminPlus,
+    ctx: AdminStrong,
     runtime: RuntimeDep,
 ) -> Response:
     rows = runtime.leads.fetch_export_rows(ctx.principal.token, ctx.tenant.id, payload.kind)

@@ -38,9 +38,15 @@ Run: `make dev-api` (with AGENTS_ENABLED=true for the agent step) in one termina
 
 from __future__ import annotations
 
+import base64
 import hashlib
+import hmac
 import json
 import os
+import re
+import shutil
+import struct
+import subprocess
 import sys
 import time
 import uuid
@@ -321,6 +327,32 @@ CLAIMS = [
 
 
 # ----------------------------------------------------------------------------- the run
+
+def totp_code(secret_b32: str, offset_steps: int = 0) -> str:
+    """RFC 6238 (SHA-1, 6 digits, 30 s), written out so the seed needs no dependency."""
+    key = base64.b32decode(secret_b32.upper() + "=" * (-len(secret_b32) % 8))
+    digest = hmac.new(key, struct.pack(">Q", int(time.time() // 30) + offset_steps), hashlib.sha1).digest()
+    offset = digest[-1] & 0x0F
+    return f"{(struct.unpack('>I', digest[offset : offset + 4])[0] & 0x7FFFFFFF) % 10**6:06d}"
+
+
+def local_factor_secret(user_id: str) -> str:
+    """The demo user's authenticator secret, read from the LOCAL database container (never a hosted database)."""
+    docker = shutil.which("docker")
+    config = (Path(__file__).resolve().parents[1] / "supabase" / "config.toml").read_text()
+    match = re.search(r'^project_id\s*=\s*"([^"]+)"', config, re.M)
+    if docker is None or match is None or not re.fullmatch(r"[0-9a-f-]{36}", user_id):
+        raise SeedError("Cannot read the demo authenticator from the local database container.")
+    out = subprocess.run(  # noqa: S603 - fixed argv; the id is a validated uuid
+        [docker, "exec", "-i", f"supabase_db_{match.group(1)}", "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
+         f"select secret from auth.mfa_factors where user_id = '{user_id}' and status = 'verified' order by created_at limit 1"],  # noqa: S608
+        capture_output=True, text=True, timeout=30, check=False,
+    )
+    secret = out.stdout.strip()
+    if out.returncode != 0 or not secret:
+        raise SeedError("Cannot read the demo authenticator from the local database container.")
+    return secret
+
 class Seeder:
     def __init__(self, config: Config, api: httpx.Client, http: httpx.Client) -> None:
         self.c = config
@@ -402,6 +434,38 @@ class Seeder:
         body = r.json()
         self.token = str(body["access_token"])
         self.user_id = str(body["user"]["id"])
+        self.token = self._second_factor(auth, headers)
+
+    def _second_factor(self, auth: str, headers: dict[str, str]) -> str:
+        """A second-factor (aal2) session for the demo owner (ADR 0016: an Owner needs one to publish the profile, switch agents on...).
+        LOCAL ONLY: the first run enrols an authenticator for the demo user; later runs read its secret from the local database
+        container (the same `docker exec` the dev scripts use), so the e2e walkthroughs can do the same."""
+        bearer = {**headers, "Authorization": f"Bearer {self.token}"}
+        try:
+            factors = self.http.get(f"{auth}/user", headers=bearer, timeout=30).json().get("factors") or []
+            verified = [f for f in factors if f.get("status") == "verified"]
+            if verified:
+                factor_id, secret = str(verified[0]["id"]), local_factor_secret(self.user_id)
+            else:
+                for stale in factors:  # an unverified leftover from an interrupted run
+                    self.http.delete(f"{auth}/factors/{stale['id']}", headers=bearer, timeout=30)
+                enrolled = self.http.post(
+                    f"{auth}/factors", json={"factor_type": "totp", "friendly_name": "demo"}, headers=bearer, timeout=30
+                ).json()
+                factor_id, secret = str(enrolled["id"]), str(enrolled["totp"]["secret"])
+            for offset in (0, 1, -1):
+                challenge = self.http.post(f"{auth}/factors/{factor_id}/challenge", json={}, headers=bearer, timeout=30).json()
+                done = self.http.post(
+                    f"{auth}/factors/{factor_id}/verify",
+                    json={"challenge_id": challenge["id"], "code": totp_code(secret, offset)},
+                    headers=bearer,
+                    timeout=30,
+                )
+                if done.status_code == 200:
+                    return str(done.json()["access_token"])
+        except (httpx.HTTPError, KeyError, ValueError, TypeError):
+            pass
+        raise SeedError("Could not set up the demo user's authenticator on the local stack.")
 
     def workspace(self) -> None:
         r = self._api(

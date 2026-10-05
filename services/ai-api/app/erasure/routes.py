@@ -38,7 +38,10 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}")
 
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AdminPlus = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
-OwnerOnly = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER))]
+# ADR 0016: asking, running and cancelling an erasure need a second factor (reading does not)
+_BOTH = (Role.OWNER, Role.ADMIN)
+AdminStrong = Annotated[TenantContext, Depends(require_tenant_role(*_BOTH, strong=True))]
+OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 
 
 def _repo(runtime: Runtime) -> ErasureRepository:
@@ -74,7 +77,7 @@ def get_data_policy(ctx: AnyMember, runtime: RuntimeDep) -> DataPolicyOut:
 
 @router.post("/erasure-requests", response_model=ErasureRequestOut, status_code=201)
 def request_erasure(
-    body: ErasureRequestIn, ctx: AdminPlus, runtime: RuntimeDep, response: Response
+    body: ErasureRequestIn, ctx: AdminStrong, runtime: RuntimeDep, response: Response
 ) -> ErasureRequestOut:
     repo = _repo(runtime)
     replayed = repo.request(
@@ -114,7 +117,7 @@ def get_request(request_id: str, ctx: AdminPlus, runtime: RuntimeDep) -> Erasure
 
 @router.post("/erasure-requests/{request_id}/execute", response_model=ErasureResultOut)
 def execute_request(
-    request_id: str, body: ExecuteIn, ctx: OwnerOnly, runtime: RuntimeDep
+    request_id: str, body: ExecuteIn, ctx: OwnerStrong, runtime: RuntimeDep
 ) -> ErasureResultOut:
     found = _visible(
         runtime, ctx, request_id
@@ -123,7 +126,7 @@ def execute_request(
 
 
 @router.post("/erasure-requests/{request_id}/cancel", response_model=ErasureRequestOut)
-def cancel_request(request_id: str, ctx: AdminPlus, runtime: RuntimeDep) -> ErasureRequestOut:
+def cancel_request(request_id: str, ctx: AdminStrong, runtime: RuntimeDep) -> ErasureRequestOut:
     found = _visible(runtime, ctx, request_id)
     _repo(runtime).cancel(ctx.principal.token, found.id)
     after = _repo(runtime).get(ctx.principal.token, ctx.tenant.id, found.id)

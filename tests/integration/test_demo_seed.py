@@ -59,7 +59,21 @@ def demo_token(stack: Stack) -> User:
     body = r.json()
     import uuid
 
-    return User(label="demo", id=uuid.UUID(body["user"]["id"]), token=body["access_token"])
+    # the demo Owner's seed enrolled an authenticator (ADR 0016): answer its challenge for a second-factor session
+    from conftest import challenge_verify
+
+    user_id = body["user"]["id"]
+    factors = httpx.get(
+        f"{stack.url}/auth/v1/user",
+        headers={"apikey": stack.anon_key, "Authorization": f"Bearer {body['access_token']}"},
+        timeout=15,
+    ).json()["factors"]
+    factor_id = next(f["id"] for f in factors if f["status"] == "verified")
+    done = challenge_verify(
+        stack, body["access_token"], factor_id, seed.local_factor_secret(user_id)
+    )
+    assert done.status_code == 200
+    return User(label="demo", id=uuid.UUID(user_id), token=done.json()["access_token"])
 
 
 # ==== safety ====

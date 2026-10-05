@@ -20,7 +20,7 @@ from app.crm.routes import router as crm_router
 from app.erasure import repository as erasure_repo
 from app.erasure.repository import PostgrestErasureRepository
 from app.erasure.routes import router as erasure_router
-from app.errors import ApiError, install_error_handlers
+from app.errors import ApiError, install_error_handlers, mfa_required
 from app.evidence.repository import PostgrestEvidenceRepository
 from app.evidence.routes import router as evidence_router
 from app.leads.repository import PostgrestLeadsRepository
@@ -78,6 +78,7 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         headers={"WWW-Authenticate": "Bearer"},
     ),
     repo.Forbidden: ApiError(403, "forbidden", "Your role does not allow this action."),
+    repo.MfaRequired: mfa_required(),
     repo.InvalidInput: ApiError(422, "validation_error", "Invalid input."),
     repo.SlugUnavailable: ApiError(409, "slug_unavailable", "That slug is not available."),
     # CRM. Deliberately generic: none of these bodies carries a field name, a value, or a hint
@@ -186,12 +187,16 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             headers=mapped.headers,
         )
 
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.cors_origins,
-        allow_methods=["GET", "POST", "PATCH", "PUT"],
-        allow_headers=["*"],
-    )
+    cors_origins = settings.cors_origins  # validated: explicit origins only
+    if cors_origins:  # none configured = no CORS headers at all
+        app.add_middleware(
+            CORSMiddleware,
+            allow_origins=cors_origins,
+            allow_methods=["GET", "POST", "PATCH", "PUT"],
+            allow_headers=["Authorization", "Content-Type"],
+            allow_credentials=False,
+            max_age=600,
+        )
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:

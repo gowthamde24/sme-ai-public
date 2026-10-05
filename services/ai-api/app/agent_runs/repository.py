@@ -25,7 +25,13 @@ from app.agent_runs.models import (
 )
 from app.crm.models import Page, encode_cursor
 from app.crm.repository import ConflictError, InvalidValueError, NotFoundError
-from app.tenancy.repository import Forbidden, RepositoryError, TokenRejected, UpstreamError
+from app.tenancy.repository import (
+    Forbidden,
+    MfaRequired,
+    RepositoryError,
+    TokenRejected,
+    UpstreamError,
+)
 
 logger = logging.getLogger("app.agent_runs.repository")
 
@@ -138,6 +144,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM202": TokenExpiringError,
         "SM204": AgentsDisabledError,
         "SM206": RunLimitError,
+        "SM306": MfaRequired,
         "23505": ConflictError,
         "23503": NotFoundError,
         "23514": InvalidValueError,

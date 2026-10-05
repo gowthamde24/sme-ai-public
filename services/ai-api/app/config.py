@@ -1,3 +1,4 @@
+import re
 from functools import lru_cache
 
 from pydantic import SecretStr
@@ -10,6 +11,9 @@ MIN_HS256_SECRET_LENGTH = 32
 
 # The Supabase CLI local stack. Used as a default ONLY when API_ENV is exactly "development".
 LOCAL_SUPABASE_URL = "http://127.0.0.1:54321"
+
+
+_ORIGIN = re.compile(r"https?://[A-Za-z0-9]([A-Za-z0-9.-]*[A-Za-z0-9])?(:[0-9]{1,5})?")
 
 
 class ConfigurationError(RuntimeError):
@@ -26,7 +30,10 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
     api_env: str = "development"
-    api_cors_origins: str = "http://localhost:3000"
+    # Browser origins allowed to call the API, comma separated. NONE by default: the web app calls
+    # the API from its SERVER, so the browser needs no CORS access at all. Explicit origins only
+    # (scheme://host[:port], no path, no "*"); https outside development.
+    api_cors_origins: str = ""
 
     # Supabase (T002). The anon/publishable key is public by design: it identifies the project
     # to PostgREST; it grants nothing without a user JWT.
@@ -59,7 +66,18 @@ class Settings(BaseSettings):
 
     @property
     def cors_origins(self) -> list[str]:
-        return [o.strip() for o in self.api_cors_origins.split(",") if o.strip()]
+        """The validated list. A wildcard, a path, a trailing slash or (outside development) a
+        non-https origin stops the process."""
+        origins = [o.strip() for o in self.api_cors_origins.split(",") if o.strip()]
+        for origin in origins:
+            if not _ORIGIN.fullmatch(origin):
+                raise ConfigurationError(
+                    "API_CORS_ORIGINS holds an entry that is not an origin "
+                    "(scheme://host[:port], no wildcard, no path)"
+                )
+            if not self.is_development and not origin.startswith("https://"):
+                raise ConfigurationError("API_CORS_ORIGINS must be https outside development")
+        return origins
 
     @property
     def is_development(self) -> bool:
