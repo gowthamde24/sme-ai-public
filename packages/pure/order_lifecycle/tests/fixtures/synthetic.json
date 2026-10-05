@@ -1,0 +1,11 @@
+{
+  "current_state": "quote_approved",
+  "event": {"type": "send_quote"},
+  "as_of": "2026-10-05T06:00:00Z",
+  "valid_until": "2026-10-06T06:00:00Z",
+  "order_total": 1000,
+  "payments": [{"payment_id": "SYN-P0", "amount": 100}],
+  "refunds": [],
+  "policy": {"advance_required": true, "advance_amount": 100, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation"},
+  "flags": {"owner_override": false}
+}

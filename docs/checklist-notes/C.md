@@ -211,3 +211,16 @@ Final checks: 33 cadence + 29 quote tests pass (62 total; 59 before fix), includ
 250 seeded cadence cases; `make check-leftovers` passes. Pure lane C changes only;
 no push/network/database/ports. API and handoff updated in the T010 plan. Lane A
 legal/authoritative flags, approval, persistence/audit and integration/CI remain pending.
+
+## Order lifecycle: baseline
+
+- Started clean on lane/c at e394cbe; HEAD equalled origin/main.
+- Added a stdlib pure transition API, synthetic fixture, all 132 state/event pairs,
+  monetary and date boundaries, bounded preflight and 250 seeded 24-step sequences.
+- No close event was requested: delivery closes a settled order; payment closes
+  an already delivered order. Overpayments reject and flag for owner review.
+  Refunds occur before terminal cancellation; lane A owns later reconciliation.
+- `make test-packages`: 27 lifecycle + 33 cadence + 29 quote tests pass (89 total;
+  62 before this task). `make check-leftovers` passes. No external services used.
+- API, matrix, conservative bounds and owner decisions: docs/plans/order-lifecycle.md.
+- Manual mutation results will be recorded below after the baseline commit.
