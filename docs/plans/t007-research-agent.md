@@ -116,3 +116,15 @@ page, off-host links, a `robots.txt` Disallow, one huge page. Reported: **precis
 | M4 | live smoke on about 5 fixture leads, at most about $0.50, `make eval-live` research cases, results read by hand | **only after my written approval** of provider, key, model id, prices and a provider-side spend cap |
 
 Out of T007: search, contact enrichment, e-mail, scheduling (option B principal stays required before any scheduled agent), hosting.
+
+## M1 implementation notes (built 2026-10-05; deviations from the plan above)
+* Interfaces and data live in `app/agents/web.py` (inside the sandbox, no I/O); the real fetcher, guards, sanitiser and fakes live in `app/webfetch/`.
+  A boundary test keeps sockets out of the sandbox and out of every webfetch module except `fetcher.py`.
+* `PageFetcher.fetch(url, *, allowed_hosts=None)`: the host scope is a parameter, so redirect hops are checked inside the fetcher.
+* Transport is stdlib `http.client` over our own pinned socket (not `httpx`): total deadline via a watchdog, exact peer check, no cookie jar.
+  No new dependency.
+* A failure while fetching `robots.txt` (any cause) is reported as `robots_unavailable`, so the caller sees one constant code.
+* The phone scrub needs 9 or more digits (a year range such as 2019-2024 must survive); a chat link such as `wa.me/<number>` is scrubbed.
+* Fixture hosts end in `.test`; the real fetcher refuses that suffix by name, only the fake serves them.
+* `make smoke-fetch` (opt-in) fetches example.com and example.org through the real fetcher and prints numbers only. Not run by me.
+

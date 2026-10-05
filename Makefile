@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test check check-fast check-leftovers db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
+.PHONY: install lint typecheck test check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../scripts/seed_demo.py ../../scripts/gen_match_key_fixture.py
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../scripts/seed_demo.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -71,6 +71,11 @@ eval:
 eval-live:
 	cd $(API) && .venv/bin/python ../../tests/integration/eval_live_preflight.py
 	cd $(API) && EVAL_LIVE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py -q -s -k test_live_pass_rates
+
+# OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
+# fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.
+smoke-fetch:
+	cd $(API) && .venv/bin/python ../../scripts/smoke_fetch.py
 
 # A clearly fictional business (company, contacts, products, lead, opportunity, evidence, claims) in a
 # local workspace, built through the API (claims through PostgREST with the demo user's own JWT).

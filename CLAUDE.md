@@ -64,6 +64,7 @@ make contracts   # regenerate packages/contracts/{crm,evidence,leads}.* from the
 make seed-demo   # a clearly fictional business + the generic ICP profile + 20 synthetic leads + one agent run, in the LOCAL stack (needs db + `AGENTS_ENABLED=true make dev-api`; refuses non-local URLs)
 make eval        # T006 agent containment evals (scripted models that obey every injection, real local stack; part of make check)
 make eval-live   # OPT-IN, never in make check: the live-capable evals against the real model; refuses unless the adapter's gates are satisfied
+make smoke-fetch # OPT-IN, never in make check: fetches example.com / example.org through the real guarded fetcher (T007 M1); no model, no key, no cost
 make dev-api     # FastAPI on :8000
 ```
 
