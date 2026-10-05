@@ -16,6 +16,7 @@ from app.crm.repository import ConflictError, InvalidReferenceError
 from app.erasure.repository import (
     AlreadyExecutedError,
     NotPendingError,
+    OwnerTransferFirstError,
     RequestCancelledError,
     WindowNotElapsedError,
 )
@@ -216,6 +217,7 @@ def test_a_workspace_request_takes_no_subject(w: World) -> None:
         (WindowNotElapsedError(CANARY), 409, "erasure_window_open"),
         (AlreadyExecutedError(CANARY), 409, "erasure_already_executed"),
         (RequestCancelledError(CANARY), 409, "erasure_cancelled"),
+        (OwnerTransferFirstError(CANARY), 409, "erasure_owner_transfer_first"),
         (Forbidden(CANARY), 403, "forbidden"),
         (UpstreamError(CANARY), 502, "upstream_error"),
     ],
@@ -273,3 +275,32 @@ def test_erasure_unavailable_is_a_503_not_a_silent_success() -> None:
     bare, _ = make_client()
     r = bare.get(f"/v1/tenants/{TENANT_A.id}/erasure-requests", headers=auth("a_owner"))
     assert r.status_code == 503 and r.json()["error"]["code"] == "erasure_unavailable"
+
+
+# ---- the real-data gate, read-only
+def test_every_member_can_read_the_gate_and_a_new_workspace_is_closed(w: World) -> None:
+    url = f"/v1/tenants/{TENANT_A.id}/data-policy"
+    for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
+        r = client(w).get(url, headers=auth(user))
+        assert r.status_code == 200 and r.json() == {"real_data_allowed": False}, user
+    w.repo.open_gates.add(TENANT_A.id)
+    assert client(w).get(url, headers=auth("a_viewer")).json() == {"real_data_allowed": True}
+
+
+def test_the_gate_is_tenant_scoped_and_unauthenticated_reads_are_refused(w: World) -> None:
+    w.repo.open_gates.add(TENANT_A.id)
+    url_a = f"/v1/tenants/{TENANT_A.id}/data-policy"
+    assert client(w).get(url_a).status_code == 401
+    assert client(w).get(url_a, headers=auth("b_owner")).status_code == 404
+    other = client(w).get(f"/v1/tenants/{TENANT_B.id}/data-policy", headers=auth("b_owner"))
+    assert other.json() == {"real_data_allowed": False}
+
+
+def test_nothing_in_the_api_can_open_or_close_the_gate(w: World) -> None:
+    url = f"/v1/tenants/{TENANT_A.id}/data-policy"
+    for method in ("post", "put", "patch", "delete"):
+        r = client(w).request(
+            method, url, json={"real_data_allowed": True}, headers=auth("a_owner")
+        )
+        assert r.status_code in (404, 405), method
+    assert TENANT_A.id not in w.repo.open_gates

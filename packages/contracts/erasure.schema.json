@@ -4,6 +4,21 @@
   "title": "Erasure API contracts (T006b)",
   "description": "Generated from services/ai-api/app/erasure/models.py by `make contracts`. A result holds counts per column and row ids for manual review, never a value. Requests forbid unknown properties: a tenant, a status or a requester can never be sent.",
   "$defs": {
+    "DataPolicyOut": {
+      "additionalProperties": false,
+      "description": "Whether this workspace accepts real contact details yet (the real-data gate, ADR 0015).\nClosed until the operator opens it.",
+      "properties": {
+        "real_data_allowed": {
+          "title": "Real Data Allowed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "real_data_allowed"
+      ],
+      "title": "DataPolicyOut",
+      "type": "object"
+    },
     "ErasureRequestIn": {
       "additionalProperties": false,
       "description": "Ask for one contact, one company or the whole workspace to be erased. The id is chosen by the\ncaller (a retry with the same id and payload is a replay, never a second request).",

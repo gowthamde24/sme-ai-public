@@ -66,6 +66,13 @@ class ErasureResultOut(_Strict):
     replayed: bool = False
 
 
+class DataPolicyOut(_Strict):
+    """Whether this workspace accepts real contact details yet (the real-data gate, ADR 0015).
+    Closed until the operator opens it."""
+
+    real_data_allowed: bool
+
+
 class ErasureRequestOut(_Strict):
     id: uuid.UUID
     scope: Scope

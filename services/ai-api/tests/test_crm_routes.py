@@ -704,3 +704,22 @@ def test_a_grant_for_a_suppressed_contact_is_a_stable_409(
         json={"reason": "manual"},
     )
     assert (response.status_code, response.json()["error"]["code"]) == (409, "invalid_transition")
+
+
+def test_a_closed_real_data_gate_is_a_stable_409_with_a_fixed_message(
+    env: tuple[TestClient, FakeCrmRepository],
+) -> None:
+    from app.crm.repository import RealDataGateError
+
+    client, crm = env
+    crm.rpc_error = RealDataGateError("CANARY-real@gmail.com")
+    cid = seed(crm, "contacts")
+    response = client.post(
+        url("contacts", suffix=f"/{cid}/suppress"),
+        headers=auth("a_sales"),
+        json={"reason": "manual"},
+    )
+    assert response.status_code == 409
+    assert response.json()["error"]["code"] == "real_data_gate_closed"
+    assert "CANARY" not in response.text and "gmail" not in response.text
+    assert "+00" in response.json()["error"]["message"]

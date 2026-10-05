@@ -13,6 +13,7 @@ import {
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const fetchPage = vi.fn();
+const fetchDataPolicy = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
@@ -26,6 +27,10 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
 vi.mock("@/lib/api/crm", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/crm")>()),
   fetchPage: (...a: unknown[]) => fetchPage(...a),
+}));
+vi.mock("@/lib/api/erasure", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api/erasure")>()),
+  fetchDataPolicy: (...a: unknown[]) => fetchDataPolicy(...a),
 }));
 vi.mock("./actions", () => ({
   createCompanyAction: vi.fn(async () => undefined),
@@ -133,9 +138,31 @@ describe("/app/tenants/[tenantId]", () => {
     vi.stubGlobal("crypto", { randomUUID: () => FORM_ID });
     requireUser.mockResolvedValue(USER);
     fetchTenant.mockResolvedValue(tenant("owner"));
+    fetchDataPolicy.mockResolvedValue({ real_data_allowed: false });
     fetchPage.mockImplementation(
       async (_t: string, _id: string, entity: string) => PAGES[entity],
     );
+  });
+
+  // ------------------------------------------------------------------ the real-data gate
+  it("says so while the gate is closed", async () => {
+    render(await TenantPage(props()));
+    expect(screen.getByRole("note")).toHaveTextContent(/Synthetic data only/);
+    expect(screen.getByRole("note")).toHaveTextContent(/\+00/);
+    expect(fetchDataPolicy).toHaveBeenCalledWith("tok", TENANT);
+  });
+
+  it("shows no banner once the operator has opened it", async () => {
+    fetchDataPolicy.mockResolvedValue({ real_data_allowed: true });
+    render(await TenantPage(props()));
+    expect(screen.queryByRole("note")).toBeNull();
+  });
+
+  it("makes no claim either way when the policy cannot be read", async () => {
+    fetchDataPolicy.mockRejectedValue(new Error("down"));
+    render(await TenantPage(props()));
+    expect(screen.queryByRole("note")).toBeNull();
+    expect(screen.getByRole("heading", { name: "Acme Workspace" })).toBeInTheDocument();
   });
 
   // ------------------------------------------------------------------ order and authentication

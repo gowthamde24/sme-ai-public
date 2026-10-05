@@ -338,6 +338,11 @@ def test_an_id_that_exists_only_in_another_tenant_is_the_same_conflict() -> None
             {"code": "SM002", "message": "contact is suppressed; lift the suppression first"},
             r.ContactSuppressedError,
         ),
+        (
+            400,
+            {"code": "SM401", "message": "real data is not accepted in this workspace yet"},
+            r.RealDataGateError,
+        ),
         # no message-text matching: the same words under an ordinary code are just invalid
         (
             400,
@@ -550,8 +555,13 @@ def test_no_classified_exception_carries_any_part_of_the_database_text(
 def test_list_claims_is_tenant_scoped_user_jwt_only_and_returns_the_scoring_fields() -> None:
     company = uuid.uuid4()
     rows = [
-        {"id": str(uuid.uuid4()), "company_id": str(company), "predicate": "buyer_type",
-         "value": "saree_shop", "confidence": "unverified"},
+        {
+            "id": str(uuid.uuid4()),
+            "company_id": str(company),
+            "predicate": "buyer_type",
+            "value": "saree_shop",
+            "confidence": "unverified",
+        },
     ]
     repo, seen = repo_with(lambda req: httpx.Response(200, json=rows))
     got = repo.list_claims(TOKEN, TENANT, company_id=company)

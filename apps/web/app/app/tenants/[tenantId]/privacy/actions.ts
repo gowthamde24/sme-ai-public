@@ -44,6 +44,8 @@ function explain(error: unknown, whatFor: string): string {
       return "That request was cancelled. Make a new one.";
     if (error.status === 409 && error.code === "erasure_already_executed")
       return "That erasure has already been carried out.";
+    if (error.status === 409 && error.code === "erasure_owner_transfer_first")
+      return "This contact is the workspace's only owner. Transfer ownership to someone else first.";
     if (error.status === 409 && error.code === "erasure_not_pending")
       return "That request is no longer waiting. Reload the page.";
     if (error.status === 409)

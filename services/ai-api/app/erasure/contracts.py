@@ -21,6 +21,7 @@ HEADER = (
 RESPONSES: list[type[BaseModel]] = [
     m.ErasureRequestOut,
     m.ErasureResultOut,
+    m.DataPolicyOut,
     Page[m.ErasureRequestOut],
 ]
 REQUESTS: list[type[BaseModel]] = [m.ErasureRequestIn, m.ExecuteIn]

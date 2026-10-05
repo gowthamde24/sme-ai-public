@@ -21,7 +21,7 @@ from app.crm.repository import (
     InvalidValueError,
     NotFoundError,
 )
-from app.erasure.models import ErasureRequestOut, ErasureResultOut
+from app.erasure.models import DataPolicyOut, ErasureRequestOut, ErasureResultOut
 from app.tenancy.repository import Forbidden, RepositoryError, TokenRejected, UpstreamError
 
 logger = logging.getLogger("app.erasure.repository")
@@ -47,6 +47,10 @@ class AlreadyExecutedError(RepositoryError):
 
 class RequestCancelledError(RepositoryError):
     """SM304"""
+
+
+class OwnerTransferFirstError(RepositoryError):
+    """SM305: the last Owner cannot erase their own record."""
 
 
 class ErasureRepository(Protocol):
@@ -76,6 +80,8 @@ class ErasureRepository(Protocol):
         """Cancel a pending request. Returns True for a replay."""
         ...
 
+    def data_policy(self, token: str, tenant_id: uuid.UUID) -> DataPolicyOut: ...
+
 
 def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryError:
     """SQLSTATE -> one of our exceptions. `hide_denial`: a generic 42501 means "not found"."""
@@ -93,6 +99,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM302": WindowNotElapsedError,
         "SM303": AlreadyExecutedError,
         "SM304": RequestCancelledError,
+        "SM305": OwnerTransferFirstError,
         "23505": ConflictError,
         "23503": InvalidReferenceError,
         "22023": InvalidValueError,
@@ -242,6 +249,20 @@ class PostgrestErasureRepository:
                 "erasure data layer returned a result that does not match ErasureResultOut"
             )
             raise UpstreamError("unexpected erasure result") from None
+
+    def data_policy(self, token: str, tenant_id: uuid.UUID) -> DataPolicyOut:
+        """No row means closed (the default)."""
+        rows = self._send(
+            "GET",
+            "/tenant_data_policy",
+            token,
+            params={"select": "real_data_allowed", "tenant_id": f"eq.{tenant_id}", "limit": "1"},
+        )
+        if not isinstance(rows, list):
+            raise UpstreamError("unexpected list shape")
+        return DataPolicyOut(
+            real_data_allowed=bool(rows[0].get("real_data_allowed")) if rows else False
+        )
 
     def cancel(self, token: str, request_id: uuid.UUID) -> bool:
         result = self._rpc(

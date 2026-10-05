@@ -201,6 +201,7 @@ describe("privacy actions", () => {
       [409, "erasure_cancelled", /cancelled/],
       [409, "erasure_already_executed", /already been carried out/],
       [409, "erasure_not_pending", /no longer waiting/],
+      [409, "erasure_owner_transfer_first", /only owner/],
       [409, "conflict", /out of date/],
       [503, "erasure_unavailable", /not available right now/],
       [500, "http_error", /Could not run/],

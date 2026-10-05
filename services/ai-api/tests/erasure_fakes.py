@@ -9,7 +9,7 @@ from typing import Any
 
 from app.crm.models import Page
 from app.crm.repository import ConflictError
-from app.erasure.models import ErasureRequestOut, ErasureResultOut
+from app.erasure.models import DataPolicyOut, ErasureRequestOut, ErasureResultOut
 from app.tenancy.repository import Forbidden
 
 NOW = dt.datetime(2026, 10, 5, 12, 0, tzinfo=dt.UTC)
@@ -41,6 +41,7 @@ class FakeErasureRepository:
         self.request_error: Exception | None = None
         self.execute_error: Exception | None = None
         self.cancel_error: Exception | None = None
+        self.open_gates: set[uuid.UUID] = set()
 
     def _seen(self, token: str, call: str) -> None:
         self.tokens_seen.append(token)
@@ -132,3 +133,7 @@ class FakeErasureRepository:
         replayed = row.status == "cancelled"
         self.rows[request_id] = (tenant, row.model_copy(update={"status": "cancelled"}))
         return replayed
+
+    def data_policy(self, token: str, tenant_id: uuid.UUID) -> DataPolicyOut:
+        self._seen(token, "data_policy")
+        return DataPolicyOut(real_data_allowed=tenant_id in self.open_gates)

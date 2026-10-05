@@ -96,6 +96,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     crm_repo.ContactSuppressedError: ApiError(
         409, "contact_suppressed", "The contact is suppressed; lift the suppression first."
     ),
+    crm_repo.RealDataGateError: ApiError(
+        409,
+        "real_data_gate_closed",
+        "This workspace accepts synthetic data only for now: use an e-mail address on a reserved "
+        "domain (such as example.test) and a phone number that starts with +00.",
+    ),
     # Agent runs (T006). Fixed messages: no field name, no value, nothing from the data layer.
     runs_repo.AgentsDisabledError: ApiError(
         409, "agents_disabled", "Agents are not enabled for this workspace."
@@ -121,6 +127,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     erasure_repo.RequestCancelledError: ApiError(
         409, "erasure_cancelled", "That erasure request was cancelled."
+    ),
+    erasure_repo.OwnerTransferFirstError: ApiError(
+        409,
+        "erasure_owner_transfer_first",
+        "This contact is the workspace's only owner. Transfer ownership to someone else first; "
+        "an exception needs the operator.",
     ),
 }
 

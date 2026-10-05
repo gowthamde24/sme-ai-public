@@ -4,6 +4,7 @@ import { ApiContractError } from "./client";
 import {
   cancelErasure,
   confirmationPhrase,
+  fetchDataPolicy,
   fetchErasureRequest,
   phraseMatches,
   executeErasure,
@@ -237,5 +238,16 @@ describe("erasure API client", () => {
     expect(phraseMatches(" ERASE   Asha Rao", "ERASE Asha Rao")).toBe(true);
     for (const wrong of ["erase Asha Rao", "ERASE asha rao", "ERASE Asha", "", "ERASE Asha Rao!"])
       expect(phraseMatches(wrong, "ERASE Asha Rao")).toBe(false);
+  });
+
+  it("reads the real-data gate, and anything that is not exactly a boolean is an error, never 'open'", async () => {
+    const f = respond({ real_data_allowed: false });
+    globalThis.fetch = f as unknown as typeof fetch;
+    expect(await fetchDataPolicy("tok", TENANT)).toEqual({ real_data_allowed: false });
+    expect(f.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/data-policy`);
+    for (const broken of [{ real_data_allowed: "true" }, { real_data_allowed: 1 }, {}, null, "open"]) {
+      globalThis.fetch = respond(broken) as unknown as typeof fetch;
+      await expect(fetchDataPolicy("tok", TENANT)).rejects.toThrow(ApiContractError);
+    }
   });
 });

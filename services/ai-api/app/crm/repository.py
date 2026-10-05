@@ -70,6 +70,10 @@ class ContactSuppressedError(RepositoryError):
     """SM002: consent cannot be granted while the contact is suppressed."""
 
 
+class RealDataGateError(RepositoryError):
+    """SM401: the real-data gate is closed (ADR 0015): reserved e-mail domain and +00 phone only."""
+
+
 # ----------------------------------------------------------------------------- entities
 @dataclass(frozen=True)
 class EntitySpec:
@@ -181,6 +185,8 @@ def classify_error(status: int, body: Any) -> Exception:
         return InvalidTransitionError(code)
     if code == "SM002":
         return ContactSuppressedError(code)
+    if code == "SM401":
+        return RealDataGateError(code)
     if code == "23514":
         return InvalidValueError(code)
     if code in _VALUE_CODES:

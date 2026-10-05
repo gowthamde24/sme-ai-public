@@ -198,6 +198,17 @@ export async function cancelErasure(
   );
 }
 
+/**
+ * Whether this workspace accepts real contact details yet (the real-data gate, ADR 0015). Closed until the operator opens it; the
+ * browser can only read it. A response that is not exactly a boolean is an error, never "open".
+ */
+export async function fetchDataPolicy(accessToken: string, tenantId: string): Promise<{ real_data_allowed: boolean }> {
+  checked(tenantId);
+  const json = await apiRequest(`/v1/tenants/${tenantId}/data-policy`, accessToken);
+  if (!isRecord(json) || typeof json.real_data_allowed !== "boolean") return bad("data policy");
+  return { real_data_allowed: json.real_data_allowed };
+}
+
 export async function fetchErasureRequest(
   accessToken: string,
   tenantId: string,

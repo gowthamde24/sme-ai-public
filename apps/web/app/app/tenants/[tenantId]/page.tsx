@@ -9,6 +9,7 @@ import {
   fetchPage,
   isCanonicalUuid,
 } from "@/lib/api/crm";
+import { fetchDataPolicy } from "@/lib/api/erasure";
 import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
@@ -77,6 +78,14 @@ export default async function TenantPage({
     // anything else: show an error, never placeholder data
   }
 
+  // The real-data gate. A failure to read it shows no banner (never a claim either way); the database enforces the gate regardless.
+  let syntheticOnly = false;
+  try {
+    syntheticOnly = !(await fetchDataPolicy(user.accessToken, tenantId)).real_data_allowed;
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+  }
+
   const canWrite = WRITE_ROLES.includes(tenant.role);
   const formId = crypto.randomUUID();
 
@@ -89,6 +98,14 @@ export default async function TenantPage({
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
+
+      {syntheticOnly && (
+        <p role="note" className="hint" style={{ borderLeft: "4px solid #b45309", paddingLeft: "0.75rem" }}>
+          <strong>Synthetic data only.</strong> This workspace does not accept real contact details yet. Use an e-mail address on a
+          reserved domain (such as <code>example.test</code>) and a phone number that starts with <code>+00</code>. The operator
+          opens this once the privacy checks are done.
+        </p>
+      )}
 
       <nav aria-label="Lead actions" style={{ marginBottom: "1rem" }}>
         <Link

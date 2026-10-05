@@ -22,6 +22,7 @@ from fastapi import APIRouter, Depends, Query, Response
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import CursorError, Page, decode_cursor, parse_uuid
 from app.erasure.models import (
+    DataPolicyOut,
     ErasureRequestIn,
     ErasureRequestOut,
     ErasureResultOut,
@@ -59,6 +60,16 @@ def _visible(runtime: Runtime, ctx: TenantContext, raw_id: str) -> ErasureReques
     if found is None:
         raise not_found()
     return found
+
+
+AnyMember = Annotated[TenantContext, Depends(require_tenant_role())]
+
+
+@router.get("/data-policy", response_model=DataPolicyOut)
+def get_data_policy(ctx: AnyMember, runtime: RuntimeDep) -> DataPolicyOut:
+    """The real-data gate, read-only (the operator opens it; nothing here can). Any member may
+    read it: the web shows "synthetic data only" while it is closed."""
+    return _repo(runtime).data_policy(ctx.principal.token, ctx.tenant.id)
 
 
 @router.post("/erasure-requests", response_model=ErasureRequestOut, status_code=201)
