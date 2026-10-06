@@ -236,7 +236,14 @@ class People:
             }
             _save_state(self.state)
         user = users[label]
-        weak = self._password_token(user["email"], user["password"])
+        try:
+            weak = self._password_token(user["email"], user["password"])
+        except httpx.HTTPStatusError:
+            # the database was reset since this person was kept: they no longer exist, so they are signed up again
+            del users[label]
+            _save_state(self.state)
+            self.sign_in(role)
+            return
         factors = (
             httpx.get(f"{self.stack.url}/auth/v1/user", headers=self.stack.hdr(weak), timeout=20)
             .json()

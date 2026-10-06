@@ -1,5 +1,16 @@
 # Handoff: resume here
 
+**STOP POINT (2026-10-06): rehearsal steps 0-3 are built and committed locally; nothing is pushed. The owner reads `rehearsal-report.md` (`make db-reset && make rehearse-thin-slice`) before anything else is built.** Do NOT start step 4 (order web page), step 5 (price-list CSV import), T010 part 2 or T011a before the owner approves.
+
+* Built: step 0 (erased marker, `20261021090000_erased_marker.sql`; stops-followups "newer" by approval time then quote number), step 1 (order API: `app/orders/{routes,repository,service,errors,models}.py`, the error map in `app/main.py`), step 2 (`tests/rehearsal/data` all invented, hand-worked `expected.json` / `expected.md`; `app/leads/csv_rows.py`), step 3 (`tests/rehearsal/{drive,harness,report}.py`, `make rehearse-thin-slice`; state of invented people in `.rehearsal/state.json`, git-ignored, healed after a db-reset).
+* Last full `make check` (2026-10-06): exit 0; vitest 962, pytest 3,457, pgTAP 8,709, integration 909, evals 45 + 9 + 29 + 9 passed (one opt-in live case skipped). Mutation pass: `docs/checklist-notes/A.md` "Rehearsal steps 0-3".
+* Rehearsal result: 294/294 checks; 17 of 20 leads imported (1 adapter refusal, 1 duplicate, 1 rejection, 2 flagged); 7 quotes equal the hand-worked figures; 7 orders (3 closed_paid, 1 declined, 2 cancelled, 1 in preparation); the second pass changed no row. Findings for the owner are in section 8 of the report (no invite route; a typed field cannot be retried after confirm; repeat quotes always carry CREDIT_LIMIT_EXCEEDED under the seeded policy).
+* Traps: pgTAP files must not assert global counts; the rehearsal driver must run on a day-stable clock (same UTC day for the second pass); do not run a Python mutation pass while a SQL pass is running (they share the app code and the database).
+
+---
+
+(Earlier hand-off, still true.)
+
 **STOP POINT (2026-10-07): the owner's review verdict on T010 part 1 and the order database is APPLIED and committed locally; nothing is pushed.** Do NOT build the order API or web (plan commits 5-6), T010 part 2 or T011a before the owner approves. `docs/plans/thin-slice-rehearsal.md` is a PLAN ONLY (nothing built).
 
 * The review fixes are ONE migration, `supabase/migrations/20261020090000_review_fixes.sql` (create or replace of the latest definitions; `tests/test_migration_copies.py` pins every copy): (1) lifting a contact lifts a shared key only when no other suppressed, non-erased contact holds it (a key whose suppression came from an erasure stays suppressed); (2) a cancellation that carries money is the Owner's (SM234, message "this action needs the owner", `owner_approved_by` set, the check allows it on a `cancel`); (3) SM237 only while the quote's order is not declined, expired or cancelled, and `app.order_stops_followups` is decided by the lead's LATEST order unless a newer approved quote has no order yet; (4) `app.operator_seed_order_policy` (synthetic, operator-only; run by `make seed-quote-data`).

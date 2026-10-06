@@ -233,3 +233,47 @@ def test_two_lifts_at_once_of_contacts_sharing_an_email_key_release_it(
     )
     assert lifted == "1"
     assert operator_sql.sql(f"select app.key_active('{w.a.id}', 'email', '{shared}')") == "f"
+
+
+def test_a_lift_waits_for_an_erasure_of_the_same_key_and_then_finds_its_marker(
+    w: World, client: TestClient
+) -> None:
+    """Step 0 (the erased marker): `mark_erased` takes the same per-key lock as add and lift. A psql session HOLDS the erasure of Z open (its marker is appended, not yet
+    committed) while the Owner lifts Y, who suppressed the number first. Without the lock the lift would not wait, would not see the uncommitted marker and would append its
+    `lifted` event after it; with it the lift waits, finds the marker and leaves the number suppressed."""
+    phone = number()
+    y, z = contact(client, w.a, phone), contact(client, w.a, phone)
+    owner = bearer(w.a.users["owner"])
+    assert (
+        client.post(
+            url(w.a, f"/contacts/{y}/suppress"),
+            json={"reason": "opted_out"},
+            headers=bearer(w.a.users["sales"]),
+        ).status_code
+        == 200
+    )
+    request = uid()
+    made = client.post(
+        url(w.a, "/erasure-requests"),
+        json={"id": request, "scope": "contact", "subject_id": z},
+        headers=owner,
+    )
+    assert made.status_code == 201, made.text
+    held = Held(w.a.users["owner"], f"select public.execute_erasure('{request}', false)")
+    held.holding()
+    response, waited = timed(
+        lambda: client.post(
+            url(w.a, f"/contacts/{y}/lift-suppression"),
+            json={"evidence_type": "written", "evidence_ref": "letter:m2"},
+            headers=owner,
+        )
+    )
+    held.finish()
+    assert response.status_code == 200 and waited > 1.5, (response.text, waited)
+    key = RING.key_for("phone", phone)
+    assert events(w.a, phone, "lifted") == 0, "the lift found the marker and wrote nothing"
+    assert operator_sql.sql(f"select app.key_active('{w.a.id}', 'phone', '{key}')") == "t"
+    marker = operator_sql.sql(
+        f"select count(*) from suppression.key_events where tenant_id = '{w.a.id}' and kind = 'phone' and key_hmac = '{key}' and event = 'suppressed' and reason = 'erased'"
+    )
+    assert marker == "1"

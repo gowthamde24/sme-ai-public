@@ -2,6 +2,29 @@
 
 Record ticket, checklist row, evidence, unresolved risk and proposed status here. Lane A consolidates these into docs/pre-pilot-checklist.md after review.
 
+## Rehearsal steps 0-3: mutation pass (2026-10-06)
+
+Same method as below (a SQL function re-created and restored with the baseline checked first; Python mutants applied to the file, unit tests run, file restored; a "kill" is a FAILING test, a broken import is reported apart).
+
+**SQL, the step 0 guards (`20261021090000_erased_marker.sql`): 31 mutants, first pass 27 killed, 4 survived; 2 closed with new tests and re-run killed, 2 equivalent => 29 killed + 2 equivalent.** **Python, the order routes' guards (body-field refusal, SQLSTATE mapping, role handling, replay status, paging): 52 mutants, first pass 46 killed, 6 survived; all 6 closed with tests and re-run killed => 52 killed.**
+
+| Survivor | What it was | Disposition |
+| --- | --- | --- |
+| MK07 `mark_erased` takes no per-key lock | the one race test erased through the API, which first records the contact's keys and so took the lock itself | closed: `test_a_lift_waits_for_an_erasure_of_the_same_key_and_then_finds_its_marker` holds the erasure open (psql) while the Owner lifts the other contact; the lift must wait and then find the marker; killed |
+| SY06 a marker blocks a lift for ever, even after a later lift | no application path writes a `lifted` event after a marker (the guard refuses it), so only a direct ledger row reaches the clause | closed: pgTAP 60 P1/P2 write the operator's lift directly and prove an older marker does not block while a newer one does; killed |
+| SY07 `e.seq >= coalesce(.., 0)` | EQUIVALENT: `seq` starts at 1 and two events never share a seq | documented |
+| OS04 the same quote counts as "newer" (`>=`) | EQUIVALENT: the latest order's own quote has an order, and the `not exists (order)` filter removes it | documented |
+| M14 the SM232 message is the raw reason | the unit tests checked only that a message exists (the real-stack suite pinned one sentence) | closed: every reason's sentence is compared with the table, the table is pinned (16 distinct sentences); killed |
+| M20 the closed reason list loses ADVANCE_NOT_PAID | the tests iterated the list under test | closed: the list is pinned as a literal; killed |
+| R07 the order is not read before an event is recorded | an unknown order was a 404 either way | closed: the test counts what the data layer was asked; killed |
+| R08 a malformed id reaches the data layer | the fake answered None for anything | closed: the fake records what it was asked; a malformed id asks nothing; killed |
+| R10 a policy retry answers 201 | the fake never replayed | closed: the fake replays by version id; the retry is a 200 with `replayed`; killed |
+| R11 the list limit has no upper bound | only `limit=0` was tested | closed: `limit=51` is a 422; killed |
+
+Other findings of the rehearsal itself (not mutation): a typed requirement field cannot be retried after the requirement is confirmed (`requirement_confirmed`); a quote replaced by a newer one cannot be approved again (`quote_not_draft`); the API has no route to add a member to a workspace (the Owner's token is used against the database API); the seeded quote policy gives a repeat customer a credit limit of zero, so every repeat quote carries CREDIT_LIMIT_EXCEEDED.
+
+Evidence: `make check` exit 0 (vitest 962, pytest 3,457, pgTAP 8,709 in 61 files, integration 909, evals 45 + 9 + 29 + 9 passed, the one opt-in live case skipped). `make rehearse-thin-slice` on a fresh database: 294 of 294 checks passed; the second pass changed no row.
+
 ## Review fixes (steps 1-3, and the step 4 seed): mutation pass (2026-10-07)
 
 One pass over the guards changed by `20261020090000_review_fixes.sql`: the shared-key lift (e-mail and phone variants, the erasure guard, the per-key lock), the Owner's funded cancellation (SM234, the approver, the widened check, the message), SM237 for non-terminal orders only (approve and withdraw, per state), the lead's-latest-order follow-up stop, and the order policy seed. Same method as the pass above (the original runs first before every mutant; `PYTHONDONTWRITEBYTECODE=1`; `__pycache__` swept; the runner and the lists are scratch). 68 mutants.

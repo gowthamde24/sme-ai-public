@@ -81,6 +81,13 @@ def test_every_sqlstate_becomes_one_typed_exception_without_the_data_layers_text
     assert CANARY not in str(caught.value) and CANARY not in repr(caught.value.__cause__)
 
 
+def test_the_closed_list_of_reasons_is_pinned() -> None:
+    assert REASONS == (
+        "ILLEGAL_TRANSITION", "QUOTE_NOT_EXPIRED", "QUOTE_EXPIRED", "CANCEL_WINDOW_CLOSED", "ADVANCE_NOT_PAID", "DUPLICATE_PAYMENT_ID", "DUPLICATE_REFUND_ID",
+        "OVERPAYMENT", "REFUND_EXCEEDS_PAID", "CLOSED_UNPAID", "INVALID_ADVANCE", "INVALID_CANCEL_WINDOW", "INVALID_STATE", "INVALID_EVENT", "OUT_OF_RANGE", "OTHER",
+    )  # fmt: skip
+
+
 @pytest.mark.parametrize("reason", REASONS)
 def test_sm232_carries_one_closed_reason(reason: str) -> None:
     with pytest.raises(OrderRefusedError) as caught:

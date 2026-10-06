@@ -13,6 +13,7 @@ from typing import Any
 
 import pytest
 
+from app.main import ORDER_REASON_TEXT
 from app.orders import lifecycle_port
 from app.orders.builder import OrderEvent, build_request
 from app.orders.errors import REASONS
@@ -244,6 +245,9 @@ def test_a_malformed_ids_and_an_unknown_order_look_the_same(w: World) -> None:
     )
     assert w.call("POST", "/orders/not-a-uuid/events", EVENT_BODY, "a_sales").status_code == 404
     assert w.sent("record_event") == []
+    assert all(isinstance(asked, uuid.UUID) for asked in w.o.asked) and len(w.o.asked) == 3, (
+        "a malformed id is a 404 before the data layer is asked anything"
+    )
 
 
 # ----------------------------------------------------------------------------- what is sent to the database
@@ -474,7 +478,16 @@ def test_sm232_is_reported_with_one_closed_reason_and_a_fixed_sentence(
         and error["reason"] == reason
         and set(error) == {"code", "message", "reason"}
     )
-    assert error["message"] and CANARY not in r.text
+    assert error["message"] != reason and error["message"].endswith(".") and CANARY not in r.text
+    assert error["message"] == ORDER_REASON_TEXT[reason]
+
+
+def test_the_sentences_are_the_ones_a_person_reads() -> None:
+    assert ORDER_REASON_TEXT["ADVANCE_NOT_PAID"] == "The advance has not been paid."
+    assert ORDER_REASON_TEXT["OTHER"] == "The order rules refuse this event."
+    assert len(set(ORDER_REASON_TEXT.values())) == len(ORDER_REASON_TEXT) == 16, (
+        "one sentence per reason"
+    )
 
 
 def test_an_admins_funded_cancellation_is_the_owners_to_decide(w: World) -> None:
@@ -569,6 +582,7 @@ def test_the_list_is_keyset_paged_and_a_bad_cursor_is_refused(w: World) -> None:
     assert w.sent("list_orders")[-1]["cursor"] is not None
     assert w.call("GET", "/orders?cursor=%25%25%25", None, "a_sales").status_code == 422
     assert w.call("GET", "/orders?limit=0", None, "a_sales").status_code == 422
+    assert w.call("GET", "/orders?limit=51", None, "a_sales").status_code == 422
     last = w.call("GET", "/orders?limit=50", None, "a_sales").json()
     assert last["next_cursor"] is None
 
@@ -586,7 +600,10 @@ def test_the_policy_is_published_with_the_tenant_of_the_path_and_only_the_four_f
     w: World,
 ) -> None:
     r = w.call("POST", "/order-policy-versions", POLICY_BODY, "a_owner")
-    assert r.status_code == 201 and r.json()["version_no"] == 1
+    assert r.status_code == 201 and r.json()["version_no"] == 1 and r.json()["replayed"] is False
+    again = w.call("POST", "/order-policy-versions", POLICY_BODY, "a_owner")
+    assert again.status_code == 200 and again.json()["replayed"] is True, "a retry is a 200"
+    w.o.calls.pop()  # (only the first send is checked below)
     (args,) = w.sent("create_policy")
     assert args["p_tenant_id"] == str(TENANT_A.id) and args["p_effective_from"] == "2026-10-07"
     assert args["p_policy"] == {

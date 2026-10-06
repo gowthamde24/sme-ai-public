@@ -98,6 +98,10 @@ class FakeOrders:
         self.tokens: list[str] = []
         self.calls: list[tuple[str, dict[str, Any]]] = []
         self.raise_next: Exception | None = None
+        self.asked: list[
+            object
+        ] = []  # what get_order was asked for (a malformed id must never get here)
+        self.policies: set[str] = set()
         self.next_result: dict[str, Any] | None = None
 
     def _seen(self, token: str, name: str, args: dict[str, Any]) -> None:
@@ -140,12 +144,14 @@ class FakeOrders:
 
     def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         self._seen(token, "create_policy", args)
+        replayed = args["p_version_id"] in self.policies
+        self.policies.add(args["p_version_id"])
         return {
             "version_id": args["p_version_id"],
             "version_no": 1,
             "effective_from": args["p_effective_from"],
             "content_sha256": "0" * 64,
-            "replayed": False,
+            "replayed": replayed,
         }
 
     # reads
@@ -153,6 +159,7 @@ class FakeOrders:
         self, token: str, tenant_id: uuid.UUID, order_id: uuid.UUID
     ) -> dict[str, Any] | None:
         self.tokens.append(token)
+        self.asked.append(order_id)
         return self.rows.get(order_id) if tenant_id == self.tenant else None
 
     def list_orders(

@@ -542,5 +542,23 @@ select ok(not has_function_privilege('authenticated', 'app.suppression_key_mark_
           and not has_function_privilege('service_role', 'app.suppression_key_mark_erased(uuid, text, text, smallint, uuid, uuid)', 'execute') and not has_function_privilege('public', 'app.suppression_key_mark_erased(uuid, text, text, smallint, uuid, uuid)', 'execute'), 'O10 revoked from every role');
 -- unrelated shared-key behaviour is unchanged (section N still holds: the new rule only looks for an erased marker)
 
+-- ============================================================================ P. the marker blocks a lift only while it is NEWER than the key's last lift (mutation pass: SY06)
+-- an operator lifted an erased key on purpose (no application path can): after that lift, a contact that suppresses the number and is lifted releases it again
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('p1'), tests.tid('a'), tests.rid('a_company'), 'P one', 'p1@example.test', '+00 90000 00601'),
+  (tests.rid('p2'), tests.tid('a'), tests.rid('a_company'), 'P two', 'p2@example.test', '+00 90000 00602');
+select pg_temp.rk('a_sales', 'p1', pg_temp.ks(null, 'p_marked'));
+select pg_temp.rk('a_sales', 'p2', pg_temp.ks(null, 'p_marked2'));
+insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event, reason) values
+  (tests.tid('a'), 'phone', pg_temp.h('p_marked'), 1, 'suppressed', 'erased'),
+  (tests.tid('a'), 'phone', pg_temp.h('p_marked'), 1, 'lifted', null),
+  (tests.tid('a'), 'phone', pg_temp.h('p_marked2'), 1, 'suppressed', 'erased');
+select pg_temp.sup('p1');
+select pg_temp.lift('p1');
+select is(pg_temp.chk_phone('p_marked'), '{"email": false, "phone": false, "suppressed": false}', 'P1 an erased marker OLDER than the last lift does not block a later lift');
+select pg_temp.sup('p2');
+select pg_temp.lift('p2');
+select is(pg_temp.chk_phone('p_marked2'), '{"email": false, "phone": true, "suppressed": true}', 'P2 ... while a marker with no lift after it does (the same steps, one key still suppressed)');
+
 select * from finish();
 rollback;
