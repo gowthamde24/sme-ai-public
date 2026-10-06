@@ -299,3 +299,57 @@ ports or pushes; integration, approvals and real payment verification belong to 
   Includes 250 seeded mapper cases. `make check-leftovers` passes.
 - API, bounds and handoff: docs/plans/requirement-mapper.md. Manual mutation
   evidence follows in the next commit; integration and real data remain with A.
+
+### Requirement mapper manual mutation pass
+
+Applied each mutation independently by hand to the real mapper, ran
+`make test-packages`, observed exit 2 with the named test failing, then reverted
+before the next mutation. All 36 killed by baseline tests; no survivors or extra
+tests needed. No mutation script; the mapper diff against beddf35 is empty.
+“Added test” indicates a test added because a mutant survived.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| 01 Ignore duplicate per-line slots | test_duplicate_slots_precede_other_and_missing | no |
+| 02 Ignore missing saree_type | test_missing_required_slots | no |
+| 03 Ignore missing quantity | test_missing_required_slots | no |
+| 04 Ignore missing quantity basis | test_missing_required_slots | no |
+| 05 Ignore other in a code slot | test_other_in_each_code_requires_human | no |
+| 06 Missing saree mapping returns category reason | test_saree_type_not_mapped | no |
+| 07 Include inactive products | test_250_seeded_properties | no |
+| 08 Invert category membership | test_250_seeded_properties | no |
+| 09 Fabric reads colour mapping | test_normalization_and_config_alternates | no |
+| 10 Colour reads fabric mapping | test_matched_and_proposal | no |
+| 11 Permit products missing required attributes | test_missing_attributes_strictly_excluded | no |
+| 12 Apply colour before fabric | test_colour_failure_after_fabric | no |
+| 13 Alternatives use empty post-filter set | test_fabric_failure_and_previous_candidates | no |
+| 14 Consider only first configured attribute value | test_normalization_and_config_alternates | no |
+| 15 Replace casefold with lowercase | test_normalization_and_config_alternates | no |
+| 16 Remove whitespace collapse | test_normalization_and_config_alternates | no |
+| 17 Treat two candidates as a single match | test_candidate_cap_and_truncation_boundary | no |
+| 18 Raise candidate cap to 21 | test_candidate_cap_and_truncation_boundary | no |
+| 19 Truncated > becomes >= at cap | test_candidate_cap_and_truncation_boundary | no |
+| 20 Return SKUs in descending order | test_candidate_cap_and_truncation_boundary | no |
+| 21 Invert known-unit mismatch comparison | test_unit_mismatch_and_unknown_product_unit | no |
+| 22 Treat unknown product unit as mismatch | test_unit_mismatch_and_unknown_product_unit | no |
+| 23 Add one to proposal quantity | test_matched_and_proposal | no |
+| 24 Invent 100 bps proposal discount | test_matched_and_proposal | no |
+| 25 Propose first ambiguous candidate | test_optional_criteria_absent_or_null | no |
+| 26 Omit duplicate_sku result flag | test_line_order_and_duplicate_sku_without_merge | no |
+| 27 Discard later proposal for same SKU | test_line_order_and_duplicate_sku_without_merge | no |
+| 28 Share mutable order rows with input | test_order_rows_untouched_and_not_matching_inputs | no |
+| 29 Hash field rows in input order | test_hash_roundtrip_and_every_leaf | no |
+| 30 Hash catalog in input order | test_hash_roundtrip_and_every_leaf | no |
+| 31 Change mapper version to 1.0.1 | test_matched_and_proposal | no |
+| 32 Omit config from hash input | test_hash_roundtrip_and_every_leaf | no |
+| 33 Disable normalized duplicate catalog SKU check | test_duplicate_sku_and_normalized_attribute_checks | no |
+| 34 Use isinstance, accepting bool-as-int | test_fixed_type_rejections | no |
+| 35 Integer upper bound > becomes >= | test_line_and_quantity_bounds | no |
+| 36 Set human_confirmation_required false | test_matched_and_proposal | no |
+
+Final checks: 34 mapper + 33 cadence + 27 lifecycle + 29 quote = 123 tests,
+all pass after reversions; 250 seeded mapper cases included. `make check-leftovers`
+passes. Lane A integration, authoritative input retrieval, approvals and audit
+remain pending. No database, network, ports, dependency changes or pushes.
+`./scripts/check-lane-paths.sh C` output:
+`Lane C: changed paths allowed under base policy` (exit 0).
