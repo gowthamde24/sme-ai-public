@@ -1,0 +1,7 @@
+{
+  "csv": "sku,name,unit_price,moq,tax_bps,min_qty_1,price_1,min_qty_2,price_2\nSYN-B,Synthetic weave B,1200,2,500,2,1100,10,1000\nSYN-A,Synthetic weave A,0.01,1,0,,,,\n",
+  "expected_items": [
+    {"sku": "SYN-A", "name": "Synthetic weave A", "unit_price": 1, "minimum_order_quantity": 1, "price_breaks": [], "tax_bps": 0},
+    {"sku": "SYN-B", "name": "Synthetic weave B", "unit_price": 120000, "minimum_order_quantity": 2, "price_breaks": [{"min_qty": 2, "unit_price": 110000}, {"min_qty": 10, "unit_price": 100000}], "tax_bps": 500}
+  ]
+}

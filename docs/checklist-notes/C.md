@@ -280,6 +280,101 @@ ports or pushes; integration, approvals and real payment verification belong to 
 `./scripts/check-lane-paths.sh c main` output:
 `Lane C: changed paths allowed under base policy` (exit 0).
 
+## Quote text: baseline
+
+- Retry fetched origin/main with merged CSV PR (5d912b7); lane/c is already at
+  that HEAD and started clean. Work changes only quote_text/**, its plan and C notes.
+- Owner confirmed separate {quote, approved, expected_engine_hash, display}
+  wrapper; engine status stays draft. approved is A's authoritative approval,
+  not the engine's needs_owner_approval flag. Hash must equal the approved record.
+- Owner confirmed 200-character ordinary/display strings, separately bounded
+  generated trace.text (4,000 characters). Metadata never appears in output.
+- Pure English templates, Indian rupee grouping and exact bps percentages;
+  no clocks/I/O/translations/sending. All display markup is neutralized, unsafe
+  control/bidi characters reject, every rendered line <=60 Unicode characters.
+- Input limits: <=30 quote items, <=10 notes, generated output <=500 lines;
+  nested preflight before validation/hash, strict types/unknown-key rejection.
+- Uses exact engine money fields; traces supply rates. Checks monetary/date
+  consistency. A owns approval/auth, recomputation and stored-result binding:
+  engine input hash is not a result signature. Human copies text; no system send.
+- make test-packages auto-discovers package: 28 text + 149 existing tests pass
+  (177 total), including 250 seeded real-engine amount round trips and hostile
+  inputs. make check-leftovers passes. Manual mutation evidence follows separately.
+
+## Price-list CSV: baseline
+
+- Retried requested fetch/fast-forward successfully to origin/main 7b78665;
+  lifecycle/mapper PR is merged. Started clean on lane/c. No push.
+- Added only packages/pure/price_list_csv/**, docs/plans/price-list-csv.md and
+  these notes. Existing make test-packages discovers the nested package.
+- Required name and tax_bps columns added to the proposed CSV columns: the quote
+  engine requires both, so no product name or tax rate is invented/defaulted.
+- All-or-nothing parser uses exact integer INR paise, strict SKU syntax,
+  case-insensitive SKU uniqueness, fixed row errors and early file limits.
+- Engine 1.1.0 item fields/bounds are mirrored. Import files can hold 5,000 rows;
+  lane A selects <=1,000 relevant catalog items for a quote request. No existing
+  pure test cross-imports: 250 seeded cases assert the documented engine shape
+  and break rules instead. Prices are strictly positive; breaks contiguous.
+- Semantic hash ignores valid row/header ordering and equivalent money formats;
+  error results have null hash. BOM counts toward UTF-8 byte size. Western comma
+  grouping only. Lane A owns import endpoint, owner approval, DB re-checks/audit.
+- Test count before this package: 123. Baseline adds 26 CSV tests (149 total).
+  Mutation evidence follows separately; no services, ports or new dependencies.
+
+### Price-list CSV manual mutation pass
+
+Mutated the real library by hand, one change per run of make test-packages;
+each row below observed exit 2 with the named test failing. No mutation scripts.
+All 35 killed by baseline tests; no survivors or additional tests needed. All
+mutations reverted; parser diff against cdba6aa is empty. One revert of mutation
+27 initially matched its adjacent guard; restored both guards and reran mutation
+28 in isolation before counting it. No combined result is used as evidence.
+“Added test” means added because a mutation survived.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| 01 Convert whole rupees with multiplier 10 instead of 100 | test_exact_money_formats_and_boundaries | no |
+| 02 Left-pad decimal digits instead of right-padding | test_exact_money_formats_and_boundaries | no |
+| 03 Allow three decimal places | test_invalid_money_syntax | no |
+| 04 Zero-money guard <= becomes < | test_exact_money_formats_and_boundaries | no |
+| 05 Money maximum > becomes >= | test_exact_money_formats_and_boundaries | no |
+| 06 Strip commas before checking grouping | test_invalid_money_syntax | no |
+| 07 Allow Unicode decimal digits | test_invalid_money_syntax | no |
+| 08 Allow leading hyphen in SKU | test_sku_injection_and_character_rules | no |
+| 09 Allow 41-character SKU | test_sku_injection_and_character_rules | no |
+| 10 Disable case-insensitive duplicate SKU check | test_sku_case_insensitive_duplicates | no |
+| 11 Name maximum becomes 200 instead of engine's 128 | test_name_bounds_and_no_tax_default | no |
+| 12 Compare header names case-sensitively | test_headers_bom_case_and_column_permutation | no |
+| 13 Disable unknown-column check | test_header_errors_no_echo | no |
+| 14 Disable duplicate-column check | test_header_errors_no_echo | no |
+| 15 Make required name column optional | test_header_errors_no_echo | no |
+| 16 Disable paired-break-column check | test_header_errors_no_echo | no |
+| 17 Preserve BOM in parsed header | test_headers_bom_case_and_column_permutation | no |
+| 18 Relax CSV syntax strictness | test_csv_quotes_newlines_and_doubled_quotes | no |
+| 19 Row width != becomes > (short rows accepted) | test_row_width_and_logical_numbering | no |
+| 20 Integer lower bound < becomes <= | test_integer_syntax_and_bounds | no |
+| 21 Integer upper bound > becomes >= | test_integer_syntax_and_bounds | no |
+| 22 Default empty tax_bps to zero | test_name_bounds_and_no_tax_default | no |
+| 23 Break minimum < MOQ becomes <= | test_price_break_edges_and_rules | no |
+| 24 Break quantity <= previous becomes < | test_price_break_edges_and_rules | no |
+| 25 Break price > previous becomes >= | test_price_break_edges_and_rules | no |
+| 26 Allow gaps in populated break tiers | test_break_missing_pairs_gaps_and_invalid_values | no |
+| 27 Incomplete pair guard OR becomes AND | test_break_missing_pairs_gaps_and_invalid_values | no |
+| 28 Add one paise to each parsed break (isolated rerun) | test_price_break_edges_and_rules | no |
+| 29 Sort items descending by SKU | test_synthetic_engine_shape | no |
+| 30 Change parser/hash version to 1.0.1 | test_hash_determinism_sorting_and_roundtrip | no |
+| 31 Omit items from hash | test_hash_includes_all_valid_item_fields | no |
+| 32 Return partial items when any error exists | test_all_or_nothing_and_multiple_errors | no |
+| 33 Check character count instead of UTF-8 byte count | test_utf8_byte_limit_and_bom_counts | no |
+| 34 Decoded cell limit > becomes >= | test_cell_limit_exact_quoted_and_unquoted | no |
+| 35 Logical record limit > becomes >= | test_rows_at_limit_and_one_above | no |
+
+Final checks: 26 CSV + 123 existing tests = 149, including 250 seeded CSV cases;
+make test-packages and make check-leftovers pass after all reversions. Endpoint,
+real DB validation and approval integration remain with lane A. Synthetic only.
+`./scripts/check-lane-paths.sh C` output:
+`Lane C: changed paths allowed under base policy` (exit 0).
+
 ## Requirement mapper: baseline
 
 - Started from clean lane/c HEAD 4618cd9, building on unmerged order lifecycle
@@ -353,3 +448,55 @@ passes. Lane A integration, authoritative input retrieval, approvals and audit
 remain pending. No database, network, ports, dependency changes or pushes.
 `./scripts/check-lane-paths.sh C` output:
 `Lane C: changed paths allowed under base policy` (exit 0).
+## Quote text: manual mutation evidence
+
+Final clean verification: 31 quote-text tests + 149 existing tests = 180 passing
+tests (baseline 149); includes 250 seeded real-engine amount round trips.
+`make test-packages` and `make check-leftovers` pass. Lane guard (exit 0):
+`Lane C: changed paths allowed under base policy`.
+Lane A approval integration and customer copy flow are not exercised here.
+
+Each mutation below was applied individually by hand, checked with `make
+test-packages`, and reverted. Four initially survived: malformed matching hashes,
+quantity multiplication, footer validity, and a one-paise discount. Three new
+test methods and one strengthened assertion killed them on rerun. All 36 final
+mutation runs failed a test; no mutation scripts or mutated implementation remain.
+
+| Mutation | Killed by which test | Added test |
+|---|---|---|
+| 01 Paise divisor 100 -> 10 | test_money_boundaries | no |
+| 02 Indian grouping uses groups of three | test_money_boundaries | no |
+| 03 Omit paise zero padding | test_money_boundaries | no |
+| 04 Basis-point divisor 100 -> 1000 | test_rate_boundaries | no |
+| 05 Omit rate fraction padding | test_rate_boundaries | no |
+| 06 Keep supplied WhatsApp markup | test_whatsapp_markup_neutralization_all_display_locations | no |
+| 07 Permit bidi format characters | test_hostile_controls_bidi_and_line_separators | no |
+| 08 Permit controls and newlines | test_hostile_controls_bidi_and_line_separators | no |
+| 09 Width 60 -> 61 | test_long_words_wrap_and_money_tokens_remain_whole | no |
+| 10 Disable long-word wrapping | test_long_words_wrap_and_money_tokens_remain_whole | no |
+| 11 Disable approval guard | test_approval_and_engine_status_refused | no |
+| 12 Disable approval hash equality | test_hash_mismatch_fixed_error | no |
+| 13 Disable hash format validation | test_matching_malformed_hashes_refused | yes |
+| 14 Accept engine status approved | test_approval_and_engine_status_refused | no |
+| 15 Disable line-sum totals check | test_bad_money_and_totals_invariants | no |
+| 16 Disable quantity times price check | test_quantity_times_price_invariant | yes |
+| 17 Print net instead of line gross | test_sections_and_exact_engine_amounts | no |
+| 18 Print net instead of shipping gross | test_sections_and_exact_engine_amounts | no |
+| 19 Print balance instead of advance | test_payment_amounts_optional_and_zero | no |
+| 20 Footer validity uses issued date | test_sections_and_exact_engine_amounts | yes (assertion) |
+| 21 Print subtotal instead of unit price | test_sections_and_exact_engine_amounts | no |
+| 22 Omit exactly one-paise discount | test_one_paise_discount_is_shown | yes |
+| 23 Use merchandise GST rate for shipping | test_sections_and_exact_engine_amounts | no |
+| 24 Aggregate GST omits shipping tax | test_sections_and_exact_engine_amounts | no |
+| 25 Use tax rate for discount | test_sections_and_exact_engine_amounts | no |
+| 26 Omit notes | test_sections_and_exact_engine_amounts | no |
+| 27 Payment terms use seller name | test_sections_and_exact_engine_amounts | no |
+| 28 Use engine name instead of display label | test_sections_and_exact_engine_amounts | no |
+| 29 Omit display from hash input | test_determinism_hash_roundtrip_and_immutability | no |
+| 30 Renderer version 1.0.0 -> 1.0.1 | test_determinism_hash_roundtrip_and_immutability | no |
+| 31 Allow eleven notes | test_note_count_limit | no |
+| 32 Allow thirty-one quote lines | test_quote_lines_limit_and_large_money | no |
+| 33 Accept bool as integer | test_strict_format_types | no |
+| 34 Disable validity date equality | test_dates_and_required_labels | no |
+| 35 Disable engine version allowlist | test_trace_and_flag_validation | no |
+| 36 Allow empty quote lines | test_quote_lines_limit_and_large_money | no |
