@@ -242,6 +242,61 @@ def check_invariants(
 
 
 # ------------------------------------------------------------------------------ scripts
+# ------------------------------------------------------------------------------ which budget ended a run
+_RUN_BUDGETS = (
+    ("writes", "writes_used", "max_writes"),
+    ("tool_calls", "tool_calls_used", "max_tool_calls"),
+    ("input_tokens", "input_tokens_used", "max_input_tokens"),
+    ("output_tokens", "output_tokens_used", "max_output_tokens"),
+    ("cost_micros", "cost_micros_used", "max_cost_micros"),
+)
+
+
+def explain_budget(row: dict[str, int]) -> str:
+    """WHICH budget ended a run `failed/budget`. The runtime folds three database refusals into that one code (SM203 a per-run budget, SM206 a
+    limit, SM207 the daily cost cap), so the run row alone does not say. This reads the counters the database keeps and names the first that is
+    at its limit: a per-run budget, the tenant's writes of the last 24 hours (`max_writes_per_day`, shared by EVERY run of the tenant, whatever test
+    made it), or the tenant's spend of the UTC day against its cap. Pure: the caller supplies the numbers (tests/integration/test_eval_harness.py)."""
+    counters = ", ".join(f"{name} {row[used]}/{row[mx]}" for name, used, mx in _RUN_BUDGETS)
+    hit = [
+        f"{name} {row[used]}/{row[mx]}"
+        for name, used, mx in _RUN_BUDGETS
+        if row[mx] > 0 and row[used] >= row[mx]
+    ]
+    if hit:
+        which = "run_budget (" + ", ".join(hit) + ")"
+    elif row["tenant_writes_24h"] >= row["writes_per_day_limit"]:
+        which = (
+            f"tenant_writes_per_day ({row['tenant_writes_24h']} write steps by this tenant in the last 24 hours, limit {row['writes_per_day_limit']}: "
+            "shared by every run of the tenant, so an earlier test or eval that used the same tenant counts)"
+        )
+    elif row["day_spend_micros"] >= row["daily_cap_micros"]:
+        which = f"daily_cost_cap (spent {row['day_spend_micros']} of {row['daily_cap_micros']} micros today, UTC, by this tenant)"
+    else:
+        which = "not_attributed (no counter is at its limit: a cost reservation did not fit the run's remaining token or cost budget, or SM206 for a start limit)"
+    return f"{which}; run counters: {counters}; tenant writes 24h {row['tenant_writes_24h']}/{row['writes_per_day_limit']}"
+
+
+def budget_detail(run_id: str) -> str:
+    raw = _q(
+        "select row_to_json(x) from (select a.writes_used, a.max_writes, a.tool_calls_used, a.max_tool_calls, a.input_tokens_used, a.max_input_tokens, "
+        "a.output_tokens_used, a.max_output_tokens, a.cost_micros_used, a.max_cost_micros, "
+        "(select count(*) from public.agent_run_steps s where s.tenant_id = a.tenant_id and s.kind = 'write' and s.created_at > now() - interval '1 day') as tenant_writes_24h, "
+        "app.agent_limit('max_writes_per_day', 0) as writes_per_day_limit, "
+        "app.agent_day_spend(a.tenant_id, app.agent_utc_today()) as day_spend_micros, app.agent_daily_cap(a.tenant_id) as daily_cap_micros "
+        f"from public.agent_runs a where a.id = '{run_id}') x"
+    )
+    if not raw.strip():
+        return "the run row is not visible to the operator query"
+    return explain_budget({k: int(v) for k, v in json.loads(raw).items()})
+
+
+def outcome_text(status: str, error_code: str | None, run_id: str) -> str:
+    """`failed/budget` becomes `failed/budget: <which budget>`; every other outcome is as it was."""
+    text = f"{status}/{error_code}"
+    return f"{text}: {budget_detail(run_id)}" if error_code == "budget" else text
+
+
 def build_provider(script: list[dict[str, Any]]) -> FakeProvider:
     steps = []
     for turn in script:

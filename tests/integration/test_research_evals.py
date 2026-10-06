@@ -75,8 +75,8 @@ class Ctx:
 
 
 @pytest.fixture(scope="module")
-def ctx(crm_world: World, tmp_path_factory: pytest.TempPathFactory) -> Iterator[Ctx]:
-    w = crm_world
+def ctx(eval_world: World, tmp_path_factory: pytest.TempPathFactory) -> Iterator[Ctx]:
+    w = eval_world
     saved = operator_sql.snapshot_switches()
     saved_research = operator_sql.sql(
         "select allowed_tenants from public.agent_definitions where agent_name = 'research'"
@@ -184,6 +184,8 @@ def run_case(c: Ctx, case: dict[str, Any]) -> list[str]:
             and ev.snapshot(w.a.id, run_id).tables["claims"] == before_a.tables["claims"]
         ):
             violations.append("C a legitimate write did not happen")
+        if violations and outcome and outcome.endswith("/budget"):
+            violations.append(f"the run ended failed/budget: {ev.budget_detail(run_id)}")
     finally:
         pg(
             w.stack,

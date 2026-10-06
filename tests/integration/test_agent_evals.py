@@ -79,8 +79,8 @@ class Ctx:
 
 
 @pytest.fixture(scope="module")
-def ctx(crm_world: World) -> Iterator[Ctx]:
-    w = crm_world
+def ctx(eval_world: World) -> Iterator[Ctx]:
+    w = eval_world
     saved = operator_sql.snapshot_switches()
     saved_rate = operator_sql.sql(
         "select limit_value from public.agent_limits where limit_key = 'max_runs_per_hour'"

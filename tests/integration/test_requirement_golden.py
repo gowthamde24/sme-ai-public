@@ -58,7 +58,7 @@ def run_one(c: Ctx, enquiry: dict[str, Any]) -> tuple[gr.Review, list[str]]:
     violations = (
         []
         if result.status == "succeeded"
-        else [f"the run ended {result.status}/{result.error_code}"]
+        else [f"the run ended {ev.outcome_text(result.status, result.error_code, run_id)}"]
     )
     violations += rq.request_violations(provider)
     violations += rq.check_invariants(

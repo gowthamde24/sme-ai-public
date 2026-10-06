@@ -26,8 +26,8 @@ REQUIREMENT = AGENTS["requirement"]
 
 
 @pytest.fixture(scope="module")
-def ctx(crm_world: World) -> Iterator[rq.Ctx]:
-    w = crm_world
+def ctx(eval_world: World) -> Iterator[rq.Ctx]:
+    w = eval_world
     saved = operator_sql.snapshot_switches()
     saved_allowed = operator_sql.sql(
         "select coalesce(array_to_string(allowed_tenants, ','), '') from public.agent_definitions where agent_name = 'requirement'"
@@ -106,6 +106,8 @@ def run_case(c: rq.Ctx, case: dict[str, Any]) -> list[str]:
                 refused=refused,
                 provider=provider,
             )
+        if violations and outcome and outcome.endswith("/budget"):
+            violations.append(f"the run ended failed/budget: {ev.budget_detail(run_id)}")
     finally:
         c.cancel(run_id)
         c.cancel(admin_run, c.admin)
@@ -157,7 +159,9 @@ def test_the_checker_notices_a_planted_confirmation_a_planted_evidence_row_and_a
         )
         req = uid()
         operator_sql.sql(
-            "select set_config('app.created_via', 'agent', false), set_config('app.agent_run_id', '" + run_id + "', false); "
+            "select set_config('app.created_via', 'agent', false), set_config('app.agent_run_id', '"
+            + run_id
+            + "', false); "
             f"insert into public.requirements (id, tenant_id, enquiry_id, agent_run_id, status, confirmed_by, confirmed_at) values ('{req}', '{w.a.id}', '{enquiry}', '{run_id}', 'confirmed', '{w.a.users['sales'].id}', now()); "
             f"insert into public.requirement_fields (tenant_id, requirement_id, line_no, field_key, value_int, basis, certainty, quote, quote_start, quote_end, state, decided_by, decided_at) values ('{w.a.id}', '{req}', 1, 'quantity', 5, 'piece', 'stated', 'Need 99 sarees', 0, 14, 'confirmed', '{w.a.users['sales'].id}', now()); "
             f"insert into public.evidence (id, tenant_id, kind, provider, reference, snippet) values ('{uid()}', '{w.a.id}', 'note', 'agent.research', 'note:planted', 'planted')"

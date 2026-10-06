@@ -46,9 +46,9 @@ RESEARCH = AGENTS["research"]
 
 @pytest.fixture(scope="module")
 def world(
-    crm_world: World, tmp_path_factory: pytest.TempPathFactory
+    eval_world: World, tmp_path_factory: pytest.TempPathFactory
 ) -> Iterator[tuple[World, Path]]:
-    w = crm_world
+    w = eval_world
     saved = operator_sql.snapshot_switches()
     saved_research = operator_sql.sql(
         "select allowed_tenants from public.agent_definitions where agent_name = 'research'"
@@ -130,7 +130,9 @@ def run_business(
         db.close()
     violations: list[str] = []
     if result.status != "succeeded":
-        violations.append(f"the run did not succeed: {result.status}/{result.error_code}")
+        violations.append(
+            f"the run did not succeed: {ev.outcome_text(result.status, result.error_code, run_id)}"
+        )
     violations += rev.check_research_invariants(
         tenant_a=t.id, tenant_b=w.b.id, run_id=run_id, company_id=company, lead_id=lead, host=host,
         before_a=before_a, before_b=before_b, fetcher=FixturePageFetcher(root),

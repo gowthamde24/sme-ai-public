@@ -203,6 +203,23 @@ def unique_slug(prefix: str) -> str:
     return f"{prefix}-{uuid.uuid4().hex[:10]}"
 
 
+@pytest.fixture(scope="module")
+def eval_world(client: TestClient, stack: Stack, signup: Any) -> Any:
+    """Two FRESH tenants (and users) for ONE eval module.
+
+    The agent limits are per tenant and rolling: `max_writes_per_day` counts every write step of the
+    tenant in the last 24 hours (500), the daily cost cap counts its spend of the UTC day. The
+    session-wide `crm_world` below is shared by every suite of one pytest session, so an eval that
+    used it passed or failed by TEST ORDER: CI runs the whole directory in one session, the T008
+    tests had already written 500 steps on the shared tenant, and the research golden set ended
+    `failed/budget` on the businesses that write (CI run 14). `make check` runs the evals in a
+    session of their own and never saw it. Evals start from a tenant that has done nothing: use
+    this fixture, never `crm_world` (tests/integration/test_eval_harness.py enforces it)."""
+    from crm_support import World
+
+    return World(client, stack, signup)
+
+
 @pytest.fixture(scope="session")
 def crm_world(client: TestClient, stack: Stack, signup: Any) -> Any:
     """Two tenants, seven users, one base row per entity: built once, shared by the CRM suites."""
