@@ -5,6 +5,19 @@ Not to be confused with `docs/plans/t009-quote-engine.md`, which is lane C's con
 
 **The slice:** a person looks at a CONFIRMED requirement (T008), confirms which catalog product each line means, a deterministic service prices it, and an Owner/Admin approves the resulting DRAFT quote. **Nothing is ever sent, no PDF, no e-mail, no payment, no order.** No model is involved anywhere in this slice: the mapper and the engine are pure deterministic libraries and the people decide. (Roadmap: "AI only explains"; in this slice the explanation is the engine's own rule trace rendered through closed templates. A model-written explanation waits for the live batch and the owner's approval of a provider.)
 
+## Owner decisions on this plan (2026-10-06, accepted in principle)
+
+1. A Viewer sees no price lists or policy **and no quote totals** (for now); prices, policies and quotes are Owner/Admin/Sales only, and a Viewer sees at most that a quote exists (status chip), never an amount.
+2. `discard_requirement` is blocked by a draft AND an approved quote (SM212).
+3. No tax advice in code or docs; GST slabs and freight rules are owner/accountant inputs; synthetic seed values only.
+4. Advance, validity, net days, credit limit and freight are synthetic seeds.
+5. aal2 to approve a quote and to publish a price list, policy or mapper version.
+6. Delivery state is required, as proposed.
+7. **The optional Prices and Policy pages are SKIPPED for T009** (commit 7 of section 7 is dropped): synthetic data is seeded through a script, and "price-list CSV import" is a pre-pilot checklist row.
+8. The two Dockerfile COPY lines are a T012 checklist row, not built now (commit 8 keeps only the plan's as-built notes, ADR and checklist rows).
+
+Progress: commit 1 (the `quote_engine` adapter) is done; the mapper checkpoint and every migration wait for the owner's confirmation.
+
 ## 0. What I read, what I verified, what I assume
 
 Read: CLAUDE.md, AGENTS.md, docs/lanes.md, docs/product.md, docs/architecture.md, ADR 0013 (agent path; not on this slice's path), ADR 0016 (aal2), ADR 0018 (requirements), `docs/plans/t009-quote-engine.md`, `t010-followup-cadence.md`, `roadmap.md`, lane C's notes, and (read through git from `lane/c`, never from lane C's folder) `docs/plans/order-lifecycle.md`.

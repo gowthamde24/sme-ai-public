@@ -192,6 +192,15 @@ Accepted when T005 was approved pending the human walkthrough. None blocks the w
 | [ ] | **Decision functions are reachable with the delegated token** (option A), like `review_claim`; the sandbox has no path to them. Option B (a separate agent identity) is required before any scheduled run or external customer. | ADR 0013, 0018 | External pilot | Later |
 | [ ] | **Scope of the value-in-span check.** A city in a non-Latin script abstains (a person adds it); Hindi quantity words are a short list. Extend with the family's real wording at T012. | ADR 0018 | Pilot data | Before real data |
 
+## Quotes (T009 integration, docs/plans/t009-quote-integration.md)
+
+| | Item | Source | Gate | Phase |
+| --- | --- | --- | --- | --- |
+| [ ] | **Price-list CSV import (deferred).** T009 does NOT build the Prices / Policy pages: the price list, policy and mapper config are seeded from a script with SYNTHETIC values. Before the family can load their real catalog an Owner/Admin import is needed (paste a CSV of sku, rupees, MOQ, GST %, breaks; preview against the active version; publish with aal2). Real prices never enter the repository. | T009 plan, owner decision 7 | Customer Zero | Before real data |
+| [ ] | **T012 (deploy): `deploy/Dockerfile.api` needs two COPY lines** so the pure packages are in the image: `COPY packages/quote-engine/src ./packages/quote-engine/src` (and later `COPY packages/pure ./packages/pure`), plus `ENV PYTHONPATH` entries for them (the adapter only finds a checkout, not an image layout, and fails closed with 503 `quotes_unavailable` otherwise). Untested until T012; no deployment before then. | T009 plan, owner decision 8; `app/quotes/engine_port.py` | T012 | Before deploy |
+| [ ] | **GST rates, GST slabs and freight rules are the owner's and the accountant's inputs.** No tax advice in code or docs. Every rate, slab, advance, validity, net-days, credit-limit and freight value in the seed is SYNTHETIC and labelled. A rate can depend on the unit price (a slab) while the engine has one `tax_bps` per item: the accountant confirms the rate per SKU and whether a price break could cross a slab. | T009 plan, owner decisions 3 and 4 | Customer Zero | Before real data |
+| [ ] | **Engine version upgrades are reviewed.** `ALLOWED_ENGINE_VERSIONS` and the golden hashes in `tests/test_quotes_engine_port.py` move together, after reading lane C's changelog; the database allow-list (`quote_engine_versions`) follows in a migration. | T009 plan section 1 | Each upgrade | Ongoing |
+
 ## Local-first sequence (ADR 0017, 2026-10-05)
 
 | | Item | Source | Gate | Phase |
