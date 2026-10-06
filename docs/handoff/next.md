@@ -4,6 +4,7 @@ T008 (Requirement Agent) is BUILT: commits 1-7, the closing batch (3c: lock orde
 
 * Full `make check` and ONE mutation pass were the last steps (see the T008 report); results are in the commit message of the last T008 commit.
 * **Do not start T009 or any live call** before the owner approves. Before the first live call: the approvals in `docs/pre-pilot-checklist.md`, section "Enquiries and requirements".
+* **T008 is ACCEPTED (owner, 2026-10-06).** Next: **T009 integration is PLAN ONLY**: `docs/plans/t009-quote-integration.md` awaits the owner's review; no code or migration until it is approved (the first stop for review is after its migration + functions commit).
 * Plan and as-built notes: `docs/plans/t008-requirement-agent.md` (sections 14 and 15). Decisions: `docs/adr/0018-...`.
 
 Traps: never run `ruff format` on a directory outside `app/requirements`, `app/enquiries`, `app/agents/requirement*`; format only the files you edit (it reformats `services/ai-api/app/leads/review.py` and `scoring.py`).
