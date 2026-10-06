@@ -5,14 +5,13 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { commitPriceList, previewPriceList, type Preview } from "@/lib/api/pricelists";
+import { FILE_TOO_BIG, MAX_FILE_BYTES, commitPriceList, previewPriceList, textBytes, type Preview } from "@/lib/api/pricelists";
 import { formatDate } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
 
 export type PreviewState = { ok?: boolean; error?: string; preview?: Preview } | undefined;
 export type CommitState = { ok?: boolean; error?: string; message?: string } | undefined;
 
-const MAX_CHARS = 2 * 1024 * 1024;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 
 function field(formData: FormData, name: string): string {
@@ -50,7 +49,7 @@ function describe(error: unknown): string {
 function inputs(formData: FormData): { csv: string; effectiveFrom: string } | string {
   const csv = field(formData, "csv");
   if (csv.trim() === "") return "Paste the file's text or choose a file first.";
-  if (csv.length > MAX_CHARS) return "The file is too big: at most 2 MB.";
+  if (csv.length > MAX_FILE_BYTES || textBytes(csv) > MAX_FILE_BYTES) return FILE_TOO_BIG; // bytes, not characters
   const effectiveFrom = field(formData, "effective_from").trim();
   if (!DAY.test(effectiveFrom)) return "Choose the date the price list starts.";
   return { csv, effectiveFrom };

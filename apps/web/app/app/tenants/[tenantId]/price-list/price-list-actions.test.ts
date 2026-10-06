@@ -26,6 +26,7 @@ function form(values: Record<string, string>): FormData {
   for (const [k, v] of Object.entries(values)) data.set(k, v);
   return data;
 }
+const TOO_BIG = "The file is too big: at most 900,000 bytes (about 900 KB).";
 const FILE = { csv: "sku,name,unit_price,moq,tax_bps\nA,x,1,1,0\n", effective_from: "2026-10-06" };
 const check = (over: Record<string, string> = {}) => previewPriceListAction(TENANT, undefined, form({ ...FILE, ...over }));
 const save = (over: Record<string, string> = {}) => commitPriceListAction(TENANT, undefined, form({ ...FILE, version_id: VERSION, ...over }));
@@ -51,11 +52,24 @@ describe("previewPriceListAction", () => {
   });
   it("refuses an empty or oversized file and a malformed date before the API is called", async () => {
     expect((await check({ csv: "   " }))?.error).toBe("Paste the file's text or choose a file first.");
-    expect((await check({ csv: "x".repeat(2 * 1024 * 1024 + 1) }))?.error).toBe("The file is too big: at most 2 MB.");
+    expect((await check({ csv: "x".repeat(900_001) }))?.error).toBe(TOO_BIG);
     for (const effective_from of ["", "soon", "06/10/2026", "2026-1-6"]) expect((await check({ effective_from }))?.error).toBe("Choose the date the price list starts.");
     expect((await previewPriceListAction("x", undefined, form(FILE)))?.ok).toBe(false);
     expect(api.previewPriceList).not.toHaveBeenCalled();
   });
+  it("the limit is 900,000 BYTES: Telugu text (three bytes a character) is cut by bytes, not characters", async () => {
+    const telugu = "\u0c05";
+    expect(new TextEncoder().encode(telugu.repeat(300_000)).length).toBe(900_000);
+    expect((await check({ csv: telugu.repeat(300_001) }))?.error).toBe(TOO_BIG); // 300,001 characters, 900,003 bytes
+    expect((await check({ csv: "a" + telugu.repeat(300_000) }))?.error).toBe(TOO_BIG);
+    expect(api.previewPriceList).not.toHaveBeenCalled();
+    expect((await check({ csv: telugu.repeat(300_000) }))?.ok).toBe(true); // exactly at the limit
+    expect((await check({ csv: "x".repeat(900_000) }))?.ok).toBe(true);
+    expect((await save({ csv: telugu.repeat(300_001) }))?.error).toBe(TOO_BIG);
+    expect(api.commitPriceList).not.toHaveBeenCalled();
+    expect((await save({ csv: telugu.repeat(300_000) }))?.ok).toBe(true);
+  });
+
   it.each([
     [new ApiRequestError(403, "mfa_required", CANARY), /authenticator app/],
     [new ApiRequestError(403, "forbidden", CANARY), /Only an owner or an admin/],

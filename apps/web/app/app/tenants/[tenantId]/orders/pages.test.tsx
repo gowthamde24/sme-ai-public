@@ -65,6 +65,18 @@ describe("the orders list", () => {
     expect(screen.getByRole("note")).toHaveTextContent("Nothing is sent by this system");
   });
 
+  it("a closed order that holds money says so in the list too; a paid or empty one does not (step F8)", async () => {
+    const held = { ...ORDER_JSON, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2", order_no: 8, state: "cancelled", outcome: "cancelled", paid_paise: 882000, refunded_paise: 100000, net_paise: 782000 };
+    const paid = { ...ORDER_JSON, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb3", order_no: 9, state: "closed_paid", outcome: "won", paid_paise: 15000000, net_paise: 15000000, balance_paise: 0 };
+    const empty = { ...ORDER_JSON, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb4", order_no: 10, state: "declined", outcome: "lost" };
+    orders.fetchOrders.mockResolvedValue(parseOrderPage({ items: [held, paid, empty], next_cursor: null }));
+    render(await OrdersPage(listProps()));
+    const items = within(screen.getByRole("list", { name: "Orders, newest first" })).getAllByRole("listitem");
+    expect(items[0]).toHaveTextContent("Money still held: ₹7,820.00. A refund may be owed to the customer.");
+    expect(items[1]).not.toHaveTextContent("Money still held");
+    expect(items[2]).not.toHaveTextContent("Money still held");
+  });
+
   it("says so when there are no orders, and pages with the API's cursor", async () => {
     orders.fetchOrders.mockResolvedValue(parseOrderPage({ items: [], next_cursor: null }));
     render(await OrdersPage(listProps()));

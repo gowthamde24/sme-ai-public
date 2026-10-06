@@ -7,7 +7,7 @@ import uuid
 from datetime import date
 from typing import Annotated, Literal
 
-from pydantic import StringConstraints
+from pydantic import AfterValidator, ConfigDict, StringConstraints
 
 from app.crm.models import ApiUuid, _Strict
 from app.pricelists.csv_port import COLUMNS, PARSER_CODES
@@ -16,12 +16,23 @@ from app.pricelists.csv_port import COLUMNS, PARSER_CODES
 API_CODES: tuple[str, ...] = ("UNKNOWN_SKU", "HIDDEN_CHARACTERS", "NO_ITEMS", "TOO_MANY_ITEMS")
 IssueCode = Literal[*PARSER_CODES, *API_CODES]  # type: ignore[valid-type]
 ColumnName = Literal[*COLUMNS]  # type: ignore[valid-type]
-MAX_CSV_CHARS = 2 * 1024 * 1024
+MAX_CSV_BYTES = 900_000  # BYTES of UTF-8, not characters: Next.js caps a server-action request at 1 MB, and an Indic text is three bytes a character
 MAX_ITEMS = 1000  # the database's own limit for one version
 
 
+def _within_bytes(text: str) -> str:
+    if len(text.encode("utf-8", errors="replace")) > MAX_CSV_BYTES:
+        raise ValueError("the file is too big")
+    return text
+
+
 class _CsvText(_Strict):
-    csv: Annotated[str, StringConstraints(min_length=1, max_length=MAX_CSV_CHARS)]
+    # at most MAX_CSV_BYTES characters is a cheap first cut (a character is at least one byte); the exact rule is the byte count
+    csv: Annotated[
+        str,
+        StringConstraints(min_length=1, max_length=MAX_CSV_BYTES),
+        AfterValidator(_within_bytes),
+    ]
     effective_from: date
 
 
@@ -41,12 +52,18 @@ class IssueOut(_Strict):
     code: IssueCode
 
 
-class BreakOut(_Strict):
+class _ExactTypes(_Strict):
+    """Whole numbers and texts only: a parser result with a string where a number belongs is refused, never coerced."""
+
+    model_config = ConfigDict(extra="forbid", strict=True)
+
+
+class BreakOut(_ExactTypes):
     min_qty: int
     unit_price_paise: int
 
 
-class PreviewItemOut(_Strict):
+class PreviewItemOut(_ExactTypes):
     sku: str
     name: str
     catalog_name: str | None  # the product's name in the catalog (None for an unknown sku)

@@ -87,6 +87,35 @@ describe("OrderView", () => {
   });
 });
 
+describe("money still held (step F8)", () => {
+  const LINE = /Money still held: ₹[\d,]+\.\d{2}\. A refund may be owed to the customer\./;
+  it("the rehearsal's order F (paid 8,820, refunded 1,000) shows a permanent line with 7,820.00", () => {
+    show({ state: "cancelled", outcome: "cancelled", paid_paise: 882000, refunded_paise: 100000, net_paise: 782000, balance_paise: 2746000 });
+    expect(screen.getByText("Money still held: ₹7,820.00. A refund may be owed to the customer.")).toBeInTheDocument();
+    expect(screen.getByText("Money still held: ₹7,820.00. A refund may be owed to the customer.").closest("[role=note]")).not.toBeNull();
+    const ledger = screen.getByText("Order total").closest("dl") as HTMLElement;
+    expect(within(ledger).getByText("Balance").nextElementSibling).toHaveTextContent("Not owed: the order is closed");
+  });
+  it("a closed_paid order has no such line", () => {
+    show({ state: "closed_paid", outcome: "won", paid_paise: 15000000, net_paise: 15000000, balance_paise: 0 });
+    expect(screen.queryByText(LINE)).toBeNull();
+  });
+  it("a declined order with no payment has no such line; with a payment it has", () => {
+    show({ state: "declined", outcome: "lost", paid_paise: 0, net_paise: 0 });
+    expect(screen.queryByText(LINE)).toBeNull();
+    document.body.innerHTML = "";
+    show({ state: "declined", outcome: "lost", paid_paise: 5000, net_paise: 5000 });
+    expect(screen.getByText("Money still held: ₹50.00. A refund may be owed to the customer.")).toBeInTheDocument();
+  });
+  it("an expired order that holds money has it; an open or in-preparation order has none", () => {
+    show({ state: "expired", outcome: "expired", paid_paise: 100, net_paise: 100 });
+    expect(screen.getByText(LINE)).toBeInTheDocument();
+    document.body.innerHTML = "";
+    show({ state: "in_preparation", outcome: "won", paid_paise: 100, net_paise: 100 });
+    expect(screen.queryByText(LINE)).toBeNull();
+  });
+});
+
 describe("whoText", () => {
   it("is a name and role, a role, or 'a team member', never an id", () => {
     expect(whoText(PERSON, members)).toBe("Asha (synthetic) (owner)");

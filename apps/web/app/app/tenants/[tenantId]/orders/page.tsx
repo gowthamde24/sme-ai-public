@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { OUTCOME_LABELS, STATE_LABELS, fetchOrders, formatRupees, type OrderPage } from "@/lib/api/orders";
+import { HELD_TEXT, OUTCOME_LABELS, STATE_LABELS, fetchOrders, formatRupees, moneyHeld, type OrderPage } from "@/lib/api/orders";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../local-time";
@@ -78,6 +78,12 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
               <span className="hint">
                 Total {formatRupees(o.order_total_paise)} · received {formatRupees(o.paid_paise)} · started <LocalTime iso={o.created_at} />
               </span>
+              {moneyHeld(o) > 0 ? (
+                <>
+                  <br />
+                  <strong>{HELD_TEXT(moneyHeld(o))}</strong>
+                </>
+              ) : null}
             </li>
           ))}
         </ul>

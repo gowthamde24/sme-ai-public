@@ -305,3 +305,145 @@ def test_issues_come_in_row_order_not_in_sku_order(w: World) -> None:
         (2, "UNKNOWN_SKU"),
         (3, "HIDDEN_CHARACTERS"),
     ]
+
+
+# ----------------------------------------------------------------------------- step F2: the commit reads the catalog once
+def test_a_commit_reads_the_catalog_once_not_twice(w: World) -> None:
+    assert commit(w).status_code == 201
+    assert len(w.p.asked) == 1, "the preview's read is the commit's read"
+    assert len(w.p.created) == 1
+
+
+def test_a_product_that_disappears_after_the_read_is_the_databases_refusal_not_a_500(
+    w: World,
+) -> None:
+    w.p.raise_next = InvalidReferenceError(
+        "23503"
+    )  # the database function refuses a product that is gone by then
+    r = commit(w)
+    assert r.status_code == 422 and code(r) == "invalid_reference"
+    assert CANARY not in r.text
+
+
+def test_a_product_missing_from_the_catalog_at_commit_time_is_an_unknown_sku_refusal_never_a_keyerror(
+    w: World, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.pricelists import service
+
+    real = service._analyse
+
+    def vanished(*args: Any, **kw: Any) -> Any:
+        checked, catalog = real(*args, **kw)
+        return checked, {sku: p for sku, p in catalog.items() if sku != "SYN-KJ-BLUE-01"}
+
+    monkeypatch.setattr(service, "_analyse", vanished)
+    r = commit(w)
+    assert r.status_code == 422 and code(r) == "price_list_invalid"
+    assert {(i["code"], i["column"]) for i in r.json()["issues"]} == {("UNKNOWN_SKU", "sku")}
+    assert r.json()["issues"][0]["row"] == 2
+    assert w.p.created == []
+
+
+# ----------------------------------------------------------------------------- step F3: the limit is 900,000 BYTES, not characters
+TELUGU = "\u0c05"  # one character, three bytes in UTF-8
+
+
+@pytest.mark.parametrize("path", ["/price-lists/import/preview", "/price-lists/import"])
+def test_the_file_limit_counts_bytes_not_characters(w: World, path: str) -> None:
+    def post(csv: str) -> Any:
+        body: dict[str, Any] = {"csv": csv, "effective_from": "2026-10-06"}
+        if path.endswith("import"):
+            body["id"] = VID
+        return w.call(path, body, "a_owner")
+
+    assert len((TELUGU * 300_000).encode()) == 900_000
+    for too_big in (TELUGU * 300_001, "x" * 900_001, "a" + TELUGU * 300_000):
+        over = post(too_big)  # the first is under 900,000 CHARACTERS but 900,003 bytes
+        assert over.status_code == 422 and code(over) == "validation_error", len(too_big)
+    for at_limit in (TELUGU * 300_000, "x" * 900_000, "a" + TELUGU * 299_999 + "bb"):
+        ok = post(
+            at_limit
+        )  # accepted by the model: whatever happens next is the parser's verdict on the file
+        assert not (ok.status_code == 422 and code(ok) == "validation_error"), len(
+            at_limit.encode()
+        )
+
+
+# ----------------------------------------------------------------------------- step F7: a malformed parser result is a fixed 502
+def _fake_parse(result: dict[str, Any]) -> Any:
+    return lambda text: result
+
+
+GOOD_ITEM = {
+    "sku": "SYN-KJ-RED-01",
+    "name": "x",
+    "unit_price": 100,
+    "minimum_order_quantity": 1,
+    "price_breaks": [],
+    "tax_bps": 0,
+}
+
+
+@pytest.mark.parametrize(
+    "result",
+    [
+        {
+            "ok": True,
+            "items": [{**GOOD_ITEM, "unit_price": "100"}],
+            "errors": [],
+            "row_count": 1,
+            "canonical_hash": "0" * 64,
+        },
+        {
+            "ok": True,
+            "items": [{**GOOD_ITEM, "name": None}],
+            "errors": [],
+            "row_count": 1,
+            "canonical_hash": "0" * 64,
+        },
+        {
+            "ok": True,
+            "items": [{**GOOD_ITEM, "price_breaks": [{"min_qty": "a", "unit_price": 1}]}],
+            "errors": [],
+            "row_count": 1,
+            "canonical_hash": "0" * 64,
+        },
+        {
+            "ok": True,
+            "items": [{**GOOD_ITEM, "price_breaks": [{"min_qty": 2}]}],
+            "errors": [],
+            "row_count": 1,
+            "canonical_hash": "0" * 64,
+        },
+        {
+            "ok": False,
+            "items": [],
+            "errors": [{"row": 1, "column": "sku", "code": "NOT_A_CODE"}],
+            "row_count": 1,
+            "canonical_hash": None,
+        },
+        {
+            "ok": False,
+            "items": [],
+            "errors": [{"row": "one", "column": None, "code": "ROW_WIDTH"}],
+            "row_count": 1,
+            "canonical_hash": None,
+        },
+    ],
+)
+@pytest.mark.parametrize("which", ["preview", "commit"])
+def test_a_malformed_parser_result_is_a_fixed_502_and_nothing_is_saved(
+    w: World, monkeypatch: pytest.MonkeyPatch, result: dict[str, Any], which: str
+) -> None:
+    from app.pricelists import csv_port
+
+    monkeypatch.setattr(csv_port, "parse", _fake_parse(result))
+    r = preview(w) if which == "preview" else commit(w)
+    assert r.status_code == 502 and code(r) == "price_csv_failed"
+    assert r.json()["error"]["message"] == "The file could not be checked. Nothing was saved."
+    assert (
+        set(r.json()["error"]) == {"code", "message"}
+        and "pydantic" not in r.text.lower()
+        and "input_value" not in r.text
+    )
+    assert w.p.created == []

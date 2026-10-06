@@ -1,13 +1,20 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { ApiContractError } from "./client";
-import { API_CODES, COLUMNS, COLUMN_LABELS, ISSUE_CODES, ISSUE_TEXT, PARSER_CODES, commitPriceList, issueText, parseCommitted, parsePreview, previewPriceList } from "./pricelists";
+import { API_CODES, FILE_TOO_BIG, MAX_FILE_BYTES, COLUMNS, COLUMN_LABELS, ISSUE_CODES, ISSUE_TEXT, PARSER_CODES, commitPriceList, issueText, parseCommitted, parsePreview, previewPriceList } from "./pricelists";
 import { BAD_JSON, COMMITTED_JSON, ITEM_JSON, PREVIEW_JSON, TENANT, VERSION } from "./pricelists-fixtures";
 
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
 afterEach(() => vi.clearAllMocks());
+
+describe("the file limit", () => {
+  it("is 900,000 bytes and the sentence says so", () => {
+    expect(MAX_FILE_BYTES).toBe(900_000);
+    expect(FILE_TOO_BIG).toBe("The file is too big: at most 900,000 bytes (about 900 KB).");
+  });
+});
 
 describe("the words", () => {
   it("every closed code has a plain sentence and every column a name", () => {

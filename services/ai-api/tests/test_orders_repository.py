@@ -289,3 +289,18 @@ def test_the_ledger_of_an_order_without_totals_defaults_to_zero_paid() -> None:
 
     row: Any = repo(handler).get_order("t", TENANT, ID)
     assert (row["paid_paise"], row["balance_paise"], row["event_count"]) == (0, 500, 0)
+
+
+def test_the_quote_filter_is_one_more_equality_beside_the_tenant_filter() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json=[])
+
+    quote = uuid.UUID(int=0x51)
+    repo(handler).list_orders("t", TENANT, limit=1, cursor=None, quote_id=quote)
+    repo(handler).list_orders("t", TENANT, limit=1, cursor=None)
+    filtered, plain = seen[0].url.params, seen[1].url.params
+    assert filtered["quote_id"] == f"eq.{quote}" and filtered["tenant_id"] == f"eq.{TENANT}"
+    assert "quote_id" not in plain and plain["tenant_id"] == f"eq.{TENANT}"

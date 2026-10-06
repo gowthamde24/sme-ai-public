@@ -3,6 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { ENQ, P1, QUOTE, QUOTE_JSON, SETUP_JSON, SUMMARY_JSON, TEXT_JSON } from "@/lib/api/quotes-fixtures";
+import { parseOrderPage } from "@/lib/api/orders";
+import { ORDER_JSON } from "@/lib/api/orders-fixtures";
 import { parseQuote, parseQuoteSummary, parseSetup, parseQuoteText } from "@/lib/api/quotes";
 import { redirectMock, redirectTarget } from "@/test/helpers";
 
@@ -10,6 +12,7 @@ const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const fetchEnquiry = vi.fn();
 const fetchRequirement = vi.fn();
+const ordersApi = { fetchOrders: vi.fn() };
 const quotesApi = { fetchQuoteSetup: vi.fn(), fetchEnquiryQuotes: vi.fn(), fetchQuote: vi.fn(), fetchQuoteText: vi.fn() };
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => { throw new Error("not found"); } }));
@@ -20,6 +23,7 @@ vi.mock("@/lib/api/enquiries", async (importOriginal) => ({
   fetchEnquiry: (...a: unknown[]) => fetchEnquiry(...a),
   fetchRequirement: (...a: unknown[]) => fetchRequirement(...a),
 }));
+vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchOrders: (...a: unknown[]) => ordersApi.fetchOrders(...a) }));
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/quotes")>()),
   fetchQuoteSetup: (...a: unknown[]) => quotesApi.fetchQuoteSetup(...a),
@@ -61,6 +65,7 @@ describe("the quote section of /app/tenants/[tenantId]/enquiries/[enquiryId]", (
     vi.clearAllMocks();
     vi.stubGlobal("crypto", { randomUUID: () => "77777777-7777-4777-8777-777777777777" });
     requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal2" });
+    ordersApi.fetchOrders.mockResolvedValue({ items: [], next_cursor: null });
     fetchTenant.mockResolvedValue(tenant("sales"));
     fetchEnquiry.mockResolvedValue(enquiry);
     fetchRequirement.mockResolvedValue(view);
@@ -112,6 +117,31 @@ describe("the quote section of /app/tenants/[tenantId]/enquiries/[enquiryId]", (
     expect(quotesApi.fetchQuoteText).toHaveBeenCalledWith("tok", TENANT, QUOTE);
     expect(screen.getByLabelText("Quote text for the customer").textContent).toContain("Grand total");
     expect(screen.getByText(/Nothing is sent by the system/)).toBeInTheDocument();
+  });
+
+  it("an approved quote asks for ITS order only, by the quote filter and one row, never a page of fifty", async () => {
+    quotesApi.fetchQuote.mockResolvedValue(parseQuote(approvedJson));
+    await show();
+    expect(ordersApi.fetchOrders).toHaveBeenCalledTimes(1);
+    expect(ordersApi.fetchOrders).toHaveBeenCalledWith("tok", TENANT, { quoteId: QUOTE, limit: 1 });
+  });
+
+  it("the order the API returns for the quote is linked, and a failing order read does not take the quote down", async () => {
+    quotesApi.fetchQuote.mockResolvedValue(parseQuote(approvedJson));
+    ordersApi.fetchOrders.mockResolvedValue(parseOrderPage({ items: [ORDER_JSON], next_cursor: null }));
+    await show();
+    expect(screen.getByRole("link", { name: "Order 7" })).toBeInTheDocument();
+    ordersApi.fetchOrders.mockRejectedValue(new ApiRequestError(503, "orders_unavailable", "x"));
+    fetchTenant.mockResolvedValue(tenant("owner"));
+    document.body.innerHTML = "";
+    await show();
+    expect(screen.getByRole("heading", { name: "Quote 3" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Start order" })).toBeInTheDocument();
+  });
+
+  it("a draft does not ask for an order or for text", async () => {
+    await show();
+    expect(ordersApi.fetchOrders).not.toHaveBeenCalled();
   });
 
   it("a draft does not ask for text", async () => {

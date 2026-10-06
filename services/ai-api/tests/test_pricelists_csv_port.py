@@ -227,8 +227,27 @@ def test_a_hash_that_is_not_the_documented_one_is_refused(fresh: pytest.MonkeyPa
     assert parse("x")["ok"] is True
 
 
-def test_an_item_of_another_shape_is_refused(fresh: pytest.MonkeyPatch) -> None:
-    fresh.setattr(csv_port, "_import", lambda: _Fake(result=_ok([{**ITEM, "extra": 1}])))
+@pytest.mark.parametrize(
+    "item",
+    [
+        {**ITEM, "extra": 1},
+        {**ITEM, "unit_price": "1"},
+        {**ITEM, "unit_price": 1.5},
+        {**ITEM, "unit_price": True},
+        {**ITEM, "minimum_order_quantity": "1"},
+        {**ITEM, "tax_bps": None},
+        {**ITEM, "sku": 5},
+        {**ITEM, "name": None},
+        {**ITEM, "price_breaks": [{"min_qty": "2", "unit_price": 1}]},
+        {**ITEM, "price_breaks": [{"min_qty": 2}]},
+        {**ITEM, "price_breaks": [{"min_qty": 2, "unit_price": 1, "extra": 1}]},
+        {**ITEM, "price_breaks": ["x"]},
+    ],
+)
+def test_an_item_of_another_shape_or_type_is_refused(
+    fresh: pytest.MonkeyPatch, item: dict[str, Any]
+) -> None:
+    fresh.setattr(csv_port, "_import", lambda: _Fake(result=_ok([item])))
     with pytest.raises(PriceCsvError):
         parse("x")
 

@@ -5,8 +5,10 @@ cannot give itself, the same way `app/orders/lifecycle_port.py` does for the lif
 
   * **Versioned.** Only versions in ALLOWED_PARSER_VERSIONS run; a new one fails closed (PriceCsvUnavailable) until a person has read its changelog, re-run the golden vectors and added it here.
   * **Fail closed.** A missing package, an unknown version or a missing function raises PriceCsvUnavailable (the API answers 503); the API still boots.
-  * **Verified hash.** The package hashes `{"parser_version", "items"}` (sorted compact ASCII JSON); the adapter recomputes it and refuses a result whose hash differs, and refuses a result of a shape it
-    does not know (PriceCsvError). A parser error code that is not on the closed list below is refused too: no unreviewed word reaches a client.
+  * **Consistency check, not authentication.** The package hashes `{"parser_version", "items"}` with ITS OWN `canonical_json`, and the adapter recomputes the digest with that same function. That detects a
+    result that is inconsistent with itself (a hash that does not belong to its items, a result altered on the way); it does NOT prove the package is the reviewed one, because a wrong package would compute
+    a matching hash for its own output. The protection against a wrong or changed package is the version allow-list above and the golden vectors in `tests/test_pricelists_csv_port.py`, which pin the output
+    by value. The adapter also refuses a result of a shape it does not know (PriceCsvError) and an error code that is not on the closed list below: no unreviewed word reaches a client.
   * **Nothing from the package leaks.** Errors carry a fixed code only.
 
 No dependency is added: the package is stdlib-only and is put on the import path from the repository checkout when it is not already importable."""
@@ -129,6 +131,35 @@ def _shape_ok(result: Any) -> bool:
     return bool(errors) and not items and result.get("canonical_hash") is None
 
 
+def _is_int(value: Any) -> bool:
+    return type(value) is int  # not a bool, not a float, not a string
+
+
+def _item_ok(item: Any) -> bool:
+    """An engine-shaped item: exactly these keys, text for sku and name, whole numbers for the money, the minimum and the rate, and breaks of exactly two whole numbers."""
+    if not isinstance(item, dict) or set(item) != {
+        "sku",
+        "name",
+        "unit_price",
+        "minimum_order_quantity",
+        "price_breaks",
+        "tax_bps",
+    }:
+        return False
+    if not isinstance(item["sku"], str) or not isinstance(item["name"], str):
+        return False
+    if not all(_is_int(item[k]) for k in ("unit_price", "minimum_order_quantity", "tax_bps")):
+        return False
+    breaks = item["price_breaks"]
+    return isinstance(breaks, list) and all(
+        isinstance(b, dict)
+        and set(b) == {"min_qty", "unit_price"}
+        and _is_int(b["min_qty"])
+        and _is_int(b["unit_price"])
+        for b in breaks
+    )
+
+
 def parse(text: str) -> dict[str, Any]:
     """Parse the CSV text. Returns the package's dict (`ok`, `items`, `errors`, `row_count`, `canonical_hash`) after the adapter's checks.
 
@@ -144,19 +175,7 @@ def parse(text: str) -> dict[str, Any]:
         if hashlib.sha256(payload.encode("utf-8")).hexdigest() != result["canonical_hash"]:
             raise PriceCsvError
         for item in result["items"]:
-            if (
-                not isinstance(item, dict)
-                or set(item)
-                != {
-                    "sku",
-                    "name",
-                    "unit_price",
-                    "minimum_order_quantity",
-                    "price_breaks",
-                    "tax_bps",
-                }
-                or not isinstance(item["price_breaks"], list)
-            ):
+            if not _item_ok(item):
                 raise PriceCsvError
     parsed: dict[str, Any] = result
     return parsed

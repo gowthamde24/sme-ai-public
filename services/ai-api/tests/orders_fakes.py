@@ -163,11 +163,22 @@ class FakeOrders:
         return self.rows.get(order_id) if tenant_id == self.tenant else None
 
     def list_orders(
-        self, token: str, tenant_id: uuid.UUID, *, limit: int, cursor: tuple[str, uuid.UUID] | None
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+        quote_id: uuid.UUID | None = None,
     ) -> list[dict[str, Any]]:
         self.tokens.append(token)
-        self.calls.append(("list_orders", {"limit": limit, "cursor": cursor}))
-        return list(self.rows.values())[: limit + 1] if tenant_id == self.tenant else []
+        self.calls.append(("list_orders", {"limit": limit, "cursor": cursor, "quote_id": quote_id}))
+        if tenant_id != self.tenant:
+            return []
+        rows = list(self.rows.values())
+        if quote_id is not None:
+            rows = [r for r in rows if r["quote_id"] == str(quote_id)]
+        return rows[: limit + 1]
 
     def events(self, token: str, tenant_id: uuid.UUID, order_id: uuid.UUID) -> list[dict[str, Any]]:
         self.tokens.append(token)

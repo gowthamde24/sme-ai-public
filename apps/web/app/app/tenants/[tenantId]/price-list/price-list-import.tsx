@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useActionState, useState } from "react";
 
-import { issueText, type Preview } from "@/lib/api/pricelists";
+import { FILE_TOO_BIG, MAX_FILE_BYTES, issueText, textBytes, type Preview } from "@/lib/api/pricelists";
 import { formatBps, formatRupees } from "@/lib/api/quotes";
 
 import type { CommitState, PreviewState } from "./price-list-actions";
 
+type Previewed = { state: PreviewState; checked: { csv: string; date: string; versionId: string } } | undefined;
 type PreviewAction = (prev: PreviewState, formData: FormData) => Promise<PreviewState>;
 type CommitAction = (prev: CommitState, formData: FormData) => Promise<CommitState>;
 
@@ -31,22 +32,30 @@ export function PriceListImport({
   today: string;
   secondFactorMissing: boolean;
 }) {
-  const [previewState, previewAction, checking] = useActionState(preview, undefined);
+  // a check is tied to the EXACT text and date it was made for (and carries the id of the version it would save): the verdict and the save button belong to that text and date and to nothing else
+  const checkThis = async (prev: Previewed, formData: FormData): Promise<Previewed> => {
+    const state = await preview(prev?.state, formData);
+    return { state, checked: { csv: String(formData.get("csv") ?? ""), date: String(formData.get("effective_from") ?? ""), versionId: crypto.randomUUID() } };
+  };
+  const [previewed, previewAction, checking] = useActionState(checkThis, undefined);
   const [commitState, commitAction, saving] = useActionState(commit, undefined);
   const [csv, setCsv] = useState("");
   const [date, setDate] = useState(today);
-  const [checked, setChecked] = useState<{ csv: string; date: string; versionId: string } | null>(null);
   const [fileError, setFileError] = useState<string | null>(null);
-  const result = previewState?.preview;
-  // a clean check of exactly this text and date: any edit after it switches the save button off
-  const current = result?.ok === true && checked !== null && checked.csv === csv && checked.date === date;
+  const previewState = previewed?.state;
+  const checked = previewed?.checked ?? null;
+  // the verdict is shown only when no check is running and the text and date are exactly the checked ones
+  const fresh = !checking && checked !== null && checked.csv === csv && checked.date === date;
+  const result = fresh ? previewState?.preview : undefined;
+  const current = result?.ok === true;
+  const stale = !checking && previewState?.preview !== undefined && !fresh;
 
   async function onFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     setFileError(null);
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      setFileError("The file is too big: at most 2 MB.");
+    if (file.size > MAX_FILE_BYTES) {
+      setFileError(FILE_TOO_BIG);
       return;
     }
     setCsv(await file.text());
@@ -73,8 +82,13 @@ export function PriceListImport({
         <button
           type="submit"
           disabled={checking}
-          onClick={() => {
-            setChecked({ csv, date, versionId: crypto.randomUUID() }); // a new check is a new version; a double click on save is a retry
+          onClick={(event) => {
+            if (textBytes(csv) > MAX_FILE_BYTES) {
+              event.preventDefault(); // over the limit: never sent (the server-action request itself is capped at 1 MB)
+              setFileError(FILE_TOO_BIG);
+              return;
+            }
+            setFileError(null);
           }}
         >
           {checking ? "Checking..." : "Check the file"}
@@ -87,6 +101,7 @@ export function PriceListImport({
         ) : null}
       </form>
 
+      {stale ? <p className="hint">The text or the date changed since the last check: its result is not shown. Check the file again.</p> : null}
       {result ? (
         <section aria-labelledby="pl-result" className="card" style={{ maxWidth: "70rem" }}>
           <h2 id="pl-result">{result.ok ? "The file is good" : "The file has problems"}</h2>
@@ -134,7 +149,7 @@ export function PriceListImport({
         </section>
       ) : null}
 
-      {result?.ok ? (
+      {previewState?.preview?.ok || checking ? (
         secondFactorMissing ? (
           <p role="note">
             Saving a price list needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
@@ -144,10 +159,10 @@ export function PriceListImport({
             <input type="hidden" name="version_id" value={checked?.versionId ?? ""} />
             <input type="hidden" name="csv" value={csv} />
             <input type="hidden" name="effective_from" value={date} />
-            <button type="submit" formAction={commitAction} disabled={saving || !current}>
+            <button type="submit" formAction={commitAction} disabled={saving || checking || !current}>
               {saving ? "Saving..." : "Save as a new price list version"}
             </button>
-            {!current ? <p className="hint">The text or the date changed since the check. Check the file again to save it.</p> : null}
+            {!current && !checking ? <p className="hint">The text or the date changed since the check. Check the file again to save it.</p> : null}
             <p className="hint">Saving makes a new version in force from the date above. Earlier quotes keep the version they were made with. Nothing is sent to anyone.</p>
           </form>
         )

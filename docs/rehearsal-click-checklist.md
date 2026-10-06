@@ -70,7 +70,7 @@ Quote: 8 Kanjivaram blue, repeat customer: total **₹35,280.00**, advance **₹
 | D3 | Admin | payment `8,820` | *Advance received*, received ₹8,820.00 | | |
 | D4 | Admin | open the order and look at **What to record next** | **no** *A refund was given* and **no** *Cancel this order* (they are the Owner's: the order carries money) | | |
 | D5 | Owner | **A refund was given**: amount `1,000` → **Record this refund** | the message says the rules flagged it for the owner; *Advance asked for* (the refund took it back under the advance); refunded ₹1,000.00 | | |
-| D6 | Owner | **Cancel this order** | *Cancelled*; the message says the order had money in it and a refund may be owed | | |
+| D6 | Owner | **Cancel this order** | *Cancelled*; the message says the order had money in it and a refund may be owed; the order page and the list now carry the permanent line **Money still held: ₹7,820.00. A refund may be owed to the customer.** | | |
 
 Total for D: clicks ______ seconds ______
 

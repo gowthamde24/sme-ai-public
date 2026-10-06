@@ -20,7 +20,7 @@ from typing import Any
 import httpx
 import operator_sql
 import pytest
-from conftest import aal1_token
+from conftest import aal1_token, bearer
 from crm_support import Tenant, World
 from evidence_support import uid
 from fastapi.testclient import TestClient
@@ -571,3 +571,68 @@ def test_the_order_carries_guidance_from_the_lifecycle_for_the_callers_role(
     done, _, _ = fresh_order(client, ow)
     assert event(client, ow, done, "admin", "cancel").json()["state"] == "cancelled"
     assert get(client, ow, done, "owner")["allowed_next_events"] == []
+
+
+def test_the_order_list_can_be_filtered_by_quote_and_another_workspaces_quote_finds_nothing(
+    client: TestClient, ow: OrderWorld
+) -> None:
+    order, quote, _ = fresh_order(client, ow)
+    hit = client.get(url(ow.t, f"/orders?quote_id={quote}&limit=1"), headers=headers(ow, "sales"))
+    assert hit.status_code == 200 and [i["id"] for i in hit.json()["items"]] == [order]
+    assert (
+        client.get(url(ow.t, f"/orders?quote_id={uid()}"), headers=headers(ow, "sales")).json()[
+            "items"
+        ]
+        == []
+    )
+    other = ow.w.b
+    foreign = client.get(
+        f"/v1/tenants/{other.id}/orders?quote_id={quote}", headers=bearer(other.users["owner"])
+    )
+    assert foreign.status_code == 200 and foreign.json()["items"] == [], (
+        "their workspace has no such quote"
+    )
+    assert (
+        client.get(url(ow.t, "/orders?quote_id=nope"), headers=headers(ow, "sales")).status_code
+        == 422
+    )
+
+
+def test_what_bounds_the_time_a_person_says_an_event_happened_today(
+    client: TestClient, ow: OrderWorld
+) -> None:
+    """Step F5: this test RECORDS the current behaviour, it does not endorse it. `occurred_at` is bounded ONLY by the database function against the clock (not more than five minutes in the
+    future, not more than 30 days in the past). It is NOT compared with the order's creation time and NOT with the previous event's time: a payment can be dated before the order existed
+    and events can be recorded out of date order. The API model accepts any timezone-aware time (the database refuses the unreasonable) and the lifecycle never sees it."""
+    from datetime import timedelta
+
+    now = datetime.now(UTC)
+    order, _, _ = fresh_order(client, ow)
+
+    def at(when: datetime, type_: str = "send_quote") -> httpx.Response:
+        return event(client, ow, order, "sales", type_, occurred_at=when.isoformat())
+
+    # the future: five minutes of slack, not more
+    assert at(now + timedelta(minutes=10)).status_code == 422, "ten minutes ahead is refused"
+    # the past: 30 days, not more
+    assert at(now - timedelta(days=31)).status_code == 422, "31 days ago is refused"
+    # the order was created a moment ago: an event dated 20 days BEFORE it is accepted (no comparison with the order's creation)
+    first = at(now - timedelta(days=20))
+    assert first.status_code == 200, first.text
+    # and an event dated EARLIER than the previous one is accepted too (no ordering between events)
+    second = event(
+        client,
+        ow,
+        order,
+        "sales",
+        "customer_accept",
+        occurred_at=(now - timedelta(days=25)).isoformat(),
+    )
+    assert second.status_code == 200, second.text
+    stored = [e["occurred_at"] for e in get(client, ow, order)["events"]]
+    assert len(stored) == 3 and datetime.fromisoformat(stored[2]) < datetime.fromisoformat(
+        stored[1]
+    ), "the ledger's order is the recording order (seq), not the order of the dates"
+    # a naive time (no zone) is refused by the model before the database is asked
+    naive = event(client, ow, order, "sales", "request_advance", occurred_at="2026-10-05T10:00:00")
+    assert naive.status_code == 422

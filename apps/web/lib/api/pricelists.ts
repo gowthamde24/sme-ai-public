@@ -7,6 +7,14 @@ import { isCanonicalUuid } from "./crm";
  * The file is parsed by the pinned parser behind the API; nothing here reads a price. What comes back about a file is numbers, the file's own sku and name cells (for the person to check) and
  * ISSUES: a row, a known column and a closed code, never a cell. A body that does not match the contract is an error, never rendered. Money is integer paise.
  */
+/** A file is at most 900,000 BYTES of UTF-8 (not characters: an Indic character is three bytes). Next.js refuses a server-action request over 1 MB, so the form, the page and the API all stop below it. */
+export const MAX_FILE_BYTES = 900_000;
+export const FILE_TOO_BIG = "The file is too big: at most 900,000 bytes (about 900 KB).";
+/** The size of a text in bytes, the way the API counts it. */
+export function textBytes(text: string): number {
+  return new TextEncoder().encode(text).length;
+}
+
 export const PARSER_CODES = [
   "FILE_LIMIT", "INVALID_UTF8", "HEADER_REQUIRED", "DUPLICATE_COLUMN", "UNKNOWN_COLUMN", "MISSING_COLUMN", "UNPAIRED_BREAK_COLUMN", "CSV_FORMAT", "ROW_WIDTH", "INVALID_SKU", "DUPLICATE_SKU",
   "INVALID_NAME", "INVALID_MONEY", "MONEY_OUT_OF_RANGE", "INVALID_INTEGER", "INTEGER_OUT_OF_RANGE", "INCOMPLETE_BREAK", "BREAK_GAP", "INVALID_PRICE_BREAKS",
@@ -19,7 +27,7 @@ export type Column = (typeof COLUMNS)[number];
 
 /** What each closed code means, in plain words of OUR making. */
 export const ISSUE_TEXT: Record<IssueCode, string> = {
-  FILE_LIMIT: "The file is too big: at most 5,000 rows, 2 MB, 40 columns, and 200 characters in a cell.",
+  FILE_LIMIT: "The file is too big: at most 5,000 rows, 40 columns, and 200 characters in a cell (and 900,000 bytes in all).",
   INVALID_UTF8: "The file is not plain text that can be read.",
   HEADER_REQUIRED: "The first row must be the column names.",
   DUPLICATE_COLUMN: "A column name is used twice.",

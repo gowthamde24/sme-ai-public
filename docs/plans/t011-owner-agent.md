@@ -30,6 +30,8 @@ Each is `public.owner_brief_<name>(p_tenant_id uuid, ...)`, `SECURITY DEFINER`, 
 | `owner_brief_pipeline_counts` | counts by lead status and by quote outcome, last 7 and 30 days (India time) | none |
 | `owner_brief_money_summary` | quoted, approved, paid and refunded paise for today, 7 and 30 days, from the ledger | none |
 
+**Requirement added 2026-10-06 (rehearsal step F8): closed orders holding money.** The attention list MUST include a ninth question, `owner_brief_closed_orders_holding_money`: orders whose outcome is cancelled, lost or expired and whose NET received (paid less refunded) is more than zero, with the amount in paise and the days since the order closed. Threshold: none and no age limit (the item stays until the money is refunded and the ledger says so: a refund may be owed to the customer). The order page and the orders list already show the permanent line "Money still held: ₹X. A refund may be owed to the customer." for the same orders; the brief must agree with them (same definition: `net_paise > 0` on a closed order that is not `closed_paid`). The "eight functions" above are therefore nine when this is built; the endpoint, the page and the test plan count nine.
+
 Four of them read tables that do not exist yet (follow-ups, orders, suppression): each function is written WHEN its table exists (commit order, section 5); until then the endpoint reports it as "not available yet" rather than showing an empty list. Row limits: 20 per list (the response says when a list is cut). Severity is a rule (days past a threshold, balance size), not a judgement.
 
 ## 3. API and page

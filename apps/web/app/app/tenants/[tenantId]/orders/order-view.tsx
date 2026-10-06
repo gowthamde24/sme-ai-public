@@ -5,8 +5,10 @@ import {
   EVENT_LABELS,
   LOST_REASON_LABELS,
   OUTCOME_LABELS,
+  HELD_TEXT,
   STATE_LABELS,
   formatRupees,
+  moneyHeld,
   type Member,
   type OrderDetail,
 } from "@/lib/api/orders";
@@ -41,6 +43,12 @@ export function OrderView({ tenantId, order, members, forms }: { tenantId: strin
       <p role="note" className="notice">
         Nothing is sent by this system: every entry here is a record of something that happened outside it.
       </p>
+
+      {moneyHeld(order) > 0 ? (
+        <p role="note" className="notice">
+          {HELD_TEXT(moneyHeld(order))}
+        </p>
+      ) : null}
 
       <h2>The money</h2>
       <dl className="summary">

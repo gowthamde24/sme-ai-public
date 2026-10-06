@@ -187,6 +187,14 @@ export function parseRupees(text: string): number | null {
   return paise >= 1 && paise <= 1_000_000_000 ? paise : null;
 }
 
+// ----------------------------------------------------------------------------- money still held on a closed order
+/** What a lost, cancelled or expired order still holds: the NET received (paid less refunded). A won order is not "closed with money": it is paid for. Zero when nothing is held. */
+export function moneyHeld(order: Pick<Order, "outcome" | "net_paise">): number {
+  return (order.outcome === "lost" || order.outcome === "cancelled" || order.outcome === "expired") && order.net_paise > 0 ? order.net_paise : 0;
+}
+/** The permanent line for an order that holds money after it closed (a refund may be owed). */
+export const HELD_TEXT = (paise: number): string => `Money still held: ${formatRupees(paise)}. A refund may be owed to the customer.`;
+
 // ----------------------------------------------------------------------------- who may record what (guidance for the screen; the database decides again)
 export interface OfferInput {
   role: string;
@@ -317,9 +325,13 @@ function checked(...ids: string[]): void {
 const base = (tenantId: string) => `/v1/tenants/${tenantId}`;
 const post = (body: unknown): RequestInit => ({ method: "POST", body: JSON.stringify(body) });
 
-export async function fetchOrders(accessToken: string, tenantId: string, opts: { limit?: number; cursor?: string | null } = {}): Promise<OrderPage> {
+export async function fetchOrders(accessToken: string, tenantId: string, opts: { limit?: number; cursor?: string | null; quoteId?: string } = {}): Promise<OrderPage> {
   checked(tenantId);
   const query = new URLSearchParams({ limit: String(opts.limit ?? 20) });
+  if (opts.quoteId !== undefined) {
+    checked(opts.quoteId);
+    query.set("quote_id", opts.quoteId); // only the orders of this quote (the quote screen asks for its own order)
+  }
   if (opts.cursor) query.set("cursor", opts.cursor);
   return parseOrderPage(await apiRequest(`${base(tenantId)}/orders?${query}`, accessToken));
 }

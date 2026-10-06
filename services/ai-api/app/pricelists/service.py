@@ -9,6 +9,8 @@ import uuid
 from datetime import date
 from typing import Any
 
+from pydantic import ValidationError
+
 from app.pricelists import csv_port
 from app.pricelists.models import (
     MAX_ITEMS,
@@ -44,9 +46,11 @@ def _issue(row: int, column: str | None, code: str) -> IssueOut:
     return IssueOut.model_validate({"row": row, "column": column, "code": code})
 
 
-def preview(
+def _build(
     repo: PriceListRepository, token: str, tenant: uuid.UUID, text: str, effective_from: date
-) -> PreviewOut:
+) -> tuple[PreviewOut, dict[str, Product]]:
+    """Parse the file and read the catalog ONCE. The preview is built from that read, and a commit uses the very same read."""
+    catalog: dict[str, Product] = {}
     parsed = csv_port.parse(text)
     issues = [_issue(e["row"], e["column"], e["code"]) for e in parsed["errors"]]
     items: list[PreviewItemOut] = []
@@ -85,7 +89,7 @@ def preview(
                     )
                 )
     issues.sort(key=lambda i: (i.row, i.column or "", i.code))
-    return PreviewOut(
+    out = PreviewOut(
         ok=not issues,
         parser_version=csv_port.parser_version(),
         effective_from=effective_from,
@@ -94,6 +98,24 @@ def preview(
         items=items if not parsed["errors"] else [],
         issues=issues,
     )
+    return out, catalog
+
+
+def _analyse(
+    repo: PriceListRepository, token: str, tenant: uuid.UUID, text: str, effective_from: date
+) -> tuple[PreviewOut, dict[str, Product]]:
+    """Parse the file and read the catalog ONCE (see `_build`). A parser result that does not fit our models (a wrong type, a missing field, a code we do not know) is the adapter's
+    `PriceCsvError`: the route answers a fixed 502 and nothing is saved. The package's own error text never leaves."""
+    try:
+        return _build(repo, token, tenant, text, effective_from)
+    except (ValidationError, KeyError, TypeError, AttributeError):
+        raise csv_port.PriceCsvError from None
+
+
+def preview(
+    repo: PriceListRepository, token: str, tenant: uuid.UUID, text: str, effective_from: date
+) -> PreviewOut:
+    return _analyse(repo, token, tenant, text, effective_from)[0]
 
 
 class PriceListInvalid(Exception):
@@ -112,23 +134,29 @@ def commit(
     text: str,
     effective_from: date,
 ) -> CommitOut:
-    checked = preview(repo, token, tenant, text, effective_from)
+    checked, catalog = _analyse(repo, token, tenant, text, effective_from)
     if not checked.ok:
         raise PriceListInvalid(checked.issues)
-    catalog = repo.products_by_sku(token, tenant, [i.sku for i in checked.items])
-    payload = [
-        {
-            "product_id": str(catalog[i.sku].id),
-            "sale_unit": i.sale_unit,
-            "unit_price_paise": i.unit_price_paise,
-            "minimum_order_quantity": i.minimum_order_quantity,
-            "tax_bps": i.tax_bps,
-            "breaks": [
-                {"min_qty": b.min_qty, "unit_price_paise": b.unit_price_paise} for b in i.breaks
-            ],
-        }
-        for i in checked.items
-    ]
+    rows = _rows_by_sku(text)
+    payload = []
+    for i in checked.items:
+        product = catalog.get(i.sku)
+        if (
+            product is None
+        ):  # cannot happen with one read; if it ever does it is a refusal of the file, never a KeyError
+            raise PriceListInvalid([_issue(rows.get(i.sku, 0), "sku", "UNKNOWN_SKU")])
+        payload.append(
+            {
+                "product_id": str(product.id),
+                "sale_unit": i.sale_unit,
+                "unit_price_paise": i.unit_price_paise,
+                "minimum_order_quantity": i.minimum_order_quantity,
+                "tax_bps": i.tax_bps,
+                "breaks": [
+                    {"min_qty": b.min_qty, "unit_price_paise": b.unit_price_paise} for b in i.breaks
+                ],
+            }
+        )
     done = repo.create_version(
         token,
         {

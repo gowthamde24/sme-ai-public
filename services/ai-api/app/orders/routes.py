@@ -71,7 +71,9 @@ def list_orders(
     runtime: RuntimeDep,
     limit: Annotated[int, Query(ge=1, le=50)] = 20,
     cursor: Annotated[str | None, Query(max_length=300)] = None,
+    quote_id: Annotated[uuid.UUID | None, Query()] = None,
 ) -> Page[OrderOut]:
+    """The workspace's orders, newest first; `quote_id` (a UUID) narrows them to the orders of one quote (the quote screen asks for its own order this way)."""
     decoded = None
     if cursor is not None:
         try:
@@ -79,7 +81,7 @@ def list_orders(
         except CursorError:
             raise ApiError(422, "validation_error", "Invalid input: cursor.") from None
     rows = _repo(runtime).list_orders(
-        ctx.principal.token, ctx.tenant.id, limit=limit, cursor=decoded
+        ctx.principal.token, ctx.tenant.id, limit=limit, cursor=decoded, quote_id=quote_id
     )
     items = [service.order_out(r) for r in rows[:limit]]
     next_cursor = None

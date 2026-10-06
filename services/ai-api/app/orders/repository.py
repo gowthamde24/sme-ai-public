@@ -41,9 +41,15 @@ class OrdersRepository(Protocol):
         ...
 
     def list_orders(
-        self, token: str, tenant_id: uuid.UUID, *, limit: int, cursor: tuple[str, uuid.UUID] | None
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+        quote_id: uuid.UUID | None = None,
     ) -> list[dict[str, Any]]:
-        """Up to `limit + 1` rows (the caller trims), newest first, each merged with its ledger totals."""
+        """Up to `limit + 1` rows (the caller trims), newest first, each merged with its ledger totals; only the orders of `quote_id` when it is given."""
         ...
 
     def events(
@@ -184,7 +190,13 @@ class PostgrestOrdersRepository:
         )
 
     def list_orders(
-        self, token: str, tenant_id: uuid.UUID, *, limit: int, cursor: tuple[str, uuid.UUID] | None
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        limit: int,
+        cursor: tuple[str, uuid.UUID] | None,
+        quote_id: uuid.UUID | None = None,
     ) -> list[dict[str, Any]]:
         params = {
             "select": ORDER_COLUMNS,
@@ -192,6 +204,10 @@ class PostgrestOrdersRepository:
             "order": "created_at.desc,id.desc",
             "limit": str(limit + 1),
         }
+        if quote_id is not None:
+            params["quote_id"] = (
+                f"eq.{quote_id}"  # a validated UUID: the tenant filter above still applies
+            )
         if cursor is not None:
             created_at, row_id = cursor  # validated by decode_cursor
             params["or"] = (

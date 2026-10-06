@@ -69,7 +69,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
       if (selected?.outcome === "approved") {
         try {
           // the order already started from this quote (if any): a nicety, the quote screen never depends on it
-          order = (await fetchOrders(user.accessToken, tenantId, { limit: 50 })).items.find((o) => o.quote_id === selected?.id) ?? null;
+          order = (await fetchOrders(user.accessToken, tenantId, { quoteId: selected.id, limit: 1 })).items[0] ?? null;
         } catch (error) {
           if (error instanceof ApiAuthError) redirect("/login");
         }

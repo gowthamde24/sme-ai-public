@@ -721,3 +721,57 @@ def test_the_default_clock_is_the_real_one(w: World) -> None:
         "expire",
         "cancel",
     ]
+
+
+# ----------------------------------------------------------------------------- the quote filter (step F1)
+def test_the_list_can_be_filtered_by_quote_even_past_the_first_fifty_orders(w: World) -> None:
+    wanted = uuid.UUID(int=0x51)
+    for n in range(
+        2, 80
+    ):  # 78 orders of other quotes, then the one we look for LAST (past any first page of 50)
+        oid = uuid.UUID(int=0x0E00 + n)
+        w.o.rows[oid] = order_row(
+            TENANT_A.id, oid, order_no=n, quote_id=str(uuid.UUID(int=0x1000 + n))
+        )
+    target = uuid.UUID(int=0x0EFF)
+    w.o.rows[target] = order_row(TENANT_A.id, target, order_no=99, quote_id=str(wanted))
+    page = w.call("GET", f"/orders?quote_id={wanted}&limit=1", None, "a_sales").json()
+    assert [i["id"] for i in page["items"]] == [str(target)] and page["next_cursor"] is None
+    assert w.sent("list_orders")[-1]["quote_id"] == wanted
+    unfiltered = w.call("GET", "/orders?limit=50", None, "a_sales").json()
+    assert str(target) not in [i["id"] for i in unfiltered["items"]], (
+        "without the filter it is not on the first page"
+    )
+    assert w.sent("list_orders")[-1]["quote_id"] is None
+
+
+def test_a_quote_of_another_workspace_or_an_unknown_one_returns_nothing(w: World) -> None:
+    theirs = uuid.UUID(int=0xB0B)
+    other = FakeOrders(TENANT_B.id)
+    other.rows[uuid.UUID(int=0xB0C)] = order_row(
+        TENANT_B.id, uuid.UUID(int=0xB0C), quote_id=str(theirs)
+    )
+    assert other.list_orders("t", TENANT_A.id, limit=5, cursor=None, quote_id=theirs) == []
+    assert w.call("GET", f"/orders?quote_id={theirs}", None, "a_sales").json() == {
+        "items": [],
+        "next_cursor": None,
+    }
+    assert w.call("GET", f"/orders?quote_id={uuid.uuid4()}", None, "a_owner").json()["items"] == []
+
+
+@pytest.mark.parametrize(
+    "bad", ["not-a-uuid", "1", "' or 1=1 --", "", "00000000-0000-0000-0000-00000000000g"]
+)
+def test_a_malformed_quote_id_is_a_422_and_the_data_layer_is_not_asked(w: World, bad: str) -> None:
+    r = w.call("GET", f"/orders?quote_id={bad}", None, "a_sales")
+    assert r.status_code == 422 and code(r) == "validation_error"
+    assert w.o.calls == []
+
+
+def test_the_quote_filter_keeps_every_role_rule(w: World) -> None:
+    path = f"/orders?quote_id={QUOTE}"
+    assert w.call("GET", path, None, None).status_code == 401
+    assert w.call("GET", path, None, "a_viewer").status_code == 403
+    assert w.call("GET", path, None, "outsider").status_code == 404
+    assert w.call("GET", path, None, "b_owner", TENANT_A.id).status_code == 404
+    assert w.o.calls == []

@@ -2,6 +2,21 @@
 
 Record ticket, checklist row, evidence, unresolved risk and proposed status here. Lane A consolidates these into docs/pre-pilot-checklist.md after review.
 
+## Step F: findings (2026-10-06)
+
+**F5: what bounds `occurred_at` on an order event (the time a person says it happened). Not changed; recorded by `test_what_bounds_the_time_a_person_says_an_event_happened_today` (real stack).**
+| Layer | Bound |
+| --- | --- |
+| Web form | the day picker has `max` = today (India) and no minimum; an earlier day is sent as noon in India; today is the page's own render time |
+| API model (`RecordEventIn`) | any timezone-aware time (a naive time is a 422); no bound against the future, the past or the order |
+| Lifecycle (pure package) | none: `occurred_at` never enters the engine |
+| Database (`record_order_event`, `20261019090000_order_conversion.sql` line 810) | **not more than five minutes in the future and not more than 30 days in the past, measured against the database clock.** Outside it the answer is 22023 (a 422 `invalid_value` through the API) |
+| Against the order's creation time | **none.** An event dated 20 days before the order was created is accepted |
+| Against the previous event's time | **none.** An event can be dated earlier than the one before it; the ledger's order is the recording order (`seq`), not the order of the dates |
+Consequences to weigh before real use (not changed here): a payment can be dated before its order existed and events can be out of date order, so a report that sorts by `occurred_at` and one that sorts by `seq` can disagree; the 30-day window means a payment received 31 days ago can only be recorded with a date inside the window; the web form shows the database's 422 as the generic "That input was not accepted". An owner decision on a floor (the order's creation date, or the previous event's) is a database change and was not made.
+
+**F3: was Next.js's server-action body limit what made 900,000 bytes necessary? Yes.** The framework caps a server-action request at 1 MB by default (`node_modules/next/dist/docs/01-app/02-guides/server-actions.md`: "Action requests are capped at 1MB by default"; `serverActions.bodySizeLimit` raises it, and this repository does not set it). The price-list form posts the whole file as one field inside the action request (a check, and again on a save), so the earlier 2 MB limit would have failed inside the framework with a generic error before our own sentence. The limit is now 900,000 BYTES everywhere (the browser check, the file picker, the action with `TextEncoder`, the API model), which leaves room for the form's other fields; a Telugu character is three bytes, so the character count of the old limit was wrong by up to a factor of three.
+
 ## Rehearsal small fixes A-C, the order and price-list pages: mutation pass (2026-10-06)
 
 Same method as the sections below (SQL: a function re-created and restored with the baseline checked first; Python and TypeScript: the file edited, the unit tests run, the file restored; a "kill" is a FAILING test, a broken build is reported apart).

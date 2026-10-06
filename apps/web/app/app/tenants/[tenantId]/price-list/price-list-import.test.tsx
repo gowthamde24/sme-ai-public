@@ -89,19 +89,50 @@ describe("PriceListImport", () => {
     expect(sent.get("version_id")).toBe(versionId);
   });
 
-  it("an edit after the check switches the save off until the file is checked again, and a new check is a new version", async () => {
+  it("an edit after the check removes the verdict and switches the save off until the file is checked again, and a new check is a new version", async () => {
     render(<PriceListImport {...props()} />);
     type(GOOD_TEXT);
     await check();
     const first = (document.querySelector('input[name="version_id"]') as HTMLInputElement).value;
     expect(await screen.findByRole("button", { name: "Save as a new price list version" })).toBeEnabled();
+    expect(screen.getByRole("heading", { name: "The file is good" })).toBeInTheDocument();
     type(GOOD_TEXT + "SYN-KJ-BLUE-01,y,4200,4,500\n");
+    expect(screen.queryByRole("heading", { name: "The file is good" })).toBeNull();
+    expect(screen.queryByRole("table")).toBeNull();
     expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeDisabled();
     expect(screen.getByText(/changed since the check/)).toBeInTheDocument();
+    type(GOOD_TEXT); // back to the checked text: the check is still the check of THIS text
+    expect(screen.getByRole("heading", { name: "The file is good" })).toBeInTheDocument();
     fireEvent.change(screen.getByLabelText("The price list starts on"), { target: { value: "2026-10-07" } });
+    expect(screen.queryByRole("heading", { name: "The file is good" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeDisabled();
     await check();
     expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeEnabled();
     expect((document.querySelector('input[name="version_id"]') as HTMLInputElement).value).not.toBe(first);
+  });
+
+  it("while a NEW check runs the old verdict is gone and Save is disabled, even for unchanged text; the new verdict is of the new text", async () => {
+    let finish: (v: { ok: true; preview: ReturnType<typeof parsePreview> }) => void = () => {};
+    const results = [{ ok: true as const, preview: parsePreview(PREVIEW_JSON) }];
+    const preview = vi.fn(() =>
+      results.length > 0 ? Promise.resolve(results.shift()!) : new Promise<{ ok: true; preview: ReturnType<typeof parsePreview> }>((resolve) => (finish = resolve)),
+    );
+    render(<PriceListImport {...props({ preview })} />);
+    type(GOOD_TEXT);
+    await check();
+    expect(await screen.findByRole("button", { name: "Save as a new price list version" })).toBeEnabled();
+    await check(); // the second check is slow
+    expect(screen.getByRole("button", { name: "Checking..." })).toBeDisabled();
+    expect(screen.queryByRole("heading", { name: "The file is good" })).toBeNull();
+    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeDisabled();
+    type(GOOD_TEXT + "x"); // edited while it runs
+    await act(async () => finish({ ok: true, preview: parsePreview(PREVIEW_JSON) }));
+    expect(screen.queryByRole("heading", { name: "The file is good" })).toBeNull(); // the answer is for the old text
+    expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeDisabled();
+    type(GOOD_TEXT);
+    expect(screen.getByRole("heading", { name: "The file is good" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeEnabled();
   });
 
   it("without the second factor a clean check offers the notice, not the save", async () => {
@@ -127,6 +158,19 @@ describe("PriceListImport", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app."));
   });
 
+  it("a pasted text over 900,000 bytes (Telugu counts three bytes a character) is stopped in the browser: the action is never called", async () => {
+    const p = props();
+    render(<PriceListImport {...p} />);
+    type("\u0c05".repeat(300_001));
+    await check();
+    expect(await screen.findByRole("alert")).toHaveTextContent("The file is too big: at most 900,000 bytes (about 900 KB).");
+    expect(p.preview).not.toHaveBeenCalled();
+    type("\u0c05".repeat(300_000));
+    await check();
+    await waitFor(() => expect(p.preview).toHaveBeenCalledTimes(1));
+    expect(screen.queryByText(/too big/)).toBeNull();
+  });
+
   it("puts a chosen file's text in the box, and refuses one over 2 MB", async () => {
     render(<PriceListImport {...props()} />);
     const input = screen.getByLabelText("Choose a CSV file") as HTMLInputElement;
@@ -134,9 +178,14 @@ describe("PriceListImport", () => {
     await act(async () => fireEvent.change(input, { target: { files: [file] } }));
     await waitFor(() => expect((screen.getByLabelText("Or paste the file's text") as HTMLTextAreaElement).value).toBe(GOOD_TEXT));
     const big = new File(["x"], "big.csv");
-    Object.defineProperty(big, "size", { value: 2 * 1024 * 1024 + 1 });
+    Object.defineProperty(big, "size", { value: 900_001 });
     await act(async () => fireEvent.change(input, { target: { files: [big] } }));
-    expect(await screen.findByRole("alert")).toHaveTextContent("The file is too big: at most 2 MB.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("The file is too big: at most 900,000 bytes (about 900 KB).");
+    const exact = new File(["y,z"], "exact.csv");
+    Object.defineProperty(exact, "size", { value: 900_000 });
+    await act(async () => fireEvent.change(input, { target: { files: [exact] } }));
+    await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+    expect((screen.getByLabelText("Or paste the file's text") as HTMLTextAreaElement).value).toBe("y,z");
   });
 
   it("renders a hostile name or sku as text, never as markup", async () => {

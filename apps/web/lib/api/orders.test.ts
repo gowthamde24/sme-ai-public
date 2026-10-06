@@ -26,6 +26,7 @@ import {
   recordEvent,
   type EventType,
 } from "./orders";
+import { moneyHeld, HELD_TEXT } from "./orders";
 import { DETAIL_JSON, EVENT, EVENT_JSON, LEDGER, MEMBERS_JSON, ORDER, ORDER_JSON, QUOTE, RESULT_JSON, TENANT } from "./orders-fixtures";
 
 const apiRequest = vi.fn();
@@ -64,6 +65,25 @@ describe("money", () => {
   });
 
   it.each(["", "abc", "0", "0.00", "-5", "1.234", "1e3", "10,00,00,000.01", "12345678901", "5 rupees", "1..2"])("%j is not an amount", (text) => expect(parseRupees(text)).toBeNull());
+});
+
+describe("money still held on a closed order (step F8)", () => {
+  const order = (over: Record<string, unknown>) => parseOrder({ ...ORDER_JSON, ...over });
+  it("a cancelled, lost or expired order with money left in it holds it: the net received, never the gross", () => {
+    expect(moneyHeld(order({ state: "cancelled", outcome: "cancelled", paid_paise: 882000, refunded_paise: 100000, net_paise: 782000 }))).toBe(782000);
+    expect(moneyHeld(order({ state: "declined", outcome: "lost", paid_paise: 5000, net_paise: 5000 }))).toBe(5000);
+    expect(moneyHeld(order({ state: "expired", outcome: "expired", paid_paise: 1, net_paise: 1 }))).toBe(1);
+  });
+  it("nothing is held when nothing is left, when it was all refunded, or when the order is open or won", () => {
+    expect(moneyHeld(order({ state: "declined", outcome: "lost", net_paise: 0 }))).toBe(0);
+    expect(moneyHeld(order({ state: "cancelled", outcome: "cancelled", paid_paise: 500, refunded_paise: 500, net_paise: 0 }))).toBe(0);
+    expect(moneyHeld(order({ state: "closed_paid", outcome: "won", paid_paise: 15000000, net_paise: 15000000 }))).toBe(0);
+    expect(moneyHeld(order({ state: "in_preparation", outcome: "won", paid_paise: 100, net_paise: 100 }))).toBe(0);
+    expect(moneyHeld(order({ state: "quote_sent", outcome: "open", net_paise: 0 }))).toBe(0);
+  });
+  it("the sentence says how much and that a refund may be owed", () => {
+    expect(HELD_TEXT(782000)).toBe("Money still held: ₹7,820.00. A refund may be owed to the customer.");
+  });
 });
 
 describe("which forms a role is offered (guidance: the database decides again)", () => {
@@ -138,6 +158,16 @@ describe("requests", () => {
     expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${TENANT}/orders/${ORDER}`, "tok");
     await expect(fetchOrder("tok", TENANT, "../../x")).rejects.toThrow(ApiContractError);
     await expect(fetchOrders("tok", "nope")).rejects.toThrow(ApiContractError);
+    expect(apiRequest).toHaveBeenCalledTimes(2);
+  });
+
+  it("a list can be narrowed to one quote, and the id is checked before it reaches the path", async () => {
+    apiRequest.mockResolvedValue({ items: [], next_cursor: null });
+    await fetchOrders("tok", TENANT, { limit: 1, quoteId: QUOTE });
+    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/orders?limit=1&quote_id=${QUOTE}`, "tok");
+    await fetchOrders("tok", TENANT);
+    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${TENANT}/orders?limit=20`, "tok");
+    await expect(fetchOrders("tok", TENANT, { quoteId: "x&tenant_id=eq.1" })).rejects.toThrow(ApiContractError);
     expect(apiRequest).toHaveBeenCalledTimes(2);
   });
 
