@@ -214,3 +214,23 @@ Sending of any kind (e-mail, WhatsApp, links), PDF or any document rendering, pa
 * **Packaging:** the Docker image does not contain the pure packages; fixed in commit 8, proven only at T012.
 * **Real prices and costs never enter the repository**; the seed is synthetic and labelled.
 * **Scope creep to watch:** discounts, PDFs and sending are the first things that will be asked for; each needs its own plan.
+
+## 11. As built (owner review of migration parts 1 and 2 and the mapper adapter, 2026-10-06)
+
+Everything above stands except these changes, each decided while building (each is in ADR 0019):
+
+* **Review flags are derived by the database, never taken from the payload.** The plan had the API add them; `app.quote_build` derives them and `create_quote_draft` stores them.
+* **`TERMS_REQUESTED_BY_CUSTOMER` replaces `TERMS_DIFFER_FROM_REQUEST`:** ANY stated (confirmed or corrected) payment terms in the requirement need the Owner; the database does not interpret them
+  (it would have to guess what "advance_partial" means). The Owner confirmed this rule.
+* **`DELIVERY_STATE_UNCONFIRMED` is dropped:** the delivery state is a required input a person chooses, so there is nothing to flag. `MIXED_GST_RATES_SHIPPING` is derived (more than one item rate and freight charged).
+* **No city on the quote.** The plan copied `delivery_city` onto the quote with erasure registration; instead the quote tables hold no personal data and the city is read from the (frozen) requirement at display time.
+* **No mapper-results table (`requirement_mappings`).** A pick records its `source` (`manual` or `mapper_suggestion`) and the mapper output's hash (`suggestion_sha256`); persisting full mapper outputs waits for a use.
+* **The same product on two lines of one requirement is refused in v1** (the engine takes one quantity per sku; aggregation is a later design).
+* **The database recomputes far more than the plan's "cheap invariants".** For the v1 subset it rebuilds the request and every figure and flag (SM216), proved equal to the real engine by a property test (see ADR 0019).
+* **No `supersedes_quote_id`, no `company_id`, no `requested_deadline`, no per-line `rule_ids` columns:** history is the status plus the audit trail; the company is reached through the lead; the deadline is read from the requirement;
+  the rule trace per line lives in the stored `result_text`.
+* **A `gst_supply` label** (`intra_state` / `inter_state`, from the policy's `seller_state` against the delivery state) is stored; no number depends on it.
+* **`default_sale_unit` lives on the mapper config version** (and the price list item carries the unit its price is quoted in): the products table's `unit` is free text and is not the authority.
+* **Quote numbers are unique and increasing, not gap-free** (an advisory lock around "max + 1").
+* **Reject codes are a closed list** (`wrong_prices`, `customer_changed`, `duplicate`, `withdrawn`, `other`); Sales may only withdraw their own draft.
+
