@@ -1,0 +1,150 @@
+{
+ "_comment": "Invented enquiries. lead_line is the line number of the lead in leads.csv (the header is line 1). The texts contain no e-mail address and no phone number on purpose (the API scrubs them). stops_after: the enquiry goes no further than that step.",
+ "enquiries": [
+  {
+   "key": "E1",
+   "lead_line": 2,
+   "subject": "Wedding season order",
+   "text": "We are a saree wholesaler and need twelve Kanjivaram silk sarees in red for the wedding season. Please share your best price and delivery time to Hyderabad.",
+   "lines": [
+    {
+     "saree_type": "kanjivaram",
+     "quantity": "12 pieces",
+     "sku": "SYN-KJ-RED-01",
+     "qty": 12
+    }
+   ],
+   "delivery_city": "Hyderabad",
+   "delivery_state": "TG",
+   "customer_kind": "new",
+   "quote": "Q1"
+  },
+  {
+   "key": "E2",
+   "lead_line": 3,
+   "subject": "Banarasi enquiry",
+   "text": "Looking for six Banarasi silk sarees in red for our Chennai shop. Is a small quantity possible?",
+   "lines": [
+    {
+     "saree_type": "banarasi",
+     "quantity": "6 pieces",
+     "sku": "SYN-BN-RED-01",
+     "qty": 6
+    }
+   ],
+   "delivery_city": "Chennai",
+   "delivery_state": "TN",
+   "customer_kind": "new",
+   "quote": "Q2"
+  },
+  {
+   "key": "E3",
+   "lead_line": 4,
+   "subject": "Kanjivaram samples",
+   "text": "Interested in five Kanjivaram silk sarees in blue for Madurai. Please quote the price per piece.",
+   "lines": [
+    {
+     "saree_type": "kanjivaram",
+     "quantity": "5 pieces",
+     "sku": "SYN-KJ-BLUE-01",
+     "qty": 5
+    }
+   ],
+   "delivery_city": "Madurai",
+   "delivery_state": "TN",
+   "customer_kind": "new",
+   "quote": "Q3"
+  },
+  {
+   "key": "E4",
+   "lead_line": 9,
+   "subject": "Large Banarasi order",
+   "text": "We need twenty Banarasi silk sarees in gold for our Bhopal showroom. Is there a price for twenty pieces?",
+   "lines": [
+    {
+     "saree_type": "banarasi",
+     "quantity": "20 pieces",
+     "sku": "SYN-BN-GOLD-01",
+     "qty": 20
+    }
+   ],
+   "delivery_city": "Bhopal",
+   "delivery_state": "MP",
+   "customer_kind": "new",
+   "quote": "Q4"
+  },
+  {
+   "key": "E5",
+   "lead_line": 12,
+   "subject": "Mixed order",
+   "text": "Four Kanjivaram sarees in red and ten Paithani sarees in green, for delivery to Hubli.",
+   "lines": [
+    {
+     "saree_type": "kanjivaram",
+     "quantity": "4 pieces",
+     "sku": "SYN-KJ-RED-01",
+     "qty": 4
+    },
+    {
+     "saree_type": "paithani",
+     "quantity": "10 pieces",
+     "sku": "SYN-PT-GREEN-01",
+     "qty": 10
+    }
+   ],
+   "delivery_city": "Hubli",
+   "delivery_state": "KA",
+   "customer_kind": "new",
+   "quote": "Q5"
+  },
+  {
+   "key": "E6",
+   "lead_line": 15,
+   "subject": "Repeat customer reorder",
+   "text": "We bought from you before and want eight Kanjivaram silk sarees in blue again, delivered to Mysuru.",
+   "lines": [
+    {
+     "saree_type": "kanjivaram",
+     "quantity": "8 pieces",
+     "sku": "SYN-KJ-BLUE-01",
+     "qty": 8
+    }
+   ],
+   "delivery_city": "Mysuru",
+   "delivery_state": "KA",
+   "customer_kind": "repeat",
+   "quote": "Q6"
+  },
+  {
+   "key": "E7",
+   "lead_line": 16,
+   "subject": "Just asking",
+   "text": "Do you supply Mekhela chador sets? We would like to know before deciding anything.",
+   "lines": [],
+   "delivery_city": null,
+   "delivery_state": null,
+   "customer_kind": null,
+   "quote": null,
+   "stops_after": "capture"
+  },
+  {
+   "key": "E8",
+   "lead_line": 17,
+   "subject": "Kanjivaram, unsure of quantity",
+   "text": "Interested in some Kanjivaram sarees for Ratnagiri but the quantity is not decided yet.",
+   "lines": [
+    {
+     "saree_type": "kanjivaram",
+     "quantity": null,
+     "sku": null,
+     "qty": null
+    }
+   ],
+   "delivery_city": "Ratnagiri",
+   "delivery_state": null,
+   "customer_kind": null,
+   "quote": null,
+   "stops_after": "requirement_unconfirmed"
+  }
+ ]
+}

@@ -1,0 +1,21 @@
+company_name,website,country,city,industry,contact_name,contact_email,contact_phone,contact_job_title,source
+Kaveri Silks,https://kaveri-silks.example.com,IN,Hyderabad,saree_wholesale,A Rao,a.rao@kaveri-silks.example.com,+00 90000 10001,Buyer,rehearsal_csv
+Lakshmi Sarees,https://lakshmi-sarees.example.com,IN,Chennai,saree_wholesale,B Iyer,b.iyer@lakshmi-sarees.example.com,+00 90000 10002,Owner,rehearsal_csv
+Meenakshi Weaves,https://meenakshi-weaves.example.org,IN,Madurai,saree_retail,C Nair,c.nair@meenakshi-weaves.example.org,+00 90000 10003,Buyer,rehearsal_csv
+MEENAKSHI  WEAVES,,IN,Madurai,saree_retail,C Nair,C.Nair@Meenakshi-Weaves.Example.Org,+00 90000 10003,Buyer,rehearsal_csv
+Padma Textiles,,IN,Surat,saree_retail,D Shah,not-an-email,+00 90000 10005,Buyer,rehearsal_csv
+Ganga Handlooms,,IN,Varanasi,saree_wholesale,E Mishra,e.mishra@ganga-handlooms.example.net,+00 90000 10006,Buyer,rehearsal_csv
+,,IN,Jaipur,saree_retail,F Gupta,f.gupta@jaipur-prints.example.com,+00 90000 10007,Buyer,rehearsal_csv
+Narmada Fabrics,,IN,Bhopal,saree_retail,F Verma,f.verma@narmada-fabrics.example.com,+00 90000 10008,Buyer,rehearsal_csv
+Godavari Silks,,IN,Rajahmundry,saree_wholesale,G Reddy,g.reddy@godavari-silks.example.com,+00 90000 10009,Buyer,rehearsal_csv
+Krishna Sarees,,IN,Vijayawada,saree_retail,H Rao,h.rao@krishna-sarees.example.com,+00 90000 10009,Buyer,rehearsal_csv
+Tungabhadra Looms,,IN,Hubli,saree_wholesale,I Gowda,i.gowda@tungabhadra-looms.example.test,+00 90000 10011,Buyer,rehearsal_csv
+Sabarmati Cloth,,IN,Ahmedabad,saree_retail,J Patel,j.patel@sabarmati-cloth.example.com,+00 90000 10012,Buyer,rehearsal_csv
+Yamuna Weavers,,IN,Mathura,saree_retail,K Sharma,k.sharma@yamuna-weavers.example.com,+0090000-10013,Buyer,rehearsal_csv
+Cauvery Silks,,IN,Mysuru,saree_wholesale,L Gowda,l.gowda@cauvery-silks.example.com,+00 90000 10014,Buyer,rehearsal_csv
+Brahmaputra Mekhela,,IN,Guwahati,saree_retail,M Das,m.das@brahmaputra-mekhela.example.com,+00 90000 10015,Buyer,rehearsal_csv
+Konkan Textiles,,IN,Ratnagiri,saree_retail,N Patil,n.patil@konkan-textiles.example.com,+00 90000 10016,Buyer,rehearsal_csv
+Deccan Looms,,IN,Solapur,saree_wholesale,O Kulkarni,o.kulkarni@deccan-looms.example.com,+00 90000 10017,Buyer,rehearsal_csv
+Malabar Silks,,IN,Kozhikode,saree_wholesale,P Menon,p.menon@malabar-silks.example.com,+00 90000 10018,Buyer,rehearsal_csv
+Pennar Fabrics,,IN,Nellore,saree_retail,Q Naidu,q.naidu@pennar-fabrics.example.com,+00 90000 10019,Buyer,rehearsal_csv
+Ghats Weavers,,IN,Pune,saree_retail,R Joshi,r.joshi@ghats-weavers.example.com,+00 90000 10020,Buyer,rehearsal_csv

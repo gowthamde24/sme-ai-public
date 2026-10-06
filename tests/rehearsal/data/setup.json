@@ -1,0 +1,25 @@
+{
+  "_comment": "Contacts that exist BEFORE the CSV is imported, so that two rows of leads.csv meet a suppression that already exists. Invented people; the numbers are invented.",
+  "company": {"name": "Rehearsal Archive Co", "city": "Pune"},
+  "contacts": [
+    {
+      "key": "opted_out",
+      "full_name": "S One Archive",
+      "email": "s.one@rehearsal-archive.example.com",
+      "phone": "+00 90000 10012",
+      "then": "suppress",
+      "reason": "opted_out",
+      "meets_csv_line": 13,
+      "expect_flag_reason": "opted_out"
+    },
+    {
+      "key": "erased",
+      "full_name": "S Two Archive",
+      "email": "s.two@rehearsal-archive.example.com",
+      "phone": "+00 90000 10013",
+      "then": "erase",
+      "meets_csv_line": 14,
+      "expect_flag_reason": "legal"
+    }
+  ]
+}

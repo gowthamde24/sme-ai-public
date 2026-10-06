@@ -1,0 +1,17 @@
+{
+ "_comment": "Hand-worked. Amounts in paise. rupees x 100. Seed policy: tax 5% exclusive, discount ceiling 0, shipping 0, new-customer advance 50%, repeat advance 25%, validity 15 days.",
+ "quotes": {
+  "Q1": {"enquiry": "E1", "subtotal_paise": 4800000, "tax_paise": 240000, "total_paise": 5040000, "advance_paise": 2520000, "owner_only": false},
+  "Q2": {"enquiry": "E2", "subtotal_paise": 1860000, "tax_paise": 93000,  "total_paise": 1953000, "advance_paise": 976500,  "owner_only": false},
+  "Q3": {"enquiry": "E3", "subtotal_paise": 2100000, "tax_paise": 105000, "total_paise": 2205000, "advance_paise": 1102500, "owner_only": false},
+  "Q4": {"enquiry": "E4", "subtotal_paise": 5900000, "tax_paise": 295000, "total_paise": 6195000, "advance_paise": 3097500, "owner_only": false},
+  "Q5": {"enquiry": "E5", "subtotal_paise": 4330000, "tax_paise": 216500, "total_paise": 4546500, "advance_paise": 2273250, "owner_only": false},
+  "Q6": {"enquiry": "E6", "subtotal_paise": 3360000, "tax_paise": 168000, "total_paise": 3528000, "advance_paise": 882000,  "owner_only": true}
+ },
+ "csv_import": {
+  "rows_in_file": 20,
+  "rows_rejected_by_adapter": [{"line": 8, "code": "company_name_missing"}],
+  "rows_sent": 19,
+  "flagged": [{"line": 13, "reason": "opted_out"}, {"line": 14, "reason": "legal"}]
+ }
+}

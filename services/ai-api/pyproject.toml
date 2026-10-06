@@ -48,6 +48,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/agents/requirement*.py" = ["E501"]
 # T008: the enquiry API (long docstrings and fixed messages)
 "app/enquiries/*" = ["E501"]
+# rehearsal step 2: the CSV adapter (long explanatory docstrings)
+"app/leads/csv_rows.py" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # T009 integration: the quote path (long explanatory docstrings)
 "app/quotes/*" = ["E501"]

@@ -1,0 +1,6 @@
+sku,name,unit_price,moq,tax_bps,min_qty_1,price_1
+SYN-KJ-RED-01,SYNTHETIC Kanjivaram silk saree red,4200,4,500,10,4000
+SYN-KJ-BLUE-01,SYNTHETIC Kanjivaram silk saree blue,4200,4,500,10,4000
+SYN-BN-RED-01,SYNTHETIC Banarasi silk saree red,3100,4,500,10,2950
+SYN-BN-GOLD-01,SYNTHETIC Banarasi silk saree gold,3100,4,500,10,2950
+SYN-PT-GREEN-01,SYNTHETIC Paithani silk saree green,2800,4,500,10,2650
