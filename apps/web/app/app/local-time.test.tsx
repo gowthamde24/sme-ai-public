@@ -19,12 +19,15 @@ describe("local time", () => {
   });
 
   it("shows the viewer's own timezone after load, keeps the UTC time in the tooltip and a machine-readable datetime", async () => {
+    // the clock is fixed (Date only: waitFor keeps its real timers): the relative text must not depend on the day the suite runs
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-10-05T01:00:00Z"));
     render(<LocalTime iso="2026-10-04T21:57:12+00:00" />);
     const el = screen.getByText(/2026|Oct/);
     expect(el.tagName).toBe("TIME");
     expect(el).toHaveAttribute("datetime", "2026-10-04T21:57:12+00:00");
     expect(el).toHaveAttribute("title", "2026-10-04 21:57 UTC");
-    await waitFor(() => expect(el.textContent).toMatch(/ago|in \d/));
+    await waitFor(() => expect(el.textContent).toMatch(/3 hours ago/));
   });
 
   it("leaves the UTC text when the value is not a date", () => {
