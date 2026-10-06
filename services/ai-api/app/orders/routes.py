@@ -59,7 +59,9 @@ def _order(runtime: Runtime, ctx: TenantContext, raw_id: str) -> OrderDetailOut:
     )
     if found is None:
         raise not_found()
-    return found
+    return service.with_guidance(
+        _repo(runtime), ctx.principal.token, ctx.tenant.id, ctx.role, found
+    )
 
 
 # ----------------------------------------------------------------------------- reading

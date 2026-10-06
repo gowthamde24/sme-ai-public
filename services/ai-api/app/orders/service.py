@@ -12,7 +12,13 @@ from typing import Any
 from app.crm.repository import NotFoundError
 from app.errors import ApiError
 from app.orders import lifecycle_port
-from app.orders.builder import OrderEvent, OrderRequestError, build_request
+from app.orders.builder import (
+    OrderEvent,
+    OrderRequestError,
+    OrderState,
+    build_request,
+    new_ledger_id,
+)
 from app.orders.models import (
     EventResultOut,
     OrderDetailOut,
@@ -37,6 +43,61 @@ def order_detail(
         return None
     events = [OrderEventOut.model_validate(e) for e in orders.events(token, tenant, order_id)]
     return OrderDetailOut.model_validate({**order_out(row).model_dump(), "events": events})
+
+
+GUIDANCE_PROBES: tuple[str, ...] = (
+    "send_quote",
+    "customer_accept",
+    "customer_decline",
+    "expire",
+    "request_advance",
+    "record_payment",
+    "start_preparation",
+    "dispatch",
+    "deliver",
+    "cancel",
+    "record_refund",
+)
+
+
+def guidance(snapshot: OrderState, role: Role, now: datetime) -> list[str]:
+    """Which events the pinned lifecycle would ACCEPT for this order right now, for this role (guidance for a screen, never approval). Each event type is put to the lifecycle itself, so
+    no rule is copied here; a money event is asked with one paisa and a fresh ledger id. A lifecycle that cannot run gives no guidance (the screen then offers nothing)."""
+    allowed: list[str] = []
+    for kind in GUIDANCE_PROBES:
+        money = kind in ("record_payment", "record_refund")
+        event = OrderEvent(kind, 1 if money else None, new_ledger_id() if money else None)
+        try:
+            result = lifecycle_port.run_transition(
+                build_request(snapshot, event, as_of=now, role=role.value)
+            )
+        except (
+            OrderRequestError,
+            lifecycle_port.LifecycleUnavailable,
+            lifecycle_port.LifecycleInputError,
+            lifecycle_port.LifecycleError,
+        ):
+            return []
+        if result.get("status") == "ok":
+            allowed.append(kind)
+    return allowed
+
+
+def with_guidance(
+    orders: OrdersRepository,
+    token: str,
+    tenant: uuid.UUID,
+    role: Role,
+    detail: OrderDetailOut,
+    *,
+    now: datetime | None = None,
+) -> OrderDetailOut:
+    snapshot = orders.snapshot(token, tenant, detail.id)
+    if snapshot is None:
+        return detail
+    return detail.model_copy(
+        update={"allowed_next_events": guidance(snapshot, role, now or datetime.now(UTC))}
+    )
 
 
 def _lifecycle_failure(exc: Exception) -> ApiError:

@@ -878,10 +878,12 @@ class Rehearsal:
             )
 
     # ------------------------------------------------------------------------------ the whole script
-    def run(self) -> None:
+    def run(self, until: str = "all") -> None:
         self.setup_archive()
         self.import_leads()
         self.quotes_phase()
+        if until == "quotes":
+            return  # the orders are left for a person to start by hand in the browser (docs/rehearsal-click-checklist.md)
         self.orders_phase()
         self.gates()
         self.audit_and_provenance()
@@ -893,7 +895,8 @@ def prepare(people: People) -> None:
         people.sign_in(role)
 
 
-def main() -> int:
+def main(argv: list[str]) -> int:
+    until = "quotes" if "--until=quotes" in argv else "all"
     stack = Stack.from_env()
     if any("SERVICE_ROLE" in k.upper() for k in os.environ):
         raise SystemExit(
@@ -964,7 +967,7 @@ def main() -> int:
             res.started = time.perf_counter()
             results.append(res)
             try:
-                Rehearsal(Api(client, people, tenants, rec), people, tenants, res).run()
+                Rehearsal(Api(client, people, tenants, rec), people, tenants, res).run(until)
             except Deviation as exc:
                 res.stopped = str(exc)
             res.seconds = time.perf_counter() - res.started
@@ -980,6 +983,8 @@ def main() -> int:
         res.network_local, res.network_refused = dict(guard.local), list(guard.refused)
     first = results[0]
     first.rec.check("no connection but the local stack", [], guard.refused)
+    if until == "quotes":
+        return prepared_for_clicking(results, people, tenants)
     write_report(
         REPORT, results, EXPECTED, total_seconds=time.perf_counter() - started, tenant_ids=tenants
     )
@@ -995,5 +1000,29 @@ def main() -> int:
     return 1 if (failed or stopped) else 0
 
 
+def prepared_for_clicking(results: list[RunResult], people: People, tenants: dict[str, str]) -> int:
+    """`--until=quotes`: the leads, enquiries and approved quotes exist and NO order does; a person starts the orders by hand in the browser. Prints how to sign in as the five invented people
+    (their passwords and authenticator secrets are synthetic and local) and writes no report."""
+    failed = [c for r in results for c in r.rec.failed()]
+    stopped = [r.stopped for r in results if r.stopped]
+    print(
+        f"rehearsal (prepare for clicking): {'STOPPED: ' + str(stopped[0]) if stopped else 'ready'}; checks failed: {len(failed)}"
+    )
+    for c in failed[:10]:
+        print(f"FAILED: {c.name}: expected {c.expected!r}, got {c.actual!r}")
+    print(
+        f"Workspace A: http://localhost:3000/app/tenants/{tenants['a']}  (sign in at http://localhost:3000/login)"
+    )
+    for role in ("owner", "admin", "sales", "viewer"):
+        user = people.state["users"]["rehearsal-" + role]
+        print(
+            f"  {role:7} {user['email']}  password: {user['password']}  authenticator key: {user['totp_secret']}"
+        )
+    print(
+        "Add each authenticator key to an authenticator app by hand (enter the key; 6 digits, 30 seconds, SHA-1). Use one private window per person."
+    )
+    return 1 if (failed or stopped) else 0
+
+
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(main(sys.argv[1:]))

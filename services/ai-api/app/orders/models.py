@@ -174,6 +174,8 @@ class OrderOut(_Strict):
 
 class OrderDetailOut(OrderOut):
     events: list[OrderEventOut]
+    # GUIDANCE from the pinned lifecycle for THIS caller's role, as of now (never approval: the database decides). Empty for a closed order.
+    allowed_next_events: list[EventType] = []
 
 
 class EventResultOut(_Strict):

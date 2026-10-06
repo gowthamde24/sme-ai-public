@@ -70,6 +70,17 @@ describe("api client", () => {
     expect(error).toMatchObject({ status: 409, code: "slug_unavailable" });
   });
 
+  it("carries a closed reason code when the API gives one, and only a string", async () => {
+    globalThis.fetch = respond(409, {
+      error: { code: "order_event_refused", message: "x", reason: "ADVANCE_NOT_PAID" },
+    }) as unknown as typeof fetch;
+    expect(await createTenant("t", "Acme", "acme-silks").catch((e) => e)).toMatchObject({ code: "order_event_refused", reason: "ADVANCE_NOT_PAID" });
+    globalThis.fetch = respond(409, { error: { code: "c", message: "x", reason: { nested: 1 } } }) as unknown as typeof fetch;
+    expect((await createTenant("t", "Acme", "acme-silks").catch((e) => e)).reason).toBeUndefined();
+    globalThis.fetch = respond(409, { error: { code: "c", message: "x" } }) as unknown as typeof fetch;
+    expect((await createTenant("t", "Acme", "acme-silks").catch((e) => e)).reason).toBeUndefined();
+  });
+
   it("treats an unreachable API as an error, not an empty result", async () => {
     globalThis.fetch = vi.fn(async () => {
       throw new TypeError("fetch failed");

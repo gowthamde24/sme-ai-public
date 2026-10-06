@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data rehearse-thin-slice dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data rehearse-thin-slice rehearse-prepare-click dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -115,6 +115,10 @@ seed-quote-data:
 # fresh database. Writes rehearsal-report.md at the repository root (git-ignored). Opt-in: not part of make check.
 rehearse-thin-slice:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/drive.py
+
+# The same rehearsal up to APPROVED QUOTES only (no order is started): the owner then clicks the orders by hand in the browser (docs/rehearsal-click-checklist.md). Run `make db-reset` first.
+rehearse-prepare-click:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/drive.py --until=quotes
 
 dev-web:
 	cd $(WEB) && npm run dev

@@ -17,6 +17,7 @@ from app.main import ORDER_REASON_TEXT
 from app.orders import lifecycle_port
 from app.orders.builder import OrderEvent, build_request
 from app.orders.errors import REASONS
+from app.tenancy.models import Role
 from app.tenancy.repository import Forbidden, MfaRequired, UpstreamError
 from tests.fakes import TENANT_A, TENANT_B, auth, make_client
 from tests.orders_fakes import (
@@ -622,3 +623,70 @@ def test_the_policy_is_published_with_the_tenant_of_the_path_and_only_the_four_f
             w.call("POST", "/order-policy-versions", {**POLICY_BODY, **bad}, "a_owner").status_code
             == 422
         ), bad
+
+
+# ----------------------------------------------------------------------------- guidance on the order page
+EARLY = datetime(2026, 10, 1, 12, 0, tzinfo=UTC)  # well before the fake quote's valid_until
+LATE = datetime(2030, 1, 1, tzinfo=UTC)  # after it
+
+
+@pytest.mark.parametrize(
+    ("state", "payments", "role", "now", "expected"),
+    [
+        # hand-read from docs/plans/order-lifecycle.md: the structural matrix, then the guards
+        ("quote_approved", (), Role.OWNER, EARLY, ["send_quote", "cancel"]),
+        ("quote_approved", (), Role.OWNER, LATE, ["expire", "cancel"]),
+        ("quote_sent", (), Role.SALES, EARLY, ["customer_accept", "customer_decline", "cancel"]),
+        ("accepted", (), Role.SALES, EARLY, ["request_advance", "record_payment", "cancel"]),
+        (
+            "accepted",
+            (("11111111-1111-4111-8111-111111111111", 40000),),
+            Role.ADMIN,
+            EARLY,
+            ["request_advance", "record_payment", "start_preparation", "cancel", "record_refund"],
+        ),
+        ("in_preparation", (), Role.SALES, EARLY, ["record_payment", "cancel"]),
+        ("in_preparation", (), Role.OWNER, EARLY, ["record_payment", "dispatch", "cancel"]),
+        (
+            "in_preparation",
+            (("11111111-1111-4111-8111-111111111111", 40000),),
+            Role.SALES,
+            EARLY,
+            ["record_payment", "dispatch", "cancel", "record_refund"],
+        ),
+        ("dispatched", (), Role.SALES, EARLY, ["record_payment", "deliver"]),
+        (
+            "delivered",
+            (("11111111-1111-4111-8111-111111111111", 60000),),
+            Role.OWNER,
+            EARLY,
+            ["record_payment", "record_refund"],
+        ),
+        ("closed_paid", (), Role.OWNER, EARLY, []),
+        ("declined", (), Role.OWNER, EARLY, []),
+        ("cancelled", (), Role.OWNER, EARLY, []),
+        ("expired", (), Role.OWNER, EARLY, []),
+    ],
+)
+def test_guidance_is_what_the_lifecycle_would_accept_now_for_this_role(
+    state: str,
+    payments: tuple[tuple[str, int], ...],
+    role: Role,
+    now: datetime,
+    expected: list[str],
+) -> None:
+    from app.orders.service import guidance
+
+    assert guidance(state_of(state, payments=payments), role, now) == expected
+
+
+def test_the_order_page_carries_guidance_for_the_callers_role(w: World) -> None:
+    w.o.snapshots[ORDER] = state_of("in_preparation")
+    owner = w.call("GET", f"/orders/{ORDER}", None, "a_owner").json()
+    sales = w.call("GET", f"/orders/{ORDER}", None, "a_sales").json()
+    assert "dispatch" in owner["allowed_next_events"], "the Owner may dispatch with the override"
+    assert (
+        "dispatch" not in sales["allowed_next_events"] and "cancel" in sales["allowed_next_events"]
+    )
+    w.o.snapshots[ORDER] = state_of("closed_paid")
+    assert w.call("GET", f"/orders/{ORDER}", None, "a_owner").json()["allowed_next_events"] == []

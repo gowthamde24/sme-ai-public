@@ -5,6 +5,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
 import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
+import { fetchOrders, type Order } from "@/lib/api/orders";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../../local-time";
@@ -58,6 +59,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   let text: QuoteText | null = null;
   let textError: string | null = null;
   let quotesDown = false;
+  let order: Order | null = null;
   if (canQuote) {
     try {
       [setup, quotes] = await Promise.all([fetchQuoteSetup(user.accessToken, tenantId, enquiryId), fetchEnquiryQuotes(user.accessToken, tenantId, enquiryId)]);
@@ -65,6 +67,12 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
       const chosen = wanted && isCanonicalUuid(wanted) && quotes.some((q) => q.id === wanted) ? wanted : quotes[0]?.id;
       selected = chosen ? await fetchQuote(user.accessToken, tenantId, chosen) : null;
       if (selected?.outcome === "approved") {
+        try {
+          // the order already started from this quote (if any): a nicety, the quote screen never depends on it
+          order = (await fetchOrders(user.accessToken, tenantId, { limit: 50 })).items.find((o) => o.quote_id === selected?.id) ?? null;
+        } catch (error) {
+          if (error instanceof ApiAuthError) redirect("/login");
+        }
         try {
           text = await fetchQuoteText(user.accessToken, tenantId, selected.id);
         } catch (error) {
@@ -133,6 +141,8 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           text={text}
           textError={textError}
           newQuoteId={crypto.randomUUID()}
+          order={order}
+          newOrderId={crypto.randomUUID()}
         />
       )}
     </main>

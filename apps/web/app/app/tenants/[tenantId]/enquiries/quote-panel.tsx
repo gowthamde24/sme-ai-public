@@ -10,6 +10,10 @@ import {
   type QuoteText,
 } from "@/lib/api/quotes";
 
+import { OUTCOME_LABELS as ORDER_OUTCOME_LABELS, STATE_LABELS as ORDER_STATE_LABELS, type Order } from "@/lib/api/orders";
+
+import { startOrderAction } from "../orders/order-actions";
+import { StartOrderForm } from "../orders/start-order-form";
 import {
   approveQuoteAction,
   createQuoteAction,
@@ -34,13 +38,16 @@ type Props = {
   text: QuoteText | null;
   textError: string | null;
   newQuoteId: string;
+  /** The order already started from the selected quote, if any, and the id a new one would use (the page makes it, so a retry replays). */
+  order?: Order | null;
+  newOrderId?: string;
 };
 
 /**
  * The quote of one enquiry: a person chooses the product for each approved requirement line (the assistant only suggests), makes a DRAFT, and an owner
  * or admin approves it. After approval the customer-facing text is shown to COPY. This application never sends anything, and the screen says so.
  */
-export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId }: Props) {
+export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId }: Props) {
   const confirmed = setup.requirement_status === "confirmed";
   const blockers = setup.missing.filter((m) => m !== "mapper_unavailable");
   const notes = setup.missing.filter((m) => m === "mapper_unavailable");
@@ -116,6 +123,23 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
                 <p role="alert" className="error hint">
                   The text could not be prepared right now ({textError ?? "unavailable"}). The approval stands: reload the page to try again. Nothing was sent.
                 </p>
+              )}
+            </div>
+          ) : null}
+          {selected.outcome === "approved" && newOrderId ? (
+            <div>
+              <h3>Order</h3>
+              {order ? (
+                <p>
+                  <Link href={`/app/tenants/${tenantId}/orders/${order.id}`} className="tap">
+                    Order {order.order_no}
+                  </Link>{" "}
+                  <span className="hint">
+                    {ORDER_OUTCOME_LABELS[order.outcome]}, {ORDER_STATE_LABELS[order.state]}
+                  </span>
+                </p>
+              ) : (
+                <StartOrderForm start={startOrderAction.bind(null, tenantId, enquiryId, selected.id)} orderId={newOrderId} role={role} secondFactorMissing={secondFactorMissing} />
               )}
             </div>
           ) : null}

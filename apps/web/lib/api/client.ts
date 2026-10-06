@@ -12,6 +12,8 @@ export class ApiRequestError extends Error {
     readonly status: number,
     readonly code: string,
     message: string,
+    /** A closed reason code the API adds to a refusal of the lifecycle's rules (orders); never free text. */
+    readonly reason?: string,
   ) {
     super(message);
   }
@@ -86,6 +88,11 @@ function apiBaseUrl(): string {
   return base.replace(/\/+$/, "");
 }
 
+function reasonOf(err: ApiError["error"] | null): string | undefined {
+  const reason = err ? (err as unknown as { reason?: unknown }).reason : undefined;
+  return typeof reason === "string" ? reason : undefined;
+}
+
 export async function apiRequest(
   path: string,
   accessToken: string,
@@ -128,6 +135,7 @@ export async function apiRequest(
       response.status,
       err && isString(err.code) ? err.code : "http_error",
       err && isString(err.message) ? err.message : "Request failed.",
+      reasonOf(err),
     );
   }
   return body;

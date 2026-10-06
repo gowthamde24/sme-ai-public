@@ -544,3 +544,30 @@ def test_nothing_internal_appears_in_any_response(client: TestClient, ow: OrderW
             not re.search(r"[0-9a-f]{64}", text.replace("canonical_hash", ""))
             or "canonical_hash" in text
         )  # a hash only as the event's own canonical_hash
+
+
+def test_the_order_carries_guidance_from_the_lifecycle_for_the_callers_role(
+    client: TestClient, ow: OrderWorld
+) -> None:
+    """Rehearsal step 4: the order page offers one form per event the pinned lifecycle would accept, narrowed by the API to the caller's role."""
+    order, _, _ = fresh_order(client, ow)
+    assert get(client, ow, order, "owner")["allowed_next_events"] == ["send_quote", "cancel"]
+    for user, type_ in (("sales", "send_quote"), ("sales", "customer_accept")):
+        assert event(client, ow, order, user, type_).status_code == 200
+    # accepted, nothing paid: the advance is not in, so preparation is not offered; the owner and sales see the same guidance until money moves
+    assert get(client, ow, order, "sales")["allowed_next_events"] == [
+        "request_advance",
+        "record_payment",
+        "cancel",
+    ]
+    assert event(client, ow, order, "sales", "request_advance").status_code == 200
+    assert event(client, ow, order, "admin", "record_payment", amount=1000).status_code == 200
+    assert get(client, ow, order, "owner")["allowed_next_events"] == [
+        "record_payment",
+        "cancel",
+        "record_refund",
+    ]
+    # a closed order offers nothing
+    done, _, _ = fresh_order(client, ow)
+    assert event(client, ow, done, "admin", "cancel").json()["state"] == "cancelled"
+    assert get(client, ow, done, "owner")["allowed_next_events"] == []
