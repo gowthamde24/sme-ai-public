@@ -4,10 +4,12 @@ import { notFound, redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
+import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../../local-time";
 import { EnquiryText } from "../enquiry-text";
+import { QuotePanel } from "../quote-panel";
 import { RequirementPanel } from "../requirement-panel";
 
 export const metadata = { title: "Enquiry · SME AI Revenue Engine" };
@@ -48,6 +50,33 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDown />;
   }
+  // A Viewer reads no price and no quote (the API refuses them), so nothing is asked for them. A quote screen that cannot load does not take the enquiry down.
+  const canQuote = WRITE_ROLES.includes(tenant.role);
+  let setup: QuoteSetup | null = null;
+  let quotes: QuoteSummary[] = [];
+  let selected: Quote | null = null;
+  let text: QuoteText | null = null;
+  let textError: string | null = null;
+  let quotesDown = false;
+  if (canQuote) {
+    try {
+      [setup, quotes] = await Promise.all([fetchQuoteSetup(user.accessToken, tenantId, enquiryId), fetchEnquiryQuotes(user.accessToken, tenantId, enquiryId)]);
+      const wanted = pick(query.quote);
+      const chosen = wanted && isCanonicalUuid(wanted) && quotes.some((q) => q.id === wanted) ? wanted : quotes[0]?.id;
+      selected = chosen ? await fetchQuote(user.accessToken, tenantId, chosen) : null;
+      if (selected?.outcome === "approved") {
+        try {
+          text = await fetchQuoteText(user.accessToken, tenantId, selected.id);
+        } catch (error) {
+          if (error instanceof ApiAuthError) redirect("/login");
+          textError = error instanceof ApiRequestError ? error.code : "unavailable";
+        }
+      }
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      quotesDown = true;
+    }
+  }
   const notice = NOTICES[pick(query.captured) ?? ""];
   return (
     <main className="shell wide">
@@ -86,6 +115,26 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
         </p>
       </section>
       <RequirementPanel tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
+      {!canQuote ? (
+        <p className="hint">Quotes are shown to owners, admins and sales users.</p>
+      ) : quotesDown || setup === null ? (
+        <p role="alert" className="error">
+          The quote could not be loaded right now. The enquiry above is unaffected: try again shortly.
+        </p>
+      ) : (
+        <QuotePanel
+          tenantId={tenantId}
+          enquiryId={enquiryId}
+          role={tenant.role}
+          secondFactorMissing={user.aal !== "aal2"}
+          setup={setup}
+          quotes={quotes}
+          selected={selected}
+          text={text}
+          textError={textError}
+          newQuoteId={crypto.randomUUID()}
+        />
+      )}
     </main>
   );
 }
