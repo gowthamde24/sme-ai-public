@@ -292,10 +292,14 @@ def test_an_opt_out_suppresses_the_keys_and_only_the_owner_with_aal2_lifts_them(
         (e["kind"], e["event"])
         for e in events(w.a, f"source_contact_id = '{cid}'")
         if e["event"] == "lifted"
-    } == {("email", "lifted"), ("phone", "lifted")}
+    } == {("email", "lifted")}, "the e-mail key is lifted; the number is still held by the flagged newcomer (review fix 1)"
+    held = make_contact(client, w.a, unique_mail("still-held"), phone).json()["id"]
+    assert get_contact(client, w.a, held)["suppressed_at"] is not None, "the number is still suppressed"
+    for other in (again, held):  # the last suppressed holders are lifted too: only then is the number released
+        assert client.post(url(w.a, f"/contacts/{other}/lift-suppression"), json=lift, headers=owner).status_code == 200
     fresh = make_contact(client, w.a, unique_mail("after-lift"), phone).json()["id"]
     assert get_contact(client, w.a, fresh)["suppressed_at"] is None, (
-        "after the lift the number is no longer suppressed"
+        "after the last lift the number is no longer suppressed"
     )
 
 
@@ -714,3 +718,26 @@ def test_two_contacts_sharing_a_number_erased_together_leave_one_suppressed_key(
     assert (
         SecretStr("x").get_secret_value() == "x"
     )  # (keeps the SecretStr import honest for the type checker)
+
+
+# ============================================================================ review fix 1: a shared number is lifted only by the LAST suppressed holder
+def test_lifting_one_of_two_contacts_that_share_a_number_keeps_the_number_suppressed(w: World, client: TestClient) -> None:
+    phone = phone_n(next(COUNTER))
+    a, b = make_contact(client, w.a, unique_mail("sh-a"), phone).json()["id"], make_contact(client, w.a, unique_mail("sh-b"), phone).json()["id"]
+    sales, owner = bearer(w.a.users["sales"]), bearer(w.a.users["owner"])
+    for c in (a, b):
+        assert client.post(url(w.a, f"/contacts/{c}/suppress"), json={"reason": "opted_out"}, headers=sales).status_code == 200
+    lift = {"evidence_type": "written", "evidence_ref": "letter:shared"}
+    assert client.post(url(w.a, f"/contacts/{a}/lift-suppression"), json=lift, headers=owner).status_code == 200
+    key = RING.key_for("phone", phone)
+    asked = rpc(w, w.a.users["sales"], "check_suppression", p_tenant_id=w.a.id, p_keys={"phone": [key]})
+    assert asked.json() == {"email": False, "phone": True, "suppressed": True}, "one holder lifted: the number is still suppressed"
+    # a new import of that number (another formatting) is flagged
+    again = make_contact(client, w.a, unique_mail("sh-new"), phone.replace(" ", "")).json()["id"]
+    assert get_contact(client, w.a, again)["suppressed_at"] is not None
+    for c in (again, b):  # the flagged newcomer and the other holder: the number is released only when the last one is lifted
+        assert rpc(w, w.a.users["sales"], "check_suppression", p_tenant_id=w.a.id, p_keys={"phone": [key]}).json()["phone"] is True
+        assert client.post(url(w.a, f"/contacts/{c}/lift-suppression"), json=lift, headers=owner).status_code == 200
+    assert rpc(w, w.a.users["sales"], "check_suppression", p_tenant_id=w.a.id, p_keys={"phone": [key]}).json() == {"email": False, "phone": False, "suppressed": False}
+    fresh = make_contact(client, w.a, unique_mail("sh-fresh"), phone).json()["id"]
+    assert get_contact(client, w.a, fresh)["suppressed_at"] is None, "released: a new contact with the number is not flagged"

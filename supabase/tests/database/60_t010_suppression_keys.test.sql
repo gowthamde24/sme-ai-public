@@ -384,5 +384,41 @@ select is(pg_temp.priv(format('insert into suppression.contact_keys (tenant_id, 
 select is(pg_temp.priv(format('insert into suppression.contact_keys (tenant_id, contact_id, email_hmac, key_version) values (%L, %L, %L, 0)', tests.tid('a'), tests.rid('m16'), pg_temp.h('z3'))), '23514', 'M24 a stored key version of 0 is refused');
 select is(pg_temp.priv(format('update public.erasure_requests set without_key_by = %L where id = %L', tests.uid('a_owner'), tests.rid('mt'))), '23514', 'M25 an allowance needs both who and when (a table check)');
 
+-- ============================================================================ N. review fix 1: a shared key is lifted only by the LAST suppressed holder
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('n1'), tests.tid('a'), tests.rid('a_company'), 'N one', 'n1@example.test', '+00 90000 00401'),
+  (tests.rid('n2'), tests.tid('a'), tests.rid('a_company'), 'N two', 'n2@example.test', '+00 90000 00402'),
+  (tests.rid('n3'), tests.tid('a'), tests.rid('a_company'), 'N three', 'n3@example.test', '+00 90000 00403'),
+  (tests.rid('n4'), tests.tid('a'), tests.rid('a_company'), 'N four', 'n4@example.test', '+00 90000 00404'),
+  (tests.rid('n5'), tests.tid('a'), tests.rid('a_company'), 'N five', 'n5@example.test', '+00 90000 00405');
+create function pg_temp.chk_phone(p_word text) returns text language sql as $$
+  select pg_temp.sc('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('phone', jsonb_build_array(pg_temp.h(p_word)))::text)) $$;
+create function pg_temp.sup(p_contact text) returns text language sql as $$
+  select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('a'), tests.rid(p_contact))) $$;
+create function pg_temp.lift(p_contact text) returns text language sql as $$
+  select pg_temp.sc('a_owner', format($q$select public.lift_suppression(%L, %L, 'written', 'letter:n') is not null$q$, tests.tid('a'), tests.rid(p_contact))) $$;
+select pg_temp.rk('a_sales', 'n1', pg_temp.ks(null, 'n_shared'));
+select pg_temp.rk('a_sales', 'n2', pg_temp.ks('n2_mail', 'n_shared'));
+select pg_temp.sup('n1');
+select pg_temp.sup('n2');
+select pg_temp.lift('n1');
+select is(pg_temp.chk_phone('n_shared'), '{"email": false, "phone": true, "suppressed": true}', 'N1 two contacts share a number and both are suppressed: lifting ONE leaves the shared key suppressed');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('n_shared') and event = 'lifted'), 0::bigint, 'N2 and no lift event was written for it');
+select is(pg_temp.rk('a_sales', 'n3', pg_temp.ks(null, 'n_shared')) ::jsonb ->> 'flagged', 'true', 'N3 a NEW contact with that number arrives flagged (the number is still suppressed)');
+select is(pg_temp.lift('n3'), 'true', 'N4 lifting the new contact too');
+select is(pg_temp.chk_phone('n_shared'), '{"email": false, "phone": true, "suppressed": true}', 'N5 ... still suppressed: the first remaining holder (n2) is suppressed');
+select pg_temp.lift('n2');
+select is(pg_temp.chk_phone('n_shared'), '{"email": false, "phone": false, "suppressed": false}', 'N6 lifting the LAST suppressed holder lifts the key');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('n_shared') and event = 'lifted'), 1::bigint, 'N7 with exactly one lift event');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('n2_mail') and event = 'lifted'), 1::bigint, 'N8 and the contact''s own e-mail key was lifted with it');
+-- a key whose suppression came from an ERASURE stays suppressed when a living contact that shares it is lifted
+select pg_temp.rk('a_sales', 'n4', pg_temp.ks(null, 'n_gone'));
+select pg_temp.rk('a_sales', 'n5', pg_temp.ks('n5_mail', 'n_gone'));
+select pg_temp.req('ne5', 'n5') is not null;
+select is(pg_temp.exec('a_owner', 'ne5') ::jsonb ->> 'status', 'executed', 'N9 a contact is erased (its keys are written first)');
+select pg_temp.sup('n4');
+select pg_temp.lift('n4');
+select is(pg_temp.chk_phone('n_gone'), '{"email": false, "phone": true, "suppressed": true}', 'N10 the number of an ERASED person stays suppressed when a living contact that shared it is lifted');
+
 select * from finish();
 rollback;

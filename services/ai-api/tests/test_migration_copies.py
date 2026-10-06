@@ -225,3 +225,30 @@ def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_n
     later = [m.name for m in MIGRATIONS if m.name > ORDERS]
     for name in ORDERS_CHANGED:
         assert all(d[0] <= ORDERS for d in definitions(name)), (name, later)
+
+
+# ---------------------------------------------------------------------------------------------- review fixes (owner review of T010 part 1 and the order database)
+# Migration 20261020090000 replaces functions of two earlier migrations with the LATEST definitions plus the lines named in its header. It must be the LAST definition of each; compared
+# with the latest earlier one it may only drop a line that it re-adds (indentation aside) or that is named here.
+REVIEW = "20261020090000_review_fixes.sql"
+REVIEW_CHANGED: dict[str, set[str]] = {
+    "app.contacts_sync_suppression_keys": set(),
+}
+
+
+@pytest.mark.parametrize("name", sorted(REVIEW_CHANGED))
+def test_the_review_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == REVIEW, (
+        f"{name} is redefined after the review fixes ({defs[-1][0]}) or the review migration does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < REVIEW]
+    assert earlier
+    kept = {line.strip() for line in defs[-1][1].split("\n")}
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    unexpected = [line for line in removed if line not in REVIEW_CHANGED[name] and line not in kept]
+    assert not unexpected, f"{name}: the review fixes drop lines of {earlier[-1][0]}: {unexpected}"
