@@ -712,8 +712,8 @@ def test_two_contacts_sharing_a_number_erased_together_leave_one_suppressed_key(
     phone_events = [
         e for e in events(w.a) if e["kind"] == "phone" and e["source_contact_id"] in (a, b)
     ]
-    assert len(phone_events) == 1 and phone_events[0]["event"] == "suppressed", (
-        "the shared number is suppressed once, not twice"
+    assert len(phone_events) == 2 and {(e["event"], e["reason"]) for e in phone_events} == {("suppressed", "erased")}, (
+        "each erasure writes its own erased marker for the shared number (the number is one key, suppressed once; the second erasure is a marker, not a new suppression)"
     )
     assert (
         SecretStr("x").get_secret_value() == "x"
@@ -741,3 +741,55 @@ def test_lifting_one_of_two_contacts_that_share_a_number_keeps_the_number_suppre
     assert rpc(w, w.a.users["sales"], "check_suppression", p_tenant_id=w.a.id, p_keys={"phone": [key]}).json() == {"email": False, "phone": False, "suppressed": False}
     fresh = make_contact(client, w.a, unique_mail("sh-fresh"), phone).json()["id"]
     assert get_contact(client, w.a, fresh)["suppressed_at"] is None, "released: a new contact with the number is not flagged"
+
+
+# ============================================================================ the ERASED marker (second review, step 0)
+def _check_phone(w: World, phone: str) -> bool:
+    key = RING.key_for("phone", phone)
+    r = rpc(w, w.a.users["sales"], "check_suppression", p_tenant_id=w.a.id, p_keys={"phone": [key]})
+    return bool(r.json()["phone"])
+
+
+def test_an_erasure_outlives_the_opt_out_that_suppressed_the_shared_number_first(w: World, client: TestClient) -> None:
+    phone = phone_n(next(COUNTER))
+    y = make_contact(client, w.a, unique_mail("mk-y"), phone).json()["id"]
+    z = make_contact(client, w.a, unique_mail("mk-z"), phone).json()["id"]
+    assert client.post(url(w.a, f"/contacts/{y}/suppress"), json={"reason": "opted_out"}, headers=bearer(w.a.users["sales"])).status_code == 200
+    done = erase(client, w.a, z)
+    # (Z arrived with the number already suppressed by Y's opt-out? No: Z was created first. Recording Z's keys before the erasure flags Z, so every key of Z is active already:
+    # nothing is NEWLY suppressed, yet both erased markers are written)
+    assert done["counts"]["suppression.erased_markers"] == 2, done["counts"]
+    lift = {"evidence_type": "written", "evidence_ref": "letter:marker"}
+    assert client.post(url(w.a, f"/contacts/{y}/lift-suppression"), json=lift, headers=bearer(w.a.users["owner"])).status_code == 200
+    assert _check_phone(w, phone), "lifting Y must not lift the number: Z was erased"
+    again = make_contact(client, w.a, unique_mail("mk-new"), phone).json()["id"]
+    assert get_contact(client, w.a, again)["suppression_reason"] == "legal"
+
+
+def test_erased_first_then_another_contact_suppresses_and_is_lifted_the_number_stays_suppressed(w: World, client: TestClient) -> None:
+    phone = phone_n(next(COUNTER))
+    y = make_contact(client, w.a, unique_mail("mk2-y"), phone).json()["id"]
+    z = make_contact(client, w.a, unique_mail("mk2-z"), phone).json()["id"]
+    erase(client, w.a, z)
+    assert client.post(url(w.a, f"/contacts/{y}/suppress"), json={"reason": "opted_out"}, headers=bearer(w.a.users["sales"])).status_code == 200
+    lift = {"evidence_type": "written", "evidence_ref": "letter:marker2"}
+    assert client.post(url(w.a, f"/contacts/{y}/lift-suppression"), json=lift, headers=bearer(w.a.users["owner"])).status_code == 200
+    assert _check_phone(w, phone)
+
+
+def test_a_workspace_erasure_writes_a_marker_for_every_key_even_a_shared_one(client: TestClient, stack: Any, signup: Any) -> None:
+    fresh = World(client, stack, signup)
+    phone = phone_n(next(COUNTER))
+    y = make_contact(client, fresh.a, unique_mail("mk3-y"), phone).json()["id"]
+    make_contact(client, fresh.a, unique_mail("mk3-z"), phone)
+    assert client.post(url(fresh.a, f"/contacts/{y}/suppress"), json={"reason": "opted_out"}, headers=bearer(fresh.a.users["sales"])).status_code == 200
+    owner = bearer(fresh.a.users["owner"])
+    rid = uid()
+    assert client.post(url(fresh.a, "/erasure-requests"), json={"id": rid, "scope": "tenant"}, headers=owner).status_code == 201
+    sql(f"update public.erasure_requests set execute_after = now() - interval '1 second' where id = '{rid}'")
+    done = client.post(url(fresh.a, f"/erasure-requests/{rid}/execute"), json={}, headers=owner)
+    assert done.status_code == 200, done.text
+    counts = done.json()["counts"]
+    assert counts["suppression.erased_markers"] >= 4, counts  # every keyed contact's e-mail and phone key gets a marker, the shared number once per contact
+    key = RING.key_for("phone", phone)
+    assert sql(f"select count(*) from suppression.key_events where tenant_id = '{fresh.a.id}' and key_hmac = '{key}' and reason = 'erased'") == "2"

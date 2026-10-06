@@ -174,7 +174,7 @@ T010_CHANGED = {
 
 @pytest.mark.parametrize("name", sorted(T010_CHANGED))
 def test_the_t010_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
-    defs = definitions(name)
+    defs = [d for d in definitions(name) if d[0] < "20261021090000_erased_marker.sql"]  # (the erased-marker migration replaces the erasure functions again)
     assert defs[-1][0] == T010_SUPPRESSION, (
         f"{name} is redefined after T010 ({defs[-1][0]}) or T010 does not define it: re-copy it from the latest definition"
     )
@@ -232,6 +232,7 @@ def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_n
 # Migration 20261020090000 replaces functions of two earlier migrations with the LATEST definitions plus the lines named in its header. It must be the LAST definition of each; compared
 # with the latest earlier one it may only drop a line that it re-adds (indentation aside) or that is named here.
 REVIEW = "20261020090000_review_fixes.sql"
+MARKER = "20261021090000_erased_marker.sql"
 REVIEW_CHANGED: dict[str, set[str]] = {
     "app.contacts_sync_suppression_keys": set(),
     "app.order_error": {"when 'SM234' then 'a refund needs the owner'"},
@@ -249,7 +250,8 @@ REVIEW_REWRITTEN = ("app.order_stops_followups",)
 
 @pytest.mark.parametrize("name", sorted(REVIEW_CHANGED))
 def test_the_review_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
-    defs = definitions(name)
+    # the erased-marker migration (below) replaces the sync trigger again: pin the review migration's copy as the last definition BEFORE it
+    defs = [d for d in definitions(name) if d[0] < MARKER]
     assert defs[-1][0] == REVIEW, (
         f"{name} is redefined after the review fixes ({defs[-1][0]}) or the review migration does not define it: re-copy it from the latest definition"
     )
@@ -269,3 +271,42 @@ def test_the_review_copy_is_the_last_definition_and_only_drops_the_named_lines(n
 def test_a_rewritten_review_function_is_the_last_definition(name: str) -> None:
     defs = definitions(name)
     assert defs[-1][0] == REVIEW, f"{name} is redefined after the review fixes ({defs[-1][0]})"
+
+
+# ---------------------------------------------------------------------------------------------- the erased marker (second review, step 0)
+# Migration 20261021090000 replaces the two erasure functions and the sync trigger. Last definition; compared with the latest earlier one it may only drop a line it re-adds
+# (indentation aside) or one named here.
+MARKER_CHANGED: dict[str, set[str]] = {
+    "app.erase_contact": {
+        'if c.email is not null and k.email_hmac is not null',
+        "and app.suppression_key_add(r.tenant_id, 'email', k.email_hmac, k.key_version, 'erased', c.id, auth.uid()) then",
+        'if c.phone is not null and k.phone_hmac is not null',
+        "and app.suppression_key_add(r.tenant_id, 'phone', k.phone_hmac, k.key_version, 'erased', c.id, auth.uid()) then",
+    },
+    "app.erase_tenant": {
+        "if k.email_hmac is not null and app.suppression_key_add(r.tenant_id, 'email', k.email_hmac, k.key_version, 'erased', k.contact_id, auth.uid()) then",
+        "if k.phone_hmac is not null and app.suppression_key_add(r.tenant_id, 'phone', k.phone_hmac, k.key_version, 'erased', k.contact_id, auth.uid()) then",
+    },
+    "app.contacts_sync_suppression_keys": {
+        '-- ... and a key whose current suppression came from an ERASURE stays suppressed (a person erased by right is never re-contacted through a shared number)',
+        "and not exists (select 1 from (select e.event, e.reason from suppression.key_events e where e.tenant_id = new.tenant_id and e.kind = 'email' and e.key_hmac = k.email_hmac",
+        "order by e.seq desc limit 1) l where l.event = 'suppressed' and l.reason = 'erased') then",
+        "and not exists (select 1 from (select e.event, e.reason from suppression.key_events e where e.tenant_id = new.tenant_id and e.kind = 'phone' and e.key_hmac = k.phone_hmac",
+    },
+}
+
+
+@pytest.mark.parametrize("name", sorted(MARKER_CHANGED))
+def test_the_marker_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == MARKER, f"{name} is redefined after the erased marker ({defs[-1][0]}) or the marker migration does not define it: re-copy it from the latest definition"
+    earlier = [d for d in defs if d[0] < MARKER]
+    assert earlier
+    kept = {line.strip() for line in defs[-1][1].split("\n")}
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    unexpected = [line for line in removed if line not in MARKER_CHANGED[name] and line not in kept]
+    assert not unexpected, f"{name}: the marker migration drops lines of {earlier[-1][0]}: {unexpected}"

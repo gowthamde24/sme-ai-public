@@ -501,5 +501,46 @@ select pg_temp.sup('nh3');
 select pg_temp.lift('nh3');
 select is(pg_temp.chk_email('ne_hist'), '{"email": true, "phone": false, "suppressed": true}', 'N18 an e-mail key suppressed, lifted, then erased stays suppressed (the latest event)');
 
+-- ============================================================================ O. the ERASED marker (step 0 of the second review): an erasure outlives the opt-out that suppressed the key first
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('o1'), tests.tid('a'), tests.rid('a_company'), 'O one (Y)', 'o1@example.test', '+00 90000 00501'),
+  (tests.rid('o2'), tests.tid('a'), tests.rid('a_company'), 'O two (Z)', 'o2@example.test', '+00 90000 00502'),
+  (tests.rid('o3'), tests.tid('a'), tests.rid('a_company'), 'O three (Z)', 'o3@example.test', '+00 90000 00503'),
+  (tests.rid('o4'), tests.tid('a'), tests.rid('a_company'), 'O four (Y)', 'o4@example.test', '+00 90000 00504'),
+  (tests.rid('o5'), tests.tid('a'), tests.rid('a_company'), 'O five (Y)', 'o5@example.test', '+00 90000 00505'),
+  (tests.rid('o6'), tests.tid('a'), tests.rid('a_company'), 'O six (Z)', 'o6@example.test', '+00 90000 00506');
+-- order 1: Y suppresses the number, THEN Z (same number) is erased, then Y is lifted
+select pg_temp.rk('a_sales', 'o1', pg_temp.ks(null, 'o_shared1'));
+select pg_temp.rk('a_sales', 'o2', pg_temp.ks('o2_mail', 'o_shared1'));
+select pg_temp.sup('o1');
+select pg_temp.req('oe2', 'o2') is not null;
+create temp table oe2_result as select pg_temp.exec('a_owner', 'oe2') ::jsonb as r;
+select is((select r -> 'counts' ->> 'suppression.erased_markers' from oe2_result), '2', 'O1 erasing a contact with two keys appends two erased markers (counted apart from keys_written)');
+select is((select r -> 'counts' ->> 'suppression.keys_written' from oe2_result), '1', 'O2 ... and only the e-mail key was NEWLY suppressed: the number already was');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('o_shared1') and event = 'suppressed'), 2::bigint, 'O3 the shared number has BOTH events: the opt-out and the erased marker');
+select is((select string_agg(reason, ',' order by seq) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('o_shared1')), 'opted_out,erased', 'O4 in that order');
+select pg_temp.lift('o1');
+select is(pg_temp.chk_phone('o_shared1'), '{"email": false, "phone": true, "suppressed": true}', 'O5 lifting the contact that suppressed it first does NOT lift the number: the erased person stays protected');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('o_shared1') and event = 'lifted'), 0::bigint, 'O6 no lift event was written for it');
+-- order 2: Z is erased FIRST, then Y suppresses and is lifted
+select pg_temp.rk('a_sales', 'o3', pg_temp.ks('o3_mail', 'o_shared2'));
+select pg_temp.rk('a_sales', 'o4', pg_temp.ks(null, 'o_shared2'));
+select pg_temp.req('oe3', 'o3') is not null;
+select pg_temp.exec('a_owner', 'oe3') is not null;
+select pg_temp.sup('o4');
+select pg_temp.lift('o4');
+select is(pg_temp.chk_phone('o_shared2'), '{"email": false, "phone": true, "suppressed": true}', 'O7 erased first, then another contact suppresses and is lifted: still suppressed');
+-- the erased marker is appended each time (two contacts erased with the same number: two markers); the stored key never reaches a client
+select pg_temp.rk('a_sales', 'o5', pg_temp.ks(null, 'o_shared3'));
+select pg_temp.rk('a_sales', 'o6', pg_temp.ks('o6_mail', 'o_shared3'));
+select pg_temp.sup('o5');
+select pg_temp.req('oe6', 'o6') is not null;
+select pg_temp.exec('a_owner', 'oe6') is not null;
+select pg_temp.lift('o5');
+select is(pg_temp.chk_phone('o_shared3'), '{"email": false, "phone": true, "suppressed": true}', 'O8 (a third order of events with the same shape) the number stays suppressed');
+select ok(not has_function_privilege('authenticated', 'app.suppression_key_mark_erased(uuid, text, text, smallint, uuid, uuid)', 'execute') and not has_function_privilege('anon', 'app.suppression_key_mark_erased(uuid, text, text, smallint, uuid, uuid)', 'execute')
+          and not has_function_privilege('service_role', 'app.suppression_key_mark_erased(uuid, text, text, smallint, uuid, uuid)', 'execute') and not has_function_privilege('public', 'app.suppression_key_mark_erased(uuid, text, text, smallint, uuid, uuid)', 'execute'), 'O10 revoked from every role');
+-- unrelated shared-key behaviour is unchanged (section N still holds: the new rule only looks for an erased marker)
+
 select * from finish();
 rollback;
