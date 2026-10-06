@@ -17,8 +17,9 @@ from __future__ import annotations
 
 import csv
 import io
-import unicodedata
 from dataclasses import dataclass, field
+
+from app.text_rules import has_hidden_characters
 
 MAX_BYTES = 1_000_000
 MAX_ROWS = 500
@@ -85,14 +86,6 @@ def _formula_like(cell: str) -> bool:
     return cell[:1] == "-"
 
 
-def _hidden(cell: str) -> bool:
-    for char in cell:
-        category = unicodedata.category(char)
-        if category in ("Cc", "Cf", "Cs", "Co", "Cn", "Zl", "Zp") and char not in "\n":
-            return True
-    return False
-
-
 def _fatal(code: str) -> CsvRows:
     return CsvRows(fatal=code)
 
@@ -141,7 +134,7 @@ def rows_from_csv(text: str) -> CsvRows:
                 continue
             if len(cell) > MAX_CELL:
                 issue = RowIssue(line, "cell_too_long", name)
-            elif _hidden(cell):
+            elif has_hidden_characters(cell):
                 issue = RowIssue(line, "hidden_characters", name)
             elif _formula_like(raw.lstrip(" ")):
                 issue = RowIssue(line, "formula_like", name)

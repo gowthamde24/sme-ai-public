@@ -359,6 +359,30 @@ def test_a_manual_field_added_to_a_draft_is_theirs_and_makes_it_confirmable(
     )
     after = client.post(base, json={"field": "delivery_city", "value": "Pune"}, headers=h)
     assert after.status_code == 409 and after.json()["error"]["code"] == "requirement_confirmed"
+    # small fix A1: an EXACT retry of a typed field replays even now; anything else is still refused
+    exact = {"line": 1, "field": "saree_type", "value": "Paithani", "quote": "paithani"}
+    again = client.post(base, json=exact, headers=h)
+    assert again.status_code == 200 and again.json()["replayed"] is True
+    qty = client.post(
+        base,
+        json={"line": 1, "field": "quantity", "value": "5", "quote": "Need 5 paithani"},
+        headers=h,
+    )
+    assert qty.status_code == 200 and qty.json()["replayed"] is True
+    assert again.json()["requirement_id"] == v["requirement"]["id"]
+    changed = client.post(base, json={**exact, "value": "Banarasi"}, headers=h)
+    assert changed.status_code == 409 and changed.json()["error"]["code"] == "requirement_confirmed"
+    other_quote = client.post(base, json={**exact, "quote": "Need 5 paithani"}, headers=h)
+    assert other_quote.status_code == 409, "the same value with another quote is not an exact retry"
+    # another person's identical write is not THEIR retry
+    admin = client.post(base, json=exact, headers=bearer(t.users["admin"]))
+    assert admin.status_code == 409 and admin.json()["error"]["code"] == "requirement_confirmed"
+    # a viewer, another workspace's owner and nobody: refused as before
+    assert client.post(base, json=exact, headers=bearer(t.users["viewer"])).status_code == 403
+    assert client.post(base, json=exact, headers=bearer(w.b.users["owner"])).status_code == 404
+    assert client.post(base, json=exact).status_code == 401
+    # the retry added nothing
+    assert len(view(client, t, eid)["fields"]) == 2
 
 
 def test_what_capture_refuses_and_hides(api: tuple[TestClient, World]) -> None:  # noqa: F811

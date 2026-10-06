@@ -1,5 +1,5 @@
 {
- "_comment": "Hand-worked. Amounts in paise. rupees x 100. Seed policy: tax 5% exclusive, discount ceiling 0, shipping 0, new-customer advance 50%, repeat advance 25%, validity 15 days.",
+ "_comment": "Hand-worked. Amounts in paise. rupees x 100. Seed policy: tax 5% exclusive, discount ceiling 0, shipping 0, new-customer advance 50%, repeat advance 25%, repeat credit limit Rs 5,00,000, validity 15 days.",
  "quotes": {
   "Q1": {
    "enquiry": "E1",
@@ -10,7 +10,8 @@
    "owner_only": false,
    "delivery_state": "TG",
    "customer_kind": "new",
-   "gst_supply": "intra_state"
+   "gst_supply": "intra_state",
+   "flags": []
   },
   "Q2": {
    "enquiry": "E2",
@@ -21,7 +22,8 @@
    "owner_only": false,
    "delivery_state": "TN",
    "customer_kind": "new",
-   "gst_supply": "inter_state"
+   "gst_supply": "inter_state",
+   "flags": []
   },
   "Q3": {
    "enquiry": "E3",
@@ -32,7 +34,8 @@
    "owner_only": false,
    "delivery_state": "TN",
    "customer_kind": "new",
-   "gst_supply": "inter_state"
+   "gst_supply": "inter_state",
+   "flags": []
   },
   "Q4": {
    "enquiry": "E4",
@@ -43,7 +46,8 @@
    "owner_only": false,
    "delivery_state": "MP",
    "customer_kind": "new",
-   "gst_supply": "inter_state"
+   "gst_supply": "inter_state",
+   "flags": []
   },
   "Q5": {
    "enquiry": "E5",
@@ -54,7 +58,8 @@
    "owner_only": false,
    "delivery_state": "KA",
    "customer_kind": "new",
-   "gst_supply": "inter_state"
+   "gst_supply": "inter_state",
+   "flags": []
   },
   "Q6": {
    "enquiry": "E6",
@@ -65,7 +70,10 @@
    "owner_only": true,
    "delivery_state": "KA",
    "customer_kind": "repeat",
-   "gst_supply": "inter_state"
+   "gst_supply": "inter_state",
+   "flags": [
+    "REPEAT_CUSTOMER_CLAIMED"
+   ]
   },
   "Q2b": {
    "enquiry": "E2",
@@ -77,7 +85,24 @@
    "delivery_state": "TN",
    "customer_kind": "new",
    "gst_supply": "inter_state",
-   "note": "the same requirement quoted again after the first order was declined: the same figures"
+   "note": "the same requirement quoted again after the first order was declined: the same figures",
+   "flags": []
+  },
+  "Q7": {
+   "enquiry": "E9",
+   "subtotal_paise": 68000000,
+   "tax_paise": 3400000,
+   "total_paise": 71400000,
+   "advance_paise": 17850000,
+   "owner_only": true,
+   "delivery_state": "MH",
+   "customer_kind": "repeat",
+   "gst_supply": "inter_state",
+   "note": "the one deliberately over-limit repeat quote: balance 5,35,500 against a credit limit of 5,00,000",
+   "flags": [
+    "CREDIT_LIMIT_EXCEEDED",
+    "REPEAT_CUSTOMER_CLAIMED"
+   ]
   }
  },
  "csv_import": {

@@ -482,6 +482,11 @@ class Rehearsal:
             },
             got,
         )
+        rec.check(
+            f"{key}: the flags equal the hand-worked ones",
+            sorted(want["flags"]),
+            sorted(made["review_flags"] + made["engine_flags"]),
+        )
         self.res.quotes[key] = {
             "actual": got,
             "expected": want,
@@ -528,17 +533,17 @@ class Rehearsal:
             self.approve(
                 key, approver, f"L{by_key[EXPECTED['quotes'][key]['enquiry']]['lead_line']}"
             )
-        # the repeat customer's quote: a flagged quote is the Owner's to approve
-        tag6 = f"L{by_key['E6']['lead_line']}"
-        self.api.probe(
-            "Q6: an Admin tries to approve a repeat customer's quote",
-            "admin",
-            "POST",
-            f"/quotes/{self.quote_id['Q6']}/approve",
-            expect=(403,) if self.fresh else (403, 409),
-            code="owner_approval_required" if self.fresh else None,
-        )
-        self.approve("Q6", "owner", tag6)
+        # the repeat customers' quotes: a flagged quote is the Owner's to approve (Q6 is an ordinary repeat quote, Q7 is over its credit limit on purpose)
+        for key, enquiry in (("Q6", "E6"), ("Q7", "E9")):
+            self.api.probe(
+                f"{key}: an Admin tries to approve a repeat customer's quote",
+                "admin",
+                "POST",
+                f"/quotes/{self.quote_id[key]}/approve",
+                expect=(403,) if self.fresh else (403, 409),
+                code="owner_approval_required" if self.fresh else None,
+            )
+            self.approve(key, "owner", f"L{by_key[enquiry]['lead_line']}")
 
     # ------------------------------------------------------------------------------ orders
     def create_order(self, key: str, quote_key: str, who: str, tag: str) -> None:

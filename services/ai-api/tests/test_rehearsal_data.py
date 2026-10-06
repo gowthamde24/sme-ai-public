@@ -28,6 +28,7 @@ def test_hand_worked_quotes_add_up() -> None:
         "Q4": 20 * 2950,
         "Q5": 4 * 4200 + 10 * 2650,
         "Q6": 8 * 4200,
+        "Q7": 170 * 4000,
     }
     for key, q in _json("expected.json")["quotes"].items():
         assert key in prices, key
@@ -48,14 +49,14 @@ def test_price_list_matches_the_seed_shape() -> None:
 def test_enquiries_point_at_csv_lines_and_carry_no_contact_details() -> None:
     lines = (DATA / "leads.csv").read_text().splitlines()
     enquiries = _json("enquiries.json")["enquiries"]
-    assert len(enquiries) == 8
+    assert len(enquiries) == 9
     quotes = _json("expected.json")["quotes"]
     for e in enquiries:
         assert 2 <= e["lead_line"] <= len(lines)
         assert not EMAIL.search(e["text"]) and not PHONE.search(e["text"])
         if e["quote"]:
             assert e["quote"] in quotes and quotes[e["quote"]]["enquiry"] == e["key"]
-    assert len({e["lead_line"] for e in enquiries}) == 8
+    assert len({e["lead_line"] for e in enquiries}) == 9
 
 
 def test_every_email_and_phone_is_invented() -> None:

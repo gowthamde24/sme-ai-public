@@ -2,7 +2,7 @@
 
 Price list (seed): every item MOQ 4, tax 5% exclusive (500 bps), one break at 10 pieces.
 Kanjivaram: 4,200 each, 4,000 from 10. Banarasi: 3,100 each, 2,950 from 10. Paithani: 2,800 each, 2,650 from 10.
-Policy (seed): no discount (ceiling 0), no shipping, new customer advance 50%, repeat customer advance 25%, valid 15 days, delivery state required.
+Policy (seed): no discount (ceiling 0), no shipping, new customer advance 50%, repeat customer advance 25%, repeat customer credit limit Rs 5,00,000 (50,000,000 paise), valid 15 days, delivery state required.
 Amounts below are rupees; `expected.json` holds the same in paise.
 
 | Quote | Lines | Subtotal | Tax 5% | Total | Advance | Who approves |
@@ -13,6 +13,9 @@ Amounts below are rupees; `expected.json` holds the same in paise.
 | Q4 | 20 Banarasi gold at 2,950 (break) | 59,000 | 2,950 | 61,950 | 50% = 30,975 | Owner or Admin |
 | Q5 | 4 Kanjivaram red at 4,200 = 16,800; 10 Paithani green at 2,650 = 26,500 | 43,300 | 2,165 | 45,465 | 50% = 22,732.50 | Owner or Admin |
 | Q6 | 8 Kanjivaram blue at 4,200 (repeat customer) | 33,600 | 1,680 | 35,280 | 25% = 8,820 | **Owner only** (a repeat-customer claim always needs the Owner) |
+| Q7 | 170 Kanjivaram red at 4,000 (break), repeat customer, a deliberately OVER-LIMIT quote | 6,80,000 | 34,000 | 7,14,000 | 25% = 1,78,500 | **Owner only** (repeat claim) and flagged CREDIT_LIMIT_EXCEEDED: its balance 7,14,000 - 1,78,500 = 5,35,500 is above the credit limit of 5,00,000 |
+
+Q6's balance is 35,280 - 8,820 = 26,460, far under the limit: Q6 is flagged only REPEAT_CUSTOMER_CLAIMED (Owner only). Q7 is quoted and approved by the Owner but never ordered.
 
 Enquiries E7 (no sarees asked) and E8 (quantity not decided) stop before a quote on purpose.
 

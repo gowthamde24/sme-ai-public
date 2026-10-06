@@ -145,6 +145,24 @@
    "customer_kind": null,
    "quote": null,
    "stops_after": "requirement_unconfirmed"
+  },
+  {
+   "key": "E9",
+   "lead_line": 18,
+   "subject": "Large repeat order",
+   "text": "We have bought from you before. We need one hundred and seventy Kanjivaram silk sarees in red for our Solapur stores. Please quote.",
+   "lines": [
+    {
+     "saree_type": "kanjivaram",
+     "quantity": "170 pieces",
+     "sku": "SYN-KJ-RED-01",
+     "qty": 170
+    }
+   ],
+   "delivery_city": "Solapur",
+   "delivery_state": "MH",
+   "customer_kind": "repeat",
+   "quote": "Q7"
   }
  ]
 }

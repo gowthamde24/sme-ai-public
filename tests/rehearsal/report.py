@@ -373,7 +373,7 @@ def write_report(
         "* A quote replaced by a newer one (Q2 after Q2b) can no longer be approved (`quote_not_draft`); the repeat pass skips it for the same reason."
     )
     w(
-        "* The repeat customer's quote (Q6) is flagged `CREDIT_LIMIT_EXCEEDED` as well as `REPEAT_CUSTOMER_CLAIMED`: the seeded quote policy has a repeat credit limit of zero. That number is the owner's to set before real use (checklist)."
+        "* The repeat customer's ordinary quote (Q6) is flagged only `REPEAT_CUSTOMER_CLAIMED` (Owner only); Q7 is over its credit limit on purpose and is also flagged `CREDIT_LIMIT_EXCEEDED`. The limit is the seeded synthetic Rs 5,00,000: the real number is the owner's to set before real use (checklist)."
     )
     w(
         "* Orders B, C and F end lost or cancelled on purpose and D stays `in_preparation`; the balance of a lost or cancelled order is not owed and is not shown as a number."

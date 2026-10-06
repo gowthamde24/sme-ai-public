@@ -142,7 +142,7 @@ SEED_FN = "app.operator_seed_quote_reference_data"
 
 
 def test_the_seed_copy_is_the_last_definition_and_changes_exactly_the_seller_state() -> None:
-    defs = block_definitions(SEED_FN)
+    defs = [d for d in block_definitions(SEED_FN) if d[0] < SMALL]  # the small-fixes migration (below) changes the credit limit again
     assert defs[-1][0] == SEED, f"{SEED_FN} is redefined after {SEED}: re-copy it from the latest definition"
     earlier = [d for d in defs if d[0] < SEED]
     assert earlier
@@ -233,6 +233,7 @@ def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_n
 # with the latest earlier one it may only drop a line that it re-adds (indentation aside) or that is named here.
 REVIEW = "20261020090000_review_fixes.sql"
 MARKER = "20261021090000_erased_marker.sql"
+SMALL = "20261022090000_small_fixes.sql"
 REVIEW_CHANGED: dict[str, set[str]] = {
     "app.contacts_sync_suppression_keys": set(),
     "app.order_error": {"when 'SM234' then 'a refund needs the owner'"},
@@ -315,3 +316,36 @@ def test_the_marker_copy_is_the_last_definition_and_only_drops_the_named_lines(n
     ]
     unexpected = [line for line in removed if line not in MARKER_CHANGED[name] and line not in kept]
     assert not unexpected, f"{name}: the marker migration drops lines of {earlier[-1][0]}: {unexpected}"
+
+
+# ---------------------------------------------------------------------------------------------- small fixes (owner review of rehearsal steps 0-3)
+# Migration 20261022090000: A1 add_requirement_field (an exact retry replays on a confirmed requirement: lines are ADDED only) and A3 the seed's repeat credit limit (exactly one line changes).
+def test_the_small_fixes_copy_of_add_requirement_field_is_the_last_definition_and_only_adds_lines() -> None:
+    defs = definitions("public.add_requirement_field")
+    assert defs[-1][0] == SMALL, f"add_requirement_field is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
+    earlier = [d for d in defs if d[0] < SMALL]
+    assert earlier
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    kept = {line.strip() for line in defs[-1][1].split("\n")}
+    assert [line for line in removed if line not in kept] == []
+
+
+def test_the_small_fixes_seed_changes_exactly_the_repeat_credit_limit() -> None:
+    defs = block_definitions(SEED_FN)
+    assert defs[-1][0] == SMALL, f"{SEED_FN} is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
+    earlier = [d for d in defs if d[0] < SMALL]
+    diff = [
+        line
+        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    assert [line[1:].strip() for line in diff if line[0] == "-"] == [
+        "'repeat_advance_bps', 2500, 'net_days', 30, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 0,"
+    ]
+    assert [line[1:].strip() for line in diff if line[0] == "+"] == [
+        "'repeat_advance_bps', 2500, 'net_days', 30, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 50000000,"
+    ]

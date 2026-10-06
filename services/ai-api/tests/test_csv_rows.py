@@ -202,3 +202,67 @@ def test_no_issue_and_no_fatal_ever_repeats_a_cell_or_a_header_name() -> None:
         assert all(
             i.code in ROW_CODES and (i.column is None or i.column in COLUMNS) for i in r.issues
         )
+
+
+INDIC_CELLS = [
+    "హైదరా\u200cబాద్ శ్రీ\u200dనివాస్ సిల్క్స్",  # Telugu (invented), with ZWNJ and ZWJ
+    "ಮೈಸೂರು\u200c ರೇಷ್ಮೆ ಮನೆ\u200d",  # Kannada
+    "കൊച്ചിന്\u200d കൈത്തറി\u200c",  # Malayalam (a chillu typed with ZWJ)
+    "क्\u200dष साड़ी भवन\u200c",  # Devanagari
+]
+
+
+@pytest.mark.parametrize("cell", INDIC_CELLS)
+def test_indic_text_with_a_joiner_or_non_joiner_is_accepted(cell: str) -> None:
+    r = rows_from_csv(f'company_name,city,contact_name\n"{cell}",{cell},"{cell}"\n')
+    assert r.issues == [] and r.rows[0]["company_name"] == cell and r.rows[0]["city"] == cell
+
+
+@pytest.mark.parametrize(
+    "char",
+    [
+        "\u200b",  # zero-width space
+        "\ufeff",  # BOM / zero-width no-break space
+        "\u200e",
+        "\u200f",  # direction marks
+        "\u202a",
+        "\u202b",
+        "\u202c",
+        "\u202d",
+        "\u202e",  # bidi embeddings and overrides
+        "\u2066",
+        "\u2067",
+        "\u2068",
+        "\u2069",  # bidi isolates
+        "\u2028",
+        "\u2029",  # line and paragraph separators
+        "\u2060",  # word joiner
+        "\x00",
+        "\x07",
+        "\x1b",
+        "\x7f",
+        "\x85",  # controls
+        "\ue000",  # private use
+        "\U000e0001",  # a tag character
+        "\u0378",  # unassigned
+    ],
+)
+def test_each_hidden_character_is_refused_with_the_closed_code_and_never_echoed(char: str) -> None:
+    secret = f"Zeta{char}Plant"
+    r = rows_from_csv(f'company_name,city\n"{secret}",Pune\n')
+    assert [(i.line, i.code, i.column) for i in r.issues] == [
+        (2, "hidden_characters", "company_name")
+    ]
+    assert r.rows == [] and "Zeta" not in repr(r.issues) and "Plant" not in repr(r.issues)
+    # next to a joiner the verdict is the same: the joiner does not launder its neighbour
+    mixed = rows_from_csv(f'company_name,city\n"Zeta\u200d{char}Plant",Pune\n')
+    assert [i.code for i in mixed.issues] == ["hidden_characters"]
+
+
+def test_the_shared_rule_is_one_function() -> None:
+    from app.text_rules import has_hidden_characters
+
+    assert not has_hidden_characters("plain \n text") and not has_hidden_characters(
+        "a\u200cb\u200dc"
+    )
+    assert has_hidden_characters("a\tb") and has_hidden_characters("a\u200bb")
