@@ -46,6 +46,7 @@ from app.crm.models import (
     parse_uuid,
 )
 from app.errors import ApiError, not_found
+from app.suppression import service as suppression
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}")
@@ -96,6 +97,20 @@ def _archived() -> ApiError:
 def _require_changes(changes: dict[str, Any]) -> None:
     if not changes:
         raise ApiError(422, "validation_error", "Invalid input: send at least one field to change.")
+
+
+def _keyed(runtime: Runtime, ctx: TenantContext, row: Any) -> Any:
+    """Record the contact's suppression keys with the caller's token (ADR 0020). A contact that
+    arrives with a suppressed key is FLAGGED by the database: show the fresh state.
+    A failure to record never fails the request (the contact stays unkeyed, which is safe: it
+    cannot receive a follow-up draft until the backfill)."""
+    done = suppression.record_for_contact(
+        runtime.suppression, runtime.key_ring, ctx.principal.token, row.id, row.email, row.phone
+    )
+    if done is not None and done.get("flagged"):
+        fresh = runtime.crm.get_row(ctx.principal.token, "contacts", ctx.tenant.id, row.id)
+        return fresh if fresh is not None else row
+    return row
 
 
 def _register(api: EntityApi) -> None:
@@ -150,6 +165,8 @@ def _register(api: EntityApi) -> None:
             ctx.principal.token, entity, ctx.tenant.id, body.model_dump(mode="json")
         )
         response.status_code = 201 if created else 200
+        if entity == "contacts":
+            row = _keyed(runtime, ctx, row)
         return row
 
     create_row.__annotations__["body"] = api.create
@@ -172,7 +189,11 @@ def _register(api: EntityApi) -> None:
             raise not_found()
         if current.archived_at is not None:
             raise _archived()
-        return runtime.crm.update_row(ctx.principal.token, entity, ctx.tenant.id, rid, changes)
+        updated = runtime.crm.update_row(ctx.principal.token, entity, ctx.tenant.id, rid, changes)
+        if entity == "contacts" and ("email" in changes or "phone" in changes):
+            # a changed identifier forgot its key: record the new one (ADR 0020)
+            updated = _keyed(runtime, ctx, updated)
+        return updated
 
     update_row.__annotations__["body"] = api.update
     router.add_api_route(

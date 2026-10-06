@@ -32,6 +32,9 @@ from app.logging_safety import install_log_redaction
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
+from app.suppression.repository import PostgrestSuppressionRepository
+from app.suppression.routes import router as suppression_router
+from app.suppression.wiring import build_key_ring
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -75,6 +78,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         erasure=PostgrestErasureRepository(config.rest_url, config.anon_key),
         enquiries=PostgrestEnquiriesRepository(config.rest_url, config.anon_key),
         quotes=PostgrestQuotesRepository(config.rest_url, config.anon_key),
+        suppression=PostgrestSuppressionRepository(config.rest_url, config.anon_key),
+        key_ring=build_key_ring(settings),
     )
 
 
@@ -197,6 +202,13 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     erasure_repo.RequestCancelledError: ApiError(
         409, "erasure_cancelled", "That erasure request was cancelled."
     ),
+    erasure_repo.KeyMissingError: ApiError(
+        409,
+        "erasure_key_missing",
+        "This contact holds an e-mail or a phone number with no suppression key, so a later "
+        "import of it could not be recognised. The keys are recorded automatically when the "
+        "suppression key is configured; otherwise the owner may allow this erasure without a key.",
+    ),
     erasure_repo.OwnerTransferFirstError: ApiError(
         409,
         "erasure_owner_transfer_first",
@@ -225,6 +237,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.erasure,
                 runtime.enquiries,
                 runtime.quotes,
+                runtime.suppression,
             ):
                 if isinstance(
                     repository,
@@ -235,7 +248,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestAgentRunsRepository
                     | PostgrestErasureRepository
                     | PostgrestEnquiriesRepository
-                    | PostgrestQuotesRepository,
+                    | PostgrestQuotesRepository
+                    | PostgrestSuppressionRepository,
                 ):
                     repository.close()
 
@@ -286,6 +300,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(agent_runs_router)
     app.include_router(enquiries_router)
     app.include_router(quotes_router)
+    app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app
 

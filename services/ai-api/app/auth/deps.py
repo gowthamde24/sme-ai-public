@@ -19,6 +19,8 @@ from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorize
 from app.evidence.repository import EvidenceRepository
 from app.leads.repository import LeadsRepository
 from app.quotes.repository import QuotesRepository
+from app.suppression.keys import KeyRing
+from app.suppression.repository import SuppressionRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
 
@@ -38,6 +40,8 @@ class Runtime:
     erasure: ErasureRepository | None = None
     enquiries: EnquiriesRepository | None = None
     quotes: QuotesRepository | None = None
+    suppression: SuppressionRepository | None = None
+    key_ring: KeyRing | None = None
 
 
 @dataclass(frozen=True)

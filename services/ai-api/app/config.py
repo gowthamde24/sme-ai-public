@@ -69,6 +69,14 @@ class Settings(BaseSettings):
     # (M4), it runs ONLY in development, with the scripted model, on the synthetic fixture sites in
     # this directory (a path; no network). Unset = the research agent cannot start.
     research_fixture_dir: str | None = None
+    # Suppression keys (T010, ADR 0020). The key of the HMAC that recognises an erased or opted-out
+    # contact when it arrives again. A secret: ONLY from the environment, no default,
+    # never logged or returned. Outside development the process refuses to start without it. A
+    # rotation sets the new key and keeps the old one as PREVIOUS (matching only).
+    suppression_hmac_key: SecretStr | None = None
+    suppression_hmac_key_version: int = 1
+    suppression_hmac_key_previous: SecretStr | None = None
+    suppression_hmac_key_previous_version: int | None = None
 
     @property
     def cors_origins(self) -> list[str]:

@@ -21,6 +21,7 @@ from typing import Any
 import httpx
 import pytest
 from fastapi.testclient import TestClient
+from pydantic import SecretStr
 
 from app.config import Settings
 from app.main import create_app
@@ -182,6 +183,9 @@ def aal1_token(stack: Stack, user: User) -> str:
     return password_token(stack, user.email, user.password)
 
 
+TEST_SUPPRESSION_KEY = "synthetic-integration-key-0123456789"  # not a secret
+
+
 @pytest.fixture(scope="session")
 def client(stack: Stack) -> Iterator[TestClient]:
     """The real application: real JWKS verification, real PostgREST repository."""
@@ -190,6 +194,8 @@ def client(stack: Stack) -> Iterator[TestClient]:
         api_env="development",
         supabase_url=stack.url,
         supabase_anon_key=stack.anon_key,
+        # T010 (ADR 0020): a synthetic key (not a secret): contacts made through this app are keyed
+        suppression_hmac_key=SecretStr(TEST_SUPPRESSION_KEY),
     )
     with TestClient(create_app(settings)) as test_client:
         yield test_client

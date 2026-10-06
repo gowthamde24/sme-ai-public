@@ -30,6 +30,7 @@ from app.leads.models import (
     ReviewQueueLeadOut,
 )
 from app.leads.review import score_inputs
+from app.suppression import service as suppression
 from app.tenancy.models import Role
 
 audit_log = logging.getLogger("app.leads.audit")
@@ -151,6 +152,26 @@ def commit_lead_import(
     )
     if report.replayed:
         response.status_code = 200
+    else:
+        # ADR 0020: key every contact this batch CREATED (the keys are computed here, the database
+        # flags one that arrives with a suppressed key). Contacts that already existed
+        # keep the keys they have (or get them from the backfill). A failure here never fails the
+        # import.
+        for outcome in report.rows:
+            if (
+                outcome.contact_created
+                and outcome.contact_id is not None
+                and 1 <= outcome.row <= len(rows)
+            ):
+                row = rows[outcome.row - 1]
+                suppression.record_for_contact(
+                    runtime.suppression,
+                    runtime.key_ring,
+                    ctx.principal.token,
+                    outcome.contact_id,
+                    row.get("contact_email"),
+                    row.get("contact_phone"),
+                )
     return report
 
 

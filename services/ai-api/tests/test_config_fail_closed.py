@@ -20,6 +20,10 @@ ENV_NAMES = [
     "SUPABASE_JWKS_URL",
     "SUPABASE_JWT_ALGORITHMS",
     "SUPABASE_JWT_SECRET",
+    "SUPPRESSION_HMAC_KEY",
+    "SUPPRESSION_HMAC_KEY_VERSION",
+    "SUPPRESSION_HMAC_KEY_PREVIOUS",
+    "SUPPRESSION_HMAC_KEY_PREVIOUS_VERSION",
 ]
 
 VALID_PROD: dict[str, Any] = {
@@ -30,6 +34,8 @@ VALID_PROD: dict[str, Any] = {
     "supabase_jwt_audience": "authenticated",
     "supabase_jwks_url": "https://project.supabase.example/auth/v1/.well-known/jwks.json",
     "supabase_jwt_algorithms": "ES256",
+    # T010 (ADR 0020): required outside development; a synthetic test value, not a secret
+    "suppression_hmac_key": "synthetic-test-key-0123456789",
 }
 
 
@@ -46,6 +52,68 @@ def settings(**overrides: Any) -> Settings:
 def test_valid_production_config_starts() -> None:
     app = create_app(settings())
     assert app.state.runtime is not None
+    assert (
+        app.state.runtime.key_ring is not None and app.state.runtime.key_ring.current.version == 1
+    )
+
+
+def test_production_refuses_to_start_without_the_suppression_key() -> None:
+    for missing in (None, ""):
+        with pytest.raises(ConfigurationError, match="SUPPRESSION_HMAC_KEY"):
+            create_app(settings(suppression_hmac_key=missing))
+
+
+@pytest.mark.parametrize(
+    "overrides",
+    [
+        {"suppression_hmac_key": "short"},  # a typo, not a key
+        {"suppression_hmac_key_version": 0},
+        {"suppression_hmac_key_version": 33},
+        # a previous key needs its own version, which must differ, and the key must differ
+        {"suppression_hmac_key_previous": "previous-key-0123456789"},
+        {
+            "suppression_hmac_key_previous": "previous-key-0123456789",
+            "suppression_hmac_key_previous_version": 1,
+        },
+        {
+            "suppression_hmac_key_previous": "synthetic-test-key-0123456789",
+            "suppression_hmac_key_previous_version": 2,
+        },
+        {"suppression_hmac_key_previous": "short", "suppression_hmac_key_previous_version": 2},
+    ],
+)
+def test_an_unacceptable_suppression_key_stops_the_process(overrides: dict[str, Any]) -> None:
+    with pytest.raises(ConfigurationError):
+        create_app(settings(**overrides))
+
+
+def test_a_previous_suppression_key_is_accepted_for_a_rotation() -> None:
+    app = create_app(
+        settings(
+            suppression_hmac_key_version=2,
+            suppression_hmac_key_previous="previous-key-0123456789",
+            suppression_hmac_key_previous_version=1,
+        )
+    )
+    ring = app.state.runtime.key_ring
+    assert ring.current.version == 2 and ring.previous is not None and ring.previous.version == 1
+
+
+def test_development_without_a_suppression_key_starts_unkeyed() -> None:
+    app = create_app(settings(api_env="development", suppression_hmac_key=None))
+    assert app.state.runtime is not None and app.state.runtime.key_ring is None
+
+
+def test_no_key_value_is_ever_shown_by_the_settings_or_the_ring() -> None:
+    s = settings()
+    app = create_app(s)
+    for shown in (
+        repr(s),
+        str(s),
+        repr(app.state.runtime.key_ring),
+        str(app.state.runtime.key_ring),
+    ):
+        assert "synthetic-test-key-0123456789" not in shown
 
 
 def test_the_publishable_name_and_the_legacy_anon_name_are_both_accepted() -> None:

@@ -55,6 +55,10 @@ class RequestCancelledError(RepositoryError):
     """SM304"""
 
 
+class KeyMissingError(RepositoryError):
+    """SM221: an identifier has no suppression key and the Owner did not allow it (ADR 0020)."""
+
+
 class OwnerTransferFirstError(RepositoryError):
     """SM305: the last Owner cannot erase their own record."""
 
@@ -106,6 +110,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM303": AlreadyExecutedError,
         "SM304": RequestCancelledError,
         "SM305": OwnerTransferFirstError,
+        "SM221": KeyMissingError,
         "SM306": MfaRequired,
         "23505": ConflictError,
         "23503": InvalidReferenceError,

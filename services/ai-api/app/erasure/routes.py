@@ -30,6 +30,8 @@ from app.erasure.models import (
 )
 from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, not_found
+from app.suppression import service as suppression
+from app.suppression.models import WithoutKeyOut
 from app.tenancy.models import Role
 
 logger = logging.getLogger("app.erasure.routes")
@@ -122,7 +124,38 @@ def execute_request(
     found = _visible(
         runtime, ctx, request_id
     )  # a request the caller cannot see does not exist for them
+    if found.scope == "contact" and found.subject_id is not None and found.status == "pending":
+        # ADR 0020: record the contact's suppression keys FIRST (a preview too: the keys are derived
+        # data and recording is idempotent), then erase. If they cannot be recorded,
+        # the database refuses (SM221) unless the Owner allowed the erasure without a key.
+        contact = runtime.crm.get_row(
+            ctx.principal.token, "contacts", ctx.tenant.id, found.subject_id
+        )
+        if contact is not None:  # an erased contact has no identifiers left: nothing to key
+            suppression.record_for_contact(
+                runtime.suppression,
+                runtime.key_ring,
+                ctx.principal.token,
+                contact.id,
+                contact.email,
+                contact.phone,
+            )
     return _repo(runtime).execute(ctx.principal.token, found.id, dry_run=body.dry_run)
+
+
+@router.post("/erasure-requests/{request_id}/allow-without-key", response_model=WithoutKeyOut)
+def allow_without_key(request_id: str, ctx: OwnerStrong, runtime: RuntimeDep) -> WithoutKeyOut:
+    """The Owner (with a second factor) allows THIS contact erasure to run without a recorded
+    suppression key (audited; counted as `erased_without_key`; listed for review)."""
+    found = _visible(runtime, ctx, request_id)
+    if runtime.suppression is None:
+        raise ApiError(503, "suppression_unavailable", "Suppression keys are not available.")
+    done = runtime.suppression.allow_without_key(ctx.principal.token, found.id)
+    return WithoutKeyOut(
+        request_id=found.id,
+        without_key=bool(done.get("without_key")),
+        replayed=bool(done.get("replayed")),
+    )
 
 
 @router.post("/erasure-requests/{request_id}/cancel", response_model=ErasureRequestOut)
