@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -101,6 +101,14 @@ seed-demo:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py
 	./scripts/dev-enable-selftest.sh demo-synthetic-sme
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py --agents
+
+# T009: SYNTHETIC quote reference data (six invented products, a price list, a quote policy, a mapper config) for a LOCAL workspace:
+#     make seed-quote-data TENANT=demo-synthetic-sme
+# Runs the operator function inside the local database container; refuses any URL that is not this machine; idempotent. Real prices, rates
+# and terms are the owner's and the accountant's and never come from this target.
+seed-quote-data:
+	@test -n "$(TENANT)" || { echo "usage: make seed-quote-data TENANT=<workspace slug>"; exit 2; }
+	cd $(API) && .venv/bin/python seeds/seed_quote_reference_data.py --tenant-slug "$(TENANT)"
 
 dev-web:
 	cd $(WEB) && npm run dev

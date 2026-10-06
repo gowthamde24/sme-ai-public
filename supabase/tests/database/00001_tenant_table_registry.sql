@@ -125,6 +125,32 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
           r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id)
      insert into public.requirement_fields (id, tenant_id, requirement_id, line_no, field_key, value_int, basis, certainty, quote, quote_start, quote_end) select %2$L, %1$L, r.id, 1, 'quantity', 20, 'piece', 'stated', '20 kanjivaram sarees', 5, 25 from r$$,
    'state = state', $$delete from public.requirement_fields where id = %2$L$$, true),
+  -- T009 part 1. Reference-data versions are written ONLY by the definer functions (Owner / Admin + aal2); nobody updates or deletes them; a
+  -- Viewer reads none of them. The fixtures build their parents inside one statement (a CTE chain).
+  ('price_lists',
+   $$insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list')$$,
+   'name = name', $$delete from public.price_lists where id = %2$L$$, true),
+  ('price_list_versions',
+   $$with l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id)
+     insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l$$,
+   'version_no = version_no', $$delete from public.price_list_versions where id = %2$L$$, true),
+  ('price_list_items',
+   $$with l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id),
+          v as (insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l returning id)
+     insert into public.price_list_items (id, tenant_id, version_id, product_id, sku, name, unit_price_paise, minimum_order_quantity, tax_bps) select %2$L, %1$L, v.id, (select id from public.products where tenant_id = %1$L order by id limit 1), 'G-ITEM', 'Generic item', 1000, 1, 0 from v$$,
+   'sku = sku', $$delete from public.price_list_items where id = %2$L$$, false),
+  ('price_list_breaks',
+   $$with l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id),
+          v as (insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l returning id),
+          i as (insert into public.price_list_items (id, tenant_id, version_id, product_id, sku, name, unit_price_paise, minimum_order_quantity, tax_bps) select %2$L, %1$L, v.id, (select id from public.products where tenant_id = %1$L order by id limit 1), 'G-ITEM', 'Generic item', 1000, 1, 0 from v returning id)
+     insert into public.price_list_breaks (id, tenant_id, item_id, min_qty, unit_price_paise) select %2$L, %1$L, i.id, 5, 900 from i$$,
+   'min_qty = min_qty', $$delete from public.price_list_breaks where id = %2$L$$, false),
+  ('quote_policy_versions',
+   $$insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.quote_policy_versions where tenant_id = %1$L), current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64))$$,
+   'version_no = version_no', $$delete from public.quote_policy_versions where id = %2$L$$, true),
+  ('mapper_config_versions',
+   $$insert into public.mapper_config_versions (id, tenant_id, version_no, effective_from, config, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.mapper_config_versions where tenant_id = %1$L), current_date, '{}'::jsonb, repeat('2', 64))$$,
+   'version_no = version_no', $$delete from public.mapper_config_versions where id = %2$L$$, true),
   ('memberships',
    $$insert into public.memberships (tenant_id, user_id, role) values (%1$L, %5$L, 'viewer')$$,
    'role = role', $$delete from public.memberships where tenant_id = %1$L and user_id = %5$L$$, false),
@@ -195,6 +221,19 @@ select t, r, s, i, u, d from (values
   ('requirements',  'sales',  true, false, false, false), ('requirements',  'viewer', true, false, false, false),
   ('requirement_fields','owner', true, false, false, false), ('requirement_fields','admin', true, false, false, false),
   ('requirement_fields','sales', true, false, false, false), ('requirement_fields','viewer', true, false, false, false),
+  -- T009 part 1: Owner / Admin / Sales read; a Viewer reads none of the prices, policies or mapper config; nobody writes directly.
+  ('price_lists',          'owner', true, false, false, false), ('price_lists',          'admin', true, false, false, false),
+  ('price_lists',          'sales', true, false, false, false), ('price_lists',          'viewer', false, false, false, false),
+  ('price_list_versions',  'owner', true, false, false, false), ('price_list_versions',  'admin', true, false, false, false),
+  ('price_list_versions',  'sales', true, false, false, false), ('price_list_versions',  'viewer', false, false, false, false),
+  ('price_list_items',     'owner', true, false, false, false), ('price_list_items',     'admin', true, false, false, false),
+  ('price_list_items',     'sales', true, false, false, false), ('price_list_items',     'viewer', false, false, false, false),
+  ('price_list_breaks',    'owner', true, false, false, false), ('price_list_breaks',    'admin', true, false, false, false),
+  ('price_list_breaks',    'sales', true, false, false, false), ('price_list_breaks',    'viewer', false, false, false, false),
+  ('quote_policy_versions','owner', true, false, false, false), ('quote_policy_versions','admin', true, false, false, false),
+  ('quote_policy_versions','sales', true, false, false, false), ('quote_policy_versions','viewer', false, false, false, false),
+  ('mapper_config_versions','owner', true, false, false, false), ('mapper_config_versions','admin', true, false, false, false),
+  ('mapper_config_versions','sales', true, false, false, false), ('mapper_config_versions','viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

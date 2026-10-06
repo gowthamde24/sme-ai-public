@@ -248,6 +248,30 @@ begin
   end loop;
 end $$;
 
+-- T009 part 1: one price list with a version, an item and a break, one policy version and one mapper config version per fixture tenant (parents for
+-- the composite-foreign-key attacks of 12). Prefix 'a' / 'b': tests.rid('a_price_list'), tests.rid('a_price_version'), tests.rid('a_price_item'),
+-- tests.rid('a_policy_version'), tests.rid('a_mapper_version'). Requires seed_two_tenants() and seed_crm() (the tenant's product).
+create or replace function tests.seed_t009() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.price_lists (id, tenant_id, name) values (tests.rid(p || '_price_list'), tests.tid(p), 'Fixture price list');
+    insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256)
+    values (tests.rid(p || '_price_version'), tests.tid(p), tests.rid(p || '_price_list'), 1, current_date, 1, repeat('0', 64));
+    insert into public.price_list_items (id, tenant_id, version_id, product_id, sku, name, unit_price_paise, minimum_order_quantity, tax_bps)
+    values (tests.rid(p || '_price_item'), tests.tid(p), tests.rid(p || '_price_version'), tests.rid(p || '_product'), 'SKU-1', 'Product ' || p, 100000, 1, 500);
+    insert into public.price_list_breaks (id, tenant_id, item_id, min_qty, unit_price_paise)
+    values (tests.rid(p || '_price_break'), tests.tid(p), tests.rid(p || '_price_item'), 10, 90000);
+    insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps,
+                                              validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, content_sha256)
+    values (tests.rid(p || '_policy_version'), tests.tid(p), 1, current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64));
+    insert into public.mapper_config_versions (id, tenant_id, version_no, effective_from, config, content_sha256)
+    values (tests.rid(p || '_mapper_version'), tests.tid(p), 1, current_date, '{}'::jsonb, repeat('2', 64));
+  end loop;
+end $$;
+
 -- T005: one ICP config version, one import batch and one lead label per fixture tenant.
 -- Prefix 'a' / 'b': tests.rid('a_icp1'), tests.rid('a_batch'), tests.rid('a_label').
 -- Requires seed_two_tenants() and seed_crm().

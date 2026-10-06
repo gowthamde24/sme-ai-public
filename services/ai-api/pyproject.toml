@@ -51,6 +51,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # T009 integration: the quote path (long explanatory docstrings)
 "app/quotes/*" = ["E501"]
+"seeds/*" = ["E501"]
+"tests/test_quote_seed_script.py" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"

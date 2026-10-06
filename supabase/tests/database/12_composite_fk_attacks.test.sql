@@ -11,6 +11,7 @@ select tests.seed_evidence();
 select tests.seed_t005();
 select tests.seed_agents();
 select tests.seed_t008();
+select tests.seed_t009();
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
