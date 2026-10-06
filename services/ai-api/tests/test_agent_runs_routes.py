@@ -13,6 +13,7 @@ from app.agent_runs.executor import RunTask
 from app.agent_runs.repository import (
     AgentsDisabledError,
     CostCapError,
+    DraftHasWorkError,
     RunLimitError,
     TokenExpiringError,
 )
@@ -298,6 +299,7 @@ def test_database_refusals_have_fixed_messages_and_no_database_text(w: World) ->
         (RunLimitError("SM206"), 429, "run_limit_reached"),
         (CostCapError("SM207"), 429, "cost_cap_reached"),
         (TokenExpiringError("SM202"), 409, "token_expiring"),
+        (DraftHasWorkError("SM211"), 409, "discard_draft_to_rerun"),
         (Forbidden("42501"), 403, "forbidden"),
         (InvalidValueError("23514"), 422, "invalid_value"),
         (UpstreamError(f"{CANARY} 22003 numeric value out of range"), 502, "upstream_error"),

@@ -141,6 +141,9 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "requirement_confirmed",
         "This enquiry already has a confirmed requirement. Discard it first.",
     ),
+    runs_repo.DraftHasWorkError: ApiError(
+        409, "discard_draft_to_rerun", "Discard the current draft to re-run."
+    ),
     # Erasure (T006b, ADR 0014). Fixed messages: nothing from the data layer reaches the client.
     erasure_repo.NotPendingError: ApiError(
         409, "erasure_not_pending", "That erasure request is not pending."

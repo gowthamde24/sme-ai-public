@@ -31,7 +31,7 @@ its quote. This closes the limit T007 had (the database never saw the page). Wha
 **5. People decide, and only people.** `decide_requirement_field` (confirm | correct | reject), `add_requirement_field` (a field the extraction missed; stored `corrected`, `manual`), `confirm_requirement`,
 `discard_requirement`: Owner / Admin / Sales; an unknown id and another tenant's id are the same refusal. A correction is written in the person's words and read by the SAME normalisers.
 **Confirm needs a saree type AND a quantity on the same line, each confirmed or corrected by a person: nothing else blocks it.** The delivery city, the deadline and the payment terms are "needed before quote": they are asked for and tracked by a
-separate `ready_for_quote` flag. Both flags are computed at read time by rules (`app/requirements/policy.py`), never by a model. SM208 (the enquiry already has a confirmed requirement), SM209 (not a draft), SM210 (not confirmable).
+separate `ready_for_quote` flag. Both flags are computed at read time by rules (`app/requirements/policy.py`), never by a model. SM208 (the enquiry already has a confirmed requirement), SM209 (not a draft), SM210 (not confirmable), SM211 (discard the current draft to re-run: see decision 9).
 
 **6. Questions are derived, not stored.** The flags (missing, low-certainty, conflicting) become clarifying questions through closed templates at read time. A question echoes only closed values (a saree type, a
 number of pieces, a date), never the customer's words, a name, a link or a price, so an enquiry cannot put words into a message a person might send. The screen shows the text and a Copy button. **Nothing is persisted and nothing is sent.
@@ -44,8 +44,17 @@ Persisted question drafts (and any approval state for them) belong to the T010 i
 until the operator names one, and a run only ever targets an enquiry (and no other agent may). The delegated token is the starting human's (option A): the decision functions are reachable with it, like `review_claim`; the sandbox has no code path
 to them (`tests/test_agents_boundary.py`, which now also scans the pure `app/requirements` package). Option B stays required before any scheduled run or external customer.
 
+**9. Concurrency and re-run safety (commit 3c).** One lock order everywhere: **the enquiry row, then the requirement row.** `confirm_requirement` and `discard_requirement` lock the enquiry first (they did not before: a confirm could commit
+between an add or an agent write passing its "no confirmed requirement" check and inserting a field, leaving a field in a confirmed requirement). `add_requirement_field` selects the active requirement `FOR UPDATE` and takes a field only into a
+draft; `agent_write_requirement_field` locks its own requirement row and refuses (SM209) unless it is a draft (a person discarded it, or a later run superseded it). `decide_requirement_field` is unchanged: it never takes the enquiry lock, so no
+cycle is possible. **A re-run never replaces a person's work:** `start_agent_run` for an enquiry refuses with **SM211** ("discard the current draft to re-run"; API 409 `discard_draft_to_rerun`) when the active draft holds a confirmed,
+corrected, rejected or manually added field (`app.requirement_human_work`). A person decides while a run is going, so the same test runs again in the run's FIRST write, after the draft is locked (a decision in flight is waited for, then seen).
+The person discards the draft first. The SQLSTATEs of the requirement path: SM208 an enquiry already has a confirmed requirement (HTTP 409 `requirement_confirmed`), SM209 the requirement is not a draft (`requirement_not_draft`), SM210 it cannot
+be confirmed yet (`not_confirmable`), SM211 the draft holds a person's work (`discard_draft_to_rerun`). Inside a run all four end it as `failed` / `tool_failed` and store nothing it had buffered.
+
 ## Evidence it holds
-pgTAP 53-55; real-stack direct-PostgREST attacks and Python/database equivalence properties (guard, quote, add); injection evals E01-E15 and N20-N31 with a diff of the whole tenant before and after (no evidence, claims, links or
+pgTAP 53-56; two real connections racing (a psql session holds its locks while a second connection competes: confirm vs add, vs an agent write, vs a re-run, vs discard; a person's decision vs a re-run; then five operations at once for eight
+rounds: no deadlock, one active requirement, no overwritten person's work) and direct-PostgREST attacks on SM211 / SM209 (`tests/integration/test_requirement_concurrency.py`, `test_requirement_rerun_direct_postgrest.py`); real-stack direct-PostgREST attacks and Python/database equivalence properties (guard, quote, add); injection evals E01-E15 and N20-N31 with a diff of the whole tenant before and after (no evidence, claims, links or
 reviews appear; every field is an undecided proposal whose quote is at its offsets); a golden set of 20 enquiries with a committed report and THE GATE (zero `stated` fields that are wrong or unasked for; the first run found one, a quote of one end of a range, now `ambiguous`).
 The scripted model is a stand-in: real quality is measured only with a real model after the owner's written approval (ADR 0017 b).
 

@@ -97,6 +97,9 @@ create function pg_temp.start_sql(p_run uuid, p_enq text) returns text language 
 create function pg_temp.city_sql(p_run uuid, p_step text, p_enq text, p_phrase text, p_city text) returns text language sql as $$
   select format('select public.agent_write_requirement_field(%L, %L, null, ''delivery_city'', null, null, null, %L, null, ''stated'', %L, %s, %s, false)',
                 p_run, p_step, p_city, p_phrase, strpos(pg_temp.body(p_enq), p_phrase) - 1, strpos(pg_temp.body(p_enq), p_phrase) - 1 + char_length(p_phrase)) $$;
+-- (commit 3c) en1 and en2 hold a person's manual fields from section A: a run needs the draft discarded first
+select pg_temp.sc('a_sales', format('select public.discard_requirement(%L)', (select id from public.requirements where enquiry_id = tests.rid('en1') and status = 'draft')));
+select pg_temp.sc('a_sales', format('select public.discard_requirement(%L)', (select id from public.requirements where enquiry_id = tests.rid('en2') and status = 'draft')));
 select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.start_sql(tests.rid('r2'), 'en1')), 'rows:1', 'a run on the Navi Mumbai enquiry starts');
 select is(pg_temp.err('a_sales', pg_temp.city_sql(tests.rid('r2'), 'c1', 'en1', 'Navi  Mumbai', 'Chennai')), '23514|value not allowed||||', 'a city that is not in its quote: refused');
 select is(pg_temp.err('a_sales', pg_temp.city_sql(tests.rid('r2'), 'c2', 'en1', 'Deliver to Navi  Mumbai', 'Pune')), '23514|value not allowed||||', '...even when the quote is about delivery');

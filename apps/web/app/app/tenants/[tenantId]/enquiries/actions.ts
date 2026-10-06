@@ -41,6 +41,8 @@ function describe(error: unknown): string {
     switch (error.code) {
       case "requirement_confirmed":
         return "This enquiry already has an approved requirement. Discard it first to change it.";
+      case "discard_draft_to_rerun":
+        return "Discard the current draft to re-run.";
       case "requirement_not_draft":
         return "This requirement is no longer a draft. Reload the page.";
       case "not_confirmable":

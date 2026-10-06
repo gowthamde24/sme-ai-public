@@ -528,7 +528,8 @@ What was built (migrations `20261009090000_t006_agent_foundation.sql`, `20261009
 7. **Error contract.** Before ownership of the run is proven (unknown run, someone else's, a foreign tenant, a removed or demoted
    starter, a Viewer) every function answers the same `42501` "agent action not permitted" (identical sqlstate, message, detail,
    hint, constraint, table: a pgTAP test compares the whole string). After it: `SM201` not running, `SM202` expired, `SM203`
-   budget, `SM204` disabled, `SM205` step key reused with other arguments, `SM206` limit; `23505` for a used id is raised with a
+   budget, `SM204` disabled, `SM205` step key reused with other arguments, `SM206` limit (later: `SM207` daily cost cap; T008 adds
+   `SM208` to `SM211`, listed in ADR 0018: confirmed requirement exists, not a draft, not confirmable, discard the draft to re-run); `23505` for a used id is raised with a
    constant message so a foreign id looks exactly like a payload conflict. Content problems (hygiene, size, URL) are the tables'
    own CHECKs (`23514`); PostgreSQL puts the failing row in that error's DETAIL, so **the API (M2) must classify by SQLSTATE and
    never forward a database message**, as it already does.

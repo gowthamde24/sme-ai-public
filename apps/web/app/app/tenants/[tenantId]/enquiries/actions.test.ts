@@ -116,6 +116,10 @@ describe("extractRequirementAction", () => {
     expect((await extractRequirementAction(TENANT, ENQ, undefined, form({ run_id: RUN })))?.error).toMatch(/spending limit/);
     api.startRequirementRun.mockRejectedValue(new ApiRequestError(409, "requirement_confirmed", CANARY));
     expect((await extractRequirementAction(TENANT, ENQ, undefined, form({ run_id: RUN })))?.error).toMatch(/Discard it first/);
+    api.startRequirementRun.mockRejectedValue(new ApiRequestError(409, "discard_draft_to_rerun", CANARY));
+    const refused = await extractRequirementAction(TENANT, ENQ, undefined, form({ run_id: RUN }));
+    expect(refused?.error).toBe("Discard the current draft to re-run.");
+    expect(refused?.error).not.toContain(CANARY);
   });
 });
 

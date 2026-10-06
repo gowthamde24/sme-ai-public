@@ -76,6 +76,12 @@ class RequirementConfirmedError(RepositoryError):
     """SM208: the enquiry already has a confirmed requirement; a human discards it first."""
 
 
+class DraftHasWorkError(RepositoryError):
+    """SM211: the active draft holds a person's work (a decided or manually added field).
+
+    A person discards it before a re-run."""
+
+
 @dataclass(frozen=True)
 class StartResult:
     run_id: uuid.UUID
@@ -163,6 +169,7 @@ def classify_error(status: int, body: Any, *, hide_denial: bool) -> RepositoryEr
         "SM206": RunLimitError,
         "SM207": CostCapError,
         "SM208": RequirementConfirmedError,
+        "SM211": DraftHasWorkError,
         "SM306": MfaRequired,
         "23505": ConflictError,
         "23503": NotFoundError,

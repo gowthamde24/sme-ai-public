@@ -70,6 +70,15 @@ class ReferenceRefused(AgentDbError):
     code = "reference_refused"
 
 
+class RequirementChanged(AgentDbError):
+    """SM208 / SM209 / SM211: while the run was going, a person confirmed, discarded or worked on
+    the enquiry's requirement (or a later run replaced this run's draft). The run's write is
+    refused and it stops; nothing it buffered is stored."""
+
+    sqlstate = "SM209"
+    code = "requirement_changed"
+
+
 class DataLayerUnavailable(AgentDbError):
     """Anything else: a network error, a 5xx, a SQLSTATE nobody planned for. The text is never
     kept."""
@@ -93,3 +102,5 @@ BY_SQLSTATE: dict[str, type[AgentDbError]] = {
     )
 }
 BY_SQLSTATE["22023"] = ValueRefused
+for _sqlstate in ("SM208", "SM209", "SM211"):
+    BY_SQLSTATE[_sqlstate] = RequirementChanged
