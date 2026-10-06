@@ -15,6 +15,12 @@ quote_engine = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(quote_engine)
 
 
+# The pinned hash of the fixture request per renderer version (the version is part of the hashed payload);
+# the 1.0.0 value is the one that was pinned before 1.1.0 existed and stays so (test_legacy_1_0_0 re-runs this file).
+GOLDEN_HASH = {"1.0.0": "376e2b72ffc0a880941cb254f891811cdeb99ad3d195b2312d39cd0cf7c3b17f",
+               "1.1.0": "6cab990d149f3ef9ef56a4087d1382241b1705921caa18573a32f3030ceb58aa"}
+
+
 def fixture():
     return json.loads((Path(__file__).parent / "fixtures" / "synthetic.json").read_text())
 
@@ -316,7 +322,7 @@ class RenderTests(unittest.TestCase):
         self.assertEqual(q, engine.render(json.loads(engine.canonical_json(r))))
         self.assertEqual(q, json.loads(engine.canonical_json(q)))
         self.assertEqual(r, original)
-        self.assertEqual(q["canonical_hash"], "376e2b72ffc0a880941cb254f891811cdeb99ad3d195b2312d39cd0cf7c3b17f")
+        self.assertEqual(q["canonical_hash"], GOLDEN_HASH[engine.RENDERER_VERSION])
         r["display"]["quote_ref"] = "SYN-Q-002"
         self.assertNotEqual(q["canonical_hash"], self.accepted(r)["canonical_hash"])
 

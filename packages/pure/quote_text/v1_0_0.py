@@ -1,18 +1,12 @@
-"""Pure plain-text quote rendering; approval and copying belong to humans.
-
-1.1.0 allows U+200C / U+200D after an Indic letter or mark (see VERSIONS.md). The 1.0.0
-renderer is frozen byte for byte in v1_0_0.py so quotes rendered with it can be re-verified.
-"""
+"""Pure plain-text quote rendering; approval and copying belong to humans."""
 from datetime import date
-from importlib import import_module
 import hashlib
 import json
 import re
 import textwrap
 import unicodedata
 
-RENDERER_VERSION = "1.1.0"
-SUPPORTED_VERSIONS = ("1.0.0", "1.1.0")
+RENDERER_VERSION = "1.0.0"
 MAX_WIDTH = 60
 MAX_STRING = 200
 MAX_LINES = 30
@@ -30,11 +24,6 @@ MAX_NODES = 50_000
 MAX_OBJECT_FIELDS = 40
 EXPECTED_ENGINE_VERSION = "1.1.0"
 HASH = re.compile(r"[0-9a-f]{64}\Z", re.ASCII)
-# The two joiners Indic scripts spell real words with, and the same "after an Indic letter or
-# mark" rule as the application's capture (app/requirements/capture_text.py, copied, not imported).
-JOINERS = frozenset("\u200c\u200d")
-INDIC_RANGE = (0x0900, 0x0DFF)  # Devanagari .. Sinhala
-UNSAFE_CATEGORIES = frozenset(("Cc", "Cf", "Cs", "Zl", "Zp"))
 MARKUP = str.maketrans({char: " " for char in "*_~`"})
 LINE_KEYS = ("sku", "name", "quantity", "unit_price_applied", "price_break_applied",
              "line_subtotal", "discount", "net", "tax", "gross")
@@ -94,35 +83,13 @@ def rate(bps):
     return str(whole) + ("." + str(fraction).zfill(2).rstrip("0") if fraction else "") + "%"
 
 
-def _indic(char):
-    return INDIC_RANGE[0] <= ord(char) <= INDIC_RANGE[1] and unicodedata.category(char)[0] in "LM"
-
-
-def _unsafe(value):
-    """True when a string holds a character the renderer refuses.
-
-    A joiner is allowed only directly after an Indic letter or mark, so never at the start, after
-    a space, between Latin letters, next to digits, or twice in a row. Every other control, format,
-    surrogate, line and paragraph separator stays refused, even right after an Indic letter.
-    """
-    previous = ""
-    for char in value:
-        if char in JOINERS:
-            if not previous or not _indic(previous):
-                return True
-        elif unicodedata.category(char) in UNSAFE_CATEGORIES:
-            return True
-        previous = char
-    return False
-
-
 def _string(value, maximum=MAX_STRING, allow_empty=False):
     _typed(value, str)
     if len(value) > maximum:
         raise _Invalid("OUT_OF_RANGE")
     if not allow_empty and not value.strip():
         raise _Invalid("EMPTY_STRING")
-    if _unsafe(value):
+    if any(unicodedata.category(char) in ("Cc", "Cf", "Cs", "Zl", "Zp") for char in value):
         raise _Invalid("UNSAFE_STRING")
 
 
@@ -438,12 +405,3 @@ def render(request):
     digest = hashlib.sha256(canonical_json({"renderer_version": RENDERER_VERSION,
                                           "inputs": request}).encode("utf-8")).hexdigest()
     return {"text": text, "line_count": len(output), "canonical_hash": digest}
-
-
-def renderer_for(version):
-    """The renderer module of a supported version, so an older quote can be re-verified."""
-    if version == RENDERER_VERSION:
-        return import_module(__name__)
-    if version in SUPPORTED_VERSIONS:
-        return import_module(__name__ + ".v" + version.replace(".", "_"))
-    raise KeyError(version)
