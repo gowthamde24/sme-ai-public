@@ -46,7 +46,7 @@ It is the dry run that tells the owner what the family's first real week would f
 7. **No web page for lead import** exists; the rehearsal does not need one (the driver is the "person").
 
 ## 5. Smallest build order (each step is one commit group with its tests; stop for review after step 3)
-1. **Order API** (missing item 1). Acceptance: the real-stack suites that today call the SQL functions directly also pass through the API routes; Viewer and other tenants refused; a forged `owner_override`, a stale client (SM238) and a replay are tested at the route level; no route takes an amount, a state or an approver from the body.
+1. **Order API** (missing item 1). Acceptance: the real-stack suites that today call the SQL functions directly also pass through the API routes; Viewer and other tenants refused; a forged `owner_override`, a stale client (SM238) and a replay are tested at the route level; no route takes a total, a state, an approver or an owner_override from the body; the payment or refund amount, the ledger id, the time of occurrence and the lost reason are the person's inputs.
 2. **Synthetic data set and the CSV adapter** (items 4 and 5): `tests/rehearsal/data/` (fixed seed, a README that says every value is invented) and `app/leads/csv_rows.py` with unit tests (formula-injection safe, size limits, no echo of cell values in errors).
 3. **The driver** (item 6), run through the API with the real roles, ending with the report. Acceptance: it runs from a fresh database to `closed_paid` for the happy leads and produces the report; a second run on the same database changes nothing (idempotency). **Stop: the owner reads the first report.**
 4. **Order web page** (item 2), then rerun the driver's "person" steps through the browser by hand once (a checklist, not automation) to count real clicks.
@@ -61,7 +61,7 @@ It is the dry run that tells the owner what the family's first real week would f
 * **Provenance and audit:** every step has an audit event with actor and time; every quote and order event carries its engine version and canonical hash.
 * **Safety:** zero outbound messages (the driver asserts no network call besides the local stack), zero model cost, zero secrets read.
 
-## 7. Open owner decisions (recommended default first)
+## 7. Open owner decisions (recommended default first). **ALL NINE ACCEPTED with their defaults (owner, 2026-10-07).**
 1. **Where it runs.** Default: local stack only, synthetic data only, on the developer machine. (A hosted run belongs to the Customer Zero stage.)
 2. **How the requirement is entered.** Default: scripted human entry (the fields a person would type), no model. Alternative: the Requirement Agent with its scripted fake model, to rehearse the confirm step too. A live model needs the owner's approval of provider, key and spend cap (ADR 0017).
 3. **Price list.** Default: seeded for the first run; the CSV import endpoint (step 5) follows. Alternative: build the import first.
@@ -73,6 +73,6 @@ It is the dry run that tells the owner what the family's first real week would f
 9. **Follow-ups.** Default: out of the slice; add a second rehearsal after T010 part 2 (touches, drafts, the stop).
 
 ## 8. Risks
-* The order API is the largest piece and the first place a real person's money claims will pass: it must be built with the same rules as the database (the API never decides; it rebuilds nothing and trusts nothing it did not read with the caller's token).
+* The order API is the largest piece and the first place a real person's money claims will pass: it must be built with the same rules as the database (the API decides nothing: it builds the lifecycle request from the ledger it read with the caller's token, and the database rebuilds and refuses any difference).
 * A rehearsal on synthetic data says little about real data quality (messy addresses, names, enquiries written in other languages): the data-quality figures are a lower bound.
 * The driver must not become a second implementation of the business rules: it calls the API like a person and asserts against independently computed expectations.
