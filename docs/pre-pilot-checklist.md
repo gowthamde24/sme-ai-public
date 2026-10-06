@@ -246,6 +246,16 @@ Accepted when T005 was approved pending the human walkthrough. None blocks the w
 | [ ] | **A key shared by a living contact and an erased person stays suppressed for ever** (it can only be released by a person who is not erased AND a key whose suppression did not come from an erasure). Revisit if recycled phone numbers become a problem; the Owner has no screen to release such a key. | ADR 0020 | Pilot data | Later |
 | [ ] | **Known limit: a living contact that shares a number with an erased person stays blocked after an Owner lift.** The key carries an erased marker, so the Owner's lift of the living contact does not release it (the contact is lifted, the number is not): such a contact cannot be sent a follow-up draft. The marker is appended even when another contact suppressed the key first (the second review, step 0). The DPDP question above covers it: counsel decides how long an erased person's keyed hash is kept and whether a shared number may be released. | ADR 0020 | **Before the gate opens** | Before the gate opens |
 
+## Rehearsal steps A-E (owner review 2026-10-06)
+
+| | Item | Source | Gate | Phase |
+| --- | --- | --- | --- | --- |
+| [ ] | **Indic names with a zero-width joiner or non-joiner (U+200D / U+200C).** The CSV adapters (`app/text_rules.py`) and the database text hygiene accept them. Two places do not: the PINNED quote-text renderer (`packages/pure/quote_text`, lane C) refuses them in a product name, so such a quote is approved but its customer text shows `quote_text_refused`; and `app/requirements/capture_text.py` STRIPS them from a pasted enquiry by default (`KEEP_INDIC_JOINERS = False`, an owner decision pending since T008). Both need a decision before real Indic product names or enquiries. | A2 grep, rehearsal report | Before real data | Customer Zero |
+| [ ] | **The real repeat-customer credit limit.** The seed gives a synthetic Rs 5,00,000; the real number, and whether an unknown balance should ever mean "no credit", is the owner's. | small fix A3, ADR 0019 | Before real data | Customer Zero |
+| [ ] | **Members and invitations.** Today a person joins through an operator SQL function or an Owner's raw table write that needs the person's user id and asks nobody's consent. Design and open decisions: `docs/plans/members-and-invitations.md`. Needs the owner's approval before it is built. | plan | Before a second person joins for real | Customer Zero |
+| [ ] | **The order web page and the price-list page have only been driven by tests, never by a person in a browser.** The owner's by-hand count is `docs/rehearsal-click-checklist.md` (`make db-reset && make rehearse-prepare-click`). | step 4 | Before the family uses them | Customer Zero |
+| [ ] | **Order policy has no page.** A policy is published through the API only (the dispatch override cannot be tried in the browser). | step 4 | Before real orders | Customer Zero |
+
 ## Local-first sequence (ADR 0017, 2026-10-05)
 
 | | Item | Source | Gate | Phase |

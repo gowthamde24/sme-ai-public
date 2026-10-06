@@ -2,6 +2,46 @@
 
 Record ticket, checklist row, evidence, unresolved risk and proposed status here. Lane A consolidates these into docs/pre-pilot-checklist.md after review.
 
+## Rehearsal small fixes A-C, the order and price-list pages: mutation pass (2026-10-06)
+
+Same method as the sections below (SQL: a function re-created and restored with the baseline checked first; Python and TypeScript: the file edited, the unit tests run, the file restored; a "kill" is a FAILING test, a broken build is reported apart).
+
+**138 mutants: first pass 120 killed, 18 survived; 17 closed with new tests and re-run killed, 1 equivalent => 137 killed + 1 equivalent.**
+* SQL, A1 (`add_requirement_field`: an exact retry replays on a confirmed requirement): 14 mutants, first pass 6 killed, 8 survived; 7 closed, 1 equivalent.
+* Python, A2 (the shared character rule), the price-list import (service, routes, adapter, repository) and the order guidance: 59 mutants, first pass 53 killed, 6 survived; 6 closed.
+* TypeScript, the order page's role and form rules, the second-factor notices, the money and date rules, the strict parsing, the price-list page's save rules: 65 mutants, first pass 61 killed, 4 survived; 4 closed.
+
+| Survivor | What it was | Disposition |
+| --- | --- | --- |
+| A103 a field an agent proposed and a person confirmed replays as that person's own | no test confirmed an agent's field and then retried it | closed: `test_a_field_an_agent_proposed_and_a_person_confirmed_is_not_the_persons_own_retry`; killed |
+| A105, A106 the quote's start or end is not compared on a confirmed retry | the API finds the span itself, so a different span reaches the function only directly | closed: a direct call with the same words at a start moved over spaces, then at an end moved over spaces; killed |
+| A107, A108, A109, A114 the text, the basis, the number or the line is not compared | the first test changed only the code value | closed: one retry per part of the field (another value, number, basis, text, quote, line, slot, key) is refused; killed |
+| A104 the quote text is not compared on a confirmed retry | EQUIVALENT: the span (start, end) is validated against the quote text, so equal spans mean equal text | documented |
+| T06 a lone surrogate is accepted by the character rule | the CSV path rejects a surrogate earlier (not UTF-8), so only the rule itself reaches it | closed: `tests/test_text_rules.py` tests every refused category directly; killed |
+| S09 issues are not sorted by row | the example happened to be in order | closed: a file whose sku order differs from its row order; killed |
+| P06 an ok result that also lists errors is accepted | the hash check caught the test's fake first | closed: the same result with a correct hash; killed |
+| Q05 the catalog is asked in chunks of a thousand | the test read the chunk size from the module under test | closed: pinned as 100 with 201 skus; killed |
+| G05, G06 a failing lifecycle gives partial guidance; a fixed clock | no test made the lifecycle fail; the example order was valid on both clocks | closed: a failing lifecycle gives none; a quote that expired on 3 October is expired now; killed |
+| W08 a cancellation needs no second factor on the order page | the notice was tested for payments only | closed: cancel, refund and payment for the owner without a second factor; killed |
+| W10 the amount cap is one paisa higher | no boundary test | closed: Rs 1,00,00,000 is the largest amount, one paisa more is not; killed |
+| W35 a cancellation is a primary button | styling untested | closed: cancel and refund are the quiet buttons; killed |
+| V24 the check button is not disabled while it runs | no pending state test | closed: a controlled slow action; killed |
+
+**The A2 grep (`Cf` and zero-width characters in the repository's text cleaning), what it found:**
+| Where | What it does with U+200C / U+200D | Verdict |
+| --- | --- | --- |
+| `app/evidence/models.py`, `20261006100000_t004_text_hygiene.sql`, `apps/web/lib/api/evidence.ts` | accepted (ZWNJ, ZWJ, LRM and RLM stay legal) | fine |
+| `app/agents/schemas.py` (`_clean`) | accepted (joiners and direction marks allowed) | fine |
+| `app/webfetch/sanitize.py` | kept (ZWNJ, ZWJ, LRM, RLM) | fine |
+| `app/leads/keys.py` and `20261007090000_t005_match_keys.sql` | removed from MATCH KEYS on purpose (a duplicate check ignores them) | fine |
+| `app/webfetch/urls.py` | refused in a URL (a host name is not Indic text) | not touched |
+| `app/leads/csv_rows.py` | REFUSED every `Cf` character, including ZWNJ and ZWJ | **fixed (A2)**: one shared rule, `app/text_rules.py`, also used by the price-list import |
+| `app/requirements/capture_text.py` | STRIPS them from a pasted enquiry by default (`KEEP_INDIC_JOINERS = False`; the code says an owner decision is pending) | **not changed**: a stripped joiner can change how a word renders but never rejects the enquiry; an owner decision, now in the checklist |
+| `packages/pure/quote_text/__init__.py` (`_string`) | REFUSES any `Cf`, so a product NAME with a joiner makes the quote text fail (`quote_text_refused`; the approval stands) | **not changed**: a pinned lane C package (version, golden vector); the checklist row asks for a lane C change |
+| `tests/integration/research_eval.py` | test helper that allows them | fine |
+
+Evidence: `make check` exit 0 (vitest 1,178, pytest 3,616, pgTAP 8,709 in 61 files, integration 923, evals 45 + 9 + 29 + 9 passed, the one opt-in live case skipped). One pgTAP assertion (58 E6) had assumed the old zero credit limit of the seed and was re-worded; the first full run failed on it and the second passed. `make rehearse-thin-slice` on a fresh database: 343 of 343 checks, the second pass changed no row.
+
 ## Rehearsal steps 0-3: mutation pass (2026-10-06)
 
 Same method as below (a SQL function re-created and restored with the baseline checked first; Python mutants applied to the file, unit tests run, file restored; a "kill" is a FAILING test, a broken import is reported apart).

@@ -43,6 +43,19 @@ describe("EventForm", () => {
     expect(Array.from(select.options).map((o) => o.value)).toEqual(["", ...LOST_REASONS]);
   });
 
+  it("a cancellation and a refund are the quiet buttons; the others are the main one", () => {
+    for (const type of ["cancel", "record_refund"] as EventType[]) {
+      const { unmount } = render(<EventForm type={type} action={ok()} ids={ids} secondFactorMissing={false} />);
+      expect(screen.getByRole("button")).toHaveClass("secondary");
+      unmount();
+    }
+    for (const type of ["send_quote", "record_payment", "customer_decline", "dispatch"] as EventType[]) {
+      const { unmount } = render(<EventForm type={type} action={ok()} ids={ids} secondFactorMissing={false} />);
+      expect(screen.getByRole("button")).not.toHaveClass("secondary");
+      unmount();
+    }
+  });
+
   it("a dispatch says only the owner can go without the advance", () => {
     render(<EventForm type="dispatch" action={ok()} ids={ids} secondFactorMissing={false} />);
     expect(screen.getByText(/only the owner can dispatch/)).toBeInTheDocument();

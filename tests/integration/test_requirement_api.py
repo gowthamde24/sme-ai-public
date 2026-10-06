@@ -410,3 +410,178 @@ def test_what_capture_refuses_and_hides(api: tuple[TestClient, World]) -> None: 
     )
     indic = capture(client, t, "నమస్కారం 20 సారీలు క్‌ష కావాలి")
     assert indic.status_code == 201 and "‌" not in indic.json()["enquiry"]["body"]
+
+
+def _post_field(
+    client: TestClient, t: Tenant, eid: str, body: dict[str, Any], user: str = "sales"
+) -> Any:
+    return client.post(
+        f"/v1/tenants/{t.id}/enquiries/{eid}/requirement-fields",
+        json=body,
+        headers=bearer(t.users[user]),
+    )
+
+
+def test_an_exact_retry_on_a_confirmed_requirement_is_matched_on_every_part_of_the_field(
+    api: tuple[TestClient, World],
+) -> None:  # noqa: F811
+    """Small fix A1, mutation pass: the replay compares the slot (key AND line), the person, the value (code, number, basis, text) and the quote. Any difference is refused."""
+    client, w = api
+    t = w.a
+    eid = capture(client, t, "Need 5 paithani sarees for Pune. Banarasi too.").json()["enquiry"][
+        "id"
+    ]
+    fields: list[dict[str, Any]] = [
+        {"line": 1, "field": "saree_type", "value": "Paithani", "quote": "paithani"},
+        {"line": 1, "field": "quantity", "value": "5", "quote": "Need 5 paithani"},
+        {"line": 2, "field": "saree_type", "value": "Banarasi", "quote": "Banarasi"},
+        {"field": "delivery_city", "value": "Pune", "quote": "Pune"},
+    ]
+    for f in fields:
+        assert _post_field(client, t, eid, f).status_code == 200, f
+    rid = view(client, t, eid)["requirement"]["id"]
+    done = client.post(
+        f"/v1/tenants/{t.id}/requirements/{rid}/confirm", headers=bearer(t.users["sales"])
+    )
+    assert done.json()["status"] == "confirmed"
+    for f in fields:
+        again = _post_field(client, t, eid, f)
+        assert again.status_code == 200 and again.json()["replayed"] is True, f
+    refused: list[dict[str, Any]] = [
+        {
+            "line": 1,
+            "field": "saree_type",
+            "value": "Banarasi",
+            "quote": "paithani",
+        },  # another value
+        {
+            "line": 1,
+            "field": "quantity",
+            "value": "6",
+            "quote": "Need 5 paithani",
+        },  # another number
+        {
+            "line": 1,
+            "field": "quantity",
+            "value": "5 sets",
+            "quote": "Need 5 paithani",
+        },  # the same number, another basis
+        {"field": "delivery_city", "value": "Mumbai", "quote": "Pune"},  # another text
+        {
+            "line": 1,
+            "field": "saree_type",
+            "value": "Paithani",
+            "quote": "Need 5 paithani",
+        },  # another quote
+        {"line": 1, "field": "saree_type", "value": "Paithani"},  # no quote at all
+        {
+            "line": 2,
+            "field": "saree_type",
+            "value": "Paithani",
+            "quote": "paithani",
+        },  # another LINE: line 1 holds this value, line 2 holds another
+        {
+            "line": 3,
+            "field": "saree_type",
+            "value": "Paithani",
+            "quote": "paithani",
+        },  # a slot that does not exist
+        {"field": "budget", "value": "Rs 500 per piece"},  # another key
+    ]
+    for f in refused:
+        r = _post_field(client, t, eid, f)
+        assert r.status_code == 409 and r.json()["error"]["code"] == "requirement_confirmed", f
+    assert len(view(client, t, eid)["fields"]) == 4, "no retry added anything"
+
+
+def test_an_exact_retry_with_the_same_span_replays_and_another_span_of_the_same_words_does_not(
+    api: tuple[TestClient, World],
+) -> None:  # noqa: F811
+    """The API finds the span itself, so a different span of the same words reaches the database only through its own function: the database must still refuse it."""
+    from quote_support import rpc
+
+    client, w = api
+    t = w.a
+    body = "Hello.   Need 5 paithani   sarees. Paithani again, to Pune."
+    eid = capture(client, t, body).json()["enquiry"]["id"]
+    token = t.users["sales"].token
+
+    def add(key: str, line: int | None, start: int, end: int, **value: Any) -> Any:
+        return rpc(
+            w,
+            token,
+            "add_requirement_field",
+            p_enquiry_id=eid,
+            p_line=line,
+            p_key=key,
+            p_quote=body[start:end],
+            p_start=start,
+            p_end=end,
+            **value,
+        )
+
+    first = body.index("paithani")
+    second = body.index("Paithani again")
+    r1 = add("saree_type", 1, first, first + 8, p_value_code="paithani")
+    assert r1.status_code == 200 and r1.json()["replayed"] is False, r1.text
+    start = body.index("Need")
+    r2 = add("quantity", 1, start, start + 15, p_value_int=5, p_basis="piece")
+    assert r2.status_code == 200, r2.text
+    rid = r1.json()["requirement_id"]
+    assert (
+        client.post(
+            f"/v1/tenants/{t.id}/requirements/{rid}/confirm", headers=bearer(t.users["sales"])
+        ).json()["status"]
+        == "confirmed"
+    )
+    same = add("saree_type", 1, first, first + 8, p_value_code="paithani")
+    assert same.status_code == 200 and same.json()["replayed"] is True
+    other = add(
+        "saree_type", 1, second, second + 8, p_value_code="paithani"
+    )  # "Paithani": the words (case aside) of the same field, at the other place
+    assert other.status_code != 200, "another span is not an exact retry"
+    # the same words with only the START moved (over spaces the quote ignores), or only the END: the quote's text is the same but it is not the same field
+    exact = add("quantity", 1, start, start + 15, p_value_int=5, p_basis="piece")
+    assert exact.status_code == 200 and exact.json()["replayed"] is True
+    assert (
+        add("quantity", 1, start - 3, start + 15, p_value_int=5, p_basis="piece").status_code != 200
+    )
+    assert add("quantity", 1, start, start + 18, p_value_int=5, p_basis="piece").status_code != 200
+    earlier = add("saree_type", 1, first, first + 8, p_value_code="paithani")
+    assert earlier.json()["replayed"] is True
+
+
+def test_a_field_an_agent_proposed_and_a_person_confirmed_is_not_the_persons_own_retry(
+    api: tuple[TestClient, World],
+) -> None:  # noqa: F811
+    """A person who CONFIRMED an agent's field did not type it: writing the same content again after the requirement is confirmed is refused, not replayed."""
+    client, w = api
+    t = w.a
+    eid = capture(client, t).json()["enquiry"]["id"]
+    run_agent(client, t, eid)
+    fields = by_key(view(client, t, eid))
+    saree, qty = fields[(1, "saree_type")], fields[(1, "quantity")]
+    for f in (saree, qty):
+        assert decide(client, t, f["id"], {"decision": "confirm"}).status_code == 200
+    rid = view(client, t, eid)["requirement"]["id"]
+    assert (
+        client.post(
+            f"/v1/tenants/{t.id}/requirements/{rid}/confirm", headers=bearer(t.users["sales"])
+        ).json()["status"]
+        == "confirmed"
+    )
+    assert saree["created_via"] == "agent"
+    same = _post_field(
+        client,
+        t,
+        eid,
+        {
+            "line": 1,
+            "field": "saree_type",
+            "value": saree["value"]["code"],
+            "quote": saree["quote"],
+        },
+    )
+    assert same.status_code == 409 and same.json()["error"]["code"] == "requirement_confirmed", (
+        same.text
+    )

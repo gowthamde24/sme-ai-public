@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from typing import Any
 
 import pytest
@@ -690,3 +690,34 @@ def test_the_order_page_carries_guidance_for_the_callers_role(w: World) -> None:
     )
     w.o.snapshots[ORDER] = state_of("closed_paid")
     assert w.call("GET", f"/orders/{ORDER}", None, "a_owner").json()["allowed_next_events"] == []
+
+
+def test_a_lifecycle_that_cannot_run_gives_no_guidance_at_all_not_a_partial_list(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from app.orders import service as order_service
+    from app.orders.lifecycle_port import LifecycleError
+
+    calls = {"n": 0}
+
+    def failing(request: dict[str, Any]) -> dict[str, Any]:
+        calls["n"] += 1
+        if calls["n"] == 3:
+            raise LifecycleError
+        return lifecycle_port.run_transition(request)
+
+    monkeypatch.setattr(lifecycle_port, "run_transition", failing)
+    assert order_service.guidance(state_of("quote_approved"), Role.OWNER, EARLY) == []
+
+
+def test_the_default_clock_is_the_real_one(w: World) -> None:
+    """A quote that expired on 3 October is expired now whatever the day: the guidance without an explicit clock reads the real time."""
+    import dataclasses
+
+    w.o.snapshots[ORDER] = dataclasses.replace(
+        state_of("quote_approved"), valid_until=date(2026, 10, 3)
+    )
+    assert w.call("GET", f"/orders/{ORDER}", None, "a_owner").json()["allowed_next_events"] == [
+        "expire",
+        "cancel",
+    ]

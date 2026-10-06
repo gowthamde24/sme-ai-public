@@ -1,5 +1,18 @@
 # Handoff: resume here
 
+**STOP POINT (2026-10-06, second rehearsal batch): small fixes A1-A3, the order web page (step 4), the price-list CSV import (step 5) and the members-and-invitations PLAN are built or written and committed locally; nothing is pushed.** The owner reads `rehearsal-report.md` (`make db-reset && make rehearse-thin-slice`), tries `docs/rehearsal-click-checklist.md` by hand (`make db-reset && make rehearse-prepare-click`, then `make dev-api`, `make dev-web`), and decides the members plan. Do NOT build members/invitations, T010 part 2 or T011a before the owner approves.
+
+* New migrations: `20261022090000_small_fixes.sql` (A1 `add_requirement_field` replay after confirm; A3 seeded repeat credit limit Rs 5,00,000) and `20261023090000_seed_without_price_list.sql` (the seed can skip the price list: `make seed-quote-data TENANT=<slug>` still seeds one; the driver uses `--without-price-list`). Copies are pinned in `tests/test_migration_copies.py`.
+* New code: `app/text_rules.py` (one Unicode rule, ZWJ/ZWNJ allowed), `app/orders/service.py` guidance (`allowed_next_events` on the order detail, asked of the lifecycle itself per role), `app/pricelists/` (csv_port, models, repository, service, routes), web `lib/api/orders.ts`, `lib/api/pricelists.ts`, `app/app/tenants/[tenantId]/orders/`, `.../price-list/`, Start order on the quote panel; the driver loads the price list from `tests/rehearsal/data/price_list.csv`.
+* Last full `make check` (2026-10-06): exit 0; vitest 1,178, pytest 3,616, pgTAP 8,709, integration 923, evals 45 + 9 + 29 + 9 passed (one opt-in live case skipped). Mutation pass (138 mutants, 137 killed, 1 equivalent): `docs/checklist-notes/A.md`.
+* Rehearsal (fresh database): 343/343 checks; 17 of 20 leads imported; price list 5 products from the CSV and 2 hostile files refused row by row; 8 quotes equal the hand-worked figures (Q6 flagged only as a repeat claim, Q7 deliberately over its credit limit); 7 orders (3 closed_paid, 1 declined, 2 cancelled, 1 in preparation); the second pass changed no row.
+* Open for the owner: the A2 grep findings (the pinned quote-text renderer, lane C, still refuses ZWJ/ZWNJ in a product name; `capture_text` strips them by default), the real credit limit, the members plan decisions, and the order page and price-list page have never been driven in a real browser.
+* Traps: the pgTAP files that used the seed assumed a zero credit limit (58 E6 re-worded); a Python mutation pass must not run while a SQL one does; `ruff format` rewrites quoting in long lines, so mutants must match the formatted text; keep `tests/rehearsal/data/expected.json` hand-worked.
+
+---
+
+(Earlier hand-off, still true.)
+
 **STOP POINT (2026-10-06): rehearsal steps 0-3 are built and committed locally; nothing is pushed. The owner reads `rehearsal-report.md` (`make db-reset && make rehearse-thin-slice`) before anything else is built.** Do NOT start step 4 (order web page), step 5 (price-list CSV import), T010 part 2 or T011a before the owner approves.
 
 * Built: step 0 (erased marker, `20261021090000_erased_marker.sql`; stops-followups "newer" by approval time then quote number), step 1 (order API: `app/orders/{routes,repository,service,errors,models}.py`, the error map in `app/main.py`), step 2 (`tests/rehearsal/data` all invented, hand-worked `expected.json` / `expected.md`; `app/leads/csv_rows.py`), step 3 (`tests/rehearsal/{drive,harness,report}.py`, `make rehearse-thin-slice`; state of invented people in `.rehearsal/state.json`, git-ignored, healed after a db-reset).

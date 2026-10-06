@@ -209,6 +209,15 @@ def test_a_result_that_is_not_the_contract_is_refused(
         parse("x")
 
 
+def test_an_ok_result_that_also_lists_errors_is_refused_even_with_a_correct_hash(
+    fresh: pytest.MonkeyPatch,
+) -> None:
+    result = {**_ok([ITEM]), "errors": [{"row": 1, "column": None, "code": "ROW_WIDTH"}]}
+    fresh.setattr(csv_port, "_import", lambda: _Fake(result=result))
+    with pytest.raises(PriceCsvError):
+        parse("x")
+
+
 def test_a_hash_that_is_not_the_documented_one_is_refused(fresh: pytest.MonkeyPatch) -> None:
     fresh.setattr(csv_port, "_import", lambda: _Fake(result=_ok([ITEM], digest="f" * 64)))
     with pytest.raises(PriceCsvError):

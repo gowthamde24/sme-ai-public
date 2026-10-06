@@ -187,8 +187,8 @@ select is(pg_temp.j(pg_temp.create_quote('a_sales', (select q2 from qids), 'en3'
 select is((select engine_flags::text || '|' || review_flags::text from public.quotes where id = (select q2 from qids)), '{BELOW_MINIMUM_ORDER_QUANTITY}|{TERMS_REQUESTED_BY_CUSTOMER}', 'E2 the database derived BOTH: the engine flag and the customer''s stated terms');
 select is(pg_temp.tamper('en3', 'new', '$1', $$jsonb_set($1, '{flags,reasons}', '[]'::jsonb)$$), 'SM216', 'E3 a result that hides the minimum-quantity flag: refused');
 select is(pg_temp.tamper('en3', 'new', '$1', $$jsonb_set($1, '{flags,needs_owner_approval}', 'false'::jsonb)$$), 'SM216', 'E4 a result that clears the approval flag: refused');
-select is(pg_temp.j(pg_temp.create_quote('a_sales', (select q3 from qids), 'en3', 'repeat'), 'needs_owner_approval'), 'true', 'E5 a repeat customer with no credit limit (the seeded policy): flagged too');
-select is((select engine_flags::text from public.quotes where id = (select q3 from qids)), '{BELOW_MINIMUM_ORDER_QUANTITY,CREDIT_LIMIT_EXCEEDED}', 'E6 both engine flags, in the engine''s order');
+select is(pg_temp.j(pg_temp.create_quote('a_sales', (select q3 from qids), 'en3', 'repeat'), 'needs_owner_approval'), 'true', 'E5 a repeat customer: needs the Owner (the repeat claim is never verified)');
+select is((select engine_flags::text from public.quotes where id = (select q3 from qids)), '{BELOW_MINIMUM_ORDER_QUANTITY}', 'E6 the seeded credit limit (Rs 5,00,000) is not exceeded by a small repeat quote: only the minimum-quantity flag (the credit flag is covered by the rehearsal''s Q7)');
 select is((select status::text from public.quotes where id = (select q2 from qids)), 'superseded', 'E7 the newer draft of the same requirement superseded the first (one draft at a time)');
 select is((select count(*) from public.quotes where requirement_id = pg_temp.req('en3') and status = 'draft'), 1::bigint, 'E8 exactly one draft of that requirement');
 

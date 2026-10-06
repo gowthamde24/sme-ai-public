@@ -128,6 +128,19 @@ describe("the order page", () => {
     expect(screen.queryByRole("button", { name: "Record this payment" })).toBeNull();
   });
 
+  it.each([
+    ["cancel", "Cancel this order"],
+    ["record_refund", "A refund was given"],
+    ["record_payment", "A payment was received"],
+  ])("without the second factor the owner's %s form is only a notice", async (type, title) => {
+    requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal1" });
+    orders.fetchOrder.mockResolvedValue(parseOrderDetail({ ...DETAIL_JSON, state: "accepted", allowed_next_events: [type], paid_paise: 500 }));
+    render(await OrderPage(orderProps()));
+    expect(screen.getByRole("heading", { name: title })).toBeInTheDocument();
+    expect(screen.getByText(/This needs your authenticator app\./)).toBeInTheDocument();
+    expect(screen.queryByRole("button")).toBeNull();
+  });
+
   it("a closed order offers nothing and says so", async () => {
     orders.fetchOrder.mockResolvedValue(parseOrderDetail({ ...DETAIL_JSON, state: "closed_paid", outcome: "won", allowed_next_events: [] }));
     render(await OrderPage(orderProps()));

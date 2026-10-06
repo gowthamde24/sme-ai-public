@@ -56,6 +56,13 @@ describe("money", () => {
     [" 12 ", 1200],
   ])("what a person types, %s, is %i paise", (text, paise) => expect(parseRupees(text)).toBe(paise));
 
+  it("the cap is exact: ₹1,00,00,000 is the largest amount, one paisa more is not an amount", () => {
+    expect(parseRupees("1,00,00,000")).toBe(1_000_000_000);
+    expect(parseRupees("10000000.00")).toBe(1_000_000_000);
+    expect(parseRupees("1,00,00,000.01")).toBeNull();
+    expect(parseRupees("0.01")).toBe(1);
+  });
+
   it.each(["", "abc", "0", "0.00", "-5", "1.234", "1e3", "10,00,00,000.01", "12345678901", "5 rupees", "1..2"])("%j is not an amount", (text) => expect(parseRupees(text)).toBeNull());
 });
 

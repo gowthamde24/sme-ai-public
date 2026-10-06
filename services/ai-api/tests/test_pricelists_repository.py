@@ -93,8 +93,12 @@ def test_a_long_list_is_asked_in_chunks() -> None:
         seen.append(request)
         return httpx.Response(200, json=[])
 
-    repo(record).products_by_sku("t", TENANT, [f"S{i}" for i in range(CHUNK * 2 + 1)])
-    assert len(seen) == 3 and all(len(dict(r.url.params)["sku"].split(",")) <= CHUNK for r in seen)
+    repo(record).products_by_sku("t", TENANT, [f"S{i}" for i in range(201)])
+    assert (
+        CHUNK == 100
+        and len(seen) == 3
+        and all(len(dict(r.url.params)["sku"].split(",")) <= 100 for r in seen)
+    )
 
 
 @pytest.mark.parametrize(

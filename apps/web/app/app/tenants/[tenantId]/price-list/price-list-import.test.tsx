@@ -61,6 +61,17 @@ describe("PriceListImport", () => {
     expect(screen.queryByRole("table")).toBeNull();
   });
 
+  it("while a check is running the button says so and cannot be pressed again", async () => {
+    let finish: (v: { ok: true; preview: ReturnType<typeof parsePreview> }) => void = () => {};
+    const slow = vi.fn(() => new Promise<{ ok: true; preview: ReturnType<typeof parsePreview> }>((resolve) => (finish = resolve)));
+    render(<PriceListImport {...props({ preview: slow })} />);
+    type(GOOD_TEXT);
+    await check();
+    expect(screen.getByRole("button", { name: "Checking..." })).toBeDisabled();
+    await act(async () => finish({ ok: true, preview: parsePreview(PREVIEW_JSON) }));
+    expect(await screen.findByRole("button", { name: "Check the file" })).toBeEnabled();
+  });
+
   it("after a clean check the save button works for exactly that text and date, with the check's version id", async () => {
     const p = props();
     render(<PriceListImport {...p} />);

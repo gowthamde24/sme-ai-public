@@ -295,3 +295,13 @@ def test_the_path_in_a_log_line_is_words_not_data() -> None:
         == "/v1/tenants/<redacted>/price-lists/import"
     )
     assert json.dumps(redact_path("/v1/tenants/x/price-lists/SECRET")).count("SECRET") == 0
+
+
+def test_issues_come_in_row_order_not_in_sku_order(w: World) -> None:
+    csv = "sku,name,unit_price,moq,tax_bps\nZZZ-LAST,Unknown at row one,100,1,500\nAAA-FIRST,Unknown at row two,100,1,500\nSYN-KJ-RED-01,Zero\u200bwidth at row three,100,1,500\n"
+    issues = preview(w, csv).json()["issues"]
+    assert [(i["row"], i["code"]) for i in issues] == [
+        (1, "UNKNOWN_SKU"),
+        (2, "UNKNOWN_SKU"),
+        (3, "HIDDEN_CHARACTERS"),
+    ]
