@@ -6,14 +6,16 @@ builds, and the database must ACCEPT the engine's own canonical request and resu
 the picks). Cases are seeded (reproducible) and cover every rounding mode, quantity breaks, free-shipping thresholds, taxed freight, both customer kinds, credit
 limits, the minimum order quantity, and half-paise ties. A failure names the case. All data is synthetic."""
 
-# ruff: noqa: E501, S311
+# ruff: noqa: E501, S311, S608
 
 from __future__ import annotations
 
+import json
 import os
 import random
 from typing import Any
 
+import operator_sql
 import pytest
 from crm_support import World
 from evidence_support import uid
@@ -53,8 +55,14 @@ def _assert_accepted(qw: QuoteWorld, requirement: str, kind: str, label: str) ->
     ), label
     codes = sorted({r["code"] for r in result["flags"]["reasons"]})
     assert row["engine_flags"] == "{" + ",".join(codes) + "}", label
+    assert ("REPEAT_CUSTOMER_CLAIMED" in row["review_flags"]) == (kind == "repeat"), (
+        label
+    )  # derived by the database from the person's claim
     assert row["needs_owner_approval"] == bool(
-        codes or "TERMS" in row["review_flags"] or "MIXED" in row["review_flags"]
+        codes
+        or "TERMS" in row["review_flags"]
+        or "MIXED" in row["review_flags"]
+        or kind == "repeat"
     ), label
     return {"quote": created.json()["quote_id"], "row": row, "result": result}
 
@@ -214,3 +222,38 @@ def test_a_balance_equal_to_the_credit_limit_is_not_over_it(
     qw.policy_version(repeat_advance_bps=0, repeat_credit_limit_paise=balance + delta)
     got = _assert_accepted(qw, requirement, "repeat", f"credit limit {balance + delta}")
     assert ("CREDIT_LIMIT_EXCEEDED" in got["row"]["engine_flags"]) is flagged
+
+
+def test_skus_that_sort_differently_by_locale_and_by_code_point_go_through_the_real_engine(
+    qw: QuoteWorld,
+) -> None:
+    """The engine and the API sort by CODE POINT (Python's default); the database must too (COLLATE "C"). 'A-1', 'A1', 'a-2' and 'B 1' are ordered differently by an
+    English locale (punctuation ignored, case folded). The price list is shuffled on purpose; the request the database builds must be in code point order, the real engine
+    must accept it, create_quote_draft must accept the engine's canonical text, and the approval's rebuild (from the stored text and the picks) must reproduce it."""
+    skus = ["a-2", "B 1", "A1", "A-1"]
+    indexes = [qw.add_product(f"{sku}") for sku in skus]
+    qw.price_version([qw.item(i, 100000 + 1000 * n, 1, 500) for n, i in enumerate(indexes)])
+    qw.policy_version()
+    _, requirement = qw.requirement(
+        [("kanjivaram", 3), ("banarasi", 4), ("paithani", 5), ("chanderi", 6)]
+    )
+    for line, (i, q) in enumerate(zip(indexes, (3, 4, 5, 6), strict=True), start=1):
+        assert qw.pick(requirement, line, i, q).status_code == 200
+    request = qw.build(requirement)["request"]
+    assert (
+        [p["sku"] for p in request["price_list"]] == sorted(skus) == ["A-1", "A1", "B 1", "a-2"]
+    )  # Python's sort is code point order
+    assert [
+        x["sku"] for x in request["order_lines"]
+    ] == skus  # the order lines keep the requirement's line order
+    got = _assert_accepted(qw, requirement, "new", "collation")
+    assert qw.approve(got["quote"]).status_code == 200
+    stored = json.loads(
+        operator_sql.sql(f"select request_text from public.quotes where id = '{got['quote']}'")
+    )
+    assert [p["sku"] for p in stored["price_list"]] == [
+        "A-1",
+        "A1",
+        "B 1",
+        "a-2",
+    ]  # the stored request is in code point order too

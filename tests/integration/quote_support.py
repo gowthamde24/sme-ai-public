@@ -67,6 +67,26 @@ class QuoteWorld:
             assert r.status_code == 201, r.text
             self.products.append(pid)
 
+    def add_product(self, sku: str, name: str | None = None) -> int:
+        """A product with exactly this sku (the collation test needs skus that sort differently by locale and by code point). Returns its index."""
+        pid = uid()
+        r = pg(
+            self.w.stack,
+            self.owner,
+            "POST",
+            "/products",
+            json={
+                "id": pid,
+                "tenant_id": self.t.id,
+                "sku": sku,
+                "name": name or f"Synthetic {sku}",
+                "category": "silk",
+            },
+        )
+        assert r.status_code == 201, r.text
+        self.products.append(pid)
+        return len(self.products) - 1
+
     # ------------------------------------------------------------------------------ reference data (aal2 Owner)
     def price_version(
         self, items: list[dict[str, Any]], version: str | None = None
@@ -133,10 +153,11 @@ class QuoteWorld:
         city: str | None = "Hyderabad",
         payment_terms: tuple[str, int, str] | None = None,
         confirm: bool = True,
+        lead_id: str | None = None,
     ) -> tuple[str, str]:
         """A captured enquiry and a requirement whose lines a person added (saree type, quantity in pieces) and confirmed. Returns (enquiry id, requirement id)."""
         eid = uid()
-        r = pg(self.w.stack, self.sales, "POST", "/enquiries", json={"id": eid, "tenant_id": self.t.id, "lead_id": self.t.rows["leads"]["id"], "channel": "email",
+        r = pg(self.w.stack, self.sales, "POST", "/enquiries", json={"id": eid, "tenant_id": self.t.id, "lead_id": lead_id or self.t.rows["leads"]["id"], "channel": "email",
                "received_at": "2026-10-05T10:00:00+00:00", "body": f"Synthetic enquiry {eid}"}, representation=False)  # fmt: skip
         assert r.status_code == 201, r.text
         requirement = ""
@@ -254,6 +275,17 @@ class QuoteWorld:
             "approve_quote",
             p_quote_id=quote,
             p_recomputed_hash=h,
+        )
+
+    def withdraw(
+        self, quote: str, code: str = "price_changed", token: str | None = None
+    ) -> httpx.Response:
+        return rpc(
+            self.w,
+            token or self.owner.token,
+            "withdraw_approved_quote",
+            p_quote_id=quote,
+            p_code=code,
         )
 
     def quote_row(self, quote: str) -> dict[str, Any]:

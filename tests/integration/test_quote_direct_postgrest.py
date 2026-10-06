@@ -307,3 +307,52 @@ def test_rejection_and_withdrawal_rules(qw: QuoteWorld) -> None:
         code_of(rpc(qw.w, qw.admin.token, "reject_quote", p_quote_id=mine, p_code="other"))
         == "SM214"
     )
+
+
+def test_a_repeat_customer_claim_needs_the_owner(qw: QuoteWorld) -> None:
+    requirement = ready(qw, [("kanjivaram", 12, 0)])
+    created = qw.create(requirement, kind="repeat")
+    assert created.status_code == 200 and created.json()["needs_owner_approval"] is True
+    quote = created.json()["quote_id"]
+    assert "REPEAT_CUSTOMER_CLAIMED" in qw.quote_row(quote)["review_flags"]
+    assert code_of(qw.approve(quote, token=qw.admin.token)) == "SM218"
+    assert qw.approve(quote, token=qw.owner.token).status_code == 200
+
+
+def test_withdrawal_rules(qw: QuoteWorld) -> None:
+    requirement = ready(qw, [("kanjivaram", 12, 0)])
+    quote = qw.create(requirement).json()["quote_id"]
+    weak_owner, weak_sales = (aal1_token(qw.w.stack, u) for u in (qw.owner, qw.sales))
+    assert code_of(qw.withdraw(quote)) == "SM214"  # a draft cannot be withdrawn
+    assert qw.approve(quote).status_code == 200
+    stranger = qw.w.b.users["owner"].token
+    assert [
+        code_of(qw.withdraw(quote, token=t)) for t in (qw.sales.token, qw.viewer.token, stranger)
+    ] == ["42501"] * 3
+    assert (
+        qw.withdraw(quote, token=stranger).json() == qw.withdraw(uid(), token=stranger).json()
+    )  # a foreign quote and an unknown one: the identical refusal
+    assert (
+        code_of(qw.withdraw(quote, token=weak_owner)) == "SM306"
+        and code_of(qw.withdraw(quote, token=weak_sales)) == "42501"
+    )
+    assert code_of(qw.withdraw(quote, code="nonsense")) == "22023"
+    assert (
+        code_of(rpc(qw.w, qw.sales.token, "discard_requirement", p_requirement_id=requirement))
+        == "SM212"
+    )  # approved: still blocked
+    done = qw.withdraw(quote, "customer_cancelled", token=qw.admin.token)
+    assert (
+        done.status_code == 200
+        and done.json()["replayed"] is False
+        and done.json()["status"] == "superseded"
+    )
+    assert qw.withdraw(quote, "customer_cancelled", token=qw.admin.token).json()["replayed"] is True
+    assert (
+        code_of(qw.withdraw(quote, "customer_cancelled", token=qw.owner.token)) == "SM214"
+    )  # another person's identical request is not a replay
+    assert code_of(qw.approve(quote)) == "SM214"
+    freed = rpc(qw.w, qw.sales.token, "discard_requirement", p_requirement_id=requirement)
+    assert freed.status_code == 200 and freed.json()["status"] == "discarded"
+    row = qw.quote_row(quote)
+    assert row["status"] == "superseded"

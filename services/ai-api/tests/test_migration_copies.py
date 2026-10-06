@@ -74,3 +74,59 @@ def test_the_t008_copy_is_the_last_definition_and_only_adds_lines(name: str) -> 
     ]
     unexpected = [line for line in removed if line not in CHANGED[name]]
     assert not unexpected, f"{name}: the T008 copy drops lines of {earlier[-1][0]}: {unexpected}"
+
+
+# ---------------------------------------------------------------------------------------------- T009 part 3
+# Migration 20261017090000 replaces five functions of parts 1 and 2. Same rule: it must be the LAST definition, and compared with the latest earlier one it may only
+# drop the lines named here (each is replaced by a line that adds COLLATE "C", a derived flag or the withdrawal guard).
+PART3 = "20261017090000_t009_withdrawal_collation_repeat_flag.sql"
+PART3_CHANGED = {
+    "app.quote_build": {
+        "select jsonb_agg(x order by x ->> 'sku') into v_pl from jsonb_array_elements(v_pl) x;",
+        "'flags', (select coalesce(jsonb_agg(f order by f), '[]'::jsonb) from unnest(v_flags) f),",
+        "'review', (select coalesce(jsonb_agg(f order by f), '[]'::jsonb) from unnest(v_review) f),",
+    },
+    "app.quote_price_version_normalised": {
+        "select coalesce(jsonb_agg(item order by item ->> 'sku'), '[]'::jsonb) from ("
+    },
+    "app.quote_create_price_version": {
+        "select jsonb_agg(x order by x ->> 'sku') into v_norm from jsonb_array_elements(v_norm) x;"
+    },
+    "app.quote_result_flags": {
+        "as $$ select coalesce(array_agg(distinct x ->> 'code' order by x ->> 'code'), '{}') from jsonb_array_elements(p_result -> 'flags' -> 'reasons') x $$;"
+    },
+    "app.quote_guard_update": {
+        "if (to_jsonb(new) - 'status' - 'approved_by' - 'approved_at' - 'approved_hash' - 'rejected_by' - 'rejected_at' - 'reject_code')",
+        "is distinct from (to_jsonb(old) - 'status' - 'approved_by' - 'approved_at' - 'approved_hash' - 'rejected_by' - 'rejected_at' - 'reject_code') then",
+    },
+}
+
+
+def block_definitions(name: str) -> list[tuple[str, str]]:
+    """Every definition of `name`, from its `create` line to the first `$$;` after its `as $$` (right for one-line SQL functions too)."""
+    found: list[tuple[str, str]] = []
+    for path in MIGRATIONS:
+        text = path.read_text()
+        for m in re.finditer(rf"create (?:or replace )?function {re.escape(name)}\(", text):
+            start = text.index("as $$", m.start()) + 5
+            found.append((path.name, text[m.start() : text.index("$$;", start) + 3]))
+    return found
+
+
+@pytest.mark.parametrize("name", sorted(PART3_CHANGED))
+def test_the_part3_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
+    defs = block_definitions(name)
+    assert defs[-1][0] == PART3, (
+        f"{name} is redefined after part 3 ({defs[-1][0]}) or part 3 does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < PART3]
+    assert earlier
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    unexpected = [line for line in removed if line not in PART3_CHANGED[name]]
+    assert not unexpected, f"{name}: part 3 drops lines of {earlier[-1][0]}: {unexpected}"

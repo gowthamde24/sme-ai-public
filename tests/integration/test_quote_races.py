@@ -70,22 +70,25 @@ def status_of(quote: str) -> str:
 
 
 # ------------------------------------------------------------------------------ lock probes
-@pytest.mark.parametrize("writer", ["pick", "create", "approve", "reject", "discard"])
+@pytest.mark.parametrize("writer", ["pick", "create", "approve", "reject", "discard", "withdraw"])
 def test_every_quote_writer_locks_the_enquiry_then_the_requirement(
     qw: QuoteWorld, writer: str
 ) -> None:
     eid, requirement = ready(qw)
     quote = ""
-    if writer in ("approve", "reject"):
+    if writer in ("approve", "reject", "withdraw"):
         quote = qw.create(requirement).json()["quote_id"]
+    if writer == "withdraw":
+        assert qw.approve(quote).status_code == 200
     statements = {
         "pick": f"select public.pick_requirement_line_product('{requirement}', 1::smallint, '{qw.products[0]}', 12, 'piece')",
         "create": create_sql(qw, requirement, uid()),
         "approve": f"select public.approve_quote('{quote}', '{hash_of(quote) if quote else ''}')",
         "reject": f"select public.reject_quote('{quote}', 'wrong_prices')",
         "discard": f"select public.discard_requirement('{requirement}')",
+        "withdraw": f"select public.withdraw_approved_quote('{quote}', 'price_changed')",
     }
-    user = qw.owner if writer in ("approve", "reject", "discard") else qw.sales
+    user = qw.owner if writer in ("approve", "reject", "discard", "withdraw") else qw.sales
     held = Held(user, statements[writer])
     held.holding()
     try:
@@ -143,6 +146,85 @@ def test_a_discard_that_waits_for_an_approval_is_refused_by_the_approved_quote(
     held.finish()
     assert code_of(response) == "SM212" and waited > 1.5, (response.text, waited)
     assert status_of(quote) == "approved"
+
+
+def approved(qw: QuoteWorld) -> tuple[str, str]:
+    _, requirement = ready(qw)
+    quote = qw.create(requirement).json()["quote_id"]
+    assert qw.approve(quote).status_code == 200
+    return requirement, quote
+
+
+def test_a_discard_that_waits_for_a_withdrawal_succeeds_after_it(qw: QuoteWorld) -> None:
+    requirement, quote = approved(qw)
+    held = Held(qw.owner, f"select public.withdraw_approved_quote('{quote}', 'price_changed')")
+    held.holding()
+    response, waited = timed(
+        lambda: rpc(qw.w, qw.sales.token, "discard_requirement", p_requirement_id=requirement)
+    )
+    held.finish()
+    assert (
+        response.status_code == 200 and response.json()["status"] == "discarded" and waited > 1.5
+    ), (
+        response.text,
+        waited,
+    )  # the withdrawal committed first: nothing depends on the requirement any more
+    assert status_of(quote) == "superseded"
+
+
+def test_approving_a_new_draft_while_the_old_approval_is_withdrawn_leaves_one_approved_quote(
+    qw: QuoteWorld,
+) -> None:
+    requirement, old = approved(qw)
+    new = qw.create(requirement).json()["quote_id"]
+    held = Held(qw.owner, f"select public.withdraw_approved_quote('{old}', 'customer_cancelled')")
+    held.holding()
+    response, waited = timed(lambda: qw.approve(new))
+    held.finish()
+    assert response.status_code == 200 and waited > 1.5, (response.text, waited)
+    assert status_of(old) == "superseded" and status_of(new) == "approved"
+    withdrawn = operator_sql.sql(
+        f"select withdrawn_by is not null from public.quotes where id = '{old}'"
+    ).strip()
+    assert (
+        withdrawn == "t"
+    )  # the old one was WITHDRAWN (the replacing approval found nothing left to supersede)
+
+
+def test_a_withdrawal_that_waits_for_a_replacing_approval_is_refused(qw: QuoteWorld) -> None:
+    requirement, old = approved(qw)
+    new = qw.create(requirement).json()["quote_id"]
+    held = Held(qw.owner, f"select public.approve_quote('{new}', '{hash_of(new)}')")
+    held.holding()
+    response, waited = timed(lambda: qw.withdraw(old))
+    held.finish()
+    assert code_of(response) == "SM214" and waited > 1.5, (
+        response.text,
+        waited,
+    )  # it was replaced (superseded without a withdrawal) while it waited
+    assert (
+        operator_sql.sql(
+            f"select withdrawn_at is null from public.quotes where id = '{old}'"
+        ).strip()
+        == "t"
+    )
+    assert status_of(new) == "approved"
+
+
+def test_two_withdrawals_at_once_withdraw_once(qw: QuoteWorld) -> None:
+    _, quote = approved(qw)
+    a, b = _both(
+        lambda: qw.withdraw(quote, "other", token=qw.owner.token),
+        lambda: qw.withdraw(quote, "other", token=qw.admin.token),
+    )
+    assert {code_of(a), code_of(b)} == {"", "SM214"}, (
+        a.text,
+        b.text,
+    )  # another person's identical request is not a replay
+    assert (
+        operator_sql.sql(f"select withdraw_code from public.quotes where id = '{quote}'").strip()
+        == "other"
+    )
 
 
 def test_a_pick_that_changes_while_a_quote_is_created_makes_that_quote_wrong_not_a_500(
