@@ -101,3 +101,15 @@ needs the quote row `FOR UPDATE` first, so the two are serialised on the quote r
 
 1. ADR 0021 (orders), this plan's as-built section, checklist rows. 2. The lifecycle adapter (golden vectors, fail closed, no new dependency) and the request builder with its unit tests. 3. Migration: policy versions, orders, events, the ledger view, `create_order_from_quote`, `record_order_event`, guard triggers, the two replaced functions (SM237) with copy tests, pgTAP.
 4. The equivalence property test and the race tests. 5. API and real-stack attacks. 6. Web (order page, event forms, the link from the quote). 7. Milestone: full `make check`, one mutation pass, handoff and checklist notes. **Stop for the owner's review after 3-4 (the database and its proofs) before the API and web.** No push.
+
+## 10. As built (commits 1-4: the database and its proofs) and readings taken
+
+* **ADR 0021** records the decisions below; the migration is `supabase/migrations/20261019090000_order_conversion.sql`; the adapter and builder are `services/ai-api/app/orders/` (the only door to `order_lifecycle` is `lifecycle_port.py`).
+* **Codes:** the plan's SM222 ("no order policy in force") would sit inside the follow-up range SM220-SM229, so it is **SM239**; **SM233** is new (the order's figures cannot satisfy the policy: zero value, an advance the policy requires but the quote has, a total above the engine's cap of INR 10,000,000).
+* **`as_of` and `valid_until`:** the quote's `valid_until` is a date; the engine's is that day at 23:59:59 IST as UTC. `as_of` is the API's now; the database bounds it to [now - 10 min, now + 2 min] (the plan said "today or yesterday", which would let a backdated event dodge a one-day-old expiry).
+* **Ledger ids are UUIDs** (plan: "the caller's ids"); no free text anywhere in the ledger.
+* **`owner_override`** is derived (Owner dispatching) and a request that disagrees is SM238. An Admin or Sales dispatch with the advance unpaid is the engine's ADVANCE_NOT_PAID (SM232); an Owner's is accepted and flagged ADVANCE_OVERRIDE, and then requires the second factor.
+* **An Admin recording a refund is refused SM234 before anything else** (after the role and the second factor); Sales is refused with the generic 42501.
+* **The cache equals the ledger by a guard trigger**, not only by a test: an order's state may change only to the new state of its latest event.
+* **Not built (as instructed):** the API routes, the web, the seed of an order policy, the follow-up consumers of `app.order_stops_followups`.
+
