@@ -51,6 +51,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # T009 integration: the quote path (long explanatory docstrings)
 "app/quotes/*" = ["E501"]
+"app/orders/*" = ["E501"]
 # T010: the suppression path (long explanatory docstrings)
 "app/suppression/*" = ["E501"]
 "tests/test_suppression_*.py" = ["E501", "S311"]
