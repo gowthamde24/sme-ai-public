@@ -108,6 +108,7 @@ create function pg_temp.sent(p_user text, p_label text, p_touch text default nul
   select pg_temp.try(p_user, format('select public.record_draft_sent(%L, %L, null)', pg_temp.did(p_label), tests.rid('s_' || coalesce(p_touch, p_label)))) $$;
 create function pg_temp.nd(p_lead text) returns bigint language sql as $$ select count(*) from public.followup_drafts where lead_id = tests.rid(p_lead) $$;
 create function pg_temp.nt(p_lead text) returns bigint language sql as $$ select count(*) from public.lead_touches where lead_id = tests.rid(p_lead) $$;
+create function pg_temp.gate(p_lead text, p_channel text default 'email', p_user text default 'a_sales') returns jsonb language sql as $$ select pg_temp.sc(p_user, format('select public.followup_gate(%L, %L)', tests.rid(p_lead), p_channel))::jsonb $$;
 -- a contact marked erased the way only an erasure may (the guard trigger is switched off for this one statement, inside the test transaction)
 create function pg_temp.mark_erased(p_contact text) returns void language plpgsql as $$
 begin
@@ -273,20 +274,30 @@ select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''si
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, null, ''email'', null)', gen_random_uuid(), tests.rid('m1'))), '22023', 'C6 a null direction is invalid');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''sms'', null)', gen_random_uuid(), tests.rid('m1'))), '22023', 'C7 a channel outside e-mail / WhatsApp / phone is invalid');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', null, null)', gen_random_uuid(), tests.rid('m1'))), '22023', 'C8 a null channel is invalid');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes')), 'ok', 'C9 exactly 5 minutes ahead is allowed (clock slack)');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes 1 second')), '23514', 'C9b one second more is refused');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes 1 second')), '23514', 'C9c ... in either direction');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() - interval '7 days 1 second')), '23514', 'C10 a touch more than 7 days back is refused');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() - interval '7 days')), 'ok', 'C11 exactly 7 days back is allowed');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now())), 'ok', 'C12 a touch at the database clock is allowed');
+-- the time of a touch: never after now, at most 7 days back, never before the lead existed; an OUTBOUND touch never before the lead's latest outbound touch (a reply may be recorded late)
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now())), 'ok', 'C9 a touch exactly now is allowed');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '1 second')), '23514', 'C9b one second after now is refused (no future slack: the web form sends null for "now")');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '1 second')), '23514', 'C9c ... for an outbound touch too');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes')), '23514', 'C9d ... and five minutes ahead (there is no slack any more)');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() - interval '7 days 1 second')), '23514', 'C10 a touch more than 7 days back is refused');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() - interval '7 days')), 'ok', 'C11 exactly 7 days back is allowed');
+select pg_temp.mklead('lo');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '7 days 1 second')), '23514', 'C12 an outbound touch more than 7 days back is refused');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', tests.rid('lo_1'), tests.rid('lo'), now() - interval '2 days')), 'ok', 'C12a the first outbound touch (2 days ago)');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '2 days 1 second')), '23514', 'C12b an outbound touch one second BEFORE the latest outbound touch is refused');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''whatsapp'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '5 days')), '23514', 'C12c ... however far back, and on any channel');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '2 days')), 'ok', 'C12d an outbound touch exactly AT the latest one is allowed');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '1 day')), 'ok', 'C12e ... and one after it');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '4 days')), 'ok', 'C12f a REPLY may be recorded late: before the latest outbound touch is fine');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('lo'), now() - interval '1 day 1 second')), '23514', 'C12g (and the latest outbound touch is now 1 day ago: one second before it is refused)');
 -- not before the lead existed (a lead created 3 days ago: the lower bound is the lead's creation, tighter than 7 days)
 select pg_temp.mklead('young');   update public.leads set created_at = now() - interval '3 days' where id = tests.rid('young');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days 1 second')), '23514', 'C12b a touch one second before the lead was created is refused');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days 1 second')), '23514', 'C12c ... a reply too');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days')), 'ok', 'C12d a touch exactly at the lead''s creation is allowed');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '2 days 23 hours')), 'ok', 'C12e ... and one after it');
-select is(pg_temp.priv(format($q$insert into public.lead_touches (id, tenant_id, lead_id, direction, channel, occurred_at) values (gen_random_uuid(), %L, %L, 'in', 'email', now() + interval '5 minutes 1 second')$q$, tests.tid('a'), tests.rid('m1'))), '23514', 'C12f the table itself refuses a touch more than 5 minutes ahead of its recording, even for a privileged writer');
-select is(pg_temp.priv(format($q$insert into public.lead_touches (id, tenant_id, lead_id, direction, channel, occurred_at) values (gen_random_uuid(), %L, %L, 'in', 'email', now() + interval '5 minutes')$q$, tests.tid('a'), tests.rid('m1'))), 'ok', 'C12g ... and allows exactly 5 minutes');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days 1 second')), '23514', 'C12h a touch one second before the lead was created is refused');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days 1 second')), '23514', 'C12i ... a reply too');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days')), 'ok', 'C12j a touch exactly at the lead''s creation is allowed');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '2 days 23 hours')), 'ok', 'C12k ... and one after it');
+select is(pg_temp.priv(format($q$insert into public.lead_touches (id, tenant_id, lead_id, direction, channel, occurred_at) values (gen_random_uuid(), %L, %L, 'in', 'email', now() + interval '1 second')$q$, tests.tid('a'), tests.rid('m1'))), '23514', 'C12l the table itself refuses a touch after its own recording, even for a privileged writer');
+select is(pg_temp.priv(format($q$insert into public.lead_touches (id, tenant_id, lead_id, direction, channel, occurred_at) values (gen_random_uuid(), %L, %L, 'in', 'email', now())$q$, tests.tid('a'), tests.rid('m1'))), 'ok', 'C12m ... and allows exactly the moment of recording');
 -- replay and conflict
 select is(pg_temp.touch('a_sales', 'r1', 'm1', 'out', 'email'), 'ok', 'C13 a touch is recorded');
 select is(pg_temp.j(pg_temp.sc('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', null)', tests.rid('t_r1'), tests.rid('m1'))), 'replayed'), 'true', 'C14 an exact retry replays (a null time matches the stored one)');
@@ -447,8 +458,8 @@ select is(pg_temp.try('b_sales', format('select public.create_followup_draft(%L,
 select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', ''{}'')', gen_random_uuid(), tests.rid('b_lead'))), '42501', 'D35 another tenant''s lead is the generic refusal');
 
 -- forged requests and results (SM226): every one refused, nothing written, and then the honest call works
-select is(pg_temp.try('a_sales', pg_temp.cd('f_old', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-11 minutes')))), 'SM226', 'D36 an as_of more than 10 minutes old is refused');
-select is(pg_temp.try('a_sales', pg_temp.cd('f_new', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '3 minutes')))), 'SM226', 'D37 an as_of more than 2 minutes ahead is refused');
+select is(pg_temp.try('a_sales', pg_temp.cd('f_old', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-3 minutes -10 seconds')))), 'SM226', 'D36 an as_of more than 3 minutes old is refused');
+select is(pg_temp.try('a_sales', pg_temp.cd('f_new', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '2 minutes 10 seconds')))), 'SM226', 'D37 an as_of more than 2 minutes ahead is refused');
 select is(pg_temp.try('a_sales', pg_temp.cd('f_bad', 'f1', 'email', pg_temp.req('f1') || '{"as_of": "yesterday"}')), 'SM226', 'D38 a malformed as_of is refused');
 select is(pg_temp.try('a_sales', pg_temp.cd('f_noas', 'f1', 'email', pg_temp.req('f1') - 'as_of')), 'SM226', 'D39 a missing as_of is refused');
 select is(pg_temp.try('a_sales', pg_temp.cd('f_flag', 'f1', 'email', jsonb_set(pg_temp.req('f1'), '{lead,won}', 'true'))), 'SM226', 'D40 a changed lead flag is refused (the database owns the flags)');
@@ -472,6 +483,9 @@ select is(pg_temp.try('a_sales', pg_temp.cd('r_rej', 'f1', 'email', null, jsonb_
 select is(pg_temp.try('a_sales', pg_temp.cd('r_str', 'f1', 'email', null, pg_temp.res(pg_temp.req('f1')) || '{"touch_number": "2"}')), 'SM226', 'D58 a touch number that is a string is refused');
 select is(pg_temp.nd('f1'), 0::bigint, 'D59 nothing was written for any forgery');
 select is(pg_temp.mk('a_sales', 'f1', 'f1'), 'ok', 'D60 the honest call on the same lead works');
+select pg_temp.mkdue('w1');  select pg_temp.mkdue('w2');
+select is(pg_temp.try('a_sales', pg_temp.cd('w1', 'w1', 'email', pg_temp.req('w1', pg_temp.asof(interval '-2 minutes -50 seconds')))), 'ok', 'D60a an as_of 2 minutes 50 seconds old is accepted (the window is 3 minutes back)');
+select is(pg_temp.try('a_sales', pg_temp.cd('w2', 'w2', 'email', pg_temp.req('w2', pg_temp.asof(interval '2 minutes')))), 'ok', 'D60b an as_of exactly 2 minutes ahead is accepted');
 
 -- not due (SM225, the database's own decision, detail = the closed reason)
 select pg_temp.mklead('n0');
@@ -621,13 +635,13 @@ begin
   alter table public.followup_drafts enable trigger followup_drafts_guard_update;
 end $$;
 select pg_temp.age_approval('gt', interval '2 hours');
-select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), now() + interval '5 minutes 1 second')), '23514', 'G12 a sent time more than 5 minutes ahead is refused');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), now() + interval '1 second')), '23514', 'G12 a sent time after now is refused (no future slack)');
 select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), (select approved_at - interval '1 second' from public.followup_drafts where id = pg_temp.did('gt')))), '23514', 'G13 one second before the approval is refused');
 select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), tests.rid('s_gt'), (select approved_at from public.followup_drafts where id = pg_temp.did('gt')))), 'ok', 'G14 exactly at the approval time is allowed');
 select is((select occurred_at = (select approved_at from public.followup_drafts where id = pg_temp.did('gt')) from public.lead_touches where id = tests.rid('s_gt')), true, 'G15 recorded as stated');
 select pg_temp.mkdue('gt2');   select pg_temp.run('a_sales', pg_temp.cd('gt2', 'gt2'));
 select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('gt2'), (select state_hash from public.followup_drafts where id = pg_temp.did('gt2'))));
-select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt2'), tests.rid('s_gt2'), now() + interval '5 minutes')), 'ok', 'G15b exactly 5 minutes ahead is allowed');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt2'), tests.rid('s_gt2'), now())), 'ok', 'G15b exactly now is allowed');
 select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt2'), gen_random_uuid(), now())), 'SM223:closed', 'G15c (the draft is recorded: a second try is closed, whatever the time)');
 select pg_temp.mkdue('gt3');   select pg_temp.run('a_sales', pg_temp.cd('gt3', 'gt3'));
 select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('gt3'), (select state_hash from public.followup_drafts where id = pg_temp.did('gt3'))));
@@ -677,6 +691,56 @@ select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %
 select is(pg_temp.touch('a_sales', 'rp1i', 'rp1', 'in'), 'ok', 'G28 a reply is recorded on a lead with an APPROVED draft');
 select is((select status::text || '/' || discard_code::text from public.followup_drafts where id = pg_temp.did('rp1')), 'discarded/reply_recorded', 'G29 the approved draft is discarded: a person takes over (reply_recorded)');
 select is(pg_temp.sent('a_sales', 'rp1'), 'SM223:not_approved', 'G30 and cannot be recorded as sent');
+
+-- a draft older than 7 days is stale: neither approved nor recorded as sent (SM224); exactly 7 days is still fine
+create function pg_temp.age_created(p_label text, p_by interval) returns void language plpgsql as $$
+begin
+  alter table public.followup_drafts disable trigger followup_drafts_guard_update;
+  update public.followup_drafts set created_at = now() - p_by where id = pg_temp.did(p_label);
+  alter table public.followup_drafts enable trigger followup_drafts_guard_update;
+end $$;
+select pg_temp.mkdue('ag1');  select pg_temp.run('a_sales', pg_temp.cd('ag1', 'ag1'));  select pg_temp.age_created('ag1', interval '7 days 1 second');
+select is(pg_temp.approve('a_owner', 'ag1'), 'SM224', 'G31 a draft older than 7 days cannot be approved (SM224)');
+select pg_temp.mkdue('ag2');  select pg_temp.run('a_sales', pg_temp.cd('ag2', 'ag2'));  select pg_temp.age_created('ag2', interval '7 days');
+select is(pg_temp.approve('a_owner', 'ag2'), 'ok', 'G32 a draft exactly 7 days old can');
+select pg_temp.mkdue('ag3');  select pg_temp.run('a_sales', pg_temp.cd('ag3', 'ag3'));
+select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('ag3'), (select state_hash from public.followup_drafts where id = pg_temp.did('ag3'))));
+select pg_temp.age_created('ag3', interval '7 days 1 second');
+select is(pg_temp.sent('a_sales', 'ag3'), 'SM224', 'G33 ... nor recorded as sent once it is older than 7 days (SM224), even though it was approved in time');
+select is(pg_temp.dst('ag3'), 'approved', 'G34 (it stays approved: a person discards it)');
+select pg_temp.mkdue('ag4');  select pg_temp.run('a_sales', pg_temp.cd('ag4', 'ag4'));
+select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('ag4'), (select state_hash from public.followup_drafts where id = pg_temp.did('ag4'))));
+select pg_temp.age_created('ag4', interval '7 days');
+select is(pg_temp.sent('a_sales', 'ag4'), 'ok', 'G35 a draft exactly 7 days old can be recorded as sent');
+-- the sent time is not before the lead's latest outbound touch either (the approval is aged to 6 days ago so that this rule, not the approval, is the one that bites; the lead's outbound touch is 5 days ago)
+select pg_temp.mkdue('so2');  select pg_temp.run('a_sales', pg_temp.cd('so2', 'so2'));
+select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('so2'), (select state_hash from public.followup_drafts where id = pg_temp.did('so2'))));
+select pg_temp.age_approval('so2', interval '6 days');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('so2'), gen_random_uuid(), now() - interval '5 days 1 second')), '23514', 'G36 a sent time one second before the lead''s latest outbound touch is refused');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('so2'), tests.rid('s_so2'), now() - interval '5 days')), 'ok', 'G37 exactly at it is allowed');
+
+-- a change of a contact's e-mail or phone INVALIDATES the stored key of that identifier (part 1's trigger): the gate answers SM221 until the API re-keys it
+select pg_temp.mklead('kc');
+create function pg_temp.kg(p_channel text) returns text language sql as $$ select coalesce(pg_temp.gate('kc', p_channel) ->> 'blocked', 'open') $$;
+select is(pg_temp.kg('email') || '/' || pg_temp.kg('whatsapp'), 'open/open', 'N1 a keyed, consented contact: both channels open');
+select is(tests.rows_as(tests.uid('a_sales'), format($q$update public.contacts set email = email where id = %L$q$, tests.rid('kc_c'))), 1::bigint, 'N2 (an update that does not change the address)');
+select is(pg_temp.kg('email'), 'open', 'N3 ... keeps the key');
+select is((select email_hmac is not null and phone_hmac is not null from suppression.contact_keys where contact_id = tests.rid('kc_c')), true, 'N4 (both stored keys present)');
+select is(tests.rows_as(tests.uid('a_sales'), format($q$update public.contacts set email = 'kc.changed@example.test' where id = %L$q$, tests.rid('kc_c'))), 1::bigint, 'N5 a person changes the contact''s e-mail address');
+select is((select email_hmac is null and phone_hmac is not null from suppression.contact_keys where contact_id = tests.rid('kc_c')), true, 'N6 the stored E-MAIL key is forgotten; the phone key stays');
+select is(pg_temp.kg('email'), 'unkeyed', 'N7 the gate answers `unkeyed` for e-mail');
+select is(pg_temp.touch('a_sales', 'kc1', 'kc', 'out', 'email'), 'SM221', 'N8 and an outbound e-mail touch is refused with SM221');
+select is(pg_temp.mk('a_sales', 'kc1', 'kc', 'email'), 'SM221', 'N9 as is a draft (the gate runs before everything else)');
+select is(pg_temp.kg('whatsapp'), 'open', 'N10 WhatsApp is unaffected (the phone key is intact)');
+select pg_temp.run('a_owner', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('kc_c'), jsonb_build_object('version', 1, 'email', pg_temp.h('kc_new_e'))));
+select is(pg_temp.kg('email'), 'open', 'N11 once the API records the new key, the gate opens again');
+select is(tests.rows_as(tests.uid('a_sales'), format($q$update public.contacts set phone = '+00 9 55501' where id = %L$q$, tests.rid('kc_c'))), 1::bigint, 'N12 a person changes the contact''s phone number');
+select is(pg_temp.kg('whatsapp') || '/' || pg_temp.kg('email'), 'unkeyed/open', 'N13 the PHONE key is forgotten: WhatsApp answers `unkeyed`, e-mail stays open');
+select is(pg_temp.touch('a_sales', 'kc2', 'kc', 'out', 'whatsapp'), 'SM221', 'N14 an outbound WhatsApp touch is refused (SM221)');
+select is(pg_temp.touch('a_sales', 'kc3', 'kc', 'out', 'phone'), 'SM221', 'N15 and a phone-call touch');
+select is(pg_temp.touch('a_sales', 'kc4', 'kc', 'in', 'whatsapp'), 'ok', 'N16 (a reply is still recordable)');
+select pg_temp.run('a_owner', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('kc_c'), jsonb_build_object('version', 1, 'phone', pg_temp.h('kc_new_p'))));
+select is(pg_temp.kg('whatsapp'), 'open', 'N17 re-keyed: open again');
 
 -- ============================================================================ H. the contact trigger: a contact that becomes suppressed or erased has its open drafts discarded
 select pg_temp.mkdue('hs');   select pg_temp.run('a_sales', pg_temp.cd('hs', 'hs'));
@@ -758,14 +822,13 @@ select is(pg_temp.cells(format('select public.followup_gate(%L, ''email'')', tes
 select is(pg_temp.err('a_viewer', format('select public.followup_gate(%L, ''email'')', tests.rid('l1'))), pg_temp.err('a_viewer', format('select public.followup_gate(%L, ''email'')', gen_random_uuid())), 'J2 a refusal for a role and for an unknown lead are the SAME answer');
 select is(pg_temp.try('a_sales', format('select public.followup_gate(%L, ''sms'')', tests.rid('l1'))), '22023', 'J3 an unknown channel is invalid');
 select is(pg_temp.try('a_sales', format('select public.followup_gate(%L, null)', tests.rid('l1'))), '22023', 'J4 a null channel is invalid');
-create function pg_temp.gate(p_lead text, p_channel text default 'email', p_user text default 'a_sales') returns jsonb language sql as $$ select pg_temp.sc(p_user, format('select public.followup_gate(%L, %L)', tests.rid(p_lead), p_channel))::jsonb $$;
 select is(pg_temp.gate('l1') ->> 'blocked', null, 'J5 an eligible lead: not blocked');
 select is(pg_temp.gate('g_sup') ->> 'blocked', 'contact', 'J6 suppressed: contact');
 select is(pg_temp.gate('g_erased') ->> 'blocked', 'erased', 'J7 erased');
 select is(pg_temp.gate('g_unkeyed') ->> 'blocked', 'unkeyed', 'J8 no key: unkeyed');
 select is(pg_temp.gate('g_key') ->> 'blocked', 'key', 'J9 a suppressed key (another contact)');
 select is(pg_temp.gate('g_key', 'whatsapp') ->> 'blocked', null, 'J10 ... for e-mail only: WhatsApp is fine');
-select is(pg_temp.gate('g_erkey') ->> 'blocked', 'erased_key', 'J11 an erased marker on the key');
+select is(pg_temp.gate('g_erkey') ->> 'blocked', 'key', 'J11 an erased marker on the key is shown by the read as plain `key` (the write refusals keep the detail erased_key: C29, D18)');
 select is(pg_temp.gate('g_nocons') ->> 'blocked', 'consent', 'J12 no consent');
 select is(pg_temp.gate('g_nocontact') ->> 'blocked', 'consent', 'J13 no contact');
 select is(pg_temp.gate('st_acc') ->> 'stopped', 'order_accepted', 'J14 a stopped lead says why');

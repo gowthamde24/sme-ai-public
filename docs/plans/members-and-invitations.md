@@ -42,7 +42,7 @@ Column grants for `authenticated`: `select`; `insert (tenant_id, user_id, role)`
 
 Principles: nobody is put into a workspace without having asked to be (accept with a code); a code is a one-time secret handed over by any channel (in person, on paper, by any chat; **no e-mail or SMTP is needed to join**: delivery by e-mail is a later add-on at the hosted stage); roles are granted only by functions that say who may grant which; everything privileged needs the second factor and writes an audit event; the table loses its client write grants; **the Owner role is never granted through the app** (decision 2).
 
-### 3.1 Data (one migration, append-only; ADR 0022)
+### 3.1 Data (one migration, append-only; ADR 0023)
 * `public.invitations` (tenant-owned, RLS, **no client write grant**, in `tests.tenant_table_registry`): `id` (the caller's id: idempotent create), `tenant_id`, `role` (**`admin`, `sales` or `viewer` only**; a check constraint refuses `owner`), `code_sha256` (the SHA-256 of the NORMALISED 100-bit random code; the code itself is never stored), `label` (up to 60 characters, "for the new cutter"; **refused when it holds a run of 7 or more digits or an "@"**, so it cannot carry a phone number or an address; the column is covered by `erase_tenant` and by the erasure registry), `created_by`, `created_at`, `expires_at` (default 7 days, at most 30), `status` (`pending`, `accepted`, `revoked`), `accepted_by`, `accepted_at`, `revoked_by`, `revoked_at`. Owner and Admin read their workspace's rows (never a code); nobody else reads any.
 * `private.invitation_attempts` (private schema, no client access): one row per FAILED code presentation (user, time), used to answer SM241 after 5 in an hour. **Rows older than 24 hours are deleted** (by the next `accept_invitation` call and by a daily operator task; no scheduled job is assumed).
 * `memberships` loses `insert`, `update` and `delete` for `authenticated` (reads stay). The functions below run as definer and are the only writers (plus `create_tenant` and the operator functions, unchanged). The aal2 trigger stays as a second line.
@@ -113,7 +113,7 @@ The cap of 3 Owners is in the operator function and answers its own error there 
 * **Mutation pass** on the role rules, the code lifecycle and normaliser, the attempt counter, the aal2 and last-Owner guards, the closed reasons, the label rule.
 
 ## 6. Commit order (stop for review after commit 1 and after commit 3)
-1. ADR 0022 and the migration (tables, functions, the revoked grants, the operator function's Owner cap) with its pgTAP and the copy-pin tests.
+1. ADR 0023 and the migration (tables, functions, the revoked grants, the operator function's Owner cap) with its pgTAP and the copy-pin tests.
 2. The API: repository, routes, fixed errors, log-safety words, fakes, unit and real-stack tests (including the races).
 3. The web: members page, join page (fragment, replaceState, the header), tests. **Stop: the owner reviews.**
 4. The driver and the click checklist use invitations; the runbook `add-family-member.md` becomes "hand over a code"; the operator functions stay for the first Owner and for recovery.

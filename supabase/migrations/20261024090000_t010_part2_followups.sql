@@ -15,7 +15,7 @@
 --     1. DERIVES the contact from the lead (the caller names a lead, never a contact) and runs the GATE under locks: suppressed or erased contact (SM220), no recorded suppression key for the
 --        channel (SM221: missing data never means "not suppressed"), a suppressed key (SM220, detail contact | key | erased_key), consent not granted for the channel (SM220 consent);
 --     2. refuses when follow-ups are STOPPED for the lead (SM227: an order accepted, declined or cancelled, a withdrawn quote, an archived lead) and when no policy is in force (SM222);
---     3. REBUILDS the engine's request from its own touches, policy and lead flags and refuses any other one (SM226), as of its own clock (-10 min to +2 min);
+--     3. REBUILDS the engine's request from its own touches, policy and lead flags and refuses any other one (SM226), as of its own clock (-3 min to +2 min);
 --     4. decides ITSELF whether the engine would answer draft_followup (app.followup_blocker: the flags, a reply, the touch limit, the minimum gap, the weekday, the holiday, quiet hours)
 --        and refuses with SM225 (detail: the closed reason) when it would not; the engine's result must then be exactly that decision (SM226). A due draft is ALWAYS due at as_of itself (the
 --        engine moves a candidate only forward and answers draft_followup only when the moved time is not after as_of), so the whole positive decision is checked, not trusted;
@@ -270,8 +270,8 @@ create table public.lead_touches (
   foreign key (tenant_id, contact_id) references public.contacts (tenant_id, id),
   foreign key (tenant_id, draft_id)   references public.followup_drafts (tenant_id, id),
   check (draft_id is null or direction = 'out'),
-  -- a touch is never more than 5 minutes ahead of the moment it was recorded (the function also bounds it below: the lead's creation and 7 days)
-  check (occurred_at <= recorded_at + interval '5 minutes')
+  -- a touch never lies in the future of the moment it was recorded (the functions also bound it below: the lead's creation, 7 days, the lead's latest outbound touch)
+  check (occurred_at <= recorded_at)
 );
 create unique index lead_touches_draft_key on public.lead_touches (tenant_id, draft_id) where draft_id is not null;
 create index lead_touches_lead_idx    on public.lead_touches (tenant_id, lead_id, occurred_at, id);
@@ -790,7 +790,8 @@ begin
   end if;
   g := app.followup_gate(l.id, p_channel::public.consent_channel, false);
   return jsonb_build_object(
-    'blocked', case when g ->> 'code' = 'SM221' then 'unkeyed' else g ->> 'detail' end,
+    -- an ERASED marker on a key is shown as plain `key` (a client of the read need not learn that another person was erased by right)
+    'blocked', case when g ->> 'code' = 'SM221' then 'unkeyed' when g ->> 'detail' = 'erased_key' then 'key' else g ->> 'detail' end,
     'stopped', app.followup_stopped(l.id),
     'policy_in_force', app.followup_active_policy_version(l.tenant_id, app.quote_today()) is not null);
 end;
@@ -848,8 +849,8 @@ begin
   if p_direction is null or p_direction not in ('out', 'in') or p_channel is null or p_channel not in ('email', 'whatsapp', 'phone') then
     perform app.followup_error('invalid');
   end if;
-  -- null = now (the database clock). A stated time: at most 5 minutes ahead (clock slack), at most 7 days back, and never before the lead existed
-  if p_occurred_at is not null and (p_occurred_at > now() + interval '5 minutes' or p_occurred_at < now() - interval '7 days' or p_occurred_at < l.created_at) then
+  -- null = now (the database clock; the web form sends null for "now"). A stated time: never after now, at most 7 days back, never before the lead existed
+  if p_occurred_at is not null and (p_occurred_at > now() or p_occurred_at < now() - interval '7 days' or p_occurred_at < l.created_at) then
     perform app.followup_error('value');
   end if;
   l := app.followup_lock(p_lead_id);
@@ -868,6 +869,10 @@ begin
     g := app.followup_gate(l.id, p_channel::public.consent_channel, true);
     if g ->> 'code' is not null then
       perform app.followup_error(g ->> 'code', g ->> 'detail');
+    end if;
+    -- an OUTBOUND touch may not be before the lead's latest outbound touch (a reply may be recorded late; "I sent it" may not be recorded out of order)
+    if p_occurred_at is not null and p_occurred_at < (select max(t.occurred_at) from public.lead_touches t where t.tenant_id = l.tenant_id and t.lead_id = l.id and t.direction = 'out') then
+      perform app.followup_error('value');
     end if;
   elsif exists (select 1 from public.contacts c where c.tenant_id = l.tenant_id and c.id = l.contact_id and c.erased_at is not null) then
     -- an inbound touch bypasses the outbound gate (it can only stop outreach) but NEVER for an erased contact: erasure wins, no new record about an erased person
@@ -981,7 +986,7 @@ begin
   exception when others then
     perform app.followup_error('SM226');
   end;
-  if v_as_ts < now() - interval '10 minutes' or v_as_ts > now() + interval '2 minutes' then
+  if v_as_ts < now() - interval '3 minutes' or v_as_ts > now() + interval '2 minutes' then
     perform app.followup_error('SM226');
   end if;
   v_built := app.followup_build(l.id, v_as, v_pver);
@@ -1048,6 +1053,10 @@ begin
   end if;
   if d.status <> 'draft' then
     perform app.followup_error('SM223', 'not_draft');
+  end if;
+  -- a draft older than 7 days is stale: make a new one
+  if d.created_at < now() - interval '7 days' then
+    perform app.followup_error('SM224');
   end if;
   if l.contact_id is distinct from d.contact_id then
     perform app.followup_error('SM224');
@@ -1147,8 +1156,13 @@ begin
   if d.status <> 'approved' then
     perform app.followup_error('SM223', 'not_approved');
   end if;
-  -- the sent time: never before the approval, never more than 5 minutes ahead (null = the database clock)
-  if p_occurred_at is not null and (p_occurred_at > now() + interval '5 minutes' or p_occurred_at < d.approved_at) then
+  -- a draft older than 7 days is stale
+  if d.created_at < now() - interval '7 days' then
+    perform app.followup_error('SM224');
+  end if;
+  -- the sent time: never after now, never before the approval, never before the lead's latest outbound touch (null = the database clock)
+  if p_occurred_at is not null and (p_occurred_at > now() or p_occurred_at < d.approved_at
+     or p_occurred_at < (select max(t.occurred_at) from public.lead_touches t where t.tenant_id = l.tenant_id and t.lead_id = l.id and t.direction = 'out')) then
     perform app.followup_error('value');
   end if;
   if l.contact_id is distinct from d.contact_id then

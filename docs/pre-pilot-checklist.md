@@ -246,6 +246,16 @@ Accepted when T005 was approved pending the human walkthrough. None blocks the w
 | [ ] | **A key shared by a living contact and an erased person stays suppressed for ever** (it can only be released by a person who is not erased AND a key whose suppression did not come from an erasure). Revisit if recycled phone numbers become a problem; the Owner has no screen to release such a key. | ADR 0020 | Pilot data | Later |
 | [ ] | **Known limit: a living contact that shares a number with an erased person stays blocked after an Owner lift.** The key carries an erased marker, so the Owner's lift of the living contact does not release it (the contact is lifted, the number is not): such a contact cannot be sent a follow-up draft. The marker is appended even when another contact suppressed the key first (the second review, step 0). The DPDP question above covers it: counsel decides how long an erased person's keyed hash is kept and whether a shared number may be released. | ADR 0020 | **Before the gate opens** | Before the gate opens |
 
+## Follow-up touches, drafts and question drafts (ADR 0022, T010 part 2)
+
+| | Item | Source | Gate | Phase |
+| --- | --- | --- | --- | --- |
+| [ ] | **Retention of touches and drafts after an erasure (DPDP).** `lead_touches` and `followup_drafts` are kept, unchanged and free of the person's name, e-mail and phone, when a contact or the whole workspace is erased (open drafts are discarded as `erased`). Counsel confirms that PII-free business records of what was sent to a lead, and when, may stay. | ADR 0014, ADR 0022, `64_t010_part2_erasure.test.sql` | **Before the gate opens** | Before real data |
+| [ ] | **The draft wording is synthetic placeholder text** (`followup_templates`: three English templates, no variables). The family replaces it through a migration and has a person who reads the language review it; other languages (owner question 13) are not built. | ADR 0022, plan decision 13 | **Customer Zero** | Before real data |
+| [ ] | **The cadence policy has no real values.** Gaps, touch limit, quiet hours, weekdays, holidays, minimum gap and the recipient's UTC offset are the owner's; a policy version is created by an Owner with a second factor. | `docs/plans/t010-followup-cadence.md` | **Customer Zero** | Before real data |
+| [ ] | **The database re-implements the engine's draft condition** (a deliberate, owner-accepted exception). A new engine version needs a new migration AND a re-read of `app.followup_blocker`; the equivalence test against the real engine is the gate and any disagreement fails the build. | ADR 0022 decision 3 | **Each engine upgrade** | Ongoing |
+| [ ] | **Option A limits stay.** A member who talks to PostgREST directly could record a wrong key (ADR 0020) or store another closed-looking question text for a requirement (ADR 0022); nothing leaves the system. Option B before an external customer. | ADR 0013, ADR 0020, ADR 0022 | **Before any external customer** | Later |
+
 ## Rehearsal steps A-E (owner review 2026-10-06)
 
 | | Item | Source | Gate | Phase |
