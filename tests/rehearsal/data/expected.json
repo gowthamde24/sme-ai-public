@@ -216,5 +216,109 @@
     "CANCELLATION_WITH_FUNDS"
    ]
   }
+ },
+ "price_list": {
+  "_comment": "Hand-worked from price_list.csv (rupees x 100). Every item: moq 4, tax 500 bps.",
+  "items": {
+   "SYN-KJ-RED-01": {
+    "unit_price_paise": 420000,
+    "minimum_order_quantity": 4,
+    "tax_bps": 500,
+    "breaks": [
+     [
+      10,
+      400000
+     ]
+    ]
+   },
+   "SYN-KJ-BLUE-01": {
+    "unit_price_paise": 420000,
+    "minimum_order_quantity": 4,
+    "tax_bps": 500,
+    "breaks": [
+     [
+      10,
+      400000
+     ]
+    ]
+   },
+   "SYN-BN-RED-01": {
+    "unit_price_paise": 310000,
+    "minimum_order_quantity": 4,
+    "tax_bps": 500,
+    "breaks": [
+     [
+      10,
+      295000
+     ]
+    ]
+   },
+   "SYN-BN-GOLD-01": {
+    "unit_price_paise": 310000,
+    "minimum_order_quantity": 4,
+    "tax_bps": 500,
+    "breaks": [
+     [
+      10,
+      295000
+     ]
+    ]
+   },
+   "SYN-PT-GREEN-01": {
+    "unit_price_paise": 280000,
+    "minimum_order_quantity": 4,
+    "tax_bps": 500,
+    "breaks": [
+     [
+      10,
+      265000
+     ]
+    ]
+   }
+  },
+  "probes": [
+   {
+    "file": "price_list_hostile_a.csv",
+    "note": "a formula, a repeated sku in another case, a malformed amount, a zero minimum: refused by the parser, row by row",
+    "issues": [
+     [
+      1,
+      "sku",
+      "INVALID_SKU"
+     ],
+     [
+      3,
+      "sku",
+      "DUPLICATE_SKU"
+     ],
+     [
+      4,
+      "unit_price",
+      "INVALID_MONEY"
+     ],
+     [
+      5,
+      "moq",
+      "INTEGER_OUT_OF_RANGE"
+     ]
+    ]
+   },
+   {
+    "file": "price_list_hostile_b.csv",
+    "note": "a product the catalog does not have and a name with a zero-width space; a Telugu name with joiners is fine",
+    "issues": [
+     [
+      2,
+      "sku",
+      "UNKNOWN_SKU"
+     ],
+     [
+      3,
+      "name",
+      "HIDDEN_CHARACTERS"
+     ]
+    ]
+   }
+  ]
  }
 }

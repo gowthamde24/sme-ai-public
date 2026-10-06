@@ -17,6 +17,7 @@ from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.main import create_app
 from app.orders.repository import OrdersRepository
+from app.pricelists.repository import PriceListRepository
 from app.quotes.repository import QuotesRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
@@ -143,6 +144,7 @@ def make_client(
     enquiries: EnquiriesRepository | None = None,
     quotes: QuotesRepository | None = None,
     orders: OrdersRepository | None = None,
+    pricelists: PriceListRepository | None = None,
     suppression: SuppressionRepository | None = None,
     key_ring: KeyRing | None = None,
 ) -> tuple[TestClient, FakeRepository]:
@@ -167,6 +169,7 @@ def make_client(
             enquiries=enquiries,
             quotes=quotes,
             orders=orders,
+            pricelists=pricelists,
             suppression=suppression,
             key_ring=key_ring,
         ),

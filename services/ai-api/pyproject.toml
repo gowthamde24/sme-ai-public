@@ -52,6 +52,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # rehearsal step 2: the CSV adapter (long explanatory docstrings)
 "app/leads/csv_rows.py" = ["E501"]
 "app/text_rules.py" = ["E501"]
+# rehearsal step 5: the price-list import (long explanatory docstrings, the parser's closed code lists)
+"app/pricelists/*" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # T009 integration: the quote path (long explanatory docstrings)
 "app/quotes/*" = ["E501"]

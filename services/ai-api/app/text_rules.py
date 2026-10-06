@@ -14,5 +14,7 @@ _REFUSED = frozenset({"Cc", "Cf", "Cs", "Co", "Cn", "Zl", "Zp"})
 _ALLOWED = frozenset({ZWNJ, ZWJ, "\n"})
 
 
-def has_hidden_characters(text: str) -> bool:
-    return any(char not in _ALLOWED and unicodedata.category(char) in _REFUSED for char in text)
+def has_hidden_characters(text: str, *, allow_newline: bool = True) -> bool:
+    """True when `text` holds a refused character. `allow_newline=False` also refuses the line feed (a name or a city is one line)."""
+    allowed = _ALLOWED if allow_newline else _ALLOWED - {"\n"}
+    return any(char not in allowed and unicodedata.category(char) in _REFUSED for char in text)

@@ -32,6 +32,8 @@ from app.logging_safety import install_log_redaction
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
+from app.pricelists.repository import PostgrestPriceListRepository
+from app.pricelists.routes import router as pricelists_router
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
@@ -82,6 +84,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         enquiries=PostgrestEnquiriesRepository(config.rest_url, config.anon_key),
         quotes=PostgrestQuotesRepository(config.rest_url, config.anon_key),
         orders=PostgrestOrdersRepository(config.rest_url, config.anon_key),
+        pricelists=PostgrestPriceListRepository(config.rest_url, config.anon_key),
         suppression=PostgrestSuppressionRepository(config.rest_url, config.anon_key),
         key_ring=build_key_ring(settings),
     )
@@ -292,6 +295,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.enquiries,
                 runtime.quotes,
                 runtime.orders,
+                runtime.pricelists,
                 runtime.suppression,
             ):
                 if isinstance(
@@ -305,6 +309,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestEnquiriesRepository
                     | PostgrestQuotesRepository
                     | PostgrestOrdersRepository
+                    | PostgrestPriceListRepository
                     | PostgrestSuppressionRepository,
                 ):
                     repository.close()
@@ -370,6 +375,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(enquiries_router)
     app.include_router(quotes_router)
     app.include_router(orders_router)
+    app.include_router(pricelists_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

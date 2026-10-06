@@ -1,0 +1,6 @@
+sku,name,unit_price,moq,tax_bps
+=CMD|x,Boss,4200,4,500
+SYN-KJ-RED-01,Fine,4200,4,500
+syn-kj-red-01,Same sku in another case,4200,4,500
+SYN-BN-RED-01,Bad money,3.1.0,4,500
+SYN-BN-GOLD-01,Zero minimum,3100,0,500

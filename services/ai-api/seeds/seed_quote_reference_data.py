@@ -34,12 +34,14 @@ def container_name(config_text: str) -> str:
     return f"supabase_db_{match.group(1)}"
 
 
-def seed_sql(slug: str) -> str:
+def seed_sql(slug: str, *, price_list: bool = True) -> str:
     if not SLUG.fullmatch(slug):
         raise ValueError("the workspace slug is not a valid slug")
-    # the quote reference data and the order policy (review fix 4): both operator functions, both idempotent, both synthetic
+    # the quote reference data and the order policy (review fix 4): both operator functions, both idempotent, both synthetic. Without the price list (the rehearsal loads its own
+    # through the import endpoint) the products, the quote policy and the mapper config are still seeded.
+    skip = "" if price_list else "set app.seed_skip_price_list = 'on'; "
     return (
-        "select jsonb_build_object('quote_reference_data', app.operator_seed_quote_reference_data('"
+        f"{skip}select jsonb_build_object('quote_reference_data', app.operator_seed_quote_reference_data('"
         f"{slug}'), 'order_policy', app.operator_seed_order_policy('{slug}'))"
     )
 
@@ -47,6 +49,11 @@ def seed_sql(slug: str) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     parser.add_argument("--tenant-slug", required=True)
+    parser.add_argument(
+        "--without-price-list",
+        action="store_true",
+        help="seed the products, policies and mapper config but NOT a price list (it comes from the CSV import)",
+    )
     args = parser.parse_args(argv)
     url = os.environ.get("SUPABASE_URL", "http://127.0.0.1:54321")
     if not is_local(url):
@@ -56,7 +63,7 @@ def main(argv: list[str] | None = None) -> int:
         )
         return 2
     try:
-        sql = seed_sql(args.tenant_slug)
+        sql = seed_sql(args.tenant_slug, price_list=not args.without_price_list)
         container = container_name((ROOT / "supabase" / "config.toml").read_text())
     except (ValueError, OSError) as exc:
         print(f"refusing: {exc}", file=sys.stderr)

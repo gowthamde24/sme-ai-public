@@ -142,13 +142,19 @@ SEED_FN = "app.operator_seed_quote_reference_data"
 
 
 def test_the_seed_copy_is_the_last_definition_and_changes_exactly_the_seller_state() -> None:
-    defs = [d for d in block_definitions(SEED_FN) if d[0] < SMALL]  # the small-fixes migration (below) changes the credit limit again
-    assert defs[-1][0] == SEED, f"{SEED_FN} is redefined after {SEED}: re-copy it from the latest definition"
+    defs = [
+        d for d in block_definitions(SEED_FN) if d[0] < SMALL
+    ]  # the small-fixes migration (below) changes the credit limit again
+    assert defs[-1][0] == SEED, (
+        f"{SEED_FN} is redefined after {SEED}: re-copy it from the latest definition"
+    )
     earlier = [d for d in defs if d[0] < SEED]
     assert earlier
     diff = [
         line
-        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]
     assert [line[1:].strip() for line in diff if line[0] == "-"] == [
@@ -174,7 +180,9 @@ T010_CHANGED = {
 
 @pytest.mark.parametrize("name", sorted(T010_CHANGED))
 def test_the_t010_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
-    defs = [d for d in definitions(name) if d[0] < "20261021090000_erased_marker.sql"]  # (the erased-marker migration replaces the erasure functions again)
+    defs = [
+        d for d in definitions(name) if d[0] < "20261021090000_erased_marker.sql"
+    ]  # (the erased-marker migration replaces the erasure functions again)
     assert defs[-1][0] == T010_SUPPRESSION, (
         f"{name} is redefined after T010 ({defs[-1][0]}) or T010 does not define it: re-copy it from the latest definition"
     )
@@ -182,7 +190,9 @@ def test_the_t010_copy_is_the_last_definition_and_only_drops_the_named_lines(nam
     assert earlier
     removed = [
         line[1:].strip()
-        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
         if line.startswith("-") and not line.startswith("---")
     ]
     unexpected = [line for line in removed if line not in T010_CHANGED[name]]
@@ -213,8 +223,12 @@ def test_the_order_copy_is_the_last_definition_and_only_drops_the_named_lines(na
     diff = list(
         difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
     )
-    removed = [line[1:].strip() for line in diff if line.startswith("-") and not line.startswith("---")]
-    added = [line[1:].strip() for line in diff if line.startswith("+") and not line.startswith("+++")]
+    removed = [
+        line[1:].strip() for line in diff if line.startswith("-") and not line.startswith("---")
+    ]
+    added = [
+        line[1:].strip() for line in diff if line.startswith("+") and not line.startswith("+++")
+    ]
     unexpected = [line for line in removed if line not in ORDERS_CHANGED[name]]
     assert not unexpected, f"{name}: order conversion drops lines of {earlier[-1][0]}: {unexpected}"
     # what it adds is the SM237 check and nothing else that touches the quote
@@ -222,10 +236,15 @@ def test_the_order_copy_is_the_last_definition_and_only_drops_the_named_lines(na
     assert not any("update public.quotes" in line for line in added if "SM237" not in line), name
 
 
-def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_nothing_after_it_does() -> None:
+def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_nothing_after_it_does() -> (
+    None
+):
     later = [m.name for m in MIGRATIONS if m.name > ORDERS]
     for name in ORDERS_CHANGED:
-        assert all(d[0] <= "20261020090000_review_fixes.sql" for d in definitions(name)), (name, later)
+        assert all(d[0] <= "20261020090000_review_fixes.sql" for d in definitions(name)), (
+            name,
+            later,
+        )
 
 
 # ---------------------------------------------------------------------------------------------- review fixes (owner review of T010 part 1 and the order database)
@@ -234,6 +253,7 @@ def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_n
 REVIEW = "20261020090000_review_fixes.sql"
 MARKER = "20261021090000_erased_marker.sql"
 SMALL = "20261022090000_small_fixes.sql"
+NOPRICE = "20261023090000_seed_without_price_list.sql"
 REVIEW_CHANGED: dict[str, set[str]] = {
     "app.contacts_sync_suppression_keys": set(),
     "app.order_error": {"when 'SM234' then 'a refund needs the owner'"},
@@ -243,7 +263,9 @@ REVIEW_CHANGED: dict[str, set[str]] = {
     "public.withdraw_approved_quote": {
         "if exists (select 1 from public.orders o where o.tenant_id = z.tenant_id and o.quote_id = z.id) then"
     },
-    "public.approve_quote": {"if exists (select 1 from public.quotes x join public.orders o on o.tenant_id = x.tenant_id and o.quote_id = x.id"},
+    "public.approve_quote": {
+        "if exists (select 1 from public.quotes x join public.orders o on o.tenant_id = x.tenant_id and o.quote_id = x.id"
+    },
 }
 # rewritten, not copied: only "it is the last definition" is pinned
 REVIEW_REWRITTEN = ("app.order_stops_followups",)
@@ -261,7 +283,9 @@ def test_the_review_copy_is_the_last_definition_and_only_drops_the_named_lines(n
     kept = {line.strip() for line in defs[-1][1].split("\n")}
     removed = [
         line[1:].strip()
-        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
         if line.startswith("-") and not line.startswith("---")
     ]
     unexpected = [line for line in removed if line not in REVIEW_CHANGED[name] and line not in kept]
@@ -279,14 +303,14 @@ def test_a_rewritten_review_function_is_the_last_definition(name: str) -> None:
 # (indentation aside) or one named here.
 MARKER_CHANGED: dict[str, set[str]] = {
     "app.order_stops_followups": {
-        'select o.state, z.quote_no from public.orders o join public.quotes z on z.tenant_id = o.tenant_id and z.id = o.quote_id',
-        '-- a newer approved quote of the lead that has no order yet: a new deal is being made, nothing stops',
+        "select o.state, z.quote_no from public.orders o join public.quotes z on z.tenant_id = o.tenant_id and z.id = o.quote_id",
+        "-- a newer approved quote of the lead that has no order yet: a new deal is being made, nothing stops",
         "select 1 from latest l join public.quotes q on q.lead_id = p_lead and q.status = 'approved' and q.quote_no > l.quote_no",
     },
     "app.erase_contact": {
-        'if c.email is not null and k.email_hmac is not null',
+        "if c.email is not null and k.email_hmac is not null",
         "and app.suppression_key_add(r.tenant_id, 'email', k.email_hmac, k.key_version, 'erased', c.id, auth.uid()) then",
-        'if c.phone is not null and k.phone_hmac is not null',
+        "if c.phone is not null and k.phone_hmac is not null",
         "and app.suppression_key_add(r.tenant_id, 'phone', k.phone_hmac, k.key_version, 'erased', c.id, auth.uid()) then",
     },
     "app.erase_tenant": {
@@ -294,7 +318,7 @@ MARKER_CHANGED: dict[str, set[str]] = {
         "if k.phone_hmac is not null and app.suppression_key_add(r.tenant_id, 'phone', k.phone_hmac, k.key_version, 'erased', k.contact_id, auth.uid()) then",
     },
     "app.contacts_sync_suppression_keys": {
-        '-- ... and a key whose current suppression came from an ERASURE stays suppressed (a person erased by right is never re-contacted through a shared number)',
+        "-- ... and a key whose current suppression came from an ERASURE stays suppressed (a person erased by right is never re-contacted through a shared number)",
         "and not exists (select 1 from (select e.event, e.reason from suppression.key_events e where e.tenant_id = new.tenant_id and e.kind = 'email' and e.key_hmac = k.email_hmac",
         "order by e.seq desc limit 1) l where l.event = 'suppressed' and l.reason = 'erased') then",
         "and not exists (select 1 from (select e.event, e.reason from suppression.key_events e where e.tenant_id = new.tenant_id and e.kind = 'phone' and e.key_hmac = k.phone_hmac",
@@ -305,29 +329,41 @@ MARKER_CHANGED: dict[str, set[str]] = {
 @pytest.mark.parametrize("name", sorted(MARKER_CHANGED))
 def test_the_marker_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
     defs = definitions(name)
-    assert defs[-1][0] == MARKER, f"{name} is redefined after the erased marker ({defs[-1][0]}) or the marker migration does not define it: re-copy it from the latest definition"
+    assert defs[-1][0] == MARKER, (
+        f"{name} is redefined after the erased marker ({defs[-1][0]}) or the marker migration does not define it: re-copy it from the latest definition"
+    )
     earlier = [d for d in defs if d[0] < MARKER]
     assert earlier
     kept = {line.strip() for line in defs[-1][1].split("\n")}
     removed = [
         line[1:].strip()
-        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
         if line.startswith("-") and not line.startswith("---")
     ]
     unexpected = [line for line in removed if line not in MARKER_CHANGED[name] and line not in kept]
-    assert not unexpected, f"{name}: the marker migration drops lines of {earlier[-1][0]}: {unexpected}"
+    assert not unexpected, (
+        f"{name}: the marker migration drops lines of {earlier[-1][0]}: {unexpected}"
+    )
 
 
 # ---------------------------------------------------------------------------------------------- small fixes (owner review of rehearsal steps 0-3)
 # Migration 20261022090000: A1 add_requirement_field (an exact retry replays on a confirmed requirement: lines are ADDED only) and A3 the seed's repeat credit limit (exactly one line changes).
-def test_the_small_fixes_copy_of_add_requirement_field_is_the_last_definition_and_only_adds_lines() -> None:
+def test_the_small_fixes_copy_of_add_requirement_field_is_the_last_definition_and_only_adds_lines() -> (
+    None
+):
     defs = definitions("public.add_requirement_field")
-    assert defs[-1][0] == SMALL, f"add_requirement_field is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
+    assert defs[-1][0] == SMALL, (
+        f"add_requirement_field is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
+    )
     earlier = [d for d in defs if d[0] < SMALL]
     assert earlier
     removed = [
         line[1:].strip()
-        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
         if line.startswith("-") and not line.startswith("---")
     ]
     kept = {line.strip() for line in defs[-1][1].split("\n")}
@@ -335,12 +371,18 @@ def test_the_small_fixes_copy_of_add_requirement_field_is_the_last_definition_an
 
 
 def test_the_small_fixes_seed_changes_exactly_the_repeat_credit_limit() -> None:
-    defs = block_definitions(SEED_FN)
-    assert defs[-1][0] == SMALL, f"{SEED_FN} is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
+    defs = [
+        d for d in block_definitions(SEED_FN) if d[0] < NOPRICE
+    ]  # the next migration (below) adds the skip switch
+    assert defs[-1][0] == SMALL, (
+        f"{SEED_FN} is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
+    )
     earlier = [d for d in defs if d[0] < SMALL]
     diff = [
         line
-        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]
     assert [line[1:].strip() for line in diff if line[0] == "-"] == [
@@ -348,4 +390,26 @@ def test_the_small_fixes_seed_changes_exactly_the_repeat_credit_limit() -> None:
     ]
     assert [line[1:].strip() for line in diff if line[0] == "+"] == [
         "'repeat_advance_bps', 2500, 'net_days', 30, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 50000000,"
+    ]
+
+
+# ---------------------------------------------------------------------------------------------- seed without a price list (rehearsal step 5)
+def test_the_seed_can_skip_the_price_list_and_changes_exactly_one_line() -> None:
+    defs = block_definitions(SEED_FN)
+    assert defs[-1][0] == NOPRICE, (
+        f"{SEED_FN} is redefined after {NOPRICE} ({defs[-1][0]}): re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < NOPRICE]
+    diff = [
+        line
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    assert [line[1:].strip() for line in diff if line[0] == "-"] == [
+        "if not exists (select 1 from public.price_list_versions v where v.tenant_id = v_tenant) then"
+    ]
+    assert [line[1:].strip() for line in diff if line[0] == "+"] == [
+        "if not exists (select 1 from public.price_list_versions v where v.tenant_id = v_tenant) and coalesce(current_setting('app.seed_skip_price_list', true), '') <> 'on' then"
     ]

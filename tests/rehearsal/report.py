@@ -53,7 +53,7 @@ def write_report(
     q = first.import_quality
     out: list[str] = []
     w = out.append
-    w("# Thin-slice rehearsal: first report")
+    w("# Thin-slice rehearsal: report")
     w("")
     w(
         f"Written {datetime.now(UTC).strftime('%Y-%m-%d %H:%M UTC')} by `make rehearse-thin-slice`. **Everything here is synthetic and local**: invented people, invented prices, the local stack, no model, nothing sent to anyone."
@@ -83,6 +83,10 @@ def write_report(
                 ["... skipped as duplicates", q.get("duplicates", "n/a")],
                 ["... rejected by the database", q.get("rejected", "n/a")],
                 ["... imported but flagged (suppressed number)", q.get("flagged", "n/a")],
+                [
+                    "Price list: products loaded from the CSV / hostile files refused row by row",
+                    f"{first.price_list.get('items', 'n/a')} / {len(first.price_list.get('probes', {}))}",
+                ],
                 [
                     "Enquiries pasted",
                     len([c for c in actions if _kind(c.step) == "paste the enquiry"]),
@@ -367,10 +371,16 @@ def write_report(
         "* The API has no route to add a member to a workspace: the Owner's token was used against the database API to add the Admin, the Sales user and the Viewer. The first real week needs an invite route or a runbook step."
     )
     w(
-        "* A typed requirement field cannot be retried after the requirement is confirmed (`requirement_confirmed`, not a replay); the repeat pass therefore reads the requirement first and does not type it again, as a person would."
+        "* A typed requirement field is a retry that replays even after the requirement is confirmed (small fix A1); the repeat pass still reads the requirement first and does not type it again, as a person would."
     )
     w(
         "* A quote replaced by a newer one (Q2 after Q2b) can no longer be approved (`quote_not_draft`); the repeat pass skips it for the same reason."
+    )
+    w(
+        "* The price list was loaded from `price_list.csv` through the import endpoint (the seed now keeps only the products, the quote policy, the mapper and the order policy), then two hostile files were refused row by row with closed codes and no cell echoed. The prices of every quote above come from that version."
+    )
+    w(
+        "* Indic names with a zero-width joiner or non-joiner are accepted by the CSV adapters. The quote-text renderer (a pinned lane C package) still refuses them in a product name: a quote for such a product is approved but its customer text shows `quote_text_refused` (the approval stands). A lane C change is needed before products with such names are quoted."
     )
     w(
         "* The repeat customer's ordinary quote (Q6) is flagged only `REPEAT_CUSTOMER_CLAIMED` (Owner only); Q7 is over its credit limit on purpose and is also flagged `CREDIT_LIMIT_EXCEEDED`. The limit is the seeded synthetic Rs 5,00,000: the real number is the owner's to set before real use (checklist)."

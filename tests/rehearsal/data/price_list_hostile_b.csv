@@ -1,0 +1,5 @@
+sku,name,unit_price,moq,tax_bps
+SYN-KJ-RED-01,Fine,4200,4,500
+NOPE-1,No such product,4200,4,500
+SYN-KJ-BLUE-01,Zero​width name,4200,4,500
+SYN-BN-RED-01,"హైదరా‌బాద్ శ్రీ‍సిల్క్",3100,4,500

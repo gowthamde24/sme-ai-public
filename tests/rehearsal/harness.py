@@ -496,7 +496,7 @@ def operator_sql(statement: str) -> str:
 COUNTED = (
     "public.companies", "public.contacts", "public.leads", "public.import_batches", "public.import_rows", "public.evidence", "public.claims", "public.enquiries",
     "public.requirements", "public.requirement_fields", "public.requirement_line_picks", "public.quotes", "public.quote_lines", "public.orders", "public.order_events",
-    "public.order_policy_versions", "public.consent_events", "public.erasure_requests", "public.audit_events", "public.memberships", "suppression.contact_keys", "suppression.key_events",
+    "public.order_policy_versions", "public.price_list_versions", "public.price_list_items", "public.price_list_breaks", "public.consent_events", "public.erasure_requests", "public.audit_events", "public.memberships", "suppression.contact_keys", "suppression.key_events",
 )  # fmt: skip
 
 

@@ -413,6 +413,14 @@ describe("/app/tenants/[tenantId]", () => {
     expect(screen.queryByText(/create a company/i)).not.toBeInTheDocument();
   });
 
+  it.each([["owner", true], ["admin", true], ["sales", false], ["viewer", false]])("links the price list page for a %s: %s", async (role, shown) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    render(await TenantPage(props()));
+    const link = screen.queryByRole("link", { name: "Price list →" });
+    expect(link !== null).toBe(shown);
+    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/price-list$/));
+  });
+
   it.each(["owner", "admin", "sales"])("links the orders page for a %s, and not for a viewer", async (role) => {
     fetchTenant.mockResolvedValue(tenant(role));
     render(await TenantPage(props()));

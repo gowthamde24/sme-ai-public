@@ -160,6 +160,7 @@ class RunResult:
     quotes: dict[str, dict[str, Any]] = field(default_factory=dict)
     orders: dict[str, dict[str, Any]] = field(default_factory=dict)
     audit: dict[str, Any] = field(default_factory=dict)
+    price_list: dict[str, Any] = field(default_factory=dict)
     stopped: str | None = None
     network_local: dict[str, int] = field(default_factory=dict)
     network_refused: list[str] = field(default_factory=list)
@@ -254,6 +255,70 @@ class Rehearsal:
                     {},
                     replay=False,
                 )
+
+    # ------------------------------------------------------------------------------ the price list, from a CSV
+    def load_price_list(self) -> None:
+        """The price list comes from tests/rehearsal/data/price_list.csv through the import endpoint (the seed keeps only the products and the policies): check it, save it, then try two hostile files."""
+        api, rec, want = self.api, self.rec, EXPECTED["price_list"]
+        text = (DATA / "price_list.csv").read_text()
+        today = datetime.now(ZoneInfo("Asia/Kolkata")).date().isoformat()
+        checked = api.call(
+            "price list: check the file",
+            "owner",
+            "POST",
+            "/price-lists/import/preview",
+            {"csv": text, "effective_from": today},
+            expect=(200,),
+            replay=False,
+        ).body
+        rec.check("price list: the file is good", (True, []), (checked["ok"], checked["issues"]))
+        got = {
+            i["sku"]: {
+                "unit_price_paise": i["unit_price_paise"],
+                "minimum_order_quantity": i["minimum_order_quantity"],
+                "tax_bps": i["tax_bps"],
+                "breaks": [[b["min_qty"], b["unit_price_paise"]] for b in i["breaks"]],
+            }
+            for i in checked["items"]
+        }
+        rec.check("price list: the items equal the hand-worked ones", want["items"], got)
+        saved = api.call(
+            "price list: save it as a version",
+            "owner",
+            "POST",
+            "/price-lists/import",
+            {"id": rid("pricelist", "v1"), "csv": text, "effective_from": today},
+        ).body
+        rec.check("price list: the version holds five products", 5, saved["item_count"])
+        self.res.price_list = {
+            "items": saved["item_count"],
+            "version_no": saved["version_no"],
+            "hash": saved["content_sha256"][:12],
+            "probes": {},
+        }
+        for probe in want["probes"]:
+            out = api.call(
+                f"price list: check {probe['file']}",
+                "owner",
+                "POST",
+                "/price-lists/import/preview",
+                {"csv": (DATA / probe["file"]).read_text(), "effective_from": today},
+                kind="probe",
+                expect=(200,),
+                replay=False,
+            ).body
+            issues = [[i["row"], i["column"], i["code"]] for i in out["issues"]]
+            rec.check(
+                f"price list: {probe['file']} is refused row by row",
+                (False, probe["issues"]),
+                (out["ok"], issues),
+            )
+            rec.check(
+                f"price list: {probe['file']} echoes no cell of the file",
+                False,
+                any(w in json.dumps(out["issues"]) for w in ("CMD", "Boss", "NOPE", "width")),
+            )
+            self.res.price_list["probes"][probe["file"]] = len(issues)
 
     # ------------------------------------------------------------------------------ import
     def import_leads(self) -> None:
@@ -751,6 +816,46 @@ class Rehearsal:
             expect=(403,),
             code="forbidden",
         )
+        for who in ("sales", "viewer"):
+            api.probe(
+                f"gate: {who} cannot load a price list",
+                who,
+                "POST",
+                "/price-lists/import/preview",
+                {"csv": "sku,name,unit_price,moq,tax_bps\n", "effective_from": "2026-10-06"},
+                expect=(403,),
+                code="forbidden",
+            )
+        api.probe(
+            "gate: an Admin without the second factor cannot load a price list",
+            "admin",
+            "POST",
+            "/price-lists/import",
+            {
+                "id": rid("pricelist", "refused"),
+                "csv": "sku,name,unit_price,moq,tax_bps\n",
+                "effective_from": "2026-10-06",
+            },
+            expect=(403,),
+            weak=True,
+            code="mfa_required",
+        )
+        other = api.call(
+            "isolation: the other workspace's catalog is not this one's",
+            "b_owner",
+            "POST",
+            "/price-lists/import/preview",
+            {"csv": (DATA / "price_list.csv").read_text(), "effective_from": "2026-10-06"},
+            tenant="b",
+            kind="probe",
+            expect=(200,),
+            replay=False,
+        ).body
+        rec.check(
+            "isolation: every sku of this workspace is unknown to the other",
+            {"UNKNOWN_SKU"},
+            {i["code"] for i in other["issues"]},
+        )
         api.probe(
             "gate: a Viewer imports nothing",
             "viewer",
@@ -880,6 +985,7 @@ class Rehearsal:
     # ------------------------------------------------------------------------------ the whole script
     def run(self, until: str = "all") -> None:
         self.setup_archive()
+        self.load_price_list()
         self.import_leads()
         self.quotes_phase()
         if until == "quotes":
@@ -947,7 +1053,13 @@ def main(argv: list[str]) -> int:
                 if added.status_code != 201:
                     raise SystemExit(f"could not add the {role}: {added.status_code}")
         seeded = subprocess.run(
-            [sys.executable, "seeds/seed_quote_reference_data.py", "--tenant-slug", SLUG_A],
+            [
+                sys.executable,
+                "seeds/seed_quote_reference_data.py",
+                "--tenant-slug",
+                SLUG_A,
+                "--without-price-list",
+            ],
             cwd=API_DIR,
             capture_output=True,
             text=True,

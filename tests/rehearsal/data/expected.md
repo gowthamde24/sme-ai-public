@@ -19,6 +19,9 @@ Q6's balance is 35,280 - 8,820 = 26,460, far under the limit: Q6 is flagged only
 
 Enquiries E7 (no sarees asked) and E8 (quantity not decided) stop before a quote on purpose.
 
+## Price list (loaded from `price_list.csv` through the import endpoint)
+Five products, every one with minimum 4 and GST 500 bps and one break at 10: Kanjivaram red and blue 4,200 (4,000 from 10), Banarasi red and gold 3,100 (2,950 from 10), Paithani green 2,800 (2,650 from 10). Two hostile files are checked row by row: `price_list_hostile_a.csv` (a formula sku row 1, the same sku in another case row 3, a malformed amount row 4, a zero minimum row 5) and `price_list_hostile_b.csv` (an unknown product row 2, a zero-width space in a name row 3; a Telugu name with joiners on row 4 is accepted).
+
 ## Orders
 Six orders and one new policy version. Money is the person's claim; payments are recorded by an Admin (or the Owner), refunds and cancellations that carry money by the Owner.
 | Order | Quote | Path | Ends | Paid / balance (rupees) |
