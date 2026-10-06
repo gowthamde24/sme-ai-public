@@ -12,7 +12,7 @@ a minor version; the text for a request both versions accept must stay identical
 
 ## Frozen versions
 
-`v1_0_0.py` is the 1.0.0 `__init__.py` byte for byte (sha256 `a6717e52...6387`, pinned in
+`v1_0_0.py` is the 1.0.0 `__init__.py` byte for byte (sha256 `a6717e52...9387`, pinned in
 `tests/test_legacy_1_0_0.py`). Never edit it. A quote rendered with 1.0.0 is re-verified with
 `quote_text.renderer_for("1.0.0")`; `renderer_for("1.1.0")` is the package itself; any other version raises `KeyError`.
 `tests/test_legacy_1_0_0.py` also re-runs the original suites (`test_quote_text`, `test_text_bounds`, hash pin

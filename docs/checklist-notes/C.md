@@ -508,7 +508,7 @@ mutation runs failed a test; no mutation scripts or mutated implementation remai
   (adapter allow-list, pins, an end-to-end test) — list below. Lane A consolidates this note into the checklist.
 - New renderer version **1.1.0** (minor: behaviour change). `RENDERER_VERSION`, `SUPPORTED_VERSIONS` and
   `renderer_for(version)` are in `packages/pure/quote_text/__init__.py`; 1.0.0 is frozen as `quote_text/v1_0_0.py`,
-  byte-identical to the old `__init__.py` (sha256 `a6717e52...6387`, pinned in a test). Package doc: `VERSIONS.md`.
+  byte-identical to the old `__init__.py` (sha256 `a6717e52...9387`, pinned in a test). Package doc: `VERSIONS.md`.
 - Rule (the application's, re-implemented, not imported): U+200C / U+200D are allowed only DIRECTLY after a letter or
   mark (`L*`, `M*`) in U+0900..U+0DFF. Refused: at the start, after a space, between Latin letters, in or next to
   digits, after an Indic digit or danda, twice in a row. Every other Cc/Cf/Cs/Zl/Zp character stays refused, even
@@ -523,7 +523,7 @@ mutation runs failed a test; no mutation scripts or mutated implementation remai
   `fixtures/golden_1_1_0.json` (9 accepted vectors, 33 refused strings, each refused in all 7 string locations,
   for both versions). The whole `make test-packages` set (all packages) also passes, offline.
 - Old vectors unchanged: `fixtures/synthetic.json` and `tests/test_text_bounds.py` are byte-identical to `main`
-  (sha256 `6e051024...1f89`, `b7e31dbf...87d`); `test_quote_text.py` changed only by `GOLDEN_HASH`, a dict whose
+  (sha256 `6e051024...1f89`, `b7e31dbf...a87f`); `test_quote_text.py` changed only by `GOLDEN_HASH`, a dict whose
   1.0.0 entry is the old literal `376e2b72...b17f`; `v1_0_0.py` equals the old `__init__.py`.
 - Hashes: fixture request, 1.0.0 `376e2b72ffc0a880941cb254f891811cdeb99ad3d195b2312d39cd0cf7c3b17f`, 1.1.0
   `6cab990d149f3ef9ef56a4087d1382241b1705921caa18573a32f3030ceb58aa` (same text, only the version in the hash differs).
@@ -537,9 +537,9 @@ mutation runs failed a test; no mutation scripts or mutated implementation remai
   `capture_text`) accepts it only after an Indic letter or mark. A product name imported with a joiner in another
   position (e.g. between Latin letters) passes import and is still refused by the renderer. Lane A's call.
 
-### Manual deliberate-mutation evidence (new rule, 30 mutants of `__init__.py`)
+### Manual deliberate-mutation evidence (new rule, 31 mutants of `__init__.py`)
 
-Each: temporary edit, the package tests, `git checkout` of the file. 28 killed; 2 survive and are equivalent mutants.
+Each: temporary edit, the package tests, `git checkout` of the file. 29 killed; 2 survive and both are equivalent mutants.
 
 | Mutation | Result |
 | --- | --- |
