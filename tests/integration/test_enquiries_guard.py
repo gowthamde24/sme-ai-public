@@ -159,16 +159,18 @@ INDIC = {
 
 
 @pytest.mark.parametrize("name", list(INDIC))
-def test_the_database_accepts_raw_indic_joiners_and_capture_stores_the_stripped_text(
-    w: World, name: str
-) -> None:
+def test_the_database_accepts_raw_indic_joiners_and_capture_keeps_them(w: World, name: str) -> None:
     from app.requirements.capture_text import prepare_body
 
     raw = f"నమస్కారం 20 sarees {INDIC[name]} deliver to Hyderabad"
     assert stored(w, raw), "ZWJ / ZWNJ are legal in the database (Indic scripts spell with them)"
     cleaned = prepare_body(raw).text
-    assert "‌" not in cleaned and "‍" not in cleaned
-    assert stored(w, cleaned), "what capture stores always passes"
+    assert INDIC[name] in cleaned, (
+        "owner decision 2026-10-06: a joiner after an Indic letter or mark is kept"
+    )
+    assert stored(w, cleaned), (
+        "what capture stores always passes (the database accepts exactly these two joiners)"
+    )
 
 
 @pytest.mark.parametrize(

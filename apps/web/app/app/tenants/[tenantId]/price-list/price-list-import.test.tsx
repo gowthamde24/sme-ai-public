@@ -111,6 +111,19 @@ describe("PriceListImport", () => {
     expect((document.querySelector('input[name="version_id"]') as HTMLInputElement).value).not.toBe(first);
   });
 
+  it("while the very first check runs there is no verdict and Save is shown but disabled", async () => {
+    let finish: (v: { ok: true; preview: ReturnType<typeof parsePreview> }) => void = () => {};
+    const slow = vi.fn(() => new Promise<{ ok: true; preview: ReturnType<typeof parsePreview> }>((resolve) => (finish = resolve)));
+    render(<PriceListImport {...props({ preview: slow })} />);
+    type(GOOD_TEXT);
+    await check();
+    expect(screen.queryByRole("heading", { name: "The file is good" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeDisabled();
+    await act(async () => finish({ ok: true, preview: parsePreview(PREVIEW_JSON) }));
+    expect(await screen.findByRole("heading", { name: "The file is good" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save as a new price list version" })).toBeEnabled();
+  });
+
   it("while a NEW check runs the old verdict is gone and Save is disabled, even for unchanged text; the new verdict is of the new text", async () => {
     let finish: (v: { ok: true; preview: ReturnType<typeof parsePreview> }) => void = () => {};
     const results = [{ ok: true as const, preview: parsePreview(PREVIEW_JSON) }];

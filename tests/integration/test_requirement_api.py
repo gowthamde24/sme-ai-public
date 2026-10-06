@@ -408,8 +408,18 @@ def test_what_capture_refuses_and_hides(api: tuple[TestClient, World]) -> None: 
         and long.json()["truncated"] is True
         and len(long.json()["enquiry"]["body"]) <= 6000
     )
-    indic = capture(client, t, "నమస్కారం 20 సారీలు క్‌ష కావాలి")
-    assert indic.status_code == 201 and "‌" not in indic.json()["enquiry"]["body"]
+    indic = capture(client, t, "నమస్కారం 20 సారీలు క్\u200cష కావాలి")
+    # owner decision 2026-10-06: the joiner after an Indic letter or mark is KEPT, and the database accepts it
+    assert indic.status_code == 201 and "క్\u200cష" in indic.json()["enquiry"]["body"]
+    hidden = capture(client, t, "call 98765\u200c43210 or \u200bwrite \u202eto me")
+    assert hidden.status_code == 201
+    body = hidden.json()["enquiry"]["body"]
+    assert (
+        "\u200c" not in body
+        and "\u200b" not in body
+        and "\u202e" not in body
+        and "98765" not in body
+    )
 
 
 def _post_field(

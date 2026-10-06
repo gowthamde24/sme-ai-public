@@ -26,31 +26,107 @@ DEVANAGARI = "क्" + ZWJ + "ष"
 DEVANAGARI_ZWNJ = "क्" + ZWNJ + "ष"
 
 
+MALAYALAM_CHILLU = (
+    "\u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d" + ZWJ
+)  # a chillu typed with ZWJ at the END of a word
+KANNADA_END = "\u0cae\u0cc8\u0cb8\u0cc2\u0cb0\u0cc1" + ZWNJ  # a ZWNJ after a word, before a space
+
+
 @pytest.mark.parametrize(
-    ("raw", "kept"), [(TELUGU, "క్ష"), (KANNADA, "ಕ್ಷ"), (DEVANAGARI, "क्ष"), (DEVANAGARI_ZWNJ, "क्ष")]
+    "raw", [TELUGU, KANNADA, DEVANAGARI, DEVANAGARI_ZWNJ, MALAYALAM_CHILLU, KANNADA_END]
 )
-def test_indic_joiners_are_stripped_and_the_letters_stay_in_order(raw: str, kept: str) -> None:
-    assert strip_invisible(raw) == kept
-    assert len(strip_invisible(raw)) == len(raw) - 1
+def test_indic_joiners_are_kept_where_an_indic_letter_or_mark_precedes_them(raw: str) -> None:
+    """Owner decision 2026-10-06: a pasted enquiry KEEPS U+200C and U+200D that follow a letter or mark of an Indic script (they spell real words)."""
+    assert capture_text.KEEP_INDIC_JOINERS is True
+    assert strip_invisible(raw) == raw
+    assert strip_invisible(f"{raw} {raw}\n{raw}.") == f"{raw} {raw}\n{raw}."
 
 
-@pytest.mark.parametrize("raw", [TELUGU, KANNADA, DEVANAGARI, DEVANAGARI_ZWNJ])
-def test_an_enquiry_with_joiners_is_stored_stripped_not_refused(raw: str) -> None:
-    prepared = prepare_body(f"నమస్కారం. 20 సారీలు {raw} కావాలి. Deliver to Hyderabad by 15 November.")
-    assert ZWJ not in prepared.text and ZWNJ not in prepared.text
-    assert not BLOCKED.search(prepared.text)
+@pytest.mark.parametrize(
+    "raw", [TELUGU, KANNADA, DEVANAGARI, DEVANAGARI_ZWNJ, MALAYALAM_CHILLU, KANNADA_END]
+)
+def test_an_enquiry_with_joiners_is_stored_with_them_and_passes_the_databases_hygiene_rule(
+    raw: str,
+) -> None:
+    prepared = prepare_body(
+        f"\u0c28\u0c2e\u0c38\u0c4d\u0c15\u0c3e\u0c30\u0c02. 20 {raw} \u0c15\u0c3e\u0c35\u0c3e\u0c32\u0c3f. Deliver to Hyderabad by 15 November."
+    )
+    assert (ZWJ in prepared.text) or (ZWNJ in prepared.text)
+    assert not BLOCKED.search(prepared.text), "the database accepts exactly these two joiners"
     assert (
         "Hyderabad" in prepared.text and "20" in prepared.text and prepared.truncated_from is None
     )
+    assert raw in prepared.text
 
 
-def test_the_joiners_can_be_kept_between_indic_letters_by_a_switch(
-    monkeypatch: pytest.MonkeyPatch,
+def test_a_joiner_anywhere_else_is_still_removed_so_it_cannot_hide_a_number_from_the_scrubber() -> (
+    None
+):
+    assert strip_invisible("a" + ZWJ + "b") == "ab"  # between Latin letters
+    assert strip_invisible("98765" + ZWNJ + "43210") == "9876543210"  # inside a number
+    assert (
+        strip_invisible(ZWJ + "\u0915") == "\u0915" and strip_invisible(" " + ZWNJ + "x") == " x"
+    )  # at the start, after a space
+    assert (
+        strip_invisible("\u0915" + ZWJ + ZWJ + ZWNJ) == "\u0915" + ZWJ
+    )  # a run of joiners keeps one
+    assert (
+        strip_invisible("\u0967" + ZWJ + "\u0968") == "\u0967\u0968"
+    )  # an Indic DIGIT is not a letter or mark
+    assert prepare_body("call 98765" + ZWNJ + "43210 now").text == f"call {CONTACT_MARKER} now"
+    assert prepare_body(
+        "call \u0c2b\u0c4b\u0c28\u0c4d" + ZWJ + " 98765" + ZWJ + "43210"
+    ).text.endswith(CONTACT_MARKER)
+
+
+@pytest.mark.parametrize(
+    "ch",
+    [
+        "\u200b",
+        LRM,
+        RLM,
+        "\u202a",
+        "\u202b",
+        "\u202c",
+        "\u202d",
+        "\u202e",
+        "\u2060",
+        "\u2061",
+        "\u2066",
+        "\u2067",
+        "\u2068",
+        "\u2069",
+        "\ufeff",
+        "\u00ad",
+        "\U000e0041",
+        "\U000e007f",
+        "\u061c",
+    ],
+)
+def test_bidi_tag_and_other_format_characters_are_still_removed_even_right_after_an_indic_letter(
+    ch: str,
 ) -> None:
-    monkeypatch.setattr(capture_text, "KEEP_INDIC_JOINERS", True)
-    assert strip_invisible(TELUGU) == TELUGU and strip_invisible(DEVANAGARI) == DEVANAGARI
-    assert strip_invisible("a" + ZWJ + "b") == "ab"  # between Latin letters it is still removed
-    assert strip_invisible(ZWJ + "क") == "क" and strip_invisible("क" + ZWJ) == "क"
+    assert strip_invisible("\u0c15" + ch + "\u0c37") == "\u0c15\u0c37"
+    assert strip_invisible("a" + ch + "b") == "ab"
+
+
+def test_the_removal_follows_the_one_shared_rule() -> None:
+    """Everything the shared rule (app/text_rules.py) calls hidden is removed here, apart from the two joiners the rule allows and the whitespace capture keeps."""
+    from app.text_rules import has_hidden_characters
+
+    for code in list(range(0x0, 0x3000)) + [0xFEFF, 0xE0001, 0xE0041, 0xE000, 0xFFFF]:
+        ch = chr(code)
+        if ch in "\t\n\r" or ch in (ZWNJ, ZWJ) or ch in "\u2028\u2029":
+            continue
+        out = strip_invisible("a" + ch + "b")
+        assert (out == "ab") is has_hidden_characters(ch), hex(code)
+
+
+def test_the_joiners_can_still_be_switched_off(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setattr(capture_text, "KEEP_INDIC_JOINERS", False)
+    assert strip_invisible(TELUGU) == "\u0c15\u0c4d\u0c37" and strip_invisible(
+        MALAYALAM_CHILLU
+    ) == MALAYALAM_CHILLU.replace(ZWJ, "")
 
 
 @pytest.mark.parametrize(

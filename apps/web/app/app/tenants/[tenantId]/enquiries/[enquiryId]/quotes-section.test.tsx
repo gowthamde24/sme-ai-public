@@ -139,6 +139,13 @@ describe("the quote section of /app/tenants/[tenantId]/enquiries/[enquiryId]", (
     expect(screen.getByRole("button", { name: "Start order" })).toBeInTheDocument();
   });
 
+  it("it asks for the order of the quote that is SELECTED, not of the newest one", async () => {
+    quotesApi.fetchEnquiryQuotes.mockResolvedValue([parseQuoteSummary(SUMMARY_JSON), parseQuoteSummary({ ...SUMMARY_JSON, id: OLDER, quote_no: 2 })]);
+    quotesApi.fetchQuote.mockImplementation(async (_t: string, _tenant: string, id: string) => parseQuote({ ...approvedJson, id }));
+    await show({ quote: OLDER });
+    expect(ordersApi.fetchOrders).toHaveBeenCalledWith("tok", TENANT, { quoteId: OLDER, limit: 1 });
+  });
+
   it("a draft does not ask for an order or for text", async () => {
     await show();
     expect(ordersApi.fetchOrders).not.toHaveBeenCalled();

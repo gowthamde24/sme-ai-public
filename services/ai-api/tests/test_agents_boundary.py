@@ -68,8 +68,11 @@ def rel(path: Path) -> str:
 
 @pytest.mark.parametrize("path", FILES, ids=rel)
 def test_nothing_is_imported_from_the_application_except_the_runtime_itself(path: Path) -> None:
+    # app.text_rules: the one shared character rule, pure (a test below pins it)
     allowed = (
-        ("app.requirements",) if PURE_ROOT in path.parents else ("app.agents", "app.requirements")
+        ("app.requirements", "app.text_rules")
+        if PURE_ROOT in path.parents
+        else ("app.agents", "app.requirements", "app.text_rules")
     )
     for module in imports(path):
         if module == "app" or module.startswith("app."):
@@ -128,3 +131,10 @@ def test_the_tool_context_holds_no_token_tenant_or_table() -> None:
         "host",
         "allowed_hosts",
     }
+
+
+def test_the_shared_character_rule_is_pure_standard_library_only() -> None:
+    """The sandbox may import app.text_rules: it reaches nothing (no application module, no I/O)."""
+    path = Path(__file__).resolve().parents[1] / "app" / "text_rules.py"
+    found = {m.split(".")[0] for m in imports(path)}
+    assert found <= {"__future__", "unicodedata"}, found

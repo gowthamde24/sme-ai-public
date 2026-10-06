@@ -5,13 +5,14 @@ joiner, BOM, tag characters, control characters) and, deliberately, ACCEPTS the 
 direction marks LRM / RLM, because Indic and Persian scripts use them to spell words. Capture does not refuse an enquiry for any of this: it
 STRIPS, and stores the stripped text. Every offset (the runtime's quote finder, the database's verification) is against the STORED text.
 
-Stripped: every control character except tab, line feed and carriage return; every format character (Unicode category Cf: zero-width
-space / non-joiner / joiner, LRM / RLM, bidi embeddings, overrides and isolates, word joiner and invisible operators, BOM, soft hyphen, tag
-characters); private-use, unassigned and surrogate code points. U+2028 / U+2029 become a line feed.
+What is hidden is decided by the ONE shared rule (`app/text_rules.py`, also used by the CSV imports): control characters (but tab, line feed and
+carriage return stay), every format character (Cf: zero-width space, LRM / RLM, bidi embeddings, overrides and isolates, word joiner and invisible
+operators, BOM, soft hyphen, tag characters), private-use, unassigned and surrogate code points. U+2028 / U+2029 become a line feed.
 
-The cost, stated plainly (owner decision pending): ZWJ and ZWNJ are functional in Devanagari, Telugu, Kannada, Malayalam and Persian text.
-Without them a conjunct or a half form can render differently (the letters and their order are unchanged, so the text stays readable and
-searchable). Set KEEP_INDIC_JOINERS = True to keep a joiner that sits between two letters or marks of an Indic script; it is False by default.
+Owner decision 2026-10-06: **a pasted enquiry KEEPS the zero-width joiner and non-joiner (U+200D / U+200C) where they spell a word**: a joiner that
+FOLLOWS a letter or a mark of an Indic script (Devanagari to Sinhala), including at the end of a word (a Malayalam chillu, a Kannada word before a space).
+Anywhere else a joiner is still removed: inside a number or between Latin letters it could hide a phone number or an address from the scrubber, and it spells
+nothing. Set KEEP_INDIC_JOINERS = False to remove them everywhere.
 """
 
 from __future__ import annotations
@@ -20,8 +21,9 @@ import unicodedata
 from dataclasses import dataclass
 
 from app.requirements.scrub import scrub
+from app.text_rules import has_hidden_characters
 
-KEEP_INDIC_JOINERS = False
+KEEP_INDIC_JOINERS = True  # owner decision 2026-10-06
 MAX_BODY_CHARS = 6000
 MAX_SUBJECT_CHARS = 200
 _KEEP_WHITESPACE = frozenset("\t\n\r")
@@ -36,21 +38,16 @@ def _indic(ch: str) -> bool:
 
 def strip_invisible(text: str) -> str:
     out: list[str] = []
-    for i, ch in enumerate(text):
+    for ch in text:
         if ch in _KEEP_WHITESPACE:
             out.append(ch)
-        elif ch in "  ":
+        elif ch in "\u2028\u2029":
             out.append("\n")
-        elif (
-            KEEP_INDIC_JOINERS
-            and ch in _JOINERS
-            and out
-            and _indic(out[-1])
-            and i + 1 < len(text)
-            and _indic(text[i + 1])
-        ):
-            out.append(ch)
-        elif unicodedata.category(ch) in {"Cc", "Cf", "Cs", "Co", "Cn"}:
+        elif ch in _JOINERS:
+            # kept only after a letter or a mark of an Indic script (and never twice in a row: the second follows a joiner, not a letter)
+            if KEEP_INDIC_JOINERS and out and _indic(out[-1]):
+                out.append(ch)
+        elif has_hidden_characters(ch, allow_newline=False):
             continue
         else:
             out.append(ch)

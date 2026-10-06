@@ -1,5 +1,16 @@
 # Handoff: resume here
 
+**STOP POINT (2026-10-06, step F): the members plan has the owner's decisions recorded (not built; queued after T011a, before T012) and step F fixes F1-F8 plus the capture_text decision are committed locally; nothing is pushed.** Do NOT start anything else (members build, T010 part 2, T011a) before the owner says so.
+
+* Step F (see `docs/checklist-notes/A.md`, "Step F: findings" and "Step F: mutation spot-check"): F1 `GET /orders?quote_id=`; F2 the commit reads the catalog once; F3 900,000 BYTES (Next.js caps a server action at 1 MB); F4 the verdict and Save belong to the exact text and date checked; F5 `occurred_at` is bounded only by the database clock (30 days back, 5 minutes ahead; no floor at the order's creation or the previous event: recorded in a test, no database change); F6 the hash comment; F7 a malformed parser result is a fixed 502; F8 "Money still held" on cancelled/lost/expired orders, and the T011a requirement (a ninth owner-brief question, `docs/plans/t011-owner-agent.md`).
+* capture_text: `KEEP_INDIC_JOINERS = True` (owner decision): a joiner after an Indic letter or mark is kept; elsewhere removed; everything else hidden goes through `app/text_rules.py` (now allowed in the agent sandbox's import boundary, with a purity test).
+* Still open: the pinned quote-text renderer (lane C) must allow U+200C/U+200D in product names (checklist row, NOT part of this work); the members decisions are recorded in `docs/plans/members-and-invitations.md` (A1-A6 included).
+* Traps: ruff-format wraps long lines, so mutation patterns must match the formatted text; the agent sandbox may import only `app.requirements` and `app.text_rules`; a pgTAP file that uses the seed must not assume a zero credit limit.
+
+---
+
+(Earlier hand-off, still true.)
+
 **STOP POINT (2026-10-06, second rehearsal batch): small fixes A1-A3, the order web page (step 4), the price-list CSV import (step 5) and the members-and-invitations PLAN are built or written and committed locally; nothing is pushed.** The owner reads `rehearsal-report.md` (`make db-reset && make rehearse-thin-slice`), tries `docs/rehearsal-click-checklist.md` by hand (`make db-reset && make rehearse-prepare-click`, then `make dev-api`, `make dev-web`), and decides the members plan. Do NOT build members/invitations, T010 part 2 or T011a before the owner approves.
 
 * New migrations: `20261022090000_small_fixes.sql` (A1 `add_requirement_field` replay after confirm; A3 seeded repeat credit limit Rs 5,00,000) and `20261023090000_seed_without_price_list.sql` (the seed can skip the price list: `make seed-quote-data TENANT=<slug>` still seeds one; the driver uses `--without-price-list`). Copies are pinned in `tests/test_migration_copies.py`.

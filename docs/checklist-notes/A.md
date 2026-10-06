@@ -2,6 +2,23 @@
 
 Record ticket, checklist row, evidence, unresolved risk and proposed status here. Lane A consolidates these into docs/pre-pilot-checklist.md after review.
 
+## Step F: mutation spot-check (2026-10-06)
+
+Every rule changed in step F was mutated (Python: the unit tests; TypeScript: vitest). **61 mutants: 56 killed on the first pass or after re-targeting the pattern at the formatted text, 2 survivors closed with new tests, 3 equivalent => 58 killed + 3 equivalent.**
+* F1 the quote filter (route, UUID typing, repository parameter, column, tenant filter, web client, enquiry page): 11 mutants. One survivor (the page asked for the newest quote's order instead of the selected one: the test's two quotes were the same) closed with a test that selects the OLDER approved quote.
+* F2 the single catalog read and the vanished-product refusal: 3. F3 the byte limit (model, validator, the off-by-one both ways, the web counts, the picker, the paste check, the sentence): 12. F7 the 502 mapping (each exception class, the strict response models, the adapter's type checks): 7.
+* F4 the save gating (the verdict while a check runs, after an edit of the text or the date, save enabled while checking or without a clean check, the version id of a new check): 10. One survivor (the save form hidden during the very first check) closed with a test of the first slow check.
+* F8 the held-money line (each outcome, the net not the gross, nothing held, the line in the view and in the list, the sentence): 10.
+* capture_text: the default, the Indic-letter rule (anywhere, at the start, digits, marks only), the shared rule, line separators, the block bounds: 11.
+
+| Equivalent | Why |
+| --- | --- |
+| T305 save is enabled while a check runs (`saving \|\| checking \|\| !current` without `checking`) | `current` already needs the verdict to be fresh, and a verdict is never fresh while a check runs: the extra term is a second guard |
+| T308 `previewed?.state ?? undefined` | a no-op |
+| T405 `net_paise >= 0` instead of `> 0` | the function returns the amount, and 0 is 0: the same value either way |
+
+Evidence of step F: `make check` exit 0 (vitest 1,196, pytest 3,679, pgTAP 8,709 in 61 files, integration 925, evals 45 + 9 + 29 + 9 passed, the one opt-in live case skipped). No golden report was regenerated; no migration was created.
+
 ## Step F: findings (2026-10-06)
 
 **F5: what bounds `occurred_at` on an order event (the time a person says it happened). Not changed; recorded by `test_what_bounds_the_time_a_person_says_an_event_happened_today` (real stack).**
