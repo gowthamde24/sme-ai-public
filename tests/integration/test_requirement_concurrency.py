@@ -297,6 +297,61 @@ def test_a_decision_versus_an_agent_write_of_the_same_run(draft: Draft) -> None:
     assert ("colour", "proposed", "agent") in draft.field_keys(draft.requirement)
 
 
+# ------------------------------------------------------------------------------ the lock order itself
+def _row_is_locked(table: str, row_id: str) -> bool:
+    """Is the row locked by another transaction? (`for update nowait` as the operator: it fails at once when someone holds the row.)"""
+    docker = shutil.which("docker")
+    assert docker is not None
+    r = subprocess.run(
+        [docker, "exec", "-i", operator_sql.container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", f"select 1 from public.{table} where id = '{row_id}' for update nowait"],
+        capture_output=True,
+        text=True,
+    )  # fmt: skip
+    if r.returncode == 0:
+        return False
+    assert "could not obtain lock" in r.stderr, r.stderr
+    return True
+
+
+@pytest.mark.parametrize(
+    ("writer", "enquiry_locked", "requirement_locked"),
+    [
+        ("confirm", True, True),
+        ("discard", True, True),
+        ("add_field", True, True),
+        ("agent_write", True, True),
+        (
+            "decide",
+            False,
+            True,
+        ),  # decide_requirement_field never takes the enquiry lock: that is what keeps the order cycle-free
+    ],
+)
+def test_every_writer_takes_the_enquiry_row_then_the_requirement_row(
+    draft: Draft, writer: str, enquiry_locked: bool, requirement_locked: bool
+) -> None:
+    statements = {
+        "confirm": f"select public.confirm_requirement('{draft.requirement}')",
+        "discard": f"select public.discard_requirement('{draft.requirement}')",
+        "add_field": f"select public.add_requirement_field(p_enquiry_id => '{draft.eid}', p_line => null, p_key => 'delivery_city', p_value_text => 'Hyderabad')",
+        "agent_write": f"select public.agent_write_requirement_field('{draft.run}', 'probe', 1::smallint, 'colour', 'red', null, null, null, null, 'stated', 'Hello,', 0, 6, false)",
+        "decide": f"select public.decide_requirement_field('{draft.type}', 'confirm')",
+    }
+    if writer in ("confirm", "discard"):
+        draft.confirm_both()
+    held = Held(draft.sales, statements[writer])
+    held.holding()
+    try:
+        assert _row_is_locked("enquiries", draft.eid) is enquiry_locked, (
+            f"{writer}: the enquiry row lock"
+        )
+        assert _row_is_locked("requirements", draft.requirement) is requirement_locked, (
+            f"{writer}: the requirement row lock"
+        )
+    finally:
+        held.finish()
+
+
 # ------------------------------------------------------------------------------ everything at once
 ROUNDS = 8
 ALLOWED = {"SM208", "SM209", "SM210", "SM211", "23514"}
