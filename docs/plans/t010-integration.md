@@ -1,9 +1,18 @@
 # T010 integration plan: suppression, consent-aware follow-up, persisted drafts (PLAN ONLY, nothing built)
 
-Status: written 2026-10-06 after T009 for the owner's review. Related: ADR 0005 (consent ledger), ADR 0013 (agents; option A / B), ADR 0014 (erasure; suppression-after-erasure open question 1),
+Status: written 2026-10-06 after T009; **AMENDED and ACCEPTED by the owner on 2026-10-06** (see "Owner decisions and amendments" below; the sections that changed say so). Related: ADR 0005 (consent ledger), ADR 0013 (agents; option A / B), ADR 0014 (erasure; suppression-after-erasure open question 1),
 ADR 0016 (second factor), ADR 0017 (local-first), ADR 0018 (requirements; persisted question drafts deferred here), ADR 0019 and 0020-to-be (quotes), `docs/plans/t010-followup-cadence.md`
 (lane C's pure package, the contract this plan wraps), `docs/plans/order-conversion.md`, `docs/pre-pilot-checklist.md`.
 Reads before building: CLAUDE.md, AGENTS.md, docs/lanes.md, this plan, the cadence plan, ADR 0014 section "suppression after erasure".
+
+## Owner decisions and amendments (2026-10-06)
+
+**Decisions 1-12 of section 8 are accepted as written, with their recommended defaults** (see section 8, each marked ACCEPTED). Amendments:
+
+* **(a) Erasure can never be blocked by a missing key.** The API records the keys and THEN erases (it reads the contact's e-mail and phone with the caller's token, computes the HMACs, calls `record_contact_keys` with reason `erased`, then calls the erasure function). If the keys cannot be produced (the HMAC key is not configured, an identifier cannot be normalised, the contact has none), an **Owner with aal2 may erase explicitly WITHOUT a key**: `p_without_key = true`, audited with its own reason code, and a pre-pilot checklist row ("an erasure without a key leaves no suppression: list and review each one") is added. No other role and no other path can skip the key; a normal erasure that finds identifiers but no recorded key is still refused (**SM221**) so an accident cannot lose the key, but the refusal always has the explicit way out. The DPDP right to erasure is never held hostage by suppression bookkeeping.
+* **(b) Backfill and the two entry paths.** Keys are computed (i) for every EXISTING contact by a backfill (an Owner-only, aal2, idempotent API action that works in batches and reports how many contacts remain unkeyed; a pgTAP and a real-stack test prove a second run changes nothing and that an unkeyed contact cannot receive a draft until it is keyed), (ii) in the CSV/JSON IMPORT path and (iii) in the CREATE-CONTACT path (and on any change of a contact's e-mail or phone): the API computes the keys, calls `check_suppression` before the contact is created or imported, and records the keys with the contact. A contact whose address matches a suppressed key is created FLAGGED (suppressed, consent not grantable), never refused silently and never contacted.
+* **(c) Follow-ups stop on order outcomes.** A lead's follow-ups stop when an order for one of its quotes is **accepted, declined or cancelled**, or when the approved quote is **withdrawn** (a withdrawn quote is a quote the person took back). Implemented as a READ-ONLY check (`app.followup_stopped(lead_id)`) evaluated by the due list and re-checked by `create_followup_draft`, `approve_followup_draft` and `record_draft_sent`; the order functions never write drafts, so no new lock cycle exists (the lead lock stays first on the follow-up side; the order side keeps enquiry, requirement, quote, order). A draft that is approved just before an acceptance commits is stopped at `record_draft_sent` (nothing was sent by the system). New SQLSTATE **SM227** (follow-ups stopped for this lead; the API shows the reason code: `order_accepted`, `order_declined`, `order_cancelled`, `quote_withdrawn`).
+* **(d) English only for now.** Draft and question templates are English; other languages (Hindi, Telugu and others) are an owner question (decision 13 below), not built.
 
 ## 1. Scope and non-goals
 
@@ -37,8 +46,9 @@ Numbers below are proposals: confirm free SQLSTATEs at build time (today SM001-0
   contact (existing function), idempotent.
 * `public.lift_suppression(p_key_id, p_reason_text_code)` (**Owner only, aal2**): appends a lift.
 * `public.check_suppression(p_keys jsonb) returns jsonb` (read; Owner/Admin/Sales): for a set of HMACs, which are suppressed. Used by the import and by the API before a contact is created.
-* `app.erase_contact` (replaced in a new migration, copy test as in `test_migration_copies.py`): refuses (**SM221**) when the contact holds an e-mail or phone and no key for it was recorded, so erasure can never leave no trace.
-  **Erasure writes the key row (`reason='erased'`) in the same transaction before the identifiers are removed.**
+* `app.erase_contact` (replaced in a new migration, copy test as in `test_migration_copies.py`; **amended, see (a)**): when the contact holds an e-mail or phone and no key for it was recorded it refuses (**SM221**), UNLESS the caller passes the explicit `p_without_key = true`, which only an **Owner with aal2** may do and which writes an audited `erased_without_key` event. In the normal path the API has recorded the keys first, and the function writes the `erased` key row in the same transaction before the identifiers are removed.
+* `public.backfill_contact_keys(p_keys jsonb)` (**Owner, aal2**; **amendment (b)**): stores keys the API computed for existing contacts, in batches, idempotent; `public.unkeyed_contact_count()` reports what remains.
+* `app.followup_stopped(p_lead_id)` (**amendment (c)**, built with part 2 and read by it): returns the stop reason or null from the lead's orders and quotes.
 
 ### 2.2 Touches, policy, decisions, drafts (migration part 2)
 * `lead_touches` (append-only): `id` (the caller's, idempotent), `tenant_id`, `lead_id`, `direction` (`out`|`in`), `channel`, `occurred_at`, `recorded_by`, `draft_id` (nullable: the draft this touch fulfils).
@@ -51,7 +61,7 @@ Numbers below are proposals: confirm free SQLSTATEs at build time (today SM001-0
 * Functions (all `SECURITY DEFINER`, `search_path=''`, one overload, `authenticated` only; the role is proven BEFORE anything else is revealed, one generic 42501):
   * `record_touch(p_id, p_lead_id, p_direction, p_channel, p_occurred_at)` (Owner/Admin/Sales, any aal). **A recorded fact is never refused** (a person did send it, or the lead did write): a touch on a suppressed lead is stored and flagged, never rejected.
   * `create_followup_draft(p_id, p_lead_id, p_contact_id, p_channel, p_engine_version, p_request_text, p_result_text)` (Owner/Admin/Sales, any aal). The API ran the pinned engine; the database refuses **SM220** (the contact or its keys are suppressed, or consent is not granted
-    for the channel), **SM221** (no recorded key for the channel: an unkeyed contact cannot be contacted), **SM222** (no policy in force), **SM225** (the decision is not `draft_followup`, or it is not due now), **SM226** (the request is not the one the
+    for the channel), **SM221** (no recorded key for the channel: an unkeyed contact cannot be contacted; also the erasure refusal above), **SM227** (follow-ups stopped, amendment (c)), **SM222** (no policy in force), **SM225** (the decision is not `draft_followup`, or it is not due now), **SM226** (the request is not the one the
     database rebuilds from the recorded touches and policy; see section 5), and replays an exact retry.
   * `approve_followup_draft(p_id, p_recomputed_hash)` (**Owner/Admin, aal2**): re-checks suppression, consent and the touch history under lock; **SM224** when the history, the policy or the suppression state moved since the draft (stale); **SM223** when not a draft.
   * `discard_followup_draft(p_id)` (Owner/Admin/Sales on their own, Owner/Admin on any).
@@ -98,6 +108,7 @@ A Viewer reads none of it (consistent with quotes). Refusals before the role is 
 
 ## 6. Test plan (what `make check` must hold at the end)
 
+* **Added by the amendments:** erasure with keys recorded first (the `erased` key row exists, a re-import is flagged); erasure refused without keys (SM221) for every role; erasure with `p_without_key` by an Owner aal2 only (Admin, Sales, aal1 Owner refused; the audit event exists); the backfill (batches, idempotent, the unkeyed count falls to zero); import and create-contact compute keys and flag a match; a draft for an unkeyed contact is refused; follow-up stop reasons (built with part 2).
 * **pgTAP:** role matrix for every function (Viewer, Sales, Admin, Owner, another tenant, anon); one generic 42501; aal2 after role; append-only (update, delete, truncate refused for keys, lifts, touches); the partial unique index; every SQLSTATE reached by a hand-made case;
   `erase_contact` refuses without keys (SM221) and writes the key before the identifiers vanish; **after erasure a re-import of the same address is flagged by `check_suppression`** (the gate's own test); column-grant tests (nobody writes `contacts.*_hmac` directly); the catalog guard allow-list (06) and the registry (00001) updated; a copy test for the replaced `erase_contact`.
 * **Real stack (API and direct PostgREST):** every new read and write, a Viewer refused, a second tenant sees nothing; every attack: a forged result, a stale approval, a suppressed approval, an unkeyed contact, a key recorded for another tenant's contact, a lifted suppression by an Admin; the response and the log never contain a key (canary on a real key value).
@@ -112,7 +123,7 @@ A Viewer reads none of it (consistent with quotes). Refusals before the role is 
 * Lane C's cadence package is on main and pinned by golden vectors; the adapter pattern is proven twice (engine, mapper, text).
 * Risks: (1) the HMAC secret handling (a leaked key lets someone test whether an address was suppressed: treat as a secret, one key per environment, never in the repo or the browser); (2) normalisation drift (an address written two ways escapes suppression: vectors and a property test; conservative: lower-case, trim, no dot removal); (3) a person never recording "I sent it" so the cadence stays on the same touch (the UI says so and the due list shows drafts waiting for a record); (4) legal: consent and DND rules are the owner's and a lawyer's (checklist rows stay open: nothing here is legal advice and no default legal basis is coded).
 
-## 8. Open owner decisions (each with a recommended default; I proceed on the default if you say nothing)
+## 8. Owner decisions (2026-10-06: **1-12 ACCEPTED as written, with their defaults**; 13 is new)
 
 1. **Suppression key scope.** Default: e-mail and phone only. Alternatives: also a WhatsApp id, or a company-level key. (More keys = more PII-adjacent data.)
 2. **HMAC key custody and rotation.** Default: one key per environment in the API's configuration, `key_version` stored, up to two versions checked; no rotation before Customer Zero (rotation after erasure cannot recompute originals, so old keys must stay for checks).
@@ -126,9 +137,10 @@ A Viewer reads none of it (consistent with quotes). Refusals before the role is 
 10. **Persisted question drafts in this ticket.** Default: yes, as the last commit before the milestone (ADR 0018 deferred them here). Alternative: defer to the Owner Agent ticket.
 11. **No scheduler.** Default: "what is due" is computed when a person opens the page. A scheduled job needs option B first (ADR 0013 decision 4).
 12. **Outreach drafts for a first touch.** The engine cannot invent the first anchor (`initial_outreach_required`). Default: the first outreach draft is a person's, from the lead page, with the same suppression and consent gates; the cadence takes over after its recorded touch.
+13. **Languages (NEW, owner question).** Drafts and question templates are English only. Should Hindi, Telugu or another language be added, and who writes and reviews the wording (closed templates must be reviewed by a person who reads the language)? Default: English only until you answer.
 
 ## 9. Commit order and stops
 
-1. ADR 0020 (suppression and follow-up), this plan's as-built section, checklist rows. 2. Migration part 1: suppression keys, contact keys, `erase_contact` replacement, copy test, pgTAP, catalog guards. 3. The HMAC adapter, the import and create-contact checks in the API, the response/log canaries, real-stack tests (**STOP: the hard gate is closed; the owner reviews before the rest**).
+1. ADR 0020 (suppression and follow-up), this plan's as-built section, checklist rows. 2. Migration part 1: suppression keys and lifts, contact keys, `record_contact_keys`, `suppress_contact`, `lift_suppression`, `check_suppression`, the `erase_contact` replacement with the explicit Owner aal2 escape, the backfill functions, copy test, pgTAP, catalog guards. 3. The HMAC adapter, the key computation in the import, create-contact and erasure paths and the backfill action in the API, the response/log canaries, real-stack tests (**STOP: the hard gate is closed; the owner reviews before the rest**). Commits 1-3 are the first build; the API/web of commits 6-7 and everything after commit 3 wait.
 4. The cadence adapter (golden vectors, fail closed). 5. Migration part 2: touches, policy, drafts, functions, pgTAP, races. 6. API and real-stack attacks. 7. Web. 8. Question drafts (migration, API, web). 9. Milestone check: full `make check`, one mutation pass, handoff and checklist notes.
 Each commit: `make check-fast` plus its new tests; full `make check` and the mutation pass only at commit 9. No push.

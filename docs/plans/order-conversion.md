@@ -1,6 +1,6 @@
 # Order conversion plan: approved quote to order, won / lost, payments recorded by a person (PLAN ONLY, nothing built)
 
-Status: written 2026-10-06 after T009 for the owner's review. Related: ADR 0019 (quote integration; the withdrawal hook), ADR 0018 decision 9 (lock order), ADR 0013 / 0016 (agents, second factor), `docs/plans/order-lifecycle.md`
+Status: written 2026-10-06 after T009; **ACCEPTED by the owner on 2026-10-06 with all recommended defaults** (section 8 records each decision; the changed ones are marked DECIDED). Related: ADR 0019 (quote integration; the withdrawal hook), ADR 0018 decision 9 (lock order), ADR 0013 / 0016 (agents, second factor), `docs/plans/order-lifecycle.md`
 (lane C's pure package, the contract this plan wraps), `docs/plans/t009-quote-integration.md`, `docs/plans/t010-integration.md`, `docs/pre-pilot-checklist.md` rows "Quotes".
 Reads before building: CLAUDE.md, AGENTS.md, docs/lanes.md, this plan, the lifecycle plan, ADR 0019.
 
@@ -34,6 +34,9 @@ SQLSTATEs proposed in the range **SM230-SM239** (confirm free codes at build tim
   * `public.withdraw_approved_quote` (replaced in a new migration, copy test): **SM237 once an order exists for the quote** (the hook already in the function, ADR 0019). And `public.approve_quote` (replaced): when it would supersede an older approved quote that has an order it refuses with **SM237** instead.
 * The pure engine is the AUTHORITY on transitions; the database proves a **v1 subset** it can recompute exactly (decision 2): the structural state / event matrix, positive integer money, `paid <= order_total`, `refunds <= paid`, unique payment and refund ids, the advance threshold for `start_preparation` and `dispatch`, and the cancel window. An equivalence property test (generated ledgers, the real engine against the database function, like `test_quote_engine_equivalence.py`) pins them equal.
 
+## 2b. Interaction with follow-ups (T010 plan, amendment (c))
+A lead's follow-ups STOP when an order of its quotes is **accepted, declined or cancelled** (the order states `accepted`, `declined`, `cancelled`), or when the approved quote is **withdrawn**. The order side does NOT write follow-up drafts: the follow-up side reads the order state (`app.followup_stopped(lead_id)`, read-only) when it lists what is due and re-checks it at create, approve and record-as-sent. So this ticket adds no lock to the follow-up tables and no cycle: the follow-up functions lock the lead row first and only READ orders and quotes; the order functions keep **enquiry, requirement, quote, order**. Consequences to build and test here: the order states are readable by the follow-up functions under the same tenant rules (no new grant: they are definer functions), `accepted` moves the lead to fulfilment (no cadence), `declined` is Lost with its reason, and the order page tells the person "follow-ups for this lead are stopped" with the reason code. The race test of this ticket includes an acceptance committing while a follow-up draft is being approved (the draft is stopped at the next check; nothing is sent by the system either way).
+
 ## 3. Lock order
 
 **Enquiry row, requirement row, quote row, order row, then the order's events** (ADR 0018 decision 9 extended at its tail). `create_order_from_quote` locks `enquiry -> requirement -> quote` exactly like `approve_quote`, then inserts the order; `record_order_event` locks `order` only if it never reads
@@ -51,7 +54,7 @@ needs the quote row `FOR UPDATE` first, so the two are serialised on the quote r
 | `record_refund` (the engine flags `REFUND_REQUIRES_OWNER_APPROVAL`) | yes | no | no | no | **yes** |
 | `dispatch` with an unpaid advance (`owner_override`) | yes | no | no | no | **yes** |
 | Create an order policy version | yes | no | no | no | **yes** |
-| Read orders, events, ledger | yes | yes | yes (no money columns? decision 4) | no | no |
+| Read orders, events, ledger | yes | yes | yes (amounts included: decision 4) | no | no |
 
 `owner_override` is a FLAG derived from the caller's role by the database, never a field a caller can set (the engine's own note: "owner_override is not proof").
 
@@ -81,15 +84,15 @@ needs the quote row `FOR UPDATE` first, so the two are serialised on the quote r
 
 (1) A person records money that did not arrive: the ledger is a ledger of claims (limit above; the checklist gets a reconciliation row). (2) Time: `occurred_at` is a person's date; the engine takes an `as_of` that the API sets to now (IST) and the database bounds (like quotes: today or yesterday), so a backdated payment cannot be used to dodge `QUOTE_EXPIRED`. (3) Rounding is already settled in the quote; an order never recomputes a price. (4) A discount or a changed price after acceptance is NOT an order edit: it is a new quote, which supersedes only a quote without an order (SM237).
 
-## 8. Open owner decisions (recommended default in each)
+## 8. Owner decisions (2026-10-06: ALL defaults accepted; Sales sees amounts and a Viewer nothing; the lost-reason list below)
 
 1. **When an order exists.** Default: a person starts tracking an approved quote as an order explicitly (Owner/Admin, aal2). Alternative: automatically at approval (then every approved quote has an order and the withdrawal hook always fires, which makes a mistaken approval harder to undo).
 2. **Database recompute vs trusting the engine.** Default: the database recomputes the v1 subset (section 2) and an equivalence test pins it. Alternative: trust the API-run engine entirely (less code, but PostgREST is exposed, so a malicious user could submit a forged result straight to the database).
 3. **Advance policy.** Default: `advance_required = true`, amount = the quote's own advance (new 50%, repeat 25% in the synthetic seed); `dispatch_requires_advance = true`; override by the Owner only. Real values are the family's.
-4. **Sales and money.** Default: Sales reads an order's state and events but not its payment amounts or totals (as quotes: a Viewer sees no totals; Sales does see quote totals today, so the consistent default is Sales sees amounts, Viewer none). **Please confirm which**; I will build "Sales sees amounts, Viewer sees nothing" unless told otherwise.
+4. **Sales and money. DECIDED: Sales sees amounts (an order's totals, payments and balance); a Viewer sees nothing of orders.** The role table in section 4 and the RLS follow this: read = Owner, Admin, Sales.
 5. **Cancellation window and late acceptance.** Default: cancel allowed through `in_preparation` (the engine's default reading); accepting after `valid_until` refused (`QUOTE_EXPIRED`); a person who wants to honour a late acceptance makes a new quote.
 6. **Won / lost and the CRM.** Default: the order page shows Won (accepted) and Lost (declined, with a reason from a closed list); the CRM opportunity is NOT changed automatically; the order page links to it and a person updates it. Alternative: a function moves the opportunity through the existing transition rules in the same transaction (needs the opportunity-to-order link and its race).
-7. **Lost reasons.** Default list: `price`, `timing`, `bought_elsewhere`, `no_response`, `requirement_changed`, `other`. The owner may edit it before the build (it is an enum, so changing it later needs a migration).
+7. **Lost reasons. DECIDED, the list is: `price`, `timing`, `bought_elsewhere`, `no_response`, `requirement_changed`, `product_unavailable`, `credit_terms`, `other`** (an enum; changing it later needs a migration).
 8. **Zero-value orders.** Default: refused (`allow_zero_value_orders = false`).
 9. **Refund approval.** Default: Owner with aal2 records the refund, which is itself the approval (one step); no second approver. A refund records that money was returned elsewhere; the system returns nothing.
 10. **Reconciliation.** Default: out of scope; a checklist row "reconcile the ledger with bank statements weekly during the four-week measurement" for Customer Zero.
