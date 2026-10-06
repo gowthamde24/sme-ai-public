@@ -187,3 +187,41 @@ def test_the_t010_copy_is_the_last_definition_and_only_drops_the_named_lines(nam
     ]
     unexpected = [line for line in removed if line not in T010_CHANGED[name]]
     assert not unexpected, f"{name}: T010 drops lines of {earlier[-1][0]}: {unexpected}"
+
+
+# ---------------------------------------------------------------------------------------------- order conversion (ADR 0021)
+# Migration 20261019090000 replaces two quote functions with the latest earlier definitions plus the SM237 lines. It must be the LAST definition of each, and compared with the
+# latest earlier one it may only DROP the lines named here (approve_quote drops nothing; withdraw_approved_quote's HOOK comment becomes the SM237 check).
+ORDERS = "20261019090000_order_conversion.sql"
+ORDERS_CHANGED = {
+    "public.approve_quote": set(),
+    "public.withdraw_approved_quote": {
+        "-- HOOK (order conversion, docs/plans/order-conversion.md): once an order exists for this quote the withdrawal is refused here"
+    },
+}
+
+
+@pytest.mark.parametrize("name", sorted(ORDERS_CHANGED))
+def test_the_order_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == ORDERS, (
+        f"{name} is redefined after order conversion ({defs[-1][0]}) or the order migration does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < ORDERS]
+    assert earlier
+    diff = list(
+        difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+    )
+    removed = [line[1:].strip() for line in diff if line.startswith("-") and not line.startswith("---")]
+    added = [line[1:].strip() for line in diff if line.startswith("+") and not line.startswith("+++")]
+    unexpected = [line for line in removed if line not in ORDERS_CHANGED[name]]
+    assert not unexpected, f"{name}: order conversion drops lines of {earlier[-1][0]}: {unexpected}"
+    # what it adds is the SM237 check and nothing else that touches the quote
+    assert any("app.order_error('SM237')" in line for line in added), name
+    assert not any("update public.quotes" in line for line in added if "SM237" not in line), name
+
+
+def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_nothing_after_it_does() -> None:
+    later = [m.name for m in MIGRATIONS if m.name > ORDERS]
+    for name in ORDERS_CHANGED:
+        assert all(d[0] <= ORDERS for d in definitions(name)), (name, later)

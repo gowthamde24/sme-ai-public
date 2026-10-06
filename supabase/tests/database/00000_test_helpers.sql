@@ -284,6 +284,26 @@ begin
   end loop;
 end $$;
 
+-- Order conversion (ADR 0021): one order policy version, one order (for the tenant's rejected fixture quote) and its `created` event per fixture tenant, written the way a
+-- privileged fixture may (the functions are tested in 61). Prefix 'a' / 'b': tests.rid('a_order_policy'), tests.rid('a_order'), tests.rid('a_order_event').
+-- Requires seed_t009() (the quote, its enquiry and requirement).
+create or replace function tests.seed_orders() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state,
+                                              allow_zero_value_orders, content_sha256)
+    values (tests.rid(p || '_order_policy'), tests.tid(p), 1, current_date, true, true, 'in_preparation', false, repeat('4', 64));
+    insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+    values (tests.rid(p || '_order'), tests.tid(p), 1, tests.rid(p || '_quote'), tests.rid(p || '_enquiry'), tests.rid(p || '_requirement'), tests.rid(p || '_lead'), 0, 0,
+            current_date, tests.rid(p || '_order_policy'));
+    insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at)
+    values (tests.rid(p || '_order_event'), tests.tid(p), tests.rid(p || '_order'), 1, 'created', null, 'quote_approved', now());
+  end loop;
+end $$;
+
 -- T005: one ICP config version, one import batch and one lead label per fixture tenant.
 -- Prefix 'a' / 'b': tests.rid('a_icp1'), tests.rid('a_batch'), tests.rid('a_label').
 -- Requires seed_two_tenants() and seed_crm().

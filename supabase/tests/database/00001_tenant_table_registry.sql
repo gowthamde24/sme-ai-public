@@ -178,6 +178,37 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
                 select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', v.id, p.id, '1.1.0', '{}', '{}', repeat('3', 64), 'new', 'TS', 'intra_state', current_date, current_date, current_date, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, v, p returning id)
      insert into public.quote_lines (id, tenant_id, quote_id, line_no, requirement_line_no, product_id, sku, name, sale_unit, qty, unit_price_applied_paise, line_subtotal_paise, net_paise, tax_paise, gross_paise, tax_bps) select %2$L, %1$L, z.id, 1, 1, (select id from public.products where tenant_id = %1$L order by id limit 1), 'G-LINE', 'Generic line', 'piece', 1, 100, 100, 100, 5, 105, 500 from z$$,
    'sku = sku', $$delete from public.quote_lines where id = %2$L$$, false),
+  -- Order conversion (ADR 0021). Policy versions, orders and events are written by the order functions: no role inserts, updates or deletes them directly, and a Viewer reads none of
+  -- them. The fixtures build their parents in one statement (a CTE chain, as for quotes); the quote is REJECTED so the quote indexes never meet a second generic insert.
+  ('order_policy_versions',
+   $$insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64))$$,
+   'version_no = version_no', $$delete from public.order_policy_versions where id = %2$L$$, true),
+  ('orders',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id),
+          v as (insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l returning id),
+          p as (insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.quote_policy_versions where tenant_id = %1$L), current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64)) returning id),
+          z as (insert into public.quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, price_list_version_id, policy_version_id, engine_version, request_text, result_text, canonical_hash, customer_kind, delivery_state, gst_supply, as_of, valid_until, due_date, merchandise_net_paise, item_tax_paise, shipping_net_paise, shipping_tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', v.id, p.id, '1.1.0', '{}', '{}', repeat('3', 64), 'new', 'TS', 'intra_state', current_date, current_date, current_date, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, v, p returning id),
+          op as (insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64)) returning id),
+          o as (insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+                select %2$L, %1$L, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = %1$L), z.id, e.id, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 0, 0, current_date, op.id from z, e, r, op returning id)
+     select 1 from o$$,
+   'state = state', $$delete from public.orders where id = %2$L$$, true),
+  ('order_events',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id),
+          v as (insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l returning id),
+          p as (insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.quote_policy_versions where tenant_id = %1$L), current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64)) returning id),
+          z as (insert into public.quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, price_list_version_id, policy_version_id, engine_version, request_text, result_text, canonical_hash, customer_kind, delivery_state, gst_supply, as_of, valid_until, due_date, merchandise_net_paise, item_tax_paise, shipping_net_paise, shipping_tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', v.id, p.id, '1.1.0', '{}', '{}', repeat('3', 64), 'new', 'TS', 'intra_state', current_date, current_date, current_date, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, v, p returning id),
+          op as (insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64)) returning id),
+          o as (insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+                select %2$L, %1$L, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = %1$L), z.id, e.id, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 0, 0, current_date, op.id from z, e, r, op returning id)
+     insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at) select %2$L, %1$L, o.id, 1, 'created', null, 'quote_approved', now() from o$$,
+   'seq = seq', $$delete from public.order_events where id = %2$L$$, false),
   ('memberships',
    $$insert into public.memberships (tenant_id, user_id, role) values (%1$L, %5$L, 'viewer')$$,
    'role = role', $$delete from public.memberships where tenant_id = %1$L and user_id = %5$L$$, false),
@@ -268,6 +299,13 @@ select t, r, s, i, u, d from (values
   ('quotes',               'sales', true, false, false, false), ('quotes',               'viewer', false, false, false, false),
   ('quote_lines',          'owner', true, false, false, false), ('quote_lines',          'admin', true, false, false, false),
   ('quote_lines',          'sales', true, false, false, false), ('quote_lines',          'viewer', false, false, false, false),
+  -- Order conversion: Owner / Admin / Sales read; a Viewer reads no amount; nobody writes directly.
+  ('order_policy_versions','owner', true, false, false, false), ('order_policy_versions','admin', true, false, false, false),
+  ('order_policy_versions','sales', true, false, false, false), ('order_policy_versions','viewer', false, false, false, false),
+  ('orders',               'owner', true, false, false, false), ('orders',               'admin', true, false, false, false),
+  ('orders',               'sales', true, false, false, false), ('orders',               'viewer', false, false, false, false),
+  ('order_events',         'owner', true, false, false, false), ('order_events',         'admin', true, false, false, false),
+  ('order_events',         'sales', true, false, false, false), ('order_events',         'viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),
