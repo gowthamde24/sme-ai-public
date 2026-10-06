@@ -130,3 +130,26 @@ def test_the_part3_copy_is_the_last_definition_and_only_drops_the_named_lines(na
     ]
     unexpected = [line for line in removed if line not in PART3_CHANGED[name]]
     assert not unexpected, f"{name}: part 3 drops lines of {earlier[-1][0]}: {unexpected}"
+
+
+# ---------------------------------------------------------------------------------------------- T009 step 3: the seed's seller state
+SEED = "20261017090100_t009_seed_state_code.sql"
+SEED_FN = "app.operator_seed_quote_reference_data"
+
+
+def test_the_seed_copy_is_the_last_definition_and_changes_exactly_the_seller_state() -> None:
+    defs = block_definitions(SEED_FN)
+    assert defs[-1][0] == SEED, f"{SEED_FN} is redefined after {SEED}: re-copy it from the latest definition"
+    earlier = [d for d in defs if d[0] < SEED]
+    assert earlier
+    diff = [
+        line
+        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    assert [line[1:].strip() for line in diff if line[0] == "-"] == [
+        "'seller_state', 'TS', 'required_inputs', jsonb_build_array('delivery_state')));"
+    ]
+    assert [line[1:].strip() for line in diff if line[0] == "+"] == [
+        "'seller_state', 'TG', 'required_inputs', jsonb_build_array('delivery_state')));"
+    ]

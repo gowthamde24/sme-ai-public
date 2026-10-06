@@ -67,7 +67,7 @@ class QuoteWorld:
             assert r.status_code == 201, r.text
             self.products.append(pid)
 
-    def add_product(self, sku: str, name: str | None = None) -> int:
+    def add_product(self, sku: str, name: str | None = None, category: str = "silk") -> int:
         """A product with exactly this sku (the collation test needs skus that sort differently by locale and by code point). Returns its index."""
         pid = uid()
         r = pg(
@@ -80,7 +80,7 @@ class QuoteWorld:
                 "tenant_id": self.t.id,
                 "sku": sku,
                 "name": name or f"Synthetic {sku}",
-                "category": "silk",
+                "category": category,
             },
         )
         assert r.status_code == 201, r.text
@@ -123,6 +123,20 @@ class QuoteWorld:
             p_tenant_id=self.t.id,
             p_effective_from=today(),
             p_policy=policy,
+        )
+        assert r.status_code == 200, r.text
+        return dict(r.json())
+
+    def mapper_config(self, config: dict[str, Any], unit: str = "piece") -> dict[str, Any]:
+        r = rpc(
+            self.w,
+            self.owner.token,
+            "create_mapper_config_version",
+            p_version_id=uid(),
+            p_tenant_id=self.t.id,
+            p_effective_from=today(),
+            p_default_sale_unit=unit,
+            p_config=config,
         )
         assert r.status_code == 200, r.text
         return dict(r.json())

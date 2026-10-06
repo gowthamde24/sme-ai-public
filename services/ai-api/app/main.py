@@ -29,6 +29,9 @@ from app.evidence.routes import router as evidence_router
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
 from app.logging_safety import install_log_redaction
+from app.quotes import errors as quote_errors
+from app.quotes.repository import PostgrestQuotesRepository
+from app.quotes.routes import router as quotes_router
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -71,6 +74,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         agents=build_agents_runtime(settings, config),
         erasure=PostgrestErasureRepository(config.rest_url, config.anon_key),
         enquiries=PostgrestEnquiriesRepository(config.rest_url, config.anon_key),
+        quotes=PostgrestQuotesRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -136,6 +140,40 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "not_confirmable",
         "A line needs a saree type and a quantity that a person confirmed or corrected.",
     ),
+    # Quotes (T009). Fixed messages: nothing from the data layer reaches a client.
+    enquiries_repo.QuoteDependsError: ApiError(
+        409,
+        "quote_depends",
+        "A quote depends on this requirement. Reject the draft or withdraw the approved "
+        "quote first.",
+    ),
+    quote_errors.RequirementNotConfirmedError: ApiError(
+        409, "requirement_not_confirmed", "Confirm the requirement before quoting it."
+    ),
+    quote_errors.QuoteNotDraftError: ApiError(
+        409, "quote_not_draft", "That quote is not a draft any more."
+    ),
+    quote_errors.QuoteStaleError: ApiError(
+        409,
+        "quote_stale",
+        "The inputs of this quote have changed (a newer price list or policy, the picks, "
+        "the requirement, or the quote expired): make a new draft.",
+    ),
+    quote_errors.QuoteMismatchError: ApiError(
+        409,
+        "quote_mismatch",
+        "This quote does not match the database's own recomputation. "
+        "Nothing was changed: make a new draft.",
+    ),
+    quote_errors.QuoteInputMissingError: ApiError(
+        422,
+        "quote_input_missing",
+        "Something the quote needs is missing: a product for every confirmed line, a price "
+        "list, a policy, or a required input such as the delivery state.",
+    ),
+    quote_errors.OwnerApprovalRequiredError: ApiError(
+        403, "owner_approval_required", "This quote needs the Owner's approval."
+    ),
     runs_repo.RequirementConfirmedError: ApiError(
         409,
         "requirement_confirmed",
@@ -185,6 +223,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.leads,
                 runtime.agents.repository if runtime.agents is not None else None,
                 runtime.erasure,
+                runtime.enquiries,
+                runtime.quotes,
             ):
                 if isinstance(
                     repository,
@@ -193,7 +233,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestEvidenceRepository
                     | PostgrestLeadsRepository
                     | PostgrestAgentRunsRepository
-                    | PostgrestErasureRepository,
+                    | PostgrestErasureRepository
+                    | PostgrestEnquiriesRepository
+                    | PostgrestQuotesRepository,
                 ):
                     repository.close()
 
@@ -243,6 +285,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(crm_router)
     app.include_router(agent_runs_router)
     app.include_router(enquiries_router)
+    app.include_router(quotes_router)
     app.include_router(erasure_router)
     return app
 

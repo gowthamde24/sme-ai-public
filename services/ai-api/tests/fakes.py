@@ -16,6 +16,7 @@ from app.config import Settings
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.main import create_app
+from app.quotes.repository import QuotesRepository
 from app.tenancy.models import (
     AuditEventListOut,
     AuditEventOut,
@@ -137,6 +138,7 @@ def make_client(
     agents: AgentsRuntime | None = None,
     erasure: ErasureRepository | None = None,
     enquiries: EnquiriesRepository | None = None,
+    quotes: QuotesRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -157,6 +159,7 @@ def make_client(
             agents=agents,
             erasure=erasure,
             enquiries=enquiries,
+            quotes=quotes,
         ),
     )
     return TestClient(app), repo

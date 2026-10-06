@@ -31,7 +31,7 @@ create function pg_temp.honest(p_build jsonb, p_request jsonb) returns jsonb lan
   select (p_build -> 'core') || jsonb_build_object('status', 'draft', 'engine_version', '1.1.0', 'canonical_hash', app.quote_request_hash('1.1.0', p_request::text), 'trace', '[]'::jsonb,
            'flags', jsonb_build_object('needs_owner_approval', jsonb_array_length(p_build -> 'flags') > 0,
                                        'reasons', (select coalesce(jsonb_agg(jsonb_build_object('code', c)), '[]'::jsonb) from jsonb_array_elements_text(p_build -> 'flags') c))) $$;
-create function pg_temp.create_quote(p_user text, p_id uuid, p_enq text, p_kind text default 'new', p_state text default 'TS') returns text language sql as $$
+create function pg_temp.create_quote(p_user text, p_id uuid, p_enq text, p_kind text default 'new', p_state text default 'TG') returns text language sql as $$
   select pg_temp.sc(p_user, format('select public.create_quote_draft(%L, %L, %L, %L, ''1.1.0'', %L, %L)', p_id, pg_temp.req(p_enq), p_kind, p_state,
          (pg_temp.build(pg_temp.req(p_enq), p_kind) -> 'request')::text, pg_temp.honest(pg_temp.build(pg_temp.req(p_enq), p_kind), pg_temp.build(pg_temp.req(p_enq), p_kind) -> 'request')::text)) $$;
 create function pg_temp.approve_sql(p_quote uuid) returns text language sql as $$

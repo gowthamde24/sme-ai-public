@@ -28,6 +28,7 @@ ROUTE_WORDS = frozenset(
         "agent-claims", "agent-cost", "agent-runs", "agent-settings", "cancel", "claims", "reviews",
         "enquiries", "requirement", "requirement-fields", "requirements",
         "confirm", "decision", "discard",
+        "quote-setup", "quotes", "picks", "approve", "reject", "withdraw", "text",
         "erasure-requests", "execute", "data-policy",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }

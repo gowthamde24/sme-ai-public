@@ -41,10 +41,15 @@ class NotConfirmableError(RepositoryError):
     """SM210: no line has a saree type AND a quantity that a person confirmed or corrected."""
 
 
+class QuoteDependsError(RepositoryError):
+    """SM212: a draft or an approved quote depends on this requirement; reject or withdraw it first (T009)."""
+
+
 _STATES: dict[str, type[RepositoryError]] = {
     "SM208": RequirementConfirmedError,
     "SM209": RequirementNotDraftError,
     "SM210": NotConfirmableError,
+    "SM212": QuoteDependsError,  # a quote (draft or approved) depends on the requirement: discard_requirement refuses
 }
 
 

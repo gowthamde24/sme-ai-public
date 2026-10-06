@@ -115,7 +115,7 @@ create function pg_temp.honest(p_build jsonb, p_request jsonb) returns jsonb lan
 create function pg_temp.cq_sql(p_id uuid, p_enq text, p_kind text, p_state text, p_request jsonb, p_result jsonb) returns text language sql as $$
   select format('select public.create_quote_draft(%L, %L, %L, %L, %L, %L, %L)', p_id, pg_temp.req(p_enq), p_kind, p_state, '1.1.0', p_request::text, p_result::text) $$;
 -- an honest create (request and result from the database's own build)
-create function pg_temp.create_quote(p_user text, p_id uuid, p_enq text, p_kind text default 'new', p_state text default 'TS') returns text language sql as $$
+create function pg_temp.create_quote(p_user text, p_id uuid, p_enq text, p_kind text default 'new', p_state text default 'TG') returns text language sql as $$
   select pg_temp.sc(p_user, pg_temp.cq_sql(p_id, p_enq, p_kind, p_state, pg_temp.build(pg_temp.req(p_enq), p_kind) -> 'request',
                                           pg_temp.honest(pg_temp.build(pg_temp.req(p_enq), p_kind), pg_temp.build(pg_temp.req(p_enq), p_kind) -> 'request'))) $$;
 create function pg_temp.tamper(p_enq text, p_kind text, p_request_fn text, p_result_fn text) returns text language plpgsql as $$
