@@ -1,0 +1,19 @@
+{
+  "fields": [
+    {"line_no": 1, "field_key": "saree_type", "value_code": "pattu_style", "value_int": null, "value_date": null, "value_text": null, "basis": null},
+    {"line_no": 1, "field_key": "quantity", "value_code": null, "value_int": 12, "value_date": null, "value_text": null, "basis": "piece"},
+    {"line_no": 1, "field_key": "fabric", "value_code": "silk_style", "value_int": null, "value_date": null, "value_text": null, "basis": null},
+    {"line_no": 1, "field_key": "colour", "value_code": "purple_style", "value_int": null, "value_date": null, "value_text": null, "basis": null}
+  ],
+  "catalog": [
+    {"sku": "SYN-DP-A", "category": "Synthetic Pattu Style", "attributes": {"fabric": "Synthetic Silk", "colour": "Invented Purple"}, "active": true, "sale_unit": "piece"},
+    {"sku": "SYN-DP-B", "category": "Synthetic Pattu Style", "attributes": {"fabric": "Synthetic Silk", "colour": "Invented Gold"}, "active": true, "sale_unit": "piece"},
+    {"sku": "SYN-DP-C", "category": "Synthetic Pattu Style", "attributes": {"fabric": "Synthetic Blend", "colour": "Invented Purple"}, "active": true, "sale_unit": "set"},
+    {"sku": "SYN-DP-OFF", "category": "Synthetic Pattu Style", "attributes": {"fabric": "Synthetic Silk", "colour": "Invented Purple"}, "active": false, "sale_unit": "piece"}
+  ],
+  "config": {
+    "saree_type_to_categories": {"pattu_style": ["Synthetic Pattu Style"]},
+    "fabric_to_values": {"silk_style": ["Synthetic Silk"]},
+    "colour_to_values": {"purple_style": ["Invented Purple"]}
+  }
+}

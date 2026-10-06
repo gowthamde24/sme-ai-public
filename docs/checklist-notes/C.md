@@ -279,3 +279,23 @@ including the full 132-pair matrix and 250 seeded lifecycle sequences.
 ports or pushes; integration, approvals and real payment verification belong to A.
 `./scripts/check-lane-paths.sh c main` output:
 `Lane C: changed paths allowed under base policy` (exit 0).
+
+## Requirement mapper: baseline
+
+- Started from clean lane/c HEAD 4618cd9, building on unmerged order lifecycle
+  commits 4618cd9 and a565cf3 as requested; no fetch, network or pushes.
+- Only packages/pure/requirement_mapper/**, its plan and these notes changed.
+  Existing runner automatically discovers/imports this nested package.
+- Added pure proposed matches, strict structured type/schema rejections, fixed
+  messages, bounded preflight, canonical snapshot hash and synthetic fixtures.
+- Owner confirmed empty category-failure alternatives. Fabric/colour failures
+  retain preceding relevant candidates. Absent attributes strictly exclude.
+  Single known unit mismatch requires human review; unknown product units remain
+  proposals for confirmation. Order rows are the explicit free-text pass-through
+  exception. Added irrelevant products change the snapshot hash, not decisions.
+- All proposals require a human. No choices, prices, line merges or persistence.
+  Lane A supplies confirmed rows, config, authoritative catalog, approvals/audit.
+- `make test-packages`: 34 mapper + 89 existing tests pass (123 total; 89 before).
+  Includes 250 seeded mapper cases. `make check-leftovers` passes.
+- API, bounds and handoff: docs/plans/requirement-mapper.md. Manual mutation
+  evidence follows in the next commit; integration and real data remain with A.
