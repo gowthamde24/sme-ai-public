@@ -77,6 +77,8 @@ RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AnyMember = Annotated[TenantContext, Depends(require_tenant_role(*READERS))]
 AdminPlus = Annotated[TenantContext, Depends(require_tenant_role(*ADMIN_PLUS))]
 SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(*SALES_PLUS))]
+# lifting a suppression is the Owner's, with a second factor (ADR 0020)
+OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 
 
 def _row_id(raw: str) -> uuid.UUID:
@@ -269,8 +271,9 @@ def suppress(
 
 @router.post("/contacts/{row_id}/lift-suppression", response_model=ConsentResultOut)
 def lift_suppression(
-    row_id: str, body: LiftSuppressionIn, ctx: AdminPlus, runtime: RuntimeDep
+    row_id: str, body: LiftSuppressionIn, ctx: OwnerStrong, runtime: RuntimeDep
 ) -> ConsentResultOut:
+    """Owner with a second factor (ADR 0020); lifting also lifts the contact's keys."""
     cid = _row_id(row_id)
     event_id = runtime.crm.consent_rpc(
         ctx.principal.token,

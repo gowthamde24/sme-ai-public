@@ -552,9 +552,20 @@ def test_consent_endpoints_roles_and_path_binding(
         ).status_code
         == 403
     )
+    # ADR 0020: lifting is the Owner's, with a second factor
+    admin = client.post(
+        url("contacts", suffix=f"/{cid}/lift-suppression"), headers=auth("a_admin"), json=lift
+    )
+    assert admin.status_code == 403 and admin.json()["error"]["code"] == "forbidden"
+    weak = client.post(
+        url("contacts", suffix=f"/{cid}/lift-suppression"),
+        headers=auth("a_owner", aal="aal1"),
+        json=lift,
+    )
+    assert weak.status_code == 403 and weak.json()["error"]["code"] == "mfa_required"
     assert (
         client.post(
-            url("contacts", suffix=f"/{cid}/lift-suppression"), headers=auth("a_admin"), json=lift
+            url("contacts", suffix=f"/{cid}/lift-suppression"), headers=auth("a_owner"), json=lift
         ).status_code
         == 200
     )

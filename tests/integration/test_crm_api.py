@@ -96,7 +96,18 @@ def test_consent_endpoints_roles(world: World, role: str) -> None:
     )
     assert r1.status_code == (200 if role in SALES_PLUS else 403), r1.text
     assert r2.status_code == (200 if role in SALES_PLUS else 403), r2.text
-    assert r3.status_code == (200 if role in ADMIN_PLUS else 403), r3.text
+    assert r3.status_code == (200 if role == "owner" else 403), (
+        r3.text
+    )  # ADR 0020: the Owner lifts, with a second factor
+    # only the Owner lifts now: the Owner clears the shared contact for the next role
+    w.call(
+        w.a.users["owner"],
+        "POST",
+        w.a,
+        "contacts",
+        f"/{contact}/lift-suppression",
+        json={"evidence_type": "written", "evidence_ref": "letter:2"},
+    )
     for r in (r1, r2, r3):
         if r.status_code == 200:
             check_schema(r.json(), "ConsentResultOut")
@@ -168,13 +179,13 @@ def test_consent_endpoints_are_404_across_tenants(world: World) -> None:
             r = w.call(user, "POST", w.b, "contacts", f"/{foreign}/{action}", json=body)
             assert r.status_code == 404, (role, action)
         # my tenant's path with the other tenant's contact id: my role first, then the row
-        sales_plus, admin_plus = role in SALES_PLUS, role in ADMIN_PLUS
+        sales_plus = role in SALES_PLUS
         r = w.call(user, "POST", w.a, "contacts", f"/{foreign}/record-consent", json=record)
         assert r.status_code == (404 if sales_plus else 403), role
         r = w.call(user, "POST", w.a, "contacts", f"/{foreign}/suppress", json=suppress)
         assert r.status_code == (404 if sales_plus else 403), role
         r = w.call(user, "POST", w.a, "contacts", f"/{foreign}/lift-suppression", json=lift)
-        assert r.status_code == (404 if admin_plus else 403), role
+        assert r.status_code == (404 if role == "owner" else 403), role
     owner_b = w.call(w.b.users["owner"], "GET", w.b, "contacts", f"/{foreign}").json()
     assert owner_b["suppressed_at"] is None and owner_b["email_consent"] == "unknown"
 
@@ -680,7 +691,7 @@ def test_created_by_and_via_are_the_servers(world: World) -> None:
 # ===================================================================================== consent
 def test_consent_flows_including_the_optout_withdrawal(world: World) -> None:
     w = world
-    sales, admin, viewer = w.a.users["sales"], w.a.users["admin"], w.a.users["viewer"]
+    sales, viewer = w.a.users["sales"], w.a.users["viewer"]
     cid = w.call(
         sales,
         "POST",
@@ -754,7 +765,7 @@ def test_consent_flows_including_the_optout_withdrawal(world: World) -> None:
         == 403
     )
     lifted = w.call(
-        admin,
+        w.a.users["owner"],
         "POST",
         w.a,
         "contacts",
@@ -803,7 +814,7 @@ def test_consent_flows_including_the_optout_withdrawal(world: World) -> None:
     ).json()["contact"]
     assert bounced["email_consent"] == "granted" and bounced["suppression_reason"] == "bounced"
     after = w.call(
-        admin,
+        w.a.users["owner"],
         "POST",
         w.a,
         "contacts",
@@ -1092,7 +1103,9 @@ def test_granting_consent_to_a_suppressed_contact_is_a_409(world: World) -> None
     )
     lift = {"evidence_type": "written", "evidence_ref": "letter:5"}
     assert (
-        w.call(admin, "POST", w.a, "contacts", f"/{cid}/lift-suppression", json=lift).status_code
+        w.call(
+            w.a.users["owner"], "POST", w.a, "contacts", f"/{cid}/lift-suppression", json=lift
+        ).status_code
         == 200
     )
     assert (

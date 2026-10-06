@@ -116,18 +116,20 @@ select is(tests.outcome_as(tests.uid('a_sales'), format($q$select public.lift_su
   '42501', 'sales: DENY lifting a suppression');
 select is(tests.outcome_as(tests.uid('a_viewer'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'viewer: DENY lifting a suppression');
-select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, null, null)$q$, tests.tid('a'), tests.rid('a_contact'))),
-  '22023', 'admin: lifting without evidence is refused');
+select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
+  '42501', 'admin: DENY lifting a suppression (T010, ADR 0020: the Owner with aal2 only)');
+select is(tests.outcome_as(tests.uid('a_owner'), format($q$select public.lift_suppression(%L, %L, null, null)$q$, tests.tid('a'), tests.rid('a_contact'))),
+  '22023', 'owner: lifting without evidence is refused');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'still suppressed after the refusals');
 select is(tests.outcome_as(tests.uid('b_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
   '42501', 'owner of tenant B: DENY lifting A''s suppression');
-select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
-  'rows:1', 'ALLOW: admin lifts the suppression with evidence');
+select is(tests.outcome_as(tests.uid('a_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))),
+  'rows:1', 'ALLOW: the owner lifts the suppression with evidence');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'false', 'can_contact: STILL false after the lift: an opt-out withdrew consent and lifting does not revive it (R1)');
 select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.grant_sql('a', 'a_contact', 'form:789')), 'rows:1', 'a fresh grant is required');
 select is(pg_temp.can(tests.uid('a_viewer'), 'a_contact', 'email'), 'true', 'can_contact: true only after a fresh record_consent grant');
 select ok((select suppressed_at is null and suppression_reason is null from public.contacts where id = tests.rid('a_contact')), 'suppression state cleared');
-select is(tests.scalar_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:2') is null$q$, tests.tid('a'), tests.rid('a_contact'))),
+select is(tests.scalar_as(tests.uid('a_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:2') is null$q$, tests.tid('a'), tests.rid('a_contact'))),
   'true', 'lifting a suppression that is not set is a no-op (returns NULL)');
 select is(pg_temp.ledger(), 7::bigint, '... and adds no ledger row (7 = through the fresh grant)');
 

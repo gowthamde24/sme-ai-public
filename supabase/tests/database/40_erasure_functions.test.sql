@@ -74,6 +74,8 @@ select is(tests.scalar_as(tests.uid('a_owner'), format('select public.cancel_era
 select is(pg_temp.exec('a_owner', 'r_tenant'), 'SM304|erasure request was cancelled||||', 'a cancelled request cannot be executed');
 
 -- ---- dry run: counts, nothing changes
+-- T010 (ADR 0020): erasing a contact that holds an e-mail and a phone needs recorded suppression keys (well-formed fakes: the database cannot verify an HMAC)
+select tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'email', %L, 'phone', %L))$q$, tests.rid('a_contact'), md5('k1') || md5('k2'), md5('k3') || md5('k4')));
 create temp table before_a as select tests.er_digest('a') as d, (select count(*) from public.audit_events where tenant_id = tests.tid('a')) as audits;
 create temp table dry as select pg_temp.exec_ok('a_owner', 'r_admin', 'true') as r;
 select is((select r ->> 'dry_run' from dry), 'true', 'a dry run says so');

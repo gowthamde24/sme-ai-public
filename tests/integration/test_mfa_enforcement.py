@@ -21,6 +21,7 @@ from conftest import Stack, User, aal1_token, aal2_token, bearer, challenge_veri
 from crm_support import World
 from evidence_support import code_of, pg, uid
 from fastapi.testclient import TestClient
+from suppression_support import key_contact
 
 TEMPLATE = json.loads(
     (Path(__file__).resolve().parents[2] / "config" / "icp" / "silk-wholesale.v1.json").read_text(
@@ -104,6 +105,7 @@ def test_erasure_functions_refuse_a_password_only_session(w: World) -> None:
         "status"
     ]
     assert status == "pending"
+    key_contact(w, owner2, a.rows["contacts"]["id"])  # ADR 0020: a contact that holds an e-mail needs a recorded suppression key
     assert rpc(w, owner2, "execute_erasure", p_request_id=rid, p_dry_run=True).status_code == 200
     assert rpc(w, admin2, "cancel_erasure", p_request_id=rid).status_code == 200
     # a replay of the (cancelled) request is refused at aal1 too: nothing stored goes to a password-only session

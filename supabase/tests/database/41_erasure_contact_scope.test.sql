@@ -22,6 +22,8 @@ create temp table pre as select
   tests.er_hits('a', 'qxjv') as qxjv_before;
 select ok(cardinality((select qxjv_before from pre)) >= 15, 'sanity: the person''s canary is planted in many places (' || cardinality((select qxjv_before from pre)) || ')');
 
+-- T010 (ADR 0020): erasing a contact that holds an e-mail and a phone needs recorded suppression keys (well-formed fakes: the database cannot verify an HMAC)
+select tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'email', %L, 'phone', %L))$q$, tests.rid('a_contact'), md5('k1') || md5('k2'), md5('k3') || md5('k4')));
 select tests.scalar_as(tests.uid('a_owner'), format('select public.request_erasure(%L, %L, ''contact'', %L)', tests.rid('c1'), tests.tid('a'), tests.rid('a_contact')));
 create temp table res as select tests.scalar_as(tests.uid('a_owner'), format('select public.execute_erasure(%L, false)', tests.rid('c1')))::jsonb as r;
 select is((select r ->> 'status' from res), 'executed', 'the Owner erased the contact');

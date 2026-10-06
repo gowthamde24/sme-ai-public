@@ -53,6 +53,8 @@ select is(pg_temp.at('aal1', 'a_admin', format('select public.cancel_erasure(%L)
 select is(pg_temp.at('aal1', 'a_sales', format('select public.cancel_erasure(%L)', tests.rid('m2'))), '42501|erasure action not permitted||||', 'Sales: generic');
 select is((select status::text from public.erasure_requests where id = tests.rid('m2')), 'pending', 'still pending');
 select is(pg_temp.at('aal2', 'a_admin', format('select public.cancel_erasure(%L)', tests.rid('m2'))), 'ok', 'at aal2 the Admin may cancel');
+-- T010 (ADR 0020): the contact needs a recorded suppression key (a well-formed fake: the database cannot verify an HMAC)
+select is(pg_temp.at('aal2', 'a_owner', format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'email', %L, 'phone', %L))$q$, tests.rid('a_contact'), md5('a_contact') || md5('a_contact' || 'x'), md5('a_phone') || md5('a_phone' || 'x'))), 'ok', 'setup: the contact has recorded suppression keys');
 select is(pg_temp.at('aal2', 'a_owner', format('select public.execute_erasure(%L, true)', tests.rid('m1'))), 'ok', 'at aal2 the Owner may preview');
 select is(pg_temp.at('aal2', 'a_owner', format('select public.execute_erasure(%L, false)', tests.rid('m1'))), 'ok', '...and execute');
 select is(pg_temp.at('aal1', 'a_owner', format('select public.execute_erasure(%L, false)', tests.rid('m1'))), 'SM306|a second factor is required for this action||||', 'a replay of an executed request is refused at aal1 (the stored result is not handed to a password-only session)');

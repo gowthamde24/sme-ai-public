@@ -20,7 +20,7 @@ language sql as $$
 $$;
 create function pg_temp.lift(p_contact text default 'a_contact') returns text
 language sql as $$
-  select tests.outcome_as(tests.uid('a_admin'), format(
+  select tests.outcome_as(tests.uid('a_owner'), format(
     $q$select public.lift_suppression(%L, %L, 'written', 'letter:9')$q$, tests.tid('a'), tests.rid(p_contact)))
 $$;
 create function pg_temp.can(p_contact text, p_channel text) returns text
@@ -61,7 +61,7 @@ select results_eq(
   'R1: the contact change is audited once, with the before/after consent status');
 
 -- lifting does NOT revive consent
-select is(pg_temp.lift(), 'rows:1', 'ALLOW: admin lifts the suppression');
+select is(pg_temp.lift(), 'rows:1', 'ALLOW: the owner lifts the suppression (T010: owner with aal2 only)');
 select is(pg_temp.state(), 'withdrawn/withdrawn/withdrawn/-', 'R1: suppression gone, consent still withdrawn');
 select is(pg_temp.can('a_contact', 'email') || pg_temp.can('a_contact', 'whatsapp') || pg_temp.can('a_contact', 'phone'),
   'falsefalsefalse', 'R1: can_contact stays false on every channel after the lift');

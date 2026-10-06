@@ -24,6 +24,9 @@ insert into public.contacts (id, tenant_id, company_id, full_name, email) values
   (tests.rid('a_self'),  tests.tid('a'), tests.rid('a_company'), 'DEMO A Owner',     'a_owner@owner.example.test');
 create function pg_temp.req(p_user text, p_tenant text, p_id text, p_subject text) returns void language plpgsql as $$
 begin perform tests.scalar_as(tests.uid(p_user), format('select public.request_erasure(%L, %L, ''contact'', %L)', tests.rid(p_id), tests.tid(p_tenant), tests.rid(p_subject))); end $$;
+-- T010 (ADR 0020): erasing a contact that holds an e-mail needs a recorded suppression key (a well-formed fake here: the database cannot verify an HMAC)
+create function pg_temp.key(p_user text, p_contact text) returns void language plpgsql as $$
+begin perform tests.scalar_as(tests.uid(p_user), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'email', %L))$q$, tests.rid(p_contact), md5(p_contact) || md5(p_contact || 'x'))); end $$;
 select pg_temp.req('b_owner', 'b', 'so1', 'b_self');
 select is(tests.error_full_as(tests.uid('b_owner'), format('select public.execute_erasure(%L, false)', tests.rid('so1'))),
           'SM305|ownership must be transferred before this contact can be erased||||', 'the sole Owner cannot erase their own contact record (address compared in any case)');
@@ -31,8 +34,10 @@ select is(tests.error_full_as(tests.uid('b_owner'), format('select public.execut
           'SM305|ownership must be transferred before this contact can be erased||||', '...not even as a preview');
 select is((select full_name || '/' || email from public.contacts where id = tests.rid('b_self')), 'DEMO Owner Self/B_Owner@Owner.Example.test', 'and nothing was changed');
 select is((select status::text from public.erasure_requests where id = tests.rid('so1')), 'pending', 'the request is still pending');
+select pg_temp.key('b_owner', 'b_other');
 select pg_temp.req('b_owner', 'b', 'so2', 'b_other');
 select is(tests.error_full_as(tests.uid('b_owner'), format('select public.execute_erasure(%L, false)', tests.rid('so2'))), 'ok', 'another contact of the same workspace is erased as usual');
+select pg_temp.key('a_owner', 'a_self');
 select pg_temp.req('a_owner', 'a', 'so3', 'a_self');
 select is(tests.error_full_as(tests.uid('a_owner'), format('select public.execute_erasure(%L, false)', tests.rid('so3'))), 'ok', 'where there are other Owners an Owner can be erased (ownership is not at stake)');
 
@@ -72,6 +77,7 @@ select set_config('request.jwt.claims', '', true), set_config('request.jwt.claim
 select is(pg_temp.try($q$select app.operator_add_owner_exception('tenant-b', 'x1@test.local', 'identity verified by video call with the Owner 2026-10-05')$q$), 'ok', 'with a recorded reason the operator adds an Owner');
 select is((select role::text from public.memberships where tenant_id = tests.tid('b') and user_id = tests.uid('x1')), 'owner', '...who is an Owner');
 select is((select count(*) from public.audit_events where tenant_id = tests.tid('b') and action = 'membership.operator_added_owner' and metadata ->> 'reason' like 'identity verified%'), 1::bigint, 'and the exception is audited with its reason');
+select pg_temp.key('b_owner', 'b_self');
 select pg_temp.req('b_owner', 'b', 'so4', 'b_self');
 select is(tests.error_full_as(tests.uid('b_owner'), format('select public.execute_erasure(%L, false)', tests.rid('so4'))), 'ok', 'with a second Owner in place the first Owner''s record can be erased');
 select is((select full_name from public.contacts where id = tests.rid('b_self')), 'erased:1', '...and is');

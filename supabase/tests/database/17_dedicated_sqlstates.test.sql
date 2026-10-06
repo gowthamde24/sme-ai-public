@@ -58,7 +58,7 @@ select is(pg_temp.withdraw('email', 'a_arch'), 'rows:1', 'F1: withdrawing consen
 select is(pg_temp.state('a_arch'), 'withdrawn/unknown/unknown/-', '... and recorded');
 
 -- after the lift a grant works again; an ordinary (not suppressed) contact is unaffected
-select is(tests.outcome_as(tests.uid('a_admin'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))), 'rows:1', 'setup: admin lifts');
+select is(tests.outcome_as(tests.uid('a_owner'), format($q$select public.lift_suppression(%L, %L, 'written', 'letter:1')$q$, tests.tid('a'), tests.rid('a_contact'))), 'rows:1', 'setup: the owner lifts');
 select is(pg_temp.grant('email', 'form:8'), 'rows:1', 'F1: after the lift a grant is accepted again');
 insert into public.contacts (id, tenant_id, company_id, full_name, email) values (tests.rid('a_plain'), tests.tid('a'), tests.rid('a_company'), 'Plain', 'plain@example.test');
 select is(pg_temp.grant('email', 'form:9', 'a_plain'), 'rows:1', 'F1: an unsuppressed contact is unaffected');

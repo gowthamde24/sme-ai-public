@@ -56,9 +56,13 @@ def normalised(text: str) -> list[str]:
     return lines
 
 
+T010_SUPPRESSION = "20261018090000_t010_suppression_keys.sql"
+
+
 @pytest.mark.parametrize("name", sorted(CHANGED))
 def test_the_t008_copy_is_the_last_definition_and_only_adds_lines(name: str) -> None:
-    defs = definitions(name)
+    # T010 (below) replaces erase_contact again; this test pins T008's copy as the last definition BEFORE that migration
+    defs = [d for d in definitions(name) if d[0] < T010_SUPPRESSION]
     assert defs[-1][0] in {m.name for m in T008}, (
         f"{name} is redefined after T008 ({defs[-1][0]}): re-copy it from that definition"
     )
@@ -153,3 +157,33 @@ def test_the_seed_copy_is_the_last_definition_and_changes_exactly_the_seller_sta
     assert [line[1:].strip() for line in diff if line[0] == "+"] == [
         "'seller_state', 'TG', 'required_inputs', jsonb_build_array('delivery_state')));"
     ]
+
+
+# ---------------------------------------------------------------------------------------------- T010 part 1 (ADR 0020)
+# Migration 20261018090000 replaces three functions. It must be the LAST definition of each, and compared with the latest earlier one it may only DROP the lines named here
+# (lift_suppression: the Owner-or-Admin role check becomes the Owner-only check followed by the second factor). erase_contact and erase_tenant only ADD lines.
+T010_CHANGED = {
+    "app.erase_contact": set(),
+    "app.erase_tenant": set(),
+    "public.lift_suppression": {
+        "if not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then",
+        "raise exception 'only an owner or admin can lift a suppression' using errcode = '42501';",
+    },
+}
+
+
+@pytest.mark.parametrize("name", sorted(T010_CHANGED))
+def test_the_t010_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == T010_SUPPRESSION, (
+        f"{name} is redefined after T010 ({defs[-1][0]}) or T010 does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < T010_SUPPRESSION]
+    assert earlier
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    unexpected = [line for line in removed if line not in T010_CHANGED[name]]
+    assert not unexpected, f"{name}: T010 drops lines of {earlier[-1][0]}: {unexpected}"

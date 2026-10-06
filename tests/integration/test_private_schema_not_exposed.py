@@ -50,7 +50,17 @@ APP_FUNCTIONS = [
     "agent_day_spend",
     "agent_cost_lock",
 ]
-HIDDEN_SCHEMAS = ["app", "auth", "extensions", "tests", "storage", "graphql_public", "erasure"]
+# "suppression" is T010 (ADR 0020)
+HIDDEN_SCHEMAS = [
+    "app",
+    "auth",
+    "extensions",
+    "tests",
+    "storage",
+    "graphql_public",
+    "erasure",
+    "suppression",
+]
 
 
 @pytest.fixture(scope="module")

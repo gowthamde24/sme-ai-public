@@ -18,6 +18,7 @@ import pytest
 from conftest import bearer
 from crm_support import Tenant, World, create_payload
 from evidence_support import code_of, pg, uid
+from suppression_support import key_contact
 from test_agent_direct_postgrest import on, rpc  # noqa: F401
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -307,6 +308,8 @@ def test_a_lead_with_no_company_cannot_start_a_run_at_all(scoring: World) -> Non
 # ------------------------------------------------------------------------------ erasure still works around source_lead_id
 def request_and_execute_erasure(w: World, t: Tenant, scope: str, subject: str) -> None:
     owner, rid = t.users["owner"], uid()
+    if scope == "contact":
+        key_contact(w, owner, subject)  # ADR 0020: a contact that holds an identifier needs a recorded suppression key
     req = rpc(
         w,
         owner,
