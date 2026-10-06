@@ -546,9 +546,18 @@ def test_a_decline_carries_its_closed_reason_and_a_cancellation_with_funds_is_fl
     for user, event in (("sales", "send_quote"), ("sales", "customer_accept")):
         ok(ow.run_event(order2, user, event).response)
     ok(ow.run_event(order2, "admin", "record_payment", amount=1000, ledger=uid()).response)
-    cancelled = ow.run_event(order2, "admin", "cancel")
+    refused = ow.run_event(order2, "admin", "cancel")
+    assert code_of(refused.response) == "SM234", refused.response.text  # money in the order: the Owner's (review fix 2)
+    assert ow.state(order2) == "accepted"
+    weak_owner = aal1_token(ow.w.stack, ow.users["owner"])
+    assert code_of(ow.run_event(order2, "owner", "cancel", token=weak_owner).response) == "SM306"
+    cancelled = ow.run_event(order2, "owner", "cancel")
     assert ok(cancelled.response)["state"] == "cancelled"
     assert [r["code"] for r in cancelled.result["flags"]["reasons"]] == ["CANCELLATION_WITH_FUNDS"]
+    approver = operator_sql.sql(f"select owner_approved_by from public.order_events where order_id = '{order2}' and type = 'cancel'")
+    assert approver == str(ow.users["owner"].id)
+    order3, _ = ow.order()  # no money: an Admin may still cancel
+    assert ok(ow.run_event(order3, "admin", "cancel").response)["state"] == "cancelled"
     ow.invariants(order2)
 
 

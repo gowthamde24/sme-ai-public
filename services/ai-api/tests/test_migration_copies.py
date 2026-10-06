@@ -233,6 +233,10 @@ def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_n
 REVIEW = "20261020090000_review_fixes.sql"
 REVIEW_CHANGED: dict[str, set[str]] = {
     "app.contacts_sync_suppression_keys": set(),
+    "app.order_error": {"when 'SM234' then 'a refund needs the owner'"},
+    "public.record_order_event": {
+        "v_approver := case when 'REFUND_REQUIRES_OWNER_APPROVAL' = any (v_flags) or 'ADVANCE_OVERRIDE' = any (v_flags) then v_uid end;"
+    },
 }
 
 

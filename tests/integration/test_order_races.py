@@ -334,7 +334,9 @@ def test_a_cancellation_that_waits_for_a_payment_is_refused_as_stale_and_succeed
         waited,
     )  # built before the payment: the ledger moved while it waited
     assert ow.state(order) == "accepted"
-    retry = ow.run_event(order, "admin", "cancel")
+    refused = ow.run_event(order, "admin", "cancel")  # refreshed: money is in the order now, so an Admin may not cancel it (review fix 2)
+    assert code_of(refused.response) == "SM234", refused.response.text
+    retry = ow.run_event(order, "owner", "cancel")
     assert retry.response.status_code == 200 and [
         r["code"] for r in retry.result["flags"]["reasons"]
     ] == ["CANCELLATION_WITH_FUNDS"]

@@ -384,9 +384,15 @@ select is(pg_temp.rec('a_admin', 'o7', 'record_payment', 10000, 'p7a'), 'ERR:SM2
 select is(pg_temp.rec('a_admin', 'o7', 'record_payment', 30001, 'p7b'), 'ERR:SM232:OVERPAYMENT', 'F39 the total includes what is paid already');
 select is(pg_temp.rec('a_owner', 'o7', 'record_refund', 5000, 'r7a'), 'advance_requested', 'F40 a refund below the advance steps back to advance_requested');
 select is(pg_temp.rec('a_owner', 'o7', 'record_refund', 5000, 'r7a'), 'ERR:SM232:DUPLICATE_REFUND_ID', 'F41 a refund id is used once (DUPLICATE_REFUND_ID)');
-select is(pg_temp.rec('a_admin', 'o7', 'cancel'), 'cancelled', 'F42 an Admin (aal2) cancels with funds in');
+select is(pg_temp.rec('a_admin', 'o7', 'cancel'), 'ERR:SM234', 'F42 an Admin cannot cancel an order with money in it (SM234: review fix 2)');
+select is(pg_temp.rec('a_sales', 'o7', 'cancel'), 'ERR:42501', 'F42b and Sales cannot cancel at all');
+select is(pg_temp.at('aal1', 'a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o7'), 'cancel')), 'SM306', 'F42c an Admin without the second factor is told about the factor first');
+select is(pg_temp.at('aal1', 'a_owner', pg_temp.callsql('a_owner', pg_temp.ord('o7'), 'cancel')), 'SM306', 'F42d the Owner needs the second factor to cancel');
+select is((select state::text from public.orders where id = pg_temp.ord('o7')), 'advance_requested', 'F42e none of the refusals moved the order');
+select is(pg_temp.rec('a_owner', 'o7', 'cancel'), 'cancelled', 'F42f the Owner (aal2) cancels it');
 select is((select (result_text::jsonb -> 'flags' -> 'reasons' -> 0 ->> 'code') from public.order_events where order_id = pg_temp.ord('o7') and type = 'cancel'), 'CANCELLATION_WITH_FUNDS', 'F43 flagged CANCELLATION_WITH_FUNDS');
-select is((select owner_approved_by from public.order_events where order_id = pg_temp.ord('o7') and type = 'cancel'), null, 'F44 a cancellation records no owner approval (it is flagged, not approved)');
+select is((select owner_approved_by from public.order_events where order_id = pg_temp.ord('o7') and type = 'cancel'), tests.uid('a_owner'), 'F44 a cancellation with funds records the Owner who did it');
+select is((select owner_approved_by from public.order_events where order_id = pg_temp.ord('o10') and type = 'cancel'), null, 'F44b a cancellation with NO money records no owner (an Admin may do it)');
 select is((select closed_at is not null from public.orders where id = pg_temp.ord('o7')), true, 'F45 cancelled is closed');
 
 -- ============================================================================ G. forged requests and results (SM238), replay and conflict
