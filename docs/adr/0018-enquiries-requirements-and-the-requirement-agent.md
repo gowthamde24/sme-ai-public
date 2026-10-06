@@ -63,5 +63,8 @@ The scripted model is a stand-in: real quality is measured only with a real mode
 * The caps guard against bugs and honest mistakes, not a malicious member (ADR 0013).
 * A city in a non-Latin script is not supported by the span check (the agent abstains; a person adds it). Quantity words in Hindi are limited to a short list.
 * `enquiries.retain_until` is the hook for a later retention rule (a function and a job, not a table change). Until then text is kept until erased (erasure reaches the body, the subject, every quote and city).
-* The definition's input ceiling is 40,000 tokens (a 6,000-character Indic text is up to 18,000 bytes).
+* The definition's input ceiling is 40,000 tokens (a 6,000-character Indic text is up to 18,000 bytes). **At the live batch `max_cost_micros` and `max_output_tokens` must be reconciled with the chosen model's price row so the worst-case
+  reservation of such an enquiry fits (measured about 21,600 to 23,400 input tokens per call; proposed `max_output_tokens` 2,500; a run may make 3 calls that share the 40,000 input budget): checklist row "LIVE-BATCH COST RECONCILIATION".**
+* The contact scrubber leaves phone numbers written 3-3-4 (`987-654-3210`, `987 654 3210`), dotted (`98.7654.3210`), in pairs, or as landlines with an STD code. This is a known limit, not a defect: widening it risks altering amounts, GSTINs and pincodes (ADR 0014's limit of names applies too).
+* **Discarding a confirmed requirement must be blocked once a quote depends on it (T009 integration).** Until then a person may discard it, which hides its fields from `requirement_v1`.
 * Not built: sending, e-mail / WhatsApp integration, attachments, SKU matching, any price or quote calculation, order creation, model-written text of any kind.

@@ -862,3 +862,8 @@ reads (`buyer_type`, `order_scale`, `size_band`, `operating_status`), each a val
   script. They prove the pipeline (fetch scope, quote checks, review, the database rules) and give a baseline that a real model must beat; the agent's real
   precision is measured only at M4, with the owner's approval (checklist row "BEFORE THE FIRST LIVE CALL").
 - **Two known limits** (checklist): the database does not verify quotes (the screen says so); evidence is counted per lead while claims are per company.
+
+## Addendum (T008 closing batch): live-batch checklist
+Before the first live model call of ANY agent, an agent definition's `max_cost_micros` and `max_output_tokens` are reconciled with the chosen model's `agent_model_prices` row so the worst-case reservation of that agent's largest input fits (the
+reservation bounds a call's input by the UTF-8 bytes it sends plus a fixed overhead, "T007 M2 note: the daily cost cap" above). For the Requirement Agent the numbers and the proposal (`max_output_tokens` 2,500) are in ADR 0018 and the checklist row
+"LIVE-BATCH COST RECONCILIATION" in `docs/pre-pilot-checklist.md`.
