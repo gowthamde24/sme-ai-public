@@ -575,9 +575,9 @@ def test_the_quote_of_an_order_can_be_neither_withdrawn_nor_replaced(ow: OrderWo
     assert code_of(qw.approve(new)) == "SM237"
     assert operator_sql.sql(f"select status from public.quotes where id = '{old}'") == "approved"
     assert operator_sql.sql(f"select status from public.quotes where id = '{new}'") == "draft"
-    # once the order is cancelled the quote is still the order's: the withdrawal stays refused (a new quote is a new order, after the customer cancelled)
+    # once the order is cancelled it no longer blocks its quote (review fix 3): the quote can be withdrawn
     ok(ow.run_event(order, "admin", "cancel").response)
-    assert code_of(qw.withdraw(old)) == "SM237"
+    assert qw.withdraw(old).status_code == 200
     # a quote with no order keeps the old behaviour
     _, req2 = qw.requirement([("banarasi", 12)])
     assert qw.pick(req2, 1, 1, 12).status_code == 200
@@ -592,6 +592,40 @@ def test_the_quote_of_an_order_can_be_neither_withdrawn_nor_replaced(ow: OrderWo
     again = ow.create_order(old, order_id=uid())
     assert code_of(again) == "SM231", again.text
     assert ok(ow.create_order(old, order_id=order))["replayed"] is True
+
+
+def test_a_lost_deal_does_not_block_a_new_quote_and_the_new_order_runs_to_closed_paid(ow: OrderWorld) -> None:
+    ow.policy()
+    qw = ow.qw
+    _, requirement = qw.requirement([("kanjivaram", 12)])
+    assert qw.pick(requirement, 1, 0, 12).status_code == 200
+    old = qw.create(requirement).json()["quote_id"]
+    assert qw.approve(old).status_code == 200
+    order = ok(ow.create_order(old))["order_id"]
+    ok(ow.run_event(order, "sales", "send_quote").response)
+    # in flight: the quote is protected
+    new = qw.create(requirement).json()["quote_id"]
+    assert code_of(qw.approve(new)) == "SM237"
+    ok(ow.run_event(order, "sales", "customer_decline", reason="price").response)
+    # lost: the same draft can now be approved, the old quote is superseded, its declined order stays as the record
+    assert qw.approve(new).status_code == 200
+    assert operator_sql.sql(f"select status from public.quotes where id = '{old}'") == "superseded"
+    assert ow.state(order) == "declined"
+    second = ok(ow.create_order(new))["order_id"]
+    snap = ow.snapshot(second)
+    paid = 0
+    for user, event, amount in (
+        ("sales", "send_quote", None), ("sales", "customer_accept", None), ("admin", "record_payment", snap.advance_paise), ("sales", "start_preparation", None),
+        ("sales", "dispatch", None), ("sales", "deliver", None), ("admin", "record_payment", snap.order_total_paise - snap.advance_paise),
+    ):  # fmt: skip
+        run = ow.run_event(second, user, event, amount=amount, ledger=uid() if amount else None)
+        ok(run.response)
+        paid += amount or 0
+        assert run.result["paid_total"] == paid
+    assert ow.state(second) == "closed_paid"
+    assert code_of(qw.withdraw(new)) == "SM237"  # closed_paid: the quote stays
+    ow.invariants(order)
+    ow.invariants(second)
 
 
 def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:

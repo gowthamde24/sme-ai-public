@@ -203,7 +203,8 @@ ORDERS_CHANGED = {
 
 @pytest.mark.parametrize("name", sorted(ORDERS_CHANGED))
 def test_the_order_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
-    defs = definitions(name)
+    # the review fixes (below) replace both functions again; this pins the order migration's copy as the last definition BEFORE that migration
+    defs = [d for d in definitions(name) if d[0] < "20261020090000_review_fixes.sql"]
     assert defs[-1][0] == ORDERS, (
         f"{name} is redefined after order conversion ({defs[-1][0]}) or the order migration does not define it: re-copy it from the latest definition"
     )
@@ -224,7 +225,7 @@ def test_the_order_copy_is_the_last_definition_and_only_drops_the_named_lines(na
 def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_nothing_after_it_does() -> None:
     later = [m.name for m in MIGRATIONS if m.name > ORDERS]
     for name in ORDERS_CHANGED:
-        assert all(d[0] <= ORDERS for d in definitions(name)), (name, later)
+        assert all(d[0] <= "20261020090000_review_fixes.sql" for d in definitions(name)), (name, later)
 
 
 # ---------------------------------------------------------------------------------------------- review fixes (owner review of T010 part 1 and the order database)
@@ -237,7 +238,13 @@ REVIEW_CHANGED: dict[str, set[str]] = {
     "public.record_order_event": {
         "v_approver := case when 'REFUND_REQUIRES_OWNER_APPROVAL' = any (v_flags) or 'ADVANCE_OVERRIDE' = any (v_flags) then v_uid end;"
     },
+    "public.withdraw_approved_quote": {
+        "if exists (select 1 from public.orders o where o.tenant_id = z.tenant_id and o.quote_id = z.id) then"
+    },
+    "public.approve_quote": {"if exists (select 1 from public.quotes x join public.orders o on o.tenant_id = x.tenant_id and o.quote_id = x.id"},
 }
+# rewritten, not copied: only "it is the last definition" is pinned
+REVIEW_REWRITTEN = ("app.order_stops_followups",)
 
 
 @pytest.mark.parametrize("name", sorted(REVIEW_CHANGED))
@@ -256,3 +263,9 @@ def test_the_review_copy_is_the_last_definition_and_only_drops_the_named_lines(n
     ]
     unexpected = [line for line in removed if line not in REVIEW_CHANGED[name] and line not in kept]
     assert not unexpected, f"{name}: the review fixes drop lines of {earlier[-1][0]}: {unexpected}"
+
+
+@pytest.mark.parametrize("name", REVIEW_REWRITTEN)
+def test_a_rewritten_review_function_is_the_last_definition(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == REVIEW, f"{name} is redefined after the review fixes ({defs[-1][0]})"

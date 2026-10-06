@@ -426,3 +426,33 @@ def test_a_storm_of_mixed_events_has_no_deadlock_and_leaves_every_ledger_consist
     assert set(outcomes) <= FINE, sorted(set(outcomes) - FINE)
     for order in orders:
         ow.invariants(order)
+
+
+# ------------------------------------------------------------------------------ review fix 3: a NEW approval vs a decline committing at once
+def sent_order_with_new_draft(ow: OrderWorld) -> tuple[str, str, str, str]:
+    old, requirement, _ = approved(ow)
+    order = ow.create_order(old).json()["order_id"]
+    assert ow.run_event(order, "sales", "send_quote").response.status_code == 200
+    return order, old, requirement, newer_draft(ow, requirement)
+
+
+def test_an_approval_that_runs_while_a_decline_is_uncommitted_is_refused(ow: OrderWorld) -> None:
+    order, old, _, new = sent_order_with_new_draft(ow)
+    held = Held(ow.users["sales"], ow.event_sql(order, "sales", "customer_decline", reason="price"))
+    held.holding()
+    response = ow.qw.approve(new)  # the decline has not committed: the order is still open
+    held.finish()
+    assert code_of(response) == "SM237", response.text
+    assert qstatus(old) == "approved" and qstatus(new) == "draft" and ow.state(order) == "declined"
+    assert ow.qw.approve(new).status_code == 200  # after the commit the same approval goes through
+    assert qstatus(old) == "superseded"
+
+
+def test_a_new_approval_and_a_decline_at_once_never_leave_a_superseded_quote_with_an_open_order(ow: OrderWorld) -> None:
+    for _ in range(4):
+        order, old, _, new = sent_order_with_new_draft(ow)
+        a, b = both(lambda: ow.qw.approve(new, token=ow.users["admin"].token), lambda: ow.run_event(order, "sales", "customer_decline", reason="price").response)  # noqa: B023
+        assert code_of(b) == "", b.text  # the decline always succeeds
+        outcome = (qstatus(old), qstatus(new), ow.state(order), code_of(a))
+        assert outcome in (("superseded", "approved", "declined", ""), ("approved", "draft", "declined", "SM237")), outcome
+        ow.invariants(order)

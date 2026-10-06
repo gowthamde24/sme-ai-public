@@ -612,6 +612,59 @@ select is(pg_temp.j(pg_temp.approve_q((select h3b from q)), 'status'), 'approved
 select is((select status::text from public.quotes where id = (select h3a from q)), 'superseded', 'I19 which is superseded');
 select is(pg_temp.j(pg_temp.sc2('a_owner', format('select public.create_order_from_quote(%L, %L)', gen_random_uuid(), (select h3a from q))), 'error'), 'SM230', 'I20 a superseded quote cannot be ordered');
 
+-- ---------------------------------------------------------------------------------------------
+-- review fix 3: SM237 holds only while the quote's order is NOT declined, expired or cancelled (a lost or cancelled deal does not block a new quote)
+-- ---------------------------------------------------------------------------------------------
+create function pg_temp.deal(p_enq text) returns void language plpgsql as $$
+begin
+  insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (tests.rid(p_enq), tests.tid('a'), tests.rid('a_lead'), 'email', now() - interval '1 hour', 'Synthetic enquiry ' || p_enq);
+  perform pg_temp.field(p_enq, 1, 'saree_type', 'kanjivaram');
+  perform pg_temp.field(p_enq, 1, 'quantity', null, 3, 'piece');
+  perform pg_temp.sc2('a_owner', format('select public.confirm_requirement(%L)', pg_temp.rq(p_enq)));
+  perform pg_temp.sc2('a_sales', format('select public.pick_requirement_line_product(%L, 1::smallint, %L, 3, ''piece'', ''manual'', null)', pg_temp.rq(p_enq), pg_temp.prod('SKU-1')));
+  perform pg_temp.draft(tests.rid(p_enq || '_q1'), p_enq);
+  perform pg_temp.approve_q(tests.rid(p_enq || '_q1'));
+  perform pg_temp.sc2('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid(p_enq || '_order'), tests.rid(p_enq || '_q1')));
+end $$;
+create function pg_temp.q2(p_enq text) returns uuid language sql as $$ select tests.rid(p_enq || '_q2') $$;
+-- a declined order: a new quote for the same requirement can be approved, the old quote is superseded, the new order runs to closed_paid
+select pg_temp.deal('d1');
+select pg_temp.rec('a_sales', 'd1', 'send_quote');
+select is(pg_temp.rec('a_sales', 'd1', 'customer_decline', null, null, 'price'), 'declined', 'I30 a deal is lost: the order is declined');
+select is(pg_temp.j(pg_temp.draft(pg_temp.q2('d1'), 'd1'), 'status'), 'draft', 'I31 a new quote for the same requirement is drafted');
+select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('d1')), 'status'), 'approved', 'I32 and APPROVED: the declined order no longer blocks it (it was SM237 before the review fix)');
+select is((select status::text from public.quotes where id = tests.rid('d1_q1')), 'superseded', 'I33 the old quote is superseded');
+select is((select state::text from public.orders where id = pg_temp.ord('d1')), 'declined', 'I34 and its order is untouched: still declined, still the record of the lost deal');
+select is(pg_temp.j(pg_temp.sc2('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('d1b_order'), pg_temp.q2('d1'))), 'state'), 'quote_approved', 'I35 the new quote gets its own order');
+select pg_temp.rec('a_sales', 'd1b', 'send_quote');  select pg_temp.rec('a_sales', 'd1b', 'customer_accept');  select pg_temp.rec('a_sales', 'd1b', 'start_preparation');  select pg_temp.rec('a_sales', 'd1b', 'dispatch');
+select is(pg_temp.rec('a_sales', 'd1b', 'deliver'), 'delivered', 'I36 the new order runs through preparation, dispatch and delivery');
+select is(pg_temp.rec('a_admin', 'd1b', 'record_payment', (select order_total_paise from public.orders where id = pg_temp.ord('d1b')), 'pd1b'), 'closed_paid', 'I37 and is paid in full: closed_paid');
+select is(pg_temp.j(pg_temp.withdraw_q(pg_temp.q2('d1')), 'error'), 'SM237', 'I38 the new quote, now closed_paid, cannot be withdrawn');
+-- a cancelled order: the same
+select pg_temp.deal('c1');
+select is(pg_temp.rec('a_admin', 'c1', 'cancel'), 'cancelled', 'I39 an order cancelled with no money in it');
+select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('c1_q1')), 'withdrawn'), 'true', 'I40 its quote CAN now be withdrawn');
+select pg_temp.deal('c2');
+select pg_temp.rec('a_admin', 'c2', 'cancel');
+select is(pg_temp.j(pg_temp.draft(pg_temp.q2('c2'), 'c2'), 'status'), 'draft', 'I41 a new quote after a cancellation: drafted');
+select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('c2')), 'status'), 'approved', 'I42 and approved (replacing the cancelled deal''s quote)');
+-- an expired order (a privileged fixture): its quote can be withdrawn
+select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('oe_quote')), 'withdrawn'), 'true', 'I43 an expired order''s quote can be withdrawn');
+-- accepted, in-flight and closed_paid orders still refuse, both ways
+select pg_temp.deal('a1');  select pg_temp.rec('a_sales', 'a1', 'send_quote');  select pg_temp.rec('a_sales', 'a1', 'customer_accept');
+select pg_temp.deal('p1');  select pg_temp.rec('a_sales', 'p1', 'send_quote');  select pg_temp.rec('a_sales', 'p1', 'customer_accept');  select pg_temp.rec('a_sales', 'p1', 'start_preparation');
+select pg_temp.deal('z1');  select pg_temp.rec('a_sales', 'z1', 'send_quote');  select pg_temp.rec('a_sales', 'z1', 'customer_accept');  select pg_temp.rec('a_sales', 'z1', 'start_preparation');  select pg_temp.rec('a_sales', 'z1', 'dispatch');
+select pg_temp.rec('a_admin', 'z1', 'record_payment', (select order_total_paise from public.orders where id = pg_temp.ord('z1')), 'pz1');
+select is(pg_temp.rec('a_sales', 'z1', 'deliver'), 'closed_paid', 'I44 (setup) a closed_paid order');
+select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('a1_q1')), 'error'), 'SM237', 'I45 an ACCEPTED order''s quote cannot be withdrawn');
+select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('p1_q1')), 'error'), 'SM237', 'I46 nor an order in preparation');
+select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('z1_q1')), 'error'), 'SM237', 'I47 nor a closed_paid one');
+select pg_temp.draft(pg_temp.q2('a1'), 'a1');  select pg_temp.draft(pg_temp.q2('p1'), 'p1');  select pg_temp.draft(pg_temp.q2('z1'), 'z1');
+select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('a1')), 'error'), 'SM237', 'I48 a new quote cannot replace an ACCEPTED order''s quote');
+select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('p1')), 'error'), 'SM237', 'I49 nor one in preparation');
+select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('z1')), 'error'), 'SM237', 'I50 nor a closed_paid one');
+select is((select string_agg(status::text, ',' order by quote_no) from public.quotes where requirement_id in (pg_temp.rq('a1'), pg_temp.rq('p1'), pg_temp.rq('z1'))), 'approved,approved,approved,draft,draft,draft', 'I51 the three ordered quotes are still approved and the new drafts are still drafts');
+
 -- the refusals that need a policy of their own (each new policy is the latest one in force from here on)
 create function pg_temp.policy(p_id text, p_adv boolean, p_disp boolean, p_zero boolean) returns text language sql as $$
   select pg_temp.sc('a_owner', format($q$select public.create_order_policy_version(%L, %L, %L, %L::jsonb)$q$, tests.rid(p_id), tests.tid('a'), pg_temp.today(),
@@ -649,7 +702,7 @@ select pg_temp.mkorder_priv('l4x', 100000, 40000, pg_temp.today() - 1);
 select pg_temp.rec('a_sales', 'l4x', 'expire');
 select is(app.order_stops_followups(tests.rid('L4')), null, 'J7 a lead with no order is not stopped');
 select is((select state::text from public.orders where id = pg_temp.ord('l4x')), 'expired', 'J8 (an expired order is a different lead''s: the helper is per lead)');
-select is(app.order_stops_followups(tests.rid('a_lead')) is not null, true, 'J9 the main fixture lead is stopped by its accepted and closed orders');
+
 select pg_temp.mkq('l5', 100000, 40000, null, 'approved', 'a', 'L5');
 update public.quotes set status = 'superseded', withdrawn_by = tests.uid('a_owner'), withdrawn_at = now(), withdraw_code = 'price_changed' where id = tests.rid('l5_quote');
 select is(app.order_stops_followups(tests.rid('L5')), 'withdrawn', 'J10 a withdrawn approved quote with no approved one since stops them');
@@ -666,6 +719,35 @@ select pg_temp.rec('a_sales', 'l8', 'send_quote');  select pg_temp.rec('a_sales'
 select pg_temp.rec('a_sales', 'l8', 'start_preparation');  select pg_temp.rec('a_sales', 'l8', 'dispatch');
 select is(pg_temp.rec('a_sales', 'l8', 'deliver'), 'delivered', 'J13b an order that is delivered with a balance still due');
 select is(app.order_stops_followups(tests.rid('L8')), 'accepted', 'J13c stops follow-ups too (fulfilment)');
+
+-- review fix 3: the lead's LATEST order decides; a newer approved quote with no order yet means nothing stops
+insert into public.leads (id, tenant_id, company_id, contact_id)
+select tests.rid(n), tests.tid('a'), tests.rid('a_company'), tests.rid('a_contact') from unnest(array['M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8']) n;
+select pg_temp.mkq('m2a', 100000, 40000, null, 'approved', 'a', 'M2');  select pg_temp.mko('m2a');  select pg_temp.rec('a_sales', 'm2a', 'send_quote');  select pg_temp.rec('a_sales', 'm2a', 'customer_accept');
+select pg_temp.mkq('m2b', 100000, 40000, null, 'approved', 'a', 'M2');  select pg_temp.mko('m2b');  select pg_temp.rec('a_sales', 'm2b', 'send_quote');  select pg_temp.rec('a_sales', 'm2b', 'customer_decline', null, null, 'timing');
+select is(app.order_stops_followups(tests.rid('M2')), 'declined', 'J16 an older accepted order and a LATEST declined one: the latest decides (declined)');
+select pg_temp.mkq('m3a', 100000, 40000, null, 'approved', 'a', 'M3');  select pg_temp.mko('m3a');  select pg_temp.rec('a_admin', 'm3a', 'cancel');
+select is(app.order_stops_followups(tests.rid('M3')), 'cancelled', 'J17 a cancelled order stops them');
+select pg_temp.mkq('m3b', 100000, 40000, null, 'approved', 'a', 'M3');  select pg_temp.mko('m3b');  select pg_temp.rec('a_sales', 'm3b', 'send_quote');
+select is(app.order_stops_followups(tests.rid('M3')), null, 'J18 ... until a LATER order is only sent: the latest order decides, nothing stops');
+select pg_temp.mkq('m4a', 100000, 40000, null, 'approved', 'a', 'M4');  select pg_temp.mko('m4a');  select pg_temp.rec('a_sales', 'm4a', 'send_quote');  select pg_temp.rec('a_sales', 'm4a', 'customer_decline', null, null, 'price');
+select is(app.order_stops_followups(tests.rid('M4')), 'declined', 'J19 a declined order stops them');
+select pg_temp.mkq('m4b', 100000, 40000, null, 'approved', 'a', 'M4');
+select is(app.order_stops_followups(tests.rid('M4')), null, 'J20 a NEWER approved quote with no order yet: a new deal is being made, nothing stops');
+select pg_temp.mko('m4b');
+select is(app.order_stops_followups(tests.rid('M4')), null, 'J21 and once that quote has its (open) order, the latest order is open: nothing stops');
+select pg_temp.mkq('m5a', 100000, 40000, null, 'approved', 'a', 'M5');  select pg_temp.mko('m5a');  select pg_temp.rec('a_sales', 'm5a', 'send_quote');  select pg_temp.rec('a_sales', 'm5a', 'customer_decline', null, null, 'price');
+select pg_temp.mkq('m5b', 100000, 40000, null, 'approved', 'a', 'M5');
+update public.quotes set status = 'superseded', withdrawn_by = tests.uid('a_owner'), withdrawn_at = now(), withdraw_code = 'price_changed' where id = tests.rid('m5b_quote');
+select is(app.order_stops_followups(tests.rid('M5')), 'declined', 'J22 a newer quote that was WITHDRAWN again is no new deal: the declined order stops them');
+select pg_temp.mkq('m7a', 100000, 40000, null, 'approved', 'a', 'M7');  select pg_temp.mko('m7a');  select pg_temp.rec('a_sales', 'm7a', 'send_quote');  select pg_temp.rec('a_sales', 'm7a', 'customer_accept');
+select is(app.order_stops_followups(tests.rid('M7')), 'accepted', 'J23 an accepted order stops them');
+select pg_temp.mkq('m7b', 100000, 40000, null, 'approved', 'a', 'M7');
+select is(app.order_stops_followups(tests.rid('M7')), null, 'J24 ... unless a newer approved quote with no order exists (the reading of the review: nothing stops)');
+select pg_temp.mkq('m8x', 100000, 40000, null, 'approved', 'a', 'M8');
+select pg_temp.mkq('m8a', 100000, 40000, null, 'approved', 'a', 'M8');  select pg_temp.mko('m8a');  select pg_temp.rec('a_sales', 'm8a', 'send_quote');  select pg_temp.rec('a_sales', 'm8a', 'customer_accept');
+select is(app.order_stops_followups(tests.rid('M8')), 'accepted', 'J25 an OLDER approved quote with no order does not count as a new deal');
+
 select ok(not has_function_privilege('authenticated', 'app.order_stops_followups(uuid)', 'execute'), 'J14 it is a helper for definer functions, not callable by a client');
 select is((select provolatile from pg_proc where oid = 'app.order_stops_followups(uuid)'::regprocedure), 's', 'J15 and it is read-only (STABLE): it takes no lock');
 
@@ -676,7 +758,7 @@ select is((select count(*) from (select order_id, count(*) c, max(seq) m from pu
 select is((select count(*) from public.orders o where o.tenant_id in (tests.tid('a'), tests.tid('b')) and not exists (select 1 from public.order_events e where e.order_id = o.id and e.seq = 1 and e.type = 'created')), 0::bigint, 'K3 every order starts with a created event');
 select is((select count(*) from public.orders o where o.tenant_id in (tests.tid('a'), tests.tid('b')) and (o.state in ('closed_paid', 'declined', 'expired', 'cancelled')) <> (o.closed_at is not null)), 0::bigint, 'K4 an order is closed exactly when its state is terminal');
 select is((select count(*) from public.order_ledger l join public.orders o on o.id = l.order_id where o.tenant_id in (tests.tid('a'), tests.tid('b')) and (l.balance_paise < 0 or l.net_paise < 0 or l.paid_paise > o.order_total_paise)), 0::bigint, 'K5 no order is overpaid and no balance is negative');
-select is((select count(*) from public.orders o join public.quotes z on z.id = o.quote_id where o.tenant_id in (tests.tid('a'), tests.tid('b')) and z.status <> 'approved' and o.id not in (select tests.rid(l || '_order') from unnest(array['oe', 'oe2', 'l4x']) l)), 0::bigint,
+select is((select count(*) from public.orders o join public.quotes z on z.id = o.quote_id where o.tenant_id in (tests.tid('a'), tests.tid('b')) and z.status <> 'approved' and o.state not in ('declined', 'expired', 'cancelled') and o.id not in (select tests.rid(l || '_order') from unnest(array['oe', 'oe2', 'l4x']) l)), 0::bigint,
           'K8 every order made through the function has an approved quote (the privileged fixtures are the exceptions)');
 
 select * from finish();
