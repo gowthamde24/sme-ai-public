@@ -49,6 +49,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # T008: the enquiry API (long docstrings and fixed messages)
 "app/enquiries/*" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
+# T009 integration: the quote path (long explanatory docstrings)
+"app/quotes/*" = ["E501"]
 
 [tool.mypy]
 python_version = "3.11"
