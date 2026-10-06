@@ -280,6 +280,26 @@ ports or pushes; integration, approvals and real payment verification belong to 
 `./scripts/check-lane-paths.sh c main` output:
 `Lane C: changed paths allowed under base policy` (exit 0).
 
+## Price-list CSV: baseline
+
+- Retried requested fetch/fast-forward successfully to origin/main 7b78665;
+  lifecycle/mapper PR is merged. Started clean on lane/c. No push.
+- Added only packages/pure/price_list_csv/**, docs/plans/price-list-csv.md and
+  these notes. Existing make test-packages discovers the nested package.
+- Required name and tax_bps columns added to the proposed CSV columns: the quote
+  engine requires both, so no product name or tax rate is invented/defaulted.
+- All-or-nothing parser uses exact integer INR paise, strict SKU syntax,
+  case-insensitive SKU uniqueness, fixed row errors and early file limits.
+- Engine 1.1.0 item fields/bounds are mirrored. Import files can hold 5,000 rows;
+  lane A selects <=1,000 relevant catalog items for a quote request. No existing
+  pure test cross-imports: 250 seeded cases assert the documented engine shape
+  and break rules instead. Prices are strictly positive; breaks contiguous.
+- Semantic hash ignores valid row/header ordering and equivalent money formats;
+  error results have null hash. BOM counts toward UTF-8 byte size. Western comma
+  grouping only. Lane A owns import endpoint, owner approval, DB re-checks/audit.
+- Test count before this package: 123. Baseline adds 26 CSV tests (149 total).
+  Mutation evidence follows separately; no services, ports or new dependencies.
+
 ## Requirement mapper: baseline
 
 - Started from clean lane/c HEAD 4618cd9, building on unmerged order lifecycle
