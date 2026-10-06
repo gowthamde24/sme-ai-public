@@ -16,6 +16,7 @@ from app.config import Settings
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.main import create_app
+from app.orders.repository import OrdersRepository
 from app.quotes.repository import QuotesRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
@@ -141,6 +142,7 @@ def make_client(
     erasure: ErasureRepository | None = None,
     enquiries: EnquiriesRepository | None = None,
     quotes: QuotesRepository | None = None,
+    orders: OrdersRepository | None = None,
     suppression: SuppressionRepository | None = None,
     key_ring: KeyRing | None = None,
 ) -> tuple[TestClient, FakeRepository]:
@@ -164,6 +166,7 @@ def make_client(
             erasure=erasure,
             enquiries=enquiries,
             quotes=quotes,
+            orders=orders,
             suppression=suppression,
             key_ring=key_ring,
         ),

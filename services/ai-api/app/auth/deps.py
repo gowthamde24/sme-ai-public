@@ -18,6 +18,7 @@ from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
 from app.evidence.repository import EvidenceRepository
 from app.leads.repository import LeadsRepository
+from app.orders.repository import OrdersRepository
 from app.quotes.repository import QuotesRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
@@ -40,6 +41,7 @@ class Runtime:
     erasure: ErasureRepository | None = None
     enquiries: EnquiriesRepository | None = None
     quotes: QuotesRepository | None = None
+    orders: OrdersRepository | None = None
     suppression: SuppressionRepository | None = None
     key_ring: KeyRing | None = None
 

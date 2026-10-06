@@ -29,6 +29,9 @@ from app.evidence.routes import router as evidence_router
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
 from app.logging_safety import install_log_redaction
+from app.orders import errors as order_errors
+from app.orders.repository import PostgrestOrdersRepository
+from app.orders.routes import router as orders_router
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
@@ -78,10 +81,32 @@ def build_runtime(settings: Settings) -> Runtime | None:
         erasure=PostgrestErasureRepository(config.rest_url, config.anon_key),
         enquiries=PostgrestEnquiriesRepository(config.rest_url, config.anon_key),
         quotes=PostgrestQuotesRepository(config.rest_url, config.anon_key),
+        orders=PostgrestOrdersRepository(config.rest_url, config.anon_key),
         suppression=PostgrestSuppressionRepository(config.rest_url, config.anon_key),
         key_ring=build_key_ring(settings),
     )
 
+
+# SM232: the lifecycle's closed refusal codes, said once in plain words
+# (the code itself is returned as `reason`)
+ORDER_REASON_TEXT: dict[str, str] = {
+    "ILLEGAL_TRANSITION": "That cannot happen at this stage of the order.",
+    "QUOTE_NOT_EXPIRED": "The quote has not expired yet.",
+    "QUOTE_EXPIRED": "The quote has expired.",
+    "CANCEL_WINDOW_CLOSED": "It is too late to cancel this order.",
+    "ADVANCE_NOT_PAID": "The advance has not been paid.",
+    "DUPLICATE_PAYMENT_ID": "That payment was already recorded.",
+    "DUPLICATE_REFUND_ID": "That refund was already recorded.",
+    "OVERPAYMENT": "That payment would pay more than the order's total.",
+    "REFUND_EXCEEDS_PAID": "That refund is more than has been paid.",
+    "CLOSED_UNPAID": "A closed order must be fully paid.",
+    "INVALID_ADVANCE": "The order's advance does not fit its policy.",
+    "INVALID_CANCEL_WINDOW": "The order's cancel window is not valid.",
+    "INVALID_STATE": "The order is in a state the rules do not know.",
+    "INVALID_EVENT": "The rules do not know that event.",
+    "OUT_OF_RANGE": "A value is outside the allowed range.",
+    "OTHER": "The order rules refuse this event.",
+}
 
 _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     repo.TokenRejected: ApiError(
@@ -179,6 +204,35 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     quote_errors.OwnerApprovalRequiredError: ApiError(
         403, "owner_approval_required", "This quote needs the Owner's approval."
     ),
+    # Orders (ADR 0021). Fixed messages: nothing from the data layer reaches a client.
+    order_errors.OrderQuoteNotApprovedError: ApiError(
+        409, "quote_not_approved", "Only an approved quote can become an order."
+    ),
+    order_errors.OrderExistsError: ApiError(
+        409, "order_exists", "This quote already has an order."
+    ),
+    order_errors.OrderFiguresError: ApiError(
+        409,
+        "order_figures_invalid",
+        "This quote cannot become an order under the current order policy "
+        "(a zero total, a missing advance the policy requires, or a total above the limit).",
+    ),
+    order_errors.OwnerRequiredError: ApiError(
+        403, "owner_required", "This action needs the owner."
+    ),
+    order_errors.OrderClosedError: ApiError(409, "order_closed", "This order is closed."),
+    order_errors.QuoteExpiredError: ApiError(409, "quote_expired", "The quote has expired."),
+    order_errors.QuoteHasOrderError: ApiError(
+        409, "quote_has_order", "This quote has a live order: lose or cancel the order first."
+    ),
+    order_errors.OrderMismatchError: ApiError(
+        409,
+        "order_changed",
+        "The order changed while you were working on it. Reload it and try again.",
+    ),
+    order_errors.NoOrderPolicyError: ApiError(
+        409, "no_order_policy", "No order policy is in force: the owner must publish one."
+    ),
     runs_repo.RequirementConfirmedError: ApiError(
         409,
         "requirement_confirmed",
@@ -237,6 +291,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.erasure,
                 runtime.enquiries,
                 runtime.quotes,
+                runtime.orders,
                 runtime.suppression,
             ):
                 if isinstance(
@@ -249,6 +304,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestErasureRepository
                     | PostgrestEnquiriesRepository
                     | PostgrestQuotesRepository
+                    | PostgrestOrdersRepository
                     | PostgrestSuppressionRepository,
                 ):
                     repository.close()
@@ -261,14 +317,27 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     @app.exception_handler(repo.RepositoryError)
     async def _repository_error(_: Request, exc: repo.RepositoryError) -> JSONResponse:
         mapped = _REPOSITORY_ERRORS.get(type(exc))
+        reason: str | None = None
+        if isinstance(
+            exc, order_errors.OrderRefusedError
+        ):  # SM232: one closed reason, a fixed sentence
+            reason = exc.reason
+            mapped = ApiError(
+                409,
+                "order_event_refused",
+                ORDER_REASON_TEXT.get(reason, ORDER_REASON_TEXT["OTHER"]),
+            )
         if isinstance(exc, crm_repo.DuplicateValueError):
             mapped = ApiError(
                 409, "duplicate_value", f"That {exc.field} is already used.", headers={}
             )
         if mapped is None:
             mapped = ApiError(502, "upstream_error", "The data layer failed.")
+        body: dict[str, str] = {"code": mapped.code, "message": mapped.message}
+        if reason is not None:
+            body["reason"] = reason
         return JSONResponse(
-            {"error": {"code": mapped.code, "message": mapped.message}},
+            {"error": body},
             status_code=mapped.status_code,
             headers=mapped.headers,
         )
@@ -300,6 +369,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(agent_runs_router)
     app.include_router(enquiries_router)
     app.include_router(quotes_router)
+    app.include_router(orders_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app
