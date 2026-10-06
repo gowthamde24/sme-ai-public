@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data rehearse-thin-slice dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../scripts/seed_demo.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -109,6 +109,12 @@ seed-demo:
 seed-quote-data:
 	@test -n "$(TENANT)" || { echo "usage: make seed-quote-data TENANT=<workspace slug>"; exit 2; }
 	cd $(API) && .venv/bin/python seeds/seed_quote_reference_data.py --tenant-slug "$(TENANT)"
+
+# Rehearsal step 3 (docs/plans/thin-slice-rehearsal.md): the whole slice through the API as Owner, Admin, Sales and Viewer (and a second workspace), from the synthetic CSV to
+# closed_paid, then run a second time on the same database (it must change nothing). Local stack only, synthetic data, no model, nothing sent. Run `make db-reset` first for a
+# fresh database. Writes rehearsal-report.md at the repository root (git-ignored). Opt-in: not part of make check.
+rehearse-thin-slice:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/drive.py
 
 dev-web:
 	cd $(WEB) && npm run dev

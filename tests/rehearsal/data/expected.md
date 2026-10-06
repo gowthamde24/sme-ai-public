@@ -17,20 +17,26 @@ Amounts below are rupees; `expected.json` holds the same in paise.
 Enquiries E7 (no sarees asked) and E8 (quantity not decided) stop before a quote on purpose.
 
 ## Orders
-* Q1 -> order A: the happy path to `closed_paid`: advance 25,200 then balance 25,200.
-* Q2 -> order B: declined (reason `price`); then a new quote for the same requirement and a new order (declined then re-quoted).
-* Q3 -> order C: cancelled with no money in it (Admin).
-* Q4 -> order D: in preparation (advance 30,975 paid); an Owner dispatch override on an order whose advance is unpaid is rehearsed on Q5 -> order E.
-* Q5 -> order E: advance unpaid, an Owner dispatch with the override; then paid in full.
-* Q6 -> order F: advance 8,820 paid, then a refund of 1,000 by the Owner (Admin refused).
+Six orders and one new policy version. Money is the person's claim; payments are recorded by an Admin (or the Owner), refunds and cancellations that carry money by the Owner.
+| Order | Quote | Path | Ends | Paid / balance (rupees) |
+| --- | --- | --- | --- | --- |
+| A | Q1 | sent, accepted, advance requested, advance 25,200, preparation, dispatch, delivered, balance 25,200 | closed_paid | 50,400 / 0 |
+| B | Q2 | sent, customer declines (reason `price`) | declined (lost) | 0 / 19,530 |
+| B2 | Q2b (Q2 again) | the same path as A, advance 9,765, balance 9,765 (needs B to be lost first) | closed_paid | 19,530 / 0 |
+| C | Q3 | sent, then cancelled by an Admin (no money in it) | cancelled | 0 |
+| D | Q4 | sent, accepted, advance requested, advance 30,975, preparation | in_preparation | 30,975 / 30,975 |
+| E | Q5 | under a second policy (advance not required; dispatch needs it): accepted, preparation, dispatch refused for Sales and Admin (ADVANCE_NOT_PAID), the Owner dispatches with the override, delivered, paid 22,732.50 twice | closed_paid | 45,465 / 0 |
+| F | Q6 | sent, accepted, advance requested, advance 8,820; an Admin's refund and cancellation refused (the Owner's); the Owner refunds 1,000 and cancels | cancelled | paid 8,820, refunded 1,000, net 7,820 |
 
 ## Import (leads.csv, header is line 1)
+Worked out from the import rules (ADR 0010, `import_lead_rows`): a contact needs an e-mail on a reserved domain and a phone starting `+00`; a company is matched by website host, then by normalised name unless the cities differ; an open lead of the same company and contact is a duplicate; a contact is matched by e-mail, case-insensitive.
 | Line | Company | What it tests | Expected |
 | --- | --- | --- | --- |
-| 4, 5 | Meenakshi Weaves twice (case, spacing, same number) | a duplicate | the second is merged or flagged as a duplicate, not a second lead |
-| 6 | Padma Textiles | a malformed e-mail | arrives without an e-mail, flagged for the reason |
-| 8 | (blank name) | a missing company | rejected by the adapter (`company_name_missing`) before the API |
-| 10, 11 | Godavari Silks, Krishna Sarees | one phone number shared by two people | both imported; the number is a shared key |
-| 13 | Sabarmati Cloth | a number already opted out (setup.json) | imported, flagged `opted_out` |
-| 14 | Yamuna Weavers | a number of an erased person, written in another format | imported, flagged `legal` |
-| all others | | clean | imported |
+| 5 | MEENAKSHI  WEAVES (line 4 again: case, spacing, same contact) | a duplicate | `skipped_duplicate` (`existing_open_lead`): no second company, contact or lead |
+| 6 | Padma Textiles | a malformed e-mail | `rejected` (`contact_domain_not_reserved`): no company, contact or lead is left behind |
+| 8 | (blank name) | a missing company | refused by the adapter (`company_name_missing`) before the API |
+| 10, 11 | Godavari Silks, Krishna Sarees | one phone number shared by two people | both created; the number is a shared key |
+| 13 | Sabarmati Cloth | a number already opted out (setup.json) | created, contact flagged `opted_out` |
+| 14 | Yamuna Weavers | the number of an erased person, written another way | created, contact flagged `legal` |
+| all others | | clean | created |
+So: 20 lines, 1 refused by the adapter, 19 sent, 17 created (17 companies, 17 contacts), 1 duplicate, 1 rejected, 2 flagged.

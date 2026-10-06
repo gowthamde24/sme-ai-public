@@ -23,12 +23,14 @@ def test_hand_worked_quotes_add_up() -> None:
     prices = {  # rupees, from price_list.csv by hand: (unit, break_unit)
         "Q1": 12 * 4000,
         "Q2": 6 * 3100,
+        "Q2b": 6 * 3100,
         "Q3": 5 * 4200,
         "Q4": 20 * 2950,
         "Q5": 4 * 4200 + 10 * 2650,
         "Q6": 8 * 4200,
     }
     for key, q in _json("expected.json")["quotes"].items():
+        assert key in prices, key
         assert q["subtotal_paise"] == prices[key] * 100, key
         assert q["tax_paise"] * 20 == q["subtotal_paise"], key  # 5 per cent
         assert q["total_paise"] == q["subtotal_paise"] + q["tax_paise"], key

@@ -40,6 +40,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S101", "S105", "S106"]
 "../../tests/integration/*" = ["S101", "S105", "S106"]
+"../../tests/rehearsal/*" = ["S101"]
 # a script of readable data tables and a long explanatory header
 "../../scripts/seed_demo.py" = ["E501"]
 # T008: word lists, synonym tables and regular expressions that read better on one line, and long explanatory docstrings
@@ -64,4 +65,4 @@ select = ["E", "F", "I", "B", "UP", "S"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
-files = ["app", "tests", "../../tests/integration", "../../scripts/seed_demo.py", "../../scripts/smoke_fetch.py"]
+files = ["app", "tests", "../../tests/integration", "../../tests/rehearsal", "../../scripts/seed_demo.py", "../../scripts/smoke_fetch.py"]
