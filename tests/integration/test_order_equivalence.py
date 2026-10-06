@@ -173,14 +173,14 @@ def grid() -> list[dict[str, Any]]:
                         (True, False),
                         (False, True),
                     ):
-                        for paid in (0, 40000, 100000):
+                        for paid in (0, 40000, 45000, 100000):
                             refunds = (
                                 [(r1, 5000)] if paid == 100000 and name == "record_refund" else []
                             )
                             payments = [(p1, paid)] if paid else []
                             if state == "closed_paid" and paid != 100000:
                                 continue  # an unpaid closed order is its own case below
-                            out.append(request(state, event_for(name, 1000, p2 if name == "record_payment" else r1 if name == "record_refund" else ""), total=100000, advance=40000, adv_req=adv_req,
+                            out.append(request(state, event_for(name, 5000 if name == "record_refund" else 1000, p2 if name == "record_payment" else r1 if name == "record_refund" else ""), total=100000, advance=40000, adv_req=adv_req,
                                                disp_req=disp_req, window="in_preparation", payments=payments, refunds=refunds, as_of=base + timedelta(seconds=shift), until=base, override=override))  # fmt: skip
     return out
 
@@ -299,9 +299,19 @@ def test_the_ledger_limits_agree() -> None:
                              refunds=ledger(n), as_of=base, until=until, override=False))  # fmt: skip
         cases.append(request("accepted", event_for("send_quote", 1, ""), total=10**6, advance=100, adv_req=False, disp_req=False, window="in_preparation", payments=ledger(n), refunds=[], as_of=base,
                              until=until, override=False))  # fmt: skip
+    # refunds beyond the bound with an event that is not a refund; an amount in the ledger above the cap (payments and refunds); a cancel window the lifecycle does not know
+    cases.append(request("accepted", event_for("send_quote", 1, ""), total=10**6, advance=100, adv_req=False, disp_req=False, window="in_preparation", payments=[(make_uuid(rng), 5000)], refunds=ledger(1001),
+                         as_of=base, until=until, override=False))  # fmt: skip
+    cases.append(request("accepted", event_for("send_quote", 1, ""), total=CAP, advance=100, adv_req=False, disp_req=False, window="in_preparation", payments=[(make_uuid(rng), CAP + 1)], refunds=[],
+                         as_of=base, until=until, override=False))  # fmt: skip
+    cases.append(request("accepted", event_for("send_quote", 1, ""), total=CAP, advance=100, adv_req=False, disp_req=False, window="in_preparation", payments=[(make_uuid(rng), CAP)], refunds=[(make_uuid(rng), CAP + 1)],
+                         as_of=base, until=until, override=False))  # fmt: skip
+    cases.append(request("accepted", event_for("send_quote", 1, ""), total=10**6, advance=100, adv_req=False, disp_req=False, window="dispatched", payments=[], refunds=[], as_of=base, until=until,
+                         override=False))  # fmt: skip
     reached = compare(cases, "limits")
-    # 1000 entries refuse the next payment (or refund), 1001 entries refuse every event
-    assert reached[("rejected", "OUT_OF_RANGE")] == 5, reached
+    # 1000 entries refuse the next payment (or refund), 1001 entries refuse every event, an amount above the cap in either ledger too
+    assert reached[("rejected", "OUT_OF_RANGE")] == 8, reached
+    assert reached[("rejected", "INVALID_CANCEL_WINDOW")] == 1, reached
     assert reached[("ok", "accepted")] == 2 and reached[("rejected", "ILLEGAL_TRANSITION")] == 2
 
 

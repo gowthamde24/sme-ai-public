@@ -2,6 +2,51 @@
 
 Record ticket, checklist row, evidence, unresolved risk and proposed status here. Lane A consolidates these into docs/pre-pilot-checklist.md after review.
 
+## T010 part 1 (the hard gate) and order conversion (database and proofs): mutation pass (2026-10-06)
+
+One pass over the SQL guards of the two new migrations: `20261018090000_t010_suppression_keys.sql` (125 mutants) and `20261019090000_order_conversion.sql` (221 mutants). Method: `PYTHONDONTWRITEBYTECODE=1`, every `__pycache__` swept first (no Python source was mutated). A mutant re-creates ONE function (the latest definition with one text replacement), or drops / disables ONE trigger, constraint or index, runs the tests that should notice, and restores the original; the original is run first before every mutant (a failing baseline stops the run), and the database was reset before each full pass. Tests that kill a mutant: pgTAP 60 / 61 (about a second each), the real-stack suites for the lock and builder mutants (`test_order_races.py`, `test_order_direct_postgrest.py`, `test_order_equivalence.py`, `test_suppression_races.py`). The runner and the mutant lists are scratch files, not in the repository.
+
+**Result: T010 125 mutants: first pass 97 killed, 28 survived; 23 closed with new tests and re-run killed, 5 equivalent => 120 killed + 5 equivalent. Orders 221 mutants: first pass 167 killed, 50 survived, 3 invalid (a typo in the mutant: fixed, then killed); 39 survivors closed with new or isolating tests and re-run killed, 11 equivalent => 210 killed + 11 equivalent.** Survivors that were NOT equivalent were all tests that asserted the right answer for the wrong reason (another guard raised the same SQLSTATE) or that never reached a boundary.
+
+| Survivor | What it was | Disposition |
+| --- | --- | --- |
+| KA04 key kind ignored | no test used one value as an e-mail key and a phone key | closed: pgTAP 60 M1, M2 |
+| KS01, KL01 a key already suppressed is suppressed again / a key not suppressed is lifted | no test had two contacts sharing one key | closed: pgTAP 60 M3-M6 |
+| KS02, KL02, CK15 no per-key lock, no contact lock | single-session tests cannot see a missing lock | closed: `tests/integration/test_suppression_races.py` (held transaction; the shared key gets ONE event) |
+| CK14 previous PHONE key versions not matched | only the e-mail side was tested | closed: M7, M8 |
+| CK16, CK17 a new key version never replaces the old / one key drops the other | the merge test gave both keys | closed: M9, M10 |
+| AW03-AW05 allow-without-key accepts a tenant-wide, executed or cancelled request | only the happy path | closed: M11-M13 |
+| CS03, CS07 list limit, the overall `suppressed` flag from a phone match | | closed: M14-M16 |
+| UC05, UL04 phone-only unkeyed contacts, the list limit | | closed: M17, M18 |
+| EC03 erasure with only the phone keyed | | closed: M19 |
+| CN02, CN06-CN09, CN11 table checks hidden behind other checks | the other check raised the same SQLSTATE | closed: M20-M25 (privileged inserts that only ONE check refuses) |
+| RE14, CK13 text hygiene of request / result (function and table) | no invisible character was ever sent | closed: pgTAP 61 D30b/c, H35m |
+| RE21, RE25 replay ignores the type / the reason | the other fields differed too | closed: G34b-g (events that differ in ONE field only) |
+| RE29, RE30 expired / cancelled not treated as closed | only closed_paid and declined were tried | closed: F8b, F10b |
+| RE33, RE37 non-canonical as_of text, the +2 minute edge | the forged text was also out of the window | closed: G11b-c, G12b |
+| RE47 flag codes not compared | needs_owner_approval also differed | closed: G24b (consistent flag, wrong code) |
+| CO11, CO14, CO16, CO18, CO19 the valid-until day, the cap itself, zero value, each advance flag alone | the quotes used failed another SM233 clause or were far from the edge | closed: C31-C33, I21-I29 (a policy of its own for each) |
+| PV07-PV09, PV11, PV12, PV15, PV16 policy shapes, past and out-of-order dates, replay across date and tenant | | closed: B13b-d, B16b-f |
+| OB03 refunds in reverse order | the builder test had one refund | closed: the direct suite records two |
+| TG07, TG10, TG12, TG14, TG28, IX04, CK03, CK04, CK09-CK12 ledger gap, first event, born closed, dispatched -> closed_paid, truncate guard enabled, order number, table checks | gap and first-event cases used an illegal move, so the move guard answered; the final close from `dispatched` was never walked | closed: H20-H21b, H35a-m, E28-E31, A10 (each guard asserted ENABLED), CK checks isolated on a bare order |
+| SF01-SF04 the follow-up stop per state | mutants were invalid enum values, then a lead with only a `delivered` order was missing | closed: mutants fixed; J13b/c |
+| OD02, OD06, OD13, OD54 refund-ledger bound, ledger amount above the cap, an unknown cancel window, the advance step-back boundary | the generator never produced them | closed: equivalence test limits cases and a 45,000-paid grid row; F36a-c |
+| CO04, CO05, CO06, CO07 one or two of the three parent locks of `create_order_from_quote` removed | EQUIVALENT: the quote lock alone serialises the race with `approve_quote` (which UPDATES the older quote), the enquiry lock alone serialises it too; **CO07b (all three removed) is killed by the race tests** | documented (ADR 0021: "any one of the three parent locks is redundant") |
+| PV03 a non-object policy accepted | EQUIVALENT: `jsonb_object_keys` raises 22023 on a non-object, the same SQLSTATE | documented |
+| PV10 a cancel window after dispatch accepted | EQUIVALENT: the enum column's table check raises 23514, the same SQLSTATE | documented |
+| TG03, TG05 the orders guard's move and prior-state checks | EQUIVALENT: the ledger guard refuses any event with an illegal move or a wrong prior state first (two layers; the ledger-guard mutants TG08 and TG09 are killed) | documented |
+| TG17 `p_from <> p_to` removed from `order_move_allowed` | EQUIVALENT: neither caller asks about an unchanged state | documented |
+| IX05 unique (tenant, order, seq) | EQUIVALENT: the ledger guard's gapless rule refuses a repeated number first | documented |
+| WD04 the replaced-quote check ignores the quote status | EQUIVALENT: an ordered quote never leaves `approved` (SM237 on both paths) | documented |
+| KO01, KO10 a non-object key set / non-array matching list accepted | EQUIVALENT: the jsonb functions raise 22023 themselves | documented |
+| SY06 the sync trigger without its "no keys" early return | EQUIVALENT: a contact with no keys is an all-null record and every branch is skipped | documented |
+| UC03 erased contacts counted as unkeyed | EQUIVALENT: erasure nulls the identifiers, so an erased contact has nothing to key | documented |
+| BF05 a non-object backfill item not skipped | EQUIVALENT: it has no `contact_id`, so the next condition skips it | documented |
+
+Also found while testing (not mutation): `array || 'literal'` in `app.order_decide` was read as an array literal (every refund / override / cancel with funds failed with "malformed array literal"): caught by the first pgTAP run, fixed with `array_append(..., 'X'::text)` before the commit. The T010 and order pgTAP files were order-sensitive to committed data of earlier integration runs (global counts); every count is now scoped to the file's own tenants, so the files pass on a used database as well as a fresh one (`make check` still resets the database first).
+
+Evidence of this stage: `make check-fast` exit 0 (vitest 962, pytest 3,234); pgTAP full suite 8,620 (61 files); the new and touched real-stack suites 58 passed (order equivalence, direct, races, erasure; suppression api and races); the existing integration suite (845) passed against the order migration before the new files were added. The full `make check` (Docker, evals) was NOT run in this stage (instruction: fast tier per commit plus the mutation pass).
+
 ## T009 milestone (steps 2-4): mutation pass and evidence (2026-10-06)
 
 One pass over the guards added in step 2 (migration part 3) and step 3 (the quote API). Method: `PYTHONDONTWRITEBYTECODE=1`, every `__pycache__` swept after each mutant, a source file restored with `git checkout` (never from memory) and refused when not clean; SQL mutants re-create ONE function (or run one statement and its undo) on the local database, then pgTAP 57-59 and the real-stack suites (races for lock mutants). The first pass found survivors; each was either closed with a test or shown equivalent, then re-run.

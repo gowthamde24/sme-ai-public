@@ -1,5 +1,19 @@
 # Handoff: resume here
 
+**STOP POINT (2026-10-06): T010 commits 1-3 (suppression keys, the hard gate) and order conversion commits 1-4 (ADR 0021, the lifecycle adapter and builder, the migration with its pgTAP, the equivalence and race tests) are BUILT and committed locally; nothing is pushed. Both await the owner's review.** Do NOT build the API or web parts of orders (commits 5-6), do NOT start T010 part 2 (cadence adapter, touches, drafts: plan commits 4-9) and do NOT start T011a before the owner approves.
+
+* Where things are: `docs/adr/0020-suppression-keys-and-follow-up.md` and `docs/plans/t010-integration.md` (section 10, as built); `docs/adr/0021-orders.md` and `docs/plans/order-conversion.md` (section 10, as built); the "Suppression keys" and "Orders" sections of `docs/pre-pilot-checklist.md`; the mutation table in `docs/checklist-notes/A.md` (T010 part 1 and orders: 346 SQL mutants, 330 killed, 16 equivalent and documented).
+* Migrations (both unpushed, so amendable until pushed): `supabase/migrations/20261018090000_t010_suppression_keys.sql`, `supabase/migrations/20261019090000_order_conversion.sql` (the second REPLACES `approve_quote` and `withdraw_approved_quote`; `tests/test_migration_copies.py` pins the copies).
+* New code: `services/ai-api/app/suppression/` (key ring, hooks on create / update / import / erasure, backfill and status endpoints) and `services/ai-api/app/orders/` (`lifecycle_port.py` = the ONLY door to `packages/pure/order_lifecycle`; `builder.py` = the request the database rebuilds). The order ROUTES, repository and web do not exist yet.
+* Last checks: `make check-fast` exit 0 (vitest 962, pytest 3,234); pgTAP full suite 8,620 (61 files); the new real-stack suites 58 passed. The full `make check` (Docker, evals) was not run in this stage.
+* Contracts the next steps must keep: the database REBUILDS every order request (`app.order_build`, `app.order_decide`) and refuses a different one (SM238); `owner_override` is derived from the role, never sent; a stale client gets SM238 and must re-read (the request carries the ledger); an exact retry (same event id, values AND time of occurrence) replays; SM239 is "no order policy in force" (the plan's SM222 sits in the follow-up range); `app.order_stops_followups(lead)` is the read-only helper T010 part 2 must call under the lead's lock.
+* Open items for the owner: the hosting of `SUPPRESSION_HMAC_KEY` (the process refuses to start outside development without it); the real order policy values; the time rules (valid through the last second of the day in India; `as_of` within 10 minutes before / 2 after the database clock; `occurred_at` up to 30 days old); the option-A limit (a member calling PostgREST can record a wrong key or report a payment that did not happen).
+* Traps met here: pgTAP files must not assert GLOBAL counts (committed rows of earlier integration runs break them); a bare `select pg_temp.f()` that returns the text `ok` prints a line TAP reads as a test; `array || 'literal'` in plpgsql is read as an array literal (use `array_append(.., 'x'::text)`); a Held (psql) session holds FK key-share locks on parent rows, so a `for update nowait` probe cannot prove an explicit parent lock: use the race tests.
+
+---
+
+(Earlier hand-off, still true for the traps below.)
+
 **T009 is BUILT (migration parts 1-3, the quote API, the quote screen), committed locally, nothing pushed. It awaits the owner's review.** Do not start T010 (or any plan below) before the owner approves. Plans written, not built: `docs/plans/t010-integration.md`, `docs/plans/order-conversion.md`, `docs/plans/t011-owner-agent.md` (each ends with numbered owner decisions and a recommended default).
 
 * Where things are: ADR 0019, `docs/plans/t009-quote-integration.md` (section 12 "As built"), the "Quotes" rows of `docs/pre-pilot-checklist.md`, the mutation table in `docs/checklist-notes/A.md`.

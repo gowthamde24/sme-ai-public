@@ -234,7 +234,7 @@ select pg_temp.rk('a_sales', 'e4', pg_temp.ks('e4_mail', 'e4_phone'));
 select is(pg_temp.req('g2', 'e2'), 'ok', 'G1 the Owner requests the erasure of e2');
 select is(pg_temp.at('aal2', 'a_owner', format('select public.execute_erasure(%L, false)', tests.rid('g2'))), 'SM221', 'G2 an identifier with no recorded key: the erasure is refused (SM221)');
 select is((select email from public.contacts where id = tests.rid('e2')), 'e2@example.test', 'G3 nothing was erased');
-select is((select count(*) from suppression.key_events where reason = 'erased'), 0::bigint, 'G4 and no key was written');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and reason = 'erased'), 0::bigint, 'G4 and no key was written');
 select is((select status::text from public.erasure_requests where id = tests.rid('g2')), 'pending', 'G5 the request is still pending');
 -- the Owner's explicit step
 select is(pg_temp.at('aal2', 'a_admin', format('select public.allow_erasure_without_key(%L)', tests.rid('g2'))), '42501', 'G6 an Admin cannot allow an erasure without a key');
@@ -249,7 +249,7 @@ select is(pg_temp.sc('a_owner', format('select public.allow_erasure_without_key(
 select is((select without_key_by = tests.uid('a_owner') and without_key_at is not null from public.erasure_requests where id = tests.rid('g2')), true, 'G15 who and when are recorded');
 select is((select count(*) from public.audit_events where entity_type = 'erasure_request' and entity_id = tests.rid('g2') and action = 'erasure_request.update' and new_values ? 'without_key_at'), 1::bigint, 'G16 the step is audited');
 select is(pg_temp.exec('a_owner', 'g2', true) ::jsonb -> 'counts' ->> 'suppression.erased_without_key', '1', 'G17 the preview counts the erasure without a key');
-select is((select count(*) from suppression.key_events where reason = 'erased'), 0::bigint, 'G18 ... and the preview left nothing behind');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and reason = 'erased'), 0::bigint, 'G18 ... and the preview left nothing behind');
 select is(pg_temp.exec('a_owner', 'g2') ::jsonb -> 'counts' ->> 'suppression.erased_without_key', '1', 'G19 the erasure runs and says it had no key for the phone');
 select is(pg_temp.sc('a_owner', format('select public.execute_erasure(%L, false)', tests.rid('g2'))) ::jsonb ->> 'replayed', 'true', 'G20 (a replay of the executed request)');
 select is((select email is null and phone is null and erased_at is not null from public.contacts where id = tests.rid('e2')), true, 'G21 e2 is erased');
@@ -309,6 +309,80 @@ select is((select count(*) from public.audit_events where entity_type = 'suppres
 select is((select count(*) from public.audit_events where entity_type = 'contact_key' and (new_values ? 'email_hmac' or new_values ? 'phone_hmac' or old_values ? 'email_hmac' or old_values ? 'phone_hmac')), 0::bigint, 'I3 a stored key is audited WITHOUT its values');
 select is((select count(*) from public.audit_events where entity_type = 'suppression_key_event' and metadata -> 'pii_fields_changed' ? 'key_hmac'), (select count(*) from public.audit_events where entity_type = 'suppression_key_event'), 'I4 ... but the audit says the key field changed');
 select is((select count(*) from public.audit_events a where a.tenant_id = tests.tid('a') and (a.new_values::text like '%' || pg_temp.h('e1_mail') || '%' or a.old_values::text like '%' || pg_temp.h('e1_mail') || '%' or a.metadata::text like '%' || pg_temp.h('e1_mail') || '%')), 0::bigint, 'I5 a known key value appears nowhere in the audit trail');
+
+-- ============================================================================ M. additions from the mutation pass (each one closes a mutant that survived the first pass)
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('m1'), tests.tid('a'), tests.rid('a_company'), 'M one', 'm1@example.test', '+00 90000 00301'),
+  (tests.rid('m2'), tests.tid('a'), tests.rid('a_company'), 'M two', 'm2@example.test', '+00 90000 00302'),
+  (tests.rid('m3'), tests.tid('a'), tests.rid('a_company'), 'M three', 'm3@example.test', '+00 90000 00303'),
+  (tests.rid('m4'), tests.tid('a'), tests.rid('a_company'), 'M four', 'm4@example.test', '+00 90000 00304'),
+  (tests.rid('m7'), tests.tid('a'), tests.rid('a_company'), 'M seven', 'm7@example.test', '+00 90000 00307'),
+  (tests.rid('m8'), tests.tid('a'), tests.rid('a_company'), 'M eight', 'm8@example.test', '+00 90000 00308'),
+  (tests.rid('m9'), tests.tid('a'), tests.rid('a_company'), 'M nine', 'm9@example.test', '+00 90000 00309'),
+  (tests.rid('m10'), tests.tid('a'), tests.rid('a_company'), 'M ten', 'm10@example.test', '+00 90000 00310'),
+  (tests.rid('m11'), tests.tid('a'), tests.rid('a_company'), 'M eleven', 'm11@example.test', '+00 90000 00311'),
+  (tests.rid('m12'), tests.tid('a'), tests.rid('a_company'), 'M twelve', 'm12@example.test', '+00 90000 00312'),
+  (tests.rid('m15'), tests.tid('a'), tests.rid('a_company'), 'M fifteen', 'm15@example.test', '+00 90000 00315'),
+  (tests.rid('m16'), tests.tid('a'), tests.rid('a_company'), 'M sixteen', 'm16@example.test', '+00 90000 00316');
+-- the kind is part of a key: one value used as an e-mail key and as a phone key are two different keys
+select pg_temp.rk('a_sales', 'm1', pg_temp.ks('kind_x', null));
+select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('a'), tests.rid('m1')));
+select is(pg_temp.rk('a_sales', 'm2', pg_temp.ks(null, 'kind_x')) ::jsonb ->> 'flagged', 'false', 'M1 a PHONE key equal to a suppressed E-MAIL key is not a match (the kind is part of the key)');
+select is((select suppressed_at is null from public.contacts where id = tests.rid('m2')), true, 'M2 and the contact is not suppressed');
+-- two contacts that share one key: one suppressed event, one lifted event (idempotent in both directions)
+select pg_temp.rk('a_sales', 'm3', pg_temp.ks(null, 'shared_p'));
+select pg_temp.rk('a_sales', 'm4', pg_temp.ks('m4_mail', 'shared_p'));
+select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('a'), tests.rid('m3')));
+select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'complained', null, null) is not null$q$, tests.tid('a'), tests.rid('m4')));
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('shared_p') and event = 'suppressed'), 1::bigint, 'M3 a key shared by two suppressed contacts has ONE suppressed event (a suppressed key is not suppressed again)');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('m4_mail') and event = 'suppressed'), 1::bigint, 'M4 and the second contact''s own e-mail key was suppressed');
+select pg_temp.sc('a_owner', format($q$select public.lift_suppression(%L, %L, 'written', 'letter:m3')$q$, tests.tid('a'), tests.rid('m3')));
+select pg_temp.sc('a_owner', format($q$select public.lift_suppression(%L, %L, 'written', 'letter:m4')$q$, tests.tid('a'), tests.rid('m4')));
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('shared_p') and event = 'lifted'), 1::bigint, 'M5 lifting both contacts lifts the shared key ONCE (a key that is not suppressed is not lifted)');
+select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('m4_mail') and event = 'lifted'), 1::bigint, 'M6 and the second contact''s own key');
+-- the previous key versions are matched for e-mail AND for phone
+select pg_temp.rk('a_sales', 'm7', pg_temp.ks('m7_mail', 'old_phone'));
+select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('a'), tests.rid('m7')));
+select is(pg_temp.rk('a_sales', 'm8', pg_temp.ks('m8_mail', 'new_phone', 2), jsonb_build_object('phone', jsonb_build_array(pg_temp.h('old_phone')))::text) ::jsonb ->> 'flagged', 'true', 'M7 a contact whose PREVIOUS-version phone key is suppressed arrives flagged');
+select is((select suppression_reason::text from public.contacts where id = tests.rid('m8')), 'opted_out', 'M8 with the reason of the earlier suppression');
+-- merging keys: a new version drops BOTH old keys; the same version keeps the key that is not given
+select pg_temp.rk('a_sales', 'm9', pg_temp.ks('m9_mail', 'm9_phone'));
+select pg_temp.rk('a_sales', 'm9', pg_temp.ks(null, 'm9_phone2', 2));
+select is((select email_hmac is null and phone_hmac = pg_temp.h('m9_phone2') and key_version = 2 from suppression.contact_keys where contact_id = tests.rid('m9')), true, 'M9 a NEW version with only a phone key drops the e-mail key of the old version');
+select pg_temp.rk('a_sales', 'm10', pg_temp.ks('m10_mail', 'm10_phone'));
+select pg_temp.rk('a_sales', 'm10', pg_temp.ks('m10_mail2', null));
+select is((select email_hmac = pg_temp.h('m10_mail2') and phone_hmac = pg_temp.h('m10_phone') and key_version = 1 from suppression.contact_keys where contact_id = tests.rid('m10')), true, 'M10 the same version with only an e-mail key keeps the phone key');
+-- allowing an erasure without a key: only a PENDING CONTACT request
+select pg_temp.req('mt', null, 'tenant') is not null;
+select is(pg_temp.at('aal2', 'a_owner', format('select public.allow_erasure_without_key(%L)', tests.rid('mt'))), '22023', 'M11 a whole-workspace request cannot be allowed without a key (it never needs one)');
+select is(pg_temp.at('aal2', 'a_owner', format('select public.allow_erasure_without_key(%L)', tests.rid('g1'))), '22023', 'M12 nor a request that has already been carried out');
+select pg_temp.req('mc', 'm11') is not null;
+select pg_temp.at('aal2', 'a_owner', format('select public.cancel_erasure(%L)', tests.rid('mc'))) is not null;
+select is(pg_temp.at('aal2', 'a_owner', format('select public.allow_erasure_without_key(%L)', tests.rid('mc'))), '22023', 'M13 nor a cancelled one');
+-- check_suppression: the list limit and the overall flag
+select is(pg_temp.code('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('email', (select jsonb_agg(pg_temp.h(i::text)) from generate_series(1, 9) i))::text)), '22023', 'M14 nine keys in one list are refused (the limit is eight)');
+select is(pg_temp.code('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('email', (select jsonb_agg(pg_temp.h(i::text)) from generate_series(1, 8) i))::text)), 'ok', 'M15 eight are accepted');
+select pg_temp.rk('a_sales', 'm12', pg_temp.ks(null, 'm12_p'));
+select pg_temp.sc('a_sales', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('a'), tests.rid('m12')));
+select is(pg_temp.sc('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('phone', jsonb_build_array(pg_temp.h('m12_p')))::text)), '{"email": false, "phone": true, "suppressed": true}', 'M16 a suppressed PHONE key alone makes the answer `suppressed`');
+-- the unkeyed count and list: phone-only contacts count, and the list limit applies
+create temp table t_cnt as select (pg_temp.sc('a_admin', format('select public.unkeyed_contact_count(%L)', tests.tid('a'))))::int as n;
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('m13'), tests.tid('a'), tests.rid('a_company'), 'M thirteen', null, '+00 90000 00313'),
+  (tests.rid('m14'), tests.tid('a'), tests.rid('a_company'), 'M fourteen', null, '+00 90000 00314');
+select is((pg_temp.sc('a_admin', format('select public.unkeyed_contact_count(%L)', tests.tid('a'))))::int, (select n from t_cnt) + 2, 'M17 two contacts that hold only a phone number and no key are counted as unkeyed');
+select is(pg_temp.sc('a_owner', format('select jsonb_array_length(public.unkeyed_contacts(%L, 1))', tests.tid('a'))), '1', 'M18 the list limit is applied (limit 1 returns one contact although more are unkeyed)');
+-- erasure needs a key for EVERY identifier the contact holds
+select pg_temp.rk('a_sales', 'm15', pg_temp.ks(null, 'm15_p'));
+select pg_temp.req('m15e', 'm15') is not null;
+select is(pg_temp.at('aal2', 'a_owner', format('select public.execute_erasure(%L, false)', tests.rid('m15e'))), 'SM221', 'M19 a contact with a phone key but no e-mail key is refused (SM221): the e-mail would be forgotten unkeyed');
+-- the ledger and key tables refuse what their checks refuse, one check at a time
+select is(pg_temp.priv(format('insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event) values (%L, ''email'', %L, 1, ''shrugged'')', tests.tid('a'), pg_temp.h('z1'))), '23514', 'M20 an event other than suppressed / lifted is refused');
+select is(pg_temp.priv(format('insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event, reason) values (%L, ''email'', %L, 1, ''suppressed'', ''bogus'')', tests.tid('a'), pg_temp.h('z2'))), '23514', 'M21 a reason outside the list is refused');
+select is(pg_temp.priv(format('insert into suppression.contact_keys (tenant_id, contact_id, email_hmac, key_version) values (%L, %L, ''ABC'', 1)', tests.tid('a'), tests.rid('m16'))), '23514', 'M22 a stored e-mail key must be 64 hex digits');
+select is(pg_temp.priv(format('insert into suppression.contact_keys (tenant_id, contact_id, phone_hmac, key_version) values (%L, %L, ''ABC'', 1)', tests.tid('a'), tests.rid('m16'))), '23514', 'M23 so must a stored phone key');
+select is(pg_temp.priv(format('insert into suppression.contact_keys (tenant_id, contact_id, email_hmac, key_version) values (%L, %L, %L, 0)', tests.tid('a'), tests.rid('m16'), pg_temp.h('z3'))), '23514', 'M24 a stored key version of 0 is refused');
+select is(pg_temp.priv(format('update public.erasure_requests set without_key_by = %L where id = %L', tests.uid('a_owner'), tests.rid('mt'))), '23514', 'M25 an allowance needs both who and when (a table check)');
 
 select * from finish();
 rollback;

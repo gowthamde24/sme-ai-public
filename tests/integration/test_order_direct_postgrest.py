@@ -128,7 +128,7 @@ def test_the_builder_and_app_order_build_make_the_same_request_in_every_state(
     order, _ = ow.order()
     snap0 = ow.snapshot(order)
     plan = [
-        ("sales", "send_quote", None), ("sales", "customer_accept", None), ("admin", "record_payment", 1000), ("admin", "record_payment", 2000), ("owner", "record_refund", 1500),
+        ("sales", "send_quote", None), ("sales", "customer_accept", None), ("admin", "record_payment", 1000), ("admin", "record_payment", 2000), ("owner", "record_refund", 1500), ("owner", "record_refund", 300),
         ("sales", "request_advance", None),
     ]  # fmt: skip
     checked = 0

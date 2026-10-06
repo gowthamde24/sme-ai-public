@@ -118,8 +118,8 @@ select is((select reloptions::text from pg_class where oid = 'public.order_ledge
 select ok(not has_table_privilege('anon', 'public.order_ledger', 'select') and has_table_privilege('authenticated', 'public.order_ledger', 'select'), 'A7 authenticated reads the ledger view, anon does not');
 select is((select array_agg(version) from public.order_engine_versions), array['1.0.0'], 'A8 the lifecycle allow-list holds exactly 1.0.0');
 select ok(not has_table_privilege('authenticated', 'public.order_engine_versions', 'select'), 'A9 the allow-list is not readable by clients');
-select is((select count(*) from pg_trigger t where t.tgrelid in ('public.orders'::regclass, 'public.order_events'::regclass, 'public.order_policy_versions'::regclass) and not t.tgisinternal and tgname like '%no_truncate'),
-          3::bigint, 'A10 every order table has its TRUNCATE guard');
+select is((select string_agg(t.tgrelid::regclass::text, ',' order by t.tgrelid::regclass::text) from pg_trigger t where t.tgrelid in ('public.orders'::regclass, 'public.order_events'::regclass, 'public.order_policy_versions'::regclass)
+            and not t.tgisinternal and tgname like '%no_truncate' and t.tgenabled = 'O'), 'order_events,order_policy_versions,orders', 'A10 every order table has its TRUNCATE guard, and it is enabled');
 select is((select string_agg(e.enumlabel, ',' order by e.enumsortorder) from pg_enum e where e.enumtypid = 'public.order_lost_reason'::regtype),
           'price,timing,bought_elsewhere,no_response,requirement_changed,product_unavailable,credit_terms,other', 'A11 the lost reasons are the closed list of the plan (decision 7)');
 select is((select string_agg(e.enumlabel, ',' order by e.enumsortorder) from pg_enum e where e.enumtypid = 'public.order_state'::regtype),
@@ -162,6 +162,22 @@ select is(pg_temp.code('a_owner', format($q$select public.create_order_policy_ve
           (select p2 from ids), tests.tid('a'), pg_temp.today() - 1)), '23514', 'B16 a policy cannot take effect in the past');
 select is(pg_temp.code('a_owner', format($q$select public.create_order_policy_version(%L, %L, null, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
           (select p2 from ids), tests.tid('a'))), '22023', 'B17 a missing date is invalid');
+select is(pg_temp.code('a_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": "yes", "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
+          (select p2 from ids), tests.tid('a'), pg_temp.today())), '22023', 'B13b a non-boolean dispatch flag is invalid');
+select is(pg_temp.code('a_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": "no"}'::jsonb)$q$,
+          (select p2 from ids), tests.tid('a'), pg_temp.today())), '22023', 'B13c a non-boolean zero-value flag is invalid');
+select is(pg_temp.code('a_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": 5, "allow_zero_value_orders": false}'::jsonb)$q$,
+          (select p2 from ids), tests.tid('a'), pg_temp.today())), '22023', 'B13d a non-string window is invalid');
+select is(pg_temp.code('b_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
+          (select p3 from ids), tests.tid('b'), pg_temp.today() - 1)), '23514', 'B16b a tenant''s FIRST policy cannot take effect in the past either');
+select is(pg_temp.code('b_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
+          (select p3 from ids), tests.tid('b'), pg_temp.today() + 5)), 'ok', 'B16c a policy may be scheduled for the future');
+select is(pg_temp.code('b_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": false, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
+          gen_random_uuid(), tests.tid('b'), pg_temp.today() + 3)), '23514', 'B16d but not before the latest one');
+select is(pg_temp.code('b_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
+          tests.rid('pol1'), tests.tid('b'), pg_temp.today())), '23505', 'B16e another tenant''s Owner replaying tenant A''s policy id is the constant conflict (a replay is recognised only inside its own tenant)');
+select is(pg_temp.code('a_owner', format($q$select public.create_order_policy_version(%L, %L, %L, '{"advance_required": true, "dispatch_requires_advance": true, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": false}'::jsonb)$q$,
+          tests.rid('pol1'), tests.tid('a'), pg_temp.today() + 1)), '23505', 'B16f the same id and policy with another date is the constant conflict');
 select is(app.order_active_policy_version(tests.tid('a'), pg_temp.today()), tests.rid('pol1'), 'B18 the policy is active from its effective date');
 select is(app.order_active_policy_version(tests.tid('a'), pg_temp.today() - 1), null, 'B19 and not before it');
 select is(app.order_active_policy_version(tests.tid('b'), pg_temp.today()), null, 'B20 tenant B has none yet');
@@ -169,7 +185,7 @@ select is(pg_temp.priv('update public.order_policy_versions set advance_required
 select is(pg_temp.priv('delete from public.order_policy_versions'), '42501', 'B22 and never deleted');
 select is(tests.rows_as(tests.uid('a_sales'), 'select 1 from public.order_policy_versions'), 1::bigint, 'B23 Sales reads the policy');
 select is(tests.rows_as(tests.uid('a_viewer'), 'select 1 from public.order_policy_versions'), 0::bigint, 'B24 a Viewer reads nothing');
-select is(tests.rows_as(tests.uid('b_owner'), 'select 1 from public.order_policy_versions'), 0::bigint, 'B25 another tenant''s Owner reads nothing');
+select is(tests.rows_as(tests.uid('b_owner'), format('select 1 from public.order_policy_versions where tenant_id = %L', tests.tid('a'))), 0::bigint, 'B25 another tenant''s Owner reads none of tenant A''s policies');
 
 -- ============================================================================ C. create_order_from_quote
 select pg_temp.mkq('o1', 100000, 40000);
@@ -189,7 +205,7 @@ select is(pg_temp.err('a_sales', format('select public.create_order_from_quote(%
 select is(pg_temp.at('aal1', 'a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('o1_order'), tests.rid('o1_quote'))), 'SM306', 'C5 the Owner needs a second factor (an order is a financial commitment record)');
 select is(pg_temp.at('aal1', 'a_admin', format('select public.create_order_from_quote(%L, %L)', tests.rid('o1_order'), tests.rid('o1_quote'))), 'SM306', 'C6 so does an Admin');
 select is(pg_temp.at('aal1', 'a_sales', format('select public.create_order_from_quote(%L, %L)', tests.rid('o1_order'), tests.rid('o1_quote'))), '42501', 'C7 Sales at aal1 is refused as a stranger is (the role comes first)');
-select is((select count(*) from public.orders), 0::bigint, 'C8 nothing was created by the refusals');
+select is((select count(*) from public.orders where tenant_id = tests.tid('a')), 0::bigint, 'C8 nothing was created by the refusals');
 select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('d1_order'), tests.rid('d1_quote'))), 'SM230', 'C9 a draft quote cannot be ordered (SM230)');
 select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('x1_order'), tests.rid('x1_quote'))), 'SM230', 'C10 a rejected quote cannot (SM230)');
 select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('s1_order'), tests.rid('s1_quote'))), 'SM230', 'C11 a superseded or withdrawn quote cannot (SM230)');
@@ -206,7 +222,7 @@ select is((select quote_id || '/' || enquiry_id || '/' || requirement_id || '/' 
 select is((select count(*) || '/' || min(type::text) || '/' || min(seq) || '/' || min(new_state::text) from public.order_events where order_id = pg_temp.ord('o1')), '1/created/1/quote_approved', 'C20 its ledger starts with one created event');
 select is((select created_by from public.orders where id = pg_temp.ord('o1')), tests.uid('a_owner'), 'C21 the creator is the caller (server-owned)');
 select is(pg_temp.j(pg_temp.mko('o1'), 'replayed'), 'true', 'C22 an exact retry replays');
-select is((select count(*) from public.orders), 1::bigint, 'C23 and creates nothing');
+select is((select count(*) from public.orders where tenant_id = tests.tid('a')), 1::bigint, 'C23 and creates nothing');
 select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('o1_order'), tests.rid('s1_quote'))), '23505', 'C24 the same order id for another quote is the constant conflict');
 select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', gen_random_uuid(), tests.rid('o1_quote'))), 'SM231', 'C25 a second order for the same quote is refused (SM231)');
 select is(pg_temp.code('a_admin', format('select public.create_order_from_quote(%L, %L)', tests.rid('o1_order'), tests.rid('o1_quote'))), 'ok', 'C26 an Admin''s exact retry replays too');
@@ -214,6 +230,12 @@ select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(
 select is((select count(*) from public.audit_events where entity_type = 'order' and action = 'order.create' and entity_id = pg_temp.ord('o1')), 1::bigint, 'C28 the creation is audited');
 select is((select count(*) from public.audit_events where entity_type = 'order_event' and tenant_id = tests.tid('a')), 1::bigint, 'C29 and so is its first event');
 select is(pg_temp.j(pg_temp.sc('a_admin', format('select public.create_order_from_quote(%L, %L)', tests.rid('o2_order'), pg_temp.mkq('o2', 100000, 40000))), 'order_no'), '2', 'C30 an Admin creates an order; the number is the tenant''s next');
+
+select pg_temp.mkq('vt', 100000, 40000, pg_temp.today());
+select is(pg_temp.j(pg_temp.mko('vt'), 'state'), 'quote_approved', 'C31 a quote is valid through its last day: an order may be created on the valid-until day itself (SM236 only from the next day)');
+select pg_temp.mkq('cap', 1000000000, 100);
+select is(pg_temp.j(pg_temp.mko('cap'), 'state'), 'quote_approved', 'C32 a total of exactly the lifecycle''s cap is accepted');
+select is((select order_total_paise from public.orders where id = pg_temp.ord('cap')), 1000000000::bigint, 'C33 and kept');
 
 -- ============================================================================ D. record_order_event: roles, aal2, argument shapes
 select pg_temp.mkq('o3', 100000, 40000);  select pg_temp.mko('o3');
@@ -250,6 +272,10 @@ select is(pg_temp.code('a_sales', format('select public.record_order_event(%L, %
 select is(pg_temp.code('a_sales', format('select public.record_order_event(%L, %L, %L, now(), null, null, null, %L, %L, %L)', gen_random_uuid(), pg_temp.ord('o3'), 'send_quote', '1.0.0', 'not json', '{}')), '22023', 'D28 and so is text that is not JSON');
 select is(pg_temp.code('a_sales', format('select public.record_order_event(%L, %L, %L, now(), null, null, null, %L, null, %L)', gen_random_uuid(), pg_temp.ord('o3'), 'send_quote', '1.0.0', '{}')), '22023', 'D29 and a missing result');
 select is(pg_temp.code('a_sales', format('select public.record_order_event(null, %L, %L, now(), null, null, null, %L, %L, %L)', pg_temp.ord('o3'), 'send_quote', '1.0.0', '{}', '{}')), '42501', 'D30 a missing event id is refused like a stranger');
+select is(pg_temp.code('a_sales', format('select public.record_order_event(%L, %L, %L, now(), null, null, null, %L, %L, %L)', gen_random_uuid(), pg_temp.ord('o3'), 'send_quote', '1.0.0', '{"x":"' || chr(8203) || '"}', '{}')), '22023',
+          'D30b a request with an invisible character is refused as invalid (text hygiene) before anything is compared');
+select is(pg_temp.code('a_sales', format('select public.record_order_event(%L, %L, %L, now(), null, null, null, %L, %L, %L)', gen_random_uuid(), pg_temp.ord('o3'), 'send_quote', '1.0.0', '{}', '{"x":"' || chr(8203) || '"}')), '22023',
+          'D30c and so is a result with one');
 select is(pg_temp.st('o3'), 'quote_approved', 'D31 none of the refusals moved the order');
 select is(pg_temp.nev('o3'), 1::bigint, 'D32 or wrote an event');
 
@@ -285,6 +311,14 @@ select is(tests.rows_as(tests.uid('b_owner'), 'select 1 from public.order_ledger
 select is(tests.rows_as(tests.uid('a_viewer'), 'select 1 from public.order_ledger'), 0::bigint, 'E26 and a Viewer reads no ledger view');
 select is(tests.rows_as(tests.uid('a_sales'), 'select 1 from public.order_ledger'), (select count(*) from public.orders where tenant_id = tests.tid('a')), 'E27 Sales reads it (decision 4: amounts included)');
 
+select pg_temp.mkq('o9', 100000, 40000);  select pg_temp.mko('o9');
+select pg_temp.rec('a_sales', 'o9', 'send_quote');  select pg_temp.rec('a_sales', 'o9', 'customer_accept');
+select pg_temp.rec('a_admin', 'o9', 'record_payment', 40000, 'p9a');  select pg_temp.rec('a_sales', 'o9', 'start_preparation');
+select is(pg_temp.rec('a_admin', 'o9', 'record_payment', 60000, 'p9b'), 'in_preparation', 'E28 paying in full before delivery does not close the order');
+select is(pg_temp.rec('a_sales', 'o9', 'dispatch'), 'dispatched', 'E29 dispatched');
+select is(pg_temp.rec('a_sales', 'o9', 'deliver'), 'closed_paid', 'E30 delivering a fully paid order closes it at once (dispatched -> closed_paid)');
+select is((select closed_at is not null from public.orders where id = pg_temp.ord('o9')), true, 'E31 and it is closed');
+
 -- ============================================================================ F. SM232 codes, the override, refunds, cancellations, decline
 select is(pg_temp.rec('a_sales', 'o5', 'customer_accept'), 'ERR:SM232:ILLEGAL_TRANSITION', 'F1 accepting before sending is illegal (SM232, ILLEGAL_TRANSITION)');
 select is(pg_temp.rec('a_sales', 'o5', 'expire'), 'ERR:SM232:QUOTE_NOT_EXPIRED', 'F2 expiring a quote that has not expired is refused (QUOTE_NOT_EXPIRED)');
@@ -294,11 +328,15 @@ select is((select closed_at is not null from public.orders where id = pg_temp.or
 select is((select lost_reason from public.order_ledger where order_id = pg_temp.ord('o5')), 'price', 'F6 the ledger view shows the lost reason');
 select is((select reason_code::text from public.order_events where order_id = pg_temp.ord('o5') and type = 'customer_decline'), 'price', 'F7 stored on the decline event');
 select is(pg_temp.rec('a_owner', 'o5', 'customer_accept'), 'ERR:SM235', 'F8 a lost order takes no event');
+select pg_temp.mkq('o10', 100000, 40000);  select pg_temp.mko('o10');
+select pg_temp.rec('a_admin', 'o10', 'cancel');
+select is(pg_temp.rec('a_sales', 'o10', 'send_quote'), 'ERR:SM235', 'F8b a cancelled order takes no event (SM235)');
 
 -- an order whose quote has expired (a privileged fixture: the function would refuse the creation)
 select pg_temp.mkorder_priv('oe', 100000, 40000, pg_temp.today() - 1);
 select is(pg_temp.rec('a_sales', 'oe', 'send_quote'), 'ERR:SM232:QUOTE_EXPIRED', 'F9 sending an expired quote is refused (QUOTE_EXPIRED)');
 select is(pg_temp.rec('a_sales', 'oe', 'expire'), 'expired', 'F10 expiring it is allowed -> expired');
+select is(pg_temp.rec('a_sales', 'oe', 'send_quote'), 'ERR:SM235', 'F10b an expired order takes no event (SM235)');
 select is((select closed_at is not null from public.orders where id = pg_temp.ord('oe')), true, 'F11 and closed');
 select pg_temp.mkorder_priv('oe2', 100000, 40000, pg_temp.today());
 select is(pg_temp.rec('a_sales', 'oe2', 'expire'), 'ERR:SM232:QUOTE_NOT_EXPIRED', 'F12 a quote is valid through the last second of its day in India: not expirable today');
@@ -329,6 +367,13 @@ select is((select owner_approved_by from public.order_events where order_id = pg
 select is((select (result_text::jsonb -> 'flags' -> 'reasons' -> 0 ->> 'code') from public.order_events where order_id = pg_temp.ord('o6') and type = 'dispatch'), 'ADVANCE_OVERRIDE', 'F33 and its flag');
 select is(pg_temp.rec('a_admin', 'o6', 'cancel'), 'ERR:SM232:ILLEGAL_TRANSITION', 'F34 after dispatch a cancellation is illegal');
 select is(pg_temp.rec('a_owner', 'o6', 'cancel'), 'ERR:SM232:ILLEGAL_TRANSITION', 'F35 even for the Owner (the override covers dispatch only)');
+
+-- the advance stepping back is a strict rule: a refund that leaves exactly the advance does not step back
+select pg_temp.mkq('o11', 100000, 40000);  select pg_temp.mko('o11');
+select pg_temp.rec('a_sales', 'o11', 'send_quote');  select pg_temp.rec('a_sales', 'o11', 'customer_accept');
+select is(pg_temp.rec('a_admin', 'o11', 'record_payment', 45000, 'p11a'), 'advance_paid', 'F36a 45000 paid: advance_paid');
+select is(pg_temp.rec('a_owner', 'o11', 'record_refund', 5000, 'r11a'), 'advance_paid', 'F36b a refund that leaves exactly the advance (40000) keeps advance_paid');
+select is(pg_temp.rec('a_owner', 'o11', 'record_refund', 1, 'r11b'), 'advance_requested', 'F36c one paisa less steps back to advance_requested');
 
 -- overpayment, duplicate ids, the advance stepping back, a cancellation with funds
 select pg_temp.mkq('o7', 50000, 20000);  select pg_temp.mko('o7');
@@ -366,6 +411,9 @@ select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8c'), js
 select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8c'), jsonb_build_object('as_of', pg_temp.asof('3 minutes'))), 'SM238', 'G10 an as_of in the future is refused');
 select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8c'), jsonb_build_object('as_of', '2026-10-06 06:00:00')), 'SM238', 'G11 a timestamp that is not the canonical text is refused');
 select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8c'), jsonb_build_object('as_of', pg_temp.asof('-9 minutes'))), 'ok', 'G12 an as_of within the window is accepted (nine minutes old)');
+select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8i'), jsonb_build_object('as_of', pg_temp.asof('90 seconds'))), 'ok', 'G12b and one a minute and a half ahead (clock slack of two minutes)');
+select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8j'), jsonb_build_object('as_of', to_char(now() at time zone 'UTC', 'YYYY-MM-DD HH24:MI:SS'))), 'SM238', 'G11b a timestamp inside the window but not in the canonical form (a space for the T, no Z) is refused');
+select is(pg_temp.forged('a_admin', 'record_payment', 1000, tests.rid('p8j'), jsonb_build_object('as_of', to_char(now() at time zone 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS".123Z"'))), 'SM238', 'G11c and so is one with fractional seconds');
 select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o8'), 'record_payment', 1000, tests.rid('p8d'), null, null, app.order_build(pg_temp.ord('o8'), 'record_payment', 2000, tests.rid('p8d'), pg_temp.asof(), false))), 'SM238',
           'G13 the request''s amount must be the argument''s amount');
 select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o8'), 'record_payment', 1000, tests.rid('p8d'), null, null, app.order_build(pg_temp.ord('o8'), 'record_payment', 1000, tests.rid('p8e'), pg_temp.asof(), false))), 'SM238',
@@ -387,6 +435,14 @@ select is(pg_temp.forged_res(jsonb_build_object('canonical_hash', repeat('a', 64
 select is(pg_temp.forged_res(jsonb_build_object('engine_version', '0.9.0')), 'SM238', 'G22 a result of another version is refused');
 select is(pg_temp.forged_res(jsonb_build_object('status', 'rejected')), 'SM238', 'G23 a result that says rejected for an event the database accepts is refused');
 select is(pg_temp.forged_res('{}'), 'ok', 'G24 (the control) the honest result is accepted');
+-- the flags must be the decision's flags, not merely consistent with needs_owner_approval: a refund (REFUND_REQUIRES_OWNER_APPROVAL) whose result names another code
+create function pg_temp.forged_flag_code() returns text language plpgsql as $$
+declare r jsonb := app.order_build(pg_temp.ord('o8'), 'record_refund', 100, tests.rid('r8z'), pg_temp.asof(), true);
+begin
+  return pg_temp.code('a_owner', pg_temp.callsql('a_owner', pg_temp.ord('o8'), 'record_refund', 100, tests.rid('r8z'), null, null, r,
+    pg_temp.honest(r) || jsonb_build_object('flags', jsonb_build_object('needs_owner_approval', true, 'reasons', jsonb_build_array(jsonb_build_object('code', 'CANCELLATION_WITH_FUNDS'))))));
+end $$;
+select is(pg_temp.forged_flag_code(), 'SM238', 'G24b a result that names another flag code (with needs_owner_approval consistent) is refused');
 -- an honest-looking OK result for an event the database refuses: the database'' own refusal wins
 create function pg_temp.lie(p_type text, p_user text default 'a_admin') returns text language plpgsql as $$
 declare r jsonb := app.order_build(pg_temp.ord('o8'), p_type, null, null, pg_temp.asof(), p_user = 'a_owner');
@@ -407,6 +463,18 @@ select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o8'), 
 select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o8'), 'record_payment', 2500, tests.rid('p8h'), null, (select ev from rp))), '23505', 'G32 ... or another ledger id');
 select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o8'), 'send_quote', null, null, null, (select ev from rp))), '23505', 'G33 ... or another type');
 select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o6'), 'record_payment', 2500, tests.rid('p8g'), null, (select ev from rp))), '23505', 'G34 ... or another order');
+-- events that differ ONLY in their type or ONLY in their reason (same id, same time of occurrence, no amount, no ledger id)
+create temp table rp2 as select gen_random_uuid() as ev, now() - interval '1 minute' as t;
+select pg_temp.mkq('o12', 100000, 40000);  select pg_temp.mko('o12');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o12'), 'send_quote', null, null, null, (select ev from rp2), null, null, '1.0.0', (select t from rp2))), 'replayed'), 'false', 'G34b an event recorded at a given time');
+select is(pg_temp.code('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o12'), 'customer_accept', null, null, null, (select ev from rp2), app.order_build(pg_temp.ord('o12'), 'customer_accept', null, null, pg_temp.asof(), false), null, '1.0.0', (select t from rp2))), '23505',
+          'G34c the same id and time with only another TYPE is the constant conflict');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o12'), 'send_quote', null, null, null, (select ev from rp2), null, null, '1.0.0', (select t from rp2))), 'replayed'), 'true', 'G34d (control) the same call again replays');
+create temp table rp3 as select gen_random_uuid() as ev, now() - interval '2 minutes' as t;
+select pg_temp.mkq('o13', 100000, 40000);  select pg_temp.mko('o13');  select pg_temp.rec('a_sales', 'o13', 'send_quote');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o13'), 'customer_decline', null, null, 'price', (select ev from rp3), null, null, '1.0.0', (select t from rp3))), 'state'), 'declined', 'G34e a decline with a reason');
+select is(pg_temp.code('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o13'), 'customer_decline', null, null, 'timing', (select ev from rp3), null, null, '1.0.0', (select t from rp3))), '23505', 'G34f the same id and time with only another REASON is the constant conflict');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o13'), 'customer_decline', null, null, 'price', (select ev from rp3), null, null, '1.0.0', (select t from rp3))), 'replayed'), 'true', 'G34g (control) the exact retry replays');
 select is(pg_temp.code('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o8'), 'record_payment', 2500, tests.rid('p8g'), null, (select ev from rp), null, null, '1.0.0', now() - interval '1 day')), '23505', 'G35 ... or another time of occurrence');
 select is(pg_temp.code('a_sales', pg_temp.callsql('a_sales', pg_temp.ord('o8'), 'record_payment', 2500, tests.rid('p8g'), null, (select ev from rp))), '42501', 'G36 a Sales user cannot probe the event (the role is refused first)');
 select is(pg_temp.code('b_owner', pg_temp.callsql('b_owner', pg_temp.ord('o8'), 'record_payment', 2500, tests.rid('p8g'), null, (select ev from rp))), '42501', 'G37 nor another tenant');
@@ -440,8 +508,9 @@ begin
   return 'ok';
 exception when others then return sqlstate;
 end $$;
-select is(pg_temp.ins_ev('o8', (select max(seq) + 2 from public.order_events where order_id = pg_temp.ord('o8')), 'send_quote', (select state::text from public.orders where id = pg_temp.ord('o8')), 'quote_sent'), '42501', 'H20 the ledger is gapless: a gap is refused');
-select is(pg_temp.ins_ev('o8', (select max(seq) from public.order_events where order_id = pg_temp.ord('o8')), 'send_quote', 'accepted', 'quote_sent'), '42501', 'H21 ... and so is a repeated sequence number');
+select is(pg_temp.ins_ev('o8', (select max(seq) + 2 from public.order_events where order_id = pg_temp.ord('o8')), 'record_payment', 'accepted', 'accepted', 100, tests.rid('pgap')), '42501', 'H20 the ledger is gapless: a gap is refused (a LEGAL event, so the gap is what refuses it)');
+select is(pg_temp.ins_ev('o8', (select max(seq) from public.order_events where order_id = pg_temp.ord('o8')), 'record_payment', 'accepted', 'accepted', 100, tests.rid('prep')), '42501', 'H21 ... and so is a repeated sequence number');
+select is(pg_temp.ins_ev('o8', (select max(seq) + 1 from public.order_events where order_id = pg_temp.ord('o8')), 'record_payment', 'accepted', 'accepted', 100, tests.rid('pnext')), 'ok', 'H21b (control) the next sequence number with a legal event is accepted');
 select is(pg_temp.ins_ev('o8', (select max(seq) + 1 from public.order_events where order_id = pg_temp.ord('o8')), 'send_quote', 'quote_sent', 'accepted'), '42501', 'H22 an event follows the state the ledger ended in (a wrong prior state is refused)');
 select is(pg_temp.ins_ev('o8', (select max(seq) + 1 from public.order_events where order_id = pg_temp.ord('o8')), 'deliver', 'accepted', 'closed_paid'), '42501', 'H23 an event cannot make an illegal move');
 select is(pg_temp.ins_ev('o8', (select max(seq) + 1 from public.order_events where order_id = pg_temp.ord('o8')), 'created', null, 'quote_approved'), '42501', 'H24 `created` is only ever the first event (the ledger guard refuses a second one: it does not follow the state the ledger ended in)');
@@ -454,12 +523,35 @@ select is(pg_temp.ins_ev('oe2', 3, 'customer_decline', 'quote_sent', 'declined')
 select is(pg_temp.ins_ev('oe2', 3, 'cancel', 'quote_sent', 'cancelled', null, null, 'price'), '23514', 'H31 and only a decline carries one');
 select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, state, order_total_paise, advance_paise, valid_until, policy_version_id) values (%L, %L, 77, %L, %L, %L, %L, %L, 1, 0, now(), %L)',
           gen_random_uuid(), tests.tid('a'), tests.rid('d1_quote'), tests.rid('d1_enq'), tests.rid('d1_req'), tests.rid('a_lead'), 'accepted', tests.rid('pol1'))), '42501', 'H32 an order is born as quote_approved');
+-- an order with no events at all (a privileged fixture) lets the table checks and the first-event rules be reached on their own
+select pg_temp.mkq('bare', 100000, 40000);
+insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+values (tests.rid('bare_order'), tests.tid('a'), (select max(order_no) + 1 from public.orders where tenant_id = tests.tid('a')), tests.rid('bare_quote'), tests.rid('bare_enq'), tests.rid('bare_req'), tests.rid('a_lead'), 100000, 40000, pg_temp.today() + 5, tests.rid('pol1'));
+select is(pg_temp.ins_ev('bare', 1, 'created', null, 'accepted'), '42501', 'H35a `created` must leave the order in quote_approved');
+select is(pg_temp.ins_ev('bare', 1, 'send_quote', 'quote_approved', 'quote_sent'), '23514', 'H35b the FIRST event must be `created` (a table check: type created iff sequence 1; this row has a prior state, so no other check refuses it)');
+select is(pg_temp.ins_ev('bare', 1, 'created', 'quote_approved', 'quote_approved'), '23514', 'H35c `created` has no prior state (a table check)');
+select is(pg_temp.priv(format('insert into public.order_events (id, tenant_id, order_id, seq, type, new_state, occurred_at, engine_version) values (%L, %L, %L, 1, %L, %L, now(), %L)', gen_random_uuid(), tests.tid('a'), pg_temp.ord('bare'), 'created', 'quote_approved', '1.0.0')),
+          '23514', 'H35d `created` carries no lifecycle run (a table check)');
+select is(pg_temp.priv(format('insert into public.order_events (id, tenant_id, order_id, seq, type, new_state, occurred_at, owner_approved_by) values (%L, %L, %L, 1, %L, %L, now(), %L)', gen_random_uuid(), tests.tid('a'), pg_temp.ord('bare'), 'created', 'quote_approved', tests.uid('a_owner'))),
+          '23514', 'H35e an owner approval belongs only to a refund or a dispatch (a table check)');
+select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id) values (%L, %L, 76, %L, %L, %L, %L, 1000000001, 0, now(), %L)',
+          gen_random_uuid(), tests.tid('a'), tests.rid('d1_quote'), tests.rid('d1_enq'), tests.rid('d1_req'), tests.rid('a_lead'), tests.rid('pol1'))), '23514', 'H35h an order total above the lifecycle''s cap is refused by the table');
+select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id, closed_at) values (%L, %L, 75, %L, %L, %L, %L, 1, 0, now(), %L, now())',
+          gen_random_uuid(), tests.tid('a'), tests.rid('d1_quote'), tests.rid('d1_enq'), tests.rid('d1_req'), tests.rid('a_lead'), tests.rid('pol1'))), '42501', 'H35i an order is born OPEN: the insert guard refuses a closed one before the table check');
+select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id) values (%L, %L, 1, %L, %L, %L, %L, 1, 0, now(), %L)',
+          gen_random_uuid(), tests.tid('a'), tests.rid('d1_quote'), tests.rid('d1_enq'), tests.rid('d1_req'), tests.rid('a_lead'), tests.rid('pol1'))), '23505', 'H35j an order number is unique per tenant');
 select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id) values (%L, %L, 78, %L, %L, %L, %L, 1, 0, now(), %L)',
           gen_random_uuid(), tests.tid('a'), tests.rid('o1_quote'), tests.rid('o1_enq'), tests.rid('o1_req'), tests.rid('a_lead'), tests.rid('pol1'))), '23505', 'H33 one order per quote, whatever the path');
 select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id) values (%L, %L, 79, %L, %L, %L, %L, 1, 2, now(), %L)',
           gen_random_uuid(), tests.tid('a'), tests.rid('d1_quote'), tests.rid('d1_enq'), tests.rid('d1_req'), tests.rid('a_lead'), tests.rid('pol1'))), '23514', 'H34 an advance above the total is refused');
 select is(pg_temp.priv(format('insert into public.orders (id, tenant_id, order_no, quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id) values (%L, %L, 80, %L, %L, %L, %L, 1, 0, now(), %L)',
           gen_random_uuid(), tests.tid('a'), tests.rid('b1_quote'), tests.rid('b1_enq'), tests.rid('b1_req'), tests.rid('a_lead'), tests.rid('pol1'))), '23503', 'H35 a quote of another tenant cannot be referenced (composite foreign key)');
+
+select is(pg_temp.ins_ev('bare', 1, 'created', null, 'quote_approved'), 'ok', 'H35k (control) the first event `created` is accepted, so the bare order has its ledger like every other');
+select is(pg_temp.priv(format('insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, engine_version, request_text, result_text, canonical_hash) values (%L, %L, %L, 2, %L, %L, %L, now(), %L, %L, %L, %L)',
+          gen_random_uuid(), tests.tid('a'), pg_temp.ord('bare'), 'send_quote', 'quote_approved', 'quote_sent', '1.0.0', '{}', '{}', 'not-a-hash')), '23514', 'H35l a hash is 64 lower-case hex digits (a table check; a legal second event, so no other check refuses it)');
+select is(pg_temp.priv(format('insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, engine_version, request_text, result_text, canonical_hash) values (%L, %L, %L, 2, %L, %L, %L, now(), %L, %L, %L, repeat(%L, 64))',
+          gen_random_uuid(), tests.tid('a'), pg_temp.ord('bare'), 'send_quote', 'quote_approved', 'quote_sent', '1.0.0', '{"x":"' || chr(8203) || '"}', '{}', 'a')), '23514', 'H35m request text with an invisible character is refused by the table too (a legal second event)');
 
 -- ============================================================================ I. SM237 through the real quote flow
 -- the fixture price list (SKU-1) and quote policy are the ones in force; a second ORDER policy (no advance required) takes over from here on, so the real quotes (advance 0) can be ordered
@@ -514,9 +606,25 @@ select is(pg_temp.j(pg_temp.approve_q((select h3b from q)), 'status'), 'approved
 select is((select status::text from public.quotes where id = (select h3a from q)), 'superseded', 'I19 which is superseded');
 select is(pg_temp.j(pg_temp.sc2('a_owner', format('select public.create_order_from_quote(%L, %L)', gen_random_uuid(), (select h3a from q))), 'error'), 'SM230', 'I20 a superseded quote cannot be ordered');
 
+-- the refusals that need a policy of their own (each new policy is the latest one in force from here on)
+create function pg_temp.policy(p_id text, p_adv boolean, p_disp boolean, p_zero boolean) returns text language sql as $$
+  select pg_temp.sc('a_owner', format($q$select public.create_order_policy_version(%L, %L, %L, %L::jsonb)$q$, tests.rid(p_id), tests.tid('a'), pg_temp.today(),
+         jsonb_build_object('advance_required', p_adv, 'dispatch_requires_advance', p_disp, 'cancel_allowed_until_state', 'in_preparation', 'allow_zero_value_orders', p_zero)::text)) $$;
+select pg_temp.mkq('zz', 0, 0);
+select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('zz_order'), tests.rid('zz_quote'))), 'SM233', 'I21 a zero-value order is refused by the zero-value rule on its own (policy 2 requires no advance)');
+select is(pg_temp.j(pg_temp.policy('pol3', false, false, true), 'version_no'), '3', 'I22 a policy that allows zero-value orders');
+select is(pg_temp.j(pg_temp.mko('zz'), 'state'), 'quote_approved', 'I23 ... and then the zero-value order is created');
+select is((select order_total_paise || '/' || advance_paise from public.orders where id = pg_temp.ord('zz')), '0/0', 'I24 with a total of zero');
+select pg_temp.mkq('na2', 100000, 0);  select pg_temp.mkq('na3', 100000, 0);  select pg_temp.mkq('na4', 100000, 40000);
+select is(pg_temp.j(pg_temp.policy('pol4', true, false, false), 'version_no'), '4', 'I25 a policy that requires the advance for preparation only');
+select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('na2_order'), tests.rid('na2_quote'))), 'SM233', 'I26 a quote with no advance cannot be ordered under it (SM233: advance_required alone is enough)');
+select is(pg_temp.j(pg_temp.policy('pol5', false, true, false), 'version_no'), '5', 'I27 a policy that requires the advance for dispatch only');
+select is(pg_temp.code('a_owner', format('select public.create_order_from_quote(%L, %L)', tests.rid('na3_order'), tests.rid('na3_quote'))), 'SM233', 'I28 a quote with no advance cannot be ordered under it either (dispatch_requires_advance alone is enough)');
+select is(pg_temp.j(pg_temp.mko('na4'), 'state'), 'quote_approved', 'I29 a quote WITH an advance is ordered under it');
+
 -- ============================================================================ J. app.order_stops_followups
 insert into public.leads (id, tenant_id, company_id, contact_id)
-select tests.rid(n), tests.tid('a'), tests.rid('a_company'), tests.rid('a_contact') from unnest(array['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7']) n;
+select tests.rid(n), tests.tid('a'), tests.rid('a_company'), tests.rid('a_contact') from unnest(array['L1', 'L2', 'L3', 'L4', 'L5', 'L6', 'L7', 'L8']) n;
 select pg_temp.mkq('l1', 100000, 40000, null, 'approved', 'a', 'L1');  select pg_temp.mko('l1');
 select is(app.order_stops_followups(tests.rid('L1')), null, 'J1 an order that is only approved does not stop follow-ups');
 select pg_temp.rec('a_sales', 'l1', 'send_quote');
@@ -547,17 +655,22 @@ select pg_temp.rec('a_sales', 'l7a', 'send_quote');  select pg_temp.rec('a_sales
 select pg_temp.rec('a_sales', 'l7b', 'send_quote');  select pg_temp.rec('a_sales', 'l7b', 'customer_accept');
 select is(app.order_stops_followups(tests.rid('L7')), 'accepted', 'J12 with a declined and an accepted order the lead is in fulfilment (accepted wins)');
 select is(app.order_stops_followups(gen_random_uuid()), null, 'J13 an unknown lead is not stopped');
+select pg_temp.mkq('l8', 100000, 40000, null, 'approved', 'a', 'L8');  select pg_temp.mko('l8');
+select pg_temp.rec('a_sales', 'l8', 'send_quote');  select pg_temp.rec('a_sales', 'l8', 'customer_accept');  select pg_temp.rec('a_admin', 'l8', 'record_payment', 40000, 'p-l8');
+select pg_temp.rec('a_sales', 'l8', 'start_preparation');  select pg_temp.rec('a_sales', 'l8', 'dispatch');
+select is(pg_temp.rec('a_sales', 'l8', 'deliver'), 'delivered', 'J13b an order that is delivered with a balance still due');
+select is(app.order_stops_followups(tests.rid('L8')), 'accepted', 'J13c stops follow-ups too (fulfilment)');
 select ok(not has_function_privilege('authenticated', 'app.order_stops_followups(uuid)', 'execute'), 'J14 it is a helper for definer functions, not callable by a client');
 select is((select provolatile from pg_proc where oid = 'app.order_stops_followups(uuid)'::regprocedure), 's', 'J15 and it is read-only (STABLE): it takes no lock');
 
 -- ============================================================================ K. invariants over EVERY order
-select is((select count(*) from public.orders o where o.state is distinct from (select e.new_state from public.order_events e where e.order_id = o.id order by e.seq desc limit 1)), 0::bigint,
+select is((select count(*) from public.orders o where o.tenant_id in (tests.tid('a'), tests.tid('b')) and o.state is distinct from (select e.new_state from public.order_events e where e.order_id = o.id order by e.seq desc limit 1)), 0::bigint,
           'K1 the cache equals the ledger: every order''s state is the new state of its latest event');
-select is((select count(*) from (select order_id, count(*) c, max(seq) m from public.order_events group by order_id having count(*) <> max(seq)) x), 0::bigint, 'K2 every ledger is gapless');
-select is((select count(*) from public.orders o where not exists (select 1 from public.order_events e where e.order_id = o.id and e.seq = 1 and e.type = 'created')), 0::bigint, 'K3 every order starts with a created event');
-select is((select count(*) from public.orders o where (o.state in ('closed_paid', 'declined', 'expired', 'cancelled')) <> (o.closed_at is not null)), 0::bigint, 'K4 an order is closed exactly when its state is terminal');
-select is((select count(*) from public.order_ledger l join public.orders o on o.id = l.order_id where l.balance_paise < 0 or l.net_paise < 0 or l.paid_paise > o.order_total_paise), 0::bigint, 'K5 no order is overpaid and no balance is negative');
-select is((select count(*) from public.orders o join public.quotes z on z.id = o.quote_id where z.status <> 'approved' and o.id not in (select tests.rid(l || '_order') from unnest(array['oe', 'oe2', 'l4x']) l)), 0::bigint,
+select is((select count(*) from (select order_id, count(*) c, max(seq) m from public.order_events where tenant_id in (tests.tid('a'), tests.tid('b')) group by order_id having count(*) <> max(seq)) x), 0::bigint, 'K2 every ledger is gapless');
+select is((select count(*) from public.orders o where o.tenant_id in (tests.tid('a'), tests.tid('b')) and not exists (select 1 from public.order_events e where e.order_id = o.id and e.seq = 1 and e.type = 'created')), 0::bigint, 'K3 every order starts with a created event');
+select is((select count(*) from public.orders o where o.tenant_id in (tests.tid('a'), tests.tid('b')) and (o.state in ('closed_paid', 'declined', 'expired', 'cancelled')) <> (o.closed_at is not null)), 0::bigint, 'K4 an order is closed exactly when its state is terminal');
+select is((select count(*) from public.order_ledger l join public.orders o on o.id = l.order_id where o.tenant_id in (tests.tid('a'), tests.tid('b')) and (l.balance_paise < 0 or l.net_paise < 0 or l.paid_paise > o.order_total_paise)), 0::bigint, 'K5 no order is overpaid and no balance is negative');
+select is((select count(*) from public.orders o join public.quotes z on z.id = o.quote_id where o.tenant_id in (tests.tid('a'), tests.tid('b')) and z.status <> 'approved' and o.id not in (select tests.rid(l || '_order') from unnest(array['oe', 'oe2', 'l4x']) l)), 0::bigint,
           'K8 every order made through the function has an approved quote (the privileged fixtures are the exceptions)');
 
 select * from finish();
