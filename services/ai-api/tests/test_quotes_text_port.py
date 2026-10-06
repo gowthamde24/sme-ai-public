@@ -55,11 +55,15 @@ DISPLAY: dict[str, Any] = {
     "issued_on": "2026-10-06",
     "valid_until": "2026-10-21",
     "line_labels": {"SYN-K": "Synthetic kanjivaram", "SYN-B": "Synthetic banarasi"},
-    "payment_terms_text": "Advance first.",
-    "notes": ["Prices in INR."],
+    "payment_terms_text": "An advance is payable before dispatch; the balance by the due date.",
+    "notes": [
+        "Prices are in Indian rupees (INR).",
+        "GST is shown separately as a line.",
+        "This is a quote, not an invoice.",
+    ],
 }
-GOLDEN_RENDER_HASH = "1c1696e493901eff6cc4199c7a399d67f2b6b56ac3edeca31c742a28d3a3ffff"
-GOLDEN_TEXT_SHA = "55d4542c2fad9837e36b7fde85aaa6dddba8bcd4524d59f2d94ff752ec0b7e50"
+GOLDEN_RENDER_HASH = "713c15d77a0b95b5725b7f7112e63b5f70d73f75aa02068ffee42c7466bc850d"
+GOLDEN_TEXT_SHA = "97e1da16db5718d5e14fd736708fcff46e129f9b6643929281ee9bbde18c7624"
 
 
 @pytest.fixture(autouse=True)
@@ -78,7 +82,7 @@ def test_golden_vector_pins_the_renderer_by_value() -> None:
         out["canonical_hash"] == GOLDEN_RENDER_HASH
         and hashlib.sha256(out["text"].encode()).hexdigest() == GOLDEN_TEXT_SHA
     )
-    assert out["line_count"] == 35 and out["renderer_version"] == "1.0.0"
+    assert out["line_count"] == 38 and out["renderer_version"] == "1.0.0"
     lines = out["text"].split("\n")
     assert (
         lines[0] == "Approved quote"
@@ -279,10 +283,16 @@ def test_only_the_adapter_names_the_renderer_package() -> None:
     assert offenders == []
 
 
-def test_a_line_wider_than_the_contract_is_refused_even_with_a_correct_hash(monkeypatch: pytest.MonkeyPatch) -> None:
+def test_a_line_wider_than_the_contract_is_refused_even_with_a_correct_hash(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     def answer(width: int) -> Any:
         def render(request: dict[str, Any]) -> dict[str, Any]:
-            digest = hashlib.sha256(_REAL.canonical_json({"renderer_version": _REAL.RENDERER_VERSION, "inputs": request}).encode("utf-8")).hexdigest()
+            digest = hashlib.sha256(
+                _REAL.canonical_json(
+                    {"renderer_version": _REAL.RENDERER_VERSION, "inputs": request}
+                ).encode("utf-8")
+            ).hexdigest()
             return {"text": "x" * width, "line_count": 1, "canonical_hash": digest}
 
         return render
@@ -292,3 +302,51 @@ def test_a_line_wider_than_the_contract_is_refused_even_with_a_correct_hash(monk
     _module_with(monkeypatch, render=answer(61))
     with pytest.raises(TextRefused):
         render_approved(RESULT, HASH, DISPLAY)
+
+
+def test_the_golden_display_is_the_wording_the_service_chooses_for_these_amounts() -> None:
+    from app.quotes import service
+
+    terms = RESULT["payment_terms"]
+    assert DISPLAY["payment_terms_text"] == service.payment_terms_text(
+        terms["advance_amount"], terms["balance"]
+    )
+    assert DISPLAY["notes"] == list(service.NOTES)
+    text = render_approved(RESULT, HASH, DISPLAY)["text"]
+    assert (
+        "Payment terms: An advance is payable before dispatch; the\nbalance by the due date."
+        in text
+    )
+    assert (
+        "- GST is shown separately as a line." in text and "GST (5%): ₹3,800.00" in text
+    )  # said once in the notes and shown as a line per item
+
+
+def test_the_payment_wording_follows_the_amounts() -> None:
+    from app.quotes import service
+
+    assert (
+        service.payment_terms_text(4860950, 4860950)
+        == "An advance is payable before dispatch; the balance by the due date."
+    )
+    assert (
+        service.payment_terms_text(97219, 0)
+        == "The whole amount is payable in advance, before dispatch."
+    )
+    assert service.payment_terms_text(0, 97219) == "The whole amount is payable by the due date."
+    assert service.payment_terms_text(0, 0) == "No payment is due."
+    assert service.payment_terms_text(1, 1) == service.payment_terms_text(
+        50, 99999
+    )  # only the shape matters, never the size
+    for bad in ((-1, 5), (5, -1)):
+        with pytest.raises(ValueError):
+            service.payment_terms_text(*bad)
+    for amounts in (
+        (4860950, 4860950),
+        (97219, 0),
+        (0, 97219),
+        (0, 0),
+    ):  # every wording is accepted by the renderer
+        render_approved(
+            RESULT, HASH, {**DISPLAY, "payment_terms_text": service.payment_terms_text(*amounts)}
+        )

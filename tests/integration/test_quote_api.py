@@ -306,6 +306,7 @@ def test_approval_is_the_owners_or_admins_with_a_second_factor_and_renders_the_t
     text = out["text"]
     assert text["sent_by_system"] is False and text["renderer_version"] and len(text["canonical_hash"]) == 64
     assert "₹96,075.00" in text["text"] and "Synthetic kanjivaram" in text["text"] and "Synthetic banarasi" in text["text"] and "Reference: Q-" in text["text"]
+    assert "An advance is payable before dispatch" in text["text"].replace("\n", " ") and "GST is shown separately as a line." in text["text"]
     assert "QA-KANJI" not in text["text"]  # the customer sees the product name, never our internal sku
     assert all(len(line) <= 60 for line in text["text"].split("\n")) and text["line_count"] == len(text["text"].split("\n"))
     assert "CANARY" not in text["text"] and "@" not in text["text"]  # no contact detail is ever in the customer text

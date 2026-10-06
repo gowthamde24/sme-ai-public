@@ -40,8 +40,27 @@ from app.quotes.repository import QuotesRepository
 from app.quotes.states import ALL_CODES
 from app.requirements.display import display
 
-NOTES = ("Prices are in Indian rupees (INR).", "This is a quote, not an invoice.")
-PAYMENT_TERMS_TEXT = "Advance payment before dispatch; the balance by the due date."
+NOTES = (
+    "Prices are in Indian rupees (INR).",
+    "GST is shown separately as a line.",
+    "This is a quote, not an invoice.",
+)
+
+
+def payment_terms_text(advance_paise: int, balance_paise: int) -> str:
+    """The payment wording of the customer text, chosen from the AMOUNTS the quote already carries (never typed by a person, never a model's): everything in
+    advance, everything by the due date, or an advance and a balance. The figures themselves are printed by the renderer from the engine's result."""
+    if advance_paise < 0 or balance_paise < 0:
+        raise ValueError("amounts are never negative")
+    if advance_paise == 0 and balance_paise == 0:
+        return "No payment is due."
+    if balance_paise == 0:
+        return "The whole amount is payable in advance, before dispatch."
+    if advance_paise == 0:
+        return "The whole amount is payable by the due date."
+    return "An advance is payable before dispatch; the balance by the due date."
+
+
 _LINE_ORDER = {"saree_type": 0, "quantity": 1, "fabric": 2, "colour": 3}
 
 
@@ -547,7 +566,7 @@ def render_text(
         "issued_on": quote.as_of.isoformat(),
         "valid_until": quote.valid_until.isoformat(),
         "line_labels": {line.sku: line.name for line in quote.lines},
-        "payment_terms_text": PAYMENT_TERMS_TEXT,
+        "payment_terms_text": payment_terms_text(quote.advance_paise, quote.balance_paise),
         "notes": list(NOTES),
     }
     try:

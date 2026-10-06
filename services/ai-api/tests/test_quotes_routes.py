@@ -528,6 +528,10 @@ def test_the_text_is_rendered_from_the_stored_row_and_ignores_the_request(w: Wor
         and "Synthetic kanjivaram" in text
     )
     assert "SYN-K" not in text and "@" not in text and CANARY not in text
+    assert (
+        "An advance is payable before dispatch; the" in text
+        and "GST is shown separately as a line." in text
+    )  # chosen from the amounts, not a fixed sentence
 
 
 def test_a_company_name_that_is_not_safe_text_cannot_inject_lines_into_the_customer_text(
