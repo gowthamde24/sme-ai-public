@@ -309,6 +309,8 @@ def test_database_refusals_have_fixed_messages_and_no_database_text(w: World) ->
         r = post_start(w)
         assert r.status_code == status, (error, r.text)
         assert r.json()["error"]["code"] == code
+        if code == "discard_draft_to_rerun":
+            assert r.json()["error"]["message"] == "Discard the current draft to re-run."
         assert CANARY not in r.text and "22003" not in r.text
     assert not w.executor.tasks
 
