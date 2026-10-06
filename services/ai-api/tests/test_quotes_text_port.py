@@ -277,3 +277,18 @@ def test_only_the_adapter_names_the_renderer_package() -> None:
         and "quote_text" in "".join(ln for ln in p.read_text().splitlines() if "import" in ln)
     ]
     assert offenders == []
+
+
+def test_a_line_wider_than_the_contract_is_refused_even_with_a_correct_hash(monkeypatch: pytest.MonkeyPatch) -> None:
+    def answer(width: int) -> Any:
+        def render(request: dict[str, Any]) -> dict[str, Any]:
+            digest = hashlib.sha256(_REAL.canonical_json({"renderer_version": _REAL.RENDERER_VERSION, "inputs": request}).encode("utf-8")).hexdigest()
+            return {"text": "x" * width, "line_count": 1, "canonical_hash": digest}
+
+        return render
+
+    _module_with(monkeypatch, render=answer(60))
+    assert render_approved(RESULT, HASH, DISPLAY)["text"] == "x" * 60  # the limit itself is allowed
+    _module_with(monkeypatch, render=answer(61))
+    with pytest.raises(TextRefused):
+        render_approved(RESULT, HASH, DISPLAY)

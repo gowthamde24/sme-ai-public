@@ -162,5 +162,15 @@ select is((select count(*) from public.quotes where tenant_id = tests.tid('a')) 
 select is((select bool_and(pg_temp.priv('truncate public.' || t || ' cascade') like '42501|%') from unnest(array['price_lists', 'price_list_versions', 'price_list_items', 'price_list_breaks', 'quote_policy_versions', 'mapper_config_versions', 'requirement_line_picks', 'quotes', 'quote_lines']) t), true, 'E1d every one of the nine, with CASCADE, is refused by OUR guard (42501)');
 select ok(not has_table_privilege('authenticated', 'public.quotes', 'TRUNCATE') and not has_table_privilege('authenticated', 'public.quote_lines', 'TRUNCATE'), 'E2 clients hold no TRUNCATE privilege either');
 
+-- the plain/cascade checks above can be satisfied by ANOTHER table's guard (a cascade fires every trigger it reaches), so the catalog proves each guard on its own
+select is((select string_agg(c.relname, ',' order by c.relname) from pg_trigger g join pg_class c on c.oid = g.tgrelid
+            where g.tgname = c.relname || '_no_truncate' and c.relnamespace = 'public'::regnamespace and g.tgfoid = 'app.quote_forbid_truncate'::regproc
+              and (g.tgtype & 1) = 0 and (g.tgtype & 2) = 2 and (g.tgtype & 32) = 32 and g.tgenabled = 'O'),
+          'mapper_config_versions,price_list_breaks,price_list_items,price_list_versions,price_lists,quote_lines,quote_policy_versions,quotes,requirement_line_picks',
+          'E3 each of the nine quote tables has its OWN enabled BEFORE TRUNCATE statement trigger on the guard function');
+select ok(not has_function_privilege('anon', 'public.withdraw_approved_quote(uuid, text)', 'execute') and not has_function_privilege('public', 'public.withdraw_approved_quote(uuid, text)', 'execute')
+          and has_function_privilege('authenticated', 'public.withdraw_approved_quote(uuid, text)', 'execute'), 'C30 only signed-in people can execute withdraw_approved_quote (anon and public cannot)');
+select ok(not has_function_privilege('authenticated', 'app.quote_forbid_truncate()', 'execute') and not has_function_privilege('anon', 'app.quote_forbid_truncate()', 'execute'), 'E4 nobody can call the truncate guard directly');
+
 select * from finish();
 rollback;

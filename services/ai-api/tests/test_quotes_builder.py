@@ -215,11 +215,11 @@ def test_only_what_a_person_confirmed_or_corrected_counts() -> None:
         row(1, "saree_type", value_code="kanjivaram"),
         row(1, "quantity", "corrected", value_int=20, basis="piece"),
         row(
-            2, "saree_type", "suggested", value_code="banarasi"
+            2, "saree_type", "proposed", value_code="banarasi"
         ),  # proposed by an agent, never reviewed
         row(2, "quantity", "rejected", value_int=99, basis="piece"),
         row(None, "delivery_city", value_text="Hyderabad"),
-        row(None, "payment_terms", "suggested", value_code="net_days", value_int=60),
+        row(None, "payment_terms", "proposed", value_code="net_days", value_int=60),
     ]
     got = requirement_facts(rows)
     assert [(x.line_no, x.saree_type, x.quantity, x.basis) for x in got.lines] == [

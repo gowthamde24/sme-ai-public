@@ -9,7 +9,7 @@ from __future__ import annotations
 import copy
 import json
 import uuid
-from datetime import date
+from datetime import date, timedelta
 from typing import Any
 
 import pytest
@@ -309,8 +309,8 @@ def test_a_field_nobody_confirmed_is_not_quoted(w: World) -> None:
         requirement(),
         [
             *two_line_rows(),
-            field(3, "saree_type", "suggested", value_code="patola"),
-            field(3, "quantity", "suggested", value_int=50, basis="piece"),
+            field(3, "saree_type", "proposed", value_code="patola"),
+            field(3, "quantity", "proposed", value_int=50, basis="piece"),
         ],
     )
     r = w.draft()
@@ -470,6 +470,20 @@ def test_a_changed_input_changes_the_recomputed_hash_so_the_database_refuses(w: 
     assert digest2 != stored
 
 
+def test_the_recomputation_uses_the_quotes_own_date_not_todays(w: World) -> None:
+    w.draft()
+    stored = w.q.rows[QID][0]["canonical_hash"]
+    made = date.fromisoformat(w.q.rows[QID][0]["as_of"])
+    w.q.rows[QID][0]["as_of"] = (
+        made - timedelta(days=1)
+    ).isoformat()  # the quote was made the day before: its request carries THAT date
+    w.client.post(w.url(f"/quotes/{QID}/approve"), headers=auth("a_owner"))
+    ((_, (_, digest)),) = [c for c in w.q.calls if c[0] == "approve"]
+    assert (
+        digest != stored
+    )  # rebuilt with today's date it would reproduce the stored hash and hide that the date moved
+
+
 @pytest.mark.parametrize(
     "change", ["status", "requirement_id", "pick_removed", "duplicate_product", "no_policy"]
 )
@@ -561,6 +575,28 @@ def test_a_stored_result_that_the_engine_does_not_reproduce_is_refused(w: World)
     result = json.loads(w.q.texts[QID]["result_text"])
     result["totals"]["total"] += 1
     w.q.texts[QID]["result_text"] = engine_port.canonical_json(result)
+    r = w.client.get(w.url(f"/quotes/{QID}/text"), headers=auth("a_sales"))
+    assert r.status_code == 409 and code(r) == "quote_text_refused"
+
+
+def test_a_stored_request_that_does_not_give_the_stored_result_is_refused(w: World) -> None:
+    w.draft()
+    w.client.post(w.url(f"/quotes/{QID}/approve"), headers=auth("a_owner"))
+    request = json.loads(w.q.texts[QID]["request_text"])
+    request["price_list"][0]["unit_price"] += (
+        100  # the stored result is intact and self-consistent, but the engine does not reproduce it from this request
+    )
+    w.q.texts[QID]["request_text"] = engine_port.canonical_json(request)
+    r = w.client.get(w.url(f"/quotes/{QID}/text"), headers=auth("a_sales"))
+    assert r.status_code == 409 and code(r) == "quote_text_refused"
+
+
+def test_a_quote_made_by_another_engine_version_is_refused(w: World) -> None:
+    w.draft()
+    w.client.post(w.url(f"/quotes/{QID}/approve"), headers=auth("a_owner"))
+    w.q.texts[QID]["engine_version"] = (
+        "9.9.9"  # this adapter cannot recompute it, so it does not render it
+    )
     r = w.client.get(w.url(f"/quotes/{QID}/text"), headers=auth("a_sales"))
     assert r.status_code == 409 and code(r) == "quote_text_refused"
 
@@ -670,8 +706,8 @@ def test_an_unconfirmed_field_never_gets_a_suggestion(w: World) -> None:
         requirement(),
         [
             *two_line_rows(),
-            field(3, "saree_type", "suggested", value_code="patola"),
-            field(3, "quantity", "suggested", value_int=9, basis="piece"),
+            field(3, "saree_type", "proposed", value_code="patola"),
+            field(3, "quantity", "proposed", value_int=9, basis="piece"),
         ],
     )
     lines = w.client.get(w.url(f"/enquiries/{ENQ}/quote-setup"), headers=auth("a_sales")).json()[
@@ -708,6 +744,12 @@ def test_a_pick_sends_the_database_function_its_arguments_and_the_server_chooses
     assert suggested.status_code == 200 and suggested.json()["source"] == "mapper_suggestion"
     ((_, args),) = [c for c in w.q.calls if c[0] == "pick"]
     assert args["p_source"] == "mapper_suggestion" and len(args["p_suggestion_sha256"]) == 64
+    mapped = service.suggest(
+        w.q, "tok", TENANT_A.id, w.enq.requirement[ENQ][1], service.to_items(ITEM_ROWS), today_ist()
+    )
+    assert (
+        mapped is not None and args["p_suggestion_sha256"] == mapped[0]["canonical_hash"]
+    )  # the mapper's OWN hash of what it suggested, not any 64 characters
     for smuggled in (
         {"source": "mapper_suggestion"},
         {"suggestion_sha256": "0" * 64},
