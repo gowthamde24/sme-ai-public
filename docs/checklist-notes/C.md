@@ -448,3 +448,55 @@ passes. Lane A integration, authoritative input retrieval, approvals and audit
 remain pending. No database, network, ports, dependency changes or pushes.
 `./scripts/check-lane-paths.sh C` output:
 `Lane C: changed paths allowed under base policy` (exit 0).
+## Quote text: manual mutation evidence
+
+Final clean verification: 31 quote-text tests + 149 existing tests = 180 passing
+tests (baseline 149); includes 250 seeded real-engine amount round trips.
+`make test-packages` and `make check-leftovers` pass. Lane guard (exit 0):
+`Lane C: changed paths allowed under base policy`.
+Lane A approval integration and customer copy flow are not exercised here.
+
+Each mutation below was applied individually by hand, checked with `make
+test-packages`, and reverted. Four initially survived: malformed matching hashes,
+quantity multiplication, footer validity, and a one-paise discount. Three new
+test methods and one strengthened assertion killed them on rerun. All 36 final
+mutation runs failed a test; no mutation scripts or mutated implementation remain.
+
+| Mutation | Killed by which test | Added test |
+|---|---|---|
+| 01 Paise divisor 100 -> 10 | test_money_boundaries | no |
+| 02 Indian grouping uses groups of three | test_money_boundaries | no |
+| 03 Omit paise zero padding | test_money_boundaries | no |
+| 04 Basis-point divisor 100 -> 1000 | test_rate_boundaries | no |
+| 05 Omit rate fraction padding | test_rate_boundaries | no |
+| 06 Keep supplied WhatsApp markup | test_whatsapp_markup_neutralization_all_display_locations | no |
+| 07 Permit bidi format characters | test_hostile_controls_bidi_and_line_separators | no |
+| 08 Permit controls and newlines | test_hostile_controls_bidi_and_line_separators | no |
+| 09 Width 60 -> 61 | test_long_words_wrap_and_money_tokens_remain_whole | no |
+| 10 Disable long-word wrapping | test_long_words_wrap_and_money_tokens_remain_whole | no |
+| 11 Disable approval guard | test_approval_and_engine_status_refused | no |
+| 12 Disable approval hash equality | test_hash_mismatch_fixed_error | no |
+| 13 Disable hash format validation | test_matching_malformed_hashes_refused | yes |
+| 14 Accept engine status approved | test_approval_and_engine_status_refused | no |
+| 15 Disable line-sum totals check | test_bad_money_and_totals_invariants | no |
+| 16 Disable quantity times price check | test_quantity_times_price_invariant | yes |
+| 17 Print net instead of line gross | test_sections_and_exact_engine_amounts | no |
+| 18 Print net instead of shipping gross | test_sections_and_exact_engine_amounts | no |
+| 19 Print balance instead of advance | test_payment_amounts_optional_and_zero | no |
+| 20 Footer validity uses issued date | test_sections_and_exact_engine_amounts | yes (assertion) |
+| 21 Print subtotal instead of unit price | test_sections_and_exact_engine_amounts | no |
+| 22 Omit exactly one-paise discount | test_one_paise_discount_is_shown | yes |
+| 23 Use merchandise GST rate for shipping | test_sections_and_exact_engine_amounts | no |
+| 24 Aggregate GST omits shipping tax | test_sections_and_exact_engine_amounts | no |
+| 25 Use tax rate for discount | test_sections_and_exact_engine_amounts | no |
+| 26 Omit notes | test_sections_and_exact_engine_amounts | no |
+| 27 Payment terms use seller name | test_sections_and_exact_engine_amounts | no |
+| 28 Use engine name instead of display label | test_sections_and_exact_engine_amounts | no |
+| 29 Omit display from hash input | test_determinism_hash_roundtrip_and_immutability | no |
+| 30 Renderer version 1.0.0 -> 1.0.1 | test_determinism_hash_roundtrip_and_immutability | no |
+| 31 Allow eleven notes | test_note_count_limit | no |
+| 32 Allow thirty-one quote lines | test_quote_lines_limit_and_large_money | no |
+| 33 Accept bool as integer | test_strict_format_types | no |
+| 34 Disable validity date equality | test_dates_and_required_labels | no |
+| 35 Disable engine version allowlist | test_trace_and_flag_validation | no |
+| 36 Allow empty quote lines | test_quote_lines_limit_and_large_money | no |

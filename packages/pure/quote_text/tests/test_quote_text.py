@@ -110,6 +110,7 @@ class RenderTests(unittest.TestCase):
         self.assertNotIn("mailto:", q["text"])
         self.assertNotIn("http", q["text"])
         self.assertNotIn("SYN-TEXT-A", q["text"])
+        self.assertEqual(q["text"].count("Valid until: 2026-10-14"), 2)
 
     def test_no_discount_or_notes_without_input(self):
         source = fixture()["engine_request"]
@@ -119,6 +120,17 @@ class RenderTests(unittest.TestCase):
         q = self.accepted(r)
         self.assertNotIn("Discount", q["text"])
         self.assertNotIn("Notes:", q["text"])
+        self.assertEqual(paise_tokens(q["text"]), expected_amounts(r))
+
+    def test_one_paise_discount_is_shown(self):
+        source = fixture()["engine_request"]
+        source["price_list"][0].update(unit_price=1, tax_bps=0)
+        source["order_lines"][0].update(qty=1, discount_bps=10000)
+        source["policy"]["discount_ceiling_bps"] = 10000
+        source["policy"]["shipping"] = {"flat_fee": 0, "tax_bps": 0}
+        r = request(source)
+        q = self.accepted(r)
+        self.assertIn("Discount (100%): ₹0.01", q["text"])
         self.assertEqual(paise_tokens(q["text"]), expected_amounts(r))
 
     def test_payment_amounts_optional_and_zero(self):
@@ -167,6 +179,12 @@ class RenderTests(unittest.TestCase):
                 target = r if key == "expected_engine_hash" else r["quote"]
                 target[key] = value
                 self.assertEqual(self.rejected(r, "HASH_MISMATCH")["message"], "Quote hash does not match approval.")
+
+    def test_matching_malformed_hashes_refused(self):
+        for value in ("wrong", "A" * 64, "a" * 63, "a" * 65):
+            r = request()
+            r["quote"]["canonical_hash"] = r["expected_engine_hash"] = value
+            self.assertEqual(self.rejected(r, "HASH_MISMATCH")["message"], "Quote hash does not match approval.")
 
     def test_whatsapp_markup_neutralization_all_display_locations(self):
         r = request()
@@ -266,6 +284,11 @@ class RenderTests(unittest.TestCase):
                 target = target[key]
             target[path[-1]] = value
             self.rejected(r, code)
+
+    def test_quantity_times_price_invariant(self):
+        r = request()
+        r["quote"]["lines"][0]["quantity"] += 1
+        self.rejected(r, "INVALID_QUOTE")
 
     def test_trace_and_flag_validation(self):
         r = request()
