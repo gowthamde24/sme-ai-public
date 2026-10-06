@@ -300,6 +300,60 @@ ports or pushes; integration, approvals and real payment verification belong to 
 - Test count before this package: 123. Baseline adds 26 CSV tests (149 total).
   Mutation evidence follows separately; no services, ports or new dependencies.
 
+### Price-list CSV manual mutation pass
+
+Mutated the real library by hand, one change per run of make test-packages;
+each row below observed exit 2 with the named test failing. No mutation scripts.
+All 35 killed by baseline tests; no survivors or additional tests needed. All
+mutations reverted; parser diff against cdba6aa is empty. One revert of mutation
+27 initially matched its adjacent guard; restored both guards and reran mutation
+28 in isolation before counting it. No combined result is used as evidence.
+“Added test” means added because a mutation survived.
+
+| Mutation | Killed by which test | Added test |
+| --- | --- | --- |
+| 01 Convert whole rupees with multiplier 10 instead of 100 | test_exact_money_formats_and_boundaries | no |
+| 02 Left-pad decimal digits instead of right-padding | test_exact_money_formats_and_boundaries | no |
+| 03 Allow three decimal places | test_invalid_money_syntax | no |
+| 04 Zero-money guard <= becomes < | test_exact_money_formats_and_boundaries | no |
+| 05 Money maximum > becomes >= | test_exact_money_formats_and_boundaries | no |
+| 06 Strip commas before checking grouping | test_invalid_money_syntax | no |
+| 07 Allow Unicode decimal digits | test_invalid_money_syntax | no |
+| 08 Allow leading hyphen in SKU | test_sku_injection_and_character_rules | no |
+| 09 Allow 41-character SKU | test_sku_injection_and_character_rules | no |
+| 10 Disable case-insensitive duplicate SKU check | test_sku_case_insensitive_duplicates | no |
+| 11 Name maximum becomes 200 instead of engine's 128 | test_name_bounds_and_no_tax_default | no |
+| 12 Compare header names case-sensitively | test_headers_bom_case_and_column_permutation | no |
+| 13 Disable unknown-column check | test_header_errors_no_echo | no |
+| 14 Disable duplicate-column check | test_header_errors_no_echo | no |
+| 15 Make required name column optional | test_header_errors_no_echo | no |
+| 16 Disable paired-break-column check | test_header_errors_no_echo | no |
+| 17 Preserve BOM in parsed header | test_headers_bom_case_and_column_permutation | no |
+| 18 Relax CSV syntax strictness | test_csv_quotes_newlines_and_doubled_quotes | no |
+| 19 Row width != becomes > (short rows accepted) | test_row_width_and_logical_numbering | no |
+| 20 Integer lower bound < becomes <= | test_integer_syntax_and_bounds | no |
+| 21 Integer upper bound > becomes >= | test_integer_syntax_and_bounds | no |
+| 22 Default empty tax_bps to zero | test_name_bounds_and_no_tax_default | no |
+| 23 Break minimum < MOQ becomes <= | test_price_break_edges_and_rules | no |
+| 24 Break quantity <= previous becomes < | test_price_break_edges_and_rules | no |
+| 25 Break price > previous becomes >= | test_price_break_edges_and_rules | no |
+| 26 Allow gaps in populated break tiers | test_break_missing_pairs_gaps_and_invalid_values | no |
+| 27 Incomplete pair guard OR becomes AND | test_break_missing_pairs_gaps_and_invalid_values | no |
+| 28 Add one paise to each parsed break (isolated rerun) | test_price_break_edges_and_rules | no |
+| 29 Sort items descending by SKU | test_synthetic_engine_shape | no |
+| 30 Change parser/hash version to 1.0.1 | test_hash_determinism_sorting_and_roundtrip | no |
+| 31 Omit items from hash | test_hash_includes_all_valid_item_fields | no |
+| 32 Return partial items when any error exists | test_all_or_nothing_and_multiple_errors | no |
+| 33 Check character count instead of UTF-8 byte count | test_utf8_byte_limit_and_bom_counts | no |
+| 34 Decoded cell limit > becomes >= | test_cell_limit_exact_quoted_and_unquoted | no |
+| 35 Logical record limit > becomes >= | test_rows_at_limit_and_one_above | no |
+
+Final checks: 26 CSV + 123 existing tests = 149, including 250 seeded CSV cases;
+make test-packages and make check-leftovers pass after all reversions. Endpoint,
+real DB validation and approval integration remain with lane A. Synthetic only.
+`./scripts/check-lane-paths.sh C` output:
+`Lane C: changed paths allowed under base policy` (exit 0).
+
 ## Requirement mapper: baseline
 
 - Started from clean lane/c HEAD 4618cd9, building on unmerged order lifecycle
