@@ -269,7 +269,7 @@ def test_the_review_copy_is_the_last_definition_and_only_drops_the_named_lines(n
 
 @pytest.mark.parametrize("name", REVIEW_REWRITTEN)
 def test_a_rewritten_review_function_is_the_last_definition(name: str) -> None:
-    defs = definitions(name)
+    defs = [d for d in definitions(name) if d[0] < MARKER]
     assert defs[-1][0] == REVIEW, f"{name} is redefined after the review fixes ({defs[-1][0]})"
 
 
@@ -277,6 +277,11 @@ def test_a_rewritten_review_function_is_the_last_definition(name: str) -> None:
 # Migration 20261021090000 replaces the two erasure functions and the sync trigger. Last definition; compared with the latest earlier one it may only drop a line it re-adds
 # (indentation aside) or one named here.
 MARKER_CHANGED: dict[str, set[str]] = {
+    "app.order_stops_followups": {
+        'select o.state, z.quote_no from public.orders o join public.quotes z on z.tenant_id = o.tenant_id and z.id = o.quote_id',
+        '-- a newer approved quote of the lead that has no order yet: a new deal is being made, nothing stops',
+        "select 1 from latest l join public.quotes q on q.lead_id = p_lead and q.status = 'approved' and q.quote_no > l.quote_no",
+    },
     "app.erase_contact": {
         'if c.email is not null and k.email_hmac is not null',
         "and app.suppression_key_add(r.tenant_id, 'email', k.email_hmac, k.key_version, 'erased', c.id, auth.uid()) then",

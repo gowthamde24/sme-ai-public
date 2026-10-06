@@ -3,6 +3,8 @@
 --   a. app.suppression_key_mark_erased   the 'erased' key event is appended even when the key is already suppressed (it used to be skipped by suppression_key_add, so lifting
 --      the contact that had suppressed the key first lost the erased person's protection); app.erase_contact and app.erase_tenant use it and count 'suppression.erased_markers'
 --   b. app.contacts_sync_suppression_keys   a key is lifted only if NO 'erased' event exists for it since its last 'lifted' event
+--   c. app.order_stops_followups   'newer' is decided by approval time, then quote number (quotes.quote_no is per tenant, strictly increasing and never reused, but assigned when the
+--      DRAFT is made, so a draft numbered earlier can be approved later)
 
 -- ---------------------------------------------------------------------------------------------
 -- app.suppression_key_mark_erased: the ERASED marker of a key. Unlike suppression_key_add it appends its event even when the key is already suppressed (by an opt-out of another
@@ -246,4 +248,27 @@ begin
   end if;
   return new;
 end;
+$$;
+
+create or replace function app.order_stops_followups(p_lead uuid) returns text
+language sql
+stable
+set search_path = ''
+as $$
+  with latest as (
+    select o.state, z.approved_at, z.quote_no from public.orders o join public.quotes z on z.tenant_id = o.tenant_id and z.id = o.quote_id
+     where o.lead_id = p_lead order by o.order_no desc, o.id desc limit 1),
+  newer as (
+    -- a quote of the lead APPROVED AFTER the latest order's quote (by approval time, then number: the number follows the draft, not the approval) that has no order yet:
+    -- a new deal is being made, nothing stops
+    select 1 from latest l join public.quotes q on q.lead_id = p_lead and q.status = 'approved' and (q.approved_at, q.quote_no) > (l.approved_at, l.quote_no)
+     where not exists (select 1 from public.orders o2 where o2.tenant_id = q.tenant_id and o2.quote_id = q.id))
+  select case
+    when exists (select 1 from newer) then null
+    when (select state from latest) in ('accepted', 'advance_requested', 'advance_paid', 'in_preparation', 'dispatched', 'delivered', 'closed_paid') then 'accepted'
+    when (select state from latest) = 'declined' then 'declined'
+    when (select state from latest) = 'cancelled' then 'cancelled'
+    when exists (select 1 from public.quotes q where q.lead_id = p_lead and q.withdrawn_at is not null)
+         and not exists (select 1 from public.quotes q where q.lead_id = p_lead and q.status = 'approved') then 'withdrawn'
+    else null end
 $$;

@@ -32,7 +32,7 @@ begin perform tests.as_aal('aal2'); return split_part(tests.error_full_as(tests.
 -- ---------------------------------------------------------------------------------------------
 -- fixtures: a quote for a tenant (approved by default), its enquiry and requirement; the lead can be chosen
 -- ---------------------------------------------------------------------------------------------
-create function pg_temp.mkq(p_label text, p_total bigint, p_advance bigint, p_valid date default null, p_status text default 'approved', p_t text default 'a', p_lead text default null)
+create function pg_temp.mkq(p_label text, p_total bigint, p_advance bigint, p_valid date default null, p_status text default 'approved', p_t text default 'a', p_lead text default null, p_ago interval default '0')
 returns uuid language plpgsql as $$
 declare v_lead uuid := tests.rid(coalesce(p_lead, p_t || '_lead'));
 begin
@@ -44,7 +44,7 @@ begin
   values (tests.rid(p_label || '_quote'), tests.tid(p_t), (select coalesce(max(quote_no), 0) + 1 from public.quotes where tenant_id = tests.tid(p_t)), tests.rid(p_label || '_req'),
           tests.rid(p_label || '_enq'), v_lead, p_status::public.quote_status, tests.rid(p_t || '_price_version'), tests.rid(p_t || '_policy_version'), '1.1.0', '{}', '{}', repeat('3', 64),
           'new', 'TS', 'intra_state', least(pg_temp.today(), coalesce(p_valid, pg_temp.today() + 10)), coalesce(p_valid, pg_temp.today() + 10), pg_temp.today() + 30, p_total, 0, 0, 0, p_total, p_advance, p_total - p_advance, false,
-          case when p_status in ('approved', 'superseded') then tests.uid(p_t || '_owner') end, case when p_status in ('approved', 'superseded') then now() end,
+          case when p_status in ('approved', 'superseded') then tests.uid(p_t || '_owner') end, case when p_status in ('approved', 'superseded') then now() - p_ago end,
           case when p_status in ('approved', 'superseded') then repeat('5', 64) end,
           case when p_status = 'rejected' then tests.uid(p_t || '_owner') end, case when p_status = 'rejected' then now() end, case when p_status = 'rejected' then 'other'::public.quote_reject_code end);
   return tests.rid(p_label || '_quote');
@@ -773,6 +773,22 @@ select pg_temp.rec('a_sales', 'm10a', 'send_quote');  select pg_temp.rec('a_sale
 select pg_temp.rec('a_sales', 'm10a', 'start_preparation');  select pg_temp.rec('a_sales', 'm10a', 'dispatch');
 select is(pg_temp.rec('a_sales', 'm10a', 'deliver'), 'closed_paid', 'J28 (setup) a lead whose only order is closed_paid');
 select is(app.order_stops_followups(tests.rid('M10')), 'accepted', 'J29 a closed_paid order stops follow-ups (the deal is done: no cadence)');
+-- 'newer' is decided by APPROVAL time (then number), not by the quote number: two requirements of ONE lead
+insert into public.leads (id, tenant_id, company_id, contact_id) select tests.rid(n), tests.tid('a'), tests.rid('a_company'), tests.rid('a_contact') from unnest(array['R1', 'R2', 'R3']) n;
+-- R1: A (number 1) declined; B (number 2) approved LATER, no order -> nothing stops
+select pg_temp.mkq('r1a', 100000, 40000, null, 'approved', 'a', 'R1', interval '2 hours');  select pg_temp.mko('r1a');  select pg_temp.rec('a_sales', 'r1a', 'send_quote');  select pg_temp.rec('a_sales', 'r1a', 'customer_decline', null, null, 'price');
+select pg_temp.mkq('r1b', 100000, 40000, null, 'approved', 'a', 'R1', interval '1 hour');
+select is(app.order_stops_followups(tests.rid('R1')), null, 'J30 a quote on ANOTHER requirement, numbered and approved later, no order yet: nothing stops');
+-- R2: the REVERSE numbering: B is numbered first (drafted first) but approved later than A's quote
+select pg_temp.mkq('r2b', 100000, 40000, null, 'approved', 'a', 'R2', interval '1 hour');
+select pg_temp.mkq('r2a', 100000, 40000, null, 'approved', 'a', 'R2', interval '2 hours');  select pg_temp.mko('r2a');  select pg_temp.rec('a_sales', 'r2a', 'send_quote');  select pg_temp.rec('a_sales', 'r2a', 'customer_decline', null, null, 'price');
+select is((select quote_no from public.quotes where id = tests.rid('r2b_quote')) < (select quote_no from public.quotes where id = tests.rid('r2a_quote')), true, 'J31 (setup) B has the LOWER quote number');
+select is(app.order_stops_followups(tests.rid('R2')), null, 'J32 ... and is still the newer approval: the same answer, nothing stops');
+-- R3: B approved EARLIER than A's quote and not ordered: it is not a new deal, the declined order stops
+select pg_temp.mkq('r3b', 100000, 40000, null, 'approved', 'a', 'R3', interval '2 hours');
+select pg_temp.mkq('r3a', 100000, 40000, null, 'approved', 'a', 'R3', interval '1 hour');  select pg_temp.mko('r3a');  select pg_temp.rec('a_sales', 'r3a', 'send_quote');  select pg_temp.rec('a_sales', 'r3a', 'customer_decline', null, null, 'price');
+select is(app.order_stops_followups(tests.rid('R3')), 'declined', 'J33 an unordered quote approved BEFORE the declined order''s quote is not a new deal (even with the higher number)');
+
 
 
 select ok(not has_function_privilege('authenticated', 'app.order_stops_followups(uuid)', 'execute'), 'J14 it is a helper for definer functions, not callable by a client');
