@@ -17,6 +17,7 @@ from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
 from app.evidence.repository import EvidenceRepository
+from app.followups.repository import FollowupsRepository
 from app.leads.repository import LeadsRepository
 from app.orders.repository import OrdersRepository
 from app.pricelists.repository import PriceListRepository
@@ -46,6 +47,7 @@ class Runtime:
     pricelists: PriceListRepository | None = None
     suppression: SuppressionRepository | None = None
     key_ring: KeyRing | None = None
+    followups: FollowupsRepository | None = None
 
 
 @dataclass(frozen=True)

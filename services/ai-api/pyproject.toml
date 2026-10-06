@@ -60,6 +60,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/orders/*" = ["E501"]
 # T010: the suppression path (long explanatory docstrings)
 "app/suppression/*" = ["E501"]
+# T010 part 2: the follow-up path (long explanatory docstrings, fixed sentences)
+"app/followups/*" = ["E501"]
+"tests/test_followups_*.py" = ["E501", "S311"]
+"tests/followups_fakes.py" = ["E501"]
 "tests/test_suppression_*.py" = ["E501", "S311"]
 "tests/suppression_fakes.py" = ["E501"]
 "seeds/*" = ["E501"]

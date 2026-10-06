@@ -26,6 +26,10 @@ from app.erasure.routes import router as erasure_router
 from app.errors import ApiError, install_error_handlers, mfa_required
 from app.evidence.repository import PostgrestEvidenceRepository
 from app.evidence.routes import router as evidence_router
+from app.followups import errors as followup_errors
+from app.followups.messages import FOLLOWUP_REFUSALS
+from app.followups.repository import PostgrestFollowupsRepository
+from app.followups.routes import router as followups_router
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
 from app.logging_safety import install_log_redaction
@@ -87,6 +91,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         pricelists=PostgrestPriceListRepository(config.rest_url, config.anon_key),
         suppression=PostgrestSuppressionRepository(config.rest_url, config.anon_key),
         key_ring=build_key_ring(settings),
+        followups=PostgrestFollowupsRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -297,6 +302,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.orders,
                 runtime.pricelists,
                 runtime.suppression,
+                runtime.followups,
             ):
                 if isinstance(
                     repository,
@@ -310,7 +316,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestQuotesRepository
                     | PostgrestOrdersRepository
                     | PostgrestPriceListRepository
-                    | PostgrestSuppressionRepository,
+                    | PostgrestSuppressionRepository
+                    | PostgrestFollowupsRepository,
                 ):
                     repository.close()
 
@@ -332,6 +339,12 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 "order_event_refused",
                 ORDER_REASON_TEXT.get(reason, ORDER_REASON_TEXT["OTHER"]),
             )
+        if isinstance(
+            exc, followup_errors.FollowupRefusal
+        ):  # SM220-SM229: a closed reason, a fixed sentence
+            status, code, texts = FOLLOWUP_REFUSALS[exc.sqlstate]
+            reason = exc.reason
+            mapped = ApiError(status, code, texts[reason if reason is not None else "-"])
         if isinstance(exc, crm_repo.DuplicateValueError):
             mapped = ApiError(
                 409, "duplicate_value", f"That {exc.field} is already used.", headers={}
@@ -375,6 +388,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(enquiries_router)
     app.include_router(quotes_router)
     app.include_router(orders_router)
+    app.include_router(followups_router)
     app.include_router(pricelists_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
