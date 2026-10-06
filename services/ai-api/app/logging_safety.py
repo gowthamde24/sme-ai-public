@@ -30,6 +30,7 @@ ROUTE_WORDS = frozenset(
         "confirm", "decision", "discard",
         "quote-setup", "quotes", "picks", "approve", "reject", "withdraw", "text",
         "suppression", "status", "backfill", "allow-without-key",
+        "orders", "events", "order-policy-versions",
         "erasure-requests", "execute", "data-policy",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }
