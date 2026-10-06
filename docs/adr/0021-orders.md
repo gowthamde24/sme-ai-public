@@ -22,7 +22,9 @@ What the database does not run is the engine itself (two implementations, kept e
 **4. Who may do what.** Role first (one generic 42501 for every refusal before the role is proven), then the second factor (SM306), then the specific refusals.
 | Action | Owner | Admin | Sales | Viewer | aal2 |
 | --- | --- | --- | --- | --- | --- |
-| create an order, `record_payment`, `cancel` | yes | yes | no | no | yes |
+| create an order, `record_payment` | yes | yes | no | no | yes |
+| `cancel` an order with NO money in it | yes | yes | no | no | yes |
+| `cancel` an order that carries money (CANCELLATION_WITH_FUNDS) | yes | refused (SM234) | no | no | yes |
 | `record_refund` | yes | refused (SM234) | no | no | yes |
 | `send_quote`, `customer_accept`, `customer_decline` (with a reason), `request_advance`, `start_preparation`, `dispatch`, `deliver`, `expire` | yes | yes | yes | no | no (except below) |
 | `dispatch` with the advance unpaid (the override) | yes | refused (the engine's ADVANCE_NOT_PAID) | refused (same) | no | yes |
@@ -57,3 +59,9 @@ Trusted: that the money really arrived, that the customer really accepted, that 
 * The CRM opportunity is NOT changed automatically; a person updates it (plan decision 6).
 * A policy change does not touch existing orders (immutable, versioned); an order keeps the policy version it was created under.
 * Not built here: the API, the web, the seed of an order policy (tests create one through the function), the follow-up stop's consumers (T010 part 2).
+
+## Amendments after the owner's review (2026-10-07; migration `20261020090000_review_fixes.sql`)
+* **A cancellation that carries money is the Owner's (SM234, reworded "this action needs the owner").** The lifecycle already flags it (CANCELLATION_WITH_FUNDS) and says a flag is never authority; an order with money in it can mean a refund is owed, so the person who may approve a refund decides to cancel it. An Admin may still cancel an order with no money in it. The Owner's `owner_approved_by` is recorded on that event (the `order_events` check now allows it on a `cancel`). Reason: a cancellation with funds was the one money-affecting event an Admin could do without the Owner.
+* **SM237 holds only while the quote's order is NOT declined, expired or cancelled.** Decision 5 made a quote with an order permanent. A lost or cancelled deal is finished: its order stays as the record, and the customer may come back with a new quote for the same requirement, which must be approvable (the old quote becomes superseded; its terminal order is untouched). Accepted, in-flight and closed_paid orders still protect their quote, both ways. Reason: without this a declined order would block every later quote for the requirement forever.
+* **The follow-up stop reads the lead's LATEST order (decision 10 amended).** `app.order_stops_followups(lead)` looks at the lead's latest order (highest order number): fulfilment states give `accepted`, then `declined`, then `cancelled`; any other state stops nothing. A newer approved quote of the lead with no order yet means a new deal is being made, so nothing stops. The withdrawn rule is unchanged. Reason: an old declined order must not silence a lead the business is quoting again. Known consequence (owner to confirm): a lead with an accepted order in fulfilment AND a later, open order of another quote is not stopped by the older one.
+* **A synthetic order policy seed** (`app.operator_seed_order_policy`, operator-only) exists for local work; the values are invented defaults, not the family's.

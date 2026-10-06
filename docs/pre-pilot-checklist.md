@@ -236,6 +236,15 @@ Accepted when T005 was approved pending the human walkthrough. None blocks the w
 | [ ] | **The CRM opportunity is not changed by an order.** Won and Lost are shown on the order; a person updates the opportunity (plan decision 6). Revisit if the family wants the two linked. | order-conversion plan decision 6 | Later | Later |
 | [ ] | **Erasure and orders.** An order carries no contact field (the lead link is an id, like a quote). Erasing a contact leaves its orders and ledger untouched; confirm with the DPDP review that amounts and dates of a transaction may stay (it is a business record). | ADR 0014, ADR 0021 | **Before the gate opens** | Before the gate opens |
 
+## Review amendments (owner review 2026-10-07)
+
+| | Item | Source | Gate | Phase |
+| --- | --- | --- | --- | --- |
+| [ ] | **Legal review of keeping a keyed hash after a legal erasure (DPDP).** An erased person's e-mail and phone stay as HMAC keys in `suppression.key_events` so that they are never contacted again, and a number or address shared with a living contact stays suppressed after that contact is lifted. Counsel must confirm that keeping the keyed hash is lawful, for how long, and what the erasure notice must say. | ADR 0014, ADR 0020 | **Before the gate opens** | Before the gate opens |
+| [ ] | **Confirm with the owner: an Admin may not cancel an order that carries money.** The Owner (with a second factor) decides; an Admin cancels only an order with nothing paid. | ADR 0021 amendments | Before real data | Before real data |
+| [ ] | **Confirm with the owner: the lead's latest order decides the follow-up stop.** A lead with an accepted order in fulfilment and a LATER open order (another quote) is not stopped by the older order. Alternative: any accepted order stops it. | ADR 0021 amendments | Before T010 part 2 | Before T010 part 2 |
+| [ ] | **A key shared by a living contact and an erased person stays suppressed for ever** (it can only be released by a person who is not erased AND a key whose suppression did not come from an erasure). Revisit if recycled phone numbers become a problem; the Owner has no screen to release such a key. | ADR 0020 | Pilot data | Later |
+
 ## Local-first sequence (ADR 0017, 2026-10-05)
 
 | | Item | Source | Gate | Phase |
