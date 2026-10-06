@@ -280,6 +280,27 @@ ports or pushes; integration, approvals and real payment verification belong to 
 `./scripts/check-lane-paths.sh c main` output:
 `Lane C: changed paths allowed under base policy` (exit 0).
 
+## Quote text: baseline
+
+- Retry fetched origin/main with merged CSV PR (5d912b7); lane/c is already at
+  that HEAD and started clean. Work changes only quote_text/**, its plan and C notes.
+- Owner confirmed separate {quote, approved, expected_engine_hash, display}
+  wrapper; engine status stays draft. approved is A's authoritative approval,
+  not the engine's needs_owner_approval flag. Hash must equal the approved record.
+- Owner confirmed 200-character ordinary/display strings, separately bounded
+  generated trace.text (4,000 characters). Metadata never appears in output.
+- Pure English templates, Indian rupee grouping and exact bps percentages;
+  no clocks/I/O/translations/sending. All display markup is neutralized, unsafe
+  control/bidi characters reject, every rendered line <=60 Unicode characters.
+- Input limits: <=30 quote items, <=10 notes, generated output <=500 lines;
+  nested preflight before validation/hash, strict types/unknown-key rejection.
+- Uses exact engine money fields; traces supply rates. Checks monetary/date
+  consistency. A owns approval/auth, recomputation and stored-result binding:
+  engine input hash is not a result signature. Human copies text; no system send.
+- make test-packages auto-discovers package: 28 text + 149 existing tests pass
+  (177 total), including 250 seeded real-engine amount round trips and hostile
+  inputs. make check-leftovers passes. Manual mutation evidence follows separately.
+
 ## Price-list CSV: baseline
 
 - Retried requested fetch/fast-forward successfully to origin/main 7b78665;

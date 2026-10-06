@@ -1,0 +1,12 @@
+{
+  "engine_request": {
+    "as_of": "2026-10-07",
+    "price_list": [{"sku": "SYN-TEXT-A", "name": "Synthetic weave", "unit_price": 12345, "minimum_order_quantity": 1, "price_breaks": [], "tax_bps": 1250}],
+    "customer": {"kind": "new"},
+    "order_lines": [{"sku": "SYN-TEXT-A", "qty": 3, "discount_bps": 500}],
+    "policy": {"discount_ceiling_bps": 1000, "shipping": {"flat_fee": 101, "tax_bps": 500}, "validity_days": 7,
+      "payment_terms": {"new_advance_bps": 2500, "repeat_advance_bps": 0, "net_days": 15}, "tax_mode": "exclusive"}
+  },
+  "display": {"seller_name": "Synthetic Seller", "customer_name": "Synthetic Customer", "quote_ref": "SYN-Q-001", "issued_on": "2026-10-07", "valid_until": "2026-10-14",
+    "line_labels": {"SYN-TEXT-A": "Synthetic weave A"}, "payment_terms_text": "Synthetic terms agreed by the owner.", "notes": ["Synthetic demonstration only."]}
+}
