@@ -5,6 +5,7 @@
 --      for it, and the order_events check allows it on a `cancel`
 --   3. public.approve_quote, public.withdraw_approved_quote   SM237 only while the quote's order is NOT declined, expired or cancelled; app.order_stops_followups: the lead's
 --      LATEST order decides, unless the lead has a newer approved quote with no order yet
+--   4. app.operator_seed_order_policy   a synthetic order policy for a LOCAL workspace (callable by no application role)
 
 -- ---------------------------------------------------------------------------------------------
 -- 1. shared keys
@@ -371,3 +372,30 @@ as $$
     else null end
 $$;
 
+-- ---------------------------------------------------------------------------------------------
+-- 4. app.operator_seed_order_policy: SYNTHETIC, for a LOCAL workspace. Creates the policy only when the workspace has none (a second run changes nothing). Callable by no
+-- application role. The values are invented defaults (advance required for preparation and dispatch, cancellation until preparation, no zero-value orders): the real ones are
+-- the owner's (docs/pre-pilot-checklist.md, "Orders"). The content hash is the one create_order_policy_version would compute, so a later replay of the same policy is recognised.
+-- ---------------------------------------------------------------------------------------------
+create function app.operator_seed_order_policy(p_tenant_slug text) returns jsonb
+language plpgsql
+set search_path = ''
+as $$
+declare
+  v_tenant uuid;
+  v_id     uuid := gen_random_uuid();
+begin
+  select t.id into v_tenant from public.tenants t where t.slug = p_tenant_slug;
+  if v_tenant is null then
+    raise exception 'tenant not found' using errcode = 'P0002';
+  end if;
+  if exists (select 1 from public.order_policy_versions v where v.tenant_id = v_tenant) then
+    return jsonb_build_object('order_policy_version', null, 'created', false);
+  end if;
+  insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256)
+  values (v_id, v_tenant, 1, app.quote_today(), true, true, 'in_preparation', false,
+          app.quote_content_hash(jsonb_build_object('advance_required', true, 'dispatch_requires_advance', true, 'cancel_allowed_until_state', 'in_preparation', 'allow_zero_value_orders', false)));
+  return jsonb_build_object('order_policy_version', v_id, 'created', true);
+end;
+$$;
+revoke all on function app.operator_seed_order_policy(text) from public, anon, authenticated, service_role;

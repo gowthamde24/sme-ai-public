@@ -648,3 +648,24 @@ def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:
         )
         == "3"
     )
+
+
+def test_the_synthetic_order_policy_seed_is_operator_only_idempotent_and_usable(client: Any, stack: Any, signup: Any) -> None:
+    eval_world = World(client, stack, signup)  # a fresh workspace: no policy yet
+    b = eval_world.a
+    slug = operator_sql.sql(f"select slug from public.tenants where id = '{b.id}'")
+    first = json.loads(operator_sql.sql(f"select app.operator_seed_order_policy('{slug}')"))
+    assert first["created"] is True
+    assert json.loads(operator_sql.sql(f"select app.operator_seed_order_policy('{slug}')")) == {"order_policy_version": None, "created": False}
+    rows = pg(eval_world.stack, b.users["sales"], "GET", "/order_policy_versions?select=id,advance_required,dispatch_requires_advance,cancel_allowed_until_state,allow_zero_value_orders").json()
+    assert rows == [{"id": first["order_policy_version"], "advance_required": True, "dispatch_requires_advance": True, "cancel_allowed_until_state": "in_preparation", "allow_zero_value_orders": False}]
+    assert pg(eval_world.stack, b.users["viewer"], "GET", "/order_policy_versions").json() == []
+    assert pg(eval_world.stack, b.users["owner"], "POST", "/rpc/operator_seed_order_policy", json={"p_tenant_slug": slug}).status_code in (404, 406)
+    # an order made under it
+    qw = QuoteWorld(eval_world, b, n_products=2)
+    qw.price_version([qw.item(0, 400000, 4, 500)])
+    qw.policy_version()
+    seeded = OrderWorld(qw)
+    order, _ = seeded.order()
+    assert seeded.snapshot(order).advance_required is True
+    assert operator_sql.sql(f"select policy_version_id from public.orders where id = '{order}'") == first["order_policy_version"]

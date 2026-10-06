@@ -1,5 +1,5 @@
 """SYNTHETIC quote reference data for a LOCAL workspace (T009): six invented products, a price list version, a quote policy version and a mapper
-config version. Run it with `make seed-quote-data TENANT=<workspace slug>`.
+config version, and (review fix 4) an order policy version. Run it with `make seed-quote-data TENANT=<workspace slug>`.
 
 It calls the operator function `app.operator_seed_quote_reference_data` inside the local database container (`docker exec ... psql`): no application
 role can call that function, no key of any kind is read, and the script REFUSES unless the configured Supabase URL is this machine. It creates only
@@ -37,7 +37,11 @@ def container_name(config_text: str) -> str:
 def seed_sql(slug: str) -> str:
     if not SLUG.fullmatch(slug):
         raise ValueError("the workspace slug is not a valid slug")
-    return f"select app.operator_seed_quote_reference_data('{slug}')"
+    # the quote reference data and the order policy (review fix 4): both operator functions, both idempotent, both synthetic
+    return (
+        "select jsonb_build_object('quote_reference_data', app.operator_seed_quote_reference_data('"
+        f"{slug}'), 'order_policy', app.operator_seed_order_policy('{slug}'))"
+    )
 
 
 def main(argv: list[str] | None = None) -> int:

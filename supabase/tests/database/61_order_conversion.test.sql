@@ -751,6 +751,26 @@ select is(app.order_stops_followups(tests.rid('M8')), 'accepted', 'J25 an OLDER 
 select ok(not has_function_privilege('authenticated', 'app.order_stops_followups(uuid)', 'execute'), 'J14 it is a helper for definer functions, not callable by a client');
 select is((select provolatile from pg_proc where oid = 'app.order_stops_followups(uuid)'::regprocedure), 's', 'J15 and it is read-only (STABLE): it takes no lock');
 
+-- ============================================================================ J2. app.operator_seed_order_policy (review fix 4): synthetic, operator-only, idempotent
+select ok(not has_function_privilege('authenticated', 'app.operator_seed_order_policy(text)', 'execute') and not has_function_privilege('anon', 'app.operator_seed_order_policy(text)', 'execute')
+          and not has_function_privilege('service_role', 'app.operator_seed_order_policy(text)', 'execute') and not has_function_privilege('public', 'app.operator_seed_order_policy(text)', 'execute'),
+          'S1 no application role can run the order policy seed');
+select is(pg_temp.priv($q$select app.operator_seed_order_policy('no-such-workspace')$q$), 'P0002', 'S2 an unknown workspace is refused');
+select is((select count(*) from public.order_policy_versions where tenant_id = tests.tid('b')), 1::bigint, 'S3 (setup) tenant B already has a policy from the tests above, so the seed must leave it alone');
+select is(app.operator_seed_order_policy('tenant-b') ->> 'created', 'false', 'S4 a workspace that has a policy is not seeded (a second run changes nothing)');
+select is((select count(*) from public.order_policy_versions where tenant_id = tests.tid('b')), 1::bigint, 'S5 and nothing was added');
+create temp table seed_t as select gen_random_uuid() as id;
+insert into public.tenants (id, name, slug) values ((select id from seed_t), 'Seed Synthetic', 'seed-synthetic');
+select is(app.operator_seed_order_policy('seed-synthetic') ->> 'created', 'true', 'S6 an empty workspace gets the synthetic policy');
+select is((select version_no || '/' || advance_required || '/' || dispatch_requires_advance || '/' || cancel_allowed_until_state || '/' || allow_zero_value_orders || '/' || (effective_from = app.quote_today()) from public.order_policy_versions where tenant_id = (select id from seed_t)),
+          '1/true/true/in_preparation/false/true', 'S7 advance required for preparation and dispatch, cancellation until preparation, no zero-value orders, effective today');
+select is((select content_sha256 from public.order_policy_versions where tenant_id = (select id from seed_t)),
+          app.quote_content_hash(jsonb_build_object('advance_required', true, 'dispatch_requires_advance', true, 'cancel_allowed_until_state', 'in_preparation', 'allow_zero_value_orders', false)),
+          'S8 its content hash is the one create_order_policy_version computes for the same policy');
+select is(app.operator_seed_order_policy('seed-synthetic') ->> 'created', 'false', 'S9 a second run creates nothing');
+select is((select count(*) from public.order_policy_versions where tenant_id = (select id from seed_t)), 1::bigint, 'S10 one policy');
+select is((select count(*) from public.audit_events where entity_type = 'order_policy_version' and tenant_id = (select id from seed_t)), 1::bigint, 'S11 the seed is audited like any policy');
+
 -- ============================================================================ K. invariants over EVERY order
 select is((select count(*) from public.orders o where o.tenant_id in (tests.tid('a'), tests.tid('b')) and o.state is distinct from (select e.new_state from public.order_events e where e.order_id = o.id order by e.seq desc limit 1)), 0::bigint,
           'K1 the cache equals the ledger: every order''s state is the new state of its latest event');

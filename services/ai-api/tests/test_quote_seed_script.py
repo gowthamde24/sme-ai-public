@@ -44,7 +44,10 @@ def test_the_script_refuses_a_hosted_url_without_touching_docker(
 
 @pytest.mark.parametrize("slug", ["demo", "tenant-a", "a1"])
 def test_a_valid_slug_becomes_the_one_statement(slug: str) -> None:
-    assert seed.seed_sql(slug) == f"select app.operator_seed_quote_reference_data('{slug}')"
+    assert seed.seed_sql(slug) == (
+        f"select jsonb_build_object('quote_reference_data', app.operator_seed_quote_reference_data('{slug}'), "
+        f"'order_policy', app.operator_seed_order_policy('{slug}'))"
+    )
 
 
 @pytest.mark.parametrize(
@@ -70,5 +73,5 @@ def test_the_script_reads_no_secret_and_runs_only_the_operator_function() -> Non
         and "open(" not in source
     )
     assert (
-        source.count("select app.") == 1
-    )  # the one statement it runs, built by seed_sql from a validated slug
+        source.count("select jsonb_build_object(") == 1 and source.count("app.operator_seed_") == 3
+    )  # the one statement it runs (two operator functions), built by seed_sql from a validated slug; the third is the docstring
