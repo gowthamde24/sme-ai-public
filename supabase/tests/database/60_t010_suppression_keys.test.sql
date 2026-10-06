@@ -407,6 +407,12 @@ select is((select count(*) from suppression.key_events where tenant_id = tests.t
 select is(pg_temp.rk('a_sales', 'n3', pg_temp.ks(null, 'n_shared')) ::jsonb ->> 'flagged', 'true', 'N3 a NEW contact with that number arrives flagged (the number is still suppressed)');
 select is(pg_temp.lift('n3'), 'true', 'N4 lifting the new contact too');
 select is(pg_temp.chk_phone('n_shared'), '{"email": false, "phone": true, "suppressed": true}', 'N5 ... still suppressed: the first remaining holder (n2) is suppressed');
+-- another workspace holds the same value suppressed: it is another key (the tenant is part of it) and never blocks this workspace's lift
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('nb1'), tests.tid('b'), tests.rid('b_company'), 'N tenant b', 'nb1@example.test', '+00 90000 00499');
+select pg_temp.sc('b_owner', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('nb1'), pg_temp.ks('nb1_mail', 'n_shared')));
+select pg_temp.sc('b_owner', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('b'), tests.rid('nb1')));
+select pg_temp.sc('b_owner', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('nb1'), pg_temp.ks('nb1_mail', 'n_shared'))) is not null;
 select pg_temp.lift('n2');
 select is(pg_temp.chk_phone('n_shared'), '{"email": false, "phone": false, "suppressed": false}', 'N6 lifting the LAST suppressed holder lifts the key');
 select is((select count(*) from suppression.key_events where tenant_id = tests.tid('a') and key_hmac = pg_temp.h('n_shared') and event = 'lifted'), 1::bigint, 'N7 with exactly one lift event');
@@ -419,6 +425,81 @@ select is(pg_temp.exec('a_owner', 'ne5') ::jsonb ->> 'status', 'executed', 'N9 a
 select pg_temp.sup('n4');
 select pg_temp.lift('n4');
 select is(pg_temp.chk_phone('n_gone'), '{"email": false, "phone": true, "suppressed": true}', 'N10 the number of an ERASED person stays suppressed when a living contact that shared it is lifted');
+
+-- the same rules for an E-MAIL key (two contacts can hold the same e-mail key only through the data layer: the address is unique per workspace, so the keys are recorded directly)
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('ne1'), tests.tid('a'), tests.rid('a_company'), 'N email one', 'ne1@example.test', null),
+  (tests.rid('ne2'), tests.tid('a'), tests.rid('a_company'), 'N email two', 'ne2@example.test', null),
+  (tests.rid('ne3'), tests.tid('a'), tests.rid('a_company'), 'N email three', 'ne3@example.test', null),
+  (tests.rid('ne4'), tests.tid('a'), tests.rid('a_company'), 'N email four', 'ne4@example.test', null),
+  (tests.rid('ne5'), tests.tid('a'), tests.rid('a_company'), 'N email five', 'ne5@example.test', null);
+create function pg_temp.chk_email(p_word text) returns text language sql as $$
+  select pg_temp.sc('a_sales', format('select public.check_suppression(%L, %L::jsonb)', tests.tid('a'), jsonb_build_object('email', jsonb_build_array(pg_temp.h(p_word)))::text)) $$;
+select pg_temp.rk('a_sales', 'ne1', pg_temp.ks('ne_shared', null));
+select pg_temp.rk('a_sales', 'ne2', pg_temp.ks('ne_shared', null));
+select pg_temp.sup('ne1');
+select pg_temp.sup('ne2');
+select pg_temp.lift('ne1');
+select is(pg_temp.chk_email('ne_shared'), '{"email": true, "phone": false, "suppressed": true}', 'N11 an E-MAIL key shared by two suppressed contacts: lifting one leaves it suppressed');
+select pg_temp.lift('ne2');
+select is(pg_temp.chk_email('ne_shared'), '{"email": false, "phone": false, "suppressed": false}', 'N12 and lifting the last holder releases it');
+-- a holder that was already LIFTED does not block (e-mail and phone)
+select pg_temp.rk('a_sales', 'ne3', pg_temp.ks('ne_lifted', null));
+select pg_temp.rk('a_sales', 'ne4', pg_temp.ks('ne_lifted', null));
+select pg_temp.sup('ne3');
+select pg_temp.sup('ne4');
+select pg_temp.lift('ne3');
+select pg_temp.lift('ne4');
+select is(pg_temp.chk_email('ne_lifted'), '{"email": false, "phone": false, "suppressed": false}', 'N13 two holders lifted one after the other: released (the first, already lifted, does not block the second)');
+-- an e-mail key suppressed by an ERASURE stays suppressed
+select pg_temp.rk('a_sales', 'ne5', pg_temp.ks('ne_gone', null));
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('ne6'), tests.tid('a'), tests.rid('a_company'), 'N email six', 'ne6@example.test', null);
+select pg_temp.rk('a_sales', 'ne6', pg_temp.ks('ne_gone', null));
+select pg_temp.req('nee6', 'ne6') is not null;
+select is(pg_temp.exec('a_owner', 'nee6') ::jsonb ->> 'status', 'executed', 'N14 a contact holding the e-mail key is erased');
+select pg_temp.sup('ne5');
+select pg_temp.lift('ne5');
+select is(pg_temp.chk_email('ne_gone'), '{"email": true, "phone": false, "suppressed": true}', 'N15 the e-mail key of an ERASED person stays suppressed when a living contact that shared it is lifted');
+-- the HISTORY of a key: the erasure guard reads the LATEST event, not the first (a key suppressed, lifted, then erased)
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('nh1'), tests.tid('a'), tests.rid('a_company'), 'N hist one', 'nh1@example.test', '+00 90000 00451'),
+  (tests.rid('nh2'), tests.tid('a'), tests.rid('a_company'), 'N hist two', 'nh2@example.test', '+00 90000 00452');
+select pg_temp.rk('a_sales', 'nh1', pg_temp.ks('nh1_mail', 'n_hist'));
+select pg_temp.rk('a_sales', 'nh2', pg_temp.ks('nh2_mail', 'n_hist'));
+select pg_temp.sup('nh1');
+select pg_temp.lift('nh1');
+select pg_temp.req('nhe2', 'nh2') is not null;
+select pg_temp.exec('a_owner', 'nhe2') is not null;
+select pg_temp.sup('nh1');
+select pg_temp.lift('nh1');
+select is(pg_temp.chk_phone('n_hist'), '{"email": false, "phone": true, "suppressed": true}', 'N16 a number suppressed, lifted, then erased stays suppressed: the guard reads the latest event');
+
+-- an e-mail key held by ANOTHER workspace never blocks this one; and the e-mail key's history (suppressed, lifted, erased) is read by its latest event
+insert into public.contacts (id, tenant_id, company_id, full_name, email, phone) values
+  (tests.rid('ne7'), tests.tid('a'), tests.rid('a_company'), 'N email seven', 'ne7@example.test', null),
+  (tests.rid('ne8'), tests.tid('a'), tests.rid('a_company'), 'N email eight', 'ne8@example.test', null),
+  (tests.rid('nb2'), tests.tid('b'), tests.rid('b_company'), 'N tenant b email', 'nb2@example.test', null),
+  (tests.rid('nh3'), tests.tid('a'), tests.rid('a_company'), 'N hist three', 'nh3@example.test', null),
+  (tests.rid('nh4'), tests.tid('a'), tests.rid('a_company'), 'N hist four', 'nh4@example.test', null);
+select pg_temp.rk('a_sales', 'ne7', pg_temp.ks('ne_x2', null));
+select pg_temp.rk('a_sales', 'ne8', pg_temp.ks('ne_x2', null));
+select pg_temp.sc('b_owner', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid('nb2'), pg_temp.ks('ne_x2', null))) is not null;
+select pg_temp.sc('b_owner', format($q$select public.suppress_contact(%L, %L, 'opted_out', null, null) is not null$q$, tests.tid('b'), tests.rid('nb2'))) is not null;
+select pg_temp.sup('ne7');
+select pg_temp.sup('ne8');
+select pg_temp.lift('ne7');
+select pg_temp.lift('ne8');
+select is(pg_temp.chk_email('ne_x2'), '{"email": false, "phone": false, "suppressed": false}', 'N17 an e-mail key suppressed in ANOTHER workspace does not stop this workspace releasing it');
+select pg_temp.rk('a_sales', 'nh3', pg_temp.ks('ne_hist', null));
+select pg_temp.rk('a_sales', 'nh4', pg_temp.ks('ne_hist', null));
+select pg_temp.sup('nh3');
+select pg_temp.lift('nh3');
+select pg_temp.req('nhe4', 'nh4') is not null;
+select pg_temp.exec('a_owner', 'nhe4') is not null;
+select pg_temp.sup('nh3');
+select pg_temp.lift('nh3');
+select is(pg_temp.chk_email('ne_hist'), '{"email": true, "phone": false, "suppressed": true}', 'N18 an e-mail key suppressed, lifted, then erased stays suppressed (the latest event)');
 
 select * from finish();
 rollback;

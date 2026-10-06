@@ -2,6 +2,29 @@
 
 Record ticket, checklist row, evidence, unresolved risk and proposed status here. Lane A consolidates these into docs/pre-pilot-checklist.md after review.
 
+## Review fixes (steps 1-3, and the step 4 seed): mutation pass (2026-10-07)
+
+One pass over the guards changed by `20261020090000_review_fixes.sql`: the shared-key lift (e-mail and phone variants, the erasure guard, the per-key lock), the Owner's funded cancellation (SM234, the approver, the widened check, the message), SM237 for non-terminal orders only (approve and withdraw, per state), the lead's-latest-order follow-up stop, and the order policy seed. Same method as the pass above (the original runs first before every mutant; `PYTHONDONTWRITEBYTECODE=1`; `__pycache__` swept; the runner and the lists are scratch). 68 mutants.
+
+**Result: first pass 46 killed, 21 survived, 1 invalid (a typo in the mutant); 14 survivors closed with new tests and re-run killed, the invalid one fixed and killed, 7 equivalent => 61 killed + 7 equivalent.**
+
+| Survivor | What it was | Disposition |
+| --- | --- | --- |
+| RV1E1, RV1E2, RV1E7, RV1E8 (e-mail variants of the other-holder rule, a lifted holder, the erasure guard) | the first tests covered only a shared PHONE key | closed: pgTAP 60 N11-N15 (an e-mail key recorded through the data layer: an address is unique per workspace) |
+| RV1E4, RV1P4 another workspace's holder blocks | the second workspace's contact had no phone, so its key was never recorded | closed: N-section contacts in tenant b (phone and e-mail), N17 |
+| RV1E9, RV1P9 the erasure guard reads the earliest event | one-event histories cannot tell earliest from latest | closed: N16, N18 (suppressed, lifted, then erased) |
+| RV1EA no per-key lock before the check (e-mail), RV1PA (phone) | single-session tests cannot see a missing lock; two lifts at once leave a number suppressed for ever | closed: `test_suppression_races.py` (two lifts at once, phone and e-mail: the second waits and releases) |
+| RV303, RV312 an expired order still blocks approve / a declined order still blocks withdraw | only declined (approve) and cancelled / expired (withdraw) were tried | closed: I43b, I43c |
+| RV326 a newer quote WITH an order is counted as no new deal | the latest order was always the newest | closed: J26 (orders created out of quote order) |
+| RV328 a closed_paid order does not stop follow-ups | no lead had only a closed_paid order | closed: J28, J29 |
+| RV32F a newer approved quote of ANOTHER lead releases the stop | the other leads' quotes were older | closed: J27 |
+| RV1E5, RV1P5 the lifted contact itself counts as a holder | EQUIVALENT: in its own transaction the lifted contact is no longer suppressed | documented |
+| RV1E6, RV1P6 an erased contact counts as a holder | EQUIVALENT: erasure deletes its stored keys, so it is never a holder | documented |
+| RV1EB, RV1PB the trigger's lock names another key | EQUIVALENT: a coarser lock (every key of that kind in the workspace) serialises more, never less | documented |
+| RV324 an equal quote number counts as newer | EQUIVALENT: that is the latest order's own quote, which has an order | documented |
+
+Failing-first for the behaviours: the old definition of the sync trigger fails pgTAP 60 section N; Admin cancel with funds, SM237 after a decline and the stop matrix fail on the previous definitions (the earlier pgTAP assertions F42, I-section and J9 had to change with them).
+
 ## T010 part 1 (the hard gate) and order conversion (database and proofs): mutation pass (2026-10-06)
 
 One pass over the SQL guards of the two new migrations: `20261018090000_t010_suppression_keys.sql` (125 mutants) and `20261019090000_order_conversion.sql` (221 mutants). Method: `PYTHONDONTWRITEBYTECODE=1`, every `__pycache__` swept first (no Python source was mutated). A mutant re-creates ONE function (the latest definition with one text replacement), or drops / disables ONE trigger, constraint or index, runs the tests that should notice, and restores the original; the original is run first before every mutant (a failing baseline stops the run), and the database was reset before each full pass. Tests that kill a mutant: pgTAP 60 / 61 (about a second each), the real-stack suites for the lock and builder mutants (`test_order_races.py`, `test_order_direct_postgrest.py`, `test_order_equivalence.py`, `test_suppression_races.py`). The runner and the mutant lists are scratch files, not in the repository.

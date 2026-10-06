@@ -385,6 +385,8 @@ select is(pg_temp.rec('a_admin', 'o7', 'record_payment', 30001, 'p7b'), 'ERR:SM2
 select is(pg_temp.rec('a_owner', 'o7', 'record_refund', 5000, 'r7a'), 'advance_requested', 'F40 a refund below the advance steps back to advance_requested');
 select is(pg_temp.rec('a_owner', 'o7', 'record_refund', 5000, 'r7a'), 'ERR:SM232:DUPLICATE_REFUND_ID', 'F41 a refund id is used once (DUPLICATE_REFUND_ID)');
 select is(pg_temp.rec('a_admin', 'o7', 'cancel'), 'ERR:SM234', 'F42 an Admin cannot cancel an order with money in it (SM234: review fix 2)');
+select is(split_part(pg_temp.err('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o7'), 'cancel')), '|', 2), 'this action needs the owner', 'F42a2 the refusal says so in a fixed message (and the Admin''s refund does too)');
+select is(split_part(pg_temp.err('a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o7'), 'record_refund', 100, tests.rid('rmsg'))), '|', 2), 'this action needs the owner', 'F42a3 the same message for a refund');
 select is(pg_temp.rec('a_sales', 'o7', 'cancel'), 'ERR:42501', 'F42b and Sales cannot cancel at all');
 select is(pg_temp.at('aal1', 'a_admin', pg_temp.callsql('a_admin', pg_temp.ord('o7'), 'cancel')), 'SM306', 'F42c an Admin without the second factor is told about the factor first');
 select is(pg_temp.at('aal1', 'a_owner', pg_temp.callsql('a_owner', pg_temp.ord('o7'), 'cancel')), 'SM306', 'F42d the Owner needs the second factor to cancel');
@@ -650,6 +652,16 @@ select is(pg_temp.j(pg_temp.draft(pg_temp.q2('c2'), 'c2'), 'status'), 'draft', '
 select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('c2')), 'status'), 'approved', 'I42 and approved (replacing the cancelled deal''s quote)');
 -- an expired order (a privileged fixture): its quote can be withdrawn
 select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('oe_quote')), 'withdrawn'), 'true', 'I43 an expired order''s quote can be withdrawn');
+-- an EXPIRED order (forced through a legal ledger row, as a quote cannot expire inside a test): its quote may be replaced
+select pg_temp.deal('x1');
+insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, occurred_at, engine_version, request_text, result_text, canonical_hash)
+values (gen_random_uuid(), tests.tid('a'), pg_temp.ord('x1'), 2, 'expire', 'quote_approved', 'expired', now(), '1.0.0', '{}', '{}', repeat('b', 64));
+update public.orders set state = 'expired', closed_at = now() where id = pg_temp.ord('x1');
+select pg_temp.draft(pg_temp.q2('x1'), 'x1');
+select is(pg_temp.j(pg_temp.approve_q(pg_temp.q2('x1')), 'status'), 'approved', 'I43b a quote can replace the quote of an EXPIRED order');
+-- a declined order: its quote can be withdrawn
+select pg_temp.deal('w1');  select pg_temp.rec('a_sales', 'w1', 'send_quote');  select pg_temp.rec('a_sales', 'w1', 'customer_decline', null, null, 'timing');
+select is(pg_temp.j(pg_temp.withdraw_q(tests.rid('w1_q1')), 'withdrawn'), 'true', 'I43c the quote of a DECLINED order can be withdrawn');
 -- accepted, in-flight and closed_paid orders still refuse, both ways
 select pg_temp.deal('a1');  select pg_temp.rec('a_sales', 'a1', 'send_quote');  select pg_temp.rec('a_sales', 'a1', 'customer_accept');
 select pg_temp.deal('p1');  select pg_temp.rec('a_sales', 'p1', 'send_quote');  select pg_temp.rec('a_sales', 'p1', 'customer_accept');  select pg_temp.rec('a_sales', 'p1', 'start_preparation');
@@ -747,6 +759,21 @@ select is(app.order_stops_followups(tests.rid('M7')), null, 'J24 ... unless a ne
 select pg_temp.mkq('m8x', 100000, 40000, null, 'approved', 'a', 'M8');
 select pg_temp.mkq('m8a', 100000, 40000, null, 'approved', 'a', 'M8');  select pg_temp.mko('m8a');  select pg_temp.rec('a_sales', 'm8a', 'send_quote');  select pg_temp.rec('a_sales', 'm8a', 'customer_accept');
 select is(app.order_stops_followups(tests.rid('M8')), 'accepted', 'J25 an OLDER approved quote with no order does not count as a new deal');
+
+-- the stop reason is per LEAD and per ORDER (more cases from the mutation pass)
+insert into public.leads (id, tenant_id, company_id, contact_id) select tests.rid(n), tests.tid('a'), tests.rid('a_company'), tests.rid('a_contact') from unnest(array['M9', 'M10']) n;
+select pg_temp.mkq('m9a', 100000, 40000, null, 'approved', 'a', 'M9');
+select pg_temp.mkq('m9b', 100000, 40000, null, 'approved', 'a', 'M9');
+select pg_temp.mko('m9b');  select pg_temp.mko('m9a');
+select pg_temp.rec('a_sales', 'm9a', 'send_quote');  select pg_temp.rec('a_sales', 'm9a', 'customer_decline', null, null, 'price');
+select is(app.order_stops_followups(tests.rid('M9')), 'declined', 'J26 the LATEST order (m9a, created last) is declined; the newer QUOTE m9b already has its own order and is not a "new deal"');
+select is(app.order_stops_followups(tests.rid('M5')), 'declined', 'J27 other leads'' newer approved quotes with no order do not release this lead');
+select pg_temp.mkq('m10a', 100000, 40000, null, 'approved', 'a', 'M10');  select pg_temp.mko('m10a');
+select pg_temp.rec('a_sales', 'm10a', 'send_quote');  select pg_temp.rec('a_sales', 'm10a', 'customer_accept');  select pg_temp.rec('a_admin', 'm10a', 'record_payment', 100000, 'pm10');
+select pg_temp.rec('a_sales', 'm10a', 'start_preparation');  select pg_temp.rec('a_sales', 'm10a', 'dispatch');
+select is(pg_temp.rec('a_sales', 'm10a', 'deliver'), 'closed_paid', 'J28 (setup) a lead whose only order is closed_paid');
+select is(app.order_stops_followups(tests.rid('M10')), 'accepted', 'J29 a closed_paid order stops follow-ups (the deal is done: no cadence)');
+
 
 select ok(not has_function_privilege('authenticated', 'app.order_stops_followups(uuid)', 'execute'), 'J14 it is a helper for definer functions, not callable by a client');
 select is((select provolatile from pg_proc where oid = 'app.order_stops_followups(uuid)'::regprocedure), 's', 'J15 and it is read-only (STABLE): it takes no lock');
