@@ -90,7 +90,7 @@ begin
                               where t.tgrelid = format('public.%I', k.child)::regclass
                                 and not t.tgisinternal
                                 and fp.pronamespace = 'app'::regnamespace
-                                and fp.proname in ('append_only', 'guard_immutable_record'));
+                                and fp.proname in ('append_only', 'guard_immutable_record', 'quote_guard_update'));
     -- agent_runs.lead_id / enquiry_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.

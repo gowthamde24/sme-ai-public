@@ -151,6 +151,33 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('mapper_config_versions',
    $$insert into public.mapper_config_versions (id, tenant_id, version_no, effective_from, config, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.mapper_config_versions where tenant_id = %1$L), current_date, '{}'::jsonb, repeat('2', 64))$$,
    'version_no = version_no', $$delete from public.mapper_config_versions where id = %2$L$$, true),
+  -- T009 part 2. Picks are written by pick_requirement_line_product, quotes and lines by the quote functions: no role inserts, updates or deletes them
+  -- directly, and a Viewer reads none of them. The fixtures build their parents in one statement (a CTE chain); the quote is REJECTED so that the
+  -- partial unique indexes (one draft, one approved per requirement) never meet a second generic insert.
+  ('requirement_line_picks',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id)
+     insert into public.requirement_line_picks (id, tenant_id, requirement_id, line_no, product_id, qty, sale_unit, decided_by) select %2$L, %1$L, r.id, 1, (select id from public.products where tenant_id = %1$L order by id limit 1), 1, 'piece', %5$L from r$$,
+   'qty = qty', $$delete from public.requirement_line_picks where id = %2$L$$, false),
+  ('quotes',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id),
+          v as (insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l returning id),
+          p as (insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.quote_policy_versions where tenant_id = %1$L), current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64)) returning id)
+     insert into public.quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, price_list_version_id, policy_version_id, engine_version, request_text, result_text, canonical_hash, customer_kind, delivery_state, gst_supply, as_of, valid_until, due_date, merchandise_net_paise, item_tax_paise, shipping_net_paise, shipping_tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', v.id, p.id, '1.1.0', '{}', '{}', repeat('3', 64), 'new', 'TS', 'intra_state', current_date, current_date, current_date, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, v, p$$,
+   'status = status', $$delete from public.quotes where id = %2$L$$, true),
+  ('quote_lines',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          l as (insert into public.price_lists (id, tenant_id, name) values (%2$L, %1$L, 'Generic price list') returning id),
+          v as (insert into public.price_list_versions (id, tenant_id, price_list_id, version_no, effective_from, item_count, content_sha256) select %2$L, %1$L, l.id, 1, current_date, 1, repeat('0', 64) from l returning id),
+          p as (insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.quote_policy_versions where tenant_id = %1$L), current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64)) returning id),
+          z as (insert into public.quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, price_list_version_id, policy_version_id, engine_version, request_text, result_text, canonical_hash, customer_kind, delivery_state, gst_supply, as_of, valid_until, due_date, merchandise_net_paise, item_tax_paise, shipping_net_paise, shipping_tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', v.id, p.id, '1.1.0', '{}', '{}', repeat('3', 64), 'new', 'TS', 'intra_state', current_date, current_date, current_date, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, v, p returning id)
+     insert into public.quote_lines (id, tenant_id, quote_id, line_no, requirement_line_no, product_id, sku, name, sale_unit, qty, unit_price_applied_paise, line_subtotal_paise, net_paise, tax_paise, gross_paise, tax_bps) select %2$L, %1$L, z.id, 1, 1, (select id from public.products where tenant_id = %1$L order by id limit 1), 'G-LINE', 'Generic line', 'piece', 1, 100, 100, 100, 5, 105, 500 from z$$,
+   'sku = sku', $$delete from public.quote_lines where id = %2$L$$, false),
   ('memberships',
    $$insert into public.memberships (tenant_id, user_id, role) values (%1$L, %5$L, 'viewer')$$,
    'role = role', $$delete from public.memberships where tenant_id = %1$L and user_id = %5$L$$, false),
@@ -234,6 +261,13 @@ select t, r, s, i, u, d from (values
   ('quote_policy_versions','sales', true, false, false, false), ('quote_policy_versions','viewer', false, false, false, false),
   ('mapper_config_versions','owner', true, false, false, false), ('mapper_config_versions','admin', true, false, false, false),
   ('mapper_config_versions','sales', true, false, false, false), ('mapper_config_versions','viewer', false, false, false, false),
+  -- T009 part 2: Owner / Admin / Sales read picks, quotes and lines; a Viewer reads no price and no total; nobody writes directly.
+  ('requirement_line_picks','owner', true, false, false, false), ('requirement_line_picks','admin', true, false, false, false),
+  ('requirement_line_picks','sales', true, false, false, false), ('requirement_line_picks','viewer', false, false, false, false),
+  ('quotes',               'owner', true, false, false, false), ('quotes',               'admin', true, false, false, false),
+  ('quotes',               'sales', true, false, false, false), ('quotes',               'viewer', false, false, false, false),
+  ('quote_lines',          'owner', true, false, false, false), ('quote_lines',          'admin', true, false, false, false),
+  ('quote_lines',          'sales', true, false, false, false), ('quote_lines',          'viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

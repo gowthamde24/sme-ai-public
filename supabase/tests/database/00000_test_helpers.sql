@@ -269,6 +269,18 @@ begin
     values (tests.rid(p || '_policy_version'), tests.tid(p), 1, current_date, 0, 0, 0, 15, 0, 0, 30, 'TS', repeat('1', 64));
     insert into public.mapper_config_versions (id, tenant_id, version_no, effective_from, config, content_sha256)
     values (tests.rid(p || '_mapper_version'), tests.tid(p), 1, current_date, '{}'::jsonb, repeat('2', 64));
+    -- part 2 (needs seed_t008 first: the tenant's enquiry and requirement): one rejected quote with one line, and one pick
+    insert into public.quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, price_list_version_id, policy_version_id, engine_version, request_text,
+                               result_text, canonical_hash, customer_kind, delivery_state, gst_supply, as_of, valid_until, due_date, merchandise_net_paise, item_tax_paise,
+                               shipping_net_paise, shipping_tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+    values (tests.rid(p || '_quote'), tests.tid(p), 1, tests.rid(p || '_requirement'), tests.rid(p || '_enquiry'), tests.rid(p || '_lead'), 'rejected',
+            tests.rid(p || '_price_version'), tests.rid(p || '_policy_version'), '1.1.0', '{}', '{}', repeat('3', 64), 'new', 'TS', 'intra_state', current_date,
+            current_date, current_date, 0, 0, 0, 0, 0, 0, 0, false, tests.uid(p || '_owner'), now(), 'other');
+    insert into public.quote_lines (id, tenant_id, quote_id, line_no, requirement_line_no, product_id, sku, name, sale_unit, qty, unit_price_applied_paise,
+                                    line_subtotal_paise, net_paise, tax_paise, gross_paise, tax_bps)
+    values (tests.rid(p || '_quote_line'), tests.tid(p), tests.rid(p || '_quote'), 1, 1, tests.rid(p || '_product'), 'SKU-1', 'Product ' || p, 'piece', 1, 100, 100, 100, 5, 105, 500);
+    insert into public.requirement_line_picks (id, tenant_id, requirement_id, line_no, product_id, qty, sale_unit, decided_by)
+    values (tests.rid(p || '_pick'), tests.tid(p), tests.rid(p || '_requirement'), 1, tests.rid(p || '_product'), 1, 'piece', tests.uid(p || '_owner'));
   end loop;
 end $$;
 

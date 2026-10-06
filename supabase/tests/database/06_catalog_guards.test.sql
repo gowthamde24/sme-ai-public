@@ -164,7 +164,12 @@ select is(
         -- T009 part 1: Owner / Admin publish a price list, a quote policy or a mapper config version (role proven first, then aal2)
         'public.create_price_list_version',
         'public.create_quote_policy_version',
-        'public.create_mapper_config_version')),
+        'public.create_mapper_config_version',
+        -- T009 part 2: a person picks a product, Sales+ create a draft quote, Owner / Admin approve or reject it (role, and aal2 for approval, proven inside)
+        'public.pick_requirement_line_product',
+        'public.create_quote_draft',
+        'public.approve_quote',
+        'public.reject_quote')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -178,8 +183,9 @@ select is(
                      'public.request_erasure', 'public.execute_erasure', 'public.cancel_erasure',
                      'public.agent_write_requirement_field', 'public.decide_requirement_field', 'public.confirm_requirement', 'public.discard_requirement',
                      'public.add_requirement_field',
-                     'public.create_price_list_version', 'public.create_quote_policy_version', 'public.create_mapper_config_version')),
-  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions (T009) and the three erasure functions (ADR 0014)');
+                     'public.create_price_list_version', 'public.create_quote_policy_version', 'public.create_mapper_config_version',
+                     'public.pick_requirement_line_product', 'public.create_quote_draft', 'public.approve_quote', 'public.reject_quote')),
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) and the three erasure functions (ADR 0014)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions

@@ -49,8 +49,9 @@ class Held:
         self.marker = f"hold-{uuid.uuid4().hex}"
         claims = json.dumps({"sub": str(user.id), "role": "authenticated", "aal": "aal2"})
         script = (
-            f"begin; select set_config('request.jwt.claims', '{claims}', true); set local role authenticated; "
-            f"{statement}; /* {self.marker} */ select pg_sleep({HOLD_SECONDS}); commit;"
+            # the marker comes FIRST: pg_stat_activity.query is cut at 1,024 characters, and a quote's request text alone is longer
+            f"/* {self.marker} */ begin; select set_config('request.jwt.claims', '{claims}', true); set local role authenticated; "
+            f"{statement}; select pg_sleep({HOLD_SECONDS}); commit;"
         )
         self.proc = subprocess.Popen(
             [docker, "exec", "-i", operator_sql.container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-v", "ON_ERROR_STOP=1", "-At", "-c", script],
