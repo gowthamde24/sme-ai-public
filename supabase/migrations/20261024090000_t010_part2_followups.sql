@@ -269,7 +269,9 @@ create table public.lead_touches (
   foreign key (tenant_id, lead_id)    references public.leads (tenant_id, id),
   foreign key (tenant_id, contact_id) references public.contacts (tenant_id, id),
   foreign key (tenant_id, draft_id)   references public.followup_drafts (tenant_id, id),
-  check (draft_id is null or direction = 'out')
+  check (draft_id is null or direction = 'out'),
+  -- a touch is never more than 5 minutes ahead of the moment it was recorded (the function also bounds it below: the lead's creation and 7 days)
+  check (occurred_at <= recorded_at + interval '5 minutes')
 );
 create unique index lead_touches_draft_key on public.lead_touches (tenant_id, draft_id) where draft_id is not null;
 create index lead_touches_lead_idx    on public.lead_touches (tenant_id, lead_id, occurred_at, id);
@@ -518,6 +520,21 @@ language plpgsql
 stable
 set search_path = ''
 as $$
+begin
+  -- fails CLOSED: a request the rules cannot read (a missing key, a value of the wrong shape) is 'invalid', never due
+  begin
+    return app.followup_blocker_inner(p_request);
+  exception when others then
+    return 'invalid';
+  end;
+end;
+$$;
+
+create function app.followup_blocker_inner(p_request jsonb) returns text
+language plpgsql
+stable
+set search_path = ''
+as $$
 declare
   v_lead    jsonb := p_request -> 'lead';
   v_pol     jsonb := p_request -> 'policy';
@@ -534,6 +551,15 @@ declare
   v_qe      integer;
   v_quiet   boolean;
 begin
+  -- every input the rules read must be present; a missing value would make a comparison NULL (read as false), which must never mean "due"
+  if p_request is null or v_lead is null or v_pol is null or v_as is null or v_off is null
+     or (v_lead ->> 'do_not_contact') is null or (v_lead ->> 'opted_out') is null or (v_lead ->> 'replied') is null or (v_lead ->> 'bounced') is null
+     or (v_lead ->> 'won') is null or (v_lead ->> 'lost') is null
+     or (v_pol ->> 'max_touches') is null or (v_pol ->> 'min_gap_hours') is null or (v_pol -> 'quiet_hours' ->> 'start') is null or (v_pol -> 'quiet_hours' ->> 'end') is null
+     or jsonb_typeof(p_request -> 'history') <> 'array' or jsonb_typeof(v_pol -> 'gap_days') <> 'array' or jsonb_typeof(v_pol -> 'allowed_weekdays') <> 'array'
+     or jsonb_typeof(v_pol -> 'holidays') <> 'array' then
+    return 'invalid';
+  end if;
   if (v_lead ->> 'do_not_contact')::boolean or (v_lead ->> 'opted_out')::boolean or (v_lead ->> 'bounced')::boolean then
     return 'suppressed';
   end if;
@@ -557,6 +583,9 @@ begin
   end if;
   select max(x) into v_last from unnest(v_outs) x;
   v_gap := (v_pol -> 'gap_days' ->> (v_n - 1))::integer;
+  if v_gap is null then
+    return 'invalid';
+  end if;
   if v_as < v_last + v_gap * interval '1 day' or v_as < v_last + (v_pol ->> 'min_gap_hours')::integer * interval '1 hour' then
     return 'not_yet';
   end if;
@@ -599,7 +628,7 @@ $$;
 
 revoke all on function app.followup_active_policy_version(uuid, date), app.followup_request_hash(text, text), app.followup_policy_json(public.followup_policy_versions),
   app.followup_stopped(uuid), app.followup_gate(uuid, public.consent_channel, boolean), app.followup_build(uuid, text, uuid), app.followup_state_hash(uuid, uuid, text, uuid),
-  app.followup_blocker(jsonb), app.followup_result_ok(jsonb, jsonb, text, text, integer) from public;
+  app.followup_blocker(jsonb), app.followup_blocker_inner(jsonb), app.followup_result_ok(jsonb, jsonb, text, text, integer) from public;
 
 -- ---------------------------------------------------------------------------------------------
 -- A contact that becomes suppressed or erased has its OPEN drafts discarded (a system discard, with the reason). Runs inside the contact's own update, so the contact row is
@@ -819,8 +848,8 @@ begin
   if p_direction is null or p_direction not in ('out', 'in') or p_channel is null or p_channel not in ('email', 'whatsapp', 'phone') then
     perform app.followup_error('invalid');
   end if;
-  -- null = now (the database clock); a stated time is a deliberate backdating: up to 7 days back, never in the future
-  if p_occurred_at is not null and (p_occurred_at > now() or p_occurred_at < now() - interval '7 days') then
+  -- null = now (the database clock). A stated time: at most 5 minutes ahead (clock slack), at most 7 days back, and never before the lead existed
+  if p_occurred_at is not null and (p_occurred_at > now() + interval '5 minutes' or p_occurred_at < now() - interval '7 days' or p_occurred_at < l.created_at) then
     perform app.followup_error('value');
   end if;
   l := app.followup_lock(p_lead_id);
@@ -840,6 +869,9 @@ begin
     if g ->> 'code' is not null then
       perform app.followup_error(g ->> 'code', g ->> 'detail');
     end if;
+  elsif exists (select 1 from public.contacts c where c.tenant_id = l.tenant_id and c.id = l.contact_id and c.erased_at is not null) then
+    -- an inbound touch bypasses the outbound gate (it can only stop outreach) but NEVER for an erased contact: erasure wins, no new record about an erased person
+    perform app.followup_error('SM220', 'erased');
   end if;
   if (select count(*) from public.lead_touches t where t.tenant_id = l.tenant_id and t.lead_id = l.id) >= 500 then
     perform app.followup_error('SM229');
@@ -1098,9 +1130,6 @@ begin
   if not found or not app.has_tenant_role(d.tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then
     perform app.followup_deny();
   end if;
-  if p_occurred_at is not null and (p_occurred_at > now() or p_occurred_at < now() - interval '7 days') then
-    perform app.followup_error('value');
-  end if;
   l := app.followup_lock(d.lead_id);
   select * into d from public.followup_drafts x where x.id = p_draft_id for update;
 
@@ -1117,6 +1146,10 @@ begin
   end if;
   if d.status <> 'approved' then
     perform app.followup_error('SM223', 'not_approved');
+  end if;
+  -- the sent time: never before the approval, never more than 5 minutes ahead (null = the database clock)
+  if p_occurred_at is not null and (p_occurred_at > now() + interval '5 minutes' or p_occurred_at < d.approved_at) then
+    perform app.followup_error('value');
   end if;
   if l.contact_id is distinct from d.contact_id then
     perform app.followup_error('SM224');

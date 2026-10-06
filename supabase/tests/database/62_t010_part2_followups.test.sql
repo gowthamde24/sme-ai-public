@@ -67,7 +67,7 @@ begin
   insert into public.contacts (id, tenant_id, company_id, full_name, email, phone)
   values (tests.rid(p_label || '_c'), tests.tid('a'), tests.rid('a_company'), 'Contact ' || p_label, case when p_email then p_label || '@example.test' end,
           '+00 9' || lpad((abs(hashtext(p_label)) % 100000)::text, 5, '0'));
-  insert into public.leads (id, tenant_id, company_id, contact_id, status) values (tests.rid(p_label), tests.tid('a'), tests.rid('a_company'), tests.rid(p_label || '_c'), p_status::public.lead_status);
+  insert into public.leads (id, tenant_id, company_id, contact_id, status, created_at) values (tests.rid(p_label), tests.tid('a'), tests.rid('a_company'), tests.rid(p_label || '_c'), p_status::public.lead_status, now() - interval '30 days');
   if p_keyed then
     perform pg_temp.run('a_owner', format('select public.record_contact_keys(%L, %L::jsonb)', tests.rid(p_label || '_c'),
             jsonb_build_object('version', 1, 'email', case when p_email then pg_temp.h(p_label || '_e') end, 'phone', pg_temp.h(p_label || '_p'))));
@@ -256,7 +256,7 @@ select pg_temp.run('a_owner', format('select public.record_contact_keys(%L, %L::
 select pg_temp.run('a_owner', format($q$select public.suppress_contact(%L, %L, 'opted_out', 'other', 'ref:keyx')$q$, tests.tid('a'), tests.rid('g_key_x')));
 select pg_temp.mklead('g_erkey');                                  -- its e-mail key carries an ERASED marker (a person erased by right shared the address)
 insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event, reason) values (tests.tid('a'), 'email', pg_temp.h('g_erkey_e'), 1, 'suppressed', 'erased');
-insert into public.leads (id, tenant_id, company_id) values (tests.rid('g_nocontact'), tests.tid('a'), tests.rid('a_company'));    -- a lead without a contact
+insert into public.leads (id, tenant_id, company_id, created_at) values (tests.rid('g_nocontact'), tests.tid('a'), tests.rid('a_company'), now() - interval '30 days');    -- a lead without a contact
 select pg_temp.mklead('g_lost', true, true, true, 'disqualified');
 
 -- control: the matrix helper really reports a cell that differs from the expectation (so a null answer below means every cell matched)
@@ -273,10 +273,20 @@ select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''si
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, null, ''email'', null)', gen_random_uuid(), tests.rid('m1'))), '22023', 'C6 a null direction is invalid');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''sms'', null)', gen_random_uuid(), tests.rid('m1'))), '22023', 'C7 a channel outside e-mail / WhatsApp / phone is invalid');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', null, null)', gen_random_uuid(), tests.rid('m1'))), '22023', 'C8 a null channel is invalid');
-select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '1 second')), '23514', 'C9 a touch in the future is refused (no slack: null means "now")');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes')), 'ok', 'C9 exactly 5 minutes ahead is allowed (clock slack)');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes 1 second')), '23514', 'C9b one second more is refused');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() + interval '5 minutes 1 second')), '23514', 'C9c ... in either direction');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() - interval '7 days 1 second')), '23514', 'C10 a touch more than 7 days back is refused');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now() - interval '7 days')), 'ok', 'C11 exactly 7 days back is allowed');
 select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('m1'), now())), 'ok', 'C12 a touch at the database clock is allowed');
+-- not before the lead existed (a lead created 3 days ago: the lower bound is the lead's creation, tighter than 7 days)
+select pg_temp.mklead('young');   update public.leads set created_at = now() - interval '3 days' where id = tests.rid('young');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days 1 second')), '23514', 'C12b a touch one second before the lead was created is refused');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days 1 second')), '23514', 'C12c ... a reply too');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '3 days')), 'ok', 'C12d a touch exactly at the lead''s creation is allowed');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', gen_random_uuid(), tests.rid('young'), now() - interval '2 days 23 hours')), 'ok', 'C12e ... and one after it');
+select is(pg_temp.priv(format($q$insert into public.lead_touches (id, tenant_id, lead_id, direction, channel, occurred_at) values (gen_random_uuid(), %L, %L, 'in', 'email', now() + interval '5 minutes 1 second')$q$, tests.tid('a'), tests.rid('m1'))), '23514', 'C12f the table itself refuses a touch more than 5 minutes ahead of its recording, even for a privileged writer');
+select is(pg_temp.priv(format($q$insert into public.lead_touches (id, tenant_id, lead_id, direction, channel, occurred_at) values (gen_random_uuid(), %L, %L, 'in', 'email', now() + interval '5 minutes')$q$, tests.tid('a'), tests.rid('m1'))), 'ok', 'C12g ... and allows exactly 5 minutes');
 -- replay and conflict
 select is(pg_temp.touch('a_sales', 'r1', 'm1', 'out', 'email'), 'ok', 'C13 a touch is recorded');
 select is(pg_temp.j(pg_temp.sc('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', null)', tests.rid('t_r1'), tests.rid('m1'))), 'replayed'), 'true', 'C14 an exact retry replays (a null time matches the stored one)');
@@ -292,6 +302,7 @@ select is((select contact_id = tests.rid('m1_c') and recorded_by = tests.uid('a_
 select is(pg_temp.touch('a_sales', 'o1', 'l1', 'out', 'email', interval '5 days'), 'ok', 'C22 an eligible lead: an outbound e-mail is recorded (5 days ago)');
 select is(pg_temp.touch('a_sales', 'o2', 'g_sup', 'out'), 'SM220:contact', 'C23 a SUPPRESSED contact: refused (SM220, detail contact)');
 select is(pg_temp.touch('a_sales', 'o3', 'g_optout', 'out'), 'SM220:contact', 'C24 an OPTED-OUT contact: refused (SM220, contact)');
+select is(pg_temp.touch('a_owner', 'i2o', 'g_erased', 'in'), 'SM220:erased', 'C39b the Owner is refused the same way');
 select is(pg_temp.touch('a_sales', 'o4', 'g_erased', 'out'), 'SM220:erased', 'C25 an ERASED contact: refused (SM220, detail erased)');
 select is(pg_temp.touch('a_sales', 'o5', 'g_unkeyed', 'out'), 'SM221', 'C26 a contact with NO recorded key: refused (SM221): missing data never means "not suppressed"');
 select is(pg_temp.touch('a_sales', 'o6', 'g_key', 'out', 'email'), 'SM220:key', 'C27 an e-mail key suppressed through ANOTHER contact: refused (SM220, detail key)');
@@ -307,8 +318,8 @@ select is(pg_temp.touch('a_owner', 'o15', 'g_sup', 'out'), 'SM220:contact', 'C36
 select is((select count(*) from public.lead_touches where lead_id in (tests.rid('g_sup'), tests.rid('g_optout'), tests.rid('g_erased'), tests.rid('g_unkeyed'), tests.rid('g_erkey'), tests.rid('g_nocons'), tests.rid('g_arch'), tests.rid('g_nocontact'))),
           0::bigint, 'C37 nothing was written for any refused cell');
 -- an INBOUND touch can only stop outreach: it is ALWAYS recordable
-select is(pg_temp.touch('a_sales', 'i1', 'g_sup', 'in'), 'ok', 'C38 a reply from a suppressed contact is recorded');
-select is(pg_temp.touch('a_sales', 'i2', 'g_erased', 'in'), 'ok', 'C39 ... from an erased one');
+select is(pg_temp.touch('a_sales', 'i1', 'g_sup', 'in'), 'ok', 'C38 a reply from a suppressed contact is recorded (an inbound touch can only stop outreach)');
+select is(pg_temp.touch('a_sales', 'i2', 'g_erased', 'in'), 'SM220:erased', 'C39 ... but NOT for an ERASED contact: erasure wins, no new record about an erased person (SM220, erased)');
 select is(pg_temp.touch('a_sales', 'i3', 'g_unkeyed', 'in'), 'ok', 'C40 ... from a contact with no key');
 select is(pg_temp.touch('a_sales', 'i4', 'g_key', 'in', 'email'), 'ok', 'C41 ... through a suppressed key');
 select is(pg_temp.touch('a_sales', 'i5', 'g_nocontact', 'in'), 'ok', 'C42 ... on a lead without a contact');
@@ -323,6 +334,22 @@ select is(pg_temp.touch('a_sales', 'cap2', 'cap', 'out'), 'SM229', 'C46 ... in e
 select is(pg_temp.touch('a_sales', 'cap3', 'l1', 'out', 'email', interval '4 days'), 'ok', 'C47 (a lead under the cap is unaffected)');
 -- a second outbound touch makes the first draft stale; a reply discards every open draft: see sections D and G
 select is((select count(*) from public.audit_events where entity_type = 'lead_touch' and action = 'lead_touch.create' and tenant_id = tests.tid('a')), (select count(*) from public.lead_touches where tenant_id = tests.tid('a')), 'C48 every touch has its audit event (the 500 planted ones too: the trigger fires for a privileged insert)');
+
+-- an inbound touch NEVER lifts, shortens or weakens a suppression or a follow-up stop (it writes one touch row and discards open drafts; nothing else)
+create function pg_temp.snap(p_lead text) returns text language sql as $$
+  select (select concat_ws('|', c.suppressed_at is not null, c.suppression_reason::text, c.email_consent::text, c.whatsapp_consent::text, c.phone_consent::text, c.erased_at is not null, c.archived_at is not null)
+            from public.contacts c where c.id = (select contact_id from public.leads where id = tests.rid(p_lead)))
+      || '|' || (select count(*) from suppression.key_events where tenant_id = tests.tid('a'))
+      || '|' || (select count(*) from public.consent_events where tenant_id = tests.tid('a'))
+      || '|' || coalesce(app.followup_stopped(tests.rid(p_lead)), '-')
+      || '|' || coalesce(app.followup_gate(tests.rid(p_lead), 'email', false) ->> 'detail', app.followup_gate(tests.rid(p_lead), 'email', false) ->> 'code', 'open') $$;
+create temp table snaps as select 'g_sup'::text as lead, pg_temp.snap('g_sup') as before union all select 'g_key', pg_temp.snap('g_key') union all select 'g_unkeyed', pg_temp.snap('g_unkeyed') union all select 'g_optout', pg_temp.snap('g_optout');
+select is(pg_temp.touch('a_sales', 'ii1', 'g_optout', 'in'), 'ok', 'C49 a reply from an opted-out contact is recorded');
+select is(pg_temp.touch('a_sales', 'ii2', 'g_key', 'in'), 'ok', 'C50 ... and from a contact with a suppressed key');
+select is(pg_temp.touch('a_sales', 'ii3', 'g_unkeyed', 'in'), 'ok', 'C51 ... and from an unkeyed one');
+select is(pg_temp.touch('a_sales', 'ii4', 'g_sup', 'in'), 'ok', 'C52 ... and a second one from a suppressed contact');
+select is((select count(*) from snaps s where s.before <> pg_temp.snap(s.lead)), 0::bigint, 'C53 after an inbound touch the contact''s suppression, its consent, the key ledger, the consent ledger, the follow-up stop and the gate are EXACTLY as before (an inbound touch weakens nothing)');
+select is((select count(*) from public.lead_touches where lead_id in (tests.rid('g_sup'), tests.rid('g_key'), tests.rid('g_unkeyed'), tests.rid('g_optout')) and direction = 'in'), 7::bigint, 'C54 (the replies were recorded: this is not a vacuous pass)');
 
 -- ============================================================================ D. create_followup_draft
 select tests.seed_orders();
@@ -451,7 +478,7 @@ select pg_temp.mklead('n0');
 select pg_temp.mklead('n1');   select pg_temp.run('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', null)', tests.rid('t_n1'), tests.rid('n1')));
 select pg_temp.mkdue('n3', 3);
 select pg_temp.mkdue('n4');    select pg_temp.run('a_sales', format('select public.record_touch(%L, %L, ''in'', ''email'', null)', tests.rid('t_n4_in'), tests.rid('n4')));
-select pg_temp.mkdue('n5');    insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at) values (tests.rid('t_n5_f'), tests.tid('a'), tests.rid('n5'), tests.rid('n5_c'), 'out', 'email', now() + interval '1 hour');
+select pg_temp.mkdue('n5');    insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at, recorded_at) values (tests.rid('t_n5_f'), tests.tid('a'), tests.rid('n5'), tests.rid('n5_c'), 'out', 'email', now() + interval '1 hour', now() + interval '2 hours');
 select is(pg_temp.mk('a_sales', 'n0', 'n0'), 'SM225:initial_outreach', 'D61 a lead with no outbound touch: the first message is a person''s (initial_outreach)');
 select is(pg_temp.mk('a_sales', 'n1', 'n1'), 'SM225:not_yet', 'D62 a touch just now and a gap of one day: not yet');
 select is(pg_temp.mk('a_sales', 'n3', 'n3'), 'SM225:max_touches', 'D63 three outbound touches under a limit of three: the limit is reached');
@@ -586,10 +613,26 @@ select is(app.followup_build(tests.rid('gm'), pg_temp.asof(), pg_temp.polid('gm'
 -- time of the touch
 select pg_temp.mkdue('gt');   select pg_temp.run('a_sales', pg_temp.cd('gt', 'gt'));
 select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('gt'), (select state_hash from public.followup_drafts where id = pg_temp.did('gt'))));
-select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), now() + interval '1 second')), '23514', 'G12 a time in the future is refused');
-select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), now() - interval '8 days')), '23514', 'G13 a time more than 7 days back is refused');
-select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), tests.rid('s_gt'), now() - interval '2 hours')), 'ok', 'G14 a stated time is recorded');
-select is((select occurred_at = now() - interval '2 hours' from public.lead_touches where id = tests.rid('s_gt')), true, 'G15 as stated');
+-- the sent time: not before the approval, not more than 5 minutes ahead (the approval is aged by switching the guard off for one statement, inside the test transaction)
+create function pg_temp.age_approval(p_label text, p_by interval) returns void language plpgsql as $$
+begin
+  alter table public.followup_drafts disable trigger followup_drafts_guard_update;
+  update public.followup_drafts set approved_at = approved_at - p_by where id = pg_temp.did(p_label);
+  alter table public.followup_drafts enable trigger followup_drafts_guard_update;
+end $$;
+select pg_temp.age_approval('gt', interval '2 hours');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), now() + interval '5 minutes 1 second')), '23514', 'G12 a sent time more than 5 minutes ahead is refused');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), gen_random_uuid(), (select approved_at - interval '1 second' from public.followup_drafts where id = pg_temp.did('gt')))), '23514', 'G13 one second before the approval is refused');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt'), tests.rid('s_gt'), (select approved_at from public.followup_drafts where id = pg_temp.did('gt')))), 'ok', 'G14 exactly at the approval time is allowed');
+select is((select occurred_at = (select approved_at from public.followup_drafts where id = pg_temp.did('gt')) from public.lead_touches where id = tests.rid('s_gt')), true, 'G15 recorded as stated');
+select pg_temp.mkdue('gt2');   select pg_temp.run('a_sales', pg_temp.cd('gt2', 'gt2'));
+select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('gt2'), (select state_hash from public.followup_drafts where id = pg_temp.did('gt2'))));
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt2'), tests.rid('s_gt2'), now() + interval '5 minutes')), 'ok', 'G15b exactly 5 minutes ahead is allowed');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt2'), gen_random_uuid(), now())), 'SM223:closed', 'G15c (the draft is recorded: a second try is closed, whatever the time)');
+select pg_temp.mkdue('gt3');   select pg_temp.run('a_sales', pg_temp.cd('gt3', 'gt3'));
+select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('gt3'), (select state_hash from public.followup_drafts where id = pg_temp.did('gt3'))));
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, %L)', pg_temp.did('gt3'), gen_random_uuid(), now() - interval '1 second')), '23514', 'G15d a draft approved just now cannot have been sent a second ago');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, null)', pg_temp.did('gt3'), gen_random_uuid())), 'ok', 'G15e ... but "now" (null) is allowed');
 select is(pg_temp.try('a_sales', 'select public.record_draft_sent(null, null, null)'), '42501', 'G16 null ids are the generic refusal');
 select is(pg_temp.err('a_viewer', format('select public.record_draft_sent(%L, %L, null)', pg_temp.did('gt'), gen_random_uuid())), pg_temp.err('a_viewer', format('select public.record_draft_sent(%L, %L, null)', gen_random_uuid(), gen_random_uuid())),
           'G17 a refusal for a role and for an unknown draft are the SAME answer');
@@ -638,7 +681,7 @@ select is(pg_temp.sent('a_sales', 'rp1'), 'SM223:not_approved', 'G30 and cannot 
 -- ============================================================================ H. the contact trigger: a contact that becomes suppressed or erased has its open drafts discarded
 select pg_temp.mkdue('hs');   select pg_temp.run('a_sales', pg_temp.cd('hs', 'hs'));
 select pg_temp.run('a_owner', format('select public.approve_followup_draft(%L, %L)', pg_temp.did('hs'), (select state_hash from public.followup_drafts where id = pg_temp.did('hs'))));
-insert into public.leads (id, tenant_id, company_id, contact_id) values (tests.rid('hs2'), tests.tid('a'), tests.rid('a_company'), tests.rid('hs_c'));
+insert into public.leads (id, tenant_id, company_id, contact_id, created_at) values (tests.rid('hs2'), tests.tid('a'), tests.rid('a_company'), tests.rid('hs_c'), now() - interval '30 days');
 select pg_temp.run('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', %L)', tests.rid('t_hs2'), tests.rid('hs2'), (now() - interval '5 days')::text));
 select pg_temp.run('a_sales', pg_temp.cd('hs2', 'hs2'));
 select is(pg_temp.dst('hs') || '/' || pg_temp.dst('hs2'), 'approved/draft', 'H1 a contact with an approved draft and a draft (two leads)');
@@ -831,6 +874,16 @@ select pg_temp.mkdue('rm', 2);
 select is(pg_temp.mk('a_sales', 'rm', 'rm'), 'ok', 'D95 a lead with two outbound touches under a limit of four');
 select is((select template_code || '/' || touch_number from public.followup_drafts where id = pg_temp.did('rm')), 'followup_reminder/3', 'D95b touch 3 of 4 uses the REMINDER wording');
 select is(pg_temp.mkpol('r8', pg_temp.pol()), 'ok', 'D96 (the benign version again)');
+-- the blocker fails CLOSED: a request the rules cannot read is 'invalid', never due (and never an error)
+select is(app.followup_blocker('{}'::jsonb), 'invalid', 'L52 an empty request is invalid, not due');
+select is(app.followup_blocker(null), 'invalid', 'L53 a null request is invalid');
+select is(pg_temp.bl(p_asof => 'garbage'), 'invalid', 'L54 an as_of that is not a time is invalid');
+select is(pg_temp.bl(p_flags => '{"won": null}'), 'invalid', 'L55 a flag that is null is invalid (a NULL comparison must never read as "not closed")');
+select is(pg_temp.bl(p_gaps => '[]'), 'invalid', 'L56 a gap list too short for the touch number is invalid');
+select is(pg_temp.bl(p_hist => '{}'), 'invalid', 'L57 a history that is not a list is invalid');
+select is(pg_temp.bl(p_wd => '"x"'), 'invalid', 'L58 weekdays that are not a list are invalid');
+select is(app.followup_blocker(jsonb_set(jsonb_set(pg_temp.req('l1'), '{policy,quiet_hours}', '{}'), '{as_of}', to_jsonb(pg_temp.asof()))), 'invalid', 'L59 quiet hours without their ends are invalid');
+select is(app.followup_blocker(jsonb_set(pg_temp.req('l1'), '{recipient_utc_offset_minutes}', '"x"')), 'invalid', 'L60 an offset that is not a number is invalid');
 
 -- ============================================================================ M. invariants over every draft and touch this file made
 select is((select count(*) from public.followup_drafts d where not exists (select 1 from public.leads l where l.tenant_id = d.tenant_id and l.id = d.lead_id)
