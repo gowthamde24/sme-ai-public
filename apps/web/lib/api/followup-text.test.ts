@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { DECISION_FALLBACK, DECISION_TEXT, GATE_TEXT, MFA_TEXT, OUT_OF_DATE, REFUSAL_TEXT, STALE_CODES, STOPPED_TEXT, followupSentence } from "./followup-text";
+import { CHANNEL_BLOCK_FALLBACK, CHANNEL_BLOCK_TEXT, CHANNEL_OPEN_TEXT, CHANNEL_STOPPED_TEXT, DECISION_FALLBACK, DECISION_TEXT, GATE_TEXT, MFA_TEXT, OUT_OF_DATE, REFUSAL_TEXT, STALE_CODES, STOPPED_TEXT, followupSentence } from "./followup-text";
 
 const CANARY = "CANARY-7d2e61 secret server text";
 const ALL: [string, string, string][] = Object.entries(REFUSAL_TEXT).flatMap(([code, table]) => Object.entries(table).map(([reason, text]): [string, string, string] => [code, reason, text]));
@@ -39,7 +39,7 @@ describe("PRIVACY: another person who was erased by right is never mentioned, an
   });
 
   it("no sentence of any table mentions an erasure by right or an erased key", () => {
-    const every = [...ALL.map(([, , t]) => t), ...Object.values(GATE_TEXT), ...Object.values(STOPPED_TEXT), ...Object.values(DECISION_TEXT), MFA_TEXT, OUT_OF_DATE, DECISION_FALLBACK];
+    const every = [...ALL.map(([, , t]) => t), ...Object.values(CHANNEL_BLOCK_TEXT), CHANNEL_BLOCK_FALLBACK, CHANNEL_OPEN_TEXT, CHANNEL_STOPPED_TEXT, ...Object.values(GATE_TEXT), ...Object.values(STOPPED_TEXT), ...Object.values(DECISION_TEXT), MFA_TEXT, OUT_OF_DATE, DECISION_FALLBACK];
     for (const text of every) {
       expect(text.toLowerCase()).not.toContain("by right");
       expect(text).not.toMatch(/erased[\s_-]*key/i);
@@ -84,6 +84,11 @@ describe("the other answers", () => {
     expect(Object.keys(STOPPED_TEXT).sort()).toEqual(["lead_archived", "order_accepted", "order_cancelled", "order_declined", "quote_withdrawn"]);
     expect(Object.keys(DECISION_TEXT)).toContain("eligible_now");
     expect(Object.keys(DECISION_TEXT)).toContain("FUTURE_HISTORY");
+  });
+
+  it("every word of the gate has a short form for a tab, and nothing else does", () => {
+    expect(Object.keys(CHANNEL_BLOCK_TEXT).sort()).toEqual(Object.keys(GATE_TEXT).sort());
+    expect(Object.keys(CHANNEL_BLOCK_TEXT)).not.toContain("erased_key");
   });
 
   it("a refusal after which the screen is out of date says so (the page is read again)", () => {

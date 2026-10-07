@@ -1,12 +1,15 @@
 import type { ReactNode } from "react";
 
+import Link from "next/link";
+
 import { CHANNEL_LABELS, DISCARD_LABELS, STATUS_LABELS, type Draft, type LeadFollowup } from "@/lib/api/followups";
 
 import { LocalTime } from "../../../local-time";
+import { ChannelTabs } from "./channel-tabs";
 import { ApproveForm, DiscardForm, SentForm } from "./draft-forms";
 import { DraftText } from "./draft-text";
 import { approveDraftAction, discardDraftAction, recordSentAction } from "./followup-actions";
-import { decisionLine, draftOffers, gateLines } from "./followup-logic";
+import { channelTabs, decisionLine, draftAsk, draftOffers, gateLines } from "./followup-logic";
 
 export interface LeadFollowupIds {
   /** One touch id per "I sent it myself" form (a retry sends the same one: the database then replays). */
@@ -47,7 +50,8 @@ function DraftCard({ tenantId, leadId, draft, role, userId, aal, ids }: { tenant
 
 /**
  * One lead's follow-up, in plain words: whether anything blocks it (in closed words), what the pinned rules say now (GUIDANCE ONLY: the database decides again when a draft is asked for; a lead the database has STOPPED or the gate BLOCKS has no guidance at all: the line under "Is anything blocking a follow-up?" says it), the drafts
- * with the actions this role may take, and the touches. The forms (passed in) record what a person did; nothing on this page sends a message to anyone.
+ * with the actions this role may take, and the touches. The page is read for ONE channel (the tab); the tabs say whether each channel is open. The forms (passed in) record what a person did; nothing on this page
+ * sends a message to anyone. "Ask for a draft" is offered only on an open tab and only while no draft of this lead is open on the other channel.
  */
 export function LeadFollowupView({
   tenantId,
@@ -57,7 +61,8 @@ export function LeadFollowupView({
   userId,
   aal,
   ids,
-  forms,
+  draftForm,
+  touchForm,
 }: {
   tenantId: string;
   leadId: string;
@@ -66,12 +71,15 @@ export function LeadFollowupView({
   userId: string;
   aal: string;
   ids: LeadFollowupIds;
-  forms: ReactNode;
+  draftForm: ReactNode;
+  touchForm: ReactNode;
 }) {
   const lines = gateLines(data.gate);
+  const ask = draftAsk(data);
   return (
     <section aria-labelledby="followup-heading">
       <h1 id="followup-heading">Follow-up</h1>
+      <ChannelTabs tenantId={tenantId} leadId={leadId} tabs={channelTabs(data)} />
       <h2>Is anything blocking a follow-up?</h2>
       {lines.length === 0 ? (
         <p>Nothing blocks a follow-up for this lead.</p>
@@ -104,7 +112,14 @@ export function LeadFollowupView({
         </ul>
       )}
 
-      {forms}
+      {ask.waiting ? (
+        <p role="note" className="notice">
+          A draft for touch {ask.waiting.touch_number} is waiting on {CHANNEL_LABELS[ask.waiting.channel]}. Work on it there, or discard it first: a follow-up has one draft, on one channel.{" "}
+          <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup?channel=${ask.waiting.channel}`}>Open the {CHANNEL_LABELS[ask.waiting.channel]} tab</Link>
+        </p>
+      ) : null}
+      {ask.show ? draftForm : null}
+      {touchForm}
 
       <h2>Touches</h2>
       {data.touches.length === 0 ? (
