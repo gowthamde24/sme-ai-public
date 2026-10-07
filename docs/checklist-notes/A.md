@@ -238,3 +238,34 @@ One pass over everything T010 part 2 added: the two migrations of the database (
 | the composite unique `(tenant_id, id)` of the touches and the question drafts | EQUIVALENT: the primary key on `id` already makes it unique; the policy and draft ones are referenced by foreign keys and cannot be dropped (the 2 invalid) | documented |
 
 Evidence of this stage: `make check` exit 0 (vitest 1,460, pytest 3,897, pgTAP 9,845 over 65 files, integration 978, evals 45 + 9 + 29 + 9 passed with the one opt-in live case skipped). New: pgTAP 62 O1-O113 (113 cases) and 63 F1-F15 (15), three race tests (the follow-up race file is 20), one migration, one migration-copy pin, 9 route tests, one strengthened builder test, 4 web tests. The 4d evidence is in ADR 0022.
+
+## followups-whatsapp (commits 1-4): mutation delta (2026-10-07)
+
+No database change, so the SQL mutants (588) were NOT re-run; the Python and web lists were updated for the new branches and re-run in full (the earlier results were not kept in this checkout). `tools/mutation-followups/`: 5 stale mutants re-pointed at the new code (the channel query, the gate sanitising, the due-list stop and block, the draft form's channel), 41 Python and 48 web mutants added.
+
+**Result: Python 133 mutants (125 killed at once, 8 survived the first pass, 8 closed: killed); web 113 mutants, 112 distinct descriptions (108 killed at once, 4 survived, 4 closed: killed). Nothing equivalent, nothing left alive.**
+
+| Area | Mutants (examples) | First pass |
+| --- | --- | --- |
+| the fixed bound | 31 / 29 candidates, a caller who can raise it, the default limit | all killed (the unit tests with 100 candidates pin 30 and 60 gate reads) |
+| the per-channel reads and the short-circuit | WhatsApp judged on the e-mail gate and the reverse, a stopped lead still listed, a lead blocked on every channel listed, "listed only when every channel is open", the channel states always open, tab order | all killed |
+| the default channel | the open draft ignored, the last outbound ignored, their order swapped, a closed channel as the default, WhatsApp before e-mail, both closed reading WhatsApp or nothing | killed, except the three below |
+| the open-draft line and the draft ask (web) | the other-channel draft not named, "Ask for a draft" always shown, never shown, offered for a stopped lead or a blocked channel, an approved or finished draft counted wrongly, a draft on this channel counted as the other one | killed, except the note's link |
+| the empty-channels reading (web) | an unreported channel list printing a line, an unreported tab reading open, a stop not closing the tabs | all killed |
+| the parsers and the fetch | null or undefined channels, a duplicate channel, a phone call as a channel, the older-API defaults (lead page, due row), no channel asked for meaning e-mail | killed, except the phone-call one |
+| the privacy rule | `erased_key` unsanitised in the lead page's gates, the due list's e-mail gate and its WhatsApp gate | killed, except the due list's e-mail gate |
+| the page | an unknown channel falling back to e-mail or passed through, the forms not remounted on a tab change | killed, except the two remount mutants |
+
+| Survivor of the first pass | Why it lived | Closed by |
+| --- | --- | --- |
+| the due list's e-mail gate unsanitised (an `erased_key` there) | the privacy test used WhatsApp only | `test_an_erased_marker_on_the_email_gate_reads_key_in_the_due_row_too` |
+| a reply counts as the last outbound touch; a phone call counts | the default-channel tests used outbound e-mail and WhatsApp touches only | `test_the_lead_page_default_ignores_a_reply_and_a_phone_call` |
+| the open draft's channel always e-mail; the open draft does not decide the default; the last outbound channel does not decide the default (3) | every due-row test had an e-mail draft, or a lead whose other channel was closed, so the default came out the same | `test_a_due_row_takes_its_default_from_the_open_draft_then_the_last_outbound_touch` (a WhatsApp draft open while the last message went by e-mail; then both open with each last channel) |
+| a counted lead stops learning its channel once the cap is reached | the repository test's rows had no touch after the first overflowing lead | `test_a_counted_lead_still_learns_its_channel_from_a_row_after_the_cap_was_reached` |
+| "request models accept unknown fields" | the mutant changed the TEXT `extra="forbid"` in the module's docstring (dead) | re-pointed at `ConfigDict(extra="forbid")` of the shared `_Strict` model in `app/crm/models.py`: killed by the existing 422 tests |
+| the channel-state parser accepting a phone call | the tests used `sms` as the bad channel | two cases: a phone call in a lead page's and a due row's channel state |
+| the note links to e-mail whatever the open draft's channel | the only other-channel draft in the tests was an e-mail one | `the note names the channel of the draft that is open, and links to THAT tab` |
+| the draft form and the touch form not remounted on a tab change | no test changed tabs on a mounted page | `a tab change starts the forms afresh` (re-renders the page for the other tab: an uncontrolled field would keep "email", and a finished form's message would carry over) |
+
+**A flaw of the tool, found and written into its README:** running the Python and the web runners at the same time shares git's index lock; one restore failed silently, a mutant stayed in `routes.py`, and the next mutant of that file refused to start. The diff was exactly that one mutant, was reverted by hand and the run resumed. Run one runner at a time.
+

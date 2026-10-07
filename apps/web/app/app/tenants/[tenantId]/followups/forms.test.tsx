@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { DRAFT_CHANNELS, TOUCH_CHANNELS } from "@/lib/api/followups";
+import { TOUCH_CHANNELS } from "@/lib/api/followups";
 import { BODY_TEXT, HASH, TOUCH } from "@/lib/api/followups-fixtures";
 
 const refresh = vi.fn();
@@ -40,6 +40,20 @@ describe("TouchForm", () => {
     expect(Array.from(select.options).map((o) => o.value)).toEqual([...TOUCH_CHANNELS]);
   });
 
+  it("starts on the channel of the tab (e-mail when none is given) and may still be changed, a phone call included", async () => {
+    const { unmount } = render(<TouchForm action={ok()} touchId={TOUCH} maxNow={NOW} />);
+    expect((screen.getByLabelText("Channel") as HTMLSelectElement).value).toBe("email");
+    unmount();
+    const action = ok();
+    render(<TouchForm action={action} touchId={TOUCH} maxNow={NOW} channel="whatsapp" />);
+    const select = screen.getByLabelText("Channel") as HTMLSelectElement;
+    expect(select.value).toBe("whatsapp");
+    fireEvent.change(select, { target: { value: "phone" } });
+    fireEvent.click(screen.getByRole("button", { name: "Record this" }));
+    await waitFor(() => expect(action).toHaveBeenCalled());
+    expect((action.mock.calls[0] as unknown as [unknown, FormData])[1].get("channel")).toBe("phone");
+  });
+
   it("submits the form's fields to the action and shows the outcome", async () => {
     const action = ok();
     render(<TouchForm action={action} touchId={TOUCH} maxNow={NOW} />);
@@ -58,24 +72,32 @@ describe("TouchForm", () => {
   });
 });
 
-describe("CreateDraftForm: the channel and nothing else", () => {
-  it("has no text input for wording", () => {
+describe("CreateDraftForm: the channel of the tab and nothing else", () => {
+  it("has no input for wording and no channel choice: the tab decides the channel", () => {
     render(<CreateDraftForm action={ok()} draftId="d" channel="email" />);
     expect(screen.queryByRole("textbox")).toBeNull();
     expect(document.querySelector("textarea")).toBeNull();
+    expect(document.querySelector("select")).toBeNull();
     expect(document.querySelector("input:not([type=hidden])")).toBeNull();
     expect(screen.getByText(/you cannot type or change it here/)).toBeInTheDocument();
-    const select = screen.getByLabelText("Channel") as HTMLSelectElement;
-    expect(Array.from(select.options).map((o) => o.value)).toEqual([...DRAFT_CHANNELS]);
-    expect(select.value).toBe("email");
+    expect(screen.getByText("E-mail")).toBeInTheDocument();
+    expect(hidden("channel")).toBe("email");
     expect(screen.getByRole("button", { name: "Ask for a draft" })).toBeInTheDocument();
   });
-});
 
-describe("CreateDraftForm: the channel of the page", () => {
-  it("starts on the channel the page is showing", () => {
-    render(<CreateDraftForm action={ok()} draftId="d" channel="whatsapp" />);
-    expect((screen.getByLabelText("Channel") as HTMLSelectElement).value).toBe("whatsapp");
+  it.each([
+    ["email", "E-mail"],
+    ["whatsapp", "WhatsApp"],
+  ] as const)("on the %s tab it names the channel and sends it as a hidden field", async (channel, label) => {
+    const action = ok();
+    render(<CreateDraftForm action={action} draftId="d" channel={channel} />);
+    expect(screen.getByText(label)).toBeInTheDocument();
+    expect(hidden("channel")).toBe(channel);
+    fireEvent.click(screen.getByRole("button", { name: "Ask for a draft" }));
+    await waitFor(() => expect(action).toHaveBeenCalled());
+    const data = (action.mock.calls[0] as unknown as [unknown, FormData])[1];
+    expect(data.get("channel")).toBe(channel);
+    expect(data.get("draft_id")).toBe("d");
   });
 });
 

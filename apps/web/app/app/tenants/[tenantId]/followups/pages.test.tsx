@@ -1,9 +1,9 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { parseDueItem, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
-import { DRAFT, DRAFT_JSON, DUE_JSON, FOLLOWUP_JSON, GATE_JSON, HASH, LEAD, OTHER_PERSON, PERSON, POLICY_JSON, QUESTION_JSON, REQ, TENANT } from "@/lib/api/followups-fixtures";
+import { CHANNELS_OPEN_JSON, DRAFT, DRAFT_JSON, DUE_JSON, DUE_OLD_JSON, FOLLOWUP_JSON, FOLLOWUP_OLD_JSON, GATE_JSON, HASH, LEAD, OTHER_PERSON, PERSON, POLICY_JSON, QUESTION_JSON, REQ, TENANT } from "@/lib/api/followups-fixtures";
 import { redirectMock, redirectTarget } from "@/test/helpers";
 
 const requireUser = vi.fn();
@@ -28,6 +28,7 @@ vi.mock("./followup-actions", () => {
   return { recordTouchAction: action, createDraftAction: action, approveDraftAction: action, discardDraftAction: action, recordSentAction: action, createPolicyAction: action, syncQuestionsAction: action, decideQuestionAction: action };
 });
 
+import { createDraftAction } from "./followup-actions";
 import LeadFollowupPage from "../leads/[leadId]/followup/page";
 import QuestionsPage from "../requirements/[requirementId]/questions/page";
 import DuePage from "./page";
@@ -89,11 +90,20 @@ describe("every page says follow-ups are drafts for a person to send outside the
 });
 
 describe("the lead's follow-up page", () => {
-  it("is read with the user's own token for the chosen channel (an unknown channel falls back to e-mail)", async () => {
+  it("is read with the user's own token for the chosen channel; no channel, or an unknown one, leaves the choice to the API", async () => {
     render(await LeadFollowupPage(leadProps({ channel: "whatsapp" })));
     expect(api.fetchLeadFollowup).toHaveBeenCalledWith("tok", TENANT, LEAD, "whatsapp");
     render(await LeadFollowupPage(leadProps({ channel: "carrier-pigeon" })));
-    expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, "email");
+    expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, undefined);
+    for (const odd of ["phone", "", "EMAIL", "email,whatsapp", "whatsapp ", "__proto__"]) {
+      render(await LeadFollowupPage(leadProps({ channel: odd })));
+      expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, undefined); // dropped, never passed through, and no error page
+      expect(screen.queryByRole("alert")).toBeNull();
+    }
+    render(await LeadFollowupPage({ ...leadProps(), searchParams: Promise.resolve({ channel: ["whatsapp", "email"] }) } as unknown as Parameters<typeof LeadFollowupPage>[0]));
+    expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, "whatsapp"); // a repeated parameter: the first one counts
+    render(await LeadFollowupPage(leadProps()));
+    expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, undefined);
   });
 
   it("shows the gate in closed words, the engine's answer as guidance only, the drafts and the touches", async () => {
@@ -219,6 +229,116 @@ describe("the lead's follow-up page", () => {
   });
 });
 
+describe("the lead's follow-up page across channels", () => {
+  const WHATSAPP_OPEN_EMAIL_BLOCKED = [{ channel: "email", blocked: "consent" }, { channel: "whatsapp", blocked: null }];
+  const tabs = () => within(screen.getByRole("navigation", { name: "Channel" }));
+
+  it("shows E-mail then WhatsApp as links to the same lead, the current one marked, each with its state in closed words", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channels: WHATSAPP_OPEN_EMAIL_BLOCKED }));
+    render(await LeadFollowupPage(leadProps()));
+    const links = tabs().getAllByRole("link");
+    expect(links.map((l) => l.textContent)).toEqual(["E-mail", "WhatsApp"]);
+    expect(links.map((l) => l.getAttribute("href"))).toEqual([`/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=email`, `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=whatsapp`]);
+    expect(links[0]).toHaveAttribute("aria-current", "page");
+    expect(links[1]).not.toHaveAttribute("aria-current");
+    const items = tabs().getAllByRole("listitem");
+    expect(items[0]).toHaveTextContent("E-mail · no recorded consent or address");
+    expect(items[1]).toHaveTextContent("WhatsApp · open");
+    noSendControl();
+  });
+
+  it("the page is for the channel the API answered for: on WhatsApp the forms start on WhatsApp", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "whatsapp", default_channel: "whatsapp", channels: CHANNELS_OPEN_JSON, drafts: [] }));
+    render(await LeadFollowupPage(leadProps()));
+    expect(tabs().getAllByRole("link")[1]).toHaveAttribute("aria-current", "page");
+    expect(document.querySelector('input[name="channel"]')).toHaveValue("whatsapp"); // the draft form's fixed channel
+    expect((document.querySelector("#touch-channel") as HTMLSelectElement).value).toBe("whatsapp"); // the touch form's default
+    expect(document.querySelector("#draft-channel")).toBeNull(); // there is no channel choice in the draft form
+  });
+
+  it("a blocked tab says why and offers no 'Ask for a draft'; recording a touch stays", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ gate: { ...GATE_JSON, blocked: "consent" }, channels: WHATSAPP_OPEN_EMAIL_BLOCKED, decision: null, drafts: [] }));
+    render(await LeadFollowupPage(leadProps()));
+    expect(within(screen.getByRole("list", { name: "What blocks a follow-up" })).getByText("There is no recorded consent for this channel, or no address for it.")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Ask for a draft" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Record this" })).toBeInTheDocument();
+  });
+
+  it("a stopped lead shows both tabs as stopped, the stop once, and no 'Ask for a draft'", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ gate: { ...GATE_JSON, stopped: "order_accepted" }, channels: CHANNELS_OPEN_JSON, drafts: [] }));
+    render(await LeadFollowupPage(leadProps()));
+    expect(tabs().getAllByRole("listitem").map((i) => i.textContent)).toEqual(["E-mail · stopped", "WhatsApp · stopped"]);
+    expect(screen.getAllByText("An order for this lead was accepted: follow-ups stop.")).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: "Ask for a draft" })).toBeNull();
+  });
+
+  it("EMPTY channels means 'not reported': only the loaded channel's gate is shown, the tabs carry no state, and no channel is called closed", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(parseLeadFollowup({ ...FOLLOWUP_OLD_JSON, drafts: [] }));
+    render(await LeadFollowupPage(leadProps()));
+    expect(tabs().getAllByRole("listitem").map((i) => i.textContent)).toEqual(["E-mail", "WhatsApp"]); // links, no state
+    expect(screen.getByText("Nothing blocks a follow-up for this lead.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ask for a draft" })).toBeInTheDocument();
+    expect(document.body.textContent).not.toMatch(/no channel|no open channel|not open|stopped|cannot be contacted/i);
+  });
+
+  it("EMPTY channels with a block on the loaded channel still shows that block, and only that", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(parseLeadFollowup({ ...FOLLOWUP_OLD_JSON, gate: { ...GATE_JSON, blocked: "key" }, decision: null, drafts: [] }));
+    render(await LeadFollowupPage(leadProps()));
+    expect(screen.getAllByText("This e-mail address or phone number is on the do-not-contact list.")).toHaveLength(1);
+    expect(tabs().getAllByRole("listitem").map((i) => i.textContent)).toEqual(["E-mail", "WhatsApp"]);
+    expect(screen.queryByRole("button", { name: "Ask for a draft" })).toBeNull();
+  });
+
+  it("a draft open on the OTHER channel is named with a link to it, and 'Ask for a draft' is not offered here", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "whatsapp", default_channel: "email", channels: CHANNELS_OPEN_JSON })); // the fixture draft is an e-mail draft, touch 2
+    render(await LeadFollowupPage(leadProps({ channel: "whatsapp" })));
+    const note = screen.getByText(/A draft for touch 2 is waiting on E-mail/);
+    expect(within(note).getByRole("link", { name: "Open the E-mail tab" })).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=email`);
+    expect(screen.queryByRole("button", { name: "Ask for a draft" })).toBeNull();
+    expect(screen.getByRole("button", { name: "Record this" })).toBeInTheDocument();
+  });
+
+  it("a draft on THIS channel, or a closed draft on the other, does not hide the form or add the note", async () => {
+    render(await LeadFollowupPage(leadProps())); // an open e-mail draft on the e-mail tab
+    expect(screen.queryByText(/is waiting on/)).toBeNull();
+    expect(screen.getByRole("button", { name: "Ask for a draft" })).toBeInTheDocument();
+    document.body.innerHTML = "";
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "whatsapp", channels: CHANNELS_OPEN_JSON, drafts: [draft({ status: "discarded", discard_code: "person" }), draft({ id: "dddddddd-dddd-4ddd-8ddd-ddddddddddd2", status: "recorded_sent", channel: "email" })] }));
+    render(await LeadFollowupPage(leadProps({ channel: "whatsapp" })));
+    expect(screen.queryByText(/is waiting on/)).toBeNull();
+    expect(screen.getByRole("button", { name: "Ask for a draft" })).toBeInTheDocument();
+  });
+
+  it("the note names the channel of the draft that is open, and links to THAT tab", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "email", channels: CHANNELS_OPEN_JSON, drafts: [draft({ channel: "whatsapp" })] }));
+    render(await LeadFollowupPage(leadProps({ channel: "email" })));
+    const note = screen.getByText(/A draft for touch 2 is waiting on WhatsApp/);
+    expect(within(note).getByRole("link", { name: "Open the WhatsApp tab" })).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=whatsapp`);
+    expect(screen.queryByRole("button", { name: "Ask for a draft" })).toBeNull();
+  });
+
+  it("a tab change starts the forms afresh: the touch form's channel and a finished form's message do not carry over", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channels: CHANNELS_OPEN_JSON }));
+    const { rerender } = render(await LeadFollowupPage(leadProps({ channel: "email" })));
+    expect((document.querySelector("#touch-channel") as HTMLSelectElement).value).toBe("email");
+    vi.mocked(createDraftAction).mockResolvedValueOnce({ ok: true, message: "Made it on the first tab." });
+    fireEvent.click(screen.getByRole("button", { name: "Ask for a draft" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Made it on the first tab."));
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "whatsapp", default_channel: "email", channels: CHANNELS_OPEN_JSON, drafts: [] }));
+    rerender(await LeadFollowupPage(leadProps({ channel: "whatsapp" })));
+    expect((document.querySelector("#touch-channel") as HTMLSelectElement).value).toBe("whatsapp"); // an uncontrolled field would keep "email" if the form were not remounted
+    expect(screen.queryByText("Made it on the first tab.")).toBeNull();
+    expect(document.querySelector('input[name="channel"]')).toHaveValue("whatsapp");
+  });
+
+  it("a Viewer still sees nothing: no tabs, and nothing is asked of the API", async () => {
+    fetchTenant.mockResolvedValue(tenant("viewer"));
+    render(await LeadFollowupPage(leadProps()));
+    expect(screen.queryByRole("navigation", { name: "Channel" })).toBeNull();
+    expect(api.fetchLeadFollowup).not.toHaveBeenCalled();
+  });
+});
+
 describe("the due list", () => {
   it("lists each lead with our sentence and a link to its follow-up page; a waiting draft is mentioned", async () => {
     api.fetchDueList.mockResolvedValue([...DUE_JSON, { ...DUE_JSON[0], lead_id: "44444444-4444-4444-8444-444444444444", action: "wait", reason_code: "not_yet_eligible", open_draft_id: DRAFT }].map(parseDueItem));
@@ -228,9 +348,30 @@ describe("the due list", () => {
     expect(items[0]).toHaveTextContent("Due now");
     expect(items[1]).toHaveTextContent("Not yet");
     expect(items[1]).toHaveTextContent("A draft is waiting");
-    expect(within(items[0]).getByRole("link")).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup`);
+    expect(within(items[0]).getByRole("link")).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=email`);
     expect(screen.getByText(/Worked out when you opened this page/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "The follow-up policy" })).toHaveAttribute("href", `/app/tenants/${TENANT}/followups/policy`);
+  });
+
+  it("one row per lead names each channel's state and opens the lead on its default channel; a waiting draft names its channel", async () => {
+    const row = { ...DUE_JSON[0], channels: [{ channel: "email", blocked: "unkeyed" }, { channel: "whatsapp", blocked: null }], default_channel: "whatsapp", open_draft_id: DRAFT, open_draft_channel: "whatsapp" };
+    api.fetchDueList.mockResolvedValue([row].map(parseDueItem));
+    render(await DuePage(tenantProps));
+    const items = within(screen.getByRole("list", { name: "Leads with a follow-up" })).getAllByRole("listitem");
+    expect(items).toHaveLength(1);
+    expect(items[0]).toHaveTextContent("E-mail: no suppression key yet · WhatsApp: open · opens on WhatsApp");
+    expect(items[0]).toHaveTextContent("A draft is waiting on WhatsApp: open the lead to read and approve it.");
+    expect(within(items[0]).getByRole("link")).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=whatsapp`);
+    noSendControl();
+  });
+
+  it("an older API's rows (no channel fields) still list as before: no channel line, e-mail, the old draft sentence", async () => {
+    api.fetchDueList.mockResolvedValue(DUE_OLD_JSON.map((r) => parseDueItem({ ...r, open_draft_id: DRAFT })));
+    render(await DuePage(tenantProps));
+    const item = within(screen.getByRole("list", { name: "Leads with a follow-up" })).getByRole("listitem");
+    expect(item).toHaveTextContent("A draft is waiting: open the lead to read and approve it.");
+    expect(item.textContent).not.toMatch(/opens on|E-mail:|WhatsApp:|not reported/);
+    expect(within(item).getByRole("link")).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=email`);
   });
 
   it("says plainly when there is nothing, and when the API is down", async () => {

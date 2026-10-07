@@ -108,9 +108,9 @@ def lead_followup(
     lead_id: str,
     ctx: SalesPlus,
     runtime: RuntimeDep,
-    channel: Annotated[DraftChannel, Query()] = "email",
+    channel: Annotated[DraftChannel | None, Query()] = None,
 ) -> LeadFollowupOut:
-    """Why the lead's follow-up is blocked or stopped (closed words), what the pinned engine says now (guidance, never approval), the touches and the drafts."""
+    """Why the lead's follow-up is blocked or stopped (closed words), what the pinned engine says now (guidance, never approval), the touches and the drafts, for `channel` or, when none is asked for, the lead's default channel."""
     found = service.lead_followup(
         _repo(runtime), ctx.principal.token, ctx.tenant.id, _row_id(lead_id), channel
     )
@@ -145,7 +145,7 @@ def create_draft(
 
 @router.get("/followups/due", response_model=list[DueItemOut])
 def due(ctx: SalesPlus, runtime: RuntimeDep) -> list[DueItemOut]:
-    """The leads with an outbound touch, each put to the pinned engine NOW (computed when the page is opened: there is no scheduler)."""
+    """One row per lead with an outbound touch and an open draft channel, each put to the pinned engine NOW (computed when the page is opened: there is no scheduler)."""
     return service.due_list(_repo(runtime), ctx.principal.token, ctx.tenant.id)
 
 

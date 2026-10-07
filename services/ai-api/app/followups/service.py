@@ -17,9 +17,11 @@ from app.followups import cadence_port
 from app.followups.builder import FollowupRequestError, LeadSnapshot, build_request
 from app.followups.models import (
     ApproveDraftIn,
+    ChannelStateOut,
     CreateDraftIn,
     CreatePolicyIn,
     DecisionOut,
+    DraftChannel,
     DraftOut,
     DraftResultOut,
     DraftStatusOut,
@@ -122,6 +124,47 @@ def public_gate(gate: dict[str, Any]) -> dict[str, Any]:
     return {**gate, "blocked": "key" if blocked == "erased_key" else blocked}
 
 
+# The draft channels, in the order a screen shows them (the order is also the default's last resort).
+CHANNELS: tuple[DraftChannel, ...] = ("email", "whatsapp")
+
+# The most leads one due list reads gates for. Each candidate costs at most two gate reads (e-mail, then WhatsApp; a stopped lead only the first), so a due list makes at most
+# 2 * DUE_LIST_MAX_LEADS = 60 gate reads however many leads have an outbound touch. A caller cannot raise it.
+DUE_LIST_MAX_LEADS = 30
+
+
+def channel_is_open(gate: dict[str, Any]) -> bool:
+    """A draft channel is open when the database has neither stopped the lead nor blocked this channel."""
+    return gate.get("stopped") is None and gate.get("blocked") is None
+
+
+def channel_states(gates: dict[DraftChannel, dict[str, Any]]) -> list[ChannelStateOut]:
+    return [ChannelStateOut(channel=c, blocked=gates[c].get("blocked")) for c in CHANNELS]
+
+
+def default_channel(
+    gates: dict[DraftChannel, dict[str, Any]],
+    open_draft_channel: str | None,
+    last_outbound_channel: str | None,
+) -> DraftChannel:
+    """The channel a lead opens on when nobody asked for one (there is no preferred-channel field): the channel of the draft a person has open, else the channel of the lead's latest outbound e-mail or
+    WhatsApp touch (carry on where you last spoke), each only while that channel is open; else e-mail if open, else WhatsApp if open; else e-mail, so the page shows why it is closed."""
+    for wanted in (open_draft_channel, last_outbound_channel):
+        for channel in CHANNELS:
+            if channel == wanted and channel_is_open(gates[channel]):
+                return channel
+    for channel in CHANNELS:
+        if channel_is_open(gates[channel]):
+            return channel
+    return "email"
+
+
+def read_gates(
+    repo: FollowupsRepository, token: str, lead_id: uuid.UUID
+) -> dict[DraftChannel, dict[str, Any]]:
+    """The gate as a client may see it, for every draft channel of the lead (the lead page reads both; the stop is the lead's, the block is the channel's)."""
+    return {c: public_gate(repo.gate(token, lead_id, c)) for c in CHANNELS}
+
+
 def blocked_decision(reason: str) -> DecisionOut:
     """A lead whose contact the gate BLOCKS for this channel (the contact asked not to be contacted, a suppressed key shared with someone else, an erased contact, no consent, no key) is not put to the engine either:
     the engine sees only the lead's own flag, not keys, consent or erasure, and would say a draft can be made, which the database then refuses (SM220/SM221). The block overrides it with the gate's own closed word as the
@@ -145,14 +188,31 @@ def lead_followup(
     token: str,
     tenant: uuid.UUID,
     lead_id: uuid.UUID,
-    channel: str,
+    channel: str | None,
     *,
     now: datetime | None = None,
 ) -> LeadFollowupOut | None:
+    """The page for `channel`, or for the lead's default channel when `channel` is None. Gate first, per channel: the lead's stop, then this channel's block, then the engine (which is lead-level and asked only for an open channel)."""
     snapshot = repo.lead_snapshot(token, tenant, lead_id)
     if snapshot is None:
         return None
-    gate = public_gate(repo.gate(token, lead_id, channel))
+    gates = read_gates(repo, token, lead_id)
+    touches = [
+        TouchOut.model_validate(t) for t in repo.list_touches(token, tenant, lead_id, limit=100)
+    ]
+    drafts = [
+        draft_out(d)
+        for d in repo.list_drafts(token, tenant, lead_id=lead_id, status=None, limit=50)
+    ]
+    open_draft = next((d for d in drafts if d.status in ("draft", "approved")), None)
+    last_out = next((t for t in touches if t.direction == "out" and t.channel in CHANNELS), None)
+    default = default_channel(
+        gates,
+        None if open_draft is None else open_draft.channel,
+        None if last_out is None else last_out.channel,
+    )
+    shown: DraftChannel = default if channel is None else channel  # type: ignore[assignment]
+    gate = gates[shown]
     stopped, blocked = gate.get("stopped"), gate.get("blocked")
     decision: DecisionOut | None = None
     if stopped is not None:
@@ -169,17 +229,14 @@ def lead_followup(
         decision = None if ran is None else decision_out(ran[1])
     return LeadFollowupOut(
         lead_id=lead_id,
-        channel=channel,  # type: ignore[arg-type]
+        channel=shown,
+        default_channel=default,
+        channels=channel_states(gates),
         gate=GateOut.model_validate(gate),
         decision=decision,
         policy_version_id=None if snapshot.policy is None else uuid.UUID(snapshot.policy.id),
-        touches=[
-            TouchOut.model_validate(t) for t in repo.list_touches(token, tenant, lead_id, limit=100)
-        ],
-        drafts=[
-            draft_out(d)
-            for d in repo.list_drafts(token, tenant, lead_id=lead_id, status=None, limit=50)
-        ],
+        touches=touches,
+        drafts=drafts,
     )
 
 
@@ -188,18 +245,26 @@ def due_list(
     token: str,
     tenant: uuid.UUID,
     *,
-    limit: int = 30,
+    limit: int = DUE_LIST_MAX_LEADS,
     now: datetime | None = None,
 ) -> list[DueItemOut]:
-    """What a person could do about follow-ups right now, from real backend state: the leads with an outbound touch that the database has not stopped and the gate does not block for e-mail, each put to the pinned engine. Computed when the page is opened (no scheduler)."""
+    """What a person could do about follow-ups right now, from real backend state: one row per lead with an outbound touch that the database has not stopped and at least one draft channel is open for, put once to the
+    pinned engine (the cadence is the lead's, not the channel's). At most DUE_LIST_MAX_LEADS leads are read, whatever `limit` says. Computed when the page is opened (no scheduler)."""
     moment = now or datetime.now(UTC)
     active = repo.list_drafts(token, tenant, lead_id=None, status="active", limit=200)
     open_drafts = {str(d["lead_id"]): d for d in active}
     items: list[DueItemOut] = []
-    for lead_id in repo.recent_outbound_leads(token, tenant, limit=limit):
-        gate = repo.gate(token, lead_id, "email")
-        if gate.get("stopped") is not None or gate.get("blocked") is not None:
-            continue  # stopped by the database (an order, a withdrawn quote, an archived lead) or blocked by the gate for e-mail (opted out, a suppressed shared key, erased, no consent): nothing is due, whatever the engine would say
+    for candidate in repo.recent_outbound(token, tenant, limit=min(limit, DUE_LIST_MAX_LEADS)):
+        lead_id = candidate.lead_id
+        email = public_gate(repo.gate(token, lead_id, "email"))
+        if email.get("stopped") is not None:
+            continue  # stopped by the database (an order, a withdrawn quote, an archived lead): the stop is the lead's, so WhatsApp is not read
+        gates: dict[DraftChannel, dict[str, Any]] = {
+            "email": email,
+            "whatsapp": public_gate(repo.gate(token, lead_id, "whatsapp")),
+        }
+        if not any(channel_is_open(g) for g in gates.values()):
+            continue  # blocked on every channel (opted out, erased, no consent or no key): nothing is due, whatever the engine would say
         snapshot = repo.lead_snapshot(token, tenant, lead_id)
         if snapshot is None:
             continue
@@ -208,6 +273,7 @@ def due_list(
             continue
         result = ran[1]
         open_draft = open_drafts.get(str(lead_id))
+        open_channel = None if open_draft is None else str(open_draft["channel"])
         items.append(
             DueItemOut(
                 lead_id=lead_id,
@@ -216,6 +282,9 @@ def due_list(
                 touch_number=result["touch_number"],
                 next_eligible_at=result["next_eligible_at"],
                 open_draft_id=None if open_draft is None else uuid.UUID(str(open_draft["id"])),
+                open_draft_channel=open_channel,  # type: ignore[arg-type]
+                channels=channel_states(gates),
+                default_channel=default_channel(gates, open_channel, candidate.channel),
             )
         )
     return items

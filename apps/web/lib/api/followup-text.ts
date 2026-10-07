@@ -108,6 +108,20 @@ export const GATE_TEXT: Record<string, string> = {
   consent: REFUSAL_TEXT.contact_blocked.consent,
   unkeyed: REFUSAL_TEXT.no_suppression_key["-"],
 };
+/**
+ * A draft channel's state in a few words (a tab, a due-list row). Closed words in, our words out; an unknown word is the fallback, never printed. No `erased_key`: a client is only ever told `key`.
+ * The full sentences for the loaded channel are GATE_TEXT; these are the short forms for the channels around it.
+ */
+export const CHANNEL_OPEN_TEXT = "open";
+export const CHANNEL_STOPPED_TEXT = "stopped";
+export const CHANNEL_BLOCK_TEXT: Record<string, string> = {
+  contact: "asked not to be contacted",
+  key: "on the do-not-contact list",
+  erased: "contact erased",
+  consent: "no recorded consent or address",
+  unkeyed: "no suppression key yet",
+};
+export const CHANNEL_BLOCK_FALLBACK = "cannot be contacted";
 export const STOPPED_TEXT: Record<string, string> = {
   order_accepted: REFUSAL_TEXT.followup_stopped.order_accepted,
   order_declined: REFUSAL_TEXT.followup_stopped.order_declined,

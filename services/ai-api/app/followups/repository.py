@@ -10,7 +10,7 @@ from __future__ import annotations
 import logging
 import uuid
 from datetime import date, datetime, timedelta, timezone
-from typing import Any, Protocol
+from typing import Any, NamedTuple, Protocol
 
 import httpx
 
@@ -37,6 +37,13 @@ DRAFT_COLUMNS = (
     "state_hash,as_of,created_by,created_at,approved_by,approved_at,discarded_by,discarded_at,discard_code"
 )
 QUESTION_COLUMNS = "id,requirement_id,line_no,question_code,question_text,status,created_by,created_at,decided_by,decided_at,discard_code"
+
+
+class OutboundLead(NamedTuple):
+    """A candidate of the due list: a lead with an outbound touch and the channel (email or whatsapp) of its latest such touch, or None when every outbound touch it has is a phone call."""
+
+    lead_id: uuid.UUID
+    channel: str | None
 
 
 class FollowupsRepository(Protocol):
@@ -80,10 +87,10 @@ class FollowupsRepository(Protocol):
         status: str | None,
         limit: int,
     ) -> list[dict[str, Any]]: ...
-    def recent_outbound_leads(
+    def recent_outbound(
         self, token: str, tenant_id: uuid.UUID, *, limit: int
-    ) -> list[uuid.UUID]:
-        """The leads with the most recent outbound touches (distinct, newest first): the candidates of the due list."""
+    ) -> list[OutboundLead]:
+        """The leads with the most recent outbound touches (distinct, newest first, at most `limit`): the candidates of the due list, each with the channel (email or whatsapp) of its latest such touch."""
         ...
 
     def requirement_enquiry(
@@ -360,28 +367,30 @@ class PostgrestFollowupsRepository:
             params["status"] = "in.(draft,approved)" if status == "active" else f"eq.{status}"
         return self._rows("/followup_drafts", token, params)
 
-    def recent_outbound_leads(
+    def recent_outbound(
         self, token: str, tenant_id: uuid.UUID, *, limit: int
-    ) -> list[uuid.UUID]:
+    ) -> list[OutboundLead]:
         rows = self._rows(
             "/lead_touches",
             token,
             {
-                "select": "lead_id",
+                "select": "lead_id,channel",
                 "tenant_id": f"eq.{tenant_id}",
                 "direction": "eq.out",
                 "order": "occurred_at.desc,id.desc",
                 "limit": str(limit * 4),
             },
         )
-        seen: list[uuid.UUID] = []
-        for row in rows:
+        seen: dict[uuid.UUID, str | None] = {}
+        for row in rows:  # newest first: the first e-mail or WhatsApp row of a lead is its latest such touch (a phone call makes a lead a candidate but is not a draft channel)
             lead = uuid.UUID(str(row["lead_id"]))
             if lead not in seen:
-                seen.append(lead)
-            if len(seen) >= limit:
-                break
-        return seen
+                if len(seen) >= limit:
+                    continue  # the cap is reached: only leads already counted may still learn their channel
+                seen[lead] = None
+            if seen[lead] is None and row.get("channel") in ("email", "whatsapp"):
+                seen[lead] = str(row["channel"])
+        return [OutboundLead(lead_id=lead, channel=ch) for lead, ch in seen.items()]
 
     def requirement_enquiry(
         self, token: str, tenant_id: uuid.UUID, requirement_id: uuid.UUID

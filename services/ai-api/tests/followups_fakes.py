@@ -11,6 +11,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from app.followups.builder import LeadSnapshot, PolicySnapshot, Touch
+from app.followups.repository import OutboundLead
 
 LEAD = uuid.UUID(int=0x1EAD)
 CONTACT = uuid.UUID(int=0xC0A7)
@@ -34,6 +35,7 @@ __all__ = [
     "policy_snapshot",
     "question_row",
     "snapshot",
+    "touch_row",
 ]
 
 
@@ -72,6 +74,23 @@ def snapshot(*, outbound_days_ago: tuple[int, ...] = (5,), **over: Any) -> LeadS
     }
     base.update(over)
     return LeadSnapshot(**base)
+
+
+def touch_row(channel: str = "email", direction: str = "out", **over: Any) -> dict[str, Any]:
+    """A recorded touch as the repository returns it (newest first is the caller's order)."""
+    row: dict[str, Any] = {
+        "id": str(uuid.uuid4()),
+        "lead_id": str(LEAD),
+        "contact_id": str(CONTACT),
+        "direction": direction,
+        "channel": channel,
+        "occurred_at": "2026-10-02T08:00:00Z",
+        "draft_id": None,
+        "recorded_by": None,
+        "recorded_at": "2026-10-02T08:00:00Z",
+    }
+    row.update(over)
+    return row
 
 
 def draft_row(draft_id: uuid.UUID = DRAFT, **over: Any) -> dict[str, Any]:
@@ -132,6 +151,9 @@ class FakeFollowups:
             "policy_in_force": True,
         }
         self.outbound_leads: list[uuid.UUID] = [LEAD]
+        self.last_out_channel: dict[
+            uuid.UUID, str | None
+        ] = {}  # per candidate: the channel (email or whatsapp) of its latest outbound touch; none when absent
         self.stopped_leads: dict[
             uuid.UUID, str
         ] = {}  # per lead: the database's stop reason (an accepted order ...)
@@ -288,11 +310,15 @@ class FakeFollowups:
             rows = [r for r in rows if r["status"] == status]
         return rows[:limit]
 
-    def recent_outbound_leads(
+    def recent_outbound(
         self, token: str, tenant_id: uuid.UUID, *, limit: int
-    ) -> list[uuid.UUID]:
+    ) -> list[OutboundLead]:
         self.tokens.append(token)
-        return self.outbound_leads[:limit]
+        self.calls.append(("recent_outbound", {"limit": limit}))
+        return [
+            OutboundLead(lead, self.last_out_channel.get(lead))
+            for lead in self.outbound_leads[:limit]
+        ]
 
     def requirement_enquiry(
         self, token: str, tenant_id: uuid.UUID, requirement_id: uuid.UUID

@@ -41,11 +41,12 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   }
   if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShown tenantId={tenantId} tenantName={tenant.name} title="Follow-up" />;
 
+  // A channel in the address is honoured; anything else (or nothing) leaves the choice to the API, which answers for the lead's default channel and says which.
   const asked = pick(query.channel);
-  const channel: DraftChannel = (DRAFT_CHANNELS as readonly string[]).includes(asked ?? "") ? (asked as DraftChannel) : "email";
+  const wanted: DraftChannel | undefined = (DRAFT_CHANNELS as readonly string[]).includes(asked ?? "") ? (asked as DraftChannel) : undefined;
   let data: LeadFollowup;
   try {
-    data = await fetchLeadFollowup(user.accessToken, tenantId, leadId, channel);
+    data = await fetchLeadFollowup(user.accessToken, tenantId, leadId, wanted);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -54,12 +55,9 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
 
   const maxNow = indiaNowLocal(new Date());
   const ids = { sentTouchIds: Object.fromEntries(data.drafts.map((d) => [d.id, crypto.randomUUID()])), maxNow };
-  const forms = (
-    <>
-      <CreateDraftForm action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={channel} />
-      <TouchForm action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} />
-    </>
-  );
+  // `key` makes a form start afresh when the tab changes (an uncontrolled field keeps its value while the same form stays mounted).
+  const draftForm = <CreateDraftForm key={`draft-${data.channel}`} action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={data.channel} />;
+  const touchForm = <TouchForm key={`touch-${data.channel}`} action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} channel={data.channel} />;
   return (
     <main className="shell wide">
       <p>
@@ -69,7 +67,7 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
         Your role: <strong>{tenant.role}</strong>
       </p>
       <Notice />
-      <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} forms={forms} />
+      <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
     </main>
   );
 }

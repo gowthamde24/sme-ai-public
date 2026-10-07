@@ -1,7 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { DECISION_TEXT } from "@/lib/api/followup-text";
-import { decisionLine, draftOffers, dueLine, errorState, gateLines, indiaNowLocal, parseGapDays, parseHolidays, policyFromForm, touchTime } from "./followup-logic";
+import { parseDraft, parseLeadFollowup } from "@/lib/api/followups";
+import { DRAFT_JSON, FOLLOWUP_JSON } from "@/lib/api/followups-fixtures";
+import { channelStateText, channelTabs, channelsLine, decisionLine, draftAsk, draftOffers, dueLine, errorState, gateLines, indiaNowLocal, parseGapDays, parseHolidays, policyFromForm, touchTime } from "./followup-logic";
 
 const NOW = new Date("2026-10-07T06:30:00.000Z"); // 12:00 in India
 
@@ -176,5 +178,83 @@ describe("errorState: one fixed sentence, and whether the page must be read agai
     const hidden = errorState(409, "contact_blocked", "erased_key");
     expect(hidden.error).toBe(errorState(409, "contact_blocked", "key").error);
     expect(JSON.stringify(hidden)).not.toMatch(/erased[\s_-]*key|by right/i);
+  });
+});
+
+describe("channel states in closed words", () => {
+  it("open, each blocked word in its short form, an unknown word in the fallback (never printed)", () => {
+    expect(channelStateText(null)).toBe("open");
+    expect(channelStateText("contact")).toBe("asked not to be contacted");
+    expect(channelStateText("key")).toBe("on the do-not-contact list");
+    expect(channelStateText("erased")).toBe("contact erased");
+    expect(channelStateText("consent")).toBe("no recorded consent or address"); // like the full sentence: a phone-only lead's e-mail has no address at all
+    expect(channelStateText("unkeyed")).toBe("no suppression key yet");
+    expect(channelStateText("something-new")).toBe("cannot be contacted");
+    expect(channelStateText("erased_key")).not.toMatch(/erased/); // never the marker's own word: the API says `key`, and a stray one is the fallback
+  });
+
+  it("the due row's line names every channel and where it opens; none at all when the channels were not reported", () => {
+    const states = [{ channel: "email", blocked: "consent" }, { channel: "whatsapp", blocked: null }] as const;
+    expect(channelsLine([...states], "whatsapp")).toBe("E-mail: no recorded consent or address · WhatsApp: open · opens on WhatsApp");
+    expect(channelsLine([], "email")).toBeNull();
+  });
+});
+
+describe("the tabs of the lead page", () => {
+  const page = (over: Record<string, unknown>) => parseLeadFollowup({ ...FOLLOWUP_JSON, ...over });
+
+  it("E-mail then WhatsApp, the loaded channel current", () => {
+    const tabs = channelTabs(page({ channel: "whatsapp" }));
+    expect(tabs.map((t) => [t.channel, t.label, t.current, t.state])).toEqual([
+      ["email", "E-mail", false, "open"],
+      ["whatsapp", "WhatsApp", true, "open"],
+    ]);
+  });
+
+  it("a blocked channel says why; a stop closes both", () => {
+    const blocked = page({ channels: [{ channel: "email", blocked: "key" }, { channel: "whatsapp", blocked: null }] });
+    expect(channelTabs(blocked).map((t) => t.state)).toEqual(["on the do-not-contact list", "open"]);
+    const stopped = page({ gate: { blocked: null, stopped: "lead_archived", policy_in_force: true } });
+    expect(channelTabs(stopped).map((t) => t.state)).toEqual(["stopped", "stopped"]);
+  });
+
+  it("NOT REPORTED (empty channels) is no state at all, never 'closed': the loaded channel's own gate is on the page", () => {
+    const old = page({ channels: [] });
+    expect(channelTabs(old).map((t) => t.state)).toEqual([null, null]);
+    const stopped = page({ channels: [], gate: { blocked: null, stopped: "lead_archived", policy_in_force: true } });
+    expect(channelTabs(stopped).map((t) => t.state)).toEqual([null, null]); // a stop is still said, by the gate lines
+    expect(gateLines(stopped.gate)).toEqual(["This lead is archived: follow-ups stop."]);
+  });
+
+  it("a channel the API left out of a partial list is not reported either", () => {
+    expect(channelTabs(page({ channels: [{ channel: "whatsapp", blocked: null }] })).map((t) => t.state)).toEqual([null, "open"]);
+  });
+});
+
+describe("'Ask for a draft' is offered on an open tab only, and not while a draft is open on the other channel", () => {
+  const page = (over: Record<string, unknown>) => parseLeadFollowup({ ...FOLLOWUP_JSON, ...over });
+  const other = (over: Record<string, unknown>) => parseDraft({ ...DRAFT_JSON, id: "dddddddd-dddd-4ddd-8ddd-ddddddddddd9", ...over });
+
+  it("an open tab with no draft elsewhere: offered", () => {
+    expect(draftAsk(page({ drafts: [] }))).toEqual({ show: true, waiting: null });
+  });
+
+  it("a blocked channel or a stopped lead: not offered, and nothing to say about other drafts", () => {
+    expect(draftAsk(page({ gate: { blocked: "consent", stopped: null, policy_in_force: true }, drafts: [] }))).toEqual({ show: false, waiting: null });
+    expect(draftAsk(page({ gate: { blocked: null, stopped: "order_accepted", policy_in_force: true }, drafts: [DRAFT_JSON] }))).toEqual({ show: false, waiting: null });
+  });
+
+  it("a draft or approved draft on the other channel: not offered, and named", () => {
+    for (const status of ["draft", "approved"]) {
+      const got = draftAsk(page({ channel: "whatsapp", drafts: [{ ...DRAFT_JSON, status, channel: "email" }] }));
+      expect(got.show).toBe(false);
+      expect(got.waiting?.channel).toBe("email");
+      expect(got.waiting?.touch_number).toBe(2);
+    }
+  });
+
+  it("a draft on THIS channel, or a finished draft on the other, changes nothing", () => {
+    expect(draftAsk(page({ channel: "email", drafts: [DRAFT_JSON] })).show).toBe(true);
+    for (const status of ["discarded", "recorded_sent"]) expect(draftAsk(page({ channel: "whatsapp", drafts: [other({ status, channel: "email" })] })).show).toBe(true);
   });
 });

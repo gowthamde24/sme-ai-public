@@ -5,8 +5,20 @@
  *
  * Nothing in the follow-up screens sends a message. A touch, a draft and an approval are records of what a person did outside this system.
  */
-import { DECISION_FALLBACK, DECISION_TEXT, GATE_TEXT, STOPPED_TEXT, followupSentence, STALE_CODES } from "@/lib/api/followup-text";
-import type { Decision, Draft, DueItem, Gate, PolicyInput } from "@/lib/api/followups";
+import {
+  CHANNEL_BLOCK_FALLBACK,
+  CHANNEL_BLOCK_TEXT,
+  CHANNEL_OPEN_TEXT,
+  CHANNEL_STOPPED_TEXT,
+  DECISION_FALLBACK,
+  DECISION_TEXT,
+  GATE_TEXT,
+  STOPPED_TEXT,
+  followupSentence,
+  STALE_CODES,
+} from "@/lib/api/followup-text";
+import { CHANNEL_LABELS, DRAFT_CHANNELS } from "@/lib/api/followups";
+import type { ChannelState, Decision, Draft, DraftChannel, DueItem, Gate, LeadFollowup, PolicyInput } from "@/lib/api/followups";
 
 const LOCAL = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -144,6 +156,55 @@ export function dueLine(item: Pick<DueItem, "action" | "reason_code" | "touch_nu
   if (item.action === "draft_followup") return `${base} (Touch ${item.touch_number}.)`;
   if (item.action === "wait" && item.next_eligible_at) return `${base} Earliest: ${item.next_eligible_at.slice(0, 16).replace("T", " ")} UTC.`;
   return base;
+}
+
+// ----------------------------------------------------------------------------- channels (WhatsApp as a first-class channel)
+/**
+ * `channels` EMPTY means "the API did not report them" (an older API): nothing here ever turns that into a claim about a channel, least of all "no channel is open". The loaded channel's own gate
+ * (data.gate) is always reported and is what the page shows.
+ */
+export function channelStateText(blocked: string | null): string {
+  return blocked === null ? CHANNEL_OPEN_TEXT : (CHANNEL_BLOCK_TEXT[blocked] ?? CHANNEL_BLOCK_FALLBACK);
+}
+
+/** The due-list row's channel line, "E-mail: open · WhatsApp: no recorded consent or address · opens on E-mail"; null when the channels were not reported. */
+export function channelsLine(channels: ChannelState[], defaultChannel: DraftChannel): string | null {
+  if (channels.length === 0) return null;
+  const states = channels.map((c) => `${CHANNEL_LABELS[c.channel]}: ${channelStateText(c.blocked)}`).join(" · ");
+  return `${states} · opens on ${CHANNEL_LABELS[defaultChannel]}`;
+}
+
+export interface ChannelTab {
+  channel: DraftChannel;
+  label: string;
+  /** Open, a short blocked phrase, "stopped"; null when the API did not report this channel's state. */
+  state: string | null;
+  current: boolean;
+}
+/** The tabs of the lead page, E-mail first, then WhatsApp. A lead-level stop closes both. */
+export function channelTabs(data: Pick<LeadFollowup, "channel" | "channels" | "gate">): ChannelTab[] {
+  return DRAFT_CHANNELS.map((channel) => {
+    const reported = data.channels.find((c) => c.channel === channel);
+    let state: string | null = null;
+    if (reported !== undefined) state = data.gate.stopped !== null ? CHANNEL_STOPPED_TEXT : channelStateText(reported.blocked);
+    return { channel, label: CHANNEL_LABELS[channel], state, current: channel === data.channel };
+  });
+}
+
+export interface DraftAsk {
+  /** Whether "Ask for a draft" is offered on this tab. */
+  show: boolean;
+  /** An open draft of this lead on ANOTHER channel (the database allows one open draft per touch): the person works that one first. */
+  waiting: Draft | null;
+}
+/**
+ * "Ask for a draft" exists only on an open tab (guidance: the database refuses it anyway). Not on a channel the gate blocks or a lead the database has stopped (the lines above say why), and not
+ * while a draft of this lead is open on the other channel (discard it first).
+ */
+export function draftAsk(data: Pick<LeadFollowup, "channel" | "gate" | "drafts">): DraftAsk {
+  if (data.gate.stopped !== null || data.gate.blocked !== null) return { show: false, waiting: null };
+  const waiting = data.drafts.find((d) => (d.status === "draft" || d.status === "approved") && d.channel !== data.channel) ?? null;
+  return { show: waiting === null, waiting };
 }
 
 // ----------------------------------------------------------------------------- errors

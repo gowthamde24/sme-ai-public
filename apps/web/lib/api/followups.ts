@@ -139,9 +139,19 @@ export interface Decision {
   next_eligible_at: string | null;
   engine_version: string;
 }
+/** One draft channel of a lead as the gate reads it for THAT channel: `blocked` is the gate's closed word (contact | key | erased | consent | unkeyed) or null when the channel is open. A lead-level stop is `gate.stopped`, not here. */
+export interface ChannelState {
+  channel: DraftChannel;
+  blocked: string | null;
+}
 export interface LeadFollowup {
   lead_id: string;
+  /** The channel this page was read for (the one asked for, else `default_channel`); `gate` and `decision` are for it. */
   channel: DraftChannel;
+  /** The channel to open first. An API that predates the field is read as "the channel it answered for". */
+  default_channel: DraftChannel;
+  /** The state of every draft channel, e-mail first. EMPTY means the API did not report it (an older API): show only the loaded channel's gate. */
+  channels: ChannelState[];
   gate: Gate;
   decision: Decision | null;
   policy_version_id: string | null;
@@ -155,6 +165,12 @@ export interface DueItem {
   touch_number: number;
   next_eligible_at: string | null;
   open_draft_id: string | null;
+  /** The channel of the open draft; null when there is none, or when the API predates the field. */
+  open_draft_channel: DraftChannel | null;
+  /** One row per LEAD: the state of each draft channel. EMPTY means the API did not report it (an older API judged e-mail only). */
+  channels: ChannelState[];
+  /** The channel to open first; "email" when the API predates the field (it judged e-mail only). */
+  default_channel: DraftChannel;
 }
 export interface QuestionDraft {
   id: string;
@@ -302,11 +318,26 @@ export function parseDecision(json: unknown): Decision {
   };
 }
 
+export function parseChannelState(json: unknown): ChannelState {
+  const r = rec(json, "channel state");
+  return { channel: oneOf(r, "channel", DRAFT_CHANNELS), blocked: strOrNull(r, "blocked") };
+}
+/** Absent = an API that predates the field = []. Present = strict: a list of valid states, each channel at most once. */
+function parseChannelStates(r: Rec): ChannelState[] {
+  if (!("channels" in r) || r.channels === undefined) return [];
+  const states = list(r.channels, "channels").map(parseChannelState);
+  if (new Set(states.map((c) => c.channel)).size !== states.length) bad("channels");
+  return states;
+}
+
 export function parseLeadFollowup(json: unknown): LeadFollowup {
   const r = rec(json, "lead follow-up");
+  const channel = oneOf(r, "channel", DRAFT_CHANNELS);
   return {
     lead_id: str(r, "lead_id"),
-    channel: oneOf(r, "channel", DRAFT_CHANNELS),
+    channel,
+    default_channel: r.default_channel === undefined ? channel : oneOf(r, "default_channel", DRAFT_CHANNELS),
+    channels: parseChannelStates(r),
     gate: parseGate(r.gate),
     decision: r.decision === null ? null : parseDecision(r.decision),
     policy_version_id: strOrNull(r, "policy_version_id"),
@@ -324,6 +355,9 @@ export function parseDueItem(json: unknown): DueItem {
     touch_number: int(r, "touch_number"),
     next_eligible_at: strOrNull(r, "next_eligible_at"),
     open_draft_id: strOrNull(r, "open_draft_id"),
+    open_draft_channel: r.open_draft_channel === undefined ? null : oneOfOrNull(r, "open_draft_channel", DRAFT_CHANNELS),
+    channels: parseChannelStates(r),
+    default_channel: r.default_channel === undefined ? "email" : oneOf(r, "default_channel", DRAFT_CHANNELS),
   };
 }
 export const parseDueItems = (json: unknown): DueItem[] => list(json, "due list").map(parseDueItem);
@@ -402,9 +436,11 @@ export async function createPolicyVersion(accessToken: string, tenantId: string,
   );
 }
 
-export async function fetchLeadFollowup(accessToken: string, tenantId: string, leadId: string, channel: DraftChannel = "email"): Promise<LeadFollowup> {
+/** `channel` undefined = the API resolves the lead's default channel (the answer says which: `channel`, `default_channel`). */
+export async function fetchLeadFollowup(accessToken: string, tenantId: string, leadId: string, channel?: DraftChannel): Promise<LeadFollowup> {
   checked(tenantId, leadId);
-  return parseLeadFollowup(await apiRequest(`${base(tenantId)}/leads/${leadId}/followup?channel=${channel}`, accessToken));
+  const query = channel === undefined ? "" : `?channel=${channel}`;
+  return parseLeadFollowup(await apiRequest(`${base(tenantId)}/leads/${leadId}/followup${query}`, accessToken));
 }
 
 export interface TouchInput {
