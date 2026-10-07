@@ -72,6 +72,13 @@ describe("CreateDraftForm: the channel and nothing else", () => {
   });
 });
 
+describe("CreateDraftForm: the channel of the page", () => {
+  it("starts on the channel the page is showing", () => {
+    render(<CreateDraftForm action={ok()} draftId="d" channel="whatsapp" />);
+    expect((screen.getByLabelText("Channel") as HTMLSelectElement).value).toBe("whatsapp");
+  });
+});
+
 describe("ApproveForm: the second factor and the reviewed fingerprint", () => {
   it("carries the state_hash it was shown", () => {
     render(<ApproveForm action={ok()} stateHash={HASH} secondFactorMissing={false} />);

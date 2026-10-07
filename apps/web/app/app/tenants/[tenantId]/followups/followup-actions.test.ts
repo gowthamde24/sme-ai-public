@@ -130,8 +130,9 @@ describe("createDraftAction: the channel only", () => {
 
 describe("approveDraftAction: the fingerprint of the draft that was shown", () => {
   it("sends exactly the state_hash the form carried", async () => {
-    const r = await approveDraftAction(TENANT, LEAD, DRAFT, undefined, form({ state_hash: HASH }));
-    expect(api.approveDraft).toHaveBeenCalledWith("tok", TENANT, DRAFT, HASH);
+    const reviewed = "0123456789abcdef".repeat(4); // not an easy value: a constant would not pass
+    const r = await approveDraftAction(TENANT, LEAD, DRAFT, undefined, form({ state_hash: reviewed }));
+    expect(api.approveDraft).toHaveBeenCalledWith("tok", TENANT, DRAFT, reviewed);
     expect(r?.ok).toBe(true);
     expect(r?.message).toMatch(/send it yourself/);
   });

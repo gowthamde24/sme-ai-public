@@ -69,6 +69,14 @@ describe("the policy form's text", () => {
     expect(r.ok === false && r.error).toMatch(/^[A-Z].*[.]$/);
   });
 
+  it("the touch count is 1 to 100: each bound with a valid gap count, so only the range can refuse", () => {
+    const gaps = (n: number) => Array.from({ length: n }, () => "1").join(", ");
+    expect(policyFromForm({ ...values, max_touches: "100", gap_days: gaps(99) }, ["0"], "id-1").ok).toBe(true);
+    expect(policyFromForm({ ...values, max_touches: "101", gap_days: gaps(100) }, ["0"], "id-1").ok).toBe(false);
+    expect(policyFromForm({ ...values, max_touches: "0", gap_days: "" }, ["0"], "id-1").ok).toBe(false);
+    expect(policyFromForm({ ...values, max_touches: "1", gap_days: "" }, ["0"], "id-1").ok).toBe(true);
+  });
+
   it("at least one weekday, each once, each 0 to 6", () => {
     for (const days of [[], ["7"], ["x"], ["1", "1"]]) expect(policyFromForm(values, days, "id-1").ok).toBe(false);
     expect(policyFromForm({ ...values, max_touches: "1", gap_days: "" }, ["0"], "id-1").ok).toBe(true); // one touch needs no gap

@@ -190,4 +190,75 @@ select is((select count(*) from public.question_drafts d where d.status = 'draft
 select is((select count(*) from public.question_drafts d where not exists (select 1 from public.requirements r where r.tenant_id = d.tenant_id and r.id = d.requirement_id)), 0::bigint, 'E7 every question''s requirement is in its own tenant');
 select is((select count(*) from public.question_drafts d where d.question_text ~ '[@]' or app.text_has_contact(d.question_text) or not app.text_is_clean(d.question_text)), 0::bigint, 'E8 no question holds contact data or a hidden character');
 
+-- ============================================================================ F. commit 5, the mutation pass (docs/checklist-notes/A.md, "T010 part 2")
+-- the one CHECK constraint left standing (see 62, section O): every other CHECK of the table is dropped and its user triggers disabled inside a sub-transaction that is rolled back
+create function pg_temp.only_check(p_table regclass, p_keep text, p_sql text) returns text language plpgsql as $$
+declare
+  c record;
+  r text;
+  v_con text;
+begin
+  begin
+    for c in select conname from pg_constraint where conrelid = p_table and contype = 'c' and conname <> p_keep loop
+      execute format('alter table %s drop constraint %I', p_table, c.conname);
+    end loop;
+    execute format('alter table %s disable trigger user', p_table);
+    begin
+      execute p_sql;
+      r := 'ok';
+    exception when others then
+      get stacked diagnostics v_con = constraint_name;
+      r := sqlstate || ':' || coalesce(v_con, '');
+    end;
+    raise exception 'sandbox' using detail = r;
+  exception when raise_exception then
+    get stacked diagnostics r = pg_exception_detail;
+    return r;
+  end;
+end $$;
+create function pg_temp.sandbox(p_sql text) returns text language plpgsql as $$
+declare r text;
+begin
+  begin
+    begin
+      execute p_sql;
+      r := 'ok';
+    exception when others then
+      r := sqlstate;
+    end;
+    raise exception 'sandbox' using detail = r;
+  exception when raise_exception then
+    get stacked diagnostics r = pg_exception_detail;
+    return r;
+  end;
+end $$;
+insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (tests.rid('e_r7'), tests.tid('a'), tests.rid('a_lead'), 'email', now() - interval '1 hour', 'Fixture enquiry r7');
+insert into public.requirements (id, tenant_id, enquiry_id) values (tests.rid('r7'), tests.tid('a'), tests.rid('e_r7'));
+create function pg_temp.qins(p_status text default 'draft', p_decided text default 'null', p_code text default 'null') returns text language sql as $$
+  select format($q$insert into public.question_drafts (id, tenant_id, requirement_id, question_code, question_text, line_no, status, decided_at, discard_code)
+                   values (gen_random_uuid(), %L, %L, 'confirm_budget', 'Is the budget still the same?', 5, %L::public.question_draft_status, %s, %s)$q$, tests.tid('a'), tests.rid('r7'), p_status, p_decided, p_code) $$;
+select is(pg_temp.priv(pg_temp.qins('draft')), 'ok', 'F1 (fixture) a plain question row is accepted by the table');
+select is(pg_temp.only_check('public.question_drafts', 'question_drafts_check', pg_temp.qins('draft', 'now()')), '23514:question_drafts_check', 'F2 a question still waiting cannot carry a decision time: refused by the table check by itself');
+select is(pg_temp.only_check('public.question_drafts', 'question_drafts_check', pg_temp.qins('approved', 'null')), '23514:question_drafts_check', 'F3 ... and a decided question must carry one');
+select is(pg_temp.only_check('public.question_drafts', 'question_drafts_check1', pg_temp.qins('draft', 'null', $$'person'$$)), '23514:question_drafts_check1', 'F4 a question that is not discarded cannot carry a discard reason: refused by the table check by itself');
+select is(pg_temp.only_check('public.question_drafts', 'question_drafts_check1', pg_temp.qins('discarded', 'now()', 'null')), '23514:question_drafts_check1', 'F5 ... and a discarded one must carry one');
+
+-- the cap on one persist call: 40 items are stored, 41 are an invalid argument
+create function pg_temp.many(p_n int) returns jsonb language sql as $$
+  select jsonb_agg(pg_temp.it('m' || i,
+                              (array['missing', 'conflicting', 'confirm'])[(i - 1) % 3 + 1] || '_' || (array['saree_type', 'fabric', 'colour', 'quantity', 'budget', 'deadline', 'delivery_city', 'payment_terms'])[((i - 1) / 3) % 8 + 1],
+                              case when i > 24 then '1' end, 'A synthetic question number ' || i || '?')) from generate_series(1, p_n) i $$;
+select is(pg_temp.persist('a_sales', 'r6', pg_temp.many(41)), '22023', 'F6 41 items in one call are an invalid argument (nothing is stored)');
+select is(pg_temp.nact('r6'), 0::bigint, 'F7 ... and nothing was');
+select is(pg_temp.persist('a_sales', 'r6', pg_temp.many(40)), 'ok', 'F8 40 items in one call are stored (the cap itself is allowed)');
+select is(pg_temp.nact('r6'), 40::bigint, 'F9 all forty');
+
+-- the question guard trigger, branch by branch
+select is(pg_temp.priv(format($q$update public.question_drafts set decided_at = decided_at + interval '1 day' where id = %L$q$, tests.rid('x1'))), '42501', 'F10 the decision time of a discarded question cannot change (it stays discarded)');
+select is(pg_temp.try('a_sales', format('select public.decide_question_draft(%L, ''approve'')', tests.rid('m1'))), 'ok', 'F11 (fixture) a question is approved');
+select is(pg_temp.priv(format($q$update public.question_drafts set status = 'draft', decided_at = null where id = %L$q$, tests.rid('m1'))), '42501', 'F12 an approved question cannot go back to waiting (the move guard: the table check is satisfied by decided_at = null)');
+select is(pg_temp.sandbox(format($q$update public.question_drafts set decided_by = decided_by where id = %L$q$, tests.rid('x1'))), 'ok', 'F13 a write that changes nothing is not refused on a discarded question');
+select is(pg_temp.sandbox(format($q$update public.question_drafts set decided_by = decided_by where id = %L$q$, tests.rid('m1'))), 'ok', 'F14 ... on an approved one');
+select is(pg_temp.sandbox(format($q$update public.question_drafts set decided_by = decided_by where id = %L$q$, tests.rid('m2'))), 'ok', 'F15 ... on one waiting for a decision');
+
 select * from finish();

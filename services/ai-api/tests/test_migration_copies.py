@@ -425,8 +425,10 @@ def _code_lines(text: str) -> list[str]:
     return [ln.strip() for ln in text.split("\n") if ln.strip() and not ln.strip().startswith("--")]
 
 
-def test_the_blocker_order_copy_is_the_last_definition_and_only_moves_one_block() -> None:
-    defs = block_definitions(BLOCKER_FN)
+def test_the_blocker_order_copy_is_the_last_of_its_time_and_only_moves_one_block() -> None:
+    defs = [
+        d for d in block_definitions(BLOCKER_FN) if d[0] <= BLOCKER_ORDER
+    ]  # later migrations may redefine it again (below)
     assert defs[-1][0] == BLOCKER_ORDER, (
         f"{BLOCKER_FN} is redefined after {BLOCKER_ORDER} ({defs[-1][0]}): re-copy it from the latest definition"
     )
@@ -480,3 +482,38 @@ def test_the_draft_replay_copy_is_the_last_definition_and_changes_only_the_repla
     assert [line[1:] for line in diff if line[0] == "+"] == [
         "if v_exist.tenant_id = l.tenant_id and v_exist.lead_id = l.id and v_exist.channel::text = p_channel then"
     ]
+
+
+# ---------------------------------------------------------------------------------------------- T010 part 2, commit 5: the blocker's guard catches a MISSING array too
+BLOCKER_ARRAYS = "20261027090000_t010_part2_blocker_missing_arrays.sql"
+
+
+def test_the_blocker_arrays_copy_is_the_last_definition_and_changes_only_the_four_array_guards() -> (
+    None
+):
+    defs = block_definitions(BLOCKER_FN)
+    assert defs[-1][0] == BLOCKER_ARRAYS, (
+        f"{BLOCKER_FN} is redefined after {BLOCKER_ARRAYS} ({defs[-1][0]}): re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < BLOCKER_ARRAYS]
+    assert earlier
+    old = _code_lines("\n".join(normalised(earlier[-1][1])))
+    new = _code_lines("\n".join(normalised(defs[-1][1])))
+    diff = [
+        line
+        for line in difflib.unified_diff(old, new, lineterm="", n=0)
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    removed, added = (
+        [line[1:] for line in diff if line[0] == "-"],
+        [line[1:] for line in diff if line[0] == "+"],
+    )
+    assert len(removed) == len(added) == 2
+    # the same four tests, each now `coalesce(jsonb_typeof(x), '') <> 'array'`: a missing key is not a NULL that slips past the guard
+    assert [
+        r.replace("jsonb_typeof(", "coalesce(jsonb_typeof(").replace(
+            ") <> 'array'", "), '') <> 'array'"
+        )
+        for r in removed
+    ] == added
+    assert sum(line.count("coalesce(jsonb_typeof(") for line in added) == 4

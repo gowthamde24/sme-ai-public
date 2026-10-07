@@ -12,11 +12,13 @@ competing write:
   * a storm of mixed operations from several clients: no deadlock (the database's own counter), no server error, the invariants hold.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608, S311, B023
+# ruff: noqa: E501, S608, S311, B023, S603, S607
 
 from __future__ import annotations
 
+import json
 import random
+import subprocess
 import threading
 import time
 import uuid
@@ -25,6 +27,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Any
 
 import httpx
+import operator_sql
 import pytest
 from crm_support import World
 from evidence_support import uid
@@ -77,6 +80,20 @@ def key_locked(tenant: str, kind: str, hmac: str, *, exclusive_probe: bool) -> b
     return got == "f"
 
 
+def row_lock_held(table: str, row_id: str, mode: str) -> bool:
+    """Is the row held by another transaction in a way that conflicts with `for {mode} nowait`?  A plain UPDATE takes NO KEY UPDATE and an insert into a child table takes KEY SHARE on the parent row, so
+    `for update nowait` cannot tell a deliberate lock from those. `key share` fails only against an explicit FOR UPDATE; `no key update` fails against an explicit FOR SHARE or FOR UPDATE."""
+    out = subprocess.run(
+        ["docker", "exec", "-i", operator_sql.container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", f"select 1 from public.{table} where id = '{row_id}' for {mode} nowait"],
+        capture_output=True,
+        text=True,
+    )  # fmt: skip
+    if out.returncode == 0:
+        return False
+    assert "could not obtain lock" in out.stderr, out.stderr
+    return True
+
+
 def deadlocks() -> int:
     return int(
         FollowWorld.sql("select deadlocks from pg_stat_database where datname = current_database()")
@@ -124,6 +141,96 @@ def test_suppress_holds_the_contact_and_the_key_exclusively_and_takes_no_lead_lo
         )
     finally:
         held.finish()
+
+
+# ------------------------------------------------------------------------------ commit 5 (the mutation pass): locks no test had probed
+def test_approve_discard_and_record_sent_hold_the_contact_the_lead_and_the_draft_row(
+    fw: FollowWorld,
+) -> None:
+    """The lock probes above cover record_touch and create. Approve, discard and "I sent it" take the same locks (the contact row shared, the lead row, then the draft row): without the lead lock a touch
+    could slip in between their re-checks and their write; without the draft row lock two people could move one draft at once."""
+    for what in ("approve", "discard", "sent"):
+        lead = fw.due_lead(f"probe-{what}")
+        draft_id = fw.made_draft(lead)
+        if what == "sent":
+            assert fw.approve("admin", draft_id).status_code == 200
+        statement = {
+            "approve": fw.approve_sql(draft_id),
+            "discard": f"select public.discard_followup_draft('{draft_id}')",
+            "sent": f"select public.record_draft_sent('{draft_id}', '{uid()}', null)",
+        }[what]
+        held = Held(fw.sales if what == "discard" else fw.admin, statement)
+        held.holding()
+        try:
+            assert row_lock_held("contacts", lead.contact_id, "no key update"), (
+                f"{what}: the contact row lock (FOR SHARE)"
+            )
+            assert row_lock_held("leads", lead.id, "key share"), (
+                f"{what}: the lead row lock (FOR UPDATE)"
+            )
+            assert row_lock_held("followup_drafts", draft_id, "key share"), (
+                f"{what}: the draft row lock (FOR UPDATE)"
+            )
+        finally:
+            out = held.finish()
+        assert "{" in out, what
+
+
+def test_a_call_that_waits_for_the_lead_sees_that_its_contact_was_swapped_and_is_refused_as_stale(
+    fw: FollowWorld,
+) -> None:
+    """followup_lock reads the lead's contact, share-locks it, then locks the lead; if the lead was moved to another contact while it waited, the contact it locked is not the lead's any more
+    (SM224, stale): nothing is recorded for the wrong person."""
+    lead = fw.due_lead("swap")
+    other = fw.lead("swap-other")
+    held = Held(
+        fw.owner,
+        f"update public.leads set contact_id = '{other.contact_id}' where id = '{lead.id}'",
+    )
+    held.holding()
+    try:
+        response, waited = timed(lambda: fw.touch("sales", lead, "out"))
+    finally:
+        held.finish()
+    assert waited > 1.5, waited
+    assert response.status_code == 409 and code(response) == "followup_stale", response.text
+    assert (
+        len(fw.touches_of(lead)) == 1
+    )  # only the first touch of the fixture: the refused one was not recorded
+    fw.invariants()
+
+
+def test_the_question_functions_hold_the_requirement_and_the_question_row(fw: FollowWorld) -> None:
+    from quote_support import QuoteWorld
+
+    qw = QuoteWorld(fw.w, fw.t, n_products=2)
+    _, requirement = qw.requirement([("kanjivaram", 12)], city=None)
+    sync = fw.call("POST", f"/requirements/{requirement}/question-drafts/sync", "sales")
+    assert sync.status_code == 200, sync.text
+    target = sync.json()["drafts"][0]["id"]
+    item = {
+        "id": str(uuid.uuid4()),
+        "code": "missing_budget",
+        "line": None,
+        "text": "What budget do you have in mind?",
+    }
+    statements = {  # decide first: the persist that follows resolves the questions it no longer derives
+        "decide": f"select public.decide_question_draft('{target}', 'approve')",
+        "persist": f"select public.persist_question_drafts('{requirement}', '{json.dumps([item])}'::jsonb)",
+    }
+    for what, statement in statements.items():
+        held = Held(fw.sales, statement)
+        held.holding()
+        try:
+            assert row_lock_held("requirements", str(requirement), "key share"), (
+                f"{what}: the requirement row lock (FOR UPDATE)"
+            )
+            if what == "decide":
+                assert row_lock_held("question_drafts", target, "key share"), (
+                    f"{what}: the question row lock (FOR UPDATE)"
+                )
+        finally:
+            held.finish()
 
 
 # ------------------------------------------------------------------------------ draft vs record_touch

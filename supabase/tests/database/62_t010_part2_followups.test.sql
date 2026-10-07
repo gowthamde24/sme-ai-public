@@ -996,4 +996,222 @@ select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('gm', 'gm', 'email', pg_tem
 select is((select count(*) from public.followup_drafts where lead_id in (tests.rid('dm'), tests.rid('gm'))), 2::bigint, 'N24 and no draft was added for either lead');
 select is((select count(*) from public.lead_touches where draft_id = pg_temp.did('gm')), 1::bigint, 'N25 a replay records no touch: the one touch that carries gm is still the only one');
 
+-- ============================================================================ O. commit 5, the mutation pass: guards that no test had reached (docs/checklist-notes/A.md, "T010 part 2")
+-- A guard that another guard also enforces (the function AND the table's CHECK, a trigger AND a grant) answers the same SQLSTATE whichever fires, so a test of the SQLSTATE alone cannot tell which of them
+-- works. These helpers isolate one: inside a sub-transaction that is rolled back, every other CHECK of the table is dropped and its user triggers are disabled, the privileged statement runs, and the
+-- answer is the SQLSTATE and the name of the constraint that refused it ('ok' when nothing did).
+create function pg_temp.only_check(p_table regclass, p_keep text, p_sql text) returns text language plpgsql as $$
+declare
+  c record;
+  r text;
+  v_con text;
+begin
+  begin
+    for c in select conname from pg_constraint where conrelid = p_table and contype = 'c' and conname <> p_keep loop
+      execute format('alter table %s drop constraint %I', p_table, c.conname);
+    end loop;
+    execute format('alter table %s disable trigger user', p_table);
+    begin
+      execute p_sql;
+      r := 'ok';
+    exception when others then
+      get stacked diagnostics v_con = constraint_name;
+      r := sqlstate || ':' || coalesce(v_con, '');
+    end;
+    raise exception 'sandbox' using detail = r;
+  exception when raise_exception then
+    get stacked diagnostics r = pg_exception_detail;
+    return r;
+  end;
+end $$;
+-- one privileged statement, rolled back: its SQLSTATE or 'ok'
+create function pg_temp.sandbox(p_sql text) returns text language plpgsql as $$
+declare r text;
+begin
+  begin
+    begin
+      execute p_sql;
+      r := 'ok';
+    exception when others then
+      r := sqlstate;
+    end;
+    raise exception 'sandbox' using detail = r;
+  exception when raise_exception then
+    get stacked diagnostics r = pg_exception_detail;
+    return r;
+  end;
+end $$;
+-- a policy version row written the way only the operator can (the functions validate first, so the table's own checks are otherwise never reached)
+create function pg_temp.polins(p_gaps text default '{1,2}', p_max text default '3', p_qs text default '03:00', p_qe text default '04:00', p_wd text default '{0,1,2,3,4,5,6}', p_hol text default '{}',
+                               p_min text default '0', p_off text default '330', p_sha text default null, p_no text default '9001') returns text language sql as $$
+  select format('insert into public.followup_policy_versions (id, tenant_id, version_no, effective_from, gap_days, max_touches, quiet_start, quiet_end, allowed_weekdays, holidays, min_gap_hours, recipient_utc_offset_minutes, content_sha256) '
+                'values (gen_random_uuid(), %L, %s, %L, %L, %s, %L, %L, %L, %L, %s, %s, %L)',
+                tests.tid('a'), p_no, pg_temp.today() + 90, p_gaps, p_max, p_qs, p_qe, p_wd, p_hol, p_min, p_off, coalesce(p_sha, repeat('7', 64))) $$;
+-- a draft row copied from the draft f1 with one column changed (every argument is a SQL expression)
+create function pg_temp.drins(p_status text default 'draft', p_ab text default 'null', p_aa text default 'null', p_db text default 'null', p_da text default 'null', p_dc text default 'null',
+                              p_req text default 'request_text', p_res text default 'result_text', p_ch text default 'canonical_hash', p_sh text default 'state_hash') returns text language sql as $$
+  select format($q$insert into public.followup_drafts (id, tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text,
+                                                       canonical_hash, state_hash, as_of, status, approved_by, approved_at, discarded_by, discarded_at, discard_code)
+                   select gen_random_uuid(), tenant_id, lead_id, contact_id, 50, channel, template_code, body, policy_version_id, engine_version, %s, %s, %s, %s, as_of, %L::public.followup_draft_status, %s, %s, %s, %s, %s
+                     from public.followup_drafts where id = %L$q$, p_req, p_res, p_ch, p_sh, p_status, p_ab, p_aa, p_db, p_da, p_dc, pg_temp.did('f1')) $$;
+
+-- --- the policy table's own checks, each one alone
+select is(pg_temp.sandbox(pg_temp.polins()), 'ok', 'O1 (fixture) a plain version row is accepted with every check standing: the refusals below are the named check, nothing else');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_allowed_weekdays_check', pg_temp.polins(p_wd => '{}')), '23514:followup_policy_versions_allowed_weekdays_check', 'O2 the table refuses no weekday by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_check', pg_temp.polins(p_gaps => '{1,2,3}')), '23514:followup_policy_versions_check', 'O3 the table refuses a gap count other than max_touches - 1 by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_check', pg_temp.polins(p_gaps => '{1,366}')), '23514:followup_policy_versions_check', 'O4 ... and a gap above 365 days');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_check1', pg_temp.polins(p_qs => '05:00', p_qe => '05:00')), '23514:followup_policy_versions_check1', 'O5 the table refuses equal quiet endpoints by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_content_sha256_check', pg_temp.polins(p_sha => 'xyz')), '23514:followup_policy_versions_content_sha256_check', 'O6 the table refuses a content hash that is not 64 hex digits by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_holidays_check', pg_temp.polins(p_hol => '{2026-12-25,2026-12-25}')), '23514:followup_policy_versions_holidays_check', 'O7 the table refuses a repeated holiday by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_holidays_check',
+                             pg_temp.polins(p_hol => (select '{' || string_agg((date '2027-01-01' + i)::text, ',') || '}' from generate_series(1, 367) i))), '23514:followup_policy_versions_holidays_check', 'O8 ... and 367 holidays');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_max_touches_check', pg_temp.polins(p_max => '0')), '23514:followup_policy_versions_max_touches_check', 'O9 the table refuses zero touches by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_max_touches_check', pg_temp.polins(p_max => '101')), '23514:followup_policy_versions_max_touches_check', 'O10 ... and 101 touches');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_min_gap_hours_check', pg_temp.polins(p_min => '8761')), '23514:followup_policy_versions_min_gap_hours_check', 'O11 the table refuses a minimum gap above 8,760 hours by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_min_gap_hours_check', pg_temp.polins(p_min => '-1')), '23514:followup_policy_versions_min_gap_hours_check', 'O12 ... and a negative one');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_quiet_start_check', pg_temp.polins(p_qs => '24:00')), '23514:followup_policy_versions_quiet_start_check', 'O13 the table refuses a quiet start that is not HH:MM by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_quiet_end_check', pg_temp.polins(p_qe => '24:00')), '23514:followup_policy_versions_quiet_end_check', 'O14 ... and a quiet end');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_recipient_utc_offset_minutes_check', pg_temp.polins(p_off => '841')), '23514:followup_policy_versions_recipient_utc_offset_minutes_check', 'O15 the table refuses an offset beyond +14:00 by itself');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_recipient_utc_offset_minutes_check', pg_temp.polins(p_off => '-841')), '23514:followup_policy_versions_recipient_utc_offset_minutes_check', 'O16 ... and beyond -14:00');
+select is(pg_temp.only_check('public.followup_policy_versions', 'followup_policy_versions_version_no_check', pg_temp.polins(p_no => '0')), '23514:followup_policy_versions_version_no_check', 'O17 the table refuses version number 0 by itself');
+select is(pg_temp.priv(pg_temp.polins(p_no => '1')), '23505', 'O18 a second version 1 of one tenant is refused by the unique key (the function numbers versions under a lock; this is the backstop)');
+
+-- --- the draft table's own checks, each one alone
+select is(pg_temp.sandbox(pg_temp.drins()), 'ok', 'O19 (fixture) a plain draft row copied from f1 is accepted with every check standing');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_canonical_hash_check', pg_temp.drins(p_ch => $$'xyz'$$)), '23514:followup_drafts_canonical_hash_check', 'O20 the table refuses a canonical hash that is not 64 hex digits by itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_state_hash_check', pg_temp.drins(p_sh => $$'xyz'$$)), '23514:followup_drafts_state_hash_check', 'O21 ... and a state hash');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_check', pg_temp.drins(p_ab => format('%L', tests.uid('a_owner')))), '23514:followup_drafts_check', 'O22 an approver without an approval time is refused by the table by itself (they come together)');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_check1', pg_temp.drins(p_status => 'approved')), '23514:followup_drafts_check1', 'O23 an approved draft without an approval time is refused by the table by itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_check2', pg_temp.drins(p_ab => format('%L', tests.uid('a_owner')), p_aa => 'now()')), '23514:followup_drafts_check2', 'O24 a draft still waiting for approval cannot carry an approval, by the table itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_check3', pg_temp.drins(p_da => 'now()')), '23514:followup_drafts_check3', 'O25 a discard time on a draft that is not discarded is refused by the table by itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_check4', pg_temp.drins(p_dc => $$'person'$$)), '23514:followup_drafts_check4', 'O26 a discard reason on a draft that is not discarded is refused by the table by itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_request_text_check', pg_temp.drins(p_req => $$'x'$$)), '23514:followup_drafts_request_text_check', 'O27 the table refuses a one-character request by itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_request_text_check', pg_temp.drins(p_req => $$repeat('a', 100001)$$)), '23514:followup_drafts_request_text_check', 'O28 ... and one of 100,001 characters');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_request_text_check', pg_temp.drins(p_req => $$repeat('a', 100000)$$)), 'ok', 'O29 ... but 100,000 is allowed (the boundary itself)');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_result_text_check', pg_temp.drins(p_res => $$'x'$$)), '23514:followup_drafts_result_text_check', 'O30 the table refuses a one-character result by itself');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_result_text_check', pg_temp.drins(p_res => $$repeat('a', 200001)$$)), '23514:followup_drafts_result_text_check', 'O31 ... and one of 200,001 characters');
+select is(pg_temp.only_check('public.followup_drafts', 'followup_drafts_result_text_check', pg_temp.drins(p_res => $$repeat('a', 200000)$$)), 'ok', 'O32 ... but 200,000 is allowed');
+
+-- --- triggers whose effect is visible
+select is((select created_by from public.followup_policy_versions where id = tests.rid('pol_p1')), tests.uid('a_owner'), 'O33 a policy version names the person who published it (the created-by trigger, not the function)');
+select is((select count(*) from public.audit_events where entity_type = 'followup_policy_version' and action = 'followup_policy_version.create' and tenant_id = tests.tid('a')),
+          (select count(*) from public.followup_policy_versions where tenant_id = tests.tid('a') and created_by is not null), 'O34 every published policy version has its audit event');
+select is(pg_temp.priv(format($q$update public.followup_drafts set updated_at = timestamptz '2000-01-01' where id = %L$q$, pg_temp.did('f1'))), 'ok', 'O35 (a privileged update that touches only the timestamp)');
+select is((select updated_at = now() from public.followup_drafts where id = pg_temp.did('f1')), true, 'O36 the updated-at trigger stamps the update itself: the value written (year 2000) did not stay');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set status = 'discarded', discarded_at = now(), discard_code = 'person' where id = %L$q$, pg_temp.did('dm'))), 'ok', 'O37 (an approved draft may be discarded: a legal move)');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set status = 'recorded_sent' where id = %L$q$, pg_temp.did('dm'))), '42501', 'O38 an approved draft cannot become recorded_sent without its outbound touch (the guard trigger)');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set status = 'approved', approved_by = %L, approved_at = now() where id = %L$q$, tests.uid('a_owner'), pg_temp.did('fd'))), '42501', 'O39 a discarded draft cannot be approved (a closed draft stays closed)');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set body = 'A different closed text that nobody approved.' where id = %L$q$, pg_temp.did('f1'))), '42501', 'O40 a draft''s text never changes (the guard trigger)');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set status = 'draft' where id = %L$q$, pg_temp.did('dm'))), '42501', 'O41 an approved draft cannot go back to waiting (the guard trigger)');
+select is(pg_temp.sandbox(format($q$insert into public.followup_drafts (id, tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of, status)
+                                    select gen_random_uuid(), tenant_id, lead_id, contact_id, 51, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of, 'approved' from public.followup_drafts where id = %L$q$, pg_temp.did('f1'))),
+          '42501', 'O42 a draft is born waiting for approval, never approved (the insert guard)');
+
+-- --- who can READ the policy versions and the touches (the select policies: roles, tenants)
+select is(pg_temp.sc('a_sales', format('select count(*) > 0 from public.followup_policy_versions where tenant_id = %L', tests.tid('a'))), 'true', 'O43 Sales reads the policy versions of the workspace');
+select is(pg_temp.sc('a_admin', format('select count(*) > 0 from public.followup_policy_versions where tenant_id = %L', tests.tid('a'))), 'true', 'O44 so does an Admin');
+select is(pg_temp.sc('a_viewer', 'select count(*) from public.followup_policy_versions'), '0', 'O45 a Viewer reads none');
+select is(pg_temp.sc('b_owner', format('select count(*) from public.followup_policy_versions where tenant_id = %L', tests.tid('a'))), '0', 'O46 another workspace''s owner reads none of them');
+select is(pg_temp.sc('a_sales', format('select count(*) > 0 from public.lead_touches where tenant_id = %L', tests.tid('a'))), 'true', 'O47 Sales reads the touches of the workspace');
+select is(pg_temp.sc('a_viewer', 'select count(*) from public.lead_touches'), '0', 'O48 a Viewer reads none');
+select is(pg_temp.sc('b_owner', format('select count(*) from public.lead_touches where tenant_id = %L', tests.tid('a'))), '0', 'O49 another workspace''s owner reads none');
+
+-- --- the policy function at the edges of what it accepts (the table repeats the bounds, so only an ACCEPTANCE at the bound proves the function's own)
+select is(pg_temp.mkpol('bnd1', pg_temp.pol(p_max => 100, p_gaps => (select jsonb_agg(1)::text from generate_series(1, 99))), 'b', pg_temp.today() + 11, 'b_owner'), 'ok', 'O50 100 touches with 99 gaps is accepted (the top of the range)');
+select is(pg_temp.mkpol('bnd2', pg_temp.pol(p_min => 8760), 'b', pg_temp.today() + 12, 'b_owner'), 'ok', 'O51 a minimum gap of 8,760 hours is accepted');
+select is(pg_temp.mkpol('bnd3', pg_temp.pol(p_gaps => '[1, 365]'), 'b', pg_temp.today() + 13, 'b_owner'), 'ok', 'O52 a gap of 365 days is accepted');
+select is(pg_temp.mkpol('bnd4', pg_temp.pol(p_hol => (select jsonb_agg((date '2027-01-01' + i)::text)::text from generate_series(1, 366) i)), 'b', pg_temp.today() + 14, 'b_owner'), 'ok', 'O53 366 holidays are accepted');
+select is(pg_temp.mkpol('bnd5', pg_temp.pol(p_off => 840), 'b', pg_temp.today() + 15, 'b_owner'), 'ok', 'O54 an offset of +14:00 is accepted');
+select is(pg_temp.mkpol('bnd6', pg_temp.pol(p_off => -840), 'b', pg_temp.today() + 16, 'b_owner'), 'ok', 'O55 and of -14:00');
+select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"gap_days": [1, "x"]}')::text), '22023', 'O56 a gap that is not an integer is an invalid policy (22023), not a database error');
+select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"gap_days": [1, 1.5]}')::text), '22023', 'O57 ... nor a fraction');
+
+-- --- create_followup_draft: the request's own format and size
+select pg_temp.mkdue('o_req');
+select is(pg_temp.try('a_sales', pg_temp.cd('o1', 'o_req', 'email', pg_temp.req('o_req', to_char(now() at time zone 'UTC', 'YYYY-MM-DD HH24:MI:SS')))), 'SM226', 'O58 an as_of that is a valid, current time but not the canonical text (a space, no Z) is refused (SM226): the request is otherwise the database''s own, so only the format guard can refuse it');
+select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', %L, ''{}'')', tests.rid('d_o2'), tests.rid('o_req'), '{"other": 1}')), 'SM226', 'O59 a request without an as_of is refused (SM226)');
+select is(pg_temp.try('a_sales', pg_temp.cd('o3', 'o_req', 'email', pg_temp.req('o_req', '2026-13-40T25:61:61Z'))), 'SM226', 'O60 an as_of in the canonical shape that is not a time is refused (SM226) by the cast guard: the request is otherwise the database''s own, so without it the blocker would answer invalid (SM225)');
+select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', %L, ''{}'')', tests.rid('d_o4'), tests.rid('o_req'), '{"x":"' || repeat('a', 99992) || '"}')), 'SM226', 'O61 a request of exactly 100,000 characters passes the size check (and is then refused as a forgery)');
+select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', %L, ''{}'')', tests.rid('d_o5'), tests.rid('o_req'), '{"x":"' || repeat('a', 99993) || '"}')), '22023', 'O62 one character more is an invalid argument (22023)');
+select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', %L)', tests.rid('d_o6'), tests.rid('o_req'), '{"x":"' || repeat('a', 199992) || '"}')), 'SM226', 'O63 a result of exactly 200,000 characters passes the size check');
+select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', %L)', tests.rid('d_o7'), tests.rid('o_req'), '{"x":"' || repeat('a', 199993) || '"}')), '22023', 'O64 one character more is an invalid argument (22023)');
+select is(pg_temp.nd('o_req'), 0::bigint, 'O65 none of those left a draft');
+
+-- --- create_followup_draft: a forged ENGINE RESULT whose every other field is right (the action and the reason are each compared)
+select is(pg_temp.try('a_sales', pg_temp.cd('o8', 'o_req', 'email', null, pg_temp.res(pg_temp.req('o_req')) || '{"action": "wait"}')), 'SM226', 'O66 a result whose action is wait is refused (SM226)');
+select is(pg_temp.try('a_sales', pg_temp.cd('o9', 'o_req', 'email', null, pg_temp.res(pg_temp.req('o_req')) || '{"reason_code": "not_yet_eligible"}')), 'SM226', 'O67 a result whose reason is not eligible_now is refused (SM226)');
+select is(pg_temp.try('a_sales', pg_temp.cd('o10', 'o_req', 'email', null, pg_temp.res(pg_temp.req('o_req')) || '{"terminal": true}')), 'SM226', 'O68 a terminal result is refused (SM226)');
+select is(pg_temp.nd('o_req'), 0::bigint, 'O69 none of them left a draft');
+select is(pg_temp.mk('a_sales', 'o11', 'o_req'), 'ok', 'O70 (the honest result for the same lead is accepted: the forgeries failed for their own reason)');
+
+-- --- approval names the APPROVER, not the person who asked for the draft
+select pg_temp.mkdue('o_appr');
+select is(pg_temp.mk('a_sales', 'o12', 'o_appr'), 'ok', 'O71 Sales asks for a draft');
+select is(pg_temp.approve('a_admin', 'o12'), 'ok', 'O72 an Admin approves it');
+select is((select approved_by from public.followup_drafts where id = pg_temp.did('o12')), tests.uid('a_admin'), 'O73 the approval names the Admin, not the Sales user who made the draft');
+
+-- --- a touch id belongs to ONE record: neither "I sent it" nor a plain touch may replay another draft's touch
+select pg_temp.mkdue('o_sent');
+select is(pg_temp.mk('a_sales', 'o13', 'o_sent'), 'ok', 'O74 a second lead gets a draft');
+select is(pg_temp.approve('a_admin', 'o13'), 'ok', 'O75 approved');
+select is(pg_temp.sent('a_sales', 'o13'), 'ok', 'O76 recorded as sent under its own touch id');
+select is(pg_temp.try('a_sales', format('select public.record_draft_sent(%L, %L, null)', pg_temp.did('o13'), tests.rid('s_gm'))), '23505', 'O77 "I sent it" for an already recorded draft under ANOTHER draft''s touch id is the constant conflict, not a replay');
+select is(pg_temp.try('a_sales', format('select public.record_touch(%L, %L, ''out'', ''email'', null)', tests.rid('s_gm'), tests.rid('gm'))), '23505', 'O78 a plain touch cannot replay the touch that belongs to a draft (the same id, lead, direction and channel)');
+
+-- --- the gate: no phone number is "no consent", not "no key"; and a lifted key forgets an older erased marker
+select pg_temp.mklead('o_nophone', true, true, true);
+update public.contacts set phone = null where id = tests.rid('o_nophone_c');
+select is(pg_temp.gate('o_nophone', 'whatsapp') ->> 'blocked', 'consent', 'O79 a contact with no phone number cannot be reached on WhatsApp: consent (not unkeyed)');
+select pg_temp.mklead('o_erlift');
+insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event, reason) values (tests.tid('a'), 'email', pg_temp.h('o_erlift_e'), 1, 'suppressed', 'erased');
+insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event, reason) values (tests.tid('a'), 'email', pg_temp.h('o_erlift_e'), 1, 'lifted', null);
+insert into suppression.key_events (tenant_id, kind, key_hmac, key_version, event, reason) values (tests.tid('a'), 'email', pg_temp.h('o_erlift_e'), 1, 'suppressed', 'opted_out');
+select is(pg_temp.touch('a_sales', 'o_el1', 'o_erlift', 'out', 'email'), 'SM220:key', 'O80 a key erased, lifted and suppressed AGAIN is a plain key: the erased marker is older than the lift');
+select is(pg_temp.touch('a_sales', 'o8', 'g_erkey', 'out', 'email'), 'SM220:erased_key', 'O81 (and the key whose erased marker has not been lifted still says so)');
+
+-- --- the blocker is the rule's own guard: a request it cannot read is never due (a hand-made request: the create path only ever hands it the database's own)
+create function pg_temp.blk(p_edit text) returns text language sql as $$ select coalesce(app.followup_blocker((select (pg_temp.req('o_req')::text)::jsonb #- p_edit::text[])), 'DUE') $$;
+select is(pg_temp.blk('{lead,won}'), 'invalid', 'O82 a request without the won flag is invalid, never due');
+select is(pg_temp.blk('{lead,lost}'), 'invalid', 'O83 ... without the lost flag');
+select is(pg_temp.blk('{lead,opted_out}'), 'invalid', 'O84 ... without the opted_out flag');
+select is(pg_temp.blk('{lead,do_not_contact}'), 'invalid', 'O85 ... without the do_not_contact flag');
+select is(pg_temp.blk('{lead,replied}'), 'invalid', 'O86 ... without the replied flag');
+select is(pg_temp.blk('{lead,bounced}'), 'invalid', 'O87 ... without the bounced flag');
+select is(pg_temp.blk('{policy,max_touches}'), 'invalid', 'O88 ... without max_touches');
+select is(pg_temp.blk('{policy,min_gap_hours}'), 'invalid', 'O89 ... without the minimum gap');
+select is(pg_temp.blk('{policy,holidays}'), 'invalid', 'O90 ... without holidays');
+select is(pg_temp.blk('{policy,gap_days}'), 'invalid', 'O91 ... without the gaps');
+select is(pg_temp.blk('{policy,allowed_weekdays}'), 'invalid', 'O92 ... without the weekdays');
+select is(pg_temp.blk('{history}'), 'invalid', 'O93 ... without the history');
+select is(pg_temp.blk('{as_of}'), 'invalid', 'O94 ... without as_of');
+select is(pg_temp.blk('{recipient_utc_offset_minutes}'), 'invalid', 'O95 ... without the recipient''s offset');
+select is(pg_temp.blk('{policy,quiet_hours,start}'), 'invalid', 'O96 ... without the quiet start');
+select is(app.followup_blocker((pg_temp.req('o_req')::jsonb) || '{"policy": 5}'), 'invalid', 'O97 a policy that is not an object is invalid');
+select is(pg_temp.blk('{}'), 'DUE', 'O98 (and the untouched request is due: the edits above are what made the rest invalid)');
+
+-- --- the touch cap at its edge: 499 touches record one more, 500 do not
+select pg_temp.mklead('o_cap499');
+insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at)
+select gen_random_uuid(), tests.tid('a'), tests.rid('o_cap499'), tests.rid('o_cap499_c'), 'in', 'email', now() - make_interval(secs => n) from generate_series(1, 499) n;
+select is(pg_temp.touch('a_sales', 'o_c1', 'o_cap499', 'in'), 'ok', 'O99 a lead with 499 touches records the 500th');
+select is(pg_temp.touch('a_sales', 'o_c2', 'o_cap499', 'in'), 'SM229', 'O100 ... and then no more (SM229)');
+
+-- --- the draft guard trigger, branch by branch (the test itself switches it off twice to plant states, so it is mutated through its FUNCTION, not by disabling it)
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set discarded_at = discarded_at + interval '1 day' where id = %L$q$, pg_temp.did('fd'))), '42501', 'O101 the discard time of a discarded draft cannot change (a closed draft stays closed)');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set approved_at = approved_at + interval '1 day' where id = %L$q$, pg_temp.did('gm'))), '42501', 'O102 nor the approval time of a recorded one');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set discarded_by = discarded_by where id = %L$q$, pg_temp.did('fd'))), 'ok', 'O103 a write that changes nothing is not refused on a discarded draft');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set discarded_by = discarded_by where id = %L$q$, pg_temp.did('gm'))), 'ok', 'O104 ... on a recorded one');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set discarded_by = discarded_by where id = %L$q$, pg_temp.did('dm'))), 'ok', 'O105 ... on an approved one');
+select is(pg_temp.sandbox(format($q$update public.followup_drafts set discarded_by = discarded_by where id = %L$q$, pg_temp.did('f1'))), 'ok', 'O106 ... on a draft waiting for approval');
+select is(pg_temp.sandbox(format($q$insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at, draft_id)
+                                    select gen_random_uuid(), tenant_id, lead_id, contact_id, 'out', 'email', now(), id from public.followup_drafts where id = %L;
+                                    update public.followup_drafts set status = 'recorded_sent' where id = %L$q$, pg_temp.did('f1'), pg_temp.did('f1'))), '42501',
+          'O107 a draft cannot jump from waiting to recorded even WITH its outbound touch there: it must be approved first (the move guard, not the touch guard)');
+
+-- --- the policy's other element shapes (a weekday or a holiday that is not what it should be is an invalid policy, 22023, before any table check can answer 23514)
+select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"allowed_weekdays": ["x"]}')::text), '22023', 'O108 a weekday that is not an integer is an invalid policy (22023)');
+select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"allowed_weekdays": [1.5]}')::text), '22023', 'O109 ... nor a fraction');
+select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"holidays": [null]}')::text), '22023', 'O110 a holiday that is JSON null is an invalid policy (22023), not a NULL in the stored array');
+select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"holidays": [20261225]}')::text), '22023', 'O111 a holiday that is a number is an invalid policy (22023)');
+
 select * from finish();

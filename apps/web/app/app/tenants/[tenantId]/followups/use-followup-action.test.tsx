@@ -45,6 +45,13 @@ describe("useFollowupAction", () => {
     expect(refresh).not.toHaveBeenCalled();
   });
 
+  it("only a FAILED action refreshes: a success that happens to carry the stale flag does not", async () => {
+    render(<Probe action={async () => ({ ok: true, message: "Done.", stale: true })} />);
+    fireEvent.click(screen.getByText("go"));
+    await waitFor(() => expect(shown()).toEqual({ ok: true, message: "Done.", stale: true }));
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
   it("an ordinary error is shown and the page is not read again", async () => {
     render(<Probe action={async () => ({ ok: false, error: "Nope.", stale: false })} />);
     fireEvent.click(screen.getByText("go"));

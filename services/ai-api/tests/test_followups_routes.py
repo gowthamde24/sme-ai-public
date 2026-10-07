@@ -661,6 +661,91 @@ def test_a_stop_wins_over_a_block_and_the_due_list_makes_no_extra_gate_read(w: W
     )  # one gate read per candidate, as in 4b
 
 
+# ----------------------------------------------------------------------------- the mutation pass (commit 5): edges that no test reached
+def _without(w: World, **gone: Any) -> None:
+    """The runtime with a collaborator missing (a deployment where it is not wired)."""
+    app = w.client.app
+    app.state.runtime = dataclasses.replace(app.state.runtime, **gone)  # type: ignore[attr-defined]
+
+
+def test_without_the_follow_up_repository_every_route_answers_503_not_a_crash(w: World) -> None:
+    _without(w, followups=None)
+    for method, path in (
+        ("GET", "/followups/due"),
+        ("GET", f"/leads/{LEAD}/followup"),
+        ("GET", "/followup-drafts"),
+    ):
+        r = w.call(method, path, None, "a_sales")
+        assert r.status_code == 503 and code(r) == "followups_unavailable", (method, path, r.text)
+
+
+def test_syncing_questions_without_the_enquiries_repository_is_a_503(w: World) -> None:
+    _without(w, enquiries=None)
+    r = w.call("POST", f"/requirements/{REQUIREMENT}/question-drafts/sync", None, "a_sales")
+    assert r.status_code == 503 and code(r) == "enquiries_unavailable", r.text
+
+
+def test_the_questions_of_an_unknown_requirement_are_a_404_and_nothing_is_listed(w: World) -> None:
+    r = w.call("GET", f"/requirements/{uuid.UUID(int=0xBAD)}/question-drafts", None, "a_sales")
+    assert r.status_code == 404 and w.f.question_list_calls == []
+
+
+def test_the_question_list_shows_the_active_ones_unless_asked_for_all(w: World) -> None:
+    w.call("GET", f"/requirements/{REQUIREMENT}/question-drafts", None, "a_sales")
+    w.call("GET", f"/requirements/{REQUIREMENT}/question-drafts?active_only=false", None, "a_sales")
+    assert w.f.question_list_calls == [True, False]
+
+
+def test_a_sync_answers_with_the_active_questions_only_and_refuses_a_requirement_that_is_not_the_enquiries(
+    w: World,
+) -> None:
+    w.call("POST", f"/requirements/{REQUIREMENT}/question-drafts/sync", None, "a_sales")
+    assert w.f.question_list_calls == [
+        True
+    ]  # the answer lists the ACTIVE questions, never the closed ones
+    enquiry = w.f.requirements[REQUIREMENT]
+    current = w.enq.requirement[enquiry][0]
+    assert current is not None
+    w.enq.requirement[enquiry] = ({**current, "id": str(uuid.UUID(int=0xABC))}, [])
+    r = w.call("POST", f"/requirements/{REQUIREMENT}/question-drafts/sync", None, "a_sales")
+    assert (
+        r.status_code == 404 and w.f.sent("persist_questions") == w.f.sent("persist_questions")[:1]
+    )
+
+
+def test_a_draft_list_limit_of_zero_is_refused(w: World) -> None:
+    assert w.call("GET", "/followup-drafts?limit=0", None, "a_sales").status_code == 422
+
+
+@pytest.mark.parametrize(
+    "direction,channel", [("in", "email"), ("out", "whatsapp"), ("in", "phone")]
+)
+def test_a_touch_goes_to_the_database_with_the_direction_and_channel_the_person_chose(
+    w: World, direction: str, channel: str
+) -> None:
+    r = w.call(
+        "POST",
+        f"/leads/{LEAD}/touches",
+        {"id": ID1, "direction": direction, "channel": channel},
+        "a_sales",
+    )
+    assert r.status_code == 201, r.text
+    sent = w.f.sent("record_touch")[-1]
+    assert (sent["p_direction"], sent["p_channel"]) == (direction, channel)
+
+
+def test_a_rejected_request_is_not_in_the_due_list_and_does_not_break_it(w: World) -> None:
+    """A touch recorded after now makes the engine REJECT the request (FUTURE_HISTORY): it has no action, so it is left out of the list instead of failing the page."""
+    future = dataclasses.replace(
+        snapshot().touches[0],
+        id=str(ID2),
+        occurred_at=datetime(2026, 10, 8, 6, 30, tzinfo=NOW.tzinfo),
+    )
+    w.f.snapshots[LEAD] = snapshot(touches=snapshot().touches + (future,))
+    r = w.call("GET", "/followups/due", None, "a_sales")
+    assert r.status_code == 200 and r.json() == []
+
+
 def test_a_draft_list_can_be_filtered_by_a_closed_status_only(w: World) -> None:
     assert w.call("GET", "/followup-drafts?status=active", None, "a_sales").status_code == 200
     assert w.call("GET", "/followup-drafts?status=bogus", None, "a_sales").status_code == 422

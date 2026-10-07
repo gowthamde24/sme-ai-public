@@ -148,9 +148,9 @@ def test_the_history_is_ordered_by_the_second_then_the_touch_id() -> None:
     history = build_request(
         snap(
             touches=(
-                touch(T3, "out", same_second_b),
-                touch(T1, "out", same_second_a),
-                touch(T2, "out", earlier),
+                touch(T3, "out", same_second_b, "whatsapp"),
+                touch(T1, "out", same_second_a, "email"),
+                touch(T2, "out", earlier, "phone"),
             )
         ),
         as_of=AS_OF,
@@ -161,12 +161,14 @@ def test_the_history_is_ordered_by_the_second_then_the_touch_id() -> None:
         "2026-10-02T06:30:05Z",
         "2026-10-02T06:30:05Z",
     ]
+    # the two touches of that second differ only by their ids (T1 < T3) and their channels: by id T1 (email, 0.9 s) comes BEFORE T3 (whatsapp, 0.1 s); by the microsecond it would come after
+    assert [h["channel"] for h in history] == ["phone", "email", "whatsapp"]
     again = build_request(
         snap(
             touches=(
-                touch(T1, "out", same_second_a),
-                touch(T3, "out", same_second_b),
-                touch(T2, "out", earlier),
+                touch(T1, "out", same_second_a, "email"),
+                touch(T3, "out", same_second_b, "whatsapp"),
+                touch(T2, "out", earlier, "phone"),
             )
         ),
         as_of=AS_OF,

@@ -138,6 +138,7 @@ class FakeFollowups:
         self.blocked_leads: dict[
             tuple[uuid.UUID, str], str
         ] = {}  # per (lead, channel): the gate's block (contact, key, erased, consent, unkeyed; the database may also say erased_key)
+        self.question_list_calls: list[bool] = []  # the `active_only` of every question list
         self.tokens: list[str] = []
         self.calls: list[tuple[str, dict[str, Any]]] = []
         self.raise_next: Exception | None = None
@@ -304,6 +305,7 @@ class FakeFollowups:
         self, token: str, tenant_id: uuid.UUID, requirement_id: uuid.UUID, *, active_only: bool
     ) -> list[dict[str, Any]]:
         self.tokens.append(token)
+        self.question_list_calls.append(active_only)
         rows = [q for q in self.questions.values() if q["requirement_id"] == str(requirement_id)]
         return [q for q in rows if q["status"] in ("draft", "approved")] if active_only else rows
 
