@@ -1,6 +1,6 @@
 # Plan: WhatsApp as a first-class channel in the follow-up screens
 
-Status: **PLAN ONLY. Awaiting the owner's approval. No code and no migration has been written.** Branch `followups-whatsapp` (from `main` at `2fd595b`, which already contains T010 part 2). This closes the first OPEN item of `docs/handoff-t010-part2.md` and the "WhatsApp is not a first-class channel" row of `docs/pre-pilot-checklist.md` (gate: before Customer Zero). Read ADR 0022 "Final state" first.
+Status: **APPROVED by the owner (2026-10-07), with the answers and changes in the last section.** Commit 1 (API) and commit 2 (web data layer) are done; the plan itself writes no migration. Branch `followups-whatsapp` (from `main` at `2fd595b`, which already contains T010 part 2). This closes the first OPEN item of `docs/handoff-t010-part2.md` and the "WhatsApp is not a first-class channel" row of `docs/pre-pilot-checklist.md` (gate: before Customer Zero). Read ADR 0022 "Final state" first.
 
 **Nothing sends anything.** This ticket is only about *drafting* and *recording touches* on WhatsApp the way the screens already do for e-mail: a draft is a closed template a person copies and sends outside the system; "Record: I sent it myself" is a person's word.
 
@@ -135,6 +135,17 @@ Each commit: `make check` before it (Lane A), the owner's rhythm (a diff to `~/D
 
 The cadence engine (pinned 1.0.0), the blocker, the request builder, the replay and gate-first rules, every migration, the templates, sending (nothing is added that sends), the suppression-key screen, a preferred-channel field, drafts for phone calls, languages other than English, and design (the plain screens stay plain; design v2 is its own ticket).
 
+## Owner's decisions (2026-10-07)
+
+Answers to section 8: 1 A (one row per lead); 2 leads blocked on every channel stay out of the list; 3 the default-channel rule as written, no preferred-channel column; 4 discard first; 5 the same wording for WhatsApp as for e-mail for now (synthetic); 6 yes, phone calls are touches only; 7 yes, two gate reads per candidate; 8 yes, tab order E-mail then WhatsApp.
+
+Changes to the plan:
+
+* **Definition of done:** the owner will NOT do the stopwatch click test. It is replaced by: the headless driver (`make rehearse-followups`) passes. The click checklist (`docs/rehearsal-followups-checklist.md`) stays in the repository and is kept true to the screens.
+* **Testing rhythm:** per commit, `make check-fast` plus the tests of the files the commit touches (and the commit's new tests); a spike or a risky assumption runs on the real stack. The full `make check` runs once at the end of the ticket, from a clean `db-reset`; mutation passes run at the end too.
+* **Pre-pilot rows:** "WhatsApp wording" (the templates are synthetic and identical to e-mail) and the due list's bound (its own small ticket right after this one: one read-only database function plus paging; reordering alone is not enough).
+* **Empty `channels`:** a lead page whose `channels` list is empty is read as "not reported" (an older API): it shows only the loaded channel's gate and never claims that no channel is open.
+
 ## Definition of done
 
-`make check` passes locally before each commit; the click checklist (with the new WhatsApp steps) is worked through by the owner with a stopwatch; ADR 0022, the hand-off, the pre-pilot row and `CLAUDE.md` say WhatsApp is first-class and what is still open; a short report names anything fixed on its own, with the single function and its copy test where a database function was touched (none is planned).
+The headless driver (`make rehearse-followups`) passes; `make check` passes locally once at the end of the ticket, from a clean `db-reset`; the click checklist (with the new WhatsApp steps) stays in the repository and its quoted sentences are pinned to the screens; ADR 0022, the hand-off, the pre-pilot rows and `CLAUDE.md` say WhatsApp is first-class and what is still open; a short report names anything fixed on its own, with the single function and its copy test where a database function was touched (none is planned).
