@@ -91,6 +91,11 @@ describe("the other answers", () => {
     expect(Object.keys(CHANNEL_BLOCK_TEXT)).not.toContain("erased_key");
   });
 
+  it("the short form for consent says both halves of the full sentence: no consent, or no address (a phone-only lead's e-mail has none)", () => {
+    expect(CHANNEL_BLOCK_TEXT.consent).toBe("no recorded consent or address");
+    expect(GATE_TEXT.consent).toBe("There is no recorded consent for this channel, or no address for it.");
+  });
+
   it("a refusal after which the screen is out of date says so (the page is read again)", () => {
     for (const code of ["followup_stale", "followup_mismatch", "draft_state", "not_due", "followup_stopped", "contact_blocked"]) expect(STALE_CODES).toContain(code);
     expect(STALE_CODES).not.toContain("mfa_required");

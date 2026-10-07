@@ -118,7 +118,7 @@ export const CHANNEL_BLOCK_TEXT: Record<string, string> = {
   contact: "asked not to be contacted",
   key: "on the do-not-contact list",
   erased: "contact erased",
-  consent: "no recorded consent",
+  consent: "no recorded consent or address",
   unkeyed: "no suppression key yet",
 };
 export const CHANNEL_BLOCK_FALLBACK = "cannot be contacted";

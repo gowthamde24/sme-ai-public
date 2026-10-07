@@ -234,7 +234,7 @@ describe("the lead's follow-up page across channels", () => {
     expect(links[0]).toHaveAttribute("aria-current", "page");
     expect(links[1]).not.toHaveAttribute("aria-current");
     const items = tabs().getAllByRole("listitem");
-    expect(items[0]).toHaveTextContent("E-mail · no recorded consent");
+    expect(items[0]).toHaveTextContent("E-mail · no recorded consent or address");
     expect(items[1]).toHaveTextContent("WhatsApp · open");
     noSendControl();
   });

@@ -167,7 +167,7 @@ export function channelStateText(blocked: string | null): string {
   return blocked === null ? CHANNEL_OPEN_TEXT : (CHANNEL_BLOCK_TEXT[blocked] ?? CHANNEL_BLOCK_FALLBACK);
 }
 
-/** The due-list row's channel line, "E-mail: open · WhatsApp: no recorded consent · opens on E-mail"; null when the channels were not reported. */
+/** The due-list row's channel line, "E-mail: open · WhatsApp: no recorded consent or address · opens on E-mail"; null when the channels were not reported. */
 export function channelsLine(channels: ChannelState[], defaultChannel: DraftChannel): string | null {
   if (channels.length === 0) return null;
   const states = channels.map((c) => `${CHANNEL_LABELS[c.channel]}: ${channelStateText(c.blocked)}`).join(" · ");

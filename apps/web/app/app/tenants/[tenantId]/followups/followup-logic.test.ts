@@ -187,7 +187,7 @@ describe("channel states in closed words", () => {
     expect(channelStateText("contact")).toBe("asked not to be contacted");
     expect(channelStateText("key")).toBe("on the do-not-contact list");
     expect(channelStateText("erased")).toBe("contact erased");
-    expect(channelStateText("consent")).toBe("no recorded consent");
+    expect(channelStateText("consent")).toBe("no recorded consent or address"); // like the full sentence: a phone-only lead's e-mail has no address at all
     expect(channelStateText("unkeyed")).toBe("no suppression key yet");
     expect(channelStateText("something-new")).toBe("cannot be contacted");
     expect(channelStateText("erased_key")).not.toMatch(/erased/); // never the marker's own word: the API says `key`, and a stray one is the fallback
@@ -195,7 +195,7 @@ describe("channel states in closed words", () => {
 
   it("the due row's line names every channel and where it opens; none at all when the channels were not reported", () => {
     const states = [{ channel: "email", blocked: "consent" }, { channel: "whatsapp", blocked: null }] as const;
-    expect(channelsLine([...states], "whatsapp")).toBe("E-mail: no recorded consent · WhatsApp: open · opens on WhatsApp");
+    expect(channelsLine([...states], "whatsapp")).toBe("E-mail: no recorded consent or address · WhatsApp: open · opens on WhatsApp");
     expect(channelsLine([], "email")).toBeNull();
   });
 });
