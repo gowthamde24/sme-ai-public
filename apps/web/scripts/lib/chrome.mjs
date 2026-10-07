@@ -134,6 +134,19 @@ export class Tab {
     await this.send("Network.setCookie", { url, name, value });
   }
 
+  /** A real key press (keyDown + keyUp), so :focus-visible behaves as it does for a keyboard user. */
+  async pressTab() {
+    const base = { key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 };
+    await this.send("Input.dispatchKeyEvent", { type: "rawKeyDown", ...base });
+    await this.send("Input.dispatchKeyEvent", { type: "keyUp", ...base });
+    await sleep(60);
+  }
+
+  /** Console errors and warnings, uncaught exceptions and browser log errors since the page opened. */
+  getLogs() {
+    return [...this.logs];
+  }
+
   /** Content-Security-Policy violations seen since the last navigation. */
   csp() {
     return this.eval("window.__csp || []");
