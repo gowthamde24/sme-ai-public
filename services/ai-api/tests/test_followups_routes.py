@@ -510,7 +510,7 @@ def test_the_lead_page_runs_the_engine_now_and_says_so_without_approving_anythin
 
 def test_the_due_list_puts_each_candidate_to_the_engine_and_names_an_open_draft(w: World) -> None:
     w.f.drafts[DRAFT] = draft_row(status="approved")
-    items = w.call("GET", "/followups/due", None, "a_sales").json()
+    items = w.call("GET", "/followups/due", None, "a_sales").json()["items"]
     assert items == [
         {
             "lead_id": str(LEAD),
@@ -529,7 +529,7 @@ def test_the_due_list_puts_each_candidate_to_the_engine_and_names_an_open_draft(
     ]
     w.f.snapshots[LEAD] = snapshot(policy=None)
     assert (
-        w.call("GET", "/followups/due", None, "a_sales").json() == []
+        w.call("GET", "/followups/due", None, "a_sales").json()["items"] == []
     )  # no policy: nothing is due, nothing is invented
 
 
@@ -563,7 +563,7 @@ def test_a_lead_the_database_has_stopped_is_never_due_and_the_engine_is_not_aske
         "next_eligible_at": None,
         "engine_version": "none",
     }
-    assert w.call("GET", "/followups/due", None, "a_sales").json() == []
+    assert w.call("GET", "/followups/due", None, "a_sales").json()["items"] == []
 
 
 def test_the_due_list_leaves_out_only_the_stopped_leads(w: World) -> None:
@@ -571,11 +571,13 @@ def test_the_due_list_leaves_out_only_the_stopped_leads(w: World) -> None:
     w.f.snapshots[other] = dataclasses.replace(snapshot(), lead_id=str(other))
     w.f.outbound_leads = [LEAD, other]
     w.f.stopped_leads[LEAD] = "order_accepted"
-    items = w.call("GET", "/followups/due", None, "a_sales").json()
+    items = w.call("GET", "/followups/due", None, "a_sales").json()["items"]
     assert [i["lead_id"] for i in items] == [str(other)]
     assert items[0]["action"] == "draft_followup"
     w.f.stopped_leads.clear()
-    assert [i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()] == [
+    assert [
+        i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()["items"]
+    ] == [
         str(LEAD),
         str(other),
     ]
@@ -622,7 +624,7 @@ def test_a_lead_the_gate_blocks_is_never_due_and_the_engine_is_not_asked(
         "next_eligible_at": None,
         "engine_version": "none",
     }
-    assert w.call("GET", "/followups/due", None, "a_sales").json() == []
+    assert w.call("GET", "/followups/due", None, "a_sales").json()["items"] == []
 
 
 def test_an_erased_key_is_key_everywhere_the_client_looks(w: World) -> None:
@@ -635,7 +637,7 @@ def test_an_erased_key_is_key_everywhere_the_client_looks(w: World) -> None:
         page.json()["gate"]["blocked"] == "key" and page.json()["decision"]["reason_code"] == "key"
     )
     assert [c["blocked"] for c in page.json()["channels"]] == ["key", "key"]
-    assert w.call("GET", "/followups/due", None, "a_sales").json() == []
+    assert w.call("GET", "/followups/due", None, "a_sales").json()["items"] == []
     assert not re.search(r"erased[\s_-]*key", page.text, re.I)
 
 
@@ -644,7 +646,7 @@ def test_a_block_is_for_one_channel_and_a_lead_open_on_either_is_listed(w: World
     w.f.snapshots[other] = dataclasses.replace(snapshot(), lead_id=str(other))
     w.f.outbound_leads = [LEAD, other]
     w.f.blocked_leads[(LEAD, "whatsapp")] = "key"  # a shared PHONE number: e-mail is still open
-    items = w.call("GET", "/followups/due", None, "a_sales").json()
+    items = w.call("GET", "/followups/due", None, "a_sales").json()["items"]
     assert [i["lead_id"] for i in items] == [str(LEAD), str(other)]
     assert items[0]["channels"] == [
         {"channel": "email", "blocked": None},
@@ -662,7 +664,7 @@ def test_a_block_is_for_one_channel_and_a_lead_open_on_either_is_listed(w: World
     # the other way round: e-mail closed, WhatsApp open: still listed, and WhatsApp is where it opens
     w.f.blocked_leads.clear()
     w.f.blocked_leads[(LEAD, "email")] = "consent"
-    items = w.call("GET", "/followups/due", None, "a_sales").json()
+    items = w.call("GET", "/followups/due", None, "a_sales").json()["items"]
     assert [i["lead_id"] for i in items] == [str(LEAD), str(other)]
     assert items[0]["channels"] == [
         {"channel": "email", "blocked": "consent"},
@@ -680,9 +682,45 @@ def test_a_block_is_for_one_channel_and_a_lead_open_on_either_is_listed(w: World
     assert opened["decision"]["action"] == "draft_followup"
     # blocked on both: not listed
     w.f.blocked_leads[(LEAD, "whatsapp")] = "key"
-    assert [i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()] == [
-        str(other)
-    ]
+    assert [
+        i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()["items"]
+    ] == [str(other)]
+
+
+def test_the_due_list_answers_an_object_with_a_cursor_a_policy_flag_and_a_left_out_count(
+    w: World,
+) -> None:
+    body = w.call("GET", "/followups/due", None, "a_sales").json()
+    assert set(body) == {"items", "next_cursor", "policy_in_force", "left_out"}
+    assert (body["next_cursor"], body["policy_in_force"], body["left_out"]) == (None, True, 0)
+    w.f.candidates_policy_in_force = False
+    assert w.call("GET", "/followups/due", None, "a_sales").json() == {
+        "items": [],
+        "next_cursor": None,
+        "policy_in_force": False,
+        "left_out": 0,
+    }
+
+
+def test_the_after_parameter_is_the_opaque_cursor_of_the_previous_page_and_anything_else_is_a_422(
+    w: World,
+) -> None:
+    leads = [uuid.UUID(int=0x9100 + i) for i in range(40)]
+    for lead in leads:
+        w.f.snapshots[lead] = dataclasses.replace(snapshot(), lead_id=str(lead))
+    w.f.outbound_leads = leads
+    w.f.drafts.clear()
+    first = w.call("GET", "/followups/due", None, "a_sales").json()
+    assert len(first["items"]) == 30 and first["next_cursor"]
+    second = w.call("GET", "/followups/due?after=" + first["next_cursor"], None, "a_sales").json()
+    assert [i["lead_id"] for i in first["items"] + second["items"]] == [
+        str(x) for x in leads
+    ]  # every lead once, oldest first
+    assert second["next_cursor"] is None
+    asked = len(w.f.sent("due_candidates"))
+    for bad in ("garbage", "x" * 201, "", "e30"):  # e30 is base64 of "{}"
+        assert w.call("GET", "/followups/due?after=" + bad, None, "a_sales").status_code == 422, bad
+    assert len(w.f.sent("due_candidates")) == asked  # a refused cursor asks the database nothing
 
 
 def test_a_stop_wins_over_a_block_and_a_stopped_lead_costs_one_gate_read_in_the_due_list(
@@ -792,7 +830,9 @@ def test_a_rejected_request_is_not_in_the_due_list_and_does_not_break_it(w: Worl
     )
     w.f.snapshots[LEAD] = snapshot(touches=snapshot().touches + (future,))
     r = w.call("GET", "/followups/due", None, "a_sales")
-    assert r.status_code == 200 and r.json() == []
+    assert (
+        r.status_code == 200 and r.json()["items"] == [] and r.json()["left_out"] == 1
+    )  # left out of the list, and counted
 
 
 def test_a_draft_list_can_be_filtered_by_a_closed_status_only(w: World) -> None:

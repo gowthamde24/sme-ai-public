@@ -80,6 +80,4 @@ def score_inputs(
 
 def hide_scores(label: LeadLabelOut) -> LeadLabelOut:
     """A label as a blind reviewer may see it: the verdict stays, its stored score does not."""
-    return label.model_copy(
-        update={"score": None, "score_max_reachable": None, "snapshot": None}
-    )
+    return label.model_copy(update={"score": None, "score_max_reachable": None, "snapshot": None})

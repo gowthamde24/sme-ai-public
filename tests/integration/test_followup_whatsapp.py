@@ -93,7 +93,7 @@ def test_spike_a_phone_only_lead_goes_through_whatsapp_end_to_end(fw: FollowWorl
 def due(fw: FollowWorld) -> dict[str, dict[str, Any]]:
     out = fw.call("GET", "/followups/due", "sales")
     assert out.status_code == 200, out.text
-    return {i["lead_id"]: i for i in out.json()}
+    return {i["lead_id"]: i for i in out.json()["items"]}
 
 
 def page(fw: FollowWorld, lead: Lead, channel: str | None = None) -> dict[str, Any]:
@@ -242,17 +242,25 @@ def test_a_stopped_or_fully_blocked_lead_is_not_listed_and_both_tabs_say_so(
     fw.invariants()
 
 
-def test_the_default_channel_follows_the_last_outbound_touch_and_the_open_draft(
-    fw: FollowWorld,
-) -> None:
+def test_the_default_channel_follows_the_last_outbound_touch(fw: FollowWorld) -> None:
     lead = fw.lead("def-1")
     assert fw.touch("sales", lead, channel="email", days_ago=6).status_code == 201
-    assert page(fw, lead)["default_channel"] == "email"
+    assert (
+        page(fw, lead)["default_channel"] == "email"
+        and due(fw)[lead.id]["default_channel"] == "email"
+    )
     assert fw.touch("sales", lead, channel="whatsapp", days_ago=5).status_code == 201
     assert (
         page(fw, lead)["default_channel"] == "whatsapp"
         and due(fw)[lead.id]["default_channel"] == "whatsapp"
     )
+    fw.invariants()
+
+
+def test_a_newer_phone_call_does_not_decide_the_default_channel(fw: FollowWorld) -> None:
+    """Two outbound touches only: a third would reach the policy's limit of three, and a lead at its limit is no longer a candidate."""
+    lead = fw.lead("def-1b")
+    assert fw.touch("sales", lead, channel="whatsapp", days_ago=6).status_code == 201
     granted = fw.w.call(  # a call is an outbound touch like any other, so it needs consent for the phone channel
         fw.owner,
         "POST",
@@ -264,7 +272,7 @@ def test_the_default_channel_follows_the_last_outbound_touch_and_the_open_draft(
             "status": "granted",
             "basis": "explicit_consent",
             "evidence_type": "web_form",
-            "evidence_ref": "ref:def-1",
+            "evidence_ref": "ref:def-1b",
         },
     )
     assert granted.status_code == 200, granted.text
@@ -276,6 +284,20 @@ def test_the_default_channel_follows_the_last_outbound_touch_and_the_open_draft(
         and due(fw)[lead.id]["default_channel"] == "whatsapp"
     )
     fw.invariants()
+
+
+def test_a_lead_at_the_policy_limit_is_no_longer_in_the_due_list_but_its_page_still_opens(
+    fw: FollowWorld,
+) -> None:
+    """Three outbound touches under a limit of three: the engine stops for good, so the candidates function drops the lead (a decision of the due-candidates ticket); its own page still shows the touches and the stop."""
+    lead = fw.due_lead("at-limit", outs=3)
+    assert lead.id not in due(fw)
+    got = page(fw, lead)
+    assert (
+        got["decision"]["action"] == "stop"
+        and got["decision"]["reason_code"] == "max_touches_reached"
+    )
+    assert len(got["touches"]) == 3
 
 
 def test_an_open_draft_decides_the_channel_and_blocks_a_draft_on_the_other_one(

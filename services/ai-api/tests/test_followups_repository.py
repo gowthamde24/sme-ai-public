@@ -161,11 +161,10 @@ def test_every_read_carries_the_tenant_filter() -> None:
     r.list_touches("tok", TENANT, LEAD, limit=5)
     r.get_draft("tok", TENANT, ID)
     r.list_drafts("tok", TENANT, lead_id=LEAD, status="active", limit=5)
-    r.recent_outbound("tok", TENANT, limit=5)
     r.requirement_enquiry("tok", TENANT, ID)
     r.list_question_drafts("tok", TENANT, ID, active_only=True)
     r.get_question_draft("tok", TENANT, ID)
-    assert len(seen) == 8
+    assert len(seen) == 7
     for request in seen:
         assert request.method == "GET" and request.url.params["tenant_id"] == f"eq.{TENANT}", (
             request.url
@@ -262,60 +261,122 @@ def test_a_lead_the_caller_cannot_see_is_none_and_a_lead_without_a_contact_has_n
     )
 
 
-def test_the_recent_outbound_leads_are_distinct_newest_first_and_capped() -> None:
-    a, b = uuid.UUID(int=0xA1), uuid.UUID(int=0xB1)
-    rows = [
-        {"lead_id": str(a), "channel": "email"},
-        {"lead_id": str(a), "channel": "whatsapp"},
-        {"lead_id": str(b), "channel": "whatsapp"},
-        {"lead_id": str(a), "channel": "email"},
-    ]
-    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=5)
-    assert [x.lead_id for x in got] == [a, b]
-    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=1)
-    assert [x.lead_id for x in got] == [a]
+def _page(**over: Any) -> dict[str, Any]:
+    base: dict[str, Any] = {
+        "policy_in_force": True,
+        "items": [
+            {
+                "lead_id": str(LEAD),
+                "last_outbound_at": "2026-10-02T08:30:00.123456+00:00",
+                "last_outbound_channel": "whatsapp",
+                "open_draft_id": str(ID),
+                "open_draft_channel": "email",
+            },
+            {
+                "lead_id": str(ID),
+                "last_outbound_at": "2026-10-03T08:30:00+00:00",
+                "last_outbound_channel": None,
+                "open_draft_id": None,
+                "open_draft_channel": None,
+            },
+        ],
+        "next_cursor": {"at": "2026-10-03T08:30:00+00:00", "id": str(ID)},
+    }
+    base.update(over)
+    return base
 
 
-def test_a_candidates_channel_is_that_of_its_latest_email_or_whatsapp_touch_and_a_call_has_none() -> (
-    None
-):
-    a, b, c = uuid.UUID(int=0xA1), uuid.UUID(int=0xB1), uuid.UUID(int=0xC1)
-    rows = [  # newest first
-        {
-            "lead_id": str(a),
-            "channel": "phone",
-        },  # a call is newer than a's WhatsApp touch but is not a draft channel
-        {"lead_id": str(b), "channel": "phone"},
-        {"lead_id": str(a), "channel": "whatsapp"},
-        {"lead_id": str(c), "channel": "email"},
-        {"lead_id": str(a), "channel": "email"},
-    ]
-    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=3)
-    assert [(x.lead_id, x.channel) for x in got] == [(a, "whatsapp"), (b, None), (c, "email")]
-    capped = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=2)
-    assert [x.lead_id for x in capped] == [a, b]  # c is past the cap and is not counted
+def test_the_candidates_are_one_definer_call_with_the_callers_token_and_every_argument() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json=_page())
+
+    page = repo(handler).due_candidates(
+        "tok", TENANT, after=("2026-10-01T00:00:00+00:00", ID), limit=30, scan_max=300
+    )
+    assert [(q.method, q.url.path) for q in seen] == [("POST", "/rpc/followup_due_candidates")]
+    assert (
+        seen[0].headers["authorization"] == "Bearer tok" and seen[0].headers["apikey"] == "anon-key"
+    )
+    assert json.loads(seen[0].content) == {
+        "p_tenant_id": str(TENANT),
+        "p_after_at": "2026-10-01T00:00:00+00:00",
+        "p_after_id": str(ID),
+        "p_limit": 30,
+        "p_scan_max": 300,
+    }
+    assert page.policy_in_force is True
+    first, second = page.items
+    assert (
+        first.lead_id,
+        first.last_outbound_at,
+        first.last_outbound_channel,
+        first.open_draft_id,
+        first.open_draft_channel,
+    ) == (
+        LEAD,
+        "2026-10-02T08:30:00.123456+00:00",
+        "whatsapp",
+        ID,
+        "email",
+    )
+    assert (second.last_outbound_channel, second.open_draft_id, second.open_draft_channel) == (
+        None,
+        None,
+        None,
+    )
+    assert page.next_cursor == ("2026-10-03T08:30:00+00:00", ID)
 
 
-def test_a_counted_lead_still_learns_its_channel_from_a_row_after_the_cap_was_reached() -> None:
-    a, b, c = uuid.UUID(int=0xA1), uuid.UUID(int=0xB1), uuid.UUID(int=0xC1)
-    rows = [  # newest first: c is the first lead past the cap of 2, and a's latest e-mail or WhatsApp touch comes after it
-        {"lead_id": str(a), "channel": "phone"},
-        {"lead_id": str(b), "channel": "phone"},
-        {"lead_id": str(c), "channel": "email"},
-        {"lead_id": str(a), "channel": "whatsapp"},
-    ]
-    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=2)
-    assert [(x.lead_id, x.channel) for x in got] == [(a, "whatsapp"), (b, None)]
+def test_the_first_page_sends_a_null_cursor_and_the_last_page_has_none() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json=_page(next_cursor=None, items=[]))
+
+    page = repo(handler).due_candidates("tok", TENANT, after=None, limit=1, scan_max=1)
+    body = json.loads(seen[0].content)
+    assert body["p_after_at"] is None and body["p_after_id"] is None
+    assert (page.items, page.next_cursor) == ([], None)
 
 
-def test_the_candidate_read_asks_for_outbound_touches_with_their_channel_and_four_times_the_cap() -> (
-    None
-):
-    seen, handler = _capture()
-    repo(handler).recent_outbound("tok", TENANT, limit=7)
-    params = seen[0].url.params
-    assert params["select"] == "lead_id,channel" and params["direction"] == "eq.out"
-    assert params["limit"] == "28" and params["order"] == "occurred_at.desc,id.desc"
+@pytest.mark.parametrize(
+    "bad",
+    [
+        _page(policy_in_force="yes"),
+        _page(items={}),
+        _page(items=[1]),
+        _page(items=[{**_page()["items"][0], "lead_id": "not-a-uuid"}]),
+        _page(items=[{**_page()["items"][0], "last_outbound_at": 5}]),
+        _page(items=[{**_page()["items"][0], "last_outbound_channel": "phone"}]),
+        _page(items=[{**_page()["items"][0], "open_draft_channel": "sms"}]),
+        _page(items=[{**_page()["items"][0], "open_draft_id": "x"}]),
+        _page(next_cursor="x"),
+        _page(next_cursor={"at": 5, "id": str(ID)}),
+        _page(next_cursor={"at": "2026-10-03T08:30:00+00:00", "id": "x"}),
+    ],
+)
+def test_a_candidates_answer_of_the_wrong_shape_is_an_upstream_failure_never_a_half_read_page(
+    bad: dict[str, Any],
+) -> None:
+    with pytest.raises(UpstreamError):
+        repo(lambda r: httpx.Response(200, json=bad)).due_candidates(
+            "tok", TENANT, after=None, limit=30, scan_max=300
+        )
+
+
+def test_a_refusal_of_the_candidates_function_is_classified_like_the_others() -> None:
+    with pytest.raises(Forbidden):
+        repo(lambda r: httpx.Response(403, json={"code": "42501", "message": "x"})).due_candidates(
+            "tok", TENANT, after=None, limit=30, scan_max=300
+        )
+    with pytest.raises(InvalidValueError):
+        repo(lambda r: httpx.Response(400, json={"code": "22023", "message": "x"})).due_candidates(
+            "tok", TENANT, after=None, limit=30, scan_max=300
+        )
 
 
 def test_the_server_still_distinguishes_an_erased_key_in_the_log_and_the_typed_exception(

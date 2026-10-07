@@ -49,7 +49,9 @@ def _propose_field(ctx: ToolContext, args: ProposeFieldArgs) -> str:
     if not supports(args.field, normalised.value, quote, enquiry.received_at):
         return NOTE_VALUE_REFUSED
     certainty = worse(args.certainty, normalised.certainty)
-    if args.field in ("quantity", "budget", "payment_terms") and in_range_context(enquiry.body, *span):
+    if args.field in ("quantity", "budget", "payment_terms") and in_range_context(
+        enquiry.body, *span
+    ):
         certainty = worse(certainty, "ambiguous")  # one end of a range is not a stated number
     proposal = Proposal(
         value=normalised.value,
