@@ -17,7 +17,27 @@ export function selectorsOf(css) {
   return out;
 }
 
-/** Class names defined by a stylesheet, from its selectors. */
+/**
+ * The class combinations a stylesheet reacts to. A compound selector like `.card` reacts to one class (`single`); one like
+ * `.sticky-actions.sticky` only reacts to an element that carries BOTH (`multi`), so using `sticky` alone is not a risk.
+ * An element qualifier (`a.button`) is ignored: the class alone is treated as the risk (conservative).
+ */
+export function legacyRules(css) {
+  const single = new Set();
+  const multi = [];
+  for (const list of selectorsOf(css)) {
+    for (const sel of splitSelectorList(list)) {
+      for (const compound of sel.split(/[\s>+~]+/)) {
+        const classes = [...new Set([...compound.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)].map((m) => m[1]))];
+        if (classes.length === 1) single.add(classes[0]);
+        else if (classes.length > 1) multi.push(classes);
+      }
+    }
+  }
+  return { single, multi };
+}
+
+/** Every class name a stylesheet mentions (for reporting only). */
 export function legacyClassNames(css) {
   const names = new Set();
   for (const sel of selectorsOf(css)) for (const m of sel.matchAll(/\.(-?[_a-zA-Z][\w-]*)/g)) names.add(m[1]);
@@ -94,11 +114,14 @@ function classTokens(src) {
   return found;
 }
 
-/** Violations in one v2 source file: [{ file, line, rule, detail }]. */
+/** Violations in one v2 source file: [{ file, line, rule, detail }]. `legacy` is the result of legacyRules(). */
 export function checkSource(src, file, legacy) {
   const out = [];
   for (const { index, tokens } of classTokens(src)) {
-    for (const t of tokens) if (legacy.has(t)) out.push({ file, line: lineOf(src, index), rule: "legacy-class", detail: `uses the legacy class "${t}"` });
+    for (const t of tokens) if (legacy.single.has(t)) out.push({ file, line: lineOf(src, index), rule: "legacy-class", detail: `uses the legacy class "${t}"` });
+    for (const combo of legacy.multi) {
+      if (combo.every((c) => tokens.includes(c))) out.push({ file, line: lineOf(src, index), rule: "legacy-class", detail: `carries the legacy class combination ".${combo.join(".")}"` });
+    }
   }
   for (const tag of jsxOpeningTags(src)) {
     if (/\bstyle\s*=/.test(tag.text) && /\bclassName\s*=/.test(tag.text)) {
@@ -110,14 +133,16 @@ export function checkSource(src, file, legacy) {
 
 /** Fixtures the CLI runs before trusting the check (vitest runs the same ones). */
 export function sourceCheckSelfTest() {
-  const legacy = new Set(["card", "row", "error"]);
+  const legacy = { single: new Set(["card", "row", "error"]), multi: [["sticky-actions", "sticky"]] };
   const bad1 = checkSource('const A = () => <div className="card p-4">x</div>;', "f.tsx", legacy);
   const bad2 = checkSource('const A = () => <div style={{ margin: 1 }} className="p-4">x</div>;', "f.tsx", legacy);
   const bad3 = checkSource('const c = cn("p-2", cond && "row");', "f.tsx", legacy);
+  const bad4 = checkSource('const A = () => <div className="sticky-actions sticky">x</div>;', "f.tsx", legacy);
+  const ok3 = checkSource('const A = () => <header className="sticky top-0">x</header>;', "f.tsx", legacy);
   const ok1 = checkSource('const A = () => <div className="p-4 rounded-lg">error</div>; const s = "error";', "f.tsx", legacy);
   const ok2 = checkSource("const A = () => <div style={{ margin: 1 }}>x</div>; const n = a < b;", "f.tsx", legacy);
   const scopeBad = unscopedSelectors('[data-ui="v2"] a { x: 1 } button { y: 2 }');
   const scopeOk = unscopedSelectors('@media (a) { [data-ui="v2"]:not([x]) { y: 1 } } [data-ui="v2"], [data-ui="v2"] * { z: 1 }');
-  const ok = bad1.length === 1 && bad2.length === 1 && bad3.length === 1 && ok1.length === 0 && ok2.length === 0 && scopeBad.length === 1 && scopeOk.length === 0;
-  return { ok, detail: { bad1: bad1.length, bad2: bad2.length, bad3: bad3.length, ok1: ok1.length, ok2: ok2.length, scopeBad: scopeBad.length, scopeOk: scopeOk.length } };
+  const ok = bad1.length === 1 && bad2.length === 1 && bad3.length === 1 && bad4.length === 1 && ok1.length === 0 && ok2.length === 0 && ok3.length === 0 && scopeBad.length === 1 && scopeOk.length === 0;
+  return { ok, detail: { bad1: bad1.length, bad2: bad2.length, bad3: bad3.length, bad4: bad4.length, ok1: ok1.length, ok2: ok2.length, ok3: ok3.length, scopeBad: scopeBad.length, scopeOk: scopeOk.length } };
 }

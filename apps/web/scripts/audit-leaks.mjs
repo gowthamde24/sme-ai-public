@@ -10,7 +10,7 @@ import path from "node:path";
 
 import { startChrome, Tab } from "./lib/chrome.mjs";
 import { BASE_ALLOW, ROOT, detectorSelfTest, runFixtureAudit } from "./lib/leak-audit.mjs";
-import { checkSource, legacyClassNames, sourceCheckSelfTest, unscopedSelectors } from "./lib/source-check.mjs";
+import { checkSource, legacyClassNames, legacyRules, sourceCheckSelfTest, unscopedSelectors } from "./lib/source-check.mjs";
 
 const rel = (p) => path.relative(ROOT, p);
 const walk = (dir) =>
@@ -33,7 +33,8 @@ const fail = (msg) => {
 const self = sourceCheckSelfTest();
 console.log(`source check self-test: ${self.ok ? "ok" : "FAILED"} ${JSON.stringify(self.detail)}`);
 if (!self.ok) fail("the source check cannot recognise its own fixtures");
-const legacy = legacyClassNames(fs.readFileSync(path.join(ROOT, "app/globals.css"), "utf8"));
+const legacyCss = fs.readFileSync(path.join(ROOT, "app/globals.css"), "utf8");
+const legacy = legacyRules(legacyCss);
 const files = v2Sources();
 let violations = 0;
 for (const f of files) {
@@ -48,7 +49,7 @@ for (const css of ["design/tokens.css", "design/reset.css", "design/base.css"]) 
     console.error(`  ${css}: selector outside [data-ui="v2"]: ${sel}`);
   }
 }
-console.log(`source check: ${files.length} v2 source file(s), ${legacy.size} legacy class names, ${violations} violation(s)`);
+console.log(`source check: ${files.length} v2 source file(s), ${legacyClassNames(legacyCss).size} legacy class names (${legacy.single.size} standalone, ${legacy.multi.length} combinations), ${violations} violation(s)`);
 if (violations) fail(`${violations} source violation(s)`);
 
 // 2. browser
