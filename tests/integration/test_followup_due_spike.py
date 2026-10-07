@@ -1,12 +1,12 @@
-"""C0 SPIKE of the due-candidates ticket (docs/plans/followups-due-candidates-plan.md, sections 4 and 12): is option B (the database's own blocker for the four terminal answers) fast enough?
+"""TIMING of the due list's candidates function (docs/plans/followups-due-candidates-plan.md, sections 4 and 12). It began as the C0 SPIKE (option B measured with a draft of the function applied by hand) and, since
+C1, measures the function the MIGRATION made: nothing is created or dropped here.
 
 OPT-IN: runs only with DUE_SPIKE=1 (it loads 20,000 leads and 100,000+ outbound touches and takes a few minutes), never in `make check`:
 
     cd services/ai-api && DUE_SPIKE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_followup_due_spike.py -q -s
 
-It applies the DRAFT function (tools/due-candidates-spike/draft.sql) and the partial index to the LOCAL database BY HAND, times the function INSIDE the database (clock_timestamp around each call, so no docker or HTTP
-overhead), and drops both again. The numbers are printed, not asserted tightly (only a loose 10 s bound so the machine's speed cannot make it flaky); the budget decision is the owner's rule in section 4:
-first page under 300 ms (p95 over 20 runs) and a page that has to skip 300 terminal leads under 1.5 s. All data is synthetic."""
+The function is timed INSIDE the database (clock_timestamp around each call, so no docker or HTTP overhead). The numbers are printed, not asserted tightly (only a loose 10 s bound so the machine's speed cannot
+make it flaky); the budget of section 4 is: first page under 300 ms (p95 over 20 runs) and a page that has to skip 300 terminal leads under 1.5 s. All data is synthetic."""
 
 # ruff: noqa: E501, S608, T201
 
@@ -28,8 +28,6 @@ pytestmark = pytest.mark.skipif(
     os.environ.get("DUE_SPIKE") != "1", reason="opt-in spike: set DUE_SPIKE=1"
 )
 
-DRAFT = operator_sql.ROOT / "tools" / "due-candidates-spike" / "draft.sql"
-INDEX = "lead_touches_out_spike_idx"
 LEADS, CHUNK = 20_000, 5_000
 
 
@@ -62,9 +60,9 @@ select gen_random_uuid(), '{t}', n.id, 'out', (case when k % 2 = 0 then 'email' 
         "('out', 'email', now() - interval '500 days'), ('in', 'email', now() - interval '499 days')",
         replica=True,
     )
-    print(f"\n[spike] loaded {LEADS} + 400 leads in {time.perf_counter() - started:.1f} s")
+    print(f"\n[timing] loaded {LEADS} + 400 leads in {time.perf_counter() - started:.1f} s")
     print(
-        "[spike] outbound touches:",
+        "[timing] outbound touches:",
         operator_sql.sql(
             f"select count(*) from public.lead_touches where tenant_id = '{t}' and direction = 'out'"
         ),
@@ -95,7 +93,7 @@ end $$;
 select json_build_object('p50', round(percentile_cont(0.5) within group (order by ms)::numeric, 1), 'p95', round(percentile_cont(0.95) within group (order by ms)::numeric, 1), 'max', round(max(ms), 1)) from m"""
     )
     figures: dict[str, float] = {k: float(v) for k, v in json.loads(out).items()}
-    print(f"[spike] {label}: {figures} ms")
+    print(f"[timing] {label}: {figures} ms")
     return figures
 
 
@@ -113,39 +111,24 @@ select public.followup_due_candidates('{tenant}', {after_args}, 30, 300)::text""
     return dict(json.loads(out.splitlines()[-1]))
 
 
-def test_c0_option_b_cost_at_20000_leads(fw: FollowWorld) -> None:
-    operator_sql.sql(DRAFT.read_text())
-    try:
-        load_big(fw)
-        # what the first calls return (shape check, not a timing)
-        start = one_call(fw, None)
-        assert start["policy_in_force"] is True
-        print(
-            f"[spike] from the start (400 terminal leads first): items={len(start['items'])}, next_cursor={'set' if start['next_cursor'] else None}"
-        )
-        skip = timed(fw, "skip 300 terminal leads, no partial index", None, runs=8)
-        first_no_index = timed(fw, "first normal page, no partial index", "480 days")
-        operator_sql.sql(
-            f"create index {INDEX} on public.lead_touches (tenant_id, lead_id, occurred_at desc) where direction = 'out'; analyze public.lead_touches"
-        )
-        skip_idx = timed(fw, "skip 300 terminal leads, partial index", None, runs=8)
-        first = timed(fw, "first normal page, partial index", "480 days")
-        deep = timed(fw, "a page deep in the set (180 days), partial index", "180 days")
-        plan = operator_sql.sql(
-            f"explain (analyze, costs off, timing off) select t.lead_id, max(t.occurred_at) from public.lead_touches t where t.tenant_id = '{fw.t.id}' and t.direction = 'out' group by t.lead_id"
-        )
-        print(
-            "[spike] aggregate plan with the partial index:\n"
-            + "\n".join("    " + line for line in plan.splitlines()[:8])
-        )
-        print(
-            f"[spike] BUDGET: first page p95 {first['p95']} ms (< 300), skip-300 p95 {skip_idx['p95']} ms (< 1500)"
-        )
-        for figures in (skip, first_no_index, skip_idx, first, deep):
-            assert figures["max"] < 10_000, (
-                figures
-            )  # the loose bound: only a broken plan fails the test
-    finally:
-        operator_sql.sql(
-            f"drop index if exists public.{INDEX}; drop function if exists public.followup_due_candidates(uuid, timestamptz, uuid, integer, integer)"
-        )
+def test_the_candidates_function_cost_at_20000_leads(fw: FollowWorld) -> None:
+    load_big(fw)
+    start = one_call(fw, None)
+    assert start["policy_in_force"] is True
+    print(
+        f"[timing] from the start (400 terminal leads first): items={len(start['items'])}, next_cursor={'set' if start['next_cursor'] else None}"
+    )
+    skip = timed(fw, "skip 300 terminal leads (cap reached, a cursor returned)", None, runs=8)
+    first = timed(fw, "first normal page", "480 days")
+    deep = timed(fw, "a page deep in the set (180 days)", "180 days")
+    plan = operator_sql.sql(
+        f"explain (analyze, costs off, timing off) select t.lead_id, max(t.occurred_at) from public.lead_touches t where t.tenant_id = '{fw.t.id}' and t.direction = 'out' group by t.lead_id"
+    )
+    print("[timing] aggregate plan:\n" + "\n".join("    " + line for line in plan.splitlines()[:8]))
+    print(
+        f"[timing] BUDGET: first page p95 {first['p95']} ms (< 300), skip-300 p95 {skip['p95']} ms (< 1500)"
+    )
+    for figures in (skip, first, deep):
+        assert figures["max"] < 10_000, (
+            figures
+        )  # the loose bound: only a broken plan fails the test

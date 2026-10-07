@@ -220,3 +220,17 @@ Dataset: 20,000 leads with 1 to 9 outbound touches each (**100,395** outbound to
 * **The partial index `lead_touches_out_idx` gives no measurable benefit and is NOT added.** With and without it the planner chooses a sequential scan for the aggregate (this one tenant holds 97% of the table; the aggregate over 100,395 rows runs in about 24 ms), even after `VACUUM ANALYZE`; the timings are identical (first page p50 32.9 ms without, 32.8 ms with). The existing `lead_touches_lead_idx (tenant_id, lead_id, occurred_at, id)` already gives tenant selectivity when a tenant is a small part of the table. An index that is not used would only cost writes. **The C1 migration therefore holds the function and no index** (section 7 and the index copy test are dropped). Re-measure at hosted scale at T012.
 * The aggregate is O(outbound touches of the tenant) per call as modelled (about 24 ms per 100,000 rows); the stage-2 cost per examined lead is about 0.4 ms (the skip-300 case: 142 ms for 300 leads).
 
+
+## C3 results (measured 2026-10-07 on the migrated function; `tests/integration/test_followup_due_spike.py`, opt-in with `DUE_SPIKE=1`)
+
+Same dataset as C0 (20,000 leads, **100,395** outbound touches, 400 `replied` leads first), timed inside the database, 20 runs after 3 warm-ups (8 runs for the skip case):
+
+| Case | p50 | p95 | max | Budget |
+| --- | --- | --- | --- | --- |
+| First normal page (limit 30, scan cap 300) | 41.3 ms | **66.4 ms** | 89.2 ms | p95 < 300 ms: met |
+| A page that skips 300 terminal leads (0 candidates, a cursor returned) | 159.0 ms | **226.0 ms** | 252.6 ms | p95 < 1,500 ms: met |
+| A page deep in the set (cursor 180 days ago), for information | 157.7 ms | 210.6 ms | 219.9 ms | none |
+
+(The C0 draft measured 32.8 / 41.0 ms and 142.1 / 144.8 ms on a quieter machine; the same function text, so the difference is the machine, not the migration.)
+
+The correctness proof on 600+ leads (`tests/integration/test_followup_due_candidates.py`, six tests, real stack): the **walk of the function returns exactly the leads the real pinned engine does not stop for good** (the oracle is the engine on the database's own request for every lead), each once, oldest first, with the 40-day-old lead first; no replied, at-limit, archived, lost, opted-out or won lead is returned; a walk with a scan cap of 9 and pages of 7 returns the same leads as a walk with 300 and 30; and the API walk shows every keyed candidate once, counts what it left out, starts with the overdue lead, and cuts pages at 30 candidates.
