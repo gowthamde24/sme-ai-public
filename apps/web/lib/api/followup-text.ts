@@ -122,6 +122,7 @@ export const STOPPED_TEXT: Record<string, string> = {
  */
 export const DECISION_TEXT: Record<string, string> = {
   ...STOPPED_TEXT, // the database's own stops (an accepted order ...): the API answers `stop` with that reason for a stopped lead
+  ...GATE_TEXT, // the gate's own blocks (contact, key, erased, consent, unkeyed): the API answers `stop` with that reason for a blocked lead. No `erased_key`: a client is only ever told `key`.
   eligible_now: "A follow-up draft can be made now.",
   not_yet_eligible: "It is not time for the next follow-up yet.",
   do_not_contact: "This lead is flagged do-not-contact: no follow-up.",

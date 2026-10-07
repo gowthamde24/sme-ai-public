@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { DECISION_TEXT } from "@/lib/api/followup-text";
 import { decisionLine, draftOffers, dueLine, errorState, gateLines, indiaNowLocal, parseGapDays, parseHolidays, policyFromForm, touchTime } from "./followup-logic";
 
 const NOW = new Date("2026-10-07T06:30:00.000Z"); // 12:00 in India
@@ -134,6 +135,15 @@ describe("words", () => {
     expect(decisionLine(stop("order_cancelled"), true)).toBe("An order for this lead was cancelled: follow-ups stop.");
     expect(decisionLine(stop("quote_withdrawn"), true)).toBe("The quote for this lead was withdrawn: follow-ups stop.");
     expect(decisionLine(stop("lead_archived"), true)).toBe("This lead is archived: follow-ups stop.");
+  });
+
+  it("a block the gate names reads as that block (the gate's own sentence), and an erased key is never a decision word", () => {
+    const stop = (reason: string) => ({ action: "stop" as const, reason_code: reason, terminal: false, touch_number: null, next_eligible_at: null, engine_version: "none" });
+    expect(decisionLine(stop("contact"), true)).toBe("This person has asked not to be contacted.");
+    expect(decisionLine(stop("key"), true)).toBe("This e-mail address or phone number is on the do-not-contact list.");
+    expect(decisionLine(stop("erased"), true)).toBe("This contact has been erased: nothing new can be recorded about them.");
+    expect(decisionLine(stop("consent"), true)).toBe("There is no recorded consent for this channel, or no address for it.");
+    expect(Object.keys(DECISION_TEXT)).not.toContain("erased_key");
   });
 
   it("a line of the due list", () => {

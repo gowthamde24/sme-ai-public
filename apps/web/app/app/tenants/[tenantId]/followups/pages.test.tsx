@@ -112,8 +112,30 @@ describe("the lead's follow-up page", () => {
     const list = within(screen.getByRole("list", { name: "What blocks a follow-up" }));
     expect(list.getByText("No follow-up policy is in force: the owner must publish one.")).toBeInTheDocument();
     expect(list.getByText("This e-mail address or phone number is on the do-not-contact list.")).toBeInTheDocument();
-    expect(screen.getByText("No guidance: no follow-up policy is in force.")).toBeInTheDocument();
+    expect(screen.queryByText(/No guidance/)).toBeNull(); // a blocked lead has no guidance section: the block line says it
     expect(document.body.textContent).not.toMatch(/erased/i);
+  });
+
+  it.each([
+    ["contact", "This person has asked not to be contacted."],
+    ["key", "This e-mail address or phone number is on the do-not-contact list."],
+    ["erased", "This contact has been erased: nothing new can be recorded about them."],
+    ["consent", "There is no recorded consent for this channel, or no address for it."],
+    ["unkeyed", "This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet."],
+  ])("a lead the gate blocks (%s) shows the block once and no guidance, whatever decision it was sent", async (blocked, sentence) => {
+    for (const decision of [
+      { action: "stop", reason_code: blocked, terminal: false, touch_number: null, next_eligible_at: null, engine_version: "none" },
+      { action: "draft_followup", reason_code: "eligible_now", terminal: false, touch_number: 2, next_eligible_at: "2026-10-07T06:30:00Z", engine_version: "1.0.0" },
+    ]) {
+      api.fetchLeadFollowup.mockResolvedValue(lead({ gate: { ...GATE_JSON, blocked }, decision }));
+      const { unmount } = render(await LeadFollowupPage(leadProps()));
+      expect(screen.getAllByText(sentence)).toHaveLength(1);
+      expect(within(screen.getByRole("list", { name: "What blocks a follow-up" })).getByText(sentence)).toBeInTheDocument();
+      expect(screen.queryByText(/can be made now/)).toBeNull();
+      expect(screen.queryByText(/Guidance only/)).toBeNull();
+      expect(screen.queryByRole("heading", { name: "What the rules say now" })).toBeNull();
+      unmount();
+    }
   });
 
   it("an owner and an admin see Approve with the draft's own fingerprint; the text shown is the text reviewed", async () => {

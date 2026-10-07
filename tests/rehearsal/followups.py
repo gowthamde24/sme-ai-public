@@ -2,7 +2,7 @@
 
 Two ways to run it, both on the LOCAL stack, both through OUR API as the people of a small workspace (Owner, Admin, Sales, Viewer):
 
-  * `make rehearse-prepare-followups`: builds a clean synthetic workspace for the owner to click through by hand: a follow-up policy in force and nine leads in the nine states of the
+  * `make rehearse-prepare-followups`: builds a clean synthetic workspace for the owner to click through by hand: a follow-up policy in force and ten leads in the ten states of the
     checklist. Nothing else happens. It prints how to sign in.
   * `make rehearse-followups`: builds the same workspace, then runs the whole follow-up journey headless and ASSERTS each step, every refusal the owner will see, and that nothing could
     have been sent. It writes `rehearsal-followups-report.md` at the repository root (git-ignored).
@@ -51,6 +51,7 @@ LEAD_KEYS = (
     "touch_limit",
     "questions",
     "reply_after_draft",
+    "shared_number",
 )
 
 # (key, label shown on the screen, contact name, phone). Invented; the "+00" numbers and the .test addresses cannot belong to anyone.
@@ -64,6 +65,11 @@ LEAD_SPEC: dict[str, tuple[str, str, str]] = {
     "touch_limit": ("FU7 Three Touches Sarees", "Gita Limit", "+00 90000 20007"),
     "questions": ("FU8 Questions Weaves", "Hari Questions", "+00 90000 20008"),
     "reply_after_draft": ("FU9 Reply After Draft Silks", "Indu Afterdraft", "+00 90000 20009"),
+    "shared_number": (
+        "FU10 Shared Number Silks",
+        "Jaya Sharednum",
+        "+00 90000 20004",
+    ),  # the SAME number as lead 4, whose contact opts out: its WhatsApp key is blocked (an e-mail address cannot be shared: the API refuses a second contact with it)
 }
 LEAD_NO = {key: n for n, key in enumerate(LEAD_KEYS, start=1)}
 
@@ -136,6 +142,12 @@ class FollowupRehearsal:
     def i(*parts: object) -> str:
         return rid("fu", *parts)
 
+    def within_one_second(self) -> None:
+        """Start just after a second boundary. The database replays a retry of "ask for a draft" only when the stored request is identical, and that request carries the API's clock (`as_of`) in whole seconds:
+        a retry that lands in the NEXT second gets `409 conflict` instead of a replay (found by this driver, reported in commit 4c; no duplicate is ever made). Both sends of a draft request are kept inside
+        one second so the driver is deterministic; the finding itself is recorded as a note in the report."""
+        time.sleep(1.0 - (time.time() % 1.0) + 0.02)
+
     def path(self, key: str, tail: str) -> str:
         return f"/leads/{self.leads[key].lead_id}{tail}"
 
@@ -169,15 +181,16 @@ class FollowupRehearsal:
         self.facts.sentences.append((step, r.status, r.code, r.reason))
         return r
 
-    def read(self, key: str, who: str = "sales") -> dict[str, Any]:
+    def read(self, key: str, who: str = "sales", channel: str = "email") -> dict[str, Any]:
         body: dict[str, Any] = self.api.get(
-            f"{LEAD_NO[key]}: open the lead's follow-up page",
+            f"{LEAD_NO[key]}: open the lead's follow-up page ({channel})",
             who,
-            self.path(key, "/followup?channel=email"),
+            self.path(key, f"/followup?channel={channel}"),
             lead=f"FU{LEAD_NO[key]}",
         ).body
         self.facts.pages.setdefault(
-            key, {"gate": body["gate"], "decision": body["decision"]}
+            key if channel == "email" else f"{key}/{channel}",
+            {"gate": body["gate"], "decision": body["decision"]},
         )  # the first look, right after the preparation (the checklist quotes it)
         return body
 
@@ -353,6 +366,7 @@ class FollowupRehearsal:
         for n, days in enumerate((6, 5, 4), start=1):
             self.touch("touch_limit", "out", timedelta(days=days), n)
         self.touch("reply_after_draft", "out", timedelta(days=5), 1)
+        self.touch("shared_number", "out", timedelta(days=5), 1)
         self.accepted_order()
         self.question_requirement()
 
@@ -441,6 +455,15 @@ class FollowupRehearsal:
         )
         four = self.read("suppressed")
         rec.check("4 suppressed: the gate names the contact", "contact", four["gate"]["blocked"])
+        rec.check(
+            "4 suppressed: the page's answer is the block, not guidance (the gate decides, the engine is not asked)",
+            ("stop", "contact", False),
+            (
+                four["decision"]["action"],
+                four["decision"]["reason_code"],
+                four["decision"]["terminal"],
+            ),
+        )
         five = self.read("order_accepted")
         rec.check(
             "5 order accepted: follow-ups are stopped", "order_accepted", five["gate"]["stopped"]
@@ -468,6 +491,23 @@ class FollowupRehearsal:
         )
         nine = self.read("reply_after_draft")
         rec.check("9 reply after draft: due now", "draft_followup", nine["decision"]["action"])
+        ten_mail = self.read("shared_number")
+        rec.check(
+            "10 shared number: e-mail is open, a draft can be made by e-mail",
+            (None, "draft_followup"),
+            (ten_mail["gate"]["blocked"], ten_mail["decision"]["action"]),
+        )
+        ten_wa = self.read("shared_number", channel="whatsapp")
+        rec.check(
+            "10 shared number: WhatsApp is blocked by the do-not-contact key of the other contact (a client is told `key`)",
+            ("key", "stop", "key", False),
+            (
+                ten_wa["gate"]["blocked"],
+                ten_wa["decision"]["action"],
+                ten_wa["decision"]["reason_code"],
+                ten_wa["decision"]["terminal"],
+            ),
+        )
         due = {
             x["lead_id"]: x
             for x in self.api.get("due list: as Sales", "sales", "/followups/due").body
@@ -501,6 +541,16 @@ class FollowupRehearsal:
             "due list: lead 5 (order accepted) is not listed: a stopped lead is never due",
             False,
             self.leads["order_accepted"].lead_id in due,
+        )
+        rec.check(
+            "due list: lead 4 (opted out) is not listed: a blocked lead is never due",
+            False,
+            self.leads["suppressed"].lead_id in due,
+        )
+        rec.check(
+            "due list: lead 10 is listed, judged on e-mail where it is open",
+            "draft_followup",
+            due[self.leads["shared_number"].lead_id]["action"],
         )
         rec.check(
             "due list: a lead with no recorded first message is not listed",
@@ -571,6 +621,7 @@ class FollowupRehearsal:
         api, rec = self.api, self.rec
         lead = self.leads["due_now"].lead_id
         draft = self.i("due_now", "draft", 1)
+        self.within_one_second()
         made = api.call(
             "1: Sales asks for a draft (the channel only)",
             "sales",
@@ -749,6 +800,16 @@ class FollowupRehearsal:
                 code,
                 reason,
             )
+        self.refuse(
+            "10 shared number: Sales asks for a WhatsApp draft",
+            "sales",
+            "POST",
+            self.path("shared_number", "/followup-drafts"),
+            {"id": self.i("shared_number", "draft", 1), "channel": "whatsapp"},
+            409,
+            "contact_blocked",
+            "key",
+        )
         # the same refusals as the owner meets them on the lead pages: the page's gate says it before anyone asks
         self.rec.check(
             "4 suppressed: the page's gate says 'contact'",
@@ -765,6 +826,7 @@ class FollowupRehearsal:
         api, rec = self.api, self.rec
         lead = self.leads["reply_after_draft"].lead_id
         draft = self.i("reply_after_draft", "draft", 1)
+        self.within_one_second()
         made = api.call(
             "9: Sales asks for a draft",
             "sales",
@@ -1111,6 +1173,10 @@ def ready_to_click(
         print(
             f"  lead {LEAD_NO[key]} {LEAD_SPEC[key][0]:30} http://localhost:3000/app/tenants/{t}/leads/{run.facts.leads[key]}/followup"
         )
+        if key == "shared_number":
+            print(
+                f"  lead {LEAD_NO[key]} (the WhatsApp view) {'':14} http://localhost:3000/app/tenants/{t}/leads/{run.facts.leads[key]}/followup?channel=whatsapp"
+            )
     print(
         f"  requirement of lead 8 (questions): http://localhost:3000/app/tenants/{t}/requirements/{run.requirement_id}/questions"
     )
@@ -1152,6 +1218,12 @@ def write_follow_report(
         w("")
         w(f"Stopped at: {stopped}")
     w("")
+    w("## Known behaviour found by this driver (not a failed check)")
+    w("")
+    w(
+        "* A retry of 'ask for a draft' (same draft id) replays only if it reaches the database in the SAME wall-clock second as the first: the stored request carries the API's `as_of` in whole seconds and the database compares it byte for byte. A retry a second or more later gets `409 conflict` (no duplicate draft is made; the screen says the form is out of date and reads the page again). The driver starts each draft request just after a second boundary to stay deterministic. Reported in commit 4c for the owner's decision."
+    )
+    w("")
     w(
         "## Refusals reached (status, closed code, closed reason; the screens show our sentence for each)"
     )
@@ -1167,17 +1239,16 @@ def write_follow_report(
         "| Lead | Blocked by | Stopped by | Rules' answer (action, reason, touch) | In the due list as |"
     )
     w("| --- | --- | --- | --- | --- |")
-    for key in LEAD_KEYS:
-        page = run.facts.pages.get(key)
-        if page is None:
-            continue
+    for name, page in run.facts.pages.items():
+        key, _, channel = name.partition("/")
         d = page["decision"]
         said = (
             "none" if d is None else f"{d['action']}, {d['reason_code']}, touch {d['touch_number']}"
         )
-        listed = run.facts.due.get(key)
+        listed = run.facts.due.get(key) if not channel else None
+        label = f"{LEAD_NO[key]} {LEAD_SPEC[key][0]}" + (f" ({channel} view)" if channel else "")
         w(
-            f"| {LEAD_NO[key]} {LEAD_SPEC[key][0]} | {page['gate']['blocked'] or ''} | {page['gate']['stopped'] or ''} | {said} | {'not listed' if listed is None else f'{listed[0]}, {listed[1]}, touch {listed[2]}'} |"
+            f"| {label} | {page['gate']['blocked'] or ''} | {page['gate']['stopped'] or ''} | {said} | {'(e-mail only)' if channel else 'not listed' if listed is None else f'{listed[0]}, {listed[1]}, touch {listed[2]}'} |"
         )
     w("")
     w("## The closed texts a person copies (read from the run)")

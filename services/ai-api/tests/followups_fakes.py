@@ -135,6 +135,9 @@ class FakeFollowups:
         self.stopped_leads: dict[
             uuid.UUID, str
         ] = {}  # per lead: the database's stop reason (an accepted order ...)
+        self.blocked_leads: dict[
+            tuple[uuid.UUID, str], str
+        ] = {}  # per (lead, channel): the gate's block (contact, key, erased, consent, unkeyed; the database may also say erased_key)
         self.tokens: list[str] = []
         self.calls: list[tuple[str, dict[str, Any]]] = []
         self.raise_next: Exception | None = None
@@ -231,9 +234,12 @@ class FakeFollowups:
     # ------------------------------------------------------------------ reads
     def gate(self, token: str, lead_id: uuid.UUID, channel: str) -> dict[str, Any]:
         self._seen(token, "gate", {"p_lead_id": str(lead_id), "p_channel": channel})
+        result = dict(self.gate_result)
         if lead_id in self.stopped_leads:
-            return {**self.gate_result, "stopped": self.stopped_leads[lead_id]}
-        return self.gate_result
+            result["stopped"] = self.stopped_leads[lead_id]
+        if (lead_id, channel) in self.blocked_leads:
+            result["blocked"] = self.blocked_leads[(lead_id, channel)]
+        return result
 
     def lead_snapshot(
         self, token: str, tenant_id: uuid.UUID, lead_id: uuid.UUID

@@ -116,6 +116,26 @@ def stopped_decision(reason: str) -> DecisionOut:
     )
 
 
+def public_gate(gate: dict[str, Any]) -> dict[str, Any]:
+    """The gate as a client may see it: an erased marker on a key (another person erased by right shared the identifier) is `key`, never `erased_key`. The database already answers `key`; this is the same rule held once more at the door."""
+    blocked = gate.get("blocked")
+    return {**gate, "blocked": "key" if blocked == "erased_key" else blocked}
+
+
+def blocked_decision(reason: str) -> DecisionOut:
+    """A lead whose contact the gate BLOCKS for this channel (the contact asked not to be contacted, a suppressed key shared with someone else, an erased contact, no consent, no key) is not put to the engine either:
+    the engine sees only the lead's own flag, not keys, consent or erasure, and would say a draft can be made, which the database then refuses (SM220/SM221). The block overrides it with the gate's own closed word as the
+    reason. `terminal` is false: a lifted key or a recorded consent can reopen it, and the database decides again. `engine_version` is "none": no engine produced it."""
+    return DecisionOut(
+        action="stop",
+        reason_code=reason,
+        terminal=False,
+        touch_number=None,
+        next_eligible_at=None,
+        engine_version="none",
+    )
+
+
 def draft_out(row: dict[str, Any]) -> DraftOut:
     return DraftOut.model_validate(row)
 
@@ -132,11 +152,15 @@ def lead_followup(
     snapshot = repo.lead_snapshot(token, tenant, lead_id)
     if snapshot is None:
         return None
-    gate = repo.gate(token, lead_id, channel)
-    stopped = gate.get("stopped")
+    gate = public_gate(repo.gate(token, lead_id, channel))
+    stopped, blocked = gate.get("stopped"), gate.get("blocked")
     decision: DecisionOut | None = None
     if stopped is not None:
         decision = stopped_decision(str(stopped))  # the database's stop: the engine is not asked
+    elif blocked is not None:
+        decision = blocked_decision(
+            str(blocked)
+        )  # the gate's block for this channel: the engine is not asked
     else:
         try:
             ran = run_engine(snapshot, now or datetime.now(UTC))
@@ -167,14 +191,15 @@ def due_list(
     limit: int = 30,
     now: datetime | None = None,
 ) -> list[DueItemOut]:
-    """What a person could do about follow-ups right now, from real backend state: the leads with an outbound touch that the database has not stopped, each put to the pinned engine. Computed when the page is opened (no scheduler)."""
+    """What a person could do about follow-ups right now, from real backend state: the leads with an outbound touch that the database has not stopped and the gate does not block for e-mail, each put to the pinned engine. Computed when the page is opened (no scheduler)."""
     moment = now or datetime.now(UTC)
     active = repo.list_drafts(token, tenant, lead_id=None, status="active", limit=200)
     open_drafts = {str(d["lead_id"]): d for d in active}
     items: list[DueItemOut] = []
     for lead_id in repo.recent_outbound_leads(token, tenant, limit=limit):
-        if repo.gate(token, lead_id, "email").get("stopped") is not None:
-            continue  # stopped by the database (an order, a withdrawn quote, an archived lead): nothing is due, whatever the engine would say
+        gate = repo.gate(token, lead_id, "email")
+        if gate.get("stopped") is not None or gate.get("blocked") is not None:
+            continue  # stopped by the database (an order, a withdrawn quote, an archived lead) or blocked by the gate for e-mail (opted out, a suppressed shared key, erased, no consent): nothing is due, whatever the engine would say
         snapshot = repo.lead_snapshot(token, tenant, lead_id)
         if snapshot is None:
             continue

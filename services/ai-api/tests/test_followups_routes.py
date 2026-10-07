@@ -584,6 +584,83 @@ def test_a_lead_that_is_not_stopped_still_gets_the_engines_answer(w: World) -> N
     )
 
 
+BLOCKS = ("contact", "key", "erased", "consent", "unkeyed")
+
+
+@pytest.mark.parametrize("blocked", BLOCKS)
+def test_a_lead_the_gate_blocks_is_never_due_and_the_engine_is_not_asked(
+    w: World, monkeypatch: pytest.MonkeyPatch, blocked: str
+) -> None:
+    """Commit 4c: the engine sees only the lead's own flag, not keys, consent or erasure: for a blocked lead it would say 'draft_followup'. The gate's block overrides it, with the gate's own word as the reason."""
+    w.f.blocked_leads[(LEAD, "email")] = blocked
+
+    def not_asked(request: Any) -> Any:
+        raise AssertionError("the engine must not be asked about a blocked lead")
+
+    monkeypatch.setattr(cadence_port, "run_decide", not_asked)
+    page = w.call("GET", f"/leads/{LEAD}/followup", None, "a_sales").json()
+    assert page["gate"]["blocked"] == blocked
+    assert page["decision"] == {
+        "action": "stop",
+        "reason_code": blocked,
+        "terminal": False,
+        "touch_number": None,
+        "next_eligible_at": None,
+        "engine_version": "none",
+    }
+    assert w.call("GET", "/followups/due", None, "a_sales").json() == []
+
+
+def test_an_erased_key_is_key_everywhere_the_client_looks(w: World) -> None:
+    """Even if the database answered `erased_key` (another person erased by right shared the identifier), the page's gate AND decision say `key`."""
+    w.f.blocked_leads[(LEAD, "email")] = "erased_key"
+    page = w.call("GET", f"/leads/{LEAD}/followup", None, "a_sales")
+    assert page.status_code == 200
+    assert (
+        page.json()["gate"]["blocked"] == "key" and page.json()["decision"]["reason_code"] == "key"
+    )
+    assert not re.search(r"erased[\s_-]*key", page.text, re.I)
+
+
+def test_a_block_is_for_one_channel_and_the_due_list_judges_e_mail(w: World) -> None:
+    other = uuid.UUID(int=0x2EAD)
+    w.f.snapshots[other] = dataclasses.replace(snapshot(), lead_id=str(other))
+    w.f.outbound_leads = [LEAD, other]
+    w.f.blocked_leads[(LEAD, "whatsapp")] = "key"  # a shared PHONE number: e-mail is still open
+    assert [i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()] == [
+        str(LEAD),
+        str(other),
+    ]
+    page = w.call("GET", f"/leads/{LEAD}/followup?channel=whatsapp", None, "a_sales").json()
+    assert (
+        page["gate"]["blocked"],
+        page["decision"]["action"],
+        page["decision"]["reason_code"],
+    ) == ("key", "stop", "key")
+    email = w.call("GET", f"/leads/{LEAD}/followup?channel=email", None, "a_sales").json()
+    assert (email["gate"]["blocked"], email["decision"]["action"]) == (None, "draft_followup")
+    w.f.blocked_leads[(LEAD, "email")] = (
+        "key"  # now e-mail is blocked too: only the other lead is due
+    )
+    assert [i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()] == [
+        str(other)
+    ]
+
+
+def test_a_stop_wins_over_a_block_and_the_due_list_makes_no_extra_gate_read(w: World) -> None:
+    w.f.stopped_leads[LEAD] = "order_accepted"
+    w.f.blocked_leads[(LEAD, "email")] = "contact"
+    page = w.call("GET", f"/leads/{LEAD}/followup", None, "a_sales").json()
+    assert page["decision"]["reason_code"] == "order_accepted"
+    before = len(w.f.sent("gate"))
+    w.f.stopped_leads.clear()
+    w.f.blocked_leads.clear()
+    w.call("GET", "/followups/due", None, "a_sales")
+    assert len(w.f.sent("gate")) - before == len(
+        w.f.outbound_leads
+    )  # one gate read per candidate, as in 4b
+
+
 def test_a_draft_list_can_be_filtered_by_a_closed_status_only(w: World) -> None:
     assert w.call("GET", "/followup-drafts?status=active", None, "a_sales").status_code == 200
     assert w.call("GET", "/followup-drafts?status=bogus", None, "a_sales").status_code == 422
@@ -793,7 +870,11 @@ def test_the_lead_page_shows_everything_but_a_decision_when_the_engine_cannot_ru
     w: World, monkeypatch: pytest.MonkeyPatch, failure: type[Exception]
 ) -> None:
     w.f.drafts[DRAFT] = draft_row()
-    w.f.gate_result = {"blocked": "key", "stopped": None, "policy_in_force": True}
+    w.f.gate_result = {
+        "blocked": None,
+        "stopped": None,
+        "policy_in_force": True,
+    }  # not blocked, not stopped: only then is the engine asked (4b, 4c)
 
     def refuse(request: Any) -> Any:
         raise failure
@@ -804,7 +885,7 @@ def test_the_lead_page_shows_everything_but_a_decision_when_the_engine_cannot_ru
     page = r.json()
     assert page["decision"] is None
     assert (
-        page["gate"]["blocked"] == "key"
+        page["gate"]["blocked"] is None
         and [d["id"] for d in page["drafts"]] == [str(DRAFT)]
         and page["policy_version_id"] == str(POLICY)
     )

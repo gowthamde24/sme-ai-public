@@ -6,13 +6,13 @@ Words inside double quotes below are the exact sentences the screens show (a tes
 
 ## Before you start (once)
 
-1. In a terminal, from the repository: `make rehearse-prepare-followups`. It needs the local stack running (`make db-start`) and **does not need `make db-reset`**: every run makes a new workspace called *Follow-up rehearsal* plus the time (the newest is the one it prints). It makes the people, a follow-up policy in force and **nine leads** (below). It prints a web address for each lead, for the due list and for the questions page, and how to sign in as the Owner, an Admin, a Sales user and a Viewer.
-2. Start the two servers the usual way: `make dev-api` and `make dev-web` (ports 8000 and 3000). Optional: contacts you add by hand are only protected by the do-not-contact list if the API has a suppression key; the script prints the one-line command that gives it a synthetic one. The nine prepared contacts are already keyed.
+1. In a terminal, from the repository: `make rehearse-prepare-followups`. It needs the local stack running (`make db-start`) and **does not need `make db-reset`**: every run makes a new workspace called *Follow-up rehearsal* plus the time (the newest is the one it prints). It makes the people, a follow-up policy in force and **ten leads** (below). It prints a web address for each lead, for the due list and for the questions page, and how to sign in as the Owner, an Admin, a Sales user and a Viewer.
+2. Start the two servers the usual way: `make dev-api` and `make dev-web` (ports 8000 and 3000). Optional: contacts you add by hand are only protected by the do-not-contact list if the API has a suppression key; the script prints the one-line command that gives it a synthetic one. The ten prepared contacts are already keyed.
 3. Open **one private window per person** (Owner, Admin, Sales, Viewer). Sign in at `http://localhost:3000/login` with the printed e-mail and password, add each person's printed *authenticator key* to an authenticator app (enter the key by hand: 6 digits, 30 seconds, SHA-1) and use the 6-digit code when the sign-in asks for it. For the two steps that say **password only**, use one more private window and sign in with the password but do not give the code.
 4. Do it **within a few hours** of preparing: the policy makes the recipient's clock read about noon *when you prepare*. If you come back another day, prepare again (a new workspace).
 5. Stopwatch: start it when you read the step, stop it when the page shows the result. Write the **seconds**, and tick **Pass** only if you saw exactly what the step says. Count a mistake and its correction too: that is the point. If something differs, write what you saw in the last column of the notes at the end.
 
-The nine leads (each has a keyed contact who gave consent for e-mail and WhatsApp; their first message was recorded as sent by a person):
+The ten leads (each has a keyed contact who gave consent for e-mail and WhatsApp; every lead except 6 and 8 has a first message recorded as sent by a person):
 
 | Lead | Company (as the lead page shows it) | State |
 | --- | --- | --- |
@@ -25,6 +25,7 @@ The nine leads (each has a keyed contact who gave consent for e-mail and WhatsAp
 | 7 | FU7 Three Touches Sarees | three messages already: the limit |
 | 8 | FU8 Questions Weaves | an enquiry whose requirement has missing details |
 | 9 | FU9 Reply After Draft Silks | due now (used for the stale-draft step) |
+| 10 | FU10 Shared Number Silks | due now by e-mail; its **WhatsApp** number is also lead 4's, whose contact opted out: WhatsApp is blocked |
 
 **Finding your way:** the follow-up screens do not show the company's name, so use the printed addresses (the script lists them by lead number and company). On a lead's follow-up page the link "← Lead" opens the lead itself, where the company is named.
 
@@ -37,7 +38,7 @@ Where things are: the workspace's home page has a link "Follow-ups →" (the due
 | # | Who | Do | You should see | Seconds | Pass |
 | --- | --- | --- | --- | --- | --- |
 | A1 | Owner | Home page → "Follow-ups →" | the heading "Follow-ups due"; the note "Worked out when you opened this page. Guidance only: the database decides again when you ask for a draft."; and the banner "Follow-ups are drafts for a person to send outside this system." | | ☐ |
-| A2 | Owner | Count the rows of the list | **six** rows: two marked "Due now" (leads 1 and 9), one "Not yet" (lead 2), three "No follow-up" (leads 3, 4, 7). Leads 5, 6 and 8 are **not** listed: lead 5 has an accepted order (a stopped lead is never due), leads 6 and 8 have no recorded first message. Row sentences: "A follow-up draft can be made now.", "It is not time for the next follow-up yet.", "The customer replied: a person takes over.", "This lead opted out: no follow-up.", "The policy's limit of touches is reached." | | ☐ |
+| A2 | Owner | Count the rows of the list | **seven** rows: three marked "Due now" (leads 1, 9 and 10), one "Not yet" (lead 2), two "No follow-up" (leads 3 and 7). Leads 4, 5, 6 and 8 are **not** listed: lead 4's contact opted out and lead 5 has an accepted order (a blocked or stopped lead is never due), leads 6 and 8 have no recorded first message. Row sentences: "A follow-up draft can be made now.", "It is not time for the next follow-up yet.", "The customer replied: a person takes over.", "The policy's limit of touches is reached." | | ☐ |
 | A3 | Owner | Press "The follow-up policy" | the heading "The follow-up policy" and **Version 1**, starting today, "in force today": touches at most 3; days to wait 1, 2; quiet hours 03:00 to 04:00; all seven weekdays; no holidays; minimum gap 0 hours | | ☐ |
 | A4 | Owner | In "Publish a policy version" change **Starts on** to **tomorrow** (leave the rest) → "Publish this policy". *Do not start it today: that would replace the policy the rest of this checklist needs.* | the message "The policy is published. It applies from the day you chose."; the list now shows **Version 2**, starts tomorrow, *not started yet*, and Version 1 still *in force today* | | ☐ |
 | A5 | Sales | Open the policy page | the versions are listed; no form; the sentence "Only the owner publishes a policy." | | ☐ |
@@ -71,10 +72,11 @@ For each lead: open its follow-up page, read the lines, then press "Ask for a dr
 | --- | --- | --- | --- | --- | --- |
 | C1 | 2, Not Yet | "Nothing blocks a follow-up for this lead."; "It is not time for the next follow-up yet." and an earliest time about a day after the touch | "It is not time for the next follow-up yet." | | ☐ |
 | C2 | 3, Replied | "The customer replied: a person takes over." | "The customer replied: a person takes over." | | ☐ |
-| C3 | 4, Opted Out | under "Is anything blocking a follow-up?": "This person has asked not to be contacted."; the guidance "This lead opted out: no follow-up." | "This person has asked not to be contacted." | | ☐ |
+| C3 | 4, Opted Out | under "Is anything blocking a follow-up?": "This person has asked not to be contacted." and **nothing else about the rules**: no "What the rules say now" section, no sentence that a draft can be made | "This person has asked not to be contacted." | | ☐ |
 | C4 | 5, Order Accepted | under the blocks: "An order for this lead was accepted: follow-ups stop." and **nothing else about the rules**: there is no "What the rules say now" section and no sentence that a draft can be made (the rules do not know about orders, so a stopped lead is never shown as due) | "An order for this lead was accepted: follow-ups stop." | | ☐ |
 | C5 | 6, Never Contacted | "Nothing recorded yet. The first message is yours: write it, send it yourself, then record it here."; the guidance "There is no first message yet: the first message is a person's. Record it, then follow-ups can start." | "There is no first message yet: the first message is a person's. Record it, then follow-ups can start." | | ☐ |
 | C6 | 7, Three Touches | three entries under "Touches"; the guidance "The policy's limit of touches is reached." | "The policy's limit of touches is reached." | | ☐ |
+| C7 | 10, Shared Number (open the printed WhatsApp address, which ends in `?channel=whatsapp`) | WhatsApp view: under the blocks "This e-mail address or phone number is on the do-not-contact list." and no "What the rules say now" section. Then open the same address **without** that ending (the e-mail view): "Nothing blocks a follow-up for this lead." and "A follow-up draft can be made now." followed by "(This would be touch 2.)". *Do not ask for a draft on the e-mail view: this lead is only here to be read twice* | on the WhatsApp view (channel WhatsApp): "This e-mail address or phone number is on the do-not-contact list." | | ☐ |
 
 Total for C: seconds ______
 
@@ -127,7 +129,7 @@ Tick each box when you have looked and it is true:
 
 - The server's refusal of an approval from a session without the authenticator code, and of an approval of a text other than the one shown (the screens never offer either; the script sends them on purpose).
 - Sales approving, a Viewer asking for anything, and every refusal above, by code and by reason, plus that the same request sent twice changes nothing and that no route, setting or table that could send a message exists.
-- Suppression keys: there is **no screen** to record keys for an existing contact (the Owner's `POST /suppression/backfill` endpoint exists, with `GET /suppression/status`, but nothing in the web calls them). A contact with no key reads "This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet." Contacts made through the API with a key configured are keyed when they are made; the script proves the nine prepared contacts are.
+- Suppression keys: there is **no screen** to record keys for an existing contact (the Owner's `POST /suppression/backfill` endpoint exists, with `GET /suppression/status`, but nothing in the web calls them). A contact with no key reads "This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet." Contacts made through the API with a key configured are keyed when they are made; the script proves the ten prepared contacts are.
 
 ## I. Summary
 
