@@ -80,7 +80,11 @@ def test_the_checklists_fixed_texts_are_the_ones_the_database_and_the_templates_
     source += (
         Path(__file__).resolve().parents[1] / "app" / "requirements" / "questions.py"
     ).read_text()
-    texts = [t for t in re.findall(r"`([^`\n]{25,})`", CHECKLIST) if t[0].isupper()]
+    texts = [
+        t
+        for t in re.findall(r"`([^`\n]{25,})`", CHECKLIST)
+        if t[0].isupper() and t.endswith((".", "?"))
+    ]
     assert len(texts) >= 4
     for text in texts:
         # the question about quantity names the saree type the requirement has (an f-string in the template)

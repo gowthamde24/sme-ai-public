@@ -102,6 +102,20 @@ def decision_out(result: dict[str, Any]) -> DecisionOut:
     )
 
 
+def stopped_decision(reason: str) -> DecisionOut:
+    """A lead the DATABASE has stopped (an order accepted, declined or cancelled, a quote withdrawn, the lead archived: `app.followup_stopped`) is not put to the engine. The engine does not know
+    about orders and would say a draft can be made now, which the database then refuses; the stop reason overrides it, so a screen never shows "due" for a lead that cannot be followed up.
+    `engine_version` is "none": no engine produced this answer, the database's stop rule did. The pinned engine is unchanged."""
+    return DecisionOut(
+        action="stop",
+        reason_code=reason,
+        terminal=True,
+        touch_number=None,
+        next_eligible_at=None,
+        engine_version="none",
+    )
+
+
 def draft_out(row: dict[str, Any]) -> DraftOut:
     return DraftOut.model_validate(row)
 
@@ -118,16 +132,22 @@ def lead_followup(
     snapshot = repo.lead_snapshot(token, tenant, lead_id)
     if snapshot is None:
         return None
-    try:
-        ran = run_engine(snapshot, now or datetime.now(UTC))
-    except ENGINE_FAILURES:
-        ran = None  # the page still shows the gate, the touches and the drafts; it just has no decision (creating a draft stays fail-closed)
     gate = repo.gate(token, lead_id, channel)
+    stopped = gate.get("stopped")
+    decision: DecisionOut | None = None
+    if stopped is not None:
+        decision = stopped_decision(str(stopped))  # the database's stop: the engine is not asked
+    else:
+        try:
+            ran = run_engine(snapshot, now or datetime.now(UTC))
+        except ENGINE_FAILURES:
+            ran = None  # the page still shows the gate, the touches and the drafts; it just has no decision (creating a draft stays fail-closed)
+        decision = None if ran is None else decision_out(ran[1])
     return LeadFollowupOut(
         lead_id=lead_id,
         channel=channel,  # type: ignore[arg-type]
         gate=GateOut.model_validate(gate),
-        decision=None if ran is None else decision_out(ran[1]),
+        decision=decision,
         policy_version_id=None if snapshot.policy is None else uuid.UUID(snapshot.policy.id),
         touches=[
             TouchOut.model_validate(t) for t in repo.list_touches(token, tenant, lead_id, limit=100)
@@ -147,12 +167,14 @@ def due_list(
     limit: int = 30,
     now: datetime | None = None,
 ) -> list[DueItemOut]:
-    """What a person could do about follow-ups right now, from real backend state: the leads with an outbound touch, each put to the pinned engine. Computed when the page is opened (no scheduler)."""
+    """What a person could do about follow-ups right now, from real backend state: the leads with an outbound touch that the database has not stopped, each put to the pinned engine. Computed when the page is opened (no scheduler)."""
     moment = now or datetime.now(UTC)
     active = repo.list_drafts(token, tenant, lead_id=None, status="active", limit=200)
     open_drafts = {str(d["lead_id"]): d for d in active}
     items: list[DueItemOut] = []
     for lead_id in repo.recent_outbound_leads(token, tenant, limit=limit):
+        if repo.gate(token, lead_id, "email").get("stopped") is not None:
+            continue  # stopped by the database (an order, a withdrawn quote, an archived lead): nothing is due, whatever the engine would say
         snapshot = repo.lead_snapshot(token, tenant, lead_id)
         if snapshot is None:
             continue

@@ -46,7 +46,7 @@ function DraftCard({ tenantId, leadId, draft, role, userId, aal, ids }: { tenant
 }
 
 /**
- * One lead's follow-up, in plain words: whether anything blocks it (in closed words), what the pinned rules say now (GUIDANCE ONLY: the database decides again when a draft is asked for), the drafts
+ * One lead's follow-up, in plain words: whether anything blocks it (in closed words), what the pinned rules say now (GUIDANCE ONLY: the database decides again when a draft is asked for; a lead the database has STOPPED has no guidance at all: the stop line says it), the drafts
  * with the actions this role may take, and the touches. The forms (passed in) record what a person did; nothing on this page sends a message to anyone.
  */
 export function LeadFollowupView({
@@ -83,11 +83,15 @@ export function LeadFollowupView({
         </ul>
       )}
 
-      <h2>What the rules say now</h2>
-      <p role="note" className="hint">
-        Guidance only: the database decides again when you ask for a draft.
-      </p>
-      <p>{decisionLine(data.decision, data.gate.policy_in_force)}</p>
+      {data.gate.stopped === null ? (
+        <>
+          <h2>What the rules say now</h2>
+          <p role="note" className="hint">
+            Guidance only: the database decides again when you ask for a draft.
+          </p>
+          <p>{decisionLine(data.decision, data.gate.policy_in_force)}</p>
+        </>
+      ) : null}
 
       <h2>Drafts</h2>
       {data.drafts.length === 0 ? (

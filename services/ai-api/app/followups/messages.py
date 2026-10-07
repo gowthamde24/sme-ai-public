@@ -18,7 +18,7 @@ FOLLOWUP_REFUSALS: dict[str, tuple[int, str, dict[str, str]]] = {
         409,
         "no_suppression_key",
         {
-            "-": "This contact has no suppression key recorded yet, so it cannot be contacted. The owner can record the keys first."
+            "-": "This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet."
         },
     ),
     "SM222": (

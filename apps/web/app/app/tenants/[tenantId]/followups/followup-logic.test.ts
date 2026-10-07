@@ -127,6 +127,15 @@ describe("words", () => {
     expect(decisionLine(null, false)).toBe("No guidance: no follow-up policy is in force.");
   });
 
+  it("a stop reason the API gives for a stopped lead reads as the stop, never as 'a draft can be made'", () => {
+    const stop = (reason: string) => ({ action: "stop" as const, reason_code: reason, terminal: true, touch_number: null, next_eligible_at: null, engine_version: "none" });
+    expect(decisionLine(stop("order_accepted"), true)).toBe("An order for this lead was accepted: follow-ups stop.");
+    expect(decisionLine(stop("order_declined"), true)).toBe("An order for this lead was declined: follow-ups stop.");
+    expect(decisionLine(stop("order_cancelled"), true)).toBe("An order for this lead was cancelled: follow-ups stop.");
+    expect(decisionLine(stop("quote_withdrawn"), true)).toBe("The quote for this lead was withdrawn: follow-ups stop.");
+    expect(decisionLine(stop("lead_archived"), true)).toBe("This lead is archived: follow-ups stop.");
+  });
+
   it("a line of the due list", () => {
     expect(dueLine({ action: "draft_followup", reason_code: "eligible_now", touch_number: 2, next_eligible_at: null })).toBe("A follow-up draft can be made now. (Touch 2.)");
     expect(dueLine({ action: "wait", reason_code: "not_yet_eligible", touch_number: 3, next_eligible_at: "2026-10-08T06:30:00Z" })).toBe("It is not time for the next follow-up yet. Earliest: 2026-10-08 06:30 UTC.");

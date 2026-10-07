@@ -174,6 +174,21 @@ describe("the lead's follow-up page", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Could not load this from the API.");
   });
 
+  it.each([
+    ["the API's own answer for a stopped lead (stop, with the stop reason)", { action: "stop", reason_code: "order_accepted", terminal: true, touch_number: null, next_eligible_at: null, engine_version: "none" }],
+    ["an older answer that still says a draft can be made (the page must not believe it)", { action: "draft_followup", reason_code: "eligible_now", terminal: false, touch_number: 2, next_eligible_at: "2026-10-07T06:30:00Z", engine_version: "1.0.0" }],
+  ])("a lead whose order was accepted shows the stop once and no guidance: %s", async (_name, decision) => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ gate: { ...GATE_JSON, stopped: "order_accepted" }, decision }));
+    render(await LeadFollowupPage(leadProps()));
+    const blocks = within(screen.getByRole("list", { name: "What blocks a follow-up" }));
+    expect(blocks.getByText("An order for this lead was accepted: follow-ups stop.")).toBeInTheDocument();
+    expect(screen.getAllByText("An order for this lead was accepted: follow-ups stop.")).toHaveLength(1);
+    expect(screen.queryByText(/can be made now/)).toBeNull();
+    expect(screen.queryByText(/Guidance only/)).toBeNull();
+    expect(screen.queryByRole("heading", { name: "What the rules say now" })).toBeNull();
+    expect(screen.queryByText(/No guidance/)).toBeNull();
+  });
+
   it("an engine outage on the API does not hide the lead's drafts and touches", async () => {
     api.fetchLeadFollowup.mockResolvedValue(lead({ decision: null }));
     render(await LeadFollowupPage(leadProps()));

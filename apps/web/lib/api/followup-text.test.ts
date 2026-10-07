@@ -92,3 +92,11 @@ describe("the other answers", () => {
     expect(STALE_CODES).not.toContain("not_your_draft");
   });
 });
+
+describe("the sentence for a contact with no suppression key", () => {
+  it("does not promise an action no screen provides", () => {
+    const sentence = followupSentence(409, "no_suppression_key");
+    expect(sentence).toBe("This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet.");
+    expect(sentence).not.toMatch(/owner can record/i);
+  });
+});

@@ -208,3 +208,15 @@ describe("parsing: a body that does not match the contract is an error, never re
     ["a policy whose weekdays are text", () => parsePolicyVersion({ ...POLICY_JSON, allowed_weekdays: ["Monday"] })],
   ])("%s", (_name, run) => expect(run).toThrow(ApiContractError));
 });
+
+describe("the answer for a lead the database has stopped", () => {
+  it("parses: action stop, the stop reason as the reason code, terminal, no touch number, no engine behind it", () => {
+    const page = parseLeadFollowup({
+      ...FOLLOWUP_JSON,
+      gate: { ...FOLLOWUP_JSON.gate, stopped: "order_accepted" },
+      decision: { action: "stop", reason_code: "order_accepted", terminal: true, touch_number: null, next_eligible_at: null, engine_version: "none" },
+    });
+    expect(page.decision).toMatchObject({ action: "stop", reason_code: "order_accepted", terminal: true, touch_number: null, next_eligible_at: null });
+    expect(page.gate.stopped).toBe("order_accepted");
+  });
+});

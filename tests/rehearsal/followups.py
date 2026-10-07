@@ -445,6 +445,12 @@ class FollowupRehearsal:
         rec.check(
             "5 order accepted: follow-ups are stopped", "order_accepted", five["gate"]["stopped"]
         )
+        d5 = five["decision"]
+        rec.check(
+            "5 order accepted: the page's answer is the stop, never 'a draft can be made now' (the engine does not know orders; the stop reason overrides it)",
+            ("stop", "order_accepted", True, None),
+            (d5["action"], d5["reason_code"], d5["terminal"], d5["touch_number"]),
+        )
         six = self.read("no_first_touch")
         rec.check(
             "6 no first touch: nothing recorded, so the rules do not offer a draft",
@@ -490,6 +496,11 @@ class FollowupRehearsal:
             "due list: lead 7 is stopped (limit)",
             "stop",
             due[self.leads["touch_limit"].lead_id]["action"],
+        )
+        rec.check(
+            "due list: lead 5 (order accepted) is not listed: a stopped lead is never due",
+            False,
+            self.leads["order_accepted"].lead_id in due,
         )
         rec.check(
             "due list: a lead with no recorded first message is not listed",

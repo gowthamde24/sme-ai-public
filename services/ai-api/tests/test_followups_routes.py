@@ -5,6 +5,7 @@ tests/integration/test_followup_*.py."""
 
 from __future__ import annotations
 
+import dataclasses
 import json
 import re
 import uuid
@@ -524,6 +525,63 @@ def test_the_due_list_puts_each_candidate_to_the_engine_and_names_an_open_draft(
     assert (
         w.call("GET", "/followups/due", None, "a_sales").json() == []
     )  # no policy: nothing is due, nothing is invented
+
+
+STOP_REASONS = (
+    "order_accepted",
+    "order_declined",
+    "order_cancelled",
+    "quote_withdrawn",
+    "lead_archived",
+)
+
+
+@pytest.mark.parametrize("reason", STOP_REASONS)
+def test_a_lead_the_database_has_stopped_is_never_due_and_the_engine_is_not_asked(
+    w: World, monkeypatch: pytest.MonkeyPatch, reason: str
+) -> None:
+    """Lead 5 of the rehearsal: an accepted order stops follow-ups in the DATABASE; the engine (pinned, unchanged) does not know orders and would say 'draft_followup'. The stop reason overrides it."""
+    w.f.stopped_leads[LEAD] = reason
+
+    def not_asked(request: Any) -> Any:
+        raise AssertionError("the engine must not be asked about a stopped lead")
+
+    monkeypatch.setattr(cadence_port, "run_decide", not_asked)
+    page = w.call("GET", f"/leads/{LEAD}/followup", None, "a_sales").json()
+    assert page["gate"]["stopped"] == reason
+    assert page["decision"] == {
+        "action": "stop",
+        "reason_code": reason,
+        "terminal": True,
+        "touch_number": None,
+        "next_eligible_at": None,
+        "engine_version": "none",
+    }
+    assert w.call("GET", "/followups/due", None, "a_sales").json() == []
+
+
+def test_the_due_list_leaves_out_only_the_stopped_leads(w: World) -> None:
+    other = uuid.UUID(int=0x2EAD)
+    w.f.snapshots[other] = dataclasses.replace(snapshot(), lead_id=str(other))
+    w.f.outbound_leads = [LEAD, other]
+    w.f.stopped_leads[LEAD] = "order_accepted"
+    items = w.call("GET", "/followups/due", None, "a_sales").json()
+    assert [i["lead_id"] for i in items] == [str(other)]
+    assert items[0]["action"] == "draft_followup"
+    w.f.stopped_leads.clear()
+    assert [i["lead_id"] for i in w.call("GET", "/followups/due", None, "a_sales").json()] == [
+        str(LEAD),
+        str(other),
+    ]
+
+
+def test_a_lead_that_is_not_stopped_still_gets_the_engines_answer(w: World) -> None:
+    page = w.call("GET", f"/leads/{LEAD}/followup", None, "a_sales").json()
+    assert page["gate"]["stopped"] is None
+    assert (page["decision"]["action"], page["decision"]["engine_version"]) == (
+        "draft_followup",
+        "1.0.0",
+    )
 
 
 def test_a_draft_list_can_be_filtered_by_a_closed_status_only(w: World) -> None:

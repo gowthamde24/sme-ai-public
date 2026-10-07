@@ -415,9 +415,31 @@ def test_sm226_a_stale_read_is_refused_and_nothing_is_written(
 
 
 def test_sm227_the_stops_reachable_through_the_api(fw: FollowWorld) -> None:
+    def shown_as_stopped(lead: Lead, reason: str) -> None:
+        """Commit 4b: a lead the database stopped is shown as `stop` with that reason (never the engine's 'draft_followup', which does not know orders) and is not in the due list."""
+        page = fw.call("GET", f"/leads/{lead.id}/followup", "sales").json()
+        assert page["decision"] == {
+            "action": "stop",
+            "reason_code": reason,
+            "terminal": True,
+            "touch_number": None,
+            "next_eligible_at": None,
+            "engine_version": "none",
+        }
+        assert lead.id not in {
+            i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()
+        }
+
+    live = fw.due_lead("s227live")  # not stopped: the engine answers and the lead is due
+    assert (
+        fw.call("GET", f"/leads/{live.id}/followup", "sales").json()["decision"]["action"]
+        == "draft_followup"
+    )
+    assert live.id in {i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()}
     archived = fw.due_lead("s227a")
     fw.archive_lead(archived)
     refused(fw.draft("sales", archived), "SM227", "lead_archived")
+    shown_as_stopped(archived, "lead_archived")
     assert (
         fw.call("GET", f"/leads/{archived.id}/followup", "sales").json()["gate"]["stopped"]
         == "lead_archived"
@@ -452,6 +474,7 @@ def test_sm227_the_stops_reachable_through_the_api(fw: FollowWorld) -> None:
             fw.call("GET", f"/leads/{lead.id}/followup", "sales").json()["gate"]["stopped"]
             == expected
         )
+        shown_as_stopped(lead, expected)
     withdrawn = fw.due_lead("s227w")
     _, requirement = qw.requirement([("kanjivaram", 12)], lead_id=withdrawn.id)
     assert qw.pick(requirement, 1, 0, 12).status_code == 200
@@ -468,6 +491,7 @@ def test_sm227_the_stops_reachable_through_the_api(fw: FollowWorld) -> None:
         == 200
     )
     refused(fw.draft("sales", withdrawn), "SM227", "quote_withdrawn")
+    shown_as_stopped(withdrawn, "quote_withdrawn")
 
 
 def test_sm229_the_touch_cap(fw: FollowWorld) -> None:

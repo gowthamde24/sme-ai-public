@@ -15,7 +15,7 @@ export const REFUSAL_TEXT: Record<string, Record<string, string>> = {
     other: "This contact cannot be contacted.",
   },
   no_suppression_key: {
-    "-": "This contact has no suppression key recorded yet, so it cannot be contacted. The owner can record the keys first.",
+    "-": "This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet.",
   },
   no_followup_policy: { "-": "No follow-up policy is in force: the owner must publish one." },
   draft_state: {
@@ -121,6 +121,7 @@ export const STOPPED_TEXT: Record<string, string> = {
  * its closed rejection codes.
  */
 export const DECISION_TEXT: Record<string, string> = {
+  ...STOPPED_TEXT, // the database's own stops (an accepted order ...): the API answers `stop` with that reason for a stopped lead
   eligible_now: "A follow-up draft can be made now.",
   not_yet_eligible: "It is not time for the next follow-up yet.",
   do_not_contact: "This lead is flagged do-not-contact: no follow-up.",
