@@ -142,12 +142,6 @@ class FollowupRehearsal:
     def i(*parts: object) -> str:
         return rid("fu", *parts)
 
-    def within_one_second(self) -> None:
-        """Start just after a second boundary. The database replays a retry of "ask for a draft" only when the stored request is identical, and that request carries the API's clock (`as_of`) in whole seconds:
-        a retry that lands in the NEXT second gets `409 conflict` instead of a replay (found by this driver, reported in commit 4c; no duplicate is ever made). Both sends of a draft request are kept inside
-        one second so the driver is deterministic; the finding itself is recorded as a note in the report."""
-        time.sleep(1.0 - (time.time() % 1.0) + 0.02)
-
     def path(self, key: str, tail: str) -> str:
         return f"/leads/{self.leads[key].lead_id}{tail}"
 
@@ -621,7 +615,6 @@ class FollowupRehearsal:
         api, rec = self.api, self.rec
         lead = self.leads["due_now"].lead_id
         draft = self.i("due_now", "draft", 1)
-        self.within_one_second()
         made = api.call(
             "1: Sales asks for a draft (the channel only)",
             "sales",
@@ -635,6 +628,29 @@ class FollowupRehearsal:
             "1: a draft for touch 2, waiting for approval",
             (2, "draft"),
             (made["touch_number"], made["status"]),
+        )
+        # a RETRY across a second boundary (migration 20261026090000): the request the API builds carries its clock in whole seconds, and the database used to answer `409 conflict` to a retry that
+        # landed in another second. The same draft id now returns the stored draft, whatever the clock says.
+        time.sleep(1.2)
+        late = api.call(
+            "1: the same request again more than a second later (a retry)",
+            "sales",
+            "POST",
+            f"/leads/{lead}/followup-drafts",
+            {"id": draft, "channel": "email"},
+            expect=(200,),
+            lead="FU1",
+            replay=False,
+        ).body
+        rec.check(
+            "1: a retry across a second boundary replays the stored draft (200, replayed true, the same draft, nothing new)",
+            (True, draft, 2, "draft"),
+            (late["replayed"], late["draft_id"], late["touch_number"], late["status"]),
+        )
+        rec.check(
+            "1: ... and the lead still has exactly one draft",
+            1,
+            len(self.read("due_now")["drafts"]),
         )
         shown = api.get("1: read the draft", "sales", f"/followup-drafts/{draft}", lead="FU1").body
         self.facts.texts["followup_draft"] = shown["body"]
@@ -826,7 +842,6 @@ class FollowupRehearsal:
         api, rec = self.api, self.rec
         lead = self.leads["reply_after_draft"].lead_id
         draft = self.i("reply_after_draft", "draft", 1)
-        self.within_one_second()
         made = api.call(
             "9: Sales asks for a draft",
             "sales",
@@ -1217,12 +1232,6 @@ def write_follow_report(
     if stopped:
         w("")
         w(f"Stopped at: {stopped}")
-    w("")
-    w("## Known behaviour found by this driver (not a failed check)")
-    w("")
-    w(
-        "* A retry of 'ask for a draft' (same draft id) replays only if it reaches the database in the SAME wall-clock second as the first: the stored request carries the API's `as_of` in whole seconds and the database compares it byte for byte. A retry a second or more later gets `409 conflict` (no duplicate draft is made; the screen says the form is out of date and reads the page again). The driver starts each draft request just after a second boundary to stay deterministic. Reported in commit 4c for the owner's decision."
-    )
     w("")
     w(
         "## Refusals reached (status, closed code, closed reason; the screens show our sentence for each)"

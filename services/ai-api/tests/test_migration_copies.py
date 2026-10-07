@@ -450,3 +450,33 @@ def test_the_blocker_order_copy_is_the_last_definition_and_only_moves_one_block(
         < new.index("return 'max_touches';")
         < new.index("return 'initial_outreach';")
     )
+
+
+# ---------------------------------------------------------------------------------------------- T010 part 2, commit 4d: a retry of "ask for a draft" replays whatever the clock says
+DRAFT_FN = "public.create_followup_draft"
+DRAFT_REPLAY = "20261026090000_t010_part2_draft_replay.sql"
+
+
+def test_the_draft_replay_copy_is_the_last_definition_and_changes_only_the_replay_condition() -> (
+    None
+):
+    defs = block_definitions(DRAFT_FN)
+    assert defs[-1][0] == DRAFT_REPLAY, (
+        f"{DRAFT_FN} is redefined after {DRAFT_REPLAY} ({defs[-1][0]}): re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < DRAFT_REPLAY]
+    assert earlier
+    old = _code_lines("\n".join(normalised(earlier[-1][1])))
+    new = _code_lines("\n".join(normalised(defs[-1][1])))
+    diff = [
+        line
+        for line in difflib.unified_diff(old, new, lineterm="", n=0)
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    assert [line[1:] for line in diff if line[0] == "-"] == [
+        "if v_exist.tenant_id = l.tenant_id and v_exist.lead_id = l.id and v_exist.channel::text = p_channel and v_exist.engine_version = p_engine_version",
+        "and v_exist.request_text = p_request_text and v_exist.result_text = p_result_text then",
+    ]
+    assert [line[1:] for line in diff if line[0] == "+"] == [
+        "if v_exist.tenant_id = l.tenant_id and v_exist.lead_id = l.id and v_exist.channel::text = p_channel then"
+    ]

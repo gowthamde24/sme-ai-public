@@ -514,8 +514,8 @@ select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1')), 'replayed'), 
 select is(pg_temp.j(pg_temp.sc('a_admin', pg_temp.cd('f1', 'f1')), 'status'), 'draft', 'D73 ... by anyone with the role, and reports the status');
 select is(pg_temp.try('a_sales', pg_temp.cd('f1', 'f1', 'whatsapp')), '23505', 'D74 the same id on another channel is the constant conflict');
 select is(pg_temp.try('a_sales', pg_temp.cd('f1', 'dd')), '23505', 'D75 the same id for another lead');
-select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', %L, %L)', pg_temp.did('f1'), tests.rid('f1'), pg_temp.req('f1', pg_temp.asof(interval '-1 minute'))::text,
-                                       pg_temp.res(pg_temp.req('f1', pg_temp.asof(interval '-1 minute')))::text)), '23505', 'D76 the same id with another request (another as_of) is the constant conflict');
+select is(pg_temp.j(pg_temp.sc('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', %L, %L)', pg_temp.did('f1'), tests.rid('f1'), pg_temp.req('f1', pg_temp.asof(interval '-1 minute'))::text,
+                                       pg_temp.res(pg_temp.req('f1', pg_temp.asof(interval '-1 minute')))::text)), 'replayed'), 'true', 'D76 the same id with another request (another as_of) REPLAYS since migration 20261026090000 (it was the constant conflict: a retry a second later failed); section N has the full cases');
 select is(pg_temp.try('a_sales', pg_temp.cd('f1b', 'f1')), 'SM223:exists', 'D77 a second draft for the same lead and touch number is refused (SM223, exists): one active draft per touch');
 select is(pg_temp.priv(format($q$insert into public.followup_drafts (id, tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of)
                                select gen_random_uuid(), tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of
@@ -962,5 +962,38 @@ select is((select count(*) from public.lead_touches t where t.direction = 'out' 
 select is((select count(*) from public.followup_drafts d where d.canonical_hash <> app.followup_request_hash(d.engine_version, d.request_text)), 0::bigint, 'M9 every draft''s hash is the hash of its stored request text (nothing stored was edited)');
 select is((select count(*) from public.followup_drafts d where d.body <> (select t.body from public.followup_templates t where t.code = d.template_code)), 0::bigint, 'M10 every body is its template''s text');
 select is((select count(*) from public.followup_drafts d where (d.request_text::jsonb ->> 'as_of')::timestamptz <> d.as_of), 0::bigint, 'M11 as_of is the request''s as_of');
+
+-- ============================================================================================ N: commit 4d (migration 20261026090000): a retry replays whatever the clock says
+-- the retry's request is built at another as_of (the API's clock moved on between the attempt and its retry): it is still the draft that was asked for
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-1 second')))), 'replayed'), 'true', 'N1 a retry across a second boundary (the previous second) replays');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '1 second')))), 'replayed'), 'true', 'N2 ... and one built a second ahead');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-2 minutes')))), 'replayed'), 'true', 'N3 ... and one two minutes old (inside the window)');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-1 hour')))), 'replayed'), 'true', 'N4 ... even one far outside the window: the window guards a NEW draft, a replay creates nothing');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1', 'email', null, null, '1.0.0', '{}')), 'draft_id'), pg_temp.did('f1')::text, 'N5 ... and whatever request or result text it carries: the answer is the stored draft');
+select is(pg_temp.sc('a_sales', pg_temp.cd('f1', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-1 second')))), (select jsonb_build_object('draft_id', id, 'lead_id', lead_id, 'touch_number', touch_number, 'status', status, 'replayed', true)::text
+                                                                                                                       from public.followup_drafts where id = pg_temp.did('f1')), 'N6 the replay answers exactly the stored draft: its id, lead, touch number and status, replayed true');
+select is((select count(*) from public.followup_drafts where lead_id = tests.rid('f1')), 1::bigint, 'N7 and no draft was added by any of the retries');
+select is((select as_of = date_trunc('second', now()) and (request_text::jsonb ->> 'as_of')::timestamptz = as_of from public.followup_drafts where id = pg_temp.did('f1')), true, 'N8 the stored draft is untouched (its as_of is still the first request''s)');
+-- the same id for another lead, another channel or another tenant is still the constant conflict, whatever as_of the call carries
+select is(pg_temp.try('a_sales', pg_temp.cd('f1', 'dd', 'email', pg_temp.req('dd', pg_temp.asof(interval '-1 second')))), '23505', 'N9 the same id for another lead of the tenant: the constant conflict, with another as_of too');
+select is(pg_temp.try('a_sales', pg_temp.cd('f1', 'f1', 'whatsapp', pg_temp.req('f1', pg_temp.asof(interval '-1 second')))), '23505', 'N10 the same id on another channel: the constant conflict, with another as_of too');
+select is(pg_temp.try('b_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', ''{}'')', pg_temp.did('f1'), tests.rid('b_lead'))), '23505', 'N11 tenant a''s draft id asked by tenant b for tenant b''s own lead: the constant conflict, not a replay');
+select is(pg_temp.err('b_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', ''{}'')', pg_temp.did('f1'), tests.rid('b_lead'))),
+          pg_temp.err('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', ''{}'')', pg_temp.did('f1'), tests.rid('dd'))), 'N12 the other-tenant conflict is the very same answer as the other-lead conflict: nothing of the other draft is in it');
+select is((select count(*) from public.followup_drafts where tenant_id = tests.tid('b')), 0::bigint, 'N13 tenant b has no draft: nothing was written for it, and nothing of tenant a was returned');
+select is(pg_temp.try('a_sales', format('select public.create_followup_draft(%L, %L, ''email'', ''1.0.0'', ''{}'', ''{}'')', pg_temp.did('f1'), tests.rid('b_lead'))), '42501', 'N14 tenant a asking about tenant b''s lead is still the generic refusal before anything else');
+select is(pg_temp.try('a_viewer', pg_temp.cd('f1', 'f1', 'email', pg_temp.req('f1', pg_temp.asof(interval '-1 second')))), '42501', 'N15 a Viewer is refused before any replay: the role comes first');
+select is(pg_temp.try('anon', pg_temp.cd('f1', 'f1')), '42501', 'N16 and so is anon');
+-- the draft has moved on: the retry gets the truth about it and changes nothing. (Choice: a retry asks "did my request succeed?"; the answer is that the draft exists and what became of it. A new draft for a
+-- discarded one would be a duplicate; a refusal would turn a harmless retry into an error. The status in the answer is what a screen needs.)
+select is((select status::text from public.followup_drafts where id = pg_temp.did('dm')), 'approved', 'N17 (fixture) the draft dm is approved');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('dm', 'dm', 'email', pg_temp.req('dm', pg_temp.asof(interval '-1 second')))), 'status'), 'approved', 'N18 a retry after the draft was APPROVED replays it as approved');
+select is((select status::text from public.followup_drafts where id = pg_temp.did('fd')), 'discarded', 'N19 (fixture) the draft fd is discarded, and a newer draft holds its touch number');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('fd', 'fd', 'email', pg_temp.req('fd', pg_temp.asof(interval '-1 second')))), 'status'), 'discarded', 'N20 a retry after the draft was DISCARDED replays it as discarded (not a new draft, not an SM223)');
+select is((select count(*) from public.followup_drafts where lead_id = tests.rid('fd') and status in ('draft', 'approved')), 1::bigint, 'N21 ... and the lead still has its one open draft (the newer one): the retry created nothing');
+select is((select status::text from public.followup_drafts where id = pg_temp.did('gm')), 'recorded_sent', 'N22 (fixture) the draft gm is recorded as sent');
+select is(pg_temp.j(pg_temp.sc('a_sales', pg_temp.cd('gm', 'gm', 'email', pg_temp.req('gm', pg_temp.asof(interval '-1 second')))), 'status'), 'recorded_sent', 'N23 a retry after the draft was RECORDED AS SENT replays it as recorded_sent');
+select is((select count(*) from public.followup_drafts where lead_id in (tests.rid('dm'), tests.rid('gm'))), 2::bigint, 'N24 and no draft was added for either lead');
+select is((select count(*) from public.lead_touches where draft_id = pg_temp.did('gm')), 1::bigint, 'N25 a replay records no touch: the one touch that carries gm is still the only one');
 
 select * from finish();

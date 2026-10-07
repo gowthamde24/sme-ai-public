@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import logging
 import re
+import time
 import uuid
 from datetime import UTC, datetime, timedelta
 from typing import Any
@@ -151,6 +152,67 @@ def test_the_due_list_names_what_is_due_and_the_open_draft(fw: FollowWorld) -> N
     assert items[lead.id]["open_draft_id"] == draft_id
     listed = fw.call("GET", f"/followup-drafts?status=active&lead_id={lead.id}", "sales").json()
     assert [d["id"] for d in listed] == [draft_id]
+
+
+def test_a_retry_of_ask_for_a_draft_replays_whatever_the_clock_says_and_whatever_became_of_the_draft(
+    fw: FollowWorld,
+) -> None:
+    """Commit 4d (migration 20261026090000). The request the API builds carries its clock (`as_of`) in whole seconds; the database used to replay only a byte-identical request, so a retry a second later was a
+    `409 conflict`. Now the same draft id for the same tenant, lead and channel returns the stored draft, `replayed: true`, and creates nothing: a second later, after approval, after "I sent it", after a discard."""
+    lead = fw.due_lead("retry")
+    draft_id = uid()
+    first = fw.draft("sales", lead, "email", draft_id)
+    assert first.status_code == 201 and first.json()["replayed"] is False, first.text
+    time.sleep(1.2)  # across a second boundary
+    again = fw.draft("sales", lead, "email", draft_id)
+    assert again.status_code == 200 and again.json() == {**first.json(), "replayed": True}, (
+        again.text
+    )
+    assert len(fw.drafts_of(lead)) == 1
+    # approved since
+    assert fw.approve("admin", draft_id).status_code == 200
+    time.sleep(1.1)
+    after_approval = fw.draft("sales", lead, "email", draft_id)
+    assert after_approval.status_code == 200 and after_approval.json()["replayed"] is True
+    assert after_approval.json()["status"] == "approved", after_approval.text
+    # recorded as sent since: the retry does not record another touch
+    assert fw.sent("sales", draft_id).status_code == 201
+    touches = len(fw.touches_of(lead))
+    time.sleep(1.1)
+    after_sent = fw.draft("sales", lead, "email", draft_id)
+    assert after_sent.status_code == 200 and after_sent.json()["status"] == "recorded_sent", (
+        after_sent.text
+    )
+    assert len(fw.touches_of(lead)) == touches and len(fw.drafts_of(lead)) == 1
+    # discarded since: the retry returns the discarded draft and makes no new one
+    lead2 = fw.due_lead("retry2")
+    discarded = fw.made_draft(lead2)
+    assert fw.call("POST", f"/followup-drafts/{discarded}/discard", "sales").status_code == 200
+    time.sleep(1.1)
+    after_discard = fw.draft("sales", lead2, "email", discarded)
+    assert after_discard.status_code == 200 and after_discard.json()["status"] == "discarded", (
+        after_discard.text
+    )
+    assert len(fw.drafts_of(lead2)) == 1
+    # the same id for another lead, on another channel or in another workspace is still the constant conflict
+    other_lead = fw.due_lead("retry3")
+    for response in (
+        fw.draft("sales", other_lead, "email", draft_id),
+        fw.draft("sales", lead, "whatsapp", draft_id),
+    ):
+        assert response.status_code == 409 and err(response)["code"] == "conflict", response.text
+    assert len(fw.drafts_of(other_lead)) == 0
+    fwb = FollowWorld(
+        fw.client, fw.w, fw.w.b
+    )  # workspace B has NO policy and must stay so (test_sm222 relies on it): the replay check comes before the policy check
+    lead_b = fwb.lead("retry-b")
+    across = fwb.draft("sales", lead_b, "email", draft_id)
+    assert across.status_code == 409 and err(across)["code"] == "conflict", across.text
+    assert draft_id not in across.text and fwb.drafts_of(lead_b) == []
+    assert err(across) == err(
+        fw.draft("sales", other_lead, "email", draft_id)
+    )  # one answer for another lead and another workspace
+    fw.invariants()
 
 
 # ============================================================================ roles
