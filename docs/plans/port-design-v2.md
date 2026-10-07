@@ -10,6 +10,8 @@ The plan was approved one stage at a time. Answers to the 15 questions: 1 start 
 
 **Stage 0 is done:** `docs/plans/port-design-v2-stage0-findings.md` (two spikes, with numbers) and the draft `docs/adr/0060-design-v2-port-styling-and-public-page-rendering.md`. **It corrects this plan in four places:** (a) SRI is **not** webpack-only; it works under Turbopack in 16.3.8, but it does not cover inline scripts, so static pages need a hash-based CSP (proven); (b) removing `force-dynamic` from the root layout also makes `/auth/forgot` and `/_not-found` static; (c) a static login shell with a `useSearchParams` island works; (d) the JS baseline of an empty Next route is 177,009 B gzip, so the public-page budget is about 217 KB gzip. Sections 1.3, 1.5 and 6 below are otherwise unchanged and are read together with the findings; the web-lane proposal in section 6 is superseded by decision 4 (advisory table).
 
+**Lockfiles are always generated with CI's npm** (`npx -y npm@10.9.2 install --package-lock-only`, Node 22.13.0 from `.nvmrc`) and checked with both npm 10.9.2 and the local npm (`npm ci --dry-run`) before they are committed.
+
 ## 0. Ten-second version
 
 * `design-lab/` (Vite SPA, 70 source files, 9,272 lines, 757 `className` lines) is reference only. The real app `apps/web` has **no shell, no Tailwind, no i18n, 475 lines of unlayered global CSS, and a root layout that forces dynamic rendering because of the nonce CSP.** Those four facts decide the plan.
