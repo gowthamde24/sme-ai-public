@@ -203,6 +203,7 @@ What the repository says (appendix has the exact lines):
     | allow | `apps/web/app/login/page.tsx`, `apps/web/app/login/login-form.tsx` | login markup only |
     | allow | `apps/web/app/auth/*` | auth pages and forms; the `*actions*` deny keeps server actions out |
     | allow | `apps/web/app/app/*` | real screens and their tests; the denies below keep actions, routes and gated families out |
+    | allow | `apps/web/postcss.config.mjs` | the PostCSS config that enables the Tailwind plugin (added in Stage 1; owner-confirmed) |
     | allow | `apps/web/package.json`, `apps/web/package-lock.json` | only with your written "deps ok" (the guard cannot check that; you review the diff) |
     | allow | `docs/plans/port-design-v2.md`, `docs/checklist-notes/web.md`, `docs/adr/0060-*.md` to `docs/adr/0069-*.md` | the plan, the lane's notes, a proposed ADR range (unused today) |
     | deny | `lanes.json`, `AGENTS.md`, `CLAUDE.md`, `docs/lanes.md`, `scripts/check-lane-paths.sh`, `scripts/new-lane.sh`, `scripts/test-lanes.py`, `.github/*` | guard integrity (setup branch only) |
