@@ -204,3 +204,19 @@ Each commit is small and stops being "done" only when its checks pass; the ticke
 8. **Return the open draft with each candidate** (this also removes the 200-draft limit gap). *Recommendation: yes.*
 
 **Not decided (left open on purpose):** the scan cap (300 proposed) and the page-size ceiling of the function (50); the exact timing budget (to be set by the spike); whether to show a count of hidden terminal leads; the cursor's encoding details; whether the short-page note shows a number; the hosted index-build procedure; whether a later "folded gates" function should return channel states per lead; whether `DUE_LIST_MAX_LEADS` is renamed to `DUE_PAGE_SIZE`; whether the same cursor convention is applied to the draft list and the policy list; the name and number of the migration.
+
+## C0 results (measured 2026-10-07, local stack; the spike test `tests/integration/test_followup_due_spike.py`, opt-in with `DUE_SPIKE=1`)
+
+Dataset: 20,000 leads with 1 to 9 outbound touches each (**100,395** outbound touches in all, spread over a year; 7 of every 9 leads are at the touch limit of the test policy, a deliberately heavy mix of terminal leads) plus **400 `replied` leads older than everything else**. The draft function (`tools/due-candidates-spike/draft.sql`, option B) was applied by hand and timed **inside the database** (20 runs after 3 warm-ups; no HTTP or docker overhead); the function and the index were dropped afterwards.
+
+| Case | p50 | p95 | max | Budget (section 4) |
+| --- | --- | --- | --- | --- |
+| First normal page (limit 30, scan cap 300) | 32.8 ms | **41.0 ms** | 42.6 ms | p95 < 300 ms: **met** |
+| A page that must skip 300 terminal leads (the 400 `replied` leads first; 0 candidates, a cursor returned) | 142.1 ms | **144.8 ms** | 145.1 ms | p95 < 1,500 ms: **met** |
+| A page deep in the set (cursor 180 days ago), for information | 182.0 ms | 351.5 ms | 436.7 ms | no budget |
+
+**Decision: option B holds; no stop.** Findings that change the plan:
+
+* **The partial index `lead_touches_out_idx` gives no measurable benefit and is NOT added.** With and without it the planner chooses a sequential scan for the aggregate (this one tenant holds 97% of the table; the aggregate over 100,395 rows runs in about 24 ms), even after `VACUUM ANALYZE`; the timings are identical (first page p50 32.9 ms without, 32.8 ms with). The existing `lead_touches_lead_idx (tenant_id, lead_id, occurred_at, id)` already gives tenant selectivity when a tenant is a small part of the table. An index that is not used would only cost writes. **The C1 migration therefore holds the function and no index** (section 7 and the index copy test are dropped). Re-measure at hosted scale at T012.
+* The aggregate is O(outbound touches of the tenant) per call as modelled (about 24 ms per 100,000 rows); the stage-2 cost per examined lead is about 0.4 ms (the skip-300 case: 142 ms for 300 leads).
+
