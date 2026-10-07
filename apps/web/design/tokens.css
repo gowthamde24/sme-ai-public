@@ -1,0 +1,128 @@
+/* ==========================================================================
+   Design v2 tokens: ONE orange theme, light and dark. Every token lives under
+   [data-ui="v2"], never on :root, so a page that does not opt in (every legacy
+   page) never sees them. Names are --v2-* so they cannot collide with the
+   legacy :root variables (--bg, --fg, --muted).
+   scripts/contrast.mjs parses the three colour blocks below: keep every colour
+   a plain #rrggbb on its own line, and keep the dark values identical in the
+   attribute block and the media-query block (the script checks that too).
+   ========================================================================== */
+[data-ui="v2"] {
+  color-scheme: light;
+  --v2-radius: 12px;
+
+  --v2-bg: #f9f8f6;
+  --v2-surface: #ffffff;
+  --v2-surface-2: #f3f1ed;
+  --v2-ink: #1e1e24;
+  --v2-muted: #6d6a67;
+  --v2-border: #d9d5ce;          /* decorative hairline only */
+  --v2-border-strong: #8c8782;   /* every control edge: >= 3:1 */
+
+  --v2-brand: #ff773c;
+  --v2-on-brand: #1e1e24;        /* dark ink: white on #ff773c is only 2.64:1 */
+  --v2-brand-edge: #c2410c;
+  --v2-brand-text: #c2410c;      /* orange used as text, links, meter fill */
+  --v2-brand-bg: #fff0e8;
+  --v2-ring: #c2410c;
+
+  --v2-charcoal: #312f2f;
+  --v2-on-charcoal: #f9f8f6;
+
+  --v2-info-text: #3950e6;
+  --v2-info-bg: #eaedfd;
+
+  --v2-green-text: #166534;
+  --v2-green-bg: #e6f4ea;
+  --v2-amber-text: #92400e;
+  --v2-amber-bg: #fdf0d5;
+  --v2-red-text: #b91c1c;
+  --v2-red-bg: #fdeaea;
+
+  --v2-dot: rgba(30, 30, 36, 0.07);
+  --v2-shadow: 0 1px 2px rgba(30, 30, 36, 0.06), 0 4px 16px rgba(30, 30, 36, 0.05);
+  --v2-shadow-pop: 0 8px 32px rgba(30, 30, 36, 0.16);
+
+  /* Font stacks. The variables come from next/font (design/fonts.ts, set by V2Root); Telugu, Devanagari and Kannada
+     follow the Latin font and are used only for their own glyphs. Every var() has a fallback: an undefined variable
+     would make the whole declaration invalid and silently hand the font back to the legacy stylesheet. */
+  --v2-font-sans-stack: var(--v2-font-sans, system-ui), var(--v2-font-telugu, system-ui), var(--v2-font-devanagari, system-ui),
+    var(--v2-font-kannada, system-ui), system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --v2-font-display-stack: var(--v2-font-display, system-ui), var(--v2-font-telugu, system-ui), var(--v2-font-devanagari, system-ui),
+    var(--v2-font-kannada, system-ui), system-ui, sans-serif;
+}
+
+[data-ui="v2"][data-theme="dark"] {
+  color-scheme: dark;
+
+  --v2-bg: #17161a;
+  --v2-surface: #1f1e23;
+  --v2-surface-2: #27262c;
+  --v2-ink: #f4f2ee;
+  --v2-muted: #a9a5a0;
+  --v2-border: #36343b;
+  --v2-border-strong: #7b7780;
+
+  --v2-brand: #ff773c;
+  --v2-on-brand: #1e1e24;
+  --v2-brand-edge: #ff773c;
+  --v2-brand-text: #ff9a6b;
+  --v2-brand-bg: #33231c;
+  --v2-ring: #ff9a6b;
+
+  --v2-charcoal: #312f2f;
+  --v2-on-charcoal: #f4f2ee;
+
+  --v2-info-text: #9aa8ff;
+  --v2-info-bg: #1d2247;
+
+  --v2-green-text: #4ade80;
+  --v2-green-bg: #12301f;
+  --v2-amber-text: #fbbf24;
+  --v2-amber-bg: #36290d;
+  --v2-red-text: #f87171;
+  --v2-red-bg: #3a1717;
+
+  --v2-dot: rgba(244, 242, 238, 0.045);
+  --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+  --v2-shadow-pop: 0 8px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* No explicit choice: follow the system. An explicit data-theme="light" keeps the light block above. */
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --v2-bg: #17161a;
+    --v2-surface: #1f1e23;
+    --v2-surface-2: #27262c;
+    --v2-ink: #f4f2ee;
+    --v2-muted: #a9a5a0;
+    --v2-border: #36343b;
+    --v2-border-strong: #7b7780;
+
+    --v2-brand: #ff773c;
+    --v2-on-brand: #1e1e24;
+    --v2-brand-edge: #ff773c;
+    --v2-brand-text: #ff9a6b;
+    --v2-brand-bg: #33231c;
+    --v2-ring: #ff9a6b;
+
+    --v2-charcoal: #312f2f;
+    --v2-on-charcoal: #f4f2ee;
+
+    --v2-info-text: #9aa8ff;
+    --v2-info-bg: #1d2247;
+
+    --v2-green-text: #4ade80;
+    --v2-green-bg: #12301f;
+    --v2-amber-text: #fbbf24;
+    --v2-amber-bg: #36290d;
+    --v2-red-text: #f87171;
+    --v2-red-bg: #3a1717;
+
+    --v2-dot: rgba(244, 242, 238, 0.045);
+    --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
+    --v2-shadow-pop: 0 8px 32px rgba(0, 0, 0, 0.55);
+  }
+}
