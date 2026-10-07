@@ -1,0 +1,25 @@
+<!-- The probe markup of scripts/audit-leaks.mjs: one element for every bare element the legacy stylesheet styles
+     (button, a, select, table, th/td, h1/h2) plus the common form elements. Classes are the v2 utilities;
+     design/v2.css scans this folder (@source in the audit entry). Every element has an id so a finding can name it. -->
+<div data-ui="v2" id="v2root" class="bg-bg text-ink p-6">
+  <h1 id="h1" class="mb-4 text-3xl font-bold">Heading one</h1>
+  <h2 id="h2" class="mb-2 text-xl font-semibold">Heading two</h2>
+  <h3 id="h3" class="mb-2 text-lg font-semibold">Heading three</h3>
+  <p id="p" class="mb-4 text-muted">A paragraph of body text.</p>
+  <a id="lnk" href="#" class="mb-4 inline-flex rounded-lg bg-brand px-4 py-2 text-on-brand">Link styled as a button</a>
+  <button id="btn" type="button" class="rounded-lg border border-brand-edge bg-brand px-6 py-3 text-on-brand">Primary</button>
+  <button id="btn2" type="button" disabled class="rounded-lg border border-edge bg-surface px-6 py-3 text-ink">Disabled</button>
+  <button id="btn3" type="button" class="rounded-lg bg-charcoal px-6 py-3 text-on-charcoal">Charcoal</button>
+  <label id="lbl" for="sel" class="mt-4 block text-sm font-medium">Choose</label>
+  <select id="sel" class="rounded-lg border border-edge bg-surface px-3 py-2 text-ink"><option>One</option></select>
+  <input id="inp" type="text" class="mt-2 block rounded-lg border border-edge bg-surface px-3 py-2 text-ink" />
+  <textarea id="ta" class="mt-2 block rounded-lg border border-edge bg-surface px-3 py-2 text-ink"></textarea>
+  <table id="tbl" class="mt-4 w-auto">
+    <tbody>
+      <tr>
+        <th id="th" class="border-b border-line p-3 text-left">Head</th>
+        <td id="td" class="border-b border-line p-3">Cell</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
