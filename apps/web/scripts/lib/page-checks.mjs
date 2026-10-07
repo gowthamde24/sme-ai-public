@@ -75,7 +75,7 @@ export const STRUCTURE = `(() => { ${HELPERS}
   };
   const nameOf = (e) => {
     const al = (e.getAttribute('aria-label') || '').trim(); if (al) return al;
-    const lb = (e.getAttribute('aria-labelledby') || '').split(/\\s+/).map((id) => { const t = document.getElementById(id); return t ? txt(t) : ''; }).join(' ').trim(); if (lb) return lb;
+    const lb = (e.getAttribute('aria-labelledby') || '').split(/\\s+/).filter(Boolean).map((id) => { const t = document.getElementById(id); return t ? txt(t) : ''; }).join(' ').trim(); if (lb) return lb;
     if (e.labels && e.labels.length) { const l = [...e.labels].map(txt).join(' ').trim(); if (l) return l; }
     const t = txt(e).replace(/\\s+/g, ' ').trim(); if (t) return t;
     return (e.getAttribute('title') || '').trim();

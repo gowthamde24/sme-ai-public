@@ -1,7 +1,9 @@
-// npm run audit:landing [-- --engine chrome]: the page checks for the public landing page (/landing) on the real,
+// npm run audit:landing [-- --engine chrome|webkit|firefox]: the page checks for the public landing page (/landing) on the real,
 // compiled page served by `next start` (run `npm run build` first). NOT part of `npm test` and NOT in CI (it needs a
-// browser); run it at every stage STOP. No dependency: system Chrome over the DevTools Protocol (other engines: see
-// scripts/lib/engines.mjs). It checks, in four languages (en, te, hi, kn), light and dark:
+// browser); run it at every stage STOP. Chrome (default): the system Chrome over the DevTools Protocol, no dependency.
+// webkit (the Safari engine, not Safari itself) and firefox: through the playwright-core devDependency, local only,
+// after `npx playwright-core install webkit firefox` (scripts/lib/engines-playwright.mjs; those two are served over
+// https by a local proxy because Safari's engine upgrades http://127.0.0.1 under the production CSP). It checks, in four languages (en, te, hi, kn), light and dark:
 //   structure   one h1, heading order, landmarks, unique ids, resolvable references, accessible names, noindex, no
 //               og:image, no JSON-LD, the wrapper's lang attribute
 //   layout      no horizontal scroll at 360, 390, 768, 1024 and 1440 px; the h1, the first button and the first step
@@ -18,6 +20,7 @@
 import { sleep } from "./lib/chrome.mjs";
 import { chromeEngine } from "./lib/engines.mjs";
 import { LANGS, startNext } from "./lib/next-server.mjs";
+import { startTlsProxy } from "./lib/tls-proxy.mjs";
 import { ANIMATED_NOW, FLOW_TRANSITIONS, FOCUSABLE_COUNT, FOCUS_STATE, LAYOUT, STRUCTURE, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
 
 const argv = process.argv.slice(2);
@@ -44,14 +47,17 @@ const engine = await engineFor(engineName);
 const app = await startNext();
 console.log(`engine ${engine.name}: ${engine.note}`);
 console.log(`next start pid ${app.pid} on ${app.base} (stopped by PID at the end)`);
+const tls = engine.needsHttps ? await startTlsProxy(app.base) : null;
+const base = tls ? tls.base : app.base;
+if (tls) console.log(`served over https for this engine through a local proxy at ${base} (self-signed certificate, see scripts/lib/tls-proxy.mjs)`);
 
 /** Opens /landing with the given language, size and scheme; runs fn(page); records CSP violations and console output. */
 async function withPage(opts, fn) {
   const { lang = "en", width = 1440, height = 900, dark = false, reduced = false, settle = 900 } = opts;
   const page = await engine.open({ width, height, dark, reducedMotion: reduced });
   try {
-    await page.setCookie(app.base, "sme_lang", lang);
-    await page.goto(`${app.base}/landing`, settle);
+    await page.setCookie(base, "sme_lang", lang);
+    await page.goto(`${base}/landing`, settle);
     const result = await fn(page);
     const csp = await page.csp();
     const logs = page.getLogs();
@@ -259,16 +265,25 @@ try {
     const problems = [];
     let violations = 0;
     let messages = 0;
+    let known = 0;
     for (const h of healthLines) {
       violations += h.csp.length;
-      messages += h.logs.length;
       for (const c of h.csp) problems.push(`CSP violation on ${h.where}: ${c}`);
-      for (const l of h.logs) problems.push(`console on ${h.where}: ${l}`);
+      for (const l of h.logs) {
+        // Known and not this page's: Firefox warns that the root layout's Geist preloads (app/layout.tsx, off limits to the
+        // port) are never used on a v2 page. Counted and printed, not hidden; see the Stage 2 report.
+        if (/preloaded with link preload was not used/.test(l)) known++;
+        else {
+          messages++;
+          problems.push(`console on ${h.where}: ${l}`);
+        }
+      }
     }
-    report(`health: ${healthLines.length} page loads, ${violations} CSP violations, ${messages} console errors or warnings`, problems);
+    report(`health: ${healthLines.length} page loads, ${violations} CSP violations, ${messages} console errors or warnings${known ? `; plus ${known} known "preloaded font not used" warning(s) from the root layout's Geist preloads (Firefox only)` : ""}`, problems);
   }
 } finally {
   await engine.stop();
+  tls?.stop();
   app.stop();
 }
 console.log(failed ? "\nLANDING AUDIT FAILED" : "\nLANDING AUDIT PASSED");
