@@ -270,8 +270,9 @@ try {
       violations += h.csp.length;
       for (const c of h.csp) problems.push(`CSP violation on ${h.where}: ${c}`);
       for (const l of h.logs) {
-        // Known and not this page's: Firefox warns that the root layout's Geist preloads (app/layout.tsx, off limits to the
-        // port) are never used on a v2 page. Counted and printed, not hidden; see the Stage 2 report.
+        // Known: Firefox warns that four preloaded fonts "were not used". Two are the root layout's Geist and Geist Mono
+        // (app/layout.tsx, off limits to the port; no v2 page uses them). The other two are v2's own Latin fonts, which
+        // document.fonts reports as loaded (cause not investigated). Counted and printed, not hidden; see the Stage 2 report.
         if (/preloaded with link preload was not used/.test(l)) known++;
         else {
           messages++;
@@ -279,7 +280,7 @@ try {
         }
       }
     }
-    report(`health: ${healthLines.length} page loads, ${violations} CSP violations, ${messages} console errors or warnings${known ? `; plus ${known} known "preloaded font not used" warning(s) from the root layout's Geist preloads (Firefox only)` : ""}`, problems);
+    report(`health: ${healthLines.length} page loads, ${violations} CSP violations, ${messages} console errors or warnings${known ? `; plus ${known} known Firefox "preloaded font not used" warning(s), see the Stage 2 report, finding 1` : ""}`, problems);
   }
 } finally {
   await engine.stop();
