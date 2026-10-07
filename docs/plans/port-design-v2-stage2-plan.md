@@ -159,6 +159,19 @@ Order (about 14 commits, in line with the plan's estimate of 10 to 14 for Stage 
 7. **Accessibility tooling:** custom checks only (no dependency), or add `axe-core` as a dev dependency for a broader rule set? *Recommend custom checks now; revisit if the browser matrix is approved (Playwright integrates axe cheaply).*
 8. **Placeholders:** footer privacy/terms/contact as plain text labelled "(placeholder)" (not links), and the early-access button staying a "coming soon" placeholder that sends and saves nothing? *Recommend yes, as designed.*
 
+## 12a. Owner answers (2026-10-07), recorded before the build
+
+1. **Route: B.** Build at `/landing`; the `/` flip waits for the owner's approval and is not part of this build.
+2. **Cookies** `sme_lang` and `sme_theme`: `Path=/`, `SameSite=Lax`, `Max-Age` one year, `Secure` only when the page is served over https, values allow-listed on the server.
+3. **`lucide-react` approved:** exact version = the latest stable release at least 14 days old, one import per icon, lockfile generated with `npx -y npm@10.9.2`, in its own commit. If the lockfile gains anything other than `lucide-react` itself, that commit is not made: inline SVG icons are used instead and the reason is recorded.
+4. **`playwright-core` approved:** exact pin, devDependency, lockfile via npm 10.9.2, its own commit. Browsers: `npx playwright-core install webkit firefox` (no Chromium). Local use only, NOT in CI, no sudo, no `safaridriver`. If the download fails or is blocked: at most two retries, then "Chrome only; Safari and Firefox not verified" and the stage continues.
+5. **`noindex` until launch, no `og:image`, and no JSON-LD at all until launch** (stricter than the plan's text, which kept a JSON-LD block without `publisher`).
+6. **Accepted:** `<html lang>` stays `en`.
+7. **Custom accessibility checks only**, no `axe-core`.
+8. **Placeholders:** footer privacy, terms and contact as plain text labelled "(placeholder)"; the early-access button is a "coming soon" placeholder that sends and saves nothing.
+
+In this stage the plan's STOP report reads `origin/main...HEAD` where it says `origin/main...web/port-design-v2` (PR #6 is merged; the branch is `web/port-stage2`).
+
 ## Appendix: facts checked in this run (exact output)
 
 ```
