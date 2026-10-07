@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -28,6 +28,7 @@ vi.mock("./followup-actions", () => {
   return { recordTouchAction: action, createDraftAction: action, approveDraftAction: action, discardDraftAction: action, recordSentAction: action, createPolicyAction: action, syncQuestionsAction: action, decideQuestionAction: action };
 });
 
+import { createDraftAction } from "./followup-actions";
 import LeadFollowupPage from "../leads/[leadId]/followup/page";
 import QuestionsPage from "../requirements/[requirementId]/questions/page";
 import DuePage from "./page";
@@ -306,6 +307,28 @@ describe("the lead's follow-up page across channels", () => {
     render(await LeadFollowupPage(leadProps({ channel: "whatsapp" })));
     expect(screen.queryByText(/is waiting on/)).toBeNull();
     expect(screen.getByRole("button", { name: "Ask for a draft" })).toBeInTheDocument();
+  });
+
+  it("the note names the channel of the draft that is open, and links to THAT tab", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "email", channels: CHANNELS_OPEN_JSON, drafts: [draft({ channel: "whatsapp" })] }));
+    render(await LeadFollowupPage(leadProps({ channel: "email" })));
+    const note = screen.getByText(/A draft for touch 2 is waiting on WhatsApp/);
+    expect(within(note).getByRole("link", { name: "Open the WhatsApp tab" })).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${LEAD}/followup?channel=whatsapp`);
+    expect(screen.queryByRole("button", { name: "Ask for a draft" })).toBeNull();
+  });
+
+  it("a tab change starts the forms afresh: the touch form's channel and a finished form's message do not carry over", async () => {
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channels: CHANNELS_OPEN_JSON }));
+    const { rerender } = render(await LeadFollowupPage(leadProps({ channel: "email" })));
+    expect((document.querySelector("#touch-channel") as HTMLSelectElement).value).toBe("email");
+    vi.mocked(createDraftAction).mockResolvedValueOnce({ ok: true, message: "Made it on the first tab." });
+    fireEvent.click(screen.getByRole("button", { name: "Ask for a draft" }));
+    await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Made it on the first tab."));
+    api.fetchLeadFollowup.mockResolvedValue(lead({ channel: "whatsapp", default_channel: "email", channels: CHANNELS_OPEN_JSON, drafts: [] }));
+    rerender(await LeadFollowupPage(leadProps({ channel: "whatsapp" })));
+    expect((document.querySelector("#touch-channel") as HTMLSelectElement).value).toBe("whatsapp"); // an uncontrolled field would keep "email" if the form were not remounted
+    expect(screen.queryByText("Made it on the first tab.")).toBeNull();
+    expect(document.querySelector('input[name="channel"]')).toHaveValue("whatsapp");
   });
 
   it("a Viewer still sees nothing: no tabs, and nothing is asked of the API", async () => {

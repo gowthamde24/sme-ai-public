@@ -296,6 +296,18 @@ def test_a_candidates_channel_is_that_of_its_latest_email_or_whatsapp_touch_and_
     assert [x.lead_id for x in capped] == [a, b]  # c is past the cap and is not counted
 
 
+def test_a_counted_lead_still_learns_its_channel_from_a_row_after_the_cap_was_reached() -> None:
+    a, b, c = uuid.UUID(int=0xA1), uuid.UUID(int=0xB1), uuid.UUID(int=0xC1)
+    rows = [  # newest first: c is the first lead past the cap of 2, and a's latest e-mail or WhatsApp touch comes after it
+        {"lead_id": str(a), "channel": "phone"},
+        {"lead_id": str(b), "channel": "phone"},
+        {"lead_id": str(c), "channel": "email"},
+        {"lead_id": str(a), "channel": "whatsapp"},
+    ]
+    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=2)
+    assert [(x.lead_id, x.channel) for x in got] == [(a, "whatsapp"), (b, None)]
+
+
 def test_the_candidate_read_asks_for_outbound_touches_with_their_channel_and_four_times_the_cap() -> (
     None
 ):

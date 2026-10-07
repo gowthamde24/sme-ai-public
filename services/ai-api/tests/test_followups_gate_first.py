@@ -141,6 +141,33 @@ def test_a_gate_that_says_erased_key_reaches_no_channel_state() -> None:
     assert "erased_key" not in item.model_dump_json() and "erased_key" not in out.model_dump_json()
 
 
+def test_an_erased_marker_on_the_email_gate_reads_key_in_the_due_row_too() -> None:
+    f = FakeFollowups()
+    f.blocked_leads[(LEAD, "email")] = "erased_key"
+    (item,) = service.due_list(f, "tok", TENANT, now=NOW)
+    assert [(c.channel, c.blocked) for c in item.channels] == [("email", "key"), ("whatsapp", None)]
+    assert "erased_key" not in item.model_dump_json()
+
+
+def test_a_due_row_takes_its_default_from_the_open_draft_then_the_last_outbound_touch() -> None:
+    f = FakeFollowups()
+    f.last_out_channel[LEAD] = "email"
+    f.drafts[DRAFT] = draft_row(
+        channel="whatsapp"
+    )  # a WhatsApp draft is open, though the last message went by e-mail
+    (item,) = service.due_list(f, "tok", TENANT, now=NOW)
+    assert (item.open_draft_id, item.open_draft_channel, item.default_channel) == (
+        DRAFT,
+        "whatsapp",
+        "whatsapp",
+    )
+    f.drafts.clear()  # no draft: where the last message went decides (both channels are open)
+    for last in ("whatsapp", "email"):
+        f.last_out_channel[LEAD] = last
+        (item,) = service.due_list(f, "tok", TENANT, now=NOW)
+        assert (item.open_draft_channel, item.default_channel) == (None, last)
+
+
 # ----------------------------------------------------------------------------- the default channel (no preferred-channel field exists)
 OPEN = {"blocked": None, "stopped": None, "policy_in_force": True}
 
@@ -202,6 +229,24 @@ def test_the_lead_page_resolves_its_default_from_the_open_draft_and_the_last_out
     assert page(f, None).default_channel == "email"
     f.drafts[DRAFT] = draft_row(status="discarded", channel="email")
     assert page(f, None).default_channel == "whatsapp"  # a finished draft is not "open"
+
+
+def test_the_lead_page_default_ignores_a_reply_and_a_phone_call() -> None:
+    f = FakeFollowups()
+    f.drafts.clear()
+    f.touch_rows = [  # newest first
+        {
+            **touch_row("whatsapp", direction="in")
+        },  # the customer replied on WhatsApp: that is not where YOU last wrote
+        {**touch_row("email")},
+    ]
+    assert page(f, None).default_channel == "email"
+    f.touch_rows = [  # the newest outbound touch is a call, which is not a draft channel: the one before it decides
+        {**touch_row("phone")},
+        {**touch_row("whatsapp")},
+        {**touch_row("email")},
+    ]
+    assert page(f, None).default_channel == "whatsapp"
 
 
 # ----------------------------------------------------------------------------- the fixed bound

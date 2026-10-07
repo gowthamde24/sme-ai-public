@@ -15,14 +15,16 @@ changes, which must be written down with its reason). Three kinds:
 ## How to run (from the repository root; the local stack must be running: `make db-start`)
 
 ```
-python3 tools/mutation-followups/run_sql.py --list            # how many SQL mutants (587 at the time of writing)
+python3 tools/mutation-followups/run_sql.py --list            # how many SQL mutants (588; unchanged by followups-whatsapp, which has no database change)
 python3 tools/mutation-followups/run_sql.py                   # all of them against pgTAP; resumable (a killed run continues where it stopped)
 python3 tools/mutation-followups/run_sql.py --survivors       # after you strengthened the tests: re-run the survivors (a later answer replaces the earlier)
 python3 tools/mutation-followups/run_sql.py --realstack       # survivors against the real-stack suites: the race tests (locks) and the equivalence + API tests (request builder)
-python3 tools/mutation-followups/run_source.py py             # the API mutants (92)
-python3 tools/mutation-followups/run_source.py web            # the screen mutants (65)
+python3 tools/mutation-followups/run_source.py py             # the API mutants (133)
+python3 tools/mutation-followups/run_source.py web            # the screen mutants (113)
 python3 tools/mutation-followups/summary.py                   # counts, and what is still alive
 ```
+
+**Run ONE runner at a time.** Two runners at once (for example `py` and `web`) share git's index lock: a restore (`git checkout`) can fail silently and leave a mutant in the working tree, and the next mutant of that file then refuses to start ("is not clean in git"). If that happens, look at `git diff` (it must be exactly one mutant), `git checkout -- <file>`, and resume (the run is resumable). Found during the followups-whatsapp mutation delta.
 
 `--limit N` and `--only TEXT` (SQL) narrow a run. Results are appended to `tools/mutation-followups/out/*.jsonl` (git-ignored), keyed by the mutant's description, so a result survives a source change
 that does not move that mutant.
