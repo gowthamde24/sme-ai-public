@@ -32,6 +32,13 @@
   --leading-snug: 1.45;
   --leading-hero: 1.4;
 }
+/* The same letters are wider and taller in Kannada, so the headline needs one size step less to keep the first
+   step card on the first screen (Stage 2 audit). Set through the theme variables, so the utilities still win. */
+[data-ui="v2"]:lang(kn) {
+  --text-3xl: 1.625rem;
+  --text-5xl: 2.625rem;
+  --text-6xl: 3rem;
+}
 
 [data-ui="v2"] ::selection {
   background: var(--v2-brand);
