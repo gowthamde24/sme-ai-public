@@ -34,6 +34,7 @@ describe("leak audit: source check", () => {
   it("the v2 stylesheets have no selector outside [data-ui=v2]", () => {
     expect(unscopedSelectors(read("design/tokens.css"))).toEqual([]);
     expect(unscopedSelectors(read("design/reset.css"))).toEqual([]);
+    expect(unscopedSelectors(read("design/base.css"))).toEqual([]);
     expect(unscopedSelectors("body { margin: 0 }")).toEqual(["body"]);
   });
   it("the v2 sources in the repository pass", () => {

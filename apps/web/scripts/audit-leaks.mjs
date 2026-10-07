@@ -42,7 +42,7 @@ for (const f of files) {
     console.error(`  ${v.file}:${v.line} ${v.rule}: ${v.detail}`);
   }
 }
-for (const css of ["design/tokens.css", "design/reset.css"]) {
+for (const css of ["design/tokens.css", "design/reset.css", "design/base.css"]) {
   for (const sel of unscopedSelectors(fs.readFileSync(path.join(ROOT, css), "utf8"))) {
     violations++;
     console.error(`  ${css}: selector outside [data-ui="v2"]: ${sel}`);

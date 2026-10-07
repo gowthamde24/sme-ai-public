@@ -14,10 +14,11 @@ describe("V2Root", () => {
     expect(root.className).toBe("font-vars");
     expect(root.hasAttribute("data-theme")).toBe(false);
   });
-  it("applies an explicit theme and extra classes, and never an inline style", () => {
-    render(<V2Root theme="dark" className="min-h-screen">x</V2Root>);
+  it("applies an explicit theme, a language and extra classes, and never an inline style", () => {
+    render(<V2Root theme="dark" lang="te" className="min-h-screen">x</V2Root>);
     const root = screen.getByText("x");
     expect(root.getAttribute("data-theme")).toBe("dark");
+    expect(root.getAttribute("lang")).toBe("te");
     expect(root.className).toBe("font-vars min-h-screen");
     expect(root.hasAttribute("style")).toBe(false);
   });

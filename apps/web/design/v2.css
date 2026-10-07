@@ -11,6 +11,7 @@
 @source "../components/v2";
 @import "./tokens.css";
 @import "./reset.css";
+@import "./base.css";
 
 @theme inline {
   --font-sans: var(--v2-font-sans-stack);
