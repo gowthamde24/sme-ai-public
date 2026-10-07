@@ -20,8 +20,10 @@ from __future__ import annotations
 
 import itertools
 import json
+import re
 import uuid
 from datetime import UTC, datetime, timedelta
+from pathlib import Path
 from typing import Any
 
 import pytest
@@ -35,6 +37,7 @@ from app.followups import cadence_port
 from app.followups.builder import LeadSnapshot, build_request, utc_text
 from app.followups.repository import PostgrestFollowupsRepository
 
+ROOT = Path(__file__).resolve().parents[2]
 BASE = datetime(2026, 10, 7, 0, 0, 0, tzinfo=UTC)  # a Wednesday
 ENGINE_STOPS = {
     "do_not_contact": "suppressed",
@@ -429,6 +432,69 @@ def test_a_future_touch_beats_every_stop_in_both_the_engine_and_the_database(
     assert all(e == d == "future_history" for _, e, d in both_cases), [
         c for c in both_cases if not c[1] == c[2] == "future_history"
     ][:5]
+
+
+def candidates_terminal_list() -> tuple[str, ...]:
+    """The terminal list of `public.followup_due_candidates`, read from its migration (so this gate follows the function and cannot be satisfied by a list kept only here)."""
+    text = (
+        ROOT / "supabase" / "migrations" / "20261028090000_t010_followup_due_candidates.sql"
+    ).read_text()
+    match = re.search(r"c_terminal constant text\[\] := array\[([^\]]*)\]", text)
+    assert match, "the candidates function has no terminal list"
+    return tuple(re.findall(r"'([a-z_]+)'", match.group(1)))
+
+
+@pytest.fixture(scope="module")
+def engine_terminal(
+    evaluated: list[tuple[str, dict[str, Any], str | None, str]],
+) -> list[bool | None]:
+    """The real engine's `terminal` flag for every grid request (None for a rejection, which has none)."""
+    out: list[bool | None] = []
+    for _, req, _, _ in evaluated:
+        result = cadence_port.run_decide(req)
+        out.append(None if cadence_port.is_rejected(result) else bool(result["terminal"]))
+    return out
+
+
+def test_every_answer_the_candidates_function_drops_is_terminal_for_the_real_engine(
+    evaluated: list[tuple[str, dict[str, Any], str | None, str]], engine_terminal: list[bool | None]
+) -> None:
+    """The safe direction (docs/plans/followups-due-candidates-plan.md, section 7): a lead the database's blocker calls terminal must be terminal for the real engine too, in EVERY grid case, so the
+    candidates function can never hide a lead the engine could still make due. A failure here means the terminal list is wrong: it is not to be weakened."""
+    terminal = candidates_terminal_list()
+    assert terminal == ("suppressed", "replied", "closed", "max_touches")
+    wrong = [
+        (label, d, t)
+        for (label, _, _, d), t in zip(evaluated, engine_terminal, strict=True)
+        if d in terminal and t is not True
+    ]
+    assert wrong == [], (
+        f"{len(wrong)} case(s) where the blocker says terminal and the engine does not; first: {wrong[:5]}"
+    )
+    assert {d for _, _, _, d in evaluated if d in terminal} == set(terminal), (
+        "the grid must meet every terminal answer"
+    )
+
+
+def test_the_engines_terminal_results_are_exactly_the_terminal_answers(
+    evaluated: list[tuple[str, dict[str, Any], str | None, str]], engine_terminal: list[bool | None]
+) -> None:
+    """The other direction, reported as an equality: wherever the engine accepts the request, terminal = true exactly when the database's answer is in the list (a future-history rejection has no flag and
+    stays IN the candidates by design). Non-terminal answers (due, not_yet, initial_outreach) are never terminal."""
+    terminal = candidates_terminal_list()
+    differing = [
+        (label, d, t)
+        for (label, _, _, d), t in zip(evaluated, engine_terminal, strict=True)
+        if t is not None and t != (d in terminal)
+    ]
+    assert differing == [], (
+        f"{len(differing)} case(s) where the engine's terminal flag and the candidates function's list differ; first: {differing[:5]}"
+    )
+    kept = {d for (_, _, _, d), t in zip(evaluated, engine_terminal, strict=True) if t is False}
+    assert kept <= {"-", "not_yet", "initial_outreach"}, kept
+    assert {d for _, _, _, d in evaluated if d == "future_history"}, (
+        "the grid must contain future-history rejections"
+    )
 
 
 def test_the_database_fails_closed_on_requests_the_engine_rejects_for_other_reasons() -> None:

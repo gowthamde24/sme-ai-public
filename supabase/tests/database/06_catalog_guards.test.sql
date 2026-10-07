@@ -186,6 +186,7 @@ select is(
         -- T010 part 2: touches, the cadence policy, follow-up drafts and question drafts. The role is proven first in every one; aal2 for a policy and for approving a draft
         'public.create_followup_policy_version',
         'public.followup_gate',
+        'public.followup_due_candidates',  -- the due list's candidates (a read; role proven first; docs/plans/followups-due-candidates-plan.md)
         'public.record_touch',
         'public.create_followup_draft',
         'public.approve_followup_draft',
@@ -212,7 +213,7 @@ select is(
                      'public.record_contact_keys', 'public.check_suppression', 'public.unkeyed_contact_count', 'public.unkeyed_contacts', 'public.backfill_contact_keys',
                      'public.allow_erasure_without_key',
                      'public.create_order_policy_version', 'public.create_order_from_quote', 'public.record_order_event',
-                     'public.create_followup_policy_version', 'public.followup_gate', 'public.record_touch', 'public.create_followup_draft', 'public.approve_followup_draft',
+                     'public.create_followup_policy_version', 'public.followup_gate', 'public.followup_due_candidates', 'public.record_touch', 'public.create_followup_draft', 'public.approve_followup_draft',
                      'public.discard_followup_draft', 'public.record_draft_sent', 'public.persist_question_drafts', 'public.decide_question_draft')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) and the three erasure functions (ADR 0014)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
