@@ -9,7 +9,7 @@
 
 ## The follow-up rehearsal (T010 part 2, commit 4)
 
-`followups.py` builds a NEW synthetic workspace on every run (no `make db-reset` needed: the history is dated relative to now, so a repeat is a new workspace with new ids) with a follow-up policy in force and twelve leads in twelve states (due now, not yet, replied, opted out, order accepted, no first message, touch limit, a requirement with questions, a reply after a draft, a WhatsApp number shared with an opted-out contact, a phone-only contact taken through WhatsApp end to end, a contact who withdrew e-mail consent after the first message).
+`followups.py` builds a NEW synthetic workspace on every run (no `make db-reset` needed: the history is dated relative to now, so a repeat is a new workspace with new ids) with a follow-up policy in force and twelve leads in twelve states (and, in the headless journey only, 35 more keyed leads that make the due list two pages) (due now, not yet, replied, opted out, order accepted, no first message, touch limit, a requirement with questions, a reply after a draft, a WhatsApp number shared with an opted-out contact, a phone-only contact taken through WhatsApp end to end, a contact who withdrew e-mail consent after the first message).
 
 * `make rehearse-prepare-followups`: only builds the workspace, for the owner to click through by hand (`docs/rehearsal-followups-checklist.md`). Prints how to sign in and the address of each lead.
 * `make rehearse-followups`: builds it, then runs the whole journey headless through the API as Owner, Admin, Sales and Viewer, asserting each step and every refusal (code and reason), and that nothing could have been sent. Writes `rehearsal-followups-report.md` (git-ignored). Opt-in: not part of `make check`.

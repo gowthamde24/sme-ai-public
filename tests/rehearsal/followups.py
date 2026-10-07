@@ -200,8 +200,22 @@ class FollowupRehearsal:
         )  # the first look, right after the preparation (the checklist quotes it)
         return body
 
+    def due_page(self, step: str, after: str | None = None) -> dict[str, Any]:
+        path = "/followups/due" + ("" if after is None else f"?after={after}")
+        body: dict[str, Any] = self.api.get(step, "sales", path).body
+        return body
+
     def due_rows(self, step: str = "due list: as Sales") -> dict[str, dict[str, Any]]:
-        return {x["lead_id"]: x for x in self.api.get(step, "sales", "/followups/due").body}
+        """Every row of the due list, by lead id: the pages are walked by cursor (a workspace of twelve leads is one page; the page walk of the journey adds more)."""
+        rows: dict[str, dict[str, Any]] = {}
+        after: str | None = None
+        for page in range(1, 6):
+            body = self.due_page(step if page == 1 else f"{step} (page {page})", after)
+            rows.update({x["lead_id"]: x for x in body["items"]})
+            after = body["next_cursor"]
+            if after is None:
+                break
+        return rows
 
     # ------------------------------------------------------------------------------ the workspace, its people and the policy
     def policy(self) -> None:
@@ -552,14 +566,14 @@ class FollowupRehearsal:
             "due list: lead 2 is not yet", "wait", due[self.leads["not_yet"].lead_id]["action"]
         )
         rec.check(
-            "due list: lead 3 is stopped (replied)",
-            "stop",
-            due[self.leads["replied"].lead_id]["action"],
+            "due list: lead 3 (the customer replied) is not listed: a lead that needs no follow-up is not on the list",
+            False,
+            self.leads["replied"].lead_id in due,
         )
         rec.check(
-            "due list: lead 7 is stopped (limit)",
-            "stop",
-            due[self.leads["touch_limit"].lead_id]["action"],
+            "due list: lead 7 (the touch limit is reached) is not listed either",
+            False,
+            self.leads["touch_limit"].lead_id in due,
         )
         rec.check(
             "due list: lead 5 (order accepted) is not listed: a stopped lead is never due",
@@ -667,9 +681,16 @@ class FollowupRehearsal:
                 (channels, default, None),
                 (row["channels"], row["default_channel"], row["open_draft_channel"]),
             )
-        for key in ("suppressed", "order_accepted"):
+        for key in (
+            "suppressed",
+            "order_accepted",
+            "replied",
+            "touch_limit",
+            "no_first_touch",
+            "questions",
+        ):
             rec.check(
-                f"due list: lead {LEAD_NO[key]} (blocked on every channel, or stopped) is not listed",
+                f"due list: lead {LEAD_NO[key]} (blocked on every channel, stopped, replied, at the limit, or never contacted) is not listed",
                 False,
                 self.leads[key].lead_id in due,
             )
@@ -720,6 +741,7 @@ class FollowupRehearsal:
 
     # ------------------------------------------------------------------------------ the journey
     def journey(self, client: TestClient, guard: NetworkGuard) -> None:
+        self.page_walk()
         self.viewer_sees_nothing()
         self.happy_path()
         self.phone_only_whatsapp()
@@ -728,6 +750,168 @@ class FollowupRehearsal:
         self.stale_after_reply()
         self.questions()
         self.nothing_was_sent(client, guard)
+
+    def extra_lead(self, k: int, total: int) -> str:
+        """One more synthetic, keyed, consented lead whose only message was sent `6 days and (total - k) minutes` ago, so the extra leads are OLDER than every prepared lead and k = 1 is the oldest of all."""
+        api = self.api
+        company, contact, lead = (
+            self.i("extra", k, "company"),
+            self.i("extra", k, "contact"),
+            self.i("extra", k, "lead"),
+        )
+        api.call(
+            f"extra {k}: the company",
+            "sales",
+            "POST",
+            "/companies",
+            {"id": company, "name": f"FX{k} Extra Silks", "city": "Pune"},
+        )
+        api.call(
+            f"extra {k}: the contact",
+            "sales",
+            "POST",
+            "/contacts",
+            {
+                "id": contact,
+                "company_id": company,
+                "full_name": f"Extra Person {k}",
+                "email": f"x{k}@fu-rehearsal.example.test",
+                "phone": f"+00 90000 22{k:03d}",
+            },
+        )
+        api.call(
+            f"extra {k}: the lead",
+            "sales",
+            "POST",
+            "/leads",
+            {"id": lead, "company_id": company, "contact_id": contact},
+        )
+        for channel in BOTH:
+            api.call(
+                f"extra {k}: consent for {channel}",
+                "owner",
+                "POST",
+                f"/contacts/{contact}/record-consent",
+                {
+                    "channel": channel,
+                    "status": "granted",
+                    "basis": "explicit_consent",
+                    "evidence_type": "web_form",
+                    "evidence_ref": f"ref:fx{k}",
+                },
+                replay=False,
+            )
+        operator_sql(
+            f"update public.leads set created_at = now() - interval '30 days' where id = '{lead}'"
+        )  # operator SQL (1), as for the prepared leads
+        api.call(
+            f"extra {k}: the first message",
+            "sales",
+            "POST",
+            f"/leads/{lead}/touches",
+            {
+                "id": self.i("extra", k, "touch"),
+                "direction": "out",
+                "channel": "email",
+                "occurred_at": iso(self.now - timedelta(days=6, minutes=total - k)),
+            },
+        )
+        return lead
+
+    def page_walk(self) -> None:
+        """The due list is a PAGE: thirty candidates, oldest last message first, a cursor to the next. 35 more leads, all older than the prepared ones, make two pages: the walk must show every lead once, the oldest
+        first, and never a lead that needs no follow-up."""
+        rec = self.rec
+        total = 35
+        extra = [self.extra_lead(k, total) for k in range(1, total + 1)]
+        first = self.due_page("due list: page 1 (the 35 extra leads are the oldest)")
+        rec.check(
+            "page walk: page 1 holds thirty rows, the 30 oldest leads, oldest first",
+            extra[:30],
+            [x["lead_id"] for x in first["items"]],
+        )
+        rec.check(
+            "page walk: page 1 has a cursor, a policy in force and nothing left out",
+            (True, True, 0),
+            (bool(first["next_cursor"]), first["policy_in_force"], first["left_out"]),
+        )
+        second = self.due_page("due list: page 2", first["next_cursor"])
+        rows2 = [x["lead_id"] for x in second["items"]]
+        prepared_five = {
+            self.leads[k].lead_id
+            for k in (
+                "due_now",
+                "shared_number",
+                "reply_after_draft",
+                "phone_only",
+                "email_blocked",
+            )
+        }
+        rec.check(
+            "page walk: page 2 starts with the last five extra leads, oldest first",
+            extra[30:],
+            rows2[:5],
+        )
+        rec.check(
+            "page walk: ... then the five prepared leads that were written to five days ago (any order among them) ...",
+            prepared_five,
+            set(rows2[5:10]),
+        )
+        rec.check(
+            "page walk: ... and last the lead that was written to an hour ago",
+            self.leads["not_yet"].lead_id,
+            rows2[-1],
+        )
+        rec.check(
+            "page walk: page 2 is the last page",
+            (None, 11, 0),
+            (second["next_cursor"], len(rows2), second["left_out"]),
+        )
+        every = [x["lead_id"] for x in first["items"]] + rows2
+        rec.check("page walk: nobody is listed twice", len(every), len(set(every)))
+        no_work = {
+            self.leads[k].lead_id
+            for k in (
+                "replied",
+                "suppressed",
+                "order_accepted",
+                "no_first_touch",
+                "touch_limit",
+                "questions",
+            )
+        }
+        rec.check(
+            "page walk: no lead that needs no follow-up is on any page (replied, opted out, order accepted, never contacted, at the limit, a requirement only)",
+            set(),
+            set(every) & no_work,
+        )
+        self.refuse(
+            "page walk: a cursor that is not ours is refused",
+            "sales",
+            "GET",
+            "/followups/due?after=not-a-cursor!",
+            None,
+            422,
+            "validation_error",
+        )
+        self.refuse(
+            "page walk: a cursor of 201 characters is refused",
+            "sales",
+            "GET",
+            "/followups/due?after=" + "a" * 201,
+            None,
+            422,
+            "validation_error",
+        )
+        self.refuse(
+            "page walk: a Viewer cannot ask for a later page either",
+            "viewer",
+            "GET",
+            "/followups/due?after=" + str(first["next_cursor"]),
+            None,
+            403,
+            "forbidden",
+        )
 
     def viewer_sees_nothing(self) -> None:
         any_lead = self.leads["due_now"].lead_id
