@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 // next/font only works inside the Next build, and the router only inside a mounted app.
-vi.mock("@/design/fonts", () => ({ v2FontClassName: "font-vars" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { LandingView } from "@/components/v2/landing/LandingView";

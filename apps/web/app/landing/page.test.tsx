@@ -4,7 +4,7 @@ const cookieValues: Record<string, string> = {};
 vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (name: string) => (name in cookieValues ? { name, value: cookieValues[name] } : undefined) }),
 }));
-vi.mock("@/design/fonts", () => ({ v2FontClassName: "font-vars" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import LandingPage, { generateMetadata } from "./page";

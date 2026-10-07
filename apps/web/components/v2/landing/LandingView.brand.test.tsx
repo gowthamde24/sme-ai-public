@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-vi.mock("@/design/fonts", () => ({ v2FontClassName: "font-vars" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 // the whole rename: this one module
 vi.mock("@/design/brand", () => ({ BRAND_NAME: "Rename Test (working name)", BRAND_TEXT: "Rename⁠Test (working name)" }));

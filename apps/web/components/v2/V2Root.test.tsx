@@ -2,7 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 // next/font only works inside the Next build; the test replaces it with a fixed class name.
-vi.mock("@/design/fonts", () => ({ v2FontClassName: "font-vars" }));
+vi.mock("@/design/fonts", () => ({ v2FontClassName: (lang?: string) => (lang ? `font-vars-${lang}` : "font-vars") }));
 
 import { V2Root } from "@/components/v2/V2Root";
 
@@ -19,7 +19,7 @@ describe("V2Root", () => {
     const root = screen.getByText("x");
     expect(root.getAttribute("data-theme")).toBe("dark");
     expect(root.getAttribute("lang")).toBe("te");
-    expect(root.className).toBe("font-vars min-h-screen");
+    expect(root.className).toBe("font-vars-te min-h-screen"); // the fonts follow the language
     expect(root.hasAttribute("style")).toBe(false);
   });
 });

@@ -12,8 +12,9 @@ export type V2Theme = "light" | "dark";
  * content (the document's own `<html lang>` stays `en`: the root layout is not ours to change).
  */
 export function V2Root({ children, theme, lang, className }: { children: ReactNode; theme?: V2Theme; lang?: string; className?: string }) {
+  const fonts = v2FontClassName(lang);
   return (
-    <div data-ui="v2" data-theme={theme} lang={lang} className={className ? `${v2FontClassName} ${className}` : v2FontClassName}>
+    <div data-ui="v2" data-theme={theme} lang={lang} className={className ? `${fonts} ${className}` : fonts}>
       {children}
     </div>
   );
