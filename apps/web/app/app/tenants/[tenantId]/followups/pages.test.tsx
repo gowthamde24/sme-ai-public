@@ -94,6 +94,13 @@ describe("the lead's follow-up page", () => {
     expect(api.fetchLeadFollowup).toHaveBeenCalledWith("tok", TENANT, LEAD, "whatsapp");
     render(await LeadFollowupPage(leadProps({ channel: "carrier-pigeon" })));
     expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, undefined);
+    for (const odd of ["phone", "", "EMAIL", "email,whatsapp", "whatsapp ", "__proto__"]) {
+      render(await LeadFollowupPage(leadProps({ channel: odd })));
+      expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, undefined); // dropped, never passed through, and no error page
+      expect(screen.queryByRole("alert")).toBeNull();
+    }
+    render(await LeadFollowupPage({ ...leadProps(), searchParams: Promise.resolve({ channel: ["whatsapp", "email"] }) } as unknown as Parameters<typeof LeadFollowupPage>[0]));
+    expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, "whatsapp"); // a repeated parameter: the first one counts
     render(await LeadFollowupPage(leadProps()));
     expect(api.fetchLeadFollowup).toHaveBeenLastCalledWith("tok", TENANT, LEAD, undefined);
   });

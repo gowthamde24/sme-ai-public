@@ -2,8 +2,8 @@
 
 Two ways to run it, both on the LOCAL stack, both through OUR API as the people of a small workspace (Owner, Admin, Sales, Viewer):
 
-  * `make rehearse-prepare-followups`: builds a clean synthetic workspace for the owner to click through by hand: a follow-up policy in force and ten leads in the ten states of the
-    checklist. Nothing else happens. It prints how to sign in.
+  * `make rehearse-prepare-followups`: builds a clean synthetic workspace for the owner to click through by hand: a follow-up policy in force and twelve leads in the twelve states of the
+    checklist (two of them, 11 and 12, are about WhatsApp as a first-class channel). Nothing else happens. It prints how to sign in.
   * `make rehearse-followups`: builds the same workspace, then runs the whole follow-up journey headless and ASSERTS each step, every refusal the owner will see, and that nothing could
     have been sent. It writes `rehearsal-followups-report.md` at the repository root (git-ignored).
 
@@ -41,6 +41,7 @@ from app.main import create_app
 ROOT = Path(__file__).resolve().parents[2]
 REPORT = ROOT / "rehearsal-followups-report.md"
 ALL_WEEKDAYS = [0, 1, 2, 3, 4, 5, 6]
+OWN_ROW = "(see the lead's own row)"  # a channel view is not a due-list row of its own
 LEAD_KEYS = (
     "due_now",
     "not_yet",
@@ -52,6 +53,8 @@ LEAD_KEYS = (
     "questions",
     "reply_after_draft",
     "shared_number",
+    "phone_only",
+    "email_blocked",
 )
 
 # (key, label shown on the screen, contact name, phone). Invented; the "+00" numbers and the .test addresses cannot belong to anyone.
@@ -70,7 +73,13 @@ LEAD_SPEC: dict[str, tuple[str, str, str]] = {
         "Jaya Sharednum",
         "+00 90000 20004",
     ),  # the SAME number as lead 4, whose contact opts out: its WhatsApp key is blocked (an e-mail address cannot be shared: the API refuses a second contact with it)
+    "phone_only": ("FU11 Phone Only Silks", "Kavya Phoneonly", "+00 90000 20011"),
+    "email_blocked": ("FU12 Email Withdrawn Weaves", "Lalit Nomail", "+00 90000 20012"),
 }
+# Leads whose contact has NO e-mail address (a phone number only), and the channels each lead's contact gave consent for.
+NO_EMAIL = frozenset({"phone_only"})
+CONSENTS: dict[str, tuple[str, ...]] = {"phone_only": ("whatsapp",)}
+BOTH = ("email", "whatsapp")
 LEAD_NO = {key: n for n, key in enumerate(LEAD_KEYS, start=1)}
 
 
@@ -87,7 +96,7 @@ class Lead:
     lead_id: str
     contact_id: str
     company_id: str
-    email: str
+    email: str | None
     phone: str
 
 
@@ -175,18 +184,24 @@ class FollowupRehearsal:
         self.facts.sentences.append((step, r.status, r.code, r.reason))
         return r
 
-    def read(self, key: str, who: str = "sales", channel: str = "email") -> dict[str, Any]:
+    def read(self, key: str, who: str = "sales", channel: str | None = "email") -> dict[str, Any]:
+        """The lead's page for a channel; `channel=None` asks for none (the API answers for the lead's default channel and says which)."""
+        query = "" if channel is None else f"?channel={channel}"
         body: dict[str, Any] = self.api.get(
-            f"{LEAD_NO[key]}: open the lead's follow-up page ({channel})",
+            f"{LEAD_NO[key]}: open the lead's follow-up page ({channel or 'the default channel'})",
             who,
-            self.path(key, f"/followup?channel={channel}"),
+            self.path(key, f"/followup{query}"),
             lead=f"FU{LEAD_NO[key]}",
         ).body
+        shown = body["channel"]
         self.facts.pages.setdefault(
-            key if channel == "email" else f"{key}/{channel}",
+            key if shown == "email" else f"{key}/{shown}",
             {"gate": body["gate"], "decision": body["decision"]},
         )  # the first look, right after the preparation (the checklist quotes it)
         return body
+
+    def due_rows(self, step: str = "due list: as Sales") -> dict[str, dict[str, Any]]:
+        return {x["lead_id"]: x for x in self.api.get(step, "sales", "/followups/due").body}
 
     # ------------------------------------------------------------------------------ the workspace, its people and the policy
     def policy(self) -> None:
@@ -261,7 +276,9 @@ class FollowupRehearsal:
         api = self.api
         label, person, phone = LEAD_SPEC[key]
         n = LEAD_NO[key]
-        email = f"fu{n}-{key.replace('_', '-')}@fu-rehearsal.example.test"
+        email = (
+            None if key in NO_EMAIL else f"fu{n}-{key.replace('_', '-')}@fu-rehearsal.example.test"
+        )
         company, contact, lead = self.i(key, "company"), self.i(key, "contact"), self.i(key, "lead")
         api.call(
             f"{n}: the company",
@@ -280,7 +297,7 @@ class FollowupRehearsal:
                 "id": contact,
                 "company_id": company,
                 "full_name": person,
-                "email": email,
+                **({} if email is None else {"email": email}),
                 "phone": phone,
             },
             lead=f"FU{n}",
@@ -293,7 +310,7 @@ class FollowupRehearsal:
             {"id": lead, "company_id": company, "contact_id": contact},
             lead=f"FU{n}",
         )
-        for channel in ("email", "whatsapp"):
+        for channel in CONSENTS.get(key, BOTH):
             api.call(
                 f"{n}: consent for {channel}",
                 "owner",
@@ -318,18 +335,20 @@ class FollowupRehearsal:
         self.facts.leads[key] = lead
         return made
 
-    def touch(self, key: str, direction: str, ago: timedelta | None, n: int) -> None:
+    def touch(
+        self, key: str, direction: str, ago: timedelta | None, n: int, channel: str = "email"
+    ) -> None:
         body: dict[str, Any] = {
             "id": self.i(key, "touch", n),
             "direction": direction,
-            "channel": "email",
+            "channel": channel,
         }
         if ago is not None:
             body["occurred_at"] = iso(
                 self.now - ago
             )  # fixed once per run: a retry sends the same body
         self.api.call(
-            f"{LEAD_NO[key]}: record touch {n} ({direction})",
+            f"{LEAD_NO[key]}: record touch {n} ({direction}, {channel})",
             "sales",
             "POST",
             self.path(key, "/touches"),
@@ -361,6 +380,19 @@ class FollowupRehearsal:
             self.touch("touch_limit", "out", timedelta(days=days), n)
         self.touch("reply_after_draft", "out", timedelta(days=5), 1)
         self.touch("shared_number", "out", timedelta(days=5), 1)
+        # 11: a phone number only: the first message was a WhatsApp message a person sent
+        self.touch("phone_only", "out", timedelta(days=5), 1, channel="whatsapp")
+        # 12: the first message was an e-mail; AFTER it the contact withdrew consent for e-mail (WhatsApp consent stays)
+        self.touch("email_blocked", "out", timedelta(days=5), 1)
+        self.api.call(
+            "12: the contact withdraws consent for e-mail",
+            "owner",
+            "POST",
+            f"/contacts/{self.leads['email_blocked'].contact_id}/record-consent",
+            {"channel": "email", "status": "withdrawn"},
+            lead="FU12",
+            replay=False,
+        )
         self.accepted_order()
         self.question_requirement()
 
@@ -502,10 +534,8 @@ class FollowupRehearsal:
                 ten_wa["decision"]["terminal"],
             ),
         )
-        due = {
-            x["lead_id"]: x
-            for x in self.api.get("due list: as Sales", "sales", "/followups/due").body
-        }
+        self.check_channels()
+        due = self.due_rows()
         for key, lead in self.leads.items():
             if lead.lead_id in due:
                 x = due[lead.lead_id]
@@ -542,10 +572,24 @@ class FollowupRehearsal:
             self.leads["suppressed"].lead_id in due,
         )
         rec.check(
-            "due list: lead 10 is listed, judged on e-mail where it is open",
+            "due list: lead 10 is listed (its e-mail is open; only its WhatsApp number is blocked)",
             "draft_followup",
             due[self.leads["shared_number"].lead_id]["action"],
         )
+        rec.check(
+            "due list: lead 4 (opted out) is blocked on EVERY channel, so it is not listed",
+            ["contact", "contact"],
+            [self.read("suppressed", channel=c)["gate"]["blocked"] for c in ("email", "whatsapp")],
+        )
+        for key, what in (
+            ("phone_only", "11 phone only"),
+            ("email_blocked", "12 e-mail withdrawn"),
+        ):
+            rec.check(
+                f"due list: lead {what} is listed: one channel is closed and the other is open",
+                "draft_followup",
+                due[self.leads[key].lead_id]["action"],
+            )
         rec.check(
             "due list: a lead with no recorded first message is not listed",
             False,
@@ -559,26 +603,127 @@ class FollowupRehearsal:
         self.keyed()
 
     def keyed(self) -> None:
-        """Counts only: every contact of this workspace has both suppression keys. The API computed them when it created each contact (the rehearsal gives the in-process API a synthetic key, never a real one)."""
+        """Counts only: every contact of this workspace has its suppression keys. The API computed them when it created each contact (the rehearsal gives the in-process API a synthetic key, never a real one). The phone-only contact has a phone key and no e-mail key."""
         t = self.tenant
         contacts = int(
             operator_sql(f"select count(*) from public.contacts where tenant_id = '{t}'")
         )  # operator SQL (2): counts
-        keyed = int(
+        both = int(
             operator_sql(
                 f"select count(*) from suppression.contact_keys where tenant_id = '{t}' and email_hmac is not null and phone_hmac is not null"
             )
         )
+        phone_only = int(
+            operator_sql(
+                f"select count(*) from suppression.contact_keys where tenant_id = '{t}' and email_hmac is null and phone_hmac is not null"
+            )
+        )
         self.rec.check(
-            "every prepared contact is keyed for e-mail and phone (counts)",
-            (len(LEAD_KEYS), len(LEAD_KEYS)),
-            (contacts, keyed),
+            "every prepared contact is keyed (counts): all with a phone key; all but the phone-only one with an e-mail key too",
+            (len(LEAD_KEYS), len(LEAD_KEYS) - len(NO_EMAIL), len(NO_EMAIL)),
+            (contacts, both, phone_only),
+        )
+
+    # ------------------------------------------------------------------------------ WhatsApp as a first-class channel (docs/plans/followups-whatsapp.md)
+    def check_channels(self) -> None:
+        """What the due list and the lead pages say about CHANNELS right after the preparation. Hand-worked from the plan: the cadence is the lead's, the gate is the channel's; a lead is listed when at least one channel is open;
+        the page opens on the default channel (the open draft's, else the latest outbound e-mail or WhatsApp touch's while that channel is open, else e-mail, else WhatsApp)."""
+        rec = self.rec
+        open_both = [
+            {"channel": "email", "blocked": None},
+            {"channel": "whatsapp", "blocked": None},
+        ]
+        due = self.due_rows("due list: the channels of each row")
+        expected: tuple[tuple[str, list[dict[str, Any]], str], ...] = (
+            ("due_now", open_both, "email"),
+            ("not_yet", open_both, "email"),
+            ("reply_after_draft", open_both, "email"),
+            (
+                "shared_number",
+                [{"channel": "email", "blocked": None}, {"channel": "whatsapp", "blocked": "key"}],
+                "email",
+            ),
+            (
+                "phone_only",
+                [
+                    {"channel": "email", "blocked": "consent"},
+                    {"channel": "whatsapp", "blocked": None},
+                ],
+                "whatsapp",
+            ),
+            (
+                "email_blocked",
+                [
+                    {"channel": "email", "blocked": "consent"},
+                    {"channel": "whatsapp", "blocked": None},
+                ],
+                "whatsapp",
+            ),
+        )
+        for key, channels, default in expected:
+            row = due[self.leads[key].lead_id]
+            rec.check(
+                f"due list: lead {LEAD_NO[key]} shows its channels and opens on {default}",
+                (channels, default, None),
+                (row["channels"], row["default_channel"], row["open_draft_channel"]),
+            )
+        for key in ("suppressed", "order_accepted"):
+            rec.check(
+                f"due list: lead {LEAD_NO[key]} (blocked on every channel, or stopped) is not listed",
+                False,
+                self.leads[key].lead_id in due,
+            )
+        # the lead page with NO channel asked for: it answers for the default channel and says which
+        for key, channels, default in expected:
+            page = self.read(key, channel=None)
+            rec.check(
+                f"lead {LEAD_NO[key]}: with no channel asked for, the page is for {default}",
+                (default, default, channels),
+                (page["channel"], page["default_channel"], page["channels"]),
+            )
+        phone = self.read("phone_only", channel=None)
+        rec.check(
+            "11 phone only: on its default channel WhatsApp nothing blocks and a draft can be made (touch 2)",
+            (None, "draft_followup", "eligible_now", 2),
+            (
+                phone["gate"]["blocked"],
+                phone["decision"]["action"],
+                phone["decision"]["reason_code"],
+                phone["decision"]["touch_number"],
+            ),
+        )
+        mail = self.read("phone_only", channel="email")
+        rec.check(
+            "11 phone only: the e-mail tab says why it is closed (the gate's block, the engine is not asked)",
+            ("consent", "stop", "consent", "none"),
+            (
+                mail["gate"]["blocked"],
+                mail["decision"]["action"],
+                mail["decision"]["reason_code"],
+                mail["decision"]["engine_version"],
+            ),
+        )
+        rec.check(
+            "11 phone only: its only touch is the WhatsApp message a person sent",
+            [("out", "whatsapp")],
+            [(t["direction"], t["channel"]) for t in phone["touches"]],
+        )
+        withdrawn = self.read("email_blocked", channel="email")
+        rec.check(
+            "12 e-mail withdrawn: the e-mail tab is blocked for consent, the WhatsApp tab is open",
+            ("consent", None),
+            (
+                withdrawn["gate"]["blocked"],
+                self.read("email_blocked", channel="whatsapp")["gate"]["blocked"],
+            ),
         )
 
     # ------------------------------------------------------------------------------ the journey
     def journey(self, client: TestClient, guard: NetworkGuard) -> None:
         self.viewer_sees_nothing()
         self.happy_path()
+        self.phone_only_whatsapp()
+        self.email_blocked_whatsapp()
         self.refusals()
         self.stale_after_reply()
         self.questions()
@@ -758,6 +903,172 @@ class FollowupRehearsal:
             "closed",
         )
 
+    def phone_only_whatsapp(self) -> None:
+        """Lead 11: a contact with ONLY a phone number goes through WhatsApp end to end (a draft, a refusal to approve, an approval, "I sent it"); e-mail stays closed for it, for the gate's own reason."""
+        api, rec = self.api, self.rec
+        key, lead = "phone_only", self.leads["phone_only"].lead_id
+        self.refuse(
+            "11 phone only: Sales asks for an e-mail draft (no address, no consent for e-mail)",
+            "sales",
+            "POST",
+            self.path(key, "/followup-drafts"),
+            {"id": self.i(key, "draft", "mail"), "channel": "email"},
+            409,
+            "contact_blocked",
+            "consent",
+        )
+        draft = self.i(key, "draft", 1)
+        made = api.call(
+            "11: Sales asks for a WhatsApp draft (the channel only)",
+            "sales",
+            "POST",
+            f"/leads/{lead}/followup-drafts",
+            {"id": draft, "channel": "whatsapp"},
+            expect=(200, 201),
+            lead="FU11",
+        ).body
+        rec.check(
+            "11: a WhatsApp draft for touch 2, waiting for approval",
+            (2, "draft"),
+            (made["touch_number"], made["status"]),
+        )
+        shown = api.get(
+            "11: read the draft", "sales", f"/followup-drafts/{draft}", lead="FU11"
+        ).body
+        rec.check(
+            "11: the draft is on WhatsApp and its wording is the closed template, the same as the e-mail draft's (synthetic wording for both)",
+            ("whatsapp", self.facts.texts["followup_draft"]),
+            (shown["channel"], shown["body"]),
+        )
+        self.facts.texts["whatsapp_draft"] = shown["body"]
+        row = self.due_rows("11: the due list names the open draft's channel")[lead]
+        rec.check(
+            "11: the due row names the open draft and its channel, and the lead opens on WhatsApp",
+            (draft, "whatsapp", "whatsapp"),
+            (row["open_draft_id"], row["open_draft_channel"], row["default_channel"]),
+        )
+        self.refuse(
+            "11: Sales tries to approve",
+            "sales",
+            "POST",
+            f"/followup-drafts/{draft}/approve",
+            {"state_hash": shown["state_hash"]},
+            403,
+            "forbidden",
+        )
+        approved = api.call(
+            "11: an Admin approves the text that was shown",
+            "admin",
+            "POST",
+            f"/followup-drafts/{draft}/approve",
+            {"state_hash": shown["state_hash"]},
+            expect=(200,),
+            lead="FU11",
+        ).body
+        rec.check("11: approved", "approved", approved["status"])
+        touch = self.i(key, "touch", 2)
+        sent = api.call(
+            "11: Sales records 'I sent it myself' (on WhatsApp)",
+            "sales",
+            "POST",
+            f"/followup-drafts/{draft}/sent",
+            {"touch_id": touch},
+            expect=(200, 201),
+            lead="FU11",
+        ).body
+        rec.check(
+            "11: recorded as sent, by a person's word",
+            ("recorded_sent", touch),
+            (sent["status"], sent["touch_id"]),
+        )
+        page = self.read(key, channel="whatsapp")
+        rec.check(
+            "11: both touches are WhatsApp touches and the newest names the draft and Sales",
+            ([("out", "whatsapp"), ("out", "whatsapp")], draft, self.people.ids["sales"]),
+            (
+                [(t["direction"], t["channel"]) for t in page["touches"]],
+                page["touches"][0]["draft_id"],
+                page["touches"][0]["recorded_by"],
+            ),
+        )
+        rec.check(
+            "11: the next follow-up is not yet due, and the lead still opens on WhatsApp",
+            ("wait", "whatsapp"),
+            (page["decision"]["action"], self.read(key, channel=None)["channel"]),
+        )
+        self.refuse(
+            "11: Sales asks for another WhatsApp draft straight away",
+            "sales",
+            "POST",
+            f"/leads/{lead}/followup-drafts",
+            {"id": self.i(key, "draft", 2), "channel": "whatsapp"},
+            409,
+            "not_due",
+            "not_yet",
+        )
+        self.no_contact_details(key)
+
+    def email_blocked_whatsapp(self) -> None:
+        """Lead 12: e-mail consent was withdrawn after the first message; a WhatsApp draft is possible, an e-mail one is refused for consent; discarding the draft clears the row's open draft."""
+        api, rec = self.api, self.rec
+        key, lead = "email_blocked", self.leads["email_blocked"].lead_id
+        self.refuse(
+            "12 e-mail withdrawn: Sales asks for an e-mail draft",
+            "sales",
+            "POST",
+            self.path(key, "/followup-drafts"),
+            {"id": self.i(key, "draft", "mail"), "channel": "email"},
+            409,
+            "contact_blocked",
+            "consent",
+        )
+        draft = self.i(key, "draft", 1)
+        api.call(
+            "12: Sales asks for a WhatsApp draft",
+            "sales",
+            "POST",
+            f"/leads/{lead}/followup-drafts",
+            {"id": draft, "channel": "whatsapp"},
+            expect=(200, 201),
+            lead="FU12",
+        )
+        row = self.due_rows("12: the due list with a WhatsApp draft open")[lead]
+        rec.check(
+            "12: the row names the WhatsApp draft and opens on WhatsApp",
+            (draft, "whatsapp", "whatsapp"),
+            (row["open_draft_id"], row["open_draft_channel"], row["default_channel"]),
+        )
+        gone = api.call(
+            "12: Sales discards her own draft",
+            "sales",
+            "POST",
+            f"/followup-drafts/{draft}/discard",
+            None,
+            expect=(200,),
+            lead="FU12",
+        ).body
+        rec.check("12: discarded", "discarded", gone["status"])
+        row = self.due_rows("12: the due list after the discard")[lead]
+        rec.check(
+            "12: no draft is open any more",
+            (None, None),
+            (row["open_draft_id"], row["open_draft_channel"]),
+        )
+
+    def no_contact_details(self, key: str) -> None:
+        """The answers about channels carry no e-mail address, phone number, key or erasure marker of anyone (a count of matches, never a value)."""
+        lead = self.leads[key]
+        bodies = json.dumps(
+            [self.read(key, channel=None), self.due_rows("due list: for the leak check")],
+            default=str,
+        )
+        needles = [lead.phone, "hmac", "erased_key"] + ([lead.email] if lead.email else [])
+        self.rec.check(
+            f"{LEAD_NO[key]}: the lead page and the due list show no phone number, e-mail address, key or erasure marker",
+            0,
+            sum(bodies.count(n) for n in needles),
+        )
+
     def refusals(self) -> None:
         """Each lead of the checklist that is not due, refused for its own closed reason: (key, what a person did, status, code, reason)."""
         table: tuple[tuple[str, str, int, str, str], ...] = (
@@ -858,6 +1169,23 @@ class FollowupRehearsal:
             lead="FU9",
         ).body
         rec.check("9: a draft is waiting", ("draft", 2), (made["status"], made["touch_number"]))
+        # one open draft per touch, across channels: a WhatsApp draft for the same touch is refused while the e-mail draft is open
+        self.refuse(
+            "9: Sales asks for a WhatsApp draft while the e-mail draft is open",
+            "sales",
+            "POST",
+            f"/leads/{lead}/followup-drafts",
+            {"id": self.i("reply_after_draft", "draft", "wa"), "channel": "whatsapp"},
+            409,
+            "draft_state",
+            "exists",
+        )
+        row = self.due_rows("9: the due list with an e-mail draft open")[lead]
+        rec.check(
+            "9: the row names the open draft's channel, and the lead opens on it",
+            ("email", "email"),
+            (row["open_draft_channel"], row["default_channel"]),
+        )
         api.call(
             "9: Sales records that the customer replied",
             "sales",
@@ -1188,9 +1516,9 @@ def ready_to_click(
         print(
             f"  lead {LEAD_NO[key]} {LEAD_SPEC[key][0]:30} http://localhost:3000/app/tenants/{t}/leads/{run.facts.leads[key]}/followup"
         )
-        if key == "shared_number":
+        if key in ("shared_number", "phone_only", "email_blocked"):
             print(
-                f"  lead {LEAD_NO[key]} (the WhatsApp view) {'':14} http://localhost:3000/app/tenants/{t}/leads/{run.facts.leads[key]}/followup?channel=whatsapp"
+                f"  lead {LEAD_NO[key]} (the WhatsApp tab) {'':11} http://localhost:3000/app/tenants/{t}/leads/{run.facts.leads[key]}/followup?channel=whatsapp"
             )
     print(
         f"  requirement of lead 8 (questions): http://localhost:3000/app/tenants/{t}/requirements/{run.requirement_id}/questions"
@@ -1257,7 +1585,7 @@ def write_follow_report(
         listed = run.facts.due.get(key) if not channel else None
         label = f"{LEAD_NO[key]} {LEAD_SPEC[key][0]}" + (f" ({channel} view)" if channel else "")
         w(
-            f"| {label} | {page['gate']['blocked'] or ''} | {page['gate']['stopped'] or ''} | {said} | {'(e-mail only)' if channel else 'not listed' if listed is None else f'{listed[0]}, {listed[1]}, touch {listed[2]}'} |"
+            f"| {label} | {page['gate']['blocked'] or ''} | {page['gate']['stopped'] or ''} | {said} | {OWN_ROW if channel else 'not listed' if listed is None else f'{listed[0]}, {listed[1]}, touch {listed[2]}'} |"
         )
     w("")
     w("## The closed texts a person copies (read from the run)")
