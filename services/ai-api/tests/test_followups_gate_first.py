@@ -348,6 +348,27 @@ def test_anything_that_is_not_exactly_our_cursor_is_a_422_and_nothing_is_asked_o
     assert f.sent("due_candidates") == []
 
 
+def _cursor_of_bytes(n: int) -> str:
+    """A VALID cursor whose JSON is exactly n bytes (padded with spaces, which JSON allows), as base64url without padding."""
+    import base64
+
+    base = ('{"at":"2026-10-02T08:30:00+00:00","id":"' + str(uuid.UUID(int=0xABC)) + '"}').encode()
+    assert len(base) <= n
+    return base64.urlsafe_b64encode(base + b" " * (n - len(base))).rstrip(b"=").decode()
+
+
+def test_a_cursor_of_exactly_200_characters_is_accepted_and_the_next_size_up_is_refused() -> None:
+    at_the_limit, over = _cursor_of_bytes(150), _cursor_of_bytes(151)
+    assert (len(at_the_limit), len(over)) == (200, 202)
+    assert service.decode_cursor(at_the_limit) == (
+        "2026-10-02T08:30:00+00:00",
+        uuid.UUID(int=0xABC),
+    )
+    with pytest.raises(ApiError) as caught:
+        service.decode_cursor(over)
+    assert caught.value.status_code == 422
+
+
 def test_the_page_is_asked_for_with_the_page_size_the_scan_cap_and_the_decoded_cursor() -> None:
     f, leads = fake_many(3)
     cursor = service.encode_cursor(("2026-09-01T00:00:00+00:00", leads[0]))

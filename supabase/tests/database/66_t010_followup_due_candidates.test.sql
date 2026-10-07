@@ -284,6 +284,13 @@ create function pg_temp.item(p_label text, p_key text) returns text language sql
   select e.item ->> p_key from jsonb_array_elements(pg_temp.cand('a_sales', null, null, 50, 1000) -> 'items') e(item) where (e.item ->> 'lead_id')::uuid = tests.rid(p_label) $$;
 select is(pg_temp.item('c_mix', 'last_outbound_channel'), 'whatsapp', 'G1 the channel is the latest e-mail or WhatsApp touch: a newer phone call is not a draft channel');
 select is(pg_temp.item('in_phone', 'last_outbound_channel'), null, 'G2 a lead whose outbound touches are all calls has no channel');
+-- two e-mail / WhatsApp touches on DIFFERENT channels: the channel is the LATEST one's (e-mail 9 days ago then WhatsApp 8 days ago -> whatsapp; and the reverse -> email)
+select pg_temp.mkl('c_two', array[9], p_chan => 'email');
+insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at) values (tests.rid('t_c_two_w'), tests.tid('a'), tests.rid('c_two'), tests.rid('c_two_c'), 'out', 'whatsapp', now() - interval '8 days');
+select pg_temp.mkl('c_rev', array[9], p_chan => 'whatsapp');
+insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at) values (tests.rid('t_c_rev_e'), tests.tid('a'), tests.rid('c_rev'), tests.rid('c_rev_c'), 'out', 'email', now() - interval '8 days');
+select is(pg_temp.item('c_two', 'last_outbound_channel'), 'whatsapp', 'G2a e-mail then WhatsApp: the latest channel is WhatsApp (not the first, e-mail)');
+select is(pg_temp.item('c_rev', 'last_outbound_channel'), 'email', 'G2b WhatsApp then e-mail: the latest channel is e-mail');
 select is(pg_temp.item('in_due', 'last_outbound_channel'), 'email', 'G3 an e-mail touch gives e-mail');
 select is(pg_temp.item('in_due', 'open_draft_id'), null, 'G4 no draft: no open draft');
 -- an open draft (written the way a privileged fixture may; its fingerprint is the real one so it can be approved)
@@ -296,6 +303,12 @@ select is(pg_temp.try('a_owner', format('select public.approve_followup_draft(%L
 select is(pg_temp.item('in_due', 'open_draft_id'), tests.rid('d_in_due')::text, 'G7 an APPROVED draft is still open');
 select is(pg_temp.try('a_owner', format('select public.discard_followup_draft(%L)', tests.rid('d_in_due'))), 'ok', 'fixture: the draft is discarded');
 select is(pg_temp.item('in_due', 'open_draft_id'), null, 'G8 a discarded draft is not open');
+-- two open drafts of one lead (touch numbers 2 and 3; a privileged fixture: the application supersedes older drafts when a touch is recorded, so this is a defensive rule): the NEWEST one is named
+insert into public.followup_drafts (id, tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of, created_at)
+values (tests.rid('d_two_a'), tests.tid('a'), tests.rid('in_two'), tests.rid('in_two_c'), 2, 'email', 'followup_gentle', 'Synthetic fixture draft body text', tests.rid('pol_c1'), '1.0.0', '{}', '{}', repeat('3', 64), repeat('4', 64), now(), now() - interval '2 hours'),
+       (tests.rid('d_two_b'), tests.tid('a'), tests.rid('in_two'), tests.rid('in_two_c'), 3, 'whatsapp', 'followup_gentle', 'Synthetic fixture draft body text', tests.rid('pol_c1'), '1.0.0', '{}', '{}', repeat('5', 64), repeat('6', 64), now(), now());
+select is(pg_temp.item('in_two', 'open_draft_id'), tests.rid('d_two_b')::text, 'G9 with two open drafts the NEWEST is named');
+select is(pg_temp.item('in_two', 'open_draft_channel'), 'whatsapp', 'G10 ... with its own channel');
 
 -- ---------------------------------------------------------------------------------------------
 -- H. no policy in force

@@ -22,7 +22,8 @@ OUT = HERE / "out"
 MIGRATIONS = sorted((ROOT / "supabase" / "migrations").glob("2026*.sql"))
 API = ROOT / "services" / "ai-api"
 WEB = ROOT / "apps" / "web"
-PGTAP_FILES = ["62_t010_part2_followups", "63_t010_part2_question_drafts", "64_t010_part2_erasure", "65_t010_part2_blocker_order"]
+PGTAP_FILES = ["62_t010_part2_followups", "63_t010_part2_question_drafts", "64_t010_part2_erasure", "65_t010_part2_blocker_order", "66_t010_followup_due_candidates"]
+DUE_FILES = ["66_t010_followup_due_candidates"]  # the due-candidates function is first run against its own file only (a survivor is then run against all)
 QUESTION_FILES = ["63_t010_part2_question_drafts"]  # the question objects are first run against their own file only (a survivor is then run against all four)
 
 

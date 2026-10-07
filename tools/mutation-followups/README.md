@@ -15,12 +15,12 @@ changes, which must be written down with its reason). Three kinds:
 ## How to run (from the repository root; the local stack must be running: `make db-start`)
 
 ```
-python3 tools/mutation-followups/run_sql.py --list            # how many SQL mutants (588; unchanged by followups-whatsapp, which has no database change)
+python3 tools/mutation-followups/run_sql.py --list            # how many SQL mutants (656: the 588 of T010 part 2 and 68 for public.followup_due_candidates)
 python3 tools/mutation-followups/run_sql.py                   # all of them against pgTAP; resumable (a killed run continues where it stopped)
 python3 tools/mutation-followups/run_sql.py --survivors       # after you strengthened the tests: re-run the survivors (a later answer replaces the earlier)
 python3 tools/mutation-followups/run_sql.py --realstack       # survivors against the real-stack suites: the race tests (locks) and the equivalence + API tests (request builder)
-python3 tools/mutation-followups/run_source.py py             # the API mutants (133)
-python3 tools/mutation-followups/run_source.py web            # the screen mutants (113)
+python3 tools/mutation-followups/run_source.py py             # the API mutants (160)
+python3 tools/mutation-followups/run_source.py web            # the screen mutants (138)
 python3 tools/mutation-followups/summary.py                   # counts, and what is still alive
 ```
 

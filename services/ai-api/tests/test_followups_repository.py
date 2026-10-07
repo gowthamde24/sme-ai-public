@@ -330,6 +330,18 @@ def test_the_candidates_are_one_definer_call_with_the_callers_token_and_every_ar
     assert page.next_cursor == ("2026-10-03T08:30:00+00:00", ID)
 
 
+def test_the_limit_and_the_scan_cap_are_sent_as_given() -> None:
+    seen: list[httpx.Request] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json=_page(next_cursor=None, items=[]))
+
+    repo(handler).due_candidates("tok", TENANT, after=None, limit=7, scan_max=9)
+    body = json.loads(seen[0].content)
+    assert (body["p_limit"], body["p_scan_max"]) == (7, 9)
+
+
 def test_the_first_page_sends_a_null_cursor_and_the_last_page_has_none() -> None:
     seen: list[httpx.Request] = []
 

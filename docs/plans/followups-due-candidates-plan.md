@@ -1,6 +1,6 @@
 # Plan: the follow-up due list's candidates (one read-only database function, ordering and paging)
 
-Status: **APPROVED for the build on 2026-10-07 (see the next section).** When this plan was written no code, migration, test or dependency had been written or changed. Written 2026-10-07 on the branch `plan-files-chat` (from `origin/main`; the WhatsApp ticket is read from `origin/followups-whatsapp`, where it was pushed). This is the "its own small ticket right after followups-whatsapp, before Customer Zero" that the owner decided on 2026-10-07 (`docs/pre-pilot-checklist.md`, row "The due list reads at most 30 candidate leads").
+Status: **BUILT (2026-10-08) on the branch `followups-due-candidates`; see ADR 0022 addendum 2 for the result and the deviations from this plan.** Approved for the build on 2026-10-07 (the next section). When this plan was written no code, migration, test or dependency had been written or changed. Written 2026-10-07 on the branch `plan-files-chat` (from `origin/main`; the WhatsApp ticket is read from `origin/followups-whatsapp`, where it was pushed). This is the "its own small ticket right after followups-whatsapp, before Customer Zero" that the owner decided on 2026-10-07 (`docs/pre-pilot-checklist.md`, row "The due list reads at most 30 candidate leads").
 
 ## Owner decisions (2026-10-07) and corrections to this plan
 
