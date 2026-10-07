@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "audit:leaks": "node scripts/audit-leaks.mjs",
+    "audit:budget": "node scripts/audit-budget.mjs",
     "audit:contrast": "node scripts/contrast.mjs",
     "i18n:status": "node scripts/i18n-status.mjs",
     "i18n:export": "node scripts/i18n-export.mjs",

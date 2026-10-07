@@ -1,0 +1,6 @@
+{
+  "_comment": "ADR 0060 decision 5. Baseline = the gzip size of every <script src> of an empty Next route, measured at Stage 0. Allowance = what a public page may add. Change these only with the owner's approval.",
+  "route": "/landing",
+  "baselineGzipBytes": 177009,
+  "allowanceGzipBytes": 40000
+}

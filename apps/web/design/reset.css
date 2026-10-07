@@ -62,6 +62,7 @@
   letter-spacing: inherit;
   color: inherit;
   background-color: transparent;
+  background-position: 0% 0%; /* the legacy "background: transparent" shorthand would reset this to 0px 0px */
   border-radius: 0;
   opacity: 1;
   cursor: default;
