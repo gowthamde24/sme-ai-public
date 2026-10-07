@@ -284,6 +284,19 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     expect(!!screen.queryByRole("form", { name: "Add evidence" })).toBe(shown);
   });
 
+  it.each([
+    ["owner", true],
+    ["admin", true],
+    ["sales", true],
+    ["viewer", false],
+  ])("the follow-up link is shown to %s: %s", async (role, shown) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    render(await LeadPage(props()));
+    const link = screen.queryByRole("link", { name: "Follow-up for this lead →" });
+    expect(link !== null).toBe(shown);
+    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/leads\/[0-9a-f-]{36}\/followup$/));
+  });
+
   it("the form carries one id per render", async () => {
     render(await LeadPage(props()));
     const hidden = document.querySelector(

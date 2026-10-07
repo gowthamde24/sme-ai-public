@@ -139,6 +139,17 @@ export default async function TenantPage({
             </Link>
           </>
         )}
+        {tenant.role !== "viewer" && (
+          <>
+            {" · "}
+            <Link
+              href={`/app/tenants/${tenantId}/followups`}
+              style={{ fontWeight: 600 }}
+            >
+              Follow-ups →
+            </Link>
+          </>
+        )}
         {(tenant.role === "owner" || tenant.role === "admin") && (
           <>
             {" · "}

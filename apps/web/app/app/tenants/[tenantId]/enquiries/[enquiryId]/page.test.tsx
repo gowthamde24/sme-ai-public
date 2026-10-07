@@ -93,7 +93,10 @@ describe("/app/tenants/[tenantId]/enquiries/[enquiryId]", () => {
     const { container } = render(await EnquiryPage(props()));
     expect(screen.getByTestId("enquiry-text").textContent).toBe(enquiry.body);
     expect(container.querySelector("script, img, iframe, svg")).toBeNull();
-    expect(container.querySelectorAll("a").length).toBe(1); // only the back link: nothing from the text or the fields became a link
+    // only OUR two links (the back link and the stored-questions page): nothing from the text or the fields became a link
+    const hrefs = Array.from(container.querySelectorAll("a")).map((a) => a.getAttribute("href"));
+    expect(hrefs).toHaveLength(2);
+    expect(hrefs[1]).toMatch(/^\/app\/tenants\/[0-9a-f-]+\/requirements\/[0-9a-f-]+\/questions$/);
     expect(Array.from(container.querySelectorAll("mark")).map((m) => m.textContent)).toContain("20 kanjivaram");
     expect(screen.getAllByText(HOSTILE, { exact: false }).length).toBeGreaterThan(0);
   });

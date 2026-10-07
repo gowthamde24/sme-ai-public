@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   CERTAINTY_LABELS,
   FIELD_LABELS,
@@ -66,6 +68,14 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
         Approving needs a saree type and a quantity on the same line, approved by a person. &quot;Ready for a quote&quot; also needs the delivery city, the date it
         is needed and the payment terms. Nothing here is ever sent.
       </p>
+
+      {requirement && canWrite ? (
+        <p>
+          <Link href={`/app/tenants/${tenantId}/requirements/${requirement.id}/questions`} className="tap">
+            Stored questions for the customer →
+          </Link>
+        </p>
+      ) : null}
 
       {canWrite && status !== "confirmed" ? <ExtractForm action={extractRequirementAction.bind(null, tenantId, enquiry.id)} runId={runId} replaces={draft} /> : null}
 
