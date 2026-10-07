@@ -15,6 +15,7 @@ from app.auth.jwt import StaticKeyProvider, TokenVerifier
 from app.config import Settings
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
+from app.followups.repository import FollowupsRepository
 from app.main import create_app
 from app.orders.repository import OrdersRepository
 from app.pricelists.repository import PriceListRepository
@@ -147,6 +148,7 @@ def make_client(
     pricelists: PriceListRepository | None = None,
     suppression: SuppressionRepository | None = None,
     key_ring: KeyRing | None = None,
+    followups: FollowupsRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -172,6 +174,7 @@ def make_client(
             pricelists=pricelists,
             suppression=suppression,
             key_ring=key_ring,
+            followups=followups,
         ),
     )
     return TestClient(app), repo

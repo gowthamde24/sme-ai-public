@@ -431,6 +431,16 @@ describe("/app/tenants/[tenantId]", () => {
     expect(screen.queryByRole("link", { name: "Orders →" })).toBeNull();
   });
 
+  it.each(["owner", "admin", "sales"])("links the follow-ups page for a %s, and not for a viewer", async (role) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    render(await TenantPage(props()));
+    expect(screen.getByRole("link", { name: "Follow-ups →" })).toHaveAttribute("href", expect.stringMatching(/\/followups$/));
+    fetchTenant.mockResolvedValue(tenant("viewer"));
+    document.body.innerHTML = "";
+    render(await TenantPage(props()));
+    expect(screen.queryByRole("link", { name: "Follow-ups →" })).toBeNull();
+  });
+
   it("generates the form id once per render, on the server", async () => {
     const randomUUID = vi.fn(() => FORM_ID);
     vi.stubGlobal("crypto", { randomUUID });

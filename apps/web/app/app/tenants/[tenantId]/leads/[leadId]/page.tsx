@@ -98,6 +98,13 @@ export default async function LeadPage({
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
+      {WRITE_ROLES.includes(tenant.role) ? (
+        <p>
+          <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup`} className="tap">
+            Follow-up for this lead →
+          </Link>
+        </p>
+      ) : null}
 
       <section aria-labelledby="summary-heading">
         <h2 id="summary-heading">Lead</h2>

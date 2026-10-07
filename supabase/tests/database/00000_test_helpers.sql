@@ -304,6 +304,28 @@ begin
   end loop;
 end $$;
 
+-- T010 part 2: one follow-up policy version, one open draft, one touch (a reply, so it is attached to no draft) and one question draft per fixture tenant, written the way a privileged fixture may
+-- (the functions are tested in 62). Prefix 'a' / 'b': tests.rid('a_followup_policy'), tests.rid('a_followup_draft'), tests.rid('a_touch'), tests.rid('a_question'). Requires seed_crm() and seed_t008().
+create or replace function tests.seed_followups() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.followup_policy_versions (id, tenant_id, version_no, effective_from, gap_days, max_touches, quiet_start, quiet_end, allowed_weekdays, holidays, min_gap_hours,
+                                                 recipient_utc_offset_minutes, content_sha256)
+    values (tests.rid(p || '_followup_policy'), tests.tid(p), 1, current_date, '{3}', 2, '21:00', '09:00', '{0,1,2,3,4,5}', '{}', 24, 330, repeat('5', 64));
+    insert into public.followup_drafts (id, tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text,
+                                        canonical_hash, state_hash, as_of)
+    values (tests.rid(p || '_followup_draft'), tests.tid(p), tests.rid(p || '_lead'), tests.rid(p || '_contact'), 2, 'email', 'followup_gentle', 'Synthetic fixture draft body text',
+            tests.rid(p || '_followup_policy'), '1.0.0', '{}', '{}', repeat('1', 64), repeat('2', 64), now());
+    insert into public.lead_touches (id, tenant_id, lead_id, contact_id, direction, channel, occurred_at)
+    values (tests.rid(p || '_touch'), tests.tid(p), tests.rid(p || '_lead'), tests.rid(p || '_contact'), 'in', 'email', now());
+    insert into public.question_drafts (id, tenant_id, requirement_id, line_no, question_code, question_text)
+    values (tests.rid(p || '_question'), tests.tid(p), tests.rid(p || '_requirement'), 0, 'missing_quantity', 'How many pieces do you need?');
+  end loop;
+end $$;
+
 -- T005: one ICP config version, one import batch and one lead label per fixture tenant.
 -- Prefix 'a' / 'b': tests.rid('a_icp1'), tests.rid('a_batch'), tests.rid('a_label').
 -- Requires seed_two_tenants() and seed_crm().
