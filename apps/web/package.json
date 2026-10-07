@@ -9,7 +9,11 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "audit:contrast": "node scripts/contrast.mjs"
+    "audit:contrast": "node scripts/contrast.mjs",
+    "i18n:status": "node scripts/i18n-status.mjs",
+    "i18n:export": "node scripts/i18n-export.mjs",
+    "i18n:first-pass": "node scripts/i18n-export.mjs --first-pass",
+    "i18n:import": "node scripts/i18n-import.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",

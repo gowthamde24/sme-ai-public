@@ -1,0 +1,409 @@
+{
+ "skip": {
+  "en": "Skip to content",
+  "te": "నేరుగా కంటెంట్‌కి వెళ్ళండి",
+  "hi": "सीधे कंटेंट पर जाएँ",
+  "kn": "ನೇರವಾಗಿ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lang.label": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "theme.toDark": {
+  "en": "Switch to dark mode",
+  "te": "డార్క్ మోడ్ పెట్టండి",
+  "hi": "डार्क मोड लगाएँ",
+  "kn": "ಡಾರ್ಕ್ ಮೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "theme.toLight": {
+  "en": "Switch to light mode",
+  "te": "లైట్ మోడ్ పెట్టండి",
+  "hi": "लाइट मोड लगाएँ",
+  "kn": "ಲೈಟ್ ಮೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "home": {
+  "en": "Back to the home page",
+  "te": "హోమ్ పేజీకి వెనక్కి",
+  "hi": "होम पेज पर वापस जाएँ",
+  "kn": "ಹೋಮ್ ಪೇಜ್‌ಗೆ ವಾಪಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "side.title": {
+  "en": "Your enquiries, quotes and follow-ups in one calm place.",
+  "te": "మీ ఎంక్వైరీలు, కొటేషన్లు, ఫాలో-అప్‌లు అన్నీ ఒకేచోట, ప్రశాంతంగా.",
+  "hi": "आपकी पूछताछ, कोटेशन और फ़ॉलो-अप, सब एक ही जगह, आराम से।",
+  "kn": "ನಿಮ್ಮ ಎನ್‌ಕ್ವೈರಿ, ಕೊಟೇಶನ್, ಫಾಲೋ-ಅಪ್ ಎಲ್ಲವೂ ಒಂದೇ ಕಡೆ, ಆರಾಮವಾಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "side.d": {
+  "en": "Every message is a draft. You approve it, and you send it yourself.",
+  "te": "ప్రతి మెసేజ్ ఒక డ్రాఫ్ట్. మీరు ఓకే చేస్తారు, మీరే పంపుతారు.",
+  "hi": "हर मैसेज एक ड्राफ़्ट है। आप मंज़ूर करते हैं और खुद भेजते हैं।",
+  "kn": "ಪ್ರತಿ ಮೆಸೇಜ್ ಒಂದು ಡ್ರಾಫ್ಟ್. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ, ನೀವೇ ಕಳುಹಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "side.note": {
+  "en": "Early access, invitation only.",
+  "te": "ముందే వాడే అవకాశం, ఆహ్వానం ఉన్నవారికే.",
+  "hi": "पहले इस्तेमाल का मौका, सिर्फ़ बुलावे पर।",
+  "kn": "ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ, ಆಹ್ವಾನ ಇದ್ದವರಿಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.title": {
+  "en": "Sign in",
+  "te": "లాగిన్",
+  "hi": "लॉग इन",
+  "kn": "ಲಾಗಿನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.sub": {
+  "en": "Welcome back to {brand}.",
+  "te": "{brand}కి మళ్ళీ స్వాగతం.",
+  "hi": "{brand} में फिर से स्वागत है।",
+  "kn": "{brand}ಗೆ ಮತ್ತೆ ಸ್ವಾಗತ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.email": {
+  "en": "E-mail",
+  "te": "ఈమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.password": {
+  "en": "Password",
+  "te": "పాస్‌వర్డ్",
+  "hi": "पासवर्ड",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.show": {
+  "en": "Show password",
+  "te": "పాస్‌వర్డ్ చూపించు",
+  "hi": "पासवर्ड दिखाएँ",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.hide": {
+  "en": "Hide password",
+  "te": "పాస్‌వర్డ్ దాచు",
+  "hi": "पासवर्ड छिपाएँ",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.submit": {
+  "en": "Continue",
+  "te": "ముందుకు",
+  "hi": "आगे बढ़ें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.forgot": {
+  "en": "Forgot your password? Coming soon.",
+  "te": "పాస్‌వర్డ్ మర్చిపోయారా? త్వరలో వస్తుంది.",
+  "hi": "पासवर्ड भूल गए? जल्द आ रहा है।",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್ ಮರೆತಿರಾ? ಬೇಗ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.noRemember": {
+  "en": "We do not keep you signed in. You will enter a code each time you sign in.",
+  "te": "మిమ్మల్ని లాగిన్‌లో ఉంచం. ప్రతిసారీ కోడ్ ఎంటర్ చేయాలి.",
+  "hi": "हम आपको लॉग इन नहीं रखते। हर बार लॉग इन पर कोड डालना होगा।",
+  "kn": "ನಾವು ನಿಮ್ಮನ್ನು ಲಾಗಿನ್‌ನಲ್ಲಿ ಇಡುವುದಿಲ್ಲ. ಪ್ರತಿ ಸಲ ಕೋಡ್ ಹಾಕಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.join": {
+  "en": "Not a member yet?",
+  "te": "ఇంకా చేరలేదా?",
+  "hi": "अभी जुड़े नहीं हैं?",
+  "kn": "ಇನ್ನೂ ಸೇರಿಲ್ಲವೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signin.joinLink": {
+  "en": "Request early access",
+  "te": "ముందే వాడే అవకాశం అడగండి",
+  "hi": "पहले इस्तेमाल का मौका माँगें",
+  "kn": "ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.title": {
+  "en": "Enter your 6-digit code",
+  "te": "మీ 6 అంకెల కోడ్ ఎంటర్ చేయండి",
+  "hi": "अपना 6 अंकों का कोड डालें",
+  "kn": "ನಿಮ್ಮ 6 ಅಂಕಿಯ ಕೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.sub": {
+  "en": "Open your authenticator app and type the current code.",
+  "te": "మీ ఆథెంటికేటర్ యాప్ తెరిచి, ఇప్పుడు వచ్చిన కోడ్ టైప్ చేయండి.",
+  "hi": "अपना ऑथेंटिकेटर ऐप खोलें और अभी वाला कोड टाइप करें।",
+  "kn": "ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ತೆರೆದು, ಈಗಿನ ಕೋಡ್ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.label": {
+  "en": "6-digit code",
+  "te": "6 అంకెల కోడ్",
+  "hi": "6 अंकों का कोड",
+  "kn": "6 ಅಂಕಿಯ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.hint": {
+  "en": "Six digits, no spaces.",
+  "te": "ఆరు అంకెలు, మధ్యలో ఖాళీ లేకుండా.",
+  "hi": "छह अंक, बीच में खाली जगह नहीं।",
+  "kn": "ಆರು ಅಂಕಿ, ನಡುವೆ ಖಾಲಿ ಜಾಗ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.verify": {
+  "en": "Verify and sign in",
+  "te": "సరిచూసి లాగిన్ చేయండి",
+  "hi": "जाँचकर लॉग इन करें",
+  "kn": "ಚೆಕ್ ಮಾಡಿ ಲಾಗಿನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.back": {
+  "en": "Back to sign in",
+  "te": "లాగిన్‌కి వెనక్కి",
+  "hi": "लॉग इन पर वापस जाएँ",
+  "kn": "ಲಾಗಿನ್‌ಗೆ ವಾಪಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "code.lost": {
+  "en": "Lost your device? Ask your workspace owner to reset it. Self-service reset is coming soon.",
+  "te": "ఫోన్ పోయిందా? మీ ఖాతా యజమానిని రీసెట్ చేయమని అడగండి. మీరే రీసెట్ చేసుకునే సౌకర్యం త్వరలో వస్తుంది.",
+  "hi": "फ़ोन खो गया? अपने खाते के मालिक से रीसेट करने को कहें। खुद रीसेट करने की सुविधा जल्द आ रही है।",
+  "kn": "ಫೋನ್ ಕಳೆದುಹೋಯಿತೇ? ನಿಮ್ಮ ಖಾತೆಯ ಮಾಲೀಕರಿಗೆ ರೀಸೆಟ್ ಮಾಡಲು ಹೇಳಿ. ನೀವೇ ರೀಸೆಟ್ ಮಾಡಿಕೊಳ್ಳುವ ಸೌಲಭ್ಯ ಬೇಗ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.required": {
+  "en": "Enter your e-mail and your password.",
+  "te": "మీ ఈమెయిల్, పాస్‌వర్డ్ ఎంటర్ చేయండి.",
+  "hi": "अपना ईमेल और पासवर्ड डालें।",
+  "kn": "ನಿಮ್ಮ ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.signin": {
+  "en": "That e-mail and password do not match, or the account is not ready. Check them and try again.",
+  "te": "ఈమెయిల్, పాస్‌వర్డ్ సరిపోలేదు, లేదా ఖాతా ఇంకా సిద్ధంగా లేదు. ఒకసారి చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "ईमेल और पासवर्ड मेल नहीं खाए, या खाता अभी तैयार नहीं है। एक बार देखकर फिर कोशिश करें।",
+  "kn": "ಇಮೇಲ್ ಮತ್ತು ಪಾಸ್‌ವರ್ಡ್ ಹೊಂದುತ್ತಿಲ್ಲ, ಅಥವಾ ಖಾತೆ ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ. ಒಮ್ಮೆ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.locked": {
+  "en": "Too many attempts. Wait 15 minutes, then try again.",
+  "te": "చాలాసార్లు ప్రయత్నించారు. 15 నిమిషాలు ఆగి మళ్ళీ చూడండి.",
+  "hi": "बहुत बार कोशिश हो चुकी है। 15 मिनट रुककर फिर देखें।",
+  "kn": "ತುಂಬ ಸಲ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. 15 ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.refused": {
+  "en": "Your sign-in was refused. Please sign in again.",
+  "te": "మీ లాగిన్ ఒప్పుకోలేదు. మళ్ళీ లాగిన్ అవ్వండి.",
+  "hi": "आपका लॉग इन मंज़ूर नहीं हुआ। दोबारा लॉग इन करें।",
+  "kn": "ನಿಮ್ಮ ಲಾಗಿನ್ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ. ಮತ್ತೆ ಲಾಗಿನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.expired": {
+  "en": "Your session expired. Sign in again to continue.",
+  "te": "మీ సెషన్ అయిపోయింది. కొనసాగడానికి మళ్ళీ లాగిన్ అవ్వండి.",
+  "hi": "आपका सेशन ख़त्म हो गया। आगे बढ़ने के लिए दोबारा लॉग इन करें।",
+  "kn": "ನಿಮ್ಮ ಸೆಷನ್ ಮುಗಿದಿದೆ. ಮುಂದುವರಿಯಲು ಮತ್ತೆ ಲಾಗಿನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.codeFormat": {
+  "en": "Enter all 6 digits.",
+  "te": "మొత్తం 6 అంకెలు ఎంటర్ చేయండి.",
+  "hi": "पूरे 6 अंक डालें।",
+  "kn": "ಪೂರ್ತಿ 6 ಅಂಕಿ ಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.codeWrong": {
+  "en": "That code is not right. Check the latest code and try again.",
+  "te": "ఈ కోడ్ సరిగ్గా లేదు. తాజా కోడ్ చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह कोड सही नहीं है। ताज़ा कोड देखकर फिर कोशिश करें।",
+  "kn": "ಈ ಕೋಡ್ ಸರಿಯಿಲ್ಲ. ಹೊಸ ಕೋಡ್ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.codeExpired": {
+  "en": "That code has expired. Use the newest code from your app.",
+  "te": "ఈ కోడ్ గడువు అయిపోయింది. యాప్‌లో ఇప్పుడు ఉన్న కొత్త కోడ్ వాడండి.",
+  "hi": "इस कोड का वक़्त ख़त्म हो गया। ऐप में अभी वाला नया कोड इस्तेमाल करें।",
+  "kn": "ಈ ಕೋಡ್‌ನ ಅವಧಿ ಮುಗಿದಿದೆ. ಆ್ಯಪ್‌ನಲ್ಲಿ ಈಗಿರುವ ಹೊಸ ಕೋಡ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "err.network": {
+  "en": "We could not reach the service. Check your connection and try again.",
+  "te": "సర్వీస్‌కి కనెక్ట్ కాలేకపోయాం. మీ ఇంటర్నెట్ చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सर्विस से कनेक्ट नहीं हो पाए। अपना इंटरनेट देखकर फिर कोशिश करें।",
+  "kn": "ಸರ್ವಿಸ್‌ಗೆ ಕನೆಕ್ಟ್ ಆಗಲಿಲ್ಲ. ನಿಮ್ಮ ಇಂಟರ್ನೆಟ್ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.title": {
+  "en": "Sign in · {brand}",
+  "te": "లాగిన్ · {brand}",
+  "hi": "लॉग इन · {brand}",
+  "kn": "ಲಾಗಿನ್ · {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.description": {
+  "en": "Sign in to {brand}. Early access, invitation only.",
+  "te": "{brand}కి లాగిన్ అవ్వండి. ముందే వాడే అవకాశం, ఆహ్వానం ఉన్నవారికే.",
+  "hi": "{brand} में लॉग इन करें। पहले इस्तेमाल का मौका, सिर्फ़ बुलावे पर।",
+  "kn": "{brand}ಗೆ ಲಾಗಿನ್ ಮಾಡಿ. ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ, ಆಹ್ವಾನ ಇದ್ದವರಿಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ }
+}

@@ -1,0 +1,1561 @@
+{
+ "skip": {
+  "en": "Skip to content",
+  "te": "కంటెంట్‌కి వెళ్లండి",
+  "hi": "सीधे कंटेंट पर जाएँ",
+  "kn": "ನೇರವಾಗಿ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.how": {
+  "en": "How it works",
+  "te": "ఎలా పనిచేస్తుంది",
+  "hi": "कैसे काम करता है",
+  "kn": "ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.control": {
+  "en": "You stay in control",
+  "te": "కంట్రోల్ మీ చేతిలోనే",
+  "hi": "कंट्रोल आपके हाथ में",
+  "kn": "ಕಂಟ್ರೋಲ್ ನಿಮ್ಮ ಕೈಯಲ್ಲೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.team": {
+  "en": "The team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.languages": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.privacy": {
+  "en": "Privacy",
+  "te": "ప్రైవసీ",
+  "hi": "प्राइवेसी",
+  "kn": "ಪ್ರೈವಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.faq": {
+  "en": "FAQ",
+  "te": "ప్రశ్నలు",
+  "hi": "सवाल",
+  "kn": "ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.signin": {
+  "en": "Sign in",
+  "te": "లాగిన్",
+  "hi": "लॉग इन",
+  "kn": "ಲಾಗಿನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.sections": {
+  "en": "Sections",
+  "te": "విభాగాలు",
+  "hi": "हिस्से",
+  "kn": "ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lang.label": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "theme.toDark": {
+  "en": "Switch to dark mode",
+  "te": "డార్క్ మోడ్ పెట్టండి",
+  "hi": "डार्क मोड लगाएँ",
+  "kn": "ಡಾರ್ಕ್ ಮೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "theme.toLight": {
+  "en": "Switch to light mode",
+  "te": "లైట్ మోడ్ పెట్టండి",
+  "hi": "लाइट मोड लगाएँ",
+  "kn": "ಲೈಟ್ ಮೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.eyebrow": {
+  "en": "For Indian wholesalers, manufacturers and traders",
+  "te": "భారతదేశంలోని హోల్‌సేల్ వ్యాపారులు, తయారీదారులు, ట్రేడర్ల కోసం",
+  "hi": "भारत के थोक व्यापारियों, निर्माताओं और ट्रेडर्स के लिए",
+  "kn": "ಭಾರತದ ಸಗಟು ವ್ಯಾಪಾರಿಗಳು, ತಯಾರಕರು ಮತ್ತು ಟ್ರೇಡರ್‌ಗಳಿಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.h1": {
+  "en": "Turn enquiries into orders, one approved draft at a time.",
+  "te": "ఎంక్వైరీలను ఆర్డర్లుగా మార్చండి, మీరు ఓకే చేసిన ఒక్కో డ్రాఫ్ట్‌తో.",
+  "hi": "पूछताछ को ऑर्डर में बदलें, आपके मंज़ूर किए हर ड्राफ़्ट के साथ।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡಿ, ನೀವು ಒಪ್ಪಿದ ಒಂದೊಂದು ಡ್ರಾಫ್ಟ್‌ನೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.sub": {
+  "en": "{brand} is an AI team that finds leads, researches them, drafts your quotes and follow-ups, and tracks every order. You approve each message and send it yourself.",
+  "te": "{brand} ఒక AI టీమ్. లీడ్స్‌ను వెతుకుతుంది, వివరాలు చూస్తుంది, మీ కొటేషన్లు, ఫాలో-అప్‌లు డ్రాఫ్ట్ చేస్తుంది, ప్రతి ఆర్డర్‌నూ గమనిస్తుంది. ప్రతి మెసేజ్‌ను మీరే ఓకే చేసి, మీరే పంపుతారు.",
+  "hi": "{brand} एक AI टीम है। यह लीड ढूँढती है, उनकी जाँच-पड़ताल करती है, आपके कोटेशन और फ़ॉलो-अप के ड्राफ़्ट बनाती है और हर ऑर्डर पर नज़र रखती है। हर मैसेज आप खुद मंज़ूर करते हैं और खुद भेजते हैं।",
+  "kn": "{brand} ಒಂದು AI ತಂಡ. ಲೀಡ್‌ಗಳನ್ನು ಹುಡುಕುತ್ತದೆ, ವಿವರ ನೋಡುತ್ತದೆ, ನಿಮ್ಮ ಕೊಟೇಶನ್ ಮತ್ತು ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಪ್ರತಿ ಆರ್ಡರ್ ಮೇಲೂ ಕಣ್ಣಿಡುತ್ತದೆ. ಪ್ರತಿ ಮೆಸೇಜ್ ಅನ್ನು ನೀವೇ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು, ನೀವೇ ಕಳುಹಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.cta": {
+  "en": "Request early access",
+  "te": "ముందే వాడే అవకాశం అడగండి",
+  "hi": "पहले इस्तेमाल का मौका माँगें",
+  "kn": "ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.secondary": {
+  "en": "See how it works",
+  "te": "ఇది ఎలా పనిచేస్తుందో చూడండి",
+  "hi": "देखें, यह कैसे काम करता है",
+  "kn": "ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.note": {
+  "en": "Early access, invitation only.",
+  "te": "ముందే వాడే అవకాశం, ఆహ్వానం ఉన్నవారికే.",
+  "hi": "पहले इस्तेमाल का मौका, सिर्फ़ बुलावे पर।",
+  "kn": "ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ, ಆಹ್ವಾನ ಇದ್ದವರಿಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.title": {
+  "en": "Sound familiar?",
+  "te": "మీకూ ఇలాగే అనిపిస్తోందా?",
+  "hi": "क्या आपके साथ भी ऐसा होता है?",
+  "kn": "ನಿಮಗೂ ಹೀಗೇ ಆಗುತ್ತಿದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.sub": {
+  "en": "Most small businesses sell from places that were never built for selling.",
+  "te": "చాలా చిన్న వ్యాపారాలు అమ్మకాల కోసం తయారు చేయని సాధనాలతోనే నడుస్తాయి.",
+  "hi": "ज़्यादातर छोटे व्यापारी ऐसे तरीकों से बेचते हैं जो बिक्री के लिए बने ही नहीं थे।",
+  "kn": "ಹೆಚ್ಚಿನ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳು ಮಾರಾಟಕ್ಕಾಗಿ ಮಾಡದ ಸಾಧನಗಳಲ್ಲೇ ನಡೆಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.1.t": {
+  "en": "Enquiries are everywhere",
+  "te": "ఎంక్వైరీలు ఎక్కడెక్కడో ఉంటాయి",
+  "hi": "पूछताछ हर जगह बिखरी रहती है",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಗಳು ಎಲ್ಲೆಲ್ಲೋ ಇರುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.1.d": {
+  "en": "A message on WhatsApp, a name in a notebook, a call you meant to return.",
+  "te": "వాట్సాప్‌లో ఒక మెసేజ్, నోట్‌బుక్‌లో ఒక పేరు, తిరిగి చేయాలనుకున్న ఒక ఫోన్ కాల్.",
+  "hi": "WhatsApp पर एक मैसेज, नोटबुक में एक नाम, एक कॉल जो वापस करनी थी।",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಒಂದು ಮೆಸೇಜ್, ನೋಟ್‌ಬುಕ್‌ನಲ್ಲಿ ಒಂದು ಹೆಸರು, ವಾಪಸ್ ಮಾಡಬೇಕೆಂದಿದ್ದ ಒಂದು ಕಾಲ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.2.t": {
+  "en": "Follow-ups get forgotten",
+  "te": "ఫాలో-అప్‌లు మర్చిపోతారు",
+  "hi": "फ़ॉलो-अप भूल जाते हैं",
+  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು ಮರೆತುಹೋಗುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.2.d": {
+  "en": "The quote went out on Monday. By Friday nobody remembers to ask.",
+  "te": "కొటేషన్ సోమవారం పంపారు. శుక్రవారం అయ్యేసరికి ఎవరికీ అడగడం గుర్తుండదు.",
+  "hi": "कोटेशन सोमवार को भेजा। शुक्रवार तक किसी को पूछना याद नहीं रहता।",
+  "kn": "ಕೊಟೇಶನ್ ಸೋಮವಾರ ಕಳುಹಿಸಿದ್ದು. ಶುಕ್ರವಾರದ ಹೊತ್ತಿಗೆ ಕೇಳಲು ಯಾರಿಗೂ ನೆನಪಿರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.3.t": {
+  "en": "Quotes take too long",
+  "te": "కొటేషన్‌కి చాలా టైమ్ పడుతుంది",
+  "hi": "कोटेशन बनाने में बहुत वक़्त लगता है",
+  "kn": "ಕೊಟೇಶನ್‌ಗೆ ತುಂಬ ಟೈಮ್ ಹಿಡಿಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.3.d": {
+  "en": "Finding the price, working out GST, typing it all out while the buyer waits.",
+  "te": "రేటు వెతకడం, GST లెక్క వేయడం, కొనేవాళ్ళు ఎదురుచూస్తుంటే అంతా టైప్ చేయడం.",
+  "hi": "रेट ढूँढना, GST का हिसाब लगाना, और खरीदार इंतज़ार कर रहा हो तो सब टाइप करना।",
+  "kn": "ರೇಟ್ ಹುಡುಕುವುದು, GST ಲೆಕ್ಕ ಹಾಕುವುದು, ಖರೀದಿದಾರ ಕಾಯುತ್ತಿರುವಾಗ ಎಲ್ಲವನ್ನೂ ಟೈಪ್ ಮಾಡುವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.title": {
+  "en": "From first enquiry to order, in six steps",
+  "te": "మొదటి ఎంక్వైరీ నుంచి ఆర్డర్ వరకు, ఆరు స్టెప్పుల్లో",
+  "hi": "पहली पूछताछ से ऑर्डर तक, छह कदमों में",
+  "kn": "ಮೊದಲ ಎನ್‌ಕ್ವೈರಿಯಿಂದ ಆರ್ಡರ್‌ವರೆಗೆ, ಆರು ಹಂತಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.sub": {
+  "en": "Your team does the legwork and prepares drafts. You decide what goes out.",
+  "te": "టీమ్ కష్టపడి డ్రాఫ్ట్‌లు సిద్ధం చేస్తుంది. ఏది వెళ్ళాలో మీరే నిర్ణయిస్తారు.",
+  "hi": "मेहनत टीम करती है और ड्राफ़्ट तैयार रखती है। क्या भेजना है, यह आप तय करते हैं।",
+  "kn": "ತಂಡ ದುಡಿದು ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು ಸಿದ್ಧ ಮಾಡಿಡುತ್ತದೆ. ಯಾವುದು ಹೋಗಬೇಕೆಂದು ನೀವೇ ತೀರ್ಮಾನಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.lead.t": {
+  "en": "Lead",
+  "te": "లీడ్",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.lead.d": {
+  "en": "A new business is found, or an enquiry arrives.",
+  "te": "కొత్త వ్యాపారం దొరుకుతుంది, లేదా ఎంక్వైరీ వస్తుంది.",
+  "hi": "कोई नया व्यापारी मिलता है, या पूछताछ आती है।",
+  "kn": "ಹೊಸ ವ್ಯಾಪಾರ ಸಿಗುತ್ತದೆ, ಅಥವಾ ಎನ್‌ಕ್ವೈರಿ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.research.t": {
+  "en": "Research",
+  "te": "వివరాలు వెతకడం",
+  "hi": "जाँच-पड़ताल",
+  "kn": "ವಿವರ ಹುಡುಕುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.research.d": {
+  "en": "Public pages are read. What is known, and where from, is recorded.",
+  "te": "అందరికీ కనిపించే వెబ్ పేజీలు చదువుతుంది. ఏం తెలిసింది, ఎక్కడ నుంచి తెలిసింది అని రాసి పెడుతుంది.",
+  "hi": "सबके लिए खुले पन्ने पढ़े जाते हैं। क्या पता चला और कहाँ से, यह लिख लिया जाता है।",
+  "kn": "ಎಲ್ಲರಿಗೂ ಕಾಣುವ ವೆಬ್ ಪುಟಗಳನ್ನು ಓದುತ್ತದೆ. ಏನು ಗೊತ್ತಾಯಿತು, ಎಲ್ಲಿಂದ ಗೊತ್ತಾಯಿತು ಎಂದು ಬರೆದಿಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.requirement.t": {
+  "en": "Requirement",
+  "te": "కావలసినవి",
+  "hi": "ज़रूरत",
+  "kn": "ಬೇಕಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.requirement.d": {
+  "en": "What the customer wants becomes rows in your price list.",
+  "te": "కస్టమర్‌కి కావలసినవి మీ రేట్ల లిస్ట్‌లోని వరుసలుగా మారతాయి.",
+  "hi": "ग्राहक को जो चाहिए, वह आपकी रेट लिस्ट की लाइनें बन जाता है।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಬೇಕಾದದ್ದು ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನ ಸಾಲುಗಳಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.quote.t": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.quote.d": {
+  "en": "A draft is priced from your price list by fixed rules. You approve it.",
+  "te": "మీ రేట్ల లిస్ట్ నుంచి, ఎప్పుడూ ఒకే పద్ధతిలో డ్రాఫ్ట్ తయారవుతుంది. మీరు ఓకే చేస్తారు.",
+  "hi": "आपकी रेट लिस्ट से हर बार एक ही तरीके से ड्राफ़्ट बनता है। आप मंज़ूर करते हैं।",
+  "kn": "ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದ ಯಾವಾಗಲೂ ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಡ್ರಾಫ್ಟ್ ಆಗುತ್ತದೆ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.followup.t": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.followup.d": {
+  "en": "If there is no reply, a short reminder is drafted. You approve it.",
+  "te": "జవాబు రాకపోతే చిన్న రిమైండర్ డ్రాఫ్ట్ అవుతుంది. మీరు ఓకే చేస్తారు.",
+  "hi": "जवाब न आए तो छोटा रिमाइंडर ड्राफ़्ट बनता है। आप मंज़ूर करते हैं।",
+  "kn": "ಉತ್ತರ ಬರದಿದ್ದರೆ ಚಿಕ್ಕ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಆಗುತ್ತದೆ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.order.t": {
+  "en": "Order",
+  "te": "ఆర్డర్",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.order.d": {
+  "en": "You record what happens: advance, preparation, dispatch, delivery.",
+  "te": "జరిగినది మీరు రాసుకుంటారు: అడ్వాన్స్, తయారీ, పంపడం, డెలివరీ.",
+  "hi": "जो होता है, वह आप लिख लेते हैं: एडवांस, तैयारी, माल भेजना, पहुँचना।",
+  "kn": "ನಡೆದದ್ದನ್ನು ನೀವು ಬರೆದುಕೊಳ್ಳುತ್ತೀರಿ: ಮುಂಗಡ, ತಯಾರಿ, ಸರಕು ಕಳುಹಿಸುವುದು, ತಲುಪುವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "anim.pause": {
+  "en": "Pause animation",
+  "te": "యానిమేషన్ ఆపండి",
+  "hi": "एनिमेशन रोकें",
+  "kn": "ಆನಿಮೇಷನ್ ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "anim.play": {
+  "en": "Play animation",
+  "te": "యానిమేషన్ ప్లే చేయండి",
+  "hi": "एनिमेशन चलाएँ",
+  "kn": "ಆನಿಮೇಷನ್ ಪ್ಲೇ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "flow.label": {
+  "en": "How an enquiry becomes an order (example)",
+  "te": "ఒక ఎంక్వైరీ ఆర్డర్ ఎలా అవుతుంది (ఉదాహరణ)",
+  "hi": "एक पूछताछ ऑर्डर कैसे बनती है (उदाहरण)",
+  "kn": "ಒಂದು ಎನ್‌ಕ್ವೈರಿ ಆರ್ಡರ್ ಆಗುವುದು ಹೇಗೆ (ಉದಾಹರಣೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "flow.example": {
+  "en": "Example with made-up data",
+  "te": "నిజం కాని ఉదాహరణ డేటాతో",
+  "hi": "असली नहीं, उदाहरण वाले डेटा के साथ",
+  "kn": "ನಿಜವಲ್ಲದ ಉದಾಹರಣೆ ಡೇಟಾದೊಂದಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "flow.draft": {
+  "en": "Draft, a person approves",
+  "te": "డ్రాఫ్ట్, మనిషి ఓకే చేస్తారు",
+  "hi": "ड्राफ़्ट, इंसान मंज़ूर करता है",
+  "kn": "ಡ್ರಾಫ್ಟ್, ಮನುಷ್ಯರು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.lead.t": {
+  "en": "Example Textiles, Hyderabad",
+  "te": "ఎగ్జాంపుల్ టెక్స్‌టైల్స్, హైదరాబాద్",
+  "hi": "एग्ज़ाम्पल टेक्सटाइल्स, हैदराबाद",
+  "kn": "ಎಗ್ಸಾಂಪಲ್ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್, ಹೈದರಾಬಾದ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.lead.s": {
+  "en": "Found in a trade directory.",
+  "te": "ట్రేడ్ డైరెక్టరీలో దొరికింది.",
+  "hi": "ट्रेड डायरेक्टरी में मिली।",
+  "kn": "ಟ್ರೇಡ್ ಡೈರೆಕ್ಟರಿಯಲ್ಲಿ ಸಿಕ್ಕಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.research.t": {
+  "en": "2 public pages read",
+  "te": "2 పేజీలు చదివాం",
+  "hi": "2 पन्ने पढ़े",
+  "kn": "2 ಪುಟ ಓದಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.research.s": {
+  "en": "Suggested, not verified.",
+  "te": "అంచనా మాత్రమే, ఇంకా సరిచూడలేదు.",
+  "hi": "अंदाज़ा है, अभी जाँचा नहीं।",
+  "kn": "ಅಂದಾಜು ಮಾತ್ರ, ಇನ್ನೂ ಚೆಕ್ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.requirement.c1": {
+  "en": "120 silk dupattas",
+  "te": "120 సిల్క్ దుపట్టాలు",
+  "hi": "120 सिल्क दुपट्टे",
+  "kn": "120 ರೇಷ್ಮೆ ದುಪಟ್ಟಾಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.requirement.c2": {
+  "en": "Matched to your price list",
+  "te": "మీ రేట్ల లిస్ట్‌తో సరిపోయింది",
+  "hi": "आपकी रेट लिस्ट से मिला लिया",
+  "kn": "ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ಗೆ ಹೊಂದಿಸಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.quote.t": {
+  "en": "{amount}, GST included",
+  "te": "{amount}, GST కలిపి",
+  "hi": "{amount}, GST मिलाकर",
+  "kn": "{amount}, GST ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.followup.t": {
+  "en": "No reply after two days",
+  "te": "రెండు రోజులైనా జవాబు రాలేదు",
+  "hi": "दो दिन बाद भी जवाब नहीं",
+  "kn": "ಎರಡು ದಿನ ಆದರೂ ಉತ್ತರ ಬಂದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "card.followup.s": {
+  "en": "A short reminder is drafted.",
+  "te": "చిన్న రిమైండర్ డ్రాఫ్ట్ రాశాం.",
+  "hi": "छोटा रिमाइंडर ड्राफ़्ट बन गया।",
+  "kn": "ಚಿಕ್ಕ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಬರೆದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "anim.motionPlay": {
+  "en": "Play motion",
+  "te": "కదలిక చూడండి",
+  "hi": "हलचल चलाएँ",
+  "kn": "ಚಲನೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "anim.motionStop": {
+  "en": "Stop motion",
+  "te": "కదలిక ఆపండి",
+  "hi": "हलचल रोकें",
+  "kn": "ಚಲನೆ ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "anim.dots": {
+  "en": "Choose a step",
+  "te": "ఒక స్టెప్ ఎంచుకోండి",
+  "hi": "कोई स्टेप चुनें",
+  "kn": "ಒಂದು ಸ್ಟೆಪ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "anim.dot": {
+  "en": "Show step {n}: {name}",
+  "te": "{n}వ స్టెప్ చూడండి: {name}",
+  "hi": "स्टेप {n} देखें: {name}",
+  "kn": "{n}ನೇ ಸ್ಟೆಪ್ ನೋಡಿ: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "control.title": {
+  "en": "You stay in control",
+  "te": "కంట్రోల్ మీ చేతిలోనే",
+  "hi": "कंट्रोल आपके हाथ में",
+  "kn": "ಕಂಟ್ರೋಲ್ ನಿಮ್ಮ ಕೈಯಲ್ಲೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "control.sub": {
+  "en": "Nothing leaves the system. Every message is a draft until you approve it and send it yourself.",
+  "te": "సిస్టమ్ నుంచి ఏదీ బయటకు వెళ్ళదు. మీరు ఓకే చేసి, మీరే పంపేవరకు ప్రతి మెసేజ్ డ్రాఫ్ట్ మాత్రమే.",
+  "hi": "सिस्टम से कुछ बाहर नहीं जाता। जब तक आप मंज़ूर करके खुद नहीं भेजते, हर मैसेज सिर्फ़ ड्राफ़्ट रहता है।",
+  "kn": "ಸಿಸ್ಟಮ್‌ನಿಂದ ಏನೂ ಹೊರಗೆ ಹೋಗುವುದಿಲ್ಲ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು ನೀವೇ ಕಳುಹಿಸುವವರೆಗೆ ಪ್ರತಿ ಮೆಸೇಜ್ ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.1.t": {
+  "en": "Drafts, never sends",
+  "te": "డ్రాఫ్ట్ చేస్తుంది, పంపదు",
+  "hi": "ड्राफ़्ट बनाता है, भेजता नहीं",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಕಳುಹಿಸುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.1.d": {
+  "en": "First messages, quotes and follow-ups are drafts. {brand} does not send anything.",
+  "te": "మొదటి మెసేజ్‌లు, కొటేషన్లు, ఫాలో-అప్‌లు డ్రాఫ్ట్‌లే. {brand} ఏదీ పంపదు.",
+  "hi": "पहले मैसेज, कोटेशन और फ़ॉलो-अप सब ड्राफ़्ट होते हैं। {brand} कुछ नहीं भेजता।",
+  "kn": "ಮೊದಲ ಮೆಸೇಜ್‌ಗಳು, ಕೊಟೇಶನ್‌ಗಳು, ಫಾಲೋ-ಅಪ್‌ಗಳು ಡ್ರಾಫ್ಟ್‌ಗಳೇ. {brand} ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.2.t": {
+  "en": "You approve",
+  "te": "మీరు ఓకే చేస్తారు",
+  "hi": "आप मंज़ूर करते हैं",
+  "kn": "ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.2.d": {
+  "en": "Every draft waits for you. Edit it first if you like.",
+  "te": "ప్రతి డ్రాఫ్ట్ మీ కోసం ఆగి ఉంటుంది. కావాలంటే ముందు మార్చుకోవచ్చు.",
+  "hi": "हर ड्राफ़्ट आपके इंतज़ार में रहता है। चाहें तो पहले बदल लें।",
+  "kn": "ಪ್ರತಿ ಡ್ರಾಫ್ಟ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ. ಬೇಕಿದ್ದರೆ ಮೊದಲು ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.3.t": {
+  "en": "Prices by fixed rules",
+  "te": "రేట్లు ఒకే పద్ధతిలో",
+  "hi": "रेट हर बार एक ही तरीके से",
+  "kn": "ರೇಟ್ ಯಾವಾಗಲೂ ಒಂದೇ ರೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.3.d": {
+  "en": "Prices come from your price list. The AI never sets or changes a price.",
+  "te": "రేట్లు మీ రేట్ల లిస్ట్ నుంచే వస్తాయి. AI ఏ రేటునూ పెట్టదు, మార్చదు.",
+  "hi": "रेट आपकी रेट लिस्ट से आते हैं। AI कोई रेट न तय करता है, न बदलता है।",
+  "kn": "ರೇಟ್ ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದಲೇ ಬರುತ್ತದೆ. AI ಯಾವ ರೇಟ್ ಅನ್ನೂ ಹಾಕುವುದಿಲ್ಲ, ಬದಲಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.4.t": {
+  "en": "A real order record",
+  "te": "నిజమైన ఆర్డర్ రికార్డు",
+  "hi": "असली ऑर्डर रिकॉर्ड",
+  "kn": "ನಿಜವಾದ ಆರ್ಡರ್ ದಾಖಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.4.d": {
+  "en": "From quote sent to closed, each step is recorded by you.",
+  "te": "కొటేషన్ పంపినప్పటి నుంచి ఆర్డర్ ముగిసేవరకు, ప్రతి స్టెప్ మీరే రాసుకుంటారు.",
+  "hi": "कोटेशन भेजने से ऑर्डर बंद होने तक, हर स्टेप आप खुद लिखते हैं।",
+  "kn": "ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದಾಗಿನಿಂದ ಆರ್ಡರ್ ಮುಗಿಯುವವರೆಗೆ, ಪ್ರತಿ ಹಂತವನ್ನು ನೀವೇ ಬರೆದುಕೊಳ್ಳುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.lifecycle": {
+  "en": "The order lifecycle",
+  "te": "ఆర్డర్ ఎలా నడుస్తుంది",
+  "hi": "ऑर्डर कैसे आगे बढ़ता है",
+  "kn": "ಆರ್ಡರ್ ಹೇಗೆ ನಡೆಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.1": {
+  "en": "Quote sent",
+  "te": "కొటేషన్ పంపారు",
+  "hi": "कोटेशन भेजा",
+  "kn": "ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.2": {
+  "en": "Customer accepted",
+  "te": "కస్టమర్ ఒప్పుకున్నారు",
+  "hi": "ग्राहक ने हाँ कही",
+  "kn": "ಗ್ರಾಹಕ ಒಪ್ಪಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.3": {
+  "en": "Advance asked for",
+  "te": "అడ్వాన్స్ అడిగారు",
+  "hi": "एडवांस माँगा",
+  "kn": "ಮುಂಗಡ ಕೇಳಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.4": {
+  "en": "Advance received",
+  "te": "అడ్వాన్స్ వచ్చింది",
+  "hi": "एडवांस आ गया",
+  "kn": "ಮುಂಗಡ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.5": {
+  "en": "In preparation",
+  "te": "తయారవుతోంది",
+  "hi": "तैयारी चल रही है",
+  "kn": "ತಯಾರಿ ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.6": {
+  "en": "Dispatched",
+  "te": "పంపించారు",
+  "hi": "माल भेज दिया",
+  "kn": "ಸರಕು ಹೊರಟಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.7": {
+  "en": "Delivered",
+  "te": "డెలివరీ అయింది",
+  "hi": "पहुँच गया",
+  "kn": "ತಲುಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "life.8": {
+  "en": "Closed",
+  "te": "ముగిసింది",
+  "hi": "बंद",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.money": {
+  "en": "Money still held: {held}. A refund may be owed to the customer.",
+  "te": "ఇంకా మన దగ్గర ఉన్న డబ్బు: {held}. కస్టమర్‌కి డబ్బు వెనక్కి ఇవ్వాల్సి రావచ్చు.",
+  "hi": "हमारे पास रुका पैसा: {held}। ग्राहक को पैसे वापस करने पड़ सकते हैं।",
+  "kn": "ನಮ್ಮ ಬಳಿ ಇನ್ನೂ ಇರುವ ಹಣ: {held}. ಗ್ರಾಹಕರಿಗೆ ಹಣ ವಾಪಸ್ ಕೊಡಬೇಕಾಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ctl.moneyNote": {
+  "en": "If an order is cancelled after an advance, the money held stays on screen in amber until you record the refund. It is never hidden.",
+  "te": "అడ్వాన్స్ తీసుకున్న తర్వాత ఆర్డర్ క్యాన్సిల్ అయితే, మీరు డబ్బు వెనక్కి ఇచ్చినట్టు రాసుకునేవరకు ఆ డబ్బు స్క్రీన్‌పై అంబర్ రంగులో కనిపిస్తూనే ఉంటుంది. దాన్ని ఎప్పుడూ దాచం.",
+  "hi": "एडवांस के बाद ऑर्डर रद्द हो जाए, तो रुका हुआ पैसा तब तक स्क्रीन पर एम्बर रंग में दिखता रहता है जब तक आप पैसे वापस करने की बात लिख नहीं लेते। इसे कभी छिपाया नहीं जाता।",
+  "kn": "ಮುಂಗಡ ತೆಗೆದುಕೊಂಡ ಮೇಲೆ ಆರ್ಡರ್ ರದ್ದಾದರೆ, ನೀವು ಹಣ ವಾಪಸ್ ಕೊಟ್ಟಿದ್ದನ್ನು ಬರೆದುಕೊಳ್ಳುವವರೆಗೆ ಆ ಹಣ ಪರದೆಯ ಮೇಲೆ ಅಂಬರ್ ಬಣ್ಣದಲ್ಲಿ ಕಾಣುತ್ತಲೇ ಇರುತ್ತದೆ. ಅದನ್ನು ಎಂದೂ ಮರೆಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.title": {
+  "en": "Meet the team",
+  "te": "టీమ్‌ని కలవండి",
+  "hi": "टीम से मिलिए",
+  "kn": "ತಂಡವನ್ನು ಭೇಟಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.sub": {
+  "en": "Six assistants and a main agent, each with one job. This is an illustration.",
+  "te": "ఆరుగురు అసిస్టెంట్లు, ఒక మెయిన్ అసిస్టెంట్. ఒక్కొక్కరికి ఒక పని. ఇది బొమ్మ మాత్రమే.",
+  "hi": "छह सहायक और एक मुख्य सहायक, हर एक का एक काम। यह सिर्फ़ एक तस्वीर है।",
+  "kn": "ಆರು ಅಸಿಸ್ಟೆಂಟ್‌ಗಳು ಮತ್ತು ಒಬ್ಬ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್, ಒಬ್ಬೊಬ್ಬರಿಗೆ ಒಂದೊಂದು ಕೆಲಸ. ಇದು ಬರೀ ಚಿತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.alt": {
+  "en": "Illustration: seven assistants seated around a round table, with the main agent at the head.",
+  "te": "బొమ్మ: గుండ్రని టేబుల్ చుట్టూ కూర్చున్న ఏడుగురు అసిస్టెంట్లు, తలభాగంలో మెయిన్ అసిస్టెంట్.",
+  "hi": "तस्वीर: गोल मेज़ के चारों तरफ़ बैठे सात सहायक, सिरे पर मुख्य सहायक।",
+  "kn": "ಚಿತ್ರ: ಸುತ್ತಿನ ಮೇಜಿನ ಸುತ್ತ ಕುಳಿತಿರುವ ಏಳು ಅಸಿಸ್ಟೆಂಟ್‌ಗಳು, ತುದಿಯಲ್ಲಿ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.main.t": {
+  "en": "Main agent",
+  "te": "మెయిన్ అసిస్టెంట్",
+  "hi": "मुख्य सहायक",
+  "kn": "ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.main.d": {
+  "en": "Answers your questions from recorded facts.",
+  "te": "రాసి ఉన్న వివరాల ఆధారంగా మీ ప్రశ్నలకు జవాబు ఇస్తుంది.",
+  "hi": "लिखे हुए तथ्यों के आधार पर आपके सवालों का जवाब देता है।",
+  "kn": "ಬರೆದಿಟ್ಟಿರುವ ಸಂಗತಿಗಳ ಆಧಾರದ ಮೇಲೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ಕೊಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.lead.t": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.lead.d": {
+  "en": "Finds businesses that may buy.",
+  "te": "కొనే అవకాశం ఉన్న వ్యాపారాలను వెతుకుతుంది.",
+  "hi": "खरीद सकने वाले व्यापारियों को ढूँढता है।",
+  "kn": "ಖರೀದಿಸುವ ಸಾಧ್ಯತೆ ಇರುವ ವ್ಯಾಪಾರಗಳನ್ನು ಹುಡುಕುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.research.t": {
+  "en": "Researcher",
+  "te": "రీసెర్చర్",
+  "hi": "रिसर्चर",
+  "kn": "ರಿಸರ್ಚರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.research.d": {
+  "en": "Reads public pages about a lead.",
+  "te": "లీడ్ గురించి అందరికీ కనిపించే పేజీలు చదువుతుంది.",
+  "hi": "लीड के बारे में सबके लिए खुले पन्ने पढ़ता है।",
+  "kn": "ಲೀಡ್ ಬಗ್ಗೆ ಎಲ್ಲರಿಗೂ ಕಾಣುವ ಪುಟಗಳನ್ನು ಓದುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.requirement.t": {
+  "en": "Requirement Analyst",
+  "te": "రిక్వైర్‌మెంట్ అనలిస్ట్",
+  "hi": "ज़रूरत समझने वाला",
+  "kn": "ರಿಕ್ವೈರ್‌ಮೆಂಟ್ ಅನಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.requirement.d": {
+  "en": "Turns a request into price list rows.",
+  "te": "కస్టమర్ అడిగినదాన్ని రేట్ల లిస్ట్ వరుసలుగా మారుస్తుంది.",
+  "hi": "ग्राहक की माँग को रेट लिस्ट की लाइनों में बदलता है।",
+  "kn": "ಗ್ರಾಹಕರು ಕೇಳಿದ್ದನ್ನು ರೇಟ್ ಲಿಸ್ಟ್‌ನ ಸಾಲುಗಳಾಗಿ ಬದಲಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.quote.t": {
+  "en": "Quote Writer",
+  "te": "కొటేషన్ రైటర్",
+  "hi": "कोटेशन राइटर",
+  "kn": "ಕೊಟೇಶನ್ ರೈಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.quote.d": {
+  "en": "Drafts quotes from your price list.",
+  "te": "మీ రేట్ల లిస్ట్ నుంచి కొటేషన్లు డ్రాఫ్ట్ చేస్తుంది.",
+  "hi": "आपकी रेट लिस्ट से कोटेशन का ड्राफ़्ट बनाता है।",
+  "kn": "ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದ ಕೊಟೇಶನ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.followup.t": {
+  "en": "Follow-up Desk",
+  "te": "ఫాలో-అప్ డెస్క్",
+  "hi": "फ़ॉलो-अप डेस्क",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.followup.d": {
+  "en": "Drafts reminders when nobody replies.",
+  "te": "ఎవరూ జవాబు ఇవ్వనప్పుడు రిమైండర్లు డ్రాఫ్ట్ చేస్తుంది.",
+  "hi": "कोई जवाब न दे तो रिमाइंडर के ड्राफ़्ट बनाता है।",
+  "kn": "ಯಾರೂ ಉತ್ತರ ಕೊಡದಿದ್ದಾಗ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.order.t": {
+  "en": "Order Desk",
+  "te": "ఆర్డర్ డెస్క్",
+  "hi": "ऑर्डर डेस्क",
+  "kn": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "role.order.d": {
+  "en": "Watches advances and open orders.",
+  "te": "అడ్వాన్స్‌లను, నడుస్తున్న ఆర్డర్లను గమనిస్తుంది.",
+  "hi": "एडवांस और चल रहे ऑर्डर पर नज़र रखता है।",
+  "kn": "ಮುಂಗಡಗಳು ಮತ್ತು ನಡೆಯುತ್ತಿರುವ ಆರ್ಡರ್‌ಗಳ ಮೇಲೆ ಕಣ್ಣಿಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "langs.title": {
+  "en": "In your language",
+  "te": "మీ భాషలో",
+  "hi": "आपकी अपनी भाषा में",
+  "kn": "ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "langs.sub": {
+  "en": "The app and the drafts work in English, Telugu, Hindi and Kannada.",
+  "te": "యాప్, డ్రాఫ్ట్‌లు ఇంగ్లీష్, తెలుగు, హిందీ, కన్నడలో పనిచేస్తాయి.",
+  "hi": "ऐप और ड्राफ़्ट अंग्रेज़ी, तेलुगु, हिन्दी और कन्नड़ में चलते हैं।",
+  "kn": "ಆ್ಯಪ್ ಮತ್ತು ಡ್ರಾಫ್ಟ್‌ಗಳು ಇಂಗ್ಲಿಷ್, ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡದಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "langs.sampleLabel": {
+  "en": "A follow-up draft",
+  "te": "ఒక ఫాలో-అప్ డ్రాఫ్ట్",
+  "hi": "फ़ॉलो-अप का एक ड्राफ़्ट",
+  "kn": "ಒಂದು ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "langs.sample.en": {
+  "en": "Hello, a reminder about the quote we sent on Monday. Please let us know your decision. Thank you.",
+  "te": "Hello, a reminder about the quote we sent on Monday. Please let us know your decision. Thank you.",
+  "hi": "Hello, a reminder about the quote we sent on Monday. Please let us know your decision. Thank you.",
+  "kn": "Hello, a reminder about the quote we sent on Monday. Please let us know your decision. Thank you.",
+  "status": {},
+  "only": []
+ },
+ "langs.sample.te": {
+  "en": "నమస్కారం, సోమవారం పంపిన కొటేషన్ గురించి గుర్తు చేస్తున్నాను. మీ నిర్ణయం చెప్పండి. ధన్యవాదాలు.",
+  "te": "నమస్కారం, సోమవారం పంపిన కొటేషన్ గురించి గుర్తు చేస్తున్నాను. మీ నిర్ణయం చెప్పండి. ధన్యవాదాలు.",
+  "hi": "నమస్కారం, సోమవారం పంపిన కొటేషన్ గురించి గుర్తు చేస్తున్నాను. మీ నిర్ణయం చెప్పండి. ధన్యవాదాలు.",
+  "kn": "నమస్కారం, సోమవారం పంపిన కొటేషన్ గురించి గుర్తు చేస్తున్నాను. మీ నిర్ణయం చెప్పండి. ధన్యవాదాలు.",
+  "status": {
+   "te": "draft"
+  },
+  "only": [
+   "te"
+  ]
+ },
+ "langs.sample.hi": {
+  "en": "नमस्ते, सोमवार को जो कोटेशन भेजा था, उसकी याद दिला रहा हूँ। आप अपना फ़ैसला बता दीजिए। धन्यवाद।",
+  "te": "नमस्ते, सोमवार को जो कोटेशन भेजा था, उसकी याद दिला रहा हूँ। आप अपना फ़ैसला बता दीजिए। धन्यवाद।",
+  "hi": "नमस्ते, सोमवार को जो कोटेशन भेजा था, उसकी याद दिला रहा हूँ। आप अपना फ़ैसला बता दीजिए। धन्यवाद।",
+  "kn": "नमस्ते, सोमवार को जो कोटेशन भेजा था, उसकी याद दिला रहा हूँ। आप अपना फ़ैसला बता दीजिए। धन्यवाद।",
+  "status": {
+   "hi": "draft"
+  },
+  "only": [
+   "hi"
+  ]
+ },
+ "langs.sample.kn": {
+  "en": "ನಮಸ್ಕಾರ, ಸೋಮವಾರ ಕಳುಹಿಸಿದ ಕೊಟೇಶನ್ ಬಗ್ಗೆ ನೆನಪಿಸುತ್ತಿದ್ದೇನೆ. ನಿಮ್ಮ ತೀರ್ಮಾನ ತಿಳಿಸಿ. ಧನ್ಯವಾದಗಳು.",
+  "te": "ನಮಸ್ಕಾರ, ಸೋಮವಾರ ಕಳುಹಿಸಿದ ಕೊಟೇಶನ್ ಬಗ್ಗೆ ನೆನಪಿಸುತ್ತಿದ್ದೇನೆ. ನಿಮ್ಮ ತೀರ್ಮಾನ ತಿಳಿಸಿ. ಧನ್ಯವಾದಗಳು.",
+  "hi": "ನಮಸ್ಕಾರ, ಸೋಮವಾರ ಕಳುಹಿಸಿದ ಕೊಟೇಶನ್ ಬಗ್ಗೆ ನೆನಪಿಸುತ್ತಿದ್ದೇನೆ. ನಿಮ್ಮ ತೀರ್ಮಾನ ತಿಳಿಸಿ. ಧನ್ಯವಾದಗಳು.",
+  "kn": "ನಮಸ್ಕಾರ, ಸೋಮವಾರ ಕಳುಹಿಸಿದ ಕೊಟೇಶನ್ ಬಗ್ಗೆ ನೆನಪಿಸುತ್ತಿದ್ದೇನೆ. ನಿಮ್ಮ ತೀರ್ಮಾನ ತಿಳಿಸಿ. ಧನ್ಯವಾದಗಳು.",
+  "status": {
+   "kn": "draft"
+  },
+  "only": [
+   "kn"
+  ]
+ },
+ "langs.note": {
+  "en": "Telugu, Hindi and Kannada text here is machine-written. The owner will proofread it before launch.",
+  "te": "ఇక్కడ తెలుగు, హిందీ, కన్నడ టెక్స్ట్ మెషీన్ రాసినది. లాంచ్‌కి ముందు యజమాని సరిచూస్తారు.",
+  "hi": "यहाँ तेलुगु, हिन्दी और कन्नड़ का लिखा हुआ मशीन से बना है। लॉन्च से पहले मालिक इसे जाँच लेंगे।",
+  "kn": "ಇಲ್ಲಿರುವ ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಪಠ್ಯ ಮೆಷಿನ್ ಬರೆದದ್ದು. ಲಾಂಚ್‌ಗೆ ಮೊದಲು ಮಾಲೀಕರು ಚೆಕ್ ಮಾಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "privacy.title": {
+  "en": "Private by design",
+  "te": "మొదటి నుంచే ప్రైవసీ",
+  "hi": "शुरू से ही प्राइवेसी",
+  "kn": "ಮೊದಲಿನಿಂದಲೇ ಪ್ರೈವಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "privacy.sub": {
+  "en": "Your customers' details belong to your business. In plain words:",
+  "te": "మీ కస్టమర్ల వివరాలు మీ వ్యాపారానివే. సింపుల్‌గా చెప్పాలంటే:",
+  "hi": "आपके ग्राहकों की जानकारी आपके कारोबार की है। सीधी बात:",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರ ವಿವರಗಳು ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಸೇರಿದ್ದು. ಸರಳವಾಗಿ ಹೇಳುವುದಾದರೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.1.t": {
+  "en": "Your data stays yours",
+  "te": "మీ డేటా మీదే",
+  "hi": "आपका डेटा आपका ही",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ನಿಮ್ಮದೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.1.d": {
+  "en": "Each business's records are kept apart from every other business.",
+  "te": "ప్రతి వ్యాపారం రికార్డులు మిగతా వ్యాపారాలకు కనిపించకుండా వేరుగా ఉంటాయి.",
+  "hi": "हर कारोबार का रिकॉर्ड बाकी कारोबारों से अलग रखा जाता है।",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರದ ದಾಖಲೆಗಳು ಉಳಿದ ವ್ಯಾಪಾರಗಳಿಂದ ಬೇರೆಯಾಗಿ ಇರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.2.t": {
+  "en": "Consent and do-not-contact",
+  "te": "అనుమతి, మెసేజ్ చేయకూడని వారి లిస్ట్",
+  "hi": "इजाज़त और “संपर्क नहीं करना” की लिस्ट",
+  "kn": "ಸಮ್ಮತಿ ಮತ್ತು ಕರೆ/ಮೆಸೇಜ್ ಮಾಡಬಾರದವರ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.2.d": {
+  "en": "Consent records and do-not-contact lists are built in, so a customer who says no is not drafted to.",
+  "te": "కస్టమర్ అనుమతి రికార్డులు, మెసేజ్ చేయకూడని వారి లిస్ట్ ముందే ఉన్నాయి. వద్దన్న కస్టమర్‌కి డ్రాఫ్ట్ రాదు.",
+  "hi": "ग्राहक की इजाज़त का रिकॉर्ड और जिन्हें मैसेज/कॉल नहीं करना उनकी लिस्ट पहले से बनी है। जिसने मना किया, उसके लिए ड्राफ़्ट नहीं बनता।",
+  "kn": "ಗ್ರಾಹಕರ ಸಮ್ಮತಿಯ ದಾಖಲೆ ಮತ್ತು ಕರೆ/ಮೆಸೇಜ್ ಮಾಡಬಾರದವರ ಲಿಸ್ಟ್ ಮೊದಲೇ ಇದೆ. ಬೇಡ ಅಂದ ಗ್ರಾಹಕರಿಗೆ ಡ್ರಾಫ್ಟ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.3.t": {
+  "en": "Built with India's DPDP Act in mind",
+  "te": "భారత DPDP చట్టాన్ని దృష్టిలో పెట్టుకుని చేశాం",
+  "hi": "भारत के DPDP कानून को ध्यान में रखकर बनाया",
+  "kn": "ಭಾರತದ DPDP ಕಾಯ್ದೆಯನ್ನು ಗಮನದಲ್ಲಿಟ್ಟು ಮಾಡಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.3.d": {
+  "en": "We have not had an independent review yet. Early access is invitation only.",
+  "te": "ఇంకా బయటివారితో సమీక్ష చేయించలేదు. ముందే వాడే అవకాశం ఆహ్వానం ఉన్నవారికే.",
+  "hi": "अभी बाहर के किसी से इसकी जाँच नहीं करवाई है। पहले इस्तेमाल का मौका सिर्फ़ बुलावे पर है।",
+  "kn": "ಇನ್ನೂ ಹೊರಗಿನವರಿಂದ ಚೆಕ್ ಮಾಡಿಸಿಲ್ಲ. ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ ಆಹ್ವಾನ ಇದ್ದವರಿಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.4.t": {
+  "en": "Only what the work needs",
+  "te": "పనికి కావలసినవే",
+  "hi": "सिर्फ़ उतना जितना काम को चाहिए",
+  "kn": "ಕೆಲಸಕ್ಕೆ ಬೇಕಾದಷ್ಟೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "priv.4.d": {
+  "en": "We keep only the details a task needs, and phone numbers are partly hidden on screen.",
+  "te": "పనికి కావలసిన వివరాలనే ఉంచుతాం. ఫోన్ నంబర్లు స్క్రీన్‌పై కొంత దాచి చూపిస్తాం.",
+  "hi": "काम के लिए जितनी जानकारी चाहिए, उतनी ही रखते हैं। स्क्रीन पर फ़ोन नंबर आधे छिपे रहते हैं।",
+  "kn": "ಕೆಲಸಕ್ಕೆ ಬೇಕಾದ ವಿವರಗಳನ್ನು ಮಾತ್ರ ಇಟ್ಟುಕೊಳ್ಳುತ್ತೇವೆ. ಫೋನ್ ನಂಬರ್ ಪರದೆಯ ಮೇಲೆ ಅರ್ಧ ಮುಚ್ಚಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "early.title": {
+  "en": "Early access",
+  "te": "ముందే వాడే అవకాశం",
+  "hi": "पहले इस्तेमाल का मौका",
+  "kn": "ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "early.body": {
+  "en": "We are letting businesses in by invitation while we finish building.",
+  "te": "మేము ఇంకా తయారు చేస్తూ ఉన్నాం, అందుకే ఆహ్వానం ఉన్న వ్యాపారాలనే చేర్చుకుంటున్నాం.",
+  "hi": "हम अभी इसे पूरा बना रहे हैं, इसलिए कारोबारों को बुलावे पर जोड़ रहे हैं।",
+  "kn": "ನಾವು ಇನ್ನೂ ಇದನ್ನು ಮುಗಿಸುತ್ತಿದ್ದೇವೆ, ಅದಕ್ಕೇ ಆಹ್ವಾನ ಇರುವ ವ್ಯಾಪಾರಗಳನ್ನು ಮಾತ್ರ ಸೇರಿಸಿಕೊಳ್ಳುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "early.status": {
+  "en": "Coming soon: early access opens soon.",
+  "te": "త్వరలో వస్తుంది: ముందే వాడే అవకాశం త్వరలో మొదలవుతుంది.",
+  "hi": "जल्द आ रहा है: पहले इस्तेमाल का मौका जल्द खुलेगा।",
+  "kn": "ಬೇಗ ಬರುತ್ತದೆ: ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ ಬೇಗ ತೆರೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "early.nodata": {
+  "en": "This button is a placeholder. No form is connected, and nothing on this page collects or sends your details.",
+  "te": "ఈ బటన్ ప్లేస్‌హోల్డర్ మాత్రమే, ఇంకా పనిచేయదు. ఏ ఫారమూ కలపలేదు. ఈ పేజీ మీ వివరాలేవీ తీసుకోదు, పంపదు.",
+  "hi": "यह बटन अभी सिर्फ़ दिखावे का है, काम नहीं करता। कोई फ़ॉर्म जुड़ा नहीं है, और इस पन्ने से आपकी कोई जानकारी न ली जाती है, न भेजी जाती है।",
+  "kn": "ಈ ಬಟನ್ ಈಗ ಕೇವಲ ಪ್ಲೇಸ್‌ಹೋಲ್ಡರ್, ಇನ್ನೂ ಕೆಲಸ ಮಾಡುವುದಿಲ್ಲ. ಯಾವ ಫಾರ್ಮ್ ಕೂಡ ಜೋಡಿಸಿಲ್ಲ. ಈ ಪುಟ ನಿಮ್ಮ ವಿವರಗಳನ್ನು ತೆಗೆದುಕೊಳ್ಳುವುದಿಲ್ಲ, ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "early.clicked": {
+  "en": "Thank you for your interest. Early access opens soon. Nothing was sent or saved.",
+  "te": "మీ ఆసక్తికి ధన్యవాదాలు. ముందే వాడే అవకాశం త్వరలో మొదలవుతుంది. ఏదీ పంపలేదు, సేవ్ చేయలేదు.",
+  "hi": "आपकी दिलचस्पी के लिए धन्यवाद। पहले इस्तेमाल का मौका जल्द खुलेगा। कुछ भी भेजा या सेव नहीं हुआ।",
+  "kn": "ನಿಮ್ಮ ಆಸಕ್ತಿಗೆ ಧನ್ಯವಾದಗಳು. ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ ಬೇಗ ತೆರೆಯುತ್ತದೆ. ಏನನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ, ಸೇವ್ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.title": {
+  "en": "Questions, answered calmly",
+  "te": "మీ సందేహాలకు సులువైన జవాబులు",
+  "hi": "आपके सवाल, सीधे जवाब",
+  "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳಿಗೆ ಸರಳ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.1.q": {
+  "en": "Does it send messages to my customers?",
+  "te": "ఇది నా కస్టమర్లకు మెసేజ్‌లు పంపుతుందా?",
+  "hi": "क्या यह मेरे ग्राहकों को मैसेज भेजता है?",
+  "kn": "ಇದು ನನ್ನ ಗ್ರಾಹಕರಿಗೆ ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.1.a": {
+  "en": "No. Every message is a draft. You approve it, then you send it yourself, outside the system. Nothing is sent automatically.",
+  "te": "లేదు. ప్రతి మెసేజ్ డ్రాఫ్ట్ మాత్రమే. మీరు ఓకే చేసి, సిస్టమ్ బయట మీరే పంపుతారు. ఏదీ దానంతట అదే వెళ్ళదు.",
+  "hi": "नहीं। हर मैसेज एक ड्राफ़्ट है। आप मंज़ूर करते हैं, फिर सिस्टम के बाहर खुद भेजते हैं। कुछ भी अपने आप नहीं जाता।",
+  "kn": "ಇಲ್ಲ. ಪ್ರತಿ ಮೆಸೇಜ್ ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು, ಸಿಸ್ಟಮ್‌ನ ಹೊರಗೆ ನೀವೇ ಕಳುಹಿಸುತ್ತೀರಿ. ಏನೂ ತಾನಾಗಿ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.2.q": {
+  "en": "Who is it for?",
+  "te": "ఇది ఎవరికి?",
+  "hi": "यह किसके लिए है?",
+  "kn": "ಇದು ಯಾರಿಗಾಗಿ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.2.a": {
+  "en": "Indian wholesalers, manufacturers and traders who sell by enquiry and quote.",
+  "te": "ఎంక్వైరీ, కొటేషన్ ద్వారా అమ్మే భారతీయ హోల్‌సేల్ వ్యాపారులు, తయారీదారులు, ట్రేడర్లకు.",
+  "hi": "भारत के उन थोक व्यापारियों, निर्माताओं और ट्रेडर्स के लिए जो पूछताछ और कोटेशन से माल बेचते हैं।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಮತ್ತು ಕೊಟೇಶನ್ ಮೂಲಕ ಮಾರುವ ಭಾರತದ ಸಗಟು ವ್ಯಾಪಾರಿಗಳು, ತಯಾರಕರು, ಟ್ರೇಡರ್‌ಗಳಿಗಾಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.3.q": {
+  "en": "Can the AI change my prices?",
+  "te": "AI నా రేట్లు మార్చగలదా?",
+  "hi": "क्या AI मेरे रेट बदल सकता है?",
+  "kn": "AI ನನ್ನ ರೇಟ್ ಬದಲಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.3.a": {
+  "en": "No. Prices come from your price list by fixed rules. The AI does not calculate or change a price.",
+  "te": "లేదు. రేట్లు మీ రేట్ల లిస్ట్ నుంచి ఒకే పద్ధతిలో వస్తాయి. AI రేటు లెక్క వేయదు, మార్చదు.",
+  "hi": "नहीं। रेट आपकी रेट लिस्ट से हर बार एक ही तरीके से आते हैं। AI रेट न निकालता है, न बदलता है।",
+  "kn": "ಇಲ್ಲ. ರೇಟ್ ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದ ಯಾವಾಗಲೂ ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಬರುತ್ತದೆ. AI ರೇಟ್ ಲೆಕ್ಕ ಹಾಕುವುದಿಲ್ಲ, ಬದಲಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.4.q": {
+  "en": "Which languages work?",
+  "te": "ఏ భాషలు పనిచేస్తాయి?",
+  "hi": "कौन-सी भाषाएँ चलती हैं?",
+  "kn": "ಯಾವ ಭಾಷೆಗಳು ಕೆಲಸ ಮಾಡುತ್ತವೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.4.a": {
+  "en": "English, Telugu, Hindi and Kannada. Machine-written translations should be proofread by someone who knows the language.",
+  "te": "ఇంగ్లీష్, తెలుగు, హిందీ, కన్నడ. మెషీన్ రాసిన అనువాదాలను ఆ భాష తెలిసినవారు సరిచూడాలి.",
+  "hi": "अंग्रेज़ी, तेलुगु, हिन्दी और कन्नड़। मशीन से बने अनुवाद को उस भाषा के जानकार से जँचवा लेना चाहिए।",
+  "kn": "ಇಂಗ್ಲಿಷ್, ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ. ಮೆಷಿನ್ ಬರೆದ ಅನುವಾದವನ್ನು ಆ ಭಾಷೆ ಗೊತ್ತಿರುವವರು ಚೆಕ್ ಮಾಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.5.q": {
+  "en": "What happens to my customers' data?",
+  "te": "నా కస్టమర్ల డేటాకు ఏమవుతుంది?",
+  "hi": "मेरे ग्राहकों के डेटा का क्या होता है?",
+  "kn": "ನನ್ನ ಗ್ರಾಹಕರ ಡೇಟಾಗೆ ಏನಾಗುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.5.a": {
+  "en": "It stays in your business's own records, kept apart from other businesses. Consent and do-not-contact lists are built in.",
+  "te": "అది మీ వ్యాపారం సొంత రికార్డుల్లో ఉంటుంది, మిగతా వ్యాపారాల నుంచి వేరుగా. అనుమతి, మెసేజ్ చేయకూడని వారి లిస్ట్ ముందే ఉన్నాయి.",
+  "hi": "वह आपके कारोबार के अपने रिकॉर्ड में रहता है, बाकी कारोबारों से अलग। इजाज़त और “संपर्क नहीं करना” की लिस्ट पहले से बनी है।",
+  "kn": "ಅದು ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಸ್ವಂತ ದಾಖಲೆಗಳಲ್ಲಿ, ಉಳಿದ ವ್ಯಾಪಾರಗಳಿಂದ ಬೇರೆಯಾಗಿ ಇರುತ್ತದೆ. ಸಮ್ಮತಿ ಮತ್ತು ಕರೆ/ಮೆಸೇಜ್ ಮಾಡಬಾರದವರ ಲಿಸ್ಟ್ ಮೊದಲೇ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.6.q": {
+  "en": "Is it available now?",
+  "te": "ఇప్పుడు వాడుకోవచ్చా?",
+  "hi": "क्या यह अभी मिल रहा है?",
+  "kn": "ಇದು ಈಗ ಸಿಗುತ್ತದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.6.a": {
+  "en": "Not yet. Early access is by invitation only, and opens soon.",
+  "te": "ఇంకా లేదు. ముందే వాడే అవకాశం ఆహ్వానం ఉన్నవారికే, త్వరలో మొదలవుతుంది.",
+  "hi": "अभी नहीं। पहले इस्तेमाल का मौका सिर्फ़ बुलावे पर है, और जल्द खुलेगा।",
+  "kn": "ಇನ್ನೂ ಇಲ್ಲ. ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ ಆಹ್ವಾನ ಇದ್ದವರಿಗೆ ಮಾತ್ರ, ಬೇಗ ತೆರೆಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.7.q": {
+  "en": "What does it cost?",
+  "te": "ఖర్చు ఎంత?",
+  "hi": "इसका खर्च कितना है?",
+  "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು ಖರ್ಚಾಗುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.7.a": {
+  "en": "Pricing has not been decided yet.",
+  "te": "రేటు ఇంకా నిర్ణయించలేదు.",
+  "hi": "कीमत अभी तय नहीं हुई है।",
+  "kn": "ರೇಟ್ ಇನ್ನೂ ಫಿಕ್ಸ್ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.sections": {
+  "en": "Page sections",
+  "te": "పేజీ విభాగాలు",
+  "hi": "पन्ने के हिस्से",
+  "kn": "ಪುಟದ ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.privacy": {
+  "en": "Privacy policy (placeholder)",
+  "te": "ప్రైవసీ పాలసీ (ప్లేస్‌హోల్డర్)",
+  "hi": "प्राइवेसी पॉलिसी (प्लेसहोल्डर)",
+  "kn": "ಪ್ರೈವಸಿ ಪಾಲಿಸಿ (ಪ್ಲೇಸ್‌ಹೋಲ್ಡರ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.terms": {
+  "en": "Terms (placeholder)",
+  "te": "షరతులు (ప్లేస్‌హోల్డర్)",
+  "hi": "शर्तें (प्लेसहोल्डर)",
+  "kn": "ಷರತ್ತುಗಳು (ಪ್ಲೇಸ್‌ಹೋಲ್ಡರ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.contact": {
+  "en": "Contact (placeholder)",
+  "te": "మమ్మల్ని సంప్రదించండి (ప్లేస్‌హోల్డర్)",
+  "hi": "हमसे संपर्क करें (प्लेसहोल्डर)",
+  "kn": "ನಮ್ಮನ್ನು ಸಂಪರ್ಕಿಸಿ (ಪ್ಲೇಸ್‌ಹೋಲ್ಡರ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.copy": {
+  "en": "© {year} {brand}",
+  "te": "© {year} {brand}",
+  "hi": "© {year} {brand}",
+  "kn": "© {year} {brand}",
+  "status": {},
+  "only": []
+ },
+ "foot.note": {
+  "en": "Made-up example data is labelled wherever it appears.",
+  "te": "ఉదాహరణ కోసం చేసిన డేటా ఎక్కడ కనిపించినా అలా చెప్పే ఉంటుంది.",
+  "hi": "उदाहरण वाला डेटा जहाँ भी दिखता है, वहाँ साफ़ लिखा होता है।",
+  "kn": "ಉದಾಹರಣೆಗಾಗಿ ಮಾಡಿದ ಡೇಟಾ ಎಲ್ಲಿ ಕಂಡರೂ ಅದನ್ನು ಹಾಗೆಂದು ಬರೆದಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.title": {
+  "en": "{brand}: turn enquiries into orders",
+  "te": "{brand}: ఎంక్వైరీలను ఆర్డర్లుగా మార్చండి",
+  "hi": "{brand}: पूछताछ को ऑर्डर में बदलें",
+  "kn": "{brand}: ಎನ್‌ಕ್ವೈರಿಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.description": {
+  "en": "An AI team for Indian wholesalers, manufacturers and traders. It finds leads, researches them, drafts quotes and follow-ups and tracks orders. Every message is a draft you approve and send yourself. Early access, invitation only.",
+  "te": "హోల్‌సేల్ వ్యాపారులు, తయారీదారులు, ట్రేడర్ల కోసం AI టీమ్. లీడ్స్ వెతుకుతుంది, వివరాలు చూస్తుంది, కొటేషన్లు, ఫాలో-అప్‌లు డ్రాఫ్ట్ చేస్తుంది, ఆర్డర్లను గమనిస్తుంది. ప్రతి మెసేజ్ మీరు ఓకే చేసి, మీరే పంపే డ్రాఫ్ట్. ముందే వాడే అవకాశం, ఆహ్వానం ఉన్నవారికే.",
+  "hi": "भारत के थोक व्यापारियों, निर्माताओं और ट्रेडर्स के लिए एक AI टीम। लीड ढूँढती है, जाँच-पड़ताल करती है, कोटेशन और फ़ॉलो-अप के ड्राफ़्ट बनाती है और ऑर्डर पर नज़र रखती है। हर मैसेज एक ड्राफ़्ट है जिसे आप मंज़ूर करके खुद भेजते हैं। पहले इस्तेमाल का मौका, सिर्फ़ बुलावे पर।",
+  "kn": "ಭಾರತದ ಸಗಟು ವ್ಯಾಪಾರಿಗಳು, ತಯಾರಕರು, ಟ್ರೇಡರ್‌ಗಳಿಗಾಗಿ ಒಂದು AI ತಂಡ. ಲೀಡ್ ಹುಡುಕುತ್ತದೆ, ವಿವರ ನೋಡುತ್ತದೆ, ಕೊಟೇಶನ್ ಮತ್ತು ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಆರ್ಡರ್‌ಗಳ ಮೇಲೆ ಕಣ್ಣಿಡುತ್ತದೆ. ಪ್ರತಿ ಮೆಸೇಜ್ ನೀವು ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು ನೀವೇ ಕಳುಹಿಸುವ ಡ್ರಾಫ್ಟ್. ಮೊದಲೇ ಬಳಸುವ ಅವಕಾಶ, ಆಹ್ವಾನ ಇದ್ದವರಿಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ }
+}
