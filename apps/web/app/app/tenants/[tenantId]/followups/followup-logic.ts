@@ -12,13 +12,14 @@ import {
   CHANNEL_STOPPED_TEXT,
   DECISION_FALLBACK,
   DECISION_TEXT,
+  DUE_TEXT,
   GATE_TEXT,
   STOPPED_TEXT,
   followupSentence,
   STALE_CODES,
 } from "@/lib/api/followup-text";
 import { CHANNEL_LABELS, DRAFT_CHANNELS } from "@/lib/api/followups";
-import type { ChannelState, Decision, Draft, DraftChannel, DueItem, Gate, LeadFollowup, PolicyInput } from "@/lib/api/followups";
+import type { ChannelState, Decision, Draft, DraftChannel, DueItem, DueList, Gate, LeadFollowup, PolicyInput } from "@/lib/api/followups";
 
 const LOCAL = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})$/;
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
@@ -156,6 +157,18 @@ export function dueLine(item: Pick<DueItem, "action" | "reason_code" | "touch_nu
   if (item.action === "draft_followup") return `${base} (Touch ${item.touch_number}.)`;
   if (item.action === "wait" && item.next_eligible_at) return `${base} Earliest: ${item.next_eligible_at.slice(0, 16).replace("T", " ")} UTC.`;
   return base;
+}
+
+/** The note under a due-list page about the candidates it did not show; null when there is nothing to say. */
+export function leftOutLine(count: number): string | null {
+  if (count <= 0) return null;
+  return count === 1 ? DUE_TEXT.leftOutOne : DUE_TEXT.leftOutMany(count);
+}
+
+/** What an empty due-list page says: nothing at all when there are rows; "more follow" when this page is empty but a next page exists; otherwise that nothing is waiting. */
+export function dueEmptyLine(list: Pick<DueList, "items" | "next_cursor">): string | null {
+  if (list.items.length > 0) return null;
+  return list.next_cursor !== null ? DUE_TEXT.pageEmpty : DUE_TEXT.nothing;
 }
 
 // ----------------------------------------------------------------------------- channels (WhatsApp as a first-class channel)

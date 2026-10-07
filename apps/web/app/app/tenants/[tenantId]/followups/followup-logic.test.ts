@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import { DECISION_TEXT } from "@/lib/api/followup-text";
-import { parseDraft, parseLeadFollowup } from "@/lib/api/followups";
-import { DRAFT_JSON, FOLLOWUP_JSON } from "@/lib/api/followups-fixtures";
-import { channelStateText, channelTabs, channelsLine, decisionLine, draftAsk, draftOffers, dueLine, errorState, gateLines, indiaNowLocal, parseGapDays, parseHolidays, policyFromForm, touchTime } from "./followup-logic";
+import { parseDraft, parseDueItem, parseLeadFollowup } from "@/lib/api/followups";
+import { DRAFT_JSON, DUE_JSON, FOLLOWUP_JSON } from "@/lib/api/followups-fixtures";
+import { leftOutLine, channelStateText, channelTabs, channelsLine, decisionLine, dueEmptyLine, draftAsk, draftOffers, dueLine, errorState, gateLines, indiaNowLocal, parseGapDays, parseHolidays, policyFromForm, touchTime } from "./followup-logic";
 
 const NOW = new Date("2026-10-07T06:30:00.000Z"); // 12:00 in India
 
@@ -197,6 +197,24 @@ describe("channel states in closed words", () => {
     const states = [{ channel: "email", blocked: "consent" }, { channel: "whatsapp", blocked: null }] as const;
     expect(channelsLine([...states], "whatsapp")).toBe("E-mail: no recorded consent or address · WhatsApp: open · opens on WhatsApp");
     expect(channelsLine([], "email")).toBeNull();
+  });
+});
+
+describe("the notes of a due-list page", () => {
+  it("left out: nothing for zero (or less), one sentence for one, the number for several", () => {
+    expect(leftOutLine(0)).toBeNull();
+    expect(leftOutLine(-1)).toBeNull();
+    expect(leftOutLine(1)).toBe("1 lead on this page was left out: it cannot be contacted on any channel, or it changed while the list was made.");
+    expect(leftOutLine(2)).toBe("2 leads on this page were left out: they cannot be contacted on any channel, or they changed while the list was made.");
+    expect(leftOutLine(30)).toMatch(/^30 leads /);
+  });
+
+  it("an empty page: nothing to say when there are rows, 'more follow' when a next page exists, otherwise that nothing is waiting", () => {
+    const row = parseDueItem(DUE_JSON[0]);
+    expect(dueEmptyLine({ items: [row], next_cursor: null })).toBeNull();
+    expect(dueEmptyLine({ items: [row], next_cursor: "abc" })).toBeNull();
+    expect(dueEmptyLine({ items: [], next_cursor: "abc" })).toBe("No lead on this page needs a follow-up now. More leads follow.");
+    expect(dueEmptyLine({ items: [], next_cursor: null })).toBe("Nothing to follow up: no lead is waiting for a follow-up right now.");
   });
 });
 

@@ -149,4 +149,13 @@ export const DECISION_TEXT: Record<string, string> = {
   initial_outreach_required: "There is no first message yet: the first message is a person's. Record it, then follow-ups can start.",
   FUTURE_HISTORY: "A touch is recorded after now: wait until it has passed.",
 };
+/** The sentences of the due list's page chrome (one place; the checklist quotes them). */
+export const DUE_TEXT = {
+  hint: "Oldest first. Leads that need no follow-up (replied, limit reached, closed, opted out) are not listed.",
+  next: "Show the next leads",
+  nothing: "Nothing to follow up: no lead is waiting for a follow-up right now.",
+  pageEmpty: "No lead on this page needs a follow-up now. More leads follow.",
+  leftOutOne: "1 lead on this page was left out: it cannot be contacted on any channel, or it changed while the list was made.",
+  leftOutMany: (n: number): string => `${n} leads on this page were left out: they cannot be contacted on any channel, or they changed while the list was made.`,
+} as const;
 export const DECISION_FALLBACK = "The follow-up rules could not give an answer for this lead.";

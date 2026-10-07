@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { fetchDueList, type DueItem } from "@/lib/api/followups";
+import { fetchDueList, isDueCursor, type DueList } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
 
 import { DueView } from "./due-view";
@@ -13,10 +13,13 @@ export const metadata = { title: "Follow-ups due · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-/** /app/tenants/[tenantId]/followups: the due list. A Viewer sees nothing and nothing is asked of the API for them. */
-export default async function FollowupsPage({ params }: PageProps<"/app/tenants/[tenantId]/followups">) {
+/** /app/tenants/[tenantId]/followups: one page of the due list (`?after=` is the cursor of the previous page). A Viewer sees nothing and nothing is asked of the API for them. */
+export default async function FollowupsPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/followups">) {
   const user = await requireUser();
   const { tenantId } = await params;
+  const query = await searchParams;
+  const asked = Array.isArray(query.after) ? query.after[0] : query.after;
+  const after = isDueCursor(asked) ? asked : undefined; // a cursor that is not ours is ignored: the first page
   if (!isCanonicalUuid(tenantId)) notFound();
 
   let tenant;
@@ -29,9 +32,9 @@ export default async function FollowupsPage({ params }: PageProps<"/app/tenants/
   }
   if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShown tenantId={tenantId} tenantName={tenant.name} title="Follow-ups due" />;
 
-  let items: DueItem[];
+  let list: DueList;
   try {
-    items = await fetchDueList(user.accessToken, tenantId);
+    list = await fetchDueList(user.accessToken, tenantId, after);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     return <ApiDown />;
@@ -45,7 +48,7 @@ export default async function FollowupsPage({ params }: PageProps<"/app/tenants/
         Your role: <strong>{tenant.role}</strong>
       </p>
       <Notice />
-      <DueView tenantId={tenantId} items={items} />
+      <DueView tenantId={tenantId} list={list} />
     </main>
   );
 }

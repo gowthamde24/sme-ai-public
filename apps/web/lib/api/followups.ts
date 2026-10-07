@@ -172,6 +172,13 @@ export interface DueItem {
   /** The channel to open first; "email" when the API predates the field (it judged e-mail only). */
   default_channel: DraftChannel;
 }
+/** One page of the due list. `next_cursor` is the opaque string for the next page (null at the end); `left_out` is how many candidates of THIS page were not shown (stopped since, blocked on every channel, unreadable). */
+export interface DueList {
+  items: DueItem[];
+  next_cursor: string | null;
+  policy_in_force: boolean;
+  left_out: number;
+}
 export interface QuestionDraft {
   id: string;
   requirement_id: string;
@@ -362,6 +369,21 @@ export function parseDueItem(json: unknown): DueItem {
 }
 export const parseDueItems = (json: unknown): DueItem[] => list(json, "due list").map(parseDueItem);
 
+/** A cursor is what the API made: base64url text, at most 200 characters. Anything else never reaches a path. */
+const CURSOR = /^[A-Za-z0-9_-]{1,200}$/;
+export const isDueCursor = (value: unknown): value is string => typeof value === "string" && CURSOR.test(value);
+
+/** The page the API sends. A BARE LIST (an older API) is read as one page with nothing after it. Strict on everything present. */
+export function parseDueList(json: unknown): DueList {
+  if (Array.isArray(json)) return { items: parseDueItems(json), next_cursor: null, policy_in_force: true, left_out: 0 };
+  const r = rec(json, "due list");
+  const cursor = r.next_cursor;
+  if (cursor !== null && !isDueCursor(cursor)) bad("next_cursor");
+  const leftOut = int(r, "left_out");
+  if (leftOut < 0) bad("left_out");
+  return { items: list(r.items, "items").map(parseDueItem), next_cursor: cursor as string | null, policy_in_force: bool(r, "policy_in_force"), left_out: leftOut };
+}
+
 export function parseQuestionDraft(json: unknown): QuestionDraft {
   const r = rec(json, "question draft");
   return {
@@ -500,9 +522,12 @@ export async function recordSent(accessToken: string, tenantId: string, draftId:
   return parseSentResult(await apiRequest(`${base(tenantId)}/followup-drafts/${draftId}/sent`, accessToken, post(body)));
 }
 
-export async function fetchDueList(accessToken: string, tenantId: string): Promise<DueItem[]> {
+/** One page of the due list; `after` is the `next_cursor` of the page before (a malformed one never reaches a path). */
+export async function fetchDueList(accessToken: string, tenantId: string, after?: string): Promise<DueList> {
   checked(tenantId);
-  return parseDueItems(await apiRequest(`${base(tenantId)}/followups/due`, accessToken));
+  if (after !== undefined && !isDueCursor(after)) throw new ApiContractError("Unexpected cursor for the follow-up list.");
+  const query = after === undefined ? "" : `?after=${after}`;
+  return parseDueList(await apiRequest(`${base(tenantId)}/followups/due${query}`, accessToken));
 }
 
 export async function fetchQuestionDrafts(accessToken: string, tenantId: string, requirementId: string, activeOnly = true): Promise<QuestionDraft[]> {
