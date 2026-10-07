@@ -44,7 +44,12 @@ def refusing(
     ("code", "detail", "klass", "reason"),
     [
         ("SM220", "contact", errors.ContactBlockedError, "contact"),
-        ("SM220", "erased_key", errors.ContactBlockedError, "erased_key"),
+        (
+            "SM220",
+            "erased_key",
+            errors.ContactBlockedError,
+            "key",
+        ),  # hidden from a client: shown as key
         ("SM220", CANARY, errors.ContactBlockedError, "other"),
         ("SM221", CANARY, errors.NoSuppressionKeyError, None),
         ("SM222", None, errors.NoFollowupPolicyError, None),
@@ -66,6 +71,7 @@ def test_the_family_is_classified_by_sqlstate_and_a_closed_detail_only(
         repo(refusing(400, code, detail or "")).record_touch("tok", {})
     assert caught.value.reason == reason  # type: ignore[attr-defined]
     assert CANARY not in str(caught.value) and CANARY not in repr(caught.value)
+    assert (caught.value.internal_reason == "erased_key") == (detail == "erased_key")  # type: ignore[attr-defined]
 
 
 @pytest.mark.parametrize(
@@ -265,3 +271,17 @@ def test_the_recent_outbound_leads_are_distinct_newest_first_and_capped() -> Non
     assert repo(lambda r: httpx.Response(200, json=rows)).recent_outbound_leads(
         "tok", TENANT, limit=1
     ) == [a]
+
+
+def test_the_server_still_distinguishes_an_erased_key_in_the_log_and_the_typed_exception(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    import logging
+
+    caplog.set_level(logging.INFO, logger="app.followups.repository")
+    with pytest.raises(errors.ContactBlockedError) as caught:
+        repo(refusing(400, "SM220", "erased_key")).create_draft("tok", {})
+    assert caught.value.reason == "key" and caught.value.internal_reason == "erased_key"
+    lines = [r.getMessage() for r in caplog.records if r.name == "app.followups.repository"]
+    assert any("sqlstate=SM220" in line and "reason=erased_key" in line for line in lines), lines
+    assert all(CANARY not in line for line in lines)

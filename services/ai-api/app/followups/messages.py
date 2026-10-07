@@ -8,8 +8,7 @@ FOLLOWUP_REFUSALS: dict[str, tuple[int, str, dict[str, str]]] = {
         "contact_blocked",
         {
             "contact": "This person has asked not to be contacted.",
-            "key": "This e-mail address or phone number is on the do-not-contact list.",
-            "erased_key": "This e-mail address or phone number belongs to a person who was erased by right and must not be contacted.",
+            "key": "This e-mail address or phone number is on the do-not-contact list.",  # also what a client is told when the database says erased_key (errors.CLIENT_REASON)
             "erased": "This contact has been erased: nothing new can be recorded about them.",
             "consent": "There is no recorded consent for this channel, or no address for it.",
             "other": "This contact cannot be contacted.",

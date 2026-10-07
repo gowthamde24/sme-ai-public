@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from typing import Any, Protocol
 
 import httpx
@@ -143,8 +143,11 @@ class PostgrestFollowupsRepository:
         if code in SM_ERRORS:
             detail = body.get("details") if isinstance(body, dict) else None
             error = refusal(code, detail)
+            # the SERVER's log names what the database said (erased_key included); the client is only ever told error.reason
             logger.info(
-                "followups data layer refused: sqlstate=%s reason=%s", code, error.reason or "-"
+                "followups data layer refused: sqlstate=%s reason=%s",
+                code,
+                error.internal_reason or "-",
             )
             return error
         if code == "SM306":
@@ -263,17 +266,7 @@ class PostgrestFollowupsRepository:
                 "limit": "1100",
             },
         )
-        today = datetime.now(IST).date().isoformat()
-        policy = self._one(
-            "/followup_policy_versions",
-            token,
-            {
-                "select": POLICY_COLUMNS,
-                "tenant_id": tenant,
-                "effective_from": f"lte.{today}",
-                "order": "effective_from.desc,version_no.desc",
-            },
-        )
+        policy = self.active_policy(token, tenant_id, datetime.now(IST).date())
         return LeadSnapshot(
             lead_id=str(lead["id"]),
             status=str(lead["status"]),
@@ -289,6 +282,19 @@ class PostgrestFollowupsRepository:
                 for t in touches
             ),
             policy=None if policy is None else _policy(policy),
+        )
+
+    def active_policy(self, token: str, tenant_id: uuid.UUID, on: date) -> dict[str, Any] | None:
+        """The policy version in force on a date: the latest `effective_from` on or before it, the higher version number winning a tie (the rule of app.followup_active_policy_version)."""
+        return self._one(
+            "/followup_policy_versions",
+            token,
+            {
+                "select": POLICY_COLUMNS,
+                "tenant_id": f"eq.{tenant_id}",
+                "effective_from": f"lte.{on.isoformat()}",
+                "order": "effective_from.desc,version_no.desc",
+            },
         )
 
     def list_policies(

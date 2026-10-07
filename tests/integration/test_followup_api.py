@@ -13,6 +13,7 @@ All data is synthetic."""
 
 from __future__ import annotations
 
+import logging
 import re
 import uuid
 from datetime import UTC, datetime, timedelta
@@ -219,7 +220,9 @@ def test_sales_discards_her_own_draft_but_not_another_persons(fw: FollowWorld) -
 
 
 # ============================================================================ every SQLSTATE and reason that can be reached through the API
-def test_sm220_every_reason_through_the_api(fw: FollowWorld) -> None:
+def test_sm220_every_reason_through_the_api(
+    fw: FollowWorld, caplog: pytest.LogCaptureFixture
+) -> None:
     # contact: the contact asked not to be contacted
     suppressed = fw.due_lead("s220c")
     assert fw.suppress(suppressed).status_code == 200
@@ -236,14 +239,33 @@ def test_sm220_every_reason_through_the_api(fw: FollowWorld) -> None:
     a = fw.due_lead("s220a", phone_number=shared)
     b = fw.lead("s220b", phone_number=shared)
     assert fw.suppress(b).status_code == 200
-    refused(fw.draft("sales", a, "whatsapp"), "SM220", "key")
+    plain = fw.draft("sales", a, "whatsapp")
+    refused(plain, "SM220", "key")
     assert fw.draft("sales", a, "email").status_code == 201  # the e-mail key is another key
     # erased_key: a contact that shared the number was ERASED by right
     shared2 = "+00 9" + f"{uuid.uuid4().int % 10**9:09d}"
     c = fw.due_lead("s220c2", phone_number=shared2)
     d = fw.lead("s220d", phone_number=shared2)
     erase(fw, d)
-    refused(fw.draft("sales", c, "whatsapp"), "SM220", "erased_key")
+    caplog.set_level(logging.INFO, logger="app.followups.repository")
+    hidden = fw.draft("sales", c, "whatsapp")
+    refused(
+        hidden, "SM220", "key"
+    )  # PRIVACY: the client is told `key`, never that another person was erased by right
+    assert (
+        not re.search(r"erased[\s_-]*key", hidden.text, re.I)
+        and "by right" not in hidden.text.lower()
+    )
+    assert any(
+        "sqlstate=SM220" in r.getMessage() and "reason=erased_key" in r.getMessage()
+        for r in caplog.records
+    ), "the SERVER still distinguishes it"
+    assert (
+        fw.call("GET", f"/leads/{c.id}/followup?channel=whatsapp", "sales").json()["gate"][
+            "blocked"
+        ]
+        == "key"
+    )
     # erased: the contact itself is erased: not even a reply is recorded (erasure wins)
     gone = fw.due_lead("s220e")
     erase(fw, gone)

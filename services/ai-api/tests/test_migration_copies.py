@@ -413,3 +413,40 @@ def test_the_seed_can_skip_the_price_list_and_changes_exactly_one_line() -> None
     assert [line[1:].strip() for line in diff if line[0] == "+"] == [
         "if not exists (select 1 from public.price_list_versions v where v.tenant_id = v_tenant) and coalesce(current_setting('app.seed_skip_price_list', true), '') <> 'on' then"
     ]
+
+
+# ---------------------------------------------------------------------------------------------- T010 part 2, commit 2b: the blocker follows the engine's order
+BLOCKER_FN = "app.followup_blocker_inner"
+BLOCKER_ORDER = "20261025090000_t010_part2_blocker_order.sql"
+
+
+def _code_lines(text: str) -> list[str]:
+    """The statements of a function body, comments and blank lines dropped, whitespace stripped."""
+    return [ln.strip() for ln in text.split("\n") if ln.strip() and not ln.strip().startswith("--")]
+
+
+def test_the_blocker_order_copy_is_the_last_definition_and_only_moves_one_block() -> None:
+    defs = block_definitions(BLOCKER_FN)
+    assert defs[-1][0] == BLOCKER_ORDER, (
+        f"{BLOCKER_FN} is redefined after {BLOCKER_ORDER} ({defs[-1][0]}): re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < BLOCKER_ORDER]
+    assert earlier
+    old, new = _code_lines(earlier[-1][1]), _code_lines(defs[-1][1])
+    # the same statements, reordered: nothing added, nothing dropped (the `create function` line becomes `create or replace function`)
+    assert sorted(old[1:]) == sorted(new[1:]) and old[0] != new[0]
+    assert old != new
+    # and the moved block is the future-history check, now BEFORE the first stop flag
+    moved = "return 'future_history';"
+    assert old.index(moved) > old.index("return 'suppressed';")
+    assert new.index(moved) < new.index("return 'suppressed';")
+    assert (
+        new.index("return 'suppressed';")
+        < new.index("return 'replied';")
+        < new.index("return 'closed';")
+    )
+    assert (
+        new.index("return 'closed';")
+        < new.index("return 'max_touches';")
+        < new.index("return 'initial_outreach';")
+    )

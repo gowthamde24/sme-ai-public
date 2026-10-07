@@ -6,8 +6,8 @@ from __future__ import annotations
 
 from app.tenancy.repository import RepositoryError
 
-# the closed lists of reasons per SQLSTATE (the migration's header is the other half of this contract)
-REASONS: dict[str, tuple[str, ...]] = {
+# the closed lists of reasons the DATABASE may name per SQLSTATE (the migration's header is the other half of this contract)
+DB_REASONS: dict[str, tuple[str, ...]] = {
     "SM220": ("contact", "key", "erased_key", "erased", "consent"),
     "SM223": ("exists", "not_draft", "not_approved", "closed"),
     "SM225": (
@@ -28,15 +28,27 @@ REASONS: dict[str, tuple[str, ...]] = {
         "lead_archived",
     ),
 }
+# PRIVACY (owner review of commit 2, decision 3 of ADR 0022): a client must never learn that ANOTHER person was erased by right and shared this identifier. The database names it `erased_key`
+# for the server's own use (the Owner's lift screen, the log line); the client is told `key`, with the sentence of `key`. The typed exception keeps both values.
+CLIENT_REASON: dict[tuple[str, str], str] = {("SM220", "erased_key"): "key"}
+# the reasons a CLIENT can ever see (what messages.py must have a sentence for)
+REASONS: dict[str, tuple[str, ...]] = {
+    code: tuple(dict.fromkeys(CLIENT_REASON.get((code, r), r) for r in reasons))
+    for code, reasons in DB_REASONS.items()
+}
 
 
 class FollowupRefusal(RepositoryError):
-    """A refusal of the follow-up family. `sqlstate` is the code; `reason` is one of REASONS[sqlstate] or None (the codes that carry none)."""
+    """A refusal of the follow-up family. `sqlstate` is the code; `reason` is what a CLIENT may be told (one of REASONS[sqlstate] or None, the codes that carry none); `internal_reason` is what the
+    database said (DB_REASONS), for the server's own log and logic: it can differ from `reason` only where CLIENT_REASON hides it (erased_key -> key)."""
 
-    def __init__(self, sqlstate: str, reason: str | None = None) -> None:
+    def __init__(
+        self, sqlstate: str, reason: str | None = None, internal_reason: str | None = None
+    ) -> None:
         super().__init__(sqlstate)
         self.sqlstate = sqlstate
         self.reason = reason
+        self.internal_reason = internal_reason if internal_reason is not None else reason
 
 
 class ContactBlockedError(FollowupRefusal):
@@ -94,10 +106,11 @@ SM_ERRORS: dict[str, type[FollowupRefusal]] = {
 
 
 def refusal(sqlstate: str, detail: object) -> FollowupRefusal:
-    """The exception for a SM22x code; the detail is kept only when it is on the closed list for that code (else `other` for the codes that carry one)."""
+    """The exception for a SM22x code; the detail is kept only when it is on the database's closed list for that code (else `other` for the codes that carry one). The client-facing reason hides
+    `erased_key` as `key`; the exception remembers the real one in `internal_reason`."""
     cls = SM_ERRORS[sqlstate]
-    allowed = REASONS.get(sqlstate)
+    allowed = DB_REASONS.get(sqlstate)
     if allowed is None:
         return cls(sqlstate)
-    reason = str(detail) if isinstance(detail, str) and detail in allowed else "other"
-    return cls(sqlstate, reason)
+    internal = str(detail) if isinstance(detail, str) and detail in allowed else "other"
+    return cls(sqlstate, CLIENT_REASON.get((sqlstate, internal), internal), internal)

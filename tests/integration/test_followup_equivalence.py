@@ -9,10 +9,10 @@
           without a contact, same-second ties, microsecond order, three channels, every touch count) and several policies, the request built in Python from rows READ THROUGH PostgREST with the
           caller's token (the API's own reading code) must equal, key for key, `app.followup_build`; and the real engine on that request must agree with `app.followup_blocker` on the database's.
 
-KNOWN DIVERGENCE (found by this gate, reported to the owner, NOT fixed here: a fix is a new migration): the engine VALIDATES before it applies any rule, so a history entry after as_of is a REJECTION
-(FUTURE_HISTORY) even when a suppression flag, a reply or a close would also stop the lead; `app.followup_blocker` checks the flags, a reply and a close BEFORE the future-history rule and names those
-reasons instead. Both say "not due" (the due-ness always agrees); only the NAME of the reason differs, and only for a lead with a history entry after as_of AND one of those stops. It is
-pinned below as a strict expected failure, so the day it is fixed that test fails and must be removed."""
+HISTORY. The first version of this gate found ONE divergence (commit 2): the engine VALIDATES before it applies any rule, so a history entry after as_of is a rejection (FUTURE_HISTORY) even when a stop
+flag, a reply or a close would also stop the lead, while `app.followup_blocker` named the stop. The owner decided the pinned engine is the contract; migration 20261025090000 (commit 2b) puts the
+database's checks in the engine's order, and this gate now requires agreement on due-ness AND on the reason in EVERY case.
+"""
 
 # ruff: noqa: E501, S608, S311
 
@@ -409,41 +409,26 @@ def test_the_engine_and_the_database_agree_on_due_ness_in_every_case(
     )
 
 
-def test_the_engine_and_the_database_name_the_same_reason_in_every_case_without_a_future_touch_and_a_stop(
+def test_the_engine_and_the_database_name_the_same_reason_in_every_case(
     evaluated: list[tuple[str, dict[str, Any], str | None, str]],
 ) -> None:
-    cases = [
-        (label, e, d) for label, req, e, d in evaluated if not (has_future(req) and stops(req))
-    ]
-    assert len(cases) >= 1800
-    differing = [(label, e, "-" if d == "-" else d) for label, e, d in cases if (e or "-") != d]
+    assert len(evaluated) >= 1900
+    differing = [(label, e, d) for label, _, e, d in evaluated if (e or "-") != d]
     assert differing == [], (
         f"{len(differing)} case(s) where the engine and the database name different reasons; first: {differing[:5]}"
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="KNOWN DIVERGENCE (ADR 0022): the engine rejects a future touch BEFORE any stop rule; app.followup_blocker names the stop first. Due-ness agrees; only the reason's NAME differs. Fix = a new migration (owner decision).",
-)
-def test_the_reason_for_a_lead_that_has_a_future_touch_and_a_stop(
+def test_a_future_touch_beats_every_stop_in_both_the_engine_and_the_database(
     evaluated: list[tuple[str, dict[str, Any], str | None, str]],
 ) -> None:
-    cases = [(label, e, d) for label, req, e, d in evaluated if has_future(req) and stops(req)]
-    assert cases, "the grid must contain the combination"
-    assert [(label, e, d) for label, e, d in cases if (e or "-") != d] == []
-
-
-def test_the_divergence_is_only_about_names_never_about_due_ness(
-    evaluated: list[tuple[str, dict[str, Any], str | None, str]],
-) -> None:
-    for label, req, e, d in evaluated:
-        if has_future(req) and stops(req):
-            assert e == "future_history" and d in ("suppressed", "replied", "closed"), (
-                label,
-                e,
-                d,
-            )  # both say "not due"
+    both_cases = [(label, e, d) for label, req, e, d in evaluated if has_future(req) and stops(req)]
+    assert len(both_cases) >= 100, (
+        "the grid must contain the combination (a stop AND a history entry after as_of)"
+    )
+    assert all(e == d == "future_history" for _, e, d in both_cases), [
+        c for c in both_cases if not c[1] == c[2] == "future_history"
+    ][:5]
 
 
 def test_the_database_fails_closed_on_requests_the_engine_rejects_for_other_reasons() -> None:
@@ -664,19 +649,11 @@ def test_the_python_request_equals_the_databases_for_every_lead_policy_and_time(
             )
             assert cadence_port.canonical_json(ours) == cadence_port.canonical_json(theirs)
             expected = engine_reason(cadence_port.run_decide(ours))
-            future_and_stop = has_future(ours) and stops(ours)
-            if expected is None or not future_and_stop:
-                assert (expected or "-") == db_reason, (
-                    f"policy {number} lead {lead.label} as_of {utc_text(as_of)}: engine says {expected}, the database says {db_reason}"
-                )
-            else:
-                assert expected == "future_history" and db_reason != "-", (
-                    lead.label,
-                    expected,
-                    db_reason,
-                )  # the known naming divergence: both not due
+            assert (expected or "-") == db_reason, (
+                f"policy {number} lead {lead.label} as_of {utc_text(as_of)}: engine says {expected}, the database says {db_reason}"
+            )
             compared += 1
-    assert compared == len(POLICIES) * len(leads) * len(AS_OFS) and compared >= 700
+    assert compared == len(POLICIES) * len(leads) * len(AS_OFS) and compared == 720
 
 
 cache: dict[str, LeadSnapshot] = {}

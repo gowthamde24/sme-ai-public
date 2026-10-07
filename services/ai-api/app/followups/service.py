@@ -52,21 +52,32 @@ def _cadence_failure(exc: Exception) -> ApiError:
     )
 
 
-def decide(snapshot: LeadSnapshot, now: datetime) -> tuple[dict[str, Any], dict[str, Any]] | None:
-    """(request, engine result) for the lead as of `now`, or None when no policy is in force. Raises ApiError when the engine cannot run."""
+def run_engine(
+    snapshot: LeadSnapshot, now: datetime
+) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """(request, engine result) for the lead as of `now`, or None when no policy is in force. The engine's own failures (CadenceUnavailable, CadenceInputError, CadenceError) are NOT caught here:
+    the caller decides what a failure means (a page shows no decision; a draft fails closed)."""
     try:
         request = build_request(snapshot, as_of=now)
     except FollowupRequestError as exc:
         if exc.code == "no_policy":
             return None
         raise ApiError(422, "validation_error", "Invalid input.") from None
+    return request, cadence_port.run_decide(request)
+
+
+ENGINE_FAILURES = (
+    cadence_port.CadenceUnavailable,
+    cadence_port.CadenceInputError,
+    cadence_port.CadenceError,
+)
+
+
+def decide(snapshot: LeadSnapshot, now: datetime) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    """run_engine, FAIL CLOSED: an engine that cannot run is an ApiError (503 unavailable, 502 failed) and nothing is recorded. Used by creating a draft and by the due list."""
     try:
-        return request, cadence_port.run_decide(request)
-    except (
-        cadence_port.CadenceUnavailable,
-        cadence_port.CadenceInputError,
-        cadence_port.CadenceError,
-    ) as exc:
+        return run_engine(snapshot, now)
+    except ENGINE_FAILURES as exc:
         raise _cadence_failure(exc) from None
 
 
@@ -107,7 +118,10 @@ def lead_followup(
     snapshot = repo.lead_snapshot(token, tenant, lead_id)
     if snapshot is None:
         return None
-    ran = decide(snapshot, now or datetime.now(UTC))
+    try:
+        ran = run_engine(snapshot, now or datetime.now(UTC))
+    except ENGINE_FAILURES:
+        ran = None  # the page still shows the gate, the touches and the drafts; it just has no decision (creating a draft stays fail-closed)
     gate = repo.gate(token, lead_id, channel)
     return LeadFollowupOut(
         lead_id=lead_id,

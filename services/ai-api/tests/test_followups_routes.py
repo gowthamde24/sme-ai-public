@@ -684,3 +684,93 @@ def test_no_follow_up_module_imports_a_mail_or_messaging_client_and_only_the_rep
         if path.name != "repository.py":
             assert not http.search(text), path.name
     assert not (package.parent / "followups" / "__init__.py").read_text().strip()
+
+
+# ----------------------------------------------------------------------------- privacy: a client never learns that another person was erased by right
+def test_an_erased_key_is_shown_to_a_client_as_a_plain_key_and_the_server_still_knows(
+    w: World,
+) -> None:
+    w.f.raise_next = errors.refusal("SM220", "erased_key")
+    r = w.call("POST", f"/leads/{LEAD}/followup-drafts", DRAFT_BODY, "a_sales")
+    plain = FOLLOWUP_REFUSALS["SM220"][2]["key"]
+    assert r.status_code == 409 and r.json()["error"] == {
+        "code": "contact_blocked",
+        "message": plain,
+        "reason": "key",
+    }
+    assert (
+        not re.search(r"erased[\s_-]*key", r.text, re.I) and "erased by right" not in r.text.lower()
+    )
+    # the same answer as a plain suppressed key: indistinguishable to the client
+    w.f.raise_next = errors.refusal("SM220", "key")
+    assert (
+        w.call("POST", f"/leads/{LEAD}/followup-drafts", DRAFT_BODY, "a_sales").json() == r.json()
+    )
+    assert (
+        errors.refusal("SM220", "erased_key").internal_reason == "erased_key"
+    )  # the typed exception keeps it for the server
+    assert (
+        errors.refusal("SM220", "erased").reason == "erased"
+    )  # the contact ITSELF being erased is not hidden: it is about this lead's own contact
+
+
+def test_no_sentence_a_client_can_see_mentions_an_erasure_by_right_or_an_erased_key() -> None:
+    for sqlstate, (_, _, texts) in FOLLOWUP_REFUSALS.items():
+        assert "erased_key" not in texts, sqlstate
+        for reason, text in texts.items():
+            assert "by right" not in text.lower() and not re.search(
+                r"erased[\s_-]*key", text, re.I
+            ), (sqlstate, reason)
+    assert (
+        "erased_key" not in errors.REASONS["SM220"] and "erased_key" in errors.DB_REASONS["SM220"]
+    )
+
+
+# ----------------------------------------------------------------------------- the lead page survives an engine that cannot run; creating a draft does not
+@pytest.mark.parametrize(
+    "failure",
+    [cadence_port.CadenceUnavailable, cadence_port.CadenceError, cadence_port.CadenceInputError],
+)
+def test_the_lead_page_shows_everything_but_a_decision_when_the_engine_cannot_run(
+    w: World, monkeypatch: pytest.MonkeyPatch, failure: type[Exception]
+) -> None:
+    w.f.drafts[DRAFT] = draft_row()
+    w.f.gate_result = {"blocked": "key", "stopped": None, "policy_in_force": True}
+
+    def refuse(request: Any) -> Any:
+        raise failure
+
+    monkeypatch.setattr(cadence_port, "run_decide", refuse)
+    r = w.call("GET", f"/leads/{LEAD}/followup", None, "a_sales")
+    assert r.status_code == 200, r.text
+    page = r.json()
+    assert page["decision"] is None
+    assert (
+        page["gate"]["blocked"] == "key"
+        and [d["id"] for d in page["drafts"]] == [str(DRAFT)]
+        and page["policy_version_id"] == str(POLICY)
+    )
+    assert "touches" in page
+
+
+@pytest.mark.parametrize(
+    ("failure", "status", "name"),
+    [
+        (cadence_port.CadenceUnavailable, 503, "followup_cadence_unavailable"),
+        (cadence_port.CadenceError, 502, "followup_cadence_failed"),
+        (cadence_port.CadenceInputError, 502, "followup_cadence_failed"),
+    ],
+)
+def test_creating_a_draft_stays_fail_closed_when_the_engine_cannot_run(
+    w: World, monkeypatch: pytest.MonkeyPatch, failure: type[Exception], status: int, name: str
+) -> None:
+    def refuse(request: Any) -> Any:
+        raise failure
+
+    monkeypatch.setattr(cadence_port, "run_decide", refuse)
+    r = w.call("POST", f"/leads/{LEAD}/followup-drafts", DRAFT_BODY, "a_sales")
+    assert r.status_code == status and code(r) == name
+    assert w.f.sent("create_draft") == []
+    assert (
+        w.call("GET", "/followups/due", None, "a_sales").status_code == status
+    )  # the due list is fail-closed too
