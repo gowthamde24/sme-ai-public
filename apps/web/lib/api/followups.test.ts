@@ -26,12 +26,15 @@ import {
   syncQuestionDrafts,
 } from "./followups";
 import {
+  CHANNELS_OPEN_JSON,
   DECISION_JSON,
   DRAFT,
   DRAFT_JSON,
   DRAFT_RESULT_JSON,
   DUE_JSON,
+  DUE_OLD_JSON,
   FOLLOWUP_JSON,
+  FOLLOWUP_OLD_JSON,
   HASH,
   LEAD,
   POLICY,
@@ -207,6 +210,61 @@ describe("parsing: a body that does not match the contract is an error, never re
     ["a question status outside the list", () => parseQuestionDraft({ ...QUESTION_JSON, status: "sent" })],
     ["a policy whose weekdays are text", () => parsePolicyVersion({ ...POLICY_JSON, allowed_weekdays: ["Monday"] })],
   ])("%s", (_name, run) => expect(run).toThrow(ApiContractError));
+});
+
+describe("the channel fields (WhatsApp as a first-class channel)", () => {
+  it("keeps what the API sent: the state of each channel, the default and the channel of the open draft", () => {
+    const blocked = [{ channel: "email", blocked: "consent" }, { channel: "whatsapp", blocked: null }];
+    const page = parseLeadFollowup({ ...FOLLOWUP_JSON, channel: "whatsapp", default_channel: "whatsapp", channels: blocked });
+    expect(page.channel).toBe("whatsapp");
+    expect(page.default_channel).toBe("whatsapp");
+    expect(page.channels).toEqual(blocked);
+    const [row] = parseDueItems([{ ...DUE_JSON[0], open_draft_id: DRAFT, open_draft_channel: "whatsapp", channels: blocked, default_channel: "whatsapp" }]);
+    expect(row).toMatchObject({ open_draft_id: DRAFT, open_draft_channel: "whatsapp", default_channel: "whatsapp", channels: blocked });
+    expect(parseDueItems(DUE_JSON)[0]).toMatchObject({ open_draft_channel: null, default_channel: "email", channels: CHANNELS_OPEN_JSON });
+  });
+
+  it("a response WITHOUT the new fields (an older API) still parses, with explicit defaults", () => {
+    expect("channels" in FOLLOWUP_OLD_JSON || "default_channel" in FOLLOWUP_OLD_JSON).toBe(false);
+    expect(DUE_OLD_JSON.every((row) => !("channels" in row) && !("default_channel" in row) && !("open_draft_channel" in row))).toBe(true);
+    const page = parseLeadFollowup(FOLLOWUP_OLD_JSON);
+    expect(page.channels).toEqual([]);
+    expect(page.default_channel).toBe(page.channel); // the channel the API answered for
+    expect(parseLeadFollowup({ ...FOLLOWUP_OLD_JSON, channel: "whatsapp" }).default_channel).toBe("whatsapp");
+    expect(page.drafts[0].state_hash).toBe(HASH); // nothing else changed
+    const [row] = parseDueItems(DUE_OLD_JSON);
+    expect(row).toMatchObject({ channels: [], default_channel: "email", open_draft_channel: null, open_draft_id: null }); // an older API judged e-mail only
+  });
+
+  it("the fields are not mixed up: one new field absent, the others kept", () => {
+    expect(parseLeadFollowup({ ...FOLLOWUP_JSON, channel: "whatsapp", default_channel: undefined }).default_channel).toBe("whatsapp");
+    expect(parseLeadFollowup({ ...FOLLOWUP_JSON, channels: undefined }).channels).toEqual([]);
+    expect(parseDueItems([{ ...DUE_JSON[0], open_draft_channel: undefined }])[0].channels).toEqual(CHANNELS_OPEN_JSON);
+  });
+
+  it.each([
+    ["a default channel outside the list", () => parseLeadFollowup({ ...FOLLOWUP_JSON, default_channel: "sms" })],
+    ["a default channel that is null", () => parseLeadFollowup({ ...FOLLOWUP_JSON, default_channel: null })],
+    ["a phone call as a draft channel", () => parseLeadFollowup({ ...FOLLOWUP_JSON, default_channel: "phone" })],
+    ["channels that are not a list", () => parseLeadFollowup({ ...FOLLOWUP_JSON, channels: {} })],
+    ["channels that are null", () => parseLeadFollowup({ ...FOLLOWUP_JSON, channels: null })],
+    ["a channel state outside the list", () => parseLeadFollowup({ ...FOLLOWUP_JSON, channels: [{ channel: "sms", blocked: null }] })],
+    ["a channel state without its blocked word", () => parseLeadFollowup({ ...FOLLOWUP_JSON, channels: [{ channel: "email" }] })],
+    ["a blocked word that is a number", () => parseLeadFollowup({ ...FOLLOWUP_JSON, channels: [{ channel: "email", blocked: 5 }] })],
+    ["the same channel twice", () => parseLeadFollowup({ ...FOLLOWUP_JSON, channels: [{ channel: "email", blocked: null }, { channel: "email", blocked: "key" }] })],
+    ["a due row with a default channel outside the list", () => parseDueItems([{ ...DUE_JSON[0], default_channel: "sms" }])],
+    ["a due row with an open-draft channel outside the list", () => parseDueItems([{ ...DUE_JSON[0], open_draft_channel: "phone" }])],
+    ["a due row with channels that are text", () => parseDueItems([{ ...DUE_JSON[0], channels: "email" }])],
+  ])("%s is an error", (_name, run) => expect(run).toThrow(ApiContractError));
+
+  it("an unset channel leaves the choice to the API; a stated one is sent", async () => {
+    apiRequest.mockResolvedValue(FOLLOWUP_JSON);
+    await fetchLeadFollowup("tok", TENANT, LEAD);
+    expect(call()[0]).toBe(`/v1/tenants/${TENANT}/leads/${LEAD}/followup`);
+    apiRequest.mockClear();
+    await fetchLeadFollowup("tok", TENANT, LEAD, "email");
+    expect(call()[0]).toBe(`/v1/tenants/${TENANT}/leads/${LEAD}/followup?channel=email`);
+  });
 });
 
 describe("the answer for a lead the database has stopped", () => {
