@@ -69,6 +69,8 @@ make eval-live   # OPT-IN, never in make check: the live-capable evals against t
 make smoke-fetch # OPT-IN, never in make check: fetches example.com / example.org through the real guarded fetcher (T007 M1); no model, no key, no cost
 make rehearse-prepare-click # OPT-IN: the rehearsal up to approved quotes only, for the owner's by-hand click count (docs/rehearsal-click-checklist.md)
 make rehearse-thin-slice # OPT-IN, never in make check: the synthetic CSV-to-closed_paid rehearsal through the API on the local stack (run make db-reset first); writes rehearsal-report.md
+make rehearse-prepare-followups # OPT-IN: a NEW synthetic follow-up workspace for the owner to click through (docs/rehearsal-followups-checklist.md); no db-reset needed
+make rehearse-followups # OPT-IN, never in make check: the headless follow-up journey and every refusal through the API; writes rehearsal-followups-report.md
 make dev-api     # FastAPI on :8000
 ```
 

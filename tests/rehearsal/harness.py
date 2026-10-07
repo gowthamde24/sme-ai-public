@@ -35,9 +35,13 @@ NAMESPACE = uuid.UUID(
 )  # fixed: the same names give the same ids on every run
 
 
+ID_SCOPE = ""  # empty for the thin-slice rehearsal (the same ids on every run); the follow-up rehearsal sets one tag per run, so each run is a new workspace with new ids
+
+
 def rid(*parts: object) -> str:
     """A deterministic id for a thing the driver creates ("enquiry", "E1"): a repeat run sends the very same ids, so every write is a retry."""
-    return str(uuid.uuid5(NAMESPACE, "/".join(str(p) for p in parts)))
+    scoped = (ID_SCOPE, *parts) if ID_SCOPE else parts
+    return str(uuid.uuid5(NAMESPACE, "/".join(str(p) for p in scoped)))
 
 
 # ============================================================================ no network but the local stack

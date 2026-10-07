@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data rehearse-thin-slice rehearse-prepare-click dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -119,6 +119,14 @@ rehearse-thin-slice:
 # The same rehearsal up to APPROVED QUOTES only (no order is started): the owner then clicks the orders by hand in the browser (docs/rehearsal-click-checklist.md). Run `make db-reset` first.
 rehearse-prepare-click:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/drive.py --until=quotes
+
+# T010 part 2 (commit 4): the follow-up rehearsal on the local stack. Every run makes a NEW synthetic workspace (no db-reset needed). The first runs the whole journey headless and asserts every step
+# and refusal (writes rehearsal-followups-report.md, git-ignored); the second only prepares the workspace for the owner to click through (docs/rehearsal-followups-checklist.md). Opt-in: not part of make check.
+rehearse-followups:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/followups.py
+
+rehearse-prepare-followups:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../tests/rehearsal/followups.py --prepare-only
 
 dev-web:
 	cd $(WEB) && npm run dev

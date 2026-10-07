@@ -40,3 +40,4 @@ tmp/
 # rehearsal (step 3): local state of invented people, and the report
 /.rehearsal/
 /rehearsal-report.md
+/rehearsal-followups-report.md

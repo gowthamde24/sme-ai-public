@@ -66,3 +66,23 @@ def test_the_screens_closed_lists_are_the_apis() -> None:
     assert _list("DISCARD_CODES") == list(get_args(DiscardCode))
     assert _list("QUESTION_STATUSES") == list(get_args(QuestionStatus))
     assert _list("QUESTION_DISCARD_CODES") == list(get_args(QuestionDiscardCode))
+
+
+ROOT = Path(__file__).resolve().parents[3]
+CHECKLIST = (ROOT / "docs" / "rehearsal-followups-checklist.md").read_text()
+
+
+def test_the_checklists_fixed_texts_are_the_ones_the_database_and_the_templates_make() -> None:
+    """The rehearsal checklist quotes, in backticks, the texts a person copies. Each must exist in a migration (the draft's closed template) or in the question templates."""
+    source = "\n".join(
+        p.read_text() for p in sorted((ROOT / "supabase" / "migrations").glob("*.sql"))
+    )
+    source += (
+        Path(__file__).resolve().parents[1] / "app" / "requirements" / "questions.py"
+    ).read_text()
+    texts = [t for t in re.findall(r"`([^`\n]{25,})`", CHECKLIST) if t[0].isupper()]
+    assert len(texts) >= 4
+    for text in texts:
+        # the question about quantity names the saree type the requirement has (an f-string in the template)
+        generic = re.sub(r" of [A-Z][a-z]+\?$", "{of_type}?", text)
+        assert text in source or generic in source, text
