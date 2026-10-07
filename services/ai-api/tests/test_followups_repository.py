@@ -161,7 +161,7 @@ def test_every_read_carries_the_tenant_filter() -> None:
     r.list_touches("tok", TENANT, LEAD, limit=5)
     r.get_draft("tok", TENANT, ID)
     r.list_drafts("tok", TENANT, lead_id=LEAD, status="active", limit=5)
-    r.recent_outbound_leads("tok", TENANT, limit=5)
+    r.recent_outbound("tok", TENANT, limit=5)
     r.requirement_enquiry("tok", TENANT, ID)
     r.list_question_drafts("tok", TENANT, ID, active_only=True)
     r.get_question_draft("tok", TENANT, ID)
@@ -264,13 +264,46 @@ def test_a_lead_the_caller_cannot_see_is_none_and_a_lead_without_a_contact_has_n
 
 def test_the_recent_outbound_leads_are_distinct_newest_first_and_capped() -> None:
     a, b = uuid.UUID(int=0xA1), uuid.UUID(int=0xB1)
-    rows = [{"lead_id": str(a)}, {"lead_id": str(a)}, {"lead_id": str(b)}, {"lead_id": str(a)}]
-    assert repo(lambda r: httpx.Response(200, json=rows)).recent_outbound_leads(
-        "tok", TENANT, limit=5
-    ) == [a, b]
-    assert repo(lambda r: httpx.Response(200, json=rows)).recent_outbound_leads(
-        "tok", TENANT, limit=1
-    ) == [a]
+    rows = [
+        {"lead_id": str(a), "channel": "email"},
+        {"lead_id": str(a), "channel": "whatsapp"},
+        {"lead_id": str(b), "channel": "whatsapp"},
+        {"lead_id": str(a), "channel": "email"},
+    ]
+    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=5)
+    assert [x.lead_id for x in got] == [a, b]
+    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=1)
+    assert [x.lead_id for x in got] == [a]
+
+
+def test_a_candidates_channel_is_that_of_its_latest_email_or_whatsapp_touch_and_a_call_has_none() -> (
+    None
+):
+    a, b, c = uuid.UUID(int=0xA1), uuid.UUID(int=0xB1), uuid.UUID(int=0xC1)
+    rows = [  # newest first
+        {
+            "lead_id": str(a),
+            "channel": "phone",
+        },  # a call is newer than a's WhatsApp touch but is not a draft channel
+        {"lead_id": str(b), "channel": "phone"},
+        {"lead_id": str(a), "channel": "whatsapp"},
+        {"lead_id": str(c), "channel": "email"},
+        {"lead_id": str(a), "channel": "email"},
+    ]
+    got = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=3)
+    assert [(x.lead_id, x.channel) for x in got] == [(a, "whatsapp"), (b, None), (c, "email")]
+    capped = repo(lambda r: httpx.Response(200, json=rows)).recent_outbound("tok", TENANT, limit=2)
+    assert [x.lead_id for x in capped] == [a, b]  # c is past the cap and is not counted
+
+
+def test_the_candidate_read_asks_for_outbound_touches_with_their_channel_and_four_times_the_cap() -> (
+    None
+):
+    seen, handler = _capture()
+    repo(handler).recent_outbound("tok", TENANT, limit=7)
+    params = seen[0].url.params
+    assert params["select"] == "lead_id,channel" and params["direction"] == "eq.out"
+    assert params["limit"] == "28" and params["order"] == "occurred_at.desc,id.desc"
 
 
 def test_the_server_still_distinguishes_an_erased_key_in_the_log_and_the_typed_exception(

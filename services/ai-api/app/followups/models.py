@@ -175,9 +175,21 @@ class DecisionOut(_Strict):
     engine_version: str
 
 
+class ChannelStateOut(_Strict):
+    """One draft channel of a lead as the gate reads it for THAT channel: `blocked` is the gate's closed word (contact | key | erased | consent | unkeyed) or null when the channel is open. A lead-level stop (an order, a withdrawn
+    quote, an archived lead) is not here: it is `gate.stopped` and closes both channels."""
+
+    channel: DraftChannel
+    blocked: str | None
+
+
 class LeadFollowupOut(_Strict):
+    """`channel` is the channel this page was read for (the one asked for, else `default_channel`); `gate` and `decision` are for that channel; `channels` is the state of every draft channel, e-mail first."""
+
     lead_id: uuid.UUID
     channel: DraftChannel
+    default_channel: DraftChannel
+    channels: list[ChannelStateOut]
     gate: GateOut
     decision: DecisionOut | None
     policy_version_id: uuid.UUID | None
@@ -186,12 +198,17 @@ class LeadFollowupOut(_Strict):
 
 
 class DueItemOut(_Strict):
+    """One row per LEAD (the cadence is per lead): the engine's answer, the state of each draft channel (a lead is listed when at least one is open), the channel to open first and the channel of the open draft, if any."""
+
     lead_id: uuid.UUID
     action: Literal["wait", "draft_followup", "stop"]
     reason_code: str
     touch_number: int
     next_eligible_at: datetime | None
     open_draft_id: uuid.UUID | None
+    open_draft_channel: DraftChannel | None
+    channels: list[ChannelStateOut]
+    default_channel: DraftChannel
 
 
 class QuestionDraftOut(_Strict):

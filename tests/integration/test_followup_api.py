@@ -340,8 +340,9 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
     fw: FollowWorld,
 ) -> None:
     """Commit 4c: the engine sees only the lead's own flag, so for a blocked lead it said 'draft_followup' and the due list said due. The gate's block now overrides it, with the gate's own closed word, and a lead
-    blocked for e-mail is left out of the due list (which is judged on e-mail). A shared KEY needs a shared PHONE number (the API refuses a second contact with the same e-mail address), so it blocks WhatsApp only: the
-    lead page shows it for that channel and the due list, judged on e-mail, still lists the lead. Consent withdrawn after a touch, an opted-out contact and an erased contact block e-mail."""
+    blocked on EVERY channel is left out of the due list; a lead blocked on one channel stays listed while the other is open (WhatsApp as a first-class channel: tests/integration/test_followup_whatsapp.py). A shared KEY needs a
+    shared PHONE number (the API refuses a second contact with the same e-mail address), so it blocks WhatsApp only. Consent withdrawn for e-mail after a touch blocks e-mail only (these leads also have WhatsApp consent); an
+    opted-out contact and an erased contact are blocked on both channels."""
 
     def due_ids() -> set[str]:
         return {i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()}
@@ -351,7 +352,7 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
         assert out.status_code == 200, out.text
         return dict(out.json())
 
-    def blocked_as(lead: Lead, word: str, channel: str = "email") -> None:
+    def blocked_as(lead: Lead, word: str, channel: str = "email", *, listed: bool) -> None:
         got = page(lead, channel)
         assert got["gate"]["blocked"] == word
         assert got["decision"] == {
@@ -362,8 +363,7 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
             "next_eligible_at": None,
             "engine_version": "none",
         }
-        if channel == "email":
-            assert lead.id not in due_ids()
+        assert (lead.id in due_ids()) is listed
 
     # shared KEY (the case verified in 4b): another contact shares the PHONE number and is suppressed
     phone = "+00 9" + f"{uuid.uuid4().int % 10**9:09d}"
@@ -373,13 +373,13 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
         page(a, "whatsapp")["decision"]["action"] == "draft_followup"
     )  # before: nothing in the way
     assert fw.suppress(b).status_code == 200
-    blocked_as(a, "key", "whatsapp")
+    blocked_as(a, "key", "whatsapp", listed=True)
     refused(
         fw.draft("sales", a, "whatsapp"), "SM220", "key"
     )  # the database agrees: the screen no longer promises what it refuses
     assert (
         page(a)["decision"]["action"] == "draft_followup" and a.id in due_ids()
-    )  # e-mail is its own gate, and the due list is judged on e-mail
+    )  # e-mail is its own gate: the lead is still due, on e-mail
     # consent WITHDRAWN after the touch
     c = fw.due_lead("blk-c")
     assert c.id in due_ids()
@@ -392,22 +392,24 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
         json={"channel": "email", "status": "withdrawn"},
     )
     assert withdrawn.status_code == 200, withdrawn.text
-    blocked_as(c, "consent")
+    blocked_as(c, "consent", listed=True)  # WhatsApp is still open
     # the contact asked not to be contacted
     d = fw.due_lead("blk-d")
     assert d.id in due_ids()
     assert fw.suppress(d).status_code == 200
-    blocked_as(d, "contact")
+    blocked_as(d, "contact", listed=False)
+    blocked_as(d, "contact", "whatsapp", listed=False)
     # an ERASED contact
     e = fw.due_lead("blk-e")
     erase(fw, e)
-    blocked_as(e, "erased")
+    blocked_as(e, "erased", listed=False)
+    blocked_as(e, "erased", "whatsapp", listed=False)
     # erased BY RIGHT and sharing the number: the client is told `key`, never `erased_key`
     phone2 = "+00 9" + f"{uuid.uuid4().int % 10**9:09d}"
     f = fw.due_lead("blk-f", phone_number=phone2)
     g = fw.lead("blk-g", phone_number=phone2)
     erase(fw, g)
-    blocked_as(f, "key", "whatsapp")
+    blocked_as(f, "key", "whatsapp", listed=True)
     text = fw.call("GET", f"/leads/{f.id}/followup?channel=whatsapp", "sales").text
     assert not re.search(r"erased[\s_-]*key", text, re.I) and "by right" not in text.lower()
     fw.invariants()
