@@ -13,6 +13,11 @@
 @import "./reset.css";
 @import "./base.css";
 
+@theme {
+  /* the hero headline: tight in Latin, Telugu and Hindi; base.css raises it for Kannada */
+  --leading-hero: 1.1;
+}
+
 @theme inline {
   --font-sans: var(--v2-font-sans-stack);
   --font-display: var(--v2-font-display-stack);

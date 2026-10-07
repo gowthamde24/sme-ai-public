@@ -9,7 +9,7 @@ export function Hero({ t }: { t: LandingT }) {
   return (
     <section aria-labelledby="h1" className={`${container} pb-8 pt-4 sm:pb-10 sm:pt-8 lg:pb-14 lg:pt-8`}>
       <p className="text-sm font-semibold text-brand-text sm:text-base">{t("hero.eyebrow")}</p>
-      <h1 id="h1" className="mt-2 max-w-4xl font-display text-3xl font-bold leading-tight tracking-tight sm:text-5xl xl:text-6xl">
+      <h1 id="h1" className="mt-2 max-w-4xl font-display text-3xl font-bold leading-hero tracking-tight sm:text-5xl xl:text-6xl">
         {t("hero.h1")}
       </h1>
       <p className="mt-3 max-w-4xl text-base leading-relaxed text-muted sm:text-lg">{t("hero.sub")}</p>

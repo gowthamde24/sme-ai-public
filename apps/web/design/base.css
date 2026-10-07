@@ -30,6 +30,7 @@
 [data-ui="v2"]:lang(kn) {
   --leading-tight: 1.4;
   --leading-snug: 1.45;
+  --leading-hero: 1.4;
 }
 
 [data-ui="v2"] ::selection {

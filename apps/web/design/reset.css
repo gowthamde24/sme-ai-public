@@ -1,9 +1,12 @@
 /* ==========================================================================
-   Scoped reset for design v2. The legacy stylesheet (app/globals.css, unlayered, loaded on every route) styles bare
-   elements: *, html/body, h1/h2, button, a.button, button.secondary, button:disabled, table, th/td, select.
-   Inside [data-ui="v2"] this file puts every one of those properties back, so a v2 element starts from a known
-   base. It is deliberately UNLAYERED and has no selector outside [data-ui="v2"]: it cannot reach a legacy page.
-   (Tailwind preflight is NOT used: it is global.) scripts/audit-leaks.mjs proves the result.
+   Scoped reset for design v2: Tailwind's preflight, but only inside [data-ui="v2"] (the real preflight is global and
+   would restyle every legacy page). Two jobs: (1) give v2 markup the same blank base the utilities were designed on
+   (no margins, no padding, no list bullets, block images and icons, inherited fonts on controls); (2) put back, inside
+   v2, every property the legacy sheet (app/globals.css, unlayered, loaded on every route) sets on a bare element:
+   *, html/body, h1/h2, button, a.button, button.secondary, button:disabled, table, th/td, select.
+   Deliberately UNLAYERED with specificity (0,1,0) or more, so it beats the legacy element rules; Tailwind utilities are
+   `important` and beat this. No selector outside [data-ui="v2"]: it cannot reach a legacy page.
+   scripts/audit-leaks.mjs proves the result.
    ========================================================================== */
 [data-ui="v2"] {
   font-family: var(--v2-font-sans-stack);
@@ -13,29 +16,53 @@
   background-color: var(--v2-bg);
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  margin: 0;
+  tab-size: 4;
 }
 [data-ui="v2"],
 [data-ui="v2"] *,
 [data-ui="v2"] *::before,
 [data-ui="v2"] *::after {
   box-sizing: border-box;
-}
-[data-ui="v2"] :where(h1, h2, h3, h4) {
   margin: 0;
+  padding: 0;
+  border: 0 solid;
+}
+[data-ui="v2"] :where(h1, h2, h3, h4, h5, h6) {
   font-family: var(--v2-font-display-stack);
   font-size: inherit;
   font-weight: inherit;
   line-height: 1.2;
 }
+[data-ui="v2"] :where(a) {
+  color: inherit;
+  text-decoration: inherit;
+}
+[data-ui="v2"] :where(b, strong) {
+  font-weight: bolder;
+}
+[data-ui="v2"] :where(small) {
+  font-size: 80%;
+}
+[data-ui="v2"] :where(ol, ul, menu) {
+  list-style: none;
+}
+[data-ui="v2"] :where(summary) {
+  display: list-item;
+}
+[data-ui="v2"] :where(img, svg, video, canvas, audio, iframe, embed, object) {
+  display: block;
+  vertical-align: middle;
+}
+[data-ui="v2"] :where(img, video) {
+  max-width: 100%;
+  height: auto;
+}
 [data-ui="v2"] :where(button, select, input, textarea) {
   font: inherit;
+  letter-spacing: inherit;
   color: inherit;
-  background: transparent;
-  border: 0 solid currentColor;
+  background-color: transparent;
   border-radius: 0;
-  padding: 0;
-  margin: 0;
   opacity: 1;
   cursor: default;
 }
@@ -46,18 +73,18 @@
   opacity: 1;
   cursor: not-allowed;
 }
-[data-ui="v2"] :where(a) {
-  color: inherit;
-  text-decoration: none;
+[data-ui="v2"] :where(textarea) {
+  resize: vertical;
 }
 [data-ui="v2"] :where(table) {
   width: auto;
-  margin: 0;
-  border-collapse: separate;
-  border-spacing: 0;
+  border-collapse: collapse;
+  text-indent: 0;
+  border-color: inherit;
 }
 [data-ui="v2"] :where(th, td) {
-  padding: 0;
   text-align: inherit;
-  border: 0 solid currentColor;
+}
+[data-ui="v2"] [hidden]:where(:not([hidden="until-found"])) {
+  display: none !important;
 }
