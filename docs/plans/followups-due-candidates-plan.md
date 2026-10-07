@@ -1,6 +1,19 @@
 # Plan: the follow-up due list's candidates (one read-only database function, ordering and paging)
 
-Status: **PLAN ONLY. Not approved. No code, migration, test or dependency was written or changed.** Written 2026-10-07 on the branch `plan-files-chat` (from `origin/main`; the WhatsApp ticket is read from `origin/followups-whatsapp`, where it was pushed). This is the "its own small ticket right after followups-whatsapp, before Customer Zero" that the owner decided on 2026-10-07 (`docs/pre-pilot-checklist.md`, row "The due list reads at most 30 candidate leads").
+Status: **APPROVED for the build on 2026-10-07 (see the next section).** When this plan was written no code, migration, test or dependency had been written or changed. Written 2026-10-07 on the branch `plan-files-chat` (from `origin/main`; the WhatsApp ticket is read from `origin/followups-whatsapp`, where it was pushed). This is the "its own small ticket right after followups-whatsapp, before Customer Zero" that the owner decided on 2026-10-07 (`docs/pre-pilot-checklist.md`, row "The due list reads at most 30 candidate leads").
+
+## Owner decisions (2026-10-07) and corrections to this plan
+
+**Status change: APPROVED for the overnight build.** All eight decisions of section 14 are **YES, as recommended**: (1) terminal "No follow-up" rows leave the due list; (2) oldest last outbound touch first; (3) page size 30, "Show the next leads", no fill loop; (4) option B (the database's own blocker), with the measurement gate; (5) keyset cursor; (6) the gate stays in the API; (7) the response becomes `{items, next_cursor}` with a tolerant web reader; (8) the function returns each candidate's open draft.
+
+The open items are settled: **scan cap 300; function page ceiling 50; the constant keeps the name `DUE_LIST_MAX_LEADS`** (no rename); **no count of hidden terminal leads**; the short-page note **does show how many leads were left out**; the **cursor is base64url of `{at, id}`**; the hosted index build and a "folded gates" function are later; the other lists keep their `limit` for now.
+
+Corrections:
+
+* **a. The C0 regression test must not leave the repository red.** It is committed as an expected failure (`pytest.mark.xfail(strict=True, reason=...)`); C3 removes the marker and the test turns green (a strict xfail that starts passing fails the run, which is how the marker is forced out).
+* **b. In C0, before anything else, the last definition of `app.followup_blocker` is read** and its closed answers confirmed against section 2 (terminal: `suppressed`, `replied`, `closed`, `max_touches`; staying in: `not_yet`, `future_history`, `invalid`, `NULL`). A difference stops the run.
+* **c. Testing rhythm as in section 12:** the full `make check` in every commit with a migration or database change, or one that touches roles, permissions, consent or suppression; `make check-fast` plus the touched tests otherwise; mutation only at the end, one runner at a time.
+* **Hard stops** (the run leaves the tree committed and clean and reports): the C0 measurement misses the section 4 budget (option C is **not** chosen by the build); the equivalence-gate extension fails (the terminal list or the test is **not** weakened); the same check fails after three honest fix attempts; anything that needs `.env`, an account, a payment, a push, or a change outside this ticket (the cadence engine, an existing migration).
 
 ## 0. Assumptions
 
