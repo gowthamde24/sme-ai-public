@@ -1,7 +1,47 @@
 # ADR 0022: Touches, the cadence policy, follow-up drafts and question drafts (T010 part 2)
 
-Status: built for the local-first stage; commit 1 (the database and its proofs) reviewed by the owner 2026-10-07, review decisions applied in the amendment commit (see "Owner review of commit 1" below); commit 2 (adapter, builder, API, fakes, real-stack tests, the equivalence gate) built and awaiting the owner's review. Plan and owner decisions: `docs/plans/t010-integration.md` (sections 2.2-6, 8, 11). Related: ADR 0005 (consent ledger), ADR 0013 (option A / B), ADR 0016 (second factor), ADR 0017 (local-first),
-ADR 0018 (questions; lock order), ADR 0020 (suppression keys: the gate this part enforces), ADR 0021 (orders: the follow-up stop), `docs/plans/t010-followup-cadence.md` (lane C's pure engine, `packages/pure/followup_cadence` 1.0.0, the contract this wraps).
+Status: **BUILT for the local-first stage** (T010 part 2, commits 1 to 6 on the branch `t010-part2`; nothing pushed, nothing deployed). Commits 1, 1b, 1c, 2 and 2b were accepted by the owner; commits 3, 4, 4b and 4c were accepted provisionally (the owner reads the diffs); commits 4d, 5 and 6 await the owner's reading. Commit 6 writes down the final state. **The final state is the next section; the sections after it are the history of how it came to be (reviews, amendments, commit addenda) and are kept as written.** The hand-off, with the open list, is `docs/handoff-t010-part2.md`. Plan and
+ADR 0018 (questions; lock order), ADR 0020 (suppression keys: the gate this part enforces), ADR 0021 (orders: the follow-up stop), ADR 0013 (option A: delegated runs; option B before an external customer), `docs/plans/t010-followup-cadence.md` (lane C's pure engine, `packages/pure/followup_cadence` 1.0.0, the contract this wraps).
+
+## Final state (commit 6)
+
+**What exists.** Five migrations: `20261024090000_t010_part2_followups.sql` (touches, the cadence policy, drafts, the gate, the stops, the request builder, the blocker, the definer functions), `20261024090100_t010_part2_question_drafts.sql`, and three that each `create or replace` ONE function: `20261025090000_t010_part2_blocker_order.sql` (the blocker follows the engine's own order), `20261026090000_t010_part2_draft_replay.sql` (a retry replays), `20261027090000_t010_part2_blocker_missing_arrays.sql` (a missing array is invalid, not due). The API (`services/ai-api/app/followups/*`), the pinned cadence adapter, the web screens (the lead's follow-up page, the due list, the policy page, the question drafts), the rehearsal (`make rehearse-followups`, `make rehearse-prepare-followups`, `docs/rehearsal-followups-checklist.md`) and the mutation tools (`tools/mutation-followups/`). Nothing sends anything: a touch, a draft and an approval are records a person acts on outside the system.
+
+| Commit | What |
+| --- | --- |
+| 1, 1b, 1c | the database and its proofs (pgTAP 62-65), the owner's two review rounds, erasure answered by tests |
+| 2, 2b | adapter, request builder, API, fakes, real-stack tests, races, the equivalence gate; the database follows the engine's order; an erased key is shown as `key` |
+| 3 | the web data layer and the plain screens (one strings module, logic apart from markup) |
+| 4, 4b, 4c, 4d | the rehearsal driver and click checklist; a stopped lead and a blocked lead are never due; the unkeyed sentence made honest; a retry of "ask for a draft" replays |
+| 5 | the mutation pass (588 SQL, 92 Python, 65 web mutants) and the defect it found |
+| 6 | the final state, the mutation tools in the repository, the hand-off |
+
+**The refusals (SM220 to SM229).** The API answers each with ONE fixed sentence and a closed `code` and `reason` (`app/followups/messages.py`; the web repeats the sentences, a Python test pins the two equal). A client never sees `erased_key`.
+
+| SQLSTATE | HTTP / API code | Closed reasons |
+| --- | --- | --- |
+| SM220 | 409 `contact_blocked` | `contact` (opted out), `key` (a suppressed key, also shown for an erased marker), `erased`, `consent` |
+| SM221 | 409 `no_suppression_key` | a contact with no key for the channel: missing data never means "not suppressed" |
+| SM222 | 409 `no_followup_policy` | no policy in force |
+| SM223 | 409 `draft_state` | `exists`, `not_draft`, `not_approved`, `closed` |
+| SM224 | 409 `followup_stale` | the history, policy, contact or suppression state moved since the draft was made; a draft older than 7 days |
+| SM225 | 409 `not_due` | `suppressed`, `replied`, `closed`, `max_touches`, `initial_outreach`, `future_history`, `not_yet`, `invalid` |
+| SM226 | 409 `followup_mismatch` | the request or the result is not what the database computes |
+| SM227 | 409 `followup_stopped` | `order_accepted`, `order_declined`, `order_cancelled`, `quote_withdrawn`, `lead_archived` |
+| SM228 | 403 `not_your_draft` | Sales discarding another person's draft |
+| SM229 | 409 `followup_limit` | 500 recorded touches for one lead |
+
+A same-id retry with a different body is the constant `conflict` (23505); an invalid or out-of-range value is 22023 / 23514. A refusal before the role is proven is the generic 42501 for everyone.
+
+**The gate-first rule (4b, 4c).** The engine is pinned (`followup_cadence` 1.0.0) and sees only a lead's own flags, touches and policy: not orders, withdrawn quotes, archived leads, keys, consent or erasure. Those are the DATABASE's (`app.followup_stopped`, `app.followup_gate`). So the API reads the gate FIRST: when the lead is stopped the page's decision is `stop` with the stop reason, when the gate blocks the lead for the channel it is `stop` with the gate's own closed word, and the engine is not asked (`engine_version` is `"none"`). The due list reads the gate for e-mail per candidate and leaves out every stopped or blocked lead. Creating a draft is unchanged: the database refuses it (SM227 / SM220 / SM221). The web hides the guidance for such a lead and shows the block line.
+
+**The replay rules.** Every write is idempotent by a caller-supplied id. A policy version replays when the same id comes with the same content (a different body is `conflict`). A touch replays when the id, lead, direction and channel match and the time is null or equal; the touch of a draft is never replayed by a plain touch. **A draft request replays when the same id comes for the same tenant, lead and channel (4d), whatever `as_of`, history or result it carries**, and returns the draft with the status it has reached (approved, discarded, recorded as sent): the request holds the API's clock in whole seconds, so comparing it byte for byte had turned a retry a second later into a conflict. An approval replays when the draft is already approved with the same fingerprint; a discard replays on a discarded draft; "I sent it" replays when the touch id is the draft's own. The same id for another lead, channel or tenant stays the constant conflict.
+
+**Option A, and what option B must close.** This part runs under option A (ADR 0013): the API passes the person's own token to SECURITY DEFINER functions with an empty search_path, the role is proven first, then the second factor, then the specific refusals; the API never decides and the database recomputes everything it can and refuses any difference. What the database cannot verify under option A: that the HMAC the API recorded is the HMAC of the identifier, and the text of a stored question (a member who talks to PostgREST directly can record a wrong key, or store a different closed-looking question). **Option B (a dedicated service principal that alone holds EXECUTE on the key-recording and the question-persisting functions, and a scheduled agent that is not a human's delegate) is required before the first scheduled agent and before any external customer**; it is a row of `docs/pre-pilot-checklist.md`.
+
+**Deliberately not built / open.** WhatsApp as a first-class channel (the due list judges e-mail only; the lead page reaches WhatsApp only by `?channel=whatsapp`), a screen for the Owner to record suppression keys (the endpoints exist), the bound of 100 touches that makes the "I sent it" 500-touch cap unreachable, `SUPPRESSION_HMAC_KEY` hosting, the family's real policy values, languages other than English, any sending. The list, with owners and gates, is `docs/handoff-t010-part2.md`.
+
+**Proofs.** pgTAP 62-65 (the database, including each table check proved alone and the guard triggers branch by branch), the real-stack suites (API, races with row-lock probes, the equivalence gate: 1,949 grid cases and 720 builder comparisons agree with the real engine on due-ness and on the reason), the unit tests of the adapter, builder, routes and the screens, a pinned copy test for every migration that replaces a function, and the mutation pass (`docs/checklist-notes/A.md`; the runner is `tools/mutation-followups/`).
 
 ## Context
 Part 1 built the suppression keys. Part 2 is what a person does with them: record what they sent and what the customer said (touches), keep a versioned cadence policy, and get a DRAFT follow-up (and persisted question drafts) that a person reviews, approves, copies and sends OUTSIDE the system.

@@ -1214,4 +1214,29 @@ select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"allowed_weekdays": [1.5]}'
 select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"holidays": [null]}')::text), '22023', 'O110 a holiday that is JSON null is an invalid policy (22023), not a NULL in the stored array');
 select is(pg_temp.pol_try((pg_temp.pol()::jsonb || '{"holidays": [20261225]}')::text), '22023', 'O111 a holiday that is a number is an invalid policy (22023)');
 
+-- --- why the 4d replay needs no tenant condition: a draft's lead and its tenant are tied by a composite foreign key (docs/checklist-notes/A.md, the "replay without its tenant condition" row)
+select is((select pg_get_constraintdef(oid) from pg_constraint where conrelid = 'public.followup_drafts'::regclass and conname = 'followup_drafts_tenant_id_lead_id_fkey'),
+          'FOREIGN KEY (tenant_id, lead_id) REFERENCES leads(tenant_id, id)', 'O112 a draft''s (tenant, lead) must be a lead of THAT tenant: the composite foreign key exists');
+create function pg_temp.sandbox_con(p_sql text) returns text language plpgsql as $$
+declare r text; v_con text;
+begin
+  begin
+    begin
+      execute p_sql;
+      r := 'ok';
+    exception when others then
+      get stacked diagnostics v_con = constraint_name;
+      r := sqlstate || ':' || coalesce(v_con, '');
+    end;
+    raise exception 'sandbox' using detail = r;
+  exception when raise_exception then
+    get stacked diagnostics r = pg_exception_detail;
+    return r;
+  end;
+end $$;
+select is(pg_temp.sandbox_con(format($q$insert into public.followup_drafts (id, tenant_id, lead_id, contact_id, touch_number, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of)
+                                       select gen_random_uuid(), tenant_id, %L, contact_id, 50, channel, template_code, body, policy_version_id, engine_version, request_text, result_text, canonical_hash, state_hash, as_of
+                                         from public.followup_drafts where id = %L$q$, tests.rid('b_lead'), pg_temp.did('f1'))),
+          '23503:followup_drafts_tenant_id_lead_id_fkey', 'O113 a draft of tenant a naming a lead of tenant b is refused by that very key (and by nothing else: the contact, the policy and the tenant are tenant a''s)');
+
 select * from finish();

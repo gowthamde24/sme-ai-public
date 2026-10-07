@@ -129,6 +129,7 @@ Tick each box when you have looked and it is true:
 
 - The server's refusal of an approval from a session without the authenticator code, and of an approval of a text other than the one shown (the screens never offer either; the script sends them on purpose).
 - Sales approving, a Viewer asking for anything, and every refusal above, by code and by reason, plus that the same request sent twice changes nothing and that no route, setting or table that could send a message exists.
+- WhatsApp is reached only by an address ending `?channel=whatsapp`: the lead page has no channel switch, and the due list judges leads on e-mail only (a lead with only a phone number never appears in it). Known and open: `docs/handoff-t010-part2.md`, item 1.
 - Suppression keys: there is **no screen** to record keys for an existing contact (the Owner's `POST /suppression/backfill` endpoint exists, with `GET /suppression/status`, but nothing in the web calls them). A contact with no key reads "This contact has no suppression key recorded yet, so it cannot be contacted. Recording keys for existing contacts is not available on any screen yet." Contacts made through the API with a key configured are keyed when they are made; the script proves the ten prepared contacts are.
 
 ## I. Summary

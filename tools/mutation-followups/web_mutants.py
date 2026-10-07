@@ -1,0 +1,81 @@
+"""The hand-written web mutants of the follow-up screens: (file under apps/web, the text to replace, its replacement, what it means, which occurrence)."""
+
+# ruff: noqa: E501, E702
+
+T = "app/app/tenants/[tenantId]/followups"
+FL = f"{T}/followup-logic.ts"; FA = f"{T}/followup-actions.ts"; LV = f"{T}/lead-followup-view.tsx"; FD = f"{T}/draft-forms.tsx"; TF = f"{T}/touch-form.tsx"; UF = f"{T}/use-followup-action.ts"
+PP = f"{T}/page-parts.tsx"; DT = f"{T}/draft-text.tsx"; CD = f"{T}/create-draft-form.tsx"; PF = f"{T}/policy-form.tsx"
+AP = "lib/api/followups.ts"; TX = "lib/api/followup-text.ts"
+W = []
+def a(f, old, new, desc, nth=0): W.append((f, old, new, desc, nth))
+# logic
+a(FL, "if (at.getTime() > now.getTime())", "if (false)", "a future touch time is accepted")
+a(FL, "if (at.getTime() > now.getTime())", "if (at.getTime() > now.getTime() + 3600000)", "a touch up to an hour ahead is accepted")
+a(FL, "5.5 * 3600 * 1000", "5 * 3600 * 1000", "India offset wrong in the touch time", 0)
+a(FL, "return out.every((n) => n <= 365) ? out : null;", "return out.every((n) => n <= 366) ? out : null;", "a gap of 366 days accepted")
+a(FL, "maxTouches <= 100", "maxTouches <= 101", "101 touches accepted")
+a(FL, "if (gaps.length !== maxTouches - 1)", "if (false)", "a wrong gap count is not refused in the form")
+a(FL, "|| start === end", "", "equal quiet times accepted")
+a(FL, "days.length === 0 || ", "", "no weekday accepted")
+a(FL, "|| new Set(days).size !== days.length", "", "a repeated weekday accepted")
+a(FL, "minGap <= 8760", "minGap <= 8761", "a minimum gap over a year accepted")
+a(FL, "offset <= 840", "offset <= 841", "an offset over 14 hours accepted")
+a(FL, "[...days].sort((a, b) => a - b)", "days", "weekdays not sorted")
+a(FL, "approve: strong && draft.status === \"draft\"", "approve: writer && draft.status === \"draft\"", "Sales is offered Approve")
+a(FL, "approveNeedsSecondFactor: strong && draft.status === \"draft\" && aal !== \"aal2\"", "approveNeedsSecondFactor: strong && draft.status === \"draft\" && aal === \"aal2\"", "the second-factor notice is inverted")
+a(FL, "(role === \"sales\" && draft.created_by === userId)", "(role === \"sales\")", "Sales is offered Discard on anyone's draft")
+a(FL, "sent: writer && draft.status === \"approved\"", "sent: strong && draft.status === \"approved\"", "Sales is not offered 'I sent it'")
+a(FL, "sent: writer && draft.status === \"approved\"", "sent: writer && draft.status !== \"discarded\"", "'I sent it' offered for a draft not yet approved")
+a(FL, "discard: open && ", "discard: ", "Discard offered for a closed draft")
+a(FL, "if (!gate.policy_in_force)", "if (gate.policy_in_force)", "the no-policy line is inverted")
+a(FL, "if (gate.blocked !== null) lines.push(", "if (false) lines.push(", "the block line is never shown")
+a(FL, "if (gate.stopped !== null) lines.push(", "if (false) lines.push(", "the stop line is never shown")
+a(FL, "decision.action === \"wait\" && decision.next_eligible_at", "false", "the earliest time is never shown")
+a(FL, "return { error: followupSentence(status, code, reason), stale: STALE_CODES.includes(code) };", "return { error: followupSentence(status, code, reason), stale: false };", "a stale refusal does not refresh")
+a(FL, "return { error: followupSentence(status, code, reason), stale: STALE_CODES.includes(code) };", "return { error: followupSentence(status, code, reason), stale: true };", "every refusal refreshes the page")
+# actions
+a(FA, "if (!/^[0-9a-f]{64}$/.test(stateHash)) return", "if (false) return", "approve: a malformed fingerprint is sent")
+a(FA, "...(when.value ? { occurredAt: when.value } : {})", "", "touch: the stated time is dropped", 0)
+a(FA, "...(when.value ? { occurredAt: when.value } : {})", "", "sent: the stated time is dropped", 1)
+a(FA, "if (!(DIRECTIONS as readonly string[]).includes(direction))", "if (false)", "touch: any direction sent")
+a(FA, "if (!(TOUCH_CHANNELS as readonly string[]).includes(channel))", "if (false)", "touch: any channel sent")
+a(FA, "if (!(DRAFT_CHANNELS as readonly string[]).includes(channel))", "if (false)", "draft: any channel sent")
+a(FA, "if (!isCanonicalUuid(id)) return { ok: false, error: OUT_OF_DATE };", "", "touch: a malformed form id is sent")
+a(FA, "if (error instanceof ApiAuthError) redirect(\"/login\");", "", "a rejected session is not sent to sign-in")
+a(FA, "if (error instanceof ApiRequestError) return { ok: false, ...errorState(error.status, error.code, error.reason) };", "if (error instanceof ApiRequestError) return { ok: false, error: error.message, stale: false };", "the server's own text is shown")
+a(FA, "\"Recorded: you sent it yourself. Nothing was sent by this system.\" : \"Recorded: they replied.\"", "\"Recorded: they replied.\" : \"Recorded: you sent it yourself. Nothing was sent by this system.\"", "touch messages swapped")
+a(FA, "revalidatePath(leadPage(tenantId, leadId));\n  revalidatePath(`/app/tenants/${tenantId}/followups`);\n  return { ok: true, message: direction", "return { ok: true, message: direction", "touch: pages not revalidated")
+a(FA, "    revalidatePath(leadPage(tenantId, leadId));\n    return failure(error);\n  }\n  revalidatePath(leadPage(tenantId, leadId));\n  revalidatePath(`/app/tenants/${tenantId}/followups`);\n  return { ok: true, message: \"Approved.", "    return failure(error);\n  }\n  revalidatePath(leadPage(tenantId, leadId));\n  revalidatePath(`/app/tenants/${tenantId}/followups`);\n  return { ok: true, message: \"Approved.", "approve: a refused approval does not refresh the page")
+a(FA, "await approveDraft(user.accessToken, tenantId, draftId, stateHash);", "await approveDraft(user.accessToken, tenantId, draftId, \"a\".repeat(64));", "approve: a constant fingerprint is sent")
+a(FA, "const user = await requireUser();\n  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(leadId) || !isCanonicalUuid(draftId)) return { ok: false, error: NOT_AVAILABLE };\n  try {\n    await discardDraft", "const user = await requireUser();\n  try {\n    await discardDraft", "discard: malformed ids reach the API")
+# view
+a(LV, "data.gate.stopped === null && data.gate.blocked === null", "data.gate.stopped === null", "a blocked lead shows guidance")
+a(LV, "data.gate.stopped === null && data.gate.blocked === null", "data.gate.blocked === null", "a stopped lead shows guidance")
+a(LV, "{offers.approve ? <ApproveForm", "{true ? <ApproveForm", "Approve shown on every draft")
+a(LV, "{offers.sent ? <SentForm", "{true ? <SentForm", "'I sent it' shown on every draft")
+a(LV, "{offers.discard ? <DiscardForm", "{true ? <DiscardForm", "Discard shown on every draft")
+a(LV, "{draft.status === \"draft\" || draft.status === \"approved\" ? (", "{true ? (", "a closed draft still shows its text")
+a(LV, "stateHash={draft.state_hash}", "stateHash={\"b\".repeat(64)}", "the approval carries another fingerprint than the one shown")
+# forms
+a(FD, "  if (secondFactorMissing)\n    return (", "  if (false)\n    return (", "Approve without the second-factor notice")
+a(FD, "<input type=\"hidden\" name=\"state_hash\" value={stateHash} />", "<input type=\"hidden\" name=\"state_hash\" value=\"\" />", "the form carries no fingerprint")
+a(FD, "className=\"secondary\" disabled={pending}>\n        {pending ? \"Saving...\" : \"Discard this draft\"}", "disabled={pending}>\n        {pending ? \"Saving...\" : \"Discard this draft\"}", "Discard is the main button")
+a(TF, "max={maxNow}", "", "the time field allows the future")
+a(TF, "<input type=\"radio\" name=\"direction\" value=\"out\" defaultChecked />", "<input type=\"radio\" name=\"direction\" value=\"out\" />", "no default direction")
+a(UF, "if (state && state.ok === false && state.stale) router.refresh();", "", "a stale refusal does not refresh")
+a(UF, "state.ok === false && state.stale", "state.stale", "refresh on any state with stale")
+a(PP, "export const FOLLOWUP_ROLES = [\"owner\", \"admin\", \"sales\"];", "export const FOLLOWUP_ROLES = [\"owner\", \"admin\", \"sales\", \"viewer\"];", "a Viewer sees the follow-up screens")
+a(PP, "export const FOLLOWUP_ROLES = [\"owner\", \"admin\", \"sales\"];", "export const FOLLOWUP_ROLES = [\"owner\", \"admin\"];", "Sales sees no follow-up screen")
+a(DT, "await navigator.clipboard.writeText(text);", "await navigator.clipboard.writeText(\"\");", "the copy button copies nothing")
+a(CD, "defaultValue={channel}", "defaultValue=\"email\"", "the channel of the page is not the form's default")
+# api client
+a(AP, "if (input.occurredAt !== undefined) body.occurred_at = input.occurredAt;", "", "touch: the stated time is not sent", 0)
+a(AP, "if (input.occurredAt !== undefined) body.occurred_at = input.occurredAt;", "", "sent: the stated time is not sent", 1)
+a(AP, "if (!/^[0-9a-f]{64}$/.test(stateHash)) throw new ApiContractError(\"state_hash\");", "", "client: a malformed fingerprint is sent")
+a(AP, "post({ id: input.id, channel: input.channel })", "post({ id: input.id, channel: input.channel, status: \"approved\" })", "client: the draft request carries a status")
+a(AP, "for (const id of ids) if (!isCanonicalUuid(id)) throw new ApiContractError(\"id\");", "", "client: ids not validated")
+# text
+a(TX, "if (code === \"mfa_required\") return MFA_TEXT;", "", "the second-factor sentence is lost")
+a(TX, "const wanted = reason === \"erased_key\" ? \"key\" : (reason ?? \"other\");", "const wanted = reason ?? \"other\";", "PRIVACY: erased_key is not read as key")
+a(TX, "\"followup_stale\", ", "", "a stale draft does not refresh")
+a(TX, "if (Object.keys(table).includes(\"-\")) return \"-\";", "", "codes without reasons fall through to other")

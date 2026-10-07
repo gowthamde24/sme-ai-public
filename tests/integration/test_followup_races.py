@@ -12,12 +12,13 @@ competing write:
   * a storm of mixed operations from several clients: no deadlock (the database's own counter), no server error, the invariants hold.
 All data is synthetic."""
 
-# ruff: noqa: E501, S608, S311, B023, S603, S607
+# ruff: noqa: E501, S608, S311, B023
 
 from __future__ import annotations
 
 import json
 import random
+import shutil
 import subprocess
 import threading
 import time
@@ -83,8 +84,10 @@ def key_locked(tenant: str, kind: str, hmac: str, *, exclusive_probe: bool) -> b
 def row_lock_held(table: str, row_id: str, mode: str) -> bool:
     """Is the row held by another transaction in a way that conflicts with `for {mode} nowait`?  A plain UPDATE takes NO KEY UPDATE and an insert into a child table takes KEY SHARE on the parent row, so
     `for update nowait` cannot tell a deliberate lock from those. `key share` fails only against an explicit FOR UPDATE; `no key update` fails against an explicit FOR SHARE or FOR UPDATE."""
-    out = subprocess.run(
-        ["docker", "exec", "-i", operator_sql.container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", f"select 1 from public.{table} where id = '{row_id}' for {mode} nowait"],
+    docker = shutil.which("docker")
+    assert docker is not None, "docker is required for the integration tests"
+    out = subprocess.run(  # noqa: S603 (the arguments are this test's own: a table name and a row id it made)
+        [docker, "exec", "-i", operator_sql.container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c", f"select 1 from public.{table} where id = '{row_id}' for {mode} nowait"],
         capture_output=True,
         text=True,
     )  # fmt: skip
