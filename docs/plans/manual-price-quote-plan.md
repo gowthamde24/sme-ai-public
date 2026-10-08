@@ -29,7 +29,7 @@ So a quote needs a **manual kind**: an allowed role types the unit price of each
 2. `quotes.price_list_version_id` is `not null` today (`20261016090100:119-120`): it must be nullable for a manual quote, with a check that it is set exactly for the list kind. **And the staleness test in `approve_quote`** (`app.quote_active_price_version(...) is distinct from z.price_list_version_id`) would call every manual quote stale while a price list exists: it must be skipped for the manual kind. This is the sharpest edge.
 3. `quote_lines.product_id` and `sku` are `not null` (`:190-191`). A manual line has no catalog product: the engine needs a key, so the request uses a synthetic key per line (`LINE-1`, `LINE-2`), the label is the saree type's name, and `product_id` becomes nullable for the manual kind; the line stores the **saree-type code** (new nullable column) for the warning and rate options below. **So the catalog (the add-a-product form) is not required for a manual quote.**
 4. The engine's "price list" for a manual quote is built from the lines themselves: `{sku: "LINE-n", name: label, unit_price: typed, minimum_order_quantity: 1, price_breaks: [], tax_bps: the rate for this line}`; `order_lines` carry `{sku, qty}` and **no discount**; `policy.shipping = {flat_fee: 0, tax_bps: 0}` because the engine **requires** a shipping rule (`packages/quote-engine/src/quote_engine/__init__.py:165-178`); it is fixed at zero by the policy and never typed. The engine's hash covers the typed prices, so a tampered price changes it.
-5. `delivery_state` stays a required input (`required_inputs`, owner decision 6) because it decides `gst_supply` (same state or another state). The text does not show the difference. Whether to keep asking for it with no courier is a small question for the owners (section 11).
+5. `delivery_state` stays a required input (`required_inputs`, owner decision 6) because it decides `gst_supply` (same state or another state). The text does not show the difference. The owner decided on 2026-10-08 not to ask for it on manual quotes (section 12, item 5); UNVERIFIED whether the manual path can skip it, and slice 1 settles it.
 
 ## 2. Who typed it and when
 
@@ -135,7 +135,7 @@ A typed price can hold a slip such as an extra zero. The policy gets an **option
 After approval the owner uses the approved text as today. **Item f** (independent of the pricing, size S, web only): on the approved quote, **Copy** (exists, `enquiries/copy-text.tsx`), **"Open in WhatsApp"** (a `wa.me` link built on the server from the contact's phone and the approved text; rules in `docs/plans/customer-zero-intake-gap.md`, section 12), and **"I sent it on WhatsApp"** calling the existing `POST /leads/{id}/touches` (outgoing, channel `whatsapp`). That outgoing touch **starts the follow-up clock**: a lead enters the due list only after at least one outgoing touch (`docs/plans/followups-due-candidates-plan.md`, L1; the engine answers `initial_outreach_required` without one), so the button sits **right after "Open in WhatsApp"**. It needs a contact with a phone, a suppression key and a **granted** consent (the forms built on `web/customer-forms`). Nothing is sent by the system. A withdrawn quote stops the follow-up (`app.followup_stopped`).
 
 **Findings from the intake review that bind item f** (recorded 2026-10-08; sources and line numbers in `docs/plans/customer-forms-plan.md`, section "Findings from the intake review", on `web/customer-forms`):
-* **No phone normalisation exists** in the API or the database: a phone is stored as the person typed it (3 to 32 characters). Only the suppression key normalises (`services/ai-api/app/suppression/keys.py:36-47`). So the `wa.me` link builder cannot take the stored string as it is: it needs its own small, tested function that keeps the digits and settles the country code. How to treat a number without a country code is an open owner decision (section 20).
+* **No phone normalisation exists** in the API or the database: a phone is stored as the person typed it (3 to 32 characters). Only the suppression key normalises (`services/ai-api/app/suppression/keys.py:36-47`). So the `wa.me` link builder cannot take the stored string as it is: it needs its own small, tested function that keeps the digits and settles the country code. How to treat a number without a country code was decided on 2026-10-08 (section 20, item 2): only a plain 10-digit Indian mobile number starting with 6 to 9 gets +91; otherwise the screen shows "Copy text".
 * **A touch has no note field** (`RecordTouchIn` has only id, direction, channel and time; the table has no text column). "I sent it" therefore records the fact and the time, not what was sent; the approved quote text is the record of what was sent.
 * **No `wa.me` link and no length limit exist yet**, in the code or in any test. Nothing encodes a quote text today.
 * **A long quote needs a "Copy text" fallback.** The measured synthetic two-item quote text was **721 characters; URL-encoded it became 1,185** (the rupee sign becomes nine characters, each newline three). The renderer's own bounds allow far more (500 lines of 60 characters). **The real WhatsApp limit on the length of the `text` parameter is UNVERIFIED** (no website was called). So item f must always offer **Copy text** next to **Open in WhatsApp**, and must test the link by hand on a phone before it is called done.
@@ -189,17 +189,25 @@ Each commit: `make check-fast` and the touched tests; any commit that touches th
 
 ## 12. Decisions I need from the owner
 
+**Recorded 2026-10-08.** The owner said, in chat: "do the recommended things". Each item below is marked DECIDED 2026-10-08 (owner), or STILL OPEN, and the original question text is kept. The decisions are recorded; the plan as a whole is still not approved (see the banner above).
+
 1. **Who may type a price:** Owner and Admin only (recommended), or Sales too?
+   **DECIDED 2026-10-08 (owner):** Owner and Admin only may type a price. Sales can view quotes.
 2. **The GST rule (the accountant's answer):** one rate, or by price band, or by saree type? Where are the limits (inclusive or exclusive), and is it the price per piece before GST? What is "a piece" for a set? Until answered, options 2 and 3 are built only with the synthetic placeholders above.
+   **STILL OPEN.** It waits for the accountant's answers (`docs/customer-zero/accountant-questions.md`). Until then only synthetic placeholder rates are used.
 3. **The soft warning:** the policy range (min and max) as in section 6, and do you want the later "compared with the last price for this saree type" warning?
+   **DECIDED 2026-10-08 (owner):** Yes to both: the optional per-type price range (from the values sheet) as a soft warning, and the later "compared with the last price for this saree type" warning (section 17). Neither blocks and neither fills in a price. Note: section 6 describes one range in the policy for all sarees; the values sheet asks for an optional range for each type as well as an overall lowest and highest price. How the per-type range is stored is for slice 1 to design. Section 6 is not changed by this edit.
 4. **The text:** hide the three zero shipping lines (a lane C renderer version) or accept them for now?
+   **DECIDED 2026-10-08 (owner):** Hide the three zero shipping lines (a `quote_text` 1.2.0 job in lane C).
 5. **Delivery state:** keep asking for it (it decides whether the GST is the same-state or other-state kind, which the text does not show) or drop the question for this shop?
+   **DECIDED 2026-10-08 (owner):** Do not ask for the delivery state on manual quotes. **UNVERIFIED whether the manual path can skip it.** The current database rule for list-price quotes requires `delivery_state` among the policy's `required_inputs` (`supabase/migrations/20261016090000_t009_quote_reference_data.sql:226` as a table check and `:547` in `app.quote_create_policy_version`, which refuses a policy without it), and `quotes.delivery_state` is `not null` with a two-letter pattern (`20261016090100_t009_picks_and_quotes.sql:130`; `create_quote_draft` refuses a null state, `:596`). The pgTAP file `supabase/tests/database/57_quote_reference_data.test.sql` exercises `required_inputs`. The test file `tests/integration/test_quote_policy_api.py` and its "no-delivery-state" case, named when this decision was recorded, were not found in this checkout. Slice 1 settles it. It also depends on accountant question 7 (`docs/customer-zero/accountant-questions.md`: does the rate depend on the buyer or the state). It can be added back as a policy input.
 6. **Is a catalog product still wanted** for each saree type (the product form), or should saree types live only in the requirement?
+   **DECIDED 2026-10-08 (owner):** No catalog product per saree type. Saree types live in the owner-editable `saree_types` list (section 16).
 7. **Order of work:** the sequence in section 11, or f first? *(On 2026-10-08 the owner gave the order g, d, f, slices 1 to 7, e; it is recorded in section 11.)*
 
 **Not decided (left open on purpose):** the one-line text variant; a per-customer price table; direct sending.
 
-**Further open decisions, added 2026-10-08, are in section 20.**
+**Further decisions, added and decided 2026-10-08, are in section 20.**
 
 ## 13. ADR sketch (not the ADR)
 
@@ -266,11 +274,11 @@ For a manual quote, "the product list" is the family's own list of saree types, 
 
 **Seed.** For tests, a synthetic fixture beside the other rehearsal data (`tests/rehearsal/data/saree_types.json`, the 20 numbered rows; product names, no personal data). In the pilot the Owner loads the real list through the editor on the Customer Zero workspace; nothing real is committed to the repository.
 
-**The open questions (sections 20 and 21):** how this list meets the requirement vocabulary above, and what the manual quote requires instead of a separately confirmed requirement (section 21). The manual quote picks its saree type from this table on the quote screen; whether the requirement fields should also read this table (a larger change to the Requirement Agent, the mapper and the confirmation rule) is for the owner to decide, not part of this plan.
+**Decided and still open (sections 20 and 21):** how this list meets the requirement vocabulary above was decided on 2026-10-08 (section 20, item 3): the eight fixed codes stay, and only the manual quote uses this list, through a mapping. What the manual quote requires instead of a separately confirmed requirement is still a PROPOSAL (section 21). The manual quote picks its saree type from this table on the quote screen; making the requirement fields read this table too (a larger change to the Requirement Agent, the mapper and the confirmation rule) is left for later and is not part of this plan.
 
-## 17. PROPOSAL: a last-price warning in v1 (for the owner to decide)
+## 17. A last-price warning in v1 (DECIDED 2026-10-08 (owner): yes)
 
-**PROPOSAL, not decided.** On the manual quote screen, when a person types a price for a saree type, show the **last price quoted for the same saree type to the same contact** ("Last quoted to this customer for this type: ₹X on [date]") and, when the typed price differs from it by more than a threshold, a plain **warning** ("This is N percent above or below the last price quoted to this customer for this type. Check for a typing slip.").
+**DECIDED 2026-10-08 (owner): yes (section 12, item 3); the design below is still a plan.** On the manual quote screen, when a person types a price for a saree type, show the **last price quoted for the same saree type to the same contact** ("Last quoted to this customer for this type: ₹X on [date]") and, when the typed price differs from it by more than a threshold, a plain **warning** ("This is N percent above or below the last price quoted to this customer for this type. Check for a typing slip.").
 * It **never blocks** and **never fills in a price**: the field stays empty until the person types; the figure is shown beside it as information.
 * "Last price quoted" means the most recent **approved or superseded** manual quote line of that contact (through the lead's contact) with the same `saree_type_code`. A draft that was never approved does not count. No new table: it reads earlier quote lines (the code is stored on each manual line, section 16).
 * The threshold is a policy field (`last_price_warn_bps`, optional; empty means the last price is shown and no warning is raised). A synthetic placeholder for tests and the checklist: 2,000 basis points (20 percent), **not the owners' number**.
@@ -300,18 +308,21 @@ For a manual quote, "the product list" is the family's own list of saree types, 
 
 **Voice agent for owners (LATER).** Speaking to the system instead of typing (for example to record "I sent it" or to add a note). Speech-to-text is a **paid dependency** and **needs the owner's written approval** first; **Telugu quality is UNVERIFIED** (nothing was tested). Whatever it hears would still be a proposal that a person approves, like the Capture Agent. Not planned in detail, not built.
 
-## 20. Open owner decisions added on 2026-10-08 (not decided here)
+## 20. Owner decisions added on 2026-10-08 (DECIDED 2026-10-08 (owner): "do the recommended things"; the original questions are kept)
 
 **1. The single test that pins "no detail links in the contacts table."**
 * The test: `it("the other tables have no detail links")` in `apps/web/app/app/tenants/[tenantId]/page.test.tsx`; it checks that the contacts, products and opportunities tables contain no link.
 * The finding: it was added with the two detail pages in commit `5b26454` (2026-10-04). **No text calls it a privacy guard.** ADR 0009, decision 1, only says there are two detail pages (companies and leads) and that the company name and the lead status link to them. Nobody wrote down a reason beyond that scope. Whether the authors meant it as a guard is UNVERIFIED.
 * The question: may that one test be changed? If yes, an **addendum to ADR 0009, decision 1** is recorded in the same commit: contacts get a link to their consent page; the page shows the name and the three consent states, never a phone number or an address. If no, the consent page is reached only from the "Add a customer" result and by its address, or from the lead page.
+* **DECIDED 2026-10-08 (owner):** The test "the other tables have no detail links" may be changed. The change is made together with an addendum to ADR 0009, decision 1, in the SAME commit: contacts link to their consent page; that page shows the name and the three consent states, never a phone number or an address. **The addendum and the test change are NOT made by this docs job.**
 
 **2. Phone numbers typed two ways.**
 * The facts: no phone normalisation exists; a phone is stored as typed; the same mobile written two ways becomes two contacts with two stored strings and **one shared suppression key**; nothing warns the person (details in `docs/plans/customer-forms-plan.md` on the branch `web/customer-forms`, PR #16, section "Findings from the intake review", a and b).
 * The question: what should happen? Options, without a recommendation: (a) nothing, as today; (b) a non-blocking warning when a contact with the same key already exists (a read-only lookup by key); (c) refuse a second contact with the same key; (d) store a normalised form of the number as well (a migration and a backfill). It also decides how item f builds the `wa.me` number when no country code was typed.
+* **DECIDED 2026-10-08 (owner):** Option (b): a non-blocking warning when a contact with the same suppression key already exists (a read-only lookup by key), plus phone matching in the batch import. For "Open in WhatsApp", a number without a country code is accepted only if it is a plain 10-digit Indian mobile number starting with 6 to 9 (then +91 is added); otherwise the screen shows "Copy text". **Option (d)** (a stored normalised number, with a migration and a backfill) goes on the list of things to do BEFORE any real family data is entered, because it is cheapest while the tables hold only synthetic data. The row is not added to `docs/pre-pilot-checklist.md` by this docs job.
 
-**3. Where the family's saree-type list meets the requirement vocabulary** (section 16): keep the requirement's eight fixed codes and let only the manual quote use the family's list; or make the requirement fields read the family's list too (a larger change). Not decided.
+**3. Where the family's saree-type list meets the requirement vocabulary** (section 16): keep the requirement's eight fixed codes and let only the manual quote use the family's list; or make the requirement fields read the family's list too (a larger change).
+* **DECIDED 2026-10-08 (owner):** Keep the eight fixed requirement codes. Only the manual quote uses the family's 20 types, through a mapping. Making the requirement read the family's list is left for later. Section 21 stays a PROPOSAL.
 
 ## 21. PROPOSAL: what a manual quote requires instead of a confirmed requirement
 
@@ -323,7 +334,7 @@ For a manual quote, "the product list" is the family's own list of saree types, 
 **Proposal (the owner decides).** For the manual kind, **the family's saree type and the quantity typed on the quote form, by an Owner or Admin, count as the person's confirmation.** A manual quote requires:
 1. an **enquiry on a lead** (the quote hangs on it, as today);
 2. at least one **typed line**: an active saree-type code from the workspace's list (section 16), a quantity from 1 to 10,000, and a unit price (bounded as in section 5);
-3. the customer kind and the delivery state, as today;
+3. the customer kind and the delivery state, as today (but the owner decided on 2026-10-08 not to ask for the delivery state on manual quotes: section 12, item 5, UNVERIFIED);
 4. a **current quote policy** with a complete GST rule table (sections 4 and 15).
 It does **not** require a separately confirmed requirement, and no agent field has to be proposed, accepted or corrected first.
 
@@ -334,6 +345,6 @@ It does **not** require a separately confirmed requirement, and no agent field h
 **Which existing rule or test would change.**
 * **Under (ii): none of the existing rules.** SM210, SM213, SM208 and the vocabulary stay exactly as they are for list quotes; the existing pgTAP files `58`, `59` and `61` are unchanged; only new pgTAP is added. The one difference is for the manual kind: its requirement is confirmed by the function, so `approve_quote`'s SM213 check passes without a screen step.
 * **Under (i):** the not-null columns, the lock-order code, pgTAP `58`, `59`, `61` and the race tests (`tests/integration/test_quote_races.py`, `test_order_races.py`).
-* **Only if the owner decides section 20, item 3, the other way** (the requirement fields read the family's list): then SM210, `app.requirement_vocab` with its pgTAP, the Requirement Agent and the mapper tests would change. That is a separate ticket and not part of this plan.
+* **Only if the requirement fields are later made to read the family's list** (section 20, item 3: the owner left this for later): then SM210, `app.requirement_vocab` with its pgTAP, the Requirement Agent and the mapper tests would change. That is a separate ticket and not part of this plan.
 
 **UNVERIFIED:** (ii) was not prototyped. I did not check whether writing a requirement and its fields from a function trips another guard (the field immutability triggers, the agent-state checks, the per-field "one field per line and key" rule). Line numbers are from today's migrations.
