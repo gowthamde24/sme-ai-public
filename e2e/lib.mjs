@@ -116,24 +116,61 @@ export async function discover(page) {
 
 /** Measure a page for the phone checklist: horizontal scroll, tappable things under 44px, text that overflows. */
 export async function layoutReport(page) {
-  return page.evaluate(() => {
+  const out = await page.evaluate(() => {
     const vw = window.innerWidth;
     const doc = document.documentElement;
     const out = { vw, scrollW: doc.scrollWidth, hscroll: doc.scrollWidth > vw + 1, small: [], tiny: [], overflowEls: [] };
+    // The screen-reader-only pattern ("sr-only") is the ONE exemption: a box of at most 1x1 px that is clipped away (clip, clip-path, or overflow hidden on an absolutely positioned box).
+    // It is not on screen, so it can neither overflow nor be a tap target. Anything else (a 1x1 box that is not clipped, a larger clipped box, a real overflow) is still reported.
+    const srOnly = (b, cs) =>
+      b.width <= 1 && b.height <= 1 && ((cs.clip !== "auto" && cs.clip !== "") || (cs.clipPath !== "" && cs.clipPath !== "none") || (cs.overflowX === "hidden" && cs.position === "absolute"));
     for (const el of document.querySelectorAll("a, button, select, input:not([type=hidden]), summary, textarea")) {
       // a radio or a checkbox is tapped through its label: that is the target
       const target = (el.type === "radio" || el.type === "checkbox") && el.closest("label") ? el.closest("label") : el;
       const b = target.getBoundingClientRect();
       if (b.width === 0 || b.height === 0) continue;
+      if (srOnly(b, getComputedStyle(target))) continue;
       const label = (el.innerText || el.getAttribute("aria-label") || el.name || el.tagName).trim().slice(0, 30);
       if (b.height < 44 || b.width < 44) out.small.push(`${label} ${Math.round(b.width)}x${Math.round(b.height)}`);
       if (b.height < 24 || b.width < 24) out.tiny.push(`${label} ${Math.round(b.width)}x${Math.round(b.height)}`);
     }
     for (const el of document.querySelectorAll("body *")) {
       const b = el.getBoundingClientRect();
+      if (b.width && srOnly(b, getComputedStyle(el))) continue;
       if (b.width && (b.right > vw + 1 || (el.scrollWidth > el.clientWidth + 1 && getComputedStyle(el).overflowX !== "visible")))
         out.overflowEls.push(`${el.tagName.toLowerCase()}.${(el.className || "").toString().slice(0, 25)} right=${Math.round(b.right)}`);
     }
     return out;
   });
+  // The skip link (a[href="#main"]), where a page has one: pressed to with Tab it must be a real target, at least 44 px high and inside the viewport. If it stays 1x1 (or is off screen, or Tab
+  // does not reach it first) it is reported through the existing arrays, so every caller's gate fails without changing the callers. The focus the page had is put back afterwards.
+  if (await page.locator('a[href="#main"]').count()) {
+    await page.evaluate(() => {
+      window.__layoutPrev = document.activeElement;
+      if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+      document.body.setAttribute("tabindex", "-1"); // move the sequential-focus starting point to the top of the document
+      document.body.focus();
+      document.body.removeAttribute("tabindex");
+    });
+    await page.keyboard.press("Tab");
+    // In `next dev` the framework's own overlay (<nextjs-portal>) can take the first Tab; it is not part of the page and does not exist in a production build. Nothing else may come before the skip link.
+    for (let i = 0; i < 2 && (await page.evaluate(() => document.activeElement && document.activeElement.tagName === "NEXTJS-PORTAL")); i++) await page.keyboard.press("Tab");
+    const skip = await page.evaluate(() => {
+      const a = document.activeElement;
+      const isSkip = !!a && a.matches('a[href="#main"]');
+      const b = a ? a.getBoundingClientRect() : { left: 0, top: 0, width: 0, height: 0, right: 0, bottom: 0 };
+      return { isSkip, w: Math.round(b.width), h: Math.round(b.height), inViewport: b.left >= 0 && b.top >= 0 && b.right <= innerWidth && b.bottom <= innerHeight && b.width > 0 && b.height > 0 };
+    });
+    await page.evaluate(() => {
+      const prev = window.__layoutPrev;
+      if (document.activeElement && document.activeElement !== document.body) document.activeElement.blur();
+      if (prev && prev !== document.body && prev.isConnected) prev.focus();
+      delete window.__layoutPrev;
+    });
+    out.skipLink = skip;
+    if (!skip.isSkip) out.small.push("skip link: Tab does not reach it first");
+    else if (skip.h < 44) out.small.push(`skip link (focused) ${skip.w}x${skip.h}`);
+    if (skip.isSkip && !skip.inViewport) out.overflowEls.push("a.skip link (focused) is outside the viewport");
+  }
+  return out;
 }

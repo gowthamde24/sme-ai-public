@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 
+import { authAlert, authForm, authSubmitSolo } from "@/components/v2/auth/ui";
 import type { AuthFormState } from "@/lib/auth/form-state";
 
 import { confirmLink } from "./actions";
@@ -20,16 +21,16 @@ export function ConfirmForm({
     undefined,
   );
   return (
-    <form className="card" action={action}>
+    <form className={authForm} action={action}>
       <input type="hidden" name="token_hash" value={tokenHash} />
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="next" value={next} />
       {state?.error && (
-        <p role="alert" className="error">
+        <p role="alert" className={authAlert}>
           {state.error}
         </p>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" disabled={pending} className={authSubmitSolo}>
         Continue
       </button>
     </form>
