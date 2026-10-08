@@ -29,6 +29,8 @@ const unitWord = (qty: number, unit: string) => `${qty} ${unit}${qty === 1 ? "" 
 export function QuoteView({ quote, stateName }: { quote: Quote; stateName: string }) {
   const flags = [...quote.engine_flags, ...quote.review_flags];
   const manual = isManual(quote);
+  // a quote with typed prices has no freight line: its two freight rows are left out, unless the quote somehow carries freight money (then it is shown, never hidden)
+  const showFreight = !manual || quote.shipping_net_paise !== 0 || quote.shipping_tax_paise !== 0;
   return (
     <div>
       <div className="row" style={{ flexWrap: "wrap" }}>
@@ -112,10 +114,14 @@ export function QuoteView({ quote, stateName }: { quote: Quote; stateName: strin
         <dd>{formatRupees(quote.merchandise_net_paise)}</dd>
         <dt>GST on goods</dt>
         <dd>{formatRupees(quote.item_tax_paise)}</dd>
-        <dt>Freight</dt>
-        <dd>{formatRupees(quote.shipping_net_paise)}</dd>
-        <dt>GST on freight</dt>
-        <dd>{formatRupees(quote.shipping_tax_paise)}</dd>
+        {showFreight ? (
+          <>
+            <dt>Freight</dt>
+            <dd>{formatRupees(quote.shipping_net_paise)}</dd>
+            <dt>GST on freight</dt>
+            <dd>{formatRupees(quote.shipping_tax_paise)}</dd>
+          </>
+        ) : null}
         <dt>
           <strong>Total</strong>
         </dt>

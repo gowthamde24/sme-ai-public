@@ -34,6 +34,23 @@ describe("QuoteView of a quote whose prices a person typed", () => {
     expect(document.body.textContent).not.toMatch(/null|undefined|another state|seller's own state/);
     expect(screen.getByText("Policy version")).toBeInTheDocument();
   });
+  it("leaves out the two freight rows, which a quote with typed prices cannot have, and keeps every other total", () => {
+    render(<QuoteView quote={manual()} stateName="" />);
+    expect(screen.queryByText("Freight")).toBeNull();
+    expect(screen.queryByText("GST on freight")).toBeNull();
+    for (const row of ["Goods", "GST on goods", "Total", "Advance", "Balance"]) expect(screen.getByText(row), row).toBeInTheDocument();
+  });
+  it("never hides freight money: a typed-price quote that carried some would still show both rows", () => {
+    render(<QuoteView quote={manual({ shipping_net_paise: 5000, shipping_tax_paise: 900 })} stateName="" />);
+    expect(screen.getByText("Freight")).toBeInTheDocument();
+    expect(screen.getByText("GST on freight")).toBeInTheDocument();
+  });
+  it("a list-price quote shows both freight rows even when the freight is zero", () => {
+    render(<QuoteView quote={parseQuote({ ...QUOTE_JSON, shipping_net_paise: 0, shipping_tax_paise: 0 })} stateName="Maharashtra" />);
+    expect(screen.getByText("Freight")).toBeInTheDocument();
+    expect(screen.getByText("GST on freight")).toBeInTheDocument();
+    expect(screen.getAllByText("₹0.00").length).toBeGreaterThanOrEqual(2);
+  });
   it("shows the delivery state when the quote was made with one", () => {
     render(<QuoteView quote={manual({ delivery_state: "KA", gst_supply: "inter_state" })} stateName="Karnataka" />);
     expect(screen.getByText("Delivery")).toBeInTheDocument();
