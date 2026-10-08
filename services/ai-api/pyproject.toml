@@ -43,6 +43,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../tests/rehearsal/*" = ["S101"]
 # a script of readable data tables and a long explanatory header
 "../../scripts/seed_demo.py" = ["E501"]
+"../../scripts/seed_demo_manual.py" = ["E501"]
 # T008: word lists, synonym tables and regular expressions that read better on one line, and long explanatory docstrings
 "app/requirements/*" = ["E501"]
 # the requirement agent: its policy text and a long explanatory docstring per file
