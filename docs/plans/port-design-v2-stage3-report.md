@@ -77,3 +77,7 @@ make seed-demo
 cd e2e && npm ci && npm run install-browser && npm run setup-users && npm run auth
 ```
 `npm run auth` is `e2e/auth.mjs`: the sign-in page (no sign-up, exactly one `a[href="/auth/forgot"]`), forgot-password answers, the confirm page's missing-token state and Continue button, sign-in and the code challenge, the security headers and the CSP under the real proxy, and the 360 px pass. It reads `input[name=...]`, `button:has-text("Sign in" | "Send the link" | "Continue" | "Verify")`, `form [role="status"|"alert"]` and `main`: all pinned by the skin contract. There is no manual or phone checklist (owner decision).
+
+## 8. After the rebase onto `origin/main` (01d4d77, 2026-10-08)
+
+The flip (`web/port-flip`, PR #11) is merged, so the branch was rebased onto `origin/main` (14 commits, no conflicts). Re-run on the rebased tree: forbidden-path list against `origin/main`: empty; test files against `origin/main`: only `A` (6 new files); guarded repository paths: empty diff; the only new non-test paths under `app/` are the two layouts (plus the skin-contract tests under `app/auth/`); `npm ci` (npm 10.9.2), lint, typecheck, build exit 0; full web suite 117 files, 1,790 tests (main gained the follow-up and suppression-key tests); the 7 existing auth and login test files: 90 tests, unchanged and passing; the 6 new Stage 3 test files: 51 tests. The browser audits above ran on the pre-rebase tree; nothing under `app/login`, `app/auth`, `components/v2` or `i18n` was touched by the merged commits, so they were not repeated.
