@@ -21,22 +21,19 @@ type Props = {
   /** The ACTIVE item types, in the owner's display order. */
   itemTypes: ItemType[];
   gst: GstInForce | null;
-  states: Record<string, string>;
 };
 
 /**
- * A quote with typed prices (owner or admin). A person chooses an item type, a quantity and a price for each line, in rupees; the price is converted to integer paise by
+ * A quote with typed prices (owner or admin). It does not ask where the goods are delivered (owner decision: a quote with typed prices has no delivery state). A person chooses an item type, a quantity and a price for each line, in rupees; the price is converted to integer paise by
  * reading the text and nothing here works out GST or a total: the engine and the database do, and the database decides. A price outside the item type's usual range gets a
  * neutral note and never stops the form. The id comes from the page (one per render), so pressing again after a failure is a retry that replays, not a second quote.
  * Held in state and sent with onSubmit, so a refusal keeps what the person typed.
  */
-export function ManualQuoteForm({ create, quoteId, itemTypes, gst, states }: Props) {
+export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
   const [lines, setLines] = useState<LineValues[]>([{ ...EMPTY_LINE }]);
   const [kind, setKind] = useState<string>("new");
-  const [deliveryState, setDeliveryState] = useState("");
   const [localError, setLocalError] = useState<string | null>(null);
   const [state, formAction, pending] = useActionState(create, undefined);
-  const stateOptions = Object.entries(states).sort((a, b) => a[1].localeCompare(b[1]));
   const noRate = gst === null;
   const blocked = state?.blocked === true;
   const error = localError ?? state?.error ?? null;
@@ -91,16 +88,6 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst, states }: Pro
         ))}
         <p className="hint">A repeat customer is your word: nobody has verified it, so the owner decides such a quote.</p>
       </fieldset>
-
-      <label htmlFor="mq-state">Delivery state (optional)</label>
-      <select id="mq-state" name="delivery_state" value={deliveryState} onChange={(e) => setDeliveryState(e.target.value)} disabled={pending}>
-        <option value="">Not needed</option>
-        {stateOptions.map(([code, name]) => (
-          <option key={code} value={code}>
-            {name} ({code})
-          </option>
-        ))}
-      </select>
 
       {lines.map((line, index) => {
         const n = index + 1;

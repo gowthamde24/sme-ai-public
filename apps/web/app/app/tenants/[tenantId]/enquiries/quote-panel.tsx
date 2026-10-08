@@ -73,6 +73,8 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
   const base = `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
   // typed prices exist on this screen: the sentence about where prices come from must say so (a list-only screen keeps its sentence)
   const typedPrices = manual !== null || (selected !== null && isManual(selected)) || quotes.some((q) => isManual(q));
+  // an enquiry that has quotes, all with typed prices, is not on the list flow: the list notices ("no price list in force", "approve the requirement") are not about it
+  const typedOnly = quotes.length > 0 && quotes.every((q) => isManual(q));
   return (
     <section aria-labelledby="quote-heading">
       <h2 id="quote-heading">Quote</h2>
@@ -81,7 +83,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
         Nothing on this page is ever sent to anyone.
       </p>
 
-      {[...blockers, ...notes].map((m) => (
+      {(typedOnly ? [] : [...blockers, ...notes]).map((m) => (
         <p key={m} role="note" className="notice">
           {MISSING_TEXT[m] ?? "Something this quote needs is missing."}
         </p>
@@ -127,7 +129,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
             </p>
           ) : (
             <>
-              <ManualQuoteForm create={createManualQuoteAction.bind(null, tenantId, enquiryId)} quoteId={manual.newQuoteId} itemTypes={manual.itemTypes} gst={manual.gst} states={setup.delivery_states} />
+              <ManualQuoteForm create={createManualQuoteAction.bind(null, tenantId, enquiryId)} quoteId={manual.newQuoteId} itemTypes={manual.itemTypes} gst={manual.gst} />
               {quotes.some((q) => q.outcome === "draft") ? <p className="hint">Making a new draft replaces the current draft.</p> : null}
             </>
           )}

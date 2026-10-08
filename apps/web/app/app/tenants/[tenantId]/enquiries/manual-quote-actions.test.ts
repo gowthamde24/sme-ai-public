@@ -27,7 +27,7 @@ function form(values: Record<string, string>): FormData {
   for (const [k, v] of Object.entries(values)) data.set(k, v);
   return data;
 }
-const GOOD = { quote_id: ID, customer_kind: "new", delivery_state: "", line_count: "2", code_1: "A", qty_1: "3", price_1: "2500", code_2: "B", qty_2: "1", price_2: "999.99" };
+const GOOD = { quote_id: ID, customer_kind: "new", line_count: "2", code_1: "A", qty_1: "3", price_1: "2500", code_2: "B", qty_2: "1", price_2: "999.99" };
 const make = (over: Record<string, string> = {}) => createManualQuoteAction(TENANT, ENQ, undefined, form({ ...GOOD, ...over }));
 const refused = (status: number, code: string) => new ApiRequestError(status, code, `${CANARY} secret`);
 
@@ -52,9 +52,9 @@ describe("createManualQuoteAction", () => {
     });
     expect(revalidatePath).toHaveBeenCalledWith(PAGE);
   });
-  it("sends the delivery state when one is chosen and a repeat customer as chosen", async () => {
+  it("sends a repeat customer as chosen and never a delivery state, even if the form carries one", async () => {
     await make({ delivery_state: "KA", customer_kind: "repeat" }).catch(() => undefined);
-    expect(api.createManualQuote.mock.calls[0][3]).toMatchObject({ deliveryState: "KA", customerKind: "repeat" });
+    expect(api.createManualQuote.mock.calls[0][3]).toMatchObject({ deliveryState: null, customerKind: "repeat" });
   });
   it("a retry sends the SAME id (the API replays it); another page render sends its own", async () => {
     await make().catch(() => undefined);
@@ -67,11 +67,10 @@ describe("createManualQuoteAction", () => {
     const sent = JSON.stringify(api.createManualQuote.mock.calls[0][3]);
     for (const forbidden of ["total", "gst", "tax", "tenant", "price_source", '"unit_price_paise":1,']) expect(sent).not.toContain(forbidden);
   });
-  it("refuses with a sentence of ours, before any request, a bad id, kind, state, line count, quantity, price or item type", async () => {
+  it("refuses with a sentence of ours, before any request, a bad id, kind, line count, quantity, price or item type", async () => {
     const cases: [Record<string, string>, RegExp][] = [
       [{ quote_id: "x" }, /out of date/],
       [{ customer_kind: "vip" }, /new or a repeat/],
-      [{ delivery_state: "karnataka" }, /delivery state/],
       [{ line_count: "0" }, /out of date/],
       [{ line_count: "6" }, /out of date/],
       [{ line_count: "x" }, /out of date/],
@@ -107,7 +106,7 @@ describe("every refusal is a fixed sentence of ours", () => {
     [403, "price_not_typed_by_person", /Only a person can type a price/, false],
     [403, "forbidden", /Only an owner or an admin/, false],
     [422, "quote_input_missing", /GST rate that applies today/, false],
-    [422, "invalid_delivery_state", /delivery state/, false],
+    [422, "invalid_delivery_state", /not accepted/, false],
     [422, "invalid_reference", /item types is not available/, false],
     [422, "invalid_value", /no longer sold/, false],
     [422, "validation_error", /not accepted/, false],
