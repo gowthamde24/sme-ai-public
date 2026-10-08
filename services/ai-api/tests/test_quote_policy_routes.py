@@ -28,6 +28,7 @@ FIELDS = {
     "repeat_advance_bps": 2500,
     "new_net_days": 10,
     "repeat_net_days": 30,
+    "gst_rate_bps": 500,
     "seller_state": "TG",
 }
 BODY = {"id": str(uuid.UUID(int=0x9001)), "effective_from": "2026-10-20", **FIELDS}
