@@ -11,6 +11,8 @@ import { requireUser } from "@/lib/auth/session";
 import { LocalTime } from "../../../../local-time";
 import { EnquiryText } from "../enquiry-text";
 import { QuotePanel } from "../quote-panel";
+import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
+import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
 import { RequirementPanel } from "../requirement-panel";
 
 export const metadata = { title: "Enquiry · SME AI Revenue Engine" };
@@ -58,6 +60,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   let selected: Quote | null = null;
   let text: QuoteText | null = null;
   let textError: string | null = null;
+  let whatsapp: WhatsappView | null = null;
   let quotesDown = false;
   let order: Order | null = null;
   if (canQuote) {
@@ -79,6 +82,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           if (error instanceof ApiAuthError) redirect("/login");
           textError = error instanceof ApiRequestError ? error.code : "unavailable";
         }
+        if (text) whatsapp = await loadWhatsappView(user.accessToken, tenantId, selected, text, query.whatsapp, new Date());
       }
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
@@ -143,6 +147,8 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           newQuoteId={crypto.randomUUID()}
           order={order}
           newOrderId={crypto.randomUUID()}
+          whatsapp={whatsapp}
+          sentOnWhatsapp={selected ? { action: recordQuoteSentAction.bind(null, tenantId, selected.id), touchId: crypto.randomUUID() } : null}
         />
       )}
     </main>
