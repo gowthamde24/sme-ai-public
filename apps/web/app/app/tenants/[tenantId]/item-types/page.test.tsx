@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -30,6 +30,9 @@ beforeEach(() => {
   fetchItemTypes.mockResolvedValue(parseItemTypes([TYPE_B_JSON, TYPE_C_JSON, TYPE_A_JSON]));
 });
 
+/** The data rows of the item types table, in the order shown (the header row and the edit-form rows are not among them). */
+const typeRows = () => screen.getAllByRole("rowheader").map((h) => h.closest("tr") as HTMLElement);
+
 async function show(role: string, aal = "aal2") {
   fetchTenant.mockResolvedValue(tenant(role));
   requireUser.mockResolvedValue({ ...USER, aal });
@@ -44,7 +47,8 @@ describe("/app/tenants/[tenantId]/item-types", () => {
   });
   it("lists every item type in the owner's order with its name, code, switch and prices in rupees", async () => {
     await show("owner");
-    const items = screen.getAllByRole("listitem").map((li) => li.textContent ?? "");
+    const items = typeRows().map((tr) => tr.textContent ?? "");
+    expect(items).toHaveLength(3);
     expect(items[0]).toContain("Type C (not sold)");
     expect(items[1]).toContain("Type A");
     expect(items[2]).toContain("Type B");
@@ -52,6 +56,25 @@ describe("/app/tenants/[tenantId]/item-types", () => {
     expect(items[2]).toContain("₹500.00");
     expect(items[2]).toContain("₹4,000.00");
     expect(items[1]).toContain("none");
+  });
+  it("shows the types as one table with a column for each fact, and each cell says which fact it is", async () => {
+    await show("owner");
+    const table = screen.getByRole("table", { name: "Item types, in order" });
+    const heads = within(table).getAllByRole("columnheader").map((h) => h.textContent);
+    expect(heads).toEqual(["Name", "Code", "Can be used", "Position", "Lowest price", "Highest price", "Edit"]);
+    const b = typeRows()[2];
+    expect(within(b).getByRole("rowheader")).toHaveTextContent("Type B");
+    expect(within(b).getAllByRole("cell").map((c) => c.getAttribute("data-label"))).toEqual(["Code", "Can be used", "Position", "Lowest price", "Highest price", null]);
+    expect(within(b).getAllByRole("cell").slice(0, 5).map((c) => c.textContent)).toEqual(["B", "Yes", "2", "₹500.00", "₹4,000.00"]);
+  });
+  it("puts each edit control in the row of its type, and its form in the row under it", async () => {
+    await show("owner");
+    const [c, a] = typeRows();
+    expect(within(c).getByText("Edit Type C (not sold)")).toBeInTheDocument();
+    expect(within(a).getByText("Edit Type A")).toBeInTheDocument();
+    const form = (a.nextElementSibling as HTMLElement).querySelector("form");
+    expect(form).not.toBeNull();
+    expect(within(form as HTMLElement).getByLabelText("Name")).toHaveValue("Type A");
   });
   it("says in plain words that a price outside the range only warns and never stops a quote", async () => {
     await show("owner");
@@ -66,7 +89,8 @@ describe("/app/tenants/[tenantId]/item-types", () => {
   });
   it.each(["owner", "admin"])("a %s without the authenticator app sees the list, one sentence with the link, and NO control", async (role) => {
     await show(role, "aal1");
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(typeRows()).toHaveLength(3);
+    expect(screen.queryByRole("columnheader", { name: "Edit" })).toBeNull();
     expect(screen.getByText(/needs your authenticator app/)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Security page/ })).toHaveAttribute("href", "/app/security");
     expect(screen.queryByRole("button")).toBeNull();
@@ -74,7 +98,10 @@ describe("/app/tenants/[tenantId]/item-types", () => {
   });
   it("a sales user reads the list and is offered no edit control at all", async () => {
     await show("sales");
-    expect(screen.getAllByRole("listitem")).toHaveLength(3);
+    expect(typeRows()).toHaveLength(3);
+    expect(screen.getAllByRole("row")).toHaveLength(4); // the header and the three types: no edit-form row either
+    expect(screen.queryByRole("columnheader", { name: "Edit" })).toBeNull();
+    expect(document.querySelector("details, summary, form, .edit-row")).toBeNull();
     expect(screen.queryByRole("button")).toBeNull();
     expect(screen.queryByRole("textbox")).toBeNull();
     expect(screen.queryByRole("checkbox")).toBeNull();
@@ -86,8 +113,9 @@ describe("/app/tenants/[tenantId]/item-types", () => {
     await show("viewer");
     expect(screen.getByText("Item types are shown to owners, admins and sales users.")).toBeInTheDocument();
     expect(fetchItemTypes).not.toHaveBeenCalled();
-    expect(screen.queryByRole("list")).toBeNull();
+    expect(screen.queryByRole("table")).toBeNull();
     expect(screen.queryByRole("button")).toBeNull();
+    expect(document.querySelector("details, summary, form")).toBeNull();
   });
   it("an empty workspace says so, and offers the first add to a writer only", async () => {
     fetchItemTypes.mockResolvedValue([]);

@@ -37,6 +37,10 @@
   color: inherit;
   text-decoration: inherit;
 }
+/* the legacy sheet colours a:visited (specificity 0,1,1); this (0,2,0) keeps v2 links on their own colour */
+[data-ui="v2"] :where(a):visited {
+  color: inherit;
+}
 [data-ui="v2"] :where(b, strong) {
   font-weight: bolder;
 }

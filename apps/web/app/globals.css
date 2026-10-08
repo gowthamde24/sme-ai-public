@@ -1,7 +1,11 @@
 :root {
+  color-scheme: light dark;
   --bg: #ffffff;
   --fg: #111827;
   --muted: #4b5563;
+  /* Links and the focus ring: 6.7:1 (link), 7.1:1 (visited) on --bg; globals-contrast.test.ts keeps them at WCAG AA (4.5:1) in both themes. */
+  --link: #1d4ed8;
+  --link-visited: #6d28d9;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -9,7 +13,24 @@
     --bg: #0b0f17;
     --fg: #f3f4f6;
     --muted: #9ca3af;
+    --link: #93c5fd;
+    --link-visited: #c4b5fd;
   }
+}
+
+/* The browser's own link blue is 2:1 on the dark background: every link takes its colour from here, so no page styles one by hand.
+   These come before a.button and the tab styles, which set their own colour and must win. */
+a {
+  color: var(--link);
+}
+
+a:visited {
+  color: var(--link-visited);
+}
+
+:focus-visible {
+  outline: 2px solid var(--link);
+  outline-offset: 2px;
 }
 
 * {
@@ -472,4 +493,155 @@ select {
   padding: 0.5rem 0.75rem;
   border-left: 4px solid var(--muted);
   color: var(--fg);
+}
+
+/* Forms: one field is a label above its input; fields sit in a grid that goes to one column on a phone. */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 0.75rem 1rem;
+  margin: 0 0 0.75rem;
+}
+
+.form-grid .wide {
+  grid-column: 1 / -1;
+}
+
+/* A line of a quote: item type, quantity, price, side by side when there is room. */
+@media (min-width: 40rem) {
+  .form-grid.line-grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.2fr);
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.field > label {
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.field input:not([type="checkbox"]):not([type="radio"]),
+.field select {
+  width: 100%;
+  padding: 0.5rem 0.625rem;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid var(--muted);
+  border-radius: 0.375rem;
+}
+
+.field .hint {
+  margin: 0;
+}
+
+fieldset.form-line {
+  min-width: 0;
+  margin: 1rem 0 0;
+  padding: 0.75rem;
+  border: 1px solid var(--muted);
+  border-radius: 0.5rem;
+}
+
+fieldset.form-line > legend {
+  padding: 0 0.25rem;
+  font-weight: 600;
+}
+
+fieldset.form-plain {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* A table of records that stacks on a phone: each row becomes a block, each cell says what it is (data-label). */
+.data-table {
+  margin-bottom: 1.5rem;
+}
+
+.data-table th[scope="col"] {
+  font-size: 0.875rem;
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.data-table .edit-cell {
+  white-space: nowrap;
+}
+
+/* The edit form of a row sits in the row under it and shows only while that row's Edit control is open. A browser that cannot tell shows every form. */
+@supports selector(:has(*)) {
+  .data-table tr.edit-row {
+    display: none;
+  }
+
+  .data-table tr:has(details[open]) + tr.edit-row {
+    display: table-row;
+  }
+}
+
+.data-table tr.edit-row > td {
+  padding: 0.75rem 0.25rem 1.25rem;
+}
+
+@media (max-width: 40rem) {
+  .data-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .data-table,
+  .data-table tbody,
+  .data-table tr,
+  .data-table th,
+  .data-table td {
+    display: block;
+  }
+
+  .data-table tr {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--muted);
+  }
+
+  .data-table th,
+  .data-table td {
+    border-bottom: 0;
+  }
+
+  .data-table td[data-label] {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .data-table td[data-label]::before {
+    content: attr(data-label);
+    color: var(--muted);
+  }
+
+  .data-table tr.edit-row {
+    border-bottom: 0;
+    padding-top: 0;
+  }
+
+  @supports selector(:has(*)) {
+    .data-table tr.edit-row {
+      display: none;
+    }
+
+    .data-table tr:has(details[open]) + tr.edit-row {
+      display: block;
+    }
+  }
 }

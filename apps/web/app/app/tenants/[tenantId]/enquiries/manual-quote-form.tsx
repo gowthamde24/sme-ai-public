@@ -64,8 +64,7 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
         Quote with typed prices
       </h3>
       <p className="hint">
-        You type the price of each piece. The GST and the totals are worked out for you when you make the draft, and the owner approves it before it can be used. This makes a
-        draft. Nothing is approved and nothing is sent.
+        You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.
       </p>
       {gst ? (
         <p>
@@ -79,7 +78,7 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
       <input type="hidden" name="quote_id" value={quoteId} />
       <input type="hidden" name="line_count" value={lines.length} />
 
-      <fieldset disabled={pending} style={{ border: 0, padding: 0, margin: 0 }}>
+      <fieldset disabled={pending} className="form-plain">
         <legend>The customer</legend>
         {CUSTOMER_KINDS.map((k) => (
           <label key={k} style={{ display: "block" }}>
@@ -92,29 +91,37 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
       {lines.map((line, index) => {
         const n = index + 1;
         return (
-          <fieldset key={n} disabled={pending} style={{ border: 0, padding: 0, margin: "1rem 0 0" }}>
+          <fieldset key={n} disabled={pending} className="form-line">
             <legend>Line {n}</legend>
-            <label htmlFor={`mq-code-${n}`}>Item type</label>
-            <select id={`mq-code-${n}`} name={`code_${n}`} value={line.code} onChange={(e) => change(index, "code", e.target.value)}>
-              <option value="">Choose an item type</option>
-              {itemTypes.map((t) => (
-                <option key={t.code} value={t.code}>
-                  {t.name}
-                </option>
-              ))}
-            </select>
-            <label htmlFor={`mq-qty-${n}`}>Quantity (pieces)</label>
-            <input id={`mq-qty-${n}`} name={`qty_${n}`} inputMode="numeric" autoComplete="off" value={line.qty} onChange={(e) => change(index, "qty", e.target.value)} />
-            <label htmlFor={`mq-price-${n}`}>Price per piece (rupees)</label>
-            <input
-              id={`mq-price-${n}`}
-              name={`price_${n}`}
-              inputMode="decimal"
-              autoComplete="off"
-              aria-describedby={`mq-price-hint-${n}`}
-              value={line.price}
-              onChange={(e) => change(index, "price", e.target.value)}
-            />
+            <div className="form-grid line-grid">
+              <div className="field">
+                <label htmlFor={`mq-code-${n}`}>Item type</label>
+                <select id={`mq-code-${n}`} name={`code_${n}`} value={line.code} onChange={(e) => change(index, "code", e.target.value)}>
+                  <option value="">Choose an item type</option>
+                  {itemTypes.map((t) => (
+                    <option key={t.code} value={t.code}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="field">
+                <label htmlFor={`mq-qty-${n}`}>Quantity (pieces)</label>
+                <input id={`mq-qty-${n}`} name={`qty_${n}`} inputMode="numeric" autoComplete="off" value={line.qty} onChange={(e) => change(index, "qty", e.target.value)} />
+              </div>
+              <div className="field">
+                <label htmlFor={`mq-price-${n}`}>Price per piece (rupees)</label>
+                <input
+                  id={`mq-price-${n}`}
+                  name={`price_${n}`}
+                  inputMode="decimal"
+                  autoComplete="off"
+                  aria-describedby={`mq-price-hint-${n}`}
+                  value={line.price}
+                  onChange={(e) => change(index, "price", e.target.value)}
+                />
+              </div>
+            </div>
             <p id={`mq-price-hint-${n}`} className="hint">
               {LINE_TEXT.price}
             </p>

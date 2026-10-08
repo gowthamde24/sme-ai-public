@@ -38,7 +38,11 @@ describe("the form", () => {
     expect(screen.getByRole("heading", { name: "Quote with typed prices" })).toBeInTheDocument();
     const l = line(1);
     expect([l.code.value, l.qty.value, l.price.value]).toEqual(["", "", ""]);
-    expect(screen.getByText(/Nothing is approved and nothing is sent/)).toBeInTheDocument();
+    const intro = screen.getByText(/You type the price of each piece/);
+    expect(intro).toHaveTextContent("The GST and the totals are worked out for you");
+    expect(intro).toHaveTextContent("the owner approves the draft before it can be used");
+    expect(intro).toHaveTextContent("Nothing is sent");
+    expect(screen.getAllByText(/nothing is sent/i)).toHaveLength(1); // said once
     expect(screen.queryByRole("button", { name: /Remove line/ })).toBeNull();
   });
   it("offers only the item types it is given, by name, after a first empty choice", () => {
@@ -58,6 +62,27 @@ describe("the form", () => {
     expect(screen.getByLabelText("New customer")).toBeChecked();
     expect(screen.getByLabelText("Repeat customer")).not.toBeChecked();
     expect(screen.getByText(/the owner decides such a quote/)).toBeInTheDocument();
+  });
+});
+
+describe("the layout of the fields", () => {
+  it("gives every input and select its own label, in its own field, with the line's three fields in one grid", () => {
+    renderForm(mk());
+    addLine();
+    const form = screen.getByRole("form", { name: "Quote with typed prices" });
+    const controls = [...form.querySelectorAll("select, input:not([type=hidden]):not([type=radio])")] as HTMLElement[];
+    expect(controls).toHaveLength(6);
+    for (const control of controls) {
+      const label = form.querySelector(`label[for="${control.id}"]`) as HTMLLabelElement;
+      expect(label, control.id).not.toBeNull();
+      expect(control.closest(".field"), control.id).toBe(label.closest(".field")); // label and input share one field box
+      expect(screen.getByLabelText(label.textContent ?? "", { selector: `#${control.id}` })).toBe(control);
+    }
+    for (const n of [1, 2]) {
+      const grid = document.getElementById(`mq-code-${n}`)?.closest(".line-grid") as HTMLElement;
+      expect([...grid.querySelectorAll("label")].map((l) => l.textContent)).toEqual(["Item type", "Quantity (pieces)", "Price per piece (rupees)"]);
+    }
+    expect(document.getElementById("mq-price-1")).toHaveAccessibleDescription(LINE_TEXT.price);
   });
 });
 

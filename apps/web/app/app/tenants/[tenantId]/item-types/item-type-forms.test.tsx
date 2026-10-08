@@ -44,6 +44,27 @@ describe("the add form", () => {
   });
 });
 
+describe("the layout of the fields", () => {
+  const labelled = (root: HTMLElement) => {
+    const controls = [...root.querySelectorAll("input:not([type=hidden]), select")] as HTMLElement[];
+    for (const control of controls) {
+      const label = root.querySelector(`label[for="${control.id}"]`) ?? control.closest("label");
+      expect(label, control.id || control.getAttribute("name") || "").not.toBeNull();
+      if (control.getAttribute("type") !== "checkbox") expect(control.closest(".field"), control.id).toBe(label?.closest(".field")); // label above its input, in one field box
+    }
+    return controls.length;
+  };
+  it("the add form gives each of its five inputs a label in its own field", () => {
+    const { container } = render(<AddItemTypeForm add={mk()} />);
+    expect(labelled(container)).toBe(5);
+    expect(screen.getByLabelText("Code")).toHaveAccessibleDescription(/Letters, digits, hyphens and underscores only/);
+  });
+  it("the edit form gives each of its four inputs and its switch a label", () => {
+    const { container } = render(<EditItemTypeForm type={typeB} save={mk()} />);
+    expect(labelled(container)).toBe(5);
+  });
+});
+
 describe("the edit form", () => {
   it("shows the saved values in rupees, the code as text that cannot be edited, and the switch", () => {
     render(<EditItemTypeForm type={typeB} save={mk()} />);
