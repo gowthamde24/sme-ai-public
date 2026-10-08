@@ -190,3 +190,43 @@ export const FLOW_TRANSITIONS = `(() => {
   }
   return [...props];
 })()`;
+
+/**
+ * Structure of a sign-in or account screen behind the Stage 3 frame: one h1, one banner, one main (id "main", the skip
+ * link's target), exactly one skip link, the form region in English inside the content language, names for every control,
+ * labels for every field, unique ids, noindex, the expected title.
+ */
+export const AUTH_STRUCTURE = (opts) => `(() => { ${HELPERS}
+  const opts = ${JSON.stringify(opts)};
+  const problems = [], info = {};
+  const count = (sel) => [...document.querySelectorAll(sel)].filter(vis).length;
+  info.h1 = count('h1'); if (info.h1 !== 1) problems.push('expected one h1, found ' + info.h1);
+  info.main = count('main'); if (info.main !== 1) problems.push('expected one main, found ' + info.main);
+  const main = document.querySelector('main');
+  if (!main || main.id !== 'main') problems.push('the main has no id="main" (the skip link target)');
+  info.banner = count('body header:not(section header):not(article header)'); if (info.banner !== 1) problems.push('expected one banner, found ' + info.banner);
+  const skips = [...document.querySelectorAll('a[href="#main"]')]; info.skipLinks = skips.length; if (skips.length !== 1) problems.push('expected one skip link, found ' + skips.length);
+  info.v2Roots = document.querySelectorAll('[data-ui="v2"]').length; if (info.v2Roots !== 1) problems.push('expected one [data-ui="v2"] root, found ' + info.v2Roots);
+  info.rootLang = root ? root.getAttribute('lang') : null; if (info.rootLang !== opts.lang) problems.push('wrapper lang is "' + info.rootLang + '", expected "' + opts.lang + '"');
+  const region = main && main.parentElement; info.regionLang = region ? region.getAttribute('lang') : null;
+  if (info.regionLang !== 'en') problems.push('the form region has lang="' + info.regionLang + '", expected "en"');
+  if (opts.lang !== 'en') { const t = (skips[0] && skips[0].textContent.trim()) || ''; if (t === 'Skip to content') problems.push('the skip link is not translated'); }
+  info.forms = count('form'); if (info.forms !== opts.forms) problems.push('expected ' + opts.forms + ' form(s), found ' + info.forms);
+  info.title = document.title; if (document.title !== opts.title) problems.push('title is "' + document.title + '", expected "' + opts.title + '"');
+  const robots = (document.querySelector('meta[name="robots"]') || {}).content || null; info.robots = robots;
+  if (!/noindex/.test(robots || '') || !/nofollow/.test(robots || '')) problems.push('robots meta is not noindex, nofollow: ' + robots);
+  const ids = {}; for (const e of document.querySelectorAll('[id]')) ids[e.id] = (ids[e.id] || 0) + 1;
+  for (const [id, n] of Object.entries(ids)) if (n > 1) problems.push('duplicate id ' + id);
+  for (const f of document.querySelectorAll('input:not([type=hidden]),select,textarea')) {
+    if (!vis(f)) continue;
+    const named = (f.labels && f.labels.length && [...f.labels].some((l) => l.textContent.trim())) || f.getAttribute('aria-label') || f.getAttribute('aria-labelledby');
+    if (!named) problems.push('field without a label: ' + label(f));
+  }
+  const txt = (n) => { if (n.nodeType === 3) return n.textContent; if (n.nodeType !== 1 || n.getAttribute('aria-hidden') === 'true') return ''; const cs = getComputedStyle(n); if (cs.display === 'none' || cs.visibility === 'hidden') return ''; return [...n.childNodes].map(txt).join(' '); };
+  for (const c of document.querySelectorAll('a[href],button,select,summary')) {
+    if (!vis(c)) continue;
+    if (!((c.getAttribute('aria-label') || '').trim() || txt(c).trim() || (c.getAttribute('title') || '').trim())) problems.push('no accessible name: ' + label(c));
+  }
+  info.alertInForm = !!document.querySelector('form [role="alert"]'); info.statusInForm = !!document.querySelector('form [role="status"]');
+  return { problems, info };
+})()`;

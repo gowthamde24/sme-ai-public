@@ -10,6 +10,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
     "audit:leaks": "node scripts/audit-leaks.mjs",
+    "audit:auth": "node scripts/audit-auth.mjs",
     "audit:landing": "node scripts/audit-landing.mjs",
     "audit:budget": "node scripts/audit-budget.mjs",
     "audit:contrast": "node scripts/contrast.mjs",

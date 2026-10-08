@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { authAlert, authH1, authLead, authLink, authMain, authParagraph } from "@/components/v2/auth/ui";
 import { parseConfirmType, parseTokenHash } from "@/lib/auth/otp";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 
@@ -30,21 +31,21 @@ export default async function ConfirmPage({ searchParams }: PageProps<"/auth/con
 
   if (!type || !tokenHash) {
     return (
-      <main className="shell">
-        <h1>This link does not work</h1>
-        <p role="alert" className="error">
+      <main id="main" className={authMain}>
+        <h1 className={authH1}>This link does not work</h1>
+        <p role="alert" className={authAlert}>
           This link has expired or was already used. Request a new one.
         </p>
-        <p>
-          <Link href="/auth/forgot">Reset your password</Link> · <Link href="/login">Sign in</Link>
+        <p className={authParagraph}>
+          <Link href="/auth/forgot" className={authLink}>Reset your password</Link> · <Link href="/login" className={authLink}>Sign in</Link>
         </p>
       </main>
     );
   }
   return (
-    <main className="shell">
-      <h1>{HEADINGS[type]}</h1>
-      <p>
+    <main id="main" className={authMain}>
+      <h1 className={authH1}>{HEADINGS[type]}</h1>
+      <p className={authLead}>
         {type === "email"
           ? "Press Continue to confirm your email address."
           : "Press Continue, then choose a password for your account."}
