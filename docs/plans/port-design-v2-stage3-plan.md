@@ -109,7 +109,7 @@ Nothing in this table needs a change to `actions.ts`, `lib/auth`, `proxy.ts`, `c
 
 **Existing tests that must pass unchanged:** `app/login/actions.test.ts`, `app/auth/{forgot,confirm,mfa,set-password}/actions.test.ts`, `app/auth/confirm/page.test.tsx`, `app/auth/mfa/page.test.tsx`, and the whole web suite (1,589+ tests at the end of Stage 2).
 
-**Browser audit for the screens that load without a session:** `scripts/audit-auth.mjs` reuses `page-checks.mjs` (overflow at 360, 390, 768, 1024, 1440; text at least 14 px; computed contrast light and dark; touch targets; a real Tab walk with ring contrast; 0 CSP violations and 0 console errors) in Chrome, WebKit and Firefox, on: `/login`, `/login?notice=reset`, `/login?notice=link`, `/login` after a rejected submit (a malformed address is rejected by the action **before any network call**, so the error state is real and offline), `/auth/forgot`, `/auth/confirm` (no token: the error state), `/auth/confirm?type=invite&token_hash=<32 hex>` (the form state). The app runs with the dummy public Supabase settings (host `example.invalid`), as in Stage 2. **`/auth/mfa` and `/auth/set-password` redirect to `/login` without a session, so the browser audit cannot load them:** they are proved by their unit tests, the skin-contract test and the leak audit's source check, and by **lane A's run of `e2e/auth.mjs` and the phone checklist on the local stack before the merge** (this lane has no local stack: AGENTS.md).
+**Browser audit for the screens that load without a session:** `scripts/audit-auth.mjs` reuses `page-checks.mjs` (overflow at 360, 390, 768, 1024, 1440; text at least 14 px; computed contrast light and dark; touch targets; a real Tab walk with ring contrast; 0 CSP violations and 0 console errors) in Chrome, WebKit and Firefox, on: `/login`, `/login?notice=reset`, `/login?notice=link`, `/login` after a rejected submit (a malformed address is rejected by the action **before any network call**, so the error state is real and offline), `/auth/forgot`, `/auth/confirm` (no token: the error state), `/auth/confirm?type=invite&token_hash=<32 hex>` (the form state). The app runs with the dummy public Supabase settings (host `example.invalid`), as in Stage 2. **`/auth/mfa` and `/auth/set-password` redirect to `/login` without a session, so the browser audit cannot load them:** they are proved by their unit tests, the skin-contract test and the leak audit's source check, and by **lane A's run of `make check` and `e2e/auth.mjs` on the local stack before the merge** (this lane has no local stack: AGENTS.md).
 
 **The proof that nothing else moved:**
 * the Stage 1/2 snapshot script, ten requests, before/after: **only `/login`, `/login?next=...&notice=reset`, `/auth/forgot` and `/auth/confirm` may differ** (their bodies); `/`, `/does-not-exist`, `/app`, `/app/tenants/...`, `/auth/mfa` and `/auth/set-password` (both 307 redirects) must be byte-identical, and the emitted css/js list may only **add** files (every existing file keeps its sha256). **The legacy stylesheet's file hash must be unchanged** (`globals.css` is not touched);
@@ -123,18 +123,19 @@ Nothing in this table needs a change to `actions.ts`, `lib/auth`, `proxy.ts`, `c
 ## 8. Commit slicing (about 8)
 
 1. docs: add `apps/web/components/v2/auth/*` (already covered by `components/v2/*`) and the Stage 3 decisions to the plan; record the owner's answers.
+2a. **Risk check before any skin code (docs or test only, nothing committed in app code):** prove with a scratch test that a page wrapped in `AuthFrame` (an async server component that calls `cookies()`) still renders, **unchanged**, in the existing `mfa/page.test.tsx` and `confirm/page.test.tsx` (direct call of the async page, `react-dom/server`, testing-library, mocks of `next/headers`). If it cannot: stop and report the exact failure and the options; no existing test is modified and no mock is added to one.
 2. `skin-contract.test.tsx` written against the **unchanged** screens (green), plus a mutation run showing it fails when a word or attribute changes.
 3. `i18n/auth.ts` (the chrome subset) + test; `components/v2/auth/ui.ts`.
 4. `AuthFrame` + tests in four languages.
-5. `/login` skin (`page.tsx`, `login-form.tsx`).
+5. `/login` skin (`page.tsx`, `login-form.tsx`), with the additive `robots` metadata (decision 8).
 6. `/auth/forgot` and `/auth/confirm` skin.
 7. `/auth/mfa` and `/auth/set-password` skin.
-8. audit: `audit-auth.mjs`, the legacy probe in `audit:leaks`.
+8. audit: `audit-auth.mjs`, the legacy probe in `audit:leaks`, and a drift test for the probe (every class selector in `legacy-probe.html` exists in `globals.css`; the probe covers `shell`, `card`, `error`, `hint`, `row`, `secondary`).
 9. docs: Stage 3 report. **STOP.**
 
 ## 9. STOP report (same format as Stage 2, raw outputs)
 
-`git status --short`; `git log --oneline origin/main..HEAD`; the guard lists (forbidden paths: none; test files: only `A`); `git diff -U0 ... | grep '^-'` for `app/login` and `app/auth` (the removed lines); the guarded repository diff (empty); the full web CI exit codes with npm 10.9.2; the existing login and auth tests, **unchanged and passing** (file list with counts); `skin-contract` and its mutation proof; `audit:leaks` (page mode on `/login`, `/auth/forgot`, `/auth/confirm`, the legacy probe); `audit-auth` in three engines; `audit:budget` for `/login`; the ten-request before/after with the legacy stylesheet hash; what lane A must still run (`make check`, `e2e/auth.mjs`, the phone checklist) and the exact commands; the lists "Skipped", "Assumptions", "Stopped at".
+`git status --short`; `git log --oneline origin/main..HEAD`; the guard lists (forbidden paths: none; test files: only `A`); `git diff -U0 ... | grep '^-'` for `app/login` and `app/auth` (the removed lines); the guarded repository diff (empty); the full web CI exit codes with npm 10.9.2; the existing login and auth tests, **unchanged and passing** (file list with counts); `skin-contract` and its mutation proof; `audit:leaks` (page mode on `/login`, `/auth/forgot`, `/auth/confirm`, the legacy probe); `audit-auth` in three engines; `audit:budget` for `/login`; the ten-request before/after with the legacy stylesheet hash; what lane A must still run (`make check`, `e2e/auth.mjs`) and the exact commands; the lists "Skipped", "Assumptions", "Stopped at".
 
 ## 10. Risks
 
@@ -160,6 +161,19 @@ Allowed: `apps/web/components/v2/auth/*`, `apps/web/i18n/auth*`, `apps/web/app/l
 3. **Scope.** All five screens in Stage 3, or `/login` and `/auth/forgot` first? *Recommend all five: they are one family and share the frame; `/auth/mfa` and `/auth/set-password` get the same markup-only change and are proved by tests and lane A's e2e run.*
 4. **Show/hide password button.** Build it now or defer? *Recommend defer: it adds client state to two security forms. It is a small, separate change with its own tests.*
 5. **Layout.** The design-lab split layout (side panel from `md` up, card on the right), or a single centred card with no side panel? *Recommend the split layout; the side panel is chrome only and its text is the store's.*
-6. **Review path.** Lane A reviews the diff and runs `make check`, `e2e/auth.mjs` and the phone checklist on the local stack before the merge? *Recommend yes (this lane has no stack, and these are security-tier files by the repository's own rules).*
+6. **Review path.** Lane A reviews the diff and runs `make check` and `e2e/auth.mjs` on the local stack before the merge? *Recommend yes (this lane has no stack, and these are security-tier files by the repository's own rules).*
 7. **Page titles.** Keep today's titles ("Sign in · SME AI Revenue Engine", ...) or use the store's ("Sign in · {brand}")? *Recommend keep: the brand name is undecided (launch checklist f) and a title is a word the tests and e2e do not pin but the owner has not reviewed.*
 8. **Indexing.** Add `robots: noindex, nofollow` metadata to the five screens (additive, tested), or leave them as they are? *Recommend add: sign-in and account pages have no business in a search index; it changes metadata only.*
+
+## 12a. Owner answers (2026-10-08), recorded before the build
+
+1. **Words: keep every current English word** exactly as today (skin only).
+2. **Language:** translated chrome and side panel; the form region stays English with `lang="en"`.
+3. **Scope:** all five screens.
+4. **Show/hide password button:** deferred, not built.
+5. **Layout:** the split layout (side panel from `md` up).
+6. **Review path:** lane A (Claude 1) reviews the diff and runs `make check` and `e2e/auth.mjs` on the local stack. **There is no phone or manual click checklist** (the owner declined those).
+7. **Page titles:** keep today's titles.
+8. **Indexing:** add `robots: noindex, nofollow` metadata to the five screens, as an **additive** export: where a page already exports `metadata`, it is extended and its title is unchanged.
+
+**Changes to this plan, same day:** (A) a **risk check before any skin code** (commit 2a, section 8): the existing `mfa` and `confirm` page tests must still render a page wrapped in `AuthFrame` unchanged; if not, the build stops and reports the options. (B) decision 8 is built as described above, tested in new files only. (C) the legacy probe gets a drift test (section 8, commit 8). (D) everything else in sections 1 to 11 stands. **Stop rules:** a forbidden path in the diff; any existing test needing a change; the CSP, proxy, actions, `lib/*` or the root layout needing a change; the risk check failing; a dependency needed; an audit failing twice after a fix. If the Firefox audit hangs, the processes are killed by PID and the audit is rerun once, and the hang is reported.
