@@ -48,6 +48,7 @@ export const FLAG_TEXT: Record<string, string> = {
   TERMS_REQUESTED_BY_CUSTOMER: "The customer asked for payment terms of their own: the owner decides.",
   MIXED_GST_RATES_SHIPPING: "The lines carry different GST rates and freight is charged: check how the freight is taxed.",
   REPEAT_CUSTOMER_CLAIMED: "Marked as a repeat customer, which nobody has verified: the owner decides.",
+  TYPED_PRICE_OUTSIDE_RANGE: "A price typed by a person is outside the usual range for its item type: check it before approving.",
 };
 export const MISSING_TEXT: Record<string, string> = {
   no_requirement: "This enquiry has no requirement yet.",
@@ -57,10 +58,17 @@ export const MISSING_TEXT: Record<string, string> = {
   mapper_unavailable: "Product suggestions are not available right now. You can still pick products by hand.",
 };
 
+/** How a quote was priced. The API leaves the field out of a list-price quote, so a missing `pricing_kind` means "list". */
+export const PRICING_KINDS = ["list", "manual"] as const;
+export type PricingKind = (typeof PRICING_KINDS)[number];
+export const PRICE_SOURCES = ["list", "typed_by_person"] as const;
+export type PriceSource = (typeof PRICE_SOURCES)[number];
+
 export interface QuoteLine {
   line_no: number;
   requirement_line_no: number;
-  product_id: string;
+  /** null on a typed-price line: it names an item type, not a product. */
+  product_id: string | null;
   sku: string;
   name: string;
   sale_unit: SaleUnit;
@@ -72,6 +80,9 @@ export interface QuoteLine {
   tax_paise: number;
   gross_paise: number;
   tax_bps: number;
+  /** Present only on a typed-price line (the API leaves both out of a list-price line). */
+  price_source?: PriceSource;
+  item_type_code?: string;
 }
 export interface UnquotedLine {
   line_no: number;
@@ -85,13 +96,17 @@ export interface Quote {
   lead_id: string;
   status: (typeof STATUSES)[number];
   outcome: Outcome;
-  price_list_version_id: string;
+  /** Present only on a typed-price quote ("manual"); a missing value means "list". */
+  pricing_kind?: PricingKind;
+  /** null on a typed-price quote: it has no price list. */
+  price_list_version_id: string | null;
   policy_version_id: string;
   engine_version: string;
   canonical_hash: string;
   customer_kind: CustomerKind;
-  delivery_state: string;
-  gst_supply: "intra_state" | "inter_state";
+  /** null on a typed-price quote made without a delivery state (then the label below is null too). */
+  delivery_state: string | null;
+  gst_supply: "intra_state" | "inter_state" | null;
   as_of: string;
   valid_until: string;
   due_date: string;
@@ -124,12 +139,16 @@ export interface QuoteSummary {
   enquiry_id: string;
   status: (typeof STATUSES)[number];
   outcome: Outcome;
+  pricing_kind?: PricingKind;
   customer_kind: CustomerKind;
   valid_until: string;
   total_paise: number;
   needs_owner_approval: boolean;
   created_at: string;
 }
+
+/** True for a quote whose prices a person typed. A missing `pricing_kind` is a list-price quote. */
+export const isManual = (quote: { pricing_kind?: PricingKind }): boolean => quote.pricing_kind === "manual";
 export interface PriceItem {
   product_id: string;
   sku: string;
@@ -281,12 +300,21 @@ function strings(v: unknown, what: string): string[] {
   return list(v, what).map((s) => (typeof s === "string" ? s : bad(what)));
 }
 
+/** `pricing_kind` is optional on the wire: absent = list. Only a value the API really sends is kept, so a list-price quote parses to exactly what it always did. */
+function kindOf(r: Rec): { pricing_kind?: PricingKind } {
+  if (!("pricing_kind" in r)) return {};
+  return { pricing_kind: oneOf(r, "pricing_kind", PRICING_KINDS) };
+}
+
 function parseLine(json: unknown): QuoteLine {
   if (!isRecord(json)) return bad("line");
+  const typed: { price_source?: PriceSource; item_type_code?: string } = {};
+  if ("price_source" in json) typed.price_source = oneOf(json, "price_source", PRICE_SOURCES);
+  if ("item_type_code" in json) typed.item_type_code = str(json, "item_type_code");
   return {
     line_no: int(json, "line_no"),
     requirement_line_no: int(json, "requirement_line_no"),
-    product_id: str(json, "product_id"),
+    product_id: strOrNull(json, "product_id"),
     sku: str(json, "sku"),
     name: str(json, "name"),
     sale_unit: oneOf(json, "sale_unit", SALE_UNITS),
@@ -298,6 +326,7 @@ function parseLine(json: unknown): QuoteLine {
     tax_paise: int(json, "tax_paise"),
     gross_paise: int(json, "gross_paise"),
     tax_bps: int(json, "tax_bps"),
+    ...typed,
   };
 }
 
@@ -311,13 +340,14 @@ export function parseQuote(json: unknown): Quote {
     lead_id: str(json, "lead_id"),
     status: oneOf(json, "status", STATUSES),
     outcome: oneOf(json, "outcome", OUTCOMES),
-    price_list_version_id: str(json, "price_list_version_id"),
+    ...kindOf(json),
+    price_list_version_id: strOrNull(json, "price_list_version_id"),
     policy_version_id: str(json, "policy_version_id"),
     engine_version: str(json, "engine_version"),
     canonical_hash: str(json, "canonical_hash"),
     customer_kind: oneOf(json, "customer_kind", CUSTOMER_KINDS),
-    delivery_state: str(json, "delivery_state"),
-    gst_supply: oneOf(json, "gst_supply", ["intra_state", "inter_state"] as const),
+    delivery_state: strOrNull(json, "delivery_state"),
+    gst_supply: oneOfOrNull(json, "gst_supply", ["intra_state", "inter_state"] as const),
     as_of: str(json, "as_of"),
     valid_until: str(json, "valid_until"),
     due_date: str(json, "due_date"),
@@ -357,6 +387,7 @@ export function parseQuoteSummary(json: unknown): QuoteSummary {
     enquiry_id: str(json, "enquiry_id"),
     status: oneOf(json, "status", STATUSES),
     outcome: oneOf(json, "outcome", OUTCOMES),
+    ...kindOf(json),
     customer_kind: oneOf(json, "customer_kind", CUSTOMER_KINDS),
     valid_until: str(json, "valid_until"),
     total_paise: int(json, "total_paise"),
@@ -552,4 +583,31 @@ export async function rejectQuote(accessToken: string, tenantId: string, quoteId
 export async function withdrawQuote(accessToken: string, tenantId: string, quoteId: string, code: WithdrawCode): Promise<Decision> {
   checked(tenantId, quoteId);
   return parseDecision(await apiRequest(`${base(tenantId)}/quotes/${quoteId}/withdraw`, accessToken, post({ code })));
+}
+
+export interface ManualLineInput {
+  itemTypeCode: string;
+  qty: number;
+  /** Integer paise: the person's own price, typed in rupees and converted exactly by the form. */
+  unitPricePaise: number;
+}
+export interface CreateManualQuoteInput {
+  id: string;
+  customerKind: CustomerKind;
+  /** null / left out: the quote is made without a delivery state. */
+  deliveryState: string | null;
+  lines: ManualLineInput[];
+}
+
+/** A quote with typed prices (Owner or Admin). The body has EXACTLY the keys the API allows; the API and the database decide everything else. A retry with the same id replays. */
+export async function createManualQuote(accessToken: string, tenantId: string, enquiryId: string, input: CreateManualQuoteInput): Promise<Quote> {
+  checked(tenantId, enquiryId, input.id);
+  if (input.lines.length < 1 || input.lines.length > 5) throw new ApiContractError("lines");
+  const body: Record<string, unknown> = {
+    id: input.id,
+    customer_kind: input.customerKind,
+    lines: input.lines.map((l) => ({ item_type_code: l.itemTypeCode, qty: l.qty, unit_price_paise: l.unitPricePaise })),
+  };
+  if (input.deliveryState !== null) body.delivery_state = input.deliveryState;
+  return parseQuote(await apiRequest(`${base(tenantId)}/enquiries/${enquiryId}/manual-quotes`, accessToken, post(body)));
 }

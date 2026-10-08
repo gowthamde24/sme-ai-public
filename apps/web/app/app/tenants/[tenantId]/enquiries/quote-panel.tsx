@@ -4,6 +4,7 @@ import {
   MISSING_TEXT,
   OUTCOME_LABELS,
   formatRupees,
+  isManual,
   type Quote,
   type QuoteSetup,
   type QuoteSummary,
@@ -25,7 +26,10 @@ import { CopyText } from "./copy-text";
 import { CreateQuoteForm } from "./create-quote-form";
 import { PickLineForm } from "./pick-line-form";
 import { QuoteDecisions } from "./quote-decisions";
+import { createManualQuoteAction } from "./manual-quote-actions";
+import { ManualQuoteForm, type GstInForce } from "./manual-quote-form";
 import { QuoteView } from "./quote-view";
+import type { ItemType } from "@/lib/api/item-types";
 import { WhatsappActions, type SentOnWhatsapp } from "./whatsapp-actions";
 import type { WhatsappView } from "./whatsapp-view";
 
@@ -47,13 +51,17 @@ type Props = {
   whatsapp?: WhatsappView | null;
   /** "I sent it on WhatsApp": the bound server action and the id the page made for this render (null: no button). */
   sentOnWhatsapp?: SentOnWhatsapp | null;
+  /** The "Quote with typed prices" form (owner and admin only; the page passes null for everyone else). `unavailable`: the item types or the policy could not be read. */
+  manual?: ManualQuoteData | null;
 };
+
+export type ManualQuoteData = { unavailable: false; itemTypes: ItemType[]; gst: GstInForce | null; newQuoteId: string } | { unavailable: true };
 
 /**
  * The quote of one enquiry: a person chooses the product for each approved requirement line (the assistant only suggests), makes a DRAFT, and an owner
  * or admin approves it. After approval the customer-facing text is shown to COPY. This application never sends anything, and the screen says so.
  */
-export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null, sentOnWhatsapp = null }: Props) {
+export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null, sentOnWhatsapp = null, manual = null }: Props) {
   const confirmed = setup.requirement_status === "confirmed";
   const blockers = setup.missing.filter((m) => m !== "mapper_unavailable");
   const notes = setup.missing.filter((m) => m === "mapper_unavailable");
@@ -63,11 +71,13 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
   const ready = confirmed && blockers.length === 0;
   const stateName = (code: string) => setup.delivery_states[code] ?? code;
   const base = `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
+  // typed prices exist on this screen: the sentence about where prices come from must say so (a list-only screen keeps its sentence)
+  const typedPrices = manual !== null || (selected !== null && isManual(selected)) || quotes.some((q) => isManual(q));
   return (
     <section aria-labelledby="quote-heading">
       <h2 id="quote-heading">Quote</h2>
       <p className="hint">
-        A quote is a draft until an owner or admin approves it. Prices come from the price list and the pricing engine, never from a person or an assistant.
+        A quote is a draft until an owner or admin approves it. {typedPrices ? "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant." : "Prices come from the price list and the pricing engine, never from a person or an assistant."}{" "}
         Nothing on this page is ever sent to anyone.
       </p>
 
@@ -108,9 +118,25 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
         </div>
       ) : null}
 
+      {manual ? (
+        <div>
+          {ready ? <p className="hint">Or make a quote with typed prices instead of using the price list:</p> : null}
+          {manual.unavailable ? (
+            <p role="alert" className="error hint">
+              The item types or the quote policy could not be loaded right now. Reload the page to try again.
+            </p>
+          ) : (
+            <>
+              <ManualQuoteForm create={createManualQuoteAction.bind(null, tenantId, enquiryId)} quoteId={manual.newQuoteId} itemTypes={manual.itemTypes} gst={manual.gst} states={setup.delivery_states} />
+              {quotes.some((q) => q.outcome === "draft") ? <p className="hint">Making a new draft replaces the current draft.</p> : null}
+            </>
+          )}
+        </div>
+      ) : null}
+
       {selected ? (
         <div>
-          <QuoteView quote={selected} stateName={stateName(selected.delivery_state)} />
+          <QuoteView quote={selected} stateName={selected.delivery_state === null ? "" : stateName(selected.delivery_state)} />
           <QuoteDecisions
             approve={approveQuoteAction.bind(null, tenantId, enquiryId, selected.id)}
             reject={rejectQuoteAction.bind(null, tenantId, enquiryId, selected.id)}
@@ -166,6 +192,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
                 </Link>{" "}
                 <span className="hint">
                   {OUTCOME_LABELS[q.outcome]}, {formatRupees(q.total_paise)}
+                  {isManual(q) ? ", typed prices" : ""}
                 </span>
               </li>
             ))}
