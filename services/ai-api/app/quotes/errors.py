@@ -1,4 +1,4 @@
-"""The database's quote refusals as typed exceptions (SQLSTATE SM213 to SM218). SM212 (a quote blocks discarding a requirement) belongs to the enquiries repository, which must not import this package.
+"""The database's quote refusals as typed exceptions (SQLSTATE SM213 to SM218, and SM208 and SM260 for the manual-price quote). SM212 (a quote blocks discarding a requirement) belongs to the enquiries repository, which must not import this package.
 Each class carries NO text: the API maps it to a fixed message (app/main.py) and nothing from the data layer ever reaches a client."""
 
 from __future__ import annotations
@@ -30,7 +30,17 @@ class OwnerApprovalRequiredError(RepositoryError):
     """SM218: the quote needs the Owner's approval (an Admin is told so)."""
 
 
+class EnquiryHasRequirementError(RepositoryError):
+    """SM208: a manual quote needs an enquiry with no requirement of the line-by-line flow (a draft, or a confirmed one with fields): discard that one first."""
+
+
+class PriceNotTypedByPersonError(RepositoryError):
+    """SM260: a manual price was typed inside an agent context. Only a person types a price."""
+
+
 SM_ERRORS: dict[str, type[RepositoryError]] = {
+    "SM208": EnquiryHasRequirementError,
+    "SM260": PriceNotTypedByPersonError,
     "SM213": RequirementNotConfirmedError,
     "SM214": QuoteNotDraftError,
     "SM215": QuoteStaleError,
