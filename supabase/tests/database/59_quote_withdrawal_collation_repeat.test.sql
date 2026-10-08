@@ -135,7 +135,7 @@ select is(pg_temp.j(pg_temp.sc('a_owner', pg_temp.approve_sql((select w3 from id
 -- a quote replaced by a NEWER approval is superseded without a withdrawal, and cannot be withdrawn
 select pg_temp.create_quote('a_sales', (select w4 from ids), 'w2', 'new');
 select pg_temp.sc('a_owner', pg_temp.approve_sql((select w4 from ids)));
-select is((select string_agg(status::text || ':' || (withdrawn_at is not null)::text, ',' order by created_at) from public.quotes where requirement_id = pg_temp.req('w2')), 'superseded:true,superseded:false,approved:false', 'C25 W2: the withdrawn one, the one replaced by W4, and the approved W4: told apart by withdrawn_at');
+select is((select string_agg(status::text || ':' || (withdrawn_at is not null)::text, ',' order by quote_no) from public.quotes where requirement_id = pg_temp.req('w2')), 'superseded:true,superseded:false,approved:false', 'C25 W2: the withdrawn one, the one replaced by W4, and the approved W4: told apart by withdrawn_at, in the order of their quote numbers (created_at is the transaction start, the same for all four)');
 select is(pg_temp.err('a_owner', pg_temp.withdraw_sql((select w3 from ids))), 'SM214|quote is not a draft||||', 'C26 a quote that was REPLACED (not approved any more) cannot be withdrawn');
 select is(pg_temp.j(pg_temp.sc('a_owner', pg_temp.withdraw_sql((select w4 from ids), 'entered_in_error')), 'status'), 'superseded', 'C27 the current approved quote can');
 
