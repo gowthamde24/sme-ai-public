@@ -265,8 +265,9 @@ begin
     insert into public.price_list_breaks (id, tenant_id, item_id, min_qty, unit_price_paise)
     values (tests.rid(p || '_price_break'), tests.tid(p), tests.rid(p || '_price_item'), 10, 90000);
     insert into public.quote_policy_versions (id, tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps,
-                                              validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_effective_from, seller_state, content_sha256)
-    values (tests.rid(p || '_policy_version'), tests.tid(p), 1, current_date, 0, 0, 0, 15, 0, 0, 30, 30, current_date, 'TS', repeat('1', 64));
+                                              validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_rate_bps, gst_effective_from, seller_state, content_sha256)
+    values (tests.rid(p || '_policy_version'), tests.tid(p), 1, current_date, 0, 0, 0, 15, 0, 0, 30, 30, 500, current_date, 'TS', repeat('1', 64));
+    insert into public.item_types (id, tenant_id, code, name) values (tests.rid(p || '_item_type'), tests.tid(p), upper(p) || '1', 'Fixture item type ' || p);
     insert into public.mapper_config_versions (id, tenant_id, version_no, effective_from, config, content_sha256)
     values (tests.rid(p || '_mapper_version'), tests.tid(p), 1, current_date, '{}'::jsonb, repeat('2', 64));
     -- part 2 (needs seed_t008 first: the tenant's enquiry and requirement): one rejected quote with one line, and one pick

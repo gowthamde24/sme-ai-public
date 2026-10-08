@@ -167,6 +167,8 @@ select is(
         'public.create_mapper_config_version',
         -- manual-price slice 1: Owner / Admin save an item type and its optional price range (role first, then aal2)
         'public.save_item_type',
+        -- manual-price slice 2: Owner / Admin type the prices of a manual quote (role first; never inside an agent context)
+        'public.create_manual_quote_draft',
         -- T009 part 2: a person picks a product, Sales+ create a draft quote, Owner / Admin approve or reject it (role, and aal2 for approval, proven inside)
         'public.pick_requirement_line_product',
         'public.create_quote_draft',
@@ -209,7 +211,7 @@ select is(
                      'public.request_erasure', 'public.execute_erasure', 'public.cancel_erasure',
                      'public.agent_write_requirement_field', 'public.decide_requirement_field', 'public.confirm_requirement', 'public.discard_requirement',
                      'public.add_requirement_field',
-                     'public.create_price_list_version', 'public.create_quote_policy_version', 'public.create_mapper_config_version', 'public.save_item_type',
+                     'public.create_price_list_version', 'public.create_quote_policy_version', 'public.create_mapper_config_version', 'public.save_item_type', 'public.create_manual_quote_draft',
                      'public.pick_requirement_line_product', 'public.create_quote_draft', 'public.approve_quote', 'public.reject_quote',
                      'public.withdraw_approved_quote',
                      'public.record_contact_keys', 'public.check_suppression', 'public.unkeyed_contact_count', 'public.unkeyed_contacts', 'public.backfill_contact_keys',
