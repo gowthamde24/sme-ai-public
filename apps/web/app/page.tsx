@@ -1,15 +1,3 @@
-export const metadata = {
-  title: "SME AI Revenue Engine",
-};
-
-export default function Home() {
-  return (
-    <main className="shell">
-      <h1>SME AI Revenue Engine</h1>
-      <p>
-        Foundation build (T001). No business features yet. Tenant, auth and
-        row-level security arrive in T002.
-      </p>
-    </main>
-  );
-}
+// "/" is the public landing page (design v2, Stage 2 flip). One implementation, two routes: /landing stays, unchanged
+// (noindex, cookie-driven language and theme), and "/" renders the very same page and metadata.
+export { default, generateMetadata } from "@/app/landing/page";
