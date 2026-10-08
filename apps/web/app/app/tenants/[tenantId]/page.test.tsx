@@ -429,6 +429,14 @@ describe("/app/tenants/[tenantId]", () => {
     if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/app\/tenants\/[0-9a-f-]+\/quote-policy$/));
   });
 
+  it.each([["owner", true], ["admin", true], ["sales", true], ["viewer", false]])("links the item types page for a %s: %s", async (role, shown) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    render(await TenantPage(props()));
+    const link = screen.queryByRole("link", { name: "Item types →" });
+    expect(link !== null).toBe(shown);
+    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/app\/tenants\/[0-9a-f-]+\/item-types$/));
+  });
+
   it.each([["owner", true], ["admin", true], ["sales", true], ["viewer", false]])("links the add a customer page for a %s: %s", async (role, shown) => {
     fetchTenant.mockResolvedValue(tenant(role));
     render(await TenantPage(props()));

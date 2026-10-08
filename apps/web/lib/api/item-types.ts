@@ -70,3 +70,40 @@ export async function fetchItemTypes(accessToken: string, tenantId: string): Pro
   if (!isCanonicalUuid(tenantId)) throw new ApiContractError("id");
   return parseItemTypes(await apiRequest(`/v1/tenants/${tenantId}/item-types`, accessToken));
 }
+
+export interface SaveItemTypeInput {
+  code: string;
+  name: string;
+  position: number;
+  active: boolean;
+  /** Integer paise, or null for "no lowest price". */
+  minPricePaise: number | null;
+  /** Integer paise, or null for "no highest price". */
+  maxPricePaise: number | null;
+}
+export interface SavedItemType {
+  id: string;
+  code: string;
+  /** false: the code already existed and its record was REPLACED (the API has no create-only call). */
+  created: boolean;
+}
+
+export function parseSavedItemType(json: unknown): SavedItemType {
+  if (!isRecord(json)) return bad("save result");
+  const { id, code, created } = json;
+  if (typeof id !== "string" || !isCanonicalUuid(id)) return bad("id");
+  if (typeof code !== "string" || !CODE.test(code)) return bad("code");
+  if (typeof created !== "boolean") return bad("created");
+  return { id, code, created };
+}
+
+/**
+ * Create or REPLACE one item type (`PUT /v1/tenants/{tenant}/item-types/{code}`; Owner or Admin with a second factor). The body has exactly the keys the API allows and a price bound that is
+ * not set goes as null: the call replaces the whole record. The code is in the path, is never changed afterwards and the API has no delete.
+ */
+export async function saveItemType(accessToken: string, tenantId: string, input: SaveItemTypeInput): Promise<SavedItemType> {
+  if (!isCanonicalUuid(tenantId) || !CODE.test(input.code)) throw new ApiContractError("id");
+  const body = { name: input.name, position: input.position, active: input.active, min_price_paise: input.minPricePaise, max_price_paise: input.maxPricePaise };
+  return parseSavedItemType(await apiRequest(`/v1/tenants/${tenantId}/item-types/${input.code}`, accessToken, { method: "PUT", body: JSON.stringify(body) }));
+}
+

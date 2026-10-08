@@ -6,7 +6,7 @@ import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "./quotes-fixtures";
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
-import { fetchItemTypes, parseItemType, parseItemTypes, priceOutsideRange, sellableItemTypes } from "./item-types";
+import { fetchItemTypes, parseItemType, parseItemTypes, parseSavedItemType, priceOutsideRange, saveItemType, sellableItemTypes } from "./item-types";
 
 const TENANT = "22222222-2222-4222-8222-222222222222";
 beforeEach(() => vi.clearAllMocks());
@@ -64,3 +64,38 @@ describe("fetchItemTypes", () => {
     expect(apiRequest).not.toHaveBeenCalled();
   });
 });
+
+describe("saveItemType", () => {
+  const INPUT = { code: "D", name: "Type D", position: 4, active: true, minPricePaise: 10_000, maxPricePaise: null };
+  const SAVED = { id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb4", code: "D", created: true };
+  const call = () => apiRequest.mock.calls[0] as [string, string, RequestInit];
+  it("PUTs to the code's path with the user's token and EXACTLY the keys the API allows, a missing bound as null", async () => {
+    apiRequest.mockResolvedValue(SAVED);
+    expect(await saveItemType("tok", TENANT, INPUT)).toEqual(SAVED);
+    expect(call()[0]).toBe(`/v1/tenants/${TENANT}/item-types/D`);
+    expect(call()[1]).toBe("tok");
+    expect(call()[2].method).toBe("PUT");
+    const body = JSON.parse(String(call()[2].body)) as Record<string, unknown>;
+    expect(body).toEqual({ name: "Type D", position: 4, active: true, min_price_paise: 10_000, max_price_paise: null });
+    expect(Object.keys(body).sort()).toEqual(["active", "max_price_paise", "min_price_paise", "name", "position"]);
+  });
+  it("never puts the code, a tenant or an id in the body (the code is in the path)", async () => {
+    apiRequest.mockResolvedValue(SAVED);
+    await saveItemType("tok", TENANT, { ...INPUT, tenant_id: "x", id: "y" } as unknown as typeof INPUT);
+    const text = String(call()[2].body);
+    for (const forbidden of ["code", "tenant", '"id"']) expect(text).not.toContain(forbidden);
+  });
+  it("a code or a tenant that is not plain never reaches a path", async () => {
+    await expect(saveItemType("tok", TENANT, { ...INPUT, code: "../x" })).rejects.toBeInstanceOf(ApiContractError);
+    await expect(saveItemType("tok", TENANT, { ...INPUT, code: "a b" })).rejects.toBeInstanceOf(ApiContractError);
+    await expect(saveItemType("tok", "x", INPUT)).rejects.toBeInstanceOf(ApiContractError);
+    expect(apiRequest).not.toHaveBeenCalled();
+  });
+  it("a response that does not match is a contract error", () => {
+    expect(() => parseSavedItemType({ ...SAVED, created: "yes" })).toThrow(ApiContractError);
+    expect(() => parseSavedItemType({ ...SAVED, id: "x" })).toThrow(ApiContractError);
+    expect(() => parseSavedItemType({ ...SAVED, code: "" })).toThrow(ApiContractError);
+    expect(() => parseSavedItemType(null)).toThrow(ApiContractError);
+  });
+});
+

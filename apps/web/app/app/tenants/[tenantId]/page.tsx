@@ -161,6 +161,17 @@ export default async function TenantPage({
             </Link>
           </>
         )}
+        {tenant.role !== "viewer" && (
+          <>
+            {" · "}
+            <Link
+              href={`/app/tenants/${tenantId}/item-types`}
+              style={{ fontWeight: 600 }}
+            >
+              Item types →
+            </Link>
+          </>
+        )}
         {(tenant.role === "owner" || tenant.role === "admin") && (
           <>
             {" · "}
