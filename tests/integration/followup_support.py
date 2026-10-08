@@ -211,7 +211,9 @@ class FollowWorld:
         touch_id: str | None = None,
     ) -> httpx.Response:
         body: dict[str, Any] = {"id": touch_id or uid(), "direction": direction, "channel": channel}
-        if days_ago is not None:
+        # days_ago == 0 means "now": send no time, so the database stamps its OWN now() (public.record_touch refuses a stated time later than its clock, and the host clock can run a few ms ahead of
+        # the Docker VM's). Any other offset is days in the past and cannot be later than the database's now().
+        if days_ago is not None and days_ago != 0:
             body["occurred_at"] = (datetime.now(UTC) - timedelta(days=days_ago)).isoformat()
         return self.call("POST", f"/leads/{lead.id}/touches", user, body)
 
