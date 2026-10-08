@@ -23,6 +23,7 @@ from app.quotes.builder import today_ist
 from app.quotes.errors import QuoteNotDraftError
 from app.quotes.models import (
     ApproveOut,
+    CreateManualQuoteIn,
     CreateQuoteIn,
     CreateQuotePolicyIn,
     DecisionOut,
@@ -185,6 +186,34 @@ def create_quote(
     enquiry = _enquiry(runtime, ctx, enquiry_id)
     quote_id, replayed = service.create_draft(
         quotes, enquiries, token, tenant, enquiry, body.id, body.customer_kind, body.delivery_state
+    )
+    response.status_code = 200 if replayed else 201
+    return _quote(runtime, ctx, str(quote_id))
+
+
+@router.post("/enquiries/{enquiry_id}/manual-quotes", response_model=QuoteOut, status_code=201)
+def create_manual_quote(
+    enquiry_id: str,
+    body: CreateManualQuoteIn,
+    ctx: OwnerAdmin,
+    runtime: RuntimeDep,
+    response: Response,
+) -> QuoteOut:
+    """Make a DRAFT quote from typed prices (Owner or Admin). The prices are the person's own: this route sets none, defaults none and suggests none. It builds the engine
+    request exactly as the database does, runs the pinned engine, and hands request, result and the typed lines to `public.create_manual_quote_draft` with the caller's own
+    token; the database recomputes everything and decides. Nothing is sent and nothing is approved."""
+    quotes, _ = _repos(runtime)
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    enquiry = _enquiry(runtime, ctx, enquiry_id)
+    quote_id, replayed = service.create_manual_draft(
+        quotes,
+        token,
+        tenant,
+        enquiry,
+        body.id,
+        body.customer_kind,
+        body.delivery_state,
+        body.lines,
     )
     response.status_code = 200 if replayed else 201
     return _quote(runtime, ctx, str(quote_id))

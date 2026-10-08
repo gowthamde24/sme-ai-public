@@ -10,22 +10,27 @@ import uuid
 from datetime import date
 from typing import Any
 
+from app.crm.repository import InvalidReferenceError
 from app.enquiries.models import EnquiryOut
 from app.enquiries.service import value_of
 from app.errors import ApiError
 from app.quotes import engine_port, mapper_port, text_port
 from app.quotes.builder import (
     SETTLED,
+    ManualLine,
     MissingInput,
     Pick,
     Policy,
     PriceItem,
     RequirementFacts,
+    build_manual_request,
     build_request,
     requirement_facts,
     today_ist,
 )
+from app.quotes.errors import QuoteInputMissingError
 from app.quotes.models import (
+    ManualLineIn,
     PickedOut,
     PriceItemOut,
     QuoteLineOut,
@@ -45,6 +50,8 @@ NOTES = (
     "GST is shown separately as a line.",
     "This is a quote, not an invoice.",
 )
+# printed ONCE, last, on a manual-price quote only (the renderer prints the notes at the very end and does not remove duplicates): the GST rate on a manual quote is fixed per line
+MANUAL_GST_NOTE = "GST as applicable at invoicing"
 
 
 def payment_terms_text(advance_paise: int, balance_paise: int) -> str:
@@ -100,6 +107,12 @@ def to_policy(row: dict[str, Any]) -> Policy:
         repeat_credit_limit_paise=int(row["repeat_credit_limit_paise"]),
         seller_state=str(row["seller_state"]),
         required_inputs=tuple(str(x) for x in row["required_inputs"]),
+        gst_rate_bps=None if row.get("gst_rate_bps") is None else int(row["gst_rate_bps"]),
+        gst_effective_from=(
+            None
+            if row.get("gst_effective_from") is None
+            else date.fromisoformat(str(row["gst_effective_from"]))
+        ),
     )
 
 
@@ -335,17 +348,123 @@ def create_draft(
     return uuid.UUID(str(created["quote_id"])), bool(created.get("replayed"))
 
 
+def manual_unavailable() -> ApiError:
+    return ApiError(
+        422,
+        "quote_input_missing",
+        "A quote with typed prices needs a quote policy in force with a GST rate that applies "
+        "today.",
+    )
+
+
+def create_manual_draft(
+    quotes: QuotesRepository,
+    token: str,
+    tenant_id: uuid.UUID,
+    enquiry: EnquiryOut,
+    quote_id: uuid.UUID,
+    kind: str,
+    delivery_state: str | None,
+    lines: list[ManualLineIn],
+    now: date | None = None,
+) -> tuple[uuid.UUID, bool]:
+    """Make a manual-price draft. The prices are the person's own; the request is built exactly as `app.quote_build_manual` builds it, the PINNED engine runs on it, and
+    the database compares the request and every figure with its own recomputation (SM216) before anything is stored. Returns (quote id, replayed)."""
+    if delivery_state is not None and delivery_state not in ALL_CODES:
+        raise ApiError(
+            422,
+            "invalid_delivery_state",
+            "The delivery state is not a state or union territory code.",
+        )
+    as_of = now or today_ist()
+    policy_row = quotes.active_policy(token, tenant_id, as_of)
+    if policy_row is None:
+        raise manual_unavailable()
+    names = {str(r["code"]): str(r["name"]) for r in quotes.list_item_types(token, tenant_id)}
+    resolved: list[ManualLine] = []
+    for line in lines:
+        name = names.get(line.item_type_code)
+        if (
+            name is None
+        ):  # an unknown item type cannot be labelled: the same answer as the database's "invalid reference"
+            raise InvalidReferenceError("23503")
+        resolved.append(ManualLine(line.item_type_code, name, line.qty, line.unit_price_paise))
+    try:
+        request = build_manual_request(as_of, kind, resolved, to_policy(policy_row))
+    except MissingInput:
+        raise manual_unavailable() from None
+    result = run_engine(request)
+    try:
+        created = quotes.create_manual_draft(
+            token,
+            {
+                "p_quote_id": str(quote_id),
+                "p_enquiry_id": str(enquiry.id),
+                "p_customer_kind": kind,
+                "p_delivery_state": delivery_state,
+                "p_engine_version": engine_port.engine_version(),
+                "p_request_text": engine_port.canonical_json(request),
+                "p_result_text": engine_port.canonical_json(result),
+                "p_lines": [
+                    {
+                        "item_type_code": line.item_type_code,
+                        "qty": line.qty,
+                        "unit_price_paise": line.unit_price_paise,
+                    }
+                    for line in lines
+                ],
+            },
+        )
+    except QuoteInputMissingError:
+        raise manual_unavailable() from None
+    return uuid.UUID(str(created["quote_id"])), bool(created.get("replayed"))
+
+
+def recomputed_hash_manual(
+    quotes: QuotesRepository, token: str, tenant_id: uuid.UUID, quote: QuoteOut
+) -> str:
+    """The approver's recomputation of a MANUAL quote: rebuild the request from the quote's recorded policy version and its STORED lines (the typed prices), run the engine,
+    return ITS hash. The database compares it to the quote's hash (SM216) and rebuilds everything itself (SM215)."""
+    policy_row = quotes.policy(token, tenant_id, quote.policy_version_id)
+    if policy_row is None:
+        raise stale()
+    lines = [
+        ManualLine(str(line.item_type_code), line.name, line.qty, line.unit_price_applied_paise)
+        for line in quote.lines
+        if line.item_type_code is not None
+    ]
+    if len(lines) != len(quote.lines):
+        raise stale()
+    try:
+        request = build_manual_request(
+            quote.as_of, quote.customer_kind, lines, to_policy(policy_row)
+        )
+    except MissingInput:
+        raise stale() from None
+    digest = run_engine(request).get("canonical_hash")
+    if not isinstance(digest, str):
+        raise ApiError(
+            502, "quote_computation_failed", "The quote engine answered something unexpected."
+        )
+    return digest
+
+
 def recomputed_hash(
     quotes: QuotesRepository, enquiries: Any, token: str, tenant_id: uuid.UUID, quote: QuoteOut
 ) -> str:
     """The approver's recomputation: rebuild the request from the quote's RECORDED versions and the CURRENT picks and requirement, run the engine, return ITS hash. The
     database compares it to the quote's own hash (SM216 when anything moved) and then rebuilds everything itself (SM215)."""
+    if quote.pricing_kind == "manual":
+        return recomputed_hash_manual(quotes, token, tenant_id, quote)
     requirement, rows = enquiries.get_requirement(token, tenant_id, quote.enquiry_id)
     if (
         requirement is None
         or requirement["status"] != "confirmed"
         or str(requirement["id"]) != str(quote.requirement_id)
     ):
+        raise stale()
+    price_version = quote.price_list_version_id
+    if price_version is None:  # only a manual quote has none, and it took the other branch
         raise stale()
     try:
         request = request_for(
@@ -356,7 +475,7 @@ def recomputed_hash(
             rows=rows,
             kind=quote.customer_kind,
             as_of=quote.as_of,
-            price_version=quote.price_list_version_id,
+            price_version=price_version,
             policy_version=quote.policy_version_id,
         )
     except MissingInput:
@@ -566,9 +685,10 @@ def render_text(
         "quote_ref": f"Q-{quote.quote_no:05d}",
         "issued_on": quote.as_of.isoformat(),
         "valid_until": quote.valid_until.isoformat(),
+        # the label of a line is its stored name (a manual line: the item type's name); the synthetic LINE-n sku is only the key and is never printed
         "line_labels": {line.sku: line.name for line in quote.lines},
         "payment_terms_text": payment_terms_text(quote.advance_paise, quote.balance_paise),
-        "notes": list(NOTES),
+        "notes": [*NOTES, MANUAL_GST_NOTE] if quote.pricing_kind == "manual" else list(NOTES),
     }
     try:
         return text_port.render_approved(

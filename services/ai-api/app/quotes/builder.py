@@ -56,6 +56,10 @@ class Policy:
     repeat_credit_limit_paise: int
     seller_state: str
     required_inputs: tuple[str, ...] = ("delivery_state",)
+    gst_rate_bps: int | None = (
+        None  # the GST of a MANUAL-price quote (a list quote uses each item's own rate)
+    )
+    gst_effective_from: date | None = None
 
 
 @dataclass(frozen=True)
@@ -219,4 +223,74 @@ def build_request(
         "customer": customer,
         "order_lines": order_lines,
         "policy": policy_json(policy, kind),
+    }
+
+
+# ----------------------------------------------------------------------------- the manual-price quote
+@dataclass(frozen=True)
+class ManualLine:
+    """One typed line as the database will rebuild it: the item type's code and NAME (the name is the line's label), the quantity and the person's typed price."""
+
+    item_type_code: str
+    name: str
+    qty: int
+    unit_price_paise: int
+
+
+def gst_rate_in_force(policy: Policy, as_of: date) -> int | None:
+    """The GST rate of a manual-price quote made on `as_of`, from this one policy version: its rate once its date has come, otherwise None (the quote is refused; nothing is
+    guessed). The same rule as `app.quote_gst_bps_on`."""
+    if policy.gst_rate_bps is None or policy.gst_effective_from is None:
+        return None
+    return policy.gst_rate_bps if as_of >= policy.gst_effective_from else None
+
+
+def build_manual_request(
+    as_of: date, kind: str, lines: list[ManualLine], policy: Policy
+) -> dict[str, Any]:
+    """The engine request for a manual-price quote, EXACTLY as `app.quote_build_manual` builds it: one synthetic sku per line (LINE-1 to LINE-5), the item type's name as the
+    label, the typed price, minimum order quantity 1, no price breaks, the GST rate in force on every line, no courier (a zero fee whose tax rate is the GST rate), half-up rounding
+    whatever the policy says. Nothing here prices anything: the numbers are the person's and the policy's. Raises MissingInput when no rate is in force."""
+    if kind not in ("new", "repeat"):
+        raise ValueError("customer kind")
+    if not 1 <= len(lines) <= 5:
+        raise MissingInput([0])
+    rate = gst_rate_in_force(policy, as_of)
+    if rate is None:
+        raise MissingInput([0])
+    items = [
+        {
+            "sku": f"LINE-{n}",
+            "name": line.name,
+            "unit_price": line.unit_price_paise,
+            "minimum_order_quantity": 1,
+            "price_breaks": [],
+            "tax_bps": rate,
+        }
+        for n, line in enumerate(lines, start=1)
+    ]
+    customer: dict[str, Any] = (
+        {"kind": "new"}
+        if kind == "new"
+        else {"kind": "repeat", "credit_limit": policy.repeat_credit_limit_paise}
+    )
+    return {
+        "as_of": as_of.isoformat(),
+        "price_list": sorted(items, key=lambda item: str(item["sku"]).encode("utf-8")),
+        "customer": customer,
+        "order_lines": [
+            {"sku": f"LINE-{n}", "qty": line.qty} for n, line in enumerate(lines, start=1)
+        ],
+        "policy": {
+            "discount_ceiling_bps": policy.discount_ceiling_bps,
+            "shipping": {"flat_fee": 0, "tax_bps": rate},
+            "validity_days": policy.validity_days,
+            "payment_terms": {
+                "new_advance_bps": policy.new_advance_bps,
+                "repeat_advance_bps": policy.repeat_advance_bps,
+                "net_days": policy.new_net_days if kind == "new" else policy.repeat_net_days,
+            },
+            "tax_mode": "exclusive",
+            "rounding_mode": "half_up",
+        },
     }

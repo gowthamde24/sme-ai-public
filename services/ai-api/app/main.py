@@ -212,6 +212,15 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     quote_errors.OwnerApprovalRequiredError: ApiError(
         403, "owner_approval_required", "This quote needs the Owner's approval."
     ),
+    quote_errors.EnquiryHasRequirementError: ApiError(
+        409,
+        "enquiry_has_requirement",
+        "This enquiry already has a requirement from the line-by-line flow. Discard it "
+        "before making a quote with typed prices.",
+    ),
+    quote_errors.PriceNotTypedByPersonError: ApiError(
+        403, "price_not_typed_by_person", "Only a person can type a price."
+    ),
     # Orders (ADR 0021). Fixed messages: nothing from the data layer reaches a client.
     order_errors.OrderQuoteNotApprovedError: ApiError(
         409, "quote_not_approved", "Only an approved quote can become an order."

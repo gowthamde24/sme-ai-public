@@ -7,9 +7,17 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import Field, StrictBool, StrictInt, StringConstraints, model_validator
+from pydantic import (
+    Field,
+    SerializerFunctionWrapHandler,
+    StrictBool,
+    StrictInt,
+    StringConstraints,
+    model_serializer,
+    model_validator,
+)
 
 from app.crm.models import ApiUuid, _Strict
 
@@ -20,12 +28,14 @@ WithdrawCode = Literal["price_changed", "customer_cancelled", "entered_in_error"
 QuoteStatus = Literal["draft", "approved", "rejected", "superseded"]
 # what the screen says: a superseded quote that carries a withdrawal is WITHDRAWN, the others were replaced by a newer one
 Outcome = Literal["draft", "approved", "rejected", "withdrawn", "superseded"]
+PricingKind = Literal["list", "manual"]
+PriceSource = Literal["list", "typed_by_person"]
 
 
 class QuoteLineOut(_Strict):
     line_no: int
     requirement_line_no: int
-    product_id: uuid.UUID
+    product_id: uuid.UUID | None  # null on a manual line: it names an item type, not a product
     sku: str
     name: str
     sale_unit: SaleUnit
@@ -37,6 +47,20 @@ class QuoteLineOut(_Strict):
     tax_paise: int
     gross_paise: int
     tax_bps: int
+    price_source: PriceSource = "list"
+    item_type_code: str | None = None
+
+    @model_serializer(mode="wrap")
+    def _leave_out_what_only_a_manual_line_has(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        """A list-price line's JSON is exactly what it was before manual quotes existed: the two fields only a manual line needs are left out when they say "list"."""
+        data: dict[str, Any] = handler(self)
+        if self.price_source == "list":
+            data.pop("price_source", None)
+        if self.item_type_code is None:
+            data.pop("item_type_code", None)
+        return data
 
 
 class UnquotedLineOut(_Strict):
@@ -55,13 +79,14 @@ class QuoteOut(_Strict):
     lead_id: uuid.UUID
     status: QuoteStatus
     outcome: Outcome
-    price_list_version_id: uuid.UUID
+    pricing_kind: PricingKind = "list"
+    price_list_version_id: uuid.UUID | None  # null on a manual quote: it has no price list
     policy_version_id: uuid.UUID
     engine_version: str
     canonical_hash: str
     customer_kind: CustomerKind
-    delivery_state: str
-    gst_supply: Literal["intra_state", "inter_state"]
+    delivery_state: str | None  # null on a manual quote that was made without one
+    gst_supply: Literal["intra_state", "inter_state"] | None
     as_of: date
     valid_until: date
     due_date: date
@@ -88,6 +113,16 @@ class QuoteOut(_Strict):
     lines: list[QuoteLineOut]
     unquoted_lines: list[UnquotedLineOut] = Field(default_factory=list)
 
+    @model_serializer(mode="wrap")
+    def _leave_out_what_only_a_manual_quote_has(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        """A list-price quote's JSON is exactly what it was before manual quotes existed: `pricing_kind` is left out when it says "list"."""
+        data: dict[str, Any] = handler(self)
+        if self.pricing_kind == "list":
+            data.pop("pricing_kind", None)
+        return data
+
 
 class QuoteSummaryOut(_Strict):
     id: uuid.UUID
@@ -95,11 +130,21 @@ class QuoteSummaryOut(_Strict):
     enquiry_id: uuid.UUID
     status: QuoteStatus
     outcome: Outcome
+    pricing_kind: PricingKind = "list"
     customer_kind: CustomerKind
     valid_until: date
     total_paise: int
     needs_owner_approval: bool
     created_at: datetime
+
+    @model_serializer(mode="wrap")
+    def _leave_out_what_only_a_manual_quote_has(
+        self, handler: SerializerFunctionWrapHandler
+    ) -> dict[str, Any]:
+        data: dict[str, Any] = handler(self)
+        if self.pricing_kind == "list":
+            data.pop("pricing_kind", None)
+        return data
 
 
 class CreateQuoteIn(_Strict):
@@ -322,3 +367,22 @@ class ItemTypeSavedOut(_Strict):
     id: uuid.UUID
     code: str
     created: bool
+
+
+# ----------------------------------------------------------------------------- the manual-price quote (the owners type each line's price)
+class ManualLineIn(_Strict):
+    """One typed line. The price is the person's own number, in paise; nothing else is read from the caller (no name, no tax, no price source)."""
+
+    item_type_code: ItemTypeCode
+    qty: Annotated[StrictInt, Field(ge=1, le=10_000)]
+    unit_price_paise: PricePaise
+
+
+class CreateManualQuoteIn(_Strict):
+    """A person's typed lines and choices; the id is the caller's (an exact retry replays). Shape and bounds only: the figures come from the engine and are verified by the
+    database, which also decides the role, the item types, the GST rate in force and the requirement."""
+
+    id: ApiUuid
+    customer_kind: CustomerKind
+    delivery_state: str | None = Field(default=None, min_length=2, max_length=2)
+    lines: list[ManualLineIn] = Field(min_length=1, max_length=5)

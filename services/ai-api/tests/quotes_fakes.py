@@ -109,6 +109,19 @@ def quote_from(
     request: dict[str, Any], result: dict[str, Any], **over: Any
 ) -> tuple[dict[str, Any], list[dict[str, Any]]]:
     """A stored quote row and its lines, made from an engine result the way the database stores them (figures are the engine's; this is a FAKE, not a verifier)."""
+    row = quote_row_from(request, result, **over)
+    skus = {i["sku"]: i for i in ITEM_ROWS}
+    lines = [
+        {"line_no": n, "requirement_line_no": n, "product_id": skus[x["sku"]]["product_id"], "sku": x["sku"], "name": x["name"], "sale_unit": skus[x["sku"]]["sale_unit"], "qty": x["quantity"],
+         "unit_price_applied_paise": x["unit_price_applied"], "price_break_min_qty": (x["price_break_applied"] or {}).get("min_qty"), "line_subtotal_paise": x["line_subtotal"],
+         "net_paise": x["net"], "tax_paise": x["tax"], "gross_paise": x["gross"], "tax_bps": skus[x["sku"]]["tax_bps"]}
+        for n, x in enumerate(result["lines"], start=1)
+    ]  # fmt: skip
+    return row, lines
+
+
+def quote_row_from(request: dict[str, Any], result: dict[str, Any], **over: Any) -> dict[str, Any]:
+    """Just the stored quote row (see quote_from)."""
     t, pt = result["totals"], result["payment_terms"]
     row: dict[str, Any] = {
         "id": str(QID), "quote_no": 1, "requirement_id": str(RID), "enquiry_id": str(ENQ), "lead_id": str(LEAD), "status": "draft",
@@ -119,14 +132,7 @@ def quote_from(
         "created_by": None, "created_at": "2026-10-06T05:00:00+00:00", "approved_by": None, "approved_at": None, "rejected_by": None, "rejected_at": None, "reject_code": None,
         "withdrawn_by": None, "withdrawn_at": None, "withdraw_code": None, **over,
     }  # fmt: skip
-    skus = {i["sku"]: i for i in ITEM_ROWS}
-    lines = [
-        {"line_no": n, "requirement_line_no": n, "product_id": skus[x["sku"]]["product_id"], "sku": x["sku"], "name": x["name"], "sale_unit": skus[x["sku"]]["sale_unit"], "qty": x["quantity"],
-         "unit_price_applied_paise": x["unit_price_applied"], "price_break_min_qty": (x["price_break_applied"] or {}).get("min_qty"), "line_subtotal_paise": x["line_subtotal"],
-         "net_paise": x["net"], "tax_paise": x["tax"], "gross_paise": x["gross"], "tax_bps": skus[x["sku"]]["tax_bps"]}
-        for n, x in enumerate(result["lines"], start=1)
-    ]  # fmt: skip
-    return row, lines
+    return row
 
 
 class FakeQuotes:
@@ -142,6 +148,9 @@ class FakeQuotes:
         ] = {}  # policy versions created through the API: id -> version number
         self.mapper: dict[str, Any] | None = MAPPER_ROW
         self.item_type_rows: list[dict[str, Any]] = []
+        self.manual_review_flags: list[
+            str
+        ] = []  # the review flags the fake database "derives" for the next manual drafts
         self.item_type_ids: dict[str, str] = {}  # item types saved through the API: code -> id
         self.products_rows = list(PRODUCTS)
         self.pick_rows: list[dict[str, Any]] = []
@@ -217,6 +226,7 @@ class FakeQuotes:
             "quote_no",
             "enquiry_id",
             "status",
+            "pricing_kind",
             "customer_kind",
             "valid_until",
             "total_paise",
@@ -225,7 +235,9 @@ class FakeQuotes:
             "withdrawn_at",
         )
         return [
-            {k: row[k] for k in keys}
+            {
+                k: row[k] for k in keys if k in row
+            }  # a list-price row from quote_from has no pricing_kind: the model's default says list
             for row, _ in self.rows.values()
             if enquiry_id is None or row["enquiry_id"] == str(enquiry_id)
         ][:limit]
@@ -340,6 +352,65 @@ class FakeQuotes:
             "quote_no": 1,
             "status": "draft",
             "needs_owner_approval": False,
+            "canonical_hash": result["canonical_hash"],
+            "replayed": replayed,
+        }
+
+    def create_manual_draft(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        """A manual draft as the database would store it from the engine's own output (this fake is NOT a verifier; the real database is exercised in tests/integration)."""
+        self._tok(token)
+        self.calls.append(("create_manual_draft", copy.deepcopy(args)))
+        self._maybe()
+        request, result = json.loads(args["p_request_text"]), json.loads(args["p_result_text"])
+        qid = uuid.UUID(args["p_quote_id"])
+        replayed = qid in self.rows
+        state = args["p_delivery_state"]
+        if not replayed:
+            row = quote_row_from(
+                request,
+                result,
+                id=str(qid),
+                pricing_kind="manual",
+                price_list_version_id=None,
+                delivery_state=state,
+                gst_supply=None if state is None else "inter_state",
+                customer_kind=args["p_customer_kind"],
+                review_flags=list(self.manual_review_flags),
+                needs_owner_approval=bool(self.manual_review_flags),
+            )
+            rate = request["price_list"][0]["tax_bps"]
+            lines = [
+                {
+                    "line_no": n,
+                    "requirement_line_no": n,
+                    "product_id": None,
+                    "sku": x["sku"],
+                    "name": x["name"],
+                    "sale_unit": "piece",
+                    "qty": x["quantity"],
+                    "unit_price_applied_paise": x["unit_price_applied"],
+                    "price_break_min_qty": None,
+                    "line_subtotal_paise": x["line_subtotal"],
+                    "net_paise": x["net"],
+                    "tax_paise": x["tax"],
+                    "gross_paise": x["gross"],
+                    "tax_bps": rate,
+                    "price_source": "typed_by_person",
+                    "item_type_code": args["p_lines"][n - 1]["item_type_code"],
+                }
+                for n, x in enumerate(result["lines"], start=1)
+            ]
+            self.rows[qid] = (row, lines)
+            self.texts[qid] = {
+                "request_text": args["p_request_text"],
+                "result_text": args["p_result_text"],
+                "engine_version": args["p_engine_version"],
+            }
+        return {
+            "quote_id": str(qid),
+            "quote_no": 1,
+            "status": "draft",
+            "needs_owner_approval": bool(self.manual_review_flags),
             "canonical_hash": result["canonical_hash"],
             "replayed": replayed,
         }

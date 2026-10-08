@@ -21,12 +21,12 @@ logger = logging.getLogger("app.quotes.repository")
 
 # the request and result TEXTS are read only by the one method that needs them (the approval and the customer text), never by a listing
 QUOTE_COLUMNS = (
-    "id,quote_no,requirement_id,enquiry_id,lead_id,status,price_list_version_id,policy_version_id,engine_version,canonical_hash,customer_kind,delivery_state,gst_supply,"
+    "id,quote_no,requirement_id,enquiry_id,lead_id,status,pricing_kind,price_list_version_id,policy_version_id,engine_version,canonical_hash,customer_kind,delivery_state,gst_supply,"
     "as_of,valid_until,due_date,merchandise_net_paise,item_tax_paise,shipping_net_paise,shipping_tax_paise,total_paise,advance_paise,balance_paise,engine_flags,review_flags,"
     "needs_owner_approval,created_by,created_at,approved_by,approved_at,rejected_by,rejected_at,reject_code,withdrawn_by,withdrawn_at,withdraw_code"
 )
-SUMMARY_COLUMNS = "id,quote_no,enquiry_id,status,customer_kind,valid_until,total_paise,needs_owner_approval,created_at,withdrawn_at"
-LINE_COLUMNS = "line_no,requirement_line_no,product_id,sku,name,sale_unit,qty,unit_price_applied_paise,price_break_min_qty,line_subtotal_paise,net_paise,tax_paise,gross_paise,tax_bps"
+SUMMARY_COLUMNS = "id,quote_no,enquiry_id,status,pricing_kind,customer_kind,valid_until,total_paise,needs_owner_approval,created_at,withdrawn_at"
+LINE_COLUMNS = "line_no,requirement_line_no,product_id,sku,name,sale_unit,qty,unit_price_applied_paise,price_break_min_qty,line_subtotal_paise,net_paise,tax_paise,gross_paise,tax_bps,price_source,item_type_code"
 ITEM_COLUMNS = "product_id,sku,name,sale_unit,unit_price_paise,minimum_order_quantity,tax_bps,breaks:price_list_breaks(min_qty,unit_price_paise)"
 POLICY_COLUMNS = (
     "id,version_no,effective_from,discount_ceiling_bps,shipping_flat_fee_paise,shipping_free_above_paise,shipping_tax_bps,validity_days,new_advance_bps,repeat_advance_bps,"
@@ -82,6 +82,7 @@ class QuotesRepository(Protocol):
 
     def pick(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def create_draft(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
+    def create_manual_draft(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def approve(self, token: str, quote_id: uuid.UUID, recomputed_hash: str) -> dict[str, Any]: ...
     def reject(self, token: str, quote_id: uuid.UUID, code: str) -> dict[str, Any]: ...
     def withdraw(self, token: str, quote_id: uuid.UUID, code: str) -> dict[str, Any]: ...
@@ -354,6 +355,9 @@ class PostgrestQuotesRepository:
 
     def create_draft(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         return self._rpc(token, "create_quote_draft", args)
+
+    def create_manual_draft(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc(token, "create_manual_quote_draft", args)
 
     def approve(self, token: str, quote_id: uuid.UUID, recomputed_hash: str) -> dict[str, Any]:
         return self._rpc(
