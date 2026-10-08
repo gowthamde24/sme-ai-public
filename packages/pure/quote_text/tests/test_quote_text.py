@@ -16,9 +16,12 @@ _spec.loader.exec_module(quote_engine)
 
 
 # The pinned hash of the fixture request per renderer version (the version is part of the hashed payload);
-# the 1.0.0 value is the one that was pinned before 1.1.0 existed and stays so (test_legacy_1_0_0 re-runs this file).
+# the 1.0.0 value is the one that was pinned before 1.1.0 existed and stays so (test_legacy_1_0_0 re-runs this file),
+# and the 1.1.0 value the one pinned before 1.2.0 existed (test_legacy_1_1_0 re-runs it). The fixture ships a non-zero
+# fee, so 1.2.0 prints the same text as 1.1.0 for it and only the hash (which carries the version) differs.
 GOLDEN_HASH = {"1.0.0": "376e2b72ffc0a880941cb254f891811cdeb99ad3d195b2312d39cd0cf7c3b17f",
-               "1.1.0": "6cab990d149f3ef9ef56a4087d1382241b1705921caa18573a32f3030ceb58aa"}
+               "1.1.0": "6cab990d149f3ef9ef56a4087d1382241b1705921caa18573a32f3030ceb58aa",
+               "1.2.0": "1aedb7b0adc2491a67c043420c2cf513850a8ef29d5f6db2500c006bd80193b5"}
 
 
 def fixture():
@@ -56,7 +59,11 @@ def expected_amounts(r):
     result.append(t["subtotal"])
     if t["discount"]:
         result.append(t["discount"])
-    result += [t[key] for key in ("net", "item_tax", "shipping", "shipping_tax", "shipping_gross", "tax", "total")]
+    # From 1.2.0 a shipping line whose own amount is zero is not printed (1.0.0 and 1.1.0 print all three).
+    hide_zero = tuple(int(n) for n in engine.RENDERER_VERSION.split(".")) >= (1, 2, 0)
+    for key in ("net", "item_tax", "shipping", "shipping_tax", "shipping_gross", "tax", "total"):
+        if not (hide_zero and key.startswith("shipping") and not t[key]):
+            result.append(t[key])
     if "payment_terms" in q:
         result += [q["payment_terms"][key] for key in ("advance_amount", "balance")]
     return result

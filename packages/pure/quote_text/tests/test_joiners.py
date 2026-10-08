@@ -14,6 +14,7 @@ import unittest
 
 import quote_text as engine
 import quote_text.v1_0_0 as legacy
+import quote_text.v1_1_0 as frozen
 from golden_support import LOCATIONS, build, load, place
 
 ZWNJ, ZWJ = "\u200c", "\u200d"
@@ -75,21 +76,25 @@ def independent_hash(inputs, version):
 
 class VersionTests(unittest.TestCase):
     def test_version_and_registry(self):
-        self.assertEqual(engine.RENDERER_VERSION, "1.1.0")
-        self.assertEqual(engine.SUPPORTED_VERSIONS, ("1.0.0", "1.1.0"))
-        self.assertIs(engine.renderer_for("1.1.0"), engine)
+        self.assertEqual(engine.RENDERER_VERSION, "1.2.0")
+        self.assertEqual(engine.SUPPORTED_VERSIONS, ("1.0.0", "1.1.0", "1.2.0"))
+        self.assertIs(engine.renderer_for("1.2.0"), engine)
+        self.assertIs(engine.renderer_for("1.1.0"), frozen)
         self.assertIs(engine.renderer_for("1.0.0"), legacy)
         self.assertEqual(legacy.RENDERER_VERSION, "1.0.0")
-        for bad in ("1.0.1", "1.2.0", "2.0.0", "", "1.0", None, 1):
+        self.assertEqual(frozen.RENDERER_VERSION, "1.1.0")
+        for bad in ("1.0.1", "1.3.0", "2.0.0", "", "1.0", None, 1):
             with self.assertRaises(KeyError):
                 engine.renderer_for(bad)
 
     def test_the_version_is_part_of_the_hash_and_only_the_hash_differs(self):
         r = build(["Synthetic weave", "Second synthetic weave"])
+        # build() ships a non-zero fee, so 1.2.0 hides nothing here and the three versions print the same text
         new, old = engine.render(r), legacy.render(r)
         self.assertEqual((new["text"], new["line_count"]), (old["text"], old["line_count"]))
         self.assertNotEqual(new["canonical_hash"], old["canonical_hash"])
-        self.assertEqual(new["canonical_hash"], independent_hash(r, "1.1.0"))
+        self.assertEqual(new["canonical_hash"], independent_hash(r, "1.2.0"))
+        self.assertEqual(frozen.render(r)["canonical_hash"], independent_hash(r, "1.1.0"))
         self.assertEqual(old["canonical_hash"], independent_hash(r, "1.0.0"))
 
 
@@ -206,19 +211,23 @@ class ExhaustiveTests(unittest.TestCase):
 class RenderTests(unittest.TestCase):
     def test_golden_vectors_render_to_the_pinned_text_and_hash(self):
         golden = load("golden_1_1_0.json")
-        self.assertEqual(golden["renderer_version"], engine.RENDERER_VERSION)
+        self.assertEqual(golden["renderer_version"], frozen.RENDERER_VERSION)
         ids = {v["id"] for v in golden["accepted"]}
         self.assertTrue({"telugu_zwnj", "kannada_zwj", "devanagari_zwj", "devanagari_zwnj",
                          "malayalam_chillu_at_end_of_word", "joiner_in_longer_quote"} <= ids)
         for v in golden["accepted"]:
             with self.subTest(vector=v["id"]):
                 r = build(v["names"], v.get("display"))
+                # the vectors pin 1.1.0 by value (text and hash); 1.2.0 prints the same text (non-zero fee) under its own hash
+                old = frozen.render(r)
+                self.assertEqual((old["line_count"], old["canonical_hash"]),
+                                 (v["expect"]["line_count"], v["expect"]["canonical_hash"]))
                 q = engine.render(r)
                 self.assertEqual(set(q), {"text", "line_count", "canonical_hash"}, q)
                 self.assertEqual(q["text"].split("\n"), v["expect"]["text"])
-                self.assertEqual((q["line_count"], q["canonical_hash"]),
-                                 (v["expect"]["line_count"], v["expect"]["canonical_hash"]))
-                self.assertEqual(q["canonical_hash"], independent_hash(r, "1.1.0"))
+                self.assertEqual(q["line_count"], v["expect"]["line_count"])
+                self.assertEqual(q["canonical_hash"], independent_hash(r, "1.2.0"))
+                self.assertNotEqual(q["canonical_hash"], old["canonical_hash"])
                 self.assertTrue(all(len(line) <= 60 for line in q["text"].split("\n")))
                 # a short product name reaches the customer text whole
                 for name in v["names"]:

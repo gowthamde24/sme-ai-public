@@ -1,8 +1,7 @@
 """Pure plain-text quote rendering; approval and copying belong to humans.
 
-1.1.0 allows U+200C / U+200D after an Indic letter or mark; 1.2.0 leaves out each shipping line whose
-amount is zero (see VERSIONS.md). Earlier renderers are frozen byte for byte in v1_0_0.py and v1_1_0.py
-so quotes rendered with them can be re-verified.
+1.1.0 allows U+200C / U+200D after an Indic letter or mark (see VERSIONS.md). The 1.0.0
+renderer is frozen byte for byte in v1_0_0.py so quotes rendered with it can be re-verified.
 """
 from datetime import date
 from importlib import import_module
@@ -12,8 +11,8 @@ import re
 import textwrap
 import unicodedata
 
-RENDERER_VERSION = "1.2.0"
-SUPPORTED_VERSIONS = ("1.0.0", "1.1.0", "1.2.0")
+RENDERER_VERSION = "1.1.0"
+SUPPORTED_VERSIONS = ("1.0.0", "1.1.0")
 MAX_WIDTH = 60
 MAX_STRING = 200
 MAX_LINES = 30
@@ -417,13 +416,9 @@ def render(request):
         amount("Discounts", t["discount"])
     amount("Merchandise net", t["net"])
     amount("GST on merchandise", t["item_tax"])
-    # A shipping line whose own amount is zero is left out (a business with no courier has none).
-    if t["shipping"]:
-        amount("Shipping net", t["shipping"])
-    if t["shipping_tax"]:
-        amount("GST on shipping (" + rate(traces[("shipping.tax." + mode, None)]["tax_bps"]) + ")", t["shipping_tax"])
-    if t["shipping_gross"]:
-        amount("Shipping total", t["shipping_gross"])
+    amount("Shipping net", t["shipping"])
+    amount("GST on shipping (" + rate(traces[("shipping.tax." + mode, None)]["tax_bps"]) + ")", t["shipping_tax"])
+    amount("Shipping total", t["shipping_gross"])
     amount("GST total", t["tax"])
     amount("Grand total", t["total"])
     if "payment_terms" in q:
