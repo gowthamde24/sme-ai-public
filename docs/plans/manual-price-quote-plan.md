@@ -21,11 +21,11 @@ So a quote needs a **manual kind**: an allowed role types the unit price of each
 * the pinned engine and its version check, the request and result texts, the canonical hash, and the database's **own recomputation of every figure** (the arithmetic helper `app.quote_round`, line 71);
 * quote content is **immutable**; only the status moves (`app.quote_guard_update`); a new price is a new draft (a new quote number), never an edit;
 * approval: Owner or Admin, second factor, the lock order enquiry, requirement, quote; withdrawal; the follow-up stop on a withdrawn quote; order conversion reads the quote's totals, not its lines (checked: `20261019090000_order_conversion.sql` has no `quote_lines` or `product_id` read);
-* the confirmed requirement: only fields a person confirmed count; a line needs a confirmed saree type **and** quantity (SM210, `20261015090100_t008_requirement_functions.sql`);
+* the confirmed requirement: **for the list kind** only fields a person confirmed count, and a line needs a confirmed saree type **and** quantity (SM210, `20261015090100_t008_requirement_functions.sql`). **CORRECTION (2026-10-08): this does NOT stay as written for the manual kind**; it would make the owner pick the saree type twice. What the manual kind requires instead is a PROPOSAL in section 21;
 * the quote text is written by the pinned renderer from the engine result; nothing is composed in the web.
 
 **What a new quote kind changes** (the honest list):
-1. The **sources** of the rebuild are no longer "a pick and a price list item" but "the requirement's confirmed saree type code and quantity, **the typed price**, the policy version (GST rule, validity, advances)". The typed prices are arguments of the creating function, validated and stored with the quote; approval rebuilds from the stored values.
+1. The **sources** of the rebuild are no longer "a pick and a price list item" but "the saree type (the family's own code, section 16) and the quantity **typed on the quote form** (section 21: they count as the person's confirmation), **the typed price**, the policy version (GST rule, validity, advances)". *(Before 2026-10-08 this item said "the requirement's confirmed saree type code", which contradicted section 16; see section 21.)* The typed prices are arguments of the creating function, validated and stored with the quote; approval rebuilds from the stored values.
 2. `quotes.price_list_version_id` is `not null` today (`20261016090100:119-120`): it must be nullable for a manual quote, with a check that it is set exactly for the list kind. **And the staleness test in `approve_quote`** (`app.quote_active_price_version(...) is distinct from z.price_list_version_id`) would call every manual quote stale while a price list exists: it must be skipped for the manual kind. This is the sharpest edge.
 3. `quote_lines.product_id` and `sku` are `not null` (`:190-191`). A manual line has no catalog product: the engine needs a key, so the request uses a synthetic key per line (`LINE-1`, `LINE-2`), the label is the saree type's name, and `product_id` becomes nullable for the manual kind; the line stores the **saree-type code** (new nullable column) for the warning and rate options below. **So the catalog (the add-a-product form) is not required for a manual quote.**
 4. The engine's "price list" for a manual quote is built from the lines themselves: `{sku: "LINE-n", name: label, unit_price: typed, minimum_order_quantity: 1, price_breaks: [], tax_bps: the rate for this line}`; `order_lines` carry `{sku, qty}` and **no discount**; `policy.shipping = {flat_fee: 0, tax_bps: 0}` because the engine **requires** a shipping rule (`packages/quote-engine/src/quote_engine/__init__.py:165-178`); it is fixed at zero by the policy and never typed. The engine's hash covers the typed prices, so a tampered price changes it.
@@ -64,7 +64,23 @@ So **the engine, the renderer and the database arithmetic already handle a diffe
 * **Option 3: a rate by saree-type code** (a map code to rate in the policy). Right if the accountant says the rate follows the type, not the price. The saree-type code is stored on the line anyway. Same size as option 2.
 * **Option 4: the owner types the rate per line.** Not recommended: it puts a tax decision in a typing field; it could be allowed later with the same soft warning.
 
-**Open questions for the accountant (NOT KNOWN):** is the limit inclusive or exclusive; is it the price **per piece** before GST (the quote's unit price) and what is "a piece" for a set; does it depend on anything else; and the actual rates. Nothing is coded until the owners give them. **Placeholders in tests and in the click checklist will be the synthetic ones above.**
+**Options 2 and 3 are not exclusive.** The rate may depend on the saree type (and so on its fabric), on the price per piece, or on **both**. Do not build two separate tables; build **one rule table keyed by saree type (or "any") and price band**:
+* A rule is `{saree_type_code or any, up_to_paise or none, tax_bps}`. The policy version holds the whole table (a new nullable field `tax_rules`, or child rows of the policy version; one immutable version like every policy).
+* **Precedence (so there is never a tie):** a rule for a specific type beats a rule for "any"; within a type, the band with the smallest limit that still covers the price wins; the last band of each type has no limit. The table must be **complete**: a final rule for "any type, any price" is required, so no line is left without a rate. A policy without a complete table refuses a manual quote (SM217); nothing is guessed.
+* One pure SQL function `app.quote_tax_bps_for(policy, saree_type_code, unit_price_paise)` picks the rate; the API builder has the same small function; the database's request check makes any mismatch a refusal (fail closed, SM216). The equivalence test covers every **band edge for every type** (exactly at the limit, one paise either side) and the "any" fallback.
+* **Option 1 (one rate) is the same table with one rule; option 2 is the table with "any" rows only; option 3 is the table with price-less rows only.** So building the table once covers all three.
+* A **SYNTHETIC PLACEHOLDER table, NOT the accountant's rates, for tests and the click checklist only:** type 01 (semi silk self), any price: 4%; any type, up to ₹10,000: 3%; any type, above ₹10,000: 7%. Under this table a ₹9,000 saree of type 01 is taxed at 4% (the specific rule wins) and a ₹9,000 saree of type 10 at 3%.
+* Size: M on top of the manual kind, as for option 2, plus a rule editor on the policy page (item d, second step) that checks completeness before it saves.
+
+**Open questions for the accountant (NOT KNOWN; nothing here is tax advice):**
+1. The **GST rate for each saree type**, by fabric: which of the 20 types (section 16) take which rate (for example pure silk against semi silk).
+2. Is there a **per-piece price threshold** for sarees, and at what amount; does a different rate apply above it?
+3. Is the threshold **inclusive or exclusive** (is a saree priced exactly at the limit above or below it)?
+4. Is the threshold tested on the price **before or after GST** (the typed price is before GST)?
+5. What is **a piece for a set**: is the threshold tested on the price of the set or on the price per saree in it?
+6. The **HSN code for each type**: does it have to appear on the quote, and if so is it stored on the saree type (an optional `hsn_code` column of the list in section 16)?
+7. Does the rate depend on anything else (the buyer, the state, a composition scheme)?
+Nothing is coded until the owners give the answers. **Every rate in this section is a SYNTHETIC PLACEHOLDER; the placeholders in tests and in the click checklist will be the synthetic ones above.**
 
 **What the renderer shows with no courier (a finding):** I rendered a synthetic two-line quote with the pinned `quote_text` 1.0.0, no courier (the engine's fixed `flat_fee: 0`) and two different rates. The engine and renderer handle the two rates correctly:
 
@@ -250,7 +266,7 @@ For a manual quote, "the product list" is the family's own list of saree types, 
 
 **Seed.** For tests, a synthetic fixture beside the other rehearsal data (`tests/rehearsal/data/saree_types.json`, the 20 numbered rows; product names, no personal data). In the pilot the Owner loads the real list through the editor on the Customer Zero workspace; nothing real is committed to the repository.
 
-**The open question (section 20):** how this list meets the requirement vocabulary above. The manual quote picks its saree type from this table on the quote screen; whether the requirement fields should also read this table (a larger change to the Requirement Agent, the mapper and the confirmation rule) is for the owner to decide, not part of this plan.
+**The open questions (sections 20 and 21):** how this list meets the requirement vocabulary above, and what the manual quote requires instead of a separately confirmed requirement (section 21). The manual quote picks its saree type from this table on the quote screen; whether the requirement fields should also read this table (a larger change to the Requirement Agent, the mapper and the confirmation rule) is for the owner to decide, not part of this plan.
 
 ## 17. PROPOSAL: a last-price warning in v1 (for the owner to decide)
 
@@ -296,3 +312,28 @@ For a manual quote, "the product list" is the family's own list of saree types, 
 * The question: what should happen? Options, without a recommendation: (a) nothing, as today; (b) a non-blocking warning when a contact with the same key already exists (a read-only lookup by key); (c) refuse a second contact with the same key; (d) store a normalised form of the number as well (a migration and a backfill). It also decides how item f builds the `wa.me` number when no country code was typed.
 
 **3. Where the family's saree-type list meets the requirement vocabulary** (section 16): keep the requirement's eight fixed codes and let only the manual quote use the family's list; or make the requirement fields read the family's list too (a larger change). Not decided.
+
+## 21. PROPOSAL: what a manual quote requires instead of a confirmed requirement
+
+**The inconsistency, found 2026-10-08.** Section 1 (lines 24 and 28 of this file before this edit) said a manual quote rebuilds from "the requirement's confirmed saree type code" and keeps the SM210 rule. Section 16 (lines 222 to 247 before this edit; it now starts at line 236) says a manual line stores the family's own code. **Which statement is true?**
+* **In the code today, for the list kind: section 1 was true.** The draft function refuses unless the requirement is confirmed (SM213: `supabase/migrations/20261016090100_t009_picks_and_quotes.sql:499` in the pick function, `:627` in `create_quote_draft`, and again in `approve_quote`). Confirming needs a line whose saree type **and** quantity a person confirmed (SM210: `20261015090100_t008_requirement_functions.sql:12`), and the saree type must be one of the **eight fixed codes** (`20261015090000_t008_enquiries_requirements.sql:50` and `:70`).
+* **The family's own code exists nowhere in the code yet: section 16 is a proposal**, not a fact.
+* **They cannot both hold for the manual kind.** If the requirement's code had to be confirmed first, the owner would **pick twice for every quote**: once from the eight codes (to confirm the requirement), once from the family's 20 on the quote form. Section 1 is therefore corrected above: the SM210 rule is for the list kind.
+
+**Proposal (the owner decides).** For the manual kind, **the family's saree type and the quantity typed on the quote form, by an Owner or Admin, count as the person's confirmation.** A manual quote requires:
+1. an **enquiry on a lead** (the quote hangs on it, as today);
+2. at least one **typed line**: an active saree-type code from the workspace's list (section 16), a quantity from 1 to 10,000, and a unit price (bounded as in section 5);
+3. the customer kind and the delivery state, as today;
+4. a **current quote policy** with a complete GST rule table (sections 4 and 15).
+It does **not** require a separately confirmed requirement, and no agent field has to be proposed, accepted or corrected first.
+
+**How the schema copes: two ways, not decided here.**
+* **(ii) The function writes the requirement itself. This is the smaller change and the one this plan assumes.** Inside `create_manual_quote_draft` the person's typed lines create (or reuse) a **confirmed requirement** for the enquiry: origin manual, its fields confirmed by the same person, the saree type stored as the vocabulary's own value `other` (the family's code is not one of the eight), the quantity as typed. Nothing else has to move: `quotes.requirement_id` and `orders.requirement_id` stay `not null`, the lock order enquiry, requirement, quote stays, and so do SM208 to SM213 and the one-draft-per-requirement index. Costs: the requirement then shows "other" (the screens show the quote line's family type instead); SM208 ("the enquiry already has a confirmed requirement") means a second manual quote on the same enquiry must reuse or supersede it, which slice 2 has to design; and the function becomes a new writer of requirements, to be proved like section 14 (origin manual, refused inside an agent context).
+* **(i) Make the requirement optional for the manual kind. Not recommended.** It changes `quotes.requirement_id` and `orders.requirement_id` (`20261016090100:117`, `20261019090000:137`), the one-draft index (`quotes_one_draft_key`, `:174`), the lock order in `approve_quote`, `withdraw_approved_quote` and `create_order_from_quote` (`20261019090000:707-709`), and the SM212 discard check.
+
+**Which existing rule or test would change.**
+* **Under (ii): none of the existing rules.** SM210, SM213, SM208 and the vocabulary stay exactly as they are for list quotes; the existing pgTAP files `58`, `59` and `61` are unchanged; only new pgTAP is added. The one difference is for the manual kind: its requirement is confirmed by the function, so `approve_quote`'s SM213 check passes without a screen step.
+* **Under (i):** the not-null columns, the lock-order code, pgTAP `58`, `59`, `61` and the race tests (`tests/integration/test_quote_races.py`, `test_order_races.py`).
+* **Only if the owner decides section 20, item 3, the other way** (the requirement fields read the family's list): then SM210, `app.requirement_vocab` with its pgTAP, the Requirement Agent and the mapper tests would change. That is a separate ticket and not part of this plan.
+
+**UNVERIFIED:** (ii) was not prototyped. I did not check whether writing a requirement and its fields from a function trips another guard (the field immutability triggers, the agent-state checks, the per-field "one field per line and key" rule). Line numbers are from today's migrations.
