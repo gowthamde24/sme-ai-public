@@ -211,6 +211,16 @@ class DueItemOut(_Strict):
     default_channel: DraftChannel
 
 
+class DueListOut(_Strict):
+    """One page of the due list: `items` (one row per lead), `next_cursor` (an opaque string for the next page, null at the end), `policy_in_force`, and `left_out`, the number of candidates of THIS page that were
+    not shown because the database stopped them since, they cannot be contacted on any channel, or their state could not be read."""
+
+    items: list[DueItemOut]
+    next_cursor: str | None
+    policy_in_force: bool
+    left_out: int
+
+
 class QuestionDraftOut(_Strict):
     id: uuid.UUID
     requirement_id: uuid.UUID

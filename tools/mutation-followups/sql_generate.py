@@ -8,7 +8,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from common import QUESTION_FILES, latest_definition, query
+from common import DUE_FILES, QUESTION_FILES, latest_definition, query
 from sql_manual import M
 
 FUNCS = [
@@ -17,7 +17,7 @@ FUNCS = [
     "app.followup_gate", "app.followup_build", "app.followup_state_hash", "app.followup_blocker", "app.followup_blocker_inner", "app.followup_result_ok", "app.contacts_discard_followup_drafts",
     "app.followup_json_int", "public.create_followup_policy_version", "public.followup_gate", "app.followup_lock", "public.record_touch", "public.create_followup_draft",
     "public.approve_followup_draft", "public.discard_followup_draft", "public.record_draft_sent", "app.question_drafts_guard_insert", "app.question_drafts_guard_update",
-    "public.persist_question_drafts", "public.decide_question_draft",
+    "public.persist_question_drafts", "public.decide_question_draft", "public.followup_due_candidates",
 ]  # fmt: skip
 # the trigger functions and the refusal helpers get the extra operators: a `raise` removed, an `is distinct from` flipped, a negation removed, a move allowed (the test file switches the draft guard
 # trigger off and on itself, so a "trigger disabled" statement mutant is undone by the test: the function is what must be mutated)
@@ -109,6 +109,8 @@ def _operators(fn: str) -> list[dict[str, Any]]:
 
 
 def _files(fn: str) -> list[str] | None:
+    if fn == "public.followup_due_candidates":
+        return DUE_FILES
     return QUESTION_FILES if "question" in fn else None
 
 
@@ -159,7 +161,7 @@ def statement_mutants() -> list[dict[str, Any]]:
         for privilege in ["insert", "update", "delete"]:
             rows.append((f"grant {privilege} on public.{t} to authenticated", f"revoke {privilege} on public.{t} from authenticated", f"authenticated may {privilege} {t} directly"))
         rows.append((f"grant select on public.{t} to anon", f"revoke select on public.{t} from anon", f"anon may read {t}"))
-    names = "'create_followup_policy_version','followup_gate','record_touch','create_followup_draft','approve_followup_draft','discard_followup_draft','record_draft_sent','persist_question_drafts','decide_question_draft'"
+    names = "'create_followup_policy_version','followup_gate','record_touch','create_followup_draft','approve_followup_draft','discard_followup_draft','record_draft_sent','persist_question_drafts','decide_question_draft','followup_due_candidates'"
     for sig in [x for x in query(f"select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname in ({names}) order by 1").split("\n") if x]:
         rows.append((f"grant execute on function {sig} to anon", f"revoke execute on function {sig} from anon", f"anon may execute {sig.split('(')[0]}"))
         rows.append((f"revoke execute on function {sig} from authenticated", f"grant execute on function {sig} to authenticated", f"authenticated may not execute {sig.split('(')[0]}"))

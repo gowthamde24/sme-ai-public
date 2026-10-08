@@ -11,7 +11,7 @@ from datetime import UTC, datetime, timedelta
 from typing import Any
 
 from app.followups.builder import LeadSnapshot, PolicySnapshot, Touch
-from app.followups.repository import OutboundLead
+from app.followups.repository import DueCandidate, DueCandidates
 
 LEAD = uuid.UUID(int=0x1EAD)
 CONTACT = uuid.UUID(int=0xC0A7)
@@ -26,6 +26,7 @@ __all__ = [
     "CONTACT",
     "DRAFT",
     "LEAD",
+    "CANDIDATE_BASE",
     "NOW",
     "POLICY",
     "QUESTION",
@@ -53,6 +54,11 @@ def policy_snapshot(**over: Any) -> PolicySnapshot:
     }
     base.update(over)
     return PolicySnapshot(**base)
+
+
+CANDIDATE_BASE = datetime(
+    2026, 9, 1, 0, 0, tzinfo=UTC
+)  # the last touch of the first fake candidate; each next one is a minute later
 
 
 def snapshot(*, outbound_days_ago: tuple[int, ...] = (5,), **over: Any) -> LeadSnapshot:
@@ -150,7 +156,14 @@ class FakeFollowups:
             "stopped": None,
             "policy_in_force": True,
         }
-        self.outbound_leads: list[uuid.UUID] = [LEAD]
+        self.outbound_leads: list[uuid.UUID] = [
+            LEAD
+        ]  # the leads with an outbound touch, OLDEST last touch first (the order the database function returns them in)
+        self.not_candidates: set[uuid.UUID] = (
+            set()
+        )  # leads the database function drops (a reply, the touch limit, closed, opted out ...)
+        self.candidates_policy_in_force = True
+        self.gate_error: Exception | None = None  # raised by every gate read
         self.last_out_channel: dict[
             uuid.UUID, str | None
         ] = {}  # per candidate: the channel (email or whatsapp) of its latest outbound touch; none when absent
@@ -257,6 +270,8 @@ class FakeFollowups:
     # ------------------------------------------------------------------ reads
     def gate(self, token: str, lead_id: uuid.UUID, channel: str) -> dict[str, Any]:
         self._seen(token, "gate", {"p_lead_id": str(lead_id), "p_channel": channel})
+        if self.gate_error is not None:
+            raise self.gate_error
         result = dict(self.gate_result)
         if lead_id in self.stopped_leads:
             result["stopped"] = self.stopped_leads[lead_id]
@@ -310,15 +325,48 @@ class FakeFollowups:
             rows = [r for r in rows if r["status"] == status]
         return rows[:limit]
 
-    def recent_outbound(
-        self, token: str, tenant_id: uuid.UUID, *, limit: int
-    ) -> list[OutboundLead]:
-        self.tokens.append(token)
-        self.calls.append(("recent_outbound", {"limit": limit}))
-        return [
-            OutboundLead(lead, self.last_out_channel.get(lead))
-            for lead in self.outbound_leads[:limit]
+    def due_candidates(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        after: tuple[str, uuid.UUID] | None,
+        limit: int,
+        scan_max: int,
+    ) -> DueCandidates:
+        """The database function's contract, simulated over `outbound_leads` (oldest first; lead k's last touch is k minutes after a fixed instant): a keyset page, a scan cap, the leads in `not_candidates` dropped, the open draft and
+        the last channel attached."""
+        self._seen(token, "due_candidates", {"after": after, "limit": limit, "scan_max": scan_max})
+        rows = [
+            ((CANDIDATE_BASE + timedelta(minutes=k)).isoformat(), lead)
+            for k, lead in enumerate(self.outbound_leads)
         ]
+        if after is not None:
+            rows = [(at, lead) for at, lead in rows if (at, str(lead)) > (after[0], str(after[1]))]
+        open_draft = {
+            d["lead_id"]: d for d in self.drafts.values() if d["status"] in ("draft", "approved")
+        }
+        items: list[DueCandidate] = []
+        examined, more, last = 0, False, None
+        for at, lead in rows:
+            if examined >= scan_max or len(items) >= limit:
+                more = True
+                break
+            examined += 1
+            last = (at, lead)
+            if lead in self.not_candidates:
+                continue
+            draft = open_draft.get(str(lead))
+            items.append(
+                DueCandidate(
+                    lead,
+                    at,
+                    self.last_out_channel.get(lead),
+                    None if draft is None else uuid.UUID(str(draft["id"])),
+                    None if draft is None else str(draft["channel"]),
+                )
+            )
+        return DueCandidates(self.candidates_policy_in_force, items, last if more else None)
 
     def requirement_enquiry(
         self, token: str, tenant_id: uuid.UUID, requirement_id: uuid.UUID

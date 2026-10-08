@@ -2,8 +2,8 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { parseDueItem, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
-import { CHANNELS_OPEN_JSON, DRAFT, DRAFT_JSON, DUE_JSON, DUE_OLD_JSON, FOLLOWUP_JSON, FOLLOWUP_OLD_JSON, GATE_JSON, HASH, LEAD, OTHER_PERSON, PERSON, POLICY_JSON, QUESTION_JSON, REQ, TENANT } from "@/lib/api/followups-fixtures";
+import { parseDueList, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
+import { CHANNELS_OPEN_JSON, CURSOR, DRAFT, DRAFT_JSON, DUE_JSON, DUE_LIST_JSON, DUE_OLD_JSON, FOLLOWUP_JSON, FOLLOWUP_OLD_JSON, GATE_JSON, HASH, LEAD, OTHER_PERSON, PERSON, POLICY_JSON, QUESTION_JSON, REQ, TENANT } from "@/lib/api/followups-fixtures";
 import { redirectMock, redirectTarget } from "@/test/helpers";
 
 const requireUser = vi.fn();
@@ -37,9 +37,11 @@ import PolicyPage from "./policy/page";
 const tenant = (role: string) => ({ id: TENANT, name: "Acme", slug: "acme", role });
 const leadProps = (query: Record<string, string> = {}, leadId = LEAD, tenantId = TENANT) =>
   ({ params: Promise.resolve({ tenantId, leadId }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof LeadFollowupPage>[0];
-const tenantProps = { params: Promise.resolve({ tenantId: TENANT }) } as unknown as Parameters<typeof DuePage>[0];
+const tenantProps = { params: Promise.resolve({ tenantId: TENANT }), searchParams: Promise.resolve({}) } as unknown as Parameters<typeof DuePage>[0];
+const dueProps = (query: Record<string, string | string[]>) => ({ params: Promise.resolve({ tenantId: TENANT }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof DuePage>[0];
 const policyProps = { params: Promise.resolve({ tenantId: TENANT }) } as unknown as Parameters<typeof PolicyPage>[0];
 const questionProps = (requirementId = REQ) => ({ params: Promise.resolve({ tenantId: TENANT, requirementId }) }) as unknown as Parameters<typeof QuestionsPage>[0];
+const dueList = (items: unknown[], over: Record<string, unknown> = {}) => parseDueList({ items, next_cursor: null, policy_in_force: true, left_out: 0, ...over });
 const lead = (over: Record<string, unknown> = {}) => parseLeadFollowup({ ...FOLLOWUP_JSON, ...over });
 const draft = (over: Record<string, unknown>) => ({ ...DRAFT_JSON, ...over });
 const noSendControl = () => {
@@ -53,7 +55,7 @@ beforeEach(() => {
   requireUser.mockResolvedValue({ id: PERSON, email: "e", accessToken: "tok", aal: "aal2" });
   fetchTenant.mockResolvedValue(tenant("owner"));
   api.fetchLeadFollowup.mockResolvedValue(lead());
-  api.fetchDueList.mockResolvedValue(DUE_JSON.map(parseDueItem));
+  api.fetchDueList.mockResolvedValue(parseDueList(DUE_LIST_JSON));
   api.fetchPolicyVersions.mockResolvedValue([parsePolicyVersion(POLICY_JSON)]);
   api.fetchQuestionDrafts.mockResolvedValue([parseQuestionDraft(QUESTION_JSON)]);
 });
@@ -341,7 +343,7 @@ describe("the lead's follow-up page across channels", () => {
 
 describe("the due list", () => {
   it("lists each lead with our sentence and a link to its follow-up page; a waiting draft is mentioned", async () => {
-    api.fetchDueList.mockResolvedValue([...DUE_JSON, { ...DUE_JSON[0], lead_id: "44444444-4444-4444-8444-444444444444", action: "wait", reason_code: "not_yet_eligible", open_draft_id: DRAFT }].map(parseDueItem));
+    api.fetchDueList.mockResolvedValue(dueList([...DUE_JSON, { ...DUE_JSON[0], lead_id: "44444444-4444-4444-8444-444444444444", action: "wait", reason_code: "not_yet_eligible", open_draft_id: DRAFT }]));
     render(await DuePage(tenantProps));
     const items = within(screen.getByRole("list", { name: "Leads with a follow-up" })).getAllByRole("listitem");
     expect(items).toHaveLength(2);
@@ -355,7 +357,7 @@ describe("the due list", () => {
 
   it("one row per lead names each channel's state and opens the lead on its default channel; a waiting draft names its channel", async () => {
     const row = { ...DUE_JSON[0], channels: [{ channel: "email", blocked: "unkeyed" }, { channel: "whatsapp", blocked: null }], default_channel: "whatsapp", open_draft_id: DRAFT, open_draft_channel: "whatsapp" };
-    api.fetchDueList.mockResolvedValue([row].map(parseDueItem));
+    api.fetchDueList.mockResolvedValue(dueList([row]));
     render(await DuePage(tenantProps));
     const items = within(screen.getByRole("list", { name: "Leads with a follow-up" })).getAllByRole("listitem");
     expect(items).toHaveLength(1);
@@ -366,7 +368,7 @@ describe("the due list", () => {
   });
 
   it("an older API's rows (no channel fields) still list as before: no channel line, e-mail, the old draft sentence", async () => {
-    api.fetchDueList.mockResolvedValue(DUE_OLD_JSON.map((r) => parseDueItem({ ...r, open_draft_id: DRAFT })));
+    api.fetchDueList.mockResolvedValue(parseDueList(DUE_OLD_JSON.map((r) => ({ ...r, open_draft_id: DRAFT })))); // an older API: a BARE list
     render(await DuePage(tenantProps));
     const item = within(screen.getByRole("list", { name: "Leads with a follow-up" })).getByRole("listitem");
     expect(item).toHaveTextContent("A draft is waiting: open the lead to read and approve it.");
@@ -375,12 +377,88 @@ describe("the due list", () => {
   });
 
   it("says plainly when there is nothing, and when the API is down", async () => {
-    api.fetchDueList.mockResolvedValue([]);
+    api.fetchDueList.mockResolvedValue(dueList([]));
     render(await DuePage(tenantProps));
     expect(screen.getByText(/Nothing to follow up/)).toBeInTheDocument();
     api.fetchDueList.mockRejectedValue(new ApiRequestError(503, "followups_unavailable", "x"));
     render(await DuePage(tenantProps));
     expect(screen.getAllByRole("alert").at(-1)).toHaveTextContent("Could not load this from the API.");
+  });
+});
+
+describe("the due list is a page: oldest first, a cursor, what was left out", () => {
+  it("says it is oldest first and that leads with nothing to do are not listed", async () => {
+    render(await DuePage(tenantProps));
+    expect(screen.getByText("Oldest first. Leads that need no follow-up (replied, limit reached, closed, opted out) are not listed.")).toBeInTheDocument();
+  });
+
+  it("asks the API for the first page, or for the page after a cursor in the address", async () => {
+    render(await DuePage(tenantProps));
+    expect(api.fetchDueList).toHaveBeenLastCalledWith("tok", TENANT, undefined);
+    render(await DuePage(dueProps({ after: CURSOR })));
+    expect(api.fetchDueList).toHaveBeenLastCalledWith("tok", TENANT, CURSOR);
+    render(await DuePage(dueProps({ after: [CURSOR, "other"] })));
+    expect(api.fetchDueList).toHaveBeenLastCalledWith("tok", TENANT, CURSOR); // a repeated parameter: the first counts
+  });
+
+  it.each(["garbage with spaces", "../etc", "x".repeat(201), ""])("a cursor in the address that is not ours (%j) is ignored: the first page", async (bad) => {
+    render(await DuePage(dueProps({ after: bad })));
+    expect(api.fetchDueList).toHaveBeenLastCalledWith("tok", TENANT, undefined);
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("shows 'Show the next leads' with the page's cursor when more follow, and not at the end", async () => {
+    api.fetchDueList.mockResolvedValue(dueList(DUE_JSON, { next_cursor: CURSOR }));
+    render(await DuePage(tenantProps));
+    expect(screen.getByRole("link", { name: "Show the next leads" })).toHaveAttribute("href", `/app/tenants/${TENANT}/followups?after=${CURSOR}`);
+    noSendControl();
+    document.body.innerHTML = "";
+    api.fetchDueList.mockResolvedValue(dueList(DUE_JSON));
+    render(await DuePage(tenantProps));
+    expect(screen.queryByRole("link", { name: "Show the next leads" })).toBeNull();
+  });
+
+  it("an empty page that has a next page says more follow and offers the link; an empty last page says nothing is waiting", async () => {
+    api.fetchDueList.mockResolvedValue(dueList([], { next_cursor: CURSOR, left_out: 30 }));
+    render(await DuePage(tenantProps));
+    expect(screen.getByText("No lead on this page needs a follow-up now. More leads follow.")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Show the next leads" })).toBeInTheDocument();
+    expect(screen.queryByText(/Nothing to follow up/)).toBeNull();
+    document.body.innerHTML = "";
+    api.fetchDueList.mockResolvedValue(dueList([]));
+    render(await DuePage(tenantProps));
+    expect(screen.getByText("Nothing to follow up: no lead is waiting for a follow-up right now.")).toBeInTheDocument();
+    expect(screen.queryByText(/More leads follow/)).toBeNull();
+  });
+
+  it("says how many candidates of the page were left out: one, several, none", async () => {
+    api.fetchDueList.mockResolvedValue(dueList(DUE_JSON, { left_out: 1 }));
+    render(await DuePage(tenantProps));
+    expect(screen.getByText("1 lead on this page was left out: it cannot be contacted on any channel, or it changed while the list was made.")).toBeInTheDocument();
+    document.body.innerHTML = "";
+    api.fetchDueList.mockResolvedValue(dueList(DUE_JSON, { left_out: 7 }));
+    render(await DuePage(tenantProps));
+    expect(screen.getByText("7 leads on this page were left out: they cannot be contacted on any channel, or they changed while the list was made.")).toBeInTheDocument();
+    document.body.innerHTML = "";
+    api.fetchDueList.mockResolvedValue(dueList(DUE_JSON, { left_out: 0 }));
+    render(await DuePage(tenantProps));
+    expect(screen.queryByText(/left out/)).toBeNull();
+  });
+
+  it("with no policy in force it says so, lists nothing and offers no link", async () => {
+    api.fetchDueList.mockResolvedValue(dueList([], { policy_in_force: false, next_cursor: CURSOR, left_out: 3 }));
+    render(await DuePage(tenantProps));
+    expect(screen.getByText("No follow-up policy is in force: the owner must publish one.")).toBeInTheDocument();
+    expect(screen.queryByRole("list", { name: "Leads with a follow-up" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Show the next leads" })).toBeNull();
+    expect(screen.queryByText(/left out/)).toBeNull();
+  });
+
+  it("an older API's bare list is shown as one page without a link", async () => {
+    api.fetchDueList.mockResolvedValue(parseDueList(DUE_JSON));
+    render(await DuePage(tenantProps));
+    expect(within(screen.getByRole("list", { name: "Leads with a follow-up" })).getAllByRole("listitem")).toHaveLength(1);
+    expect(screen.queryByRole("link", { name: "Show the next leads" })).toBeNull();
   });
 });
 

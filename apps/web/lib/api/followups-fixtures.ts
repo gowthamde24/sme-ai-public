@@ -31,6 +31,9 @@ export const DUE_JSON = [{ lead_id: LEAD, action: "draft_followup", reason_code:
 const without = (o: Record<string, unknown>, ...keys: string[]): Record<string, unknown> => Object.fromEntries(Object.entries(o).filter(([k]) => !keys.includes(k)));
 export const FOLLOWUP_OLD_JSON = without(FOLLOWUP_JSON, "default_channel", "channels");
 export const DUE_OLD_JSON = DUE_JSON.map((row) => without(row, "open_draft_channel", "channels", "default_channel"));
+/** One page of the due list as the API now sends it (the bare list above is what an older API sent). */
+export const DUE_LIST_JSON = { items: DUE_JSON, next_cursor: null, policy_in_force: true, left_out: 0 };
+export const CURSOR = "eyJhdCI6IjIwMjYtMTAtMDJUMDg6MzA6MDArMDA6MDAiLCJpZCI6IjMzMzMzMzMzLTMzMzMtMzMzMy0zMzMzLTMzMzMzMzMzMzMzMyJ9";
 export const POLICY_JSON = {
   id: POLICY, version_no: 1, effective_from: "2026-10-01", gap_days: [3, 7], max_touches: 3, quiet_start: "21:00", quiet_end: "09:00", allowed_weekdays: [0, 1, 2, 3, 4, 5], holidays: ["2026-12-25"],
   min_gap_hours: 24, recipient_utc_offset_minutes: 330, created_at: "2026-10-01T05:00:00+00:00",

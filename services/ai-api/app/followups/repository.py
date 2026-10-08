@@ -39,11 +39,24 @@ DRAFT_COLUMNS = (
 QUESTION_COLUMNS = "id,requirement_id,line_no,question_code,question_text,status,created_by,created_at,decided_by,decided_at,discard_code"
 
 
-class OutboundLead(NamedTuple):
-    """A candidate of the due list: a lead with an outbound touch and the channel (email or whatsapp) of its latest such touch, or None when every outbound touch it has is a phone call."""
+class DueCandidate(NamedTuple):
+    """One candidate of the due list, exactly as `public.followup_due_candidates` sent it: a lead the engine might still make due (never an answer of the engine's)."""
 
     lead_id: uuid.UUID
-    channel: str | None
+    last_outbound_at: str
+    last_outbound_channel: (
+        str | None
+    )  # email or whatsapp (a phone call is not a draft channel); None when every outbound touch is a call
+    open_draft_id: uuid.UUID | None
+    open_draft_channel: str | None
+
+
+class DueCandidates(NamedTuple):
+    policy_in_force: bool
+    items: list[DueCandidate]
+    next_cursor: (
+        tuple[str, uuid.UUID] | None
+    )  # (the last examined lead's last outbound time as the database wrote it, its id); None at the end
 
 
 class FollowupsRepository(Protocol):
@@ -87,10 +100,16 @@ class FollowupsRepository(Protocol):
         status: str | None,
         limit: int,
     ) -> list[dict[str, Any]]: ...
-    def recent_outbound(
-        self, token: str, tenant_id: uuid.UUID, *, limit: int
-    ) -> list[OutboundLead]:
-        """The leads with the most recent outbound touches (distinct, newest first, at most `limit`): the candidates of the due list, each with the channel (email or whatsapp) of its latest such touch."""
+    def due_candidates(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        after: tuple[str, uuid.UUID] | None,
+        limit: int,
+        scan_max: int,
+    ) -> DueCandidates:
+        """One page of the leads a person might have to follow up, oldest last outbound touch first (the database function `public.followup_due_candidates`, a safe superset of what the engine would call due)."""
         ...
 
     def requirement_enquiry(
@@ -102,6 +121,54 @@ class FollowupsRepository(Protocol):
     def get_question_draft(
         self, token: str, tenant_id: uuid.UUID, draft_id: uuid.UUID
     ) -> dict[str, Any] | None: ...
+
+
+DRAFT_CHANNELS = ("email", "whatsapp")
+
+
+def _candidate_uuid(value: Any) -> uuid.UUID:
+    if not isinstance(value, str):
+        raise UpstreamError("unexpected candidate shape")
+    try:
+        return uuid.UUID(value)
+    except ValueError:
+        raise UpstreamError("unexpected candidate shape") from None
+
+
+def _candidate_channel(value: Any) -> str | None:
+    if value is None:
+        return None
+    if value not in DRAFT_CHANNELS:
+        raise UpstreamError("unexpected candidate shape")
+    return str(value)
+
+
+def parse_due_candidates(result: dict[str, Any]) -> DueCandidates:
+    """The function's answer, strictly: a shape or a channel it should never send is an upstream failure, never a half-read page."""
+    items = result.get("items")
+    in_force = result.get("policy_in_force")
+    cursor = result.get("next_cursor")
+    if not isinstance(in_force, bool) or not isinstance(items, list):
+        raise UpstreamError("unexpected candidates shape")
+    parsed: list[DueCandidate] = []
+    for row in items:
+        if not isinstance(row, dict) or not isinstance(row.get("last_outbound_at"), str):
+            raise UpstreamError("unexpected candidate shape")
+        draft_id = row.get("open_draft_id")
+        parsed.append(
+            DueCandidate(
+                lead_id=_candidate_uuid(row.get("lead_id")),
+                last_outbound_at=row["last_outbound_at"],
+                last_outbound_channel=_candidate_channel(row.get("last_outbound_channel")),
+                open_draft_id=None if draft_id is None else _candidate_uuid(draft_id),
+                open_draft_channel=_candidate_channel(row.get("open_draft_channel")),
+            )
+        )
+    if cursor is None:
+        return DueCandidates(in_force, parsed, None)
+    if not isinstance(cursor, dict) or not isinstance(cursor.get("at"), str):
+        raise UpstreamError("unexpected cursor shape")
+    return DueCandidates(in_force, parsed, (cursor["at"], _candidate_uuid(cursor.get("id"))))
 
 
 class PostgrestFollowupsRepository:
@@ -367,30 +434,27 @@ class PostgrestFollowupsRepository:
             params["status"] = "in.(draft,approved)" if status == "active" else f"eq.{status}"
         return self._rows("/followup_drafts", token, params)
 
-    def recent_outbound(
-        self, token: str, tenant_id: uuid.UUID, *, limit: int
-    ) -> list[OutboundLead]:
-        rows = self._rows(
-            "/lead_touches",
+    def due_candidates(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        after: tuple[str, uuid.UUID] | None,
+        limit: int,
+        scan_max: int,
+    ) -> DueCandidates:
+        result = self._rpc(
             token,
+            "followup_due_candidates",
             {
-                "select": "lead_id,channel",
-                "tenant_id": f"eq.{tenant_id}",
-                "direction": "eq.out",
-                "order": "occurred_at.desc,id.desc",
-                "limit": str(limit * 4),
+                "p_tenant_id": str(tenant_id),
+                "p_after_at": None if after is None else after[0],
+                "p_after_id": None if after is None else str(after[1]),
+                "p_limit": limit,
+                "p_scan_max": scan_max,
             },
         )
-        seen: dict[uuid.UUID, str | None] = {}
-        for row in rows:  # newest first: the first e-mail or WhatsApp row of a lead is its latest such touch (a phone call makes a lead a candidate but is not a draft channel)
-            lead = uuid.UUID(str(row["lead_id"]))
-            if lead not in seen:
-                if len(seen) >= limit:
-                    continue  # the cap is reached: only leads already counted may still learn their channel
-                seen[lead] = None
-            if seen[lead] is None and row.get("channel") in ("email", "whatsapp"):
-                seen[lead] = str(row["channel"])
-        return [OutboundLead(lead_id=lead, channel=ch) for lead, ch in seen.items()]
+        return parse_due_candidates(result)
 
     def requirement_enquiry(
         self, token: str, tenant_id: uuid.UUID, requirement_id: uuid.UUID

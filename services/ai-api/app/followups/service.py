@@ -5,6 +5,10 @@ canonical request and result. The database runs the gate (suppression, keys, con
 
 from __future__ import annotations
 
+import base64
+import binascii
+import datetime as dt
+import json
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -26,6 +30,7 @@ from app.followups.models import (
     DraftResultOut,
     DraftStatusOut,
     DueItemOut,
+    DueListOut,
     GateOut,
     LeadFollowupOut,
     PolicyResultOut,
@@ -127,9 +132,44 @@ def public_gate(gate: dict[str, Any]) -> dict[str, Any]:
 # The draft channels, in the order a screen shows them (the order is also the default's last resort).
 CHANNELS: tuple[DraftChannel, ...] = ("email", "whatsapp")
 
-# The most leads one due list reads gates for. Each candidate costs at most two gate reads (e-mail, then WhatsApp; a stopped lead only the first), so a due list makes at most
-# 2 * DUE_LIST_MAX_LEADS = 60 gate reads however many leads have an outbound touch. A caller cannot raise it.
+# The most leads ONE REQUEST of the due list processes (the page size). Each candidate costs at most two gate reads (e-mail, then WhatsApp; a stopped lead only the first), so a request makes at most
+# 2 * DUE_LIST_MAX_LEADS = 60 gate reads, 30 snapshot reads and 30 engine runs, however many leads the workspace has: the rest is reached by the cursor (`?after=`). A caller cannot raise it.
 DUE_LIST_MAX_LEADS = 30
+# The most leads the database function EXAMINES for one page (it skips the ones that cannot be due); a stretch of dead leads cannot make one call slow, and the cursor continues after it.
+DUE_SCAN_MAX = 300
+# A cursor is the base64url of {"at", "id"} (about 110 characters); anything longer is not ours.
+CURSOR_MAX_CHARS = 200
+
+
+def encode_cursor(cursor: tuple[str, uuid.UUID]) -> str:
+    raw = json.dumps({"at": cursor[0], "id": str(cursor[1])}, separators=(",", ":")).encode()
+    return base64.urlsafe_b64encode(raw).rstrip(b"=").decode()
+
+
+def decode_cursor(text: str) -> tuple[str, uuid.UUID]:
+    """A client's cursor back into (time, lead id), or a 422: it is validated here and is nothing the database has to trust (it only compares). Anything that is not exactly what `encode_cursor` makes is refused."""
+    invalid = ApiError(422, "validation_error", "Invalid input.")
+    if not text or len(text) > CURSOR_MAX_CHARS or not text.isascii():
+        raise invalid
+    try:
+        raw = base64.urlsafe_b64decode(text + "=" * (-len(text) % 4))
+        data = json.loads(raw)
+        if (
+            not isinstance(data, dict)
+            or set(data) != {"at", "id"}
+            or not isinstance(data["at"], str)
+            or not isinstance(data["id"], str)
+        ):
+            raise invalid
+        moment = dt.datetime.fromisoformat(
+            data["at"]
+        )  # `datetime` itself is the module's clock (the tests freeze it): parsing uses the real class
+        lead = uuid.UUID(data["id"])
+    except (binascii.Error, ValueError, UnicodeDecodeError):
+        raise invalid from None
+    if moment.tzinfo is None or str(lead) != data["id"]:
+        raise invalid
+    return moment.isoformat(), lead
 
 
 def channel_is_open(gate: dict[str, Any]) -> bool:
@@ -245,35 +285,48 @@ def due_list(
     token: str,
     tenant: uuid.UUID,
     *,
+    cursor: str | None = None,
     limit: int = DUE_LIST_MAX_LEADS,
     now: datetime | None = None,
-) -> list[DueItemOut]:
-    """What a person could do about follow-ups right now, from real backend state: one row per lead with an outbound touch that the database has not stopped and at least one draft channel is open for, put once to the
-    pinned engine (the cadence is the lead's, not the channel's). At most DUE_LIST_MAX_LEADS leads are read, whatever `limit` says. Computed when the page is opened (no scheduler)."""
+) -> DueListOut:
+    """One page of what a person could do about follow-ups right now, from real backend state. The candidates come from the database (`public.followup_due_candidates`: oldest last outbound touch first, only leads that
+    could still be due); for each of them the API does what it always did: the gate per channel (stop > block > engine), the snapshot, the pinned engine (the cadence is the lead's, not the channel's). At most
+    DUE_LIST_MAX_LEADS candidates are processed per request, whatever `limit` says; the rest is reached with the cursor. Computed when the page is opened (no scheduler)."""
+    after = None if cursor is None else decode_cursor(cursor)
     moment = now or datetime.now(UTC)
-    active = repo.list_drafts(token, tenant, lead_id=None, status="active", limit=200)
-    open_drafts = {str(d["lead_id"]): d for d in active}
+    page = repo.due_candidates(
+        token, tenant, after=after, limit=min(limit, DUE_LIST_MAX_LEADS), scan_max=DUE_SCAN_MAX
+    )
+    if not page.policy_in_force:
+        return DueListOut(
+            items=[], next_cursor=None, policy_in_force=False, left_out=0
+        )  # no policy: nothing is due, the engine is not asked, and whatever the function sent is ignored
     items: list[DueItemOut] = []
-    for candidate in repo.recent_outbound(token, tenant, limit=min(limit, DUE_LIST_MAX_LEADS)):
+    left_out = 0
+    for candidate in page.items:
         lead_id = candidate.lead_id
         email = public_gate(repo.gate(token, lead_id, "email"))
         if email.get("stopped") is not None:
-            continue  # stopped by the database (an order, a withdrawn quote, an archived lead): the stop is the lead's, so WhatsApp is not read
+            left_out += 1  # stopped by the database since the candidates were read (an order, a withdrawn quote): the stop is the lead's, so WhatsApp is not read
+            continue
         gates: dict[DraftChannel, dict[str, Any]] = {
             "email": email,
             "whatsapp": public_gate(repo.gate(token, lead_id, "whatsapp")),
         }
         if not any(channel_is_open(g) for g in gates.values()):
-            continue  # blocked on every channel (opted out, erased, no consent or no key): nothing is due, whatever the engine would say
+            left_out += 1  # blocked on every channel (erased, no consent or no key): nothing is due, whatever the engine would say
+            continue
         snapshot = repo.lead_snapshot(token, tenant, lead_id)
         if snapshot is None:
+            left_out += 1
             continue
         ran = decide(snapshot, moment)
         if ran is None or cadence_port.is_rejected(ran[1]):
+            left_out += 1
             continue
         result = ran[1]
-        open_draft = open_drafts.get(str(lead_id))
-        open_channel = None if open_draft is None else str(open_draft["channel"])
+        if result["action"] == "stop":
+            continue  # the engine says there is nothing to do (the candidates function should not have sent it); a stop is not a row of the working list
         items.append(
             DueItemOut(
                 lead_id=lead_id,
@@ -281,13 +334,20 @@ def due_list(
                 reason_code=str(result["reason_code"]),
                 touch_number=result["touch_number"],
                 next_eligible_at=result["next_eligible_at"],
-                open_draft_id=None if open_draft is None else uuid.UUID(str(open_draft["id"])),
-                open_draft_channel=open_channel,  # type: ignore[arg-type]
+                open_draft_id=candidate.open_draft_id,
+                open_draft_channel=candidate.open_draft_channel,  # type: ignore[arg-type]
                 channels=channel_states(gates),
-                default_channel=default_channel(gates, open_channel, candidate.channel),
+                default_channel=default_channel(
+                    gates, candidate.open_draft_channel, candidate.last_outbound_channel
+                ),
             )
         )
-    return items
+    return DueListOut(
+        items=items,
+        next_cursor=None if page.next_cursor is None else encode_cursor(page.next_cursor),
+        policy_in_force=page.policy_in_force,
+        left_out=left_out,
+    )
 
 
 def create_policy(

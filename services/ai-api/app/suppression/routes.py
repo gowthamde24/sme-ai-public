@@ -45,6 +45,12 @@ def suppression_status(ctx: AdminPlus, runtime: RuntimeDep) -> SuppressionStatus
 def backfill_keys(ctx: OwnerStrong, runtime: RuntimeDep) -> BackfillOut:
     """Key the existing contacts that have no key (Owner, second factor; idempotent; batched: call again while `remaining` is above zero)."""
     if runtime.suppression is None or runtime.key_ring is None:
-        raise ApiError(503, "suppression_key_not_configured", "The suppression key is not configured, so contacts cannot be keyed.")
-    done = service.backfill(runtime.suppression, runtime.key_ring, ctx.principal.token, ctx.tenant.id)
+        raise ApiError(
+            503,
+            "suppression_key_not_configured",
+            "The suppression key is not configured, so contacts cannot be keyed.",
+        )
+    done = service.backfill(
+        runtime.suppression, runtime.key_ring, ctx.principal.token, ctx.tenant.id
+    )
     return BackfillOut(**done)

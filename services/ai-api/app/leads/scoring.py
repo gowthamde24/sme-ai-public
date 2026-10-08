@@ -422,9 +422,7 @@ def score_lead(
         flags.append("closed_or_inactive")
 
     # unrelated_apparel_only
-    unrelated_vocab = (
-        config.get("vocabularies", {}).get("unrelated_apparel", {}).get("terms", [])
-    )
+    unrelated_vocab = config.get("vocabularies", {}).get("unrelated_apparel", {}).get("terms", [])
     unrelated_terms = [
         str(t["term"]) for t in unrelated_vocab if isinstance(t, dict) and t.get("term")
     ]

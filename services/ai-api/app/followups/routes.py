@@ -26,7 +26,7 @@ from app.followups.models import (
     DraftOut,
     DraftResultOut,
     DraftStatusOut,
-    DueItemOut,
+    DueListOut,
     LeadFollowupOut,
     PolicyResultOut,
     PolicyVersionOut,
@@ -143,10 +143,15 @@ def create_draft(
     return done
 
 
-@router.get("/followups/due", response_model=list[DueItemOut])
-def due(ctx: SalesPlus, runtime: RuntimeDep) -> list[DueItemOut]:
-    """One row per lead with an outbound touch and an open draft channel, each put to the pinned engine NOW (computed when the page is opened: there is no scheduler)."""
-    return service.due_list(_repo(runtime), ctx.principal.token, ctx.tenant.id)
+@router.get("/followups/due", response_model=DueListOut)
+def due(
+    ctx: SalesPlus,
+    runtime: RuntimeDep,
+    after: Annotated[str | None, Query(max_length=service.CURSOR_MAX_CHARS)] = None,
+) -> DueListOut:
+    """One page of the due list, oldest last outbound touch first: one row per lead that could still be due and has an open draft channel, each put to the pinned engine NOW (computed when the page is opened: there is no
+    scheduler). `after` is the opaque `next_cursor` of the previous page."""
+    return service.due_list(_repo(runtime), ctx.principal.token, ctx.tenant.id, cursor=after)
 
 
 # ----------------------------------------------------------------------------- drafts

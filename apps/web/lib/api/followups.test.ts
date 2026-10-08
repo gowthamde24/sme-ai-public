@@ -11,11 +11,13 @@ import {
   fetchDraft,
   fetchDrafts,
   fetchDueList,
+  isDueCursor,
   fetchLeadFollowup,
   fetchPolicyVersions,
   fetchQuestionDrafts,
   parseDraft,
   parseDueItems,
+  parseDueList,
   parseGate,
   parseLeadFollowup,
   parsePolicyVersion,
@@ -31,7 +33,9 @@ import {
   DRAFT,
   DRAFT_JSON,
   DRAFT_RESULT_JSON,
+  CURSOR,
   DUE_JSON,
+  DUE_LIST_JSON,
   DUE_OLD_JSON,
   FOLLOWUP_JSON,
   FOLLOWUP_OLD_JSON,
@@ -162,9 +166,12 @@ describe("reads", () => {
     await fetchLeadFollowup("tok", TENANT, LEAD, "whatsapp");
     expect(call()[0]).toBe(`/v1/tenants/${TENANT}/leads/${LEAD}/followup?channel=whatsapp`);
     apiRequest.mockClear();
-    apiRequest.mockResolvedValue(DUE_JSON);
+    apiRequest.mockResolvedValue(DUE_LIST_JSON);
     await fetchDueList("tok", TENANT);
     expect(call()[0]).toBe(`/v1/tenants/${TENANT}/followups/due`);
+    apiRequest.mockClear();
+    await fetchDueList("tok", TENANT, CURSOR);
+    expect(call()[0]).toBe(`/v1/tenants/${TENANT}/followups/due?after=${CURSOR}`);
     apiRequest.mockClear();
     apiRequest.mockResolvedValue([POLICY_JSON]);
     expect(await fetchPolicyVersions("tok", TENANT)).toHaveLength(1);
@@ -266,6 +273,47 @@ describe("the channel fields (WhatsApp as a first-class channel)", () => {
     apiRequest.mockClear();
     await fetchLeadFollowup("tok", TENANT, LEAD, "email");
     expect(call()[0]).toBe(`/v1/tenants/${TENANT}/leads/${LEAD}/followup?channel=email`);
+  });
+});
+
+describe("the due list page and its cursor", () => {
+  it("keeps what the API sent: the rows, the cursor, the policy flag and the number left out", () => {
+    const list = parseDueList({ ...DUE_LIST_JSON, next_cursor: CURSOR, left_out: 4 });
+    expect(list.items).toHaveLength(1);
+    expect([list.next_cursor, list.policy_in_force, list.left_out]).toEqual([CURSOR, true, 4]);
+    expect(parseDueList({ items: [], next_cursor: null, policy_in_force: false, left_out: 0 })).toEqual({ items: [], next_cursor: null, policy_in_force: false, left_out: 0 });
+  });
+
+  it("a BARE LIST (an older API) is one page with nothing after it", () => {
+    const list = parseDueList(DUE_JSON);
+    expect(list.items).toHaveLength(1);
+    expect([list.next_cursor, list.policy_in_force, list.left_out]).toEqual([null, true, 0]);
+    expect(parseDueList([])).toEqual({ items: [], next_cursor: null, policy_in_force: true, left_out: 0 });
+  });
+
+  it.each([
+    ["no items", () => parseDueList({ next_cursor: null, policy_in_force: true, left_out: 0 })],
+    ["items that are not a list", () => parseDueList({ ...DUE_LIST_JSON, items: {} })],
+    ["a row outside the contract", () => parseDueList({ ...DUE_LIST_JSON, items: [{ ...DUE_JSON[0], action: "send" }] })],
+    ["a cursor with a space", () => parseDueList({ ...DUE_LIST_JSON, next_cursor: "a b" })],
+    ["a cursor with a slash", () => parseDueList({ ...DUE_LIST_JSON, next_cursor: "../x" })],
+    ["a cursor of 201 characters", () => parseDueList({ ...DUE_LIST_JSON, next_cursor: "a".repeat(201) })],
+    ["an empty cursor", () => parseDueList({ ...DUE_LIST_JSON, next_cursor: "" })],
+    ["a cursor that is a number", () => parseDueList({ ...DUE_LIST_JSON, next_cursor: 5 })],
+    ["no cursor key at all", () => parseDueList({ items: [], policy_in_force: true, left_out: 0 })],
+    ["a policy flag that is text", () => parseDueList({ ...DUE_LIST_JSON, policy_in_force: "yes" })],
+    ["no policy flag", () => parseDueList({ items: [], next_cursor: null, left_out: 0 })],
+    ["a negative number left out", () => parseDueList({ ...DUE_LIST_JSON, left_out: -1 })],
+    ["a fraction left out", () => parseDueList({ ...DUE_LIST_JSON, left_out: 1.5 })],
+    ["no number left out", () => parseDueList({ items: [], next_cursor: null, policy_in_force: true })],
+    ["something that is neither a list nor an object", () => parseDueList("x")],
+  ])("%s is an error", (_name, run) => expect(run).toThrow(ApiContractError));
+
+  it("a cursor is base64url text of at most 200 characters, and nothing else reaches a path", async () => {
+    expect([CURSOR, "a", "A-_0", "a".repeat(200)].every(isDueCursor)).toBe(true);
+    expect(["", "a b", "a/b", "a=b", "é", "a".repeat(201), 5, null, undefined].some(isDueCursor)).toBe(false);
+    for (const bad of ["a b", "../x", "a".repeat(201), ""]) await expect(fetchDueList("t", TENANT, bad)).rejects.toThrow(ApiContractError);
+    expect(apiRequest).not.toHaveBeenCalled();
   });
 });
 

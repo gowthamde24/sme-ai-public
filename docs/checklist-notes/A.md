@@ -269,3 +269,33 @@ No database change, so the SQL mutants (588) were NOT re-run; the Python and web
 
 **A flaw of the tool, found and written into its README:** running the Python and the web runners at the same time shares git's index lock; one restore failed silently, a mutant stayed in `routes.py`, and the next mutant of that file refused to start. The diff was exactly that one mutant, was reverted by hand and the run resumed. Run one runner at a time.
 
+## followups-due-candidates (C0 to C5): mutation delta (2026-10-08)
+
+The SQL mutants of T010 part 2 (588) were NOT re-run: no existing function, table or trigger changed (one new function, no index). The new function got its own 69 SQL mutants (67 function mutants: the operators of the tool plus 52 hand-written ones; 2 grant mutants), run against pgTAP 66 only and, on survival, against all five files. The Python and web mutant lists were re-pointed at the new code (nine API mutants of the old candidate read were replaced) and **re-run in full**, because the API service, the repository, the routes and the due page changed.
+
+| Set | Mutants | Killed at once | Survived the first pass | Closed with a test | Equivalent (documented) | Left alive |
+| --- | --- | --- | --- | --- | --- | --- |
+| SQL, `public.followup_due_candidates` | 69 | 58 | 11 | 2 | 9 | 0 |
+| Python (API) | 160 | 154 | 6 | 4 | 2 | 0 |
+| Web | 138 (137 distinct descriptions) | 137 | 0 | 0 | 0 | 0 |
+
+**Closed with tests.** SQL: the channel of the last message was the FIRST e-mail or WhatsApp touch's (no test had a lead with two touches on different channels): pgTAP 66 G2a/G2b (e-mail then WhatsApp gives WhatsApp, and the reverse); the OLDEST open draft was named (no test had two open drafts): G9/G10 (two open drafts of one lead, the newest is named, with its own channel). Python: a cursor of exactly 200 characters was refused, and one of 800 accepted (no test sat on the boundary): `test_a_cursor_of_exactly_200_characters_is_accepted_and_the_next_size_up_is_refused` (a valid 200-character cursor is accepted, a 202-character one refused); the repository sent a constant limit of 30 and scan cap of 300 (every test used those values): `test_the_limit_and_the_scan_cap_are_sent_as_given` (7 and 9).
+
+**EQUIVALENT (11), each with its reason.**
+
+| Mutant | Why nothing observable changes |
+| --- | --- |
+| SQL: the terminal list also holds `initial_outreach` | the blocker answers `initial_outreach` only for a lead with no outbound touch, and a lead with none is not a row of the aggregate |
+| SQL: the terminal list also holds `invalid` | the blocker answers `invalid` only for a request it cannot read; a policy has exactly max_touches - 1 gaps and a lead below the limit always has its gap, so no consistent data reaches it (the unreadable-input guard is pinned by pgTAP 62 and 65) |
+| SQL: the last touch also counts INBOUND touches | a lead with any inbound touch has replied, and the blocker's `replied` drops it before its time is used |
+| SQL: the touch aggregate has no workspace filter | the join to `leads` carries the workspace filter and a lead id belongs to one workspace (the composite foreign key); only the cost of the aggregate changes |
+| SQL: the lead join has no workspace filter | the aggregate is already filtered by workspace, and a touch's lead is in the touch's workspace (composite foreign key) |
+| SQL: archived leads are not filtered in SQL | `app.followup_stopped` drops an archived lead (`lead_archived`) one step later; the SQL filter is a cheap pre-filter that keeps archived leads from spending the scan cap, which no test measures |
+| SQL: `limit p_scan_max + 2` | the loop leaves at the first row beyond its quota; reading one more row changes the cost only |
+| SQL: the last channel also counts replies | a lead with a reply is a terminal lead and is not a row |
+| SQL: the draft lookup has no workspace filter | a draft belongs to its lead's workspace (composite foreign key) |
+| Python: non-ASCII cursor text accepted | `urlsafe_b64decode` of non-ASCII text raises a `ValueError`, which the same function answers with the same 422 |
+| Python: no length limit on the route's `after` parameter | `decode_cursor` refuses more than 200 characters with the same 422; the route limit is defence in depth |
+
+**A flaw found on the way, in the TEST DATABASE and not in the code.** The SQL runner's first baseline failed with `M8 every outbound touch names its contact` (pgTAP 62): the long-lived local database held the contactless bulk leads of the 600-lead and 20,000-lead tests, and that invariant counts every touch of the database. `make check` starts from `db-reset`, so it never sees this; after a timing or proof run, **`make db-reset` before a SQL mutation run**.
+

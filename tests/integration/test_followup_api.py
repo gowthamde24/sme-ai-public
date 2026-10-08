@@ -145,10 +145,10 @@ def test_a_whatsapp_draft_needs_the_phone_key_and_consent_for_whatsapp(fw: Follo
 
 def test_the_due_list_names_what_is_due_and_the_open_draft(fw: FollowWorld) -> None:
     lead = fw.due_lead("due")
-    items = {i["lead_id"]: i for i in fw.call("GET", "/followups/due", "sales").json()}
+    items = {i["lead_id"]: i for i in fw.call("GET", "/followups/due", "sales").json()["items"]}
     assert items[lead.id]["action"] == "draft_followup" and items[lead.id]["open_draft_id"] is None
     draft_id = fw.made_draft(lead)
-    items = {i["lead_id"]: i for i in fw.call("GET", "/followups/due", "sales").json()}
+    items = {i["lead_id"]: i for i in fw.call("GET", "/followups/due", "sales").json()["items"]}
     assert items[lead.id]["open_draft_id"] == draft_id
     listed = fw.call("GET", f"/followup-drafts?status=active&lead_id={lead.id}", "sales").json()
     assert [d["id"] for d in listed] == [draft_id]
@@ -345,7 +345,7 @@ def test_a_lead_the_gate_blocks_is_never_shown_as_due_on_the_real_stack(
     opted-out contact and an erased contact are blocked on both channels."""
 
     def due_ids() -> set[str]:
-        return {i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()}
+        return {i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()["items"]}
 
     def page(lead: Lead, channel: str = "email") -> dict[str, Any]:
         out = fw.call("GET", f"/leads/{lead.id}/followup?channel={channel}", "sales")
@@ -568,7 +568,7 @@ def test_sm227_the_stops_reachable_through_the_api(fw: FollowWorld) -> None:
             "engine_version": "none",
         }
         assert lead.id not in {
-            i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()
+            i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()["items"]
         }
 
     live = fw.due_lead("s227live")  # not stopped: the engine answers and the lead is due
@@ -576,7 +576,7 @@ def test_sm227_the_stops_reachable_through_the_api(fw: FollowWorld) -> None:
         fw.call("GET", f"/leads/{live.id}/followup", "sales").json()["decision"]["action"]
         == "draft_followup"
     )
-    assert live.id in {i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()}
+    assert live.id in {i["lead_id"] for i in fw.call("GET", "/followups/due", "sales").json()["items"]}
     archived = fw.due_lead("s227a")
     fw.archive_lead(archived)
     refused(fw.draft("sales", archived), "SM227", "lead_archived")

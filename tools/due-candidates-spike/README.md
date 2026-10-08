@@ -1,0 +1,3 @@
+# Due-candidates spike (slice C0)
+
+`draft.sql` is the DRAFT of `public.followup_due_candidates` that was applied by hand to the local database in slice C0 to measure option B (the database's own blocker for the four terminal answers) at 20,000 leads. It is **superseded by the migration** `supabase/migrations/20261028090000_t010_followup_due_candidates.sql` and is kept only as the record of what was measured; nothing runs it. The opt-in timing test `tests/integration/test_followup_due_spike.py` now measures the migrated function (`DUE_SPIKE=1`). Figures: `docs/plans/followups-due-candidates-plan.md` ("C0 results", "C3 results").
