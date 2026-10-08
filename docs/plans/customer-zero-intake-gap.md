@@ -139,7 +139,7 @@ Minimum for a **one-hour session**, using what exists. "Now" means buildable and
 1. Workspace exists; both Owners are in (operator SQL, section 5); both enrol the second factor.
 2. Products (catalog), then the price list CSV.
 3. Quote policy and order policy (operator or developer, no screen for the quote policy), then the follow-up policy page.
-4. Customers (add-a-customer path), their consent (record-consent path), suppression keys (the K1 screen: merged as PR #13 after this document's base commit, so it is not in the code read here).
+4. Customers (add-a-customer path), their consent (record-consent path), suppression keys (the K1 screen at `/app/tenants/{id}/suppression`, merged as PR #13, is on `main`).
 5. A rehearsal quote and a rehearsal follow-up with invented customers, then stop.
 6. Only after the gate prerequisites, real customers.
 
@@ -266,7 +266,7 @@ Direct sending from the system would need: the **WhatsApp Business Platform** (C
 3. **S**: "Add a product" form (Admin+, existing `POST /products`): one product per saree type. Then the price list CSV by saree type is loaded in the setup session (section 6).
 4. **M**: quote policy route and page (courier flat fee, courier GST, validity, advances, seller state).
 5. **M**: the "quick quote" screen: customer, saree type, quantity, delivery state, then the existing steps behind it (enquiry, fields, confirm, pick, draft, approve), using only existing endpoints.
-6. **S**: on the approved quote, "Copy" (exists) + "Open in WhatsApp" (`wa.me`) + "I sent it on WhatsApp" (the existing touch endpoint). This starts the follow-up clock, so the family stops forgetting.
+6. **S**: on the approved quote, "Copy" (exists) + "Open in WhatsApp" (`wa.me`) + "I sent it on WhatsApp" (the existing touch endpoint). This starts the follow-up clock, so the family stops forgetting. The follow-up clock starts only when the owner records an outgoing touch ("I sent it"), so the quote flow needs an "I sent it" button right after "Open in WhatsApp".
 
 **Milestone v1, "this customer's price":**
 7. **S to M, read only**: "last quoted to this customer for this saree type" next to the price (from `quote_lines`).
