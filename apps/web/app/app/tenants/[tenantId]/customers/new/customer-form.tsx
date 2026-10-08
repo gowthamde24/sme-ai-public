@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { startTransition, useActionState, useState } from "react";
 
 import { HOW_IT_CAME, HOW_LABELS } from "@/lib/api/customers";
 
@@ -11,10 +11,24 @@ type Action = (prev: CustomerFormState, formData: FormData) => Promise<CustomerF
 
 /**
  * The form for one customer. The three ids come from the page (one set per render), so a second press is a retry. After a save it says what was made and what is still NOT done: no consent
- * is recorded, so a contact made here cannot yet be noted as contacted. It never shows the phone number or the e-mail back.
+ * is recorded, so a contact made here cannot yet be noted as contacted. It never shows the phone number or the e-mail back after a SAVE.
+ *
+ * What the person typed is held in state and the form is submitted through onSubmit, not an `action` prop (React resets the fields of an `action` form when it finishes): after a refusal
+ * every field still shows what was typed, so only the wrong value needs fixing. After a duplicate e-mail the server hands back a FRESH contact id (the contact was not made); the company and
+ * lead ids stay, so the company replays and no second company is made.
  */
 export function CustomerForm({ action, tenantId, ids }: { action: Action; tenantId: string; ids: { company: string; contact: string; lead: string } }) {
-  const [state, formAction, pending] = useActionState(action, undefined);
+  const [contactId, setContactId] = useState(ids.contact);
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [shop, setShop] = useState("");
+  const [how, setHow] = useState("phone_call");
+  const [state, formAction, pending] = useActionState(async (prev: CustomerFormState, formData: FormData) => {
+    const next = await action(prev, formData);
+    if (next?.nextContactId) setContactId(next.nextContactId);
+    return next;
+  }, undefined);
   if (state?.ok && state.leadId && state.contactId)
     return (
       <div role="status" className="card" style={{ maxWidth: "40rem" }}>
@@ -39,20 +53,29 @@ export function CustomerForm({ action, tenantId, ids }: { action: Action; tenant
       </div>
     );
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "40rem" }} aria-label="Add a customer">
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        startTransition(() => formAction(data));
+      }}
+      className="card"
+      style={{ maxWidth: "40rem" }}
+      aria-label="Add a customer"
+    >
       <input type="hidden" name="company_id" value={ids.company} />
-      <input type="hidden" name="contact_id" value={ids.contact} />
+      <input type="hidden" name="contact_id" value={contactId} />
       <input type="hidden" name="lead_id" value={ids.lead} />
       <label htmlFor="cust-name">Customer&apos;s name</label>
-      <input id="cust-name" name="full_name" required maxLength={200} disabled={pending} />
+      <input id="cust-name" name="full_name" required value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={200} disabled={pending} />
       <label htmlFor="cust-phone">WhatsApp or phone number</label>
-      <input id="cust-phone" name="phone" required minLength={3} maxLength={32} inputMode="tel" autoComplete="off" disabled={pending} />
+      <input id="cust-phone" name="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} minLength={3} maxLength={32} inputMode="tel" autoComplete="off" disabled={pending} />
       <label htmlFor="cust-email">E-mail (optional)</label>
-      <input id="cust-email" name="email" type="email" maxLength={254} autoComplete="off" disabled={pending} />
+      <input id="cust-email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} autoComplete="off" disabled={pending} />
       <label htmlFor="cust-shop">Shop or business name (optional)</label>
-      <input id="cust-shop" name="company_name" maxLength={200} disabled={pending} />
+      <input id="cust-shop" name="company_name" value={shop} onChange={(e) => setShop(e.target.value)} maxLength={200} disabled={pending} />
       <label htmlFor="cust-how">How did the enquiry come?</label>
-      <select id="cust-how" name="how" defaultValue="phone_call" disabled={pending}>
+      <select id="cust-how" name="how" value={how} onChange={(e) => setHow(e.target.value)} disabled={pending}>
         {HOW_IT_CAME.map((h) => (
           <option key={h} value={h}>
             {HOW_LABELS[h]}

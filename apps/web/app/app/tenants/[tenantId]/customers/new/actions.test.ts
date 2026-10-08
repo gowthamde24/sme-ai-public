@@ -124,6 +124,39 @@ describe("addCustomerAction", () => {
     expect(JSON.stringify(r)).not.toContain("98765");
     expect(api.createLead).not.toHaveBeenCalled();
   });
+  it("a duplicate e-mail says so in plain words and hands back a FRESH contact id; no lead is tried", async () => {
+    api.createContact.mockRejectedValue(new ApiRequestError(409, "duplicate_value", CANARY));
+    const r = await run({ email: "dup@x.example.test" });
+    expect(r?.ok).toBe(false);
+    expect(r?.error).toMatch(/^That e-mail is already used by another person\./);
+    expect(r?.error).not.toMatch(/already used\. Reload|This form was already used/);
+    expect(r?.nextContactId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
+    expect(r?.nextContactId).not.toBe(CT);
+    expect(JSON.stringify(r)).not.toContain(CANARY);
+    expect(JSON.stringify(r)).not.toContain("dup@x");
+    expect(api.createLead).not.toHaveBeenCalled();
+  });
+  it("only a duplicate e-mail at the contact step gets a fresh contact id; every other failure keeps the ids", async () => {
+    api.createContact.mockRejectedValue(new ApiRequestError(409, "real_data_gate_closed", CANARY));
+    expect((await run())?.nextContactId).toBeUndefined();
+    api.createContact.mockRejectedValue(new ApiRequestError(503, "api_unreachable", CANARY));
+    expect((await run())?.nextContactId).toBeUndefined();
+    api.createContact.mockResolvedValue(CT);
+    api.createLead.mockRejectedValue(new ApiRequestError(409, "duplicate_value", CANARY));
+    expect((await run())?.nextContactId).toBeUndefined(); // the contact WAS made: its id must be kept, or a retry would hit the same e-mail
+  });
+  it("after a duplicate e-mail, the corrected resubmit reuses the company id (it replays) and uses the fresh contact id, and makes the lead", async () => {
+    api.createContact.mockRejectedValueOnce(new ApiRequestError(409, "duplicate_value", CANARY));
+    const first = await run({ email: "dup@x.example.test" });
+    const fresh = first?.nextContactId as string;
+    const second = await run({ email: "new@x.example.test", contact_id: fresh });
+    expect(second).toEqual({ ok: true, leadId: LD, contactId: fresh, name: "Synthetic Asha" });
+    const [c1, c2] = api.createCustomerCompany.mock.calls;
+    expect(c1[2].id).toBe(CO);
+    expect(c2[2].id).toBe(CO); // the same company id: the API replays it, no second company
+    expect(api.createContact.mock.calls[1][2]).toMatchObject({ id: fresh, companyId: CO, email: "new@x.example.test" });
+    expect(api.createLead).toHaveBeenCalledWith("tok", T, { id: LD, companyId: CO, contactId: fresh, source: "whatsapp" });
+  });
   it("a refusal at the lead step keeps the same ids for the retry", async () => {
     api.createLead.mockRejectedValueOnce(new ApiRequestError(503, "api_unreachable", CANARY));
     expect((await run())?.ok).toBe(false);

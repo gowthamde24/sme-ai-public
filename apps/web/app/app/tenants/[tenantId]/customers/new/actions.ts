@@ -1,5 +1,7 @@
 "use server";
 
+import { randomUUID } from "node:crypto";
+
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
@@ -10,7 +12,7 @@ import { requireUser } from "@/lib/auth/session";
 
 /** What the screen shows after a press. It never carries the phone number or the e-mail back. */
 export type CustomerFormState =
-  | { ok?: boolean; error?: string; leadId?: string; contactId?: string; name?: string }
+  | { ok?: boolean; error?: string; leadId?: string; contactId?: string; name?: string; nextContactId?: string }
   | undefined;
 
 function field(formData: FormData, name: string): string {
@@ -26,6 +28,7 @@ function describe(error: unknown): string {
   if (error instanceof ApiRequestError) {
     if (error.status === 403) return "Your role cannot add customers.";
     if (error.status === 404) return "This workspace is not available.";
+    if (error.code === "duplicate_value") return "That e-mail is already used by another person.";
     if (error.code === "real_data_gate_closed")
       return "This workspace does not accept real phone numbers or e-mail addresses yet. Use a number that starts with +00 and an e-mail that ends in .test.";
     if (error.status === 409) return "This form was already used. Reload the page and try again.";
@@ -64,7 +67,9 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
     step = 2;
     await createLead(user.accessToken, tenantId, { id: leadId, companyId, contactId, source: how });
   } catch (error) {
-    return { ok: false, error: describe(error) + (step > 0 ? AGAIN : "") };
+    const duplicateEmail = step === 1 && error instanceof ApiRequestError && error.code === "duplicate_value";
+    // A duplicate e-mail means the contact was NOT made (the company was). The next try uses a FRESH contact id and the SAME company and lead ids: the company replays, nothing is added twice.
+    return { ok: false, error: describe(error) + (step > 0 ? AGAIN : ""), ...(duplicateEmail && { nextContactId: randomUUID() }) };
   }
   revalidatePath(`/app/tenants/${tenantId}`);
   revalidatePath(`/app/tenants/${tenantId}/customers/new`); // the next render makes fresh ids
