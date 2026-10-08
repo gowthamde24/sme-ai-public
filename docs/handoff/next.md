@@ -1,5 +1,7 @@
 # Handoff: resume here
 
+**CI note (job N, branch `ci/split-db-job`, not pushed):** the single `db` job is now four parallel jobs (`db-pgtap`, `db-integration-1..3`) plus one final job named `db` that sums them up and is still the required check. Integration groups 1 and 2 are the file lists in the workflow `env:` of `.github/workflows/ci.yml`; group 3 is every other file in `tests/integration`, so a new test file needs no CI edit. The owner pushes the PR and the first run must pass before merge; re-balance the lists if one group drifts well past the others.
+
 **STOP POINT (2026-10-06, step F): the members plan has the owner's decisions recorded (not built; queued after T011a, before T012) and step F fixes F1-F8 plus the capture_text decision are committed locally; nothing is pushed.** Do NOT start anything else (members build, T010 part 2, T011a) before the owner says so.
 
 * Step F (see `docs/checklist-notes/A.md`, "Step F: findings" and "Step F: mutation spot-check"): F1 `GET /orders?quote_id=`; F2 the commit reads the catalog once; F3 900,000 BYTES (Next.js caps a server action at 1 MB); F4 the verdict and Save belong to the exact text and date checked; F5 `occurred_at` is bounded only by the database clock (30 days back, 5 minutes ahead; no floor at the order's creation or the previous event: recorded in a test, no database change); F6 the hash comment; F7 a malformed parser result is a fixed 502; F8 "Money still held" on cancelled/lost/expired orders, and the T011a requirement (a ninth owner-brief question, `docs/plans/t011-owner-agent.md`).

@@ -8,8 +8,22 @@ on:
 permissions:
   contents: read
 
+# The integration tests are split BY FILE into three groups that run in parallel, each on its own runner with its own Supabase stack. Groups 1 and 2 are explicit lists;
+# group 3 is "everything else in tests/integration", so a NEW test file lands in group 3 automatically and no file can be left out. A file listed here that no longer
+# exists makes pytest fail ("file or directory not found"), so a stale list is loud. Expected time per group (measured on run 37840506972): about 6.5 minutes of tests each.
+env:
+  INTEGRATION_GROUP_1: >-
+    test_demo_seed.py test_erasure_direct_postgrest.py test_evidence_direct_postgrest.py test_followup_due_spike.py test_followup_races.py test_followup_whatsapp.py
+    test_mfa_enforcement.py test_order_api.py test_order_equivalence.py test_order_erasure.py test_price_list_import_api.py test_quote_api.py
+    test_quote_engine_equivalence.py test_quote_policy_api.py test_quote_text_joiners_api.py test_requirement_e2e.py test_requirement_evals.py
+    test_requirement_rerun_direct_postgrest.py test_t005_direct_postgrest.py
+  INTEGRATION_GROUP_2: >-
+    test_agent_direct_postgrest.py test_agent_runs_api.py test_api_end_to_end.py test_claim_home.py test_daily_cost_cap.py test_direct_postgrest.py test_eval_harness.py
+    test_icp_template_in_db.py test_item_types_api.py test_last_owner_race.py test_live_server_logs.py test_quote_direct_postgrest.py test_quote_races.py
+    test_real_data_gate_direct_postgrest.py test_requirement_concurrency.py test_requirement_golden.py test_research_e2e.py test_research_evals.py test_research_golden.py
+
 jobs:
-  # Decides whether the slow `db` job (about 23 minutes) can affect this change. It checks nothing itself. A push to main always runs `db`. A pull request skips `db` ONLY when every
+  # Decides whether the db jobs (`db-pgtap`, `db-integration-1..3`, then the one required `db` that sums them up) can affect this change. It checks nothing itself. A push to main always runs `db`. A pull request skips `db` ONLY when every
   # changed file is under docs/, apps/web/ or e2e/, or is a *.md file, and none is under the paths that always run it. A path that is on neither list also runs `db` (fail closed).
   # One document is on the always-run list although it is under docs/: tests/integration/test_demo_seed.py runs the SQL blocks of docs/runbooks/agents-kill-switch.md against the real schema.
   changes:
@@ -104,9 +118,10 @@ jobs:
       - run: mypy
       - run: pytest -q
 
-  db:
+  # The db work is four parallel jobs (pgTAP, and three groups of integration tests). Each runs when `changes` says so, with the same condition the single `db` job used:
+  # it runs unless `changes` succeeded and said no. If `changes` itself fails, the groups still run (nothing is skipped by accident).
+  db-pgtap:
     needs: changes
-    # Runs unless `changes` said no. If `changes` itself fails, `db` still runs (nothing is skipped by accident).
     if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
     runs-on: ubuntu-latest
     steps:
@@ -116,12 +131,115 @@ jobs:
           version: 2.119.0
       - run: supabase start
       - run: supabase test db
+
+  db-integration-1:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.119.0
+      - run: supabase start
       - uses: actions/setup-python@v5
         with:
           python-version: "3.13"
           cache: pip
           cache-dependency-path: services/ai-api/pyproject.toml
       - run: pip install -e "services/ai-api[dev]"
-      - name: Integration tests (API + local Supabase)
+      - name: Integration tests, group 1 (API + local Supabase)
         working-directory: services/ai-api
-        run: ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml ../../tests/integration -q
+        run: |
+          set -euo pipefail
+          files=()
+          for f in $INTEGRATION_GROUP_1; do files+=("../../tests/integration/$f"); done
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q
+
+  db-integration-2:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.119.0
+      - run: supabase start
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: services/ai-api/pyproject.toml
+      - run: pip install -e "services/ai-api[dev]"
+      - name: Integration tests, group 2 (API + local Supabase)
+        working-directory: services/ai-api
+        run: |
+          set -euo pipefail
+          files=()
+          for f in $INTEGRATION_GROUP_2; do files+=("../../tests/integration/$f"); done
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml "${files[@]}" -q
+
+  db-integration-3:
+    needs: changes
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.119.0
+      - run: supabase start
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: services/ai-api/pyproject.toml
+      - run: pip install -e "services/ai-api[dev]"
+      - name: Integration tests, group 3 (everything not in group 1 or 2)
+        working-directory: services/ai-api
+        run: |
+          set -euo pipefail
+          ignores=()
+          for f in $INTEGRATION_GROUP_1 $INTEGRATION_GROUP_2; do ignores+=("--ignore=../../tests/integration/$f"); done
+          ../../scripts/with-local-supabase-env.sh pytest -c pyproject.toml ../../tests/integration "${ignores[@]}" -q
+
+  # THE required check. It is the only job named `db`. It always runs (`if: always()`, so a failed, cancelled or skipped group can never leave it "skipped", which would count as passing) and
+  # decides from the results of the four groups:
+  #   - `changes` succeeded and said no db work: the groups are skipped, and that is a pass (a group that somehow ran must not have failed or been cancelled).
+  #   - in every other case (`changes` said yes, failed, was cancelled or skipped): EVERY group must be `success`. `skipped`, `failure` and `cancelled` all fail.
+  # The groups are read from the `needs` context itself, so a group added to `needs` is judged too. The count check below fails the job if a group is removed from `needs`.
+  db:
+    needs: [changes, db-pgtap, db-integration-1, db-integration-2, db-integration-3]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sum up the db groups
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          EXPECTED_GROUPS: "4"
+        run: |
+          set -euo pipefail
+          echo "$NEEDS" | jq -r 'to_entries[] | "\(.key): \(.value.result)"'
+          changes_result=$(echo "$NEEDS" | jq -r '.changes.result')
+          changes_db=$(echo "$NEEDS" | jq -r '.changes.outputs.db // ""')
+          groups=$(echo "$NEEDS" | jq -r 'to_entries[] | select(.key | startswith("db-")) | .value.result')
+          count=$(printf '%s\n' "$groups" | grep -c . || true)
+          if [ "$count" != "$EXPECTED_GROUPS" ]; then
+            echo "FAIL: expected $EXPECTED_GROUPS db groups in needs, found $count"; exit 1
+          fi
+          if [ "$changes_result" = success ] && [ "$changes_db" = false ]; then
+            allowed='^(skipped|success)$'
+            echo "changes said no db work: groups may be skipped"
+          else
+            allowed='^success$'
+            echo "db work required: every group must be success"
+          fi
+          bad=0
+          while IFS= read -r r; do
+            printf '%s\n' "$r" | grep -Eq "$allowed" || bad=1
+          done <<< "$groups"
+          if [ "$bad" = 1 ]; then
+            echo "FAIL: at least one db group did not finish as required"; exit 1
+          fi
+          echo "db: OK"
