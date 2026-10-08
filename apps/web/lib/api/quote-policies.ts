@@ -6,7 +6,8 @@ import { isCanonicalUuid } from "./crm";
  *
  * Every response is parsed strictly: a wrong type, a missing key, a malformed id or date, or a number outside the limits of the database is a contract error and nothing is shown. The request body
  * is the policy and nothing else: the shipping fee is FIXED at zero here (the shop charges no courier) and the shipping tax is not sent (the database sets it to the goods rate); `tax_mode`,
- * `rounding_mode`, `shipping_free_above_paise`, `required_inputs`, `gst_rate_bps` and `gst_effective_from` are never sent (the database fills them: 5 % from the start date). This page has no GST field yet.
+ * `rounding_mode`, `shipping_free_above_paise`, `required_inputs` and `gst_effective_from` are never sent (the database fills them; the GST date is the version's own start date).
+ * The GST rate IS sent: it is a required choice with no default (manual-price quotes add it on top; price-list items keep their own rate).
  */
 
 /** The limits of `public.create_quote_policy_version` (the same as the API's request model). */
@@ -62,6 +63,7 @@ export interface QuotePolicyInput {
   repeatAdvanceBps: number;
   newNetDays: number;
   repeatNetDays: number;
+  gstRateBps: number;
   repeatCreditLimitPaise: number;
   sellerState: string;
 }
@@ -152,7 +154,7 @@ export async function fetchQuotePolicyVersions(accessToken: string, tenantId: st
   return parseQuotePolicyVersions(await apiRequest(base(tenantId), accessToken));
 }
 
-/** The body: the typed policy fields, the shipping fee fixed at zero, and nothing else (no shipping tax, tax mode, rounding mode, free-shipping threshold, required inputs, GST rate or GST date: the database fills those). */
+/** The body: the typed policy fields (the GST rate included), the shipping fee fixed at zero, and nothing else (no shipping tax, tax mode, rounding mode, free-shipping threshold, required inputs or GST date: the database fills those). */
 export function policyBody(input: QuotePolicyInput): Record<string, unknown> {
   return {
     id: input.id,
@@ -164,6 +166,7 @@ export function policyBody(input: QuotePolicyInput): Record<string, unknown> {
     repeat_advance_bps: input.repeatAdvanceBps,
     new_net_days: input.newNetDays,
     repeat_net_days: input.repeatNetDays,
+    gst_rate_bps: input.gstRateBps,
     repeat_credit_limit_paise: input.repeatCreditLimitPaise,
     seller_state: input.sellerState,
   };
