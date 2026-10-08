@@ -10,7 +10,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../../local-time";
 import { EnquiryText } from "../enquiry-text";
-import { QuotePanel } from "../quote-panel";
+import { loadManualQuoteData } from "../manual-quote-data";
+import { QuotePanel, type ManualQuoteData } from "../quote-panel";
 import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
 import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
 import { RequirementPanel } from "../requirement-panel";
@@ -20,6 +21,8 @@ export const metadata = { title: "Enquiry · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
 
 const WRITE_ROLES = ["owner", "admin", "sales"];
+// Only an owner or an admin may type a price: Sales and Viewer never see the form and the page never asks for its data.
+const TYPED_PRICE_ROLES = ["owner", "admin"];
 const NOTICES: Record<string, string> = {
   changed: "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
   truncated: "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
@@ -63,6 +66,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   let whatsapp: WhatsappView | null = null;
   let quotesDown = false;
   let order: Order | null = null;
+  let manual: ManualQuoteData | null = null;
   if (canQuote) {
     try {
       [setup, quotes] = await Promise.all([fetchQuoteSetup(user.accessToken, tenantId, enquiryId), fetchEnquiryQuotes(user.accessToken, tenantId, enquiryId)]);
@@ -87,6 +91,14 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       quotesDown = true;
+    }
+    if (setup && TYPED_PRICE_ROLES.includes(tenant.role)) {
+      try {
+        manual = await loadManualQuoteData(user.accessToken, tenantId, setup.today, crypto.randomUUID());
+      } catch (error) {
+        if (error instanceof ApiAuthError) redirect("/login");
+        manual = { unavailable: true }; // the rest of the quote screen does not depend on it
+      }
     }
   }
   const notice = NOTICES[pick(query.captured) ?? ""];
@@ -149,6 +161,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           newOrderId={crypto.randomUUID()}
           whatsapp={whatsapp}
           sentOnWhatsapp={selected ? { action: recordQuoteSentAction.bind(null, tenantId, selected.id), touchId: crypto.randomUUID() } : null}
+          manual={manual}
         />
       )}
     </main>

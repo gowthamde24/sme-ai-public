@@ -7,6 +7,7 @@ import {
   formatBps,
   formatDate,
   formatRupees,
+  isManual,
   type Quote,
 } from "@/lib/api/quotes";
 
@@ -22,15 +23,18 @@ const unitWord = (qty: number, unit: string) => `${qty} ${unit}${qty === 1 ? "" 
 /**
  * One quote, every figure and every flag. The figures are the pricing engine's, verified again by the database: nothing on this screen was typed by a
  * person or worked out by a language model. Names and requirement text are plain text. A quote is a Draft until a person approves it; no quote here is ever
- * "Sent", because this application sends nothing.
+ * "Sent", because this application sends nothing. A quote whose prices a person typed (`pricing_kind` "manual") shows the item type's name and says the price was typed by a
+ * person; it has no price list, and may have no delivery state, and those rows are left out. The internal line key (LINE-n) is never shown. A list-price quote renders exactly as before.
  */
 export function QuoteView({ quote, stateName }: { quote: Quote; stateName: string }) {
   const flags = [...quote.engine_flags, ...quote.review_flags];
+  const manual = isManual(quote);
   return (
     <div>
       <div className="row" style={{ flexWrap: "wrap" }}>
         <h3 style={{ margin: 0 }}>Quote {quote.quote_no}</h3>
         <Badge tone={quote.outcome === "approved" ? "good" : quote.outcome === "draft" ? "warn" : "plain"}>{OUTCOME_LABELS[quote.outcome]}</Badge>
+        {manual ? <Badge tone="plain">Typed prices</Badge> : null}
         {quote.needs_owner_approval ? <Badge tone="warn">Needs the owner&apos;s approval</Badge> : null}
       </div>
 
@@ -48,10 +52,14 @@ export function QuoteView({ quote, stateName }: { quote: Quote; stateName: strin
       <dl className="summary">
         <dt>Customer</dt>
         <dd>{CUSTOMER_KIND_LABELS[quote.customer_kind]}</dd>
-        <dt>Delivery</dt>
-        <dd>
-          <span className="plain-text">{stateName}</span> ({quote.delivery_state}), {quote.gst_supply === "intra_state" ? "the seller's own state" : "another state"}
-        </dd>
+        {quote.delivery_state !== null ? (
+          <>
+            <dt>Delivery</dt>
+            <dd>
+              <span className="plain-text">{stateName}</span> ({quote.delivery_state}), {quote.gst_supply === "intra_state" ? "the seller's own state" : "another state"}
+            </dd>
+          </>
+        ) : null}
         <dt>Made on</dt>
         <dd>{formatDate(quote.as_of)}</dd>
         <dt>Valid until</dt>
@@ -64,7 +72,8 @@ export function QuoteView({ quote, stateName }: { quote: Quote; stateName: strin
       <ul className="evidence-list">
         {quote.lines.map((line) => (
           <li key={line.line_no} className="evidence-item">
-            <strong className="plain-text">{line.name}</strong> <span className="hint">({line.sku}; requirement line {line.requirement_line_no})</span>
+            <strong className="plain-text">{line.name}</strong>{" "}
+            {manual ? <span className="hint">Price typed by a person</span> : <span className="hint">({line.sku}; requirement line {line.requirement_line_no})</span>}
             <dl>
               <dt>Quantity</dt>
               <dd>{unitWord(line.qty, line.sale_unit)}</dd>
@@ -137,13 +146,24 @@ export function QuoteView({ quote, stateName }: { quote: Quote; stateName: strin
 
       <details>
         <summary className="tap">How these figures were made</summary>
-        <p className="hint">
-          The pricing engine (version {quote.engine_version}) worked them out from the price list and the quote policy that were in force, and the database
-          checked every figure again. No person typed a price and no language model calculated one.
-        </p>
+        {manual ? (
+          <p className="hint">
+            A person typed the price of each line. The pricing engine (version {quote.engine_version}) worked out the GST and the totals from those prices and the quote policy
+            that was in force, and the database checked every figure again. No language model calculated a price.
+          </p>
+        ) : (
+          <p className="hint">
+            The pricing engine (version {quote.engine_version}) worked them out from the price list and the quote policy that were in force, and the database
+            checked every figure again. No person typed a price and no language model calculated one.
+          </p>
+        )}
         <dl className="summary">
-          <dt>Price list version</dt>
-          <dd className="plain-text">{quote.price_list_version_id}</dd>
+          {quote.price_list_version_id !== null ? (
+            <>
+              <dt>Price list version</dt>
+              <dd className="plain-text">{quote.price_list_version_id}</dd>
+            </>
+          ) : null}
           <dt>Policy version</dt>
           <dd className="plain-text">{quote.policy_version_id}</dd>
           <dt>Fingerprint</dt>
