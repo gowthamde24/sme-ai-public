@@ -1,5 +1,11 @@
 # Plan: members and invitations, the build plan (ADR 0023)
 
+## Owner decisions (2026-10-08)
+
+Decisions 1 to 8 of section 15: **all YES, as recommended.** The plan text below is unchanged and still shows the questions.
+
+- Decision 3 (a second factor for Sales and Viewer): YES as recommended, which is **no** second factor for the family at Customer Zero. **Revisit before any external customer.**
+
 Status: **PLAN ONLY. Not approved. No code, migration, test or dependency was written or changed.** Written 2026-10-08 on the branch `plan-customer-zero` from `origin/main` at `81060dd`. Queue position (owner, 2026-10-06): after the owner brief (T011a), before the Customer Zero stage (T012): see `docs/plans/customer-zero-roadmap.md`.
 
 **This plan EXTENDS, and does not replace, `docs/plans/members-and-invitations.md`.** That file holds the design and **the owner's twelve recorded decisions of 2026-10-06** (expiry 7 days; no Owner invitations through the app; an Admin invites `sales` and `viewer` only; a 20-character one-time code; a lost code is revoked and remade; hosted sign-up stays closed; the closed removal reasons; counts only on removal; sessions elsewhere not ended; "a former member"; 20 pending per workspace; direct table writes revoked) and the amendments A1 to A6. They all stand here. This file adds what a build needs: the role table of the whole product, the invitation flow without real e-mail (a `Mailer` interface with a fake), MFA at first sign-in, what changed in the repository since the design was written, the full test and mutation plan under the current rhythm, and commit slicing with the full-check points. Where this plan changes something, it says **CHANGE**; where it adds, **ADD**.

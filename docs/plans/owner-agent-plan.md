@@ -1,5 +1,11 @@
 # Plan: the Owner Agent, T011a (the brief) and T011b (the agent), ADR 0024
 
+## Owner decisions (2026-10-08)
+
+Decisions 1 to 8 of section 12: **all YES, as recommended.** The plan text below is unchanged and still shows the questions.
+
+- Errata E1 to E8 are **accepted.** They are applied in the ADR 0024 commit of the build ticket (A0), not now.
+
 Status: **PLAN ONLY. Not approved. No code, migration, test or dependency was written or changed.** Written 2026-10-08 on the branch `plan-customer-zero` from `origin/main` at `81060dd`. Queue position: T011a first (it is the next code ticket after the capture foundation in `docs/plans/customer-zero-roadmap.md`), T011b after the live batch (owner decision of 2026-10-06, kept here as a recommendation).
 
 ## 0. What already exists, and what this plan does with it

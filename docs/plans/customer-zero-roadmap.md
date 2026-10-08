@@ -1,5 +1,18 @@
 # Roadmap: from today's `main` to the start of T012 (Customer Zero)
 
+## Owner decisions (2026-10-08)
+
+Answers to section 7 (recorded as given; the plan text below is unchanged and still shows the questions):
+
+1. Order of the code tickets: **YES.**
+2. How much of capture must exist at the start of Customer Zero: **OPEN.** Waits for the family's answer on how orders reach the shop today.
+3. Commission the DPDP review now: **OPEN.** The owner starts the DPDP lawyer scope this week.
+4. Live model before or after the start: **OPEN.** The owner's note: a small capped live test on synthetic data may come before Customer Zero, with explicit approval and a spend cap; real data goes to a model only after the DPDP review.
+5. Push lane C's `quote-text-joiners` branch: **YES.** Push it as a backup; review it later.
+6. GitHub Pro (branch protection): **NOT YET.** Decide when the first collaborator joins.
+7. Docs-only refresh of the stale `CLAUDE.md` lines and checklist rows (H1): **YES** (done in the commit before this one on `plan-customer-zero`).
+8. The baseline for the four-week measurement: **OPEN.** Waits for the same family answer as 2.
+
 Status: **PLAN ONLY. Not approved. No code, migration, test or dependency was written or changed.** Written 2026-10-08 on the branch `plan-customer-zero`, from `origin/main` at `81060dd` (PR #8). The pushed branch `origin/followups-due-candidates` (`5e9ed29`, not yet merged) was read with `git show` where a fact depended on it. Every "state" below was checked in the repository on that date; what could not be checked is listed in section 0 and again at the end.
 
 Related plans written in the same pass: `docs/plans/members-and-invitations-plan.md` (ADR 0023), `docs/plans/owner-agent-plan.md` (T011a / T011b, ADR 0024). Existing plans this one points at, not repeats: `docs/plans/plan-v2-local-first.md` (the owner's decided sequence and rules), `docs/plans/roadmap.md` (the local-first table of 2026-10-05), `docs/plans/workspace-files-and-chat-capture-plan.md` (on the due-list branch), `docs/plans/t011-owner-agent.md`, `docs/plans/members-and-invitations.md`, `docs/plans/quote-text.md`, `docs/pre-pilot-checklist.md`, `docs/runbooks/real-data-gate.md`, ADRs 0015, 0017.
