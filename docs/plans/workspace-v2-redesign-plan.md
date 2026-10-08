@@ -1,10 +1,10 @@
 # Plan: the whole app in the v2 look, inside one workspace
 
-Status: **PLAN ONLY.** Written 2026-10-09 on branch `docs/workspace-v2-plan`, from `origin/main` (47edd4d). No code, no dependency, no server, no database, nothing pushed. Every count below comes from a command run for this plan; where I read code but could not run it, it says "unverified".
+Status: **PLAN ONLY.** Written 2026-10-09 on branch `docs/workspace-v2-plan`, from `origin/main` (47edd4d); rebased onto `origin/main` 1984e39 (Job U merged). No code, no dependency, no server, no database, nothing pushed. Every count below comes from a command run for this plan; where I read code but could not run it, it says "unverified".
 
 **Owner direction (2026-10-09):** "i want everything screen look like v2 design, all these should under workspace." Meaning: after sign-in there is one workspace with one frame, the same on every screen, and every screen uses the v2 look of the front page and the sign-in pages (orange brand, type, spacing, light/dark toggle, language menu).
 
-**Not in this base:** Job U (branch `web/screen-polish`, commit 14193e8, not pushed): item-types table, link colours, form grid, hidden freight rows on typed-price quotes. It touches files this plan also touches (section 3, "Order"). Merge it first, or this plan's batches 1B and 1C will conflict with it.
+**Job U is merged** (PR #14, `main` commit 1984e39): item-types table, link colours, form grid, hidden freight rows on typed-price quotes. This branch is rebased on it, so batches 1B and 1C start from it (section 3.2, last row).
 
 ## 0. The short version
 
@@ -191,7 +191,7 @@ Rough total: 80 to 110 commits for looks and about 30 to 40 more for language, p
 | `touch-targets.test.ts`, `factor-breakdown*` | lane B owns them | Batch 3 coordinates; Batch 6 re-points the test |
 | `components/v2/app/nav` (menu table) | every batch that adds a route | only 1A edits it |
 | `globals.css` | lane B owns it | untouched until Batch 6 (and the small theme bridge, if approved) |
-| Job U's edits (`quote-view.tsx`, `item-types-view.tsx`, `manual-quote-form.tsx`, `globals.css`) | 1B-quote, 1C | merge Job U first; 1C then replaces its table and form grid with v2 versions and keeps its tests (columns, labels, hidden freight rows, no edit control for Sales and Viewer) |
+| Job U's edits (`quote-view.tsx`, `item-types-view.tsx`, `manual-quote-form.tsx`, `globals.css`) | 1B-quote, 1C | Job U is merged (PR #14); 1C replaces its table and form grid with v2 versions and keeps its tests (columns, labels, hidden freight rows, no edit control for Sales and Viewer) |
 
 ### 3.3 Who works on what
 
@@ -295,10 +295,25 @@ I have no browser, and neither does a batch built the same way, so the review ne
 4. **One workspace only:** open it straight after sign-in, skipping the list? **Recommend not yet**; it changes what `/app` does.
 5. **Theme during the move (2.9).** Accept that old screens ignore the toggle until they move, or approve the small root-layout and `globals.css` bridge in Batch 0? **Recommend approve the bridge**; it is two small blocks and is deleted in Batch 6.
 6. **Branches and review.** Same arrangement as the earlier port (`web/…` branches, advisory path check, lane A reviews security-tier batches and runs `make check`)? **Recommend yes.**
-7. **Job U first?** **Recommend merge it before Batch 1A.**
+7. **Job U first?** **Recommend merge it before Batch 1A.** (Done: PR #14, `main` commit 1984e39.)
 8. **Who reads Telugu, Hindi and Kannada?** **Recommend Telugu first, with a named native reader per language; Hindi and Kannada only for the frame and quote flow until a reader is found.**
 9. **The text snapshot as a gate.** Accept "a look batch may not change it" as a merge rule? **Recommend yes.**
 10. **Old links and "Your role" lines.** Keep until Batch 6 (tests pin them) or move to the frame earlier at the cost of a visible test change? **Recommend keep until Batch 6.**
 11. **Page weight on phones.** The three Indic fonts load on every app route. What budget do you accept? **Recommend measure in Batch 0, then set it; load only the font for the chosen language if it is too heavy.**
 12. **Screenshot tool.** Contact sheet script only, no pixel-diff tool for now (section 6)? **Recommend yes.**
 13. **Order of the two follow-on tickets.** Checklist first, then "due today"? **Recommend yes**; the checklist is what a new owner needs first.
+
+### Added after the owner's answers (2026-10-09)
+
+14. **A Quotes list and an Enquiries list screen are needed.** No read exists for either (a quote is reached only from a lead's enquiry), so the menu cannot link to them. This is a separate API ticket and is NOT part of the redesign job.
+
+## 9. Owner decisions (2026-10-09)
+
+The owner answered "yes, approved" to **all 13 recommendations** in section 8. They are final. In particular:
+
+* Q1 to Q4: side menu on desktop and bottom tab bar on phone; the group names as listed; records tabs stay on the home URL for now; no auto-open of a single workspace.
+* **Q5:** the small theme bridge in Batch 0 (root layout and `globals.css`, two small blocks, deleted in Batch 6) is APPROVED.
+* **Q6:** `web/...` branches, advisory path check; lane A reviews the security-tier batches (2, 5, and the second-factor prompts in 1C) and runs `make check` on the local stack later.
+* **Q7:** Job U is already merged (PR #14, `main` commit 1984e39).
+* Q8 to Q13: Telugu first with named native readers; the text snapshot is a merge gate; old links and "Your role" lines stay until Batch 6; measure page weight in Batch 0; contact-sheet script only, no pixel-diff tool; checklist ticket before the "due today" ticket.
+* **New decision:** EVERY screen is to be in the v2 look under one workspace frame, as this plan describes.
