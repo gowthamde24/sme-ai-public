@@ -22,16 +22,35 @@ function field(formData: FormData, name: string): string {
 
 const AGAIN = " Nothing is added twice if you press the button again.";
 
-/** Every failure becomes a short sentence of OUR wording; nothing the API, the database or the form said is echoed. */
+/**
+ * Every failure becomes a short sentence of OUR wording; nothing the API, the database or the form said is echoed. A replay of the same ids and details is not an error (the API answers 200 and the
+ * screen shows success), so no sentence here says "this form was already used": a 409 means a real conflict, and each kind has its own words.
+ */
 function describe(error: unknown): string {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
     if (error.status === 403) return "Your role cannot add customers.";
     if (error.status === 404) return "This workspace is not available.";
-    if (error.code === "duplicate_value") return "That e-mail is already used by another person.";
-    if (error.code === "real_data_gate_closed")
-      return "This workspace does not accept real phone numbers or e-mail addresses yet. Use a number that starts with +00 and an e-mail that ends in .test.";
-    if (error.status === 409) return "This form was already used. Reload the page and try again.";
+    if (error.status === 429) return "Too many requests. Wait a moment and try again.";
+    switch (error.code) {
+      case "duplicate_value":
+        return "That e-mail is already used by another person.";
+      case "real_data_gate_closed":
+        return "This workspace does not accept real phone numbers or e-mail addresses yet. Use a number that starts with +00 and an e-mail that ends in .test.";
+      case "conflict":
+        return "This customer was already saved with different details. Reload the page and look in the Contacts list before adding again.";
+      case "contact_suppressed":
+        return "This person is on the do-not-contact list, so a lead cannot be made for them. Ask the owner.";
+      case "token_expiring":
+        return "Your session is about to expire. Sign in again, then try once more.";
+      case "invalid_reference":
+        return "Something this customer depends on is no longer there. Reload the page and start again.";
+      case "invalid_value":
+        return "A value was not accepted. Check the number and the e-mail, then try again.";
+      case "validation_error":
+        return "Check the name, the number (3 to 32 characters) and the e-mail, then try again.";
+    }
+    if (error.status === 409) return "This could not be saved right now. Reload the page and look in the Contacts list before trying again.";
     if (error.status === 422) return "Check the name, the number (3 to 32 characters) and the e-mail, then try again.";
   }
   return "Could not save. Try again.";

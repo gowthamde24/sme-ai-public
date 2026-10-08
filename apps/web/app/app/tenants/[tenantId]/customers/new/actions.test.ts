@@ -103,7 +103,7 @@ describe("addCustomerAction", () => {
     [new ApiRequestError(403, "forbidden", CANARY), /Your role cannot add customers/],
     [new ApiRequestError(404, "not_found", CANARY), /workspace is not available/],
     [new ApiRequestError(409, "real_data_gate_closed", CANARY), /does not accept real phone numbers or e-mail addresses yet/],
-    [new ApiRequestError(409, "conflict", CANARY), /already used/],
+    [new ApiRequestError(409, "conflict", CANARY), /already saved with different details/],
     [new ApiRequestError(422, "validation_error", CANARY), /Check the name/],
     [new ApiRequestError(503, "api_unreachable", CANARY), /Could not save/],
     [new Error(CANARY), /Could not save/],
@@ -123,6 +123,48 @@ describe("addCustomerAction", () => {
     expect(r?.error).toMatch(/Nothing is added twice if you press the button again/);
     expect(JSON.stringify(r)).not.toContain("98765");
     expect(api.createLead).not.toHaveBeenCalled();
+  });
+  it.each([
+    [new ApiRequestError(409, "duplicate_value", CANARY), /^That e-mail is already used by another person\./],
+    [new ApiRequestError(409, "conflict", CANARY), /^This customer was already saved with different details\./],
+    [new ApiRequestError(409, "real_data_gate_closed", CANARY), /^This workspace does not accept real phone numbers/],
+    [new ApiRequestError(409, "contact_suppressed", CANARY), /^This person is on the do-not-contact list/],
+    [new ApiRequestError(409, "token_expiring", CANARY), /^Your session is about to expire\. Sign in again/],
+    [new ApiRequestError(409, "archived", CANARY), /^This could not be saved right now\./],
+    [new ApiRequestError(409, "something_new", CANARY), /^This could not be saved right now\./],
+    [new ApiRequestError(422, "validation_error", CANARY), /^Check the name, the number/],
+    [new ApiRequestError(422, "invalid_reference", CANARY), /^Something this customer depends on is no longer there\./],
+    [new ApiRequestError(422, "invalid_value", CANARY), /^A value was not accepted\./],
+    [new ApiRequestError(422, "something_new", CANARY), /^Check the name, the number/],
+    [new ApiRequestError(429, "rate_limited", CANARY), /^Too many requests\./],
+    [new ApiRequestError(403, "forbidden", CANARY), /^Your role cannot add customers\./],
+    [new ApiRequestError(404, "not_found", CANARY), /^This workspace is not available\./],
+    [new ApiRequestError(503, "api_unreachable", CANARY), /^Could not save\. Try again\./],
+  ])("%s gets its own plain sentence at every step, and never the wrong 'form was already used' one", async (error, sentence) => {
+    for (const step of ["company", "contact", "lead"] as const) {
+      vi.clearAllMocks();
+      requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal2" });
+      api.createCustomerCompany.mockResolvedValue(undefined);
+      api.createContact.mockResolvedValue(CT);
+      api.createLead.mockResolvedValue(LD);
+      ({ company: api.createCustomerCompany, contact: api.createContact, lead: api.createLead })[step].mockRejectedValue(error);
+      const r = await run();
+      expect(r?.ok).toBe(false);
+      expect(r?.error).toMatch(sentence);
+      expect(r?.error).not.toMatch(/form was already used/);
+      expect(JSON.stringify(r)).not.toContain(CANARY);
+    }
+  });
+  it("a rejected session goes to sign-in at every step", async () => {
+    for (const step of ["company", "contact", "lead"] as const) {
+      vi.clearAllMocks();
+      requireUser.mockResolvedValue({ id: "u", email: "e", accessToken: "tok", aal: "aal2" });
+      api.createCustomerCompany.mockResolvedValue(undefined);
+      api.createContact.mockResolvedValue(CT);
+      api.createLead.mockResolvedValue(LD);
+      ({ company: api.createCustomerCompany, contact: api.createContact, lead: api.createLead })[step].mockRejectedValue(new ApiAuthError("no"));
+      expect(await redirectTarget(() => run())).toBe("/login");
+    }
   });
   it("a duplicate e-mail says so in plain words and hands back a FRESH contact id; no lead is tried", async () => {
     api.createContact.mockRejectedValue(new ApiRequestError(409, "duplicate_value", CANARY));
