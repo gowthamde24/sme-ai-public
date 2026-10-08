@@ -17,9 +17,11 @@ export const authCode = `${authField} text-center font-mono text-2xl tracking-[0
 export const authHint = "mt-2 text-sm text-muted";
 export const authAlert = "mt-4 rounded-lg border border-red-text bg-red-bg p-3 font-medium text-red-text";
 export const authNotice = "mt-4 rounded-lg border border-line bg-info-bg p-3 text-sm font-medium text-info-text";
-export const authSubmit = `${btnPrimary} mt-6 w-full disabled:opacity-60`;
+export const authSubmit = `${btnPrimary} w-full disabled:opacity-60`;
+/** The same button directly under the fields (no row around it). */
+export const authSubmitSolo = `${authSubmit} mt-6`;
 export const authSecondary =
   "mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
-export const authRow = "mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-1";
+export const authRow = "mt-6 flex flex-col items-center gap-3";
 export const authLink = "inline-flex min-h-11 items-center rounded-lg text-base font-semibold text-brand-text hover:underline";
 export const authParagraph = "mt-4 text-base";

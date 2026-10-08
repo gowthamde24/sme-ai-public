@@ -1,3 +1,4 @@
+import { authH1, authMain } from "@/components/v2/auth/ui";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 
 import { LoginForm } from "./login-form";
@@ -17,8 +18,8 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const notice = Array.isArray(params.notice) ? params.notice[0] : params.notice;
 
   return (
-    <main className="shell">
-      <h1>Sign in</h1>
+    <main id="main" className={authMain}>
+      <h1 className={authH1}>Sign in</h1>
       <LoginForm next={next} notice={NOTICES[notice ?? ""]} />
     </main>
   );

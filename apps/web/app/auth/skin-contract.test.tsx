@@ -167,3 +167,19 @@ describe("/auth/set-password", () => {
     expect(container.querySelector('button[type="submit"]')!.textContent).toBe("Save password");
   });
 });
+
+/** After the skin: the page's <main> is the skip link's target and no legacy class name is left on any element. */
+const LEGACY = ["shell", "card", "error", "hint", "row", "secondary"];
+function skinned(container: HTMLElement) {
+  expect(container.querySelector("main")!.id).toBe("main");
+  const used = new Set<string>();
+  for (const el of container.querySelectorAll("[class]")) for (const c of el.className.split(/\s+/)) used.add(c);
+  for (const bad of LEGACY) expect(used.has(bad), `legacy class "${bad}"`).toBe(false);
+  expect(container.querySelector("[style]")).toBeNull(); // no inline style
+}
+
+describe("skin applied", () => {
+  it("/login", async () => {
+    skinned(render(await LoginPage(q<typeof LoginPage>({ notice: "reset" }))).container);
+  });
+});
