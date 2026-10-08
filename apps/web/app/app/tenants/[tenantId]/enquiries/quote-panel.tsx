@@ -26,6 +26,8 @@ import { CreateQuoteForm } from "./create-quote-form";
 import { PickLineForm } from "./pick-line-form";
 import { QuoteDecisions } from "./quote-decisions";
 import { QuoteView } from "./quote-view";
+import { WhatsappActions } from "./whatsapp-actions";
+import type { WhatsappView } from "./whatsapp-view";
 
 type Props = {
   tenantId: string;
@@ -41,13 +43,15 @@ type Props = {
   /** The order already started from the selected quote, if any, and the id a new one would use (the page makes it, so a retry replays). */
   order?: Order | null;
   newOrderId?: string;
+  /** The WhatsApp controls of the selected approved quote (null: none are shown). Closed words and ids only: no number, no text. */
+  whatsapp?: WhatsappView | null;
 };
 
 /**
  * The quote of one enquiry: a person chooses the product for each approved requirement line (the assistant only suggests), makes a DRAFT, and an owner
  * or admin approves it. After approval the customer-facing text is shown to COPY. This application never sends anything, and the screen says so.
  */
-export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId }: Props) {
+export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null }: Props) {
   const confirmed = setup.requirement_status === "confirmed";
   const blockers = setup.missing.filter((m) => m !== "mapper_unavailable");
   const notes = setup.missing.filter((m) => m === "mapper_unavailable");
@@ -118,7 +122,10 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
             <div>
               <h3>Text for the customer</h3>
               {text ? (
-                <CopyText text={text.text} />
+                <>
+                  <CopyText text={text.text} />
+                  {whatsapp ? <WhatsappActions tenantId={tenantId} quoteId={selected.id} view={whatsapp} /> : null}
+                </>
               ) : (
                 <p role="alert" className="error hint">
                   The text could not be prepared right now ({textError ?? "unavailable"}). The approval stands: reload the page to try again. Nothing was sent.

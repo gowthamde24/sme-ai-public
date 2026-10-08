@@ -68,3 +68,35 @@ describe("the WhatsApp number rule is imported by the redirect route only", () =
     expect(code).not.toMatch(/wa\.me|whatsappDigits|INDIAN_MOBILE|phone/i);
   });
 });
+
+describe("the quote screen's WhatsApp controls hold no number and open nothing themselves", () => {
+  const actions = path.join("app", "app", "tenants", "[tenantId]", "enquiries", "whatsapp-actions.tsx");
+  const code = (f: string) => read(path.join(WEB_ROOT, f)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
+
+  it("every href is an internal path built from the validated ids", () => {
+    const hrefs = [...code(actions).matchAll(/href=(\{(?:[^{}]|\$\{[^{}]*\})*\}|"[^"]*")/g)].map((m) => m[1]);
+    expect(hrefs.length).toBeGreaterThanOrEqual(3);
+    for (const h of hrefs) expect(h, h).toMatch(/^\{(route|`\$\{route\}\?chat=1`|`\/app\/tenants\/\$\{tenantId\}\/contacts\/\$\{view\.consentContactId\}\/consent`)\}$/);
+  });
+
+  it("an anchor that opens a new tab says noopener noreferrer", () => {
+    const text = code(actions);
+    expect((text.match(/target="_blank"/g) ?? []).length).toBeGreaterThanOrEqual(2);
+    expect((text.match(/rel="noopener noreferrer"/g) ?? []).length).toBe((text.match(/target="_blank"/g) ?? []).length);
+  });
+
+  it("no source file but the number rule contains a wa.me address, and none opens a window, prefetches the route or links to a tel: address", () => {
+    const offenders: string[] = [];
+    for (const f of sources) {
+      if (rel(f) === path.join("lib", "whatsapp", "link.ts")) continue;
+      const text = read(f).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
+      if (/wa\.me|["'`]tel:|window\.open\(|api\.whatsapp\.com/.test(text)) offenders.push(rel(f));
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it("the controls are a plain anchor, never a prefetching Link, for the redirect route", () => {
+    const text = code(actions);
+    expect(text).not.toMatch(/<Link[^>]*\bhref=\{route/);
+  });
+});
