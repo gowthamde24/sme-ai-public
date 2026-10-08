@@ -9,7 +9,7 @@ Sizes: **S** = web only, existing endpoints, about a day. **M** = a new endpoint
 * Customer Zero is a silk-saree wholesale. One to two enquiries **a day**, by phone call and WhatsApp.
 * Customers exist **only as contacts in a phone**. There is no written price list: the owners remember prices by saree type.
 * They **never chase** a customer who has not replied. Forgetting follow-ups is the most frequent mistake. Advances are written in handwritten books.
-* Two people, **both Owners**. GST and freight apply; whether they are added on top or included is **not known yet** (settled later the same day: GST is added on top and courier is a separate line, see section 8).
+* Two people, **both Owners**. GST and freight apply; whether they are added on top or included is **not known yet** (settled later the same day: GST is added on top, and the shop does not charge courier (owner answer, 2026-10-08), so the quote has no courier line; see `docs/plans/manual-price-quote-plan.md`).
 * The plan: the family has no organised documents, so the **first setup is assisted** (the owner sits with them). Later they update information by talking to an agent (the Capture Agent, C-W5: it only proposes, a person approves, the database re-checks).
 
 ## 1. One lead and one touch through the web screens
@@ -80,7 +80,7 @@ So the slice works **up to the first thing the owner sends**, and not past it. T
 1. an **enquiry** with a **confirmed requirement** (fields added by hand or proposed and accepted), `enquiries/routes.py`;
 2. a **product pick** per requirement line: a catalog product, chosen by a person (`pick-line-form.tsx`, `POST /enquiries/{id}/picks`);
 3. the product must be **on a price list version** (`MissingInput`: "a line has no pick, or its pick's product is not on the price list");
-4. an in-force **quote policy version** (discount ceiling, flat shipping fee, free-above, shipping GST, validity days, advances, net days, seller state, required inputs; table `quote_policy_versions`, `20261016090000_t009_quote_reference_data.sql:207`);
+4. an in-force **quote policy version** (discount ceiling, validity days, advances, net days, seller state, required inputs, and shipping fields that the engine requires and that stay at zero for this shop; table `quote_policy_versions`, `20261016090000_t009_quote_reference_data.sql:207`);
 5. the customer kind (`new` or `repeat`) and the delivery state (`CreateQuoteIn`);
 6. approval by an Owner or Admin **with the second factor** to get the quote text.
 
@@ -130,7 +130,7 @@ Minimum for a **one-hour session**, using what exists. "Now" means buildable and
 | weekdays and holidays | `allowed_weekdays` (Monday 0 to Sunday 6), `holidays` (dates) | same |
 | smallest gap between two outgoing touches | `min_gap_hours` (0 to 8760) | same |
 | time zone | `recipient_utc_offset_minutes` (India 330) | same |
-| GST and freight rule | quote policy: `tax_mode` is **`exclusive` only** (`20261016090000...:29`, "v1: tax-exclusive only (owner decision 16)"); `shipping_flat_fee_paise`, `shipping_free_above_paise`, `shipping_tax_bps`; the rate per product is `tax_bps` in the price list | **no screen or API** for the quote policy |
+| GST and freight rule | quote policy: `tax_mode` is **`exclusive` only** (`20261016090000...:29`, "v1: tax-exclusive only (owner decision 16)"); the shipping fields exist because the engine requires them and stay at zero (no courier); the rate per product is `tax_bps` in the price list, and the policy has no rate rule by price (see the manual-price quote plan) | **no screen or API** for the quote policy |
 | advance for a new and a repeat customer, days to pay, credit limit | `new_advance_bps`, `repeat_advance_bps`, `net_days`, `repeat_credit_limit_paise` | quote policy (no screen) |
 | how long a quote is good for, discount ceiling | `validity_days`, `discount_ceiling_bps` (v1: no discounts allowed in the database's subset) | quote policy |
 | wording of the first message and the follow-up, English and Telugu | **closed English templates written by migrations**: `followup_gentle`, `followup_reminder`, `followup_last` (`t010_part2_followups.sql:151-154`); no first-message template exists and none is in Telugu | a Telugu or first-message wording is a **migration** (S to M) and the owner's wording |
@@ -151,9 +151,9 @@ Minimum for a **one-hour session**, using what exists. "Now" means buildable and
 
 Confirmed from the plans. **The Owner Agent** (T011a/T011b, `docs/plans/owner-agent-plan.md`; the first part `docs/plans/t011-owner-agent.md`) is a **read-only morning brief** for the Owner and Admin: T011a is deterministic and uses **no model** (nine read-only database functions, one endpoint, one page that says what needs attention: drafts waiting, quotes waiting, money held and so on); T011b is a read-only agent behind the model interface (the fake model only until the owner approves a live batch) that ranks and explains the same recorded facts from a closed list of phrases. It cannot write anything, send anything or take data in. **The Capture Agent** (C-W5 of `docs/plans/workspace-files-and-chat-capture-plan.md`, which the plan itself calls "the main agent", assumption A2) is an **interactive intake agent**: a person types or dictates to a chat box, and it **proposes** structured records (a lead, a touch, a file attached to a lead) from a closed list of proposal kinds; it has **no write tool for any business table**, a person approves, and the database re-checks and applies through the same functions a person uses; it runs with the asking person's own token, is off by default and is planned for the fake model first. It cannot send messages, change prices or decide anything, and it does not rank or advise. The family-facing word **"main agent" must not be used for both**: use "the morning brief" (or "Owner brief") for the first and "the assistant that takes notes" (or "Capture assistant") for the second.
 
-## 8. Per-customer prices (new facts: GST is added on top; courier is a separate line; the price differs by saree type and by customer; today's quote is one informal line)
+## 8. Per-customer prices (new facts: GST is added on top; there is no courier; the price differs by saree type and by customer; today's quote is one informal line)
 
-**"GST on top, courier separate" fits what exists.** The quote engine's only tax mode in the database is `exclusive` (`quote_tax_mode` has the single value `exclusive`, `20261016090000_t009_quote_reference_data.sql:29`, "owner decision 16"), the shipping fee is its own line with its own GST rate (`shipping_flat_fee_paise`, `shipping_free_above_paise`, `shipping_tax_bps`), and the text prints GST and shipping as separate lines (section 9). So the fact "GST is added on top" closes the "included or added" question of section 0 for the code: no inclusive mode is needed. One thing does not fit yet: the courier cost is **one flat fee per policy version** (free above a threshold), not an amount typed per order. Whether the family's courier cost is the same for every order is **not known**; if it varies, the courier needs the same treatment as the price below.
+**"GST on top" fits what exists, and there is no courier.** The quote engine's only tax mode in the database is `exclusive` (`quote_tax_mode` has the single value `exclusive`, `20261016090000_t009_quote_reference_data.sql:29`, "owner decision 16"), and the text prints the GST as its own line (section 9). So the fact "GST is added on top" closes the "included or added" question of section 0 for the code: no inclusive mode is needed. **Courier:** the shop charges none (owner answer, later the same day), so the quote has no courier line and no courier amount; the policy's shipping fields exist because the engine requires them and stay at zero. **New question:** the GST rate may depend on the price per piece; the engine and the database arithmetic can already take a different rate on each line, but the policy has no rule that chooses it: see `docs/plans/manual-price-quote-plan.md`, section 4.
 
 **Can the current price list, quote and order screens hold or override a price per customer? No.**
 * The price list is per product, per version, for the whole workspace: `price_list_items` has `product_id`, `unit_price_paise`, `minimum_order_quantity`, `tax_bps` and, in `price_list_breaks`, quantity tiers (`20261016090000...:167-200`). There is no customer column.
@@ -161,13 +161,13 @@ Confirmed from the plans. **The Owner Agent** (T011a/T011b, `docs/plans/owner-ag
 * The engine itself accepts a `discount_bps` on an order line, up to the policy's ceiling (`docs/plans/t009-quote-engine.md`), but the integration sends none (`builder.py:8`, "with no discount") and the database **refuses** any quote outside the v1 subset ("a discount, a margin, tax-inclusive mode, a second shipping rate", `20261016090100_t009_picks_and_quotes.sql` header).
 * The quote screens take a product, a quantity and the customer kind; the order screen starts from an approved quote and has no price. Past prices are stored: `quote_lines.unit_price_applied_paise` (same migration, line 195), per quote line.
 
-**The smallest design that keeps the owners' judgment (they type the price for each quote) and still computes GST and freight on top: a typed price on the pick.**
+**The smallest design that keeps the owners' judgment (they type the price for each quote) and still computes GST on top: a typed price on the pick.**
 1. The person's **pick** of a product for a requirement line (`requirement_line_picks`, the table that already records "this line means this product") gets one more optional value: `unit_price_paise`, and a source word `typed`. Only an Owner or Admin may set it (approval is already theirs, with the second factor).
-2. The quote builder (`quotes/builder.py`) uses the typed price as that line's price in the request it sends the engine, with the product's GST rate; the **engine adds the GST and the courier line exactly as today**, so nothing about tax is recomputed by hand and no model is involved (non-negotiable 4: a person types the price, a deterministic service does the sums).
-3. The GST rate for a typed line needs a source, because the family has no price list to hold it: one new field on the quote policy (`default_tax_bps`, the family's rate for sarees, **their number to give**), or the price-list row if the product has one.
+2. The quote builder (`quotes/builder.py`) uses the typed price as that line's price in the request it sends the engine, with the product's GST rate; the **engine adds the GST exactly as today**, so nothing about tax is recomputed by hand and no model is involved (non-negotiable 4: a person types the price, a deterministic service does the sums).
+3. The GST rate for a typed line needs a source, because the family has no price list to hold it: a rule in the quote policy (one rate, or price bands, or by saree type; **the accountant's answer, not known**), or the price-list row if the product has one. The manual-price quote plan (section 4) compares the options with synthetic placeholders.
 4. **The database must do the same**, because it rebuilds the request byte for byte and recomputes every figure (section 4). So this is a migration that changes the pick function, `create_quote_draft` and the recomputation inside `approve_quote`, with an equivalence test against the real engine, pgTAP and integration tests, and the price list rule "the product must be on the price list" relaxed for a typed pick. A screen alone cannot do it.
-5. Provenance and uncertainty (non-negotiable 5): store who typed it and when (the audit trigger does), show "price typed by [person]" on the draft, and add a review flag for a typed price so the Owner's approval is a real second look. A typed price is bounded like a list price (1 paise to INR 1,000,000).
-6. A typed courier amount, if needed, is the same shape on the quote (an optional `shipping_fee_paise`), another change to the same three functions.
+5. Provenance and uncertainty (non-negotiable 5): store who typed it and when (the audit trigger does), show "price typed by [person]" on the draft, and add a **soft warning, never a block**, for a typed price outside a policy-set range (a typo guard: manual-price quote plan, section 6). A typed price is bounded like a list price (1 paise to INR 1,000,000).
+6. *(Withdrawn: a typed courier amount. The shop does not charge courier.)*
 
 **Size: L** (a change to three security-relevant quote functions and to the equivalence proof), though the screen part is small. A cheaper step that helps first, **S to M and read-only**: show, next to the price box, "last quoted to this customer for this saree type: ₹X on [date]" read from `quote_lines` of that customer's earlier quotes. No new table, no write path, and it gives the owners the memory they now keep in their heads.
 
@@ -175,44 +175,50 @@ Confirmed from the plans. **The Owner Agent** (T011a/T011b, `docs/plans/owner-ag
 
 ## 9. The one-line quote: what `quote_text` writes today
 
-`quote_text` **1.0.0** is the only version the API accepts (`ALLOWED_RENDERER_VERSIONS = {"1.0.0"}`, `services/ai-api/app/quotes/text_port.py:20`). **1.1.0** exists on the lane C branch `quote-text-joiners` (also on `origin`, not merged to `main`): `git show quote-text-joiners:packages/pure/quote_text/VERSIONS.md` says it differs from 1.0.0 only by allowing U+200C and U+200D after an Indic letter or mark; the text for any input both accept is identical. I rendered the same synthetic quote with both (extracted from git into the scratch area; nothing in the repository changed): **the two outputs are identical except for the version line.**
+`quote_text` **1.0.0** is the only version the API accepts (`ALLOWED_RENDERER_VERSIONS = {"1.0.0"}`, `services/ai-api/app/quotes/text_port.py:20`). **1.1.0** exists on the lane C branch `quote-text-joiners` (also on `origin`, not merged to `main`): `git show quote-text-joiners:packages/pure/quote_text/VERSIONS.md` says it differs from 1.0.0 only by allowing U+200C and U+200D after an Indic letter or mark; the text for any input both accept is identical. I rendered a synthetic one-line quote with both (extracted from git into the scratch area; nothing in the repository changed): **the two outputs were identical except for the version line.** The sample below was rendered with 1.0.0.
 
-Synthetic input: one line, "Kanjivaram saree, red", quantity 1, the engine price ₹12,000.00, GST 5 percent on the merchandise (exclusive), courier flat fee ₹300 with GST 18 percent, a new customer (advance 50 percent), seller "Synthetic Silks":
+Synthetic input: two lines, "Saree type A" (2 pieces at ₹1,500.00) and "Saree type B" (1 piece at ₹1,00,000.00), GST exclusive, no courier, two lines at two **synthetic placeholder** GST rates (3 and 7 percent, NOT the accountant's), a new customer (advance 50 percent), seller "Synthetic Silks":
 
 ```
 Approved quote
 Seller: Synthetic Silks
 Customer: Synthetic Customer
-Reference: SYN-Q-001
+Reference: SYN-Q-002
 Issued: 2026-10-08
 Valid until: 2026-10-15
 Prices exclude GST
 
-Kanjivaram saree, red
-1 x ₹12,000.00 = ₹12,000.00
-Net: ₹12,000.00
-GST (5%): ₹600.00
-Line total: ₹12,600.00
+Saree type A
+2 x ₹1,500.00 = ₹3,000.00
+Net: ₹3,000.00
+GST (3%): ₹90.00
+Line total: ₹3,090.00
 
-Merchandise subtotal: ₹12,000.00
-Merchandise net: ₹12,000.00
-GST on merchandise: ₹600.00
-Shipping net: ₹300.00
-GST on shipping (18%): ₹54.00
-Shipping total: ₹354.00
-GST total: ₹654.00
-Grand total: ₹12,954.00
-Advance: ₹6,477.00
-Balance: ₹6,477.00
+Saree type B
+1 x ₹1,00,000.00 = ₹1,00,000.00
+Net: ₹1,00,000.00
+GST (7%): ₹7,000.00
+Line total: ₹1,07,000.00
+
+Merchandise subtotal: ₹1,03,000.00
+Merchandise net: ₹1,03,000.00
+GST on merchandise: ₹7,090.00
+Shipping net: ₹0.00
+GST on shipping (0%): ₹0.00
+Shipping total: ₹0.00
+GST total: ₹7,090.00
+Grand total: ₹1,10,090.00
+Advance: ₹55,045.00
+Balance: ₹55,045.00
 Balance due: 2026-10-08
 Valid until: 2026-10-15
-Payment terms: 50% advance, balance before dispatch.
+Payment terms: 50% advance.
 Notes:
 - Synthetic demonstration only.
 ```
 
-**How far is it from "this saree price 12000rs, GST extra, courier extra"?** Every value the short message needs is already in that output and in the stored quote: the label, the unit price (₹12,000.00), the GST rate (5 percent), the courier amount and its GST. The distance is in shape, not in data:
-* **Length and layout:** 29 lines in about ten blocks (an "Approved quote" header, seller, customer, reference, dates, line block, a merchandise block, shipping block, grand total, advance, balance, due date, validity, terms, notes) against one line.
+**How far is it from "this saree price 12000rs, GST extra, courier extra"?** Every value the short message needs is already in that output and in the stored quote: the label, the unit price, the GST rate and the GST amount. The distance is in shape, not in data. **One more finding:** with no courier the renderer still prints three zero lines ("Shipping net: ₹0.00", "GST on shipping (0%)", "Shipping total: ₹0.00", `packages/pure/quote_text/__init__.py:386-388`); leaving them out is a new lane C renderer version (manual-price quote plan, section 4).
+* **Length and layout:** about 35 lines for two items (29 for one) in about ten blocks (an "Approved quote" header, seller, customer, reference, dates, line block, a merchandise block, a zero shipping block, grand total, advance, balance, due date, validity, terms, notes) against one line.
 * **Wording:** formal ("Prices exclude GST", "Merchandise net", "GST on merchandise") and rupee amounts with Indian grouping and two decimals (₹12,000.00), against "12000rs". All labels are fixed English; there is no Telugu.
 * **Things the informal message never says:** reference number, dates, advance and balance, due date, validity, terms.
 * **A condition before any text exists:** the quote must be **approved** by an Owner or Admin with the second factor (`GET /quotes/{id}/text` serves approved quotes only).
@@ -227,14 +233,14 @@ Notes:
 
 ## 11. The quote template flow (owner idea, 2026-10-08)
 
-The idea: the owner picks the customer, picks the saree type, types **this customer's price**; the system adds GST and courier as separate lines and writes the message; the owner reviews it and taps "Open in WhatsApp" (a `wa.me` link with the text filled in) and sends it by hand; saving the quote creates the follow-up; the system itself never sends. This fits the non-negotiables (a person types the price, a deterministic service computes tax and freight, a person approves and sends).
+The idea: the owner picks the customer, picks the saree type, types **this customer's price**; the system adds GST on top as its own line and writes the message (there is no courier line); the owner reviews it and taps "Open in WhatsApp" (a `wa.me` link with the text filled in) and sends it by hand; saving the quote creates the follow-up; the system itself never sends. This fits the non-negotiables (a person types the price, a deterministic service computes the tax, a person approves and sends).
 
 | # | Step | State on `origin/main` | Evidence | Gap |
 | --- | --- | --- | --- | --- |
 | 1 | Pick the customer | **partly** | the Leads tab and the lead page exist (`apps/web/app/app/tenants/[tenantId]/page.tsx`, `leads/[leadId]/page.tsx`). Creating a customer is **missing** (section 1), and a quote can only start from an **enquiry** on a lead (`enquiries/[enquiryId]/page.tsx`, `quote-panel.tsx`), so there is no "new quote for this customer" entry | **S** (the add-a-customer form) **+ M** (a "quick quote" screen that, from a customer, makes the enquiry, adds the two required fields, confirms and goes on to the pick, using the existing endpoints in turn; no migration) |
 | 2 | Pick the saree type | **partly** | the requirement field `saree_type` and quantity (`add-field-form.tsx`; confirm needs a human-confirmed saree type **and** quantity, `20261015090100_t008_requirement_functions.sql:12`), then a pick of a **catalog product** (`pick-line-form.tsx`, `POST /enquiries/{id}/picks`). The catalog has no web screen to add a product (section 4) | **S** (add-a-product form). The mapper's suggestions need a mapper config that has no screen; not required, the person can pick |
 | 3 | Type this customer's price | **missing** | a quote has no price input; the database rebuilds the request byte for byte (sections 4 and 8) | **L** (a typed price on the pick, a migration to three quote functions, an equivalence test). v0 can use the **price list** price per saree type (a price list loaded in the session) and skip this step |
-| 4 | GST and courier as separate lines | **exists, partly** | the engine adds GST on top and a shipping line with its own GST; the text prints them separately (section 9). The **quote policy that holds the courier fee has no screen or API** (`quote_policy_versions`, only `create_quote_policy_version`), and the courier is one flat fee per policy, not typed per order | **M** (quote policy route and page); a courier typed per quote is part of the **L** above |
+| 4 | GST on top as its own line (no courier) | **exists, partly** | the engine adds GST on top per line and the text prints it per line (section 9). The **quote policy has no screen or API** (`quote_policy_versions`, only `create_quote_policy_version`) and no rule that chooses the GST rate by price. The text prints three zero shipping lines (no courier) | **M** (quote policy route and page); **M** (a GST rate rule by price, if the accountant says so); **M** (a lane C renderer version without the zero shipping block) |
 | 5 | The message text | **partly** | `GET /quotes/{id}/text` (`quotes/routes.py:126`) gives the formal text of an **approved** quote (29 lines, section 9). Approving needs an Owner or Admin with the second factor | **M** for a one-line variant (a new `quote_text` version); until then the formal text works |
 | 6 | A copy button or a `wa.me` link | **partly** | **copy exists** (`enquiries/copy-text.tsx`, "Copy text", with the note "Nothing is sent by the system"). **No `wa.me` link exists anywhere** (searched `apps/web/app` and `apps/web/lib`) | **S** (a link built on the server from the contact's phone and the approved text; see section 12 for the rules) |
 | 7 | Record that the owner sent it | **partly** | the follow-up screens have "Record: I sent it myself" for a **follow-up draft** (`followups/draft-forms.tsx:46-55`) and a plain "Record a touch" for anything else (`followups/touch-form.tsx`, channel WhatsApp). Neither is on the quote screen, and a quote has **no "sent" state** (`quote_status`: draft, approved, rejected, superseded). Both go through the outgoing gate (contact, address, suppression key, **consent granted**), and no screen records consent | **S** (a "I sent it on WhatsApp" button on the approved quote calling the existing touch endpoint; no migration) **+ S** (record consent, section 1). A quote-linked "sent" state would be a migration (**M**), not needed for v0 |
@@ -264,13 +270,13 @@ Direct sending from the system would need: the **WhatsApp Business Platform** (C
 1. **S**: "Add a customer" form (company, contact name, phone, optional e-mail, a lead) on the existing `POST /companies`, `/contacts`, `/leads`.
 2. **S**: "Record consent" form (existing `record-consent`; a basis and a short evidence line).
 3. **S**: "Add a product" form (Admin+, existing `POST /products`): one product per saree type. Then the price list CSV by saree type is loaded in the setup session (section 6).
-4. **M**: quote policy route and page (courier flat fee, courier GST, validity, advances, seller state).
+4. **M**: quote policy route and page (validity, advances, seller state, the GST rule, an optional price-warning range; the shipping fields stay at zero).
 5. **M**: the "quick quote" screen: customer, saree type, quantity, delivery state, then the existing steps behind it (enquiry, fields, confirm, pick, draft, approve), using only existing endpoints.
 6. **S**: on the approved quote, "Copy" (exists) + "Open in WhatsApp" (`wa.me`) + "I sent it on WhatsApp" (the existing touch endpoint). This starts the follow-up clock, so the family stops forgetting. The follow-up clock starts only when the owner records an outgoing touch ("I sent it"), so the quote flow needs an "I sent it" button right after "Open in WhatsApp".
 
 **Milestone v1, "this customer's price":**
 7. **S to M, read only**: "last quoted to this customer for this saree type" next to the price (from `quote_lines`).
-8. **L**: the **typed price on the pick** and the policy's default GST rate (section 8), with the migration and the equivalence test. This is where the owners' judgment enters.
+8. **L**: the **typed price on the pick** and the policy's GST rule (one rate, or by price band; manual-price quote plan, section 4), with the migration and the equivalence test. This is where the owners' judgment enters.
 9. **M**: a one-line text variant, a new `quote_text` version adopted by lane A (section 9).
 
 **Alongside, not part of the flow:** **M** phone-contacts import (vCard and Google CSV; the phone-only migration or the form path), **S to M** Telugu first-message and follow-up wording (a migration, the owners' own words), **S** a photo note (section 10). An unsaved **price-sheet calculator** through the pinned engine (no write, no approval record) would be M and cheaper than item 8, but it would not be a quote with an audit trail and the idea says "saving the quote"; I do not recommend it except as a stop-gap the owner asks for.
