@@ -172,6 +172,28 @@ export default async function TenantPage({
             </Link>
           </>
         )}
+        {(tenant.role === "owner" || tenant.role === "admin" || tenant.role === "sales") && (
+          <>
+            {" · "}
+            <Link
+              href={`/app/tenants/${tenantId}/customers/new`}
+              style={{ fontWeight: 600 }}
+            >
+              Add a customer →
+            </Link>
+          </>
+        )}
+        {(tenant.role === "owner" || tenant.role === "admin") && (
+          <>
+            {" · "}
+            <Link
+              href={`/app/tenants/${tenantId}/products/new`}
+              style={{ fontWeight: 600 }}
+            >
+              Add a product →
+            </Link>
+          </>
+        )}
         {tenant.role === "owner" && (
           <>
             {" · "}
