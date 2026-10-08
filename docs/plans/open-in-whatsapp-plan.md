@@ -4,7 +4,7 @@
 
 Short names used below: `followups.sql` is `supabase/migrations/20261024090000_t010_part2_followups.sql`; `t003_consent.sql` is `supabase/migrations/20261005100200_t003_consent.sql`; `20261012090100:142` is the `+00` line of `supabase/migrations/20261012090100_t006b_m2_review_fixes.sql`.
 
-Source documents this plan builds on: `docs/plans/customer-zero-intake-gap.md` section 12 (lines 251-259, the rules a `wa.me` link must follow), `docs/plans/manual-price-quote-plan.md` sections 7, 17-18 and 20, `docs/plans/followups-due-candidates-plan.md`, `docs/plans/t010-followup-cadence.md`, and `docs/plans/dpdp-counsel-guidance-2026-10-08.md` (a relayed record, not the written opinion).
+Source documents this plan builds on: `docs/plans/customer-zero-intake-gap.md` section 12 (lines 251-259, the rules a `wa.me` link must follow), `docs/plans/manual-price-quote-plan.md` sections 7, 17-18 and 20, `docs/plans/followups-due-candidates-plan.md`, `docs/plans/t010-followup-cadence.md`, and the owner's relayed DPDP notes (kept in the private repository; a relayed record, not the written opinion).
 
 ## 0. What this is, in one paragraph
 
@@ -49,7 +49,7 @@ There are three ways to get a number into a `wa.me` link:
 ### What the link contains, and who can see it
 
 * **Contents**: the digits of the customer's number in international form, and the approved quote text (customer name, items, quantities, prices, tax, totals, validity). It contains no tenant id, no lead id and no email. It is exactly what the person would otherwise copy and paste by hand.
-* **Who can see it**: the signed-in person who clicked (it appears in their browser for an instant and in that browser's history once it opens WhatsApp); the WhatsApp app or WhatsApp Web on their device; and **WhatsApp and Meta**, which receive the number and the text whenever anyone messages through WhatsApp. The lawyer's relayed point that the WhatsApp provider and Meta are sub-processors, and that the privacy notice must say so, applies (`dpdp-counsel-guidance-2026-10-08.md:52-54`). Not seen by: our API (no new endpoint), its logs, the page HTML, the browser's saved page, or the next page the person visits (referrer).
+* **Who can see it**: the signed-in person who clicked (it appears in their browser for an instant and in that browser's history once it opens WhatsApp); the WhatsApp app or WhatsApp Web on their device; and **WhatsApp and Meta**, which receive the number and the text whenever anyone messages through WhatsApp. The lawyer's relayed point that the WhatsApp provider and Meta are sub-processors, and that the privacy notice must say so, applies (kept in the private repository). Not seen by: our API (no new endpoint), its logs, the page HTML, the browser's saved page, or the next page the person visits (referrer).
 * **UNVERIFIED**: who can read response headers at the future host (a proxy or CDN in front of the app). Nothing is deployed. The Customer Zero hosting stage must check that the redirect's `Location` header is not logged by the host. The pre-pilot checklist already has a row that proxy and CDN logs must drop query strings (`docs/pre-pilot-checklist.md:72`); a **response header** is a different thing, so slice 5 adds its own row.
 
 ## 3. Message length
@@ -102,12 +102,12 @@ The gate is not checked when the person merely opens WhatsApp; it is checked whe
 
 ### What this plan leaves to the written DPDP opinion
 
-Nothing in this plan changes a consent rule, a basis, an evidence kind, a quiet-hours rule or the real-data gate. The relayed points that touch it, all **relayed and unconfirmed** (`dpdp-counsel-guidance-2026-10-08.md`):
-* a quote the customer asked for, and a reminder about it, are legitimate uses (point 2, line 23): this suggests such a message might not need recorded consent at all, whereas the database today requires `granted` for every outgoing WhatsApp touch. Which is right, and whether `legitimate_use` is the basis to record, is the lawyer's call (section 8, no. 8);
-* consent evidence should be a verifiable digital record and a verbal yes is not enough; the evidence kinds "verbal" and "customer enquiry" change later (point 6 and the "Later" item, lines 36-37 and 107-109). The consent form still offers "verbal" today and this plan leaves it;
-* quiet hours: whether they apply to a reminder about a quote, and to WhatsApp at all, is an open question (lines 137-139). Recording a touch does not check quiet hours (they only move the next eligible time, `t010-followup-cadence.md:53-55`); this plan adds no check;
-* withdrawal must stop outreach within a reasonable time (point 7); today a withdrawn consent or a suppression makes the gate refuse at once, which is stricter than "24 to 48 hours";
-* the privacy notice must name WhatsApp and Meta as third-party platforms (point 11).
+Nothing in this plan changes a consent rule, a basis, an evidence kind, a quiet-hours rule or the real-data gate. The relayed points that touch it, all **relayed and unconfirmed** (kept in the private repository):
+* a quote the customer asked for, and a reminder about it, are legitimate uses (kept in the private repository): this suggests such a message might not need recorded consent at all, whereas the database today requires `granted` for every outgoing WhatsApp touch. Which is right, and whether `legitimate_use` is the basis to record, is the lawyer's call (section 8, no. 8);
+* consent evidence should be a verifiable digital record and a verbal yes is not enough; the evidence kinds "verbal" and "customer enquiry" change later (kept in the private repository). The consent form still offers "verbal" today and this plan leaves it;
+* quiet hours: whether they apply to a reminder about a quote, and to WhatsApp at all, is an open question (kept in the private repository). Recording a touch does not check quiet hours (they only move the next eligible time, `t010-followup-cadence.md:53-55`); this plan adds no check;
+* withdrawal must stop outreach within a reasonable time (kept in the private repository); today a withdrawn consent or a suppression makes the gate refuse at once, which is stricter than "24 to 48 hours";
+* the privacy notice must name WhatsApp and Meta as third-party platforms (kept in the private repository).
 Until the written opinion is filed the real-data gate stays closed and every number is `+00`, so none of this touches a real customer (section 7).
 
 ## 6. Roles and states
@@ -145,6 +145,6 @@ All web only, one commit each, `make check-fast` plus the touched vitest files p
 5. **"I sent it": one button or a time field too.** Recommend **one button** (WhatsApp, now). Item g's lead-page form already handles "I sent it earlier" and other channels, and a link to it sits under the button.
 6. **Check the gate before opening WhatsApp, or only when recording.** Recommend **before**: do not offer a chat with a person who has opted out, is suppressed, erased or has no recorded consent, using the database's own gate reading (`GET /leads/{id}/followup?channel=whatsapp`, no phone in it). The final refusal stays at "I sent it".
 7. **A revised quote sent again counts as another outgoing touch** (it moves the clock and uses a slot of `max_touches`). Recommend accepting this and saying so in one sentence under the button.
-8. **Consent for a quote the customer asked for.** The database requires recorded WhatsApp consent for any outgoing WhatsApp touch; counsel's relayed view is that such a quote is a legitimate use (point 2). Recommend: **change nothing**; keep the database as it is until the written opinion is filed, and put this exact question to the lawyer.
+8. **Consent for a quote the customer asked for.** The database requires recorded WhatsApp consent for any outgoing WhatsApp touch; counsel's relayed view is that such a quote is a legitimate use (kept in the private repository). Recommend: **change nothing**; keep the database as it is until the written opinion is filed, and put this exact question to the lawyer.
 9. **Real-number testing.** Recommend: the by-hand wa.me test (no. 3) now; the system-level phone test at the Customer Zero stage, after the gate opens (T012).
 10. **Where item f sits.** The owner's order is g, d, f. If d (the quote policy page) is delayed, f is independent and can go first; recommend keeping the owner's order.

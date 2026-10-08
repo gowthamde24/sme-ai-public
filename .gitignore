@@ -43,5 +43,3 @@ tmp/
 /rehearsal-followups-report.md
 /tools/mutation-followups/out/
 
-# Customer Zero: a filled-in sheet must never be committed (docs/customer-zero/README.md)
-docs/customer-zero/*[Ff][Ii][Ll][Ll][Ee][Dd]*
