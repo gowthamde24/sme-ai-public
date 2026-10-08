@@ -38,7 +38,7 @@ You asked to drop item c unless the quote path needs a saree-type reference. **I
 
 **Add a product, fields:** code (required, price-list rule), name (required, 200 at most), unit (Piece or Set, the two sale units the quote path knows), category (optional, 64 at most). 409 means the code is already used (or the form was used for another product).
 
-**Links:** the tenant home page gets "Add a customer →" (Owner, Admin, Sales) and "Add a product →" (Owner, Admin) in the same row as the K1 link; the contact's name in the Contacts tab links to its consent page.
+**Links:** the tenant home page gets "Add a customer →" (Owner, Admin, Sales) and "Add a product →" (Owner, Admin) in the same row as the K1 link. The consent screen is reached from the result of "Add a customer" (a link to the new person's consent page). **A link from the Contacts tab was planned and dropped**: an existing test pins "the other tables have no detail links" (`page.test.tsx`, contacts, products, opportunities), and an existing test must not change in this ticket. For a contact that was not made on this screen, the consent page is reached by its address; a link from the lead page or a change to that test needs the owner's decision.
 
 ## 4. States and errors
 
