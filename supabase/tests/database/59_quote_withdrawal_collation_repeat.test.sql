@@ -79,7 +79,7 @@ select pg_temp.field('r1', 1, 'saree_type', 'kanjivaram');  select pg_temp.field
 select pg_temp.confirm('r1');
 select pg_temp.pick('a_sales', 'r1', 1, 'SYN-KJ-RED-01', 12);
 select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.create_quote_policy_version(%L, %L, %L, %L::jsonb)', gen_random_uuid(), tests.tid('a'), pg_temp.today(),
-          '{"discount_ceiling_bps": 0, "shipping_flat_fee_paise": 0, "shipping_tax_bps": 0, "validity_days": 15, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "net_days": 30, "seller_state": "TS", "repeat_credit_limit_paise": 1000000000}')), 'version_no'), '2',
+          '{"discount_ceiling_bps": 0, "shipping_flat_fee_paise": 0, "shipping_tax_bps": 0, "validity_days": 15, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "new_net_days": 30, "repeat_net_days": 30, "seller_state": "TS", "repeat_credit_limit_paise": 1000000000}')), 'version_no'), '2',
           'B1 a policy with a repeat credit limit that no balance reaches (so no ENGINE flag can appear for a repeat customer)');
 select is(pg_temp.j(pg_temp.create_quote('a_sales', (select r1 from ids), 'r1', 'new'), 'needs_owner_approval'), 'false', 'B2 a NEW customer: no review flag, no approval needed');
 select is((select review_flags::text || '|' || engine_flags::text from public.quotes where id = (select r1 from ids)), '{}|{}', 'B3 no flags at all');
@@ -166,8 +166,8 @@ select ok(not has_table_privilege('authenticated', 'public.quotes', 'TRUNCATE') 
 select is((select string_agg(c.relname, ',' order by c.relname) from pg_trigger g join pg_class c on c.oid = g.tgrelid
             where g.tgname = c.relname || '_no_truncate' and c.relnamespace = 'public'::regnamespace and g.tgfoid = 'app.quote_forbid_truncate'::regproc
               and (g.tgtype & 1) = 0 and (g.tgtype & 2) = 2 and (g.tgtype & 32) = 32 and g.tgenabled = 'O'),
-          'mapper_config_versions,price_list_breaks,price_list_items,price_list_versions,price_lists,quote_lines,quote_policy_versions,quotes,requirement_line_picks',
-          'E3 each of the nine quote tables has its OWN enabled BEFORE TRUNCATE statement trigger on the guard function');
+          'item_types,mapper_config_versions,price_list_breaks,price_list_items,price_list_versions,price_lists,quote_lines,quote_policy_versions,quotes,requirement_line_picks',
+          'E3 each of the ten quote tables (the nine and item_types) has its OWN enabled BEFORE TRUNCATE statement trigger on the guard function');
 select ok(not has_function_privilege('anon', 'public.withdraw_approved_quote(uuid, text)', 'execute') and not has_function_privilege('public', 'public.withdraw_approved_quote(uuid, text)', 'execute')
           and has_function_privilege('authenticated', 'public.withdraw_approved_quote(uuid, text)', 'execute'), 'C30 only signed-in people can execute withdraw_approved_quote (anon and public cannot)');
 select ok(not has_function_privilege('authenticated', 'app.quote_forbid_truncate()', 'execute') and not has_function_privilege('anon', 'app.quote_forbid_truncate()', 'execute'), 'E4 nobody can call the truncate guard directly');

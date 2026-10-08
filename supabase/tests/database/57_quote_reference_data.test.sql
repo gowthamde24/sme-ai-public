@@ -139,7 +139,7 @@ select is(pg_temp.priv(format('update public.price_list_items set unit_price_pai
 select is(pg_temp.priv(format('update public.price_list_breaks set unit_price_paise = 1 where tenant_id = %L', tests.tid('a'))), '42501|price_list_breaks rows are immutable: archive the row and record a new one', 'a break cannot be updated');
 select is(pg_temp.priv(format('update public.price_list_versions set effective_from = effective_from + 1 where tenant_id = %L', tests.tid('a'))), '42501|price_list_versions rows are immutable: archive the row and record a new one', 'a version cannot be re-dated');
 select is(pg_temp.priv(format('update public.price_lists set name = ''x'' where tenant_id = %L', tests.tid('a'))), '42501|price_lists rows are immutable: archive the row and record a new one', 'a price list cannot be renamed');
-select is(pg_temp.priv(format('update public.quote_policy_versions set net_days = 1 where tenant_id = %L', tests.tid('a'))), 'ok', 'control: the policy table has no rows of tenant A yet, so nothing is updated');
+select is(pg_temp.priv(format('update public.quote_policy_versions set repeat_net_days = 1 where tenant_id = %L', tests.tid('a'))), 'ok', 'control: the policy table has no rows of tenant A yet, so nothing is updated');
 select is(pg_temp.priv(format('delete from public.price_list_versions where tenant_id = %L', tests.tid('a'))), '42501|price_list_versions rows are never deleted: record a new version', 'a version cannot be deleted');
 select is(pg_temp.priv(format('delete from public.price_list_items where tenant_id = %L', tests.tid('a'))), '42501|price_list_items rows are never deleted: record a new version', 'an item cannot be deleted');
 select is(pg_temp.priv(format('delete from public.price_list_breaks where tenant_id = %L', tests.tid('a'))), '42501|price_list_breaks rows are never deleted: record a new version', 'a break cannot be deleted');
@@ -148,7 +148,7 @@ select is(pg_temp.priv(format('delete from public.price_lists where tenant_id = 
 -- ============================================================================ F. policy versions
 create function pg_temp.policy(p_over jsonb default '{}'::jsonb) returns jsonb language sql as $$
   select jsonb_build_object('discount_ceiling_bps', 0, 'shipping_flat_fee_paise', 0, 'shipping_tax_bps', 0, 'validity_days', 15, 'new_advance_bps', 5000,
-                            'repeat_advance_bps', 2500, 'net_days', 30, 'seller_state', 'TS') || p_over $$;
+                            'repeat_advance_bps', 2500, 'new_net_days', 30, 'repeat_net_days', 30, 'seller_state', 'TS') || p_over $$;
 create function pg_temp.qp_sql(p_id uuid, p_tenant text, p_eff date, p_policy jsonb) returns text language sql as $$
   select format('select public.create_quote_policy_version(%L, %L, %L, %L::jsonb)', p_id, tests.tid(p_tenant), p_eff, p_policy::text) $$;
 create function pg_temp.qp(p_user text, p_policy jsonb, p_id uuid default gen_random_uuid(), p_tenant text default 'a', p_eff date default null) returns text language sql as $$
@@ -159,7 +159,7 @@ select is((select tax_mode::text || '|' || rounding_mode::text || '|' || repeat_
              from public.quote_policy_versions v join pids on v.id = pids.p1), 'exclusive|half_up|0|delivery_state|null', 'the defaults: tax exclusive, half-up rounding, credit limit 0, delivery state required, no free-shipping threshold');
 select is(pg_temp.j(pg_temp.sc('a_admin', pg_temp.qp_sql(gen_random_uuid(), 'a', pg_temp.today(), pg_temp.policy('{"shipping_free_above_paise": 500000, "rounding_mode": "half_even", "required_inputs": ["deadline", "delivery_state"], "repeat_credit_limit_paise": 100000}'))), 'version_no'), '2', 'an Admin publishes version 2 with the optional keys');
 select is(pg_temp.j(pg_temp.sc('a_owner', pg_temp.qp_sql((select p1 from pids), 'a', pg_temp.today(), pg_temp.policy())), 'replayed'), 'true', 'a retry replays');
-select is(pg_temp.err('a_owner', pg_temp.qp_sql((select p1 from pids), 'a', pg_temp.today(), pg_temp.policy('{"net_days": 31}'))), '23505|record id already used||||', 'the same id with another policy: a constant conflict');
+select is(pg_temp.err('a_owner', pg_temp.qp_sql((select p1 from pids), 'a', pg_temp.today(), pg_temp.policy('{"new_net_days": 31}'))), '23505|record id already used||||', 'the same id with another policy: a constant conflict');
 select is(pg_temp.err('b_owner', pg_temp.qp_sql((select p1 from pids), 'b', pg_temp.today(), pg_temp.policy())), '23505|record id already used||||', 'another tenant''s Owner with IDENTICAL content and tenant A''s version id gets the constant conflict, not a replay of A''s version');
 select is(pg_temp.qp('a_sales', pg_temp.policy()), '42501', 'Sales cannot publish a policy');
 select is(pg_temp.qp('a_viewer', pg_temp.policy()), '42501', 'a Viewer cannot publish a policy');
@@ -169,11 +169,11 @@ select is(pg_temp.qp('a_owner', pg_temp.policy()), 'SM306', 'an Owner at aal1 ne
 select is(pg_temp.qp('a_sales', pg_temp.policy()), '42501', '...and Sales at aal1 is refused before that (no oracle)');
 select tests.as_aal('aal2');
 select is(pg_temp.qp('a_owner', pg_temp.policy() || '{"price": 1}'), '22023', 'an unknown key: invalid');
-select is(pg_temp.qp('a_owner', pg_temp.policy() - 'net_days'), '22023', 'a missing key: invalid');
-select is(pg_temp.qp('a_owner', pg_temp.policy('{"net_days": "30"}')), '22023', 'a string where an integer belongs: invalid');
+select is(pg_temp.qp('a_owner', pg_temp.policy() - 'repeat_net_days'), '22023', 'a missing key: invalid');
+select is(pg_temp.qp('a_owner', pg_temp.policy('{"repeat_net_days": "30"}')), '22023', 'a string where an integer belongs: invalid');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"validity_days": 0}')), '23514', 'validity of 0 days: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"validity_days": 366}')), '23514', 'validity above 365 days: not allowed');
-select is(pg_temp.qp('a_owner', pg_temp.policy('{"net_days": 181}')), '23514', 'net days above 180: not allowed');
+select is(pg_temp.qp('a_owner', pg_temp.policy('{"new_net_days": 181}')), '23514', 'net days above 180: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"new_advance_bps": 10001}')), '23514', 'an advance above 100 %: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"discount_ceiling_bps": 10001}')), '23514', 'a discount ceiling above 100 %: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"shipping_flat_fee_paise": 100000001}')), '23514', 'freight above INR 1,000,000: not allowed');
@@ -184,19 +184,19 @@ select is(pg_temp.qp('a_owner', pg_temp.policy('{"seller_state": "ts"}')), '2351
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"seller_state": "TSX"}')), '23514', 'a three-letter state code: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"required_inputs": ["deadline"]}')), '23514', 'the delivery state is always required (owner decision 6)');
 select is(pg_temp.err('a_owner', pg_temp.qp_sql(gen_random_uuid(), 'a', pg_temp.today(), pg_temp.policy('{"required_inputs": ["deadline"]}'))), '23514|value not allowed||||', '...refused by the function itself (the table CHECK is the second line)');
-select is(pg_temp.err('a_owner', pg_temp.qp_sql(gen_random_uuid(), 'a', pg_temp.today(), pg_temp.policy('{"net_days": 181}'))), '23514|value not allowed||||', 'net days above 180: the function''s fixed message');
+select is(pg_temp.err('a_owner', pg_temp.qp_sql(gen_random_uuid(), 'a', pg_temp.today(), pg_temp.policy('{"new_net_days": 181}'))), '23514|value not allowed||||', 'net days above 180: the function''s fixed message');
 select is(pg_temp.err('a_owner', pg_temp.qp_sql(gen_random_uuid(), 'a', pg_temp.today(), pg_temp.policy('{"seller_state": "ts"}'))), '23514|value not allowed||||', 'a bad state code: the function''s fixed message');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"required_inputs": ["delivery_state", "delivery_state"]}')), '23514', 'a repeated required input: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"required_inputs": ["delivery_state", "colour"]}')), '23514', 'an unknown required input: not allowed');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"required_inputs": ["delivery_state", "delivery_city", "payment_terms", "deadline", "deadline"]}')), '22023', 'five required inputs: invalid');
 select is(pg_temp.qp('a_owner', pg_temp.policy(), gen_random_uuid(), 'a', pg_temp.today() - 1), '23514', 'a policy effective in the past: not allowed');
-select is(pg_temp.qp('a_owner', pg_temp.policy('{"net_days": 45}'), gen_random_uuid(), 'a', pg_temp.today() + 3), 'ok', 'a scheduled policy version is allowed');
-select is(pg_temp.qp('a_owner', pg_temp.policy('{"net_days": 46}'), gen_random_uuid(), 'a', pg_temp.today() + 2), '23514', 'one effective before the latest existing policy: not allowed');
+select is(pg_temp.qp('a_owner', pg_temp.policy('{"new_net_days": 45}'), gen_random_uuid(), 'a', pg_temp.today() + 3), 'ok', 'a scheduled policy version is allowed');
+select is(pg_temp.qp('a_owner', pg_temp.policy('{"new_net_days": 46}'), gen_random_uuid(), 'a', pg_temp.today() + 2), '23514', 'one effective before the latest existing policy: not allowed');
 select is(app.quote_active_policy_version(tests.tid('a'), pg_temp.today()), (select id from public.quote_policy_versions where tenant_id = tests.tid('a') and version_no = 2), 'the active policy today is the latest effective today');
 select is(app.quote_active_policy_version(tests.tid('a'), pg_temp.today() + 3), (select id from public.quote_policy_versions where tenant_id = tests.tid('a') and version_no = 3), 'on the scheduled day the scheduled policy is active');
-select is(pg_temp.priv(format('update public.quote_policy_versions set net_days = 1 where tenant_id = %L', tests.tid('a'))), '42501|quote_policy_versions rows are immutable: archive the row and record a new one', 'a policy cannot be updated');
+select is(pg_temp.priv(format('update public.quote_policy_versions set repeat_net_days = 1 where tenant_id = %L', tests.tid('a'))), '42501|quote_policy_versions rows are immutable: archive the row and record a new one', 'a policy cannot be updated');
 select is(pg_temp.priv(format('delete from public.quote_policy_versions where tenant_id = %L', tests.tid('a'))), '42501|quote_policy_versions rows are never deleted: record a new version', 'a policy cannot be deleted');
-select is(pg_temp.priv(format('insert into public.quote_policy_versions (tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, net_days, seller_state, required_inputs, content_sha256) values (%L, 99, current_date, 0, 0, 0, 15, 0, 0, 30, ''TS'', array[''deadline'']::public.quote_input_key[], repeat(''1'', 64))', tests.tid('a'))) like '23514|%', true, 'the table itself also refuses a policy without the delivery state');
+select is(pg_temp.priv(format('insert into public.quote_policy_versions (tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_effective_from, seller_state, required_inputs, content_sha256) values (%L, 99, current_date, 0, 0, 0, 15, 0, 0, 30, 30, current_date, ''TS'', array[''deadline'']::public.quote_input_key[], repeat(''1'', 64))', tests.tid('a'))) like '23514|%', true, 'the table itself also refuses a policy without the delivery state');
 
 -- ============================================================================ G. mapper config versions
 create function pg_temp.mc_sql(p_id uuid, p_tenant text, p_eff date, p_unit text, p_config jsonb) returns text language sql as $$
