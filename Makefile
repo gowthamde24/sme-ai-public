@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-demo-manual seed-quote-data rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/demo_code.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -140,3 +140,19 @@ dev-web:
 #     AGENTS_ENABLED=true make dev-api
 dev-api:
 	cd $(API) && .venv/bin/uvicorn app.main:app --reload --port 8000
+
+# The local demo, one command each (see "Run the demo" in README.md). They take the LOCAL stack's URL and PUBLIC key from `supabase status` (never the secret or
+# service-role key), map them to the names each app needs, print nothing, write no file, and refuse unless the Supabase URL is this machine. dev-api and dev-web are unchanged.
+# Ports are 8000 and 3000; if another program already uses one, pick others: make dev-api-local API_PORT=8001, make dev-web-local WEB_PORT=3001 API_PORT=8001.
+API_PORT ?= 8000
+WEB_PORT ?= 3000
+
+dev-api-local:
+	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port $(API_PORT)
+
+dev-web-local:
+	cd $(WEB) && LOCAL_DEMO_API_URL=http://localhost:$(API_PORT) ../../scripts/with-local-demo-env.sh npm run dev -- --port $(WEB_PORT)
+
+# Prints the current 6-digit second-factor code of the local demo owner (a local demo code; the local database container only).
+demo-code:
+	@cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/demo_code.py
