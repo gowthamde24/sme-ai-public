@@ -55,7 +55,7 @@ Every failure is one short sentence of our own; a raw API body, a submitted valu
 
 ## 6. Files touched
 
-New: `apps/web/lib/api/customers.ts`, `consent.ts`, `products.ts` (with tests); `apps/web/app/app/tenants/[tenantId]/customers/new/`, `contacts/[contactId]/consent/`, `products/new/` (page, actions, form, tests). Changed: the tenant home page and its test (links), `docs/pre-pilot-checklist.md` (status). Not touched: any API file, migration, RLS, SECURITY DEFINER function, `followup_cadence`, `package.json`, the lockfile, any design-v2 file.
+New: `apps/web/lib/api/customers.ts`, `consent.ts`, `products.ts` (with tests); `apps/web/app/app/tenants/[tenantId]/customers/new/`, `contacts/[contactId]/consent/`, `products/new/` (page, actions, form, tests). Changed: the tenant home page and its test (the two links). The pre-pilot checklist is not touched in this ticket. Not touched: any API file, migration, RLS, SECURITY DEFINER function, `followup_cadence`, `package.json`, the lockfile, any design-v2 file.
 
 ## 7. Stop conditions
 
