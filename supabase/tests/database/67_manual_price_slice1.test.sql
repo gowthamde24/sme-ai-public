@@ -22,7 +22,7 @@ create function pg_temp.prod(p_sku text) returns uuid language sql as $$ select 
 -- the policy payload (SYNTHETIC) and the call that publishes it
 create function pg_temp.policy(p_over jsonb default '{}'::jsonb) returns jsonb language sql as $$
   select jsonb_build_object('discount_ceiling_bps', 0, 'shipping_flat_fee_paise', 0, 'validity_days', 15, 'new_advance_bps', 5000, 'repeat_advance_bps', 2500,
-                            'new_net_days', 10, 'repeat_net_days', 45, 'seller_state', 'TS', 'repeat_credit_limit_paise', 1000000000) || p_over $$;
+                            'new_net_days', 10, 'repeat_net_days', 45, 'gst_rate_bps', 500, 'seller_state', 'TS', 'repeat_credit_limit_paise', 1000000000) || p_over $$;
 create function pg_temp.qp_sql(p_id uuid, p_tenant text, p_policy jsonb, p_eff date default null) returns text language sql as $$
   select format('select public.create_quote_policy_version(%L, %L, %L, %L::jsonb)', p_id, tests.tid(p_tenant), coalesce(p_eff, pg_temp.today()), p_policy::text) $$;
 create function pg_temp.qp(p_user text, p_policy jsonb, p_id uuid default gen_random_uuid(), p_tenant text default 'a', p_eff date default null) returns text language sql as $$
@@ -118,7 +118,7 @@ select is(pg_temp.code('a_sales', replace(pg_temp.create_quote_sql(gen_random_uu
 
 -- ============================================================================ B. GST
 select is((select gst_rate_bps || '|' || gst_effective_from::text || '|' || shipping_tax_bps from public.quote_policy_versions where tenant_id = tests.tid('a') and version_no = 2),
-          '500|' || pg_temp.today()::text || '|500', 'B1 not given: 5 % (500 bps) from the version''s own date, and the shipping tax follows the goods rate');
+          '500|' || pg_temp.today()::text || '|500', 'B1 a rate of 5 % (500 bps) sent explicitly, from the version''s own date when none is given, and the shipping tax follows the goods rate (slice 2: the rate itself is required, pgTAP 68)');
 select is((select count(*) from public.quote_policy_versions where tenant_id = tests.tid('a') and version_no = 1 and gst_rate_bps = 500 and gst_effective_from = effective_from and shipping_tax_bps = 0), 1::bigint,
           'B2 the seeded (older) version got the default rate and its own date; its stored shipping tax of 0 is untouched');
 select is(pg_temp.j(pg_temp.sc('a_owner', pg_temp.qp_sql(gen_random_uuid(), 'a', pg_temp.policy('{"shipping_tax_bps": 0}'))), 'version_no'), '5', 'B3 a caller that still sends shipping_tax_bps keeps it (list-price quotes)');
@@ -271,12 +271,12 @@ select ok((select count(*) from public.audit_events where tenant_id = tests.tid(
 
 -- ============================================================================ D. delivery_state: what a manual-price quote can and cannot skip (settled in slice 1)
 select is((select string_agg(attname || ':' || attnotnull::text, ',' order by attname) from pg_attribute
-            where attrelid = 'public.quotes'::regclass and attname in ('delivery_state', 'gst_supply') and not attisdropped), 'delivery_state:true,gst_supply:true',
-          'D1 quotes.delivery_state and quotes.gst_supply are NOT NULL: a quote row of ANY kind cannot be stored without a state today');
+            where attrelid = 'public.quotes'::regclass and attname in ('delivery_state', 'gst_supply') and not attisdropped), 'delivery_state:false,gst_supply:false',
+          'D1 (slice 2 changed this) the columns are nullable now, but only the manual kind may leave them empty: the table CHECK quotes_pricing_kind_check keeps them required for the list kind (pgTAP 68)');
 select is(pg_temp.err('a_sales', format('select public.create_quote_draft(%L, %L, ''new'', null, ''1.1.0'', ''{}'', ''{}'')', gen_random_uuid(), pg_temp.req('n1'))), '22023|invalid argument||||',
           'D2 the draft function refuses a missing delivery state before anything else');
 select is(pg_temp.qp('a_owner', pg_temp.policy('{"required_inputs": ["deadline"]}')), '23514', 'D3 a policy that does not require the delivery state is refused (the list-price rule is unchanged)');
-select is(pg_temp.priv(format('insert into public.quote_policy_versions (tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_effective_from, seller_state, required_inputs, content_sha256) values (%L, 99, current_date, 0, 0, 0, 15, 0, 0, 30, 30, current_date, ''TS'', array[''deadline'']::public.quote_input_key[], repeat(''1'', 64))', tests.tid('a'))) like '23514|%', true,
+select is(pg_temp.priv(format('insert into public.quote_policy_versions (tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_rate_bps, gst_effective_from, seller_state, required_inputs, content_sha256) values (%L, 99, current_date, 0, 0, 0, 15, 0, 0, 30, 30, 500, current_date, ''TS'', array[''deadline'']::public.quote_input_key[], repeat(''1'', 64))', tests.tid('a'))) like '23514|%', true,
           'D4 ...and the table itself refuses it too');
 select is((select pg_get_function_identity_arguments('app.quote_build'::regproc)), 'p_tenant uuid, p_requirement uuid, p_as_of date, p_kind text, p_price_version uuid, p_policy_version uuid',
           'D5 the database''s own build takes NO delivery state: no figure of a quote can depend on it');

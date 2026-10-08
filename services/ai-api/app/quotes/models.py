@@ -223,8 +223,8 @@ RequiredInput = Literal["delivery_state", "delivery_city", "payment_terms", "dea
 class CreateQuotePolicyIn(_Strict):
     """Exactly the fields of `public.create_quote_policy_version` and nothing else (extra keys are a 422). This model checks SHAPE and BOUNDS only; every rule (the second factor, the role,
     a delivery state among the required inputs, an effective date not before the latest version, a replay) is the database's. A field left out stays out: the API sets no default (the database
-    applies its own: exclusive tax, half-up rounding, a zero repeat credit limit, delivery state as the one required input, no free-shipping threshold, GST at 5 % from the version's date,
-    the shipping tax at the goods rate)."""
+    applies its own: exclusive tax, half-up rounding, a zero repeat credit limit, delivery state as the one required input, no free-shipping threshold, the GST date at the version's own date,
+    the shipping tax at the goods rate). The GST rate itself has no default."""
 
     id: ApiUuid
     effective_from: date
@@ -238,8 +238,8 @@ class CreateQuotePolicyIn(_Strict):
     repeat_advance_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
     new_net_days: Annotated[StrictInt, Field(ge=0, le=180)]
     repeat_net_days: Annotated[StrictInt, Field(ge=0, le=180)]
-    # GST for manual-price quotes (price-list items keep their own rate): left out, the database applies 500 (5 %) from the version's own date
-    gst_rate_bps: Annotated[StrictInt, Field(ge=0, le=2800)] | None = None
+    # GST for manual-price quotes (price-list items keep their own rate): a REQUIRED choice with no default; the date it applies from is optional (the database uses the version's own date)
+    gst_rate_bps: Annotated[StrictInt, Field(ge=0, le=2800)]
     gst_effective_from: date | None = None
     tax_mode: Literal["exclusive"] | None = None
     rounding_mode: RoundingMode | None = None

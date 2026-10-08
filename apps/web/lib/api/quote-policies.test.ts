@@ -52,6 +52,7 @@ const INPUT: QuotePolicyInput = {
   repeatAdvanceBps: 2500,
   newNetDays: 10,
   repeatNetDays: 45,
+  gstRateBps: 500,
   repeatCreditLimitPaise: 250_000,
   sellerState: "XX",
 };
@@ -79,20 +80,21 @@ describe("what is sent", () => {
       repeat_advance_bps: 2500,
       new_net_days: 10,
       repeat_net_days: 45,
+      gst_rate_bps: 500,
       repeat_credit_limit_paise: 250_000,
       seller_state: "XX",
     });
   });
   it("never sends a free-shipping threshold, a tax mode, a rounding mode, required inputs, a tenant, a status or a GST field", () => {
     const keys = Object.keys(policyBody(INPUT));
-    for (const forbidden of ["shipping_free_above_paise", "tax_mode", "rounding_mode", "required_inputs", "tenant_id", "status", "version_no", "created_by", "gst_bps", "net_days", "shipping_tax_bps", "gst_rate_bps", "gst_effective_from", "tax_bps", "price_warn_min_paise", "price_warn_max_paise", "last_price_warn_bps"])
+    for (const forbidden of ["shipping_free_above_paise", "tax_mode", "rounding_mode", "required_inputs", "tenant_id", "status", "version_no", "created_by", "gst_bps", "net_days", "shipping_tax_bps", "gst_effective_from", "tax_bps", "price_warn_min_paise", "price_warn_max_paise", "last_price_warn_bps"])
       expect(keys, forbidden).not.toContain(forbidden);
   });
-  it("the shipping fee stays zero and no shipping tax or GST is sent, whatever the input object carries", () => {
-    const body = policyBody({ ...INPUT, shipping_flat_fee_paise: 999, shipping_tax_bps: 1800, gst_rate_bps: 1200 } as unknown as QuotePolicyInput);
+  it("the shipping fee stays zero and no shipping tax is sent, whatever the input object carries; the GST rate is the typed one", () => {
+    const body = policyBody({ ...INPUT, shipping_flat_fee_paise: 999, shipping_tax_bps: 1800 } as unknown as QuotePolicyInput);
     expect(body.shipping_flat_fee_paise).toBe(0);
     expect(Object.keys(body)).not.toContain("shipping_tax_bps");
-    expect(Object.keys(body)).not.toContain("gst_rate_bps");
+    expect(body.gst_rate_bps).toBe(500);
   });
   it("an id that is not a canonical UUID never reaches a path or a body", async () => {
     await expect(createQuotePolicyVersion("t", "x", INPUT)).rejects.toBeInstanceOf(ApiContractError);

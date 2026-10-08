@@ -22,6 +22,7 @@ const LABELS = {
   repeat_advance: /^Advance for a repeat customer/,
   new_net_days: /^New customers \(days\)$/,
   repeat_net_days: /^Repeat customers \(days\)$/,
+  gst_rate: /^GST rate \(percent\)$/,
   credit_limit: /^Most credit for one repeat customer/,
   seller_state: /^State where the shop is/,
   discount_ceiling: /^Discount ceiling/,
@@ -34,6 +35,7 @@ const GOOD: Record<Name, string> = {
   repeat_advance: "25.5",
   new_net_days: "10",
   repeat_net_days: "45",
+  gst_rate: "5",
   credit_limit: "2500.50",
   seller_state: "XX",
   discount_ceiling: "0",
@@ -56,7 +58,7 @@ const assertInternalLinks = (c: HTMLElement) => {
 };
 
 describe("QuotePolicyForm: every field starts empty and nothing is selected", () => {
-  it("has nine empty, required fields and no select, radio or checkbox", () => {
+  it("has ten empty, required fields and no select, radio or checkbox", () => {
     const { container } = renderForm(mk());
     for (const name of NAMES) {
       expect(field(name), name).toHaveValue("");
@@ -73,13 +75,15 @@ describe("QuotePolicyForm: every field starts empty and nothing is selected", ()
     const { container } = renderForm(mk());
     expect(screen.getByText("Shipping: none (no courier charge)")).toBeInTheDocument();
     const names = Array.from(container.querySelectorAll("input")).map((i) => i.getAttribute("name"));
-    expect(names.sort()).toEqual(["discount_ceiling", "effective_from", "new_advance", "new_net_days", "policy_id", "repeat_advance", "repeat_net_days", "credit_limit", "seller_state", "validity_days"].sort());
-    expect(names.join(" ")).not.toMatch(/shipping|tax|rounding|required|gst/i);
+    expect(names.sort()).toEqual(["discount_ceiling", "effective_from", "new_advance", "gst_rate", "new_net_days", "policy_id", "repeat_advance", "repeat_net_days", "credit_limit", "seller_state", "validity_days"].sort());
+    expect(names.join(" ")).not.toMatch(/shipping|tax|rounding|required/i);
   });
-  it("says in one sentence that there is no GST rate, price range or last-price warning yet", () => {
+  it("asks for the GST rate (it starts empty like every field) and says there is no price range or last-price warning yet", () => {
     renderForm(mk());
-    expect(screen.getByText("This page does not have a GST rate, a price range for each item type or a last-price warning yet. GST on a manual price is added at 5 % until a later change.")).toBeInTheDocument();
-    expect(screen.queryByLabelText(/GST/i)).toBeNull();
+    expect(screen.getByLabelText(/^GST rate \(percent\)$/)).toHaveValue("");
+    expect(screen.getByText("Added on top of every price typed by hand, from the start date above. A price list keeps the rate of each of its items.")).toBeInTheDocument();
+    expect(screen.getByText("This page does not have a price range for each item type or a last-price warning yet.")).toBeInTheDocument();
+    expect(screen.queryByText(/until a later change/)).toBeNull();
     expect(screen.queryByLabelText(/price range|last price/i)).toBeNull();
   });
   it("the discount ceiling hint says what the ceiling does today", () => {
@@ -144,7 +148,7 @@ describe("QuotePolicyForm: a missing or wrong value blocks the save", () => {
 });
 
 describe("QuotePolicyForm: what is submitted", () => {
-  it("calls the action once with the page's id and the nine fields exactly as typed, and nothing about shipping", async () => {
+  it("calls the action once with the page's id and the ten fields exactly as typed, and nothing about shipping", async () => {
     const action = mk();
     renderForm(action);
     fillAll({ validity_days: " 7 " });
@@ -158,7 +162,7 @@ describe("QuotePolicyForm: what is submitted", () => {
   it("the edges pass the form's own check: zero, the maximum and a start date of today", async () => {
     const action = mk();
     renderForm(action, ID_A, TODAY);
-    fillAll({ effective_from: TODAY, validity_days: "365", new_advance: "0", repeat_advance: "100", new_net_days: "180", repeat_net_days: "0", credit_limit: "10000000", discount_ceiling: "100" });
+    fillAll({ effective_from: TODAY, validity_days: "365", new_advance: "0", repeat_advance: "100", new_net_days: "180", repeat_net_days: "0", gst_rate: "28", credit_limit: "10000000", discount_ceiling: "100" });
     await submit();
     expect(action).toHaveBeenCalledTimes(1);
   });

@@ -48,6 +48,8 @@ export function QuotePolicyView({ versions, today, form }: { versions: QuotePoli
                 <dd>{v.new_net_days}</dd>
                 <dt>Days to pay the balance, repeat customer</dt>
                 <dd>{v.repeat_net_days}</dd>
+                <dt>GST rate, prices typed by hand</dt>
+                <dd>{`${formatBps(v.gst_rate_bps)} from ${formatDate(v.gst_effective_from)}`}</dd>
                 <dt>Most credit for one repeat customer</dt>
                 <dd>{formatRupees(v.repeat_credit_limit_paise)}</dd>
                 <dt>State where the shop is</dt>

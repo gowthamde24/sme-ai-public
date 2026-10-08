@@ -79,7 +79,7 @@ select pg_temp.field('r1', 1, 'saree_type', 'kanjivaram');  select pg_temp.field
 select pg_temp.confirm('r1');
 select pg_temp.pick('a_sales', 'r1', 1, 'SYN-KJ-RED-01', 12);
 select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.create_quote_policy_version(%L, %L, %L, %L::jsonb)', gen_random_uuid(), tests.tid('a'), pg_temp.today(),
-          '{"discount_ceiling_bps": 0, "shipping_flat_fee_paise": 0, "shipping_tax_bps": 0, "validity_days": 15, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "new_net_days": 30, "repeat_net_days": 30, "seller_state": "TS", "repeat_credit_limit_paise": 1000000000}')), 'version_no'), '2',
+          '{"discount_ceiling_bps": 0, "shipping_flat_fee_paise": 0, "shipping_tax_bps": 0, "validity_days": 15, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "new_net_days": 30, "repeat_net_days": 30, "gst_rate_bps": 500, "seller_state": "TS", "repeat_credit_limit_paise": 1000000000}')), 'version_no'), '2',
           'B1 a policy with a repeat credit limit that no balance reaches (so no ENGINE flag can appear for a repeat customer)');
 select is(pg_temp.j(pg_temp.create_quote('a_sales', (select r1 from ids), 'r1', 'new'), 'needs_owner_approval'), 'false', 'B2 a NEW customer: no review flag, no approval needed');
 select is((select review_flags::text || '|' || engine_flags::text from public.quotes where id = (select r1 from ids)), '{}|{}', 'B3 no flags at all');

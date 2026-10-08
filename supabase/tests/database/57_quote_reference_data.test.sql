@@ -148,7 +148,7 @@ select is(pg_temp.priv(format('delete from public.price_lists where tenant_id = 
 -- ============================================================================ F. policy versions
 create function pg_temp.policy(p_over jsonb default '{}'::jsonb) returns jsonb language sql as $$
   select jsonb_build_object('discount_ceiling_bps', 0, 'shipping_flat_fee_paise', 0, 'shipping_tax_bps', 0, 'validity_days', 15, 'new_advance_bps', 5000,
-                            'repeat_advance_bps', 2500, 'new_net_days', 30, 'repeat_net_days', 30, 'seller_state', 'TS') || p_over $$;
+                            'repeat_advance_bps', 2500, 'new_net_days', 30, 'repeat_net_days', 30, 'gst_rate_bps', 500, 'seller_state', 'TS') || p_over $$;
 create function pg_temp.qp_sql(p_id uuid, p_tenant text, p_eff date, p_policy jsonb) returns text language sql as $$
   select format('select public.create_quote_policy_version(%L, %L, %L, %L::jsonb)', p_id, tests.tid(p_tenant), p_eff, p_policy::text) $$;
 create function pg_temp.qp(p_user text, p_policy jsonb, p_id uuid default gen_random_uuid(), p_tenant text default 'a', p_eff date default null) returns text language sql as $$
@@ -196,7 +196,7 @@ select is(app.quote_active_policy_version(tests.tid('a'), pg_temp.today()), (sel
 select is(app.quote_active_policy_version(tests.tid('a'), pg_temp.today() + 3), (select id from public.quote_policy_versions where tenant_id = tests.tid('a') and version_no = 3), 'on the scheduled day the scheduled policy is active');
 select is(pg_temp.priv(format('update public.quote_policy_versions set repeat_net_days = 1 where tenant_id = %L', tests.tid('a'))), '42501|quote_policy_versions rows are immutable: archive the row and record a new one', 'a policy cannot be updated');
 select is(pg_temp.priv(format('delete from public.quote_policy_versions where tenant_id = %L', tests.tid('a'))), '42501|quote_policy_versions rows are never deleted: record a new version', 'a policy cannot be deleted');
-select is(pg_temp.priv(format('insert into public.quote_policy_versions (tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_effective_from, seller_state, required_inputs, content_sha256) values (%L, 99, current_date, 0, 0, 0, 15, 0, 0, 30, 30, current_date, ''TS'', array[''deadline'']::public.quote_input_key[], repeat(''1'', 64))', tests.tid('a'))) like '23514|%', true, 'the table itself also refuses a policy without the delivery state');
+select is(pg_temp.priv(format('insert into public.quote_policy_versions (tenant_id, version_no, effective_from, discount_ceiling_bps, shipping_flat_fee_paise, shipping_tax_bps, validity_days, new_advance_bps, repeat_advance_bps, new_net_days, repeat_net_days, gst_rate_bps, gst_effective_from, seller_state, required_inputs, content_sha256) values (%L, 99, current_date, 0, 0, 0, 15, 0, 0, 30, 30, 500, current_date, ''TS'', array[''deadline'']::public.quote_input_key[], repeat(''1'', 64))', tests.tid('a'))) like '23514|%', true, 'the table itself also refuses a policy without the delivery state');
 
 -- ============================================================================ G. mapper config versions
 create function pg_temp.mc_sql(p_id uuid, p_tenant text, p_eff date, p_unit text, p_config jsonb) returns text language sql as $$

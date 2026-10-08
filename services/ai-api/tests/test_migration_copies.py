@@ -243,10 +243,12 @@ def test_the_order_migration_is_the_last_to_define_the_two_quote_functions_and_n
 ):
     later = [m.name for m in MIGRATIONS if m.name > ORDERS]
     for name in ORDERS_CHANGED:
-        assert all(d[0] <= "20261020090000_review_fixes.sql" for d in definitions(name)), (
-            name,
-            later,
-        )
+        # manual-price slice 2 (below) replaces approve_quote once more, pinned by its own test
+        assert all(
+            d[0] <= "20261020090000_review_fixes.sql"
+            or (name == "public.approve_quote" and d[0] == "20261030090000_manual_price_slice2.sql")
+            for d in definitions(name)
+        ), (name, later)
 
 
 # ---------------------------------------------------------------------------------------------- review fixes (owner review of T010 part 1 and the order database)
@@ -528,12 +530,12 @@ SLICE1 = "20261029090000_manual_price_slice1.sql"
 NET_BY_KIND = "(case p_kind when 'new' then pol.new_net_days else pol.repeat_net_days end)"
 
 
-def _changes(name: str) -> tuple[list[str], list[str]]:
-    defs = block_definitions(name)
-    assert defs[-1][0] == SLICE1, (
-        f"{name} is redefined after slice 1 ({defs[-1][0]}) or slice 1 does not define it: re-copy it from the latest definition"
+def _changes(name: str, last: str = SLICE1) -> tuple[list[str], list[str]]:
+    defs = [d for d in block_definitions(name) if d[0] <= last]
+    assert defs[-1][0] == last, (
+        f"{name} is redefined after {last} ({defs[-1][0]}) or it does not define it: re-copy it from the latest definition"
     )
-    earlier = [d for d in defs if d[0] < SLICE1]
+    earlier = [d for d in defs if d[0] < last]
     assert earlier
     diff = [
         line
@@ -583,3 +585,54 @@ def test_slice1_policy_function_drops_only_the_named_lines() -> None:
     assert "'net_days'" not in text.replace("'net_days', pol", "")
     for key in ("new_net_days", "repeat_net_days", "gst_rate_bps", "gst_effective_from"):
         assert key in text
+
+
+# ---------------------------------------------------------------------------------------------- manual-price quote, slice 2: GST required, the manual branch of the approval
+SLICE2 = "20261030090000_manual_price_slice2.sql"
+
+
+def test_slice2_seed_adds_exactly_the_explicit_gst_rate() -> None:
+    removed, added = _changes("app.operator_seed_quote_reference_data", SLICE2)
+    assert removed == [
+        "'repeat_advance_bps', 2500, 'new_net_days', 30, 'repeat_net_days', 30, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 50000000,"
+    ]
+    assert added == [
+        "'repeat_advance_bps', 2500, 'new_net_days', 30, 'repeat_net_days', 30, 'gst_rate_bps', 500, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 50000000,"
+    ]
+
+
+def test_slice2_policy_function_only_makes_the_rate_required() -> None:
+    removed, added = _changes("app.quote_create_policy_version", SLICE2)
+    assert removed == [
+        "-- GST for manual-price quotes (the price list keeps its own rate per item): a default rate and the date it applies from. Not given: 5 % from the version's own date.",
+        "v_gst     := coalesce(app.quote_int(p_policy, 'gst_rate_bps', 0, 2800, false), 500);",
+    ]
+    assert added == [
+        "-- GST for manual-price quotes (the price list keeps its own rate per item): the rate (required) and the date it applies from (not given: the version's own date).",
+        "v_gst     := app.quote_int(p_policy, 'gst_rate_bps', 0, 2800);   -- a required choice: no default (slice 2)",
+    ]
+
+
+def test_slice2_error_helper_adds_exactly_one_code() -> None:
+    removed, added = _changes("app.quote_error", SLICE2)
+    assert removed == []
+    assert added == ["when 'SM260' then 'a price can only be typed by a person'"]
+
+
+def test_slice2_approval_keeps_the_list_path_and_adds_the_manual_branch() -> None:
+    removed, added = _changes("public.approve_quote", SLICE2)
+    # the list path is the same code: the only lines that go are the price-list staleness test (now only for the list kind) and the one build call (now inside the list
+    # branch, with the same text); a declare line and the manual branch are added
+    assert removed == [
+        "or app.quote_active_price_version(z.tenant_id, v_today) is distinct from z.price_list_version_id",
+        "v_build := app.quote_build(z.tenant_id, z.requirement_id, z.as_of, z.customer_kind::text, z.price_list_version_id, z.policy_version_id);",
+    ]
+    assert (
+        "or (z.pricing_kind = 'list' and app.quote_active_price_version(z.tenant_id, v_today) is distinct from z.price_list_version_id)"
+        in added
+    )
+    assert (
+        "v_build := app.quote_build(z.tenant_id, z.requirement_id, z.as_of, z.customer_kind::text, z.price_list_version_id, z.policy_version_id);"
+        in added
+    ), "the list build call is unchanged"
+    assert "v_lines jsonb;" in added and "if z.pricing_kind = 'manual' then" in added

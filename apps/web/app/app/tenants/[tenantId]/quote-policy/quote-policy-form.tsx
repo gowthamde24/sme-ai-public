@@ -11,7 +11,7 @@ type Props = { action: Action; policyId: string; today: string; minDate: string 
 
 /**
  * Publish a new quote policy version. EVERY field starts empty: nothing is selected and there is no default of ours. The shipping is not an input: it is fixed at zero (the shop charges no courier)
- * and shown as one read-only line. The days to pay the balance are two fields, one for new and one for repeat customers. There is no GST rate field yet: the database applies 5 % from the start date.
+ * and shown as one read-only line. The days to pay the balance are two fields, one for new and one for repeat customers. The GST rate is one more required field with no default.
  *
  * The id comes from the page (one per render), so a second press is a retry. The body is keyed on that id: a new id from the page restarts the form (empty fields, the new id). After a SAVED version
  * the form gets a fresh id and empties its fields (the next version is a new record, not a replay) and the success sentence, which lives OUTSIDE the keyed body so the page's re-render cannot hide it,
@@ -71,7 +71,7 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress }:
         Publish a new version
       </h3>
       <p className="hint">A published version never changes. A new version replaces the one in force from its start date. Every field starts empty on purpose: type the shop&apos;s own numbers.</p>
-      <p className="hint">This page does not have a GST rate, a price range for each item type or a last-price warning yet. GST on a manual price is added at 5 % until a later change.</p>
+      <p className="hint">This page does not have a price range for each item type or a last-price warning yet.</p>
       <input type="hidden" name="policy_id" value={id} />
 
       <label htmlFor="qp-from">Starts on</label>
@@ -97,6 +97,12 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress }:
         <label htmlFor="qp-net-repeat">Repeat customers (days)</label>
         <input id="qp-net-repeat" name="repeat_net_days" inputMode="numeric" autoComplete="off" required value={values.repeat_net_days} onChange={change("repeat_net_days")} disabled={pending} />
       </fieldset>
+
+      <label htmlFor="qp-gst">GST rate (percent)</label>
+      <input id="qp-gst" name="gst_rate" inputMode="decimal" autoComplete="off" required aria-describedby="qp-gst-hint" value={values.gst_rate} onChange={change("gst_rate")} disabled={pending} />
+      <p id="qp-gst-hint" className="hint">
+        Added on top of every price typed by hand, from the start date above. A price list keeps the rate of each of its items.
+      </p>
 
       <label htmlFor="qp-credit">Most credit for one repeat customer (rupees)</label>
       <input id="qp-credit" name="credit_limit" inputMode="decimal" autoComplete="off" required aria-describedby="qp-credit-hint" value={values.credit_limit} onChange={change("credit_limit")} disabled={pending} />

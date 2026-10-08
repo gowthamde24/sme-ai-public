@@ -113,6 +113,7 @@ class QuoteWorld:
             "repeat_advance_bps": 2500,
             "new_net_days": 30,
             "repeat_net_days": 30,
+            "gst_rate_bps": 500,
             "seller_state": "TS",
             **over,
         }

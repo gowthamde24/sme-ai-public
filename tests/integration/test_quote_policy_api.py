@@ -31,6 +31,7 @@ FIELDS: dict[str, Any] = {
     "repeat_advance_bps": 2500,
     "new_net_days": 10,
     "repeat_net_days": 30,
+    "gst_rate_bps": 500,
     "seller_state": "TS",
 }  # SYNTHETIC numbers, like the seeded policy: not a statement of any rate or freight
 
@@ -116,7 +117,11 @@ def test_an_owner_and_an_admin_publish_and_read_and_the_one_in_force_is_marked(f
             "the latest effective_from not after today; a future one is not in force yet"
         )
         assert rows[1]["id"] == second.json()["version_id"]
-        assert rows[1]["shipping_flat_fee_paise"] == 7500 and rows[0]["new_net_days"] == 45 and rows[0]["repeat_net_days"] == 30
+        assert (
+            rows[1]["shipping_flat_fee_paise"] == 7500
+            and rows[0]["new_net_days"] == 45
+            and rows[0]["repeat_net_days"] == 30
+        )
         assert rows[0]["effective_from"] == later(10) and rows[2]["effective_from"] == today()
         assert all(v["seller_state"] == "TS" and v["created_at"] for v in rows)
 
@@ -276,3 +281,20 @@ def test_the_newest_version_dated_today_is_the_one_in_force(world: World) -> Non
     forced = [v for v in listing(world, t).json() if v["in_force"]]
     assert len(forced) == 1 and forced[0]["id"] == r.json()["version_id"]
     assert forced[0]["shipping_flat_fee_paise"] == 9_900
+
+
+def test_the_gst_rate_is_a_required_choice_with_no_default(world: World) -> None:
+    t = world.a
+    before = count(world, t)
+    body = {
+        "id": uid(),
+        "effective_from": today(),
+        **{k: v for k, v in FIELDS.items() if k != "gst_rate_bps"},
+    }
+    r = world.client.post(url(t), json=body, headers=headers(world, t, "owner"))
+    assert r.status_code == 422 and err(r) == "validation_error", r.text
+    assert count(world, t) == before, "nothing was published"
+    ok = publish(world, t, gst_rate_bps=0)
+    assert ok.status_code == 201, "0 % is a choice too"
+    row = next(v for v in listing(world, t).json() if v["id"] == ok.json()["version_id"])
+    assert row["gst_rate_bps"] == 0 and row["gst_effective_from"] == row["effective_from"]
