@@ -9,6 +9,49 @@ permissions:
   contents: read
 
 jobs:
+  # Decides whether the slow `db` job (about 23 minutes) can affect this change. It checks nothing itself. A push to main always runs `db`. A pull request skips `db` ONLY when every
+  # changed file is under docs/, apps/web/ or e2e/, or is a *.md file, and none is under the paths that always run it. A path that is on neither list also runs `db` (fail closed).
+  # One document is on the always-run list although it is under docs/: tests/integration/test_demo_seed.py runs the SQL blocks of docs/runbooks/agents-kill-switch.md against the real schema.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      db: ${{ steps.decide.outputs.db }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: decide
+        env:
+          EVENT: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" != "pull_request" ]; then
+            echo "db=true" >> "$GITHUB_OUTPUT"
+            echo "db job: RUNS (a push to main runs every job)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          files=$(git diff --name-only --no-renames "$BASE_SHA...$HEAD_SHA")
+          needed=false
+          reason=""
+          while IFS= read -r f; do
+            [ -n "$f" ] || continue
+            case "$f" in
+              supabase/*|services/ai-api/*|tests/integration/*|packages/*|deploy/*|tools/*|.github/*|docs/runbooks/agents-kill-switch.md)
+                needed=true; reason="$f is on the always-run list"; break ;;
+              docs/*|apps/web/*|e2e/*|*.md) ;;
+              *)
+                needed=true; reason="$f is on neither list (fail closed)"; break ;;
+            esac
+          done <<< "$files"
+          echo "db=$needed" >> "$GITHUB_OUTPUT"
+          if [ "$needed" = true ]; then
+            echo "db job: RUNS ($reason)" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "db job: SKIPPED on purpose (only docs/**, apps/web/**, e2e/** or *.md changed; the db job cannot be affected)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   packages:
     runs-on: ubuntu-latest
     steps:
@@ -62,6 +105,9 @@ jobs:
       - run: pytest -q
 
   db:
+    needs: changes
+    # Runs unless `changes` said no. If `changes` itself fails, `db` still runs (nothing is skipped by accident).
+    if: ${{ !cancelled() && (needs.changes.result != 'success' || needs.changes.outputs.db == 'true') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
