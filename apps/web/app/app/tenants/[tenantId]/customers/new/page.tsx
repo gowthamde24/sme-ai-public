@@ -65,7 +65,7 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
       <p className="hint">
         A customer is a person with a phone number, and a lead for them. Nothing is sent to anyone. Consent is not recorded here: you record it on the next screen, when the customer has told you.
       </p>
-      <CustomerForm key={ids.contact} action={addCustomerAction.bind(null, tenantId)} tenantId={tenantId} ids={ids} />
+      <CustomerForm key={`${ids.company}|${ids.contact}|${ids.lead}`} action={addCustomerAction.bind(null, tenantId)} tenantId={tenantId} ids={ids} />
     </main>
   );
 }

@@ -91,6 +91,5 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
     return { ok: false, error: describe(error) + (step > 0 ? AGAIN : ""), ...(duplicateEmail && { nextContactId: randomUUID() }) };
   }
   revalidatePath(`/app/tenants/${tenantId}`);
-  revalidatePath(`/app/tenants/${tenantId}/customers/new`); // the next render makes fresh ids
   return { ok: true, leadId, contactId, name: fullName };
 }

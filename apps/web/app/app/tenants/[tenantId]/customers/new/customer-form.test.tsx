@@ -70,6 +70,81 @@ describe("CustomerForm", () => {
     expect(second.get("company_name")).toBe("Asha Silks");
     expect(await screen.findByRole("status")).toHaveTextContent("Added Synthetic Asha.");
   });
+  describe("a new page render (new ids) never reuses the first customer's state", () => {
+    const IDS_B = { company: "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa", contact: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb", lead: "cccccccc-cccc-4ccc-8ccc-cccccccccccc" };
+    const ids = (c: HTMLElement) => ["company_id", "contact_id", "lead_id"].map((n) => (c.querySelector(`input[name="${n}"]`) as HTMLInputElement | null)?.value);
+    const type = () => {
+      fireEvent.change(screen.getByLabelText("Customer's name"), { target: { value: "Synthetic Asha" } });
+      fireEvent.change(screen.getByLabelText("WhatsApp or phone number"), { target: { value: "+00 90000 20001" } });
+      fireEvent.change(screen.getByLabelText("E-mail (optional)"), { target: { value: "asha@x.example.test" } });
+      fireEvent.change(screen.getByLabelText("Shop or business name (optional)"), { target: { value: "Asha Silks" } });
+    };
+    it("after a save, new ids from the page give an empty form with the NEW ids (rerender)", async () => {
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: true, leadId: IDS.lead, contactId: IDS.contact, name: "Synthetic Asha" }));
+      const { container, rerender } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
+      type();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      expect(await screen.findByRole("status")).toHaveTextContent("Added Synthetic Asha.");
+      rerender(<CustomerForm action={action} tenantId={T} ids={IDS_B} />);
+      expect(screen.queryByRole("status")).toBeNull(); // not the first customer's success view
+      expect(ids(container)).toEqual([IDS_B.company, IDS_B.contact, IDS_B.lead]);
+      expect(screen.getByLabelText("Customer's name")).toHaveValue("");
+      expect(screen.getByLabelText("WhatsApp or phone number")).toHaveValue("");
+      expect(screen.getByLabelText("E-mail (optional)")).toHaveValue("");
+      expect(screen.getByLabelText("Shop or business name (optional)")).toHaveValue("");
+      expect(screen.getByLabelText("How did the enquiry come?")).toHaveValue("phone_call");
+    });
+    it("after a duplicate e-mail swapped the contact id, new page ids still win (the swapped id is not carried over)", async () => {
+      const FRESH = "77777777-7777-4777-8777-777777777777";
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "That e-mail is already used by another person.", nextContactId: FRESH }));
+      const { container, rerender } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
+      type();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      await screen.findByRole("alert");
+      expect(ids(container)[1]).toBe(FRESH);
+      rerender(<CustomerForm action={action} tenantId={T} ids={IDS_B} />);
+      expect(screen.queryByRole("alert")).toBeNull();
+      expect(ids(container)).toEqual([IDS_B.company, IDS_B.contact, IDS_B.lead]);
+      expect(screen.getByLabelText("E-mail (optional)")).toHaveValue("");
+    });
+    it("a re-render with the SAME ids keeps what the person typed and the swapped contact id", async () => {
+      const FRESH = "77777777-7777-4777-8777-777777777777";
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "That e-mail is already used by another person.", nextContactId: FRESH }));
+      const { container, rerender } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
+      type();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      await screen.findByRole("alert");
+      rerender(<CustomerForm action={action} tenantId={T} ids={{ ...IDS }} />);
+      expect(screen.getByRole("alert")).toBeInTheDocument();
+      expect(ids(container)).toEqual([IDS.company, FRESH, IDS.lead]);
+      expect(screen.getByLabelText("E-mail (optional)")).toHaveValue("asha@x.example.test");
+    });
+    it("'Add another customer' restarts in place: fresh ids, empty fields, no success view, and no navigation", async () => {
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: true, leadId: IDS.lead, contactId: IDS.contact, name: "Synthetic Asha" }));
+      const { container } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
+      type();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      await screen.findByRole("status");
+      const link = screen.getByRole("link", { name: "Add another customer" });
+      expect(link).toHaveAttribute("href", `/app/tenants/${T}/customers/new`); // still a real link (no script, or a new tab)
+      const notPrevented = fireEvent.click(link);
+      expect(notPrevented).toBe(false); // the click was handled here: the browser does not navigate
+      expect(screen.queryByRole("status")).toBeNull();
+      const now = ids(container) as string[];
+      expect(now.every((v) => /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/.test(v))).toBe(true);
+      expect(now[0]).not.toBe(IDS.company);
+      expect(now[1]).not.toBe(IDS.contact);
+      expect(now[2]).not.toBe(IDS.lead);
+      expect(screen.getByLabelText("Customer's name")).toHaveValue("");
+      expect(screen.getByLabelText("E-mail (optional)")).toHaveValue("");
+      // and a second customer is sent with the new ids, never the first customer's
+      fireEvent.change(screen.getByLabelText("Customer's name"), { target: { value: "Second Person" } });
+      fireEvent.change(screen.getByLabelText("WhatsApp or phone number"), { target: { value: "+00 90000 20002" } });
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      const second = action.mock.calls[1][1];
+      expect([second.get("company_id"), second.get("contact_id"), second.get("lead_id")]).toEqual(now);
+    });
+  });
   it("a refusal that is not a duplicate keeps all three ids", async () => {
     const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "Could not save. Try again." }));
     const { container } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);

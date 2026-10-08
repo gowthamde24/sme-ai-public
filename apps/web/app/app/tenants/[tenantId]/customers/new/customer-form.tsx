@@ -17,7 +17,32 @@ type Action = (prev: CustomerFormState, formData: FormData) => Promise<CustomerF
  * every field still shows what was typed, so only the wrong value needs fixing. After a duplicate e-mail the server hands back a FRESH contact id (the contact was not made); the company and
  * lead ids stay, so the company replays and no second company is made.
  */
-export function CustomerForm({ action, tenantId, ids }: { action: Action; tenantId: string; ids: { company: string; contact: string; lead: string } }) {
+type Ids = { company: string; contact: string; lead: string };
+
+/**
+ * One customer per set of ids. Everything the form holds (the typed values, the contact id after a duplicate e-mail, the result of the last press) belongs to ONE set of ids, so the body below is
+ * remounted whenever the ids change: new ids from a new page render, or the person pressing "Add another customer", which makes fresh ids here and restarts in place. Without this a second
+ * customer could be sent with the first customer's contact id and typed values (the page's own `key` is not enough: a component must not rely on its caller for it).
+ */
+export function CustomerForm({ action, tenantId, ids: pageIds }: { action: Action; tenantId: string; ids: Ids }) {
+  const pageKey = `${pageIds.company}|${pageIds.contact}|${pageIds.lead}`;
+  const [seenKey, setSeenKey] = useState(pageKey);
+  const [ids, setIds] = useState(pageIds);
+  const [round, setRound] = useState(0);
+  if (seenKey !== pageKey) {
+    // the page rendered new ids: start clean (adjusting state while rendering is React's documented way to reset state when a prop changes)
+    setSeenKey(pageKey);
+    setIds(pageIds);
+    setRound((r) => r + 1);
+  }
+  const another = () => {
+    setIds({ company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() });
+    setRound((r) => r + 1);
+  };
+  return <CustomerFormBody key={`${round}|${ids.company}|${ids.contact}|${ids.lead}`} action={action} tenantId={tenantId} ids={ids} onAnother={another} />;
+}
+
+function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action; tenantId: string; ids: Ids; onAnother: () => void }) {
   const [contactId, setContactId] = useState(ids.contact);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -46,7 +71,14 @@ export function CustomerForm({ action, tenantId, ids }: { action: Action; tenant
             Open the lead →
           </Link>
           {" · "}
-          <Link href={`/app/tenants/${tenantId}/customers/new`} className="tap">
+          <Link
+            href={`/app/tenants/${tenantId}/customers/new`}
+            className="tap"
+            onClick={(event) => {
+              event.preventDefault(); // restart here with fresh ids; the link itself still works without script or in a new tab
+              onAnother();
+            }}
+          >
             Add another customer
           </Link>
         </p>
