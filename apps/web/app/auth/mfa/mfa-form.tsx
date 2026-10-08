@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 
+import { authAlert, authCode, authForm, authLabel, authSecondary, authSubmitSolo } from "@/components/v2/auth/ui";
 import type { AuthFormState } from "@/lib/auth/form-state";
 
 import { leaveChallenge, verifyCode } from "./actions";
@@ -13,11 +14,12 @@ export function MfaForm({ next }: { next: string }) {
   );
   return (
     <>
-      <form className="card" action={action}>
+      <form className={authForm} action={action}>
         <input type="hidden" name="next" value={next} />
-        <label htmlFor="code">Code from your authenticator app</label>
+        <label htmlFor="code" className={authLabel}>Code from your authenticator app</label>
         <input
           id="code"
+          className={authCode}
           name="code"
           inputMode="numeric"
           autoComplete="one-time-code"
@@ -27,16 +29,16 @@ export function MfaForm({ next }: { next: string }) {
           autoFocus
         />
         {state?.error && (
-          <p role="alert" className="error">
+          <p role="alert" className={authAlert}>
             {state.error}
           </p>
         )}
-        <button type="submit" disabled={pending}>
+        <button type="submit" disabled={pending} className={authSubmitSolo}>
           {pending ? "Checking..." : "Verify"}
         </button>
       </form>
       <form action={leaveChallenge}>
-        <button type="submit" className="secondary">
+        <button type="submit" className={authSecondary}>
           Sign out
         </button>
       </form>

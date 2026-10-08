@@ -185,6 +185,10 @@ describe("skin applied", () => {
   it("/auth/forgot", () => {
     skinned(render(<>{ForgotPage()}</>).container);
   });
+  it("/auth/mfa and /auth/set-password", async () => {
+    skinned(render(await MfaPage(q<typeof MfaPage>({}))).container);
+    skinned(render(await SetPasswordPage(q<typeof SetPasswordPage>({ type: "invite" }))).container);
+  });
   it("/auth/confirm, both states", async () => {
     skinned(render(await ConfirmPage(q<typeof ConfirmPage>({ token_hash: TOKEN, type: "invite" }))).container);
     skinned(render(await ConfirmPage(q<typeof ConfirmPage>({}))).container);

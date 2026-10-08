@@ -1,3 +1,4 @@
+import { authH1, authMain } from "@/components/v2/auth/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { SetPasswordForm } from "./set-password-form";
@@ -11,8 +12,8 @@ export default async function SetPasswordPage({ searchParams }: PageProps<"/auth
   const params = await searchParams;
   const type = Array.isArray(params.type) ? params.type[0] : params.type;
   return (
-    <main className="shell">
-      <h1>{type === "invite" ? "Welcome: choose a password" : "Choose a new password"}</h1>
+    <main id="main" className={authMain}>
+      <h1 className={authH1}>{type === "invite" ? "Welcome: choose a password" : "Choose a new password"}</h1>
       <SetPasswordForm />
     </main>
   );
