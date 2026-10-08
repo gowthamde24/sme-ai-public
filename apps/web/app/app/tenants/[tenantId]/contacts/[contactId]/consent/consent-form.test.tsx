@@ -9,6 +9,7 @@ const BUTTON = "Record this";
 const BASIS = "Basis, as you describe it";
 const KIND = "Kind of evidence";
 const LABEL = "A short label for your note";
+const CHANNEL = "Channel";
 
 const radios = () => screen.getAllByRole("radio") as HTMLInputElement[];
 const choose = (name: string) => fireEvent.click(screen.getByLabelText(name));
@@ -20,6 +21,7 @@ describe("ConsentForm: nothing is pre-selected", () => {
     render(<ConsentForm action={vi.fn()} />);
     expect(radios()).toHaveLength(2);
     for (const r of radios()) expect(r.checked).toBe(false);
+    expect(screen.getByLabelText(CHANNEL)).toHaveValue(""); // the channel starts with nothing chosen too
     expect(screen.queryByLabelText(BASIS)).toBeNull();
     expect(screen.queryByLabelText(KIND)).toBeNull();
     expect(screen.queryByLabelText(LABEL)).toBeNull();
@@ -31,7 +33,7 @@ describe("ConsentForm: nothing is pre-selected", () => {
     expect(screen.getByLabelText(KIND)).toHaveValue("");
     expect(screen.getByLabelText(LABEL)).toHaveValue("");
     const placeholders = screen.getAllByRole("option", { name: "Choose one", hidden: true }) as HTMLOptionElement[];
-    expect(placeholders).toHaveLength(2); // one in the basis, one in the evidence kind
+    expect(placeholders).toHaveLength(3); // the channel, the basis and the evidence kind
     for (const o of placeholders) expect(o.disabled).toBe(true);
   });
   it("choosing Withdrawn does not ask for a basis or evidence", () => {
@@ -42,8 +44,9 @@ describe("ConsentForm: nothing is pre-selected", () => {
     expect(screen.queryByLabelText(KIND)).toBeNull();
     expect(screen.queryByLabelText(LABEL)).toBeNull();
   });
-  it("the three choices are required fields", () => {
+  it("the channel and the three choices are required fields", () => {
     render(<ConsentForm action={vi.fn()} />);
+    expect(screen.getByLabelText(CHANNEL)).toBeRequired();
     for (const r of radios()) expect(r).toBeRequired();
     choose("Granted");
     expect(screen.getByLabelText(BASIS)).toBeRequired();
@@ -59,9 +62,27 @@ describe("ConsentForm: each missing choice blocks the submit", () => {
     await submit();
     expect(action).not.toHaveBeenCalled();
   });
+  it("everything chosen except the channel: not called", async () => {
+    const action = vi.fn(async () => OK);
+    render(<ConsentForm action={action} />);
+    choose("Granted");
+    pick(BASIS, "explicit_consent");
+    pick(KIND, "verbal");
+    fireEvent.change(screen.getByLabelText(LABEL), { target: { value: "call-1" } });
+    await submit();
+    expect(action).not.toHaveBeenCalled();
+  });
+  it("Withdrawn but no channel: not called", async () => {
+    const action = vi.fn(async () => OK);
+    render(<ConsentForm action={action} />);
+    choose("Withdrawn");
+    await submit();
+    expect(action).not.toHaveBeenCalled();
+  });
   it("Granted only, no basis, no evidence, no label: not called", async () => {
     const action = vi.fn(async () => OK);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     await submit();
     expect(action).not.toHaveBeenCalled();
@@ -69,6 +90,7 @@ describe("ConsentForm: each missing choice blocks the submit", () => {
   it("Granted and a basis, no evidence kind: not called", async () => {
     const action = vi.fn(async () => OK);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     pick(BASIS, "explicit_consent");
     fireEvent.change(screen.getByLabelText(LABEL), { target: { value: "call-1" } });
@@ -78,6 +100,7 @@ describe("ConsentForm: each missing choice blocks the submit", () => {
   it("Granted and an evidence kind, no basis: not called", async () => {
     const action = vi.fn(async () => OK);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     pick(KIND, "verbal");
     fireEvent.change(screen.getByLabelText(LABEL), { target: { value: "call-1" } });
@@ -87,6 +110,7 @@ describe("ConsentForm: each missing choice blocks the submit", () => {
   it("Granted, a basis and a kind, but no label: not called", async () => {
     const action = vi.fn(async () => OK);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     pick(BASIS, "explicit_consent");
     pick(KIND, "verbal");
@@ -96,6 +120,7 @@ describe("ConsentForm: each missing choice blocks the submit", () => {
   it("everything chosen: the action is called once with exactly what was chosen", async () => {
     const action = vi.fn<(prev: ConsentFormState, data: FormData) => Promise<ConsentFormState>>(async () => OK);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     pick(BASIS, "contractual");
     pick(KIND, "written");
@@ -108,10 +133,12 @@ describe("ConsentForm: each missing choice blocks the submit", () => {
   it("Withdrawn alone is enough: the action is called with no basis and no evidence", async () => {
     const action = vi.fn<(prev: ConsentFormState, data: FormData) => Promise<ConsentFormState>>(async () => OK);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "email");
     choose("Withdrawn");
     await submit();
     expect(action).toHaveBeenCalledTimes(1);
     const data = action.mock.calls[0][1];
+    expect(data.get("channel")).toBe("email");
     expect(data.get("status")).toBe("withdrawn");
     expect(data.get("basis")).toBeNull();
     expect(data.get("evidence_kind")).toBeNull();
@@ -123,18 +150,19 @@ describe("ConsentForm: after a submit", () => {
     render(<ConsentForm action={vi.fn()} />);
     await submit();
     for (const r of radios()) expect(r.checked).toBe(false);
+    expect(screen.getByLabelText(CHANNEL)).toHaveValue("");
   });
   it("a failed submit keeps exactly what the person chose and chooses nothing else", async () => {
     const action = vi.fn(async () => ({ ok: false, error: "Your role cannot record consent." }) as ConsentFormState);
     render(<ConsentForm action={action} />);
-    fireEvent.change(screen.getByLabelText("Channel"), { target: { value: "phone" } });
+    pick(CHANNEL, "phone");
     choose("Granted");
     pick(BASIS, "legitimate_use");
     pick(KIND, "email_reply");
     fireEvent.change(screen.getByLabelText(LABEL), { target: { value: "reply-1" } });
     await submit();
     expect(await screen.findByRole("alert")).toHaveTextContent("Your role cannot record consent.");
-    expect(screen.getByLabelText("Channel")).toHaveValue("phone");
+    expect(screen.getByLabelText(CHANNEL)).toHaveValue("phone");
     expect((screen.getByLabelText("Granted") as HTMLInputElement).checked).toBe(true);
     expect((screen.getByLabelText("Withdrawn") as HTMLInputElement).checked).toBe(false);
     expect(screen.getByLabelText(BASIS)).toHaveValue("legitimate_use");
@@ -144,15 +172,18 @@ describe("ConsentForm: after a submit", () => {
   it("a failed submit after choosing only Withdrawn does not turn it into Granted or add a basis", async () => {
     const action = vi.fn(async () => ({ ok: false, error: "Could not record this. Try again." }) as ConsentFormState);
     render(<ConsentForm action={action} />);
+    pick(CHANNEL, "whatsapp");
     choose("Withdrawn");
     await submit();
     expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(screen.getByLabelText(CHANNEL)).toHaveValue("whatsapp");
     expect((screen.getByLabelText("Withdrawn") as HTMLInputElement).checked).toBe(true);
     expect((screen.getByLabelText("Granted") as HTMLInputElement).checked).toBe(false);
     expect(screen.queryByLabelText(BASIS)).toBeNull();
   });
   it("a saved entry returns the form to nothing chosen, so a second press cannot repeat it", async () => {
     render(<ConsentForm action={vi.fn(async () => OK)} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     pick(BASIS, "explicit_consent");
     pick(KIND, "verbal");
@@ -160,6 +191,7 @@ describe("ConsentForm: after a submit", () => {
     await submit();
     await screen.findByRole("status");
     for (const r of radios()) expect(r.checked).toBe(false);
+    expect(screen.getByLabelText(CHANNEL)).toHaveValue("");
     expect(screen.queryByLabelText(BASIS)).toBeNull();
   });
 });
@@ -174,6 +206,7 @@ describe("ConsentForm: wording and results", () => {
   });
   it("after a record it says who recorded it, when, and what is held now", async () => {
     render(<ConsentForm action={vi.fn(async () => OK)} />);
+    pick(CHANNEL, "whatsapp");
     choose("Granted");
     pick(BASIS, "explicit_consent");
     pick(KIND, "verbal");
@@ -187,6 +220,7 @@ describe("ConsentForm: wording and results", () => {
   });
   it("an error is an alert of our wording and no result is shown", async () => {
     render(<ConsentForm action={vi.fn(async () => ({ ok: false, error: "Your role cannot record consent." }) as ConsentFormState)} />);
+    pick(CHANNEL, "whatsapp");
     choose("Withdrawn");
     await submit();
     expect(await screen.findByRole("alert")).toHaveTextContent("Your role cannot record consent.");

@@ -14,17 +14,18 @@ type Action = (prev: ConsentFormState, formData: FormData) => Promise<ConsentFor
  * three states the API holds now. No word here says the entry is valid, lawful or enough, and no number or address is shown.
  */
 export function ConsentForm({ action }: { action: Action }) {
-  // NOTHING is pre-selected: the person must choose the status and, for "granted", the basis and the kind of evidence. Pressing Save cannot record anything they did not choose.
+  // NOTHING is pre-selected: the person must choose the channel, the status and, for "granted", the basis and the kind of evidence. Pressing Save cannot record anything they did not choose.
   // Every choice is held in state and the form is submitted through onSubmit, not through an `action` prop (React resets the fields of an `action` form when it finishes): a failed submit keeps exactly
   // what the person chose, and a saved entry returns the form to "nothing chosen". The browser's own validation still runs first, so a missing required choice never reaches the action.
   const [status, setStatus] = useState<"granted" | "withdrawn" | "">("");
-  const [channel, setChannel] = useState("whatsapp");
+  const [channel, setChannel] = useState("");
   const [basis, setBasis] = useState("");
   const [kind, setKind] = useState("");
   const [label, setLabel] = useState("");
   const [state, formAction, pending] = useActionState(async (prev: ConsentFormState, formData: FormData) => {
     const next = await action(prev, formData);
     if (next?.ok) {
+      setChannel("");
       setStatus("");
       setBasis("");
       setKind("");
@@ -41,7 +42,10 @@ export function ConsentForm({ action }: { action: Action }) {
       }}
       className="card" style={{ maxWidth: "40rem" }} aria-label="Record consent">
       <label htmlFor="consent-channel">Channel</label>
-      <select id="consent-channel" name="channel" value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending}>
+      <select id="consent-channel" name="channel" required value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending}>
+        <option value="" disabled>
+          Choose one
+        </option>
         {CHANNELS.map((c) => (
           <option key={c} value={c}>
             {CHANNEL_LABELS[c]}

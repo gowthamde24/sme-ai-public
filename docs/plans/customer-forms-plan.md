@@ -105,4 +105,4 @@ Method: read-only. No code was changed for this section, no website was called, 
 
 ### Observations from Job 1 (not changed)
 
-* The consent form's **channel** select still starts on WhatsApp (the owner's instruction named only the status, the basis and the evidence kind). A person who does not look could record for WhatsApp; if that matters, it is a one-line follow-up.
+* The consent form's **channel** select started on WhatsApp. **Resolved afterwards:** it now starts with nothing chosen and is required, like the status, the basis and the evidence kind.
