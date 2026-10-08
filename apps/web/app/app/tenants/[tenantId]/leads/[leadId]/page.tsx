@@ -6,11 +6,15 @@ import { fetchLead, isCanonicalUuid } from "@/lib/api/crm";
 import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type Enquiry, fetchLeadEnquiries } from "@/lib/api/enquiries";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
+import { fetchLeadContactId } from "@/lib/api/lead-contact";
 import { requireUser } from "@/lib/auth/session";
 
 import { EnquiriesPanel } from "../../enquiries/enquiries-panel";
+import { indiaNowLocal } from "../../followups/followup-logic";
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
+import { recordSentMessageAction } from "./sent-message-actions";
+import { SentMessageForm } from "./sent-message-form";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -85,6 +89,16 @@ export default async function LeadPage({
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
   }
+  // The contact this lead is linked to (only to point at its consent page): null = none, undefined = could not be read (the form is still offered; the database decides).
+  let contactId: string | null | undefined;
+  if (WRITE_ROLES.includes(tenant.role)) {
+    try {
+      contactId = await fetchLeadContactId(user.accessToken, tenantId, leadId);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+    }
+  }
+  const sentId = crypto.randomUUID(); // one id per render: a second press of "Record this" is a retry
   const reviewIds = Object.fromEntries(
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
   );
@@ -105,6 +119,29 @@ export default async function LeadPage({
           </Link>
         </p>
       ) : null}
+
+      <section aria-labelledby="sent-heading">
+        <h2 id="sent-heading">I sent a message</h2>
+        {!WRITE_ROLES.includes(tenant.role) ? (
+          <p>An owner, an admin or a sales person records that a message was sent.</p>
+        ) : contactId === null ? (
+          <p role="note">
+            This lead has no contact attached, so a message to them cannot be recorded.{" "}
+            <Link href={`/app/tenants/${tenantId}/customers/new`} className="tap">
+              Add the customer first →
+            </Link>
+          </p>
+        ) : (
+          <SentMessageForm
+            key={sentId}
+            action={recordSentMessageAction.bind(null, tenantId, leadId)}
+            tenantId={tenantId}
+            touchId={sentId}
+            maxNow={indiaNowLocal(new Date())}
+            contactId={contactId ?? null}
+          />
+        )}
+      </section>
 
       <section aria-labelledby="summary-heading">
         <h2 id="summary-heading">Lead</h2>
