@@ -7,9 +7,9 @@ from __future__ import annotations
 
 import uuid
 from datetime import date, datetime
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import Field
+from pydantic import Field, StrictInt, StringConstraints
 
 from app.crm.models import ApiUuid, _Strict
 
@@ -213,3 +213,61 @@ class QuoteSetupOut(_Strict):
     lines: list[SetupLineOut]
     price_list: list[PriceItemOut]
     delivery_states: dict[str, str]
+
+
+# ----------------------------------------------------------------------------- the quote policy (a version the Owner or Admin publishes)
+RoundingMode = Literal["half_up", "half_even", "down"]
+RequiredInput = Literal["delivery_state", "delivery_city", "payment_terms", "deadline"]
+
+
+class CreateQuotePolicyIn(_Strict):
+    """Exactly the fields of `public.create_quote_policy_version` and nothing else (extra keys are a 422). This model checks SHAPE and BOUNDS only; every rule (the second factor, the role,
+    a delivery state among the required inputs, an effective date not before the latest version, a replay) is the database's. A field left out stays out: the API sets no default (the database
+    applies its own: exclusive tax, half-up rounding, a zero repeat credit limit, delivery state as the one required input, no free-shipping threshold)."""
+
+    id: ApiUuid
+    effective_from: date
+    discount_ceiling_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
+    shipping_flat_fee_paise: Annotated[StrictInt, Field(ge=0, le=100_000_000)]
+    shipping_free_above_paise: Annotated[StrictInt, Field(ge=0, le=100_000_000)] | None = None
+    shipping_tax_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
+    validity_days: Annotated[StrictInt, Field(ge=1, le=365)]
+    new_advance_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
+    repeat_advance_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
+    net_days: Annotated[StrictInt, Field(ge=0, le=180)]
+    tax_mode: Literal["exclusive"] | None = None
+    rounding_mode: RoundingMode | None = None
+    repeat_credit_limit_paise: Annotated[StrictInt, Field(ge=0, le=1_000_000_000)] | None = None
+    seller_state: Annotated[str, StringConstraints(pattern=r"^[A-Z]{2}$")]
+    required_inputs: Annotated[list[RequiredInput], Field(max_length=4)] | None = None
+
+
+class QuotePolicyResultOut(_Strict):
+    version_id: uuid.UUID
+    version_no: int
+    effective_from: date
+    replayed: bool
+
+
+class QuotePolicyVersionOut(_Strict):
+    """One published version, newest first. `in_force` marks the version that applies today (the latest whose date has come: the database's own rule, read through the same query the quote
+    screens use)."""
+
+    id: uuid.UUID
+    version_no: int
+    effective_from: date
+    discount_ceiling_bps: int
+    shipping_flat_fee_paise: int
+    shipping_free_above_paise: int | None
+    shipping_tax_bps: int
+    validity_days: int
+    new_advance_bps: int
+    repeat_advance_bps: int
+    net_days: int
+    tax_mode: str
+    rounding_mode: str
+    repeat_credit_limit_paise: int
+    seller_state: str
+    required_inputs: list[str]
+    created_at: datetime
+    in_force: bool

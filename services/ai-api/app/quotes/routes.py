@@ -24,10 +24,13 @@ from app.quotes.errors import QuoteNotDraftError
 from app.quotes.models import (
     ApproveOut,
     CreateQuoteIn,
+    CreateQuotePolicyIn,
     DecisionOut,
     PickIn,
     PickOut,
     QuoteOut,
+    QuotePolicyResultOut,
+    QuotePolicyVersionOut,
     QuoteSetupOut,
     QuoteSummaryOut,
     QuoteTextOut,
@@ -41,6 +44,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}")
 SALES_PLUS: tuple[Role, ...] = (Role.OWNER, Role.ADMIN, Role.SALES)
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 SalesPlus = Annotated[TenantContext, Depends(require_tenant_role(*SALES_PLUS))]
+OwnerAdmin = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 OwnerAdminStrong = Annotated[
     TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))
 ]
@@ -232,3 +236,47 @@ def withdraw_quote(
             409, "quote_not_approved", "Only an approved quote can be withdrawn."
         ) from None
     return DecisionOut(quote_id=quote.id, status="superseded", replayed=bool(done.get("replayed")))
+
+
+# ----------------------------------------------------------------------------- the quote policy
+@router.get("/quote-policy-versions", response_model=list[QuotePolicyVersionOut])
+def list_quote_policies(ctx: OwnerAdmin, runtime: RuntimeDep) -> list[QuotePolicyVersionOut]:
+    """Every published quote policy version, newest first, with the one in force today marked (Owner or Admin)."""
+    if runtime.quotes is None:
+        raise _unavailable()
+    token, tenant = ctx.principal.token, ctx.tenant.id
+    rows = runtime.quotes.list_policies(token, tenant, limit=50)
+    active = runtime.quotes.active_policy(token, tenant, today_ist())
+    in_force = str(active["id"]) if active is not None else None
+    return [
+        QuotePolicyVersionOut.model_validate(
+            {
+                **{k: r[k] for k in QuotePolicyVersionOut.model_fields if k != "in_force"},
+                "in_force": str(r["id"]) == in_force,
+            }
+        )
+        for r in rows
+    ]
+
+
+@router.post("/quote-policy-versions", response_model=QuotePolicyResultOut, status_code=201)
+def create_quote_policy(
+    body: CreateQuotePolicyIn, ctx: OwnerAdminStrong, runtime: RuntimeDep, response: Response
+) -> QuotePolicyResultOut:
+    """An Owner or Admin (with a second factor) publishes a quote policy version. A thin pass-through: the caller's own token, the fields as typed (none added, none defaulted), then
+    `public.create_quote_policy_version` decides again (role, second factor, bounds, the effective date, a replay)."""
+    if runtime.quotes is None:
+        raise _unavailable()
+    done = runtime.quotes.create_policy(
+        ctx.principal.token,
+        {
+            "p_version_id": str(body.id),
+            "p_tenant_id": str(ctx.tenant.id),
+            "p_effective_from": body.effective_from.isoformat(),
+            "p_policy": body.model_dump(exclude={"id", "effective_from"}, exclude_none=True),
+        },
+    )
+    response.status_code = 200 if done.get("replayed") else 201
+    return QuotePolicyResultOut.model_validate(
+        {k: done[k] for k in ("version_id", "version_no", "effective_from", "replayed")}
+    )

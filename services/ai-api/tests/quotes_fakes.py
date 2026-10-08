@@ -5,6 +5,7 @@ this fake only holds the rows the service reads and records what the service wri
 
 from __future__ import annotations
 
+import copy
 import json
 import uuid
 from datetime import UTC, date, datetime
@@ -135,6 +136,10 @@ class FakeQuotes:
         ]
         self.items = list(ITEM_ROWS)
         self.policy_row: dict[str, Any] | None = dict(POLICY_ROW)
+        self.policy_list: list[dict[str, Any]] | None = None  # None: just the seeded row
+        self.policy_ids: dict[
+            str, int
+        ] = {}  # policy versions created through the API: id -> version number
         self.mapper: dict[str, Any] | None = MAPPER_ROW
         self.products_rows = list(PRODUCTS)
         self.pick_rows: list[dict[str, Any]] = []
@@ -243,6 +248,36 @@ class FakeQuotes:
             "canonical_hash": row["canonical_hash"],
             "approved_hash": self.approved_hashes.get(quote_id),
             **stored,
+        }
+
+    # ---- the quote policy
+    def list_policies(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        self._tok(token)
+        self.calls.append(("list_policies", {"tenant_id": str(tenant_id), "limit": limit}))
+        if tenant_id != self.tenant:
+            return []
+        if self.policy_list is not None:
+            return [dict(r) for r in self.policy_list]
+        return (
+            [{**self.policy_row, "created_at": "2026-10-01T05:00:00+00:00"}]
+            if self.policy_row
+            else []
+        )
+
+    def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._tok(token)
+        self._maybe()
+        self.calls.append(("create_policy", copy.deepcopy(args)))
+        version_id = args["p_version_id"]
+        replayed = version_id in self.policy_ids
+        if not replayed:
+            self.policy_ids[version_id] = len(self.policy_ids) + 2  # the seeded row is version 1
+        return {
+            "version_id": version_id,
+            "version_no": self.policy_ids[version_id],
+            "effective_from": args["p_effective_from"],
+            "content_sha256": "0" * 64,  # the database returns it; the API never passes it on
+            "replayed": replayed,
         }
 
     # ---- writes

@@ -30,7 +30,7 @@ ROUTE_WORDS = frozenset(
         "confirm", "decision", "discard",
         "quote-setup", "quotes", "picks", "approve", "reject", "withdraw", "text",
         "suppression", "status", "backfill", "allow-without-key",
-        "orders", "events", "order-policy-versions", "price-lists",
+        "orders", "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",
         "touches", "due", "sent", "sync",
         "erasure-requests", "execute", "data-policy",

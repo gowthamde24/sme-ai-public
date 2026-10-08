@@ -48,6 +48,10 @@ class QuotesRepository(Protocol):
     def policy(
         self, token: str, tenant_id: uuid.UUID, version_id: uuid.UUID
     ) -> dict[str, Any] | None: ...
+    def list_policies(
+        self, token: str, tenant_id: uuid.UUID, limit: int
+    ) -> list[dict[str, Any]]: ...
+    def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def active_mapper_config(
         self, token: str, tenant_id: uuid.UUID, on: date
     ) -> dict[str, Any] | None: ...
@@ -196,6 +200,22 @@ class PostgrestQuotesRepository:
             token,
             {"select": POLICY_COLUMNS, "tenant_id": f"eq.{tenant_id}", "id": f"eq.{version_id}"},
         )
+
+    def list_policies(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]:
+        """Every published version, newest first (the order of the rule that picks the one in force)."""
+        return self._rows(
+            "/quote_policy_versions",
+            token,
+            {
+                "select": POLICY_COLUMNS + ",created_at",
+                "tenant_id": f"eq.{tenant_id}",
+                "order": "effective_from.desc,version_no.desc",
+                "limit": str(limit),
+            },
+        )
+
+    def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc(token, "create_quote_policy_version", args)
 
     def active_mapper_config(
         self, token: str, tenant_id: uuid.UUID, on: date
