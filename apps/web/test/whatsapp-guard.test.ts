@@ -25,6 +25,7 @@ const sources = walk(WEB_ROOT);
 const read = (f: string) => readFileSync(f, "utf8");
 const rel = (f: string) => path.relative(WEB_ROOT, f);
 const IMPORTS_LINK = /from\s+["'](@\/lib\/whatsapp\/link|(\.{1,2}\/)+[\w./-]*whatsapp\/link|\.\/link)["']/;
+const IMPORTS_PHONE = /from\s+["'](@\/lib\/api\/contact-phone|(\.{1,2}\/)+[\w./-]*api\/contact-phone|\.\/contact-phone)["']/;
 
 describe("the WhatsApp number rule is imported by the redirect route only", () => {
   it("finds the files it polices", () => {
@@ -37,10 +38,21 @@ describe("the WhatsApp number rule is imported by the redirect route only", () =
     expect(importers.filter((f) => f !== ROUTE)).toEqual([]);
   });
 
+  it("the same holds for the one function that reads a contact's phone (lib/api/contact-phone.ts)", () => {
+    expect(sources.some((f) => rel(f) === path.join("lib", "api", "contact-phone.ts"))).toBe(true);
+    const importers = sources.filter((f) => rel(f) !== path.join("lib", "api", "contact-phone.ts") && IMPORTS_PHONE.test(read(f))).map(rel);
+    expect(importers).toEqual([ROUTE]);
+  });
+
+  it("the redirect route exists and is the importer of the number rule", () => {
+    const importers = sources.filter((f) => rel(f) !== path.join("lib", "whatsapp", "link.ts") && IMPORTS_LINK.test(read(f))).map(rel);
+    expect(importers).toEqual([ROUTE]);
+  });
+
   it("no 'use client' file imports it, and no 'use server' file does", () => {
     for (const f of sources) {
       const head = read(f).split("\n").slice(0, 5).join("\n");
-      if (/^\s*["']use (client|server)["']/m.test(head)) expect(IMPORTS_LINK.test(read(f)), rel(f)).toBe(false);
+      if (/^\s*["']use (client|server)["']/m.test(head)) expect(IMPORTS_LINK.test(read(f)) || IMPORTS_PHONE.test(read(f)), rel(f)).toBe(false);
     }
   });
 
