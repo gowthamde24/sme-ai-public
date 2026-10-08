@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { startTransition, useActionState, useState } from "react";
 
 import { BASES, BASIS_LABELS, CHANNELS, CHANNEL_LABELS, EVIDENCE_KINDS, EVIDENCE_LABELS, STATUS_LABELS } from "@/lib/api/consent";
 
@@ -14,12 +14,34 @@ type Action = (prev: ConsentFormState, formData: FormData) => Promise<ConsentFor
  * three states the API holds now. No word here says the entry is valid, lawful or enough, and no number or address is shown.
  */
 export function ConsentForm({ action }: { action: Action }) {
-  const [state, formAction, pending] = useActionState(action, undefined);
-  const [status, setStatus] = useState<"granted" | "withdrawn">("granted");
+  // NOTHING is pre-selected: the person must choose the status and, for "granted", the basis and the kind of evidence. Pressing Save cannot record anything they did not choose.
+  // Every choice is held in state and the form is submitted through onSubmit, not through an `action` prop (React resets the fields of an `action` form when it finishes): a failed submit keeps exactly
+  // what the person chose, and a saved entry returns the form to "nothing chosen". The browser's own validation still runs first, so a missing required choice never reaches the action.
+  const [status, setStatus] = useState<"granted" | "withdrawn" | "">("");
+  const [channel, setChannel] = useState("whatsapp");
+  const [basis, setBasis] = useState("");
+  const [kind, setKind] = useState("");
+  const [label, setLabel] = useState("");
+  const [state, formAction, pending] = useActionState(async (prev: ConsentFormState, formData: FormData) => {
+    const next = await action(prev, formData);
+    if (next?.ok) {
+      setStatus("");
+      setBasis("");
+      setKind("");
+      setLabel("");
+    }
+    return next;
+  }, undefined);
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "40rem" }} aria-label="Record consent">
+    <form
+      onSubmit={(event) => {
+        event.preventDefault();
+        const data = new FormData(event.currentTarget);
+        startTransition(() => formAction(data));
+      }}
+      className="card" style={{ maxWidth: "40rem" }} aria-label="Record consent">
       <label htmlFor="consent-channel">Channel</label>
-      <select id="consent-channel" name="channel" defaultValue="whatsapp" disabled={pending}>
+      <select id="consent-channel" name="channel" value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending}>
         {CHANNELS.map((c) => (
           <option key={c} value={c}>
             {CHANNEL_LABELS[c]}
@@ -29,16 +51,19 @@ export function ConsentForm({ action }: { action: Action }) {
       <fieldset disabled={pending} style={{ border: 0, padding: 0, margin: 0 }}>
         <legend>What are you writing down?</legend>
         <label>
-          <input type="radio" name="status" value="granted" checked={status === "granted"} onChange={() => setStatus("granted")} /> {STATUS_LABELS.granted}
+          <input type="radio" name="status" value="granted" required checked={status === "granted"} onChange={() => setStatus("granted")} /> {STATUS_LABELS.granted}
         </label>
         <label>
-          <input type="radio" name="status" value="withdrawn" checked={status === "withdrawn"} onChange={() => setStatus("withdrawn")} /> {STATUS_LABELS.withdrawn}
+          <input type="radio" name="status" value="withdrawn" required checked={status === "withdrawn"} onChange={() => setStatus("withdrawn")} /> {STATUS_LABELS.withdrawn}
         </label>
       </fieldset>
       {status === "granted" && (
         <>
           <label htmlFor="consent-basis">Basis, as you describe it</label>
-          <select id="consent-basis" name="basis" defaultValue="explicit_consent" disabled={pending}>
+          <select id="consent-basis" name="basis" required value={basis} onChange={(e) => setBasis(e.target.value)} disabled={pending}>
+            <option value="" disabled>
+              Choose one
+            </option>
             {BASES.map((b) => (
               <option key={b} value={b}>
                 {BASIS_LABELS[b]}
@@ -46,7 +71,10 @@ export function ConsentForm({ action }: { action: Action }) {
             ))}
           </select>
           <label htmlFor="consent-kind">Kind of evidence</label>
-          <select id="consent-kind" name="evidence_kind" defaultValue="verbal" disabled={pending}>
+          <select id="consent-kind" name="evidence_kind" required value={kind} onChange={(e) => setKind(e.target.value)} disabled={pending}>
+            <option value="" disabled>
+              Choose one
+            </option>
             {EVIDENCE_KINDS.map((k) => (
               <option key={k} value={k}>
                 {EVIDENCE_LABELS[k]}
@@ -54,7 +82,7 @@ export function ConsentForm({ action }: { action: Action }) {
             ))}
           </select>
           <label htmlFor="consent-label">A short label for your note</label>
-          <input id="consent-label" name="evidence_label" required maxLength={96} autoComplete="off" placeholder="call-2026-10-08" pattern="[A-Za-z0-9._#/\-]{1,96}" disabled={pending} />
+          <input id="consent-label" name="evidence_label" required value={label} onChange={(e) => setLabel(e.target.value)} maxLength={96} autoComplete="off" placeholder="call-2026-10-08" pattern="[A-Za-z0-9._#/\-]{1,96}" disabled={pending} />
           <p className="hint">Letters, digits and . _ # / - only. No names, numbers or addresses: it is only a label so you can find your own note later.</p>
         </>
       )}

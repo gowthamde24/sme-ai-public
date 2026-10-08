@@ -70,9 +70,12 @@ describe("recordConsentAction", () => {
     [{ channel: "pigeon" }, /Choose the channel/],
     [{ channel: "" }, /Choose the channel/],
     [{ status: "unknown" }, /Choose Granted or Withdrawn/],
+    [{ status: "refused" }, /Choose Granted or Withdrawn/], // the API has no "refused" status: it is refused here, never mapped to something else
     [{ status: "" }, /Choose Granted or Withdrawn/],
     [{ basis: "vibes" }, /Choose the basis/],
+    [{ basis: "" }, /Choose the basis/],
     [{ evidence_kind: "imported" }, /kind of evidence/],
+    [{ evidence_kind: "" }, /kind of evidence/],
     [{ evidence_label: "" }, /short label/],
     [{ evidence_label: "two words" }, /short label/],
     [{ evidence_label: "a@b" }, /short label/],
@@ -82,6 +85,34 @@ describe("recordConsentAction", () => {
     expect(r?.ok).toBe(false);
     expect(r?.error).toMatch(message);
     expect(api.recordConsent).not.toHaveBeenCalled();
+  });
+  it.each([
+    ["status", /Choose Granted or Withdrawn/],
+    ["basis", /Choose the basis/],
+    ["evidence_kind", /kind of evidence/],
+    ["evidence_label", /short label/],
+    ["channel", /Choose the channel/],
+  ])("a missing %s (the field absent from the form) is refused with a plain message and nothing is defaulted", async (key, message) => {
+    const data = form();
+    data.delete(key);
+    const r = await recordConsentAction(T, C, undefined, data);
+    expect(r?.ok).toBe(false);
+    expect(r?.error).toMatch(message);
+    expect(api.recordConsent).not.toHaveBeenCalled();
+  });
+  it("a form with only a channel and no status at all records nothing", async () => {
+    const data = new FormData();
+    data.set("channel", "whatsapp");
+    const r = await recordConsentAction(T, C, undefined, data);
+    expect(r).toEqual({ ok: false, error: "Choose Granted or Withdrawn." });
+    expect(api.recordConsent).not.toHaveBeenCalled();
+  });
+  it("Withdrawn does not need a basis, evidence or label, even when they are absent", async () => {
+    const data = new FormData();
+    data.set("channel", "email");
+    data.set("status", "withdrawn");
+    expect((await recordConsentAction(T, C, undefined, data))?.ok).toBe(true);
+    expect(api.recordConsent).toHaveBeenCalledWith("tok", T, C, { channel: "email", status: "withdrawn" });
   });
   it("a malformed ids never reach the API", async () => {
     expect((await recordConsentAction("x", C, undefined, form()))?.error).toBe("This person is not available.");
