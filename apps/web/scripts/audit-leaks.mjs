@@ -9,7 +9,7 @@
 //      /login page and compare the computed styles of every element with the v2 sheet enabled and disabled.
 // Exit 1 if: a source rule fails, the detector cannot tell a leak from no leak, any OVERRIDE leak or SHADOWED utility
 // exists, any BASE leak is outside the allow-list, or the legacy page changes when the v2 sheet is toggled.
-// `--source-only` skips the browser steps; `--fixture-only` skips page mode.
+// `--source-only` skips the browser steps; `--fixture-only` skips page mode; `--path /` audits "/" instead of /landing.
 import fs from "node:fs";
 import path from "node:path";
 
@@ -53,6 +53,8 @@ const REVERSE_JS = `(() => {
   return { v2SheetPresent: true, path: location.pathname, elements: els.length, diffs, overridden, added: added.size };
 })()`;
 
+const pagePath = process.argv.includes("--path") ? process.argv[process.argv.indexOf("--path") + 1] : "/landing";
+
 async function pageMode(chrome) {
   const app = await startNext();
   console.log(`next start pid ${app.pid} on ${app.base} (stopped by PID at the end)`);
@@ -62,7 +64,7 @@ async function pageMode(chrome) {
         const tab = await Tab.open(chrome.port, { dark });
         try {
           await tab.setCookie(app.base, "sme_lang", lang);
-          await tab.goto(`${app.base}/landing`);
+          await tab.goto(`${app.base}${pagePath}`);
           const r = await auditLoadedPage(tab);
           const csp = await tab.csp();
           console.log(`page audit, ${lang}, ${dark ? "dark" : "light"}: elements=${r.elements} | OVERRIDE leaks=${r.override.length} | SHADOWED utilities=${r.shadowed.length} | BASE leaks outside the allow-list=${r.base.length} (allow-listed derived values: ${r.allowListed}) | CSP violations=${csp.length}`);
@@ -81,7 +83,7 @@ async function pageMode(chrome) {
     for (const dark of [false, true]) {
       const tab = await Tab.open(chrome.port, { dark });
       try {
-        await tab.goto(`${app.base}/landing`);
+        await tab.goto(`${app.base}${pagePath}`);
         await tab.eval(`document.querySelector('a[href="/login"]').click()`);
         const t0 = Date.now();
         while (Date.now() - t0 < 10000 && (await tab.eval("location.pathname")) !== "/login") await sleep(150);
