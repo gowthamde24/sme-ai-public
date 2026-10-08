@@ -421,6 +421,14 @@ describe("/app/tenants/[tenantId]", () => {
     if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/price-list$/));
   });
 
+  it.each([["owner", true], ["admin", false], ["sales", false], ["viewer", false]])("links the suppression keys page for a %s: %s", async (role, shown) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    render(await TenantPage(props()));
+    const link = screen.queryByRole("link", { name: "Suppression keys →" });
+    expect(link !== null).toBe(shown);
+    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/suppression$/));
+  });
+
   it.each(["owner", "admin", "sales"])("links the orders page for a %s, and not for a viewer", async (role) => {
     fetchTenant.mockResolvedValue(tenant(role));
     render(await TenantPage(props()));
