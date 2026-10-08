@@ -9,7 +9,7 @@ Sizes: **S** = web only, existing endpoints, about a day. **M** = a new endpoint
 * Customer Zero is a silk-saree wholesale. One to two enquiries **a day**, by phone call and WhatsApp.
 * Customers exist **only as contacts in a phone**. There is no written price list: the owners remember prices by saree type.
 * They **never chase** a customer who has not replied. Forgetting follow-ups is the most frequent mistake. Advances are written in handwritten books.
-* Two people, **both Owners**. GST and freight apply; whether they are added on top or included is **not known yet** (an item added later in this document may settle it).
+* Two people, **both Owners**. GST and freight apply; whether they are added on top or included is **not known yet** (settled later the same day: GST is added on top and courier is a separate line, see section 8).
 * The plan: the family has no organised documents, so the **first setup is assisted** (the owner sits with them). Later they update information by talking to an agent (the Capture Agent, C-W5: it only proposes, a person approves, the database re-checks).
 
 ## 1. One lead and one touch through the web screens
@@ -151,13 +151,93 @@ Minimum for a **one-hour session**, using what exists. "Now" means buildable and
 
 Confirmed from the plans. **The Owner Agent** (T011a/T011b, `docs/plans/owner-agent-plan.md`; the first part `docs/plans/t011-owner-agent.md`) is a **read-only morning brief** for the Owner and Admin: T011a is deterministic and uses **no model** (nine read-only database functions, one endpoint, one page that says what needs attention: drafts waiting, quotes waiting, money held and so on); T011b is a read-only agent behind the model interface (the fake model only until the owner approves a live batch) that ranks and explains the same recorded facts from a closed list of phrases. It cannot write anything, send anything or take data in. **The Capture Agent** (C-W5 of `docs/plans/workspace-files-and-chat-capture-plan.md`, which the plan itself calls "the main agent", assumption A2) is an **interactive intake agent**: a person types or dictates to a chat box, and it **proposes** structured records (a lead, a touch, a file attached to a lead) from a closed list of proposal kinds; it has **no write tool for any business table**, a person approves, and the database re-checks and applies through the same functions a person uses; it runs with the asking person's own token, is off by default and is planned for the fake model first. It cannot send messages, change prices or decide anything, and it does not rank or advise. The family-facing word **"main agent" must not be used for both**: use "the morning brief" (or "Owner brief") for the first and "the assistant that takes notes" (or "Capture assistant") for the second.
 
-## 8. Ranked list of the smallest changes (first version)
+## 8. Per-customer prices (new facts: GST is added on top; courier is a separate line; the price differs by saree type and by customer; today's quote is one informal line)
 
-1. **S**: web "Add a customer" form (company, contact name, phone, optional e-mail, a lead), calling the existing `POST /companies`, `/contacts`, `/leads`. No migration. Without it nothing real can start.
-2. **S**: web "Record consent" form on a contact (existing `record-consent`), with the basis and a short evidence line. No migration. Without it no outgoing touch can be recorded.
-3. **S**: web "Add a product" form (Admin+, existing `POST /products`). Without it a price list cannot be loaded.
-4. **M**: API route and page for the **quote policy** (today only a database function). Without it no quote can be made without a developer.
-5. **M**: phone-contacts import (vCard and Google CSV adapter, plus the migration that lets a contact have a phone and no e-mail, or the form-based bulk path).
-6. **S to M**: a Telugu first-message and follow-up wording (a migration, and the owners' own words).
+**"GST on top, courier separate" fits what exists.** The quote engine's only tax mode in the database is `exclusive` (`quote_tax_mode` has the single value `exclusive`, `20261016090000_t009_quote_reference_data.sql:29`, "owner decision 16"), the shipping fee is its own line with its own GST rate (`shipping_flat_fee_paise`, `shipping_free_above_paise`, `shipping_tax_bps`), and the text prints GST and shipping as separate lines (section 9). So the fact "GST is added on top" closes the "included or added" question of section 0 for the code: no inclusive mode is needed. One thing does not fit yet: the courier cost is **one flat fee per policy version** (free above a threshold), not an amount typed per order. Whether the family's courier cost is the same for every order is **not known**; if it varies, the courier needs the same treatment as the price below.
 
-**Not to build now:** direct sending, a vision reader for photos, Storage, a chat parser, a per-customer price table, the Capture Agent (it needs the three S forms anyway to have something to propose into), a members screen for two Owners (the operator path is enough for two people).
+**Can the current price list, quote and order screens hold or override a price per customer? No.**
+* The price list is per product, per version, for the whole workspace: `price_list_items` has `product_id`, `unit_price_paise`, `minimum_order_quantity`, `tax_bps` and, in `price_list_breaks`, quantity tiers (`20261016090000...:167-200`). There is no customer column.
+* The quote request carries only `customer: {kind: "new" | "repeat"}`, which changes the advance rate and the credit limit and nothing else (`services/ai-api/app/quotes/builder.py:207-216`).
+* The engine itself accepts a `discount_bps` on an order line, up to the policy's ceiling (`docs/plans/t009-quote-engine.md`), but the integration sends none (`builder.py:8`, "with no discount") and the database **refuses** any quote outside the v1 subset ("a discount, a margin, tax-inclusive mode, a second shipping rate", `20261016090100_t009_picks_and_quotes.sql` header).
+* The quote screens take a product, a quantity and the customer kind; the order screen starts from an approved quote and has no price. Past prices are stored: `quote_lines.unit_price_applied_paise` (same migration, line 195), per quote line.
+
+**The smallest design that keeps the owners' judgment (they type the price for each quote) and still computes GST and freight on top: a typed price on the pick.**
+1. The person's **pick** of a product for a requirement line (`requirement_line_picks`, the table that already records "this line means this product") gets one more optional value: `unit_price_paise`, and a source word `typed`. Only an Owner or Admin may set it (approval is already theirs, with the second factor).
+2. The quote builder (`quotes/builder.py`) uses the typed price as that line's price in the request it sends the engine, with the product's GST rate; the **engine adds the GST and the courier line exactly as today**, so nothing about tax is recomputed by hand and no model is involved (non-negotiable 4: a person types the price, a deterministic service does the sums).
+3. The GST rate for a typed line needs a source, because the family has no price list to hold it: one new field on the quote policy (`default_tax_bps`, the family's rate for sarees, **their number to give**), or the price-list row if the product has one.
+4. **The database must do the same**, because it rebuilds the request byte for byte and recomputes every figure (section 4). So this is a migration that changes the pick function, `create_quote_draft` and the recomputation inside `approve_quote`, with an equivalence test against the real engine, pgTAP and integration tests, and the price list rule "the product must be on the price list" relaxed for a typed pick. A screen alone cannot do it.
+5. Provenance and uncertainty (non-negotiable 5): store who typed it and when (the audit trigger does), show "price typed by [person]" on the draft, and add a review flag for a typed price so the Owner's approval is a real second look. A typed price is bounded like a list price (1 paise to INR 1,000,000).
+6. A typed courier amount, if needed, is the same shape on the quote (an optional `shipping_fee_paise`), another change to the same three functions.
+
+**Size: L** (a change to three security-relevant quote functions and to the equivalence proof), though the screen part is small. A cheaper step that helps first, **S to M and read-only**: show, next to the price box, "last quoted to this customer for this saree type: ₹X on [date]" read from `quote_lines` of that customer's earlier quotes. No new table, no write path, and it gives the owners the memory they now keep in their heads.
+
+**What a per-customer price adds later:** a versioned table `customer_prices (tenant, company or contact, product, unit_price_paise, effective_from, created_by, ...)`, immutable versions like the price list. The builder then looks up in this order: **typed price on the quote, then the customer's price, then the list price**. The typed-price form gets a tick, "use this price for this customer next time", which writes a row. The database re-check follows the same pattern as above (the request it rebuilds includes the customer price). Size **L**, after the typed price is in use and the owners have shown which customers really have fixed prices.
+
+## 9. The one-line quote: what `quote_text` writes today
+
+`quote_text` **1.0.0** is the only version the API accepts (`ALLOWED_RENDERER_VERSIONS = {"1.0.0"}`, `services/ai-api/app/quotes/text_port.py:20`). **1.1.0** exists on the lane C branch `quote-text-joiners` (also on `origin`, not merged to `main`): `git show quote-text-joiners:packages/pure/quote_text/VERSIONS.md` says it differs from 1.0.0 only by allowing U+200C and U+200D after an Indic letter or mark; the text for any input both accept is identical. I rendered the same synthetic quote with both (extracted from git into the scratch area; nothing in the repository changed): **the two outputs are identical except for the version line.**
+
+Synthetic input: one line, "Kanjivaram saree, red", quantity 1, the engine price ₹12,000.00, GST 5 percent on the merchandise (exclusive), courier flat fee ₹300 with GST 18 percent, a new customer (advance 50 percent), seller "Synthetic Silks":
+
+```
+Approved quote
+Seller: Synthetic Silks
+Customer: Synthetic Customer
+Reference: SYN-Q-001
+Issued: 2026-10-08
+Valid until: 2026-10-15
+Prices exclude GST
+
+Kanjivaram saree, red
+1 x ₹12,000.00 = ₹12,000.00
+Net: ₹12,000.00
+GST (5%): ₹600.00
+Line total: ₹12,600.00
+
+Merchandise subtotal: ₹12,000.00
+Merchandise net: ₹12,000.00
+GST on merchandise: ₹600.00
+Shipping net: ₹300.00
+GST on shipping (18%): ₹54.00
+Shipping total: ₹354.00
+GST total: ₹654.00
+Grand total: ₹12,954.00
+Advance: ₹6,477.00
+Balance: ₹6,477.00
+Balance due: 2026-10-08
+Valid until: 2026-10-15
+Payment terms: 50% advance, balance before dispatch.
+Notes:
+- Synthetic demonstration only.
+```
+
+**How far is it from "this saree price 12000rs, GST extra, courier extra"?** Every value the short message needs is already in that output and in the stored quote: the label, the unit price (₹12,000.00), the GST rate (5 percent), the courier amount and its GST. The distance is in shape, not in data:
+* **Length and layout:** 29 lines in about ten blocks (an "Approved quote" header, seller, customer, reference, dates, line block, a merchandise block, shipping block, grand total, advance, balance, due date, validity, terms, notes) against one line.
+* **Wording:** formal ("Prices exclude GST", "Merchandise net", "GST on merchandise") and rupee amounts with Indian grouping and two decimals (₹12,000.00), against "12000rs". All labels are fixed English; there is no Telugu.
+* **Things the informal message never says:** reference number, dates, advance and balance, due date, validity, terms.
+* **A condition before any text exists:** the quote must be **approved** by an Owner or Admin with the second factor (`GET /quotes/{id}/text` serves approved quotes only).
+
+**Is a plain one-line template a text change or does it need new fields? No new fields; but not a string edit either.** The renderer has one layout and no short mode (`packages/pure/quote_text/__init__.py`, `render`). A short form is **new renderer behaviour**: a second function or mode in lane C's pure package, a **new version** (the version is part of the hashed payload, and `VERSIONS.md` says any change of what is printed is at least a minor version: 1.2.0), new golden vectors, and lane A adopting the version deliberately in `ALLOWED_RENDERER_VERSIONS` (for 1.1.0 this adoption is still waiting). It needs the same request it already takes, so no new input field, no new column. Size **M** (it is pure code with a golden-vector rhythm). **Not recommended:** composing the short text in the web from the stored figures; that would bypass the pinned renderer, its refusals and its hash, and the customer text is meant to come only from the renderer (T009 integration). Until then the formal text is a valid, correct message the owner can send as it is.
+
+## 10. Saree photos
+
+**Can an enquiry or a lead hold a photo today? No.** There is no attachment field on an enquiry, a lead, a contact or a quote. `docs/plans/workspace-files-and-chat-capture-plan.md` plans files in a private store (W1) and a model that reads them, but nothing of it is built: Supabase Storage is switched off in the local setup (`supabase/config.toml:118-119`, `[storage] enabled = false`) and the enquiry text is plain text with e-mail addresses and phone numbers removed.
+
+**The smallest option, no Storage and no model: a note.** Today a person can already add a **note** to a lead: the lead page has the evidence form with the kind "Note" (`apps/web/app/app/tenants/[tenantId]/add-evidence-form.tsx`, the kinds list; `EvidenceKind.NOTE`), a reference line and a snippet of up to 1,000 characters (`evidence/models.py`). A habit that works today: "photo sent on WhatsApp 8 Oct 14:32, red Kanjivaram, border gold" typed as the snippet, with the photo staying in the owners' phone and their WhatsApp chat. A requirement field of the enquiry (`saree_type`, `colour`, `fabric`, `quantity`, each up to 120 characters, `enquiries/models.py` `AddFieldIn`) can carry what the photo shows in words. If the family wants it more explicit, the smallest build is **a "photo note" box on the quote screen** (a short text line stored with the quote and printed nowhere): **S to M** (one nullable text column and a migration, or no code at all by using the lead's note). I am not planning the vision reader.
+
+## Ranked list of the smallest changes (second version, after the new facts)
+
+Sizes as defined at the top. The new facts moved the typed price to the top: the owners already work with one informal price a customer.
+
+1. **S**: web "Add a customer" form (company, contact name, phone, optional e-mail, a lead) on the existing `POST /companies`, `/contacts`, `/leads`. No migration. Without it nothing real can start.
+2. **S**: web "Record consent" form (existing `record-consent`, basis plus a short evidence line). Without it no outgoing touch, including "I phoned them", can be recorded.
+3. **S**: web "Add a product" form (Admin+, existing `POST /products`): one product per saree type. Without it neither a price list nor a typed price has a product to stand on.
+4. **M**: API route and page for the **quote policy** (today only a database function): the flat courier fee, the courier's GST rate, validity, the advance rates. Without it no quote can be made without a developer.
+5. **S to M, read only**: "last quoted to this customer" next to the price box (from `quote_lines`).
+6. **L**: the **typed price on the pick** (section 8), with the GST rate field on the quote policy. This is what makes a quote "this saree, this customer, this price" and keeps GST and courier as separate computed lines.
+7. **M**: a short one-line text in `quote_text` (section 9): a new lane C version, adopted by lane A. Not before 6; until then the formal text is sent as it is.
+8. **M**: phone-contacts import (vCard and Google CSV adapter, plus the migration that lets a contact have a phone and no e-mail, or the bulk form path). After 1: for the 20 to 50 customers who matter, the form is enough.
+9. **S to M**: Telugu first-message and follow-up wording (a migration; the owners' own words).
+10. **S**: a photo note field or the lead's note habit (section 10).
+
+**Not to build now:** direct sending, a vision reader, Storage, a chat parser, a per-customer price table (the typed price and the "last quoted" line come first), the Capture Agent (it needs items 1 to 3 anyway to have something to propose into), a members screen for two Owners (the operator path is enough for two people).
