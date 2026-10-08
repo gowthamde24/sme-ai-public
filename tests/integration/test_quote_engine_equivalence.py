@@ -98,7 +98,8 @@ def test_the_database_accepts_the_real_engines_output_on_random_inputs(qw: Quote
         qw.price_version(items)
         policy: dict[str, Any] = {
             "shipping_flat_fee_paise": rng.choice([0, rng.randint(1, 300000)]), "shipping_tax_bps": rng.choice([0, 500, 1800]), "validity_days": rng.randint(1, 60),
-            "new_advance_bps": rng.randint(0, 10000), "repeat_advance_bps": rng.randint(0, 10000), "net_days": rng.randint(0, 90),
+            "new_advance_bps": rng.randint(0, 10000), "repeat_advance_bps": rng.randint(0, 10000),
+            "new_net_days": rng.randint(0, 90), "repeat_net_days": rng.randint(0, 90),
             "rounding_mode": rng.choice(["half_up", "half_even", "down"]), "repeat_credit_limit_paise": rng.choice([0, rng.randint(1, 20_000_000)]), "seller_state": rng.choice(["TS", "KA"]),
         }  # fmt: skip
         if rng.random() < 0.5:

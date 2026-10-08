@@ -5,8 +5,8 @@ import { isCanonicalUuid } from "./crm";
  * The quote policy client: the published versions (Owner or Admin) and the publishing of a new one (Owner or Admin with a second factor). Server side only, with the signed-in user's own token.
  *
  * Every response is parsed strictly: a wrong type, a missing key, a malformed id or date, or a number outside the limits of the database is a contract error and nothing is shown. The request body
- * is the policy and nothing else: the shipping fields are FIXED at zero here (the shop charges no courier), and `tax_mode`, `rounding_mode`, `shipping_free_above_paise` and `required_inputs` are
- * never sent (the database fills them). There is no GST rate, price range or last-price threshold in it: those need a later database change.
+ * is the policy and nothing else: the shipping fee is FIXED at zero here (the shop charges no courier) and the shipping tax is not sent (the database sets it to the goods rate); `tax_mode`,
+ * `rounding_mode`, `shipping_free_above_paise`, `required_inputs`, `gst_rate_bps` and `gst_effective_from` are never sent (the database fills them: 5 % from the start date). This page has no GST field yet.
  */
 
 /** The limits of `public.create_quote_policy_version` (the same as the API's request model). */
@@ -15,6 +15,7 @@ export const POLICY_LIMITS = {
   validityDays: { min: 1, max: 365 },
   advanceBps: { min: 0, max: 10_000 },
   netDays: { min: 0, max: 180 },
+  gstRateBps: { min: 0, max: 2_800 },
   repeatCreditLimitPaise: { min: 0, max: 1_000_000_000 },
   shippingFeePaise: { min: 0, max: 100_000_000 },
   shippingTaxBps: { min: 0, max: 10_000 },
@@ -31,7 +32,10 @@ export interface QuotePolicyVersion {
   validity_days: number;
   new_advance_bps: number;
   repeat_advance_bps: number;
-  net_days: number;
+  new_net_days: number;
+  repeat_net_days: number;
+  gst_rate_bps: number;
+  gst_effective_from: string;
   tax_mode: string;
   rounding_mode: string;
   repeat_credit_limit_paise: number;
@@ -56,7 +60,8 @@ export interface QuotePolicyInput {
   validityDays: number;
   newAdvanceBps: number;
   repeatAdvanceBps: number;
-  netDays: number;
+  newNetDays: number;
+  repeatNetDays: number;
   repeatCreditLimitPaise: number;
   sellerState: string;
 }
@@ -110,7 +115,10 @@ export function parseQuotePolicyVersion(json: unknown): QuotePolicyVersion {
     validity_days: int(r, "validity_days", L.validityDays.min, L.validityDays.max),
     new_advance_bps: int(r, "new_advance_bps", L.advanceBps.min, L.advanceBps.max),
     repeat_advance_bps: int(r, "repeat_advance_bps", L.advanceBps.min, L.advanceBps.max),
-    net_days: int(r, "net_days", L.netDays.min, L.netDays.max),
+    new_net_days: int(r, "new_net_days", L.netDays.min, L.netDays.max),
+    repeat_net_days: int(r, "repeat_net_days", L.netDays.min, L.netDays.max),
+    gst_rate_bps: int(r, "gst_rate_bps", L.gstRateBps.min, L.gstRateBps.max),
+    gst_effective_from: date(r, "gst_effective_from"),
     tax_mode: str(r, "tax_mode"),
     rounding_mode: str(r, "rounding_mode"),
     repeat_credit_limit_paise: int(r, "repeat_credit_limit_paise", L.repeatCreditLimitPaise.min, L.repeatCreditLimitPaise.max),
@@ -144,18 +152,18 @@ export async function fetchQuotePolicyVersions(accessToken: string, tenantId: st
   return parseQuotePolicyVersions(await apiRequest(base(tenantId), accessToken));
 }
 
-/** The body: the typed policy fields, the shipping fixed at zero, and nothing else (no tax mode, rounding mode, free-shipping threshold or required inputs: the database fills those). */
+/** The body: the typed policy fields, the shipping fee fixed at zero, and nothing else (no shipping tax, tax mode, rounding mode, free-shipping threshold, required inputs, GST rate or GST date: the database fills those). */
 export function policyBody(input: QuotePolicyInput): Record<string, unknown> {
   return {
     id: input.id,
     effective_from: input.effectiveFrom,
     discount_ceiling_bps: input.discountCeilingBps,
     shipping_flat_fee_paise: 0,
-    shipping_tax_bps: 0,
     validity_days: input.validityDays,
     new_advance_bps: input.newAdvanceBps,
     repeat_advance_bps: input.repeatAdvanceBps,
-    net_days: input.netDays,
+    new_net_days: input.newNetDays,
+    repeat_net_days: input.repeatNetDays,
     repeat_credit_limit_paise: input.repeatCreditLimitPaise,
     seller_state: input.sellerState,
   };

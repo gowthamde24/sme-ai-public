@@ -366,7 +366,7 @@ select pg_temp.confirm('en9');
 select pg_temp.pick('a_sales', 'en9', 1, 'SYN-BN-RED-01', 6);
 select is(pg_temp.j(pg_temp.create_quote('a_sales', (select n3 from nids), 'en9'), 'status'), 'draft', 'N8 a draft of R9');
 select is(pg_temp.j(pg_temp.sc('a_owner', format('select public.create_quote_policy_version(%L, %L, %L, %L::jsonb)', gen_random_uuid(), tests.tid('a'), pg_temp.today(),
-          '{"discount_ceiling_bps": 0, "shipping_flat_fee_paise": 0, "shipping_tax_bps": 0, "validity_days": 20, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "net_days": 30, "seller_state": "TS", "required_inputs": ["delivery_state", "delivery_city", "payment_terms", "deadline"]}')), 'version_no'), '2', 'N9 the Owner publishes a newer policy (it requires the city, the payment terms and a deadline too)');
+          '{"discount_ceiling_bps": 0, "shipping_flat_fee_paise": 0, "shipping_tax_bps": 0, "validity_days": 20, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "new_net_days": 30, "repeat_net_days": 30, "seller_state": "TS", "required_inputs": ["delivery_state", "delivery_city", "payment_terms", "deadline"]}')), 'version_no'), '2', 'N9 the Owner publishes a newer policy (it requires the city, the payment terms and a deadline too)');
 select is(pg_temp.err('a_owner', pg_temp.approve_sql((select n3 from nids))), 'SM215|quote is stale||||', 'N10 a draft made under the OLD policy cannot be approved (SM215)');
 -- N11a / N11b: each optional required input on its own
 select pg_temp.field('en13', 1, 'saree_type', 'kanjivaram');

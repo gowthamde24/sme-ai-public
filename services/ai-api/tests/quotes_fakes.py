@@ -65,8 +65,8 @@ ITEM_ROWS: list[dict[str, Any]] = [
 ]
 POLICY_ROW: dict[str, Any] = {
     "id": str(POL), "version_no": 1, "effective_from": "2026-10-01", "discount_ceiling_bps": 0, "shipping_flat_fee_paise": 5000, "shipping_free_above_paise": None, "shipping_tax_bps": 1800,
-    "validity_days": 15, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "net_days": 30, "tax_mode": "exclusive", "rounding_mode": "half_up",
-    "repeat_credit_limit_paise": 250000, "seller_state": "TG", "required_inputs": ["delivery_state"],
+    "validity_days": 15, "new_advance_bps": 5000, "repeat_advance_bps": 2500, "new_net_days": 30, "repeat_net_days": 30, "gst_rate_bps": 500, "gst_effective_from": "2026-10-01", "tax_mode": "exclusive",
+    "rounding_mode": "half_up", "repeat_credit_limit_paise": 250000, "seller_state": "TG", "required_inputs": ["delivery_state"],
 }  # fmt: skip
 PRODUCTS: list[dict[str, Any]] = [
     {"id": str(P1), "sku": "SYN-K", "category": "kanjivaram", "attributes": {}, "active": True},
@@ -141,6 +141,8 @@ class FakeQuotes:
             str, int
         ] = {}  # policy versions created through the API: id -> version number
         self.mapper: dict[str, Any] | None = MAPPER_ROW
+        self.item_type_rows: list[dict[str, Any]] = []
+        self.item_type_ids: dict[str, str] = {}  # item types saved through the API: code -> id
         self.products_rows = list(PRODUCTS)
         self.pick_rows: list[dict[str, Any]] = []
         self.rows: dict[uuid.UUID, tuple[dict[str, Any], list[dict[str, Any]]]] = {}
@@ -279,6 +281,23 @@ class FakeQuotes:
             "content_sha256": "0" * 64,  # the database returns it; the API never passes it on
             "replayed": replayed,
         }
+
+    def list_item_types(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        self._tok(token)
+        self.calls.append(("list_item_types", {"tenant_id": str(tenant_id)}))
+        if tenant_id != self.tenant:
+            return []
+        return [dict(r) for r in self.item_type_rows]
+
+    def save_item_type(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._tok(token)
+        self._maybe()
+        self.calls.append(("save_item_type", copy.deepcopy(args)))
+        code = args["p_code"]
+        created = code not in self.item_type_ids
+        if created:
+            self.item_type_ids[code] = str(uuid.UUID(int=0xA000 + len(self.item_type_ids)))
+        return {"id": self.item_type_ids[code], "code": code, "created": created}
 
     # ---- writes
     def pick(self, token: str, args: dict[str, Any]) -> dict[str, Any]:

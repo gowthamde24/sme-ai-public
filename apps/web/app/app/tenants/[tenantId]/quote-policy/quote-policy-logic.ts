@@ -9,7 +9,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { POLICY_LIMITS, type QuotePolicyInput } from "@/lib/api/quote-policies";
 
 /** The names of the form's fields (the same in the form and in the server action). */
-export const FIELD_NAMES = ["effective_from", "validity_days", "new_advance", "repeat_advance", "net_days", "credit_limit", "seller_state", "discount_ceiling"] as const;
+export const FIELD_NAMES = ["effective_from", "validity_days", "new_advance", "repeat_advance", "new_net_days", "repeat_net_days", "credit_limit", "seller_state", "discount_ceiling"] as const;
 export type FieldName = (typeof FIELD_NAMES)[number];
 export type PolicyValues = Record<FieldName, string>;
 
@@ -19,7 +19,8 @@ export const EMPTY_VALUES: PolicyValues = {
   validity_days: "",
   new_advance: "",
   repeat_advance: "",
-  net_days: "",
+  new_net_days: "",
+  repeat_net_days: "",
   credit_limit: "",
   seller_state: "",
   discount_ceiling: "",
@@ -74,7 +75,8 @@ export const FIELD_TEXT: Record<FieldName, string> = {
   validity_days: "Days a quote is valid: enter a whole number from 1 to 365, using digits only.",
   new_advance: "Advance for a new customer: enter a percent from 0 to 100, using digits and at most two digits after the point.",
   repeat_advance: "Advance for a repeat customer: enter a percent from 0 to 100, using digits and at most two digits after the point.",
-  net_days: "Days of credit: enter a whole number from 0 to 180, using digits only.",
+  new_net_days: "Days to pay the balance, new customers: enter a whole number from 0 to 180, using digits only.",
+  repeat_net_days: "Days to pay the balance, repeat customers: enter a whole number from 0 to 180, using digits only.",
   credit_limit: "Most credit for one repeat customer: enter rupees from 0 to 1,00,00,000, using digits and at most two digits after the point, without commas.",
   seller_state: "State where the shop is: type the two capital letters of the state code on your GST papers.",
   discount_ceiling: "Discount ceiling: enter a percent from 0 to 100, using digits and at most two digits after the point.",
@@ -99,15 +101,17 @@ export function policyFromForm(values: PolicyValues, id: string, today: string):
   if (newAdvanceBps === null) return { ok: false, error: FIELD_TEXT.new_advance };
   const repeatAdvanceBps = percentToBps(values.repeat_advance);
   if (repeatAdvanceBps === null) return { ok: false, error: FIELD_TEXT.repeat_advance };
-  const netDays = wholeNumber(values.net_days, L.netDays.min, L.netDays.max);
-  if (netDays === null) return { ok: false, error: FIELD_TEXT.net_days };
+  const newNetDays = wholeNumber(values.new_net_days, L.netDays.min, L.netDays.max);
+  if (newNetDays === null) return { ok: false, error: FIELD_TEXT.new_net_days };
+  const repeatNetDays = wholeNumber(values.repeat_net_days, L.netDays.min, L.netDays.max);
+  if (repeatNetDays === null) return { ok: false, error: FIELD_TEXT.repeat_net_days };
   const repeatCreditLimitPaise = rupeesToPaise(values.credit_limit, L.repeatCreditLimitPaise.max);
   if (repeatCreditLimitPaise === null) return { ok: false, error: FIELD_TEXT.credit_limit };
   const sellerState = values.seller_state.trim();
   if (!STATE.test(sellerState)) return { ok: false, error: FIELD_TEXT.seller_state };
   const discountCeilingBps = percentToBps(values.discount_ceiling);
   if (discountCeilingBps === null) return { ok: false, error: FIELD_TEXT.discount_ceiling };
-  return { ok: true, input: { id, effectiveFrom: start, discountCeilingBps, validityDays, newAdvanceBps, repeatAdvanceBps, netDays, repeatCreditLimitPaise, sellerState } };
+  return { ok: true, input: { id, effectiveFrom: start, discountCeilingBps, validityDays, newAdvanceBps, repeatAdvanceBps, newNetDays, repeatNetDays, repeatCreditLimitPaise, sellerState } };
 }
 
 // ----------------------------------------------------------------------------- refusals

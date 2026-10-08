@@ -119,7 +119,9 @@ def block_definitions(name: str) -> list[tuple[str, str]]:
 
 @pytest.mark.parametrize("name", sorted(PART3_CHANGED))
 def test_the_part3_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
-    defs = block_definitions(name)
+    defs = [
+        d for d in block_definitions(name) if d[0] <= PART3
+    ]  # slice 1 of the manual-price quote (below) replaces app.quote_build again
     assert defs[-1][0] == PART3, (
         f"{name} is redefined after part 3 ({defs[-1][0]}) or part 3 does not define it: re-copy it from the latest definition"
     )
@@ -395,7 +397,9 @@ def test_the_small_fixes_seed_changes_exactly_the_repeat_credit_limit() -> None:
 
 # ---------------------------------------------------------------------------------------------- seed without a price list (rehearsal step 5)
 def test_the_seed_can_skip_the_price_list_and_changes_exactly_one_line() -> None:
-    defs = block_definitions(SEED_FN)
+    defs = [
+        d for d in block_definitions(SEED_FN) if d[0] <= NOPRICE
+    ]  # slice 1 of the manual-price quote (below) changes the seed's net-day line again
     assert defs[-1][0] == NOPRICE, (
         f"{SEED_FN} is redefined after {NOPRICE} ({defs[-1][0]}): re-copy it from the latest definition"
     )
@@ -517,3 +521,65 @@ def test_the_blocker_arrays_copy_is_the_last_definition_and_changes_only_the_fou
         for r in removed
     ] == added
     assert sum(line.count("coalesce(jsonb_typeof(") for line in added) == 4
+
+
+# ---------------------------------------------------------------------------------------------- manual-price quote, slice 1: net days per customer kind, GST fields
+SLICE1 = "20261029090000_manual_price_slice1.sql"
+NET_BY_KIND = "(case p_kind when 'new' then pol.new_net_days else pol.repeat_net_days end)"
+
+
+def _changes(name: str) -> tuple[list[str], list[str]]:
+    defs = block_definitions(name)
+    assert defs[-1][0] == SLICE1, (
+        f"{name} is redefined after slice 1 ({defs[-1][0]}) or slice 1 does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < SLICE1]
+    assert earlier
+    diff = [
+        line
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    return (
+        [line[1:].strip() for line in diff if line[0] == "-"],
+        [line[1:].strip() for line in diff if line[0] == "+"],
+    )
+
+
+def test_slice1_quote_build_changes_exactly_the_three_net_days_lines() -> None:
+    removed, added = _changes("app.quote_build")
+    assert len(removed) == len(added) == 3
+    assert all("pol.net_days" in line for line in removed)
+    assert all(NET_BY_KIND in line and "pol.net_days" not in line for line in added)
+    # nothing else moved: each added line is the removed one with the single expression swapped
+    assert [line.replace("pol.net_days", NET_BY_KIND) for line in removed] == added
+
+
+def test_slice1_seed_changes_exactly_the_net_days_line() -> None:
+    removed, added = _changes("app.operator_seed_quote_reference_data")
+    assert removed == [
+        "'repeat_advance_bps', 2500, 'net_days', 30, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 50000000,"
+    ]
+    assert added == [
+        "'repeat_advance_bps', 2500, 'new_net_days', 30, 'repeat_net_days', 30, 'tax_mode', 'exclusive', 'rounding_mode', 'half_up', 'repeat_credit_limit_paise', 50000000,"
+    ]
+
+
+def test_slice1_policy_function_drops_only_the_named_lines() -> None:
+    removed, added = _changes("app.quote_create_policy_version")
+    assert set(removed) == {
+        "v_ceiling bigint; v_fee bigint; v_free bigint; v_shiptax bigint; v_valid bigint; v_new bigint; v_rep bigint; v_net bigint; v_credit bigint;",
+        "'new_advance_bps', 'repeat_advance_bps', 'net_days', 'tax_mode', 'rounding_mode', 'repeat_credit_limit_paise',",
+        "v_shiptax := app.quote_int(p_policy, 'shipping_tax_bps', 0, 10000);",
+        "v_net     := app.quote_int(p_policy, 'net_days', 0, 180);",
+        "'validity_days', v_valid, 'new_advance_bps', v_new, 'repeat_advance_bps', v_rep, 'net_days', v_net, 'tax_mode', v_tax, 'rounding_mode', v_round,",
+        "new_advance_bps, repeat_advance_bps, net_days, tax_mode, rounding_mode, repeat_credit_limit_paise, seller_state, required_inputs, content_sha256)",
+        "(p_version_id, p_tenant, v_no, p_effective, v_ceiling, v_fee, v_free, v_shiptax, v_valid, v_new, v_rep, v_net, v_tax::public.quote_tax_mode,",
+    }
+    # the single net_days key is gone from the new definition; the two new ones and the GST keys are in
+    text = "\n".join(added)
+    assert "'net_days'" not in text.replace("'net_days', pol", "")
+    for key in ("new_net_days", "repeat_net_days", "gst_rate_bps", "gst_effective_from"):
+        assert key in text

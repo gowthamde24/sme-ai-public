@@ -30,7 +30,10 @@ const VERSION = {
   validity_days: 7,
   new_advance_bps: 5000,
   repeat_advance_bps: 2500,
-  net_days: 30,
+  new_net_days: 10,
+  repeat_net_days: 45,
+  gst_rate_bps: 500,
+  gst_effective_from: "2026-10-20",
   tax_mode: "exclusive",
   rounding_mode: "half_up",
   repeat_credit_limit_paise: 250_000,
@@ -47,7 +50,8 @@ const INPUT: QuotePolicyInput = {
   validityDays: 7,
   newAdvanceBps: 5000,
   repeatAdvanceBps: 2500,
-  netDays: 30,
+  newNetDays: 10,
+  repeatNetDays: 45,
   repeatCreditLimitPaise: 250_000,
   sellerState: "XX",
 };
@@ -62,7 +66,7 @@ describe("what is sent", () => {
     expect(call()[1]).toBe("tok");
     expect(call()[2]?.method).toBe("POST");
   });
-  it("sends exactly the typed fields and the shipping fixed at zero, and nothing else", async () => {
+  it("sends exactly the typed fields and the shipping fee fixed at zero, and nothing else", async () => {
     apiRequest.mockResolvedValue(RESULT);
     await createQuotePolicyVersion("tok", TENANT, INPUT);
     expect(sentBody()).toEqual({
@@ -70,23 +74,25 @@ describe("what is sent", () => {
       effective_from: "2026-10-20",
       discount_ceiling_bps: 0,
       shipping_flat_fee_paise: 0,
-      shipping_tax_bps: 0,
       validity_days: 7,
       new_advance_bps: 5000,
       repeat_advance_bps: 2500,
-      net_days: 30,
+      new_net_days: 10,
+      repeat_net_days: 45,
       repeat_credit_limit_paise: 250_000,
       seller_state: "XX",
     });
   });
   it("never sends a free-shipping threshold, a tax mode, a rounding mode, required inputs, a tenant, a status or a GST field", () => {
     const keys = Object.keys(policyBody(INPUT));
-    for (const forbidden of ["shipping_free_above_paise", "tax_mode", "rounding_mode", "required_inputs", "tenant_id", "status", "version_no", "created_by", "gst_bps", "tax_bps", "price_warn_min_paise", "price_warn_max_paise", "last_price_warn_bps"])
+    for (const forbidden of ["shipping_free_above_paise", "tax_mode", "rounding_mode", "required_inputs", "tenant_id", "status", "version_no", "created_by", "gst_bps", "net_days", "shipping_tax_bps", "gst_rate_bps", "gst_effective_from", "tax_bps", "price_warn_min_paise", "price_warn_max_paise", "last_price_warn_bps"])
       expect(keys, forbidden).not.toContain(forbidden);
   });
-  it("the shipping stays zero whatever the input object carries", () => {
-    const body = policyBody({ ...INPUT, shipping_flat_fee_paise: 999, shipping_tax_bps: 1800 } as unknown as QuotePolicyInput);
-    expect([body.shipping_flat_fee_paise, body.shipping_tax_bps]).toEqual([0, 0]);
+  it("the shipping fee stays zero and no shipping tax or GST is sent, whatever the input object carries", () => {
+    const body = policyBody({ ...INPUT, shipping_flat_fee_paise: 999, shipping_tax_bps: 1800, gst_rate_bps: 1200 } as unknown as QuotePolicyInput);
+    expect(body.shipping_flat_fee_paise).toBe(0);
+    expect(Object.keys(body)).not.toContain("shipping_tax_bps");
+    expect(Object.keys(body)).not.toContain("gst_rate_bps");
   });
   it("an id that is not a canonical UUID never reaches a path or a body", async () => {
     await expect(createQuotePolicyVersion("t", "x", INPUT)).rejects.toBeInstanceOf(ApiContractError);
@@ -138,7 +144,14 @@ describe("the list is parsed strictly", () => {
     ["validity_days", 366],
     ["new_advance_bps", 10_001],
     ["repeat_advance_bps", -5],
-    ["net_days", 181],
+    ["new_net_days", 181],
+    ["repeat_net_days", -1],
+    ["gst_rate_bps", 2_801],
+    ["gst_rate_bps", -1],
+    ["gst_rate_bps", 5.5],
+    ["gst_effective_from", "2026-02-30"],
+    ["gst_effective_from", "20-10-2026"],
+    ["gst_effective_from", 20261020],
     ["tax_mode", null],
     ["rounding_mode", 1],
     ["repeat_credit_limit_paise", 1_000_000_001],
@@ -161,8 +174,12 @@ describe("the list is parsed strictly", () => {
       ["discount_ceiling_bps", L.discountCeilingBps.max],
       ["validity_days", L.validityDays.min],
       ["validity_days", L.validityDays.max],
-      ["net_days", L.netDays.min],
-      ["net_days", L.netDays.max],
+      ["new_net_days", L.netDays.min],
+      ["new_net_days", L.netDays.max],
+      ["repeat_net_days", L.netDays.min],
+      ["repeat_net_days", L.netDays.max],
+      ["gst_rate_bps", L.gstRateBps.min],
+      ["gst_rate_bps", L.gstRateBps.max],
       ["repeat_credit_limit_paise", L.repeatCreditLimitPaise.max],
     ] as const)
       expect(parseQuotePolicyVersion({ ...VERSION, [key]: value })[key]).toBe(value);
@@ -174,7 +191,7 @@ describe("the list is parsed strictly", () => {
     expect(parseQuotePolicyVersions([])).toEqual([]);
   });
   it("a bad answer to the list or to a publish is never returned", async () => {
-    apiRequest.mockResolvedValue([{ ...VERSION, net_days: "30" }]);
+    apiRequest.mockResolvedValue([{ ...VERSION, new_net_days: "10" }]);
     await expect(fetchQuotePolicyVersions("t", TENANT)).rejects.toBeInstanceOf(ApiContractError);
     apiRequest.mockResolvedValue({ ...RESULT, replayed: "no" });
     await expect(createQuotePolicyVersion("t", TENANT, INPUT)).rejects.toBeInstanceOf(ApiContractError);

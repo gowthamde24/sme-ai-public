@@ -30,8 +30,9 @@ LINE_COLUMNS = "line_no,requirement_line_no,product_id,sku,name,sale_unit,qty,un
 ITEM_COLUMNS = "product_id,sku,name,sale_unit,unit_price_paise,minimum_order_quantity,tax_bps,breaks:price_list_breaks(min_qty,unit_price_paise)"
 POLICY_COLUMNS = (
     "id,version_no,effective_from,discount_ceiling_bps,shipping_flat_fee_paise,shipping_free_above_paise,shipping_tax_bps,validity_days,new_advance_bps,repeat_advance_bps,"
-    "net_days,tax_mode,rounding_mode,repeat_credit_limit_paise,seller_state,required_inputs"
+    "new_net_days,repeat_net_days,gst_rate_bps,gst_effective_from,tax_mode,rounding_mode,repeat_credit_limit_paise,seller_state,required_inputs"
 )
+ITEM_TYPE_COLUMNS = "id,code,name,position,active,min_price_paise,max_price_paise"
 _STATES = {**SM_ERRORS}
 
 
@@ -52,6 +53,8 @@ class QuotesRepository(Protocol):
         self, token: str, tenant_id: uuid.UUID, limit: int
     ) -> list[dict[str, Any]]: ...
     def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
+    def list_item_types(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
+    def save_item_type(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def active_mapper_config(
         self, token: str, tenant_id: uuid.UUID, on: date
     ) -> dict[str, Any] | None: ...
@@ -216,6 +219,22 @@ class PostgrestQuotesRepository:
 
     def create_policy(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         return self._rpc(token, "create_quote_policy_version", args)
+
+    def list_item_types(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]:
+        """The workspace's item types in display order (the table is small: one page)."""
+        return self._rows(
+            "/item_types",
+            token,
+            {
+                "select": ITEM_TYPE_COLUMNS,
+                "tenant_id": f"eq.{tenant_id}",
+                "order": "position.asc,code.asc",
+                "limit": "500",
+            },
+        )
+
+    def save_item_type(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        return self._rpc(token, "save_item_type", args)
 
     def active_mapper_config(
         self, token: str, tenant_id: uuid.UUID, on: date

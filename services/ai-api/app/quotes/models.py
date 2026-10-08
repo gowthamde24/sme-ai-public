@@ -9,7 +9,7 @@ import uuid
 from datetime import date, datetime
 from typing import Annotated, Literal
 
-from pydantic import Field, StrictInt, StringConstraints
+from pydantic import Field, StrictBool, StrictInt, StringConstraints, model_validator
 
 from app.crm.models import ApiUuid, _Strict
 
@@ -223,18 +223,24 @@ RequiredInput = Literal["delivery_state", "delivery_city", "payment_terms", "dea
 class CreateQuotePolicyIn(_Strict):
     """Exactly the fields of `public.create_quote_policy_version` and nothing else (extra keys are a 422). This model checks SHAPE and BOUNDS only; every rule (the second factor, the role,
     a delivery state among the required inputs, an effective date not before the latest version, a replay) is the database's. A field left out stays out: the API sets no default (the database
-    applies its own: exclusive tax, half-up rounding, a zero repeat credit limit, delivery state as the one required input, no free-shipping threshold)."""
+    applies its own: exclusive tax, half-up rounding, a zero repeat credit limit, delivery state as the one required input, no free-shipping threshold, GST at 5 % from the version's date,
+    the shipping tax at the goods rate)."""
 
     id: ApiUuid
     effective_from: date
     discount_ceiling_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
     shipping_flat_fee_paise: Annotated[StrictInt, Field(ge=0, le=100_000_000)]
     shipping_free_above_paise: Annotated[StrictInt, Field(ge=0, le=100_000_000)] | None = None
-    shipping_tax_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
+    # not typed separately any more: left out, the database sets it to the goods rate (gst_rate_bps); an explicit value is still accepted (list-price quotes)
+    shipping_tax_bps: Annotated[StrictInt, Field(ge=0, le=10000)] | None = None
     validity_days: Annotated[StrictInt, Field(ge=1, le=365)]
     new_advance_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
     repeat_advance_bps: Annotated[StrictInt, Field(ge=0, le=10000)]
-    net_days: Annotated[StrictInt, Field(ge=0, le=180)]
+    new_net_days: Annotated[StrictInt, Field(ge=0, le=180)]
+    repeat_net_days: Annotated[StrictInt, Field(ge=0, le=180)]
+    # GST for manual-price quotes (price-list items keep their own rate): left out, the database applies 500 (5 %) from the version's own date
+    gst_rate_bps: Annotated[StrictInt, Field(ge=0, le=2800)] | None = None
+    gst_effective_from: date | None = None
     tax_mode: Literal["exclusive"] | None = None
     rounding_mode: RoundingMode | None = None
     repeat_credit_limit_paise: Annotated[StrictInt, Field(ge=0, le=1_000_000_000)] | None = None
@@ -263,7 +269,10 @@ class QuotePolicyVersionOut(_Strict):
     validity_days: int
     new_advance_bps: int
     repeat_advance_bps: int
-    net_days: int
+    new_net_days: int
+    repeat_net_days: int
+    gst_rate_bps: int
+    gst_effective_from: date
     tax_mode: str
     rounding_mode: str
     repeat_credit_limit_paise: int
@@ -271,3 +280,45 @@ class QuotePolicyVersionOut(_Strict):
     required_inputs: list[str]
     created_at: datetime
     in_force: bool
+
+
+# ----------------------------------------------------------------------------- item types (the tenant's own list, with an optional price range)
+ItemTypeCode = Annotated[str, StringConstraints(pattern=r"^[0-9A-Za-z][0-9A-Za-z_-]{0,19}$")]
+PricePaise = Annotated[StrictInt, Field(ge=1, le=100_000_000)]
+
+
+class SaveItemTypeIn(_Strict):
+    """Create or REPLACE one item type (the code is in the path and never changes). Shape and bounds only: whether the caller may, the second factor, the lowest price not above the
+    highest and the clean name are the database's (`public.save_item_type`). A price bound left out means "no bound": the call replaces the record, it does not merge."""
+
+    name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
+    position: Annotated[StrictInt, Field(ge=0, le=10000)] = 0
+    active: StrictBool = True
+    min_price_paise: PricePaise | None = None
+    max_price_paise: PricePaise | None = None
+
+    @model_validator(mode="after")
+    def _range_is_ordered(self) -> SaveItemTypeIn:
+        if (
+            self.min_price_paise is not None
+            and self.max_price_paise is not None
+            and self.min_price_paise > self.max_price_paise
+        ):
+            raise ValueError("the lowest price must not be above the highest")
+        return self
+
+
+class ItemTypeOut(_Strict):
+    id: uuid.UUID
+    code: str
+    name: str
+    position: int
+    active: bool
+    min_price_paise: int | None
+    max_price_paise: int | None
+
+
+class ItemTypeSavedOut(_Strict):
+    id: uuid.UUID
+    code: str
+    created: bool

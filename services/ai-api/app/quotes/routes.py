@@ -12,7 +12,7 @@ NOTE: no `from __future__ import annotations` here, for the same reason as app/c
 import uuid
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Query, Response
+from fastapi import APIRouter, Depends, Path, Query, Response
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
@@ -26,6 +26,8 @@ from app.quotes.models import (
     CreateQuoteIn,
     CreateQuotePolicyIn,
     DecisionOut,
+    ItemTypeOut,
+    ItemTypeSavedOut,
     PickIn,
     PickOut,
     QuoteOut,
@@ -35,6 +37,7 @@ from app.quotes.models import (
     QuoteSummaryOut,
     QuoteTextOut,
     RejectIn,
+    SaveItemTypeIn,
     WithdrawIn,
 )
 from app.tenancy.models import Role
@@ -273,10 +276,48 @@ def create_quote_policy(
             "p_version_id": str(body.id),
             "p_tenant_id": str(ctx.tenant.id),
             "p_effective_from": body.effective_from.isoformat(),
-            "p_policy": body.model_dump(exclude={"id", "effective_from"}, exclude_none=True),
+            "p_policy": body.model_dump(
+                mode="json", exclude={"id", "effective_from"}, exclude_none=True
+            ),
         },
     )
     response.status_code = 200 if done.get("replayed") else 201
     return QuotePolicyResultOut.model_validate(
         {k: done[k] for k in ("version_id", "version_no", "effective_from", "replayed")}
     )
+
+
+# ----------------------------------------------------------------------------- item types (the workspace's own list; an optional price range per type)
+@router.get("/item-types", response_model=list[ItemTypeOut])
+def list_item_types(ctx: SalesPlus, runtime: RuntimeDep) -> list[ItemTypeOut]:
+    """The workspace's item types in display order, with their optional price range. Owner, Admin and Sales read it (a Viewer reads no price)."""
+    if runtime.quotes is None:
+        raise _unavailable()
+    rows = runtime.quotes.list_item_types(ctx.principal.token, ctx.tenant.id)
+    return [ItemTypeOut.model_validate({k: r[k] for k in ItemTypeOut.model_fields}) for r in rows]
+
+
+@router.put("/item-types/{code}", response_model=ItemTypeSavedOut)
+def save_item_type(
+    code: Annotated[str, Path(pattern=r"^[0-9A-Za-z][0-9A-Za-z_-]{0,19}$")],
+    body: SaveItemTypeIn,
+    ctx: OwnerAdminStrong,
+    runtime: RuntimeDep,
+) -> ItemTypeSavedOut:
+    """An Owner or Admin (with a second factor) creates or replaces one item type. A thin pass-through: the caller's own token, the tenant of the PATH, the fields as typed (a price bound left
+    out is sent as null, meaning no bound), then `public.save_item_type` decides again (role, second factor, bounds, clean name). No price is set or suggested here."""
+    if runtime.quotes is None:
+        raise _unavailable()
+    done = runtime.quotes.save_item_type(
+        ctx.principal.token,
+        {
+            "p_tenant_id": str(ctx.tenant.id),
+            "p_code": code,
+            "p_name": body.name,
+            "p_position": body.position,
+            "p_active": body.active,
+            "p_min_price_paise": body.min_price_paise,
+            "p_max_price_paise": body.max_price_paise,
+        },
+    )
+    return ItemTypeSavedOut.model_validate({k: done[k] for k in ("id", "code", "created")})

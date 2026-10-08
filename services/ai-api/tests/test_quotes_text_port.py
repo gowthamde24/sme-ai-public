@@ -35,7 +35,7 @@ ITEMS = {
     ),
     "p2": PriceItem("p2", "SYN-B", "Synthetic banarasi", "piece", 310000, 4, 1200),
 }
-POLICY = Policy(0, 5000, None, 1800, 15, 5000, 2500, 30, "half_up", 0, "TG")
+POLICY = Policy(0, 5000, None, 1800, 15, 5000, 2500, 30, 30, "half_up", 0, "TG")
 FACTS = RequirementFacts(
     lines=[Line(1, "kanjivaram", 20, "piece"), Line(2, "banarasi", 5, "piece")]
 )
@@ -479,7 +479,9 @@ def test_the_joiner_rule_is_the_same_for_every_string_the_renderer_validates() -
 def _result_with(
     fee: int, free_above: int | None = None, shipping_tax_bps: int = 1800
 ) -> dict[str, Any]:
-    policy = Policy(0, fee, free_above, shipping_tax_bps, 15, 5000, 2500, 30, "half_up", 0, "TG")
+    policy = Policy(
+        0, fee, free_above, shipping_tax_bps, 15, 5000, 2500, 30, 30, "half_up", 0, "TG"
+    )
     return engine_port.run_quote(
         build_request(
             date(2026, 10, 6),

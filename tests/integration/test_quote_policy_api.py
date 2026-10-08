@@ -29,7 +29,8 @@ FIELDS: dict[str, Any] = {
     "validity_days": 15,
     "new_advance_bps": 5000,
     "repeat_advance_bps": 2500,
-    "net_days": 30,
+    "new_net_days": 10,
+    "repeat_net_days": 30,
     "seller_state": "TS",
 }  # SYNTHETIC numbers, like the seeded policy: not a statement of any rate or freight
 
@@ -103,7 +104,7 @@ def test_an_owner_and_an_admin_publish_and_read_and_the_one_in_force_is_marked(f
     assert set(first.json()) == {"version_id", "version_no", "effective_from", "replayed"}
     second = publish(flow, t, "admin", shipping_flat_fee_paise=7500)
     assert second.status_code == 201 and second.json()["version_no"] == 2, second.text
-    future = publish(flow, t, "owner", effective=later(10), net_days=45)
+    future = publish(flow, t, "owner", effective=later(10), new_net_days=45)
     assert future.status_code == 201 and future.json()["version_no"] == 3, future.text
 
     for reader in ("owner", "admin"):
@@ -115,7 +116,7 @@ def test_an_owner_and_an_admin_publish_and_read_and_the_one_in_force_is_marked(f
             "the latest effective_from not after today; a future one is not in force yet"
         )
         assert rows[1]["id"] == second.json()["version_id"]
-        assert rows[1]["shipping_flat_fee_paise"] == 7500 and rows[0]["net_days"] == 45
+        assert rows[1]["shipping_flat_fee_paise"] == 7500 and rows[0]["new_net_days"] == 45 and rows[0]["repeat_net_days"] == 30
         assert rows[0]["effective_from"] == later(10) and rows[2]["effective_from"] == today()
         assert all(v["seller_state"] == "TS" and v["created_at"] for v in rows)
 
@@ -133,6 +134,8 @@ def test_the_database_fills_every_default_the_api_does_not(world: World) -> None
     assert row["tax_mode"] == "exclusive" and row["rounding_mode"] == "half_up"
     assert row["repeat_credit_limit_paise"] == 0 and row["shipping_free_above_paise"] is None
     assert row["required_inputs"] == ["delivery_state"]
+    assert row["gst_rate_bps"] == 500 and row["gst_effective_from"] == row["effective_from"]
+    assert row["shipping_tax_bps"] == 0, "this helper sends a shipping tax of its own"
 
 
 def test_everything_typed_comes_back_as_typed(world: World) -> None:
@@ -145,7 +148,9 @@ def test_everything_typed_comes_back_as_typed(world: World) -> None:
         "validity_days": 7,
         "new_advance_bps": 6000,
         "repeat_advance_bps": 1000,
-        "net_days": 0,
+        "new_net_days": 0,
+        "repeat_net_days": 180,
+        "gst_rate_bps": 1200,
         "tax_mode": "exclusive",
         "rounding_mode": "half_even",
         "repeat_credit_limit_paise": 900_000,
@@ -219,7 +224,7 @@ def test_a_replay_is_a_200_and_the_same_id_with_other_content_is_a_409(world: Wo
         "the same policy with its defaults written out is the same content"
     )
     assert count(world, t) == before
-    clash = publish(world, t, version=version, net_days=44)
+    clash = publish(world, t, version=version, new_net_days=44)
     assert clash.status_code == 409 and err(clash) == "conflict", clash.text
     assert count(world, t) == before
 
@@ -250,7 +255,11 @@ def test_a_malformed_body_is_refused_before_the_database(world: World) -> None:
     before = count(world, t)
     for bad in (
         {"seller_state": "ts"},
-        {"net_days": 181},
+        {"new_net_days": 181},
+        {"repeat_net_days": 181},
+        {"net_days": 30},
+        {"gst_rate_bps": 2801},
+        {"gst_effective_from": "2026-02-30"},
         {"tax_mode": "inclusive"},
         {"gst_bps": 500},
         {"shipping_flat_fee_paise": 1.5},

@@ -111,7 +111,8 @@ class QuoteWorld:
             "validity_days": 15,
             "new_advance_bps": 5000,
             "repeat_advance_bps": 2500,
-            "net_days": 30,
+            "new_net_days": 30,
+            "repeat_net_days": 30,
             "seller_state": "TS",
             **over,
         }

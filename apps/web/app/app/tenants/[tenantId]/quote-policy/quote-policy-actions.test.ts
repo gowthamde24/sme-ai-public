@@ -26,7 +26,8 @@ const GOOD: Record<string, string> = {
   validity_days: "7",
   new_advance: "50",
   repeat_advance: "25.5",
-  net_days: "30",
+  new_net_days: "10",
+  repeat_net_days: "45",
   credit_limit: "2500.50",
   seller_state: "XX",
   discount_ceiling: "0",
@@ -64,18 +65,18 @@ describe("publishQuotePolicyAction: what it sends", () => {
       effective_from: "2026-10-20",
       discount_ceiling_bps: 0,
       shipping_flat_fee_paise: 0,
-      shipping_tax_bps: 0,
       validity_days: 7,
       new_advance_bps: 5000,
       repeat_advance_bps: 2550,
-      net_days: 30,
+      new_net_days: 10,
+      repeat_net_days: 45,
       repeat_credit_limit_paise: 250_050,
       seller_state: "XX",
     });
   });
   it("sends no free-shipping threshold, tax mode, rounding mode or required inputs", async () => {
     await run();
-    for (const key of ["shipping_free_above_paise", "tax_mode", "rounding_mode", "required_inputs"]) expect(Object.keys(sentBody())).not.toContain(key);
+    for (const key of ["shipping_tax_bps", "shipping_free_above_paise", "tax_mode", "rounding_mode", "required_inputs", "gst_rate_bps", "gst_effective_from", "net_days"]) expect(Object.keys(sentBody())).not.toContain(key);
   });
   it("a form that carries shipping, tax, tenant, status or GST fields of its own is not believed: nothing but the eight fields and the id is read", async () => {
     await run({
@@ -91,9 +92,10 @@ describe("publishQuotePolicyAction: what it sends", () => {
       version_no: "99",
     });
     const body = sentBody();
-    expect([body.shipping_flat_fee_paise, body.shipping_tax_bps]).toEqual([0, 0]);
+    expect(body.shipping_flat_fee_paise).toBe(0);
+    expect(Object.keys(body)).not.toContain("shipping_tax_bps");
     expect(Object.keys(body).sort()).toEqual(
-      ["discount_ceiling_bps", "effective_from", "id", "net_days", "new_advance_bps", "repeat_advance_bps", "repeat_credit_limit_paise", "seller_state", "shipping_flat_fee_paise", "shipping_tax_bps", "validity_days"].sort(),
+      ["discount_ceiling_bps", "effective_from", "id", "new_advance_bps", "new_net_days", "repeat_advance_bps", "repeat_credit_limit_paise", "repeat_net_days", "seller_state", "shipping_flat_fee_paise", "validity_days"].sort(),
     );
   });
   it("revalidates the policy page so the list shows the new version", async () => {
@@ -114,8 +116,8 @@ describe("publishQuotePolicyAction: what it sends", () => {
     expect([sentBody(0).id, sentBody(1).id, sentBody(2).id]).toEqual([ID, ID, "66666666-6666-4666-8666-666666666666"]);
   });
   it("the edges are accepted: a start date of today, zero advances, zero credit, the longest validity, the biggest credit and discount", async () => {
-    await run({ effective_from: "2026-10-08", validity_days: "365", new_advance: "0", repeat_advance: "100", net_days: "180", credit_limit: "10000000", discount_ceiling: "100" });
-    expect(sentBody()).toMatchObject({ validity_days: 365, new_advance_bps: 0, repeat_advance_bps: 10_000, net_days: 180, repeat_credit_limit_paise: 1_000_000_000, discount_ceiling_bps: 10_000 });
+    await run({ effective_from: "2026-10-08", validity_days: "365", new_advance: "0", repeat_advance: "100", new_net_days: "180", repeat_net_days: "0", credit_limit: "10000000", discount_ceiling: "100" });
+    expect(sentBody()).toMatchObject({ validity_days: 365, new_advance_bps: 0, repeat_advance_bps: 10_000, new_net_days: 180, repeat_net_days: 0, repeat_credit_limit_paise: 1_000_000_000, discount_ceiling_bps: 10_000 });
   });
   it("spaces around the numbers are ignored", async () => {
     await run({ validity_days: " 7 ", new_advance: "  50", credit_limit: "2500.50  ", seller_state: " XX " });
@@ -138,7 +140,8 @@ describe("publishQuotePolicyAction: a wrong value is refused with a sentence BEF
     ["new_advance", "12.345"],
     ["new_advance", "-0.01"],
     ["repeat_advance", "٥٠"],
-    ["net_days", "181"],
+    ["new_net_days", "181"],
+    ["repeat_net_days", "181"],
     ["credit_limit", "10000000.01"],
     ["credit_limit", "1,000"],
     ["seller_state", "xx"],
