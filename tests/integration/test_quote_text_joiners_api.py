@@ -19,9 +19,9 @@ from fastapi.testclient import TestClient
 from quote_support import QuoteWorld
 
 SELLER = "TG"
-TELUGU = "క్‍ష"  # KA, virama, ZWJ, SSA
-MALAYALAM_CHILLU = "ന്‍"  # NA, virama, ZWJ (a chillu at the end of a word)
-LATIN_WITH_JOINER = "Syn‍thetic latin"
+TELUGU = "\u0c15\u0c4d\u200d\u0c37"  # KA, virama, ZWJ, SSA
+MALAYALAM_CHILLU = "\u0d28\u0d4d\u200d"  # NA, virama, ZWJ (a chillu at the end of a word)
+LATIN_WITH_JOINER = "Syn\u200dthetic latin"
 MAPPER = {
     "saree_type_to_categories": {
         "kanjivaram": ["kanjivaram"],
@@ -90,7 +90,7 @@ def test_a_product_name_with_a_joiner_after_an_indic_letter_renders_with_rendere
     )
     lines = text["text"].split("\n")
     assert name in lines  # on a line of its own, both joiners intact
-    assert "‍" in text["text"]
+    assert "\u200d" in text["text"]
     assert all(len(x) <= 60 for x in lines)
     assert (
         got.json() == out["text"]
@@ -111,7 +111,7 @@ def test_a_product_name_with_a_joiner_between_latin_letters_is_refused_and_the_a
     assert approval.json()["text"] is None and approval.json()["text_error"] == "quote_text_refused"
     got = client.get(url(qj, f"/quotes/{qid}/text"), headers=bearer(qj.sales))
     assert got.status_code == 409 and got.json()["error"]["code"] == "quote_text_refused"
-    assert "‍" not in got.text and "Syn" not in got.text
+    assert "\u200d" not in got.text and "Syn" not in got.text
     row = client.get(url(qj, f"/quotes/{qid}"), headers=bearer(qj.sales)).json()
     assert row["status"] == "approved" and row["outcome"] == "approved"
 
