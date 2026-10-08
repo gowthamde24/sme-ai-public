@@ -11,7 +11,7 @@ type Props = { action: Action; policyId: string; today: string; minDate: string 
 
 /**
  * Publish a new quote policy version. EVERY field starts empty: nothing is selected and there is no default of ours. The shipping is not an input: it is fixed at zero (the shop charges no courier)
- * and shown as one read-only line. There is no GST rate, price range or last-price field: those need a later database change.
+ * and shown as one read-only line. The days to pay the balance are two fields, one for new and one for repeat customers. There is no GST rate field yet: the database applies 5 % from the start date.
  *
  * The id comes from the page (one per render), so a second press is a retry. The body is keyed on that id: a new id from the page restarts the form (empty fields, the new id). After a SAVED version
  * the form gets a fresh id and empties its fields (the next version is a new record, not a replay) and the success sentence, which lives OUTSIDE the keyed body so the page's re-render cannot hide it,
@@ -71,7 +71,7 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress }:
         Publish a new version
       </h3>
       <p className="hint">A published version never changes. A new version replaces the one in force from its start date. Every field starts empty on purpose: type the shop&apos;s own numbers.</p>
-      <p className="hint">This page does not have a GST rate, a price range for each saree type or a last-price warning yet, because they need a later database change.</p>
+      <p className="hint">This page does not have a GST rate, a price range for each item type or a last-price warning yet. GST on a manual price is added at 5 % until a later change.</p>
       <input type="hidden" name="policy_id" value={id} />
 
       <label htmlFor="qp-from">Starts on</label>
@@ -86,8 +86,17 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress }:
       <label htmlFor="qp-repeat">Advance for a repeat customer (percent)</label>
       <input id="qp-repeat" name="repeat_advance" inputMode="decimal" autoComplete="off" required value={values.repeat_advance} onChange={change("repeat_advance")} disabled={pending} />
 
-      <label htmlFor="qp-net">Days of credit (the balance on a quote is due this many days after the quote date)</label>
-      <input id="qp-net" name="net_days" inputMode="numeric" autoComplete="off" required value={values.net_days} onChange={change("net_days")} disabled={pending} />
+      <fieldset aria-describedby="qp-net-hint" style={{ border: 0, padding: 0, margin: 0 }}>
+        <legend>Days to pay the balance</legend>
+        <p id="qp-net-hint" className="hint">
+          The balance on a quote is due this many days after the quote date, by the kind of customer.
+        </p>
+        <label htmlFor="qp-net-new">New customers (days)</label>
+        <input id="qp-net-new" name="new_net_days" inputMode="numeric" autoComplete="off" required value={values.new_net_days} onChange={change("new_net_days")} disabled={pending} />
+
+        <label htmlFor="qp-net-repeat">Repeat customers (days)</label>
+        <input id="qp-net-repeat" name="repeat_net_days" inputMode="numeric" autoComplete="off" required value={values.repeat_net_days} onChange={change("repeat_net_days")} disabled={pending} />
+      </fieldset>
 
       <label htmlFor="qp-credit">Most credit for one repeat customer (rupees)</label>
       <input id="qp-credit" name="credit_limit" inputMode="decimal" autoComplete="off" required aria-describedby="qp-credit-hint" value={values.credit_limit} onChange={change("credit_limit")} disabled={pending} />

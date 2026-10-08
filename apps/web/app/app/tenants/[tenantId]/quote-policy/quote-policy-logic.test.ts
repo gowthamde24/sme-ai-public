@@ -24,7 +24,8 @@ const GOOD: PolicyValues = {
   validity_days: "7",
   new_advance: "50",
   repeat_advance: "25.5",
-  net_days: "30",
+  new_net_days: "10",
+  repeat_net_days: "45",
   credit_limit: "2500.50",
   seller_state: "XX",
   discount_ceiling: "0",
@@ -159,17 +160,17 @@ describe("the policy as typed", () => {
     expect(Object.values(EMPTY_VALUES).every((v) => v === "")).toBe(true);
     expect(Object.keys(EMPTY_VALUES).sort()).toEqual([...FIELD_NAMES].sort());
   });
-  it("turns good text into the exact typed body, and only the nine fields of the input", () => {
+  it("turns good text into the exact typed body, and only the ten fields of the input", () => {
     const r = policyFromForm(GOOD, ID, TODAY);
     expect(r).toEqual({
       ok: true,
-      input: { id: ID, effectiveFrom: "2026-10-20", discountCeilingBps: 0, validityDays: 7, newAdvanceBps: 5000, repeatAdvanceBps: 2550, netDays: 30, repeatCreditLimitPaise: 250_050, sellerState: "XX" },
+      input: { id: ID, effectiveFrom: "2026-10-20", discountCeilingBps: 0, validityDays: 7, newAdvanceBps: 5000, repeatAdvanceBps: 2550, newNetDays: 10, repeatNetDays: 45, repeatCreditLimitPaise: 250_050, sellerState: "XX" },
     });
-    if (r.ok) expect(Object.keys(r.input).sort()).toEqual(["discountCeilingBps", "effectiveFrom", "id", "netDays", "newAdvanceBps", "repeatAdvanceBps", "repeatCreditLimitPaise", "sellerState", "validityDays"]);
+    if (r.ok) expect(Object.keys(r.input).sort()).toEqual(["discountCeilingBps", "effectiveFrom", "id", "newAdvanceBps", "newNetDays", "repeatAdvanceBps", "repeatCreditLimitPaise", "repeatNetDays", "sellerState", "validityDays"]);
   });
   it("the edges together: zero advances, zero credit, the longest validity, the biggest credit and discount are all accepted", () => {
-    const r = policyFromForm({ ...GOOD, validity_days: "365", new_advance: "0", repeat_advance: "100", net_days: "180", credit_limit: "10000000", discount_ceiling: "100" }, ID, TODAY);
-    expect(r.ok && r.input).toMatchObject({ validityDays: 365, newAdvanceBps: 0, repeatAdvanceBps: 10_000, netDays: 180, repeatCreditLimitPaise: MAX_PAISE, discountCeilingBps: 10_000 });
+    const r = policyFromForm({ ...GOOD, validity_days: "365", new_advance: "0", repeat_advance: "100", new_net_days: "180", repeat_net_days: "0", credit_limit: "10000000", discount_ceiling: "100" }, ID, TODAY);
+    expect(r.ok && r.input).toMatchObject({ validityDays: 365, newAdvanceBps: 0, repeatAdvanceBps: 10_000, newNetDays: 180, repeatNetDays: 0, repeatCreditLimitPaise: MAX_PAISE, discountCeilingBps: 10_000 });
   });
   it("trims spaces around every field", () => {
     const spaced = Object.fromEntries(Object.entries(GOOD).map(([k, v]) => [k, `  ${v}  `])) as PolicyValues;
@@ -192,8 +193,11 @@ describe("the policy as typed", () => {
     ["new_advance", "-1"],
     ["repeat_advance", "٥٠"],
     ["repeat_advance", "101"],
-    ["net_days", "181"],
-    ["net_days", "-1"],
+    ["new_net_days", "181"],
+    ["new_net_days", "-1"],
+    ["repeat_net_days", "181"],
+    ["repeat_net_days", "-1"],
+    ["repeat_net_days", "1.5"],
     ["credit_limit", "10000000.01"],
     ["credit_limit", "1,000"],
     ["credit_limit", "0.001"],
@@ -209,7 +213,7 @@ describe("the policy as typed", () => {
     expect(policyFromForm({ ...GOOD, [name]: value }, ID, TODAY)).toEqual({ ok: false, error: FIELD_TEXT[name] });
   });
   it("when several fields are wrong the first one in the form's order is named", () => {
-    expect(policyFromForm({ ...GOOD, net_days: "x", validity_days: "x" }, ID, TODAY)).toEqual({ ok: false, error: FIELD_TEXT.validity_days });
+    expect(policyFromForm({ ...GOOD, new_net_days: "x", validity_days: "x" }, ID, TODAY)).toEqual({ ok: false, error: FIELD_TEXT.validity_days });
   });
   it("an id that is not a canonical UUID is out of date", () => {
     expect(policyFromForm(GOOD, "x", TODAY)).toEqual({ ok: false, error: OUT_OF_DATE });
