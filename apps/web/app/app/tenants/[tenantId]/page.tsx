@@ -165,6 +165,17 @@ export default async function TenantPage({
           <>
             {" · "}
             <Link
+              href={`/app/tenants/${tenantId}/quote-policy`}
+              style={{ fontWeight: 600 }}
+            >
+              Quote policy →
+            </Link>
+          </>
+        )}
+        {(tenant.role === "owner" || tenant.role === "admin") && (
+          <>
+            {" · "}
+            <Link
               href={`/app/tenants/${tenantId}/privacy`}
               style={{ fontWeight: 600 }}
             >
