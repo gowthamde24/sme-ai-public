@@ -1,0 +1,66 @@
+/* ==========================================================================
+   Design v2 base: typography for the three Indic scripts, one focus style, selection colour, slim scrollbars and the
+   reduced-motion rule. Every selector starts with [data-ui="v2"]: nothing global (audited by audit:leaks).
+   No `important` is needed here: line heights are changed through Tailwind's own theme variables, so the utilities
+   (which read them) keep winning and the audit sees no shadowed utility.
+   ========================================================================== */
+[data-ui="v2"] {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  background-image: radial-gradient(circle, var(--v2-dot) 1px, transparent 1.2px);
+  background-size: 22px 22px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--v2-border-strong) transparent;
+}
+
+[data-ui="v2"] :where(h1, h2, h3) {
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+
+/* Telugu, Hindi and Kannada need more line height than Latin. */
+[data-ui="v2"]:lang(te),
+[data-ui="v2"]:lang(hi),
+[data-ui="v2"]:lang(kn) {
+  line-height: 1.7;
+}
+/* Kannada letters stack tall (a vowel mark and a sub-letter under one consonant): the tight leading utilities
+   (1.25 and 1.375 in Latin) never go below 1.4 there. */
+[data-ui="v2"]:lang(kn) {
+  --leading-tight: 1.4;
+  --leading-snug: 1.45;
+  --leading-hero: 1.4;
+}
+/* The same letters are wider and taller in Kannada, so the headline needs one size step less to keep the first
+   step card on the first screen (Stage 2 audit). Set through the theme variables, so the utilities still win. */
+[data-ui="v2"]:lang(kn) {
+  --text-3xl: 1.625rem;
+  --text-5xl: 2.625rem;
+  --text-6xl: 3rem;
+}
+
+[data-ui="v2"] ::selection {
+  background: var(--v2-brand);
+  color: var(--v2-on-brand);
+}
+
+/* One focus style for everything, visible in both modes. */
+[data-ui="v2"] :focus-visible {
+  outline: 2px solid var(--v2-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Every animation and transition off when the person asks for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"],
+  [data-ui="v2"] *,
+  [data-ui="v2"] *::before,
+  [data-ui="v2"] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

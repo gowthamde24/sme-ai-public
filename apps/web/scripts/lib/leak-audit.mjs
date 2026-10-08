@@ -42,7 +42,7 @@ export const buildPage = ({ legacyCss, v2Css, body }) =>
   `<!doctype html><html><head><meta charset="utf-8"><style id="legacy">${legacyCss}</style><style id="v2">${v2Css}</style></head><body>${body}</body></html>`;
 
 /** Runs inside the page. Sheets are told apart by the id of their <style>. */
-const PAGE_JS = `((allow) => {
+const PAGE_JS = `((allow, mode) => {
   // Flattens a sheet's rules, remembering the cascade layer and skipping @media / @supports blocks that are not active.
   const flat = (rules, layer = '') => rules.flatMap((r) => {
     if (r.selectorText) return [{ r, layer }];
@@ -51,15 +51,31 @@ const PAGE_JS = `((allow) => {
     if (r.media && !window.matchMedia(r.media.mediaText).matches) return [];
     return flat([...r.cssRules], r.constructor.name === 'CSSLayerBlockRule' ? (layer ? layer + '.' : '') + r.name : layer);
   });
-  const sheetOf = (id) => [...document.styleSheets].find((s) => s.ownerNode && s.ownerNode.id === id);
-  const legacy = sheetOf('legacy'), v2 = sheetOf('v2');
+  const text = (s) => { try { return [...s.cssRules].map((r) => r.cssText).join(''); } catch { return ''; } };
+  let legacy, v2, els;
+  if (mode === 'fixture') {
+    // Sheets are told apart by the id of their <style>; elements by their id.
+    const sheetOf = (id) => [...document.styleSheets].find((s) => s.ownerNode && s.ownerNode.id === id);
+    legacy = sheetOf('legacy'); v2 = sheetOf('v2');
+    els = [...document.querySelectorAll('#v2root, #v2root *')].filter((e) => e.id);
+  } else {
+    // The real page: the legacy sheet is the one that declares .shell and .card, the v2 sheet the one scoped to [data-ui="v2"].
+    const sheets = [...document.styleSheets];
+    legacy = sheets.find((s) => /\\.shell\\b/.test(text(s)) && /\\.card\\b/.test(text(s)));
+    v2 = sheets.find((s) => /data-ui="v2"/.test(text(s)));
+    if (!legacy || !v2) throw new Error('page mode: could not find the legacy sheet (' + !!legacy + ') and the v2 sheet (' + !!v2 + ') among ' + sheets.length + ' sheets');
+    if (legacy === v2) throw new Error('page mode: the legacy and v2 rules are in one sheet; they cannot be told apart');
+    els = [...document.querySelectorAll('[data-ui="v2"], [data-ui="v2"] *')].filter((e) => !['SCRIPT', 'STYLE'].includes(e.tagName));
+    els.forEach((e, i) => { if (!e.id) e.id = '__a' + i; });
+  }
+  const label = (e) => '#' + e.id + (mode === 'fixture' ? '' : ' <' + e.tagName.toLowerCase() + '> ' + String(e.getAttribute('class') || '').slice(0, 60));
   const legacyProps = new Set();
   for (const { r } of flat([...legacy.cssRules])) if (r.style) for (const p of r.style) if (!p.startsWith('--')) legacyProps.add(p);
-  const els = [...document.querySelectorAll('#v2root, #v2root *')].filter((e) => e.id);
   const v2Rules = flat([...v2.cssRules]);
-  const v2Declared = {}, lastUtility = {};
+  const v2Declared = {}, lastUtility = {}, autoMargin = {};
   for (const e of els) {
     v2Declared[e.id] = new Set();
+    autoMargin[e.id] = new Set();
     lastUtility[e.id] = {};
     for (const { r, layer } of v2Rules) {
       let hit = false;
@@ -68,6 +84,11 @@ const PAGE_JS = `((allow) => {
       for (const p of r.style) {
         if (p.startsWith('--')) continue;
         v2Declared[e.id].add(p);
+        if (p.startsWith('margin') && r.style.getPropertyValue(p) === 'auto') {
+          const sides = p === 'margin' ? ['left', 'right', 'top', 'bottom'] : /inline/.test(p) ? ['left', 'right'] : /block/.test(p) ? ['top', 'bottom'] : [p.slice(7)];
+          for (const side of sides) for (const q of ['margin-' + side, 'margin-inline-' + (side === 'left' ? 'start' : 'end'), 'margin-block-' + (side === 'top' ? 'start' : 'end')]) autoMargin[e.id].add(q);
+          autoMargin[e.id].add(p);
+        }
         if (layer === 'utilities') lastUtility[e.id][p] = r.style.getPropertyValue(p); // later rules win within the layer
       }
     }
@@ -80,13 +101,14 @@ const PAGE_JS = `((allow) => {
       e.style.setProperty(p, v, 'important');
       const expected = getComputedStyle(e).getPropertyValue(p);
       e.style.removeProperty(p);
-      if (actual !== expected) shadowed.push('#' + e.id + ' ' + p + ': computed ' + actual + ' but the utility says ' + expected);
+      if (actual !== expected) shadowed.push(label(e) + ' ' + p + ': computed ' + actual + ' but the utility says ' + expected);
     }
   }
   const snap = () => Object.fromEntries(els.map((e) => [e.id, Object.fromEntries([...legacyProps, ...v2Declared[e.id]].map((p) => [p, getComputedStyle(e).getPropertyValue(p)]))]));
   const withLegacy = snap();
   legacy.disabled = true;
   const without = snap();
+  legacy.disabled = false;
   const override = [], base = [];
   let allowListed = 0;
   for (const e of els) {
@@ -94,19 +116,23 @@ const PAGE_JS = `((allow) => {
       if (withLegacy[e.id][p] === without[e.id][p]) continue;
       const m = p.match(/^border-(top|right|bottom|left)-(color|style)$/);
       if (m && getComputedStyle(e).getPropertyValue('border-' + m[1] + '-width') === '0px') continue; // invisible border
-      const rec = '#' + e.id + ' ' + p + ': ' + withLegacy[e.id][p] + ' (v2 alone: ' + without[e.id][p] + ')';
-      if (v2Declared[e.id].has(p)) override.push(rec);
+      const rec = label(e) + ' ' + p + ': ' + withLegacy[e.id][p] + ' (v2 alone: ' + without[e.id][p] + ')';
+      if (autoMargin[e.id].has(p)) allowListed++; // an auto margin is resolved from the layout: its used value moves with the legacy body margin reset
+      else if (v2Declared[e.id].has(p)) override.push(rec);
       else if (allow.includes(p)) allowListed++;
       else base.push(rec);
     }
   }
   return { elements: els.length, legacyProps: legacyProps.size, override, base, shadowed, allowListed };
-})(__ALLOW__)`;
+})(__ALLOW__, __MODE__)`;
 
 export async function auditPage(tab, html) {
   await tab.setHtml(html);
-  return tab.eval(PAGE_JS.replace("__ALLOW__", JSON.stringify(BASE_ALLOW)));
+  return tab.eval(PAGE_JS.replace("__ALLOW__", JSON.stringify(BASE_ALLOW)).replace("__MODE__", '"fixture"'));
 }
+
+/** The same classification on the page the tab has loaded (the real, compiled landing page). */
+export const auditLoadedPage = (tab) => tab.eval(PAGE_JS.replace("__ALLOW__", JSON.stringify(BASE_ALLOW)).replace("__MODE__", '"page"'));
 
 /**
  * The detector's own test. It must tell apart (1) a layered, non-important utility under an unlayered legacy `button`

@@ -202,6 +202,7 @@ What the repository says (appendix has the exact lines):
     | allow | `apps/web/components/v2/*` | primitives and the shell (new; not `components/ui`, which is B's) |
     | allow | `apps/web/scripts/*` | i18n scripts, CSS-leak audit, screenshot and overflow scripts (new) |
     | allow | `apps/web/app/page.tsx`, `apps/web/app/page.test.tsx` | the landing at `/` |
+    | allow | `apps/web/app/landing/*` | the public landing route at `/landing` (Stage 2; owner-confirmed 2026-10-07) |
     | allow | `apps/web/app/login/page.tsx`, `apps/web/app/login/login-form.tsx` | login markup only |
     | allow | `apps/web/app/auth/*` | auth pages and forms; the `*actions*` deny keeps server actions out |
     | allow | `apps/web/app/app/*` | real screens and their tests; the denies below keep actions, routes and gated families out |

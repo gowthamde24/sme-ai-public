@@ -47,13 +47,13 @@ async function portIsFree(port) {
 }
 
 /** Starts one headless Chrome with remote debugging on `port` (default 9335). Returns { port, pid, stop }. */
-export async function startChrome(port = Number(process.env.DEBUG_PORT ?? 9335)) {
+export async function startChrome(port = Number(process.env.DEBUG_PORT ?? 9335), { hideScrollbars = false } = {}) {
   if (!(await portIsFree(port))) throw new Error(`debug port ${port} is already in use; not touching it (set DEBUG_PORT)`);
   const profile = path.join(os.tmpdir(), "sme-ai-audit-chrome-profile");
   fs.mkdirSync(profile, { recursive: true });
   const child = spawn(
     findChrome(),
-    ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "--disable-extensions", "about:blank"],
+    ["--headless=new", `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, "--no-first-run", "--no-default-browser-check", "--disable-extensions", ...(hideScrollbars ? ["--hide-scrollbars"] : []), "about:blank"],
     { stdio: "ignore" },
   );
   await waitFor(async () => (await fetch(`http://127.0.0.1:${port}/json/version`)).ok, "Chrome");
@@ -69,7 +69,7 @@ export async function startChrome(port = Number(process.env.DEBUG_PORT ?? 9335))
 }
 
 export class Tab {
-  static async open(port, { width = 1200, height = 800, dark = false } = {}) {
+  static async open(port, { width = 1200, height = 800, dark = false, reducedMotion = false, mobile = false } = {}) {
     const target = await (await fetch(`http://127.0.0.1:${port}/json/new?about:blank`, { method: "PUT" })).json();
     const ws = new WebSocket(target.webSocketDebuggerUrl);
     await new Promise((resolve, reject) => {
@@ -79,8 +79,18 @@ export class Tab {
     const tab = new Tab(ws, target.id, port);
     await tab.send("Page.enable");
     await tab.send("Runtime.enable");
-    await tab.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile: false });
-    await tab.send("Emulation.setEmulatedMedia", { features: [{ name: "prefers-color-scheme", value: dark ? "dark" : "light" }] });
+    await tab.send("Log.enable");
+    await tab.send("Emulation.setDeviceMetricsOverride", { width, height, deviceScaleFactor: 1, mobile });
+    await tab.send("Emulation.setEmulatedMedia", {
+      features: [
+        { name: "prefers-color-scheme", value: dark ? "dark" : "light" },
+        { name: "prefers-reduced-motion", value: reducedMotion ? "reduce" : "no-preference" },
+      ],
+    });
+    // Every Content-Security-Policy violation, from the first byte of every new document.
+    await tab.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: "window.__csp=[];document.addEventListener('securitypolicyviolation',function(e){window.__csp.push(e.violatedDirective+' '+(e.blockedURI||'inline'))});",
+    });
     return tab;
   }
 
@@ -90,6 +100,8 @@ export class Tab {
     this.port = port;
     this.n = 0;
     this.pending = new Map();
+    this.logs = []; // console errors and warnings, uncaught exceptions, browser log errors
+    this.loadWaiters = [];
     ws.addEventListener("message", (m) => {
       const msg = JSON.parse(m.data);
       if (msg.id && this.pending.has(msg.id)) {
@@ -97,7 +109,10 @@ export class Tab {
         this.pending.delete(msg.id);
         if (msg.error) reject(new Error(msg.error.message));
         else resolve(msg.result);
-      }
+      } else if (msg.method === "Log.entryAdded" && ["error", "warning"].includes(msg.params.entry.level)) this.logs.push(`${msg.params.entry.level}: ${msg.params.entry.text}`);
+      else if (msg.method === "Runtime.consoleAPICalled" && ["error", "warning"].includes(msg.params.type)) this.logs.push(`console.${msg.params.type}: ${msg.params.args.map((a) => a.value ?? a.description ?? "").join(" ")}`);
+      else if (msg.method === "Runtime.exceptionThrown") this.logs.push(`exception: ${msg.params.exceptionDetails.exception?.description ?? msg.params.exceptionDetails.text}`);
+      else if (msg.method === "Page.loadEventFired") this.loadWaiters.splice(0).forEach((f) => f());
     });
   }
 
@@ -105,6 +120,36 @@ export class Tab {
     const id = ++this.n;
     this.ws.send(JSON.stringify({ id, method, params }));
     return new Promise((resolve, reject) => this.pending.set(id, { resolve, reject }));
+  }
+
+  /** Navigates and waits for the load event (or 15 s), then a short settle for hydration. */
+  async goto(url, settleMs = 900) {
+    const loaded = new Promise((resolve) => this.loadWaiters.push(resolve));
+    await this.send("Page.navigate", { url });
+    await Promise.race([loaded, sleep(15000)]);
+    await sleep(settleMs);
+  }
+
+  async setCookie(url, name, value) {
+    await this.send("Network.setCookie", { url, name, value });
+  }
+
+  /** A real key press (keyDown + keyUp), so :focus-visible behaves as it does for a keyboard user. */
+  async pressTab() {
+    const base = { key: "Tab", code: "Tab", windowsVirtualKeyCode: 9, nativeVirtualKeyCode: 9 };
+    await this.send("Input.dispatchKeyEvent", { type: "rawKeyDown", ...base });
+    await this.send("Input.dispatchKeyEvent", { type: "keyUp", ...base });
+    await sleep(60);
+  }
+
+  /** Console errors and warnings, uncaught exceptions and browser log errors since the page opened. */
+  getLogs() {
+    return [...this.logs];
+  }
+
+  /** Content-Security-Policy violations seen since the last navigation. */
+  csp() {
+    return this.eval("window.__csp || []");
   }
 
   /** Replaces the page with this HTML (an inline document, so its stylesheets are same-origin readable). */

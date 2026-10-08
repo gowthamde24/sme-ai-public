@@ -12,4 +12,15 @@ const telugu = Noto_Sans_Telugu({ subsets: ["telugu"], variable: "--v2-font-telu
 const devanagari = Noto_Sans_Devanagari({ subsets: ["devanagari"], variable: "--v2-font-devanagari", display: "swap", preload: false });
 const kannada = Noto_Sans_Kannada({ subsets: ["kannada"], variable: "--v2-font-kannada", display: "swap", preload: false });
 
-export const v2FontClassName = [sans, display, telugu, devanagari, kannada].map((f) => f.variable).join(" ");
+const INDIC = { te: telugu, hi: devanagari, kn: kannada } as const;
+
+/**
+ * The font variables a page puts on its wrapper. Latin sans and display always; of the three Indic fonts only the one
+ * for the page's language (a Telugu page downloads Telugu, an English page none: the other scripts' names, shown in the
+ * language list, use the system's own font for that script). Without a language, all three. A font whose variable is
+ * not on the page is never requested (an unset variable falls back to system-ui in tokens.css).
+ */
+export function v2FontClassName(lang?: string): string {
+  const indic = lang === undefined ? [telugu, devanagari, kannada] : lang in INDIC ? [INDIC[lang as keyof typeof INDIC]] : [];
+  return [sans, display, ...indic].map((f) => f.variable).join(" ");
+}
