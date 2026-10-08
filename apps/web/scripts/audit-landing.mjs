@@ -1,4 +1,4 @@
-// npm run audit:landing [-- --engine chrome|webkit|firefox]: the page checks for the public landing page (/landing) on the real,
+// npm run audit:landing [-- --engine chrome|webkit|firefox] [-- --path /]: the page checks for the public landing page (/landing) on the real,
 // compiled page served by `next start` (run `npm run build` first). NOT part of `npm test` and NOT in CI (it needs a
 // browser); run it at every stage STOP. Chrome (default): the system Chrome over the DevTools Protocol, no dependency.
 // webkit (the Safari engine, not Safari itself) and firefox: through the playwright-core devDependency, local only,
@@ -25,6 +25,7 @@ import { ANIMATED_NOW, FLOW_TRANSITIONS, FOCUSABLE_COUNT, FOCUS_STATE, LAYOUT, S
 
 const argv = process.argv.slice(2);
 const engineName = argv.includes("--engine") ? argv[argv.indexOf("--engine") + 1] : "chrome";
+const route = argv.includes("--path") ? argv[argv.indexOf("--path") + 1] : "/landing"; // "/" is the same page since the flip
 const SIZES = [[360, 780], [390, 844], [768, 1024], [1024, 768], [1440, 800]];
 const ALLOWED_ANIMATED = new Set(["transform", "translate", "scale", "rotate", "opacity"]);
 
@@ -45,7 +46,7 @@ async function engineFor(name) {
 
 const engine = await engineFor(engineName);
 const app = await startNext();
-console.log(`engine ${engine.name}: ${engine.note}`);
+console.log(`engine ${engine.name}: ${engine.note}; route ${route}`);
 console.log(`next start pid ${app.pid} on ${app.base} (stopped by PID at the end)`);
 const tls = engine.needsHttps ? await startTlsProxy(app.base) : null;
 const base = tls ? tls.base : app.base;
@@ -57,7 +58,7 @@ async function withPage(opts, fn) {
   const page = await engine.open({ width, height, dark, reducedMotion: reduced });
   try {
     await page.setCookie(base, "sme_lang", lang);
-    await page.goto(`${base}/landing`, settle);
+    await page.goto(`${base}${route}`, settle);
     const result = await fn(page);
     const csp = await page.csp();
     const logs = page.getLogs();

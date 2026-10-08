@@ -12,6 +12,7 @@ import { ROOT } from "./lib/leak-audit.mjs";
 import { LANGS, startNext } from "./lib/next-server.mjs";
 
 const budget = JSON.parse(fs.readFileSync(path.join(ROOT, "scripts/budget.json"), "utf8"));
+const route = process.argv.includes("--route") ? process.argv[process.argv.indexOf("--route") + 1] : budget.route;
 const limit = budget.baselineGzipBytes + budget.allowanceGzipBytes;
 const fmt = (n) => n.toLocaleString("en-US");
 
@@ -20,7 +21,7 @@ console.log(`next start pid ${app.pid} on ${app.base} (stopped by PID at the end
 let failed = false;
 let chrome;
 try {
-  const html = await (await fetch(`${app.base}${budget.route}`)).text();
+  const html = await (await fetch(`${app.base}${route}`)).text();
   const srcs = [...new Set([...html.matchAll(/<script[^>]*\ssrc="([^"]+)"/g)].map((m) => m[1]))];
   let raw = 0;
   let gz = 0;
@@ -38,7 +39,7 @@ try {
   const css = [...html.matchAll(/<link[^>]*rel="stylesheet"[^>]*href="([^"]+)"/g)].map((m) => m[1]);
   let cssGz = 0;
   for (const href of css) cssGz += zlib.gzipSync(Buffer.from(await (await fetch(new URL(href, app.base))).arrayBuffer()), { level: 9 }).length;
-  console.log(`route ${budget.route}: ${srcs.length} script file(s), ${fmt(raw)} B raw, ${fmt(gz)} B gzip; ${css.length} stylesheet(s), ${fmt(cssGz)} B gzip (informational)`);
+  console.log(`route ${route}: ${srcs.length} script file(s), ${fmt(raw)} B raw, ${fmt(gz)} B gzip; ${css.length} stylesheet(s), ${fmt(cssGz)} B gzip (informational)`);
   const margin = limit - gz;
   console.log(`JS budget: baseline ${fmt(budget.baselineGzipBytes)} + allowance ${fmt(budget.allowanceGzipBytes)} = ${fmt(limit)} B gzip; total ${fmt(gz)} B; ${margin >= 0 ? "margin" : "OVER by"} ${fmt(Math.abs(margin))} B (${(100 * gz / limit).toFixed(1)}% of the limit; the page itself adds ${fmt(gz - budget.baselineGzipBytes)} B over the empty route)`);
   if (margin < 0) {
@@ -51,7 +52,7 @@ try {
     const tab = await Tab.open(chrome.port, { width: 1440, height: 900 });
     try {
       await tab.setCookie(app.base, "sme_lang", lang);
-      await tab.goto(`${app.base}${budget.route}`, 1200);
+      await tab.goto(`${app.base}${route}`, 1200);
       const fonts = await tab.eval(`performance.getEntriesByType('resource').filter((e) => /\\.(woff2?|ttf|otf)(\\?|$)/.test(e.name)).map((e) => [e.name.split('/').pop(), e.encodedBodySize])`);
       const total = fonts.reduce((a, [, n]) => a + n, 0);
       console.log(`fonts a ${lang} visitor downloads (informational): ${fonts.length} file(s), ${fmt(total)} B`);
