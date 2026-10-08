@@ -172,6 +172,17 @@ export default async function TenantPage({
             </Link>
           </>
         )}
+        {tenant.role === "owner" && (
+          <>
+            {" · "}
+            <Link
+              href={`/app/tenants/${tenantId}/suppression`}
+              style={{ fontWeight: 600 }}
+            >
+              Suppression keys →
+            </Link>
+          </>
+        )}
       </nav>
 
       <nav aria-label="Records" className="tabs">
