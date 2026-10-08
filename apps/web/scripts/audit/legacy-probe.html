@@ -1,0 +1,59 @@
+<div id="legacy-probe">
+  <main class="shell wide">
+    <h1>Workspace</h1>
+    <h2>Section heading</h2>
+    <p>A paragraph with a <a href="#probe">link inside a sentence</a>.</p>
+    <nav class="tabs"><a href="#probe" aria-current="page">Leads</a><a href="#probe">Orders</a></nav>
+    <div class="row between"><span>Left</span><a class="button" href="#probe">Open</a></div>
+    <div class="row">
+      <button type="button">Save</button>
+      <button type="button" class="secondary">Cancel</button>
+      <button type="button" disabled>Disabled</button>
+      <a class="tap" href="#probe">A tap target</a>
+    </div>
+    <form class="card" action="#probe">
+      <label for="probe-name">Name</label>
+      <input id="probe-name" name="name" type="text" />
+      <label for="probe-note">Note</label>
+      <textarea id="probe-note" name="note"></textarea>
+      <label for="probe-pick">Pick</label>
+      <select id="probe-pick" name="pick"><option>One</option><option>Two</option></select>
+      <label><input type="checkbox" name="agree" /> A checkbox</label>
+      <label><input type="radio" name="r" /> A radio</label>
+      <p class="hint">A hint under a field.</p>
+      <p class="error" role="alert">An error message.</p>
+      <p class="notice" role="status">A notice.</p>
+    </form>
+    <section class="card card-compact"><p class="hint-block">A hint block.</p><p class="plain-text">Plain text.</p><blockquote class="quote-text">A quoted text.</blockquote></section>
+    <table><thead><tr><th>Column</th><th>Other</th></tr></thead><tbody><tr><td>Cell</td><td>Cell</td></tr></tbody></table>
+    <p>
+      <span class="badge">Plain</span>
+      <span class="badge badge-priority">Priority</span>
+      <span class="badge badge-worth-reviewing">Worth reviewing</span>
+      <span class="badge badge-maybe">Maybe</span>
+      <span class="badge badge-low-priority">Low</span>
+      <span class="badge badge-hidden">Hidden</span>
+      <span class="badge badge-good">Good</span>
+      <span class="badge badge-bad">Bad</span>
+      <span class="badge tap">Tap badge</span>
+    </p>
+    <dl class="summary"><dt>Term</dt><dd>Definition</dd></dl>
+    <article class="review-card">
+      <header class="review-card-header"><strong>Acme Traders</strong><span class="badge">Score</span></header>
+      <ul class="evidence-list">
+        <li class="evidence-item"><dl><dt>Source</dt><dd>A synthetic page</dd></dl></li>
+        <li class="evidence-item"><dl><dt>Quote</dt><dd>Synthetic text</dd></dl></li>
+      </ul>
+      <details class="factor-breakdown">
+        <summary class="tap">Why this score</summary>
+        <ul class="factors-grid"><li class="factor-item">Factor one</li><li class="factor-item">Factor two</li></ul>
+      </details>
+      <div class="review-actions">
+        <button type="button" class="button-good">Good</button>
+        <button type="button" class="button-maybe">Maybe</button>
+        <button type="button" class="button-bad">Bad</button>
+      </div>
+    </article>
+    <div class="sticky-actions sticky"><button type="button">Sticky action</button></div>
+  </main>
+</div>

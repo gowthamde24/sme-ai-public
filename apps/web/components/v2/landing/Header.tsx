@@ -20,7 +20,7 @@ const NAV: [string, LandingKey][] = [
 
 export function Header({ t, lang, theme }: { t: LandingT; lang: Lang; theme?: Theme }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
+    <header className="[position:sticky] top-0 z-30 border-b border-line bg-bg/90 backdrop-blur">
       <div className={`${container} flex min-h-16 items-center gap-3 py-2`}>
         <a href="#top" className="rounded-md" aria-label={BRAND_NAME}>
           <Wordmark />

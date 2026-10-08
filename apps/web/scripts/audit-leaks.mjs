@@ -5,10 +5,14 @@
 //      + the probe markup), in light and dark.
 //   3. PAGE MODE (Stage 2): the real, compiled /landing served by `next start` (run `npm run build` first), in light and
 //      dark and in all four languages: the same classification on every element inside [data-ui="v2"], with the legacy
-//      sheet found by content. Then the REVERSE audit: soft-navigate from the header's "Sign in" link to the legacy
-//      /login page and compare the computed styles of every element with the v2 sheet enabled and disabled.
+//      sheet found by content. Then a soft navigation from the header's "Sign in" link to /login (the v2 sheet stays in the
+//      document; no existing custom property is overridden).
+//      And the LEGACY PROBE (Stage 3): scripts/audit/legacy-probe.html, markup built from the real legacy class names, is
+//      injected into the page (outside [data-ui="v2"]) and every computed property of every probe element is compared
+//      with the v2 sheet on and off. It replaces "navigate to a legacy page" as the proof that v2 does not reach the legacy
+//      screens, because no screen that loads without a session is a legacy screen any more.
 // Exit 1 if: a source rule fails, the detector cannot tell a leak from no leak, any OVERRIDE leak or SHADOWED utility
-// exists, any BASE leak is outside the allow-list, or the legacy page changes when the v2 sheet is toggled.
+// exists, any BASE leak is outside the allow-list, or the legacy probe changes when the v2 sheet is toggled.
 // `--source-only` skips the browser steps; `--fixture-only` skips page mode; `--path /` audits "/" instead of /landing.
 import fs from "node:fs";
 import path from "node:path";
@@ -55,6 +59,29 @@ const REVERSE_JS = `(() => {
 
 const pagePath = process.argv.includes("--path") ? process.argv[process.argv.indexOf("--path") + 1] : "/landing";
 
+/** Injects the legacy probe and compares every standard property of its elements with the v2 sheet on and off. */
+const PROBE_JS = (html) => `(() => {
+  const text = (s) => { try { return [...s.cssRules].map((r) => r.cssText).join(''); } catch { return ''; } };
+  const sheets = [...document.styleSheets];
+  const v2 = sheets.find((s) => /data-ui="v2"/.test(text(s)));
+  const legacy = sheets.find((s) => /\\.shell\\b/.test(text(s)) && /\\.card\\b/.test(text(s)));
+  if (!v2 || !legacy) throw new Error('probe: v2 sheet ' + !!v2 + ', legacy sheet ' + !!legacy);
+  document.body.insertAdjacentHTML('beforeend', ${JSON.stringify(html)});
+  const els = [...document.querySelectorAll('#legacy-probe, #legacy-probe *')];
+  const snap = () => els.map((e) => { const cs = getComputedStyle(e); return Object.fromEntries([...cs].filter((p) => !p.startsWith('--')).map((p) => [p, cs.getPropertyValue(p)])); });
+  const both = snap();
+  v2.disabled = true; const withoutV2 = snap(); v2.disabled = false;
+  legacy.disabled = true; const withoutLegacy = snap(); legacy.disabled = false;
+  const diffs = [], legacyEffect = new Set();
+  els.forEach((e, i) => {
+    for (const p of Object.keys(both[i])) {
+      if (both[i][p] !== withoutV2[i][p]) diffs.push(e.tagName.toLowerCase() + '.' + String(e.className).slice(0, 30) + ' ' + p + ': ' + withoutV2[i][p] + ' -> ' + both[i][p]);
+      if (both[i][p] !== withoutLegacy[i][p]) legacyEffect.add(e.tagName.toLowerCase() + ' ' + p);
+    }
+  });
+  return { elements: els.length, diffs, legacyEffect: legacyEffect.size, classes: new Set([...document.querySelectorAll('#legacy-probe [class]')].flatMap((e) => String(e.className).split(/\\s+/))).size };
+})()`;
+
 async function pageMode(chrome) {
   const app = await startNext();
   console.log(`next start pid ${app.pid} on ${app.base} (stopped by PID at the end)`);
@@ -79,7 +106,7 @@ async function pageMode(chrome) {
         }
       }
     }
-    // Reverse audit: soft navigation keeps the v2 sheet in the document; the legacy page must not change because of it.
+    // Soft navigation keeps the v2 sheet in the document (Stage 0 finding); the legacy probe then proves it does not reach legacy markup.
     for (const dark of [false, true]) {
       const tab = await Tab.open(chrome.port, { dark });
       try {
@@ -89,11 +116,27 @@ async function pageMode(chrome) {
         while (Date.now() - t0 < 10000 && (await tab.eval("location.pathname")) !== "/login") await sleep(150);
         await sleep(800);
         const r = await tab.eval(REVERSE_JS);
-        console.log(`reverse audit, ${dark ? "dark" : "light"}: landed on ${r.path}; v2 sheet still in the document=${r.v2SheetPresent}; legacy-page elements compared=${r.elements}; properties whose computed value changes with the v2 sheet on/off=${r.diffs.length}; existing custom properties it overrides=${r.overridden.length}; new custom properties it adds on :root (Tailwind theme variables, unused by the legacy pages)=${r.added}`);
+        // Since Stage 3 /login is a v2 page, so html and body size depend on v2 content and a property-by-property comparison of
+        // "the legacy page" means nothing here: the legacy probe below is the comparison. What this step still proves: the soft
+        // navigation reaches /login with the v2 sheet in the document, and the sheet overrides no existing custom property.
+        console.log(`soft navigation, ${dark ? "dark" : "light"}: landed on ${r.path}; v2 sheet still in the document=${r.v2SheetPresent}; existing custom properties it overrides=${r.overridden.length}; new custom properties it adds on :root (Tailwind theme variables, unused by the legacy pages)=${r.added}`);
         if (r.path !== "/login") fail("the soft navigation from the landing did not reach /login");
-        if (!r.v2SheetPresent) console.log("  note: the v2 sheet was not in the document after the soft navigation, so there was nothing to leak (the comparison is vacuous)");
-        if (r.diffs.length) fail(`reverse audit ${dark ? "dark" : "light"}: the v2 sheet changes the legacy page: ${r.diffs.slice(0, 8).join("; ")}`);
-        if (r.overridden.length) fail(`reverse audit ${dark ? "dark" : "light"}: the v2 sheet overrides existing custom properties: ${r.overridden.slice(0, 8).join("; ")}`);
+        if (!r.v2SheetPresent) fail("the v2 sheet is not in the document after the soft navigation: the probe below would test nothing");
+        if (r.overridden.length) fail(`soft navigation ${dark ? "dark" : "light"}: the v2 sheet overrides existing custom properties: ${r.overridden.slice(0, 8).join("; ")}`);
+      } finally {
+        await tab.close();
+      }
+    }
+    // Legacy probe: legacy markup with the v2 sheet in the document, on a phone width too (the legacy sheet has phone rules).
+    const probeHtml = fs.readFileSync(path.join(ROOT, "scripts/audit/legacy-probe.html"), "utf8");
+    for (const [width, dark] of [[1200, false], [1200, true], [390, false], [390, true]]) {
+      const tab = await Tab.open(chrome.port, { width, height: 800, dark });
+      try {
+        await tab.goto(`${app.base}${pagePath}`);
+        const r = await tab.eval(PROBE_JS(probeHtml));
+        console.log(`legacy probe, ${width}px ${dark ? "dark" : "light"}: ${r.elements} elements, ${r.classes} legacy classes used; properties the legacy sheet itself changes=${r.legacyEffect} (the probe is not vacuous); properties that change with the v2 sheet on/off=${r.diffs.length}`);
+        if (!r.legacyEffect) fail("the legacy probe is vacuous: the legacy sheet changes nothing on it");
+        if (r.diffs.length) fail(`legacy probe ${width}px ${dark ? "dark" : "light"}: the v2 sheet changes legacy markup: ${r.diffs.slice(0, 8).join("; ")}`);
       } finally {
         await tab.close();
       }
