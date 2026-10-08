@@ -81,3 +81,19 @@ cd e2e && npm ci && npm run install-browser && npm run setup-users && npm run au
 ## 8. After the rebase onto `origin/main` (01d4d77, 2026-10-08)
 
 The flip (`web/port-flip`, PR #11) is merged, so the branch was rebased onto `origin/main` (14 commits, no conflicts). Re-run on the rebased tree: forbidden-path list against `origin/main`: empty; test files against `origin/main`: only `A` (6 new files); guarded repository paths: empty diff; the only new non-test paths under `app/` are the two layouts (plus the skin-contract tests under `app/auth/`); `npm ci` (npm 10.9.2), lint, typecheck, build exit 0; full web suite 117 files, 1,790 tests (main gained the follow-up and suppression-key tests); the 7 existing auth and login test files: 90 tests, unchanged and passing; the 6 new Stage 3 test files: 51 tests. The browser audits above ran on the pre-rebase tree; nothing under `app/login`, `app/auth`, `components/v2` or `i18n` was touched by the merged commits, so they were not repeated.
+
+## 9. Audits after the rebase
+
+Re-run on the rebased head (on `origin/main` 01d4d77, which had not moved; no code changed; fresh build of this head; no engine hung). All exit 0.
+
+| Audit | Chrome | WebKit 26.6 | Firefox 155.0 |
+|---|---|---|---|
+| `audit:auth` | 108 ok, 0 FAIL | 108 ok, 0 FAIL | 108 ok, 0 FAIL |
+| `audit:landing --path /` | 55 ok, 0 FAIL | 55 ok, 0 FAIL | 55 ok, 0 FAIL |
+| `audit:landing` (`/landing`) | 55 ok, 0 FAIL | 55 ok, 0 FAIL | 55 ok, 0 FAIL |
+
+Each of those runs: 0 CSP violations and 0 console errors or warnings (`audit:auth` 107 page loads, `audit:landing` 54); Firefox also prints the 8 known "preloaded font not used" warnings on the landing (Stage 2 report, finding 1).
+
+`audit:leaks` (page mode, Chrome only: `en`, `te`, `hi`, `kn`, light and dark = 8 audits per path, then the legacy probe at 1200 and 390 px, light and dark = 4 probes per path): `/login`, `/auth/forgot`, `/auth/confirm` (error state), `/auth/confirm` with a token, `/` and `/landing` each exit 0, every audit OVERRIDE 0, SHADOWED 0, BASE 0, CSP violations 0, and every probe 0 properties changed by the v2 sheet.
+
+`audit:budget`: `/login` 181,259 B gzip and `/landing` 184,010 B gzip, against 217,009 B (margins 35,750 and 32,999).
