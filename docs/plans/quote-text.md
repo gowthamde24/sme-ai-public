@@ -48,7 +48,10 @@ two digits, removing trailing decimal zeroes: 500 -> 5%, 1250 -> 12.5%.
 Money tokens never wrap internally. Display long words wrap deterministically.
 
 All strings/keys reject control/format/surrogate and Unicode line/paragraph
-separator characters (includes bidi controls, zero-width formatting and newline).
+separator characters (includes bidi controls, zero-width formatting and newline),
+except that since 1.1.0 U+200C and U+200D are allowed directly after an Indic
+letter or mark (U+0900..U+0DFF); anywhere else they are still refused. Since 1.2.0
+a shipping line whose amount is zero is not printed. Versions: `packages/pure/quote_text/VERSIONS.md`.
 Supplied display * _ ~ and backticks become spaces; whitespace collapses. A
 markup-only/blank display value rejects. No numeric amounts are recalculated:
 integer conservation checks validate line subtotal, discounts, net+tax=gross,
@@ -70,7 +73,8 @@ decision occurs. Due date must not precede issuance.
 Trace/reason lists, line labels and all nested shapes are bounded before hashing,
 formatting or per-line validation. Trace.text has no control characters either.
 Canonical JSON sorts keys, uses compact separators and ASCII escaping, integers
-only. Hash = sha256 of `{renderer_version: "1.0.0", inputs: request}`. All supplied
+only. Hash = sha256 of `{renderer_version: V, inputs: request}`, with V the renderer's
+version ("1.2.0" today; the version is part of the hash). All supplied
 metadata participates even when not printed. Input is never mutated/shared.
 Tests use the real quote engine in tests only, synthetic JSON fixtures and 250
 seeded inclusive/exclusive cases parsing every printed amount back to paise.

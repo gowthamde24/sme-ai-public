@@ -504,8 +504,9 @@ mutation runs failed a test; no mutation scripts or mutated implementation remai
 ## quote_text 1.1.0 — U+200C / U+200D in product names (branch quote-text-joiners)
 
 - Checklist row: "The pinned quote-text renderer ... still refuses U+200C and U+200D in a product name"
-  (`docs/pre-pilot-checklist.md`). The pure package side is done; the row stays open until lane A adopts 1.1.0
-  (adapter allow-list, pins, an end-to-end test) — list below. Lane A consolidates this note into the checklist.
+  (`docs/pre-pilot-checklist.md`). The pure package side is done. **Adopted by lane A on `api/quote-text-1-2-0`**
+  (adapter allow-list, pins, an end-to-end test; the list below is the record) and consolidated into the checklist
+  (two rows: the adoption is `[x]`, the alignment decisions stay `[ ]`).
 - New renderer version **1.1.0** (minor: behaviour change). `RENDERER_VERSION`, `SUPPORTED_VERSIONS` and
   `renderer_for(version)` are in `packages/pure/quote_text/__init__.py`; 1.0.0 is frozen as `quote_text/v1_0_0.py`,
   byte-identical to the old `__init__.py` (sha256 `a6717e52...9387`, pinned in a test). Package doc: `VERSIONS.md`.
@@ -559,21 +560,32 @@ Each: temporary edit, the package tests, `git checkout` of the file. 29 killed; 
 First run of the pass had one harness bug (a `None` replacement truncated `__init__.py`); restored from git and
 verified equal to HEAD before the rerun. Nothing survives except the two equivalents. No mutation script is committed.
 
-### What lane A must change to adopt 1.1.0 (not done here)
+### What lane A changed to adopt 1.2.0 (done on `api/quote-text-1-2-0`)
 
-1. `services/ai-api/app/quotes/text_port.py`: `ALLOWED_RENDERER_VERSIONS` `{"1.0.0"}` to `{"1.2.0"}` (fail closed; the app
-   never re-renders from a stored 1.0.0 text, so 1.0.0 need not stay allowed; `quote_text.renderer_for("1.0.0")` exists if that changes).
-   Merging the package without the API pin change breaks the API (text_port.py refuses renderer 1.2.0) and its tests, so the package change and the API change must be in the same PR.
-2. `services/ai-api/tests/test_quotes_text_port.py`: the `frozenset({"1.0.0"})` assertion (line ~75), `renderer_version == "1.0.0"`
-   (~85), `GOLDEN_RENDER_HASH` (the hash changes because the version is hashed; `GOLDEN_TEXT_SHA` must NOT change), and a new joiner
-   case (a Telugu / Malayalam-chillu product name renders; a joiner between Latin letters still gives `quote_text_refused`).
-3. A differential test in the app (it may import both): `app.requirements.capture_text.strip_invisible` keeps a joiner exactly where
-   `quote_text._unsafe` accepts it, so the two copies of the rule cannot drift.
-4. An integration test through the real API (lane A's stack): product with a joiner name, quote approved, customer text renders,
-   `renderer_version == "1.1.0"`. Check `tests/integration/test_quote_api.py` (only asserts `renderer_version` is truthy).
-5. Mocks/fixtures that print the version: `apps/web/lib/api/quotes-fixtures.ts` (`renderer_version: "1.0.0"`), cosmetic.
-6. `tests/rehearsal/report.py` line ~383 states the renderer still refuses joiners: update the wording after adoption.
-7. Docs: `docs/plans/quote-text.md` ("Hash = sha256 of {renderer_version: "1.0.0", ...}" and the "reject control/format ..." paragraph),
-   `docs/checklist-notes/A.md` row about `packages/pure/quote_text/__init__.py (_string)`, and the `docs/pre-pilot-checklist.md` row 254.
-8. No migration, pgTAP or RLS change: no database column stores the renderer version or the rendered text (the text is rendered on
-   demand from the stored approved row). Decide the CSV-rule alignment (cross-lane note above) and the Co/Cn gap.
+`quote_text` 1.2.0 is the package's current version: 1.1.0 allows U+200C / U+200D after an Indic letter or mark; 1.2.0 leaves out each
+shipping line whose amount is zero (`packages/pure/quote_text/VERSIONS.md`); 1.0.0 and 1.1.0 are frozen modules. The package alone breaks the
+API (the adapter refused 1.2.0), so the package and the API change are one PR. Where each item landed:
+
+1. **Done.** `services/ai-api/app/quotes/text_port.py`: `ALLOWED_RENDERER_VERSIONS = {"1.2.0"}` (fail closed). Only 1.2.0: no stored quote needs an
+   older renderer (see 8), and the older versions are frozen modules the adapter never loads.
+2. **Done.** `services/ai-api/tests/test_quotes_text_port.py`: the allow-list and `renderer_version == "1.2.0"` asserts; `GOLDEN_RENDER_HASH`
+   re-derived with an independent implementation of the documented hash (it reproduces the 1.0.0 value first); `GOLDEN_TEXT_SHA` unchanged,
+   proved against the frozen 1.0.0 / 1.1.0 modules; joiner cases (Telugu, Kannada, Malayalam, Devanagari render; a joiner between Latin letters,
+   at the start, after a space, after a digit, twice in a row and next to another format character are refused); zero, free and non-zero shipping.
+   The same cases through the routes are in `tests/test_quotes_routes.py`.
+3. **Done.** `services/ai-api/tests/test_quote_text_joiner_rule.py`: capture's `strip_invisible` changes a string exactly when the renderer's
+   `_unsafe` refuses it, on all 54,240 strings of length 1 to 4 over 15 characters (boundary code points of the Indic range included).
+   Mutated in both places, it fails.
+4. **Done.** `tests/integration/test_quote_text_joiners_api.py` (real stack, real API): a product named with a Telugu joiner and a Malayalam
+   chillu, quote approved, text renders, `renderer_version == "1.2.0"`; a Latin joiner name is `quote_text_refused` with the approval standing; the
+   shipping lines follow the policy. `tests/integration/test_quote_api.py` only asserts that `renderer_version` is truthy and was left alone.
+5. **Done.** `apps/web/lib/api/quotes-fixtures.ts`: the fixture prints `1.2.0` (cosmetic).
+6. **Done.** `tests/rehearsal/report.py`: the wording about joiners.
+7. **Done.** `docs/plans/quote-text.md` (the joiner exception, zero shipping, the hash text), `docs/plans/customer-zero-intake-gap.md` section 9,
+   `docs/checklist-notes/A.md`, `docs/handoff/next.md` and `docs/pre-pilot-checklist.md` (the `[x]` row and a new `[ ]` row).
+8. **No migration, pgTAP or RLS change**: checked, no column, message or log stores the renderer version or the rendered text; the text is
+   rendered on demand from the stored approved row (`service.render_text`), so an approved quote is re-rendered with 1.2.0 the next time its text
+   is asked for. Lane C's report line "a quote already created stays pinned to its renderer version" is NOT true in the application (only the
+   ENGINE version is stored and checked); the pin exists in the package (`renderer_for`) for anyone who stores a text. **Still open** (the owner's
+   call, in the checklist): the CSV-rule alignment (a joiner anywhere on import, only after an Indic letter or mark in the renderer) and the
+   private-use / unassigned gap (a possible 1.3.0).
