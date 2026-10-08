@@ -75,7 +75,9 @@ function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action
             href={`/app/tenants/${tenantId}/customers/new`}
             className="tap"
             onClick={(event) => {
-              event.preventDefault(); // restart here with fresh ids; the link itself still works without script or in a new tab
+              // A click with a modifier key (new tab, new window, download) or with a button other than the primary one is the browser's own: leave it alone.
+              if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+              event.preventDefault(); // restart here with fresh ids; the link itself still works without script
               onAnother();
             }}
           >

@@ -107,6 +107,42 @@ describe("CustomerForm", () => {
       expect(ids(container)).toEqual([IDS_B.company, IDS_B.contact, IDS_B.lead]);
       expect(screen.getByLabelText("E-mail (optional)")).toHaveValue("");
     });
+    it.each([
+      ["Ctrl", { ctrlKey: true }],
+      ["Cmd", { metaKey: true }],
+      ["Shift", { shiftKey: true }],
+      ["Alt", { altKey: true }],
+      ["a non-primary button", { button: 2 }],
+      ["the middle button", { button: 1 }],
+    ])("a click with %s is left to the browser: not prevented, and the form is not restarted", async (_name, init) => {
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: true, leadId: IDS.lead, contactId: IDS.contact, name: "Synthetic Asha" }));
+      render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
+      type();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      await screen.findByRole("status");
+      const link = screen.getByRole("link", { name: "Add another customer" });
+      expect(link).toHaveAttribute("href", `/app/tenants/${T}/customers/new`);
+      // Record whether OUR handler prevented the click, then stop it here so jsdom does not try to navigate (a real browser would open the tab or window).
+      let preventedByUs: boolean | undefined;
+      const record = (e: MouseEvent) => {
+        preventedByUs = e.defaultPrevented;
+        e.preventDefault();
+      };
+      document.addEventListener("click", record);
+      fireEvent.click(link, init);
+      document.removeEventListener("click", record);
+      expect(preventedByUs).toBe(false); // the browser may open a new tab or window
+      expect(screen.getByRole("status")).toHaveTextContent("Added Synthetic Asha."); // this page is left as it was
+    });
+    it("a plain primary click is still handled here (prevented) and restarts the form", async () => {
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: true, leadId: IDS.lead, contactId: IDS.contact, name: "Synthetic Asha" }));
+      render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
+      type();
+      await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+      await screen.findByRole("status");
+      expect(fireEvent.click(screen.getByRole("link", { name: "Add another customer" }), { button: 0 })).toBe(false);
+      expect(screen.queryByRole("status")).toBeNull();
+    });
     it("a re-render with the SAME ids keeps what the person typed and the swapped contact id", async () => {
       const FRESH = "77777777-7777-4777-8777-777777777777";
       const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "That e-mail is already used by another person.", nextContactId: FRESH }));
