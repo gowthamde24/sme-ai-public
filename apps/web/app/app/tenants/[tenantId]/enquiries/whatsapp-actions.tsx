@@ -1,9 +1,14 @@
 import Link from "next/link";
 
-import type { WhatsappView } from "./whatsapp-view";
 import { NO_POLICY_NOTE, NOTHING_SENT, WHATSAPP_SENTENCES } from "@/lib/whatsapp/sentences";
 
-type Props = { tenantId: string; quoteId: string; view: WhatsappView };
+import { SentOnWhatsappForm } from "./sent-on-whatsapp-form";
+import type { SentMessageState } from "./sent-on-whatsapp-actions";
+import type { WhatsappView } from "./whatsapp-view";
+
+/** `sent` is the "I sent it on WhatsApp" form: the server action already bound to this workspace and quote, and the id the page made for this render. Without it the button is not shown. */
+export type SentOnWhatsapp = { action: (prev: SentMessageState, formData: FormData) => Promise<SentMessageState>; touchId: string };
+type Props = { tenantId: string; quoteId: string; view: WhatsappView; sent?: SentOnWhatsapp | null };
 
 /**
  * The WhatsApp controls of an APPROVED quote, under "Copy text" (which is always there). A server component with NO number, NO text and NO link to WhatsApp in it: "Open in WhatsApp" is a link to this site's own redirect route
@@ -12,7 +17,7 @@ type Props = { tenantId: string; quoteId: string; view: WhatsappView };
  * What is shown, in this order: a closed-code sentence if the redirect sent the person back; then, for an expired quote, only the sentence that it expired; for a gate word, the sentence for that word (and for `consent` a link to the
  * consent page); and only if the database's own gate lets the channel through, the controls.
  */
-export function WhatsappActions({ tenantId, quoteId, view }: Props) {
+export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props) {
   const route = `/app/tenants/${tenantId}/quotes/${quoteId}/whatsapp`;
   return (
     <div aria-labelledby="whatsapp-heading" className="whatsapp-actions">
@@ -67,6 +72,7 @@ export function WhatsappActions({ tenantId, quoteId, view }: Props) {
               {NO_POLICY_NOTE}
             </p>
           ) : null}
+          {sent ? <SentOnWhatsappForm action={sent.action} tenantId={tenantId} touchId={sent.touchId} consentContactId={view.consentContactId} /> : null}
         </>
       )}
     </div>

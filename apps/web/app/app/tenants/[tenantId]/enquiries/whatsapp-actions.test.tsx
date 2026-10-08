@@ -90,3 +90,35 @@ describe("WhatsappActions", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Press the button on this page again, or press Copy text.");
   });
 });
+
+describe("WhatsappActions: the 'I sent it on WhatsApp' button", () => {
+  const sent = { action: async () => undefined, touchId: "55555555-5555-4555-8555-555555555555" };
+  const showSent = (over: Partial<WhatsappView> = {}) => render(<WhatsappActions tenantId={T} quoteId={Q} view={view(over)} sent={sent} />);
+
+  it("is shown with the controls when the channel is open", () => {
+    showSent();
+    expect(screen.getByRole("button", { name: "I sent it on WhatsApp" })).toBeInTheDocument();
+    expect(screen.getByText(/another message sent to this lead/)).toBeInTheDocument();
+  });
+
+  it("is also shown when the text is too long for a link (the person pastes it, then records it)", () => {
+    showSent({ fits: false });
+    expect(screen.getByRole("button", { name: "I sent it on WhatsApp" })).toBeInTheDocument();
+  });
+
+  it("is shown with the no-policy note: recording still works, the list stays empty until a policy exists", () => {
+    showSent({ policyInForce: false });
+    expect(screen.getByRole("button", { name: "I sent it on WhatsApp" })).toBeInTheDocument();
+    expect(screen.getByText(/No follow-up policy is in force\./)).toBeInTheDocument();
+  });
+
+  it.each([["expired", { expired: true, gate: "unread" as const }], ["unread", { gate: "unread" as const }], ["consent", { gate: "consent" as const }], ["contact", { gate: "contact" as const }], ["key", { gate: "key" as const }], ["erased", { gate: "erased" as const }], ["unkeyed", { gate: "unkeyed" as const }]])("is NOT shown when the quote is %s", (_name, over) => {
+    showSent(over);
+    expect(screen.queryByRole("button", { name: "I sent it on WhatsApp" })).toBeNull();
+  });
+
+  it("is not shown when the page gave no action", () => {
+    show();
+    expect(screen.queryByRole("button", { name: "I sent it on WhatsApp" })).toBeNull();
+  });
+});

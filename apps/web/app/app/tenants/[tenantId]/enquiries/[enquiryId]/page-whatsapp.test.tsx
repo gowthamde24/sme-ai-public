@@ -155,6 +155,26 @@ describe("the WhatsApp controls on /app/tenants/[tenantId]/enquiries/[enquiryId]
     expect(screen.getByText(/No follow-up policy is in force/)).toBeInTheDocument();
   });
 
+  it("the 'I sent it on WhatsApp' button is on the page beside Open in WhatsApp, with the page's id for this render", async () => {
+    const { container } = await show();
+    expect(screen.getByRole("button", { name: "I sent it on WhatsApp" })).toBeInTheDocument();
+    expect(container.querySelector('input[name="touch_id"]')).toHaveValue("77777777-7777-4777-8777-777777777777");
+  });
+
+  it("the button is not offered when the channel is blocked, the quote expired or the gate unread", async () => {
+    fetchLeadFollowup.mockResolvedValue({ ...open, gate: { blocked: "key", stopped: null, policy_in_force: true } });
+    const first = await show();
+    expect(screen.queryByRole("button", { name: "I sent it on WhatsApp" })).toBeNull();
+    first.unmount();
+    fetchLeadFollowup.mockRejectedValue(new Error("down"));
+    const second = await show();
+    expect(screen.queryByRole("button", { name: "I sent it on WhatsApp" })).toBeNull();
+    second.unmount();
+    quotesApi.fetchQuote.mockResolvedValue(approved({ valid_until: "2026-10-07" }));
+    await show();
+    expect(screen.queryByRole("button", { name: "I sent it on WhatsApp" })).toBeNull();
+  });
+
   it("when the text could not be prepared there are no WhatsApp controls and no gate read", async () => {
     quotesApi.fetchQuoteText.mockRejectedValue(new Error("down"));
     await show();

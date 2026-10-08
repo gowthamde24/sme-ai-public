@@ -100,3 +100,29 @@ describe("the quote screen's WhatsApp controls hold no number and open nothing t
     expect(text).not.toMatch(/<Link[^>]*\bhref=\{route/);
   });
 });
+
+describe("'I sent it on WhatsApp' takes the quote and fixes the direction and the channel", () => {
+  const action = path.join("app", "app", "tenants", "[tenantId]", "enquiries", "sent-on-whatsapp-actions.ts");
+  const text = () => read(path.join(WEB_ROOT, action)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
+
+  it("reads only the touch id from the form: never a lead, a channel, a direction or a time", () => {
+    const names = [...text().matchAll(/formData\.get\(\s*["']([^"']+)["']/g)].map((m) => m[1]);
+    expect(names).toEqual(["touch_id"]);
+  });
+
+  it("records with the literal direction 'out' and the literal channel 'whatsapp', for the lead read from the quote", () => {
+    expect(text()).toMatch(/recordTouch\(user\.accessToken, tenantId, leadId, \{ id, direction: "out", channel: "whatsapp" \}\)/);
+    expect(text()).toMatch(/leadId = quote\.lead_id/);
+  });
+
+  it("never reads a phone number or imports the number rule", () => {
+    expect(text()).not.toMatch(/contact-phone|whatsapp\/link|\bphone\b/i);
+  });
+
+  it("the shared refusal wording is a plain module that both actions import", () => {
+    const shared = path.join("app", "app", "tenants", "[tenantId]", "followups", "sent-refusal.ts");
+    expect(/^\s*["']use server["']/.test(read(path.join(WEB_ROOT, shared)))).toBe(false);
+    const g = path.join("app", "app", "tenants", "[tenantId]", "leads", "[leadId]", "sent-message-actions.ts");
+    for (const f of [g, action]) expect(read(path.join(WEB_ROOT, f))).toMatch(/from "\.\.\/(\.\.\/followups|followups)\/sent-refusal"/);
+  });
+});

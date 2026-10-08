@@ -11,6 +11,7 @@ import { requireUser } from "@/lib/auth/session";
 import { LocalTime } from "../../../../local-time";
 import { EnquiryText } from "../enquiry-text";
 import { QuotePanel } from "../quote-panel";
+import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
 import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
 import { RequirementPanel } from "../requirement-panel";
 
@@ -147,6 +148,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           order={order}
           newOrderId={crypto.randomUUID()}
           whatsapp={whatsapp}
+          sentOnWhatsapp={selected ? { action: recordQuoteSentAction.bind(null, tenantId, selected.id), touchId: crypto.randomUUID() } : null}
         />
       )}
     </main>
