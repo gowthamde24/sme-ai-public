@@ -106,11 +106,11 @@ async function pageMode(chrome) {
         }
       }
     }
-    // Soft navigation keeps the v2 sheet in the document (Stage 0 finding); the legacy probe then proves it does not reach legacy markup.
+    // Soft navigation always starts from /landing (it has the "Sign in" link), whatever --path says. It keeps the v2 sheet in the document (Stage 0 finding); the legacy probe then proves the sheet does not reach legacy markup.
     for (const dark of [false, true]) {
       const tab = await Tab.open(chrome.port, { dark });
       try {
-        await tab.goto(`${app.base}${pagePath}`);
+        await tab.goto(`${app.base}/landing`);
         await tab.eval(`document.querySelector('a[href="/login"]').click()`);
         const t0 = Date.now();
         while (Date.now() - t0 < 10000 && (await tab.eval("location.pathname")) !== "/login") await sleep(150);
