@@ -54,6 +54,27 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
   const status = requirement?.status ?? null;
   const draft = status === "draft";
   const decide = (fieldId: string) => decideFieldAction.bind(null, tenantId, enquiry.id, fieldId);
+  // A confirmed requirement with NO fields is what a quote with typed prices leaves behind (the database makes it so the quote has something to hang on). The line-by-line flow
+  // can never produce one (approving needs a line with a type and a quantity), so this is the typed-price case and none of the list-flow wording is about it.
+  if (requirement && status === "confirmed" && view.fields.length === 0) {
+    return (
+      <section aria-labelledby="requirement-heading">
+        <h2 id="requirement-heading">Requirement</h2>
+        <p>This enquiry is quoted with typed prices, so there are no lines to approve here.</p>
+        <p className="hint">
+          To quote it line by line from the price list instead, reject or withdraw its quotes, then discard this requirement. Nothing here is ever sent.
+        </p>
+        {canWrite ? (
+          <RequirementActions
+            confirm={confirmRequirementAction.bind(null, tenantId, enquiry.id, requirement.id)}
+            discard={discardRequirementAction.bind(null, tenantId, enquiry.id, requirement.id)}
+            status="confirmed"
+            confirmable={false}
+          />
+        ) : null}
+      </section>
+    );
+  }
   const missing = view.flags.filter((f) => f.kind === "missing");
   const doubtful = view.flags.filter((f) => f.kind !== "missing");
   return (

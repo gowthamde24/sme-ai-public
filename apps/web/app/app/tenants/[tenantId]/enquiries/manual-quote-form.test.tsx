@@ -10,14 +10,13 @@ import { LINE_TEXT, RANGE_NOTE } from "./manual-quote-logic";
 
 const ID = "77777777-7777-4777-8777-777777777777";
 const ID2 = "66666666-6666-4666-8666-666666666666";
-const STATES = { KA: "Karnataka", TG: "Telangana" };
 const TYPES = sellableItemTypes(parseItemTypes([TYPE_B_JSON, TYPE_C_JSON, TYPE_A_JSON]));
 type Fn = (prev: ManualQuoteState, data: FormData) => Promise<ManualQuoteState>;
 const mk = (result: ManualQuoteState = { ok: true }) => vi.fn<Fn>(async () => result);
 const GST = { rateBps: 500, from: "2026-10-01" };
 
 function renderForm(action: Fn, over: Partial<Parameters<typeof ManualQuoteForm>[0]> = {}) {
-  return render(<ManualQuoteForm create={action} quoteId={ID} itemTypes={TYPES} gst={GST} states={STATES} {...over} />);
+  return render(<ManualQuoteForm create={action} quoteId={ID} itemTypes={TYPES} gst={GST} {...over} />);
 }
 const line = (n: number) => ({
   code: screen.getByLabelText(new RegExp(`^Item type$`), { selector: `#mq-code-${n}` }) as HTMLSelectElement,
@@ -86,27 +85,28 @@ describe("one to five lines", () => {
 });
 
 describe("sending", () => {
-  it("sends the page's id, the kind, the optional state and every line's own fields, exactly as typed", async () => {
+  it("sends the page's id, the kind and every line's own fields, exactly as typed, and nothing about delivery", async () => {
     const action = mk();
     renderForm(action);
     fillLine(1, "A", "3", "2500");
     addLine();
     fillLine(2, "B", "1", "999.99");
-    fireEvent.change(screen.getByLabelText("Delivery state (optional)"), { target: { value: "KA" } });
     fireEvent.click(screen.getByLabelText("Repeat customer"));
     await submit();
     expect(action).toHaveBeenCalledTimes(1);
     const data = action.mock.calls[0][1];
     expect(Object.fromEntries(data.entries())).toEqual({
-      quote_id: ID, line_count: "2", customer_kind: "repeat", delivery_state: "KA", code_1: "A", qty_1: "3", price_1: "2500", code_2: "B", qty_2: "1", price_2: "999.99",
+      quote_id: ID, line_count: "2", customer_kind: "repeat", code_1: "A", qty_1: "3", price_1: "2500", code_2: "B", qty_2: "1", price_2: "999.99",
     });
   });
-  it("a state is not needed", async () => {
+  it("does not ask where the goods are delivered (owner decision): no field, no label, nothing sent", async () => {
     const action = mk();
     renderForm(action);
+    expect(screen.queryByLabelText(/delivery|state/i)).toBeNull();
+    expect(document.querySelector('[name="delivery_state"]')).toBeNull();
     fillLine(1, "A", "3", "2500");
     await submit();
-    expect(action.mock.calls[0][1].get("delivery_state")).toBe("");
+    expect(action.mock.calls[0][1].has("delivery_state")).toBe(false);
   });
   it.each([
     ["no item type", ["", "3", "2500"], LINE_TEXT.itemType],

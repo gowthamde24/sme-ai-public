@@ -16,7 +16,6 @@ import { CHOOSE_KIND, EMPTY_LINE, MAX_LINES, OUT_OF_DATE, linesFromForm, type Li
  */
 export type ManualQuoteState = { ok?: boolean; error?: string; blocked?: boolean } | undefined;
 
-const STATE_CODE = /^[A-Z]{2}$/;
 const NO_RATE = "A quote with typed prices needs a quote policy in force with a GST rate that applies today.";
 
 function text(formData: FormData, name: string): string {
@@ -40,8 +39,6 @@ function describe(error: unknown): ManualQuoteState {
         return { ok: false, error: "Only a person can type a price." };
       case "quote_input_missing":
         return { ok: false, error: NO_RATE };
-      case "invalid_delivery_state":
-        return { ok: false, error: "Choose the delivery state from the list, or leave it empty." };
       case "invalid_reference":
         return { ok: false, error: "One of the item types is not available. Reload the page and choose again." };
       case "invalid_value":
@@ -69,8 +66,8 @@ function describe(error: unknown): ManualQuoteState {
 const page = (tenantId: string, enquiryId: string) => `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
 
 /**
- * Make a DRAFT quote from prices a person typed (an owner or an admin). The server reads ONLY the quote id, the customer kind, the optional delivery state and the lines'
- * item type, quantity and price; each price is converted to integer paise by reading the text, and the keys sent to the API are exactly the ones it allows. Nothing here
+ * Make a DRAFT quote from prices a person typed (an owner or an admin). The server reads ONLY the quote id, the customer kind and the lines' item type, quantity and price (it never
+ * reads or sends a delivery state); each price is converted to integer paise by reading the text, and the keys sent to the API are exactly the ones it allows. Nothing here
  * works out GST or a total: the API and the database do, and the database decides. The id comes from the page, so a retry replays instead of duplicating.
  */
 export async function createManualQuoteAction(tenantId: string, enquiryId: string, _prev: ManualQuoteState, formData: FormData): Promise<ManualQuoteState> {
@@ -80,8 +77,6 @@ export async function createManualQuoteAction(tenantId: string, enquiryId: strin
   if (!isCanonicalUuid(id)) return { ok: false, error: OUT_OF_DATE };
   const kind = text(formData, "customer_kind").trim();
   if (!(CUSTOMER_KINDS as readonly string[]).includes(kind)) return { ok: false, error: CHOOSE_KIND };
-  const state = text(formData, "delivery_state").trim();
-  if (state !== "" && !STATE_CODE.test(state)) return { ok: false, error: "Choose the delivery state from the list, or leave it empty." };
   const count = Number(text(formData, "line_count"));
   if (!Number.isInteger(count) || count < 1 || count > MAX_LINES) return { ok: false, error: OUT_OF_DATE };
   const values: LineValues[] = [];
@@ -95,7 +90,7 @@ export async function createManualQuoteAction(tenantId: string, enquiryId: strin
     quote = await createManualQuote(user.accessToken, tenantId, enquiryId, {
       id,
       customerKind: kind as CustomerKind,
-      deliveryState: state === "" ? null : state,
+      deliveryState: null, // a quote with typed prices does not ask for it (the API still accepts one, the web just does not send it)
       lines: lines.lines,
     });
   } catch (error) {

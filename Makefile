@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-quote-data rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-demo-manual seed-quote-data rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -101,6 +101,11 @@ seed-demo:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py
 	./scripts/dev-enable-selftest.sh demo-synthetic-sme
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo.py --agents
+
+# Manual-price quote demo (slice 4b), LOCAL ONLY: a workspace named DEMO with twelve invented item types, a published quote policy and one invented enquiry, through the API as the demo owner.
+# Same sign-in as seed-demo (no service-role key, no new secret); refuses any URL that is not this machine; idempotent. Needs `make db-start` and `make dev-api`. Wipe: `make db-reset`.
+seed-demo-manual:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo_manual.py
 
 # T009: SYNTHETIC quote reference data (six invented products, a price list, a quote policy, a mapper config) for a LOCAL workspace:
 #     make seed-quote-data TENANT=demo-synthetic-sme
