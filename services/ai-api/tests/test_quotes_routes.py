@@ -886,3 +886,55 @@ def _pair() -> tuple[dict[str, Any], dict[str, Any]]:
         service.to_policy(POLICY_ROW),
     )
     return request, engine_port.run_quote(request)
+
+
+# ----------------------------------------------------------------------------- the customer text through the route: renderer 1.2.0
+def _approve_and_text(w: World) -> Any:
+    assert w.draft().status_code == 201
+    assert (
+        w.client.post(w.url(f"/quotes/{QID}/approve"), headers=auth("a_owner")).status_code == 200
+    )
+    return w.client.get(w.url(f"/quotes/{QID}/text"), headers=auth("a_sales"))
+
+
+def test_a_product_name_with_a_joiner_after_an_indic_letter_renders_through_the_route(
+    w: World,
+) -> None:
+    telugu = "\u0c15\u0c4d\u200d\u0c37 pattu"  # KA, virama, ZWJ, SSA
+    w.q.items = [{**w.q.items[0], "name": telugu}, *w.q.items[1:]]
+    r = _approve_and_text(w)
+    assert r.status_code == 200 and r.json()["renderer_version"] == "1.2.0"
+    assert telugu in r.json()["text"].split("\n")
+
+
+def test_a_product_name_with_a_joiner_between_latin_letters_is_still_refused_through_the_route(
+    w: World,
+) -> None:
+    w.q.items = [{**w.q.items[0], "name": "Syn\u200dthetic kanjivaram"}, *w.q.items[1:]]
+    r = _approve_and_text(w)
+    assert r.status_code == 409 and code(r) == "quote_text_refused"
+    assert "\u200d" not in r.text and "Syn" not in r.text
+
+
+def test_a_policy_with_no_shipping_fee_gives_a_text_with_no_shipping_line_through_the_route(
+    w: World,
+) -> None:
+    from tests.quotes_fakes import POLICY_ROW
+
+    w.q.policy_row = {**POLICY_ROW, "shipping_flat_fee_paise": 0}
+    r = _approve_and_text(w)
+    lines = r.json()["text"].split("\n")
+    assert r.status_code == 200 and not [
+        x for x in lines if x.startswith(("Shipping net", "GST on shipping", "Shipping total"))
+    ]
+
+
+def test_a_policy_with_a_shipping_fee_keeps_the_three_shipping_lines_through_the_route(
+    w: World,
+) -> None:
+    r = _approve_and_text(w)
+    lines = r.json()["text"].split("\n")
+    assert r.status_code == 200 and [x for x in lines if x.startswith("Shipping net")] == [
+        "Shipping net: ₹50.00"
+    ]
+    assert "GST on shipping (18%): ₹9.00" in lines and "Shipping total: ₹59.00" in lines
