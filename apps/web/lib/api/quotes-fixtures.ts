@@ -39,3 +39,24 @@ export const SETUP_JSON = {
   delivery_states: { MH: "Maharashtra", TG: "Telangana", KA: "Karnataka" },
 };
 export const TEXT_JSON = { text: "Approved quote\nGrand total: ₹79,859.00", line_count: 2, canonical_hash: "f".repeat(64), renderer_version: "1.2.0", sent_by_system: false };
+
+// ----------------------------------------------------------------------------- a quote whose prices a person typed (manual-price quote, slice 4a). "Type A" and "Type B" are synthetic item types.
+export const MANUAL_QUOTE = "88888888-8888-4888-8888-888888888889";
+export const MANUAL_LINE_JSON = {
+  line_no: 1, requirement_line_no: 1, product_id: null, sku: "LINE-1", name: "Type A", sale_unit: "piece", qty: 3, unit_price_applied_paise: 250000,
+  price_break_min_qty: null, line_subtotal_paise: 750000, net_paise: 750000, tax_paise: 37500, gross_paise: 787500, tax_bps: 500, price_source: "typed_by_person", item_type_code: "A",
+};
+export const MANUAL_LINE2_JSON = {
+  ...MANUAL_LINE_JSON, line_no: 2, requirement_line_no: 2, sku: "LINE-2", name: "Type B", qty: 1, unit_price_applied_paise: 99999, line_subtotal_paise: 99999, net_paise: 99999,
+  tax_paise: 5000, gross_paise: 104999, item_type_code: "B",
+};
+export const MANUAL_QUOTE_JSON = {
+  ...QUOTE_JSON, id: MANUAL_QUOTE, quote_no: 4, pricing_kind: "manual", price_list_version_id: null, delivery_state: null, gst_supply: null,
+  merchandise_net_paise: 849999, item_tax_paise: 42500, shipping_net_paise: 0, shipping_tax_paise: 0, total_paise: 892499, advance_paise: 446250, balance_paise: 446249,
+  lines: [MANUAL_LINE_JSON, MANUAL_LINE2_JSON],
+};
+export const MANUAL_SUMMARY_JSON = { ...SUMMARY_JSON, id: MANUAL_QUOTE, quote_no: 4, pricing_kind: "manual", total_paise: 892499 };
+// the item types as GET /item-types sends them (synthetic): B has a usual range, C is no longer sold
+export const TYPE_A_JSON = { id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1", code: "A", name: "Type A", position: 1, active: true, min_price_paise: null, max_price_paise: null };
+export const TYPE_B_JSON = { id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2", code: "B", name: "Type B", position: 2, active: true, min_price_paise: 50000, max_price_paise: 400000 };
+export const TYPE_C_JSON = { id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb3", code: "C", name: "Type C (not sold)", position: 0, active: false, min_price_paise: null, max_price_paise: null };
