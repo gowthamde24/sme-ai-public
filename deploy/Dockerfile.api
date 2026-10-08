@@ -7,6 +7,10 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_
 WORKDIR /srv
 COPY services/ai-api/pyproject.toml ./pyproject.toml
 COPY services/ai-api/app ./app
+# Lane C's pure packages (the API finds them only in a checkout or on PYTHONPATH; without them quotes and follow-ups fail closed with 503).
+COPY packages/quote-engine/src ./packages/quote-engine/src
+COPY packages/pure ./packages/pure
+ENV PYTHONPATH=/srv/packages/quote-engine/src:/srv/packages/pure
 RUN pip install . && useradd --system --no-create-home --uid 10001 api
 USER 10001
 
