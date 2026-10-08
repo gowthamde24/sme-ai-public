@@ -500,3 +500,92 @@ mutation runs failed a test; no mutation scripts or mutated implementation remai
 | 34 Disable validity date equality | test_dates_and_required_labels | no |
 | 35 Disable engine version allowlist | test_trace_and_flag_validation | no |
 | 36 Allow empty quote lines | test_quote_lines_limit_and_large_money | no |
+
+## quote_text 1.1.0 — U+200C / U+200D in product names (branch quote-text-joiners)
+
+- Checklist row: "The pinned quote-text renderer ... still refuses U+200C and U+200D in a product name"
+  (`docs/pre-pilot-checklist.md`). The pure package side is done. **Adopted by lane A on `api/quote-text-1-2-0`**
+  (adapter allow-list, pins, an end-to-end test; the list below is the record) and consolidated into the checklist
+  (two rows: the adoption is `[x]`, the alignment decisions stay `[ ]`).
+- New renderer version **1.1.0** (minor: behaviour change). `RENDERER_VERSION`, `SUPPORTED_VERSIONS` and
+  `renderer_for(version)` are in `packages/pure/quote_text/__init__.py`; 1.0.0 is frozen as `quote_text/v1_0_0.py`,
+  byte-identical to the old `__init__.py` (sha256 `a6717e52...9387`, pinned in a test). Package doc: `VERSIONS.md`.
+- Rule (the application's, re-implemented, not imported): U+200C / U+200D are allowed only DIRECTLY after a letter or
+  mark (`L*`, `M*`) in U+0900..U+0DFF. Refused: at the start, after a space, between Latin letters, in or next to
+  digits, after an Indic digit or danda, twice in a row. Every other Cc/Cf/Cs/Zl/Zp character stays refused, even
+  right after an Indic letter (ZWSP, word joiner, BOM, soft hyphen, LRM/RLM, ALM, bidi, tags, newline, tab, NUL).
+  The rule applies to EVERY validated string (names, labels, seller, customer, notes, payment text, keys), because
+  the application's text rule is not per field and the customer name comes from the same text.
+- Evidence (`python3 scripts/test-packages.py packages/pure/quote_text/tests packages/pure`, exit 0): **86 tests**
+  = the original 31 now run against 1.1.0 AND again against the frozen 1.0.0 (+1 version check), 2 frozen-source
+  tests, 21 new tests (`test_joiners.py`): copied application cases, every code point alone / in a word /
+  before a joiner / after a joiner, 60,000 seeded random strings with the OLD renderer as oracle ("new accepts a
+  string exactly when old accepts it without its joiners and every joiner follows an Indic letter or mark"), and
+  `fixtures/golden_1_1_0.json` (9 accepted vectors, 33 refused strings, each refused in all 7 string locations,
+  for both versions). The whole `make test-packages` set (all packages) also passes, offline.
+- Old vectors unchanged: `fixtures/synthetic.json` and `tests/test_text_bounds.py` are byte-identical to `main`
+  (sha256 `6e051024...1f89`, `b7e31dbf...a87f`); `test_quote_text.py` changed only by `GOLDEN_HASH`, a dict whose
+  1.0.0 entry is the old literal `376e2b72...b17f`; `v1_0_0.py` equals the old `__init__.py`.
+- Hashes: fixture request, 1.0.0 `376e2b72ffc0a880941cb254f891811cdeb99ad3d195b2312d39cd0cf7c3b17f`, 1.1.0
+  `6cab990d149f3ef9ef56a4087d1382241b1705921caa18573a32f3030ceb58aa` (same text, only the version in the hash differs).
+- Decision to confirm (smallest safe choice): the task said private-use and unassigned characters "stay refused",
+  but 1.0.0 never refused Co or Cn (only Cc, Cf, Cs, Zl, Zp), and the same task said 1.1.0 accepts exactly the old
+  set plus the joiners. I kept the old behaviour and pinned it (`test_private_use_and_unassigned_are_unchanged_from_1_0_0`).
+  The application's CSV rule refuses Co/Cn; the database text rule does not. Tightening is a separate 1.3.0.
+- Known limit: `textwrap` can cut a very long unbroken word anywhere, so a joiner may start a line (none lost or
+  added). Joiners count toward the 60 / 200 character limits. Both pre-existing in kind; documented in `VERSIONS.md`.
+- Cross-lane note: the price-list/lead CSV rule (`app/text_rules.py`) accepts a joiner ANYWHERE; the renderer (like
+  `capture_text`) accepts it only after an Indic letter or mark. A product name imported with a joiner in another
+  position (e.g. between Latin letters) passes import and is still refused by the renderer. Lane A's call.
+
+### Manual deliberate-mutation evidence (new rule, 31 mutants of `__init__.py`)
+
+Each: temporary edit, the package tests, `git checkout` of the file. 29 killed; 2 survive and both are equivalent mutants.
+
+| Mutation | Result |
+| --- | --- |
+| Indic range low 0x0900 to 0x0901 / 0x08FF | killed (boundary + before-joiner exhaustive) |
+| Range high to 0x0DF2 / 0x0E01 (first Thai letter) | killed |
+| Range high to 0x0DFE, and to 0x0E00 | **equivalent**: U+0DFF and U+0E00 are unassigned (Cn), never L/M; unkillable |
+| Category `LM` to `L`, `L` or False, `LMN`, `LMP`, Mn/Mc/Lo only | killed (marks, digits, punctuation cases) |
+| Only ZWJ / only ZWNJ is a joiner | killed |
+| Joiner allowed anywhere; at start; inverted; branch falls through | killed |
+| Previous char not advanced past a joiner (double joiner passes); never advanced | killed |
+| Drop Cf / Cc / Cs / Zl / Zp from the refused set | killed |
+| Add Co / add Cn (tighten) | killed (the pin test) |
+| Every Cf allowed after an Indic letter | killed |
+| `_string` skips the check | killed |
+| Version stays 1.0.0; `SUPPORTED_VERSIONS` drops 1.0.0; `renderer_for("1.0.0")` returns current | killed |
+
+First run of the pass had one harness bug (a `None` replacement truncated `__init__.py`); restored from git and
+verified equal to HEAD before the rerun. Nothing survives except the two equivalents. No mutation script is committed.
+
+### What lane A changed to adopt 1.2.0 (done on `api/quote-text-1-2-0`)
+
+`quote_text` 1.2.0 is the package's current version: 1.1.0 allows U+200C / U+200D after an Indic letter or mark; 1.2.0 leaves out each
+shipping line whose amount is zero (`packages/pure/quote_text/VERSIONS.md`); 1.0.0 and 1.1.0 are frozen modules. The package alone breaks the
+API (the adapter refused 1.2.0), so the package and the API change are one PR. Where each item landed:
+
+1. **Done.** `services/ai-api/app/quotes/text_port.py`: `ALLOWED_RENDERER_VERSIONS = {"1.2.0"}` (fail closed). Only 1.2.0: no stored quote needs an
+   older renderer (see 8), and the older versions are frozen modules the adapter never loads.
+2. **Done.** `services/ai-api/tests/test_quotes_text_port.py`: the allow-list and `renderer_version == "1.2.0"` asserts; `GOLDEN_RENDER_HASH`
+   re-derived with an independent implementation of the documented hash (it reproduces the 1.0.0 value first); `GOLDEN_TEXT_SHA` unchanged,
+   proved against the frozen 1.0.0 / 1.1.0 modules; joiner cases (Telugu, Kannada, Malayalam, Devanagari render; a joiner between Latin letters,
+   at the start, after a space, after a digit, twice in a row and next to another format character are refused); zero, free and non-zero shipping.
+   The same cases through the routes are in `tests/test_quotes_routes.py`.
+3. **Done.** `services/ai-api/tests/test_quote_text_joiner_rule.py`: capture's `strip_invisible` changes a string exactly when the renderer's
+   `_unsafe` refuses it, on all 54,240 strings of length 1 to 4 over 15 characters (boundary code points of the Indic range included).
+   Mutated in both places, it fails.
+4. **Done.** `tests/integration/test_quote_text_joiners_api.py` (real stack, real API): a product named with a Telugu joiner and a Malayalam
+   chillu, quote approved, text renders, `renderer_version == "1.2.0"`; a Latin joiner name is `quote_text_refused` with the approval standing; the
+   shipping lines follow the policy. `tests/integration/test_quote_api.py` only asserts that `renderer_version` is truthy and was left alone.
+5. **Done.** `apps/web/lib/api/quotes-fixtures.ts`: the fixture prints `1.2.0` (cosmetic).
+6. **Done.** `tests/rehearsal/report.py`: the wording about joiners.
+7. **Done.** `docs/plans/quote-text.md` (the joiner exception, zero shipping, the hash text), `docs/plans/customer-zero-intake-gap.md` section 9,
+   `docs/checklist-notes/A.md`, `docs/handoff/next.md` and `docs/pre-pilot-checklist.md` (the `[x]` row and a new `[ ]` row).
+8. **No migration, pgTAP or RLS change**: checked, no column, message or log stores the renderer version or the rendered text; the text is
+   rendered on demand from the stored approved row (`service.render_text`), so an approved quote is re-rendered with 1.2.0 the next time its text
+   is asked for. Lane C's report line "a quote already created stays pinned to its renderer version" is NOT true in the application (only the
+   ENGINE version is stored and checked); the pin exists in the package (`renderer_for`) for anyone who stores a text. **Still open** (the owner's
+   call, in the checklist): the CSV-rule alignment (a joiner anywhere on import, only after an Indic letter or mark in the renderer) and the
+   private-use / unassigned gap (a possible 1.3.0).

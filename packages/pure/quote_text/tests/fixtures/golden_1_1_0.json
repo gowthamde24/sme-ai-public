@@ -1,0 +1,550 @@
+{
+ "renderer_version": "1.1.0",
+ "accepted": [
+  {
+   "id": "telugu_zwnj",
+   "names": [
+    "Pattu \u0c15\u0c4d\u200c\u0c37 saree"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "1f7d87bdffeaa9d97584669da034357f17c9d83ce7adce059f58fb53291a90f3",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Pattu \u0c15\u0c4d\u200c\u0c37 saree",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "kannada_zwj",
+   "names": [
+    "Mysore \u0c95\u0ccd\u200d\u0cb7 silk"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "bf8638854d8d16d3c17c8143bef66bb13811c4bceadf2fa7f062a058782ef4e1",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Mysore \u0c95\u0ccd\u200d\u0cb7 silk",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "devanagari_zwj",
+   "names": [
+    "Banarasi \u0915\u094d\u200d\u0937 dupatta"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "bd15d1d43d9e4acff6ab79a5fe92b268ffd78d23457cddf17bae8082a920cac4",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Banarasi \u0915\u094d\u200d\u0937 dupatta",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "devanagari_zwnj",
+   "names": [
+    "Banarasi \u0915\u094d\u200c\u0937 dupatta"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "4e774461166b7956fcb4da4f3ab7dbaffe0dab544c0f60cfe701a42873e4a037",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Banarasi \u0915\u094d\u200c\u0937 dupatta",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "malayalam_chillu_at_end_of_word",
+   "names": [
+    "Kasavu \u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d\u200d"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "4ef3ad6a7ebbb724a8dae914a287384c5cf5917e16bc66e110c8e34cbde899b8",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Kasavu \u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d\u200d",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "kannada_zwnj_at_end_before_space",
+   "names": [
+    "\u0cae\u0cc8\u0cb8\u0cc2\u0cb0\u0cc1\u200c silk"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "375c35713c798eff1f563b2add8706623cd02815097d53afde4230d997e3e0cd",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "\u0cae\u0cc8\u0cb8\u0cc2\u0cb0\u0cc1\u200c silk",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "joiner_only_name_of_one_word",
+   "names": [
+    "\u0c15\u0c4d\u200c\u0c37"
+   ],
+   "expect": {
+    "line_count": 29,
+    "canonical_hash": "a7c0d599c13fb8e572f97c59c6dc5fae33290bd4ff90e7eb36514afeb4ac2958",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "\u0c15\u0c4d\u200c\u0c37",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  },
+  {
+   "id": "joiner_in_longer_quote",
+   "names": [
+    "Pattu \u0c15\u0c4d\u200c\u0c37 saree, 6 yards, with blouse piece",
+    "Mysore \u0c95\u0ccd\u200d\u0cb7 silk crepe",
+    "Banarasi \u0915\u094d\u200d\u0937 dupatta and \u0915\u094d\u200c\u0937 stole",
+    "Kasavu \u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d\u200d set",
+    "Plain Synthetic weave"
+   ],
+   "display": {
+    "customer_name": "Customer \u0cae\u0cc8\u0cb8\u0cc2\u0cb0\u0cc1\u200c Traders",
+    "payment_terms_text": "Advance first; balance \u0915\u094d\u200d\u0937 on delivery.",
+    "notes": [
+     "Note one \u0c15\u0c4d\u200c\u0c37",
+     "Plain note"
+    ]
+   },
+   "expect": {
+    "line_count": 57,
+    "canonical_hash": "5e07a0f630f58d1c6173e95b013ec452d7a753d7b01658cd128f99625a40d014",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Customer \u0cae\u0cc8\u0cb8\u0cc2\u0cb0\u0cc1\u200c Traders",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Pattu \u0c15\u0c4d\u200c\u0c37 saree, 6 yards, with blouse piece",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Mysore \u0c95\u0ccd\u200d\u0cb7 silk crepe",
+     "3 x \u20b9124.45 = \u20b9373.35",
+     "Discount (5%): \u20b918.67",
+     "Net: \u20b9354.68",
+     "GST (12.5%): \u20b944.34",
+     "Line total: \u20b9399.02",
+     "",
+     "Banarasi \u0915\u094d\u200d\u0937 dupatta and \u0915\u094d\u200c\u0937 stole",
+     "4 x \u20b9125.45 = \u20b9501.80",
+     "Net: \u20b9501.80",
+     "GST (12.5%): \u20b962.73",
+     "Line total: \u20b9564.53",
+     "",
+     "Kasavu \u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d\u200d set",
+     "5 x \u20b9126.45 = \u20b9632.25",
+     "Discount (5%): \u20b931.61",
+     "Net: \u20b9600.64",
+     "GST (12.5%): \u20b975.08",
+     "Line total: \u20b9675.72",
+     "",
+     "Plain Synthetic weave",
+     "6 x \u20b9127.45 = \u20b9764.70",
+     "Net: \u20b9764.70",
+     "GST (12.5%): \u20b995.59",
+     "Line total: \u20b9860.29",
+     "",
+     "Merchandise subtotal: \u20b92,519.00",
+     "Discounts: \u20b950.28",
+     "Merchandise net: \u20b92,468.72",
+     "GST on merchandise: \u20b9308.60",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b9308.65",
+     "Grand total: \u20b92,778.38",
+     "Advance: \u20b9694.60",
+     "Balance: \u20b92,083.78",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Advance first; balance \u0915\u094d\u200d\u0937 on delivery.",
+     "Notes:",
+     "- Note one \u0c15\u0c4d\u200c\u0c37",
+     "- Plain note"
+    ]
+   }
+  },
+  {
+   "id": "long_name_wraps_over_several_lines",
+   "names": [
+    "Pattu \u0c15\u0c4d\u200c\u0c37 Pattu \u0c15\u0c4d\u200c\u0c37 Pattu \u0c15\u0c4d\u200c\u0c37 Pattu \u0c15\u0c4d\u200c\u0c37 saree \u0c95\u0ccd\u200d\u0cb7 \u0915\u094d\u200d\u0937 \u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d\u200d of the long name"
+   ],
+   "expect": {
+    "line_count": 30,
+    "canonical_hash": "fc3155301040c79f5cb908535d425649ec56608d71b3a7b15a92c8b5b1bd8b44",
+    "text": [
+     "Approved quote",
+     "Seller: Synthetic Seller",
+     "Customer: Synthetic Customer",
+     "Reference: SYN-Q-001",
+     "Issued: 2026-10-07",
+     "Valid until: 2026-10-14",
+     "Prices exclude GST",
+     "",
+     "Pattu \u0c15\u0c4d\u200c\u0c37 Pattu \u0c15\u0c4d\u200c\u0c37 Pattu \u0c15\u0c4d\u200c\u0c37 Pattu \u0c15\u0c4d\u200c\u0c37 saree \u0c95\u0ccd\u200d\u0cb7 \u0915\u094d\u200d\u0937",
+     "\u0d15\u0d4a\u0d1a\u0d4d\u0d1a\u0d3f\u0d28\u0d4d\u200d of the long name",
+     "2 x \u20b9123.45 = \u20b9246.90",
+     "Net: \u20b9246.90",
+     "GST (12.5%): \u20b930.86",
+     "Line total: \u20b9277.76",
+     "",
+     "Merchandise subtotal: \u20b9246.90",
+     "Merchandise net: \u20b9246.90",
+     "GST on merchandise: \u20b930.86",
+     "Shipping net: \u20b91.01",
+     "GST on shipping (5%): \u20b90.05",
+     "Shipping total: \u20b91.06",
+     "GST total: \u20b930.91",
+     "Grand total: \u20b9278.82",
+     "Advance: \u20b969.71",
+     "Balance: \u20b9209.11",
+     "Balance due: 2026-10-22",
+     "Valid until: 2026-10-14",
+     "Payment terms: Synthetic terms agreed by the owner.",
+     "Notes:",
+     "- Synthetic demonstration only."
+    ]
+   }
+  }
+ ],
+ "refused": [
+  {
+   "id": "joiner_at_start",
+   "value": "\u200d\u0c15"
+  },
+  {
+   "id": "zwnj_at_start",
+   "value": "\u200c\u0c15"
+  },
+  {
+   "id": "joiner_after_space",
+   "value": "Silk \u200cx"
+  },
+  {
+   "id": "joiner_after_space_before_indic",
+   "value": "\u0c15 \u200d\u0c37"
+  },
+  {
+   "id": "joiner_between_latin_letters",
+   "value": "Si\u200dlk"
+  },
+  {
+   "id": "zwnj_between_latin_letters",
+   "value": "Si\u200clk"
+  },
+  {
+   "id": "joiner_inside_digits",
+   "value": "98765\u200c43210"
+  },
+  {
+   "id": "joiner_next_to_digits",
+   "value": "Code 12\u200d"
+  },
+  {
+   "id": "joiner_after_indic_digit",
+   "value": "\u0967\u200d\u0968"
+  },
+  {
+   "id": "joiner_after_indic_danda",
+   "value": "\u0964\u200d"
+  },
+  {
+   "id": "joiner_after_arabic_letter",
+   "value": "\u0628\u200c"
+  },
+  {
+   "id": "two_joiners_in_a_row",
+   "value": "\u0915\u200d\u200d"
+  },
+  {
+   "id": "joiner_then_zwnj",
+   "value": "\u0915\u200d\u200c"
+  },
+  {
+   "id": "joiner_after_zero_width_space",
+   "value": "\u0c15\u200b\u200d"
+  },
+  {
+   "id": "zero_width_space_after_indic_letter",
+   "value": "\u0c15\u200b\u0c37"
+  },
+  {
+   "id": "word_joiner_after_indic_letter",
+   "value": "\u0c15\u2060\u0c37"
+  },
+  {
+   "id": "bom_after_indic_letter",
+   "value": "\u0c15\ufeff\u0c37"
+  },
+  {
+   "id": "soft_hyphen_after_indic_letter",
+   "value": "\u0c15\u00ad\u0c37"
+  },
+  {
+   "id": "lrm_after_indic_letter",
+   "value": "\u0c15\u200e\u0c37"
+  },
+  {
+   "id": "rlm_after_indic_letter",
+   "value": "\u0c15\u200f\u0c37"
+  },
+  {
+   "id": "arabic_letter_mark_after_indic_letter",
+   "value": "\u0c15\u061c\u0c37"
+  },
+  {
+   "id": "bidi_embedding_after_indic_letter",
+   "value": "\u0c15\u202a\u0c37"
+  },
+  {
+   "id": "bidi_override_after_indic_letter",
+   "value": "\u0c15\u202e\u0c37"
+  },
+  {
+   "id": "bidi_isolate_after_indic_letter",
+   "value": "\u0c15\u2066\u0c37"
+  },
+  {
+   "id": "bidi_isolate_pop_after_indic_letter",
+   "value": "\u0c15\u2069\u0c37"
+  },
+  {
+   "id": "tag_character_after_indic_letter",
+   "value": "\u0c15\udb40\udc41\u0c37"
+  },
+  {
+   "id": "cancel_tag_after_indic_letter",
+   "value": "\u0c15\udb40\udc7f\u0c37"
+  },
+  {
+   "id": "newline_after_indic_letter",
+   "value": "\u0c15\n\u0c37"
+  },
+  {
+   "id": "tab_after_indic_letter",
+   "value": "\u0c15\t\u0c37"
+  },
+  {
+   "id": "nul_after_indic_letter",
+   "value": "\u0c15\u0000\u0c37"
+  },
+  {
+   "id": "line_separator_after_indic_letter",
+   "value": "\u0c15\u2028\u0c37"
+  },
+  {
+   "id": "paragraph_separator_after_indic_letter",
+   "value": "\u0c15\u2029\u0c37"
+  },
+  {
+   "id": "lone_surrogate_after_indic_letter",
+   "value": "\u0c15\ud800\u0c37"
+  }
+ ],
+ "refused_code": "UNSAFE_STRING"
+}

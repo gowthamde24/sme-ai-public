@@ -380,7 +380,7 @@ def write_report(
         "* The price list was loaded from `price_list.csv` through the import endpoint (the seed now keeps only the products, the quote policy, the mapper and the order policy), then two hostile files were refused row by row with closed codes and no cell echoed. The prices of every quote above come from that version."
     )
     w(
-        "* Indic names with a zero-width joiner or non-joiner are accepted by the CSV adapters. The quote-text renderer (a pinned lane C package) still refuses them in a product name: a quote for such a product is approved but its customer text shows `quote_text_refused` (the approval stands). A lane C change is needed before products with such names are quoted."
+        "* Indic names with a zero-width joiner or non-joiner are accepted by the CSV adapters, and the quote-text renderer (`quote_text` 1.2.0, a pinned lane C package) accepts the joiner when it directly follows an Indic letter or mark. A joiner anywhere else (for example between Latin letters) is still refused: the quote is approved but its customer text shows `quote_text_refused` (the approval stands)."
     )
     w(
         "* The repeat customer's ordinary quote (Q6) is flagged only `REPEAT_CUSTOMER_CLAIMED` (Owner only); Q7 is over its credit limit on purpose and is also flagged `CREDIT_LIMIT_EXCEEDED`. The limit is the seeded synthetic Rs 5,00,000: the real number is the owner's to set before real use (checklist)."

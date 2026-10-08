@@ -38,4 +38,4 @@ export const SETUP_JSON = {
   price_list: [ITEM2_JSON, ITEM_JSON],
   delivery_states: { MH: "Maharashtra", TG: "Telangana", KA: "Karnataka" },
 };
-export const TEXT_JSON = { text: "Approved quote\nGrand total: ₹79,859.00", line_count: 2, canonical_hash: "f".repeat(64), renderer_version: "1.0.0", sent_by_system: false };
+export const TEXT_JSON = { text: "Approved quote\nGrand total: ₹79,859.00", line_count: 2, canonical_hash: "f".repeat(64), renderer_version: "1.2.0", sent_by_system: false };

@@ -17,7 +17,9 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any
 
-ALLOWED_RENDERER_VERSIONS: frozenset[str] = frozenset({"1.0.0"})
+# Only the version the package reports today. The text of a quote is rendered ON DEMAND from the stored approved row (service.render_text): no column, message or log keeps the renderer version or the rendered
+# text, so no stored quote needs an older renderer. The older renderers (1.0.0, 1.1.0) are frozen modules inside the package that this adapter never loads. Anything else fails closed (TextUnavailable).
+ALLOWED_RENDERER_VERSIONS: frozenset[str] = frozenset({"1.2.0"})
 MODULE_NAME = "quote_text"
 MAX_WIDTH = 60
 
