@@ -7,7 +7,7 @@ builds from its own sources, so this module must produce it BYTE for byte as JSO
                   each {sku, name, unit_price, minimum_order_quantity, price_breaks [{min_qty, unit_price}] by min_qty, tax_bps}; never a cost;
   * order_lines = one {sku, qty} per requirement line, in LINE order, with no discount;
   * customer    = {kind: "new"} or {kind: "repeat", credit_limit: the policy's repeat credit limit};
-  * policy      = {discount_ceiling_bps, shipping{flat_fee, tax_bps[, free_above]}, validity_days, payment_terms{new_advance_bps, repeat_advance_bps, net_days},
+  * policy      = {discount_ceiling_bps, shipping{flat_fee, tax_bps[, free_above]}, validity_days, payment_terms{new_advance_bps, repeat_advance_bps, net_days (the customer kind's)},
                   tax_mode: "exclusive", rounding_mode};
   * as_of       = the quote date (today in India), ISO.
 The integration tests build requests with this module and with the database side by side and require them equal."""
@@ -50,7 +50,8 @@ class Policy:
     validity_days: int
     new_advance_bps: int
     repeat_advance_bps: int
-    net_days: int
+    new_net_days: int
+    repeat_net_days: int
     rounding_mode: str
     repeat_credit_limit_paise: int
     seller_state: str
@@ -132,7 +133,8 @@ def requirement_facts(rows: list[dict[str, Any]]) -> RequirementFacts:
     return facts
 
 
-def policy_json(policy: Policy) -> dict[str, Any]:
+def policy_json(policy: Policy, kind: str) -> dict[str, Any]:
+    """The engine's policy. The balance falls due after the days of the quote's customer kind (the database picks the same days in `app.quote_build`)."""
     shipping: dict[str, Any] = {
         "flat_fee": policy.shipping_flat_fee_paise,
         "tax_bps": policy.shipping_tax_bps,
@@ -146,7 +148,7 @@ def policy_json(policy: Policy) -> dict[str, Any]:
         "payment_terms": {
             "new_advance_bps": policy.new_advance_bps,
             "repeat_advance_bps": policy.repeat_advance_bps,
-            "net_days": policy.net_days,
+            "net_days": policy.new_net_days if kind == "new" else policy.repeat_net_days,
         },
         "tax_mode": "exclusive",
         "rounding_mode": policy.rounding_mode,
@@ -216,5 +218,5 @@ def build_request(
         ],  # code point order, the engine's and the database's
         "customer": customer,
         "order_lines": order_lines,
-        "policy": policy_json(policy),
+        "policy": policy_json(policy, kind),
     }

@@ -26,7 +26,9 @@ from app.quotes.builder import (
 )
 
 AS_OF = date(2026, 10, 6)
-POLICY = Policy(0, 5000, None, 1800, 15, 5000, 2500, 30, "half_up", 250000, "TG")
+POLICY = Policy(
+    0, 5000, None, 1800, 15, 5000, 2500, 30, 45, "half_up", 250000, "TG"
+)  # 30 days for a new customer, 45 for a repeat one
 
 
 def item(
@@ -128,7 +130,25 @@ def test_a_repeat_customer_carries_the_policys_credit_limit_and_a_free_shipping_
     assert build_request(AS_OF, "new", facts((1, 20)), picks, ITEMS, with_free)["policy"][
         "shipping"
     ] == {"flat_fee": 5000, "tax_bps": 1800, "free_above": 3000000}
-    assert policy_json(POLICY)["shipping"] == {"flat_fee": 5000, "tax_bps": 1800}
+    assert policy_json(POLICY, "new")["shipping"] == {"flat_fee": 5000, "tax_bps": 1800}
+
+
+def test_the_balance_falls_due_after_the_days_of_the_customers_kind() -> None:
+    picks = [Pick(1, "p1", 20, "piece")]
+    new = build_request(AS_OF, "new", facts((1, 20)), picks, ITEMS, POLICY)
+    repeat = build_request(AS_OF, "repeat", facts((1, 20)), picks, ITEMS, POLICY)
+    assert new["policy"]["payment_terms"] == {
+        "new_advance_bps": 5000,
+        "repeat_advance_bps": 2500,
+        "net_days": 30,
+    }
+    assert repeat["policy"]["payment_terms"]["net_days"] == 45
+    # only that number differs between the two requests' policies
+    assert {**new["policy"], "payment_terms": None} == {**repeat["policy"], "payment_terms": None}
+    for request in (new, repeat):
+        assert not engine_port.is_rejected(engine_port.run_quote(request))
+    assert engine_port.run_quote(new)["payment_terms"]["due_date"] == "2026-11-05"
+    assert engine_port.run_quote(repeat)["payment_terms"]["due_date"] == "2026-11-20"
 
 
 @pytest.mark.parametrize("kind", ["", "vip", "REPEAT", "New"])

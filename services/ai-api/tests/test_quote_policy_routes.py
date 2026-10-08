@@ -23,17 +23,20 @@ CANARY = "CANARY-9f3b2c"
 FIELDS = {
     "discount_ceiling_bps": 0,
     "shipping_flat_fee_paise": 5000,
-    "shipping_tax_bps": 1800,
     "validity_days": 15,
     "new_advance_bps": 5000,
     "repeat_advance_bps": 2500,
-    "net_days": 30,
+    "new_net_days": 10,
+    "repeat_net_days": 30,
     "seller_state": "TG",
 }
 BODY = {"id": str(uuid.UUID(int=0x9001)), "effective_from": "2026-10-20", **FIELDS}
 FULL = {
     **BODY,
     "shipping_free_above_paise": 1_000_000,
+    "shipping_tax_bps": 1800,
+    "gst_rate_bps": 1200,
+    "gst_effective_from": "2026-10-20",
     "tax_mode": "exclusive",
     "rounding_mode": "half_even",
     "repeat_credit_limit_paise": 250_000,
@@ -194,6 +197,7 @@ def test_a_retry_of_the_same_id_is_a_200_replay_and_a_new_id_is_a_new_201(w: Wor
         "created_at",
         "in_force",
         "gst_bps",
+        "net_days",
         "tax_bps",
         "approver",
         "total",
@@ -229,8 +233,16 @@ def test_a_missing_required_field_is_refused(w: World, missing: str) -> None:
         ("validity_days", 366),
         ("new_advance_bps", 10001),
         ("repeat_advance_bps", -1),
-        ("net_days", -1),
-        ("net_days", 181),
+        ("new_net_days", -1),
+        ("new_net_days", 181),
+        ("repeat_net_days", -1),
+        ("repeat_net_days", 181),
+        ("gst_rate_bps", -1),
+        ("gst_rate_bps", 2801),
+        ("gst_effective_from", "2026-02-30"),
+        ("gst_effective_from", "20-10-2026"),
+        ("gst_effective_from", "tomorrow"),
+        ("gst_effective_from", 20261020),
         ("repeat_credit_limit_paise", -1),
         ("repeat_credit_limit_paise", 1_000_000_001),
         ("seller_state", "tg"),
@@ -262,7 +274,9 @@ def test_a_value_outside_the_database_bounds_or_of_the_wrong_kind_is_refused_fir
 
 
 @pytest.mark.parametrize(
-    "field", [f for f in FIELDS if f != "seller_state"] + ["shipping_free_above_paise"]
+    "field",
+    [f for f in FIELDS if f != "seller_state"]
+    + ["shipping_free_above_paise", "shipping_tax_bps", "gst_rate_bps"],
 )
 @pytest.mark.parametrize("bad", [1.5, "100", True, [1]])
 def test_a_number_must_be_a_whole_number_not_a_float_a_string_or_a_flag(
@@ -286,8 +300,13 @@ def test_a_number_must_be_a_whole_number_not_a_float_a_string_or_a_flag(
         ("validity_days", 365),
         ("new_advance_bps", 10000),
         ("repeat_advance_bps", 0),
-        ("net_days", 0),
-        ("net_days", 180),
+        ("new_net_days", 0),
+        ("new_net_days", 180),
+        ("repeat_net_days", 0),
+        ("repeat_net_days", 180),
+        ("gst_rate_bps", 0),
+        ("gst_rate_bps", 2800),
+        ("gst_effective_from", "2026-12-31"),
         ("repeat_credit_limit_paise", 0),
         ("repeat_credit_limit_paise", 1_000_000_000),
         ("seller_state", "KA"),
@@ -357,7 +376,10 @@ def test_a_refusal_never_echoes_a_value_the_person_typed(w: World) -> None:
         {"rounding_mode": CANARY},
         {"id": CANARY},
         {"effective_from": CANARY},
-        {"net_days": CANARY},
+        {"new_net_days": CANARY},
+        {"repeat_net_days": CANARY},
+        {"gst_rate_bps": CANARY},
+        {"gst_effective_from": CANARY},
     ):
         r = w.post({**FULL, **bad})
         assert r.status_code == 422 and CANARY not in r.text, bad
@@ -421,7 +443,10 @@ def test_the_list_reports_every_policy_field_and_nothing_else(w: World) -> None:
         "validity_days",
         "new_advance_bps",
         "repeat_advance_bps",
-        "net_days",
+        "new_net_days",
+        "repeat_net_days",
+        "gst_rate_bps",
+        "gst_effective_from",
         "tax_mode",
         "rounding_mode",
         "repeat_credit_limit_paise",
