@@ -22,6 +22,18 @@ function field(formData: FormData, name: string): string {
 
 const AGAIN = " Nothing is added twice if you press the button again.";
 
+// The note above is true only when pressing the button again is the right next move. A sentence that tells the person to reload the page, start again or look in the Contacts list must NOT
+// carry it (it would contradict the sentence): a conflict, a reference that is gone, a suppressed contact, and any 409 we have no words for.
+const PRESS_AGAIN_IS_SAFE_409 = new Set(["duplicate_value", "real_data_gate_closed", "token_expiring"]);
+function retryNote(error: unknown, step: number): string {
+  if (step === 0) return "";
+  if (error instanceof ApiRequestError) {
+    if (error.code === "invalid_reference" || error.code === "contact_suppressed") return "";
+    if (error.status === 409 && !PRESS_AGAIN_IS_SAFE_409.has(error.code)) return "";
+  }
+  return AGAIN;
+}
+
 /**
  * Every failure becomes a short sentence of OUR wording; nothing the API, the database or the form said is echoed. A replay of the same ids and details is not an error (the API answers 200 and the
  * screen shows success), so no sentence here says "this form was already used": a 409 means a real conflict, and each kind has its own words.
@@ -88,7 +100,7 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
   } catch (error) {
     const duplicateEmail = step === 1 && error instanceof ApiRequestError && error.code === "duplicate_value";
     // A duplicate e-mail means the contact was NOT made (the company was). The next try uses a FRESH contact id and the SAME company and lead ids: the company replays, nothing is added twice.
-    return { ok: false, error: describe(error) + (step > 0 ? AGAIN : ""), ...(duplicateEmail && { nextContactId: randomUUID() }) };
+    return { ok: false, error: describe(error) + retryNote(error, step), ...(duplicateEmail && { nextContactId: randomUUID() }) };
   }
   revalidatePath(`/app/tenants/${tenantId}`);
   return { ok: true, leadId, contactId, name: fullName };

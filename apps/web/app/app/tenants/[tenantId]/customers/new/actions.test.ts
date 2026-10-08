@@ -153,6 +153,27 @@ describe("addCustomerAction", () => {
       expect(r?.error).toMatch(sentence);
       expect(r?.error).not.toMatch(/form was already used/);
       expect(JSON.stringify(r)).not.toContain(CANARY);
+      // "Nothing is added twice if you press the button again." only where pressing again is the right move, and never after the first step has failed with nothing saved
+      const e = error as ApiRequestError;
+      const wordsSayReload = e.code === "invalid_reference" || e.code === "contact_suppressed" || (e.status === 409 && !["duplicate_value", "real_data_gate_closed", "token_expiring"].includes(e.code));
+      const expectNote = step !== "company" && !wordsSayReload;
+      expect(/Nothing is added twice if you press the button again\./.test(r?.error ?? "")).toBe(expectNote);
+    }
+  });
+  it("the conflict sentence stands alone: it says to reload and check the Contacts list, and does not also say pressing again is safe", async () => {
+    const exact = "This customer was already saved with different details. Reload the page and look in the Contacts list before adding again.";
+    api.createContact.mockRejectedValue(new ApiRequestError(409, "conflict", CANARY));
+    expect((await run())?.error).toBe(exact); // company saved, contact conflicts
+    api.createContact.mockResolvedValue(CT);
+    api.createLead.mockRejectedValue(new ApiRequestError(409, "conflict", CANARY));
+    expect((await run())?.error).toBe(exact); // company and contact saved, lead conflicts
+    api.createCustomerCompany.mockRejectedValue(new ApiRequestError(409, "conflict", CANARY));
+    expect((await run())?.error).toBe(exact); // first step
+  });
+  it("where pressing again IS safe the note stays: a duplicate e-mail, the gate, and a network failure after the company was saved", async () => {
+    for (const error of [new ApiRequestError(409, "duplicate_value", CANARY), new ApiRequestError(409, "real_data_gate_closed", CANARY), new ApiRequestError(503, "api_unreachable", CANARY)]) {
+      api.createContact.mockRejectedValue(error);
+      expect((await run())?.error).toMatch(/Nothing is added twice if you press the button again\.$/);
     }
   });
   it("a rejected session goes to sign-in at every step", async () => {
