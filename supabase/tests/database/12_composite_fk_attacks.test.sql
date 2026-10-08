@@ -37,8 +37,9 @@ declare
   k          record;
   reg        record;
   child_id   uuid;
-  foreign_v  uuid;
-  missing_v  uuid := gen_random_uuid();
+  -- text, not uuid: a parent column can be a code (quote_lines.item_type_code -> item_types.code); format('%L') quotes either kind the same way
+  foreign_v  text;
+  missing_v  text := gen_random_uuid()::text;
   upd        text;
   p_foreign  text; p_missing text; o_foreign text; o_missing text;
   label      text;
