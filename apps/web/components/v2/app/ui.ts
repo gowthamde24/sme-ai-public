@@ -101,3 +101,9 @@ export const dataEditRow =
 export const dataEditCell = "px-3 pb-5 pt-3 max-sm:block";
 export const formGrid = "grid gap-x-4 gap-y-3 sm:grid-cols-2";
 export const colSpanFull = "col-span-full";
+export const codeInline = "rounded bg-surface-2 px-1.5 py-0.5 font-mono text-sm [overflow-wrap:anywhere]";
+export const qrImage = "rounded-lg border border-line bg-white p-2";
+/** The workspace home's row of links to every screen (kept until the clean-up batch; the menu carries the same links). */
+export const linkRow = "mt-4 flex flex-wrap items-center gap-x-1 gap-y-1";
+export const rowLink = "inline-flex min-h-11 items-center rounded-lg font-semibold text-brand-text hover:underline";
+export const mutedInline = "text-muted";
