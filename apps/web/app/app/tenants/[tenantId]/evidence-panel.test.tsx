@@ -8,6 +8,7 @@ vi.mock("./evidence-actions", () => ({
 }));
 
 import { EvidencePanel } from "./evidence-panel";
+import { plainText } from "@/components/v2/app/ui";
 
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const TARGET = "44444444-4444-4444-4444-444444444444";
@@ -59,7 +60,7 @@ describe("EvidencePanel", () => {
       expect(within(list).getByText(text)).toBeInTheDocument();
     const snippet = list.querySelector('[data-evidence="snippet"]');
     expect(snippet?.textContent).toBe("line one\nline two");
-    expect(snippet).toHaveClass("plain-text");
+    expect(snippet?.className).toBe(plainText);
   });
 
   it("hides absent optional fields instead of inventing them", () => {
@@ -94,7 +95,7 @@ describe("EvidencePanel", () => {
     const { container } = panel({
       page: { items: [hostile], nextCursor: null },
     });
-    const list = container.querySelector("ul.evidence-list") as HTMLElement;
+    const list = container.querySelector("section ul") as HTMLElement;
     expect(
       list.querySelector(
         "a, img, iframe, script, object, embed, video, audio, form, link, base",
@@ -114,7 +115,7 @@ describe("EvidencePanel", () => {
 
   it("an https URL is still only text, never a link", () => {
     const { container } = panel();
-    const list = container.querySelector("ul.evidence-list") as HTMLElement;
+    const list = container.querySelector("section ul") as HTMLElement;
     expect(list.querySelector("a")).toBeNull();
     expect(screen.queryByRole("link", { name: /example\.test/ })).toBeNull();
   });
