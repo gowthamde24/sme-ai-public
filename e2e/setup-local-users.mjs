@@ -1,6 +1,6 @@
 // Creates extra LOCAL demo users on the demo workspace (Admin, Sales, Viewer and two Sales "labelers"), so the walkthroughs
 // can check roles and label 20 leads more than once (a label belongs to one reviewer). Local stack only.
-import { supabasePublic, PW, totp, factorSecret } from "./lib.mjs";
+import { supabasePublic, PW, totp, factorSecret, confirmEmail } from "./lib.mjs";
 
 const { url, anon } = supabasePublic();
 if (!/^http:\/\/(127\.0\.0\.1|localhost)/.test(url)) { console.error("e2e: not a local Supabase stack"); process.exit(2); }
@@ -37,7 +37,11 @@ const tenant = tenants.body[0].id;
 for (const [name, role] of [["admin", "admin"], ["sales", "sales"], ["viewer", "viewer"], ["labeler1", "sales"], ["labeler2", "sales"]]) {
   const email = `demo-${name}@demo.example.test`;
   let u = await call("POST", "/auth/v1/token?grant_type=password", { email, password: PW });
-  if (u.status !== 200) u = await call("POST", "/auth/v1/signup", { email, password: PW });
+  if (u.status !== 200) {
+    await call("POST", "/auth/v1/signup", { email, password: PW });
+    confirmEmail(email); // the local stack asks for e-mail confirmation; these are throwaway demo accounts
+    u = await call("POST", "/auth/v1/token?grant_type=password", { email, password: PW });
+  }
   const m = await call("POST", "/rest/v1/memberships", { tenant_id: tenant, user_id: u.body.user.id, role }, token, { Prefer: "return=minimal" });
   console.log(`${email} as ${role}: ${m.status === 201 ? "added" : m.status === 409 ? "already a member" : "HTTP " + m.status}`);
 }

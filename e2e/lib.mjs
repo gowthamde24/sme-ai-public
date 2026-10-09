@@ -67,6 +67,15 @@ export function factorSecret(email) {
   return out.trim();
 }
 
+/** Mark a throwaway LOCAL account's e-mail address confirmed (the local stack asks for confirmation since job AD / D2), through the local database container. */
+export function confirmEmail(email) {
+  const config = execFileSync("cat", [path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "supabase", "config.toml")], { encoding: "utf8" });
+  const project = /^project_id\s*=\s*"([^"]+)"/m.exec(config)[1];
+  if (!/^[A-Za-z0-9._+-]{1,64}@[A-Za-z0-9.-]{1,120}$/.test(email)) throw new Error("unexpected e-mail");
+  execFileSync("docker", ["exec", "-i", `supabase_db_${project}`, "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c",
+    `update auth.users set email_confirmed_at = coalesce(email_confirmed_at, now()) where lower(email) = lower('${email}')`], { encoding: "utf8" });
+}
+
 /** Answer the authenticator challenge if the sign-in lands on it. Returns true when a code was typed. */
 export async function passChallenge(page, email, { wrongFirst = false } = {}) {
   const secret = factorSecret(email);

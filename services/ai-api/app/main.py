@@ -47,6 +47,8 @@ from app.suppression.wiring import build_key_ring
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
+from app.today.repository import PostgrestTodayRepository
+from app.today.routes import router as today_router
 
 SERVICE_NAME = "ai-api"
 SERVICE_VERSION = "0.1.0"
@@ -92,6 +94,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         suppression=PostgrestSuppressionRepository(config.rest_url, config.anon_key),
         key_ring=build_key_ring(settings),
         followups=PostgrestFollowupsRepository(config.rest_url, config.anon_key),
+        today=PostgrestTodayRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -127,6 +130,18 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     repo.MfaRequired: mfa_required(),
     repo.InvalidInput: ApiError(422, "validation_error", "Invalid input."),
     repo.SlugUnavailable: ApiError(409, "slug_unavailable", "That slug is not available."),
+    repo.TermsNotAccepted: ApiError(
+        403, "terms_required", "Accept the terms when you sign up to continue."
+    ),
+    repo.EmailNotConfirmed: ApiError(
+        403, "email_not_confirmed", "Confirm your email address first: use the link we sent you."
+    ),
+    repo.WorkspaceLimitReached: ApiError(
+        409,
+        "workspace_limit_reached",
+        "Your plan includes one workspace and you already have it. "
+        "Ask us if you need another.",
+    ),
     # CRM. Deliberately generic: none of these bodies carries a field name, a value, or a hint
     # about whether an id exists in another tenant.
     crm_repo.NotFoundError: ApiError(404, "not_found", "Not found."),
@@ -312,6 +327,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.pricelists,
                 runtime.suppression,
                 runtime.followups,
+                runtime.today,
             ):
                 if isinstance(
                     repository,
@@ -326,7 +342,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestOrdersRepository
                     | PostgrestPriceListRepository
                     | PostgrestSuppressionRepository
-                    | PostgrestFollowupsRepository,
+                    | PostgrestFollowupsRepository
+                    | PostgrestTodayRepository,
                 ):
                     repository.close()
 
@@ -399,6 +416,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(orders_router)
     app.include_router(followups_router)
     app.include_router(pricelists_router)
+    app.include_router(today_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

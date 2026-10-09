@@ -12,12 +12,15 @@ import pytest
 
 from app.tenancy.models import Role
 from app.tenancy.repository import (
+    EmailNotConfirmed,
     Forbidden,
     InvalidInput,
     PostgrestTenantRepository,
     SlugUnavailable,
+    TermsNotAccepted,
     TokenRejected,
     UpstreamError,
+    WorkspaceLimitReached,
 )
 
 USER = uuid.UUID(int=1)
@@ -119,6 +122,31 @@ def test_create_tenant_posts_the_rpc_arguments() -> None:
     assert json.loads(seen[0].content) == {"p_name": "Acme", "p_slug": "acme-silks"}
 
 
+def test_get_plan_reads_three_columns_of_one_tenant_with_the_callers_token() -> None:
+    row = {
+        "plan": "free_trial",
+        "workspace_limit": 1,
+        "trial_started_at": "2026-10-01T09:00:00+00:00",
+    }
+    repo, seen = repo_with(lambda r: json_response([row]))
+    plan = repo.get_plan(USER_TOKEN, TENANT)
+    assert (plan.plan, plan.workspace_limit) == ("free_trial", 1)
+    assert plan.trial_started_at.year == 2026
+    assert seen[0].url.path.endswith("/tenants")
+    assert dict(seen[0].url.params) == {
+        "select": "plan,workspace_limit,trial_started_at",
+        "id": f"eq.{TENANT}",
+        "limit": "1",
+    }
+    assert seen[0].headers["authorization"] == f"Bearer {USER_TOKEN}"
+
+
+def test_get_plan_of_a_tenant_the_caller_cannot_see_is_a_refusal_not_a_crash() -> None:
+    repo, _ = repo_with(lambda r: json_response([]))
+    with pytest.raises(Forbidden):
+        repo.get_plan(USER_TOKEN, TENANT)
+
+
 @pytest.mark.parametrize(
     ("status", "code", "expected"),
     [
@@ -128,6 +156,9 @@ def test_create_tenant_posts_the_rpc_arguments() -> None:
         (403, "42501", Forbidden),
         (401, "PGRST303", TokenRejected),
         (401, "PGRST301", TokenRejected),
+        (400, "SM307", WorkspaceLimitReached),
+        (400, "SM308", TermsNotAccepted),
+        (400, "SM309", EmailNotConfirmed),
         (500, "XX000", UpstreamError),
         (404, "PGRST202", UpstreamError),
         (406, "PGRST106", UpstreamError),
@@ -153,3 +184,22 @@ def test_network_failure_is_an_upstream_error_without_leaking_details() -> None:
     with pytest.raises(UpstreamError) as info:
         repo.get_me(USER_TOKEN, USER)
     assert "10.0.0.5" not in str(info.value)
+
+
+def test_get_account_setup_posts_an_empty_body_to_the_rpc_with_the_callers_token() -> None:
+    reply = {"state": "needed", "tenant_id": None, "business_name": "Sri Lakshmi Silks"}
+    repo, seen = repo_with(lambda r: json_response(reply))
+    out = repo.get_account_setup(USER_TOKEN)
+    assert (out.state, out.business_name, out.tenant_id) == ("needed", "Sri Lakshmi Silks", None)
+    assert seen[0].method == "POST" and seen[0].url.path.endswith("/rpc/get_account_setup")
+    assert json.loads(seen[0].content) == {}
+    assert seen[0].headers["authorization"] == f"Bearer {USER_TOKEN}"
+
+
+def test_complete_setup_sends_only_the_two_choices() -> None:
+    repo, seen = repo_with(lambda r: json_response({"tenant_id": str(TENANT), "created": True}))
+    out = repo.complete_setup(USER_TOKEN, "textiles", "te")
+    assert (out.tenant_id, out.created) == (TENANT, True)
+    assert seen[0].url.path.endswith("/rpc/complete_setup")
+    assert json.loads(seen[0].content) == {"p_business_type": "textiles", "p_language": "te"}
+    assert seen[0].headers["authorization"] == f"Bearer {USER_TOKEN}"

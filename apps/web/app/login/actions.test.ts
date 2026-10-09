@@ -62,6 +62,17 @@ describe("signIn", () => {
     );
   });
 
+  it("says plainly when the address was never confirmed (the password was right, so nothing is revealed)", async () => {
+    createClient.mockResolvedValue(
+      fakeSupabase({
+        signInWithPassword: vi.fn(async () => ({ data: {}, error: { code: "email_not_confirmed", message: "Email not confirmed" } })),
+      }),
+    );
+    expect(await signIn(undefined, form({ ...OK, next: "/app" }))).toEqual({
+      error: "Confirm your email first: use the link we sent you.",
+    });
+  });
+
   it("returns one generic error for any failure and does not redirect", async () => {
     createClient.mockResolvedValue(fakeSupabase());
     const result = await signIn(undefined, form({ ...OK, next: "/app" }));

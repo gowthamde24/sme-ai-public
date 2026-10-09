@@ -26,6 +26,7 @@ from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
+from app.today.repository import TodayRepository
 
 logger = logging.getLogger("app.auth")
 
@@ -48,6 +49,7 @@ class Runtime:
     suppression: SuppressionRepository | None = None
     key_ring: KeyRing | None = None
     followups: FollowupsRepository | None = None
+    today: TodayRepository | None = None
 
 
 @dataclass(frozen=True)

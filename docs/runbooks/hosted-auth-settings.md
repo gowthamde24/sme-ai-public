@@ -9,8 +9,11 @@ project by hand from this list, then run `scripts/verify_hosted.py`, which check
 Set in the Supabase dashboard (names are the dashboard's; they move, look for the meaning):
 
 ## Sign-in
-- [ ] **Allow new users to sign up: OFF.** (Authentication > Sign In / Providers.) People are invited, then added to a workspace by the
-      operator (`add-family-member.md`). `verify_hosted.py` checks `disable_signup`.
+- [ ] **Allow new users to sign up: OFF** until the owner decides to open sign-up on the hosted project. (Authentication > Sign In / Providers.)
+      People are invited, then added to a workspace by the operator (`add-family-member.md`). `verify_hosted.py` checks `disable_signup`.
+      The app has open sign-up built and working locally (ADR 0061, job AD); turning this ON hosted also needs the rows added to
+      `docs/pre-pilot-checklist.md` (rate limits and CAPTCHA, the terms text) and the "Confirm sign-up" template
+      below pointing at `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app`. Never `supabase config push` the local file.
 - [ ] **Confirm e-mail: ON.** (`mailer_autoconfirm` must be false.) The web app's `/auth/confirm` route exists (M3a); the e-mail templates below must point at it.
 - [ ] **E-mail provider only.** Every other provider and phone sign-in OFF.
 - [ ] **Password:** minimum length 12 or more; require mixed character types; **leaked-password protection ON** (Pro plan).

@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
@@ -43,6 +43,45 @@ class TenantDetailOut(TenantOut):
     """A tenant plus the caller's own role in it."""
 
     role: Role
+
+
+class TenantPlanOut(_Out):
+    """The plan of a business (job AD / D1). Read-only for clients: only the operator changes it."""
+
+    plan: Literal["free_trial"]
+    workspace_limit: int
+    trial_started_at: datetime
+
+
+class TenantWithPlanOut(TenantDetailOut, TenantPlanOut):
+    """GET /v1/tenants/{id}: the tenant, the caller's role in it, and the plan."""
+
+
+class AccountSetupOut(_Out):
+    """What this account still has to do after sign-up (job AD / D2).
+
+    `needed`: confirmed, terms accepted, no business yet. `done`: the setup was done (tenant_id
+    says which business). `none`: nothing to do (an invited person).
+    """
+
+    state: Literal["none", "needed", "done"]
+    tenant_id: uuid.UUID | None
+    business_name: str | None
+
+
+class AccountSetupIn(BaseModel):
+    """The two choices of the first-login setup. The business name comes from sign-up."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    business_type: Literal["textiles", "construction", "other"]
+    language: Literal["en", "te", "hi", "kn"]
+
+
+class AccountSetupResultOut(_Out):
+    tenant_id: uuid.UUID
+    # false for a repeat (a double click or a second tab): the same business, nothing new
+    created: bool
 
 
 class MemberOut(_Out):

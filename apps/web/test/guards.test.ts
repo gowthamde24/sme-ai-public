@@ -217,6 +217,7 @@ describe("server-only code stays on the server", () => {
         path.join("app", "auth", "mfa", "actions.ts"),
         path.join("app", "auth", "set-password", "actions.ts"),
         path.join("app", "login", "actions.ts"),
+        path.join("app", "signup", "actions.ts"),
         path.join("lib", "auth", "session.ts"),
         "proxy.ts",
       ].sort(),
@@ -447,11 +448,15 @@ describe("server-only code stays on the server", () => {
   });
 });
 
-describe("sign-up stays closed and the page stays under its policy", () => {
+describe("sign-up is open only through the one signUp action, and the page stays under its policy", () => {
   const code = files.filter((f) => /\.(ts|tsx)$/.test(f) && !f.endsWith(".test.ts") && !f.endsWith(".test.tsx"));
 
-  it("nothing in the app can create an account", () => {
-    for (const file of code) expect(read(file), rel(file)).not.toMatch(/auth\.signUp\s*\(|signInWithOtp|shouldCreateUser|admin\.createUser/);
+  it("nothing in the app can create an account except the sign-up logic, and nothing can create one without the person's own password or as an admin", () => {
+    // Open sign-up (job AD / D2, ADR 0061): the ONE place that calls the Auth server's sign-up is app/signup/signup-logic.ts (reached only by the signUp action).
+    const allowed = path.join("app", "signup", "signup-logic.ts");
+    const callers = code.filter((f) => /auth\.signUp\s*\(/.test(read(f))).map(rel);
+    expect(callers).toEqual([allowed]);
+    for (const file of code) expect(read(file), rel(file)).not.toMatch(/signInWithOtp|shouldCreateUser|admin\.createUser/);
   });
 
   it("no component injects raw HTML or an inline script", () => {

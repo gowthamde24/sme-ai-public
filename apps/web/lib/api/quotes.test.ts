@@ -5,6 +5,7 @@ import {
   approveQuote,
   createQuote,
   fetchEnquiryQuotes,
+  fetchQuotes,
   fetchQuote,
   fetchQuoteSetup,
   fetchQuoteText,
@@ -127,6 +128,31 @@ describe("requests", () => {
     expect(f.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/quotes/${QUOTE}/text`);
     globalThis.fetch = respond({ not: "a list" }) as unknown as typeof fetch;
     await expect(fetchEnquiryQuotes("tok", TENANT, ENQ)).rejects.toThrow(ApiContractError);
+  });
+
+  it("lists the workspace's newest quotes with the customer's name and city (fetchQuotes)", async () => {
+    const f = respond([SUMMARY_JSON, { ...SUMMARY_JSON, customer: null, city: null }]);
+    globalThis.fetch = f as unknown as typeof fetch;
+    const rows = await fetchQuotes("tok", TENANT);
+    expect(f.mock.calls[0][0]).toBe(`http://api.test/v1/tenants/${TENANT}/quotes?limit=20`);
+    expect(rows.map((r) => [r.customer, r.city])).toEqual([["Synthetic Buyer", "Hyderabad"], [null, null]]);
+    await fetchQuotes("tok", TENANT, 5);
+    expect(f.mock.calls[1][0]).toBe(`http://api.test/v1/tenants/${TENANT}/quotes?limit=5`);
+  });
+
+  it("checks the ids and the limit before calling, and shows nothing for a row without the customer fields", async () => {
+    const f = respond([SUMMARY_JSON]);
+    globalThis.fetch = f as unknown as typeof fetch;
+    await expect(fetchQuotes("tok", "not-a-uuid")).rejects.toThrow(ApiContractError);
+    for (const limit of [0, 51, 1.5, Number.NaN]) await expect(fetchQuotes("tok", TENANT, limit)).rejects.toThrow(ApiContractError);
+    expect(f).not.toHaveBeenCalled();
+    const old: Record<string, unknown> = { ...SUMMARY_JSON };
+    delete old.customer;
+    delete old.city;
+    globalThis.fetch = respond([old]) as unknown as typeof fetch;
+    await expect(fetchQuotes("tok", TENANT)).rejects.toThrow(ApiContractError);
+    globalThis.fetch = respond([{ ...SUMMARY_JSON, customer: 5 }]) as unknown as typeof fetch;
+    await expect(fetchQuotes("tok", TENANT)).rejects.toThrow(ApiContractError);
   });
 
   it("sends a pick with the person's choice and whether it came from a suggestion, and nothing priced", async () => {

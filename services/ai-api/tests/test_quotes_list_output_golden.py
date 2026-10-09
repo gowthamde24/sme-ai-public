@@ -4,7 +4,10 @@ The file tests/golden/quotes_list_api_output.json was captured from the API BEFO
 reading a draft, listing, approving, reading the approved quote and its customer text, for a list-price quote built from the synthetic fixtures. This test
 replays the same calls and compares the raw bytes, key order included. A new optional field must not appear in a list-price quote's output: the fields that
 only a manual quote needs (`pricing_kind`, `price_source`, `item_type_code`) are left out of a list quote's JSON. The one value that differs between runs, the
-approver's id (a fresh test token each time), is replaced by a fixed word before comparing."""
+approver's id (a fresh test token each time), is replaced by a fixed word before comparing.
+
+Job AD (D3b, deliberate): the two LISTS (`list_all`, `list_enquiry`) gained `customer` and `city` (the lead's company name and city, for the quotes screen); the golden was
+regenerated for exactly those two and every other body is byte-identical to the slice-2 capture."""
 
 # ruff: noqa: E501
 

@@ -53,7 +53,7 @@ describe("addEvidenceAction", () => {
         published_at: "2026-01-02",
       }),
     );
-    expect(target).toBe(`/app/tenants/${TENANT}/companies/${TARGET}`);
+    expect(target).toBe(`/app/tenants/${TENANT}/companies/${TARGET}?section=evidence`);
     expect(createEvidence).toHaveBeenCalledWith(
       "tok",
       TENANT,
@@ -73,9 +73,24 @@ describe("addEvidenceAction", () => {
     );
   });
 
+  it("returns to the Evidence part of the page (the pages show one part at a time), and revalidates the plain path", async () => {
+    for (const kind of ["companies", "leads"] as const) {
+      revalidatePath.mockClear();
+      const back = `/app/tenants/${TENANT}/${kind}/${TARGET}`;
+      expect(await redirectTarget(() => run(OK, kind as never))).toBe(`${back}?section=evidence`);
+      expect(revalidatePath).toHaveBeenCalledWith(back);
+    }
+  });
+
+  it("does not redirect (so the form stays with its message) when the evidence is refused", async () => {
+    createEvidence.mockRejectedValue(new ApiRequestError(422, "validation_error", "x"));
+    expect(await redirectTarget(() => run())).toBeNull();
+    expect(revalidatePath).not.toHaveBeenCalled();
+  });
+
   it("works for a lead too", async () => {
     const target = await redirectTarget(() => run(OK, "leads" as never));
-    expect(target).toBe(`/app/tenants/${TENANT}/leads/${TARGET}`);
+    expect(target).toBe(`/app/tenants/${TENANT}/leads/${TARGET}?section=evidence`);
     expect(createEvidence.mock.calls[0][2]).toBe("leads");
   });
 

@@ -37,6 +37,7 @@ from seed_demo import (  # noqa: E402
     SeedError,
     demo_id,
     load_config,
+    local_allow_demo_workspaces,
     require_local,
 )
 
@@ -83,6 +84,7 @@ class ManualDemoSeeder(Seeder):
             raise SeedError(f"Could not create the demo workspace (HTTP {r.status_code}).")
         self.tenant_id = str(r.json()["id"])
         self.summary.tenant_id = self.tenant_id
+        local_allow_demo_workspaces(self.user_id)  # the free trial allows one workspace per owner; the demo user has two
 
     def _put(self, path: str, body: dict[str, Any], what: str) -> None:
         r = self._api("PUT", path, body)

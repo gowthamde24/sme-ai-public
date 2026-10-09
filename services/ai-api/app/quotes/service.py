@@ -213,9 +213,17 @@ def quote_out(
 
 def summary_out(row: dict[str, Any]) -> QuoteSummaryOut:
     shown = {
-        k: v for k, v in row.items() if k != "withdrawn_at"
-    }  # only needed to tell a withdrawal from a replacement
-    return QuoteSummaryOut.model_validate({**shown, "outcome": outcome(row)})
+        k: v for k, v in row.items() if k not in ("withdrawn_at", "lead")
+    }  # withdrawn_at is only needed to tell a withdrawal from a replacement
+    company = ((row.get("lead") or {}).get("company")) or {}
+    return QuoteSummaryOut.model_validate(
+        {
+            **shown,
+            "outcome": outcome(row),
+            "customer": company.get("name"),
+            "city": company.get("city"),
+        }
+    )
 
 
 def load_quote(

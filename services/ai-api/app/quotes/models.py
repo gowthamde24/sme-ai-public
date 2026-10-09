@@ -136,6 +136,9 @@ class QuoteSummaryOut(_Strict):
     total_paise: int
     needs_owner_approval: bool
     created_at: datetime
+    # the customer's company name and city, for the list (null when the lead has no company)
+    customer: str | None = None
+    city: str | None = None
 
     @model_serializer(mode="wrap")
     def _leave_out_what_only_a_manual_quote_has(

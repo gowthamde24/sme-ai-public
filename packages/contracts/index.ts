@@ -23,6 +23,28 @@ export interface TenantDetail extends Tenant {
   role: Role;
 }
 
+/** GET /v1/tenants/{id}: the tenant, the caller's role, and the plan (job AD / D1). Read-only for clients. */
+export interface TenantWithPlan extends TenantDetail {
+  plan: "free_trial";
+  workspace_limit: number;
+  /** ISO 8601 */
+  trial_started_at: string;
+}
+
+/** GET /v1/account/setup (job AD / D2): what a new account still has to do. `needed` carries the business name typed at sign-up. */
+export interface AccountSetup {
+  state: "none" | "needed" | "done";
+  tenant_id: string | null;
+  business_name: string | null;
+}
+
+/** POST /v1/account/setup body is exactly { business_type: "textiles" | "construction" | "other", language: "en" | "te" | "hi" | "kn" }. */
+export interface AccountSetupResult {
+  tenant_id: string;
+  /** false for a repeat (double click, second tab): the same business, nothing new */
+  created: boolean;
+}
+
 export interface Me {
   user_id: string;
   memberships: { tenant: Tenant; role: Role }[];

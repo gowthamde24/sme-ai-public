@@ -239,7 +239,8 @@ def test_a_draft_has_the_databases_figures_and_the_flags(qa: QuoteWorld, client:
     # listings: this enquiry's quotes and the tenant's, newest first, no figures beyond the summary
     listed = client.get(url(qa, f"/enquiries/{eid}/quotes"), headers=h(qa.sales)).json()
     assert [x["id"] for x in listed][:2] == [second.json()["id"], qid]
-    assert set(listed[0]) == {"id", "quote_no", "enquiry_id", "status", "outcome", "customer_kind", "valid_until", "total_paise", "needs_owner_approval", "created_at"}
+    assert set(listed[0]) == {"id", "quote_no", "enquiry_id", "status", "outcome", "customer_kind", "valid_until", "total_paise", "needs_owner_approval", "created_at", "customer", "city"}  # job AD (D3b): the list names the customer's company and city
+    assert listed[0]["customer"] == qa.t.rows["companies"]["name"]
     tenant_wide = client.get(url(qa, "/quotes?limit=2"), headers=h(qa.owner)).json()
     assert len(tenant_wide) == 2 and tenant_wide[0]["id"] == second.json()["id"]
     assert client.get(url(qa, "/quotes?limit=51"), headers=h(qa.owner)).status_code == 422
