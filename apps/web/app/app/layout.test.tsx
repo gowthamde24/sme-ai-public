@@ -39,7 +39,7 @@ describe("the /app layout (the workspace frame)", () => {
     render(await AppLayout({ children: page }));
     expect(fetchMe).toHaveBeenCalledWith("tok");
     expect(screen.getByText("The page")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Sign out" })).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Sign out" }).length).toBeGreaterThan(0); // the phone's account menu and the side menu's footer
   });
 
   it("draws the account part only, and still the page, when the API cannot be read or answers for someone else", async () => {

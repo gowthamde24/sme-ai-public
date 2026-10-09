@@ -1,33 +1,35 @@
 import { describe, expect, it } from "vitest";
 
-import { NAV, TAB_GROUPS, groupHref, hrefOf, itemFor, visibleGroups, workspaceOf, type Role } from "./nav";
+import { NAV, barItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 
-/** The plan's table (docs/plans/workspace-v2-redesign-plan.md, 2.2), typed out by hand: the menu must agree with it. [owner, admin, sales, viewer] */
+/** The plan's table (docs/plans/workspace-v2-redesign-plan.md, 2.2, as simplified by Job X on 2026-10-09: six top-level groups), typed out by hand: the menu must agree with it. [owner, admin, sales, viewer] */
 const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, boolean]][]> = {
-  Today: [["Today", "", "today", [true, true, true, true]]],
-  Customers: [
+  Today: [
+    ["Home", "", "today", [true, true, true, true]],
+    ["Follow-ups due", "/followups", "followups-due", [true, true, true, false]],
+    ["Rules for follow-ups", "/followups/policy", "followups-policy", [true, true, true, false]],
+  ],
+  "Leads and orders": [
     ["Leads to look at", "/review", "review", [true, true, true, true]],
+    ["Orders", "/orders", "orders", [true, true, true, false]],
+  ],
+  Customers: [
     ["Companies and contacts", "", "records", [true, true, true, true]],
     ["Add a customer", "/customers/new", "add-customer", [true, true, true, false]],
   ],
-  "Quotes and orders": [["Orders", "/orders", "orders", [true, true, true, false]]],
-  "Follow-ups": [
-    ["Due now", "/followups", "followups-due", [true, true, true, false]],
-    ["Rules for follow-ups", "/followups/policy", "followups-policy", [true, true, true, false]],
-  ],
-  Catalogue: [
+  "Catalogue and prices": [
     ["Item types", "/item-types", "item-types", [true, true, true, false]],
     ["Price list", "/price-list", "price-list", [true, true, false, false]],
     ["Add a product", "/products/new", "add-product", [true, true, false, false]],
+    ["Quote policy", "/quote-policy", "quote-policy", [true, true, false, false]],
   ],
   Assistant: [
     ["Suggestions", "/suggestions", "suggestions", [true, true, true, true]],
     ["Agents", "/agents", "agents", [true, true, true, true]],
   ],
-  Settings: [
-    ["Quote policy", "/quote-policy", "quote-policy", [true, true, false, false]],
+  "Privacy and safety": [
     ["Privacy and erasure", "/privacy", "privacy", [true, true, false, false]],
     ["Suppression keys", "/suppression", "suppression", [true, false, false, false]],
     ["Security (your account)", "/app/security", "security", [true, true, true, true]],
@@ -48,14 +50,14 @@ describe("the menu table", () => {
     expect(offered).toEqual(expected);
   });
 
-  it("hides a group with nothing in it (a viewer has no Quotes and orders, Follow-ups or Catalogue)", () => {
-    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Today", "Customers", "Assistant", "Settings"]);
-    expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Today", "Customers", "Quotes and orders", "Follow-ups", "Catalogue", "Assistant", "Settings"]);
+  it("hides a group with nothing in it (a viewer has no Catalogue and prices)", () => {
+    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Today", "Leads and orders", "Customers", "Assistant", "Privacy and safety"]);
+    expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Today", "Leads and orders", "Customers", "Catalogue and prices", "Assistant", "Privacy and safety"]);
   });
 
-  it("the phone's tabs are the four groups the plan names, then More", () => {
-    expect([...TAB_GROUPS]).toEqual(["today", "customers", "orders", "followups"]);
-    expect(visibleGroups("viewer").filter((g) => (TAB_GROUPS as readonly string[]).includes(g.id)).map((g) => g.label)).toEqual(["Today", "Customers"]);
+  it("the phone's tabs are four daily pages, then More", () => {
+    expect(barItems("owner").map((i) => i.id)).toEqual(["today", "followups-due", "review", "orders"]);
+    expect(barItems("viewer").map((i) => i.id)).toEqual(["today", "review"]);
   });
 
   it("makes addresses inside the workspace, and the account page absolute", () => {
@@ -64,7 +66,7 @@ describe("the menu table", () => {
     expect(hrefOf(flat.find((i) => i.id === "records")!, T)).toBe(`/app/tenants/${T}?tab=companies`);
     expect(hrefOf(flat.find((i) => i.id === "today")!, T)).toBe(`/app/tenants/${T}`);
     expect(hrefOf(flat.find((i) => i.id === "security")!, T)).toBe("/app/security");
-    expect(groupHref(visibleGroups("owner")[1], T)).toBe(`/app/tenants/${T}/review`);
+    expect(hrefOf(barItems("owner")[2], T)).toBe(`/app/tenants/${T}/review`);
   });
 
   it("every menu address is a real route of the app (no new URL)", () => {
