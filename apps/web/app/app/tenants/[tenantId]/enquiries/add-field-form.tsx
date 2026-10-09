@@ -20,7 +20,7 @@ export function AddFieldForm({ add }: { add: Action }) {
       <label htmlFor="add-field" className={fieldLabel}>
         Field
       </label>
-      <select id="add-field" className={fieldInput} name="field" value={field} onChange={(e) => setField(e.target.value as FieldKey)} disabled={pending}>
+      <select id="add-field" name="field" value={field} onChange={(e) => setField(e.target.value as FieldKey)} disabled={pending} className={fieldInput}>
         {FIELD_KEYS.map((k) => (
           <option key={k} value={k}>
             {FIELD_LABELS[k]}
