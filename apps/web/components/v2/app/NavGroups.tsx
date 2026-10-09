@@ -2,7 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useId, useState } from "react";
+import { useId, useMemo, useState, useSyncExternalStore } from "react";
 
 import { NavIcon } from "./icons";
 import { word, type Labels } from "./labels";
@@ -13,21 +13,41 @@ export const itemCurrent = "bg-brand-bg text-brand-text font-semibold";
 const headClass = "flex min-h-11 items-center gap-2 rounded-lg px-3 text-base font-semibold text-ink";
 const STORE = "sme_nav_open";
 
-/** What the person opened or closed last time (a convenience only: with no storage, or a broken value, the menu works and starts as the table says). */
-function readStored(): Record<string, boolean> {
+/**
+ * What the person opened or closed last time (a convenience only: with no storage, or a broken value, the menu works and starts as the table says).
+ * Read as an external store, so the first (server) render is the table's own default and the browser's value arrives after hydration.
+ */
+const listeners = new Set<() => void>();
+function subscribe(notify: () => void) {
+  listeners.add(notify);
+  window.addEventListener("storage", notify);
+  return () => {
+    listeners.delete(notify);
+    window.removeEventListener("storage", notify);
+  };
+}
+function snapshot(): string {
   try {
-    const v: unknown = JSON.parse(window.localStorage.getItem(STORE) ?? "{}");
+    return window.localStorage.getItem(STORE) ?? "{}";
+  } catch {
+    return "{}";
+  }
+}
+function parse(raw: string): Record<string, boolean> {
+  try {
+    const v: unknown = JSON.parse(raw);
     return v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, boolean>) : {};
   } catch {
     return {};
   }
 }
-function writeStored(map: Record<string, boolean>) {
+function remember(id: string, open: boolean) {
   try {
-    window.localStorage.setItem(STORE, JSON.stringify(map));
+    window.localStorage.setItem(STORE, JSON.stringify({ ...parse(snapshot()), [id]: open }));
   } catch {
     /* no storage: the choice lasts until the page changes */
   }
+  listeners.forEach((l) => l());
 }
 
 /**
@@ -37,16 +57,14 @@ function writeStored(map: Record<string, boolean>) {
  * person opens or closes is remembered in this browser (try/catch: the page works without storage).
  */
 export function NavGroups({ groups, tenantId, activeItemId, activeGroupId, pathname, labels, onNavigate }: { groups: readonly VisibleGroup[]; tenantId: string; activeItemId: string | null; activeGroupId: string | null; pathname: string; labels?: Labels; onNavigate?: () => void }) {
-  const [stored, setStored] = useState<Record<string, boolean>>({});
+  const raw = useSyncExternalStore(subscribe, snapshot, () => "{}");
+  const stored = useMemo(() => parse(raw), [raw]);
   const [choice, setChoice] = useState<Record<string, boolean>>({});
   const [seen, setSeen] = useState(pathname);
   if (seen !== pathname) {
     setSeen(pathname); // a new page: forget this page's own open or close (state adjusted while rendering)
     setChoice({});
   }
-  useEffect(() => {
-    setStored(readStored());
-  }, []);
   const prefix = useId();
   const openOf = (g: VisibleGroup) => choice[g.id] ?? (g.id === activeGroupId ? true : (stored[g.id] ?? g.defaultOpen));
   const link = (g: VisibleGroup, i: VisibleGroup["items"][number], icon: boolean) => {
@@ -72,9 +90,7 @@ export function NavGroups({ groups, tenantId, activeItemId, activeGroupId, pathn
                 const isOpen = e.currentTarget.open;
                 if (isOpen === openOf(g)) return;
                 setChoice((c) => ({ ...c, [g.id]: isOpen }));
-                const next = { ...readStored(), [g.id]: isOpen };
-                setStored(next);
-                writeStored(next);
+                remember(g.id, isOpen);
               }}
               className="group"
             >
