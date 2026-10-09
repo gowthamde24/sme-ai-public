@@ -1,6 +1,6 @@
 /**
- * The workspace menu: ONE table (workspace redesign, plan section 2.2). Visibility is a convenience only: the page, the API and the database
- * stay the gate. `test: nav.test.ts` pins this table to the plan, so a role change in a page cannot silently disagree with the menu.
+ * The workspace menu: ONE table (workspace redesign, plan section 2.2; ported to the design-lab app in Job AC, batch C1). Visibility is a convenience only: the
+ * page, the API and the database stay the gate. `test: nav.test.ts` pins this table to the plan, so a role change in a page cannot silently disagree with the menu.
  * Pure data and pure functions: no React, no request. A path is relative to /app/tenants/<id>; a path starting with /app is absolute (account level).
  */
 export type Role = "owner" | "admin" | "sales" | "viewer";
@@ -9,117 +9,79 @@ export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 export const OWNER_ONLY: readonly Role[] = ["owner"];
 
-export type IconKey = "today" | "followups" | "leads" | "customers" | "orders" | "catalogue" | "assistant" | "safety";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "office" | "integrations" | "settings";
 
 export type NavItem = {
   id: string;
   label: string;
+  icon: IconKey;
   /** "" = the workspace home. */
   path: string;
-  /** The home's records tabs: `?tab=` value that makes this item the current one (and "" = no tab). */
+  /** The home's records tab (`?tab=`) that makes this item the current one: "" = the home with no tab. */
   tab?: string;
-  /** Set on the few daily items that are a tab of the phone's bottom bar: the short word under the icon, and the icon. */
-  bar?: string;
-  barIcon?: IconKey;
+  /** Other home tabs (`?tab=`) that belong to this item too. */
+  tabs?: readonly string[];
+  /** Other paths (relative to the workspace) whose pages belong under this item: the current marker and the way back use them. */
+  also?: readonly string[];
+  /** A tab of the phone's bottom bar (the rest are in "More"). */
+  bar?: boolean;
   roles: readonly Role[];
 };
-/**
- * `collapsible`: the group opens and closes (a group with more than three items must be; the test pins that). `defaultOpen`: open until the person closes it
- * (the group that holds the current page always opens itself). `humanOnly`: the group's name stays English in every language until a person who reads the
- * language has reviewed it (language track).
- */
-export type NavGroup = { id: string; label: string; icon: IconKey; items: readonly NavItem[]; collapsible?: boolean; defaultOpen?: boolean; humanOnly?: boolean };
+export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
 /**
- * The menu, simplified (Job X, owner feedback 2026-10-09): six top-level entries at most, plain words, the daily groups always open, the rarely used
- * ones (catalogue and prices, privacy and safety) closed until opened. Every page a role can open is at most two clicks from here. A group a role has
- * only one item of is drawn as a plain link (see `visibleGroups`). There is no "Your team" entry: there is no page for it yet (docs/plans/members-and-invitations.md).
- * "Rules for follow-ups" (/followups/policy) is no menu entry any more: the follow-ups page links to it, so it is one click further, and it belongs to "Follow-ups due" for the current marker.
+ * The menu as the design-lab app draws it: four labelled groups (Work, Your business, Your team, Connect), then, below the scrolling part, Settings. The
+ * pages the old menu listed one by one are reached from the screens now: follow-ups and suggestions from Leads, the catalogue's four pages from "Catalogue and
+ * prices", the privacy and security pages from Settings, runs and cost from Office. Each page still belongs to one item (`also`), so the marker and the way back stay right.
+ * There is no "Your team" members page yet (docs/plans/members-and-invitations.md): "Your team" is the group of the AI team (Office).
  */
 export const NAV: readonly NavGroup[] = [
   {
-    id: "today",
-    label: "Today",
-    icon: "today",
+    id: "work",
+    label: "Work",
     items: [
-      { id: "today", label: "Home", path: "", tab: "", bar: "Today", barIcon: "today", roles: ALL_ROLES },
-      { id: "followups-due", label: "Follow-ups due", path: "/followups", bar: "Follow-ups", barIcon: "followups", roles: WRITERS },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", bar: true, roles: ALL_ROLES },
+      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, roles: ALL_ROLES },
+      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, roles: WRITERS },
+      { id: "orders", label: "Orders", icon: "orders", path: "/orders", bar: true, roles: WRITERS },
+      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
     ],
   },
   {
-    id: "leads",
-    label: "Leads and orders",
-    icon: "orders",
-    items: [
-      { id: "review", label: "Leads to look at", path: "/review", bar: "Leads", barIcon: "leads", roles: ALL_ROLES },
-      { id: "orders", label: "Orders", path: "/orders", bar: "Orders", barIcon: "orders", roles: WRITERS },
-    ],
+    id: "business",
+    label: "Your business",
+    items: [{ id: "catalogue", label: "Catalogue and prices", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], roles: WRITERS }],
   },
   {
-    id: "customers",
-    label: "Customers",
-    icon: "customers",
-    items: [
-      { id: "records", label: "Companies and contacts", path: "", tab: "companies", roles: ALL_ROLES },
-      { id: "add-customer", label: "Add a customer", path: "/customers/new", roles: WRITERS },
-    ],
+    id: "team",
+    label: "Your team",
+    items: [{ id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES }],
   },
   {
-    id: "catalogue",
-    label: "Catalogue and prices",
-    icon: "catalogue",
-    collapsible: true,
-    items: [
-      { id: "item-types", label: "Item types", path: "/item-types", roles: WRITERS },
-      { id: "price-list", label: "Price list", path: "/price-list", roles: ADMINS },
-      { id: "add-product", label: "Add a product", path: "/products/new", roles: ADMINS },
-      { id: "quote-policy", label: "Quote policy", path: "/quote-policy", roles: ADMINS },
-    ],
-  },
-  {
-    id: "assistant",
-    label: "Assistant",
-    icon: "assistant",
-    items: [
-      { id: "suggestions", label: "Suggestions", path: "/suggestions", roles: ALL_ROLES },
-      { id: "agents", label: "Agents", path: "/agents", roles: ALL_ROLES },
-    ],
-  },
-  {
-    id: "safety",
-    label: "Privacy and safety",
-    icon: "safety",
-    collapsible: true,
-    humanOnly: true,
-    items: [
-      { id: "privacy", label: "Privacy and erasure", path: "/privacy", roles: ADMINS },
-      { id: "suppression", label: "Suppression keys", path: "/suppression", roles: OWNER_ONLY },
-      { id: "security", label: "Security (your account)", path: "/app/security", roles: ALL_ROLES },
-    ],
+    id: "connect",
+    label: "Connect",
+    items: [{ id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", roles: ADMINS }],
   },
 ];
 
-export type VisibleGroup = {
-  id: string;
-  label: string;
-  icon: IconKey;
-  items: NavItem[];
-  /** The group opens and closes (and has at least two items for this role). */
-  collapsible: boolean;
-  defaultOpen: boolean;
-  /** One item only for this role: drawn as a plain link, with no group heading. */
-  flat: boolean;
-};
+/** Below the scrolling part of the menu: Settings (its tabs hold the business and plan, the members, language and look, security and privacy). */
+export const FOOT: readonly NavItem[] = [
+  { id: "settings", label: "Settings", icon: "settings", path: "/settings", also: ["/privacy", "/suppression"], roles: ALL_ROLES },
+];
+
+export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
 /** The groups (and, inside them, the items) a role is offered. A group with no visible item is hidden. */
 export function visibleGroups(role: Role): VisibleGroup[] {
-  return NAV.map((g) => {
-    const items = g.items.filter((i) => i.roles.includes(role));
-    return { id: g.id, label: g.label, icon: g.icon, items, collapsible: !!g.collapsible && items.length > 1, defaultOpen: !!g.defaultOpen, flat: items.length === 1 };
-  }).filter((g) => g.items.length > 0);
+  return NAV.map((g) => ({ id: g.id, label: g.label, items: g.items.filter((i) => i.roles.includes(role)) })).filter((g) => g.items.length > 0);
 }
 
-/** The daily items that are tabs of the phone's bottom bar (then "More" holds the whole menu), only those the role is offered. */
+/** The items under the scrolling part (Settings) a role is offered. */
+export function footItems(role: Role): NavItem[] {
+  return FOOT.filter((i) => i.roles.includes(role));
+}
+
+/** The items that are tabs of the phone's bottom bar (then "More" holds the rest), only those the role is offered. */
 export function barItems(role: Role): NavItem[] {
   return NAV.flatMap((g) => g.items).filter((i) => i.bar && i.roles.includes(role));
 }
@@ -131,15 +93,6 @@ export function hrefOf(item: NavItem, tenantId: string): string {
   return item.tab ? `${base}?tab=${item.tab}` : base;
 }
 
-/** Pages that belong under an item although their path does not start with it (static rules, most specific first). */
-const BELONGS: readonly { test: RegExp; item: string }[] = [
-  { test: /^\/leads\/[^/]+\/followup/, item: "followups-due" },
-  { test: /^\/requirements\//, item: "followups-due" },
-  { test: /^\/leads\//, item: "review" },
-  { test: /^\/(companies|contacts)\//, item: "records" },
-  { test: /^\/enquiries\//, item: "orders" },
-];
-
 const TENANT_PATH = /^\/app\/tenants\/([0-9a-fA-F-]{36})(\/[^?#]*)?/;
 
 /** `{ tenantId, rest }` for a path under a workspace, else null. `rest` is "" for the workspace home. */
@@ -148,23 +101,21 @@ export function workspaceOf(pathname: string): { tenantId: string; rest: string 
   return m ? { tenantId: m[1], rest: (m[2] ?? "").replace(/\/$/, "") } : null;
 }
 
+const under = (rest: string, path: string) => rest === path || rest.startsWith(`${path}/`);
+
 /** The nav item a path belongs to (for the current marker and the way back), or null. */
-export function itemFor(pathname: string, tab: string | null): { group: VisibleGroup | NavGroup; item: NavItem } | null {
-  if (pathname === "/app/security" || pathname.startsWith("/app/security/")) {
-    const group = NAV.find((g) => g.id === "safety")!;
-    return { group, item: group.items.find((i) => i.id === "security")! };
-  }
+export function itemFor(pathname: string, tab: string | null): { group: NavGroup; item: NavItem } | null {
+  const all = [...NAV.flatMap((g) => g.items.map((item) => ({ group: g, item }))), ...FOOT.map((item) => ({ group: { id: "foot", label: "", items: FOOT } as NavGroup, item }))];
+  if (pathname === "/app/security" || pathname.startsWith("/app/security/")) return all.find((x) => x.item.id === "settings") ?? null;
   const ws = workspaceOf(pathname);
   if (!ws) return null;
-  const items = NAV.flatMap((g) => g.items.map((item) => ({ group: g, item })));
   if (ws.rest === "") {
-    const id = tab ? "records" : "today";
-    return items.find((x) => x.item.id === id) ?? null;
+    if (!tab) return all.find((x) => x.item.id === "today") ?? null;
+    return all.find((x) => x.item.tabs?.includes(tab)) ?? all.find((x) => x.item.id === "today") ?? null;
   }
-  const rule = BELONGS.find((b) => b.test.test(ws.rest));
-  if (rule) return items.find((x) => x.item.id === rule.item) ?? null;
-  // the longest matching path wins (/followups/policy before /followups)
-  const hits = items.filter((x) => x.item.path !== "" && !x.item.path.startsWith("/app") && (ws.rest === x.item.path || ws.rest.startsWith(`${x.item.path}/`)));
-  hits.sort((a, b) => b.item.path.length - a.item.path.length);
-  return hits[0] ?? null;
+  // the longest matching path wins (/followups/policy is under Leads through its own prefix; /agents is under Office)
+  const hits = all
+    .flatMap((x) => [x.item.path, ...(x.item.also ?? [])].filter((p) => p !== "" && !p.startsWith("/app") && under(ws.rest, p)).map((p) => ({ x, len: p.length })))
+    .sort((a, b) => b.len - a.len);
+  return hits[0]?.x ?? null;
 }

@@ -1,5 +1,49 @@
 {
- "nav.group.today": {
+ "nav.group.work": {
+  "en": "Work",
+  "te": "పని",
+  "hi": "काम",
+  "kn": "ಕೆಲಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.business": {
+  "en": "Your business",
+  "te": "మీ వ్యాపారం",
+  "hi": "आपका व्यापार",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.team": {
+  "en": "Your team",
+  "te": "మీ టీమ్",
+  "hi": "आपकी टीम",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.connect": {
+  "en": "Connect",
+  "te": "కనెక్షన్లు",
+  "hi": "कनेक्ट करें",
+  "kn": "ಸಂಪರ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.today": {
   "en": "Today",
   "te": "ఈరోజు",
   "hi": "आज",
@@ -10,100 +54,22 @@
    "kn": "draft"
   }
  },
- "nav.group.leads": {
-  "en": "Leads and orders",
-  "te": "లీడ్‌లు, ఆర్డర్లు",
-  "hi": "लीड और ऑर्डर",
-  "kn": "ಲೀಡ್‌ಗಳು ಮತ್ತು ಆರ್ಡರ್‌ಗಳು",
+ "nav.item.leads": {
+  "en": "Leads",
+  "te": "లీడ్‌లు",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.group.customers": {
-  "en": "Customers",
-  "te": "కస్టమర్లు",
-  "hi": "ग्राहक",
-  "kn": "ಗ್ರಾಹಕರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.group.catalogue": {
-  "en": "Catalogue and prices",
-  "te": "క్యాటలాగ్, ధరలు",
-  "hi": "कैटलॉग और दाम",
-  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.group.assistant": {
-  "en": "Assistant",
-  "te": "అసిస్టెంట్",
-  "hi": "असिस्टेंट",
-  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.group.safety": {
-  "en": "Privacy and safety",
-  "te": "Privacy and safety",
-  "hi": "Privacy and safety",
-  "kn": "Privacy and safety",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.today": {
-  "en": "Home",
-  "te": "హోమ్",
-  "hi": "होम",
-  "kn": "ಹೋಮ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.review": {
-  "en": "Leads to look at",
-  "te": "చూడాల్సిన లీడ్‌లు",
-  "hi": "देखने वाले लीड",
-  "kn": "ನೋಡಬೇಕಾದ ಲೀಡ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.records": {
-  "en": "Companies and contacts",
-  "te": "కంపెనీలు, కాంటాక్ట్‌లు",
-  "hi": "कंपनियाँ और कॉन्टैक्ट",
-  "kn": "ಕಂಪನಿಗಳು ಮತ್ತು ಕಾಂಟ್ಯಾಕ್ಟ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.add-customer": {
-  "en": "Add a customer",
-  "te": "కస్టమర్‌ను చేర్చండి",
-  "hi": "ग्राहक जोड़ें",
-  "kn": "ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+ "nav.item.quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -121,157 +87,55 @@
    "kn": "draft"
   }
  },
- "nav.item.followups-due": {
-  "en": "Follow-ups due",
-  "te": "చేయాల్సిన ఫాలో-అప్‌లు",
-  "hi": "करने वाले फ़ॉलो-अप",
-  "kn": "ಮಾಡಬೇಕಾದ ಫಾಲೋ-ಅಪ್‌ಗಳು",
+ "nav.item.customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.item-types": {
-  "en": "Item types",
-  "te": "ఐటమ్ రకాలు",
-  "hi": "आइटम के प्रकार",
-  "kn": "ಐಟಂ ವಿಧಗಳು",
+ "nav.item.catalogue": {
+  "en": "Catalogue and prices",
+  "te": "క్యాటలాగ్, ధరలు",
+  "hi": "कैटलॉग और दाम",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.price-list": {
-  "en": "Price list",
-  "te": "ప్రైస్ లిస్ట్",
-  "hi": "प्राइस लिस्ट",
-  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್",
+ "nav.item.office": {
+  "en": "Office",
+  "te": "ఆఫీస్",
+  "hi": "ऑफ़िस",
+  "kn": "ಆಫೀಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.add-product": {
-  "en": "Add a product",
-  "te": "ప్రొడక్ట్‌ను చేర్చండి",
-  "hi": "प्रोडक्ट जोड़ें",
-  "kn": "ಪ್ರಾಡಕ್ಟ್ ಸೇರಿಸಿ",
+ "nav.item.integrations": {
+  "en": "Integrations",
+  "te": "ఇంటిగ్రేషన్లు",
+  "hi": "इंटीग्रेशन",
+  "kn": "ಇಂಟಿಗ್ರೇಷನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.suggestions": {
-  "en": "Suggestions",
-  "te": "సూచనలు",
-  "hi": "सुझाव",
-  "kn": "ಸಲಹೆಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.agents": {
-  "en": "Agents",
-  "te": "ఏజెంట్లు",
-  "hi": "एजेंट",
-  "kn": "ಏಜೆಂಟ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.quote-policy": {
-  "en": "Quote policy",
-  "te": "Quote policy",
-  "hi": "Quote policy",
-  "kn": "Quote policy",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.privacy": {
-  "en": "Privacy and erasure",
-  "te": "Privacy and erasure",
-  "hi": "Privacy and erasure",
-  "kn": "Privacy and erasure",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.suppression": {
-  "en": "Suppression keys",
-  "te": "Suppression keys",
-  "hi": "Suppression keys",
-  "kn": "Suppression keys",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.security": {
-  "en": "Security (your account)",
-  "te": "సెక్యూరిటీ (మీ అకౌంట్)",
-  "hi": "सिक्योरिटी (आपका अकाउंट)",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ (ನಿಮ್ಮ ಅಕೌಂಟ್)",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.today": {
-  "en": "Today",
-  "te": "ఈరోజు",
-  "hi": "आज",
-  "kn": "ಇಂದು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.followups-due": {
-  "en": "Follow-ups",
-  "te": "ఫాలో-అప్‌లు",
-  "hi": "फ़ॉलो-अप",
-  "kn": "ಫಾಲೋ-ಅಪ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.review": {
-  "en": "Leads",
-  "te": "లీడ్‌లు",
-  "hi": "लीड",
-  "kn": "ಲೀಡ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.orders": {
-  "en": "Orders",
-  "te": "ఆర్డర్లు",
-  "hi": "ऑर्डर",
-  "kn": "ಆರ್ಡರ್‌ಗಳು",
+ "nav.item.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -327,17 +191,6 @@
   "te": "మొత్తం మెనూ",
   "hi": "पूरा मेन्यू",
   "kn": "ಪೂರ್ತಿ ಮೆನು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.role": {
-  "en": "Your role here: {role}",
-  "te": "ఇక్కడ మీ పాత్ర: {role}",
-  "hi": "यहाँ आपकी भूमिका: {role}",
-  "kn": "ಇಲ್ಲಿ ನಿಮ್ಮ ಪಾತ್ರ: {role}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -410,44 +263,99 @@
    "kn": "draft"
   }
  },
- "frame.addworkspace": {
-  "en": "Add a workspace",
-  "te": "వర్క్‌స్పేస్‌ను చేర్చండి",
-  "hi": "वर्कस्पेस जोड़ें",
-  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸೇರಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.workspaces": {
-  "en": "Workspaces",
-  "te": "వర్క్‌స్పేస్‌లు",
-  "hi": "वर्कस्पेस",
-  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.here": {
-  "en": "You are here",
-  "te": "మీరు ఇక్కడ ఉన్నారు",
-  "hi": "आप यहाँ हैं",
-  "kn": "ನೀವು ಇಲ್ಲಿದ್ದೀರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "frame.draft": {
   "en": "Machine-written translation of the menu, not yet read by a person. The screens below are still in English.",
   "te": "మెనూ అనువాదాన్ని యంత్రం రాసింది, ఇంకా ఎవరూ చదివి సరిచూడలేదు. కింద స్క్రీన్లు ఇంకా ఇంగ్లీషులోనే ఉన్నాయి.",
   "hi": "मेन्यू का अनुवाद मशीन ने लिखा है, अभी किसी ने पढ़कर जाँचा नहीं है। नीचे की स्क्रीन अभी अंग्रेज़ी में हैं।",
   "kn": "ಮೆನುವಿನ ಅನುವಾದವನ್ನು ಯಂತ್ರ ಬರೆದಿದೆ, ಇನ್ನೂ ಯಾರೂ ಓದಿ ಪರಿಶೀಲಿಸಿಲ್ಲ. ಕೆಳಗಿನ ಸ್ಕ್ರೀನ್‌ಗಳು ಇನ್ನೂ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.help": {
+  "en": "Help",
+  "te": "సహాయం",
+  "hi": "मदद",
+  "kn": "ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.notyet": {
+  "en": "Not available yet",
+  "te": "ఇంకా అందుబాటులో లేదు",
+  "hi": "अभी उपलब्ध नहीं",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.collapse": {
+  "en": "Collapse menu",
+  "te": "మెనూను కుదించండి",
+  "hi": "मेन्यू छोटा करें",
+  "kn": "ಮೆನು ಕುಗ್ಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.expand": {
+  "en": "Expand menu",
+  "te": "మెనూను విస్తరించండి",
+  "hi": "मेन्यू बड़ा करें",
+  "kn": "ಮೆನು ವಿಸ್ತರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aiusage": {
+  "en": "AI usage today",
+  "te": "ఈరోజు AI వినియోగం",
+  "hi": "आज का AI उपयोग",
+  "kn": "ಇಂದಿನ AI ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aileft": {
+  "en": "{amount} left today",
+  "te": "ఈరోజు {amount} మిగిలింది",
+  "hi": "आज {amount} बचे हैं",
+  "kn": "ಇಂದು {amount} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.waiting": {
+  "en": "Waiting for you",
+  "te": "మీ కోసం వేచి ఉన్నవి",
+  "hi": "आपके इंतज़ार में",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.plan": {
+  "en": "{plan} plan",
+  "te": "{plan} ప్లాన్",
+  "hi": "{plan} प्लान",
+  "kn": "{plan} ಪ್ಲಾನ್",
   "status": {
    "te": "draft",
    "hi": "draft",

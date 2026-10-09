@@ -7,13 +7,13 @@ import { appDict, appT, frameLabels } from "@/i18n/app";
 import { LANGS } from "@/i18n/lang";
 import { TRANSLATED_LANGS, dictFor } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
-import { NAV } from "@/components/v2/app/nav";
+import { FOOT, NAV } from "@/components/v2/app/nav";
 
 type Entry = { en: string; te: string; hi: string; kn: string; status: Record<string, string>; humanOnly?: boolean };
 const data = app as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY = ["nav.group.safety", "nav.item.privacy", "nav.item.quote-policy", "nav.item.suppression"];
+const HUMAN_ONLY: string[] = []; // no string of the frame is about money, consent, privacy or safety any more: those words live in the screens, which stay English
 
 describe("the frame's string store (language track L0)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(app as never, l) as Record<string, string>]));
@@ -48,10 +48,11 @@ describe("the frame's string store (language track L0)", () => {
       expect(appDict("en")[`nav.group.${g.id}` as keyof typeof app], g.id).toBe(g.label);
       for (const i of g.items) expect(appDict("en")[`nav.item.${i.id}` as keyof typeof app], i.id).toBe(i.label);
     }
+    for (const i of FOOT) expect(appDict("en")[`nav.item.${i.id}` as keyof typeof app], i.id).toBe(i.label);
   });
   it("fills a placeholder and ships the dictionary of ONE language as props", () => {
-    expect(appT("en")("frame.role", { role: "owner" })).toBe("Your role here: owner");
-    expect(appT("te")("frame.role", { role: "owner" })).toContain("owner");
+    expect(appT("en")("frame.aileft", { amount: "₹310" })).toBe("₹310 left today");
+    expect(appT("te")("frame.aileft", { amount: "₹310" })).toContain("₹310");
     expect(Object.keys(frameLabels("te")).length).toBe(keys.length);
   });
   it("is server only: no client component imports it (all four dictionaries would land in the browser bundle)", () => {

@@ -9,6 +9,7 @@ vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchPa
 import { frameLabels } from "@/i18n/app";
 
 import { AccountMenu } from "./AccountMenu";
+import type { FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
 import { Crumbs } from "./Crumbs";
 import { SideNav } from "./SideNav";
@@ -17,6 +18,7 @@ import type { Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 
 const A = "22222222-2222-2222-2222-222222222222";
+const none: FrameData = { plan: null, usage: null, waiting: null };
 const members: Membership[] = [{ id: A, name: "Acme", role: "owner" }, { id: "33333333-3333-3333-3333-333333333333", name: "Second", role: "viewer" }];
 
 beforeEach(() => {
@@ -26,10 +28,10 @@ afterEach(cleanup);
 
 describe("the frame in English is the same with or without the dictionary (language track L0, English parity)", () => {
   it.each([
-    ["SideNav", (l?: Record<string, string>) => <SideNav memberships={members} labels={l} />],
-    ["TabBar", (l?: Record<string, string>) => <TabBar memberships={members} labels={l} />],
+    ["SideNav", (l?: Record<string, string>) => <SideNav memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} />],
+    ["TabBar", (l?: Record<string, string>) => <TabBar memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} />],
     ["Crumbs", (l?: Record<string, string>) => <Crumbs memberships={members} labels={l} />],
-    ["WorkspaceSwitcher", (l?: Record<string, string>) => <WorkspaceSwitcher memberships={members} labels={l} />],
+    ["WorkspaceSwitcher", (l?: Record<string, string>) => <WorkspaceSwitcher memberships={members} labels={l} plan={null} />],
     ["AccountMenu", (l?: Record<string, string>) => <AccountMenu email="o@example.test" signOut={async () => undefined} labels={l} />],
   ])("%s", (_name, make) => {
     nav.pathname = `/app/tenants/${A}/orders/abc`;
@@ -54,11 +56,14 @@ describe("the frame in Telugu", () => {
     expect(screen.getByRole("note")).toHaveTextContent("యంత్రం రాసింది");
     expect(screen.getByText("The page")).toBeInTheDocument();
   });
-  it("keeps the three menu items about money rules, privacy and erasure, and do-not-contact keys in English until a person has reviewed them", () => {
+  it("draws the words of the new frame in Telugu too: the groups, the foot, Help and 'Not available yet'", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
-    for (const name of ["Quote policy", "Privacy and erasure", "Suppression keys"]) expect(within(menu).getByRole("link", { name })).toBeInTheDocument();
+    expect(within(menu).getByRole("group", { name: "పని" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "సెట్టింగ్స్" })).toBeInTheDocument();
+    expect(screen.getAllByText("ఇంకా అందుబాటులో లేదు").length).toBeGreaterThan(0);
+    expect(screen.getByRole("button", { name: /సహాయం/ })).toBeInTheDocument();
   });
   it("English has no draft note and the page area is English too", () => {
     nav.pathname = `/app/tenants/${A}/orders`;

@@ -458,3 +458,9 @@ add({
   render: async () => (await import("@/app/app/tenants/[tenantId]/followups/page")).default(props({})),
   handlers: () => ({ fetchTenant: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
 });
+
+// ---- screens of the new menu whose data layer has not landed yet (Job AC, batch C1): a title and "Not available yet" ---------------------------------
+add({ id: "quotes-not-yet", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "office-not-yet", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "integrations-not-yet", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "settings-not-yet", render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({})), handlers: (role) => base(role) });

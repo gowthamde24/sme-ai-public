@@ -1,45 +1,30 @@
 import { describe, expect, it } from "vitest";
 
-import { NAV, barItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role } from "./nav";
+import { FOOT, NAV, barItems, footItems, hrefOf, itemFor, visibleGroups, workspaceOf, type Role } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
 
-/** The plan's table (docs/plans/workspace-v2-redesign-plan.md, 2.2, as simplified by Job X on 2026-10-09: six top-level groups), typed out by hand: the menu must agree with it. [owner, admin, sales, viewer] */
+/** The menu of the design-lab app (docs/plans/workspace-v2-redesign-plan.md, 2.2, as ported in Job AC batch C1), typed out by hand: the menu must agree with it. [owner, admin, sales, viewer] */
 const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, boolean]][]> = {
-  Today: [
-    ["Home", "", "today", [true, true, true, true]],
-    ["Follow-ups due", "/followups", "followups-due", [true, true, true, false]],
-  ],
-  "Leads and orders": [
-    ["Leads to look at", "/review", "review", [true, true, true, true]],
+  Work: [
+    ["Today", "", "today", [true, true, true, true]],
+    ["Leads", "/review", "leads", [true, true, true, true]],
+    ["Quotes", "/quotes", "quotes", [true, true, true, false]],
     ["Orders", "/orders", "orders", [true, true, true, false]],
+    ["Customers", "", "customers", [true, true, true, true]],
   ],
-  Customers: [
-    ["Companies and contacts", "", "records", [true, true, true, true]],
-    ["Add a customer", "/customers/new", "add-customer", [true, true, true, false]],
-  ],
-  "Catalogue and prices": [
-    ["Item types", "/item-types", "item-types", [true, true, true, false]],
-    ["Price list", "/price-list", "price-list", [true, true, false, false]],
-    ["Add a product", "/products/new", "add-product", [true, true, false, false]],
-    ["Quote policy", "/quote-policy", "quote-policy", [true, true, false, false]],
-  ],
-  Assistant: [
-    ["Suggestions", "/suggestions", "suggestions", [true, true, true, true]],
-    ["Agents", "/agents", "agents", [true, true, true, true]],
-  ],
-  "Privacy and safety": [
-    ["Privacy and erasure", "/privacy", "privacy", [true, true, false, false]],
-    ["Suppression keys", "/suppression", "suppression", [true, false, false, false]],
-    ["Security (your account)", "/app/security", "security", [true, true, true, true]],
-  ],
+  "Your business": [["Catalogue and prices", "/item-types", "catalogue", [true, true, true, false]]],
+  "Your team": [["Office", "/office", "office", [true, true, true, true]]],
+  Connect: [["Integrations", "/integrations", "integrations", [true, true, false, false]]],
 };
+const PLAN_FOOT: [string, string, string, [boolean, boolean, boolean, boolean]] = ["Settings", "/settings", "settings", [true, true, true, true]];
 const ROLES: Role[] = ["owner", "admin", "sales", "viewer"];
 
 describe("the menu table", () => {
   it("has exactly the groups and items of the plan, in order, with the same words", () => {
     expect(NAV.map((g) => g.label)).toEqual(Object.keys(PLAN));
     for (const g of NAV) expect(g.items.map((i) => [i.label, i.path, i.id]), g.label).toEqual(PLAN[g.label].map(([l, p, id]) => [l, p, id]));
+    expect(FOOT.map((i) => [i.label, i.path, i.id])).toEqual([[PLAN_FOOT[0], PLAN_FOOT[1], PLAN_FOOT[2]]]);
   });
 
   it.each(ROLES)("offers a %s exactly the items the plan says", (role) => {
@@ -47,30 +32,27 @@ describe("the menu table", () => {
     const offered = visibleGroups(role).flatMap((g) => g.items.map((i) => i.label));
     const expected = Object.values(PLAN).flatMap((items) => items.filter((i) => i[3][idx]).map((i) => i[0]));
     expect(offered).toEqual(expected);
+    expect(footItems(role).map((i) => i.label)).toEqual(PLAN_FOOT[3][idx] ? ["Settings"] : []);
   });
 
-  it("hides a group with nothing in it (a viewer has no Catalogue and prices)", () => {
-    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Today", "Leads and orders", "Customers", "Assistant", "Privacy and safety"]);
-    expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Today", "Leads and orders", "Customers", "Catalogue and prices", "Assistant", "Privacy and safety"]);
+  it("hides a group with nothing in it (a viewer has no Your business and no Connect, a sales person no Connect)", () => {
+    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Work", "Your team"]);
+    expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Work", "Your business", "Your team"]);
+    expect(visibleGroups("owner").map((g) => g.label)).toEqual(["Work", "Your business", "Your team", "Connect"]);
   });
 
-  it("the phone's tabs are four daily pages, then More", () => {
-    expect(barItems("owner").map((i) => i.id)).toEqual(["today", "followups-due", "review", "orders"]);
-    expect(barItems("viewer").map((i) => i.id)).toEqual(["today", "review"]);
+  it("the phone's tabs are the daily pages (Today, Leads, Quotes, Orders, Office), then More", () => {
+    expect(barItems("owner").map((i) => i.id)).toEqual(["today", "leads", "quotes", "orders", "office"]);
+    expect(barItems("viewer").map((i) => i.id)).toEqual(["today", "leads", "office"]);
   });
 
-  it("makes addresses inside the workspace, and the account page absolute", () => {
+  it("makes addresses inside the workspace", () => {
     const flat = NAV.flatMap((g) => g.items);
     expect(hrefOf(flat.find((i) => i.id === "orders")!, T)).toBe(`/app/tenants/${T}/orders`);
-    expect(hrefOf(flat.find((i) => i.id === "records")!, T)).toBe(`/app/tenants/${T}?tab=companies`);
+    expect(hrefOf(flat.find((i) => i.id === "customers")!, T)).toBe(`/app/tenants/${T}?tab=companies`);
     expect(hrefOf(flat.find((i) => i.id === "today")!, T)).toBe(`/app/tenants/${T}`);
-    expect(hrefOf(flat.find((i) => i.id === "security")!, T)).toBe("/app/security");
-    expect(hrefOf(barItems("owner")[2], T)).toBe(`/app/tenants/${T}/review`);
-  });
-
-  it("every menu address is a real route of the app (no new URL)", () => {
-    const routes = ["", "/review", "/customers/new", "/orders", "/followups", "/followups/policy", "/item-types", "/price-list", "/products/new", "/suggestions", "/agents", "/quote-policy", "/privacy", "/suppression"];
-    for (const i of NAV.flatMap((g) => g.items)) if (!i.path.startsWith("/app")) expect(routes).toContain(i.path);
+    expect(hrefOf(flat.find((i) => i.id === "leads")!, T)).toBe(`/app/tenants/${T}/review`);
+    expect(hrefOf(FOOT[0], T)).toBe(`/app/tenants/${T}/settings`);
   });
 });
 
@@ -78,19 +60,30 @@ describe("which item a page belongs to", () => {
   const at = (p: string, tab: string | null = null) => itemFor(p, tab)?.item.id ?? null;
   it("finds the top-level pages, the longest path first", () => {
     expect(at(`/app/tenants/${T}`)).toBe("today");
-    expect(at(`/app/tenants/${T}`, "leads")).toBe("records");
-    expect(at(`/app/tenants/${T}/followups`)).toBe("followups-due");
-    expect(at(`/app/tenants/${T}/followups/policy`)).toBe("followups-due"); // no menu entry of its own: the due list links to it
+    expect(at(`/app/tenants/${T}`, "leads")).toBe("leads");
+    expect(at(`/app/tenants/${T}`, "companies")).toBe("customers");
+    expect(at(`/app/tenants/${T}`, "contacts")).toBe("customers");
+    expect(at(`/app/tenants/${T}`, "products")).toBe("today");
     expect(at(`/app/tenants/${T}/orders/abc`)).toBe("orders");
-    expect(at("/app/security")).toBe("security");
+    expect(at(`/app/tenants/${T}/quotes`)).toBe("quotes");
+    expect(at(`/app/tenants/${T}/office`)).toBe("office");
+    expect(at(`/app/tenants/${T}/integrations`)).toBe("integrations");
+    expect(at("/app/security")).toBe("settings");
   });
-  it("puts record pages under the item they are reached from, and says nothing for an unknown page", () => {
-    expect(at(`/app/tenants/${T}/leads/x`)).toBe("review");
-    expect(at(`/app/tenants/${T}/leads/x/followup`)).toBe("followups-due");
-    expect(at(`/app/tenants/${T}/companies/x`)).toBe("records");
-    expect(at(`/app/tenants/${T}/contacts/x/consent`)).toBe("records");
-    expect(at(`/app/tenants/${T}/enquiries/x`)).toBe("orders");
-    expect(at(`/app/tenants/${T}/requirements/x/questions`)).toBe("followups-due");
+  it("puts the pages that have no menu row of their own under the item they are reached from", () => {
+    expect(at(`/app/tenants/${T}/followups`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/followups/policy`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/suggestions`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/leads/x`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/leads/x/followup`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/requirements/x/questions`)).toBe("leads");
+    expect(at(`/app/tenants/${T}/enquiries/x`)).toBe("quotes");
+    expect(at(`/app/tenants/${T}/companies/x`)).toBe("customers");
+    expect(at(`/app/tenants/${T}/contacts/x/consent`)).toBe("customers");
+    expect(at(`/app/tenants/${T}/customers/new`)).toBe("customers");
+    for (const p of ["item-types", "price-list", "products/new", "quote-policy"]) expect(at(`/app/tenants/${T}/${p}`), p).toBe("catalogue");
+    expect(at(`/app/tenants/${T}/agents`)).toBe("office");
+    for (const p of ["privacy", "suppression", "settings"]) expect(at(`/app/tenants/${T}/${p}`), p).toBe("settings");
     expect(at(`/app/tenants/${T}/nothing-here`)).toBeNull();
     expect(at("/app")).toBeNull();
   });
