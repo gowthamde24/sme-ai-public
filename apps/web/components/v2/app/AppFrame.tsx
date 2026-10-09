@@ -58,7 +58,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, children }:
         </header>
       </V2Root>
       <div className="flex min-w-0 flex-1 md:items-stretch">
-        <V2Root theme={theme} lang="en" className="hidden w-64 shrink-0 border-r border-line md:block lg:w-72">
+        <V2Root theme={theme} lang="en" className="hidden w-64 shrink-0 border-r border-line md:has-[nav]:block lg:w-72">
           <div className="sticky top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto">
             <SideNav memberships={list} />
           </div>

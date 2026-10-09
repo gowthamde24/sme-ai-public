@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchMe } from "@/lib/api/client";
+import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
+import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, mutedText, pageH1, pageH2, pageMain, rowBetween, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { signOut } from "./actions";
@@ -25,58 +27,61 @@ export default async function AppPage() {
   // The API and Supabase Auth must agree on who this is.
   if (me && me.user_id !== user.id) redirect("/login");
 
+  const theme = await currentTheme();
   return (
-    <main className="shell">
-      <header className="row between">
-        <h1>Workspaces</h1>
+    <ScreenWrap theme={theme}>
+    <main className={pageMain}>
+      <header className={rowBetween}>
+        <h1 className={pageH1}>Workspaces</h1>
         <form action={signOut}>
-          <button type="submit" className="secondary">
+          <button type="submit" className={btnQuiet}>
             Sign out
           </button>
         </form>
       </header>
-      <p>
-        Signed in as {user.email ?? "your account"}. <Link href="/app/security">Security</Link>
+      <p className={bodyText}>
+        Signed in as {user.email ?? "your account"}. <Link href="/app/security" className={inlineLink}>Security</Link>
       </p>
       {me?.memberships.some((m) => m.role === "owner" || m.role === "admin") &&
         !user.hasSecondFactor && (
-          <p role="note" className="hint" style={{ borderLeft: "4px solid #b45309", paddingLeft: "0.75rem" }}>
+          <p role="note" className={warnBox}>
             <strong>Set up your authenticator app.</strong> As an owner or admin you need it to erase data, export, change members or roles, and
-            change workspace settings. <Link href="/app/security">Set it up</Link>
+            change workspace settings. <Link href="/app/security" className={inlineLink}>Set it up</Link>
           </p>
         )}
 
       {me === null ? (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           Could not load your workspaces from the API. Try again shortly.
         </p>
       ) : me.memberships.length === 0 ? (
-        <p>You do not belong to a workspace yet. Create one to get started.</p>
+        <p className={bodyText}>You do not belong to a workspace yet. Create one to get started.</p>
       ) : (
-        <table>
+        <table className={`mt-4 ${dataTable}`}>
           <thead>
             <tr>
-              <th>Workspace</th>
-              <th>URL name</th>
-              <th>Your role</th>
+              <th className={dataThCol}>Workspace</th>
+              <th className={dataThCol}>URL name</th>
+              <th className={dataThCol}>Your role</th>
             </tr>
           </thead>
           <tbody>
             {me.memberships.map(({ tenant, role }) => (
-              <tr key={tenant.id}>
-                <td>
-                  <Link href={`/app/tenants/${tenant.id}`}>{tenant.name}</Link>
+              <tr key={tenant.id} className={dataTr}>
+                <td data-label="Workspace" className={dataTd}>
+                  <Link href={`/app/tenants/${tenant.id}`} className={inlineLink}>{tenant.name}</Link>
                 </td>
-                <td>{tenant.slug}</td>
-                <td>{role}</td>
+                <td data-label="URL name" className={dataTd}>{tenant.slug}</td>
+                <td data-label="Your role" className={dataTd}>{role}</td>
               </tr>
             ))}
           </tbody>
         </table>
       )}
 
-      <h2>Create a workspace</h2>
+      <h2 id="create-workspace" className={pageH2}>Create a workspace</h2>
       <CreateTenantForm />
     </main>
+    </ScreenWrap>
   );
 }

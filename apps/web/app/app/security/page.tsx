@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { backLink, bodyText, mutedText, okBox, pageH1, pageH2, pageMain, surface } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { EnrolForm, RemoveForm } from "./security-forms";
@@ -18,32 +19,36 @@ export default async function SecurityPage({ searchParams }: PageProps<"/app/sec
   const removed = params.removed !== undefined;
 
   return (
-    <main className="shell">
+    <main className={pageMain}>
       <p>
-        <Link href="/app">← Workspaces</Link>
+        <Link href="/app" className={backLink}>
+          ← Workspaces
+        </Link>
       </p>
-      <h1>Security</h1>
-      <p>
+      <h1 className={pageH1}>Security</h1>
+      <p className={bodyText}>
         Signed in as {user.email ?? "your account"}. Session: <strong>{user.aal === "aal2" ? "verified with your authenticator" : "password only"}</strong>.
       </p>
-      {done && <p role="status">Done. Your authenticator is on.</p>}
-      {removed && <p role="status">Your authenticator was removed.</p>}
+      {done && <p role="status" className={okBox}>Done. Your authenticator is on.</p>}
+      {removed && <p role="status" className={okBox}>Your authenticator was removed.</p>}
 
-      <section aria-labelledby="mfa-heading">
-        <h2 id="mfa-heading">Authenticator app</h2>
+      <section aria-labelledby="mfa-heading" className={`mt-6 ${surface}`}>
+        <h2 id="mfa-heading" className={pageH2}>
+          Authenticator app
+        </h2>
         {user.hasSecondFactor ? (
           <>
-            <p>
+            <p className={bodyText}>
               <strong>On.</strong> You type a code from your app after your password.
             </p>
             <RemoveForm />
-            <p className="hint">
+            <p className={mutedText}>
               If you remove it you can no longer erase data, export, change members or roles, or change workspace settings until you set a new one.
             </p>
           </>
         ) : (
           <>
-            <p>
+            <p className={bodyText}>
               <strong>Not set up.</strong> Owners and Admins need an authenticator app to erase data, export, change members or roles, and change
               workspace settings. It takes a minute.
             </p>
@@ -52,9 +57,11 @@ export default async function SecurityPage({ searchParams }: PageProps<"/app/sec
         )}
       </section>
 
-      <section aria-labelledby="lost-heading">
-        <h2 id="lost-heading">If you lose your phone</h2>
-        <p>
+      <section aria-labelledby="lost-heading" className={`mt-6 ${surface}`}>
+        <h2 id="lost-heading" className={pageH2}>
+          If you lose your phone
+        </h2>
+        <p className={bodyText}>
           There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old
           authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.
         </p>

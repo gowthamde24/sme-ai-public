@@ -10,6 +10,8 @@ import {
   isCanonicalUuid,
 } from "@/lib/api/crm";
 import { fetchDataPolicy } from "@/lib/api/erasure";
+import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
+import { alertBox, backLink, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, linkRow, mutedInline, mutedText, pageH1, pageH2, pageMain, rowLink, spaceTop, tabLink, tabLinkOn, tabRow, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
@@ -57,7 +59,11 @@ export default async function TenantPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return (
+      <ScreenWrap theme={await currentTheme()}>
+        <ApiDown />
+      </ScreenWrap>
+    );
   }
 
   const requestedTab = pick(query.tab);
@@ -89,152 +95,159 @@ export default async function TenantPage({
   const canWrite = WRITE_ROLES.includes(tenant.role);
   const formId = crypto.randomUUID();
 
+  const theme = await currentTheme();
   return (
-    <main className="shell wide">
-      <p>
-        <Link href="/app">← Workspaces</Link>
-      </p>
-      <h1>{tenant.name}</h1>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
-
-      {syntheticOnly && (
-        <p role="note" className="hint" style={{ borderLeft: "4px solid #b45309", paddingLeft: "0.75rem" }}>
-          <strong>Synthetic data only.</strong> This workspace does not accept real contact details yet. Use an e-mail address on a
-          reserved domain (such as <code>example.test</code>) and a phone number that starts with <code>+00</code>. The operator
-          opens this once the privacy checks are done.
+    <ScreenWrap theme={theme}>
+      <main className={pageMain}>
+        <p>
+          <Link href="/app" className={backLink}>
+            ← Workspaces
+          </Link>
         </p>
-      )}
+        <h1 className={pageH1}>{tenant.name}</h1>
+        <p className={mutedText}>
+          Your role: <strong>{tenant.role}</strong>
+        </p>
 
-      <nav aria-label="Lead actions" style={{ marginBottom: "1rem" }}>
-        <Link
-          href={`/app/tenants/${tenantId}/review`}
-          style={{ fontWeight: 600 }}
-        >
-          Lead Review Queue →
-        </Link>
-        {" · "}
-        <Link
-          href={`/app/tenants/${tenantId}/suggestions`}
-          style={{ fontWeight: 600 }}
-        >
-          Review suggestions →
-        </Link>
-        {" · "}
-        <Link
-          href={`/app/tenants/${tenantId}/agents`}
-          style={{ fontWeight: 600 }}
-        >
-          Agents →
-        </Link>
-        {tenant.role !== "viewer" && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/orders`}
-              style={{ fontWeight: 600 }}
-            >
-              Orders →
-            </Link>
-          </>
+        {syntheticOnly && (
+          <p role="note" className={warnBox}>
+            <strong>Synthetic data only.</strong> This workspace does not accept real contact details yet. Use an e-mail address on a
+            reserved domain (such as <code>example.test</code>) and a phone number that starts with <code>+00</code>. The operator
+            opens this once the privacy checks are done.
+          </p>
         )}
-        {tenant.role !== "viewer" && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/followups`}
-              style={{ fontWeight: 600 }}
-            >
-              Follow-ups →
-            </Link>
-          </>
-        )}
-        {(tenant.role === "owner" || tenant.role === "admin") && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/price-list`}
-              style={{ fontWeight: 600 }}
-            >
-              Price list →
-            </Link>
-          </>
-        )}
-        {tenant.role !== "viewer" && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/item-types`}
-              style={{ fontWeight: 600 }}
-            >
-              Item types →
-            </Link>
-          </>
-        )}
-        {(tenant.role === "owner" || tenant.role === "admin") && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/quote-policy`}
-              style={{ fontWeight: 600 }}
-            >
-              Quote policy →
-            </Link>
-          </>
-        )}
-        {(tenant.role === "owner" || tenant.role === "admin") && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/privacy`}
-              style={{ fontWeight: 600 }}
-            >
-              Privacy →
-            </Link>
-          </>
-        )}
-        {(tenant.role === "owner" || tenant.role === "admin" || tenant.role === "sales") && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/customers/new`}
-              style={{ fontWeight: 600 }}
-            >
-              Add a customer →
-            </Link>
-          </>
-        )}
-        {(tenant.role === "owner" || tenant.role === "admin") && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/products/new`}
-              style={{ fontWeight: 600 }}
-            >
-              Add a product →
-            </Link>
-          </>
-        )}
-        {tenant.role === "owner" && (
-          <>
-            {" · "}
-            <Link
-              href={`/app/tenants/${tenantId}/suppression`}
-              style={{ fontWeight: 600 }}
-            >
-              Suppression keys →
-            </Link>
-          </>
-        )}
-      </nav>
 
-      <nav aria-label="Records" className="tabs">
+        {/* The set-up checklist of the business-setup plan (12.1) goes here: owners and admins only, until done. Its own ticket: until it ships this slot draws nothing. */}
+
+        <nav aria-label="Lead actions" className={linkRow}>
+          <Link
+            href={`/app/tenants/${tenantId}/review`}
+                className={rowLink}
+          >
+            Lead Review Queue →
+          </Link>
+          <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+          <Link
+            href={`/app/tenants/${tenantId}/suggestions`}
+                className={rowLink}
+          >
+            Review suggestions →
+          </Link>
+          <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+          <Link
+            href={`/app/tenants/${tenantId}/agents`}
+                className={rowLink}
+          >
+            Agents →
+          </Link>
+          {tenant.role !== "viewer" && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/orders`}
+                className={rowLink}
+              >
+                Orders →
+              </Link>
+            </>
+          )}
+          {tenant.role !== "viewer" && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/followups`}
+                className={rowLink}
+              >
+                Follow-ups →
+              </Link>
+            </>
+          )}
+          {(tenant.role === "owner" || tenant.role === "admin") && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/price-list`}
+                className={rowLink}
+              >
+                Price list →
+              </Link>
+            </>
+          )}
+          {tenant.role !== "viewer" && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/item-types`}
+                className={rowLink}
+              >
+                Item types →
+              </Link>
+            </>
+          )}
+          {(tenant.role === "owner" || tenant.role === "admin") && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/quote-policy`}
+                className={rowLink}
+              >
+                Quote policy →
+              </Link>
+            </>
+          )}
+          {(tenant.role === "owner" || tenant.role === "admin") && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/privacy`}
+                className={rowLink}
+              >
+                Privacy →
+              </Link>
+            </>
+          )}
+          {(tenant.role === "owner" || tenant.role === "admin" || tenant.role === "sales") && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/customers/new`}
+                className={rowLink}
+              >
+                Add a customer →
+              </Link>
+            </>
+          )}
+          {(tenant.role === "owner" || tenant.role === "admin") && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/products/new`}
+                className={rowLink}
+              >
+                Add a product →
+              </Link>
+            </>
+          )}
+          {tenant.role === "owner" && (
+            <>
+              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
+              <Link
+                href={`/app/tenants/${tenantId}/suppression`}
+                className={rowLink}
+              >
+                Suppression keys →
+              </Link>
+            </>
+          )}
+        </nav>
+
+      <nav aria-label="Records" className={tabRow}>
         {ENTITY_KEYS.map((key) => (
           <Link
             key={key}
             href={`/app/tenants/${tenantId}?tab=${key}`}
             aria-current={key === tab ? "page" : undefined}
+            className={`${tabLink} ${key === tab ? tabLinkOn : ""}`}
           >
             {LABELS[key]}
           </Link>
@@ -242,11 +255,13 @@ export default async function TenantPage({
       </nav>
 
       <section aria-labelledby="records-heading">
-        <h2 id="records-heading">{LABELS[tab]}</h2>
+        <h2 id="records-heading" className={pageH2}>
+          {LABELS[tab]}
+        </h2>
         {page === null ? (
           <ApiDown />
         ) : page.items.length === 0 ? (
-          <p>
+          <p className={bodyText}>
             {cursor
               ? "No more records."
               : `No ${LABELS[tab].toLowerCase()} yet.`}
@@ -255,10 +270,11 @@ export default async function TenantPage({
           <RecordsTable page={page} tenantId={tenantId} />
         )}
         {page?.nextCursor && (
-          <p>
+          <p className={spaceTop}>
             <Link
               href={`/app/tenants/${tenantId}?tab=${tab}&cursor=${encodeURIComponent(page.nextCursor)}`}
               rel="next"
+              className={link}
             >
               Load more
             </Link>
@@ -266,7 +282,7 @@ export default async function TenantPage({
         )}
         {cursor && (
           <p>
-            <Link href={`/app/tenants/${tenantId}?tab=${tab}`}>
+            <Link href={`/app/tenants/${tenantId}?tab=${tab}`} className={link}>
               Back to the first page
             </Link>
           </p>
@@ -275,20 +291,23 @@ export default async function TenantPage({
 
       {canWrite && (
         <section aria-labelledby="create-heading">
-          <h2 id="create-heading">Create a company</h2>
+          <h2 id="create-heading" className={pageH2}>
+            Create a company
+          </h2>
           <CreateCompanyForm
             action={createCompanyAction.bind(null, tenantId)}
             formId={formId}
           />
         </section>
       )}
-    </main>
+      </main>
+    </ScreenWrap>
   );
 }
 
 function ApiDown() {
   return (
-    <p role="alert" className="error">
+    <p role="alert" className={alertBox}>
       Could not load this from the API. Try again shortly.
     </p>
   );
@@ -302,36 +321,37 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
   switch (page.entity) {
     case "companies":
       return (
-        <table>
+        <table className={dataTable}>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Type</th>
-              <th>Website</th>
-              <th>Country</th>
-              <th>City</th>
-              <th>Industry</th>
-              <th>Created</th>
-              <th>Origin</th>
+              <th className={dataThCol}>Name</th>
+              <th className={dataThCol}>Type</th>
+              <th className={dataThCol}>Website</th>
+              <th className={dataThCol}>Country</th>
+              <th className={dataThCol}>City</th>
+              <th className={dataThCol}>Industry</th>
+              <th className={dataThCol}>Created</th>
+              <th className={dataThCol}>Origin</th>
             </tr>
           </thead>
           <tbody>
             {page.items.map((c) => (
-              <tr key={c.id}>
-                <td>
+              <tr key={c.id} className={dataTr}>
+                <td data-label="Name" className={dataTd}>
                   <Link
                     href={`/app/tenants/${tenantId}/companies/${encodeURIComponent(c.id)}`}
+                    className={inlineLink}
                   >
                     {c.name}
                   </Link>
                 </td>
-                <td>{c.type}</td>
-                <td>{c.website ?? "—"}</td>
-                <td>{c.country ?? "—"}</td>
-                <td>{c.city ?? "—"}</td>
-                <td>{c.industry ?? "—"}</td>
-                <td>{day(c.created_at)}</td>
-                <td>{c.created_via}</td>
+                <td data-label="Type" className={dataTd}>{c.type}</td>
+                <td data-label="Website" className={dataTd}>{c.website ?? "—"}</td>
+                <td data-label="Country" className={dataTd}>{c.country ?? "—"}</td>
+                <td data-label="City" className={dataTd}>{c.city ?? "—"}</td>
+                <td data-label="Industry" className={dataTd}>{c.industry ?? "—"}</td>
+                <td data-label="Created" className={dataTd}>{day(c.created_at)}</td>
+                <td data-label="Origin" className={dataTd}>{c.created_via}</td>
               </tr>
             ))}
           </tbody>
@@ -339,30 +359,30 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
       );
     case "contacts":
       return (
-        <table>
+        <table className={dataTable}>
           <thead>
             <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Phone</th>
-              <th>Job title</th>
-              <th>Email consent</th>
-              <th>Phone consent</th>
-              <th>Suppressed</th>
-              <th>Origin</th>
+              <th className={dataThCol}>Name</th>
+              <th className={dataThCol}>Email</th>
+              <th className={dataThCol}>Phone</th>
+              <th className={dataThCol}>Job title</th>
+              <th className={dataThCol}>Email consent</th>
+              <th className={dataThCol}>Phone consent</th>
+              <th className={dataThCol}>Suppressed</th>
+              <th className={dataThCol}>Origin</th>
             </tr>
           </thead>
           <tbody>
             {page.items.map((c) => (
-              <tr key={c.id}>
-                <td>{c.full_name}</td>
-                <td>{c.email ?? "—"}</td>
-                <td>{c.phone ?? "—"}</td>
-                <td>{c.job_title ?? "—"}</td>
-                <td>{c.email_consent}</td>
-                <td>{c.phone_consent}</td>
-                <td>{c.suppression_reason ?? "no"}</td>
-                <td>{c.created_via}</td>
+              <tr key={c.id} className={dataTr}>
+                <td data-label="Name" className={dataTd}>{c.full_name}</td>
+                <td data-label="Email" className={dataTd}>{c.email ?? "—"}</td>
+                <td data-label="Phone" className={dataTd}>{c.phone ?? "—"}</td>
+                <td data-label="Job title" className={dataTd}>{c.job_title ?? "—"}</td>
+                <td data-label="Email consent" className={dataTd}>{c.email_consent}</td>
+                <td data-label="Phone consent" className={dataTd}>{c.phone_consent}</td>
+                <td data-label="Suppressed" className={dataTd}>{c.suppression_reason ?? "no"}</td>
+                <td data-label="Origin" className={dataTd}>{c.created_via}</td>
               </tr>
             ))}
           </tbody>
@@ -370,26 +390,26 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
       );
     case "products":
       return (
-        <table>
+        <table className={dataTable}>
           <thead>
             <tr>
-              <th>SKU</th>
-              <th>Name</th>
-              <th>Unit</th>
-              <th>Category</th>
-              <th>Active</th>
-              <th>Origin</th>
+              <th className={dataThCol}>SKU</th>
+              <th className={dataThCol}>Name</th>
+              <th className={dataThCol}>Unit</th>
+              <th className={dataThCol}>Category</th>
+              <th className={dataThCol}>Active</th>
+              <th className={dataThCol}>Origin</th>
             </tr>
           </thead>
           <tbody>
             {page.items.map((p) => (
-              <tr key={p.id}>
-                <td>{p.sku}</td>
-                <td>{p.name}</td>
-                <td>{p.unit ?? "—"}</td>
-                <td>{p.category ?? "—"}</td>
-                <td>{p.active ? "yes" : "no"}</td>
-                <td>{p.created_via}</td>
+              <tr key={p.id} className={dataTr}>
+                <td data-label="SKU" className={dataTd}>{p.sku}</td>
+                <td data-label="Name" className={dataTd}>{p.name}</td>
+                <td data-label="Unit" className={dataTd}>{p.unit ?? "—"}</td>
+                <td data-label="Category" className={dataTd}>{p.category ?? "—"}</td>
+                <td data-label="Active" className={dataTd}>{p.active ? "yes" : "no"}</td>
+                <td data-label="Origin" className={dataTd}>{p.created_via}</td>
               </tr>
             ))}
           </tbody>
@@ -397,28 +417,29 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
       );
     case "leads":
       return (
-        <table>
+        <table className={dataTable}>
           <thead>
             <tr>
-              <th>Status</th>
-              <th>Source</th>
-              <th>Created</th>
-              <th>Origin</th>
+              <th className={dataThCol}>Status</th>
+              <th className={dataThCol}>Source</th>
+              <th className={dataThCol}>Created</th>
+              <th className={dataThCol}>Origin</th>
             </tr>
           </thead>
           <tbody>
             {page.items.map((l) => (
-              <tr key={l.id}>
-                <td>
+              <tr key={l.id} className={dataTr}>
+                <td data-label="Status" className={dataTd}>
                   <Link
                     href={`/app/tenants/${tenantId}/leads/${encodeURIComponent(l.id)}`}
+                    className={inlineLink}
                   >
                     {l.status}
                   </Link>
                 </td>
-                <td>{l.source ?? "—"}</td>
-                <td>{day(l.created_at)}</td>
-                <td>{l.created_via}</td>
+                <td data-label="Source" className={dataTd}>{l.source ?? "—"}</td>
+                <td data-label="Created" className={dataTd}>{day(l.created_at)}</td>
+                <td data-label="Origin" className={dataTd}>{l.created_via}</td>
               </tr>
             ))}
           </tbody>
@@ -426,24 +447,24 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
       );
     case "opportunities":
       return (
-        <table>
+        <table className={dataTable}>
           <thead>
             <tr>
-              <th>Title</th>
-              <th>Status</th>
-              <th>Closed</th>
-              <th>Created</th>
-              <th>Origin</th>
+              <th className={dataThCol}>Title</th>
+              <th className={dataThCol}>Status</th>
+              <th className={dataThCol}>Closed</th>
+              <th className={dataThCol}>Created</th>
+              <th className={dataThCol}>Origin</th>
             </tr>
           </thead>
           <tbody>
             {page.items.map((o) => (
-              <tr key={o.id}>
-                <td>{o.title}</td>
-                <td>{o.status}</td>
-                <td>{o.closed_at ? day(o.closed_at) : "—"}</td>
-                <td>{day(o.created_at)}</td>
-                <td>{o.created_via}</td>
+              <tr key={o.id} className={dataTr}>
+                <td data-label="Title" className={dataTd}>{o.title}</td>
+                <td data-label="Status" className={dataTd}>{o.status}</td>
+                <td data-label="Closed" className={dataTd}>{o.closed_at ? day(o.closed_at) : "—"}</td>
+                <td data-label="Created" className={dataTd}>{day(o.created_at)}</td>
+                <td data-label="Origin" className={dataTd}>{o.created_via}</td>
               </tr>
             ))}
           </tbody>

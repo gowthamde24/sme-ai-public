@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 
+import { alertBox, btnMain, fieldInput, fieldLabel, formCard } from "@/components/v2/app/ui";
+
 import { createTenantAction, type TenantFormState } from "./actions";
 
 export function CreateTenantForm() {
@@ -10,12 +12,17 @@ export function CreateTenantForm() {
     undefined,
   );
   return (
-    <form className="card" action={action}>
-      <label htmlFor="name">Workspace name</label>
-      <input id="name" name="name" required maxLength={120} />
-      <label htmlFor="slug">URL name</label>
+    <form className={formCard} action={action}>
+      <label htmlFor="name" className={fieldLabel}>
+        Workspace name
+      </label>
+      <input id="name" className={fieldInput} name="name" required maxLength={120} />
+      <label htmlFor="slug" className={fieldLabel}>
+        URL name
+      </label>
       <input
         id="slug"
+        className={fieldInput}
         name="slug"
         required
         minLength={3}
@@ -24,11 +31,11 @@ export function CreateTenantForm() {
         placeholder="my-business"
       />
       {state?.error && (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         Create workspace
       </button>
     </form>
