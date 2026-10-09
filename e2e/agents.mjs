@@ -10,7 +10,7 @@ try {
 
   await page.goto(`${BASE}/app/tenants/${T}`);
   let s = await shot(page, "A1-workspace-owner");
-  record("A1 workspace page links to Agents", (await text(page)).includes("Agents →") ? "PASS" : "FAIL", "the 'Agents →' link", s);
+  record("A1 the menu links to Agents", (await page.locator('nav[aria-label="Workspace menu"] a[href$="/agents"]').count()) > 0 ? "PASS" : "FAIL", "the 'Agents' item of the workspace menu", s);
 
   await page.goto(`${BASE}/app/tenants/${T}/agents`);
   s = await shot(page, "A2-agents-page-owner");

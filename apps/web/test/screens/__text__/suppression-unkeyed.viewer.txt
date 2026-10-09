@@ -1,3 +1,2 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
 # Suppression keys
 Only the owner records suppression keys.

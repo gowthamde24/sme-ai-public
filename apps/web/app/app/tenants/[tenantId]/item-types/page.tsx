@@ -7,7 +7,7 @@ import { fetchItemTypes, type ItemType } from "@/lib/api/item-types";
 import { requireUser } from "@/lib/auth/session";
 
 import { ApiDownV2 } from "@/components/v2/app/parts";
-import { backLink, link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
+import { link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
 import { EditItemTypeForm, AddItemTypeForm } from "./item-type-forms";
 import { addItemTypeAction, saveItemTypeAction } from "./item-types-actions";
 import { ItemTypesView } from "./item-types-view";
@@ -36,17 +36,9 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}`} className={backLink}>
-        ← {tenant.name}
-      </Link>
-    </p>
-  );
   if (!READ_ROLES.includes(tenant.role))
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Item types</h1>
         <p className={mutedText}>Item types are shown to owners, admins and sales users.</p>
       </main>
@@ -74,10 +66,6 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
   const edit = canEdit && secondFactor;
   return (
     <main className={pageMain}>
-      {back}
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <ItemTypesView
         types={types}
         adder={

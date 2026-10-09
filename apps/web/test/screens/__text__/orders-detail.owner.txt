@@ -1,4 +1,4 @@
-[← Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders) Your role: owner
+[← Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
 {label="Order 7"}
 # Order 7
 Open · Quote approved

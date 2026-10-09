@@ -1,6 +1,5 @@
 [← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
 # Lead
-Your role: viewer
 {label="I sent a message"}
 ## I sent a message
 An owner, an admin or a sales person records that a message was sent.

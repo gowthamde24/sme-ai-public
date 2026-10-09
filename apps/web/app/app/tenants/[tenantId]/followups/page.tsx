@@ -9,7 +9,7 @@ import { requireUser } from "@/lib/auth/session";
 import { DueView } from "./due-view";
 import { FOLLOWUP_ROLES, NOTHING_SENT } from "./page-parts";
 import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
-import { backLink, pageMain } from "@/components/v2/app/ui";
+import { link, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Follow-ups due · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -44,10 +44,9 @@ export default async function FollowupsPage({ params, searchParams }: PageProps<
   return (
     <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link> · <Link href={`/app/tenants/${tenantId}/followups/policy`}>The follow-up policy</Link>
-      </p>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
+        <Link href={`/app/tenants/${tenantId}/followups/policy`} className={link}>
+          The follow-up policy
+        </Link>
       </p>
       <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <DueView tenantId={tenantId} list={list} />

@@ -1,4 +1,3 @@
-[← Workspaces](/app)
 # Security
 Signed in as owner@example.test . Session: password only .
 {label="Authenticator app"}

@@ -15,12 +15,22 @@ describe("touch targets", () => {
     expect(phone).toMatch(/a\.tap,\s*a\.button,[\s\S]*display: inline-flex;/);
   });
 
-  it("every link of the review queue page carries the tap class", () => {
+  it("every link of the review queue page is a 44px target on a phone (its v2 class is one with min-h-11)", () => {
+    // the page is in the v2 look: its links take their classes from the constants of components/v2/app/ui.ts, and each of those carries min-h-11 (44px)
+    const constants = new Map<string, string>();
+    for (const file of ["components/v2/landing/ui.ts", "components/v2/app/ui.ts"]) {
+      const text = readFileSync(path.join(WEB, file), "utf8");
+      for (const m of text.matchAll(/(?:export )?const (\w+) =\s*(?:`([^`]*)`|"([^"]*)"|(\w+);)/g))
+        constants.set(m[1], (m[2] ?? m[3] ?? constants.get(m[4]) ?? "").replace(/\$\{(\w+)\}/g, (_x, name) => constants.get(name) ?? ""));
+    }
     const page = readFileSync(path.join(WEB, "app/app/tenants/[tenantId]/review/page.tsx"), "utf8");
     const links = [...page.matchAll(/<(Link|a)\b[^>]*?>/g)].map((m) => m[0]);
     expect(links.length).toBeGreaterThan(8);
-    const withoutTap = links.filter((l) => !/className=(["{][^>]*)\btap\b|className="button tap"/.test(l) && !/rel="next"/.test(l));
-    expect(withoutTap.map((l) => l.replace(/\s+/g, " ").slice(0, 70))).toEqual([]);
+    const small = links.filter((tag) => {
+      const names = [...(/className=\{`?([^}]*?)`?\}/.exec(tag)?.[1] ?? "").matchAll(/(?:\$\{)?(\w+)\}?/g)].map((m) => m[1]);
+      return !names.some((n) => (constants.get(n) ?? "").includes("min-h-11") || (constants.get(n) ?? "").includes("min-h-12") || (constants.get(n) ?? "").includes("min-h-14"));
+    });
+    expect(small.map((l) => l.replace(/\s+/g, " ").slice(0, 70))).toEqual([]);
   });
 
   it("every link on every page, and the label of every radio and checkbox, is a 44px target on a phone", () => {

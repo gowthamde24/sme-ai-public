@@ -157,16 +157,13 @@ describe("ReviewQueuePage", () => {
     fetchReviewQueue.mockResolvedValue(standardQueue);
   });
 
-  it("renders page title, caller role, and link back to workspace", async () => {
+  it("renders page title and caller role (the way back to the workspace is the frame's now)", async () => {
     render(await ReviewQueuePage(props()));
     expect(
       screen.getByRole("heading", { level: 1, name: "Lead Review Queue" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Role: owner")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "← Workspace" })).toHaveAttribute(
-      "href",
-      `/app/tenants/${TENANT}`,
-    );
+    expect(screen.queryByRole("link", { name: "← Workspace" })).toBeNull();
   });
 
   it("shows active ICP banner with version and sha256 prefix", async () => {

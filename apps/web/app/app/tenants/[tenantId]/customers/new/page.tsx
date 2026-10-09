@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -7,7 +6,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { addCustomerAction } from "./actions";
 import { CustomerForm } from "./customer-form";
-import { backLink, bodyText, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
+import { bodyText, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Add a customer · SME AI Revenue Engine" };
@@ -33,15 +32,9 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-    </p>
-  );
   if (!WRITERS.includes(tenant.role))
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Add a customer</h1>
         <p className={bodyText}>An owner, an admin or a sales person adds customers.</p>
       </main>
@@ -50,11 +43,7 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
   const ids = { company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() };
   return (
     <main className={pageMain}>
-      {back}
       <h1 className={pageH1}>Add a customer</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p className={mutedText}>
         A customer is a person with a phone number, and a lead for them. Nothing is sent to anyone. Consent is not recorded here: you record it on the next screen, when the customer has told you.
       </p>

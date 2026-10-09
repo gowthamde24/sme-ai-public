@@ -1,4 +1,4 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) · [The follow-up policy](/app/tenants/22222222-2222-2222-2222-222222222222/followups/policy) Your role: owner
+[The follow-up policy](/app/tenants/22222222-2222-2222-2222-222222222222/followups/policy)
 {role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
 {label="Follow-ups due"}
 # Follow-ups due

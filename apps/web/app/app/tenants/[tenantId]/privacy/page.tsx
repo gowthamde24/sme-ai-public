@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -26,7 +25,7 @@ import {
   PreviewForm,
   ResultView,
 } from "./privacy-forms";
-import { alertBox, backLink, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { alertBox, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Privacy · SME AI Revenue Engine" };
@@ -58,9 +57,6 @@ export default async function PrivacyPage({
   if (!ADMIN_ROLES.includes(tenant.role)) {
     return (
       <main className={pageMain}>
-        <p>
-          <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-        </p>
         <h1 className={pageH1}>Privacy</h1>
         <p>Only an owner or admin can ask for personal data to be erased.</p>
       </main>
@@ -102,13 +98,7 @@ export default async function PrivacyPage({
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-      </p>
       <h1 className={pageH1}>Privacy</h1>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p className={mutedText}>
         Erasing a person replaces their name, e-mail, phone and the personal
         text we hold about them with a marker. Labels, scores, counts and the

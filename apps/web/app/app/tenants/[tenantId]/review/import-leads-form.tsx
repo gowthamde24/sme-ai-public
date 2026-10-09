@@ -4,6 +4,9 @@ import { useActionState, useState } from "react";
 
 import type { ImportRowOutcome } from "@/lib/api/leads";
 
+import { Pill } from "@/components/v2/app/parts";
+import { alertBox, btnMain, btnQuiet, codeInline, dataTable, dataTd, dataThCol, dataTr, fieldInput, fieldLabel, fieldMono, formCardWide, mutedText, pageH3, rowBetween, rowWrap, sectionBlock, spaceTop } from "@/components/v2/app/ui";
+
 import { importLeadsAction, type ImportActionState } from "./actions";
 
 interface ImportLeadsFormProps {
@@ -33,10 +36,10 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
   );
 
   return (
-    <div style={{ margin: "1.5rem 0" }}>
+    <div className={sectionBlock}>
       <button
         type="button"
-        className="secondary"
+        className={btnQuiet}
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
@@ -44,14 +47,15 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
       </button>
 
       {isOpen && (
-        <form action={formAction} className="card" style={{ maxWidth: "48rem", marginTop: "1rem" }}>
+        <form action={formAction} className={formCardWide}>
           <input type="hidden" name="dry_run" value={isDryRun ? "true" : "false"} />
 
-          <label htmlFor="batch_label">
+          <label htmlFor="batch_label" className={fieldLabel}>
             Batch Label (optional):
           </label>
           <input
             id="batch_label"
+            className={fieldInput}
             name="batch_label"
             type="text"
             placeholder="e.g. Bangalore Silk Fair October"
@@ -59,12 +63,11 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
             disabled={isPending}
           />
 
-          <div className="row between">
-            <label htmlFor="raw_json">Candidate Leads (JSON array):</label>
+          <div className={rowBetween}>
+            <label htmlFor="raw_json" className={fieldLabel}>Candidate Leads (JSON array):</label>
             <button
               type="button"
-              className="secondary hint"
-              style={{ padding: "0.25rem 0.5rem" }}
+              className={btnQuiet}
               onClick={() => setJsonText(SAMPLE_IMPORT_TEMPLATE)}
             >
               Fill Sample Template
@@ -73,6 +76,7 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
 
           <textarea
             id="raw_json"
+            className={fieldMono}
             name="raw_json"
             rows={8}
             value={jsonText}
@@ -81,14 +85,14 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
             disabled={isPending}
             required
           />
-          <p className="hint">
-            Allowed fields: <code>company_name</code> (required), <code>city</code>, <code>country</code>, <code>website</code>, <code>industry</code>, <code>buyer_type</code>, <code>contact_name</code>, <code>contact_phone</code> (must start with +00 in test mode), <code>contact_email</code> (.test/.example domain).
+          <p className={mutedText}>
+            Allowed fields: <code className={codeInline}>company_name</code> (required), <code className={codeInline}>city</code>, <code className={codeInline}>country</code>, <code className={codeInline}>website</code>, <code className={codeInline}>industry</code>, <code className={codeInline}>buyer_type</code>, <code className={codeInline}>contact_name</code>, <code className={codeInline}>contact_phone</code> (must start with +00 in test mode), <code className={codeInline}>contact_email</code> (.test/.example domain).
           </p>
 
-          <div className="row">
+          <div className={rowWrap}>
             <button
               type="submit"
-              className="secondary"
+              className={btnQuiet}
               disabled={isPending}
               onClick={() => setIsDryRun(true)}
             >
@@ -97,6 +101,7 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
 
             <button
               type="submit"
+              className={btnMain}
               disabled={isPending}
               onClick={() => setIsDryRun(false)}
             >
@@ -105,18 +110,18 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
           </div>
 
           {state?.error && (
-            <p role="alert" className="error">
+            <p role="alert" className={alertBox}>
               {state.error}
             </p>
           )}
 
           {state?.ok && state?.report && (
-            <div style={{ marginTop: "1rem" }}>
-              <h3>
+            <div className={spaceTop}>
+              <h3 className={pageH3}>
                 {state.report.dry_run ? "Preview Summary (Dry Run)" : "Import Completed"}
                 {state.report.replayed && " (Idempotent Replay)"}
               </h3>
-              <p className="hint">
+              <p className={mutedText}>
                 Processed: <strong>{state.report.counts.rows}</strong> rows ·
                 Created: <strong>{state.report.counts.companies_created}</strong> companies,{" "}
                 <strong>{state.report.counts.contacts_created}</strong> contacts,{" "}
@@ -126,28 +131,26 @@ export function ImportLeadsForm({ tenantId }: ImportLeadsFormProps) {
               </p>
 
               {state.report.rows && state.report.rows.length > 0 && (
-                <table>
+                <table className={`mt-4 ${dataTable}`}>
                   <thead>
                     <tr>
-                      <th>Row</th>
-                      <th>Outcome</th>
-                      <th>Company</th>
-                      <th>Contact</th>
-                      <th>Notes</th>
+                      <th className={dataThCol}>Row</th>
+                      <th className={dataThCol}>Outcome</th>
+                      <th className={dataThCol}>Company</th>
+                      <th className={dataThCol}>Contact</th>
+                      <th className={dataThCol}>Notes</th>
                     </tr>
                   </thead>
                   <tbody>
                     {state.report.rows.slice(0, 10).map((r: ImportRowOutcome) => (
-                      <tr key={r.row}>
-                        <td>{r.row}</td>
-                        <td>
-                          <span className={`badge badge-${r.outcome === "created" ? "priority" : "low-priority"}`}>
-                            {r.outcome}
-                          </span>
+                      <tr key={r.row} className={dataTr}>
+                        <td data-label="Row" className={dataTd}>{r.row}</td>
+                        <td data-label="Outcome" className={dataTd}>
+                          <Pill tone={r.outcome === "created" ? "green" : "neutral"}>{r.outcome}</Pill>
                         </td>
-                        <td>{r.company_created ? "Created" : "Matched/Skipped"}</td>
-                        <td>{r.contact_created ? "Created" : "—"}</td>
-                        <td>{r.reason ?? "—"}</td>
+                        <td data-label="Company" className={dataTd}>{r.company_created ? "Created" : "Matched/Skipped"}</td>
+                        <td data-label="Contact" className={dataTd}>{r.contact_created ? "Created" : "—"}</td>
+                        <td data-label="Notes" className={dataTd}>{r.reason ?? "—"}</td>
                       </tr>
                     ))}
                   </tbody>

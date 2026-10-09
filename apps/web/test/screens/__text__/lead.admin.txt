@@ -1,6 +1,6 @@
 [← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
 # Lead
-Your role: admin [Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
+[Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
 {label="I sent a message"}
 ## I sent a message
 {label="I sent a message"}

@@ -1,8 +1,5 @@
-[← Workspaces](/app)
 # Demo Silks (synthetic)
-Your role: owner
 {role=note} Synthetic data only. This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as example.test ) and a phone number that starts with +00 . The operator opens this once the privacy checks are done.
-{label="Lead actions"} [Lead Review Queue →](/app/tenants/22222222-2222-2222-2222-222222222222/review) · [Review suggestions →](/app/tenants/22222222-2222-2222-2222-222222222222/suggestions) · [Agents →](/app/tenants/22222222-2222-2222-2222-222222222222/agents) · [Orders →](/app/tenants/22222222-2222-2222-2222-222222222222/orders) · [Follow-ups →](/app/tenants/22222222-2222-2222-2222-222222222222/followups) · [Price list →](/app/tenants/22222222-2222-2222-2222-222222222222/price-list) · [Item types →](/app/tenants/22222222-2222-2222-2222-222222222222/item-types) · [Quote policy →](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy) · [Privacy →](/app/tenants/22222222-2222-2222-2222-222222222222/privacy) · [Add a customer →](/app/tenants/22222222-2222-2222-2222-222222222222/customers/new) · [Add a product →](/app/tenants/22222222-2222-2222-2222-222222222222/products/new) · [Suppression keys →](/app/tenants/22222222-2222-2222-2222-222222222222/suppression)
 {label="Records"} [Companies](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies) [Contacts](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts) [Products](/app/tenants/22222222-2222-2222-2222-222222222222?tab=products) [Leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Opportunities](/app/tenants/22222222-2222-2222-2222-222222222222?tab=opportunities current=page)
 {label="Opportunities"}
 ## Opportunities

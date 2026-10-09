@@ -276,17 +276,19 @@ describe("/app/tenants/[tenantId]", () => {
     );
   });
 
-  it("shows the workspace name, the caller's role, and a way back", async () => {
+  it("shows the workspace name; the role, the way back and the links to every screen are the frame's now", async () => {
     fetchTenant.mockResolvedValue(tenant("sales"));
     render(await TenantPage(props()));
     expect(
       screen.getByRole("heading", { level: 1, name: "Acme Workspace" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("sales")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /workspaces/i })).toHaveAttribute(
-      "href",
-      "/app",
-    );
+    expect(screen.queryByText(/Your role/)).toBeNull();
+    expect(screen.queryByRole("link", { name: /workspaces/i })).toBeNull();
+    // the row of links to every screen is gone from the page; which role is offered which screen is pinned by the menu table (components/v2/app/nav.test.ts)
+    expect(screen.queryByRole("navigation", { name: "Lead actions" })).toBeNull();
+    for (const gone of ["Price list →", "Quote policy →", "Item types →", "Add a customer →", "Add a product →", "Suppression keys →", "Orders →", "Follow-ups →", "Agents →", "Privacy →"]) {
+      expect(screen.queryByRole("link", { name: gone }), gone).toBeNull();
+    }
   });
 
   // ------------------------------------------------------------------------------------ pagination
@@ -411,74 +413,6 @@ describe("/app/tenants/[tenantId]", () => {
       screen.queryByRole("form", { name: "Create company" }),
     ).not.toBeInTheDocument();
     expect(screen.queryByText(/create a company/i)).not.toBeInTheDocument();
-  });
-
-  it.each([["owner", true], ["admin", true], ["sales", false], ["viewer", false]])("links the price list page for a %s: %s", async (role, shown) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    const link = screen.queryByRole("link", { name: "Price list →" });
-    expect(link !== null).toBe(shown);
-    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/price-list$/));
-  });
-
-  it.each([["owner", true], ["admin", true], ["sales", false], ["viewer", false]])("links the quote policy page for a %s: %s", async (role, shown) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    const link = screen.queryByRole("link", { name: "Quote policy →" });
-    expect(link !== null).toBe(shown);
-    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/app\/tenants\/[0-9a-f-]+\/quote-policy$/));
-  });
-
-  it.each([["owner", true], ["admin", true], ["sales", true], ["viewer", false]])("links the item types page for a %s: %s", async (role, shown) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    const link = screen.queryByRole("link", { name: "Item types →" });
-    expect(link !== null).toBe(shown);
-    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/app\/tenants\/[0-9a-f-]+\/item-types$/));
-  });
-
-  it.each([["owner", true], ["admin", true], ["sales", true], ["viewer", false]])("links the add a customer page for a %s: %s", async (role, shown) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    const link = screen.queryByRole("link", { name: "Add a customer →" });
-    expect(link !== null).toBe(shown);
-    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/customers\/new$/));
-  });
-
-  it.each([["owner", true], ["admin", true], ["sales", false], ["viewer", false]])("links the add a product page for a %s: %s", async (role, shown) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    const link = screen.queryByRole("link", { name: "Add a product →" });
-    expect(link !== null).toBe(shown);
-    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/products\/new$/));
-  });
-
-  it.each([["owner", true], ["admin", false], ["sales", false], ["viewer", false]])("links the suppression keys page for a %s: %s", async (role, shown) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    const link = screen.queryByRole("link", { name: "Suppression keys →" });
-    expect(link !== null).toBe(shown);
-    if (link) expect(link).toHaveAttribute("href", expect.stringMatching(/\/suppression$/));
-  });
-
-  it.each(["owner", "admin", "sales"])("links the orders page for a %s, and not for a viewer", async (role) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    expect(screen.getByRole("link", { name: "Orders →" })).toHaveAttribute("href", expect.stringMatching(/\/orders$/));
-    fetchTenant.mockResolvedValue(tenant("viewer"));
-    document.body.innerHTML = "";
-    render(await TenantPage(props()));
-    expect(screen.queryByRole("link", { name: "Orders →" })).toBeNull();
-  });
-
-  it.each(["owner", "admin", "sales"])("links the follow-ups page for a %s, and not for a viewer", async (role) => {
-    fetchTenant.mockResolvedValue(tenant(role));
-    render(await TenantPage(props()));
-    expect(screen.getByRole("link", { name: "Follow-ups →" })).toHaveAttribute("href", expect.stringMatching(/\/followups$/));
-    fetchTenant.mockResolvedValue(tenant("viewer"));
-    document.body.innerHTML = "";
-    render(await TenantPage(props()));
-    expect(screen.queryByRole("link", { name: "Follow-ups →" })).toBeNull();
   });
 
   it("generates the form id once per render, on the server", async () => {

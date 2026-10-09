@@ -1,4 +1,3 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) Your role: sales
 {role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
 {label="Questions for the customer"}
 # Questions for the customer

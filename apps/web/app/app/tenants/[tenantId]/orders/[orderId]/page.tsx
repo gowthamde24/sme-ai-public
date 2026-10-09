@@ -43,11 +43,6 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   if (!ORDER_ROLES.includes(tenant.role))
     return (
       <main className={pageMain}>
-        <p>
-          <Link href={`/app/tenants/${tenantId}`} className={backLink}>
-            ← {tenant.name}
-          </Link>
-        </p>
         <p className={mutedText}>Orders are shown to owners, admins and sales users.</p>
       </main>
     );
@@ -93,9 +88,6 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
         <Link href={`/app/tenants/${tenantId}/orders`} className={backLink}>
           ← Orders
         </Link>
-      </p>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
       </p>
       <OrderView tenantId={tenantId} order={order} members={members} forms={forms} />
     </main>

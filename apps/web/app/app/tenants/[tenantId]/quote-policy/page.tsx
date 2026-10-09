@@ -7,7 +7,7 @@ import { fetchQuotePolicyVersions, type QuotePolicyVersion } from "@/lib/api/quo
 import { requireUser } from "@/lib/auth/session";
 
 import { ApiDownV2 } from "@/components/v2/app/parts";
-import { backLink, link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
+import { link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
 
 import { todayInIndia } from "../followups/page-parts";
 import { publishQuotePolicyAction } from "./quote-policy-actions";
@@ -40,11 +40,6 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
   if (!ROLES.includes(tenant.role))
     return (
       <main className={pageMain}>
-        <p>
-          <Link href={`/app/tenants/${tenantId}`} className={backLink}>
-            ← {tenant.name}
-          </Link>
-        </p>
         <h1 className={pageH1}>The quote policy</h1>
         <p className={mutedText}>Only an owner or an admin can see and publish the quote policy.</p>
       </main>
@@ -75,14 +70,6 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
     );
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className={backLink}>
-          ← {tenant.name}
-        </Link>
-      </p>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <QuotePolicyView versions={versions} today={today} form={form} />
     </main>
   );

@@ -5,7 +5,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { HELD_TEXT, OUTCOME_LABELS, STATE_LABELS, fetchOrders, formatRupees, moneyHeld, type OrderPage } from "@/lib/api/orders";
 import { ApiDownV2 } from "@/components/v2/app/parts";
-import { backLink, emphasisLine, link, listItemCard, listPlain, metaLine, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
+import { emphasisLine, link, listItemCard, listPlain, metaLine, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../local-time";
@@ -35,17 +35,9 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}`} className={backLink}>
-        ← {tenant.name}
-      </Link>
-    </p>
-  );
   if (!ORDER_ROLES.includes(tenant.role))
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Orders</h1>
         <p className={mutedText}>Orders are shown to owners, admins and sales users.</p>
       </main>
@@ -60,11 +52,7 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
   }
   return (
     <main className={pageMain}>
-      {back}
       <h1 className={pageH1}>Orders</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p role="note" className={noteBox}>
         Nothing is sent by this system: every entry in an order is a record of something that happened outside it.
       </p>

@@ -1,4 +1,3 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) Your role: owner
 {label="Item types"}
 # Item types
 Item types are the kinds of goods you quote, for example "Type A". Each line of a quote with typed prices uses one. A price outside the lowest and highest price only gives a warning when a quote is made. It never stops a quote. Changing a price range does not change quotes that are already made.

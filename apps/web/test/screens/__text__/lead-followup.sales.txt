@@ -1,4 +1,4 @@
-[← Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) · [Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups) Your role: sales
+[← Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) · [Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups)
 {role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
 {label="Follow-up"}
 # Follow-up

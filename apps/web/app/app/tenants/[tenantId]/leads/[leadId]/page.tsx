@@ -15,8 +15,7 @@ import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
-import { backLink, bodyText, kvList, link, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
-import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
+import { backLink, bodyText, kvList, link, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
@@ -57,9 +56,7 @@ export default async function LeadPage({
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ScreenWrap theme={await currentTheme()}>
-        <ApiDownV2 />
-      </ScreenWrap>
+      <ApiDownV2 />
     );
   }
 
@@ -110,17 +107,12 @@ export default async function LeadPage({
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
   );
 
-  const theme = await currentTheme();
   return (
-    <ScreenWrap theme={theme}>
     <main className={pageMain}>
       <p>
         <Link href={`/app/tenants/${tenantId}?tab=leads`} className={backLink}>← {tenant.name}</Link>
       </p>
       <h1 className={pageH1}>Lead</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       {WRITE_ROLES.includes(tenant.role) ? (
         <p>
           <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup`} className={link}>
@@ -193,7 +185,6 @@ export default async function LeadPage({
         reviewIds={reviewIds}
       />
     </main>
-    </ScreenWrap>
   );
 }
 

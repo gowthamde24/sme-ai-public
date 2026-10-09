@@ -11,6 +11,8 @@ import {
   type PageReviewQueueLeadOut,
   type ScoreBand,
 } from "@/lib/api/leads";
+import { Pill } from "@/components/v2/app/parts";
+import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH1, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { FactorBreakdown } from "./factor-breakdown";
@@ -106,60 +108,45 @@ export default async function ReviewQueuePage({
   const canExport = ADMIN_ROLES.includes(tenant.role);
 
   return (
-    <main className="shell wide">
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className="tap">
-          ← Workspace
-        </Link>
-      </p>
+    <main className={pageMain}>
 
-      <div className="review-card-header">
+      <div className={rowBetween}>
         <div>
-          <h1>Lead Review Queue</h1>
-          <p className="hint">
+          <h1 className={pageH1}>Lead Review Queue</h1>
+          <p className={mutedText}>
             Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is{" "}
             {blind ? <strong>enabled</strong> : <span>disabled</span>}.
           </p>
         </div>
         <div>
-          <span className="badge">Role: {tenant.role}</span>
+          <Pill tone="neutral">Role: {tenant.role}</Pill>
         </div>
       </div>
 
       {/* ICP Profile Status Banner */}
-      <div className="review-card" style={{ padding: "0.75rem 1rem", margin: "1rem 0" }}>
-        <div className="row between">
+      <div className={`mt-4 ${surfaceFlat}`}>
+        <div className={rowBetween}>
           <div>
             <strong>Active ICP Profile:</strong>{" "}
             {activeIcp ? (
               <span>
-                Version {activeIcp.version_no} (SHA-256: <code>{activeIcp.config_sha256.slice(0, 12)}...</code>)
+                Version {activeIcp.version_no} (SHA-256: <code className={codeInline}>{activeIcp.config_sha256.slice(0, 12)}...</code>)
               </span>
             ) : (
-              <span className="hint">No profile published yet (leads remain unscored)</span>
+              <span className={hintInline}>No profile published yet (leads remain unscored)</span>
             )}
           </div>
           {canExport && (
             <div>
-              <div className="row">
-                <a
-                  href={`/app/tenants/${tenantId}/review/export?format=csv`}
-                  className="badge badge-priority tap"
-                  style={{ textDecoration: "none", cursor: "pointer" }}
-                  download
-                >
+              <div className={rowWrap}>
+                <a href={`/app/tenants/${tenantId}/review/export?format=csv`} className={pillLinkGreen} download>
                   Export CSV
                 </a>
-                <a
-                  href={`/app/tenants/${tenantId}/review/export?format=json`}
-                  className="badge badge-worth-reviewing tap"
-                  style={{ textDecoration: "none", cursor: "pointer" }}
-                  download
-                >
+                <a href={`/app/tenants/${tenantId}/review/export?format=json`} className={pillLinkInfo} download>
                   Export JSON
                 </a>
               </div>
-              <p className="hint">
+              <p className={mutedText}>
                 The file lists every label with its reason, score, and the company&apos;s name, city and lead source. Every export
                 is logged (who, when, how many rows).
               </p>
@@ -169,34 +156,28 @@ export default async function ReviewQueuePage({
       </div>
 
       {/* Filters and Controls */}
-      <div className="tabs" style={{ alignItems: "center", justifyContent: "space-between" }}>
-        <div className="row" style={{ flexWrap: "wrap" }}>
-          <span className="hint" style={{ marginRight: "0.5rem" }}>
-            Filter:
-          </span>
-          <Link href={here({ band: null, unreviewed: false })} className="tap" aria-current={!scoreBand && !unreviewed ? "page" : undefined}>
+      <div className={`${tabRow} items-center justify-between`}>
+        <div className={rowWrap}>
+          <span className={hintInline}>Filter:</span>
+          <Link href={here({ band: null, unreviewed: false })} className={`${tabLink} ${!scoreBand && !unreviewed ? tabLinkOn : ""}`} aria-current={!scoreBand && !unreviewed ? "page" : undefined}>
             All
           </Link>
-          <Link href={here({ unreviewed: true })} className="tap" aria-current={unreviewed ? "page" : undefined}>
+          <Link href={here({ unreviewed: true })} className={`${tabLink} ${unreviewed ? tabLinkOn : ""}`} aria-current={unreviewed ? "page" : undefined}>
             Unreviewed only
           </Link>
           {blind ? (
-            <span className="hint">Score filters are available only with Blind Scoring off.</span>
+            <span className={hintInline}>Score filters are available only with Blind Scoring off.</span>
           ) : (
             SCORE_BANDS.map((band) => (
-              <Link key={band} href={here({ band })} className="tap" aria-current={band === scoreBand ? "page" : undefined}>
+              <Link key={band} href={here({ band })} className={`${tabLink} ${band === scoreBand ? tabLinkOn : ""}`} aria-current={band === scoreBand ? "page" : undefined}>
                 {SCORE_BAND_LABELS[band]}
               </Link>
             ))
           )}
         </div>
 
-        <div className="row">
-          <Link
-            href={here({ blind: !blind })}
-            className={`badge tap ${blind ? "badge-priority" : "badge-hidden"}`}
-            style={{ textDecoration: "none" }}
-          >
+        <div className={rowWrap}>
+          <Link href={here({ blind: !blind })} className={`${pillLinkBase} ${blind ? pillLinkGreenOn : pillLinkQuiet}`}>
             {blind ? "Blind Scoring: ON" : "Blind Scoring: OFF"}
           </Link>
         </div>
@@ -206,31 +187,31 @@ export default async function ReviewQueuePage({
       {canWrite && <ImportLeadsForm tenantId={tenantId} />}
 
       {/* Queue items */}
-      <section aria-labelledby="queue-heading" style={{ marginTop: "1.5rem" }}>
-        <h2 id="queue-heading">Candidate Leads ({queue.items.length})</h2>
+      <section aria-labelledby="queue-heading" className={sectionBlock}>
+        <h2 id="queue-heading" className={pageH2}>Candidate Leads ({queue.items.length})</h2>
 
         {canWrite && queue.items.length > 0 && (
-          <div className="sticky-actions sticky">
+          <div className={stickyActions}>
             {firstUnreviewed ? (
-              <a href={`#lead-${firstUnreviewed.lead_id}`} className="button tap">
+              <a href={`#lead-${firstUnreviewed.lead_id}`} className={btnMainLink}>
                 Next unreviewed ↓
               </a>
             ) : queue.next_cursor ? (
-              <Link href={here({ cursor: queue.next_cursor })} className="button tap">
+              <Link href={here({ cursor: queue.next_cursor })} className={btnMainLink}>
                 All reviewed here · load more →
               </Link>
             ) : (
-              <span className="hint">Everything in this view is reviewed.</span>
+              <span className={hintInline}>Everything in this view is reviewed.</span>
             )}
           </div>
         )}
 
         {queue.items.length === 0 ? (
-          <p className="hint">
+          <p className={mutedText}>
             {cursor ? "No more leads in this view." : "No leads in the review queue yet."}
           </p>
         ) : (
-          <div>
+          <div className={listPlain}>
             {queue.items.map((item) => {
               const comp = item.company || {};
               const cont = item.contact;
@@ -239,49 +220,47 @@ export default async function ReviewQueuePage({
               const reason = item.latest_label?.reason_code;
 
               return (
-                <article key={item.lead_id} id={`lead-${item.lead_id}`} className="review-card">
-                  <div className="review-card-header">
+                <article key={item.lead_id} id={`lead-${item.lead_id}`} className={cardBoxFull}>
+                  <div className={rowBetween}>
                     <div>
-                      <h3 style={{ margin: "0 0 0.25rem" }}>
-                        {String(comp.name || "Unnamed Company")}
-                      </h3>
-                      <p className="hint">
+                      <h3 className={pageH3}>{String(comp.name || "Unnamed Company")}</h3>
+                      <p className={mutedText}>
                         {String(comp.city || "—")}, {String(comp.country || "—")} ·{" "}
                         {String(comp.industry || "General")} · Source: {item.source || "import"}
                       </p>
                     </div>
 
-                    <div className="row">
+                    <div className={rowWrap}>
                       {/* Status / Label Badge */}
                       {hasLabel ? (
-                        <span className={`badge badge-${label}`}>
+                        <Pill tone={label === "good" ? "green" : label === "bad" ? "red" : "amber"}>
                           {label?.toUpperCase()}
                           {reason ? ` (${reason})` : ""}
-                        </span>
+                        </Pill>
                       ) : (
-                        <span className="badge badge-hidden">Unreviewed</span>
+                        <Pill tone="neutral">Unreviewed</Pill>
                       )}
 
                       {/* Score Badge */}
                       {item.score !== null && item.score !== undefined ? (
-                        <span className={`badge badge-${item.score_band || "low-priority"}`}>
+                        <Pill tone={BAND_TONE[item.score_band ?? "low_priority"] ?? "neutral"}>
                           Score: {item.score}/100
-                        </span>
+                        </Pill>
                       ) : (
-                        <span className="badge badge-hidden" title="Hidden to avoid confirmation bias">
-                          Score Hidden (Blind)
+                        <span title="Hidden to avoid confirmation bias">
+                          <Pill tone="neutral">Score Hidden (Blind)</Pill>
                         </span>
                       )}
                     </div>
                   </div>
 
                   {/* Summary Details */}
-                  <dl className="summary" style={{ margin: "0.25rem 0" }}>
+                  <dl className={kvList}>
                     <dt>Contact</dt>
                     <dd>
                       {cont ? (
-                        <details className="card-compact">
-                          <summary className="tap">Contact details</summary>
+                        <details className={detailsBox}>
+                          <summary className={summaryLine}>Contact details</summary>
                           <span>
                             {String(cont.full_name || "—")}{" "}
                             {cont.job_title ? `(${String(cont.job_title)})` : ""} ·{" "}
@@ -289,13 +268,13 @@ export default async function ReviewQueuePage({
                           </span>
                         </details>
                       ) : (
-                        <span className="hint">No contact information attached</span>
+                        <span className={hintInline}>No contact information attached</span>
                       )}
                     </dd>
 
                     <dt>Evidence</dt>
                     <dd>
-                      <Link href={`/app/tenants/${tenantId}/leads/${item.lead_id}`} className="tap">
+                      <Link href={`/app/tenants/${tenantId}/leads/${item.lead_id}`} className={link}>
                         View evidence &amp; details →
                       </Link>
                     </dd>
@@ -327,16 +306,16 @@ export default async function ReviewQueuePage({
         )}
 
         {queue.next_cursor && (
-          <p>
-            <Link href={here({ cursor: queue.next_cursor })} rel="next" className="tap">
+          <p className={spaceTop}>
+            <Link href={here({ cursor: queue.next_cursor })} rel="next" className={link}>
               Load more leads
             </Link>
           </p>
         )}
 
         {cursor && (
-          <p>
-            <Link href={here()} className="tap">
+          <p className={spaceTop}>
+            <Link href={here()} className={link}>
               Back to first page
             </Link>
           </p>
@@ -346,11 +325,19 @@ export default async function ReviewQueuePage({
   );
 }
 
+const BAND_TONE: Record<string, "green" | "info" | "amber" | "neutral"> = {
+  priority: "green",
+  worth_reviewing: "info",
+  "worth-reviewing": "info",
+  maybe: "amber",
+  low_priority: "neutral",
+  "low-priority": "neutral",
+};
+
 function ApiDown() {
   return (
-    <p role="alert" className="error">
+    <p role="alert" className={alertBox}>
       Could not load the review queue from the API. Try again shortly.
     </p>
   );
 }
-

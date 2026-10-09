@@ -1,6 +1,5 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts)
 # Record consent
-For Ravi Kumar (synthetic) . Your role: admin
+For Ravi Kumar (synthetic) .
 {label="What is recorded now"}
 ## What is recorded now
 - WhatsApp : Nothing recorded

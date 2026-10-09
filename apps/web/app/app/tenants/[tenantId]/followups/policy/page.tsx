@@ -52,9 +52,6 @@ export default async function PolicyPage({ params }: PageProps<"/app/tenants/[te
       <p>
         <Link href={`/app/tenants/${tenantId}/followups`} className={backLink}>← Follow-ups due</Link>
       </p>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <PolicyView versions={versions} today={today} form={form} />
     </main>

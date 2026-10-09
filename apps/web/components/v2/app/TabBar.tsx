@@ -64,7 +64,10 @@ export function TabBar({ memberships }: { memberships: readonly Membership[] }) 
       {open ? (
         <div role="dialog" aria-modal="true" aria-label="All of the menu" className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg">
           <div className="flex min-h-16 items-center justify-between border-b border-line px-4">
-            <p className="font-display text-xl font-bold">{current.name}</p>
+            <div className="min-w-0">
+              <p className="truncate font-display text-xl font-bold">{current.name}</p>
+              <p className="text-sm text-muted">Your role here: {current.role}</p>
+            </div>
             <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface" aria-label="Close the menu">
               <X className="size-5" aria-hidden="true" />
             </button>

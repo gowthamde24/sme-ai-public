@@ -1,3 +1,5 @@
+import { detailsBox, factorGrid, factorItem, hintInline, mutedText, summaryLine } from "@/components/v2/app/ui";
+
 /**
  * "How this score was worked out", in plain words. The API sends the factors of a score as a LIST of
  * { id, points, max_points, unknown }; an older shape (a map keyed by id) is still drawn. Anything else draws nothing.
@@ -60,18 +62,18 @@ export function FactorBreakdown({
   if (list.length === 0) return null;
   const notes = Array.isArray(flags) ? flags.filter((f): f is string => typeof f === "string") : [];
   return (
-    <details className="factor-breakdown">
-      <summary className="tap">
+    <details className={detailsBox}>
+      <summary className={summaryLine}>
         How this score was worked out
         {maxReachable !== null ? ` (highest possible with what we know: ${maxReachable} of 100)` : ""}
       </summary>
-      <ul className="factors-grid">
+      <ul className={factorGrid}>
         {list.map((f) => (
-          <li key={f.id} className="factor-item" data-unknown={f.unknown ? "true" : undefined}>
+          <li key={f.id} className={factorItem} data-unknown={f.unknown ? "true" : undefined}>
             <strong>{prettify(f.id)}</strong>:{" "}
             {f.unknown ? (
               <span>
-                not known yet <span className="hint">(0 of {f.maxPoints ?? "?"} for now; tell the system to count it)</span>
+                not known yet <span className={hintInline}>(0 of {f.maxPoints ?? "?"} for now; tell the system to count it)</span>
               </span>
             ) : (
               <span>
@@ -82,11 +84,11 @@ export function FactorBreakdown({
         ))}
       </ul>
       {notes.length > 0 && (
-        <p className="hint">
+        <p className={mutedText}>
           Things to know: {notes.map((n) => FLAG_LABELS[n] ?? n.replaceAll("_", " ")).join("; ")}.
         </p>
       )}
-      <p className="hint">
+      <p className={mutedText}>
         &quot;Not known yet&quot; is not a bad mark: nobody has given the system that information, so it counts 0 for now.
       </p>
     </details>

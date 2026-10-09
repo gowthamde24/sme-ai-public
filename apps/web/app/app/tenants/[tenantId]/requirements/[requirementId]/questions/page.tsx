@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -11,7 +10,7 @@ import { FOLLOWUP_ROLES, NOTHING_SENT } from "../../../followups/page-parts";
 import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { SyncQuestionsForm } from "../../../followups/question-forms";
 import { QuestionsView } from "../../../followups/questions-view";
-import { backLink, pageMain } from "@/components/v2/app/ui";
+import { pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Questions · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -43,12 +42,6 @@ export default async function QuestionsPage({ params }: PageProps<"/app/tenants/
   }
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-      </p>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <QuestionsView tenantId={tenantId} requirementId={requirementId} drafts={drafts} sync={<SyncQuestionsForm action={syncQuestionsAction.bind(null, tenantId, requirementId)} />} />
     </main>
