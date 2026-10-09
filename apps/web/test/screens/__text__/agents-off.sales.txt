@@ -1,6 +1,5 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
 # Agents
-Your role: sales An agent only suggests. Everything it writes is marked "agent suggestion, unreviewed" until an owner or admin accepts it, and nothing it writes changes a score before that.
+An agent only suggests. Everything it writes is marked "agent suggestion, unreviewed" until an owner or admin accepts it, and nothing it writes changes a score before that.
 {label="This workspace"}
 ## This workspace
 Agents are off for this workspace. Only an owner or admin can change this.

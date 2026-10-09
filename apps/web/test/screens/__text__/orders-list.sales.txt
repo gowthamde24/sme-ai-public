@@ -1,6 +1,4 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
 # Orders
-Your role: sales
 {role=note} Nothing is sent by this system: every entry in an order is a record of something that happened outside it.
 {label="Orders, newest first"}
 - [Order 7](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1) · Open · Quote approved Total ₹1,50,000.00 · received ₹0.00 · started Oct 6, 2026, 10:30 AM (in 30 minutes)

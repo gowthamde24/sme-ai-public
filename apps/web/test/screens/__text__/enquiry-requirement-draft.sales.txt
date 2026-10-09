@@ -1,6 +1,5 @@
 [← Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
 # Enquiry
-Your role: sales
 {label="What the customer wrote"}
 ## What the customer wrote
 Channel

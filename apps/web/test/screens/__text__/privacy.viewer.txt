@@ -1,3 +1,2 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
 # Privacy
 Only an owner or admin can ask for personal data to be erased.

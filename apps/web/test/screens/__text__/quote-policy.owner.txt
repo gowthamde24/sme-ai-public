@@ -1,4 +1,3 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) Your role: owner
 {label="The quote policy"}
 # The quote policy
 {label="Quote policy versions, newest first"}
