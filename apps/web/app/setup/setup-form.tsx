@@ -3,32 +3,45 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { authAlert, authChoice, authChoices, authForm, authLabel, authNotice, authRow, authSubmit } from "@/components/v2/auth/ui";
-import type { CompleteSetupAction } from "@/app/signup/contract";
+import { authAlert, authChoice, authChoices, authForm, authLabel, authRow, authSubmit } from "@/components/v2/auth/ui";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
+import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
+import type { CompleteSetupInput, CompleteSetupResult } from "@/lib/api/signup";
 
-export type SetupWords = { type: string; types: { value: string; label: string }[]; language: string; submit: string; notAvailable: string; error: string };
+export type CompleteSetupAction = (input: CompleteSetupInput) => Promise<CompleteSetupResult>;
+export type SetupWords = { type: string; types: { value: string; label: string }[]; language: string; submit: string; error: string };
+
+/** The chosen language becomes the one the app speaks (the same functional cookie the language control writes). */
+function rememberLanguage(lang: Lang) {
+  document.cookie = serializePreference(LANG_COOKIE, lang, window.location.protocol === "https:");
+}
 
 /**
- * The first-login set-up: the kind of business and the language, then Today. `action` is the server action `completeSetup` of Job AD; without it the form says "Not available yet" and
- * cannot be sent. Language names are each language's own word for itself.
+ * The first-login set-up: the kind of business and the language, then Today. `action` is the server action `completeSetup` (Job AD); pressing twice or in a second tab ends with the
+ * same single business. A refusal the API explains is shown as it sent it (plain English); any other failure, the generic sentence. Language names are each language's own word for itself.
  */
-export function SetupForm({ action, words, lang }: { action?: CompleteSetupAction; words: SetupWords; lang: Lang }) {
+export function SetupForm({ action, words, lang }: { action: CompleteSetupAction; words: SetupWords; lang: Lang }) {
   const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<{ text: string; english: boolean } | null>(null);
   const [pending, start] = useTransition();
   return (
     <form
       className={authForm}
       onSubmit={(e) => {
         e.preventDefault();
-        if (!action) return;
         const form = new FormData(e.currentTarget);
         setError(null);
         start(async () => {
-          const result = await action({ businessType: String(form.get("type") ?? ""), language: String(form.get("language") ?? lang) as Lang });
-          if (result.ok) router.push("/app");
-          else setError(words.error);
+          try {
+            const chosen = readLang(String(form.get("language") ?? lang));
+            const result = await action({ businessType: String(form.get("type") ?? "") as CompleteSetupInput["businessType"], language: chosen });
+            if (result.ok) {
+              rememberLanguage(chosen);
+              router.push("/app");
+            } else setError(result.error ? { text: result.error, english: true } : { text: words.error, english: false }); // the API's own sentence is plain English
+          } catch {
+            setError({ text: words.error, english: false }); // the server could not be reached: nothing was saved
+          }
         });
       }}
     >
@@ -54,18 +67,13 @@ export function SetupForm({ action, words, lang }: { action?: CompleteSetupActio
           ))}
         </div>
       </fieldset>
-      {!action ? (
-        <p role="status" className={authNotice}>
-          {words.notAvailable}
-        </p>
-      ) : null}
       {error ? (
-        <p role="alert" className={authAlert}>
-          {error}
+        <p role="alert" lang={error.english ? "en" : undefined} className={authAlert}>
+          {error.text}
         </p>
       ) : null}
       <div className={authRow}>
-        <button type="submit" disabled={!action || pending} className={authSubmit}>
+        <button type="submit" disabled={pending} className={authSubmit}>
           {words.submit}
         </button>
       </div>

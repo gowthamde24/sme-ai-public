@@ -4,20 +4,20 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import { authAlert, authCheckBox, authCheckRow, authField, authForm, authHint, authLabel, authLink, authNotice, authRow, authSubmit } from "@/components/v2/auth/ui";
+import { authAlert, authCheckBox, authCheckRow, authField, authForm, authHint, authLabel, authLink, authRow, authSubmit } from "@/components/v2/auth/ui";
+import type { SignUpInput, SignUpResult } from "@/lib/api/signup";
 
 import { MAX_PASSWORD, MIN_PASSWORD } from "@/lib/auth/password-policy";
 
-import type { SignUpAction } from "./contract";
+export type SignUpAction = (input: SignUpInput) => Promise<SignUpResult>;
 
-export type SignUpWords = { name: string; email: string; password: string; passwordHint: string; business: string; terms: string; submit: string; have: string; signin: string; notAvailable: string; errors: Record<string, string> };
+export type SignUpWords = { name: string; email: string; password: string; passwordHint: string; business: string; terms: string; submit: string; have: string; signin: string; errors: Record<string, string> };
 
 /**
- * The sign-up form. `action` is the server action `signUp` of Job AD; without it (it does not exist yet) the form is drawn but cannot be sent, and says "Not available yet": it never pretends
- * to create an account. A refusal shows the sentence of its error code (an unknown code, the generic one); success goes to the "check your email" screen. The page passes the words in the
- * visitor's language (this component imports no dictionary).
+ * The sign-up form. `action` is the server action `signUp` (Job AD). A refusal shows the sentence of its error code (an unknown code, the generic one); success goes to the screen the answer names
+ * ("check your email"). The page passes the words in the visitor's language (this component imports no dictionary).
  */
-export function SignUpForm({ action, words }: { action?: SignUpAction; words: SignUpWords }) {
+export function SignUpForm({ action, words }: { action: SignUpAction; words: SignUpWords }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -27,15 +27,18 @@ export function SignUpForm({ action, words }: { action?: SignUpAction; words: Si
       noValidate={false}
       onSubmit={(e) => {
         e.preventDefault();
-        if (!action) return;
         const form = new FormData(e.currentTarget);
         const accept = form.get("terms") === "on";
-        if (!accept) return setError(words.errors.terms);
+        if (!accept) return setError(words.errors.terms_required);
         setError(null);
         start(async () => {
-          const result = await action({ name: String(form.get("name") ?? "").trim(), email: String(form.get("email") ?? "").trim(), password: String(form.get("password") ?? ""), businessName: String(form.get("business") ?? "").trim(), acceptTerms: true });
-          if (result.ok) router.push("/signup/check-email");
-          else setError(words.errors[result.error] ?? words.errors.unknown);
+          try {
+            const result = await action({ name: String(form.get("name") ?? "").trim(), email: String(form.get("email") ?? "").trim(), password: String(form.get("password") ?? ""), businessName: String(form.get("business") ?? "").trim(), acceptTerms: true });
+            if (result.ok) router.push(`/signup/${result.next}`);
+            else setError(words.errors[result.error] ?? words.errors.unknown);
+          } catch {
+            setError(words.errors.unknown); // the server could not be reached: nothing was created
+          }
         });
       }}
     >
@@ -60,18 +63,13 @@ export function SignUpForm({ action, words }: { action?: SignUpAction; words: Si
         <input type="checkbox" name="terms" className={authCheckBox} required />
         <span lang="en">{words.terms}</span>
       </label>
-      {!action ? (
-        <p role="status" className={authNotice}>
-          {words.notAvailable}
-        </p>
-      ) : null}
       {error ? (
         <p role="alert" className={authAlert}>
           {error}
         </p>
       ) : null}
       <div className={authRow}>
-        <button type="submit" disabled={!action || pending} className={authSubmit}>
+        <button type="submit" disabled={pending} className={authSubmit}>
           {words.submit}
         </button>
       </div>

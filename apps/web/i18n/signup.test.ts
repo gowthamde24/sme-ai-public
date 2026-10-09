@@ -12,7 +12,7 @@ type Entry = { en: string; te: string; hi: string; kn: string; status: Record<st
 const data = signup as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY = ["signup.err.terms", "signup.terms"];
+const HUMAN_ONLY = ["signup.err.terms_required", "signup.terms"];
 
 describe("the sign-up string store (Job AC, C5)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(signup as never, l) as Record<string, string>]));
@@ -40,7 +40,10 @@ describe("the sign-up string store (Job AC, C5)", () => {
         for (const [re, label] of FORBIDDEN) expect(re.test(dicts[l][k]), `${l}:${k} contains ${label}`).toBe(false);
         expect(dicts[l][k]).not.toMatch(/sme-?ai/i);
       }
-    expect(dicts.en["signup.notavailable"]).toBe("Not available yet.");
+    // the four refusals the action can give (SIGNUP_ERRORS of lib/api/signup) each have a sentence; "email taken" does not exist (no account enumeration)
+    for (const code of ["weak_password", "terms_required", "too_many_signups", "invalid"]) expect(dicts.en[`signup.err.${code}`], code).toBeTruthy();
+    expect(keys.filter((k) => /taken|exists|already has an account/i.test(dicts.en[k]))).toEqual([]);
+    expect(keys).not.toContain("signup.notavailable"); // the screens are wired to the real actions
   });
   it("resolves one language at a time", () => {
     expect(signupT("en")("signup.title")).toBe("Create your account");

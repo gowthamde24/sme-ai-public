@@ -109,66 +109,11 @@
    "kn": "draft"
   }
  },
- "signup.notavailable": {
-  "en": "Not available yet.",
-  "te": "ఇంకా అందుబాటులో లేదు.",
-  "hi": "अभी उपलब्ध नहीं।",
-  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "signup.err.email_taken": {
-  "en": "This email already has an account. Sign in instead.",
-  "te": "ఈ ఇమెయిల్‌కు ఇప్పటికే అకౌంట్ ఉంది. బదులుగా లాగిన్ అవ్వండి.",
-  "hi": "इस ईमेल का अकाउंट पहले से है। इसके बजाय लॉग इन करें।",
-  "kn": "ಈ ಇಮೇಲ್‌ಗೆ ಈಗಾಗಲೇ ಅಕೌಂಟ್ ಇದೆ. ಬದಲಿಗೆ ಲಾಗಿನ್ ಮಾಡಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "signup.err.weak_password": {
-  "en": "Choose a longer password.",
-  "te": "పొడవైన పాస్‌వర్డ్ ఎంచుకోండి.",
-  "hi": "लंबा पासवर्ड चुनें।",
-  "kn": "ಉದ್ದದ ಪಾಸ್‌ವರ್ಡ್ ಆಯ್ಕೆಮಾಡಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "signup.err.invalid_email": {
-  "en": "Check the email address.",
-  "te": "ఇమెయిల్ చిరునామాను చూడండి.",
-  "hi": "ईमेल पता जाँचें।",
-  "kn": "ಇಮೇಲ್ ವಿಳಾಸ ಪರಿಶೀಲಿಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "signup.err.required": {
-  "en": "Fill in every field.",
-  "te": "ప్రతి ఖాళీని నింపండి.",
-  "hi": "हर खाना भरें।",
-  "kn": "ಪ್ರತಿ ಖಾಲಿಯನ್ನು ತುಂಬಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "signup.err.rate_limited": {
-  "en": "Too many tries. Wait a little and try again.",
-  "te": "చాలాసార్లు ప్రయత్నించారు. కొంచెం ఆగి మళ్లీ ప్రయత్నించండి.",
-  "hi": "बहुत बार कोशिश हुई। थोड़ा रुककर फिर कोशिश करें।",
-  "kn": "ಹಲವು ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಸ್ವಲ್ಪ ನಿಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "en": "Choose a stronger password: at least {n} characters, not a common one, and not part of your email address.",
+  "te": "బలమైన పాస్వర్డ్ ఎంచుకోండి: కనీసం {n} అక్షరాలు; సాధారణ పాస్వర్డ్ కాకూడదు, మీ ఈమెయిల్ చిరునామాలో భాగం కాకూడదు.",
+  "hi": "मज़बूत पासवर्ड चुनें: कम से कम {n} अक्षर, आम पासवर्ड नहीं, और आपके ईमेल पते का हिस्सा नहीं।",
+  "kn": "ಬಲವಾದ ಪಾಸ್ವರ್ಡ್ ಆರಿಸಿ: ಕನಿಷ್ಠ {n} ಅಕ್ಷರಗಳು, ಸಾಮಾನ್ಯ ಪಾಸ್ವರ್ಡ್ ಅಲ್ಲ, ಮತ್ತು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸದ ಭಾಗವಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -263,50 +208,6 @@
    "kn": "draft"
   }
  },
- "setup.type.wholesaler": {
-  "en": "Wholesaler",
-  "te": "హోల్‌సేలర్",
-  "hi": "थोक व्यापारी",
-  "kn": "ಸಗಟು ವ್ಯಾಪಾರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "setup.type.manufacturer": {
-  "en": "Manufacturer",
-  "te": "తయారీదారు",
-  "hi": "निर्माता",
-  "kn": "ತಯಾರಕ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "setup.type.trader": {
-  "en": "Trader",
-  "te": "వ్యాపారి",
-  "hi": "व्यापारी",
-  "kn": "ವರ್ತಕ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "setup.type.retailer": {
-  "en": "Retailer",
-  "te": "రిటైలర్",
-  "hi": "खुदरा विक्रेता",
-  "kn": "ಚಿಲ್ಲರೆ ವ್ಯಾಪಾರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "setup.type.other": {
   "en": "Other",
   "te": "ఇతరం",
@@ -363,7 +264,7 @@
   },
   "humanOnly": true
  },
- "signup.err.terms": {
+ "signup.err.terms_required": {
   "en": "You need to accept the terms to create an account.",
   "te": "You need to accept the terms to create an account.",
   "hi": "You need to accept the terms to create an account.",
@@ -374,5 +275,49 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "signup.err.too_many_signups": {
+  "en": "Too many tries. Wait a little and try again.",
+  "te": "చాలాసార్లు ప్రయత్నించారు. కొంచెం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "बहुत बार कोशिश हुई। थोड़ा रुककर फिर कोशिश करें।",
+  "kn": "ಹಲವು ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಸ್ವಲ್ಪ ನಿಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.invalid": {
+  "en": "Check your name, email address and business name, then try again.",
+  "te": "మీ పేరు, ఈమెయిల్ చిరునామా, వ్యాపారం పేరు సరిచూసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "अपना नाम, ईमेल पता और व्यवसाय का नाम जाँचें, फिर दोबारा कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು, ಇಮೇಲ್ ವಿಳಾಸ ಮತ್ತು ವ್ಯವಹಾರದ ಹೆಸರನ್ನು ಪರಿಶೀಲಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.type.textiles": {
+  "en": "Textiles",
+  "te": "వస్త్రాలు",
+  "hi": "कपड़ा",
+  "kn": "ಜವಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.type.construction": {
+  "en": "Construction",
+  "te": "నిర్మాణం",
+  "hi": "निर्माण",
+  "kn": "ನಿರ್ಮಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
