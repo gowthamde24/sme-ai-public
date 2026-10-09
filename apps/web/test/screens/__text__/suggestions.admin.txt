@@ -1,4 +1,5 @@
 # Review suggestions
+{label="Parts of Leads"} [To look at](/app/tenants/22222222-2222-2222-2222-222222222222/review) [All leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups) [Suggestions](/app/tenants/22222222-2222-2222-2222-222222222222/suggestions current=page)
 An agent only suggests. Each suggestion shows the quote it rests on and where it came from, as plain text. The quote was checked by the agent runtime, not by the database. A suggestion counts toward a score only after an owner or admin accepts it; the newest decision on a suggestion wins. 1 thing to review.
 {label="Sri Lakshmi Silks (synthetic): buyer_type"}
 ## Sri Lakshmi Silks (synthetic) · buyer_type

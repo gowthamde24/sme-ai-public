@@ -8,9 +8,10 @@ try {
   await login(page, "owner");
   const { tenant: T, company: COMPANY, lead: LEAD } = await discover(page);
 
-  await page.goto(`${BASE}/app/tenants/${T}`);
-  let s = await shot(page, "A1-workspace-owner");
-  record("A1 the menu links to Agents", (await page.locator('nav[aria-label="Workspace menu"] a[href$="/agents"]').count()) > 0 ? "PASS" : "FAIL", "the 'Agents' item of the workspace menu", s);
+  // Job AC: the menu has Office; the runs and cost page (/agents) is the "Runs and cost" link of the Office screen
+  await page.goto(`${BASE}/app/tenants/${T}/office`);
+  let s = await shot(page, "A1-office-owner");
+  record("A1 the Office links to the agent runs", (await page.locator('main a[href$="/agents"]').count()) > 0 ? "PASS" : "FAIL", "the 'Runs and cost' link of the Office screen", s);
 
   await page.goto(`${BASE}/app/tenants/${T}/agents`);
   s = await shot(page, "A2-agents-page-owner");

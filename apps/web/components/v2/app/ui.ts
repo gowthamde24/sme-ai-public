@@ -6,7 +6,7 @@ import { btnPrimary } from "@/components/v2/landing/ui";
  * may appear in a v2 file: the source check of audit:leaks enforces it.
  */
 /** The page's own <main>. */
-export const pageMain = "mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8";
+export const pageMain = "mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-8";
 export const pageMainNarrow = "mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 sm:py-8";
 export const pageH1 = "mb-2 mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl";
 export const pageH2 = "mb-3 mt-8 font-display text-2xl font-bold leading-tight";
@@ -56,6 +56,11 @@ export const listItemCard = "rounded-xl border border-line bg-surface p-4";
 export const tabRow = "mt-4 flex flex-wrap gap-2 border-b border-line pb-3";
 export const tabLink = "inline-flex min-h-11 items-center rounded-lg px-3 text-base font-medium text-ink hover:bg-surface-2";
 export const tabLinkOn = "bg-brand-bg font-semibold text-brand-text";
+/** Tabs as the design-lab app draws them: a line under the row, the current tab marked with an orange line under its word. */
+export const tabsBar = "mt-6 flex flex-wrap gap-x-1 border-b border-line";
+export const tabsItem = "-mb-px inline-flex min-h-11 items-center border-b-2 px-4 text-base";
+export const tabsItemIdle = "border-transparent font-medium text-muted hover:text-ink";
+export const tabsItemOn = "border-brand-edge font-semibold text-brand-text";
 /** A small grey line under a list entry. */
 export const metaLine = "mt-1 block text-sm text-muted";
 /** A bold sentence on its own line inside a list entry. */
@@ -136,3 +141,15 @@ export const factorItem = "rounded-lg bg-surface-2 px-2 py-1.5";
 export const btnGood = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-green-text bg-green-bg px-4 text-base font-semibold text-green-text hover:brightness-95 disabled:opacity-60";
 export const btnMaybe = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-amber-text bg-amber-bg px-4 text-base font-semibold text-amber-text hover:brightness-95 disabled:opacity-60";
 export const btnBad = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-red-text bg-red-bg px-4 text-base font-semibold text-red-text hover:brightness-95 disabled:opacity-60";
+/** A row of right-aligned figures (an order's total and received), a right-aligned cell, a right-aligned line. */
+export const figureRow = "flex gap-6 text-right";
+export const cellRight = "text-right";
+/** An integration card, its round icon box and its small status badge. */
+export const tileCard = "flex flex-col rounded-xl border border-line bg-surface p-5 shadow-[var(--v2-shadow)]";
+export const tileIcon = "grid size-11 place-items-center rounded-lg bg-surface-2 text-muted";
+export const tileBadge = "rounded-md border px-2 py-0.5 text-sm font-semibold";
+export const tileGrid = "mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3";
+/** One row of the members list, and a value that may be a long address (the URL name). */
+export const memberRow = "flex min-h-12 items-center justify-between gap-3 border-b border-line py-2 last:border-b-0";
+export const breakAll = "break-all font-semibold";
+export const youMark = "ml-2 text-sm font-normal text-muted";

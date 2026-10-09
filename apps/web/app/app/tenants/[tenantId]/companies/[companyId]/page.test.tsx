@@ -168,7 +168,7 @@ describe("/app/tenants/[tenantId]/companies/[companyId]", () => {
     expect(screen.getByText("Catalogue says <b>silk</b>")).toBeInTheDocument();
     expect(screen.getByText("doc:cat-1")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /Acme Workspace/ }),
+      screen.getByRole("link", { name: "All customers" }),
     ).toHaveAttribute("href", `/app/tenants/${TENANT}?tab=companies`);
   });
 

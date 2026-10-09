@@ -1,5 +1,49 @@
 {
- "nav.group.today": {
+ "nav.group.work": {
+  "en": "Work",
+  "te": "పని",
+  "hi": "काम",
+  "kn": "ಕೆಲಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.business": {
+  "en": "Your business",
+  "te": "మీ వ్యాపారం",
+  "hi": "आपका व्यापार",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.team": {
+  "en": "Your team",
+  "te": "మీ టీమ్",
+  "hi": "आपकी टीम",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.group.connect": {
+  "en": "Connect",
+  "te": "కనెక్షన్లు",
+  "hi": "कनेक्ट करें",
+  "kn": "ಸಂಪರ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.today": {
   "en": "Today",
   "te": "ఈరోజు",
   "hi": "आज",
@@ -10,100 +54,22 @@
    "kn": "draft"
   }
  },
- "nav.group.leads": {
-  "en": "Leads and orders",
-  "te": "లీడ్‌లు, ఆర్డర్లు",
-  "hi": "लीड और ऑर्डर",
-  "kn": "ಲೀಡ್‌ಗಳು ಮತ್ತು ಆರ್ಡರ್‌ಗಳು",
+ "nav.item.leads": {
+  "en": "Leads",
+  "te": "లీడ్‌లు",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.group.customers": {
-  "en": "Customers",
-  "te": "కస్టమర్లు",
-  "hi": "ग्राहक",
-  "kn": "ಗ್ರಾಹಕರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.group.catalogue": {
-  "en": "Catalogue and prices",
-  "te": "క్యాటలాగ్, ధరలు",
-  "hi": "कैटलॉग और दाम",
-  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.group.assistant": {
-  "en": "Assistant",
-  "te": "అసిస్టెంట్",
-  "hi": "असिस्टेंट",
-  "kn": "ಅಸಿಸ್ಟೆಂಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.group.safety": {
-  "en": "Privacy and safety",
-  "te": "Privacy and safety",
-  "hi": "Privacy and safety",
-  "kn": "Privacy and safety",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.today": {
-  "en": "Home",
-  "te": "హోమ్",
-  "hi": "होम",
-  "kn": "ಹೋಮ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.review": {
-  "en": "Leads to look at",
-  "te": "చూడాల్సిన లీడ్‌లు",
-  "hi": "देखने वाले लीड",
-  "kn": "ನೋಡಬೇಕಾದ ಲೀಡ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.records": {
-  "en": "Companies and contacts",
-  "te": "కంపెనీలు, కాంటాక్ట్‌లు",
-  "hi": "कंपनियाँ और कॉन्टैक्ट",
-  "kn": "ಕಂಪನಿಗಳು ಮತ್ತು ಕಾಂಟ್ಯಾಕ್ಟ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.add-customer": {
-  "en": "Add a customer",
-  "te": "కస్టమర్‌ను చేర్చండి",
-  "hi": "ग्राहक जोड़ें",
-  "kn": "ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+ "nav.item.quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -121,157 +87,55 @@
    "kn": "draft"
   }
  },
- "nav.item.followups-due": {
-  "en": "Follow-ups due",
-  "te": "చేయాల్సిన ఫాలో-అప్‌లు",
-  "hi": "करने वाले फ़ॉलो-अप",
-  "kn": "ಮಾಡಬೇಕಾದ ಫಾಲೋ-ಅಪ್‌ಗಳು",
+ "nav.item.customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.item-types": {
-  "en": "Item types",
-  "te": "ఐటమ్ రకాలు",
-  "hi": "आइटम के प्रकार",
-  "kn": "ಐಟಂ ವಿಧಗಳು",
+ "nav.item.catalogue": {
+  "en": "Catalogue and prices",
+  "te": "క్యాటలాగ్, ధరలు",
+  "hi": "कैटलॉग और दाम",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.price-list": {
-  "en": "Price list",
-  "te": "ప్రైస్ లిస్ట్",
-  "hi": "प्राइस लिस्ट",
-  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್",
+ "nav.item.office": {
+  "en": "Office",
+  "te": "ఆఫీస్",
+  "hi": "ऑफ़िस",
+  "kn": "ಆಫೀಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.add-product": {
-  "en": "Add a product",
-  "te": "ప్రొడక్ట్‌ను చేర్చండి",
-  "hi": "प्रोडक्ट जोड़ें",
-  "kn": "ಪ್ರಾಡಕ್ಟ್ ಸೇರಿಸಿ",
+ "nav.item.integrations": {
+  "en": "Integrations",
+  "te": "ఇంటిగ్రేషన్లు",
+  "hi": "इंटीग्रेशन",
+  "kn": "ಇಂಟಿಗ್ರೇಷನ್‌ಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "nav.item.suggestions": {
-  "en": "Suggestions",
-  "te": "సూచనలు",
-  "hi": "सुझाव",
-  "kn": "ಸಲಹೆಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.agents": {
-  "en": "Agents",
-  "te": "ఏజెంట్లు",
-  "hi": "एजेंट",
-  "kn": "ಏಜೆಂಟ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.item.quote-policy": {
-  "en": "Quote policy",
-  "te": "Quote policy",
-  "hi": "Quote policy",
-  "kn": "Quote policy",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.privacy": {
-  "en": "Privacy and erasure",
-  "te": "Privacy and erasure",
-  "hi": "Privacy and erasure",
-  "kn": "Privacy and erasure",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.suppression": {
-  "en": "Suppression keys",
-  "te": "Suppression keys",
-  "hi": "Suppression keys",
-  "kn": "Suppression keys",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "nav.item.security": {
-  "en": "Security (your account)",
-  "te": "సెక్యూరిటీ (మీ అకౌంట్)",
-  "hi": "सिक्योरिटी (आपका अकाउंट)",
-  "kn": "ಸೆಕ್ಯುರಿಟಿ (ನಿಮ್ಮ ಅಕೌಂಟ್)",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.today": {
-  "en": "Today",
-  "te": "ఈరోజు",
-  "hi": "आज",
-  "kn": "ಇಂದು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.followups-due": {
-  "en": "Follow-ups",
-  "te": "ఫాలో-అప్‌లు",
-  "hi": "फ़ॉलो-अप",
-  "kn": "ಫಾಲೋ-ಅಪ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.review": {
-  "en": "Leads",
-  "te": "లీడ్‌లు",
-  "hi": "लीड",
-  "kn": "ಲೀಡ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.tab.orders": {
-  "en": "Orders",
-  "te": "ఆర్డర్లు",
-  "hi": "ऑर्डर",
-  "kn": "ಆರ್ಡರ್‌ಗಳು",
+ "nav.item.settings": {
+  "en": "Settings",
+  "te": "సెట్టింగ్స్",
+  "hi": "सेटिंग्स",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -327,17 +191,6 @@
   "te": "మొత్తం మెనూ",
   "hi": "पूरा मेन्यू",
   "kn": "ಪೂರ್ತಿ ಮೆನು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.role": {
-  "en": "Your role here: {role}",
-  "te": "ఇక్కడ మీ పాత్ర: {role}",
-  "hi": "यहाँ आपकी भूमिका: {role}",
-  "kn": "ಇಲ್ಲಿ ನಿಮ್ಮ ಪಾತ್ರ: {role}",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -410,44 +263,986 @@
    "kn": "draft"
   }
  },
- "frame.addworkspace": {
-  "en": "Add a workspace",
-  "te": "వర్క్‌స్పేస్‌ను చేర్చండి",
-  "hi": "वर्कस्पेस जोड़ें",
-  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಸೇರಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.workspaces": {
-  "en": "Workspaces",
-  "te": "వర్క్‌స్పేస్‌లు",
-  "hi": "वर्कस्पेस",
-  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "frame.here": {
-  "en": "You are here",
-  "te": "మీరు ఇక్కడ ఉన్నారు",
-  "hi": "आप यहाँ हैं",
-  "kn": "ನೀವು ಇಲ್ಲಿದ್ದೀರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "frame.draft": {
   "en": "Machine-written translation of the menu, not yet read by a person. The screens below are still in English.",
   "te": "మెనూ అనువాదాన్ని యంత్రం రాసింది, ఇంకా ఎవరూ చదివి సరిచూడలేదు. కింద స్క్రీన్లు ఇంకా ఇంగ్లీషులోనే ఉన్నాయి.",
   "hi": "मेन्यू का अनुवाद मशीन ने लिखा है, अभी किसी ने पढ़कर जाँचा नहीं है। नीचे की स्क्रीन अभी अंग्रेज़ी में हैं।",
   "kn": "ಮೆನುವಿನ ಅನುವಾದವನ್ನು ಯಂತ್ರ ಬರೆದಿದೆ, ಇನ್ನೂ ಯಾರೂ ಓದಿ ಪರಿಶೀಲಿಸಿಲ್ಲ. ಕೆಳಗಿನ ಸ್ಕ್ರೀನ್‌ಗಳು ಇನ್ನೂ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.help": {
+  "en": "Help",
+  "te": "సహాయం",
+  "hi": "मदद",
+  "kn": "ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.notyet": {
+  "en": "Not available yet",
+  "te": "ఇంకా అందుబాటులో లేదు",
+  "hi": "अभी उपलब्ध नहीं",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.collapse": {
+  "en": "Collapse menu",
+  "te": "మెనూను కుదించండి",
+  "hi": "मेन्यू छोटा करें",
+  "kn": "ಮೆನು ಕುಗ್ಗಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.expand": {
+  "en": "Expand menu",
+  "te": "మెనూను విస్తరించండి",
+  "hi": "मेन्यू बड़ा करें",
+  "kn": "ಮೆನು ವಿಸ್ತರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aiusage": {
+  "en": "AI usage today",
+  "te": "ఈరోజు AI వినియోగం",
+  "hi": "आज का AI उपयोग",
+  "kn": "ಇಂದಿನ AI ಬಳಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aileft": {
+  "en": "{amount} left today",
+  "te": "ఈరోజు {amount} మిగిలింది",
+  "hi": "आज {amount} बचे हैं",
+  "kn": "ಇಂದು {amount} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.waiting": {
+  "en": "Waiting for you",
+  "te": "మీ కోసం వేచి ఉన్నవి",
+  "hi": "आपके इंतज़ार में",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.plan": {
+  "en": "{plan} plan",
+  "te": "{plan} ప్లాన్",
+  "hi": "{plan} प्लान",
+  "kn": "{plan} ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.greeting.morning": {
+  "en": "Good morning",
+  "te": "శుభోదయం",
+  "hi": "सुप्रभात",
+  "kn": "ಶುಭೋದಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.greeting.afternoon": {
+  "en": "Good afternoon",
+  "te": "శుభ మధ్యాహ్నం",
+  "hi": "शुभ दोपहर",
+  "kn": "ಶುಭ ಮಧ್ಯಾಹ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.greeting.evening": {
+  "en": "Good evening",
+  "te": "శుభ సాయంత్రం",
+  "hi": "शुभ संध्या",
+  "kn": "ಶುಭ ಸಂಜೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sub.none": {
+  "en": "Nothing is waiting for you.",
+  "te": "మీ కోసం ఏదీ వేచి లేదు.",
+  "hi": "आपके लिए कुछ भी इंतज़ार में नहीं है।",
+  "kn": "ನಿಮಗಾಗಿ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sub.one": {
+  "en": "1 thing is waiting for you.",
+  "te": "1 విషయం మీ కోసం వేచి ఉంది.",
+  "hi": "1 बात आपके इंतज़ार में है।",
+  "kn": "1 ವಿಷಯ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sub.other": {
+  "en": "{n} things are waiting for you.",
+  "te": "{n} విషయాలు మీ కోసం వేచి ఉన్నాయి.",
+  "hi": "{n} बातें आपके इंतज़ार में हैं।",
+  "kn": "{n} ವಿಷಯಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.waitingHint": {
+  "en": "Decisions below",
+  "te": "కింద నిర్ణయాలు",
+  "hi": "नीचे फ़ैसले",
+  "kn": "ಕೆಳಗೆ ನಿರ್ಧಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.open": {
+  "en": "Orders in progress",
+  "te": "ప్రోగ్రెస్‌లో ఉన్న ఆర్డర్లు",
+  "hi": "चालू ऑर्डर",
+  "kn": "ಪ್ರಗತಿಯಲ್ಲಿರುವ ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.openHint": {
+  "en": "Not closed yet",
+  "te": "ఇంకా ముగియలేదు",
+  "hi": "अभी बंद नहीं हुए",
+  "kn": "ಇನ್ನೂ ಮುಚ್ಚಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.needsYou": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपकी ज़रूरत है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.team": {
+  "en": "Your team right now",
+  "te": "మీ టీమ్ ఇప్పుడు",
+  "hi": "आपकी टीम अभी",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್ ಈಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.recent": {
+  "en": "Recently recorded",
+  "te": "ఇటీవల నమోదైనవి",
+  "hi": "हाल में दर्ज",
+  "kn": "ಇತ್ತೀಚೆಗೆ ದಾಖಲಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "common.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.state.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.quote": {
+  "en": "Quote draft",
+  "te": "కొటేషన్ డ్రాఫ్ట్",
+  "hi": "कोटेशन ड्राफ़्ट",
+  "kn": "ಕೊಟೇಶನ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.followup": {
+  "en": "Follow-up draft",
+  "te": "ఫాలో-అప్ డ్రాఫ్ట్",
+  "hi": "फ़ॉलो-अप ड्राफ़्ट",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.quote": {
+  "en": "Check the quote",
+  "te": "కొటేషన్ చూడండి",
+  "hi": "कोटेशन देखें",
+  "kn": "ಕೊಟೇಶನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.followup": {
+  "en": "Check the follow-up",
+  "te": "ఫాలో-అప్ చూడండి",
+  "hi": "फ़ॉलो-अप देखें",
+  "kn": "ಫಾಲೋ-ಅಪ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.order": {
+  "en": "Check the order",
+  "te": "ఆర్డర్ చూడండి",
+  "hi": "ऑर्डर देखें",
+  "kn": "ಆರ್ಡರ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.city": {
+  "en": "City",
+  "te": "నగరం",
+  "hi": "शहर",
+  "kn": "ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.held": {
+  "en": "Customer money held",
+  "te": "Customer money held",
+  "hi": "Customer money held",
+  "kn": "Customer money held",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.stat.heldHint": {
+  "en": "On closed orders, not yet refunded",
+  "te": "On closed orders, not yet refunded",
+  "hi": "On closed orders, not yet refunded",
+  "kn": "On closed orders, not yet refunded",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.fact.amount": {
+  "en": "Amount",
+  "te": "Amount",
+  "hi": "Amount",
+  "kn": "Amount",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.kind.order": {
+  "en": "Order: money still held",
+  "te": "Order: money still held",
+  "hi": "Order: money still held",
+  "kn": "Order: money still held",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.hint.nothingSent": {
+  "en": "Nothing is sent, approved or recorded by opening this.",
+  "te": "Nothing is sent, approved or recorded by opening this.",
+  "hi": "Nothing is sent, approved or recorded by opening this.",
+  "kn": "Nothing is sent, approved or recorded by opening this.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "office.idle": {
+  "en": "Idle",
+  "te": "ఖాళీగా",
+  "hi": "खाली",
+  "kn": "ಖಾಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.working": {
+  "en": "Working",
+  "te": "పని చేస్తోంది",
+  "hi": "काम कर रहा है",
+  "kn": "ಕೆಲಸ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.sub": {
+  "en": "Only the price list import exists today. The rest are not built yet.",
+  "te": "ఈరోజు ప్రైస్ లిస్ట్ దిగుమతి మాత్రమే ఉంది. మిగతావి ఇంకా తయారవలేదు.",
+  "hi": "आज सिर्फ़ प्राइस लिस्ट इंपोर्ट है। बाकी अभी बने नहीं हैं।",
+  "kn": "ಇಂದು ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಆಮದು ಮಾತ್ರ ಇದೆ. ಉಳಿದವು ಇನ್ನೂ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.available": {
+  "en": "Available",
+  "te": "అందుబాటులో ఉంది",
+  "hi": "उपलब्ध",
+  "kn": "ಲಭ್ಯವಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.pricelist.title": {
+  "en": "Price list (CSV)",
+  "te": "ప్రైస్ లిస్ట్ (CSV)",
+  "hi": "प्राइस लिस्ट (CSV)",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್ (CSV)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.pricelist.body": {
+  "en": "Upload your price list so quotes are priced from it by fixed rules.",
+  "te": "మీ ప్రైస్ లిస్ట్‌ను అప్‌లోడ్ చేయండి, కోట్‌లు స్థిర నియమాలతో దాని నుండి ధర పొందుతాయి.",
+  "hi": "अपनी प्राइस लिस्ट अपलोड करें, ताकि कोटेशन तय नियमों से उसी से दाम लें।",
+  "kn": "ನಿಮ್ಮ ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಕೊಟೇಶನ್‌ಗಳು ನಿಗದಿತ ನಿಯಮಗಳಿಂದ ಅದರಿಂದ ಬೆಲೆ ಪಡೆಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.pricelist.cta": {
+  "en": "Import price list (CSV)",
+  "te": "ప్రైస్ లిస్ట్ దిగుమతి (CSV)",
+  "hi": "प्राइस लिस्ट इंपोर्ट करें (CSV)",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಆಮದು (CSV)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.email.title": {
+  "en": "E-mail",
+  "te": "ఇ-మెయిల్",
+  "hi": "ई-मेल",
+  "kn": "ಇ-ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.calendar.title": {
+  "en": "Calendar",
+  "te": "క్యాలెండర్",
+  "hi": "कैलेंडर",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.calendar.body": {
+  "en": "Would add follow-up reminders to your calendar.",
+  "te": "ఫాలో-అప్ రిమైండర్లను మీ క్యాలెండర్‌కు చేర్చుతుంది.",
+  "hi": "फ़ॉलो-अप रिमाइंडर आपके कैलेंडर में जोड़ेगा।",
+  "kn": "ಫಾಲೋ-ಅಪ್ ರಿಮೈಂಡರ್‌ಗಳನ್ನು ನಿಮ್ಮ ಕ್ಯಾಲೆಂಡರ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.accounting.title": {
+  "en": "Accounting",
+  "te": "అకౌంటింగ్",
+  "hi": "अकाउंटिंग",
+  "kn": "ಅಕೌಂಟಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.accounting.body": {
+  "en": "Would pass orders to your accounting software.",
+  "te": "ఆర్డర్లను మీ అకౌంటింగ్ సాఫ్ట్‌వేర్‌కు పంపుతుంది.",
+  "hi": "ऑर्डर आपके अकाउंटिंग सॉफ़्टवेयर तक पहुँचाएगा।",
+  "kn": "ಆರ್ಡರ್‌ಗಳನ್ನು ನಿಮ್ಮ ಅಕೌಂಟಿಂಗ್ ಸಾಫ್ಟ್‌ವೇರ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.business": {
+  "en": "Business and plan",
+  "te": "వ్యాపారం, ప్లాన్",
+  "hi": "व्यापार और प्लान",
+  "kn": "ವ್ಯಾಪಾರ ಮತ್ತು ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.members": {
+  "en": "Members",
+  "te": "సభ్యులు",
+  "hi": "सदस्य",
+  "kn": "ಸದಸ್ಯರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.language": {
+  "en": "Language and look",
+  "te": "భాష, రూపం",
+  "hi": "भाषा और रूप",
+  "kn": "ಭಾಷೆ ಮತ್ತು ನೋಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.business.name": {
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "व्यापार",
+  "kn": "ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.business.url": {
+  "en": "URL name",
+  "te": "URL పేరు",
+  "hi": "URL नाम",
+  "kn": "URL ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.business.plan": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.members.note": {
+  "en": "The people who can open this business, and their role. Adding people comes later.",
+  "te": "ఈ వ్యాపారాన్ని తెరవగల వ్యక్తులు, వారి పాత్ర. మనుషులను చేర్చడం తర్వాత వస్తుంది.",
+  "hi": "इस व्यापार को खोल सकने वाले लोग और उनकी भूमिका। लोगों को जोड़ना बाद में आएगा।",
+  "kn": "ಈ ವ್ಯಾಪಾರವನ್ನು ತೆರೆಯಬಹುದಾದ ಜನರು ಮತ್ತು ಅವರ ಪಾತ್ರ. ಜನರನ್ನು ಸೇರಿಸುವುದು ಮುಂದೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.members.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.language.language": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.language.appearance": {
+  "en": "Appearance",
+  "te": "రూపం",
+  "hi": "रूप",
+  "kn": "ನೋಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.theme.system": {
+  "en": "System",
+  "te": "సిస్టమ్",
+  "hi": "सिस्टम",
+  "kn": "ಸಿಸ್ಟಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.theme.light": {
+  "en": "Light",
+  "te": "లైట్",
+  "hi": "लाइट",
+  "kn": "ಲೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.theme.dark": {
+  "en": "Dark",
+  "te": "డార్క్",
+  "hi": "डार्क",
+  "kn": "ಡಾರ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.whatsapp.title": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.whatsapp.body": {
+  "en": "Would let the app send messages. Today you send them yourself.",
+  "te": "Would let the app send messages. Today you send them yourself.",
+  "hi": "Would let the app send messages. Today you send them yourself.",
+  "kn": "Would let the app send messages. Today you send them yourself.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.email.body": {
+  "en": "Would let the app send quotes by e-mail. Not built.",
+  "te": "Would let the app send quotes by e-mail. Not built.",
+  "hi": "Would let the app send quotes by e-mail. Not built.",
+  "kn": "Would let the app send quotes by e-mail. Not built.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.upi.title": {
+  "en": "UPI payments",
+  "te": "UPI payments",
+  "hi": "UPI payments",
+  "kn": "UPI payments",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.upi.body": {
+  "en": "Would confirm payments automatically. Today you record them.",
+  "te": "Would confirm payments automatically. Today you record them.",
+  "hi": "Would confirm payments automatically. Today you record them.",
+  "kn": "Would confirm payments automatically. Today you record them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.tab.security": {
+  "en": "Security",
+  "te": "Security",
+  "hi": "Security",
+  "kn": "Security",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.tab.privacy": {
+  "en": "Privacy",
+  "te": "Privacy",
+  "hi": "Privacy",
+  "kn": "Privacy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.security.on": {
+  "en": "2-step sign-in is on.",
+  "te": "2-step sign-in is on.",
+  "hi": "2-step sign-in is on.",
+  "kn": "2-step sign-in is on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.security.off": {
+  "en": "2-step sign-in is not set up yet.",
+  "te": "2-step sign-in is not set up yet.",
+  "hi": "2-step sign-in is not set up yet.",
+  "kn": "2-step sign-in is not set up yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.security.open": {
+  "en": "Open the security page",
+  "te": "Open the security page",
+  "hi": "Open the security page",
+  "kn": "Open the security page",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.privacy.erasure": {
+  "en": "Privacy and erasure",
+  "te": "Privacy and erasure",
+  "hi": "Privacy and erasure",
+  "kn": "Privacy and erasure",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.privacy.suppression": {
+  "en": "Suppression keys",
+  "te": "Suppression keys",
+  "hi": "Suppression keys",
+  "kn": "Suppression keys",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.privacy.note": {
+  "en": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "te": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "hi": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "kn": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "office.title": {
+  "en": "Agent office",
+  "te": "ఏజెంట్ ఆఫీస్",
+  "hi": "एजेंट ऑफ़िस",
+  "kn": "ಏಜೆಂಟ್ ಆಫೀಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sub": {
+  "en": "Your AI team and what each one is doing right now.",
+  "te": "మీ AI టీమ్, ప్రతి ఒక్కరూ ఇప్పుడు ఏం చేస్తున్నారు.",
+  "hi": "आपकी AI टीम और हर कोई अभी क्या कर रहा है।",
+  "kn": "ನಿಮ್ಮ AI ಟೀಮ್ ಮತ್ತು ಪ್ರತಿಯೊಬ್ಬರೂ ಈಗ ಏನು ಮಾಡುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.latest": {
+  "en": "Latest events",
+  "te": "తాజా ఈవెంట్లు",
+  "hi": "ताज़ा घटनाएँ",
+  "kn": "ಇತ್ತೀಚಿನ ಘಟನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.noevents": {
+  "en": "No events yet.",
+  "te": "ఇంకా ఈవెంట్లు లేవు.",
+  "hi": "अभी कोई घटना नहीं।",
+  "kn": "ಇನ್ನೂ ಘಟನೆಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.pick": {
+  "en": "Choose a teammate to read their latest events.",
+  "te": "వారి తాజా ఈవెంట్లు చదవడానికి ఒక టీమ్ సభ్యుడిని ఎంచుకోండి.",
+  "hi": "उनकी ताज़ा घटनाएँ पढ़ने के लिए किसी साथी को चुनें।",
+  "kn": "ಅವರ ಇತ್ತೀಚಿನ ಘಟನೆಗಳನ್ನು ಓದಲು ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.runs": {
+  "en": "Runs and cost",
+  "te": "రన్‌లు, ఖర్చు",
+  "hi": "रन और खर्च",
+  "kn": "ರನ್‌ಗಳು ಮತ್ತು ವೆಚ್ಚ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.plan.free_trial": {
+  "en": "Free trial",
+  "te": "ఉచిత ట్రయల్",
+  "hi": "मुफ़्त ट्रायल",
+  "kn": "ಉಚಿತ ಟ್ರಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.main": {
+  "en": "Main agent",
+  "te": "ప్రధాన ఏజెంట్",
+  "hi": "मुख्य एजेंट",
+  "kn": "ಮುಖ್ಯ ಏಜೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.lead_finder": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.researcher": {
+  "en": "Researcher",
+  "te": "రీసెర్చర్",
+  "hi": "रिसर्चर",
+  "kn": "ರಿಸರ್ಚರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.requirement_analyst": {
+  "en": "Requirement Analyst",
+  "te": "రిక్వైర్మెంట్ అనలిస్ట్",
+  "hi": "रिक्वायरमेंट एनालिस्ट",
+  "kn": "ರಿಕ್ವೈರ್ಮೆಂಟ್ ಅನಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.quote_writer": {
+  "en": "Quote Writer",
+  "te": "కోట్ రైటర్",
+  "hi": "कोट राइटर",
+  "kn": "ಕೋಟ್ ರೈಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.followup_desk": {
+  "en": "Follow-up Desk",
+  "te": "ఫాలో-అప్ డెస్క్",
+  "hi": "फ़ॉलो-अप डेस्क",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.order_desk": {
+  "en": "Order Desk",
+  "te": "ఆర్డర్ డెస్క్",
+  "hi": "ऑर्डर डेस्क",
+  "kn": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
   "status": {
    "te": "draft",
    "hi": "draft",

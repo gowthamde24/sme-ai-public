@@ -39,9 +39,9 @@ describe("/landing route", () => {
     expect(JSON.stringify(m)).not.toMatch(/ld\+json|schema\.org|og-image|example\.invalid/);
     expect(String(m.description)).not.toContain("⁠");
   });
-  it("the English description keeps the honest promise: drafts, approval, invitation only", async () => {
+  it("the English description keeps the honest promise: drafts and approval (sign-up is open, so no invitation-only line)", async () => {
     const m = await generateMetadata();
     expect(String(m.description)).toMatch(/draft you approve/i);
-    expect(String(m.description)).toMatch(/invitation only/i);
+    expect(String(m.description)).not.toMatch(/invitation/i);
   });
 });

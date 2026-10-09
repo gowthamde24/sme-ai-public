@@ -1,4 +1,4 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies)
+[All customers](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies)
 # Sri Lakshmi Silks (synthetic)
 {label="Company"}
 ## Company

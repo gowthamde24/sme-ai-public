@@ -10,9 +10,12 @@ try {
   await login(page, "owner");
   const { tenant: T } = await discover(page);
 
-  await page.goto(`${BASE}/app/tenants/${T}`);
+  // Job AC: the menu has no Privacy entry any more; the owner reaches it from Settings, Privacy (and the workspace home is Today: the records, with the closed-gate banner, are ?tab=companies)
+  await page.goto(`${BASE}/app/tenants/${T}/settings?section=privacy`);
+  const hasPrivacyLink = (await page.locator('main a[href$="/privacy"]').count()) > 0;
+  await page.goto(`${BASE}/app/tenants/${T}?tab=companies`);
   const home = await text(page);
-  record("P1 the menu links to Privacy", (await page.locator('nav[aria-label="Workspace menu"] a[href$="/privacy"]').count()) > 0 ? "PASS" : "FAIL", "the 'Privacy and erasure' item of the workspace menu for the owner", await shot(page, "P1-workspace-owner"));
+  record("P1 Settings, Privacy links to Privacy and erasure", hasPrivacyLink ? "PASS" : "FAIL", "the 'Privacy and erasure' item of the workspace menu for the owner", await shot(page, "P1-workspace-owner"));
   record("P1b the closed real-data gate is announced", /Synthetic data only/.test(home) && /\+00/.test(home) ? "PASS" : "FAIL", "banner: synthetic data only, reserved address, +00 phone (the demo workspace is closed)");
 
   await page.goto(`${BASE}/app/tenants/${T}/privacy`);
@@ -93,8 +96,8 @@ try {
   for (const role of ["sales", "viewer"]) {
     const other = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
     await login(other, role);
-    await other.goto(`${BASE}/app/tenants/${T}`);
-    const hasLink = (await other.locator('nav[aria-label="Workspace menu"] a[href$="/privacy"]').count()) > 0;
+    await other.goto(`${BASE}/app/tenants/${T}/settings?section=privacy`);
+    const hasLink = (await other.locator('main a[href$="/privacy"]').count()) > 0;
     await other.goto(`${BASE}/app/tenants/${T}/privacy`);
     const b = await text(other);
     record(`P11 ${role} sees no link and a refusal`, !hasLink && /Only an owner or admin can ask/.test(b) && !(await other.locator('button:has-text("Request erasure")').count()) ? "PASS" : "FAIL", `link: ${hasLink}; refusal shown: ${/Only an owner or admin can ask/.test(b)}`, await shot(other, `P11-privacy-${role}`));

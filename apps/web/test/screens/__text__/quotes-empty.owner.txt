@@ -1,0 +1,2 @@
+# Quotes
+Prices come from your price list by fixed rules. AI never sets a price. [New quote](/app/tenants/22222222-2222-2222-2222-222222222222/review) A quote starts from an enquiry on a lead: open the lead, then the enquiry. No quotes yet.

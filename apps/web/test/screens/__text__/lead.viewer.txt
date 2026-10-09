@@ -1,4 +1,4 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
+[All leads](/app/tenants/22222222-2222-2222-2222-222222222222/review)
 # Lead
 {label="Lead"}
 ## Lead

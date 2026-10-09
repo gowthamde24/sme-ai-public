@@ -68,33 +68,25 @@ The frame is built from `components/v2/app/*` (new folder, like `components/v2/a
 
 ### 2.2 Navigation groups (shopkeeper words) and who sees what
 
-**Simplified on 2026-10-09 (Job X, the owner's feedback after seeing the first version): six top-level entries, daily groups always open, rarely used groups closed until opened.** The table below replaces the first one. A group with no visible item is hidden; a group a role has ONE item of is drawn as a plain link. Visibility is a convenience only: the page, the API and the database stay the gate, as the pages already say.
+**Ported to the design-lab app on 2026-10-09 (Job AC, batch C1).** The owner approved one design, the design-lab app; the menu is the one in its sidebar, plus the owner's two additions ("Customers" and "Your business"). Four labelled groups (nothing opens or closes), then Settings below the scrolling part. A group with no visible item is hidden. Visibility is a convenience only: the page, the API and the database stay the gate. The menu is one table in `components/v2/app/nav.ts`, pinned by `nav.test.ts` and `nav-structure.test.ts`.
 
 | Group | Item (the words on screen) | Goes to | Owner | Admin | Sales | Viewer |
 |---|---|---|---|---|---|---|
-| **Today** | Home | workspace home | yes | yes | yes | yes |
-| | Follow-ups due | `/followups` (the rules page `/followups/policy` is linked from it) | yes | yes | yes | no |
-| **Leads and orders** | Leads to look at | `/review` | yes | yes | yes | yes |
+| **Work** | Today | workspace home (no `?tab=`) | yes | yes | yes | yes |
+| | Leads | `/review` (parts: To look at, All leads, Follow-ups due, Suggestions) | yes | yes | yes | yes |
+| | Quotes | `/quotes` (GET /quotes) | yes | yes | yes | no |
 | | Orders | `/orders` | yes | yes | yes | no |
-| **Customers** | Companies and contacts | home records tabs | yes | yes | yes | yes |
-| | Add a customer | `/customers/new` | yes | yes | yes | no |
-| **Catalogue and prices** (opens and closes) | Item types | `/item-types` | yes | yes | yes | no |
-| | Price list | `/price-list` | yes | yes | no | no |
-| | Add a product | `/products/new` | yes | yes | no | no |
-| | Quote policy | `/quote-policy` | yes | yes | no | no |
-| **Assistant** | Suggestions | `/suggestions` | yes | yes | yes | yes |
-| | Agents | `/agents` | yes | yes | yes | yes |
-| **Privacy and safety** (opens and closes; the name stays English until a person reviews it) | Privacy and erasure | `/privacy` | yes | yes | no | no |
-| | Suppression keys | `/suppression` | yes | no | no | no |
-| | Security (your account) | `/app/security` | yes | yes | yes | yes |
+| | Customers | home `?tab=companies` (also contacts; "Add a customer" is a button there) | yes | yes | yes | yes |
+| **Your business** | Catalogue and prices | `/item-types` (tabs: Item types, Price list, Add a product, Quote policy; the last three for owner and admin) | yes | yes | yes | no |
+| **Your team** | Office | `/office` (the AI team as a list; "Runs and cost" is `/agents`) | yes | yes | yes | yes |
+| **Connect** | Integrations | `/integrations` (only the price list import is available) | yes | yes | no | no |
+| *(foot)* | Settings | `/settings` (parts: Business and plan, Members, Language and look, Security, Privacy) | yes | yes | yes | yes |
 
-(Quotes: made from a customer's enquiry; no list exists, so no menu item: see open question 14. **Your team: no page and no API exist yet** (`docs/plans/members-and-invitations.md` is plan only), so there is no menu item; the table is one entry away from having it.)
+The phone's bottom bar is Today, Leads, Quotes, Orders and Office (each only when the role may open it), then More: Customers, Catalogue and prices, Integrations, Settings, Help ("Not available yet"), the AI usage card, the other workspaces (only for someone who belongs to two or more) and Sign out.
 
-Where things sit (the same on every screen): the workspace switcher at the top of the side menu (the person's workspaces, then ONE row "Add a workspace" that opens the create form in place), the groups in the scrolling middle, the account menu (Security, All workspaces, Sign out) at the bottom. On a phone the switcher and the account button stay in the top bar; the bottom bar has Today, Follow-ups, Leads, Orders and More, and More opens the same groups. A group that opens and closes remembers what the person chose, in this browser only.
+Where things sit (the same on every screen): the business and its plan at the top of the side menu (one subscriber is one business: no list of workspaces; a switcher only for two or more), the groups in the scrolling middle, then the AI usage card, Settings, Help, the user card and "Collapse menu". The plan, the AI usage and the count on Today come from `getPlan()`, `getAiUsageToday()` and `getToday()` of lib/api (Job AD); until they exist the frame says "Not available yet". With exactly one workspace `/app` goes straight to its Today.
 
-Long screens (more than two screens tall on a laptop or four on a phone) show one part at a time, with the parts as real links (`?section=`): the enquiry (Request, Make a quote, Quote, Copy and order), the lead (Overview, Evidence, Suggestions), the company (Details, Evidence, Suggestions). `?section=all` draws every part as before. Item types, the quote policy and the workspace home keep their long forms behind a button ("Add an item type", "Publish a new version", "Add a company").
-
-"Agents" keeps its current on-screen word because pages and the e2e script use it. The group is called "Assistant". The Telugu names for the groups are decided in the language batch (section 5). The menu is one table in one file with a test that pins it to the table above, so a role change in a page cannot silently disagree with the menu.
+Every page keeps one menu item as its owner (`also` in the table): follow-ups, suggestions, leads and requirements belong to Leads; enquiries to Quotes; companies, contacts and the new-customer page to Customers; the four catalogue pages to Catalogue and prices; agents to Office; privacy and suppression to Settings. Long screens keep showing one part at a time (`?section=`), as in Job X.
 
 Unverified: the Viewer column is from page code (no role wall found on review, leads, companies, agents, suggestions); the first batch checks each with a Viewer login.
 

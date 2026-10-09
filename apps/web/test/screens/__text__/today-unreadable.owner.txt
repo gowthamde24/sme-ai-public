@@ -1,0 +1,11 @@
+# Good morning
+[Waiting for you Not available yet](#needs-you) [Customer money held Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders) [Orders in progress Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+{label="Needs you"}
+## Needs you
+Not available yet
+{label="Your team right now"}
+## Your team right now
+Not available yet [Office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+{label="Recently recorded"}
+## Recently recorded
+Not available yet

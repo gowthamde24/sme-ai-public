@@ -1,5 +1,4 @@
 import { Control } from "@/components/v2/landing/Control";
-import { EarlyAccess } from "@/components/v2/landing/EarlyAccess";
 import { Faq } from "@/components/v2/landing/Faq";
 import { Footer } from "@/components/v2/landing/Footer";
 import { Header } from "@/components/v2/landing/Header";
@@ -39,7 +38,6 @@ export function LandingView({ lang, theme }: { lang: Lang; theme?: Theme }) {
           <TeamSection t={t} />
           <LanguagesSection t={t} />
           <Privacy t={t} />
-          <EarlyAccess labels={{ title: t("early.title"), body: t("early.body"), status: t("early.status"), nodata: t("early.nodata"), clicked: t("early.clicked") }} />
           <Faq t={t} />
         </main>
         <Footer t={t} />

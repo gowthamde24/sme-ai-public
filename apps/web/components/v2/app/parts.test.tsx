@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 
-import { ActionResultV2, ApiDownV2, NoticeV2, NotShownV2, PageHeader, Panel, Pill } from "./parts";
+import { ActionResultV2, ApiDownV2, BackLink, NoticeV2, NotShownV2, PageHeader, Panel, Pill } from "./parts";
 
 describe("the shared v2 pieces say what the old ones said", () => {
   it("ApiDown: the same alert sentence and the same way back", () => {
@@ -44,5 +44,16 @@ describe("the shared v2 pieces say what the old ones said", () => {
       </Panel>,
     );
     expect(screen.getByRole("region", { name: "Money" })).toHaveTextContent("Approved");
+  });
+});
+
+describe("BackLink: the way back on a detail page", () => {
+  it("is an arrow and the name of the list, at least 44px tall, with an optional second link", () => {
+    render(<BackLink href="/app/tenants/T/orders" label="All orders" then={{ href: "/app/tenants/T/leads/L", label: "The lead" }} />);
+    const back = screen.getByRole("link", { name: "All orders" });
+    expect(back).toHaveAttribute("href", "/app/tenants/T/orders");
+    expect(back.className).toContain("min-h-11");
+    expect(back.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
+    expect(screen.getByRole("link", { name: "The lead" })).toHaveAttribute("href", "/app/tenants/T/leads/L");
   });
 });

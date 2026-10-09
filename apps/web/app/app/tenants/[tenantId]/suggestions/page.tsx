@@ -6,6 +6,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { ReviewScreen } from "../review-screen";
+import { LeadsTabs } from "@/components/v2/app/parts";
 import { alertBox, link, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Review suggestions · SME AI Revenue Engine" };
@@ -57,6 +58,7 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
   return (
     <main className={pageMain}>
       <h1 className={pageH1}>Review suggestions</h1>
+      <LeadsTabs tenantId={tenantId} role={tenant.role} current="suggestions" />
       <p className={mutedText}>
         An agent only suggests. Each suggestion shows the quote it rests on and where it came from, as plain text. The quote was
         checked by the agent runtime, not by the database. A suggestion counts toward a score only after an owner or admin

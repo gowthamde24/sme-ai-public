@@ -1,4 +1,5 @@
 # Load a price list
+{label="Parts of Catalogue and prices"} [Item types](/app/tenants/22222222-2222-2222-2222-222222222222/item-types) [Price list](/app/tenants/22222222-2222-2222-2222-222222222222/price-list current=page) [Add a product](/app/tenants/22222222-2222-2222-2222-222222222222/products/new) [Quote policy](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)
 {role=note} A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the day, never from a person or an assistant.
 form:
 Choose a CSV file

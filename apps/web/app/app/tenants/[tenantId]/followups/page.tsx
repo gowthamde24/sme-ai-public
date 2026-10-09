@@ -8,7 +8,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { DueView } from "./due-view";
 import { FOLLOWUP_ROLES, NOTHING_SENT } from "./page-parts";
-import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, LeadsTabs, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { link, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Follow-ups due · SME AI Revenue Engine" };
@@ -49,7 +49,7 @@ export default async function FollowupsPage({ params, searchParams }: PageProps<
         </Link>
       </p>
       <NoticeV2>{NOTHING_SENT}</NoticeV2>
-      <DueView tenantId={tenantId} list={list} />
+      <DueView tenantId={tenantId} list={list} tabs={<LeadsTabs tenantId={tenantId} role={tenant.role} current="followups" />} />
     </main>
   );
 }

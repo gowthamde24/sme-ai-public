@@ -22,26 +22,42 @@ describe("OrderView", () => {
       closed_paid: "won", declined: "lost", expired: "expired", cancelled: "cancelled",
     }; // fmt: skip
     show({ state, outcome: outcome[state] });
-    expect(document.querySelector("#order-heading + p")).toHaveTextContent(`${OUTCOME_LABELS[outcome[state] as keyof typeof OUTCOME_LABELS]} · ${STATE_LABELS[state]}`);
+    expect(document.querySelector("#order-heading")).toHaveTextContent(`${OUTCOME_LABELS[outcome[state] as keyof typeof OUTCOME_LABELS]} · ${STATE_LABELS[state]}`);
   });
 
-  it("shows the ledger in rupees with Indian grouping", () => {
+  it("shows the figures in rupees with Indian grouping: four boxes (total, received, balance, money held) and the rest of the ledger", () => {
     show({ order_total_paise: 15000050, advance_paise: 7500000, paid_paise: 7500000, refunded_paise: 100000, net_paise: 7400000, balance_paise: 7600050 });
-    const ledger = screen.getByText("Order total").closest("dl") as HTMLElement;
+    const box = (label: string) => screen.getByText(label, { selector: "p" }).nextElementSibling?.textContent;
+    expect(box("Order total")).toBe("₹1,50,000.50");
+    expect(box("Received")).toBe("₹75,000.00");
+    expect(box("Balance")).toBe("₹76,000.50");
+    expect(box("Money held")).toBe("₹0.00"); // always drawn; amber only when something is held
+    const ledger = screen.getByText("Advance asked for", { selector: "dt" }).closest("dl") as HTMLElement;
     const text = (label: string) => within(ledger).getByText(label).nextElementSibling?.textContent;
-    expect(text("Order total")).toBe("₹1,50,000.50");
     expect(text("Advance asked for")).toBe("₹75,000.00");
-    expect(text("Received")).toBe("₹75,000.00");
     expect(text("Refunded")).toBe("₹1,000.00");
     expect(text("Net received")).toBe("₹74,000.00");
-    expect(text("Balance")).toBe("₹76,000.50");
     expect(text("Quote valid until")).toBe("21 Oct 2026");
   });
 
   it.each(["declined", "cancelled", "expired"])("a %s order owes nothing and says so", (state) => {
     show({ state, outcome: state === "declined" ? "lost" : state, balance_paise: 99900 });
-    const ledger = screen.getByText("Order total").closest("dl") as HTMLElement;
-    expect(within(ledger).getByText("Balance").nextElementSibling).toHaveTextContent("Not owed: the order is closed");
+    expect(screen.getByText("Balance", { selector: "p" }).nextElementSibling).toHaveTextContent("–");
+    expect(screen.getByText("Balance: not owed, the order is closed.")).toBeInTheDocument();
+  });
+
+  it("draws the steps of the order: reached ones checked, the current one marked, the rest 'Not reached'; a cancelled order ends at Cancelled", () => {
+    show({ state: "advance_requested", outcome: "won", events: [EVENT_JSON, { ...EVENT_JSON, id: "cccccccc-cccc-4ccc-8ccc-ccccccccccc2", seq: 2, new_state: "accepted" }, { ...EVENT_JSON, id: "cccccccc-cccc-4ccc-8ccc-ccccccccccc3", seq: 3, new_state: "advance_requested" }] });
+    const steps = within(screen.getByRole("list", { name: "The steps of an order" })).getAllByRole("listitem");
+    expect(steps).toHaveLength(8);
+    expect(steps[2]).toHaveAttribute("aria-current", "step");
+    expect(steps[2]).toHaveTextContent("Advance asked for");
+    expect(steps[3]).toHaveTextContent("Advance receivedNot reached");
+    document.body.innerHTML = "";
+    show({ state: "cancelled", outcome: "cancelled" });
+    const ended = within(screen.getByRole("list", { name: "The steps of an order" })).getAllByRole("listitem");
+    expect(ended[ended.length - 1]).toHaveTextContent("Cancelled");
+    expect(ended[ended.length - 1]).toHaveAttribute("aria-current", "step");
   });
 
   it("names the lost reason", () => {
@@ -93,8 +109,9 @@ describe("money still held (step F8)", () => {
     show({ state: "cancelled", outcome: "cancelled", paid_paise: 882000, refunded_paise: 100000, net_paise: 782000, balance_paise: 2746000 });
     expect(screen.getByText("Money still held: ₹7,820.00. A refund may be owed to the customer.")).toBeInTheDocument();
     expect(screen.getByText("Money still held: ₹7,820.00. A refund may be owed to the customer.").closest("[role=note]")).not.toBeNull();
-    const ledger = screen.getByText("Order total").closest("dl") as HTMLElement;
-    expect(within(ledger).getByText("Balance").nextElementSibling).toHaveTextContent("Not owed: the order is closed");
+    expect(screen.getByText("Money held", { selector: "p" }).nextElementSibling).toHaveTextContent("₹7,820.00");
+    expect(screen.getByText("Money held", { selector: "p" }).parentElement?.className).toContain("amber"); // the figure is amber when money is held
+    expect(screen.getByText("Balance", { selector: "p" }).nextElementSibling).toHaveTextContent("–");
   });
   it("a closed_paid order has no such line", () => {
     show({ state: "closed_paid", outcome: "won", paid_paise: 15000000, net_paise: 15000000, balance_paise: 0 });

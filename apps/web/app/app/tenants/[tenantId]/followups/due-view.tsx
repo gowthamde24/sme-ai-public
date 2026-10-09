@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { DUE_TEXT, followupSentence } from "@/lib/api/followup-text";
@@ -11,7 +12,7 @@ import { hintInline, link, listItemCard, mutedText, pageH1 } from "@/components/
  * asking for a draft makes the database decide again. One row per LEAD: it names the state of each channel (when the API reported them) and the row opens the lead on the channel to start with. The list is one PAGE,
  * oldest last message first; leads that need no follow-up are not listed; a link goes to the next page; a note says how many candidates of this page could not be shown. Nothing here sends a message.
  */
-export function DueView({ tenantId, list }: { tenantId: string; list: DueList }) {
+export function DueView({ tenantId, list, tabs = null }: { tenantId: string; list: DueList; tabs?: ReactNode }) {
   const base = `/app/tenants/${tenantId}`;
   const { items } = list;
   const empty = dueEmptyLine(list);
@@ -19,6 +20,7 @@ export function DueView({ tenantId, list }: { tenantId: string; list: DueList })
   return (
     <section aria-labelledby="due-heading">
       <h1 id="due-heading" className={pageH1}>Follow-ups due</h1>
+      {tabs}
       <p role="note" className={mutedText}>
         Worked out when you opened this page. Guidance only: the database decides again when you ask for a draft.
       </p>

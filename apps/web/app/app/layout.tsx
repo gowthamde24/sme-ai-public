@@ -9,7 +9,6 @@ import { requireUser } from "@/lib/auth/session";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
 
 import { signOut } from "./actions";
-import { CreateTenantForm } from "./create-tenant-form";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -32,7 +31,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     // the API is down, or the session was rejected (the page then redirects to sign in): the account part only
   }
   return (
-    <AppFrame lang={lang} theme={theme} email={user.email} memberships={memberships} signOut={signOut} addWorkspace={<CreateTenantForm />}>
+    <AppFrame lang={lang} theme={theme} email={user.email} memberships={memberships} signOut={signOut}>
       {children}
     </AppFrame>
   );

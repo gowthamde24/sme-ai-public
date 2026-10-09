@@ -1,4 +1,4 @@
-[← Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+[All quotes](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
 # Enquiry
 {role=status} Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.
 {label="What the customer wrote"}

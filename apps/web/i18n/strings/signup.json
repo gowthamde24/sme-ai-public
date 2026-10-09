@@ -1,0 +1,323 @@
+{
+ "signup.title": {
+  "en": "Create your account",
+  "te": "మీ అకౌంట్ సృష్టించండి",
+  "hi": "अपना अकाउंट बनाएँ",
+  "kn": "ನಿಮ್ಮ ಅಕೌಂಟ್ ರಚಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.sub": {
+  "en": "Start with your name and your business.",
+  "te": "మీ పేరు, మీ వ్యాపారంతో మొదలుపెట్టండి.",
+  "hi": "अपने नाम और अपने व्यापार से शुरू करें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು ಮತ್ತು ನಿಮ್ಮ ವ್ಯಾಪಾರದಿಂದ ಶುರು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.email": {
+  "en": "Email",
+  "te": "ఇమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.password": {
+  "en": "Password",
+  "te": "పాస్‌వర్డ్",
+  "hi": "पासवर्ड",
+  "kn": "ಪಾಸ್‌ವರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.password.hint": {
+  "en": "At least {n} characters.",
+  "te": "కనీసం {n} అక్షరాలు.",
+  "hi": "कम से कम {n} अक्षर।",
+  "kn": "ಕನಿಷ್ಠ {n} ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.business": {
+  "en": "Business name",
+  "te": "వ్యాపారం పేరు",
+  "hi": "व्यापार का नाम",
+  "kn": "ವ್ಯಾಪಾರದ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.submit": {
+  "en": "Create account",
+  "te": "అకౌంట్ సృష్టించండి",
+  "hi": "अकाउंट बनाएँ",
+  "kn": "ಅಕೌಂಟ್ ರಚಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.have": {
+  "en": "Already have an account?",
+  "te": "ఇప్పటికే అకౌంట్ ఉందా?",
+  "hi": "पहले से अकाउंट है?",
+  "kn": "ಈಗಾಗಲೇ ಅಕೌಂಟ್ ಇದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.signin": {
+  "en": "Sign in",
+  "te": "లాగిన్",
+  "hi": "लॉग इन",
+  "kn": "ಲಾಗಿನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.weak_password": {
+  "en": "Choose a stronger password: at least {n} characters, not a common one, and not part of your email address.",
+  "te": "బలమైన పాస్వర్డ్ ఎంచుకోండి: కనీసం {n} అక్షరాలు; సాధారణ పాస్వర్డ్ కాకూడదు, మీ ఈమెయిల్ చిరునామాలో భాగం కాకూడదు.",
+  "hi": "मज़बूत पासवर्ड चुनें: कम से कम {n} अक्षर, आम पासवर्ड नहीं, और आपके ईमेल पते का हिस्सा नहीं।",
+  "kn": "ಬಲವಾದ ಪಾಸ್ವರ್ಡ್ ಆರಿಸಿ: ಕನಿಷ್ಠ {n} ಅಕ್ಷರಗಳು, ಸಾಮಾನ್ಯ ಪಾಸ್ವರ್ಡ್ ಅಲ್ಲ, ಮತ್ತು ನಿಮ್ಮ ಇಮೇಲ್ ವಿಳಾಸದ ಭಾಗವಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.unknown": {
+  "en": "Something went wrong. Nothing was created. Try again.",
+  "te": "ఏదో తప్పు జరిగింది. ఏదీ సృష్టించబడలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "कुछ गड़बड़ हुई। कुछ भी नहीं बना। फिर कोशिश करें।",
+  "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಏನೂ ರಚನೆಯಾಗಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "checkemail.title": {
+  "en": "Check your email",
+  "te": "మీ ఇమెయిల్ చూడండి",
+  "hi": "अपना ईमेल देखें",
+  "kn": "ನಿಮ್ಮ ಇಮೇಲ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "checkemail.body": {
+  "en": "We sent you a link. Open it to finish creating your account.",
+  "te": "మేము మీకు ఒక లింక్ పంపాం. అకౌంట్ సృష్టి పూర్తి చేయడానికి దాన్ని తెరవండి.",
+  "hi": "हमने आपको एक लिंक भेजा है। अकाउंट बनाना पूरा करने के लिए उसे खोलें।",
+  "kn": "ನಾವು ನಿಮಗೆ ಒಂದು ಲಿಂಕ್ ಕಳುಹಿಸಿದ್ದೇವೆ. ಅಕೌಂಟ್ ರಚನೆ ಮುಗಿಸಲು ಅದನ್ನು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "checkemail.nothing": {
+  "en": "Nothing arrived? Look in the spam folder, or try again in a few minutes.",
+  "te": "ఏమీ రాలేదా? స్పామ్ ఫోల్డర్ చూడండి, లేదా కొన్ని నిమిషాల తర్వాత మళ్లీ ప్రయత్నించండి.",
+  "hi": "कुछ नहीं आया? स्पैम फ़ोल्डर देखें, या कुछ मिनट बाद फिर कोशिश करें।",
+  "kn": "ಏನೂ ಬಂದಿಲ್ಲವೇ? ಸ್ಪ್ಯಾಮ್ ಫೋಲ್ಡರ್ ನೋಡಿ, ಅಥವಾ ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "checkemail.back": {
+  "en": "Back to sign in",
+  "te": "లాగిన్‌కు తిరిగి వెళ్లండి",
+  "hi": "लॉग इन पर वापस जाएँ",
+  "kn": "ಲಾಗಿನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.title": {
+  "en": "Set up your business",
+  "te": "మీ వ్యాపారాన్ని సిద్ధం చేయండి",
+  "hi": "अपना व्यापार तैयार करें",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರವನ್ನು ಸಿದ್ಧಪಡಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.sub": {
+  "en": "Two questions, then your Today screen.",
+  "te": "రెండు ప్రశ్నలు, తర్వాత మీ ఈరోజు స్క్రీన్.",
+  "hi": "दो सवाल, फिर आपकी आज की स्क्रीन।",
+  "kn": "ಎರಡು ಪ್ರಶ್ನೆಗಳು, ನಂತರ ನಿಮ್ಮ ಇಂದಿನ ಸ್ಕ್ರೀನ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.type": {
+  "en": "What kind of business is it?",
+  "te": "ఇది ఏ రకమైన వ్యాపారం?",
+  "hi": "यह किस तरह का व्यापार है?",
+  "kn": "ಇದು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.type.other": {
+  "en": "Other",
+  "te": "ఇతరం",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.language": {
+  "en": "Which language should the app use?",
+  "te": "యాప్ ఏ భాషను వాడాలి?",
+  "hi": "ऐप किस भाषा में चले?",
+  "kn": "ಆ್ಯಪ್ ಯಾವ ಭಾಷೆಯನ್ನು ಬಳಸಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.submit": {
+  "en": "Continue",
+  "te": "కొనసాగించండి",
+  "hi": "आगे बढ़ें",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.err.unknown": {
+  "en": "Something went wrong. Nothing was saved. Try again.",
+  "te": "ఏదో తప్పు జరిగింది. ఏదీ సేవ్ కాలేదు. మళ్లీ ప్రయత్నించండి.",
+  "hi": "कुछ गड़बड़ हुई। कुछ भी सहेजा नहीं गया। फिर कोशिश करें।",
+  "kn": "ಏನೋ ತಪ್ಪಾಯಿತು. ಏನೂ ಉಳಿಸಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.terms": {
+  "en": "I accept the terms of use and the privacy notice.",
+  "te": "I accept the terms of use and the privacy notice.",
+  "hi": "I accept the terms of use and the privacy notice.",
+  "kn": "I accept the terms of use and the privacy notice.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "signup.err.terms_required": {
+  "en": "You need to accept the terms to create an account.",
+  "te": "You need to accept the terms to create an account.",
+  "hi": "You need to accept the terms to create an account.",
+  "kn": "You need to accept the terms to create an account.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "signup.err.too_many_signups": {
+  "en": "Too many tries. Wait a little and try again.",
+  "te": "చాలాసార్లు ప్రయత్నించారు. కొంచెం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "बहुत बार कोशिश हुई। थोड़ा रुककर फिर कोशिश करें।",
+  "kn": "ಹಲವು ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಸ್ವಲ್ಪ ನಿಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.invalid": {
+  "en": "Check your name, email address and business name, then try again.",
+  "te": "మీ పేరు, ఈమెయిల్ చిరునామా, వ్యాపారం పేరు సరిచూసి మళ్లీ ప్రయత్నించండి.",
+  "hi": "अपना नाम, ईमेल पता और व्यवसाय का नाम जाँचें, फिर दोबारा कोशिश करें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು, ಇಮೇಲ್ ವಿಳಾಸ ಮತ್ತು ವ್ಯವಹಾರದ ಹೆಸರನ್ನು ಪರಿಶೀಲಿಸಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.type.textiles": {
+  "en": "Textiles",
+  "te": "వస్త్రాలు",
+  "hi": "कपड़ा",
+  "kn": "ಜವಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.type.construction": {
+  "en": "Construction",
+  "te": "నిర్మాణం",
+  "hi": "निर्माण",
+  "kn": "ನಿರ್ಮಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ }
+}

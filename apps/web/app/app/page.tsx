@@ -2,6 +2,7 @@ import type { Me } from "@contracts";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
+import { fetchAccountSetup, type AccountSetup } from "@/lib/api/account";
 import { ApiAuthError, fetchMe } from "@/lib/api/client";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageMain, rowBetween, sectionBlock, warnBox } from "@/components/v2/app/ui";
@@ -26,6 +27,19 @@ export default async function AppPage() {
   }
   // The API and Supabase Auth must agree on who this is.
   if (me && me.user_id !== user.id) redirect("/login");
+  // One subscriber is one business: with exactly one workspace there is no list to choose from, so the person lands on its Today (Job AC, C5).
+  if (me && me.memberships.length === 1) redirect(`/app/tenants/${me.memberships[0].tenant.id}`);
+  // A confirmed account with no business yet (just signed up) goes to the set-up screen; the account setup state says so. Anyone else with no workspace (an invited person) sees the empty list below.
+  if (me && me.memberships.length === 0) {
+    let setup: AccountSetup | null = null;
+    try {
+      setup = await fetchAccountSetup(user.accessToken);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      // the state could not be read: the empty list below says so
+    }
+    if (setup?.state === "needed") redirect("/setup");
+  }
 
   return (
     <main className={pageMain}>

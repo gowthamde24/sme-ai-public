@@ -11,8 +11,8 @@ import {
   type PageReviewQueueLeadOut,
   type ScoreBand,
 } from "@/lib/api/leads";
-import { Pill } from "@/components/v2/app/parts";
-import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH1, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
+import { LeadsTabs, PageTop, Pill } from "@/components/v2/app/parts";
+import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { FactorBreakdown } from "./factor-breakdown";
@@ -110,18 +110,15 @@ export default async function ReviewQueuePage({
   return (
     <main className={pageMain}>
 
-      <div className={rowBetween}>
-        <div>
-          <h1 className={pageH1}>Lead Review Queue</h1>
-          <p className={mutedText}>
-            Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is{" "}
-            {blind ? <strong>enabled</strong> : <span>disabled</span>}.
-          </p>
-        </div>
-        <div>
-          <Pill tone="neutral">Role: {tenant.role}</Pill>
-        </div>
-      </div>
+      <PageTop
+        title="Leads"
+        sub={
+          <>
+            Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is {blind ? <strong>enabled</strong> : <span>disabled</span>}.
+          </>
+        }
+      />
+      <LeadsTabs tenantId={tenantId} role={tenant.role} current="review" />
 
       {/* ICP Profile Status Banner */}
       <div className={`mt-4 ${surfaceFlat}`}>

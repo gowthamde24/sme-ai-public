@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -6,8 +5,8 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
 import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
 import { fetchOrders, type Order } from "@/lib/api/orders";
-import { ApiDownV2, SectionTabs } from "@/components/v2/app/parts";
-import { alertBox, backLink, kvList, mutedText, noteBox, pageH1, pageH2, pageMain, plainText } from "@/components/v2/app/ui";
+import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
+import { alertBox, kvList, mutedText, noteBox, pageH1, pageH2, pageMain, plainText } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../../local-time";
@@ -128,11 +127,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
     ) : null;
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}/leads/${enquiry.lead_id}`} className={backLink}>
-          ← Lead
-        </Link>
-      </p>
+      <BackLink href={`/app/tenants/${tenantId}/quotes`} label="All quotes" then={{ href: `/app/tenants/${tenantId}/leads/${enquiry.lead_id}`, label: "The lead" }} />
       <h1 className={pageH1}>Enquiry</h1>
       {notice ? (
         <p role="status" className={noteBox}>

@@ -1,4 +1,4 @@
-[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
+[All leads](/app/tenants/22222222-2222-2222-2222-222222222222/review)
 # Lead
 [Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
 {label="Lead"}
@@ -15,21 +15,7 @@ import
 ## Enquiries
 Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
 - [WhatsApp enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) received Oct 5, 2026, 3:30 PM (18 hours ago)
-summary: Paste a new enquiry
-form:
-<hidden name=enquiry_id value=77777777-7777-4777-8777-777777777777>
-<hidden name=received_at value=2026-10-06T04:30:00.000Z>
-Where did it come from?
-<select name=channel label="Where did it come from?" required>
-  options: E-mail=email | WhatsApp=whatsapp* | Form=form | Other=other
-When was it received?
-<datetime-local label="When was it received?" required value=2026-10-06T10:00>
-Subject (optional)
-<text name=subject label="Subject (optional)" maxlength=2000>
-The enquiry, as you received it
-<textarea name=text label="The enquiry, as you received it" required placeholder="Paste the e-mail or message here">
-E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.
-[button type=submit: Save enquiry]
+[button type=button: Add enquiry]
 {label="I sent a message"}
 ## I sent a message
 {label="I sent a message"}

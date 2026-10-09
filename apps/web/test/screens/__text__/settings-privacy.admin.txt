@@ -1,0 +1,5 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy current=page)
+{label="Privacy"}
+- [Privacy and erasure](/app/tenants/22222222-2222-2222-2222-222222222222/privacy)
+Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.

@@ -1,0 +1,3 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members current=page) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Members"} The people who can open this business, and their role. Adding people comes later. Not available yet

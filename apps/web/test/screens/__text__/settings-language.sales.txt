@@ -1,0 +1,12 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language current=page) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Language and look"}
+## Language
+Language
+<select label="LanguageEnglishతెలుగుहिन्दीಕನ್ನಡ">
+  options: English=en* | తెలుగు=te | हिन्दी=hi | ಕನ್ನಡ=kn
+## Appearance
+{role=group label="Appearance"}
+[button type=button: System]
+[button type=button: Light]
+[button type=button: Dark]

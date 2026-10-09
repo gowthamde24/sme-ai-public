@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth/session";
 import { commitPriceListAction, previewPriceListAction } from "./price-list-actions";
 import { PriceListImport } from "./price-list-import";
 import { mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Price list · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -45,6 +45,7 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
   return (
     <main className={pageMain}>
       <h1 className={pageH1}>Load a price list</h1>
+      <CatalogueTabs tenantId={tenantId} role={tenant.role} current="price-list" />
       <p role="note" className={noteBox}>
         A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the
         day, never from a person or an assistant.

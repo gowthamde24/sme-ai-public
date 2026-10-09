@@ -1,0 +1,5 @@
+# Workspaces
+form:
+[button type=submit: Sign out]
+Signed in as owner@example.test . [Security](/app/security) You do not belong to a workspace yet. Create one to get started.
+[button type=button: Add a workspace]

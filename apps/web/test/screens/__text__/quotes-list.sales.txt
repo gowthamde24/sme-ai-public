@@ -1,0 +1,7 @@
+# Quotes
+Prices come from your price list by fixed rules. AI never sets a price. [New quote](/app/tenants/22222222-2222-2222-2222-222222222222/review) A quote starts from an enquiry on a lead: open the lead, then the enquiry.
+caption: Quotes, newest first
+table:
+  | th Quote | th Customer | th Total | th Valid until | th Status |
+  | [Quote 3](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) | Synthetic Buyer Hyderabad · New customer | ₹79,859.00 | 21 Oct 2026 | Draft |
+  | [Quote 4](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888889) | Synthetic Buyer Hyderabad · New customer | ₹8,924.99 | 21 Oct 2026 | Draft |

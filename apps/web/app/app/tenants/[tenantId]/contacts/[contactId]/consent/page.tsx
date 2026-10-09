@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -8,8 +7,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { recordConsentAction } from "./actions";
 import { ConsentForm } from "./consent-form";
-import { backLink, bodyText, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { bodyText, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2, BackLink } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Record consent · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -35,14 +34,11 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}?tab=contacts`} className={backLink}>← {tenant.name}</Link>
-    </p>
-  );
+  const back = <BackLink href={`/app/tenants/${tenantId}?tab=contacts`} label="All customers" />;
   if (!WRITERS.includes(tenant.role))
     return (
       <main className={pageMain}>
+        {back}
         <h1 className={pageH1}>Record consent</h1>
         <p className={bodyText}>An owner, an admin or a sales person records consent.</p>
       </main>
@@ -58,6 +54,7 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
   }
   return (
     <main className={pageMain}>
+      {back}
       <h1 className={pageH1}>Record consent</h1>
       <p className={bodyText}>
         For <strong>{contact.full_name}</strong>.

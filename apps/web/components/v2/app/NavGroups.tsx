@@ -1,125 +1,46 @@
-"use client";
-
-import { ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { useId, useMemo, useState, useSyncExternalStore } from "react";
 
 import { NavIcon } from "./icons";
 import { word, type Labels } from "./labels";
-import { hrefOf, type VisibleGroup } from "./nav";
+import { hrefOf, type NavItem, type VisibleGroup } from "./nav";
 
-export const itemClass = "flex min-h-11 items-center gap-2 rounded-lg px-3 text-base font-medium text-ink hover:bg-surface-2";
-export const itemCurrent = "bg-brand-bg text-brand-text font-semibold";
-const headClass = "flex min-h-11 items-center gap-2 rounded-lg px-3 text-base font-semibold text-ink";
-const STORE = "sme_nav_open";
+export const itemBase = "relative flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors duration-150 ease-out";
+export const itemIdle = "text-ink hover:bg-surface-2 active:bg-line";
+export const itemCurrent = "bg-brand-bg text-brand-text";
 
-/**
- * What the person opened or closed last time (a convenience only: with no storage, or a broken value, the menu works and starts as the table says).
- * Read as an external store, so the first (server) render is the table's own default and the browser's value arrives after hydration.
- */
-const listeners = new Set<() => void>();
-function subscribe(notify: () => void) {
-  listeners.add(notify);
-  window.addEventListener("storage", notify);
-  return () => {
-    listeners.delete(notify);
-    window.removeEventListener("storage", notify);
-  };
-}
-function snapshot(): string {
-  try {
-    return window.localStorage.getItem(STORE) ?? "{}";
-  } catch {
-    return "{}";
-  }
-}
-function parse(raw: string): Record<string, boolean> {
-  try {
-    const v: unknown = JSON.parse(raw);
-    return v && typeof v === "object" && !Array.isArray(v) ? (v as Record<string, boolean>) : {};
-  } catch {
-    return {};
-  }
-}
-function remember(id: string, open: boolean) {
-  try {
-    window.localStorage.setItem(STORE, JSON.stringify({ ...parse(snapshot()), [id]: open }));
-  } catch {
-    /* no storage: the choice lasts until the page changes */
-  }
-  listeners.forEach((l) => l());
-}
-
-/**
- * The groups of the menu, one drawing for the side menu and the phone's "More" list so the two cannot drift (both read `visibleGroups`).
- * A group with one item for the role is a plain link; a group that opens and closes is a native <details> (it works without script: a closed group can still
- * be opened); the other groups show their heading and their items. The group that holds the current page opens itself when the page changes; what the
- * person opens or closes is remembered in this browser (try/catch: the page works without storage).
- */
-export function NavGroups({ groups, tenantId, activeItemId, activeGroupId, pathname, labels, onNavigate }: { groups: readonly VisibleGroup[]; tenantId: string; activeItemId: string | null; activeGroupId: string | null; pathname: string; labels?: Labels; onNavigate?: () => void }) {
-  const raw = useSyncExternalStore(subscribe, snapshot, () => "{}");
-  const stored = useMemo(() => parse(raw), [raw]);
-  const [choice, setChoice] = useState<Record<string, boolean>>({});
-  const [seen, setSeen] = useState(pathname);
-  if (seen !== pathname) {
-    setSeen(pathname); // a new page: forget this page's own open or close (state adjusted while rendering)
-    setChoice({});
-  }
-  const prefix = useId();
-  const openOf = (g: VisibleGroup) => choice[g.id] ?? (g.id === activeGroupId ? true : (stored[g.id] ?? g.defaultOpen));
-  const link = (g: VisibleGroup, i: VisibleGroup["items"][number], icon: boolean) => {
-    const on = activeItemId === i.id;
-    return (
-      <Link href={hrefOf(i, tenantId)} aria-current={on ? "page" : undefined} onClick={onNavigate} className={`${itemClass} ${on ? itemCurrent : ""}`}>
-        {icon ? <NavIcon name={g.icon} className="size-5" /> : null}
-        <span className="min-w-0">{word(labels, `nav.item.${i.id}`, i.label)}</span>
-      </Link>
-    );
-  };
+/** One menu row: icon, word, the orange mark when it is the current page, and (on Today) the count of what is waiting. `collapsed` = the narrow rail: icon only, the word stays for a screen reader. */
+export function NavLink({ item, tenantId, on, labels, badge, collapsed = false, onNavigate }: { item: NavItem; tenantId: string; on: boolean; labels?: Labels; badge?: number | null; collapsed?: boolean; onNavigate?: () => void }) {
+  const text = word(labels, `nav.item.${item.id}`, item.label);
   return (
-    <div className="flex flex-col gap-1">
-      {groups.map((g) => {
-        const name = word(labels, `nav.group.${g.id}`, g.label);
-        if (g.flat) return <div key={g.id}>{link(g, g.items[0], true)}</div>;
-        if (g.collapsible)
-          return (
-            <details
-              key={g.id}
-              open={openOf(g)}
-              onToggle={(e) => {
-                const isOpen = e.currentTarget.open;
-                if (isOpen === openOf(g)) return;
-                setChoice((c) => ({ ...c, [g.id]: isOpen }));
-                remember(g.id, isOpen);
-              }}
-              className="group"
-            >
-              <summary className={`${headClass} cursor-pointer list-none hover:bg-surface-2 [&::-webkit-details-marker]:hidden`}>
-                <NavIcon name={g.icon} className="size-5" />
-                <span className="min-w-0 flex-1">{name}</span>
-                <ChevronDown className="size-4 shrink-0 transition-transform group-open:rotate-180" aria-hidden="true" />
-              </summary>
-              <ul className="ml-4 border-l border-line pl-2">
-                {g.items.map((i) => (
-                  <li key={i.id}>{link(g, i, false)}</li>
-                ))}
-              </ul>
-            </details>
-          );
-        return (
-          <div key={g.id} role="group" aria-labelledby={`${prefix}-${g.id}`}>
-            <p id={`${prefix}-${g.id}`} className={`${headClass} min-h-8 text-sm uppercase tracking-wide text-muted`}>
-              <NavIcon name={g.icon} className="size-4" />
-              {name}
-            </p>
-            <ul className="ml-4 border-l border-line pl-2">
-              {g.items.map((i) => (
-                <li key={i.id}>{link(g, i, false)}</li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
+    <Link href={hrefOf(item, tenantId)} aria-current={on ? "page" : undefined} title={collapsed ? text : undefined} onClick={onNavigate} className={`${itemBase} ${collapsed ? "justify-center px-0" : ""} ${on ? itemCurrent : itemIdle}`}>
+      {on ? <span aria-hidden="true" className="absolute inset-y-2 left-0 w-1 rounded-r-full bg-brand-edge" /> : null}
+      <NavIcon name={item.icon} />
+      <span className={collapsed ? "sr-only" : "min-w-0 flex-1 truncate"}>{text}</span>
+      {badge && badge > 0 ? (
+        <span className={`grid min-w-6 place-items-center rounded-full bg-charcoal px-1.5 text-sm font-semibold text-on-charcoal ${collapsed ? "absolute right-1 top-0.5 min-w-5 px-1" : ""}`}>
+          <span className="sr-only">{word(labels, "frame.waiting", "Waiting for you")}: </span>
+          {badge}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
+/**
+ * The groups of the menu (Work, Your business, Your team, Connect), one drawing for the side menu and the phone's More sheet: a small heading, then the rows.
+ * Plain groups, nothing opens or closes: there are few rows, so everything is one look away (Hick's law).
+ */
+export function NavGroups({ groups, tenantId, activeItemId, labels, waiting = null, collapsed = false, onNavigate }: { groups: readonly VisibleGroup[]; tenantId: string; activeItemId: string | null; labels?: Labels; waiting?: number | null; collapsed?: boolean; onNavigate?: () => void }) {
+  return (
+    <div className="space-y-3">
+      {groups.map((g, gi) => (
+        <div key={g.id} role="group" aria-label={word(labels, `nav.group.${g.id}`, g.label)} className="space-y-0">
+          {collapsed ? gi > 0 ? <hr className="mx-3 border-line" /> : null : <p aria-hidden="true" className="px-3 pb-1 text-sm font-semibold text-muted">{word(labels, `nav.group.${g.id}`, g.label)}</p>}
+          {g.items.map((i) => (
+            <NavLink key={i.id} item={i} tenantId={tenantId} on={activeItemId === i.id} labels={labels} badge={i.id === "today" ? waiting : null} collapsed={collapsed} onNavigate={onNavigate} />
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
