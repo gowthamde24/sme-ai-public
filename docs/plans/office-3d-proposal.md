@@ -1,6 +1,6 @@
 # The 3D Agent office: a proposal (Job AC, batch C6, stop point)
 
-Status: **PROPOSAL ONLY. Nothing from it is built or installed.** It needs the owner's "deps ok" for the three packages below, and the owner's answer to the "decisions" section.
+Status: **BUILT in Job AH (branch `web/ah-office-3d`, not pushed)** after the owner's "deps ok" for exactly the packages below. See "As built (Job AH)" at the end; the rest of this file is the proposal as it was written.
 The Office as a list (reference `office-list-1440`) is done in batch C6. This is the 3D view (reference `office-v3-1440`, source `design-lab/src/office/*` on branch `web/landing`).
 
 ## What the reference is
@@ -47,3 +47,17 @@ Fonts: none new. Images: none. Texture memory: none (procedural). CPU/GPU: a con
 About five commits: the dependency commit (needs "deps ok"), the loader and switch with the weak-device logic and tests (the scene mocked: jsdom has no WebGL), the scene port, the build check and budget line, pictures and a real-device check (the lab itself says the frame rate on a real phone was never measured). Risks: bundle size, a GPU-heavy screen on cheap phones, the "invented people" question above, and a port of about 2,300 lines of procedural geometry that we would own.
 
 Not done in this job: no package installed, no `package.json` or lockfile change, no 3D code in the repository.
+
+## As built (Job AH)
+
+What was built, and how the five decisions were taken (the owner's instruction for the job answered 1, 2, 4 and 5; 3 was decided as the smallest safe choice and is for the owner to confirm).
+
+- **Packages** (exact versions, as in the lab): `three` 0.186.1, `@react-three/fiber` 9.8.1, `@react-three/drei` 10.7.9, dev `@types/three` 0.186.0. 55 more packages arrive with drei (transitive, all tree-shaken out of the chunk); all MIT, BSD-3, ISC or Apache-2.0 (`webgl-constants` has no `license` field in its package.json but ships an MIT LICENSE file). `npm audit` reports 5 high findings, all in `braces` under `eslint-config-next` (dev tooling, present before this change).
+- **Decision 1, default view:** the room is the first view on a device that can clearly run it; the List is the first view on a weak one (reduced motion, data saver, 2g/3g, 4 GB of memory or less, 4 cores or less) and whenever WebGL is missing (`scene/capability.ts`, tested). The server always draws the List (it works without script); the client then picks. The person's last choice is remembered in this browser only.
+- **Decision 2, drei:** kept (the owner approved the three packages). Measured: the chunk is within the proposal's figure, so the two helpers were not rewritten.
+- **Decision 3, the people:** all seven are drawn, but the room has no event stream of its own. `working` types, `idle` sits still, and a helper that is `not_available` (not built) or `switched_off` is drawn faded and still, with its state on its name tag. Nothing moves that is not working in the data; there are no speech bubbles and no hand-off paper. If you would rather have an empty chair for a helper that does not exist, it is a one-line change in `scene/Office3D.tsx` (skip the person).
+- **Decision 4, data:** only `getAgentsStatus()`: the state, the job and the ONE `last_event` per helper. The side panel therefore shows one latest event, and the event feed is the helpers' latest events newest first (at most six); a list of several events per helper, and a link from an event to its record, need Claude 1 to add them.
+- **Decision 5, budget:** `scripts/budget.json` has a separate line `office3d` (267,431 B gzip, the lab's measured figure). Measured in a production build: one chunk, 968,350 B raw, **258,660 B gzip**, margin 8,771 B. `npm run audit:3d` (after `npm run build`) fails if three.js is in more than one chunk, if the chunk is over budget, or if any first-load manifest names it.
+- **Loading:** `next/dynamic(() => import("./scene/Office3D"), { ssr: false })` in `OfficeStage.tsx`, rendered only when the 3D view is shown; hovering or focusing "3D view" starts the download ahead of the click. A test keeps `three` imports inside `components/v2/app/office/scene/`.
+- **Not ported from the lab:** the simulated event stream and reducer, the speech bubbles, the paper in transit, the debug close-up cameras, the `OfficeProvider`.
+- **Still open:** a real phone (frame rate and heat were not measured; the lab says the same), a screen-reader pass, and the touch size of the name tags (about 28 px high; tapping the person works too, and the List is the accessible version).
