@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -82,6 +82,7 @@ describe("/app/tenants/[tenantId]/item-types", () => {
   });
   it.each(["owner", "admin"])("a %s with the authenticator app gets the add form and an edit control for every type", async (role) => {
     await show(role);
+    fireEvent.click(screen.getByRole("button", { name: "Add an item type" })); // the add form opens in place
     expect(screen.getByRole("heading", { name: "Add an item type" })).toBeInTheDocument();
     expect(screen.getAllByText(/^Edit Type/)).toHaveLength(3);
     expect(screen.getAllByRole("button", { name: "Save changes" })).toHaveLength(3);

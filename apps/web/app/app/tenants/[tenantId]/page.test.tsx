@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -400,6 +400,7 @@ describe("/app/tenants/[tenantId]", () => {
     async (role) => {
       fetchTenant.mockResolvedValue(tenant(role));
       render(await TenantPage(props()));
+      fireEvent.click(screen.getByRole("button", { name: "Add a company" })); // the form opens in place
       expect(
         screen.getByRole("form", { name: "Create company" }),
       ).toBeInTheDocument();
@@ -419,6 +420,7 @@ describe("/app/tenants/[tenantId]", () => {
     const randomUUID = vi.fn(() => FORM_ID);
     vi.stubGlobal("crypto", { randomUUID });
     render(await TenantPage(props()));
+    fireEvent.click(screen.getByRole("button", { name: "Add a company" }));
     expect(randomUUID).toHaveBeenCalledTimes(1);
     const hidden = document.querySelector(
       'input[name="id"]',
