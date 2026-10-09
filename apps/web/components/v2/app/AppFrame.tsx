@@ -30,7 +30,7 @@ import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
  * It decides no access: `memberships` only says which menu items to offer; a page, the API and the database stay the gate.
  * `memberships` null = the API could not be read: the account part only.
  */
-export function AppFrame({ lang, theme, email, memberships, signOut, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; children: ReactNode }) {
+export function AppFrame({ lang, theme, email, memberships, signOut, addWorkspace, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; addWorkspace?: ReactNode; children: ReactNode }) {
   const t = authT(lang);
   const list = memberships ?? [];
   const labels = frameLabels(lang);
@@ -46,9 +46,10 @@ export function AppFrame({ lang, theme, email, memberships, signOut, children }:
               <Link href="/app" className="hidden shrink-0 rounded-md sm:block" aria-label={`${BRAND_NAME}: your workspaces`}>
                 <Wordmark />
               </Link>
-              <div className="min-w-0 flex-1 sm:ml-3">
-                <WorkspaceSwitcher memberships={list} labels={labels} />
+              <div className="min-w-0 flex-1 sm:ml-3 md:hidden">
+                <WorkspaceSwitcher memberships={list} labels={labels} addForm={addWorkspace} />
               </div>
+              <div className="hidden flex-1 md:block" />
               <div className="flex shrink-0 items-center gap-1 sm:gap-2">
                 <span lang={lang}>
                   <LangSelect lang={lang} label={t("lang.label")} />
@@ -56,7 +57,9 @@ export function AppFrame({ lang, theme, email, memberships, signOut, children }:
                 <span lang={lang}>
                   <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
                 </span>
-                <AccountMenu email={email} signOut={signOut} labels={labels} />
+                <div className="md:hidden">
+                  <AccountMenu email={email} signOut={signOut} labels={labels} />
+                </div>
               </div>
             </div>
           </header>
@@ -67,11 +70,19 @@ export function AppFrame({ lang, theme, email, memberships, signOut, children }:
           ) : null}
         </div>
         <div className="flex min-w-0 flex-1 md:items-stretch">
-          <div className="hidden w-64 shrink-0 border-r border-line md:has-[nav]:block lg:w-72">
-            <div className="sticky top-16 max-h-[calc(100dvh-4rem)] overflow-y-auto">
-              <SideNav memberships={list} labels={labels} />
+          <aside className="hidden w-64 shrink-0 border-r border-line md:block lg:w-72">
+            <div className={`sticky top-16 flex w-full flex-col ${lang === "en" ? "h-[calc(100dvh-4rem)]" : "h-[calc(100dvh-5.75rem)]"}`}>
+              <div className="shrink-0 border-b border-line p-2">
+                <WorkspaceSwitcher memberships={list} labels={labels} addForm={addWorkspace} side />
+              </div>
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                <SideNav memberships={list} labels={labels} />
+              </div>
+              <div className="shrink-0 border-t border-line p-2">
+                <AccountMenu email={email} signOut={signOut} labels={labels} side />
+              </div>
             </div>
-          </div>
+          </aside>
           <div className="min-w-0 flex-1 pb-20 md:pb-0">
             <Crumbs memberships={list} labels={labels} />
             <div id="main-content" lang="en" tabIndex={-1} className="outline-none">

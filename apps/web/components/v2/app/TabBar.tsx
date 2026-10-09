@@ -5,17 +5,17 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { NavIcon } from "./icons";
+import { NavGroups } from "./NavGroups";
 import { word, type Labels } from "./labels";
-import { TAB_GROUPS, groupHref, hrefOf, visibleGroups } from "./nav";
-import { itemClass, itemCurrent } from "./SideNav";
+import { barItems, hrefOf, visibleGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const tab = "flex min-h-14 flex-1 flex-col items-center justify-center gap-0.5 px-1 text-xs font-medium text-muted";
 const tabOn = "text-brand-text font-semibold";
 
 /**
- * The bottom bar on a phone (under 768px): Today, Customers, Quotes and orders, Follow-ups (each only when the role is offered something in it)
- * and "More", which opens every other group in a full-screen list. Respects the phone's safe area.
+ * The bottom bar on a phone (under 768px): the daily pages (Today, Follow-ups, Leads, Orders: each only when the role may open it) and "More", which opens
+ * the whole menu, the same groups as the side menu, in a full-screen list. Respects the phone's safe area.
  */
 export function TabBar({ memberships, labels }: { memberships: readonly Membership[]; labels?: Labels }) {
   const { current, pathname, active } = useWorkspace(memberships);
@@ -42,18 +42,18 @@ export function TabBar({ memberships, labels }: { memberships: readonly Membersh
   }, [open]);
   if (!current) return null;
   const groups = visibleGroups(current.role);
-  const tabs = groups.filter((g) => (TAB_GROUPS as readonly string[]).includes(g.id));
-  const rest = groups.filter((g) => !(TAB_GROUPS as readonly string[]).includes(g.id));
-  const inRest = active ? rest.some((g) => g.id === active.group.id) : false;
+  const tabs = barItems(current.role);
+  const inRest = active ? !tabs.some((i) => i.id === active.item.id) : false;
   return (
     <>
       <nav aria-label={word(labels, "frame.menu.quick", "Quick menu")} className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
-        {tabs.map((g) => {
-          const on = active?.group.id === g.id;
+        {tabs.map((i) => {
+          const on = active?.item.id === i.id;
+          const text = word(labels, `nav.tab.${i.id}`, i.bar ?? i.label);
           return (
-            <Link key={g.id} href={groupHref(g, current.id)} aria-current={on ? "page" : undefined} className={`${tab} ${on ? tabOn : ""}`}>
-              <NavIcon name={g.icon} />
-              <span className={`text-center ${/\s/.test(word(labels, `nav.group.${g.id}`, g.label)) ? "" : "whitespace-nowrap"}`}>{word(labels, `nav.group.${g.id}`, g.label)}</span>
+            <Link key={i.id} href={hrefOf(i, current.id)} aria-current={on ? "page" : undefined} className={`${tab} ${on ? tabOn : ""}`}>
+              <NavIcon name={i.barIcon ?? "today"} />
+              <span className={`text-center ${/\s/.test(text) ? "" : "whitespace-nowrap"}`}>{text}</span>
             </Link>
           );
         })}
@@ -73,27 +73,8 @@ export function TabBar({ memberships, labels }: { memberships: readonly Membersh
               <X className="size-5" aria-hidden="true" />
             </button>
           </div>
-          <div className="flex flex-col gap-5 px-3 py-5 pb-24">
-            {groups.map((g) => (
-              <div key={g.id}>
-                <p className="mb-1 flex items-center gap-2 px-3 text-sm font-semibold uppercase tracking-wide text-muted">
-                  <NavIcon name={g.icon} className="size-4" />
-                  {word(labels, `nav.group.${g.id}`, g.label)}
-                </p>
-                <ul>
-                  {g.items.map((i) => {
-                    const on = active?.item.id === i.id;
-                    return (
-                      <li key={i.id}>
-                        <Link href={hrefOf(i, current.id)} aria-current={on ? "page" : undefined} className={`${itemClass} ${on ? itemCurrent : ""}`}>
-                          {word(labels, `nav.item.${i.id}`, i.label)}
-                        </Link>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </div>
-            ))}
+          <div className="px-3 py-5 pb-24">
+            <NavGroups groups={groups} tenantId={current.id} activeItemId={active?.item.id ?? null} activeGroupId={active?.group.id ?? null} pathname={pathname} labels={labels} onNavigate={() => setOpen(false)} />
           </div>
         </div>
       ) : null}
