@@ -129,13 +129,12 @@ describe("AppFrame", () => {
         <main id="page">The page</main>
       </AppFrame>,
     );
-  it("wraps the page without touching it: a skip link, the page between islands, one language and one theme control", () => {
+  it("holds the page in the one v2 wrapper: a skip link, one wrapper, one language and one theme control", () => {
     const { container } = frame(owner);
     expect(screen.getByRole("link", { name: /skip/i })).toHaveAttribute("href", "#main-content");
     expect(container.querySelector("#main-content")).toContainElement(container.querySelector("#page"));
-    expect(container.querySelector("#main-content")?.closest('[data-ui="v2"]')).toBeNull(); // the page is NOT inside a v2 island
-    expect(container.querySelectorAll('[data-ui="v2"]').length).toBeGreaterThanOrEqual(3);
-    expect(container.querySelectorAll('[data-ui="v2"][data-theme="dark"]').length).toBe(container.querySelectorAll('[data-ui="v2"]').length);
+    expect(container.querySelectorAll('[data-ui="v2"]')).toHaveLength(1); // one wrapper for the frame and the page
+    expect(container.querySelector("#main-content")?.closest('[data-ui="v2"]')?.getAttribute("data-theme")).toBe("dark");
     expect(screen.getAllByRole("combobox")).toHaveLength(1); // the language select
     expect(screen.getByRole("button", { name: /light/i })).toBeInTheDocument();
     expect(container.querySelector("[data-frame='app']")).not.toBeNull();

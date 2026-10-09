@@ -2,9 +2,7 @@ import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
-vi.mock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (n === "sme_theme" ? { name: n, value: "dark" } : undefined) }) }));
 
-import { ScreenIsland } from "./island";
 import { ActionResultV2, ApiDownV2, NoticeV2, NotShownV2, PageHeader, Panel, Pill } from "./parts";
 
 describe("the shared v2 pieces say what the old ones said", () => {
@@ -46,12 +44,5 @@ describe("the shared v2 pieces say what the old ones said", () => {
       </Panel>,
     );
     expect(screen.getByRole("region", { name: "Money" })).toHaveTextContent("Approved");
-  });
-  it("ScreenIsland is a v2 wrapper that follows the saved theme", async () => {
-    const { container } = render(await ScreenIsland({ children: <p>in the island</p> }));
-    const root = container.querySelector('[data-ui="v2"]');
-    expect(root).toHaveAttribute("data-theme", "dark");
-    expect(root).toHaveAttribute("lang", "en");
-    expect(root).toContainElement(screen.getByText("in the island"));
   });
 });
