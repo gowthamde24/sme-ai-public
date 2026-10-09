@@ -3,7 +3,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchMe } from "@/lib/api/client";
-import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, mutedText, pageH1, pageH2, pageMain, rowBetween, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
@@ -27,9 +26,7 @@ export default async function AppPage() {
   // The API and Supabase Auth must agree on who this is.
   if (me && me.user_id !== user.id) redirect("/login");
 
-  const theme = await currentTheme();
   return (
-    <ScreenWrap theme={theme}>
     <main className={pageMain}>
       <header className={rowBetween}>
         <h1 className={pageH1}>Workspaces</h1>
@@ -82,6 +79,5 @@ export default async function AppPage() {
       <h2 id="create-workspace" className={pageH2}>Create a workspace</h2>
       <CreateTenantForm />
     </main>
-    </ScreenWrap>
   );
 }

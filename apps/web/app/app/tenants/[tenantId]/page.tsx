@@ -10,7 +10,6 @@ import {
   isCanonicalUuid,
 } from "@/lib/api/crm";
 import { fetchDataPolicy } from "@/lib/api/erasure";
-import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
 import { alertBox, backLink, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, linkRow, mutedInline, mutedText, pageH1, pageH2, pageMain, rowLink, spaceTop, tabLink, tabLinkOn, tabRow, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
@@ -60,9 +59,7 @@ export default async function TenantPage({
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ScreenWrap theme={await currentTheme()}>
-        <ApiDown />
-      </ScreenWrap>
+      <ApiDown />
     );
   }
 
@@ -95,10 +92,8 @@ export default async function TenantPage({
   const canWrite = WRITE_ROLES.includes(tenant.role);
   const formId = crypto.randomUUID();
 
-  const theme = await currentTheme();
   return (
-    <ScreenWrap theme={theme}>
-      <main className={pageMain}>
+    <main className={pageMain}>
         <p>
           <Link href="/app" className={backLink}>
             ← Workspaces
@@ -301,7 +296,6 @@ export default async function TenantPage({
         </section>
       )}
       </main>
-    </ScreenWrap>
   );
 }
 

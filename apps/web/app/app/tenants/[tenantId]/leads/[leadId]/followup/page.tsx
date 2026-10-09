@@ -11,7 +11,6 @@ import { createDraftAction, recordTouchAction } from "../../../followups/followu
 import { indiaNowLocal } from "../../../followups/followup-logic";
 import { LeadFollowupView } from "../../../followups/lead-followup-view";
 import { FOLLOWUP_ROLES, NOTHING_SENT } from "../../../followups/page-parts";
-import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
 import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { TouchForm } from "../../../followups/touch-form";
 import { backLink, pageMain } from "@/components/v2/app/ui";
@@ -41,16 +40,12 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ScreenWrap theme={await currentTheme()}>
-        <ApiDownV2 />
-      </ScreenWrap>
+      <ApiDownV2 />
     );
   }
   if (!FOLLOWUP_ROLES.includes(tenant.role))
     return (
-      <ScreenWrap theme={await currentTheme()}>
-        <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Follow-up" message="Follow-ups are shown to owners, admins and sales users." />
-      </ScreenWrap>
+      <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Follow-up" message="Follow-ups are shown to owners, admins and sales users." />
     );
 
   // A channel in the address is honoured; anything else (or nothing) leaves the choice to the API, which answers for the lead's default channel and says which.
@@ -63,9 +58,7 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ScreenWrap theme={await currentTheme()}>
-        <ApiDownV2 />
-      </ScreenWrap>
+      <ApiDownV2 />
     );
   }
 
@@ -74,9 +67,7 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   // `key` makes a form start afresh when the tab changes (an uncontrolled field keeps its value while the same form stays mounted).
   const draftForm = <CreateDraftForm key={`draft-${data.channel}`} action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={data.channel} />;
   const touchForm = <TouchForm key={`touch-${data.channel}`} action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} channel={data.channel} />;
-  const theme = await currentTheme();
   return (
-    <ScreenWrap theme={theme}>
     <main className={pageMain}>
       <p>
         <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>← Lead</Link> · <Link href={`/app/tenants/${tenantId}/followups`}>Follow-ups due</Link>
@@ -87,6 +78,5 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
       <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
     </main>
-    </ScreenWrap>
   );
 }
