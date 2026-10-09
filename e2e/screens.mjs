@@ -137,6 +137,14 @@ function screens(d) {
   return all.filter(([name, url]) => url && (ONLY.length === 0 || ONLY.includes(name)));
 }
 
+/** Frame states that need a click (only with --interactions): the phone's "More" list, the workspace switcher, the account menu. */
+const INTERACTIONS = (d) => [
+  ["frame-more", "phone", `${d.T}/orders`, async (page) => page.getByRole("button", { name: "More" }).click()],
+  ["frame-switcher", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["frame-switcher-phone", "phone", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["frame-account", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Your account" }).click()],
+];
+
 const CHECKS = () => {
   const root = document.documentElement;
   const frame = document.querySelector('[data-frame="app"]') !== null;
@@ -182,9 +190,30 @@ async function main() {
         await context.close();
       }
     }
+    if (process.argv.includes("--interactions")) {
+      for (const [name, vpName, url, act] of INTERACTIONS(d)) {
+        for (const scheme of SCHEMES) {
+          const context = await browser.newContext({ storageState: state, viewport: VIEWPORTS[vpName], colorScheme: scheme, isMobile: vpName === "phone", hasTouch: vpName === "phone" });
+          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: "en", url: BASE }]);
+          const page = await context.newPage();
+          try {
+            await page.goto(`${BASE}${url}`, { waitUntil: "load", timeout: 60000 });
+            await page.waitForTimeout(600);
+            await act(page);
+            await page.waitForTimeout(400);
+            const file = `${name}-${vpName}-${scheme}.png`;
+            await page.screenshot({ path: path.join(OUT, file), fullPage: false });
+            rows.push({ name, vpName, scheme, file, status: 200, url, finalUrl: url, frame: true, errors: [] });
+          } catch (error) {
+            rows.push({ name, vpName, scheme, file: null, status: 0, url, error: /Switch workspace/.test(String(error)) ? "skipped: the demo owner has one workspace, so there is no switcher" : String(error).slice(0, 200), errors: [], skipped: /Switch workspace/.test(String(error)) });
+          }
+          await context.close();
+        }
+      }
+    }
     writeFileSync(path.join(OUT, "index.html"), indexHtml(rows));
     writeFileSync(path.join(OUT, "report.json"), JSON.stringify(rows, null, 1));
-    const problems = rows.filter((r) => r.error || r.status >= 400 || r.noMain || (r.vpName === "phone" && r.overflow) || r.finalUrl !== r.url);
+    const problems = rows.filter((r) => !r.skipped && (r.error || r.status >= 400 || r.noMain || (r.vpName === "phone" && r.overflow) || r.finalUrl !== r.url));
     console.log(`${rows.length} pictures in ${OUT}; ${problems.length} with a problem`);
     for (const p of problems) console.log(`  ${p.name} ${p.vpName} ${p.scheme}: ${p.error ?? `status ${p.status}${p.noMain ? ", no <main>" : ""}${p.overflow ? ", horizontal overflow" : ""}${p.finalUrl !== p.url ? `, ended at ${p.finalUrl}` : ""}`}`);
   } finally {

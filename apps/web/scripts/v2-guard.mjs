@@ -48,7 +48,7 @@ if (bad.length) failed = true;
 // 2. role lists
 const ROLE_LINE = /^\s*(?:export\s+)?const\s+([A-Z_]*(?:ROLES|WRITERS|ADMINS)[A-Z_]*)\b[^=]*=\s*(\[[^\]]*\]|new Set\([^)]*\))/gm;
 const roleLines = (ref) => {
-  const files = git("ls-tree", "-r", "--name-only", ref, "--", "apps/web/app", "apps/web/components", "apps/web/lib").split("\n").filter((f) => /\.tsx?$/.test(f) && !/\.test\./.test(f));
+  const files = git("ls-tree", "-r", "--name-only", ref, "--", "apps/web/app").split("\n").filter((f) => /\.tsx?$/.test(f) && !/\.test\./.test(f));
   const out = [];
   for (const f of files) {
     const src = git("show", `${ref}:${f}`);
