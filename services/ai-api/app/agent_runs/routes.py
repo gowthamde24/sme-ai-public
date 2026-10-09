@@ -259,8 +259,10 @@ _register_claims("leads", "lead")
 
 @router.get("/agent-cost", response_model=AgentCostOut)
 def get_agent_cost(ctx: AdminPlus, runtime: RuntimeDep) -> AgentCostOut:
-    """Today's (UTC) agent spending of the workspace: the cap, what is settled, and what is still
-    open (counted at its worst case until midnight UTC). Owner / Admin only."""
+    """Today's (Asia/Kolkata day) agent spending: the cap, what is settled, what is still open.
+
+    Open reservations count at their worst case until Indian midnight. Owner / Admin only.
+    """
     return _agents(runtime).repository.cost_summary(ctx.principal.token, ctx.tenant.id)
 
 

@@ -75,7 +75,7 @@ select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros
 select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros = -1 where tenant_id = tests.tid('a')$$, '23514', null, '...nor be negative');
 select results_eq($$select model, input_micros_per_mtok, output_micros_per_mtok from public.agent_model_prices order by model$$, $$values ('fake-selftest'::text, 1000000::bigint, 1000000::bigint)$$,
   'the only seeded price is the scripted development model (no real model has a price until the operator adds one)');
-select is(app.agent_utc_today(), (now() at time zone 'UTC')::date, 'the clock helper is UTC today');
+select is(app.agent_utc_today(), (now() at time zone 'Asia/Kolkata')::date, 'the clock helper is the Indian date (since job AF; tested at the boundary in 73)');
 
 -- ============================================================================ B. reserve: the boundary, replay, conflict, the audit of a cap hit
 select pg_temp.set_cap('a', 1000);

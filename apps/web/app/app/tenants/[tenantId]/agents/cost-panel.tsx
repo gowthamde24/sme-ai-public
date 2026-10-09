@@ -9,16 +9,16 @@ export function money(micros: number): string {
 }
 
 /**
- * Today's (UTC) agent spending, for an owner or admin: what is settled, what is still OPEN, and the cap.
+ * Today's (India time, the Asia/Kolkata day) agent spending, for an owner or admin: what is settled, what is still OPEN, and the cap.
  *
  * An OPEN reservation is a model call that was reserved and never settled (its run was cancelled, expired, switched off or
- * crashed mid-call, or the provider's answer was lost). It keeps counting at its WORST case until its UTC day ends, because
+ * crashed mid-call, or the provider's answer was lost). It keeps counting at its WORST case until its Indian day ends, because
  * nobody can tell whether the provider billed it; that is deliberate, so the day is never undercounted.
  */
 export function CostPanel({ cost }: { cost: AgentCostOut | null }) {
   return (
     <section aria-labelledby="cost-heading">
-      <h2 id="cost-heading" className={pageH2}>Today&apos;s agent spending (UTC)</h2>
+      <h2 id="cost-heading" className={pageH2}>Today&apos;s agent spending (India time)</h2>
       {cost === null ? (
         <p role="alert" className={alertBox}>
           Could not load the spending from the API. Try again shortly.
@@ -31,7 +31,7 @@ export function CostPanel({ cost }: { cost: AgentCostOut | null }) {
           </p>
           <p className={mutedText}>
             Open means a model call that was reserved and never settled (its run was cancelled, expired, switched off or
-            interrupted, or the provider&apos;s answer was lost). It is counted at its worst case until midnight UTC, because nobody
+            interrupted, or the provider&apos;s answer was lost). It is counted at its worst case until midnight India time, because nobody
             can tell whether it was billed.
           </p>
           {cost.open.length === 0 ? (
