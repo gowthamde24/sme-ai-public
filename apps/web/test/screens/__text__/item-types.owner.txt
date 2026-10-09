@@ -1,0 +1,27 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) Your role: owner
+{label="Item types"}
+# Item types
+Item types are the kinds of goods you quote, for example "Type A". Each line of a quote with typed prices uses one. A price outside the lowest and highest price only gives a warning when a quote is made. It never stops a quote. Changing a price range does not change quotes that are already made.
+{label="Item types, in order"}
+table "Item types, in order":
+  | th Name | th Code | th Can be used | th Position | th Lowest price | th Highest price | th Edit |
+  | th Type C (not sold) | C | No, switched off | 0 | none | none | summary: Edit Type C (not sold) |
+  | form: / Code C can never be changed. Name / <text name=name label="Name" required maxlength=200 autocomplete=off value=Type C (not sold)> / Position in the list (0 comes first) / <text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off value=0> / Lowest price in rupees (optional) / <text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off> / Highest price in rupees (optional) / <text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off> / <checkbox name=active label="Can be used on a new quote"> / Can be used on a new quote / [button type=submit: Save changes] |
+  | th Type A | A | Yes | 1 | none | none | summary: Edit Type A |
+  | form: / Code A can never be changed. Name / <text name=name label="Name" required maxlength=200 autocomplete=off value=Type A> / Position in the list (0 comes first) / <text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off value=1> / Lowest price in rupees (optional) / <text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off> / Highest price in rupees (optional) / <text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off> / <checkbox name=active label="Can be used on a new quote" checked> / Can be used on a new quote / [button type=submit: Save changes] |
+  | th Type B | B | Yes | 2 | ₹500.00 | ₹4,000.00 | summary: Edit Type B |
+  | form: / Code B can never be changed. Name / <text name=name label="Name" required maxlength=200 autocomplete=off value=Type B> / Position in the list (0 comes first) / <text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off value=2> / Lowest price in rupees (optional) / <text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off value=500> / Highest price in rupees (optional) / <text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off value=4000> / <checkbox name=active label="Can be used on a new quote" checked> / Can be used on a new quote / [button type=submit: Save changes] |
+{label="Add an item type"}
+### Add an item type
+The code is typed once and can never be changed. An item type can never be deleted, only switched off.
+Name
+<text name=name label="Name" required maxlength=200 autocomplete=off>
+Code
+<text name=code label="Code" required maxlength=20 autocomplete=off described-by="A short label such as A1 or 07. Letters, digits, hyphens and underscores only. Typed once, never changed.">
+A short label such as A1 or 07. Letters, digits, hyphens and underscores only. Typed once, never changed. Position in the list (0 comes first)
+<text name=position label="Position in the list (0 comes first)" required inputmode=numeric autocomplete=off>
+Lowest price in rupees (optional)
+<text name=lowest label="Lowest price in rupees (optional)" inputmode=decimal autocomplete=off>
+Highest price in rupees (optional)
+<text name=highest label="Highest price in rupees (optional)" inputmode=decimal autocomplete=off>
+[button type=submit: Add this item type]

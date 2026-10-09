@@ -1,0 +1,93 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
+# Lead
+Your role: sales [Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
+{label="I sent a message"}
+## I sent a message
+{label="I sent a message"}
+### I sent a message
+This keeps a record of a message you sent yourself, outside this system. Nothing is sent from here.
+<hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
+Channel
+<select name=channel label="Channel" required>
+  options: Choose one=* | E-mail=email | WhatsApp=whatsapp | Phone call=phone
+When (India time). Leave it empty for now.
+<datetime-local name=happened_at label="When (India time). Leave it empty for now." max=2026-10-06T10:00>
+[button type=submit: Record this]
+{label="Lead"}
+## Lead
+Status
+in_review
+Source
+csv import
+Created
+2026-10-02
+Origin
+import
+{label="Enquiries"}
+## Enquiries
+Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
+- [WhatsApp enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) received Oct 5, 2026, 3:30 PM (18 hours ago)
+summary: Paste a new enquiry
+form:
+<hidden name=enquiry_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=received_at value=2026-10-06T04:30:00.000Z>
+Where did it come from?
+<select name=channel label="Where did it come from?" required>
+  options: E-mail=email | WhatsApp=whatsapp* | Form=form | Other=other
+When was it received?
+<datetime-local label="When was it received?" required value=2026-10-06T10:00>
+Subject (optional)
+<text name=subject label="Subject (optional)" maxlength=2000>
+The enquiry, as you received it
+<textarea name=text label="The enquiry, as you received it" required placeholder="Paste the e-mail or message here">
+E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.
+[button type=submit: Save enquiry]
+{label="Evidence"}
+## Evidence
+Sources are shown as plain text. They are never opened, fetched or previewed by this application.
+-
+Kind
+Web page
+Provider
+company website
+Retrieved
+Oct 2, 2026, 10:30 AM (4 days ago)
+Added by
+manual
+URL
+https://sri-lakshmi.example.test/about
+Snippet
+Family wholesale silk sarees since 1962.
+-
+Kind
+Note
+Provider
+owner note
+Retrieved
+Oct 3, 2026, 10:30 AM (3 days ago)
+Added by
+manual
+Reference
+called on Monday
+Snippet
+Asked for 20 pieces before the festival.
+### Add evidence
+{label="Add evidence"}
+<hidden name=id value=77777777-7777-4777-8777-777777777777>
+Kind
+<select name=kind label="Kind">
+  options: Web page=web_page* | Document=document | Email=email | Listing=listing | Registry=registry | Note=note
+URL (optional)
+<text name=url label="URL (optional)" placeholder="https://…" maxlength=2048 autocomplete=off>
+Reference (optional)
+<text name=reference label="Reference (optional)" placeholder="doc:invoice-12" maxlength=120 autocomplete=off described-by="A short typed reference: a lower-case prefix, a colon, then letters, digits or . _ # / - (for example doc:catalogue-2026 or upload:a1.pdf). Enter a URL, a reference, or both.">
+A short typed reference: a lower-case prefix, a colon, then letters, digits or . _ # / - (for example doc:catalogue-2026 or upload:a1.pdf). Enter a URL, a reference, or both. Snippet (optional)
+<textarea name=snippet label="Snippet (optional)" maxlength=1000>
+Published on (optional)
+<date name=published_at label="Published on (optional)">
+[button type=submit: Add evidence]
+{label="Agent suggestions"}
+## Agent suggestions
+Written by an agent, shown as plain text. A suggestion counts toward a score only after an owner or admin accepts it.
+- wholesale agent suggestion, unreviewed · buyer_type · Oct 4, 2026, 10:30 AM (2 days ago)
+- Supports · web page · source: sri-lakshmi.example.test/about Family wholesale silk sarees since 1962. Quote checked by the agent runtime, not by the database.

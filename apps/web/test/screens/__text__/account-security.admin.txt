@@ -1,0 +1,14 @@
+[← Workspaces](/app)
+# Security
+Signed in as owner@example.test . Session: verified with your authenticator .
+{label="Authenticator app"}
+## Authenticator app
+On. You type a code from your app after your password.
+form:
+To remove it, type a current code from the app
+<text name=code label="To remove it, type a current code from the app" required maxlength=7 pattern=[0-9 ]* inputmode=numeric autocomplete=one-time-code>
+[button type=submit: Remove the authenticator]
+If you remove it you can no longer erase data, export, change members or roles, or change workspace settings until you set a new one.
+{label="If you lose your phone"}
+## If you lose your phone
+There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.

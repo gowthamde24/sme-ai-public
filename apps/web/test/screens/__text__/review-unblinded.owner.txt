@@ -1,0 +1,38 @@
+[← Workspace](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Lead Review Queue
+Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is disabled . Role: owner Active ICP Profile: Version 1 (SHA-256: 0123456789ab ... ) [Export CSV](/app/tenants/22222222-2222-2222-2222-222222222222/review/export?format=csv) [Export JSON](/app/tenants/22222222-2222-2222-2222-222222222222/review/export?format=json) The file lists every label with its reason, score, and the company's name, city and lead source. Every export is logged (who, when, how many rows). Filter: [All](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=false current=page) [Unreviewed only](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=false&unreviewed=true) [Priority (80+)](/app/tenants/22222222-2222-2222-2222-222222222222/review?score_band=priority&blind=false) [Worth Reviewing (65-79)](/app/tenants/22222222-2222-2222-2222-222222222222/review?score_band=worth_reviewing&blind=false) [Maybe (50-64)](/app/tenants/22222222-2222-2222-2222-222222222222/review?score_band=maybe&blind=false) [Low Priority (<50)](/app/tenants/22222222-2222-2222-2222-222222222222/review?score_band=low_priority&blind=false) [Blind Scoring: OFF](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true)
+[button type=button: Import Candidate Leads]
+{label="Candidate Leads (2)"}
+## Candidate Leads ( 2 )
+[Next unreviewed ↓](#lead-33333333-3333-3333-3333-333333333333)
+### Kanchipuram Silks Emporium
+Bengaluru , IN · Silk Wholesale · Source: directory Unreviewed Score Hidden (Blind)
+Contact
+summary: Contact details
+Gowtham (Proprietor) · gowtham@example.test · +0098765432
+Evidence
+[View evidence & details →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+form:
+<hidden name=label_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=label value=>
+[button type=submit: Good]
+[button type=submit: Maybe]
+[button type=button: Bad...]
+### Dharmavaram Saree Traders
+Dharmavaram , IN · Saree Retailing · Source: referral BAD (wrong_product) Score: 35 /100
+Contact
+No contact information attached
+Evidence
+[View evidence & details →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333335)
+summary: How this score was worked out (highest possible with what we know: 100 of 100)
+- Sells silk sarees : 0 of 25 points
+- Type of buyer : not known yet (0 of 20 for now; tell the system to count it)
+- Location : 12 of 20 points
+Things to know: No evidence attached yet . "Not known yet" is not a bad mark: nobody has given the system that information, so it counts 0 for now.
+form:
+<hidden name=label_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=label value=>
+[button type=submit: Good]
+[button type=submit: Maybe]
+[button type=button: Bad...]
+[Load more leads](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=false&cursor=cur1)

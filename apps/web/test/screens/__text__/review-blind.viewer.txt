@@ -1,0 +1,19 @@
+[← Workspace](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Lead Review Queue
+Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is enabled . Role: viewer Active ICP Profile: Version 1 (SHA-256: 0123456789ab ... ) Filter: [All](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true current=page) [Unreviewed only](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true&unreviewed=true) Score filters are available only with Blind Scoring off. [Blind Scoring: ON](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=false)
+{label="Candidate Leads (2)"}
+## Candidate Leads ( 2 )
+### Kanchipuram Silks Emporium
+Bengaluru , IN · Silk Wholesale · Source: directory Unreviewed Score Hidden (Blind)
+Contact
+summary: Contact details
+Gowtham (Proprietor) · gowtham@example.test · +0098765432
+Evidence
+[View evidence & details →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+### Dharmavaram Saree Traders
+Dharmavaram , IN · Saree Retailing · Source: referral BAD (wrong_product) Score Hidden (Blind)
+Contact
+No contact information attached
+Evidence
+[View evidence & details →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333335)
+[Load more leads](/app/tenants/22222222-2222-2222-2222-222222222222/review?blind=true&cursor=cur1)

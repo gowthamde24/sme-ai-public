@@ -1,0 +1,3 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# The quote policy
+Only an owner or an admin can see and publish the quote policy.

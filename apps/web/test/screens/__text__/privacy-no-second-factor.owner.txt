@@ -1,0 +1,21 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Privacy
+Your role: owner Erasing a person replaces their name, e-mail, phone and the personal text we hold about them with a marker. Labels, scores, counts and the consent history stay, so your data stays useful. It cannot be undone. Erasing one contact or one company happens when the owner confirms. Erasing the whole workspace waits 24 hours and can be cancelled until then. What this cannot do: find a name written inside longer text (those rows are listed for you to read), files you already exported or downloaded, or backups (they age out). Erasing the whole workspace keeps company names and places: a sole proprietor's business is erased with "One company".
+{label="Ask for an erasure"}
+## Ask for an erasure
+form:
+<hidden name=request_id value=77777777-7777-4777-8777-777777777777>
+legend: What should be erased?
+<radio name=scope label="One contact" value=contact checked>
+One contact
+<radio name=scope label="One company (for a sole proprietor, the business name is their name)" value=company>
+One company (for a sole proprietor, the business name is their name)
+<radio name=scope label="The whole workspace (every contact, and all personal text)" value=tenant>
+The whole workspace (every contact, and all personal text)
+Contact
+<select name=contact_id label="Contact" required>
+  options: Ravi Kumar (synthetic)=55555555-5555-4555-8555-555555555552*
+[button type=submit: Request erasure]
+{label="Requests"}
+## Requests
+No requests yet.

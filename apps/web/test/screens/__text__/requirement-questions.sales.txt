@@ -1,0 +1,19 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) Your role: sales
+{role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
+{label="Questions for the customer"}
+# Questions for the customer
+{label="Update the questions from the requirement"}
+[button type=submit: Update the questions from the requirement]
+{label="Questions"}
+- Draft
+{label="Draft text"} Which city should we deliver to?
+[button type=button: Copy the text]
+{label="Approve this question"}
+[button type=submit: Approve this question]
+{label="Discard this question"}
+[button type=submit: Discard this question]
+- Approved: ready to copy
+{label="Draft text"} How many pieces do you need?
+[button type=button: Copy the text]
+{label="Discard this question"}
+[button type=submit: Discard this question]

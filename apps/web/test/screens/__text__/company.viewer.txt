@@ -1,0 +1,54 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies)
+# Sri Lakshmi Silks (synthetic)
+Your role: viewer
+{label="Company"}
+## Company
+Type
+customer
+Website
+https://sri-lakshmi.example.test
+Country
+India
+City
+Hyderabad
+Industry
+Textiles
+Created
+2026-10-01
+Origin
+manual
+{label="Evidence"}
+## Evidence
+Sources are shown as plain text. They are never opened, fetched or previewed by this application.
+-
+Kind
+Web page
+Provider
+company website
+Retrieved
+Oct 2, 2026, 10:30 AM (4 days ago)
+Added by
+manual
+URL
+https://sri-lakshmi.example.test/about
+Snippet
+Family wholesale silk sarees since 1962.
+-
+Kind
+Note
+Provider
+owner note
+Retrieved
+Oct 3, 2026, 10:30 AM (3 days ago)
+Added by
+manual
+Reference
+called on Monday
+Snippet
+Asked for 20 pieces before the festival.
+{label="Agent suggestions"}
+## Agent suggestions
+Written by an agent, shown as plain text. A suggestion counts toward a score only after an owner or admin accepts it.
+- wholesale agent suggestion, unreviewed · buyer_type · Oct 4, 2026, 10:30 AM (2 days ago)
+- Supports · web page · source: sri-lakshmi.example.test/about Family wholesale silk sarees since 1962. Quote checked by the agent runtime, not by the database.
+- yes Approved by a person · High confidence · open_for_business · Oct 4, 2026, 10:30 AM (2 days ago) No evidence is attached to this suggestion.

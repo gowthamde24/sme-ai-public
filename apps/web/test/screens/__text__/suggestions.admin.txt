@@ -1,0 +1,21 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Review suggestions
+Your role: admin An agent only suggests. Each suggestion shows the quote it rests on and where it came from, as plain text. The quote was checked by the agent runtime, not by the database. A suggestion counts toward a score only after an owner or admin accepts it; the newest decision on a suggestion wins. 1 thing to review.
+{label="Sri Lakshmi Silks (synthetic): buyer_type"}
+## Sri Lakshmi Silks (synthetic) · buyer_type
+{label="suggestion wholesale"} wholesale agent suggestion, unreviewed · Oct 4, 2026, 10:30 AM (2 days ago) This kind of note is not part of any score yet.
+- Supports · web page · source: sri-lakshmi.example.test/about Family wholesale silk sarees since 1962. Quote checked by the agent runtime, not by the database.
+form:
+<hidden name=review_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=decision value=accepted>
+Accept as
+<select name=confidence label="Accept as" required>
+  options: Choose…=* | Low confidence=low | Medium confidence=medium | High confidence=high
+[button type=submit: Accept]
+form:
+<hidden name=review_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=decision value=rejected>
+Reject (a reason is optional)
+<select name=reason_code label="Reject (a reason is optional)">
+  options: No reason=* | Incorrect=incorrect | Not supported by the evidence=unsupported_by_evidence | Outdated=outdated | Duplicate=duplicate | Not relevant=not_relevant
+[button type=submit: Reject]

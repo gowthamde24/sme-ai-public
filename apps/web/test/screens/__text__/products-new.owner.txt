@@ -1,0 +1,15 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Add a product
+Your role: owner A product is a saree type you sell. No price is set here: prices are loaded on the price-list page, or typed for each quote.
+{label="Add a product"}
+<hidden name=id value=77777777-7777-4777-8777-777777777777>
+Code
+<text name=sku label="Code" required placeholder="KJ-RED" maxlength=40 pattern=[A-Za-z0-9._][A-Za-z0-9._\-]{0,39} autocomplete=off>
+Letters, digits, dot, underscore and hyphen only, 40 at most. This is the code the price-list file uses. Name (the saree type)
+<text name=name label="Name (the saree type)" required maxlength=200>
+Sold by
+<select name=unit label="Sold by">
+  options: Piece=piece* | Set=set
+Category (optional)
+<text name=category label="Category (optional)" maxlength=64>
+[button type=submit: Add this product]
