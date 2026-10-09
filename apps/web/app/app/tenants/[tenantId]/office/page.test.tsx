@@ -13,6 +13,12 @@ vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/today", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/today")>()), getAgentsStatus: (...a: unknown[]) => getAgentsStatus(...a) }));
 
+// the device: a weak one, so the List is the first view (the 3D view is tested in OfficeRoom.test.tsx)
+vi.mock("@/components/v2/app/office/scene/capability", async (orig) => ({
+  ...(await orig<typeof import("@/components/v2/app/office/scene/capability")>()),
+  readClientEnv: () => ({ defaultView: "list", weak: true, webgl: false, reducedMotion: false, remembered: null, coarse: false, phone: false }),
+}));
+
 import OfficePage from "./page";
 
 const TENANT = "22222222-2222-2222-2222-222222222222";
@@ -29,7 +35,7 @@ describe("the Office", () => {
   it("lists all seven helpers from the API for any member; the two that are not built say so", async () => {
     render(await OfficePage(props()));
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);
-    const items = within(screen.getByRole("list")).getAllByRole("listitem");
+    const items = within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("listitem");
     expect(items).toHaveLength(7);
     expect(items[0]).toHaveTextContent("Main agentNot available yet");
     expect(items[1]).toHaveTextContent("Lead FinderNot available yet");
@@ -41,13 +47,14 @@ describe("the Office", () => {
     expect(screen.getByRole("heading", { level: 2, name: "Quote Writer" })).toBeInTheDocument();
     document.body.innerHTML = "";
     render(await OfficePage(props({ agent: "<script>" })));
-    expect(screen.getByText("Choose a teammate to read their latest events.")).toBeInTheDocument();
+    expect(screen.getByText("Tap a teammate in the room, or choose one in the list, to read their latest events here.")).toBeInTheDocument();
   });
   it("says 'Not available yet' and names no helper when the status cannot be read", async () => {
     getAgentsStatus.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
     render(await OfficePage(props()));
     expect(screen.getAllByText("Not available yet")).toHaveLength(1);
     expect(screen.queryByRole("list")).toBeNull();
+    expect(screen.queryByRole("button", { name: "3D view" })).toBeNull();
   });
   it("sends a rejected session to sign in and a missing workspace to not-found", async () => {
     getAgentsStatus.mockRejectedValue(new ApiAuthError("rejected"));

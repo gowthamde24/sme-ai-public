@@ -113,6 +113,11 @@ describe("the helpers' status", () => {
     expect(parseAgentsStatus(AGENTS)[4].last_event).toEqual({ text: "Prepared quote 3", at: AT, target: { type: "quote", id: ID } });
     expect(parseAgentsStatus(AGENTS.map((a, i) => (i === 4 ? { ...a, last_event: { text: "Chat", at: AT, target: null } } : a)))[4].last_event?.target).toBeNull();
   });
+  it("accepts all four states, including `switched_off` (the workspace's agents switch is off)", () => {
+    const states = ["idle", "working", "switched_off", "not_available"] as const;
+    const rows = parseAgentsStatus(AGENTS.map((a, i) => (i < 4 ? { ...a, state: states[i] } : a)));
+    expect(rows.slice(0, 4).map((r) => r.state)).toEqual([...states]);
+  });
   it.each([
     ["six", AGENTS.slice(0, 6)], ["eight", [...AGENTS, AGENTS[0]]], ["a different order", [AGENTS[1], AGENTS[0], ...AGENTS.slice(2)]], ["not a list", {}],
     ["a bad state", AGENTS.map((a, i) => (i === 3 ? { ...a, state: "asleep" } : a))],

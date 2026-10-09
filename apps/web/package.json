@@ -14,6 +14,7 @@
     "audit:auth": "node scripts/audit-auth.mjs",
     "audit:landing": "node scripts/audit-landing.mjs",
     "audit:budget": "node scripts/audit-budget.mjs",
+    "audit:3d": "node scripts/audit-3d.mjs",
     "audit:contrast": "node scripts/contrast.mjs",
     "i18n:status": "node scripts/i18n-status.mjs",
     "i18n:export": "node scripts/i18n-export.mjs",

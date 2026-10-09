@@ -97,7 +97,7 @@ function Decision({ item, primary, t }: { item: NeedsYouItem; primary: boolean; 
 /**
  * The Today screen, as the design-lab app draws it: the greeting and how many things wait, three cards (waiting for you, customer money held, orders in progress), "Needs you" (one
  * card per item, the first one's button in the main colour), "Your team right now" (the agents) and "Recently recorded". It only draws what `data` holds: a null part says "Not available
- * yet"; a helper that is `not_available` (not built) says so on its row. `name` null = the person has no display name on record (the greeting is then the plain greeting).
+ * yet"; a helper that is `not_available` (not built) or `switched_off` says so on its row. `name` null = the person has no display name on record (the greeting is then the plain greeting).
  */
 export function TodayView({ data, name, hour, base, t }: { data: TodayData; name: string | null; hour: number; base: string; t: T }) {
   const { cards, needs_you: needs, recent, team } = data;
@@ -144,7 +144,7 @@ export function TodayView({ data, name, hour, base, t }: { data: TodayData; name
                   <li key={a.agent} className="flex min-h-14 flex-col justify-center gap-0.5 py-2">
                     <div className="flex items-center justify-between gap-2">
                       <span className="font-medium">{t(`agent.${a.agent}`)}</span>
-                      <span className={`${pill} ${a.state === "working" ? "border-brand-edge bg-brand-bg text-brand-text" : "border-line bg-surface-2 text-muted"}`}>{a.state === "working" ? t("office.working") : a.state === "idle" ? t("office.idle") : t("frame.notyet")}</span>
+                      <span className={`${pill} ${a.state === "working" ? "border-brand-edge bg-brand-bg text-brand-text" : "border-line bg-surface-2 text-muted"}`}>{a.state === "working" ? t("office.working") : a.state === "idle" ? t("office.idle") : a.state === "switched_off" ? t("office.switchedoff") : t("frame.notyet")}</span>
                     </div>
                     <p className="line-clamp-2 text-sm text-muted">{a.last_event ? `${a.last_event.text} · ${ago(a.last_event.at)}` : a.job}</p>
                   </li>

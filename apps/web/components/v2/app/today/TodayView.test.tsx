@@ -82,6 +82,12 @@ describe("TodayView", () => {
     expect(within(team).getByText("Keeps each order's steps in order.")).toBeInTheDocument(); // else what it does
     expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that is not built (Main agent)
     expect(within(team).getByText("Main agent")).toBeInTheDocument();
+  });
+  it("a helper whose switch is off says 'Switched off' on its row, not 'Not available yet'", () => {
+    view({ ...full, team: [{ agent: "researcher", state: "switched_off", job: "Reads public pages about a lead.", last_event: null }, { agent: "main", state: "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null }] });
+    const team = screen.getByRole("heading", { name: "Your team right now" }).closest("section")!;
+    expect(within(team).getByText("Switched off")).toBeInTheDocument();
+    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // only the one that is not built
     expect(within(team).getByRole("link", { name: /Office/ })).toHaveAttribute("href", "/app/tenants/T/office");
     const recent = screen.getByRole("heading", { name: "Recently recorded" }).closest("section")!;
     expect(within(recent).getByRole("link", { name: /ORD-1 · SYNTHETIC Silks/ })).toHaveAttribute("href", "/app/tenants/T/orders/O1"); // the order the step belongs to

@@ -2,5 +2,9 @@
   "_comment": "ADR 0060 decision 5. Baseline = the gzip size of every <script src> of an empty Next route, measured at Stage 0. Allowance = what a public page may add. Change these only with the owner's approval.",
   "route": "/landing",
   "baselineGzipBytes": 177009,
-  "allowanceGzipBytes": 40000
+  "allowanceGzipBytes": 40000,
+  "office3d": {
+    "_comment": "docs/plans/office-3d-proposal.md, decision 5: the 3D Office chunk (three + fiber + drei + the scene), loaded only when the 3D view is shown. Measured in the design lab: 267,431 B gzip. A separate line from the landing page. Change only with the owner's approval.",
+    "maxGzipBytes": 267431
+  }
 }
