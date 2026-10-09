@@ -123,8 +123,8 @@ def test_the_guard_counts_only_what_this_command_spent_and_rounds_up() -> None:
     assert guard.spent_paise() == 1, "a fraction of a paisa counts as a paisa"
 
 
-def test_the_limit_is_twenty_rupees_and_a_bad_number_aborts() -> None:
-    assert smoke.MAX_SPEND_PAISE == 2000
+def test_the_limit_is_thirty_rupees_and_a_bad_number_aborts() -> None:
+    assert smoke.MAX_SPEND_PAISE == 3000
     with pytest.raises(smoke.Aborted):
         smoke.BudgetGuard(2000, 0, lambda: 0)
     with pytest.raises(smoke.Aborted):
@@ -539,20 +539,108 @@ def test_the_injection_record_is_one_fixed_row_that_a_second_run_replays(
     assert bearer(scene.a.users["owner"])["Authorization"].endswith(token)
 
 
-def test_the_switches_are_put_back_exactly(scene: Scene) -> None:
+def everything_the_run_changes(slug: str) -> dict[str, Any]:
+    """Every value apply_run_settings may touch, read straight from the database (not through snapshot, so a snapshot that missed something is caught)."""
     import operator_sql
 
-    slug = operator_sql.sql(f"select slug from public.tenants where id = '{scene.b.id}'")
-    before = operator_sql.sql(
-        "select json_object_agg(key, enabled)::text from public.platform_flags"
-    ) + operator_sql.sql(
-        "select to_json(allowed_tenants)::text from public.agent_definitions where agent_name = 'assistant'"
-    )
-    saved = smoke.switch_on(slug)
-    smoke.restore(saved)
-    after = operator_sql.sql(
-        "select json_object_agg(key, enabled)::text from public.platform_flags"
-    ) + operator_sql.sql(
-        "select to_json(allowed_tenants)::text from public.agent_definitions where agent_name = 'assistant'"
-    )
-    assert after == before
+    return {
+        "flags": operator_sql.sql(
+            "select json_object_agg(key, enabled)::text from public.platform_flags"
+        ),
+        "assistant": operator_sql.sql(
+            "select row_to_json(d)::text from (select allowed_tenants, max_cost_micros, max_input_tokens, max_output_tokens, max_tool_calls, max_writes, requires_flag from public.agent_definitions where agent_name = 'assistant') d"
+        ),
+        "others": operator_sql.sql(
+            "select coalesce(json_agg(row_to_json(d) order by agent_name), '[]')::text from public.agent_definitions d where agent_name <> 'assistant'"
+        ),
+        "tenant_rows": operator_sql.sql(
+            f"select coalesce(json_agg(row_to_json(s) order by tenant_id), '[]')::text from public.tenant_agent_settings s where tenant_id <> (select id from public.tenants where slug = '{slug}')"
+        ),
+        "this_tenant": operator_sql.sql(
+            f"select coalesce(json_agg(row_to_json(s)), '[]')::text from public.tenant_agent_settings s where tenant_id = (select id from public.tenants where slug = '{slug}')"
+        ),
+        "limits": operator_sql.sql(
+            "select coalesce(json_agg(row_to_json(l) order by limit_key), '[]')::text from public.agent_limits l"
+        ),
+    }
+
+
+@pytest.mark.parametrize("before_row", ["none", "null_cap", "custom_cap_and_switch_off"])
+def test_the_switches_and_both_caps_are_raised_for_the_run_and_put_back_exactly(
+    scene: Scene, before_row: str
+) -> None:
+    import operator_sql
+
+    tenant = str(scene.b.id)
+    slug = operator_sql.sql(f"select slug from public.tenants where id = '{tenant}'")
+    operator_sql.sql(f"delete from public.tenant_agent_settings where tenant_id = '{tenant}'")
+    if before_row == "null_cap":
+        operator_sql.sql(
+            f"insert into public.tenant_agent_settings (tenant_id, enabled) values ('{tenant}', false)"
+        )
+    if before_row == "custom_cap_and_switch_off":
+        operator_sql.sql(
+            f"insert into public.tenant_agent_settings (tenant_id, enabled, daily_cost_cap_micros) values ('{tenant}', false, 1234567)"
+        )
+    try:
+        before = everything_the_run_changes(slug)
+        saved = smoke.snapshot(slug)
+        smoke.apply_run_settings(slug)
+        # during the run: the two caps are raised, for this workspace and this agent only
+        assert (
+            smoke.SMOKE_DAILY_CAP_MICROS == 20_000_000
+            and smoke.SMOKE_RUN_BUDGET_MICROS == 5_000_000
+        )
+        assert operator_sql.sql(f"select app.agent_daily_cap('{tenant}')") == str(
+            smoke.SMOKE_DAILY_CAP_MICROS
+        )
+        assert smoke.worst_case_run_paise() == 500, "the guard reads the raised per-run budget (₹5)"
+        during = everything_the_run_changes(slug)
+        assert (
+            during["others"] == before["others"]
+            and during["tenant_rows"] == before["tenant_rows"]
+            and during["limits"] == before["limits"]
+        ), "no other agent, workspace or rate limit changed"
+        assert (
+            during["this_tenant"] != before["this_tenant"]
+            and during["assistant"] != before["assistant"]
+        )
+        smoke.restore(saved)
+        after = everything_the_run_changes(slug)
+        if before_row == "none":
+            assert after["this_tenant"] == "[]"
+            after_without_row = {k: v for k, v in after.items() if k != "this_tenant"}
+            assert after_without_row == {k: v for k, v in before.items() if k != "this_tenant"}
+        else:
+            after["this_tenant"] = re.sub(
+                r'"updated_at":"[^"]*"', '"updated_at":"-"', after["this_tenant"]
+            )
+            before["this_tenant"] = re.sub(
+                r'"updated_at":"[^"]*"', '"updated_at":"-"', before["this_tenant"]
+            )
+            assert after == before, (
+                "every value is exactly as it was (the row's own time-stamp aside)"
+            )
+    finally:
+        operator_sql.sql(f"delete from public.tenant_agent_settings where tenant_id = '{tenant}'")
+
+
+def test_the_raised_cap_is_one_the_database_accepts_and_a_higher_one_is_refused(
+    scene: Scene,
+) -> None:
+    """The brief asked ₹30; the database's own maximum for a workspace cap is ₹20 (a CHECK), so the command uses ₹20. If this test ever fails the other way, the maximum was raised: use ₹30."""
+    import operator_sql
+
+    tenant = str(scene.b.id)
+    try:
+        operator_sql.sql(
+            f"insert into public.tenant_agent_settings (tenant_id, enabled, daily_cost_cap_micros) values ('{tenant}', false, {smoke.SMOKE_DAILY_CAP_MICROS}) on conflict (tenant_id) do update set daily_cost_cap_micros = excluded.daily_cost_cap_micros"
+        )
+        code, _, err = operator_sql.sql_result(
+            f"update public.tenant_agent_settings set daily_cost_cap_micros = 30000000 where tenant_id = '{tenant}'"
+        )
+        assert code != 0 and "check constraint" in err, (
+            "the database refuses a workspace cap above ₹20"
+        )
+    finally:
+        operator_sql.sql(f"delete from public.tenant_agent_settings where tenant_id = '{tenant}'")
