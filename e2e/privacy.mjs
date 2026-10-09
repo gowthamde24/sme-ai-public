@@ -12,7 +12,7 @@ try {
 
   await page.goto(`${BASE}/app/tenants/${T}`);
   const home = await text(page);
-  record("P1 workspace page links to Privacy", home.includes("Privacy →") ? "PASS" : "FAIL", "the 'Privacy →' link for the owner", await shot(page, "P1-workspace-owner"));
+  record("P1 the menu links to Privacy", (await page.locator('nav[aria-label="Workspace menu"] a[href$="/privacy"]').count()) > 0 ? "PASS" : "FAIL", "the 'Privacy and erasure' item of the workspace menu for the owner", await shot(page, "P1-workspace-owner"));
   record("P1b the closed real-data gate is announced", /Synthetic data only/.test(home) && /\+00/.test(home) ? "PASS" : "FAIL", "banner: synthetic data only, reserved address, +00 phone (the demo workspace is closed)");
 
   await page.goto(`${BASE}/app/tenants/${T}/privacy`);
@@ -94,7 +94,7 @@ try {
     const other = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
     await login(other, role);
     await other.goto(`${BASE}/app/tenants/${T}`);
-    const hasLink = (await text(other)).includes("Privacy →");
+    const hasLink = (await other.locator('nav[aria-label="Workspace menu"] a[href$="/privacy"]').count()) > 0;
     await other.goto(`${BASE}/app/tenants/${T}/privacy`);
     const b = await text(other);
     record(`P11 ${role} sees no link and a refusal`, !hasLink && /Only an owner or admin can ask/.test(b) && !(await other.locator('button:has-text("Request erasure")').count()) ? "PASS" : "FAIL", `link: ${hasLink}; refusal shown: ${/Only an owner or admin can ask/.test(b)}`, await shot(other, `P11-privacy-${role}`));

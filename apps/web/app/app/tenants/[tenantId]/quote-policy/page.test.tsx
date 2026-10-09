@@ -77,7 +77,7 @@ describe("the quote policy page: roles", () => {
     expect(screen.getByText(/Version 1/)).toBeInTheDocument();
     expect(screen.getByText("POLICY-FORM")).toBeInTheDocument();
     expect(fetchVersions).toHaveBeenCalledWith("tok", T);
-    expect(screen.getByText(role)).toBeInTheDocument();
+    expect(screen.queryByText(/Your role/)).toBeNull(); // the frame shows the role now
   });
   it.each(["sales", "viewer"])("a %s gets one plain sentence, no list, no form, and the versions are not even read", async (role) => {
     fetchTenant.mockResolvedValue(tenant(role));
@@ -87,7 +87,7 @@ describe("the quote policy page: roles", () => {
     expect(screen.queryByRole("list")).toBeNull();
     expect(fetchVersions).not.toHaveBeenCalled();
     expect(formProps).not.toHaveBeenCalled();
-    expect(container.querySelectorAll("a")).toHaveLength(1);
+    expect(container.querySelectorAll("a")).toHaveLength(0); // the way back to the workspace is the frame's now
     assertInternalLinks(container);
   });
 });
@@ -170,9 +170,8 @@ describe("the quote policy page: failures", () => {
 describe("the quote policy page: links", () => {
   it("every link on the page is an internal path", async () => {
     const { container } = render(await QuotePolicyPage(props()));
-    expect(container.querySelectorAll("a").length).toBeGreaterThan(0);
     assertInternalLinks(container);
-    expect(screen.getByRole("link", { name: /← Acme/ })).toHaveAttribute("href", `/app/tenants/${T}`);
+    expect(screen.queryByRole("link", { name: /← Acme/ })).toBeNull(); // the way back to the workspace is the frame's now
   });
   it("shows no e-mail, phone number or address anywhere", async () => {
     const { container } = render(await QuotePolicyPage(props()));

@@ -33,7 +33,7 @@ The twelve leads (each has a keyed contact who gave consent for e-mail and Whats
 
 **Finding your way:** the follow-up screens do not show the company's name, so use the printed addresses (the script lists them by lead number and company, with the WhatsApp tab's address for leads 10, 11 and 12). On a lead's follow-up page the link "← Lead" opens the lead itself, where the company is named.
 
-Where things are: the workspace's home page has a link "Follow-ups →" (the due list) and, on a lead, "Follow-up for this lead →". The due list has a link "The follow-up policy".
+Where things are: the menu has "Due now" (the due list) and, on a lead, "Follow-up for this lead →". The due list has a link "The follow-up policy".
 
 ---
 
@@ -41,7 +41,7 @@ Where things are: the workspace's home page has a link "Follow-ups →" (the due
 
 | # | Who | Do | You should see | Seconds | Pass |
 | --- | --- | --- | --- | --- | --- |
-| A1 | Owner | Home page → "Follow-ups →" | the heading "Follow-ups due"; the note "Worked out when you opened this page. Guidance only: the database decides again when you ask for a draft."; the line "Oldest first. Leads that need no follow-up (replied, limit reached, closed, opted out) are not listed."; and the banner "Follow-ups are drafts for a person to send outside this system." | | ☐ |
+| A1 | Owner | Menu → "Due now" | the heading "Follow-ups due"; the note "Worked out when you opened this page. Guidance only: the database decides again when you ask for a draft."; the line "Oldest first. Leads that need no follow-up (replied, limit reached, closed, opted out) are not listed."; and the banner "Follow-ups are drafts for a person to send outside this system." | | ☐ |
 | A2 | Owner | Count the rows of the list | **six** rows, oldest last message first: five marked "Due now" (leads 1, 9, 10, 11 and 12) and, last, one "Not yet" (lead 2). Leads 3, 4, 5, 6, 7 and 8 are **not** listed: lead 3's customer replied and lead 7 reached the touch limit (a lead that needs no follow-up is not on the list), lead 4's contact opted out and lead 5 has an accepted order (a blocked or stopped lead is never due), leads 6 and 8 have no recorded first message. Row sentences: "A follow-up draft can be made now." and "It is not time for the next follow-up yet." Under each row's sentence a smaller line names the state of each channel, *E-mail: open · WhatsApp: open · opens on E-mail*, ending "opens on" and the channel the row will open the lead on (leads 11 and 12: *E-mail: no recorded consent or address · WhatsApp: open · opens on WhatsApp*; lead 10: *WhatsApp: on the do-not-contact list · opens on E-mail*). There is no "Show the next leads" link and no note about leads left out: this workspace has fewer than 30 candidates. *(The earlier version of this checklist said seven rows; the right count was six before leads 11 and 12 existed, and it was eight before the list stopped showing leads that need no follow-up.)* | | ☐ |
 | A3 | Owner | Press "The follow-up policy" | the heading "The follow-up policy" and **Version 1**, starting today, "in force today": touches at most 3; days to wait 1, 2; quiet hours 03:00 to 04:00; all seven weekdays; no holidays; minimum gap 0 hours | | ☐ |
 | A4 | Owner | In "Publish a policy version" change **Starts on** to **tomorrow** (leave the rest) → "Publish this policy". *Do not start it today: that would replace the policy the rest of this checklist needs.* | the message "The policy is published. It applies from the day you chose."; the list now shows **Version 2**, starts tomorrow, *not started yet*, and Version 1 still *in force today* | | ☐ |
@@ -131,7 +131,7 @@ Total for E2: seconds ______
 
 | # | Who | Do | You should see | What you saw |
 | --- | --- | --- | --- | --- |
-| F1 | Viewer | Open the home page | **no** "Follow-ups →" link | |
+| F1 | Viewer | Open the home page | **no** "Due now" item in the menu | |
 | F2 | Viewer | Open the due list, a lead's follow-up page, the policy page and the questions page (printed addresses) | on each, only the heading and the sentence "Follow-ups are shown to owners, admins and sales users." No list, no draft text, no button | |
 
 ## G. What you must NOT see, anywhere on these screens
