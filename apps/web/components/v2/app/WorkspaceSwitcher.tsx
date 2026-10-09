@@ -32,7 +32,7 @@ export function WorkspaceSwitcher({ memberships, labels, addForm, side = false }
       summary={
         <>
           <span className="min-w-0 text-left">
-            <span className={`block font-display font-bold leading-tight ${side ? "truncate text-lg" : "line-clamp-2 text-base sm:truncate sm:text-lg"}`}>{name}</span>
+            <span className={`font-display font-bold leading-tight ${side ? "block truncate text-lg" : "line-clamp-2 text-base sm:block sm:truncate sm:text-lg"}`}>{name}</span>
             {current && side ? <span className="block text-sm text-muted">{current.role}</span> : null}
           </span>
           {current && !side ? <span className="hidden rounded-md bg-brand-bg px-2 py-0.5 text-sm font-semibold text-brand-text sm:inline">{current.role}</span> : null}

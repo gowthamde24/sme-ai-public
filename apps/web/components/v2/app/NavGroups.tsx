@@ -108,7 +108,7 @@ export function NavGroups({ groups, tenantId, activeItemId, activeGroupId, pathn
           );
         return (
           <div key={g.id} role="group" aria-labelledby={`${prefix}-${g.id}`}>
-            <p id={`${prefix}-${g.id}`} className={`${headClass} min-h-9 text-sm uppercase tracking-wide text-muted`}>
+            <p id={`${prefix}-${g.id}`} className={`${headClass} min-h-8 text-sm uppercase tracking-wide text-muted`}>
               <NavIcon name={g.icon} className="size-4" />
               {name}
             </p>

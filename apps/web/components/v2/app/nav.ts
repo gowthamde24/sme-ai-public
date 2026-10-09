@@ -34,6 +34,7 @@ export type NavGroup = { id: string; label: string; icon: IconKey; items: readon
  * The menu, simplified (Job X, owner feedback 2026-10-09): six top-level entries at most, plain words, the daily groups always open, the rarely used
  * ones (catalogue and prices, privacy and safety) closed until opened. Every page a role can open is at most two clicks from here. A group a role has
  * only one item of is drawn as a plain link (see `visibleGroups`). There is no "Your team" entry: there is no page for it yet (docs/plans/members-and-invitations.md).
+ * "Rules for follow-ups" (/followups/policy) is no menu entry any more: the follow-ups page links to it, so it is one click further, and it belongs to "Follow-ups due" for the current marker.
  */
 export const NAV: readonly NavGroup[] = [
   {
@@ -43,7 +44,6 @@ export const NAV: readonly NavGroup[] = [
     items: [
       { id: "today", label: "Home", path: "", tab: "", bar: "Today", barIcon: "today", roles: ALL_ROLES },
       { id: "followups-due", label: "Follow-ups due", path: "/followups", bar: "Follow-ups", barIcon: "followups", roles: WRITERS },
-      { id: "followups-policy", label: "Rules for follow-ups", path: "/followups/policy", roles: WRITERS },
     ],
   },
   {
