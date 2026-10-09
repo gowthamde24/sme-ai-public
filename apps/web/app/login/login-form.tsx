@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
-import { authAlert, authField, authForm, authHint, authLabel, authLink, authNotice, authRow, authSubmit } from "@/components/v2/auth/ui";
+import { authAlert, authField, authForm, authLabel, authLink, authNotice, authRow, authSubmit } from "@/components/v2/auth/ui";
 
 import { type AuthFormState, signIn } from "./actions";
 
@@ -50,9 +50,6 @@ export function LoginForm({ next, notice }: { next: string; notice?: string }) {
           Forgot your password?
         </Link>
       </div>
-      <p className={authHint}>
-        Accounts are by invitation. Ask the owner of your workspace if you need one.
-      </p>
     </form>
   );
 }

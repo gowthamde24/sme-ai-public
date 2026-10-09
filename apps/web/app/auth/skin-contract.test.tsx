@@ -68,7 +68,7 @@ describe("/login", () => {
     expect(submit.textContent).toBe("Sign in");
     expect(container.querySelectorAll('a[href="/auth/forgot"]')).toHaveLength(1);
     expect(container.querySelector('a[href="/auth/forgot"]')!.textContent).toBe("Forgot your password?");
-    expect(text(container)).toContain("Accounts are by invitation. Ask the owner of your workspace if you need one.");
+    expect(text(container)).not.toContain("by invitation"); // open sign-up is decided: the invitation-only hint is gone (Job AC review)
     const status = container.querySelector('form [role="status"]')!;
     expect(status.textContent).toBe("Your password was changed. Sign in with the new one.");
   });

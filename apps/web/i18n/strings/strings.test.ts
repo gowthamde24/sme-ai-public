@@ -48,15 +48,14 @@ describe("honesty: no claims we cannot prove today", () => {
     }
   }
   const en = dictFor(landing, "en") as Record<string, string>;
-  it("the English landing copy says what it must: drafts, approval, you send, early access", () => {
+  it("the English landing copy says what it must: drafts, approval, you send, and that sign-up is open and free", () => {
     expect(en["hero.sub"]).toMatch(/approve/i);
     expect(en["hero.sub"]).toMatch(/send it yourself/i);
     expect(en["faq.1.a"]).toMatch(/draft/i);
     expect(en["faq.1.a"]).toMatch(/Nothing is sent automatically/);
-    expect(en["faq.6.a"]).toMatch(/invitation only/i);
+    expect(en["faq.6.a"]).toBe("You can sign up and try it free. Nothing is charged.");
+    for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/invitation only|by invitation|early access/i); // sign-up is open (Job AC review)
     expect(en["hero.cta"]).toBe("Sign up"); // Job AC C5: the main button on the home page goes to the sign-up screen
-    expect(en["early.status"]).toMatch(/Coming soon/);
-    expect(en["early.nodata"]).toMatch(/No form is connected/);
   });
   it("money held is shown, never hidden", () => {
     expect(en["ctl.money"]).toBe("Money still held: {held}. A refund may be owed to the customer.");
