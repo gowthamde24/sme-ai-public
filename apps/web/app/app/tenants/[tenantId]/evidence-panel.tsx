@@ -11,6 +11,7 @@ import {
 import { LocalTime } from "../../local-time";
 import { AddEvidenceForm } from "./add-evidence-form";
 import { addEvidenceAction } from "./evidence-actions";
+import { alertBox, bodyText, kvList, link, listItemCard, listPlain, mutedText, pageH2, pageH3, plainText, spaceTop } from "@/components/v2/app/ui";
 
 /**
  * The Evidence section of a company / lead page.
@@ -48,29 +49,32 @@ export function EvidencePanel({
   const here = `/app/tenants/${tenantId}/${target}/${targetId}`;
   return (
     <section aria-labelledby="evidence-heading">
-      <h2 id="evidence-heading">Evidence</h2>
-      <p className="hint">
+      <h2 id="evidence-heading" className={pageH2}>
+        Evidence
+      </h2>
+      <p className={mutedText}>
         Sources are shown as plain text. They are never opened, fetched or
         previewed by this application.
       </p>
       {page === null ? (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           Could not load the evidence from the API. Try again shortly.
         </p>
       ) : page.items.length === 0 ? (
-        <p>{cursor ? "No more evidence." : "No evidence yet."}</p>
+        <p className={bodyText}>{cursor ? "No more evidence." : "No evidence yet."}</p>
       ) : (
-        <ul className="evidence-list">
+        <ul className={listPlain}>
           {page.items.map((item) => (
             <EvidenceRow key={item.linkId} item={item} />
           ))}
         </ul>
       )}
       {page?.nextCursor && (
-        <p>
+        <p className={spaceTop}>
           <Link
             href={`${here}?cursor=${encodeURIComponent(page.nextCursor)}`}
             rel="next"
+            className={link}
           >
             Load more
           </Link>
@@ -78,12 +82,16 @@ export function EvidencePanel({
       )}
       {cursor && (
         <p>
-          <Link href={here}>Back to the first page</Link>
+          <Link href={here} className={link}>
+            Back to the first page
+          </Link>
         </p>
       )}
       {canWrite && (
         <>
-          <h3 id="add-evidence-heading">Add evidence</h3>
+          <h3 id="add-evidence-heading" className={pageH3}>
+            Add evidence
+          </h3>
           <AddEvidenceForm
             action={addEvidenceAction.bind(null, tenantId, target, targetId)}
             formId={formId}
@@ -96,8 +104,8 @@ export function EvidencePanel({
 
 function EvidenceRow({ item }: { item: EvidenceItem }) {
   return (
-    <li className="evidence-item">
-      <dl>
+    <li className={listItemCard}>
+      <dl className={kvList}>
         <dt>Kind</dt>
         <dd>{KIND_LABELS[item.kind]}</dd>
         <dt>Provider</dt>
@@ -117,7 +125,7 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
         {item.url && (
           <>
             <dt>URL</dt>
-            <dd className="plain-text" data-evidence="url">
+            <dd className={plainText} data-evidence="url">
               {item.url}
             </dd>
           </>
@@ -125,7 +133,7 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
         {item.reference && (
           <>
             <dt>Reference</dt>
-            <dd className="plain-text" data-evidence="reference">
+            <dd className={plainText} data-evidence="reference">
               {referenceText(item)}
             </dd>
           </>
@@ -133,7 +141,7 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
         {item.snippet && (
           <>
             <dt>Snippet</dt>
-            <dd className="plain-text" data-evidence="snippet">
+            <dd className={plainText} data-evidence="snippet">
               {item.snippet}
             </dd>
           </>

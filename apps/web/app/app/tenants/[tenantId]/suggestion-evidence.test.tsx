@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { ClaimEvidenceOut } from "@/lib/api/agents";
 
 import { QUOTE_CHECK_LABEL, SuggestionEvidence } from "./suggestion-evidence";
+import { quoteBlock, wrapAnywhere } from "@/components/v2/app/ui";
 
 const HOSTILE =
   '<img src=x onerror="alert(1)"> <script>alert(2)</script> <a href="javascript:alert(3)">click</a> "quoted" ‮ &lt;b&gt;';
@@ -58,8 +59,10 @@ describe("SuggestionEvidence", () => {
 
   it("wraps long words so a phone does not scroll sideways", () => {
     const { container } = render(<SuggestionEvidence evidence={[evidence({ quote: "x".repeat(300) })]} />);
-    expect(container.querySelector("blockquote")?.getAttribute("style")).toMatch(/overflow-wrap:\s*anywhere/);
-    expect(container.querySelector("ul")?.getAttribute("style")).toMatch(/overflow-wrap:\s*anywhere/);
+    expect(container.querySelector("blockquote")?.className).toBe(quoteBlock);
+    expect(quoteBlock).toMatch(/overflow-wrap:anywhere/);
+    expect(container.querySelector("ul")?.className).toContain(wrapAnywhere);
+    expect(wrapAnywhere).toMatch(/overflow-wrap:anywhere/);
   });
 
   it("shows a URL-looking source (any scheme) as text and never as a link or a script", () => {

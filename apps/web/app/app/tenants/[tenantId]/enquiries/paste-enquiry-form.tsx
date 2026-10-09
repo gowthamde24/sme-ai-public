@@ -5,7 +5,8 @@ import { useActionState, useState, useSyncExternalStore } from "react";
 import { CHANNELS, CHANNEL_LABELS } from "@/lib/api/enquiries";
 
 import type { EnquiryActionState } from "./actions";
-import { ActionResult } from "./action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, fieldInput, fieldLabel, fieldTextarea, formCardWide, mutedText } from "@/components/v2/app/ui";
 
 type Action = (prev: EnquiryActionState, formData: FormData) => Promise<EnquiryActionState>;
 
@@ -32,31 +33,39 @@ export function PasteEnquiryForm({ action, enquiryId }: { action: Action; enquir
   const local = edited ?? initial;
   const instant = local && !Number.isNaN(new Date(local).getTime()) ? new Date(local).toISOString() : "";
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "40rem" }}>
+    <form action={formAction} className={formCardWide}>
       <input type="hidden" name="enquiry_id" value={enquiryId} />
       <input type="hidden" name="received_at" value={instant} />
-      <label htmlFor="enquiry-channel">Where did it come from?</label>
-      <select id="enquiry-channel" name="channel" defaultValue="whatsapp" required disabled={pending}>
+      <label htmlFor="enquiry-channel" className={fieldLabel}>
+        Where did it come from?
+      </label>
+      <select id="enquiry-channel" name="channel" defaultValue="whatsapp" required disabled={pending} className={fieldInput}>
         {CHANNELS.map((c) => (
           <option key={c} value={c}>
             {CHANNEL_LABELS[c]}
           </option>
         ))}
       </select>
-      <label htmlFor="enquiry-received">When was it received?</label>
-      <input id="enquiry-received" type="datetime-local" value={local} onChange={(e) => setEdited(e.target.value)} required disabled={pending} />
-      <label htmlFor="enquiry-subject">Subject (optional)</label>
-      <input id="enquiry-subject" name="subject" maxLength={2000} disabled={pending} />
-      <label htmlFor="enquiry-text">The enquiry, as you received it</label>
-      <textarea id="enquiry-text" name="text" rows={10} required disabled={pending} placeholder="Paste the e-mail or message here" />
-      <p className="hint">
+      <label htmlFor="enquiry-received" className={fieldLabel}>
+        When was it received?
+      </label>
+      <input id="enquiry-received" type="datetime-local" value={local} onChange={(e) => setEdited(e.target.value)} required disabled={pending} className={fieldInput} />
+      <label htmlFor="enquiry-subject" className={fieldLabel}>
+        Subject (optional)
+      </label>
+      <input id="enquiry-subject" name="subject" maxLength={2000} disabled={pending} className={fieldInput} />
+      <label htmlFor="enquiry-text" className={fieldLabel}>
+        The enquiry, as you received it
+      </label>
+      <textarea id="enquiry-text" name="text" rows={10} required disabled={pending} placeholder="Paste the e-mail or message here" className={fieldTextarea} />
+      <p className={mutedText}>
         E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept.
         Nothing is sent to anyone.
       </p>
-      <button type="submit" disabled={pending || instant === ""}>
+      <button type="submit" className={btnMain} disabled={pending || instant === ""}>
         {pending ? "Saving..." : "Save enquiry"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }

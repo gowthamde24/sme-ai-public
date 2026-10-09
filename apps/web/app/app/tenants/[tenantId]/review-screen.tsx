@@ -5,6 +5,7 @@ import { ReviewClaimForms } from "./review-claim-form";
 import { reviewQueueClaimAction } from "./suggestion-actions";
 import { SuggestionEvidence } from "./suggestion-evidence";
 import { groupClaims } from "./suggestion-groups";
+import { alertBox, bodyText, cardBox, cardGrid, mutedText, pageH2, sectionBlock, warnBorder, wrapAnywhere } from "@/components/v2/app/ui";
 
 /**
  * The workspace's suggestion review screen: every agent suggestion that still needs a person, with what it rests on.
@@ -23,48 +24,37 @@ type Props = {
   reviewIds: Record<string, { accept: string; reject: string }>;
 };
 
-const GRID = {
-  display: "grid",
-  gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 18rem), 1fr))",
-  gap: "1rem",
-  alignItems: "start",
-} as const;
-
 export function ReviewScreen({ tenantId, claims, canReview, reviewIds }: Props) {
   if (claims === null)
     return (
-      <p role="alert" className="error">
+      <p role="alert" className={alertBox}>
         Could not load the suggestions from the API. Try again shortly.
       </p>
     );
   const groups = groupClaims(claims);
-  if (groups.length === 0) return <p>Nothing to review: there are no unreviewed suggestions.</p>;
+  if (groups.length === 0) return <p className={bodyText}>Nothing to review: there are no unreviewed suggestions.</p>;
   return (
     <div>
-      <p className="hint">
+      <p className={mutedText}>
         {groups.length} thing{groups.length === 1 ? "" : "s"} to review.
       </p>
       {groups.map((group) => (
-        <section key={group.key} aria-label={`${group.company}: ${group.predicate}`} style={{ marginBottom: "1.5rem" }}>
-          <h2 style={{ overflowWrap: "anywhere" }}>
+        <section key={group.key} aria-label={`${group.company}: ${group.predicate}`} className={sectionBlock}>
+          <h2 className={`${pageH2} ${wrapAnywhere}`}>
             {group.company} · {group.predicate}
           </h2>
           {group.conflicting && (
-            <p role="note" className="hint" style={{ borderLeft: "4px solid #b45309", paddingLeft: "0.75rem" }}>
+            <p role="note" className={warnBorder}>
               <strong>These suggestions disagree.</strong> Compare them before you accept one.
             </p>
           )}
-          <div style={GRID}>
+          <div className={cardGrid}>
             {group.claims.map((claim) => (
-              <article
-                key={claim.id}
-                aria-label={`suggestion ${claim.value}`}
-                style={{ border: "1px solid #ccc", borderRadius: "0.5rem", padding: "0.75rem", overflowWrap: "anywhere" }}
-              >
+              <article key={claim.id} aria-label={`suggestion ${claim.value}`} className={cardBox}>
                 <p>
                   <strong>{claim.value}</strong>
                 </p>
-                <p className="hint">
+                <p className={mutedText}>
                   {claim.review_state === "unreviewed"
                     ? "agent suggestion, unreviewed"
                     : `Approved by a person${claim.review_confidence ? ` · ${CONFIDENCE_LABELS[claim.review_confidence]}` : ""}`}
@@ -72,7 +62,7 @@ export function ReviewScreen({ tenantId, claims, canReview, reviewIds }: Props) 
                   <LocalTime iso={claim.created_at} />
                 </p>
                 {!claim.counts_toward_score && (
-                  <p className="hint">This kind of note is not part of any score yet.</p>
+                  <p className={mutedText}>This kind of note is not part of any score yet.</p>
                 )}
                 <SuggestionEvidence evidence={claim.evidence} />
                 {canReview && claim.review_state === "unreviewed" && reviewIds[claim.id] && (

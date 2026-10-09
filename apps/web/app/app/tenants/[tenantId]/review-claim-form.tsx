@@ -10,19 +10,20 @@ import {
 } from "@/lib/api/agents";
 
 import type { ReviewActionState } from "./suggestion-actions";
+import { alertBox, btnMain, btnQuiet, formsStack, hintInline, inlineForm, okBox, selectInline } from "@/components/v2/app/ui";
 
 type Action = (prev: ReviewActionState, formData: FormData) => Promise<ReviewActionState>;
 
 function Result({ state }: { state: ReviewActionState }) {
   if (state?.error)
     return (
-      <p role="alert" className="error hint">
+      <p role="alert" className={alertBox}>
         {state.error}
       </p>
     );
   if (state?.ok && state.message)
     return (
-      <p role="status" className="hint">
+      <p role="status" className={okBox}>
         {state.message}
       </p>
     );
@@ -50,14 +51,14 @@ export function ReviewClaimForms({
   const [acceptState, acceptAction, accepting] = useActionState(accept, undefined);
   const [rejectState, rejectAction, rejecting] = useActionState(reject, undefined);
   return (
-    <div className="review-forms">
-      <form action={acceptAction}>
+    <div className={formsStack}>
+      <form action={acceptAction} className={inlineForm}>
         <input type="hidden" name="review_id" value={acceptId} />
         <input type="hidden" name="decision" value="accepted" />
-        <label htmlFor={`confidence-${claimId}`} className="hint">
+        <label htmlFor={`confidence-${claimId}`} className={hintInline}>
           Accept as
         </label>{" "}
-        <select id={`confidence-${claimId}`} name="confidence" defaultValue="" required disabled={accepting}>
+        <select id={`confidence-${claimId}`} name="confidence" defaultValue="" required disabled={accepting} className={selectInline}>
           <option value="" disabled>
             Choose…
           </option>
@@ -67,18 +68,18 @@ export function ReviewClaimForms({
             </option>
           ))}
         </select>{" "}
-        <button type="submit" disabled={accepting || rejecting}>
+        <button type="submit" className={btnMain} disabled={accepting || rejecting}>
           {accepting ? "Saving..." : "Accept"}
         </button>
         <Result state={acceptState} />
       </form>
-      <form action={rejectAction}>
+      <form action={rejectAction} className={inlineForm}>
         <input type="hidden" name="review_id" value={rejectId} />
         <input type="hidden" name="decision" value="rejected" />
-        <label htmlFor={`reason-${claimId}`} className="hint">
+        <label htmlFor={`reason-${claimId}`} className={hintInline}>
           Reject (a reason is optional)
         </label>{" "}
-        <select id={`reason-${claimId}`} name="reason_code" defaultValue="" disabled={rejecting}>
+        <select id={`reason-${claimId}`} name="reason_code" defaultValue="" disabled={rejecting} className={selectInline}>
           <option value="">No reason</option>
           {REVIEW_REASONS.map((r) => (
             <option key={r} value={r}>
@@ -86,7 +87,7 @@ export function ReviewClaimForms({
             </option>
           ))}
         </select>{" "}
-        <button type="submit" className="secondary" disabled={accepting || rejecting}>
+        <button type="submit" className={btnQuiet} disabled={accepting || rejecting}>
           {rejecting ? "Saving..." : "Reject"}
         </button>
         <Result state={rejectState} />

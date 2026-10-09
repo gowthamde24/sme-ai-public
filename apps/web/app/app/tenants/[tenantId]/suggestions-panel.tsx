@@ -8,6 +8,7 @@ import { LocalTime } from "../../local-time";
 import { ReviewClaimForms } from "./review-claim-form";
 import { SuggestionEvidence } from "./suggestion-evidence";
 import { reviewClaimAction } from "./suggestion-actions";
+import { alertBox, bodyText, detailsBox, listItemCard, listPlain, mutedText, pageH2, summaryLine } from "@/components/v2/app/ui";
 
 /**
  * The "Agent suggestions" section of a company / lead page.
@@ -33,9 +34,9 @@ type Props = {
 function ReviewControl({ decided, children }: { decided: boolean; children: React.ReactNode }) {
   if (!decided) return <>{children}</>;
   return (
-    <details>
-      <summary className="tap">Change decision</summary>
-      <p className="hint">Choose a new decision below. It is recorded as a new review; the earlier one stays in the history.</p>
+    <details className={detailsBox}>
+      <summary className={summaryLine}>Change decision</summary>
+      <p className={mutedText}>Choose a new decision below. It is recorded as a new review; the earlier one stays in the history.</p>
       {children}
     </details>
   );
@@ -45,24 +46,26 @@ export function SuggestionsPanel({ tenantId, target, targetId, claims, canReview
   const suggestions = (claims ?? []).filter((c) => c.created_via === "agent");
   return (
     <section aria-labelledby="suggestions-heading">
-      <h2 id="suggestions-heading">Agent suggestions</h2>
-      <p className="hint">
+      <h2 id="suggestions-heading" className={pageH2}>
+        Agent suggestions
+      </h2>
+      <p className={mutedText}>
         Written by an agent, shown as plain text. A suggestion counts toward a score only after an owner or admin accepts it.
       </p>
       {claims === null ? (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           Could not load the suggestions from the API. Try again shortly.
         </p>
       ) : suggestions.length === 0 ? (
-        <p>No suggestions yet.</p>
+        <p className={bodyText}>No suggestions yet.</p>
       ) : (
-        <ul className="evidence-list">
+        <ul className={listPlain}>
           {suggestions.map((claim) => (
-            <li key={claim.id}>
+            <li key={claim.id} className={listItemCard}>
               <p>
                 <strong>{claim.value}</strong>
               </p>
-              <p className="hint">
+              <p className={mutedText}>
                 {claim.review_state === "unreviewed" && "agent suggestion, unreviewed"}
                 {claim.review_state === "accepted" &&
                   `Approved by a person${claim.review_confidence ? ` · ${CONFIDENCE_LABELS[claim.review_confidence]}` : ""}`}

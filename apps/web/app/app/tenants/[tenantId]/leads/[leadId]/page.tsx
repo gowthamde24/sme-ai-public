@@ -15,6 +15,9 @@ import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
+import { backLink, bodyText, kvList, link, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -53,7 +56,11 @@ export default async function LeadPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return (
+      <ScreenWrap theme={await currentTheme()}>
+        <ApiDownV2 />
+      </ScreenWrap>
+    );
   }
 
   const rawCursor = pick(query.cursor);
@@ -103,31 +110,33 @@ export default async function LeadPage({
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
   );
 
+  const theme = await currentTheme();
   return (
-    <main className="shell wide">
+    <ScreenWrap theme={theme}>
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}?tab=leads`}>← {tenant.name}</Link>
+        <Link href={`/app/tenants/${tenantId}?tab=leads`} className={backLink}>← {tenant.name}</Link>
       </p>
-      <h1>Lead</h1>
-      <p>
+      <h1 className={pageH1}>Lead</h1>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
       {WRITE_ROLES.includes(tenant.role) ? (
         <p>
-          <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup`} className="tap">
+          <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup`} className={link}>
             Follow-up for this lead →
           </Link>
         </p>
       ) : null}
 
       <section aria-labelledby="sent-heading">
-        <h2 id="sent-heading">I sent a message</h2>
+        <h2 id="sent-heading" className={pageH2}>I sent a message</h2>
         {!WRITE_ROLES.includes(tenant.role) ? (
-          <p>An owner, an admin or a sales person records that a message was sent.</p>
+          <p className={bodyText}>An owner, an admin or a sales person records that a message was sent.</p>
         ) : contactId === null ? (
           <p role="note">
             This lead has no contact attached, so a message to them cannot be recorded.{" "}
-            <Link href={`/app/tenants/${tenantId}/customers/new`} className="tap">
+            <Link href={`/app/tenants/${tenantId}/customers/new`} className={link}>
               Add the customer first →
             </Link>
           </p>
@@ -144,8 +153,8 @@ export default async function LeadPage({
       </section>
 
       <section aria-labelledby="summary-heading">
-        <h2 id="summary-heading">Lead</h2>
-        <dl className="summary">
+        <h2 id="summary-heading" className={pageH2}>Lead</h2>
+        <dl className={kvList}>
           <dt>Status</dt>
           <dd>{lead.status}</dd>
           <dt>Source</dt>
@@ -184,18 +193,7 @@ export default async function LeadPage({
         reviewIds={reviewIds}
       />
     </main>
+    </ScreenWrap>
   );
 }
 
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
-    </main>
-  );
-}

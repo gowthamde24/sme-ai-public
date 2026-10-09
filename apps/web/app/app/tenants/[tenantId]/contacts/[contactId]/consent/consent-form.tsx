@@ -6,6 +6,7 @@ import { BASES, BASIS_LABELS, CHANNELS, CHANNEL_LABELS, EVIDENCE_KINDS, EVIDENCE
 
 import { LocalTime } from "../../../../../local-time";
 import type { ConsentFormState } from "./actions";
+import { alertBox, btnMain, fieldInput, fieldLabel, fieldsetPlain, formCardWide, legendText, mutedText, okBox, radioRow } from "@/components/v2/app/ui";
 
 type Action = (prev: ConsentFormState, formData: FormData) => Promise<ConsentFormState>;
 
@@ -40,9 +41,11 @@ export function ConsentForm({ action }: { action: Action }) {
         const data = new FormData(event.currentTarget);
         startTransition(() => formAction(data));
       }}
-      className="card" style={{ maxWidth: "40rem" }} aria-label="Record consent">
-      <label htmlFor="consent-channel">Channel</label>
-      <select id="consent-channel" name="channel" required value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending}>
+      className={formCardWide} aria-label="Record consent">
+      <label htmlFor="consent-channel" className={fieldLabel}>
+        Channel
+      </label>
+      <select id="consent-channel" name="channel" required value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending} className={fieldInput}>
         <option value="" disabled>
           Choose one
         </option>
@@ -52,19 +55,21 @@ export function ConsentForm({ action }: { action: Action }) {
           </option>
         ))}
       </select>
-      <fieldset disabled={pending} style={{ border: 0, padding: 0, margin: 0 }}>
-        <legend>What are you writing down?</legend>
-        <label>
+      <fieldset disabled={pending} className={fieldsetPlain}>
+        <legend className={legendText}>What are you writing down?</legend>
+        <label className={radioRow}>
           <input type="radio" name="status" value="granted" required checked={status === "granted"} onChange={() => setStatus("granted")} /> {STATUS_LABELS.granted}
         </label>
-        <label>
+        <label className={radioRow}>
           <input type="radio" name="status" value="withdrawn" required checked={status === "withdrawn"} onChange={() => setStatus("withdrawn")} /> {STATUS_LABELS.withdrawn}
         </label>
       </fieldset>
       {status === "granted" && (
         <>
-          <label htmlFor="consent-basis">Basis, as you describe it</label>
-          <select id="consent-basis" name="basis" required value={basis} onChange={(e) => setBasis(e.target.value)} disabled={pending}>
+          <label htmlFor="consent-basis" className={fieldLabel}>
+        Basis, as you describe it
+      </label>
+          <select id="consent-basis" name="basis" required value={basis} onChange={(e) => setBasis(e.target.value)} disabled={pending} className={fieldInput}>
             <option value="" disabled>
               Choose one
             </option>
@@ -74,8 +79,10 @@ export function ConsentForm({ action }: { action: Action }) {
               </option>
             ))}
           </select>
-          <label htmlFor="consent-kind">Kind of evidence</label>
-          <select id="consent-kind" name="evidence_kind" required value={kind} onChange={(e) => setKind(e.target.value)} disabled={pending}>
+          <label htmlFor="consent-kind" className={fieldLabel}>
+        Kind of evidence
+      </label>
+          <select id="consent-kind" name="evidence_kind" required value={kind} onChange={(e) => setKind(e.target.value)} disabled={pending} className={fieldInput}>
             <option value="" disabled>
               Choose one
             </option>
@@ -85,19 +92,21 @@ export function ConsentForm({ action }: { action: Action }) {
               </option>
             ))}
           </select>
-          <label htmlFor="consent-label">A short label for your note</label>
-          <input id="consent-label" name="evidence_label" required value={label} onChange={(e) => setLabel(e.target.value)} maxLength={96} autoComplete="off" placeholder="call-2026-10-08" pattern="[A-Za-z0-9._#/\-]{1,96}" disabled={pending} />
-          <p className="hint">Letters, digits and . _ # / - only. No names, numbers or addresses: it is only a label so you can find your own note later.</p>
+          <label htmlFor="consent-label" className={fieldLabel}>
+        A short label for your note
+      </label>
+          <input id="consent-label" name="evidence_label" required value={label} onChange={(e) => setLabel(e.target.value)} maxLength={96} autoComplete="off" placeholder="call-2026-10-08" pattern="[A-Za-z0-9._#/\-]{1,96}" disabled={pending} className={fieldInput} />
+          <p className={mutedText}>Letters, digits and . _ # / - only. No names, numbers or addresses: it is only a label so you can find your own note later.</p>
         </>
       )}
-      <p className="hint">This only writes down what you tell us. It does not check it, and it is not legal advice. If you are not sure, leave it as it is.</p>
+      <p className={mutedText}>This only writes down what you tell us. It does not check it, and it is not legal advice. If you are not sure, leave it as it is.</p>
       {state?.error && (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
       {state?.ok && state.channel && state.status && state.at && state.consents && (
-        <div role="status" className="hint">
+        <div role="status" className={okBox}>
           <p>
             Recorded: {CHANNEL_LABELS[state.channel]}, {STATUS_LABELS[state.status].toLowerCase()}. Recorded by {state.by} at <LocalTime iso={state.at} /> (the time this screen sent it). The system keeps it in the consent history.
           </p>
@@ -106,7 +115,7 @@ export function ConsentForm({ action }: { action: Action }) {
           </p>
         </div>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : "Record this"}
       </button>
     </form>

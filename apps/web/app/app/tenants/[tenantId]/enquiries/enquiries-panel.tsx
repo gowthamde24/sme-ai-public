@@ -5,6 +5,7 @@ import { CHANNEL_LABELS, type Enquiry } from "@/lib/api/enquiries";
 import { LocalTime } from "../../../local-time";
 import { captureEnquiryAction } from "./actions";
 import { PasteEnquiryForm } from "./paste-enquiry-form";
+import { alertBox, detailsBox, hintInline, link, listItemCard, listPlain, mutedText, pageH2, summaryLine } from "@/components/v2/app/ui";
 
 /**
  * The "Enquiries" section of a lead page: the enquiries pasted onto this lead, and (for an owner, admin or sales user) the form to paste a
@@ -26,24 +27,24 @@ export function EnquiriesPanel({
 }) {
   return (
     <section aria-labelledby="enquiries-heading">
-      <h2 id="enquiries-heading">Enquiries</h2>
-      <p className="hint">
+      <h2 id="enquiries-heading" className={pageH2}>Enquiries</h2>
+      <p className={mutedText}>
         Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
       </p>
       {enquiries === null ? (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           Could not load the enquiries from the API. Try again shortly.
         </p>
       ) : enquiries.length === 0 ? (
         <p>No enquiries yet.</p>
       ) : (
-        <ul className="evidence-list">
+        <ul className={listPlain}>
           {enquiries.map((e) => (
-            <li key={e.id} className="evidence-item">
-              <Link href={`/app/tenants/${tenantId}/enquiries/${e.id}`} className="tap">
+            <li key={e.id} className={listItemCard}>
+              <Link href={`/app/tenants/${tenantId}/enquiries/${e.id}`} className={link}>
                 {CHANNEL_LABELS[e.channel]} enquiry
               </Link>{" "}
-              <span className="hint">
+              <span className={hintInline}>
                 received <LocalTime iso={e.received_at} />
               </span>
             </li>
@@ -51,12 +52,12 @@ export function EnquiriesPanel({
         </ul>
       )}
       {canWrite ? (
-        <details>
-          <summary className="tap">Paste a new enquiry</summary>
+        <details className={detailsBox}>
+          <summary className={summaryLine}>Paste a new enquiry</summary>
           <PasteEnquiryForm action={captureEnquiryAction.bind(null, tenantId, leadId)} enquiryId={formId} />
         </details>
       ) : (
-        <p className="hint">Only an owner, admin or sales user can paste an enquiry.</p>
+        <p className={mutedText}>Only an owner, admin or sales user can paste an enquiry.</p>
       )}
     </section>
   );

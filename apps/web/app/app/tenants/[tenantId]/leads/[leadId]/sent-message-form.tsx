@@ -7,6 +7,7 @@ import { CHANNEL_LABELS, TOUCH_CHANNELS } from "@/lib/api/followups";
 
 import { LocalTime } from "../../../../local-time";
 import type { SentMessageState } from "./sent-message-actions";
+import { alertBox, btnMain, fieldInput, fieldLabel, formCardWide, formTitle, link, mutedText, okBox } from "@/components/v2/app/ui";
 
 type Action = (prev: SentMessageState, formData: FormData) => Promise<SentMessageState>;
 
@@ -43,17 +44,18 @@ function SentMessageBody({ action, tenantId, touchId, maxNow, contactId }: Props
         const data = new FormData(event.currentTarget);
         startTransition(() => formAction(data));
       }}
-      className="card"
-      style={{ maxWidth: "36rem" }}
+      className={formCardWide}
       aria-labelledby="sent-title"
     >
-      <h3 id="sent-title" style={{ margin: 0 }}>
+      <h3 id="sent-title" className={formTitle}>
         I sent a message
       </h3>
-      <p className="hint">This keeps a record of a message you sent yourself, outside this system. Nothing is sent from here.</p>
+      <p className={mutedText}>This keeps a record of a message you sent yourself, outside this system. Nothing is sent from here.</p>
       <input type="hidden" name="touch_id" value={id} />
-      <label htmlFor="sent-channel">Channel</label>
-      <select id="sent-channel" name="channel" required value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending}>
+      <label htmlFor="sent-channel" className={fieldLabel}>
+        Channel
+      </label>
+      <select id="sent-channel" name="channel" required value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending} className={fieldInput}>
         <option value="" disabled>
           Choose one
         </option>
@@ -63,14 +65,16 @@ function SentMessageBody({ action, tenantId, touchId, maxNow, contactId }: Props
           </option>
         ))}
       </select>
-      <label htmlFor="sent-when">When (India time). Leave it empty for now.</label>
-      <input id="sent-when" name="happened_at" type="datetime-local" max={maxNow} value={when} onChange={(e) => setWhen(e.target.value)} disabled={pending} />
+      <label htmlFor="sent-when" className={fieldLabel}>
+        When (India time). Leave it empty for now.
+      </label>
+      <input id="sent-when" name="happened_at" type="datetime-local" max={maxNow} value={when} onChange={(e) => setWhen(e.target.value)} disabled={pending} className={fieldInput} />
       {state?.error && (
-        <div role="alert" className="error hint">
+        <div role="alert" className={alertBox}>
           <p>{state.error}</p>
           {state.reason === "consent" && contactId && (
             <p>
-              <Link href={`/app/tenants/${tenantId}/contacts/${contactId}/consent`} className="tap">
+              <Link href={`/app/tenants/${tenantId}/contacts/${contactId}/consent`} className={link}>
                 Record consent for this person →
               </Link>
             </p>
@@ -78,11 +82,11 @@ function SentMessageBody({ action, tenantId, touchId, maxNow, contactId }: Props
         </div>
       )}
       {state?.ok && state.channel && state.at && (
-        <p role="status" className="hint">
+        <p role="status" className={okBox}>
           Recorded: you sent a message by {CHANNEL_LABELS[state.channel]} at <LocalTime iso={state.at} />. The follow-up list will show this lead when it is due.
         </p>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : "Record this"}
       </button>
     </form>

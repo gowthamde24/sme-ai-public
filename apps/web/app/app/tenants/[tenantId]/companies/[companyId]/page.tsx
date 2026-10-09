@@ -9,6 +9,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
+import { backLink, kvList, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Company · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -47,7 +49,7 @@ export default async function CompanyPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
 
   const rawCursor = pick(query.cursor);
@@ -80,20 +82,20 @@ export default async function CompanyPage({
   );
 
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}?tab=companies`}>
+        <Link href={`/app/tenants/${tenantId}?tab=companies`} className={backLink}>
           ← {tenant.name}
         </Link>
       </p>
-      <h1>{company.name}</h1>
-      <p>
+      <h1 className={pageH1}>{company.name}</h1>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
 
       <section aria-labelledby="summary-heading">
-        <h2 id="summary-heading">Company</h2>
-        <dl className="summary">
+        <h2 id="summary-heading" className={pageH2}>Company</h2>
+        <dl className={kvList}>
           <dt>Type</dt>
           <dd>{company.type}</dd>
           <dt>Website</dt>
@@ -133,15 +135,3 @@ export default async function CompanyPage({
   );
 }
 
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
-    </main>
-  );
-}

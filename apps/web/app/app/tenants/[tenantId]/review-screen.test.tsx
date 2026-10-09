@@ -9,6 +9,7 @@ vi.mock("./suggestion-actions", () => ({
 }));
 
 import { ReviewScreen } from "./review-screen";
+import { cardBox, cardGrid } from "@/components/v2/app/ui";
 
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const COMPANY = "33333333-3333-3333-3333-333333333333";
@@ -102,10 +103,13 @@ describe("ReviewScreen", () => {
   it("is built for a phone: a grid that wraps to one column, wrapping text, no fixed widths, no links", () => {
     const { container } = show([claim({ value: "wholesaler" }), claim({ value: "consumer" })]);
     const grid = screen.getAllByRole("article")[0].parentElement as HTMLElement;
-    expect(grid.getAttribute("style")).toMatch(/grid-template-columns:\s*repeat\(auto-fit,\s*minmax\(min\(100%,\s*18rem\),\s*1fr\)\)/);
-    for (const card of screen.getAllByRole("article")) expect(card.getAttribute("style")).toMatch(/overflow-wrap:\s*anywhere/);
-    const styles = Array.from(container.querySelectorAll("[style]")).map((e) => e.getAttribute("style") ?? "");
-    expect(styles.join(";")).not.toMatch(/(^|[;\s])(width|min-width):\s*\d+(px|rem|em)/);
+    expect(grid.className).toBe(cardGrid);
+    expect(cardGrid).toMatch(/grid-template-columns:repeat\(auto-fit,minmax\(min\(100%,18rem\),1fr\)\)/);
+    for (const card of screen.getAllByRole("article")) {
+      expect(card.className).toBe(cardBox);
+      expect(cardBox).toMatch(/overflow-wrap:anywhere/);
+    }
+    expect(container.querySelectorAll("[style]")).toHaveLength(0); // no inline width anywhere: the sizes come from the classes
     expect(container.querySelectorAll("a")).toHaveLength(0);
   });
 
