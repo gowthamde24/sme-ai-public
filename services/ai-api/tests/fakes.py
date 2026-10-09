@@ -23,6 +23,8 @@ from app.quotes.repository import QuotesRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.tenancy.models import (
+    AccountSetupOut,
+    AccountSetupResultOut,
     AuditEventListOut,
     AuditEventOut,
     MemberListOut,
@@ -58,6 +60,9 @@ class FakeRepository:
     raise_on_next: RepositoryError | None = None
     created: dict[str, tuple[uuid.UUID, TenantOut]] = field(default_factory=dict)
     plans: dict[uuid.UUID, TenantPlanOut] = field(default_factory=dict)
+    # job AD / D2: per user (the token's sub), what is left to do; every complete_setup call
+    setups: dict[uuid.UUID, AccountSetupOut] = field(default_factory=dict)
+    setup_calls: list[tuple[str, str]] = field(default_factory=list)
 
     def _maybe_raise(self) -> None:
         if self.raise_on_next is not None:
@@ -93,6 +98,33 @@ class FakeRepository:
         tenant = TenantOut(id=uuid.uuid4(), name=name, slug=slug)
         self.created[slug] = (uuid.uuid4(), tenant)
         return tenant
+
+    @staticmethod
+    def _sub(token: str) -> uuid.UUID:
+        import jwt  # the fake trusts nothing; it only needs to know whose token this is
+
+        return uuid.UUID(str(jwt.decode(token, options={"verify_signature": False})["sub"]))
+
+    def get_account_setup(self, token: str) -> AccountSetupOut:
+        self.tokens_seen.append(token)
+        self._maybe_raise()
+        return self.setups.get(self._sub(token)) or AccountSetupOut(
+            state="none", tenant_id=None, business_name=None
+        )
+
+    def complete_setup(
+        self, token: str, business_type: str, language: str
+    ) -> AccountSetupResultOut:
+        self.tokens_seen.append(token)
+        self._maybe_raise()
+        self.setup_calls.append((business_type, language))
+        user = self._sub(token)
+        current = self.setups.get(user)
+        if current is not None and current.state == "done" and current.tenant_id is not None:
+            return AccountSetupResultOut(tenant_id=current.tenant_id, created=False)
+        tenant_id = uuid.uuid4()
+        self.setups[user] = AccountSetupOut(state="done", tenant_id=tenant_id, business_name=None)
+        return AccountSetupResultOut(tenant_id=tenant_id, created=True)
 
     def get_plan(self, token: str, tenant_id: uuid.UUID) -> TenantPlanOut:
         self.tokens_seen.append(token)

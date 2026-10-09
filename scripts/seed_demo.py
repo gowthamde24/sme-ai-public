@@ -56,6 +56,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 import httpx
+from local_confirm import confirm_email
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
@@ -443,8 +444,9 @@ class Seeder:
 
         try:
             r = token_request()
-            if r.status_code != 200:  # first run: create the demo user, then sign in
+            if r.status_code != 200:  # first run: create the demo user, confirm it (local stack only), then sign in
                 self.http.post(f"{auth}/signup", json=creds, headers=headers, timeout=30)
+                confirm_email(DEMO_EMAIL)
                 r = token_request()
         except httpx.HTTPError:
             raise SeedError(

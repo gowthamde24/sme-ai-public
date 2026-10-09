@@ -18,6 +18,7 @@ import shutil
 import socket
 import struct
 import subprocess
+import sys
 import time
 import uuid
 from dataclasses import dataclass, field
@@ -26,6 +27,9 @@ from typing import Any
 
 import httpx
 from fastapi.testclient import TestClient
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from local_confirm import confirm_email  # noqa: E402  (the scripts folder is not a package)
 
 ROOT = Path(__file__).resolve().parents[2]
 STATE_DIR = ROOT / ".rehearsal"
@@ -218,10 +222,20 @@ class People:
                 json={"email": email, "password": password},
                 timeout=20,
             )
-            if r.status_code >= 400 or "access_token" not in r.json():
+            if r.status_code >= 400:
                 raise SystemExit(
                     f"cannot sign {label} up ({r.status_code}): if this person exists from an earlier run whose .rehearsal/state.json was lost, run `make db-reset` and start again"
                 )
+            confirm_email(email)  # the local stack asks for e-mail confirmation (job AD / D2); these accounts are throwaway
+            signed_in = httpx.post(
+                f"{self.stack.url}/auth/v1/token?grant_type=password",
+                headers=self.stack.hdr(),
+                json={"email": email, "password": password},
+                timeout=20,
+            )
+            if signed_in.status_code >= 400 or "access_token" not in signed_in.json():
+                raise SystemExit(f"cannot sign {label} in after sign-up ({signed_in.status_code})")
+            r = signed_in
             token = r.json()["access_token"]
             enrol = httpx.post(
                 f"{self.stack.url}/auth/v1/factors",

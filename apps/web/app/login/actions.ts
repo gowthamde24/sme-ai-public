@@ -16,7 +16,7 @@ function field(formData: FormData, name: string): string {
   return typeof value === "string" ? value : "";
 }
 
-// Sign-up is CLOSED: there is no sign-up action. Accounts are invited, then added to a workspace by the operator.
+// Sign-up is OPEN since job AD / D2: see app/signup/actions.ts. Invited accounts and their flows are unchanged.
 
 /** Server-side validation. The form's HTML attributes are a convenience, never the control. */
 function credentials(
@@ -38,6 +38,9 @@ export async function signIn(
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword(creds);
+  // A person who signed up and has not yet used the link we sent: said plainly (the password was right, so this reveals nothing).
+  if (error?.code === "email_not_confirmed")
+    return { error: "Confirm your email first: use the link we sent you." };
   // One generic message for unknown user and wrong password alike.
   if (error) return { error: "Invalid email or password." };
 

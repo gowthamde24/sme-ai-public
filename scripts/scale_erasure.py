@@ -20,6 +20,7 @@ import httpx
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "tests" / "integration"))
 import operator_sql  # noqa: E402  (talks to the LOCAL database container only)
+from local_confirm import confirm_email  # noqa: E402
 
 URL = os.environ["SUPABASE_URL"].rstrip("/")
 ANON = os.environ.get("SUPABASE_PUBLISHABLE_KEY") or os.environ["SUPABASE_ANON_KEY"]
@@ -34,7 +35,10 @@ def rest(method: str, path: str, token: str | None = None, **kw: object) -> http
 
 
 email = f"scale-{uuid.uuid4().hex[:10]}@it.example.test"
-signup = rest("POST", "/auth/v1/signup", json={"email": email, "password": uuid.uuid4().hex + "Aa1!"})
+password = uuid.uuid4().hex + "Aa1!"
+rest("POST", "/auth/v1/signup", json={"email": email, "password": password}).raise_for_status()
+confirm_email(email)  # the local stack asks for e-mail confirmation (job AD / D2); this account is throwaway
+signup = rest("POST", "/auth/v1/token?grant_type=password", json={"email": email, "password": password})
 signup.raise_for_status()
 token, owner = signup.json()["access_token"], signup.json()["user"]["id"]
 tenant = rest("POST", "/rest/v1/rpc/create_tenant", token, json={"p_name": "Scale scratch", "p_slug": f"scale-{uuid.uuid4().hex[:8]}"})

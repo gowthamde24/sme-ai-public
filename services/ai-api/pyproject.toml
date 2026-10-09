@@ -44,6 +44,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # a script of readable data tables and a long explanatory header
 "../../scripts/seed_demo.py" = ["E501"]
 "../../scripts/seed_demo_manual.py" = ["E501"]
+"../../scripts/local_confirm.py" = ["E501"]
 "../../scripts/demo_code.py" = ["E501"]
 "tests/test_local_demo_scripts.py" = ["E501"]
 # T008: word lists, synonym tables and regular expressions that read better on one line, and long explanatory docstrings

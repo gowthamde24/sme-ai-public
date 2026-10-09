@@ -6,6 +6,9 @@ from fastapi import APIRouter, Query
 
 from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, RuntimeDep
 from app.tenancy.models import (
+    AccountSetupIn,
+    AccountSetupOut,
+    AccountSetupResultOut,
     AuditEventListOut,
     CreateTenantIn,
     MemberListOut,
@@ -21,6 +24,27 @@ router = APIRouter(prefix="/v1", tags=["tenancy"])
 @router.get("/me", response_model=MeOut)
 def get_me(principal: PrincipalDep, runtime: RuntimeDep) -> MeOut:
     return runtime.repository.get_me(principal.token, principal.user_id)
+
+
+@router.get("/account/setup", response_model=AccountSetupOut)
+def get_account_setup(principal: PrincipalDep, runtime: RuntimeDep) -> AccountSetupOut:
+    """What this account still has to do after sign-up: none, needed or done.
+
+    The database decides, from the caller's own token.
+    """
+    return runtime.repository.get_account_setup(principal.token)
+
+
+@router.post("/account/setup", response_model=AccountSetupResultOut)
+def complete_account_setup(
+    body: AccountSetupIn, principal: PrincipalDep, runtime: RuntimeDep
+) -> AccountSetupResultOut:
+    """The first-login setup: the account's one business (name from sign-up), caller as Owner.
+
+    Idempotent: a repeat, a double click or a second tab returns the same business. The API
+    sets nothing; the database checks everything.
+    """
+    return runtime.repository.complete_setup(principal.token, body.business_type, body.language)
 
 
 @router.post("/tenants", response_model=TenantDetailOut)

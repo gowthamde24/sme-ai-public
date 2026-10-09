@@ -31,6 +31,20 @@ export interface TenantWithPlan extends TenantDetail {
   trial_started_at: string;
 }
 
+/** GET /v1/account/setup (job AD / D2): what a new account still has to do. `needed` carries the business name typed at sign-up. */
+export interface AccountSetup {
+  state: "none" | "needed" | "done";
+  tenant_id: string | null;
+  business_name: string | null;
+}
+
+/** POST /v1/account/setup body is exactly { business_type: "textiles" | "construction" | "other", language: "en" | "te" | "hi" | "kn" }. */
+export interface AccountSetupResult {
+  tenant_id: string;
+  /** false for a repeat (double click, second tab): the same business, nothing new */
+  created: boolean;
+}
+
 export interface Me {
   user_id: string;
   memberships: { tenant: Tenant; role: Role }[];

@@ -11,6 +11,7 @@ import jsonschema
 import pytest
 
 from app.tenancy import repository as repo
+from app.tenancy.models import AccountSetupOut
 from tests.fakes import TENANT_A, TENANT_B, USERS, auth, make_client
 from tests.keys import claims, mint
 
@@ -292,3 +293,96 @@ def test_unknown_route_uses_the_error_shape() -> None:
 def test_health_is_public() -> None:
     client, _ = make_client()
     assert client.get("/health").status_code == 200
+
+
+# ------------------------------------------------------------------- job AD / D2: account setup
+def test_account_setup_needs_a_session_and_says_nothing_to_do_for_an_invited_person() -> None:
+    client, _ = make_client()
+    assert client.get("/v1/account/setup").status_code == 401
+    assert (
+        client.post(
+            "/v1/account/setup", json={"business_type": "other", "language": "en"}
+        ).status_code
+        == 401
+    )
+    body = client.get("/v1/account/setup", headers=auth("outsider")).json()
+    assert body == {"state": "none", "tenant_id": None, "business_name": None}
+    validate(body, "AccountSetup")
+
+
+def test_a_needed_account_gets_its_business_name_and_the_setup_is_idempotent() -> None:
+    client, repository = make_client()
+    repository.setups[USERS["outsider"]] = AccountSetupOut(
+        state="needed", tenant_id=None, business_name="Sri Lakshmi Silks"
+    )
+    assert client.get("/v1/account/setup", headers=auth("outsider")).json()["state"] == "needed"
+    body = {"business_type": "textiles", "language": "te"}
+    first = client.post("/v1/account/setup", json=body, headers=auth("outsider"))
+    second = client.post("/v1/account/setup", json=body, headers=auth("outsider"))
+    assert first.status_code == second.status_code == 200
+    assert first.json()["created"] is True and second.json()["created"] is False
+    assert first.json()["tenant_id"] == second.json()["tenant_id"]
+    assert set(first.json()) == {"tenant_id", "created"}
+    validate(first.json(), "AccountSetupResult")
+    done = client.get("/v1/account/setup", headers=auth("outsider")).json()
+    assert done["state"] == "done" and done["tenant_id"] == first.json()["tenant_id"]
+    # another account is not affected
+    assert client.get("/v1/account/setup", headers=auth("a_owner")).json()["state"] == "none"
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        {},
+        {"business_type": "textiles"},
+        {"language": "en"},
+        {"business_type": "bakery", "language": "en"},
+        {"business_type": "other", "language": "fr"},
+        {"business_type": "other", "language": "en", "business_name": "Mine"},
+        {"business_type": "other", "language": "en", "tenant_id": str(uuid.uuid4())},
+    ],
+)
+def test_the_setup_takes_exactly_two_choices_and_never_a_business_name(
+    body: dict[str, Any],
+) -> None:
+    client, repository = make_client()
+    response = client.post("/v1/account/setup", json=body, headers=auth("outsider"))
+    assert response.status_code == 422
+    validate(response.json(), "Error")
+    assert repository.setup_calls == []
+
+
+@pytest.mark.parametrize(
+    ("error", "status", "code"),
+    [
+        (repo.TermsNotAccepted("SM308"), 403, "terms_required"),
+        (repo.EmailNotConfirmed("SM309"), 403, "email_not_confirmed"),
+        (repo.WorkspaceLimitReached("SM307"), 409, "workspace_limit_reached"),
+        (repo.InvalidInput("22023"), 422, "validation_error"),
+        (repo.TokenRejected("PGRST303"), 401, "unauthorized"),
+    ],
+)
+def test_the_setup_refusals_have_fixed_plain_sentences(
+    error: repo.RepositoryError, status: int, code: str
+) -> None:
+    client, repository = make_client()
+    repository.raise_on_next = error
+    response = client.post(
+        "/v1/account/setup",
+        json={"business_type": "other", "language": "en"},
+        headers=auth("outsider"),
+    )
+    assert response.status_code == status
+    validate(response.json(), "Error")
+    assert response.json()["error"]["code"] == code
+
+
+def test_the_setup_is_read_and_written_with_the_callers_own_token() -> None:
+    client, repository = make_client()
+    headers = auth("outsider")
+    client.get("/v1/account/setup", headers=headers)
+    client.post(
+        "/v1/account/setup", json={"business_type": "other", "language": "kn"}, headers=headers
+    )
+    token = headers["Authorization"].removeprefix("Bearer ")
+    assert repository.tokens_seen[-2:] == [token, token]

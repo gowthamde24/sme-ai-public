@@ -57,6 +57,25 @@
         "trial_started_at": { "type": "string", "format": "date-time" }
       }
     },
+    "AccountSetup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["state", "tenant_id", "business_name"],
+      "properties": {
+        "state": { "type": "string", "enum": ["none", "needed", "done"] },
+        "tenant_id": { "oneOf": [{ "$ref": "#/$defs/Uuid" }, { "type": "null" }] },
+        "business_name": { "type": ["string", "null"] }
+      }
+    },
+    "AccountSetupResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tenant_id", "created"],
+      "properties": {
+        "tenant_id": { "$ref": "#/$defs/Uuid" },
+        "created": { "type": "boolean" }
+      }
+    },
     "Me": {
       "type": "object",
       "additionalProperties": false,

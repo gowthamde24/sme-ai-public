@@ -18,6 +18,8 @@ alter table public.tenants
   add column workspace_limit  integer     not null default 1 check (workspace_limit between 1 and 100),
   add column trial_started_at timestamptz not null default now();
 
+comment on column public.tenants.plan is 'SAFE: the plan name (free_trial); not personal data';
+
 -- Two small functions, because the trigger must be SECURITY INVOKER (it needs to know which role runs the statement) while counting
 -- a person's owner rows in OTHER workspaces needs more sight than the caller's row-level security gives.
 --

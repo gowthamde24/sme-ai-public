@@ -704,10 +704,20 @@ def test_rpc_is_not_callable_by_a_stranger_even_with_valid_ids_of_a_real_tenant(
     # the outsider has no tenant at all: sign up a fresh user and try tenant A
     import httpx
 
-    stranger = httpx.post(
+    stranger_email, stranger_password = f"stranger-{uid()[:8]}@it.example.test", uid() + "Aa1!"
+    httpx.post(
         f"{w.stack.url}/auth/v1/signup",
         headers={"apikey": w.stack.anon_key},
-        json={"email": f"stranger-{uid()[:8]}@it.example.test", "password": uid() + "Aa1!"},
+        json={"email": stranger_email, "password": stranger_password},
+        timeout=15,
+    ).raise_for_status()
+    from local_confirm import confirm_email  # the local stack asks for confirmation (job AD / D2)
+
+    confirm_email(stranger_email)
+    stranger = httpx.post(
+        f"{w.stack.url}/auth/v1/token?grant_type=password",
+        headers={"apikey": w.stack.anon_key},
+        json={"email": stranger_email, "password": stranger_password},
         timeout=15,
     ).json()
 

@@ -12,10 +12,12 @@ import hashlib
 import hmac
 import os
 import struct
+import sys
 import time
 import uuid
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -25,6 +27,9 @@ from pydantic import SecretStr
 
 from app.config import Settings
 from app.main import create_app
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+from local_confirm import confirm_email  # noqa: E402  (the scripts folder is not a package)
 
 
 @dataclass(frozen=True)
@@ -160,7 +165,18 @@ def signup(stack: Stack) -> Any:
             timeout=15,
         )
         response.raise_for_status()
-        body = response.json()
+        # The local stack asks for e-mail confirmation (job AD / D2). These are throwaway accounts:
+        # confirm them through the local database container, then sign in with the password.
+        # (test_open_signup.py walks the real link through the mail catcher.)
+        confirm_email(email)
+        signed_in = httpx.post(
+            f"{stack.url}/auth/v1/token?grant_type=password",
+            headers={"apikey": stack.anon_key},
+            json={"email": email, "password": password},
+            timeout=15,
+        )
+        signed_in.raise_for_status()
+        body = signed_in.json()
         token, secret = body["access_token"], None
         if mfa:
             factor_id, secret = enroll_totp(stack, token)

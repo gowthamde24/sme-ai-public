@@ -12,10 +12,12 @@ import pytest
 
 from app.tenancy.models import Role
 from app.tenancy.repository import (
+    EmailNotConfirmed,
     Forbidden,
     InvalidInput,
     PostgrestTenantRepository,
     SlugUnavailable,
+    TermsNotAccepted,
     TokenRejected,
     UpstreamError,
     WorkspaceLimitReached,
@@ -155,6 +157,8 @@ def test_get_plan_of_a_tenant_the_caller_cannot_see_is_a_refusal_not_a_crash() -
         (401, "PGRST303", TokenRejected),
         (401, "PGRST301", TokenRejected),
         (400, "SM307", WorkspaceLimitReached),
+        (400, "SM308", TermsNotAccepted),
+        (400, "SM309", EmailNotConfirmed),
         (500, "XX000", UpstreamError),
         (404, "PGRST202", UpstreamError),
         (406, "PGRST106", UpstreamError),
@@ -180,3 +184,22 @@ def test_network_failure_is_an_upstream_error_without_leaking_details() -> None:
     with pytest.raises(UpstreamError) as info:
         repo.get_me(USER_TOKEN, USER)
     assert "10.0.0.5" not in str(info.value)
+
+
+def test_get_account_setup_posts_an_empty_body_to_the_rpc_with_the_callers_token() -> None:
+    reply = {"state": "needed", "tenant_id": None, "business_name": "Sri Lakshmi Silks"}
+    repo, seen = repo_with(lambda r: json_response(reply))
+    out = repo.get_account_setup(USER_TOKEN)
+    assert (out.state, out.business_name, out.tenant_id) == ("needed", "Sri Lakshmi Silks", None)
+    assert seen[0].method == "POST" and seen[0].url.path.endswith("/rpc/get_account_setup")
+    assert json.loads(seen[0].content) == {}
+    assert seen[0].headers["authorization"] == f"Bearer {USER_TOKEN}"
+
+
+def test_complete_setup_sends_only_the_two_choices() -> None:
+    repo, seen = repo_with(lambda r: json_response({"tenant_id": str(TENANT), "created": True}))
+    out = repo.complete_setup(USER_TOKEN, "textiles", "te")
+    assert (out.tenant_id, out.created) == (TENANT, True)
+    assert seen[0].url.path.endswith("/rpc/complete_setup")
+    assert json.loads(seen[0].content) == {"p_business_type": "textiles", "p_language": "te"}
+    assert seen[0].headers["authorization"] == f"Bearer {USER_TOKEN}"

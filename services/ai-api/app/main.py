@@ -127,6 +127,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     repo.MfaRequired: mfa_required(),
     repo.InvalidInput: ApiError(422, "validation_error", "Invalid input."),
     repo.SlugUnavailable: ApiError(409, "slug_unavailable", "That slug is not available."),
+    repo.TermsNotAccepted: ApiError(
+        403, "terms_required", "Accept the terms when you sign up to continue."
+    ),
+    repo.EmailNotConfirmed: ApiError(
+        403, "email_not_confirmed", "Confirm your email address first: use the link we sent you."
+    ),
     repo.WorkspaceLimitReached: ApiError(
         409,
         "workspace_limit_reached",

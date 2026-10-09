@@ -15,6 +15,8 @@ from typing import Any, Protocol
 import httpx
 
 from app.tenancy.models import (
+    AccountSetupOut,
+    AccountSetupResultOut,
     AuditEventListOut,
     AuditEventOut,
     MemberListOut,
@@ -56,6 +58,14 @@ class WorkspaceLimitReached(RepositoryError):
     """SM307: the person already owns as many workspaces as their plan allows (job AD / D1)."""
 
 
+class TermsNotAccepted(RepositoryError):
+    """SM308: the account did not accept the terms at sign-up."""
+
+
+class EmailNotConfirmed(RepositoryError):
+    """SM309: the account's e-mail address is not confirmed."""
+
+
 class UpstreamError(RepositoryError):
     pass
 
@@ -70,6 +80,12 @@ class TenantRepository(Protocol):
     def create_tenant(self, token: str, name: str, slug: str) -> TenantOut: ...
 
     def get_plan(self, token: str, tenant_id: uuid.UUID) -> TenantPlanOut: ...
+
+    def get_account_setup(self, token: str) -> AccountSetupOut: ...
+
+    def complete_setup(
+        self, token: str, business_type: str, language: str
+    ) -> AccountSetupResultOut: ...
 
     def list_members(self, token: str, tenant_id: uuid.UUID) -> MemberListOut: ...
 
@@ -128,6 +144,10 @@ class PostgrestTenantRepository:
             raise TokenRejected(code or "401")
         if code == "SM307":
             raise WorkspaceLimitReached(code)
+        if code == "SM308":
+            raise TermsNotAccepted(code)
+        if code == "SM309":
+            raise EmailNotConfirmed(code)
         if code == "23505":
             raise SlugUnavailable(code)
         if code in {"22023", "23514", "22P02"}:
@@ -173,6 +193,9 @@ class PostgrestTenantRepository:
         if not rows:
             return None
         return MembershipOut(tenant=TenantOut(**rows[0]["tenants"]), role=rows[0]["role"])
+
+    def get_account_setup(self, token: str) -> AccountSetupOut:
+        return AccountSetupOut(**self._request("POST", "/rpc/get_account_setup", token, json={}))
 
     def get_plan(self, token: str, tenant_id: uuid.UUID) -> TenantPlanOut:
         rows = self._request(
@@ -238,3 +261,14 @@ class PostgrestTenantRepository:
             "POST", "/rpc/create_tenant", token, json={"p_name": name, "p_slug": slug}
         )
         return TenantOut(id=row["id"], name=row["name"], slug=row["slug"])
+
+    def complete_setup(
+        self, token: str, business_type: str, language: str
+    ) -> AccountSetupResultOut:
+        row = self._request(
+            "POST",
+            "/rpc/complete_setup",
+            token,
+            json={"p_business_type": business_type, "p_language": language},
+        )
+        return AccountSetupResultOut(**row)
