@@ -141,7 +141,7 @@ add({
 // ---- company, lead, consent ------------------------------------------------------------------------------------------------
 add({
   id: "company",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/companies/[companyId]/page")).default(props({ companyId: COMPANY })),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/companies/[companyId]/page")).default(props({ companyId: COMPANY }, { section: "all" })),
   handlers: (role) => ({
     ...base(role),
     fetchCompany: () => parsePage("companies", { items: [COMPANY_JSON], next_cursor: null }).items[0],
@@ -151,7 +151,7 @@ add({
 });
 add({
   id: "lead",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/leads/[leadId]/page")).default(props({ leadId: LEAD })),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/leads/[leadId]/page")).default(props({ leadId: LEAD }, { section: "all" })),
   handlers: (role) => ({
     ...base(role),
     fetchLead: () => parsePage("leads", { items: [LEAD_JSON], next_cursor: null }).items[0],
@@ -200,13 +200,13 @@ add({
 const approvedDraft = { ...DRAFT_JSON, id: "dddddddd-dddd-4ddd-8ddd-ddddddddddd2", status: "approved", approved_by: "ffffffff-ffff-4fff-8fff-fffffffffff1", approved_at: "2026-10-07T07:00:00+00:00", body: BODY_TEXT + " (approved)" };
 add({
   id: "lead-followup",
-  render: async () => (await import("@/app/app/tenants/[tenantId]/leads/[leadId]/followup/page")).default(props({ leadId: LEAD })),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/leads/[leadId]/followup/page")).default(props({ leadId: LEAD }, { section: "all" })),
   handlers: (role) => ({ ...base(role), fetchLeadFollowup: () => parseLeadFollowup({ ...FOLLOWUP_JSON, drafts: [DRAFT_JSON, approvedDraft], touches: [TOUCH_JSON] }) }),
 });
 add({
   id: "lead-followup-blocked",
   roles: ["owner"],
-  render: async () => (await import("@/app/app/tenants/[tenantId]/leads/[leadId]/followup/page")).default(props({ leadId: LEAD })),
+  render: async () => (await import("@/app/app/tenants/[tenantId]/leads/[leadId]/followup/page")).default(props({ leadId: LEAD }, { section: "all" })),
   handlers: (role) => ({
     ...base(role),
     fetchLeadFollowup: () =>
@@ -392,7 +392,7 @@ const enquiryScenario = (id: string, over: { roles?: readonly Role[]; aal?: "aal
     id,
     roles: over.roles,
     aal: over.aal,
-    render: async () => (await import("@/app/app/tenants/[tenantId]/enquiries/[enquiryId]/page")).default(props({ enquiryId: ENQ }, over.query ?? {})),
+    render: async () => (await import("@/app/app/tenants/[tenantId]/enquiries/[enquiryId]/page")).default(props({ enquiryId: ENQ }, { section: "all", ...over.query })),
     handlers: (role) => ({ ...base(role), fetchEnquiry: () => ENQUIRY, ...over.handlers(role) }),
   });
 const quoteSide = (role: Role, quote: object, summary: object, extra: Record<string, Handler> = {}): Record<string, Handler> => ({
