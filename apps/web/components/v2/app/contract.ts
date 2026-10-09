@@ -1,9 +1,22 @@
+import type { Plan } from "@/lib/api/plan";
+import type { AiUsage } from "@/lib/api/today";
+
 /**
- * The shapes of what the frame reads from the data layer (Job AC contract, from Claude 1). They mirror lib/api: `getPlan()`, `getAiUsageToday()` and the
- * `cards.waiting` of `getToday()`. Until those exist the frame is given null and draws "Not available yet" (never a made-up value). Money is in paise.
+ * What the frame reads from the data layer. The types ARE lib/api's (`getPlan()`, `getAiUsageToday()` and the `cards.waiting` of `getToday()`, Job AD): this file only
+ * says what the frame does with them. A part that cannot be read is null and the frame says "Not available yet" (never a made-up value). Money is in paise.
  */
-export type Plan = { plan: string; workspace_limit: number; trial_started_at: string | null };
-export type AiUsage = { spent_paise: number; cap_paise: number; left_paise: number };
-/** What the frame shows beyond the menu: the plan under the business name, the AI usage card, the count on "Today". Each is null while it cannot be read. */
-export type FrameData = { plan: Plan | null; usage: AiUsage | null; waiting: number | null };
-export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null };
+export type { AiUsage, Plan };
+export type FrameData = {
+  plan: Plan | null;
+  usage: AiUsage | null;
+  /** how many things wait for the person (the count on "Today") */
+  waiting: number | null;
+  /** false = the numbers are still being brought in (the first paint): the frame draws the places empty instead of saying "Not available yet" */
+  ready: boolean;
+  /** false for a role the AI usage is not shown to (the API gives it to Owner and Admin only): the card is not drawn */
+  showUsage: boolean;
+};
+/** Every part unreadable: the frame says "Not available yet" in each place. */
+export const NO_FRAME_DATA: FrameData = { plan: null, usage: null, waiting: null, ready: true, showUsage: true };
+/** Not read yet (the layout above the workspace cannot know which workspace it is; the workspace's own layout brings the numbers in). */
+export const FRAME_LOADING: FrameData = { plan: null, usage: null, waiting: null, ready: false, showUsage: true };

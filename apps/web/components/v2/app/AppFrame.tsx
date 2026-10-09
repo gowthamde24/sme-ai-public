@@ -8,7 +8,7 @@ import { authT } from "@/i18n/auth";
 import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
-import { NO_FRAME_DATA, type FrameData } from "./contract";
+import { FRAME_LOADING, type FrameData } from "./contract";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import { TopBar } from "./TopBar";
@@ -23,9 +23,9 @@ import type { Membership } from "./use-workspace";
  * so the page area says lang=en; the frame's own words, the skip link and the language and theme controls carry the chosen language (every non-English word there is a machine
  * draft, a note says so, and the strings about money, consent, privacy and safety stay English until a person reviews them).
  * It decides no access: `memberships` only says which menu items to offer; a page, the API and the database stay the gate. `memberships` null = the API could not be read:
- * the account part only. `frame` = the plan, the AI usage and the count on Today (null for each that cannot be read yet: the frame then says "Not available yet").
+ * the account part only. `frame` = what the frame shows until the workspace's own layout brings in the plan, the AI usage and the count on Today (frame-store.ts); a part that cannot be read says "Not available yet".
  */
-export function AppFrame({ lang, theme, email, memberships, signOut, frame = NO_FRAME_DATA, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; frame?: FrameData; children: ReactNode }) {
+export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRAME_LOADING, children }: { lang: Lang; theme: Theme | undefined; email: string | null; memberships: readonly Membership[] | null; signOut: () => Promise<void>; frame?: FrameData; children: ReactNode }) {
   const t = authT(lang);
   const list = memberships ?? [];
   const labels = frameLabels(lang);

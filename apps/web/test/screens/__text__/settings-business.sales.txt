@@ -4,9 +4,6 @@
 Business
 Demo Silks (synthetic)
 Plan
-Not available yet
+Free trial plan
 URL name
 demo-silks
-{label="AI usage today"}
-## AI usage today
-AI usage today Not available yet

@@ -10,8 +10,9 @@ vi.mock("next/navigation", () => ({
 }));
 
 import { AccountMenu } from "./AccountMenu";
-import type { FrameData } from "./contract";
+import { NO_FRAME_DATA, FRAME_LOADING, type FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
+import { FrameDataSlot } from "./frame-store";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import type { Membership } from "./use-workspace";
@@ -29,8 +30,8 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-const none: FrameData = { plan: null, usage: null, waiting: null };
-const loaded: FrameData = { plan: { plan: "pilot", workspace_limit: 1, trial_started_at: null }, usage: { spent_paise: 19000, cap_paise: 50000, left_paise: 31000 }, waiting: 5 };
+const none: FrameData = NO_FRAME_DATA;
+const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { spent_paise: 19000, cap_paise: 50000, left_paise: 31000 }, waiting: 5, ready: true, showUsage: true };
 const noSignOut = async () => undefined;
 const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} />);
 const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} />);
@@ -64,10 +65,32 @@ describe("SideNav", () => {
     expect(screen.queryByText(/Waiting for you/)).toBeNull();
     expect(screen.queryByRole("meter")).toBeNull();
   });
+  it("while the numbers are still being read it leaves the places empty instead of saying 'Not available yet'", () => {
+    side(only("owner"), FRAME_LOADING);
+    expect(screen.getByText("AI usage today")).toBeInTheDocument();
+    // only Help says it: the plan line and the usage card are empty
+    expect(screen.getAllByText("Not available yet")).toHaveLength(1);
+  });
+  it("does not draw the AI usage card for a role the API gives no usage to", () => {
+    side(only("sales"), { ...loaded, showUsage: false });
+    expect(screen.queryByText("AI usage today")).toBeNull();
+    cleanup();
+    bar(only("sales"), { ...loaded, showUsage: false });
+    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    expect(screen.queryByText("AI usage today")).toBeNull();
+  });
+  it("shows what the workspace's layout brought in (the slot) over what the frame was given, and goes back when the slot goes", () => {
+    side(only("owner"), FRAME_LOADING);
+    const slot = render(<FrameDataSlot data={loaded} />);
+    expect(screen.getByText("Free trial plan")).toBeInTheDocument();
+    expect(screen.getByRole("meter", { name: "AI usage today" })).toBeInTheDocument();
+    slot.unmount();
+    expect(screen.queryByText("Free trial plan")).toBeNull();
+  });
   it("shows the business and its plan on top, and no list of workspaces for one business", () => {
     side(only("owner"), loaded);
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
-    expect(screen.getByText("Pilot plan")).toBeInTheDocument();
+    expect(screen.getByText("Free trial plan")).toBeInTheDocument();
     expect(screen.queryByRole("list", { name: "Your workspaces" })).toBeNull();
     expect(screen.queryByText("Switch workspace")).toBeNull();
   });
@@ -139,7 +162,7 @@ describe("WorkspaceSwitcher", () => {
   it("one business: its name and plan, a plain link home, no switcher and no list", () => {
     render(<WorkspaceSwitcher memberships={only("owner")} plan={loaded.plan} />);
     expect(screen.getByRole("link")).toHaveAttribute("href", `/app/tenants/${A}`);
-    expect(screen.getByRole("link")).toHaveTextContent("Acme SilksPilot plan");
+    expect(screen.getByRole("link")).toHaveTextContent("Acme SilksFree trial plan");
     expect(screen.queryByText("Switch workspace")).toBeNull();
   });
   it("two or more: the name opens the list, with each role, and goes to a workspace's HOME, never the same sub-page", () => {
@@ -153,7 +176,7 @@ describe("WorkspaceSwitcher", () => {
     nav.pathname = "/app";
     render(<WorkspaceSwitcher memberships={only("owner")} plan={loaded.plan} />);
     expect(screen.getByRole("link")).toHaveAttribute("href", "/app");
-    expect(screen.queryByText("Pilot plan")).toBeNull();
+    expect(screen.queryByText("Free trial plan")).toBeNull();
   });
 });
 

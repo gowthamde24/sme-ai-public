@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { initials } from "./AccountMenu";
 import type { FrameData } from "./contract";
+import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
 import { NavIcon } from "./icons";
 import { word, type Labels } from "./labels";
@@ -21,8 +22,9 @@ const row = "flex min-h-12 w-full items-center gap-3 rounded-lg border border-li
  * each only when the role may open it) and "More", which opens a sheet with the rest of the menu (Customers, Catalogue and prices, Integrations, Settings),
  * the person, the AI usage card, Help ("Not available yet") and Sign out. Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
-export function TabBar({ memberships, labels, frame, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
+export function TabBar({ memberships, labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
   const { current, pathname, active } = useWorkspace(memberships);
+  const frame = useFrameData(given);
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const moreRef = useRef<HTMLButtonElement>(null);
@@ -113,7 +115,7 @@ export function TabBar({ memberships, labels, frame, email, signOut }: { members
                   <span className="text-sm font-normal">{word(labels, "frame.notyet", "Not available yet")}</span>
                 </button>
               </div>
-              <UsageCard usage={frame.usage} labels={labels} />
+              {frame.showUsage ? <UsageCard usage={frame.usage} loading={!frame.ready} labels={labels} /> : null}
               {memberships.length > 1 ? (
                 <div className="space-y-2">
                   <p className="text-sm font-semibold">{word(labels, "frame.yourworkspaces", "Your workspaces")}</p>

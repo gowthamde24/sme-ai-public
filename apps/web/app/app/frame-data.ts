@@ -1,10 +1,22 @@
-import { NO_FRAME_DATA, type FrameData } from "@/components/v2/app/contract";
+import type { FrameData } from "@/components/v2/app/contract";
+import { ApiRequestError } from "@/lib/api/client";
+import { getPlan } from "@/lib/api/plan";
+import { getAiUsageToday } from "@/lib/api/today";
+
+import { readTodayCached } from "./tenants/[tenantId]/today-read";
 
 /**
- * What the frame shows besides the menu: the plan under the business name, the AI usage card and the count on Today. They come from `getPlan()`,
- * `getAiUsageToday()` and `getToday().cards.waiting` of lib/api (Job AD, Claude 1). Those do not exist yet, so each is null and the frame says
- * "Not available yet". When they land, call them HERE (one place), each in its own try/catch so one failure shows only its own "Not available yet".
+ * What the frame shows besides the menu, for ONE workspace: the plan under the business name (`getPlan`), the AI usage card (`getAiUsageToday`) and the count on Today
+ * (`getToday().cards.waiting`). Each is read on its own, so one that fails is null (the frame says "Not available yet" in that one place only). The API gives the AI usage to
+ * Owner and Admin only: for anyone else its 403 means the card is not drawn at all (not "Not available yet": there is nothing to wait for). Never throws.
  */
-export async function readFrameData(): Promise<FrameData> {
-  return NO_FRAME_DATA;
+export async function readFrameData(accessToken: string, tenantId: string): Promise<FrameData> {
+  const [plan, usage, today] = await Promise.allSettled([getPlan(accessToken, tenantId), getAiUsageToday(accessToken, tenantId), readTodayCached(accessToken, tenantId)]);
+  return {
+    plan: plan.status === "fulfilled" ? plan.value : null,
+    usage: usage.status === "fulfilled" ? usage.value : null,
+    showUsage: !(usage.status === "rejected" && usage.reason instanceof ApiRequestError && usage.reason.status === 403),
+    waiting: today.status === "fulfilled" ? today.value.cards.waiting : null,
+    ready: true,
+  };
 }

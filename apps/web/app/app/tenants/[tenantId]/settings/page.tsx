@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeChoice, type ThemePick } from "@/components/v2/controls/ThemeChoice";
-import { UsageCard } from "@/components/v2/app/frame-parts";
+import { UsageCard, planText } from "@/components/v2/app/frame-parts";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
 import { breakAll, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
@@ -15,6 +15,8 @@ import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchMembers, type Member } from "@/lib/api/orders";
+import { getPlan, type Plan } from "@/lib/api/plan";
+import { getAiUsageToday, type AiUsage } from "@/lib/api/today";
 import { requireUser } from "@/lib/auth/session";
 
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
@@ -27,8 +29,8 @@ const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)
 
 /**
  * /app/tenants/[tenantId]/settings, one part at a time (?section=): the business and its plan, the members (a list: nobody is added here), the language and the look, the security of the
- * person's sign-in, and privacy (the way to the erasure and suppression pages). The plan and the AI usage come from getPlan() / getAiUsageToday() of lib/api (Job AD): "Not available yet"
- * until they exist. The security and privacy words stay English until a person reviews them.
+ * person's sign-in, and privacy (the way to the erasure and suppression pages). The plan and the AI usage come from getPlan() / getAiUsageToday() of lib/api (Job AD); one that cannot be read says "Not available yet", and the
+ * AI usage is shown to Owner and Admin only (the API refuses the others). The security and privacy words stay English until a person reviews them.
  */
 export default async function SettingsPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/settings">) {
   const user = await requireUser();
@@ -59,6 +61,11 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       if (error instanceof ApiAuthError) redirect("/login");
     }
   }
+  let plan: Plan | null = null;
+  let usage: AiUsage | null = null;
+  if (section === "business") {
+    [plan, usage] = await Promise.all([getPlan(user.accessToken, tenantId).catch(() => null), admin ? getAiUsageToday(user.accessToken, tenantId).catch(() => null) : null]);
+  }
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -87,7 +94,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 </div>
                 <div>
                   <dt className="text-sm text-muted">{t("settings.business.plan")}</dt>
-                  <dd className="font-display text-xl font-semibold">{t("frame.notyet")}</dd>
+                  <dd className="font-display text-xl font-semibold">{planText(plan, labels) ?? t("frame.notyet")}</dd>
                 </div>
                 <div>
                   <dt className="text-sm text-muted">{t("settings.business.url")}</dt>
@@ -95,12 +102,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 </div>
               </dl>
             </section>
-            <section className={surface} aria-labelledby="usage-heading">
-              <h2 id="usage-heading" className="mb-3 text-xl font-semibold">
-                {t("frame.aiusage")}
-              </h2>
-              <UsageCard usage={null} labels={labels} />
-            </section>
+            {admin ? (
+              <section className={surface} aria-labelledby="usage-heading">
+                <h2 id="usage-heading" className="mb-3 text-xl font-semibold">
+                  {t("frame.aiusage")}
+                </h2>
+                <UsageCard usage={usage} labels={labels} />
+              </section>
+            ) : null}
           </>
         ) : null}
         {section === "members" ? (

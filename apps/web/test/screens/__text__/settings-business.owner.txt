@@ -4,9 +4,11 @@
 Business
 Demo Silks (synthetic)
 Plan
-Not available yet
+Free trial plan
 URL name
 demo-silks
 {label="AI usage today"}
 ## AI usage today
-AI usage today Not available yet
+AI usage today ₹0.15 / ₹2
+{role=meter label="AI usage today"}
+₹1.85 left today

@@ -1160,5 +1160,93 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "frame.plan.free_trial": {
+  "en": "Free trial",
+  "te": "ఉచిత ట్రయల్",
+  "hi": "मुफ़्त ट्रायल",
+  "kn": "ಉಚಿತ ಟ್ರಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.main": {
+  "en": "Main agent",
+  "te": "ప్రధాన ఏజెంట్",
+  "hi": "मुख्य एजेंट",
+  "kn": "ಮುಖ್ಯ ಏಜೆಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.lead_finder": {
+  "en": "Lead Finder",
+  "te": "లీడ్ ఫైండర్",
+  "hi": "लीड फ़ाइंडर",
+  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.researcher": {
+  "en": "Researcher",
+  "te": "రీసెర్చర్",
+  "hi": "रिसर्चर",
+  "kn": "ರಿಸರ್ಚರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.requirement_analyst": {
+  "en": "Requirement Analyst",
+  "te": "రిక్వైర్మెంట్ అనలిస్ట్",
+  "hi": "रिक्वायरमेंट एनालिस्ट",
+  "kn": "ರಿಕ್ವೈರ್ಮೆಂಟ್ ಅನಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.quote_writer": {
+  "en": "Quote Writer",
+  "te": "కోట్ రైటర్",
+  "hi": "कोट राइटर",
+  "kn": "ಕೋಟ್ ರೈಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.followup_desk": {
+  "en": "Follow-up Desk",
+  "te": "ఫాలో-అప్ డెస్క్",
+  "hi": "फ़ॉलो-अप डेस्क",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agent.order_desk": {
+  "en": "Order Desk",
+  "te": "ఆర్డర్ డెస్క్",
+  "hi": "ऑर्डर डेस्क",
+  "kn": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

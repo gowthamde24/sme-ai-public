@@ -2,7 +2,7 @@ import { Layers, Sparkles } from "lucide-react";
 
 import { formatINR } from "@/design/format";
 
-import type { AiUsage } from "./contract";
+import type { AiUsage, Plan } from "./contract";
 import { word, type Labels } from "./labels";
 
 /** The width of the meter's fill in steps of 5% (a class per step: no inline style, and Tailwind sees every class). */
@@ -17,13 +17,21 @@ export function BrandMark({ className = "size-10" }: { className?: string }) {
   );
 }
 
+/** "free_trial" -> "Free trial plan": the plan's name from `getPlan()` (`frame.plan.<name>`, else the name with its underscores opened), inside the frame's own sentence. */
+export function planText(plan: Plan | null, labels?: Labels): string | null {
+  if (!plan) return null;
+  const spoken = plan.plan.replace(/_/g, " ");
+  const name = word(labels, `frame.plan.${plan.plan}`, spoken.charAt(0).toUpperCase() + spoken.slice(1));
+  return word(labels, "frame.plan", "{plan} plan", { plan: name });
+}
+
 /** "Not available yet": what an element says while the data behind it cannot be read. Never a guess. */
 export function NotYetText({ labels, className = "text-sm text-muted" }: { labels?: Labels; className?: string }) {
   return <span className={className}>{word(labels, "frame.notyet", "Not available yet")}</span>;
 }
 
-/** The AI usage card (menu footer, the phone's More sheet, Settings): spent / cap today with a meter, from `getAiUsageToday()`; "Not available yet" without it. */
-export function UsageCard({ usage, labels, className = "" }: { usage: AiUsage | null; labels?: Labels; className?: string }) {
+/** The AI usage card (menu footer, the phone's More sheet, Settings): spent / cap today with a meter, from `getAiUsageToday()`; empty while it is still being read, "Not available yet" when it cannot be. */
+export function UsageCard({ usage, labels, loading = false, className = "" }: { usage: AiUsage | null; labels?: Labels; loading?: boolean; className?: string }) {
   const title = word(labels, "frame.aiusage", "AI usage today");
   const pct = usage && usage.cap_paise > 0 ? Math.min(100, Math.round((usage.spent_paise / usage.cap_paise) * 100)) : 0;
   return (
@@ -42,6 +50,8 @@ export function UsageCard({ usage, labels, className = "" }: { usage: AiUsage | 
           </div>
           <p className="mt-2 text-sm text-muted">{word(labels, "frame.aileft", "{amount} left today", { amount: formatINR(usage.left_paise / 100) })}</p>
         </>
+      ) : loading ? (
+        <p aria-hidden="true" className="mt-1 min-h-6" />
       ) : (
         <p className="mt-1">
           <NotYetText labels={labels} />

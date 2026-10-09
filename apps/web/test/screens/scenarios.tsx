@@ -14,6 +14,8 @@ import { parseIcpConfig, parseReviewQueuePage } from "@/lib/api/leads";
 import { parseQuote, parseQuoteSummary, parseQuoteText, parseSetup } from "@/lib/api/quotes";
 import { MANUAL_QUOTE_JSON, MANUAL_SUMMARY_JSON, QUOTE_JSON, SETUP_JSON, SUMMARY_JSON, TEXT_JSON } from "@/lib/api/quotes-fixtures";
 import { parseOrderPage as parseOrders } from "@/lib/api/orders";
+import { parsePlan } from "@/lib/api/plan";
+import { parseAiUsage } from "@/lib/api/today";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
 import { parseRequirementView } from "@/lib/api/enquiries";
 import { parseDueList, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
@@ -41,8 +43,15 @@ export type Scenario = {
 };
 
 export const tenantOf = (role: Role) => ({ id: TENANT, name: "Demo Silks (synthetic)", slug: "demo-silks", role });
-/** The answer every workspace screen needs first. */
-export const base = (role: Role): Record<string, Handler> => ({ fetchTenant: () => tenantOf(role) });
+/** The answer every workspace screen needs first, and the two small reads a screen may add (the plan; today's AI usage, which the API gives to Owner and Admin only). */
+export const base = (role: Role): Record<string, Handler> => ({
+  fetchTenant: () => tenantOf(role),
+  getPlan: () => parsePlan({ plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-01T05:00:00Z" }),
+  getAiUsageToday: () => {
+    if (role !== "owner" && role !== "admin") throw new ApiRequestError(403, "forbidden", "Not allowed.");
+    return parseAiUsage({ spent_paise: 15, cap_paise: 200, left_paise: 185 });
+  },
+});
 
 export const props = <T,>(params: Record<string, string> = {}, search: Record<string, string> = {}): T =>
   ({ params: Promise.resolve({ tenantId: TENANT, ...params }), searchParams: Promise.resolve(search) }) as unknown as T;

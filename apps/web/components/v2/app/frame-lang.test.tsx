@@ -9,7 +9,7 @@ vi.mock("next/navigation", () => ({ usePathname: () => nav.pathname, useSearchPa
 import { frameLabels } from "@/i18n/app";
 
 import { AccountMenu } from "./AccountMenu";
-import type { FrameData } from "./contract";
+import { NO_FRAME_DATA, type FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
@@ -17,7 +17,7 @@ import type { Membership } from "./use-workspace";
 import { WorkspaceSwitcher } from "./WorkspaceSwitcher";
 
 const A = "22222222-2222-2222-2222-222222222222";
-const none: FrameData = { plan: null, usage: null, waiting: null };
+const none: FrameData = NO_FRAME_DATA;
 const members: Membership[] = [{ id: A, name: "Acme", role: "owner" }, { id: "33333333-3333-3333-3333-333333333333", name: "Second", role: "viewer" }];
 
 beforeEach(() => {
