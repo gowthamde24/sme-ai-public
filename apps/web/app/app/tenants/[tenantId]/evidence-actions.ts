@@ -90,5 +90,5 @@ export async function addEvidenceAction(
 
   const back = `/app/tenants/${tenantId}/${target}/${targetId}`;
   revalidatePath(back);
-  redirect(back);
+  redirect(`${back}?section=evidence`); // the part the form is in, so the new item is on screen (the company and lead pages show one part at a time)
 }
