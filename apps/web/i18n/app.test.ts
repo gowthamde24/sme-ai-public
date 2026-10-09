@@ -13,7 +13,7 @@ type Entry = { en: string; te: string; hi: string; kn: string; status: Record<st
 const data = app as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY = ["today.fact.amount", "today.hint.nothingSent", "today.kind.order", "today.stat.held", "today.stat.heldHint"]; // money held, amounts and what a button sends or does not: English until a person reviews them
+const HUMAN_ONLY = ["integrations.email.body", "integrations.upi.body", "integrations.upi.title", "integrations.whatsapp.body", "integrations.whatsapp.title", "settings.privacy.erasure", "settings.privacy.note", "settings.privacy.suppression", "settings.security.off", "settings.security.on", "settings.security.open", "settings.tab.privacy", "settings.tab.security", "today.fact.amount", "today.hint.nothingSent", "today.kind.order", "today.stat.held", "today.stat.heldHint"]; // money held, amounts and what a button sends or does not: English until a person reviews them
 
 describe("the frame's string store (language track L0)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(app as never, l) as Record<string, string>]));
@@ -35,7 +35,7 @@ describe("the frame's string store (language track L0)", () => {
   });
   it("the strings no machine may translate (money rules, privacy and erasure, do-not-contact) show the English in every language", () => {
     expect(keys.filter((k) => data[k].humanOnly).sort()).toEqual(HUMAN_ONLY);
-    for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) expect(dicts[l][k], `${k}:${l}`).toBe(dicts.en[k]);
+    for (const k of HUMAN_ONLY) for (const l of TRANSLATED_LANGS) expect(dicts[l][k].replaceAll("\u2060", ""), `${k}:${l}`).toBe(dicts.en[k]); // the only difference allowed is the invisible word joiner after a hyphen
   });
   it("makes no claim we cannot prove, never hard-codes the brand name", () => {
     for (const l of LANGS) for (const k of keys) {

@@ -685,5 +685,414 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "integrations.sub": {
+  "en": "Only the price list import exists today. The rest are not built yet.",
+  "te": "ఈరోజు ప్రైస్ లిస్ట్ దిగుమతి మాత్రమే ఉంది. మిగతావి ఇంకా తయారవలేదు.",
+  "hi": "आज सिर्फ़ प्राइस लिस्ट इंपोर्ट है। बाकी अभी बने नहीं हैं।",
+  "kn": "ಇಂದು ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಆಮದು ಮಾತ್ರ ಇದೆ. ಉಳಿದವು ಇನ್ನೂ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.available": {
+  "en": "Available",
+  "te": "అందుబాటులో ఉంది",
+  "hi": "उपलब्ध",
+  "kn": "ಲಭ್ಯವಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.pricelist.title": {
+  "en": "Price list (CSV)",
+  "te": "ప్రైస్ లిస్ట్ (CSV)",
+  "hi": "प्राइस लिस्ट (CSV)",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್ (CSV)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.pricelist.body": {
+  "en": "Upload your price list so quotes are priced from it by fixed rules.",
+  "te": "మీ ప్రైస్ లిస్ట్‌ను అప్‌లోడ్ చేయండి, కోట్‌లు స్థిర నియమాలతో దాని నుండి ధర పొందుతాయి.",
+  "hi": "अपनी प्राइस लिस्ट अपलोड करें, ताकि कोटेशन तय नियमों से उसी से दाम लें।",
+  "kn": "ನಿಮ್ಮ ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಅಪ್‌ಲೋಡ್ ಮಾಡಿ, ಕೊಟೇಶನ್‌ಗಳು ನಿಗದಿತ ನಿಯಮಗಳಿಂದ ಅದರಿಂದ ಬೆಲೆ ಪಡೆಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.pricelist.cta": {
+  "en": "Import price list (CSV)",
+  "te": "ప్రైస్ లిస్ట్ దిగుమతి (CSV)",
+  "hi": "प्राइस लिस्ट इंपोर्ट करें (CSV)",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಆಮದು (CSV)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.email.title": {
+  "en": "E-mail",
+  "te": "ఇ-మెయిల్",
+  "hi": "ई-मेल",
+  "kn": "ಇ-ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.calendar.title": {
+  "en": "Calendar",
+  "te": "క్యాలెండర్",
+  "hi": "कैलेंडर",
+  "kn": "ಕ್ಯಾಲೆಂಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.calendar.body": {
+  "en": "Would add follow-up reminders to your calendar.",
+  "te": "ఫాలో-అప్ రిమైండర్లను మీ క్యాలెండర్‌కు చేర్చుతుంది.",
+  "hi": "फ़ॉलो-अप रिमाइंडर आपके कैलेंडर में जोड़ेगा।",
+  "kn": "ಫಾಲೋ-ಅಪ್ ರಿಮೈಂಡರ್‌ಗಳನ್ನು ನಿಮ್ಮ ಕ್ಯಾಲೆಂಡರ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.accounting.title": {
+  "en": "Accounting",
+  "te": "అకౌంటింగ్",
+  "hi": "अकाउंटिंग",
+  "kn": "ಅಕೌಂಟಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.accounting.body": {
+  "en": "Would pass orders to your accounting software.",
+  "te": "ఆర్డర్లను మీ అకౌంటింగ్ సాఫ్ట్‌వేర్‌కు పంపుతుంది.",
+  "hi": "ऑर्डर आपके अकाउंटिंग सॉफ़्टवेयर तक पहुँचाएगा।",
+  "kn": "ಆರ್ಡರ್‌ಗಳನ್ನು ನಿಮ್ಮ ಅಕೌಂಟಿಂಗ್ ಸಾಫ್ಟ್‌ವೇರ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.business": {
+  "en": "Business and plan",
+  "te": "వ్యాపారం, ప్లాన్",
+  "hi": "व्यापार और प्लान",
+  "kn": "ವ್ಯಾಪಾರ ಮತ್ತು ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.members": {
+  "en": "Members",
+  "te": "సభ్యులు",
+  "hi": "सदस्य",
+  "kn": "ಸದಸ್ಯರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.language": {
+  "en": "Language and look",
+  "te": "భాష, రూపం",
+  "hi": "भाषा और रूप",
+  "kn": "ಭಾಷೆ ಮತ್ತು ನೋಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.business.name": {
+  "en": "Business",
+  "te": "వ్యాపారం",
+  "hi": "व्यापार",
+  "kn": "ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.business.url": {
+  "en": "URL name",
+  "te": "URL పేరు",
+  "hi": "URL नाम",
+  "kn": "URL ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.business.plan": {
+  "en": "Plan",
+  "te": "ప్లాన్",
+  "hi": "प्लान",
+  "kn": "ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.members.note": {
+  "en": "The people who can open this business, and their role. Adding people comes later.",
+  "te": "ఈ వ్యాపారాన్ని తెరవగల వ్యక్తులు, వారి పాత్ర. మనుషులను చేర్చడం తర్వాత వస్తుంది.",
+  "hi": "इस व्यापार को खोल सकने वाले लोग और उनकी भूमिका। लोगों को जोड़ना बाद में आएगा।",
+  "kn": "ಈ ವ್ಯಾಪಾರವನ್ನು ತೆರೆಯಬಹುದಾದ ಜನರು ಮತ್ತು ಅವರ ಪಾತ್ರ. ಜನರನ್ನು ಸೇರಿಸುವುದು ಮುಂದೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.members.you": {
+  "en": "You",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.language.language": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.language.appearance": {
+  "en": "Appearance",
+  "te": "రూపం",
+  "hi": "रूप",
+  "kn": "ನೋಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.theme.system": {
+  "en": "System",
+  "te": "సిస్టమ్",
+  "hi": "सिस्टम",
+  "kn": "ಸಿಸ್ಟಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.theme.light": {
+  "en": "Light",
+  "te": "లైట్",
+  "hi": "लाइट",
+  "kn": "ಲೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.theme.dark": {
+  "en": "Dark",
+  "te": "డార్క్",
+  "hi": "डार्क",
+  "kn": "ಡಾರ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.whatsapp.title": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.whatsapp.body": {
+  "en": "Would let the app send messages. Today you send them yourself.",
+  "te": "Would let the app send messages. Today you send them yourself.",
+  "hi": "Would let the app send messages. Today you send them yourself.",
+  "kn": "Would let the app send messages. Today you send them yourself.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.email.body": {
+  "en": "Would let the app send quotes by e-mail. Not built.",
+  "te": "Would let the app send quotes by e-mail. Not built.",
+  "hi": "Would let the app send quotes by e-mail. Not built.",
+  "kn": "Would let the app send quotes by e-mail. Not built.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.upi.title": {
+  "en": "UPI payments",
+  "te": "UPI payments",
+  "hi": "UPI payments",
+  "kn": "UPI payments",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.upi.body": {
+  "en": "Would confirm payments automatically. Today you record them.",
+  "te": "Would confirm payments automatically. Today you record them.",
+  "hi": "Would confirm payments automatically. Today you record them.",
+  "kn": "Would confirm payments automatically. Today you record them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.tab.security": {
+  "en": "Security",
+  "te": "Security",
+  "hi": "Security",
+  "kn": "Security",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.tab.privacy": {
+  "en": "Privacy",
+  "te": "Privacy",
+  "hi": "Privacy",
+  "kn": "Privacy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.security.on": {
+  "en": "2-step sign-in is on.",
+  "te": "2-step sign-in is on.",
+  "hi": "2-step sign-in is on.",
+  "kn": "2-step sign-in is on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.security.off": {
+  "en": "2-step sign-in is not set up yet.",
+  "te": "2-step sign-in is not set up yet.",
+  "hi": "2-step sign-in is not set up yet.",
+  "kn": "2-step sign-in is not set up yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.security.open": {
+  "en": "Open the security page",
+  "te": "Open the security page",
+  "hi": "Open the security page",
+  "kn": "Open the security page",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.privacy.erasure": {
+  "en": "Privacy and erasure",
+  "te": "Privacy and erasure",
+  "hi": "Privacy and erasure",
+  "kn": "Privacy and erasure",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.privacy.suppression": {
+  "en": "Suppression keys",
+  "te": "Suppression keys",
+  "hi": "Suppression keys",
+  "kn": "Suppression keys",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "settings.privacy.note": {
+  "en": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "te": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "hi": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "kn": "Only an owner or an admin can open privacy and erasure; only the owner can open the suppression keys.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

@@ -1,0 +1,20 @@
+# Integrations
+Only the price list import exists today. The rest are not built yet.
+- Available
+## Price list (CSV)
+Upload your price list so quotes are priced from it by fixed rules. [Import price list (CSV)](/app/tenants/22222222-2222-2222-2222-222222222222/price-list)
+- Not available yet
+## WhatsApp
+Would let the app send messages. Today you send them yourself.
+- Not available yet
+## E-mail
+Would let the app send quotes by e-mail. Not built.
+- Not available yet
+## UPI payments
+Would confirm payments automatically. Today you record them.
+- Not available yet
+## Calendar
+Would add follow-up reminders to your calendar.
+- Not available yet
+## Accounting
+Would pass orders to your accounting software.

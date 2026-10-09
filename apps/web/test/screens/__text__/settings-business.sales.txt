@@ -1,0 +1,12 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Business and plan"}
+Business
+Demo Silks (synthetic)
+Plan
+Not available yet
+URL name
+demo-silks
+{label="AI usage today"}
+## AI usage today
+AI usage today Not available yet

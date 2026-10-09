@@ -144,3 +144,12 @@ export const btnBad = "inline-flex min-h-12 flex-1 items-center justify-center r
 /** A row of right-aligned figures (an order's total and received), a right-aligned cell, a right-aligned line. */
 export const figureRow = "flex gap-6 text-right";
 export const cellRight = "text-right";
+/** An integration card, its round icon box and its small status badge. */
+export const tileCard = "flex flex-col rounded-xl border border-line bg-surface p-5 shadow-[var(--v2-shadow)]";
+export const tileIcon = "grid size-11 place-items-center rounded-lg bg-surface-2 text-muted";
+export const tileBadge = "rounded-md border px-2 py-0.5 text-sm font-semibold";
+export const tileGrid = "mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3";
+/** One row of the members list, and a value that may be a long address (the URL name). */
+export const memberRow = "flex min-h-12 items-center justify-between gap-3 border-b border-line py-2 last:border-b-0";
+export const breakAll = "break-all font-semibold";
+export const youMark = "ml-2 text-sm font-normal text-muted";
