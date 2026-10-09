@@ -9,7 +9,7 @@ export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 export const OWNER_ONLY: readonly Role[] = ["owner"];
 
-export type IconKey = "today" | "customers" | "orders" | "followups" | "catalogue" | "assistant" | "settings";
+export type IconKey = "today" | "followups" | "leads" | "customers" | "orders" | "catalogue" | "assistant" | "safety";
 
 export type NavItem = {
   id: string;
@@ -18,40 +18,62 @@ export type NavItem = {
   path: string;
   /** The home's records tabs: `?tab=` value that makes this item the current one (and "" = no tab). */
   tab?: string;
+  /** Set on the few daily items that are a tab of the phone's bottom bar: the short word under the icon, and the icon. */
+  bar?: string;
+  barIcon?: IconKey;
   roles: readonly Role[];
 };
-export type NavGroup = { id: string; label: string; icon: IconKey; items: readonly NavItem[] };
+/**
+ * `collapsible`: the group opens and closes (a group with more than three items must be; the test pins that). `defaultOpen`: open until the person closes it
+ * (the group that holds the current page always opens itself). `humanOnly`: the group's name stays English in every language until a person who reads the
+ * language has reviewed it (language track).
+ */
+export type NavGroup = { id: string; label: string; icon: IconKey; items: readonly NavItem[]; collapsible?: boolean; defaultOpen?: boolean; humanOnly?: boolean };
 
+/**
+ * The menu, simplified (Job X, owner feedback 2026-10-09): six top-level entries at most, plain words, the daily groups always open, the rarely used
+ * ones (catalogue and prices, privacy and safety) closed until opened. Every page a role can open is at most two clicks from here. A group a role has
+ * only one item of is drawn as a plain link (see `visibleGroups`). There is no "Your team" entry: there is no page for it yet (docs/plans/members-and-invitations.md).
+ */
 export const NAV: readonly NavGroup[] = [
-  { id: "today", label: "Today", icon: "today", items: [{ id: "today", label: "Today", path: "", tab: "", roles: ALL_ROLES }] },
+  {
+    id: "today",
+    label: "Today",
+    icon: "today",
+    items: [
+      { id: "today", label: "Home", path: "", tab: "", bar: "Today", barIcon: "today", roles: ALL_ROLES },
+      { id: "followups-due", label: "Follow-ups due", path: "/followups", bar: "Follow-ups", barIcon: "followups", roles: WRITERS },
+      { id: "followups-policy", label: "Rules for follow-ups", path: "/followups/policy", roles: WRITERS },
+    ],
+  },
+  {
+    id: "leads",
+    label: "Leads and orders",
+    icon: "orders",
+    items: [
+      { id: "review", label: "Leads to look at", path: "/review", bar: "Leads", barIcon: "leads", roles: ALL_ROLES },
+      { id: "orders", label: "Orders", path: "/orders", bar: "Orders", barIcon: "orders", roles: WRITERS },
+    ],
+  },
   {
     id: "customers",
     label: "Customers",
     icon: "customers",
     items: [
-      { id: "review", label: "Leads to look at", path: "/review", roles: ALL_ROLES },
       { id: "records", label: "Companies and contacts", path: "", tab: "companies", roles: ALL_ROLES },
       { id: "add-customer", label: "Add a customer", path: "/customers/new", roles: WRITERS },
     ],
   },
-  { id: "orders", label: "Quotes and orders", icon: "orders", items: [{ id: "orders", label: "Orders", path: "/orders", roles: WRITERS }] },
-  {
-    id: "followups",
-    label: "Follow-ups",
-    icon: "followups",
-    items: [
-      { id: "followups-due", label: "Due now", path: "/followups", roles: WRITERS },
-      { id: "followups-policy", label: "Rules for follow-ups", path: "/followups/policy", roles: WRITERS },
-    ],
-  },
   {
     id: "catalogue",
-    label: "Catalogue",
+    label: "Catalogue and prices",
     icon: "catalogue",
+    collapsible: true,
     items: [
       { id: "item-types", label: "Item types", path: "/item-types", roles: WRITERS },
       { id: "price-list", label: "Price list", path: "/price-list", roles: ADMINS },
       { id: "add-product", label: "Add a product", path: "/products/new", roles: ADMINS },
+      { id: "quote-policy", label: "Quote policy", path: "/quote-policy", roles: ADMINS },
     ],
   },
   {
@@ -64,11 +86,12 @@ export const NAV: readonly NavGroup[] = [
     ],
   },
   {
-    id: "settings",
-    label: "Settings",
-    icon: "settings",
+    id: "safety",
+    label: "Privacy and safety",
+    icon: "safety",
+    collapsible: true,
+    humanOnly: true,
     items: [
-      { id: "quote-policy", label: "Quote policy", path: "/quote-policy", roles: ADMINS },
       { id: "privacy", label: "Privacy and erasure", path: "/privacy", roles: ADMINS },
       { id: "suppression", label: "Suppression keys", path: "/suppression", roles: OWNER_ONLY },
       { id: "security", label: "Security (your account)", path: "/app/security", roles: ALL_ROLES },
@@ -76,14 +99,29 @@ export const NAV: readonly NavGroup[] = [
   },
 ];
 
-/** The phone's bottom bar: these groups, then "More" with the rest. */
-export const TAB_GROUPS = ["today", "customers", "orders", "followups"] as const;
-
-export type VisibleGroup = { id: string; label: string; icon: IconKey; items: NavItem[] };
+export type VisibleGroup = {
+  id: string;
+  label: string;
+  icon: IconKey;
+  items: NavItem[];
+  /** The group opens and closes (and has at least two items for this role). */
+  collapsible: boolean;
+  defaultOpen: boolean;
+  /** One item only for this role: drawn as a plain link, with no group heading. */
+  flat: boolean;
+};
 
 /** The groups (and, inside them, the items) a role is offered. A group with no visible item is hidden. */
 export function visibleGroups(role: Role): VisibleGroup[] {
-  return NAV.map((g) => ({ id: g.id, label: g.label, icon: g.icon, items: g.items.filter((i) => i.roles.includes(role)) })).filter((g) => g.items.length > 0);
+  return NAV.map((g) => {
+    const items = g.items.filter((i) => i.roles.includes(role));
+    return { id: g.id, label: g.label, icon: g.icon, items, collapsible: !!g.collapsible && items.length > 1, defaultOpen: !!g.defaultOpen, flat: items.length === 1 };
+  }).filter((g) => g.items.length > 0);
+}
+
+/** The daily items that are tabs of the phone's bottom bar (then "More" holds the whole menu), only those the role is offered. */
+export function barItems(role: Role): NavItem[] {
+  return NAV.flatMap((g) => g.items).filter((i) => i.bar && i.roles.includes(role));
 }
 
 /** Where a nav item goes, for a workspace. */
@@ -91,11 +129,6 @@ export function hrefOf(item: NavItem, tenantId: string): string {
   if (item.path.startsWith("/app")) return item.path;
   const base = `/app/tenants/${tenantId}${item.path}`;
   return item.tab ? `${base}?tab=${item.tab}` : base;
-}
-
-/** The first thing a group's tab opens. */
-export function groupHref(group: VisibleGroup, tenantId: string): string {
-  return hrefOf(group.items[0], tenantId);
 }
 
 /** Pages that belong under an item although their path does not start with it (static rules, most specific first). */
@@ -118,7 +151,7 @@ export function workspaceOf(pathname: string): { tenantId: string; rest: string 
 /** The nav item a path belongs to (for the current marker and the way back), or null. */
 export function itemFor(pathname: string, tab: string | null): { group: VisibleGroup | NavGroup; item: NavItem } | null {
   if (pathname === "/app/security" || pathname.startsWith("/app/security/")) {
-    const group = NAV.find((g) => g.id === "settings")!;
+    const group = NAV.find((g) => g.id === "safety")!;
     return { group, item: group.items.find((i) => i.id === "security")! };
   }
   const ws = workspaceOf(pathname);
