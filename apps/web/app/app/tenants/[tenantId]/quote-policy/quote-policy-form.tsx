@@ -5,6 +5,7 @@ import { startTransition, useActionState, useState, type ChangeEvent } from "rea
 
 import type { QuotePolicyState } from "./quote-policy-actions";
 import { EMPTY_VALUES, policyFromForm, type FieldName, type PolicyValues } from "./quote-policy-logic";
+import { alertBox, bodyText, btnMain, fieldHelp, fieldInput, fieldLabel, fieldsetPlain, formCard, formTitle, legendText, link, mutedText, okBox } from "@/components/v2/app/ui";
 
 type Action = (prev: QuotePolicyState, formData: FormData) => Promise<QuotePolicyState>;
 type Props = { action: Action; policyId: string; today: string; minDate: string };
@@ -24,7 +25,7 @@ export function QuotePolicyForm(props: Props) {
     <>
       <QuotePolicyBody key={props.policyId} {...props} onSaved={setSaved} onPress={() => setSaved(null)} />
       {saved && (
-        <p role="status" className="hint">
+        <p role="status" className={okBox}>
           {saved}
         </p>
       )}
@@ -63,80 +64,99 @@ function QuotePolicyBody({ action, policyId, today, minDate, onSaved, onPress }:
         startTransition(() => formAction(data));
       }}
       noValidate
-      className="card"
-      style={{ maxWidth: "36rem" }}
+      className={formCard}
       aria-labelledby="quote-policy-title"
     >
-      <h3 id="quote-policy-title" style={{ margin: 0 }}>
+      <h3 id="quote-policy-title" className={formTitle}>
         Publish a new version
       </h3>
-      <p className="hint">A published version never changes. A new version replaces the one in force from its start date. Every field starts empty on purpose: type the shop&apos;s own numbers.</p>
-      <p className="hint">This page does not have a price range for each item type or a last-price warning yet.</p>
+      <p className={mutedText}>A published version never changes. A new version replaces the one in force from its start date. Every field starts empty on purpose: type the shop&apos;s own numbers.</p>
+      <p className={mutedText}>This page does not have a price range for each item type or a last-price warning yet.</p>
       <input type="hidden" name="policy_id" value={id} />
 
-      <label htmlFor="qp-from">Starts on</label>
-      <input id="qp-from" name="effective_from" type="date" min={minDate} required value={values.effective_from} onChange={change("effective_from")} disabled={pending} />
+      <label htmlFor="qp-from" className={fieldLabel}>
+        Starts on
+      </label>
+      <input id="qp-from" className={fieldInput} name="effective_from" type="date" min={minDate} required value={values.effective_from} onChange={change("effective_from")} disabled={pending} />
 
-      <label htmlFor="qp-valid">Days a quote is valid</label>
-      <input id="qp-valid" name="validity_days" inputMode="numeric" autoComplete="off" required value={values.validity_days} onChange={change("validity_days")} disabled={pending} />
+      <label htmlFor="qp-valid" className={fieldLabel}>
+        Days a quote is valid
+      </label>
+      <input id="qp-valid" className={fieldInput} name="validity_days" inputMode="numeric" autoComplete="off" required value={values.validity_days} onChange={change("validity_days")} disabled={pending} />
 
-      <label htmlFor="qp-new">Advance for a new customer (percent)</label>
-      <input id="qp-new" name="new_advance" inputMode="decimal" autoComplete="off" required value={values.new_advance} onChange={change("new_advance")} disabled={pending} />
+      <label htmlFor="qp-new" className={fieldLabel}>
+        Advance for a new customer (percent)
+      </label>
+      <input id="qp-new" className={fieldInput} name="new_advance" inputMode="decimal" autoComplete="off" required value={values.new_advance} onChange={change("new_advance")} disabled={pending} />
 
-      <label htmlFor="qp-repeat">Advance for a repeat customer (percent)</label>
-      <input id="qp-repeat" name="repeat_advance" inputMode="decimal" autoComplete="off" required value={values.repeat_advance} onChange={change("repeat_advance")} disabled={pending} />
+      <label htmlFor="qp-repeat" className={fieldLabel}>
+        Advance for a repeat customer (percent)
+      </label>
+      <input id="qp-repeat" className={fieldInput} name="repeat_advance" inputMode="decimal" autoComplete="off" required value={values.repeat_advance} onChange={change("repeat_advance")} disabled={pending} />
 
-      <fieldset aria-describedby="qp-net-hint" style={{ border: 0, padding: 0, margin: 0 }}>
-        <legend>Days to pay the balance</legend>
-        <p id="qp-net-hint" className="hint">
+      <fieldset aria-describedby="qp-net-hint" className={fieldsetPlain}>
+        <legend className={legendText}>Days to pay the balance</legend>
+        <p id="qp-net-hint" className={fieldHelp}>
           The balance on a quote is due this many days after the quote date, by the kind of customer.
         </p>
-        <label htmlFor="qp-net-new">New customers (days)</label>
-        <input id="qp-net-new" name="new_net_days" inputMode="numeric" autoComplete="off" required value={values.new_net_days} onChange={change("new_net_days")} disabled={pending} />
+        <label htmlFor="qp-net-new" className={fieldLabel}>
+        New customers (days)
+      </label>
+        <input id="qp-net-new" className={fieldInput} name="new_net_days" inputMode="numeric" autoComplete="off" required value={values.new_net_days} onChange={change("new_net_days")} disabled={pending} />
 
-        <label htmlFor="qp-net-repeat">Repeat customers (days)</label>
-        <input id="qp-net-repeat" name="repeat_net_days" inputMode="numeric" autoComplete="off" required value={values.repeat_net_days} onChange={change("repeat_net_days")} disabled={pending} />
+        <label htmlFor="qp-net-repeat" className={fieldLabel}>
+        Repeat customers (days)
+      </label>
+        <input id="qp-net-repeat" className={fieldInput} name="repeat_net_days" inputMode="numeric" autoComplete="off" required value={values.repeat_net_days} onChange={change("repeat_net_days")} disabled={pending} />
       </fieldset>
 
-      <label htmlFor="qp-gst">GST rate (percent)</label>
-      <input id="qp-gst" name="gst_rate" inputMode="decimal" autoComplete="off" required aria-describedby="qp-gst-hint" value={values.gst_rate} onChange={change("gst_rate")} disabled={pending} />
-      <p id="qp-gst-hint" className="hint">
+      <label htmlFor="qp-gst" className={fieldLabel}>
+        GST rate (percent)
+      </label>
+      <input id="qp-gst" className={fieldInput} name="gst_rate" inputMode="decimal" autoComplete="off" required aria-describedby="qp-gst-hint" value={values.gst_rate} onChange={change("gst_rate")} disabled={pending} />
+      <p id="qp-gst-hint" className={fieldHelp}>
         Added on top of every price typed by hand, from the start date above. A price list keeps the rate of each of its items.
       </p>
 
-      <label htmlFor="qp-credit">Most credit for one repeat customer (rupees)</label>
-      <input id="qp-credit" name="credit_limit" inputMode="decimal" autoComplete="off" required aria-describedby="qp-credit-hint" value={values.credit_limit} onChange={change("credit_limit")} disabled={pending} />
-      <p id="qp-credit-hint" className="hint">
+      <label htmlFor="qp-credit" className={fieldLabel}>
+        Most credit for one repeat customer (rupees)
+      </label>
+      <input id="qp-credit" className={fieldInput} name="credit_limit" inputMode="decimal" autoComplete="off" required aria-describedby="qp-credit-hint" value={values.credit_limit} onChange={change("credit_limit")} disabled={pending} />
+      <p id="qp-credit-hint" className={fieldHelp}>
         A quote for a repeat customer whose balance is above this is marked as needing the Owner&apos;s approval.
       </p>
 
-      <label htmlFor="qp-state">State where the shop is (two capital letters)</label>
-      <input id="qp-state" name="seller_state" autoComplete="off" required aria-describedby="qp-state-hint" value={values.seller_state} onChange={change("seller_state")} disabled={pending} />
-      <p id="qp-state-hint" className="hint">
+      <label htmlFor="qp-state" className={fieldLabel}>
+        State where the shop is (two capital letters)
+      </label>
+      <input id="qp-state" className={fieldInput} name="seller_state" autoComplete="off" required aria-describedby="qp-state-hint" value={values.seller_state} onChange={change("seller_state")} disabled={pending} />
+      <p id="qp-state-hint" className={fieldHelp}>
         The state code on your GST papers. It decides whether a sale is in your state or in another state.
       </p>
 
-      <label htmlFor="qp-discount">Discount ceiling (percent)</label>
-      <input id="qp-discount" name="discount_ceiling" inputMode="decimal" autoComplete="off" required aria-describedby="qp-discount-hint" value={values.discount_ceiling} onChange={change("discount_ceiling")} disabled={pending} />
-      <p id="qp-discount-hint" className="hint">
+      <label htmlFor="qp-discount" className={fieldLabel}>
+        Discount ceiling (percent)
+      </label>
+      <input id="qp-discount" className={fieldInput} name="discount_ceiling" inputMode="decimal" autoComplete="off" required aria-describedby="qp-discount-hint" value={values.discount_ceiling} onChange={change("discount_ceiling")} disabled={pending} />
+      <p id="qp-discount-hint" className={fieldHelp}>
         The most discount, in percent, that a quote line may carry; today no quote line carries a discount, so this number is saved with the policy but changes no quote.
       </p>
 
-      <p>Shipping: none (no courier charge)</p>
+      <p className={bodyText}>Shipping: none (no courier charge)</p>
 
       {error && (
-        <div role="alert" className="error hint">
+        <div role="alert" className={alertBox}>
           <p>{error}</p>
           {showMfa && (
             <p>
-              <Link href="/app/security" className="tap">
+              <Link href="/app/security" className={link}>
                 Open the Security page →
               </Link>
             </p>
           )}
         </div>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Publishing..." : "Publish this version"}
       </button>
     </form>

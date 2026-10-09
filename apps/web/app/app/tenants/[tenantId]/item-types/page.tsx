@@ -6,7 +6,8 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchItemTypes, type ItemType } from "@/lib/api/item-types";
 import { requireUser } from "@/lib/auth/session";
 
-import { ApiDown } from "../followups/page-parts";
+import { ApiDownV2 } from "@/components/v2/app/parts";
+import { backLink, link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
 import { EditItemTypeForm, AddItemTypeForm } from "./item-type-forms";
 import { addItemTypeAction, saveItemTypeAction } from "./item-types-actions";
 import { ItemTypesView } from "./item-types-view";
@@ -33,19 +34,21 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   const back = (
     <p>
-      <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+      <Link href={`/app/tenants/${tenantId}`} className={backLink}>
+        ← {tenant.name}
+      </Link>
     </p>
   );
   if (!READ_ROLES.includes(tenant.role))
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         {back}
-        <h1>Item types</h1>
-        <p className="hint">Item types are shown to owners, admins and sales users.</p>
+        <h1 className={pageH1}>Item types</h1>
+        <p className={mutedText}>Item types are shown to owners, admins and sales users.</p>
       </main>
     );
 
@@ -54,15 +57,15 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
     types = await fetchItemTypes(user.accessToken, tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   const canEdit = EDIT_ROLES.includes(tenant.role);
   const secondFactor = user.aal === "aal2";
   const note =
     canEdit && !secondFactor ? (
-      <p role="note">
+      <p role="note" className={noteBox}>
         Changing item types needs your authenticator app.{" "}
-        <Link href="/app/security" className="tap">
+        <Link href="/app/security" className={link}>
           Set it up on the Security page
         </Link>
         , then sign in again with its code.
@@ -70,9 +73,9 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
     ) : null;
   const edit = canEdit && secondFactor;
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       {back}
-      <p>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
       <ItemTypesView
@@ -81,7 +84,7 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
           edit ? (
             <AddItemTypeForm add={addItemTypeAction.bind(null, tenantId)} />
           ) : canEdit ? null : (
-            <p className="hint">Only an owner or an admin can add or change item types.</p>
+            <p className={mutedText}>Only an owner or an admin can add or change item types.</p>
           )
         }
         editor={

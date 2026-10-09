@@ -4,6 +4,7 @@ import type { ItemType } from "@/lib/api/item-types";
 import { formatRupees } from "@/lib/api/quotes";
 
 import { RANGE_SENTENCE, inListOrder } from "./item-types-logic";
+import { bodyText, dataEditCell, dataEditRow, dataTable, dataTd, dataTdEdit, dataThCol, dataThRow, dataTr, mutedText, pageH1, plainText, summaryLine } from "@/components/v2/app/ui";
 
 const price = (paise: number | null) => (paise === null ? "none" : formatRupees(paise));
 
@@ -16,50 +17,52 @@ export function ItemTypesView({ types, adder, editor }: { types: ItemType[]; add
   const ordered = inListOrder(types);
   return (
     <section aria-labelledby="item-types-heading">
-      <h1 id="item-types-heading">Item types</h1>
-      <p>Item types are the kinds of goods you quote, for example &quot;Type A&quot;. Each line of a quote with typed prices uses one.</p>
-      <p className="hint">{RANGE_SENTENCE}</p>
-      <p className="hint">Changing a price range does not change quotes that are already made.</p>
+      <h1 id="item-types-heading" className={pageH1}>
+        Item types
+      </h1>
+      <p className={bodyText}>Item types are the kinds of goods you quote, for example &quot;Type A&quot;. Each line of a quote with typed prices uses one.</p>
+      <p className={mutedText}>{RANGE_SENTENCE}</p>
+      <p className={mutedText}>Changing a price range does not change quotes that are already made.</p>
       {ordered.length === 0 ? (
-        <p>No item types yet.{editor ? " Add the first one below." : ""}</p>
+        <p className={bodyText}>No item types yet.{editor ? " Add the first one below." : ""}</p>
       ) : (
-        <table aria-label="Item types, in order" className="data-table">
+        <table aria-label="Item types, in order" className={`mt-4 ${dataTable}`}>
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Code</th>
-              <th scope="col">Can be used</th>
-              <th scope="col">Position</th>
-              <th scope="col">Lowest price</th>
-              <th scope="col">Highest price</th>
-              {editor ? <th scope="col">Edit</th> : null}
+              <th scope="col" className={dataThCol}>Name</th>
+              <th scope="col" className={dataThCol}>Code</th>
+              <th scope="col" className={dataThCol}>Can be used</th>
+              <th scope="col" className={dataThCol}>Position</th>
+              <th scope="col" className={dataThCol}>Lowest price</th>
+              <th scope="col" className={dataThCol}>Highest price</th>
+              {editor ? <th scope="col" className={dataThCol}>Edit</th> : null}
             </tr>
           </thead>
           <tbody>
             {ordered.map((type) => (
               <Fragment key={type.id}>
-                <tr>
-                  <th scope="row" className="plain-text">
+                <tr className={dataTr}>
+                  <th scope="row" className={`${dataThRow} ${plainText}`}>
                     {type.name}
                   </th>
-                  <td data-label="Code" className="plain-text">
+                  <td data-label="Code" className={`${dataTd} ${plainText}`}>
                     {type.code}
                   </td>
-                  <td data-label="Can be used">{type.active ? "Yes" : "No, switched off"}</td>
-                  <td data-label="Position">{type.position}</td>
-                  <td data-label="Lowest price">{price(type.min_price_paise)}</td>
-                  <td data-label="Highest price">{price(type.max_price_paise)}</td>
+                  <td data-label="Can be used" className={dataTd}>{type.active ? "Yes" : "No, switched off"}</td>
+                  <td data-label="Position" className={dataTd}>{type.position}</td>
+                  <td data-label="Lowest price" className={dataTd}>{price(type.min_price_paise)}</td>
+                  <td data-label="Highest price" className={dataTd}>{price(type.max_price_paise)}</td>
                   {editor ? (
-                    <td className="edit-cell">
+                    <td className={dataTdEdit}>
                       <details>
-                        <summary className="tap">Edit {type.name}</summary>
+                        <summary className={summaryLine}>Edit {type.name}</summary>
                       </details>
                     </td>
                   ) : null}
                 </tr>
                 {editor ? (
-                  <tr className="edit-row">
-                    <td colSpan={7}>{editor(type)}</td>
+                  <tr className={dataEditRow}>
+                    <td colSpan={7} className={dataEditCell}>{editor(type)}</td>
                   </tr>
                 ) : null}
               </Fragment>

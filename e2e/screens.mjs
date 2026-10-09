@@ -142,6 +142,8 @@ const INTERACTIONS = (d) => [
   ["frame-more", "phone", `${d.T}/orders`, async (page) => page.getByRole("button", { name: "More" }).click()],
   ["frame-switcher", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
   ["frame-switcher-phone", "phone", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["item-types-edit", "desktop", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
+  ["item-types-edit", "phone", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
   ["frame-account", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Your account" }).click()],
 ];
 

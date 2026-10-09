@@ -6,7 +6,10 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuotePolicyVersions, type QuotePolicyVersion } from "@/lib/api/quote-policies";
 import { requireUser } from "@/lib/auth/session";
 
-import { ApiDown, todayInIndia } from "../followups/page-parts";
+import { ApiDownV2 } from "@/components/v2/app/parts";
+import { backLink, link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
+
+import { todayInIndia } from "../followups/page-parts";
 import { publishQuotePolicyAction } from "./quote-policy-actions";
 import { QuotePolicyForm } from "./quote-policy-form";
 import { QuotePolicyView } from "./quote-policy-view";
@@ -32,16 +35,18 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   if (!ROLES.includes(tenant.role))
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         <p>
-          <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+          <Link href={`/app/tenants/${tenantId}`} className={backLink}>
+            ← {tenant.name}
+          </Link>
         </p>
-        <h1>The quote policy</h1>
-        <p className="hint">Only an owner or an admin can see and publish the quote policy.</p>
+        <h1 className={pageH1}>The quote policy</h1>
+        <p className={mutedText}>Only an owner or an admin can see and publish the quote policy.</p>
       </main>
     );
 
@@ -50,7 +55,7 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
     versions = await fetchQuotePolicyVersions(user.accessToken, tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   const today = todayInIndia(new Date());
   // A new version cannot start before today or before the newest published version (the database decides again).
@@ -58,9 +63,9 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
   const minDate = newest > today ? newest : today;
   const form =
     user.aal !== "aal2" ? (
-      <p role="note">
+      <p role="note" className={noteBox}>
         Publishing a quote policy needs your authenticator app.{" "}
-        <Link href="/app/security" className="tap">
+        <Link href="/app/security" className={link}>
           Set it up on the Security page
         </Link>
         , then sign in again with its code.
@@ -69,11 +74,13 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
       <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} />
     );
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+        <Link href={`/app/tenants/${tenantId}`} className={backLink}>
+          ← {tenant.name}
+        </Link>
       </p>
-      <p>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
       <QuotePolicyView versions={versions} today={today} form={form} />
