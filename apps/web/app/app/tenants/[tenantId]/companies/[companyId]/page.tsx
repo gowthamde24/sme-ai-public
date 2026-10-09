@@ -9,7 +9,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
-import { backLink, kvList, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { backLink, kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Company · SME AI Revenue Engine" };
@@ -89,9 +89,6 @@ export default async function CompanyPage({
         </Link>
       </p>
       <h1 className={pageH1}>{company.name}</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
 
       <section aria-labelledby="summary-heading">
         <h2 id="summary-heading" className={pageH2}>Company</h2>

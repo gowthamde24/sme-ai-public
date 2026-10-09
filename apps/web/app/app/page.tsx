@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchMe } from "@/lib/api/client";
-import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, mutedText, pageH1, pageH2, pageMain, rowBetween, warnBox } from "@/components/v2/app/ui";
+import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageH2, pageMain, rowBetween, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { signOut } from "./actions";

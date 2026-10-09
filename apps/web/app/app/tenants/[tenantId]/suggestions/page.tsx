@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { fetchAgentClaims, type ClaimSuggestionOut } from "@/lib/api/agents";
@@ -57,15 +56,7 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className={link}>
-          ← {tenant.name}
-        </Link>
-      </p>
       <h1 className={pageH1}>Review suggestions</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p className={mutedText}>
         An agent only suggests. Each suggestion shows the quote it rests on and where it came from, as plain text. The quote was
         checked by the agent runtime, not by the database. A suggestion counts toward a score only after an owner or admin

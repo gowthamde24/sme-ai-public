@@ -1,6 +1,5 @@
-import Link from "next/link";
 
-import { backLink, bodyText, mutedText, okBox, pageH1, pageH2, pageMain, surface } from "@/components/v2/app/ui";
+import { bodyText, mutedText, okBox, pageH1, pageH2, pageMain, surface } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { EnrolForm, RemoveForm } from "./security-forms";
@@ -20,11 +19,6 @@ export default async function SecurityPage({ searchParams }: PageProps<"/app/sec
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href="/app" className={backLink}>
-          ← Workspaces
-        </Link>
-      </p>
       <h1 className={pageH1}>Security</h1>
       <p className={bodyText}>
         Signed in as {user.email ?? "your account"}. Session: <strong>{user.aal === "aal2" ? "verified with your authenticator" : "password only"}</strong>.

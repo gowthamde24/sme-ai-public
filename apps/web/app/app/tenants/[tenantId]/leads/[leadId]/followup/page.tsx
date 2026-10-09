@@ -13,7 +13,7 @@ import { LeadFollowupView } from "../../../followups/lead-followup-view";
 import { FOLLOWUP_ROLES, NOTHING_SENT } from "../../../followups/page-parts";
 import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { TouchForm } from "../../../followups/touch-form";
-import { backLink, pageMain } from "@/components/v2/app/ui";
+import { backLink, link, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Follow-up · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -70,10 +70,7 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   return (
     <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>← Lead</Link> · <Link href={`/app/tenants/${tenantId}/followups`}>Follow-ups due</Link>
-      </p>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
+        <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>← Lead</Link> · <Link href={`/app/tenants/${tenantId}/followups`} className={link}>Follow-ups due</Link>
       </p>
       <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />

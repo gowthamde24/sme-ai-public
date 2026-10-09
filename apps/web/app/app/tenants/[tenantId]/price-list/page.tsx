@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -7,7 +6,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { commitPriceListAction, previewPriceListAction } from "./price-list-actions";
 import { PriceListImport } from "./price-list-import";
-import { backLink, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
+import { mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Price list · SME AI Revenue Engine" };
@@ -36,26 +35,16 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-    </p>
-  );
   if (tenant.role !== "owner" && tenant.role !== "admin")
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Price list</h1>
         <p className={mutedText}>An owner or admin loads the price list.</p>
       </main>
     );
   return (
     <main className={pageMain}>
-      {back}
       <h1 className={pageH1}>Load a price list</h1>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p role="note" className={noteBox}>
         A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the
         day, never from a person or an assistant.

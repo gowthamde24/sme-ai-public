@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -7,7 +6,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { addProductAction } from "./actions";
 import { ProductForm } from "./product-form";
-import { backLink, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
+import { mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Add a product · SME AI Revenue Engine" };
@@ -33,15 +32,9 @@ export default async function NewProductPage({ params }: PageProps<"/app/tenants
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-    </p>
-  );
   if (!ADMINS.includes(tenant.role))
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Add a product</h1>
         <p>An owner or an admin adds products.</p>
       </main>
@@ -50,11 +43,7 @@ export default async function NewProductPage({ params }: PageProps<"/app/tenants
   const id = crypto.randomUUID();
   return (
     <main className={pageMain}>
-      {back}
       <h1 className={pageH1}>Add a product</h1>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p className={mutedText}>A product is a saree type you sell. No price is set here: prices are loaded on the price-list page, or typed for each quote.</p>
       <ProductForm key={id} action={addProductAction.bind(null, tenantId)} tenantId={tenantId} id={id} />
     </main>

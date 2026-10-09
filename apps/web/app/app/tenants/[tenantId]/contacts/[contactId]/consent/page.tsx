@@ -43,7 +43,6 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
   if (!WRITERS.includes(tenant.role))
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Record consent</h1>
         <p className={bodyText}>An owner, an admin or a sales person records consent.</p>
       </main>
@@ -59,10 +58,9 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
   }
   return (
     <main className={pageMain}>
-      {back}
       <h1 className={pageH1}>Record consent</h1>
       <p className={bodyText}>
-        For <strong>{contact.full_name}</strong>. Your role: <strong>{tenant.role}</strong>
+        For <strong>{contact.full_name}</strong>.
       </p>
       <section aria-labelledby="now-heading">
         <h2 id="now-heading" className={pageH2}>What is recorded now</h2>

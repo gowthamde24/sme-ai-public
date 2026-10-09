@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -9,7 +8,7 @@ import { requireUser } from "@/lib/auth/session";
 import { LocalTime } from "../../../local-time";
 import { backfillKeysAction } from "./actions";
 import { BackfillForm } from "./suppression-form";
-import { alertBox, backLink, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { alertBox, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Suppression keys · SME AI Revenue Engine" };
@@ -35,15 +34,9 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  const back = (
-    <p>
-      <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-    </p>
-  );
   if (tenant.role !== "owner")
     return (
       <main className={pageMain}>
-        {back}
         <h1 className={pageH1}>Suppression keys</h1>
         <p>Only the owner records suppression keys.</p>
       </main>
@@ -62,11 +55,7 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
 
   return (
     <main className={pageMain}>
-      {back}
       <h1 className={pageH1}>Suppression keys</h1>
-      <p>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p className={mutedText}>
         A suppression key lets the system remember that a person asked not to be contacted, even after their details are erased. A contact without a key can never receive a follow-up draft. Contacts made
         before the key was set up, or straight through the database, have none until you record them here. Nothing is sent to anyone, and no key or address is shown on this page.

@@ -15,7 +15,7 @@ import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
-import { backLink, bodyText, kvList, link, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { backLink, bodyText, kvList, link, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
@@ -113,9 +113,6 @@ export default async function LeadPage({
         <Link href={`/app/tenants/${tenantId}?tab=leads`} className={backLink}>← {tenant.name}</Link>
       </p>
       <h1 className={pageH1}>Lead</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       {WRITE_ROLES.includes(tenant.role) ? (
         <p>
           <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup`} className={link}>

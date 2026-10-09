@@ -10,7 +10,7 @@ import {
   isCanonicalUuid,
 } from "@/lib/api/crm";
 import { fetchDataPolicy } from "@/lib/api/erasure";
-import { alertBox, backLink, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, linkRow, mutedInline, mutedText, pageH1, pageH2, pageMain, rowLink, spaceTop, tabLink, tabLinkOn, tabRow, warnBox } from "@/components/v2/app/ui";
+import { alertBox, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, pageH1, pageH2, pageMain, spaceTop, tabLink, tabLinkOn, tabRow, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
@@ -94,15 +94,7 @@ export default async function TenantPage({
 
   return (
     <main className={pageMain}>
-        <p>
-          <Link href="/app" className={backLink}>
-            ← Workspaces
-          </Link>
-        </p>
         <h1 className={pageH1}>{tenant.name}</h1>
-        <p className={mutedText}>
-          Your role: <strong>{tenant.role}</strong>
-        </p>
 
         {syntheticOnly && (
           <p role="note" className={warnBox}>
@@ -114,127 +106,6 @@ export default async function TenantPage({
 
         {/* The set-up checklist of the business-setup plan (12.1) goes here: owners and admins only, until done. Its own ticket: until it ships this slot draws nothing. */}
 
-        <nav aria-label="Lead actions" className={linkRow}>
-          <Link
-            href={`/app/tenants/${tenantId}/review`}
-                className={rowLink}
-          >
-            Lead Review Queue →
-          </Link>
-          <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-          <Link
-            href={`/app/tenants/${tenantId}/suggestions`}
-                className={rowLink}
-          >
-            Review suggestions →
-          </Link>
-          <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-          <Link
-            href={`/app/tenants/${tenantId}/agents`}
-                className={rowLink}
-          >
-            Agents →
-          </Link>
-          {tenant.role !== "viewer" && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/orders`}
-                className={rowLink}
-              >
-                Orders →
-              </Link>
-            </>
-          )}
-          {tenant.role !== "viewer" && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/followups`}
-                className={rowLink}
-              >
-                Follow-ups →
-              </Link>
-            </>
-          )}
-          {(tenant.role === "owner" || tenant.role === "admin") && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/price-list`}
-                className={rowLink}
-              >
-                Price list →
-              </Link>
-            </>
-          )}
-          {tenant.role !== "viewer" && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/item-types`}
-                className={rowLink}
-              >
-                Item types →
-              </Link>
-            </>
-          )}
-          {(tenant.role === "owner" || tenant.role === "admin") && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/quote-policy`}
-                className={rowLink}
-              >
-                Quote policy →
-              </Link>
-            </>
-          )}
-          {(tenant.role === "owner" || tenant.role === "admin") && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/privacy`}
-                className={rowLink}
-              >
-                Privacy →
-              </Link>
-            </>
-          )}
-          {(tenant.role === "owner" || tenant.role === "admin" || tenant.role === "sales") && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/customers/new`}
-                className={rowLink}
-              >
-                Add a customer →
-              </Link>
-            </>
-          )}
-          {(tenant.role === "owner" || tenant.role === "admin") && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/products/new`}
-                className={rowLink}
-              >
-                Add a product →
-              </Link>
-            </>
-          )}
-          {tenant.role === "owner" && (
-            <>
-              <span aria-hidden="false" className={mutedInline}>{" · "}</span>
-              <Link
-                href={`/app/tenants/${tenantId}/suppression`}
-                className={rowLink}
-              >
-                Suppression keys →
-              </Link>
-            </>
-          )}
-        </nav>
 
       <nav aria-label="Records" className={tabRow}>
         {ENTITY_KEYS.map((key) => (

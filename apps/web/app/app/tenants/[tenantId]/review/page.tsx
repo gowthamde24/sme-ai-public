@@ -12,7 +12,7 @@ import {
   type ScoreBand,
 } from "@/lib/api/leads";
 import { Pill } from "@/components/v2/app/parts";
-import { alertBox, backLink, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH1, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
+import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH1, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { FactorBreakdown } from "./factor-breakdown";
@@ -109,11 +109,6 @@ export default async function ReviewQueuePage({
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className={backLink}>
-          ← Workspace
-        </Link>
-      </p>
 
       <div className={rowBetween}>
         <div>

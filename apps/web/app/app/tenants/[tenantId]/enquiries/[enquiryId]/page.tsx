@@ -112,9 +112,6 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
         </Link>
       </p>
       <h1 className={pageH1}>Enquiry</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       {notice ? (
         <p role="status" className={noteBox}>
           {notice}

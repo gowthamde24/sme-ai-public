@@ -24,7 +24,7 @@ import {
 } from "./actions";
 import { CostPanel } from "./cost-panel";
 import { AgentToggleForm, CancelRunForm, StartResearchForm, StartRunForm } from "./agent-forms";
-import { alertBox, backLink, bodyText, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { alertBox, bodyText, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Agents · SME AI Revenue Engine" };
@@ -92,13 +92,7 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
-      </p>
       <h1 className={pageH1}>Agents</h1>
-      <p className={mutedText}>
-        Your role: <strong>{tenant.role}</strong>
-      </p>
       <p className={mutedText}>
         An agent only suggests. Everything it writes is marked &quot;agent suggestion, unreviewed&quot; until an owner or admin
         accepts it, and nothing it writes changes a score before that.
