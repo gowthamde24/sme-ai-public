@@ -7,10 +7,9 @@ import { ApiDownV2, NotShownV2, PageTop, Pill } from "@/components/v2/app/parts"
 import { btnMain, cellRight, pageMain, table, tableWrap, td, th } from "@/components/v2/app/ui";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { OUTCOME_LABELS, formatDate, formatRupees } from "@/lib/api/quotes";
+import { OUTCOME_LABELS, fetchQuotes, formatDate, formatRupees } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
 
-import { fetchQuoteList } from "./quote-list-data";
 
 export const metadata = { title: "Quotes · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -19,7 +18,7 @@ export const dynamic = "force-dynamic";
 const TONE = { draft: "neutral", approved: "brand", rejected: "red", withdrawn: "amber", superseded: "neutral" } as const;
 
 /**
- * /app/tenants/[tenantId]/quotes: the workspace's quotes, newest first (GET /quotes, the newest 50). Each row opens the enquiry the quote belongs to, where it is checked and approved.
+ * /app/tenants/[tenantId]/quotes: the workspace's quotes, newest first (`fetchQuotes`, the newest 50, each with the customer's name and city). Each row opens the enquiry the quote belongs to, where it is checked and approved.
  * A quote's price comes from the price list by fixed rules; the list shows what the API says, nothing more. A viewer sees none (the API refuses them too).
  */
 export default async function QuotesPage({ params }: PageProps<"/app/tenants/[tenantId]/quotes">) {
@@ -38,7 +37,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
 
   let quotes;
   try {
-    quotes = await fetchQuoteList(user.accessToken, tenantId);
+    quotes = await fetchQuotes(user.accessToken, tenantId, 50);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     return <ApiDownV2 />;
@@ -80,7 +79,10 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
                       Quote {q.quote_no}
                     </Link>
                   </td>
-                  <td className={td}>{q.customer_kind === "repeat" ? "Repeat customer" : "New customer"}</td>
+                  <td className={td}>
+                    <span className="block font-medium">{q.customer ?? "A customer"}</span>
+                    <span className="block text-sm text-muted">{[q.city, q.customer_kind === "repeat" ? "Repeat customer" : "New customer"].filter(Boolean).join(" · ")}</span>
+                  </td>
                   <td className={`${td} ${cellRight} font-semibold tabular-nums`}>{formatRupees(q.total_paise)}</td>
                   <td className={`${td} text-muted`}>{formatDate(q.valid_until)}</td>
                   <td className={td}>
