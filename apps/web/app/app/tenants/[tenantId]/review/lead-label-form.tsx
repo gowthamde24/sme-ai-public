@@ -9,6 +9,8 @@ import {
   type LeadLabelReason,
 } from "@/lib/api/leads";
 
+import { alertBox, btnBad, btnGood, btnMaybe, btnQuiet, formInline, hintInline, okBox, rowWrap, selectInline } from "@/components/v2/app/ui";
+
 import { labelLeadAction, type LabelActionState } from "./actions";
 
 interface LeadLabelFormProps {
@@ -37,17 +39,18 @@ export function LeadLabelForm({
   );
 
   return (
-    <form action={formAction} className="review-actions">
+    <form action={formAction} className={formInline}>
       <input type="hidden" name="label_id" value={labelId} />
       <input type="hidden" name="label" value={selectedLabel} />
 
       {selectedLabel === "bad" && (
-        <div className="row" style={{ marginRight: "0.5rem" }}>
-          <label htmlFor={`reason-${leadId}`} className="hint">
+        <div className={rowWrap}>
+          <label htmlFor={`reason-${leadId}`} className={hintInline}>
             Reason:
           </label>
           <select
             id={`reason-${leadId}`}
+            className={selectInline}
             name="reason_code"
             value={reasonCode}
             onChange={(e) => setReasonCode(e.target.value)}
@@ -63,10 +66,10 @@ export function LeadLabelForm({
         </div>
       )}
 
-      <div className="row">
+      <div className={rowWrap}>
         <button
           type="submit"
-          className="button-good"
+          className={btnGood}
           disabled={isPending}
           onClick={() => setSelectedLabel("good")}
           aria-pressed={currentLabel === "good"}
@@ -76,7 +79,7 @@ export function LeadLabelForm({
 
         <button
           type="submit"
-          className="button-maybe"
+          className={btnMaybe}
           disabled={isPending}
           onClick={() => setSelectedLabel("maybe")}
           aria-pressed={currentLabel === "maybe"}
@@ -87,7 +90,7 @@ export function LeadLabelForm({
         {selectedLabel !== "bad" ? (
           <button
             type="button"
-            className="button-bad"
+            className={btnBad}
             disabled={isPending}
             onClick={() => setSelectedLabel("bad")}
             aria-pressed={currentLabel === "bad"}
@@ -97,7 +100,7 @@ export function LeadLabelForm({
         ) : (
           <button
             type="submit"
-            className="button-bad"
+            className={btnBad}
             disabled={isPending}
           >
             {isPending ? "Saving..." : "Confirm Bad"}
@@ -107,7 +110,7 @@ export function LeadLabelForm({
         {selectedLabel === "bad" && (
           <button
             type="button"
-            className="secondary"
+            className={btnQuiet}
             disabled={isPending}
             onClick={() => setSelectedLabel("")}
           >
@@ -117,12 +120,12 @@ export function LeadLabelForm({
       </div>
 
       {state?.error && (
-        <p role="alert" className="error hint">
+        <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
       {state?.ok && state?.message && (
-        <p role="status" className="hint" style={{ color: "#16a34a" }}>
+        <p role="status" className={okBox}>
           {state.message}
         </p>
       )}
