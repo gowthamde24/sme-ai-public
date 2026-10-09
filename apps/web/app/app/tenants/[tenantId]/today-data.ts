@@ -1,5 +1,5 @@
 import { NOTHING_TODAY, type TodayData } from "@/components/v2/app/today/types";
-import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import { ApiAuthError } from "@/lib/api/client";
 import { fetchMembers, fetchOrders, moneyHeld, type Order } from "@/lib/api/orders";
 
 const PAGE = 50; // the API's largest page
@@ -30,10 +30,8 @@ export async function readToday(accessToken: string, tenantId: string): Promise<
       data.cards.money_held_paise = orders.reduce((sum, o) => sum + moneyHeld(o), 0);
     }
   } catch (error) {
+    // a refusal, a contract error or a network failure: the two cards stay "Not available yet"
     if (error instanceof ApiAuthError) throw error;
-    if (!(error instanceof ApiRequestError)) {
-      /* a contract error or a network failure: the two cards stay "Not available yet" */
-    }
   }
   return data;
 }
