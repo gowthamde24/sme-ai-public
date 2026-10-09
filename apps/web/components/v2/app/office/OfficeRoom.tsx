@@ -11,7 +11,7 @@ import { webglAvailable } from "./scene/webgl";
 import { OfficeStage } from "./OfficeStage";
 
 /** One helper as the room and the list draw it: the API's row (`getAgentsStatus()`), and the "how long ago" worked out on the server so the first paint and the hydrated page agree. */
-export type RoomRow = { agent: AgentId; state: "idle" | "working" | "switched_off" | "not_available"; job: string; event: { text: string; ago: string; at: string } | null };
+export type RoomRow = { agent: AgentId; state: "idle" | "working" | "switched_off" | "not_available"; job: string; event: { text: string; ago: string; at: string; /** The page the event is about, inside this workspace; null = it has none (no link). */ href?: string | null } | null };
 /** The words of the screen in the person's language, resolved by the server (this file holds no dictionary: i18n/app.ts is server only). */
 export type Words = Readonly<Record<string, string>>;
 
@@ -160,7 +160,7 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
                 {feed.map((r) => (
                   <li key={r.agent} className="flex min-h-14 flex-col justify-center py-2">
                     <p className="text-sm text-muted">{`${r.event!.ago} · ${w(`agent.${r.agent}`)}`}</p>
-                    <p className="text-base">{r.event!.text}</p>
+                    {r.event!.href ? <Link href={r.event!.href} prefetch={false} className="inline-flex min-h-11 items-center text-base font-medium text-brand-text underline-offset-2 hover:underline">{r.event!.text}</Link> : <p className="text-base">{r.event!.text}</p>}
                   </li>
                 ))}
               </ol>
@@ -180,7 +180,14 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
                 <h3 id="latest-heading" className="mt-3 text-sm font-semibold">
                   {w("office.latest")}
                 </h3>
-                <p className="mt-1 text-base">{chosen.event ? `${chosen.event.text} · ${chosen.event.ago}` : w("office.noevents")}</p>
+                {chosen.event?.href ? (
+                  <p className="mt-1 text-base">
+                    <Link href={chosen.event.href} prefetch={false} className="inline-flex min-h-11 items-center font-medium text-brand-text underline-offset-2 hover:underline">{chosen.event.text}</Link>
+                    {` · ${chosen.event.ago}`}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-base">{chosen.event ? `${chosen.event.text} · ${chosen.event.ago}` : w("office.noevents")}</p>
+                )}
               </>
             ) : (
               <p id="latest-heading" className="flex items-start gap-3 text-base text-muted">

@@ -21,7 +21,7 @@ const WORD_KEYS = [
  * each says so, on its tag and its card. The chosen helper is `?agent=` (a real link). "Runs and cost" is the existing page of agent runs. The server draws the List; OfficeRoom (client)
  * decides, on the device, whether the 3D view is the first view and loads three.js only then.
  */
-export function OfficeView({ agents, selected, base, t }: { agents: AgentRow[] | null; selected: string | null; base: string; t: T }) {
+export function OfficeView({ agents, selected, base, t, links = {} }: { agents: AgentRow[] | null; selected: string | null; base: string; t: T; links?: Readonly<Record<string, string>> }) {
   if (agents === null) {
     return (
       <div data-screen="office">
@@ -43,7 +43,7 @@ export function OfficeView({ agents, selected, base, t }: { agents: AgentRow[] |
     );
   }
   const words: Words = Object.fromEntries(WORD_KEYS.map((k) => [k, t(k)]));
-  const rows: RoomRow[] = agents.map((a) => ({ agent: a.agent, state: a.state, job: a.job, event: a.last_event ? { text: a.last_event.text, ago: ago(a.last_event.at), at: a.last_event.at } : null }));
+  const rows: RoomRow[] = agents.map((a) => ({ agent: a.agent, state: a.state, job: a.job, event: a.last_event ? { text: a.last_event.text, ago: ago(a.last_event.at), at: a.last_event.at, href: links[a.agent] ?? null } : null }));
   const chosen = selected !== null && (ALL_AGENT_IDS as readonly string[]).includes(selected) ? (selected as AgentId) : null;
   return <OfficeRoom rows={rows} selected={chosen} base={base} words={words} />;
 }

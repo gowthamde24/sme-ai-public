@@ -171,6 +171,18 @@ describe("OfficeRoom: only the API's state", () => {
     const items = within(feed).getAllByRole("listitem");
     expect(items.map((i) => i.textContent)).toEqual(["5m · Quote WriterPrepared quote 3", "1h · Order DeskChecked an advance", "2d · ResearcherRead a public page"]);
   });
+  it("an event with a page is a link in the feed and in the panel; one without is plain text", () => {
+    const r = rows({
+      quote_writer: { event: { text: "Prepared quote 3", ago: "5m", at: at(5), href: "/app/tenants/T/enquiries/E?quote=Q" } },
+      main: { event: { text: "Answered a question", ago: "9m", at: at(9), href: null } },
+    });
+    room(r, "quote_writer");
+    const feed = screen.getByRole("heading", { name: "Event feed" }).closest("section")!;
+    expect(within(feed).getByRole("link", { name: "Prepared quote 3" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E?quote=Q");
+    expect(within(feed).getByText("Answered a question").closest("a")).toBeNull();
+    const panel = screen.getByRole("heading", { level: 2, name: "Quote Writer" }).closest("section")!;
+    expect(within(panel).getByRole("link", { name: "Prepared quote 3" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E?quote=Q");
+  });
   it("with no event at all the feed says so; it invents none", () => {
     room(rows());
     expect(within(screen.getByRole("heading", { name: "Event feed" }).closest("section")!).getByText("No events yet.")).toBeInTheDocument();

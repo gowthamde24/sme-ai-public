@@ -94,8 +94,14 @@ describe("TodayView", () => {
     const needs = screen.getByRole("heading", { name: "Needs you" });
     expect(ask.compareDocumentPosition(needs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the box comes first
   });
-  it("with the Main agent idle or working but no answer stream yet, the box still says 'Not available yet'; with its switch off it says 'Switched off'", () => {
+  it("the box is live when the Main agent is idle or working; 'Switched off' when its switch is off; 'Not available yet' when it is not built or cannot be read", () => {
     view({ ...full, team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }] });
+    expect(screen.getByRole("region", { name: "Ask your team" })).toHaveAttribute("data-ask", "live");
+    cleanup();
+    view({ ...full, team: [{ agent: "main", state: "working", job: "Answers.", last_event: null }] });
+    expect(screen.getByRole("region", { name: "Ask your team" })).toHaveAttribute("data-ask", "live");
+    cleanup();
+    view({ ...full, team: [{ agent: "main", state: "not_available", job: "Answers.", last_event: null }] });
     expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Not available yet")).toBeInTheDocument();
     cleanup();
     view({ ...full, team: [{ agent: "main", state: "switched_off", job: "Answers.", last_event: null }] });

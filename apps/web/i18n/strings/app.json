@@ -688,9 +688,9 @@
  },
  "office.switchedoff": {
   "en": "Switched off",
-  "te": "ఆపివేయబడింది",
+  "te": "ఆఫ్‌లో ఉంది",
   "hi": "बंद है",
-  "kn": "ಆಫ್ ಮಾಡಲಾಗಿದೆ",
+  "kn": "ಆಫ್ ಆಗಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1260,17 +1260,6 @@
    "kn": "draft"
   }
  },
- "office.switchedoff": {
-  "en": "Switched off",
-  "te": "ఆఫ్‌లో ఉంది",
-  "hi": "बंद है",
-  "kn": "ಆಫ್ ಆಗಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "office.view3d": {
   "en": "3D view",
   "te": "3D వ్యూ",
@@ -1648,5 +1637,94 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "ask.err.cost": {
+  "en": "Today's AI spending limit has been reached. Try again tomorrow.",
+  "te": "ఈ రోజు AI ఖర్చు పరిమితి చేరుకుంది. రేపు మళ్లీ ప్రయత్నించండి.",
+  "hi": "आज की AI खर्च सीमा पूरी हो गई है। कल फिर कोशिश करें।",
+  "kn": "ಇಂದಿನ AI ಖರ್ಚು ಮಿತಿ ತಲುಪಿದೆ. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.err.limit": {
+  "en": "Too many questions just now. Wait a little and ask again.",
+  "te": "ఇప్పుడు చాలా ప్రశ్నలు అడిగారు. కొంచెం ఆగి మళ్లీ అడగండి.",
+  "hi": "अभी बहुत सारे सवाल हो गए हैं। थोड़ा रुककर फिर पूछें।",
+  "kn": "ಈಗ ಹಲವು ಪ್ರಶ್ನೆಗಳಾಗಿವೆ. ಸ್ವಲ್ಪ ಕಾಯ್ದು ಮತ್ತೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.err.role": {
+  "en": "Your role cannot ask the team.",
+  "te": "మీ పాత్రతో బృందాన్ని అడగలేరు.",
+  "hi": "आपकी भूमिका से टीम से सवाल नहीं पूछा जा सकता।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರದಿಂದ ತಂಡವನ್ನು ಕೇಳಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.machine": {
+  "en": "Written by a machine",
+  "te": "యంత్రం రాసింది",
+  "hi": "मशीन ने लिखा",
+  "kn": "ಯಂತ್ರ ಬರೆದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.gloss": {
+  "en": "In English:",
+  "te": "ఇంగ్లీషులో:",
+  "hi": "अंग्रेज़ी में:",
+  "kn": "ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.noscreen": {
+  "en": "Nothing was sent. No screen approves this reply yet.",
+  "te": "Nothing was sent. No screen approves this reply yet.",
+  "hi": "Nothing was sent. No screen approves this reply yet.",
+  "kn": "Nothing was sent. No screen approves this reply yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.kind.reply": {
+  "en": "Customer reply",
+  "te": "కస్టమర్‌కు సమాధానం",
+  "hi": "ग्राहक को जवाब",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.kind.enquiry": {
+  "en": "Enquiry",
+  "te": "ఎంక్వైరీ",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

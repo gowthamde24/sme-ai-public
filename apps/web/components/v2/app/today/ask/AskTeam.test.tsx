@@ -155,7 +155,7 @@ describe("AskTeam: asking", () => {
 
 describe("AskTeam: drafts and what the answer may link to", () => {
   it("a draft is a Draft card whose Approve opens the screen that decides, with the line saying nothing is approved from here", async () => {
-    box(playing([{ type: "draft", id: "q1", kind: "quote", title: "Quote for Pooja Sarees", summary: "5 sarees, ₹65,625.", href: `${B}/enquiries/E?quote=Q` }, { type: "draft", id: "f1", kind: "followup", title: "Follow-up to Meera", summary: "A reminder.", href: `${B}/leads/L` }, { type: "done" }]));
+    box(playing([{ type: "draft", id: "q1", kind: "quote", title: "Quote for Pooja Sarees", summary: "5 sarees, ₹65,625.", href: `${B}/enquiries/E?quote=Q` }, { type: "draft", id: "f1", kind: "followup_draft", title: "Follow-up to Meera", summary: "A reminder.", href: `${B}/leads/L` }, { type: "done" }]));
     ask("x");
     const card = await screen.findByRole("article", { name: "Quote for Pooja Sarees" });
     expect(within(card).getByText("Draft")).toBeInTheDocument();
@@ -202,6 +202,58 @@ describe("AskTeam: drafts and what the answer may link to", () => {
     expect(insideWorkspace(`${B}#needs-you`, B)).toBe(`${B}#needs-you`);
     for (const bad of ["", "https://x.test/", `${B}/../x`, `${B}/%2e%2e/x`.replace("%2e%2e", ".."), "//evil.test/app/tenants/T/x", `${B}\\x`, `${B}/x\n`, `/app/tenants/TT/x`, `${B}x/y`, "x".repeat(400)]) expect(insideWorkspace(bad, B), bad).toBeNull();
     expect(insideWorkspace(undefined as never, B)).toBeNull();
+  });
+});
+
+describe("AskTeam: the real Main agent's shapes (Job AG)", () => {
+  it("a source with no screen of its own is a plain label, not a link", async () => {
+    box(playing([{ type: "text", delta: "Ok." }, { type: "source", label: "Pooja Sarees (company)", href: null }, { type: "source", label: "Order 1", href: `${B}/orders/O1` }, { type: "done" }]));
+    ask("x");
+    await screen.findByRole("link", { name: "Order 1" });
+    expect(screen.getByText("Pooja Sarees (company)").closest("a")).toBeNull();
+  });
+  it("a customer reply shows the words in the customer's language, the English meaning, the machine label, and NO Approve link when no screen approves it", async () => {
+    box(playing([{ type: "draft", id: "r1", kind: "reply_draft", title: "Reply draft (machine-written)", summary: "నమస్కారం, మీ ఎంక్వైరీకి ధన్యవాదాలు.", href: null, language: "te", gloss: "Hello, thank you for your enquiry.", machine: true }, { type: "done" }]));
+    ask("x");
+    const card = await screen.findByRole("article", { name: "Reply draft (machine-written)" });
+    expect(within(card).getByText("నమస్కారం, మీ ఎంక్వైరీకి ధన్యవాదాలు.")).toHaveAttribute("lang", "te");
+    expect(within(card).getByText(/Hello, thank you for your enquiry\./)).toBeInTheDocument();
+    expect(within(card).getByText("In English:")).toBeInTheDocument();
+    expect(within(card).getByText("Written by a machine")).toBeInTheDocument();
+    expect(within(card).getByText("Customer reply")).toBeInTheDocument();
+    expect(within(card).getByText("Draft")).toBeInTheDocument();
+    expect(within(card).queryByRole("link")).toBeNull();
+    expect(within(card).getByText("Nothing was sent. No screen approves this reply yet.")).toBeInTheDocument();
+  });
+  it("a follow-up draft and an enquiry draft each say what they are and open the screen that decides", async () => {
+    box(playing([{ type: "draft", id: "f", kind: "followup_draft", title: "Follow-up", summary: "s", href: `${B}/leads/L` }, { type: "draft", id: "e", kind: "enquiry", title: "Enquiry", summary: "s", href: `${B}/enquiries/E` }, { type: "done" }]));
+    ask("x");
+    const f = await screen.findByRole("article", { name: "Follow-up" });
+    expect(within(f).getByText("Follow-up draft")).toBeInTheDocument();
+    expect(within(f).getByRole("link", { name: /Approve/ })).toHaveAttribute("href", `${B}/leads/L`);
+    expect(within(screen.getByRole("article", { name: "Enquiry" })).getByText("Enquiry", { selector: "span" })).toBeInTheDocument();
+  });
+  it.each([
+    ["cost_cap_reached", "Today's AI spending limit has been reached. Try again tomorrow."],
+    ["run_limit_reached", "Too many questions just now. Wait a little and ask again."],
+    ["forbidden", "Your role cannot ask the team."],
+    ["agents_disabled", "Switched off"],
+    ["something_else", "The answer could not be completed. Nothing was changed."],
+    [undefined, "The answer could not be completed. Nothing was changed."],
+  ])("an error with code %s says its own fixed sentence", async (code, words) => {
+    box(playing([{ type: "error", code }]));
+    ask("x");
+    expect(await screen.findByRole("alert")).toHaveTextContent(words);
+  });
+  it("the box asks the workspace's own route by default (the browser never holds the API token)", async () => {
+    const fetcher = vi.fn(async () => new Response('{"type":"text","delta":"From the route."}\n{"type":"done"}\n', { headers: { "Content-Type": "application/x-ndjson" } }));
+    vi.stubGlobal("fetch", fetcher);
+    render(<AskTeam lang="en" base={B} words={WORDS} availability="live" />);
+    ask("What needs me today?");
+    await screen.findByText("From the route.");
+    const calls = fetcher.mock.calls as unknown as [string, RequestInit][];
+    expect(calls[0][0]).toBe(`${B}/ask`);
+    expect(String((calls[0][1].headers as Record<string, string>).Authorization)).toBe("undefined");
   });
 });
 
