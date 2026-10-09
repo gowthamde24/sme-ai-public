@@ -1,11 +1,10 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { SECOND_FACTOR_EVENTS, eventsOffered, fetchMembers, fetchOrder, type Member, type OrderDetail } from "@/lib/api/orders";
-import { ApiDownV2 } from "@/components/v2/app/parts";
-import { backLink, mutedText, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2, BackLink } from "@/components/v2/app/parts";
+import { mutedText, pageMain } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { EventForm } from "../event-form";
@@ -84,11 +83,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
     );
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}/orders`} className={backLink}>
-          ← Orders
-        </Link>
-      </p>
+      <BackLink href={`/app/tenants/${tenantId}/orders`} label="All orders" />
       <OrderView tenantId={tenantId} order={order} members={members} forms={forms} />
     </main>
   );

@@ -89,14 +89,21 @@ describe("/app/tenants/[tenantId]/enquiries/[enquiryId]", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(/Could not load this from the API/);
   });
 
+  it("has the way back to the quotes at the top, and the link to the lead beside it", async () => {
+    render(await EnquiryPage(props()));
+    expect(screen.getByRole("link", { name: "All quotes" })).toHaveAttribute("href", expect.stringMatching(/^\/app\/tenants\/[0-9a-f-]+\/quotes$/));
+    expect(screen.getByRole("link", { name: "The lead" })).toHaveAttribute("href", expect.stringMatching(/\/leads\/[0-9a-f-]+$/));
+  });
+
   it("shows the customer's text as plain text with the cited words marked, and hostile text builds nothing", async () => {
     const { container } = render(await EnquiryPage(props()));
     expect(screen.getByTestId("enquiry-text").textContent).toBe(enquiry.body);
-    expect(container.querySelector("script, img, iframe, svg")).toBeNull();
-    // only OUR two links (the back link and the stored-questions page): nothing from the text or the fields became a link
+    expect(container.querySelector("script, img, iframe")).toBeNull();
+    expect(screen.getByTestId("enquiry-text").querySelector("svg")).toBeNull(); // the way back has an arrow icon (ours); the customer's text builds none
+    // only OUR three links (the way back to the quotes, the lead, and the stored-questions page): nothing from the text or the fields became a link
     const hrefs = Array.from(container.querySelectorAll("a")).map((a) => a.getAttribute("href"));
-    expect(hrefs).toHaveLength(2);
-    expect(hrefs[1]).toMatch(/^\/app\/tenants\/[0-9a-f-]+\/requirements\/[0-9a-f-]+\/questions$/);
+    expect(hrefs).toHaveLength(3);
+    expect(hrefs[2]).toMatch(/^\/app\/tenants\/[0-9a-f-]+\/requirements\/[0-9a-f-]+\/questions$/);
     expect(Array.from(container.querySelectorAll("mark")).map((m) => m.textContent)).toContain("20 kanjivaram");
     expect(screen.getAllByText(HOSTILE, { exact: false }).length).toBeGreaterThan(0);
   });

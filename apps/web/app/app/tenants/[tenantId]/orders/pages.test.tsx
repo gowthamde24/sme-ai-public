@@ -98,6 +98,11 @@ describe("the orders list", () => {
 });
 
 describe("the order page", () => {
+  it("has the way back to the list at the top: \"All orders\"", async () => {
+    render(await OrderPage(orderProps()));
+    expect(screen.getByRole("link", { name: "All orders" })).toHaveAttribute("href", `/app/tenants/${TENANT}/orders`);
+  });
+
   it("a viewer sees no order", async () => {
     fetchTenant.mockResolvedValue(tenant("viewer"));
     render(await OrderPage(orderProps()));

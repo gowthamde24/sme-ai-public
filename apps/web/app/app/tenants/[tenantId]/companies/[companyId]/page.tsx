@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -9,8 +8,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
-import { backLink, kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2, SectionTabs } from "@/components/v2/app/parts";
+import { kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Company · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -94,11 +93,7 @@ export default async function CompanyPage({
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}?tab=companies`} className={backLink}>
-          ← {tenant.name}
-        </Link>
-      </p>
+      <BackLink href={`/app/tenants/${tenantId}?tab=companies`} label="All customers" />
       <h1 className={pageH1}>{company.name}</h1>
 
       {section !== "all" ? <SectionTabs label="Parts of this company" items={parts} /> : null}

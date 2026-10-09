@@ -164,8 +164,8 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     expect(screen.getByText("Catalogue says <b>silk</b>")).toBeInTheDocument();
     expect(screen.getByText("doc:cat-1")).toBeInTheDocument();
     expect(
-      screen.getByRole("link", { name: /Acme Workspace/ }),
-    ).toHaveAttribute("href", `/app/tenants/${TENANT}?tab=leads`);
+      screen.getByRole("link", { name: "All leads" }),
+    ).toHaveAttribute("href", `/app/tenants/${TENANT}/review`);
   });
 
   it("passes the opaque cursor on, and ignores an absurdly long one", async () => {

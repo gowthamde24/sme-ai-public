@@ -46,6 +46,11 @@ describe("the record consent page", () => {
     expect(screen.getByRole("button", { name: BUTTON })).toBeInTheDocument();
     expect(fetchContact).toHaveBeenCalledWith("tok", T, C);
   });
+  it.each(["owner", "sales"])("a %s has the way back to the customers, also when the page only refuses nothing", async (role) => {
+    fetchTenant.mockResolvedValue(tenant(role));
+    render(await ConsentPage(props()));
+    expect(screen.getByRole("link", { name: "All customers" })).toHaveAttribute("href", `/app/tenants/${T}?tab=contacts`);
+  });
   it("shows neither the number nor the address, and says it is only a record", async () => {
     const { container } = render(await ConsentPage(props()));
     expect(container.textContent).not.toMatch(/90000|asha@x/);

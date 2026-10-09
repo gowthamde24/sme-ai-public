@@ -1,2 +1,3 @@
+[All customers](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts)
 # Record consent
 An owner, an admin or a sales person records consent.

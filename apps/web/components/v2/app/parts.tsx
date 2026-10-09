@@ -1,3 +1,4 @@
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -186,4 +187,24 @@ export function CatalogueTabs({ tenantId, role, current }: Where & { current: "i
       : []),
   ];
   return <SectionTabs label="Parts of Catalogue and prices" items={items.map((i) => ({ ...i, current: i.key === current }))} />;
+}
+
+/**
+ * The way back on a detail page (an order, a quote or enquiry, a lead, a customer), as the design-lab app draws it: an arrow and the name of the list ("All orders"), at the top left of the page,
+ * at every width. It replaces the frame's breadcrumb line. `then` is an optional second link of the same kind (the enquiry's lead).
+ */
+export function BackLink({ href, label, then }: { href: string; label: string; then?: { href: string; label: string } }) {
+  return (
+    <p className="flex flex-wrap items-center gap-x-4">
+      <Link href={href} className={`${backLink} gap-2`}>
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        {label}
+      </Link>
+      {then ? (
+        <Link href={then.href} className={link}>
+          {then.label}
+        </Link>
+      ) : null}
+    </p>
+  );
 }

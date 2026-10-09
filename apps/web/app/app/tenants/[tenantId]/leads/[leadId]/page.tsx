@@ -15,8 +15,8 @@ import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
-import { backLink, bodyText, kvList, link, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2, SectionTabs } from "@/components/v2/app/parts";
+import { bodyText, kvList, link, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -119,9 +119,7 @@ export default async function LeadPage({
 
   return (
     <main className={pageMain}>
-      <p>
-        <Link href={`/app/tenants/${tenantId}?tab=leads`} className={backLink}>← {tenant.name}</Link>
-      </p>
+      <BackLink href={`/app/tenants/${tenantId}/review`} label="All leads" />
       <h1 className={pageH1}>Lead</h1>
       {WRITE_ROLES.includes(tenant.role) ? (
         <p>

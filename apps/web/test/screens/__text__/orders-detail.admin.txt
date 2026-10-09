@@ -1,4 +1,4 @@
-[← Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+[All orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
 {label="Order 7Open · Quote approved"}
 # Order 7 Open · Quote approved
 {role=note} Nothing is sent by this system: every entry here is a record of something that happened outside it.
