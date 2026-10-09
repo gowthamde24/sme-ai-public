@@ -39,8 +39,8 @@ def get_today(ctx: AnyMember, runtime: RuntimeDep) -> TodayOut:
 
 @router.get("/ai-usage/today", response_model=AiUsageOut)
 def get_ai_usage_today(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> AiUsageOut:
-    """Today's AI spend against the daily cap, in paise (from agent-run cost). Owner, Admin."""
-    return service.shape_ai_usage(_repo(runtime).cost_summary(ctx.principal.token, ctx.tenant.id))
+    """Today's (Asia/Kolkata day) AI spend against the daily cap, in paise. Owner, Admin."""
+    return service.shape_ai_usage(_repo(runtime).ai_usage(ctx.principal.token, ctx.tenant.id))
 
 
 @router.get("/agents/status", response_model=list[AgentStatusOut])

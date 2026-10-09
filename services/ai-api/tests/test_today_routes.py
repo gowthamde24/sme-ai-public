@@ -74,8 +74,8 @@ def world() -> tuple[Any, FakeTodayRepository]:
     today.today = {TENANT_A.id: a_today(), TENANT_B.id: b_today()}
     today.agents = {TENANT_A.id: agents_facts(), TENANT_B.id: agents_facts()}
     today.cost = {
-        TENANT_A.id: {"cap_micros": 250_000_000, "settled_micros": 0, "open_micros": 0},
-        TENANT_B.id: {"cap_micros": 1, "settled_micros": 0, "open_micros": 0},
+        TENANT_A.id: {"cap_micros": 250_000_000, "spent_micros": 0},
+        TENANT_B.id: {"cap_micros": 1, "spent_micros": 0},
     }
     client, _ = make_client(today=today)
     return client, today
@@ -133,7 +133,7 @@ def test_ai_usage_is_owner_and_admin_only(user: str, status: int) -> None:
         == status
     )
     if status != 200:
-        assert not [c for c in today.calls if c[0] == "cost_summary"]
+        assert not [c for c in today.calls if c[0] == "ai_usage"]
 
 
 def test_today_matches_the_contract() -> None:
@@ -180,7 +180,7 @@ def test_the_callers_own_token_is_what_the_data_layer_gets() -> None:
     ]
 
 
-def test_ai_usage_in_paise_from_the_cost_summary() -> None:
+def test_ai_usage_in_paise() -> None:
     client, _ = world()
     body = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage/today", headers=auth("a_owner")).json()
     assert body == {"spent_paise": 0, "cap_paise": 25_000, "left_paise": 25_000}

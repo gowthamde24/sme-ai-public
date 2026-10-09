@@ -1,7 +1,7 @@
 """Shapes the database's plain facts into the screens' answers (job AD / D3).
 
 Pure functions: no I/O, nothing decided here. The database functions `today_summary`,
-`agents_status` and the existing `agent_cost_summary` return numbers, ids, codes and
+`agents_status` and `ai_usage_today` return numbers, ids, codes and
 timestamps, read under the caller's own row-level security. These only choose words and
 convert units.
 """
@@ -138,7 +138,7 @@ def _shape_today(raw: Any) -> TodayOut:
 
 
 def shape_ai_usage(raw: Any) -> AiUsageOut:
-    """Today's AI spend in paise.
+    """Today's AI spend in paise, for the Asia/Kolkata day (the database cuts the day).
 
     Money still reserved by a call in flight counts as spent (the cap counts it too), rounded
     UP; the cap is rounded DOWN, so the figure left never overstates what can still be used.
@@ -146,7 +146,7 @@ def shape_ai_usage(raw: Any) -> AiUsageOut:
     if not isinstance(raw, dict):
         raise _bad("usage answer")
     cap_micros = _int(raw.get("cap_micros"), "cap")
-    used_micros = _int(raw.get("settled_micros"), "spend") + _int(raw.get("open_micros"), "spend")
+    used_micros = _int(raw.get("spent_micros"), "spend")
     spent = -(-used_micros // MICROS_PER_PAISE)
     cap = cap_micros // MICROS_PER_PAISE
     return AiUsageOut(spent_paise=spent, cap_paise=cap, left_paise=max(cap - spent, 0))

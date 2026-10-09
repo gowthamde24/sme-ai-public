@@ -31,8 +31,8 @@ class FakeTodayRepository:
     def agents_status(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._go("agents_status", token, tenant_id, self.agents)
 
-    def cost_summary(self, token: str, tenant_id: uuid.UUID) -> Any:
-        return self._go("cost_summary", token, tenant_id, self.cost)
+    def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any:
+        return self._go("ai_usage", token, tenant_id, self.cost)
 
 
 def empty_today() -> dict[str, Any]:

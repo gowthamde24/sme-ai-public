@@ -171,7 +171,7 @@ export async function getToday(accessToken: string, tenantId: string): Promise<T
   return parseToday(await apiRequest(tenantPath(tenantId, "today"), accessToken));
 }
 
-/** `GET /v1/tenants/{tenant}/ai-usage/today`: today's AI spend against the cap, in paise. Owner and Admin only (403 for anyone else). */
+/** `GET /v1/tenants/{tenant}/ai-usage/today`: today's (the Asia/Kolkata day) AI spend against the cap, in PAISE. Owner and Admin only (403 for anyone else). */
 export async function getAiUsageToday(accessToken: string, tenantId: string): Promise<AiUsage> {
   return parseAiUsage(await apiRequest(tenantPath(tenantId, "ai-usage/today"), accessToken));
 }

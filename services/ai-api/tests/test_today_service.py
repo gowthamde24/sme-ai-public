@@ -235,15 +235,13 @@ def test_an_unexpected_answer_is_a_502_never_a_guess(bad: Any) -> None:
 
 
 def test_ai_usage_is_in_paise_rounded_the_safe_way() -> None:
-    out = service.shape_ai_usage(
-        {"cap_micros": 250_000_000, "settled_micros": 1_234_567, "open_micros": 500_000}
-    )
+    out = service.shape_ai_usage({"cap_micros": 250_000_000, "spent_micros": 1_734_567})
     assert (out.spent_paise, out.cap_paise, out.left_paise) == (
         174,
         25_000,
         24_826,
     )  # 1,734,567 micros = 173.4567 paise, rounded UP
-    one = service.shape_ai_usage({"cap_micros": 19_999, "settled_micros": 1, "open_micros": 0})
+    one = service.shape_ai_usage({"cap_micros": 19_999, "spent_micros": 1})
     assert (one.spent_paise, one.cap_paise, one.left_paise) == (
         1,
         1,
@@ -252,11 +250,9 @@ def test_ai_usage_is_in_paise_rounded_the_safe_way() -> None:
 
 
 def test_ai_usage_left_never_goes_below_zero_and_zero_is_zero() -> None:
-    over = service.shape_ai_usage(
-        {"cap_micros": 100_000, "settled_micros": 900_000, "open_micros": 0}
-    )
+    over = service.shape_ai_usage({"cap_micros": 100_000, "spent_micros": 900_000})
     assert (over.spent_paise, over.cap_paise, over.left_paise) == (90, 10, 0)
-    none = service.shape_ai_usage({"cap_micros": 250_000, "settled_micros": 0, "open_micros": 0})
+    none = service.shape_ai_usage({"cap_micros": 250_000, "spent_micros": 0})
     assert (none.spent_paise, none.left_paise) == (0, 25)
 
 
@@ -266,8 +262,8 @@ def test_ai_usage_left_never_goes_below_zero_and_zero_is_zero() -> None:
         None,
         [],
         {},
-        {"cap_micros": "1", "settled_micros": 0, "open_micros": 0},
-        {"cap_micros": 1, "settled_micros": None, "open_micros": 0},
+        {"cap_micros": "1", "spent_micros": 0},
+        {"cap_micros": 1, "spent_micros": None},
     ],
 )
 def test_unexpected_usage_is_a_502(bad: Any) -> None:

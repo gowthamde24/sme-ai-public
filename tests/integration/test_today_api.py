@@ -215,6 +215,12 @@ def test_ai_usage_is_in_paise_and_adds_up(client: TestClient, scene: Scene) -> N
     )
     after = get(client, scene, scene.a, "ai-usage/today", "owner").json()
     assert after["spent_paise"] == before + 15 and after["left_paise"] == max(after["cap_paise"] - after["spent_paise"], 0)
+    # a call authorised one minute before Indian midnight belongs to yesterday in India: today's figure does not move
+    operator_sql.sql(
+        "insert into public.agent_cost_reservations (id, tenant_id, run_id, step_key, cost_day, max_input_tokens, max_output_tokens, reserved_micros, settled_micros, args_sha256, created_at, settled_at, outcome) "
+        f"values ('{uid()}', '{scene.a.id}', '{run}', 'usage-2', app.agent_utc_today(), 1000, 1000, 5000000, 5000000, repeat('c', 64), (app.quote_today()::timestamp at time zone 'Asia/Kolkata') - interval '1 minute', now(), 'used')"
+    )
+    assert get(client, scene, scene.a, "ai-usage/today", "owner").json()["spent_paise"] == after["spent_paise"], "yesterday in India is not today"
     other = get(client, scene, scene.b, "ai-usage/today", "owner").json()
     assert other["spent_paise"] == 0, "B did not spend what A spent"
 

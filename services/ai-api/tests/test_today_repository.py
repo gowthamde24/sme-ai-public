@@ -39,7 +39,7 @@ def repo_with(handler: Any) -> tuple[PostgrestTodayRepository, list[httpx.Reques
     [
         ("today_summary", "today_summary"),
         ("agents_status", "agents_status"),
-        ("cost_summary", "agent_cost_summary"),
+        ("ai_usage", "ai_usage_today"),
     ],
 )
 def test_each_read_is_one_rpc_with_the_callers_token_and_only_the_tenant(
@@ -83,4 +83,4 @@ def test_an_unreachable_or_non_json_data_layer_is_an_upstream_error_without_its_
     assert "10.0.0.9" not in str(caught.value) and caught.value.__cause__ is None
     repo2, _ = repo_with(lambda r: httpx.Response(200, content=b"<html>"))
     with pytest.raises(UpstreamError):
-        repo2.cost_summary(TOKEN, TENANT)
+        repo2.ai_usage(TOKEN, TENANT)

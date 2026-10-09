@@ -2,7 +2,7 @@
 
 Every call carries the CALLER's JWT and the public anon key, so row-level security decides every
 row. The three database functions are reads: `today_summary` and `agents_status` (SECURITY
-INVOKER, written for this) and the existing `agent_cost_summary` (Owner or Admin). Failures are
+INVOKER, written for this) and `ai_usage_today` (Owner or Admin; the Indian day). Failures are
 classified by SQLSTATE only; data-layer text is never returned, logged or chained.
 """
 
@@ -25,7 +25,7 @@ class TodayRepository(Protocol):
 
     def agents_status(self, token: str, tenant_id: uuid.UUID) -> Any: ...
 
-    def cost_summary(self, token: str, tenant_id: uuid.UUID) -> Any: ...
+    def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any: ...
 
 
 class PostgrestTodayRepository:
@@ -68,5 +68,5 @@ class PostgrestTodayRepository:
     def agents_status(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._rpc("agents_status", token, tenant_id)
 
-    def cost_summary(self, token: str, tenant_id: uuid.UUID) -> Any:
-        return self._rpc("agent_cost_summary", token, tenant_id)
+    def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any:
+        return self._rpc("ai_usage_today", token, tenant_id)
