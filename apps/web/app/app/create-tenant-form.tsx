@@ -1,27 +1,31 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useId } from "react";
 
 import { alertBox, btnMain, fieldInput, fieldLabel, formCard } from "@/components/v2/app/ui";
 
 import { createTenantAction, type TenantFormState } from "./actions";
 
 export function CreateTenantForm() {
+  // the form is drawn in the side menu and on /app, so two can be open at once: each needs ids of its own (the name= attributes stay as they are)
+  const uid = useId();
+  const nameId = `${uid}-name`;
+  const slugId = `${uid}-slug`;
   const [state, action, pending] = useActionState<TenantFormState, FormData>(
     createTenantAction,
     undefined,
   );
   return (
     <form className={formCard} action={action}>
-      <label htmlFor="name" className={fieldLabel}>
+      <label htmlFor={nameId} className={fieldLabel}>
         Workspace name
       </label>
-      <input id="name" className={fieldInput} name="name" required maxLength={120} />
-      <label htmlFor="slug" className={fieldLabel}>
+      <input id={nameId} className={fieldInput} name="name" required maxLength={120} />
+      <label htmlFor={slugId} className={fieldLabel}>
         URL name
       </label>
       <input
-        id="slug"
+        id={slugId}
         className={fieldInput}
         name="slug"
         required
