@@ -5,6 +5,7 @@ import { QUESTION_DISCARD_LABELS, QUESTION_STATUS_LABELS, type QuestionDraft } f
 import { DraftText } from "./draft-text";
 import { decideQuestionAction } from "./followup-actions";
 import { QuestionButton } from "./question-forms";
+import { listItemCard, pageH1 } from "@/components/v2/app/ui";
 
 /**
  * The stored clarifying questions of a requirement. Each is a fixed template that echoes closed values only; a person approves it, copies it and asks the customer themselves. Nothing here
@@ -13,15 +14,15 @@ import { QuestionButton } from "./question-forms";
 export function QuestionsView({ tenantId, requirementId, drafts, sync }: { tenantId: string; requirementId: string; drafts: QuestionDraft[]; sync: ReactNode }) {
   return (
     <section aria-labelledby="questions-heading">
-      <h1 id="questions-heading">Questions for the customer</h1>
+      <h1 id="questions-heading" className={pageH1}>Questions for the customer</h1>
       {sync}
       {drafts.length === 0 ? (
         <p>No questions stored. Update them from the requirement.</p>
       ) : (
         <ul aria-label="Questions">
           {drafts.map((q) => (
-            <li key={q.id} className="card">
-              <p style={{ margin: 0 }}>
+            <li key={q.id} className={listItemCard}>
+              <p>
                 <strong>{QUESTION_STATUS_LABELS[q.status]}</strong>
                 {q.line_no > 0 ? ` · item ${q.line_no}` : ""}
                 {q.discard_code ? ` (${QUESTION_DISCARD_LABELS[q.discard_code]})` : ""}

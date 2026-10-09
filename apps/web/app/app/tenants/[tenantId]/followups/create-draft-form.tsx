@@ -2,9 +2,10 @@
 
 import { CHANNEL_LABELS, type DraftChannel } from "@/lib/api/followups";
 
-import { ActionResult } from "../enquiries/action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
 import type { FollowupActionState } from "./followup-actions";
 import { useFollowupAction } from "./use-followup-action";
+import { btnMain, formCardWide, formTitle, mutedText } from "@/components/v2/app/ui";
 
 type Action = (prev: FollowupActionState, formData: FormData) => Promise<FollowupActionState>;
 
@@ -15,20 +16,20 @@ type Action = (prev: FollowupActionState, formData: FormData) => Promise<Followu
 export function CreateDraftForm({ action, draftId, channel }: { action: Action; draftId: string; channel: DraftChannel }) {
   const { state, formAction, pending } = useFollowupAction(action);
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "36rem" }} aria-labelledby="draft-title">
-      <h3 id="draft-title" style={{ margin: 0 }}>
+    <form action={formAction} className={formCardWide} aria-labelledby="draft-title">
+      <h3 id="draft-title" className={formTitle}>
         Ask for a draft
       </h3>
-      <p className="hint">The text is a fixed template: you cannot type or change it here. You approve it, copy it, and send it yourself.</p>
+      <p className={mutedText}>The text is a fixed template: you cannot type or change it here. You approve it, copy it, and send it yourself.</p>
       <input type="hidden" name="draft_id" value={draftId} />
       <input type="hidden" name="channel" value={channel} />
       <p>
         Channel: <strong>{CHANNEL_LABELS[channel]}</strong>
       </p>
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Asking..." : "Ask for a draft"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }

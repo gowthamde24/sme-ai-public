@@ -8,7 +8,7 @@ import { btnPrimary } from "@/components/v2/landing/ui";
 /** The page's own <main>. */
 export const pageMain = "mx-auto w-full max-w-5xl px-4 py-6 sm:px-6 sm:py-8";
 export const pageMainNarrow = "mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 sm:py-8";
-export const pageH1 = "mb-2 font-display text-3xl font-bold leading-tight sm:text-4xl";
+export const pageH1 = "mb-2 mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl";
 export const pageH2 = "mb-3 mt-8 font-display text-2xl font-bold leading-tight";
 export const pageH3 = "mb-2 mt-5 font-display text-xl font-bold leading-tight";
 export const bodyText = "mt-3 text-base";
@@ -116,3 +116,4 @@ export const formsStack = "mt-3 flex flex-col gap-3";
 export const inlineForm = "flex flex-wrap items-center gap-2";
 export const selectInline = "min-h-12 rounded-lg border border-edge bg-surface px-3 text-base text-ink";
 export const sectionBlock = "mt-6";
+export const tabList = "mt-3 flex flex-wrap gap-4";

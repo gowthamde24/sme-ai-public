@@ -1,8 +1,9 @@
 "use client";
 
-import { ActionResult } from "../enquiries/action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
 import type { FollowupActionState } from "./followup-actions";
 import { useFollowupAction } from "./use-followup-action";
+import { btnMain, btnQuiet } from "@/components/v2/app/ui";
 
 type Action = (prev: FollowupActionState, formData: FormData) => Promise<FollowupActionState>;
 
@@ -11,10 +12,10 @@ export function SyncQuestionsForm({ action }: { action: Action }) {
   const { state, formAction, pending } = useFollowupAction(action);
   return (
     <form action={formAction} aria-label="Update the questions from the requirement">
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Updating..." : "Update the questions from the requirement"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }
@@ -23,10 +24,10 @@ export function QuestionButton({ action, label, quiet }: { action: Action; label
   const { state, formAction, pending } = useFollowupAction(action);
   return (
     <form action={formAction} aria-label={label}>
-      <button type="submit" className={quiet ? "secondary" : undefined} disabled={pending}>
+      <button type="submit" className={quiet ? btnQuiet : btnMain} disabled={pending}>
         {pending ? "Saving..." : label}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }

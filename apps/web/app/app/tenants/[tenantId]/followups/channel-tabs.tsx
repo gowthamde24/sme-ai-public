@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import type { ChannelTab } from "./followup-logic";
+import { hintInline, link, tabList } from "@/components/v2/app/ui";
 
 /**
  * The channels of one lead as links (E-mail, then WhatsApp): the address names the channel, so the page stays a server page, works without scripts and can be bookmarked. The current tab is marked;
@@ -9,13 +10,13 @@ import type { ChannelTab } from "./followup-logic";
 export function ChannelTabs({ tenantId, leadId, tabs }: { tenantId: string; leadId: string; tabs: ChannelTab[] }) {
   return (
     <nav aria-label="Channel">
-      <ul style={{ display: "flex", gap: "1rem", listStyle: "none", padding: 0, flexWrap: "wrap" }}>
+      <ul className={tabList}>
         {tabs.map((t) => (
           <li key={t.channel}>
-            <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup?channel=${t.channel}`} className="tap" aria-current={t.current ? "page" : undefined}>
+            <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup?channel=${t.channel}`} className={link} aria-current={t.current ? "page" : undefined}>
               {t.current ? <strong>{t.label}</strong> : t.label}
             </Link>
-            {t.state !== null ? <span className="hint"> · {t.state}</span> : null}
+            {t.state !== null ? <span className={hintInline}> · {t.state}</span> : null}
           </li>
         ))}
       </ul>

@@ -13,6 +13,7 @@ import { ApproveForm, DiscardForm, SentForm } from "./draft-forms";
 import { PolicyForm } from "./policy-form";
 import { QuestionButton, SyncQuestionsForm } from "./question-forms";
 import { TouchForm } from "./touch-form";
+import { btnMain, btnQuiet } from "@/components/v2/app/ui";
 
 const ok = () => vi.fn(async () => ({ ok: true as const, message: "Recorded." }));
 const hidden = (name: string) => (document.querySelector(`input[name="${name}"]`) as HTMLInputElement | null)?.value;
@@ -127,7 +128,7 @@ describe("ApproveForm: the second factor and the reviewed fingerprint", () => {
 describe("DiscardForm and SentForm", () => {
   it("discard is the quiet button", () => {
     render(<DiscardForm action={ok()} />);
-    expect(screen.getByRole("button", { name: "Discard this draft" })).toHaveClass("secondary");
+    expect(screen.getByRole("button", { name: "Discard this draft" }).className).toBe(btnQuiet);
   });
 
   it("'I sent it myself' carries the touch id, an empty time and the page's now as max; it never says send", () => {
@@ -188,7 +189,7 @@ describe("question forms", () => {
       </>,
     );
     expect(screen.getByRole("button", { name: "Update the questions from the requirement" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Approve this question" })).not.toHaveClass("secondary");
-    expect(screen.getByRole("button", { name: "Discard this question" })).toHaveClass("secondary");
+    expect(screen.getByRole("button", { name: "Approve this question" }).className).toBe(btnMain);
+    expect(screen.getByRole("button", { name: "Discard this question" }).className).toBe(btnQuiet);
   });
 });

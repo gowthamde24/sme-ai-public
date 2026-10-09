@@ -10,8 +10,11 @@ import { CreateDraftForm } from "../../../followups/create-draft-form";
 import { createDraftAction, recordTouchAction } from "../../../followups/followup-actions";
 import { indiaNowLocal } from "../../../followups/followup-logic";
 import { LeadFollowupView } from "../../../followups/lead-followup-view";
-import { ApiDown, FOLLOWUP_ROLES, Notice, NotShown } from "../../../followups/page-parts";
+import { FOLLOWUP_ROLES, NOTHING_SENT } from "../../../followups/page-parts";
+import { ScreenWrap, currentTheme } from "@/components/v2/app/island";
+import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { TouchForm } from "../../../followups/touch-form";
+import { backLink, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Follow-up · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -37,9 +40,18 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return (
+      <ScreenWrap theme={await currentTheme()}>
+        <ApiDownV2 />
+      </ScreenWrap>
+    );
   }
-  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShown tenantId={tenantId} tenantName={tenant.name} title="Follow-up" />;
+  if (!FOLLOWUP_ROLES.includes(tenant.role))
+    return (
+      <ScreenWrap theme={await currentTheme()}>
+        <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Follow-up" message="Follow-ups are shown to owners, admins and sales users." />
+      </ScreenWrap>
+    );
 
   // A channel in the address is honoured; anything else (or nothing) leaves the choice to the API, which answers for the lead's default channel and says which.
   const asked = pick(query.channel);
@@ -50,7 +62,11 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return (
+      <ScreenWrap theme={await currentTheme()}>
+        <ApiDownV2 />
+      </ScreenWrap>
+    );
   }
 
   const maxNow = indiaNowLocal(new Date());
@@ -58,16 +74,19 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   // `key` makes a form start afresh when the tab changes (an uncontrolled field keeps its value while the same form stays mounted).
   const draftForm = <CreateDraftForm key={`draft-${data.channel}`} action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={data.channel} />;
   const touchForm = <TouchForm key={`touch-${data.channel}`} action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} channel={data.channel} />;
+  const theme = await currentTheme();
   return (
-    <main className="shell wide">
+    <ScreenWrap theme={theme}>
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}/leads/${leadId}`}>← Lead</Link> · <Link href={`/app/tenants/${tenantId}/followups`}>Follow-ups due</Link>
+        <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>← Lead</Link> · <Link href={`/app/tenants/${tenantId}/followups`}>Follow-ups due</Link>
       </p>
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <Notice />
+      <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
     </main>
+    </ScreenWrap>
   );
 }

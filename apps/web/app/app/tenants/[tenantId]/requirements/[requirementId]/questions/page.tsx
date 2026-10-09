@@ -7,9 +7,11 @@ import { fetchQuestionDrafts, type QuestionDraft } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
 
 import { syncQuestionsAction } from "../../../followups/followup-actions";
-import { ApiDown, FOLLOWUP_ROLES, Notice, NotShown } from "../../../followups/page-parts";
+import { FOLLOWUP_ROLES, NOTHING_SENT } from "../../../followups/page-parts";
+import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { SyncQuestionsForm } from "../../../followups/question-forms";
 import { QuestionsView } from "../../../followups/questions-view";
+import { backLink, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Questions · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -27,9 +29,9 @@ export default async function QuestionsPage({ params }: PageProps<"/app/tenants/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
-  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShown tenantId={tenantId} tenantName={tenant.name} title="Questions for the customer" />;
+  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Questions for the customer" message="Follow-ups are shown to owners, admins and sales users." />;
 
   let drafts: QuestionDraft[];
   try {
@@ -37,17 +39,17 @@ export default async function QuestionsPage({ params }: PageProps<"/app/tenants/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
       </p>
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <Notice />
+      <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <QuestionsView tenantId={tenantId} requirementId={requirementId} drafts={drafts} sync={<SyncQuestionsForm action={syncQuestionsAction.bind(null, tenantId, requirementId)} />} />
     </main>
   );
