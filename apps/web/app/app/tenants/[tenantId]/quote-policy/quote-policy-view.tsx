@@ -4,7 +4,7 @@ import type { QuotePolicyVersion } from "@/lib/api/quote-policies";
 import { formatBps, formatDate, formatRupees } from "@/lib/api/quotes";
 
 import { LocalTime } from "../../../local-time";
-import { kvList, listItemCard, listPlain, metaLine, noteBox, pageH1 } from "@/components/v2/app/ui";
+import { detailsBox, kvList, listItemCard, listPlain, metaLine, noteBox, pageH1, summaryLine } from "@/components/v2/app/ui";
 
 /** Shipping in words: the shop charges no courier, so a version with no shipping says so; an older version that does carry a fee shows it as stored. */
 function shippingText(v: QuotePolicyVersion): string {
@@ -24,19 +24,11 @@ function noPolicyText(versions: QuotePolicyVersion[]): string {
 /** The published versions, newest first, in plain words. A version never changes: the owner or admin publishes a new one. The one in force is the API's own marker, not worked out here. */
 export function QuotePolicyView({ versions, today, form }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode }) {
   const inForce = versions.some((v) => v.in_force);
-  return (
-    <section aria-labelledby="quote-policy-heading">
-      <h1 id="quote-policy-heading" className={pageH1}>
-        The quote policy
-      </h1>
-      {!inForce && (
-        <p role="note" className={noteBox}>
-          {noPolicyText(versions)}
-        </p>
-      )}
-      {versions.length > 0 && (
-        <ul aria-label="Quote policy versions, newest first" className={listPlain}>
-          {versions.map((v) => (
+  // The version in force (and any that has not started yet) first; the replaced ones behind "Earlier versions" so the page stays short. The newest is always shown.
+  const live = versions.filter((v) => v.in_force || v.effective_from > today);
+  const current = live.length > 0 ? live : versions.slice(0, 1);
+  const earlier = versions.filter((v) => !current.includes(v));
+  const version = (v: QuotePolicyVersion) => (
             <li key={v.id} className={listItemCard}>
               <strong>Version {v.version_no}</strong> · starts {formatDate(v.effective_from)}
               {v.in_force ? " · in force today" : v.effective_from > today ? " · not started yet" : " · replaced by a newer version"}
@@ -66,8 +58,30 @@ export function QuotePolicyView({ versions, today, form }: { versions: QuotePoli
                 Published <LocalTime iso={v.created_at} />
               </span>
             </li>
-          ))}
+  );
+
+  return (
+    <section aria-labelledby="quote-policy-heading">
+      <h1 id="quote-policy-heading" className={pageH1}>
+        The quote policy
+      </h1>
+      {!inForce && (
+        <p role="note" className={noteBox}>
+          {noPolicyText(versions)}
+        </p>
+      )}
+      {versions.length > 0 && (
+        <ul aria-label="Quote policy versions, newest first" className={listPlain}>
+          {current.map(version)}
         </ul>
+      )}
+      {earlier.length > 0 && (
+        <details className={detailsBox}>
+          <summary className={summaryLine}>Earlier versions ({earlier.length})</summary>
+          <ul aria-label="Earlier quote policy versions" className={listPlain}>
+            {earlier.map(version)}
+          </ul>
+        </details>
       )}
       {form}
     </section>

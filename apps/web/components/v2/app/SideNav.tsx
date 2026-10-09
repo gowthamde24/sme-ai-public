@@ -2,44 +2,42 @@
 
 import Link from "next/link";
 
-import { NavIcon } from "./icons";
+import { NavGroups, itemClass, itemCurrent } from "./NavGroups";
 import { word, type Labels } from "./labels";
-import { hrefOf, visibleGroups } from "./nav";
+import { visibleGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
 
-export const itemClass = "flex min-h-11 items-center gap-2 rounded-lg px-3 text-base font-medium text-ink hover:bg-surface-2";
-export const itemCurrent = "bg-brand-bg text-brand-text font-semibold";
+export { itemClass, itemCurrent };
 
-/** The menu beside the page on a tablet or desktop (768px and up): the groups of the plan's table, each item only for the roles that may open it. */
+/**
+ * The menu beside the page on a tablet or desktop (768px and up): the groups of the menu table (nav.ts), each item only for the roles that may open it.
+ * Outside a workspace (the workspaces page, the security page) it offers the two account pages instead.
+ */
 export function SideNav({ memberships, labels }: { memberships: readonly Membership[]; labels?: Labels }) {
-  const { current, active } = useWorkspace(memberships);
-  if (!current) return null;
-  const groups = visibleGroups(current.role);
+  const { current, pathname, active } = useWorkspace(memberships);
+  const aria = word(labels, "frame.menu.workspace", "Workspace menu");
+  if (!current) {
+    const pages = [
+      { href: "/app", label: word(labels, "frame.all", "All workspaces"), on: pathname === "/app" },
+      { href: "/app/security", label: word(labels, "frame.security", "Security"), on: pathname.startsWith("/app/security") },
+    ];
+    return (
+      <nav aria-label={aria} className="px-3 py-4">
+        <ul>
+          {pages.map((p) => (
+            <li key={p.href}>
+              <Link href={p.href} aria-current={p.on ? "page" : undefined} className={`${itemClass} ${p.on ? itemCurrent : ""}`}>
+                {p.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    );
+  }
   return (
-    <nav aria-label={word(labels, "frame.menu.workspace", "Workspace menu")} className="flex flex-col gap-5 px-3 py-5">
-      {groups.map((g) => (
-        <div key={g.id}>
-          {g.items.length > 1 || g.id !== "today" ? (
-            <p className="mb-1 flex items-center gap-2 px-3 text-sm font-semibold uppercase tracking-wide text-muted">
-              <NavIcon name={g.icon} className="size-4" />
-              {word(labels, `nav.group.${g.id}`, g.label)}
-            </p>
-          ) : null}
-          <ul>
-            {g.items.map((i) => {
-              const isCurrent = active?.item.id === i.id;
-              return (
-                <li key={i.id}>
-                  <Link href={hrefOf(i, current.id)} aria-current={isCurrent ? "page" : undefined} className={`${itemClass} ${isCurrent ? itemCurrent : ""}`}>
-                    {g.id === "today" ? <NavIcon name="today" className="size-5" /> : null}
-                    {word(labels, `nav.item.${i.id}`, i.label)}
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+    <nav aria-label={aria} className="px-3 py-4">
+      <NavGroups groups={visibleGroups(current.role)} tenantId={current.id} activeItemId={active?.item.id ?? null} activeGroupId={active?.group.id ?? null} pathname={pathname} labels={labels} />
     </nav>
   );
 }

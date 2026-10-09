@@ -16,7 +16,7 @@ import { SuggestionsPanel } from "../../suggestions-panel";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
 import { backLink, bodyText, kvList, link, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, SectionTabs } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -102,6 +102,16 @@ export default async function LeadPage({
       if (error instanceof ApiAuthError) redirect("/login");
     }
   }
+  // One part of the screen at a time (Job X): the summary with what to do next, the evidence, the suggestions. A paged evidence list opens on the evidence.
+  const wanted = pick(query.section);
+  // `?section=all` draws every part on one page (the screen as it was before it was split: for printing, and for the tests that pin the whole screen).
+  const section: "all" | "overview" | "evidence" | "suggestions" = wanted === "evidence" || wanted === "suggestions" || wanted === "overview" || wanted === "all" ? wanted : cursor ? "evidence" : "overview";
+  const here = `/app/tenants/${tenantId}/leads/${leadId}`;
+  const parts = [
+    { key: "overview", label: "Overview", href: `${here}?section=overview`, current: section === "overview" },
+    { key: "evidence", label: "Evidence", href: `${here}?section=evidence`, current: section === "evidence" },
+    { key: "suggestions", label: claims && claims.length > 0 ? `Suggestions (${claims.length})` : "Suggestions", href: `${here}?section=suggestions`, current: section === "suggestions" },
+  ];
   const sentId = crypto.randomUUID(); // one id per render: a second press of "Record this" is a retry
   const reviewIds = Object.fromEntries(
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
@@ -121,69 +131,81 @@ export default async function LeadPage({
         </p>
       ) : null}
 
-      <section aria-labelledby="sent-heading">
-        <h2 id="sent-heading" className={pageH2}>I sent a message</h2>
-        {!WRITE_ROLES.includes(tenant.role) ? (
-          <p className={bodyText}>An owner, an admin or a sales person records that a message was sent.</p>
-        ) : contactId === null ? (
-          <p role="note">
-            This lead has no contact attached, so a message to them cannot be recorded.{" "}
-            <Link href={`/app/tenants/${tenantId}/customers/new`} className={link}>
-              Add the customer first →
-            </Link>
-          </p>
-        ) : (
-          <SentMessageForm
-            key={sentId}
-            action={recordSentMessageAction.bind(null, tenantId, leadId)}
-            tenantId={tenantId}
-            touchId={sentId}
-            maxNow={indiaNowLocal(new Date())}
-            contactId={contactId ?? null}
-          />
-        )}
-      </section>
+      {section !== "all" ? <SectionTabs label="Parts of this lead" items={parts} /> : null}
+      {section === "overview" || section === "all" ? (
+        <>
+        <section aria-labelledby="summary-heading">
+          <h2 id="summary-heading" className={pageH2}>Lead</h2>
+          <dl className={kvList}>
+            <dt>Status</dt>
+            <dd>{lead.status}</dd>
+            <dt>Source</dt>
+            <dd>{lead.source ?? "—"}</dd>
+            <dt>Created</dt>
+            <dd>{lead.created_at.slice(0, 10)}</dd>
+            <dt>Origin</dt>
+            <dd>{lead.created_via}</dd>
+          </dl>
+        </section>
 
-      <section aria-labelledby="summary-heading">
-        <h2 id="summary-heading" className={pageH2}>Lead</h2>
-        <dl className={kvList}>
-          <dt>Status</dt>
-          <dd>{lead.status}</dd>
-          <dt>Source</dt>
-          <dd>{lead.source ?? "—"}</dd>
-          <dt>Created</dt>
-          <dd>{lead.created_at.slice(0, 10)}</dd>
-          <dt>Origin</dt>
-          <dd>{lead.created_via}</dd>
-        </dl>
-      </section>
+        <EnquiriesPanel
+          tenantId={tenantId}
+          leadId={leadId}
+          enquiries={enquiries}
+          canWrite={WRITE_ROLES.includes(tenant.role)}
+          formId={crypto.randomUUID()}
+        />
 
-      <EnquiriesPanel
-        tenantId={tenantId}
-        leadId={leadId}
-        enquiries={enquiries}
-        canWrite={WRITE_ROLES.includes(tenant.role)}
-        formId={crypto.randomUUID()}
-      />
+        <section aria-labelledby="sent-heading">
+          <h2 id="sent-heading" className={pageH2}>I sent a message</h2>
+          {!WRITE_ROLES.includes(tenant.role) ? (
+            <p className={bodyText}>An owner, an admin or a sales person records that a message was sent.</p>
+          ) : contactId === null ? (
+            <p role="note">
+              This lead has no contact attached, so a message to them cannot be recorded.{" "}
+              <Link href={`/app/tenants/${tenantId}/customers/new`} className={link}>
+                Add the customer first →
+              </Link>
+            </p>
+          ) : (
+            <SentMessageForm
+              key={sentId}
+              action={recordSentMessageAction.bind(null, tenantId, leadId)}
+              tenantId={tenantId}
+              touchId={sentId}
+              maxNow={indiaNowLocal(new Date())}
+              contactId={contactId ?? null}
+            />
+          )}
+        </section>
 
-      <EvidencePanel
-        tenantId={tenantId}
-        target="leads"
-        targetId={leadId}
-        page={page}
-        cursor={cursor}
-        canWrite={WRITE_ROLES.includes(tenant.role)}
-        formId={crypto.randomUUID()}
-      />
-
-      <SuggestionsPanel
-        tenantId={tenantId}
-        target="leads"
-        targetId={leadId}
-        claims={claims}
-        canReview={REVIEW_ROLES.includes(tenant.role)}
-        reviewIds={reviewIds}
-      />
+        </>
+      ) : null}
+      {section === "evidence" || section === "all" ? (
+        <>
+        <EvidencePanel
+          tenantId={tenantId}
+          target="leads"
+          targetId={leadId}
+          page={page}
+          cursor={cursor}
+          canWrite={WRITE_ROLES.includes(tenant.role)}
+          formId={crypto.randomUUID()}
+        />
+        </>
+      ) : null}
+      {section === "suggestions" || section === "all" ? (
+        <>
+        <SuggestionsPanel
+          tenantId={tenantId}
+          target="leads"
+          targetId={leadId}
+          claims={claims}
+          canReview={REVIEW_ROLES.includes(tenant.role)}
+          reviewIds={reviewIds}
+        />
+        </>
+      ) : null}
     </main>
   );
 }

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, fetchMe } from "@/lib/api/client";
-import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageH2, pageMain, rowBetween, warnBox } from "@/components/v2/app/ui";
+import { AddButton } from "@/components/v2/app/AddButton";
+import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageMain, rowBetween, sectionBlock, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { signOut } from "./actions";
@@ -76,8 +77,11 @@ export default async function AppPage() {
         </table>
       )}
 
-      <h2 id="create-workspace" className={pageH2}>Create a workspace</h2>
-      <CreateTenantForm />
+      <div id="create-workspace" className={sectionBlock}>
+        <AddButton key={me?.memberships.length ?? 0} label="Add a workspace">
+          <CreateTenantForm />
+        </AddButton>
+      </div>
     </main>
   );
 }

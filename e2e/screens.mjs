@@ -35,6 +35,8 @@ const BASE = arg("base", process.env.E2E_WEB_URL || "http://localhost:3000").rep
 const BATCH = arg("batch", "adhoc");
 const LANG = arg("lang", "en"); // en | te | hi | kn: the language cookie of the pictures
 const OUT = path.resolve(arg("out", path.join(HERE, "shots", BATCH)));
+// --cookie name=value (repeatable): an extra cookie for every picture (a throwaway preview of the frame as another role uses it; the real app ignores it)
+const EXTRA_COOKIES = process.argv.flatMap((a, i) => (a === "--cookie" && process.argv[i + 1]?.includes("=") ? [process.argv[i + 1]] : [])).map((c) => ({ name: c.split("=")[0], value: c.slice(c.indexOf("=") + 1) }));
 const ONLY = arg("only", "")
   .split(",")
   .map((s) => s.trim())
@@ -116,12 +118,18 @@ function screens(d) {
     ["home-leads", `${T}?tab=leads`],
     ["review", `${T}/review`],
     ["lead", d.lead && `${T}/leads/${d.lead}`],
+    ["lead-evidence", d.lead && `${T}/leads/${d.lead}?section=evidence`],
+    ["lead-suggestions", d.lead && `${T}/leads/${d.lead}?section=suggestions`],
     ["company", d.company && `${T}/companies/${d.company}`],
+    ["company-evidence", d.company && `${T}/companies/${d.company}?section=evidence`],
     ["customers-new", `${T}/customers/new`],
     ["consent", d.contactConsent],
     ["suggestions", `${T}/suggestions`],
     ["agents", `${T}/agents`],
     ["enquiry", d.enquiry && `${T}/enquiries/${d.enquiry}`],
+    ["enquiry-request", d.enquiry && `${T}/enquiries/${d.enquiry}?section=request`],
+    ["enquiry-make", d.enquiry && `${T}/enquiries/${d.enquiry}?section=make`],
+    ["enquiry-send", d.enquiry && `${T}/enquiries/${d.enquiry}?section=send`],
     ["orders", `${T}/orders`],
     ["order", d.order && `${T}/orders/${d.order}`],
     ["item-types", `${T}/item-types`],
@@ -138,14 +146,30 @@ function screens(d) {
   return all.filter(([name, url]) => url && (ONLY.length === 0 || ONLY.includes(name)));
 }
 
-/** Frame states that need a click (only with --interactions): the phone's "More" list, the workspace switcher, the account menu. */
+/** Frame states that need a click (only with --interactions): the phone's "More" list, the workspace switcher (and its add form), the account menu, a closed group opened, the add-a-company form. */
 const INTERACTIONS = (d) => [
   ["frame-more", "phone", `${d.T}/orders`, async (page) => page.getByRole("button", { name: "More" }).click()],
-  ["frame-switcher", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
-  ["frame-switcher-phone", "phone", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["frame-more-open", "phone", `${d.T}/orders`, async (page) => {
+    await page.getByRole("button", { name: "More" }).click();
+    await page.getByRole("dialog").locator("summary", { hasText: /Catalogue/ }).click();
+  }],
+  ["frame-switcher", "desktop", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["frame-switcher-add", "desktop", `${d.T}/review`, async (page) => {
+    await page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 });
+    await page.getByRole("button", { name: "Add a workspace" }).first().click();
+  }],
+  ["frame-switcher-phone", "phone", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["frame-switcher-add", "phone", `${d.T}/review`, async (page) => {
+    await page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 });
+    await page.getByRole("button", { name: "Add a workspace" }).first().click();
+  }],
+  ["frame-group-open", "desktop", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: /Catalogue/ }).click()],
   ["item-types-edit", "desktop", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
   ["item-types-edit", "phone", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
-  ["frame-account", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Your account" }).click()],
+  ["frame-account", "desktop", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Your account" }).click()],
+  ["frame-account", "phone", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Your account" }).click()],
+  ["add-company", "desktop", `${d.T}?tab=companies`, async (page) => page.getByRole("button", { name: "Add a company" }).click()],
+  ["add-company", "phone", `${d.T}?tab=companies`, async (page) => page.getByRole("button", { name: "Add a company" }).click()],
 ];
 
 const CHECKS = () => {
@@ -170,6 +194,7 @@ async function main() {
         await context.addCookies([
           { name: "sme_theme", value: scheme, url: BASE },
           { name: "sme_lang", value: LANG, url: BASE },
+          ...EXTRA_COOKIES.map((c) => ({ ...c, url: BASE })),
         ]);
         const page = await context.newPage();
         for (const [name, url] of list) {
@@ -197,7 +222,7 @@ async function main() {
       for (const [name, vpName, url, act] of INTERACTIONS(d)) {
         for (const scheme of SCHEMES) {
           const context = await browser.newContext({ storageState: state, viewport: VIEWPORTS[vpName], colorScheme: scheme, isMobile: vpName === "phone", hasTouch: vpName === "phone" });
-          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: LANG, url: BASE }]);
+          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: LANG, url: BASE }, ...EXTRA_COOKIES.map((c) => ({ ...c, url: BASE }))]);
           const page = await context.newPage();
           try {
             await page.goto(`${BASE}${url}`, { waitUntil: "load", timeout: 60000 });

@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -73,6 +73,7 @@ describe("the quote policy page: roles", () => {
   it.each(["owner", "admin"])("a %s sees the versions and the form", async (role) => {
     fetchTenant.mockResolvedValue(tenant(role));
     render(await QuotePolicyPage(props()));
+    fireEvent.click(screen.getByRole("button", { name: "Publish a new version" })); // the form opens in place
     expect(screen.getByRole("heading", { name: "The quote policy" })).toBeInTheDocument();
     expect(screen.getByText(/Version 1/)).toBeInTheDocument();
     expect(screen.getByText("POLICY-FORM")).toBeInTheDocument();
@@ -96,6 +97,7 @@ describe("the quote policy page: the form's props", () => {
   it("one new id per render, in canonical form", async () => {
     render(await QuotePolicyPage(props()));
     render(await QuotePolicyPage(props()));
+    for (const button of screen.getAllByRole("button", { name: "Publish a new version" })) fireEvent.click(button);
     const [a, b] = formProps.mock.calls.map((c) => c[0] as { policyId: string });
     expect(a.policyId).toMatch(UUID);
     expect(b.policyId).toMatch(UUID);
@@ -105,6 +107,7 @@ describe("the quote policy page: the form's props", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-10-08T20:00:00.000Z")); // 01:30 on 9 Oct in India
     render(await QuotePolicyPage(props()));
+    fireEvent.click(screen.getByRole("button", { name: "Publish a new version" })); // the form opens in place
     const p = formProps.mock.calls[0][0];
     expect([p.today, p.minDate]).toEqual(["2026-10-09", "2026-10-09"]);
   });
@@ -113,6 +116,7 @@ describe("the quote policy page: the form's props", () => {
     vi.setSystemTime(new Date("2026-10-08T10:00:00.000Z"));
     fetchVersions.mockResolvedValue([version({ id: "77777777-7777-4777-8777-777777777777", version_no: 2, effective_from: "2026-11-02", in_force: false }), version()]);
     render(await QuotePolicyPage(props()));
+    fireEvent.click(screen.getByRole("button", { name: "Publish a new version" })); // the form opens in place
     expect(formProps.mock.calls[0][0].minDate).toBe("2026-11-02");
   });
   it("an empty list still gets a form, and the page says no policy is in force", async () => {
@@ -121,6 +125,7 @@ describe("the quote policy page: the form's props", () => {
     fetchVersions.mockResolvedValue([]);
     render(await QuotePolicyPage(props()));
     expect(screen.getByRole("note")).toHaveTextContent("No quote policy is in force.");
+    fireEvent.click(screen.getByRole("button", { name: "Publish a new version" })); // the form opens in place
     expect(screen.getByText("POLICY-FORM")).toBeInTheDocument();
     expect(formProps.mock.calls[0][0].minDate).toBe("2026-10-08");
   });
@@ -178,3 +183,4 @@ describe("the quote policy page: links", () => {
     expect(container.textContent).not.toMatch(/@|\+\d{2}|\d{10}/);
   });
 });
+

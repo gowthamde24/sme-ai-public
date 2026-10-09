@@ -10,7 +10,7 @@ import { requireUser } from "@/lib/auth/session";
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { backLink, kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, SectionTabs } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Company · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -81,6 +81,17 @@ export default async function CompanyPage({
     (claims ?? []).map((c) => [c.id, { accept: crypto.randomUUID(), reject: crypto.randomUUID() }]),
   );
 
+  // One part of the screen at a time (Job X): the details, the evidence, the suggestions. A paged evidence list opens on the evidence.
+  const wanted = pick(query.section);
+  // `?section=all` draws every part on one page (the screen as it was before it was split: for printing, and for the tests that pin the whole screen).
+  const section: "all" | "details" | "evidence" | "suggestions" = wanted === "evidence" || wanted === "suggestions" || wanted === "details" || wanted === "all" ? wanted : cursor ? "evidence" : "details";
+  const here = `/app/tenants/${tenantId}/companies/${companyId}`;
+  const parts = [
+    { key: "details", label: "Details", href: `${here}?section=details`, current: section === "details" },
+    { key: "evidence", label: "Evidence", href: `${here}?section=evidence`, current: section === "evidence" },
+    { key: "suggestions", label: claims && claims.length > 0 ? `Suggestions (${claims.length})` : "Suggestions", href: `${here}?section=suggestions`, current: section === "suggestions" },
+  ];
+
   return (
     <main className={pageMain}>
       <p>
@@ -90,44 +101,55 @@ export default async function CompanyPage({
       </p>
       <h1 className={pageH1}>{company.name}</h1>
 
-      <section aria-labelledby="summary-heading">
-        <h2 id="summary-heading" className={pageH2}>Company</h2>
-        <dl className={kvList}>
-          <dt>Type</dt>
-          <dd>{company.type}</dd>
-          <dt>Website</dt>
-          <dd>{company.website ?? "—"}</dd>
-          <dt>Country</dt>
-          <dd>{company.country ?? "—"}</dd>
-          <dt>City</dt>
-          <dd>{company.city ?? "—"}</dd>
-          <dt>Industry</dt>
-          <dd>{company.industry ?? "—"}</dd>
-          <dt>Created</dt>
-          <dd>{company.created_at.slice(0, 10)}</dd>
-          <dt>Origin</dt>
-          <dd>{company.created_via}</dd>
-        </dl>
-      </section>
-
-      <EvidencePanel
-        tenantId={tenantId}
-        target="companies"
-        targetId={companyId}
-        page={page}
-        cursor={cursor}
-        canWrite={WRITE_ROLES.includes(tenant.role)}
-        formId={crypto.randomUUID()}
-      />
-
-      <SuggestionsPanel
-        tenantId={tenantId}
-        target="companies"
-        targetId={companyId}
-        claims={claims}
-        canReview={REVIEW_ROLES.includes(tenant.role)}
-        reviewIds={reviewIds}
-      />
+      {section !== "all" ? <SectionTabs label="Parts of this company" items={parts} /> : null}
+      {section === "details" || section === "all" ? (
+        <>
+        <section aria-labelledby="summary-heading">
+          <h2 id="summary-heading" className={pageH2}>Company</h2>
+          <dl className={kvList}>
+            <dt>Type</dt>
+            <dd>{company.type}</dd>
+            <dt>Website</dt>
+            <dd>{company.website ?? "—"}</dd>
+            <dt>Country</dt>
+            <dd>{company.country ?? "—"}</dd>
+            <dt>City</dt>
+            <dd>{company.city ?? "—"}</dd>
+            <dt>Industry</dt>
+            <dd>{company.industry ?? "—"}</dd>
+            <dt>Created</dt>
+            <dd>{company.created_at.slice(0, 10)}</dd>
+            <dt>Origin</dt>
+            <dd>{company.created_via}</dd>
+          </dl>
+        </section>
+        </>
+      ) : null}
+      {section === "evidence" || section === "all" ? (
+        <>
+        <EvidencePanel
+          tenantId={tenantId}
+          target="companies"
+          targetId={companyId}
+          page={page}
+          cursor={cursor}
+          canWrite={WRITE_ROLES.includes(tenant.role)}
+          formId={crypto.randomUUID()}
+        />
+        </>
+      ) : null}
+      {section === "suggestions" || section === "all" ? (
+        <>
+        <SuggestionsPanel
+          tenantId={tenantId}
+          target="companies"
+          targetId={companyId}
+          claims={claims}
+          canReview={REVIEW_ROLES.includes(tenant.role)}
+          reviewIds={reviewIds}
+        />
+        </>
+      ) : null}
     </main>
   );
 }

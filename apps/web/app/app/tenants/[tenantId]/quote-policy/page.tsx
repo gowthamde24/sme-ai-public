@@ -7,7 +7,8 @@ import { fetchQuotePolicyVersions, type QuotePolicyVersion } from "@/lib/api/quo
 import { requireUser } from "@/lib/auth/session";
 
 import { ApiDownV2 } from "@/components/v2/app/parts";
-import { link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
+import { AddButton } from "@/components/v2/app/AddButton";
+import { link, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
 
 import { todayInIndia } from "../followups/page-parts";
 import { publishQuotePolicyAction } from "./quote-policy-actions";
@@ -66,7 +67,11 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
         , then sign in again with its code.
       </p>
     ) : (
-      <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} />
+      <div className={spaceTop}>
+        <AddButton label="Publish a new version">
+          <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} />
+        </AddButton>
+      </div>
     );
   return (
     <main className={pageMain}>

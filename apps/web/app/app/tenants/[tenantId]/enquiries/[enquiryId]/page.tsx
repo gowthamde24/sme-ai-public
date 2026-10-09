@@ -6,7 +6,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
 import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
 import { fetchOrders, type Order } from "@/lib/api/orders";
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, SectionTabs } from "@/components/v2/app/parts";
 import { alertBox, backLink, kvList, mutedText, noteBox, pageH1, pageH2, pageMain, plainText } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
@@ -104,6 +104,28 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
     }
   }
   const notice = NOTICES[pick(query.captured) ?? ""];
+  // One part of the screen at a time: the request, making a quote, the quote made, and (once a quote is approved) what to do with it. Where the work is decides the first part.
+  const canSend = canQuote && selected?.outcome === "approved";
+  const canView = canQuote && selected !== null;
+  const canMake = canQuote && setup !== null;
+  const wanted = pick(query.section);
+  // `?section=all` draws every part on one page (the way the screen was before it was split, for printing and for the tests that pin the whole screen).
+  const section: "all" | "request" | "make" | "view" | "send" =
+    wanted === "all" ? "all" : wanted === "send" && canSend ? "send" : wanted === "view" && canView ? "view" : wanted === "make" && canMake ? "make" : wanted === "request" ? "request" : pick(query.whatsapp) && canSend ? "send" : canView ? "view" : "request";
+  const base = `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
+  const keep = pick(query.quote) && selected ? `&quote=${selected.id}` : "";
+  const parts = [
+    { key: "request", label: "Request", href: `${base}?section=request`, current: section === "request" },
+    ...(canMake ? [{ key: "make", label: "Make a quote", href: `${base}?section=make`, current: section === "make" }] : []),
+    ...(canView ? [{ key: "view", label: "Quote", href: `${base}?section=view${keep}`, current: section === "view" }] : []),
+    ...(canSend ? [{ key: "send", label: "Copy and order", href: `${base}?section=send${keep}`, current: section === "send" }] : []),
+  ];
+  const quoteProblem =
+    canQuote && (quotesDown || setup === null) ? (
+      <p role="alert" className={alertBox}>
+        The quote could not be loaded right now. The enquiry above is unaffected: try again shortly.
+      </p>
+    ) : null;
   return (
     <main className={pageMain}>
       <p>
@@ -117,38 +139,40 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           {notice}
         </p>
       ) : null}
-      <section aria-labelledby="enquiry-heading">
-        <h2 id="enquiry-heading" className={pageH2}>
-          What the customer wrote
-        </h2>
-        <dl className={kvList}>
-          <dt>Channel</dt>
-          <dd>{CHANNEL_LABELS[enquiry.channel]}</dd>
-          <dt>Received</dt>
-          <dd>
-            <LocalTime iso={enquiry.received_at} />
-          </dd>
-          {enquiry.subject ? (
-            <>
-              <dt>Subject</dt>
-              <dd className={plainText}>{enquiry.subject}</dd>
-            </>
-          ) : null}
-        </dl>
-        <EnquiryText body={enquiry.body} fields={view.fields} />
-        <p className={mutedText}>
-          This is the customer&apos;s text, shown as plain text. Contact details were removed before it was saved
-          {enquiry.truncated_from ? `; it was cut from ${enquiry.truncated_from} characters` : ""}. Marked words are the ones a field relies on.
-        </p>
-      </section>
-      <RequirementPanel tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
-      {!canQuote ? (
-        <p className={mutedText}>Quotes are shown to owners, admins and sales users.</p>
-      ) : quotesDown || setup === null ? (
-        <p role="alert" className={alertBox}>
-          The quote could not be loaded right now. The enquiry above is unaffected: try again shortly.
-        </p>
-      ) : (
+      {parts.length > 1 && section !== "all" ? <SectionTabs label="Parts of this enquiry" items={parts} /> : null}
+      {section === "request" || section === "all" ? (
+        <>
+        <section aria-labelledby="enquiry-heading">
+          <h2 id="enquiry-heading" className={pageH2}>
+            What the customer wrote
+          </h2>
+          <dl className={kvList}>
+            <dt>Channel</dt>
+            <dd>{CHANNEL_LABELS[enquiry.channel]}</dd>
+            <dt>Received</dt>
+            <dd>
+              <LocalTime iso={enquiry.received_at} />
+            </dd>
+            {enquiry.subject ? (
+              <>
+                <dt>Subject</dt>
+                <dd className={plainText}>{enquiry.subject}</dd>
+              </>
+            ) : null}
+          </dl>
+          <EnquiryText body={enquiry.body} fields={view.fields} />
+          <p className={mutedText}>
+            This is the customer&apos;s text, shown as plain text. Contact details were removed before it was saved
+            {enquiry.truncated_from ? `; it was cut from ${enquiry.truncated_from} characters` : ""}. Marked words are the ones a field relies on.
+          </p>
+        </section>
+          <RequirementPanel tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
+          {!canQuote ? <p className={mutedText}>Quotes are shown to owners, admins and sales users.</p> : quoteProblem}
+        </>
+      ) : null}
+      {section === "request" ? null : quoteProblem && section !== "all" ? (
+        quoteProblem
+      ) : setup !== null ? (
         <QuotePanel
           tenantId={tenantId}
           enquiryId={enquiryId}
@@ -165,8 +189,9 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           whatsapp={whatsapp}
           sentOnWhatsapp={selected ? { action: recordQuoteSentAction.bind(null, tenantId, selected.id), touchId: crypto.randomUUID() } : null}
           manual={manual}
+          part={section === "all" ? undefined : section}
         />
-      )}
+      ) : null}
     </main>
   );
 }

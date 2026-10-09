@@ -50,7 +50,7 @@ import EnquiryPage from "./page";
 const TENANT = "22222222-2222-2222-2222-222222222222";
 const LEAD = "33333333-3333-3333-3333-333333333333";
 const props = (query: Record<string, string> = {}) =>
-  ({ params: Promise.resolve({ tenantId: TENANT, enquiryId: ENQ }), searchParams: Promise.resolve(query) }) as unknown as Parameters<typeof EnquiryPage>[0];
+  ({ params: Promise.resolve({ tenantId: TENANT, enquiryId: ENQ }), searchParams: Promise.resolve({ section: "all", ...query }) }) as unknown as Parameters<typeof EnquiryPage>[0];
 
 const enquiry = {
   id: ENQ, lead_id: LEAD, company_id: null, contact_id: null, channel: "whatsapp", received_at: "2026-10-05T10:00:00+00:00", subject: null, body: "Need 20 kanjivaram sarees.",

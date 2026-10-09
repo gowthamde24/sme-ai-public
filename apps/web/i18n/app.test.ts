@@ -13,7 +13,7 @@ type Entry = { en: string; te: string; hi: string; kn: string; status: Record<st
 const data = app as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY = ["nav.item.privacy", "nav.item.quote-policy", "nav.item.suppression"];
+const HUMAN_ONLY = ["nav.group.safety", "nav.item.privacy", "nav.item.quote-policy", "nav.item.suppression"];
 
 describe("the frame's string store (language track L0)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(app as never, l) as Record<string, string>]));

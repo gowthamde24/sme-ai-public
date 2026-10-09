@@ -54,6 +54,8 @@ type Props = {
   sentOnWhatsapp?: SentOnWhatsapp | null;
   /** The "Quote with typed prices" form (owner and admin only; the page passes null for everyone else). `unavailable`: the item types or the policy could not be read. */
   manual?: ManualQuoteData | null;
+  /** Which part of the screen to draw: making a quote, the quote made (its figures and decisions), or what comes after approval (the text for the customer, WhatsApp, the order). Left out: all of it, as always. */
+  part?: "make" | "view" | "send";
 };
 
 export type ManualQuoteData = { unavailable: false; itemTypes: ItemType[]; gst: GstInForce | null; newQuoteId: string } | { unavailable: true };
@@ -62,7 +64,11 @@ export type ManualQuoteData = { unavailable: false; itemTypes: ItemType[]; gst: 
  * The quote of one enquiry: a person chooses the product for each approved requirement line (the assistant only suggests), makes a DRAFT, and an owner
  * or admin approves it. After approval the customer-facing text is shown to COPY. This application never sends anything, and the screen says so.
  */
-export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null, sentOnWhatsapp = null, manual = null }: Props) {
+export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, setup, quotes, selected, text, textError, newQuoteId, order = null, newOrderId, whatsapp = null, sentOnWhatsapp = null, manual = null, part }: Props) {
+  const showIntro = part !== "send";
+  const showMake = part === undefined || part === "make";
+  const showView = part === undefined || part === "view";
+  const showSend = part === undefined || part === "send";
   const confirmed = setup.requirement_status === "confirmed";
   const blockers = setup.missing.filter((m) => m !== "mapper_unavailable");
   const notes = setup.missing.filter((m) => m === "mapper_unavailable");
@@ -78,21 +84,33 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
   const typedOnly = quotes.length > 0 && quotes.every((q) => isManual(q));
   return (
     <section aria-labelledby="quote-heading">
-      <h2 id="quote-heading" className={pageH2}>
-        Quote
-      </h2>
-      <p className={mutedText}>
-        A quote is a draft until an owner or admin approves it. {typedPrices ? "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant." : "Prices come from the price list and the pricing engine, never from a person or an assistant."}{" "}
-        Nothing on this page is ever sent to anyone.
-      </p>
-
-      {(typedOnly ? [] : [...blockers, ...notes]).map((m) => (
-        <p key={m} role="note" className={noteBox}>
-          {MISSING_TEXT[m] ?? "Something this quote needs is missing."}
+      {showIntro ? (
+        <>
+        <h2 id="quote-heading" className={pageH2}>
+          Quote
+        </h2>
+        <p className={mutedText}>
+          A quote is a draft until an owner or admin approves it. {typedPrices ? "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant." : "Prices come from the price list and the pricing engine, never from a person or an assistant."}{" "}
+          Nothing on this page is ever sent to anyone.
         </p>
-      ))}
 
-      {ready ? (
+        {(typedOnly || !showMake ? [] : [...blockers, ...notes]).map((m) => (
+          <p key={m} role="note" className={noteBox}>
+            {MISSING_TEXT[m] ?? "Something this quote needs is missing."}
+          </p>
+        ))}
+
+        </>
+      ) : (
+        <>
+          <h2 id="quote-heading" className={pageH2}>
+            Copy and order
+          </h2>
+          <p className={mutedText}>Nothing on this page is ever sent to anyone.</p>
+        </>
+      )}
+
+      {showMake && ready ? (
         <div>
           <h3 className={pageH3}>1. Choose the product for each line</h3>
           <p className={mutedText}>The assistant suggests products; nothing is chosen until you press the button for that line.</p>
@@ -123,7 +141,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
         </div>
       ) : null}
 
-      {manual ? (
+      {showMake && manual ? (
         <div>
           {ready ? <p className={mutedText}>Or make a quote with typed prices instead of using the price list:</p> : null}
           {manual.unavailable ? (
@@ -141,8 +159,8 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
 
       {selected ? (
         <div>
-          <QuoteView quote={selected} stateName={selected.delivery_state === null ? "" : stateName(selected.delivery_state)} />
-          <QuoteDecisions
+          {showView ? <QuoteView quote={selected} stateName={selected.delivery_state === null ? "" : stateName(selected.delivery_state)} /> : null}
+          {showView ? <QuoteDecisions
             approve={approveQuoteAction.bind(null, tenantId, enquiryId, selected.id)}
             reject={rejectQuoteAction.bind(null, tenantId, enquiryId, selected.id)}
             withdraw={withdrawQuoteAction.bind(null, tenantId, enquiryId, selected.id)}
@@ -150,8 +168,8 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
             role={role}
             needsOwnerApproval={selected.needs_owner_approval}
             secondFactorMissing={secondFactorMissing}
-          />
-          {selected.outcome === "approved" ? (
+          /> : null}
+          {showSend && selected.outcome === "approved" ? (
             <div>
               <h3 className={pageH3}>Text for the customer</h3>
               {text ? (
@@ -166,7 +184,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
               )}
             </div>
           ) : null}
-          {selected.outcome === "approved" && newOrderId ? (
+          {showSend && selected.outcome === "approved" && newOrderId ? (
             <div>
               <h3 className={pageH3}>Order</h3>
               {order ? (
@@ -186,7 +204,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
         </div>
       ) : null}
 
-      {quotes.length > 1 ? (
+      {showView && quotes.length > 1 ? (
         <div>
           <h3 className={pageH3}>Earlier quotes of this enquiry</h3>
           <ul className={listPlain}>

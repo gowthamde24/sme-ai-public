@@ -70,7 +70,7 @@ function props(
       tenantId: over.tenantId ?? TENANT,
       leadId: over.leadId ?? LEAD,
     }),
-    searchParams: Promise.resolve(over.query ?? {}),
+    searchParams: Promise.resolve({ section: "all", ...over.query }),
   } as unknown as Parameters<typeof LeadPage>[0];
 }
 const tenant = (role: string) => ({

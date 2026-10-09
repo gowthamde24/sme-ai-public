@@ -64,7 +64,7 @@ function props(
       tenantId: over.tenantId ?? TENANT,
       companyId: over.companyId ?? COMPANY,
     }),
-    searchParams: Promise.resolve(over.query ?? {}),
+    searchParams: Promise.resolve({ section: "all", ...over.query }),
   } as unknown as Parameters<typeof CompanyPage>[0];
 }
 const tenant = (role: string) => ({

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
-import { alertBox, backLink, link, mutedText, noteBox, okBox, pageH1, pageMain, pillAmber, pillBrand, pillGreen, pillInfo, pillNeutral, pillRed, surface } from "./ui";
+import { alertBox, backLink, link, mutedText, noteBox, okBox, pageH1, pageMain, pillAmber, pillBrand, pillGreen, pillInfo, pillNeutral, pillRed, surface, tabLink, tabLinkOn, tabRow } from "./ui";
 
 /**
  * The shared v2 pieces of the app screens (workspace redesign, Batch 1A). They are forks of the pieces the old screens draw by hand
@@ -100,3 +100,19 @@ export function Pill({ tone = "neutral", children }: { tone?: "neutral" | "brand
   return <span className={TONES[tone]}>{children}</span>;
 }
 const TONES = { neutral: pillNeutral, brand: pillBrand, green: pillGreen, amber: pillAmber, red: pillRed, info: pillInfo } as const;
+
+/**
+ * The parts of a long screen, one at a time (Job X: no long single-page scroll): real links to the same page with `?section=`, the current one marked with
+ * aria-current. It only draws the switcher; the page decides which part to draw and checks that the part is allowed for the role.
+ */
+export function SectionTabs({ label, items }: { label: string; items: readonly { key: string; label: string; href: string; current: boolean }[] }) {
+  return (
+    <nav aria-label={label} className={tabRow}>
+      {items.map((i) => (
+        <Link key={i.key} href={i.href} aria-current={i.current ? "page" : undefined} className={`${tabLink} ${i.current ? tabLinkOn : ""}`}>
+          {i.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
