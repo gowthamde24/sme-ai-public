@@ -182,10 +182,19 @@ _MAIN_TEXT = {
 }
 
 
-def _last(text: str | None, at: Any) -> LastEvent | None:
+def _target(raw: Any) -> Target | None:
+    if not isinstance(raw, dict) or raw.get("type") not in ("quote", "lead", "enquiry", "order"):
+        return None
+    try:
+        return Target(type=raw["type"], id=raw["id"])
+    except (KeyError, ValueError):
+        return None
+
+
+def _last(text: str | None, at: Any, target: Any = None) -> LastEvent | None:
     if text is None or at is None:
         return None
-    return LastEvent(text=text, at=at)
+    return LastEvent(text=text, at=at, target=_target(target))
 
 
 def shape_agents(raw: Any) -> list[AgentStatusOut]:
@@ -200,7 +209,9 @@ def shape_agents(raw: Any) -> list[AgentStatusOut]:
         state = "switched_off" if not on else ("working" if facts.get("running") is True else "idle")
         status = facts.get("last_status")
         words = _MAIN_TEXT if key == "main" else _RUN_TEXT
-        return state, _last(words.get(str(status)) if status else None, facts.get("last_at"))
+        return state, _last(
+            words.get(str(status)) if status else None, facts.get("last_at"), facts.get("last_target")
+        )
 
     out: list[AgentStatusOut] = []
     for key in AGENT_ORDER:
@@ -215,6 +226,7 @@ def shape_agents(raw: Any) -> list[AgentStatusOut]:
             last = _last(
                 f"Prepared quote {facts['last_no']}" if facts.get("last_no") else None,
                 facts.get("last_at"),
+                facts.get("last_target"),
             )
         elif key == "followup_desk":
             facts = raw.get(key) or {}
@@ -223,10 +235,15 @@ def shape_agents(raw: Any) -> list[AgentStatusOut]:
                 if facts.get("last_touch")
                 else None,
                 facts.get("last_at"),
+                facts.get("last_target"),
             )
         else:
             facts = raw.get(key) or {}
             kind = facts.get("last_type")
-            last = _last(_step_text(str(kind), None) if kind else None, facts.get("last_at"))
+            last = _last(
+                _step_text(str(kind), None) if kind else None,
+                facts.get("last_at"),
+                facts.get("last_target"),
+            )
         out.append(AgentStatusOut(agent=key, state=state, job=JOBS[key], last_event=last))  # type: ignore[arg-type]
     return out

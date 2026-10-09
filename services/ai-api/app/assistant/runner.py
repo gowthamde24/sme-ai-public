@@ -44,7 +44,7 @@ from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts
 from app.assistant.db import AssistantDb
 from app.assistant.language import NO_ANSWER, Language, reply_matches
-from app.assistant.models import DraftCardOut, OpenTarget, SourceOut
+from app.assistant.models import DraftCardOut, SourceOut
 from app.assistant.tools import TOOLS, Ctx, Item, State
 from app.errors import ApiError
 
@@ -105,11 +105,13 @@ def _sha(obj: Any) -> str:
 
 
 def source_of(item: Item) -> SourceOut:
-    return SourceOut(
-        type=item.type,  # type: ignore[arg-type]
-        id=item.id,
-        label=item.label,
-        open=OpenTarget(type=item.open[0], id=item.open[1]) if item.open else None,  # type: ignore[arg-type]
+    return SourceOut.model_validate(
+        {
+            "kind": item.type,
+            "id": item.id,
+            "label": item.label,
+            "target": {"type": item.open[0], "id": item.open[1]} if item.open else None,
+        }
     )
 
 
@@ -216,7 +218,6 @@ class AssistantRunner:
                         notes = (prompts.NOTE_TOOL_REFUSED,)
                         continue
                     self._guard()
-                    emit("step", {"tool": tool.name})
                     actions += 1 if tool.action else 0
                     status, items, note, facts = self._execute(tool, args)
                     self._db.record_step(
@@ -341,20 +342,22 @@ class AssistantRunner:
             message_id=message_id,
             text=reply.text,
             language=reply.language,
-            sources=[{"type": s.type, "id": str(s.id)} for s in reply.sources],
-            drafts=[{"type": d.type, "id": str(d.id)} for d in reply.drafts],
+            sources=[{"type": s.kind, "id": str(s.id)} for s in reply.sources],
+            drafts=[{"type": d.kind, "id": str(d.id)} for d in reply.drafts],
         )
         words = reply.text.split(" ")
         chunk = ""
         for word in words:
             chunk = f"{chunk} {word}" if chunk else word
             if len(chunk) >= 24:
-                emit("delta", {"text": chunk + " "})
+                emit("text", {"type": "text", "delta": chunk + " "})
                 chunk = ""
         if chunk:
-            emit("delta", {"text": chunk})
-        emit("sources", {"sources": [s.model_dump(mode="json") for s in reply.sources]})
-        emit("drafts", {"drafts": [d.model_dump(mode="json") for d in reply.drafts]})
+            emit("text", {"type": "text", "delta": chunk})
+        for source in reply.sources:
+            emit("source", {"type": "source", **source.model_dump(mode="json")})
+        for draft in reply.drafts:
+            emit("draft", {"type": "draft", **draft.model_dump(mode="json")})
         try:
             self._db.finish(status, code)
         except AgentDbError as exc:

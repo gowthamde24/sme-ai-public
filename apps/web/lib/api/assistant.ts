@@ -7,56 +7,60 @@ import { isCanonicalUuid } from "./crm";
  * `return new Response(toSseStream(sendAssistantMessage(token, tenantId, input)), { headers: { "Content-Type": "text/event-stream" } })`.
  *
  * What the assistant is, in one paragraph: it READS this business through the signed-in person's own rights, answers with SOURCES, and leaves DRAFTS (a quote the engine
- * priced, a follow-up, a customer reply, a recorded enquiry). It sends nothing, approves nothing and sets no price; every draft card says where to go to approve it.
+ * priced, a follow-up, a customer reply, a recorded enquiry). It sends nothing, approves nothing and sets no price; every draft names the screen where a person approves it.
  *
- * Events, in order: `start`, then any number of `step` (a tool is being used), then `delta` (the finished answer, in pieces), `sources`, `drafts`, and last `done`; or, in place of
- * the last events, `error` with a fixed plain sentence. The model call itself is not streamed token by token. A message that fails is sent again as a NEW message id.
+ * The wire is SSE (`text/event-stream`): `event: <type>` and one `data:` line of JSON that repeats `type`. Five events, the shape of the "Ask your team" box
+ * (`components/v2/app/today/ask/ask-types.ts`): `text` (the next piece of the answer), `source` (one per source), `draft` (one per draft), `error` (fixed plain sentence, nothing
+ * was changed) and `done` (last; carries the chat's id). The model call itself is not streamed token by token: the finished answer is sent in pieces. A message that fails is
+ * sent again as a NEW message id. The box turns `target` ({type, id}) into a path of its own screens.
  */
 export const ASSISTANT_LANGUAGES = ["en", "te", "hi", "kn", "ta"] as const;
 export type AssistantLanguage = (typeof ASSISTANT_LANGUAGES)[number];
 
-export const SOURCE_TYPES = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft"] as const;
-export type SourceType = (typeof SOURCE_TYPES)[number];
-export const DRAFT_TYPES = ["quote", "followup_draft", "reply_draft", "enquiry"] as const;
-export type DraftType = (typeof DRAFT_TYPES)[number];
-export const OPEN_TYPES = ["quote", "lead", "enquiry", "order"] as const;
-export type OpenType = (typeof OPEN_TYPES)[number];
+export const SOURCE_KINDS = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft"] as const;
+export type SourceKind = (typeof SOURCE_KINDS)[number];
+export const DRAFT_KINDS = ["quote", "followup_draft", "reply_draft", "enquiry"] as const;
+export type DraftKind = (typeof DRAFT_KINDS)[number];
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order"] as const;
+export type TargetType = (typeof TARGET_TYPES)[number];
 
-/** Where "Open" goes. Null when the record has no page of its own (a company, a price item). */
-export interface OpenTarget {
-  type: OpenType;
+/** The screen of this business that shows a source, or approves a draft. */
+export interface Target {
+  type: TargetType;
   id: string;
 }
 
-/** Something an answer rests on, found in THIS business in this very message. `label` is a short plain name, read fresh (an erased record reads "(no longer available)"). */
+/** Something an answer rests on, found in THIS business in this very message. `label` is a short plain name, read fresh (an erased record reads "(no longer available)"). `target` is null when the record has no page of its own (a company, a price item). */
 export interface AssistantSource {
-  type: SourceType;
+  kind: SourceKind;
   id: string;
   label: string;
-  open: OpenTarget | null;
+  target: Target | null;
 }
 
-/** A DRAFT the assistant left. `status` is always "draft". A reply draft carries the customer-language text, an English gloss and `machine_draft: true` (a machine wrote it). */
+/**
+ * A DRAFT the assistant left. `status` is always "draft". `target` names the screen where a person approves it (a quote: the quote; a follow-up: its lead; a recorded enquiry: the
+ * enquiry). A reply draft has no approving screen yet: its `target` is the lead or enquiry it is about, `summary` is the customer-language text, `gloss_en` the English gloss, and
+ * `machine_draft` is true (a machine wrote it). For the other kinds `summary` is one fixed English sentence.
+ */
 export interface DraftCard {
-  type: DraftType;
   id: string;
-  label: string;
+  kind: DraftKind;
+  title: string;
+  summary: string;
   status: "draft";
-  open: OpenTarget | null;
+  target: Target | null;
   language: AssistantLanguage | null;
-  preview: string | null;
   gloss_en: string | null;
   machine_draft: boolean;
 }
 
 export type AssistantEvent =
-  | { event: "start"; conversation_id: string; message_id: string; language: AssistantLanguage; replayed: boolean }
-  | { event: "step"; tool: string }
-  | { event: "delta"; text: string }
-  | { event: "sources"; sources: AssistantSource[] }
-  | { event: "drafts"; drafts: DraftCard[] }
-  | { event: "done"; message_id: string; conversation_id: string; language: AssistantLanguage | null; kind: "answer" | "refusal" | "clarify" | "replayed" }
-  | { event: "error"; code: string; message: string };
+  | { type: "text"; delta: string }
+  | ({ type: "source" } & AssistantSource)
+  | ({ type: "draft" } & DraftCard)
+  | { type: "error"; code: string; message: string }
+  | { type: "done"; conversation_id: string; message_id: string; language: AssistantLanguage | null; kind: "answer" | "refusal" | "clarify" | "replayed" };
 
 export interface AssistantMessage {
   id: string;
@@ -78,7 +82,7 @@ export interface Conversation {
 export interface SendAssistantInput {
   /** The caller's own id for this message: sending the same id again replays the stored answer and spends nothing. */
   messageId: string;
-  /** Leave out to start a chat; give the id of an earlier event's `conversation_id` to go on. Your own uuid is fine too. */
+  /** Leave out to start a chat; give the `conversation_id` of an earlier `done` event to go on. Your own uuid is fine too (use it to know the chat even if the first answer fails). */
   conversationId?: string;
   /** 1 to 4000 characters. */
   text: string;
@@ -94,18 +98,20 @@ const uuid = (v: unknown, what: string): string => (typeof v === "string" && isC
 const oneOf = <T extends string>(list: readonly T[], v: unknown, what: string): T => (typeof v === "string" && (list as readonly string[]).includes(v) ? (v as T) : bad(what));
 const nullable = <T>(v: unknown, f: (x: unknown) => T): T | null => (v === null ? null : f(v));
 
-export function parseOpenTarget(json: unknown): OpenTarget {
-  if (!isRecord(json)) return bad("open target");
-  return { type: oneOf(OPEN_TYPES, json.type, "open type"), id: uuid(json.id, "open id") };
+export function parseTarget(json: unknown): Target {
+  if (!isRecord(json)) return bad("target");
+  return { type: oneOf(TARGET_TYPES, json.type, "target type"), id: uuid(json.id, "target id") };
 }
+
+const optionalTarget = (v: unknown): Target | null => (v === null || v === undefined ? null : parseTarget(v));
 
 export function parseSource(json: unknown): AssistantSource {
   if (!isRecord(json)) return bad("source");
   return {
-    type: oneOf(SOURCE_TYPES, json.type, "source type"),
+    kind: oneOf(SOURCE_KINDS, json.kind, "source kind"),
     id: uuid(json.id, "source id"),
     label: str(json.label, "source label", 300),
-    open: json.open === null || json.open === undefined ? null : parseOpenTarget(json.open),
+    target: optionalTarget(json.target),
   };
 }
 
@@ -114,13 +120,13 @@ export function parseDraftCard(json: unknown): DraftCard {
   if (json.status !== "draft") return bad("draft status");
   if (typeof json.machine_draft !== "boolean") return bad("machine_draft");
   return {
-    type: oneOf(DRAFT_TYPES, json.type, "draft type"),
     id: uuid(json.id, "draft id"),
-    label: str(json.label, "draft label", 300),
+    kind: oneOf(DRAFT_KINDS, json.kind, "draft kind"),
+    title: str(json.title, "draft title", 300),
+    summary: str(json.summary, "draft summary", 4000),
     status: "draft",
-    open: json.open === null || json.open === undefined ? null : parseOpenTarget(json.open),
+    target: optionalTarget(json.target),
     language: nullable(json.language ?? null, (x) => oneOf(ASSISTANT_LANGUAGES, x, "draft language")),
-    preview: nullable(json.preview ?? null, (x) => str(x, "preview", 4000)),
     gloss_en: nullable(json.gloss_en ?? null, (x) => str(x, "gloss", 4000)),
     machine_draft: json.machine_draft,
   };
@@ -128,36 +134,26 @@ export function parseDraftCard(json: unknown): DraftCard {
 
 const list = <T>(v: unknown, f: (x: unknown) => T, what: string, max = 50): T[] => (Array.isArray(v) && v.length <= max ? v.map(f) : bad(what));
 
-/** One server-sent event as the screens get it. An event the API does not send is a contract error: nothing is guessed. */
+/** One server-sent event as the screens get it. An event the API does not send, or one whose `type` is not its name, is a contract error: nothing is guessed. */
 export function parseAssistantEvent(name: string, data: unknown): AssistantEvent {
-  if (!isRecord(data)) return bad("event");
+  if (!isRecord(data) || data.type !== name) return bad("event");
   switch (name) {
-    case "start":
-      return {
-        event: "start",
-        conversation_id: uuid(data.conversation_id, "conversation_id"),
-        message_id: uuid(data.message_id, "message_id"),
-        language: oneOf(ASSISTANT_LANGUAGES, data.language, "language"),
-        replayed: typeof data.replayed === "boolean" ? data.replayed : bad("replayed"),
-      };
-    case "step":
-      return { event: "step", tool: str(data.tool, "tool", 60) };
-    case "delta":
-      return { event: "delta", text: str(data.text, "delta") };
-    case "sources":
-      return { event: "sources", sources: list(data.sources, parseSource, "sources", 20) };
-    case "drafts":
-      return { event: "drafts", drafts: list(data.drafts, parseDraftCard, "drafts", 10) };
+    case "text":
+      return { type: "text", delta: str(data.delta, "delta") };
+    case "source":
+      return { type: "source", ...parseSource(data) };
+    case "draft":
+      return { type: "draft", ...parseDraftCard(data) };
+    case "error":
+      return { type: "error", code: str(data.code, "code", 60), message: str(data.message, "message", 400) };
     case "done":
       return {
-        event: "done",
-        message_id: uuid(data.message_id, "message_id"),
+        type: "done",
         conversation_id: uuid(data.conversation_id, "conversation_id"),
+        message_id: uuid(data.message_id, "message_id"),
         language: nullable(data.language ?? null, (x) => oneOf(ASSISTANT_LANGUAGES, x, "language")),
         kind: oneOf(["answer", "refusal", "clarify", "replayed"] as const, data.kind, "kind"),
       };
-    case "error":
-      return { event: "error", code: str(data.code, "code", 60), message: str(data.message, "message", 400) };
     default:
       return bad(`event name "${name.slice(0, 20)}"`);
   }

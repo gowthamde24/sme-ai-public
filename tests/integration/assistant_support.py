@@ -107,7 +107,20 @@ def events(response: Any) -> list[tuple[str, dict[str, Any]]]:
 
 
 def text_of(evts: list[tuple[str, dict[str, Any]]]) -> str:
-    return "".join(d["text"] for e, d in evts if e == "delta")
+    return "".join(d["delta"] for e, d in evts if e == "text")
+
+
+def sources_of(evts: list[tuple[str, dict[str, Any]]]) -> list[dict[str, Any]]:
+    return [d for e, d in evts if e == "source"]
+
+
+def drafts_of(evts: list[tuple[str, dict[str, Any]]]) -> list[dict[str, Any]]:
+    return [d for e, d in evts if e == "draft"]
+
+
+def conversation_of(evts: list[tuple[str, dict[str, Any]]]) -> str:
+    """The chat's id, from the closing `done` event."""
+    return str(next(d["conversation_id"] for e, d in evts if e == "done"))
 
 
 @pytest.fixture

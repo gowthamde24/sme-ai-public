@@ -432,26 +432,26 @@ begin
            'switched_on', app.agent_switch_on(p_tenant_id, a.name),
            'running', exists (select 1 from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name and r.status = 'running' and r.expires_at > now()),
            'last_status', (select r.status from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1),
-           'last_at', (select coalesce(r.finished_at, r.created_at) from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1))
+           'last_at', (select coalesce(r.finished_at, r.created_at) from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1), 'last_target', (select case when r.lead_id is not null then jsonb_build_object('type', 'lead', 'id', r.lead_id) when r.enquiry_id is not null then jsonb_build_object('type', 'enquiry', 'id', r.enquiry_id) end from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1))
     into v_main from (select 'assistant'::text as name) a;
   select jsonb_build_object(
            'switched_on', app.agent_switch_on(p_tenant_id, a.name),
            'running', exists (select 1 from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name and r.status = 'running' and r.expires_at > now()),
            'last_status', (select r.status from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1),
-           'last_at', (select coalesce(r.finished_at, r.created_at) from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1))
+           'last_at', (select coalesce(r.finished_at, r.created_at) from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1), 'last_target', (select case when r.lead_id is not null then jsonb_build_object('type', 'lead', 'id', r.lead_id) when r.enquiry_id is not null then jsonb_build_object('type', 'enquiry', 'id', r.enquiry_id) end from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1))
     into v_research from (select 'research'::text as name) a;
   select jsonb_build_object(
            'switched_on', app.agent_switch_on(p_tenant_id, a.name),
            'running', exists (select 1 from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name and r.status = 'running' and r.expires_at > now()),
            'last_status', (select r.status from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1),
-           'last_at', (select coalesce(r.finished_at, r.created_at) from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1))
+           'last_at', (select coalesce(r.finished_at, r.created_at) from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1), 'last_target', (select case when r.lead_id is not null then jsonb_build_object('type', 'lead', 'id', r.lead_id) when r.enquiry_id is not null then jsonb_build_object('type', 'enquiry', 'id', r.enquiry_id) end from public.agent_runs r where r.tenant_id = p_tenant_id and r.agent_name = a.name order by coalesce(r.finished_at, r.created_at) desc, r.id desc limit 1))
     into v_require from (select 'requirement'::text as name) a;
 
-  select jsonb_build_object('last_no', q.quote_no, 'last_at', q.created_at)
+  select jsonb_build_object('last_no', q.quote_no, 'last_at', q.created_at, 'last_target', jsonb_build_object('type', 'quote', 'id', q.id))
     into v_quote from public.quotes q where q.tenant_id = p_tenant_id order by q.created_at desc, q.id desc limit 1;
-  select jsonb_build_object('last_touch', d.touch_number, 'last_at', d.created_at)
+  select jsonb_build_object('last_touch', d.touch_number, 'last_at', d.created_at, 'last_target', jsonb_build_object('type', 'lead', 'id', d.lead_id))
     into v_followup from public.followup_drafts d where d.tenant_id = p_tenant_id order by d.created_at desc, d.id desc limit 1;
-  select jsonb_build_object('last_type', e.type, 'last_at', e.recorded_at)
+  select jsonb_build_object('last_type', e.type, 'last_at', e.recorded_at, 'last_target', jsonb_build_object('type', 'order', 'id', e.order_id))
     into v_order from public.order_events e where e.tenant_id = p_tenant_id order by e.recorded_at desc, e.id desc limit 1;
 
   return jsonb_build_object(

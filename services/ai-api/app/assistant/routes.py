@@ -8,7 +8,8 @@ role, the switches (platform, assistant, workspace), the run limits and the day'
 drafts with the caller's own token only. Nothing is sent, approved or priced.
 
 The model call is not streamed token by token (the model interface is one call at a time); what streams is the progress (`step`), then the finished answer in pieces
-(`delta`), then `sources`, `drafts` and `done`. Events: start, step, delta, sources, drafts, done, error.
+(`text`), then one `source` per source, one `draft` per draft, and `done`; or `error` in their place. Events: text, source, draft, error, done. Each is a server-sent event
+(`event: <type>` and one `data:` line of JSON that repeats `type`), so a client can read the data line alone.
 
 NOTE: no `from __future__ import annotations` here, for the same reason as app/orders/routes.py."""
 
@@ -155,13 +156,6 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
         db.close()
         raise _refusal(exc) from None
 
-    start = {
-        "conversation_id": str(conversation_id),
-        "message_id": str(body.message_id),
-        "language": language,
-        "replayed": bool(began.get("replayed")),
-    }
-
     if began.get("replayed"):
         # the same message again: the stored answer, if there is one; nothing is spent
         try:
@@ -185,13 +179,15 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
             db2.close()
 
         def replay() -> Iterator[str]:
-            yield _sse("start", start)
-            yield _sse("delta", {"text": reply["body"]})
-            yield _sse("sources", {"sources": [s.model_dump(mode="json") for s in sources]})
-            yield _sse("drafts", {"drafts": [d.model_dump(mode="json") for d in drafts]})
+            yield _sse("text", {"type": "text", "delta": reply["body"]})
+            for source in sources:
+                yield _sse("source", {"type": "source", **source.model_dump(mode="json")})
+            for draft in drafts:
+                yield _sse("draft", {"type": "draft", **draft.model_dump(mode="json")})
             yield _sse(
                 "done",
                 {
+                    "type": "done",
                     "message_id": str(reply["id"]),
                     "conversation_id": str(conversation_id),
                     "language": reply.get("language"),
@@ -238,7 +234,6 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
     threading.Thread(target=work, daemon=True).start()
 
     def stream() -> Iterator[str]:
-        yield _sse("start", start)
         while True:
             item = events.get()
             if item is None:
@@ -249,11 +244,12 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
             code, message = FAILURES.get(
                 outcome.error_code or "tool_failed", FAILURES["tool_failed"]
             )
-            yield _sse("error", {"code": code, "message": message})
+            yield _sse("error", {"type": "error", "code": code, "message": message})
         else:
             yield _sse(
                 "done",
                 {
+                    "type": "done",
                     "message_id": str(reply_id),
                     "conversation_id": str(conversation_id),
                     "language": outcome.reply.language,

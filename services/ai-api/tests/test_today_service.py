@@ -396,3 +396,37 @@ def test_unexpected_agents_answer_is_a_502(bad: Any) -> None:
     with pytest.raises(ApiError) as caught:
         service.shape_agents(bad)
     assert caught.value.status_code == 502
+
+
+def test_a_last_event_names_the_screen_that_shows_it_and_a_bad_target_is_dropped() -> None:
+    quote = "11111111-1111-4111-8111-111111111111"
+    raw = {
+        "agents_enabled": True,
+        "main": {"switched_on": True},
+        "researcher": {
+            "switched_on": True,
+            "last_status": "succeeded",
+            "last_at": "2026-10-09T09:00:00Z",
+            "last_target": {"type": "lead", "id": quote},
+        },
+        "requirement_analyst": {
+            "switched_on": True,
+            "last_status": "succeeded",
+            "last_at": "2026-10-09T09:00:00Z",
+            "last_target": {"type": "dashboard", "id": quote},
+        },
+        "quote_writer": {
+            "last_no": 3,
+            "last_at": "2026-10-09T09:00:00Z",
+            "last_target": {"type": "quote", "id": quote},
+        },
+    }
+    by = {a.agent: a for a in service.shape_agents(raw)}
+    quote_event = by["quote_writer"].last_event
+    assert quote_event is not None and quote_event.target is not None
+    assert (quote_event.target.type, str(quote_event.target.id)) == ("quote", quote)
+    research_event = by["researcher"].last_event
+    assert research_event is not None and research_event.target is not None
+    assert research_event.target.type == "lead"
+    requirement_event = by["requirement_analyst"].last_event
+    assert requirement_event is not None and requirement_event.target is None, "an unknown screen type is dropped, not guessed"

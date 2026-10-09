@@ -15,7 +15,15 @@ from typing import Any
 import operator_sql
 import pytest
 from assistant_eval import Case, Scripted, build_cases
-from assistant_support import assistant_app, enable_assistant, events, restore, text_of
+from assistant_support import (
+    assistant_app,
+    drafts_of,
+    enable_assistant,
+    events,
+    restore,
+    sources_of,
+    text_of,
+)
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
@@ -188,8 +196,8 @@ def test_the_case(
         moved
     )  # no approval, no touch, no decided draft, no order step, no new quote, no new enquiry
     assert after_b == before_b, "the other business did not move"
-    sources: list[dict[str, Any]] = next((d["sources"] for e, d in evts if e == "sources"), [])
-    drafts: list[dict[str, Any]] = next((d["drafts"] for e, d in evts if e == "drafts"), [])
+    sources: list[dict[str, Any]] = sources_of(evts)
+    drafts: list[dict[str, Any]] = drafts_of(evts)
     for s in sources:
         assert owned_by(a, s["id"]), f"a source that is not this business's: {s}"
         assert ids["b_tenant"] not in str(s) and ids["b_company"] not in s["label"]
@@ -245,7 +253,7 @@ def test_the_case(
             assert "draft_reply:refused" in steps
     elif case.category == "refuse_send":
         if case.expects.get("draft") == "followup_draft":
-            assert [d["type"] for d in drafts] == ["followup_draft"] and drafts[0][
+            assert [d["kind"] for d in drafts] == ["followup_draft"] and drafts[0][
                 "status"
             ] == "draft"
             assert (

@@ -7,7 +7,7 @@ import uuid
 from typing import Any
 
 from app.assistant.db import AssistantDb
-from app.assistant.models import DraftCardOut, SourceOut
+from app.assistant.models import DraftCardOut, SourceOut, draft_summary
 
 GONE = "(no longer available)"
 
@@ -119,7 +119,7 @@ def resolve(
         label, target, _ = found.get(key, (GONE, None, {}))
         src.append(
             SourceOut.model_validate(
-                {"type": key[0], "id": key[1], "label": label, "open": _open(target)}
+                {"kind": key[0], "id": key[1], "label": label, "target": _open(target)}
             )
         )
     cards: list[DraftCardOut] = []
@@ -129,12 +129,14 @@ def resolve(
         cards.append(
             DraftCardOut.model_validate(
                 {
-                    "type": key[0],
                     "id": key[1],
-                    "label": label,
-                    "open": _open(target),
+                    "kind": key[0],
+                    "title": label,
+                    "summary": draft_summary(key[0], extra.get("preview"))
+                    if key in found
+                    else GONE,
+                    "target": _open(target),
                     "language": extra.get("language"),
-                    "preview": extra.get("preview"),
                     "gloss_en": extra.get("gloss_en"),
                     "machine_draft": pair["type"] == "reply_draft" and key in found,
                 }

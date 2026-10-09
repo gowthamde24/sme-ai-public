@@ -7,6 +7,7 @@ All data is synthetic."""
 
 from __future__ import annotations
 
+import uuid
 from typing import Any
 
 import httpx
@@ -177,6 +178,9 @@ def test_the_desks_report_their_real_latest_events(client: TestClient, scene: Sc
     assert by["quote_writer"]["last_event"]["text"].startswith("Prepared quote ")
     assert by["followup_desk"]["last_event"]["text"] == "Drafted follow-up message number 2"
     assert by["order_desk"]["last_event"]["text"] == "Order started"
+    for desk, kind in (("quote_writer", "quote"), ("followup_desk", "lead"), ("order_desk", "order")):
+        target = by[desk]["last_event"]["target"]
+        assert target["type"] == kind and uuid.UUID(target["id"]), f"{desk}: the event says which screen shows it"
     b = {a["agent"]: a for a in get(client, scene, scene.b, "agents/status", "owner").json()}
     assert b["quote_writer"]["last_event"] is None and b["order_desk"]["last_event"] is None, "B has no quotes or orders: nothing of A's shows"
     assert b["followup_desk"]["last_event"]["text"] == "Drafted follow-up message number 2"

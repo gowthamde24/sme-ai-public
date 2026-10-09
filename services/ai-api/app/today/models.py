@@ -85,6 +85,8 @@ class AiUsageOut(_Out):
 class LastEvent(_Out):
     text: str
     at: datetime
+    # the screen that shows what happened (a quote, a lead, an enquiry, an order); null when it has none (a chat with the Main agent)
+    target: Target | None = None
 
 
 class AgentStatusOut(_Out):

@@ -9,6 +9,7 @@ import pytest
 
 from app.agents.llm.interface import LlmRequest, Trust
 from app.assistant.language import LANGUAGES, NO_ANSWER, detect_language, reply_matches
+from app.assistant.models import DraftCardOut, draft_summary
 from app.assistant.prompts import FIXED_NOTES, build_request, result_block
 from app.assistant.runner import money_amounts
 from app.assistant.tools import ACTION_TOOLS, READ_TOOLS, TOOLS, Item
@@ -150,3 +151,21 @@ def test_every_tool_schema_is_closed_and_no_tool_accepts_a_tenant_or_a_price() -
             assert not any(
                 w in field for w in ("tenant", "price", "amount", "total", "rate", "discount")
             ), (tool.name, field)
+
+
+def test_a_draft_card_is_always_a_draft_and_a_summary_is_fixed_or_the_reply_text() -> None:
+    assert draft_summary("reply_draft", "  నమస్కారం  ") == "నమస్కారం"
+    assert len(draft_summary("reply_draft", "x" * 1000)) == 300
+    for kind in ("quote", "followup_draft", "enquiry"):
+        assert draft_summary(kind, "ignored customer text")
+        assert "ignored" not in draft_summary(kind, "ignored customer text")
+    card = DraftCardOut(id=LEAD_ID, kind="quote", title="Quote 1", summary=draft_summary("quote"))
+    assert card.status == "draft" and card.machine_draft is False and card.target is None
+    with pytest.raises(ValueError):
+        DraftCardOut.model_validate(
+            {"id": LEAD_ID, "kind": "quote", "title": "t", "summary": "s", "status": "sent"}
+        )
+    with pytest.raises(ValueError):
+        DraftCardOut.model_validate(
+            {"id": LEAD_ID, "kind": "quote", "title": "t", "summary": "s", "price": 1}
+        )

@@ -12,7 +12,15 @@ from typing import Any
 
 import operator_sql
 import pytest
-from assistant_support import assistant_app, enable_assistant, events, restore, text_of
+from assistant_support import (
+    assistant_app,
+    conversation_of,
+    enable_assistant,
+    events,
+    restore,
+    sources_of,
+    text_of,
+)
 from conftest import bearer
 from crm_support import World
 from fastapi.testclient import TestClient
@@ -61,19 +69,16 @@ def test_it_answers_from_the_owners_own_business_with_sources_and_streams(
     )
     evts = events(r)
     names = [e for e, _ in evts]
-    assert names[0] == "start" and names[-1] == "done"
-    assert (
-        "step" in names
-        and "delta" in names
-        and names.index("sources") < names.index("drafts") < names.index("done")
-    )
-    assert [d["tool"] for e, d in evts if e == "step"] == ["get_today"]
-    sources = next(d for e, d in evts if e == "sources")["sources"]
+    assert set(names) <= {"text", "source", "draft", "error", "done"}, names
+    assert names[-1] == "done" and names.count("done") == 1 and "text" in names
+    assert names.index("source") > max(i for i, n in enumerate(names) if n == "text")
+    assert all(d["type"] == e for e, d in evts), "every data line repeats its event name as `type`"
+    sources = sources_of(evts)
     ids = {s["id"] for s in sources}
     assert scene.draft_quote in ids and scene.held_order in ids, (
         "the answer cites the real quote and order it found"
     )
-    assert all(s["label"] and s["type"] in {"quote", "lead", "order"} for s in sources)
+    assert all(s["label"] and s["kind"] in {"quote", "lead", "order"} for s in sources)
     assert "₹" in text_of(evts) and "400.00" in text_of(evts), (
         "money appears only as a tool gave it"
     )
@@ -83,9 +88,9 @@ def test_the_chat_is_stored_per_business_and_read_back_with_fresh_labels(
     app: TestClient, scene: Scene
 ) -> None:
     first = events(say(app, scene, "owner", "Show my quotes"))
-    cid = first[0][1]["conversation_id"]
+    cid = conversation_of(first)
     second = events(say(app, scene, "owner", "And my orders?", conversation=cid))
-    assert second[0][1]["conversation_id"] == cid
+    assert conversation_of(second) == cid
     got = app.get(
         f"/v1/tenants/{scene.a.id}/assistant/conversations/{cid}",
         headers=bearer(scene.a.users["owner"]),
@@ -107,7 +112,7 @@ def test_the_chat_is_stored_per_business_and_read_back_with_fresh_labels(
 
 
 def test_every_message_is_a_run_with_its_steps_and_its_cost(app: TestClient, scene: Scene) -> None:
-    cid = events(say(app, scene, "owner", "What are the prices?"))[0][1]["conversation_id"]
+    cid = conversation_of(events(say(app, scene, "owner", "What are the prices?")))
     run = operator_sql.sql(
         f"select r.id from public.agent_runs r where r.conversation_id = '{cid}' order by r.created_at desc limit 1"
     )
@@ -142,7 +147,7 @@ def test_the_same_message_again_replays_the_answer_and_spends_nothing(
 ) -> None:
     message = str(uuid.uuid4())
     first = say(app, scene, "owner", "What is pending?", message=message)
-    cid = events(first)[0][1]["conversation_id"]
+    cid = conversation_of(events(first))
     runs = operator_sql.sql(
         f"select count(*) from public.agent_runs where conversation_id = '{cid}'"
     )
@@ -150,7 +155,7 @@ def test_the_same_message_again_replays_the_answer_and_spends_nothing(
     evts = events(again)
     assert (
         again.status_code == 200
-        and evts[0][1]["replayed"] is True
+        and evts[-1][1]["kind"] == "replayed"
         and text_of(evts) == text_of(events(first))
     )
     assert (
@@ -162,7 +167,7 @@ def test_the_same_message_again_replays_the_answer_and_spends_nothing(
 
 
 def test_a_chat_is_private_to_the_person_who_started_it(app: TestClient, scene: Scene) -> None:
-    cid = events(say(app, scene, "owner", "Show my quotes"))[0][1]["conversation_id"]
+    cid = conversation_of(events(say(app, scene, "owner", "Show my quotes")))
     for user in ("admin", "sales"):
         r = app.get(
             f"/v1/tenants/{scene.a.id}/assistant/conversations/{cid}",
@@ -190,8 +195,8 @@ def test_a_chat_is_private_to_the_person_who_started_it(app: TestClient, scene: 
 def test_it_reads_only_the_business_of_the_person_asking(app: TestClient, scene: Scene) -> None:
     mine = events(say(app, scene, "owner", "Show my follow-ups"))
     theirs = events(say(app, scene, "owner", "Show my follow-ups", tenant=scene.b))
-    mine_ids = {s["id"] for s in next(d for e, d in mine if e == "sources")["sources"]}
-    their_ids = {s["id"] for s in next(d for e, d in theirs if e == "sources")["sources"]}
+    mine_ids = {s["id"] for s in sources_of(mine)}
+    their_ids = {s["id"] for s in sources_of(theirs)}
     assert scene.draft_a in mine_ids and scene.draft_b not in mine_ids
     assert scene.draft_b in their_ids and scene.draft_a not in their_ids
     assert mine_ids.isdisjoint(their_ids)

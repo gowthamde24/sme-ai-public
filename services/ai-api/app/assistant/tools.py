@@ -19,7 +19,7 @@ from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 from app.assistant.db import AssistantDb
 from app.assistant.language import Language
-from app.assistant.models import DraftCardOut, OpenTarget
+from app.assistant.models import DraftCardOut, OpenTarget, draft_summary
 from app.auth.deps import Runtime
 from app.requirements.capture_text import prepare_body, prepare_subject
 from app.today.service import format_rupees, shape_today
@@ -515,7 +515,11 @@ def draft_quote(ctx: Ctx, args: DraftQuoteArgs) -> Output:
     _card(
         ctx,
         DraftCardOut(
-            type="quote", id=quote_id, label=item.label, open=OpenTarget(type="quote", id=quote_id)
+            id=quote_id,
+            kind="quote",
+            title=item.label,
+            summary=draft_summary("quote"),
+            target=OpenTarget(type="quote", id=quote_id),
         ),
     )
     return Output(items=(item,))
@@ -551,10 +555,11 @@ def draft_followup(ctx: Ctx, args: DraftFollowupArgs) -> Output:
     _card(
         ctx,
         DraftCardOut(
-            type="followup_draft",
             id=done.draft_id,
-            label=item.label,
-            open=OpenTarget(type="lead", id=args.lead_id),
+            kind="followup_draft",
+            title=item.label,
+            summary=draft_summary("followup_draft"),
+            target=OpenTarget(type="lead", id=args.lead_id),
         ),
     )
     return Output(items=(item,))
@@ -608,12 +613,12 @@ def draft_reply(ctx: Ctx, args: DraftReplyArgs) -> Output:
     _card(
         ctx,
         DraftCardOut(
-            type="reply_draft",
             id=draft_id,
-            label=item.label,
-            open=OpenTarget(type=open_type, id=open_id),
+            kind="reply_draft",
+            title=item.label,
+            summary=draft_summary("reply_draft", args.text),
+            target=OpenTarget(type=open_type, id=open_id),
             language=args.language,
-            preview=args.text,
             gloss_en=args.gloss_en,
             machine_draft=True,
         ),
@@ -664,10 +669,11 @@ def record_enquiry(ctx: Ctx, args: RecordEnquiryArgs) -> Output:
     _card(
         ctx,
         DraftCardOut(
-            type="enquiry",
             id=enquiry_id,
-            label=item.label,
-            open=OpenTarget(type="enquiry", id=enquiry_id),
+            kind="enquiry",
+            title=item.label,
+            summary=draft_summary("enquiry"),
+            target=OpenTarget(type="enquiry", id=enquiry_id),
         ),
     )
     return Output(items=(item,))

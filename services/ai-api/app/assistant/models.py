@@ -30,32 +30,48 @@ class MessageIn(_Strict):
 
 
 class OpenTarget(_Strict):
-    """Where "Open" goes for a source or a draft card."""
+    """The screen of this business that shows a source, or approves a draft: `{type, id}` (the web builds the path from it)."""
 
     type: OpenType
     id: uuid.UUID
 
 
 class SourceOut(_Strict):
-    """Something the answer rests on, found by a read tool in THIS owner's business. `label` is a short plain name (read fresh, never stored)."""
+    """Something the answer rests on, found by a read tool in THIS owner's business. `label` is a short plain name (read fresh, never stored). `target` is the screen that
+    shows it (null when the record has no page of its own: a company, a price item)."""
 
-    type: SourceType
+    kind: SourceType
     id: uuid.UUID
     label: str
-    open: OpenTarget | None = None
+    target: OpenTarget | None = None
+
+
+DRAFT_SUMMARY: dict[str, str] = {
+    "quote": "A draft quote, priced by the quote engine. Check and approve it on the quote page.",
+    "followup_draft": "A draft follow-up message. Check and approve it on the lead's follow-up page. Nothing has been sent.",
+    "enquiry": "An enquiry recorded from what you pasted. Check it on the enquiry page.",
+}
+
+
+def draft_summary(kind: str, body: str | None = None) -> str:
+    """What a draft card says under its title: a reply draft shows its own text (the customer's language); the others a fixed sentence."""
+    if kind == "reply_draft":
+        return (body or "").strip()[:300]
+    return DRAFT_SUMMARY.get(kind, "")
 
 
 class DraftCardOut(_Strict):
-    """A DRAFT the assistant left. Nothing was sent, approved or priced by it: approval stays where it is today (`open` goes there)."""
+    """A DRAFT the assistant left. Nothing was sent, approved or priced by it: a person approves it on the screen `target` names (a reply draft has no approving screen yet:
+    `target` is the lead or enquiry it is about)."""
 
-    type: DraftType
     id: uuid.UUID
-    label: str
+    kind: DraftType
+    title: str
+    summary: str
     status: Literal["draft"] = "draft"
-    open: OpenTarget | None = None
-    # a customer-reply draft only: the text in the customer's language, its English gloss, and the mark that a machine wrote it
+    target: OpenTarget | None = None
+    # a customer-reply draft only: its language, its English gloss, and the mark that a machine wrote it
     language: Language | None = None
-    preview: str | None = None
     gloss_en: str | None = None
     machine_draft: bool = False
 

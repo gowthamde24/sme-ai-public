@@ -27,9 +27,13 @@ have routine writing done for them. It must not become a hidden autonomous actor
    `assistant_save_reply_draft`) check the caller, the switches, the run and the content. A message id is idempotent: the same words replay the stored answer and spend nothing; other
    words under the same id are refused (`message_id_used`). Sources are stored as `{type, id}` pairs only (no names); labels are read fresh, so an erased record reads "(no longer
    available)". Message and reply-draft text is registered with the erasure flow (tenant scope and sweep); customer names found in text go to the "needs manual review" list.
-8. **API.** `POST /v1/tenants/{id}/assistant/messages` streams server-sent events (`start`, `step`, `delta`, `sources`, `drafts`, `done` / `error`); `GET .../assistant/conversations/{id}`
-   reads a chat back. The model call is **not** token-streamed (the model interface returns whole results); the finished answer is sent in pieces.
-9. **Status.** `GET /agents/status` reports `switched_off` for an agent that exists but whose switch is off, distinct from `not_available` (it does not exist).
+8. **API.** `POST /v1/tenants/{id}/assistant/messages` streams **server-sent events** in the shape of the "Ask your team" box: `text` (a piece of the answer), `source` (one per
+   source), `draft` (one per draft), `error` (a fixed sentence) and `done` (last; carries the chat's id). Each is `event: <type>` plus one `data:` line of JSON that repeats `type`.
+   A source is `{kind, id, label, target}`; a draft is `{id, kind, title, summary, status: "draft", target, language, gloss_en, machine_draft}`; `target` is `{type, id}`: the screen
+   that shows the source, or where a person approves the draft (null when there is none: a reply draft has no approving screen yet). `GET .../assistant/conversations/{id}` reads a
+   chat back with the same source and draft shapes. The model call is **not** token-streamed (the model interface returns whole results); the finished answer is sent in pieces.
+9. **Status.** `GET /agents/status` reports `switched_off` for an agent that exists but whose switch is off, distinct from `not_available` (it does not exist). Each helper's
+   `last_event` also carries `target` ({type, id} or null), the screen that shows what happened.
 
 ## Consequences and limits
 - The real Anthropic adapter has not run live for this agent (`make eval-live` is the owner's opt-in step). The local development model is scripted and obeys nothing from data.

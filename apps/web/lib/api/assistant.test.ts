@@ -13,8 +13,8 @@ const MSG = "44444444-4444-4444-8444-444444444444";
 const ID = "55555555-5555-4555-8555-555555555555";
 const AT = "2026-10-09T09:30:00Z";
 
-const SOURCE = { type: "quote", id: ID, label: "Quote 3 for Harbour Retail", open: { type: "quote", id: ID } };
-const DRAFT = { type: "reply_draft", id: ID, label: "Reply to Harbour Retail", status: "draft", open: null, language: "te", preview: "నమస్కారం", gloss_en: "Hello", machine_draft: true };
+const SOURCE = { kind: "quote", id: ID, label: "Quote 3 for Harbour Retail", target: { type: "quote", id: ID } };
+const DRAFT = { id: ID, kind: "reply_draft", title: "Reply draft (machine-written)", summary: "నమస్కారం", status: "draft", target: { type: "lead", id: ID }, language: "te", gloss_en: "Hello", machine_draft: true };
 
 function sse(events: Array<[string, unknown]>): string {
   return events.map(([name, data]) => `event: ${name}\ndata: ${JSON.stringify(data)}\n\n`).join("");
@@ -39,13 +39,13 @@ beforeEach(() => vi.clearAllMocks());
 describe("sources and draft cards", () => {
   it("parse the contract's shape", () => {
     expect(parseSource(SOURCE)).toEqual(SOURCE);
-    expect(parseSource({ ...SOURCE, type: "company", open: null }).open).toBeNull();
+    expect(parseSource({ ...SOURCE, kind: "company", target: null }).target).toBeNull();
     expect(parseDraftCard(DRAFT)).toEqual(DRAFT);
   });
-  it.each([["type", "dashboard"], ["id", "x"], ["label", 5], ["open", { type: "company", id: ID }]])("a source with %s = %j is a contract error", (k, v) => {
+  it.each([["kind", "dashboard"], ["id", "x"], ["label", 5], ["target", { type: "company", id: ID }]])("a source with %s = %j is a contract error", (k, v) => {
     expect(() => parseSource({ ...SOURCE, [k]: v })).toThrow(ApiContractError);
   });
-  it.each([["status", "sent"], ["status", "approved"], ["machine_draft", "yes"], ["type", "order"], ["language", "fr"]])("a draft card with %s = %j is a contract error", (k, v) => {
+  it.each([["status", "sent"], ["status", "approved"], ["machine_draft", "yes"], ["kind", "order"], ["language", "fr"], ["title", 5], ["summary", null], ["target", { type: "dashboard", id: ID }]])("a draft card with %s = %j is a contract error", (k, v) => {
     expect(() => parseDraftCard({ ...DRAFT, [k]: v })).toThrow(ApiContractError);
   });
   it("a draft card is always a draft, never sent or approved", () => {
@@ -54,33 +54,34 @@ describe("sources and draft cards", () => {
 });
 
 describe("events", () => {
-  it("parses every event the API sends", () => {
-    expect(parseAssistantEvent("start", { conversation_id: CONV, message_id: MSG, language: "te", replayed: false })).toMatchObject({ event: "start", language: "te" });
-    expect(parseAssistantEvent("step", { tool: "get_today" })).toEqual({ event: "step", tool: "get_today" });
-    expect(parseAssistantEvent("delta", { text: "ఈ రోజు" })).toEqual({ event: "delta", text: "ఈ రోజు" });
-    expect(parseAssistantEvent("sources", { sources: [SOURCE] })).toEqual({ event: "sources", sources: [SOURCE] });
-    expect(parseAssistantEvent("drafts", { drafts: [DRAFT] })).toEqual({ event: "drafts", drafts: [DRAFT] });
-    expect(parseAssistantEvent("done", { message_id: MSG, conversation_id: CONV, language: "en", kind: "answer" })).toMatchObject({ event: "done", kind: "answer" });
-    expect(parseAssistantEvent("error", { code: "cost_cap_reached", message: "The daily limit is reached." })).toMatchObject({ event: "error" });
+  it("parses every event the API sends, in the box's shape", () => {
+    expect(parseAssistantEvent("text", { type: "text", delta: "ఈ రోజు" })).toEqual({ type: "text", delta: "ఈ రోజు" });
+    expect(parseAssistantEvent("source", { type: "source", ...SOURCE })).toEqual({ type: "source", ...SOURCE });
+    expect(parseAssistantEvent("draft", { type: "draft", ...DRAFT })).toEqual({ type: "draft", ...DRAFT });
+    expect(parseAssistantEvent("done", { type: "done", message_id: MSG, conversation_id: CONV, language: "en", kind: "answer" })).toMatchObject({ type: "done", kind: "answer", conversation_id: CONV });
+    expect(parseAssistantEvent("error", { type: "error", code: "cost_cap_reached", message: "The daily limit is reached." })).toMatchObject({ type: "error", code: "cost_cap_reached" });
   });
   it("refuses an event name or a shape the API does not send", () => {
-    expect(() => parseAssistantEvent("send_email", {})).toThrow(ApiContractError);
-    expect(() => parseAssistantEvent("start", { conversation_id: "x", message_id: MSG, language: "en", replayed: false })).toThrow(ApiContractError);
-    expect(() => parseAssistantEvent("done", { message_id: MSG, conversation_id: CONV, language: "en", kind: "sent" })).toThrow(ApiContractError);
-    expect(() => parseAssistantEvent("delta", null)).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("send_email", { type: "send_email" })).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("start", { type: "start" })).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("text", { type: "done", delta: "x" })).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("text", { delta: "x" })).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("done", { type: "done", conversation_id: "x", message_id: MSG, language: "en", kind: "answer" })).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("done", { type: "done", conversation_id: CONV, message_id: MSG, language: "en", kind: "sent" })).toThrow(ApiContractError);
+    expect(() => parseAssistantEvent("text", null)).toThrow(ApiContractError);
   });
 });
 
 describe("readSse", () => {
   it("reassembles events split anywhere, including inside a Telugu letter", async () => {
-    const body = sse([["delta", { text: "ఈ రోజు రెండు కోట్స్" }], ["delta", { text: "వేచి ఉన్నాయి" }]]);
+    const body = sse([["text", { type: "text", delta: "ఈ రోజు రెండు కోట్స్" }], ["text", { type: "text", delta: "వేచి ఉన్నాయి" }]]);
     for (const cut of [1, 2, 3, 5, 11]) {
       const got = await collect(readSse(streamOf(body, cut)));
-      expect(got.map((g) => (g.data as { text: string }).text)).toEqual(["ఈ రోజు రెండు కోట్స్", "వేచి ఉన్నాయి"]);
+      expect(got.map((g) => (g.data as { delta: string }).delta)).toEqual(["ఈ రోజు రెండు కోట్స్", "వేచి ఉన్నాయి"]);
     }
   });
   it("an event with data that is not JSON is a contract error", async () => {
-    await expect(collect(readSse(streamOf("event: delta\ndata: {nope\n\n")))).rejects.toThrow(ApiContractError);
+    await expect(collect(readSse(streamOf("event: text\ndata: {nope\n\n")))).rejects.toThrow(ApiContractError);
   });
 });
 
@@ -94,17 +95,15 @@ describe("sendAssistantMessage", () => {
 
   it("posts the message with the caller's token and yields the parsed events in order", async () => {
     const body = sse([
-      ["start", { conversation_id: CONV, message_id: MSG, language: "en", replayed: false }],
-      ["step", { tool: "get_today" }],
-      ["delta", { text: "Two quotes are waiting." }],
-      ["sources", { sources: [SOURCE] }],
-      ["drafts", { drafts: [] }],
-      ["done", { message_id: MSG, conversation_id: CONV, language: "en", kind: "answer" }],
+      ["text", { type: "text", delta: "Two quotes are waiting." }],
+      ["source", { type: "source", ...SOURCE }],
+      ["draft", { type: "draft", ...DRAFT }],
+      ["done", { type: "done", message_id: MSG, conversation_id: CONV, language: "en", kind: "answer" }],
     ]);
     const fetchMock = vi.fn(async () => new Response(body, { status: 200, headers: { "Content-Type": "text/event-stream" } }));
     globalThis.fetch = fetchMock as unknown as typeof fetch;
     const events = await collect(sendAssistantMessage("tok", TENANT, { messageId: MSG, text: "  What is waiting?  " }));
-    expect(events.map((e) => e.event)).toEqual(["start", "step", "delta", "sources", "drafts", "done"]);
+    expect(events.map((e) => e.type)).toEqual(["text", "source", "draft", "done"]);
     const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
     expect(url).toBe(`http://api.test/v1/tenants/${TENANT}/assistant/messages`);
     expect((init.headers as Record<string, string>).Authorization).toBe("Bearer tok");

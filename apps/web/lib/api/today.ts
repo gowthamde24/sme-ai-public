@@ -64,7 +64,8 @@ export interface AgentStatus {
   /** `switched_off`: the helper exists and a switch (the platform's, its own, or the workspace's) is off. `not_available`: it does not exist yet. */
   state: "idle" | "working" | "not_available" | "switched_off";
   job: string;
-  last_event: { text: string; at: string } | null;
+  /** `target` is always on the wire (null when the event has no screen); optional here so screens written before it existed still compile. */
+  last_event: { text: string; at: string; target?: Target | null } | null;
 }
 
 type Rec = Record<string, unknown>;
@@ -159,7 +160,11 @@ export function parseAgentsStatus(json: unknown): AgentStatus[] {
     let last: AgentStatus["last_event"] = null;
     if (row.last_event !== null) {
       if (!isRecord(row.last_event)) return bad("last_event");
-      last = { text: text(row.last_event.text, "last_event text"), at: when(row.last_event.at, "last_event at") };
+      last = {
+        text: text(row.last_event.text, "last_event text"),
+        at: when(row.last_event.at, "last_event at"),
+        target: row.last_event.target === null || row.last_event.target === undefined ? null : parseTarget(row.last_event.target),
+      };
     }
     return { agent: AGENT_KEYS[i], state: row.state, job: text(row.job, "job"), last_event: last };
   });
