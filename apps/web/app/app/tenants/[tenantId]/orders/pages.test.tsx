@@ -60,7 +60,7 @@ describe("the orders list", () => {
     const item = within(screen.getByRole("list", { name: "Orders, newest first" })).getByRole("listitem");
     expect(item).toHaveTextContent("Order 7");
     expect(item).toHaveTextContent("Open · Quote approved");
-    expect(item).toHaveTextContent("Total ₹1,50,000.00");
+    expect(item).toHaveTextContent("Total₹1,50,000.00");
     expect(screen.getByRole("link", { name: "Order 7" })).toHaveAttribute("href", `/app/tenants/${TENANT}/orders/${ORDER}`);
     expect(screen.getByRole("note")).toHaveTextContent("Nothing is sent by this system");
   });
@@ -108,7 +108,7 @@ describe("the order page", () => {
   it("an owner is offered a form for every event the API's guidance lists, and the order is read with their token", async () => {
     render(await OrderPage(orderProps()));
     expect(orders.fetchOrder).toHaveBeenCalledWith("tok", TENANT, ORDER);
-    expect(screen.getByRole("heading", { name: "Order 7" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Order 7");
     expect(screen.getByRole("heading", { name: "I sent the quote" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Cancel this order" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "A payment was received" })).toBeNull(); // the rules did not offer it
@@ -170,7 +170,7 @@ describe("the order page", () => {
   it("works without the member names (a nicety, never a dependency)", async () => {
     orders.fetchMembers.mockRejectedValue(new ApiRequestError(403, "forbidden", "x"));
     render(await OrderPage(orderProps()));
-    expect(screen.getByRole("heading", { name: "Order 7" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Order 7");
     expect(screen.getByText(/recorded by A team member/)).toBeInTheDocument();
   });
 

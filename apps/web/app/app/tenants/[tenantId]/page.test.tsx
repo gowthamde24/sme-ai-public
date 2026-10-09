@@ -164,7 +164,8 @@ describe("/app/tenants/[tenantId]", () => {
     fetchDataPolicy.mockRejectedValue(new Error("down"));
     render(await TenantPage(props()));
     expect(screen.queryByRole("note")).toBeNull();
-    expect(screen.getByRole("heading", { name: "Acme Workspace" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Customers" })).toBeInTheDocument();
+    expect(screen.getByText("The records of Acme Workspace, as saved.")).toBeInTheDocument();
   });
 
   // ------------------------------------------------------------------ order and authentication
@@ -277,12 +278,11 @@ describe("/app/tenants/[tenantId]", () => {
     );
   });
 
-  it("shows the workspace name; the role, the way back and the links to every screen are the frame's now", async () => {
+  it("shows the title of the table and the workspace name; the role, the way back and the links to every screen are the frame's now", async () => {
     fetchTenant.mockResolvedValue(tenant("sales"));
     render(await TenantPage(props()));
-    expect(
-      screen.getByRole("heading", { level: 1, name: "Acme Workspace" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Customers" })).toBeInTheDocument();
+    expect(screen.getByText("The records of Acme Workspace, as saved.")).toBeInTheDocument();
     expect(screen.queryByText(/Your role/)).toBeNull();
     expect(screen.queryByRole("link", { name: /workspaces/i })).toBeNull();
     // the row of links to every screen is gone from the page; which role is offered which screen is pinned by the menu table (components/v2/app/nav.test.ts)

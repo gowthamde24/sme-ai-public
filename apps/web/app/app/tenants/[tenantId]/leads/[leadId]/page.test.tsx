@@ -363,7 +363,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     render(await LeadPage(props()));
     expect(screen.getByRole("heading", { name: "Enquiries" })).toBeInTheDocument();
     expect(fetchLeadEnquiries).toHaveBeenCalledWith("tok", TENANT, LEAD);
-    expect(screen.getByText("Paste a new enquiry")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add enquiry" })).toBeInTheDocument();
   });
 
   it("an API failure on the enquiries shows an error in that section only", async () => {

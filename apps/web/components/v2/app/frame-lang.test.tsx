@@ -11,7 +11,6 @@ import { frameLabels } from "@/i18n/app";
 import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
-import { Crumbs } from "./Crumbs";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import type { Membership } from "./use-workspace";
@@ -30,7 +29,6 @@ describe("the frame in English is the same with or without the dictionary (langu
   it.each([
     ["SideNav", (l?: Record<string, string>) => <SideNav memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} />],
     ["TabBar", (l?: Record<string, string>) => <TabBar memberships={members} labels={l} frame={none} email="o@example.test" signOut={async () => undefined} />],
-    ["Crumbs", (l?: Record<string, string>) => <Crumbs memberships={members} labels={l} />],
     ["WorkspaceSwitcher", (l?: Record<string, string>) => <WorkspaceSwitcher memberships={members} labels={l} plan={null} />],
     ["AccountMenu", (l?: Record<string, string>) => <AccountMenu email="o@example.test" signOut={async () => undefined} labels={l} />],
   ])("%s", (_name, make) => {

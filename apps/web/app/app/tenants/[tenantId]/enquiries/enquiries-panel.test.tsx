@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("./actions", () => ({ captureEnquiryAction: vi.fn(async () => undefined) }));
@@ -18,13 +18,13 @@ describe("EnquiriesPanel", () => {
     render(<EnquiriesPanel tenantId={TENANT} leadId={LEAD} enquiries={[enquiry("44444444-4444-4444-4444-444444444444", "SECRET customer words")]} canWrite formId={FORM} />);
     expect(screen.getByRole("link", { name: "E-mail enquiry" })).toHaveAttribute("href", `/app/tenants/${TENANT}/enquiries/44444444-4444-4444-4444-444444444444`);
     expect(screen.queryByText(/SECRET/)).toBeNull();
-    expect(screen.getByText("Paste a new enquiry")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add enquiry" })).toBeInTheDocument();
   });
 
   it("a viewer sees the list and no paste form", () => {
     render(<EnquiriesPanel tenantId={TENANT} leadId={LEAD} enquiries={[]} canWrite={false} formId={FORM} />);
     expect(screen.getByText("No enquiries yet.")).toBeInTheDocument();
-    expect(screen.queryByText("Paste a new enquiry")).toBeNull();
+    expect(screen.queryByRole("button", { name: "Add enquiry" })).toBeNull();
     expect(screen.getByText(/Only an owner, admin or sales user can paste/)).toBeInTheDocument();
   });
 
@@ -35,6 +35,8 @@ describe("EnquiriesPanel", () => {
 
   it("gives the paste form the page's own id", () => {
     render(<EnquiriesPanel tenantId={TENANT} leadId={LEAD} enquiries={[]} canWrite formId={FORM} />);
+    expect(document.querySelector('input[name="enquiry_id"]')).toBeNull(); // the form is behind the compact button until it is wanted
+    fireEvent.click(screen.getByRole("button", { name: "Add enquiry" }));
     expect((document.querySelector('input[name="enquiry_id"]') as HTMLInputElement).value).toBe(FORM);
   });
 });

@@ -1,27 +1,28 @@
 [← Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
-{label="Order 7"}
-# Order 7
-Open · Quote approved
+{label="Order 7Open · Quote approved"}
+# Order 7 Open · Quote approved
 {role=note} Nothing is sent by this system: every entry here is a record of something that happened outside it.
+Order total ₹1,50,000.00 Received ₹0.00 Balance ₹1,50,000.00 Money held ₹0.00
+## Where it stands
+{label="The steps of an order"}
+- Quote marked as sent Not reached
+- Accepted by the customer Not reached
+- Advance asked for Not reached
+- Advance received Not reached
+- In preparation Not reached
+- Dispatched Not reached
+- Delivered Not reached
+- Closed, fully paid Not reached
+You record each step yourself, after it happens outside this app.
 ## The money
-Order total
-₹1,50,000.00
 Advance asked for
 ₹75,000.00
-Received
-₹0.00
 Refunded
 ₹0.00
 Net received
 ₹0.00
-Balance
-₹1,50,000.00
 Quote valid until
 21 Oct 2026
-## Where it came from
-- [The approved quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888)
-- [The enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444)
-- [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
 ## What to record next
 These are the entries the rules allow now. They are guidance: the database decides again when you save.
 {label="I sent the quote"}
@@ -30,6 +31,10 @@ These are the entries the rules allow now. They are guidance: the database decid
 <hidden name=rendered_at value=2026-10-06T04:30:00.000Z>
 <hidden name=today value=2026-10-06>
 [button type=submit: Record: quote sent]
+## Where it came from
+- [The approved quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888)
+- [The enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444)
+- [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
 ## History
 {label="Events, oldest first"}
 - Order started from the approved quote Quote approved · recorded by Asha (synthetic) (owner) · it happened Oct 6, 2026, 10:30 AM (in 30 minutes) ; recorded Oct 6, 2026, 10:30 AM (in 30 minutes)

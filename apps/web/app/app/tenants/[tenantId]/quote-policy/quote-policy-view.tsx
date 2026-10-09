@@ -22,7 +22,7 @@ function noPolicyText(versions: QuotePolicyVersion[]): string {
 }
 
 /** The published versions, newest first, in plain words. A version never changes: the owner or admin publishes a new one. The one in force is the API's own marker, not worked out here. */
-export function QuotePolicyView({ versions, today, form }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode }) {
+export function QuotePolicyView({ versions, today, form, tabs = null }: { versions: QuotePolicyVersion[]; today: string; form: ReactNode; tabs?: ReactNode }) {
   const inForce = versions.some((v) => v.in_force);
   // The version in force (and any that has not started yet) first; the replaced ones behind "Earlier versions" so the page stays short. The newest is always shown.
   const live = versions.filter((v) => v.in_force || v.effective_from > today);
@@ -65,7 +65,8 @@ export function QuotePolicyView({ versions, today, form }: { versions: QuotePoli
       <h1 id="quote-policy-heading" className={pageH1}>
         The quote policy
       </h1>
-      {!inForce && (
+
+      {tabs}      {!inForce && (
         <p role="note" className={noteBox}>
           {noPolicyText(versions)}
         </p>

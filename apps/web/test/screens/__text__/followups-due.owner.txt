@@ -2,6 +2,7 @@
 {role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
 {label="Follow-ups due"}
 # Follow-ups due
+{label="Parts of Leads"} [To look at](/app/tenants/22222222-2222-2222-2222-222222222222/review) [All leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups current=page) [Suggestions](/app/tenants/22222222-2222-2222-2222-222222222222/suggestions)
 {role=note} Worked out when you opened this page. Guidance only: the database decides again when you ask for a draft.
 {role=note} Oldest first. Leads that need no follow-up (replied, limit reached, closed, opted out) are not listed.
 {label="Leads with a follow-up"}

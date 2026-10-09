@@ -472,7 +472,9 @@ add({
 });
 
 // ---- screens of the new menu whose data layer has not landed yet (Job AC, batch C1): a title and "Not available yet" ---------------------------------
-add({ id: "quotes-not-yet", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "quotes-list", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuoteList: () => [parseQuoteSummary(SUMMARY_JSON), parseQuoteSummary(MANUAL_SUMMARY_JSON)] }) });
+add({ id: "quotes-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuoteList: () => [] }) });
+add({ id: "quotes-viewer", roles: ["viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "office-not-yet", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "integrations-not-yet", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "settings-not-yet", render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({})), handlers: (role) => base(role) });

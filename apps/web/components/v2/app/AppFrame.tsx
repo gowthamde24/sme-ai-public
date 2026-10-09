@@ -9,7 +9,6 @@ import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
 import { NO_FRAME_DATA, type FrameData } from "./contract";
-import { Crumbs } from "./Crumbs";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import { TopBar } from "./TopBar";
@@ -51,7 +50,6 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = NO_
               {appT(lang)("frame.draft")}
             </p>
           ) : null}
-          <Crumbs memberships={list} labels={labels} />
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 pb-20 outline-none md:pb-0">
             {children}
           </div>

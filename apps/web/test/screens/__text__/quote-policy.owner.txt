@@ -1,5 +1,6 @@
 {label="The quote policy"}
 # The quote policy
+{label="Parts of Catalogue and prices"} [Item types](/app/tenants/22222222-2222-2222-2222-222222222222/item-types) [Price list](/app/tenants/22222222-2222-2222-2222-222222222222/price-list) [Add a product](/app/tenants/22222222-2222-2222-2222-222222222222/products/new) [Quote policy](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy current=page)
 {label="Quote policy versions, newest first"}
 - Version 1 · starts 1 Oct 2026 · in force today
 Days a quote is valid

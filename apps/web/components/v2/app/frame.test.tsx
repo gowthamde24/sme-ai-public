@@ -12,7 +12,6 @@ vi.mock("next/navigation", () => ({
 import { AccountMenu } from "./AccountMenu";
 import type { FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
-import { Crumbs } from "./Crumbs";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import type { Membership } from "./use-workspace";
@@ -132,21 +131,6 @@ describe("TabBar", () => {
   it("draws nothing outside a workspace", () => {
     nav.pathname = "/app";
     const { container } = bar(owner);
-    expect(container).toBeEmptyDOMElement();
-  });
-});
-
-describe("Crumbs", () => {
-  it("on a page below a menu item offers one arrow back to that item", () => {
-    nav.pathname = `/app/tenants/${A}/orders/abc`;
-    render(<Crumbs memberships={owner} />);
-    expect(screen.getByRole("link", { name: "Orders" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
-  });
-  it("draws nothing on a top-level page and nothing outside a workspace", () => {
-    const { container, rerender } = render(<Crumbs memberships={owner} />);
-    expect(container).toBeEmptyDOMElement();
-    nav.pathname = "/app";
-    rerender(<Crumbs memberships={owner} />);
     expect(container).toBeEmptyDOMElement();
   });
 });

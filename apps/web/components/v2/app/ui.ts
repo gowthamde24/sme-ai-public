@@ -56,6 +56,11 @@ export const listItemCard = "rounded-xl border border-line bg-surface p-4";
 export const tabRow = "mt-4 flex flex-wrap gap-2 border-b border-line pb-3";
 export const tabLink = "inline-flex min-h-11 items-center rounded-lg px-3 text-base font-medium text-ink hover:bg-surface-2";
 export const tabLinkOn = "bg-brand-bg font-semibold text-brand-text";
+/** Tabs as the design-lab app draws them: a line under the row, the current tab marked with an orange line under its word. */
+export const tabsBar = "mt-6 flex flex-wrap gap-x-1 border-b border-line";
+export const tabsItem = "-mb-px inline-flex min-h-11 items-center border-b-2 px-4 text-base";
+export const tabsItemIdle = "border-transparent font-medium text-muted hover:text-ink";
+export const tabsItemOn = "border-brand-edge font-semibold text-brand-text";
 /** A small grey line under a list entry. */
 export const metaLine = "mt-1 block text-sm text-muted";
 /** A bold sentence on its own line inside a list entry. */
@@ -136,3 +141,6 @@ export const factorItem = "rounded-lg bg-surface-2 px-2 py-1.5";
 export const btnGood = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-green-text bg-green-bg px-4 text-base font-semibold text-green-text hover:brightness-95 disabled:opacity-60";
 export const btnMaybe = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-amber-text bg-amber-bg px-4 text-base font-semibold text-amber-text hover:brightness-95 disabled:opacity-60";
 export const btnBad = "inline-flex min-h-12 flex-1 items-center justify-center rounded-lg border border-red-text bg-red-bg px-4 text-base font-semibold text-red-text hover:brightness-95 disabled:opacity-60";
+/** A row of right-aligned figures (an order's total and received), a right-aligned cell, a right-aligned line. */
+export const figureRow = "flex gap-6 text-right";
+export const cellRight = "text-right";

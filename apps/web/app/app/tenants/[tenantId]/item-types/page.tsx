@@ -6,7 +6,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchItemTypes, type ItemType } from "@/lib/api/item-types";
 import { requireUser } from "@/lib/auth/session";
 
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { link, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
 import { EditItemTypeForm, AddItemTypeForm } from "./item-type-forms";
@@ -68,6 +68,7 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
   return (
     <main className={pageMain}>
       <ItemTypesView
+        tabs={<CatalogueTabs tenantId={tenantId} role={tenant.role} current="item-types" />}
         types={types}
         adder={
           edit ? (

@@ -6,7 +6,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuotePolicyVersions, type QuotePolicyVersion } from "@/lib/api/quote-policies";
 import { requireUser } from "@/lib/auth/session";
 
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { link, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
 
@@ -75,7 +75,7 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
     );
   return (
     <main className={pageMain}>
-      <QuotePolicyView versions={versions} today={today} form={form} />
+      <QuotePolicyView tabs={<CatalogueTabs tenantId={tenantId} role={tenant.role} current="quote-policy" />} versions={versions} today={today} form={form} />
     </main>
   );
 }

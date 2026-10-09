@@ -11,7 +11,8 @@ import {
 } from "@/lib/api/crm";
 import { fetchDataPolicy } from "@/lib/api/erasure";
 import { AddButton } from "@/components/v2/app/AddButton";
-import { alertBox, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, pageH1, pageH2, pageMain, spaceTop, tabLink, tabLinkOn, tabRow, warnBox } from "@/components/v2/app/ui";
+import { PageTop, SectionTabs } from "@/components/v2/app/parts";
+import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, pageH2, pageMain, spaceTop, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
@@ -29,6 +30,7 @@ const LABELS: Record<EntityKey, string> = {
   leads: "Leads",
   opportunities: "Opportunities",
 };
+const TITLES: Record<EntityKey, string> = { companies: "Customers", contacts: "Customers", products: "Products", leads: "Leads", opportunities: "Opportunities" };
 const WRITE_ROLES = ["owner", "admin", "sales"];
 const MAX_CURSOR = 300;
 
@@ -98,7 +100,7 @@ export default async function TenantPage({
 
   return (
     <main className={pageMain}>
-        <h1 className={pageH1}>{tenant.name}</h1>
+        <PageTop title={TITLES[tab]} sub={tab === "leads" ? "Every lead of the workspace, as saved." : `The records of ${tenant.name}, as saved.`} />
 
         {syntheticOnly && (
           <p role="note" className={warnBox}>
@@ -111,21 +113,15 @@ export default async function TenantPage({
         {/* The set-up checklist of the business-setup plan (12.1) goes here: owners and admins only, until done. Its own ticket: until it ships this slot draws nothing. */}
 
 
-      <nav aria-label="Records" className={tabRow}>
-        {ENTITY_KEYS.map((key) => (
-          <Link
-            key={key}
-            href={`/app/tenants/${tenantId}?tab=${key}`}
-            aria-current={key === tab ? "page" : undefined}
-            className={`${tabLink} ${key === tab ? tabLinkOn : ""}`}
-          >
-            {LABELS[key]}
-          </Link>
-        ))}
-      </nav>
+      <SectionTabs label="Records" items={ENTITY_KEYS.map((key) => ({ key, label: LABELS[key], href: `/app/tenants/${tenantId}?tab=${key}`, current: key === tab }))} />
 
       {canWrite && (
-        <section aria-label="Add a company" className={spaceTop}>
+        <section aria-label="Add a company" className={`${spaceTop} flex flex-wrap items-start gap-3`}>
+          {tab === "companies" || tab === "contacts" ? (
+            <Link href={`/app/tenants/${tenantId}/customers/new`} className={btnQuiet}>
+              Add a customer
+            </Link>
+          ) : null}
           <AddButton label="Add a company">
             <CreateCompanyForm
               action={createCompanyAction.bind(null, tenantId)}

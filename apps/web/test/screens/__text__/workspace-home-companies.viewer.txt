@@ -1,4 +1,5 @@
-# Demo Silks (synthetic)
+# Customers
+The records of Demo Silks (synthetic), as saved.
 {role=note} Synthetic data only. This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as example.test ) and a phone number that starts with +00 . The operator opens this once the privacy checks are done.
 {label="Records"} [Companies](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies current=page) [Contacts](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts) [Products](/app/tenants/22222222-2222-2222-2222-222222222222?tab=products) [Leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Opportunities](/app/tenants/22222222-2222-2222-2222-222222222222?tab=opportunities)
 {label="Companies"}

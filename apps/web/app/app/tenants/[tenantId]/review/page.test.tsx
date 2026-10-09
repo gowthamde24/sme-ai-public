@@ -157,12 +157,13 @@ describe("ReviewQueuePage", () => {
     fetchReviewQueue.mockResolvedValue(standardQueue);
   });
 
-  it("renders page title and caller role (the way back to the workspace is the frame's now)", async () => {
+  it("renders the page title; the role line is gone (the frame shows the role), and the four parts of Leads are links", async () => {
     render(await ReviewQueuePage(props()));
     expect(
-      screen.getByRole("heading", { level: 1, name: "Lead Review Queue" }),
+      screen.getByRole("heading", { level: 1, name: "Leads" }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Role: owner")).toBeInTheDocument();
+    expect(screen.queryByText("Role: owner")).toBeNull();
+    expect(within(screen.getByRole("navigation", { name: "Parts of Leads" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["To look at", "All leads", "Follow-ups due", "Suggestions"]);
     expect(screen.queryByRole("link", { name: "← Workspace" })).toBeNull();
   });
 

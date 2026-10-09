@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth/session";
 import { addProductAction } from "./actions";
 import { ProductForm } from "./product-form";
 import { mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
-import { ApiDownV2 } from "@/components/v2/app/parts";
+import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Add a product · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -44,6 +44,7 @@ export default async function NewProductPage({ params }: PageProps<"/app/tenants
   return (
     <main className={pageMain}>
       <h1 className={pageH1}>Add a product</h1>
+      <CatalogueTabs tenantId={tenantId} role={tenant.role} current="add-product" />
       <p className={mutedText}>A product is a saree type you sell. No price is set here: prices are loaded on the price-list page, or typed for each quote.</p>
       <ProductForm key={id} action={addProductAction.bind(null, tenantId)} tenantId={tenantId} id={id} />
     </main>

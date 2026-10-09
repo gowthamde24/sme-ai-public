@@ -1,3 +1,4 @@
+import { CircleCheck, CircleSlash, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
@@ -11,8 +12,10 @@ import {
   moneyHeld,
   type Member,
   type OrderDetail,
+  type OrderState,
 } from "@/lib/api/orders";
-import { eventItem, kvList, kvTerm, kvValue, leadLine, link, listOrdered, metaLine, noteBox, pageH1, pageH2 } from "@/components/v2/app/ui";
+import { StatBox } from "@/components/v2/app/parts";
+import { eventItem, kvList, kvTerm, kvValue, leadLine, link, listOrdered, metaLine, mutedText, noteBox, pageH1, pageH2, pillAmber, pillBrand, pillGreen } from "@/components/v2/app/ui";
 import { formatDate } from "@/lib/api/quotes";
 
 import { LocalTime } from "../../../local-time";
@@ -34,40 +37,63 @@ export function whoText(userId: string | null, members: Member[]): string {
 export function OrderView({ tenantId, order, members, forms }: { tenantId: string; order: OrderDetail; members: Member[]; forms: ReactNode }) {
   const base = `/app/tenants/${tenantId}`;
   const notOwed = CLOSED_NOT_OWED.includes(order.state);
+  const held = moneyHeld(order);
   return (
     <section aria-labelledby="order-heading">
-      <h1 id="order-heading" className={pageH1}>Order {order.order_no}</h1>
-      <p className={leadLine}>
-        <strong>{OUTCOME_LABELS[order.outcome]}</strong> · {STATE_LABELS[order.state]}
-        {order.lost_reason ? ` · ${LOST_REASON_LABELS[order.lost_reason]}` : ""}
-      </p>
+      <h1 id="order-heading" className={`${pageH1} flex flex-wrap items-center gap-3`}>
+        <span className="font-mono">Order {order.order_no}</span>
+        <span className={order.outcome === "open" ? pillBrand : order.outcome === "won" ? pillGreen : pillAmber}>
+          {OUTCOME_LABELS[order.outcome]} · {STATE_LABELS[order.state]}
+        </span>
+      </h1>
+      {order.lost_reason ? <p className={leadLine}>{LOST_REASON_LABELS[order.lost_reason]}</p> : null}
       <p role="note" className={noteBox}>
         Nothing is sent by this system: every entry here is a record of something that happened outside it.
       </p>
 
-      {moneyHeld(order) > 0 ? (
-        <p role="note" className={noteBox}>
-          {HELD_TEXT(moneyHeld(order))}
+      {held > 0 ? (
+        <p role="note" className="mt-4 flex items-center gap-2 rounded-lg border border-amber-text bg-amber-bg p-3 text-base font-semibold text-amber-text">
+          <TriangleAlert className="size-5 shrink-0" aria-hidden="true" />
+          {HELD_TEXT(held)}
         </p>
       ) : null}
 
+      <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatBox label="Order total" value={formatRupees(order.order_total_paise)} />
+        <StatBox label="Received" value={formatRupees(order.paid_paise)} />
+        <StatBox label="Balance" value={notOwed ? "–" : formatRupees(order.balance_paise)} />
+        <StatBox label="Money held" value={formatRupees(held)} amber={held > 0} />
+      </div>
+      {notOwed ? <p className={mutedText}>Balance: not owed, the order is closed.</p> : null}
+
+      <h2 className={pageH2}>Where it stands</h2>
+      <ol aria-label="The steps of an order" className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        {steps(order).map((st) => (
+          <li key={st.state} aria-current={st.current ? "step" : undefined} className={`flex min-h-12 items-center gap-3 rounded-lg border px-3 py-2 ${st.current ? "border-brand-edge bg-brand-bg font-semibold" : st.reached ? "border-line bg-surface" : "border-dashed border-edge bg-surface-2 text-muted"}`}>
+            {st.reached ? <CircleCheck className={`size-6 shrink-0 ${st.current ? "text-brand-text" : "text-green-text"}`} aria-hidden="true" /> : <CircleSlash className="size-6 shrink-0" aria-hidden="true" />}
+            <span>
+              {STATE_LABELS[st.state]}
+              {st.reached ? null : <span className="block text-sm font-normal">Not reached</span>}
+            </span>
+          </li>
+        ))}
+      </ol>
+      <p className={mutedText}>You record each step yourself, after it happens outside this app.</p>
+
       <h2 className={pageH2}>The money</h2>
       <dl className={kvList}>
-        <dt className={kvTerm}>Order total</dt>
-        <dd className={kvValue}>{formatRupees(order.order_total_paise)}</dd>
         <dt className={kvTerm}>Advance asked for</dt>
         <dd className={kvValue}>{formatRupees(order.advance_paise)}</dd>
-        <dt className={kvTerm}>Received</dt>
-        <dd className={kvValue}>{formatRupees(order.paid_paise)}</dd>
         <dt className={kvTerm}>Refunded</dt>
         <dd className={kvValue}>{formatRupees(order.refunded_paise)}</dd>
         <dt className={kvTerm}>Net received</dt>
         <dd className={kvValue}>{formatRupees(order.net_paise)}</dd>
-        <dt className={kvTerm}>Balance</dt>
-        <dd className={kvValue}>{notOwed ? "Not owed: the order is closed" : formatRupees(order.balance_paise)}</dd>
         <dt className={kvTerm}>Quote valid until</dt>
         <dd className={kvValue}>{formatDate(order.valid_until)}</dd>
       </dl>
+
+      <h2 className={pageH2}>What to record next</h2>
+      {forms}
 
       <h2 className={pageH2}>Where it came from</h2>
       <ul>
@@ -88,9 +114,6 @@ export function OrderView({ tenantId, order, members, forms }: { tenantId: strin
         </li>
       </ul>
 
-      <h2 className={pageH2}>What to record next</h2>
-      {forms}
-
       <h2 className={pageH2}>History</h2>
       <ol aria-label="Events, oldest first" className={listOrdered}>
         {order.events.map((e) => (
@@ -109,4 +132,15 @@ export function OrderView({ tenantId, order, members, forms }: { tenantId: strin
       </ol>
     </section>
   );
+}
+
+const PATH: readonly OrderState[] = ["quote_sent", "accepted", "advance_requested", "advance_paid", "in_preparation", "dispatched", "delivered", "closed_paid"];
+const TERMINAL: readonly OrderState[] = ["declined", "expired", "cancelled"];
+/** The steps of the order for the picture: the usual path, with the end replaced by how this order really ended (declined, expired, cancelled). A step is reached when an event of this order put it in that state. */
+function steps(order: OrderDetail): { state: OrderState; reached: boolean; current: boolean }[] {
+  const visited = new Set<OrderState>([order.state, ...order.events.map((e) => e.new_state)]);
+  const path = TERMINAL.includes(order.state) ? [...PATH.slice(0, -1), order.state] : [...PATH];
+  const rank = (s: OrderState) => PATH.indexOf(s);
+  const furthest = Math.max(-1, ...[...visited].map((s) => rank(s)));
+  return path.map((state) => ({ state, reached: visited.has(state) || (rank(state) !== -1 && rank(state) < furthest), current: state === order.state }));
 }

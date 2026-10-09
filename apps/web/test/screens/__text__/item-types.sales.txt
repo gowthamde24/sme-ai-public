@@ -1,5 +1,6 @@
 {label="Item types"}
 # Item types
+{label="Parts of Catalogue and prices"} [Item types](/app/tenants/22222222-2222-2222-2222-222222222222/item-types current=page)
 Item types are the kinds of goods you quote, for example "Type A". Each line of a quote with typed prices uses one. A price outside the lowest and highest price only gives a warning when a quote is made. It never stops a quote. Changing a price range does not change quotes that are already made. Only an owner or an admin can add or change item types.
 {label="Item types, in order"}
 table "Item types, in order":
