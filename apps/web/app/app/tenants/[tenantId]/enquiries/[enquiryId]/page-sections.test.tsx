@@ -79,13 +79,15 @@ describe("the enquiry screen, one part at a time", () => {
     expect(tabs().queryByRole("link", { name: "Quote" })).toBeNull();
     expect(tabs().getByRole("link", { name: "Make a quote" })).toHaveAttribute("href", `/app/tenants/${TENANT}/enquiries/${ENQ}?section=make`);
   });
-  it("Send and order exists only for an approved quote, and then holds the text for the customer and the order", async () => {
+  it("Copy and order exists only for an approved quote, and then holds the text for the customer and the order", async () => {
     render(await EnquiryPage(props()));
-    expect(tabs().queryByRole("link", { name: "Send and order" })).toBeNull();
+    expect(tabs().queryByRole("link", { name: "Copy and order" })).toBeNull();
     cleanup();
     quotesApi.fetchQuote.mockResolvedValue(parseQuote(approvedJson));
     render(await EnquiryPage(props({ section: "send" })));
-    expect(current()).toBe("Send and order");
+    expect(current()).toBe("Copy and order");
+    expect(screen.getByRole("heading", { name: "Copy and order" })).toBeInTheDocument();
+    expect(screen.getByText("Nothing on this page is ever sent to anyone.")).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Text for the customer" })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: "Order" })).toBeInTheDocument();
     expect(screen.queryByRole("heading", { name: "Quote 3" })).toBeNull();
@@ -104,10 +106,10 @@ describe("the enquiry screen, one part at a time", () => {
     expect(screen.getByRole("heading", { name: "What the customer wrote" })).toBeInTheDocument();
     for (const fn of Object.values(quotesApi)) expect(fn).not.toHaveBeenCalled();
   });
-  it("a WhatsApp return (?whatsapp=) of an approved quote opens Send and order; ?section=all draws every part with no tabs", async () => {
+  it("a WhatsApp return (?whatsapp=) of an approved quote opens Copy and order; ?section=all draws every part with no tabs", async () => {
     quotesApi.fetchQuote.mockResolvedValue(parseQuote(approvedJson));
     render(await EnquiryPage(props({ whatsapp: "no-consent" })));
-    expect(current()).toBe("Send and order");
+    expect(current()).toBe("Copy and order");
     cleanup();
     render(await EnquiryPage(props({ section: "all" })));
     expect(screen.queryByRole("navigation", { name: "Parts of this enquiry" })).toBeNull();

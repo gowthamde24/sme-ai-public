@@ -118,7 +118,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
     { key: "request", label: "Request", href: `${base}?section=request`, current: section === "request" },
     ...(canMake ? [{ key: "make", label: "Make a quote", href: `${base}?section=make`, current: section === "make" }] : []),
     ...(canView ? [{ key: "view", label: "Quote", href: `${base}?section=view${keep}`, current: section === "view" }] : []),
-    ...(canSend ? [{ key: "send", label: "Send and order", href: `${base}?section=send${keep}`, current: section === "send" }] : []),
+    ...(canSend ? [{ key: "send", label: "Copy and order", href: `${base}?section=send${keep}`, current: section === "send" }] : []),
   ];
   const quoteProblem =
     canQuote && (quotesDown || setup === null) ? (

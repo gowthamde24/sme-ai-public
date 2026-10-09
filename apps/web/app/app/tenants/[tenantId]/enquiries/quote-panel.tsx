@@ -102,9 +102,12 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
 
         </>
       ) : (
-        <h2 id="quote-heading" className={pageH2}>
-          Send and order
-        </h2>
+        <>
+          <h2 id="quote-heading" className={pageH2}>
+            Copy and order
+          </h2>
+          <p className={mutedText}>Nothing on this page is ever sent to anyone.</p>
+        </>
       )}
 
       {showMake && ready ? (
