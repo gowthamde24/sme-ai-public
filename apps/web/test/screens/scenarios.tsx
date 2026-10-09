@@ -475,7 +475,7 @@ add({
 add({ id: "quotes-list", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuoteList: () => [parseQuoteSummary(SUMMARY_JSON), parseQuoteSummary(MANUAL_SUMMARY_JSON)] }) });
 add({ id: "quotes-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuoteList: () => [] }) });
 add({ id: "quotes-viewer", roles: ["viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => base(role) });
-add({ id: "office-not-yet", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "office-not-available", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => base(role) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
 for (const section of ["business", "language", "security", "privacy"] as const) {
   add({ id: `settings-${section}`, roles: section === "privacy" ? ROLES : ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => base(role) });

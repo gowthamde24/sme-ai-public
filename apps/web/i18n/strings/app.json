@@ -1094,5 +1094,71 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "office.title": {
+  "en": "Agent office",
+  "te": "ఏజెంట్ ఆఫీస్",
+  "hi": "एजेंट ऑफ़िस",
+  "kn": "ಏಜೆಂಟ್ ಆಫೀಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.sub": {
+  "en": "Your AI team and what each one is doing right now.",
+  "te": "మీ AI టీమ్, ప్రతి ఒక్కరూ ఇప్పుడు ఏం చేస్తున్నారు.",
+  "hi": "आपकी AI टीम और हर कोई अभी क्या कर रहा है।",
+  "kn": "ನಿಮ್ಮ AI ಟೀಮ್ ಮತ್ತು ಪ್ರತಿಯೊಬ್ಬರೂ ಈಗ ಏನು ಮಾಡುತ್ತಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.latest": {
+  "en": "Latest events",
+  "te": "తాజా ఈవెంట్లు",
+  "hi": "ताज़ा घटनाएँ",
+  "kn": "ಇತ್ತೀಚಿನ ಘಟನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.noevents": {
+  "en": "No events yet.",
+  "te": "ఇంకా ఈవెంట్లు లేవు.",
+  "hi": "अभी कोई घटना नहीं।",
+  "kn": "ಇನ್ನೂ ಘಟನೆಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.pick": {
+  "en": "Choose a teammate to read their latest events.",
+  "te": "వారి తాజా ఈవెంట్లు చదవడానికి ఒక టీమ్ సభ్యుడిని ఎంచుకోండి.",
+  "hi": "उनकी ताज़ा घटनाएँ पढ़ने के लिए किसी साथी को चुनें।",
+  "kn": "ಅವರ ಇತ್ತೀಚಿನ ಘಟನೆಗಳನ್ನು ಓದಲು ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.runs": {
+  "en": "Runs and cost",
+  "te": "రన్‌లు, ఖర్చు",
+  "hi": "रन और खर्च",
+  "kn": "ರನ್‌ಗಳು ಮತ್ತು ವೆಚ್ಚ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

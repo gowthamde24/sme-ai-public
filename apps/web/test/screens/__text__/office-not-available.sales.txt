@@ -1,0 +1,5 @@
+# Agent office
+Your AI team and what each one is doing right now.
+{label="Agent office"} Not available yet
+{label="Choose a teammate to read their latest events."} Choose a teammate to read their latest events.
+[Runs and cost](/app/tenants/22222222-2222-2222-2222-222222222222/agents)
