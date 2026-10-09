@@ -2,6 +2,8 @@
 
 import { useActionState } from "react";
 
+import { alertBox, btnMain, fieldHelp, fieldInput, fieldLabel, fieldTextarea, formCard } from "@/components/v2/app/ui";
+
 import type { EvidenceFormState } from "./evidence-actions";
 
 type Props = {
@@ -29,28 +31,36 @@ export function AddEvidenceForm({ action, formId }: Props) {
     FormData
   >(action, undefined);
   return (
-    <form className="card" action={formAction} aria-label="Add evidence">
+    <form className={formCard} action={formAction} aria-label="Add evidence">
       <input type="hidden" name="id" value={formId} />
-      <label htmlFor="evidence-kind">Kind</label>
-      <select id="evidence-kind" name="kind" defaultValue="web_page">
+      <label htmlFor="evidence-kind" className={fieldLabel}>
+        Kind
+      </label>
+      <select id="evidence-kind" name="kind" defaultValue="web_page" className={fieldInput}>
         {KINDS.map(([value, label]) => (
           <option key={value} value={value}>
             {label}
           </option>
         ))}
       </select>
-      <label htmlFor="evidence-url">URL (optional)</label>
+      <label htmlFor="evidence-url" className={fieldLabel}>
+        URL (optional)
+      </label>
       <input
         id="evidence-url"
+        className={fieldInput}
         name="url"
         maxLength={2048}
         placeholder="https://…"
         autoComplete="off"
         spellCheck={false}
       />
-      <label htmlFor="evidence-reference">Reference (optional)</label>
+      <label htmlFor="evidence-reference" className={fieldLabel}>
+        Reference (optional)
+      </label>
       <input
         id="evidence-reference"
+        className={fieldInput}
         name="reference"
         maxLength={120}
         placeholder="doc:invoice-12"
@@ -58,26 +68,31 @@ export function AddEvidenceForm({ action, formId }: Props) {
         spellCheck={false}
         aria-describedby="evidence-reference-hint"
       />
-      <p id="evidence-reference-hint" className="hint">
+      <p id="evidence-reference-hint" className={fieldHelp}>
         A short typed reference: a lower-case prefix, a colon, then letters,
         digits or . _ # / - (for example doc:catalogue-2026 or upload:a1.pdf).
         Enter a URL, a reference, or both.
       </p>
-      <label htmlFor="evidence-snippet">Snippet (optional)</label>
+      <label htmlFor="evidence-snippet" className={fieldLabel}>
+        Snippet (optional)
+      </label>
       <textarea
         id="evidence-snippet"
+        className={fieldTextarea}
         name="snippet"
         rows={4}
         maxLength={1000}
       />
-      <label htmlFor="evidence-published">Published on (optional)</label>
-      <input id="evidence-published" name="published_at" type="date" />
+      <label htmlFor="evidence-published" className={fieldLabel}>
+        Published on (optional)
+      </label>
+      <input id="evidence-published" name="published_at" type="date" className={fieldInput} />
       {state?.error && (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         Add evidence
       </button>
     </form>

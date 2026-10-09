@@ -6,6 +6,7 @@ import { startTransition, useActionState, useState } from "react";
 import { HOW_IT_CAME, HOW_LABELS } from "@/lib/api/customers";
 
 import type { CustomerFormState } from "./actions";
+import { alertBox, btnMain, fieldInput, fieldLabel, formCardWide, link, mutedText } from "@/components/v2/app/ui";
 
 type Action = (prev: CustomerFormState, formData: FormData) => Promise<CustomerFormState>;
 
@@ -56,24 +57,24 @@ function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action
   }, undefined);
   if (state?.ok && state.leadId && state.contactId)
     return (
-      <div role="status" className="card" style={{ maxWidth: "40rem" }}>
+      <div role="status" className={formCardWide}>
         <p>
           <strong>Added {state.name}.</strong> A lead was made for this customer.
         </p>
-        <p className="hint">No consent is recorded yet, so you cannot record that you contacted them. Record it next, once they have told you.</p>
+        <p className={mutedText}>No consent is recorded yet, so you cannot record that you contacted them. Record it next, once they have told you.</p>
         <p>
-          <Link href={`/app/tenants/${tenantId}/contacts/${state.contactId}/consent`} className="tap">
+          <Link href={`/app/tenants/${tenantId}/contacts/${state.contactId}/consent`} className={link}>
             Record consent for this person →
           </Link>
         </p>
         <p>
-          <Link href={`/app/tenants/${tenantId}/leads/${state.leadId}`} className="tap">
+          <Link href={`/app/tenants/${tenantId}/leads/${state.leadId}`} className={link}>
             Open the lead →
           </Link>
           {" · "}
           <Link
             href={`/app/tenants/${tenantId}/customers/new`}
-            className="tap"
+            className={link}
             onClick={(event) => {
               // A click with a modifier key (new tab, new window, download) or with a button other than the primary one is the browser's own: leave it alone.
               if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -93,36 +94,45 @@ function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action
         const data = new FormData(event.currentTarget);
         startTransition(() => formAction(data));
       }}
-      className="card"
-      style={{ maxWidth: "40rem" }}
+      className={formCardWide}
       aria-label="Add a customer"
     >
       <input type="hidden" name="company_id" value={ids.company} />
       <input type="hidden" name="contact_id" value={contactId} />
       <input type="hidden" name="lead_id" value={ids.lead} />
-      <label htmlFor="cust-name">Customer&apos;s name</label>
-      <input id="cust-name" name="full_name" required value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={200} disabled={pending} />
-      <label htmlFor="cust-phone">WhatsApp or phone number</label>
-      <input id="cust-phone" name="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} minLength={3} maxLength={32} inputMode="tel" autoComplete="off" disabled={pending} />
-      <label htmlFor="cust-email">E-mail (optional)</label>
-      <input id="cust-email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} autoComplete="off" disabled={pending} />
-      <label htmlFor="cust-shop">Shop or business name (optional)</label>
-      <input id="cust-shop" name="company_name" value={shop} onChange={(e) => setShop(e.target.value)} maxLength={200} disabled={pending} />
-      <label htmlFor="cust-how">How did the enquiry come?</label>
-      <select id="cust-how" name="how" value={how} onChange={(e) => setHow(e.target.value)} disabled={pending}>
+      <label htmlFor="cust-name" className={fieldLabel}>
+        Customer&apos;s name
+      </label>
+      <input id="cust-name" name="full_name" required value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={200} disabled={pending} className={fieldInput} />
+      <label htmlFor="cust-phone" className={fieldLabel}>
+        WhatsApp or phone number
+      </label>
+      <input id="cust-phone" name="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} minLength={3} maxLength={32} inputMode="tel" autoComplete="off" disabled={pending} className={fieldInput} />
+      <label htmlFor="cust-email" className={fieldLabel}>
+        E-mail (optional)
+      </label>
+      <input id="cust-email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} autoComplete="off" disabled={pending} className={fieldInput} />
+      <label htmlFor="cust-shop" className={fieldLabel}>
+        Shop or business name (optional)
+      </label>
+      <input id="cust-shop" name="company_name" value={shop} onChange={(e) => setShop(e.target.value)} maxLength={200} disabled={pending} className={fieldInput} />
+      <label htmlFor="cust-how" className={fieldLabel}>
+        How did the enquiry come?
+      </label>
+      <select id="cust-how" name="how" value={how} onChange={(e) => setHow(e.target.value)} disabled={pending} className={fieldInput}>
         {HOW_IT_CAME.map((h) => (
           <option key={h} value={h}>
             {HOW_LABELS[h]}
           </option>
         ))}
       </select>
-      <p className="hint">If you leave the shop name empty, the customer&apos;s name is used. Look in the Contacts list first: this form does not check whether you already added this person.</p>
+      <p className={mutedText}>If you leave the shop name empty, the customer&apos;s name is used. Look in the Contacts list first: this form does not check whether you already added this person.</p>
       {state?.error && (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : "Add this customer"}
       </button>
     </form>

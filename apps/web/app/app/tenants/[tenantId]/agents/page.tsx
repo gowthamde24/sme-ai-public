@@ -24,6 +24,8 @@ import {
 } from "./actions";
 import { CostPanel } from "./cost-panel";
 import { AgentToggleForm, CancelRunForm, StartResearchForm, StartRunForm } from "./agent-forms";
+import { alertBox, backLink, bodyText, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Agents · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -49,7 +51,7 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
 
   let settings: AgentSettingsOut | null = null;
@@ -89,28 +91,28 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   const canStart = START_ROLES.includes(tenant.role);
 
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
       </p>
-      <h1>Agents</h1>
-      <p>
+      <h1 className={pageH1}>Agents</h1>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <p className="hint">
+      <p className={mutedText}>
         An agent only suggests. Everything it writes is marked &quot;agent suggestion, unreviewed&quot; until an owner or admin
         accepts it, and nothing it writes changes a score before that.
       </p>
 
       <section aria-labelledby="switch-heading">
-        <h2 id="switch-heading">This workspace</h2>
+        <h2 id="switch-heading" className={pageH2}>This workspace</h2>
         {settings === null ? (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             Could not load the agent settings from the API. Try again shortly.
           </p>
         ) : (
           <>
-            <p>
+            <p className={bodyText}>
               Agents are <strong>{settings.enabled ? "on" : "off"}</strong> for this workspace.
             </p>
             {canManage ? (
@@ -119,7 +121,7 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
                 enabled={settings.enabled}
               />
             ) : (
-              <p className="hint">Only an owner or admin can change this.</p>
+              <p className={mutedText}>Only an owner or admin can change this.</p>
             )}
           </>
         )}
@@ -127,8 +129,8 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
 
       {canStart && settings?.enabled && (
         <section aria-labelledby="start-heading">
-          <h2 id="start-heading">Start a run</h2>
-          <p className="hint">
+          <h2 id="start-heading" className={pageH2}>Start a run</h2>
+          <p className={mutedText}>
             The selftest agent reads a company&apos;s name, city, region and website host, and writes one note and a few
             observations. It does no research and contacts no one.
           </p>
@@ -142,8 +144,8 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
 
       {canStart && settings?.enabled && leads.length > 0 && (
         <section aria-labelledby="research-heading">
-          <h2 id="research-heading">Research a lead</h2>
-          <p className="hint">
+          <h2 id="research-heading" className={pageH2}>Research a lead</h2>
+          <p className={mutedText}>
             The research agent reads only the lead&apos;s company&apos;s own website, quotes what it finds, and suggests what it
             says about the buyer type, order size, size and whether the business is open. Every suggestion stays
             &quot;agent suggestion, unreviewed&quot; until an owner or admin accepts it. It contacts no one. (Development: it
@@ -160,34 +162,34 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
       {canManage && <CostPanel cost={cost} />}
 
       <section aria-labelledby="runs-heading">
-        <h2 id="runs-heading">Runs</h2>
+        <h2 id="runs-heading" className={pageH2}>Runs</h2>
         {runs === null ? (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             Could not load the runs from the API. Try again shortly.
           </p>
         ) : runs.items.length === 0 ? (
-          <p>No runs yet.</p>
+          <p className={bodyText}>No runs yet.</p>
         ) : (
-          <table>
+          <table className={`mt-4 ${dataTable}`}>
             <thead>
               <tr>
-                <th>Started</th>
-                <th>Agent</th>
-                <th>Target</th>
-                <th>Status</th>
-                <th>Writes</th>
-                <th>Started by</th>
-                <th />
+                <th className={dataThCol}>Started</th>
+                <th className={dataThCol}>Agent</th>
+                <th className={dataThCol}>Target</th>
+                <th className={dataThCol}>Status</th>
+                <th className={dataThCol}>Writes</th>
+                <th className={dataThCol}>Started by</th>
+                <th className={dataThCol} />
               </tr>
             </thead>
             <tbody>
               {runs.items.map((run) => (
-                <tr key={run.id}>
-                  <td>
+                <tr key={run.id} className={dataTr}>
+                  <td data-label="Started" className={dataTd}>
                     <LocalTime iso={run.created_at} />
                   </td>
-                  <td>{run.agent_name}</td>
-                  <td>
+                  <td data-label="Agent" className={dataTd}>{run.agent_name}</td>
+                  <td data-label="Target" className={dataTd}>
                     {run.company_id ? (
                       <Link href={`/app/tenants/${tenantId}/companies/${run.company_id}`}>Company</Link>
                     ) : run.lead_id ? (
@@ -196,15 +198,15 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
                       "—"
                     )}
                   </td>
-                  <td>
+                  <td data-label="Status" className={dataTd}>
                     {RUN_STATUS_LABELS[run.status]}
                     {run.status === "failed" && run.error_code ? `: ${RUN_ERROR_LABELS[run.error_code]}` : ""}
                   </td>
-                  <td>
+                  <td data-label="Writes" className={dataTd}>
                     {run.writes_used}/{run.max_writes}
                   </td>
-                  <td>{run.started_by === user.id ? "you" : "a teammate"}</td>
-                  <td>
+                  <td data-label="Started by" className={dataTd}>{run.started_by === user.id ? "you" : "a teammate"}</td>
+                  <td data-label="" className={dataTd}>
                     {run.status === "running" && (canManage || run.started_by === user.id) && (
                       <CancelRunForm action={cancelRunAction.bind(null, tenantId, run.id)} />
                     )}
@@ -219,15 +221,3 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   );
 }
 
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
-    </main>
-  );
-}

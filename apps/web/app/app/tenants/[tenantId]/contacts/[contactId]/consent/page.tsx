@@ -8,6 +8,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { recordConsentAction } from "./actions";
 import { ConsentForm } from "./consent-form";
+import { backLink, bodyText, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Record consent · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -31,19 +33,19 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   const back = (
     <p>
-      <Link href={`/app/tenants/${tenantId}?tab=contacts`}>← {tenant.name}</Link>
+      <Link href={`/app/tenants/${tenantId}?tab=contacts`} className={backLink}>← {tenant.name}</Link>
     </p>
   );
   if (!WRITERS.includes(tenant.role))
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         {back}
-        <h1>Record consent</h1>
-        <p>An owner, an admin or a sales person records consent.</p>
+        <h1 className={pageH1}>Record consent</h1>
+        <p className={bodyText}>An owner, an admin or a sales person records consent.</p>
       </main>
     );
 
@@ -53,17 +55,17 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       {back}
-      <h1>Record consent</h1>
-      <p>
+      <h1 className={pageH1}>Record consent</h1>
+      <p className={bodyText}>
         For <strong>{contact.full_name}</strong>. Your role: <strong>{tenant.role}</strong>
       </p>
       <section aria-labelledby="now-heading">
-        <h2 id="now-heading">What is recorded now</h2>
+        <h2 id="now-heading" className={pageH2}>What is recorded now</h2>
         <ul>
           {CHANNELS.map((c) => (
             <li key={c}>
@@ -71,25 +73,13 @@ export default async function ConsentPage({ params }: PageProps<"/app/tenants/[t
             </li>
           ))}
         </ul>
-        {contact.suppression_reason !== null && <p className="hint">This person is marked as not to be contacted ({contact.suppression_reason}). Writing down consent here does not change that.</p>}
+        {contact.suppression_reason !== null && <p className={mutedText}>This person is marked as not to be contacted ({contact.suppression_reason}). Writing down consent here does not change that.</p>}
       </section>
       <section aria-labelledby="record-heading">
-        <h2 id="record-heading">Write down an entry</h2>
+        <h2 id="record-heading" className={pageH2}>Write down an entry</h2>
         <ConsentForm action={recordConsentAction.bind(null, tenantId, contactId)} />
       </section>
     </main>
   );
 }
 
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
-    </main>
-  );
-}

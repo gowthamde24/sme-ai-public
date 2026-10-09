@@ -7,6 +7,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { ReviewScreen } from "../review-screen";
+import { alertBox, link, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Review suggestions · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -31,8 +32,8 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <main className="shell wide">
-        <p role="alert" className="error">
+      <main className={pageMain}>
+        <p role="alert" className={alertBox}>
           Could not load this workspace from the API. Try again shortly.
         </p>
       </main>
@@ -55,17 +56,17 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
   );
 
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`} className="tap">
+        <Link href={`/app/tenants/${tenantId}`} className={link}>
           ← {tenant.name}
         </Link>
       </p>
-      <h1>Review suggestions</h1>
-      <p>
+      <h1 className={pageH1}>Review suggestions</h1>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <p className="hint">
+      <p className={mutedText}>
         An agent only suggests. Each suggestion shows the quote it rests on and where it came from, as plain text. The quote was
         checked by the agent runtime, not by the database. A suggestion counts toward a score only after an owner or admin
         accepts it; the newest decision on a suggestion wins.

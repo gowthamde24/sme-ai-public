@@ -1,4 +1,5 @@
 import type { ClaimEvidenceOut } from "@/lib/api/agents";
+import { listItemCard, listPlain, mutedText, quoteBlock, wrapAnywhere } from "@/components/v2/app/ui";
 
 /** Said next to every quote: what has and has not been checked. */
 export const QUOTE_CHECK_LABEL = "Quote checked by the agent runtime, not by the database.";
@@ -19,21 +20,21 @@ const STANCE_LABELS: Record<ClaimEvidenceOut["stance"], string> = {
  */
 export function SuggestionEvidence({ evidence }: { evidence: ClaimEvidenceOut[] | undefined }) {
   if (!evidence || evidence.length === 0)
-    return <p className="hint">No evidence is attached to this suggestion.</p>;
+    return <p className={mutedText}>No evidence is attached to this suggestion.</p>;
   return (
-    <ul className="evidence-list" style={{ overflowWrap: "anywhere" }}>
+    <ul className={`${listPlain} ${wrapAnywhere}`}>
       {evidence.map((e, i) => (
-        <li key={i}>
-          <p className="hint">
+        <li key={i} className={listItemCard}>
+          <p className={mutedText}>
             {STANCE_LABELS[e.stance]} · {e.kind === "web_page" ? "web page" : e.kind}
             {e.host ? ` · source: ${e.host}${e.path ?? ""}` : ""}
           </p>
           {e.quote ? (
-            <blockquote style={{ margin: "0.25rem 0", overflowWrap: "anywhere" }}>{e.quote}</blockquote>
+            <blockquote className={quoteBlock}>{e.quote}</blockquote>
           ) : (
-            <p className="hint">(no quote)</p>
+            <p className={mutedText}>(no quote)</p>
           )}
-          <p className="hint">{QUOTE_CHECK_LABEL}</p>
+          <p className={mutedText}>{QUOTE_CHECK_LABEL}</p>
         </li>
       ))}
     </ul>

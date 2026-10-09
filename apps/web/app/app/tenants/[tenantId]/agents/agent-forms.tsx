@@ -3,19 +3,20 @@
 import { useActionState } from "react";
 
 import type { AgentActionState } from "./actions";
+import { alertBox, btnMain, btnQuiet, hintInline, inlineForm, okBox, selectInline } from "@/components/v2/app/ui";
 
 type Action = (prev: AgentActionState, formData: FormData) => Promise<AgentActionState>;
 
 function Result({ state }: { state: AgentActionState }) {
   if (state?.error)
     return (
-      <p role="alert" className="error hint">
+      <p role="alert" className={alertBox}>
         {state.error}
       </p>
     );
   if (state?.ok && state.message)
     return (
-      <p role="status" className="hint">
+      <p role="status" className={okBox}>
         {state.message}
       </p>
     );
@@ -26,9 +27,9 @@ function Result({ state }: { state: AgentActionState }) {
 export function AgentToggleForm({ action, enabled }: { action: Action; enabled: boolean }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
-    <form action={formAction}>
+    <form action={formAction} className={inlineForm}>
       <input type="hidden" name="enabled" value={enabled ? "false" : "true"} />
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : enabled ? "Turn agents off" : "Turn agents on"}
       </button>
       <Result state={state} />
@@ -48,17 +49,19 @@ export function StartRunForm({
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
-    <form action={formAction}>
+    <form action={formAction} className={inlineForm}>
       <input type="hidden" name="run_id" value={runId} />
-      <label htmlFor="agent-company">Company</label>{" "}
-      <select id="agent-company" name="company_id" required disabled={pending}>
+      <label htmlFor="agent-company" className={hintInline}>
+        Company
+      </label>{" "}
+      <select id="agent-company" name="company_id" required disabled={pending} className={selectInline}>
         {companies.map((c) => (
           <option key={c.id} value={c.id}>
             {c.name}
           </option>
         ))}
       </select>{" "}
-      <button type="submit" disabled={pending || companies.length === 0}>
+      <button type="submit" className={btnMain} disabled={pending || companies.length === 0}>
         {pending ? "Starting..." : "Start selftest run"}
       </button>
       <Result state={state} />
@@ -79,17 +82,19 @@ export function StartResearchForm({
 }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
-    <form action={formAction}>
+    <form action={formAction} className={inlineForm}>
       <input type="hidden" name="run_id" value={runId} />
-      <label htmlFor="agent-lead">Lead</label>{" "}
-      <select id="agent-lead" name="lead_id" required disabled={pending}>
+      <label htmlFor="agent-lead" className={hintInline}>
+        Lead
+      </label>{" "}
+      <select id="agent-lead" name="lead_id" required disabled={pending} className={selectInline}>
         {leads.map((l) => (
           <option key={l.id} value={l.id}>
             {l.label}
           </option>
         ))}
       </select>{" "}
-      <button type="submit" disabled={pending || leads.length === 0}>
+      <button type="submit" className={btnMain} disabled={pending || leads.length === 0}>
         {pending ? "Starting..." : "Start research run"}
       </button>
       <Result state={state} />
@@ -100,8 +105,8 @@ export function StartResearchForm({
 export function CancelRunForm({ action }: { action: Action }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
-    <form action={formAction}>
-      <button type="submit" className="secondary" disabled={pending}>
+    <form action={formAction} className={inlineForm}>
+      <button type="submit" className={btnQuiet} disabled={pending}>
         {pending ? "Cancelling..." : "Cancel"}
       </button>
       <Result state={state} />

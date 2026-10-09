@@ -1,6 +1,7 @@
 import { RUN_STATUS_LABELS, type AgentCostOut } from "@/lib/api/agents";
 
 import { LocalTime } from "../../../local-time";
+import { alertBox, bodyText, listPlain, mutedText, pageH2 } from "@/components/v2/app/ui";
 
 /** Millionths of the billing currency, as a plain number with up to four decimals (1,500,000 -> "1.5"). */
 export function money(micros: number): string {
@@ -17,29 +18,29 @@ export function money(micros: number): string {
 export function CostPanel({ cost }: { cost: AgentCostOut | null }) {
   return (
     <section aria-labelledby="cost-heading">
-      <h2 id="cost-heading">Today&apos;s agent spending (UTC)</h2>
+      <h2 id="cost-heading" className={pageH2}>Today&apos;s agent spending (UTC)</h2>
       {cost === null ? (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           Could not load the spending from the API. Try again shortly.
         </p>
       ) : (
         <>
-          <p>
+          <p className={bodyText}>
             Settled <strong>{money(cost.settled_micros)}</strong> + open <strong>{money(cost.open_micros)}</strong> of a daily
             cap of <strong>{money(cost.cap_micros)}</strong> ({cost.day}). Amounts are in the billing currency.
           </p>
-          <p className="hint">
+          <p className={mutedText}>
             Open means a model call that was reserved and never settled (its run was cancelled, expired, switched off or
             interrupted, or the provider&apos;s answer was lost). It is counted at its worst case until midnight UTC, because nobody
             can tell whether it was billed.
           </p>
           {cost.open.length === 0 ? (
-            <p>Nothing is open.</p>
+            <p className={bodyText}>Nothing is open.</p>
           ) : (
-            <ul className="evidence-list">
+            <ul className={listPlain}>
               {cost.open.map((o) => (
                 <li key={`${o.run_id}-${o.step_key}`}>
-                  <p>
+                  <p className={bodyText}>
                     Open <strong>{money(o.reserved_micros)}</strong> · run {RUN_STATUS_LABELS[o.run_status].toLowerCase()} ·{" "}
                     {o.step_key} · <LocalTime iso={o.created_at} />
                   </p>
