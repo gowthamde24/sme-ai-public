@@ -6,6 +6,9 @@ replays the same calls and compares the raw bytes, key order included. A new opt
 only a manual quote needs (`pricing_kind`, `price_source`, `item_type_code`) are left out of a list quote's JSON. The one value that differs between runs, the
 approver's id (a fresh test token each time), is replaced by a fixed word before comparing.
 
+The clock is FROZEN at 2026-10-09 12:00 UTC (17:30 in India) while the calls are made: a quote is dated "today in India" and valid for 15 days, and the capture was made
+on 2026-10-09, so without a frozen clock this test failed on every other day.
+
 Job AD (D3b, deliberate): the two LISTS (`list_all`, `list_enquiry`) gained `customer` and `city` (the lead's company name and city, for the quotes screen); the golden was
 regenerated for exactly those two and every other body is byte-identical to the slice-2 capture."""
 
@@ -16,17 +19,41 @@ from __future__ import annotations
 import json
 import os
 import re
+from collections.abc import Iterator
+from contextlib import contextmanager
+from datetime import UTC, datetime, tzinfo
 from pathlib import Path
 from typing import Any
+from unittest import mock
 
+from app.quotes import builder
 from tests.fakes import auth
 from tests.quotes_fakes import ENQ, QID
 from tests.test_quotes_routes import World
 
 GOLDEN = Path(__file__).parent / "golden" / "quotes_list_api_output.json"
+FROZEN_NOW = datetime(2026, 10, 9, 12, 0, tzinfo=UTC)
+
+
+class _FrozenDatetime(datetime):
+    @classmethod
+    def now(cls, tz: tzinfo | None = None) -> _FrozenDatetime:
+        return cls.fromtimestamp(FROZEN_NOW.timestamp(), tz or UTC)
+
+
+@contextmanager
+def frozen_clock() -> Iterator[None]:
+    """`today_ist` (the only clock a quote's dates come from) reads this module's `datetime`."""
+    with mock.patch.object(builder, "datetime", _FrozenDatetime):
+        yield
 
 
 def capture() -> dict[str, str]:
+    with frozen_clock():
+        return _capture()
+
+
+def _capture() -> dict[str, str]:
     w = World()
     out: dict[str, str] = {}
 
