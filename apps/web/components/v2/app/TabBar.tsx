@@ -53,7 +53,7 @@ export function TabBar({ memberships, labels }: { memberships: readonly Membersh
           return (
             <Link key={g.id} href={groupHref(g, current.id)} aria-current={on ? "page" : undefined} className={`${tab} ${on ? tabOn : ""}`}>
               <NavIcon name={g.icon} />
-              <span className={`text-center leading-tight ${/\s/.test(word(labels, `nav.group.${g.id}`, g.label)) ? "" : "whitespace-nowrap"}`}>{word(labels, `nav.group.${g.id}`, g.label)}</span>
+              <span className={`text-center ${/\s/.test(word(labels, `nav.group.${g.id}`, g.label)) ? "" : "whitespace-nowrap"}`}>{word(labels, `nav.group.${g.id}`, g.label)}</span>
             </Link>
           );
         })}
