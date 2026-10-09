@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { HELD_TEXT, OUTCOME_LABELS, STATE_LABELS, fetchOrders, formatRupees, moneyHeld, type OrderPage } from "@/lib/api/orders";
+import { ApiDownV2 } from "@/components/v2/app/parts";
+import { backLink, emphasisLine, link, listItemCard, listPlain, metaLine, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../local-time";
@@ -31,19 +33,21 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   const back = (
     <p>
-      <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+      <Link href={`/app/tenants/${tenantId}`} className={backLink}>
+        ← {tenant.name}
+      </Link>
     </p>
   );
   if (!ORDER_ROLES.includes(tenant.role))
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         {back}
-        <h1>Orders</h1>
-        <p className="hint">Orders are shown to owners, admins and sales users.</p>
+        <h1 className={pageH1}>Orders</h1>
+        <p className={mutedText}>Orders are shown to owners, admins and sales users.</p>
       </main>
     );
 
@@ -52,62 +56,43 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
     page = await fetchOrders(user.accessToken, tenantId, { cursor: pick(query.cursor) ?? null });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       {back}
-      <h1>Orders</h1>
-      <p>
+      <h1 className={pageH1}>Orders</h1>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <p role="note" className="notice">
+      <p role="note" className={noteBox}>
         Nothing is sent by this system: every entry in an order is a record of something that happened outside it.
       </p>
       {page.items.length === 0 ? (
-        <p>No orders yet. An owner or admin starts one from an approved quote.</p>
+        <p className={spaceTop}>No orders yet. An owner or admin starts one from an approved quote.</p>
       ) : (
-        <ul aria-label="Orders, newest first">
+        <ul aria-label="Orders, newest first" className={listPlain}>
           {page.items.map((o) => (
-            <li key={o.id} className="card">
-              <Link href={`/app/tenants/${tenantId}/orders/${o.id}`} className="tap">
+            <li key={o.id} className={listItemCard}>
+              <Link href={`/app/tenants/${tenantId}/orders/${o.id}`} className={link}>
                 <strong>Order {o.order_no}</strong>
               </Link>{" "}
               · {OUTCOME_LABELS[o.outcome]} · {STATE_LABELS[o.state]}
-              <br />
-              <span className="hint">
+              <span className={metaLine}>
                 Total {formatRupees(o.order_total_paise)} · received {formatRupees(o.paid_paise)} · started <LocalTime iso={o.created_at} />
               </span>
-              {moneyHeld(o) > 0 ? (
-                <>
-                  <br />
-                  <strong>{HELD_TEXT(moneyHeld(o))}</strong>
-                </>
-              ) : null}
+              {moneyHeld(o) > 0 ? <strong className={emphasisLine}>{HELD_TEXT(moneyHeld(o))}</strong> : null}
             </li>
           ))}
         </ul>
       )}
       {page.next_cursor ? (
-        <p>
-          <Link href={`/app/tenants/${tenantId}/orders?cursor=${encodeURIComponent(page.next_cursor)}`} className="tap">
+        <p className={spaceTop}>
+          <Link href={`/app/tenants/${tenantId}/orders?cursor=${encodeURIComponent(page.next_cursor)}`} className={link}>
             Older orders →
           </Link>
         </p>
       ) : null}
-    </main>
-  );
-}
-
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
     </main>
   );
 }

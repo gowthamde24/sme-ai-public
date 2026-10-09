@@ -4,6 +4,8 @@ import { notFound, redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { SECOND_FACTOR_EVENTS, eventsOffered, fetchMembers, fetchOrder, type Member, type OrderDetail } from "@/lib/api/orders";
+import { ApiDownV2 } from "@/components/v2/app/parts";
+import { backLink, mutedText, pageMain } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { EventForm } from "../event-form";
@@ -36,15 +38,17 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   if (!ORDER_ROLES.includes(tenant.role))
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         <p>
-          <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+          <Link href={`/app/tenants/${tenantId}`} className={backLink}>
+            ← {tenant.name}
+          </Link>
         </p>
-        <p className="hint">Orders are shown to owners, admins and sales users.</p>
+        <p className={mutedText}>Orders are shown to owners, admins and sales users.</p>
       </main>
     );
 
@@ -55,7 +59,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   try {
     members = await fetchMembers(user.accessToken, tenantId); // names are a nicety: the order never depends on them
@@ -68,10 +72,10 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   const secondFactorMissing = user.aal !== "aal2";
   const forms =
     offered.length === 0 ? (
-      <p className="hint">{order.allowed_next_events.length === 0 ? "Nothing more can be recorded: this order is closed." : "Nothing is left for your role to record. An owner or admin records the rest."}</p>
+      <p className={mutedText}>{order.allowed_next_events.length === 0 ? "Nothing more can be recorded: this order is closed." : "Nothing is left for your role to record. An owner or admin records the rest."}</p>
     ) : (
       <div>
-        <p className="hint">These are the entries the rules allow now. They are guidance: the database decides again when you save.</p>
+        <p className={mutedText}>These are the entries the rules allow now. They are guidance: the database decides again when you save.</p>
         {offered.map((type) => (
           <EventForm
             key={type}
@@ -84,27 +88,16 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
       </div>
     );
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}/orders`}>← Orders</Link>
+        <Link href={`/app/tenants/${tenantId}/orders`} className={backLink}>
+          ← Orders
+        </Link>
       </p>
-      <p>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
       <OrderView tenantId={tenantId} order={order} members={members} forms={forms} />
-    </main>
-  );
-}
-
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
     </main>
   );
 }
