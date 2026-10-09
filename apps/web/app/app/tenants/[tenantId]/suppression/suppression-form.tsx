@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 
 import type { BackfillState } from "./actions";
+import { alertBox, btnMain, link, mutedText, okBox } from "@/components/v2/app/ui";
 
 type Action = () => Promise<BackfillState>;
 
@@ -16,22 +17,22 @@ export function BackfillForm({ action, secondFactorMissing }: { action: Action; 
   if (secondFactorMissing)
     return (
       <p role="note">
-        Recording keys needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
+        Recording keys needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
       </p>
     );
   return (
     <form action={run}>
-      <button type="submit" disabled={running}>
+      <button type="submit" className={btnMain} disabled={running}>
         {running ? "Recording keys…" : "Record keys for contacts that have none"}
       </button>
-      <p className="hint">Safe to press again: contacts that already have a key are skipped. Each press handles up to 500 contacts.</p>
+      <p className={mutedText}>Safe to press again: contacts that already have a key are skipped. Each press handles up to 500 contacts.</p>
       {state?.error && (
-        <p role="alert" className="error hint">
+        <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
       {state?.ok && (
-        <div role="status" className="hint">
+        <div role="status" className={okBox}>
           <p>
             Recorded keys for {state.recorded} {state.recorded === 1 ? "contact" : "contacts"}. Contacts still without a key: {state.remaining}.
           </p>

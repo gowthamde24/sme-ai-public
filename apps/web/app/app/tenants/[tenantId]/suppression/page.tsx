@@ -9,6 +9,8 @@ import { requireUser } from "@/lib/auth/session";
 import { LocalTime } from "../../../local-time";
 import { backfillKeysAction } from "./actions";
 import { BackfillForm } from "./suppression-form";
+import { alertBox, backLink, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Suppression keys · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -31,27 +33,18 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return (
-      <main className="shell wide">
-        <p role="alert" className="error">
-          Could not load this from the API. Try again shortly.
-        </p>
-        <p>
-          <Link href="/app">Back to your workspaces</Link>
-        </p>
-      </main>
-    );
+    return <ApiDownV2 />;
   }
   const back = (
     <p>
-      <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+      <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
     </p>
   );
   if (tenant.role !== "owner")
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         {back}
-        <h1>Suppression keys</h1>
+        <h1 className={pageH1}>Suppression keys</h1>
         <p>Only the owner records suppression keys.</p>
       </main>
     );
@@ -68,31 +61,31 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
   const checkedAt = new Date().toISOString();
 
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       {back}
-      <h1>Suppression keys</h1>
+      <h1 className={pageH1}>Suppression keys</h1>
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <p className="hint">
+      <p className={mutedText}>
         A suppression key lets the system remember that a person asked not to be contacted, even after their details are erased. A contact without a key can never receive a follow-up draft. Contacts made
         before the key was set up, or straight through the database, have none until you record them here. Nothing is sent to anyone, and no key or address is shown on this page.
       </p>
 
       <section aria-labelledby="status-heading">
-        <h2 id="status-heading">Status</h2>
+        <h2 id="status-heading" className={pageH2}>Status</h2>
         {readiness === "unavailable" && (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             <strong>NOT ready.</strong> Could not read the suppression status from the API. Try again shortly.
           </p>
         )}
         {readiness === "no_key" && (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             <strong>NOT ready.</strong> The suppression key is not set up on the server, so contacts cannot be keyed. This is a setting of whoever runs the server, not something to fix on this page.
           </p>
         )}
         {readiness === "unkeyed" && (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             <strong>NOT ready.</strong>{" "}
             {status?.unkeyed_contacts === null
               ? "The number of contacts without a key is not known."
@@ -106,7 +99,7 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
           </p>
         )}
         {status !== null && (
-          <p className="hint">
+          <p className={mutedText}>
             Checked <LocalTime iso={checkedAt} />.{status.key_version !== null && ` Key version in use: ${status.key_version}.`}
           </p>
         )}
@@ -114,7 +107,7 @@ export default async function SuppressionPage({ params }: PageProps<"/app/tenant
 
       {(readiness === "unkeyed" || readiness === "clear") && (
         <section aria-labelledby="backfill-heading">
-          <h2 id="backfill-heading">Record keys</h2>
+          <h2 id="backfill-heading" className={pageH2}>Record keys</h2>
           <BackfillForm action={backfillKeysAction.bind(null, tenantId)} secondFactorMissing={user.aal !== "aal2"} />
         </section>
       )}

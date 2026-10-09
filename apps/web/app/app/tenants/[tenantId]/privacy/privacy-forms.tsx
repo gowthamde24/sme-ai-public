@@ -5,6 +5,7 @@ import { useActionState, useState } from "react";
 import type { ErasureResultOut } from "@/lib/api/erasure";
 
 import type { PrivacyActionState } from "./actions";
+import { alertBox, btnMain, btnQuiet, detailsBox, fieldInput, fieldLabel, legendText, okBox } from "@/components/v2/app/ui";
 
 type Action = (
   prev: PrivacyActionState,
@@ -16,13 +17,13 @@ type BareAction = () => Promise<PrivacyActionState>;
 function Result({ state }: { state: PrivacyActionState }) {
   if (state?.error)
     return (
-      <p role="alert" className="error hint">
+      <p role="alert" className={alertBox}>
         {state.error}
       </p>
     );
   if (state?.ok && state.message)
     return (
-      <div role="status" className="hint">
+      <div role="status" className={okBox}>
         <p>{state.message}</p>
         {state.result && <ResultView result={state.result} />}
       </div>
@@ -42,7 +43,7 @@ export function ResultView({ result }: { result: ErasureResultOut }) {
           : entries.map(([column, n]) => `${column} (${n})`).join(", ")}
       </p>
       {result.review.length > 0 && (
-        <details>
+        <details className={detailsBox}>
           <summary>
             {result.review.length}{" "}
             {result.review.length === 1 ? "row needs" : "rows need"} a manual
@@ -93,7 +94,7 @@ export function NewRequestForm({
     <form action={formAction}>
       <input type="hidden" name="request_id" value={requestId} />
       <fieldset>
-        <legend>What should be erased?</legend>
+        <legend className={legendText}>What should be erased?</legend>
         {[
           ["contact", "One contact"],
           [
@@ -122,13 +123,14 @@ export function NewRequestForm({
       </fieldset>
       {scope === "contact" && (
         <p>
-          <label htmlFor="erase-contact">Contact</label>{" "}
+          <label htmlFor="erase-contact" className={fieldLabel}>
+        Contact
+      </label>{" "}
           <select
             id="erase-contact"
             name="contact_id"
             required
-            disabled={pending}
-          >
+            disabled={pending} className={fieldInput}>
             {contacts.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -139,13 +141,14 @@ export function NewRequestForm({
       )}
       {scope === "company" && (
         <p>
-          <label htmlFor="erase-company">Company</label>{" "}
+          <label htmlFor="erase-company" className={fieldLabel}>
+        Company
+      </label>{" "}
           <select
             id="erase-company"
             name="company_id"
             required
-            disabled={pending}
-          >
+            disabled={pending} className={fieldInput}>
             {companies.map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
@@ -154,7 +157,7 @@ export function NewRequestForm({
           </select>
         </p>
       )}
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Requesting..." : "Request erasure"}
       </button>
       <Result state={state} />
@@ -167,7 +170,7 @@ export function PreviewForm({ action }: { action: BareAction }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
     <form action={formAction}>
-      <button type="submit" className="secondary" disabled={pending}>
+      <button type="submit" className={btnQuiet} disabled={pending}>
         {pending ? "Checking..." : "Preview"}
       </button>
       <Result state={state} />
@@ -195,10 +198,9 @@ export function ExecuteForm({ action, phrase }: { action: Action; phrase: string
           autoComplete="off"
           autoCapitalize="off"
           spellCheck={false}
-          disabled={pending}
-        />
+          disabled={pending} className={fieldInput} />
       </label>{" "}
-      <button type="submit" disabled={pending || !matches}>
+      <button type="submit" className={btnMain} disabled={pending || !matches}>
         {pending ? "Erasing..." : "Erase now"}
       </button>
       <Result state={state} />
@@ -210,7 +212,7 @@ export function CancelForm({ action }: { action: BareAction }) {
   const [state, formAction, pending] = useActionState(action, undefined);
   return (
     <form action={formAction}>
-      <button type="submit" className="secondary" disabled={pending}>
+      <button type="submit" className={btnQuiet} disabled={pending}>
         {pending ? "Cancelling..." : "Cancel request"}
       </button>
       <Result state={state} />
