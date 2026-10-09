@@ -645,3 +645,42 @@ fieldset.form-plain {
     }
   }
 }
+
+/* ---- Workspace redesign: theme bridge (docs/plans/workspace-v2-redesign-plan.md, 2.9; owner approved 2026-10-09) ----
+   The v2 theme button writes data-theme on <html>. Screens not yet in the v2 look follow it, in both directions: dark on a light phone and light
+   on a dark phone. With no choice there is no attribute and nothing here applies. Deleted with the last legacy screen (Batch 6). */
+html[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0b0f17;
+  --fg: #f3f4f6;
+  --muted: #9ca3af;
+  --link: #93c5fd;
+  --link-visited: #c4b5fd;
+}
+html[data-theme="dark"] .error { color: #fca5a5; }
+html[data-theme="dark"] .badge-priority { background: #14532d; color: #bbf7d0; border-color: #16a34a; }
+html[data-theme="dark"] .badge-worth-reviewing { background: #1e3a8a; color: #bfdbfe; border-color: #2563eb; }
+html[data-theme="dark"] .badge-maybe { background: #78350f; color: #fde68a; border-color: #d97706; }
+html[data-theme="dark"] .badge-low-priority { background: #374151; color: #d1d5db; border-color: #4b5563; }
+html[data-theme="dark"] .badge-hidden { background: #1e293b; color: #94a3b8; }
+html[data-theme="dark"] .badge-good { background: #14532d; color: #bbf7d0; }
+html[data-theme="dark"] .badge-bad { background: #7f1d1d; color: #fecaca; }
+html[data-theme="dark"] .factor-item { background: rgba(255, 255, 255, 0.05); }
+
+html[data-theme="light"] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --fg: #111827;
+  --muted: #4b5563;
+  --link: #1d4ed8;
+  --link-visited: #6d28d9;
+}
+html[data-theme="light"] .error { color: #b91c1c; }
+html[data-theme="light"] .badge-priority { background: #dcfce7; color: #166534; border-color: #86efac; }
+html[data-theme="light"] .badge-worth-reviewing { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+html[data-theme="light"] .badge-maybe { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+html[data-theme="light"] .badge-low-priority { background: #f3f4f6; color: #4b5563; border-color: #d1d5db; }
+html[data-theme="light"] .badge-hidden { background: #f1f5f9; color: #64748b; }
+html[data-theme="light"] .badge-good { background: #dcfce7; color: #166534; }
+html[data-theme="light"] .badge-bad { background: #fee2e2; color: #991b1b; }
+html[data-theme="light"] .factor-item { background: rgba(0, 0, 0, 0.03); }

@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
+    "guard:v2": "node scripts/v2-guard.mjs",
     "audit:leaks": "node scripts/audit-leaks.mjs",
     "audit:auth": "node scripts/audit-auth.mjs",
     "audit:landing": "node scripts/audit-landing.mjs",
