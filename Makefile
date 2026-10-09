@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -87,6 +87,12 @@ eval:
 eval-live:
 	cd $(API) && .venv/bin/python ../../tests/integration/eval_live_preflight.py
 	cd $(API) && EVAL_LIVE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py -q -s -k test_live_pass_rates
+
+# OPT-IN, NEVER part of make check (job AJ): the FIRST LIVE RUN of the Main agent. Five fixed questions on the seeded demo workspace through the REAL Anthropic adapter, PASS/FAIL per
+# question, at most 20 rupees (2000 paise) for the whole command, the daily cap stays on. The key comes from the environment only; without it the command prints one line and stops.
+# Needs `make db-start`, `make seed-demo` and `make seed-demo-manual`. See docs/runbooks/main-agent-live-smoke.md.
+assistant-smoke:
+	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/assistant_smoke.py
 
 # OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
 # fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.
