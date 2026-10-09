@@ -59,6 +59,9 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # rehearsal step 5: the price-list import (long explanatory docstrings, the parser's closed code lists)
 "app/pricelists/*" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
+# job AK / K3: the model adapters (long explanatory docstrings, long payload lines)
+"app/agents/llm/openai_compat.py" = ["E501"]
+"app/agents/llm/gemini.py" = ["E501"]
 # T009 integration: the quote path (long explanatory docstrings)
 "app/quotes/*" = ["E501"]
 "app/orders/*" = ["E501"]

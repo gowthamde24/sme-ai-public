@@ -59,6 +59,12 @@ class Settings(BaseSettings):
     # set at the provider and confirmed here before the first real call.
     llm_model: str | None = None
     anthropic_api_key: SecretStr | None = None
+    # Other providers behind the same port (job AK / K3). Each is enabled ONLY by its own
+    # key and by LLM_PROVIDER naming it; the model, the two prices and the spend-cap
+    # confirmation are the same settings as for Anthropic. Keys: environment only.
+    openai_api_key: SecretStr | None = None
+    gemini_api_key: SecretStr | None = None
+    sarvam_api_key: SecretStr | None = None
     anthropic_base_url: str = "https://api.anthropic.com"
     llm_input_micros_per_mtok: int | None = None
     llm_output_micros_per_mtok: int | None = None

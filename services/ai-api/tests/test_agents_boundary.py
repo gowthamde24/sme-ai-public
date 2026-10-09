@@ -27,7 +27,8 @@ from app.agents import selftest
 ROOT = Path(__file__).resolve().parents[1] / "app" / "agents"
 PURE_ROOT = Path(__file__).resolve().parents[1] / "app" / "requirements"
 FILES = sorted(ROOT.rglob("*.py")) + sorted(PURE_ROOT.rglob("*.py"))
-HTTP_ALLOWED = {"db.py", "anthropic.py"}
+# the database module and the model adapters: the only ones that talk to the outside
+HTTP_ALLOWED = {"db.py", "anthropic.py", "openai_compat.py", "gemini.py"}
 FORBIDDEN_MODULES = {
     "os",
     "subprocess",
