@@ -1,0 +1,26 @@
+[← Workspaces](/app)
+# Demo Silks (synthetic)
+Your role: owner
+{label="Lead actions"} [Lead Review Queue →](/app/tenants/22222222-2222-2222-2222-222222222222/review) · [Review suggestions →](/app/tenants/22222222-2222-2222-2222-222222222222/suggestions) · [Agents →](/app/tenants/22222222-2222-2222-2222-222222222222/agents) · [Orders →](/app/tenants/22222222-2222-2222-2222-222222222222/orders) · [Follow-ups →](/app/tenants/22222222-2222-2222-2222-222222222222/followups) · [Price list →](/app/tenants/22222222-2222-2222-2222-222222222222/price-list) · [Item types →](/app/tenants/22222222-2222-2222-2222-222222222222/item-types) · [Quote policy →](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy) · [Privacy →](/app/tenants/22222222-2222-2222-2222-222222222222/privacy) · [Add a customer →](/app/tenants/22222222-2222-2222-2222-222222222222/customers/new) · [Add a product →](/app/tenants/22222222-2222-2222-2222-222222222222/products/new) · [Suppression keys →](/app/tenants/22222222-2222-2222-2222-222222222222/suppression)
+{label="Records"} [Companies](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies) [Contacts](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts) [Products](/app/tenants/22222222-2222-2222-2222-222222222222?tab=products) [Leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads current=page) [Opportunities](/app/tenants/22222222-2222-2222-2222-222222222222?tab=opportunities)
+{label="Leads"}
+## Leads
+No leads yet.
+{label="Create a company"}
+## Create a company
+{label="Create company"}
+<hidden name=id value=77777777-7777-4777-8777-777777777777>
+Name
+<text name=name label="Name" required maxlength=200>
+Type
+<select name=type label="Type">
+  options: Prospect=prospect* | Customer=customer | Supplier=supplier | Other=other
+Website
+<text name=website label="Website" maxlength=200>
+Country
+<text name=country label="Country" maxlength=100>
+City
+<text name=city label="City" maxlength=100>
+Industry
+<text name=industry label="Industry" maxlength=100>
+[button type=submit: Create company]

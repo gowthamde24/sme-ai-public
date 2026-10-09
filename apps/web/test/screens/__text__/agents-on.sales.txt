@@ -1,0 +1,30 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Agents
+Your role: sales An agent only suggests. Everything it writes is marked "agent suggestion, unreviewed" until an owner or admin accepts it, and nothing it writes changes a score before that.
+{label="This workspace"}
+## This workspace
+Agents are on for this workspace. Only an owner or admin can change this.
+{label="Start a run"}
+## Start a run
+The selftest agent reads a company's name, city, region and website host, and writes one note and a few observations. It does no research and contacts no one.
+form:
+<hidden name=run_id value=77777777-7777-4777-8777-777777777777>
+Company
+<select name=company_id label="Company" required>
+  options: Sri Lakshmi Silks (synthetic)=55555555-5555-4555-8555-555555555551*
+[button type=submit: Start selftest run]
+{label="Research a lead"}
+## Research a lead
+The research agent reads only the lead's company's own website, quotes what it finds, and suggests what it says about the buyer type, order size, size and whether the business is open. Every suggestion stays "agent suggestion, unreviewed" until an owner or admin accepts it. It contacts no one. (Development: it runs on synthetic demo sites only.)
+form:
+<hidden name=run_id value=77777777-7777-4777-8777-777777777777>
+Lead
+<select name=lead_id label="Lead" required>
+  options: Sri Lakshmi Silks (synthetic)=33333333-3333-3333-3333-333333333333*
+[button type=submit: Start research run]
+{label="Runs"}
+## Runs
+table:
+  | th Started | th Agent | th Target | th Status | th Writes | th Started by | th  |
+  | Oct 4, 2026, 5:30 PM (2 days ago) | selftest | [Company](/app/tenants/22222222-2222-2222-2222-222222222222/companies/55555555-5555-4555-8555-555555555551) | Running | 3 / 6 | you | form: / [button type=submit: Cancel] |
+  | Oct 4, 2026, 5:30 PM (2 days ago) | research | [Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) | Failed : the model did not answer | 3 / 6 | you |  |

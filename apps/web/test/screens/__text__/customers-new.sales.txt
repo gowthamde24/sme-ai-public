@@ -1,0 +1,20 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Add a customer
+Your role: sales A customer is a person with a phone number, and a lead for them. Nothing is sent to anyone. Consent is not recorded here: you record it on the next screen, when the customer has told you.
+{label="Add a customer"}
+<hidden name=company_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=contact_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=lead_id value=77777777-7777-4777-8777-777777777777>
+Customer's name
+<text name=full_name label="Customer's name" required maxlength=200>
+WhatsApp or phone number
+<text name=phone label="WhatsApp or phone number" required maxlength=32 minlength=3 inputmode=tel autocomplete=off>
+E-mail (optional)
+<email name=email label="E-mail (optional)" maxlength=254 autocomplete=off>
+Shop or business name (optional)
+<text name=company_name label="Shop or business name (optional)" maxlength=200>
+How did the enquiry come?
+<select name=how label="How did the enquiry come?">
+  options: Phone call=phone_call* | WhatsApp=whatsapp
+If you leave the shop name empty, the customer's name is used. Look in the Contacts list first: this form does not check whether you already added this person.
+[button type=submit: Add this customer]

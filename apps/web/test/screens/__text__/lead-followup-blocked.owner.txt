@@ -1,0 +1,30 @@
+[← Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) · [Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups) Your role: owner
+{role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
+{label="Follow-up"}
+# Follow-up
+{label="Channel"}
+- [E-mail](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup?channel=email current=page) · no recorded consent or address
+- [WhatsApp](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup?channel=whatsapp) · no suppression key yet
+## Is anything blocking a follow-up?
+{label="What blocks a follow-up"}
+- There is no recorded consent for this channel, or no address for it.
+## Drafts
+No drafts yet.
+{label="Record a touch"}
+### Record a touch
+This keeps a record of something that already happened outside this system. Nothing is sent.
+<hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
+legend: What happened
+<radio name=direction label="I sent it myself" value=out checked>
+I sent it myself
+<radio name=direction label="They replied" value=in>
+They replied
+Channel
+<select name=channel label="Channel">
+  options: E-mail=email* | WhatsApp=whatsapp | Phone call=phone
+When (India time). Leave it empty for now.
+<datetime-local name=happened_at label="When (India time). Leave it empty for now." max=2026-10-06T10:00>
+[button type=submit: Record this]
+## Touches
+{label="Touches, newest first"}
+- You sent it yourself · E-mail · Oct 2, 2026, 12:00 PM (4 days ago)

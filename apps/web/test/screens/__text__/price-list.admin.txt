@@ -1,0 +1,13 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Load a price list
+Your role: admin
+{role=note} A price list is a file of your products and their prices. Check it first: nothing is saved until you press save, and nothing is sent to anyone. Prices in a quote always come from the price list in force on the day, never from a person or an assistant.
+form:
+Choose a CSV file
+<file label="Choose a CSV file" accept=.csv,text/csv,text/plain>
+Or paste the file's text
+<textarea name=csv label="Or paste the file's text" placeholder="sku,name,unit_price,moq,tax_bps">
+Columns: sku, name, unit_price, moq, tax_bps and, optionally, min_qty_1, price_1 up to min_qty_5, price_5 . Prices are in rupees (4200 or 1,200.50). Every sku must already be a product in your catalog. The price list starts on
+<date name=effective_from label="The price list starts on" required value=2026-10-06>
+[button type=submit: Check the file]
+Checking writes nothing.

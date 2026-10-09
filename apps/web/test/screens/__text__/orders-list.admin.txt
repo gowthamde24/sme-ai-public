@@ -1,0 +1,9 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Orders
+Your role: admin
+{role=note} Nothing is sent by this system: every entry in an order is a record of something that happened outside it.
+{label="Orders, newest first"}
+- [Order 7](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1) · Open · Quote approved Total ₹1,50,000.00 · received ₹0.00 · started Oct 6, 2026, 10:30 AM (in 30 minutes)
+- [Order 8](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2) · Cancelled · Cancelled Total ₹1,50,000.00 · received ₹8,820.00 · started Oct 6, 2026, 10:30 AM (in 30 minutes) Money still held: ₹7,820.00. A refund may be owed to the customer.
+- [Order 9](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb3) · Won · Closed, fully paid Total ₹1,50,000.00 · received ₹1,50,000.00 · started Oct 6, 2026, 10:30 AM (in 30 minutes)
+[Older orders →](/app/tenants/22222222-2222-2222-2222-222222222222/orders?cursor=a%20b)

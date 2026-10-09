@@ -1,0 +1,31 @@
+[← Workspaces](/app)
+# Demo Silks (synthetic)
+Your role: sales
+{role=note} Synthetic data only. This workspace does not accept real contact details yet. Use an e-mail address on a reserved domain (such as example.test ) and a phone number that starts with +00 . The operator opens this once the privacy checks are done.
+{label="Lead actions"} [Lead Review Queue →](/app/tenants/22222222-2222-2222-2222-222222222222/review) · [Review suggestions →](/app/tenants/22222222-2222-2222-2222-222222222222/suggestions) · [Agents →](/app/tenants/22222222-2222-2222-2222-222222222222/agents) · [Orders →](/app/tenants/22222222-2222-2222-2222-222222222222/orders) · [Follow-ups →](/app/tenants/22222222-2222-2222-2222-222222222222/followups) · [Item types →](/app/tenants/22222222-2222-2222-2222-222222222222/item-types) · [Add a customer →](/app/tenants/22222222-2222-2222-2222-222222222222/customers/new)
+{label="Records"} [Companies](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies current=page) [Contacts](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts) [Products](/app/tenants/22222222-2222-2222-2222-222222222222?tab=products) [Leads](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads) [Opportunities](/app/tenants/22222222-2222-2222-2222-222222222222?tab=opportunities)
+{label="Companies"}
+## Companies
+table:
+  | th Name | th Type | th Website | th Country | th City | th Industry | th Created | th Origin |
+  | [Sri Lakshmi Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/companies/55555555-5555-4555-8555-555555555551) | customer | https://sri-lakshmi.example.test | India | Hyderabad | Textiles | 2026-10-01 | manual |
+  | [Kanchi Looms (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/companies/55555555-5555-4555-8555-555555555553) | prospect | — | India | Kanchipuram | Textiles | 2026-10-01 | import |
+[Load more](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies&cursor=abc)
+{label="Create a company"}
+## Create a company
+{label="Create company"}
+<hidden name=id value=77777777-7777-4777-8777-777777777777>
+Name
+<text name=name label="Name" required maxlength=200>
+Type
+<select name=type label="Type">
+  options: Prospect=prospect* | Customer=customer | Supplier=supplier | Other=other
+Website
+<text name=website label="Website" maxlength=200>
+Country
+<text name=country label="Country" maxlength=100>
+City
+<text name=city label="City" maxlength=100>
+Industry
+<text name=industry label="Industry" maxlength=100>
+[button type=submit: Create company]

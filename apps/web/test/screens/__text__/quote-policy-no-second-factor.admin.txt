@@ -1,0 +1,49 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) Your role: admin
+{label="The quote policy"}
+# The quote policy
+{label="Quote policy versions, newest first"}
+- Version 1 · starts 1 Oct 2026 · in force today
+Days a quote is valid
+7
+Advance, new customer
+50%
+Advance, repeat customer
+25%
+Days to pay the balance, new customer
+10
+Days to pay the balance, repeat customer
+45
+GST rate, prices typed by hand
+5% from 1 Oct 2026
+Most credit for one repeat customer
+₹2,500.00
+State where the shop is
+TG
+Discount ceiling
+0%
+Shipping
+none (no courier charge)
+Published Oct 1, 2026, 3:30 PM (5 days ago)
+- Version 2 · starts 20 Oct 2026 · not started yet
+Days a quote is valid
+7
+Advance, new customer
+50%
+Advance, repeat customer
+25%
+Days to pay the balance, new customer
+10
+Days to pay the balance, repeat customer
+45
+GST rate, prices typed by hand
+5% from 1 Oct 2026
+Most credit for one repeat customer
+₹2,500.00
+State where the shop is
+TG
+Discount ceiling
+5%
+Shipping
+flat fee ₹150.00, tax 0%, free above ₹50,000.00
+Published Oct 1, 2026, 3:30 PM (5 days ago)
+{role=note} Publishing a quote policy needs your authenticator app. [Set it up on the Security page](/app/security) , then sign in again with its code.

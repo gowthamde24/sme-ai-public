@@ -1,0 +1,7 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222)
+# Suppression keys
+Your role: owner A suppression key lets the system remember that a person asked not to be contacted, even after their details are erased. A contact without a key can never receive a follow-up draft. Contacts made before the key was set up, or straight through the database, have none until you record them here. Nothing is sent to anyone, and no key or address is shown on this page.
+{label="Status"}
+## Status
+{role=alert} NOT ready. The suppression key is not set up on the server, so contacts cannot be keyed. This is a setting of whoever runs the server, not something to fix on this page.
+Checked Oct 6, 2026, 10:00 AM (now) .

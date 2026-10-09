@@ -1,0 +1,20 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=contacts)
+# Record consent
+For Ravi Kumar (synthetic) . Your role: sales
+{label="What is recorded now"}
+## What is recorded now
+- WhatsApp : Nothing recorded
+- Phone call : Withdrawn
+- E-mail : Granted
+{label="Write down an entry"}
+## Write down an entry
+{label="Record consent"} Channel
+<select name=channel label="Channel" required>
+  options: Choose one=* | WhatsApp=whatsapp | Phone call=phone | E-mail=email
+legend: What are you writing down?
+<radio name=status label="Granted" required value=granted>
+Granted
+<radio name=status label="Withdrawn" required value=withdrawn>
+Withdrawn
+This only writes down what you tell us. It does not check it, and it is not legal advice. If you are not sure, leave it as it is.
+[button type=submit: Record this]

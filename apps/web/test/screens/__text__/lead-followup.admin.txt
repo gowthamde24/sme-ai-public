@@ -1,0 +1,57 @@
+[← Lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) · [Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups) Your role: admin
+{role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
+{label="Follow-up"}
+# Follow-up
+{label="Channel"}
+- [E-mail](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup?channel=email current=page) · open
+- [WhatsApp](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup?channel=whatsapp) · open
+## Is anything blocking a follow-up?
+Nothing blocks a follow-up for this lead.
+## What the rules say now
+{role=note} Guidance only: the database decides again when you ask for a draft.
+A follow-up draft can be made now. (This would be touch 2.)
+## Drafts
+{label="Drafts, newest first"}
+- Touch 2 · E-mail · Draft: waiting for approval Made Oct 7, 2026, 12:00 PM (tomorrow) This is the text you review. It is a fixed template: nothing here can be edited.
+{label="Draft text"} Hello, I am following up on my earlier message about your saree requirement.
+[button type=button: Copy the text]
+{label="Approve this draft"}
+<hidden name=state_hash value=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa>
+[button type=submit: Approve this text]
+{label="Discard this draft"}
+[button type=submit: Discard this draft]
+- Touch 2 · E-mail · Approved: ready for you to send yourself Made Oct 7, 2026, 12:00 PM (tomorrow) · approved Oct 7, 2026, 12:30 PM (tomorrow) This is the text you review. It is a fixed template: nothing here can be edited.
+{label="Draft text"} Hello, I am following up on my earlier message about your saree requirement. (approved)
+[button type=button: Copy the text]
+{label="Record that you sent it yourself"}
+<hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
+When you sent it (India time). Leave it empty for now.
+<datetime-local name=happened_at label="When you sent it (India time). Leave it empty for now." max=2026-10-06T10:00>
+[button type=submit: Record: I sent it myself]
+{label="Discard this draft"}
+[button type=submit: Discard this draft]
+{label="Ask for a draft"}
+### Ask for a draft
+The text is a fixed template: you cannot type or change it here. You approve it, copy it, and send it yourself.
+<hidden name=draft_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=channel value=email>
+Channel: E-mail
+[button type=submit: Ask for a draft]
+{label="Record a touch"}
+### Record a touch
+This keeps a record of something that already happened outside this system. Nothing is sent.
+<hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
+legend: What happened
+<radio name=direction label="I sent it myself" value=out checked>
+I sent it myself
+<radio name=direction label="They replied" value=in>
+They replied
+Channel
+<select name=channel label="Channel">
+  options: E-mail=email* | WhatsApp=whatsapp | Phone call=phone
+When (India time). Leave it empty for now.
+<datetime-local name=happened_at label="When (India time). Leave it empty for now." max=2026-10-06T10:00>
+[button type=submit: Record this]
+## Touches
+{label="Touches, newest first"}
+- You sent it yourself · E-mail · Oct 2, 2026, 12:00 PM (4 days ago)

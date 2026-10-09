@@ -1,0 +1,38 @@
+[← Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups) Your role: owner
+{role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
+{label="The follow-up policy"}
+# The follow-up policy
+{label="Policy versions, newest first"}
+- Version 1 · starts 2026-10-01 · in force today
+Touches at most
+3
+Days to wait
+3, 7
+Quiet hours
+21:00 to 09:00
+Weekdays
+Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+Holidays
+2026-12-25
+Minimum gap
+24 hours
+UTC offset
+330 minutes
+Published Oct 1, 2026, 10:30 AM (5 days ago)
+- Version 2 · starts 2026-10-08 · not started yet
+Touches at most
+4
+Days to wait
+3, 7
+Quiet hours
+21:00 to 09:00
+Weekdays
+Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+Holidays
+2026-12-25
+Minimum gap
+24 hours
+UTC offset
+330 minutes
+Published Oct 1, 2026, 10:30 AM (5 days ago)
+{role=note} Publishing a policy needs your authenticator app. [Set it up on the Security page](/app/security) , then sign in again with its code.

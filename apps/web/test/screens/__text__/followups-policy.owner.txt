@@ -1,0 +1,72 @@
+[← Follow-ups due](/app/tenants/22222222-2222-2222-2222-222222222222/followups) Your role: owner
+{role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
+{label="The follow-up policy"}
+# The follow-up policy
+{label="Policy versions, newest first"}
+- Version 1 · starts 2026-10-01 · in force today
+Touches at most
+3
+Days to wait
+3, 7
+Quiet hours
+21:00 to 09:00
+Weekdays
+Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+Holidays
+2026-12-25
+Minimum gap
+24 hours
+UTC offset
+330 minutes
+Published Oct 1, 2026, 10:30 AM (5 days ago)
+- Version 2 · starts 2026-10-08 · not started yet
+Touches at most
+4
+Days to wait
+3, 7
+Quiet hours
+21:00 to 09:00
+Weekdays
+Monday, Tuesday, Wednesday, Thursday, Friday, Saturday
+Holidays
+2026-12-25
+Minimum gap
+24 hours
+UTC offset
+330 minutes
+Published Oct 1, 2026, 10:30 AM (5 days ago)
+{label="Publish a policy version"}
+### Publish a policy version
+<hidden name=policy_id value=77777777-7777-4777-8777-777777777777>
+Starts on
+<date name=effective_from label="Starts on" required min=2026-10-06 value=2026-10-06>
+Touches at most (the first message counts)
+<text name=max_touches label="Touches at most (the first message counts)" required inputmode=numeric value=3>
+Days to wait before touch 2, 3, ... (one number for each touch after the first)
+<text name=gap_days label="Days to wait before touch 2, 3, ... (one number for each touch after the first)" required inputmode=numeric value=3, 7>
+Quiet hours start
+<time name=quiet_start label="Quiet hours start" required value=21:00>
+Quiet hours end
+<time name=quiet_end label="Quiet hours end" required value=09:00>
+legend: Weekdays a follow-up may be due
+<checkbox name=weekday label="Monday" value=0 checked>
+Monday
+<checkbox name=weekday label="Tuesday" value=1 checked>
+Tuesday
+<checkbox name=weekday label="Wednesday" value=2 checked>
+Wednesday
+<checkbox name=weekday label="Thursday" value=3 checked>
+Thursday
+<checkbox name=weekday label="Friday" value=4 checked>
+Friday
+<checkbox name=weekday label="Saturday" value=5 checked>
+Saturday
+<checkbox name=weekday label="Sunday" value=6>
+Sunday
+Holidays (dates like 2026-12-25, separated by commas or lines)
+<textarea name=holidays label="Holidays (dates like 2026-12-25, separated by commas or lines)">
+Minimum gap in hours
+<text name=min_gap_hours label="Minimum gap in hours" required inputmode=numeric value=24>
+The recipient's UTC offset in minutes (330 for India)
+<text name=offset_minutes label="The recipient's UTC offset in minutes (330 for India)" required inputmode=numeric value=330>
+[button type=submit: Publish this policy]

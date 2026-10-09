@@ -1,0 +1,10 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) · [The follow-up policy](/app/tenants/22222222-2222-2222-2222-222222222222/followups/policy) Your role: sales
+{role=note} Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.
+{label="Follow-ups due"}
+# Follow-ups due
+{role=note} Worked out when you opened this page. Guidance only: the database decides again when you ask for a draft.
+{role=note} Oldest first. Leads that need no follow-up (replied, limit reached, closed, opted out) are not listed.
+{label="Leads with a follow-up"}
+- [Due now](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup?channel=email) · A follow-up draft can be made now. (Touch 2.) E-mail: open · WhatsApp: open · opens on E-mail
+- [Not yet](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333334/followup?channel=whatsapp) · The follow-up rules could not give an answer for this lead. Earliest: 2026-10-07 06:30 UTC. E-mail: open · WhatsApp: open · opens on WhatsApp A draft is waiting on WhatsApp: open the lead to read and approve it.
+{role=note} 2 leads on this page were left out: they cannot be contacted on any channel, or they changed while the list was made.

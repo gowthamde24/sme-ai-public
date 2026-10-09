@@ -1,0 +1,99 @@
+[← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=companies)
+# Sri Lakshmi Silks (synthetic)
+Your role: admin
+{label="Company"}
+## Company
+Type
+customer
+Website
+https://sri-lakshmi.example.test
+Country
+India
+City
+Hyderabad
+Industry
+Textiles
+Created
+2026-10-01
+Origin
+manual
+{label="Evidence"}
+## Evidence
+Sources are shown as plain text. They are never opened, fetched or previewed by this application.
+-
+Kind
+Web page
+Provider
+company website
+Retrieved
+Oct 2, 2026, 10:30 AM (4 days ago)
+Added by
+manual
+URL
+https://sri-lakshmi.example.test/about
+Snippet
+Family wholesale silk sarees since 1962.
+-
+Kind
+Note
+Provider
+owner note
+Retrieved
+Oct 3, 2026, 10:30 AM (3 days ago)
+Added by
+manual
+Reference
+called on Monday
+Snippet
+Asked for 20 pieces before the festival.
+### Add evidence
+{label="Add evidence"}
+<hidden name=id value=77777777-7777-4777-8777-777777777777>
+Kind
+<select name=kind label="Kind">
+  options: Web page=web_page* | Document=document | Email=email | Listing=listing | Registry=registry | Note=note
+URL (optional)
+<text name=url label="URL (optional)" placeholder="https://…" maxlength=2048 autocomplete=off>
+Reference (optional)
+<text name=reference label="Reference (optional)" placeholder="doc:invoice-12" maxlength=120 autocomplete=off described-by="A short typed reference: a lower-case prefix, a colon, then letters, digits or . _ # / - (for example doc:catalogue-2026 or upload:a1.pdf). Enter a URL, a reference, or both.">
+A short typed reference: a lower-case prefix, a colon, then letters, digits or . _ # / - (for example doc:catalogue-2026 or upload:a1.pdf). Enter a URL, a reference, or both. Snippet (optional)
+<textarea name=snippet label="Snippet (optional)" maxlength=1000>
+Published on (optional)
+<date name=published_at label="Published on (optional)">
+[button type=submit: Add evidence]
+{label="Agent suggestions"}
+## Agent suggestions
+Written by an agent, shown as plain text. A suggestion counts toward a score only after an owner or admin accepts it.
+- wholesale agent suggestion, unreviewed · buyer_type · Oct 4, 2026, 10:30 AM (2 days ago)
+- Supports · web page · source: sri-lakshmi.example.test/about Family wholesale silk sarees since 1962. Quote checked by the agent runtime, not by the database.
+form:
+<hidden name=review_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=decision value=accepted>
+Accept as
+<select name=confidence label="Accept as" required>
+  options: Choose…=* | Low confidence=low | Medium confidence=medium | High confidence=high
+[button type=submit: Accept]
+form:
+<hidden name=review_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=decision value=rejected>
+Reject (a reason is optional)
+<select name=reason_code label="Reject (a reason is optional)">
+  options: No reason=* | Incorrect=incorrect | Not supported by the evidence=unsupported_by_evidence | Outdated=outdated | Duplicate=duplicate | Not relevant=not_relevant
+[button type=submit: Reject]
+- yes Approved by a person · High confidence · open_for_business · Oct 4, 2026, 10:30 AM (2 days ago) No evidence is attached to this suggestion.
+summary: Change decision
+Choose a new decision below. It is recorded as a new review; the earlier one stays in the history.
+form:
+<hidden name=review_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=decision value=accepted>
+Accept as
+<select name=confidence label="Accept as" required>
+  options: Choose…=* | Low confidence=low | Medium confidence=medium | High confidence=high
+[button type=submit: Accept]
+form:
+<hidden name=review_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=decision value=rejected>
+Reject (a reason is optional)
+<select name=reason_code label="Reject (a reason is optional)">
+  options: No reason=* | Incorrect=incorrect | Not supported by the evidence=unsupported_by_evidence | Outdated=outdated | Duplicate=duplicate | Not relevant=not_relevant
+[button type=submit: Reject]

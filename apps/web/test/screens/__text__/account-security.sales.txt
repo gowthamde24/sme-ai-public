@@ -1,0 +1,10 @@
+[← Workspaces](/app)
+# Security
+Signed in as owner@example.test . Session: password only .
+{label="Authenticator app"}
+## Authenticator app
+Not set up. Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.
+[button type=button: Set up an authenticator]
+{label="If you lose your phone"}
+## If you lose your phone
+There are no backup codes. Ask the operator of this system. They confirm who you are some other way (a call, a meeting), remove the old authenticator and sign you out everywhere. Then you sign in with your password and set up a new one.
