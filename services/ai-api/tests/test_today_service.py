@@ -275,8 +275,9 @@ def test_unexpected_usage_is_a_502(bad: Any) -> None:
 def agents_raw(**over: Any) -> dict[str, Any]:
     raw: dict[str, Any] = {
         "agents_enabled": True,
-        "researcher": {"running": False, "last_status": "succeeded", "last_at": AT},
-        "requirement_analyst": {"running": True, "last_status": None, "last_at": None},
+        "main": {"switched_on": True, "running": False, "last_status": "succeeded", "last_at": AT},
+        "researcher": {"switched_on": True, "running": False, "last_status": "succeeded", "last_at": AT},
+        "requirement_analyst": {"switched_on": True, "running": True, "last_status": None, "last_at": None},
         "quote_writer": {"last_no": 12, "last_at": AT},
         "followup_desk": {"last_touch": 2, "last_at": AT},
         "order_desk": {"last_type": "record_payment", "last_at": AT},
@@ -308,8 +309,9 @@ AT_TIME = datetime(2026, 10, 9, tzinfo=UTC)
 
 def test_states_and_latest_events() -> None:
     by = {a.agent: a for a in service.shape_agents(agents_raw())}
-    assert by["main"].state == by["lead_finder"].state == "not_available"
-    assert by["main"].last_event is None and by["lead_finder"].last_event is None
+    assert by["lead_finder"].state == "not_available" and by["lead_finder"].last_event is None
+    assert by["main"].state == "idle"
+    assert by["main"].last_event is not None and by["main"].last_event.text == "Answered a question"
     assert by["researcher"].state == "idle"
     assert (
         by["researcher"].last_event is not None
@@ -331,31 +333,47 @@ def test_states_and_latest_events() -> None:
     ]
 
 
-def test_when_agents_are_switched_off_the_run_helpers_are_not_available_but_the_desks_still_report() -> (
-    None
-):
-    by = {a.agent: a for a in service.shape_agents(agents_raw(agents_enabled=False))}
-    assert by["researcher"].state == by["requirement_analyst"].state == "not_available"
+def test_when_a_switch_is_off_the_helper_says_switched_off_and_the_desks_still_report() -> None:
+    raw = agents_raw(
+        main={"switched_on": False, "running": False, "last_status": None, "last_at": None},
+        researcher={"switched_on": False, "running": False, "last_status": "succeeded", "last_at": AT},
+        requirement_analyst={"switched_on": False, "running": False, "last_status": None, "last_at": None},
+    )
+    by = {a.agent: a for a in service.shape_agents(raw)}
+    assert by["main"].state == by["researcher"].state == by["requirement_analyst"].state == "switched_off"
+    assert by["lead_finder"].state == "not_available", "a helper that does not exist is not 'switched off'"
     assert by["researcher"].last_event is not None  # what happened before is still true
     assert by["quote_writer"].state == by["followup_desk"].state == by["order_desk"].state == "idle"
+
+
+def test_one_helper_can_be_on_while_another_is_off() -> None:
+    raw = agents_raw(researcher={"switched_on": False, "running": False, "last_status": None, "last_at": None})
+    by = {a.agent: a.state for a in service.shape_agents(raw)}
+    assert (by["main"], by["researcher"], by["requirement_analyst"]) == ("idle", "switched_off", "working")
+
+
+def test_an_answer_without_the_per_helper_flag_falls_back_to_the_workspace_switch() -> None:
+    by = {a.agent: a.state for a in service.shape_agents({"agents_enabled": False, "researcher": {}, "requirement_analyst": {}, "main": {}})}
+    assert (by["main"], by["researcher"], by["requirement_analyst"]) == ("switched_off",) * 3
 
 
 def test_a_quiet_business_has_seven_idle_or_unavailable_helpers_and_no_events() -> None:
     out = service.shape_agents(
         {
             "agents_enabled": False,
-            "researcher": {"running": False, "last_status": None, "last_at": None},
-            "requirement_analyst": {"running": False, "last_status": None, "last_at": None},
+            "main": {"switched_on": False, "running": False, "last_status": None, "last_at": None},
+            "researcher": {"switched_on": False, "running": False, "last_status": None, "last_at": None},
+            "requirement_analyst": {"switched_on": False, "running": False, "last_status": None, "last_at": None},
             "quote_writer": {},
             "followup_desk": {},
             "order_desk": {},
         }
     )
     assert [a.state for a in out] == [
+        "switched_off",
         "not_available",
-        "not_available",
-        "not_available",
-        "not_available",
+        "switched_off",
+        "switched_off",
         "idle",
         "idle",
         "idle",
@@ -378,3 +396,37 @@ def test_unexpected_agents_answer_is_a_502(bad: Any) -> None:
     with pytest.raises(ApiError) as caught:
         service.shape_agents(bad)
     assert caught.value.status_code == 502
+
+
+def test_a_last_event_names_the_screen_that_shows_it_and_a_bad_target_is_dropped() -> None:
+    quote = "11111111-1111-4111-8111-111111111111"
+    raw = {
+        "agents_enabled": True,
+        "main": {"switched_on": True},
+        "researcher": {
+            "switched_on": True,
+            "last_status": "succeeded",
+            "last_at": "2026-10-09T09:00:00Z",
+            "last_target": {"type": "lead", "id": quote},
+        },
+        "requirement_analyst": {
+            "switched_on": True,
+            "last_status": "succeeded",
+            "last_at": "2026-10-09T09:00:00Z",
+            "last_target": {"type": "dashboard", "id": quote},
+        },
+        "quote_writer": {
+            "last_no": 3,
+            "last_at": "2026-10-09T09:00:00Z",
+            "last_target": {"type": "quote", "id": quote},
+        },
+    }
+    by = {a.agent: a for a in service.shape_agents(raw)}
+    quote_event = by["quote_writer"].last_event
+    assert quote_event is not None and quote_event.target is not None
+    assert (quote_event.target.type, str(quote_event.target.id)) == ("quote", quote)
+    research_event = by["researcher"].last_event
+    assert research_event is not None and research_event.target is not None
+    assert research_event.target.type == "lead"
+    requirement_event = by["requirement_analyst"].last_event
+    assert requirement_event is not None and requirement_event.target is None, "an unknown screen type is dropped, not guessed"

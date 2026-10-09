@@ -14,6 +14,7 @@ select tests.seed_t008();
 select tests.seed_t009();
 select tests.seed_orders();
 select tests.seed_followups();
+select tests.seed_assistant();
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
@@ -95,11 +96,11 @@ begin
                                 and fp.pronamespace = 'app'::regnamespace
                                 and fp.proname in ('append_only', 'guard_immutable_record', 'quote_guard_update', 'order_guard_update',
                                                             'followup_drafts_guard_update', 'question_drafts_guard_update'));
-    -- agent_runs.lead_id / enquiry_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
+    -- agent_runs.lead_id / enquiry_id / conversation_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.
     return next ok(p_foreign like (case when immutable_row then '42501:%'
-                                        when k.child = 'agent_runs' and k.child_col in ('lead_id', 'enquiry_id') then '23514:%'
+                                        when k.child = 'agent_runs' and k.child_col in ('lead_id', 'enquiry_id', 'conversation_id') then '23514:%'
                                         else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');

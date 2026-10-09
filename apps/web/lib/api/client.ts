@@ -178,6 +178,42 @@ export interface ExportDownloadResult {
   contentType: string;
 }
 
+/**
+ * A POST whose answer is a STREAM of server-sent events (the Main agent). The status is judged before any byte is read, exactly as apiRequest does: a 401 is an
+ * ApiAuthError and any other refusal an ApiRequestError with the API's fixed code and sentence; only a 200 comes back as a Response whose body the caller reads.
+ */
+export async function apiStreamRequest(path: string, accessToken: string, body: unknown): Promise<Response> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Content-Type": "application/json", Accept: "text/event-stream", Authorization: `Bearer ${accessToken}` },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  }
+  if (response.status === 401) throw new ApiAuthError("The API rejected the session.");
+  if (!response.ok) {
+    let errBody: unknown = null;
+    try {
+      errBody = await response.json();
+    } catch {
+      // non-JSON body
+    }
+    const err = isRecord(errBody) && isRecord(errBody.error) ? (errBody.error as ApiError["error"]) : null;
+    throw new ApiRequestError(
+      response.status,
+      err && isString(err.code) ? err.code : "http_error",
+      err && isString(err.message) ? err.message : "Request failed.",
+    );
+  }
+  if (!response.body) throw new ApiContractError("The stream has no body.");
+  return response;
+}
+
 export async function apiExportRequest(
   path: string,
   accessToken: string,

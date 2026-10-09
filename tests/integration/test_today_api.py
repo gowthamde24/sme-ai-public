@@ -7,6 +7,7 @@ All data is synthetic."""
 
 from __future__ import annotations
 
+import uuid
 from typing import Any
 
 import httpx
@@ -166,8 +167,9 @@ def test_the_helpers_are_always_all_seven_and_start_switched_off(client: TestCli
     body = r.json()
     assert [a["agent"] for a in body] == AGENT_ORDER
     by = {a["agent"]: a for a in body}
-    assert by["main"]["state"] == by["lead_finder"]["state"] == "not_available"
-    assert by["researcher"]["state"] == by["requirement_analyst"]["state"] == "not_available", "agents are off until the workspace switches them on"
+    assert by["lead_finder"]["state"] == "not_available", "it does not exist yet"
+    assert by["main"]["state"] == by["researcher"]["state"] == "switched_off", "it exists, and its switch is off until the workspace turns it on"
+    assert by["requirement_analyst"]["state"] == "switched_off"
     assert all(a["job"] for a in body)
 
 
@@ -176,13 +178,17 @@ def test_the_desks_report_their_real_latest_events(client: TestClient, scene: Sc
     assert by["quote_writer"]["last_event"]["text"].startswith("Prepared quote ")
     assert by["followup_desk"]["last_event"]["text"] == "Drafted follow-up message number 2"
     assert by["order_desk"]["last_event"]["text"] == "Order started"
+    for desk, kind in (("quote_writer", "quote"), ("followup_desk", "lead"), ("order_desk", "order")):
+        target = by[desk]["last_event"]["target"]
+        assert target["type"] == kind and uuid.UUID(target["id"]), f"{desk}: the event says which screen shows it"
     b = {a["agent"]: a for a in get(client, scene, scene.b, "agents/status", "owner").json()}
     assert b["quote_writer"]["last_event"] is None and b["order_desk"]["last_event"] is None, "B has no quotes or orders: nothing of A's shows"
     assert b["followup_desk"]["last_event"]["text"] == "Drafted follow-up message number 2"
 
 
 def test_a_running_research_run_shows_as_working_once_agents_are_on(client: TestClient, scene: Scene) -> None:
-    operator_sql.sql(f"insert into public.tenant_agent_settings (tenant_id, enabled) values ('{scene.a.id}', true) on conflict (tenant_id) do update set enabled = true")
+    slug = operator_sql.sql(f"select slug from public.tenants where id = '{scene.a.id}'").strip()
+    operator_sql.sql(f"select app.operator_enable_research('{slug}'); select app.operator_enable_requirement('{slug}')")
     lead = scene.a.rows["leads"]["id"]
     owner = scene.a.users["owner"].id
     operator_sql.sql(
@@ -193,7 +199,7 @@ def test_a_running_research_run_shows_as_working_once_agents_are_on(client: Test
     assert by["researcher"]["state"] == "working"
     assert by["requirement_analyst"]["state"] == "idle"
     other = {a["agent"]: a for a in get(client, scene, scene.b, "agents/status", "owner").json()}
-    assert other["researcher"]["state"] == "not_available", "B's switch is still off and A's run is not B's"
+    assert other["researcher"]["state"] == "switched_off", "B's switch is still off and A's run is not B's"
 
 
 @pytest.mark.parametrize(("user", "status"), [("owner", 200), ("admin", 200), ("sales", 403), ("viewer", 403)])

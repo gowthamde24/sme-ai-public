@@ -14,9 +14,24 @@ const AT = "2026-10-09T09:30:00Z";
 const ITEM = { kind: "quote_approval", id: ID, customer: "Harbour Retail", city: "Hyderabad", agent: "quote_writer", summary: "Quote 3 for ₹5,000.00 is ready for your approval.", at: AT, amount_paise: 500_000, target: { type: "quote", id: ID } };
 const STEP = { kind: "order_step", order_ref: "Order 4", customer: "Lakshmi Silks", text: "Order cancelled", at: AT, target: { type: "order", id: ID } };
 const TODAY = { cards: { waiting: 1, money_held_paise: 40_000, orders_open: 2 }, needs_you: [ITEM], recent: [STEP] };
-const AGENTS = AGENT_KEYS.map((agent, i) => ({ agent, state: i < 2 ? "not_available" : "idle", job: `Job of ${agent}`, last_event: i === 4 ? { text: "Prepared quote 3", at: AT } : null }));
+const AGENTS = AGENT_KEYS.map((agent, i) => ({ agent, state: i < 2 ? "not_available" : "idle", job: `Job of ${agent}`, last_event: i === 4 ? { text: "Prepared quote 3", at: AT, target: { type: "quote", id: ID } } : null }));
 
 beforeEach(() => vi.clearAllMocks());
+
+describe("agent state: switched off is not the same as not available", () => {
+  it("accepts switched_off and keeps it distinct", () => {
+    const rows = AGENTS.map((a, i) => (i === 0 ? { ...a, state: "switched_off" } : a));
+    const parsed = parseAgentsStatus(rows);
+    expect(parsed[0].state).toBe("switched_off");
+    expect(parsed[1].state).toBe("not_available");
+  });
+  it("reads a last event without a target as having none (the API always sends one)", () => {
+    expect(parseAgentsStatus(AGENTS.map((a, i) => (i === 3 ? { ...a, last_event: { text: "x", at: AT } } : a)))[3].last_event?.target).toBeNull();
+  });
+  it("still refuses a state the API does not send", () => {
+    expect(() => parseAgentsStatus(AGENTS.map((a, i) => (i === 0 ? { ...a, state: "sleeping" } : a)))).toThrow(ApiContractError);
+  });
+});
 
 describe("Today", () => {
   it("parses the contract's shape exactly", () => {
@@ -95,13 +110,15 @@ describe("AI usage", () => {
 describe("the helpers' status", () => {
   it("is always all seven, in the contract's order", () => {
     expect(parseAgentsStatus(AGENTS).map((a) => a.agent)).toEqual(["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
-    expect(parseAgentsStatus(AGENTS)[4].last_event).toEqual({ text: "Prepared quote 3", at: AT });
+    expect(parseAgentsStatus(AGENTS)[4].last_event).toEqual({ text: "Prepared quote 3", at: AT, target: { type: "quote", id: ID } });
+    expect(parseAgentsStatus(AGENTS.map((a, i) => (i === 4 ? { ...a, last_event: { text: "Chat", at: AT, target: null } } : a)))[4].last_event?.target).toBeNull();
   });
   it.each([
     ["six", AGENTS.slice(0, 6)], ["eight", [...AGENTS, AGENTS[0]]], ["a different order", [AGENTS[1], AGENTS[0], ...AGENTS.slice(2)]], ["not a list", {}],
     ["a bad state", AGENTS.map((a, i) => (i === 3 ? { ...a, state: "asleep" } : a))],
     ["an empty job", AGENTS.map((a, i) => (i === 3 ? { ...a, job: "" } : a))],
     ["a bad last_event", AGENTS.map((a, i) => (i === 3 ? { ...a, last_event: { text: "x" } } : a))],
+    ["a last_event with a bad target", AGENTS.map((a, i) => (i === 3 ? { ...a, last_event: { text: "x", at: AT, target: { type: "dashboard", id: ID } } } : a))],
     ["a missing last_event", AGENTS.map((a, i) => (i === 3 ? { agent: a.agent, state: a.state, job: a.job } : a))],
   ])("%s is a contract error", (_label, json) => {
     expect(() => parseAgentsStatus(json)).toThrow(ApiContractError);

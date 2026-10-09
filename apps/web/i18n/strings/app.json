@@ -686,6 +686,17 @@
    "kn": "draft"
   }
  },
+ "office.switchedoff": {
+  "en": "Switched off",
+  "te": "ఆపివేయబడింది",
+  "hi": "बंद है",
+  "kn": "ಆಫ್ ಮಾಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "integrations.sub": {
   "en": "Only the price list import exists today. The rest are not built yet.",
   "te": "ఈరోజు ప్రైస్ లిస్ట్ దిగుమతి మాత్రమే ఉంది. మిగతావి ఇంకా తయారవలేదు.",

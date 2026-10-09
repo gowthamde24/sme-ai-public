@@ -93,11 +93,11 @@ select is(pg_temp.j(pg_temp.summary('outsider'), 'error'), '42501', 'an outsider
 select is(pg_temp.j(pg_temp.summary('b_owner'), 'error'), '42501', 'the Owner of ANOTHER tenant cannot read this tenant''s');
 select is(pg_temp.err(null, format('select public.agent_cost_summary(%L)', tests.tid('a'))), '42501|permission denied for function agent_cost_summary||||', 'anon: no EXECUTE');
 select is(pg_temp.j(pg_temp.sc(tests.uid('b_owner'), format('select public.agent_cost_summary(%L)', tests.tid('b'))), 'open_micros'), '0', 'tenant B''s own summary holds none of tenant A''s reservations');
--- the day ends: yesterday's open reservations stop counting at UTC midnight
-select pg_temp.set_day((now() at time zone 'UTC')::date + 1);
-select is(pg_temp.spent(), 0::numeric, 'after UTC midnight the open reservations of the day before no longer count');
+-- the day ends: yesterday's open reservations stop counting at Indian midnight (job AF: the cap's day is the Asia/Kolkata day)
+select pg_temp.set_day((now() at time zone 'Asia/Kolkata')::date + 1);
+select is(pg_temp.spent(), 0::numeric, 'after Indian midnight the open reservations of the day before no longer count');
 select is(pg_temp.j(pg_temp.summary('a_owner'), 'open_micros'), '0', '...and the summary of the new day starts empty');
-select pg_temp.set_day((now() at time zone 'UTC')::date);
+select pg_temp.set_day((now() at time zone 'Asia/Kolkata')::date);
 
 -- ============================================================================ D. evidence URLs: http / https only; ports 80 / 443
 select app.operator_enable_research('tenant-a');

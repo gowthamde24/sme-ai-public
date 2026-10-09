@@ -17,6 +17,9 @@ if [ -z "${SUPABASE_PUBLISHABLE_KEY:-}" ]; then
 fi
 export NEXT_PUBLIC_SUPABASE_URL="$SUPABASE_URL"
 export NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
+# A synthetic, local-only value so the demo contacts get suppression keys (the follow-up screens need them). It protects nothing: this script refuses to run
+# against anything but a stack on this machine, and a real key (the environment) always wins.
+export SUPPRESSION_HMAC_KEY="${SUPPRESSION_HMAC_KEY:-synthetic-local-demo-suppression-key-0123456789}"
 export NEXT_PUBLIC_API_BASE_URL="${LOCAL_DEMO_API_URL:-http://localhost:8000}"
 exec "$@"
 ' sh "$@"

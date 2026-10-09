@@ -11,6 +11,7 @@ from app.agent_runs import repository as runs_repo
 from app.agent_runs.repository import PostgrestAgentRunsRepository
 from app.agent_runs.routes import router as agent_runs_router
 from app.agent_runs.wiring import build_agents_runtime
+from app.assistant.routes import router as assistant_router
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.config import ConfigurationError, Settings, build_auth_config, get_settings
@@ -418,6 +419,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(followups_router)
     app.include_router(pricelists_router)
     app.include_router(today_router)
+    app.include_router(assistant_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

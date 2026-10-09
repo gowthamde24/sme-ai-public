@@ -9,6 +9,7 @@ tenant switch) and answers a start with 503 `agents_unavailable`."""
 from __future__ import annotations
 
 import logging
+import uuid
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -22,6 +23,8 @@ from app.agents.llm.fake_requirement import requirement_script
 from app.agents.llm.interface import LlmClient
 from app.agents.registry import AGENTS
 from app.agents.runtime import AgentRunner
+from app.assistant.db import AssistantDb
+from app.assistant.dev_model import DevAssistantModel
 from app.config import AuthConfig, ConfigurationError, Settings
 from app.webfetch.fakes import FixturePageFetcher
 
@@ -42,6 +45,10 @@ class AgentsRuntime:
     # the Research Agent can start: development, the scripted model, and a fixture directory (no
     # real fetcher or real model for it exists yet)
     research_available: bool = False
+    # the Main agent (job AG): a model client per message (the scripted stand-in under the fake
+    # provider, in development only) and the database door per message
+    assistant_llm: Callable[[], LlmClient] | None = None
+    assistant_db: Callable[[str, uuid.UUID], AssistantDb] | None = None
 
 
 def _anthropic_config(settings: Settings) -> AnthropicConfig | str:
@@ -160,9 +167,14 @@ def build_agents_runtime(settings: Settings, config: AuthConfig) -> AgentsRuntim
     executor = ThreadRunExecutor(
         execute, max_workers=settings.agents_max_workers, max_queue=settings.agents_max_queue
     )
+    def assistant_db(token: str, run_id: uuid.UUID) -> AssistantDb:
+        return AssistantDb(config.rest_url, config.anon_key, token, run_id)
+
     return AgentsRuntime(
         repository=repository,
         executor=executor,
         unavailable=None,
         research_available=fixtures is not None,
+        assistant_llm=(lambda: DevAssistantModel()) if settings.llm_provider == "fake" else factory,
+        assistant_db=assistant_db,
     )
