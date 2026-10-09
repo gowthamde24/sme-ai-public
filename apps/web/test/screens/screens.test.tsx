@@ -44,9 +44,9 @@ vi.mock("@/lib/api/lead-contact", async (orig) => (await import("./state")).wrap
 vi.mock("@/lib/api/leads", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/leads")>(), ["fetchReviewQueue", "fetchActiveIcpConfig"]));
 vi.mock("@/lib/api/orders", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/orders")>(), ["fetchOrders", "fetchOrder", "fetchMembers"]));
 vi.mock("@/lib/api/plan", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/plan")>(), ["getPlan"]));
-vi.mock("@/lib/api/today", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/today")>(), ["getAiUsageToday"]));
+vi.mock("@/lib/api/today", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/today")>(), ["getToday", "getAiUsageToday", "getAgentsStatus"]));
 vi.mock("@/lib/api/quote-policies", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quote-policies")>(), ["fetchQuotePolicyVersions"]));
-vi.mock("@/lib/api/quotes", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quotes")>(), ["fetchQuoteSetup", "fetchEnquiryQuotes", "fetchQuote", "fetchQuoteText"]));
+vi.mock("@/lib/api/quotes", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quotes")>(), ["fetchQuoteSetup", "fetchEnquiryQuotes", "fetchQuote", "fetchQuoteText", "fetchQuotes"]));
 vi.mock("@/app/app/tenants/[tenantId]/quotes/quote-list-data", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/app/app/tenants/[tenantId]/quotes/quote-list-data")>(), ["fetchQuoteList"])); // the workspace-wide quote list: lib/api has no function for it yet
 vi.mock("@/lib/api/suppression", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/suppression")>(), ["fetchSuppressionStatus"]));
 

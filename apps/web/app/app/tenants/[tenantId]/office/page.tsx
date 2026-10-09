@@ -32,7 +32,13 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   }
   const lang = await getLang();
   const t = appT(lang);
-  const agents = await readAgentsStatus(user.accessToken, tenantId);
+  let agents;
+  try {
+    agents = await readAgentsStatus(user.accessToken, tenantId);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    throw error;
+  }
   const wanted = pick(query.agent);
   return (
     <main className={pageMain} lang={lang}>

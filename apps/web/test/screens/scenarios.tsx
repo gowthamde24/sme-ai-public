@@ -16,6 +16,7 @@ import { MANUAL_QUOTE_JSON, MANUAL_SUMMARY_JSON, QUOTE_JSON, SETUP_JSON, SUMMARY
 import { parseOrderPage as parseOrders } from "@/lib/api/orders";
 import { parsePlan } from "@/lib/api/plan";
 import { parseAiUsage } from "@/lib/api/today";
+import { agentsStatus, todayFor } from "./today-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
 import { parseRequirementView } from "@/lib/api/enquiries";
 import { parseDueList, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
@@ -140,17 +141,17 @@ for (const tab of Object.keys(TABS) as (keyof typeof TABS)[]) {
     }),
   });
 }
-// Today: the home with no ?tab= (Job AC, C2). With orders it can count (two open, one cancelled with money held), and with none readable.
+// Today: the home with no ?tab= (Job AE). What each role is given follows the database's rule (test/screens/today-fixtures.ts); with the reads failing it says "Not available yet" in each place.
 add({
-  id: "today-with-orders",
+  id: "today",
   render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})),
-  handlers: (role) => ({ ...base(role), fetchOrders: () => parseOrders({ items: [ORDER_JSON, { ...ORDER_JSON, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2", order_no: 2, state: "cancelled", outcome: "cancelled", paid_paise: 500000, net_paise: 500000 }], next_cursor: null }), fetchMembers: () => parseMembers(MEMBERS_JSON) }),
+  handlers: (role) => ({ ...base(role), getToday: () => todayFor(role), getAgentsStatus: () => agentsStatus(), fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)], fetchMembers: () => parseMembers(MEMBERS_JSON) }),
 });
 add({
-  id: "today-orders-unreadable",
+  id: "today-unreadable",
   roles: ["owner"],
   render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})),
-  handlers: (role) => ({ ...base(role), fetchOrders: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
+  handlers: (role) => ({ ...base(role), getToday: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
 });
 add({
   id: "workspace-home-empty",
@@ -484,7 +485,9 @@ add({
 add({ id: "quotes-list", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuoteList: () => [parseQuoteSummary(SUMMARY_JSON), parseQuoteSummary(MANUAL_SUMMARY_JSON)] }) });
 add({ id: "quotes-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuoteList: () => [] }) });
 add({ id: "quotes-viewer", roles: ["viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => base(role) });
-add({ id: "office-not-available", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => base(role) });
+add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
+add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
+add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
 for (const section of ["business", "language", "security", "privacy"] as const) {
   add({ id: `settings-${section}`, roles: section === "privacy" ? ROLES : ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => base(role) });

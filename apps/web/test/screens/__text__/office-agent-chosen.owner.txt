@@ -1,0 +1,16 @@
+# Agent office
+Your AI team and what each one is doing right now.
+{label="Agent office"}
+- [Main agent Not available yet Coordinates the other helpers. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=main)
+- [Lead Finder Not available yet Finds new businesses that may want to buy. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=lead_finder)
+- [Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=researcher)
+- [Requirement Analyst Working Reads an enquiry and lists what the customer asked for, to be checked.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=requirement_analyst)
+- [Quote Writer Idle Prepares a quote from the prices you set. A person approves it. Prepared quote 3 · 2h](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=quote_writer current=true)
+- [Follow-up Desk Idle Drafts follow-up messages. A person approves and sends them. Drafted follow-up message number 2 · 1m](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=followup_desk)
+- [Order Desk Idle Keeps each order's steps, payments and refunds in order. Order started · 30m](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=order_desk)
+{label="Latest events"}
+## Quote Writer
+Prepares a quote from the prices you set. A person approves it.
+### Latest events
+Prepared quote 3 · 2h
+[Runs and cost](/app/tenants/22222222-2222-2222-2222-222222222222/agents)

@@ -10,12 +10,17 @@ const en = appT("en");
 const t = (k: string, v?: Record<string, string | number>) => en(k as "frame.notyet", v);
 const NOW = new Date("2026-10-09T10:00:00Z").getTime();
 const at = (minutes: number) => new Date(NOW - minutes * 60_000).toISOString();
-const item = (over: Partial<NeedsYouItem>): NeedsYouItem => ({ kind: "quote_approval", id: "q1", customer: "SYNTHETIC Textiles", city: "Hyderabad", agent: "Quote Writer", summary: "A quote draft is ready.", at: at(28), amount_paise: 14175000, href: "/app/tenants/T/enquiries/E", ...over });
+const U = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1";
+const item = (over: Partial<NeedsYouItem>): NeedsYouItem => ({ kind: "quote_approval", id: U, customer: "SYNTHETIC Textiles", city: "Hyderabad", agent: "quote_writer", summary: "A quote draft is ready.", at: at(28), amount_paise: 14175000, target: { type: "quote", id: U }, href: "/app/tenants/T/enquiries/E", ...over });
 const full: TodayData = {
   cards: { waiting: 3, money_held_paise: 782000, orders_open: 2 },
-  needs_you: [item({}), item({ kind: "followup_due", id: "f1", city: null, amount_paise: null, href: "/app/tenants/T/leads/L/followup" }), item({ kind: "order_money_held", id: "o1", href: "/app/tenants/T/orders/O" })],
-  recent: [{ kind: "x", order_ref: "ORD-1", customer: "SYNTHETIC Silks", text: "Dispatched", at: at(2000), href: null }],
-  team: [{ agent: "Main agent", state: "idle", job: null, last_event: null }, { agent: "Lead Finder", state: "working", job: "Reading a directory", last_event: null }, { agent: "Order Desk", state: "not_available", job: null, last_event: null }],
+  needs_you: [item({}), item({ kind: "followup_due", id: "f1", agent: "followup_desk", city: null, amount_paise: null, href: "/app/tenants/T/leads/L" }), item({ kind: "order_money_held", id: "o1", agent: "order_desk", href: "/app/tenants/T/orders/O" })],
+  recent: [{ kind: "order_step", order_ref: "ORD-1", customer: "SYNTHETIC Silks", text: "Dispatched", at: at(2000), target: { type: "order", id: U }, href: "/app/tenants/T/orders/O1" }],
+  team: [
+    { agent: "main", state: "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null },
+    { agent: "researcher", state: "working", job: "Reads public pages about a lead.", last_event: { text: "Read a page", at: new Date(Date.now() - 5 * 60_000).toISOString() } },
+    { agent: "order_desk", state: "idle", job: "Keeps each order's steps in order.", last_event: null },
+  ],
 };
 const view = (data: TodayData, name: string | null = "Asha", hour = 9) => render(<TodayView data={data} name={name} hour={hour} base="/app/tenants/T" t={t} />);
 afterEach(cleanup);
@@ -47,6 +52,7 @@ describe("TodayView", () => {
     const first = articles[0];
     expect(within(first).getByRole("heading", { level: 3 })).toHaveTextContent("SYNTHETIC Textiles, Hyderabad");
     expect(within(first).getByText("Quote draft")).toBeInTheDocument();
+    expect(within(first).getByText(/Quote Writer · /)).toBeInTheDocument(); // the agent's name
     expect(within(first).getByText("₹1,41,750.00")).toBeInTheDocument();
     expect(within(first).getByRole("link", { name: "Check the quote" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
     expect(within(first).getByRole("link", { name: "Check the quote" }).className).toContain("bg-brand");
@@ -71,11 +77,14 @@ describe("TodayView", () => {
     view(full);
     const team = screen.getByRole("heading", { name: "Your team right now" }).closest("section")!;
     expect(within(team).getByText("Working")).toBeInTheDocument();
-    expect(within(team).getByText("Reading a directory")).toBeInTheDocument();
-    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that does not exist yet
+    expect(within(team).getByText("Researcher")).toBeInTheDocument(); // the agent's name, not its code
+    expect(within(team).getByText("Read a page · 5m")).toBeInTheDocument(); // the last event when there is one
+    expect(within(team).getByText("Keeps each order's steps in order.")).toBeInTheDocument(); // else what it does
+    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that is not built (Main agent)
+    expect(within(team).getByText("Main agent")).toBeInTheDocument();
     expect(within(team).getByRole("link", { name: /Office/ })).toHaveAttribute("href", "/app/tenants/T/office");
     const recent = screen.getByRole("heading", { name: "Recently recorded" }).closest("section")!;
-    expect(within(recent).getByRole("link", { name: /ORD-1 · SYNTHETIC Silks/ })).toHaveAttribute("href", "/app/tenants/T/orders");
+    expect(within(recent).getByRole("link", { name: /ORD-1 · SYNTHETIC Silks/ })).toHaveAttribute("href", "/app/tenants/T/orders/O1"); // the order the step belongs to
   });
   it("the money card links to the orders and is the amber one", () => {
     view(full);

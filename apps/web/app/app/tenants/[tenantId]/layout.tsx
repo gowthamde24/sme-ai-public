@@ -1,5 +1,3 @@
-import type { ReactNode } from "react";
-
 import { NO_FRAME_DATA } from "@/components/v2/app/contract";
 import { FrameDataSlot } from "@/components/v2/app/frame-store";
 import { isCanonicalUuid } from "@/lib/api/crm";

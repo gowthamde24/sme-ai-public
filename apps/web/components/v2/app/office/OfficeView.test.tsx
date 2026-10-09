@@ -8,10 +8,11 @@ import { OfficeView } from "./OfficeView";
 
 const en = appT("en");
 const t = (k: string, v?: Record<string, string | number>) => en(k as "frame.notyet", v);
+const NOW = Date.now();
 const rows: AgentRow[] = [
-  { agent: "Main agent", state: "idle", job: null, last_event: null },
-  { agent: "Lead Finder", state: "working", job: "Reading a directory", last_event: "Passed a lead to the Researcher." },
-  { agent: "Order Desk", state: "not_available", job: null, last_event: null },
+  { agent: "researcher", state: "idle", job: "Reads public pages about a lead.", last_event: null },
+  { agent: "quote_writer", state: "working", job: "Prepares a quote from the prices you set.", last_event: { text: "Prepared quote 3", at: new Date(NOW - 3 * 3600_000).toISOString() } },
+  { agent: "lead_finder", state: "not_available", job: "Finds new businesses that may want to buy. Not built yet.", last_event: null },
 ];
 const view = (agents: AgentRow[] | null, selected: string | null = null) => render(<OfficeView agents={agents} selected={selected} base="/app/tenants/T" t={t} />);
 afterEach(cleanup);
@@ -23,29 +24,29 @@ describe("OfficeView", () => {
     expect(screen.queryByRole("list")).toBeNull();
     expect(screen.getByRole("link", { name: /Runs and cost/ })).toHaveAttribute("href", "/app/tenants/T/agents");
   });
-  it("draws one card per agent with its state, what it is doing and its last event; each is a real link to its own detail", () => {
+  it("draws one card per agent, by name, with its state, what it does and its last event; each is a real link to its own detail", () => {
     view(rows);
     const items = within(screen.getByRole("list")).getAllByRole("listitem");
     expect(items).toHaveLength(3);
-    expect(items[0]).toHaveTextContent("Main agentIdle");
-    expect(items[1]).toHaveTextContent("Lead FinderWorkingReading a directoryPassed a lead to the Researcher.");
-    expect(items[2]).toHaveTextContent("Order DeskNot available yet");
-    expect(within(items[1]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/office?agent=Lead%20Finder");
+    expect(items[0]).toHaveTextContent("ResearcherIdleReads public pages about a lead.");
+    expect(items[1]).toHaveTextContent("Quote WriterWorkingPrepares a quote from the prices you set.Prepared quote 3 · 3h");
+    expect(items[2]).toHaveTextContent("Lead FinderNot available yetFinds new businesses that may want to buy. Not built yet.");
+    expect(within(items[1]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/office?agent=quote_writer");
   });
-  it("the chosen agent's latest event is read beside the cards; with none chosen it says how to choose", () => {
+  it("the chosen agent's job and latest event are read beside the cards; with none chosen it says how to choose", () => {
     view(rows);
     expect(screen.getByText("Choose a teammate to read their latest events.")).toBeInTheDocument();
     cleanup();
-    view(rows, "Lead Finder");
-    expect(screen.getByRole("heading", { level: 2, name: "Lead Finder" })).toBeInTheDocument();
-    expect(screen.getAllByText("Passed a lead to the Researcher.").length).toBe(2); // on the card and beside it
-    expect(screen.getByRole("link", { name: /Lead Finder/ })).toHaveAttribute("aria-current", "true");
+    view(rows, "quote_writer");
+    expect(screen.getByRole("heading", { level: 2, name: "Quote Writer" })).toBeInTheDocument();
+    expect(screen.getAllByText("Prepared quote 3 · 3h").length).toBe(2); // on the card and beside it
+    expect(screen.getByRole("link", { name: /Quote Writer/ })).toHaveAttribute("aria-current", "true");
     cleanup();
-    view(rows, "Main agent");
+    view(rows, "researcher");
     expect(screen.getByText("No events yet.")).toBeInTheDocument();
   });
   it("cards are tall enough to touch (44px)", () => {
     view(rows);
-    for (const a of screen.getAllByRole("link", { name: /Main agent|Lead Finder|Order Desk/ })) expect(a.className).toContain("min-h-24");
+    for (const a of screen.getAllByRole("link", { name: /Researcher|Quote Writer|Lead Finder/ })) expect(a.className).toContain("min-h-24");
   });
 });

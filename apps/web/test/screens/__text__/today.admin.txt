@@ -1,0 +1,38 @@
+# Good morning
+2 things are waiting for you. [Waiting for you 2 Decisions below](#needs-you) [Customer money held ₹400.00 On closed orders, not yet refunded](/app/tenants/22222222-2222-2222-2222-222222222222/orders) [Orders in progress 1 Not closed yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+{label="Needs you"}
+## Needs you
+{label="Synthetic Buyer"} Draft Follow-up draft
+### Synthetic Buyer
+Follow-up Desk · 1m A follow-up message (number 2) is drafted and waiting for your approval.
+Customer
+Synthetic Buyer
+When
+1m
+[Check the follow-up](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) Nothing is sent, approved or recorded by opening this.
+{label="Synthetic Buyer, Hyderabad"} Draft Quote draft
+### Synthetic Buyer , Hyderabad
+Quote Writer · 3h Quote 1 for ₹50,400.00 is ready for your approval.
+Customer
+Synthetic Buyer
+City
+Hyderabad
+Amount
+₹50,400.00
+When
+3h
+[Check the quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) Nothing is sent, approved or recorded by opening this.
+{label="Your team right now"}
+## Your team right now
+- Main agent Not available yet Coordinates the other helpers. Not built yet.
+- Lead Finder Not available yet Finds new businesses that may want to buy. Not built yet.
+- Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.
+- Requirement Analyst Working Reads an enquiry and lists what the customer asked for, to be checked.
+- Quote Writer Idle Prepared quote 3 · 2h
+- Follow-up Desk Idle Drafted follow-up message number 2 · 1m
+- Order Desk Idle Order started · 30m
+[Office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+{label="Recently recorded"}
+## Recently recorded
+- [Order 2 · Synthetic Buyer 30m · Order started](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2)
+- [Order 1 · Synthetic Buyer 1d · Order cancelled](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1)
