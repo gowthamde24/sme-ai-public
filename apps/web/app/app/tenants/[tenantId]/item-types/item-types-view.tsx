@@ -4,7 +4,7 @@ import type { ItemType } from "@/lib/api/item-types";
 import { formatRupees } from "@/lib/api/quotes";
 
 import { RANGE_SENTENCE, inListOrder } from "./item-types-logic";
-import { bodyText, dataEditCell, dataEditRow, dataTable, dataTd, dataTdEdit, dataThCol, dataThRow, dataTr, mutedText, pageH1, plainText, summaryLine } from "@/components/v2/app/ui";
+import { bodyText, dataEditCell, dataEditRow, dataTable, dataTdEditWide, dataTdStack, dataThCol, dataThRowWide, dataTrGrid, mutedText, pageH1, plainText, summaryLine } from "@/components/v2/app/ui";
 
 const price = (paise: number | null) => (paise === null ? "none" : formatRupees(paise));
 
@@ -23,9 +23,9 @@ export function ItemTypesView({ types, adder, editor }: { types: ItemType[]; add
       <p className={bodyText}>Item types are the kinds of goods you quote, for example &quot;Type A&quot;. Each line of a quote with typed prices uses one.</p>
       <p className={mutedText}>{RANGE_SENTENCE}</p>
       <p className={mutedText}>Changing a price range does not change quotes that are already made.</p>
-      {ordered.length === 0 ? (
-        <p className={bodyText}>No item types yet.{editor ? " Add the first one below." : ""}</p>
-      ) : (
+      {ordered.length === 0 ? <p className={bodyText}>No item types yet.{editor ? " Add the first one below." : ""}</p> : null}
+      {adder}
+      {ordered.length === 0 ? null : (
         <table aria-label="Item types, in order" className={`mt-4 ${dataTable}`}>
           <thead>
             <tr>
@@ -41,19 +41,19 @@ export function ItemTypesView({ types, adder, editor }: { types: ItemType[]; add
           <tbody>
             {ordered.map((type) => (
               <Fragment key={type.id}>
-                <tr className={dataTr}>
-                  <th scope="row" className={`${dataThRow} ${plainText}`}>
+                <tr className={dataTrGrid}>
+                  <th scope="row" className={`${dataThRowWide} ${plainText}`}>
                     {type.name}
                   </th>
-                  <td data-label="Code" className={`${dataTd} ${plainText}`}>
+                  <td data-label="Code" className={`${dataTdStack} ${plainText}`}>
                     {type.code}
                   </td>
-                  <td data-label="Can be used" className={dataTd}>{type.active ? "Yes" : "No, switched off"}</td>
-                  <td data-label="Position" className={dataTd}>{type.position}</td>
-                  <td data-label="Lowest price" className={dataTd}>{price(type.min_price_paise)}</td>
-                  <td data-label="Highest price" className={dataTd}>{price(type.max_price_paise)}</td>
+                  <td data-label="Can be used" className={dataTdStack}>{type.active ? "Yes" : "No, switched off"}</td>
+                  <td data-label="Position" className={dataTdStack}>{type.position}</td>
+                  <td data-label="Lowest price" className={dataTdStack}>{price(type.min_price_paise)}</td>
+                  <td data-label="Highest price" className={dataTdStack}>{price(type.max_price_paise)}</td>
                   {editor ? (
-                    <td className={dataTdEdit}>
+                    <td className={dataTdEditWide}>
                       <details>
                         <summary className={summaryLine}>Edit {type.name}</summary>
                       </details>
@@ -70,7 +70,6 @@ export function ItemTypesView({ types, adder, editor }: { types: ItemType[]; add
           </tbody>
         </table>
       )}
-      {adder}
     </section>
   );
 }

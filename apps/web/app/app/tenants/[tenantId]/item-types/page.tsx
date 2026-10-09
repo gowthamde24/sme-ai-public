@@ -7,7 +7,8 @@ import { fetchItemTypes, type ItemType } from "@/lib/api/item-types";
 import { requireUser } from "@/lib/auth/session";
 
 import { ApiDownV2 } from "@/components/v2/app/parts";
-import { link, mutedText, noteBox, pageH1, pageMain } from "@/components/v2/app/ui";
+import { AddButton } from "@/components/v2/app/AddButton";
+import { link, mutedText, noteBox, pageH1, pageMain, spaceTop } from "@/components/v2/app/ui";
 import { EditItemTypeForm, AddItemTypeForm } from "./item-type-forms";
 import { addItemTypeAction, saveItemTypeAction } from "./item-types-actions";
 import { ItemTypesView } from "./item-types-view";
@@ -70,7 +71,11 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
         types={types}
         adder={
           edit ? (
-            <AddItemTypeForm add={addItemTypeAction.bind(null, tenantId)} />
+            <div className={spaceTop}>
+              <AddButton label="Add an item type">
+                <AddItemTypeForm add={addItemTypeAction.bind(null, tenantId)} />
+              </AddButton>
+            </div>
           ) : canEdit ? null : (
             <p className={mutedText}>Only an owner or an admin can add or change item types.</p>
           )
