@@ -45,30 +45,4 @@ Discount ceiling
 Shipping
 flat fee ₹150.00, tax 0%, free above ₹50,000.00
 Published Oct 1, 2026, 3:30 PM (5 days ago)
-{label="Publish a new version"}
-### Publish a new version
-A published version never changes. A new version replaces the one in force from its start date. Every field starts empty on purpose: type the shop's own numbers. This page does not have a price range for each item type or a last-price warning yet.
-<hidden name=policy_id value=77777777-7777-4777-8777-777777777777>
-Starts on
-<date name=effective_from label="Starts on" required min=2026-10-20>
-Days a quote is valid
-<text name=validity_days label="Days a quote is valid" required inputmode=numeric autocomplete=off>
-Advance for a new customer (percent)
-<text name=new_advance label="Advance for a new customer (percent)" required inputmode=decimal autocomplete=off>
-Advance for a repeat customer (percent)
-<text name=repeat_advance label="Advance for a repeat customer (percent)" required inputmode=decimal autocomplete=off>
-legend: Days to pay the balance
-The balance on a quote is due this many days after the quote date, by the kind of customer. New customers (days)
-<text name=new_net_days label="New customers (days)" required inputmode=numeric autocomplete=off>
-Repeat customers (days)
-<text name=repeat_net_days label="Repeat customers (days)" required inputmode=numeric autocomplete=off>
-GST rate (percent)
-<text name=gst_rate label="GST rate (percent)" required inputmode=decimal autocomplete=off described-by="Added on top of every price typed by hand, from the start date above. A price list keeps the rate of each of its items.">
-Added on top of every price typed by hand, from the start date above. A price list keeps the rate of each of its items. Most credit for one repeat customer (rupees)
-<text name=credit_limit label="Most credit for one repeat customer (rupees)" required inputmode=decimal autocomplete=off described-by="A quote for a repeat customer whose balance is above this is marked as needing the Owner's approval.">
-A quote for a repeat customer whose balance is above this is marked as needing the Owner's approval. State where the shop is (two capital letters)
-<text name=seller_state label="State where the shop is (two capital letters)" required autocomplete=off described-by="The state code on your GST papers. It decides whether a sale is in your state or in another state.">
-The state code on your GST papers. It decides whether a sale is in your state or in another state. Discount ceiling (percent)
-<text name=discount_ceiling label="Discount ceiling (percent)" required inputmode=decimal autocomplete=off described-by="The most discount, in percent, that a quote line may carry; today no quote line carries a discount, so this number is saved with the policy but changes no quote.">
-The most discount, in percent, that a quote line may carry; today no quote line carries a discount, so this number is saved with the policy but changes no quote. Shipping: none (no courier charge)
-[button type=submit: Publish this version]
+[button type=button: Publish a new version]

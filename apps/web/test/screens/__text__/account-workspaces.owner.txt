@@ -6,10 +6,4 @@ table:
   | th Workspace | th URL name | th Your role |
   | [Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222) | demo-silks | owner |
   | [Second shop (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222223) | second-shop | viewer |
-## Create a workspace
-form:
-Workspace name
-<text name=name label="Workspace name" required maxlength=120>
-URL name
-<text name=slug label="URL name" required placeholder="my-business" maxlength=40 minlength=3 pattern=[a-z0-9][a-z0-9\-]{1,38}[a-z0-9]>
-[button type=submit: Create workspace]
+[button type=button: Add a workspace]

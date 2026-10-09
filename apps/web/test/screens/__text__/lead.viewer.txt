@@ -1,8 +1,5 @@
 [← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
 # Lead
-{label="I sent a message"}
-## I sent a message
-An owner, an admin or a sales person records that a message was sent.
 {label="Lead"}
 ## Lead
 Status
@@ -18,6 +15,9 @@ import
 Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
 - [WhatsApp enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) received Oct 5, 2026, 3:30 PM (18 hours ago)
 Only an owner, admin or sales user can paste an enquiry.
+{label="I sent a message"}
+## I sent a message
+An owner, an admin or a sales person records that a message was sent.
 {label="Evidence"}
 ## Evidence
 Sources are shown as plain text. They are never opened, fetched or previewed by this application.

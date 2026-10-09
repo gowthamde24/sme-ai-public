@@ -1,18 +1,6 @@
 [← Demo Silks (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222?tab=leads)
 # Lead
 [Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
-{label="I sent a message"}
-## I sent a message
-{label="I sent a message"}
-### I sent a message
-This keeps a record of a message you sent yourself, outside this system. Nothing is sent from here.
-<hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
-Channel
-<select name=channel label="Channel" required>
-  options: Choose one=* | E-mail=email | WhatsApp=whatsapp | Phone call=phone
-When (India time). Leave it empty for now.
-<datetime-local name=happened_at label="When (India time). Leave it empty for now." max=2026-10-06T10:00>
-[button type=submit: Record this]
 {label="Lead"}
 ## Lead
 Status
@@ -42,6 +30,18 @@ The enquiry, as you received it
 <textarea name=text label="The enquiry, as you received it" required placeholder="Paste the e-mail or message here">
 E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.
 [button type=submit: Save enquiry]
+{label="I sent a message"}
+## I sent a message
+{label="I sent a message"}
+### I sent a message
+This keeps a record of a message you sent yourself, outside this system. Nothing is sent from here.
+<hidden name=touch_id value=77777777-7777-4777-8777-777777777777>
+Channel
+<select name=channel label="Channel" required>
+  options: Choose one=* | E-mail=email | WhatsApp=whatsapp | Phone call=phone
+When (India time). Leave it empty for now.
+<datetime-local name=happened_at label="When (India time). Leave it empty for now." max=2026-10-06T10:00>
+[button type=submit: Record this]
 {label="Evidence"}
 ## Evidence
 Sources are shown as plain text. They are never opened, fetched or previewed by this application.
