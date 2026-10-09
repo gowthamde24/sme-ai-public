@@ -361,5 +361,329 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "today.greeting.morning": {
+  "en": "Good morning",
+  "te": "శుభోదయం",
+  "hi": "सुप्रभात",
+  "kn": "ಶುಭೋದಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.greeting.afternoon": {
+  "en": "Good afternoon",
+  "te": "శుభ మధ్యాహ్నం",
+  "hi": "शुभ दोपहर",
+  "kn": "ಶುಭ ಮಧ್ಯಾಹ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.greeting.evening": {
+  "en": "Good evening",
+  "te": "శుభ సాయంత్రం",
+  "hi": "शुभ संध्या",
+  "kn": "ಶುಭ ಸಂಜೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sub.none": {
+  "en": "Nothing is waiting for you.",
+  "te": "మీ కోసం ఏదీ వేచి లేదు.",
+  "hi": "आपके लिए कुछ भी इंतज़ार में नहीं है।",
+  "kn": "ನಿಮಗಾಗಿ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sub.one": {
+  "en": "1 thing is waiting for you.",
+  "te": "1 విషయం మీ కోసం వేచి ఉంది.",
+  "hi": "1 बात आपके इंतज़ार में है।",
+  "kn": "1 ವಿಷಯ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.sub.other": {
+  "en": "{n} things are waiting for you.",
+  "te": "{n} విషయాలు మీ కోసం వేచి ఉన్నాయి.",
+  "hi": "{n} बातें आपके इंतज़ार में हैं।",
+  "kn": "{n} ವಿಷಯಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.waitingHint": {
+  "en": "Decisions below",
+  "te": "కింద నిర్ణయాలు",
+  "hi": "नीचे फ़ैसले",
+  "kn": "ಕೆಳಗೆ ನಿರ್ಧಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.open": {
+  "en": "Orders in progress",
+  "te": "ప్రోగ్రెస్‌లో ఉన్న ఆర్డర్లు",
+  "hi": "चालू ऑर्डर",
+  "kn": "ಪ್ರಗತಿಯಲ್ಲಿರುವ ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.openHint": {
+  "en": "Not closed yet",
+  "te": "ఇంకా ముగియలేదు",
+  "hi": "अभी बंद नहीं हुए",
+  "kn": "ಇನ್ನೂ ಮುಚ್ಚಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.needsYou": {
+  "en": "Needs you",
+  "te": "మీరు చూడాలి",
+  "hi": "आपकी ज़रूरत है",
+  "kn": "ನೀವು ನೋಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.team": {
+  "en": "Your team right now",
+  "te": "మీ టీమ్ ఇప్పుడు",
+  "hi": "आपकी टीम अभी",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್ ಈಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.recent": {
+  "en": "Recently recorded",
+  "te": "ఇటీవల నమోదైనవి",
+  "hi": "हाल में दर्ज",
+  "kn": "ಇತ್ತೀಚೆಗೆ ದಾಖಲಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "common.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.state.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.quote": {
+  "en": "Quote draft",
+  "te": "కొటేషన్ డ్రాఫ్ట్",
+  "hi": "कोटेशन ड्राफ़्ट",
+  "kn": "ಕೊಟೇಶನ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.kind.followup": {
+  "en": "Follow-up draft",
+  "te": "ఫాలో-అప్ డ్రాఫ్ట్",
+  "hi": "फ़ॉलो-अप ड्राफ़्ट",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.quote": {
+  "en": "Check the quote",
+  "te": "కొటేషన్ చూడండి",
+  "hi": "कोटेशन देखें",
+  "kn": "ಕೊಟೇಶನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.followup": {
+  "en": "Check the follow-up",
+  "te": "ఫాలో-అప్ చూడండి",
+  "hi": "फ़ॉलो-अप देखें",
+  "kn": "ಫಾಲೋ-ಅಪ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.step.order": {
+  "en": "Check the order",
+  "te": "ఆర్డర్ చూడండి",
+  "hi": "ऑर्डर देखें",
+  "kn": "ಆರ್ಡರ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.city": {
+  "en": "City",
+  "te": "నగరం",
+  "hi": "शहर",
+  "kn": "ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.fact.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.stat.held": {
+  "en": "Customer money held",
+  "te": "Customer money held",
+  "hi": "Customer money held",
+  "kn": "Customer money held",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.stat.heldHint": {
+  "en": "On closed orders, not yet refunded",
+  "te": "On closed orders, not yet refunded",
+  "hi": "On closed orders, not yet refunded",
+  "kn": "On closed orders, not yet refunded",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.fact.amount": {
+  "en": "Amount",
+  "te": "Amount",
+  "hi": "Amount",
+  "kn": "Amount",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.kind.order": {
+  "en": "Order: money still held",
+  "te": "Order: money still held",
+  "hi": "Order: money still held",
+  "kn": "Order: money still held",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.hint.nothingSent": {
+  "en": "Nothing is sent, approved or recorded by opening this.",
+  "te": "Nothing is sent, approved or recorded by opening this.",
+  "hi": "Nothing is sent, approved or recorded by opening this.",
+  "kn": "Nothing is sent, approved or recorded by opening this.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "office.idle": {
+  "en": "Idle",
+  "te": "ఖాళీగా",
+  "hi": "खाली",
+  "kn": "ಖಾಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.working": {
+  "en": "Working",
+  "te": "పని చేస్తోంది",
+  "hi": "काम कर रहा है",
+  "kn": "ಕೆಲಸ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

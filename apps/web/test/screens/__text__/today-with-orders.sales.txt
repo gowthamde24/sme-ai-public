@@ -1,0 +1,11 @@
+# Good morning
+[Waiting for you Not available yet](#needs-you) [Customer money held ₹5,000.00 On closed orders, not yet refunded](/app/tenants/22222222-2222-2222-2222-222222222222/orders) [Orders in progress 1 Not closed yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+{label="Needs you"}
+## Needs you
+Not available yet
+{label="Your team right now"}
+## Your team right now
+Not available yet [Office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+{label="Recently recorded"}
+## Recently recorded
+Not available yet

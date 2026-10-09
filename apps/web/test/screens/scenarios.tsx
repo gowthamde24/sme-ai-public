@@ -131,6 +131,18 @@ for (const tab of Object.keys(TABS) as (keyof typeof TABS)[]) {
     }),
   });
 }
+// Today: the home with no ?tab= (Job AC, C2). With orders it can count (two open, one cancelled with money held), and with none readable.
+add({
+  id: "today-with-orders",
+  render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})),
+  handlers: (role) => ({ ...base(role), fetchOrders: () => parseOrders({ items: [ORDER_JSON, { ...ORDER_JSON, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2", order_no: 2, state: "cancelled", outcome: "cancelled", paid_paise: 500000, net_paise: 500000 }], next_cursor: null }), fetchMembers: () => parseMembers(MEMBERS_JSON) }),
+});
+add({
+  id: "today-orders-unreadable",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})),
+  handlers: (role) => ({ ...base(role), fetchOrders: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
+});
 add({
   id: "workspace-home-empty",
   roles: ["owner"],

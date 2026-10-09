@@ -13,7 +13,7 @@ type Entry = { en: string; te: string; hi: string; kn: string; status: Record<st
 const data = app as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY: string[] = []; // no string of the frame is about money, consent, privacy or safety any more: those words live in the screens, which stay English
+const HUMAN_ONLY = ["today.fact.amount", "today.hint.nothingSent", "today.kind.order", "today.stat.held", "today.stat.heldHint"]; // money held, amounts and what a button sends or does not: English until a person reviews them
 
 describe("the frame's string store (language track L0)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(app as never, l) as Record<string, string>]));

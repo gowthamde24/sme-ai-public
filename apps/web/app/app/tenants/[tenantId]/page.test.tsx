@@ -47,7 +47,8 @@ function props(
 ) {
   return {
     params: Promise.resolve({ tenantId: over.tenantId ?? TENANT }),
-    searchParams: Promise.resolve(over.query ?? {}),
+    // the home with no ?tab= is Today (Job AC, C2): these tests are about the records tables, so they ask for one (companies unless the test says which)
+    searchParams: Promise.resolve({ tab: "companies", ...(over.query ?? {}) }),
   } as unknown as Parameters<typeof TenantPage>[0];
 }
 const tenant = (role: string) => ({

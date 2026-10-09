@@ -15,6 +15,7 @@ import { alertBox, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, l
 import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
+import { TodayScreen } from "./today-screen";
 import { CreateCompanyForm } from "./create-company-form";
 
 export const metadata = { title: "Workspace · SME AI Revenue Engine" };
@@ -65,6 +66,8 @@ export default async function TenantPage({
   }
 
   const requestedTab = pick(query.tab);
+  // no tab: Today (Job AC, C2). The records tables are reached with ?tab= (Customers: companies and contacts; Leads: leads).
+  if (requestedTab === undefined) return TodayScreen({ accessToken: user.accessToken, userId: user.id, tenantId });
   const tab: EntityKey = (ENTITY_KEYS as readonly string[]).includes(
     requestedTab ?? "",
   )
