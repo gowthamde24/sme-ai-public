@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight, Armchair, Boxes, Info, TriangleAlert } from "lucide-react";
+import { ArrowRight, Armchair, Boxes, Info, List, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
@@ -116,6 +116,10 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
             <OfficeStage poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} reduced={env.reducedMotion} coarse={env.coarse} phone={env.phone} hint={w("office.hint")} loadingText={w("office.loading")} onFail={setFallback} />
           ) : (
             <section aria-label={w("office.title")}>
+              <p className="mb-3 flex items-center gap-2 text-base text-muted">
+                <List className="size-4 shrink-0" aria-hidden="true" />
+                {w("office.listintro")}
+              </p>
               <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 {rows.map((a) => (
                   <li key={a.agent}>

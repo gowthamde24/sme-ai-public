@@ -1369,5 +1369,16 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "office.listintro": {
+  "en": "The same information as the 3D room, as text.",
+  "te": "3D రూమ్‌లోని సమాచారమే, ఇక్కడ అక్షరాల్లో.",
+  "hi": "3D रूम की वही जानकारी, यहाँ लिखी हुई।",
+  "kn": "3D ರೂಮ್‌ನಲ್ಲಿರುವ ಅದೇ ಮಾಹಿತಿ, ಇಲ್ಲಿ ಅಕ್ಷರಗಳಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

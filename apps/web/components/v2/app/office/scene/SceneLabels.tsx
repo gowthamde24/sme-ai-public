@@ -4,6 +4,9 @@ import * as React from "react";
 
 import { ALL_AGENT_IDS, type AgentId, type Pose } from "./ids";
 
+/** Hidden until the first frame has placed the tag (an inline style, which the per-frame writes below can override; a class could not). */
+const HIDDEN = { visibility: "hidden" } as const;
+
 export type LabelPositions = Partial<Record<AgentId, { x: number; y: number; on: boolean }>>;
 
 /**
@@ -36,20 +39,32 @@ export function SceneLabels({
     let raf = 0;
     const tick = () => {
       const W = box.current?.clientWidth ?? 0;
-      for (const id of ALL_AGENT_IDS) {
+      // The chosen helper's tag first, then the main agent's, then the others: a tag that would sit on one already placed is lifted above it, so no name is hidden.
+      const order = [...ALL_AGENT_IDS].sort((a, b) => Number(b === selected) - Number(a === selected) || Number(b === "main") - Number(a === "main"));
+      const placed: { l: number; r: number; t: number; b: number }[] = [];
+      for (const id of order) {
         const el = els.current[id];
         const p = positions.current[id];
         if (!el || !p) continue;
-        const half = el.offsetWidth / 2 + 6;
+        const w = el.offsetWidth;
+        const h = el.offsetHeight;
+        const half = w / 2 + 6;
         const x = Math.min(Math.max(p.x, half), Math.max(half, W - half));
-        el.style.transform = `translate(${x.toFixed(1)}px, ${p.y.toFixed(1)}px) translate(-50%, -100%)`;
+        let y = p.y;
+        for (let guard = 0; guard < 8; guard++) {
+          const hit = placed.find((r) => x - w / 2 < r.r && x + w / 2 > r.l && y - h < r.b && y > r.t);
+          if (!hit) break;
+          y = hit.t - 4;
+        }
+        if (p.on) placed.push({ l: x - w / 2, r: x + w / 2, t: y - h, b: y });
+        el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -100%)`;
         el.style.visibility = p.on ? "visible" : "hidden";
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [positions]);
+  }, [positions, selected]);
 
   return (
     <div ref={box} className="pointer-events-none absolute inset-0 z-10 overflow-hidden">
@@ -62,15 +77,16 @@ export function SceneLabels({
             ref={(e) => {
               els.current[id] = e;
             }}
-            className="invisible absolute left-0 top-0 will-change-transform"
+            style={HIDDEN}
+            className="absolute left-0 top-0 will-change-transform"
           >
             <button
               type="button"
               tabIndex={-1}
               onClick={() => onSelect(id)}
-              className={`pointer-events-auto flex w-max max-w-[220px] items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-sm font-medium shadow-[var(--v2-shadow)] ${hot ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink"} ${poses[id] === "off" ? "opacity-80" : ""}`}
+              className={`pointer-events-auto flex w-max items-center gap-1.5 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-sm font-medium shadow-[var(--v2-shadow)] ${hot ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink"} ${poses[id] === "off" ? "opacity-80" : ""}`}
             >
-              <span className="truncate">{names[id]}</span>
+              <span>{names[id]}</span>
               <span className={`shrink-0 text-sm font-normal ${hot ? "opacity-90" : "text-muted"}`}>{`· ${stateText[id]}`}</span>
             </button>
           </div>

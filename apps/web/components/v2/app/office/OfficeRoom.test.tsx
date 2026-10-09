@@ -29,7 +29,7 @@ vi.mock("./OfficeStage", () => ({
 
 const en = appT("en");
 const W = (k: string) => en(k as "frame.notyet");
-const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.view3d", "office.viewlist", "office.viewswitch", "office.hint", "office.loading", "office.nowebgl", "office.loaderror", "office.still", "office.feed", ...AGENT_KEYS.map((a) => `agent.${a}`)];
+const KEYS = ["office.title", "office.sub", "office.idle", "office.working", "office.switchedoff", "frame.notyet", "office.latest", "office.noevents", "office.pick", "office.runs", "office.view3d", "office.viewlist", "office.listintro", "office.viewswitch", "office.hint", "office.loading", "office.nowebgl", "office.loaderror", "office.still", "office.feed", ...AGENT_KEYS.map((a) => `agent.${a}`)];
 const WORDS = Object.fromEntries(KEYS.map((k) => [k, W(k)]));
 const NOW = Date.UTC(2026, 9, 9, 12, 0, 0);
 const at = (minutesAgo: number) => new Date(NOW - minutesAgo * 60_000).toISOString();

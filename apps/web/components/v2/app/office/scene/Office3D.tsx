@@ -73,7 +73,6 @@ function fade(root: THREE.Object3D, k: number) {
       }
       x.transparent = k < 1 || d.transparent;
       x.opacity = (d.opacity ?? 1) * k;
-      x.depthWrite = k >= 1;
       x.needsUpdate = true;
     }
   });
