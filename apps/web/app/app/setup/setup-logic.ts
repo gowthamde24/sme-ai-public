@@ -1,4 +1,5 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
+import type { CompleteSetupInput, CompleteSetupResult } from "@/lib/api/signup";
 import {
   BUSINESS_TYPES,
   SETUP_LANGUAGES,
@@ -7,8 +8,8 @@ import {
   type SetupResult,
 } from "@/lib/api/account";
 
-export type CompleteSetupInput = { businessType: BusinessType; language: SetupLanguage };
-export type CompleteSetupResult = { ok: true } | { ok: false; error: string };
+// The input and result types live in lib/api/signup.ts so the screens import them from there.
+export type { CompleteSetupInput, CompleteSetupResult } from "@/lib/api/signup";
 
 /** Plain sentences, in the order a person would hit them. The API's own fixed sentences are passed through for a refusal it explains. */
 export const SETUP_TEXT = {

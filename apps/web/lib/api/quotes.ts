@@ -145,6 +145,9 @@ export interface QuoteSummary {
   total_paise: number;
   needs_owner_approval: boolean;
   created_at: string;
+  /** the customer's company name and city (null when the lead has no company) */
+  customer: string | null;
+  city: string | null;
 }
 
 /** True for a quote whose prices a person typed. A missing `pricing_kind` is a list-price quote. */
@@ -393,6 +396,8 @@ export function parseQuoteSummary(json: unknown): QuoteSummary {
     total_paise: int(json, "total_paise"),
     needs_owner_approval: bool(json, "needs_owner_approval"),
     created_at: str(json, "created_at"),
+    customer: strOrNull(json, "customer"),
+    city: strOrNull(json, "city"),
   };
 }
 
@@ -517,6 +522,13 @@ const post = (body?: unknown): RequestInit => ({ method: "POST", ...(body === un
 export async function fetchQuoteSetup(accessToken: string, tenantId: string, enquiryId: string): Promise<QuoteSetup> {
   checked(tenantId, enquiryId);
   return parseSetup(await apiRequest(`${base(tenantId)}/enquiries/${enquiryId}/quote-setup`, accessToken));
+}
+
+/** `GET /v1/tenants/{tenant}/quotes`: the workspace's newest quotes (Owner, Admin, Sales), each with the customer's company name and city. `limit` is 1 to 50 (default 20). */
+export async function fetchQuotes(accessToken: string, tenantId: string, limit = 20): Promise<QuoteSummary[]> {
+  checked(tenantId);
+  if (!Number.isInteger(limit) || limit < 1 || limit > 50) throw new ApiContractError("limit");
+  return list(await apiRequest(`${base(tenantId)}/quotes?limit=${limit}`, accessToken), "quotes").map(parseQuoteSummary);
 }
 
 export async function fetchEnquiryQuotes(accessToken: string, tenantId: string, enquiryId: string): Promise<QuoteSummary[]> {

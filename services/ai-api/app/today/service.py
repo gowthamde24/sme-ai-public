@@ -18,6 +18,7 @@ from app.today.models import (
     LastEvent,
     NeedsYouItem,
     RecentStep,
+    Target,
     TodayCards,
     TodayOut,
 )
@@ -88,6 +89,13 @@ def _step_text(kind: str, amount: int | None) -> str:
 
 
 def shape_today(raw: Any) -> TodayOut:
+    try:
+        return _shape_today(raw)
+    except (KeyError, TypeError, ValueError, AttributeError):
+        raise _bad("Today answer") from None
+
+
+def _shape_today(raw: Any) -> TodayOut:
     if not isinstance(raw, dict) or not isinstance(raw.get("cards"), dict):
         raise _bad("Today answer")
     cards = raw["cards"]
@@ -104,6 +112,7 @@ def shape_today(raw: Any) -> TodayOut:
                 summary=_summary(row["kind"], str(row["ref"]), amount),
                 at=row["at"],
                 amount_paise=amount,
+                target=Target(type=row["target"]["type"], id=row["target"]["id"]),
             )
         )
     recent = [
@@ -113,6 +122,7 @@ def shape_today(raw: Any) -> TodayOut:
             customer=row.get("customer") or UNKNOWN_CUSTOMER,
             text=_step_text(str(row["type"]), row.get("amount_paise")),
             at=row["at"],
+            target=Target(type="order", id=row["order_id"]),
         )
         for row in (raw.get("recent") or [])[:5]
     ]

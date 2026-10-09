@@ -25,7 +25,7 @@ QUOTE_COLUMNS = (
     "as_of,valid_until,due_date,merchandise_net_paise,item_tax_paise,shipping_net_paise,shipping_tax_paise,total_paise,advance_paise,balance_paise,engine_flags,review_flags,"
     "needs_owner_approval,created_by,created_at,approved_by,approved_at,rejected_by,rejected_at,reject_code,withdrawn_by,withdrawn_at,withdraw_code"
 )
-SUMMARY_COLUMNS = "id,quote_no,enquiry_id,status,pricing_kind,customer_kind,valid_until,total_paise,needs_owner_approval,created_at,withdrawn_at"
+SUMMARY_COLUMNS = "id,quote_no,enquiry_id,status,pricing_kind,customer_kind,valid_until,total_paise,needs_owner_approval,created_at,withdrawn_at,lead:leads(company:companies(name,city))"
 LINE_COLUMNS = "line_no,requirement_line_no,product_id,sku,name,sale_unit,qty,unit_price_applied_paise,price_break_min_qty,line_subtotal_paise,net_paise,tax_paise,gross_paise,tax_bps,price_source,item_type_code"
 ITEM_COLUMNS = "product_id,sku,name,sale_unit,unit_price_paise,minimum_order_quantity,tax_bps,breaks:price_list_breaks(min_qty,unit_price_paise)"
 POLICY_COLUMNS = (

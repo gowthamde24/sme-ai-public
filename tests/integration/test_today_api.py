@@ -95,6 +95,11 @@ def test_the_owner_sees_everything_that_waits_for_them(client: TestClient, scene
     held = by_kind["order_money_held"]
     assert (held["id"], held["agent"], held["amount_paise"]) == (scene.held_order, "order_desk", 40_000)
     assert "₹400.00" in held["summary"] and "refund may be owed" in held["summary"]
+    # where "Open" goes: the quote, the lead (its follow-ups) and the order
+    assert by_kind["quote_approval"]["target"] == {"type": "quote", "id": scene.draft_quote}
+    assert by_kind["order_money_held"]["target"] == {"type": "order", "id": scene.held_order}
+    lead_of_draft = operator_sql.sql(f"select lead_id from public.followup_drafts where id = '{scene.draft_a}'").strip()
+    assert by_kind["followup_due"]["target"] == {"type": "lead", "id": lead_of_draft}
     assert all(i["customer"] and i["summary"] and i["at"] for i in body["needs_you"])
 
 
@@ -104,6 +109,8 @@ def test_the_recent_steps_are_the_orders_real_steps_newest_first_at_most_five(cl
     assert body["recent"][0]["kind"] == "order_step" and body["recent"][0]["order_ref"].startswith("Order ")
     # the open order was started last, so its "started" step is the newest; the cancelled order's cancel step follows it
     assert [s["text"] for s in body["recent"]][:2] == ["Order started", "Order cancelled"]
+    assert {s["target"]["type"] for s in body["recent"]} == {"order"}
+    assert {s["target"]["id"] for s in body["recent"]} <= {scene.held_order, scene.open_order}
     times = [s["at"] for s in body["recent"]]
     assert times == sorted(times, reverse=True)
 
@@ -210,3 +217,18 @@ def test_ai_usage_is_in_paise_and_adds_up(client: TestClient, scene: Scene) -> N
     assert after["spent_paise"] == before + 15 and after["left_paise"] == max(after["cap_paise"] - after["spent_paise"], 0)
     other = get(client, scene, scene.b, "ai-usage/today", "owner").json()
     assert other["spent_paise"] == 0, "B did not spend what A spent"
+
+
+def test_the_quotes_list_names_the_customer_and_the_city(client: TestClient, scene: Scene) -> None:
+    company = scene.a.rows["companies"]
+    rows = client.get(f"/v1/tenants/{scene.a.id}/quotes", headers=bearer(scene.a.users["sales"]))
+    assert rows.status_code == 200, rows.text
+    body = rows.json()
+    assert any(r["id"] == scene.draft_quote for r in body)
+    for row in body:
+        assert row["customer"] == company["name"] and row["city"] == company.get("city")
+    by_enquiry = client.get(f"/v1/tenants/{scene.a.id}/enquiries/{body[0]['enquiry_id']}/quotes", headers=bearer(scene.a.users["owner"])).json()
+    assert by_enquiry and all(r["customer"] == company["name"] for r in by_enquiry)
+    # business B has no quotes, and A's customer never shows there
+    other = client.get(f"/v1/tenants/{scene.b.id}/quotes", headers=bearer(scene.b.users["sales"]))
+    assert other.status_code == 200 and other.json() == []

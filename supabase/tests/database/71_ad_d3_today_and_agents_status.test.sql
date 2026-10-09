@@ -60,6 +60,13 @@ select is(tests.scalar_as(tests.uid('a_owner'), format($$select jsonb_array_leng
 select is(tests.scalar_as(tests.uid('a_owner'), format($$select (public.today_summary(%L) -> 'recent' -> 0 ->> 'type') || '|' || (public.today_summary(%L) -> 'recent' -> 0 ->> 'order_no')$$, tests.tid('a'), tests.tid('a'))),
   'cancel|1', 'the newest step first');
 
+-- ---- where "Open" goes
+select is(tests.scalar_as(tests.uid('a_owner'), format($$select string_agg((x ->> 'kind') || '>' || (x -> 'target' ->> 'type') || ':' || (x -> 'target' ->> 'id'), ',' order by x ->> 'kind')
+  from jsonb_array_elements(public.today_summary(%L) -> 'needs_you') x$$, tests.tid('a'))),
+  'followup_due>lead:' || tests.rid('a_lead') || ',order_money_held>order:' || tests.rid('a_order') || ',quote_approval>quote:' || tests.rid('a_quote_draft'),
+  'each waiting item opens its quote, its lead or its order');
+select is(tests.scalar_as(tests.uid('a_owner'), format($$select (public.today_summary(%L) -> 'recent' -> 0 -> 'order_id')::text$$, tests.tid('a'))), '"' || tests.rid('a_order') || '"', 'a recent step names its order');
+
 -- ---- by role
 select is(tests.scalar_as(tests.uid('a_admin'), format($$select string_agg(x ->> 'kind', ',' order by x ->> 'kind') from jsonb_array_elements(public.today_summary(%L) -> 'needs_you') x$$, tests.tid('a'))),
   'followup_due,quote_approval', 'admin: approvals only (recording a refund is the Owner''s)');

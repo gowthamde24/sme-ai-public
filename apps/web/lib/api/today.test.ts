@@ -5,14 +5,14 @@ import { ApiContractError } from "./client";
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
-import { AGENT_KEYS, getAgentsStatus, getAiUsageToday, getToday, parseAgentsStatus, parseAiUsage, parseNeedsYouItem, parseRecentStep, parseToday } from "./today";
+import { AGENT_KEYS, getAgentsStatus, getAiUsageToday, getToday, parseAgentsStatus, parseAiUsage, parseNeedsYouItem, parseRecentStep, parseTarget, parseToday } from "./today";
 
 const TENANT = "22222222-2222-4222-8222-222222222222";
 const ID = "33333333-3333-4333-8333-333333333333";
 const AT = "2026-10-09T09:30:00Z";
 
-const ITEM = { kind: "quote_approval", id: ID, customer: "Harbour Retail", city: "Hyderabad", agent: "quote_writer", summary: "Quote 3 for ₹5,000.00 is ready for your approval.", at: AT, amount_paise: 500_000 };
-const STEP = { kind: "order_step", order_ref: "Order 4", customer: "Lakshmi Silks", text: "Order cancelled", at: AT };
+const ITEM = { kind: "quote_approval", id: ID, customer: "Harbour Retail", city: "Hyderabad", agent: "quote_writer", summary: "Quote 3 for ₹5,000.00 is ready for your approval.", at: AT, amount_paise: 500_000, target: { type: "quote", id: ID } };
+const STEP = { kind: "order_step", order_ref: "Order 4", customer: "Lakshmi Silks", text: "Order cancelled", at: AT, target: { type: "order", id: ID } };
 const TODAY = { cards: { waiting: 1, money_held_paise: 40_000, orders_open: 2 }, needs_you: [ITEM], recent: [STEP] };
 const AGENTS = AGENT_KEYS.map((agent, i) => ({ agent, state: i < 2 ? "not_available" : "idle", job: `Job of ${agent}`, last_event: i === 4 ? { text: "Prepared quote 3", at: AT } : null }));
 
@@ -31,6 +31,27 @@ describe("Today", () => {
     ["amount_paise", -1], ["amount_paise", 1.5], ["amount_paise", "5"], ["amount_paise", undefined], ["city", 5], ["city", undefined],
   ])("an item with %s = %j is a contract error", (key, value) => {
     expect(() => parseNeedsYouItem({ ...ITEM, [key]: value })).toThrow(ApiContractError);
+  });
+  it("every item and step says where Open goes", () => {
+    expect(parseNeedsYouItem(ITEM).target).toEqual({ type: "quote", id: ID });
+    expect(parseRecentStep(STEP).target).toEqual({ type: "order", id: ID });
+    for (const type of ["quote", "lead", "enquiry", "order"]) expect(parseTarget({ type, id: ID })).toEqual({ type, id: ID });
+  });
+  it.each([[null], [{}], [{ type: "quote" }], [{ id: ID }], [{ type: "dashboard", id: ID }], [{ type: "quote", id: "x" }], [{ type: "quote", id: 5 }], ["quote"]])(
+    "a target of %j is a contract error, on an item and on a step",
+    (target) => {
+      expect(() => parseTarget(target)).toThrow(ApiContractError);
+      expect(() => parseNeedsYouItem({ ...ITEM, target })).toThrow(ApiContractError);
+      expect(() => parseRecentStep({ ...STEP, target })).toThrow(ApiContractError);
+    },
+  );
+  it("an item or a step with no target at all is a contract error", () => {
+    const item: Record<string, unknown> = { ...ITEM };
+    const step: Record<string, unknown> = { ...STEP };
+    delete item.target;
+    delete step.target;
+    expect(() => parseNeedsYouItem(item)).toThrow(ApiContractError);
+    expect(() => parseRecentStep(step)).toThrow(ApiContractError);
   });
   it.each([["kind", "x"], ["order_ref", ""], ["customer", ""], ["text", ""], ["at", "soon"]])("a recent step with %s = %j is a contract error", (key, value) => {
     expect(() => parseRecentStep({ ...STEP, [key]: value })).toThrow(ApiContractError);

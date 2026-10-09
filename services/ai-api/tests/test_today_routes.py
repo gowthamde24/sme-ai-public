@@ -31,6 +31,7 @@ def a_today() -> dict[str, Any]:
                 "ref": "3",
                 "amount_paise": 500_000,
                 "at": AT,
+                "target": {"type": "quote", "id": ID},
             }
         ],
         "recent": [],
@@ -50,6 +51,7 @@ def b_today() -> dict[str, Any]:
                 "ref": "1",
                 "amount_paise": 9_999_900,
                 "at": AT,
+                "target": {"type": "order", "id": ID},
             }
         ],
         "recent": [],
@@ -140,7 +142,18 @@ def test_today_matches_the_contract() -> None:
     assert set(body) == {"cards", "needs_you", "recent"}
     assert body["cards"] == {"waiting": 1, "money_held_paise": 0, "orders_open": 1}
     item = body["needs_you"][0]
-    assert set(item) == {"kind", "id", "customer", "city", "agent", "summary", "at", "amount_paise"}
+    assert set(item) == {
+        "kind",
+        "id",
+        "customer",
+        "city",
+        "agent",
+        "summary",
+        "at",
+        "amount_paise",
+        "target",
+    }
+    assert item["target"] == {"type": "quote", "id": ID}
     assert item["summary"] == "Quote 3 for ₹5,000.00 is ready for your approval."
 
 

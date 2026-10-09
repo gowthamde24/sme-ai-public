@@ -15,6 +15,7 @@ from app.today import service
 from app.today.models import AGENT_ORDER, LastEvent
 
 ID = str(uuid.UUID(int=7))
+QID, LID, OID = (str(uuid.UUID(int=n)) for n in (11, 12, 13))
 AT = "2026-10-09T09:30:00+00:00"
 
 
@@ -49,6 +50,7 @@ def today_raw(**over: Any) -> dict[str, Any]:
                 "ref": "12",
                 "amount_paise": 1_050_000,
                 "at": AT,
+                "target": {"type": "quote", "id": QID},
             },
             {
                 "kind": "followup_due",
@@ -59,6 +61,7 @@ def today_raw(**over: Any) -> dict[str, Any]:
                 "ref": "2",
                 "amount_paise": None,
                 "at": AT,
+                "target": {"type": "lead", "id": LID},
             },
             {
                 "kind": "order_money_held",
@@ -69,11 +72,13 @@ def today_raw(**over: Any) -> dict[str, Any]:
                 "ref": "4",
                 "amount_paise": 40_000,
                 "at": AT,
+                "target": {"type": "order", "id": OID},
             },
         ],
         "recent": [
             {
                 "order_no": 4,
+                "order_id": OID,
                 "customer": "Lakshmi Silks",
                 "type": "cancel",
                 "new_state": "cancelled",
@@ -114,7 +119,13 @@ def test_today_is_shaped_to_the_contract() -> None:
             "customer": "Lakshmi Silks",
             "text": "Order cancelled",
             "at": AT.replace("+00:00", "Z"),
+            "target": {"type": "order", "id": OID},
         }
+    ]
+    assert [i["target"] for i in out["needs_you"]] == [
+        {"type": "quote", "id": QID},
+        {"type": "lead", "id": LID},
+        {"type": "order", "id": OID},
     ]
     assert set(quote) == {
         "kind",
@@ -125,6 +136,7 @@ def test_today_is_shaped_to_the_contract() -> None:
         "summary",
         "at",
         "amount_paise",
+        "target",
     }
 
 
@@ -148,7 +160,16 @@ def test_today_is_shaped_to_the_contract() -> None:
 )
 def test_every_order_step_has_plain_words(kind: str, amount: int | None, text: str) -> None:
     raw = today_raw(
-        recent=[{"order_no": 1, "customer": "X", "type": kind, "amount_paise": amount, "at": AT}]
+        recent=[
+            {
+                "order_no": 1,
+                "order_id": OID,
+                "customer": "X",
+                "type": kind,
+                "amount_paise": amount,
+                "at": AT,
+            }
+        ]
     )
     assert service.shape_today(raw).recent[0].text == text
 
@@ -156,7 +177,14 @@ def test_every_order_step_has_plain_words(kind: str, amount: int | None, text: s
 def test_at_most_five_recent_steps_are_kept() -> None:
     raw = today_raw(
         recent=[
-            {"order_no": n, "customer": "X", "type": "cancel", "amount_paise": None, "at": AT}
+            {
+                "order_no": n,
+                "order_id": OID,
+                "customer": "X",
+                "type": "cancel",
+                "amount_paise": None,
+                "at": AT,
+            }
             for n in range(1, 9)
         ]
     )

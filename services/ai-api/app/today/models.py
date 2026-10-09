@@ -42,6 +42,13 @@ class TodayCards(_Out):
     orders_open: int
 
 
+class Target(_Out):
+    """Where "Open" goes for an item: a quote, a lead (its follow-ups), an enquiry or an order."""
+
+    type: Literal["quote", "lead", "enquiry", "order"]
+    id: uuid.UUID
+
+
 class NeedsYouItem(_Out):
     kind: Literal["quote_approval", "followup_due", "order_money_held"]
     id: uuid.UUID
@@ -51,6 +58,7 @@ class NeedsYouItem(_Out):
     summary: str
     at: datetime
     amount_paise: int | None
+    target: Target
 
 
 class RecentStep(_Out):
@@ -59,6 +67,7 @@ class RecentStep(_Out):
     customer: str
     text: str
     at: datetime
+    target: Target
 
 
 class TodayOut(_Out):

@@ -10,6 +10,8 @@
 --   public.agents_status(tenant)   the facts the office screen shows about the seven helpers: whether the workspace has switched agents on, whether
 --                                  a research or requirement run is running, and the latest quote, follow-up draft and order step.
 --
+-- Each waiting item and each recent step carries a `target` ({type, id}) so the screen knows where "Open" goes: a quote, a lead (its follow-ups),
+-- or an order.
 -- Both return plain facts (ids, counts, numbers, codes, timestamps). The API turns them into the screen's sentences; neither function decides
 -- anything. A caller who is not a member of the tenant is refused (42501), the same answer for a tenant that does not exist.
 
@@ -37,19 +39,19 @@ begin
 
   with items as (
     select 'quote_approval'::text as kind, qt.id, c.name as customer, c.city, 'quote_writer'::text as agent,
-           qt.quote_no::text as ref, qt.total_paise as amount_paise, qt.created_at as at
+           qt.quote_no::text as ref, qt.total_paise as amount_paise, qt.created_at as at, 'quote'::text as target_type, qt.id as target_id
       from public.quotes qt
       left join public.leads l on l.tenant_id = qt.tenant_id and l.id = qt.lead_id
       left join public.companies c on c.tenant_id = l.tenant_id and c.id = l.company_id
      where v_decider and qt.tenant_id = p_tenant_id and qt.status = 'draft'
     union all
-    select 'followup_due', d.id, c.name, c.city, 'followup_desk', d.touch_number::text, null::bigint, d.created_at
+    select 'followup_due', d.id, c.name, c.city, 'followup_desk', d.touch_number::text, null::bigint, d.created_at, 'lead', d.lead_id
       from public.followup_drafts d
       left join public.leads l on l.tenant_id = d.tenant_id and l.id = d.lead_id
       left join public.companies c on c.tenant_id = l.tenant_id and c.id = l.company_id
      where v_decider and d.tenant_id = p_tenant_id and d.status = 'draft'
     union all
-    select 'order_money_held', o.id, c.name, c.city, 'order_desk', o.order_no::text, g.net_paise, coalesce(o.closed_at, o.updated_at)
+    select 'order_money_held', o.id, c.name, c.city, 'order_desk', o.order_no::text, g.net_paise, coalesce(o.closed_at, o.updated_at), 'order', o.id
       from public.orders o
       join public.order_ledger g on g.tenant_id = o.tenant_id and g.order_id = o.id
       left join public.leads l on l.tenant_id = o.tenant_id and l.id = o.lead_id
@@ -60,7 +62,8 @@ begin
   )
   select (select count(*) from items)::integer,
          coalesce((select jsonb_agg(jsonb_build_object('kind', t.kind, 'id', t.id, 'customer', t.customer, 'city', t.city, 'agent', t.agent,
-                                                       'ref', t.ref, 'amount_paise', t.amount_paise, 'at', t.at) order by t.at desc, t.id) from top t), '[]'::jsonb)
+                                                       'ref', t.ref, 'amount_paise', t.amount_paise, 'at', t.at,
+                                                       'target', jsonb_build_object('type', t.target_type, 'id', t.target_id)) order by t.at desc, t.id) from top t), '[]'::jsonb)
     into v_waiting, v_needs;
 
   if v_reader then
@@ -74,7 +77,7 @@ begin
     select coalesce(jsonb_agg(r.j order by r.at desc, r.id desc), '[]'::jsonb)
       into v_recent
       from (select e.recorded_at as at, e.id,
-                   jsonb_build_object('order_no', o.order_no, 'customer', c.name, 'type', e.type, 'new_state', e.new_state,
+                   jsonb_build_object('order_no', o.order_no, 'order_id', o.id, 'customer', c.name, 'type', e.type, 'new_state', e.new_state,
                                       'amount_paise', e.amount_paise, 'at', e.recorded_at) as j
               from public.order_events e
               join public.orders o on o.tenant_id = e.tenant_id and o.id = e.order_id

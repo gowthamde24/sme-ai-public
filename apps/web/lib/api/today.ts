@@ -12,6 +12,14 @@ import { isCanonicalUuid } from "./crm";
 export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
+/** Where "Open" goes: a quote, a lead (its follow-ups), an enquiry or an order. Today's items carry a quote, a lead or an order; a quote's own row (`fetchQuotes`) carries its `enquiry_id`. */
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order"] as const;
+export type TargetType = (typeof TARGET_TYPES)[number];
+export interface Target {
+  type: TargetType;
+  id: string;
+}
+
 export interface NeedsYouItem {
   kind: NeedsYouKind;
   id: string;
@@ -22,6 +30,7 @@ export interface NeedsYouItem {
   /** ISO 8601 */
   at: string;
   amount_paise: number | null;
+  target: Target;
 }
 
 export interface RecentStep {
@@ -31,6 +40,7 @@ export interface RecentStep {
   text: string;
   /** ISO 8601 */
   at: string;
+  target: Target;
 }
 
 export interface Today {
@@ -79,6 +89,12 @@ function when(v: unknown, what: string): string {
 const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held"];
 const AGENTS: readonly NeedsYouAgent[] = ["quote_writer", "followup_desk", "order_desk"];
 
+export function parseTarget(json: unknown): Target {
+  if (!isRecord(json) || !TARGET_TYPES.includes(json.type as TargetType)) return bad("target");
+  if (typeof json.id !== "string" || !isCanonicalUuid(json.id)) return bad("target id");
+  return { type: json.type as TargetType, id: json.id };
+}
+
 export function parseNeedsYouItem(json: unknown): NeedsYouItem {
   if (!isRecord(json)) return bad("item");
   const { kind, id, customer, city, agent, summary, at, amount_paise: amount } = json;
@@ -95,6 +111,7 @@ export function parseNeedsYouItem(json: unknown): NeedsYouItem {
     summary: text(summary, "summary"),
     at: when(at, "at"),
     amount_paise: amount === null ? null : paise(amount, "amount_paise"),
+    target: parseTarget(json.target),
   };
 }
 
@@ -107,6 +124,7 @@ export function parseRecentStep(json: unknown): RecentStep {
     customer: text(json.customer, "customer", 200),
     text: text(json.text, "text"),
     at: when(json.at, "at"),
+    target: parseTarget(json.target),
   };
 }
 

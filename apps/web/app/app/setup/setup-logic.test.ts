@@ -5,7 +5,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { runCompleteSetup, SETUP_TEXT } from "./setup-logic";
 
 const TENANT = "22222222-2222-4222-8222-222222222222";
-const ok = () => vi.fn(async (_token: string, _choices: unknown) => ({ tenantId: TENANT, created: true }));
+const ok = () => vi.fn(async (...args: [string, unknown]) => ({ tenantId: TENANT, created: args.length > 0 }));
 
 describe("runCompleteSetup", () => {
   it("sends the two choices with the caller's token and answers ok", async () => {

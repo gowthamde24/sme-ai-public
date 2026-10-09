@@ -21,7 +21,7 @@ export const QUOTE_JSON = {
 };
 export const SUMMARY_JSON = {
   id: QUOTE, quote_no: 3, enquiry_id: ENQ, status: "draft", outcome: "draft", customer_kind: "new", valid_until: "2026-10-21", total_paise: 7985900,
-  needs_owner_approval: false, created_at: "2026-10-06T05:00:00+00:00",
+  needs_owner_approval: false, created_at: "2026-10-06T05:00:00+00:00", customer: "Synthetic Buyer", city: "Hyderabad",
 };
 export const ITEM_JSON = { product_id: P1, sku: "SYN-K", name: "Synthetic kanjivaram", sale_unit: "piece", unit_price_paise: 400000, minimum_order_quantity: 4, tax_bps: 500 };
 export const ITEM2_JSON = { product_id: P2, sku: "SYN-B", name: "Synthetic banarasi", sale_unit: "piece", unit_price_paise: 310000, minimum_order_quantity: 4, tax_bps: 1200 };

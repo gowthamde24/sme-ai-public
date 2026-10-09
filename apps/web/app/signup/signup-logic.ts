@@ -1,26 +1,10 @@
+import type { SignUpResult } from "@/lib/api/signup";
 import { validateNewPassword } from "@/lib/auth/password-policy";
 import type { SignupLimiter } from "@/lib/auth/signup-limit";
 import { TERMS_VERSION } from "@/lib/auth/terms";
 
-/** What the sign-up form sends. Everything is checked again here, on the server. */
-export type SignUpInput = {
-  name: string;
-  email: string;
-  password: string;
-  businessName: string;
-  acceptTerms: boolean;
-};
-
-export type SignUpError =
-  | "email_taken"
-  | "weak_password"
-  | "terms_required"
-  | "too_many_signups"
-  | "invalid";
-
-export type SignUpResult =
-  | { ok: true; next: "check-email" }
-  | { ok: false; error: SignUpError };
+// The input, error and result types live in lib/api/signup.ts so the screens import them from there.
+export type { SignUpError, SignUpInput, SignUpResult } from "@/lib/api/signup";
 
 /** The slice of the Supabase Auth client the sign-up uses (so a test can stand in for it). */
 export interface SignUpAuth {

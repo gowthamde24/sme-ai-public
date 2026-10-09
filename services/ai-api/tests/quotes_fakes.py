@@ -236,7 +236,9 @@ class FakeQuotes:
         )
         return [
             {
-                k: row[k] for k in keys if k in row
+                **{k: row[k] for k in keys if k in row},
+                # PostgREST's embedded lead -> company (the list shows the customer's name and city)
+                "lead": {"company": {"name": self.company, "city": "Hyderabad"}},
             }  # a list-price row from quote_from has no pricing_kind: the model's default says list
             for row, _ in self.rows.values()
             if enquiry_id is None or row["enquiry_id"] == str(enquiry_id)
