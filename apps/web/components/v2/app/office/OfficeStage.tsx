@@ -112,7 +112,8 @@ export function OfficeStage({
   const state = React.useMemo(() => Object.fromEntries(ALL_AGENT_IDS.map((id) => [id, poses[id]])) as Record<AgentId, Pose>, [poses]);
 
   return (
-    <div ref={holder} data-office-ready={String(ready)} data-detail={detail} className="relative isolate h-[54dvh] min-h-[23rem] overflow-hidden rounded-xl border border-line md:h-[34rem]" style={{ background: dark ? DARK_BG : LIGHT_BG }}>
+    <div ref={holder} data-office-ready={String(ready)} data-detail={detail} className="relative isolate h-[54dvh] min-h-[23rem] overflow-hidden rounded-xl border border-line md:h-[34rem]">
+      <div aria-hidden="true" style={{ position: "absolute", inset: 0, background: dark ? DARK_BG : LIGHT_BG }} />
       <div ref={stage} aria-hidden="true" className="absolute inset-0">
         <SceneBoundary onError={() => onFail("error")}>
           <Office3D

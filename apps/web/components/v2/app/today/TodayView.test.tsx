@@ -66,7 +66,7 @@ describe("TodayView", () => {
   it("says 'Not available yet' in place of every part that is null, and shows no number it was not given", () => {
     view(NOTHING_TODAY, null);
     expect(screen.queryByText(/things are waiting/)).toBeNull();
-    expect(screen.getAllByText("Not available yet")).toHaveLength(6); // three cards, Needs you, the team, Recently recorded
+    expect(screen.getAllByText("Not available yet")).toHaveLength(7); // three cards, Ask your team, Needs you, the team, Recently recorded
     expect(screen.queryByText(/₹/)).toBeNull();
   });
   it("an empty list is 'nothing is waiting', not 'not available'", () => {
@@ -82,6 +82,27 @@ describe("TodayView", () => {
     expect(within(team).getByText("Keeps each order's steps in order.")).toBeInTheDocument(); // else what it does
     expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that is not built (Main agent)
     expect(within(team).getByText("Main agent")).toBeInTheDocument();
+  });
+  it("'Ask your team' is centred above 'Needs you', and with the Main agent not built it says 'Not available yet' and offers nothing to press", () => {
+    view(full);
+    const ask = screen.getByRole("region", { name: "Ask your team" });
+    expect(ask).toHaveAttribute("data-ask", "unavailable");
+    expect(within(ask).getByText("Not available yet")).toBeInTheDocument();
+    expect(within(ask).queryByRole("textbox")).toBeNull();
+    expect(within(ask).queryByRole("button")).toBeNull();
+    expect(ask.className).toContain("mx-auto");
+    const needs = screen.getByRole("heading", { name: "Needs you" });
+    expect(ask.compareDocumentPosition(needs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the box comes first
+  });
+  it("with the Main agent idle or working but no answer stream yet, the box still says 'Not available yet'; with its switch off it says 'Switched off'", () => {
+    view({ ...full, team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }] });
+    expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Not available yet")).toBeInTheDocument();
+    cleanup();
+    view({ ...full, team: [{ agent: "main", state: "switched_off", job: "Answers.", last_event: null }] });
+    expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Switched off")).toBeInTheDocument();
+    cleanup();
+    view({ ...full, team: null });
+    expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Not available yet")).toBeInTheDocument();
   });
   it("a helper whose switch is off says 'Switched off' on its row, not 'Not available yet'", () => {
     view({ ...full, team: [{ agent: "researcher", state: "switched_off", job: "Reads public pages about a lead.", last_event: null }, { agent: "main", state: "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null }] });

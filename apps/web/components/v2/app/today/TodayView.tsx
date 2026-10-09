@@ -5,6 +5,9 @@ import type { ReactNode } from "react";
 import { formatINR } from "@/design/format";
 
 import { pageH1 } from "../ui";
+import { AskTeam } from "./ask/AskTeam";
+import { ASK_WORD_KEYS } from "./ask/ask-words";
+import type { Availability } from "./ask/ask-types";
 import type { NeedsYouItem, T, TodayData } from "./types";
 
 const card = "rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]";
@@ -95,12 +98,15 @@ function Decision({ item, primary, t }: { item: NeedsYouItem; primary: boolean; 
 }
 
 /**
- * The Today screen, as the design-lab app draws it: the greeting and how many things wait, three cards (waiting for you, customer money held, orders in progress), "Needs you" (one
+ * The Today screen, as the design-lab app draws it: the greeting and how many things wait, three cards (waiting for you, customer money held, orders in progress), "Ask your team" (a question to
+ * the Main agent, centred above the list; it says "Not available yet" until the Main agent and its answer stream exist), "Needs you" (one
  * card per item, the first one's button in the main colour), "Your team right now" (the agents) and "Recently recorded". It only draws what `data` holds: a null part says "Not available
  * yet"; a helper that is `not_available` (not built) or `switched_off` says so on its row. `name` null = the person has no display name on record (the greeting is then the plain greeting).
  */
-export function TodayView({ data, name, hour, base, t }: { data: TodayData; name: string | null; hour: number; base: string; t: T }) {
+export function TodayView({ data, name, hour, base, t, lang = "en" }: { data: TodayData; name: string | null; hour: number; base: string; t: T; lang?: string }) {
   const { cards, needs_you: needs, recent, team } = data;
+  const main = team?.find((a) => a.agent === "main")?.state;
+  const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
   const waiting = cards.waiting;
   const sub = waiting === null ? null : waiting === 0 ? t("today.sub.none") : waiting === 1 ? t("today.sub.one") : t("today.sub.other", { n: waiting });
@@ -113,6 +119,7 @@ export function TodayView({ data, name, hour, base, t }: { data: TodayData; name
         <Stat t={t} amber icon={<Wallet className="size-5" aria-hidden="true" />} label={t("today.stat.held")} value={cards.money_held_paise === null ? null : formatINR(cards.money_held_paise / 100, { decimals: 2 })} hint={t("today.stat.heldHint")} href={`${base}/orders`} />
         <Stat t={t} icon={<Package className="size-5" aria-hidden="true" />} label={t("today.stat.open")} value={cards.orders_open === null ? null : String(cards.orders_open)} hint={t("today.stat.openHint")} href={`${base}/orders`} />
       </div>
+      <AskTeam lang={lang} base={base} availability={availability} words={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} />
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         <section id="needs-you" aria-labelledby="needs-you-heading" className="scroll-mt-24 space-y-4 lg:col-span-8">
           <h2 id="needs-you-heading" className="text-2xl font-semibold">

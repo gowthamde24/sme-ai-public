@@ -4,8 +4,8 @@ import * as React from "react";
 
 import { ALL_AGENT_IDS, type AgentId, type Pose } from "./ids";
 
-/** Hidden until the first frame has placed the tag (an inline style, which the per-frame writes below can override; a class could not). */
-const HIDDEN = { visibility: "hidden" } as const;
+/** Where a tag starts: top left, and hidden until the first frame has placed it (an inline style, which the per-frame writes below can override). */
+const START = { position: "absolute", left: 0, top: 0, visibility: "hidden", willChange: "transform" } as const;
 
 export type LabelPositions = Partial<Record<AgentId, { x: number; y: number; on: boolean }>>;
 
@@ -77,8 +77,7 @@ export function SceneLabels({
             ref={(e) => {
               els.current[id] = e;
             }}
-            style={HIDDEN}
-            className="absolute left-0 top-0 will-change-transform"
+            style={START}
           >
             <button
               type="button"
