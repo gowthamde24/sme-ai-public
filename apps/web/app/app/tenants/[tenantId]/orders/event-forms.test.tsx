@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+import { btnMain, btnQuiet } from "@/components/v2/app/ui";
 import { EVENT_TYPES, LOST_REASONS, type EventType } from "@/lib/api/orders";
 
 import { EventForm, type EventFormIds } from "./event-form";
@@ -46,12 +47,12 @@ describe("EventForm", () => {
   it("a cancellation and a refund are the quiet buttons; the others are the main one", () => {
     for (const type of ["cancel", "record_refund"] as EventType[]) {
       const { unmount } = render(<EventForm type={type} action={ok()} ids={ids} secondFactorMissing={false} />);
-      expect(screen.getByRole("button")).toHaveClass("secondary");
+      expect(screen.getByRole("button").className).toBe(btnQuiet);
       unmount();
     }
     for (const type of ["send_quote", "record_payment", "customer_decline", "dispatch"] as EventType[]) {
       const { unmount } = render(<EventForm type={type} action={ok()} ids={ids} secondFactorMissing={false} />);
-      expect(screen.getByRole("button")).not.toHaveClass("secondary");
+      expect(screen.getByRole("button").className).toBe(btnMain);
       unmount();
     }
   });
