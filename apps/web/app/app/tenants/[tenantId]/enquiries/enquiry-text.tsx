@@ -1,5 +1,7 @@
 import { FIELD_LABELS, type RequirementField } from "@/lib/api/enquiries";
 
+import { markClass, plainText } from "@/components/v2/app/ui";
+
 import { segments } from "./spans";
 
 /**
@@ -13,12 +15,12 @@ export function EnquiryText({ body, fields }: { body: string; fields: Requiremen
     .map((f) => ({ start: f.quote_start as number, end: f.quote_end as number, id: f.id }));
   const labelOf = new Map(fields.map((f) => [f.id, FIELD_LABELS[f.field_key]]));
   return (
-    <p className="plain-text" lang="und" data-testid="enquiry-text" style={{ margin: 0 }}>
+    <p className={plainText} lang="und" data-testid="enquiry-text">
       {segments(body, spans).map((s, i) =>
         s.ids.length === 0 ? (
           <span key={i}>{s.text}</span>
         ) : (
-          <mark key={i} title={`Cited by: ${[...new Set(s.ids.map((id) => labelOf.get(id)))].join(", ")}`}>
+          <mark key={i} className={markClass} title={`Cited by: ${[...new Set(s.ids.map((id) => labelOf.get(id)))].join(", ")}`}>
             {s.text}
           </mark>
         ),

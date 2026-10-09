@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
-import { ActionResult } from "../enquiries/action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, formCol, link, mutedText, noteBox } from "@/components/v2/app/ui";
 import type { OrderActionState } from "./order-actions";
 
 type Action = (prev: OrderActionState, formData: FormData) => Promise<OrderActionState>;
@@ -14,21 +15,21 @@ type Action = (prev: OrderActionState, formData: FormData) => Promise<OrderActio
  */
 export function StartOrderForm({ start, orderId, role, secondFactorMissing }: { start: Action; orderId: string; role: string; secondFactorMissing: boolean }) {
   const [state, formAction, pending] = useActionState(start, undefined);
-  if (role !== "owner" && role !== "admin") return <p className="hint">An owner or admin starts an order from an approved quote.</p>;
+  if (role !== "owner" && role !== "admin") return <p className={mutedText}>An owner or admin starts an order from an approved quote.</p>;
   if (secondFactorMissing)
     return (
-      <p role="note">
-        Starting an order needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
+      <p role="note" className={noteBox}>
+        Starting an order needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
       </p>
     );
   return (
-    <form action={formAction}>
+    <form action={formAction} className={formCol}>
       <input type="hidden" name="order_id" value={orderId} />
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Starting..." : "Start order"}
       </button>
-      <p className="hint">The order copies this quote&apos;s total and advance. It is a record you keep up to date: nothing is sent to anyone.</p>
-      <ActionResult state={state} />
+      <p className={mutedText}>The order copies this quote&apos;s total and advance. It is a record you keep up to date: nothing is sent to anyone.</p>
+      <ActionResultV2 state={state} />
     </form>
   );
 }

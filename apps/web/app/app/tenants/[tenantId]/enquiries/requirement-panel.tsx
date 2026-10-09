@@ -17,6 +17,8 @@ import { ExtractForm } from "./extract-form";
 import { FieldControls } from "./field-controls";
 import { QuestionList } from "./question-list";
 import { RequirementActions } from "./requirement-actions";
+import { Pill } from "@/components/v2/app/parts";
+import { bigText, hintInline, link, listItemCard, listPlain, mutedText, noteBlock, pageH2, pageH3, plainText, rowBetween, rowWrap } from "@/components/v2/app/ui";
 
 type Props = {
   tenantId: string;
@@ -27,8 +29,7 @@ type Props = {
 };
 
 function Badge({ children, tone }: { children: React.ReactNode; tone: "good" | "plain" | "warn" }) {
-  const cls = tone === "good" ? "badge badge-good" : tone === "warn" ? "badge badge-maybe" : "badge";
-  return <span className={cls}>{children}</span>;
+  return <Pill tone={tone === "good" ? "green" : tone === "warn" ? "amber" : "neutral"}>{children}</Pill>;
 }
 
 function origin(f: RequirementField): string {
@@ -59,9 +60,11 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
   if (requirement && status === "confirmed" && view.fields.length === 0) {
     return (
       <section aria-labelledby="requirement-heading">
-        <h2 id="requirement-heading">Requirement</h2>
-        <p>This enquiry is quoted with typed prices, so there are no lines to approve here.</p>
-        <p className="hint">
+        <h2 id="requirement-heading" className={pageH2}>
+          Requirement
+        </h2>
+        <p className={bigText}>This enquiry is quoted with typed prices, so there are no lines to approve here.</p>
+        <p className={mutedText}>
           To quote it line by line from the price list instead, reject or withdraw its quotes, then discard this requirement. Nothing here is ever sent.
         </p>
         {canWrite ? (
@@ -79,20 +82,22 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
   const doubtful = view.flags.filter((f) => f.kind !== "missing");
   return (
     <section aria-labelledby="requirement-heading">
-      <h2 id="requirement-heading">Requirement</h2>
-      <div className="row" style={{ flexWrap: "wrap" }}>
+      <h2 id="requirement-heading" className={pageH2}>
+        Requirement
+      </h2>
+      <div className={rowWrap}>
         <Badge tone={status === "confirmed" ? "good" : "plain"}>{status ? REQUIREMENT_STATUS_LABELS[status] : "Not started"}</Badge>
         <Badge tone={view.confirmable ? "good" : "plain"}>{view.confirmable ? "Can approve" : "Cannot approve yet"}</Badge>
         <Badge tone={view.ready_for_quote ? "good" : "warn"}>{view.ready_for_quote ? "Ready for a quote" : "Not ready for a quote"}</Badge>
       </div>
-      <p className="hint">
+      <p className={mutedText}>
         Approving needs a saree type and a quantity on the same line, approved by a person. &quot;Ready for a quote&quot; also needs the delivery city, the date it
         is needed and the payment terms. Nothing here is ever sent.
       </p>
 
       {requirement && canWrite ? (
         <p>
-          <Link href={`/app/tenants/${tenantId}/requirements/${requirement.id}/questions`} className="tap">
+          <Link href={`/app/tenants/${tenantId}/requirements/${requirement.id}/questions`} className={link}>
             Stored questions for the customer →
           </Link>
         </p>
@@ -101,7 +106,7 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
       {canWrite && status !== "confirmed" ? <ExtractForm action={extractRequirementAction.bind(null, tenantId, enquiry.id)} runId={runId} replaces={draft} /> : null}
 
       {missing.length + doubtful.length > 0 ? (
-        <div role="note">
+        <div role="note" className={noteBlock}>
           {missing.length > 0 ? (
             <p>
               <strong>Missing:</strong>{" "}
@@ -118,29 +123,29 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
       ) : null}
 
       {view.fields.length === 0 ? (
-        <p>No fields yet. {canWrite ? "Suggest the fields, or add them by hand below." : ""}</p>
+        <p className={bigText}>No fields yet. {canWrite ? "Suggest the fields, or add them by hand below." : ""}</p>
       ) : (
         groups(view.fields).map((g) => (
           <div key={g.title}>
-            <h3>{g.title}</h3>
-            <ul className="evidence-list">
+            <h3 className={pageH3}>{g.title}</h3>
+            <ul className={listPlain}>
               {g.fields.map((f) => (
-                <li key={f.id} className="evidence-item">
-                  <div className="row between" style={{ flexWrap: "wrap" }}>
+                <li key={f.id} className={listItemCard}>
+                  <div className={rowBetween}>
                     <strong>{FIELD_LABELS[f.field_key]}</strong>
                     <Badge tone={f.state === "confirmed" || f.state === "corrected" ? "good" : f.state === "rejected" ? "plain" : "warn"}>
                       {FIELD_STATE_LABELS[f.state]}
                     </Badge>
                   </div>
-                  <p className="plain-text" style={{ margin: "0.25rem 0", fontSize: "1.125rem" }}>
+                  <p className={`${bigText} ${plainText}`}>
                     {f.display || "—"}
                   </p>
-                  <p className="hint" style={{ margin: 0 }}>
+                  <p className={hintInline}>
                     {origin(f)}; {CERTAINTY_LABELS[f.certainty]}
                     {f.conflict ? "; the enquiry gives more than one value" : ""}
                   </p>
                   {f.quote ? (
-                    <p className="plain-text hint" style={{ margin: "0.25rem 0 0" }}>
+                    <p className={`${hintInline} ${plainText}`}>
                       From the enquiry: <q>{f.quote}</q>
                     </p>
                   ) : null}
@@ -154,20 +159,20 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId }: P
         ))
       )}
 
-      <h3>Questions you may want to ask the customer</h3>
-      <p className="hint">Draft wording only: copy it into your own message. This application does not send anything.</p>
+      <h3 className={pageH3}>Questions you may want to ask the customer</h3>
+      <p className={mutedText}>Draft wording only: copy it into your own message. This application does not send anything.</p>
       <QuestionList questions={view.questions} />
 
       {canWrite && status !== "confirmed" ? (
         <div>
-          <h3>Add a field the suggestions missed</h3>
+          <h3 className={pageH3}>Add a field the suggestions missed</h3>
           <AddFieldForm add={addFieldAction.bind(null, tenantId, enquiry.id)} />
         </div>
       ) : null}
 
       {canWrite && requirement && (status === "draft" || status === "confirmed") ? (
         <div>
-          <h3>{status === "confirmed" ? "This requirement is approved" : "Approve the requirement"}</h3>
+          <h3 className={pageH3}>{status === "confirmed" ? "This requirement is approved" : "Approve the requirement"}</h3>
           <RequirementActions
             confirm={confirmRequirementAction.bind(null, tenantId, enquiry.id, requirement.id)}
             discard={discardRequirementAction.bind(null, tenantId, enquiry.id, requirement.id)}

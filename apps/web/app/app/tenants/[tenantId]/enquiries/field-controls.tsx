@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 
 import type { EnquiryActionState } from "./actions";
-import { ActionResult } from "./action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, btnQuiet, detailsBox, fieldInput, formInline, hintInline, summaryLine } from "@/components/v2/app/ui";
 
 type Action = (prev: EnquiryActionState, formData: FormData) => Promise<EnquiryActionState>;
 
@@ -16,21 +17,21 @@ export function FieldControls({ decide, decided, label }: { decide: Action; deci
   const [state, formAction, pending] = useActionState(decide, undefined);
   const forms = (
     <>
-      <form action={formAction} className="review-actions" style={{ border: 0, paddingTop: 0 }}>
-        <button type="submit" name="decision" value="confirm" disabled={pending}>
+      <form action={formAction} className={formInline}>
+        <button type="submit" name="decision" value="confirm" className={btnMain} disabled={pending}>
           Approve
         </button>
-        <button type="submit" name="decision" value="reject" className="secondary" disabled={pending}>
+        <button type="submit" name="decision" value="reject" className={btnQuiet} disabled={pending}>
           Reject
         </button>
       </form>
-      <form action={formAction} className="review-actions" style={{ border: 0, paddingTop: 0 }}>
+      <form action={formAction} className={formInline}>
         <input type="hidden" name="decision" value="correct" />
-        <label className="hint" htmlFor={`correct-${label}`}>
+        <label className={hintInline} htmlFor={`correct-${label}`}>
           Correct to
         </label>
-        <input id={`correct-${label}`} name="value" maxLength={120} placeholder="Write it as the enquiry would" disabled={pending} required />
-        <button type="submit" className="secondary" disabled={pending}>
+        <input id={`correct-${label}`} className={fieldInput} name="value" maxLength={120} placeholder="Write it as the enquiry would" disabled={pending} required />
+        <button type="submit" className={btnQuiet} disabled={pending}>
           Save correction
         </button>
       </form>
@@ -39,14 +40,14 @@ export function FieldControls({ decide, decided, label }: { decide: Action; deci
   return (
     <div>
       {decided ? (
-        <details>
-          <summary className="tap">Change</summary>
+        <details className={detailsBox}>
+          <summary className={summaryLine}>Change</summary>
           {forms}
         </details>
       ) : (
         forms
       )}
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </div>
   );
 }

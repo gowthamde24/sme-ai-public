@@ -6,6 +6,8 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
 import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
 import { fetchOrders, type Order } from "@/lib/api/orders";
+import { ApiDownV2 } from "@/components/v2/app/parts";
+import { alertBox, backLink, kvList, mutedText, noteBox, pageH1, pageH2, pageMain, plainText } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../../local-time";
@@ -54,7 +56,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   // A Viewer reads no price and no quote (the API refuses them), so nothing is asked for them. A quote screen that cannot load does not take the enquiry down.
   const canQuote = WRITE_ROLES.includes(tenant.role);
@@ -103,22 +105,26 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   }
   const notice = NOTICES[pick(query.captured) ?? ""];
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}/leads/${enquiry.lead_id}`}>← Lead</Link>
+        <Link href={`/app/tenants/${tenantId}/leads/${enquiry.lead_id}`} className={backLink}>
+          ← Lead
+        </Link>
       </p>
-      <h1>Enquiry</h1>
-      <p>
+      <h1 className={pageH1}>Enquiry</h1>
+      <p className={mutedText}>
         Your role: <strong>{tenant.role}</strong>
       </p>
       {notice ? (
-        <p role="status" className="hint">
+        <p role="status" className={noteBox}>
           {notice}
         </p>
       ) : null}
       <section aria-labelledby="enquiry-heading">
-        <h2 id="enquiry-heading">What the customer wrote</h2>
-        <dl className="summary">
+        <h2 id="enquiry-heading" className={pageH2}>
+          What the customer wrote
+        </h2>
+        <dl className={kvList}>
           <dt>Channel</dt>
           <dd>{CHANNEL_LABELS[enquiry.channel]}</dd>
           <dt>Received</dt>
@@ -128,21 +134,21 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           {enquiry.subject ? (
             <>
               <dt>Subject</dt>
-              <dd className="plain-text">{enquiry.subject}</dd>
+              <dd className={plainText}>{enquiry.subject}</dd>
             </>
           ) : null}
         </dl>
         <EnquiryText body={enquiry.body} fields={view.fields} />
-        <p className="hint">
+        <p className={mutedText}>
           This is the customer&apos;s text, shown as plain text. Contact details were removed before it was saved
           {enquiry.truncated_from ? `; it was cut from ${enquiry.truncated_from} characters` : ""}. Marked words are the ones a field relies on.
         </p>
       </section>
       <RequirementPanel tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
       {!canQuote ? (
-        <p className="hint">Quotes are shown to owners, admins and sales users.</p>
+        <p className={mutedText}>Quotes are shown to owners, admins and sales users.</p>
       ) : quotesDown || setup === null ? (
-        <p role="alert" className="error">
+        <p role="alert" className={alertBox}>
           The quote could not be loaded right now. The enquiry above is unaffected: try again shortly.
         </p>
       ) : (
@@ -164,19 +170,6 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           manual={manual}
         />
       )}
-    </main>
-  );
-}
-
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
     </main>
   );
 }

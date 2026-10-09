@@ -5,6 +5,8 @@ import { startTransition, useActionState, useState } from "react";
 import type { ItemType } from "@/lib/api/item-types";
 import { CUSTOMER_KINDS, CUSTOMER_KIND_LABELS, formatBps, formatDate } from "@/lib/api/quotes";
 
+import { alertBox, btnMain, btnQuiet, checkBox, fieldBlock, fieldHelp, fieldInput, fieldLabel, fieldsetLine, fieldsetPlain, formCardWide, legendText, lineGrid, mutedText, noteBox, pageH3, radioRow } from "@/components/v2/app/ui";
+
 import type { ManualQuoteState } from "./manual-quote-actions";
 import { CHOOSE_KIND, EMPTY_LINE, LINE_TEXT, MAX_LINES, RANGE_NOTE, linesFromForm, showRangeNote, type LineValues } from "./manual-quote-logic";
 
@@ -41,8 +43,7 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
   return (
     <form
       noValidate
-      className="card"
-      style={{ maxWidth: "40rem" }}
+      className={formCardWide}
       aria-labelledby="manual-quote-title"
       onSubmit={(event) => {
         event.preventDefault();
@@ -60,10 +61,10 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
         startTransition(() => formAction(new FormData(event.currentTarget)));
       }}
     >
-      <h3 id="manual-quote-title" style={{ margin: 0 }}>
+      <h3 id="manual-quote-title" className={pageH3}>
         Quote with typed prices
       </h3>
-      <p className="hint">
+      <p className={mutedText}>
         You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.
       </p>
       {gst ? (
@@ -71,32 +72,34 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
           GST rate: <strong>{formatBps(gst.rateBps)}</strong>, from {formatDate(gst.from)}, added on top of every price you type. It comes from the quote policy.
         </p>
       ) : (
-        <p role="note" className="notice">
+        <p role="note" className={noteBox}>
           {NO_RATE_TEXT}
         </p>
       )}
       <input type="hidden" name="quote_id" value={quoteId} />
       <input type="hidden" name="line_count" value={lines.length} />
 
-      <fieldset disabled={pending} className="form-plain">
-        <legend>The customer</legend>
+      <fieldset disabled={pending} className={fieldsetPlain}>
+        <legend className={legendText}>The customer</legend>
         {CUSTOMER_KINDS.map((k) => (
-          <label key={k} style={{ display: "block" }}>
-            <input type="radio" name="customer_kind" value={k} checked={kind === k} onChange={() => setKind(k)} /> {CUSTOMER_KIND_LABELS[k]}
+          <label key={k} className={radioRow}>
+            <input type="radio" name="customer_kind" value={k} checked={kind === k} onChange={() => setKind(k)} className={checkBox} /> {CUSTOMER_KIND_LABELS[k]}
           </label>
         ))}
-        <p className="hint">A repeat customer is your word: nobody has verified it, so the owner decides such a quote.</p>
+        <p className={mutedText}>A repeat customer is your word: nobody has verified it, so the owner decides such a quote.</p>
       </fieldset>
 
       {lines.map((line, index) => {
         const n = index + 1;
         return (
-          <fieldset key={n} disabled={pending} className="form-line">
-            <legend>Line {n}</legend>
-            <div className="form-grid line-grid">
-              <div className="field">
-                <label htmlFor={`mq-code-${n}`}>Item type</label>
-                <select id={`mq-code-${n}`} name={`code_${n}`} value={line.code} onChange={(e) => change(index, "code", e.target.value)}>
+          <fieldset key={n} disabled={pending} className={fieldsetLine}>
+            <legend className={legendText}>Line {n}</legend>
+            <div className={lineGrid}>
+              <div className={fieldBlock}>
+                <label htmlFor={`mq-code-${n}`} className={fieldLabel}>
+                  Item type
+                </label>
+                <select id={`mq-code-${n}`} className={fieldInput} name={`code_${n}`} value={line.code} onChange={(e) => change(index, "code", e.target.value)}>
                   <option value="">Choose an item type</option>
                   {itemTypes.map((t) => (
                     <option key={t.code} value={t.code}>
@@ -105,14 +108,19 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
                   ))}
                 </select>
               </div>
-              <div className="field">
-                <label htmlFor={`mq-qty-${n}`}>Quantity (pieces)</label>
-                <input id={`mq-qty-${n}`} name={`qty_${n}`} inputMode="numeric" autoComplete="off" value={line.qty} onChange={(e) => change(index, "qty", e.target.value)} />
+              <div className={fieldBlock}>
+                <label htmlFor={`mq-qty-${n}`} className={fieldLabel}>
+                  Quantity (pieces)
+                </label>
+                <input id={`mq-qty-${n}`} className={fieldInput} name={`qty_${n}`} inputMode="numeric" autoComplete="off" value={line.qty} onChange={(e) => change(index, "qty", e.target.value)} />
               </div>
-              <div className="field">
-                <label htmlFor={`mq-price-${n}`}>Price per piece (rupees)</label>
+              <div className={fieldBlock}>
+                <label htmlFor={`mq-price-${n}`} className={fieldLabel}>
+                  Price per piece (rupees)
+                </label>
                 <input
                   id={`mq-price-${n}`}
+                  className={fieldInput}
                   name={`price_${n}`}
                   inputMode="decimal"
                   autoComplete="off"
@@ -122,16 +130,16 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
                 />
               </div>
             </div>
-            <p id={`mq-price-hint-${n}`} className="hint">
+            <p id={`mq-price-hint-${n}`} className={fieldHelp}>
               {LINE_TEXT.price}
             </p>
             {showRangeNote(line, itemTypes) ? (
-              <p role="note" className="notice">
+              <p role="note" className={noteBox}>
                 {RANGE_NOTE}
               </p>
             ) : null}
             {lines.length > 1 ? (
-              <button type="button" onClick={() => setLines((current) => current.filter((_, i) => i !== index))}>
+              <button type="button" className={btnQuiet} onClick={() => setLines((current) => current.filter((_, i) => i !== index))}>
                 Remove line {n}
               </button>
             ) : null}
@@ -140,18 +148,18 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
       })}
 
       <p>
-        <button type="button" disabled={pending || lines.length >= MAX_LINES} onClick={() => setLines((current) => [...current, { ...EMPTY_LINE }])}>
+        <button type="button" className={btnQuiet} disabled={pending || lines.length >= MAX_LINES} onClick={() => setLines((current) => [...current, { ...EMPTY_LINE }])}>
           Add a line
         </button>
-        {lines.length >= MAX_LINES ? <span className="hint"> A quote has at most 5 lines.</span> : null}
+        {lines.length >= MAX_LINES ? <span className={mutedText}> A quote has at most 5 lines.</span> : null}
       </p>
 
       {error ? (
-        <p role="alert" className="error hint">
+        <p role="alert" className={alertBox}>
           {error}
         </p>
       ) : null}
-      <button type="submit" disabled={pending || noRate || blocked}>
+      <button type="submit" className={btnMain} disabled={pending || noRate || blocked}>
         {pending ? "Making the draft..." : "Make draft quote"}
       </button>
     </form>

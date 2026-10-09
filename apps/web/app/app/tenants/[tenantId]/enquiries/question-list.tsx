@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { btnQuiet, hintInline, listItemCard, listPlain, mutedText, plainText } from "@/components/v2/app/ui";
 import { FIELD_LABELS, type Question } from "@/lib/api/enquiries";
 
 /**
@@ -10,7 +11,7 @@ import { FIELD_LABELS, type Question } from "@/lib/api/enquiries";
  */
 export function QuestionList({ questions }: { questions: Question[] }) {
   const [copied, setCopied] = useState<string | null>(null);
-  if (questions.length === 0) return <p className="hint">Nothing to ask: every needed field is present.</p>;
+  if (questions.length === 0) return <p className={mutedText}>Nothing to ask: every needed field is present.</p>;
   async function copy(q: Question) {
     try {
       await navigator.clipboard.writeText(q.text);
@@ -20,19 +21,19 @@ export function QuestionList({ questions }: { questions: Question[] }) {
     }
   }
   return (
-    <ul className="evidence-list">
+    <ul className={listPlain}>
       {questions.map((q) => {
         const key = `${q.code}:${q.line_no ?? ""}`;
         return (
-          <li key={key} className="evidence-item">
-            <p className="hint" style={{ margin: 0 }}>
+          <li key={key} className={listItemCard}>
+            <p className={hintInline}>
               {FIELD_LABELS[q.field_key]}
               {q.line_no ? `, line ${q.line_no}` : ""}
             </p>
-            <p className="plain-text" style={{ margin: "0.25rem 0 0.5rem" }}>
+            <p className={`mt-1 mb-2 ${plainText}`}>
               {q.text}
             </p>
-            <button type="button" className="secondary" onClick={() => copy(q)}>
+            <button type="button" className={btnQuiet} onClick={() => copy(q)}>
               {copied === key ? "Copied" : "Copy"}
             </button>
           </li>

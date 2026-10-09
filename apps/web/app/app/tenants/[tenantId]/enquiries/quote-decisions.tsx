@@ -5,7 +5,8 @@ import { useActionState } from "react";
 
 import { REJECT_CODES, REJECT_LABELS, WITHDRAW_CODES, WITHDRAW_LABELS, type Outcome } from "@/lib/api/quotes";
 
-import { ActionResult } from "./action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, btnQuiet, detailsBox, fieldInput, fieldLabel, formStack, link, mutedText, noteBox, summaryLine } from "@/components/v2/app/ui";
 import type { QuoteActionState } from "./quote-actions";
 
 type Action = (prev: QuoteActionState, formData: FormData) => Promise<QuoteActionState>;
@@ -44,48 +45,50 @@ export function QuoteDecisions({
         {decider ? (
           <>
             {adminBlocked ? (
-              <p role="note">This quote carries a flag, so only the owner can approve it. You can reject it.</p>
+              <p role="note" className={noteBox}>This quote carries a flag, so only the owner can approve it. You can reject it.</p>
             ) : secondFactorMissing ? (
-              <p role="note">
-                Approving needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
+              <p role="note" className={noteBox}>
+                Approving needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
               </p>
             ) : (
-              <form action={approveAction}>
-                <button type="submit" disabled={busy}>
+              <form action={approveAction} className={formStack}>
+                <button type="submit" className={btnMain} disabled={busy}>
                   {approving ? "Approving..." : "Approve this quote"}
                 </button>
-                <p className="hint">Approving records your decision. It does not send anything to the customer.</p>
-                <ActionResult state={approveState} />
+                <p className={mutedText}>Approving records your decision. It does not send anything to the customer.</p>
+                <ActionResultV2 state={approveState} />
               </form>
             )}
-            <details>
-              <summary className="tap">Reject this draft</summary>
-              <form action={rejectAction}>
-                <label htmlFor="reject-code">Why</label>
-                <select id="reject-code" name="code" defaultValue="wrong_prices" disabled={busy}>
+            <details className={detailsBox}>
+              <summary className={summaryLine}>Reject this draft</summary>
+              <form action={rejectAction} className={formStack}>
+                <label htmlFor="reject-code" className={fieldLabel}>
+                  Why
+                </label>
+                <select id="reject-code" name="code" defaultValue="wrong_prices" disabled={busy} className={fieldInput}>
                   {REJECT_CODES.map((code) => (
                     <option key={code} value={code}>
                       {REJECT_LABELS[code]}
                     </option>
                   ))}
                 </select>
-                <button type="submit" className="secondary" disabled={busy}>
+                <button type="submit" className={btnQuiet} disabled={busy}>
                   {rejecting ? "Saving..." : "Reject"}
                 </button>
-                <ActionResult state={rejectState} />
+                <ActionResultV2 state={rejectState} />
               </form>
             </details>
           </>
         ) : (
-          <details>
-            <summary className="tap">Withdraw my draft</summary>
-            <p className="hint">An owner or admin approves a quote. You can withdraw a draft you made yourself.</p>
-            <form action={rejectAction}>
+          <details className={detailsBox}>
+            <summary className={summaryLine}>Withdraw my draft</summary>
+            <p className={mutedText}>An owner or admin approves a quote. You can withdraw a draft you made yourself.</p>
+            <form action={rejectAction} className={formStack}>
               <input type="hidden" name="code" value="withdrawn" />
-              <button type="submit" className="secondary" disabled={busy}>
+              <button type="submit" className={btnQuiet} disabled={busy}>
                 {rejecting ? "Saving..." : "Withdraw my draft"}
               </button>
-              <ActionResult state={rejectState} />
+              <ActionResultV2 state={rejectState} />
             </form>
           </details>
         )}
@@ -94,27 +97,29 @@ export function QuoteDecisions({
   }
   if (outcome === "approved" && decider) {
     return (
-      <details>
-        <summary className="tap">Withdraw this approved quote</summary>
-        <p className="hint">A withdrawn quote is kept in the history and can no longer be approved or copied.</p>
+      <details className={detailsBox}>
+        <summary className={summaryLine}>Withdraw this approved quote</summary>
+        <p className={mutedText}>A withdrawn quote is kept in the history and can no longer be approved or copied.</p>
         {secondFactorMissing ? (
-          <p role="note">
-            This needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
+          <p role="note" className={noteBox}>
+            This needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
           </p>
         ) : (
-          <form action={withdrawAction}>
-            <label htmlFor="withdraw-code">Why</label>
-            <select id="withdraw-code" name="code" defaultValue="price_changed" disabled={busy}>
+          <form action={withdrawAction} className={formStack}>
+            <label htmlFor="withdraw-code" className={fieldLabel}>
+              Why
+            </label>
+            <select id="withdraw-code" name="code" defaultValue="price_changed" disabled={busy} className={fieldInput}>
               {WITHDRAW_CODES.map((code) => (
                 <option key={code} value={code}>
                   {WITHDRAW_LABELS[code]}
                 </option>
               ))}
             </select>
-            <button type="submit" className="secondary" disabled={busy}>
+            <button type="submit" className={btnQuiet} disabled={busy}>
               {withdrawing ? "Saving..." : "Withdraw"}
             </button>
-            <ActionResult state={withdrawState} />
+            <ActionResultV2 state={withdrawState} />
           </form>
         )}
       </details>
