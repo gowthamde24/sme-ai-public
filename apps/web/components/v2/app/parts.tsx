@@ -1,9 +1,5 @@
-import { cookies } from "next/headers";
 import Link from "next/link";
 import type { ReactNode } from "react";
-
-import { V2Root } from "@/components/v2/V2Root";
-import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 
 import { alertBox, backLink, link, mutedText, noteBox, okBox, pageH1, pageMain, pillAmber, pillBrand, pillGreen, pillInfo, pillNeutral, pillRed, surface } from "./ui";
 
@@ -104,16 +100,3 @@ export function Pill({ tone = "neutral", children }: { tone?: "neutral" | "brand
   return <span className={TONES[tone]}>{children}</span>;
 }
 const TONES = { neutral: pillNeutral, brand: pillBrand, green: pillGreen, amber: pillAmber, red: pillRed, info: pillInfo } as const;
-
-/**
- * The wrapper a migrated screen's folder layout uses: a v2 island for the screen's own content (plan 2.9). It reads the theme cookie like the
- * frame does, so the screen follows the choice after a reload (its words are English until the language track, so it says lang=en); the theme button keeps every island in step without one.
- */
-export async function ScreenIsland({ children }: { children: ReactNode }) {
-  const jar = await cookies();
-  return (
-    <V2Root theme={readTheme(jar.get(THEME_COOKIE)?.value)} lang="en" className="min-h-[60dvh] bg-transparent bg-none">
-      {children}
-    </V2Root>
-  );
-}

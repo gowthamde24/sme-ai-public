@@ -5,7 +5,8 @@ import { useActionState } from "react";
 
 import { EVENT_LABELS, LOST_REASONS, LOST_REASON_LABELS, MONEY_EVENTS, type EventType } from "@/lib/api/orders";
 
-import { ActionResult } from "../enquiries/action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, btnQuiet, fieldHelp, fieldInput, fieldLabel, formCard, formTitle, link, noteBox } from "@/components/v2/app/ui";
 import type { OrderActionState } from "./order-actions";
 
 type Action = (prev: OrderActionState, formData: FormData) => Promise<OrderActionState>;
@@ -42,13 +43,13 @@ export function EventForm({ type, action, ids, secondFactorMissing }: { type: Ev
   const money = (MONEY_EVENTS as readonly string[]).includes(type);
   const id = `event-${type}`;
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "36rem" }} aria-labelledby={`${id}-title`}>
-      <h4 id={`${id}-title`} style={{ margin: 0 }}>
+    <form action={formAction} className={formCard} aria-labelledby={`${id}-title`}>
+      <h4 id={`${id}-title`} className={formTitle}>
         {EVENT_LABELS[type]}
       </h4>
       {secondFactorMissing ? (
-        <p role="note">
-          This needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
+        <p role="note" className={noteBox}>
+          This needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
         </p>
       ) : (
         <>
@@ -58,17 +59,17 @@ export function EventForm({ type, action, ids, secondFactorMissing }: { type: Ev
           {money ? (
             <>
               <input type="hidden" name="ledger_id" value={ids.ledgerId} />
-              <label htmlFor={`${id}-amount`}>Amount in rupees</label>
-              <input id={`${id}-amount`} name="amount" inputMode="decimal" autoComplete="off" required disabled={pending} placeholder="25,000" />
-              <label htmlFor={`${id}-day`}>The day it happened</label>
-              <input id={`${id}-day`} name="happened_on" type="date" defaultValue={ids.today} max={ids.today} required disabled={pending} />
-              <p className="hint">The amount is your record of what arrived or went out. Nothing is collected or paid from here.</p>
+              <label htmlFor={`${id}-amount`} className={fieldLabel}>Amount in rupees</label>
+              <input id={`${id}-amount`} className={fieldInput} name="amount" inputMode="decimal" autoComplete="off" required disabled={pending} placeholder="25,000" />
+              <label htmlFor={`${id}-day`} className={fieldLabel}>The day it happened</label>
+              <input id={`${id}-day`} className={fieldInput} name="happened_on" type="date" defaultValue={ids.today} max={ids.today} required disabled={pending} />
+              <p className={fieldHelp}>The amount is your record of what arrived or went out. Nothing is collected or paid from here.</p>
             </>
           ) : null}
           {type === "customer_decline" ? (
             <>
-              <label htmlFor={`${id}-reason`}>Why</label>
-              <select id={`${id}-reason`} name="reason" defaultValue="" required disabled={pending}>
+              <label htmlFor={`${id}-reason`} className={fieldLabel}>Why</label>
+              <select id={`${id}-reason`} className={fieldInput} name="reason" defaultValue="" required disabled={pending}>
                 <option value="" disabled>
                   Choose a reason
                 </option>
@@ -80,13 +81,13 @@ export function EventForm({ type, action, ids, secondFactorMissing }: { type: Ev
               </select>
             </>
           ) : null}
-          {type === "dispatch" ? <p className="hint">If the advance has not been paid, only the owner can dispatch (with their authenticator app).</p> : null}
-          <button type="submit" className={type === "cancel" || type === "record_refund" ? "secondary" : undefined} disabled={pending}>
+          {type === "dispatch" ? <p className={fieldHelp}>If the advance has not been paid, only the owner can dispatch (with their authenticator app).</p> : null}
+          <button type="submit" className={type === "cancel" || type === "record_refund" ? btnQuiet : btnMain} disabled={pending}>
             {pending ? "Saving..." : BUTTON[type]}
           </button>
         </>
       )}
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }

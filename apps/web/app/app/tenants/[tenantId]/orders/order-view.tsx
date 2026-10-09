@@ -12,6 +12,7 @@ import {
   type Member,
   type OrderDetail,
 } from "@/lib/api/orders";
+import { eventItem, kvList, kvTerm, kvValue, leadLine, link, listOrdered, metaLine, noteBox, pageH1, pageH2 } from "@/components/v2/app/ui";
 import { formatDate } from "@/lib/api/quotes";
 
 import { LocalTime } from "../../../local-time";
@@ -35,70 +36,69 @@ export function OrderView({ tenantId, order, members, forms }: { tenantId: strin
   const notOwed = CLOSED_NOT_OWED.includes(order.state);
   return (
     <section aria-labelledby="order-heading">
-      <h1 id="order-heading">Order {order.order_no}</h1>
-      <p>
+      <h1 id="order-heading" className={pageH1}>Order {order.order_no}</h1>
+      <p className={leadLine}>
         <strong>{OUTCOME_LABELS[order.outcome]}</strong> · {STATE_LABELS[order.state]}
         {order.lost_reason ? ` · ${LOST_REASON_LABELS[order.lost_reason]}` : ""}
       </p>
-      <p role="note" className="notice">
+      <p role="note" className={noteBox}>
         Nothing is sent by this system: every entry here is a record of something that happened outside it.
       </p>
 
       {moneyHeld(order) > 0 ? (
-        <p role="note" className="notice">
+        <p role="note" className={noteBox}>
           {HELD_TEXT(moneyHeld(order))}
         </p>
       ) : null}
 
-      <h2>The money</h2>
-      <dl className="summary">
-        <dt>Order total</dt>
-        <dd>{formatRupees(order.order_total_paise)}</dd>
-        <dt>Advance asked for</dt>
-        <dd>{formatRupees(order.advance_paise)}</dd>
-        <dt>Received</dt>
-        <dd>{formatRupees(order.paid_paise)}</dd>
-        <dt>Refunded</dt>
-        <dd>{formatRupees(order.refunded_paise)}</dd>
-        <dt>Net received</dt>
-        <dd>{formatRupees(order.net_paise)}</dd>
-        <dt>Balance</dt>
-        <dd>{notOwed ? "Not owed: the order is closed" : formatRupees(order.balance_paise)}</dd>
-        <dt>Quote valid until</dt>
-        <dd>{formatDate(order.valid_until)}</dd>
+      <h2 className={pageH2}>The money</h2>
+      <dl className={kvList}>
+        <dt className={kvTerm}>Order total</dt>
+        <dd className={kvValue}>{formatRupees(order.order_total_paise)}</dd>
+        <dt className={kvTerm}>Advance asked for</dt>
+        <dd className={kvValue}>{formatRupees(order.advance_paise)}</dd>
+        <dt className={kvTerm}>Received</dt>
+        <dd className={kvValue}>{formatRupees(order.paid_paise)}</dd>
+        <dt className={kvTerm}>Refunded</dt>
+        <dd className={kvValue}>{formatRupees(order.refunded_paise)}</dd>
+        <dt className={kvTerm}>Net received</dt>
+        <dd className={kvValue}>{formatRupees(order.net_paise)}</dd>
+        <dt className={kvTerm}>Balance</dt>
+        <dd className={kvValue}>{notOwed ? "Not owed: the order is closed" : formatRupees(order.balance_paise)}</dd>
+        <dt className={kvTerm}>Quote valid until</dt>
+        <dd className={kvValue}>{formatDate(order.valid_until)}</dd>
       </dl>
 
-      <h2>Where it came from</h2>
+      <h2 className={pageH2}>Where it came from</h2>
       <ul>
         <li>
-          <Link href={`${base}/enquiries/${order.enquiry_id}?quote=${order.quote_id}`} className="tap">
+          <Link href={`${base}/enquiries/${order.enquiry_id}?quote=${order.quote_id}`} className={link}>
             The approved quote
           </Link>
         </li>
         <li>
-          <Link href={`${base}/enquiries/${order.enquiry_id}`} className="tap">
+          <Link href={`${base}/enquiries/${order.enquiry_id}`} className={link}>
             The enquiry
           </Link>
         </li>
         <li>
-          <Link href={`${base}/leads/${order.lead_id}`} className="tap">
+          <Link href={`${base}/leads/${order.lead_id}`} className={link}>
             The lead
           </Link>
         </li>
       </ul>
 
-      <h2>What to record next</h2>
+      <h2 className={pageH2}>What to record next</h2>
       {forms}
 
-      <h2>History</h2>
-      <ol aria-label="Events, oldest first">
+      <h2 className={pageH2}>History</h2>
+      <ol aria-label="Events, oldest first" className={listOrdered}>
         {order.events.map((e) => (
-          <li key={e.id} className="card">
+          <li key={e.id} className={eventItem}>
             <strong>{EVENT_LABELS[e.type]}</strong>
             {e.amount_paise !== null ? <> · {formatRupees(e.amount_paise)}</> : null}
             {e.reason_code ? <> · {LOST_REASON_LABELS[e.reason_code]}</> : null}
-            <br />
-            <span className="hint">
+            <span className={metaLine}>
               {e.prior_state ? `${STATE_LABELS[e.prior_state]} → ` : ""}
               {STATE_LABELS[e.new_state]} · recorded by {whoText(e.recorded_by, members)}
               {e.owner_approved_by ? `, with the owner's approval (${whoText(e.owner_approved_by, members)})` : ""} · it happened <LocalTime iso={e.occurred_at} />; recorded{" "}

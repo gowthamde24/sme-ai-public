@@ -4,7 +4,8 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (n: string) => (n === "sme_theme" ? { name: n, value: "dark" } : undefined) }) }));
 
-import { ActionResultV2, ApiDownV2, NoticeV2, NotShownV2, PageHeader, Panel, Pill, ScreenIsland } from "./parts";
+import { ScreenIsland } from "./island";
+import { ActionResultV2, ApiDownV2, NoticeV2, NotShownV2, PageHeader, Panel, Pill } from "./parts";
 
 describe("the shared v2 pieces say what the old ones said", () => {
   it("ApiDown: the same alert sentence and the same way back", () => {

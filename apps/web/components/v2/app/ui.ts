@@ -29,7 +29,7 @@ export const fieldTextarea = `${fieldInput} py-2`;
 export const fieldHelp = "mt-1.5 text-sm text-muted";
 export const checkRow = "flex min-h-11 items-center gap-3 text-base";
 export const checkBox = "size-6 shrink-0 accent-brand-text";
-export const btnMain = `${btnPrimary} min-h-12 disabled:opacity-60`;
+export const btnMain = `${btnPrimary} disabled:opacity-60`;
 export const btnQuiet =
   "inline-flex min-h-12 items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
 export const btnDanger =
@@ -56,3 +56,13 @@ export const listItemCard = "rounded-xl border border-line bg-surface p-4";
 export const tabRow = "mt-4 flex flex-wrap gap-2 border-b border-line pb-3";
 export const tabLink = "inline-flex min-h-11 items-center rounded-lg px-3 text-base font-medium text-ink hover:bg-surface-2";
 export const tabLinkOn = "bg-brand-bg font-semibold text-brand-text";
+/** A small grey line under a list entry. */
+export const metaLine = "mt-1 block text-sm text-muted";
+/** A bold sentence on its own line inside a list entry. */
+export const emphasisLine = "mt-2 block font-semibold";
+export const spaceTop = "mt-4";
+export const formCard = "mt-4 flex max-w-xl flex-col gap-3 rounded-xl border border-line bg-surface p-4";
+export const formTitle = "font-display text-lg font-bold";
+export const eventItem = "rounded-xl border border-line bg-surface p-4";
+export const listOrdered = "mt-3 flex flex-col gap-3";
+export const leadLine = "mt-1 text-lg";
