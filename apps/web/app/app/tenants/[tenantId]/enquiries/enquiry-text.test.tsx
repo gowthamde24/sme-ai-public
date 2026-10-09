@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { RequirementField } from "@/lib/api/enquiries";
 
 import { EnquiryText } from "./enquiry-text";
+import { plainText } from "@/components/v2/app/ui";
 
 function field(over: Partial<RequirementField>): RequirementField {
   return {
@@ -33,7 +34,7 @@ describe("EnquiryText", () => {
   it("does not mark a rejected field's quote and keeps line breaks and wrapping", () => {
     render(<EnquiryText body={"Line one\nLine two"} fields={[field({ state: "rejected", quote_start: 0, quote_end: 4 })]} />);
     expect(document.querySelector("mark")).toBeNull();
-    expect(screen.getByTestId("enquiry-text")).toHaveClass("plain-text");
+    expect(screen.getByTestId("enquiry-text").className).toBe(plainText);
     expect(screen.getByTestId("enquiry-text").textContent).toBe("Line one\nLine two");
   });
 

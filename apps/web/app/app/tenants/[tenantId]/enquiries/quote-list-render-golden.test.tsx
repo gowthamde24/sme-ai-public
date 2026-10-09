@@ -32,6 +32,11 @@ import { QuoteView } from "./quote-view";
  * A LIST-price quote must look exactly as it did before manual-price quotes reached the screen (manual-price quote, slice 4a). The file golden/list-quote-render.json
  * holds the HTML of the quote view and of the whole quote panel for a list-price draft and approved quote, captured from the code BEFORE slice 4a. This test renders the
  * same inputs and compares every character. (Set UPDATE_GOLDEN=1 only on code known to be the old behaviour.)
+ *
+ * Re-captured ONCE, on purpose, in the commit "golden: re-capture list-quote after v2" (workspace redesign, Batch 1B-quote): the quote screen moved to the v2 look, so every class
+ * name and the markup around the words changed. What this golden stood for, "a list-price quote says the same thing", is now proved by the plain-text snapshot of the enquiry screens
+ * (apps/web/test/screens/__text__, captured from main before the restyle and unchanged by it) and by the check that the text of all 15 pieces below is identical before and after.
+ * Do not re-capture it again for a change of words: that needs the owner.
  */
 const GOLDEN = join(__dirname, "golden", "list-quote-render.json");
 const TENANT = "22222222-2222-2222-2222-222222222222";

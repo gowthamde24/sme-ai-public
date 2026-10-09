@@ -5,6 +5,8 @@ import { startTransition, useActionState, useState } from "react";
 
 import { SENT_AGAIN } from "@/lib/whatsapp/sentences";
 
+import { alertBox, btnMain, formCol, link, mutedText, okBox } from "@/components/v2/app/ui";
+
 import { LocalTime } from "../../../local-time";
 import type { SentMessageState } from "./sent-on-whatsapp-actions";
 
@@ -35,18 +37,19 @@ function Body({ action, tenantId, touchId, consentContactId }: Props) {
         startTransition(() => formAction(data));
       }}
       aria-label="Record that you sent this quote on WhatsApp"
+      className={formCol}
     >
       <input type="hidden" name="touch_id" value={id} />
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : "I sent it on WhatsApp"}
       </button>
-      <p className="hint">{SENT_AGAIN}</p>
+      <p className={mutedText}>{SENT_AGAIN}</p>
       {state?.error && (
-        <div role="alert" className="error hint">
+        <div role="alert" className={alertBox}>
           <p>{state.error}</p>
           {state.reason === "consent" && consentContactId && (
             <p>
-              <Link href={`/app/tenants/${tenantId}/contacts/${consentContactId}/consent`} className="tap">
+              <Link href={`/app/tenants/${tenantId}/contacts/${consentContactId}/consent`} className={link}>
                 Record consent for this person →
               </Link>
             </p>
@@ -54,7 +57,7 @@ function Body({ action, tenantId, touchId, consentContactId }: Props) {
         </div>
       )}
       {state?.ok && state.at && (
-        <p role="status" className="hint">
+        <p role="status" className={okBox}>
           Recorded: you sent this quote on WhatsApp at <LocalTime iso={state.at} />. The follow-up list will show this lead when it is due.
         </p>
       )}

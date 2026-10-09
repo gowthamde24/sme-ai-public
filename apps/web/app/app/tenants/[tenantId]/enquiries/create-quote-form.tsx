@@ -4,7 +4,8 @@ import { useActionState } from "react";
 
 import { CUSTOMER_KINDS, CUSTOMER_KIND_LABELS } from "@/lib/api/quotes";
 
-import { ActionResult } from "./action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, checkBox, fieldInput, fieldLabel, fieldsetPlain, formCardWide, legendText, mutedText, radioRow } from "@/components/v2/app/ui";
 import type { QuoteActionState } from "./quote-actions";
 
 type Action = (prev: QuoteActionState, formData: FormData) => Promise<QuoteActionState>;
@@ -18,19 +19,21 @@ export function CreateQuoteForm({ create, quoteId, states }: { create: Action; q
   const [state, formAction, pending] = useActionState(create, undefined);
   const options = Object.entries(states).sort((a, b) => a[1].localeCompare(b[1]));
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "36rem" }}>
+    <form action={formAction} className={formCardWide}>
       <input type="hidden" name="quote_id" value={quoteId} />
-      <fieldset disabled={pending} style={{ border: 0, padding: 0, margin: 0 }}>
-        <legend>The customer</legend>
+      <fieldset disabled={pending} className={fieldsetPlain}>
+        <legend className={legendText}>The customer</legend>
         {CUSTOMER_KINDS.map((kind) => (
-          <label key={kind} style={{ display: "block" }}>
-            <input type="radio" name="customer_kind" value={kind} defaultChecked={kind === "new"} /> {CUSTOMER_KIND_LABELS[kind]}
+          <label key={kind} className={radioRow}>
+            <input type="radio" name="customer_kind" value={kind} defaultChecked={kind === "new"} className={checkBox} /> {CUSTOMER_KIND_LABELS[kind]}
           </label>
         ))}
-        <p className="hint">A repeat customer is your word: nobody has verified it, so the owner decides such a quote.</p>
+        <p className={mutedText}>A repeat customer is your word: nobody has verified it, so the owner decides such a quote.</p>
       </fieldset>
-      <label htmlFor="quote-state">Delivery state</label>
-      <select id="quote-state" name="delivery_state" defaultValue="" required disabled={pending}>
+      <label htmlFor="quote-state" className={fieldLabel}>
+        Delivery state
+      </label>
+      <select id="quote-state" name="delivery_state" defaultValue="" required disabled={pending} className={fieldInput}>
         <option value="" disabled>
           Choose a state or union territory
         </option>
@@ -40,11 +43,11 @@ export function CreateQuoteForm({ create, quoteId, states }: { create: Action; q
           </option>
         ))}
       </select>
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Making the draft..." : "Make draft quote"}
       </button>
-      <p className="hint">This makes a draft. Nothing is approved and nothing is sent.</p>
-      <ActionResult state={state} />
+      <p className={mutedText}>This makes a draft. Nothing is approved and nothing is sent.</p>
+      <ActionResultV2 state={state} />
     </form>
   );
 }

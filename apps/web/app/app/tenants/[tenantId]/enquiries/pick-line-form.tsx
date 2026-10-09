@@ -4,7 +4,8 @@ import { useActionState } from "react";
 
 import { formatRupees, type PriceItem, type SetupLine } from "@/lib/api/quotes";
 
-import { ActionResult } from "./action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { bulletList, btnMain, fieldInput, fieldLabel, formCardWide, mutedText, noteBox, pageH4, plainText } from "@/components/v2/app/ui";
 import type { QuoteActionState } from "./quote-actions";
 
 type Action = (prev: QuoteActionState, formData: FormData) => Promise<QuoteActionState>;
@@ -31,24 +32,26 @@ export function PickLineForm({ pick, line, priceList }: { pick: Action; line: Se
   const current = line.pick ? `${suggestedIds.has(line.pick.product_id) ? "suggested" : "list"}:${line.pick.product_id}:${line.pick.sale_unit}` : "";
   const id = `pick-${line.line_no}`;
   return (
-    <form action={formAction} className="card" style={{ maxWidth: "40rem" }}>
-      <h4 style={{ margin: 0 }}>Line {line.line_no}</h4>
-      <ul className="plain-text" style={{ margin: "0.25rem 0" }}>
+    <form action={formAction} className={formCardWide}>
+      <h4 className={pageH4}>Line {line.line_no}</h4>
+      <ul className={`${bulletList} ${plainText}`}>
         {line.summary.map((s) => (
           <li key={s}>{s}</li>
         ))}
       </ul>
       {chosen ? (
-        <p role="status">
-          Chosen: <strong className="plain-text">{chosen.name}</strong> × {line.pick?.qty} {line.pick?.sale_unit}
+        <p role="status" className={noteBox}>
+          Chosen: <strong className={plainText}>{chosen.name}</strong> × {line.pick?.qty} {line.pick?.sale_unit}
           {line.pick?.source === "mapper_suggestion" ? " (from the assistant's suggestion, confirmed by a person)" : " (chosen by hand)"}
         </p>
       ) : (
-        <p className="hint">No product chosen yet.</p>
+        <p className={mutedText}>No product chosen yet.</p>
       )}
-      {line.suggestion ? <p className="hint">{SUGGESTION_WORDS[line.suggestion.status]}{line.suggestion.truncated ? " Only the first candidates are shown." : ""}</p> : null}
-      <label htmlFor={`${id}-choice`}>Product</label>
-      <select id={`${id}-choice`} name="choice" defaultValue={current} required disabled={pending}>
+      {line.suggestion ? <p className={mutedText}>{SUGGESTION_WORDS[line.suggestion.status]}{line.suggestion.truncated ? " Only the first candidates are shown." : ""}</p> : null}
+      <label htmlFor={`${id}-choice`} className={fieldLabel}>
+        Product
+      </label>
+      <select id={`${id}-choice`} name="choice" defaultValue={current} required disabled={pending} className={fieldInput}>
         <option value="" disabled>
           Choose a product
         </option>
@@ -71,15 +74,17 @@ export function PickLineForm({ pick, line, priceList }: { pick: Action; line: Se
             ))}
         </optgroup>
       </select>
-      <label htmlFor={`${id}-qty`}>Quantity to quote</label>
-      <input id={`${id}-qty`} name="qty" type="number" inputMode="numeric" min={1} max={10000} step={1} defaultValue={line.pick?.qty ?? line.quantity ?? ""} required disabled={pending} />
-      <p className="hint">
+      <label htmlFor={`${id}-qty`} className={fieldLabel}>
+        Quantity to quote
+      </label>
+      <input id={`${id}-qty`} className={fieldInput} name="qty" type="number" inputMode="numeric" min={1} max={10000} step={1} defaultValue={line.pick?.qty ?? line.quantity ?? ""} required disabled={pending} />
+      <p className={mutedText}>
         The enquiry asked for {line.quantity} {line.basis ?? "piece"}. If the price list sells this product in a different unit (pieces or sets), enter the converted count.
       </p>
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : line.pick ? "Change the product" : "Use this product"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }

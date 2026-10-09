@@ -7,6 +7,7 @@ import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures
 import type { ManualQuoteState } from "./manual-quote-actions";
 import { ManualQuoteForm, NO_RATE_TEXT } from "./manual-quote-form";
 import { LINE_TEXT, RANGE_NOTE } from "./manual-quote-logic";
+import { fieldBlock, lineGrid } from "@/components/v2/app/ui";
 
 const ID = "77777777-7777-4777-8777-777777777777";
 const ID2 = "66666666-6666-4666-8666-666666666666";
@@ -75,11 +76,13 @@ describe("the layout of the fields", () => {
     for (const control of controls) {
       const label = form.querySelector(`label[for="${control.id}"]`) as HTMLLabelElement;
       expect(label, control.id).not.toBeNull();
-      expect(control.closest(".field"), control.id).toBe(label.closest(".field")); // label and input share one field box
+      expect(control.parentElement, control.id).toBe(label.parentElement); // label and input share one field box
+      expect(control.parentElement?.className, control.id).toBe(fieldBlock);
       expect(screen.getByLabelText(label.textContent ?? "", { selector: `#${control.id}` })).toBe(control);
     }
     for (const n of [1, 2]) {
-      const grid = document.getElementById(`mq-code-${n}`)?.closest(".line-grid") as HTMLElement;
+      const grid = document.getElementById(`mq-code-${n}`)?.parentElement?.parentElement as HTMLElement;
+      expect(grid.className).toBe(lineGrid);
       expect([...grid.querySelectorAll("label")].map((l) => l.textContent)).toEqual(["Item type", "Quantity (pieces)", "Price per piece (rupees)"]);
     }
     expect(document.getElementById("mq-price-1")).toHaveAccessibleDescription(LINE_TEXT.price);

@@ -2,6 +2,8 @@ import Link from "next/link";
 
 import { NO_POLICY_NOTE, NOTHING_SENT, WHATSAPP_SENTENCES } from "@/lib/whatsapp/sentences";
 
+import { alertBox, link, mutedText, noteBox, pageH4, surfaceFlat } from "@/components/v2/app/ui";
+
 import { SentOnWhatsappForm } from "./sent-on-whatsapp-form";
 import type { SentMessageState } from "./sent-on-whatsapp-actions";
 import type { WhatsappView } from "./whatsapp-view";
@@ -20,27 +22,29 @@ type Props = { tenantId: string; quoteId: string; view: WhatsappView; sent?: Sen
 export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props) {
   const route = `/app/tenants/${tenantId}/quotes/${quoteId}/whatsapp`;
   return (
-    <div aria-labelledby="whatsapp-heading" className="whatsapp-actions">
-      <h4 id="whatsapp-heading">WhatsApp</h4>
+    <div aria-labelledby="whatsapp-heading" className={`mt-6 ${surfaceFlat}`}>
+      <h4 id="whatsapp-heading" className={pageH4}>
+        WhatsApp
+      </h4>
       {view.notice ? (
-        <p role="alert" className="error hint">
+        <p role="alert" className={alertBox}>
           {WHATSAPP_SENTENCES[view.notice]}
         </p>
       ) : null}
       {view.expired ? (
-        <p role="note" className="notice">
+        <p role="note" className={noteBox}>
           This quote expired after {view.validUntil}, so WhatsApp is not offered. You can still copy the text.
         </p>
       ) : view.gate === "unread" ? (
-        <p role="note" className="hint">
+        <p role="note" className={mutedText}>
           {WHATSAPP_SENTENCES.unavailable}
         </p>
       ) : view.gate !== "open" ? (
-        <div role="note" className="notice">
+        <div role="note" className={noteBox}>
           <p>{WHATSAPP_SENTENCES[view.gate]}</p>
           {view.gate === "consent" && view.consentContactId ? (
             <p>
-              <Link href={`/app/tenants/${tenantId}/contacts/${view.consentContactId}/consent`} className="tap">
+              <Link href={`/app/tenants/${tenantId}/contacts/${view.consentContactId}/consent`} className={link}>
                 Record consent for this person →
               </Link>
             </p>
@@ -50,25 +54,25 @@ export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props)
         <>
           {view.fits ? (
             <p>
-              <a href={route} target="_blank" rel="noopener noreferrer" className="tap">
+              <a href={route} target="_blank" rel="noopener noreferrer" className={link}>
                 Open in WhatsApp
               </a>
             </p>
           ) : (
             <>
-              <p role="note" className="hint">
+              <p role="note" className={mutedText}>
                 {WHATSAPP_SENTENCES.too_long}
               </p>
               <p>
-                <a href={`${route}?chat=1`} target="_blank" rel="noopener noreferrer" className="tap">
+                <a href={`${route}?chat=1`} target="_blank" rel="noopener noreferrer" className={link}>
                   Open the WhatsApp chat
                 </a>
               </p>
             </>
           )}
-          <p className="hint">{NOTHING_SENT}</p>
+          <p className={mutedText}>{NOTHING_SENT}</p>
           {view.policyInForce === false ? (
-            <p role="note" className="hint">
+            <p role="note" className={mutedText}>
               {NO_POLICY_NOTE}
             </p>
           ) : null}

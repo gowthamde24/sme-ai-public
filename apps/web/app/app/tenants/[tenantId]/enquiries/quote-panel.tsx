@@ -32,6 +32,7 @@ import { QuoteView } from "./quote-view";
 import type { ItemType } from "@/lib/api/item-types";
 import { WhatsappActions, type SentOnWhatsapp } from "./whatsapp-actions";
 import type { WhatsappView } from "./whatsapp-view";
+import { alertBox, bigText, bulletList, hintInline, link, listPlain, mutedText, noteBox, pageH2, pageH3, plainText } from "@/components/v2/app/ui";
 
 type Props = {
   tenantId: string;
@@ -77,32 +78,34 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
   const typedOnly = quotes.length > 0 && quotes.every((q) => isManual(q));
   return (
     <section aria-labelledby="quote-heading">
-      <h2 id="quote-heading">Quote</h2>
-      <p className="hint">
+      <h2 id="quote-heading" className={pageH2}>
+        Quote
+      </h2>
+      <p className={mutedText}>
         A quote is a draft until an owner or admin approves it. {typedPrices ? "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant." : "Prices come from the price list and the pricing engine, never from a person or an assistant."}{" "}
         Nothing on this page is ever sent to anyone.
       </p>
 
       {(typedOnly ? [] : [...blockers, ...notes]).map((m) => (
-        <p key={m} role="note" className="notice">
+        <p key={m} role="note" className={noteBox}>
           {MISSING_TEXT[m] ?? "Something this quote needs is missing."}
         </p>
       ))}
 
       {ready ? (
         <div>
-          <h3>1. Choose the product for each line</h3>
-          <p className="hint">The assistant suggests products; nothing is chosen until you press the button for that line.</p>
-          {quotable.length === 0 ? <p>No line has a saree type and a quantity that a person approved yet.</p> : null}
+          <h3 className={pageH3}>1. Choose the product for each line</h3>
+          <p className={mutedText}>The assistant suggests products; nothing is chosen until you press the button for that line.</p>
+          {quotable.length === 0 ? <p className={bigText}>No line has a saree type and a quantity that a person approved yet.</p> : null}
           {quotable.map((line) => (
             <PickLineForm key={`${line.line_no}-${line.pick?.product_id ?? "none"}-${line.pick?.qty ?? 0}`} pick={pickProductAction.bind(null, tenantId, enquiryId, line.line_no)} line={line} priceList={setup.price_list} />
           ))}
           {unquotable.length > 0 ? (
-            <div role="note" className="notice">
+            <div role="note" className={noteBox}>
               <strong>Not quoted</strong> (approve its saree type and quantity first):
-              <ul>
+              <ul className={bulletList}>
                 {unquotable.map((line) => (
-                  <li key={line.line_no} className="plain-text">
+                  <li key={line.line_no} className={plainText}>
                     Line {line.line_no}: {line.summary.join("; ")}
                   </li>
                 ))}
@@ -110,27 +113,27 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
             </div>
           ) : null}
 
-          <h3>2. Make a draft quote</h3>
+          <h3 className={pageH3}>2. Make a draft quote</h3>
           {allPicked ? (
             <CreateQuoteForm create={createQuoteAction.bind(null, tenantId, enquiryId)} quoteId={newQuoteId} states={setup.delivery_states} />
           ) : (
-            <p className="hint">Choose a product for every line above first.</p>
+            <p className={mutedText}>Choose a product for every line above first.</p>
           )}
-          {quotes.some((q) => q.outcome === "draft") ? <p className="hint">Making a new draft replaces the current draft.</p> : null}
+          {quotes.some((q) => q.outcome === "draft") ? <p className={mutedText}>Making a new draft replaces the current draft.</p> : null}
         </div>
       ) : null}
 
       {manual ? (
         <div>
-          {ready ? <p className="hint">Or make a quote with typed prices instead of using the price list:</p> : null}
+          {ready ? <p className={mutedText}>Or make a quote with typed prices instead of using the price list:</p> : null}
           {manual.unavailable ? (
-            <p role="alert" className="error hint">
+            <p role="alert" className={alertBox}>
               The item types or the quote policy could not be loaded right now. Reload the page to try again.
             </p>
           ) : (
             <>
               <ManualQuoteForm create={createManualQuoteAction.bind(null, tenantId, enquiryId)} quoteId={manual.newQuoteId} itemTypes={manual.itemTypes} gst={manual.gst} />
-              {quotes.some((q) => q.outcome === "draft") ? <p className="hint">Making a new draft replaces the current draft.</p> : null}
+              {quotes.some((q) => q.outcome === "draft") ? <p className={mutedText}>Making a new draft replaces the current draft.</p> : null}
             </>
           )}
         </div>
@@ -150,14 +153,14 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
           />
           {selected.outcome === "approved" ? (
             <div>
-              <h3>Text for the customer</h3>
+              <h3 className={pageH3}>Text for the customer</h3>
               {text ? (
                 <>
                   <CopyText text={text.text} />
                   {whatsapp ? <WhatsappActions tenantId={tenantId} quoteId={selected.id} view={whatsapp} sent={sentOnWhatsapp} /> : null}
                 </>
               ) : (
-                <p role="alert" className="error hint">
+                <p role="alert" className={alertBox}>
                   The text could not be prepared right now ({textError ?? "unavailable"}). The approval stands: reload the page to try again. Nothing was sent.
                 </p>
               )}
@@ -165,13 +168,13 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
           ) : null}
           {selected.outcome === "approved" && newOrderId ? (
             <div>
-              <h3>Order</h3>
+              <h3 className={pageH3}>Order</h3>
               {order ? (
                 <p>
-                  <Link href={`/app/tenants/${tenantId}/orders/${order.id}`} className="tap">
+                  <Link href={`/app/tenants/${tenantId}/orders/${order.id}`} className={link}>
                     Order {order.order_no}
                   </Link>{" "}
-                  <span className="hint">
+                  <span className={hintInline}>
                     {ORDER_OUTCOME_LABELS[order.outcome]}, {ORDER_STATE_LABELS[order.state]}
                   </span>
                 </p>
@@ -185,14 +188,14 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
 
       {quotes.length > 1 ? (
         <div>
-          <h3>Earlier quotes of this enquiry</h3>
-          <ul>
+          <h3 className={pageH3}>Earlier quotes of this enquiry</h3>
+          <ul className={listPlain}>
             {quotes.map((q) => (
               <li key={q.id}>
-                <Link href={`${base}?quote=${q.id}`} className="tap" aria-current={selected?.id === q.id ? "true" : undefined}>
+                <Link href={`${base}?quote=${q.id}`} className={link} aria-current={selected?.id === q.id ? "true" : undefined}>
                   Quote {q.quote_no}
                 </Link>{" "}
-                <span className="hint">
+                <span className={hintInline}>
                   {OUTCOME_LABELS[q.outcome]}, {formatRupees(q.total_paise)}
                   {isManual(q) ? ", typed prices" : ""}
                 </span>

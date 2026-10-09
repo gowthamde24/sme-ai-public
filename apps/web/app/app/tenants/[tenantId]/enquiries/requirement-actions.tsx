@@ -3,7 +3,8 @@
 import { useActionState } from "react";
 
 import type { EnquiryActionState } from "./actions";
-import { ActionResult } from "./action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
+import { btnMain, btnQuiet, detailsBox, formCol, mutedText, summaryLine } from "@/components/v2/app/ui";
 
 type Action = (prev: EnquiryActionState, formData: FormData) => Promise<EnquiryActionState>;
 
@@ -27,24 +28,24 @@ export function RequirementActions({
   return (
     <div>
       {status === "draft" ? (
-        <form action={confirmAction}>
-          <button type="submit" disabled={!confirmable || confirming || discarding}>
+        <form action={confirmAction} className={formCol}>
+          <button type="submit" className={btnMain} disabled={!confirmable || confirming || discarding}>
             {confirming ? "Saving..." : "Approve requirement"}
           </button>
           {confirmable ? null : (
-            <p className="hint">Approve (or correct) a saree type and a quantity on the same line first.</p>
+            <p className={mutedText}>Approve (or correct) a saree type and a quantity on the same line first.</p>
           )}
-          <ActionResult state={confirmState} />
+          <ActionResultV2 state={confirmState} />
         </form>
       ) : null}
-      <details>
-        <summary className="tap">Discard this requirement</summary>
-        <p className="hint">A discarded requirement can be replaced by a new suggestion run. It is kept in the history.</p>
-        <form action={discardAction}>
-          <button type="submit" className="secondary" disabled={confirming || discarding}>
+      <details className={detailsBox}>
+        <summary className={summaryLine}>Discard this requirement</summary>
+        <p className={mutedText}>A discarded requirement can be replaced by a new suggestion run. It is kept in the history.</p>
+        <form action={discardAction} className={formCol}>
+          <button type="submit" className={btnQuiet} disabled={confirming || discarding}>
             {discarding ? "Saving..." : "Discard"}
           </button>
-          <ActionResult state={discardState} />
+          <ActionResultV2 state={discardState} />
         </form>
       </details>
     </div>
