@@ -117,3 +117,4 @@ export const inlineForm = "flex flex-wrap items-center gap-2";
 export const selectInline = "min-h-12 rounded-lg border border-edge bg-surface px-3 text-base text-ink";
 export const sectionBlock = "mt-6";
 export const tabList = "mt-3 flex flex-wrap gap-4";
+export const fieldMono = "min-h-12 w-full rounded-lg border border-edge bg-surface px-3 py-2 font-mono text-sm text-ink focus:border-brand-edge";

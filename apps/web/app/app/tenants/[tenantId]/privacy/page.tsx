@@ -26,6 +26,8 @@ import {
   PreviewForm,
   ResultView,
 } from "./privacy-forms";
+import { alertBox, backLink, dataTable, dataTd, dataThCol, dataTr, mutedText, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
+import { ApiDownV2 } from "@/components/v2/app/parts";
 
 export const metadata = { title: "Privacy · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -51,15 +53,15 @@ export default async function PrivacyPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   if (!ADMIN_ROLES.includes(tenant.role)) {
     return (
-      <main className="shell wide">
+      <main className={pageMain}>
         <p>
-          <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+          <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
         </p>
-        <h1>Privacy</h1>
+        <h1 className={pageH1}>Privacy</h1>
         <p>Only an owner or admin can ask for personal data to be erased.</p>
       </main>
     );
@@ -99,15 +101,15 @@ export default async function PrivacyPage({
   }
 
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link>
+        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link>
       </p>
-      <h1>Privacy</h1>
+      <h1 className={pageH1}>Privacy</h1>
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <p className="hint">
+      <p className={mutedText}>
         Erasing a person replaces their name, e-mail, phone and the personal
         text we hold about them with a marker. Labels, scores, counts and the
         consent history stay, so your data stays useful. It cannot be undone.
@@ -115,7 +117,7 @@ export default async function PrivacyPage({
         Erasing the whole workspace waits 24 hours and can be cancelled until
         then.
       </p>
-      <p className="hint">
+      <p className={mutedText}>
         What this cannot do: find a name written inside longer text (those rows
         are listed for you to read), files you already exported or downloaded,
         or backups (they age out). Erasing the whole workspace keeps company
@@ -124,9 +126,9 @@ export default async function PrivacyPage({
       </p>
 
       <section aria-labelledby="new-heading">
-        <h2 id="new-heading">Ask for an erasure</h2>
+        <h2 id="new-heading" className={pageH2}>Ask for an erasure</h2>
         {requests === null ? (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             Could not load this from the API. Try again shortly.
           </p>
         ) : (
@@ -140,40 +142,40 @@ export default async function PrivacyPage({
       </section>
 
       <section aria-labelledby="requests-heading">
-        <h2 id="requests-heading">Requests</h2>
+        <h2 id="requests-heading" className={pageH2}>Requests</h2>
         {requests === null ? (
-          <p role="alert" className="error">
+          <p role="alert" className={alertBox}>
             Could not load the requests from the API. Try again shortly.
           </p>
         ) : requests.items.length === 0 ? (
           <p>No requests yet.</p>
         ) : (
-          <table>
+          <table className={`mt-4 ${dataTable}`}>
             <thead>
               <tr>
-                <th>Requested</th>
-                <th>What</th>
-                <th>Status</th>
-                <th>Can run from</th>
-                <th>Requested by</th>
-                <th />
+                <th className={dataThCol}>Requested</th>
+                <th className={dataThCol}>What</th>
+                <th className={dataThCol}>Status</th>
+                <th className={dataThCol}>Can run from</th>
+                <th className={dataThCol}>Requested by</th>
+                <th className={dataThCol} />
               </tr>
             </thead>
             <tbody>
               {requests.items.map((request) => (
-                <tr key={request.id}>
-                  <td>
+                <tr key={request.id} className={dataTr}>
+                  <td data-label="Requested" className={dataTd}>
                     <LocalTime iso={request.created_at} />
                   </td>
-                  <td>{SCOPE_LABELS[request.scope]}</td>
-                  <td>{STATUS_LABELS[request.status]}</td>
-                  <td>
+                  <td data-label="What" className={dataTd}>{SCOPE_LABELS[request.scope]}</td>
+                  <td data-label="Status" className={dataTd}>{STATUS_LABELS[request.status]}</td>
+                  <td data-label="Can run from" className={dataTd}>
                     <LocalTime iso={request.execute_after} />
                   </td>
-                  <td>
+                  <td data-label="Requested by" className={dataTd}>
                     {request.requested_by === user.id ? "you" : "a teammate"}
                   </td>
-                  <td>
+                  <td data-label="" className={dataTd}>
                     {request.status === "pending" && (
                       <>
                         {isOwner && (
@@ -203,7 +205,7 @@ export default async function PrivacyPage({
                           )}
                         />
                         {!isOwner && (
-                          <p className="hint">Only the owner can run this.</p>
+                          <p className={mutedText}>Only the owner can run this.</p>
                         )}
                       </>
                     )}
@@ -221,15 +223,3 @@ export default async function PrivacyPage({
   );
 }
 
-function ApiDown() {
-  return (
-    <main className="shell wide">
-      <p role="alert" className="error">
-        Could not load this from the API. Try again shortly.
-      </p>
-      <p>
-        <Link href="/app">Back to your workspaces</Link>
-      </p>
-    </main>
-  );
-}
