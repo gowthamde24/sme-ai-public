@@ -36,6 +36,7 @@ from app.tenancy.models import (
     TenantPlanOut,
 )
 from app.tenancy.repository import RepositoryError
+from app.today.repository import TodayRepository
 from tests.keys import AUDIENCE, ISSUER, claims, make_ec_key, mint
 
 KEY = make_ec_key()
@@ -192,6 +193,7 @@ def make_client(
     suppression: SuppressionRepository | None = None,
     key_ring: KeyRing | None = None,
     followups: FollowupsRepository | None = None,
+    today: TodayRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -218,6 +220,7 @@ def make_client(
             suppression=suppression,
             key_ring=key_ring,
             followups=followups,
+            today=today,
         ),
     )
     return TestClient(app), repo

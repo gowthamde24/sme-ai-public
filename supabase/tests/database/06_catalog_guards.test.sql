@@ -122,6 +122,9 @@ select is(
         -- job AD / D2: open sign-up. Both derive the person from auth.uid(); there is no user parameter
         'public.get_account_setup',
         'public.complete_setup',
+        -- job AD / D3: two read-only SECURITY INVOKER reads for the Today screen and the office (the caller's own row-level security decides every row)
+        'public.today_summary',
+        'public.agents_status',
         'app.is_tenant_member',
         'app.has_tenant_role',
         'app.my_tenant_ids',

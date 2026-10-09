@@ -29,6 +29,13 @@ with one workspace.
    (pgTAP 06) forbids for good reason, and a table anyone could fill; that is why it is not one. The real controls are the Auth server's own rate
    limits and a CAPTCHA at the edge (pre-pilot checklist).
 
+7. **Reads for the Today screen and the office** (D3). `GET /v1/tenants/{id}/today`, `.../ai-usage/today`, `.../agents/status`. Two new
+   read-only SECURITY INVOKER functions (`today_summary`, `agents_status`) and the existing `agent_cost_summary`; every row is read under the caller's
+   own row-level security. What is "waiting for you" is by role: quote drafts and follow-up message drafts for Owner and Admin, closed orders that
+   still hold money for the Owner (recording a refund is the Owner's); Sales get the cards and the recent steps, a Viewer gets zeros. `followup_due`
+   means a follow-up **draft** waiting for approval, not a lead whose gap has elapsed: that needs the pinned cadence engine, which runs in the API and
+   not in a single query. AI spend is `agent_cost_summary` in paise, counting money reserved by a call in flight as spent, rounded up; the cap rounded down.
+
 ## Consequences
 - **`email_taken` tells a stranger that an address has an account.** The owner's contract for `signUp` asks for it, and it contradicts the sentence in
   ADR 0003 that sign-up answers the same whether or not the address exists. The brake and the Auth server's limits hold it down; it is a checklist
