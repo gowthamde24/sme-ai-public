@@ -116,3 +116,4 @@ export const formsStack = "mt-3 flex flex-col gap-3";
 export const inlineForm = "flex flex-wrap items-center gap-2";
 export const selectInline = "min-h-12 rounded-lg border border-edge bg-surface px-3 text-base text-ink";
 export const sectionBlock = "mt-6";
+export const tabList = "mt-3 flex flex-wrap gap-4";

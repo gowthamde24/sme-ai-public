@@ -10,6 +10,7 @@ import { ApproveForm, DiscardForm, SentForm } from "./draft-forms";
 import { DraftText } from "./draft-text";
 import { approveDraftAction, discardDraftAction, recordSentAction } from "./followup-actions";
 import { channelTabs, decisionLine, draftAsk, draftOffers, gateLines } from "./followup-logic";
+import { link, listItemCard, mutedText, noteBox, pageH1, pageH2 } from "@/components/v2/app/ui";
 
 export interface LeadFollowupIds {
   /** One touch id per "I sent it myself" form (a retry sends the same one: the database then replays). */
@@ -21,12 +22,12 @@ export interface LeadFollowupIds {
 function DraftCard({ tenantId, leadId, draft, role, userId, aal, ids }: { tenantId: string; leadId: string; draft: Draft; role: string; userId: string; aal: string; ids: LeadFollowupIds }) {
   const offers = draftOffers(draft, role, userId, aal);
   return (
-    <li className="card">
-      <p style={{ margin: 0 }}>
+    <li className={listItemCard}>
+      <p>
         <strong>Touch {draft.touch_number}</strong> · {CHANNEL_LABELS[draft.channel]} · {STATUS_LABELS[draft.status]}
         {draft.discard_code ? ` (${DISCARD_LABELS[draft.discard_code]})` : ""}
       </p>
-      <p className="hint" style={{ margin: 0 }}>
+      <p className={mutedText}>
         Made <LocalTime iso={draft.created_at} />
         {draft.approved_at ? (
           <>
@@ -37,7 +38,7 @@ function DraftCard({ tenantId, leadId, draft, role, userId, aal, ids }: { tenant
       </p>
       {draft.status === "draft" || draft.status === "approved" ? (
         <>
-          <p className="hint">This is the text you review. It is a fixed template: nothing here can be edited.</p>
+          <p className={mutedText}>This is the text you review. It is a fixed template: nothing here can be edited.</p>
           <DraftText text={draft.body} />
         </>
       ) : null}
@@ -78,9 +79,9 @@ export function LeadFollowupView({
   const ask = draftAsk(data);
   return (
     <section aria-labelledby="followup-heading">
-      <h1 id="followup-heading">Follow-up</h1>
+      <h1 id="followup-heading" className={pageH1}>Follow-up</h1>
       <ChannelTabs tenantId={tenantId} leadId={leadId} tabs={channelTabs(data)} />
-      <h2>Is anything blocking a follow-up?</h2>
+      <h2 className={pageH2}>Is anything blocking a follow-up?</h2>
       {lines.length === 0 ? (
         <p>Nothing blocks a follow-up for this lead.</p>
       ) : (
@@ -93,15 +94,15 @@ export function LeadFollowupView({
 
       {data.gate.stopped === null && data.gate.blocked === null ? (
         <>
-          <h2>What the rules say now</h2>
-          <p role="note" className="hint">
+          <h2 className={pageH2}>What the rules say now</h2>
+          <p role="note" className={mutedText}>
             Guidance only: the database decides again when you ask for a draft.
           </p>
           <p>{decisionLine(data.decision, data.gate.policy_in_force)}</p>
         </>
       ) : null}
 
-      <h2>Drafts</h2>
+      <h2 className={pageH2}>Drafts</h2>
       {data.drafts.length === 0 ? (
         <p>No drafts yet.</p>
       ) : (
@@ -113,15 +114,15 @@ export function LeadFollowupView({
       )}
 
       {ask.waiting ? (
-        <p role="note" className="notice">
+        <p role="note" className={noteBox}>
           A draft for touch {ask.waiting.touch_number} is waiting on {CHANNEL_LABELS[ask.waiting.channel]}. Work on it there, or discard it first: a follow-up has one draft, on one channel.{" "}
-          <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup?channel=${ask.waiting.channel}`}>Open the {CHANNEL_LABELS[ask.waiting.channel]} tab</Link>
+          <Link href={`/app/tenants/${tenantId}/leads/${leadId}/followup?channel=${ask.waiting.channel}`} className={link}>Open the {CHANNEL_LABELS[ask.waiting.channel]} tab</Link>
         </p>
       ) : null}
       {ask.show ? draftForm : null}
       {touchForm}
 
-      <h2>Touches</h2>
+      <h2 className={pageH2}>Touches</h2>
       {data.touches.length === 0 ? (
         <p>Nothing recorded yet. The first message is yours: write it, send it yourself, then record it here.</p>
       ) : (

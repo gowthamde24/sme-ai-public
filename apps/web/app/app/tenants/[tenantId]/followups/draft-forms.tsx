@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 
-import { ActionResult } from "../enquiries/action-result";
+import { ActionResultV2 } from "@/components/v2/app/parts";
 import type { FollowupActionState } from "./followup-actions";
 import { useFollowupAction } from "./use-followup-action";
+import { btnMain, btnQuiet, fieldInput, link } from "@/components/v2/app/ui";
 
 type Action = (prev: FollowupActionState, formData: FormData) => Promise<FollowupActionState>;
 
@@ -17,16 +18,16 @@ export function ApproveForm({ action, stateHash, secondFactorMissing }: { action
   if (secondFactorMissing)
     return (
       <p role="note">
-        Approving needs your authenticator app. <Link href="/app/security" className="tap">Set it up on the Security page</Link>, then sign in again with its code.
+        Approving needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
       </p>
     );
   return (
     <form action={formAction} aria-label="Approve this draft">
       <input type="hidden" name="state_hash" value={stateHash} />
-      <button type="submit" disabled={pending}>
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : "Approve this text"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }
@@ -35,10 +36,10 @@ export function DiscardForm({ action }: { action: Action }) {
   const { state, formAction, pending } = useFollowupAction(action);
   return (
     <form action={formAction} aria-label="Discard this draft">
-      <button type="submit" className="secondary" disabled={pending}>
+      <button type="submit" className={btnQuiet} disabled={pending}>
         {pending ? "Saving..." : "Discard this draft"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }
@@ -50,11 +51,11 @@ export function SentForm({ action, touchId, maxNow }: { action: Action; touchId:
     <form action={formAction} aria-label="Record that you sent it yourself">
       <input type="hidden" name="touch_id" value={touchId} />
       <label htmlFor={`sent-when-${touchId}`}>When you sent it (India time). Leave it empty for now.</label>
-      <input id={`sent-when-${touchId}`} name="happened_at" type="datetime-local" max={maxNow} disabled={pending} />
-      <button type="submit" disabled={pending}>
+      <input id={`sent-when-${touchId}`} name="happened_at" type="datetime-local" max={maxNow} disabled={pending} className={fieldInput} />
+      <button type="submit" className={btnMain} disabled={pending}>
         {pending ? "Saving..." : "Record: I sent it myself"}
       </button>
-      <ActionResult state={state} />
+      <ActionResultV2 state={state} />
     </form>
   );
 }

@@ -7,9 +7,11 @@ import { fetchPolicyVersions, type PolicyVersion } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
 
 import { createPolicyAction } from "../followup-actions";
-import { ApiDown, FOLLOWUP_ROLES, Notice, NotShown, todayInIndia } from "../page-parts";
+import { FOLLOWUP_ROLES, NOTHING_SENT, todayInIndia } from "../page-parts";
+import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { PolicyForm } from "../policy-form";
 import { PolicyView } from "../policy-view";
+import { backLink, mutedText, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Follow-up policy · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -27,33 +29,33 @@ export default async function PolicyPage({ params }: PageProps<"/app/tenants/[te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
-  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShown tenantId={tenantId} tenantName={tenant.name} title="The follow-up policy" />;
+  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="The follow-up policy" message="Follow-ups are shown to owners, admins and sales users." />;
 
   let versions: PolicyVersion[];
   try {
     versions = await fetchPolicyVersions(user.accessToken, tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   const today = todayInIndia(new Date());
   const form =
     tenant.role === "owner" ? (
       <PolicyForm action={createPolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} secondFactorMissing={user.aal !== "aal2"} />
     ) : (
-      <p className="hint">Only the owner publishes a policy.</p>
+      <p className={mutedText}>Only the owner publishes a policy.</p>
     );
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}/followups`}>← Follow-ups due</Link>
+        <Link href={`/app/tenants/${tenantId}/followups`} className={backLink}>← Follow-ups due</Link>
       </p>
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <Notice />
+      <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <PolicyView versions={versions} today={today} form={form} />
     </main>
   );

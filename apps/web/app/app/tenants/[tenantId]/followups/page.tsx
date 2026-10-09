@@ -7,7 +7,9 @@ import { fetchDueList, isDueCursor, type DueList } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
 
 import { DueView } from "./due-view";
-import { ApiDown, FOLLOWUP_ROLES, Notice, NotShown } from "./page-parts";
+import { FOLLOWUP_ROLES, NOTHING_SENT } from "./page-parts";
+import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
+import { backLink, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Follow-ups due · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -28,26 +30,26 @@ export default async function FollowupsPage({ params, searchParams }: PageProps<
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
-  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShown tenantId={tenantId} tenantName={tenant.name} title="Follow-ups due" />;
+  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Follow-ups due" message="Follow-ups are shown to owners, admins and sales users." />;
 
   let list: DueList;
   try {
     list = await fetchDueList(user.accessToken, tenantId, after);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDown />;
+    return <ApiDownV2 />;
   }
   return (
-    <main className="shell wide">
+    <main className={pageMain}>
       <p>
-        <Link href={`/app/tenants/${tenantId}`}>← {tenant.name}</Link> · <Link href={`/app/tenants/${tenantId}/followups/policy`}>The follow-up policy</Link>
+        <Link href={`/app/tenants/${tenantId}`} className={backLink}>← {tenant.name}</Link> · <Link href={`/app/tenants/${tenantId}/followups/policy`}>The follow-up policy</Link>
       </p>
       <p>
         Your role: <strong>{tenant.role}</strong>
       </p>
-      <Notice />
+      <NoticeV2>{NOTHING_SENT}</NoticeV2>
       <DueView tenantId={tenantId} list={list} />
     </main>
   );
