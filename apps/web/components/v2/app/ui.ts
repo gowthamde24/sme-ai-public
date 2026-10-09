@@ -88,3 +88,16 @@ export const sectionGap = "mt-6";
 export const noteBlock = "mt-4 rounded-lg border border-line bg-info-bg p-3 text-sm font-medium text-info-text";
 export const formCol = "mt-4 flex flex-col gap-2";
 export const formInline = "mt-2 flex flex-wrap items-center gap-2";
+/** A table of records that stacks on a phone: each row becomes a block and each cell says what it is (its data-label). */
+export const dataTable = "w-full border-collapse text-left text-base max-sm:block max-sm:[&_thead]:sr-only max-sm:[&>tbody]:block";
+export const dataTr = "border-b border-line max-sm:block max-sm:py-2";
+export const dataThCol = "whitespace-nowrap bg-surface-2 px-3 py-2 text-sm font-semibold text-muted";
+export const dataThRow = "px-3 py-2 text-left font-semibold max-sm:block";
+export const dataTd = "px-3 py-2 align-top max-sm:flex max-sm:justify-between max-sm:gap-4 max-sm:before:text-muted max-sm:before:content-[attr(data-label)]";
+export const dataTdEdit = "whitespace-nowrap px-3 py-2 align-top max-sm:block";
+/** The edit form of a row sits in the row under it and shows only while that row's Edit control is open. A browser that cannot tell (no :has) shows every form. */
+export const dataEditRow =
+  "supports-[selector(:has(*))]:hidden supports-[selector(:has(*))]:[tr:has(details[open])+&]:table-row max-sm:supports-[selector(:has(*))]:[tr:has(details[open])+&]:block";
+export const dataEditCell = "px-3 pb-5 pt-3 max-sm:block";
+export const formGrid = "grid gap-x-4 gap-y-3 sm:grid-cols-2";
+export const colSpanFull = "col-span-full";

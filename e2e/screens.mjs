@@ -142,6 +142,8 @@ const INTERACTIONS = (d) => [
   ["frame-more", "phone", `${d.T}/orders`, async (page) => page.getByRole("button", { name: "More" }).click()],
   ["frame-switcher", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
   ["frame-switcher-phone", "phone", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
+  ["item-types-edit", "desktop", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
+  ["item-types-edit", "phone", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
   ["frame-account", "desktop", `${d.T}/review`, async (page) => page.locator("summary", { hasText: "Your account" }).click()],
 ];
 
@@ -202,7 +204,7 @@ async function main() {
             await act(page);
             await page.waitForTimeout(400);
             const file = `${name}-${vpName}-${scheme}.png`;
-            await page.screenshot({ path: path.join(OUT, file), fullPage: false });
+            await page.screenshot({ path: path.join(OUT, file), fullPage: !name.startsWith("frame-") });
             rows.push({ name, vpName, scheme, file, status: 200, url, finalUrl: url, frame: true, errors: [] });
           } catch (error) {
             rows.push({ name, vpName, scheme, file: null, status: 0, url, error: /Switch workspace/.test(String(error)) ? "skipped: the demo owner has one workspace, so there is no switcher" : String(error).slice(0, 200), errors: [], skipped: /Switch workspace/.test(String(error)) });

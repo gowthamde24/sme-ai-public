@@ -4,6 +4,7 @@ import type { QuotePolicyVersion } from "@/lib/api/quote-policies";
 import { formatBps, formatDate, formatRupees } from "@/lib/api/quotes";
 
 import { LocalTime } from "../../../local-time";
+import { kvList, listItemCard, listPlain, metaLine, noteBox, pageH1 } from "@/components/v2/app/ui";
 
 /** Shipping in words: the shop charges no courier, so a version with no shipping says so; an older version that does carry a fee shows it as stored. */
 function shippingText(v: QuotePolicyVersion): string {
@@ -25,19 +26,21 @@ export function QuotePolicyView({ versions, today, form }: { versions: QuotePoli
   const inForce = versions.some((v) => v.in_force);
   return (
     <section aria-labelledby="quote-policy-heading">
-      <h1 id="quote-policy-heading">The quote policy</h1>
+      <h1 id="quote-policy-heading" className={pageH1}>
+        The quote policy
+      </h1>
       {!inForce && (
-        <p role="note" className="notice">
+        <p role="note" className={noteBox}>
           {noPolicyText(versions)}
         </p>
       )}
       {versions.length > 0 && (
-        <ul aria-label="Quote policy versions, newest first">
+        <ul aria-label="Quote policy versions, newest first" className={listPlain}>
           {versions.map((v) => (
-            <li key={v.id} className="card">
+            <li key={v.id} className={listItemCard}>
               <strong>Version {v.version_no}</strong> · starts {formatDate(v.effective_from)}
               {v.in_force ? " · in force today" : v.effective_from > today ? " · not started yet" : " · replaced by a newer version"}
-              <dl className="summary">
+              <dl className={kvList}>
                 <dt>Days a quote is valid</dt>
                 <dd>{v.validity_days}</dd>
                 <dt>Advance, new customer</dt>
@@ -59,7 +62,7 @@ export function QuotePolicyView({ versions, today, form }: { versions: QuotePoli
                 <dt>Shipping</dt>
                 <dd>{shippingText(v)}</dd>
               </dl>
-              <span className="hint">
+              <span className={metaLine}>
                 Published <LocalTime iso={v.created_at} />
               </span>
             </li>
