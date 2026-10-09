@@ -10,6 +10,7 @@ import {
   isCanonicalUuid,
 } from "@/lib/api/crm";
 import { fetchDataPolicy } from "@/lib/api/erasure";
+import { AddButton } from "@/components/v2/app/AddButton";
 import { alertBox, bodyText, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, pageH1, pageH2, pageMain, spaceTop, tabLink, tabLinkOn, tabRow, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
@@ -120,6 +121,17 @@ export default async function TenantPage({
         ))}
       </nav>
 
+      {canWrite && (
+        <section aria-label="Add a company" className={spaceTop}>
+          <AddButton label="Add a company">
+            <CreateCompanyForm
+              action={createCompanyAction.bind(null, tenantId)}
+              formId={formId}
+            />
+          </AddButton>
+        </section>
+      )}
+
       <section aria-labelledby="records-heading">
         <h2 id="records-heading" className={pageH2}>
           {LABELS[tab]}
@@ -155,17 +167,6 @@ export default async function TenantPage({
         )}
       </section>
 
-      {canWrite && (
-        <section aria-labelledby="create-heading">
-          <h2 id="create-heading" className={pageH2}>
-            Create a company
-          </h2>
-          <CreateCompanyForm
-            action={createCompanyAction.bind(null, tenantId)}
-            formId={formId}
-          />
-        </section>
-      )}
       </main>
   );
 }
