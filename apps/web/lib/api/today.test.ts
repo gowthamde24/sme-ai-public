@@ -18,6 +18,18 @@ const AGENTS = AGENT_KEYS.map((agent, i) => ({ agent, state: i < 2 ? "not_availa
 
 beforeEach(() => vi.clearAllMocks());
 
+describe("agent state: switched off is not the same as not available", () => {
+  it("accepts switched_off and keeps it distinct", () => {
+    const rows = AGENTS.map((a, i) => (i === 0 ? { ...a, state: "switched_off" } : a));
+    const parsed = parseAgentsStatus(rows);
+    expect(parsed[0].state).toBe("switched_off");
+    expect(parsed[1].state).toBe("not_available");
+  });
+  it("still refuses a state the API does not send", () => {
+    expect(() => parseAgentsStatus(AGENTS.map((a, i) => (i === 0 ? { ...a, state: "sleeping" } : a)))).toThrow(ApiContractError);
+  });
+});
+
 describe("Today", () => {
   it("parses the contract's shape exactly", () => {
     expect(parseToday(TODAY)).toEqual(TODAY);

@@ -150,3 +150,25 @@ def test_a_manual_quote_can_be_made_from_the_seeded_enquiry(demo: Any, stack: St
     quote = r.json()
     assert quote["pricing_kind"] == "manual"
     assert quote["review_flags"] == ["TYPED_PRICE_OUTSIDE_RANGE"]
+
+
+# ==== one workspace, and a Today that is not empty (job AG, G1) ====
+def test_the_demo_owner_has_exactly_one_workspace_and_nothing_raised_its_limit(demo: Any, stack: Stack, client: TestClient) -> None:
+    first, *_ = demo
+    memberships = client.get("/v1/me", headers=bearer(owner(stack))).json()["memberships"]
+    assert [m["tenant"]["id"] for m in memberships] == [first.tenant_id]
+    assert memberships[0]["tenant"]["name"] == seed.WORKSPACE_NAME
+    plan = client.get(f"/v1/tenants/{first.tenant_id}", headers=bearer(owner(stack))).json()
+    assert plan["workspace_limit"] == 1, "the seeds no longer raise the limit"
+
+
+def test_today_has_a_quote_waiting_a_follow_up_draft_and_money_held(demo: Any, stack: Stack, client: TestClient) -> None:
+    first, *_ = demo
+    today = client.get(f"/v1/tenants/{first.tenant_id}/today", headers=bearer(owner(stack)))
+    assert today.status_code == 200, today.text
+    body = today.json()
+    assert sorted(i["kind"] for i in body["needs_you"]) == ["followup_due", "order_money_held", "quote_approval"], body["needs_you"]
+    held = next(i for i in body["needs_you"] if i["kind"] == "order_money_held")
+    assert held["amount_paise"] and held["amount_paise"] > 0 and body["cards"]["money_held_paise"] == held["amount_paise"]
+    assert [s["text"] for s in body["recent"]][0] == "Order cancelled"
+    assert all(i["target"]["id"] for i in body["needs_you"])

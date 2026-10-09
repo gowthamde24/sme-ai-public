@@ -7,7 +7,7 @@ import type { AgentRow, T } from "../today/types";
 
 const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)]";
 const pill = "inline-flex items-center rounded-md border px-2 py-0.5 text-sm font-semibold";
-const STATE_PILL = { working: "border-brand-edge bg-brand-bg text-brand-text", idle: "border-line bg-surface-2 text-muted", not_available: "border-line bg-surface-2 text-ink" } as const;
+const STATE_PILL = { working: "border-brand-edge bg-brand-bg text-brand-text", idle: "border-line bg-surface-2 text-muted", not_available: "border-line bg-surface-2 text-ink", switched_off: "border-amber-text bg-amber-bg text-amber-text" } as const;
 
 /**
  * The Office as a list (the 3D room is a later batch): one card per agent with its state and what it is doing, and, beside them, the chosen agent's latest events. `agents` are the
@@ -16,7 +16,7 @@ const STATE_PILL = { working: "border-brand-edge bg-brand-bg text-brand-text", i
  */
 export function OfficeView({ agents, selected, base, t }: { agents: AgentRow[] | null; selected: string | null; base: string; t: T }) {
   const chosen = agents?.find((a) => a.agent === selected) ?? null;
-  const stateText = (a: AgentRow) => (a.state === "working" ? t("office.working") : a.state === "idle" ? t("office.idle") : t("frame.notyet"));
+  const stateText = (a: AgentRow) => (a.state === "working" ? t("office.working") : a.state === "idle" ? t("office.idle") : a.state === "switched_off" ? t("office.switchedoff") : t("frame.notyet"));
   return (
     <div data-screen="office">
       <header>

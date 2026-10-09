@@ -153,7 +153,7 @@ def shape_ai_usage(raw: Any) -> AiUsageOut:
 
 
 JOBS: dict[str, str] = {
-    "main": "Coordinates the other helpers. Not built yet.",
+    "main": "Answers your questions about your business, with sources, and leaves drafts for you to approve. It sends nothing and sets no price.",
     "lead_finder": "Finds new businesses that may want to buy. Not built yet.",
     "researcher": "Reads public pages about a lead and writes down what it finds, with sources.",
     "requirement_analyst": "Reads an enquiry and lists what the customer asked for, to be checked.",
@@ -172,6 +172,16 @@ _RUN_TEXT = {
 }
 
 
+_MAIN_TEXT = {
+    "succeeded": "Answered a question",
+    "failed": "Could not answer a question",
+    "cancelled": "A question was stopped",
+    "expired": "A question ran out of time",
+    "killed": "A question was stopped",
+    "running": "Started on a question",
+}
+
+
 def _last(text: str | None, at: Any) -> LastEvent | None:
     if text is None or at is None:
         return None
@@ -181,25 +191,24 @@ def _last(text: str | None, at: Any) -> LastEvent | None:
 def shape_agents(raw: Any) -> list[AgentStatusOut]:
     if not isinstance(raw, dict):
         raise _bad("agents answer")
-    switched_on = raw.get("agents_enabled") is True
+    workspace_switch = raw.get("agents_enabled") is True
 
     def run_agent(key: str) -> tuple[str, LastEvent | None]:
+        """"switched_off" is a helper that exists and whose switch is off (the platform's, its own, or the workspace's); a helper that does not exist is "not_available"."""
         facts = raw.get(key) or {}
-        state = (
-            "not_available"
-            if not switched_on
-            else ("working" if facts.get("running") is True else "idle")
-        )
+        on = facts["switched_on"] if isinstance(facts.get("switched_on"), bool) else workspace_switch
+        state = "switched_off" if not on else ("working" if facts.get("running") is True else "idle")
         status = facts.get("last_status")
-        return state, _last(_RUN_TEXT.get(str(status)) if status else None, facts.get("last_at"))
+        words = _MAIN_TEXT if key == "main" else _RUN_TEXT
+        return state, _last(words.get(str(status)) if status else None, facts.get("last_at"))
 
     out: list[AgentStatusOut] = []
     for key in AGENT_ORDER:
         state = "idle"
         last: LastEvent | None = None
-        if key in ("main", "lead_finder"):
+        if key == "lead_finder":
             state = "not_available"
-        elif key in ("researcher", "requirement_analyst"):
+        elif key in ("main", "researcher", "requirement_analyst"):
             state, last = run_agent(key)
         elif key == "quote_writer":
             facts = raw.get(key) or {}

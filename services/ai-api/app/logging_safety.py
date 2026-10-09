@@ -21,7 +21,7 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "v1", "me", "tenants", "members", "audit-events", "health",
-        "account", "setup", "today", "ai-usage", "agents",
+        "account", "setup", "today", "ai-usage", "agents", "assistant", "messages", "conversations",
         "companies", "contacts", "products", "leads", "opportunities",
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
         "evidence", "evidence-links",

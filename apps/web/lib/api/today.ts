@@ -61,7 +61,8 @@ export type AgentKey = (typeof AGENT_KEYS)[number];
 
 export interface AgentStatus {
   agent: AgentKey;
-  state: "idle" | "working" | "not_available";
+  /** `switched_off`: the helper exists and a switch (the platform's, its own, or the workspace's) is off. `not_available`: it does not exist yet. */
+  state: "idle" | "working" | "not_available" | "switched_off";
   job: string;
   last_event: { text: string; at: string } | null;
 }
@@ -154,7 +155,7 @@ export function parseAgentsStatus(json: unknown): AgentStatus[] {
   return json.map((row, i) => {
     if (!isRecord(row)) return bad("helper");
     if (row.agent !== AGENT_KEYS[i]) return bad("helper order");
-    if (row.state !== "idle" && row.state !== "working" && row.state !== "not_available") return bad("helper state");
+    if (row.state !== "idle" && row.state !== "working" && row.state !== "not_available" && row.state !== "switched_off") return bad("helper state");
     let last: AgentStatus["last_event"] = null;
     if (row.last_event !== null) {
       if (!isRecord(row.last_event)) return bad("last_event");

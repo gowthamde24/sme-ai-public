@@ -412,10 +412,10 @@ def test_the_template_is_the_active_icp_version_and_rerunning_publishes_nothing(
 
 
 def test_a_changed_template_is_a_new_version_and_an_old_version_is_never_edited(
-    stack: Stack, client: TestClient
+    stack: Stack, client: TestClient, signup: Any
 ) -> None:
-    """On a throwaway workspace of the demo user (the demo workspace itself stays as seeded)."""
-    user = demo_token(stack)
+    """On a throwaway workspace of ANOTHER owner (the demo owner has exactly one workspace, and it stays as seeded)."""
+    user = signup("seed-scratch")
     made = client.post(
         "/v1/tenants",
         json={"name": "DEMO scratch (fictional)", "slug": f"demo-scratch-{uid()[:8]}"},
@@ -599,7 +599,7 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
             operator_sql.sql(
                 "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
             )
-            == "false,false,false,false"
+            == "false,false,false,false,false"
         ), "an unknown slug changed nothing"
 
         done = subprocess.run(  # noqa: S603 - our own script, fixed argv
@@ -613,9 +613,9 @@ def test_the_dev_script_enables_selftest_for_the_demo_workspace_and_nobody_else(
             operator_sql.sql(
                 "select string_agg(enabled::text, ',' order by key) from public.platform_flags"
             )
-            == "true,false,false,true"
+            == "true,false,false,false,true"
         ), (
-            "agents and selftest are on; the research and requirement switches (agents_enabled, requirement_enabled, research_enabled, selftest_enabled) are not touched"
+            "agents and selftest are on; the assistant, research and requirement switches (agents_enabled, assistant_enabled, requirement_enabled, research_enabled, selftest_enabled) are not touched"
         )
         allowed = operator_sql.sql(
             "select array_to_string(allowed_tenants, ',') from public.agent_definitions "

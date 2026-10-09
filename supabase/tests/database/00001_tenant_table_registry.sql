@@ -239,6 +239,22 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
    'action = action', $$delete from public.audit_events where tenant_id = %1$L$$, false);
 
 --                                           select insert update delete
+-- job AG: the Main agent's tables. A chat is private to the person who started it, so a fixture row made by an unaffiliated user is readable by no role.
+insert into tests.tenant_table_registry (table_name, insert_sql, update_set, delete_sql, keyset_index_required) values
+  ('assistant_conversations',
+   $$insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L)$$,
+   'updated_at = updated_at', $$delete from public.assistant_conversations where id = %2$L$$, true),
+  ('assistant_messages',
+   $$with c as (insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L) returning id)
+     insert into public.assistant_messages (id, tenant_id, conversation_id, seq, role, body, created_by) select %2$L, %1$L, c.id, 1, 'user', 'Generic question', %5$L from c$$,
+   'body = body', $$delete from public.assistant_messages where id = %2$L$$, true),
+  ('assistant_reply_drafts',
+   $$with c as (insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L) returning id),
+          r as (insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256) select %2$L, %1$L, %5$L, 'assistant', 'assistant-1', c.id, now() + interval '15 minutes', repeat('a', 64) from c returning id)
+     insert into public.assistant_reply_drafts (id, tenant_id, conversation_id, run_id, lead_id, language, body, gloss_en, created_by)
+       select %2$L, %1$L, %2$L, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'en', 'Thank you for your enquiry', 'Thank you for your enquiry', %5$L from r$$,
+   'status = status', $$delete from public.assistant_reply_drafts where id = %2$L$$, true);
+
 insert into tests.role_matrix (table_name, role, can_select, can_insert, can_update, can_delete)
 select t, r, s, i, u, d from (values
   -- Sales create/update; Viewer read-only; Admin/Owner the same plus archive (a column-level rule, tested in 13)
@@ -339,6 +355,13 @@ select t, r, s, i, u, d from (values
   ('followup_drafts',      'sales', true, false, false, false), ('followup_drafts',      'viewer', false, false, false, false),
   ('question_drafts',      'owner', true, false, false, false), ('question_drafts',      'admin', true, false, false, false),
   ('question_drafts',      'sales', true, false, false, false), ('question_drafts',      'viewer', false, false, false, false),
+  -- job AG: the Main agent. Private to the person who started the chat; nobody writes directly.
+  ('assistant_conversations','owner', false, false, false, false), ('assistant_conversations','admin', false, false, false, false),
+  ('assistant_conversations','sales', false, false, false, false), ('assistant_conversations','viewer', false, false, false, false),
+  ('assistant_messages',    'owner', false, false, false, false), ('assistant_messages',    'admin', false, false, false, false),
+  ('assistant_messages',    'sales', false, false, false, false), ('assistant_messages',    'viewer', false, false, false, false),
+  ('assistant_reply_drafts','owner', false, false, false, false), ('assistant_reply_drafts','admin', false, false, false, false),
+  ('assistant_reply_drafts','sales', false, false, false, false), ('assistant_reply_drafts','viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

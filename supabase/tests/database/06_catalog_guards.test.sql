@@ -127,6 +127,11 @@ select is(
         'public.agents_status',
         -- job AD / review fix 2: today's AI spend for the Indian day (Owner or Admin proven first)
         'public.ai_usage_today',
+        -- job AG: the Main agent. Each derives the person from auth.uid() (or the run's starter) and proves the role / the run first; app.agent_switch_on is a boolean read for a member
+        'public.assistant_begin_message',
+        'public.assistant_save_reply',
+        'public.assistant_save_reply_draft',
+        'app.agent_switch_on',
         'app.is_tenant_member',
         'app.has_tenant_role',
         'app.my_tenant_ids',
@@ -229,7 +234,8 @@ select is(
                      'public.create_order_policy_version', 'public.create_order_from_quote', 'public.record_order_event',
                      'public.create_followup_policy_version', 'public.followup_gate', 'public.followup_due_candidates', 'public.record_touch', 'public.create_followup_draft', 'public.approve_followup_draft',
                      'public.discard_followup_draft', 'public.record_draft_sent', 'public.persist_question_drafts', 'public.decide_question_draft',
-                     'public.get_account_setup', 'public.complete_setup', 'public.ai_usage_today')),
+                     'public.get_account_setup', 'public.complete_setup', 'public.ai_usage_today',
+                     'public.assistant_begin_message', 'public.assistant_save_reply', 'public.assistant_save_reply_draft')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

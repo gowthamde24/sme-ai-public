@@ -327,6 +327,27 @@ begin
   end loop;
 end $$;
 
+-- Job AG: one chat of the Main agent per fixture tenant: the conversation, its run, the owner's message, the answer and a customer-reply draft. Prefix 'a' / 'b':
+-- tests.rid('a_conv'), tests.rid('a_arun'), tests.rid('a_msg1'), tests.rid('a_msg2'), tests.rid('a_reply_draft'). Requires seed_two_tenants() and seed_crm().
+create or replace function tests.seed_assistant() returns void
+language plpgsql as $$
+declare
+  p text;
+begin
+  foreach p in array array['a', 'b'] loop
+    insert into public.assistant_conversations (id, tenant_id, created_by) values (tests.rid(p || '_conv'), tests.tid(p), tests.uid(p || '_owner'));
+    insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256)
+    values (tests.rid(p || '_arun'), tests.tid(p), tests.uid(p || '_owner'), 'assistant', 'assistant-1', tests.rid(p || '_conv'), now() + interval '15 minutes', repeat('8', 64));
+    insert into public.assistant_messages (id, tenant_id, conversation_id, seq, role, body, created_by, run_id) values
+      (tests.rid(p || '_msg1'), tests.tid(p), tests.rid(p || '_conv'), 1, 'user', 'What is waiting for me today?', tests.uid(p || '_owner'), tests.rid(p || '_arun'));
+    insert into public.assistant_messages (id, tenant_id, conversation_id, seq, role, body, language, sources, created_by, run_id) values
+      (tests.rid(p || '_msg2'), tests.tid(p), tests.rid(p || '_conv'), 2, 'assistant', 'One quote is waiting for your approval.', 'en',
+       jsonb_build_array(jsonb_build_object('type', 'lead', 'id', tests.rid(p || '_lead'))), tests.uid(p || '_owner'), tests.rid(p || '_arun'));
+    insert into public.assistant_reply_drafts (id, tenant_id, conversation_id, run_id, lead_id, language, body, gloss_en, created_by)
+    values (tests.rid(p || '_reply_draft'), tests.tid(p), tests.rid(p || '_conv'), tests.rid(p || '_arun'), tests.rid(p || '_lead'), 'en', 'Thank you for your enquiry.', 'Thank you for your enquiry.', tests.uid(p || '_owner'));
+  end loop;
+end $$;
+
 -- T005: one ICP config version, one import batch and one lead label per fixture tenant.
 -- Prefix 'a' / 'b': tests.rid('a_icp1'), tests.rid('a_batch'), tests.rid('a_label').
 -- Requires seed_two_tenants() and seed_crm().
@@ -495,6 +516,14 @@ begin
     (tests.rid(p || '_er_f1'), t, tests.rid(p || '_er_req'), 1, 'quantity', 20, 'piece', 'stated', 'Zed Qxjv here from Kzv9pur: need 20 sarees', 0, 41);
   insert into public.requirement_fields (id, tenant_id, requirement_id, line_no, field_key, value_text, certainty, quote, quote_start, quote_end) values
     (tests.rid(p || '_er_f2'), t, tests.rid(p || '_er_req'), null, 'delivery_city', 'Kzv9pur', 'stated', 'Kzv9pur', 20, 27);
+  -- job AG: a chat of the Main agent that names the person, and a customer-reply draft with the same identifiers
+  insert into public.assistant_conversations (id, tenant_id, created_by) values (tests.rid(p || '_er_conv'), t, tests.uid(p || '_owner'));
+  insert into public.assistant_messages (id, tenant_id, conversation_id, seq, role, body, created_by) values
+    (tests.rid(p || '_er_m1'), t, tests.rid(p || '_er_conv'), 1, 'user', 'Ask about zed.qxjv@canary.test or +91 98765 43210 for me', tests.uid(p || '_owner'));
+  insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256)
+  values (tests.rid(p || '_er_run'), t, tests.uid(p || '_owner'), 'assistant', 'assistant-1', tests.rid(p || '_er_conv'), now() + interval '15 minutes', repeat('9', 64));
+  insert into public.assistant_reply_drafts (id, tenant_id, conversation_id, run_id, lead_id, language, body, gloss_en, created_by) values
+    (tests.rid(p || '_er_rd'), t, tests.rid(p || '_er_conv'), tests.rid(p || '_er_run'), l, 'en', 'Thank you for writing from zed.qxjv@canary.test', 'We will call 98765 43210', tests.uid(p || '_owner'));
 end $$;
 
 -- Every place a pattern still appears in tenant p, as 'table.column#row id' strings (text, text[] and jsonb columns of EVERY table with a

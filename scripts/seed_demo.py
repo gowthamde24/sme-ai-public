@@ -354,27 +354,6 @@ def local_factor_secret(user_id: str) -> str:
         raise SeedError("Cannot read the demo authenticator from the local database container.")
     return secret
 
-DEMO_WORKSPACE_LIMIT = 5
-
-
-def local_allow_demo_workspaces(user_id: str, limit: int = DEMO_WORKSPACE_LIMIT) -> None:
-    """Let the demo user own up to `limit` workspaces on this LOCAL stack. The free trial allows one workspace per owner (job AD, D1), and
-    the demo user has more than one (this seed, `make seed-demo-manual`). A plan limit is the operator's to change, never a client's, so it is
-    set through the local database container exactly as the authenticator secret is read (never a hosted database, no key)."""
-    docker = shutil.which("docker")
-    config = (Path(__file__).resolve().parents[1] / "supabase" / "config.toml").read_text()
-    match = re.search(r'^project_id\s*=\s*"([^"]+)"', config, re.M)
-    if docker is None or match is None or not re.fullmatch(r"[0-9a-f-]{36}", user_id) or not 1 <= limit <= 100:
-        raise SeedError("Cannot raise the demo user's workspace limit on the local database container.")
-    out = subprocess.run(  # noqa: S603 - fixed argv; the id is a validated uuid and the limit a checked integer
-        [docker, "exec", "-i", f"supabase_db_{match.group(1)}", "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
-         f"update public.tenants set workspace_limit = {limit} where id in (select tenant_id from public.memberships where user_id = '{user_id}' and role = 'owner')"],  # noqa: S608
-        capture_output=True, text=True, timeout=30, check=False,
-    )
-    if out.returncode != 0:
-        raise SeedError("Cannot raise the demo user's workspace limit on the local database container.")
-
-
 class Seeder:
     def __init__(self, config: Config, api: httpx.Client, http: httpx.Client) -> None:
         self.c = config
@@ -497,7 +476,6 @@ class Seeder:
         if r.status_code != 200:
             raise SeedError(f"Could not create the demo workspace (HTTP {r.status_code}).")
         self.summary.tenant_id = str(r.json()["id"])
-        local_allow_demo_workspaces(self.user_id)
 
     def template(self) -> dict[str, Any]:
         """The generic ICP template shipped in the repository (no customer values)."""

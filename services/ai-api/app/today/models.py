@@ -89,6 +89,6 @@ class LastEvent(_Out):
 
 class AgentStatusOut(_Out):
     agent: AgentKey
-    state: Literal["idle", "working", "not_available"]
+    state: Literal["idle", "working", "not_available", "switched_off"]
     job: str
     last_event: LastEvent | None

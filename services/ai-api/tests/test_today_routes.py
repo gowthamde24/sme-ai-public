@@ -61,8 +61,9 @@ def b_today() -> dict[str, Any]:
 def agents_facts() -> dict[str, Any]:
     return {
         "agents_enabled": True,
-        "researcher": {"running": False, "last_status": None, "last_at": None},
-        "requirement_analyst": {"running": False, "last_status": None, "last_at": None},
+        "main": {"switched_on": True, "running": False, "last_status": None, "last_at": None},
+        "researcher": {"switched_on": True, "running": False, "last_status": None, "last_at": None},
+        "requirement_analyst": {"switched_on": True, "running": False, "last_status": None, "last_at": None},
         "quote_writer": {},
         "followup_desk": {},
         "order_desk": {},
@@ -198,7 +199,7 @@ def test_the_helpers_are_always_all_seven_in_order() -> None:
         "followup_desk",
         "order_desk",
     ]
-    assert [a["state"] for a in body][:2] == ["not_available", "not_available"]
+    assert [a["state"] for a in body][:2] == ["idle", "not_available"]  # main (on) and lead_finder (does not exist)
     assert all(set(a) == {"agent", "state", "job", "last_event"} for a in body)
 
 

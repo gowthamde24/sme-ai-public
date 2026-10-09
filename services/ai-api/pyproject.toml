@@ -70,6 +70,9 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/followups_fakes.py" = ["E501"]
 "tests/test_suppression_*.py" = ["E501", "S311"]
 "tests/suppression_fakes.py" = ["E501"]
+# job AG: the Main agent (its policy text, fixed sentences in five languages, long explanatory docstrings)
+"app/assistant/*" = ["E501"]
+"app/today/*" = ["E501"]
 "seeds/*" = ["E501"]
 "tests/test_quote_seed_script.py" = ["E501"]
 
