@@ -26,6 +26,8 @@ export default async function AppPage() {
   }
   // The API and Supabase Auth must agree on who this is.
   if (me && me.user_id !== user.id) redirect("/login");
+  // One subscriber is one business: with exactly one workspace there is no list to choose from, so the person lands on its Today (Job AC, C5).
+  if (me && me.memberships.length === 1) redirect(`/app/tenants/${me.memberships[0].tenant.id}`);
 
   return (
     <main className={pageMain}>

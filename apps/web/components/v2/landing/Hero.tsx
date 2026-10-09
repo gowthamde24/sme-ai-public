@@ -1,4 +1,5 @@
 import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 import { Flow } from "@/components/v2/landing/Flow";
 import { buildFlowLabels } from "@/components/v2/landing/flow-labels";
@@ -14,10 +15,10 @@ export function Hero({ t }: { t: LandingT }) {
       </h1>
       <p className="mt-3 max-w-4xl text-base leading-relaxed text-muted sm:text-lg">{t("hero.sub")}</p>
       <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1">
-        <a href="#early-access" className={`${btnPrimary} max-sm:min-h-12`}>
+        <Link href="/signup" className={`${btnPrimary} max-sm:min-h-12`}>
           {t("hero.cta")}
           <ArrowRight className="size-5" aria-hidden="true" />
-        </a>
+        </Link>
         <a href="#how" className="hidden min-h-11 items-center rounded-lg px-2 text-base font-semibold text-brand-text hover:underline sm:inline-flex">
           {t("hero.secondary")}
         </a>

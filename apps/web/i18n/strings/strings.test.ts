@@ -54,7 +54,7 @@ describe("honesty: no claims we cannot prove today", () => {
     expect(en["faq.1.a"]).toMatch(/draft/i);
     expect(en["faq.1.a"]).toMatch(/Nothing is sent automatically/);
     expect(en["faq.6.a"]).toMatch(/invitation only/i);
-    expect(en["hero.cta"]).toBe("Request early access");
+    expect(en["hero.cta"]).toBe("Sign up"); // Job AC C5: the main button on the home page goes to the sign-up screen
     expect(en["early.status"]).toMatch(/Coming soon/);
     expect(en["early.nodata"]).toMatch(/No form is connected/);
   });

@@ -25,3 +25,8 @@ export const authSecondary =
 export const authRow = "mt-6 flex flex-col items-center gap-3";
 export const authLink = "inline-flex min-h-11 items-center rounded-lg text-base font-semibold text-brand-text hover:underline";
 export const authParagraph = "mt-4 text-base";
+/** A tick box with its words beside it (the terms), and a group of radio choices. */
+export const authCheckRow = "mt-4 flex min-h-11 items-start gap-3 text-base";
+export const authCheckBox = "mt-0.5 size-6 shrink-0 accent-brand-text";
+export const authChoices = "mt-1 flex flex-col gap-2";
+export const authChoice = "flex min-h-12 items-center gap-3 rounded-lg border border-edge bg-surface px-3 text-base has-[:checked]:border-brand-edge has-[:checked]:bg-brand-bg";

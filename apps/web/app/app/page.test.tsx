@@ -29,6 +29,7 @@ const TENANT = {
   name: "Acme Silks",
   slug: "acme-silks",
 };
+const SECOND = { id: "33333333-3333-3333-3333-333333333333", name: "Second Shop", slug: "second-shop" };
 
 describe("/app page", () => {
   beforeEach(() => {
@@ -39,7 +40,7 @@ describe("/app page", () => {
   it("renders the real memberships returned by /v1/me, fetched with the user's token", async () => {
     fetchMe.mockResolvedValue({
       user_id: USER.id,
-      memberships: [{ role: "owner", tenant: TENANT }],
+      memberships: [{ role: "owner", tenant: TENANT }, { role: "viewer", tenant: SECOND }], // two: with one the page goes straight to Today
     });
     render(await AppPage());
     expect(fetchMe).toHaveBeenCalledWith("tok");
@@ -56,13 +57,18 @@ describe("/app page", () => {
   it("links each workspace to its tenant page", async () => {
     fetchMe.mockResolvedValue({
       user_id: USER.id,
-      memberships: [{ role: "owner", tenant: TENANT }],
+      memberships: [{ role: "owner", tenant: TENANT }, { role: "viewer", tenant: SECOND }],
     });
     render(await AppPage());
     expect(screen.getByRole("link", { name: "Acme Silks" })).toHaveAttribute(
       "href",
       `/app/tenants/${TENANT.id}`,
     );
+  });
+
+  it("one subscriber is one business: with exactly one workspace there is no list, the person goes to its Today", async () => {
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [{ role: "owner", tenant: TENANT }] });
+    expect(await redirectTarget(() => AppPage())).toBe(`/app/tenants/${TENANT.id}`);
   });
 
   it("explains an empty state instead of inventing data", async () => {
