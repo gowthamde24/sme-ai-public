@@ -100,10 +100,10 @@ export const dataEditRow =
   "supports-[selector(:has(*))]:hidden supports-[selector(:has(*))]:[tr:has(details[open])+&]:table-row max-sm:supports-[selector(:has(*))]:[tr:has(details[open])+&]:block";
 export const dataEditCell = "px-3 pb-5 pt-3 max-sm:block";
 /** The item types table on a phone: one block per type, two columns (name across, then pairs), instead of one line per fact. */
-export const dataTrGrid = "border-b border-line max-sm:grid max-sm:grid-cols-2 max-sm:gap-x-3 max-sm:py-2";
-export const dataThRowWide = "px-3 py-2 text-left font-semibold max-sm:col-span-2";
-export const dataTdStack = "px-3 py-2 align-top max-sm:flex max-sm:flex-col max-sm:py-1 max-sm:before:text-sm max-sm:before:text-muted max-sm:before:content-[attr(data-label)]";
-export const dataTdEditWide = "whitespace-nowrap px-3 py-2 align-top max-sm:col-span-2";
+export const dataTrGrid = "border-b border-line max-sm:grid max-sm:grid-cols-3 max-sm:gap-x-2 max-sm:py-2";
+export const dataThRowWide = "px-3 py-2 text-left font-semibold max-sm:col-span-3";
+export const dataTdStack = "px-3 py-2 align-top max-sm:flex max-sm:flex-col max-sm:min-w-0 max-sm:py-1 max-sm:before:text-sm max-sm:before:text-muted max-sm:before:content-[attr(data-label)]";
+export const dataTdEditWide = "whitespace-nowrap px-3 py-2 align-top max-sm:col-span-3";
 export const formGrid = "grid gap-x-4 gap-y-3 sm:grid-cols-2";
 export const colSpanFull = "col-span-full";
 export const codeInline = "rounded bg-surface-2 px-1.5 py-0.5 font-mono text-sm [overflow-wrap:anywhere]";
