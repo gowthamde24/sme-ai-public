@@ -22,6 +22,8 @@ from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query, Response
 
+from app.agent_runs import pause
+from app.agent_runs import repository as runs_repo
 from app.agent_runs.executor import ExecutorBusy, RunTask
 from app.agent_runs.models import (
     AgentCostOut,
@@ -148,17 +150,23 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
                 409, "company_has_no_website", "This company has no website to research."
             )
         digest = input_sha256(model_input_from_company(company))
-    started = agents.repository.start_run(
-        ctx.principal.token,
-        ctx.tenant.id,
-        run_id=body.id,
-        agent_name=spec.name,
-        agent_version=spec.version,
-        target_kind=body.target_kind,
-        target_id=body.target_id,
-        input_sha256=digest,
-        input_refs=refs,
-    )
+    try:
+        started = agents.repository.start_run(
+            ctx.principal.token,
+            ctx.tenant.id,
+            run_id=body.id,
+            agent_name=spec.name,
+            agent_version=spec.version,
+            target_kind=body.target_kind,
+            target_id=body.target_id,
+            input_sha256=digest,
+            input_refs=refs,
+        )
+    except runs_repo.CostCapError:
+        # the AI allowance (today's or this month's) is used up: say when it is back
+        raise pause.paused_error(
+            pause.resolve_until(runtime.today, ctx.principal.token, ctx.tenant.id)
+        ) from None
     if not started.replayed:
         try:
             agents.executor.submit(

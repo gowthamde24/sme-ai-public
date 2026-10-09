@@ -15,7 +15,7 @@ from tests.today_fakes import FakeTodayRepository, empty_today
 
 ID = str(uuid.UUID(int=9))
 AT = "2026-10-09T09:30:00+00:00"
-PATHS = ("today", "ai-usage/today", "agents/status")
+PATHS = ("today", "ai-usage/today", "ai-usage", "agents/status")
 
 
 def a_today() -> dict[str, Any]:
@@ -63,7 +63,12 @@ def agents_facts() -> dict[str, Any]:
         "agents_enabled": True,
         "main": {"switched_on": True, "running": False, "last_status": None, "last_at": None},
         "researcher": {"switched_on": True, "running": False, "last_status": None, "last_at": None},
-        "requirement_analyst": {"switched_on": True, "running": False, "last_status": None, "last_at": None},
+        "requirement_analyst": {
+            "switched_on": True,
+            "running": False,
+            "last_status": None,
+            "last_at": None,
+        },
         "quote_writer": {},
         "followup_desk": {},
         "order_desk": {},
@@ -77,6 +82,22 @@ def world() -> tuple[Any, FakeTodayRepository]:
     today.cost = {
         TENANT_A.id: {"cap_micros": 250_000_000, "spent_micros": 0},
         TENANT_B.id: {"cap_micros": 1, "spent_micros": 0},
+    }
+    today.percent = {
+        TENANT_A.id: {
+            "today_percent": 83,
+            "month_percent": 12,
+            "resets_at_today": "2026-10-09T18:30:00+00:00",
+            "resets_at_month": "2026-11-08T18:30:00+00:00",
+            "state": "warn",
+        },
+        TENANT_B.id: {
+            "today_percent": 1,
+            "month_percent": 1,
+            "resets_at_today": "2026-10-09T18:30:00+00:00",
+            "resets_at_month": "2026-11-08T18:30:00+00:00",
+            "state": "ok",
+        },
     }
     client, _ = make_client(today=today)
     return client, today
@@ -135,6 +156,65 @@ def test_ai_usage_is_owner_and_admin_only(user: str, status: int) -> None:
     )
     if status != 200:
         assert not [c for c in today.calls if c[0] == "ai_usage"]
+
+
+@pytest.mark.parametrize(
+    ("user", "status"),
+    [("a_owner", 200), ("a_admin", 200), ("a_sales", 403), ("a_viewer", 403), ("outsider", 404)],
+)
+def test_the_percent_read_is_owner_and_admin_only(user: str, status: int) -> None:
+    client, today = world()
+    assert (
+        client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage", headers=auth(user)).status_code == status
+    )
+    if status != 200:
+        assert not [c for c in today.calls if c[0] == "ai_usage_percent"]
+
+
+def test_ai_usage_is_percentages_and_times_and_nothing_else() -> None:
+    client, _ = world()
+    body = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage", headers=auth("a_owner")).json()
+    assert set(body) == {
+        "today_percent",
+        "month_percent",
+        "resets_at_today",
+        "resets_at_month",
+        "state",
+    }
+    assert body["today_percent"] == 83 and body["month_percent"] == 12 and body["state"] == "warn"
+    assert body["resets_at_today"].startswith("2026-10-09T18:30:00")
+    assert "paise" not in str(body) and "micros" not in str(body) and "token" not in str(body)
+
+
+def test_the_percent_read_refuses_a_shape_that_is_not_the_contract() -> None:
+    client, today = world()
+    bad_shapes: list[Any] = [
+        None,
+        [],
+        {"today_percent": 101, "month_percent": 0},
+        {"today_percent": -1, "month_percent": 0},
+        {"today_percent": True, "month_percent": 0},
+        {
+            "today_percent": 5,
+            "month_percent": 5,
+            "resets_at_today": "x",
+            "resets_at_month": "x",
+            "state": "ok",
+        },
+        {
+            "today_percent": 5,
+            "month_percent": 5,
+            "resets_at_today": "2026-10-09T18:30:00+00:00",
+            "resets_at_month": "2026-10-09T18:30:00+00:00",
+            "state": "sleeping",
+        },
+    ]
+    for bad in bad_shapes:
+        today.percent[TENANT_A.id] = bad
+        assert (
+            client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage", headers=auth("a_owner")).status_code
+            == 502
+        ), bad
 
 
 def test_today_matches_the_contract() -> None:
@@ -199,7 +279,10 @@ def test_the_helpers_are_always_all_seven_in_order() -> None:
         "followup_desk",
         "order_desk",
     ]
-    assert [a["state"] for a in body][:2] == ["idle", "not_available"]  # main (on) and lead_finder (does not exist)
+    assert [a["state"] for a in body][:2] == [
+        "idle",
+        "not_available",
+    ]  # main (on) and lead_finder (does not exist)
     assert all(set(a) == {"agent", "state", "job", "last_event"} for a in body)
 
 

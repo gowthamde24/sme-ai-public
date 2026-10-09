@@ -731,7 +731,7 @@ def main(env: Mapping[str, str] | None = None) -> int:
         )
         today_paise = spent_micros(tenant) // MICROS_PER_PAISE
         print(
-            f"assistant-smoke: the demo workspace's daily cap is {cap_paise} paise, {today_paise} paise already spent today (India day). A call is reserved at its worst case, so a cap that is too low shows as FAIL (cost_cap_reached). The cap and the assistant's per-run budget (now {worst_case_run_paise()} paise) were raised for this run and are put back at the end."
+            f"assistant-smoke: the demo workspace's daily cap is {cap_paise} paise, {today_paise} paise already spent today (India day). A call is reserved at its worst case, so a cap that is too low shows as FAIL (ai_paused_until). The cap and the assistant's per-run budget (now {worst_case_run_paise()} paise) were raised for this run and are put back at the end."
         )
         with TestClient(create_app(settings, runtime=runtime)) as client:
             verdicts = run_questions(client, tenant, seeder.token, demo_id("manual-lead"), guard)

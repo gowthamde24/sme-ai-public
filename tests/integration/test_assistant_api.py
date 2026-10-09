@@ -295,38 +295,146 @@ def test_the_daily_cost_cap_applies_to_the_assistant(app: TestClient, scene: Sce
     )
     try:
         r = say(app, scene, "owner", "hello", tenant=scene.b)
-        assert r.status_code == 429 and r.json()["error"]["code"] == "cost_cap_reached"
+        error = r.json()["error"]
+        assert r.status_code == 429 and error["code"] == "ai_paused_until"
+        assert error["until"].endswith("Z") and "keep working" in error["message"]
     finally:
         operator_sql.sql(
             f"update public.tenant_agent_settings set daily_cost_cap_micros = null where tenant_id = '{scene.b.id}'"
         )
-    assert say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
 
 
-def test_the_status_read_says_switched_off_apart_from_not_available(
-    client: TestClient, app: TestClient, scene: Scene
-) -> None:
-    def states(tenant: Any) -> dict[str, str]:
-        r = app.get(f"/v1/tenants/{tenant.id}/agents/status", headers=bearer(tenant.users["owner"]))
-        assert r.status_code == 200, r.text
-        return {a["agent"]: a["state"] for a in r.json()}
+class Allowance:
+    """Plan allowance and trial start of workspace B, changed for one test and put back (job AK / K2)."""
 
-    on = states(scene.a)
-    assert on["main"] == "idle" and on["lead_finder"] == "not_available"
-    operator_sql.sql(
-        f"update public.tenant_agent_settings set enabled = false where tenant_id = '{scene.a.id}'"
-    )
-    try:
-        off = states(scene.a)
-    finally:
-        operator_sql.sql(
-            f"update public.tenant_agent_settings set enabled = true where tenant_id = '{scene.a.id}'"
+    def __init__(self, tenant: Any) -> None:
+        self.t = str(tenant.id)
+
+    def __enter__(self) -> Allowance:
+        self.plan = operator_sql.sql(
+            "select daily_paise || ',' || monthly_paise from public.plan_ai_allowances where plan = 'free_trial'"
         )
+        self.trial = operator_sql.sql(
+            f"select trial_started_at from public.tenants where id = '{self.t}'"
+        )
+        return self
+
+    def set(self, daily: int, monthly: int, trial_days_ago: int = 0) -> None:
+        operator_sql.sql(
+            f"update public.plan_ai_allowances set daily_paise = {daily}, monthly_paise = {monthly} where plan = 'free_trial'"
+        )
+        operator_sql.sql(
+            f"update public.tenants set trial_started_at = now() - interval '{trial_days_ago} days' where id = '{self.t}'"
+        )
+
+    def spend(self, micros: int, days_ago: int = 0) -> None:
+        run = operator_sql.sql(
+            f"select id from public.agent_runs where tenant_id = '{self.t}' limit 1"
+        )
+        operator_sql.sql(
+            "insert into public.agent_cost_reservations (id, tenant_id, run_id, step_key, cost_day, max_input_tokens, max_output_tokens, reserved_micros, settled_micros, args_sha256, settled_at, outcome) "
+            f"values (gen_random_uuid(), '{self.t}', '{run}', 'ak2-{uuid.uuid4().hex[:8]}', app.agent_utc_today() - {days_ago}, 1, 1, {micros}, {micros}, repeat('c', 64), now(), 'used')"
+        )
+
+    def __exit__(self, *_: object) -> None:
+        daily, monthly = self.plan.split(",")
+        operator_sql.sql(
+            f"update public.plan_ai_allowances set daily_paise = {daily}, monthly_paise = {monthly} where plan = 'free_trial'"
+        )
+        operator_sql.sql(
+            f"update public.tenants set trial_started_at = '{self.trial}' where id = '{self.t}'"
+        )
+        operator_sql.sql(
+            f"delete from public.agent_cost_reservations where tenant_id = '{self.t}' and step_key like 'ak2-%'"
+        )
+
+
+def usage(app: TestClient, scene: Scene) -> dict[str, Any]:
+    r = app.get(f"/v1/tenants/{scene.b.id}/ai-usage", headers=bearer(scene.b.users["owner"]))
+    assert r.status_code == 200, r.text
+    return dict(r.json())
+
+
+def test_a_used_up_day_pauses_only_the_ai_and_says_when_it_is_back(
+    app: TestClient, scene: Scene
+) -> None:
+    from datetime import datetime
+
     assert (
-        off["main"] == "switched_off"
-        and off["researcher"] == "switched_off"
-        and off["requirement_analyst"] == "switched_off"
+        say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
+    )  # makes sure workspace B has a run to book spend against
+    with Allowance(scene.b) as a:
+        a.set(daily=1, monthly=100)  # one paisa a day
+        before = usage(app, scene)  # the first hello already cost a few micros of the one paisa
+        assert before["state"] == "ok" and before["today_percent"] < 100
+        a.spend(10_000)  # exactly one paisa: the day is used up
+        got = usage(app, scene)
+        assert (
+            got["today_percent"] == 100 and got["state"] == "paused" and got["month_percent"] == 1
+        )
+        assert set(got) == {
+            "today_percent",
+            "month_percent",
+            "resets_at_today",
+            "resets_at_month",
+            "state",
+        }
+        r = say(app, scene, "owner", "hello", tenant=scene.b)
+        error = r.json()["error"]
+        assert r.status_code == 429 and error["code"] == "ai_paused_until"
+        until = datetime.fromisoformat(error["until"].replace("Z", "+00:00"))
+        assert until == datetime.fromisoformat(got["resets_at_today"]), (
+            "back at the next Indian midnight"
+        )
+        # everything that is not AI keeps working
+        for path in ("quotes", "orders", "companies", "today"):
+            ok = app.get(f"/v1/tenants/{scene.b.id}/{path}", headers=bearer(scene.b.users["owner"]))
+            assert ok.status_code == 200, (path, ok.text)
+        # another workspace is not paused
+        assert say(app, scene, "owner", "hello").status_code == 200
+    assert say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200, (
+        "put back: B can ask again"
     )
-    assert off["lead_finder"] == "not_available", (
-        "a helper that does not exist is not 'switched off'"
-    )
+
+
+def test_a_used_up_month_pauses_the_ai_with_the_day_still_empty_and_says_the_month_end(
+    app: TestClient, scene: Scene
+) -> None:
+    from datetime import UTC, datetime, timedelta
+
+    assert say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
+    with Allowance(scene.b) as a:
+        a.set(
+            daily=100, monthly=100, trial_days_ago=10
+        )  # a month of one rupee, started ten days ago
+        a.spend(1_000_000, days_ago=3)  # ₹1 spent three days ago, inside the month
+        got = usage(app, scene)
+        assert (
+            got["month_percent"] == 100 and got["today_percent"] == 0 and got["state"] == "paused"
+        )
+        r = say(app, scene, "owner", "hello", tenant=scene.b)
+        error = r.json()["error"]
+        assert r.status_code == 429 and error["code"] == "ai_paused_until"
+        until = datetime.fromisoformat(error["until"].replace("Z", "+00:00"))
+        assert until == datetime.fromisoformat(got["resets_at_month"])
+        assert timedelta(days=15) < until - datetime.now(UTC) < timedelta(days=22), (
+            "about twenty days away: the end of the month"
+        )
+        assert (
+            app.get(
+                f"/v1/tenants/{scene.b.id}/quotes", headers=bearer(scene.b.users["owner"])
+            ).status_code
+            == 200
+        )
+
+
+def test_the_percent_read_is_for_owner_and_admin_and_never_shows_money(
+    app: TestClient, scene: Scene
+) -> None:
+    for user, status in (("owner", 200), ("admin", 200), ("sales", 403), ("viewer", 403)):
+        r = app.get(f"/v1/tenants/{scene.a.id}/ai-usage", headers=bearer(scene.a.users[user]))
+        assert r.status_code == status, (user, r.text)
+    body = app.get(
+        f"/v1/tenants/{scene.a.id}/ai-usage", headers=bearer(scene.a.users["owner"])
+    ).json()
+    assert "paise" not in str(body) and "micros" not in str(body) and "token" not in str(body)

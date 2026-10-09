@@ -19,11 +19,13 @@ import queue
 import threading
 import uuid
 from collections.abc import Iterator
+from datetime import UTC
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 
+from app.agent_runs import pause
 from app.agents.errors import (
     AgentDbError,
     AgentsDisabled,
@@ -56,10 +58,7 @@ HISTORY_LINES = 8
 # fixed sentences for the ways a message can fail; nothing from the model or the data layer reaches a client
 FAILURES: dict[str, tuple[str, str]] = {
     "killed": ("agents_disabled", "The assistant is switched off for this workspace."),
-    "budget": (
-        "cost_cap_reached",
-        "The assistant has used today's spending limit. Try again tomorrow (India time).",
-    ),
+    "budget": (pause.CODE, pause.MESSAGE),
     "model_failed": (
         "model_failed",
         "The assistant could not answer just now. Send the message again as a new message.",
@@ -83,7 +82,9 @@ def _unavailable(reason: str) -> ApiError:
     )
 
 
-def _refusal(exc: AgentDbError) -> ApiError:
+def _refusal(
+    exc: AgentDbError, today_repo: Any = None, token: str = "", tenant: uuid.UUID | None = None
+) -> ApiError:
     if isinstance(exc, AgentsDisabled):
         return ApiError(
             409, "agents_disabled", "The assistant is not switched on for this workspace."
@@ -91,11 +92,7 @@ def _refusal(exc: AgentDbError) -> ApiError:
     if isinstance(exc, LimitReached):
         return ApiError(429, "run_limit_reached", "Too many agent runs. Try again later.")
     if isinstance(exc, CostCapReached):
-        return ApiError(
-            429,
-            "cost_cap_reached",
-            "The assistant has used today's spending limit. Try again tomorrow (India time).",
-        )
+        return pause.paused_error(pause.resolve_until(today_repo, token, tenant))
     if isinstance(exc, RunExpired):
         return ApiError(
             409, "token_expiring", "Your session is about to expire. Sign in again and retry."
@@ -154,7 +151,7 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
         )
     except AgentDbError as exc:
         db.close()
-        raise _refusal(exc) from None
+        raise _refusal(exc, runtime.today, token, tenant) from None
 
     if began.get("replayed"):
         # the same message again: the stored answer, if there is one; nothing is spent
@@ -244,7 +241,17 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
             code, message = FAILURES.get(
                 outcome.error_code or "tool_failed", FAILURES["tool_failed"]
             )
-            yield _sse("error", {"type": "error", "code": code, "message": message})
+            event: dict[str, Any] = {"type": "error", "code": code, "message": message}
+            if (
+                code == pause.CODE
+            ):  # the time the AI is back (the allowance of the day or the month is used up)
+                event["until"] = (
+                    pause.resolve_until(runtime.today, token, tenant)
+                    .astimezone(UTC)
+                    .isoformat()
+                    .replace("+00:00", "Z")
+                )
+            yield _sse("error", event)
         else:
             yield _sse(
                 "done",

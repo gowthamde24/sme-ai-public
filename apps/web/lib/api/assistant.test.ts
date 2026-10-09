@@ -59,7 +59,8 @@ describe("events", () => {
     expect(parseAssistantEvent("source", { type: "source", ...SOURCE })).toEqual({ type: "source", ...SOURCE });
     expect(parseAssistantEvent("draft", { type: "draft", ...DRAFT })).toEqual({ type: "draft", ...DRAFT });
     expect(parseAssistantEvent("done", { type: "done", message_id: MSG, conversation_id: CONV, language: "en", kind: "answer" })).toMatchObject({ type: "done", kind: "answer", conversation_id: CONV });
-    expect(parseAssistantEvent("error", { type: "error", code: "cost_cap_reached", message: "The daily limit is reached." })).toMatchObject({ type: "error", code: "cost_cap_reached" });
+    expect(parseAssistantEvent("error", { type: "error", code: "ai_paused_until", message: "Paused.", until: "2026-10-09T18:30:00Z" })).toEqual({ type: "error", code: "ai_paused_until", message: "Paused.", until: "2026-10-09T18:30:00Z" });
+    expect(parseAssistantEvent("error", { type: "error", code: "model_failed", message: "x", until: "garbage" })).toEqual({ type: "error", code: "model_failed", message: "x" });
   });
   it("refuses an event name or a shape the API does not send", () => {
     expect(() => parseAssistantEvent("send_email", { type: "send_email" })).toThrow(ApiContractError);

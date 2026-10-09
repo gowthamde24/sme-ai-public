@@ -59,8 +59,8 @@ function describe(error: unknown): string {
         return "There is no text left to store after cleaning it.";
       case "received_in_future":
         return "An enquiry cannot be received in the future.";
-      case "cost_cap_reached":
-        return "Today's spending limit for agents is used up. Try again tomorrow (India time).";
+      case "ai_paused_until":
+        return "AI help is paused because this workspace's AI allowance for the period is used up. Everything else keeps working. Try again later.";
       case "agents_disabled":
         return "Agents are not enabled for this workspace.";
       case "conflict":

@@ -202,10 +202,13 @@ select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a
 select pg_temp.set_cap('a', null);
 select is(app.agent_daily_cap(tests.tid('a')), 2000000::bigint, 'clearing the override falls back to the operator default');
 delete from public.agent_limits where limit_key = 'daily_cost_micros';
-select is(app.agent_daily_cap(tests.tid('a')), 0::bigint, 'no override and no operator default: the cap is 0 (fail closed)');
+-- job AK / K2: the plan's allowance is the default now, so the fail-closed case is: no override, no plan allowance AND no operator default
+delete from public.plan_ai_allowances where plan = 'free_trial';
+select is(app.agent_daily_cap(tests.tid('a')), 0::bigint, 'no override, no plan allowance and no operator default: the cap is 0 (fail closed)');
 select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a'), tests.rid('a_company'))), 'SM207|agent daily cost cap reached||||', '...and nothing starts');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv(tests.rid('a_run_sales'), 'fc-1', 1, 0)), 'reason'), 'daily_cap', '...nor is a model call authorised');
 insert into public.agent_limits (limit_key, limit_value) values ('daily_cost_micros', 2000000);
+insert into public.plan_ai_allowances (plan, daily_paise, monthly_paise) values ('free_trial', 200, 6000);
 update public.platform_flags set enabled = false where key = 'agents_enabled';
 select pg_temp.set_cap('a', 0);
 select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a'), tests.rid('a_company'))), 'SM204|agents are disabled||||', 'a disabled platform is reported as disabled, before the cap');

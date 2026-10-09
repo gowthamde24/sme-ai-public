@@ -86,7 +86,7 @@ To turn agents back on, set the flag back to `true`, **and** check that the work
 
 Each workspace's agents may spend at most the **daily cost cap** (default 2.00; the Owner can set 0 to 20.00 for their workspace with
 `set_tenant_daily_cost_cap`). A model call is reserved **before** it is made; when the day is full runs end as `failed` / `budget`, new
-starts answer 429 `cost_cap_reached`, and each refusal leaves an `agent_cost.refused` audit event. Amounts are millionths of the billing
+starts answer 429 `ai_paused_until` (with the time the AI is back in `until`), and each refusal leaves an `agent_cost.refused` audit event. Amounts are millionths of the billing
 currency (2,000,000 = 2.00). Run as the database owner.
 
 Today's spend and cap, per workspace:
@@ -151,3 +151,16 @@ on conflict (model) do update set input_micros_per_mtok = excluded.input_micros_
 If the API process itself must stop (for example a runaway cost at the model provider): stop the process (this ends every
 in-flight run), set `AGENTS_ENABLED=false` for the next start, **and** set the provider-side spend cap (the real limit; see
 `docs/pre-pilot-checklist.md`). The database's daily cap limits what the runtime reserves and reports; it cannot see what the provider bills.
+
+
+## The plan allowance (job AK / K2): a daily AND a monthly window
+
+Every workspace has a plan (`tenants.plan`: free_trial, starter, growth, business). `public.plan_ai_allowances` holds, per plan, a daily and a monthly AI allowance **in paise** (the values in the migration are placeholders:
+change them with an `update`; no code change). The daily cap of a workspace is its own override if one is set, else its plan's daily allowance, else the operator default (as before). The month runs from
+`tenants.billing_anchor_at`, or from `trial_started_at` while that is null, in whole months (Indian dates). When either window is used up, **only** AI features pause (the assistant, research, requirement
+drafting): the API answers 429 `ai_paused_until` with `until`. Quotes, orders, follow-ups and customers keep working.
+
+```sql
+update public.plan_ai_allowances set daily_paise = 500, monthly_paise = 15000 where plan = 'starter';
+update public.tenants set plan = 'starter', billing_anchor_at = now() where slug = ':SLUG';   -- a paid period starts now
+```

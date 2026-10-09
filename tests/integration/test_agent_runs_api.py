@@ -1173,10 +1173,9 @@ def test_a_full_day_refuses_a_new_run_with_a_fixed_message_and_creates_nothing(a
         r = start(api, owner, w.a)
         assert r.status_code == 429, r.text
         body = r.json()["error"]
-        assert body["code"] == "cost_cap_reached"
-        assert body["message"] == (
-            "This workspace's agents have used today's spending limit. Try again tomorrow (India time)."
-        )
+        assert body["code"] == "ai_paused_until"
+        assert body["message"].endswith("Quotes, orders, follow-ups and customers keep working.")
+        assert body["until"].endswith("Z"), "the time the AI is back"
         assert "SM207" not in r.text and "micros" not in r.text
         after = api.client.get(url(w.a, "/agent-runs"), headers=bearer(owner)).json()["items"]
         assert [x["id"] for x in after] == [x["id"] for x in before], "no run was created"

@@ -59,7 +59,7 @@ export type AssistantEvent =
   | { type: "text"; delta: string }
   | ({ type: "source" } & AssistantSource)
   | ({ type: "draft" } & DraftCard)
-  | { type: "error"; code: string; message: string }
+  | { type: "error"; code: string; message: string; until?: string }
   | { type: "done"; conversation_id: string; message_id: string; language: AssistantLanguage | null; kind: "answer" | "refusal" | "clarify" | "replayed" };
 
 export interface AssistantMessage {
@@ -145,7 +145,12 @@ export function parseAssistantEvent(name: string, data: unknown): AssistantEvent
     case "draft":
       return { type: "draft", ...parseDraftCard(data) };
     case "error":
-      return { type: "error", code: str(data.code, "code", 60), message: str(data.message, "message", 400) };
+      return {
+        type: "error",
+        code: str(data.code, "code", 60),
+        message: str(data.message, "message", 400),
+        ...(typeof data.until === "string" && !Number.isNaN(Date.parse(data.until)) ? { until: data.until } : {}),
+      };
     case "done":
       return {
         type: "done",
@@ -197,7 +202,7 @@ export async function* readSse(body: ReadableStream<Uint8Array>): AsyncGenerator
 
 /**
  * `POST /v1/tenants/{tenant}/assistant/messages`: the owner's message in, the assistant's answer out as a stream of events. Throws before the first event when the API refuses
- * (ApiRequestError with the API's fixed sentence: 409 agents_disabled, 429 cost_cap_reached or run_limit_reached, 403 forbidden, 422, 409 message_id_used, 503 assistant_unavailable).
+ * (ApiRequestError with the API's fixed sentence: 409 agents_disabled, 429 ai_paused_until (with `until`, see lib/api/ai-usage.ts) or run_limit_reached, 403 forbidden, 422, 409 message_id_used, 503 assistant_unavailable).
  */
 export async function* sendAssistantMessage(accessToken: string, tenantId: string, input: SendAssistantInput): AsyncGenerator<AssistantEvent> {
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(input.messageId) || (input.conversationId !== undefined && !isCanonicalUuid(input.conversationId))) throw new ApiContractError("id");

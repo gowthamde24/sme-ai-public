@@ -15,6 +15,8 @@ class FakeTodayRepository:
         self.today: dict[uuid.UUID, Any] = {}
         self.agents: dict[uuid.UUID, Any] = {}
         self.cost: dict[uuid.UUID, Any] = {}
+        self.percent: dict[uuid.UUID, Any] = {}
+        self.paused: dict[uuid.UUID, Any] = {}
         self.calls: list[tuple[str, str, uuid.UUID]] = []
         self.raise_on_next: RepositoryError | None = None
 
@@ -33,6 +35,12 @@ class FakeTodayRepository:
 
     def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._go("ai_usage", token, tenant_id, self.cost)
+
+    def ai_usage_percent(self, token: str, tenant_id: uuid.UUID) -> Any:
+        return self._go("ai_usage_percent", token, tenant_id, self.percent)
+
+    def paused_until(self, token: str, tenant_id: uuid.UUID) -> Any:
+        return self._go("paused_until", token, tenant_id, self.paused)
 
 
 def empty_today() -> dict[str, Any]:

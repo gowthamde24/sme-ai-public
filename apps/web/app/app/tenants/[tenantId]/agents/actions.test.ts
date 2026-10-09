@@ -74,7 +74,7 @@ describe("agent actions", () => {
       [409, "token_expiring", /session/],
       [409, "conflict", /out of date/],
       [429, "run_limit_reached", /Too many/],
-      [429, "cost_cap_reached", /spending limit/],
+      [429, "ai_paused_until", /AI help is paused/],
       [503, "agents_unavailable", /not available right now/],
       [500, "http_error", /Could not start/],
     ];
@@ -115,7 +115,7 @@ describe("agent actions", () => {
       [409, "lead_has_no_company", /no company/],
       [409, "company_has_no_website", /no website/],
       [503, "agents_unavailable", /not available right now/],
-      [429, "cost_cap_reached", /spending limit/],
+      [429, "ai_paused_until", /AI help is paused/],
     ];
     for (const [status, code, message] of cases) {
       startResearchRun.mockRejectedValueOnce(new ApiRequestError(status, code, "CANARY-body"));

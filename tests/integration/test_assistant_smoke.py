@@ -322,11 +322,11 @@ def test_the_injection_question_fails_if_anything_was_made_or_claimed() -> None:
 
 
 def test_a_refusal_before_the_stream_or_an_error_event_is_a_fail_with_the_reason() -> None:
-    capped = smoke.evaluate(Q["today"], 429, [], ZERO, ZERO, {0}, "cost_cap_reached")
+    capped = smoke.evaluate(Q["today"], 429, [], ZERO, ZERO, {0}, "ai_paused_until")
     assert (
         capped[0].ok is False
         and "429" in capped[0].detail
-        and "cost_cap_reached" in capped[0].detail
+        and "ai_paused_until" in capped[0].detail
     )
     broke = smoke.evaluate(
         Q["today"],

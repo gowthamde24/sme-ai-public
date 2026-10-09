@@ -14,6 +14,8 @@ export class ApiRequestError extends Error {
     message: string,
     /** A closed reason code the API adds to a refusal of the lifecycle's rules (orders); never free text. */
     readonly reason?: string,
+    /** `ai_paused_until` only: the ISO time the AI features can be used again (the allowance of the day or the month is used up). */
+    readonly until?: string,
   ) {
     super(message);
   }
@@ -88,6 +90,11 @@ function apiBaseUrl(): string {
   return base.replace(/\/+$/, "");
 }
 
+function untilOf(err: ApiError["error"] | null): string | undefined {
+  const until = err ? (err as unknown as { until?: unknown }).until : undefined;
+  return typeof until === "string" && until.length <= 40 ? until : undefined;
+}
+
 function reasonOf(err: ApiError["error"] | null): string | undefined {
   const reason = err ? (err as unknown as { reason?: unknown }).reason : undefined;
   return typeof reason === "string" ? reason : undefined;
@@ -136,6 +143,7 @@ export async function apiRequest(
       err && isString(err.code) ? err.code : "http_error",
       err && isString(err.message) ? err.message : "Request failed.",
       reasonOf(err),
+      untilOf(err),
     );
   }
   return body;
@@ -208,6 +216,8 @@ export async function apiStreamRequest(path: string, accessToken: string, body: 
       response.status,
       err && isString(err.code) ? err.code : "http_error",
       err && isString(err.message) ? err.message : "Request failed.",
+      undefined,
+      untilOf(err),
     );
   }
   if (!response.body) throw new ApiContractError("The stream has no body.");
