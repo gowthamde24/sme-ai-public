@@ -115,6 +115,12 @@ function screens(d) {
     ["account", "/app"],
     ["security", "/app/security"],
     ["home", T],
+    ["customers", `${T}?tab=companies`],
+    ["quotes", `${T}/quotes`],
+    ["office", `${T}/office`],
+    ["settings", `${T}/settings`],
+    ["settings-members", `${T}/settings?section=members`],
+    ["integrations", `${T}/integrations`],
     ["home-leads", `${T}?tab=leads`],
     ["review", `${T}/review`],
     ["lead", d.lead && `${T}/leads/${d.lead}`],
@@ -146,28 +152,13 @@ function screens(d) {
   return all.filter(([name, url]) => url && (ONLY.length === 0 || ONLY.includes(name)));
 }
 
-/** Frame states that need a click (only with --interactions): the phone's "More" list, the workspace switcher (and its add form), the account menu, a closed group opened, the add-a-company form. */
+/** Frame states that need a click (only with --interactions): the phone's "More" sheet, the business switcher (only for someone with two or more), the user menu, the add-a-company form (Job AC: the menu has no closed groups and the switcher has no add form any more). */
 const INTERACTIONS = (d) => [
   ["frame-more", "phone", `${d.T}/orders`, async (page) => page.getByRole("button", { name: "More" }).click()],
-  ["frame-more-open", "phone", `${d.T}/orders`, async (page) => {
-    await page.getByRole("button", { name: "More" }).click();
-    await page.getByRole("dialog").locator("summary", { hasText: /Catalogue/ }).click();
-  }],
   ["frame-switcher", "desktop", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
-  ["frame-switcher-add", "desktop", `${d.T}/review`, async (page) => {
-    await page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 });
-    await page.getByRole("button", { name: "Add a workspace" }).first().click();
-  }],
-  ["frame-switcher-phone", "phone", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 })],
-  ["frame-switcher-add", "phone", `${d.T}/review`, async (page) => {
-    await page.locator("summary:visible", { hasText: "Switch workspace" }).click({ timeout: 3000 });
-    await page.getByRole("button", { name: "Add a workspace" }).first().click();
-  }],
-  ["frame-group-open", "desktop", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: /Catalogue/ }).click()],
   ["item-types-edit", "desktop", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
   ["item-types-edit", "phone", `${d.T}/item-types`, async (page) => page.locator("summary", { hasText: /^Edit / }).first().click()],
   ["frame-account", "desktop", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Your account" }).click()],
-  ["frame-account", "phone", `${d.T}/review`, async (page) => page.locator("summary:visible", { hasText: "Your account" }).click()],
   ["add-company", "desktop", `${d.T}?tab=companies`, async (page) => page.getByRole("button", { name: "Add a company" }).click()],
   ["add-company", "phone", `${d.T}?tab=companies`, async (page) => page.getByRole("button", { name: "Add a company" }).click()],
 ];
