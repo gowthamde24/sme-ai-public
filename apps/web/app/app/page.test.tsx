@@ -6,6 +6,7 @@ import { redirectMock, redirectTarget } from "@/test/helpers";
 
 const requireUser = vi.fn();
 const fetchMe = vi.fn();
+const fetchAccountSetup = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
@@ -15,6 +16,7 @@ vi.mock("@/lib/api/client", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/client")>()),
   fetchMe: (token: string) => fetchMe(token),
 }));
+vi.mock("@/lib/api/account", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/account")>()), fetchAccountSetup: (...a: unknown[]) => fetchAccountSetup(...a) }));
 vi.mock("./actions", () => ({ signOut: vi.fn(), createTenantAction: vi.fn() }));
 
 import AppPage from "./page";
@@ -35,6 +37,7 @@ describe("/app page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     requireUser.mockResolvedValue(USER);
+    fetchAccountSetup.mockResolvedValue({ state: "none", tenantId: null, businessName: null });
   });
 
   it("renders the real memberships returned by /v1/me, fetched with the user's token", async () => {
@@ -69,6 +72,37 @@ describe("/app page", () => {
   it("one subscriber is one business: with exactly one workspace there is no list, the person goes to its Today", async () => {
     fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [{ role: "owner", tenant: TENANT }] });
     expect(await redirectTarget(() => AppPage())).toBe(`/app/tenants/${TENANT.id}`);
+  });
+
+  it("a confirmed account with no business yet goes to the set-up screen", async () => {
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [] });
+    fetchAccountSetup.mockResolvedValue({ state: "needed", tenantId: null, businessName: "Asha Silks" });
+    expect(await redirectTarget(() => AppPage())).toBe("/setup");
+    expect(fetchAccountSetup).toHaveBeenCalledWith("tok");
+  });
+
+  it("does not ask about set-up for anyone who has a workspace, whether one or several", async () => {
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [{ role: "owner", tenant: TENANT }] });
+    await redirectTarget(() => AppPage());
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [{ role: "owner", tenant: TENANT }, { role: "viewer", tenant: SECOND }] });
+    render(await AppPage());
+    expect(fetchAccountSetup).not.toHaveBeenCalled();
+  });
+
+  it("an invited person with no workspace yet (nothing to set up), or a set-up state that cannot be read, sees the empty list, not the set-up screen", async () => {
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [] });
+    render(await AppPage());
+    expect(screen.getByText(/do not belong to a workspace yet/i)).toBeInTheDocument();
+    document.body.innerHTML = "";
+    fetchAccountSetup.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "down"));
+    render(await AppPage());
+    expect(screen.getByText(/do not belong to a workspace yet/i)).toBeInTheDocument();
+  });
+
+  it("a rejected session while reading the set-up state goes to /login", async () => {
+    fetchMe.mockResolvedValue({ user_id: USER.id, memberships: [] });
+    fetchAccountSetup.mockRejectedValue(new ApiAuthError("expired"));
+    expect(await redirectTarget(() => AppPage())).toBe("/login");
   });
 
   it("explains an empty state instead of inventing data", async () => {

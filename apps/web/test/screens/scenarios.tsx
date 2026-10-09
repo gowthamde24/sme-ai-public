@@ -15,6 +15,7 @@ import { parseQuote, parseQuoteSummary, parseQuoteText, parseSetup } from "@/lib
 import { MANUAL_QUOTE_JSON, MANUAL_SUMMARY_JSON, QUOTE_JSON, SETUP_JSON, SUMMARY_JSON, TEXT_JSON } from "@/lib/api/quotes-fixtures";
 import { parseOrderPage as parseOrders } from "@/lib/api/orders";
 import { parsePlan } from "@/lib/api/plan";
+import { parseAccountSetup } from "@/lib/api/account";
 import { parseAiUsage } from "@/lib/api/today";
 import { agentsStatus, todayFor } from "./today-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
@@ -70,6 +71,18 @@ add({
   handlers: (role) => ({
     fetchMe: () => parseMe({ user_id: "11111111-1111-4111-8111-111111111111", memberships: [{ role, tenant: { id: TENANT, name: "Demo Silks (synthetic)", slug: "demo-silks" } }, { role: "viewer", tenant: { id: "22222222-2222-2222-2222-222222222223", name: "Second shop (synthetic)", slug: "second-shop" } }] }),
   }),
+});
+add({
+  id: "account-just-signed-up",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/page")).default(),
+  handlers: () => ({ fetchMe: () => parseMe({ user_id: "11111111-1111-4111-8111-111111111111", memberships: [] }), fetchAccountSetup: () => parseAccountSetup({ state: "needed", tenant_id: null, business_name: "Demo Silks (synthetic)" }) }),
+});
+add({
+  id: "account-invited-no-workspace",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/page")).default(),
+  handlers: () => ({ fetchMe: () => parseMe({ user_id: "11111111-1111-4111-8111-111111111111", memberships: [] }), fetchAccountSetup: () => parseAccountSetup({ state: "none", tenant_id: null, business_name: null }) }),
 });
 add({
   id: "account-security",

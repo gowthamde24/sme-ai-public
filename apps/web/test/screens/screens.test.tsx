@@ -43,6 +43,7 @@ vi.mock("@/lib/api/item-types", async (orig) => (await import("./state")).wrap(a
 vi.mock("@/lib/api/lead-contact", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/lead-contact")>(), ["fetchLeadContactId"]));
 vi.mock("@/lib/api/leads", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/leads")>(), ["fetchReviewQueue", "fetchActiveIcpConfig"]));
 vi.mock("@/lib/api/orders", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/orders")>(), ["fetchOrders", "fetchOrder", "fetchMembers"]));
+vi.mock("@/lib/api/account", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/account")>(), ["fetchAccountSetup"]));
 vi.mock("@/lib/api/plan", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/plan")>(), ["getPlan"]));
 vi.mock("@/lib/api/today", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/today")>(), ["getToday", "getAiUsageToday", "getAgentsStatus"]));
 vi.mock("@/lib/api/quote-policies", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quote-policies")>(), ["fetchQuotePolicyVersions"]));
