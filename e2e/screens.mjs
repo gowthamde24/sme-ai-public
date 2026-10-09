@@ -35,6 +35,8 @@ const BASE = arg("base", process.env.E2E_WEB_URL || "http://localhost:3000").rep
 const BATCH = arg("batch", "adhoc");
 const LANG = arg("lang", "en"); // en | te | hi | kn: the language cookie of the pictures
 const OUT = path.resolve(arg("out", path.join(HERE, "shots", BATCH)));
+// --cookie name=value (repeatable): an extra cookie for every picture (a throwaway preview of the frame as another role uses it; the real app ignores it)
+const EXTRA_COOKIES = process.argv.flatMap((a, i) => (a === "--cookie" && process.argv[i + 1]?.includes("=") ? [process.argv[i + 1]] : [])).map((c) => ({ name: c.split("=")[0], value: c.slice(c.indexOf("=") + 1) }));
 const ONLY = arg("only", "")
   .split(",")
   .map((s) => s.trim())
@@ -192,6 +194,7 @@ async function main() {
         await context.addCookies([
           { name: "sme_theme", value: scheme, url: BASE },
           { name: "sme_lang", value: LANG, url: BASE },
+          ...EXTRA_COOKIES.map((c) => ({ ...c, url: BASE })),
         ]);
         const page = await context.newPage();
         for (const [name, url] of list) {
@@ -219,7 +222,7 @@ async function main() {
       for (const [name, vpName, url, act] of INTERACTIONS(d)) {
         for (const scheme of SCHEMES) {
           const context = await browser.newContext({ storageState: state, viewport: VIEWPORTS[vpName], colorScheme: scheme, isMobile: vpName === "phone", hasTouch: vpName === "phone" });
-          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: LANG, url: BASE }]);
+          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: LANG, url: BASE }, ...EXTRA_COOKIES.map((c) => ({ ...c, url: BASE }))]);
           const page = await context.newPage();
           try {
             await page.goto(`${BASE}${url}`, { waitUntil: "load", timeout: 60000 });
