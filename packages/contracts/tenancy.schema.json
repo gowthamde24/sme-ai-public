@@ -43,6 +43,20 @@
         "role": { "$ref": "#/$defs/Role" }
       }
     },
+    "TenantWithPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "slug", "role", "plan", "workspace_limit", "trial_started_at"],
+      "properties": {
+        "id": { "$ref": "#/$defs/Uuid" },
+        "name": { "type": "string" },
+        "slug": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$" },
+        "role": { "$ref": "#/$defs/Role" },
+        "plan": { "type": "string", "enum": ["free_trial"] },
+        "workspace_limit": { "type": "integer", "minimum": 1 },
+        "trial_started_at": { "type": "string", "format": "date-time" }
+      }
+    },
     "Me": {
       "type": "object",
       "additionalProperties": false,

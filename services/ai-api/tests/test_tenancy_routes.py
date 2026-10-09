@@ -151,8 +151,39 @@ def test_foreign_tenant_is_404_on_every_tenant_route_for_every_role(suffix: str)
 def test_member_can_read_own_tenant() -> None:
     client, _ = make_client()
     body = client.get(f"/v1/tenants/{TENANT_A.id}", headers=auth("a_viewer")).json()
-    validate(body, "TenantDetail")
+    validate(body, "TenantWithPlan")
     assert (body["slug"], body["role"]) == ("tenant-a", "viewer")
+
+
+def test_the_tenant_read_carries_the_plan_for_every_role() -> None:
+    client, repository = make_client()
+    for user in ("a_owner", "a_admin", "a_sales", "a_viewer"):
+        body = client.get(f"/v1/tenants/{TENANT_A.id}", headers=auth(user)).json()
+        validate(body, "TenantWithPlan")
+        assert (body["plan"], body["workspace_limit"]) == ("free_trial", 1), user
+        assert body["trial_started_at"].startswith("2026-10-01T09:00:00"), user
+    assert repository.tokens_seen, "the plan was read through the repository, with a token"
+
+
+def test_the_plan_is_read_with_the_callers_own_token_and_a_foreign_tenant_still_404s() -> None:
+    client, repository = make_client()
+    headers = auth("a_viewer")
+    assert client.get(f"/v1/tenants/{TENANT_A.id}", headers=headers).status_code == 200
+    assert repository.tokens_seen[-1] == headers["Authorization"].removeprefix("Bearer ")
+    assert client.get(f"/v1/tenants/{TENANT_B.id}", headers=auth("a_viewer")).status_code == 404
+
+
+def test_create_tenant_past_the_workspace_limit_is_a_clear_409() -> None:
+    client, repository = make_client()
+    repository.raise_on_next = repo.WorkspaceLimitReached("SM307")
+    response = client.post(
+        "/v1/tenants", json={"name": "Second Co", "slug": "second-co"}, headers=auth("a_owner")
+    )
+    assert response.status_code == 409
+    body = response.json()
+    validate(body, "Error")
+    assert body["error"]["code"] == "workspace_limit_reached"
+    assert "one workspace" in body["error"]["message"]
 
 
 def test_members_visible_to_any_member_and_matches_contract() -> None:

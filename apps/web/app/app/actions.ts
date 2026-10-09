@@ -38,7 +38,13 @@ export async function createTenantAction(
     await createTenant(user.accessToken, name, slug);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    if (error instanceof ApiRequestError && error.status === 409) {
+    if (
+      error instanceof ApiRequestError &&
+      error.code === "workspace_limit_reached"
+    ) {
+      // The free trial includes one workspace per owner (job AD, D1). The API's sentence is fixed and plain.
+      failure = { error: error.message };
+    } else if (error instanceof ApiRequestError && error.status === 409) {
       failure = { error: "That URL name is not available." };
     } else if (error instanceof ApiRequestError && error.status === 422) {
       failure = { error: "Check the name and URL name and try again." };

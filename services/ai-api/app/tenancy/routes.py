@@ -12,6 +12,7 @@ from app.tenancy.models import (
     MeOut,
     Role,
     TenantDetailOut,
+    TenantWithPlanOut,
 )
 
 router = APIRouter(prefix="/v1", tags=["tenancy"])
@@ -32,10 +33,17 @@ def create_tenant(
     return TenantDetailOut(id=tenant.id, name=tenant.name, slug=tenant.slug, role=Role.OWNER)
 
 
-@router.get("/tenants/{tenant_id}", response_model=TenantDetailOut)
-def get_tenant(ctx: AnyMember) -> TenantDetailOut:
-    return TenantDetailOut(
-        id=ctx.tenant.id, name=ctx.tenant.name, slug=ctx.tenant.slug, role=ctx.role
+@router.get("/tenants/{tenant_id}", response_model=TenantWithPlanOut)
+def get_tenant(ctx: AnyMember, runtime: RuntimeDep) -> TenantWithPlanOut:
+    plan = runtime.repository.get_plan(ctx.principal.token, ctx.tenant.id)
+    return TenantWithPlanOut(
+        id=ctx.tenant.id,
+        name=ctx.tenant.name,
+        slug=ctx.tenant.slug,
+        role=ctx.role,
+        plan=plan.plan,
+        workspace_limit=plan.workspace_limit,
+        trial_started_at=plan.trial_started_at,
     )
 
 

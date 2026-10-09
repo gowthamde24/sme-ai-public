@@ -5,7 +5,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime
 from enum import StrEnum
-from typing import Annotated, Any
+from typing import Annotated, Any, Literal
 
 from pydantic import BaseModel, ConfigDict, StringConstraints
 
@@ -43,6 +43,18 @@ class TenantDetailOut(TenantOut):
     """A tenant plus the caller's own role in it."""
 
     role: Role
+
+
+class TenantPlanOut(_Out):
+    """The plan of a business (job AD / D1). Read-only for clients: only the operator changes it."""
+
+    plan: Literal["free_trial"]
+    workspace_limit: int
+    trial_started_at: datetime
+
+
+class TenantWithPlanOut(TenantDetailOut, TenantPlanOut):
+    """GET /v1/tenants/{id}: the tenant, the caller's role in it, and the plan."""
 
 
 class MemberOut(_Out):

@@ -31,6 +31,7 @@ from app.tenancy.models import (
     MeOut,
     Role,
     TenantOut,
+    TenantPlanOut,
 )
 from app.tenancy.repository import RepositoryError
 from tests.keys import AUDIENCE, ISSUER, claims, make_ec_key, mint
@@ -56,6 +57,7 @@ class FakeRepository:
     membership_lookups: list[tuple[uuid.UUID, uuid.UUID]] = field(default_factory=list)
     raise_on_next: RepositoryError | None = None
     created: dict[str, tuple[uuid.UUID, TenantOut]] = field(default_factory=dict)
+    plans: dict[uuid.UUID, TenantPlanOut] = field(default_factory=dict)
 
     def _maybe_raise(self) -> None:
         if self.raise_on_next is not None:
@@ -91,6 +93,15 @@ class FakeRepository:
         tenant = TenantOut(id=uuid.uuid4(), name=name, slug=slug)
         self.created[slug] = (uuid.uuid4(), tenant)
         return tenant
+
+    def get_plan(self, token: str, tenant_id: uuid.UUID) -> TenantPlanOut:
+        self.tokens_seen.append(token)
+        self._maybe_raise()
+        return self.plans.get(tenant_id) or TenantPlanOut(
+            plan="free_trial",
+            workspace_limit=1,
+            trial_started_at=datetime(2026, 10, 1, 9, 0, tzinfo=UTC),
+        )
 
     def list_members(self, token: str, tenant_id: uuid.UUID) -> MemberListOut:
         self.tokens_seen.append(token)

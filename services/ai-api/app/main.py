@@ -127,6 +127,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     repo.MfaRequired: mfa_required(),
     repo.InvalidInput: ApiError(422, "validation_error", "Invalid input."),
     repo.SlugUnavailable: ApiError(409, "slug_unavailable", "That slug is not available."),
+    repo.WorkspaceLimitReached: ApiError(
+        409,
+        "workspace_limit_reached",
+        "Your plan includes one workspace and you already have it. "
+        "Ask us if you need another.",
+    ),
     # CRM. Deliberately generic: none of these bodies carries a field name, a value, or a hint
     # about whether an id exists in another tenant.
     crm_repo.NotFoundError: ApiError(404, "not_found", "Not found."),

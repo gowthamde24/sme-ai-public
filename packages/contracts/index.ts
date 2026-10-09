@@ -23,6 +23,14 @@ export interface TenantDetail extends Tenant {
   role: Role;
 }
 
+/** GET /v1/tenants/{id}: the tenant, the caller's role, and the plan (job AD / D1). Read-only for clients. */
+export interface TenantWithPlan extends TenantDetail {
+  plan: "free_trial";
+  workspace_limit: number;
+  /** ISO 8601 */
+  trial_started_at: string;
+}
+
 export interface Me {
   user_id: string;
   memberships: { tenant: Tenant; role: Role }[];
