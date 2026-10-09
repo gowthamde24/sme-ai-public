@@ -68,27 +68,31 @@ The frame is built from `components/v2/app/*` (new folder, like `components/v2/a
 
 ### 2.2 Navigation groups (shopkeeper words) and who sees what
 
-A group with no visible item is hidden. Visibility is a convenience only: the page, the API and the database stay the gate, as the pages already say.
+**Simplified on 2026-10-09 (Job X, the owner's feedback after seeing the first version): six top-level entries, daily groups always open, rarely used groups closed until opened.** The table below replaces the first one. A group with no visible item is hidden; a group a role has ONE item of is drawn as a plain link. Visibility is a convenience only: the page, the API and the database stay the gate, as the pages already say.
 
 | Group | Item (the words on screen) | Goes to | Owner | Admin | Sales | Viewer |
 |---|---|---|---|---|---|---|
-| **Today** | Today | workspace home | yes | yes | yes | yes |
-| **Customers** | Leads to look at | `/review` | yes | yes | yes | yes |
-| | Companies and contacts | home records tabs | yes | yes | yes | yes |
+| **Today** | Home | workspace home | yes | yes | yes | yes |
+| | Follow-ups due | `/followups` (the rules page `/followups/policy` is linked from it) | yes | yes | yes | no |
+| **Leads and orders** | Leads to look at | `/review` | yes | yes | yes | yes |
+| | Orders | `/orders` | yes | yes | yes | no |
+| **Customers** | Companies and contacts | home records tabs | yes | yes | yes | yes |
 | | Add a customer | `/customers/new` | yes | yes | yes | no |
-| **Quotes and orders** | Orders | `/orders` | yes | yes | yes | no |
-| | (Quotes) | made from a customer's enquiry; no list exists, so no menu item (gap above) | | | | |
-| **Follow-ups** | Due now | `/followups` | yes | yes | yes | no |
-| | Rules for follow-ups | `/followups/policy` | yes | yes | yes | no |
-| **Catalogue** | Item types | `/item-types` | yes | yes | yes | no |
+| **Catalogue and prices** (opens and closes) | Item types | `/item-types` | yes | yes | yes | no |
 | | Price list | `/price-list` | yes | yes | no | no |
 | | Add a product | `/products/new` | yes | yes | no | no |
+| | Quote policy | `/quote-policy` | yes | yes | no | no |
 | **Assistant** | Suggestions | `/suggestions` | yes | yes | yes | yes |
 | | Agents | `/agents` | yes | yes | yes | yes |
-| **Settings** | Quote policy | `/quote-policy` | yes | yes | no | no |
-| | Privacy and erasure | `/privacy` | yes | yes | no | no |
+| **Privacy and safety** (opens and closes; the name stays English until a person reviews it) | Privacy and erasure | `/privacy` | yes | yes | no | no |
 | | Suppression keys | `/suppression` | yes | no | no | no |
 | | Security (your account) | `/app/security` | yes | yes | yes | yes |
+
+(Quotes: made from a customer's enquiry; no list exists, so no menu item: see open question 14. **Your team: no page and no API exist yet** (`docs/plans/members-and-invitations.md` is plan only), so there is no menu item; the table is one entry away from having it.)
+
+Where things sit (the same on every screen): the workspace switcher at the top of the side menu (the person's workspaces, then ONE row "Add a workspace" that opens the create form in place), the groups in the scrolling middle, the account menu (Security, All workspaces, Sign out) at the bottom. On a phone the switcher and the account button stay in the top bar; the bottom bar has Today, Follow-ups, Leads, Orders and More, and More opens the same groups. A group that opens and closes remembers what the person chose, in this browser only.
+
+Long screens (more than two screens tall on a laptop or four on a phone) show one part at a time, with the parts as real links (`?section=`): the enquiry (Request, Make a quote, Quote, Send and order), the lead (Overview, Evidence, Suggestions), the company (Details, Evidence, Suggestions). `?section=all` draws every part as before. Item types, the quote policy and the workspace home keep their long forms behind a button ("Add an item type", "Publish a new version", "Add a company").
 
 "Agents" keeps its current on-screen word because pages and the e2e script use it. The group is called "Assistant". The Telugu names for the groups are decided in the language batch (section 5). The menu is one table in one file with a test that pins it to the table above, so a role change in a page cannot silently disagree with the menu.
 
