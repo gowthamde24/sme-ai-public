@@ -83,7 +83,7 @@ def reserve(
 
 
 def spent(tenant: Tenant) -> int:
-    """What the tenant's agents have spent or reserved today (UTC), read as the operator."""
+    """What the tenant's agents have spent or reserved today (India time), read as the operator."""
     return int(
         operator_sql.sql(f"select app.agent_day_spend('{tenant.id}', app.agent_utc_today())")
     )
@@ -228,6 +228,7 @@ def test_a_cap_filled_by_another_tenant_is_not_ours(on: World) -> None:
     "name",
     [
         "agent_utc_today",
+        "agent_cost_day",
         "agent_cost_micros",
         "agent_daily_cap",
         "agent_day_spend",

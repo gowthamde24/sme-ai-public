@@ -867,3 +867,11 @@ reads (`buyer_type`, `order_scale`, `size_band`, `operating_status`), each a val
 Before the first live model call of ANY agent, an agent definition's `max_cost_micros` and `max_output_tokens` are reconciled with the chosen model's `agent_model_prices` row so the worst-case reservation of that agent's largest input fits (the
 reservation bounds a call's input by the UTF-8 bytes it sends plus a fixed overhead, "T007 M2 note: the daily cost cap" above). For the Requirement Agent the numbers and the proposal (`max_output_tokens` 2,500) are in ADR 0018 and the checklist row
 "LIVE-BATCH COST RECONCILIATION" in `docs/pre-pilot-checklist.md`.
+
+### Addendum (job AF, 2026-10-09): the cost day is the Asia/Kolkata day
+The daily cap above is counted per **Asia/Kolkata** day, not per UTC day, so the usage card (job AD, `public.ai_usage_today`) and the limit always agree. One
+function decides the day (`app.agent_utc_today()`, whose name is kept as the clock seam; it is now `app.agent_cost_day(now())`, the Indian date of an instant).
+Nothing else changes: the default, "a call belongs to the day it was authorised", settling never moves it, an open reservation counts at its worst case
+until its (now Indian) day ends. Reservations recorded before the change were re-dated to the Indian date of their own `created_at`. Wherever this ADR says
+"UTC day", read "Asia/Kolkata day".
+

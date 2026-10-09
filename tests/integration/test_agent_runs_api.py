@@ -1175,7 +1175,7 @@ def test_a_full_day_refuses_a_new_run_with_a_fixed_message_and_creates_nothing(a
         body = r.json()["error"]
         assert body["code"] == "cost_cap_reached"
         assert body["message"] == (
-            "This workspace's agents have used today's spending limit. Try again tomorrow (UTC)."
+            "This workspace's agents have used today's spending limit. Try again tomorrow (India time)."
         )
         assert "SM207" not in r.text and "micros" not in r.text
         after = api.client.get(url(w.a, "/agent-runs"), headers=bearer(owner)).json()["items"]

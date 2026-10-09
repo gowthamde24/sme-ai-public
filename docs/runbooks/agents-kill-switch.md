@@ -82,7 +82,7 @@ select status, count(*) from public.agent_runs where created_at > now() - interv
 To turn agents back on, set the flag back to `true`, **and** check that the workspace switches and the agent's allow-list
 (`agent_definitions.allowed_tenants`) are what you intend: a platform flag never opens an agent to a workspace by itself.
 
-## Spending cap (per workspace, per UTC day)
+## Spending cap (per workspace, per Asia/Kolkata day since job AF)
 
 Each workspace's agents may spend at most the **daily cost cap** (default 2.00; the Owner can set 0 to 20.00 for their workspace with
 `set_tenant_daily_cost_cap`). A model call is reserved **before** it is made; when the day is full runs end as `failed` / `budget`, new
@@ -110,7 +110,7 @@ select created_at, entity_id as run_id, new_values from public.audit_events
  order by id desc limit 20;
 ```
 
-Open (never settled) reservations of a workspace, with their run's status. An open reservation counts at its WORST case until its UTC day ends
+Open (never settled) reservations of a workspace, with their run's status. An open reservation counts at its WORST case until its Indian day ends
 (a cancelled, expired or crashed run, or a call whose outcome is unknown); the Owner sees the same in the Agents page and `GET /agent-cost`:
 
 ```sql

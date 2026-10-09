@@ -399,7 +399,7 @@ export function parseAgentCost(json: unknown): AgentCostOut {
   };
 }
 
-/** Today's (UTC) agent spending of the workspace, for its Owner / Admin: settled, and still open (counted at the worst case). */
+/** Today's (the Asia/Kolkata day) agent spending of the workspace, for its Owner / Admin: settled, and still open (counted at the worst case). */
 export async function fetchAgentCost(accessToken: string, tenantId: string): Promise<AgentCostOut> {
   checked(tenantId);
   return parseAgentCost(await apiRequest(`/v1/tenants/${tenantId}/agent-cost`, accessToken));

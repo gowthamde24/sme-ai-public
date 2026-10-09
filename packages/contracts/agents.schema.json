@@ -66,7 +66,7 @@
     },
     "AgentCostOut": {
       "additionalProperties": false,
-      "description": "Today's (UTC) agent spending of a workspace, for its Owner / Admin. Amounts are millionths of\nthe billing currency. `open_micros` is counted at the worst case, not at what was spent.",
+      "description": "Today's (Indian day) agent spending of a workspace, for its Owner / Admin.\n\nAmounts are millionths of the billing currency. `open_micros` is counted at the worst\ncase, not at what was spent.",
       "properties": {
         "day": {
           "format": "date",
@@ -830,7 +830,7 @@
     },
     "OpenReservationOut": {
       "additionalProperties": false,
-      "description": "A model call that was reserved and never settled: it keeps counting at its worst case until\nits UTC day ends. `run_status` says whether its run is still running.",
+      "description": "A model call that was reserved and never settled: it keeps counting at its worst case until\nits (Asia/Kolkata) day ends. `run_status` says whether its run is still running.",
       "properties": {
         "run_id": {
           "format": "uuid",

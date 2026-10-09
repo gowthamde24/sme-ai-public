@@ -6,9 +6,9 @@ Agents are off for this workspace.
 form:
 <hidden name=enabled value=true>
 [button type=submit: Turn agents on]
-{label="Today's agent spending (UTC)"}
-## Today's agent spending (UTC)
-Settled 0.0004 + open 0.0009 of a daily cap of 2 ( 2026-10-04 ). Amounts are in the billing currency. Open means a model call that was reserved and never settled (its run was cancelled, expired, switched off or interrupted, or the provider's answer was lost). It is counted at its worst case until midnight UTC, because nobody can tell whether it was billed.
+{label="Today's agent spending (India time)"}
+## Today's agent spending (India time)
+Settled 0.0004 + open 0.0009 of a daily cap of 2 ( 2026-10-04 ). Amounts are in the billing currency. Open means a model call that was reserved and never settled (its run was cancelled, expired, switched off or interrupted, or the provider's answer was lost). It is counted at its worst case until midnight India time, because nobody can tell whether it was billed.
 - Open 0.0009 · run running · s1 · Oct 4, 2026, 5:30 PM (2 days ago)
 {label="Runs"}
 ## Runs

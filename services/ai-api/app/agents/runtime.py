@@ -87,7 +87,7 @@ class _Stop(Exception):
 #   rate_limited    HTTP 429: the provider refused before processing
 #   rejected        any other 4xx: the request itself was refused (bad key, bad request)
 #   not_configured  nothing was sent at all
-# Every OTHER failure leaves the reservation open at its worst case until its UTC day ends:
+# Every OTHER failure leaves the reservation open at its worst case until its Indian day ends:
 #   unavailable     a transport error or a 5xx: the request may have been processed
 #   timeout         the provider may have finished the call after we stopped waiting
 #   bad_response    the call completed and was billed, but its usage could not be read
@@ -250,7 +250,7 @@ class AgentRunner:
     def _release_if_not_billed(self, step_key: str, code: str) -> None:
         """Settle the call's reservation at ZERO when the failure proves the provider never billed
         it. Every other failure leaves the reservation OPEN: it keeps counting at its worst case
-        until its UTC day ends (ADR 0013, "Open reservations"). See NOT_BILLED."""
+        until its (Asia/Kolkata) day ends (ADR 0013, "Open reservations"). See NOT_BILLED."""
         if code not in NOT_BILLED:
             return
         try:

@@ -256,7 +256,7 @@ def explain_budget(row: dict[str, int]) -> str:
     """WHICH budget ended a run `failed/budget`. The runtime folds three database refusals into that one code (SM203 a per-run budget, SM206 a
     limit, SM207 the daily cost cap), so the run row alone does not say. This reads the counters the database keeps and names the first that is
     at its limit: a per-run budget, the tenant's writes of the last 24 hours (`max_writes_per_day`, shared by EVERY run of the tenant, whatever test
-    made it), or the tenant's spend of the UTC day against its cap. Pure: the caller supplies the numbers (tests/integration/test_eval_harness.py)."""
+    made it), or the tenant's spend of the Indian day against its cap. Pure: the caller supplies the numbers (tests/integration/test_eval_harness.py)."""
     counters = ", ".join(f"{name} {row[used]}/{row[mx]}" for name, used, mx in _RUN_BUDGETS)
     hit = [
         f"{name} {row[used]}/{row[mx]}"

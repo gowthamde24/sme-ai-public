@@ -45,6 +45,7 @@ APP_FUNCTIONS = [
     "guard_erased_row",
     # T007 M2 / 3: the daily cost cap (the clock helper among them)
     "agent_utc_today",
+    "agent_cost_day",  # job AF
     "agent_cost_micros",
     "agent_daily_cap",
     "agent_day_spend",

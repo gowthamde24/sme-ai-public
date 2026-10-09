@@ -32,7 +32,7 @@ describe("CostPanel", () => {
     expect(screen.getByText("2")).toBeInTheDocument();
     expect(screen.getByText(/run cancelled/)).toBeInTheDocument();
     expect(screen.getByText(/run running/)).toBeInTheDocument();
-    expect(screen.getByText(/counted at its worst case until midnight UTC/)).toBeInTheDocument();
+    expect(screen.getByText(/counted at its worst case until midnight India time/)).toBeInTheDocument();
   });
 
   it("says when nothing is open, and when the API could not be reached", () => {

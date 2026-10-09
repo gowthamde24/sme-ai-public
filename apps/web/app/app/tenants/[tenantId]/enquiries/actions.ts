@@ -60,7 +60,7 @@ function describe(error: unknown): string {
       case "received_in_future":
         return "An enquiry cannot be received in the future.";
       case "cost_cap_reached":
-        return "Today's spending limit for agents is used up. Try again tomorrow (UTC).";
+        return "Today's spending limit for agents is used up. Try again tomorrow (India time).";
       case "agents_disabled":
         return "Agents are not enabled for this workspace.";
       case "conflict":
