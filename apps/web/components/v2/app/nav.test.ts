@@ -9,7 +9,6 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
   Today: [
     ["Home", "", "today", [true, true, true, true]],
     ["Follow-ups due", "/followups", "followups-due", [true, true, true, false]],
-    ["Rules for follow-ups", "/followups/policy", "followups-policy", [true, true, true, false]],
   ],
   "Leads and orders": [
     ["Leads to look at", "/review", "review", [true, true, true, true]],
@@ -81,7 +80,7 @@ describe("which item a page belongs to", () => {
     expect(at(`/app/tenants/${T}`)).toBe("today");
     expect(at(`/app/tenants/${T}`, "leads")).toBe("records");
     expect(at(`/app/tenants/${T}/followups`)).toBe("followups-due");
-    expect(at(`/app/tenants/${T}/followups/policy`)).toBe("followups-policy");
+    expect(at(`/app/tenants/${T}/followups/policy`)).toBe("followups-due"); // no menu entry of its own: the due list links to it
     expect(at(`/app/tenants/${T}/orders/abc`)).toBe("orders");
     expect(at("/app/security")).toBe("security");
   });
