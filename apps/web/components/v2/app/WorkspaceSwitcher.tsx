@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 
 import { Disclosure } from "./Disclosure";
+import { word, type Labels } from "./labels";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const rowLink = "flex min-h-11 items-center justify-between gap-3 rounded-lg px-3 text-base text-ink hover:bg-surface-2";
@@ -12,9 +13,9 @@ const rowLink = "flex min-h-11 items-center justify-between gap-3 rounded-lg px-
  * The workspace name in the top bar, with a switcher. Choosing a workspace goes to THAT workspace's home, never to the same sub-page, so no id
  * of one workspace is ever carried into another. A person with one workspace sees the name and no arrow. Outside a workspace it says "Workspaces".
  */
-export function WorkspaceSwitcher({ memberships }: { memberships: readonly Membership[] }) {
+export function WorkspaceSwitcher({ memberships, labels }: { memberships: readonly Membership[]; labels?: Labels }) {
   const { current } = useWorkspace(memberships);
-  const name = current?.name ?? "Workspaces";
+  const name = current?.name ?? word(labels, "frame.workspaces", "Workspaces");
   const role = current ? <span className="hidden rounded-md sm:inline bg-brand-bg px-2 py-0.5 text-sm font-semibold text-brand-text">{current.role}</span> : null;
   if (memberships.length === 0)
     return (
@@ -39,11 +40,11 @@ export function WorkspaceSwitcher({ memberships }: { memberships: readonly Membe
           <span className="truncate font-display text-lg font-bold">{name}</span>
           {role}
           <ChevronDown className="size-4 shrink-0" aria-hidden="true" />
-          <span className="sr-only">Switch workspace</span>
+          <span className="sr-only">{word(labels, "frame.switch", "Switch workspace")}</span>
         </>
       }
     >
-      <ul aria-label="Your workspaces">
+      <ul aria-label={word(labels, "frame.yourworkspaces", "Your workspaces")}>
         {memberships.map((m) => (
           <li key={m.id}>
             <Link href={`/app/tenants/${m.id}`} className={rowLink} aria-current={current?.id === m.id ? "true" : undefined}>
@@ -55,10 +56,10 @@ export function WorkspaceSwitcher({ memberships }: { memberships: readonly Membe
       </ul>
       <div className="mt-1 border-t border-line pt-1">
         <Link href="/app" className={rowLink}>
-          All workspaces
+          {word(labels, "frame.all", "All workspaces")}
         </Link>
         <Link href="/app#create-workspace" className={rowLink}>
-          Create a workspace
+          {word(labels, "frame.create", "Create a workspace")}
         </Link>
       </div>
     </Disclosure>

@@ -9,8 +9,8 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 export const STRINGS_DIR = path.join(ROOT, "i18n/strings");
 export const LANGS = ["te", "hi", "kn"];
 export const LANG_NAMES = { te: "Telugu", hi: "Hindi", kn: "Kannada" };
-/** The string sets the port carries so far (landing and login). New sets are added with the stage that uses them. */
-export const SETS = ["landing", "login"];
+/** The string sets carried so far (landing, login, and app: the workspace frame). New sets are added with the stage that uses them. */
+export const SETS = ["landing", "login", "app"];
 
 export function loadSets(dir = STRINGS_DIR) {
   const out = {};
