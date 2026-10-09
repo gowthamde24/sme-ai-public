@@ -33,6 +33,7 @@ const arg = (name, fallback) => {
 };
 const BASE = arg("base", process.env.E2E_WEB_URL || "http://localhost:3000").replace(/\/+$/, "");
 const BATCH = arg("batch", "adhoc");
+const LANG = arg("lang", "en"); // en | te | hi | kn: the language cookie of the pictures
 const OUT = path.resolve(arg("out", path.join(HERE, "shots", BATCH)));
 const ONLY = arg("only", "")
   .split(",")
@@ -168,7 +169,7 @@ async function main() {
         const context = await browser.newContext({ storageState: state, viewport, colorScheme: scheme, deviceScaleFactor: 1, isMobile: vpName === "phone", hasTouch: vpName === "phone" });
         await context.addCookies([
           { name: "sme_theme", value: scheme, url: BASE },
-          { name: "sme_lang", value: "en", url: BASE },
+          { name: "sme_lang", value: LANG, url: BASE },
         ]);
         const page = await context.newPage();
         for (const [name, url] of list) {
@@ -196,7 +197,7 @@ async function main() {
       for (const [name, vpName, url, act] of INTERACTIONS(d)) {
         for (const scheme of SCHEMES) {
           const context = await browser.newContext({ storageState: state, viewport: VIEWPORTS[vpName], colorScheme: scheme, isMobile: vpName === "phone", hasTouch: vpName === "phone" });
-          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: "en", url: BASE }]);
+          await context.addCookies([{ name: "sme_theme", value: scheme, url: BASE }, { name: "sme_lang", value: LANG, url: BASE }]);
           const page = await context.newPage();
           try {
             await page.goto(`${BASE}${url}`, { waitUntil: "load", timeout: 60000 });

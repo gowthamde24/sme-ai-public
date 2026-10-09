@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 
 import { NavIcon } from "./icons";
+import { word, type Labels } from "./labels";
 import { TAB_GROUPS, groupHref, hrefOf, visibleGroups } from "./nav";
 import { itemClass, itemCurrent } from "./SideNav";
 import { useWorkspace, type Membership } from "./use-workspace";
@@ -16,7 +17,7 @@ const tabOn = "text-brand-text font-semibold";
  * The bottom bar on a phone (under 768px): Today, Customers, Quotes and orders, Follow-ups (each only when the role is offered something in it)
  * and "More", which opens every other group in a full-screen list. Respects the phone's safe area.
  */
-export function TabBar({ memberships }: { memberships: readonly Membership[] }) {
+export function TabBar({ memberships, labels }: { memberships: readonly Membership[]; labels?: Labels }) {
   const { current, pathname, active } = useWorkspace(memberships);
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -46,29 +47,29 @@ export function TabBar({ memberships }: { memberships: readonly Membership[] }) 
   const inRest = active ? rest.some((g) => g.id === active.group.id) : false;
   return (
     <>
-      <nav aria-label="Quick menu" className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
+      <nav aria-label={word(labels, "frame.menu.quick", "Quick menu")} className="flex border-t border-line bg-surface pb-[env(safe-area-inset-bottom)]">
         {tabs.map((g) => {
           const on = active?.group.id === g.id;
           return (
             <Link key={g.id} href={groupHref(g, current.id)} aria-current={on ? "page" : undefined} className={`${tab} ${on ? tabOn : ""}`}>
               <NavIcon name={g.icon} />
-              <span className={`text-center leading-tight ${/\s/.test(g.label) ? "" : "whitespace-nowrap"}`}>{g.label}</span>
+              <span className={`text-center leading-tight ${/\s/.test(word(labels, `nav.group.${g.id}`, g.label)) ? "" : "whitespace-nowrap"}`}>{word(labels, `nav.group.${g.id}`, g.label)}</span>
             </Link>
           );
         })}
         <button ref={moreRef} type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" aria-expanded={open} className={`${tab} ${inRest ? tabOn : ""}`}>
           <Ellipsis className="size-5" aria-hidden="true" />
-          <span>More</span>
+          <span>{word(labels, "frame.more", "More")}</span>
         </button>
       </nav>
       {open ? (
-        <div role="dialog" aria-modal="true" aria-label="All of the menu" className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg">
+        <div role="dialog" aria-modal="true" aria-label={word(labels, "frame.menu.all", "All of the menu")} className="fixed inset-0 z-50 flex flex-col overflow-y-auto bg-bg">
           <div className="flex min-h-16 items-center justify-between border-b border-line px-4">
             <div className="min-w-0">
               <p className="truncate font-display text-xl font-bold">{current.name}</p>
-              <p className="text-sm text-muted">Your role here: {current.role}</p>
+              <p className="text-sm text-muted">{word(labels, "frame.role", "Your role here: {role}", { role: current.role })}</p>
             </div>
-            <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface" aria-label="Close the menu">
+            <button ref={closeRef} type="button" onClick={() => setOpen(false)} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border border-edge bg-surface" aria-label={word(labels, "frame.close", "Close the menu")}>
               <X className="size-5" aria-hidden="true" />
             </button>
           </div>
@@ -77,7 +78,7 @@ export function TabBar({ memberships }: { memberships: readonly Membership[] }) 
               <div key={g.id}>
                 <p className="mb-1 flex items-center gap-2 px-3 text-sm font-semibold uppercase tracking-wide text-muted">
                   <NavIcon name={g.icon} className="size-4" />
-                  {g.label}
+                  {word(labels, `nav.group.${g.id}`, g.label)}
                 </p>
                 <ul>
                   {g.items.map((i) => {
@@ -85,7 +86,7 @@ export function TabBar({ memberships }: { memberships: readonly Membership[] }) 
                     return (
                       <li key={i.id}>
                         <Link href={hrefOf(i, current.id)} aria-current={on ? "page" : undefined} className={`${itemClass} ${on ? itemCurrent : ""}`}>
-                          {i.label}
+                          {word(labels, `nav.item.${i.id}`, i.label)}
                         </Link>
                       </li>
                     );
