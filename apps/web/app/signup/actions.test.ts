@@ -5,6 +5,8 @@ import { fakeSupabase } from "@/test/helpers";
 const createClient = vi.fn();
 const headerMap: Record<string, string> = {};
 vi.mock("next/headers", () => ({ headers: async () => ({ get: (n: string) => headerMap[n] ?? null }) }));
+// the sign-up holds every answer to a minimum duration (no enumeration); the tests do not wait for it
+vi.mock("@/lib/auth/otp", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/auth/otp")>()), padTo: async () => {} }));
 vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: () => createClient() }));
 
 import { signUp } from "./actions";

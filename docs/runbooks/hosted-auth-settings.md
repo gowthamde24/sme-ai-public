@@ -12,7 +12,7 @@ Set in the Supabase dashboard (names are the dashboard's; they move, look for th
 - [ ] **Allow new users to sign up: OFF** until the owner decides to open sign-up on the hosted project. (Authentication > Sign In / Providers.)
       People are invited, then added to a workspace by the operator (`add-family-member.md`). `verify_hosted.py` checks `disable_signup`.
       The app has open sign-up built and working locally (ADR 0061, job AD); turning this ON hosted also needs the rows added to
-      `docs/pre-pilot-checklist.md` (rate limits and CAPTCHA, the terms text, the `email_taken` decision) and the "Confirm sign-up" template
+      `docs/pre-pilot-checklist.md` (rate limits and CAPTCHA, the terms text) and the "Confirm sign-up" template
       below pointing at `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app`. Never `supabase config push` the local file.
 - [ ] **Confirm e-mail: ON.** (`mailer_autoconfirm` must be false.) The web app's `/auth/confirm` route exists (M3a); the e-mail templates below must point at it.
 - [ ] **E-mail provider only.** Every other provider and phone sign-in OFF.

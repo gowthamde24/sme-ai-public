@@ -127,14 +127,20 @@ def test_the_terms_are_recorded_by_the_database_with_its_own_clock(stack: Stack,
     assert name == "Asha Rao"
 
 
-def test_the_same_address_again_is_refused_by_the_auth_server_with_the_code_the_form_maps(stack: Stack, confirmed: User) -> None:
+def test_the_same_address_again_makes_no_second_account_and_sends_no_second_mail(stack: Stack, confirmed: User) -> None:
+    """The form answers "check your email" for an address that already has an account (ADR 0003, no enumeration); here is what the Auth server does behind it."""
     email = operator_sql.sql(f"select email from auth.users where id = '{confirmed.id}'")
+    mails_before = httpx.get(f"{MAIL}/api/v1/search", params={"query": f"to:{email}"}, timeout=10).json()["messages_count"]
     again = sign_up(stack, email, uuid.uuid4().hex + "Aa1!")
     body = again.json()
-    # a project that hides existing accounts answers 200 with a user that has no identities; this local one answers 422. The form maps both.
+    # a project that hides existing accounts answers 200 with a user that has no identities; this local one answers 422. The form gives the same answer for both.
     assert (again.status_code == 422 and body["error_code"] in {"user_already_exists", "email_exists"}) or (
         again.status_code == 200 and body.get("identities") == []
     )
+    assert operator_sql.sql(f"select count(*) from auth.users where lower(email) = lower('{email}')") == "1"
+    assert httpx.get(f"{MAIL}/api/v1/search", params={"query": f"to:{email}"}, timeout=10).json()["messages_count"] == mails_before
+    # the old account is untouched: its terms row and its sign-in with the OLD password still stand
+    assert operator_sql.sql(f"select count(*) from public.terms_acceptances where user_id = '{confirmed.id}'") == "1"
 
 
 def test_a_too_short_password_is_refused_by_the_auth_server_too(stack: Stack) -> None:

@@ -8,8 +8,11 @@ import type { BusinessType, SetupLanguage } from "./account";
 export type { BusinessType, SetupLanguage } from "./account";
 export { BUSINESS_TYPES, SETUP_LANGUAGES } from "./account";
 
-/** Exactly these five, in this order. */
-export const SIGNUP_ERRORS = ["email_taken", "weak_password", "terms_required", "too_many_signups", "invalid"] as const;
+/**
+ * Exactly these four, in this order. There is no "email taken": a sign-up with an address that already has an account answers
+ * `{ ok: true, next: "check-email" }` like any other, so nobody can learn which addresses have accounts (ADR 0003).
+ */
+export const SIGNUP_ERRORS = ["weak_password", "terms_required", "too_many_signups", "invalid"] as const;
 export type SignUpError = (typeof SIGNUP_ERRORS)[number];
 
 export type SignUpInput = {

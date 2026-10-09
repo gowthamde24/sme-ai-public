@@ -1,4 +1,5 @@
 import type { SignUpResult } from "@/lib/api/signup";
+import { padTo } from "@/lib/auth/otp";
 import { validateNewPassword } from "@/lib/auth/password-policy";
 import type { SignupLimiter } from "@/lib/auth/signup-limit";
 import { TERMS_VERSION } from "@/lib/auth/terms";
@@ -18,6 +19,8 @@ export interface SignUpAuth {
   }>;
 }
 
+/** Every well-formed request that reaches the Auth server takes at least this long to answer (the same value the password-reset request uses). */
+const MIN_MILLISECONDS = 800;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_EMAIL = 254;
 const MAX_NAME = 100;
@@ -32,12 +35,14 @@ function text(value: unknown): string {
  * confirmation link (to the local mail catcher on a developer machine) and the database records the terms, with its own clock, when the account
  * is made. No account exists as a business until the person has confirmed the address and done the first-login setup.
  *
- * Telling a person "email_taken" is what the owner's contract asks for; it does tell a stranger that an address has an account. The brake
- * below and the Auth server's rate limits are what hold that down (docs/adr/0061-open-sign-up.md).
+ * NO ACCOUNT ENUMERATION (ADR 0003): a sign-up with an address that already has an account answers exactly like a new one,
+ * `{ ok: true, next: "check-email" }`, and sends no second account into being. Whether the Auth server says "already registered" (this local
+ * stack), or hides it with a user that has no identities (a hosted project), the answer is the same, and both outcomes are held to the same
+ * minimum duration so the speed of the answer does not tell the two apart either. The person who owns the address simply gets no new mail.
  */
 export async function runSignUp(
   input: unknown,
-  deps: { auth: SignUpAuth; limiter: SignupLimiter; ip: string },
+  deps: { auth: SignUpAuth; limiter: SignupLimiter; ip: string; minMilliseconds?: number },
 ): Promise<SignUpResult> {
   const raw = typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
   const name = text(raw.name);
@@ -55,6 +60,12 @@ export async function runSignUp(
   if (raw.acceptTerms !== true) return { ok: false, error: "terms_required" };
   if (validateNewPassword(password, password, email) !== null) return { ok: false, error: "weak_password" };
   if (!deps.limiter.allow(deps.ip)) return { ok: false, error: "too_many_signups" };
+
+  const started = Date.now();
+  const sameAnswer = async (): Promise<SignUpResult> => {
+    await padTo(started, deps.minMilliseconds ?? MIN_MILLISECONDS);
+    return { ok: true, next: "check-email" };
+  };
 
   let result: Awaited<ReturnType<SignUpAuth["signUp"]>>;
   try {
@@ -74,7 +85,7 @@ export async function runSignUp(
     switch (error.code) {
       case "user_already_exists":
       case "email_exists":
-        return { ok: false, error: "email_taken" };
+        return sameAnswer(); // an address that already has an account is not revealed
       case "weak_password":
         return { ok: false, error: "weak_password" };
       case "over_email_send_rate_limit":
@@ -86,9 +97,6 @@ export async function runSignUp(
           : { ok: false, error: "invalid" };
     }
   }
-  // A project that hides existing accounts answers a repeat sign-up with a user that has no identities (and sends no mail).
-  if (Array.isArray(data?.user?.identities) && data.user.identities.length === 0) {
-    return { ok: false, error: "email_taken" };
-  }
-  return { ok: true, next: "check-email" };
+  // A project that hides existing accounts answers a repeat sign-up with a user that has no identities (and sends no mail): the same answer.
+  return sameAnswer();
 }

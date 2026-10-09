@@ -11,7 +11,8 @@ import { runSignUp } from "./signup-logic";
 
 /**
  * Open sign-up (job AD / D2): `signUp({ name, email, password, businessName, acceptTerms })` ->
- * `{ ok: true, next: "check-email" }` or `{ ok: false, error: "email_taken" | "weak_password" | "terms_required" | "too_many_signups" | "invalid" }`.
+ * `{ ok: true, next: "check-email" }` (also for an address that already has an account: no enumeration) or
+ * `{ ok: false, error: "weak_password" | "terms_required" | "too_many_signups" | "invalid" }`.
  * The logic is in signup-logic.ts; this wrapper only supplies the Auth client, the per-address brake and the caller's address.
  */
 export async function signUp(input: SignUpInput): Promise<SignUpResult> {

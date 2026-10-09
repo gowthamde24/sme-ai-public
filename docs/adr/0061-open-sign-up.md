@@ -37,9 +37,7 @@ with one workspace.
    not in a single query. AI spend is `agent_cost_summary` in paise, counting money reserved by a call in flight as spent, rounded up; the cap rounded down.
 
 ## Consequences
-- **`email_taken` tells a stranger that an address has an account.** The owner's contract for `signUp` asks for it, and it contradicts the sentence in
-  ADR 0003 that sign-up answers the same whether or not the address exists. The brake and the Auth server's limits hold it down; it is a checklist
-  row for the owner to confirm or to reverse before real users.
+- **No account enumeration (owner review 2026-10-09, ADR 0003 stands).** `signUp` answers `{ ok: true, next: "check-email" }` for an address that already has an account too, held to the same minimum duration as a new sign-up; there is no `email_taken`. The owner of the address simply gets no new mail. The Auth server's own answer for an existing address (a 422 locally, a user with no identities on a hosted project) never reaches the screen.
 - **Local tooling confirms its own throwaway accounts** through the local database container (`scripts/local_confirm.py`, `e2e/lib.mjs`), the same
   channel the demo seed already uses for the authenticator secret. The real link path is covered by `tests/integration/test_open_signup.py`.
 - **Hosted**: "Allow new users to sign up" stays OFF in `docs/runbooks/hosted-auth-settings.md` until the owner decides to open sign-up there; the

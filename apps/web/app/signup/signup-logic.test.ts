@@ -16,7 +16,7 @@ const GOOD = {
 function deps(over: Partial<{ signUp: SignUpAuth["signUp"]; allow: boolean }> = {}) {
   const signUp = vi.fn(over.signUp ?? (async () => ({ data: { user: { identities: [{}] } }, error: null })));
   const limiter = { allow: vi.fn(() => over.allow ?? true) };
-  return { signUp, limiter, d: { auth: { signUp } as SignUpAuth, limiter, ip: "203.0.113.7" } };
+  return { signUp, limiter, d: { auth: { signUp } as SignUpAuth, limiter, ip: "203.0.113.7", minMilliseconds: 0 } };
 }
 
 describe("runSignUp", () => {
@@ -89,8 +89,6 @@ describe("runSignUp", () => {
   });
 
   it.each([
-    [{ code: "user_already_exists", status: 422 }, "email_taken"],
-    [{ code: "email_exists", status: 422 }, "email_taken"],
     [{ code: "weak_password", status: 422 }, "weak_password"],
     [{ code: "over_email_send_rate_limit", status: 429 }, "too_many_signups"],
     [{ code: "over_request_rate_limit", status: 429 }, "too_many_signups"],
@@ -103,9 +101,42 @@ describe("runSignUp", () => {
     expect(await runSignUp(GOOD, d)).toEqual({ ok: false, error: want });
   });
 
-  it("treats a user with no identities (a project that hides existing accounts) as email_taken", async () => {
-    const { d } = deps({ signUp: async () => ({ data: { user: { identities: [] } }, error: null }) });
-    expect(await runSignUp(GOOD, d)).toEqual({ ok: false, error: "email_taken" });
+  describe("no account enumeration (ADR 0003): an address that already has an account is answered exactly like a new one", () => {
+    const NEW = async () => ({ data: { user: { identities: [{}] } }, error: null });
+    const SAME = { ok: true, next: "check-email" };
+
+    it.each([
+      ["this stack: 'already registered' (user_already_exists)", async () => ({ data: null, error: { code: "user_already_exists", status: 422 } })],
+      ["the other code for it (email_exists)", async () => ({ data: null, error: { code: "email_exists", status: 422 } })],
+      ["a hosted project that hides it: a user with no identities", async () => ({ data: { user: { identities: [] } }, error: null })],
+    ])("%s answers check-email, byte for byte the same as a new address", async (_label, existing) => {
+      const a = await runSignUp(GOOD, deps({ signUp: NEW }).d);
+      const b = await runSignUp(GOOD, deps({ signUp: existing }).d);
+      expect(b).toEqual(SAME);
+      expect(JSON.stringify(b)).toBe(JSON.stringify(a));
+    });
+
+    it("never says 'taken', 'exists' or 'registered' in any answer", async () => {
+      const out = JSON.stringify(await runSignUp(GOOD, deps({ signUp: async () => ({ data: null, error: { code: "user_already_exists" } }) }).d));
+      expect(out).not.toMatch(/taken|exist|regist/i);
+    });
+
+    it("holds both answers to the same minimum duration, so speed does not tell them apart", async () => {
+      const timed = async (signUp: SignUpAuth["signUp"]) => {
+        const started = Date.now();
+        await runSignUp(GOOD, { ...deps({ signUp }).d, minMilliseconds: 120 });
+        return Date.now() - started;
+      };
+      const fresh = await timed(NEW);
+      const known = await timed(async () => ({ data: null, error: { code: "user_already_exists" } }));
+      expect(fresh).toBeGreaterThanOrEqual(110);
+      expect(known).toBeGreaterThanOrEqual(110);
+      expect(Math.abs(fresh - known)).toBeLessThan(80);
+    });
+
+    it("a failure that is not 'already registered' is still reported as before", async () => {
+      expect(await runSignUp(GOOD, deps({ signUp: async () => ({ data: null, error: { code: "weak_password" } }) }).d)).toEqual({ ok: false, error: "weak_password" });
+    });
   });
 
   it("a thrown network error is 'invalid', never a crash, and says nothing about the cause", async () => {
