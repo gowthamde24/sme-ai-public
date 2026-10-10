@@ -27,6 +27,8 @@ from app.agents.llm.interface import LlmClient
 from app.agents.llm.openai_compat import (
     ChatCompletionsClient,
     ChatCompletionsConfig,
+    hosted_free_config,
+    is_hosted_free_url,
     is_local_url,
     local_config,
     openai_config,
@@ -134,6 +136,28 @@ def _routed(
     return make
 
 
+def _hosted_free_model(
+    settings: Settings, model: str, base_url: str
+) -> Callable[[], LlmClient | ModelRouter] | str:
+    """LLM_PROVIDER=openai_compat on a hosted FREE tier (Groq, Cerebras, OpenRouter; job AN).
+
+    LLM_API_KEY is required; there is no spend-cap confirmation (nothing is billed) and the price
+    is the minimum. Development only: a free tier is for synthetic data on a developer's machine,
+    and its near-zero price must not stand in for a real spend cap anywhere else."""
+    if not settings.is_development:
+        raise AgentSettingsError("a hosted free model is refused outside development")
+    key = settings.llm_api_key.get_secret_value().strip() if settings.llm_api_key else ""
+    if not key:
+        return "llm_not_configured"
+    try:
+        config = hosted_free_config(key, model, base_url)
+        light_model = (settings.llm_light_model or "").strip()
+        light = hosted_free_config(key, light_model, base_url) if light_model else None
+    except ValueError:
+        raise AgentSettingsError("the hosted free model configuration is invalid") from None
+    return _routed(config, light)
+
+
 def _local_model(settings: Settings) -> Callable[[], LlmClient | ModelRouter] | str:
     """LLM_PROVIDER=openai_compat: a model served on THIS machine (Ollama and the like). No key, no
     spend-cap confirmation, prices default to 0. Any other address is refused: nothing here ever
@@ -142,8 +166,13 @@ def _local_model(settings: Settings) -> Callable[[], LlmClient | ModelRouter] | 
     base_url = (settings.llm_base_url or "").strip()
     if not model or not base_url:
         return "llm_not_configured"
+    if is_hosted_free_url(base_url):
+        return _hosted_free_model(settings, model, base_url)
     if not is_local_url(base_url):
-        raise AgentSettingsError("LLM_BASE_URL must be this machine (localhost or 127.0.0.1)")
+        raise AgentSettingsError(
+            "LLM_BASE_URL must be this machine (localhost or 127.0.0.1) "
+            "or one of the supported free hosts"
+        )
     try:
         config = local_config(
             model,

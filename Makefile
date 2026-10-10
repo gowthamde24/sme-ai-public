@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -170,6 +170,12 @@ WEB_PORT ?= 3000
 
 dev-api-local:
 	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port $(API_PORT)
+
+# OPT-IN (job AN): the local API with the Main agent on a hosted FREE-tier model, Groq llama-3.3-70b-versatile (LLM_MODEL=... to choose another). Reads the API key HIDDEN (or takes LLM_API_KEY if it is
+# already set), records the model's price at the minimum, switches the assistant on for the demo workspace and starts the API on API_PORT with AGENTS_ENABLED=true. Local stack and synthetic data only.
+# Needs `make db-start` and `make seed-demo-manual`. See docs/runbooks/main-agent-hosted-free.md.
+dev-api-groq:
+	API_PORT=$(API_PORT) ./scripts/dev-api-hosted-free.sh
 
 dev-web-local:
 	cd $(WEB) && LOCAL_DEMO_API_URL=http://localhost:$(API_PORT) ../../scripts/with-local-demo-env.sh npm run dev -- --port $(WEB_PORT)

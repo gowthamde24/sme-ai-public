@@ -32,6 +32,7 @@ from app.agents.errors import (
     CostCapReached,
     DataLayerUnavailable,
     LimitReached,
+    ModelNotConfigured,
     RunDenied,
     RunExpired,
     ValueRefused,
@@ -63,6 +64,12 @@ FAILURES: dict[str, tuple[str, str]] = {
         "model_failed",
         "The assistant could not answer just now. Send the message again as a new message.",
     ),
+    # not a spending limit (job AN): the provider said 429 (a free tier is busy), or the model has no price row (the operator has to record it)
+    "model_busy": ("model_busy", "The AI service is busy, try again in a minute."),
+    "model_not_configured": (
+        "model_not_configured",
+        "The AI model is not set up yet. Ask the person who looks after this system to finish setting it up.",
+    ),
     "expired": ("token_expiring", "Your session is about to expire. Sign in again and retry."),
     "cancelled": ("run_not_running", "That message was stopped."),
     "tool_failed": (
@@ -91,6 +98,8 @@ def _refusal(
         )
     if isinstance(exc, LimitReached):
         return ApiError(429, "run_limit_reached", "Too many agent runs. Try again later.")
+    if isinstance(exc, ModelNotConfigured):  # before CostCapReached, which it extends
+        return ApiError(503, "model_not_configured", FAILURES["model_not_configured"][1])
     if isinstance(exc, CostCapReached):
         return pause.paused_error(pause.resolve_until(today_repo, token, tenant))
     if isinstance(exc, RunExpired):
@@ -239,7 +248,7 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
         outcome = outcome_box[0] if outcome_box else Outcome("failed", "tool_failed")
         if outcome.reply is None:
             code, message = FAILURES.get(
-                outcome.error_code or "tool_failed", FAILURES["tool_failed"]
+                outcome.shown or outcome.error_code or "tool_failed", FAILURES["tool_failed"]
             )
             event: dict[str, Any] = {"type": "error", "code": code, "message": message}
             if (

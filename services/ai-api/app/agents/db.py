@@ -25,6 +25,7 @@ from app.agents.errors import (
     AgentDbError,
     CostCapReached,
     DataLayerUnavailable,
+    ModelNotConfigured,
     ReferenceRefused,
     RunDenied,
     RunExpired,
@@ -205,6 +206,10 @@ class AgentDb:
         # a refusal is RETURNED (not raised) so the database keeps its audit event; anything
         # but an explicit grant is a refusal
         if result.get("granted") is not True:
+            if (
+                result.get("reason") == "no_price"
+            ):  # the model has no price row: not a spending limit
+                raise ModelNotConfigured
             raise CostCapReached
 
     def ai_mode(self, light_model: str) -> str:

@@ -8,6 +8,7 @@ tools only read through the caller's own rights or leave drafts.
 THE CODE, NOT THE MODEL, decides what is shown as a fact:
   * sources are the handles the reply cites that a tool really returned in this run (unknown handles are dropped); an answer with none is asked for again, then replaced
     by a fixed "I could not find that" in the owner's language;
+  * an answer that names a tool, a function or an internal field (hygiene.py) is not shown: a fixed sentence in the owner's language takes its place;
   * every rupee amount in an answer must be one a tool returned (or one the owner typed): the assistant never prices;
   * the reply must be written in the owner's language (decided by script, see language.py);
   * draft cards come from the drafts the tools made, never from what the model says it made."""
@@ -33,6 +34,7 @@ from app.agents.errors import (
     BudgetExhausted,
     CostCapReached,
     LimitReached,
+    ModelNotConfigured,
     ReferenceRefused,
     RunDenied,
     RunExpired,
@@ -44,7 +46,8 @@ from app.agents.llm.routing import ModelRouter, as_router
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts
 from app.assistant.db import AssistantDb
-from app.assistant.language import NO_ANSWER, Language, reply_matches
+from app.assistant.hygiene import leaked_names
+from app.assistant.language import NO_ANSWER, PLAIN_WORDS, Language, reply_matches
 from app.assistant.models import DraftCardOut, SourceOut
 from app.assistant.tools import TOOLS, Ctx, Item, State
 from app.errors import ApiError
@@ -86,15 +89,18 @@ class Reply:
 @dataclass(frozen=True)
 class Outcome:
     status: str  # succeeded | failed | cancelled | expired | killed | denied
-    error_code: str | None = None
+    error_code: str | None = None  # what the run records (the database's own list)
     reply: Reply | None = None
     turns: int = 0
+    # what the client is told when it is more precise than the recorded code: "model_busy" (the provider said 429) or "model_not_configured" (the model has no price row).
+    # Neither is a spending limit, and the recorded code (model_failed) is the closest one the database knows.
+    shown: str | None = None
 
 
 class _Stop(Exception):
-    def __init__(self, status: str, error_code: str | None) -> None:
+    def __init__(self, status: str, error_code: str | None, shown: str | None = None) -> None:
         super().__init__(status)
-        self.status, self.error_code = status, error_code
+        self.status, self.error_code, self.shown = status, error_code, shown
 
 
 def _sha(obj: Any) -> str:
@@ -184,7 +190,11 @@ class AssistantRunner:
                             self._db.release_cost(f"usage-{turn}", reason=exc.code)
                         except AgentDbError:
                             pass
-                    raise _Stop("failed", "model_failed") from None
+                    raise _Stop(
+                        "failed",
+                        "model_failed",
+                        "model_busy" if exc.code == "rate_limited" else None,
+                    ) from None
                 self._db.record_usage(f"usage-{turn}", response.usage)
 
                 notes = ()
@@ -255,10 +265,10 @@ class AssistantRunner:
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
             )
         except _Stop as stop:
-            return self._end(stop.status, stop.error_code, turns)
+            return self._end(stop.status, stop.error_code, turns, stop.shown)
         except AgentDbError as exc:
-            status, code = self._classify(exc)
-            return self._end(status, code, turns)
+            status, code, shown = self._classify(exc)
+            return self._end(status, code, turns, shown)
 
     # ------------------------------------------------------------------ the tools
     def _execute(
@@ -303,6 +313,17 @@ class AssistantRunner:
             final = prompts.FinalReply.model_validate(structured)
         except ValidationError:
             return self._once("shape", prompts.NOTE_REPAIR_SHAPE, repaired)
+        # the owner is not a programmer: an answer that names a tool, a function or an internal field is replaced, whatever else is right or wrong with it
+        leaks = leaked_names(final.answer)
+        if leaks:
+            logger.warning(
+                "assistant run %s: an answer named %d internal name(s); replaced by the fixed sentence (%s, %s)",
+                self._ctx.run_id,
+                leaks,
+                language,
+                final.kind,
+            )
+            return Reply(PLAIN_WORDS[language], language, "clarify", [], list(self._state.drafts))
         if final.language != language or not reply_matches(final.answer, language):
             return self._once("language", prompts.NOTE_REPAIR_LANGUAGE, repaired)
         known = [
@@ -367,27 +388,32 @@ class AssistantRunner:
         return Outcome(status, code, reply, turns)
 
     @staticmethod
-    def _classify(exc: AgentDbError) -> tuple[str, str | None]:
+    def _classify(exc: AgentDbError) -> tuple[str, str | None, str | None]:
+        """(status, the code the run records, the code the client is shown when it differs)."""
         if isinstance(exc, RunDenied):
-            return "denied", None
+            return "denied", None, None
         if isinstance(exc, RunNotRunning):
-            return "cancelled", "cancelled"
+            return "cancelled", "cancelled", None
         if isinstance(exc, RunExpired):
-            return "expired", "expired"
+            return "expired", "expired", None
         if isinstance(exc, AgentsDisabled):
-            return "killed", "killed"
+            return "killed", "killed", None
+        if isinstance(
+            exc, ModelNotConfigured
+        ):  # before CostCapReached, which it extends: a missing price is not a spending limit
+            return "failed", "model_failed", "model_not_configured"
         if isinstance(exc, BudgetExhausted | LimitReached | CostCapReached):
-            return "failed", "budget"
-        return "failed", "tool_failed"
+            return "failed", "budget", None
+        return "failed", "tool_failed", None
 
-    def _end(self, status: str, code: str | None, turns: int) -> Outcome:
+    def _end(self, status: str, code: str | None, turns: int, shown: str | None = None) -> Outcome:
         if status != "denied":
             try:
                 self._db.finish(status, code)
             except AgentDbError as exc:
                 logger.warning("assistant run could not be closed (%s)", exc.code)
         logger.info("assistant run ended: status=%s code=%s turns=%d", status, code or "-", turns)
-        return Outcome(status, code, None, turns)
+        return Outcome(status, code, None, turns, shown)
 
     def _pick(self, request: LlmRequest) -> LlmClient:
         """The model for THIS call (see ModelRouter.choose)."""

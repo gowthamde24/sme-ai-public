@@ -98,3 +98,12 @@ NO_ANSWER: dict[Language, str] = {
     "kn": "ಇದು ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ನನಗೆ ಸಿಗಲಿಲ್ಲ, ಹಾಗಾಗಿ ನಾನು ಊಹಿಸುವುದಿಲ್ಲ.",
     "ta": "இது உங்கள் பதிவுகளில் எனக்குக் கிடைக்கவில்லை, அதனால் நான் ஊகிக்க மாட்டேன்.",
 }
+
+# What the assistant says in place of an answer that named a tool, a function or an internal field (see hygiene.py). Not model output.
+PLAIN_WORDS: dict[Language, str] = {
+    "en": "I could not put that into clear words. Please ask me again, in other words.",
+    "te": "నేను దీన్ని స్పష్టంగా చెప్పలేకపోయాను. దయచేసి వేరే మాటల్లో మళ్ళీ అడగండి.",
+    "hi": "मैं इसे साफ़ शब्दों में नहीं कह पाया। कृपया दूसरे शब्दों में फिर से पूछिए।",
+    "kn": "ನನಗೆ ಇದನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಹೇಳಲು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಬೇರೆ ಮಾತುಗಳಲ್ಲಿ ಮತ್ತೆ ಕೇಳಿ.",
+    "ta": "இதை எனக்குத் தெளிவாகச் சொல்ல முடியவில்லை. தயவுசெய்து வேறு வார்த்தைகளில் மீண்டும் கேளுங்கள்.",
+}

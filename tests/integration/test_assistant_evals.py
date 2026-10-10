@@ -14,7 +14,7 @@ from typing import Any
 
 import operator_sql
 import pytest
-from assistant_eval import Case, Scripted, build_cases
+from assistant_eval import Case, Scripted, build_cases, build_leak_cases
 from assistant_support import (
     assistant_app,
     drafts_of,
@@ -30,7 +30,8 @@ from fastapi.testclient import TestClient
 from test_today_api import Scene
 
 from app.agents.llm.routing import ModelRouter
-from app.assistant.language import reply_matches
+from app.assistant.hygiene import leaked_names
+from app.assistant.language import PLAIN_WORDS, reply_matches
 from app.assistant.runner import money_amounts
 from app.assistant.tools import TOOLS
 
@@ -94,7 +95,7 @@ def world(
         }
         for language in ("en", "te", "mixed"):
             ids[f"followup_lead_{language}"] = scene.fa.due_lead(f"eval-{language}").id
-        yield scene, ids, build_cases(ids)
+        yield scene, ids, [*build_cases(ids), *build_leak_cases()]
     finally:
         restore(saved)
 
@@ -118,6 +119,10 @@ def case_ids() -> list[str]:
         )
     }
     return [c.id for c in build_cases(dummy)]
+
+
+def leak_case_ids() -> list[str]:
+    return [c.id for c in build_leak_cases()]
 
 
 def counters(tenant: str) -> dict[str, str]:
@@ -163,6 +168,33 @@ def test_the_case(
     run_the_case(case_id, app, world)
 
 
+@pytest.mark.parametrize("case_id", leak_case_ids())
+def test_the_leak_case(
+    case_id: str, app: TestClient, world: tuple[Scene, dict[str, str], list[Case]]
+) -> None:
+    """Job AM: whatever the model says, the owner never reads the name of a tool, a function or an internal field."""
+    HOLDER["light"] = False
+    run_the_case(case_id, app, world)
+
+
+def test_a_leak_is_logged_without_the_answers_text(
+    app: TestClient,
+    world: tuple[Scene, dict[str, str], list[Case]],
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """Job AM: the log says THAT an answer was replaced (and how many names it held, and in which language), never what the answer said."""
+    HOLDER["light"] = False
+    case = next(c for c in build_leak_cases() if c.id == "en-leak-tool-name")
+    with caplog.at_level("INFO", logger="app.assistant.runner"):
+        run_the_case(case.id, app, world)
+    lines = [r.getMessage() for r in caplog.records if r.name == "app.assistant.runner"]
+    hits = [m for m in lines if "internal name" in m]
+    assert len(hits) == 1 and "1 internal name" in hits[0] and "(en, answer)" in hits[0], lines
+    assert not any("find_price" in m or "price list" in m or "your price" in m for m in lines), (
+        lines
+    )
+
+
 @pytest.fixture(scope="module")
 def light_workspace(
     world: tuple[Scene, dict[str, str], list[Case]],
@@ -174,20 +206,21 @@ def light_workspace(
         "select daily_paise || ',' || monthly_paise from public.plan_ai_allowances where plan = 'free_trial'"
     )
     run = operator_sql.sql(f"select id from public.agent_runs where tenant_id = '{t}' limit 1")
-    # the allowance is what the workspace has spent today (rounded down to a whole paisa, at least one) plus one paisa: the workspace is at or over 100 % now,
-    # and the 30 cases that follow cost about as much again, so it stays well under 300 %
+    # the allowance is what the workspace has spent today, rounded up to a whole paisa, plus four paise of room; one settled call fills the rest, so the workspace is
+    # exactly at 100 % now, and the light cases that follow (about as much again as the normal ones) stay far under 300 %
     spent = int(operator_sql.sql(f"select app.agent_day_spend('{t}', app.agent_utc_today())"))
     # the normal-mode pass left its follow-up drafts open, and the database allows one open draft per lead and channel: discard them so the light pass can draft again
     operator_sql.sql(
         "update public.followup_drafts set status = 'discarded', discarded_at = now(), discard_code = 'person' "
         f"where tenant_id = '{t}' and status = 'draft'"
     )
-    allowance_paise = max(1, (spent + 10_000) // 10_000)
+    allowance_paise = max(1, (spent + 9_999) // 10_000) + 4
+    filler = allowance_paise * 10_000 - spent
     operator_sql.sql(
         "insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('fake-light', 1000000, 1000000) on conflict do nothing; "
         f"update public.plan_ai_allowances set daily_paise = {allowance_paise}, monthly_paise = {allowance_paise * 1000} where plan = 'free_trial'; "
         "insert into public.agent_cost_reservations (id, tenant_id, run_id, step_key, cost_day, max_input_tokens, max_output_tokens, reserved_micros, settled_micros, args_sha256, settled_at, outcome) "
-        f"values (gen_random_uuid(), '{t}', '{run}', 'ak2b-light', app.agent_utc_today(), 1, 1, 10000, 10000, repeat('c', 64), now(), 'used')"
+        f"values (gen_random_uuid(), '{t}', '{run}', 'ak2b-light', app.agent_utc_today(), 1, 1, {filler}, {filler}, repeat('c', 64), now(), 'used')"
     )
     try:
         yield
@@ -200,14 +233,14 @@ def light_workspace(
         )
 
 
-@pytest.mark.parametrize("case_id", case_ids())
+@pytest.mark.parametrize("case_id", [*case_ids(), *leak_case_ids()])
 def test_the_case_in_light_mode(
     case_id: str,
     app: TestClient,
     world: tuple[Scene, dict[str, str], list[Case]],
     light_workspace: None,
 ) -> None:
-    """Job AK K2b: the same 30 cases with the workspace over its allowance. The DATABASE says light, the router serves the light model, and every invariant still holds."""
+    """Job AK K2b: the same 30 cases (and job AM's eight) with the workspace over its allowance. The DATABASE says light, the router serves the light model, and every invariant still holds."""
     HOLDER["light"] = True
     started = operator_sql.sql("select clock_timestamp()")
     try:
@@ -358,6 +391,14 @@ def run_the_case(
                 len([s for s in refused if s.startswith("refused_call")])
                 >= case.expects["refused_steps"]
             ), steps
+    elif case.category == "plain_words":
+        # the leaking answer is replaced by the fixed sentence, once, without asking the model again; its sources and its kind are not shown as an answer
+        assert text.strip() == PLAIN_WORDS[case.reply_language], text  # type: ignore[index]
+        assert leaked_names(text) == 0
+        assert done["kind"] == "clarify" and not sources and not drafts
+        assert len(model.requests) == case.expects["requests"], (
+            "the model was not asked again after the leak"
+        )
     elif case.category == "cross_business":
         if case.expects.get("injection"):
             assert sources and done["kind"] == "answer"
