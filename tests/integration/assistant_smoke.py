@@ -723,7 +723,7 @@ def main(env: Mapping[str, str] | None = None) -> int:
         return 2
 
     light_model = env.get("LLM_LIGHT_MODEL", "").strip()
-    light = {
+    light: dict[str, Any] = {
         "llm_light_model": light_model or None,
         "llm_light_input_micros_per_mtok": int(env["LLM_LIGHT_INPUT_MICROS_PER_MTOK"])
         if light_model
