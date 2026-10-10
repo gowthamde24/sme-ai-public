@@ -83,13 +83,13 @@ class AiUsageOut(_Out):
 
 
 class AiUsagePercentOut(_Out):
-    """AI usage as the owner sees it (job AK / K2): how much of today's and this month's allowance is used, never an amount. `state`: ok, warn (80 % or more of either) or paused (100 %)."""
+    """AI usage as the owner sees it (job AK / K2): how much of today's and this month's allowance is used, never an amount. `state`: ok, warn (80 % or more of either), light (100 % of either: a lighter model answers until the reset, nothing stops) or paused (300 % of either: only the AI pauses)."""
 
     today_percent: int
     month_percent: int
     resets_at_today: datetime
     resets_at_month: datetime
-    state: Literal["ok", "warn", "paused"]
+    state: Literal["ok", "warn", "light", "paused"]
 
 
 class LastEvent(_Out):

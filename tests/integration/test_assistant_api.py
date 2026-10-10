@@ -26,6 +26,9 @@ from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
 
+from app.agents.llm.routing import ModelRouter
+from app.assistant.dev_model import DevAssistantModel
+
 
 @pytest.fixture(scope="module")
 def app(stack: Any) -> Iterator[TestClient]:
@@ -355,7 +358,7 @@ def usage(app: TestClient, scene: Scene) -> dict[str, Any]:
     return dict(r.json())
 
 
-def test_a_used_up_day_pauses_only_the_ai_and_says_when_it_is_back(
+def test_a_used_up_day_goes_light_at_100_percent_and_pauses_only_the_ai_at_300_and_says_when_it_is_back(
     app: TestClient, scene: Scene
 ) -> None:
     from datetime import datetime
@@ -364,14 +367,12 @@ def test_a_used_up_day_pauses_only_the_ai_and_says_when_it_is_back(
         say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
     )  # makes sure workspace B has a run to book spend against
     with Allowance(scene.b) as a:
-        a.set(daily=1, monthly=100)  # one paisa a day
+        a.set(daily=1, monthly=1000)  # one paisa a day (10,000 micros): light at 10,000, paused at 30,000
         before = usage(app, scene)  # the first hello already cost a few micros of the one paisa
         assert before["state"] == "ok" and before["today_percent"] < 100
-        a.spend(10_000)  # exactly one paisa: the day is used up
+        a.spend(10_000)  # at least one paisa: 100 % of the day's allowance
         got = usage(app, scene)
-        assert (
-            got["today_percent"] == 100 and got["state"] == "paused" and got["month_percent"] == 1
-        )
+        assert got["today_percent"] == 100 and got["state"] == "light" and got["month_percent"] == 0
         assert set(got) == {
             "today_percent",
             "month_percent",
@@ -379,6 +380,15 @@ def test_a_used_up_day_pauses_only_the_ai_and_says_when_it_is_back(
             "resets_at_month",
             "state",
         }
+        assert (
+            say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
+        ), "at 100 % the AI does NOT stop"
+        a.spend(15_000)  # about 250 %: still light
+        assert usage(app, scene)["state"] == "light"
+        assert say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
+        a.spend(15_000)  # over 300 %: paused
+        got = usage(app, scene)
+        assert got["today_percent"] == 100 and got["state"] == "paused"
         r = say(app, scene, "owner", "hello", tenant=scene.b)
         error = r.json()["error"]
         assert r.status_code == 429 and error["code"] == "ai_paused_until"
@@ -397,7 +407,7 @@ def test_a_used_up_day_pauses_only_the_ai_and_says_when_it_is_back(
     )
 
 
-def test_a_used_up_month_pauses_the_ai_with_the_day_still_empty_and_says_the_month_end(
+def test_a_used_up_month_goes_light_at_100_percent_and_pauses_at_300_with_the_day_still_empty(
     app: TestClient, scene: Scene
 ) -> None:
     from datetime import UTC, datetime, timedelta
@@ -405,13 +415,19 @@ def test_a_used_up_month_pauses_the_ai_with_the_day_still_empty_and_says_the_mon
     assert say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200
     with Allowance(scene.b) as a:
         a.set(
-            daily=100, monthly=100, trial_days_ago=10
-        )  # a month of one rupee, started ten days ago
-        a.spend(1_000_000, days_ago=3)  # ₹1 spent three days ago, inside the month
+            daily=1000, monthly=1000, trial_days_ago=10
+        )  # a month of ten rupees (10,000,000 micros), started ten days ago
+        a.spend(10_000_000, days_ago=3)  # all of it spent three days ago, inside the month
         got = usage(app, scene)
         assert (
-            got["month_percent"] == 100 and got["today_percent"] == 0 and got["state"] == "paused"
+            got["month_percent"] == 100 and got["today_percent"] == 0 and got["state"] == "light"
         )
+        assert say(app, scene, "owner", "hello", tenant=scene.b).status_code == 200, (
+            "a month at 100 % does not stop the AI"
+        )
+        a.spend(20_000_000, days_ago=3)  # 300 % of the month
+        got = usage(app, scene)
+        assert got["month_percent"] == 100 and got["state"] == "paused"
         r = say(app, scene, "owner", "hello", tenant=scene.b)
         error = r.json()["error"]
         assert r.status_code == 429 and error["code"] == "ai_paused_until"
@@ -426,6 +442,50 @@ def test_a_used_up_month_pauses_the_ai_with_the_day_still_empty_and_says_the_mon
             ).status_code
             == 200
         )
+
+
+class _MustNotRun:
+    """The main model of the light-mode test: any call to it fails the test."""
+
+    model_id = "fake-selftest"
+
+    def complete(self, request: Any) -> Any:
+        raise AssertionError("the main model was called although the workspace is light")
+
+
+class _LightDev(DevAssistantModel):
+    model_id = "fake-light"
+
+
+@pytest.fixture(scope="module")
+def light_app(stack: Any) -> Iterator[TestClient]:
+    operator_sql.sql(
+        "insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('fake-light', 1000000, 1000000) on conflict do nothing"
+    )
+    try:
+        yield from assistant_app(stack, lambda: ModelRouter(_MustNotRun(), _LightDev()))
+    finally:
+        operator_sql.sql("delete from public.agent_model_prices where model = 'fake-light'")
+
+
+def test_a_light_workspace_is_answered_by_the_light_model_and_reserved_at_its_price(
+    light_app: TestClient, scene: Scene
+) -> None:
+    with Allowance(scene.b) as a:
+        a.set(daily=1, monthly=1000)  # one paisa a day: light from 10,000 micros of spend
+        a.spend(10_000)
+        assert usage(light_app, scene)["state"] == "light"
+        started = operator_sql.sql("select clock_timestamp()")
+        r = say(light_app, scene, "owner", "What is waiting for me today?", tenant=scene.b)
+        assert r.status_code == 200, r.text
+        names = [e for e, _ in events(r)]
+        assert names[-1] == "done" and "error" not in names, names
+        models = operator_sql.sql(
+            f"select string_agg(distinct x.model, ',') from public.agent_cost_reservations x where x.tenant_id = '{scene.b.id}' and x.created_at >= '{started}' and x.step_key like 'usage-%'"
+        )
+        assert models == "fake-light", "every reservation of the message was priced at the light model"
+    # the sentinel main model proves the other half: with the allowance restored the workspace is normal again, and the router would call the main model
+    assert usage(light_app, scene)["state"] in {"ok", "warn"}
 
 
 def test_the_percent_read_is_for_owner_and_admin_and_never_shows_money(

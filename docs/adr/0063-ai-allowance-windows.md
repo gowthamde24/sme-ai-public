@@ -1,5 +1,7 @@
 # ADR 0063: The AI allowance per plan, in two windows
 
+> **Amended by ADR 0064 (2026-10-10):** at 100 % of a window the AI no longer pauses: it switches to the light model; the pause moves to 300 %, and the plan numbers changed. Decisions 3 and 4 below describe the first version.
+
 Status: built locally (job AK / K2, 2026-10-10); nothing deployed. Related: ADR 0013 (daily cap), job AF (the Asia/Kolkata day), ADR 0061 (plans), ADR 0062 (Main agent).
 
 ## Context

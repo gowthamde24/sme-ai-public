@@ -6,12 +6,12 @@ import { isCanonicalUuid } from "./crm";
  * user's own token. `GET /v1/tenants/{tenant}/ai-usage` (Owner and Admin; anyone else gets a 403).
  *
  * No paise, no tokens, no prices ever come through this read. Percent = spent / allowance, rounded DOWN, at most 100. `today` is the Indian day (resets at Indian midnight), `month`
- * runs from the trial start or the billing date in whole months. `state`: "ok", "warn" (80 % or more of either) or "paused" (100 % of either).
+ * runs from the trial start or the billing date in whole months. `state`: "ok", "warn" (80 % or more of either), "light" (100 % of either: a lighter model answers until the reset, nothing stops) or "paused" (300 % of either: only the AI pauses). The percentages stay 0 to 100; the state carries light and paused.
  *
  * When a window is at 100 % ONLY the AI features pause (the assistant, research, requirement drafting): quotes, orders, follow-ups and customers keep working. A refused AI call is
  * HTTP 429 with the code `ai_paused_until` and the time it is back in `until` (an ApiRequestError field); `pausedUntil(error)` reads it.
  */
-export const AI_USAGE_STATES = ["ok", "warn", "paused"] as const;
+export const AI_USAGE_STATES = ["ok", "warn", "light", "paused"] as const;
 export type AiUsageState = (typeof AI_USAGE_STATES)[number];
 
 export interface AiUsage {
@@ -42,7 +42,7 @@ function when(v: unknown, what: string): string {
 export function parseAiUsage(json: unknown): AiUsage {
   if (!isRecord(json)) return bad("usage");
   const state = json.state;
-  if (state !== "ok" && state !== "warn" && state !== "paused") return bad("usage state");
+  if (state !== "ok" && state !== "warn" && state !== "light" && state !== "paused") return bad("usage state");
   return {
     today_percent: percent(json.today_percent, "today_percent"),
     month_percent: percent(json.month_percent, "month_percent"),

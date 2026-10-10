@@ -45,6 +45,12 @@ class AgentDbPort(Protocol):
         when the tenant's daily cost cap has no room for it (or the model has no price)."""
         ...
 
+    def ai_mode(self, light_model: str) -> str:
+        """'light' when the workspace is over its allowance AND `light_model` has a price row (the
+        database decides; anything else is 'normal'). Asked before a call only when a light model
+        is configured."""
+        ...
+
     def release_cost(self, step_key: str, *, reason: str) -> None:
         """Settle a reservation at ZERO because the call provably never reached a billing provider
         (`reason`: rate_limited, rejected or not_configured). Any other failure leaves it open."""

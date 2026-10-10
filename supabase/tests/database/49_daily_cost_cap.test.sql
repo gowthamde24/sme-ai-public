@@ -80,7 +80,7 @@ select is(app.agent_utc_today(), (now() at time zone 'Asia/Kolkata')::date, 'the
 -- ============================================================================ B. reserve: the boundary, replay, conflict, the audit of a cap hit
 select pg_temp.set_cap('a', 1000);
 select is(app.agent_daily_cap(tests.tid('a')), 1000::bigint, 'tenant A''s cap is its override (1000)');
-select is(app.agent_daily_cap(tests.tid('b')), 2000000::bigint, 'tenant B has no override: the operator default (2.00)');
+select is(app.agent_daily_cap(tests.tid('b')), 60000000::bigint, 'tenant B has no override: three times its plan''s daily allowance (job AK K2b: free trial 20.00 x 3)');
 create temp table r1 as select pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv(tests.rid('a_run_sales'), 'usage-1', 600, 300)) as r;
 select is(pg_temp.j((select r from r1), 'granted'), 'true', 'a reservation inside the cap is granted');
 select is(pg_temp.j((select r from r1), 'reserved_micros'), '900', '...at the worst case: 600 in + 300 out = 900');
@@ -200,7 +200,7 @@ select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a
 select pg_temp.set_cap('a', 0);
 select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a'), tests.rid('a_company'))), 'SM207|agent daily cost cap reached||||', 'a cap of ZERO refuses every start');
 select pg_temp.set_cap('a', null);
-select is(app.agent_daily_cap(tests.tid('a')), 2000000::bigint, 'clearing the override falls back to the operator default');
+select is(app.agent_daily_cap(tests.tid('a')), 60000000::bigint, 'clearing the override falls back to the plan (three times the daily allowance)');
 delete from public.agent_limits where limit_key = 'daily_cost_micros';
 -- job AK / K2: the plan's allowance is the default now, so the fail-closed case is: no override, no plan allowance AND no operator default
 delete from public.plan_ai_allowances where plan = 'free_trial';
@@ -208,7 +208,7 @@ select is(app.agent_daily_cap(tests.tid('a')), 0::bigint, 'no override, no plan 
 select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a'), tests.rid('a_company'))), 'SM207|agent daily cost cap reached||||', '...and nothing starts');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv(tests.rid('a_run_sales'), 'fc-1', 1, 0)), 'reason'), 'daily_cap', '...nor is a model call authorised');
 insert into public.agent_limits (limit_key, limit_value) values ('daily_cost_micros', 2000000);
-insert into public.plan_ai_allowances (plan, daily_paise, monthly_paise) values ('free_trial', 200, 6000);
+insert into public.plan_ai_allowances (plan, daily_paise, monthly_paise) values ('free_trial', 2000, 30000);
 update public.platform_flags set enabled = false where key = 'agents_enabled';
 select pg_temp.set_cap('a', 0);
 select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('s2'), tests.tid('a'), tests.rid('a_company'))), 'SM204|agents are disabled||||', 'a disabled platform is reported as disabled, before the cap');
@@ -255,7 +255,7 @@ select is(pg_temp.spent('a') || '/' || pg_temp.spent('b'), '900/1500', 'each ten
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_admin'), pg_temp.rsv(tests.rid('a_run_admin'), 'iso-a2', 100, 0)), 'granted'), 'true', 'A fills its cap exactly');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_admin'), pg_temp.rsv(tests.rid('a_run_admin'), 'iso-a3', 1, 0)), 'granted'), 'false', '...and is refused beyond it');
 select is(pg_temp.j(pg_temp.sc(tests.uid('b_sales'), pg_temp.rsv(tests.rid('b_run'), 'iso-b2', 1000, 0)), 'granted'), 'true', 'while B, with a full-looking A beside it, still spends (A''s spend does not count toward B''s cap)');
-select is(app.agent_daily_cap(tests.tid('b')), 2000000::bigint, 'and A''s override does not apply to B');
+select is(app.agent_daily_cap(tests.tid('b')), 60000000::bigint, 'and A''s override does not apply to B');
 select is(pg_temp.err('b_sales', pg_temp.rsv(tests.rid('a_run_sales'), 'iso-x', 1, 1)), '42501|agent action not permitted||||', 'a user of tenant B cannot reserve on tenant A''s run');
 select throws_ok(format($q$insert into public.agent_cost_reservations (tenant_id, run_id, step_key, cost_day, max_input_tokens, max_output_tokens, reserved_micros, args_sha256)
                             values (%L, %L, 'x-1', current_date, 0, 0, 0, repeat('0', 64))$q$, tests.tid('b'), tests.rid('a_run_sales')), '23503', null,
@@ -300,7 +300,7 @@ select is(pg_temp.err('a_owner', pg_temp.cap_sql('a', '500000001')), '23514|valu
 select is(pg_temp.err('a_owner', pg_temp.cap_sql('a', '-1')), '23514|value not allowed||||', 'a negative cap: 23514');
 select is((select daily_cost_cap_micros from public.tenant_agent_settings where tenant_id = tests.tid('a')), 500000000::bigint, '...and the stored cap is unchanged by the refusals');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', '0')), 'daily_cost_cap_micros'), '0', 'zero is allowed (it switches agent spending off for the tenant)');
-select is(pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', 'null')), 'daily_cost_cap_micros'), '2000000', 'null clears the override: back to the operator default');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', 'null')), 'daily_cost_cap_micros'), '60000000', 'null clears the override: back to the plan');
 select is(tests.outcome_as(tests.uid('a_owner'), format($q$update public.tenant_agent_settings set daily_cost_cap_micros = 1 where tenant_id = %L$q$, tests.tid('a'))), '42501', 'a direct client UPDATE of the column is refused (no privilege)');
 select is(tests.outcome_as(tests.uid('a_owner'), format($q$insert into public.agent_limits (limit_key, limit_value) values ('daily_cost_micros', 1) on conflict (limit_key) do update set limit_value = 1$q$)), '42501', 'nor can anyone change the operator default through the API');
 select pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', '7000')), 'daily_cost_cap_micros');

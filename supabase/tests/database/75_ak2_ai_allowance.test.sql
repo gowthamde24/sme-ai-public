@@ -1,4 +1,4 @@
--- Job AK / K2: the AI allowance per plan (migration 20261103090000): a daily and a monthly window, shown as percentages, enforced by the database at both resets.
+-- Job AK / K2 + K2b: the AI allowance per plan (migrations 20261103090000, 20261105090000): a daily and a monthly window, shown as percentages; at 100 % the AI goes LIGHT, at 300 % it pauses; enforced by the database at both resets.
 -- The clock is frozen the way pgTAP 73 does it (app.agent_utc_today is replaced through the REAL day rule app.agent_cost_day). One token costs one micro (fake-selftest).
 begin;
 select no_plan();
@@ -6,6 +6,9 @@ select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.seed_agents();
 update public.agent_limits set limit_value = 1000 where limit_key in ('max_concurrent_runs', 'max_runs_per_hour');
+select results_eq($$select plan, daily_paise, monthly_paise from public.plan_ai_allowances order by plan$$,
+  $$values ('business'::text, 10000, 250000), ('free_trial', 2000, 30000), ('growth', 4000, 90000), ('starter', 1500, 30000)$$,
+  'the plans: free trial 20/300, starter 15/300, growth 40/900, business 100/2,500 rupees (a day / a month)');
 -- the two tests' plan: ₹10 a day, ₹30 a month (1,000 and 3,000 paise = 10,000,000 and 30,000,000 micros), on the free trial
 update public.plan_ai_allowances set daily_paise = 1000, monthly_paise = 3000 where plan = 'free_trial';
 
@@ -57,7 +60,8 @@ select pg_temp.at(timestamptz '2031-03-05 12:00:00+05:30');
 select is((select win_start || '..' || win_end from app.ai_month_window(tests.tid('a'))), '2031-02-10..2031-03-10', 'the billing date wins over the trial start once it is set');
 update public.tenants set billing_anchor_at = null, trial_started_at = timestamptz '2031-01-15 10:00:00+05:30' where id = tests.tid('a');
 
--- ============================================================================ percentages: spent / allowance, rounded DOWN, at most 100
+-- ============================================================================ percentages: spent / allowance, rounded DOWN, at most 100; the states
+insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('fake-light', 1000000, 1000000);
 select pg_temp.at(timestamptz '2031-01-20 12:00:00+05:30');
 select is(pg_temp.j(pg_temp.usage(), 'today_percent') || '/' || pg_temp.j(pg_temp.usage(), 'month_percent') || '/' || pg_temp.j(pg_temp.usage(), 'state'), '0/0/ok', 'nothing spent: 0 %, 0 %, ok');
 select pg_temp.spend('p1', date '2031-01-20', 999999);
@@ -65,38 +69,56 @@ select is(pg_temp.j(pg_temp.usage(), 'today_percent'), '9', '9.99999 % is shown 
 select is(pg_temp.j(pg_temp.usage(), 'month_percent'), '3', '...and the month: 3.33 % is 3');
 select pg_temp.spend('p2', date '2031-01-20', 6999999);  -- today 7,999,998 of 10,000,000 = 79.99998 %
 select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '79:ok', '79.99 % is 79 and still ok');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), format('select public.agent_ai_mode(%L, %L)', tests.rid('a_run_sales'), 'fake-light')), 'mode'), 'normal', 'below 100 %: the main model (mode normal)');
 select pg_temp.spend('p3', date '2031-01-20', 2);  -- exactly 8,000,000
 select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '80:warn', 'exactly 80 % is a warning');
-select pg_temp.spend('p4', date '2031-01-20', 5000000);  -- 13,000,000 of 10,000,000
-select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:paused', 'over the allowance is capped at 100 and the state is paused');
-select is(pg_temp.j(pg_temp.usage(), 'month_percent'), '43', 'the month alone: 13,000,000 of 30,000,000 = 43 %');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), format('select public.agent_ai_mode(%L, %L)', tests.rid('a_run_sales'), 'fake-light')), 'mode'), 'normal', '...and still the main model');
+select pg_temp.spend('p4', date '2031-01-20', 1999999);  -- 9,999,999: one micro short of 100 %
+select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '99:warn', '99.99999 % is 99, still a warning (not light)');
+select pg_temp.spend('p5', date '2031-01-20', 1);  -- exactly 10,000,000 = 100 %
+select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:light', 'exactly 100 %: the state is LIGHT, not paused');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), format('select public.agent_ai_mode(%L, %L)', tests.rid('a_run_sales'), 'fake-light')), 'mode'), 'light', 'the runtime is told to use the light model');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), format('select public.agent_ai_mode(%L, %L)', tests.rid('a_run_sales'), 'a-model-without-a-price')), 'mode'), 'normal', 'a light model that has no price row is never used (the AI must not stop for a missing price)');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), format('select public.agent_ai_mode(%L, null)', tests.rid('a_run_sales'))), 'mode'), 'normal', 'no light model configured: the main model');
+select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.start_sql(tests.rid('k2s0'))), 'rows:1', 'at 100 % a new run STARTS (the AI does not stop)');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('fair-1', 1)), 'granted'), 'true', '...and a model call is granted');
+select pg_temp.spend('p6', date '2031-01-20', 15000000);  -- 25,000,001 including the open reservation: 250 %
+select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:light', 'at 250 % the percentage stays 100 and the state is still light');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('fair-2', 1)), 'granted'), 'true', '...and a model call is still granted');
+select pg_temp.spend('p7', date '2031-01-20', 4999996);  -- 25,000,002 + 4,999,996 = 29,999,998 (the reservation fair-2 counts: 1)
+select is(pg_temp.j(pg_temp.usage(), 'state'), 'light', 'at 299.99998 % it is still light');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('fair-3', 2)), 'granted'), 'true', 'a call that lands exactly on 300 % is granted');
+select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:paused', 'at 300 % the state is PAUSED');
+select is(pg_temp.j(pg_temp.usage('a_admin'), 'state'), 'paused', 'an Admin reads it');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('fair-4', 1)), 'granted'), 'false', 'one more micro past 300 %: a model call is refused');
+select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('k2s1'))), 'SM207|agent daily cost cap reached||||', '...and a new run is refused');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), format('select public.agent_ai_mode(%L, %L)', tests.rid('a_run_sales'), 'fake-light')), 'mode'), 'light', '(the mode stays light while paused: the refusal is the cap, not the mode)');
 
 -- ============================================================================ no paise, no tokens leave the read; who may read it
 select is((select string_agg(k, ',' order by k) from jsonb_object_keys(pg_temp.usage()::jsonb) k), 'month_percent,resets_at_month,resets_at_today,state,today_percent', 'exactly the five fields: no paise, no micros, no tokens');
-select is(pg_temp.j(pg_temp.usage('a_admin'), 'state'), 'paused', 'an Admin reads it');
 select is(pg_temp.j(pg_temp.usage('a_sales'), 'error'), '42501', 'Sales cannot');
 select is(pg_temp.j(pg_temp.usage('a_viewer'), 'error'), '42501', 'a Viewer cannot');
 select is(pg_temp.j(pg_temp.usage('outsider'), 'error'), '42501', 'an outsider cannot');
 select is(pg_temp.j(pg_temp.usage('b_owner'), 'error'), '42501', 'the Owner of ANOTHER workspace cannot');
 select is(tests.sqlstate_as(null, format('select public.ai_usage(%L)', tests.tid('a'))), '42501', 'anon cannot');
+select is(tests.sqlstate_as(tests.uid('b_owner'), format('select public.agent_ai_mode(%L, null)', tests.rid('a_run_sales'))), '42501', 'the mode of another workspace''s run cannot be asked');
+select is(tests.sqlstate_as(null, format('select public.agent_ai_mode(%L, null)', tests.rid('a_run_sales'))), '42501', 'anon cannot ask the mode');
 
 -- ============================================================================ the DAILY reset at Indian midnight
 select pg_temp.at(timestamptz '2031-01-20 23:59:00+05:30');
-select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:paused', 'a minute before Indian midnight: the day is used up, paused');
+select is(pg_temp.j(pg_temp.usage(), 'state'), 'paused', 'a minute before Indian midnight: paused');
 select is(pg_temp.j(pg_temp.usage(), 'resets_at_today'), '2031-01-20T18:30:00+00:00', '...and it resets at Indian midnight (18:30 UTC)');
-select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('k2s1'))), 'SM207|agent daily cost cap reached||||', 'a new run is refused while the day is used up');
-select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('k2-1', 1)), 'granted'), 'false', 'a model call is refused too');
 select is(tests.scalar_as(tests.uid('a_sales'), format('select public.ai_paused_until(%L)', tests.tid('a')))::timestamptz, timestamptz '2031-01-20 18:30:00+00', 'ANY member can ask when AI is back: the next Indian midnight');
 select pg_temp.at(timestamptz '2031-01-21 00:01:00+05:30');
-select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '0:ok', 'a minute after Indian midnight: yesterday does not count, the day is empty, ok');
-select is(pg_temp.j(pg_temp.usage(), 'month_percent'), '43', '...but the month still remembers it');
+select is(pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '0:light', 'a minute after Indian midnight: the day is empty, but the MONTH is at 100 % (30,000,000 of 30,000,000): light, not paused');
+select is(pg_temp.j(pg_temp.usage(), 'month_percent'), '100', '...the month remembers yesterday');
 select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.start_sql(tests.rid('k2s1'))), 'rows:1', 'and a run can start again');
 select is(tests.scalar_as(tests.uid('a_sales'), format('select public.ai_paused_until(%L)', tests.tid('a'))), null, 'nothing is paused: no time to wait for');
 
 -- ============================================================================ the MONTHLY reset at the month boundary (the trial started 15 Jan)
-select pg_temp.spend('m1', date '2031-02-10', 17000000);   -- the month now holds 13,000,000 + 17,000,000 = 30,000,000
+select pg_temp.spend('m1', date '2031-02-10', 60000000);   -- the month now holds 30,000,000 + 60,000,000 = 90,000,000 = 300 % of 30,000,000
 select pg_temp.at(timestamptz '2031-02-14 23:59:00+05:30');
-select is(pg_temp.j(pg_temp.usage(), 'month_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:paused', 'the last minute of the month: the month is used up, paused (although today is empty)');
+select is(pg_temp.j(pg_temp.usage(), 'month_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:paused', 'the last minute of the month: 300 % of the month, paused (although today is empty)');
 select is(pg_temp.j(pg_temp.usage(), 'today_percent'), '0', '...with the day itself at 0 %');
 select is(pg_temp.j(pg_temp.usage(), 'resets_at_month'), '2031-02-14T18:30:00+00:00', '...and the month resets at midnight of the 15th, Indian time');
 select is(pg_temp.err('a_sales', pg_temp.start_sql(tests.rid('k2s2'))), 'SM207|agent daily cost cap reached||||', 'a new run is refused (the month squeezes today to zero room)');
@@ -110,16 +132,16 @@ select is(pg_temp.j(pg_temp.usage(), 'resets_at_month'), '2031-03-14T18:30:00+00
 select is(tests.outcome_as(tests.uid('a_sales'), pg_temp.start_sql(tests.rid('k2s2'))), 'rows:1', 'a run can start again');
 
 -- ============================================================================ the month squeezes the day: room is the smaller of the two
-select pg_temp.spend('q1', date '2031-02-16', 29999000);   -- 29,999,000 of the month's 30,000,000, spent on another day: 1,000 micros of room are left
+select pg_temp.spend('q1', date '2031-02-16', 89999000);   -- 89,999,000 of the month's hard cap 90,000,000, spent on another day: 1,000 micros of room are left
 select pg_temp.at(timestamptz '2031-02-20 12:00:00+05:30');
-select is(pg_temp.j(pg_temp.usage(), 'month_percent') || ':' || pg_temp.j(pg_temp.usage(), 'today_percent'), '99:0', 'the month is at 99 %, today at 0 %');
-select is(app.agent_daily_cap(tests.tid('a')), 1000::bigint, 'today may spend only what the month has left (1,000 micros), not the full daily 10,000,000');
-select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('k2-3', 1001)), 'granted'), 'false', 'a call that would carry the month past its allowance is refused');
+select is(pg_temp.j(pg_temp.usage(), 'month_percent') || ':' || pg_temp.j(pg_temp.usage(), 'today_percent') || ':' || pg_temp.j(pg_temp.usage(), 'state'), '100:0:light', 'the month is at 299 % (shown 100, state light), today at 0 %');
+select is(app.agent_daily_cap(tests.tid('a')), 1000::bigint, 'today may spend only what the month has left (1,000 micros), not the full 30,000,000');
+select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('k2-3', 1001)), 'granted'), 'false', 'a call that would carry the month past 300 % is refused');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_sales'), pg_temp.rsv('k2-4', 1000)), 'granted'), 'true', 'one that fits exactly is granted');
 select is(app.agent_daily_cap(tests.tid('a')), 1000::bigint, 'and the cap does not drift as the open reservation counts (today spend + month room stay constant)');
 
 -- ============================================================================ a workspace's own cap still wins over its plan; another workspace is unaffected
-select is(app.agent_base_daily_cap(tests.tid('b')), 50000000::bigint, 'workspace B is on the business plan: 5,000 paise = 50,000,000 micros a day');
+select is(app.agent_base_daily_cap(tests.tid('b')), 300000000::bigint, 'workspace B is on the business plan: three times 10,000 paise (100.00) = 300,000,000 micros a day (the hard cap)');
 insert into public.tenant_agent_settings (tenant_id, daily_cost_cap_micros) values (tests.tid('b'), 1234567) on conflict (tenant_id) do update set daily_cost_cap_micros = 1234567;
 select is(app.agent_base_daily_cap(tests.tid('b')), 1234567::bigint, 'an operator override on the workspace wins over the plan');
 select is(app.agent_month_spend(tests.tid('b')), 0::numeric, 'B has spent nothing: A''s ledger does not count for B');

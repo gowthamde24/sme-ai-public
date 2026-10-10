@@ -67,6 +67,8 @@ class FakeAgentDb:
         enquiry: dict[str, Any] | None = None,
     ) -> None:
         self.agent_name = agent_name
+        self.mode = "normal"
+        self.mode_requests: list[str] = []
         # the Requirement Agent's enquiry (channel, received_at, subject, body); None otherwise
         self.enquiry = enquiry
         self.fields: list[dict[str, Any]] = []
@@ -232,6 +234,13 @@ class FakeAgentDb:
         self.day_spend_micros += worst
         self.reservations[step_key] = worst
         self.reserve_requests.append((step_key, model, max_input_tokens, max_output_tokens))
+
+    def ai_mode(self, light_model: str) -> str:
+        """What the database would answer: set `mode` to 'light' to make the workspace light.
+        A light model without a price is never used (the database's rule)."""
+        self._open("ai_mode")
+        self.mode_requests.append(light_model)
+        return self.mode if light_model in self.prices else "normal"
 
     def release_cost(self, step_key: str, *, reason: str) -> None:
         self._open("release_cost")

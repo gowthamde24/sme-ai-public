@@ -25,6 +25,7 @@ from app.agents.llm.interface import (
     LlmRequest,
     LlmTimeout,
     LlmUnavailable,
+    TaskClass,
     ToolSpec,
     Trust,
 )
@@ -326,6 +327,7 @@ def test_a_request_with_no_system_block_still_works_and_untrusted_only_goes_to_t
         blocks=(Block(Trust.UNTRUSTED, "raw"),),
         tools=(ToolSpec("t", "d", {"type": "object", "additionalProperties": False}),),
         max_output_tokens=10,
+        task_class=TaskClass.HARD,
     )
     make(server).complete(only)
     body = json.loads(server.requests[0].content)

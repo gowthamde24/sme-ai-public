@@ -34,6 +34,7 @@ from app.agent_runs.wiring import AgentSettingsError, build_llm_factory, llm_una
 from app.agents.db import AgentDb
 from app.agents.llm.fake import FakeProvider, call, respond
 from app.agents.llm.interface import LlmClient
+from app.agents.llm.routing import ModelRouter
 from app.agents.registry import AGENTS
 from app.agents.runtime import AgentRunner
 from app.config import Settings
@@ -366,7 +367,7 @@ def run_naive(
     return problems
 
 
-def run_runner(db: AgentDb, provider: LlmClient) -> None:
+def run_runner(db: AgentDb, provider: LlmClient | ModelRouter) -> None:
     AgentRunner(db=db, llm=provider, spec=SELFTEST).run()
 
 
@@ -393,7 +394,7 @@ Provider = Callable[[dict[str, Any]], LlmClient]
 
 
 # ------------------------------------------------------------------------------ live mode (opt-in, never part of make check)
-def live_gate(settings: Settings) -> tuple[Callable[[], LlmClient] | None, str]:
+def live_gate(settings: Settings) -> tuple[Callable[[], LlmClient | ModelRouter] | None, str]:
     """The SAME configuration gates as the real adapter: provider anthropic, model, key, prices, the owner's spend-cap
     confirmation. Returns (client factory, "") when live mode may run, else (None, why not)."""
     if settings.llm_provider != "anthropic":
@@ -405,3 +406,28 @@ def live_gate(settings: Settings) -> tuple[Callable[[], LlmClient] | None, str]:
         return build_llm_factory(settings), ""
     except AgentSettingsError as exc:
         return None, f"the real adapter configuration is refused: {exc.__class__.__name__}"
+
+
+class LightModeAgentDb(AgentDb):
+    """The same database door, but the mode question is answered 'light' (the real answer is proved in pgTAP 75 and the assistant API test): lets every runner case of the
+    containment gate run against the LIGHT model (job AK K2b)."""
+
+    def ai_mode(self, light_model: str) -> str:
+        return "light"
+
+
+class MainModelMustNotRun:
+    """The main model of a light-mode case: calling it fails the case."""
+
+    model_id = "fake-selftest"
+
+    def complete(self, request: Any) -> Any:
+        raise AssertionError("the main model was called in light mode")
+
+
+LIGHT_MODEL_ID = "fake-light"
+
+
+def light_router(provider: FakeProvider) -> ModelRouter:
+    provider.model_id = LIGHT_MODEL_ID
+    return ModelRouter(MainModelMustNotRun(), provider)

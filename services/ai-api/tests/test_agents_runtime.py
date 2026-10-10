@@ -26,7 +26,7 @@ from app.agents.llm.fake import (
     selftest_responses,
     selftest_script,
 )
-from app.agents.llm.interface import LlmRateLimited, LlmRequest, LlmResponse
+from app.agents.llm.interface import LlmRateLimited, LlmRequest, LlmResponse, TaskClass
 from tests.agent_fakes import Clock, FakeAgentDb
 
 CANARY = "CANARY-91c2d4"
@@ -322,11 +322,19 @@ def test_the_input_bound_counts_bytes_and_tool_definitions() -> None:
     from app.agents.llm.interface import Block, ToolSpec, Trust
 
     plain = LlmRequest(
-        blocks=(Block(Trust.SYSTEM, "abc"),), tools=(), max_output_tokens=10, final_result=None
+        blocks=(Block(Trust.SYSTEM, "abc"),),
+        tools=(),
+        max_output_tokens=10,
+        task_class=TaskClass.HARD,
+        final_result=None,
     )
     assert runtime.input_token_bound(plain) == 3 + runtime.INPUT_TOKEN_OVERHEAD
     multibyte = LlmRequest(
-        blocks=(Block(Trust.UNTRUSTED, "é€"),), tools=(), max_output_tokens=10, final_result=None
+        blocks=(Block(Trust.UNTRUSTED, "é€"),),
+        tools=(),
+        max_output_tokens=10,
+        task_class=TaskClass.HARD,
+        final_result=None,
     )
     assert runtime.input_token_bound(multibyte) == 2 + 3 + runtime.INPUT_TOKEN_OVERHEAD
     tool = ToolSpec("t", "d", {"type": "object"})
@@ -334,6 +342,7 @@ def test_the_input_bound_counts_bytes_and_tool_definitions() -> None:
         blocks=(Block(Trust.SYSTEM, "abc"),),
         tools=(tool,),
         max_output_tokens=10,
+        task_class=TaskClass.HARD,
         final_result=tool,
     )
     assert runtime.input_token_bound(with_tools) > runtime.input_token_bound(plain) + 20

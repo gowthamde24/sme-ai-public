@@ -207,6 +207,13 @@ class AgentDb:
         if result.get("granted") is not True:
             raise CostCapReached
 
+    def ai_mode(self, light_model: str) -> str:
+        result = self._rpc(
+            "agent_ai_mode", {"p_run_id": str(self._run), "p_light_model": light_model}
+        )
+        mode = result.get("mode")
+        return mode if isinstance(mode, str) else "normal"
+
     def release_cost(self, step_key: str, *, reason: str) -> None:
         self._rpc(
             "agent_release_cost",

@@ -17,6 +17,9 @@ describe("AI usage", () => {
     expect(parseAiUsage(USAGE)).toEqual(USAGE);
     expect(parseAiUsage({ ...USAGE, spent_paise: 5000 })).toEqual(USAGE);
   });
+  it.each(["ok", "warn", "light", "paused"])("the state %s is part of the contract (light = over 100 %%, paused = 300 %%)", (state) => {
+    expect(parseAiUsage({ ...USAGE, state }).state).toBe(state);
+  });
   it.each([
     ["today_percent", 101], ["today_percent", -1], ["today_percent", 12.5], ["today_percent", "9"], ["today_percent", null],
     ["month_percent", 101], ["month_percent", true], ["resets_at_today", "soon"], ["resets_at_today", 5], ["resets_at_month", undefined],

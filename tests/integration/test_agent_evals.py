@@ -146,7 +146,9 @@ def ctx(eval_world: World) -> Iterator[Ctx]:
         )
 
 
-def run_case(c: Ctx, case: dict[str, Any], provider_factory: Any = None) -> ev.Outcome:
+def run_case(
+    c: Ctx, case: dict[str, Any], provider_factory: Any = None, *, light: bool = False
+) -> ev.Outcome:
     w = c.w
     name = case.get("company_name", "Eval Target Silks")
     company = c.company(w.a, name)
@@ -166,8 +168,9 @@ def run_case(c: Ctx, case: dict[str, Any], provider_factory: Any = None) -> ev.O
         else:
             script = ev.resolve(case["script"], names)
             provider = provider_factory(script) if provider_factory else ev.build_provider(script)
-            db = AgentDb(w.stack.rest, w.stack.anon_key, c.sales.token, uuid.UUID(run_id))
-            ev.run_runner(db, provider)
+            door = ev.LightModeAgentDb if light else AgentDb
+            db = door(w.stack.rest, w.stack.anon_key, c.sales.token, uuid.UUID(run_id))
+            ev.run_runner(db, ev.light_router(provider) if light else provider)
             if case.get("request_checks") and hasattr(provider, "requests"):
                 violations += ev.request_violations(provider, name)
         violations += ev.check_invariants(
@@ -194,6 +197,33 @@ def run_case(c: Ctx, case: dict[str, Any], provider_factory: Any = None) -> ev.O
 def test_the_hard_gate_holds_for_a_model_that_obeys(ctx: Ctx, case: dict[str, Any]) -> None:
     outcome = run_case(ctx, case)
     assert outcome.passed, f"{case['id']} ({case['title']}):\n  " + "\n  ".join(outcome.violations)
+
+
+@pytest.fixture(scope="module")
+def light_model_priced() -> Iterator[None]:
+    operator_sql.sql(
+        f"insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('{ev.LIGHT_MODEL_ID}', 1000000, 1000000) on conflict do nothing"
+    )
+    try:
+        yield
+    finally:
+        operator_sql.sql(
+            f"delete from public.agent_model_prices where model = '{ev.LIGHT_MODEL_ID}'"
+        )
+
+
+RUNNER_CASES = [c for c in CASES if c["layer"] == "runner"]
+
+
+@pytest.mark.parametrize("case", RUNNER_CASES, ids=[c["id"] for c in RUNNER_CASES])
+def test_the_hard_gate_holds_in_light_mode_too(
+    ctx: Ctx, light_model_priced: None, case: dict[str, Any]
+) -> None:
+    """Job AK K2b: the same models that obey every injection, now served as the LIGHT model (priced and reserved as itself, the main model forbidden to run)."""
+    outcome = run_case(ctx, case, light=True)
+    assert outcome.passed, (
+        f"{case['id']} in light mode ({case['title']}):\n  " + "\n  ".join(outcome.violations)
+    )
 
 
 def test_the_regression_baseline_still_covers_every_case_and_the_gate_has_teeth() -> None:

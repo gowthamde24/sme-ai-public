@@ -160,6 +160,7 @@ select is(
         'public.agent_reserve_cost',
         'public.set_tenant_daily_cost_cap',
         'public.agent_release_cost',
+        'public.agent_ai_mode',
         'public.agent_cost_summary',
         -- T006b (ADR 0014): erasure. Each derives the tenant from the request (or proves the role in the tenant it is given).
         'public.request_erasure',
@@ -224,7 +225,7 @@ select is(
                      'public.start_agent_run', 'public.agent_write_evidence', 'public.agent_write_claim', 'public.agent_record_step',
                      'public.agent_record_usage', 'public.finish_agent_run', 'public.cancel_agent_run',
                      'public.set_tenant_agents_enabled', 'public.review_claim',
-                     'public.agent_reserve_cost', 'public.set_tenant_daily_cost_cap', 'public.agent_release_cost', 'public.agent_cost_summary',
+                     'public.agent_reserve_cost', 'public.set_tenant_daily_cost_cap', 'public.agent_release_cost', 'public.agent_ai_mode', 'public.agent_cost_summary',
                      'public.request_erasure', 'public.execute_erasure', 'public.cancel_erasure',
                      'public.agent_write_requirement_field', 'public.decide_requirement_field', 'public.confirm_requirement', 'public.discard_requirement',
                      'public.add_requirement_field',

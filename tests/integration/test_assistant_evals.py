@@ -29,17 +29,36 @@ from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
 
+from app.agents.llm.routing import ModelRouter
 from app.assistant.language import reply_matches
 from app.assistant.runner import money_amounts
 from app.assistant.tools import TOOLS
 
 ALLOWED_TOOLS = {t.name for t in TOOLS} | {"refused_call", "tool_error"}
-HOLDER: dict[str, Any] = {"model": None}
+HOLDER: dict[str, Any] = {"model": None, "light": False}
+
+
+class MainModelMustNotRun:
+    """The main model of a light-mode case (job AK K2b): calling it fails the case."""
+
+    model_id = "fake-selftest"
+
+    def complete(self, request: Any) -> Any:
+        raise AssertionError("the main model was called although the workspace is light")
+
+
+def served_by() -> Any:
+    """The model (or router) the Main agent gets for the case being run."""
+    model = HOLDER["model"]
+    if not HOLDER["light"]:
+        return model
+    model.model_id = "fake-light"
+    return ModelRouter(MainModelMustNotRun(), model)
 
 
 @pytest.fixture(scope="module")
 def app(stack: Any) -> Iterator[TestClient]:
-    yield from assistant_app(stack, factory=lambda: HOLDER["model"])
+    yield from assistant_app(stack, factory=served_by)
 
 
 @pytest.fixture(scope="module")
@@ -138,6 +157,73 @@ def owned_by(tenant: str, record_id: str) -> bool:
 
 @pytest.mark.parametrize("case_id", case_ids())
 def test_the_case(
+    case_id: str, app: TestClient, world: tuple[Scene, dict[str, str], list[Case]]
+) -> None:
+    HOLDER["light"] = False
+    run_the_case(case_id, app, world)
+
+
+@pytest.fixture(scope="module")
+def light_workspace(
+    world: tuple[Scene, dict[str, str], list[Case]],
+) -> Iterator[None]:
+    """Workspace A over its allowance for the day, for real: a tiny plan allowance and a settled call of the same size in the ledger, and a priced light model."""
+    scene = world[0]
+    t = str(scene.a.id)
+    plan = operator_sql.sql(
+        "select daily_paise || ',' || monthly_paise from public.plan_ai_allowances where plan = 'free_trial'"
+    )
+    run = operator_sql.sql(f"select id from public.agent_runs where tenant_id = '{t}' limit 1")
+    # the allowance is what the workspace has spent today (rounded down to a whole paisa, at least one) plus one paisa: the workspace is at or over 100 % now,
+    # and the 30 cases that follow cost about as much again, so it stays well under 300 %
+    spent = int(operator_sql.sql(f"select app.agent_day_spend('{t}', app.agent_utc_today())"))
+    # the normal-mode pass left its follow-up drafts open, and the database allows one open draft per lead and channel: discard them so the light pass can draft again
+    operator_sql.sql(
+        "update public.followup_drafts set status = 'discarded', discarded_at = now(), discard_code = 'person' "
+        f"where tenant_id = '{t}' and status = 'draft'"
+    )
+    allowance_paise = max(1, (spent + 10_000) // 10_000)
+    operator_sql.sql(
+        "insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('fake-light', 1000000, 1000000) on conflict do nothing; "
+        f"update public.plan_ai_allowances set daily_paise = {allowance_paise}, monthly_paise = {allowance_paise * 1000} where plan = 'free_trial'; "
+        "insert into public.agent_cost_reservations (id, tenant_id, run_id, step_key, cost_day, max_input_tokens, max_output_tokens, reserved_micros, settled_micros, args_sha256, settled_at, outcome) "
+        f"values (gen_random_uuid(), '{t}', '{run}', 'ak2b-light', app.agent_utc_today(), 1, 1, 10000, 10000, repeat('c', 64), now(), 'used')"
+    )
+    try:
+        yield
+    finally:
+        daily, monthly = plan.split(",")
+        operator_sql.sql(
+            f"update public.plan_ai_allowances set daily_paise = {daily}, monthly_paise = {monthly} where plan = 'free_trial'; "
+            f"delete from public.agent_cost_reservations where tenant_id = '{t}' and step_key = 'ak2b-light'; "
+            "delete from public.agent_model_prices where model = 'fake-light'"
+        )
+
+
+@pytest.mark.parametrize("case_id", case_ids())
+def test_the_case_in_light_mode(
+    case_id: str,
+    app: TestClient,
+    world: tuple[Scene, dict[str, str], list[Case]],
+    light_workspace: None,
+) -> None:
+    """Job AK K2b: the same 30 cases with the workspace over its allowance. The DATABASE says light, the router serves the light model, and every invariant still holds."""
+    HOLDER["light"] = True
+    started = operator_sql.sql("select clock_timestamp()")
+    try:
+        run_the_case(case_id, app, world)
+        scene = world[0]
+        assert (
+            operator_sql.sql(
+                f"select string_agg(distinct model, ',') from public.agent_cost_reservations where tenant_id = '{scene.a.id}' and step_key like 'usage-%' and created_at >= '{started}'"
+            )
+            == "fake-light"
+        )
+    finally:
+        HOLDER["light"] = False
+
+
+def run_the_case(
     case_id: str, app: TestClient, world: tuple[Scene, dict[str, str], list[Case]]
 ) -> None:
     scene, ids, cases = world

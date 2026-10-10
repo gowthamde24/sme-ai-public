@@ -10,6 +10,7 @@ website. The policy text below only tells the model what the tools already enfor
 
 from __future__ import annotations
 
+from app.agents.llm.interface import TaskClass
 from app.agents.research_tools import FETCH_PAGE, PROPOSE_CLAIM, RECORD_EVIDENCE
 from app.agents.research_vocab import CLAIM_VOCAB
 from app.agents.spec import AgentSpec
@@ -49,6 +50,7 @@ RESEARCH = AgentSpec(
     turn_hints=TURN_HINTS,
     tools=(FETCH_PAGE, RECORD_EVIDENCE, PROPOSE_CLAIM),
     claim_predicate="buyer_type",  # unused: every claim names its predicate
+    task_class=TaskClass.HARD,
     max_turns=6,
     max_calls_per_turn=5,
     uses_web=True,

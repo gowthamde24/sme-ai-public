@@ -18,6 +18,7 @@ from app.agents.llm.interface import (
     LlmRequest,
     LlmResponse,
     LlmUnavailable,
+    TaskClass,
     ToolSpec,
     Trust,
     Usage,
@@ -28,7 +29,12 @@ CANARY = "CANARY-7f3a91"
 
 # ---- the interface and the fake
 def test_the_fake_provider_is_deterministic_and_records_every_request() -> None:
-    req = LlmRequest(blocks=(Block(Trust.SYSTEM, "s"),), tools=(), max_output_tokens=100)
+    req = LlmRequest(
+        blocks=(Block(Trust.SYSTEM, "s"),),
+        tools=(),
+        max_output_tokens=100,
+        task_class=TaskClass.HARD,
+    )
     a, b = FakeProvider(selftest_script()), FakeProvider(selftest_script())
     assert [a.complete(req) for _ in range(3)] == [b.complete(req) for _ in range(3)]
     assert a.requests == [req, req, req]
@@ -36,7 +42,7 @@ def test_the_fake_provider_is_deterministic_and_records_every_request() -> None:
 
 def test_an_exhausted_script_is_a_bad_response_not_an_endless_loop() -> None:
     p = FakeProvider([respond(call("write_note", text="x"))])
-    req = LlmRequest(blocks=(), tools=(), max_output_tokens=10)
+    req = LlmRequest(blocks=(), tools=(), max_output_tokens=10, task_class=TaskClass.HARD)
     p.complete(req)
     with pytest.raises(LlmBadResponse):
         p.complete(req)
@@ -50,7 +56,7 @@ def test_a_scripted_exception_is_raised_and_a_callable_sees_the_request() -> Non
         return respond()
 
     p = FakeProvider([LlmUnavailable(), reactive])
-    req = LlmRequest(blocks=(), tools=(), max_output_tokens=10)
+    req = LlmRequest(blocks=(), tools=(), max_output_tokens=10, task_class=TaskClass.HARD)
     with pytest.raises(LlmUnavailable):
         p.complete(req)
     p.complete(req)

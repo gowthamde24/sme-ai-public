@@ -112,5 +112,6 @@ def build_request(
         blocks=tuple(blocks),
         tools=tuple(t.spec() for t in spec.tools),
         max_output_tokens=max_output_tokens,
+        task_class=spec.task_class,
         final_result=FINAL_RESULT,
     )

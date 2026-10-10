@@ -10,6 +10,7 @@ what the tool already enforces."""
 
 from __future__ import annotations
 
+from app.agents.llm.interface import TaskClass
 from app.agents.requirement_tools import PROPOSE_FIELD, flush_proposals
 from app.agents.spec import AgentSpec
 from app.requirements.vocabulary import VOCAB
@@ -46,6 +47,7 @@ REQUIREMENT = AgentSpec(
     turn_hints=TURN_HINTS,
     tools=(PROPOSE_FIELD,),
     claim_predicate="requirement.unused",  # the agent writes no claims
+    task_class=TaskClass.HARD,
     max_turns=3,
     max_calls_per_turn=12,
     target_kind="enquiry",

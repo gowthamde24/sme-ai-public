@@ -83,7 +83,7 @@ select is(pg_temp.spent(), 1300::numeric, 'expired (50), killed (30) and failed 
 create function pg_temp.summary(p_user text) returns text language sql as $$ select pg_temp.sc(tests.uid(p_user), format('select public.agent_cost_summary(%L)', tests.tid('a'))) $$;
 select is(pg_temp.j(pg_temp.summary('a_owner'), 'settled_micros'), '400', 'summary: settled today = 400');
 select is(pg_temp.j(pg_temp.summary('a_owner'), 'open_micros'), '900', '...open (worst case) = 700 + 100 + 50 + 30 + 20 = 900');
-select is(pg_temp.j(pg_temp.summary('a_owner'), 'cap_micros'), '2000000', '...and the cap');
+select is(pg_temp.j(pg_temp.summary('a_owner'), 'cap_micros'), '60000000', '...and the cap (three times the free trial''s daily allowance)');
 select is(pg_temp.j(pg_temp.summary('a_owner'), 'day'), app.agent_utc_today()::text, '...for today (India)');
 select is((select string_agg(o ->> 'run_status', ',' order by o ->> 'run_status') from jsonb_array_elements((pg_temp.summary('a_owner'))::jsonb -> 'open') o), 'cancelled,expired,failed,killed,running', '...each open reservation with its run''s status (the running one is c_run''s usage-2)');
 select is(jsonb_array_length((pg_temp.summary('a_admin'))::jsonb -> 'open'), 5, 'an Admin reads it too');
