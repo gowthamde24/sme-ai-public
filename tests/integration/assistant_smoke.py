@@ -11,8 +11,9 @@ adapter, and prints PASS or FAIL per question:
 
 HARD LIMITS (they live in this file and in the database, not in a promise):
   * the KEY comes from the environment only. This script never reads a file for it, never prints it, and refuses to start without it (one line, exit 2);
-  * the daily cost cap stays ON: this script never touches a cap, a limit or a switch except the Main agent's own (below), and a cap hit is reported, not worked around;
-  * the whole command may spend at most ₹20 (MAX_SPEND_PAISE): before each question it adds the worst case of one more run (the database's own per-run budget for the
+  * the daily cost cap stays ON: for the run it is raised on the demo workspace only (to the database's own maximum, ₹20) and the assistant's per-run budget to ₹5, both put back exactly
+    afterwards, and a cap hit is still reported, not worked around. Nothing else (no other workspace, no product default, no rate limit) is touched;
+  * the whole command may spend at most ₹30 (MAX_SPEND_PAISE): before each question it adds the worst case of one more run (the database's own per-run budget for the
     assistant) to what was spent so far and STOPS the remaining questions if that would pass the limit; the paise spent are printed at the end;
   * only the local stack and only the seeded demo workspace; it refuses any other Supabase URL;
   * the base URL of the model provider must be the default https://api.anthropic.com (a key is never sent anywhere else).
@@ -47,7 +48,12 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from app.assistant.language import reply_matches  # noqa: E402
 from app.assistant.runner import money_amounts  # noqa: E402
 
-MAX_SPEND_PAISE = 2000  # ₹20: the whole command
+MAX_SPEND_PAISE = 3000  # ₹30: the whole command
+# For THIS command, on the DEMO workspace only, and put back exactly afterwards (job AK, K1): a Sonnet-class model's worst-case reservation for one call is more than the product defaults
+# (₹1 per run for the assistant, ₹2 a day per workspace), so the first question could never pass. The daily cap is raised to the DATABASE'S OWN MAXIMUM for a workspace cap (a CHECK of
+# 20,000,000 micros = ₹20; the brief asked ₹30, which the database refuses without a migration that raises the system maximum: that is the owner's decision, see the K1 report).
+SMOKE_DAILY_CAP_MICROS = 20_000_000
+SMOKE_RUN_BUDGET_MICROS = 5_000_000  # ₹5 per assistant run (the definition's max_cost_micros)
 MICROS_PER_PAISE = 10_000  # 1,000,000 micros = ₹1 = 100 paise (the same unit as the AI usage card)
 DEFAULT_BASE_URL = "https://api.anthropic.com"
 REPORT_FILE = ROOT / "assistant-smoke-report.md"  # git-ignored
@@ -424,9 +430,9 @@ def set_model_price(model: str, input_micros: int, output_micros: int) -> None:
     )
 
 
-def switch_on(slug: str) -> dict[str, Any]:
-    """The operator turns the Main agent on for ONE workspace (the three switches). Returns what to restore. Rate limits and caps are not touched."""
-    saved = {
+def snapshot(slug: str) -> dict[str, Any]:
+    """Everything the run will change, as it is now (read only): the switches, the demo workspace's row (switch AND cap) and the assistant's per-run budget."""
+    return {
         "flags": json.loads(
             operator_sql.sql("select json_object_agg(key, enabled) from public.platform_flags")
         ),
@@ -440,9 +446,30 @@ def switch_on(slug: str) -> dict[str, Any]:
                 f"select coalesce(json_agg(row_to_json(s)), '[]') from public.tenant_agent_settings s where s.tenant_id = (select id from public.tenants where slug = '{slug}')"
             )
         ),
+        "run_budget": _int(
+            operator_sql.sql(
+                "select max_cost_micros from public.agent_definitions where agent_name = 'assistant'"
+            )
+        ),
         "slug": slug,
     }
+
+
+def apply_run_settings(slug: str) -> None:
+    """The operator turns the Main agent on for ONE workspace (the three switches) and lifts, for that workspace and the assistant only, the two caps a Sonnet-class call cannot fit in."""
     operator_sql.sql(f"select app.operator_enable_assistant('{slug}')")
+    operator_sql.sql(
+        f"update public.tenant_agent_settings set daily_cost_cap_micros = {SMOKE_DAILY_CAP_MICROS}, updated_at = now() where tenant_id = (select id from public.tenants where slug = '{slug}')"
+    )
+    operator_sql.sql(
+        f"update public.agent_definitions set max_cost_micros = {SMOKE_RUN_BUDGET_MICROS} where agent_name = 'assistant'"
+    )
+
+
+def switch_on(slug: str) -> dict[str, Any]:
+    """snapshot, then apply. Returns what to restore."""
+    saved = snapshot(slug)
+    apply_run_settings(slug)
     return saved
 
 
@@ -453,13 +480,16 @@ def restore(saved: dict[str, Any]) -> None:
         )
     allowed = ",".join(f"'{a}'" for a in saved["allowed"] or [])
     operator_sql.sql(
-        f"update public.agent_definitions set allowed_tenants = array[{allowed}]::uuid[] where agent_name = 'assistant'"
+        f"update public.agent_definitions set allowed_tenants = array[{allowed}]::uuid[], max_cost_micros = {int(saved['run_budget'])} where agent_name = 'assistant'"
     )
     slug = saved["slug"]
     if saved["settings"]:
-        enabled = "true" if saved["settings"][0].get("enabled") else "false"
+        row = saved["settings"][0]
+        enabled = "true" if row.get("enabled") else "false"
+        cap = row.get("daily_cost_cap_micros")
+        cap_sql = "null" if cap is None else str(int(cap))
         operator_sql.sql(
-            f"update public.tenant_agent_settings set enabled = {enabled}, updated_at = now() where tenant_id = (select id from public.tenants where slug = '{slug}')"
+            f"update public.tenant_agent_settings set enabled = {enabled}, daily_cost_cap_micros = {cap_sql}, updated_at = now() where tenant_id = (select id from public.tenants where slug = '{slug}')"
         )
     else:
         operator_sql.sql(
@@ -688,17 +718,20 @@ def main(env: Mapping[str, str] | None = None) -> int:
             int(env["LLM_INPUT_MICROS_PER_MTOK"]),
             int(env["LLM_OUTPUT_MICROS_PER_MTOK"]),
         )
-        saved = switch_on(DEMO_WORKSPACE_SLUG)
+        saved = snapshot(
+            DEMO_WORKSPACE_SLUG
+        )  # taken BEFORE anything changes, so a failure half-way still restores everything
+        apply_run_settings(DEMO_WORKSPACE_SLUG)
         guard = BudgetGuard(MAX_SPEND_PAISE, worst_case_run_paise(), lambda: spent_micros(tenant))
         print(
-            f"assistant-smoke: 5 questions, the real adapter, the demo workspace only. Limit {MAX_SPEND_PAISE} paise (₹{MAX_SPEND_PAISE // 100}); the daily cap stays on."
+            f"assistant-smoke: 5 questions, the real adapter, the demo workspace only. Limit {MAX_SPEND_PAISE} paise (₹{MAX_SPEND_PAISE // 100}); the daily cap stays on (raised for this run on the demo workspace only, put back at the end)."
         )
         cap_paise = (
             _int(operator_sql.sql(f"select app.agent_daily_cap('{tenant}')")) // MICROS_PER_PAISE
         )
         today_paise = spent_micros(tenant) // MICROS_PER_PAISE
         print(
-            f"assistant-smoke: the demo workspace's daily cap is {cap_paise} paise, {today_paise} paise already spent today (India day). A call is reserved at its worst case, so a cap that is too low shows as FAIL (cost_cap_reached); this command never changes a cap."
+            f"assistant-smoke: the demo workspace's daily cap is {cap_paise} paise, {today_paise} paise already spent today (India day). A call is reserved at its worst case, so a cap that is too low shows as FAIL (cost_cap_reached). The cap and the assistant's per-run budget (now {worst_case_run_paise()} paise) were raised for this run and are put back at the end."
         )
         with TestClient(create_app(settings, runtime=runtime)) as client:
             verdicts = run_questions(client, tenant, seeder.token, demo_id("manual-lead"), guard)
