@@ -241,6 +241,20 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
 --                                           select insert update delete
 -- job AG: the Main agent's tables. A chat is private to the person who started it, so a fixture row made by an unaffiliated user is readable by no role.
 insert into tests.tenant_table_registry (table_name, insert_sql, update_set, delete_sql, keyset_index_required) values
+  -- job AT: the outbox. Written only by SECURITY DEFINER functions; the fixture builder inserts a message that waits for approval (the only states a row may start in besides queued and blocked).
+  ('outbox_settings',
+   $$insert into public.outbox_settings (tenant_id) values (%1$L) on conflict (tenant_id) do update set per_customer_daily_limit = 3$$,
+   'per_customer_daily_limit = per_customer_daily_limit', $$delete from public.outbox_settings where tenant_id = %1$L$$, false),
+  ('outbox_messages',
+   $$insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by)
+     select %2$L, %1$L, l.id, l.contact_id, 'whatsapp', 'Synthetic generic message', 'en', 'info', 'needs_approval', 'category_other', repeat('1', 64), %5$L
+       from (select id, contact_id from public.leads where tenant_id = %1$L order by id limit 1) l$$,
+   'status = status', $$delete from public.outbox_messages where id = %2$L$$, true),
+  ('call_requests',
+   $$insert into public.call_requests (id, tenant_id, lead_id, contact_id, reason, script_draft, language, request_sha256, requested_by)
+     select %2$L, %1$L, l.id, l.contact_id, 'Synthetic reason', 'Synthetic script', 'en', repeat('2', 64), %5$L
+       from (select id, contact_id from public.leads where tenant_id = %1$L order by id limit 1) l$$,
+   'status = status', $$delete from public.call_requests where id = %2$L$$, true),
   ('assistant_conversations',
    $$insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L)$$,
    'updated_at = updated_at', $$delete from public.assistant_conversations where id = %2$L$$, true),
@@ -362,6 +376,13 @@ select t, r, s, i, u, d from (values
   ('assistant_messages',    'sales', false, false, false, false), ('assistant_messages',    'viewer', false, false, false, false),
   ('assistant_reply_drafts','owner', false, false, false, false), ('assistant_reply_drafts','admin', false, false, false, false),
   ('assistant_reply_drafts','sales', false, false, false, false), ('assistant_reply_drafts','viewer', false, false, false, false),
+  -- job AT: the outbox, its settings and call requests. Owner / Admin / Sales read; a Viewer reads none (a message can hold a price); nobody writes directly.
+  ('outbox_settings',      'owner', true, false, false, false), ('outbox_settings',      'admin', true, false, false, false),
+  ('outbox_settings',      'sales', true, false, false, false), ('outbox_settings',      'viewer', false, false, false, false),
+  ('outbox_messages',      'owner', true, false, false, false), ('outbox_messages',      'admin', true, false, false, false),
+  ('outbox_messages',      'sales', true, false, false, false), ('outbox_messages',      'viewer', false, false, false, false),
+  ('call_requests',        'owner', true, false, false, false), ('call_requests',        'admin', true, false, false, false),
+  ('call_requests',        'sales', true, false, false, false), ('call_requests',        'viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

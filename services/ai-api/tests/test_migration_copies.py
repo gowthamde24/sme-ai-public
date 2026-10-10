@@ -57,6 +57,7 @@ def normalised(text: str) -> list[str]:
 
 
 T010_SUPPRESSION = "20261018090000_t010_suppression_keys.sql"
+AT = "20261106090000_at_outbox.sql"
 
 
 @pytest.mark.parametrize("name", sorted(CHANGED))
@@ -332,7 +333,7 @@ MARKER_CHANGED: dict[str, set[str]] = {
 
 @pytest.mark.parametrize("name", sorted(MARKER_CHANGED))
 def test_the_marker_copy_is_the_last_definition_and_only_drops_the_named_lines(name: str) -> None:
-    defs = definitions(name)
+    defs = [d for d in definitions(name) if d[0] < AT]  # job AT (below) copies two of them again
     assert defs[-1][0] == MARKER, (
         f"{name} is redefined after the erased marker ({defs[-1][0]}) or the marker migration does not define it: re-copy it from the latest definition"
     )
@@ -636,3 +637,37 @@ def test_slice2_approval_keeps_the_list_path_and_adds_the_manual_branch() -> Non
         in added
     ), "the list build call is unchanged"
     assert "v_lines jsonb;" in added and "if z.pricing_kind = 'manual' then" in added
+
+
+# ---------------------------------------------------------------------------------------------- job AT: the outbox migration
+# Migration 20261106090000 replaces four functions as whole copies: the two erasure functions (the person's and the company's messages and call requests are erased), today_summary (two more
+# kinds of waiting item) and assistant_save_reply (two more source types). Last definition each; compared with the latest earlier one it may only ADD lines.
+AT_COPIES = ("app.erase_contact", "app.erase_company", "public.today_summary", "public.assistant_save_reply")
+
+
+@pytest.mark.parametrize("name", AT_COPIES)
+def test_the_outbox_copy_is_the_last_definition_and_only_adds_lines(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == AT, (
+        f"{name} is redefined after the outbox migration ({defs[-1][0]}) or the migration does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < AT]
+    assert earlier
+    kept = {line.strip() for line in defs[-1][1].split("\n")}
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    unexpected = [line for line in removed if line not in kept and line not in AT_CHANGED.get(name, set())]
+    assert not unexpected, f"{name}: the outbox migration drops lines of {earlier[-1][0]}: {unexpected}"
+
+
+# lines of an earlier definition that the copy rewrites on purpose (the same statement, one more value)
+AT_CHANGED: dict[str, set[str]] = {
+    "public.assistant_save_reply": {
+        "or not app.assistant_pairs_ok(coalesce(p_sources, '[]'::jsonb), array['quote', 'lead', 'enquiry', 'order', 'company', 'customer', 'price_item', 'followup_draft', 'reply_draft'])",
+    },
+}

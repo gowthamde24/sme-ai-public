@@ -38,6 +38,10 @@ from app.logging_safety import install_log_redaction
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
+from app.outbox import errors as outbox_errors
+from app.outbox.adapter import ChannelAdapter, build_adapter
+from app.outbox.repository import PostgrestOutboxRepository
+from app.outbox.routes import router as outbox_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
 from app.quotes import errors as quote_errors
@@ -65,6 +69,14 @@ class HealthResponse(BaseModel):
     service: str
     version: str
     environment: str
+
+
+def _outbox_adapter(settings: Settings) -> ChannelAdapter:
+    """The outbox's channel adapter: only the local fake exists; any other name stops us."""
+    try:
+        return build_adapter(settings.outbox_adapter)
+    except ValueError as exc:
+        raise ConfigurationError(str(exc)) from None
 
 
 def build_runtime(settings: Settings) -> Runtime | None:
@@ -97,6 +109,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         key_ring=build_key_ring(settings),
         followups=PostgrestFollowupsRepository(config.rest_url, config.anon_key),
         today=PostgrestTodayRepository(config.rest_url, config.anon_key),
+        outbox=PostgrestOutboxRepository(config.rest_url, config.anon_key),
+        outbox_adapter=_outbox_adapter(settings),
     )
 
 
@@ -263,6 +277,13 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     order_errors.NoOrderPolicyError: ApiError(
         409, "no_order_policy", "No order policy is in force: the owner must publish one."
     ),
+    # Outbox (job AT, ADR 0066). Fixed messages: nothing from the data layer reaches a client.
+    outbox_errors.OutboxStateError: ApiError(
+        409, "outbox_state", "That cannot be done in the state it is in now. Reload and look again."
+    ),
+    outbox_errors.CustomerStoppedError: ApiError(
+        409, "customer_stopped", "This customer asked us to stop. Nothing more is sent or called."
+    ),
     runs_repo.RequirementConfirmedError: ApiError(
         409,
         "requirement_confirmed",
@@ -326,6 +347,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.suppression,
                 runtime.followups,
                 runtime.today,
+                runtime.outbox,
             ):
                 if isinstance(
                     repository,
@@ -341,7 +363,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestPriceListRepository
                     | PostgrestSuppressionRepository
                     | PostgrestFollowupsRepository
-                    | PostgrestTodayRepository,
+                    | PostgrestTodayRepository
+                    | PostgrestOutboxRepository,
                 ):
                     repository.close()
 
@@ -413,6 +436,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(quotes_router)
     app.include_router(orders_router)
     app.include_router(followups_router)
+    app.include_router(outbox_router)
     app.include_router(pricelists_router)
     app.include_router(today_router)
     app.include_router(assistant_router)
