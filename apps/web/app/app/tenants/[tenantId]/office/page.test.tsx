@@ -44,7 +44,7 @@ describe("the Office", () => {
     expect(getAgentsStatus).toHaveBeenCalledWith("tok", TENANT);
     const items = within(screen.getByRole("region", { name: "Agent office" })).getAllByRole("listitem");
     expect(items).toHaveLength(7);
-    expect(items[0]).toHaveTextContent("Main agentNot available yet");
+    expect(items[0]).toHaveTextContent("Agent OWLNot available yet");
     expect(items[1]).toHaveTextContent("Lead FinderNot available yet");
     expect(items[3]).toHaveTextContent("Requirement AnalystWorking");
     expect(items[4]).toHaveTextContent("Quote WriterIdlePrepares a quote from the prices you set. A person approves it.Prepared quote 3");
@@ -94,7 +94,7 @@ describe("the Office: each latest event opens the page it is about", () => {
     expect(within(feed).getByRole("link", { name: "Prepared quote 3" })).toHaveAttribute("href", `/app/tenants/${TENANT}/enquiries/${E}?quote=${Q}`);
     expect(within(feed).getByRole("link", { name: "Drafted follow-up message number 2" })).toHaveAttribute("href", `/app/tenants/${TENANT}/leads/${L}`);
     expect(within(feed).getByRole("link", { name: "Order started" })).toHaveAttribute("href", `/app/tenants/${TENANT}/orders/${O}`);
-    expect(within(feed).getByText("Answered a question").closest("a")).toBeNull(); // the Main agent's answers have no screen
+    expect(within(feed).getByText("Answered a question").closest("a")).toBeNull(); // the Agent OWL's answers have no screen
   });
   it("the chosen helper's panel links its latest event the same way; a quote that cannot be placed opens the list of quotes", async () => {
     getAgentsStatus.mockResolvedValue(withTargets());

@@ -21,7 +21,7 @@ consent,a customer's permission to be contacted,consent,సమ్మతి,అ�
 do-not-contact,a list of people who said no,do-not-contact list,సంప్రదించవద్దు జాబితా,మెసేజ్/ఫోన్ చేయకూడని వారి లిస్ట్,డూ-నాట్-కాంటాక్ట్ లిస్ట్,B,संपर्क न करें सूची,जिन्हें मैसेज/कॉल नहीं करना उनकी लिस्ट,डू-नॉट-कॉन्टैक्ट लिस्ट,B,ಸಂಪರ್ಕಿಸಬೇಡಿ ಪಟ್ಟಿ,ಕರೆ/ಮೆಸೇಜ್ ಮಾಡಬಾರದವರ ಲಿಸ್ಟ್,ಡು-ನಾಟ್-ಕಾಂಟ್ಯಾಕ್ಟ್ ಲಿಸ್ಟ್,B,,long but clear,
 research,reading public pages about a lead,research,పరిశోధన,వివరాలు వెతకడం,రీసెర్చ్,B,अनुसंधान,जाँच-पड़ताल,रिसर्च,B,ಸಂಶೋಧನೆ,ವಿವರ ಹುಡುಕುವುದು,ರಿಸರ್ಚ್,B,,A forms mean scientific research,
 assistant / agent,an AI team member,assistant (agent),సహాయకుడు,సహాయకులు,అసిస్టెంట్,C,प्रतिनिधि,सहायक,एजेंट,B,ಸಹಾಯಕ,ಸಹಾಯಕ,ಅಸಿಸ್ಟೆಂಟ್,C,,a product term; check it does not sound like a human employee,
-main agent,the owner's assistant you talk to,main agent,ప్రధాన సహాయకుడు,మెయిన్ అసిస్టెంట్,మెయిన్ ఏజెంట్,B,मुख्य प्रतिनिधि,मुख्य सहायक,मेन एजेंट,B,ಮುಖ್ಯ ಸಹಾಯಕ,ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್,ಮೇನ್ ಏಜೆಂಟ್,B,,,
+Agent OWL,the owner's assistant you talk to (its name; job AR renamed it from 'main agent'),Agent OWL,Agent OWL,Agent OWL,Agent OWL,C,Agent OWL,Agent OWL,Agent OWL,C,Agent OWL,Agent OWL,Agent OWL,C,,"A product name: kept in Latin letters in all languages, like WhatsApp. Not translated, not transliterated.",
 team,the group of assistants,team,బృందం,జట్టు,టీమ్,C,दल,(same as C),टीम,C,ತಂಡ,ಟೀಮ್,ಟೀಮ್,A,,KN 'ತಂಡ' is everyday,
 message,text sent to a customer,message,సందేశం,సమాచారం,మెసేజ్,C,संदेश,(same as C),मैसेज,C,ಸಂದೇಶ,ಮೆಸೇಜ್,ಮೆಸೇಜ್,B,,,
 send / I sent it,the person says they sent it themselves,I sent it,పంపబడింది,పంపాను,సెండ్ చేశాను,B,प्रेषित,भेज दिया,सेंड किया,B,ರವಾನಿಸಲಾಗಿದೆ,ಕಳುಹಿಸಿದೆ,ಸೆಂಡ್ ಮಾಡಿದೆ,B,,the app itself sends nothing,

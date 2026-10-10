@@ -54,7 +54,7 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(needs.getByText("Quote 1 for ₹50,400.00 is ready for your approval.")).toBeInTheDocument(); // the API's own sentence
     const team = within(screen.getByRole("heading", { name: "Your team right now" }).closest("section")!);
     expect(team.getByText("Quote Writer")).toBeInTheDocument();
-    expect(team.getAllByText("Not available yet")).toHaveLength(2); // Main agent and Lead Finder are not built
+    expect(team.getAllByText("Not available yet")).toHaveLength(2); // Agent OWL and Lead Finder are not built
     const recent = within(screen.getByRole("heading", { name: "Recently recorded" }).closest("section")!);
     expect(recent.getAllByRole("listitem")).toHaveLength(2);
   });

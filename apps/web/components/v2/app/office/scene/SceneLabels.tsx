@@ -13,7 +13,7 @@ export type LabelPositions = Partial<Record<AgentId, { x: number; y: number; on:
  * Name tags, drawn as ordinary DOM on top of the canvas (the 3D scene is aria-hidden: the list is the accessible version of the same facts). The scene writes each person's head
  * position (in pixels) into `positions` every frame; this overlay moves the tags with plain style writes, so nothing re-renders per frame. Each tag carries the helper's name and
  * the state the API gave (Idle, Working, Switched off, Not available yet), and a tag is a real button that selects the helper, as tapping the person does.
- * The tags of the whole table are drawn when there is room (`wide`); on a phone only the main agent and the chosen helper have one.
+ * The tags of the whole table are drawn when there is room (`wide`); on a phone only Agent OWL and the chosen helper have one.
  */
 export function SceneLabels({
   positions,
@@ -39,7 +39,7 @@ export function SceneLabels({
     let raf = 0;
     const tick = () => {
       const W = box.current?.clientWidth ?? 0;
-      // The chosen helper's tag first, then the main agent's, then the others: a tag that would sit on one already placed is lifted above it, so no name is hidden.
+      // The chosen helper's tag first, then Agent OWL's, then the others: a tag that would sit on one already placed is lifted above it, so no name is hidden.
       const order = [...ALL_AGENT_IDS].sort((a, b) => Number(b === selected) - Number(a === selected) || Number(b === "main") - Number(a === "main"));
       const placed: { l: number; r: number; t: number; b: number }[] = [];
       for (const id of order) {

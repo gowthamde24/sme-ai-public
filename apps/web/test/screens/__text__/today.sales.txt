@@ -1,6 +1,8 @@
 # Good morning
 Nothing is waiting for you. [Waiting for you 0 Decisions below](#needs-you) [Customer money held ₹400.00 On closed orders, not yet refunded](/app/tenants/22222222-2222-2222-2222-222222222222/orders) [Orders in progress 1 Not closed yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
 {label="Ask your team"}
+{role=img label="Agent OWL, Resting"}
+Resting
 ## Ask your team
 Not available yet
 {label="Needs you"}
@@ -8,7 +10,7 @@ Not available yet
 Nothing is waiting for you.
 {label="Your team right now"}
 ## Your team right now
-- Main agent Not available yet Coordinates the other helpers. Not built yet.
+- Agent OWL Not available yet Coordinates the other helpers. Not built yet.
 - Lead Finder Not available yet Finds new businesses that may want to buy. Not built yet.
 - Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.
 - Requirement Analyst Working Reads an enquiry and lists what the customer asked for, to be checked.

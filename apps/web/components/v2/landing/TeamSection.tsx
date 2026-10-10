@@ -1,8 +1,12 @@
+import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
+import type { OwlAgent } from "@/components/v2/app/owl/owl-colors";
 import { TeamIllustration } from "@/components/v2/landing/TeamIllustration";
 import { container, h2, lead } from "@/components/v2/landing/ui";
 import type { LandingT } from "@/i18n/landing";
 
 const ROLES = ["main", "lead", "research", "requirement", "quote", "followup", "order"] as const;
+/** The owl each role wears: the same colour everywhere (owl-colors.ts). */
+const ROLE_OWL: Record<(typeof ROLES)[number], OwlAgent> = { main: "main", lead: "lead_finder", research: "researcher", requirement: "requirement_analyst", quote: "quote_writer", followup: "followup_desk", order: "order_desk" };
 
 export function TeamSection({ t }: { t: LandingT }) {
   return (
@@ -15,9 +19,12 @@ export function TeamSection({ t }: { t: LandingT }) {
         </div>
         <ul className="grid gap-3 sm:grid-cols-2">
           {ROLES.map((r) => (
-            <li key={r} className="rounded-lg border border-line bg-surface p-4">
-              <h3 className="font-display text-lg font-semibold">{t(`role.${r}.t`)}</h3>
-              <p className="mt-1 text-sm text-muted">{t(`role.${r}.d`)}</p>
+            <li key={r} className="flex items-start gap-3 rounded-lg border border-line bg-surface p-4">
+              <OwlSvg agent={ROLE_OWL[r]} still className="size-12" />
+              <div className="min-w-0">
+                <h3 className="font-display text-lg font-semibold">{t(`role.${r}.t`)}</h3>
+                <p className="mt-1 text-sm text-muted">{t(`role.${r}.d`)}</p>
+              </div>
             </li>
           ))}
         </ul>

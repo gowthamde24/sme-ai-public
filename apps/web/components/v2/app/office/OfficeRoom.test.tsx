@@ -121,7 +121,7 @@ describe("OfficeRoom: only the API's state", () => {
   });
   it("each tag carries the helper's state, and the pose the room draws follows it (working types; idle sits; not built and switched off are drawn faded and still)", () => {
     room(mixed);
-    expect(screen.getByRole("button", { name: "tag Main agent · Not available yet" })).toHaveAttribute("data-pose", "off");
+    expect(screen.getByRole("button", { name: "tag Agent OWL · Not available yet" })).toHaveAttribute("data-pose", "off");
     expect(screen.getByRole("button", { name: "tag Researcher · Switched off" })).toHaveAttribute("data-pose", "off");
     expect(screen.getByRole("button", { name: "tag Quote Writer · Working" })).toHaveAttribute("data-pose", "working");
     expect(screen.getByRole("button", { name: "tag Order Desk · Idle" })).toHaveAttribute("data-pose", "idle");

@@ -15,7 +15,7 @@ const MAX_BODY = 20_000;
 const NDJSON = { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } as const;
 const line = (e: AskEvent) => `${JSON.stringify(e)}\n`;
 
-/** A POST from this site only. The session cookie is sent along with any request to this address, so a page on another site must not be able to make the Main agent run. */
+/** A POST from this site only. The session cookie is sent along with any request to this address, so a page on another site must not be able to make the Agent OWL run. */
 function fromThisSite(request: NextRequest): boolean {
   if (request.headers.get("sec-fetch-site") === "same-origin") return true;
   const origin = request.headers.get("origin");
@@ -28,9 +28,9 @@ function fromThisSite(request: NextRequest): boolean {
 }
 
 /**
- * "Ask your team": the box on Today posts the person's question here; this route asks the Main agent (Job AG) with the person's OWN token, which the browser never holds, and passes the answer
+ * "Ask your team": the box on Today posts the person's question here; this route asks the Agent OWL (Job AG) with the person's OWN token, which the browser never holds, and passes the answer
  * on as one JSON event per line in the box's shape (ask-types.ts), with every `target` already turned into a path inside this workspace. Nothing is decided here: the API checks the person's
- * role, the kill switches and the daily cost cap, and the Main agent only reads and leaves drafts. A refusal arrives as one `error` event with a code the box has a sentence for.
+ * role, the kill switches and the daily cost cap, and the Agent OWL only reads and leaves drafts. A refusal arrives as one `error` event with a code the box has a sentence for.
  */
 export async function POST(request: NextRequest, { params }: { params: Promise<{ tenantId: string }> }) {
   const { tenantId } = await params;

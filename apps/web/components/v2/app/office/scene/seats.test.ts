@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { NEAR_SEAT_RADIUS, SEATS, SEAT_RADIUS, angleDiff } from "./seats";
+import { NEAR_SEAT_RADIUS, SEATS, SEAT_RADIUS, angleDiff, owlYaw } from "./seats";
 import { ALL_AGENT_IDS } from "./ids";
 
 describe("seats", () => {
@@ -9,7 +9,7 @@ describe("seats", () => {
       expect(r).toBeCloseTo(SEATS[id].swivel === 0 ? SEAT_RADIUS : NEAR_SEAT_RADIUS, 5);
     }
   });
-  it("the main agent sits at the far side and faces the camera (+z)", () => {
+  it("Agent OWL sits at the far side and faces the camera (+z)", () => {
     expect(SEATS.main.x).toBeCloseTo(0);
     expect(SEATS.main.z).toBeCloseTo(-SEAT_RADIUS);
     expect(SEATS.main.yaw).toBeCloseTo(0);
@@ -21,6 +21,13 @@ describe("seats", () => {
     const xs = ALL_AGENT_IDS.filter((i) => i !== "main").map((i) => SEATS[i].x);
     expect(xs.filter((x) => x < 0)).toHaveLength(3);
     expect(xs.filter((x) => x > 0)).toHaveLength(3);
+  });
+  it("every owl turns a little toward the viewer, the head of the table not at all, and never more than a radian", () => {
+    expect(owlYaw(SEATS.main)).toBeCloseTo(0);
+    for (const id of ALL_AGENT_IDS) expect(Math.abs(owlYaw(SEATS[id]))).toBeLessThanOrEqual(1);
+    // the left seats turn one way and the right seats the other, by the same amount
+    expect(owlYaw(SEATS.lead_finder)).toBeCloseTo(-owlYaw(SEATS.order_desk), 5);
+    expect(owlYaw(SEATS.lead_finder)).not.toBeCloseTo(0, 2);
   });
   it("angleDiff wraps to the shortest turn", () => {
     expect(angleDiff(0.1, -0.1)).toBeCloseTo(0.2);

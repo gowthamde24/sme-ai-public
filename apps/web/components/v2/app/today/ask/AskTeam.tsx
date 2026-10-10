@@ -4,10 +4,11 @@ import { ArrowRight, Mic, MicOff, Send, Square } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
+import { AgentOwl3D } from "../../owl/AgentOwl3D";
+import { owlMood } from "../../owl/owl-mood";
 import { ERROR_CODES, type AskDraft, type AskSource, type AskTransport, type Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { makeAskTransport } from "./transport";
-import { OwlAvatar, type OwlState } from "./OwlAvatar";
 import { recognitionCtor, speechLang, speechProblem, transcriptOf, type Recognition } from "./speech";
 
 const MAX_QUESTION = 500;
@@ -37,10 +38,10 @@ type Phase = "idle" | "asking" | "done" | "error";
 type Problem = "denied" | "silent" | "failed" | null;
 
 /**
- * "Ask your team": a question to the Main agent, answered from the workspace's own records. The answer streams in as plain text, with the screens it came from as links; anything the agent
+ * "Ask your team": a question to the Agent OWL, answered from the workspace's own records. The answer streams in as plain text, with the screens it came from as links; anything the agent
  * prepared is shown as a DRAFT card whose "Approve" opens the screen that decides (nothing is approved, sent or recorded from here). The microphone (the browser's speech recognition, in the
  * language of the language chip) fills the box with what it heard; the person reads it and presses Ask. It is hidden when the browser has no speech recognition.
- * While there is no Main agent to ask (it is not built, its switch is off, or the answer stream does not exist yet) the box says so and offers nothing to press.
+ * While there is no Agent OWL to ask (it is not built, its switch is off, or the answer stream does not exist yet) the box says so and offers nothing to press.
  */
 export function AskTeam({ lang, base, words, availability, transport: given }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null }) {
   const w = (key: string) => words[key] ?? key;
@@ -55,6 +56,7 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
   const [listening, setListening] = React.useState(false);
   const [problem, setProblem] = React.useState<Problem>(null);
   const [errorCode, setErrorCode] = React.useState<string | null>(null);
+  const [focused, setFocused] = React.useState(false);
   const abort = React.useRef<AbortController | null>(null);
   const rec = React.useRef<Recognition | null>(null);
   const canSpeak = React.useSyncExternalStore(
@@ -72,10 +74,10 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
   );
 
   const live = availability === "live" && transport !== null;
-  const owl: OwlState = !live ? "resting" : listening ? "listening" : phase === "asking" ? (answer ? "answering" : "thinking") : "idle";
+  const mood = owlMood({ live, typing: focused && text.trim() !== "", micOn: listening, phase, hasText: answer !== "", errorCode });
   const title = (
-    <div className="flex items-center gap-3">
-      <OwlAvatar state={owl} />
+    <div className="flex items-center gap-3 sm:gap-4">
+      <AgentOwl3D mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
       <div className="min-w-0">
         <h2 id="ask-heading" className="font-display text-xl font-semibold leading-tight">
           {w("ask.title")}
@@ -189,6 +191,8 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
           value={text}
           maxLength={MAX_QUESTION}
           onChange={(e) => setText(e.target.value)}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           placeholder={listening ? w("ask.listening") : w("ask.placeholder")}
           autoComplete="off"
           className="min-h-12 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 text-base text-ink placeholder:text-muted focus:border-brand-edge"

@@ -1,24 +1,25 @@
 /**
- * The 3D agent office. With character.ts, geo.ts and anatomy.ts this is the ONLY code that imports three / react-three-fiber / drei, and it is loaded with
+ * The 3D agent office. With the owl code in components/v2/app/owl/ (owl-model.ts) this is the ONLY code that imports three / react-three-fiber / drei, and it is loaded with
  * `next/dynamic` only when the person is shown the 3D view (OfficeRoom.tsx), so no other screen ships three.js (a build check, scripts/audit-3d.mjs, keeps it that way).
- * Everything is built from code primitives: no models, no textures, no licence risk. Ported from the design lab (design-lab/src/office); what is NOT ported: the simulated event
- * stream, the speech bubbles it drove, the paper handed from desk to desk and the debug close-up cameras. The room shows only the state `getAgentsStatus()` gave.
+ * Everything is built from code primitives: no models, no textures, no licence risk. Each helper is an owl (the same bird as Agent OWL, a colour of its own from owl-colors.ts); there are
+ * no human figures. What is NOT ported from the design lab: the simulated event stream, the speech bubbles it drove, the paper handed from desk to desk and the debug close-up cameras.
+ * The room shows only the state `getAgentsStatus()` gave.
  */
 /* eslint-disable react-hooks/immutability -- three.js objects (the rig, the scene graph, the camera) are imperative and are meant to be mutated inside useFrame; none of it is React state. */
 import * as React from "react";
 import { Canvas, useFrame, useThree, type ThreeEvent } from "@react-three/fiber";
 import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
-import { Character } from "./character";
-import type { Detail } from "./geo";
-import { PEOPLE } from "./people";
-import { SEATS, TABLE_HEIGHT, TABLE_RADIUS, angleDiff, type Seat } from "./seats";
+import { OWL_PALETTE } from "../../owl/owl-colors";
+import type { OwlMood } from "../../owl/owl-mood";
+import { createOwl, type Detail } from "../../owl/owl-model";
+import { SEATS, TABLE_HEIGHT, TABLE_RADIUS, owlYaw, type Seat } from "./seats";
 import { ALL_AGENT_IDS, type AgentId, type Pose, type RoomState } from "./ids";
-import { LAPTOP } from "./anatomy";
 import type { LabelPositions } from "./SceneLabels";
 
 const BRAND = "#ff773c";
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+/** How far in front of the stool the laptop stands, measured from the stool centre toward the table centre. */
+const LAPTOP_Z = 0.52;
 
 /* ------------------------------------------------------- soft contact shadows */
 let blobTexture: THREE.CanvasTexture | null = null;
@@ -47,15 +48,15 @@ function Blob({ position, size, opacity }: { position: [number, number, number];
   );
 }
 
-/* ------------------------------------------------------------------ Person */
-interface PersonProps {
+/* ------------------------------------------------------------------- Owl */
+interface OwlSeatProps {
   id: AgentId;
-  index: number;
   seat: Seat;
   detail: Detail;
   pose: Pose;
   selected: boolean;
   reduced: boolean;
+  shadows: boolean;
   positions: React.MutableRefObject<LabelPositions>;
   onSelect: (id: AgentId) => void;
 }
@@ -78,11 +79,20 @@ function fade(root: THREE.Object3D, k: number) {
   });
 }
 const OFF_OPACITY = 0.3;
+/** The owl is about 3.4 units tall in its own frame; these scales make a seated helper (Agent OWL a little larger) a little taller than the table. */
+const OWL_SCALE = 0.27;
+const MAIN_OWL_SCALE = 0.3;
+const SEAT_HEIGHT = 0.47;
+/** The owl sits a little behind the chair centre so its round body clears the table edge. */
+const OWL_BACK = 0.14;
 
-function Person({ id, index, seat, detail, pose: poseNow, selected, reduced, positions, onSelect }: PersonProps) {
+/** What an owl does for the state the API reported: `working` thinks (tilts its head, three dots), `idle` sits still, and `off` (not built, or switched off) is a faded, sleepy, still owl. */
+const moodOf = (p: Pose): OwlMood => (p === "working" ? "thinking" : p === "off" ? "resting" : "idle");
+
+function OwlSeat({ id, seat, detail, pose: poseNow, selected, reduced, shadows, positions, onSelect }: OwlSeatProps) {
   const isMain = id === "main";
-  const size = PEOPLE[id].size ?? 1;
-  const rig = React.useMemo(() => new Character(PEOPLE[id], detail, index + 1), [id, detail, index]);
+  const size = isMain ? MAIN_OWL_SCALE : OWL_SCALE;
+  const rig = React.useMemo(() => createOwl(OWL_PALETTE[id], { detail, extras: true, shadow: false }), [id, detail]);
   React.useEffect(() => () => rig.dispose(), [rig]);
   const invalidate = useThree((s) => s.invalidate);
   const marker = React.useRef<THREE.Object3D>(null);
@@ -98,22 +108,17 @@ function Person({ id, index, seat, detail, pose: poseNow, selected, reduced, pos
   // a helper that is not there is faded; a still pose is drawn once, and again whenever something about it changes
   React.useEffect(() => {
     fade(rig.root, off ? OFF_OPACITY : 1);
-    if (reduced || off) {
-      rig.update(0, 0, { typing: 0, speaking: false, headYaw: 0, reduced: true });
-    }
+    rig.root.traverse((o) => {
+      if ((o as THREE.Mesh).isMesh) o.castShadow = shadows;
+    });
+    if (reduced || poseNow !== "working") rig.snap(moodOf(poseNow));
     invalidate();
-  }, [reduced, off, rig, invalidate, selected]);
+  }, [reduced, off, poseNow, rig, invalidate, selected, shadows]);
 
   useFrame((state, dt) => {
     const p = pose.current;
-    if (!p.reduced && p.poseNow !== "off") {
-      // drift a little toward the camera (more for the two swivelled seats)
-      const cam = state.camera.position;
-      const toCam = Math.atan2(cam.x - seat.x, cam.z - seat.z);
-      const headYaw = clamp(angleDiff(toCam, seat.yaw) * seat.glance, -1.0, 1.0);
-      rig.update(state.clock.elapsedTime, dt, { typing: p.poseNow === "working" ? 1 : 0.06, speaking: false, headYaw, reduced: false });
-    }
-    // where this person's label belongs on screen
+    if (!p.reduced && p.poseNow === "working") rig.update("thinking", state.clock.elapsedTime, dt);
+    // where this owl's label belongs on screen
     const m = marker.current;
     if (m) {
       m.getWorldPosition(tmp).project(state.camera);
@@ -123,7 +128,7 @@ function Person({ id, index, seat, detail, pose: poseNow, selected, reduced, pos
         on: tmp.z < 1,
       };
     }
-    // hovering nudges the person a few percent larger
+    // hovering nudges the owl a few percent larger
     const g = rig.root;
     const target = (hovered.current ? 1.03 : 1) * size;
     g.scale.x += (target - g.scale.x) * Math.min(1, dt * 10);
@@ -136,6 +141,7 @@ function Person({ id, index, seat, detail, pose: poseNow, selected, reduced, pos
     onSelect(id);
   };
 
+  const working = poseNow === "working";
   return (
     <group
       position={[seat.x, 0, seat.z]}
@@ -151,16 +157,43 @@ function Person({ id, index, seat, detail, pose: poseNow, selected, reduced, pos
         document.body.style.cursor = "";
       }}
     >
-      <primitive object={rig.root} />
-      <Blob position={[0, 0.004, 0.05]} size={[1.3, 1.3]} opacity={0.5} />
-      <Blob position={[0, TABLE_HEIGHT + 0.0035, LAPTOP.z]} size={[0.5, 0.4]} opacity={0.35} />
+      {/* a round stool: seat, post, base */}
+      <mesh position={[0, SEAT_HEIGHT - 0.04, 0]} castShadow={shadows}>
+        <cylinderGeometry args={[0.32, 0.32, 0.08, 28]} />
+        <meshStandardMaterial color="#37353a" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0.24, 0]}>
+        <cylinderGeometry args={[0.04, 0.04, 0.4, 12]} />
+        <meshStandardMaterial color="#37353a" roughness={0.7} />
+      </mesh>
+      <mesh position={[0, 0.02, 0]}>
+        <cylinderGeometry args={[0.28, 0.28, 0.04, 24]} />
+        <meshStandardMaterial color="#37353a" roughness={0.7} />
+      </mesh>
+      {/* the owl, turned a little toward the viewer so every face shows from the default camera */}
+      <group position={[0, SEAT_HEIGHT, -OWL_BACK]} rotation={[0, owlYaw(seat), 0]}>
+        <primitive object={rig.root} />
+      </group>
+      {/* a laptop on the table in front of it; its screen is lit only while the helper works */}
+      <group position={[0, TABLE_HEIGHT, LAPTOP_Z]}>
+        <mesh position={[0, 0.009, 0]}>
+          <boxGeometry args={[0.3, 0.018, 0.21]} />
+          <meshStandardMaterial color="#4a4646" roughness={0.6} />
+        </mesh>
+        <mesh position={[0, 0.018 + 0.1 * Math.cos(0.42), 0.105 + 0.1 * Math.sin(0.42)]} rotation={[0.42, 0, 0]}>
+          <boxGeometry args={[0.3, 0.2, 0.01]} />
+          <meshStandardMaterial color="#26242b" roughness={0.5} emissive={BRAND} emissiveIntensity={working ? 0.55 : 0} />
+        </mesh>
+      </group>
+      <Blob position={[0, 0.004, 0.0]} size={[1.2, 1.2]} opacity={0.5} />
+      <Blob position={[0, TABLE_HEIGHT + 0.0035, LAPTOP_Z]} size={[0.5, 0.4]} opacity={0.35} />
       {(isMain || selected) && (
         <mesh position={[0, 0.02, 0.2]} rotation={[Math.PI / 2, 0, 0]}>
           <torusGeometry args={[0.72, 0.035, 10, 56]} />
           <meshStandardMaterial color={BRAND} emissive={BRAND} emissiveIntensity={isMain ? 0.75 : 0.5} />
         </mesh>
       )}
-      <object3D ref={marker} position={[0, 1.62 * size, 0.03]} />
+      <object3D ref={marker} position={[0, SEAT_HEIGHT + 3.45 * size + 0.1, -OWL_BACK]} />
     </group>
   );
 }
@@ -344,18 +377,18 @@ function Scene(p: Office3DProps & { shadows: boolean }) {
     <group ref={world}>
       <Lights dark={p.dark} shadows={p.shadows} coarse={p.coarse} />
       <Room dark={p.dark} shadows={p.shadows} />
-      {ALL_AGENT_IDS.map((id, i) => {
+      {ALL_AGENT_IDS.map((id) => {
         const seat = SEATS[id];
         return (
-          <Person
+          <OwlSeat
             key={id}
             id={id}
-            index={i}
             seat={seat}
             detail={p.detail}
             pose={p.state[id]}
             selected={p.selected === id}
             reduced={p.reduced}
+            shadows={p.shadows}
             positions={p.positions}
             onSelect={(sid) => p.onSelect(p.selected === sid ? null : sid)}
           />
