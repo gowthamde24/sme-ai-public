@@ -68,6 +68,23 @@ describe("Today", () => {
     expect(() => parseNeedsYouItem(item)).toThrow(ApiContractError);
     expect(() => parseRecentStep(step)).toThrow(ApiContractError);
   });
+  it("skips an item of a kind it does not know (outbox_approval, call_approval) instead of failing, and keeps the rest in order", () => {
+    const outbox = { ...ITEM, kind: "outbox_approval", agent: "followup_desk", target: { type: "lead", id: ID } };
+    const call = { kind: "call_approval", anything: "else", at: AT };
+    const second = { ...ITEM, kind: "followup_due", agent: "followup_desk", target: { type: "lead", id: ID } };
+    const today = parseToday({ ...TODAY, needs_you: [outbox, ITEM, call, second, { kind: "something_new" }] });
+    expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval", "followup_due"]);
+    expect(today.cards).toEqual(parseToday(TODAY).cards);
+    expect(parseToday({ ...TODAY, needs_you: [outbox, call] }).needs_you).toEqual([]);
+  });
+  it("still fails on an item that is not an object, has no text kind, or is a known kind with a bad field", () => {
+    for (const bad of ["x", 5, null, [], {}, { ...ITEM, kind: 5 }, { ...ITEM, kind: null }, { ...ITEM, id: "x" }, { ...ITEM, agent: "main" }, { ...ITEM, amount_paise: -1 }]) {
+      expect(() => parseToday({ ...TODAY, needs_you: [ITEM, bad] }), JSON.stringify(bad)).toThrow(ApiContractError);
+    }
+  });
+  it("parseNeedsYouItem stays strict about the kind (the skip is Today's, not the parser's)", () => {
+    expect(() => parseNeedsYouItem({ ...ITEM, kind: "outbox_approval" })).toThrow(ApiContractError);
+  });
   it.each([["kind", "x"], ["order_ref", ""], ["customer", ""], ["text", ""], ["at", "soon"]])("a recent step with %s = %j is a contract error", (key, value) => {
     expect(() => parseRecentStep({ ...STEP, [key]: value })).toThrow(ApiContractError);
   });
@@ -84,6 +101,10 @@ describe("Today", () => {
     expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/today`, "tok");
     await getToday("tok", "a/b?c");
     expect(apiRequest).toHaveBeenLastCalledWith("/v1/tenants/a%2Fb%3Fc/today", "tok");
+  });
+  it("getToday shows what it knows when the API sends a new kind of item (no error, the unknown one is left out)", async () => {
+    apiRequest.mockResolvedValue({ ...TODAY, needs_you: [{ ...ITEM, kind: "outbox_approval" }, ITEM, { kind: "call_approval" }] });
+    expect((await getToday("tok", TENANT)).needs_you).toEqual([ITEM]);
   });
   it("shows nothing for an answer that does not match", async () => {
     apiRequest.mockResolvedValue({ cards: "oops" });

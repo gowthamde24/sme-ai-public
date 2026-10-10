@@ -124,6 +124,15 @@ export function parseRecentStep(json: unknown): RecentStep {
   };
 }
 
+/**
+ * An item whose `kind` is a word this screen does not know (a newer API, for example `outbox_approval` or `call_approval` from the send policy) is SKIPPED, not an error: Today shows the
+ * kinds it can draw and keeps working while a new kind is built on its own screen. Only a string kind counts as "unknown": a missing or non-text kind, or a known kind with a bad field, is
+ * still a contract error (the screen never shows a guess). `parseNeedsYouItem` itself stays strict.
+ */
+function isUnknownKind(item: unknown): boolean {
+  return isRecord(item) && typeof item.kind === "string" && !KINDS.includes(item.kind as NeedsYouKind);
+}
+
 export function parseToday(json: unknown): Today {
   if (!isRecord(json) || !isRecord(json.cards) || !Array.isArray(json.needs_you) || !Array.isArray(json.recent)) return bad("body");
   if (json.recent.length > 5) return bad("recent steps (more than five)");
@@ -133,7 +142,7 @@ export function parseToday(json: unknown): Today {
       money_held_paise: paise(json.cards.money_held_paise, "money_held_paise"),
       orders_open: count(json.cards.orders_open, "orders_open"),
     },
-    needs_you: json.needs_you.map(parseNeedsYouItem),
+    needs_you: json.needs_you.filter((item) => !isUnknownKind(item)).map(parseNeedsYouItem),
     recent: json.recent.map(parseRecentStep),
   };
 }
