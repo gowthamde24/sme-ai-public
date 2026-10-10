@@ -47,6 +47,7 @@ from app.agents.inputs import (
     model_input_from_company,
 )
 from app.agents.llm.interface import LlmClient, LlmError, LlmRequest, LlmResponse, ToolCall
+from app.agents.llm.routing import ModelRouter, as_router
 from app.agents.notes import (
     FIXED_NOTES,
     NOTE_EVIDENCE_REFUSED,
@@ -136,14 +137,14 @@ class AgentRunner:
         self,
         *,
         db: AgentDbPort,
-        llm: LlmClient,
+        llm: LlmClient | ModelRouter,
         spec: AgentSpec,
         now: Callable[[], datetime] | None = None,
         delimiter: str | None = None,
         max_output_tokens: int = 1000,
         fetcher: PageFetcher | None = None,
     ) -> None:
-        self._db, self._llm, self._spec = db, llm, spec
+        self._db, self._router, self._spec = db, as_router(llm), spec
         self._fetcher = fetcher
         self._host: str | None = None
         self._allowed_hosts: frozenset[str] = frozenset()
@@ -210,14 +211,15 @@ class AgentRunner:
                 )
                 # the worst case of THIS call is reserved under the tenant's daily cost cap BEFORE
                 # the model is called (CostCapReached ends the run: nothing was spent)
+                llm = self._pick(request)
                 self._db.reserve_cost(
                     f"usage-{turn}",
-                    model=self._llm.model_id,
+                    model=llm.model_id,
                     max_input_tokens=input_token_bound(request),
                     max_output_tokens=request.max_output_tokens,
                 )
                 try:
-                    response = self._llm.complete(request)
+                    response = llm.complete(request)
                 except LlmError as exc:
                     logger.warning("run %s: model call failed (%s)", run.id, exc.code)
                     self._release_if_not_billed(f"usage-{turn}", exc.code)
@@ -240,6 +242,11 @@ class AgentRunner:
         except AgentDbError as exc:
             status, code, finish = self._classify(exc)
             return self._end(status, code, turns, finish)
+
+    def _pick(self, request: LlmRequest) -> LlmClient:
+        """The model for THIS call: the task class the agent declared and the mode the database
+        reports (light once the workspace is over its allowance)."""
+        return self._router.choose(request.task_class, self._db.ai_mode)
 
     def _finalize(self, state: tools.RunState) -> None:
         """After a valid final result: the agent's own end-of-run write (the Requirement Agent

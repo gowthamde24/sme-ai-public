@@ -186,6 +186,20 @@ def test_ai_usage_is_percentages_and_times_and_nothing_else() -> None:
     assert "paise" not in str(body) and "micros" not in str(body) and "token" not in str(body)
 
 
+@pytest.mark.parametrize("state", ["ok", "warn", "light", "paused"])
+def test_every_state_of_the_contract_passes_through(state: str) -> None:
+    client, today = world()
+    today.percent[TENANT_A.id] = {
+        "today_percent": 100,
+        "month_percent": 40,
+        "resets_at_today": "2026-10-09T18:30:00+00:00",
+        "resets_at_month": "2026-11-08T18:30:00+00:00",
+        "state": state,
+    }
+    body = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage", headers=auth("a_owner")).json()
+    assert body["state"] == state
+
+
 def test_the_percent_read_refuses_a_shape_that_is_not_the_contract() -> None:
     client, today = world()
     bad_shapes: list[Any] = [

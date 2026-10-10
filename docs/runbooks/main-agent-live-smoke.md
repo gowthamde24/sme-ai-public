@@ -22,7 +22,7 @@ The key is typed hidden, lives only in that terminal's environment, and is never
 5. **The caps (job AK, K1).** A Sonnet-class call is *reserved at its worst case* (the prompt plus up to 1,500 output tokens at your prices), which is more than the product defaults (₹1 per
    assistant run, ₹2 a day per workspace). So **for this command only, on the demo workspace only,** the command raises the demo workspace's daily cap to **₹30** (the database's wall for
    a workspace cap is ₹500; a `CHECK` refuses more) and the assistant's per-run budget to **₹5**, and **puts both back exactly** at the end (also when something fails). Product defaults and every other
-   workspace are untouched. The whole-command guard is **₹30** too, so the cap and the guard agree. The command prints the cap and what is already spent before it asks anything.
+   workspace are untouched. The whole-command guard is **₹30** too, so the cap and the guard agree. The command prints the cap and what is already spent before it asks anything. **Allowances (ADR 0064):** the demo workspace is on the free-trial plan (Rs 20 a day). If it is already over its allowance (today or this month) and `LLM_LIGHT_MODEL` is set, its answers would come from the *light* model, so the command stops with a plain line; run it after the reset, or leave `LLM_LIGHT_MODEL` unset (then the main model answers and a note is printed). At 300 % the AI is paused and the command stops too. `LLM_LIGHT_MODEL`, `LLM_LIGHT_INPUT_MICROS_PER_MTOK` and `LLM_LIGHT_OUTPUT_MICROS_PER_MTOK` are optional and all-or-nothing.
 
 ## What it does
 

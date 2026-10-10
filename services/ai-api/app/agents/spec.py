@@ -7,6 +7,7 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from app.agents.llm.interface import TaskClass
 from app.agents.tools import Tool, ToolContext
 
 
@@ -18,6 +19,8 @@ class AgentSpec:
     turn_hints: tuple[str, ...]
     tools: tuple[Tool, ...]
     claim_predicate: str
+    # what this agent's model calls are for (declared; the routing table picks the model)
+    task_class: TaskClass
     max_turns: int = 4
     max_calls_per_turn: int = 5
     # reads the company's own website through a PageFetcher (the runtime refuses to start such a run

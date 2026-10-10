@@ -11,7 +11,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.agents.llm.interface import Block, LlmRequest, ToolSpec, Trust
+from app.agents.llm.interface import Block, LlmRequest, TaskClass, ToolSpec, Trust
 from app.agents.prompts import escape_value
 from app.assistant.language import LANGUAGES, Language
 from app.assistant.tools import TOOLS, Item
@@ -37,6 +37,9 @@ class FinalReply(BaseModel):
     # the handles (s1, s2, ...) of the tool results the answer rests on
     sources: list[str] = Field(default_factory=list, max_length=20)
 
+
+# Every assistant call declares it is HARD (it reads the question, picks tools and writes in the person's language); the bake-off may split it later
+TASK_CLASS = TaskClass.HARD
 
 FINAL_REPLY = ToolSpec(
     "reply",
@@ -148,6 +151,7 @@ def build_request(
         blocks=tuple(blocks),
         tools=tuple(ToolSpec(t.name, t.description, t.args.model_json_schema()) for t in TOOLS),
         max_output_tokens=max_output_tokens,
+        task_class=TASK_CLASS,
         final_result=FINAL_REPLY,
     )
 

@@ -89,7 +89,7 @@ eval-live:
 	cd $(API) && EVAL_LIVE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_agent_evals.py -q -s -k test_live_pass_rates
 
 # OPT-IN, NEVER part of make check (job AJ): the FIRST LIVE RUN of the Main agent. Five fixed questions on the seeded demo workspace through the REAL Anthropic adapter, PASS/FAIL per
-# question, at most 20 rupees (2000 paise) for the whole command, the daily cap stays on. The key comes from the environment only; without it the command prints one line and stops.
+# question, at most 30 rupees (3000 paise) for the whole command, the daily cap stays on (and the run stops if the demo workspace is over its AI allowance and a light model is configured). The key comes from the environment only; without it the command prints one line and stops.
 # Needs `make db-start`, `make seed-demo` and `make seed-demo-manual`. See docs/runbooks/main-agent-live-smoke.md.
 assistant-smoke:
 	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/assistant_smoke.py

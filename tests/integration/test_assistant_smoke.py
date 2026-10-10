@@ -644,3 +644,48 @@ def test_the_raised_cap_is_one_the_database_accepts_and_a_higher_one_is_refused(
         )
     finally:
         operator_sql.sql(f"delete from public.tenant_agent_settings where tenant_id = '{tenant}'")
+
+
+# ---- job AK K2b: the allowance (light at 100 %, paused at 300 %) and the optional light model
+@pytest.mark.parametrize(
+    ("light", "paused", "light_set", "stops", "note"),
+    [
+        (False, False, False, False, False),
+        (False, False, True, False, False),
+        (True, False, True, True, False),  # light + a light model configured: the run would test the wrong model
+        (True, False, False, False, True),  # light but no light model: the main model still answers, with a note
+        (True, True, False, True, False),
+        (False, True, True, True, False),
+    ],
+)
+def test_the_allowance_gate(light: bool, paused: bool, light_set: bool, stops: bool, note: bool) -> None:
+    reason, said = smoke.allowance_gate(light=light, paused=paused, light_model_set=light_set)
+    assert bool(reason) is stops and bool(said) is note
+
+
+def full_env(**extra: str) -> dict[str, str]:
+    return {
+        "ANTHROPIC_API_KEY": "k",
+        "LLM_MODEL": "m-main",
+        "LLM_INPUT_MICROS_PER_MTOK": "3000000",
+        "LLM_OUTPUT_MICROS_PER_MTOK": "15000000",
+        "LLM_SPEND_CAP_CONFIRMED": "true",
+        **extra,
+    }
+
+
+def test_the_light_model_variables_are_optional_but_all_or_nothing() -> None:
+    assert smoke.gate_message(full_env()) is None
+    ok = full_env(
+        LLM_LIGHT_MODEL="m-light",
+        LLM_LIGHT_INPUT_MICROS_PER_MTOK="800000",
+        LLM_LIGHT_OUTPUT_MICROS_PER_MTOK="4000000",
+    )
+    assert smoke.gate_message(ok) is None
+    for broken in (
+        full_env(LLM_LIGHT_MODEL="m-light"),
+        full_env(LLM_LIGHT_MODEL="m-light", LLM_LIGHT_INPUT_MICROS_PER_MTOK="0", LLM_LIGHT_OUTPUT_MICROS_PER_MTOK="1"),
+        full_env(LLM_LIGHT_MODEL="bad model!", LLM_LIGHT_INPUT_MICROS_PER_MTOK="1", LLM_LIGHT_OUTPUT_MICROS_PER_MTOK="1"),
+    ):
+        message = smoke.gate_message(broken)
+        assert message and "Nothing was run" in message

@@ -8,6 +8,7 @@ which stay 'unverified' until a human accepts them."""
 
 from __future__ import annotations
 
+from app.agents.llm.interface import TaskClass
 from app.agents.spec import AgentSpec
 from app.agents.tools import WRITE_NOTE, WRITE_OBSERVATION
 
@@ -34,4 +35,5 @@ SELFTEST = AgentSpec(
     turn_hints=TURN_HINTS,
     tools=(WRITE_NOTE, WRITE_OBSERVATION),
     claim_predicate="selftest.observation",
+    task_class=TaskClass.SIMPLE,
 )

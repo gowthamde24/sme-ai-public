@@ -39,7 +39,8 @@ from app.agents.errors import (
     RunNotRunning,
     ValueRefused,
 )
-from app.agents.llm.interface import Block, LlmClient, LlmError
+from app.agents.llm.interface import Block, LlmClient, LlmError, LlmRequest
+from app.agents.llm.routing import ModelRouter, as_router
 from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts
 from app.assistant.db import AssistantDb
@@ -120,12 +121,12 @@ class AssistantRunner:
         self,
         *,
         db: AssistantDb,
-        llm: LlmClient,
+        llm: LlmClient | ModelRouter,
         ctx: Ctx,
         now: Callable[[], datetime] | None = None,
         delimiter: str | None = None,
     ) -> None:
-        self._db, self._llm, self._ctx = db, llm, ctx
+        self._db, self._router, self._ctx = db, as_router(llm), ctx
         self._now = now or (lambda: datetime.now(UTC))
         self._delimiter = delimiter or secrets.token_hex(8)
         self._state: State = ctx.state
@@ -165,14 +166,15 @@ class AssistantRunner:
                     today=self._now(),
                     max_output_tokens=MAX_OUTPUT_TOKENS,
                 )
+                llm = self._pick(request)
                 self._db.reserve_cost(
                     f"usage-{turn}",
-                    model=self._llm.model_id,
+                    model=llm.model_id,
                     max_input_tokens=input_token_bound(request),
                     max_output_tokens=request.max_output_tokens,
                 )
                 try:
-                    response = self._llm.complete(request)
+                    response = llm.complete(request)
                 except LlmError as exc:
                     logger.warning(
                         "assistant run %s: model call failed (%s)", self._ctx.run_id, exc.code
@@ -386,6 +388,10 @@ class AssistantRunner:
                 logger.warning("assistant run could not be closed (%s)", exc.code)
         logger.info("assistant run ended: status=%s code=%s turns=%d", status, code or "-", turns)
         return Outcome(status, code, None, turns)
+
+    def _pick(self, request: LlmRequest) -> LlmClient:
+        """The model for THIS call (see ModelRouter.choose)."""
+        return self._router.choose(request.task_class, self._db.ai_mode)
 
     def _guard(self) -> None:
         run = self._db.read_run()

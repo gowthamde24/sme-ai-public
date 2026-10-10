@@ -82,12 +82,32 @@ select status, count(*) from public.agent_runs where created_at > now() - interv
 To turn agents back on, set the flag back to `true`, **and** check that the workspace switches and the agent's allow-list
 (`agent_definitions.allowed_tenants`) are what you intend: a platform flag never opens an agent to a workspace by itself.
 
-## Spending cap (per workspace, per Asia/Kolkata day since job AF)
+## Spending: the allowance, the light model and the hard pause (job AK K2b, ADR 0064)
 
-Each workspace's agents may spend at most the **daily cost cap** (default 2.00; the Owner can set 0 to 500.00 for their workspace (the hard wall, raised from 20.00 by migration `20261104090000`) with
-`set_tenant_daily_cost_cap`). A model call is reserved **before** it is made; when the day is full runs end as `failed` / `budget`, new
-starts answer 429 `ai_paused_until` (with the time the AI is back in `until`), and each refusal leaves an `agent_cost.refused` audit event. Amounts are millionths of the billing
-currency (2,000,000 = 2.00). Run as the database owner.
+AI is included in every plan under **fair use**. Each plan has a daily and a monthly **allowance** (`plan_ai_allowances`, paise; free trial 20 / 300 rupees, starter 15 / 300, growth 40 / 900, business 100 / 2,500). The daily window is the Asia/Kolkata day; the monthly window runs from the billing date (or the trial start) in whole months.
+
+| Spend, either window | What happens |
+|---|---|
+| under 80 % | nothing |
+| 80 % | `GET /ai-usage` says `warn` |
+| 100 % | **the AI does not stop.** The workspace's calls switch to the **light model** (`LLM_LIGHT_MODEL`) until that window resets; `GET /ai-usage` says `light` |
+| 300 % | the AI **pauses** (`ai_paused_until`, with the time it is back). `GET /ai-usage` says `paused`. Quotes, orders, follow-ups and customers never pause |
+
+The database enforces the 300 % wall (a run start, a message start and every model call are refused with no room); the API only chooses the model. A light model with **no price row** is never used (the workspace stays on the main model, still capped), so a missing price can never stop the AI.
+
+**Setting up the light model (operator, once):** set `LLM_LIGHT_MODEL`, `LLM_LIGHT_INPUT_MICROS_PER_MTOK` and `LLM_LIGHT_OUTPUT_MICROS_PER_MTOK` in the API's environment (all three or the API refuses to start), and add the same prices to the database, as you did for the main model (replace :MODEL_ID and the two example prices):
+
+```sql
+insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok)
+values (':MODEL_ID', 800000, 4000000)  -- :MODEL_ID is the light model id; the two numbers are examples: use the provider's prices
+on conflict (model) do update set input_micros_per_mtok = excluded.input_micros_per_mtok, output_micros_per_mtok = excluded.output_micros_per_mtok, updated_at = now();
+```
+
+**Changing a plan's numbers:** `update public.plan_ai_allowances set daily_paise = ..., monthly_paise = ... where plan = '...'` (a day may not exceed 50,000 paise, the 500-rupee wall). **A workspace's own cap** (`set_tenant_daily_cost_cap`, Owner only, 0 to 500.00) is a *hard* cap and wins over the plan's 300 % wall: set lower than the allowance it pauses the AI earlier on purpose; 0 switches the AI off for that workspace.
+
+**Which model for which task:** each agent call declares a task class (`simple` or `hard`); `app/agents/llm/routing.py` holds the table. Today both classes use the main model, and both use the light model while a workspace is over its allowance; the model bake-off will fill the table.
+
+Amounts are millionths of the billing currency (2,000,000 = 2.00). Run the queries below as the database owner.
 
 Today's spend and cap, per workspace:
 

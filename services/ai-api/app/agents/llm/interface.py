@@ -19,6 +19,15 @@ class Trust(StrEnum):
     UNTRUSTED = "untrusted"
 
 
+class TaskClass(StrEnum):
+    """What a model call is FOR, declared by the agent at every call. Today both classes use the
+    main model (and both use the light one while a workspace is over its allowance: see
+    routing.py); the model bake-off fills the routing table later."""
+
+    SIMPLE = "simple"
+    HARD = "hard"
+
+
 @dataclass(frozen=True)
 class Block:
     trust: Trust
@@ -37,6 +46,7 @@ class LlmRequest:
     blocks: tuple[Block, ...]
     tools: tuple[ToolSpec, ...]
     max_output_tokens: int
+    task_class: TaskClass
     # How the model reports that it is DONE: a structured result in this shape (an adapter
     # offers it as a tool of this name and returns the arguments as `LlmResponse.structured`).
     # Never an instruction to do anything.

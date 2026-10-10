@@ -152,10 +152,40 @@ def gate_message(env: Mapping[str, str]) -> str | None:
         "yes",
     ):
         return "assistant-smoke: LLM_SPEND_CAP_CONFIRMED is not true: set the hard spend cap at the provider first, then confirm it. Nothing was run."
+    light = env.get("LLM_LIGHT_MODEL", "").strip()
+    if light:
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:-]{0,99}", light):
+            return "assistant-smoke: LLM_LIGHT_MODEL has characters a model id does not have. Nothing was run."
+        for name in ("LLM_LIGHT_INPUT_MICROS_PER_MTOK", "LLM_LIGHT_OUTPUT_MICROS_PER_MTOK"):
+            value = env.get(name, "").strip()
+            if not value.isdigit() or int(value) <= 0:
+                return f"assistant-smoke: LLM_LIGHT_MODEL is set, so {name} must be a whole number above zero. Nothing was run."
     base = env.get("ANTHROPIC_BASE_URL", DEFAULT_BASE_URL).strip().rstrip("/")
     if base != DEFAULT_BASE_URL:
         return "assistant-smoke: ANTHROPIC_BASE_URL is not the provider's address; the key is never sent anywhere else. Nothing was run."
     return None
+
+
+def allowance_gate(*, light: bool, paused: bool, light_model_set: bool) -> tuple[str | None, str | None]:
+    """(a reason to stop, a note to print) for the demo workspace's AI allowance (job AK K2b, ADR 0064). Over 100 % of the day or month the workspace is served by the LIGHT model,
+    so a run with a light model configured would test the wrong model: stop. At 300 % the AI is paused: stop. Without a light model the main model serves in both cases and the
+    run is valid (the note says so)."""
+    if paused:
+        return (
+            "the demo workspace is at 300 % of its AI allowance, so the AI is paused until the reset (make seed-demo-manual does not reset it; wait for the next India day)",
+            None,
+        )
+    if light and light_model_set:
+        return (
+            "the demo workspace is over its AI allowance for today or this month, so its answers now come from the LIGHT model, not the model under test: run again after the reset (next India day), or unset LLM_LIGHT_MODEL",
+            None,
+        )
+    if light:
+        return (
+            None,
+            "the demo workspace is over its AI allowance, and no light model is configured, so the main model still answers",
+        )
+    return None, None
 
 
 # ============================================================================ the budget (pure)
@@ -671,6 +701,13 @@ def main(env: Mapping[str, str] | None = None) -> int:
         llm_input_micros_per_mtok=int(env["LLM_INPUT_MICROS_PER_MTOK"]),
         llm_output_micros_per_mtok=int(env["LLM_OUTPUT_MICROS_PER_MTOK"]),
         llm_spend_cap_confirmed=True,
+        llm_light_model=env.get("LLM_LIGHT_MODEL", "").strip() or None,
+        llm_light_input_micros_per_mtok=int(env["LLM_LIGHT_INPUT_MICROS_PER_MTOK"])
+        if env.get("LLM_LIGHT_MODEL", "").strip()
+        else None,
+        llm_light_output_micros_per_mtok=int(env["LLM_LIGHT_OUTPUT_MICROS_PER_MTOK"])
+        if env.get("LLM_LIGHT_MODEL", "").strip()
+        else None,
     )
     runtime = build_runtime(settings)
     if (
@@ -717,10 +754,25 @@ def main(env: Mapping[str, str] | None = None) -> int:
             int(env["LLM_INPUT_MICROS_PER_MTOK"]),
             int(env["LLM_OUTPUT_MICROS_PER_MTOK"]),
         )
+        if settings.llm_light_model:
+            set_model_price(
+                settings.llm_light_model,
+                int(settings.llm_light_input_micros_per_mtok or 0),
+                int(settings.llm_light_output_micros_per_mtok or 0),
+            )
         saved = snapshot(
             DEMO_WORKSPACE_SLUG
         )  # taken BEFORE anything changes, so a failure half-way still restores everything
         apply_run_settings(DEMO_WORKSPACE_SLUG)
+        stop, note = allowance_gate(
+            light=operator_sql.sql(f"select app.ai_is_light('{tenant}')") == "t",
+            paused=operator_sql.sql(f"select app.ai_is_paused('{tenant}')") == "t",
+            light_model_set=bool(settings.llm_light_model),
+        )
+        if stop:
+            raise Aborted(stop)
+        if note:
+            print(f"assistant-smoke: note: {note}.")
         guard = BudgetGuard(MAX_SPEND_PAISE, worst_case_run_paise(), lambda: spent_micros(tenant))
         print(
             f"assistant-smoke: 5 questions, the real adapter, the demo workspace only. Limit {MAX_SPEND_PAISE} paise (₹{MAX_SPEND_PAISE // 100}); the daily cap stays on (raised for this run on the demo workspace only, put back at the end)."

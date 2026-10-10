@@ -8,6 +8,7 @@ tenant switch) and answers a start with 503 `agents_unavailable`."""
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 import uuid
 from collections.abc import Callable
@@ -21,6 +22,7 @@ from app.agents.llm.anthropic import AnthropicClient, AnthropicConfig
 from app.agents.llm.fake import FakeProvider, research_script, selftest_script
 from app.agents.llm.fake_requirement import requirement_script
 from app.agents.llm.interface import LlmClient
+from app.agents.llm.routing import ModelRouter
 from app.agents.registry import AGENTS
 from app.agents.runtime import AgentRunner
 from app.assistant.db import AssistantDb
@@ -47,7 +49,7 @@ class AgentsRuntime:
     research_available: bool = False
     # the Main agent (job AG): a model client per message (the scripted stand-in under the fake
     # provider, in development only) and the database door per message
-    assistant_llm: Callable[[], LlmClient] | None = None
+    assistant_llm: Callable[[], LlmClient | ModelRouter] | None = None
     assistant_db: Callable[[str, uuid.UUID], AssistantDb] | None = None
 
 
@@ -78,6 +80,32 @@ def _anthropic_config(settings: Settings) -> AnthropicConfig | str:
         raise AgentSettingsError("the model adapter configuration is invalid") from None
 
 
+def _light_config(settings: Settings, main: AnthropicConfig) -> AnthropicConfig | None:
+    """The light model's configuration (the main model's provider, key and address), or None when
+    no light model is set. A model without both prices is an unsafe setting: refused at start."""
+    model = (settings.llm_light_model or "").strip()
+    if not model:
+        return None
+    input_price, output_price = (
+        settings.llm_light_input_micros_per_mtok,
+        settings.llm_light_output_micros_per_mtok,
+    )
+    if input_price is None or output_price is None:
+        raise AgentSettingsError(
+            "LLM_LIGHT_MODEL needs LLM_LIGHT_INPUT_MICROS_PER_MTOK "
+            "and LLM_LIGHT_OUTPUT_MICROS_PER_MTOK"
+        )
+    try:
+        return dataclasses.replace(
+            main,
+            model=model,
+            input_micros_per_mtok=input_price,
+            output_micros_per_mtok=output_price,
+        )
+    except ValueError:
+        raise AgentSettingsError("the light model configuration is invalid") from None
+
+
 def llm_unavailable_reason(settings: Settings) -> str | None:
     """None when agents may run; otherwise a short code. Raises AgentSettingsError for an unsafe
     or unknown setting."""
@@ -94,7 +122,7 @@ def llm_unavailable_reason(settings: Settings) -> str | None:
     return outcome if isinstance(outcome, str) else None
 
 
-def build_llm_factory(settings: Settings) -> Callable[[], LlmClient]:
+def build_llm_factory(settings: Settings) -> Callable[[], LlmClient | ModelRouter]:
     """A fresh client per run (the fake keeps a script)."""
     reason = llm_unavailable_reason(settings)
     if reason is not None:
@@ -104,7 +132,15 @@ def build_llm_factory(settings: Settings) -> Callable[[], LlmClient]:
         if isinstance(outcome, str):  # not reachable: llm_unavailable_reason returned None
             raise AgentSettingsError(outcome)
         config = outcome
-        return lambda: AnthropicClient(config)
+        light = _light_config(settings, config)
+
+        def make() -> LlmClient | ModelRouter:
+            main_client = AnthropicClient(config)
+            if light is None:
+                return main_client
+            return ModelRouter(main_client, AnthropicClient(light))
+
+        return make
     return lambda: FakeProvider(selftest_script())
 
 

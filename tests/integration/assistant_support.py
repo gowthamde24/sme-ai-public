@@ -15,12 +15,13 @@ from conftest import Stack
 from fastapi.testclient import TestClient
 
 from app.agents.llm.interface import LlmClient
+from app.agents.llm.routing import ModelRouter
 from app.config import Settings
 from app.main import build_runtime, create_app
 
 
 def assistant_app(
-    stack: Stack, factory: Callable[[], LlmClient] | None = None
+    stack: Stack, factory: Callable[[], LlmClient | ModelRouter] | None = None
 ) -> Iterator[TestClient]:
     """The real application with agents on (the stand-in model of development unless a scripted `factory` is given)."""
     settings = Settings(  # type: ignore[call-arg]
