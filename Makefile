@@ -171,8 +171,8 @@ WEB_PORT ?= 3000
 dev-api-local:
 	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port $(API_PORT)
 
-# OPT-IN (job AN): the local API with the Main agent on a hosted FREE-tier model, Groq llama-3.3-70b-versatile (LLM_MODEL=... to choose another). Reads the API key HIDDEN (or takes LLM_API_KEY if it is
-# already set), records the model's price at the minimum, switches the assistant on for the demo workspace and starts the API on API_PORT with AGENTS_ENABLED=true. Local stack and synthetic data only.
+# OPT-IN (job AN): the local API with the Main agent on a hosted FREE-tier model, Groq openai/gpt-oss-120b (LLM_MODEL=... to choose another). Reads the API key HIDDEN (or takes LLM_API_KEY if it is
+# already set), checks it against Groq's models endpoint and refuses an empty or refused key, records the model's price at the minimum, switches the assistant on for the demo workspace and starts the API on API_PORT with AGENTS_ENABLED=true. Local stack and synthetic data only.
 # Needs `make db-start` and `make seed-demo-manual`. See docs/runbooks/main-agent-hosted-free.md.
 dev-api-groq:
 	API_PORT=$(API_PORT) ./scripts/dev-api-hosted-free.sh

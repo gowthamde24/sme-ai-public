@@ -54,7 +54,7 @@ RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 SalesPlus = Annotated[
     TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, Role.SALES))
 ]
-HISTORY_LINES = 8
+HISTORY_LINES = 4  # the last two exchanges: enough context for a follow-up question, and a smaller request (job AO)
 
 # fixed sentences for the ways a message can fail; nothing from the model or the data layer reaches a client
 FAILURES: dict[str, tuple[str, str]] = {

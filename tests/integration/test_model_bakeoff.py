@@ -501,17 +501,18 @@ def test_the_per_model_limit_stops_the_rest_and_says_so(app: TestClient, scene: 
 
 # ------------------------------------------------------------------------------------------------ the three new adapters, through the REAL application
 def provider_server(provider: str, requests: list[httpx.Request]) -> Any:
-    """What the provider would answer: first a tool call (get_today), then the final reply citing s1."""
+    """What the provider would answer: first a tool call (get_today), then the final reply citing every item that waits for the owner (job AO: an answer about today's list names them all)."""
 
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(request)
         text = request.content.decode()
         second = "tool: get_today" in text
+        waiting = re.findall(r"(s\d+) \| \w+ \| id [0-9a-f-]{36} \| [^|]*\| waiting_for_you", text)
         reply = {
             "kind": "answer",
             "answer": "Here is what is waiting for you today.",
             "language": "en",
-            "sources": ["s1"],
+            "sources": waiting or ["s1"],
         }
         if provider == "gemini":
             call = {"name": "reply", "args": reply} if second else {"name": "get_today", "args": {}}

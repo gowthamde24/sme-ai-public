@@ -107,3 +107,12 @@ PLAIN_WORDS: dict[Language, str] = {
     "kn": "ನನಗೆ ಇದನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಹೇಳಲು ಆಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಬೇರೆ ಮಾತುಗಳಲ್ಲಿ ಮತ್ತೆ ಕೇಳಿ.",
     "ta": "இதை எனக்குத் தெளிவாகச் சொல்ல முடியவில்லை. தயவுசெய்து வேறு வார்த்தைகளில் மீண்டும் கேளுங்கள்.",
 }
+
+# Said before the items an answer about "what is waiting for me" left out, which the code then adds from the tool's own list (see runner.py, job AO). Not model output.
+WAITING_ALSO: dict[Language, str] = {
+    "en": "Also waiting for you:",
+    "te": "మీ కోసం ఇవి కూడా ఉన్నాయి:",
+    "hi": "आपके लिए ये भी इंतज़ार कर रहे हैं:",
+    "kn": "ನಿಮಗಾಗಿ ಇವು ಕೂಡ ಕಾಯುತ್ತಿವೆ:",
+    "ta": "உங்களுக்காக இவையும் காத்திருக்கின்றன:",
+}

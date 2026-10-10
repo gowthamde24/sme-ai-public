@@ -26,7 +26,14 @@ def executable(path: Path, text: str) -> None:
 
 
 class Sandbox:
-    def __init__(self, tmp: Path, *, container_running: bool = True, tenant_exists: bool = True):
+    def __init__(
+        self,
+        tmp: Path,
+        *,
+        container_running: bool = True,
+        tenant_exists: bool = True,
+        key_status: str = "200",
+    ):
         self.root = tmp / "repo"
         (self.root / "scripts").mkdir(parents=True)
         (self.root / "supabase").mkdir()
@@ -48,6 +55,16 @@ class Sandbox:
                 else ""
             ),
         )
+        # the fake curl: records its command line and what it was given on stdin (where the key travels), and answers with a status
+        self.curl_args = tmp / "curl.args"
+        self.curl_stdin = tmp / "curl.stdin"
+        executable(
+            bin_dir / "curl",
+            "#!/bin/sh\n"
+            f'echo "$*" >> "{self.curl_args}"\n'
+            f'cat >> "{self.curl_stdin}"\n'
+            f'printf %s "{key_status}"\n',
+        )
         # the fake of the wrapper that would start the API: it reports names and a yes/no for the key, never the key
         executable(
             self.root / "scripts" / "with-local-demo-env.sh",
@@ -67,6 +84,9 @@ class Sandbox:
             timeout=30,
             check=False,
         )
+
+    def curl_calls(self) -> list[str]:
+        return self.curl_args.read_text().splitlines() if self.curl_args.exists() else []
 
     def docker_calls(self) -> list[str]:
         return self.log.read_text().splitlines() if self.log.exists() else []
@@ -88,11 +108,11 @@ def test_it_records_the_price_switches_the_assistant_on_and_starts_the_api_with_
     }
     assert started["AGENTS_ENABLED"] == "true" and started["API_ENV"] == "development"
     assert started["LLM_PROVIDER"] == "openai_compat" and started["LLM_BASE_URL"] == GROQ
-    assert started["LLM_MODEL"] == "llama-3.3-70b-versatile" and "key_ok" in started
+    assert started["LLM_MODEL"] == "openai/gpt-oss-120b" and "key_ok" in started
     assert started["cmd"].endswith("uvicorn app.main:app --port 8000")
     calls = " ".join(box.docker_calls())
     assert "supabase_db_sme-test" in calls
-    assert "values ('llama-3.3-70b-versatile', 1, 1) on conflict (model) do nothing" in calls, (
+    assert "values ('openai/gpt-oss-120b', 1, 1) on conflict (model) do nothing" in calls, (
         "the minimum price, and an existing row is kept"
     )
     assert "operator_enable_assistant('demo-synthetic-sme')" in calls
@@ -177,3 +197,65 @@ def test_the_script_reads_no_env_file_never_traces_and_only_prints_through_stder
     assert ".env" not in code and "set -x" not in code and "xtrace" not in code
     assert "service_role" not in text.lower() and "SERVICE_ROLE" not in text
     assert os.access(SCRIPT, os.X_OK)
+
+
+# ---- job AO: the key is checked with the service before anything is changed
+def test_the_key_is_checked_at_the_models_endpoint_and_travels_on_stdin_never_on_a_command_line(
+    box: Sandbox,
+) -> None:
+    done = box.run(LLM_API_KEY=KEY)
+    assert done.returncode == 0, done.stderr
+    calls = box.curl_calls()
+    assert len(calls) == 1 and calls[0].endswith("https://api.groq.com/openai/v1/models"), calls
+    assert KEY not in calls[0], "the key is not on the command line"
+    assert f"Bearer {KEY}" in box.curl_stdin.read_text(), (
+        "it is in the config curl reads from stdin"
+    )
+    assert KEY not in done.stdout + done.stderr
+
+
+@pytest.mark.parametrize("status", ["401", "403"])
+def test_a_key_the_service_does_not_accept_stops_everything_with_one_clear_line(
+    tmp_path: Path, status: str
+) -> None:
+    box = Sandbox(tmp_path, key_status=status)
+    done = box.run(LLM_API_KEY=KEY)
+    assert done.returncode == 2
+    lines = [line for line in done.stderr.splitlines() if line.strip()]
+    assert len(lines) == 1 and "api.groq.com does not accept this API key" in lines[0], lines
+    assert "Nothing was started" in lines[0]
+    assert box.docker_calls() == [] and not box.started.exists(), "nothing was changed"
+    assert KEY not in done.stdout + done.stderr
+
+
+@pytest.mark.parametrize("status", ["000", "500", "429", ""])
+def test_when_the_service_cannot_be_asked_it_says_so_and_goes_on(
+    tmp_path: Path, status: str
+) -> None:
+    box = Sandbox(tmp_path, key_status=status)
+    done = box.run(LLM_API_KEY=KEY)
+    assert done.returncode == 0, done.stderr
+    assert "could not check the key with api.groq.com" in done.stderr
+    assert box.started.exists()
+
+
+@pytest.mark.parametrize(
+    "key", ["abc1234", 'abc"def"ghijklmnop', "abc\\def-ghijklmnop", "a" * 600]
+)
+def test_something_that_is_not_shaped_like_a_key_is_refused_before_curl_runs(
+    box: Sandbox, key: str
+) -> None:
+    done = box.run(LLM_API_KEY=key)
+    assert done.returncode == 2 and "does not look like an API key" in done.stderr
+    assert box.curl_calls() == [] and box.docker_calls() == []
+    assert key not in done.stdout + done.stderr
+
+
+def test_openrouter_is_asked_at_its_own_key_endpoint(box: Sandbox) -> None:
+    done = box.run(
+        LLM_API_KEY=KEY,
+        LLM_BASE_URL="https://openrouter.ai/api/v1",
+        LLM_MODEL="meta-llama/llama-3.3-70b-instruct:free",
+    )
+    assert done.returncode == 0, done.stderr
+    assert box.curl_calls()[0].endswith("https://openrouter.ai/api/v1/key")

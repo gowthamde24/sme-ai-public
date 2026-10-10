@@ -1,6 +1,6 @@
 # Runbook: the Main agent on a hosted FREE model (Groq), on your Mac
 
-Job AN. Local stack, synthetic demo data, **no money**. The assistant answers through Groq's free tier (`llama-3.3-70b-versatile`) instead of the scripted development model. Nothing here deploys anything; `make check` never runs it.
+Job AN. Local stack, synthetic demo data, **no money**. The assistant answers through Groq's free tier (`openai/gpt-oss-120b`; `llama-3.3-70b-versatile` is retired on Groq) instead of the scripted development model. Nothing here deploys anything; `make check` never runs it.
 
 **What leaves your machine:** the question you type and the demo records the assistant reads to answer it (the invented DEMO business) go to Groq. Free tiers may log prompts or use them to improve their models, so use **only** the demo workspace. Never a real customer, number or price. The adapter refuses to start outside development.
 
@@ -26,10 +26,12 @@ In another tab, as before: `make dev-web-local`, then open http://localhost:3000
 
 Another port: `make dev-api-groq API_PORT=8001` (and `make dev-web-local WEB_PORT=3001 API_PORT=8001`). Another Groq model: `LLM_MODEL=<id> make dev-api-groq`.
 
+If you paste a wrong, empty or revoked key it stops at once with one line (`api.groq.com does not accept this API key ... Nothing was started.`) and changes nothing. The check is one request to Groq's models list; the key travels on that request's standard input, never on a command line. If Groq cannot be reached for the check, it says so and goes on.
+
 ## What `make dev-api-groq` does for you
 
 1. Refuses unless the address is exactly one of the three allowed ones and the model id is plain text.
-2. Reads the key hidden. It never prints it, writes it to a file, reads a `.env` file or uses a service-role key.
+2. Reads the key hidden, checks its shape, and asks Groq (models list) whether it knows the key; an empty or refused key stops everything here. It never prints the key, writes it to a file, reads a `.env` file or uses a service-role key.
 3. Records the model's price in the **local** database at the minimum (1 micro per million tokens; an existing row for the model is kept). **No SQL for you to type.** Without a price row every call would be refused with `model_not_configured`.
 4. Switches the Main agent on for the demo workspace (`app.operator_enable_assistant('demo-synthetic-sme')`). If the workspace is not there it stops and says `make seed-demo`.
 5. Starts the API with `AGENTS_ENABLED=true`, `LLM_PROVIDER=openai_compat`, `LLM_BASE_URL=https://api.groq.com/openai/v1`.
@@ -60,6 +62,14 @@ The assistant stream ends with an `error` event `{type, code, message}`. Two new
 | `model_not_configured` | the model has no price row in the database | The AI model is not set up yet. Ask the person who looks after this system to finish setting it up. |
 
 Starting a message when the model has no price is refused with HTTP 503 `model_not_configured` (body `{code, message}`). `ai_paused_until` is unchanged and is sent only for a real allowance or cap. The web's closed code list (`ERROR_CODES` in `ask-stream.ts`) needs the two new codes and its own sentence for each; an unknown code already falls back to the generic failure.
+
+## "What needs me today?" names everything
+
+The answer to a question about today's list must name every item the Today screen shows as waiting for you (the quote waiting for approval, the follow-up draft, the order holding money). The tool hands the model the whole list; the code then checks the answer's sources. If one is missing the model is asked once more, and if it still leaves one out the code adds it itself under a fixed line in your language ("Also waiting for you: ..."). `make eval` has six cases for it (English, Telugu, Hindi; a model that forgets the quote once, and one that always does).
+
+## Small requests (free tiers allow only a few thousand tokens a minute)
+
+One question is two or three model calls. Each call used to carry about 2,000 tokens of fixed text (rules, eleven tool definitions, the reply format). Now the tool definitions are trimmed (no generated titles, defaults or docstrings), the rules are shorter, the chat history is the last four lines cut to 280 characters, tool results no longer repeat amounts in paise, and from the third call on (when the model is told to answer) the tool definitions are not sent at all. Measured in `tests/integration/test_assistant_tokens.py` (`pytest -s` prints the table; a change that makes the requests bigger again fails it). The numbers are an estimate (bytes / 4), see the job AO report.
 
 ## Answers do not name tools
 
