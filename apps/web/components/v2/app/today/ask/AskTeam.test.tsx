@@ -238,6 +238,8 @@ describe("AskTeam: the real Main agent's shapes (Job AG)", () => {
     ["run_limit_reached", "Too many questions just now. Wait a little and ask again."],
     ["forbidden", "Your role cannot ask the team."],
     ["agents_disabled", "Switched off"],
+    ["model_busy", "The AI service is busy, try again in a minute."],
+    ["model_not_configured", "This AI model is not set up yet."],
     ["something_else", "The answer could not be completed. Nothing was changed."],
     [undefined, "The answer could not be completed. Nothing was changed."],
   ])("an error with code %s says its own fixed sentence", async (code, words) => {
@@ -254,6 +256,58 @@ describe("AskTeam: the real Main agent's shapes (Job AG)", () => {
     const calls = fetcher.mock.calls as unknown as [string, RequestInit][];
     expect(calls[0][0]).toBe(`${B}/ask`);
     expect(String((calls[0][1].headers as Record<string, string>).Authorization)).toBe("undefined");
+  });
+});
+
+describe("AskTeam: sources wrap, and the owl follows the box", () => {
+  const owlOf = () => document.querySelector("svg.owl")!.getAttribute("data-state");
+  it("a long source label is shown whole and may wrap, as a link and as a plain label", async () => {
+    const long = "Quote Q-2041 · Pooja Sarees · total ₹12,48,500.00 incl. GST, advance ₹3,00,000.00 received, balance ₹9,48,500.00 due on dispatch";
+    box(playing([{ type: "text", delta: "Ok." }, { type: "source", label: long, href: `${B}/quotes` }, { type: "source", label: `${long} (company)`, href: null }, { type: "done" }]));
+    ask("x");
+    const link = await screen.findByRole("link", { name: long });
+    expect(link).toHaveTextContent(long);
+    expect(link.className).toMatch(/overflow-wrap:anywhere/);
+    expect(link.className).toMatch(/max-w-full/);
+    expect(link.className).not.toMatch(/truncate|whitespace-nowrap|overflow-hidden/);
+    const plain = screen.getByText(`${long} (company)`);
+    expect(plain.className).toMatch(/overflow-wrap:anywhere/);
+  });
+  it("the owl rests while there is nothing to ask", () => {
+    box(playing([]), "switched_off");
+    expect(owlOf()).toBe("resting");
+  });
+  it("the owl is idle, then thinks until the first word, answers while it streams, and is idle again", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    const transport: AskTransport = async function* () {
+      await gate;
+      yield { type: "text", delta: "Two quotes." };
+      await gate;
+      yield { type: "done" };
+    };
+    box(transport);
+    expect(owlOf()).toBe("idle");
+    ask("x");
+    expect(owlOf()).toBe("thinking");
+    release();
+    expect(await screen.findByText("Two quotes.")).toBeInTheDocument();
+    await waitFor(() => expect(owlOf()).toBe("idle"));
+  });
+  it("the owl answers while text arrives", async () => {
+    let release!: () => void;
+    const gate = new Promise<void>((r) => (release = r));
+    const transport: AskTransport = async function* () {
+      yield { type: "text", delta: "First words." };
+      await gate;
+      yield { type: "done" };
+    };
+    box(transport);
+    ask("x");
+    await screen.findByText("First words.");
+    expect(owlOf()).toBe("answering");
+    release();
+    await waitFor(() => expect(owlOf()).toBe("idle"));
   });
 });
 
@@ -312,6 +366,7 @@ describe("AskTeam: the microphone", () => {
     box(playing([], seen as never));
     fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
     expect(screen.getByRole("button", { name: "Stop listening" })).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector("svg.owl")).toHaveAttribute("data-state", "listening");
     expect(screen.getByText("Your browser may send what you say to its speech service.")).toBeInTheDocument();
     act(() => FakeRecognition.last!.onresult!({ results: [[{ transcript: "which quotes" }], [{ transcript: "are waiting" }]] }));
     expect(screen.getByRole("textbox")).toHaveValue("which quotes are waiting");

@@ -1649,6 +1649,28 @@
    "kn": "draft"
   }
  },
+ "ask.err.busy": {
+  "en": "The AI service is busy, try again in a minute.",
+  "te": "AI సర్వీస్ ఇప్పుడు బిజీగా ఉంది. ఒక నిమిషం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "AI सर्विस अभी व्यस्त है। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "AI ಸರ್ವಿಸ್ ಈಗ ಬ್ಯುಸಿಯಾಗಿದೆ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.err.notset": {
+  "en": "This AI model is not set up yet.",
+  "te": "ఈ AI మోడల్ ఇంకా సెటప్ చేయలేదు.",
+  "hi": "यह AI मॉडल अभी सेट अप नहीं है।",
+  "kn": "ಈ AI ಮಾಡೆಲ್ ಇನ್ನೂ ಸೆಟ್ ಅಪ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "ask.err.role": {
   "en": "Your role cannot ask the team.",
   "te": "మీ పాత్రతో బృందాన్ని అడగలేరు.",

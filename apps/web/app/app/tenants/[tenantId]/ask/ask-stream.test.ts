@@ -79,7 +79,7 @@ describe("toAskEvents", () => {
     expect(await run([{ type: "text", delta: "half" }])).toEqual([{ type: "text", delta: "half" }, { type: "error" }]);
   });
   it("knownCode", () => {
-    expect(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden"].map(knownCode)).toEqual(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden"]);
+    expect(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden", "model_busy", "model_not_configured"].map(knownCode)).toEqual(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden", "model_busy", "model_not_configured"]);
     expect(knownCode("message_id_used")).toBeUndefined();
     expect(knownCode("__proto__")).toBeUndefined();
   });

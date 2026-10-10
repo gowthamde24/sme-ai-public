@@ -7,13 +7,14 @@ import * as React from "react";
 import { ERROR_CODES, type AskDraft, type AskSource, type AskTransport, type Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { makeAskTransport } from "./transport";
-import { MainAvatar } from "./MainAvatar";
+import { OwlAvatar, type OwlState } from "./OwlAvatar";
 import { recognitionCtor, speechLang, speechProblem, transcriptOf, type Recognition } from "./speech";
 
 const MAX_QUESTION = 500;
 const MAX_ANSWER = 8000;
 const MAX_SOURCES = 8;
 const MAX_DRAFTS = 5;
+const MAX_LABEL = 160; // a source label carries an amount or a name; it wraps on the screen, so it is not cut short
 const card = "rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]";
 const chip = "inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base text-ink hover:bg-surface-2 disabled:opacity-50";
 
@@ -71,9 +72,10 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
   );
 
   const live = availability === "live" && transport !== null;
+  const owl: OwlState = !live ? "resting" : listening ? "listening" : phase === "asking" ? (answer ? "answering" : "thinking") : "idle";
   const title = (
     <div className="flex items-center gap-3">
-      <MainAvatar />
+      <OwlAvatar state={owl} />
       <div className="min-w-0">
         <h2 id="ask-heading" className="font-display text-xl font-semibold leading-tight">
           {w("ask.title")}
@@ -114,7 +116,7 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
         else if (e.type === "source") {
           const href = e.href === null ? null : insideWorkspace(e.href, base);
           if (typeof e.label === "string" && (href !== null || e.href === null)) {
-            const label = e.label.slice(0, 80);
+            const label = e.label.slice(0, MAX_LABEL);
             setSources((s) => (s.length >= MAX_SOURCES || s.some((x) => x.href === href && x.label === label) ? s : [...s, { label, href }]));
           }
         } else if (e.type === "draft") {
@@ -232,7 +234,7 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
           {answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{answer}</p> : asking ? <p className="mt-2 text-base text-muted">{w("ask.thinking")}</p> : null}
           {phase === "error" ? (
             <p role="alert" className="mt-2 text-base font-medium text-red-text">
-              {errorCode === "ai_paused_until" ? w("ask.err.cost") : errorCode === "run_limit_reached" ? w("ask.err.limit") : errorCode === "forbidden" ? w("ask.err.role") : errorCode === "agents_disabled" ? w("office.switchedoff") : w("ask.error")}
+              {errorCode === "ai_paused_until" ? w("ask.err.cost") : errorCode === "run_limit_reached" ? w("ask.err.limit") : errorCode === "forbidden" ? w("ask.err.role") : errorCode === "agents_disabled" ? w("office.switchedoff") : errorCode === "model_busy" ? w("ask.err.busy") : errorCode === "model_not_configured" ? w("ask.err.notset") : w("ask.error")}
             </p>
           ) : null}
           {sources.length ? (
@@ -240,13 +242,13 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
               <h3 className="text-sm font-semibold">{w("ask.sources")}</h3>
               <ul className="mt-1 flex flex-wrap gap-2">
                 {sources.map((s, i) => (
-                  <li key={`${s.href ?? "-"}-${i}`}>
+                  <li key={`${s.href ?? "-"}-${i}`} className="max-w-full min-w-0">
                     {s.href ? (
-                      <Link href={s.href} prefetch={false} className="inline-flex min-h-11 items-center rounded-lg border border-edge bg-surface px-3 text-sm font-medium text-ink hover:bg-surface-2">
+                      <Link href={s.href} prefetch={false} className="inline-flex min-h-11 max-w-full items-center rounded-lg border border-edge bg-surface px-3 py-2 text-sm font-medium text-ink [overflow-wrap:anywhere] hover:bg-surface-2">
                         {s.label}
                       </Link>
                     ) : (
-                      <span className="inline-flex min-h-11 items-center rounded-lg border border-line bg-surface-2 px-3 text-sm font-medium text-muted">{s.label}</span>
+                      <span className="inline-flex min-h-11 max-w-full items-center rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm font-medium text-muted [overflow-wrap:anywhere]">{s.label}</span>
                     )}
                   </li>
                 ))}
