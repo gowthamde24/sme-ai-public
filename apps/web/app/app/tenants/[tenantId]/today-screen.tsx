@@ -26,7 +26,7 @@ export async function TodayScreen({ accessToken, userId, tenantId }: { accessTok
   }
   return (
     <main className={pageMain} lang={lang}>
-      <TodayView data={data} name={name} hour={hourInIndia()} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} />
+      <TodayView data={data} name={name} hour={hourInIndia()} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} />
     </main>
   );
 }

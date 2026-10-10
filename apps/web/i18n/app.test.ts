@@ -13,7 +13,7 @@ type Entry = { en: string; te: string; hi: string; kn: string; status: Record<st
 const data = app as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY = ["integrations.email.body", "integrations.upi.body", "integrations.upi.title", "integrations.whatsapp.body", "integrations.whatsapp.title", "settings.privacy.erasure", "settings.privacy.note", "settings.privacy.suppression", "settings.security.off", "settings.security.on", "settings.security.open", "settings.tab.privacy", "settings.tab.security", "today.fact.amount", "today.hint.nothingSent", "today.kind.order", "today.stat.held", "today.stat.heldHint"]; // money held, amounts and what a button sends or does not: English until a person reviews them
+const HUMAN_ONLY = ["ask.approve.hint", "ask.error", "ask.mic.privacy", "ask.noscreen", "ask.sub", "integrations.email.body", "integrations.upi.body", "integrations.upi.title", "integrations.whatsapp.body", "integrations.whatsapp.title", "settings.privacy.erasure", "settings.privacy.note", "settings.privacy.suppression", "settings.security.off", "settings.security.on", "settings.security.open", "settings.tab.privacy", "settings.tab.security", "today.fact.amount", "today.hint.nothingSent", "today.kind.order", "today.stat.held", "today.stat.heldHint"]; // money held, amounts and what a button sends or does not: English until a person reviews them
 
 describe("the frame's string store (language track L0)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(app as never, l) as Record<string, string>]));

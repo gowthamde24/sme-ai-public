@@ -28,7 +28,9 @@ describe("the menu's shape", () => {
   });
   it("every page of the workspace belongs to an entry (the marker and the way back are never lost)", () => {
     const owners = [...NAV.flatMap((g) => g.items), ...FOOT].flatMap((i) => [i.path, ...(i.also ?? [])]).filter((p) => p !== "");
-    const dirs = fs.readdirSync(TENANT, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => `/${e.name}`);
+    const hasPage = (dir: string): boolean => fs.readdirSync(dir, { withFileTypes: true }).some((e) => (e.isDirectory() ? hasPage(path.join(dir, e.name)) : e.name === "page.tsx"));
+    // a folder that holds only a route handler (the "Ask your team" stream, /ask) is not a screen
+    const dirs = fs.readdirSync(TENANT, { withFileTypes: true }).filter((e) => e.isDirectory() && hasPage(path.join(TENANT, e.name))).map((e) => `/${e.name}`);
     expect(dirs.filter((d) => !owners.includes(d)), "a directory with no menu entry").toEqual([]);
   });
   it("the ids are unique and every group and entry has a word and an icon", () => {

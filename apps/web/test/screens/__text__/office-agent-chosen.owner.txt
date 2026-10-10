@@ -1,6 +1,9 @@
 # Agent office
-Your AI team and what each one is doing right now.
-{label="Agent office"}
+Your team around one table. The main agent sits at the head.
+{role=group label="Choose a view"}
+[button type=button: 3D view]
+[button type=button: List view]
+{label="Agent office"} The same information as the 3D room, as text.
 - [Main agent Not available yet Coordinates the other helpers. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=main)
 - [Lead Finder Not available yet Finds new businesses that may want to buy. Not built yet.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=lead_finder)
 - [Researcher Idle Reads public pages about a lead and writes down what it finds, with sources.](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=researcher)
@@ -8,9 +11,14 @@ Your AI team and what each one is doing right now.
 - [Quote Writer Idle Prepares a quote from the prices you set. A person approves it. Prepared quote 3 · 2h](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=quote_writer current=true)
 - [Follow-up Desk Idle Drafts follow-up messages. A person approves and sends them. Drafted follow-up message number 2 · 1m](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=followup_desk)
 - [Order Desk Idle Keeps each order's steps, payments and refunds in order. Order started · 30m](/app/tenants/22222222-2222-2222-2222-222222222222/office?agent=order_desk)
+{label="Event feed"}
+## Event feed
+- 1m · Follow-up Desk Drafted follow-up message number 2
+- 30m · Order Desk Order started
+- 2h · Quote Writer Prepared quote 3
 {label="Latest events"}
 ## Quote Writer
-Prepares a quote from the prices you set. A person approves it.
+Idle Prepares a quote from the prices you set. A person approves it.
 ### Latest events
 Prepared quote 3 · 2h
 [Runs and cost](/app/tenants/22222222-2222-2222-2222-222222222222/agents)

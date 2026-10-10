@@ -1,9 +1,9 @@
 import { NOTHING_TODAY, type NeedsYouItem, type RecentItem, type TodayData } from "@/components/v2/app/today/types";
 import { ApiAuthError } from "@/lib/api/client";
 import { fetchMembers } from "@/lib/api/orders";
-import { fetchQuote, fetchQuotes } from "@/lib/api/quotes";
-import { getAgentsStatus, type Target } from "@/lib/api/today";
+import { getAgentsStatus } from "@/lib/api/today";
 
+import { targetPaths } from "./target-path";
 import { readTodayCached } from "./today-read";
 
 /**
@@ -15,7 +15,6 @@ import { readTodayCached } from "./today-read";
  * from the newest 50 quotes (`fetchQuotes`) or, for an older one, from the quote itself; if neither can be read it opens the list of quotes.
  */
 export async function readToday(accessToken: string, tenantId: string): Promise<TodayData> {
-  const base = `/app/tenants/${tenantId}`;
   const [today, team] = await Promise.allSettled([readTodayCached(accessToken, tenantId), getAgentsStatus(accessToken, tenantId)]);
   for (const r of [today, team]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
 
@@ -23,44 +22,12 @@ export async function readToday(accessToken: string, tenantId: string): Promise<
   if (team.status === "fulfilled") data.team = team.value;
   if (today.status === "fulfilled") {
     const t = today.value;
-    const enquiryOfQuote = await findEnquiries(accessToken, tenantId, t.needs_you.flatMap((i) => (i.target.type === "quote" ? [i.target.id] : [])));
-    const where = (target: Target): string => {
-      switch (target.type) {
-        case "order":
-          return `${base}/orders/${target.id}`;
-        case "lead":
-          return `${base}/leads/${target.id}`;
-        case "enquiry":
-          return `${base}/enquiries/${target.id}`;
-        case "quote": {
-          const enquiry = enquiryOfQuote.get(target.id);
-          return enquiry ? `${base}/enquiries/${enquiry}?quote=${target.id}` : `${base}/quotes`;
-        }
-      }
-    };
+    const where = await targetPaths(accessToken, tenantId, [...t.needs_you.map((i) => i.target), ...t.recent.map((r) => r.target)]);
     data.cards = { waiting: t.cards.waiting, money_held_paise: t.cards.money_held_paise, orders_open: t.cards.orders_open };
     data.needs_you = t.needs_you.map((i): NeedsYouItem => ({ ...i, href: where(i.target) }));
     data.recent = t.recent.map((r): RecentItem => ({ ...r, href: where(r.target) }));
   }
   return data;
-}
-
-/** quote id -> the id of its enquiry, for the quotes asked about. Never throws except for a rejected session: a quote it cannot place is simply missing from the map. */
-async function findEnquiries(accessToken: string, tenantId: string, quoteIds: string[]): Promise<Map<string, string>> {
-  const found = new Map<string, string>();
-  if (quoteIds.length === 0) return found;
-  try {
-    for (const q of await fetchQuotes(accessToken, tenantId, 50)) found.set(q.id, q.enquiry_id);
-  } catch (error) {
-    if (error instanceof ApiAuthError) throw error;
-  }
-  const missing = [...new Set(quoteIds)].filter((id) => !found.has(id));
-  const each = await Promise.allSettled(missing.map((id) => fetchQuote(accessToken, tenantId, id)));
-  each.forEach((r, i) => {
-    if (r.status === "fulfilled") found.set(missing[i], r.value.enquiry_id);
-    else if (r.reason instanceof ApiAuthError) throw r.reason;
-  });
-  return found;
 }
 
 /** The person's display name in this workspace, if the members list has one for them (it is null for most). Never throws except for a rejected session. */

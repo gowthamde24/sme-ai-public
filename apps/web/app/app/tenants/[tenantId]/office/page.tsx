@@ -9,7 +9,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
-import { readAgentsStatus } from "./office-data";
+import { readAgentsStatus, readEventLinks } from "./office-data";
 
 export const metadata = { title: "Office · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-/** /app/tenants/[tenantId]/office: the AI team as a list (every member may see it). The 3D room is a later batch (docs/plans/office-3d-proposal.md). */
+/** /app/tenants/[tenantId]/office: the AI team as a 3D room or a list (every member may see it), and each helper's latest event, linked to the page it is about. */
 export default async function OfficePage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/office">) {
   const user = await requireUser();
   const { tenantId } = await params;
@@ -33,8 +33,10 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   const lang = await getLang();
   const t = appT(lang);
   let agents;
+  let links: Record<string, string>;
   try {
     agents = await readAgentsStatus(user.accessToken, tenantId);
+    links = await readEventLinks(user.accessToken, tenantId, agents);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     throw error;
@@ -42,7 +44,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   const wanted = pick(query.agent);
   return (
     <main className={pageMain} lang={lang}>
-      <OfficeView agents={agents} selected={wanted && agents?.some((a) => a.agent === wanted) ? wanted : null} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} />
+      <OfficeView agents={agents} selected={wanted && agents?.some((a) => a.agent === wanted) ? wanted : null} links={links} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} />
     </main>
   );
 }

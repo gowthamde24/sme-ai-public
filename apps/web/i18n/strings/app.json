@@ -688,9 +688,9 @@
  },
  "office.switchedoff": {
   "en": "Switched off",
-  "te": "ఆపివేయబడింది",
+  "te": "ఆఫ్‌లో ఉంది",
   "hi": "बंद है",
-  "kn": "ಆಫ್ ಮಾಡಲಾಗಿದೆ",
+  "kn": "ಆಫ್ ಆಗಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1118,10 +1118,10 @@
   }
  },
  "office.sub": {
-  "en": "Your AI team and what each one is doing right now.",
-  "te": "మీ AI టీమ్, ప్రతి ఒక్కరూ ఇప్పుడు ఏం చేస్తున్నారు.",
-  "hi": "आपकी AI टीम और हर कोई अभी क्या कर रहा है।",
-  "kn": "ನಿಮ್ಮ AI ಟೀಮ್ ಮತ್ತು ಪ್ರತಿಯೊಬ್ಬರೂ ಈಗ ಏನು ಮಾಡುತ್ತಿದ್ದಾರೆ.",
+  "en": "Your team around one table. The main agent sits at the head.",
+  "te": "ఒక టేబుల్ చుట్టూ మీ టీమ్. ప్రధాన ఏజెంట్ టేబుల్ తలభాగంలో కూర్చుంటుంది.",
+  "hi": "एक मेज़ के चारों ओर आपकी टीम। मुख्य एजेंट सबसे आगे बैठता है।",
+  "kn": "ಒಂದು ಟೇಬಲ್ ಸುತ್ತ ನಿಮ್ಮ ಟೀಮ್. ಮುಖ್ಯ ಏಜೆಂಟ್ ತಲೆಯ ಸ್ಥಾನದಲ್ಲಿ ಕುಳಿತಿದ್ದಾರೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1151,10 +1151,10 @@
   }
  },
  "office.pick": {
-  "en": "Choose a teammate to read their latest events.",
-  "te": "వారి తాజా ఈవెంట్లు చదవడానికి ఒక టీమ్ సభ్యుడిని ఎంచుకోండి.",
-  "hi": "उनकी ताज़ा घटनाएँ पढ़ने के लिए किसी साथी को चुनें।",
-  "kn": "ಅವರ ಇತ್ತೀಚಿನ ಘಟನೆಗಳನ್ನು ಓದಲು ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಆರಿಸಿ.",
+  "en": "Tap a teammate in the room, or choose one in the list, to read their latest events here.",
+  "te": "రూమ్‌లో లేదా లిస్ట్‌లో ఒక టీమ్ సభ్యుడిని ఎంచుకుంటే, వారి తాజా ఈవెంట్లు ఇక్కడ కనిపిస్తాయి.",
+  "hi": "रूम में या लिस्ट में किसी साथी को चुनें, उनकी ताज़ा घटनाएँ यहाँ दिखेंगी।",
+  "kn": "ರೂಮ್‌ನಲ್ಲಿ ಅಥವಾ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಆರಿಸಿ, ಅವರ ಇತ್ತೀಚಿನ ಘಟನೆಗಳು ಇಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1254,6 +1254,473 @@
   "te": "ఆర్డర్ డెస్క్",
   "hi": "ऑर्डर डेस्क",
   "kn": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.view3d": {
+  "en": "3D view",
+  "te": "3D వ్యూ",
+  "hi": "3D व्यू",
+  "kn": "3D ವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.viewlist": {
+  "en": "List view",
+  "te": "లిస్ట్ వ్యూ",
+  "hi": "लिस्ट व्यू",
+  "kn": "ಲಿಸ್ಟ್ ವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.viewswitch": {
+  "en": "Choose a view",
+  "te": "వ్యూ ఎంచుకోండి",
+  "hi": "व्यू चुनें",
+  "kn": "ವ್ಯೂ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.hint": {
+  "en": "Drag to look around. Pinch or scroll to zoom. Tap a teammate.",
+  "te": "తిప్పి చూడండి. జూమ్ చేయడానికి రెండు వేళ్లతో లేదా స్క్రోల్ చేయండి. టీమ్ సభ్యుడిని తాకండి.",
+  "hi": "घुमाकर देखें। ज़ूम के लिए दो उँगलियों से या स्क्रॉल करें। किसी साथी को टैप करें।",
+  "kn": "ತಿರುಗಿಸಿ ನೋಡಿ. ಜೂಮ್ ಮಾಡಲು ಎರಡು ಬೆರಳು ಅಥವಾ ಸ್ಕ್ರಾಲ್ ಮಾಡಿ. ಒಬ್ಬ ಸಹೋದ್ಯೋಗಿಯನ್ನು ಟ್ಯಾಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.loading": {
+  "en": "Loading the room…",
+  "te": "రూమ్ లోడ్ అవుతోంది…",
+  "hi": "रूम लोड हो रहा है…",
+  "kn": "ರೂಮ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.nowebgl": {
+  "en": "The 3D view is not available on this device, so here is the list.",
+  "te": "ఈ డివైస్‌లో 3D వ్యూ అందుబాటులో లేదు, అందుకే లిస్ట్ ఇక్కడ ఉంది.",
+  "hi": "इस डिवाइस पर 3D व्यू उपलब्ध नहीं है, इसलिए लिस्ट दिखा रहे हैं।",
+  "kn": "ಈ ಡಿವೈಸ್‌ನಲ್ಲಿ 3D ವ್ಯೂ ಲಭ್ಯವಿಲ್ಲ, ಆದ್ದರಿಂದ ಲಿಸ್ಟ್ ತೋರಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.loaderror": {
+  "en": "The 3D view could not be drawn, so here is the list.",
+  "te": "3D వ్యూ చూపించలేకపోయాం, అందుకే లిస్ట్ చూపిస్తున్నాం.",
+  "hi": "3D व्यू नहीं दिखा पाए, इसलिए लिस्ट दिखा रहे हैं।",
+  "kn": "3D ವ್ಯೂ ತೋರಿಸಲು ಆಗಲಿಲ್ಲ, ಆದ್ದರಿಂದ ಲಿಸ್ಟ್ ತೋರಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.still": {
+  "en": "Your device asks for less motion, so the room is a still picture.",
+  "te": "మీ డివైస్ తక్కువ కదలిక అడుగుతోంది, అందుకే రూమ్ ఒక స్థిర చిత్రంగా ఉంది.",
+  "hi": "आपका डिवाइस कम मूवमेंट माँग रहा है, इसलिए रूम एक स्थिर तस्वीर है।",
+  "kn": "ನಿಮ್ಮ ಡಿವೈಸ್ ಕಡಿಮೆ ಚಲನೆ ಕೇಳುತ್ತಿದೆ, ಆದ್ದರಿಂದ ರೂಮ್ ಒಂದು ಸ್ಥಿರ ಚಿತ್ರವಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.feed": {
+  "en": "Event feed",
+  "te": "ఈవెంట్ ఫీడ్",
+  "hi": "इवेंट फ़ीड",
+  "kn": "ಈವೆಂಟ್ ಫೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "office.listintro": {
+  "en": "The same information as the 3D room, as text.",
+  "te": "3D రూమ్‌లోని సమాచారమే, ఇక్కడ అక్షరాల్లో.",
+  "hi": "3D रूम की वही जानकारी, यहाँ लिखी हुई।",
+  "kn": "3D ರೂಮ್‌ನಲ್ಲಿರುವ ಅದೇ ಮಾಹಿತಿ, ಇಲ್ಲಿ ಅಕ್ಷರಗಳಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.title": {
+  "en": "Ask your team",
+  "te": "మీ టీమ్‌ని అడగండి",
+  "hi": "अपनी टीम से पूछें",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್‌ಗೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.sub": {
+  "en": "Answers from your own records. It changes nothing.",
+  "te": "Answers from your own records. It changes nothing.",
+  "hi": "Answers from your own records. It changes nothing.",
+  "kn": "Answers from your own records. It changes nothing.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.label": {
+  "en": "Your question for the Main agent",
+  "te": "ప్రధాన ఏజెంట్‌కి మీ ప్రశ్న",
+  "hi": "मुख्य एजेंट के लिए आपका सवाल",
+  "kn": "ಮುಖ್ಯ ಏಜೆಂಟ್‌ಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.placeholder": {
+  "en": "Ask about your business",
+  "te": "మీ వ్యాపారం గురించి అడగండి",
+  "hi": "अपने व्यापार के बारे में पूछें",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.send": {
+  "en": "Ask",
+  "te": "అడుగు",
+  "hi": "पूछें",
+  "kn": "ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.stop": {
+  "en": "Stop",
+  "te": "ఆపు",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.mic": {
+  "en": "Speak your question",
+  "te": "మీ ప్రశ్నను మాట్లాడండి",
+  "hi": "अपना सवाल बोलें",
+  "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.mic.stop": {
+  "en": "Stop listening",
+  "te": "వినడం ఆపు",
+  "hi": "सुनना बंद करें",
+  "kn": "ಕೇಳುವುದನ್ನು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.listening": {
+  "en": "Listening…",
+  "te": "వింటోంది…",
+  "hi": "सुन रहा है…",
+  "kn": "ಕೇಳುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.mic.privacy": {
+  "en": "Your browser may send what you say to its speech service.",
+  "te": "Your browser may send what you say to its speech service.",
+  "hi": "Your browser may send what you say to its speech service.",
+  "kn": "Your browser may send what you say to its speech service.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.mic.denied": {
+  "en": "The microphone is not allowed. Type your question instead.",
+  "te": "మైక్రోఫోన్‌కి అనుమతి లేదు. బదులుగా మీ ప్రశ్న టైప్ చేయండి.",
+  "hi": "माइक्रोफ़ोन की अनुमति नहीं है। इसके बजाय अपना सवाल टाइप करें।",
+  "kn": "ಮೈಕ್ರೊಫೋನ್‌ಗೆ ಅನುಮತಿ ಇಲ್ಲ. ಬದಲಿಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.mic.silent": {
+  "en": "Nothing was heard. Try again, or type your question.",
+  "te": "ఏమీ వినిపించలేదు. మళ్ళీ ప్రయత్నించండి లేదా టైప్ చేయండి.",
+  "hi": "कुछ सुनाई नहीं दिया। फिर कोशिश करें या टाइप करें।",
+  "kn": "ಏನೂ ಕೇಳಿಸಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.mic.failed": {
+  "en": "Could not listen. Type your question instead.",
+  "te": "వినలేకపోయాం. బదులుగా టైప్ చేయండి.",
+  "hi": "सुन नहीं पाए। इसके बजाय टाइप करें।",
+  "kn": "ಕೇಳಲು ಆಗಲಿಲ್ಲ. ಬದಲಿಗೆ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.needs": {
+  "en": "What needs me today?",
+  "te": "ఈ రోజు నేను ఏం చేయాలి?",
+  "hi": "आज मुझे क्या देखना है?",
+  "kn": "ಇಂದು ನಾನು ಏನು ನೋಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.quotes": {
+  "en": "Which quotes are waiting for me?",
+  "te": "నా కోసం ఏ కోట్లు ఎదురుచూస్తున్నాయి?",
+  "hi": "कौन से कोट मेरा इंतज़ार कर रहे हैं?",
+  "kn": "ಯಾವ ಕೋಟ್‌ಗಳು ನನಗಾಗಿ ಕಾಯುತ್ತಿವೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.money": {
+  "en": "How much customer money is held?",
+  "te": "కస్టమర్ల డబ్బు ఎంత ఆగి ఉంది?",
+  "hi": "ग्राहकों का कितना पैसा रुका है?",
+  "kn": "ಗ್ರಾಹಕರ ಎಷ್ಟು ಹಣ ಉಳಿದಿದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.team": {
+  "en": "What did the team do today?",
+  "te": "ఈ రోజు టీమ్ ఏం చేసింది?",
+  "hi": "आज टीम ने क्या किया?",
+  "kn": "ಇಂದು ಟೀಮ್ ಏನು ಮಾಡಿತು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.asked": {
+  "en": "You asked:",
+  "te": "మీరు అడిగింది:",
+  "hi": "आपने पूछा:",
+  "kn": "ನೀವು ಕೇಳಿದ್ದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.thinking": {
+  "en": "Looking at your records…",
+  "te": "మీ రికార్డులు చూస్తోంది…",
+  "hi": "आपके रिकॉर्ड देख रहा है…",
+  "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ನೋಡುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.sources": {
+  "en": "Where this came from",
+  "te": "ఇది ఎక్కడి నుంచి వచ్చింది",
+  "hi": "यह कहाँ से आया",
+  "kn": "ಇದು ಎಲ್ಲಿಂದ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.drafts": {
+  "en": "Drafts waiting for you",
+  "te": "మీ కోసం డ్రాఫ్ట్‌లు ఎదురుచూస్తున్నాయి",
+  "hi": "आपके लिए ड्राफ़्ट इंतज़ार कर रहे हैं",
+  "kn": "ನಿಮಗಾಗಿ ಡ್ರಾಫ್ಟ್‌ಗಳು ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.approve": {
+  "en": "Approve",
+  "te": "ఓకే చేయండి",
+  "hi": "ओके करें",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.approve.hint": {
+  "en": "Opens the screen where you check and approve it. Nothing is approved or sent from here.",
+  "te": "Opens the screen where you check and approve it. Nothing is approved or sent from here.",
+  "hi": "Opens the screen where you check and approve it. Nothing is approved or sent from here.",
+  "kn": "Opens the screen where you check and approve it. Nothing is approved or sent from here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.error": {
+  "en": "The answer could not be completed. Nothing was changed.",
+  "te": "The answer could not be completed. Nothing was changed.",
+  "hi": "The answer could not be completed. Nothing was changed.",
+  "kn": "The answer could not be completed. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.err.cost": {
+  "en": "Today's AI spending limit has been reached. Try again tomorrow.",
+  "te": "ఈ రోజు AI ఖర్చు పరిమితి చేరుకుంది. రేపు మళ్లీ ప్రయత్నించండి.",
+  "hi": "आज की AI खर्च सीमा पूरी हो गई है। कल फिर कोशिश करें।",
+  "kn": "ಇಂದಿನ AI ಖರ್ಚು ಮಿತಿ ತಲುಪಿದೆ. ನಾಳೆ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.err.limit": {
+  "en": "Too many questions just now. Wait a little and ask again.",
+  "te": "ఇప్పుడు చాలా ప్రశ్నలు అడిగారు. కొంచెం ఆగి మళ్లీ అడగండి.",
+  "hi": "अभी बहुत सारे सवाल हो गए हैं। थोड़ा रुककर फिर पूछें।",
+  "kn": "ಈಗ ಹಲವು ಪ್ರಶ್ನೆಗಳಾಗಿವೆ. ಸ್ವಲ್ಪ ಕಾಯ್ದು ಮತ್ತೆ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.err.role": {
+  "en": "Your role cannot ask the team.",
+  "te": "మీ పాత్రతో బృందాన్ని అడగలేరు.",
+  "hi": "आपकी भूमिका से टीम से सवाल नहीं पूछा जा सकता।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರದಿಂದ ತಂಡವನ್ನು ಕೇಳಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.machine": {
+  "en": "Written by a machine",
+  "te": "యంత్రం రాసింది",
+  "hi": "मशीन ने लिखा",
+  "kn": "ಯಂತ್ರ ಬರೆದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.gloss": {
+  "en": "In English:",
+  "te": "ఇంగ్లీషులో:",
+  "hi": "अंग्रेज़ी में:",
+  "kn": "ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.noscreen": {
+  "en": "Nothing was sent. No screen approves this reply yet.",
+  "te": "Nothing was sent. No screen approves this reply yet.",
+  "hi": "Nothing was sent. No screen approves this reply yet.",
+  "kn": "Nothing was sent. No screen approves this reply yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "ask.kind.reply": {
+  "en": "Customer reply",
+  "te": "కస్టమర్‌కు సమాధానం",
+  "hi": "ग्राहक को जवाब",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.kind.enquiry": {
+  "en": "Enquiry",
+  "te": "ఎంక్వైరీ",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
