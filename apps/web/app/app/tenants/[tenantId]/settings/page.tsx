@@ -16,7 +16,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchMembers, type Member } from "@/lib/api/orders";
 import { getPlan, type Plan } from "@/lib/api/plan";
-import { getAiUsageToday, type AiUsage } from "@/lib/api/today";
+import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
@@ -29,7 +29,7 @@ const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v)
 
 /**
  * /app/tenants/[tenantId]/settings, one part at a time (?section=): the business and its plan, the members (a list: nobody is added here), the language and the look, the security of the
- * person's sign-in, and privacy (the way to the erasure and suppression pages). The plan and the AI usage come from getPlan() / getAiUsageToday() of lib/api (Job AD); one that cannot be read says "Not available yet", and the
+ * person's sign-in, and privacy (the way to the erasure and suppression pages). The plan and the AI usage come from getPlan() / getAiUsage() of lib/api (Job AD); one that cannot be read says "Not available yet", and the
  * AI usage is shown to Owner and Admin only (the API refuses the others). The security and privacy words stay English until a person reviews them.
  */
 export default async function SettingsPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/settings">) {
@@ -64,7 +64,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
   if (section === "business") {
-    [plan, usage] = await Promise.all([getPlan(user.accessToken, tenantId).catch(() => null), admin ? getAiUsageToday(user.accessToken, tenantId).catch(() => null) : null]);
+    [plan, usage] = await Promise.all([getPlan(user.accessToken, tenantId).catch(() => null), admin ? getAiUsage(user.accessToken, tenantId).catch(() => null) : null]);
   }
   let theme: ThemePick = "system";
   try {

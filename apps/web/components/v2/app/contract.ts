@@ -1,8 +1,8 @@
 import type { Plan } from "@/lib/api/plan";
-import type { AiUsage } from "@/lib/api/today";
+import type { AiUsage } from "@/lib/api/ai-usage";
 
 /**
- * What the frame reads from the data layer. The types ARE lib/api's (`getPlan()`, `getAiUsageToday()` and the `cards.waiting` of `getToday()`, Job AD): this file only
+ * What the frame reads from the data layer. The types ARE lib/api's (`getPlan()`, `getAiUsage()` and the `cards.waiting` of `getToday()`, Job AD): this file only
  * says what the frame does with them. A part that cannot be read is null and the frame says "Not available yet" (never a made-up value). Money is in paise.
  */
 export type { AiUsage, Plan };

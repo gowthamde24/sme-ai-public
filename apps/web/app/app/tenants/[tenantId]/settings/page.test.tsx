@@ -10,14 +10,14 @@ const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const fetchMembers = vi.fn();
 const getPlan = vi.fn();
-const getAiUsageToday = vi.fn();
+const getAiUsage = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
 
 vi.mock("@/lib/api/plan", () => ({ getPlan: (...a: unknown[]) => getPlan(...a) }));
-vi.mock("@/lib/api/today", () => ({ getAiUsageToday: (...a: unknown[]) => getAiUsageToday(...a) }));
+vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsage(...a) }));
 
 import SettingsPage from "./page";
 
@@ -31,7 +31,7 @@ beforeEach(() => {
   fetchTenant.mockResolvedValue(tenant("owner"));
   fetchMembers.mockResolvedValue(parseMembers(MEMBERS_JSON));
   getPlan.mockResolvedValue({ plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" });
-  getAiUsageToday.mockResolvedValue({ spent_paise: 15, cap_paise: 200, left_paise: 185 });
+  getAiUsage.mockResolvedValue({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" });
 });
 
 describe("Settings, one part at a time", () => {
@@ -43,25 +43,25 @@ describe("Settings, one part at a time", () => {
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
     expect(screen.getByText("Free trial plan")).toBeInTheDocument();
     expect(getPlan).toHaveBeenCalledWith("tok", TENANT);
-    expect(getAiUsageToday).toHaveBeenCalledWith("tok", TENANT);
-    expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "0.15");
-    expect(screen.getByText("₹1.85 left today")).toBeInTheDocument();
+    expect(getAiUsage).toHaveBeenCalledWith("tok", TENANT);
+    expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "7");
+    expect(screen.getByText("7% used")).toBeInTheDocument();
     expect(screen.queryByText("Not available yet")).toBeNull();
     expect(fetchMembers).not.toHaveBeenCalled();
   });
   it("says 'Not available yet' for the plan and the usage when they cannot be read (never a guess)", async () => {
     getPlan.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
-    getAiUsageToday.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    getAiUsage.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
     render(await SettingsPage(props()));
     expect(screen.getAllByText("Not available yet")).toHaveLength(2);
     expect(screen.queryByText(/₹/)).toBeNull();
   });
   it("shows no AI usage to a member who is not Owner or Admin, and does not ask the API for it", async () => {
     fetchTenant.mockResolvedValue(tenant("sales"));
-    getAiUsageToday.mockClear();
+    getAiUsage.mockClear();
     render(await SettingsPage(props()));
     expect(screen.queryByText("AI usage today")).toBeNull();
-    expect(getAiUsageToday).not.toHaveBeenCalled();
+    expect(getAiUsage).not.toHaveBeenCalled();
     expect(screen.getByText("Free trial plan")).toBeInTheDocument();
   });
   it("an unknown section word is the business part", async () => {
