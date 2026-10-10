@@ -224,8 +224,9 @@ def run(
 
 
 def main() -> int:
+    config = load_config()
     try:
-        s = run(load_config())
+        s = run(config)
     except SeedError as exc:
         print(f"seed-demo-outbox: {exc}", file=sys.stderr)
         return 1
@@ -234,7 +235,7 @@ def main() -> int:
     )
     print("\n".join(s.lines))
     print(
-        f"  outbox log:   GET http://localhost:8000/v1/tenants/{s.tenant_id}/outbox/messages   (and /outbox/approvals)"
+        f"  outbox log:   GET {config.api_url}/v1/tenants/{s.tenant_id}/outbox/messages   (and /outbox/approvals)"
     )
     print(f"  sign in as {DEMO_EMAIL}")
     return 0
