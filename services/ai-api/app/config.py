@@ -67,6 +67,11 @@ class Settings(BaseSettings):
     # http://localhost:11434/v1). Refused unless the address is localhost / 127.0.0.1; no key, no
     # spend-cap confirmation, and the prices may be 0 (unset = 0). For free testing only.
     llm_base_url: str | None = None
+    # Job AN: with LLM_PROVIDER=openai_compat the address may ALSO be one of three hosted
+    # free-tier services (api.groq.com, api.cerebras.ai, openrouter.ai; an exact allow-list in
+    # app.agents.llm.openai_compat), in development only, and then LLM_API_KEY is required.
+    # Environment only; never logged; never sent to any other address.
+    llm_api_key: SecretStr | None = None
     gemini_api_key: SecretStr | None = None
     sarvam_api_key: SecretStr | None = None
     anthropic_base_url: str = "https://api.anthropic.com"

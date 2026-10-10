@@ -32,6 +32,7 @@ from app.agents.errors import (
     BudgetExhausted,
     CostCapReached,
     LimitReached,
+    ModelNotConfigured,
     ReferenceRefused,
     RunDenied,
     RunExpired,
@@ -349,6 +350,10 @@ class AgentRunner:
             return "expired", "expired", True
         if isinstance(exc, AgentsDisabled):
             return "killed", "killed", True
+        if isinstance(
+            exc, ModelNotConfigured
+        ):  # a missing price row is not a spending limit (job AN)
+            return "failed", "model_failed", True
         if isinstance(exc, BudgetExhausted | LimitReached | CostCapReached):
             return "failed", "budget", True
         return "failed", "tool_failed", True

@@ -8,9 +8,17 @@ from datetime import UTC, datetime
 import pytest
 
 from app.agents.llm.interface import LlmRequest, Trust
-from app.assistant.language import LANGUAGES, NO_ANSWER, detect_language, reply_matches
+from app.assistant import runner
+from app.assistant.hygiene import STEP_NAMES, internal_names, leaked_names
+from app.assistant.language import (
+    LANGUAGES,
+    NO_ANSWER,
+    PLAIN_WORDS,
+    detect_language,
+    reply_matches,
+)
 from app.assistant.models import DraftCardOut, draft_summary
-from app.assistant.prompts import FIXED_NOTES, build_request, result_block
+from app.assistant.prompts import FIXED_NOTES, SYSTEM_PROMPT, build_request, result_block
 from app.assistant.runner import money_amounts
 from app.assistant.tools import ACTION_TOOLS, READ_TOOLS, TOOLS, Item
 
@@ -169,3 +177,68 @@ def test_a_draft_card_is_always_a_draft_and_a_summary_is_fixed_or_the_reply_text
         DraftCardOut.model_validate(
             {"id": LEAD_ID, "kind": "quote", "title": "t", "summary": "s", "price": 1}
         )
+
+
+# ------------------------------------------------------- job AM: answers in the owner's words
+def test_every_language_has_a_plain_words_sentence_in_its_own_script() -> None:
+    assert set(PLAIN_WORDS) == set(LANGUAGES)
+    for language, phrase in PLAIN_WORDS.items():
+        assert reply_matches(phrase, language)
+        assert leaked_names(phrase) == 0
+
+
+def test_the_internal_names_come_from_the_tool_list() -> None:
+    names = internal_names()
+    assert {t.name for t in TOOLS if "_" in t.name} <= names
+    assert {"find_price", "draft_quote", "refused_call", "tool_error", "enquiry_id"} <= names
+    # every argument written with an underscore of every tool is in the set
+    for tool in TOOLS:
+        assert {f for f in tool.args.model_fields if "_" in f} <= names
+    assert tuple(STEP_NAMES) == (runner.REFUSED_TOOL, runner.FAILED_TOOL)
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "I used the find_price tool.",
+        "the refused_call function",
+        "draft_quote tool",
+        "I used `Find_Price` for that",
+        "(get_today)",
+        "FIND_PRICE.",
+        "ఈ find_price టూల్ ద్వారా",
+        "Give me the enquiry_id.",
+        "Used list_orders, then find_customers.",
+    ],
+)
+def test_an_answer_that_names_a_tool_a_function_or_a_field_is_caught(text: str) -> None:
+    assert leaked_names(text) >= 1
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "I looked at your price list and made a draft quote.",
+        "Find the price of the saree; the quote is a draft.",
+        "I could not do that.",
+        "reply",  # a plain word, though also the name of the tool that carries the answer
+        "Lakshmi_Textiles Pvt",  # a customer's own name with an underscore is not ours
+        "my_find_price_list",  # inside a longer identifier
+        "find price",
+        "",
+        "ధర ఎంత? ₹1,250.00",
+    ],
+)
+def test_plain_answers_pass(text: str) -> None:
+    assert leaked_names(text) == 0
+
+
+def test_a_leak_is_counted_once_per_name() -> None:
+    assert leaked_names("find_price then find_price, then draft_quote") == 3
+
+
+def test_the_system_prompt_forbids_naming_tools_and_does_not_name_one_itself() -> None:
+    assert "never name a tool" in SYSTEM_PROMPT
+    # the prompt must not teach the habit: no internal name outside the list of what NOT to write
+    teach = SYSTEM_PROMPT.replace("(such as find_price, refused_call or draft_quote)", "")
+    assert leaked_names(teach) == 0

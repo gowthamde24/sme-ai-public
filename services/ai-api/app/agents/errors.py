@@ -58,6 +58,16 @@ class CostCapReached(AgentDbError):
     code = "cost_cap_reached"
 
 
+class ModelNotConfigured(CostCapReached):
+    """SM207 with the reason `no_price` (job AN): the model has no usable price row.
+
+    It is still a refusal that spends nothing (so everything that catches CostCapReached still
+    catches it), but it is NOT a spending limit and must not be shown as one: the operator has
+    to record the model's price."""
+
+    code = "model_not_configured"
+
+
 class ValueRefused(AgentDbError):
     """22023 / 23514: an argument or a value the database does not accept."""
 

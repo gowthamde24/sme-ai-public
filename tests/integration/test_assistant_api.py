@@ -26,6 +26,7 @@ from crm_support import World
 from fastapi.testclient import TestClient
 from test_today_api import Scene
 
+from app.agents.llm.interface import LlmError, LlmRateLimited
 from app.agents.llm.routing import ModelRouter
 from app.assistant.dev_model import DevAssistantModel
 
@@ -498,3 +499,77 @@ def test_the_percent_read_is_for_owner_and_admin_and_never_shows_money(
         f"/v1/tenants/{scene.a.id}/ai-usage", headers=bearer(scene.a.users["owner"])
     ).json()
     assert "paise" not in str(body) and "micros" not in str(body) and "token" not in str(body)
+
+class _Failing:
+    """A model whose call fails the way a provider's can; `model_id` decides which price row the cost cap looks for."""
+
+    def __init__(self, model_id: str, error: LlmError) -> None:
+        self.model_id, self.error = model_id, error
+
+    def complete(self, request: Any) -> Any:
+        raise self.error
+
+
+@pytest.fixture(scope="module")
+def unpriced_app(stack: Any) -> Iterator[TestClient]:
+    # a model id that has no row in agent_model_prices: the database refuses to reserve a cost for it
+    yield from assistant_app(
+        stack,
+        lambda: _Failing("zz-no-price-row", LlmRateLimited()),  # never reached
+    )
+
+
+@pytest.fixture(scope="module")
+def busy_app(stack: Any) -> Iterator[TestClient]:
+    # fake-selftest has a price row (migration), so the reservation is granted and the provider then says 429
+    yield from assistant_app(stack, lambda: _Failing("fake-selftest", LlmRateLimited()))
+
+
+def last_run(scene: Scene) -> str:
+    return operator_sql.sql(
+        f"select r.status || ',' || coalesce(r.error_code::text, '') from public.agent_runs r where r.tenant_id = '{scene.a.id}' and r.agent_name = 'assistant' order by r.created_at desc limit 1"
+    )
+
+
+def test_a_model_with_no_price_row_is_model_not_configured_and_never_a_spending_limit(
+    unpriced_app: TestClient, scene: Scene
+) -> None:
+    before = operator_sql.sql(
+        f"select count(*) from public.agent_cost_reservations where tenant_id = '{scene.a.id}'"
+    )
+    r = say(unpriced_app, scene, "owner", "What is waiting for me today?")
+    assert r.status_code == 200, r.text
+    evts = events(r)
+    assert [e for e, _ in evts][-1] == "error" and "done" not in [e for e, _ in evts], evts
+    error = evts[-1][1]
+    assert error["code"] == "model_not_configured", error
+    assert "until" not in error and "allowance" not in error["message"].lower()
+    assert (
+        error["message"]
+        == "The AI model is not set up yet. Ask the person who looks after this system to finish setting it up."
+    )
+    assert last_run(scene) == "failed,model_failed", "the database's own list of codes is unchanged"
+    after = operator_sql.sql(
+        f"select count(*) from public.agent_cost_reservations where tenant_id = '{scene.a.id}'"
+    )
+    assert after == before, "nothing was reserved or spent for a model that has no price"
+
+
+def test_a_429_from_the_provider_is_model_busy_and_costs_nothing(
+    busy_app: TestClient, scene: Scene
+) -> None:
+    started = operator_sql.sql("select clock_timestamp()")
+    r = say(busy_app, scene, "owner", "What is waiting for me today?")
+    assert r.status_code == 200, r.text
+    evts = events(r)
+    error = evts[-1][1]
+    assert evts[-1][0] == "error" and error["code"] == "model_busy", evts
+    assert error["message"] == "The AI service is busy, try again in a minute."
+    assert "until" not in error
+    assert last_run(scene) == "failed,model_failed"
+    open_micros = operator_sql.sql(
+        f"select coalesce(sum(x.reserved_micros), 0) from public.agent_cost_reservations x where x.tenant_id = '{scene.a.id}' and x.created_at >= '{started}' and x.settled_micros is null"
+    )
+    assert open_micros == "0", (
+        "a refused call was never billed: its reservation is released, not held open"
+    )

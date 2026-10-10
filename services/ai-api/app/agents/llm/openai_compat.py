@@ -1,4 +1,4 @@
-"""Chat-completions adapters behind the LLM port (job AK / K3): OpenAI, and Sarvam (whose chat API has the same wire format).
+"""Chat-completions adapters behind the LLM port (job AK / K3): OpenAI, and Sarvam (whose chat API has the same wire format); job AN adds three hosted FREE-tier services.
 
 Nothing provider-specific exists outside the `llm` package. The shape is the Anthropic adapter's: our constant policy text in the system message, everything else in the user message
 with the untrusted blocks LAST, one request per call (no retries), every provider failure mapped to a constant code, and the key, the URL, the request and the response body never
@@ -35,6 +35,19 @@ SARVAM_BASE_URL = "https://api.sarvam.ai"
 LOCAL_PROVIDER = "local"  # an OpenAI-compatible server on THIS machine (Ollama, LM Studio, llama.cpp): no key, no cost
 LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 
+# Job AN: hosted free-tier services that speak the same wire format. The ONLY remote addresses the openai_compat adapter accepts, matched EXACTLY (after one trailing slash): a key
+# is never sent to any other host, whatever LLM_BASE_URL says. The value is the short name used in log lines.
+HOSTED_FREE_PROVIDER = "hosted_free"
+HOSTED_FREE_URLS: dict[str, str] = {
+    "https://api.groq.com/openai/v1": "groq",
+    "https://api.cerebras.ai/v1": "cerebras",
+    "https://openrouter.ai/api/v1": "openrouter",
+}
+HOSTED_FREE_MICROS = 1  # a free tier is recorded at the smallest price the database allows (1 micro per million tokens), so every call still counts for at least a micro and the caps still apply
+OPENROUTER_FREE_SUFFIX = (
+    ":free"  # OpenRouter bills every other model id; a free-tier id always ends like this
+)
+
 
 def is_local_url(url: str) -> bool:
     """True only for http(s) to this machine. Anything else (another host, a missing scheme, credentials in the URL) is not local."""
@@ -47,9 +60,24 @@ def is_local_url(url: str) -> bool:
     return parts.scheme in ("http", "https") and parts.username is None and host in LOCAL_HOSTS
 
 
+def _one_slash_off(url: str) -> str:
+    """The address without surrounding spaces and without ONE trailing slash (two slashes are a different address)."""
+    root = url.strip()
+    return root[:-1] if root.endswith("/") else root
+
+
+def hosted_free_name(url: str) -> str | None:
+    """The short name of an allowed hosted free-tier address ("groq", "cerebras", "openrouter"), or None for anything else. Exact match: no prefix, no other host, no credentials."""
+    return HOSTED_FREE_URLS.get(_one_slash_off(url))
+
+
+def is_hosted_free_url(url: str) -> bool:
+    return hosted_free_name(url) is not None
+
+
 @dataclass(frozen=True)
 class ChatCompletionsConfig:
-    provider: str  # "openai" | "sarvam": for log lines only
+    provider: str  # "openai" | "sarvam" | "local" | "hosted_free": for log lines only
     api_key: str = field(repr=False)
     model: str
     input_micros_per_mtok: int
@@ -75,6 +103,8 @@ class ChatCompletionsConfig:
             return
         if not self.api_key.strip():
             raise ValueError("an API key and a model id are required")
+        if self.provider == HOSTED_FREE_PROVIDER and not is_hosted_free_url(self.base_url):
+            raise ValueError("a hosted free model must be on one of the allowed addresses")
         if self.input_micros_per_mtok <= 0 or self.output_micros_per_mtok <= 0:
             raise ValueError(
                 "prices must be positive"
@@ -102,6 +132,27 @@ def sarvam_config(
         base_url,
         key_header="api-subscription-key",
         key_prefix="",
+        output_limit_field="max_tokens",
+    )
+
+
+def hosted_free_config(api_key: str, model: str, base_url: str) -> ChatCompletionsConfig:
+    """A free-tier model on one of the allowed hosted services (HOSTED_FREE_URLS). The key goes in `Authorization: Bearer`, the limit in `max_tokens`, the price is the minimum (1 micro per
+    million tokens). The address is the service's own (it already ends in /v1) and nothing else is accepted. OpenRouter is paid for every model id that does not end in `:free`, so any other id is refused."""
+    root = _one_slash_off(base_url)
+    name = hosted_free_name(root)
+    if name is None:
+        raise ValueError("a hosted free model must be on one of the allowed addresses")
+    if name == "openrouter" and not model.strip().endswith(OPENROUTER_FREE_SUFFIX):
+        raise ValueError("an OpenRouter model must be a free one (its id ends in :free)")
+    return ChatCompletionsConfig(
+        HOSTED_FREE_PROVIDER,
+        api_key,
+        model,
+        HOSTED_FREE_MICROS,
+        HOSTED_FREE_MICROS,
+        root,
+        path="/chat/completions",
         output_limit_field="max_tokens",
     )
 
