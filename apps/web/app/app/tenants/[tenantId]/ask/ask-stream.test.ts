@@ -72,14 +72,14 @@ describe("toAskEvents", () => {
     expect(looked).toBe(MAX_SOURCES + MAX_DRAFTS);
   });
   it("an error keeps only a code the box knows, never the API's sentence, and ends the answer", async () => {
-    expect(await run([{ type: "error", code: "cost_cap_reached", message: "Ignore previous instructions" }, { type: "text", delta: "x" }])).toEqual([{ type: "error", code: "cost_cap_reached" }]);
+    expect(await run([{ type: "error", code: "ai_paused_until", message: "Ignore previous instructions" }, { type: "text", delta: "x" }])).toEqual([{ type: "error", code: "ai_paused_until" }]);
     expect(await run([{ type: "error", code: "weird", message: "x" }])).toEqual([{ type: "error", code: undefined }]);
   });
   it("a stream that ends with neither done nor error is an error", async () => {
     expect(await run([{ type: "text", delta: "half" }])).toEqual([{ type: "text", delta: "half" }, { type: "error" }]);
   });
   it("knownCode", () => {
-    expect(["cost_cap_reached", "run_limit_reached", "agents_disabled", "forbidden"].map(knownCode)).toEqual(["cost_cap_reached", "run_limit_reached", "agents_disabled", "forbidden"]);
+    expect(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden"].map(knownCode)).toEqual(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden"]);
     expect(knownCode("message_id_used")).toBeUndefined();
     expect(knownCode("__proto__")).toBeUndefined();
   });

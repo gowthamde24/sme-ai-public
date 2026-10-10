@@ -70,7 +70,7 @@ describe("POST /app/tenants/[id]/ask", () => {
     expect(h.quote).toHaveBeenCalledTimes(1);
   });
   it.each([
-    ["the cost cap", new ApiRequestError(429, "cost_cap_reached", "Today's cap"), "cost_cap_reached"],
+    ["the cost cap", new ApiRequestError(429, "ai_paused_until", "Today's cap"), "ai_paused_until"],
     ["the run limit", new ApiRequestError(429, "run_limit_reached", "x"), "run_limit_reached"],
     ["a switch that is off", new ApiRequestError(409, "agents_disabled", "x"), "agents_disabled"],
     ["a Viewer", new ApiRequestError(403, "forbidden", "x"), "forbidden"],

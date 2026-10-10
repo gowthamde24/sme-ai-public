@@ -19,7 +19,7 @@ export type AskEvent =
   | { type: "done" };
 
 /** Why an answer was refused or failed, in the words the box has a fixed sentence for. */
-export const ERROR_CODES = ["cost_cap_reached", "run_limit_reached", "agents_disabled", "forbidden"] as const;
+export const ERROR_CODES = ["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden"] as const;
 export type AskErrorCode = (typeof ERROR_CODES)[number];
 
 export type AskRequest = { question: string; lang: string; signal: AbortSignal };

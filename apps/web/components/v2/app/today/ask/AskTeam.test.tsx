@@ -234,7 +234,7 @@ describe("AskTeam: the real Main agent's shapes (Job AG)", () => {
     expect(within(screen.getByRole("article", { name: "Enquiry" })).getByText("Enquiry", { selector: "span" })).toBeInTheDocument();
   });
   it.each([
-    ["cost_cap_reached", "Today's AI spending limit has been reached. Try again tomorrow."],
+    ["ai_paused_until", "Today's AI spending limit has been reached. Try again tomorrow."],
     ["run_limit_reached", "Too many questions just now. Wait a little and ask again."],
     ["forbidden", "Your role cannot ask the team."],
     ["agents_disabled", "Switched off"],

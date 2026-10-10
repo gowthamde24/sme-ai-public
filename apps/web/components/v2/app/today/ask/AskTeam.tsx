@@ -232,7 +232,7 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
           {answer ? <p className="mt-2 whitespace-pre-wrap text-base [overflow-wrap:anywhere]">{answer}</p> : asking ? <p className="mt-2 text-base text-muted">{w("ask.thinking")}</p> : null}
           {phase === "error" ? (
             <p role="alert" className="mt-2 text-base font-medium text-red-text">
-              {errorCode === "cost_cap_reached" ? w("ask.err.cost") : errorCode === "run_limit_reached" ? w("ask.err.limit") : errorCode === "forbidden" ? w("ask.err.role") : errorCode === "agents_disabled" ? w("office.switchedoff") : w("ask.error")}
+              {errorCode === "ai_paused_until" ? w("ask.err.cost") : errorCode === "run_limit_reached" ? w("ask.err.limit") : errorCode === "forbidden" ? w("ask.err.role") : errorCode === "agents_disabled" ? w("office.switchedoff") : w("ask.error")}
             </p>
           ) : null}
           {sources.length ? (
