@@ -124,5 +124,19 @@ insert into public.tenant_agent_settings (tenant_id, daily_cost_cap_micros) valu
 select is(app.agent_base_daily_cap(tests.tid('b')), 1234567::bigint, 'an operator override on the workspace wins over the plan');
 select is(app.agent_month_spend(tests.tid('b')), 0::numeric, 'B has spent nothing: A''s ledger does not count for B');
 
+-- ============================================================================ the hard wall is 500.00 a day (migration 20261104090000; it was 20.00)
+select tests.as_aal('aal2');
+select pg_temp.sc(tests.uid('a_owner'), format('select public.set_tenant_daily_cost_cap(%L, 30000000)', tests.tid('a')));
+select is((select daily_cost_cap_micros from public.tenant_agent_settings where tenant_id = tests.tid('a')), 30000000::bigint, 'an Owner can now set 30.00 a day (the old wall refused it)');
+select pg_temp.sc(tests.uid('a_owner'), format('select public.set_tenant_daily_cost_cap(%L, 500000000)', tests.tid('a')));
+select is((select daily_cost_cap_micros from public.tenant_agent_settings where tenant_id = tests.tid('a')), 500000000::bigint, '...and exactly 500.00, the wall');
+select is(pg_temp.err('a_owner', format('select public.set_tenant_daily_cost_cap(%L, 500000001)', tests.tid('a'))), '23514|value not allowed||||', 'one micro above the wall: refused');
+select ok(app.agent_daily_cap(tests.tid('a')) < 500000000, 'the wall is a ceiling, not a grant: the month window still squeezes the cap below it');
+select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros = 500000001 where tenant_id = tests.tid('a')$$, '23514', null, 'the column refuses above the wall too');
+select throws_ok($$update public.agent_limits set limit_value = 500000001 where limit_key = 'daily_cost_micros'$$, '23514', null, 'and so does the operator default');
+select throws_ok($$update public.plan_ai_allowances set daily_paise = 50001 where plan = 'business'$$, '23514', null, 'a plan cannot grant a daily allowance above the wall (50,000 paise = 500.00)');
+select lives_ok($$update public.plan_ai_allowances set daily_paise = 50000, monthly_paise = 1000000 where plan = 'business'$$, '...but exactly the wall is allowed');
+select is((select count(*)::int from public.tenant_agent_settings where daily_cost_cap_micros > 500000000), 0, 'no row is above the wall');
+
 select * from finish();
 rollback;

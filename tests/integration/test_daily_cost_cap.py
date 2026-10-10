@@ -391,17 +391,18 @@ def test_only_the_tenants_owner_with_a_second_factor_sets_the_cap_and_never_abov
         assert code_of(r) == "42501" and r.json()["message"] == GENERIC
         # the ceiling
         ok = rpc(
-            w, owner, "set_tenant_daily_cost_cap", p_tenant_id=tenant.id, p_cap_micros=20_000_000
+            w, owner, "set_tenant_daily_cost_cap", p_tenant_id=tenant.id, p_cap_micros=500_000_000
         )
-        assert ok.status_code == 200 and ok.json()["daily_cost_cap_micros"] == 20_000_000
-        for bad in (20_000_001, -1):
+        # the response is the cap IN FORCE, which the plan's month may squeeze (job AK K2); the stored value is asserted below
+        assert ok.status_code == 200
+        for bad in (500_000_001, -1):
             r = rpc(w, owner, "set_tenant_daily_cost_cap", p_tenant_id=tenant.id, p_cap_micros=bad)
             assert r.status_code == 400 and code_of(r) == "23514", (bad, r.text)
         assert (
             operator_sql.sql(
                 f"select daily_cost_cap_micros from public.tenant_agent_settings where tenant_id = '{tenant.id}'"
             )
-            == "20000000"
+            == "500000000"
         )
         # the change is audited (who, old, new)
         events = pg(
@@ -410,7 +411,7 @@ def test_only_the_tenants_owner_with_a_second_factor_sets_the_cap_and_never_abov
             "GET",
             f"/audit_events?tenant_id=eq.{tenant.id}&entity_type=eq.tenant_agent_settings&actor_user_id=eq.{owner.id}&select=old_values,new_values&order=id.desc&limit=1",
         ).json()
-        assert events and events[0]["new_values"]["daily_cost_cap_micros"] == 20_000_000
+        assert events and events[0]["new_values"]["daily_cost_cap_micros"] == 500_000_000
         assert events[0]["old_values"]["daily_cost_cap_micros"] == 5000
     finally:
         set_cap(tenant, None)
@@ -424,7 +425,7 @@ def test_a_client_cannot_write_the_cap_column_or_the_operator_default_directly(o
             user,
             "PATCH",
             f"/tenant_agent_settings?tenant_id=eq.{tenant.id}",
-            json={"daily_cost_cap_micros": 20_000_000},
+            json={"daily_cost_cap_micros": 500_000_000},
             representation=False,
         )
         assert r.status_code == 403 and code_of(r) == "42501", (user.label, r.status_code)
@@ -433,7 +434,7 @@ def test_a_client_cannot_write_the_cap_column_or_the_operator_default_directly(o
             user,
             "PATCH",
             "/agent_limits?limit_key=eq.daily_cost_micros",
-            json={"limit_value": 20_000_000},
+            json={"limit_value": 500_000_000},
             representation=False,
         )
         assert r.status_code == 403 and code_of(r) == "42501"

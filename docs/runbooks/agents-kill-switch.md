@@ -84,7 +84,7 @@ To turn agents back on, set the flag back to `true`, **and** check that the work
 
 ## Spending cap (per workspace, per Asia/Kolkata day since job AF)
 
-Each workspace's agents may spend at most the **daily cost cap** (default 2.00; the Owner can set 0 to 20.00 for their workspace with
+Each workspace's agents may spend at most the **daily cost cap** (default 2.00; the Owner can set 0 to 500.00 for their workspace (the hard wall, raised from 20.00 by migration `20261104090000`) with
 `set_tenant_daily_cost_cap`). A model call is reserved **before** it is made; when the day is full runs end as `failed` / `budget`, new
 starts answer 429 `ai_paused_until` (with the time the AI is back in `until`), and each refusal leaves an `agent_cost.refused` audit event. Amounts are millionths of the billing
 currency (2,000,000 = 2.00). Run as the database owner.

@@ -68,10 +68,10 @@ select throws_ok($$insert into public.agent_model_prices (model, input_micros_pe
 select throws_ok($$insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('zero-out', 5, 0)$$, '23514', null, '...nor a zero output price');
 select throws_ok($$insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('neg', -1, 5)$$, '23514', null, '...nor a negative one');
 select throws_ok($$insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('bad model name!', 1, 1)$$, '23514', null, 'a model id must match the strict pattern');
-select throws_ok($$update public.agent_limits set limit_value = 20000001 where limit_key = 'daily_cost_micros'$$, '23514', null, 'the operator default cannot exceed the ceiling of 20.00 (20,000,000)');
-select lives_ok($$update public.agent_limits set limit_value = 20000000 where limit_key = 'daily_cost_micros'$$, 'exactly 20.00 is allowed');
+select throws_ok($$update public.agent_limits set limit_value = 500000001 where limit_key = 'daily_cost_micros'$$, '23514', null, 'the operator default cannot exceed the ceiling of 500.00 (500,000,000)');
+select lives_ok($$update public.agent_limits set limit_value = 500000000 where limit_key = 'daily_cost_micros'$$, 'exactly 500.00 is allowed');
 select lives_ok($$update public.agent_limits set limit_value = 2000000 where limit_key = 'daily_cost_micros'$$, '(restored to 2.00)');
-select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros = 20000001 where tenant_id = tests.tid('a')$$, '23514', null, 'a tenant override cannot exceed the ceiling either');
+select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros = 500000001 where tenant_id = tests.tid('a')$$, '23514', null, 'a tenant override cannot exceed the ceiling either');
 select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros = -1 where tenant_id = tests.tid('a')$$, '23514', null, '...nor be negative');
 select results_eq($$select model, input_micros_per_mtok, output_micros_per_mtok from public.agent_model_prices order by model$$, $$values ('fake-selftest'::text, 1000000::bigint, 1000000::bigint)$$,
   'the only seeded price is the scripted development model (no real model has a price until the operator adds one)');
@@ -294,10 +294,11 @@ select is(pg_temp.err('a_owner', pg_temp.cap_sql('a', '9000')), 'SM306|a second 
 select is(pg_temp.err('a_admin', pg_temp.cap_sql('a', '9000')), '42501|agent action not permitted||||', 'an Admin at that level still gets the generic refusal (the role is proven first)');
 select tests.as_aal('aal2');
 select is(app.agent_daily_cap(tests.tid('a')), 5000::bigint, 'none of the refusals moved the cap');
-select is(pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', '20000000')), 'daily_cost_cap_micros'), '20000000', 'exactly the ceiling (20.00) is accepted');
-select is(pg_temp.err('a_owner', pg_temp.cap_sql('a', '20000001')), '23514|value not allowed||||', 'one micro above the ceiling: 23514');
+select pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', '500000000'));
+select is((select daily_cost_cap_micros from public.tenant_agent_settings where tenant_id = tests.tid('a')), 500000000::bigint, 'exactly the ceiling (500.00) is accepted and stored (the cap IN FORCE may be lower: the plan''s month, job AK K2)');
+select is(pg_temp.err('a_owner', pg_temp.cap_sql('a', '500000001')), '23514|value not allowed||||', 'one micro above the ceiling: 23514');
 select is(pg_temp.err('a_owner', pg_temp.cap_sql('a', '-1')), '23514|value not allowed||||', 'a negative cap: 23514');
-select is(app.agent_daily_cap(tests.tid('a')), 20000000::bigint, '...and the cap is unchanged by the refusals');
+select is((select daily_cost_cap_micros from public.tenant_agent_settings where tenant_id = tests.tid('a')), 500000000::bigint, '...and the stored cap is unchanged by the refusals');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', '0')), 'daily_cost_cap_micros'), '0', 'zero is allowed (it switches agent spending off for the tenant)');
 select is(pg_temp.j(pg_temp.sc(tests.uid('a_owner'), pg_temp.cap_sql('a', 'null')), 'daily_cost_cap_micros'), '2000000', 'null clears the override: back to the operator default');
 select is(tests.outcome_as(tests.uid('a_owner'), format($q$update public.tenant_agent_settings set daily_cost_cap_micros = 1 where tenant_id = %L$q$, tests.tid('a'))), '42501', 'a direct client UPDATE of the column is refused (no privilege)');
