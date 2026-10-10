@@ -588,7 +588,7 @@ def test_the_switches_and_both_caps_are_raised_for_the_run_and_put_back_exactly(
         smoke.apply_run_settings(slug)
         # during the run: the two caps are raised, for this workspace and this agent only
         assert (
-            smoke.SMOKE_DAILY_CAP_MICROS == 20_000_000
+            smoke.SMOKE_DAILY_CAP_MICROS == 30_000_000
             and smoke.SMOKE_RUN_BUDGET_MICROS == 5_000_000
         )
         assert operator_sql.sql(f"select app.agent_daily_cap('{tenant}')") == str(
@@ -628,7 +628,7 @@ def test_the_switches_and_both_caps_are_raised_for_the_run_and_put_back_exactly(
 def test_the_raised_cap_is_one_the_database_accepts_and_a_higher_one_is_refused(
     scene: Scene,
 ) -> None:
-    """The brief asked ₹30; the database's own maximum for a workspace cap is ₹20 (a CHECK), so the command uses ₹20. If this test ever fails the other way, the maximum was raised: use ₹30."""
+    """The command's ₹30 cap is one the database accepts (its wall is ₹500 since migration 20261104090000); a cap above the wall is refused."""
     import operator_sql
 
     tenant = str(scene.b.id)
@@ -637,10 +637,10 @@ def test_the_raised_cap_is_one_the_database_accepts_and_a_higher_one_is_refused(
             f"insert into public.tenant_agent_settings (tenant_id, enabled, daily_cost_cap_micros) values ('{tenant}', false, {smoke.SMOKE_DAILY_CAP_MICROS}) on conflict (tenant_id) do update set daily_cost_cap_micros = excluded.daily_cost_cap_micros"
         )
         code, _, err = operator_sql.sql_result(
-            f"update public.tenant_agent_settings set daily_cost_cap_micros = 30000000 where tenant_id = '{tenant}'"
+            f"update public.tenant_agent_settings set daily_cost_cap_micros = 500000001 where tenant_id = '{tenant}'"
         )
         assert code != 0 and "check constraint" in err, (
-            "the database refuses a workspace cap above ₹20"
+            "the database refuses a workspace cap above ₹500"
         )
     finally:
         operator_sql.sql(f"delete from public.tenant_agent_settings where tenant_id = '{tenant}'")
