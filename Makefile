@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -93,6 +93,18 @@ eval-live:
 # Needs `make db-start`, `make seed-demo` and `make seed-demo-manual`. See docs/runbooks/main-agent-live-smoke.md.
 assistant-smoke:
 	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/assistant_smoke.py
+
+# OPT-IN, NEVER part of make check (job AK / K3): which model is best for the Main agent, MEASURED. The 30 assistant eval questions plus 10 code-mixed Telugu/Kannada ones, asked of each named model on the
+# seeded demo through the REAL provider adapters; one table row per model (pass rate, Telugu quality, price refusal, injection refusal, median latency, paise per answer). At most 30 rupees per model; keys from
+# the environment only (a model without its key is skipped). MODELS="provider:model:input_price:output_price ..." (a model on your own Mac: openai_compat:llama3.2:3b:0:0 with LLM_BASE_URL=http://localhost:11434/v1, no key, labelled a plumbing check) ; LIMIT=n asks only the first n questions (a spread). See docs/runbooks/model-bakeoff.md.
+model-bakeoff:
+	cd $(API) && MODELS="$(MODELS)" LIMIT="$(LIMIT)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/model_bakeoff.py
+
+# OPT-IN, NEVER part of make check (job AK / K3): which speech-to-text engine hears your shop talk best. DIR is a folder of .wav/.m4a samples OUTSIDE the repository (refused if inside), with <name>.truth.txt
+# (what was said) and optionally <name>.txt (Chrome's result). Engines: Sarvam Saaras (SARVAM_API_KEY), Bhashini (BHASHINI_API_KEY + BHASHINI_ASR_SERVICE_ID), Chrome. Prints the word error rate; the report is
+# written INTO the folder. See docs/runbooks/model-bakeoff.md.
+stt-bakeoff:
+	cd $(API) && DIR="$(DIR)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/stt_bakeoff.py
 
 # OPT-IN, NEVER part of make check: fetches https://example.com/ and https://example.org/ through the REAL guarded page
 # fetcher (T007 M1) and prints status, bytes, content type and sanitised-text length only. No model, no key, no cost.

@@ -689,3 +689,50 @@ def test_the_light_model_variables_are_optional_but_all_or_nothing() -> None:
     ):
         message = smoke.gate_message(broken)
         assert message and "Nothing was run" in message
+
+
+# ---- a model on this machine (Ollama): no key, no cap confirmation, only this machine, the label
+LOCAL_ENV = {"LLM_PROVIDER": "openai_compat", "LLM_MODEL": "llama3.2:3b", "LLM_BASE_URL": "http://localhost:11434/v1"}
+
+
+def test_a_local_model_needs_no_key_no_prices_and_no_cap_confirmation() -> None:
+    assert smoke.is_local(LOCAL_ENV) and smoke.gate_message(LOCAL_ENV) is None
+    assert smoke.gate_message({**LOCAL_ENV, "LLM_INPUT_MICROS_PER_MTOK": "0", "LLM_OUTPUT_MICROS_PER_MTOK": "0"}) is None
+    assert not smoke.is_local({"LLM_PROVIDER": "anthropic"}) and not smoke.is_local({})
+
+
+@pytest.mark.parametrize(
+    "change",
+    [
+        {"LLM_MODEL": ""},
+        {"LLM_MODEL": "bad model!"},
+        {"LLM_BASE_URL": ""},
+        {"LLM_BASE_URL": "https://api.anthropic.com"},
+        {"LLM_BASE_URL": "http://example.com:11434/v1"},
+        {"LLM_INPUT_MICROS_PER_MTOK": "x"},
+    ],
+)
+def test_a_local_run_refuses_anything_that_is_not_this_machine_or_malformed(change: dict[str, str]) -> None:
+    message = smoke.gate_message({**LOCAL_ENV, **change})
+    assert message and message.startswith("assistant-smoke:") and "Nothing was run" in message
+
+
+def test_a_local_run_is_labelled_a_plumbing_check_in_the_summary_and_the_report(tmp_path: Any) -> None:
+    verdicts: list[Any] = []
+    assert smoke.summary_line(verdicts, 0, smoke.LOCAL_LABEL).endswith("[local model: plumbing check]")
+    assert "plumbing" not in smoke.summary_line(verdicts, 0)
+    report = tmp_path / "r.md"
+    smoke.write_report(verdicts, 0, report, smoke.LOCAL_LABEL)
+    assert "local model: plumbing check" in report.read_text()
+
+
+def test_a_free_model_is_stored_at_the_smallest_price_the_table_allows() -> None:
+    import operator_sql
+
+    smoke.set_model_price("zz-local-free", 0, 0)
+    try:
+        assert operator_sql.sql(
+            "select input_micros_per_mtok || ',' || output_micros_per_mtok from public.agent_model_prices where model = 'zz-local-free'"
+        ) == "1,1"
+    finally:
+        operator_sql.sql("delete from public.agent_model_prices where model = 'zz-local-free'")

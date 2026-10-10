@@ -95,11 +95,11 @@ AI is included in every plan under **fair use**. Each plan has a daily and a mon
 
 The database enforces the 300 % wall (a run start, a message start and every model call are refused with no room); the API only chooses the model. A light model with **no price row** is never used (the workspace stays on the main model, still capped), so a missing price can never stop the AI.
 
-**Setting up the light model (operator, once):** set `LLM_LIGHT_MODEL`, `LLM_LIGHT_INPUT_MICROS_PER_MTOK` and `LLM_LIGHT_OUTPUT_MICROS_PER_MTOK` in the API's environment (all three or the API refuses to start), and add the same prices to the database, as you did for the main model (replace :MODEL_ID and the two example prices):
+**Setting up the light model (operator, once):** set `LLM_LIGHT_MODEL`, `LLM_LIGHT_INPUT_MICROS_PER_MTOK` and `LLM_LIGHT_OUTPUT_MICROS_PER_MTOK` in the API's environment (all three or the API refuses to start), and add the same prices to the database, as you did for the main model (replace :MODEL_ID and the two example prices; for `claude-haiku-4-5-20251001` the environment is `LLM_LIGHT_MODEL=claude-haiku-4-5-20251001 LLM_LIGHT_INPUT_MICROS_PER_MTOK=90000000 LLM_LIGHT_OUTPUT_MICROS_PER_MTOK=450000000`):
 
 ```sql
 insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok)
-values (':MODEL_ID', 800000, 4000000)  -- :MODEL_ID is the light model id; the two numbers are examples: use the provider's prices
+values (':MODEL_ID', 90000000, 450000000)  -- :MODEL_ID is the light model id (e.g. claude-haiku-4-5-20251001); the two numbers are that example's prices in the app's unit: use the provider's current prices
 on conflict (model) do update set input_micros_per_mtok = excluded.input_micros_per_mtok, output_micros_per_mtok = excluded.output_micros_per_mtok, updated_at = now();
 ```
 

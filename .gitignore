@@ -41,6 +41,7 @@ tmp/
 /.rehearsal/
 /rehearsal-report.md
 /assistant-smoke-report.md
+/model-bakeoff-report.md
 /rehearsal-followups-report.md
 /tools/mutation-followups/out/
 
