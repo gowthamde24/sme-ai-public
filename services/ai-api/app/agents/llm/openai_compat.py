@@ -11,6 +11,7 @@ import json
 import logging
 from dataclasses import dataclass, field
 from typing import Any
+from urllib.parse import urlsplit
 
 import httpx
 
@@ -31,6 +32,19 @@ logger = logging.getLogger("app.agents.llm.openai_compat")
 
 OPENAI_BASE_URL = "https://api.openai.com"
 SARVAM_BASE_URL = "https://api.sarvam.ai"
+LOCAL_PROVIDER = "local"  # an OpenAI-compatible server on THIS machine (Ollama, LM Studio, llama.cpp): no key, no cost
+LOCAL_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
+
+
+def is_local_url(url: str) -> bool:
+    """True only for http(s) to this machine. Anything else (another host, a missing scheme, credentials in the URL) is not local."""
+    try:
+        parts = urlsplit(url)
+        host = parts.hostname
+        parts.port  # noqa: B018  (raises ValueError for a bad port)
+    except ValueError:
+        return False
+    return parts.scheme in ("http", "https") and parts.username is None and host in LOCAL_HOSTS
 
 
 @dataclass(frozen=True)
@@ -48,14 +62,23 @@ class ChatCompletionsConfig:
     timeout_seconds: float = 60.0
 
     def __post_init__(self) -> None:
-        if not self.api_key.strip() or not self.model.strip():
+        if not self.model.strip():
+            raise ValueError("a model id is required")
+        if self.timeout_seconds <= 0:
+            raise ValueError("the timeout must be positive")
+        if self.provider == LOCAL_PROVIDER:
+            # a model on this machine: no key, and the price may be zero (it costs nothing; the caps still apply)
+            if self.input_micros_per_mtok < 0 or self.output_micros_per_mtok < 0:
+                raise ValueError("prices cannot be negative")
+            if not is_local_url(self.base_url):
+                raise ValueError("a local model must be on this machine (localhost or 127.0.0.1)")
+            return
+        if not self.api_key.strip():
             raise ValueError("an API key and a model id are required")
         if self.input_micros_per_mtok <= 0 or self.output_micros_per_mtok <= 0:
             raise ValueError(
                 "prices must be positive"
             )  # a zero price would make every call look free to the spend cap
-        if self.timeout_seconds <= 0:
-            raise ValueError("the timeout must be positive")
         if not self.base_url.startswith("https://"):
             raise ValueError("the base URL must use https")
 
@@ -80,6 +103,25 @@ def sarvam_config(
         key_header="api-subscription-key",
         key_prefix="",
         output_limit_field="max_tokens",
+    )
+
+
+def local_config(
+    model: str, input_micros: int, output_micros: int, base_url: str
+) -> ChatCompletionsConfig:
+    """A model served on this machine through an OpenAI-compatible endpoint, e.g. Ollama at http://localhost:11434/v1. No key is sent. The URL may end in /v1 or not."""
+    root = base_url.strip().rstrip("/")
+    if root.endswith("/v1"):
+        root = root[: -len("/v1")]
+    return ChatCompletionsConfig(
+        LOCAL_PROVIDER,
+        "",
+        model,
+        input_micros,
+        output_micros,
+        root,
+        output_limit_field="max_tokens",
+        timeout_seconds=300.0,  # a small model on a laptop CPU can take minutes
     )
 
 
@@ -148,12 +190,14 @@ class ChatCompletionsClient:
     def complete(self, request: LlmRequest) -> LlmResponse:
         provider = self._config.provider
         try:
+            headers = {"content-type": "application/json"}
+            if self._config.api_key:  # a local server needs no key: none is sent
+                headers[self._config.key_header] = (
+                    f"{self._config.key_prefix}{self._config.api_key}"
+                )
             response = self._client.post(
                 f"{self._config.base_url}{self._config.path}",
-                headers={
-                    self._config.key_header: f"{self._config.key_prefix}{self._config.api_key}",
-                    "content-type": "application/json",
-                },
+                headers=headers,
                 json=self._payload(request),
                 timeout=self._config.timeout_seconds,
             )

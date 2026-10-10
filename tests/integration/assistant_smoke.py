@@ -119,8 +119,36 @@ class Verdict:
 
 
 # ============================================================================ the gates (pure)
+LOCAL_PROVIDER = "openai_compat"
+LOCAL_LABEL = "local model: plumbing check"  # a small model on this machine proves the wiring, not the quality; its Telugu and tool checks are still real PASS/FAIL
+
+
+def is_local(env: Mapping[str, str]) -> bool:
+    """LLM_PROVIDER=openai_compat: a model served on THIS machine (Ollama): no key, no cost."""
+    return env.get("LLM_PROVIDER", "").strip() == LOCAL_PROVIDER
+
+
+def local_gate_message(env: Mapping[str, str]) -> str | None:
+    from app.agents.llm.openai_compat import is_local_url
+
+    if not env.get("LLM_MODEL", "").strip():
+        return "assistant-smoke: LLM_MODEL is not set (the model name your local server knows, for Ollama e.g. llama3.2:3b). Nothing was run."
+    if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._:/-]{0,99}", env["LLM_MODEL"].strip()):
+        return "assistant-smoke: LLM_MODEL has characters a model id does not have. Nothing was run."
+    base = env.get("LLM_BASE_URL", "").strip()
+    if not base or not is_local_url(base):
+        return "assistant-smoke: LLM_BASE_URL must be this machine, e.g. http://localhost:11434/v1 (a local model never sends anything elsewhere). Nothing was run."
+    for name in ("LLM_INPUT_MICROS_PER_MTOK", "LLM_OUTPUT_MICROS_PER_MTOK"):
+        value = env.get(name, "").strip()
+        if value and not value.isdigit():
+            return f"assistant-smoke: {name} must be a whole number (0 is fine for a local model). Nothing was run."
+    return None
+
+
 def gate_message(env: Mapping[str, str]) -> str | None:
     """None when the real adapter may be used; otherwise ONE line for the owner. Names only, never a value."""
+    if is_local(env):
+        return local_gate_message(env)
     if not env.get("ANTHROPIC_API_KEY", "").strip():
         return (
             "assistant-smoke: ANTHROPIC_API_KEY is not set in the environment. In this terminal run  export ANTHROPIC_API_KEY='<your key>'  "
@@ -452,7 +480,9 @@ def worst_case_run_paise() -> int:
 
 
 def set_model_price(model: str, input_micros: int, output_micros: int) -> None:
-    """The local price row the cost cap needs, equal to the environment's prices (a model without a row is refused)."""
+    """The local price row the cost cap needs, equal to the environment's prices (a model without a row is refused). The table refuses a zero price, so a free local model is
+    stored at 1 micro per million tokens, the smallest allowed (a call reserves a micro or two); the adapter itself reports a cost of 0."""
+    input_micros, output_micros = max(1, input_micros), max(1, output_micros)
     operator_sql.sql(
         f"insert into public.agent_model_prices (model, input_micros_per_mtok, output_micros_per_mtok) values ('{model}', {int(input_micros)}, {int(output_micros)}) "
         "on conflict (model) do update set input_micros_per_mtok = excluded.input_micros_per_mtok, output_micros_per_mtok = excluded.output_micros_per_mtok, updated_at = now()"
@@ -484,11 +514,11 @@ def snapshot(slug: str) -> dict[str, Any]:
     }
 
 
-def apply_run_settings(slug: str) -> None:
+def apply_run_settings(slug: str, daily_cap_micros: int = SMOKE_DAILY_CAP_MICROS) -> None:
     """The operator turns the Main agent on for ONE workspace (the three switches) and lifts, for that workspace and the assistant only, the two caps a Sonnet-class call cannot fit in."""
     operator_sql.sql(f"select app.operator_enable_assistant('{slug}')")
     operator_sql.sql(
-        f"update public.tenant_agent_settings set daily_cost_cap_micros = {SMOKE_DAILY_CAP_MICROS}, updated_at = now() where tenant_id = (select id from public.tenants where slug = '{slug}')"
+        f"update public.tenant_agent_settings set daily_cost_cap_micros = {int(daily_cap_micros)}, updated_at = now() where tenant_id = (select id from public.tenants where slug = '{slug}')"
     )
     operator_sql.sql(
         f"update public.agent_definitions set max_cost_micros = {SMOKE_RUN_BUDGET_MICROS} where agent_name = 'assistant'"
@@ -606,9 +636,11 @@ def run_questions(
     return verdicts
 
 
-def write_report(verdicts: list[Verdict], spent_paise: int, path: Path = REPORT_FILE) -> None:
+def write_report(
+    verdicts: list[Verdict], spent_paise: int, path: Path = REPORT_FILE, label: str = ""
+) -> None:
     lines = [
-        f"# Assistant smoke report ({datetime.now(UTC).isoformat(timespec='seconds')})",
+        f"# Assistant smoke report ({datetime.now(UTC).isoformat(timespec='seconds')})" + (f" - {label}" if label else ""),
         "",
         f"Paise spent: **{spent_paise}** (limit {MAX_SPEND_PAISE} paise = ₹{MAX_SPEND_PAISE // 100}).",
         "",
@@ -634,9 +666,10 @@ def write_report(verdicts: list[Verdict], spent_paise: int, path: Path = REPORT_
     path.write_text("\n".join(lines), encoding="utf-8")
 
 
-def summary_line(verdicts: list[Verdict], spent_paise: int) -> str:
+def summary_line(verdicts: list[Verdict], spent_paise: int, label: str = "") -> str:
     passed = sum(v.passed for v in verdicts)
-    return f"RESULT: {passed}/{len(verdicts)} PASS, {spent_paise} paise spent (limit {MAX_SPEND_PAISE} paise = ₹{MAX_SPEND_PAISE // 100})"
+    tail = f" [{label}]" if label else ""
+    return f"RESULT: {passed}/{len(verdicts)} PASS, {spent_paise} paise spent (limit {MAX_SPEND_PAISE} paise = ₹{MAX_SPEND_PAISE // 100}){tail}"
 
 
 # ============================================================================ the command
@@ -689,26 +722,47 @@ def main(env: Mapping[str, str] | None = None) -> int:
         )
         return 2
 
-    settings = Settings(  # type: ignore[call-arg]
-        _env_file=None,  # the environment only: no file is read
-        api_env="development",
-        supabase_url=supabase_url,
-        supabase_anon_key=anon_key,
-        agents_enabled=True,
-        llm_provider="anthropic",
-        llm_model=env["LLM_MODEL"].strip(),
-        anthropic_api_key=SecretStr(env["ANTHROPIC_API_KEY"].strip()),
-        llm_input_micros_per_mtok=int(env["LLM_INPUT_MICROS_PER_MTOK"]),
-        llm_output_micros_per_mtok=int(env["LLM_OUTPUT_MICROS_PER_MTOK"]),
-        llm_spend_cap_confirmed=True,
-        llm_light_model=env.get("LLM_LIGHT_MODEL", "").strip() or None,
-        llm_light_input_micros_per_mtok=int(env["LLM_LIGHT_INPUT_MICROS_PER_MTOK"])
-        if env.get("LLM_LIGHT_MODEL", "").strip()
+    light_model = env.get("LLM_LIGHT_MODEL", "").strip()
+    light = {
+        "llm_light_model": light_model or None,
+        "llm_light_input_micros_per_mtok": int(env["LLM_LIGHT_INPUT_MICROS_PER_MTOK"])
+        if light_model
         else None,
-        llm_light_output_micros_per_mtok=int(env["LLM_LIGHT_OUTPUT_MICROS_PER_MTOK"])
-        if env.get("LLM_LIGHT_MODEL", "").strip()
+        "llm_light_output_micros_per_mtok": int(env["LLM_LIGHT_OUTPUT_MICROS_PER_MTOK"])
+        if light_model
         else None,
-    )
+    }
+    local = is_local(env)
+    label = LOCAL_LABEL if local else ""
+    if local:
+        settings = Settings(  # type: ignore[call-arg]
+            _env_file=None,
+            api_env="development",
+            supabase_url=supabase_url,
+            supabase_anon_key=anon_key,
+            agents_enabled=True,
+            llm_provider=LOCAL_PROVIDER,
+            llm_model=env["LLM_MODEL"].strip(),
+            llm_base_url=env["LLM_BASE_URL"].strip(),
+            llm_input_micros_per_mtok=int(env.get("LLM_INPUT_MICROS_PER_MTOK", "0") or 0),
+            llm_output_micros_per_mtok=int(env.get("LLM_OUTPUT_MICROS_PER_MTOK", "0") or 0),
+            **light,
+        )
+    else:
+        settings = Settings(  # type: ignore[call-arg]
+            _env_file=None,  # the environment only: no file is read
+            api_env="development",
+            supabase_url=supabase_url,
+            supabase_anon_key=anon_key,
+            agents_enabled=True,
+            llm_provider="anthropic",
+            llm_model=env["LLM_MODEL"].strip(),
+            anthropic_api_key=SecretStr(env["ANTHROPIC_API_KEY"].strip()),
+            llm_input_micros_per_mtok=int(env["LLM_INPUT_MICROS_PER_MTOK"]),
+            llm_output_micros_per_mtok=int(env["LLM_OUTPUT_MICROS_PER_MTOK"]),
+            llm_spend_cap_confirmed=True,
+            **light,
+        )
     runtime = build_runtime(settings)
     if (
         runtime is None
@@ -751,8 +805,8 @@ def main(env: Mapping[str, str] | None = None) -> int:
     try:
         set_model_price(
             env["LLM_MODEL"].strip(),
-            int(env["LLM_INPUT_MICROS_PER_MTOK"]),
-            int(env["LLM_OUTPUT_MICROS_PER_MTOK"]),
+            settings.llm_input_micros_per_mtok or 0,
+            settings.llm_output_micros_per_mtok or 0,
         )
         if settings.llm_light_model:
             set_model_price(
@@ -775,7 +829,7 @@ def main(env: Mapping[str, str] | None = None) -> int:
             print(f"assistant-smoke: note: {note}.")
         guard = BudgetGuard(MAX_SPEND_PAISE, worst_case_run_paise(), lambda: spent_micros(tenant))
         print(
-            f"assistant-smoke: 5 questions, the real adapter, the demo workspace only. Limit {MAX_SPEND_PAISE} paise (₹{MAX_SPEND_PAISE // 100}); the daily cap stays on (raised for this run on the demo workspace only, put back at the end)."
+            f"assistant-smoke{f' ({label})' if label else ''}: 5 questions, {'a model on this machine' if local else 'the real adapter'}, the demo workspace only. Limit {MAX_SPEND_PAISE} paise (₹{MAX_SPEND_PAISE // 100}); the daily cap stays on (raised for this run on the demo workspace only, put back at the end)."
         )
         cap_paise = (
             _int(operator_sql.sql(f"select app.agent_daily_cap('{tenant}')")) // MICROS_PER_PAISE
@@ -793,8 +847,8 @@ def main(env: Mapping[str, str] | None = None) -> int:
     finally:
         if saved is not None:
             restore(saved)
-    write_report(verdicts, spent)
-    print(summary_line(verdicts, spent))
+    write_report(verdicts, spent, label=label)
+    print(summary_line(verdicts, spent, label))
     print(
         f"assistant-smoke: {time.perf_counter() - started:.0f}s. The full answers are in {REPORT_FILE.name} (git-ignored). The Main agent's switches were put back."
     )

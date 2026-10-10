@@ -63,6 +63,10 @@ class Settings(BaseSettings):
     # key and by LLM_PROVIDER naming it; the model, the two prices and the spend-cap
     # confirmation are the same settings as for Anthropic. Keys: environment only.
     openai_api_key: SecretStr | None = None
+    # LLM_PROVIDER=openai_compat: an OpenAI-compatible server on THIS machine (Ollama:
+    # http://localhost:11434/v1). Refused unless the address is localhost / 127.0.0.1; no key, no
+    # spend-cap confirmation, and the prices may be 0 (unset = 0). For free testing only.
+    llm_base_url: str | None = None
     gemini_api_key: SecretStr | None = None
     sarvam_api_key: SecretStr | None = None
     anthropic_base_url: str = "https://api.anthropic.com"

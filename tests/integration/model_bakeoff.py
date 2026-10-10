@@ -39,11 +39,15 @@ from app.assistant.runner import money_amounts
 ROOT = Path(__file__).resolve().parents[2]
 REPORT_FILE = ROOT / "model-bakeoff-report.md"  # git-ignored
 
+DB_WALL_MICROS = 500_000_000  # the database refuses a workspace daily cap above Rs 500
+LOCAL_PROVIDER = "openai_compat"  # a model served on THIS machine (Ollama): no key, no cost; LLM_BASE_URL says where
+LOCAL_LABEL = "local model: plumbing check"  # it proves the wiring, not the quality; its Telugu and tool checks are still real PASS/FAIL
 PROVIDER_KEYS: dict[str, str] = {
     "anthropic": "ANTHROPIC_API_KEY",
     "openai": "OPENAI_API_KEY",
     "gemini": "GEMINI_API_KEY",
     "sarvam": "SARVAM_API_KEY",
+    LOCAL_PROVIDER: "",
 }
 SETTINGS_KEY_FIELD: dict[str, str] = {
     "anthropic": "anthropic_api_key",
@@ -62,8 +66,12 @@ class ModelSpec:
     output_micros: int
 
     @property
+    def local(self) -> bool:
+        return self.provider == LOCAL_PROVIDER
+
+    @property
     def label(self) -> str:
-        return f"{self.provider}:{self.model}"
+        return f"{self.provider}:{self.model}" + (f" ({LOCAL_LABEL})" if self.local else "")
 
 
 def parse_models(text: str) -> list[ModelSpec]:
@@ -73,18 +81,25 @@ def parse_models(text: str) -> list[ModelSpec]:
         if not entry:
             continue
         parts = entry.split(":")
-        if len(parts) != 4:
+        if len(parts) < 4:
             raise ValueError(f"'{entry}' is not provider:model:input_price:output_price")
-        provider, model, inp, out = parts
+        # the model may itself contain a colon (an Ollama tag such as llama3.2:3b): the provider is the first part, the prices the last two
+        provider, inp, out = parts[0], parts[-2], parts[-1]
+        model = ":".join(parts[1:-2])
         if provider not in PROVIDER_KEYS:
             raise ValueError(
-                f"'{provider}' is not a provider I know (anthropic, openai, gemini, sarvam)"
+                f"'{provider}' is not a provider I know (anthropic, openai, gemini, sarvam, {LOCAL_PROVIDER})"
             )
-        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,99}", model):
+        local = provider == LOCAL_PROVIDER
+        if not re.fullmatch(
+            r"[A-Za-z0-9][A-Za-z0-9._:-]{0,99}" if local else r"[A-Za-z0-9][A-Za-z0-9._-]{0,99}",
+            model,
+        ):
             raise ValueError(f"'{model}' has characters a model id does not have")
-        if not (inp.isdigit() and out.isdigit() and int(inp) > 0 and int(out) > 0):
+        if not (inp.isdigit() and out.isdigit() and (local or (int(inp) > 0 and int(out) > 0))):
             raise ValueError(
-                f"the two prices of {provider}:{model} must be whole numbers above zero"
+                f"the two prices of {provider}:{model} must be whole numbers"
+                + ("" if local else " above zero")
             )
         spec = ModelSpec(provider, model, int(inp), int(out))
         if spec not in specs:
@@ -96,14 +111,21 @@ def parse_models(text: str) -> list[ModelSpec]:
 
 def gate_message(env: Mapping[str, str], specs: list[ModelSpec]) -> str | None:
     """None when at least one model can run; otherwise ONE line. Names only, never a value."""
-    runnable = [s for s in specs if env.get(PROVIDER_KEYS[s.provider], "").strip()]
+    runnable = [s for s in specs if s.local or env.get(PROVIDER_KEYS[s.provider], "").strip()]
+    if any(s.local for s in runnable):
+        from app.agents.llm.openai_compat import is_local_url
+
+        base = env.get("LLM_BASE_URL", "").strip()
+        if not base or not is_local_url(base):
+            return "model-bakeoff: LLM_BASE_URL must be this machine for a local model, e.g. http://localhost:11434/v1. Nothing was run."
     if not runnable:
         names = ", ".join(sorted({PROVIDER_KEYS[s.provider] for s in specs}))
         return (
             f"model-bakeoff: none of the models has its key in the environment (needs {names}). In this terminal run  export <NAME>='<your key>'  "
             "(never in a file of the repository), plus LLM_SPEND_CAP_CONFIRMED=true, then run  make model-bakeoff MODELS=...  again. Nothing was run."
         )
-    if env.get("LLM_SPEND_CAP_CONFIRMED", "").strip().lower() not in ("1", "true", "yes"):
+    hosted = [s for s in runnable if not s.local]
+    if hosted and env.get("LLM_SPEND_CAP_CONFIRMED", "").strip().lower() not in ("1", "true", "yes"):
         return "model-bakeoff: LLM_SPEND_CAP_CONFIRMED is not true: set the hard spend cap at each provider first, then confirm it. Nothing was run."
     return None
 
@@ -390,6 +412,11 @@ def table(rows: list[ModelRow], total: int) -> str:
         lines.append(
             f"| {r.spec.label} | {run} | {r.pass_rate()} | {r.telugu_quality()} | {r.price_refusal()} | {r.injection_refusal()} | {r.median_latency()} | {r.paise_per_answer()} |"
         )
+    if any(r.spec.local for r in rows):
+        lines += [
+            "",
+            f"{LOCAL_LABEL}: a model on this machine proves that the wiring works, not that the model is good. Its answers are scored exactly like the others (Telugu and tool checks are real PASS/FAIL, nothing is softened); its cost is 0.",
+        ]
     return "\n".join(lines)
 
 
@@ -578,7 +605,9 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None) ->
         saved = smoke.snapshot(
             DEMO_WORKSPACE_SLUG
         )  # before anything changes, so a failure half-way still restores everything
-        smoke.apply_run_settings(DEMO_WORKSPACE_SLUG)
+        # the day's cap is raised to what the models named could spend (Rs 30 each), at most the database's wall of Rs 500, so the second model of the day finds room too
+        runnable = [sp for sp in specs if sp.local or env.get(PROVIDER_KEYS[sp.provider], "").strip()]
+        smoke.apply_run_settings(DEMO_WORKSPACE_SLUG, day_cap_micros(len(runnable)))
         injection_id = str(
             uuid.uuid5(uuid.NAMESPACE_URL, f"{smoke.INJECTION_ENQUIRY_NAME}/{tenant}")
         )
@@ -591,8 +620,8 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None) ->
         for spec in specs:
             row = ModelRow(spec)
             rows.append(row)
-            key = env.get(PROVIDER_KEYS[spec.provider], "").strip()
-            if not key:
+            key = "" if spec.local else env.get(PROVIDER_KEYS[spec.provider], "").strip()
+            if not key and not spec.local:
                 row.note = f"no {PROVIDER_KEYS[spec.provider]} in the environment"
                 continue
             worst = smoke.worst_case_run_paise()
@@ -610,8 +639,11 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None) ->
                 "llm_input_micros_per_mtok": spec.input_micros,
                 "llm_output_micros_per_mtok": spec.output_micros,
                 "llm_spend_cap_confirmed": True,
-                SETTINGS_KEY_FIELD[spec.provider]: SecretStr(key),
             }
+            if spec.local:
+                options["llm_base_url"] = env.get("LLM_BASE_URL", "").strip()
+            else:
+                options[SETTINGS_KEY_FIELD[spec.provider]] = SecretStr(key)
             settings = Settings(_env_file=None, **options)  # type: ignore[call-arg]
             runtime = build_runtime(settings)
             if (
@@ -644,6 +676,14 @@ def main(argv: list[str] | None = None, env: Mapping[str, str] | None = None) ->
         f"\nmodel-bakeoff: {time.perf_counter() - started:.0f}s. Per-case answers are in {REPORT_FILE.name} (git-ignored). The Main agent's switches and caps were put back."
     )
     return 0
+
+
+def day_cap_micros(models: int) -> int:
+    """Rs 30 for each model that will run (the per-model limit), never below the smoke command's cap and never above the database's wall of Rs 500."""
+    return min(
+        DB_WALL_MICROS,
+        max(smoke.SMOKE_DAILY_CAP_MICROS, models * smoke.MAX_SPEND_PAISE * smoke.MICROS_PER_PAISE),
+    )
 
 
 def _day_room_paise(tenant: str) -> int:

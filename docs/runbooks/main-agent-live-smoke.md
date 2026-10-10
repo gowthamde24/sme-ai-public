@@ -11,6 +11,20 @@ read -rs "ANTHROPIC_API_KEY?Paste the key (hidden): " && export ANTHROPIC_API_KE
 
 The key is typed hidden, lives only in that terminal's environment, and is never written to a file or printed. Without it the command prints one line and stops.
 
+**Free test with a model on your Mac (Ollama), no key:** see "Free testing with a model on your own Mac" in `docs/runbooks/model-bakeoff.md`. In short, with Ollama running and `llama3.2:3b` pulled:
+
+```
+LLM_PROVIDER=openai_compat LLM_BASE_URL=http://localhost:11434/v1 LLM_MODEL=llama3.2:3b make assistant-smoke
+```
+
+The output is labelled **local model: plumbing check**; the Telugu and tool checks are still real PASS/FAIL. The address must be this machine; no key, no spend-cap confirmation and no prices are needed (a price of 0 is stored as the smallest the database allows and the cost is recorded as 0).
+
+**Optional light model, once you have the key** (the fair-use switch of ADR 0064; leave it out for a plain run):
+
+```
+export LLM_LIGHT_MODEL=claude-haiku-4-5-20251001 LLM_LIGHT_INPUT_MICROS_PER_MTOK=90000000 LLM_LIGHT_OUTPUT_MICROS_PER_MTOK=450000000
+```
+
 ## Before you run it (your actions, once)
 
 1. **A dedicated key with a hard monthly spend limit set at the provider** (the real backstop; the database only caps what it is told). Only then set `LLM_SPEND_CAP_CONFIRMED=true`.

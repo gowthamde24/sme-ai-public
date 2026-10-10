@@ -96,7 +96,7 @@ assistant-smoke:
 
 # OPT-IN, NEVER part of make check (job AK / K3): which model is best for the Main agent, MEASURED. The 30 assistant eval questions plus 10 code-mixed Telugu/Kannada ones, asked of each named model on the
 # seeded demo through the REAL provider adapters; one table row per model (pass rate, Telugu quality, price refusal, injection refusal, median latency, paise per answer). At most 30 rupees per model; keys from
-# the environment only (a model without its key is skipped). MODELS="provider:model:input_price:output_price ..." ; LIMIT=n asks only the first n questions (a spread). See docs/runbooks/model-bakeoff.md.
+# the environment only (a model without its key is skipped). MODELS="provider:model:input_price:output_price ..." (a model on your own Mac: openai_compat:llama3.2:3b:0:0 with LLM_BASE_URL=http://localhost:11434/v1, no key, labelled a plumbing check) ; LIMIT=n asks only the first n questions (a spread). See docs/runbooks/model-bakeoff.md.
 model-bakeoff:
 	cd $(API) && MODELS="$(MODELS)" LIMIT="$(LIMIT)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/model_bakeoff.py
 

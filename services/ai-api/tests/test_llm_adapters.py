@@ -27,6 +27,7 @@ from app.agents.llm.interface import (
     LlmRequest,
     LlmTimeout,
     LlmUnavailable,
+    TaskClass,
     ToolSpec,
     Trust,
 )
@@ -64,6 +65,7 @@ def llm_request() -> LlmRequest:
         ),
         tools=(ToolSpec("find", "find a thing", SCHEMA),),
         max_output_tokens=500,
+        task_class=TaskClass.HARD,
         final_result=FINAL,
     )
 

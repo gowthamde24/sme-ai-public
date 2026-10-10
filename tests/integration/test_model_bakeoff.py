@@ -648,3 +648,47 @@ def test_a_provider_is_never_called_when_the_daily_cap_has_no_room(
         operator_sql.sql(
             f"update public.tenant_agent_settings set daily_cost_cap_micros = null where tenant_id = '{scene.b.id}'"
         )
+
+
+# ---- a model on this machine (Ollama): the colon in its tag, no key, no spend-cap confirmation, a zero price, the label
+def test_an_ollama_tag_with_a_colon_is_one_model_and_the_prices_may_be_zero() -> None:
+    (spec,) = bake.parse_models("openai_compat:llama3.2:3b:0:0")
+    assert (spec.provider, spec.model, spec.input_micros, spec.output_micros) == (
+        "openai_compat",
+        "llama3.2:3b",
+        0,
+        0,
+    )
+    assert spec.local and "local model: plumbing check" in spec.label
+    # a hosted model still cannot have a colon in its name or a zero price
+    for bad in ("openai:gpt:x:1:1", "openai:gpt:0:1", "anthropic:m:1"):
+        with pytest.raises(ValueError):
+            bake.parse_models(bad)
+
+
+def test_a_local_model_runs_without_a_key_or_a_spend_cap_confirmation_but_only_on_this_machine() -> None:
+    specs = bake.parse_models("openai_compat:llama3.2:3b:0:0")
+    assert bake.gate_message({"LLM_BASE_URL": "http://localhost:11434/v1"}, specs) is None
+    for env in ({}, {"LLM_BASE_URL": "http://example.com/v1"}, {"LLM_BASE_URL": "http://user@localhost/v1"}):
+        message = bake.gate_message(env, specs)
+        assert message and "Nothing was run" in message and "this machine" in message
+    mixed = bake.parse_models("openai_compat:llama3.2:3b:0:0 openai:m:1:1")
+    assert bake.gate_message({"LLM_BASE_URL": "http://localhost:11434/v1"}, mixed) is None, (
+        "the hosted model has no key, so it is skipped and only the local one runs: no confirmation is needed"
+    )
+    with_key = bake.gate_message({"LLM_BASE_URL": "http://localhost:11434/v1", "OPENAI_API_KEY": "k"}, mixed)
+    assert with_key and "LLM_SPEND_CAP_CONFIRMED" in with_key, "a hosted model in the list still needs the confirmed cap"
+
+
+def test_the_table_labels_a_local_model_as_a_plumbing_check_and_does_not_soften_it() -> None:
+    (spec,) = bake.parse_models("openai_compat:llama3.2:3b:0:0")
+    row = bake.ModelRow(spec, note="x")
+    text = bake.table([row], 40)
+    assert "local model: plumbing check" in text and "real PASS/FAIL" in text
+    assert "plumbing" not in bake.table([bake.ModelRow(bake.parse_models("openai:m:1:1")[0], note="x")], 40)
+
+
+def test_the_days_cap_grows_with_the_models_but_never_passes_the_databases_wall() -> None:
+    assert bake.day_cap_micros(1) == smoke.SMOKE_DAILY_CAP_MICROS == 30_000_000
+    assert bake.day_cap_micros(4) == 120_000_000
+    assert bake.day_cap_micros(1000) == 500_000_000
