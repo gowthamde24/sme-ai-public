@@ -31,7 +31,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const none: FrameData = NO_FRAME_DATA;
-const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { spent_paise: 19000, cap_paise: 50000, left_paise: 31000 }, waiting: 5, ready: true, showUsage: true };
+const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true };
 const noSignOut = async () => undefined;
 const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} />);
 const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} />);
@@ -48,9 +48,9 @@ describe("SideNav", () => {
   it("the foot holds the AI usage card, Settings, Help (not available yet), the user card and Collapse menu", () => {
     side(owner, loaded);
     expect(screen.getByText("AI usage today")).toBeInTheDocument();
-    expect(screen.getByText("₹190")).toBeInTheDocument();
-    expect(screen.getByText("₹310 left today")).toBeInTheDocument();
-    expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "190");
+    expect(screen.getByText("38% used")).toBeInTheDocument();
+    expect(screen.getByText("12% of this month")).toBeInTheDocument();
+    expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "38");
     expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(screen.getByRole("button", { name: /^Help/ })).toHaveAttribute("aria-disabled", "true");
     expect(screen.getByRole("button", { name: /^Help/ })).toHaveTextContent("Not available yet");

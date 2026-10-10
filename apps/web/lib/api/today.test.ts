@@ -5,7 +5,7 @@ import { ApiContractError } from "./client";
 const apiRequest = vi.fn();
 vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
 
-import { AGENT_KEYS, getAgentsStatus, getAiUsageToday, getToday, parseAgentsStatus, parseAiUsage, parseNeedsYouItem, parseRecentStep, parseTarget, parseToday } from "./today";
+import { AGENT_KEYS, getAgentsStatus, getToday, parseAgentsStatus, parseNeedsYouItem, parseRecentStep, parseTarget, parseToday } from "./today";
 
 const TENANT = "22222222-2222-4222-8222-222222222222";
 const ID = "33333333-3333-4333-8333-333333333333";
@@ -88,22 +88,6 @@ describe("Today", () => {
   it("shows nothing for an answer that does not match", async () => {
     apiRequest.mockResolvedValue({ cards: "oops" });
     await expect(getToday("tok", TENANT)).rejects.toThrow(ApiContractError);
-  });
-});
-
-describe("AI usage", () => {
-  it("parses spent, cap and left in paise", () => {
-    expect(parseAiUsage({ spent_paise: 15, cap_paise: 25_000, left_paise: 24_985 })).toEqual({ spent_paise: 15, cap_paise: 25_000, left_paise: 24_985 });
-    expect(parseAiUsage({ spent_paise: 30_000, cap_paise: 25_000, left_paise: 0 }).left_paise).toBe(0);
-  });
-  it.each([[null], [{}], [{ spent_paise: -1, cap_paise: 5, left_paise: 5 }], [{ spent_paise: 0, cap_paise: 5.5, left_paise: 5 }], [{ spent_paise: 0, cap_paise: 5, left_paise: 6 }], [{ spent_paise: "0", cap_paise: 5, left_paise: 5 }]])(
-    "%j is a contract error",
-    (json) => expect(() => parseAiUsage(json)).toThrow(ApiContractError),
-  );
-  it("reads with the person's token", async () => {
-    apiRequest.mockResolvedValue({ spent_paise: 0, cap_paise: 10, left_paise: 10 });
-    await getAiUsageToday("tok", TENANT);
-    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${TENANT}/ai-usage/today`, "tok");
   });
 });
 

@@ -1,7 +1,5 @@
 import { Layers, Sparkles } from "lucide-react";
 
-import { formatINR } from "@/design/format";
-
 import type { AiUsage, Plan } from "./contract";
 import { word, type Labels } from "./labels";
 
@@ -30,10 +28,32 @@ export function NotYetText({ labels, className = "text-sm text-muted" }: { label
   return <span className={className}>{word(labels, "frame.notyet", "Not available yet")}</span>;
 }
 
-/** The AI usage card (menu footer, the phone's More sheet, Settings): spent / cap today with a meter, from `getAiUsageToday()`; empty while it is still being read, "Not available yet" when it cannot be. */
+/** "11 Oct, 12:00 am": a moment in the Indian day, which is the day the allowance counts in. Fixed zone and locale, so the server and the browser draw the same text. */
+export function indiaTime(iso: string): string {
+  return new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", hour12: true }).format(new Date(iso));
+}
+
+/**
+ * When the lighter mode (or the pause) ends, from the two windows. Light lasts while EITHER window is at 100 %, so it ends at the later reset: the month's when the month is full, else the day's.
+ * A pause is 300 % of ONE window: if only one window is full it is that one; if both are full the API does not say which, so no time is guessed (null).
+ */
+export function untilFor(usage: AiUsage): string | null {
+  const dayFull = usage.today_percent >= 100;
+  const monthFull = usage.month_percent >= 100;
+  if (usage.state === "light") return monthFull ? usage.resets_at_month : usage.resets_at_today;
+  if (usage.state === "paused") return monthFull && dayFull ? null : monthFull ? usage.resets_at_month : usage.resets_at_today;
+  return null;
+}
+
+/**
+ * The AI usage card (menu footer, the phone's More sheet, Settings), from `getAiUsage()` (`GET /ai-usage`): how much of today's and this month's allowance is used, in percent, with a meter
+ * (no money, no tokens). `state` carries what the percentages cannot (they stop at 100): busy (warn), light mode and paused. Empty while it is being read, "Not available yet" when it cannot be.
+ */
 export function UsageCard({ usage, labels, loading = false, className = "" }: { usage: AiUsage | null; labels?: Labels; loading?: boolean; className?: string }) {
   const title = word(labels, "frame.aiusage", "AI usage today");
-  const pct = usage && usage.cap_paise > 0 ? Math.min(100, Math.round((usage.spent_paise / usage.cap_paise) * 100)) : 0;
+  const pct = usage ? usage.today_percent : 0;
+  const until = usage ? untilFor(usage) : null;
+  const timeVars = until ? { time: indiaTime(until) } : undefined;
   return (
     <div className={`rounded-lg border border-line bg-surface p-3 ${className}`}>
       <p className="flex items-center gap-1.5 text-sm font-medium text-muted">
@@ -42,13 +62,22 @@ export function UsageCard({ usage, labels, loading = false, className = "" }: { 
       </p>
       {usage ? (
         <>
-          <p className="mb-2 mt-1 whitespace-nowrap font-display text-xl font-semibold tabular-nums">
-            {formatINR(usage.spent_paise / 100)} <span className="text-muted">/ {formatINR(usage.cap_paise / 100)}</span>
-          </p>
-          <div role="meter" aria-label={title} aria-valuemin={0} aria-valuemax={usage.cap_paise / 100} aria-valuenow={usage.spent_paise / 100} className="h-2 overflow-hidden rounded-full border border-edge bg-surface-2">
-            <div className={`h-full bg-brand-edge ${FILL[Math.round(pct / 5) * 5]}`} />
+          <p className="mb-2 mt-1 whitespace-nowrap font-display text-xl font-semibold tabular-nums">{word(labels, "frame.aiused", "{percent}% used", { percent: usage.today_percent })}</p>
+          <div role="meter" aria-label={title} aria-valuemin={0} aria-valuemax={100} aria-valuenow={usage.today_percent} className="h-2 overflow-hidden rounded-full border border-edge bg-surface-2">
+            <div className={`h-full ${usage.state === "ok" ? "bg-brand-edge" : "bg-amber-text"} ${FILL[Math.round(pct / 5) * 5]}`} />
           </div>
-          <p className="mt-2 text-sm text-muted">{word(labels, "frame.aileft", "{amount} left today", { amount: formatINR(usage.left_paise / 100) })}</p>
+          <p className="mt-2 text-sm text-muted">{word(labels, "frame.aimonth", "{percent}% of this month", { percent: usage.month_percent })}</p>
+          {usage.state === "warn" ? <p className="mt-2 text-sm">{word(labels, "frame.aiwarn", "Your AI team has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.")}</p> : null}
+          {usage.state === "light" ? (
+            <p className="mt-2 inline-block rounded-full border border-amber-text bg-amber-bg px-2.5 py-1 text-sm font-medium text-amber-text">
+              {word(labels, "frame.ailight", "Light mode until {time}", { time: indiaTime(until ?? usage.resets_at_today) })}
+            </p>
+          ) : null}
+          {usage.state === "paused" ? (
+            <p className="mt-2 rounded-lg border border-amber-text bg-amber-bg px-2.5 py-1.5 text-sm font-medium text-amber-text">
+              {timeVars ? word(labels, "frame.aipaused", "Your AI team is paused until {time}. Quotes, orders and customers keep working.", timeVars) : word(labels, "frame.aipausednow", "Your AI team is paused for now. Quotes, orders and customers keep working.")}
+            </p>
+          ) : null}
         </>
       ) : loading ? (
         <p aria-hidden="true" className="mt-1 min-h-6" />

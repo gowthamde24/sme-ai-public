@@ -16,7 +16,7 @@ import { MANUAL_QUOTE_JSON, MANUAL_SUMMARY_JSON, QUOTE_JSON, SETUP_JSON, SUMMARY
 import { parseOrderPage as parseOrders } from "@/lib/api/orders";
 import { parsePlan } from "@/lib/api/plan";
 import { parseAccountSetup } from "@/lib/api/account";
-import { parseAiUsage } from "@/lib/api/today";
+import { parseAiUsage } from "@/lib/api/ai-usage";
 import { agentsStatus, todayFor } from "./today-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
 import { parseRequirementView } from "@/lib/api/enquiries";
@@ -45,13 +45,13 @@ export type Scenario = {
 };
 
 export const tenantOf = (role: Role) => ({ id: TENANT, name: "Demo Silks (synthetic)", slug: "demo-silks", role });
-/** The answer every workspace screen needs first, and the two small reads a screen may add (the plan; today's AI usage, which the API gives to Owner and Admin only). */
+/** The answer every workspace screen needs first, and the two small reads a screen may add (the plan; the AI usage, which the API gives to Owner and Admin only). */
 export const base = (role: Role): Record<string, Handler> => ({
   fetchTenant: () => tenantOf(role),
   getPlan: () => parsePlan({ plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-01T05:00:00Z" }),
-  getAiUsageToday: () => {
+  getAiUsage: () => {
     if (role !== "owner" && role !== "admin") throw new ApiRequestError(403, "forbidden", "Not allowed.");
-    return parseAiUsage({ spent_paise: 15, cap_paise: 200, left_paise: 185 });
+    return parseAiUsage({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" });
   },
 });
 

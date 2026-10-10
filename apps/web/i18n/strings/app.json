@@ -329,17 +329,6 @@
    "kn": "draft"
   }
  },
- "frame.aileft": {
-  "en": "{amount} left today",
-  "te": "ఈరోజు {amount} మిగిలింది",
-  "hi": "आज {amount} बचे हैं",
-  "kn": "ಇಂದು {amount} ಉಳಿದಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "frame.waiting": {
   "en": "Waiting for you",
   "te": "మీ కోసం వేచి ఉన్నవి",
@@ -1721,6 +1710,72 @@
   "te": "ఎంక్వైరీ",
   "hi": "पूछताछ",
   "kn": "ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aiused": {
+  "en": "{percent}% used",
+  "te": "{percent}% వాడారు",
+  "hi": "{percent}% उपयोग हुआ",
+  "kn": "{percent}% ಬಳಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aimonth": {
+  "en": "{percent}% of this month",
+  "te": "ఈ నెలలో {percent}%",
+  "hi": "इस महीने का {percent}%",
+  "kn": "ಈ ತಿಂಗಳ {percent}%",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aiwarn": {
+  "en": "Your AI team has been busy today. It keeps working; at the limit it switches to a lighter mode until midnight.",
+  "te": "మీ AI బృందం ఈరోజు బిజీగా ఉంది. అది పని చేస్తూనే ఉంటుంది; పరిమితికి చేరినప్పుడు అర్ధరాత్రి వరకు తేలికపాటి విధానానికి మారుతుంది.",
+  "hi": "आपकी AI टीम आज व्यस्त रही है। वह काम करती रहती है; सीमा पर पहुँचने पर आधी रात तक हल्के मोड में चली जाती है।",
+  "kn": "ನಿಮ್ಮ AI ತಂಡ ಇಂದು ಬ್ಯುಸಿಯಾಗಿದೆ. ಅದು ಕೆಲಸ ಮುಂದುವರಿಸುತ್ತದೆ; ಮಿತಿ ತಲುಪಿದಾಗ ಮಧ್ಯರಾತ್ರಿವರೆಗೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಬದಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.ailight": {
+  "en": "Light mode until {time}",
+  "te": "{time} వరకు తేలికపాటి విధానం",
+  "hi": "{time} तक हल्का मोड",
+  "kn": "{time} ವರೆಗೆ ಹಗುರ ಮೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aipaused": {
+  "en": "Your AI team is paused until {time}. Quotes, orders and customers keep working.",
+  "te": "మీ AI బృందం {time} వరకు ఆగి ఉంది. కొటేషన్లు, ఆర్డర్లు, కస్టమర్లు యథావిధిగా పని చేస్తాయి.",
+  "hi": "आपकी AI टीम {time} तक रुकी है। कोटेशन, ऑर्डर और ग्राहक पहले की तरह काम करते हैं।",
+  "kn": "ನಿಮ್ಮ AI ತಂಡ {time} ವರೆಗೆ ನಿಲ್ಲಿಸಲಾಗಿದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್ ಮತ್ತು ಗ್ರಾಹಕರು ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.aipausednow": {
+  "en": "Your AI team is paused for now. Quotes, orders and customers keep working.",
+  "te": "మీ AI బృందం ప్రస్తుతం ఆగి ఉంది. కొటేషన్లు, ఆర్డర్లు, కస్టమర్లు యథావిధిగా పని చేస్తాయి.",
+  "hi": "आपकी AI टीम अभी रुकी है। कोटेशन, ऑर्डर और ग्राहक पहले की तरह काम करते हैं।",
+  "kn": "ನಿಮ್ಮ AI ತಂಡ ಸದ್ಯಕ್ಕೆ ನಿಲ್ಲಿಸಲಾಗಿದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್ ಮತ್ತು ಗ್ರಾಹಕರು ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

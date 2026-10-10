@@ -9,6 +9,6 @@ URL name
 demo-silks
 {label="AI usage today"}
 ## AI usage today
-AI usage today ₹0.15 / ₹2
+AI usage today 7% used
 {role=meter label="AI usage today"}
-₹1.85 left today
+3% of this month

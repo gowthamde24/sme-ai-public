@@ -2,7 +2,7 @@ import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 
 /**
- * Today, AI usage and the helpers' status (job AD / D3), read from `GET /v1/tenants/{tenant}/today`, `.../ai-usage/today` and `.../agents/status`. Server side only,
+ * Today and the helpers' status (job AD / D3), read from `GET /v1/tenants/{tenant}/today` and `.../agents/status` (the AI usage is lib/api/ai-usage.ts). Server side only,
  * with the signed-in user's own token. The field names are the contract's, exactly (snake_case, as the API sends them). Money is integer paise.
  * A response that does not match the contract is an error and nothing is shown: never a guess, never a half-filled screen.
  *
@@ -48,12 +48,6 @@ export interface Today {
   needs_you: NeedsYouItem[];
   /** at most 5, newest first */
   recent: RecentStep[];
-}
-
-export interface AiUsage {
-  spent_paise: number;
-  cap_paise: number;
-  left_paise: number;
 }
 
 export const AGENT_KEYS = ["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"] as const;
@@ -144,13 +138,6 @@ export function parseToday(json: unknown): Today {
   };
 }
 
-export function parseAiUsage(json: unknown): AiUsage {
-  if (!isRecord(json)) return bad("usage body");
-  const usage = { spent_paise: paise(json.spent_paise, "spent_paise"), cap_paise: paise(json.cap_paise, "cap_paise"), left_paise: paise(json.left_paise, "left_paise") };
-  if (usage.left_paise > usage.cap_paise) return bad("usage (more left than the cap)");
-  return usage;
-}
-
 export function parseAgentsStatus(json: unknown): AgentStatus[] {
   if (!Array.isArray(json) || json.length !== AGENT_KEYS.length) return bad("helpers list (it is always all seven)");
   return json.map((row, i) => {
@@ -175,11 +162,6 @@ const tenantPath = (tenantId: string, tail: string) => `/v1/tenants/${encodeURIC
 /** `GET /v1/tenants/{tenant}/today`: what waits for the caller, the money held, the open orders, the last five order steps. Any member. */
 export async function getToday(accessToken: string, tenantId: string): Promise<Today> {
   return parseToday(await apiRequest(tenantPath(tenantId, "today"), accessToken));
-}
-
-/** `GET /v1/tenants/{tenant}/ai-usage/today`: today's (the Asia/Kolkata day) AI spend against the cap, in PAISE. Owner and Admin only (403 for anyone else). */
-export async function getAiUsageToday(accessToken: string, tenantId: string): Promise<AiUsage> {
-  return parseAiUsage(await apiRequest(tenantPath(tenantId, "ai-usage/today"), accessToken));
 }
 
 /** `GET /v1/tenants/{tenant}/agents/status`: the seven helpers, always all seven in this order. Any member. */

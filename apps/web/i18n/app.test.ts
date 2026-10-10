@@ -51,8 +51,8 @@ describe("the frame's string store (language track L0)", () => {
     for (const i of FOOT) expect(appDict("en")[`nav.item.${i.id}` as keyof typeof app], i.id).toBe(i.label);
   });
   it("fills a placeholder and ships the dictionary of ONE language as props", () => {
-    expect(appT("en")("frame.aileft", { amount: "₹310" })).toBe("₹310 left today");
-    expect(appT("te")("frame.aileft", { amount: "₹310" })).toContain("₹310");
+    expect(appT("en")("frame.aiused", { percent: 85 })).toBe("85% used");
+    expect(appT("te")("frame.ailight", { time: "11 Oct, 12:00 am" })).toContain("11 Oct, 12:00 am");
     expect(Object.keys(frameLabels("te")).length).toBe(keys.length);
   });
   it("is server only: no client component imports it (all four dictionaries would land in the browser bundle)", () => {
