@@ -880,10 +880,10 @@
   }
  },
  "team.sub": {
-  "en": "Six assistants and a main agent, each with one job. This is an illustration.",
-  "te": "ఆరుగురు అసిస్టెంట్లు, ఒక మెయిన్ అసిస్టెంట్. ఒక్కొక్కరికి ఒక పని. ఇది బొమ్మ మాత్రమే.",
-  "hi": "छह सहायक और एक मुख्य सहायक, हर एक का एक काम। यह सिर्फ़ एक तस्वीर है।",
-  "kn": "ಆರು ಅಸಿಸ್ಟೆಂಟ್‌ಗಳು ಮತ್ತು ಒಬ್ಬ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್, ಒಬ್ಬೊಬ್ಬರಿಗೆ ಒಂದೊಂದು ಕೆಲಸ. ಇದು ಬರೀ ಚಿತ್ರ.",
+  "en": "Six assistants and Agent OWL, each with one job. This is an illustration.",
+  "te": "ఆరుగురు అసిస్టెంట్లు, ఒక Agent OWL. ఒక్కొక్కరికి ఒక పని. ఇది బొమ్మ మాత్రమే.",
+  "hi": "छह सहायक और Agent OWL, हर एक का एक काम। यह सिर्फ़ एक तस्वीर है।",
+  "kn": "ಆರು ಅಸಿಸ್ಟೆಂಟ್‌ಗಳು ಮತ್ತು Agent OWL, ಒಬ್ಬೊಬ್ಬರಿಗೆ ಒಂದೊಂದು ಕೆಲಸ. ಇದು ಬರೀ ಚಿತ್ರ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -891,10 +891,10 @@
   }
  },
  "team.alt": {
-  "en": "Illustration: seven figures seated around a round table, with the main agent at the head.",
-  "te": "బొమ్మ: గుండ్రని టేబుల్ చుట్టూ కూర్చున్న ఏడు ఆకృతులు, తలభాగంలో మెయిన్ అసిస్టెంట్.",
-  "hi": "तस्वीर: गोल मेज़ के चारों तरफ़ बैठीं सात आकृतियाँ, सिरे पर मुख्य सहायक।",
-  "kn": "ಚಿತ್ರ: ಸುತ್ತಿನ ಮೇಜಿನ ಸುತ್ತ ಕುಳಿತಿರುವ ಏಳು ಆಕೃತಿಗಳು, ತುದಿಯಲ್ಲಿ ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್.",
+  "en": "Illustration: seven owls seated around a round table, with Agent OWL at the head.",
+  "te": "బొమ్మ: గుండ్రని టేబుల్ చుట్టూ కూర్చున్న ఏడు గుడ్లగూబలు, తలభాగంలో Agent OWL.",
+  "hi": "तस्वीर: गोल मेज़ के चारों तरफ़ बैठे सात उल्लू, सिरे पर Agent OWL।",
+  "kn": "ಚಿತ್ರ: ಸುತ್ತಿನ ಮೇಜಿನ ಸುತ್ತ ಕುಳಿತಿರುವ ಏಳು ಗೂಬೆಗಳು, ತುದಿಯಲ್ಲಿ Agent OWL.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -902,10 +902,10 @@
   }
  },
  "role.main.t": {
-  "en": "Main agent",
-  "te": "మెయిన్ అసిస్టెంట్",
-  "hi": "मुख्य सहायक",
-  "kn": "ಮುಖ್ಯ ಅಸಿಸ್ಟೆಂಟ್",
+  "en": "Agent OWL",
+  "te": "Agent OWL",
+  "hi": "Agent OWL",
+  "kn": "Agent OWL",
   "status": {
    "te": "draft",
    "hi": "draft",

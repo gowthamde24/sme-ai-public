@@ -37,7 +37,7 @@ describe("OfficeView", () => {
     view(sample);
     const items = cards();
     expect(items).toHaveLength(7);
-    expect(items[0]).toHaveTextContent("Main agentIdleJob of main.");
+    expect(items[0]).toHaveTextContent("Agent OWLIdleJob of main.");
     expect(items[4]).toHaveTextContent("Quote WriterWorkingPrepares a quote from the prices you set.Prepared quote 3 · 3h");
     expect(items[1]).toHaveTextContent("Lead FinderNot available yetFinds new businesses that may want to buy. Not built yet.");
     expect(within(items[4]).getByRole("link")).toHaveAttribute("href", "/app/tenants/T/office?agent=quote_writer");

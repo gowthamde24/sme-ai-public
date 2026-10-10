@@ -2,6 +2,13 @@ import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { defineConfig } from "vitest/config";
 
+// The golden screen texts (test/screens/__text__) hold dates and times as Node formats them for en-US in India ("Oct 6, 2026, 10:30 AM"). Node reads the default locale and zone from
+// the environment, so on a machine set to another language or zone the same code prints "6 Oct 2026, 10:30 am" and 60+ goldens fail. Fixed here, before any worker starts, so the result
+// does not depend on the machine. The app's own date formatting is not touched (it passes its locale and zone itself where it matters).
+process.env.LANG = "en_US.UTF-8";
+process.env.LC_ALL = "en_US.UTF-8";
+process.env.TZ = "Asia/Kolkata";
+
 export default defineConfig({
   plugins: [react()],
   resolve: {

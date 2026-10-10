@@ -4,7 +4,11 @@
   "baselineGzipBytes": 177009,
   "allowanceGzipBytes": 40000,
   "office3d": {
-    "_comment": "docs/plans/office-3d-proposal.md, decision 5: the 3D Office chunk (three + fiber + drei + the scene), loaded only when the 3D view is shown. Measured in the design lab: 267,431 B gzip. A separate line from the landing page. Change only with the owner's approval.",
+    "_comment": "docs/plans/office-3d-proposal.md, decision 5: the 3D Office entry (every chunk its next/dynamic import loads: three's shared core + fiber + drei + the scene + the owl), loaded only when the 3D view is shown. Job AR: the people were replaced by owls (smaller than before: the figure code is gone) and three's core became a chunk shared with Agent OWL, so this entry is measured as the sum of its chunks. Change only with the owner's approval.",
     "maxGzipBytes": 267431
+  },
+  "agentOwl": {
+    "_comment": "Job AR: Agent OWL on Today (components/v2/app/owl): the 3D owl's entry (three's shared core + the owl and its canvas), requested after the first paint, never in a first load; the flat SVG owl stands in until it arrives and is the fallback. Measured in a production build. Change only with the owner's approval.",
+    "maxGzipBytes": 195000
   }
 }

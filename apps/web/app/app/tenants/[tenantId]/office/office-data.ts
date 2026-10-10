@@ -19,7 +19,7 @@ export async function readAgentsStatus(accessToken: string, tenantId: string): P
 
 /**
  * Where each helper's latest event opens: the page of this workspace that its `target` names (an order, a lead, an enquiry or, for a quote, the enquiry it belongs to). A helper whose
- * event has no target (the Main agent's answers, a chat has no screen) or has no event has no entry: the Office shows its words without a link. A rejected session is rethrown.
+ * event has no target (the Agent OWL's answers, a chat has no screen) or has no event has no entry: the Office shows its words without a link. A rejected session is rethrown.
  */
 export async function readEventLinks(accessToken: string, tenantId: string, agents: AgentRow[] | null): Promise<Record<string, string>> {
   const withTarget = (agents ?? []).flatMap((a) => (a.last_event?.target ? [{ agent: a.agent, target: a.last_event.target }] : []));

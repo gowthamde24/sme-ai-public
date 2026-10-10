@@ -80,10 +80,10 @@ describe("TodayView", () => {
     expect(within(team).getByText("Researcher")).toBeInTheDocument(); // the agent's name, not its code
     expect(within(team).getByText("Read a page · 5m")).toBeInTheDocument(); // the last event when there is one
     expect(within(team).getByText("Keeps each order's steps in order.")).toBeInTheDocument(); // else what it does
-    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that is not built (Main agent)
-    expect(within(team).getByText("Main agent")).toBeInTheDocument();
+    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that is not built (Agent OWL)
+    expect(within(team).getByText("Agent OWL")).toBeInTheDocument();
   });
-  it("'Ask your team' is centred above 'Needs you', and with the Main agent not built it says 'Not available yet' and offers nothing to press", () => {
+  it("'Ask your team' is centred above 'Needs you', and with the Agent OWL not built it says 'Not available yet' and offers nothing to press", () => {
     view(full);
     const ask = screen.getByRole("region", { name: "Ask your team" });
     expect(ask).toHaveAttribute("data-ask", "unavailable");
@@ -94,7 +94,7 @@ describe("TodayView", () => {
     const needs = screen.getByRole("heading", { name: "Needs you" });
     expect(ask.compareDocumentPosition(needs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the box comes first
   });
-  it("the box is live when the Main agent is idle or working; 'Switched off' when its switch is off; 'Not available yet' when it is not built or cannot be read", () => {
+  it("the box is live when the Agent OWL is idle or working; 'Switched off' when its switch is off; 'Not available yet' when it is not built or cannot be read", () => {
     view({ ...full, team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }] });
     expect(screen.getByRole("region", { name: "Ask your team" })).toHaveAttribute("data-ask", "live");
     cleanup();

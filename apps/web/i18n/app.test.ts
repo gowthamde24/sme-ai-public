@@ -29,9 +29,11 @@ describe("the frame's string store (language track L0)", () => {
   it("every non-English string is a DRAFT (nobody who reads the language has marked one reviewed)", () => {
     for (const k of keys) for (const l of TRANSLATED_LANGS) expect(data[k].status[l], `${k}:${l}`).toBe("draft");
   });
+  // "Agent OWL" is a product name, kept in Latin letters in every language like WhatsApp (i18n/STYLE.md); it is not a machine-translated sentence, so it is not humanOnly either.
+  const PRODUCT_NAME_KEY = "agent.main";
   it("uses each language's own script, except the strings that must stay English until a person reviews them", () => {
     const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-    for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && !script[l].test(dicts[l][k])), l).toEqual([]);
+    for (const l of TRANSLATED_LANGS) expect(keys.filter((k) => !data[k].humanOnly && k !== PRODUCT_NAME_KEY && !script[l].test(dicts[l][k])), l).toEqual([]);
   });
   it("the strings no machine may translate (money rules, privacy and erasure, do-not-contact) show the English in every language", () => {
     expect(keys.filter((k) => data[k].humanOnly).sort()).toEqual(HUMAN_ONLY);

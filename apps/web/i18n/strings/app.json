@@ -1107,10 +1107,10 @@
   }
  },
  "office.sub": {
-  "en": "Your team around one table. The main agent sits at the head.",
-  "te": "ఒక టేబుల్ చుట్టూ మీ టీమ్. ప్రధాన ఏజెంట్ టేబుల్ తలభాగంలో కూర్చుంటుంది.",
-  "hi": "एक मेज़ के चारों ओर आपकी टीम। मुख्य एजेंट सबसे आगे बैठता है।",
-  "kn": "ಒಂದು ಟೇಬಲ್ ಸುತ್ತ ನಿಮ್ಮ ಟೀಮ್. ಮುಖ್ಯ ಏಜೆಂಟ್ ತಲೆಯ ಸ್ಥಾನದಲ್ಲಿ ಕುಳಿತಿದ್ದಾರೆ.",
+  "en": "Your team around one table. Agent OWL sits at the head.",
+  "te": "ఒక టేబుల్ చుట్టూ మీ టీమ్. Agent OWL టేబుల్ తలభాగంలో కూర్చుంటుంది.",
+  "hi": "एक मेज़ के चारों ओर आपकी टीम। Agent OWL सबसे आगे बैठता है।",
+  "kn": "ಒಂದು ಟೇಬಲ್ ಸುತ್ತ ನಿಮ್ಮ ಟೀಮ್. Agent OWL ತಲೆಯ ಸ್ಥಾನದಲ್ಲಿ ಕುಳಿತಿದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1173,10 +1173,10 @@
   }
  },
  "agent.main": {
-  "en": "Main agent",
-  "te": "ప్రధాన ఏజెంట్",
-  "hi": "मुख्य एजेंट",
-  "kn": "ಮುಖ್ಯ ಏಜೆಂಟ್",
+  "en": "Agent OWL",
+  "te": "Agent OWL",
+  "hi": "Agent OWL",
+  "kn": "Agent OWL",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1383,10 +1383,10 @@
   "humanOnly": true
  },
  "ask.label": {
-  "en": "Your question for the Main agent",
-  "te": "ప్రధాన ఏజెంట్‌కి మీ ప్రశ్న",
-  "hi": "मुख्य एजेंट के लिए आपका सवाल",
-  "kn": "ಮುಖ್ಯ ಏಜೆಂಟ್‌ಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆ",
+  "en": "Your question for Agent OWL",
+  "te": "Agent OWL కి మీ ప్రశ్న",
+  "hi": "Agent OWL के लिए आपका सवाल",
+  "kn": "Agent OWL ಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1649,6 +1649,28 @@
    "kn": "draft"
   }
  },
+ "ask.err.busy": {
+  "en": "Agent OWL is busy right now. Try again in a minute.",
+  "te": "Agent OWL ఇప్పుడు బిజీగా ఉంది. ఒక నిమిషం ఆగి మళ్లీ ప్రయత్నించండి.",
+  "hi": "Agent OWL अभी व्यस्त है। एक मिनट रुककर फिर कोशिश करें।",
+  "kn": "Agent OWL ಈಗ ಬ್ಯುಸಿಯಾಗಿದೆ. ಒಂದು ನಿಮಿಷ ಕಾದು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.err.notset": {
+  "en": "Agent OWL isn't set up yet. Ask the owner to turn it on.",
+  "te": "Agent OWL ఇంకా సెటప్ చేయలేదు. ఓనర్‌ని ఆన్ చేయమని అడగండి.",
+  "hi": "Agent OWL अभी सेट अप नहीं है। ओनर से इसे चालू करने को कहें।",
+  "kn": "Agent OWL ಇನ್ನೂ ಸೆಟ್ ಅಪ್ ಆಗಿಲ್ಲ. ಓನರ್‌ಗೆ ಆನ್ ಮಾಡಲು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "ask.err.role": {
   "en": "Your role cannot ask the team.",
   "te": "మీ పాత్రతో బృందాన్ని అడగలేరు.",
@@ -1776,6 +1798,61 @@
   "te": "మీ AI బృందం ప్రస్తుతం ఆగి ఉంది. కొటేషన్లు, ఆర్డర్లు, కస్టమర్లు యథావిధిగా పని చేస్తాయి.",
   "hi": "आपकी AI टीम अभी रुकी है। कोटेशन, ऑर्डर और ग्राहक पहले की तरह काम करते हैं।",
   "kn": "ನಿಮ್ಮ AI ತಂಡ ಸದ್ಯಕ್ಕೆ ನಿಲ್ಲಿಸಲಾಗಿದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್ ಮತ್ತು ಗ್ರಾಹಕರು ಎಂದಿನಂತೆ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.mood.idle": {
+  "en": "Ready",
+  "te": "సిద్ధంగా ఉంది",
+  "hi": "तैयार है",
+  "kn": "ಸಿದ್ಧವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.mood.listening": {
+  "en": "Listening",
+  "te": "వింటోంది",
+  "hi": "सुन रहा है",
+  "kn": "ಕೇಳುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.mood.thinking": {
+  "en": "Thinking",
+  "te": "ఆలోచిస్తోంది",
+  "hi": "सोच रहा है",
+  "kn": "ಯೋಚಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.mood.answering": {
+  "en": "Answering",
+  "te": "జవాబు ఇస్తోంది",
+  "hi": "जवाब दे रहा है",
+  "kn": "ಉತ್ತರಿಸುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.mood.resting": {
+  "en": "Resting",
+  "te": "విశ్రాంతిలో ఉంది",
+  "hi": "आराम कर रहा है",
+  "kn": "ವಿಶ್ರಾಂತಿಯಲ್ಲಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",

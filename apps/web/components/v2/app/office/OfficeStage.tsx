@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import type { Detail } from "./scene/geo";
+import type { Detail } from "../owl/owl-model";
 import { ALL_AGENT_IDS, type AgentId, type Pose } from "./scene/ids";
 import { SceneLabels, type LabelPositions } from "./scene/SceneLabels";
 import { useDark } from "./scene/use-dark";
@@ -81,7 +81,7 @@ export function OfficeStage({
     else setCanvasKey((k) => k + 1);
   }, [onFail]);
 
-  // The name tags of the whole table need room; on a phone only the main agent and the chosen one have a tag.
+  // The name tags of the whole table need room; on a phone only Agent OWL and the chosen one have a tag.
   const stage = React.useRef<HTMLDivElement>(null);
   const [wide, setWide] = React.useState(false);
   React.useEffect(() => {

@@ -5,6 +5,8 @@ import Link from "next/link";
 import * as React from "react";
 
 import { pageH1 } from "../ui";
+import { OwlSvg } from "../owl/OwlSvg";
+import type { OwlMood } from "../owl/owl-mood";
 import { readClientEnv, rememberView, type ClientEnv, type View } from "./scene/capability";
 import { ALL_AGENT_IDS, type AgentId, type Pose } from "./scene/ids";
 import { webglAvailable } from "./scene/webgl";
@@ -19,6 +21,9 @@ const card = "rounded-xl border border-line bg-surface p-4 shadow-[var(--v2-shad
 const pill = "inline-flex items-center rounded-md border px-2 py-0.5 text-sm font-semibold";
 const STATE_PILL = { working: "border-brand-edge bg-brand-bg text-brand-text", idle: "border-line bg-surface-2 text-muted", switched_off: "border-line bg-surface-2 text-ink", not_available: "border-line bg-surface-2 text-ink" } as const;
 const noSubscribe = () => () => {};
+
+/** The mood a helper's avatar is drawn in: working thinks, not built or switched off rests, idle is calm. A still picture: only the Ask box's owl moves. */
+const moodOf = (s: RoomRow["state"]): OwlMood => (s === "working" ? "thinking" : s === "idle" ? "idle" : "resting");
 
 const poseOf = (s: RoomRow["state"]): Pose => (s === "working" ? "working" : s === "idle" ? "idle" : "off");
 
@@ -136,7 +141,10 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
                       className={`${card} flex min-h-24 flex-col gap-1 hover:border-edge ${a.agent === selected ? "border-brand-edge ring-2 ring-brand-edge" : ""}`}
                     >
                       <span className="flex items-start justify-between gap-2">
-                        <span className="font-display text-lg font-semibold">{w(`agent.${a.agent}`)}</span>
+                        <span className="flex min-w-0 items-center gap-2">
+                          <OwlSvg agent={a.agent} mood={moodOf(a.state)} still className="size-11" />
+                          <span className="font-display text-lg font-semibold">{w(`agent.${a.agent}`)}</span>
+                        </span>
                         <span className={`${pill} ${STATE_PILL[a.state]}`}>{stateText(a.state)}</span>
                       </span>
                       <span className="text-base">{a.job}</span>
@@ -173,7 +181,10 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
             {chosen ? (
               <>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h2 className="font-display text-xl font-semibold">{w(`agent.${chosen.agent}`)}</h2>
+                  <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
+                    <OwlSvg agent={chosen.agent} mood={moodOf(chosen.state)} still className="size-11" />
+                    {w(`agent.${chosen.agent}`)}
+                  </h2>
                   <span className={`${pill} ${STATE_PILL[chosen.state]}`}>{stateText(chosen.state)}</span>
                 </div>
                 <p className="mt-1 text-base">{chosen.job}</p>

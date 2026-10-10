@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { formatINR } from "@/design/format";
 
 import { pageH1 } from "../ui";
+import { OwlSvg } from "../owl/OwlSvg";
 import { AskTeam } from "./ask/AskTeam";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
@@ -99,7 +100,7 @@ function Decision({ item, primary, t }: { item: NeedsYouItem; primary: boolean; 
 
 /**
  * The Today screen, as the design-lab app draws it: the greeting and how many things wait, three cards (waiting for you, customer money held, orders in progress), "Ask your team" (a question to
- * the Main agent, centred above the list; it says "Not available yet" until the Main agent and its answer stream exist), "Needs you" (one
+ * Agent OWL, centred above the list, with its 3D owl in the box's header; it says "Not available yet" until Agent OWL and its answer stream exist), "Needs you" (one
  * card per item, the first one's button in the main colour), "Your team right now" (the agents) and "Recently recorded". It only draws what `data` holds: a null part says "Not available
  * yet"; a helper that is `not_available` (not built) or `switched_off` says so on its row. `name` null = the person has no display name on record (the greeting is then the plain greeting).
  */
@@ -150,7 +151,10 @@ export function TodayView({ data, name, hour, base, t, lang = "en" }: { data: To
                 {team.map((a) => (
                   <li key={a.agent} className="flex min-h-14 flex-col justify-center gap-0.5 py-2">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="font-medium">{t(`agent.${a.agent}`)}</span>
+                      <span className="flex min-w-0 items-center gap-2 font-medium">
+                        <OwlSvg agent={a.agent} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} still className="size-9" />
+                        {t(`agent.${a.agent}`)}
+                      </span>
                       <span className={`${pill} ${a.state === "working" ? "border-brand-edge bg-brand-bg text-brand-text" : "border-line bg-surface-2 text-muted"}`}>{a.state === "working" ? t("office.working") : a.state === "idle" ? t("office.idle") : a.state === "switched_off" ? t("office.switchedoff") : t("frame.notyet")}</span>
                     </div>
                     <p className="line-clamp-2 text-sm text-muted">{a.last_event ? `${a.last_event.text} · ${ago(a.last_event.at)}` : a.job}</p>

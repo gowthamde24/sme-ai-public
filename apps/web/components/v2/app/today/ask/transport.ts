@@ -31,7 +31,7 @@ export function parseLine(raw: string): AskEvent | null {
 }
 
 /**
- * The Main agent's answer as an AskTransport: the question goes to this workspace's own route (`<base>/ask`), which holds the person's token and asks the Main agent; the answer comes back
+ * The Agent OWL's answer as an AskTransport: the question goes to this workspace's own route (`<base>/ask`), which holds the person's token and asks the Agent OWL; the answer comes back
  * as one JSON event per line. The chat is one for the life of the box (a conversation id made here, so a follow-up question continues it) and every question is a NEW message id, so a
  * question sent again after a failure is never taken for a replay. A reply that is not the event stream (a sign-in page, an error page) is a failed answer, not text to show.
  */

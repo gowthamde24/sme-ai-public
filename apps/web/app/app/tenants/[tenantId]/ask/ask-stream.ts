@@ -9,7 +9,7 @@ export const MAX_DRAFTS = 5;
 export type QuoteLookup = (quoteId: string) => Promise<string | null>;
 
 /**
- * The page of THIS workspace that a `target` ({type, id} from the Main agent) opens. The path is built here from a type the API cannot invent (the parser accepts only these four) and
+ * The page of THIS workspace that a `target` ({type, id} from the Agent OWL) opens. The path is built here from a type the API cannot invent (the parser accepts only these four) and
  * an id that is a canonical uuid: no part of it is text from the answer. A quote opens the enquiry it belongs to; when that cannot be found it opens the list of quotes.
  */
 export async function pathFor(target: Target | null, base: string, enquiryOfQuote: QuoteLookup): Promise<string | null> {
@@ -34,7 +34,7 @@ export function knownCode(code: string): string | undefined {
 }
 
 /**
- * The Main agent's events (Job AG) as the Ask box's events: a `target` becomes a path inside the workspace, the fields the box does not draw (`status`, `kind` of a source, the chat's ids)
+ * The Agent OWL's events (Job AG) as the Ask box's events: a `target` becomes a path inside the workspace, the fields the box does not draw (`status`, `kind` of a source, the chat's ids)
  * are dropped, the number of sources and drafts is capped, and an error keeps only its code if the box knows it. Anything thrown while reading the stream ends the answer with an error event,
  * so the browser always gets a last word and never a half-open answer.
  */
