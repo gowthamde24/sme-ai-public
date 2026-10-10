@@ -677,7 +677,7 @@ rows are not rewritten: `claims_effective` gains `home_company_id` and `about_le
 
 A tenant's agents may spend at most **2.00 per UTC day** (operator default `agent_limits.daily_cost_micros = 2,000,000`, in millionths of the
 billing currency). The tenant's **Owner** (not Admin, second factor required, ADR 0016) can set its own value with
-`set_tenant_daily_cost_cap` to anything from 0 to **20.00**; both the default and the override carry that ceiling as a CHECK, and the change is
+`set_tenant_daily_cost_cap` to anything from 0 to **20.00** (raised to **500.00** by migration `20261104090000`, ADR 0063 addendum); both the default and the override carry that ceiling as a CHECK, and the change is
 audited by the `tenant_agent_settings` audit trigger (who, old value, new value). Migration `20261014090000_t007_daily_cost_cap.sql`; tests
 `supabase/tests/database/49_daily_cost_cap.test.sql`, `tests/integration/test_daily_cost_cap.py` and three tests in
 `tests/integration/test_agent_runs_api.py`.

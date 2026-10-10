@@ -18,7 +18,7 @@ describe("parseLine", () => {
     expect(parseLine('{"type":"text","delta":"a"}')).toEqual({ type: "text", delta: "a" });
     expect(parseLine('{"type":"source","label":"L","href":null}')).toEqual({ type: "source", label: "L", href: null });
     expect(parseLine('{"type":"draft","id":"i","kind":"reply_draft","title":"t","summary":"s","href":null,"language":"te","gloss":"g","machine":true}')).toEqual({ type: "draft", id: "i", kind: "reply_draft", title: "t", summary: "s", href: null, language: "te", gloss: "g", machine: true });
-    expect(parseLine('{"type":"error","code":"cost_cap_reached"}')).toEqual({ type: "error", code: "cost_cap_reached" });
+    expect(parseLine('{"type":"error","code":"ai_paused_until"}')).toEqual({ type: "error", code: "ai_paused_until" });
     expect(parseLine('{"type":"done"}')).toEqual({ type: "done" });
     for (const bad of ["", "not json", "[]", "null", '{"type":"start"}', '{"type":"text"}', '{"type":"text","delta":5}', '{"type":"source","label":"L"}', '{"type":"draft","id":"i"}']) expect(parseLine(bad), bad).toBeNull();
   });

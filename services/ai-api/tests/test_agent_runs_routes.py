@@ -297,7 +297,7 @@ def test_database_refusals_have_fixed_messages_and_no_database_text(w: World) ->
     cases: list[tuple[Exception, int, str]] = [
         (AgentsDisabledError("SM204"), 409, "agents_disabled"),
         (RunLimitError("SM206"), 429, "run_limit_reached"),
-        (CostCapError("SM207"), 429, "cost_cap_reached"),
+        (CostCapError("SM207"), 429, "ai_paused_until"),
         (TokenExpiringError("SM202"), 409, "token_expiring"),
         (DraftHasWorkError("SM211"), 409, "discard_draft_to_rerun"),
         (Forbidden("42501"), 403, "forbidden"),
@@ -312,6 +312,19 @@ def test_database_refusals_have_fixed_messages_and_no_database_text(w: World) ->
         if code == "discard_draft_to_rerun":
             assert r.json()["error"]["message"] == "Discard the current draft to re-run."
         assert CANARY not in r.text and "22003" not in r.text
+    assert not w.executor.tasks
+
+
+def test_a_used_up_allowance_is_ai_paused_until_with_the_time_it_is_back(w: World) -> None:
+    from datetime import datetime
+
+    w.repo.start_error = CostCapError("SM207")
+    r = post_start(w)
+    error = r.json()["error"]
+    assert r.status_code == 429 and error["code"] == "ai_paused_until"
+    assert "keep working" in error["message"], "it says that everything but the AI keeps working"
+    until = datetime.fromisoformat(error["until"].replace("Z", "+00:00"))
+    assert until.tzinfo is not None and until > datetime.now(until.tzinfo)
     assert not w.executor.tasks
 
 

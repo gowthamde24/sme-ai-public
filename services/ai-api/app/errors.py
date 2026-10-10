@@ -23,12 +23,15 @@ class ApiError(Exception):
         code: str,
         message: str,
         headers: dict[str, str] | None = None,
+        extra: dict[str, str] | None = None,
     ) -> None:
         super().__init__(message)
         self.status_code = status_code
         self.code = code
         self.message = message
         self.headers = headers or {}
+        # closed, non-secret fields added next to code and message (e.g. `until` of ai_paused_until)
+        self.extra = extra or {}
 
 
 def unauthorized() -> ApiError:
@@ -59,15 +62,19 @@ def forbidden() -> ApiError:
     return ApiError(403, "forbidden", "Your role does not allow this action.")
 
 
-def _body(code: str, message: str) -> dict[str, dict[str, str]]:
-    return {"error": {"code": code, "message": message}}
+def _body(
+    code: str, message: str, extra: dict[str, str] | None = None
+) -> dict[str, dict[str, str]]:
+    return {"error": {"code": code, "message": message, **(extra or {})}}
 
 
 def install_error_handlers(app: FastAPI) -> None:
     @app.exception_handler(ApiError)
     async def _api_error(_: Request, exc: ApiError) -> JSONResponse:
         return JSONResponse(
-            _body(exc.code, exc.message), status_code=exc.status_code, headers=exc.headers
+            _body(exc.code, exc.message, exc.extra),
+            status_code=exc.status_code,
+            headers=exc.headers,
         )
 
     @app.exception_handler(StarletteHTTPException)

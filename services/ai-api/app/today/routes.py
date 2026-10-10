@@ -15,7 +15,7 @@ from fastapi import APIRouter, Depends
 from app.auth.deps import AnyMember, OwnerOrAdmin, Runtime, get_runtime
 from app.errors import ApiError
 from app.today import service
-from app.today.models import AgentStatusOut, AiUsageOut, TodayOut
+from app.today.models import AgentStatusOut, AiUsageOut, AiUsagePercentOut, TodayOut
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["today"])
 
@@ -41,6 +41,14 @@ def get_today(ctx: AnyMember, runtime: RuntimeDep) -> TodayOut:
 def get_ai_usage_today(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> AiUsageOut:
     """Today's (Asia/Kolkata day) AI spend against the daily cap, in paise. Owner, Admin."""
     return service.shape_ai_usage(_repo(runtime).ai_usage(ctx.principal.token, ctx.tenant.id))
+
+
+@router.get("/ai-usage", response_model=AiUsagePercentOut)
+def get_ai_usage(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> AiUsagePercentOut:
+    """How much of today's (India day) and this month's AI allowance is used, as percentages. Owner, Admin. No amounts."""
+    return service.shape_ai_usage_percent(
+        _repo(runtime).ai_usage_percent(ctx.principal.token, ctx.tenant.id)
+    )
 
 
 @router.get("/agents/status", response_model=list[AgentStatusOut])

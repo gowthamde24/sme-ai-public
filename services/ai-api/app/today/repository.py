@@ -27,6 +27,10 @@ class TodayRepository(Protocol):
 
     def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any: ...
 
+    def ai_usage_percent(self, token: str, tenant_id: uuid.UUID) -> Any: ...
+
+    def paused_until(self, token: str, tenant_id: uuid.UUID) -> Any: ...
+
 
 class PostgrestTodayRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
@@ -70,3 +74,11 @@ class PostgrestTodayRepository:
 
     def ai_usage(self, token: str, tenant_id: uuid.UUID) -> Any:
         return self._rpc("ai_usage_today", token, tenant_id)
+
+    def ai_usage_percent(self, token: str, tenant_id: uuid.UUID) -> Any:
+        """Owner or Admin: percentages and reset times only (job AK / K2)."""
+        return self._rpc("ai_usage", token, tenant_id)
+
+    def paused_until(self, token: str, tenant_id: uuid.UUID) -> Any:
+        """Any member: when the AI features are back (an ISO time) or null."""
+        return self._rpc("ai_paused_until", token, tenant_id)

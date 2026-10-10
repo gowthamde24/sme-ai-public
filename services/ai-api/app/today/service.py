@@ -15,6 +15,7 @@ from app.today.models import (
     AGENT_ORDER,
     AgentStatusOut,
     AiUsageOut,
+    AiUsagePercentOut,
     LastEvent,
     NeedsYouItem,
     RecentStep,
@@ -152,6 +153,25 @@ def shape_ai_usage(raw: Any) -> AiUsageOut:
     return AiUsageOut(spent_paise=spent, cap_paise=cap, left_paise=max(cap - spent, 0))
 
 
+def shape_ai_usage_percent(raw: Any) -> AiUsagePercentOut:
+    """Percentages are the database's (spent / allowance, rounded down, at most 100); this only checks the shape. No paise, no tokens exist in this answer."""
+    if not isinstance(raw, dict):
+        raise _bad("usage answer")
+    today, month = _int(raw.get("today_percent"), "percent"), _int(raw.get("month_percent"), "percent")
+    if not (0 <= today <= 100 and 0 <= month <= 100):
+        raise _bad("usage percent")
+    try:
+        return AiUsagePercentOut(
+            today_percent=today,
+            month_percent=month,
+            resets_at_today=raw["resets_at_today"],
+            resets_at_month=raw["resets_at_month"],
+            state=raw["state"],
+        )
+    except (KeyError, ValueError):
+        raise _bad("usage answer") from None
+
+
 JOBS: dict[str, str] = {
     "main": "Answers your questions about your business, with sources, and leaves drafts for you to approve. It sends nothing and sets no price.",
     "lead_finder": "Finds new businesses that may want to buy. Not built yet.",
@@ -203,14 +223,20 @@ def shape_agents(raw: Any) -> list[AgentStatusOut]:
     workspace_switch = raw.get("agents_enabled") is True
 
     def run_agent(key: str) -> tuple[str, LastEvent | None]:
-        """"switched_off" is a helper that exists and whose switch is off (the platform's, its own, or the workspace's); a helper that does not exist is "not_available"."""
+        """ "switched_off" is a helper that exists and whose switch is off (the platform's, its own, or the workspace's); a helper that does not exist is "not_available"."""
         facts = raw.get(key) or {}
-        on = facts["switched_on"] if isinstance(facts.get("switched_on"), bool) else workspace_switch
-        state = "switched_off" if not on else ("working" if facts.get("running") is True else "idle")
+        on = (
+            facts["switched_on"] if isinstance(facts.get("switched_on"), bool) else workspace_switch
+        )
+        state = (
+            "switched_off" if not on else ("working" if facts.get("running") is True else "idle")
+        )
         status = facts.get("last_status")
         words = _MAIN_TEXT if key == "main" else _RUN_TEXT
         return state, _last(
-            words.get(str(status)) if status else None, facts.get("last_at"), facts.get("last_target")
+            words.get(str(status)) if status else None,
+            facts.get("last_at"),
+            facts.get("last_target"),
         )
 
     out: list[AgentStatusOut] = []

@@ -11,7 +11,7 @@ adapter, and prints PASS or FAIL per question:
 
 HARD LIMITS (they live in this file and in the database, not in a promise):
   * the KEY comes from the environment only. This script never reads a file for it, never prints it, and refuses to start without it (one line, exit 2);
-  * the daily cost cap stays ON: for the run it is raised on the demo workspace only (to the database's own maximum, ₹20) and the assistant's per-run budget to ₹5, both put back exactly
+  * the daily cost cap stays ON: for the run it is raised on the demo workspace only (to ₹30, well inside the database's wall of ₹500) and the assistant's per-run budget to ₹5, both put back exactly
     afterwards, and a cap hit is still reported, not worked around. Nothing else (no other workspace, no product default, no rate limit) is touched;
   * the whole command may spend at most ₹30 (MAX_SPEND_PAISE): before each question it adds the worst case of one more run (the database's own per-run budget for the
     assistant) to what was spent so far and STOPS the remaining questions if that would pass the limit; the paise spent are printed at the end;
@@ -50,9 +50,8 @@ from app.assistant.runner import money_amounts  # noqa: E402
 
 MAX_SPEND_PAISE = 3000  # ₹30: the whole command
 # For THIS command, on the DEMO workspace only, and put back exactly afterwards (job AK, K1): a Sonnet-class model's worst-case reservation for one call is more than the product defaults
-# (₹1 per run for the assistant, ₹2 a day per workspace), so the first question could never pass. The daily cap is raised to the DATABASE'S OWN MAXIMUM for a workspace cap (a CHECK of
-# 20,000,000 micros = ₹20; the brief asked ₹30, which the database refuses without a migration that raises the system maximum: that is the owner's decision, see the K1 report).
-SMOKE_DAILY_CAP_MICROS = 20_000_000
+# (₹1 per run for the assistant, ₹2 a day per workspace), so the first question could never pass. The daily cap is raised to ₹30 (30,000,000 micros), the same as the whole-command guard: the database's wall for a workspace cap is ₹500 since migration 20261104090000, so the cap and the guard now agree.
+SMOKE_DAILY_CAP_MICROS = 30_000_000
 SMOKE_RUN_BUDGET_MICROS = 5_000_000  # ₹5 per assistant run (the definition's max_cost_micros)
 MICROS_PER_PAISE = 10_000  # 1,000,000 micros = ₹1 = 100 paise (the same unit as the AI usage card)
 DEFAULT_BASE_URL = "https://api.anthropic.com"
@@ -731,7 +730,7 @@ def main(env: Mapping[str, str] | None = None) -> int:
         )
         today_paise = spent_micros(tenant) // MICROS_PER_PAISE
         print(
-            f"assistant-smoke: the demo workspace's daily cap is {cap_paise} paise, {today_paise} paise already spent today (India day). A call is reserved at its worst case, so a cap that is too low shows as FAIL (cost_cap_reached). The cap and the assistant's per-run budget (now {worst_case_run_paise()} paise) were raised for this run and are put back at the end."
+            f"assistant-smoke: the demo workspace's daily cap is {cap_paise} paise, {today_paise} paise already spent today (India day). A call is reserved at its worst case, so a cap that is too low shows as FAIL (ai_paused_until). The cap and the assistant's per-run budget (now {worst_case_run_paise()} paise) were raised for this run and are put back at the end."
         )
         with TestClient(create_app(settings, runtime=runtime)) as client:
             verdicts = run_questions(client, tenant, seeder.token, demo_id("manual-lead"), guard)

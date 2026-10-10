@@ -38,8 +38,8 @@ function explain(error: unknown, whatFor: string): string {
       return "That record is archived, so it cannot be a target.";
     if (error.status === 409)
       return "This form is out of date. Reload the page and try again.";
-    if (error.status === 429 && error.code === "cost_cap_reached")
-      return "This workspace's agents have used today's spending limit. Try again tomorrow (India time).";
+    if (error.status === 429 && error.code === "ai_paused_until")
+      return "AI help is paused because this workspace's AI allowance for the period is used up. Quotes, orders, follow-ups and customers keep working. Try again later.";
     if (error.status === 429) return "Too many agent runs right now. Try again later.";
     if (error.status === 503)
       return "Agents are not available right now (not configured, or busy). Try again later.";

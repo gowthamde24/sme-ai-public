@@ -112,8 +112,8 @@ describe("extractRequirementAction", () => {
   });
 
   it("says why it could not start", async () => {
-    api.startRequirementRun.mockRejectedValue(new ApiRequestError(429, "cost_cap_reached", CANARY));
-    expect((await extractRequirementAction(TENANT, ENQ, undefined, form({ run_id: RUN })))?.error).toMatch(/spending limit/);
+    api.startRequirementRun.mockRejectedValue(new ApiRequestError(429, "ai_paused_until", CANARY));
+    expect((await extractRequirementAction(TENANT, ENQ, undefined, form({ run_id: RUN })))?.error).toMatch(/AI help is paused/);
     api.startRequirementRun.mockRejectedValue(new ApiRequestError(409, "requirement_confirmed", CANARY));
     expect((await extractRequirementAction(TENANT, ENQ, undefined, form({ run_id: RUN })))?.error).toMatch(/Discard it first/);
     api.startRequirementRun.mockRejectedValue(new ApiRequestError(409, "discard_draft_to_rerun", CANARY));
