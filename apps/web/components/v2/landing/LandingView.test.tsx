@@ -12,6 +12,7 @@ import { BRAND_NAME } from "@/design/brand";
 import { fill } from "@/i18n/fill";
 import { LANGS, type Lang } from "@/i18n/lang";
 import { landingDict } from "@/i18n/landing";
+import { legalDict } from "@/i18n/legal";
 import { FORBIDDEN_CLAIMS } from "@/i18n/strings/forbidden";
 
 const decode = (s: string) => s.replace(/&#x27;|&#39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
@@ -112,13 +113,27 @@ describe("landing page: structure and honesty", () => {
     expect(h).not.toContain("Play motion");
     expect(h).toContain('aria-label="Pause animation"');
   });
-  it("the footer's privacy, terms and contact entries are plain text labelled (placeholder), not links", () => {
+  it("the footer links to the Privacy Policy and the Terms, has a Cookie settings button, and Contact stays a plain label (job BH)", () => {
     const h = html("en");
     const footer = h.slice(h.indexOf("<footer"));
-    for (const k of ["foot.privacy", "foot.terms", "foot.contact"] as const) {
-      expect(en[k]).toMatch(/\(placeholder\)/);
-      expect(footer).toContain(`>${en[k]}<`);
-      expect(footer).not.toMatch(new RegExp(`<a[^>]*>${en[k].replace(/[()]/g, "\\$&")}`));
+    expect(footer).toMatch(/<a[^>]*href="\/privacy"[^>]*>Privacy Policy</);
+    expect(footer).toMatch(/<a[^>]*href="\/terms"[^>]*>Terms of Use</);
+    expect(footer).toMatch(/<button[^>]*type="button"[^>]*>Cookie settings</);
+    expect(footer).toContain(`>${en["foot.contact"]}<`);
+    expect(footer).not.toMatch(new RegExp(`<a[^>]*>${en["foot.contact"].replace(/[()]/g, "\\$&")}`));
+  });
+  it("says in one sentence that Agent OWL is an AI assistant and that messages to customers may be written by AI and are labelled (job BH)", () => {
+    for (const lang of LANGS) {
+      const d = landingDict(lang);
+      expect(html(lang)).toContain(d["priv.ai"]);
+    }
+    expect(landingDict("en")["priv.ai"]).toMatch(/AI assistant.*written by AI.*labelled/);
+  });
+  it("the legal links are in each language's words", () => {
+    for (const lang of ["te", "hi", "kn"] as const) {
+      const footer = html(lang).slice(html(lang).indexOf("<footer"));
+      expect(footer).toContain(legalDict(lang)["legal.privacy.name"]);
+      expect(footer).toContain(legalDict(lang)["legal.cookies.link"]);
     }
   });
   for (const lang of LANGS) {

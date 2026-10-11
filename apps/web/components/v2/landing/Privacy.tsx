@@ -21,6 +21,9 @@ export function Privacy({ t }: { t: LandingT }) {
           </li>
         ))}
       </ul>
+      <p data-landing="ai-note" className="mt-6 max-w-2xl text-base text-muted">
+        {t("priv.ai")}
+      </p>
     </section>
   );
 }

@@ -406,3 +406,15 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | [x] | **(Fixed in the job BD review.)** *Was:* a voice replay called the speech engine again without charging the ledger. A retry now reuses the stored words and calls nothing. |
 | [ ] | **Bhashini text to speech and the AI4Bharat adapters are untested against a live service.** |
 | [ ] | **The router's safety net word lists** (weak signals) are written without native readers, like the trigger lists. Read the `assistant router miss` log lines after a week of use and add what is missing. |
+
+## Privacy policy, terms and cookie notice (job BH)
+
+| Status | Item | Source | Owner | When |
+|---|---|---|---|---|
+| [ ] | **Legal review of `/privacy` and `/terms`, then remove the draft banner.** The texts are built from `docs/data-inventory.md`, are English only, and carry `[COMPANY NAME]`, `[ADDRESS]`, `[GRIEVANCE OFFICER]`, `[EMAIL]`, `[EFFECTIVE DATE]` and `[CONFIRM ...]` / `[LEGAL REVIEW ...]` marks (highlighted on the page). The banner goes when `LEGAL_IS_DRAFT` in `apps/web/lib/legal/version.ts` is set to false; a changed text gets a new `LEGAL_VERSION`. | job BH | Owner + counsel | Before external customers |
+| [ ] | **Name the providers and regions in the Privacy Policy** (hosting, Supabase region, model, speech, e-mail; WhatsApp when connected) and read their retention and training terms. | job BH, ADR 0015, 0065, 0071 | Owner | Before real data |
+| [ ] | **Re-acceptance when the terms change.** The database keeps one `terms_version` per user (`terms_acceptances`, one row, `on conflict do nothing`), for Terms and Privacy together. A new version needs a re-accept flow and, if wanted, a row per acceptance. | job BH | Claude 1 (API/DB) | Before the first change after launch |
+| [ ] | **Account deletion and a data-access download for the account holder** (rights of access, erasure of the sign-in account). Today: write to the grievance e-mail. | job BH | Claude 1 | Before external customers |
+| [ ] | **Landing FAQ "Nothing is sent automatically"** must change before a real WhatsApp adapter ships (the outbox can send automatically under policy). | job BH, ADR 0066 | Owner | Before a real adapter |
+| [x] | Cookie notice, cookie settings (Analytics off by default, no analytics loaded), footer links, sign-up consent checkbox with the Terms and Privacy Policy linked, and the AI disclosure on the landing page and in the Privacy Policy. | job BH | | Done |
+

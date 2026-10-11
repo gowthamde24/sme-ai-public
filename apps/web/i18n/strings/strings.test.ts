@@ -1,12 +1,13 @@
 import { describe, expect, it } from "vitest";
 import landing from "@/i18n/strings/landing.json";
+import legal from "@/i18n/strings/legal.json";
 import login from "@/i18n/strings/login.json";
 import { LANGS } from "@/i18n/lang";
 import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/strings";
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
 
 type Entry = { en: string; te: string; hi: string; kn: string; status: Record<string, string>; only?: string[] };
-const SETS: Record<string, Record<string, Entry>> = { landing, login } as never;
+const SETS: Record<string, Record<string, Entry>> = { landing, login, legal } as never;
 const langsOf = (e: Entry) => e.only ?? [...TRANSLATED_LANGS];
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 
@@ -26,7 +27,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|role\.main\.t$)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);

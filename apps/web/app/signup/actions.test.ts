@@ -54,6 +54,6 @@ describe("the signUp action", () => {
     await signUp({ ...GOOD, terms_version: "evil", role: "owner" } as unknown as typeof GOOD);
     const sent = supabase.auth.signUp.mock.calls[0][0];
     expect(Object.keys(sent.options.data).sort()).toEqual(["business_name", "display_name", "terms_version"]);
-    expect(sent.options.data.terms_version).toBe("draft-1");
+    expect(sent.options.data.terms_version).toBe("draft-2026-10");
   });
 });

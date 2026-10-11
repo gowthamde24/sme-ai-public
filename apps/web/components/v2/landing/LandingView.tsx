@@ -40,7 +40,7 @@ export function LandingView({ lang, theme }: { lang: Lang; theme?: Theme }) {
           <Privacy t={t} />
           <Faq t={t} />
         </main>
-        <Footer t={t} />
+        <Footer t={t} lang={lang} />
       </div>
     </V2Root>
   );

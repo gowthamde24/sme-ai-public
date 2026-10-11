@@ -13,6 +13,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
 
 import { AuthFrame } from "@/components/v2/auth/AuthFrame";
 import { authDict } from "@/i18n/auth";
+import { legalDict } from "@/i18n/legal";
 import { LANGS } from "@/i18n/lang";
 
 import AuthLayout, { metadata as authMetadata } from "@/app/auth/layout";
@@ -90,3 +91,16 @@ describe("the two route layouts", () => {
     expect(code).not.toMatch(/redirect|requireUser|supabase|"use server"|fetch\(|cookies/);
   });
 });
+
+describe("AuthFrame footer (job BH)", () => {
+  it.each(LANGS)("%s: Privacy Policy, Terms and Cookie settings are in the footer, in that language", async (lang) => {
+    jarValues.sme_lang = lang;
+    const out = renderToStaticMarkup(await AuthFrame({ children: PAGE }));
+    const footer = out.slice(out.indexOf("<footer"));
+    expect(footer).toContain('href="/privacy"');
+    expect(footer).toContain('href="/terms"');
+    expect(footer).toContain("<button");
+    expect(footer).toContain(legalDict(lang)["legal.cookies.link"]);
+  });
+});
+

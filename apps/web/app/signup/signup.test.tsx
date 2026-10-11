@@ -13,9 +13,9 @@ import SignupPage from "./page";
 import type { SignUpResult } from "@/lib/api/signup";
 
 const words: SignUpWords = {
-  name: "Your name", email: "Email", password: "Password", passwordHint: "At least 12 characters.", business: "Business name", terms: "I accept the terms of use and the privacy notice.",
+  name: "Your name", email: "Email", password: "Password", passwordHint: "At least 12 characters.", business: "Business name", terms: "I agree to the {terms} and the {privacy}.", termsLink: "Terms", privacyLink: "Privacy Policy",
   submit: "Create account", have: "Already have an account?", signin: "Sign in",
-  errors: { weak_password: "Choose a stronger password.", terms_required: "You need to accept the terms.", unknown: "Something went wrong." },
+  errors: { weak_password: "Choose a stronger password.", terms_required: "You need to agree to the Terms and the Privacy Policy.", unknown: "Something went wrong." },
 };
 const fill = (accept = true) => {
   fireEvent.change(screen.getByLabelText("Your name"), { target: { value: " Asha " } });
@@ -30,6 +30,32 @@ afterEach(cleanup);
 
 describe("SignUpForm", () => {
   const ok = async (): Promise<SignUpResult> => ({ ok: true, next: "check-email" });
+  it("the consent checkbox is required and NOT ticked, with the Terms and the Privacy Policy linked (new tab, no opener) (job BH)", () => {
+    render(<SignUpForm words={words} action={ok} />);
+    const box = screen.getByRole("checkbox");
+    expect(box).not.toBeChecked();
+    expect(box).toBeRequired();
+    expect(box.closest("label")).toHaveTextContent("I agree to the Terms (opens in a new tab) and the Privacy Policy (opens in a new tab).");
+    const terms = screen.getByRole("link", { name: /^Terms/ });
+    const privacy = screen.getByRole("link", { name: /^Privacy Policy/ });
+    expect(terms).toHaveAttribute("href", "/terms");
+    expect(privacy).toHaveAttribute("href", "/privacy");
+    for (const a of [terms, privacy]) {
+      expect(a).toHaveAttribute("target", "_blank");
+      expect(a.getAttribute("rel")).toContain("noopener");
+    }
+    expect(box.closest("label")!.className).toContain("min-h-11");
+  });
+  it("without the tick nothing is sent, and a click on a link does not tick the box (job BH)", async () => {
+    const action = vi.fn(async (): Promise<SignUpResult> => ({ ok: true, next: "check-email" }));
+    render(<SignUpForm words={words} action={action} />);
+    fill(false);
+    fireEvent.click(screen.getByRole("link", { name: /^Terms/ }));
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+    expect(await screen.findByRole("alert")).toHaveTextContent("agree to the Terms");
+    expect(action).not.toHaveBeenCalled();
+  });
   it("is drawn with a way back to sign in, and no 'Not available yet'", () => {
     render(<SignUpForm words={words} action={ok} />);
     expect(screen.getByRole("button", { name: "Create account" })).toBeEnabled();
@@ -41,7 +67,7 @@ describe("SignUpForm", () => {
     render(<SignUpForm words={words} action={action} />);
     fill(false);
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
-    expect(await screen.findByRole("alert")).toHaveTextContent("You need to accept the terms.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("You need to agree to the Terms and the Privacy Policy.");
     expect(action).not.toHaveBeenCalled();
     fireEvent.click(screen.getByRole("checkbox"));
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
@@ -86,7 +112,7 @@ describe("the pages", () => {
     fill();
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
     expect(await screen.findByRole("alert")).toHaveTextContent("Choose a stronger password: at least 12 characters");
-    for (const [code, text] of [["terms_required", /accept the terms/], ["too_many_signups", /Too many tries/], ["invalid", /Check your name/]] as const) {
+    for (const [code, text] of [["terms_required", /agree to the Terms/], ["too_many_signups", /Too many tries/], ["invalid", /Check your name/]] as const) {
       signUp.mockResolvedValue({ ok: false, error: code });
       fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
       await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(text));
@@ -99,7 +125,10 @@ describe("the pages", () => {
     render(await SignupPage());
     expect(screen.getByRole("heading", { level: 1, name: "Create your account" })).toBeInTheDocument();
     expect(screen.getByText("At least 12 characters.")).toBeInTheDocument();
-    expect(screen.getByText("I accept the terms of use and the privacy notice.")).toHaveAttribute("lang", "en");
+    const line = screen.getByRole("checkbox").closest("label")!.querySelector("span")!;
+    expect(line).toHaveAttribute("lang", "en");
+    expect(line.textContent).toContain("I agree to the Terms");
+    expect(line.textContent).toContain("and the Privacy Policy");
     expect(screen.queryByText(/Not available yet/)).toBeNull();
     expect(screen.getByRole("button", { name: "Create account" })).toBeEnabled(); // wired to the real action
   });

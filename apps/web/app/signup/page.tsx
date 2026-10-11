@@ -24,7 +24,7 @@ export default async function SignupPage() {
       <p className={authLead}>{t("signup.sub")}</p>
       <SignUpForm
         action={signUp}
-        words={{ name: t("signup.name"), email: t("signup.email"), password: t("signup.password"), passwordHint: t("signup.password.hint", { n: MIN_PASSWORD }), business: t("signup.business"), terms: t("signup.terms"), submit: t("signup.submit"), have: t("signup.have"), signin: t("signup.signin"), errors }}
+        words={{ name: t("signup.name"), email: t("signup.email"), password: t("signup.password"), passwordHint: t("signup.password.hint", { n: MIN_PASSWORD }), business: t("signup.business"), terms: t("signup.terms"), termsLink: t("signup.terms.link"), privacyLink: t("signup.privacy.link"), submit: t("signup.submit"), have: t("signup.have"), signin: t("signup.signin"), errors }}
       />
     </main>
   );

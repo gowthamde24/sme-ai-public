@@ -5,9 +5,9 @@ import { LANGS } from "@/i18n/lang";
 import { landingDict, landingT } from "@/i18n/landing";
 
 describe("landing dictionary", () => {
-  it("has the same 137 keys in every language", () => {
+  it("has the same 136 keys in every language", () => {
     const keys = Object.keys(landingDict("en"));
-    expect(keys).toHaveLength(137);
+    expect(keys).toHaveLength(136);
     for (const l of LANGS) expect(Object.keys(landingDict(l))).toEqual(keys);
   });
   it("t() fills the brand, the year and variables", () => {

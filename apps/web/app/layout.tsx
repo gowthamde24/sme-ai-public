@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
+import { CookieConsent } from "@/components/v2/legal/CookieConsent";
+import { COOKIE_WORD_KEYS } from "@/components/v2/legal/cookie-words";
+import { V2Root } from "@/components/v2/V2Root";
+import { legalT } from "@/i18n/legal";
+import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
+import { CONSENT_COOKIE, readConsent } from "@/lib/consent/consent";
 
 import "./globals.css";
 
@@ -20,10 +25,19 @@ export const metadata: Metadata = {
  * No choice means no attribute: everything follows the system, as before. Removed in the clean-up batch.
  */
 export default async function RootLayout({ children }: LayoutProps<"/">) {
-  const theme = readTheme((await cookies()).get(THEME_COOKIE)?.value);
+  const jar = await cookies();
+  const theme = readTheme(jar.get(THEME_COOKIE)?.value);
+  const lang = readLang(jar.get(LANG_COOKIE)?.value);
+  const t = legalT(lang);
+  // the cookie notice (job BH): shown once on every page until the visitor answers; the server reads the answer from the sme_consent cookie, so it never flickers for someone who has answered
   return (
     <html lang="en" data-theme={theme}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <V2Root theme={theme} lang={lang} className="sticky bottom-0 z-[70]">
+          <CookieConsent initial={readConsent(jar.get(CONSENT_COOKIE)?.value)} words={Object.fromEntries(COOKIE_WORD_KEYS.map((k) => [k, t(k)]))} />
+        </V2Root>
+      </body>
     </html>
   );
 }

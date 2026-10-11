@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { container } from "@/components/v2/landing/ui";
+import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { V2Root } from "@/components/v2/V2Root";
 import { Wordmark } from "@/components/v2/Wordmark";
 import { BRAND_NAME } from "@/design/brand";
@@ -63,6 +64,9 @@ export async function AuthFrame({ children }: { children: ReactNode }) {
             </p>
           </div>
         </div>
+        <footer className="border-t border-line">
+          <LegalLinks lang={lang} className={`${container} py-2`} />
+        </footer>
       </div>
     </V2Root>
   );

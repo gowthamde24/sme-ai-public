@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
+import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { V2Root } from "@/components/v2/V2Root";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
@@ -50,9 +51,13 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
               {appT(lang)("frame.draft")}
             </div>
           ) : null}
-          <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 pb-20 outline-none md:pb-0">
+          <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 outline-none">
             {children}
           </div>
+          {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone */}
+          <footer data-frame="legal" className="border-t border-line px-4 pb-20 pt-1 md:px-8 md:pb-2">
+            <LegalLinks lang={lang} />
+          </footer>
         </div>
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden">
           <TabBar memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} />
