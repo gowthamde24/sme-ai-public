@@ -3,13 +3,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { notFoundMock, redirectMock } from "@/test/helpers";
-import { parseOutboxPage } from "@/lib/api/outbox";
+import { parseOutboxPage, parseOutboxSummary } from "@/lib/api/outbox";
 import { PRICE_JSON, page } from "@/lib/api/outbox-fixtures";
 import { STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const listOutboxMessages = vi.fn();
+const getOutboxSummary = vi.fn();
 const getOutboxSettings = vi.fn();
 const getSchedulerStatus = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: () => undefined }) }));
@@ -17,7 +18,7 @@ vi.mock("next/cache", () => ({ revalidatePath: () => undefined }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
-vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), listOutboxMessages: (...a: unknown[]) => listOutboxMessages(...a), getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a) }));
+vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), listOutboxMessages: (...a: unknown[]) => listOutboxMessages(...a), getOutboxSummary: (...a: unknown[]) => getOutboxSummary(...a), getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a) }));
 vi.mock("@/lib/api/scheduler", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/scheduler")>()), getSchedulerStatus: (...a: unknown[]) => getSchedulerStatus(...a) }));
 
 import OutboxPage from "./page";
@@ -37,33 +38,42 @@ beforeEach(() => {
   requireUser.mockResolvedValue({ id: "user-1", email: "e@example.test", accessToken: "tok" });
   fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme", slug: "acme", role: "owner" });
   listOutboxMessages.mockResolvedValue(parseOutboxPage(page([{ ...PRICE_JSON, created_at: "2026-10-11T03:12:00Z" }])));
-  getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3 });
+  getOutboxSummary.mockResolvedValue(parseOutboxSummary({ waiting: 1, scheduled: 0, sent: 4, blocked: 0, due_now: 0, held_for_later: 0 }));
+  getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 });
   getSchedulerStatus.mockResolvedValue({ ...STATUS_JSON, last_run_at: "2026-10-11T04:58:00Z", next_run_at: "2026-10-11T05:01:00Z" });
 });
 afterEach(() => vi.useRealTimers());
 
 describe("the Outbox page", () => {
-  it("opens on 'Waiting for you', the last 7 days, and reads that tab with the person's token", async () => {
+  it("opens on 'Waiting for you', with no filter, and reads that tab and the counts with the person's token", async () => {
     await draw();
-    expect(listOutboxMessages).toHaveBeenCalledWith("tok", TENANT, { status: "needs_approval", limit: 100, after: null });
+    expect(listOutboxMessages).toHaveBeenCalledWith("tok", TENANT, { tab: "waiting", limit: 30, after: null });
+    expect(getOutboxSummary).toHaveBeenCalledWith("tok", TENANT, {});
+    expect(document.querySelector('[data-count="sent"]')).toHaveTextContent("4");
     expect(screen.getByRole("link", { name: /Waiting for you/ })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Mentions a price")).toBeInTheDocument();
     expect(screen.getByText(/Agent OWL last checked 2 min ago · next check 10:31/)).toBeInTheDocument();
   });
-  it("?tab= chooses a tab and an unknown word chooses the first; ?range= and ?q= are checked too", async () => {
-    await draw({ tab: "sent", range: "today", q: "Lak" });
-    expect(listOutboxMessages.mock.calls.some((c) => c[2].status === "sent")).toBe(true);
+  it("?tab= chooses a tab and an unknown word chooses the first; the customer and the dates go to the SERVER", async () => {
+    await draw({ tab: "sent", q: "Lak", from: "2026-10-01", to: "2026-10-04" });
+    expect(listOutboxMessages).toHaveBeenCalledWith("tok", TENANT, { tab: "sent", limit: 30, after: null, customer: "Lak", from: "2026-10-01", to: "2026-10-04" });
+    expect(getOutboxSummary).toHaveBeenCalledWith("tok", TENANT, { customer: "Lak", from: "2026-10-01", to: "2026-10-04" });
     expect(screen.getByLabelText("Customer")).toHaveValue("Lak");
-    expect(screen.getByLabelText("Show")).toHaveValue("today");
+    expect(screen.getByLabelText("From")).toHaveValue("2026-10-01");
     document.body.innerHTML = "";
-    await draw({ tab: "<script>", range: "forever" });
+    await draw({ tab: "<script>", from: "forever" });
     expect(screen.getByRole("link", { name: /Waiting for you/ })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByLabelText("Show")).toHaveValue("7d");
+    expect(screen.getByLabelText("From")).toHaveValue("");
   });
-  it("an over-long search or cursor is cut or ignored", async () => {
+  it("an older link with range=7d still works: it becomes dates", async () => {
+    await draw({ range: "7d" });
+    expect(listOutboxMessages.mock.calls[0][2]).toMatchObject({ from: "2026-10-05", to: "2026-10-11" });
+  });
+  it("an over-long search is cut and an over-long cursor is ignored", async () => {
     await draw({ q: "x".repeat(300), after: "c".repeat(500), tab: "sent" });
     expect((screen.getByLabelText("Customer") as HTMLInputElement).value).toHaveLength(100);
-    expect(listOutboxMessages.mock.calls.find((c) => c[2].status === "sent")![2].after).toBeNull();
+    expect(listOutboxMessages.mock.calls[0][2].after).toBeNull();
+    expect(listOutboxMessages.mock.calls[0][2].customer).toHaveLength(100);
   });
   it("a Viewer is told it is not for them and nothing is read", async () => {
     fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme", slug: "acme", role: "viewer" });
@@ -79,7 +89,7 @@ describe("the Outbox page", () => {
     expect(screen.getByText("Mentions a price")).toBeInTheDocument();
   });
   it("the kill switch shows its banner", async () => {
-    getOutboxSettings.mockResolvedValue({ platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3 });
+    getOutboxSettings.mockResolvedValue({ platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 });
     await draw();
     expect(screen.getByText("Sending is stopped")).toBeInTheDocument();
   });

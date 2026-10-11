@@ -153,7 +153,16 @@ describe("Settings: Agent OWL (the Owner only)", () => {
     getSchedulerStatus.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
     render(await SettingsPage(props({ section: "agent" })));
     expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(4);
+    expect(screen.queryByRole("heading", { name: "Quiet hours" })).toBeNull(); // the hours are read with the sending settings: if those cannot be read there is nothing to edit
+    expect(screen.getByRole("heading", { name: "Agent OWL's checks" })).toBeInTheDocument();
+  });
+  it("the quiet hours can be edited: the Owner's tab has the form with the hours on record", async () => {
+    getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 22, quiet_hours_end: 8 });
+    render(await SettingsPage(props({ section: "agent" })));
     expect(screen.getByRole("heading", { name: "Quiet hours" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Quiet hours start")).toHaveValue("22");
+    expect(screen.getByLabelText("Quiet hours end")).toHaveValue("8");
+    expect(screen.getByRole("button", { name: "Save quiet hours" })).toBeInTheDocument();
   });
   it("a rejected session goes to sign-in", async () => {
     getSchedulerStatus.mockRejectedValue(new ApiAuthError("x"));

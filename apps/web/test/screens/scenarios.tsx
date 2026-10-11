@@ -20,7 +20,7 @@ import { parseAiUsage } from "@/lib/api/ai-usage";
 import { agentsStatus, todayFor } from "./today-fixtures";
 import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
-import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
+import { parseCallRequestPage, parseOutboxPage, parseOutboxSummary } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
 import { parseItem, parseItemPage } from "@/lib/api/catalogue";
 import { ITEM_A, ITEM_HIDDEN, SUMMARIES, itemJson, pageJson, photoJson, PHOTO_B1, summaryJson } from "@/lib/api/catalogue-fixtures";
@@ -572,8 +572,10 @@ const outboxItems = (status: string) => {
 };
 const outboxHandlers = (role: Role): Record<string, Handler> => ({
   ...base(role),
-  listOutboxMessages: (_t: unknown, _i: unknown, opts: unknown) => parseOutboxPage(outboxPage(outboxItems((opts as { status: string }).status))),
-  getOutboxSettings: () => ({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 }),
+  // the server does the filtering now (job BE): the tab names are the API's, and blocked also holds failed
+  listOutboxMessages: (_t: unknown, _i: unknown, opts: unknown) => parseOutboxPage(outboxPage(outboxItems(({ waiting: "needs_approval", scheduled: "queued", sent: "sent", blocked: "blocked" } as Record<string, string>)[(opts as { tab: string }).tab]))),
+  getOutboxSummary: () => parseOutboxSummary({ waiting: 1, scheduled: 1, sent: 1, blocked: 1, due_now: 0, held_for_later: 1 }),
+  getOutboxSettings: () => ({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 }),
   getSchedulerStatus: () => ({ ...STATUS_JSON, last_run_at: "2026-10-06T04:28:00Z", next_run_at: "2026-10-06T04:31:00Z" }),
 });
 add({ id: "outbox", roles: ["owner", "admin", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/outbox/page")).default(props({}, {})), handlers: outboxHandlers });

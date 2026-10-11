@@ -8,7 +8,7 @@ import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { putOutboxSettings } from "@/lib/api/outbox";
+import { QUIET_END, QUIET_START, putOutboxSettings } from "@/lib/api/outbox";
 import { EVENING_HOURS, HEADS_UP_MINUTES, NO_SHOW_MINUTES, putSchedulerSettings, type SchedulerSettings } from "@/lib/api/scheduler";
 import { requireUser } from "@/lib/auth/session";
 
@@ -38,6 +38,23 @@ export async function saveSendingAction(tenantId: string, input: { auto_send_ena
     revalidatePath(`/app/tenants/${tenantId}/settings`);
     revalidatePath(`/app/tenants/${tenantId}/outbox`);
     return { ok: true, message: t(saved.auto_send_enabled ? "agentset.saved.on" : "agentset.saved.off") };
+  } catch (error) {
+    return failure(error, t);
+  }
+}
+
+/** The quiet hours: no message goes out from the start hour (19 to 23) until the end hour (7 to 10), India time. The Owner only, with the second factor (the API checks). Saves with the sending values on record, which the same PUT needs. */
+export async function saveQuietHoursAction(tenantId: string, input: { quiet_hours_start: number; quiet_hours_end: number; auto_send_enabled: boolean; per_customer_daily_limit: number }): Promise<AgentResult> {
+  const user = await requireUser();
+  const t = appT(await getLang());
+  if (!isCanonicalUuid(tenantId) || typeof input?.auto_send_enabled !== "boolean" || !within(input.per_customer_daily_limit, { min: 1, max: 20 })) return { ok: false, error: t("agentset.err.invalid") };
+  if (!within(input.quiet_hours_start, QUIET_START) || !within(input.quiet_hours_end, QUIET_END)) return { ok: false, error: t("agentset.err.quiet") };
+  try {
+    const saved = await putOutboxSettings(user.accessToken, tenantId, input);
+    revalidatePath(`/app/tenants/${tenantId}/settings`);
+    revalidatePath(`/app/tenants/${tenantId}/outbox`);
+    const hour = (h: number) => `${String(h).padStart(2, "0")}:00`;
+    return { ok: true, message: t("agentset.quiet.saved", { start: hour(saved.quiet_hours_start), end: hour(saved.quiet_hours_end) }) };
   } catch (error) {
     return failure(error, t);
   }

@@ -29,6 +29,8 @@ export function fakeOutboxActions(over: Partial<Record<keyof OutboxActions, Retu
     reject: over.reject ?? ok("Not sent. Nothing was sent to DEMO Lakshmi Textiles."),
     edit: over.edit ?? vi.fn(async (_id: string, text: string) => ({ ok: true as const, message: "Saved. Read it once more, then approve.", text })),
     dispatch: over.dispatch ?? ok("2 sent."),
+    // the real history is read when a row opens; by default it is not available, so a row shows the history made from its own times
+    detail: over.detail ?? vi.fn(async () => ({ ok: false as const })),
   } as unknown as OutboxActions & Record<keyof OutboxActions, ReturnType<typeof vi.fn>>;
 }
 

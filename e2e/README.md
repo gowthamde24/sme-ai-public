@@ -45,3 +45,10 @@ Screenshots and the downloaded CSV go to `e2e/shots/` (git-ignored). Override wi
 
 A label belongs to one reviewer, so each labelling run needs a reviewer who has not labelled yet: re-seed the database
 (`supabase db reset` then `make seed-demo`) or create more users in `setup-local-users.mjs`.
+
+
+## The real-stack run (job BE): `make e2e-local`
+
+Unlike the walkthroughs above (which drive the demo on :3000/:8000), `be-stack.mjs` starts **its own API (:8002) and web (:3002)** against the local Supabase stack **with Storage**, signs up a **throwaway account and workspace** (`e2e-<stamp>`) through the real pages, and walks sign-in with the authenticator, Today, the Outbox, Settings, Visits and the saree Catalogue (a real photo upload), then removes everything it made. It never touches the demo, never uses :3000, :8000 or :8001, and refuses to start while an integration or pgTAP session is using the shared database. Run it from the repository root: `make e2e-local`. Details, the step list and the things to know (quiet hours, the scripted model, clean-up, why it is not in CI): `docs/runbooks/e2e-real-stack.md`.
+
+Files: `be-stack.mjs` (the steps), `be-lib.mjs` (API, sign-in token, database and shared-database guards), `be-env.mjs` (the ports), `cleanup-be.mjs` (removes `e2e-*` workspaces and accounts), `fixtures/saree-demo.jpg` (a drawn picture, no real product photo). Screenshots go to `shots-be/` (git-ignored).

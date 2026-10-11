@@ -23,6 +23,19 @@ const count = () => screen.getByRole("heading", { name: "Needs you" }).parentEle
 beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
 
+describe("Needs you: the English gloss of a message in another language (job BE)", () => {
+  it("shows an English gloss under the words so the person who approves can read it; none when the message has none", () => {
+    const card = outbox() as Extract<NeedsCard, { type: "outbox" }>;
+    board([{ ...card, message: { ...card.message!, gloss: "This saree costs ₹500 only." } } as NeedsCard]);
+    const a = cardOf(/^Reply to Lakshmi R\./);
+    expect(within(a).getByText("In English")).toBeInTheDocument();
+    expect(within(a).getByText("This saree costs ₹500 only.")).toHaveAttribute("lang", "en");
+    cleanup();
+    board([outbox()]);
+    expect(within(cardOf(/^Reply to Lakshmi R\./)).queryByText("In English")).toBeNull();
+  });
+});
+
 describe("Needs you: a message that carries photos (job BC)", () => {
   it("shows the photos with the words, so the person who approves sees what goes out; a message without photos shows none", () => {
     const card = outbox() as Extract<NeedsCard, { type: "outbox" }>;

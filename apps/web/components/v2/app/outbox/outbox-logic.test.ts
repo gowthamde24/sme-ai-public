@@ -4,8 +4,8 @@ import { appT } from "@/i18n/app";
 import { OUTBOX_REASONS } from "@/lib/api/outbox";
 
 import { NOW } from "./outbox-test-kit";
-import { filedAt, inRange, stamp } from "./outbox-time";
-import { TABS, TAB_STATUSES, firstLine, reasonKey, toneOf } from "./reasons";
+import { parseFilters, presetDates, stamp } from "./outbox-time";
+import { TABS, firstLine, reasonKey, toneOf } from "./reasons";
 import { STALE_AFTER_MINUTES, schedulerView } from "./scheduler-line";
 
 describe("the reason chips", () => {
@@ -30,9 +30,8 @@ describe("the reason chips", () => {
     expect(toneOf({ status: "blocked" })).toContain("red");
     expect(toneOf({ status: "failed" })).toContain("red");
   });
-  it("the four tabs cover every status exactly once", () => {
+  it("the four tabs are the API's own names", () => {
     expect(TABS).toEqual(["waiting", "scheduled", "sent", "blocked"]);
-    expect(Object.values(TAB_STATUSES).flat().sort()).toEqual(["blocked", "failed", "needs_approval", "queued", "sent"]);
   });
   it("the first line skips blank lines and trims", () => {
     expect(firstLine("\n  Hello there \nSecond")).toBe("Hello there");
@@ -46,20 +45,28 @@ describe("the times of the Outbox, in the Indian day", () => {
     expect(stamp("2026-10-13T15:45:00Z", NOW)).toBe("13 Oct, 21:15");
     expect(stamp("2026-10-14T18:45:00Z", NOW)).toBe("15 Oct, 0:15"); // past midnight in India is tomorrow
   });
-  it("files a message under when it goes out, when it went, or when it was made", () => {
-    const m = { scheduled_for: "2026-10-15T03:30:00Z", sent_at: "2026-10-14T02:00:00Z", created_at: "2026-10-14T01:00:00Z" };
-    expect(filedAt({ ...m, status: "queued" })).toBe(m.scheduled_for);
-    expect(filedAt({ ...m, status: "sent" })).toBe(m.sent_at);
-    expect(filedAt({ ...m, status: "blocked" })).toBe(m.created_at);
-    expect(filedAt({ ...m, status: "queued", scheduled_for: null })).toBe(m.created_at);
+});
+
+describe("the filters in the address", () => {
+  it("reads the customer and two real India dates; anything else is dropped", () => {
+    expect(parseFilters({ q: "  Lakshmi ", from: "2026-10-01", to: "2026-10-04" }, NOW)).toEqual({ q: "Lakshmi", from: "2026-10-01", to: "2026-10-04" });
+    expect(parseFilters({ from: "2026-02-30", to: "yesterday" }, NOW)).toEqual({ q: "", from: null, to: null });
+    expect(parseFilters({ q: "x".repeat(300) }, NOW).q).toHaveLength(100);
+    expect(parseFilters({ q: ["a", "b"] }, NOW).q).toBe("a");
   });
-  it("'today' is the Indian day (including a held message that goes out later); '7 days' starts six days back", () => {
-    expect(inRange("2026-10-14T00:00:00Z", "today", NOW)).toBe(true);
-    expect(inRange("2026-10-13T18:29:00Z", "today", NOW)).toBe(false); // 23:59 on the 13th in India
-    expect(inRange("2026-10-13T18:30:00Z", "today", NOW)).toBe(true); // 00:00 on the 14th in India
-    expect(inRange("2026-10-15T03:30:00Z", "today", NOW)).toBe(true); // held for tomorrow 9:00
-    expect(inRange("2026-10-08T00:00:00Z", "7d", NOW)).toBe(true);
-    expect(inRange("2026-10-07T18:29:00Z", "7d", NOW)).toBe(false);
+  it("a 'to' before the 'from' is dropped (the API would refuse it)", () => {
+    expect(parseFilters({ from: "2026-10-05", to: "2026-10-01" }, NOW)).toEqual({ q: "", from: "2026-10-05", to: null });
+  });
+  it("an older link's range=today or range=7d becomes dates in the Indian day", () => {
+    expect(parseFilters({ range: "today" }, NOW)).toEqual({ q: "", from: "2026-10-14", to: "2026-10-14" });
+    expect(parseFilters({ range: "7d" }, NOW)).toEqual({ q: "", from: "2026-10-08", to: "2026-10-14" });
+    expect(parseFilters({ range: "7d", from: "2026-10-01" }, NOW).from).toBe("2026-10-01");
+  });
+  it("the quick choices are today, and today with the six days before it (the Indian day, even just after midnight)", () => {
+    const { today, week } = presetDates(NOW);
+    expect(today).toEqual({ q: "", from: "2026-10-14", to: "2026-10-14" });
+    expect(week).toEqual({ q: "", from: "2026-10-08", to: "2026-10-14" });
+    expect(presetDates(Date.parse("2026-10-13T18:31:00Z")).today.from).toBe("2026-10-14");
   });
 });
 

@@ -5,8 +5,8 @@ import { schedulerSettings } from "@/lib/api/scheduler-fixtures";
 import { STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import type { SchedulerStatus } from "@/lib/api/scheduler";
 
-import { RemindersForm, SendingForm } from "./AgentSettingsForms";
-import { QuietHoursCard, SchedulerCard, SystemSwitchCard } from "./AgentStatusCards";
+import { QuietHoursForm, RemindersForm, SendingForm, eveningInsideQuiet } from "./AgentSettingsForms";
+import { SchedulerCard, SystemSwitchCard } from "./AgentStatusCards";
 import { NOW, WORDS, ok } from "./agent-test-kit";
 
 const click = (name: string | RegExp) => act(async () => fireEvent.click(screen.getByRole("button", { name })));
@@ -15,7 +15,7 @@ beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
 
 describe("automatic sending", () => {
-  const SETTINGS = { platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 };
+  const SETTINGS = { platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 };
   it("one plain sentence about what it means, the switch off until the Owner turns it on, and the daily limit", () => {
     render(<SendingForm words={WORDS} settings={SETTINGS} save={ok("Saved.")} />);
     expect(screen.getByText("Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.")).toBeInTheDocument();
@@ -113,19 +113,79 @@ describe("visit reminders", () => {
   });
 });
 
-describe("quiet hours and the system switch (read only)", () => {
-  it("quiet hours are 21:00 – 09:00 India time, clearly, with nothing to change", () => {
-    render(<QuietHoursCard words={WORDS} />);
-    expect(screen.getByText("21:00 – 09:00")).toBeInTheDocument();
-    expect(screen.getByText(/India time\. Nothing goes out in these hours/)).toBeInTheDocument();
-    expect(screen.queryByRole("button")).toBeNull();
-    expect(screen.queryByRole("textbox")).toBeNull();
+describe("quiet hours (editable within the API's limits, job BE)", () => {
+  const OUT = { platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 4, quiet_hours_start: 21, quiet_hours_end: 9 };
+  const REM = schedulerSettings({ reminder_evening_enabled: true, reminder_evening_hour: 18 });
+  const show = (reminders = REM, save: ReturnType<typeof vi.fn> = ok("Saved.")) => {
+    render(<QuietHoursForm words={WORDS} settings={OUT} reminders={reminders} save={save as never} />);
+    return save;
+  };
+  const options = (label: string) => within(screen.getByLabelText(label)).getAllByRole("option").map((o) => o.textContent);
+
+  it("starts from the hours on record; the start can be 19:00 to 23:00 and the end 07:00 to 10:00, nothing else is offered", () => {
+    show();
+    expect(screen.getByLabelText("Quiet hours start")).toHaveValue("21");
+    expect(screen.getByLabelText("Quiet hours end")).toHaveValue("9");
+    expect(options("Quiet hours start")).toEqual(["19:00", "20:00", "21:00", "22:00", "23:00"]);
+    expect(options("Quiet hours end")).toEqual(["07:00", "08:00", "09:00", "10:00"]);
+    expect(screen.getByText(/India time\. Nothing goes out from the start hour until the end hour/)).toBeInTheDocument();
   });
+
+  it("saves the chosen hours with the sending values on record (the same PUT needs them), says what was saved, and needs the authenticator", async () => {
+    const save = show();
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "22" } });
+    fireEvent.change(screen.getByLabelText("Quiet hours end"), { target: { value: "8" } });
+    await click("Save quiet hours");
+    expect(save).toHaveBeenCalledWith({ quiet_hours_start: 22, quiet_hours_end: 8, auto_send_enabled: true, per_customer_daily_limit: 4 });
+    expect(screen.getByRole("status")).toHaveTextContent("Saved.");
+    expect(screen.getByText("Saving needs your authenticator app.")).toBeInTheDocument();
+  });
+
+  it("a missing second factor is explained and points at Security; the choice stays on the screen", async () => {
+    const save = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
+    show(REM, save);
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "20" } });
+    await click("Save quiet hours");
+    expect(screen.getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(screen.getByRole("link", { name: "Open Security" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Quiet hours start")).toHaveValue("20");
+  });
+
+  it("one sentence when the evening reminder falls INSIDE the quiet hours (no evening reminder; the heads-up still goes), following the start as it is picked", () => {
+    show(schedulerSettings({ reminder_evening_enabled: true, reminder_evening_hour: 20 }));
+    expect(document.querySelector('[data-note="evening-inside-quiet"]')).toBeNull(); // 20:00 is before 21:00
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "20" } });
+    expect(document.querySelector('[data-note="evening-inside-quiet"]')).toHaveTextContent("The evening reminder (20:00) is inside quiet hours that start at 20:00, so no evening reminder is sent. The heads-up before the visit still goes.");
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "19" } });
+    expect(document.querySelector('[data-note="evening-inside-quiet"]')).toHaveTextContent("quiet hours that start at 19:00");
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "23" } });
+    expect(document.querySelector('[data-note="evening-inside-quiet"]')).toBeNull();
+  });
+
+  it("no such sentence when the evening reminder is off or could not be read", () => {
+    show(schedulerSettings({ reminder_evening_enabled: false, reminder_evening_hour: 20 }));
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "19" } });
+    expect(document.querySelector('[data-note="evening-inside-quiet"]')).toBeNull();
+    cleanup();
+    render(<QuietHoursForm words={WORDS} settings={OUT} reminders={null} save={ok("x")} />);
+    fireEvent.change(screen.getByLabelText("Quiet hours start"), { target: { value: "19" } });
+    expect(document.querySelector('[data-note="evening-inside-quiet"]')).toBeNull();
+  });
+
+  it("the rule itself: inside when the evening hour is at or after the start", () => {
+    expect(eveningInsideQuiet(true, 20, 20)).toBe(true);
+    expect(eveningInsideQuiet(true, 20, 21)).toBe(false);
+    expect(eveningInsideQuiet(true, 9, 19)).toBe(false);
+    expect(eveningInsideQuiet(false, 20, 19)).toBe(false);
+  });
+});
+
+describe("the system switch (read only)", () => {
   it("the system switch says On or Stopped and can only be read", () => {
-    render(<SystemSwitchCard words={WORDS} settings={{ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3 }} />);
+    render(<SystemSwitchCard words={WORDS} settings={{ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 }} />);
     expect(screen.getByText("On")).toBeInTheDocument();
     cleanup();
-    render(<SystemSwitchCard words={WORDS} settings={{ platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3 }} />);
+    render(<SystemSwitchCard words={WORDS} settings={{ platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 }} />);
     expect(screen.getByText("Stopped")).toBeInTheDocument();
     expect(screen.getByText(/Nothing goes out and everything waits\./)).toBeInTheDocument();
     expect(screen.queryByRole("button")).toBeNull();

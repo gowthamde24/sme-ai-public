@@ -33,7 +33,7 @@ export const outbox = (over: Partial<Extract<NeedsCard, { type: "outbox" }>> = {
   id: MESSAGE_ID,
   customer: "Lakshmi R.",
   city: "Demoville",
-  message: { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text, media: m.media.map((x) => ({ position: x.position, thumb_url: x.thumb_url })) },
+  message: { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text, gloss: m.gloss_en, media: m.media.map((x) => ({ position: x.position, thumb_url: x.thumb_url })) },
   ...over,
 });
 export const call = (over: Partial<Extract<NeedsCard, { type: "call" }>> = {}): NeedsCard => ({
