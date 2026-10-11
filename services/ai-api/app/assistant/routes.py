@@ -18,7 +18,7 @@ import logging
 import queue
 import threading
 import uuid
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from datetime import UTC
 from typing import Annotated, Any
 
@@ -134,9 +134,28 @@ def _factory(runtime: Runtime) -> Any:
     return agents
 
 
+SSE_HEADERS = {"Cache-Control": "no-store", "X-Accel-Buffering": "no"}
+
+
 @router.post("/assistant/messages")
 def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> StreamingResponse:
     """One message of the owner. The answer streams back as server-sent events."""
+    return StreamingResponse(
+        start_message(runtime, ctx, body), media_type="text/event-stream", headers=SSE_HEADERS
+    )
+
+
+def start_message(
+    runtime: Runtime,
+    ctx: TenantContext,
+    body: MessageIn,
+    *,
+    charge: "Callable[[AssistantDb], None] | None" = None,
+    on_reply: "Callable[[AssistantDb, str, str], None] | None" = None,
+) -> Iterator[str]:
+    """Begin one message and return its stream of server-sent events (shared with the voice route, job BD). Everything that can refuse does so HERE, before any byte is streamed.
+    `charge(db)` runs once the message and its run exist (the voice route charges the transcription to the run's cost ledger there); `on_reply(db, text, language)` runs with the finished
+    answer just before the run is closed (the voice route charges and makes the spoken reply there). Neither can break the run: a failure is logged by class and the message goes on."""
     agents = _factory(runtime)
     token, tenant = ctx.principal.token, ctx.tenant.id
     conversation_id = body.conversation_id or uuid.uuid4()
@@ -201,17 +220,28 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
                 },
             )
 
-        return StreamingResponse(
-            replay(),
-            media_type="text/event-stream",
-            headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
-        )
+        return replay()
+
+    if charge is not None:
+        try:
+            charge(db)
+        except AgentDbError as exc:
+            try:
+                db.finish("failed", "budget" if isinstance(exc, CostCapReached) else "tool_failed")
+            except AgentDbError:
+                pass
+            finally:
+                db.close()
+            raise _refusal(exc, runtime.today, token, tenant) from None
 
     seq = int(began.get("seq") or 1)
     history = db.history(conversation_id, seq, HISTORY_LINES)
     state = State()
     runner = AssistantRunner(
-        db=db, llm=agents.assistant_llm(), ctx=Ctx(db, runtime, token, tenant, run_id, state)
+        db=db,
+        llm=agents.assistant_llm(),
+        ctx=Ctx(db, runtime, token, tenant, run_id, state),
+        on_reply=(lambda text, lang: on_reply(db, text, lang)) if on_reply is not None else None,
     )
     events: queue.Queue[tuple[str, dict[str, Any]] | None] = queue.Queue()
     reply_id = uuid.uuid4()
@@ -273,11 +303,7 @@ def send_message(body: MessageIn, ctx: SalesPlus, runtime: RuntimeDep) -> Stream
                 },
             )
 
-    return StreamingResponse(
-        stream(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-store", "X-Accel-Buffering": "no"},
-    )
+    return stream()
 
 
 @router.get("/assistant/conversations/{conversation_id}", response_model=ConversationOut)

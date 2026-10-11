@@ -139,3 +139,19 @@ class AssistantDb(AgentDb):
             },
         )
         return list(reversed(rows))
+
+    def user_message_text(self, message_id: uuid.UUID, tenant_id: uuid.UUID) -> str | None:
+        """The words of one of the caller's OWN messages (a person reads only the chats they started), or None. Used by the voice route to reuse the transcript of a message it already heard (job BD)."""
+        rows = self.rest_rows(
+            "read_user_message",
+            "/assistant_messages",
+            {
+                "select": "body",
+                "id": f"eq.{message_id}",
+                "tenant_id": f"eq.{tenant_id}",
+                "role": "eq.user",
+                "limit": "1",
+            },
+        )
+        body = rows[0].get("body") if rows else None
+        return body if isinstance(body, str) and body else None

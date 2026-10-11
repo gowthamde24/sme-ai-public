@@ -76,6 +76,7 @@ python3 tools/mutation-followups/run_sql.py # OPT-IN, never in make check (about
 make dev-api     # FastAPI on :8000
 make seed-demo-catalogue # OPT-IN, local stack only (job AY, ADR 0069): twelve invented sarees with GENERATED placeholder pictures in the demo workspace, uploaded through the API into the local Storage (needs `make db-start` with Storage on, `make dev-api-local`, `make seed-demo-manual`; docs/runbooks/catalogue-local.md)
 make e2e-local   # OPT-IN, never in make check or CI (job BE): the real-stack end-to-end run (own API :8002 + web :3002 + the local Supabase with Storage + a real browser); stops what it started and removes its throwaway workspace (docs/runbooks/e2e-real-stack.md)
+make stt-bakeoff # OPT-IN, never in make check (job BD, ADR 0071): the voice bake-off over ~/Desktop/voice-samples (outside the repository): every configured speech engine scored (word and character error, time, price) per language; report to ~/Desktop/v2-overnight/voice-bakeoff.md (docs/runbooks/voice-local.md)
 make dev-worker-local # OPT-IN, local stack only (job AW, ADR 0068): the scheduler worker (releases held messages, queues visit reminders, marks missed visits); acts only while the global outbox switch AND the business's automatic sending are on; the only channel is the local fake (docs/runbooks/scheduler-local.md)
 ```
 

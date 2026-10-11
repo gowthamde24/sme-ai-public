@@ -66,6 +66,8 @@ from app.today.routes import router as today_router
 from app.visits import errors as visit_errors
 from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
+from app.voice.factory import build_voice
+from app.voice.routes import router as voice_router
 
 SERVICE_NAME = "ai-api"
 SERVICE_VERSION = "0.1.0"
@@ -127,6 +129,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         catalogue=PostgrestCatalogueRepository(config.rest_url, config.anon_key),
         catalogue_storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
         lead_search=PostgrestLeadSearchRepository(config.rest_url, config.anon_key),
+        voice=build_voice(settings),
     )
 
 
@@ -505,6 +508,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(pricelists_router)
     app.include_router(today_router)
     app.include_router(assistant_router)
+    app.include_router(voice_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

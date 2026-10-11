@@ -351,3 +351,226 @@ def test_the_offer_is_decided_once_from_the_question_and_the_chat_so_it_is_the_s
         "yes, send them", (), [{"role": "user", "body": "Show me red sarees for Ravi"}]
     )
     assert {t.name for t in model2.requests[0].tools} == CORE | CATALOGUE_TOOLS
+
+
+# ---------------------------------------------------------------------------------------------- job BD: the safety net
+from dataclasses import replace  # noqa: E402
+
+from app.assistant import runner as runner_module  # noqa: E402
+from app.assistant.router import ALL_TOOLS, could_need, group_of, missed_group  # noqa: E402
+from app.assistant.tools import Output  # noqa: E402
+
+WEAK_CATALOGUE = {
+    "en": "is that saree available",
+    "te": "ఆ చీర ఉందా",
+    "hi": "वो साड़ी चाहिए",
+    "kn": "ಆ ಸೀರೆ ಬೇಕು",
+    "ta": "அந்த புடவை வேண்டும்",
+}
+WEAK_VISITS = {
+    "en": "she will come tomorrow at 11 am",
+    "te": "రేపు రండి అని చెప్పు",
+    "hi": "कल आइए बोल दो",
+    "kn": "ನಾಳೆ ಬನ್ನಿ ಎಂದು ಹೇಳಿ",
+    "ta": "நாளை வாருங்கள் என்று சொல்",
+}
+NO_SIGNAL = [
+    "What needs me today?",
+    "Who hasn't paid?",
+    "ఈ రోజు ఏమి పెండింగ్‌లో ఉంది?",
+    "आज क्या बाकी है?",
+    "ಇಂದು ಏನು ಬಾಕಿ ಇದೆ?",
+    "இன்று என்ன நிலுவையில் உள்ளது?",
+]
+
+
+@pytest.mark.parametrize("language", sorted(WEAK_CATALOGUE))
+def test_a_weak_signal_in_each_language_could_need_the_hidden_group(language: str) -> None:
+    assert could_need("catalogue", WEAK_CATALOGUE[language])
+    assert could_need("visits", WEAK_VISITS[language])
+    assert missed_group(CORE, WEAK_CATALOGUE[language]) == "catalogue"
+    assert missed_group(CORE, WEAK_VISITS[language]) == "visits"
+    assert missed_group(ALL_TOOLS, WEAK_VISITS[language]) is None, (
+        "nothing is missed when everything is offered"
+    )
+    assert missed_group(CORE | CATALOGUE_TOOLS, WEAK_CATALOGUE[language]) is None
+
+
+@pytest.mark.parametrize("question", NO_SIGNAL)
+def test_a_question_with_no_weak_signal_gets_no_second_chance(question: str) -> None:
+    assert not could_need("catalogue", question) and not could_need("visits", question)
+    assert missed_group(CORE, question) is None
+
+
+def test_the_chat_so_far_can_carry_the_signal() -> None:
+    history = [{"role": "user", "body": "that green saree for her"}]
+    assert could_need("catalogue", "ok do it", history) and not could_need("catalogue", "ok do it")
+    assert (
+        group_of("send_catalogue_items") == "catalogue"
+        and group_of("propose_visit") == "visits"
+        and group_of("get_today") is None
+    )
+
+
+class Seq:
+    """A model that answers from a list, one response per call; records each request."""
+
+    model_id = "fake-selftest"
+
+    def __init__(self, *responses: LlmResponse) -> None:
+        self.responses = list(responses)
+        self.requests: list[LlmRequest] = []
+
+    def complete(self, request: LlmRequest) -> LlmResponse:
+        self.requests.append(request)
+        return self.responses.pop(0)
+
+
+def say(kind: str, answer: str, language: str = "en") -> LlmResponse:
+    return LlmResponse(
+        tool_calls=(),
+        structured={"kind": kind, "answer": answer, "language": language, "sources": []},
+        usage=Usage(10, 5, 0),
+    )
+
+
+def calls(*c: ToolCall) -> LlmResponse:
+    return LlmResponse(tool_calls=c, structured=None, usage=Usage(10, 5, 0))
+
+
+def _stub(tool: Any, executed: list[str]) -> Any:
+    def handler(ctx: Any, args: Any) -> Output:
+        executed.append(tool.name)
+        return Output()
+
+    return replace(tool, handler=handler)
+
+
+def _run_with(
+    model: Seq, question: str, language: str = "en", executed: list[str] | None = None
+) -> tuple[FakeDb, Any]:
+    from unittest import mock
+
+    db = FakeDb()
+    seen: list[str] = executed if executed is not None else []
+    stubs = tuple(_stub(t, seen) for t in TOOLS)
+    ctx = SimpleNamespace(
+        db=db, runtime=None, token="t", tenant=uuid.uuid4(), run_id=uuid.uuid4(), state=State()
+    )  # noqa: S106
+    runner = AssistantRunner(db=db, llm=model, ctx=ctx, now=lambda: NOW)  # type: ignore[arg-type]
+    lang: Any = language
+    with mock.patch.object(runner_module, "TOOLS", stubs):
+        out = runner.run(
+            question=question,
+            language=lang,
+            history=[],
+            emit=lambda *_: None,
+            message_id=uuid.uuid4(),
+        )
+    return db, out
+
+
+def test_a_hidden_tool_the_model_asks_for_is_allowed_once_when_the_question_could_need_it(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    visit_args = {"lead_id": str(uuid.uuid4()), "date": "2026-10-12", "time": "11:00"}
+    model = Seq(
+        calls(ToolCall("propose_visit", visit_args)), say("clarify", "Which customer is it?")
+    )
+    executed: list[str] = []
+    with caplog.at_level("WARNING", logger="app.assistant.runner"):
+        db, out = _run_with(model, "she will come tomorrow at 11 am", executed=executed)
+    assert out.status == "succeeded"
+    assert executed == ["propose_visit"], "the call ran: the question could need the visit tool"
+    assert {t.name for t in model.requests[0].tools} == CORE, "the first request was the light one"
+    assert {t.name for t in model.requests[1].tools} == ALL_TOOLS, (
+        "after the miss every tool is offered"
+    )
+    lines = [r.getMessage() for r in caplog.records if "router miss" in r.getMessage()]
+    assert len(lines) == 1 and "tool=propose_visit" in lines[0] and "language=en" in lines[0]
+    assert "tomorrow" not in lines[0] and "11" not in lines[0].split("run=")[0], (
+        "no question text in the log"
+    )
+    assert db.reserved == 2, "both model calls were reserved and counted"
+
+
+def test_a_hidden_tool_with_no_signal_in_the_question_is_still_refused(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    model = Seq(calls(SEND), say("refusal", "I could not do that."))
+    executed: list[str] = []
+    with caplog.at_level("WARNING", logger="app.assistant.runner"):
+        db, _ = _run_with(model, "What needs me today?", executed=executed)
+    assert executed == [] and db.steps == [("refused_call", "refused")]
+    assert not [r for r in caplog.records if "router miss" in r.getMessage()]
+    assert len(model.requests) == 2, "no extra call"
+
+
+@pytest.mark.parametrize("language", sorted(WEAK_CATALOGUE))
+def test_a_refusal_when_a_hidden_group_could_help_is_retried_once_with_every_tool(
+    language: str, caplog: pytest.LogCaptureFixture
+) -> None:
+    refusal = say("refusal", "I cannot do that.", "en")
+    model = Seq(refusal, say("clarify", "Which one?"))
+    with caplog.at_level("WARNING", logger="app.assistant.runner"):
+        db, out = _run_with(model, WEAK_CATALOGUE[language], language="en")
+    assert len(model.requests) == 2 and out.status == "succeeded"
+    assert {t.name for t in model.requests[0].tools} == CORE and {
+        t.name for t in model.requests[1].tools
+    } == ALL_TOOLS
+    assert prompts.NOTE_MORE_TOOLS in " ".join(b.text for b in model.requests[1].blocks)
+    (line,) = [r.getMessage() for r in caplog.records if "router miss" in r.getMessage()]
+    assert (
+        "tool=none:catalogue" in line
+        and "language=en" in line
+        and WEAK_CATALOGUE[language] not in line
+    )
+    assert db.reserved == 2
+
+
+def test_the_retry_happens_once_even_if_the_model_refuses_again() -> None:
+    model = Seq(say("refusal", "No."), say("refusal", "Still no."))
+    db, out = _run_with(model, WEAK_CATALOGUE["en"])
+    assert len(model.requests) == 2, "one retry, not a loop"
+    assert out.reply is not None and out.reply.kind == "refusal"
+
+
+def test_a_refusal_with_no_weak_signal_is_not_retried() -> None:
+    model = Seq(say("refusal", "I cannot do that."))
+    _run_with(model, "What needs me today?")
+    assert len(model.requests) == 1
+
+
+def test_when_everything_was_offered_a_refusal_is_not_retried() -> None:
+    model = Seq(say("refusal", "I cannot do that."))
+    _run_with(model, "Show me red sarees and book a visit tomorrow")
+    assert len(model.requests) == 1
+
+
+def test_a_question_back_is_never_retried() -> None:
+    model = Seq(say("clarify", "Which customer is it?"))
+    _run_with(model, WEAK_CATALOGUE["en"])
+    assert len(model.requests) == 1
+
+
+def test_a_refusal_after_the_model_already_tried_a_tool_is_not_retried() -> None:
+    model = Seq(calls(ToolCall("get_today", {})), say("refusal", "I could not find that."))
+    _run_with(model, WEAK_CATALOGUE["en"])
+    assert len(model.requests) == 2, (
+        "it looked something up and then declined: that is an answer, not a missing tool"
+    )
+    assert {t.name for t in model.requests[1].tools} == CORE
+
+
+def test_a_verb_alone_is_no_weak_signal_so_a_refusal_to_send_a_quote_stands() -> None:
+    for question in (
+        "Send the quote to the customer on WhatsApp now.",
+        "Show me the orders of the other business",
+        "ఈ కోట్ ను వాట్సాప్ లో పంపండి",
+        "कोट भेज दो",
+        "ಕೋಟ್ ಕಳುಹಿಸಿ",
+        "கோட் அனுப்புங்கள்",
+    ):
+        model = Seq(say("refusal", "I cannot send anything."))
+        _run_with(model, question)
+        assert len(model.requests) == 1, question
