@@ -9,8 +9,13 @@ import { ApiAuthError } from "@/lib/api/client";
 import { pageMain } from "@/components/v2/app/ui";
 
 import { approveCallAction, approveMessageAction, editMessageAction, offerVisitAction, rejectMessageAction } from "./today-actions";
+import { SetupGate } from "@/components/v2/app/setup/SetupGate";
+import type { SetupActions } from "@/components/v2/app/setup/types";
+import { saveItemAction } from "./catalogue/catalogue-actions";
+import { readSetupFacts } from "./setup-data";
+import { setupWords } from "./setup-words";
 import { readDisplayName, readToday } from "./today-data";
-import { cancelVisitAction, confirmVisitAction, moveVisitAction, slotsAction } from "./visits/visits-actions";
+import { cancelVisitAction, confirmVisitAction, moveVisitAction, saveHoursAction, slotsAction } from "./visits/visits-actions";
 
 /** The hour in India, where the business is: the greeting does not depend on the server's clock zone. */
 function hourInIndia(now = new Date()): number {
@@ -21,13 +26,14 @@ function hourInIndia(now = new Date()): number {
 const clock = (): number => Date.now();
 
 /** The default screen of a workspace (the home with no `?tab=`): Today. The records tables are Customers and Leads (`?tab=`). Server side; the page has already run requireUser and fetchTenant. */
-export async function TodayScreen({ accessToken, userId, tenantId, role }: { accessToken: string; userId: string; tenantId: string; role: Role }) {
+export async function TodayScreen({ accessToken, userId, tenantId, role, shop = "" }: { accessToken: string; userId: string; tenantId: string; role: Role; /** The business's name (the setup wizard greets it). */ shop?: string }) {
   const lang = await getLang();
   const t = appT(lang);
   const now = clock();
-  let data, name;
+  let data, name, setup = null;
   try {
-    [data, name] = await Promise.all([readToday(accessToken, tenantId, role), readDisplayName(accessToken, tenantId, userId)]);
+    // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
+    [data, name, setup] = await Promise.all([readToday(accessToken, tenantId, role), readDisplayName(accessToken, tenantId, userId), role === "owner" ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null)]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     throw error;
@@ -41,9 +47,19 @@ export async function TodayScreen({ accessToken, userId, tenantId, role }: { acc
     offerVisit: offerVisitAction.bind(null, tenantId),
     visit: { confirm: confirmVisitAction.bind(null, tenantId), move: moveVisitAction.bind(null, tenantId), cancel: cancelVisitAction.bind(null, tenantId), slots: slotsAction.bind(null, tenantId) },
   };
+  const view = (
+      <TodayView data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+  );
+  const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   return (
     <main className={pageMain} lang={lang}>
-      <TodayView data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      {setup ? (
+        <SetupGate tenantId={tenantId} base={`/app/tenants/${tenantId}`} lang={lang} facts={setup} words={setupWords(lang)} actions={setupActions}>
+          {view}
+        </SetupGate>
+      ) : (
+        view
+      )}
     </main>
   );
 }

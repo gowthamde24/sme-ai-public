@@ -5,7 +5,7 @@ Agent OWL this week : Not available yet
 {role=img label="Agent OWL, Resting"}
 Resting Resting Resting Agent OWL
 ## Nothing needs you right now.
-Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.
+Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 0 0 waiting for you All clear. I will tell you the moment something needs you.

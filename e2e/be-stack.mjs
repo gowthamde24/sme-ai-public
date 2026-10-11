@@ -149,6 +149,124 @@ await step("A5", "sign out, sign in again: the password alone is not enough, the
 ownerToken = await aal2Token();
 const T = () => `/v1/tenants/${tenant}`;
 const customers = {};
+// ---- 2a. the first-run setup wizard (job BJ): a brand-new workspace shows it instead of an empty Today -------------------------------------------------------------
+let axeSource = "";
+try {
+  axeSource = readFileSync(path.join(here, "..", "apps", "web", "node_modules", "axe-core", "axe.min.js"), "utf8");
+} catch {
+  // axe-core is the web app's dev dependency: without it the accessibility check is skipped and said so
+}
+const measure = (p) =>
+  p.evaluate(() => {
+    const bad = [];
+    for (const el of document.querySelectorAll("a, button, select, input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not(.sr-only), summary, textarea, [role=switch]")) {
+      const r = el.getBoundingClientRect();
+      const cs = getComputedStyle(el);
+      if (r.width === 0 || r.height === 0 || cs.visibility === "hidden" || el.closest("[aria-hidden=true]") || el.classList.contains("sr-only") || el.closest("nextjs-portal")) continue;
+      if (r.height < 43.5) bad.push(`${el.tagName.toLowerCase()} "${(el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 24)}" ${Math.round(r.height)}px`);
+    }
+    const small = new Set();
+    for (const el of document.querySelectorAll("body *")) {
+      if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim()) || el.closest("nextjs-portal")) continue;
+      const fs = parseFloat(getComputedStyle(el).fontSize);
+      if (fs < 13.99) small.add(`${el.tagName.toLowerCase()} ${fs}px`);
+    }
+    return { scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth, bad: bad.slice(0, 5), small: [...small].slice(0, 4) };
+  });
+const axeOf = async (p) => {
+  if (!axeSource) return [];
+  await p.evaluate(axeSource);
+  return p.evaluate(async () => (await window.axe.run(document, { resultTypes: ["violations"] })).violations.filter((x) => !/nextjs|portal/.test(JSON.stringify(x.nodes[0]?.target ?? ""))).map((x) => x.id));
+};
+
+await step("J1", "setup wizard on a phone (360 px, light and dark): every step is drawn, targets >= 44 px, no sideways scroll, text >= 14 px, axe finds nothing", async () => {
+  const state = await context.storageState();
+  const seen = [];
+  for (const scheme of ["light", "dark"]) {
+    const ctx = await browser.newContext({ storageState: state, viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true, colorScheme: scheme, locale: "en-IN", timezoneId: "Asia/Kolkata" });
+    const p = await ctx.newPage();
+    p.setDefaultTimeout(SLOW);
+    await p.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+    const titles = [];
+    for (const [name, advance] of [["shop", "Next"], ["hours", "Next"], ["saree", "Skip for now"], ["agent", "Next"], ["ready", null]]) {
+      await p.getByRole("heading", { level: 1 }).waitFor();
+      titles.push((await p.getByRole("heading", { level: 1 }).innerText()).trim());
+      await p.screenshot({ path: path.join(SHOTS, `V-wizard-${name}-phone-${scheme}.png`), fullPage: true });
+      const m = await measure(p);
+      if (m.scrollW > m.clientW) seen.push(`${scheme} ${name}: sideways scroll ${m.scrollW}>${m.clientW}`);
+      if (m.bad.length) seen.push(`${scheme} ${name}: small targets ${m.bad.join("; ")}`);
+      if (m.small.length) seen.push(`${scheme} ${name}: small text ${m.small.join("; ")}`);
+      const v = await axeOf(p);
+      if (v.length) seen.push(`${scheme} ${name}: axe ${v.join(", ")}`);
+      if (advance) await p.getByRole("button", { name: advance, exact: true }).tap();
+    }
+    must(/^Welcome to E2E Silks/.test(titles[0]) && titles.slice(1).join("|") === "When is the shop open?|Add your first saree|Meet Agent OWL|You're ready", `the steps were ${titles.join(" | ")}`);
+    await ctx.close();
+  }
+  must(seen.length === 0, seen.slice(0, 4).join(" | "));
+  return axeSource ? "5 screens x light/dark checked with axe" : "axe-core not installed: that check was skipped";
+}, page);
+
+await step("J2", "a brand-new workspace shows the setup wizard instead of Today; step 1 asks for the language of the app", async () => {
+  await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+  const h1 = (await page.getByRole("heading", { level: 1 }).innerText()).trim();
+  must(/^Welcome to E2E Silks/.test(h1), `the first heading was "${h1}"`);
+  must((await page.getByText("Needs you").count()) === 0, "Today is drawn behind the wizard");
+  must((await page.getByRole("radio", { name: "తెలుగు" }).count()) === 1, "no language choice");
+  await shot(page, "wizard-1-shop");
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+}, page);
+
+await step("J3", "step 2: the usual saree-shop hours are filled in (Monday to Saturday); Sunday is turned on and the hours are SAVED through the real API", async () => {
+  await page.getByRole("heading", { name: "When is the shop open?" }).waitFor();
+  must(await page.getByRole("checkbox", { name: /Monday/ }).isChecked(), "Monday should be on");
+  must(!(await page.getByRole("checkbox", { name: /Sunday/ }).isChecked()), "Sunday should start off");
+  await page.locator("label", { hasText: "Sunday" }).click(); // the checkbox itself is hidden; the chip is the label
+  await shot(page, "wizard-2-hours");
+  await page.getByRole("button", { name: "Save the hours" }).click();
+  await page.getByText(/Hours saved/).waitFor();
+  const r = await api("GET", `${T()}/visits/settings`, null, ownerToken);
+  must(r.status === 200 && r.body.is_default === false && r.body.weekly_hours.sun?.open === "10:00" && r.body.weekly_hours.mon?.close === "20:30" && r.body.slot_minutes === 30, `the API said ${JSON.stringify(r.body).slice(0, 160)}`);
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+}, page);
+
+await step("J4", "step 3: add the first saree with a REAL photo (shrunk in the browser, uploaded through the real route to real Storage); the catalogue then has it", async () => {
+  await page.getByRole("heading", { name: "Add your first saree" }).waitFor();
+  await page.setInputFiles('input[type="file"]', PHOTO);
+  await page.getByRole("button", { name: "Add this saree" }).click();
+  await page.getByText(/Saree added/).waitFor({ timeout: 60000 });
+  const r = await api("GET", `${T()}/catalogue/items?limit=5`, null, ownerToken);
+  must(r.status === 200 && r.body.items.length === 1 && r.body.items[0].name === "Maroon Kanchi pattu" && r.body.items[0].active === true, `the catalogue said ${JSON.stringify(r.body).slice(0, 200)}`);
+  must(r.body.items[0].cover || (r.body.items[0].photo_count ?? 1) >= 1, "the saree has no photo");
+  await shot(page, "wizard-3-saree");
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+}, page);
+
+await step("J5", "step 4: what Agent OWL does, what always waits (money, complaints, calls), automatic sending OFF in one plain sentence, the quiet hours; then 'You're ready' with three next actions", async () => {
+  await page.getByRole("heading", { name: "Meet Agent OWL" }).waitFor();
+  const t = await text(page);
+  must(t.includes("Automatic sending is off. New messages wait for you to approve them."), "the sending sentence is missing");
+  must(/Quiet hours: nothing goes out from \d\d:00 to \d\d:00 \(India time\)\./.test(t), "the quiet hours are missing");
+  for (const w of ["Money: prices, discounts, advances and refunds", "Complaints", "Calls: Agent OWL asks you first"]) must(t.includes(w), `missing: ${w}`);
+  await shot(page, "wizard-4-agent");
+  await page.getByRole("button", { name: "Next", exact: true }).click();
+  await page.getByRole("heading", { name: "You're ready" }).waitFor();
+  const links = await page.locator('[data-step="ready"] a').allInnerTexts();
+  must(links.length === 3, `${links.length} next actions`);
+  await shot(page, "wizard-5-ready");
+  await page.getByRole("link", { name: "Go to Today" }).click();
+  await page.getByRole("heading", { name: "Needs you", exact: true }).waitFor({ timeout: 60000 });
+  must((await page.locator('[data-setup="checklist"]').count()) === 0, "the checklist should be gone: everything is done");
+}, page);
+
+await step("J6", "the wizard is resumable and remembers: a reload shows Today, not the wizard; the facts are real (hours saved, one saree)", async () => {
+  await page.reload({ waitUntil: "networkidle" });
+  must((await page.locator('[data-setup="wizard"]').count()) === 0, "the wizard came back");
+  must((await page.getByRole("heading", { name: "Needs you", exact: true }).count()) === 1, "Today is not shown");
+  const r = await api("GET", `${T()}/outbox/settings`, null, ownerToken);
+  must(r.status === 200 && r.body.auto_send_enabled === false, "automatic sending must still be OFF after the wizard (it never switches it on)");
+}, page);
+
 await step("B0", "make the workspace ready: assistant on (local operator step), two customers who agreed to WhatsApp, a message that waits, a message with an English gloss", async () => {
   psql(`select app.operator_enable_assistant('${slug}')`);
   psql("update public.platform_flags set enabled = true where key = 'outbox_enabled' and enabled = false"); // the operator's global switch: only turned ON if it was off, and left on (the seed does the same)
@@ -383,7 +501,7 @@ await step("G2", "Catalogue list shows the saree with its real thumbnail; the ow
   await page.goto(`${BASE}/app/tenants/${tenant}/catalogue`);
   await page.waitForSelector("[data-grid=items] img");
   const ok = await page.locator("[data-grid=items] img").evaluateAll((els) => els.map((e) => e.complete && e.naturalWidth > 0));
-  must(ok.length === 1 && ok[0], `thumbnail: ${JSON.stringify(ok)}`);
+  must(ok.length >= 2 && ok.every(Boolean), `thumbnails: ${JSON.stringify(ok)}`); // the wizard's saree and this one
   await shot(page, "catalogue-list");
 }, page);
 
@@ -429,7 +547,7 @@ await step("G4", "Outbox: the catalogue message carries its photo as a thumbnail
 
 // ---- 8. Ask Agent OWL ------------------------------------------------------------------------------------------------------
 await step("H1", "Ask Agent OWL (the scripted model of the local stack): the question is answered with sources, and nothing is invented", async () => {
-  await page.goto(`${BASE}/app/tenants/${tenant}`);
+  await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" }); // the page must be hydrated before the box is typed in, or React resets it
   const box = page.locator("#ask-input");
   await box.fill("What needs me today?");
   await box.press("Enter");
@@ -440,7 +558,7 @@ await step("H1", "Ask Agent OWL (the scripted model of the local stack): the que
 
 await step("H2", "A saree named in an answer links to its page (the scripted model of the local stack has a catalogue path since job BG: the real box, the real API, the real catalogue)", async () => {
   const itemId = itemUrl.split("/").pop();
-  await page.goto(`${BASE}/app/tenants/${tenant}`);
+  await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" }); // the page must be hydrated before the box is typed in, or React resets it
   const box = page.locator("#ask-input");
   await box.fill("Show me a maroon saree");
   await box.press("Enter");

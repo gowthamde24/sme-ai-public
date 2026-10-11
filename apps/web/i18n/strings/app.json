@@ -1860,10 +1860,10 @@
   }
  },
  "ask.hero.note": {
-  "en": "Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.",
-  "te": "తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో మాట్లాడండి లేదా టైప్ చేయండి. Agent OWL రాతలో జవాబు ఇస్తుంది.",
-  "hi": "तेलुगु, हिंदी, कन्नड़ या अंग्रेज़ी में बोलें या लिखें। Agent OWL लिखकर जवाब देता है।",
-  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ. Agent OWL ಬರಹದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "en": "Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.",
+  "te": "తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో మాట్లాడండి లేదా టైప్ చేయండి. Agent OWL రాతలో జవాబు ఇస్తుంది, మీరు వాయిస్ ఆన్ చేస్తే గట్టిగా చదివి వినిపిస్తుంది.",
+  "hi": "तेलुगु, हिंदी, कन्नड़ या अंग्रेज़ी में बोलें या लिखें। Agent OWL लिखकर जवाब देता है, और वॉइस चालू करने पर बोलकर भी।",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ. Agent OWL ಬರಹದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ, ಮತ್ತು ನೀವು ವಾಯ್ಸ್ ಆನ್ ಮಾಡಿದರೆ ಧ್ವನಿಯಲ್ಲಿಯೂ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9552,6 +9552,617 @@
   "te": "మాట రూపంలో జవాబు రాలేదు. పైన ఉన్న రాతపూర్వక జవాబు పూర్తిగా ఉంది.",
   "hi": "बोला हुआ जवाब नहीं बन पाया। ऊपर लिखा जवाब पूरा है।",
   "kn": "ಮಾತಿನ ಉತ್ತರ ಬರಲಿಲ್ಲ. ಮೇಲಿನ ಬರೆದ ಉತ್ತರ ಪೂರ್ಣವಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.loading": {
+  "en": "Getting things ready…",
+  "te": "సిద్ధం చేస్తున్నాము…",
+  "hi": "तैयारी हो रही है…",
+  "kn": "ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.step": {
+  "en": "Step {n} of {total}",
+  "te": "స్టెప్ {n} / {total}",
+  "hi": "स्टेप {n} / {total}",
+  "kn": "ಹಂತ {n} / {total}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.progress": {
+  "en": "Setup progress",
+  "te": "సెటప్ పురోగతి",
+  "hi": "सेटअप की प्रगति",
+  "kn": "ಸೆಟಪ್ ಪ್ರಗತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.later": {
+  "en": "Set up later",
+  "te": "తర్వాత సెటప్ చేస్తాను",
+  "hi": "बाद में सेटअप करूँगा",
+  "kn": "ನಂತರ ಸೆಟಪ್ ಮಾಡುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.next": {
+  "en": "Next",
+  "te": "తరువాత",
+  "hi": "आगे",
+  "kn": "ಮುಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.back": {
+  "en": "Back",
+  "te": "వెనక్కి",
+  "hi": "पीछे",
+  "kn": "ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.skip": {
+  "en": "Skip for now",
+  "te": "ప్రస్తుతానికి వదిలేయండి",
+  "hi": "अभी छोड़ें",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಬಿಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s1.title": {
+  "en": "Welcome to {shop}",
+  "te": "{shop} కి స్వాగతం",
+  "hi": "{shop} में आपका स्वागत है",
+  "kn": "{shop} ಗೆ ಸ್ವಾಗತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s1.text": {
+  "en": "A few quick steps and Agent OWL is ready to help. You can skip any step and come back to it later.",
+  "te": "కొన్ని చిన్న స్టెప్‌లతో Agent OWL సహాయానికి సిద్ధం. ఏ స్టెప్‌నైనా వదిలేసి, తర్వాత చేయవచ్చు.",
+  "hi": "कुछ छोटे स्टेप और Agent OWL मदद के लिए तैयार। कोई भी स्टेप छोड़कर बाद में कर सकते हैं।",
+  "kn": "ಕೆಲವು ಚಿಕ್ಕ ಹಂತಗಳಲ್ಲಿ Agent OWL ಸಹಾಯಕ್ಕೆ ಸಿದ್ಧ. ಯಾವುದೇ ಹಂತ ಬಿಟ್ಟು ನಂತರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s1.lang": {
+  "en": "Language of the app",
+  "te": "యాప్ భాష",
+  "hi": "ऐप की भाषा",
+  "kn": "ಆ್ಯಪ್ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s1.lang.help": {
+  "en": "You can change it any time with the language button at the top.",
+  "te": "పైన ఉన్న భాష బటన్‌తో ఎప్పుడైనా మార్చవచ్చు.",
+  "hi": "ऊपर के भाषा बटन से कभी भी बदल सकते हैं।",
+  "kn": "ಮೇಲಿನ ಭಾಷೆ ಬಟನ್‌ನಿಂದ ಯಾವಾಗ ಬೇಕಾದರೂ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.title": {
+  "en": "When is the shop open?",
+  "te": "షాప్ ఎప్పుడు తెరిచి ఉంటుంది?",
+  "hi": "दुकान कब खुली रहती है?",
+  "kn": "ಅಂಗಡಿ ಯಾವಾಗ ತೆರೆದಿರುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.text": {
+  "en": "Customers can book a visit only in open hours. These are usual saree-shop hours; change anything you like.",
+  "te": "ఓపెన్ టైమ్‌లో మాత్రమే కస్టమర్లు విజిట్ బుక్ చేయగలరు. ఇవి సాధారణ చీరల షాప్ టైమింగ్స్; ఏదైనా మార్చవచ్చు.",
+  "hi": "ग्राहक सिर्फ़ खुले समय में विज़िट बुक कर सकते हैं। ये साड़ी की दुकान के आम समय हैं; जो चाहें बदलें।",
+  "kn": "ತೆರೆದ ಸಮಯದಲ್ಲಿ ಮಾತ್ರ ಗ್ರಾಹಕರು ಭೇಟಿ ಬುಕ್ ಮಾಡಬಹುದು. ಇವು ಸೀರೆ ಅಂಗಡಿಯ ಸಾಮಾನ್ಯ ಸಮಯ; ಬೇಕಾದದ್ದನ್ನು ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.days": {
+  "en": "Open days",
+  "te": "తెరిచే రోజులు",
+  "hi": "खुले रहने के दिन",
+  "kn": "ತೆರೆಯುವ ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.opens": {
+  "en": "Opens",
+  "te": "తెరిచేది",
+  "hi": "खुलता है",
+  "kn": "ತೆರೆಯುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.closes": {
+  "en": "Closes",
+  "te": "మూసేది",
+  "hi": "बंद होता है",
+  "kn": "ಮುಚ್ಚುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.slot": {
+  "en": "Length of one visit",
+  "te": "ఒక విజిట్ నిడివి",
+  "hi": "एक विज़िट की लंबाई",
+  "kn": "ಒಂದು ಭೇಟಿಯ ಅವಧಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.slot.opt": {
+  "en": "{n} minutes",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.parallel": {
+  "en": "Visits at the same time",
+  "te": "ఒకేసారి విజిట్‌లు",
+  "hi": "एक साथ विज़िट",
+  "kn": "ಒಂದೇ ಸಮಯದ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s2.err.days": {
+  "en": "Choose at least one open day.",
+  "te": "కనీసం ఒక రోజైనా ఎంచుకోండి.",
+  "hi": "कम से कम एक खुला दिन चुनें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ದಿನ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.title": {
+  "en": "Add your first saree",
+  "te": "మీ మొదటి చీరను జోడించండి",
+  "hi": "अपनी पहली साड़ी जोड़ें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.text": {
+  "en": "One photo, the fabric and the colour is enough. You can add more details later.",
+  "te": "ఒక ఫోటో, ఫాబ్రిక్, రంగు చాలు. మిగతా వివరాలు తర్వాత జోడించవచ్చు.",
+  "hi": "एक फ़ोटो, कपड़ा और रंग काफ़ी है। बाकी जानकारी बाद में जोड़ सकते हैं।",
+  "kn": "ಒಂದು ಫೋಟೋ, ಬಟ್ಟೆ, ಬಣ್ಣ ಸಾಕು. ಉಳಿದ ವಿವರಗಳನ್ನು ನಂತರ ಸೇರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.photo": {
+  "en": "Photo",
+  "te": "ఫోటో",
+  "hi": "फ़ोटो",
+  "kn": "ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.photo.change": {
+  "en": "Change photo",
+  "te": "ఫోటో మార్చండి",
+  "hi": "फ़ोटो बदलें",
+  "kn": "ಫೋಟೋ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.photo.help": {
+  "en": "A clear photo of the whole saree, in daylight if you can.",
+  "te": "మొత్తం చీర స్పష్టంగా కనిపించే ఫోటో, వీలైతే పగటి వెలుతురులో.",
+  "hi": "पूरी साड़ी की साफ़ फ़ोटो, हो सके तो दिन की रोशनी में।",
+  "kn": "ಇಡೀ ಸೀರೆ ಸ್ಪಷ್ಟವಾಗಿ ಕಾಣುವ ಫೋಟೋ, ಸಾಧ್ಯವಾದರೆ ಹಗಲಿನ ಬೆಳಕಿನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.colour": {
+  "en": "Colour",
+  "te": "రంగు",
+  "hi": "रंग",
+  "kn": "ಬಣ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.save": {
+  "en": "Add this saree",
+  "te": "ఈ చీరను జోడించండి",
+  "hi": "यह साड़ी जोड़ें",
+  "kn": "ಈ ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.err.photo": {
+  "en": "Choose a photo first.",
+  "te": "ముందు ఒక ఫోటో ఎంచుకోండి.",
+  "hi": "पहले एक फ़ोटो चुनें।",
+  "kn": "ಮೊದಲು ಒಂದು ಫೋಟೋ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.added": {
+  "en": "Saree added. It is in your catalogue and ready to send to a customer.",
+  "te": "చీర జోడించబడింది. ఇది మీ కేటలాగ్‌లో ఉంది, కస్టమర్‌కి పంపడానికి సిద్ధం.",
+  "hi": "साड़ी जुड़ गई। यह आपके कैटलॉग में है और ग्राहक को भेजने के लिए तैयार है।",
+  "kn": "ಸೀರೆ ಸೇರಿಸಲಾಗಿದೆ. ಇದು ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿದೆ, ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಲು ಸಿದ್ಧ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s3.photofail": {
+  "en": "The details were saved, but the photo did not upload: {why} Choose the photo again.",
+  "te": "వివరాలు సేవ్ అయ్యాయి, కానీ ఫోటో అప్‌లోడ్ కాలేదు: {why} ఫోటోను మళ్ళీ ఎంచుకోండి.",
+  "hi": "जानकारी सहेजी गई, पर फ़ोटो अपलोड नहीं हुई: {why} फ़ोटो फिर से चुनें।",
+  "kn": "ವಿವರಗಳು ಉಳಿಸಲಾಗಿವೆ, ಆದರೆ ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ: {why} ಫೋಟೋವನ್ನು ಮತ್ತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s4.title": {
+  "en": "Meet Agent OWL",
+  "te": "Agent OWL ని కలవండి",
+  "hi": "Agent OWL से मिलिए",
+  "kn": "Agent OWL ಅನ್ನು ಭೇಟಿಯಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s4.does": {
+  "en": "Agent OWL reads your records, answers your questions and prepares drafts: replies, follow-ups, quotes and store visits.",
+  "te": "Agent OWL మీ రికార్డులు చదివి, ప్రశ్నలకు జవాబు ఇస్తుంది, డ్రాఫ్ట్‌లు సిద్ధం చేస్తుంది: రిప్లైలు, ఫాలో-అప్‌లు, కొటేషన్లు, స్టోర్ విజిట్‌లు.",
+  "hi": "Agent OWL आपके रिकॉर्ड पढ़ता है, सवालों के जवाब देता है और ड्राफ़्ट बनाता है: रिप्लाई, फ़ॉलो-अप, कोटेशन और स्टोर विज़िट।",
+  "kn": "Agent OWL ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಓದಿ, ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರಿಸಿ, ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು ಸಿದ್ಧಪಡಿಸುತ್ತದೆ: ರಿಪ್ಲೈ, ಫಾಲೋ-ಅಪ್, ಕೊಟೇಶನ್, ಸ್ಟೋರ್ ಭೇಟಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.s4.waits.title": {
+  "en": "What always waits for you",
+  "te": "What always waits for you",
+  "hi": "What always waits for you",
+  "kn": "What always waits for you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "setup.s4.waits.money": {
+  "en": "Money: prices, discounts, advances and refunds",
+  "te": "Money: prices, discounts, advances and refunds",
+  "hi": "Money: prices, discounts, advances and refunds",
+  "kn": "Money: prices, discounts, advances and refunds",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "setup.s4.waits.complaints": {
+  "en": "Complaints",
+  "te": "Complaints",
+  "hi": "Complaints",
+  "kn": "Complaints",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "setup.s4.waits.calls": {
+  "en": "Calls: Agent OWL asks you first",
+  "te": "Calls: Agent OWL asks you first",
+  "hi": "Calls: Agent OWL asks you first",
+  "kn": "Calls: Agent OWL asks you first",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "setup.s4.auto": {
+  "en": "Automatic sending is off. New messages wait for you to approve them. You can switch it on later in Settings.",
+  "te": "Automatic sending is off. New messages wait for you to approve them. You can switch it on later in Settings.",
+  "hi": "Automatic sending is off. New messages wait for you to approve them. You can switch it on later in Settings.",
+  "kn": "Automatic sending is off. New messages wait for you to approve them. You can switch it on later in Settings.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "setup.s4.quiet": {
+  "en": "Quiet hours: nothing goes out from {start} to {end} (India time).",
+  "te": "Quiet hours: nothing goes out from {start} to {end} (India time).",
+  "hi": "Quiet hours: nothing goes out from {start} to {end} (India time).",
+  "kn": "Quiet hours: nothing goes out from {start} to {end} (India time).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "setup.s4.settings": {
+  "en": "Open Agent OWL settings",
+  "te": "Agent OWL సెట్టింగ్‌లు తెరవండి",
+  "hi": "Agent OWL सेटिंग खोलें",
+  "kn": "Agent OWL ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.ready.title": {
+  "en": "You're ready",
+  "te": "మీరు సిద్ధం",
+  "hi": "आप तैयार हैं",
+  "kn": "ನೀವು ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.ready.text": {
+  "en": "{shop} is set up. Three things you can do next:",
+  "te": "{shop} సెటప్ అయింది. తరువాత చేయగల మూడు పనులు:",
+  "hi": "{shop} सेट हो गया। आगे ये तीन काम कर सकते हैं:",
+  "kn": "{shop} ಸೆಟಪ್ ಆಯಿತು. ಮುಂದೆ ಮಾಡಬಹುದಾದ ಮೂರು ಕೆಲಸಗಳು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.ready.a1": {
+  "en": "Ask Agent OWL what needs you today",
+  "te": "ఈ రోజు మీరు ఏం చేయాలో Agent OWL ని అడగండి",
+  "hi": "आज आपको क्या देखना है, Agent OWL से पूछें",
+  "kn": "ಇಂದು ನೀವು ಏನು ಮಾಡಬೇಕು ಎಂದು Agent OWL ಅನ್ನು ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.ready.a2": {
+  "en": "Add more sarees",
+  "te": "మరిన్ని చీరలు జోడించండి",
+  "hi": "और साड़ियाँ जोड़ें",
+  "kn": "ಇನ್ನಷ್ಟು ಸೀರೆಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.ready.a3": {
+  "en": "Add a customer",
+  "te": "ఒక కస్టమర్‌ని జోడించండి",
+  "hi": "एक ग्राहक जोड़ें",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.ready.go": {
+  "en": "Go to Today",
+  "te": "ఈ రోజు పేజీకి వెళ్ళండి",
+  "hi": "आज के पेज पर जाएँ",
+  "kn": "ಇಂದಿನ ಪುಟಕ್ಕೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.title": {
+  "en": "Finish setting up",
+  "te": "సెటప్ పూర్తి చేయండి",
+  "hi": "सेटअप पूरा करें",
+  "kn": "ಸೆಟಪ್ ಪೂರ್ಣಗೊಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.count": {
+  "en": "{done} of {total} done",
+  "te": "{done}/{total} పూర్తి",
+  "hi": "{done}/{total} पूरे",
+  "kn": "{done}/{total} ಪೂರ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.hours": {
+  "en": "Set the shop hours",
+  "te": "షాప్ టైమింగ్స్ పెట్టండి",
+  "hi": "दुकान का समय तय करें",
+  "kn": "ಅಂಗಡಿ ಸಮಯ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.saree": {
+  "en": "Add your first saree",
+  "te": "మీ మొదటి చీరను జోడించండి",
+  "hi": "अपनी पहली साड़ी जोड़ें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.agent": {
+  "en": "See what Agent OWL does",
+  "te": "Agent OWL ఏం చేస్తుందో చూడండి",
+  "hi": "देखें Agent OWL क्या करता है",
+  "kn": "Agent OWL ಏನು ಮಾಡುತ್ತದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.continue": {
+  "en": "Continue setup",
+  "te": "సెటప్ కొనసాగించండి",
+  "hi": "सेटअप जारी रखें",
+  "kn": "ಸೆಟಪ್ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.hide": {
+  "en": "Hide",
+  "te": "దాచండి",
+  "hi": "छिपाएँ",
+  "kn": "ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.hide.label": {
+  "en": "Hide the setup list",
+  "te": "సెటప్ జాబితాను దాచండి",
+  "hi": "सेटअप की सूची छिपाएँ",
+  "kn": "ಸೆಟಪ್ ಪಟ್ಟಿ ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.done": {
+  "en": "Done",
+  "te": "పూర్తి",
+  "hi": "हो गया",
+  "kn": "ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.check.todo": {
+  "en": "To do",
+  "te": "చేయాలి",
+  "hi": "बाकी",
+  "kn": "ಬಾಕಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

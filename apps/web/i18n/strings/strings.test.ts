@@ -52,8 +52,9 @@ describe("honesty: no claims we cannot prove today", () => {
   it("the English landing copy says what it must: drafts, approval, you send, and that sign-up is open and free", () => {
     expect(en["hero.sub"]).toMatch(/approve/i);
     expect(en["hero.sub"]).toMatch(/send it yourself/i);
-    expect(en["faq.1.a"]).toMatch(/draft/i);
-    expect(en["faq.1.a"]).toMatch(/Nothing is sent automatically/);
+    // job BJ: automatic sending exists (switched off by default), so the answer says exactly when Agent OWL sends by itself and what always waits
+    expect(en["faq.1.a"]).toBe("Agent OWL only sends routine replies by itself when you switch automatic sending on. Anything about money, complaints or calls always waits for you.");
+    expect(en["faq.1.a"]).not.toMatch(/Nothing is sent automatically/);
     expect(en["faq.6.a"]).toBe("You can sign up and try it free. Nothing is charged.");
     for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/invitation only|by invitation|early access/i); // sign-up is open (Job AC review)
     expect(en["hero.cta"]).toBe("Sign up"); // Job AC C5: the main button on the home page goes to the sign-up screen
