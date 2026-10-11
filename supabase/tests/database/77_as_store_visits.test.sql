@@ -406,7 +406,7 @@ select is(pg_temp.j(pg_temp.complete('j_v3', 'will_return'), 'status'), 'complet
 -- K. messages through the outbox (the AT policy decides): the switch is on, automatic sending is on, the customer consented
 -- ---------------------------------------------------------------------------------------------
 update public.platform_flags set enabled = true where key = 'outbox_enabled';
-select is(pg_temp.sc('a_owner', format($q$select public.outbox_set_settings(%L, true, 5)$q$, tests.tid('a'))), '{"auto_send_enabled": true, "per_customer_daily_limit": 5}', 'the Owner switches automatic sending on');
+select is(pg_temp.sc('a_owner', format($q$select public.outbox_set_settings(%L, true, 5)$q$, tests.tid('a'))), '{"quiet_hours_end": 9, "auto_send_enabled": true, "quiet_hours_start": 21, "per_customer_daily_limit": 5}', 'the Owner switches automatic sending on');
 create function pg_temp.msg(p_visit text, p_kind text, p_msg text, p_body text, p_user text default 'a_owner') returns text language sql as $$
   select pg_temp.sc(p_user, format($q$select public.visit_send_message(%L, %L, %L, %L, %L, 'en')$q$, tests.tid('a'), tests.rid(p_visit), p_kind, tests.rid(p_msg), p_body)) $$;
 select pg_temp.mk('k1'); select pg_temp.mk('k2'); select pg_temp.mk('k3'); select pg_temp.mk('k4');

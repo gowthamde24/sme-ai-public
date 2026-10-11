@@ -450,7 +450,7 @@ def test_agent_owl_finds_sarees_and_sends_their_photos_under_the_policy(app: Tes
             lambda r: final("answer", "I found the green Mysore silk saree and queued its photo for the customer.", "en", ["s1", "s2"]),
         ]
     )
-    r = app.post(f"/v1/tenants/{shop.tenant}/assistant/messages", json={"message_id": str(uuid.uuid4()), "text": "send the green mysore silk to the customer"}, headers=bearer(shop.w.a.users["owner"]))
+    r = app.post(f"/v1/tenants/{shop.tenant}/assistant/messages", json={"message_id": str(uuid.uuid4()), "text": "send photos of the green mysore silk to the customer"}, headers=bearer(shop.w.a.users["owner"]))
     assert r.status_code == 200, r.text
     evts = events(r)
     sources = [e[1] for e in evts if e[0] == "source"]
@@ -473,7 +473,7 @@ def test_agent_owl_cannot_send_a_price_without_the_owner_and_cannot_name_one(app
             lambda r: final("refusal", "I queued it, and it waits for you to approve it.", "en", []),
         ]
     )
-    r = app.post(f"/v1/tenants/{shop.tenant}/assistant/messages", json={"message_id": str(uuid.uuid4()), "text": "send it with the price"}, headers=bearer(shop.w.a.users["owner"]))
+    r = app.post(f"/v1/tenants/{shop.tenant}/assistant/messages", json={"message_id": str(uuid.uuid4()), "text": "send photos of it with the price"}, headers=bearer(shop.w.a.users["owner"]))
     assert r.status_code == 200, r.text
     rows = operator_sql.sql(f"select status || '/' || reason from public.outbox_messages where lead_id = '{lead.id}'").splitlines()
     assert rows == ["needs_approval/money"], "the caption's amount made it wait for the Owner; the call with a price field was refused"

@@ -27,8 +27,10 @@ from conftest import Stack, User, aal1_token, bearer
 from crm_support import World
 from fastapi.testclient import TestClient
 from followup_support import FollowWorld, Lead
+from test_catalogue_api import png
 from test_outbox_api import restore_clock
 
+from app.catalogue.storage import HttpStorageClient
 from app.outbox.adapter import LocalFakeAdapter
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.session import PrincipalSession
@@ -78,7 +80,9 @@ class Sched:
     ) -> tuple[Worker, LocalFakeAdapter]:
         adapter = LocalFakeAdapter()
         repo = repository or PostgrestSchedulerRepository(self.stack.rest, self.stack.anon_key)
-        return Worker(repo, adapter, self.session(), interval_seconds=60), adapter
+        # the worker signs the photos of a message it has claimed with its own token (job BB): a real storage client, the same one `python -m app.scheduler.worker` builds
+        storage = HttpStorageClient(f"{self.stack.url}/storage/v1", self.stack.anon_key)
+        return Worker(repo, adapter, self.session(), interval_seconds=60, storage=storage), adapter
 
     def repo(self) -> PostgrestSchedulerRepository:
         return PostgrestSchedulerRepository(self.stack.rest, self.stack.anon_key)
@@ -709,3 +713,47 @@ def test_a_person_cannot_call_the_workers_functions_even_an_owner(shop: Shop, st
         timeout=15,
     )
     assert r.status_code == 403
+
+
+# ---------------------------------------------------------------------------------------------- job BB: the photos of a claimed message
+def _stocked_item(shop: Shop) -> tuple[str, str]:
+    """An active catalogue item with one photo, made through the API like the web does; returns (item id, photo id)."""
+    item = str(uuid.uuid4())
+    body = {"name": f"Qq{uuid.uuid4().hex[:6]} Kanchi", "fabric": "kanchi_pattu", "colours": ["maroon"], "zari": "rich", "border": "Temple border", "occasions": ["wedding"], "price_band": "25k_50k", "stock_status": "in_stock", "active": False}
+    assert shop.call("owner", "PUT", f"/catalogue/items/{item}", body).status_code == 200
+    up = shop.client.post(f"/v1/tenants/{shop.tenant}/catalogue/items/{item}/photos", content=png(), headers={**bearer(shop.w.a.users["owner"]), "Content-Type": "image/png"})
+    assert up.status_code == 200, up.text
+    assert shop.call("owner", "PUT", f"/catalogue/items/{item}", {**body, "active": True}).status_code == 200
+    photo = shop.call("owner", "GET", f"/catalogue/items/{item}").json()["photos"][0]["id"]
+    return item, photo
+
+
+def test_the_worker_hands_the_channel_photo_addresses_it_can_fetch_and_can_read_nothing_else(shop: Shop) -> None:
+    pin(0, "15:00")
+    shop.set_auto(True)
+    _, photo = _stocked_item(shop)
+    _, other_photo = _stocked_item(shop)  # a second saree whose message nobody claims
+    mid = str(uuid.uuid4())
+    lead = shop.lead()
+    r = shop.call("sales", "POST", "/outbox/messages", {"message_id": mid, "lead_id": lead.id, "text": "Here is a saree you may like.", "language": "en", "category": "info", "photo_ids": [photo]})
+    assert r.status_code == 200 and r.json()["message"]["status"] == "queued", r.text
+    unclaimed = str(uuid.uuid4())
+    held = shop.call("sales", "POST", "/outbox/messages", {"message_id": unclaimed, "lead_id": shop.lead().id, "text": "Here is another saree you may like.", "language": "en", "category": "other", "photo_ids": [other_photo]})
+    assert held.json()["message"]["status"] == "needs_approval"
+    worker, adapter = shop.sched.worker()
+    storage = HttpStorageClient(f"{shop.stack.url}/storage/v1", shop.stack.anon_key)
+    ref = operator_sql.sql(f"select p.bucket || '|' || p.path from public.catalogue_photos p where p.id = '{photo}'").split("|")
+    other_ref = operator_sql.sql(f"select p.bucket || '|' || p.path from public.catalogue_photos p where p.id = '{other_photo}'").split("|")
+    token = shop.sched.session().token()
+    assert storage.sign(token, ref[0], [ref[1]]) == {}, "before it claims anything the worker's account cannot even have the photo signed"
+    worker.tick_once()
+    (sent,) = [m for m in adapter.sent if str(m.message_id) == mid]
+    (media,) = sent.media
+    assert media.photo_id == uuid.UUID(photo) and media.url is not None
+    fetched = httpx.get(media.url, timeout=10)
+    assert fetched.status_code == 200 and fetched.headers["content-type"].startswith("image/") and len(fetched.content) > 1000, "the channel can fetch the image through the short-lived address"
+    assert sent.idempotency_key == mid
+    assert shop.msg(mid)[0] == "sent"
+    # the message is sent: the files are closed to the worker again, and the other saree (never claimed) never was open
+    assert storage.sign(token, ref[0], [ref[1]]) == {}, "once sent, the worker can no longer have the photo signed"
+    assert storage.sign(token, other_ref[0], [other_ref[1]]) == {}, "a photo of a message it has not claimed is closed to it"

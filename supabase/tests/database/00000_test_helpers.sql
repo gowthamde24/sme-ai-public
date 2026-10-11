@@ -525,8 +525,8 @@ begin
   insert into public.assistant_reply_drafts (id, tenant_id, conversation_id, run_id, lead_id, language, body, gloss_en, created_by) values
     (tests.rid(p || '_er_rd'), t, tests.rid(p || '_er_conv'), tests.rid(p || '_er_run'), l, 'en', 'Thank you for writing from zed.qxjv@canary.test', 'We will call 98765 43210', tests.uid(p || '_owner'));
   -- job AT: a message to the person that waits for approval, and a call request the Owner decided, both naming them
-  insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by) values
-    (tests.rid(p || '_er_ob'), t, l, k, 'whatsapp', 'Hello Zed Qxjv, call 98765 43210 or write to zed.qxjv@canary.test', 'en', 'info', 'needs_approval', 'category_other', repeat('3', 64), tests.uid(p || '_owner'));
+  insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, gloss_en, language, category, status, reason, request_sha256, created_by) values
+    (tests.rid(p || '_er_ob'), t, l, k, 'whatsapp', 'Hello Zed Qxjv, call 98765 43210 or write to zed.qxjv@canary.test', 'English gloss for Zed Qxjv, call 98765 43210', 'en', 'info', 'needs_approval', 'category_other', repeat('3', 64), tests.uid(p || '_owner'));
   insert into public.call_requests (id, tenant_id, lead_id, contact_id, reason, script_draft, language, status, request_sha256, requested_by, decided_by, decided_at, decision_note) values
     (tests.rid(p || '_er_cr'), t, l, k, 'Call Zed Qxjv about the order', 'Hello Zed Qxjv, this is about 9876543210', 'en', 'approved', repeat('4', 64), tests.uid(p || '_owner'), tests.uid(p || '_owner'), now(), 'Reach zed.qxjv@canary.test first');
   -- job AS: a store visit for the person, with free text that names them (what it is for, a note, why it was cancelled)

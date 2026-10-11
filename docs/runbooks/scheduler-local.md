@@ -3,7 +3,7 @@
 Everything here is local and synthetic. **Nothing is ever sent to anyone**: the only channel is the local stand-in (`OUTBOX_ADAPTER=fake`). The worker is one extra process; it needs no queue, no account and nothing paid.
 
 ## What it does, every minute
-1. **Releases** outbox messages that are due: held for the morning (quiet hours 21:00 to 09:00 India time), or queued and not yet handed over. The send policy, the STOP / erasure / no-key / opt-in / daily-limit checks and quiet hours are checked again at that moment, by the database; the worker cannot skip them.
+1. **Releases** outbox messages that are due: held for the morning (each business's quiet hours, 21:00 to 09:00 India time unless the Owner changed them), or queued and not yet handed over. The send policy, the STOP / erasure / no-key / opt-in / daily-limit checks and quiet hours are checked again at that moment, by the database; the worker cannot skip them.
 2. **Queues visit reminders** through the outbox (the same policy as any message): *the evening before* (from 18:00 by default, never after 21:00) and *a few hours before* (120 minutes by default, never closer than 30 minutes, never in quiet hours). One per visit, kind and start time. A visit that moves is reminded again for its new time. Only for a **confirmed** visit.
 3. **Marks missed visits** `no_show` a number of minutes after the slot ended (default 30), only for a confirmed visit. **Off** unless the Owner switches it on.
 
@@ -50,3 +50,6 @@ Ctrl-C (or SIGTERM) stops the worker; it finishes the tick it is in. To take its
 
 ## Hosted (later, not now)
 Not deployed and not planned before the Customer Zero stage (ADR 0017). When it is: create the worker's account like any account, register it with `app.operator_register_scheduler` run by the operator in the database, keep its password in the host's secret store (`SCHEDULER_EMAIL`, `SCHEDULER_PASSWORD`), run one worker process. Decide first whether one principal for all businesses is enough (`docs/pre-pilot-checklist.md`).
+
+## Photos (job BB, ADR 0070)
+When a claimed message has photos the worker asks storage, with its own token, for an address valid for 300 seconds for each (the database lets the registered worker read exactly the files of a message it has claimed, for ten minutes, and nothing else). The adapter gets them as `MediaRef.url`. If any address cannot be made the message is neither sent nor marked: it is offered again after the two-minute lease, and the tick counts an error. The message id is the adapter's idempotency key.

@@ -381,10 +381,18 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | Phase | Item |
 |---|---|
 | [ ] | **No real product photos exist in the repository or the seeds.** The Owner uploads their own; check the shop has the rights to every picture it sends customers. |
-| [ ] | **A real WhatsApp adapter needs the photos by URL.** A claim carries bucket + path + type (a reference). The worker's principal cannot sign a URL, so a real adapter needs a minting step (a signed URL made in the Owner's name or a small signing function) before it can send media. Nothing real exists yet. |
+| [x] | **(Done in job BB, ADR 0070.)** *Was:* **A real WhatsApp adapter needs the photos by URL.** A claim carries bucket + path + type (a reference). The worker's principal cannot sign a URL, so a real adapter needs a minting step (a signed URL made in the Owner's name or a small signing function) before it can send media. Nothing real exists yet. |
 | [ ] | **Hosted Storage.** The bucket-per-business rules are tested on the local Storage service only. Before hosting: confirm the `storage.objects` rules, the 5 MB limit and the allowed types on the hosted project, the backup and the retention of files (files of removed photos stay), and an orphan clean-up. |
 | [ ] | **The agent's caption is model text.** In Telugu, Hindi, Kannada and Tamil it is machine text in the customer's language that the Owner reads like any draft; unlike the visit templates it is not pre-approved. A caption with an amount waits for the Owner; a caption with a claim the policy's word lists do not know does not (the lists err on the side of asking). |
-| [ ] | **Agent OWL's question budget grew about 13 %** (two tools, about 320 tokens a call). A free-tier model with a small tokens-per-minute allowance has less room per question. |
+| [x] | **(Reduced in job BB: a question that is not about photos or visits is back to 2,982 to 3,263 tokens; the router, ADR 0070.)** *Was:* **Agent OWL's question budget grew about 13 %** (two tools, about 320 tokens a call). A free-tier model with a small tokens-per-minute allowance has less room per question. |
 | [ ] | **Exact prices in the catalogue are the Owner's own list**, separate from the quote engine's price list (`find_price`). They can disagree; the engine's price is the only one a quote uses. Decide whether the catalogue price should come from the price list. |
 | [ ] | **The web must stop adding proposed visits to the Today count** (`cards.waiting` includes them now), and must learn the new source type `catalogue_item` of the Ask box. |
 
+## Outbox gaps, worker photos, quiet hours, lighter Agent OWL (ADR 0070, job BB)
+| Phase | Item |
+|---|---|
+| [ ] | **The worker's one principal can read the claimed photos of every business** (not any other file, and only while a message is claimed). Decide with the per-business principal question (ADR 0068) before the first external customer. |
+| [ ] | **A real adapter must use the message id as its idempotency key** (and `<id>:<n>` per photo), and fetch each image within five minutes of the claim (the address lasts 300 s). |
+| [ ] | **The gloss is personal data** (it can name the customer): confirm the erasure drill covers it in the hosted project (it is in the registry for all four scopes). |
+| [ ] | **Quiet-hours range is a product decision** (start 19 to 23, end 7 to 10). A start at 19:00 with the evening reminder hour at 20 gives no evening reminder; the settings screen should say so. |
+| [ ] | **The router's word lists are English, Telugu, Hindi, Kannada and Tamil only** and have been written without a native reader; a question phrased without a trigger word does not get the catalogue or visit tools. Have a native speaker of each language read the lists in `app/assistant/router.py` and add what a shopkeeper really says. |

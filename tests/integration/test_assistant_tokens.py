@@ -31,13 +31,26 @@ QUESTIONS = {
     "telugu": "Draft a reply to the waiting customer in Telugu",
     "enquiry": "What does the newest enquiry say?",
 }
-# ceilings in ESTIMATED tokens: a whole question (all its model calls), and one call
-# job AS added ONE tool (propose_visit: 77 estimated tokens, sent with each of the two calls = +154 a question); the ceiling went from 3400 to 3450 for exactly that. The tool is kept to three small
-# fields for this reason. Anything beyond it fails here.
-# job AY added TWO tools (find_catalogue_items and send_catalogue_items; measured below), sent with each of the two calls of a question: the ceilings went from 3450 to 4050 a question and from 2000 to 2250 a call for exactly those two (measured: 3,705 to 3,986 a question, 1,855 to 2,190 a call). Both are kept to
-# closed words, a lead, up to four ids and one caption.
-QUESTION_CEILING = 4050
-CALL_CEILING = 2250
+# job BB: the router offers the catalogue tools only to a question about photos, designs, colours, fabrics or stock, and the visit tool only to a question about a visit; everything else is described with the
+# core tools alone. So the ceilings are PER PATH, and each is strict (about 3% over what was measured): a change that makes the base path bigger again fails here.
+PATH_QUESTIONS: dict[str, dict[str, str]] = {
+    "base": QUESTIONS,
+    "catalogue": {
+        "photos": "Send photos of the maroon Kanchi pattu to Ravi",
+        "show": "Show me red sarees",
+    },
+    "visits": {"book": "Book a visit for Lakshmi tomorrow at 11:00"},
+    "both": {"both": "Book a visit for Ravi and send him photos of the Kanchi pattu"},
+}
+# ceilings in ESTIMATED tokens, PER PATH: (a whole question = all its model calls, one call)
+# history: before job BB every question carried every tool: 3,705 to 3,986 a question and 1,855 to 2,190 a call (job AY: +2 catalogue tools = +600 a question over job AS's 3,450;
+# job AS: +1 visit tool = +154). Job BB, measured: core 2,982 to 3,263 a question and 1,494 to 1,829 a call; catalogue 3,679 to 3,693 and 2,037 to 2,044; visits 3,277 and 1,836; both 3,855 and 2,125.
+PATH_CEILINGS: dict[str, tuple[int, int]] = {
+    "base": (3350, 1880),
+    "catalogue": (3780, 2100),
+    "visits": (3360, 1890),
+    "both": (3950, 2180),
+}
 
 
 def size_bytes(request: LlmRequest) -> int:
@@ -101,19 +114,29 @@ def ask(
 def test_one_question_fits_a_free_tier_per_minute_budget(
     app: TestClient, scene: Scene, recorder: Recording
 ) -> None:
-    rows: list[tuple[str, int, int, int]] = []
+    rows: list[tuple[str, str, int, int, int]] = []
     conversation: str | None = None
-    for key, text in QUESTIONS.items():
-        recorder.sizes.clear()
-        evts = ask(app, scene, text, conversation)
-        assert evts[-1][0] == "done", (key, evts[-1])
-        if key == "today":
-            conversation = conversation_of(evts)  # the later questions of the chat carry its history
-        sizes = list(recorder.sizes)
-        rows.append((key, len(sizes), tokens(sum(sizes)), tokens(max(sizes))))
+    for path, questions in PATH_QUESTIONS.items():
+        for key, text in questions.items():
+            recorder.sizes.clear()
+            # the later base questions continue the chat of the first, so they carry its history
+            evts = ask(app, scene, text, conversation if path == "base" else None)
+            assert evts[-1][0] == "done", (key, evts[-1])
+            if key == "today":
+                conversation = conversation_of(evts)
+            sizes = list(recorder.sizes)
+            rows.append((path, key, len(sizes), tokens(sum(sizes)), tokens(max(sizes))))
     print("\nTOKENS per question (estimate = bytes / 4):")
-    for key, calls, total, biggest in rows:
-        print(f"TOKENS {key:8} calls={calls} total={total:5} biggest_call={biggest:5}")
-    for key, _calls, total, biggest in rows:
-        assert total <= QUESTION_CEILING, (key, total)
-        assert biggest <= CALL_CEILING, (key, biggest)
+    for path, key, calls, total, biggest in rows:
+        print(f"TOKENS {path:9} {key:8} calls={calls} total={total:5} biggest_call={biggest:5}")
+    for path, key, _calls, total, biggest in rows:
+        question_ceiling, call_ceiling = PATH_CEILINGS[path]
+        assert total <= question_ceiling, (path, key, total)
+        assert biggest <= call_ceiling, (path, key, biggest)
+    # the router really offers less on the base path: a path that offers more tools costs more on average (a router that offered everything everywhere would make all four equal)
+    mean_of = {
+        p: sum(t for pp, _k, _c, t, _b in rows if pp == p) / len([r for r in rows if r[0] == p])
+        for p in PATH_QUESTIONS
+    }
+    assert mean_of["base"] < mean_of["visits"] < mean_of["catalogue"] < mean_of["both"], mean_of
+    assert mean_of["catalogue"] - mean_of["base"] > 400, "the catalogue tools are about 600 tokens a question"

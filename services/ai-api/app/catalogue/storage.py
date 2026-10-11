@@ -16,13 +16,17 @@ from app.tenancy.repository import UpstreamError
 logger = logging.getLogger("app.catalogue.storage")
 
 SIGNED_URL_SECONDS = 600
+# the URLs handed to a channel for the photos of a message it is about to send (job BB): long enough to fetch four images, short enough to be useless afterwards
+CHANNEL_URL_SECONDS = 300
 
 
 class StorageClient(Protocol):
     def upload(
         self, token: str, bucket: str, path: str, data: bytes, content_type: str
     ) -> None: ...
-    def sign(self, token: str, bucket: str, paths: list[str]) -> dict[str, str]: ...
+    def sign(
+        self, token: str, bucket: str, paths: list[str], expires: int = SIGNED_URL_SECONDS
+    ) -> dict[str, str]: ...
     def remove(self, token: str, bucket: str, paths: list[str]) -> None: ...
 
 
@@ -75,14 +79,16 @@ class HttpStorageClient:
         logger.error("storage refused an upload: http=%s", response.status_code)
         raise UpstreamError("storage refused the upload")
 
-    def sign(self, token: str, bucket: str, paths: list[str]) -> dict[str, str]:
-        """path -> an absolute signed URL that works for SIGNED_URL_SECONDS. A path storage could not sign is left out."""
+    def sign(
+        self, token: str, bucket: str, paths: list[str], expires: int = SIGNED_URL_SECONDS
+    ) -> dict[str, str]:
+        """path -> an absolute signed URL that works for `expires` seconds (SIGNED_URL_SECONDS by default). A path storage could not sign is left out."""
         if not paths:
             return {}
         try:
             response = self._client.post(
                 f"{self._base}/object/sign/{bucket}",
-                json={"expiresIn": SIGNED_URL_SECONDS, "paths": paths},
+                json={"expiresIn": expires, "paths": paths},
                 headers=self._headers(token),
             )
         except httpx.HTTPError as exc:

@@ -6,19 +6,62 @@ said. It sends nothing itself: only a ChannelAdapter does, and only the local fa
 from __future__ import annotations
 
 import base64
+import dataclasses
 import logging
 import uuid
+from collections.abc import Callable
 from datetime import datetime
 from typing import Any, Protocol
 
+from app.catalogue.storage import CHANNEL_URL_SECONDS, StorageClient
 from app.errors import ApiError
 from app.outbox.adapter import ChannelAdapter, MediaRef, OutgoingMessage, SendResult
-from app.outbox.models import REASON_TEXT, CallRequestOut, DispatchOut, MediaOut, OutboxMessageOut
+from app.outbox.models import (
+    REASON_TEXT,
+    ActorOut,
+    CallRequestOut,
+    DispatchOut,
+    EventOut,
+    MediaOut,
+    OutboxMessageOut,
+)
 from app.tenancy.repository import RepositoryError, UpstreamError
 
 logger = logging.getLogger("app.outbox.service")
 
 DISPATCH_BATCH = 20
+
+# gives each photo of a message a signed address the channel can fetch it from (raises if it cannot for any of them)
+MediaSigner = Callable[[str, list[MediaRef]], list[MediaRef]]
+
+
+class MediaNotReady(Exception):
+    """A photo of the message could not be given a signed address: the message is not handed to the channel this time."""
+
+
+def media_signer(storage: StorageClient | None) -> MediaSigner | None:
+    """A signer that asks storage, with the CALLER's token (a person's Dispatch) or the worker's token (the database lets the worker read only the files of messages it has claimed), for URLs that
+    last CHANNEL_URL_SECONDS. None when there is no storage (then a message with photos is not handed over at all)."""
+    if storage is None:
+        return None
+
+    def sign(token: str, refs: list[MediaRef]) -> list[MediaRef]:
+        by_bucket: dict[str, list[str]] = {}
+        for ref in refs:
+            by_bucket.setdefault(ref.bucket, []).append(ref.path)
+        urls: dict[tuple[str, str], str] = {}
+        try:
+            for bucket, paths in by_bucket.items():
+                signed = storage.sign(token, bucket, paths, expires=CHANNEL_URL_SECONDS)
+                urls.update({(bucket, path): url for path, url in signed.items()})
+        except RepositoryError:
+            raise MediaNotReady from None
+        out = [dataclasses.replace(ref, url=urls.get((ref.bucket, ref.path))) for ref in refs]
+        if any(ref.url is None for ref in out):
+            raise MediaNotReady
+        return out
+
+    return sign
 
 
 class DispatchPort(Protocol):
@@ -58,7 +101,31 @@ def _media(row: dict[str, Any], urls: dict[str, str] | None) -> list[MediaOut]:
     return out
 
 
-def message_out(row: dict[str, Any], urls: dict[str, str] | None = None) -> OutboxMessageOut:
+def event_out(row: dict[str, Any], names: dict[str, str]) -> EventOut:
+    """One event row as the API's step. The person's name comes from `names` (user id -> display name); nothing else about them."""
+    try:
+        reason = row.get("reason")
+        user_id = row.get("actor_user_id")
+        return EventOut(
+            kind=row["kind"],
+            reason=reason,
+            reason_text=REASON_TEXT.get(reason) if isinstance(reason, str) else None,
+            at=row["at"],
+            actor=ActorOut(
+                kind=row["actor_kind"],
+                user_id=user_id,
+                name=names.get(str(user_id)) if user_id else None,
+            ),
+        )
+    except (KeyError, ValueError, TypeError):
+        raise UpstreamError("unexpected outbox event row") from None
+
+
+def message_out(
+    row: dict[str, Any],
+    urls: dict[str, str] | None = None,
+    events: list[EventOut] | None = None,
+) -> OutboxMessageOut:
     customer, city = _customer(row)
     try:
         return OutboxMessageOut(
@@ -87,6 +154,8 @@ def message_out(row: dict[str, Any], urls: dict[str, str] | None = None) -> Outb
             failure_code=row.get("failure_code"),
             keep_record=row.get("keep_record") is True,
             media=_media(row, urls),
+            gloss_en=row.get("gloss_en"),
+            events=events,
         )
     except (KeyError, ValueError, TypeError):
         raise UpstreamError("unexpected outbox row") from None
@@ -146,11 +215,15 @@ def dispatch_due(
     tenant_id: uuid.UUID,
     *,
     limit: int = DISPATCH_BATCH,
+    sign_media: MediaSigner | None = None,
 ) -> DispatchOut:
     """Claim what is due (the database re-checks every block first), deliver each through the adapter, tell the database what happened. A message the database did not hand out (blocked at the
-    re-check, held for 9 am, held by the kill switch) is not touched here. If the database cannot be told, the claim lapses after two minutes and the message is offered again: a real
-    adapter must therefore be given the message id as its idempotency key."""
-    sent = failed = 0
+    re-check, held for the morning, held by the kill switch) is not touched here. If the database cannot be told, the claim lapses after two minutes and the message is offered again: a real
+    adapter must therefore be given the message id as its idempotency key (OutgoingMessage.idempotency_key).
+
+    PHOTOS (job BB): a message with photos is handed over only with a signed address for each (`sign_media`, made with the same token that claimed the message). If an address cannot be made, the
+    message is neither sent nor marked: it stays claimed, the claim lapses, and the next round offers it again (`retry_later` counts them)."""
+    sent = failed = retry_later = 0
     for item in repository.claim_due(token, tenant_id, limit):
         try:
             message_id = uuid.UUID(str(item["id"]))
@@ -172,6 +245,19 @@ def dispatch_due(
         except (KeyError, ValueError):
             logger.error("outbox claim had an unexpected shape")
             continue
+        if outgoing.media:
+            try:
+                if sign_media is None:
+                    raise MediaNotReady
+                outgoing = dataclasses.replace(
+                    outgoing, media=tuple(sign_media(token, list(outgoing.media)))
+                )
+            except MediaNotReady:
+                logger.error(
+                    "outbox: the photos of a message could not be signed; offered again later"
+                )
+                retry_later += 1
+                continue
         try:
             result = adapter.send(outgoing)
         except (
@@ -206,4 +292,4 @@ def dispatch_due(
                 failed += 1
         except RepositoryError as exc:
             logger.error("outbox could not record a delivery: %s", exc.__class__.__name__)
-    return DispatchOut(sent=sent, failed=failed)
+    return DispatchOut(sent=sent, failed=failed, retry_later=retry_later)

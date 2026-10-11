@@ -578,3 +578,62 @@ def test_the_worker_refuses_to_start_when_it_is_set_up_wrongly(over: dict[str, A
 
 def test_the_workers_password_is_a_secret_in_settings() -> None:
     assert "pw-fixture" not in repr(settings())
+
+
+# ---------------------------------------------------------------------------------------------- job BB: the worker signs the photos of a message it has claimed
+def _claim_with_photos(n: int = 1) -> dict[str, Any]:
+    item = claim_item(n)
+    item["media"] = [
+        {
+            "photo_id": str(uuid.UUID(int=900 + n)),
+            "bucket": "cat-x",
+            "path": f"i/{n}.jpg",
+            "content_type": "image/jpeg",
+        }
+    ]
+    return item
+
+
+def test_the_worker_hands_the_channel_signed_photo_addresses_made_with_its_own_token() -> None:
+    from app.outbox.service import media_signer
+    from tests.catalogue_fakes import FakeStorage
+
+    storage = FakeStorage()
+    db = FakeScheduler()
+    db.listed = [TENANT_1]
+    db.claims[TENANT_1] = [[_claim_with_photos(1), claim_item(2)]]
+    adapter = LocalFakeAdapter()
+    result = run_tick(db, adapter, TOKEN, interval_seconds=60, sign_media=media_signer(storage))
+    assert result.tally.sent == 2 and result.tally.errors == 0
+    with_photos = next(m for m in adapter.sent if m.media)
+    assert with_photos.media[0].url == "http://storage.local/object/sign/cat-x/i/1.jpg?token=abc"
+    signs = [c for c in storage.calls if c[0] == "sign"]
+    assert len(signs) == 1 and signs[0][1] == TOKEN, (
+        "signed with the worker's token: no service key exists"
+    )
+    assert storage.expires == [300]
+
+
+def test_a_message_whose_photos_cannot_be_signed_is_left_claimed_and_counted_as_an_error() -> None:
+    from app.outbox.service import media_signer
+    from tests.catalogue_fakes import FakeStorage
+
+    storage = FakeStorage()
+    storage.fail_sign = True
+    db = FakeScheduler()
+    db.listed = [TENANT_1]
+    db.claims[TENANT_1] = [[_claim_with_photos(1), claim_item(2)]]
+    adapter = LocalFakeAdapter()
+    result = run_tick(db, adapter, TOKEN, interval_seconds=60, sign_media=media_signer(storage))
+    assert [m.message_id for m in adapter.sent] == [uuid.UUID(int=2)], (
+        "the text-only message still goes"
+    )
+    assert [m["p_message_id"] for m in db.args("scheduler_mark")] == [str(uuid.UUID(int=2))], (
+        "nothing is told to the database about the other: its lease lapses and it is offered again"
+    )
+    assert result.tally.sent == 1 and result.tally.errors == 1
+
+
+def test_a_worker_built_from_settings_can_sign() -> None:
+    worker = build_worker(settings())
+    assert worker._sign_media is not None  # noqa: SLF001

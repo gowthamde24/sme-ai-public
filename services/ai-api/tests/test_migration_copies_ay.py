@@ -165,7 +165,8 @@ AY_CHANGED: dict[str, tuple[str, str, set[str], set[str]]] = {
 @pytest.mark.parametrize("name", sorted(AY_CHANGED))
 def test_the_ay_copy_is_the_last_definition_and_differs_by_exactly_the_named_lines(name: str) -> None:
     mig, compared, want_dropped, want_added = AY_CHANGED[name]
-    defs = definitions(name)
+    # job BB (test_migration_copies_bb.py) replaces some of these again: this pin is about the last definition up to and including AY's migration
+    defs = [d for d in definitions(name) if d[0] <= mig]
     assert defs[-1][0] == mig, f"{name} is redefined after job AY's migration ({defs[-1][0]}): re-copy it from the latest definition"
     before = [d for d in defs if d[0] == compared]
     assert before, f"{name} was not defined in {compared}"

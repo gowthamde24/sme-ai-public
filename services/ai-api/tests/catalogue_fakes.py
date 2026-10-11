@@ -155,13 +155,15 @@ class FakeStorage:
         self.calls: list[tuple[str, str, str, Any]] = []
         self.objects: dict[tuple[str, str], bytes] = {}
         self.fail_sign = False
+        self.expires: list[int] = []
 
     def upload(self, token: str, bucket: str, path: str, data: bytes, content_type: str) -> None:
         self.calls.append(("upload", token, bucket, (path, content_type, len(data))))
         self.objects[(bucket, path)] = data
 
-    def sign(self, token: str, bucket: str, paths: list[str]) -> dict[str, str]:
+    def sign(self, token: str, bucket: str, paths: list[str], expires: int = 600) -> dict[str, str]:
         self.calls.append(("sign", token, bucket, list(paths)))
+        self.expires.append(expires)
         if self.fail_sign:
             from app.tenancy.repository import UpstreamError
 

@@ -534,7 +534,7 @@ def test_a_confirmation_is_made_from_the_fixed_words_in_india_time_and_goes_to_t
 
 def test_owner_and_admin_dispatch_right_after_and_a_replay_does_not(w: World) -> None:
     r = w.call("POST", f"/visits/{V2}/messages", "a_owner", {"kind": "reminder"})
-    assert r.json()["dispatched"] == {"sent": 0, "failed": 0}
+    assert {k: r.json()["dispatched"][k] for k in ("sent", "failed")} == {"sent": 0, "failed": 0}
     assert "outbox_claim_due" in w.outbox.names()
     w.outbox.calls.clear()
     w.db.send_answer = {"replayed": True}
@@ -615,7 +615,10 @@ def test_offering_a_visit_declines_the_call_and_makes_the_offer_in_one_call(w: W
         and body["request"]["decision_note"] == "offer_store_visit"
     )
     assert body["message"]["category"] == "visit" and body["message"]["source"] == "owner"
-    assert body["replayed"] is False and body["dispatched"] == {"sent": 0, "failed": 0}
+    assert body["replayed"] is False and {k: body["dispatched"][k] for k in ("sent", "failed")} == {
+        "sent": 0,
+        "failed": 0,
+    }
     # only ONE database function was called to do both (so they succeed or fail together)
     assert [n for n in w.db.names() if n.startswith("call_request")] == ["call_request_offer_visit"]
     assert "call_request_decide" not in w.outbox.names()

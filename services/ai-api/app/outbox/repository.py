@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import uuid
+from datetime import date
 from typing import Any, Protocol
 
 import httpx
@@ -20,7 +21,7 @@ logger = logging.getLogger("app.outbox.repository")
 
 MESSAGE_COLUMNS = (
     "id,lead_id,contact_id,channel,body,language,category,source,status,reason,flags,model_flagged,uncertain,disclosure_added,"
-    "scheduled_for,created_at,edited_at,decided_at,sent_at,failure_code,keep_record,lead:leads(company:companies(name,city)),"
+    "scheduled_for,created_at,edited_at,decided_at,sent_at,failure_code,keep_record,gloss_en,lead:leads(company:companies(name,city)),"
     "media:outbox_message_media(photo_id,position,photo:catalogue_photos(bucket,thumb_path))"
 )
 CALL_COLUMNS = "id,lead_id,contact_id,reason,script_draft,language,status,created_at,decided_at,decision_note,lead:leads(company:companies(name,city))"
@@ -30,7 +31,12 @@ class OutboxRepository(Protocol):
     # writes (definer functions only)
     def submit(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def edit(
-        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, text: str
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        message_id: uuid.UUID,
+        text: str,
+        gloss_en: str | None = None,
     ) -> dict[str, Any]: ...
     def decide(
         self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, decision: str
@@ -38,7 +44,13 @@ class OutboxRepository(Protocol):
     def claim_due(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]: ...
     def mark(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def set_settings(
-        self, token: str, tenant_id: uuid.UUID, auto_send_enabled: bool, limit: int
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        auto_send_enabled: bool,
+        limit: int,
+        quiet_start: int | None = None,
+        quiet_end: int | None = None,
     ) -> dict[str, Any]: ...
     def create_call(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def decide_call(
@@ -62,6 +74,31 @@ class OutboxRepository(Protocol):
         after: tuple[str, uuid.UUID] | None,
         limit: int,
     ) -> list[dict[str, Any]]: ...
+    def list_messages_filtered(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        tab: str | None,
+        customer: str | None,
+        date_from: date | None,
+        date_to: date | None,
+        after: tuple[str, uuid.UUID] | None,
+        limit: int,
+    ) -> list[dict[str, Any]]: ...
+    def summary(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        customer: str | None,
+        date_from: date | None,
+        date_to: date | None,
+    ) -> dict[str, Any]: ...
+    def list_events(
+        self, token: str, tenant_id: uuid.UUID, message_ids: list[uuid.UUID]
+    ) -> list[dict[str, Any]]: ...
+    def display_names(self, token: str, user_ids: list[uuid.UUID]) -> dict[str, str]: ...
     def get_message(
         self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID
     ) -> dict[str, Any] | None: ...
@@ -150,12 +187,22 @@ class PostgrestOutboxRepository:
         return self._rpc_object(token, "outbox_submit", args)
 
     def edit(
-        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, text: str
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        message_id: uuid.UUID,
+        text: str,
+        gloss_en: str | None = None,
     ) -> dict[str, Any]:
         return self._rpc_object(
             token,
             "outbox_edit",
-            {"p_tenant_id": str(tenant_id), "p_message_id": str(message_id), "p_body": text},
+            {
+                "p_tenant_id": str(tenant_id),
+                "p_message_id": str(message_id),
+                "p_body": text,
+                "p_gloss_en": gloss_en,
+            },
         )
 
     def decide(
@@ -183,7 +230,13 @@ class PostgrestOutboxRepository:
         return self._rpc_object(token, "outbox_mark", args)
 
     def set_settings(
-        self, token: str, tenant_id: uuid.UUID, auto_send_enabled: bool, limit: int
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        auto_send_enabled: bool,
+        limit: int,
+        quiet_start: int | None = None,
+        quiet_end: int | None = None,
     ) -> dict[str, Any]:
         return self._rpc_object(
             token,
@@ -192,6 +245,8 @@ class PostgrestOutboxRepository:
                 "p_tenant_id": str(tenant_id),
                 "p_auto_send_enabled": auto_send_enabled,
                 "p_per_customer_daily_limit": limit,
+                "p_quiet_start": quiet_start,
+                "p_quiet_end": quiet_end,
             },
         )
 
@@ -249,6 +304,101 @@ class PostgrestOutboxRepository:
             params["lead_id"] = f"eq.{lead_id}"
         self._keyset(params, after)
         return self._rows("/outbox_messages", token, params)
+
+    def list_messages_filtered(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        tab: str | None,
+        customer: str | None,
+        date_from: date | None,
+        date_to: date | None,
+        after: tuple[str, uuid.UUID] | None,
+        limit: int,
+    ) -> list[dict[str, Any]]:
+        """The log for a tab / customer / date range: the database picks the ids (a page, newest first, by (created_at, id)), then the rows are read with the usual embed, in that order."""
+        args: dict[str, Any] = {
+            "p_tenant_id": str(tenant_id),
+            "p_tab": tab,
+            "p_q": customer,
+            "p_from": date_from.isoformat() if date_from else None,
+            "p_to": date_to.isoformat() if date_to else None,
+            "p_limit": limit,
+            "p_after_created_at": after[0] if after else None,
+            "p_after_id": str(after[1]) if after else None,
+        }
+        page = self._rpc(token, "outbox_list", args)
+        if not isinstance(page, list) or any(
+            not isinstance(e, dict) or "id" not in e for e in page
+        ):
+            raise UpstreamError("unexpected list shape")
+        ids = [str(e["id"]) for e in page]
+        if not ids:
+            return []
+        rows = self._rows(
+            "/outbox_messages",
+            token,
+            {
+                "select": MESSAGE_COLUMNS,
+                "tenant_id": f"eq.{tenant_id}",
+                "id": f"in.({','.join(ids)})",
+            },
+        )
+        order = {i: n for n, i in enumerate(ids)}
+        rows.sort(key=lambda r: order.get(str(r["id"]), len(order)))
+        return rows
+
+    def summary(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        customer: str | None,
+        date_from: date | None,
+        date_to: date | None,
+    ) -> dict[str, Any]:
+        return self._rpc_object(
+            token,
+            "outbox_summary",
+            {
+                "p_tenant_id": str(tenant_id),
+                "p_q": customer,
+                "p_from": date_from.isoformat() if date_from else None,
+                "p_to": date_to.isoformat() if date_to else None,
+            },
+        )
+
+    def list_events(
+        self, token: str, tenant_id: uuid.UUID, message_ids: list[uuid.UUID]
+    ) -> list[dict[str, Any]]:
+        if not message_ids:
+            return []
+        return self._rows(
+            "/outbox_events",
+            token,
+            {
+                "select": "message_id,kind,reason,at,actor_kind,actor_user_id",
+                "tenant_id": f"eq.{tenant_id}",
+                "message_id": f"in.({','.join(str(m) for m in message_ids)})",
+                "order": "seq.asc",
+            },
+        )
+
+    def display_names(self, token: str, user_ids: list[uuid.UUID]) -> dict[str, str]:
+        """user id -> display name, for the people the caller shares a business with (the database shows no one else). A missing name is simply absent."""
+        if not user_ids:
+            return {}
+        rows = self._rows(
+            "/users",
+            token,
+            {"select": "id,display_name", "id": f"in.({','.join(str(u) for u in user_ids)})"},
+        )
+        return {
+            str(r["id"]): str(r["display_name"])
+            for r in rows
+            if isinstance(r.get("display_name"), str) and r["display_name"]
+        }
 
     def get_message(
         self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID

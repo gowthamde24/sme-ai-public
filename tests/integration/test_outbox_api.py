@@ -23,6 +23,12 @@ from followup_support import FollowWorld, Lead
 
 from app.outbox.adapter import LocalFakeAdapter
 
+
+def sf(dispatched: dict[str, Any]) -> dict[str, int]:
+    """Just what the channel did (sent, failed): the dispatch answer also carries counts of what is still waiting (job BB)."""
+    return {"sent": dispatched["sent"], "failed": dispatched["failed"]}
+
+
 TELUGU_PRICE = "ఈ చీర ధర 500 రూపాయలు మాత్రమే"
 
 
@@ -60,6 +66,7 @@ class Box:
         runtime = client.app.state.runtime  # type: ignore[attr-defined]
         self.adapter: LocalFakeAdapter = runtime.outbox_adapter
         assert isinstance(self.adapter, LocalFakeAdapter)
+        self.pin_name = "day"
 
     def url(self, path: str, tenant: str | None = None) -> str:
         return f"/v1/tenants/{tenant or self.tenant}{path}"
@@ -121,6 +128,7 @@ def box(request: pytest.FixtureRequest, client: TestClient, eval_world: World) -
     assert quiet() == (request.param == "night"), "the pin put the clock where it was asked to"
     operator_sql.sql("update public.platform_flags set enabled = true where key = 'outbox_enabled'")
     b = Box(client, eval_world)
+    b.pin_name = request.param  # the pin this run of the module uses (job BB re-pins inside a test and puts it back)
     r = b.call(
         "owner",
         "PUT",
@@ -162,11 +170,11 @@ def test_a_plain_reply_within_24_hours_goes_out_through_the_fake_channel_with_th
         assert (message["status"], message["reason"]) == ("queued", "quiet_hours") and message[
             "scheduled_for"
         ] is not None
-        assert out["dispatched"] == {"sent": 0, "failed": 0} and len(box.adapter.sent) == before, (
+        assert sf(out["dispatched"]) == {"sent": 0, "failed": 0} and len(box.adapter.sent) == before, (
             "no message goes between 9 pm and 9 am"
         )
     else:
-        assert out["dispatched"] == {"sent": 1, "failed": 0}
+        assert sf(out["dispatched"]) == {"sent": 1, "failed": 0}
         sent = box.adapter.sent[-1]
         assert sent.body == message["text"] and sent.to_phone == lead.phone
         row = body_of(box.call("owner", "GET", f"/outbox/messages/{message['id']}"))
@@ -192,7 +200,7 @@ def test_a_price_in_telugu_waits_for_a_person_then_goes_only_after_approval(box:
         "money",
         ["money"],
     )
-    assert out["dispatched"] == {"sent": 0, "failed": 0} and len(box.adapter.sent) == before, (
+    assert sf(out["dispatched"]) == {"sent": 0, "failed": 0} and len(box.adapter.sent) == before, (
         "nothing with money goes by itself"
     )
     queue = body_of(box.call("owner", "GET", "/outbox/approvals"))["items"]
@@ -293,7 +301,7 @@ def test_the_global_kill_switch_blocks_everything(box: Box) -> None:
         before = len(box.adapter.sent)
         message = body_of(box.submit("owner", lead, "Thank you for writing to us."))["message"]
         assert (message["status"], message["reason"]) == ("blocked", "switch_off")
-        assert body_of(box.call("owner", "POST", "/outbox/dispatch")) == {"sent": 0, "failed": 0}
+        assert sf(body_of(box.call("owner", "POST", "/outbox/dispatch"))) == {"sent": 0, "failed": 0}
         assert len(box.adapter.sent) == before
     finally:
         operator_sql.sql(
@@ -352,7 +360,7 @@ def test_a_retry_with_the_same_id_replays_and_sends_once(box: Box) -> None:
     assert len(box.adapter.sent) - before == (0 if quiet() else 1)
     other = box.submit("owner", lead, "Some other words entirely.", message_id=mid)
     assert other.status_code == 409, "the same id with other words is refused"
-    assert box.call("owner", "POST", "/outbox/dispatch").json() == {"sent": 0, "failed": 0}, (
+    assert sf(box.call("owner", "POST", "/outbox/dispatch").json()) == {"sent": 0, "failed": 0}, (
         "a second dispatch finds nothing to send twice"
     )
 
@@ -365,10 +373,10 @@ def test_a_failing_channel_marks_the_message_failed(box: Box) -> None:
     out = body_of(box.submit("owner", lead, "Thank you for writing to us.", message_id=str(mid)))
     if quiet():
         # at night nothing reaches the channel, so the failure cannot happen yet: the message is only held for 09:00
-        assert out["dispatched"] == {"sent": 0, "failed": 0}
+        assert sf(out["dispatched"]) == {"sent": 0, "failed": 0}
         assert (out["message"]["status"], out["message"]["reason"]) == ("queued", "quiet_hours")
         return
-    assert out["dispatched"] == {"sent": 0, "failed": 1}
+    assert sf(out["dispatched"]) == {"sent": 0, "failed": 1}
     assert (out["message"]["status"], out["message"]["reason"], out["message"]["failure_code"]) == (
         "failed",
         "send_failed",
@@ -415,6 +423,8 @@ def test_the_business_must_switch_automatic_sending_on(box: Box) -> None:
         "platform_switch_on": True,
         "auto_send_enabled": True,
         "per_customer_daily_limit": 3,
+        "quiet_hours_start": 21,
+        "quiet_hours_end": 9,
     }
     assert box.call("sales", "GET", "/outbox/settings").status_code == 403
 

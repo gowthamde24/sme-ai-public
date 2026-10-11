@@ -35,6 +35,18 @@ BASE = f"/v1/tenants/{TENANT_A.id}"
 PHONE = "+91 98765 43210"
 
 
+# what a dispatch that did not report the "still waiting" counts answers (the submit / approve responses): sent, failed, retry_later and three nulls
+def _done(sent: int, failed: int, retry_later: int = 0) -> dict[str, Any]:
+    return {
+        "sent": sent,
+        "failed": failed,
+        "retry_later": retry_later,
+        "still_due": None,
+        "held_for_later": None,
+        "platform_switch_on": None,
+    }
+
+
 class World:
     def __init__(self) -> None:
         self.db = FakeOutbox()
@@ -159,6 +171,7 @@ def test_the_caller_token_is_what_the_data_layer_gets(w: World) -> None:
         "p_uncertain": False,
         "p_media": [],
         "p_keep_record": False,
+        "p_gloss_en": None,
     }, "no phone number, no contact, no status, no approver: only what the person said"
 
 
@@ -224,8 +237,14 @@ def claim(message_id: str = M2, phone: str = PHONE) -> dict[str, Any]:
 def test_owner_and_admin_hand_due_messages_to_the_channel_right_after_submitting(w: World) -> None:
     w.db.claims = [claim()]
     r = w.call("POST", "/outbox/messages", "a_owner", SUBMIT)
-    assert r.status_code == 200 and r.json()["dispatched"] == {"sent": 1, "failed": 0}
-    assert w.db.names() == ["outbox_submit", "outbox_claim_due", "outbox_mark", "get_message"]
+    assert r.status_code == 200 and r.json()["dispatched"] == _done(1, 0)
+    assert w.db.names() == [
+        "outbox_submit",
+        "outbox_claim_due",
+        "outbox_mark",
+        "get_message",
+        "list_events",
+    ]
     assert len(w.adapter.sent) == 1 and w.adapter.sent[0].body == "Hello there"
 
 
@@ -247,7 +266,14 @@ def test_the_dispatch_endpoint_counts_what_the_channel_did(w: World) -> None:
     w.db.claims = [claim(M1), claim(M2)]
     w.adapter.fail_next(uuid.UUID(M2), "timeout")
     r = w.call("POST", "/outbox/dispatch", "a_admin")
-    assert r.status_code == 200 and r.json() == {"sent": 1, "failed": 1}
+    assert r.status_code == 200 and r.json() == {
+        "sent": 1,
+        "failed": 1,
+        "retry_later": 0,
+        "still_due": 0,
+        "held_for_later": 0,
+        "platform_switch_on": True,
+    }
     marks = [c[2] for c in w.db.calls if c[0] == "outbox_mark"]
     assert (
         marks[0]["p_outcome"] == "sent"
@@ -317,7 +343,7 @@ def test_approving_hands_due_messages_to_the_channel_and_rejecting_does_not(w: W
     assert (
         r.status_code == 200
         and r.json()["message"]["reason"] == "owner_approved"
-        and r.json()["dispatched"] == {"sent": 1, "failed": 0}
+        and r.json()["dispatched"] == _done(1, 0)
     )
     w2 = World()
     w2.db.claims = [claim()]
@@ -501,7 +527,9 @@ def test_the_fake_adapter_is_deterministic_and_keeps_what_it_was_given() -> None
     r1, r2 = a.send(m), a.send(m)
     assert r1.ok and r1.adapter_message_id == r2.adapter_message_id
     assert r1.adapter_message_id is not None and r1.adapter_message_id.startswith("fake-")
-    assert len(a.sent) == 2
+    assert len(a.sent) == 2, "every attempt is kept (a lapsed claim offers the same message again)"
+    assert a.sent[0].idempotency_key == a.sent[1].idempotency_key == M1, "...with the same key"
+    assert m.media_key(2) == f"{M1}:2"
     a.fail_next(uuid.UUID(M1), "rejected")
     assert a.send(m) == SendResult(False, None, "rejected") and a.send(m).ok
 
@@ -575,7 +603,11 @@ def test_a_message_shows_its_photos_as_short_lived_thumbnails_and_never_a_path()
         body["media"][0]["thumb_url"]
         == "http://storage.local/object/sign/cat-x/i/a_t.jpg?token=abc"
     )
-    assert set(body["media"][0]) == {"photo_id", "position", "thumb_url"} and "thumb_path" not in str(body) and "bucket" not in str(body)
+    assert (
+        set(body["media"][0]) == {"photo_id", "position", "thumb_url"}
+        and "thumb_path" not in str(body)
+        and "bucket" not in str(body)
+    )
     signs = [c for c in storage.calls if c[0] == "sign"]
     assert len(signs) == 1 and sorted(signs[0][3]) == ["i/a_t.jpg", "i/b_t.jpg"], (
         "one batch, thumbnails only"
@@ -589,30 +621,383 @@ def test_a_message_without_photos_has_an_empty_list_and_no_signing(w: World) -> 
     assert body["media"] == [] and body["keep_record"] is False
 
 
-def test_the_channel_is_handed_the_photos_by_reference(w: World) -> None:
-    w.db.claims = [
-        {
-            "id": M2,
-            "lead_id": LEAD,
-            "contact_id": C1,
-            "phone": PHONE,
-            "body": "Two sarees",
-            "language": "en",
-            "media": [
-                {
-                    "photo_id": PH1,
-                    "bucket": "cat-x",
-                    "path": "i/a.jpg",
-                    "content_type": "image/jpeg",
-                }
-            ],
-        }
-    ]
-    w.db.messages[M2]["status"] = "queued"
-    r = w.call("POST", "/outbox/dispatch", "a_owner")
-    assert r.json() == {"sent": 1, "failed": 0}
-    (sent,) = w.adapter.sent
+MEDIA_CLAIM = {
+    "id": M2,
+    "lead_id": LEAD,
+    "contact_id": C1,
+    "phone": PHONE,
+    "body": "Two sarees",
+    "language": "en",
+    "media": [
+        {"photo_id": PH1, "bucket": "cat-x", "path": "i/a.jpg", "content_type": "image/jpeg"},
+        {"photo_id": PH2, "bucket": "cat-x", "path": "i/b.jpg", "content_type": "image/jpeg"},
+    ],
+}
+
+
+def _media_world(storage: Any) -> tuple[Any, Any, Any]:
+    db, adapter = FakeOutbox(), LocalFakeAdapter()
+    client, _ = make_client(outbox=db, outbox_adapter=adapter, catalogue_storage=storage)
+    db.claims = [dict(MEDIA_CLAIM)]
+    db.messages[M2] = message_row(M2, status="queued")
+    return client, db, adapter
+
+
+def test_the_channel_is_handed_the_photos_by_reference_and_a_short_lived_signed_address() -> None:
+    from tests.catalogue_fakes import FakeStorage
+
+    storage = FakeStorage()
+    client, db, adapter = _media_world(storage)
+    headers = auth("a_owner")
+    r = client.post(BASE + "/outbox/dispatch", headers=headers)
+    assert r.json()["sent"] == 1 and r.json()["retry_later"] == 0
+    (sent,) = adapter.sent
     assert [(m.photo_id, m.bucket, m.path, m.content_type) for m in sent.media] == [
-        (uuid.UUID(PH1), "cat-x", "i/a.jpg", "image/jpeg")
+        (uuid.UUID(PH1), "cat-x", "i/a.jpg", "image/jpeg"),
+        (uuid.UUID(PH2), "cat-x", "i/b.jpg", "image/jpeg"),
     ]
-    assert "http" not in repr(sent), "a reference, not bytes and not a URL"
+    assert [m.url for m in sent.media] == [
+        "http://storage.local/object/sign/cat-x/i/a.jpg?token=abc",
+        "http://storage.local/object/sign/cat-x/i/b.jpg?token=abc",
+    ], "the channel gets an address it can fetch from"
+    assert storage.expires == [300], "five minutes, not the ten of a page"
+    (call,) = [c for c in storage.calls if c[0] == "sign"]
+    assert call[1] == headers["Authorization"].removeprefix("Bearer "), (
+        "signed with the caller's own token"
+    )
+    assert "http" not in repr(sent) and "token=abc" not in repr(sent.media[0]), (
+        "an address is never in a log line"
+    )
+    assert sent.idempotency_key == M2 and sent.media_key(1) == f"{M2}:1"
+
+
+def test_a_message_whose_photos_cannot_be_signed_is_not_sent_and_not_marked() -> None:
+    from tests.catalogue_fakes import FakeStorage
+
+    storage = FakeStorage()
+    storage.fail_sign = True
+    client, db, adapter = _media_world(storage)
+    r = client.post(BASE + "/outbox/dispatch", headers=auth("a_owner"))
+    assert r.json()["sent"] == 0 and r.json()["failed"] == 0 and r.json()["retry_later"] == 1
+    assert adapter.sent == [] and "outbox_mark" not in db.names(), (
+        "nothing is told to the database: the lease lapses and the message is offered again"
+    )
+
+
+def test_a_message_with_photos_is_not_sent_without_a_storage_to_sign_with() -> None:
+    client, db, adapter = _media_world(None)
+    r = client.post(BASE + "/outbox/dispatch", headers=auth("a_owner"))
+    assert r.json()["retry_later"] == 1 and adapter.sent == [] and "outbox_mark" not in db.names()
+
+
+def test_one_photo_storage_cannot_sign_holds_the_whole_message_back() -> None:
+    from tests.catalogue_fakes import FakeStorage
+
+    class Partial(FakeStorage):
+        def sign(
+            self, token: str, bucket: str, paths: list[str], expires: int = 600
+        ) -> dict[str, str]:
+            return {p: "http://storage.local/x" for p in paths if p.endswith("a.jpg")}
+
+    client, db, adapter = _media_world(Partial())
+    r = client.post(BASE + "/outbox/dispatch", headers=auth("a_owner"))
+    assert r.json()["retry_later"] == 1 and adapter.sent == []
+
+
+def test_a_message_without_photos_needs_no_signing() -> None:
+    from tests.catalogue_fakes import FakeStorage
+
+    storage = FakeStorage()
+    client, db, adapter = _media_world(storage)
+    db.claims = [claim()]
+    client.post(BASE + "/outbox/dispatch", headers=auth("a_owner"))
+    assert len(adapter.sent) == 1 and [c for c in storage.calls if c[0] == "sign"] == []
+
+
+# ---------------------------------------------------------------------------------------------- job BB: gloss, events, the filtered log, counts, quiet hours
+USER1 = "11111111-1111-4111-8111-111111111111"
+T0 = "2026-10-10T10:00:00+00:00"
+T1_ = "2026-10-10T10:05:00+00:00"
+T2_ = "2026-10-11T03:30:00+00:00"
+
+
+def test_the_gloss_is_passed_on_with_the_words_and_comes_back(w: World) -> None:
+    body = {**SUBMIT, "message_id": str(uuid.uuid4()), "gloss_en": "Thank you for writing to us."}
+    assert w.call("POST", "/outbox/messages", "a_sales", body).status_code == 200
+    assert w.db.calls[0][2]["p_gloss_en"] == "Thank you for writing to us."
+    w.db.messages[M2]["gloss_en"] = "An English gloss."
+    assert (
+        w.call("GET", f"/outbox/messages/{M2}", "a_owner").json()["gloss_en"] == "An English gloss."
+    )
+    assert w.call("GET", "/outbox/messages", "a_owner").json()["items"][0]["gloss_en"] in (
+        None,
+        "An English gloss.",
+    )
+
+
+@pytest.mark.parametrize(
+    "bad", [{"gloss_en": "x"}, {"gloss_en": "y" * 3001}, {"gloss_en": 5}, {"gloss": "hello"}]
+)
+def test_a_bad_gloss_is_refused_before_the_data_layer(w: World, bad: dict[str, Any]) -> None:
+    r = w.call(
+        "POST", "/outbox/messages", "a_owner", {**SUBMIT, "message_id": str(uuid.uuid4()), **bad}
+    )
+    assert r.status_code == 422 and w.db.calls == []
+
+
+def test_an_edit_passes_the_gloss_and_without_one_clears_it(w: World) -> None:
+    assert (
+        w.call(
+            "POST",
+            f"/outbox/messages/{M1}/edit",
+            "a_owner",
+            {"text": "New words here", "gloss_en": "New gloss here"},
+        ).status_code
+        == 200
+    )
+    assert [c[2] for c in w.db.calls if c[0] == "outbox_edit"][-1]["gloss_en"] == "New gloss here"
+    assert (
+        w.call(
+            "POST", f"/outbox/messages/{M1}/edit", "a_owner", {"text": "Other words here"}
+        ).status_code
+        == 200
+    )
+    assert [c[2] for c in w.db.calls if c[0] == "outbox_edit"][-1]["gloss_en"] is None
+
+
+def test_the_detail_lists_the_steps_in_order_with_who_and_when_and_no_text(w: World) -> None:
+    w.db.people = {USER1: "Asha"}
+    w.db.events = [
+        {
+            "message_id": M2,
+            "kind": "made",
+            "reason": None,
+            "at": T0,
+            "actor_kind": "assistant",
+            "actor_user_id": USER1,
+        },
+        {
+            "message_id": M2,
+            "kind": "needs_approval",
+            "reason": "money",
+            "at": T0,
+            "actor_kind": "system",
+            "actor_user_id": None,
+        },
+        {
+            "message_id": M2,
+            "kind": "approved",
+            "reason": None,
+            "at": T1_,
+            "actor_kind": "person",
+            "actor_user_id": USER1,
+        },
+        {
+            "message_id": M2,
+            "kind": "held",
+            "reason": "quiet_hours",
+            "at": T1_,
+            "actor_kind": "system",
+            "actor_user_id": None,
+        },
+        {
+            "message_id": M2,
+            "kind": "sent",
+            "reason": None,
+            "at": T2_,
+            "actor_kind": "worker",
+            "actor_user_id": None,
+        },
+        {
+            "message_id": M1,
+            "kind": "made",
+            "reason": None,
+            "at": T0,
+            "actor_kind": "person",
+            "actor_user_id": USER1,
+        },
+    ]
+    body = w.call("GET", f"/outbox/messages/{M2}", "a_sales").json()
+    steps = body["events"]
+    assert [e["kind"] for e in steps] == ["made", "needs_approval", "approved", "held", "sent"]
+    assert steps[0]["actor"] == {"kind": "assistant", "user_id": USER1, "name": "Asha"}
+    assert steps[1]["reason"] == "money" and "A person decides" in steps[1]["reason_text"]
+    assert steps[3]["reason"] == "quiet_hours" and "quiet hours" in steps[3]["reason_text"]
+    assert steps[4]["actor"] == {"kind": "worker", "user_id": None, "name": None}
+    assert set(steps[0]) == {"kind", "reason", "reason_text", "at", "actor"}
+    assert "Thank you for writing" not in str(
+        {k: v for k, v in body.items() if k not in ("text",)}["events"]
+    ), "no message text in an event"
+    names_call = [c for c in w.db.calls if c[0] == "display_names"]
+    assert len(names_call) == 1 and names_call[0][2]["ids"] == [USER1], (
+        "one read of the people involved, and nobody else"
+    )
+    events_call = [c for c in w.db.calls if c[0] == "list_events"]
+    assert events_call[0][2]["ids"] == [M2], "only this message's events"
+
+
+def test_the_log_and_the_approvals_do_not_carry_events(w: World) -> None:
+    items = w.call("GET", "/outbox/messages", "a_owner").json()["items"]
+    assert items and all(i["events"] is None for i in items)
+    assert "list_events" not in w.db.names()
+
+
+def test_the_filtered_log_asks_the_database_for_the_page(w: World) -> None:
+    w.db.filtered_rows = [message_row(M2)]
+    r = w.call(
+        "GET",
+        "/outbox/messages?tab=waiting&customer=Ravi&from=2026-10-01&to=2026-10-04&limit=5",
+        "a_sales",
+    )
+    assert r.status_code == 200 and [i["id"] for i in r.json()["items"]] == [M2]
+    (call,) = [c for c in w.db.calls if c[0] == "outbox_list"]
+    assert call[2] == {
+        "tab": "waiting",
+        "customer": "Ravi",
+        "from": "2026-10-01",
+        "to": "2026-10-04",
+        "after": None,
+        "limit": 5,
+    }
+    assert "list_messages" not in w.db.names()
+
+
+def test_the_cursor_of_a_filtered_page_continues_it(w: World) -> None:
+    w.db.filtered_rows = [message_row(M2, created_at="2026-10-09T10:00:00+00:00")]
+    page = w.call("GET", "/outbox/messages?tab=sent&limit=1", "a_owner").json()
+    assert page["next_cursor"]
+    w.call("GET", f"/outbox/messages?tab=sent&limit=1&after={page['next_cursor']}", "a_owner")
+    last = [c for c in w.db.calls if c[0] == "outbox_list"][-1][2]
+    assert last["after"] == ("2026-10-09T10:00:00+00:00", uuid.UUID(M2))
+
+
+@pytest.mark.parametrize(
+    "query",
+    [
+        "tab=bogus",
+        "customer=a",
+        "customer=" + "x" * 61,
+        "from=not-a-date",
+        "to=2026-13-01",
+        "tab=sent&status=sent",
+        "customer=Ravi&lead_id=" + LEAD,
+    ],
+)
+def test_bad_filters_are_refused_before_the_data_layer(w: World, query: str) -> None:
+    r = w.call("GET", "/outbox/messages?" + query, "a_owner")
+    assert r.status_code == 422 and w.db.calls == []
+
+
+def test_the_old_filters_still_use_the_plain_list(w: World) -> None:
+    w.call("GET", f"/outbox/messages?status=sent&lead_id={LEAD}", "a_owner")
+    assert w.db.names()[0] == "list_messages" and "outbox_list" not in w.db.names()
+
+
+def test_the_summary_is_the_counts_and_who_may_ask(w: World) -> None:
+    w.db.summary_answer = {
+        "waiting": 3,
+        "scheduled": 1,
+        "sent": 7,
+        "blocked": 2,
+        "due_now": 1,
+        "held_for_later": 4,
+    }
+    r = w.call("GET", "/outbox/summary?customer=Ravi&from=2026-10-01", "a_sales")
+    assert r.status_code == 200 and r.json() == w.db.summary_answer
+    (call,) = [c for c in w.db.calls if c[0] == "outbox_summary"]
+    assert call[2] == {"customer": "Ravi", "from": "2026-10-01", "to": None}
+    for user, code in (("a_viewer", 403), ("outsider", 404), ("b_owner", 404)):
+        assert w.call("GET", "/outbox/summary", user).status_code == code, user
+    assert w.call("GET", "/outbox/summary", None).status_code == 401
+
+
+def test_the_dispatch_button_says_what_is_still_waiting(w: World) -> None:
+    w.db.claims = []
+    w.db.summary_answer = {
+        "waiting": 0,
+        "scheduled": 5,
+        "sent": 0,
+        "blocked": 0,
+        "due_now": 2,
+        "held_for_later": 3,
+    }
+    w.db.settings["platform_switch_on"] = False
+    r = w.call("POST", "/outbox/dispatch", "a_owner")
+    assert r.json() == {
+        "sent": 0,
+        "failed": 0,
+        "retry_later": 0,
+        "still_due": 2,
+        "held_for_later": 3,
+        "platform_switch_on": False,
+    }
+    # it is this business's: the tenant in the path is the only one the database is asked about
+    assert all(c[0] != "outbox_claim_due" or c[2]["tenant"] == str(TENANT_A.id) for c in w.db.calls)
+    assert w.call("POST", "/outbox/dispatch", "a_sales").status_code == 403
+
+
+def test_quiet_hours_are_read_and_set_with_the_other_settings(w: World) -> None:
+    got = w.call("GET", "/outbox/settings", "a_admin").json()
+    assert got["quiet_hours_start"] == 21 and got["quiet_hours_end"] == 9
+    r = w.call(
+        "PUT",
+        "/outbox/settings",
+        "a_owner",
+        {
+            "auto_send_enabled": True,
+            "per_customer_daily_limit": 4,
+            "quiet_hours_start": 19,
+            "quiet_hours_end": 10,
+        },
+    )
+    assert r.status_code == 200 and (
+        r.json()["quiet_hours_start"],
+        r.json()["quiet_hours_end"],
+    ) == (19, 10)
+    assert [c[2] for c in w.db.calls if c[0] == "outbox_set_settings"][-1] == {
+        "auto": True,
+        "limit": 4,
+        "start": 19,
+        "end": 10,
+    }
+    w.call(
+        "PUT",
+        "/outbox/settings",
+        "a_owner",
+        {"auto_send_enabled": True, "per_customer_daily_limit": 4},
+    )
+    assert [c[2] for c in w.db.calls if c[0] == "outbox_set_settings"][-1] == {
+        "auto": True,
+        "limit": 4,
+        "start": None,
+        "end": None,
+    }, "a field left out is not sent: it keeps its value"
+    assert w.db.settings["quiet_hours_start"] == 19
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"quiet_hours_start": 18},
+        {"quiet_hours_start": 24},
+        {"quiet_hours_end": 6},
+        {"quiet_hours_end": 11},
+        {"quiet_hours_start": "21"},
+        {"quiet_hours_start": 21.5},
+        {"quiet_hours_start": True},
+    ],
+)
+def test_quiet_hours_outside_the_allowed_range_never_reach_the_data_layer(
+    w: World, bad: dict[str, Any]
+) -> None:
+    r = w.call(
+        "PUT",
+        "/outbox/settings",
+        "a_owner",
+        {"auto_send_enabled": False, "per_customer_daily_limit": 3, **bad},
+    )
+    assert r.status_code == 422 and w.db.calls == []
+
+
+def test_the_quiet_hours_sentence_no_longer_says_nine(w: World) -> None:
+    assert "9" not in REASON_TEXT["quiet_hours"] and "quiet hours" in REASON_TEXT["quiet_hours"]

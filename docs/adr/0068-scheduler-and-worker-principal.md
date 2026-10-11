@@ -49,3 +49,6 @@ What changed (migration `20261110090100_ay_outbox_media.sql`; the cores and the 
 * The Python side did not change: it asks the database which businesses to visit and hands each claim to the outbox's own dispatch loop.
 
 Tests: pgTAP 80 section I pins 13:00, 22:00, 08:59 and 09:00 India time (day and night) and checks that approved messages go with automatic sending off, an auto-allowed one does not, STOP after approval blocks, the global switch off releases nothing, the status flag and the people's dispatch; `tests/integration/test_scheduler_api.py` runs it end to end with the real worker (approve at 22:00, nothing at 08:59, sent at 09:00). The consequence listed above ("Messages the Owner approved in a business with automatic sending OFF are not released by the worker") no longer holds and is struck from the pre-pilot checklist.
+
+## Addendum (job BB): the worker's photo addresses
+The worker may read, through one more storage rule, exactly the files of the photos of a message it has claimed (lease younger than ten minutes), and signs five-minute addresses with its own token for the adapter; if it cannot, the message is left claimed and offered again. The message id is the adapter's idempotency key (ADR 0070, decision 4). The scheduler's quiet-hours checks read the business's own hours.
