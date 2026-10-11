@@ -1,0 +1,487 @@
+{
+ "legal.draft.banner": {
+  "en": "Draft, pending legal review. The text below may change before it is final.",
+  "te": "Draft, pending legal review. The text below may change before it is final.",
+  "hi": "Draft, pending legal review. The text below may change before it is final.",
+  "kn": "Draft, pending legal review. The text below may change before it is final.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "legal.version": {
+  "en": "Version {version}",
+  "te": "వెర్షన్ {version}",
+  "hi": "संस्करण {version}",
+  "kn": "ಆವೃತ್ತಿ {version}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.summary.title": {
+  "en": "In short",
+  "te": "సంక్షిప్తంగా",
+  "hi": "संक्षेप में",
+  "kn": "ಸಂಕ್ಷಿಪ್ತವಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.summary.note": {
+  "en": "This short summary is a machine-written translation and is not legal text. The full text below is in English, and that is the text that counts.",
+  "te": "ఈ చిన్న సారాంశం యంత్రం రాసిన అనువాదం, ఇది చట్టపరమైన పాఠ్యం కాదు. కింద ఉన్న పూర్తి పాఠ్యం ఇంగ్లీష్‌లో ఉంది, అదే లెక్కలోకి వస్తుంది.",
+  "hi": "यह छोटा सारांश मशीन से लिखा अनुवाद है और कानूनी पाठ नहीं है। नीचे का पूरा पाठ अंग्रेज़ी में है, और वही मान्य है।",
+  "kn": "ಈ ಸಣ್ಣ ಸಾರಾಂಶ ಯಂತ್ರ ಬರೆದ ಅನುವಾದ, ಇದು ಕಾನೂನು ಪಠ್ಯವಲ್ಲ. ಕೆಳಗಿನ ಪೂರ್ಣ ಪಠ್ಯ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿದೆ, ಅದೇ ಮಾನ್ಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.toc": {
+  "en": "On this page",
+  "te": "ఈ పేజీలో",
+  "hi": "इस पेज पर",
+  "kn": "ಈ ಪುಟದಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.privacy.name": {
+  "en": "Privacy Policy",
+  "te": "గోప్యతా విధానం",
+  "hi": "गोपनीयता नीति",
+  "kn": "ಗೌಪ್ಯತಾ ನೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.terms.name": {
+  "en": "Terms of Use",
+  "te": "వినియోగ నిబంధనలు",
+  "hi": "उपयोग की शर्तें",
+  "kn": "ಬಳಕೆಯ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.privacy.name.short": {
+  "en": "Privacy",
+  "te": "గోప్యత",
+  "hi": "गोपनीयता",
+  "kn": "ಗೌಪ್ಯತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.terms.name.short": {
+  "en": "Terms",
+  "te": "నిబంధనలు",
+  "hi": "शर्तें",
+  "kn": "ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.cookies.link": {
+  "en": "Cookie settings",
+  "te": "కుకీ సెట్టింగ్‌లు",
+  "hi": "कुकी सेटिंग",
+  "kn": "ಕುಕೀ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.foot.label": {
+  "en": "Legal",
+  "te": "చట్టపరమైనవి",
+  "hi": "कानूनी",
+  "kn": "ಕಾನೂನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.back": {
+  "en": "Back to the home page",
+  "te": "హోమ్ పేజీకి తిరిగి",
+  "hi": "होम पेज पर वापस",
+  "kn": "ಮುಖಪುಟಕ್ಕೆ ಹಿಂದಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.skip": {
+  "en": "Skip to content",
+  "te": "కంటెంట్‌కి వెళ్లండి",
+  "hi": "सीधे कंटेंट पर जाएँ",
+  "kn": "ನೇರವಾಗಿ ವಿಷಯಕ್ಕೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.lang.label": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.theme.toDark": {
+  "en": "Switch to dark mode",
+  "te": "డార్క్ మోడ్‌కి మారండి",
+  "hi": "डार्क मोड चालू करें",
+  "kn": "ಡಾರ್ಕ್ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.theme.toLight": {
+  "en": "Switch to light mode",
+  "te": "లైట్ మోడ్‌కి మారండి",
+  "hi": "लाइट मोड चालू करें",
+  "kn": "ಲೈಟ್ ಮೋಡ್‌ಗೆ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.privacy.1": {
+  "en": "We keep your name, e-mail and sign-in details, and the business records you and your team enter: customers, messages, quotes and visits.",
+  "te": "మేము మీ పేరు, ఈమెయిల్, సైన్-ఇన్ వివరాలు, మరియు మీరు, మీ బృందం ఎంటర్ చేసే వ్యాపార రికార్డులను (కస్టమర్లు, మెసేజ్‌లు, కొటేషన్లు, విజిట్‌లు) ఉంచుతాము.",
+  "hi": "हम आपका नाम, ईमेल, साइन-इन की जानकारी, और आप व आपकी टीम के दर्ज किए व्यापार के रिकॉर्ड (ग्राहक, मैसेज, कोटेशन, विज़िट) रखते हैं।",
+  "kn": "ನಾವು ನಿಮ್ಮ ಹೆಸರು, ಇಮೇಲ್, ಸೈನ್-ಇನ್ ವಿವರಗಳು, ಮತ್ತು ನೀವು ಹಾಗೂ ನಿಮ್ಮ ತಂಡ ಎಂಟರ್ ಮಾಡುವ ವ್ಯಾಪಾರ ದಾಖಲೆಗಳನ್ನು (ಗ್ರಾಹಕರು, ಮೆಸೇಜ್‌ಗಳು, ಕೊಟೇಶನ್‌ಗಳು, ಭೇಟಿಗಳು) ಇಡುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.privacy.2": {
+  "en": "Each business's records are kept apart from every other business. We do not sell data and we show no ads.",
+  "te": "ప్రతి వ్యాపారం రికార్డులు ఇతర వ్యాపారాల నుంచి వేరుగా ఉంటాయి. మేము డేటాను అమ్మము, ప్రకటనలు చూపము.",
+  "hi": "हर व्यापार के रिकॉर्ड दूसरे व्यापारों से अलग रखे जाते हैं। हम डेटा नहीं बेचते और विज्ञापन नहीं दिखाते।",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರದ ದಾಖಲೆಗಳು ಇತರ ವ್ಯಾಪಾರಗಳಿಂದ ಬೇರೆಯಾಗಿರುತ್ತವೆ. ನಾವು ಡೇಟಾ ಮಾರುವುದಿಲ್ಲ, ಜಾಹೀರಾತು ತೋರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.privacy.3": {
+  "en": "Agent OWL is an AI assistant. It reads your records to answer and to draft messages. Messages to customers may be written by AI, and are labelled.",
+  "te": "Agent OWL ఒక AI సహాయకుడు. ఇది జవాబులు ఇవ్వడానికి, మెసేజ్‌లు సిద్ధం చేయడానికి మీ రికార్డులను చదువుతుంది. కస్టమర్లకు వెళ్లే మెసేజ్‌లు AI రాసి ఉండవచ్చు, వాటిపై లేబుల్ ఉంటుంది.",
+  "hi": "Agent OWL एक AI सहायक है। यह जवाब देने और मैसेज तैयार करने के लिए आपके रिकॉर्ड पढ़ता है। ग्राहकों को जाने वाले मैसेज AI ने लिखे हो सकते हैं, और उन पर लेबल होता है।",
+  "kn": "Agent OWL ಒಂದು AI ಸಹಾಯಕ. ಉತ್ತರ ನೀಡಲು ಮತ್ತು ಮೆಸೇಜ್ ಸಿದ್ಧಪಡಿಸಲು ಇದು ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಓದುತ್ತದೆ. ಗ್ರಾಹಕರಿಗೆ ಹೋಗುವ ಮೆಸೇಜ್‌ಗಳನ್ನು AI ಬರೆದಿರಬಹುದು, ಅವುಗಳ ಮೇಲೆ ಲೇಬಲ್ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.privacy.4": {
+  "en": "If you use the microphone, your voice is sent to a speech service to be understood. We do not keep the recording.",
+  "te": "మీరు మైక్రోఫోన్ వాడితే, మీ వాయిస్ అర్థం చేసుకోవడానికి ఒక స్పీచ్ సర్వీస్‌కి వెళ్తుంది. రికార్డింగ్‌ను మేము ఉంచము.",
+  "hi": "माइक्रोफ़ोन इस्तेमाल करने पर आपकी आवाज़ समझने के लिए एक स्पीच सर्विस को भेजी जाती है। हम रिकॉर्डिंग नहीं रखते।",
+  "kn": "ನೀವು ಮೈಕ್ರೊಫೋನ್ ಬಳಸಿದರೆ, ನಿಮ್ಮ ಧ್ವನಿ ಅರ್ಥಮಾಡಿಕೊಳ್ಳಲು ಒಂದು ಸ್ಪೀಚ್ ಸೇವೆಗೆ ಹೋಗುತ್ತದೆ. ರೆಕಾರ್ಡಿಂಗ್ ನಾವು ಇಟ್ಟುಕೊಳ್ಳುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.privacy.5": {
+  "en": "You can ask to see, correct or erase your data, withdraw your consent, and write to the grievance officer. An Owner can erase a customer's details in Settings.",
+  "te": "మీ డేటాను చూడమని, సరిదిద్దమని, తొలగించమని అడగవచ్చు, సమ్మతిని వెనక్కి తీసుకోవచ్చు, ఫిర్యాదు అధికారికి రాయవచ్చు. యజమాని సెట్టింగ్స్‌లో కస్టమర్ వివరాలను తొలగించవచ్చు.",
+  "hi": "आप अपना डेटा देखने, सुधारने या मिटाने को कह सकते हैं, सहमति वापस ले सकते हैं, और शिकायत अधिकारी को लिख सकते हैं। मालिक सेटिंग में किसी ग्राहक का विवरण मिटा सकता है।",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾವನ್ನು ನೋಡಲು, ತಿದ್ದಲು, ಅಳಿಸಲು ಕೇಳಬಹುದು, ಒಪ್ಪಿಗೆ ಹಿಂತೆಗೆದುಕೊಳ್ಳಬಹುದು, ದೂರು ಅಧಿಕಾರಿಗೆ ಬರೆಯಬಹುದು. ಮಾಲೀಕರು ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರ ವಿವರಗಳನ್ನು ಅಳಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.terms.1": {
+  "en": "You may use the service for your business. You are responsible for having the right to contact your customers.",
+  "te": "మీరు ఈ సేవను మీ వ్యాపారం కోసం వాడవచ్చు. మీ కస్టమర్లను సంప్రదించే హక్కు ఉండేలా చూసుకోవడం మీ బాధ్యత.",
+  "hi": "आप इस सेवा को अपने व्यापार के लिए इस्तेमाल कर सकते हैं। ग्राहकों से संपर्क करने का अधिकार होना आपकी ज़िम्मेदारी है।",
+  "kn": "ನೀವು ಈ ಸೇವೆಯನ್ನು ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕಾಗಿ ಬಳಸಬಹುದು. ನಿಮ್ಮ ಗ್ರಾಹಕರನ್ನು ಸಂಪರ್ಕಿಸುವ ಹಕ್ಕು ಇರುವಂತೆ ನೋಡಿಕೊಳ್ಳುವುದು ನಿಮ್ಮ ಜವಾಬ್ದಾರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.terms.2": {
+  "en": "The AI helps and drafts; a person stays in charge. Prices come from your price list, never from the AI.",
+  "te": "AI సహాయం చేస్తుంది, డ్రాఫ్ట్‌లు రాస్తుంది; నిర్ణయం మనిషిదే. ధరలు మీ ధరల జాబితా నుంచే వస్తాయి, AI నుంచి కాదు.",
+  "hi": "AI मदद करता है और ड्राफ्ट बनाता है; ज़िम्मेदारी इंसान की रहती है। दाम आपकी दाम-सूची से आते हैं, AI से कभी नहीं।",
+  "kn": "AI ಸಹಾಯ ಮಾಡುತ್ತದೆ, ಡ್ರಾಫ್ಟ್ ಬರೆಯುತ್ತದೆ; ಜವಾಬ್ದಾರಿ ವ್ಯಕ್ತಿಯದೇ. ಬೆಲೆಗಳು ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿಯಿಂದ ಬರುತ್ತವೆ, AI ಯಿಂದ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.terms.3": {
+  "en": "It is free to try for now. Pricing has not been decided yet.",
+  "te": "ప్రస్తుతానికి ఉచితంగా ప్రయత్నించవచ్చు. ధర ఇంకా నిర్ణయించలేదు.",
+  "hi": "अभी इसे मुफ़्त में आज़मा सकते हैं। कीमत अभी तय नहीं हुई है।",
+  "kn": "ಸದ್ಯಕ್ಕೆ ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಬಹುದು. ಬೆಲೆ ಇನ್ನೂ ತೀರ್ಮಾನವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "legal.sum.terms.4": {
+  "en": "Either side can end it. You can ask for your data to be erased.",
+  "te": "ఎవరైనా దీన్ని ముగించవచ్చు. మీ డేటాను తొలగించమని అడగవచ్చు.",
+  "hi": "कोई भी पक्ष इसे ख़त्म कर सकता है। आप अपना डेटा मिटाने को कह सकते हैं।",
+  "kn": "ಯಾರಾದರೂ ಇದನ್ನು ಕೊನೆಗೊಳಿಸಬಹುದು. ನಿಮ್ಮ ಡೇಟಾ ಅಳಿಸಲು ಕೇಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.notice.title": {
+  "en": "Cookies",
+  "te": "కుకీలు",
+  "hi": "कुकी",
+  "kn": "ಕುಕೀಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.notice.text": {
+  "en": "We use only the cookies this site needs to work: to keep you signed in, keep it secure, and remember your language and light or dark choice. We use no advertising or tracking cookies.",
+  "te": "ఈ సైట్ పని చేయడానికి అవసరమైన కుకీలను మాత్రమే వాడతాము: మిమ్మల్ని సైన్-ఇన్‌లో ఉంచడానికి, భద్రతకు, మీ భాష, లైట్/డార్క్ ఎంపికను గుర్తుంచుకోవడానికి. ప్రకటనలు లేదా ట్రాకింగ్ కుకీలు వాడము.",
+  "hi": "हम सिर्फ़ वही कुकी इस्तेमाल करते हैं जो साइट के चलने के लिए ज़रूरी हैं: आपको साइन-इन रखने, सुरक्षा, और आपकी भाषा व लाइट/डार्क पसंद याद रखने के लिए। विज्ञापन या ट्रैकिंग कुकी नहीं हैं।",
+  "kn": "ಈ ಸೈಟ್ ಕೆಲಸ ಮಾಡಲು ಬೇಕಾದ ಕುಕೀಗಳನ್ನು ಮಾತ್ರ ಬಳಸುತ್ತೇವೆ: ನಿಮ್ಮನ್ನು ಸೈನ್-ಇನ್‌ನಲ್ಲಿ ಇಡಲು, ಭದ್ರತೆಗೆ, ನಿಮ್ಮ ಭಾಷೆ ಮತ್ತು ಲೈಟ್/ಡಾರ್ಕ್ ಆಯ್ಕೆ ನೆನಪಿಡಲು. ಜಾಹೀರಾತು ಅಥವಾ ಟ್ರ್ಯಾಕಿಂಗ್ ಕುಕೀಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.notice.ok": {
+  "en": "OK, got it",
+  "te": "సరే, అర్థమైంది",
+  "hi": "ठीक है, समझ गया",
+  "kn": "ಸರಿ, ಅರ್ಥವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.notice.privacy": {
+  "en": "Read the Privacy Policy",
+  "te": "గోప్యతా విధానం చదవండి",
+  "hi": "गोपनीयता नीति पढ़ें",
+  "kn": "ಗೌಪ್ಯತಾ ನೀತಿ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.panel.title": {
+  "en": "Cookie settings",
+  "te": "కుకీ సెట్టింగ్‌లు",
+  "hi": "कुकी सेटिंग",
+  "kn": "ಕುಕೀ ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.necessary.title": {
+  "en": "Strictly necessary",
+  "te": "తప్పనిసరిగా అవసరమైనవి",
+  "hi": "बिल्कुल ज़रूरी",
+  "kn": "ಅತ್ಯಗತ್ಯವಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.necessary.text": {
+  "en": "Always on. Needed to sign you in, keep your account secure and remember your language and theme. They cannot be switched off.",
+  "te": "ఎప్పుడూ ఆన్‌లో ఉంటాయి. సైన్-ఇన్, ఖాతా భద్రత, భాష, థీమ్ గుర్తుంచుకోవడానికి అవసరం. వీటిని ఆఫ్ చేయలేము.",
+  "hi": "हमेशा चालू। साइन-इन, खाते की सुरक्षा और भाषा व थीम याद रखने के लिए ज़रूरी। इन्हें बंद नहीं किया जा सकता।",
+  "kn": "ಯಾವಾಗಲೂ ಆನ್. ಸೈನ್-ಇನ್, ಖಾತೆ ಭದ್ರತೆ, ಭಾಷೆ ಮತ್ತು ಥೀಮ್ ನೆನಪಿಡಲು ಬೇಕು. ಇವನ್ನು ಆಫ್ ಮಾಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.analytics.title": {
+  "en": "Analytics",
+  "te": "అనలిటిక్స్",
+  "hi": "एनालिटिक्स",
+  "kn": "ಅನಲಿಟಿಕ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.analytics.text": {
+  "en": "We do not use any analytics today, so nothing is loaded. If we ever add it, it will stay off until you switch it on here.",
+  "te": "ప్రస్తుతం మేము అనలిటిక్స్ వాడము, కాబట్టి ఏదీ లోడ్ కాదు. ఎప్పుడైనా జోడిస్తే, మీరు ఇక్కడ ఆన్ చేసే వరకు ఆఫ్‌లోనే ఉంటుంది.",
+  "hi": "हम आज कोई एनालिटिक्स इस्तेमाल नहीं करते, इसलिए कुछ लोड नहीं होता। अगर कभी जोड़ा, तो आप यहाँ चालू करें तब तक बंद रहेगा।",
+  "kn": "ನಾವು ಇಂದು ಯಾವುದೇ ಅನಲಿಟಿಕ್ಸ್ ಬಳಸುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಏನೂ ಲೋಡ್ ಆಗುವುದಿಲ್ಲ. ಎಂದಾದರೂ ಸೇರಿಸಿದರೆ, ನೀವು ಇಲ್ಲಿ ಆನ್ ಮಾಡುವವರೆಗೆ ಆಫ್ ಆಗಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.analytics.switch": {
+  "en": "Allow analytics",
+  "te": "అనలిటిక్స్‌ని అనుమతించండి",
+  "hi": "एनालिटिक्स की अनुमति दें",
+  "kn": "ಅನಲಿಟಿಕ್ಸ್‌ಗೆ ಅನುಮತಿ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.list.title": {
+  "en": "The cookies we set",
+  "te": "మేము సెట్ చేసే కుకీలు",
+  "hi": "हम जो कुकी लगाते हैं",
+  "kn": "ನಾವು ಹಾಕುವ ಕುಕೀಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.col.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.col.what": {
+  "en": "What it is for",
+  "te": "దేనికి",
+  "hi": "किसलिए",
+  "kn": "ಯಾವುದಕ್ಕಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.save": {
+  "en": "Save my choice",
+  "te": "నా ఎంపికను సేవ్ చేయండి",
+  "hi": "मेरी पसंद सहेजें",
+  "kn": "ನನ್ನ ಆಯ್ಕೆ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.ck.auth": {
+  "en": "Keeps you signed in and your session secure. Until you sign out, or up to 400 days.",
+  "te": "మిమ్మల్ని సైన్-ఇన్‌లో ఉంచుతుంది, సెషన్‌ను భద్రంగా ఉంచుతుంది. సైన్ అవుట్ అయ్యే వరకు, లేదా 400 రోజుల వరకు.",
+  "hi": "आपको साइन-इन रखती है और सत्र सुरक्षित रखती है। साइन-आउट तक, या 400 दिन तक।",
+  "kn": "ನಿಮ್ಮನ್ನು ಸೈನ್-ಇನ್‌ನಲ್ಲಿ ಇಡುತ್ತದೆ, ಸೆಷನ್ ಭದ್ರವಾಗಿಡುತ್ತದೆ. ಸೈನ್ ಔಟ್ ಆಗುವವರೆಗೆ, ಅಥವಾ 400 ದಿನಗಳವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.ck.lang": {
+  "en": "Remembers the language you chose. One year.",
+  "te": "మీరు ఎంచుకున్న భాషను గుర్తుంచుకుంటుంది. ఒక సంవత్సరం.",
+  "hi": "आपकी चुनी भाषा याद रखती है। एक साल।",
+  "kn": "ನೀವು ಆಯ್ದ ಭಾಷೆ ನೆನಪಿಡುತ್ತದೆ. ಒಂದು ವರ್ಷ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.ck.theme": {
+  "en": "Remembers a light or dark choice. One year.",
+  "te": "లైట్ లేదా డార్క్ ఎంపికను గుర్తుంచుకుంటుంది. ఒక సంవత్సరం.",
+  "hi": "लाइट या डार्क पसंद याद रखती है। एक साल।",
+  "kn": "ಲೈಟ್ ಅಥವಾ ಡಾರ್ಕ್ ಆಯ್ಕೆ ನೆನಪಿಡುತ್ತದೆ. ಒಂದು ವರ್ಷ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cookie.ck.consent": {
+  "en": "Remembers your cookie choice. One year.",
+  "te": "మీ కుకీ ఎంపికను గుర్తుంచుకుంటుంది. ఒక సంవత్సరం.",
+  "hi": "आपकी कुकी पसंद याद रखती है। एक साल।",
+  "kn": "ನಿಮ್ಮ ಕುಕೀ ಆಯ್ಕೆ ನೆನಪಿಡುತ್ತದೆ. ಒಂದು ವರ್ಷ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ }
+}

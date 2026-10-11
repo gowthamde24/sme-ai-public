@@ -1,6 +1,8 @@
 import { container } from "@/components/v2/landing/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
+import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import type { LandingKey, LandingT } from "@/i18n/landing";
+import type { Lang } from "@/i18n/lang";
 
 const LINKS: [string, LandingKey][] = [
   ["#how", "nav.how"],
@@ -8,10 +10,9 @@ const LINKS: [string, LandingKey][] = [
   ["#privacy", "nav.privacy"],
   ["#faq", "nav.faq"],
 ];
-const PLACEHOLDERS = ["foot.privacy", "foot.terms", "foot.contact"] as const;
 const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text-ink";
 
-export function Footer({ t }: { t: LandingT }) {
+export function Footer({ t, lang }: { t: LandingT; lang: Lang }) {
   return (
     <footer className="border-t border-line bg-surface">
       <div className={`${container} grid gap-8 py-10 md:grid-cols-3`}>
@@ -28,14 +29,11 @@ export function Footer({ t }: { t: LandingT }) {
             ))}
           </ul>
         </nav>
-        {/* plain text, not links: the pages do not exist yet and the labels say so ("(placeholder)") */}
-        <ul className="flex flex-col">
-          {PLACEHOLDERS.map((k) => (
-            <li key={k}>
-              <span className={`${row} text-muted`}>{t(k)}</span>
-            </li>
-          ))}
-        </ul>
+        {/* Privacy Policy, Terms and Cookie settings (job BH); Contact stays a plain label until the owner gives an address */}
+        <div>
+          <LegalLinks lang={lang} direction="column" />
+          <span className={`${row} text-muted`}>{t("foot.contact")}</span>
+        </div>
       </div>
       <p className={`${container} border-t border-line py-5 text-sm text-muted`}>{t("foot.copy")}</p>
     </footer>

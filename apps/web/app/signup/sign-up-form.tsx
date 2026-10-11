@@ -9,9 +9,12 @@ import type { SignUpInput, SignUpResult } from "@/lib/api/signup";
 
 import { MAX_PASSWORD, MIN_PASSWORD } from "@/lib/auth/password-policy";
 
+/** A link inside a sentence (the terms line): inline text, underlined; the line itself is 44 px tall (a link in running text is exempt from the target size). */
+const inlineLink = "font-semibold text-brand-text underline underline-offset-2";
+
 export type SignUpAction = (input: SignUpInput) => Promise<SignUpResult>;
 
-export type SignUpWords = { name: string; email: string; password: string; passwordHint: string; business: string; terms: string; submit: string; have: string; signin: string; errors: Record<string, string> };
+export type SignUpWords = { name: string; email: string; password: string; passwordHint: string; business: string; /** "I agree to the {terms} and the {privacy}." */ terms: string; termsLink: string; privacyLink: string; submit: string; have: string; signin: string; errors: Record<string, string> };
 
 /**
  * The sign-up form. `action` is the server action `signUp` (Job AD). A refusal shows the sentence of its error code (an unknown code, the generic one); success goes to the screen the answer names
@@ -61,7 +64,23 @@ export function SignUpForm({ action, words }: { action: SignUpAction; words: Sig
       <input id="signup-business" className={authField} name="business" autoComplete="organization" required maxLength={120} />
       <label className={authCheckRow}>
         <input type="checkbox" name="terms" className={authCheckBox} required />
-        <span lang="en">{words.terms}</span>
+        <span lang="en">
+          {words.terms.split(/(\{terms\}|\{privacy\})/).map((part, i) =>
+            part === "{terms}" ? (
+              <Link key={i} href="/terms" target="_blank" rel="noopener" className={inlineLink}>
+                {words.termsLink}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </Link>
+            ) : part === "{privacy}" ? (
+              <Link key={i} href="/privacy" target="_blank" rel="noopener" className={inlineLink}>
+                {words.privacyLink}
+                <span className="sr-only"> (opens in a new tab)</span>
+              </Link>
+            ) : (
+              part
+            ),
+          )}
+        </span>
       </label>
       {error ? (
         <p role="alert" className={authAlert}>

@@ -12,7 +12,7 @@ type Entry = { en: string; te: string; hi: string; kn: string; status: Record<st
 const data = signup as Record<string, Entry>;
 const keys = Object.keys(data);
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
-const HUMAN_ONLY = ["signup.err.terms_required", "signup.terms"];
+const HUMAN_ONLY = ["signup.err.terms_required", "signup.privacy.link", "signup.terms", "signup.terms.link"];
 
 describe("the sign-up string store (Job AC, C5)", () => {
   const dicts = Object.fromEntries(LANGS.map((l) => [l, dictFor(signup as never, l) as Record<string, string>]));

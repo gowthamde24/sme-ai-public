@@ -253,10 +253,10 @@
   }
  },
  "signup.terms": {
-  "en": "I accept the terms of use and the privacy notice.",
-  "te": "I accept the terms of use and the privacy notice.",
-  "hi": "I accept the terms of use and the privacy notice.",
-  "kn": "I accept the terms of use and the privacy notice.",
+  "en": "I agree to the {terms} and the {privacy}.",
+  "te": "I agree to the {terms} and the {privacy}.",
+  "hi": "I agree to the {terms} and the {privacy}.",
+  "kn": "I agree to the {terms} and the {privacy}.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -265,10 +265,10 @@
   "humanOnly": true
  },
  "signup.err.terms_required": {
-  "en": "You need to accept the terms to create an account.",
-  "te": "You need to accept the terms to create an account.",
-  "hi": "You need to accept the terms to create an account.",
-  "kn": "You need to accept the terms to create an account.",
+  "en": "You need to agree to the Terms and the Privacy Policy to create an account.",
+  "te": "You need to agree to the Terms and the Privacy Policy to create an account.",
+  "hi": "You need to agree to the Terms and the Privacy Policy to create an account.",
+  "kn": "You need to agree to the Terms and the Privacy Policy to create an account.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -319,5 +319,29 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "signup.terms.link": {
+  "en": "Terms",
+  "te": "Terms",
+  "hi": "Terms",
+  "kn": "Terms",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "signup.privacy.link": {
+  "en": "Privacy Policy",
+  "te": "Privacy Policy",
+  "hi": "Privacy Policy",
+  "kn": "Privacy Policy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }
