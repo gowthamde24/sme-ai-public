@@ -17,6 +17,8 @@ import {
   parseOutboxPage,
   rejectCallRequest,
   rejectOutboxMessage,
+  createCallRequest,
+  submitOutboxMessage,
 } from "./outbox";
 import { BLOCKED_JSON, CALL_ID, CALL_JSON, MSG_PRICE, PRICE_JSON, QUIET_JSON, SENT_JSON, page } from "./outbox-fixtures";
 
@@ -41,6 +43,9 @@ describe("parsing the outbox as the API sends it", () => {
     ["id", "x"], ["lead_id", 5], ["text", ""], ["text", 5], ["reason_text", ""], ["created_at", "yesterday"], ["sent_at", "soon"], ["failure_code", "oops"], ["model_flagged", "no"], ["customer", 5],
   ])("a message with %s = %j is a contract error", (key, value) => {
     expect(() => parseOutboxMessage({ ...PRICE_JSON, [key]: value })).toThrow(ApiContractError);
+  });
+  it("reads a message made by a visit template (source system, category visit)", () => {
+    expect(parseOutboxMessage({ ...SENT_JSON, source: "system", category: "visit" })).toMatchObject({ source: "system", category: "visit" });
   });
   it("a customer may be null (a lead with no company)", () => {
     expect(parseOutboxMessage({ ...PRICE_JSON, customer: null, city: null })).toMatchObject({ customer: null, city: null });
@@ -103,5 +108,29 @@ describe("reading and deciding, with the person's token, inside the workspace", 
     await expect(approveOutboxMessage("tok", TENANT, MSG_PRICE)).rejects.toThrow(ApiContractError);
     apiRequest.mockResolvedValue({ message: PRICE_JSON, dispatched: { sent: "1", failed: 0 } });
     await expect(approveOutboxMessage("tok", TENANT, MSG_PRICE)).rejects.toThrow(ApiContractError);
+  });
+});
+
+describe("making a message and asking for a call", () => {
+  const LEAD = "7c1f0a52-3b11-4c6e-9d0a-5e2b8f4a1c01";
+  it("submits the person's words for the lead: no number, no status, no reason, source owner", async () => {
+    apiRequest.mockResolvedValue({ message: { ...PRICE_JSON, status: "queued" }, replayed: false, dispatched: null });
+    const out = await submitOutboxMessage("tok", TENANT, { messageId: MSG_PRICE, leadId: LEAD, text: "Hello, we are open today.", language: "en", category: "info" });
+    expect(out.replayed).toBe(false);
+    const [path, , init] = apiRequest.mock.calls[0];
+    expect(path).toBe(`${base}/outbox/messages`);
+    expect(JSON.parse(init.body)).toEqual({ message_id: MSG_PRICE, lead_id: LEAD, text: "Hello, we are open today.", language: "en", category: "info", source: "owner" });
+  });
+  it("asks for a call with a reason and the words to say", async () => {
+    apiRequest.mockResolvedValue({ request: CALL_JSON, replayed: true });
+    const out = await createCallRequest("tok", TENANT, { requestId: CALL_ID, leadId: LEAD, reason: "Wants to talk about an order", scriptDraft: "Hello, this is the shop.", language: "hi" });
+    expect(out).toMatchObject({ replayed: true, request: { id: CALL_ID, status: "requested" } });
+    expect(JSON.parse(apiRequest.mock.calls[0][2].body)).toEqual({ request_id: CALL_ID, lead_id: LEAD, reason: "Wants to talk about an order", script_draft: "Hello, this is the shop.", language: "hi" });
+  });
+  it("refuses a malformed id before any request, and an answer that is not the contract", async () => {
+    await expect(submitOutboxMessage("tok", TENANT, { messageId: "x", leadId: LEAD, text: "hello", language: "en", category: "info" })).rejects.toThrow(ApiContractError);
+    expect(apiRequest).not.toHaveBeenCalled();
+    apiRequest.mockResolvedValue({ message: { ...PRICE_JSON, status: "weird" }, replayed: false });
+    await expect(submitOutboxMessage("tok", TENANT, { messageId: MSG_PRICE, leadId: LEAD, text: "hello", language: "en", category: "info" })).rejects.toThrow(ApiContractError);
   });
 });

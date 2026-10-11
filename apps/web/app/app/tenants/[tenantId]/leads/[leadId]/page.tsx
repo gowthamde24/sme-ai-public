@@ -8,11 +8,15 @@ import { type Enquiry, fetchLeadEnquiries } from "@/lib/api/enquiries";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { fetchLeadContactId } from "@/lib/api/lead-contact";
 import { requireUser } from "@/lib/auth/session";
+import { ContactLead } from "@/components/v2/app/contact/ContactLead";
+import { getLang } from "@/i18n/get-lang";
 
 import { EnquiriesPanel } from "../../enquiries/enquiries-panel";
 import { indiaNowLocal } from "../../followups/followup-logic";
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
+import { contactWhatsAppAction, requestCallAction } from "./contact-actions";
+import { contactWords } from "./contact-words";
 import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
 import { bodyText, kvList, link, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
@@ -153,6 +157,16 @@ export default async function LeadPage({
           canWrite={WRITE_ROLES.includes(tenant.role)}
           formId={crypto.randomUUID()}
         />
+
+        {WRITE_ROLES.includes(tenant.role) ? (
+          <ContactLead
+            words={contactWords(await getLang())}
+            actions={{ whatsapp: contactWhatsAppAction.bind(null, tenantId, leadId), call: requestCallAction.bind(null, tenantId, leadId) }}
+            bookHref={`/app/tenants/${tenantId}/visits?lead=${leadId}#book`}
+            todayHref={`/app/tenants/${tenantId}#needs-you`}
+            noContact={contactId === null}
+          />
+        ) : null}
 
         <section aria-labelledby="sent-heading">
           <h2 id="sent-heading" className={pageH2}>I sent a message</h2>

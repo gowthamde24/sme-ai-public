@@ -1,14 +1,17 @@
 Tuesday, 6 October
 # Good morning
-{label="5 things need you. The rest is handled."}
+Agent OWL this week 88% left
+{role=meter label="Agent OWL usage this week: 88% left"}
+[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Agent OWL usage this week: 88% left")
+{label="6 things need you. The rest is handled."}
 {role=img label="Agent OWL, Resting"}
 Resting Resting Resting Agent OWL
-## 5 things need you. The rest is handled.
+## 6 things need you. The rest is handled.
 Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.
 {label="Needs you"}
 ## Needs you
-5 5 waiting for you
-[button type=button: See all (5)]
+6 6 waiting for you
+[button type=button: See all (6)]
 Messages about money, promises or complaints, and calls, always wait for you.
 -
 {label="Reply to Synthetic Buyer · Hyderabad"} Price · needs your OK 10:15
@@ -58,7 +61,27 @@ Amount
 When
 3h
 [Check the quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) Nothing is sent, approved or recorded by opening this.
+-
+{label="Agent OWL proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
+### Agent OWL proposed a visit for Priya S. · Hyderabad
+When
+Thu, 8 Oct, 11:00
+People
+3 people
+For
+Bridal sarees
+Booked, but not confirmed with the customer yet. Nothing was sent to the customer.
+[button type=button: Confirm the visit]
+[button type=button: Change time]
+[button type=button: Cancel the visit]
 {role=status}
+{label="At the store today"}
+## At the store today
+3 visits
+- 10:30 Anita R. Waiting for the customer
+- 12:00 Priya S. + 2 Bridal sarees Confirmed
+- 16:00 Lakshmi Textiles Silk saree wholesale Reminder sent
+Next free time today: 10:00 [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits) [Book a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits#book)
 {label="Done while you slept"}
 ## Done while you slept
 - Replied to 2 customers on WhatsApp

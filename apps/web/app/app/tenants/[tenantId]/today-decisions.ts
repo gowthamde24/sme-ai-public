@@ -4,8 +4,6 @@ import type { OutboxMessage } from "@/lib/api/outbox";
 
 export type Words = ReturnType<typeof appT>;
 
-/** The note kept with a call that was not approved because the Owner chose to offer the customer a visit to the shop instead. A fixed code, not free text. */
-export const OFFER_VISIT_NOTE = "offer_store_visit";
 const BLOCK_KEYS = ["switch_off", "stopped", "erased", "no_phone", "no_key", "no_opt_in", "daily_limit", "send_failed", "owner_rejected"] as const;
 
 export const customerOf = (m: { customer: string | null }, t: Words) => m.customer ?? t("today.customer.unknown");
@@ -18,3 +16,13 @@ export function decidedToast(m: OutboxMessage, t: Words, now: number = Date.now(
   return t("today.toast.blocked", { reason: t(`today.block.${key}` as "today.block.other") });
 }
 
+
+/**
+ * What happened to a visit offer, in OUR words: queued in the outbox (it goes by itself, waits for 9:00 or waits for a person: the outbox says which), sent, or not sent. The call is declined in
+ * every case, so the toast says so; the customer is told nothing that did not go.
+ */
+export function offeredToast(offer: { messageStatus: "queued" | "needs_approval" | "sent" | "blocked" | "failed" }, t: Words): string {
+  if (offer.messageStatus === "sent") return t("today.toast.visit.sent");
+  if (offer.messageStatus === "queued" || offer.messageStatus === "needs_approval") return t("today.toast.visit");
+  return t("today.toast.visit.notsent");
+}

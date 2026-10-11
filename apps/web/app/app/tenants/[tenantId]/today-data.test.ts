@@ -4,6 +4,7 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, page } from "@/lib/api/outbox-fixtures";
 import { agentsStatus, todayFor } from "@/test/screens/today-fixtures";
+import { TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
 
 const getToday = vi.fn();
 const getAgentsStatus = vi.fn();
@@ -17,6 +18,17 @@ vi.mock("@/lib/api/outbox", async (importOriginal) => ({
   listOutboxApprovals: (...a: unknown[]) => listOutboxApprovals(...a),
   listCallRequests: (...a: unknown[]) => listCallRequests(...a),
   listOutboxMessages: (...a: unknown[]) => listOutboxMessages(...a),
+}));
+const getTodayVisits = vi.fn();
+const getSlots = vi.fn();
+const listVisits = vi.fn();
+const getAiUsageWeek = vi.fn();
+vi.mock("@/lib/api/visits", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/api/visits")>()),
+  getTodayVisits: (...a: unknown[]) => getTodayVisits(...a),
+  getSlots: (...a: unknown[]) => getSlots(...a),
+  listVisits: (...a: unknown[]) => listVisits(...a),
+  getAiUsageWeek: (...a: unknown[]) => getAiUsageWeek(...a),
 }));
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quotes")>()), fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: async () => { throw new ApiRequestError(500, "api_error", "x"); } }));
 
@@ -32,6 +44,10 @@ beforeEach(() => {
   listCallRequests.mockResolvedValue(parseCallRequestPage(page([CALL_JSON])));
   listOutboxMessages.mockResolvedValue(parseOutboxPage(page([])));
   fetchQuotes.mockResolvedValue([]);
+  getTodayVisits.mockResolvedValue({ date: "2026-10-11", items: TODAY_VISITS });
+  getSlots.mockResolvedValue(slotsJson("2026-10-11"));
+  listVisits.mockResolvedValue({ from: "2026-10-11", to: "2026-12-11", items: [] });
+  getAiUsageWeek.mockResolvedValue({ week_percent: 12, resets_at_week: "2026-10-18T18:30:00Z" });
 });
 
 describe("readToday: the cards", () => {
@@ -40,9 +56,8 @@ describe("readToday: the cards", () => {
     expect(data.needs?.map((c) => c.type)).toEqual(["outbox", "call", "item", "item", "item"]);
     const [message, request] = data.needs!;
     expect(message).toMatchObject({ type: "outbox", id: PRICE_JSON.id, customer: "Synthetic Buyer", message: { language: "te", flags: ["money"], category: "reply_to_inbound" } });
-    expect(request).toMatchObject({ type: "call", request: { reason: CALL_JSON.reason } });
+    expect(request).toMatchObject({ type: "call", request: { reason: CALL_JSON.reason, language: CALL_JSON.language } });
     expect(data.cards.waiting).toBe(5);
-    expect(data.visits).toBeNull(); // store visits are not in the API yet
   });
   it("a card whose words are not in the queue still appears, without them", async () => {
     listOutboxApprovals.mockResolvedValue(parseOutboxPage(page([])));
@@ -82,5 +97,97 @@ describe("readToday: the outbox log", () => {
     const data = await readToday("tok", T, "viewer");
     expect(data.digest).toBeNull();
     expect(listOutboxMessages).not.toHaveBeenCalled();
+  });
+});
+
+
+const NOW = Date.parse("2026-10-11T05:00:00Z"); // 10:30 in India, Sunday 11 October
+const clock = () => NOW;
+
+describe("readToday: at the store today", () => {
+  it("reads today's visits and the first free time still to come", async () => {
+    getSlots.mockResolvedValue({ ...slotsJson("2026-10-11"), slots: slotsJson("2026-10-11").slots.map((s, i) => ({ ...s, free: i < 2 ? 0 : 2, past: i < 1 })) });
+    const data = await readToday("tok", T, "owner", clock);
+    expect(getTodayVisits).toHaveBeenCalledWith("tok", T);
+    expect(getSlots).toHaveBeenCalledWith("tok", T, "2026-10-11");
+    expect(data.store).toMatchObject({ state: "ready", slots: "free", nextFree: slotsJson("2026-10-11").slots[2].starts_at });
+    expect(data.store && data.store.state === "ready" && data.store.visits.map((v) => [v.who, v.status, v.here])).toEqual([["Anita R.", "requested", false], ["Priya S.", "confirmed", false], ["Lakshmi Textiles", "reminder_sent", false]]);
+  });
+  it("a customer who has arrived is 'here'", async () => {
+    getTodayVisits.mockResolvedValue({ date: "2026-10-11", items: [{ ...TODAY_VISITS[1], visit_status: "arrived" }] });
+    const data = await readToday("tok", T, "owner", clock);
+    expect(data.store && data.store.state === "ready" && data.store.visits[0].here).toBe(true);
+  });
+  it("the rest of the day: full, closed, or unknown when the slots cannot be read", async () => {
+    getSlots.mockResolvedValue({ ...slotsJson("2026-10-11"), slots: slotsJson("2026-10-11").slots.map((s) => ({ ...s, free: 0 })) });
+    expect((await readToday("tok", T, "owner", clock)).store).toMatchObject({ slots: "full", nextFree: null });
+    getSlots.mockResolvedValue({ ...slotsJson("2026-10-11"), open: false, reason: "closed_date", slots: [] });
+    expect((await readToday("tok", T, "owner", clock)).store).toMatchObject({ slots: "closed" });
+    getSlots.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
+    expect((await readToday("tok", T, "owner", clock)).store).toMatchObject({ state: "ready", slots: "unknown", nextFree: null });
+  });
+  it("visits that cannot be read are an error state, not an empty day", async () => {
+    getTodayVisits.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
+    expect((await readToday("tok", T, "owner", clock)).store).toEqual({ state: "error" });
+  });
+  it("any role is asked, a Viewer too (every member reads the visits)", async () => {
+    getToday.mockResolvedValue(todayFor("viewer"));
+    const data = await readToday("tok", T, "viewer", clock);
+    expect(getTodayVisits).toHaveBeenCalled();
+    expect(data.store).toMatchObject({ state: "ready" });
+  });
+  it("a rejected session is thrown", async () => {
+    getTodayVisits.mockRejectedValue(new ApiAuthError("x"));
+    await expect(readToday("tok", T, "owner", clock)).rejects.toThrow(ApiAuthError);
+  });
+});
+
+describe("readToday: a visit Agent OWL proposed", () => {
+  const proposal = (id: string, over: Record<string, unknown> = {}) => parseVisitFixture(visitJson({ id, source: "assistant", status: "booked", ...over }));
+  it("asks for the booked visits of the next two months and makes a card of each one the assistant proposed, newest first, counted in 'waiting'", async () => {
+    listVisits.mockResolvedValue({
+      from: "2026-10-11",
+      to: "2026-12-11",
+      items: [
+        proposal("aaaaaaaa-1111-4111-8111-000000000001", { created_at: "2026-10-10T08:00:00Z" }),
+        proposal("aaaaaaaa-1111-4111-8111-000000000002", { created_at: "2026-10-11T02:00:00Z", who: "Meera K.", party_size: 1, purpose: null }),
+        parseVisitFixture(visitJson({ id: "aaaaaaaa-1111-4111-8111-000000000003", source: "staff", status: "booked" })),
+      ],
+    });
+    const data = await readToday("tok", T, "owner", clock);
+    expect(listVisits).toHaveBeenCalledWith("tok", T, { from: "2026-10-11", to: "2026-12-11", status: "booked" });
+    const visits = data.needs!.filter((c) => c.type === "visit");
+    expect(visits.map((c) => c.type === "visit" && c.visit.who)).toEqual(["Meera K.", "Priya S."]);
+    expect(data.needs!.slice(-2).map((c) => c.type)).toEqual(["visit", "visit"]); // after the API's own items
+    expect(visits[0]).toMatchObject({ key: "visit-aaaaaaaa-1111-4111-8111-000000000002", at: "2026-10-11T02:00:00Z", id: "aaaaaaaa-1111-4111-8111-000000000002", visit: { partySize: 1, purpose: null, startsAt: "2026-10-14T05:00:00Z" } });
+    expect(data.cards.waiting).toBe(7); // the API's 5 and the two visits
+  });
+  it("is not asked for a Viewer, and a failed read draws no card (it never says 'nothing' for what it could not read)", async () => {
+    getToday.mockResolvedValue(todayFor("viewer"));
+    await readToday("tok", T, "viewer", clock);
+    expect(listVisits).not.toHaveBeenCalled();
+    getToday.mockResolvedValue(todayFor("owner"));
+    listVisits.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
+    const data = await readToday("tok", T, "owner", clock);
+    expect(data.needs!.some((c) => c.type === "visit")).toBe(false);
+    expect(data.cards.waiting).toBe(5);
+  });
+});
+
+describe("readToday: this week's AI figure", () => {
+  it("is read for the Owner and the Admin as a percentage only", async () => {
+    expect((await readToday("tok", T, "owner", clock)).week).toEqual({ percent: 12 });
+    expect((await readToday("tok", T, "admin", clock)).week).toEqual({ percent: 12 });
+    expect(getAiUsageWeek).toHaveBeenCalledWith("tok", T);
+  });
+  it("is not asked for Sales or a Viewer", async () => {
+    getToday.mockResolvedValue(todayFor("sales"));
+    expect((await readToday("tok", T, "sales", clock)).week).toBeNull();
+    expect((await readToday("tok", T, "viewer", clock)).week).toBeNull();
+    expect(getAiUsageWeek).not.toHaveBeenCalled();
+  });
+  it("a figure that cannot be read is 'error', never another window's number", async () => {
+    getAiUsageWeek.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
+    expect((await readToday("tok", T, "owner", clock)).week).toBe("error");
   });
 });

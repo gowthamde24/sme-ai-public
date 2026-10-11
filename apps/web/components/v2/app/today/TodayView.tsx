@@ -33,7 +33,7 @@ export function dayLine(now: number, lang: string): string {
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
 export function TodayView({ data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null }: { data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
-  const { cards, needs, team, visits, digest } = data;
+  const { cards, needs, team, store, week, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
@@ -47,14 +47,14 @@ export function TodayView({ data, name, hour, now, base, t, lang = "en", role, a
           <p className="text-sm text-muted">{dayLine(now, lang)}</p>
           <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{name ? `${greet}, ${name}` : greet}</h1>
         </div>
-        <TodayUsage words={words} settingsHref={`${base}/settings`} />
+        <TodayUsage words={words} settingsHref={`${base}/settings`} week={week} />
       </header>
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         <AgentHero lang={lang} base={base} availability={availability} askWords={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} words={words} chips={chips} digest={digest} />
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-          <NeedsYou words={words} role={role} actions={actions} now={now} />
+          <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />
           <aside className="flex min-w-0 flex-col gap-6">
-            <StoreVisits visits={visits} calendarHref={calendarHref} t={t} />
+            <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
             <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
             <TeamSection team={team} base={base} t={t} now={now} />
           </aside>

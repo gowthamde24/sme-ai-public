@@ -17,12 +17,13 @@ import { isCanonicalUuid } from "./crm";
 export const ASSISTANT_LANGUAGES = ["en", "te", "hi", "kn", "ta"] as const;
 export type AssistantLanguage = (typeof ASSISTANT_LANGUAGES)[number];
 
-export const SOURCE_KINDS = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft", "outbox_message", "call_request"] as const;
+export const SOURCE_KINDS = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft", "outbox_message", "call_request", "store_visit"] as const;
 export type SourceKind = (typeof SOURCE_KINDS)[number];
-export const DRAFT_KINDS = ["quote", "followup_draft", "reply_draft", "enquiry"] as const;
+/** `store_visit` (job AS): a visit Agent OWL proposed. It is booked but not confirmed; a person confirms it on the Visits page. */
+export const DRAFT_KINDS = ["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"] as const;
 export type DraftKind = (typeof DRAFT_KINDS)[number];
-/** `outbox_message` and `call_request` (job AT) are decided on Today in place: they have no page, so the Ask box shows them as a source without a link. */
-export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request"] as const;
+/** `outbox_message` and `call_request` (job AT) are decided on Today in place: they have no page, so the Ask box shows them as a source without a link. `store_visit` opens the Visits page at that visit. */
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "store_visit"] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 
 /** The screen of this business that shows a source, or approves a draft. */

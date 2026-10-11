@@ -6,13 +6,13 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: () => und
 
 import { NeedsYou } from "./NeedsYou";
 import { NeedsProvider } from "./needs-store";
-import { CALL_ID, MESSAGE_ID, NOW, WORDS, call, classic, fakeActions, outbox } from "./today-test-kit";
+import { CALL_ID, MESSAGE_ID, NOW, VISIT_ID, WORDS, call, classic, fakeActions, outbox, proposal } from "./today-test-kit";
 import type { NeedsCard, Role } from "./types";
 
 const board = (cards: NeedsCard[] | null, { role = "owner" as Role, actions = fakeActions(), waiting = cards?.length ?? null } = {}) => {
   const view = render(
     <NeedsProvider initial={cards} waiting={waiting}>
-      <NeedsYou words={WORDS} role={role} actions={actions} now={NOW} />
+      <NeedsYou words={WORDS} role={role} actions={actions} now={NOW} lang="en" />
     </NeedsProvider>,
   );
   return { ...view, actions };
@@ -88,12 +88,19 @@ describe("Needs you: the decisions call the right endpoint, and the card leaves 
     expect(actions.approveMessage).not.toHaveBeenCalled();
     expect(actions.offerVisit).not.toHaveBeenCalled();
   });
-  it("Offer a store visit calls offerVisit, and the toast does not claim the offer was sent", async () => {
+  it("Offer a store visit calls offerVisit with the language of the request, and the toast says the offer is queued in the outbox", async () => {
     const actions = fakeActions();
     board([call()], { actions });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Offer a store visit" })));
-    expect(actions.offerVisit).toHaveBeenCalledWith(CALL_ID);
-    expect(screen.getByRole("status")).toHaveTextContent(/This app has not sent the offer/);
+    expect(actions.offerVisit).toHaveBeenCalledWith(CALL_ID, "hi");
+    expect(screen.getByRole("status")).toHaveTextContent("The call is declined and the visit offer is queued in the outbox.");
+    expect(screen.queryByRole("article")).toBeNull(); // the call leaves the list
+  });
+  it("a call whose reason could not be read offers the visit in English", async () => {
+    const actions = fakeActions();
+    board([call({ request: null })], { actions });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Offer a store visit" })));
+    expect(actions.offerVisit).toHaveBeenCalledWith(CALL_ID, "en");
   });
   it("a refusal puts the card back where it was, with the reason; a missing second factor shows the way to Security", async () => {
     const approveMessage = vi.fn(async () => ({ ok: false as const, error: "This needs your authenticator app. Nothing was changed.", mfa: true }));
@@ -248,5 +255,85 @@ describe("Needs you: empty, unreadable, and the phone", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+});
+
+
+describe("Needs you: a visit Agent OWL proposed", () => {
+  const card = () => cardOf(/^Agent OWL proposed a visit for Priya S\./);
+  it("shows who, when (the Indian day and clock), how many and what for, and says nothing was sent", () => {
+    board([proposal()]);
+    const a = card();
+    expect(within(a).getByText("Visit · needs your OK")).toBeInTheDocument();
+    expect(within(a).getByText("Wed, 14 Oct, 11:00")).toBeInTheDocument();
+    expect(within(a).getByText("3 people")).toBeInTheDocument();
+    expect(within(a).getByText("Bridal sarees")).toBeInTheDocument();
+    expect(within(a).getByText("Hyderabad", { exact: false })).toBeInTheDocument();
+    expect(within(a).getByText("Booked, but not confirmed with the customer yet. Nothing was sent to the customer.")).toBeInTheDocument();
+    expect(within(a).getAllByRole("button").map((b) => b.textContent)).toEqual(["Confirm the visit", "Change time", "Cancel the visit"]);
+  });
+  it("counts as one of the things that need the person", () => {
+    board([outbox(), proposal()]);
+    expect(count()).toHaveTextContent("2");
+  });
+  it("Confirm calls confirm with the visit's id, the card leaves, and the toast says nothing was sent", async () => {
+    const { actions } = board([proposal()]);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Confirm the visit" })));
+    expect(actions.visit.confirm).toHaveBeenCalledWith(VISIT_ID);
+    expect(screen.queryByRole("article")).toBeNull();
+    expect(screen.getByRole("status")).toHaveTextContent("Confirmed for Priya S., and nothing was sent to the customer.");
+  });
+  it("Cancel calls cancel with the id and no reason", async () => {
+    const { actions } = board([proposal()]);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Cancel the visit" })));
+    expect(actions.visit.cancel).toHaveBeenCalledWith(VISIT_ID, "");
+    expect(screen.queryByRole("article")).toBeNull();
+    expect(screen.getByRole("status")).toHaveTextContent("Cancelled for Priya S.");
+  });
+  it("a refusal puts the card back with the reason and the way to Security when the second factor is missing", async () => {
+    const actions = fakeActions();
+    actions.visit.confirm.mockResolvedValueOnce({ ok: false, error: "This needs your authenticator app. Nothing was changed.", mfa: true } as never);
+    board([proposal()], { actions });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Confirm the visit" })));
+    expect(within(card()).getByRole("alert")).toHaveTextContent("This needs your authenticator app.");
+    expect(within(card()).getByRole("link", { name: "Open Security" })).toBeInTheDocument();
+  });
+  it("Change time opens the days' free times, moves the visit, and the card shows the new time", async () => {
+    const { actions } = board([proposal()]);
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Change time" })));
+    expect(actions.visit.slots).toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Move the visit" })).toBeDisabled(); // no time chosen yet
+    await act(async () => fireEvent.change(screen.getByLabelText("Day"), { target: { value: "2026-10-15" } }));
+    expect(actions.visit.slots).toHaveBeenLastCalledWith("2026-10-15");
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /^12:00/ })));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Move the visit" })));
+    expect(actions.visit.move).toHaveBeenCalledWith(VISIT_ID, "2026-10-15", "12:00");
+    expect(within(card()).getByText("Thu, 15 Oct, 12:00")).toBeInTheDocument(); // still a card: it is waiting for the customer again
+    expect(screen.getByRole("status")).toHaveTextContent(/^Moved to /);
+    expect(within(card()).getAllByRole("button").map((b) => b.textContent)).toEqual(["Confirm the visit", "Change time", "Cancel the visit"]);
+  });
+  it("a move that is refused keeps the picker open and shows the reason", async () => {
+    const actions = fakeActions();
+    actions.visit.move.mockResolvedValueOnce({ ok: false, error: "Every place at that time is taken. Choose another time." } as never);
+    board([proposal()], { actions });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Change time" })));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: /^11:00/ })));
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Move the visit" })));
+    expect(screen.getByRole("alert")).toHaveTextContent("Every place at that time is taken. Choose another time.");
+    expect(screen.getByRole("button", { name: "Move the visit" })).toBeInTheDocument();
+  });
+  it("a Viewer sees the card without buttons; Sales and Admin may decide it", () => {
+    board([proposal()], { role: "viewer" });
+    expect(within(card()).queryByRole("button")).toBeNull();
+    cleanup();
+    for (const role of ["sales", "admin", "owner"] as const) {
+      board([proposal()], { role });
+      expect(within(card()).getAllByRole("button")).toHaveLength(3);
+      cleanup();
+    }
+  });
+  it("offers no buttons when the server gave no actions for visits", () => {
+    board([proposal()], { actions: fakeActions({ visit: null }) });
+    expect(within(card()).queryByRole("button")).toBeNull();
   });
 });

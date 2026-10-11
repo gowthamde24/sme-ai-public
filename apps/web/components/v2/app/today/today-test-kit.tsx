@@ -2,6 +2,8 @@ import { appT } from "@/i18n/app";
 import { parseOutboxMessage } from "@/lib/api/outbox";
 import { PRICE_JSON } from "@/lib/api/outbox-fixtures";
 
+import { slotsJson } from "@/lib/api/visits-fixtures";
+
 import type { TodayActions } from "./actions-types";
 import { todayWords } from "./today-words";
 import type { NeedsCard, T } from "./types";
@@ -41,18 +43,39 @@ export const call = (over: Partial<Extract<NeedsCard, { type: "call" }>> = {}): 
   id: CALL_ID,
   customer: "Suresh K.",
   city: null,
-  request: { reason: "Wedding order, about 12 sarees. Prefers after 6 pm." },
+  request: { reason: "Wedding order, about 12 sarees. Prefers after 6 pm.", language: "hi" },
   ...over,
 });
 
-export function fakeActions(over: Partial<Record<keyof TodayActions, ReturnType<typeof vi.fn>>> = {}) {
+export const VISIT_ID = "33333333-cccc-4ccc-8ccc-000000000001";
+/** A visit Agent OWL proposed: Wednesday 14 October, 11:00 in India. */
+export const proposal = (over: Partial<Extract<NeedsCard, { type: "visit" }>> = {}): NeedsCard => ({
+  type: "visit",
+  key: `visit-${VISIT_ID}`,
+  at: "2026-10-11T02:00:00Z",
+  id: VISIT_ID,
+  visit: { who: "Priya S.", customer: "Sri Lakshmi Silks", city: "Hyderabad", startsAt: "2026-10-14T05:30:00Z", partySize: 3, purpose: "Bridal sarees" },
+  ...over,
+});
+
+export function fakeVisitActions() {
+  return {
+    confirm: vi.fn(async () => ({ ok: true as const, message: "Confirmed for Priya S., and nothing was sent to the customer." })),
+    move: vi.fn(async () => ({ ok: true as const, message: "Moved to Thu 15 Oct, 12:00. It waits for the customer to confirm again. Nothing was sent." })),
+    cancel: vi.fn(async () => ({ ok: true as const, message: "Cancelled for Priya S., and nothing was sent to the customer." })),
+    slots: vi.fn(async (date: string) => ({ ok: true as const, slots: slotsJson(date) })),
+  };
+}
+
+export function fakeActions(over: Partial<Record<Exclude<keyof TodayActions, "visit">, ReturnType<typeof vi.fn>>> & { visit?: ReturnType<typeof fakeVisitActions> | null } = {}) {
   const ok = (message: string) => vi.fn(async () => ({ ok: true as const, message }));
   const actions = {
     approveMessage: over.approveMessage ?? ok("Sent to Lakshmi R."),
     rejectMessage: over.rejectMessage ?? ok("Not sent. Nothing was sent to Lakshmi R."),
     editMessage: over.editMessage ?? vi.fn(async (_id: string, text: string) => ({ ok: true as const, message: "Saved. Read it once more, then approve.", text })),
     approveCall: over.approveCall ?? ok("Call approved for Suresh K. Nothing is dialled by this app."),
-    offerVisit: over.offerVisit ?? ok("Call not approved. Saved with the request: offer Suresh K. a store visit. This app has not sent the offer."),
+    offerVisit: over.offerVisit ?? ok("The call is declined and the visit offer is queued in the outbox."),
+    visit: over.visit === undefined ? fakeVisitActions() : over.visit,
   };
-  return actions as unknown as TodayActions & Record<keyof TodayActions, ReturnType<typeof vi.fn>>;
+  return actions as unknown as TodayActions & Record<Exclude<keyof TodayActions, "visit">, ReturnType<typeof vi.fn>> & { visit: ReturnType<typeof fakeVisitActions> };
 }

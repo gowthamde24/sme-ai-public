@@ -15,14 +15,17 @@ export type TodayCards = { waiting: number | null; money_held_paise: number | nu
 
 /** The words of a WhatsApp message held for approval, as the card shows them. Only a person who may decide it is given them (the API sends them to the Owner and Admin only). */
 export type OutboxCardMessage = { text: string; language: OutboxLanguage; category: OutboxCategory; flags: OutboxFlag[]; reasonText: string };
-/** Why a call was asked for, as the card shows it. */
-export type CallCardRequest = { reason: string };
+/** Why a call was asked for, as the card shows it, and the language the customer is spoken to in (the visit offer goes out in it). */
+export type CallCardRequest = { reason: string; language: OutboxLanguage };
+/** A visit Agent OWL proposed (booked, not confirmed): the card asks the person to confirm it, move it or cancel it. `startsAt` is ISO 8601. */
+export type ProposedVisit = { who: string; customer: string | null; city: string | null; startsAt: string; partySize: number; purpose: string | null };
 
 /** One card of "Needs you". `key` is unique in the list; `at` is ISO 8601. */
 export type NeedsCard =
   | { type: "item"; key: string; at: string; item: NeedsYouItem }
   | { type: "outbox"; key: string; at: string; id: string; customer: string | null; city: string | null; message: OutboxCardMessage | null }
-  | { type: "call"; key: string; at: string; id: string; customer: string | null; city: string | null; request: CallCardRequest | null };
+  | { type: "call"; key: string; at: string; id: string; customer: string | null; city: string | null; request: CallCardRequest | null }
+  | { type: "visit"; key: string; at: string; id: string; visit: ProposedVisit };
 
 /**
  * The outbox log of the last 24 hours, boiled down (components/v2/app/today/digest.ts). `none` = the person may not read the log (a Viewer); `error` = it could not be read.
@@ -33,10 +36,15 @@ export type DigestLine = { kind: DigestKind; n: number; /** "quiet" only: "9:00"
 export type Digest = { state: "ready"; sent: number; held: number; lines: DigestLine[] } | { state: "none" } | { state: "error" };
 
 /**
- * A visit to the shop today. Store visits are not in the API yet (job AS): the section is built behind this shape and is not drawn while `visits` is null or empty.
- * `starts_at` is ISO 8601 (the section shows it in the Indian day); `extra` is how many people come with the named one; `topic` is one short line ("Bridal sarees").
+ * A visit to the shop today, as "At the store today" draws it (`GET /visits/today`). `starts_at` is ISO 8601 (the section shows it in the Indian day); `extra` is how many people come with the named
+ * one; `topic` is one short line ("Bridal sarees"); `here` = the customer has arrived.
  */
-export type StoreVisit = { id: string; starts_at: string; who: string; extra: number; topic: string | null; status: "confirmed" | "reminder_sent" | "requested" };
+export type StoreVisit = { id: string; starts_at: string; who: string; extra: number; topic: string | null; status: "confirmed" | "reminder_sent" | "requested"; here: boolean };
+/**
+ * The store today: the visits still to come or here now, and the state of the rest of the day from the slots: `free` (with `nextFree`, the first free time still to come, ISO), `full` (every time left is taken),
+ * `closed` (the shop is closed today) or `unknown` (the slots could not be read: the line is not drawn).
+ */
+export type StoreToday = { visits: StoreVisit[]; slots: "free" | "full" | "closed" | "unknown"; nextFree: string | null };
 
 /** The role of the person on this workspace: the cards show only the actions it may take (the API checks again). */
 export type Role = "owner" | "admin" | "sales" | "viewer";
@@ -47,11 +55,13 @@ export type TodayData = {
   needs: NeedsCard[] | null;
   recent: RecentItem[] | null;
   team: AgentRow[] | null;
-  /** null = no store-visit data (not built): the section is not drawn. */
-  visits: StoreVisit[] | null;
+  /** The store today. null = not asked (the section is not drawn); `error` = it could not be read (the section says so). */
+  store: ({ state: "ready" } & StoreToday) | { state: "error" } | null;
+  /** The share of this week's AI allowance used (0 to 100), for the usage card. Owner and Admin only: null = not asked; `error` = could not be read. */
+  week: { percent: number } | "error" | null;
   /** One promise for the last 24 hours of the outbox, never rejected: the overnight line and "Done while you slept" read it under a Suspense each. null = not asked. */
   digest: Promise<Digest> | null;
 };
-export const NOTHING_TODAY: TodayData = { cards: { waiting: null, money_held_paise: null, orders_open: null }, needs: null, recent: null, team: null, visits: null, digest: null };
+export const NOTHING_TODAY: TodayData = { cards: { waiting: null, money_held_paise: null, orders_open: null }, needs: null, recent: null, team: null, store: null, week: null, digest: null };
 /** The words of the screen: the page resolves them in the person's language (server side) and passes this function. */
 export type T = (key: string, vars?: Record<string, string | number>) => string;

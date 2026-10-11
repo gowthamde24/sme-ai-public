@@ -33,7 +33,7 @@ export function insideWorkspace(href: string, base: string): string | null {
   }
 }
 
-const KIND_WORD: Readonly<Record<string, string>> = { quote: "today.kind.quote", followup_draft: "today.kind.followup", reply_draft: "ask.kind.reply", enquiry: "ask.kind.enquiry" };
+const KIND_WORD: Readonly<Record<string, string>> = { quote: "today.kind.quote", followup_draft: "today.kind.followup", reply_draft: "ask.kind.reply", enquiry: "ask.kind.enquiry", store_visit: "ask.kind.visit" };
 
 type Phase = "idle" | "asking" | "done" | "error";
 type Problem = "denied" | "silent" | "failed" | null;

@@ -8,7 +8,7 @@ const approveOutboxMessage = vi.fn();
 const rejectOutboxMessage = vi.fn();
 const editOutboxMessage = vi.fn();
 const approveCallRequest = vi.fn();
-const rejectCallRequest = vi.fn();
+const offerStoreVisit = vi.fn();
 const revalidatePath = vi.fn();
 const redirectMock = vi.fn((to: string) => {
   throw new Error(`NEXT_REDIRECT:${to}`);
@@ -24,11 +24,11 @@ vi.mock("@/lib/api/outbox", async (importOriginal) => ({
   rejectOutboxMessage: (...a: unknown[]) => rejectOutboxMessage(...a),
   editOutboxMessage: (...a: unknown[]) => editOutboxMessage(...a),
   approveCallRequest: (...a: unknown[]) => approveCallRequest(...a),
-  rejectCallRequest: (...a: unknown[]) => rejectCallRequest(...a),
 }));
+vi.mock("@/lib/api/visits", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/visits")>()), offerStoreVisit: (...a: unknown[]) => offerStoreVisit(...a) }));
 
 import { approveCallAction, approveMessageAction, editMessageAction, offerVisitAction, rejectMessageAction } from "./today-actions";
-import { OFFER_VISIT_NOTE, decidedToast } from "./today-decisions";
+import { decidedToast, offeredToast } from "./today-decisions";
 import { appT } from "@/i18n/app";
 
 const T = "22222222-2222-4222-8222-222222222222";
@@ -120,17 +120,41 @@ describe("calls", () => {
     expect(r).toEqual({ ok: true, message: "Call approved for DEMO Lakshmi Textiles. Nothing is dialled by this app." });
     expect(approveCallRequest).toHaveBeenCalledWith("tok", T, CALL_ID);
   });
-  it("Offer a store visit declines the call with a fixed note and does not claim the offer was sent", async () => {
-    rejectCallRequest.mockResolvedValue({ ...CALL_JSON, status: "rejected", decision_note: OFFER_VISIT_NOTE });
-    const r = await offerVisitAction(T, CALL_ID);
-    expect(rejectCallRequest).toHaveBeenCalledWith("tok", T, CALL_ID, "offer_store_visit");
-    expect(r).toMatchObject({ ok: true, message: expect.stringContaining("This app has not sent the offer.") });
+  it("Offer a store visit is ONE call to the offer-visit endpoint, in the language of the request, and says the offer is queued in the outbox", async () => {
+    offerStoreVisit.mockResolvedValue({ callRequestId: CALL_ID, messageStatus: "queued", scheduledFor: null });
+    const r = await offerVisitAction(T, CALL_ID, "hi");
+    expect(offerStoreVisit).toHaveBeenCalledWith("tok", T, CALL_ID, "hi");
+    expect(r).toEqual({ ok: true, message: "The call is declined and the visit offer is queued in the outbox." });
     expect(approveCallRequest).not.toHaveBeenCalled();
+    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}`);
+  });
+  it("a language the API does not know is sent as English", async () => {
+    offerStoreVisit.mockResolvedValue({ callRequestId: CALL_ID, messageStatus: "needs_approval", scheduledFor: null });
+    await offerVisitAction(T, CALL_ID, "fr" as never);
+    expect(offerStoreVisit).toHaveBeenCalledWith("tok", T, CALL_ID, "en");
+  });
+  it("says only what happened to the offer: queued (also when it waits for a person), sent, or not sent", () => {
+    const t = appT("en");
+    expect(offeredToast({ messageStatus: "queued" }, t)).toBe("The call is declined and the visit offer is queued in the outbox.");
+    expect(offeredToast({ messageStatus: "needs_approval" }, t)).toBe("The call is declined and the visit offer is queued in the outbox.");
+    expect(offeredToast({ messageStatus: "sent" }, t)).toBe("The call is declined and the visit offer was sent.");
+    expect(offeredToast({ messageStatus: "blocked" }, t)).toBe("The call is declined, but the visit offer was not sent. Look in the outbox.");
+    expect(offeredToast({ messageStatus: "failed" }, t)).toBe("The call is declined, but the visit offer was not sent. Look in the outbox.");
+  });
+  it("a call that was already decided is a stale card, not an offer", async () => {
+    offerStoreVisit.mockRejectedValue(refusal(409, "outbox_state"));
+    expect(await offerVisitAction(T, CALL_ID, "en")).toMatchObject({ ok: false, stale: true });
+  });
+  it("a malformed id never reaches the API", async () => {
+    expect(await offerVisitAction(T, "../x", "en")).toMatchObject({ ok: false, stale: true });
+    expect(offerStoreVisit).not.toHaveBeenCalled();
   });
   it("only the owner with a second factor may: an Admin's or a missing factor's refusal is our sentence", async () => {
     approveCallRequest.mockRejectedValue(refusal(403, "forbidden"));
     expect(await approveCallAction(T, CALL_ID)).toEqual({ ok: false, error: "Your role does not allow this. Nothing was changed." });
-    rejectCallRequest.mockRejectedValue(refusal(403, "mfa_required"));
-    expect(await offerVisitAction(T, CALL_ID)).toMatchObject({ ok: false, mfa: true });
+    offerStoreVisit.mockRejectedValue(refusal(403, "mfa_required"));
+    expect(await offerVisitAction(T, CALL_ID, "en")).toMatchObject({ ok: false, mfa: true });
+    offerStoreVisit.mockRejectedValue(refusal(403, "forbidden"));
+    expect(await offerVisitAction(T, CALL_ID, "en")).toMatchObject({ ok: false, error: "Your role does not allow this. Nothing was changed." });
   });
 });

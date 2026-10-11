@@ -10,6 +10,7 @@ import { pageMain } from "@/components/v2/app/ui";
 
 import { approveCallAction, approveMessageAction, editMessageAction, offerVisitAction, rejectMessageAction } from "./today-actions";
 import { readDisplayName, readToday } from "./today-data";
+import { cancelVisitAction, confirmVisitAction, moveVisitAction, slotsAction } from "./visits/visits-actions";
 
 /** The hour in India, where the business is: the greeting does not depend on the server's clock zone. */
 function hourInIndia(now = new Date()): number {
@@ -38,6 +39,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role }: { acc
     editMessage: editMessageAction.bind(null, tenantId),
     approveCall: approveCallAction.bind(null, tenantId),
     offerVisit: offerVisitAction.bind(null, tenantId),
+    visit: { confirm: confirmVisitAction.bind(null, tenantId), move: moveVisitAction.bind(null, tenantId), cancel: cancelVisitAction.bind(null, tenantId), slots: slotsAction.bind(null, tenantId) },
   };
   return (
     <main className={pageMain} lang={lang}>

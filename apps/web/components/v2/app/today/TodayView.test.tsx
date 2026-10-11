@@ -7,7 +7,7 @@ import { appT } from "@/i18n/app";
 
 import { TodayView, dayLine } from "./TodayView";
 import { NOW, call, classic, fakeActions, outbox, t } from "./today-test-kit";
-import { NOTHING_TODAY, type Digest, type NeedsCard, type Role, type TodayData } from "./types";
+import { NOTHING_TODAY, type Digest, type NeedsCard, type Role, type StoreToday, type StoreVisit, type TodayData } from "./types";
 
 const READY: Digest = { state: "ready", sent: 6, held: 1, lines: [{ kind: "reply_to_inbound", n: 6 }, { kind: "quiet", n: 1, time: "9:00" }] };
 const TEAM: TodayData["team"] = [
@@ -20,7 +20,8 @@ const TEAM: TodayData["team"] = [
   { agent: "order_desk", state: "idle", job: "Keeps orders in order.", last_event: null },
 ];
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
-const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, visits: null, digest: Promise.resolve(READY), ...over });
+const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
+const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, store: null, week: null, digest: Promise.resolve(READY), ...over });
 const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
@@ -133,7 +134,7 @@ describe("Today: the Agent OWL card", () => {
 
 describe("Today: the order of the sections", () => {
   it("header, then the Agent OWL card, then Needs you; the side sections follow in the document (below it on a phone)", async () => {
-    await view(data({ visits: [{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed" }], digest: Promise.resolve(READY) }));
+    await view(data({ store: ready([{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed", here: false }]), digest: Promise.resolve(READY) }));
     const at = (el: Element | null) => (el ? [...document.querySelectorAll("h1, h2")].indexOf(el.querySelector("h1, h2") ?? el) : -1);
     const order = ["h1", '[data-part="agent-owl"]', "#needs-you", '[data-part="visits"]', '[data-part="done"]', '[data-part="team"]'].map((sel) => document.querySelector(sel));
     expect(order.every(Boolean)).toBe(true);
@@ -141,7 +142,7 @@ describe("Today: the order of the sections", () => {
     void at;
   });
   it("the side column is store visits, then done while you slept, then your team", async () => {
-    await view(data({ visits: [{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed" }] }));
+    await view(data({ store: ready([{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed", here: false }]) }));
     expect([...document.querySelectorAll("aside > section")].map((s) => s.getAttribute("data-part"))).toEqual(["visits", "done", "team"]);
   });
   it("leaves a room under the content for the fixed question line and bottom bar (phone only)", async () => {
@@ -153,30 +154,58 @@ describe("Today: the order of the sections", () => {
 });
 
 describe("Today: the side sections", () => {
-  it("store visits are not drawn without data, and are drawn, in time order, with data", async () => {
-    await view(data({ visits: null }));
+  it("'At the store today' is not drawn when it was not asked, and says so when it could not be read", async () => {
+    await view(data({ store: null }));
     expect(document.querySelector('[data-part="visits"]')).toBeNull();
     cleanup();
-    await view(data({ visits: [] }));
-    expect(document.querySelector('[data-part="visits"]')).toBeNull();
-    cleanup();
+    await view(data({ store: { state: "error" } }));
+    expect(within(document.querySelector('[data-part="visits"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+  });
+  it("draws the visits in time order with who comes with them, what for and where each stands", async () => {
     await view(
-      data({ visits: [
-        { id: "b", starts_at: "2026-10-11T10:00:00Z", who: "Mahesh, Hindupur", extra: 0, topic: "Shop restock, about 40 pieces", status: "reminder_sent" },
-        { id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed" },
-      ] }),
-      { calendarHref: "/app/tenants/T/visits" },
+      data({ store: ready([
+        { id: "b", starts_at: "2026-10-11T10:00:00Z", who: "Mahesh, Hindupur", extra: 0, topic: "Shop restock, about 40 pieces", status: "reminder_sent", here: false },
+        { id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed", here: false },
+        { id: "c", starts_at: "2026-10-11T04:30:00Z", who: "Anita R.", extra: 0, topic: null, status: "requested", here: false },
+      ]) }),
     );
     const s = screen.getByRole("heading", { name: "At the store today" }).closest("section")!;
-    expect(within(s).getByText("2 visits")).toBeInTheDocument();
-    expect(within(s).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["11:00Priya S. + 2Bridal sareesConfirmed", "15:30Mahesh, HindupurShop restock, about 40 piecesReminder sent"]);
+    expect(within(s).getByText("3 visits")).toBeInTheDocument();
+    expect(within(s).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["10:00Anita R.Waiting for the customer", "11:00Priya S. + 2Bridal sareesConfirmed", "15:30Mahesh, HindupurShop restock, about 40 piecesReminder sent"]);
     expect(within(s).getByRole("link", { name: "Open the visit calendar" })).toHaveAttribute("href", "/app/tenants/T/visits");
+    expect(within(s).getByRole("link", { name: "Book a visit" })).toHaveAttribute("href", "/app/tenants/T/visits#book");
   });
-  it("no calendar link without a calendar", async () => {
-    await view(data({ visits: [{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "requested" }] }));
-    expect(screen.queryByRole("link", { name: "Open the visit calendar" })).toBeNull();
-    expect(screen.getByText("Waiting for the customer")).toBeInTheDocument();
-    expect(screen.getByText("1 visit")).toBeInTheDocument();
+  it("says 'Here now' for a customer who has arrived", async () => {
+    await view(data({ store: ready([{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed", here: true }]) }));
+    const s = document.querySelector('[data-part="visits"]') as HTMLElement;
+    expect(within(s).getByText("Here now")).toBeInTheDocument();
+    expect(within(s).queryByText("Confirmed")).toBeNull();
+  });
+  it("one line about the rest of the day: the next free time, 'every time is taken', 'closed today', or nothing when it could not be read", async () => {
+    await view(data({ store: ready([], { slots: "free", nextFree: "2026-10-11T11:00:00Z" }) }));
+    expect(document.querySelector('[data-line="slots"]')).toHaveTextContent("Next free time today: 16:30");
+    cleanup();
+    await view(data({ store: ready([], { slots: "full" }) }));
+    expect(document.querySelector('[data-line="slots"]')).toHaveTextContent("Every time left today is taken.");
+    cleanup();
+    await view(data({ store: ready([], { slots: "closed" }) }));
+    expect(document.querySelector('[data-line="slots"]')).toHaveTextContent("The shop is closed today.");
+    cleanup();
+    await view(data({ store: ready([], { slots: "unknown" }) }));
+    expect(document.querySelector('[data-line="slots"]')).toBeNull();
+  });
+  it("with no visits it still says so and offers the calendar and the booking", async () => {
+    await view(data({ store: ready([]) }));
+    const s = document.querySelector('[data-part="visits"]') as HTMLElement;
+    expect(within(s).getByText("No visits booked for today.")).toBeInTheDocument();
+    expect(within(s).getByText("None yet")).toBeInTheDocument();
+    expect(within(s).getByRole("link", { name: "Book a visit" })).toBeInTheDocument();
+  });
+  it("a Viewer sees the visits and the calendar but is not offered the booking", async () => {
+    await view(data({ store: ready([{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "requested", here: false }]) }), { role: "viewer" });
+    const s = document.querySelector('[data-part="visits"]') as HTMLElement;
+    expect(within(s).getByRole("link", { name: "Open the visit calendar" })).toBeInTheDocument();
+    expect(within(s).queryByRole("link", { name: "Book a visit" })).toBeNull();
   });
   it("'Done while you slept' lists at most four lines from the outbox log, with plurals, and a link only when there is an outbox page", async () => {
     const lines: Digest = { state: "ready", sent: 8, held: 0, lines: [{ kind: "reply_to_inbound", n: 6 }, { kind: "info", n: 1 }, { kind: "visit", n: 2 }, { kind: "quiet", n: 1, time: "9:00" }] };

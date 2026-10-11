@@ -9,7 +9,7 @@ export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 export const OWNER_ONLY: readonly Role[] = ["owner"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "office" | "integrations" | "settings";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "visits" | "office" | "integrations" | "settings";
 
 export type NavItem = {
   id: string;
@@ -25,6 +25,8 @@ export type NavItem = {
   also?: readonly string[];
   /** A tab of the phone's bottom bar (the rest are in "More"). */
   bar?: boolean;
+  /** The shorter word the phone's bottom bar uses for the item ("Visits" for "Store visits"); without it the bar uses `label`. */
+  short?: string;
   roles: readonly Role[];
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
@@ -43,7 +45,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "today", label: "Today", icon: "today", path: "", tab: "", bar: true, roles: ALL_ROLES },
       { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, roles: ALL_ROLES },
       { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, roles: WRITERS },
-      { id: "orders", label: "Orders", icon: "orders", path: "/orders", bar: true, roles: WRITERS },
+      { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, roles: ALL_ROLES },
+      { id: "orders", label: "Orders", icon: "orders", path: "/orders", roles: WRITERS },
       { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
     ],
   },
