@@ -21,9 +21,12 @@ SourceType = Literal[
     "reply_draft",
     "outbox_message",
     "call_request",
+    "store_visit",
 ]
-DraftType = Literal["quote", "followup_draft", "reply_draft", "enquiry"]
-OpenType = Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request"]
+DraftType = Literal["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"]
+OpenType = Literal[
+    "quote", "lead", "enquiry", "order", "outbox_message", "call_request", "store_visit"
+]
 
 
 class _Strict(BaseModel):
@@ -59,6 +62,7 @@ DRAFT_SUMMARY: dict[str, str] = {
     "quote": "A draft quote, priced by the quote engine. Check and approve it on the quote page.",
     "followup_draft": "A draft follow-up message. Check and approve it on the lead's follow-up page. Nothing has been sent.",
     "enquiry": "An enquiry recorded from what you pasted. Check it on the enquiry page.",
+    "store_visit": "A store visit I proposed. It is booked but not confirmed: check it on the Visits page and confirm it when the customer agrees. Nothing has been sent.",
 }
 
 

@@ -355,3 +355,14 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | [ ] | **The suppression-key hard gate applies to the outbox too.** A phone with no key on record is blocked (`no_key`). The API records the key when it holds `SUPPRESSION_HMAC_KEY`; hosting that key is the open item of ADR 0020. |
 | [ ] | **Call approval records a decision; nothing dials.** A real call (and what is said on it, recording, consent) is a separate decision. |
 | [ ] | **Today: the web must ship with the two new item kinds** (`outbox_approval`, `call_approval`; targets `outbox_message`, `call_request`). |
+
+## Store visits (ADR 0067, job AS)
+| Phase | Item |
+|---|---|
+| [ ] | **The Telugu, Hindi, Kannada and Tamil templates of the visit messages are machine drafts.** Every message in those languages waits for a person (`uncertain`) until a native reader has read `app/visits/texts.py` and `CHECKED_LANGUAGES` names the language. Tamil dates are numbers on purpose (the month names end in the word for tax, which the money list reads as money). |
+| [ ] | **No reminder is made automatically.** A person (or a later worker with its own principal, ADR 0013 option B) calls `POST /visits/{id}/messages`; there is no scheduler. |
+| [ ] | **Customer replies are not wired.** "Yes, I will come", a changed plan and a STOP are recorded by a person (confirm / change / cancel, and the suppression flow). |
+| [ ] | **An order from a visit needs an approved quote.** There is no order without one (ADR 0021); a customer who buys on the spot needs the quote made and approved first, or a later "quick sale" decision. |
+| [ ] | **Opening hours are per business, one set of hours a day.** No lunch break, no staff calendar, no per-room capacity; a shop that needs them is a later ticket. |
+| [ ] | **Agent OWL can propose only a bare visit** (lead, date, time). Party size, purpose and an advance are added by a person; the tool is small on purpose (token budget, ADR 0067). |
+

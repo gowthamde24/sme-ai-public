@@ -124,6 +124,19 @@ def _labels(
             ("call_request", c),
             {},
         )
+    # job AS: a store visit the assistant proposed or cited. The label has the day and the customer, never the note.
+    for r in rows(
+        "labels_visits",
+        "/store_visits",
+        "id,visit_date,status,lead:leads(company:companies(name))",
+        wanted.get("store_visit", []),
+    ):
+        v = uuid.UUID(str(r["id"]))
+        out[("store_visit", v)] = (
+            f"Visit of {_customer(r)} on {r['visit_date']} ({r['status']})",
+            ("store_visit", v),
+            {},
+        )
     return out
 
 

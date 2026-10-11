@@ -29,6 +29,7 @@ from app.suppression.repository import SuppressionRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
+from app.visits.repository import VisitsRepository
 
 logger = logging.getLogger("app.auth")
 
@@ -54,6 +55,7 @@ class Runtime:
     today: TodayRepository | None = None
     outbox: OutboxRepository | None = None
     outbox_adapter: ChannelAdapter | None = None
+    visits: VisitsRepository | None = None
 
 
 @dataclass(frozen=True)

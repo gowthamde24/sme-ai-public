@@ -255,6 +255,15 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      select %2$L, %1$L, l.id, l.contact_id, 'Synthetic reason', 'Synthetic script', 'en', repeat('2', 64), %5$L
        from (select id, contact_id from public.leads where tenant_id = %1$L order by id limit 1) l$$,
    'status = status', $$delete from public.call_requests where id = %2$L$$, true),
+  -- job AS: store visits. Written only by SECURITY DEFINER functions; every member of the business reads.
+  ('store_settings',
+   $$insert into public.store_settings (tenant_id, weekly_hours) values (%1$L, app.visit_default_hours()) on conflict (tenant_id) do update set slot_minutes = 30$$,
+   'slot_minutes = slot_minutes', $$delete from public.store_settings where tenant_id = %1$L$$, false),
+  ('store_visits',
+   $$insert into public.store_visits (id, tenant_id, lead_id, contact_id, visit_date, starts_at, ends_at, request_sha256, created_by)
+     select %2$L, %1$L, l.id, l.contact_id, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', repeat('6', 64), %5$L
+       from (select id, contact_id from public.leads where tenant_id = %1$L order by id limit 1) l$$,
+   'status = status', $$delete from public.store_visits where id = %2$L$$, true),
   ('assistant_conversations',
    $$insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L)$$,
    'updated_at = updated_at', $$delete from public.assistant_conversations where id = %2$L$$, true),
@@ -383,6 +392,11 @@ select t, r, s, i, u, d from (values
   ('outbox_messages',      'sales', true, false, false, false), ('outbox_messages',      'viewer', false, false, false, false),
   ('call_requests',        'owner', true, false, false, false), ('call_requests',        'admin', true, false, false, false),
   ('call_requests',        'sales', true, false, false, false), ('call_requests',        'viewer', false, false, false, false),
+  -- job AS: store visits and their hours. Every member reads (Today shows who is coming to anyone who may read leads); nobody writes directly.
+  ('store_settings',       'owner', true, false, false, false), ('store_settings',       'admin', true, false, false, false),
+  ('store_settings',       'sales', true, false, false, false), ('store_settings',       'viewer', true, false, false, false),
+  ('store_visits',         'owner', true, false, false, false), ('store_visits',         'admin', true, false, false, false),
+  ('store_visits',         'sales', true, false, false, false), ('store_visits',         'viewer', true, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

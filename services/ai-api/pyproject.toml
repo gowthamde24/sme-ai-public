@@ -59,6 +59,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/text_rules.py" = ["E501"]
 # rehearsal step 5: the price-list import (long explanatory docstrings, the parser's closed code lists)
 "app/pricelists/*" = ["E501"]
+# job AS: store visits (fixed message templates in five languages, long explanatory docstrings)
+"app/visits/*" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # job AK / K3: the model adapters (long explanatory docstrings, long payload lines)
 "app/agents/llm/openai_compat.py" = ["E501"]

@@ -148,6 +148,7 @@ def test_tool_surface_cannot_send_approve_or_price() -> None:
         "draft_followup",
         "draft_reply",
         "record_enquiry",
+        "propose_visit",
     }
 
 

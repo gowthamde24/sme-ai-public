@@ -39,6 +39,7 @@ from app.tenancy.models import (
 )
 from app.tenancy.repository import RepositoryError
 from app.today.repository import TodayRepository
+from app.visits.repository import VisitsRepository
 from tests.keys import AUDIENCE, ISSUER, claims, make_ec_key, mint
 
 KEY = make_ec_key()
@@ -198,6 +199,7 @@ def make_client(
     today: TodayRepository | None = None,
     outbox: OutboxRepository | None = None,
     outbox_adapter: ChannelAdapter | None = None,
+    visits: VisitsRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -227,6 +229,7 @@ def make_client(
             today=today,
             outbox=outbox,
             outbox_adapter=outbox_adapter,
+            visits=visits,
         ),
     )
     return TestClient(app), repo

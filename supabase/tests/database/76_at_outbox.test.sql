@@ -427,7 +427,7 @@ select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'nee
 select is(pg_temp.priv(format($q$update public.outbox_messages set lead_id = %L where id = %L$q$, tests.rid('a_lead'), tests.rid('ka'))), '42501', 'the lead of a message never changes');
 select is(pg_temp.priv(format($q$update public.outbox_messages set category = 'info' where id = %L$q$, tests.rid('jd'))), '42501', 'the category never changes');
 select is(pg_temp.priv(format($q$delete from public.outbox_messages where id = %L$q$, tests.rid('ka'))), '42501', 'a message is never deleted (not even by the owner of the database)');
-select is(pg_temp.priv('truncate public.outbox_messages'), '42501', '...nor truncated');
+select ok(pg_temp.priv('truncate public.outbox_messages') in ('42501', '0A000'), '...nor truncated (by the guard, or because the store visits (job AS) refer to messages)');
 select is(pg_temp.priv(format($q$insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by, sent_at, adapter, adapter_message_id)
                                  values (gen_random_uuid(), %L, %L, %L, 'whatsapp', 'forged as sent', 'en', 'info', 'sent', 'auto_allowed', repeat('a', 64), %L, app.outbox_now(), 'fake', 'f')$q$,
                  tests.tid('a'), tests.rid('a_lead'), tests.rid('a_contact'), tests.uid('a_owner'))), '42501', 'a row cannot be inserted already sent');

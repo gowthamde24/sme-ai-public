@@ -98,6 +98,13 @@ class AiUsagePercentOut(_Out):
     state: Literal["ok", "warn", "light", "paused"]
 
 
+class AiUsageWeekOut(_Out):
+    """This week's (Monday to Sunday, India time) use of the AI allowance as one percentage, never an amount or a count: an even share of the month's allowance (job AS)."""
+
+    week_percent: int
+    resets_at_week: datetime
+
+
 class LastEvent(_Out):
     text: str
     at: datetime

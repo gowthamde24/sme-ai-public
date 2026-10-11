@@ -652,7 +652,8 @@ AT_COPIES = (
 
 @pytest.mark.parametrize("name", AT_COPIES)
 def test_the_outbox_copy_is_the_last_definition_and_only_adds_lines(name: str) -> None:
-    defs = definitions(name)
+    # job AS (below) copies three of them again, so this pins the outbox migration's copy as the last definition up to that migration
+    defs = [d for d in definitions(name) if d[0] <= AT]
     assert defs[-1][0] == AT, (
         f"{name} is redefined after the outbox migration ({defs[-1][0]}) or the migration does not define it: re-copy it from the latest definition"
     )
@@ -748,3 +749,64 @@ def test_no_outbox_function_other_than_the_seam_reads_now_for_a_decision() -> No
         body = definitions(name)[-1][1]
         code = "\n".join(line for line in body.split("\n") if not line.lstrip().startswith("--"))
         assert "now()" not in code.replace("app.outbox_now()", ""), name
+
+
+# ---------------------------------------------------------------------------------------------- job AS: store visits
+# Migration 20261108090000 copies three more functions whole: the two erasure functions (the store visits' purpose, note and cancellation reason are erased with the person or the company) and
+# assistant_save_reply (a visit is a source and a draft the Main agent may save). Last definition each; compared with the outbox migration's copy it may only ADD lines, except the lines named here.
+AS = "20261108090000_as_store_visits.sql"
+AS_COPIES = ("app.erase_contact", "app.erase_company", "public.assistant_save_reply")
+AS_CHANGED: dict[str, set[str]] = {
+    "public.assistant_save_reply": {
+        "or not app.assistant_pairs_ok(coalesce(p_sources, '[]'::jsonb), array['quote', 'lead', 'enquiry', 'order', 'company', 'customer', 'price_item', 'followup_draft', 'reply_draft', 'outbox_message', 'call_request'])",
+        "or not app.assistant_pairs_ok(coalesce(p_drafts, '[]'::jsonb), array['quote', 'followup_draft', 'reply_draft', 'enquiry']) then",
+    },
+}
+
+
+@pytest.mark.parametrize("name", AS_COPIES)
+def test_the_store_visits_copy_is_the_last_definition_and_only_adds_lines(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == AS, (
+        f"{name} is redefined after the store-visits migration ({defs[-1][0]}) or the migration does not define it: re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < AS]
+    assert earlier and earlier[-1][0] == AT
+    kept = {line.strip() for line in defs[-1][1].split("\n")}
+    removed = [
+        line[1:].strip()
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
+        if line.startswith("-") and not line.startswith("---")
+    ]
+    unexpected = [
+        line for line in removed if line not in kept and line not in AS_CHANGED.get(name, set())
+    ]
+    assert not unexpected, (
+        f"{name}: the store-visits migration drops lines of {earlier[-1][0]}: {unexpected}"
+    )
+
+
+def test_the_assistant_copy_adds_exactly_the_one_word_to_both_lists() -> None:
+    defs = [d for d in definitions("public.assistant_save_reply") if d[0] in (AT, AS)]
+    assert [d[0] for d in defs] == [AT, AS]
+    diff = [
+        line[1:].strip()
+        for line in difflib.unified_diff(
+            normalised(defs[0][1]), normalised(defs[1][1]), lineterm="", n=0
+        )
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    assert len(diff) == 4, diff
+    added = " ".join(d for d in diff if "'store_visit'" in d)
+    assert added.count("'store_visit'") == 2, (
+        "the word is added to the sources list and to the drafts list"
+    )
+
+
+@pytest.mark.parametrize("name", ["app.erase_contact", "app.erase_company"])
+def test_the_erasure_copies_erase_the_three_visit_columns(name: str) -> None:
+    body = definitions(name)[-1][1]
+    for column in ("purpose", "note", "cancel_reason"):
+        assert f"'store_visits', '{column}'" in body, (name, column)

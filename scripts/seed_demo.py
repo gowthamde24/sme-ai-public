@@ -51,6 +51,7 @@ import sys
 import time
 import uuid
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlparse
@@ -103,6 +104,23 @@ class Summary:
     stances: set[str] = field(default_factory=set)
     icp_version_id: str = ""
     leads_imported: int = 0
+    visit_lines: list[str] = field(default_factory=list)
+
+
+# ----------------------------------------------------------------------------- store visits (job AS)
+IST = timezone(timedelta(hours=5, minutes=30))
+# (key, name, day offset from today (India), slot, party, purpose, advance (paise or None), steps taken in order)
+# today: one finished, one here now, one confirmed, one waiting for the customer, one that did not come; tomorrow: a confirmed one with an optional advance, a booked one, a cancelled one
+DEMO_VISITS: list[tuple[str, str, int, str, int, str | None, int | None, tuple[str, ...]]] = [
+    ("t1", "DEMO Priya Sharma", 0, "10:00", 2, "Bridal sarees", None, ("arrive", "complete:will_return")),
+    ("t2", "DEMO Anand Rao", 0, "11:30", 1, "Kanjivaram silks", None, ("confirm", "arrive")),
+    ("t3", "DEMO Meera Iyer", 0, "16:00", 3, "Wedding trousseau", None, ("confirm",)),
+    ("t4", "DEMO Suresh Kumar", 0, "18:00", 1, "Gift sarees", None, ()),
+    ("t5", "DEMO Lakshmi Devi", 0, "10:30", 1, None, None, ("no_show",)),
+    ("u1", "DEMO Divya Nair", 1, "11:00", 4, "Wedding trousseau", 50000, ("confirm",)),
+    ("u2", "DEMO Kiran Murthy", 1, "14:00", 2, "Silk dupattas", None, ()),
+    ("u3", "DEMO Pooja Singh", 1, "17:00", 1, None, None, ("cancel",)),
+]
 
 
 # ----------------------------------------------------------------------------- config and safety
@@ -680,6 +698,51 @@ class Seeder:
         rows: list[dict[str, Any]] = r.json()
         return rows
 
+    def visits(self) -> None:
+        """Job AS: a few clearly fictional STORE VISITS for today and tomorrow (India date) in mixed states, through the API as the demo owner. Each visit belongs to its own invented customer.
+        The ids carry the date, so a second run on the same day changes nothing and a run on another day adds that day's. Steps that the clock does not allow yet (a no-show before its time) are
+        left undone; a slot the business's own hours no longer offer is skipped. Nothing is sent: a visit makes no message unless a person asks for one."""
+        base = f"/v1/tenants/{self.summary.tenant_id}"
+        today = datetime.now(IST).date()
+        lines: list[str] = []
+        for key, name, offset, slot, party, purpose, advance, steps in DEMO_VISITS:
+            day = (today + timedelta(days=offset)).isoformat()
+            company, contact, lead = (demo_id(f"vs-{key}-company"), demo_id(f"vs-{key}-contact"), demo_id(f"vs-{key}-lead"))
+            self._create(f"{base}/companies", {"id": company, "name": name, "type": "customer", "country": "IN", "city": "Demoville", "tags": ["demo", "synthetic"]}, "visit company")
+            self._create(f"{base}/contacts", {"id": contact, "company_id": company, "full_name": name}, "visit contact")
+            self._create(f"{base}/leads", {"id": lead, "company_id": company, "contact_id": contact, "source": "DEMO walk-in (synthetic)"}, "visit lead")
+            booked = self._api(
+                "POST",
+                f"{base}/visits",
+                {"visit_id": demo_id(f"vs-{key}-{day}"), "lead_id": lead, "date": day, "slot_start": slot, "party_size": party, "purpose": purpose, "advance_paise": advance},
+            )
+            if booked.status_code == 404:
+                raise SeedError("The API has no store visits yet. Restart it from this branch, then run this again.")
+            if booked.status_code == 409:  # the business's own hours no longer offer this slot, or it is full
+                lines.append(f"  {key}: skipped ({booked.json().get('error', {}).get('code', 'refused')})")
+                continue
+            if booked.status_code != 200:
+                raise SeedError(f"Could not book the demo visit {key} (HTTP {booked.status_code}).")
+            vid = booked.json()["visit"]["id"]
+            if booked.json()["replayed"]:
+                self.summary.reused += 1
+            else:
+                self.summary.created += 1
+            for step in steps:
+                action, _, outcome = step.partition(":")
+                if action == "complete":
+                    r = self._api("POST", f"{base}/visits/{vid}/complete", {"outcome": outcome})
+                else:
+                    r = self._api("POST", f"{base}/visits/{vid}/{action.replace('_', '-')}")
+                if r.status_code == 409:  # not allowed yet (the clock), or already done by an earlier run
+                    break
+                if r.status_code != 200:
+                    raise SeedError(f"Could not move the demo visit {key} on (HTTP {r.status_code}).")
+            shown = self._api("GET", f"{base}/visits/{vid}")
+            status = shown.json()["status"] if shown.status_code == 200 else "?"
+            lines.append(f"  {key}: {name} on {day} at {slot}, party of {party}: {status}")
+        self.summary.visit_lines = lines
+
     def verify(self) -> None:
         """The acceptance check: every claim has at least one evidence link."""
         links = self._rest_get(
@@ -795,6 +858,7 @@ def run(
         seeder.claims()
         seeder.icp()
         seeder.leads()
+        seeder.visits()
         seeder.verify()
         return seeder.summary
     finally:
@@ -837,6 +901,8 @@ def main() -> int:
     print(f"    {s.leads_imported} synthetic leads imported: {base}/{s.tenant_id}/review")
     print(f"  company page: {base}/{s.tenant_id}/companies/{s.company_id}")
     print(f"  lead page:    {base}/{s.tenant_id}/leads/{s.lead_id}")
+    print(f"  store visits (today and tomorrow, India date; GET {load_config().api_url}/v1/tenants/{s.tenant_id}/visits/today):")
+    print("\n".join(s.visit_lines))
     print(
         f"  sign in as {DEMO_EMAIL} (the fixed demo password is a constant in scripts/seed_demo.py)"
     )

@@ -99,6 +99,10 @@ def world() -> tuple[Any, FakeTodayRepository]:
             "state": "ok",
         },
     }
+    today.week = {
+        TENANT_A.id: {"week_percent": 41, "resets_at_week": "2026-10-11T18:30:00+00:00"},
+        TENANT_B.id: {"week_percent": 2, "resets_at_week": "2026-10-11T18:30:00+00:00"},
+    }
     client, _ = make_client(today=today)
     return client, today
 
@@ -341,3 +345,45 @@ def test_the_reads_take_no_input_and_cannot_write() -> None:
             assert method(url, headers=auth("a_owner")).status_code == 405
     assert today.calls == []
     assert empty_today()["cards"]["waiting"] == 0 and USERS["a_owner"]
+
+
+@pytest.mark.parametrize(
+    ("user", "status"),
+    [("a_owner", 200), ("a_admin", 200), ("a_sales", 403), ("a_viewer", 403), ("outsider", 404)],
+)
+def test_the_weekly_figure_is_owner_and_admin_only(user: str, status: int) -> None:
+    client, today = world()
+    response = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage/week", headers=auth(user))
+    assert response.status_code == status
+    if status != 200:
+        assert not [c for c in today.calls if c[0] == "ai_usage_week"]
+
+
+def test_the_weekly_figure_is_one_percentage_and_one_time_and_nothing_else() -> None:
+    client, _ = world()
+    body = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage/week", headers=auth("a_owner")).json()
+    assert body == {"week_percent": 41, "resets_at_week": "2026-10-11T18:30:00Z"}
+
+
+@pytest.mark.parametrize(
+    "raw",
+    [
+        None,
+        {"week_percent": 101, "resets_at_week": "2026-10-11T18:30:00+00:00"},
+        {"week_percent": -1, "resets_at_week": "2026-10-11T18:30:00+00:00"},
+        {"week_percent": "41", "resets_at_week": "2026-10-11T18:30:00+00:00"},
+        {"week_percent": 41},
+        {"week_percent": 41, "resets_at_week": "not a time"},
+    ],
+)
+def test_an_unexpected_weekly_answer_is_a_502_not_a_guess(raw: object) -> None:
+    client, today = world()
+    today.week[TENANT_A.id] = raw
+    response = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage/week", headers=auth("a_owner"))
+    assert response.status_code == 502 and response.json()["error"]["code"] == "upstream_error"
+
+
+def test_the_weekly_figure_is_unavailable_without_the_data_layer() -> None:
+    client, _ = make_client()
+    response = client.get(f"/v1/tenants/{TENANT_A.id}/ai-usage/week", headers=auth("a_owner"))
+    assert response.status_code == 503
