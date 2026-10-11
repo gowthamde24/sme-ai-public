@@ -49,6 +49,8 @@ class SchedulerStatusOut(_Strict):
     platform_switch_on: bool
     auto_send_enabled: bool
     active: bool
+    # a message the Owner APPROVED is released while the global switch is on, whatever the business's automatic sending says (job AY); everything else the worker does needs `active`
+    releases_approved: bool
     # true while the worker has been heard from within three of its intervals
     worker_running: bool
     # the worker's last tick (for the whole installation) and when the next is due; null when it was never heard from, `next_run_at` also null while it is not running

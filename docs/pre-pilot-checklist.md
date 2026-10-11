@@ -372,7 +372,19 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | [ ] | **One worker principal for every business.** The worker's account (registered by the operator, no workspace) may call eleven `scheduler_*` functions for any business that has switched automatic sending on. Decide before the first external customer whether that is enough or whether to issue one principal per business (ADR 0013 option B). |
 | [ ] | **Delivery is at-least-once.** A tick that dies between the channel and the database is offered again after two minutes with the same message id. A real WhatsApp adapter MUST use the id as its idempotency key (ADR 0066 decision 6) before it exists. |
 | [ ] | **Hosted worker.** Its account, its password in the host's secret store, one process, a restart policy, an alert when `worker_running` turns false. Nothing exists; ADR 0017 keeps this for the Customer Zero stage. |
-| [ ] | **Messages the Owner approved in a business with automatic sending OFF are not released by the worker.** They wait for "dispatch now". Decide whether the worker should release owner-approved rows regardless. |
+| [x] | **Approved = send (job AY, ADR 0068 addendum).** The worker releases a message the Owner approved even when automatic sending is off; nothing goes without an approval; the send-time checks still apply. |
 | [ ] | **Reminder wording in te, hi, kn, ta is unchecked** (same item as store visits above): a reminder in those languages waits in the approval queue until a native reader has read the templates. |
 | [ ] | **Retention** of `scheduler_runs` (one row per eventful tick per business) and `visit_reminders` is not decided; both are append-only. |
 | [ ] | **The status card is API-only.** `GET /scheduler/status` and `GET|PUT /scheduler/settings` exist; the web card is a later job. |
+
+## Catalogue, photos and Agent OWL sending (ADR 0069, job AY)
+| Phase | Item |
+|---|---|
+| [ ] | **No real product photos exist in the repository or the seeds.** The Owner uploads their own; check the shop has the rights to every picture it sends customers. |
+| [ ] | **A real WhatsApp adapter needs the photos by URL.** A claim carries bucket + path + type (a reference). The worker's principal cannot sign a URL, so a real adapter needs a minting step (a signed URL made in the Owner's name or a small signing function) before it can send media. Nothing real exists yet. |
+| [ ] | **Hosted Storage.** The bucket-per-business rules are tested on the local Storage service only. Before hosting: confirm the `storage.objects` rules, the 5 MB limit and the allowed types on the hosted project, the backup and the retention of files (files of removed photos stay), and an orphan clean-up. |
+| [ ] | **The agent's caption is model text.** In Telugu, Hindi, Kannada and Tamil it is machine text in the customer's language that the Owner reads like any draft; unlike the visit templates it is not pre-approved. A caption with an amount waits for the Owner; a caption with a claim the policy's word lists do not know does not (the lists err on the side of asking). |
+| [ ] | **Agent OWL's question budget grew about 13 %** (two tools, about 320 tokens a call). A free-tier model with a small tokens-per-minute allowance has less room per question. |
+| [ ] | **Exact prices in the catalogue are the Owner's own list**, separate from the quote engine's price list (`find_price`). They can disagree; the engine's price is the only one a quote uses. Decide whether the catalogue price should come from the price list. |
+| [ ] | **The web must stop adding proposed visits to the Today count** (`cards.waiting` includes them now), and must learn the new source type `catalogue_item` of the Ask box. |
+

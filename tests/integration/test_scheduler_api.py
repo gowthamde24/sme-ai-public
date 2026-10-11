@@ -278,6 +278,33 @@ def test_a_business_that_did_not_switch_automatic_sending_on_is_left_alone(shop:
     )
 
 
+# ---------------------------------------------------------------------------------------------- approved = send (job AY)
+def test_a_message_the_owner_approved_is_released_even_when_automatic_sending_is_off(shop: Shop) -> None:
+    """Approval is the Owner's consent to send. With automatic sending OFF a message waits for the Owner; once approved, the worker releases it (quiet hours, STOP and the other checks still apply at that moment)."""
+    lead, other = shop.lead(), shop.lead()
+    pin(0, "13:00")
+    shop.set_auto(False)
+    try:
+        approved = shop.submit(lead)
+        waiting = shop.submit(other)
+        assert shop.msg(approved) == ("needs_approval", "auto_off") and shop.msg(waiting) == ("needs_approval", "auto_off")
+        pin(0, "22:00")
+        assert shop.call("owner", "POST", f"/outbox/messages/{approved}/approve").status_code == 200
+        assert shop.msg(approved) == ("queued", "owner_approved") and shop.scheduled_for(approved) == instant(1, "09:00")
+        worker, adapter = shop.sched.worker()
+        status = shop.call("owner", "GET", "/scheduler/status").json()
+        assert status["active"] is False and status["releases_approved"] is True and status["auto_send_enabled"] is False
+        pin(1, "08:59")
+        worker.tick_once()
+        assert approved not in sent_ids(adapter), "08:59: still night"
+        pin(1, "09:00")
+        worker.tick_once()
+        assert sent_ids(adapter).count(approved) == 1 and shop.msg(approved)[0] == "sent", "09:00: released although automatic sending is off"
+        assert waiting not in sent_ids(adapter) and shop.msg(waiting) == ("needs_approval", "auto_off"), "what nobody approved never goes"
+    finally:
+        shop.set_auto(True)
+
+
 # ---------------------------------------------------------------------------------------------- release: quiet hours
 def test_a_message_held_for_the_morning_goes_at_nine_and_not_at_eight_fifty_nine(
     shop: Shop,

@@ -12,6 +12,8 @@ from fastapi import Depends, Request
 
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.catalogue.repository import CatalogueRepository
+from app.catalogue.storage import StorageClient
 from app.crm.repository import CrmRepository
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
@@ -19,6 +21,7 @@ from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorize
 from app.evidence.repository import EvidenceRepository
 from app.followups.repository import FollowupsRepository
 from app.leads.repository import LeadsRepository
+from app.leadtools.repository import LeadSearchRepository
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
@@ -58,6 +61,9 @@ class Runtime:
     outbox_adapter: ChannelAdapter | None = None
     visits: VisitsRepository | None = None
     scheduler: SchedulerRepository | None = None
+    catalogue: CatalogueRepository | None = None
+    catalogue_storage: StorageClient | None = None
+    lead_search: LeadSearchRepository | None = None
 
 
 @dataclass(frozen=True)

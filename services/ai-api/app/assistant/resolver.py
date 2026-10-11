@@ -99,6 +99,11 @@ def _labels(
             target,
             {"language": r["language"], "preview": r["body"], "gloss_en": r["gloss_en"]},
         )
+    # job AY: a catalogue item the assistant found (it has no page of its own yet; the label is the saree's name)
+    for r in rows(
+        "labels_catalogue", "/catalogue_items", "id,name", wanted.get("catalogue_item", [])
+    ):
+        out[("catalogue_item", uuid.UUID(str(r["id"])))] = (str(r["name"]), None, {})
     # job AT: what Today lists for the Owner and Admin. The label never carries the text of a message or a call script.
     for r in rows(
         "labels_outbox",

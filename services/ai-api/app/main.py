@@ -15,6 +15,10 @@ from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
+from app.catalogue import errors as catalogue_errors
+from app.catalogue.repository import PostgrestCatalogueRepository
+from app.catalogue.routes import router as catalogue_router
+from app.catalogue.storage import HttpStorageClient
 from app.config import ConfigurationError, Settings, build_auth_config, get_settings
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
@@ -34,6 +38,8 @@ from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
+from app.leadtools.repository import PostgrestLeadSearchRepository
+from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
@@ -118,6 +124,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         outbox_adapter=_outbox_adapter(settings),
         visits=PostgrestVisitsRepository(config.rest_url, config.anon_key),
         scheduler=PostgrestSchedulerRepository(config.rest_url, config.anon_key),
+        catalogue=PostgrestCatalogueRepository(config.rest_url, config.anon_key),
+        catalogue_storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
+        lead_search=PostgrestLeadSearchRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -312,6 +321,18 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         "no_approved_quote",
         "This customer has no approved quote without an order yet, so no order can be made.",
     ),
+    # Catalogue (job AY, ADR 0069). Fixed messages: nothing from the data layer reaches a client.
+    catalogue_errors.NeedsPhotoError: ApiError(
+        409,
+        "needs_photo",
+        "An active item needs a photo. Add one, or make the item inactive first.",
+    ),
+    catalogue_errors.TooManyPhotosError: ApiError(
+        409, "too_many_photos", "An item can have at most 8 photos."
+    ),
+    catalogue_errors.PhotoFilesMissingError: ApiError(
+        409, "photo_files_missing", "The photo did not finish uploading. Try again."
+    ),
     runs_repo.RequirementConfirmedError: ApiError(
         409,
         "requirement_confirmed",
@@ -378,6 +399,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.outbox,
                 runtime.visits,
                 runtime.scheduler,
+                runtime.catalogue,
+                runtime.catalogue_storage,
+                runtime.lead_search,
             ):
                 if isinstance(
                     repository,
@@ -396,7 +420,10 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestTodayRepository
                     | PostgrestOutboxRepository
                     | PostgrestVisitsRepository
-                    | PostgrestSchedulerRepository,
+                    | PostgrestSchedulerRepository
+                    | PostgrestCatalogueRepository
+                    | HttpStorageClient
+                    | PostgrestLeadSearchRepository,
                 ):
                     repository.close()
 
@@ -460,6 +487,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         )
 
     app.include_router(tenancy_router)
+    app.include_router(
+        leadtools_router
+    )  # before the generic /leads/{id} routes: /leads/search must not be read as an id
     app.include_router(leads_router)
     app.include_router(evidence_router)
     app.include_router(crm_router)
@@ -471,6 +501,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(outbox_router)
     app.include_router(visits_router)
     app.include_router(scheduler_router)
+    app.include_router(catalogue_router)
     app.include_router(pricelists_router)
     app.include_router(today_router)
     app.include_router(assistant_router)

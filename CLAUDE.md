@@ -74,6 +74,7 @@ make rehearse-followups # OPT-IN, never in make check: the headless follow-up jo
 python3 tools/mutation-followups/run_sql.py # OPT-IN, never in make check (about 45 minutes): the follow-up mutation pass, SQL (also run_source.py py|web, summary.py); see tools/mutation-followups/README.md
 # OPT-IN timing of the due-candidates function (20,000 leads; never in make check): cd services/ai-api && DUE_SPIKE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_followup_due_spike.py -q -s
 make dev-api     # FastAPI on :8000
+make seed-demo-catalogue # OPT-IN, local stack only (job AY, ADR 0069): twelve invented sarees with GENERATED placeholder pictures in the demo workspace, uploaded through the API into the local Storage (needs `make db-start` with Storage on, `make dev-api-local`, `make seed-demo-manual`; docs/runbooks/catalogue-local.md)
 make dev-worker-local # OPT-IN, local stack only (job AW, ADR 0068): the scheduler worker (releases held messages, queues visit reminders, marks missed visits); acts only while the global outbox switch AND the business's automatic sending are on; the only channel is the local fake (docs/runbooks/scheduler-local.md)
 ```
 

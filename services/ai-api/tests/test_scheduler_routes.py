@@ -86,6 +86,7 @@ def test_the_status_card_carries_times_and_counts_only(w: World) -> None:
         "platform_switch_on",
         "auto_send_enabled",
         "active",
+        "releases_approved",
         "worker_running",
         "last_run_at",
         "next_run_at",

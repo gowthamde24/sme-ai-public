@@ -82,6 +82,18 @@ class SubmitMessageIn(_Strict):
     model_flagged: StrictBool = False
     uncertain: StrictBool = False
     source: Source = "owner"
+    # up to 4 catalogue photos, by id, in order. The caption (`text`) is what the policy reads: a price or an amount in it makes the message wait for a person.
+    photo_ids: Annotated[list[uuid.UUID], Field(max_length=4)] = []
+    # when true the server logs the lead touch at the moment the message is really SENT (never when it is queued, never for a message that is blocked or fails)
+    keep_record: StrictBool = False
+
+
+class MediaOut(_Strict):
+    """A photo the message carries. `thumb_url` is a signed URL that expires in minutes (null when it could not be made); fetch it again when it has."""
+
+    photo_id: uuid.UUID
+    position: int
+    thumb_url: str | None
 
 
 class EditMessageIn(_Strict):
@@ -112,6 +124,8 @@ class OutboxMessageOut(_Strict):
     decided_at: datetime | None
     sent_at: datetime | None
     failure_code: Literal["adapter_error", "timeout", "rejected"] | None
+    keep_record: bool
+    media: list[MediaOut]
 
 
 class DispatchOut(_Strict):

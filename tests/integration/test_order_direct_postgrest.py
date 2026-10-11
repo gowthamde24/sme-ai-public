@@ -642,12 +642,18 @@ def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:
     ):
         assert pg(ow.w.stack, owner, "POST", f"/rpc/{fn}", json={}).status_code in (404, 406), fn
     assert pg(ow.w.stack, owner, "GET", "/order_engine_versions").status_code in (401, 403, 404)
-    assert (
-        operator_sql.sql(
-            "select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like '%order%' and p.prosecdef"
-        )
-        == "3"
+    # The ONLY definer functions of the public schema with "order" in their name, NAMED (not counted). The first three are the order engine's callable surface; each proves a role first (ADR 0021).
+    # catalogue_photos_reorder (job AY, ADR 0069) matches the pattern only because "reorder" contains "order": it puts a catalogue item's photos in a new order, is Owner/Admin only (role proven
+    # first, pgTAP 80), reads and writes only the caller's own business's rows, and has nothing to do with orders.
+    names = operator_sql.sql(
+        "select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like '%order%' and p.prosecdef"
     )
+    assert names == "catalogue_photos_reorder,create_order_from_quote,create_order_policy_version,record_order_event"
+    # and it is closed to the anonymous caller and to a member who is not Owner or Admin
+    sales = ow.users["sales"]
+    assert pg(ow.w.stack, None, "POST", "/rpc/catalogue_photos_reorder", json={"p_tenant_id": str(ow.t.id), "p_item_id": uid(), "p_photo_ids": []}).status_code in (401, 403)
+    denied = pg(ow.w.stack, sales, "POST", "/rpc/catalogue_photos_reorder", json={"p_tenant_id": str(ow.t.id), "p_item_id": uid(), "p_photo_ids": [uid()]})
+    assert denied.status_code == 403 and denied.json().get("code") == "42501"
 
 
 def test_the_synthetic_order_policy_seed_is_operator_only_idempotent_and_usable(client: Any, stack: Any, signup: Any) -> None:

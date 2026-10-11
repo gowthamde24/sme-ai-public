@@ -35,11 +35,54 @@ _KEYWORDS: tuple[tuple[re.Pattern[str], str], ...] = (
 )
 
 
+_DRAFT_LANG = re.compile(r"Write the message in [A-Za-z]+ \(([a-z]{2})\)")
+_FIRST_NAME = re.compile(r"customer first name: ([^\n]+)")
+# a draft for a lead (job AY): a fixed, boring greeting in the customer's language. No amount, no promise. Telugu, Hindi, Kannada and Tamil are machine drafts like every non-English template.
+_DRAFTS = {
+    "en": (
+        "Hello{name}, thank you for writing to us. Please tell us what you are looking for and we will be glad to help.",
+        "Hello{name}, thank you for writing to us. Please tell us what you are looking for and we will be glad to help.",
+    ),
+    "te": (
+        "నమస్కారం{name}, మాకు రాసినందుకు ధన్యవాదాలు. మీకు ఏమి కావాలో చెప్పండి, సంతోషంగా సహాయం చేస్తాము.",
+        "Hello{name}, thank you for writing to us. Please tell us what you need and we will be glad to help.",
+    ),
+    "hi": (
+        "नमस्ते{name}, हमें लिखने के लिए धन्यवाद। कृपया बताइए कि आपको क्या चाहिए, हमें मदद करके खुशी होगी।",
+        "Hello{name}, thank you for writing to us. Please tell us what you need and we will be glad to help.",
+    ),
+    "kn": (
+        "ನಮಸ್ಕಾರ{name}, ನಮಗೆ ಬರೆದಿದ್ದಕ್ಕೆ ಧನ್ಯವಾದಗಳು. ನಿಮಗೆ ಏನು ಬೇಕು ಎಂದು ತಿಳಿಸಿ, ಸಂತೋಷದಿಂದ ಸಹಾಯ ಮಾಡುತ್ತೇವೆ.",
+        "Hello{name}, thank you for writing to us. Please tell us what you need and we will be glad to help.",
+    ),
+    "ta": (
+        "வணக்கம்{name}, எங்களுக்கு எழுதியதற்கு நன்றி. உங்களுக்கு என்ன வேண்டும் என்று சொல்லுங்கள், மகிழ்ச்சியுடன் உதவுவோம்.",
+        "Hello{name}, thank you for writing to us. Please tell us what you need and we will be glad to help.",
+    ),
+}
+
+
 class DevAssistantModel:
     model_id = "fake-selftest"  # the one development model the migration prices
 
     def complete(self, request: LlmRequest) -> LlmResponse:
         text = "\n".join(b.text for b in request.blocks)
+        if request.final_result is not None and request.final_result.name == "draft_message":
+            lang_match = _DRAFT_LANG.search(text)
+            lang = lang_match.group(1) if lang_match else "en"
+            name_match = _FIRST_NAME.search(text)
+            first = name_match.group(1).strip() if name_match else "(none)"
+            name = "" if first in ("", "(none)") else f" {first}"
+            body, gloss = _DRAFTS.get(lang, _DRAFTS["en"])
+            return LlmResponse(
+                tool_calls=(),
+                structured={
+                    "text": body.format(name=name),
+                    "gloss_en": gloss.format(name=name),
+                    "language": lang,
+                },
+                usage=Usage(120, 60, 0),
+            )
         question = (_QUESTION.search(text) or [None, ""])[1] or ""
         lang_match = _LANG.search(text)
         language = lang_match.group(1) if lang_match else "en"

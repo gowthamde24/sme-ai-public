@@ -20,7 +20,8 @@ logger = logging.getLogger("app.outbox.repository")
 
 MESSAGE_COLUMNS = (
     "id,lead_id,contact_id,channel,body,language,category,source,status,reason,flags,model_flagged,uncertain,disclosure_added,"
-    "scheduled_for,created_at,edited_at,decided_at,sent_at,failure_code,lead:leads(company:companies(name,city))"
+    "scheduled_for,created_at,edited_at,decided_at,sent_at,failure_code,keep_record,lead:leads(company:companies(name,city)),"
+    "media:outbox_message_media(photo_id,position,photo:catalogue_photos(bucket,thumb_path))"
 )
 CALL_COLUMNS = "id,lead_id,contact_id,reason,script_draft,language,status,created_at,decided_at,decision_note,lead:leads(company:companies(name,city))"
 

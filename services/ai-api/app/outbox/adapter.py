@@ -14,11 +14,22 @@ from typing import Protocol
 
 
 @dataclass(frozen=True)
+class MediaRef:
+    """A photo the message carries, BY REFERENCE (job AY): where it is stored and what it is. A real channel fetches it through a short-lived signed URL; the bytes are never in the outbox."""
+
+    photo_id: uuid.UUID
+    bucket: str
+    path: str
+    content_type: str
+
+
+@dataclass(frozen=True)
 class OutgoingMessage:
     message_id: uuid.UUID
     to_phone: str = field(repr=False)
     body: str = field(repr=False)
     language: str
+    media: tuple[MediaRef, ...] = ()
 
 
 @dataclass(frozen=True)

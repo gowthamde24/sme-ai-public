@@ -47,6 +47,7 @@ def status_out(raw: dict[str, Any]) -> SchedulerStatusOut:
             platform_switch_on=raw["platform_switch_on"],
             auto_send_enabled=raw["auto_send_enabled"],
             active=raw["active"],
+            releases_approved=raw["releases_approved"],
             worker_running=raw["worker_running"],
             last_run_at=raw.get("last_run_at"),
             next_run_at=raw.get("next_run_at"),

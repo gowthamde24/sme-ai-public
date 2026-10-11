@@ -13,7 +13,7 @@ Everything here is local and synthetic. **Nothing is ever sent to anyone**: the 
 | Global outbox kill switch | the operator: `./scripts/dev-enable-outbox.sh on` (`make seed-demo-outbox` also turns it on locally) | OFF |
 | Automatic sending for the business | its Owner, second factor: `PUT /v1/tenants/{id}/outbox/settings {"auto_send_enabled": true, "per_customer_daily_limit": 3}` | OFF |
 
-While either is off the database lists no business, so the worker's tick is a heartbeat and nothing else. Messages an Owner approved in a business with automatic sending off wait for "dispatch now" (`POST /outbox/dispatch`).
+While the global switch is off the database lists no business, so the worker's tick is a heartbeat and nothing else. **A message the Owner approved is released even when the business's automatic sending is off** (approval is the Owner's consent to send; job AY): the business is then visited for that, and for nothing else. Quiet hours, STOP, opt-in, erasure and the daily limit still apply at that moment. A message that was allowed automatically earlier and still waits when automatic sending is switched off is NOT released (nobody approved it): it waits for "dispatch now" (`POST /outbox/dispatch`). Reminders and the no-show need automatic sending on.
 
 ## Run it
 ```
@@ -29,7 +29,7 @@ The first run of `make dev-worker-local` creates the worker's account (`schedule
 The worker prints one line a tick, counts only: `scheduler tick: tenants=1 sent=0 failed=0 reminders=0 no_shows=0 errors=0`. No word of a message, no phone number, no name, no id.
 
 ## The Owner's settings and card (for the web later)
-* `GET /v1/tenants/{id}/scheduler/status` (Owner, Admin): `platform_switch_on`, `auto_send_enabled`, `active` (both on), `worker_running` (heard from within three intervals), `last_run_at`, `next_run_at`, `interval_seconds`, `last_activity_at` and `today` (this India day: `sent`, `failed`, `reminders`, `no_shows`, `errors`).
+* `GET /v1/tenants/{id}/scheduler/status` (Owner, Admin): `platform_switch_on`, `auto_send_enabled`, `active` (both on), `releases_approved` (the global switch is on: approved messages go whatever automatic sending says), `worker_running` (heard from within three intervals), `last_run_at`, `next_run_at`, `interval_seconds`, `last_activity_at` and `today` (this India day: `sent`, `failed`, `reminders`, `no_shows`, `errors`).
 * `GET|PUT /v1/tenants/{id}/scheduler/settings` (read: Owner, Admin; write: Owner with a second factor): `reminder_evening_enabled`, `reminder_evening_hour` (9 to 20), `reminder_heads_up_enabled`, `reminder_heads_up_minutes` (60 to 480), `no_show_enabled`, `no_show_after_minutes` (5 to 720). A business that never saved its own has the defaults (`is_default`).
 
 ## Two workers

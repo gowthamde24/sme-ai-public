@@ -12,8 +12,8 @@ from datetime import datetime
 from typing import Any, Protocol
 
 from app.errors import ApiError
-from app.outbox.adapter import ChannelAdapter, OutgoingMessage, SendResult
-from app.outbox.models import REASON_TEXT, CallRequestOut, DispatchOut, OutboxMessageOut
+from app.outbox.adapter import ChannelAdapter, MediaRef, OutgoingMessage, SendResult
+from app.outbox.models import REASON_TEXT, CallRequestOut, DispatchOut, MediaOut, OutboxMessageOut
 from app.tenancy.repository import RepositoryError, UpstreamError
 
 logger = logging.getLogger("app.outbox.service")
@@ -37,7 +37,28 @@ def _customer(row: dict[str, Any]) -> tuple[str | None, str | None]:
     return (name if isinstance(name, str) else None, city if isinstance(city, str) else None)
 
 
-def message_out(row: dict[str, Any]) -> OutboxMessageOut:
+def media_photos(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """The photo records (bucket, thumb_path) of the messages' media, for one batch of signing."""
+    return [
+        m["photo"] for r in rows for m in (r.get("media") or []) if isinstance(m.get("photo"), dict)
+    ]
+
+
+def _media(row: dict[str, Any], urls: dict[str, str] | None) -> list[MediaOut]:
+    out: list[MediaOut] = []
+    for m in sorted(row.get("media") or [], key=lambda x: x.get("position", 0)):
+        photo = m.get("photo") or {}
+        out.append(
+            MediaOut(
+                photo_id=m["photo_id"],
+                position=m["position"],
+                thumb_url=(urls or {}).get(str(photo.get("thumb_path"))),
+            )
+        )
+    return out
+
+
+def message_out(row: dict[str, Any], urls: dict[str, str] | None = None) -> OutboxMessageOut:
     customer, city = _customer(row)
     try:
         return OutboxMessageOut(
@@ -64,6 +85,8 @@ def message_out(row: dict[str, Any]) -> OutboxMessageOut:
             decided_at=row.get("decided_at"),
             sent_at=row.get("sent_at"),
             failure_code=row.get("failure_code"),
+            keep_record=row.get("keep_record") is True,
+            media=_media(row, urls),
         )
     except (KeyError, ValueError, TypeError):
         raise UpstreamError("unexpected outbox row") from None
@@ -132,7 +155,19 @@ def dispatch_due(
         try:
             message_id = uuid.UUID(str(item["id"]))
             outgoing = OutgoingMessage(
-                message_id, str(item["phone"]), str(item["body"]), str(item["language"])
+                message_id,
+                str(item["phone"]),
+                str(item["body"]),
+                str(item["language"]),
+                tuple(
+                    MediaRef(
+                        uuid.UUID(str(m["photo_id"])),
+                        str(m["bucket"]),
+                        str(m["path"]),
+                        str(m["content_type"]),
+                    )
+                    for m in (item.get("media") or [])
+                ),
             )
         except (KeyError, ValueError):
             logger.error("outbox claim had an unexpected shape")

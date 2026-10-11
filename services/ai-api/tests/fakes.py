@@ -12,10 +12,13 @@ from fastapi.testclient import TestClient
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.deps import Runtime
 from app.auth.jwt import StaticKeyProvider, TokenVerifier
+from app.catalogue.repository import CatalogueRepository
+from app.catalogue.storage import StorageClient
 from app.config import Settings
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.followups.repository import FollowupsRepository
+from app.leadtools.repository import LeadSearchRepository
 from app.main import create_app
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
@@ -202,6 +205,9 @@ def make_client(
     outbox_adapter: ChannelAdapter | None = None,
     visits: VisitsRepository | None = None,
     scheduler: SchedulerRepository | None = None,
+    catalogue: CatalogueRepository | None = None,
+    catalogue_storage: StorageClient | None = None,
+    lead_search: LeadSearchRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -233,6 +239,9 @@ def make_client(
             outbox_adapter=outbox_adapter,
             visits=visits,
             scheduler=scheduler,
+            catalogue=catalogue,
+            catalogue_storage=catalogue_storage,
+            lead_search=lead_search,
         ),
     )
     return TestClient(app), repo

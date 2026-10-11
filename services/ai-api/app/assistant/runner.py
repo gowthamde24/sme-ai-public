@@ -266,6 +266,7 @@ class AssistantRunner:
                     repaired.add("shape")
                     notes = (*notes, prompts.NOTE_REPAIR_SHAPE)
             # no acceptable reply: a fixed one, in the owner's language, with whatever drafts were made
+            self._note_fallback(turns, repaired)
             fallback = Reply(NO_ANSWER[language], language, "refusal", [], list(self._state.drafts))
             return self._finish(
                 fallback, message_id, emit, turns, status="failed", code="invalid_output"
@@ -276,6 +277,15 @@ class AssistantRunner:
             status, code, shown = self._classify(exc)
             return self._end(status, code, turns, shown)
 
+    def _note_fallback(self, turns: int, repaired: set[str]) -> None:
+        """A run that ends in the fixed reply says WHY in the log: how many turns it used and which repairs were asked for (closed words only; no text of the answer)."""
+        logger.warning(
+            "assistant run %s: no acceptable reply after %d turn(s); repairs asked: %s",
+            self._ctx.run_id,
+            turns,
+            ",".join(sorted(repaired)) or "-",
+        )
+
     # ------------------------------------------------------------------ the tools
     def _execute(
         self, tool: Any, args: Any
@@ -283,6 +293,11 @@ class AssistantRunner:
         try:
             out = tool.handler(self._ctx, args)
         except ApiError as exc:
+            # a 5xx is the data layer failing, not saying no: leave a trace (the code only)
+            if exc.status_code >= 500:
+                logger.warning(
+                    "assistant tool %s failed upstream: %s %s", tool.name, exc.status_code, exc.code
+                )
             return "refused", (), f"refused: {exc.code}", ()
         except (ValueRefused, ReferenceRefused):
             return "refused", (), "refused: not allowed", ()
@@ -296,7 +311,8 @@ class AssistantRunner:
             RunNotRunning,
         ):
             raise
-        except AgentDbError:
+        except AgentDbError as exc:
+            logger.warning("assistant tool %s failed: the data layer (%s)", tool.name, exc.code)
             return "failed", (), "failed: the data layer", ()
         except Exception as exc:  # a repository or service error: only its CLASS is kept
             logger.warning("assistant tool %s failed: %s", tool.name, exc.__class__.__name__)
