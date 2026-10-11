@@ -161,7 +161,7 @@ describe("/app/tenants/[tenantId]/companies/[companyId]", () => {
       "https://demo.example.test",
       "IN",
       "Silk",
-      "2026-02-03",
+      "3 Feb 2026",
       "manual",
     ])
       expect(screen.getAllByText(text).length).toBeGreaterThan(0);

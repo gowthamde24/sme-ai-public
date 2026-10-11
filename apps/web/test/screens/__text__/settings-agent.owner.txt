@@ -3,7 +3,7 @@
 {label="Automatic sending"}
 ## Automatic sending
 <checkbox label="Agent OWL may send routine replies by itself">
-Agent OWL may send routine replies by itself Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you. Off: every message waits for you. Messages per customer per day
+Agent OWL may send routine replies by itself Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you. Off: new messages wait for you to approve them. Messages you approve still go out. Messages per customer per day
 <number label="Messages per customer per day" min=1 max=20 inputmode=numeric value=3 aria-invalid=false>
 Between 1 and 20. Most shops keep it at 3.
 [button type=submit: Save]
@@ -36,6 +36,7 @@ Saving needs your authenticator app.
 On Sending is allowed for the whole system. The operator owns this switch; you can only see it.
 {label="Agent OWL's checks"}
 ## Agent OWL's checks
+Approved messages still go out when automatic sending is off.
 State
 Working for this business
 Last checked

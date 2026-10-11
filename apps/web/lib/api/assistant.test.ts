@@ -168,3 +168,40 @@ describe("a visit Agent OWL proposed (job AS)", () => {
     expect(() => parseDraftCard({ id: VISIT, kind: "store_visit", status: "draft", title: "t", summary: "s", target: { type: "store", id: VISIT }, language: null, gloss_en: null, machine_draft: false })).toThrow(ApiContractError);
   });
 });
+
+
+describe("sources of a kind a newer API sends (job AY)", () => {
+  const ITEM = "0d6a0000-0000-4000-8000-0000000000aa";
+  const CATALOGUE = { kind: "catalogue_item", id: ITEM, label: "Kanjivaram bridal, red and gold", target: null };
+  const FUTURE = { kind: "warehouse_bin", id: ITEM, label: "Bin 4", target: null };
+  it("reads a catalogue item: the saree's name, no page to open", () => {
+    expect(parseSource(CATALOGUE)).toEqual(CATALOGUE);
+    expect(parseAssistantEvent("source", { type: "source", ...CATALOGUE })).toEqual({ type: "source", ...CATALOGUE });
+  });
+  it("a source of a kind this screen does not know is skipped, not an error", () => {
+    expect(parseAssistantEvent("source", { type: "source", ...FUTURE })).toBeNull();
+    expect(() => parseSource(FUTURE)).toThrow(ApiContractError); // the strict parser stays strict: the skip is the readers' decision
+  });
+  it("the stream goes on past an unknown source: the rest of the answer arrives", async () => {
+    const body = sse([
+      ["text", { type: "text", delta: "Three sarees match." }],
+      ["source", { type: "source", ...FUTURE }],
+      ["source", { type: "source", ...CATALOGUE }],
+      ["done", { type: "done", message_id: MSG, conversation_id: CONV, language: "en", kind: "answer" }],
+    ]);
+    globalThis.fetch = vi.fn(async () => new Response(body, { status: 200 })) as unknown as typeof fetch;
+    const events = await collect(sendAssistantMessage("tok", TENANT, { messageId: MSG, text: "show me red silk" }));
+    expect(events.map((e) => e.type)).toEqual(["text", "source", "done"]);
+    expect(events[1]).toMatchObject({ kind: "catalogue_item", label: "Kanjivaram bridal, red and gold" });
+  });
+  it("a stored chat leaves out the unknown sources and keeps the rest", () => {
+    const conv = parseConversation({
+      id: CONV, created_at: "2026-10-11T04:00:00Z", updated_at: "2026-10-11T04:01:00Z",
+      messages: [{ id: MSG, role: "assistant", text: "Three sarees.", language: "en", sources: [FUTURE, CATALOGUE], drafts: [], created_at: "2026-10-11T04:01:00Z" }],
+    });
+    expect(conv.messages[0].sources).toEqual([CATALOGUE]);
+  });
+  it("a source that is malformed (not just unknown) is still an error", () => {
+    expect(() => parseAssistantEvent("source", { type: "source", kind: "catalogue_item", id: "x", label: "n", target: null })).toThrow(ApiContractError);
+  });
+});

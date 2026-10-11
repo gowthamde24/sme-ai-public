@@ -16,7 +16,7 @@ export function TopBar({ memberships, labels, email, signOut, children }: { memb
   const { current } = useWorkspace(memberships);
   return (
     <header className="sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-line bg-bg/90 px-4 backdrop-blur md:px-8">
-      <Link href={current ? `/app/tenants/${current.id}` : "/app"} className="rounded-lg md:hidden" aria-label={current?.name ?? "Home"}>
+      <Link href={current ? `/app/tenants/${current.id}` : "/app"} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg md:hidden" aria-label={current?.name ?? "Home"}>
         <BrandMark className="size-9" />
       </Link>
       <div className="ml-auto flex items-center gap-2">

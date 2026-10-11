@@ -47,11 +47,13 @@ beforeEach(() => {
   fetchLeadContactId.mockResolvedValue(C);
 });
 
-describe("the lead page: I sent a message", () => {
+describe("the lead page: I sent a message myself (folded)", () => {
   it.each(["owner", "admin", "sales"])("a %s gets the form, with this lead's contact for the consent link", async (role) => {
     fetchTenant.mockResolvedValue(tenant(role));
     render(await LeadPage(props()));
-    expect(screen.getByRole("heading", { name: "I sent a message" })).toBeInTheDocument();
+    const fold = document.querySelector('[data-part="sent-by-hand"]') as HTMLDetailsElement;
+    expect(fold).not.toHaveAttribute("open"); // folded: the main part of the page is "Contact this lead"
+    expect(fold.querySelector("summary")).toHaveTextContent("I sent a message myself");
     expect(screen.getByText("SENT-MESSAGE-FORM")).toBeInTheDocument();
     const p = formProps.mock.calls[0][0];
     expect(p.contactId).toBe(C);
@@ -60,18 +62,19 @@ describe("the lead page: I sent a message", () => {
     expect(p.maxNow).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/);
     expect(fetchLeadContactId).toHaveBeenCalledWith("tok", T, L);
   });
-  it("a viewer is told who records messages and gets no form; the contact is not even looked up", async () => {
+  it("a viewer gets neither the fold nor the form; the contact is not even looked up", async () => {
     fetchTenant.mockResolvedValue(tenant("viewer"));
     render(await LeadPage(props()));
-    expect(screen.getByText("An owner, an admin or a sales person records that a message was sent.")).toBeInTheDocument();
+    expect(document.querySelector('[data-part="sent-by-hand"]')).toBeNull();
     expect(screen.queryByText("SENT-MESSAGE-FORM")).toBeNull();
     expect(fetchLeadContactId).not.toHaveBeenCalled();
   });
-  it("a lead with no contact says so and links to Add a customer; no form", async () => {
+  it("a lead with no contact has no form; the Contact section says so and links to Add the customer", async () => {
     fetchLeadContactId.mockResolvedValue(null);
     render(await LeadPage(props()));
-    expect(screen.getByText(/This lead has no contact attached, so a message to them cannot be recorded\./)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Add the customer first →" })).toHaveAttribute("href", `/app/tenants/${T}/customers/new`);
+    expect(screen.getByText(/This lead has no contact attached/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add the customer" })).toHaveAttribute("href", `/app/tenants/${T}/customers/new`);
+    expect(document.querySelector('[data-part="sent-by-hand"]')).toBeNull();
     expect(screen.queryByText("SENT-MESSAGE-FORM")).toBeNull();
   });
   it("if the contact cannot be read the form is still offered, without a consent link (the database decides)", async () => {

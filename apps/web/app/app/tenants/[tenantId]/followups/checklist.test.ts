@@ -19,7 +19,7 @@ function sourceFiles(dir: string): string[] {
   });
 }
 
-const SOURCE = [...sourceFiles(path.join(WEB, "app")), ...sourceFiles(path.join(WEB, "lib"))]
+const SOURCE = [...sourceFiles(path.join(WEB, "app")), ...sourceFiles(path.join(WEB, "lib")), path.join(WEB, "i18n/strings/app.json")] // the words of a screen are in the code or in the string store
   .map((file) => readFileSync(file, "utf8"))
   .join("\n")
   .replaceAll("&apos;", "'")

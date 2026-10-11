@@ -74,10 +74,10 @@ export function SlotPicker({ words, lang, min, value, onChange, load, initial = 
                   disabled={full}
                   aria-pressed={on}
                   onClick={() => onChange({ date: value.date, slot: s.start })}
-                  className={`flex min-h-12 flex-col items-center justify-center rounded-lg border px-1 text-base font-semibold tabular-nums disabled:opacity-50 ${on ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}
+                  className={`flex min-h-12 flex-col items-center justify-center rounded-lg border px-1 text-base font-semibold tabular-nums disabled:opacity-50 ${on ? "border-brand-edge bg-brand text-on-brand" : s.past ? "border-dashed border-edge bg-surface text-muted hover:bg-surface-2" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}
                 >
                   <span>{s.start}</span>
-                  <span className={`text-sm font-normal ${on ? "text-on-brand" : "text-muted"}`}>{full ? say(words, "visits.slot.full") : s.past ? say(words, "visits.slot.earlier") : say(words, "visits.slot.free", { n: s.free })}</span>
+                  <span className={`text-sm font-normal ${on ? "text-on-brand" : "text-muted"}`}>{full ? say(words, "visits.slot.full") : s.past ? "" : say(words, "visits.slot.free", { n: s.free })}</span>
                 </button>
               );
             })}

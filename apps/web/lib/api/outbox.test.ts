@@ -15,7 +15,6 @@ import {
   parseCallRequest,
   parseOutboxMessage,
   parseOutboxPage,
-  rejectCallRequest,
   rejectOutboxMessage,
   createCallRequest,
   dispatchOutbox,
@@ -91,16 +90,13 @@ describe("reading and deciding, with the person's token, inside the workspace", 
     expect((await rejectOutboxMessage("tok", TENANT, MSG_PRICE)).message.reason).toBe("owner_rejected");
     expect(apiRequest).toHaveBeenLastCalledWith(`${base}/outbox/messages/${MSG_PRICE}/reject`, "tok", { method: "POST" });
   });
-  it("lists the calls that are asked for, and approves or declines one with an optional note", async () => {
+  it("lists the calls that are asked for and approves one", async () => {
     apiRequest.mockResolvedValue(page([CALL_JSON]));
     expect((await listCallRequests("tok", TENANT, { status: "requested", limit: 100 })).items).toHaveLength(1);
     expect(apiRequest).toHaveBeenLastCalledWith(`${base}/call-requests?limit=100&status=requested`, "tok");
     apiRequest.mockResolvedValue({ ...CALL_JSON, status: "approved" });
     await approveCallRequest("tok", TENANT, CALL_ID);
     expect(apiRequest).toHaveBeenLastCalledWith(`${base}/call-requests/${CALL_ID}/approve`, "tok", { method: "POST", body: "{}" });
-    apiRequest.mockResolvedValue({ ...CALL_JSON, status: "rejected", decision_note: "offer_store_visit" });
-    expect((await rejectCallRequest("tok", TENANT, CALL_ID, "offer_store_visit")).decision_note).toBe("offer_store_visit");
-    expect(apiRequest).toHaveBeenLastCalledWith(`${base}/call-requests/${CALL_ID}/reject`, "tok", { method: "POST", body: JSON.stringify({ note: "offer_store_visit" }) });
   });
   it("refuses a malformed id before any request is made", async () => {
     await expect(approveOutboxMessage("tok", TENANT, "../x")).rejects.toThrow(ApiContractError);

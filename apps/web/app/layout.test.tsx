@@ -3,7 +3,6 @@ import { describe, expect, it, vi } from "vitest";
 
 const jar = new Map<string, string>();
 vi.mock("next/headers", () => ({ cookies: async () => ({ get: (name: string) => (jar.has(name) ? { name, value: jar.get(name) } : undefined) }) }));
-vi.mock("next/font/google", () => ({ Geist: () => ({ variable: "geist" }), Geist_Mono: () => ({ variable: "mono" }) }));
 
 import RootLayout from "./layout";
 

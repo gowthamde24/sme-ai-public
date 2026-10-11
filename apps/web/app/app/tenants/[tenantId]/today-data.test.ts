@@ -147,7 +147,8 @@ describe("readToday: at the store today", () => {
 
 describe("readToday: a visit Agent OWL proposed", () => {
   const proposal = (id: string, over: Record<string, unknown> = {}) => parseVisitFixture(visitJson({ id, source: "assistant", status: "booked", ...over }));
-  it("asks for the booked visits of the next two months and makes a card of each one the assistant proposed, newest first, counted in 'waiting'", async () => {
+  it("asks for the booked visits of the next two months and makes a card of each one the assistant proposed, newest first", async () => {
+    getToday.mockResolvedValue({ ...todayFor("owner"), cards: { ...todayFor("owner").cards, waiting: 7 } }); // the API's own number already counts the two proposed visits (job AY)
     listVisits.mockResolvedValue({
       from: "2026-10-11",
       to: "2026-12-11",
@@ -163,7 +164,13 @@ describe("readToday: a visit Agent OWL proposed", () => {
     expect(visits.map((c) => c.type === "visit" && c.visit.who)).toEqual(["Meera K.", "Priya S."]);
     expect(data.needs!.slice(-2).map((c) => c.type)).toEqual(["visit", "visit"]); // after the API's own items
     expect(visits[0]).toMatchObject({ key: "visit-aaaaaaaa-1111-4111-8111-000000000002", at: "2026-10-11T02:00:00Z", id: "aaaaaaaa-1111-4111-8111-000000000002", visit: { partySize: 1, purpose: null, startsAt: "2026-10-14T05:00:00Z" } });
-    expect(data.cards.waiting).toBe(7); // the API's 5 and the two visits
+    expect(data.cards.waiting).toBe(7); // the API's number, untouched
+  });
+  it("never adds its own count of proposed visits to the API's: 5 stays 5 even with two cards drawn (no double count)", async () => {
+    listVisits.mockResolvedValue({ from: "2026-10-11", to: "2026-12-11", items: [proposal("aaaaaaaa-1111-4111-8111-000000000001"), proposal("aaaaaaaa-1111-4111-8111-000000000002")] });
+    const data = await readToday("tok", T, "owner", clock);
+    expect(data.needs!.filter((c) => c.type === "visit")).toHaveLength(2);
+    expect(data.cards.waiting).toBe(5);
   });
   it("is not asked for a Viewer, and a failed read draws no card (it never says 'nothing' for what it could not read)", async () => {
     getToday.mockResolvedValue(todayFor("viewer"));

@@ -1,8 +1,7 @@
-import { OUTBOX_REASONS, type OutboxMessage, type OutboxReason } from "@/lib/api/outbox";
+import type { OutboxMessage, OutboxReason } from "@/lib/api/outbox";
 
 /** The word key of every reason a message is in the state it is in (`outbox.reason.<reason>` in the string store). */
 export const reasonKey = (r: OutboxReason) => `outbox.reason.${r}`;
-export const ALL_REASON_KEYS = OUTBOX_REASONS.map(reasonKey);
 
 /**
  * The colour of a state's chip: a message that waits for a person is amber, one that is held or queued is blue, one that went is green, one that did not (blocked or failed) is red. The chip says WHY in plain words

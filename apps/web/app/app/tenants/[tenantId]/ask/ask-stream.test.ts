@@ -40,6 +40,14 @@ describe("pathFor: a target becomes a page of THIS workspace", () => {
   });
 });
 
+describe("toAskEvents: a catalogue item", () => {
+  it("is a source with the saree's name and no link (the catalogue has no page yet)", async () => {
+    const item: AssistantEvent = { type: "source", kind: "catalogue_item", id: ID(9), label: "Kanjivaram bridal, red and gold", target: null };
+    const out = await run([item, done]);
+    expect(out[0]).toEqual({ type: "source", label: "Kanjivaram bridal, red and gold", href: null });
+  });
+});
+
 describe("toAskEvents: a proposed visit", () => {
   it("is a draft card that links to the Visits page and says it was only proposed", async () => {
     const card: AssistantEvent = { type: "draft", id: ID(7), kind: "store_visit", status: "draft", title: "Proposed visit on 2026-10-14 at 11:30", summary: "A store visit I proposed. It is booked but not confirmed. Nothing has been sent.", target: target("store_visit", 7), language: null, gloss_en: null, machine_draft: false };

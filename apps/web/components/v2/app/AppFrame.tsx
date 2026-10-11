@@ -46,9 +46,9 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             </span>
           </TopBar>
           {lang !== "en" ? (
-            <p role="note" lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8">
+            <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8">
               {appT(lang)("frame.draft")}
-            </p>
+            </div>
           ) : null}
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 pb-20 outline-none md:pb-0">
             {children}

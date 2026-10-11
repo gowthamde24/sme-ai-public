@@ -1,21 +1,6 @@
 [All leads](/app/tenants/22222222-2222-2222-2222-222222222222/review)
 # Lead
-[Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
-{label="Lead"}
-## Lead
-Status
-in_review
-Source
-csv import
-Created
-2026-10-02
-Origin
-import
-{label="Enquiries"}
-## Enquiries
-Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
-- [WhatsApp enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) received Oct 5, 2026, 3:30 PM (18 hours ago)
-[button type=button: Add enquiry]
+Being looked at [Follow-up for this lead →](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333/followup)
 {label="Contact this lead"}
 ## Contact this lead
 Messages go through the outbox: the shop's send rules decide if a message goes now or waits for the owner. You never see the customer's number here.
@@ -23,8 +8,23 @@ Messages go through the outbox: the shop's send rules decide if a message goes n
 [button type=button: Request a call]
 <checkbox label="Keep a record of this" checked described-by="Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.">
 Keep a record of this Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made. [Book a store visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits?lead=33333333-3333-3333-3333-333333333333#book)
-{label="I sent a message"}
-## I sent a message
+{label="About this lead"}
+## About this lead
+Status
+Being looked at
+Source
+csv import
+Added
+2 Oct 2026
+How it was added
+Imported from a file
+{label="Enquiries"}
+## Enquiries
+Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
+- [WhatsApp enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) received Oct 5, 2026, 3:30 PM (18 hours ago)
+[button type=button: Add enquiry]
+summary: I sent a message myself
+Use this to write down a message you sent yourself, outside this system. Nothing is sent from here.
 {label="I sent a message"}
 ### I sent a message
 This keeps a record of a message you sent yourself, outside this system. Nothing is sent from here.

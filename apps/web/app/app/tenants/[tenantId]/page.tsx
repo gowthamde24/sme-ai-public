@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
+import { indiaDayText } from "@/components/v2/app/visits/dates";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import {
   type CrmPage,
@@ -12,7 +13,7 @@ import {
 import { fetchDataPolicy } from "@/lib/api/erasure";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { PageTop, SectionTabs } from "@/components/v2/app/parts";
-import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, link, pageH2, pageMain, spaceTop, warnBox } from "@/components/v2/app/ui";
+import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataThSecondary, dataTdSecondary, dataTr, inlineLink, link, pageH2, pageMain, spaceTop, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { createCompanyAction } from "./actions";
@@ -179,7 +180,7 @@ function ApiDown() {
 }
 
 function day(iso: string): string {
-  return iso.slice(0, 10);
+  return indiaDayText(iso);
 }
 
 function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
@@ -191,12 +192,12 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
             <tr>
               <th className={dataThCol}>Name</th>
               <th className={dataThCol}>Type</th>
-              <th className={dataThCol}>Website</th>
-              <th className={dataThCol}>Country</th>
+              <th className={dataThSecondary}>Website</th>
+              <th className={dataThSecondary}>Country</th>
               <th className={dataThCol}>City</th>
-              <th className={dataThCol}>Industry</th>
-              <th className={dataThCol}>Created</th>
-              <th className={dataThCol}>Origin</th>
+              <th className={dataThSecondary}>Industry</th>
+              <th className={dataThSecondary}>Created</th>
+              <th className={dataThSecondary}>Origin</th>
             </tr>
           </thead>
           <tbody>
@@ -211,12 +212,12 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
                   </Link>
                 </td>
                 <td data-label="Type" className={dataTd}>{c.type}</td>
-                <td data-label="Website" className={dataTd}>{c.website ?? "—"}</td>
-                <td data-label="Country" className={dataTd}>{c.country ?? "—"}</td>
+                <td data-label="Website" className={dataTdSecondary}>{c.website ?? "—"}</td>
+                <td data-label="Country" className={dataTdSecondary}>{c.country ?? "—"}</td>
                 <td data-label="City" className={dataTd}>{c.city ?? "—"}</td>
-                <td data-label="Industry" className={dataTd}>{c.industry ?? "—"}</td>
-                <td data-label="Created" className={dataTd}>{day(c.created_at)}</td>
-                <td data-label="Origin" className={dataTd}>{c.created_via}</td>
+                <td data-label="Industry" className={dataTdSecondary}>{c.industry ?? "—"}</td>
+                <td data-label="Created" className={dataTdSecondary}>{day(c.created_at)}</td>
+                <td data-label="Origin" className={dataTdSecondary}>{c.created_via}</td>
               </tr>
             ))}
           </tbody>
@@ -228,26 +229,26 @@ function RecordsTable({ page, tenantId }: { page: CrmPage; tenantId: string }) {
           <thead>
             <tr>
               <th className={dataThCol}>Name</th>
-              <th className={dataThCol}>Email</th>
+              <th className={dataThSecondary}>Email</th>
               <th className={dataThCol}>Phone</th>
-              <th className={dataThCol}>Job title</th>
-              <th className={dataThCol}>Email consent</th>
+              <th className={dataThSecondary}>Job title</th>
+              <th className={dataThSecondary}>Email consent</th>
               <th className={dataThCol}>Phone consent</th>
-              <th className={dataThCol}>Suppressed</th>
-              <th className={dataThCol}>Origin</th>
+              <th className={dataThSecondary}>Suppressed</th>
+              <th className={dataThSecondary}>Origin</th>
             </tr>
           </thead>
           <tbody>
             {page.items.map((c) => (
               <tr key={c.id} className={dataTr}>
                 <td data-label="Name" className={dataTd}>{c.full_name}</td>
-                <td data-label="Email" className={dataTd}>{c.email ?? "—"}</td>
+                <td data-label="Email" className={dataTdSecondary}>{c.email ?? "—"}</td>
                 <td data-label="Phone" className={dataTd}>{c.phone ?? "—"}</td>
-                <td data-label="Job title" className={dataTd}>{c.job_title ?? "—"}</td>
-                <td data-label="Email consent" className={dataTd}>{c.email_consent}</td>
+                <td data-label="Job title" className={dataTdSecondary}>{c.job_title ?? "—"}</td>
+                <td data-label="Email consent" className={dataTdSecondary}>{c.email_consent}</td>
                 <td data-label="Phone consent" className={dataTd}>{c.phone_consent}</td>
-                <td data-label="Suppressed" className={dataTd}>{c.suppression_reason ?? "no"}</td>
-                <td data-label="Origin" className={dataTd}>{c.created_via}</td>
+                <td data-label="Suppressed" className={dataTdSecondary}>{c.suppression_reason ?? "no"}</td>
+                <td data-label="Origin" className={dataTdSecondary}>{c.created_via}</td>
               </tr>
             ))}
           </tbody>

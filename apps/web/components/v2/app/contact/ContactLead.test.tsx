@@ -8,7 +8,7 @@ import { KEEP_RECORD_KEY, resetKeepRecordMemory } from "./use-keep-record";
 const BOOK = "/app/tenants/T/visits?lead=L#book";
 const TODAY = "/app/tenants/T#needs-you";
 const show = async (actions = fakeContactActions(), noContact = false) => {
-  await act(async () => void render(<ContactLead words={WORDS} actions={actions} bookHref={BOOK} todayHref={TODAY} noContact={noContact} />));
+  await act(async () => void render(<ContactLead words={WORDS} actions={actions} bookHref={BOOK} todayHref={TODAY} addCustomerHref="/app/tenants/T/customers/new" noContact={noContact} />));
   return actions;
 };
 const click = (name: string | RegExp) => act(async () => fireEvent.click(screen.getByRole("button", { name })));
@@ -39,6 +39,7 @@ describe("Contact this lead: what is offered", () => {
   it("a lead with no contact says so and offers no way to message or call, but still the visit", async () => {
     await show(fakeContactActions(), true);
     expect(screen.getByRole("note")).toHaveTextContent("This lead has no contact attached");
+    expect(screen.getByRole("link", { name: "Add the customer" })).toHaveAttribute("href", "/app/tenants/T/customers/new");
     expect(screen.queryByRole("button", { name: "Contact on WhatsApp" })).toBeNull();
     expect(screen.queryByRole("checkbox")).toBeNull();
     expect(screen.getByRole("link", { name: "Book a store visit" })).toBeInTheDocument();

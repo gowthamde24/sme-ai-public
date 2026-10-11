@@ -51,7 +51,7 @@ describe("the frame in Telugu", () => {
     expect(within(menu).getByRole("link", { name: "ఆర్డర్లు" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
     expect(container.querySelector("[data-ui='v2']")).toHaveAttribute("lang", "te");
     expect(container.querySelector("#main-content")).toHaveAttribute("lang", "en");
-    expect(screen.getByRole("note")).toHaveTextContent("యంత్రం రాసింది");
+    expect(screen.getByRole("region", { name: "అనువాద సూచన" })).toHaveTextContent("యంత్రం రాసింది");
     expect(screen.getByText("The page")).toBeInTheDocument();
   });
   it("draws the words of the new frame in Telugu too: the groups, the foot, Help and 'Not available yet'", () => {
@@ -66,7 +66,7 @@ describe("the frame in Telugu", () => {
   it("English has no draft note and the page area is English too", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     const { container } = frame("en");
-    expect(screen.queryByRole("note")).toBeNull();
+    expect(screen.queryByRole("region", { name: "Translation notice" })).toBeNull();
     expect(container.querySelector("[data-ui='v2']")).toHaveAttribute("lang", "en");
   });
 });

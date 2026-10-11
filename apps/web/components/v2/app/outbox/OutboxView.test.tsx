@@ -35,10 +35,11 @@ describe("the Outbox page: tabs", () => {
     await show({ waiting: null });
     expect(screen.getByRole("link", { name: "Waiting for you" })).toBeInTheDocument();
   });
-  it("tabs are at least 44 px high and the row of tabs scrolls inside itself on a phone", async () => {
+  it("tabs are at least 44 px high and on a phone all four are in view (two by two), never hidden in a sideways scroll", async () => {
     await show();
     const nav = screen.getByRole("navigation", { name: "Outbox" });
-    expect(nav.className).toContain("overflow-x-auto");
+    expect(nav.className).toContain("grid-cols-2");
+    expect(nav.className).not.toContain("overflow-x-auto");
     expect(within(nav).getByRole("link", { name: /Sent/ }).className).toContain("min-h-11");
   });
 });
@@ -88,7 +89,7 @@ describe("the Outbox page: the kill switch and automatic sending", () => {
   it("a calm note when this business has automatic sending off, with the way to Settings for the Owner only", async () => {
     const settings = { platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 };
     await show({ settings });
-    expect(document.querySelector('[data-note="auto-off"]')).toHaveTextContent("Automatic sending is off for this business: every message waits for you.");
+    expect(document.querySelector('[data-note="auto-off"]')).toHaveTextContent("Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out.");
     expect(screen.getByRole("link", { name: "Change it in Settings" })).toHaveAttribute("href", `${BASE}/settings?section=agent`);
     cleanup();
     await show({ settings, role: "admin" });

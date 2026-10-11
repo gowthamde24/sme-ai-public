@@ -1,23 +1,13 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { cookies } from "next/headers";
 
 import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 
 import "./globals.css";
 
+// The pages draw their own fonts (design/fonts.ts, through V2Root); no font is loaded here, so no page downloads one it does not use.
 // A nonce-based CSP (proxy.ts) needs every page rendered per request: a prerendered page has no nonce for its scripts.
 export const dynamic = "force-dynamic";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "SME AI Revenue Engine",
@@ -32,7 +22,7 @@ export const metadata: Metadata = {
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const theme = readTheme((await cookies()).get(THEME_COOKIE)?.value);
   return (
-    <html lang="en" data-theme={theme} className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="en" data-theme={theme}>
       <body>{children}</body>
     </html>
   );

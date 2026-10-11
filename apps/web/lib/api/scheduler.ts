@@ -13,6 +13,8 @@ export interface SchedulerStatus {
   auto_send_enabled: boolean;
   /** Both switches on: the worker acts for this business. */
   active: boolean;
+  /** Messages a person approved still go out, even when this business's automatic sending is off (job AY): true whenever the system-wide switch is on. */
+  releases_approved: boolean;
   /** Heard from within three of its own intervals. */
   worker_running: boolean;
   /** null = the worker was never heard from. */
@@ -63,6 +65,8 @@ export function parseSchedulerStatus(json: unknown): SchedulerStatus {
     platform_switch_on: bool(json.platform_switch_on, "platform_switch_on"),
     auto_send_enabled: bool(json.auto_send_enabled, "auto_send_enabled"),
     active: bool(json.active, "active"),
+    // an API from before job AY has no such field: what it then did is "no approved release", which is the stricter reading
+    releases_approved: json.releases_approved === undefined ? false : bool(json.releases_approved, "releases_approved"),
     worker_running: bool(json.worker_running, "worker_running"),
     last_run_at: nullableWhen(json.last_run_at, "last_run_at"),
     next_run_at: nullableWhen(json.next_run_at, "next_run_at"),

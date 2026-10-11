@@ -4,7 +4,7 @@ import { isCanonicalUuid } from "./crm";
 /**
  * The outbox and the call requests (job AT, ADR 0066), as Today needs them. Server side only, with the signed-in user's own token. The field names are the contract's, exactly (snake_case).
  * Every outgoing WhatsApp message is a row here; the database decides, deterministically, whether it goes by itself or waits for a person. This file reads the log and the waiting queue, and
- * sends the person's decision (edit, approve, reject; approve or decline a call). It sends nothing itself and never holds a phone number: the API does not give one.
+ * sends the person's decision (edit, approve, reject; approve a call: a call is declined only by offering a visit instead). It sends nothing itself and never holds a phone number: the API does not give one.
  *
  * Who may do what (the API decides; the screen only hides what it would refuse): the log and a single message: Owner, Admin, Sales. The waiting queue, edit, approve (needs the second factor) and
  * reject: Owner and Admin. A call request is read by Owner, Admin and Sales; approving or declining it is the Owner's, with the second factor. A Viewer gets 403 on all of it.
@@ -220,10 +220,6 @@ export async function approveCallRequest(accessToken: string, tenantId: string, 
   return parseCallRequest(await post(tenantPath(tenantId, `call-requests/${idPath(id)}/approve`), accessToken, note ? { note } : {}));
 }
 
-/** `POST /call-requests/{id}/reject`: the Owner only, with the second factor. `note` is kept with the decision. */
-export async function rejectCallRequest(accessToken: string, tenantId: string, id: string, note?: string): Promise<CallRequest> {
-  return parseCallRequest(await post(tenantPath(tenantId, `call-requests/${idPath(id)}/reject`), accessToken, note ? { note } : {}));
-}
 
 /** `POST /outbox/messages`: one WhatsApp message to the lead's contact, with the words the person wrote. The same `messageId` is a retry and replays. The policy decides: it goes (Owner/Admin hand it to the channel at once), waits for 9:00, waits for a person, or is blocked. Owner, Admin, Sales. */
 export async function submitOutboxMessage(
