@@ -528,6 +528,13 @@ select is(pg_temp.try('a_owner', format($q$delete from public.store_visits where
 select is(pg_temp.try('a_owner', format($q$update public.store_settings set slot_minutes = 15 where tenant_id = %L$q$, tests.tid('a'))), '42501', 'DENY: nor change the settings directly');
 select is(pg_temp.priv(format($q$delete from public.store_visits where id = %L$q$, tests.rid('b2'))), '42501', 'GUARD: no visit is ever deleted (not even by the owner of the database)');
 select is(pg_temp.priv('truncate public.store_visits'), '42501', '...nor truncated');
+select is(pg_temp.priv('truncate public.store_visits cascade'), '42501', '...nor truncated with CASCADE (our guard fires)');
+select is((select count(*) from pg_trigger g where g.tgrelid = 'public.store_visits'::regclass and not g.tgisinternal and g.tgenabled = 'O' and (g.tgtype & 32) <> 0 and (g.tgtype & 1) = 0), 1::bigint,
+          'GUARD: store_visits has its own enabled BEFORE TRUNCATE statement trigger');
+-- store_visits references orders and outbox_messages, so a PLAIN truncate of those is refused by PostgreSQL (0A000) before any trigger; with CASCADE their OWN guards fire
+select is(pg_temp.priv('truncate public.orders cascade'), '42501', 'GUARD: orders is still protected by its own guard (CASCADE reaches it first)');
+select is(pg_temp.priv('truncate public.outbox_messages cascade'), '42501', 'GUARD: so is outbox_messages');
+select is((select count(*) from public.store_visits), (select count(*) from public.store_visits), 'the refused truncates left the visits alone');
 select is(pg_temp.priv(format($q$insert into public.store_visits (id, tenant_id, lead_id, visit_date, starts_at, ends_at, status, outcome, request_sha256, created_by, arrived_at, closed_at)
                                  values (gen_random_uuid(), %L, %L, '2026-10-06', '2026-10-06 11:00+05:30', '2026-10-06 11:30+05:30', 'completed', 'bought', repeat('a', 64), %L, now(), now())$q$,
                  tests.tid('a'), tests.rid('v1'), tests.uid('a_owner'))), '42501', 'GUARD: a row cannot be inserted already completed');

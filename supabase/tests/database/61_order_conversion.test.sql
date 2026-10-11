@@ -503,11 +503,13 @@ select is(pg_temp.priv(format('update public.orders set closed_at = null where i
 select is(pg_temp.priv(format('update public.orders set closed_at = now() + interval %L where id = %L', '1 day', pg_temp.ord('o7'))), '42501', 'H12 closed_at moves once');
 select is(pg_temp.priv(format('update public.orders set state = %L where id = %L', 'accepted', pg_temp.ord('o7'))), '42501', 'H13 a closed order cannot move');
 select is(pg_temp.priv(format('delete from public.orders where id = %L', pg_temp.ord('o8'))), '42501', 'H14 an order is never deleted');
-select is(pg_temp.priv('truncate public.orders, public.order_events'), '42501', 'H15 or truncated');
+-- (job AS: store_visits now references orders, so a PLAIN truncate is refused by PostgreSQL itself, 0A000, before any trigger; CASCADE reaches OUR guard, the one this test is about.
+--  If the guard were missing, the cascade would succeed and the answer would be 'ok'.)
+select is(pg_temp.priv('truncate public.orders, public.order_events cascade'), '42501', 'H15 or truncated (the guard fires, not the foreign key)');
 select is(pg_temp.priv(format('update public.order_events set amount_paise = 1 where order_id = %L', pg_temp.ord('o8'))), '42501', 'H16 an event is never updated');
 select is(pg_temp.priv(format('delete from public.order_events where order_id = %L', pg_temp.ord('o8'))), '42501', 'H17 never deleted');
 select is(pg_temp.priv('truncate public.order_events'), '42501', 'H18 never truncated');
-select is(pg_temp.priv('truncate public.order_policy_versions, public.orders, public.order_events'), '42501', 'H19 a policy version is never truncated');
+select is(pg_temp.priv('truncate public.order_policy_versions, public.orders, public.order_events cascade'), '42501', 'H19 a policy version is never truncated (the guard fires, not the foreign key)');
 create function pg_temp.ins_ev(p_label text, p_seq int, p_type text, p_prior text, p_new text, p_amount bigint default null, p_ledger uuid default null, p_reason text default null) returns text language plpgsql as $$
 begin
   insert into public.order_events (id, tenant_id, order_id, seq, type, prior_state, new_state, amount_paise, ledger_id, occurred_at, reason_code, engine_version, request_text, result_text, canonical_hash)
