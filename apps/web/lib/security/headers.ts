@@ -9,10 +9,11 @@ export function securityHeaders(production: boolean): Header[] {
   const headers: Header[] = [
     { key: "X-Content-Type-Options", value: "nosniff" },
     { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+    // the microphone is allowed for this site's own pages only (the Ask box records a question, job BF); embedded frames cannot use it (and frame-ancestors is 'none' anyway)
     {
       key: "Permissions-Policy",
       value:
-        "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
+        "camera=(), microphone=(self), geolocation=(), payment=(), usb=(), interest-cohort=()",
     },
     // legacy twin of frame-ancestors 'none' for old browsers
     { key: "X-Frame-Options", value: "DENY" },

@@ -63,9 +63,10 @@ if (busy) {
   console.error(`e2e: not starting: ${busy}.`);
   process.exit(3);
 }
-const browser = await chromium.launch();
+// a fake microphone (a test tone) that Chrome opens without asking: the voice steps record from it (job BF)
+const browser = await chromium.launch({ args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] });
 const SLOW = 90_000; // a development server compiles each page the first time it is asked for
-const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: "en-IN", timezoneId: "Asia/Kolkata" });
+const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: "en-IN", timezoneId: "Asia/Kolkata", permissions: ["microphone"] });
 const page = await context.newPage();
 page.setDefaultTimeout(SLOW);
 page.setDefaultNavigationTimeout(SLOW);
@@ -454,6 +455,103 @@ await step("H2", "A saree named in an answer links to its page (the real box wit
   await context.unroute(`**/app/tenants/${tenant}/ask`);
 }, page);
 
+// ---- 8a. voice in the Ask box (job BF): the API runs the FAKE speech adapters (development only, no key, no cost); Chrome has a fake microphone ---------------------------
+const micButton = () => page.getByRole("button", { name: "Speak your question" });
+await step("H3", "voice: the microphone is drawn because the API says voice is on; the privacy line and the auto-play switch are there; the page lets the microphone through", async () => {
+  await page.goto(`${BASE}/app/tenants/${tenant}`);
+  await micButton().waitFor({ timeout: 30000 });
+  const t = await text(page);
+  must(t.includes("Your voice is sent to our speech service to be understood. We don't keep the recording."), "the privacy line is not on the page");
+  const sw = page.getByRole("switch", { name: "Play voice answers automatically" });
+  must(await sw.isVisible(), "the auto-play switch is not there");
+  must((await sw.getAttribute("aria-checked")) === "false", "a laptop should start with auto-play off");
+  const r = await page.request.get(`${BASE}/app/tenants/${tenant}/ask/voice`);
+  must(JSON.stringify(await r.json()) === '{"available":true,"speech":true}', `the status route said ${await r.text()}`);
+  must(/microphone=\(self\)/.test(r.headers()["permissions-policy"] ?? ""), "Permissions-Policy does not let this site use the microphone");
+  await shot(page, "voice-idle");
+}, page);
+
+await step("H4", "voice: tap to record, the countdown runs, Cancel throws it away and nothing is sent", async () => {
+  let posted = 0;
+  const onRequest = (r) => {
+    if (r.method() === "POST" && /\/ask\/voice/.test(r.url())) posted++;
+  };
+  page.on("request", onRequest);
+  await micButton().click();
+  await page.getByText("Recording…").waitFor({ timeout: 30000 });
+  await page.waitForFunction(() => /\d:\d\d left/.test(document.body.innerText));
+  await page.waitForTimeout(1500);
+  const left = (await text(page)).match(/(\d:\d\d) left/)?.[1];
+  must(left && left !== "1:00", `the countdown did not run (${left})`);
+  await shot(page, "voice-recording");
+  await page.getByRole("button", { name: "Cancel" }).click();
+  await page.locator("#ask-input").waitFor();
+  await page.waitForTimeout(800);
+  page.off("request", onRequest);
+  must(posted === 0, `${posted} request(s) were sent after Cancel`);
+  return `countdown showed ${left}`;
+}, page);
+
+await step("H5", "voice: record, stop, see what was heard as your message, the written answer and a spoken answer you can stop", async () => {
+  const sent = [];
+  const onRequest = (r) => {
+    if (r.method() === "POST" && /\/ask\/voice/.test(r.url())) sent.push({ url: r.url(), type: r.headers()["content-type"], size: 0 });
+  };
+  page.on("request", onRequest);
+  // the browser does not hand a Blob body to the request object: note its size where it is sent
+  await page.evaluate(() => {
+    const original = window.fetch.bind(window);
+    window.__voiceBody = 0;
+    window.fetch = (input, init) => {
+      if (/\/ask\/voice\?/.test(String(input)) && init?.body?.size !== undefined) window.__voiceBody = init.body.size;
+      return original(input, init);
+    };
+  });
+  await page.getByRole("switch", { name: "Play voice answers automatically" }).click();
+  await micButton().click();
+  await page.getByText("Recording…").waitFor({ timeout: 30000 });
+  await page.waitForTimeout(2000);
+  await page.getByRole("button", { name: "Stop and ask" }).click();
+  await page.getByText("You said: What needs me today?").waitFor({ timeout: 60000 });
+  await page.waitForFunction(() => /Here is what I found|I found nothing/.test(document.body.innerText), { timeout: 60000 });
+  const play = page.locator('[data-voice="play"]');
+  await play.waitFor({ timeout: 60000 });
+  page.off("request", onRequest);
+  must(sent.length === 1, `${sent.length} voice requests`);
+  must(/speak=1/.test(sent[0].url), "a spoken answer was not asked for");
+  sent[0].size = await page.evaluate(() => window.__voiceBody);
+  must(/^audio\/webm/.test(sent[0].type ?? "") && sent[0].size > 500, `the recording was ${sent[0].type} ${sent[0].size} bytes`);
+  must(!(await page.locator("#ask-input").isHidden()), "the question box did not come back");
+  await shot(page, "voice-answer");
+  const label = (await play.innerText()).trim();
+  must(label === "Stop" || label === "Play spoken answer", `the audio button said "${label}"`);
+  if (label === "Stop") await play.click();
+  await page.getByRole("button", { name: "Play spoken answer" }).waitFor({ timeout: 10000 });
+  return `${sent[0].type}, ${sent[0].size} bytes; audio button "${label}" before Stop`;
+}, page);
+
+await step("H6", "voice: when the API says voice is off, the microphone, the switch and the privacy line are not drawn (no dead button)", async () => {
+  await context.route("**/ask/voice", (route) => (route.request().method() === "GET" ? route.fulfill({ json: { available: false, speech: false } }) : route.continue()));
+  await page.goto(`${BASE}/app/tenants/${tenant}`);
+  await page.locator("#ask-input").waitFor();
+  await page.waitForTimeout(1500);
+  must((await micButton().count()) === 0, "a microphone is drawn though voice is off");
+  must((await page.getByRole("switch").count()) === 0, "the auto-play switch is drawn though voice is off");
+  await context.unroute("**/ask/voice");
+}, page);
+
+await step("H7", "voice: a used-up allowance is said in words, and typing still works", async () => {
+  await context.route("**/ask/voice?*", (route) => (route.request().method() === "POST" ? route.fulfill({ status: 200, contentType: "application/x-ndjson", body: `${JSON.stringify({ type: "error", code: "ai_paused_until" })}\n` }) : route.continue()));
+  await page.goto(`${BASE}/app/tenants/${tenant}`);
+  await micButton().click();
+  await page.getByText("Recording…").waitFor({ timeout: 30000 });
+  await page.waitForTimeout(1500);
+  await page.getByRole("button", { name: "Stop and ask" }).click();
+  await page.getByRole("alert").filter({ hasText: "spending limit" }).waitFor({ timeout: 30000 });
+  await context.unroute("**/ask/voice?*");
+  must(await page.locator("#ask-input").isEnabled(), "typing is not available after the refusal");
+}, page);
+
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
 await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hours) and the saree page at 360 px and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";
@@ -509,6 +607,69 @@ await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hour
   }
   must(seen.length === 0, seen.slice(0, 4).join(" | "));
   return axe ? "9 pages checked with axe" : "axe-core not installed: that check was skipped";
+}, page);
+
+// ---- 8c. the recording bar on a phone (360 px), light and dark: a finger taps the microphone; targets >= 44 px, no sideways scroll, axe finds nothing --------------------------
+await step("V2", "voice on a phone: tap the microphone (the recording bar, Cancel, the switch) at 360 px, light and dark: targets >= 44 px, no sideways scroll, text >= 14 px, axe finds nothing", async () => {
+  let axe = "";
+  try {
+    axe = readFileSync(path.join(here, "..", "apps", "web", "node_modules", "axe-core", "axe.min.js"), "utf8");
+  } catch {
+    // axe-core is the web app's dev dependency: without it that one check is skipped and said so
+  }
+  const state = await context.storageState();
+  const seen = [];
+  for (const scheme of ["light", "dark"]) {
+    const ctx = await browser.newContext({ storageState: state, viewport: { width: 360, height: 780 }, isMobile: true, hasTouch: true, colorScheme: scheme, locale: "en-IN", timezoneId: "Asia/Kolkata", permissions: ["microphone"] });
+    const p = await ctx.newPage();
+    await p.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+    const mic = p.getByRole("button", { name: "Speak your question" });
+    await mic.waitFor({ timeout: 30000 });
+    const on = await p.getByRole("switch", { name: "Play voice answers automatically" }).getAttribute("aria-checked");
+    if (on !== "true") seen.push(`${scheme}: a phone should start with auto-play on (it said ${on})`);
+    await p.screenshot({ path: path.join(SHOTS, `V-voice-idle-phone-${scheme}.png`), fullPage: true });
+    const xBefore = (await mic.boundingBox())?.x ?? -1;
+    await mic.tap();
+    await p.getByText("Recording…").waitFor({ timeout: 30000 }).catch(async () => {
+      seen.push(`${scheme}: the recording bar did not appear after a tap`);
+    });
+    await p.waitForTimeout(1200);
+    const xAfter = (await p.getByRole("button", { name: "Stop and ask" }).boundingBox())?.x ?? -2;
+    if (Math.abs(xAfter - xBefore) > 1) seen.push(`${scheme}: the microphone moved from x=${xBefore} to x=${xAfter} when recording started (a tap could land on Cancel)`);
+    await p.screenshot({ path: path.join(SHOTS, `V-voice-recording-phone-${scheme}.png`), fullPage: true });
+    const m = await p.evaluate(() => {
+      const bad = [];
+      for (const el of document.querySelectorAll("a, button, select, input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not(.sr-only), summary, textarea, [role=switch]")) {
+        const r = el.getBoundingClientRect();
+        const cs = getComputedStyle(el);
+        if (r.width === 0 || r.height === 0 || cs.visibility === "hidden" || el.closest("[aria-hidden=true]") || el.classList.contains("sr-only")) continue;
+        if (r.height < 43.5 || r.width < 43.5) bad.push(`${el.tagName.toLowerCase()} "${(el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 24)}" ${Math.round(r.width)}x${Math.round(r.height)}px`);
+      }
+      const small = new Set();
+      for (const el of document.querySelectorAll("body *")) {
+        if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+        const fs = parseFloat(getComputedStyle(el).fontSize);
+        if (fs < 13.99 && !el.closest("nextjs-portal")) small.add(`${el.tagName.toLowerCase()} ${fs}px`);
+      }
+      const cancel = [...document.querySelectorAll("button")].find((b) => b.getAttribute("aria-label") === "Cancel");
+      const bar = document.querySelector('[data-voice="recording"]')?.getBoundingClientRect();
+      return { scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth, bad: bad.slice(0, 5), small: [...small].slice(0, 4), cancel: Boolean(cancel), bar: bar ? Math.round(bar.width) : 0 };
+    });
+    if (m.scrollW > m.clientW) seen.push(`${scheme}: sideways scroll ${m.scrollW}>${m.clientW}`);
+    if (m.bad.length) seen.push(`${scheme}: small targets ${m.bad.join("; ")}`);
+    if (m.small.length) seen.push(`${scheme}: small text ${m.small.join("; ")}`);
+    if (!m.cancel) seen.push(`${scheme}: no Cancel while recording`);
+    if (m.bar < 100) seen.push(`${scheme}: the recording bar is only ${m.bar}px wide`);
+    if (axe) {
+      await p.evaluate(axe);
+      const v = await p.evaluate(async () => (await window.axe.run(document, { resultTypes: ["violations"] })).violations.filter((x) => !/nextjs|portal/.test(JSON.stringify(x.nodes[0]?.target ?? ""))).map((x) => x.id));
+      if (v.length) seen.push(`${scheme}: axe ${v.join(", ")}`);
+    }
+    await p.getByRole("button", { name: "Cancel" }).tap();
+    await ctx.close();
+  }
+  must(seen.length === 0, seen.slice(0, 4).join(" | "));
+  return axe ? "recording bar + idle, light and dark, checked with axe" : "axe-core not installed: that check was skipped";
 }, page);
 
 // ---- 9. the whole run: no CSP violation, no hydration error ---------------------------------------------------------------

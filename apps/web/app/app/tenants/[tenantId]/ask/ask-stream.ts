@@ -1,5 +1,7 @@
 import { ERROR_CODES, type AskEvent } from "@/components/v2/app/today/ask/ask-types";
-import type { AssistantEvent, Target } from "@/lib/api/assistant";
+import type { Target } from "@/lib/api/assistant";
+import type { ApiRequestError } from "@/lib/api/client";
+import type { VoiceAssistantEvent } from "@/lib/api/voice";
 
 /** What one answer may carry to the browser. The box keeps the same limits; keeping them here too bounds the lookups a single answer can cause. */
 export const MAX_SOURCES = 8;
@@ -40,16 +42,55 @@ export function knownCode(code: string): string | undefined {
   return (ERROR_CODES as readonly string[]).includes(code) ? code : undefined;
 }
 
+/** The API's refusal of a RECORDING as a code the box has a sentence for (job BF). The API's own sentences are English and are never passed on. */
+export function voiceErrorCode(error: ApiRequestError): string | undefined {
+  if (error.status === 403) return "forbidden";
+  switch (error.code) {
+    case "audio_too_long":
+    case "audio_too_large":
+      return "voice_too_long";
+    case "audio_too_short":
+      return "voice_too_short";
+    case "no_speech":
+      return "voice_no_speech";
+    case "voice_unavailable":
+    case "speech_unavailable":
+      return "voice_unavailable";
+    case "api_unreachable":
+      return "network";
+    case "voice_failed":
+    case "voice_timeout":
+    case "audio_unsupported":
+    case "audio_unreadable":
+    case "language_unsupported":
+    case "validation_error":
+      return "voice_failed";
+    default:
+      return knownCode(error.code);
+  }
+}
+
 /**
  * The Agent OWL's events (Job AG) as the Ask box's events: a `target` becomes a path inside the workspace, the fields the box does not draw (`status`, `kind` of a source, the chat's ids)
  * are dropped, the number of sources and drafts is capped, and an error keeps only its code if the box knows it. Anything thrown while reading the stream ends the answer with an error event,
  * so the browser always gets a last word and never a half-open answer.
  */
-export async function* toAskEvents(events: AsyncIterable<AssistantEvent>, base: string, enquiryOfQuote: QuoteLookup): AsyncGenerator<AskEvent> {
+export async function* toAskEvents(events: AsyncIterable<VoiceAssistantEvent>, base: string, enquiryOfQuote: QuoteLookup, options: { voice?: boolean } = {}): AsyncGenerator<AskEvent> {
   let sources = 0;
   let drafts = 0;
+  let finished = false;
   for await (const e of events) {
+    if (finished && e.type !== "audio" && e.type !== "audio_error") continue; // voice: after `done` only the spoken answer may still come
     switch (e.type) {
+      case "transcript":
+        yield { type: "heard", text: e.text.slice(0, 4000) };
+        break;
+      case "audio":
+        yield { type: "audio", contentType: e.contentType, data: e.data };
+        break;
+      case "audio_error":
+        yield { type: "audio_error", code: e.code };
+        break;
       case "text":
         yield { type: "text", delta: e.delta };
         break;
@@ -66,8 +107,10 @@ export async function* toAskEvents(events: AsyncIterable<AssistantEvent>, base: 
         return;
       case "done":
         yield { type: "done" };
-        return;
+        if (!options.voice) return;
+        finished = true; // the API speaks AFTER it has said `done`: go on reading for the audio
+        break;
     }
   }
-  yield { type: "error" }; // the stream ended with neither `done` nor `error`: the answer is not known to be whole
+  if (!finished) yield { type: "error" }; // the stream ended with neither `done` nor `error`: the answer is not known to be whole
 }

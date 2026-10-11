@@ -3,7 +3,10 @@ import { describe, expect, it } from "vitest";
 import type { AskEvent } from "@/components/v2/app/today/ask/ask-types";
 import type { AssistantEvent, Target } from "@/lib/api/assistant";
 
-import { knownCode, MAX_DRAFTS, MAX_SOURCES, pathFor, toAskEvents } from "./ask-stream";
+import { ApiRequestError } from "@/lib/api/client";
+import type { VoiceAssistantEvent } from "@/lib/api/voice";
+
+import { knownCode, MAX_DRAFTS, MAX_SOURCES, pathFor, toAskEvents, voiceErrorCode } from "./ask-stream";
 
 const B = "/app/tenants/T";
 const ID = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
@@ -111,5 +114,58 @@ describe("toAskEvents", () => {
     expect(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden", "model_busy", "model_not_configured"].map(knownCode)).toEqual(["ai_paused_until", "run_limit_reached", "agents_disabled", "forbidden", "model_busy", "model_not_configured"]);
     expect(knownCode("message_id_used")).toBeUndefined();
     expect(knownCode("__proto__")).toBeUndefined();
+  });
+});
+
+describe("voice (job BF)", () => {
+  const transcript: VoiceAssistantEvent = { type: "transcript", text: "What needs me?", language: "en", seconds: 2, reused: false };
+  const audio: VoiceAssistantEvent = { type: "audio", contentType: "audio/wav", data: "UklGRg==", characters: 3 };
+  async function runVoice(events: VoiceAssistantEvent[], voice = true) {
+    async function* gen() {
+      yield* events;
+    }
+    const out: AskEvent[] = [];
+    for await (const e of toAskEvents(gen(), B, none, { voice })) out.push(e);
+    return out;
+  }
+  it("passes the transcript on as `heard`, goes on after `done` for the spoken answer, and ends without an error", async () => {
+    expect(await runVoice([transcript, { type: "text", delta: "Hi" }, done, audio])).toEqual([{ type: "heard", text: "What needs me?" }, { type: "text", delta: "Hi" }, { type: "done" }, { type: "audio", contentType: "audio/wav", data: "UklGRg==" }]);
+  });
+  it("a failed spoken answer is passed on with its code", async () => {
+    expect((await runVoice([transcript, done, { type: "audio_error", code: "budget" }])).at(-1)).toEqual({ type: "audio_error", code: "budget" });
+  });
+  it("after `done` nothing but the spoken answer is passed on", async () => {
+    expect(await runVoice([transcript, done, { type: "text", delta: "late" }, source(1)])).toEqual([{ type: "heard", text: "What needs me?" }, { type: "done" }]);
+  });
+  it("a voice stream with no `done` is an error", async () => {
+    expect((await runVoice([transcript, { type: "text", delta: "Hi" }])).at(-1)).toEqual({ type: "error" });
+  });
+  it("a typed answer still ends at `done` (nothing after it is read)", async () => {
+    expect(await runVoice([{ type: "text", delta: "Hi" }, done, audio], false)).toEqual([{ type: "text", delta: "Hi" }, { type: "done" }]);
+  });
+  it("an over-long transcript is cut", async () => {
+    expect(((await runVoice([{ ...transcript, text: "x".repeat(4000) }, done]))[0] as { text: string }).text).toHaveLength(4000);
+  });
+  it.each([
+    [422, "audio_too_long", "voice_too_long"],
+    [413, "audio_too_large", "voice_too_long"],
+    [422, "audio_too_short", "voice_too_short"],
+    [422, "no_speech", "voice_no_speech"],
+    [503, "voice_unavailable", "voice_unavailable"],
+    [422, "speech_unavailable", "voice_unavailable"],
+    [503, "api_unreachable", "network"],
+    [502, "voice_failed", "voice_failed"],
+    [504, "voice_timeout", "voice_failed"],
+    [415, "audio_unsupported", "voice_failed"],
+    [422, "audio_unreadable", "voice_failed"],
+    [422, "language_unsupported", "voice_failed"],
+    [422, "validation_error", "voice_failed"],
+    [403, "anything", "forbidden"],
+    [429, "ai_paused_until", "ai_paused_until"],
+    [409, "agents_disabled", "agents_disabled"],
+    [409, "message_id_used", undefined],
+    [500, "__proto__", undefined],
+  ])("%s %s becomes %s", (status, code, want) => {
+    expect(voiceErrorCode(new ApiRequestError(status, code, "English"))).toBe(want);
   });
 });

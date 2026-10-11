@@ -10,6 +10,7 @@
  *  - img-src data: blob: for the authenticator QR code (an SVG data URI) and Next's image placeholders; blob: also shows the photo a person has just picked, before it is uploaded. The catalogue's photos
  *    (job BC) are signed links into the project's own Storage service, so exactly ONE more origin is allowed for images: the Supabase project's (`imageOrigin`). Never a wildcard, never for scripts,
  *    styles, frames or connections (the browser still talks only to this app).
+ *  - media-src 'self' blob: (job BF): the spoken answer of the Ask box is played from a blob: made in the page from the API's audio, never from another address. Nothing else may be played.
  *  - 'unsafe-eval' only in development (React's debugging needs it), never in production.
  *  - upgrade-insecure-requests only in production, so plain-http local development keeps working.
  */
@@ -21,6 +22,7 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     dev ? "style-src 'self' 'unsafe-inline'" : `style-src 'self' 'nonce-${nonce}'`,
     "style-src-attr 'unsafe-inline'",
     `img-src 'self' blob: data:${imageOrigin ? ` ${imageOrigin}` : ""}`,
+    "media-src 'self' blob:",
     "font-src 'self'",
     `connect-src 'self'${dev ? " ws: wss:" : ""}`,
     "object-src 'none'",

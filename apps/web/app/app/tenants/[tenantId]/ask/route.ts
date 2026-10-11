@@ -1,31 +1,17 @@
 import { type NextRequest } from "next/server";
 
-import type { AskEvent } from "@/components/v2/app/today/ask/ask-types";
 import { sendAssistantMessage } from "@/lib/api/assistant";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuote } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
 
+import { fromThisSite, ndjsonResponse } from "./ask-response";
 import { knownCode, toAskEvents, type QuoteLookup } from "./ask-stream";
 
 export const dynamic = "force-dynamic";
 
 const MAX_BODY = 20_000;
-const NDJSON = { "Content-Type": "application/x-ndjson; charset=utf-8", "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" } as const;
-const line = (e: AskEvent) => `${JSON.stringify(e)}\n`;
-
-/** A POST from this site only. The session cookie is sent along with any request to this address, so a page on another site must not be able to make the Agent OWL run. */
-function fromThisSite(request: NextRequest): boolean {
-  if (request.headers.get("sec-fetch-site") === "same-origin") return true;
-  const origin = request.headers.get("origin");
-  const host = request.headers.get("host");
-  try {
-    return origin !== null && host !== null && new URL(origin).host === host;
-  } catch {
-    return false;
-  }
-}
 
 /**
  * "Ask your team": the box on Today posts the person's question here; this route asks the Agent OWL (Job AG) with the person's OWN token, which the browser never holds, and passes the answer
@@ -74,37 +60,5 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   };
 
   const events = toAskEvents(sendAssistantMessage(user.accessToken, tenantId, { messageId, conversationId, text }), base, enquiryOfQuote);
-  const iterator = events[Symbol.asyncIterator]();
-  // The API refuses before it streams anything (switch off, cost cap, role): read the first event now, so a rejected session can still be a 401.
-  let first: IteratorResult<AskEvent>;
-  try {
-    first = await iterator.next();
-  } catch (error) {
-    if (error instanceof ApiAuthError) return new Response("Unauthorized", { status: 401 });
-    const code = error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined;
-    return new Response(line({ type: "error", code }), { headers: NDJSON });
-  }
-
-  const encoder = new TextEncoder();
-  let cancelled = false;
-  const stream = new ReadableStream<Uint8Array>({
-    async start(controller) {
-      try {
-        let step = first;
-        while (!step.done && !cancelled) {
-          controller.enqueue(encoder.encode(line(step.value)));
-          step = await iterator.next();
-        }
-      } catch {
-        if (!cancelled) controller.enqueue(encoder.encode(line({ type: "error" }))); // a broken stream or an answer that breaks the contract: the general sentence
-      } finally {
-        if (!cancelled) controller.close();
-      }
-    },
-    cancel() {
-      cancelled = true;
-      void iterator.return?.(undefined);
-    },
-  });
-  return new Response(stream, { headers: NDJSON });
+  return ndjsonResponse(events, (error) => (error instanceof ApiRequestError ? (error.status === 403 ? "forbidden" : knownCode(error.code)) : undefined));
 }

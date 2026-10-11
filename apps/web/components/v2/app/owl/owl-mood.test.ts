@@ -26,6 +26,16 @@ describe("owlMood: the Ask box's state as the owl's mood", () => {
     expect([...RESTING_CODES].sort()).toEqual(["agents_disabled", "ai_paused_until", "run_limit_reached"]);
     for (const code of RESTING_CODES) expect(owlMood({ ...base, phase: "error", errorCode: code })).toBe("resting");
   });
+  it("voice (job BF): listening while recording, thinking while the recording is understood, answering while text streams and while the spoken answer plays", () => {
+    expect(owlMood({ ...base, micOn: true })).toBe("listening");
+    expect(owlMood({ ...base, micOn: true, phase: "asking", hasText: true })).toBe("listening"); // recording wins over an answer still on screen
+    expect(owlMood({ ...base, phase: "asking" })).toBe("thinking"); // the recording was sent; no text yet
+    expect(owlMood({ ...base, phase: "asking", hasText: true })).toBe("answering");
+    expect(owlMood({ ...base, phase: "done", hasText: true, speaking: true })).toBe("answering"); // the written answer is whole, the spoken one is playing
+    expect(owlMood({ ...base, phase: "done", hasText: true, speaking: false })).toBe("idle");
+    expect(owlMood({ ...base, live: false, micOn: true, speaking: true })).toBe("resting");
+    expect(owlMood({ ...base, phase: "error", errorCode: "ai_paused_until", speaking: true })).toBe("resting");
+  });
   it("any other failure leaves the owl idle (a busy or unconfigured model is not a rest)", () => {
     for (const code of ["model_busy", "model_not_configured", "forbidden", null, undefined, "x"]) expect(owlMood({ ...base, phase: "error", errorCode: code })).toBe("idle");
   });

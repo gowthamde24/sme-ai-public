@@ -191,14 +191,23 @@ export interface ExportDownloadResult {
  * ApiAuthError and any other refusal an ApiRequestError with the API's fixed code and sentence; only a 200 comes back as a Response whose body the caller reads.
  */
 export async function apiStreamRequest(path: string, accessToken: string, body: unknown): Promise<Response> {
+  return streamPost(path, accessToken, "application/json", JSON.stringify(body));
+}
+
+/** The same, for a body that is a file sent as it is (a recording for the voice route, job BF): its own Content-Type, the status judged before any byte of the answer is read. */
+export async function apiStreamUpload(path: string, accessToken: string, body: ArrayBuffer, contentType: string): Promise<Response> {
+  return streamPost(path, accessToken, contentType, body);
+}
+
+async function streamPost(path: string, accessToken: string, contentType: string, body: string | ArrayBuffer): Promise<Response> {
   const base = apiBaseUrl();
   let response: Response;
   try {
     response = await fetch(`${base}${path}`, {
       method: "POST",
       cache: "no-store",
-      headers: { "Content-Type": "application/json", Accept: "text/event-stream", Authorization: `Bearer ${accessToken}` },
-      body: JSON.stringify(body),
+      headers: { "Content-Type": contentType, Accept: "text/event-stream", Authorization: `Bearer ${accessToken}` },
+      body,
     });
   } catch {
     throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");

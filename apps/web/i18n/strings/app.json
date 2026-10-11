@@ -1337,10 +1337,10 @@
   }
  },
  "ask.mic.stop": {
-  "en": "Stop listening",
-  "te": "వినడం ఆపు",
-  "hi": "सुनना बंद करें",
-  "kn": "ಕೇಳುವುದನ್ನು ನಿಲ್ಲಿಸಿ",
+  "en": "Stop and ask",
+  "te": "ఆపి అడగండి",
+  "hi": "रोकें और पूछें",
+  "kn": "ನಿಲ್ಲಿಸಿ ಕೇಳಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1348,10 +1348,10 @@
   }
  },
  "ask.listening": {
-  "en": "Listening…",
-  "te": "వింటోంది…",
-  "hi": "सुन रहा है…",
-  "kn": "ಕೇಳುತ್ತಿದೆ…",
+  "en": "Recording…",
+  "te": "రికార్డ్ అవుతోంది…",
+  "hi": "रिकॉर्ड हो रहा है…",
+  "kn": "ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ…",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1359,10 +1359,10 @@
   }
  },
  "ask.mic.privacy": {
-  "en": "Your browser may send what you say to its speech service.",
-  "te": "Your browser may send what you say to its speech service.",
-  "hi": "Your browser may send what you say to its speech service.",
-  "kn": "Your browser may send what you say to its speech service.",
+  "en": "Your voice is sent to our speech service to be understood. We don't keep the recording.",
+  "te": "Your voice is sent to our speech service to be understood. We don't keep the recording.",
+  "hi": "Your voice is sent to our speech service to be understood. We don't keep the recording.",
+  "kn": "Your voice is sent to our speech service to be understood. We don't keep the recording.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -9370,5 +9370,192 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "ask.voice.starting": {
+  "en": "Starting the microphone…",
+  "te": "మైక్రోఫోన్ మొదలవుతోంది…",
+  "hi": "माइक्रोफ़ोन शुरू हो रहा है…",
+  "kn": "ಮೈಕ್ರೊಫೋನ್ ಆರಂಭವಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.left": {
+  "en": "{time} left",
+  "te": "{time} మిగిలింది",
+  "hi": "{time} बाकी",
+  "kn": "{time} ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.recording.sr": {
+  "en": "Recording. {s} seconds left.",
+  "te": "రికార్డ్ అవుతోంది. {s} సెకన్లు మిగిలాయి.",
+  "hi": "रिकॉर्ड हो रहा है। {s} सेकंड बाकी।",
+  "kn": "ರೆಕಾರ್ಡ್ ಆಗುತ್ತಿದೆ. {s} ಸೆಕೆಂಡ್ ಉಳಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.hint": {
+  "en": "Tap the microphone to start and tap again to stop. On a phone you can also hold it while you speak.",
+  "te": "మైక్రోఫోన్‌ని నొక్కితే మొదలవుతుంది, మళ్ళీ నొక్కితే ఆగుతుంది. ఫోన్‌లో మాట్లాడుతున్నంత సేపు పట్టుకుని కూడా ఉండవచ్చు.",
+  "hi": "माइक्रोफ़ोन दबाएं तो शुरू होता है, फिर दबाएं तो रुकता है। फ़ोन पर बोलते समय इसे दबाए भी रख सकते हैं।",
+  "kn": "ಮೈಕ್ರೊಫೋನ್ ಒತ್ತಿದರೆ ಆರಂಭ, ಮತ್ತೆ ಒತ್ತಿದರೆ ನಿಲ್ಲುತ್ತದೆ. ಫೋನ್‌ನಲ್ಲಿ ಮಾತನಾಡುವಾಗ ಒತ್ತಿ ಹಿಡಿದೂ ಇರಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.autoplay": {
+  "en": "Play voice answers automatically",
+  "te": "వాయిస్ జవాబులను ఆటోమేటిక్‌గా ప్లే చేయండి",
+  "hi": "आवाज़ वाले जवाब अपने आप चलाएं",
+  "kn": "ಧ್ವನಿ ಉತ್ತರಗಳನ್ನು ತಾನಾಗಿ ಪ್ಲೇ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.nomic": {
+  "en": "No microphone was found. Type your question instead.",
+  "te": "మైక్రోఫోన్ కనిపించలేదు. బదులుగా మీ ప్రశ్న టైప్ చేయండి.",
+  "hi": "कोई माइक्रोफ़ोन नहीं मिला। इसके बजाय अपना सवाल टाइप करें।",
+  "kn": "ಮೈಕ್ರೊಫೋನ್ ಸಿಗಲಿಲ್ಲ. ಬದಲಿಗೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆಯನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.short": {
+  "en": "That was too short. Try again, or type your question.",
+  "te": "అది చాలా చిన్నది. మళ్ళీ ప్రయత్నించండి లేదా టైప్ చేయండి.",
+  "hi": "यह बहुत छोटा था। फिर कोशिश करें या टाइप करें।",
+  "kn": "ಅದು ತುಂಬಾ ಚಿಕ್ಕದಾಗಿತ್ತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.toolong": {
+  "en": "That recording is too long. Keep it under a minute.",
+  "te": "ఆ రికార్డింగ్ చాలా పొడవైంది. ఒక నిమిషం లోపు ఉంచండి.",
+  "hi": "वह रिकॉर्डिंग बहुत लंबी है। इसे एक मिनट से कम रखें।",
+  "kn": "ಆ ರೆಕಾರ್ಡಿಂಗ್ ತುಂಬಾ ಉದ್ದವಾಗಿದೆ. ಒಂದು ನಿಮಿಷದೊಳಗೆ ಇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.err.unavailable": {
+  "en": "Voice is not switched on right now. Type your question instead.",
+  "te": "వాయిస్ ప్రస్తుతం ఆన్‌లో లేదు. బదులుగా టైప్ చేయండి.",
+  "hi": "आवाज़ की सुविधा अभी चालू नहीं है। इसके बजाय टाइप करें।",
+  "kn": "ಧ್ವನಿ ಸೌಲಭ್ಯ ಈಗ ಆನ್ ಆಗಿಲ್ಲ. ಬದಲಿಗೆ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.err.failed": {
+  "en": "Your voice could not be understood just now. Try again, or type your question.",
+  "te": "మీ వాయిస్ ఇప్పుడు అర్థం కాలేదు. మళ్ళీ ప్రయత్నించండి లేదా టైప్ చేయండి.",
+  "hi": "आपकी आवाज़ अभी समझ नहीं आई। फिर कोशिश करें या टाइप करें।",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿ ಈಗ ಅರ್ಥವಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.err.network": {
+  "en": "No connection. Check your internet and try again.",
+  "te": "కనెక్షన్ లేదు. ఇంటర్నెట్ చూసుకుని మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कनेक्शन नहीं है। इंटरनेट देखकर फिर कोशिश करें।",
+  "kn": "ಸಂಪರ್ಕ ಇಲ್ಲ. ಇಂಟರ್ನೆಟ್ ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.said": {
+  "en": "You said:",
+  "te": "మీరు అన్నారు:",
+  "hi": "आपने कहा:",
+  "kn": "ನೀವು ಹೇಳಿದ್ದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.working": {
+  "en": "Understanding your voice…",
+  "te": "మీ వాయిస్ అర్థం చేసుకుంటోంది…",
+  "hi": "आपकी आवाज़ समझ रहा है…",
+  "kn": "ನಿಮ್ಮ ಧ್ವನಿಯನ್ನು ಅರ್ಥಮಾಡಿಕೊಳ್ಳುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.play": {
+  "en": "Play spoken answer",
+  "te": "జవాబును వినండి",
+  "hi": "बोला हुआ जवाब सुनें",
+  "kn": "ಮಾತನಾಡಿದ ಉತ್ತರ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.speaking": {
+  "en": "Preparing the spoken answer…",
+  "te": "జవాబును మాటల్లోకి మారుస్తోంది…",
+  "hi": "बोला हुआ जवाब तैयार हो रहा है…",
+  "kn": "ಮಾತಿನ ಉತ್ತರ ಸಿದ್ಧವಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.voice.audioerr": {
+  "en": "The spoken answer could not be made. The written answer above is complete.",
+  "te": "మాట రూపంలో జవాబు రాలేదు. పైన ఉన్న రాతపూర్వక జవాబు పూర్తిగా ఉంది.",
+  "hi": "बोला हुआ जवाब नहीं बन पाया। ऊपर लिखा जवाब पूरा है।",
+  "kn": "ಮಾತಿನ ಉತ್ತರ ಬರಲಿಲ್ಲ. ಮೇಲಿನ ಬರೆದ ಉತ್ತರ ಪೂರ್ಣವಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
