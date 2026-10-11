@@ -12,19 +12,40 @@ import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
 import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
+import { QuietHoursCard, SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
+import { RemindersForm, SendingForm } from "@/components/v2/app/agent-settings/AgentSettingsForms";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
+import { getSchedulerSettings, getSchedulerStatus, type SchedulerSettings, type SchedulerStatus } from "@/lib/api/scheduler";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchMembers, type Member } from "@/lib/api/orders";
 import { getPlan, type Plan } from "@/lib/api/plan";
 import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
+import { saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
+import { agentWords } from "./agent-words";
+
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "members", "language", "security", "privacy"] as const;
+const SECTIONS = ["business", "members", "language", "agent", "security", "privacy"] as const;
 type Section = (typeof SECTIONS)[number];
+/** The moment the page is drawn (ms), read once. */
+const clock = (): number => Date.now();
+/** A read that failed is null (the card says "Not available yet"); a rejected session is thrown so the page can send the person to sign in. */
+function rethrowAuth(error: unknown): null {
+  if (error instanceof ApiAuthError) throw error;
+  return null;
+}
+function UnreadCard({ note }: { note: string }) {
+  return (
+    <section className={surface}>
+      <p className="text-sm text-muted">{note}</p>
+    </section>
+  );
+}
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
 /**
@@ -49,8 +70,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const t = appT(lang);
   const labels = frameLabels(lang);
   const wanted = pick(query.section);
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") ? (wanted as Section) : "business";
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") ? (wanted as Section) : "business";
   const base = `/app/tenants/${tenantId}`;
+  const words = agentWords(lang);
   const admin = tenant.role === "owner" || tenant.role === "admin";
 
   let members: Member[] | null = null;
@@ -66,6 +88,18 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   if (section === "business") {
     [plan, usage] = await Promise.all([getPlan(user.accessToken, tenantId).catch(() => null), admin ? getAiUsage(user.accessToken, tenantId).catch(() => null) : null]);
   }
+  // Agent OWL (the Owner only): the sending switches, the reminders and the scheduler's status. Each read stands on its own; one that fails says "Not available yet" in its place.
+  let sending: OutboxSettings | null = null;
+  let reminders: SchedulerSettings | null = null;
+  let scheduler: SchedulerStatus | null = null;
+  if (section === "agent") {
+    try {
+      [sending, reminders, scheduler] = await Promise.all([getOutboxSettings(user.accessToken, tenantId).catch(rethrowAuth), getSchedulerSettings(user.accessToken, tenantId).catch(rethrowAuth), getSchedulerStatus(user.accessToken, tenantId).catch(rethrowAuth)]);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      throw error;
+    }
+  }
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -76,6 +110,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     { key: "business", label: t("settings.tab.business") },
     { key: "members", label: t("settings.tab.members") },
     { key: "language", label: t("settings.tab.language") },
+    ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     { key: "security", label: t("settings.tab.security") },
     { key: "privacy", label: t("settings.tab.privacy") },
   ];
@@ -140,6 +175,15 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             <h2 className={pageH2}>{t("settings.language.appearance")}</h2>
             <ThemeChoice initial={theme} label={t("settings.language.appearance")} words={{ system: t("settings.theme.system"), light: t("settings.theme.light"), dark: t("settings.theme.dark") }} />
           </section>
+        ) : null}
+        {section === "agent" ? (
+          <div className="flex flex-col gap-5">
+            {sending ? <SendingForm words={words} settings={sending} save={saveSendingAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+            <QuietHoursCard words={words} />
+            {reminders ? <RemindersForm words={words} settings={reminders} save={saveRemindersAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
+            <SystemSwitchCard words={words} settings={sending} />
+            <SchedulerCard words={words} status={scheduler} now={clock()} />
+          </div>
         ) : null}
         {section === "security" ? (
           <section className={`${surface} flex flex-wrap items-center gap-3`} aria-label={t("settings.tab.security")}>

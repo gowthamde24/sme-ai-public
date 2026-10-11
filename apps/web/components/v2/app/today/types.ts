@@ -59,9 +59,11 @@ export type TodayData = {
   store: ({ state: "ready" } & StoreToday) | { state: "error" } | null;
   /** The share of this week's AI allowance used (0 to 100), for the usage card. Owner and Admin only: null = not asked; `error` = could not be read. */
   week: { percent: number } | "error" | null;
+  /** Whether sending is stopped for the whole system (the operator's kill switch). Owner and Admin only: null = not asked, or could not be read (no banner is drawn for what is not known). */
+  sending: { stopped: boolean } | null;
   /** One promise for the last 24 hours of the outbox, never rejected: the overnight line and "Done while you slept" read it under a Suspense each. null = not asked. */
   digest: Promise<Digest> | null;
 };
-export const NOTHING_TODAY: TodayData = { cards: { waiting: null, money_held_paise: null, orders_open: null }, needs: null, recent: null, team: null, store: null, week: null, digest: null };
+export const NOTHING_TODAY: TodayData = { cards: { waiting: null, money_held_paise: null, orders_open: null }, needs: null, recent: null, team: null, store: null, week: null, sending: null, digest: null };
 /** The words of the screen: the page resolves them in the person's language (server side) and passes this function. */
 export type T = (key: string, vars?: Record<string, string | number>) => string;

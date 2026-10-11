@@ -12,6 +12,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Quotes", "/quotes", "quotes", [true, true, true, false]],
     ["Store visits", "/visits", "visits", [true, true, true, true]],
     ["Orders", "/orders", "orders", [true, true, true, false]],
+    ["Outbox", "/outbox", "outbox", [true, true, true, false]],
     ["Customers", "", "customers", [true, true, true, true]],
   ],
   "Your business": [["Catalogue and prices", "/item-types", "catalogue", [true, true, true, false]]],
@@ -69,6 +70,7 @@ describe("which item a page belongs to", () => {
     expect(at(`/app/tenants/${T}/quotes`)).toBe("quotes");
     expect(at(`/app/tenants/${T}/office`)).toBe("office");
     expect(at(`/app/tenants/${T}/visits`)).toBe("visits");
+    expect(at(`/app/tenants/${T}/outbox`)).toBe("outbox");
     expect(at(`/app/tenants/${T}/integrations`)).toBe("integrations");
     expect(at("/app/security")).toBe("settings");
   });

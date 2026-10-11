@@ -43,7 +43,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role }: { acc
   };
   return (
     <main className={pageMain} lang={lang}>
-      <TodayView data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} />
+      <TodayView data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
     </main>
   );
 }

@@ -9,7 +9,7 @@ export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 export const OWNER_ONLY: readonly Role[] = ["owner"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "visits" | "office" | "integrations" | "settings";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "visits" | "outbox" | "office" | "integrations" | "settings";
 
 export type NavItem = {
   id: string;
@@ -47,6 +47,7 @@ export const NAV: readonly NavGroup[] = [
       { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, roles: WRITERS },
       { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, roles: ALL_ROLES },
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", roles: WRITERS },
+      { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
     ],
   },

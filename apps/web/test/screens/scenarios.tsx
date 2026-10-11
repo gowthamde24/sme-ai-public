@@ -18,6 +18,7 @@ import { parsePlan } from "@/lib/api/plan";
 import { parseAccountSetup } from "@/lib/api/account";
 import { parseAiUsage } from "@/lib/api/ai-usage";
 import { agentsStatus, todayFor } from "./today-fixtures";
+import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
 import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
@@ -172,6 +173,7 @@ add({
     getSlots: () => slotsJson("2026-10-06"),
     listVisits: () => ({ from: "2026-10-06", to: "2026-12-06", items: [parseVisitFixture(visitJson({ source: "assistant", status: "booked", date: "2026-10-08", starts_at: "2026-10-08T05:30:00Z", ends_at: "2026-10-08T06:00:00Z", created_at: "2026-10-06T03:30:00Z" }))] }),
     getAiUsageWeek: () => ({ week_percent: 12, resets_at_week: "2026-10-11T18:30:00Z" }),
+    getOutboxSettings: () => ({ platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3 }),
     // the words of the message held for approval (Owner and Admin), the call request (Owner), and the last 24 hours of the log (everyone but a Viewer; the clock of this test is 2026-10-06 10:00 in India)
     listOutboxApprovals: () => parseOutboxPage(outboxPage([PRICE_JSON])),
     listCallRequests: () => parseCallRequestPage(outboxPage([CALL_JSON])),
@@ -200,6 +202,7 @@ add({
     getSlots: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
     listVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
     getAiUsageWeek: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getOutboxSettings: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
   }),
 });
 add({
@@ -555,6 +558,30 @@ add({
   roles: ["owner"],
   render: async () => (await import("@/app/app/tenants/[tenantId]/visits/page")).default(props({}, {})),
   handlers: (role) => ({ ...base(role), listVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, getSlots: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
+});
+// ---- the outbox and Agent OWL's settings (job AX) ---------------------------------------------------------------------------
+const outboxItems = (status: string) => {
+  const m = (over: Record<string, unknown>) => ({ ...SENT_JSON, ...over });
+  if (status === "needs_approval") return [{ ...PRICE_JSON, created_at: "2026-10-06T03:12:00Z" }];
+  if (status === "queued") return [{ ...QUIET_JSON, scheduled_for: "2026-10-07T03:30:00Z", created_at: "2026-10-06T00:00:00Z" }];
+  if (status === "sent") return [m({ sent_at: "2026-10-06T02:00:00Z", created_at: "2026-10-06T01:59:00Z" })];
+  if (status === "blocked") return [m({ id: "11111111-aaaa-4aaa-8aaa-0000000000e1", status: "blocked", reason: "stopped", reason_text: "The customer asked us to stop. Nothing more is sent.", sent_at: null, created_at: "2026-10-05T20:00:00Z" })];
+  return [];
+};
+const outboxHandlers = (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  listOutboxMessages: (_t: unknown, _i: unknown, opts: unknown) => parseOutboxPage(outboxPage(outboxItems((opts as { status: string }).status))),
+  getOutboxSettings: () => ({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 }),
+  getSchedulerStatus: () => ({ ...STATUS_JSON, last_run_at: "2026-10-06T04:28:00Z", next_run_at: "2026-10-06T04:31:00Z" }),
+});
+add({ id: "outbox", roles: ["owner", "admin", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/outbox/page")).default(props({}, {})), handlers: outboxHandlers });
+add({ id: "outbox-sent", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/outbox/page")).default(props({}, { tab: "sent" })), handlers: outboxHandlers });
+add({ id: "outbox-blocked", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/outbox/page")).default(props({}, { tab: "blocked" })), handlers: outboxHandlers });
+add({
+  id: "settings-agent",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "agent" })),
+  handlers: (role) => ({ ...outboxHandlers(role), getSchedulerSettings: () => SETTINGS_JSON }),
 });
 add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });

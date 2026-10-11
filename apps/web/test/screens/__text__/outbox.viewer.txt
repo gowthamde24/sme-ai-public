@@ -1,0 +1,2 @@
+# Outbox
+The outbox is for the owner, admins and sales.

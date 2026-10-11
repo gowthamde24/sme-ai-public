@@ -1,0 +1,14 @@
+# Outbox
+Every WhatsApp message the shop makes, and what happened to it. Agent OWL last checked 2 min ago · next check 10:01 Automatic sending is off for this business: every message waits for you. [Change it in Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
+{label="Outbox"} [Waiting for you 1 1 waiting for you](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=waiting&range=7d) [Scheduled](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=scheduled&range=7d) [Sent](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent&range=7d) [Blocked](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=blocked&range=7d current=page)
+{role=search}
+<hidden name=tab value=blocked>
+Show
+<select name=range label="Show">
+  options: Today=today | Last 7 days=7d*
+Customer
+<search name=q label="Customer" placeholder="Search by name or city" maxlength=100>
+[button type=submit: Show]
+{role=status}
+-
+[button type=button: Customer said STOPWhatsAppEnglish1:30DEMO Lakshmi Textiles · DemovilleYes, we have silk sarees in stock. We are open from 10 am to 8 pm.]

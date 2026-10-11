@@ -259,3 +259,33 @@ export async function createCallRequest(
   if (!isRecord(json)) return bad("call request result");
   return { request: parseCallRequest(json.request), replayed: json.replayed === true };
 }
+
+/** The business's sending settings (`GET /outbox/settings`, Owner and Admin): the system-wide switch (the operator's, read only here), this business's automatic sending and the per-customer daily limit. */
+export interface OutboxSettings {
+  platform_switch_on: boolean;
+  auto_send_enabled: boolean;
+  per_customer_daily_limit: number;
+}
+
+export function parseOutboxSettings(json: unknown): OutboxSettings {
+  if (!isRecord(json)) return bad("settings");
+  const limit = json.per_customer_daily_limit;
+  if (typeof limit !== "number" || !Number.isInteger(limit) || limit < 1 || limit > 20) return bad("per_customer_daily_limit");
+  return { platform_switch_on: bool(json.platform_switch_on, "platform_switch_on"), auto_send_enabled: bool(json.auto_send_enabled, "auto_send_enabled"), per_customer_daily_limit: limit };
+}
+
+export async function getOutboxSettings(accessToken: string, tenantId: string): Promise<OutboxSettings> {
+  return parseOutboxSettings(await apiRequest(tenantPath(tenantId, "outbox/settings"), accessToken));
+}
+
+/** `PUT /outbox/settings`: the Owner only, with the second factor. Automatic sending is off until the Owner turns it on. */
+export async function putOutboxSettings(accessToken: string, tenantId: string, input: { auto_send_enabled: boolean; per_customer_daily_limit: number }): Promise<OutboxSettings> {
+  return parseOutboxSettings(await apiRequest(tenantPath(tenantId, "outbox/settings"), accessToken, { method: "PUT", body: JSON.stringify({ auto_send_enabled: input.auto_send_enabled, per_customer_daily_limit: input.per_customer_daily_limit }) }));
+}
+
+/** `POST /outbox/dispatch`: hand what is due to the channel now. Owner and Admin. Returns how many went and how many failed. */
+export async function dispatchOutbox(accessToken: string, tenantId: string): Promise<{ sent: number; failed: number }> {
+  const json = await post(tenantPath(tenantId, "outbox/dispatch"), accessToken);
+  if (!isRecord(json) || !Number.isSafeInteger(json.sent) || !Number.isSafeInteger(json.failed)) return bad("dispatch");
+  return { sent: json.sent as number, failed: json.failed as number };
+}

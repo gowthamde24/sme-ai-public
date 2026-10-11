@@ -5098,5 +5098,1552 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.outbox": {
+  "en": "Outbox",
+  "te": "అవుట్‌బాక్స్",
+  "hi": "आउटबॉक्स",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.agent": {
+  "en": "Agent OWL",
+  "te": "Agent OWL",
+  "hi": "Agent OWL",
+  "kn": "Agent OWL",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.sub": {
+  "en": "Every WhatsApp message the shop makes, and what happened to it.",
+  "te": "షాప్ చేసే ప్రతి WhatsApp మెసేజ్, దానికి ఏమైందో ఇక్కడ చూడండి.",
+  "hi": "दुकान का हर WhatsApp मैसेज और उसके साथ क्या हुआ, यहाँ देखें।",
+  "kn": "ಅಂಗಡಿ ಮಾಡುವ ಪ್ರತಿ WhatsApp ಮೆಸೇಜ್ ಮತ್ತು ಅದಕ್ಕೆ ಏನಾಯಿತು ಎಂದು ಇಲ್ಲಿ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.viewer": {
+  "en": "The outbox is for the owner, admins and sales.",
+  "te": "అవుట్‌బాక్స్ ఓనర్, అడ్మిన్, సేల్స్ వాళ్ళకే.",
+  "hi": "आउटबॉक्स ओनर, एडमिन और सेल्स के लिए है।",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್ ಓನರ್, ಅಡ್ಮಿನ್ ಮತ್ತು ಸೇಲ್ಸ್‌ಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.tab.waiting": {
+  "en": "Waiting for you",
+  "te": "మీ కోసం ఎదురుచూస్తున్నవి",
+  "hi": "आपका इंतज़ार कर रहे",
+  "kn": "ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿರುವವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.tab.scheduled": {
+  "en": "Scheduled",
+  "te": "షెడ్యూల్ అయినవి",
+  "hi": "तय समय वाले",
+  "kn": "ಸಮಯ ನಿಗದಿಯಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.tab.sent": {
+  "en": "Sent",
+  "te": "పంపినవి",
+  "hi": "भेजे गए",
+  "kn": "ಕಳುಹಿಸಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.tab.blocked": {
+  "en": "Blocked",
+  "te": "ఆపినవి",
+  "hi": "रोके गए",
+  "kn": "ತಡೆದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.tab.count": {
+  "en": "{n} waiting for you",
+  "te": "{n} మీ కోసం ఎదురుచూస్తున్నాయి",
+  "hi": "{n} आपका इंतज़ार कर रहे हैं",
+  "kn": "{n} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.range": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.range.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.range.7d": {
+  "en": "Last 7 days",
+  "te": "గత 7 రోజులు",
+  "hi": "पिछले 7 दिन",
+  "kn": "ಕಳೆದ 7 ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.search": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.search.placeholder": {
+  "en": "Search by name or city",
+  "te": "పేరు లేదా ఊరుతో వెతకండి",
+  "hi": "नाम या शहर से खोजें",
+  "kn": "ಹೆಸರು ಅಥವಾ ಊರಿನಿಂದ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.filter": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.clear": {
+  "en": "Clear",
+  "te": "తీసేయండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.older": {
+  "en": "Older messages",
+  "te": "పాత మెసేజ్‌లు",
+  "hi": "पुराने मैसेज",
+  "kn": "ಹಳೆಯ ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.channel": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.goes": {
+  "en": "Goes out at {time}",
+  "te": "{time} కి వెళ్తుంది",
+  "hi": "{time} पर जाएगा",
+  "kn": "{time} ಕ್ಕೆ ಹೋಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.why": {
+  "en": "Why: {reason}",
+  "te": "Why: {reason}",
+  "hi": "Why: {reason}",
+  "kn": "Why: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.history": {
+  "en": "History",
+  "te": "చరిత్ర",
+  "hi": "इतिहास",
+  "kn": "ಇತಿಹಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.hist.made.owner": {
+  "en": "Written by a person",
+  "te": "Written by a person",
+  "hi": "Written by a person",
+  "kn": "Written by a person",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.made.assistant": {
+  "en": "Written by Agent OWL",
+  "te": "Written by Agent OWL",
+  "hi": "Written by Agent OWL",
+  "kn": "Written by Agent OWL",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.made.system": {
+  "en": "Made by the shop's own template",
+  "te": "Made by the shop's own template",
+  "hi": "Made by the shop's own template",
+  "kn": "Made by the shop's own template",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.edited": {
+  "en": "Words changed by a person",
+  "te": "Words changed by a person",
+  "hi": "Words changed by a person",
+  "kn": "Words changed by a person",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.approved": {
+  "en": "Approved by a person",
+  "te": "Approved by a person",
+  "hi": "Approved by a person",
+  "kn": "Approved by a person",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.rejected": {
+  "en": "A person said not now",
+  "te": "A person said not now",
+  "hi": "A person said not now",
+  "kn": "A person said not now",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.waiting": {
+  "en": "Waiting for a person: {reason}",
+  "te": "Waiting for a person: {reason}",
+  "hi": "Waiting for a person: {reason}",
+  "kn": "Waiting for a person: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.held": {
+  "en": "Held until it goes out",
+  "te": "Held until it goes out",
+  "hi": "Held until it goes out",
+  "kn": "Held until it goes out",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.sent": {
+  "en": "Sent",
+  "te": "Sent",
+  "hi": "Sent",
+  "kn": "Sent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.failed": {
+  "en": "Not delivered: {reason}",
+  "te": "Not delivered: {reason}",
+  "hi": "Not delivered: {reason}",
+  "kn": "Not delivered: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.hist.blocked": {
+  "en": "Not sent: {reason}",
+  "te": "Not sent: {reason}",
+  "hi": "Not sent: {reason}",
+  "kn": "Not sent: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.disclosure": {
+  "en": "The first message to a customer says it comes from the shop's AI assistant.",
+  "te": "The first message to a customer says it comes from the shop's AI assistant.",
+  "hi": "The first message to a customer says it comes from the shop's AI assistant.",
+  "kn": "The first message to a customer says it comes from the shop's AI assistant.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.flag.money": {
+  "en": "Mentions money",
+  "te": "Mentions money",
+  "hi": "Mentions money",
+  "kn": "Mentions money",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.flag.commitment": {
+  "en": "Makes a promise",
+  "te": "Makes a promise",
+  "hi": "Makes a promise",
+  "kn": "Makes a promise",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.flag.complaint": {
+  "en": "Touches a complaint",
+  "te": "Touches a complaint",
+  "hi": "Touches a complaint",
+  "kn": "Touches a complaint",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.failure.adapter_error": {
+  "en": "WhatsApp could not take it.",
+  "te": "WhatsApp could not take it.",
+  "hi": "WhatsApp could not take it.",
+  "kn": "WhatsApp could not take it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.failure.timeout": {
+  "en": "WhatsApp did not answer in time.",
+  "te": "WhatsApp did not answer in time.",
+  "hi": "WhatsApp did not answer in time.",
+  "kn": "WhatsApp did not answer in time.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.failure.rejected": {
+  "en": "WhatsApp refused it.",
+  "te": "WhatsApp refused it.",
+  "hi": "WhatsApp refused it.",
+  "kn": "WhatsApp refused it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.owneronly": {
+  "en": "Only the owner or an admin decides this.",
+  "te": "దీన్ని ఓనర్ లేదా అడ్మిన్ మాత్రమే నిర్ణయిస్తారు.",
+  "hi": "इसे सिर्फ़ ओनर या एडमिन तय करते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ನಿರ್ಧರಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.openlead": {
+  "en": "Open the lead",
+  "te": "లీడ్ తెరవండి",
+  "hi": "लीड खोलें",
+  "kn": "ಲೀಡ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.dispatch": {
+  "en": "Send what is due now",
+  "te": "ఇప్పుడు పంపాల్సినవి పంపండి",
+  "hi": "जो अभी जाना है, भेजें",
+  "kn": "ಈಗ ಕಳುಹಿಸಬೇಕಾದವನ್ನು ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.dispatch.hint": {
+  "en": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
+  "te": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
+  "hi": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
+  "kn": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dispatch.none": {
+  "en": "Nothing was due.",
+  "te": "Nothing was due.",
+  "hi": "Nothing was due.",
+  "kn": "Nothing was due.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dispatch.sent": {
+  "en": "{sent} sent.",
+  "te": "{sent} sent.",
+  "hi": "{sent} sent.",
+  "kn": "{sent} sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dispatch.some": {
+  "en": "{sent} sent, {failed} failed.",
+  "te": "{sent} sent, {failed} failed.",
+  "hi": "{sent} sent, {failed} failed.",
+  "kn": "{sent} sent, {failed} failed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.err.unavailable": {
+  "en": "Messages are not available right now. Try again shortly.",
+  "te": "ఇప్పుడు మెసేజ్‌లు అందుబాటులో లేవు. కొంత సేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी मैसेज उपलब्ध नहीं हैं। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಈಗ ಮೆಸೇಜ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.empty.waiting": {
+  "en": "Nothing is waiting for you.",
+  "te": "మీ కోసం ఏదీ ఎదురుచూడటం లేదు.",
+  "hi": "आपका इंतज़ार कोई नहीं कर रहा।",
+  "kn": "ನಿಮಗಾಗಿ ಯಾವುದೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.empty.scheduled": {
+  "en": "Nothing is held back for later.",
+  "te": "తర్వాతికి ఆపినవి ఏవీ లేవు.",
+  "hi": "बाद के लिए रोका हुआ कुछ नहीं है।",
+  "kn": "ನಂತರಕ್ಕೆ ಹಿಡಿದಿಟ್ಟದ್ದು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.empty.sent": {
+  "en": "Nothing was sent in this time.",
+  "te": "ఈ సమయంలో ఏదీ పంపలేదు.",
+  "hi": "इस समय में कुछ नहीं भेजा गया।",
+  "kn": "ಈ ಸಮಯದಲ್ಲಿ ಏನನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.empty.blocked": {
+  "en": "Nothing was blocked in this time.",
+  "te": "ఈ సమయంలో ఏదీ ఆపలేదు.",
+  "hi": "इस समय में कुछ नहीं रोका गया।",
+  "kn": "ಈ ಸಮಯದಲ್ಲಿ ಏನನ್ನೂ ತಡೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.autooff": {
+  "en": "Automatic sending is off for this business: every message waits for you.",
+  "te": "Automatic sending is off for this business: every message waits for you.",
+  "hi": "Automatic sending is off for this business: every message waits for you.",
+  "kn": "Automatic sending is off for this business: every message waits for you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.autooff.link": {
+  "en": "Change it in Settings",
+  "te": "సెట్టింగ్స్‌లో మార్చండి",
+  "hi": "सेटिंग्स में बदलें",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.stopped.title": {
+  "en": "Sending is stopped",
+  "te": "Sending is stopped",
+  "hi": "Sending is stopped",
+  "kn": "Sending is stopped",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.stopped.body": {
+  "en": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
+  "te": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
+  "hi": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
+  "kn": "Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.sched.ago": {
+  "en": "Agent OWL last checked {minutes} min ago",
+  "te": "Agent OWL {minutes} నిమిషాల క్రితం చూసింది",
+  "hi": "Agent OWL ने {minutes} मिनट पहले देखा",
+  "kn": "Agent OWL {minutes} ನಿಮಿಷ ಹಿಂದೆ ನೋಡಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.sched.now": {
+  "en": "Agent OWL checked just now",
+  "te": "Agent OWL ఇప్పుడే చూసింది",
+  "hi": "Agent OWL ने अभी देखा",
+  "kn": "Agent OWL ಈಗಷ್ಟೇ ನೋಡಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.sched.next": {
+  "en": "next check {time}",
+  "te": "తరువాతి చెక్ {time}",
+  "hi": "अगली जाँच {time}",
+  "kn": "ಮುಂದಿನ ಪರಿಶೀಲನೆ {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.sched.never": {
+  "en": "Agent OWL has not checked yet.",
+  "te": "Agent OWL ఇంకా చూడలేదు.",
+  "hi": "Agent OWL ने अभी तक नहीं देखा।",
+  "kn": "Agent OWL ಇನ್ನೂ ನೋಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.sched.stale": {
+  "en": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
+  "te": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
+  "hi": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
+  "kn": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.sched.off.system": {
+  "en": "its automatic work is stopped for the system",
+  "te": "దాని ఆటోమేటిక్ పని సిస్టమ్ అంతటా ఆగి ఉంది",
+  "hi": "इसका ऑटोमैटिक काम पूरे सिस्टम में रुका है",
+  "kn": "ಅದರ ಆಟೋಮ್ಯಾಟಿಕ್ ಕೆಲಸ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ನಿಂತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.sched.off.business": {
+  "en": "automatic sending is off for this business",
+  "te": "ఈ బిజినెస్‌కి ఆటోమేటిక్ పంపడం ఆఫ్‌లో ఉంది",
+  "hi": "इस बिज़नेस के लिए ऑटोमैटिक भेजना बंद है",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗೆ ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು ಆಫ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.auto_allowed": {
+  "en": "Sent by Agent OWL on its own",
+  "te": "Agent OWL తానే పంపింది",
+  "hi": "Agent OWL ने खुद भेजा",
+  "kn": "Agent OWL ತಾನೇ ಕಳುಹಿಸಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.quiet_hours": {
+  "en": "Quiet hours",
+  "te": "నిశ్శబ్ద సమయం",
+  "hi": "शांत समय",
+  "kn": "ಶಾಂತ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.owner_approved": {
+  "en": "A person approved it",
+  "te": "ఒకరు ఓకే చేశారు",
+  "hi": "किसी ने OK किया",
+  "kn": "ಒಬ್ಬರು ಓಕೆ ಮಾಡಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.money": {
+  "en": "Mentions a price",
+  "te": "Mentions a price",
+  "hi": "Mentions a price",
+  "kn": "Mentions a price",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.commitment": {
+  "en": "Makes a promise",
+  "te": "Makes a promise",
+  "hi": "Makes a promise",
+  "kn": "Makes a promise",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.complaint": {
+  "en": "Touches a complaint",
+  "te": "Touches a complaint",
+  "hi": "Touches a complaint",
+  "kn": "Touches a complaint",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.model_flagged": {
+  "en": "Agent OWL was careful",
+  "te": "Agent OWL జాగ్రత్త పడింది",
+  "hi": "Agent OWL ने सावधानी रखी",
+  "kn": "Agent OWL ಎಚ್ಚರಿಕೆ ವಹಿಸಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.uncertain": {
+  "en": "Words not checked yet",
+  "te": "మాటలు ఇంకా చూడలేదు",
+  "hi": "शब्द अभी जाँचे नहीं गए",
+  "kn": "ಮಾತುಗಳನ್ನು ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.category_other": {
+  "en": "Not a routine message",
+  "te": "మామూలు మెసేజ్ కాదు",
+  "hi": "रोज़ का मैसेज नहीं है",
+  "kn": "ಸಾಮಾನ್ಯ ಮೆಸೇಜ್ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.no_inbound_window": {
+  "en": "Customer has not written lately",
+  "te": "కస్టమర్ ఈ మధ్య రాయలేదు",
+  "hi": "ग्राहक ने हाल में नहीं लिखा",
+  "kn": "ಗ್ರಾಹಕರು ಇತ್ತೀಚೆಗೆ ಬರೆದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.auto_off": {
+  "en": "Automatic sending is off",
+  "te": "ఆటోమేటిక్ పంపడం ఆఫ్‌లో ఉంది",
+  "hi": "ऑटोमैटिक भेजना बंद है",
+  "kn": "ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು ಆಫ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.switch_off": {
+  "en": "Sending is stopped",
+  "te": "పంపడం ఆగి ఉంది",
+  "hi": "भेजना रुका है",
+  "kn": "ಕಳುಹಿಸುವುದು ನಿಂತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.no_contact": {
+  "en": "No contact on this lead",
+  "te": "ఈ లీడ్‌కి కాంటాక్ట్ లేదు",
+  "hi": "इस लीड में कॉन्टैक्ट नहीं है",
+  "kn": "ಈ ಲೀಡ್‌ಗೆ ಕಾಂಟ್ಯಾಕ್ಟ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.no_phone": {
+  "en": "No phone number",
+  "te": "ఫోన్ నంబర్ లేదు",
+  "hi": "फ़ोन नंबर नहीं है",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.stopped": {
+  "en": "Customer said STOP",
+  "te": "Customer said STOP",
+  "hi": "Customer said STOP",
+  "kn": "Customer said STOP",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.erased": {
+  "en": "Customer's record erased",
+  "te": "Customer's record erased",
+  "hi": "Customer's record erased",
+  "kn": "Customer's record erased",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.no_opt_in": {
+  "en": "No WhatsApp opt-in",
+  "te": "No WhatsApp opt-in",
+  "hi": "No WhatsApp opt-in",
+  "kn": "No WhatsApp opt-in",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.no_key": {
+  "en": "No stop-list check possible",
+  "te": "No stop-list check possible",
+  "hi": "No stop-list check possible",
+  "kn": "No stop-list check possible",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.reason.daily_limit": {
+  "en": "Daily limit reached",
+  "te": "రోజు లిమిట్ అయిపోయింది",
+  "hi": "रोज़ की सीमा पूरी हो गई",
+  "kn": "ದಿನದ ಮಿತಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.owner_rejected": {
+  "en": "A person said not now",
+  "te": "ఒకరు ఇప్పుడు వద్దన్నారు",
+  "hi": "किसी ने अभी नहीं कहा",
+  "kn": "ಒಬ್ಬರು ಈಗ ಬೇಡ ಎಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.reason.send_failed": {
+  "en": "WhatsApp did not take it",
+  "te": "WhatsApp తీసుకోలేదు",
+  "hi": "WhatsApp ने नहीं लिया",
+  "kn": "WhatsApp ತೆಗೆದುಕೊಳ್ಳಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sending.title": {
+  "en": "Automatic sending",
+  "te": "Automatic sending",
+  "hi": "Automatic sending",
+  "kn": "Automatic sending",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sending.switch": {
+  "en": "Agent OWL may send routine replies by itself",
+  "te": "Agent OWL may send routine replies by itself",
+  "hi": "Agent OWL may send routine replies by itself",
+  "kn": "Agent OWL may send routine replies by itself",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sending.what": {
+  "en": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "te": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "hi": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "kn": "Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sending.on": {
+  "en": "On: routine replies go out by themselves, inside the shop's rules and outside quiet hours.",
+  "te": "On: routine replies go out by themselves, inside the shop's rules and outside quiet hours.",
+  "hi": "On: routine replies go out by themselves, inside the shop's rules and outside quiet hours.",
+  "kn": "On: routine replies go out by themselves, inside the shop's rules and outside quiet hours.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sending.off": {
+  "en": "Off: every message waits for you.",
+  "te": "Off: every message waits for you.",
+  "hi": "Off: every message waits for you.",
+  "kn": "Off: every message waits for you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.limit": {
+  "en": "Messages per customer per day",
+  "te": "ఒక కస్టమర్‌కి రోజుకి మెసేజ్‌లు",
+  "hi": "एक ग्राहक को रोज़ के मैसेज",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.limit.hint": {
+  "en": "Between 1 and 20. Most shops keep it at 3.",
+  "te": "1 నుండి 20 మధ్య. చాలా షాపులు 3 ఉంచుతాయి.",
+  "hi": "1 से 20 के बीच। ज़्यादातर दुकानें 3 रखती हैं।",
+  "kn": "1 ರಿಂದ 20 ರ ನಡುವೆ. ಹೆಚ್ಚಿನ ಅಂಗಡಿಗಳು 3 ಇಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.mfa": {
+  "en": "Saving needs your authenticator app.",
+  "te": "Saving needs your authenticator app.",
+  "hi": "Saving needs your authenticator app.",
+  "kn": "Saving needs your authenticator app.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.saved.on": {
+  "en": "Saved. Automatic sending is on.",
+  "te": "Saved. Automatic sending is on.",
+  "hi": "Saved. Automatic sending is on.",
+  "kn": "Saved. Automatic sending is on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.saved.off": {
+  "en": "Saved. Automatic sending is off: every message waits for you.",
+  "te": "Saved. Automatic sending is off: every message waits for you.",
+  "hi": "Saved. Automatic sending is off: every message waits for you.",
+  "kn": "Saved. Automatic sending is off: every message waits for you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.saved.reminders": {
+  "en": "Saved. Messages that are already waiting are not changed.",
+  "te": "Saved. Messages that are already waiting are not changed.",
+  "hi": "Saved. Messages that are already waiting are not changed.",
+  "kn": "Saved. Messages that are already waiting are not changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.quiet.title": {
+  "en": "Quiet hours",
+  "te": "నిశ్శబ్ద సమయం",
+  "hi": "शांत समय",
+  "kn": "ಶಾಂತ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.quiet.range": {
+  "en": "21:00 – 09:00",
+  "te": "21:00 – 09:00",
+  "hi": "21:00 – 09:00",
+  "kn": "21:00 – 09:00",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.quiet.note": {
+  "en": "India time. Nothing goes out in these hours; what is due waits until 09:00. You cannot change this yet.",
+  "te": "భారత సమయం. ఈ గంటల్లో ఏదీ వెళ్ళదు; పంపాల్సినవి 09:00 వరకు ఆగుతాయి. దీన్ని ఇంకా మార్చలేరు.",
+  "hi": "भारतीय समय। इन घंटों में कुछ नहीं जाता; जो जाना है वह 09:00 तक रुकता है। इसे अभी बदला नहीं जा सकता।",
+  "kn": "ಭಾರತೀಯ ಸಮಯ. ಈ ಗಂಟೆಗಳಲ್ಲಿ ಏನೂ ಹೋಗುವುದಿಲ್ಲ; ಹೋಗಬೇಕಾದದ್ದು 09:00 ವರೆಗೆ ಕಾಯುತ್ತದೆ. ಇದನ್ನು ಇನ್ನೂ ಬದಲಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.title": {
+  "en": "Visit reminders",
+  "te": "విజిట్ రిమైండర్లు",
+  "hi": "विज़िट रिमाइंडर",
+  "kn": "ಭೇಟಿ ರಿಮೈಂಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.default": {
+  "en": "These are the standard settings. Save your own to replace them.",
+  "te": "ఇవి సాధారణ సెట్టింగ్స్. మీవి సేవ్ చేస్తే ఇవి మారతాయి.",
+  "hi": "ये आम सेटिंग्स हैं। अपनी सेव करेंगे तो ये बदल जाएँगी।",
+  "kn": "ಇವು ಸಾಮಾನ್ಯ ಸೆಟ್ಟಿಂಗ್ಸ್. ನಿಮ್ಮದನ್ನು ಸೇವ್ ಮಾಡಿದರೆ ಇವು ಬದಲಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.note": {
+  "en": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "te": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "hi": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "kn": "Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.rem.evening": {
+  "en": "Remind the evening before",
+  "te": "ముందు రోజు సాయంత్రం గుర్తు చేయండి",
+  "hi": "एक दिन पहले शाम को याद दिलाएँ",
+  "kn": "ಹಿಂದಿನ ದಿನ ಸಂಜೆ ನೆನಪಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.evening.from": {
+  "en": "From",
+  "te": "నుండి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.evening.hint": {
+  "en": "From this hour until 21:00 on the evening before the visit.",
+  "te": "విజిట్ ముందు రోజు సాయంత్రం ఈ గంట నుండి 21:00 వరకు.",
+  "hi": "विज़िट से एक दिन पहले शाम को इस घंटे से 21:00 तक।",
+  "kn": "ಭೇಟಿಯ ಹಿಂದಿನ ದಿನ ಸಂಜೆ ಈ ಗಂಟೆಯಿಂದ 21:00 ವರೆಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.heads": {
+  "en": "Send a heads-up before the visit",
+  "te": "విజిట్ ముందు హెచ్చరిక పంపండి",
+  "hi": "विज़िट से पहले सूचना भेजें",
+  "kn": "ಭೇಟಿಗೆ ಮುಂಚೆ ಸೂಚನೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.heads.minutes": {
+  "en": "How long before",
+  "te": "ఎంత ముందు",
+  "hi": "कितना पहले",
+  "kn": "ಎಷ್ಟು ಮುಂಚೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.rem.heads.hint": {
+  "en": "Never closer than 30 minutes and never in quiet hours.",
+  "te": "30 నిమిషాల కంటే దగ్గరగా కాదు, నిశ్శబ్ద సమయంలో కాదు.",
+  "hi": "30 मिनट से पास नहीं और शांत समय में कभी नहीं।",
+  "kn": "30 ನಿಮಿಷಕ್ಕಿಂತ ಹತ್ತಿರ ಅಲ್ಲ, ಶಾಂತ ಸಮಯದಲ್ಲಿ ಎಂದಿಗೂ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.minutes": {
+  "en": "{n} minutes",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.noshow": {
+  "en": "Mark a visit as “did not come” by itself",
+  "te": "విజిట్ “రాలేదు” అని తానే గుర్తించండి",
+  "hi": "विज़िट को खुद “नहीं आए” मार्क करें",
+  "kn": "ಭೇಟಿಯನ್ನು ತಾನೇ “ಬರಲಿಲ್ಲ” ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.noshow.minutes": {
+  "en": "After the visit time has ended by",
+  "te": "విజిట్ టైమ్ అయ్యాక",
+  "hi": "विज़िट का समय ख़त्म होने के बाद",
+  "kn": "ಭೇಟಿಯ ಸಮಯ ಮುಗಿದ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.noshow.hint": {
+  "en": "Only for a confirmed visit. Off unless you switch it on.",
+  "te": "కన్ఫర్మ్ అయిన విజిట్‌కి మాత్రమే. మీరు ఆన్ చేస్తేనే.",
+  "hi": "सिर्फ़ कन्फ़र्म विज़िट के लिए। आप चालू करें तभी।",
+  "kn": "ಕನ್ಫರ್ಮ್ ಆದ ಭೇಟಿಗೆ ಮಾತ್ರ. ನೀವು ಆನ್ ಮಾಡಿದರೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.system.title": {
+  "en": "System-wide sending switch",
+  "te": "సిస్టమ్ అంతటా పంపే స్విచ్",
+  "hi": "पूरे सिस्टम का भेजने का स्विच",
+  "kn": "ಸಿಸ್ಟಮ್‌ನ ಕಳುಹಿಸುವ ಸ್ವಿಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.system.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.system.off": {
+  "en": "Stopped",
+  "te": "ఆగింది",
+  "hi": "रुका है",
+  "kn": "ನಿಂತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.system.on.note": {
+  "en": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
+  "te": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
+  "hi": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
+  "kn": "Sending is allowed for the whole system. The operator owns this switch; you can only see it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.system.off.note": {
+  "en": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
+  "te": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
+  "hi": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
+  "kn": "Sending is stopped for the whole system by the operator. Nothing goes out and everything waits.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sched.title": {
+  "en": "Agent OWL's checks",
+  "te": "Agent OWL చెక్‌లు",
+  "hi": "Agent OWL की जाँच",
+  "kn": "Agent OWL ಪರಿಶೀಲನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.state": {
+  "en": "State",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.active": {
+  "en": "Working for this business",
+  "te": "ఈ బిజినెస్ కోసం పని చేస్తోంది",
+  "hi": "इस बिज़नेस के लिए काम कर रहा है",
+  "kn": "ಈ ಬಿಸಿನೆಸ್‌ಗಾಗಿ ಕೆಲಸ ಮಾಡುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.off.business": {
+  "en": "Idle: automatic sending is off",
+  "te": "ఖాళీగా ఉంది: ఆటోమేటిక్ పంపడం ఆఫ్",
+  "hi": "खाली: ऑटोमैटिक भेजना बंद है",
+  "kn": "ಖಾಲಿ: ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.off.system": {
+  "en": "Idle: sending is stopped for the system",
+  "te": "ఖాళీగా ఉంది: సిస్టమ్ అంతటా పంపడం ఆగింది",
+  "hi": "खाली: पूरे सिस्टम में भेजना रुका है",
+  "kn": "ಖಾಲಿ: ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಕಳುಹಿಸುವುದು ನಿಂತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.last": {
+  "en": "Last checked",
+  "te": "చివరి చెక్",
+  "hi": "आख़िरी जाँच",
+  "kn": "ಕೊನೆಯ ಪರಿಶೀಲನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.never": {
+  "en": "Never",
+  "te": "ఎప్పుడూ లేదు",
+  "hi": "कभी नहीं",
+  "kn": "ಎಂದಿಗೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.next": {
+  "en": "Next check",
+  "te": "తరువాతి చెక్",
+  "hi": "अगली जाँच",
+  "kn": "ಮುಂದಿನ ಪರಿಶೀಲನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.activity": {
+  "en": "Last did something",
+  "te": "చివరిగా పని చేసింది",
+  "hi": "आख़िरी बार काम किया",
+  "kn": "ಕೊನೆಯ ಬಾರಿ ಕೆಲಸ ಮಾಡಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.count.sent": {
+  "en": "{n} sent",
+  "te": "{n} sent",
+  "hi": "{n} sent",
+  "kn": "{n} sent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sched.count.reminders": {
+  "en": "{n} reminders",
+  "te": "{n} రిమైండర్లు",
+  "hi": "{n} रिमाइंडर",
+  "kn": "{n} ರಿಮೈಂಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.count.no_shows": {
+  "en": "{n} marked did not come",
+  "te": "{n} రాలేదని గుర్తించాను",
+  "hi": "{n} को नहीं आए मार्क किया",
+  "kn": "{n} ಬರಲಿಲ್ಲ ಎಂದು ಗುರುತಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.count.failed": {
+  "en": "{n} failed",
+  "te": "{n} failed",
+  "hi": "{n} failed",
+  "kn": "{n} failed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.sched.count.errors": {
+  "en": "{n} errors",
+  "te": "{n} లోపాలు",
+  "hi": "{n} गड़बड़ियाँ",
+  "kn": "{n} ದೋಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.err.owner": {
+  "en": "Only the owner can change this.",
+  "te": "దీన్ని ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ ओनर बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.err.invalid": {
+  "en": "Something was not accepted. Check the numbers.",
+  "te": "ఏదో అంగీకరించలేదు. సంఖ్యలు చూడండి.",
+  "hi": "कुछ स्वीकार नहीं हुआ। संख्याएँ देखें।",
+  "kn": "ಏನೋ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ. ಸಂಖ್ಯೆಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.err.unavailable": {
+  "en": "This is not available right now. Try again shortly.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు. కొంత సేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह अभी उपलब्ध नहीं है। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.justnow": {
+  "en": "Just now",
+  "te": "ఇప్పుడే",
+  "hi": "अभी-अभी",
+  "kn": "ಈಗಷ್ಟೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.minago": {
+  "en": "{minutes} min ago",
+  "te": "{minutes} నిమిషాల క్రితం",
+  "hi": "{minutes} मिनट पहले",
+  "kn": "{minutes} ನಿಮಿಷ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
