@@ -77,14 +77,9 @@ Bigger is better at tools and at Telugu, but even the best local model of this s
 
 ## Speech
 
-Put the samples in a folder OUTSIDE the repository (the command refuses one inside it): `~/Desktop/voice-samples/order1.wav`, `order1.truth.txt` (what was actually said, typed by you), and optionally `order1.txt` (what Chrome's
-speech recognition produced for it, pasted). `.wav` and `.m4a` only; at most 40 files, 25 MB each.
+See `docs/runbooks/voice-local.md` for the voice route and the full bake-off (Sarvam, Bhashini, Google, an AI4Bharat model, Chrome; word and character error, time, price, per language; text-to-speech samples to listen to). In short:
 
 ```
 read -rs "SARVAM_API_KEY?Sarvam key: " && export SARVAM_API_KEY
-make stt-bakeoff DIR=~/Desktop/voice-samples
+make stt-bakeoff                      # reads ~/Desktop/voice-samples, writes ~/Desktop/v2-overnight/voice-bakeoff.md
 ```
-
-Optional: `STT_LANGUAGE=te-IN` (else Sarvam detects the language), `SARVAM_STT_MODEL=saaras:v3` (keyterms need the default `saaras:v4`), and for Bhashini `BHASHINI_API_KEY` + `BHASHINI_ASR_SERVICE_ID`. The product words of the demo's price list
-(else its item types) are sent as keyterms, at most 50. Cost: Sarvam bills by audio length, so ask for a handful of short samples first (the command prints their total length). The Bhashini request follows the community
-description of the Dhruva pipeline and has **not** been verified against a live account. The report (what was said, what was heard, the word error rate per file and per engine) is written INTO the folder, never into the repository.

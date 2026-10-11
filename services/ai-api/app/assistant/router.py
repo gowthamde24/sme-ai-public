@@ -189,6 +189,92 @@ def wants_visits(text: str) -> bool:
     return bool(_VISIT_LATIN.search(t)) or _has_any(t, _INDIAN_VISIT)
 
 
+# ---------------------------------------------------------------------------------------------- the safety net (job BD)
+# WEAK signals: words that make a hidden group POSSIBLY useful without being a trigger on their own. If the model reaches for a tool that was not offered, or declines, and the question
+# (or the chat so far) carries a weak signal for that group, the runner offers every tool once and logs the miss, so the word lists above can be improved. A question with no weak signal
+# gets no second chance: the refusal stands.
+_WEAK_CATALOGUE_LATIN = _latin(
+    (
+        "saree",
+        "sari",
+        "silk",
+        "pic$",
+        "pics$",
+        "photo",
+        "picture",
+        "image",
+        "design",
+        "colour",
+        "color",
+        "stock",
+    )
+)
+_WEAK_CATALOGUE_INDIAN = (
+    "చీర", "ఫోటో", "रंग", "साड़ी", "साडी", "फोटो", "ಸೀರೆ", "ಫೋಟೋ", "புடவை", "சேலை", "புகைப்பட",
+)  # fmt: skip
+# nouns only: a verb such as "send" or "show" is in too many questions that must simply be refused (send the quote, show the orders)
+_WEAK_VISIT_LATIN = _latin(
+    (
+        "visit",
+        "appoint",
+        "slot",
+        "tomorrow",
+        "next week",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
+        "sunday",
+        "o'clock",
+    )
+)
+_TIME_OF_DAY = re.compile(r"\b\d{1,2}(?::\d{2})?\s?(?:am|pm)\b")
+_WEAK_VISIT_INDIAN = (
+    "రేపు", "సందర్శన",  # Telugu: tomorrow, visit
+    "कल", "ನಾಳೆ", "ಭೇಟಿ", "நாளை", "சந்தி", "வருகை", "मुलाकात",
+)  # fmt: skip
+
+
+def _weak(group: str, text: str) -> bool:
+    t = _normal(text)
+    if group == "catalogue":
+        return bool(_WEAK_CATALOGUE_LATIN.search(t)) or _has_any(t, _WEAK_CATALOGUE_INDIAN)
+    return (
+        bool(_WEAK_VISIT_LATIN.search(t))
+        or bool(_TIME_OF_DAY.search(t))
+        or _has_any(t, _WEAK_VISIT_INDIAN)
+    )
+
+
+def group_of(tool_name: str) -> str | None:
+    """The hidden group a tool belongs to (None for a core tool or an unknown name)."""
+    if tool_name in CATALOGUE_TOOLS:
+        return "catalogue"
+    if tool_name in VISIT_TOOLS:
+        return "visits"
+    return None
+
+
+def could_need(group: str, question: str, history: Sequence[Mapping[str, object]] = ()) -> bool:
+    """Does the question, or the chat it continues, carry a weak signal for this group of tools?"""
+    return any(_weak(group, t) for t in [question, *(str(h.get("body") or "") for h in history)])
+
+
+def missed_group(
+    offered: frozenset[str], question: str, history: Sequence[Mapping[str, object]] = ()
+) -> str | None:
+    """The first group NOT offered that the question could need (catalogue, then visits), else None."""
+    for group, tools in (("catalogue", CATALOGUE_TOOLS), ("visits", VISIT_TOOLS)):
+        if not tools <= offered and could_need(group, question, history):
+            return group
+    return None
+
+
+ALL_TOOLS: frozenset[str] = CORE | CATALOGUE_TOOLS | VISIT_TOOLS
+
+
 def offered_tools(question: str, history: Sequence[Mapping[str, object]] = ()) -> frozenset[str]:
     """The names of the tools to offer for this question, given the last lines of the chat it continues (a follow-up such as "yes, send them" belongs to the line before). Same input, same answer."""
     texts = [question, *(str(h.get("body") or "") for h in history)]
@@ -201,9 +287,13 @@ def offered_tools(question: str, history: Sequence[Mapping[str, object]] = ()) -
 
 
 __all__ = [
+    "ALL_TOOLS",
     "CATALOGUE_TOOLS",
     "CORE",
     "VISIT_TOOLS",
+    "could_need",
+    "group_of",
+    "missed_group",
     "offered_tools",
     "wants_catalogue",
     "wants_visits",

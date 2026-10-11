@@ -311,7 +311,7 @@ def run_the_case(
     ), (
         # job AY CI fix: say WHY a run failed (the code the run recorded) and what the owner was shown
         operator_sql.sql(
-            f"select status || ' / ' || coalesce(error_code, '-') from public.agent_runs where id = '{run}'"
+            f"select status || ' / ' || coalesce(error_code::text, '-') from public.agent_runs where id = '{run}'"
         ),
         text,
     )

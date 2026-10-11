@@ -34,6 +34,7 @@ from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
+from app.voice.interface import VoiceStack
 
 logger = logging.getLogger("app.auth")
 
@@ -64,6 +65,7 @@ class Runtime:
     catalogue: CatalogueRepository | None = None
     catalogue_storage: StorageClient | None = None
     lead_search: LeadSearchRepository | None = None
+    voice: VoiceStack | None = None
 
 
 @dataclass(frozen=True)

@@ -52,6 +52,20 @@ def resolve_until(today_repo: Any, token: str, tenant_id: uuid.UUID | None) -> d
     return until or next_india_midnight()
 
 
+def paused_until_or_none(
+    today_repo: Any, token: str, tenant_id: uuid.UUID | None
+) -> datetime | None:
+    """The time the AI is back if the allowance is used up NOW, else None. A read that fails is 'not paused' (the cost reservation enforces the cap anyway, before any model call)."""
+    try:
+        until = (
+            _parse(today_repo.paused_until(token, tenant_id)) if today_repo and tenant_id else None
+        )
+    except Exception as exc:
+        logger.warning("paused_until read failed: %s", exc.__class__.__name__)
+        return None
+    return until if until is not None and until > datetime.now(UTC) else None
+
+
 def paused_error(until: datetime) -> ApiError:
     return ApiError(
         429,

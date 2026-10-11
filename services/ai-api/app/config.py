@@ -96,6 +96,22 @@ class Settings(BaseSettings):
     scheduler_email: str | None = None
     scheduler_password: SecretStr | None = None
     scheduler_interval_seconds: int = 60
+    # Job BD (ADR 0071): voice. OFF unless a provider is named: VOICE_STT_PROVIDER and
+    # VOICE_TTS_PROVIDER = off | fake | sarvam | bhashini | google | ai4bharat. Each provider
+    # needs its own key(s) from the environment only (never logged, never returned, never in
+    # code). Sarvam's key is SARVAM_API_KEY (above).
+    voice_stt_provider: str = "off"
+    voice_tts_provider: str = "off"
+    sarvam_stt_model: str = "saaras:v4"
+    sarvam_tts_model: str = "bulbul:v3"
+    sarvam_tts_speaker: str | None = None
+    bhashini_api_key: SecretStr | None = None
+    bhashini_asr_service_id: str | None = None
+    bhashini_tts_service_id: str | None = None
+    google_api_key: SecretStr | None = None
+    ai4bharat_stt_url: str | None = None
+    ai4bharat_tts_url: str | None = None
+    ai4bharat_token: SecretStr | None = None
     agents_max_workers: int = 2
     agents_max_queue: int = 8
     # The Research Agent (T007) reads web pages. Until a real fetcher and a real model are approved

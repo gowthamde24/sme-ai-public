@@ -137,7 +137,9 @@ class AssistantRunner:
         ctx: Ctx,
         now: Callable[[], datetime] | None = None,
         delimiter: str | None = None,
+        on_reply: Callable[[str, str], None] | None = None,
     ) -> None:
+        self._on_reply = on_reply  # job BD: the voice route speaks the finished answer here, while the run is still open (so it can be charged to it)
         self._db, self._router, self._ctx = db, as_router(llm), ctx
         self._now = now or (lambda: datetime.now(UTC))
         self._delimiter = delimiter or secrets.token_hex(8)
@@ -166,6 +168,9 @@ class AssistantRunner:
             actions = 0
             # job BB: the tools offered are decided ONCE per question from the question and the lines before it (a deterministic router, no model call). A call to a tool that was not offered is refused.
             offered = router.offered_tools(question, history)
+            widened = (
+                False  # job BD, the safety net: at most ONE widening per question, to every tool
+            )
             for turn in range(1, MAX_TURNS + 1):
                 turns = turn
                 self._guard()
@@ -180,6 +185,7 @@ class AssistantRunner:
                     today=self._now(),
                     max_output_tokens=MAX_OUTPUT_TOKENS,
                     offered=offered,
+                    widened=widened,
                 )
                 llm = self._pick(request)
                 self._db.reserve_cost(
@@ -212,6 +218,16 @@ class AssistantRunner:
                         notes = (prompts.NOTE_TOOL_REFUSED,)
                         continue
                     key = f"t{turn}-c{index}"
+                    hidden = router.group_of(call.name)
+                    if (
+                        hidden is not None
+                        and call.name not in offered
+                        and not widened
+                        and router.could_need(hidden, question, history)
+                    ):
+                        # a ROUTER MISS: the model asked for a tool the router did not offer and the question could need it. Offer everything once; count it in the log (tool and language only)
+                        offered, widened = router.ALL_TOOLS, True
+                        self._note_router_miss(call.name, language)
                     tool = next(
                         (t for t in TOOLS if t.name == call.name and t.name in offered), None
                     )
@@ -259,6 +275,18 @@ class AssistantRunner:
                         notes = (prompts.NOTE_TOOL_REFUSED,)
 
                 verdict = self._judge(response.structured, language, repaired, turn)
+                if isinstance(verdict, Reply) and verdict.kind == "refusal":
+                    # the model says it cannot help. If a hidden group could have helped, ask once more with every tool offered (the one retry; its model call is counted like any other)
+                    missed = (
+                        None
+                        if widened or turn >= MAX_TURNS or results
+                        else router.missed_group(offered, question, history)
+                    )
+                    if missed is not None:
+                        offered, widened = router.ALL_TOOLS, True
+                        self._note_router_miss(f"none:{missed}", language)
+                        notes = (*notes, prompts.NOTE_MORE_TOOLS)
+                        continue
                 if isinstance(verdict, Reply):
                     return self._finish(verdict, message_id, emit, turns)
                 if verdict is not None:
@@ -281,6 +309,13 @@ class AssistantRunner:
         except AgentDbError as exc:
             status, code, shown = self._classify(exc)
             return self._end(status, code, turns, shown)
+
+    def _note_router_miss(self, what: str, language: str) -> None:
+        """The router did not offer a tool the model wanted (or the model declined while a hidden group could have helped). Logged with the tool name (or the group) and the language only, never
+        the question, so the word lists in router.py can be improved from real misses."""
+        logger.warning(
+            "assistant router miss: tool=%s language=%s run=%s", what, language, self._ctx.run_id
+        )
 
     def _note_fallback(self, turns: int, repaired: set[str]) -> None:
         """A run that ends in the fixed reply says WHY in the log: how many turns it used and which repairs were asked for (closed words only; no text of the answer)."""
@@ -436,6 +471,11 @@ class AssistantRunner:
             emit("source", {"type": "source", **source.model_dump(mode="json")})
         for draft in reply.drafts:
             emit("draft", {"type": "draft", **draft.model_dump(mode="json")})
+        if self._on_reply is not None:
+            try:
+                self._on_reply(reply.text, reply.language)
+            except Exception as exc:  # a hook must never break the run: only its class is kept
+                logger.warning("assistant reply hook failed: %s", exc.__class__.__name__)
         try:
             self._db.finish(status, code)
         except AgentDbError as exc:

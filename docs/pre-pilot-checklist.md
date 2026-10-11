@@ -396,3 +396,13 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | [ ] | **The gloss is personal data** (it can name the customer): confirm the erasure drill covers it in the hosted project (it is in the registry for all four scopes). |
 | [ ] | **Quiet-hours range is a product decision** (start 19 to 23, end 7 to 10). A start at 19:00 with the evening reminder hour at 20 gives no evening reminder; the settings screen should say so. |
 | [ ] | **The router's word lists are English, Telugu, Hindi, Kannada and Tamil only** and have been written without a native reader; a question phrased without a trigger word does not get the catalogue or visit tools. Have a native speaker of each language read the lists in `app/assistant/router.py` and add what a shopkeeper really says. |
+
+## Voice (ADR 0071, job BD)
+| Phase | Item |
+|---|---|
+| [ ] | **Choose the speech engine from the bake-off on the family's voices** (`make stt-bakeoff`), then open ONE account yourself; no provider is on today. |
+| [ ] | **A recording goes to a third party when a provider is on.** Read that provider's retention terms (the job BD report lists them); for Sarvam set zero retention in the dashboard. Decide what the customer-facing privacy notice says about voice. |
+| [ ] | **Accounting rates are deliberately high** (Rs 0.60 a minute, Rs 4 per 1,000 characters) so the allowance is never undercounted; revisit once a provider is chosen. The assistant run's cost budget moved from Rs 1 to Rs 3 for the same reason. |
+| [ ] | **A voice replay (same message id and conversation) calls the speech engine again without charging the ledger** (the run does not exist yet at that point). Rare (a retry); the allowance check still runs first. |
+| [ ] | **Bhashini text to speech and the AI4Bharat adapters are untested against a live service.** |
+| [ ] | **The router's safety net word lists** (weak signals) are written without native readers, like the trigger lists. Read the `assistant router miss` log lines after a week of use and add what is missing. |

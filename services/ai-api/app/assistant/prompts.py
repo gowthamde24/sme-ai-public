@@ -118,6 +118,7 @@ NOTE_REPAIR_SOURCES = "Your last answer cited no tool result. Cite the handles i
 NOTE_REPAIR_MONEY = "Your last answer contained an amount no tool returned. Use only amounts exactly as the tools gave them."
 NOTE_REPAIR_SHAPE = "Your last reply was not in the required shape. Use the `reply` tool."
 NOTE_REPAIR_COMPLETE = "Your last answer left out some of the things that are waiting for the owner. Name every one of them and cite each."
+NOTE_MORE_TOOLS = "More tools are available now (the catalogue and the store visits). If one of them can do what was asked, use it; otherwise answer as before."
 NOTE_TOOL_REFUSED = "A tool call was refused (an unknown tool, or arguments that are not allowed). Do not retry it; tell the owner you cannot do that."
 FIXED_NOTES = frozenset(
     {
@@ -127,6 +128,7 @@ FIXED_NOTES = frozenset(
         NOTE_REPAIR_SHAPE,
         NOTE_REPAIR_COMPLETE,
         NOTE_TOOL_REFUSED,
+        NOTE_MORE_TOOLS,
     }
 )
 
@@ -174,8 +176,9 @@ def build_request(
     today: datetime,
     max_output_tokens: int,
     offered: frozenset[str] | None = None,
+    widened: bool = False,
 ) -> LlmRequest:
-    """`offered`: the names of the tools to describe to the model (job BB: the router decides once per question; None = every tool, for tests)."""
+    """`offered`: the names of the tools to describe to the model (job BB: the router decides once per question; None = every tool, for tests). `widened`: the safety net (job BD) has offered every tool."""
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
         raise ValueError("the delimiter must be a random hex string")
     for note in notes:
@@ -202,7 +205,8 @@ def build_request(
     blocks.extend(results)
     return LlmRequest(
         blocks=tuple(blocks),
-        tools=tool_specs(offered) if turn < FINAL_TURN else (),
+        # after the router's safety net widened the offer, the tools are described again even on an answering turn (it is the one retry)
+        tools=tool_specs(offered) if turn < FINAL_TURN or widened else (),
         max_output_tokens=max_output_tokens,
         task_class=TASK_CLASS,
         final_result=FINAL_REPLY,

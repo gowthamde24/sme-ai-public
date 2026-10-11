@@ -100,9 +100,10 @@ assistant-smoke:
 model-bakeoff:
 	cd $(API) && MODELS="$(MODELS)" LIMIT="$(LIMIT)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/model_bakeoff.py
 
-# OPT-IN, NEVER part of make check (job AK / K3): which speech-to-text engine hears your shop talk best. DIR is a folder of .wav/.m4a samples OUTSIDE the repository (refused if inside), with <name>.truth.txt
-# (what was said) and optionally <name>.txt (Chrome's result). Engines: Sarvam Saaras (SARVAM_API_KEY), Bhashini (BHASHINI_API_KEY + BHASHINI_ASR_SERVICE_ID), Chrome. Prints the word error rate; the report is
-# written INTO the folder. See docs/runbooks/model-bakeoff.md.
+# OPT-IN, NEVER part of make check (job AK / K3, extended by job BD): which speech engine hears your shop talk best. DIR is a folder of .wav/.m4a samples OUTSIDE the repository (default ~/Desktop/voice-samples; refused if
+# inside), named <language>-<nn>.m4a (te, hi, kn, en) with <name>.truth.txt (what was said) and optionally <name>.txt (Chrome's result). Engines (each only by its own variables): Sarvam (SARVAM_API_KEY), Bhashini
+# (BHASHINI_API_KEY + BHASHINI_ASR_SERVICE_ID), Google (GOOGLE_API_KEY), an AI4Bharat model (AI4BHARAT_STT_URL), Chrome. Word and character error, time and price per language; text-to-speech samples to listen to. The report is
+# written to ~/Desktop/v2-overnight/voice-bakeoff.md (REPORT=...), never into the repository. See docs/runbooks/voice-local.md.
 stt-bakeoff:
 	cd $(API) && DIR="$(DIR)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/stt_bakeoff.py
 
