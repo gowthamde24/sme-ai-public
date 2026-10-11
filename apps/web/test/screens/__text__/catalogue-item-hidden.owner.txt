@@ -1,0 +1,22 @@
+[← All sarees](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+# DEMO Old Banarasi (hidden)
+Hidden from customers ₹25,000 to ₹50,000 [Edit this saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/1f2e3d4c-5b6a-4798-8695-a4b3c2d1e003/edit)
+{role=note} This saree is hidden. Customers and sales staff do not see it, and it cannot be sent.
+{label="Photos of DEMO Old Banarasi (hidden)"}
+{role=group label="Photo 1 of 1"} [image: DEMO Old Banarasi (hidden), photo 1]
+Photo 1 of 1
+Fabric
+Banarasi
+Colours
+Maroon, Gold
+Zari
+Rich zari
+Border
+Temple border in gold zari
+Occasions
+Festival, Wedding
+Stock
+In stock
+Price range
+₹25,000 to ₹50,000
+Show this saree to customers before you send it. [Edit this saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/1f2e3d4c-5b6a-4798-8695-a4b3c2d1e003/edit)

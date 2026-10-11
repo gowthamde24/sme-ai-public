@@ -7,7 +7,7 @@ Messages go through the outbox: the shop's send rules decide if a message goes n
 [button type=button: Contact on WhatsApp]
 [button type=button: Request a call]
 <checkbox label="Keep a record of this" checked described-by="Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.">
-Keep a record of this Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made. [Book a store visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits?lead=33333333-3333-3333-3333-333333333333#book)
+Keep a record of this Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made. [Book a store visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits?lead=33333333-3333-3333-3333-333333333333#book) [Send a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue?lead=33333333-3333-3333-3333-333333333333)
 {label="About this lead"}
 ## About this lead
 Status

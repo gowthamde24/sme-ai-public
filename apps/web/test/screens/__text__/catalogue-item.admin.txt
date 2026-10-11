@@ -1,0 +1,56 @@
+[← All sarees](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+# DEMO Maroon Kanchi pattu
+₹38,500.00 [Edit this saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/c27a36f2-ef14-5f33-b10f-3e03bade04aa/edit)
+{label="Photos of DEMO Maroon Kanchi pattu"}
+{role=group label="Photo 1 of 3"} [image: DEMO Maroon Kanchi pattu, photo 1]
+{role=group label="Photo 2 of 3"} [image: DEMO Maroon Kanchi pattu, photo 2]
+{role=group label="Photo 3 of 3"} [image: DEMO Maroon Kanchi pattu, photo 3]
+[button type=button disabled: Previous photo]
+[button type=button: Next photo]
+Photo 1 of 3
+-
+[button type=button: Show photo 1]
+-
+[button type=button: Show photo 2]
+-
+[button type=button: Show photo 3]
+Fabric
+Kanchi pattu
+Colours
+Maroon, Gold
+Zari
+Rich zari
+Border
+Temple border in gold zari
+Occasions
+Festival, Wedding
+Stock
+In stock
+Price range
+₹25,000 to ₹50,000
+Exact price
+₹38,500.00
+{label="Send to a customer"}
+## Send to a customer
+Choose a customer and check the message. It goes to the outbox, where the shop’s rules decide if it goes now or waits for approval.
+form:
+Customer Find a customer
+<search label="Find a customer" placeholder="Name or last 4 digits" maxlength=60 autocomplete=off>
+[button type=button: Find]
+legend: Photos to send
+- [image: ]
+<checkbox label="DEMO Maroon Kanchi pattu, photo 1" checked>
+- [image: ]
+<checkbox label="DEMO Maroon Kanchi pattu, photo 2" checked>
+- [image: ]
+<checkbox label="DEMO Maroon Kanchi pattu, photo 3" checked>
+Up to 4 photos go in one message.
+Caption
+<textarea label="Caption" maxlength=1000 value="Here is DEMO Maroon Kanchi pattu from our shop. Tell us if you would like to see more." described-by="Write it in the customer’s language. If it mentions a price or makes a promise, it waits for the owner to approve.">
+Write it in the customer’s language. If it mentions a price or makes a promise, it waits for the owner to approve. Language of the message
+<select label="Language of the message">
+  options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta
+Preview [image: DEMO Maroon Kanchi pattu, photo 1] [image: DEMO Maroon Kanchi pattu, photo 2] [image: DEMO Maroon Kanchi pattu, photo 3] Here is DEMO Maroon Kanchi pattu from our shop. Tell us if you would like to see more. This is how the message will look on WhatsApp. Nothing has been sent yet.
+<checkbox label="Keep a record of this" checked described-by="Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.">
+Keep a record of this Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.
+[button type=submit disabled: Send to the outbox]

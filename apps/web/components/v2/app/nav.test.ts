@@ -15,7 +15,10 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Outbox", "/outbox", "outbox", [true, true, true, false]],
     ["Customers", "", "customers", [true, true, true, true]],
   ],
-  "Your business": [["Catalogue and prices", "/item-types", "catalogue", [true, true, true, false]]],
+  "Your business": [
+    ["Catalogue", "/catalogue", "sarees", [true, true, true, true]],
+    ["Prices and products", "/item-types", "catalogue", [true, true, true, false]],
+  ],
   "Your team": [["Office", "/office", "office", [true, true, true, true]]],
   Connect: [["Integrations", "/integrations", "integrations", [true, true, false, false]]],
 };
@@ -37,8 +40,9 @@ describe("the menu table", () => {
     expect(footItems(role).map((i) => i.label)).toEqual(PLAN_FOOT[3][idx] ? ["Settings"] : []);
   });
 
-  it("hides a group with nothing in it (a viewer has no Your business and no Connect, a sales person no Connect)", () => {
-    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Work", "Your team"]);
+  it("hides a group with nothing in it (a viewer has no Connect, a sales person no Connect); every role reads the saree Catalogue, so Your business stays for all", () => {
+    expect(visibleGroups("viewer").map((g) => g.label)).toEqual(["Work", "Your business", "Your team"]);
+    expect(visibleGroups("viewer").find((g) => g.id === "business")?.items.map((i) => i.id)).toEqual(["sarees"]);
     expect(visibleGroups("sales").map((g) => g.label)).toEqual(["Work", "Your business", "Your team"]);
     expect(visibleGroups("owner").map((g) => g.label)).toEqual(["Work", "Your business", "Your team", "Connect"]);
   });
@@ -46,6 +50,11 @@ describe("the menu table", () => {
   it("the phone's tabs are the daily pages (Today, Leads, Quotes, Visits, Office), then More (Orders is in More)", () => {
     expect(barItems("owner").map((i) => i.id)).toEqual(["today", "leads", "quotes", "visits", "office"]);
     expect(barItems("viewer").map((i) => i.id)).toEqual(["today", "leads", "visits", "office"]);
+  });
+
+  it("keeps the saree Catalogue in More on the phone: the bar is full at its five tabs, and these are the tabs for what needs a person today (job BC)", () => {
+    expect(NAV.flatMap((g) => g.items).find((i) => i.id === "sarees")?.bar).toBeUndefined();
+    expect(barItems("owner")).toHaveLength(5);
   });
 
   it("makes addresses inside the workspace", () => {
@@ -86,6 +95,7 @@ describe("which item a page belongs to", () => {
     expect(at(`/app/tenants/${T}/contacts/x/consent`)).toBe("customers");
     expect(at(`/app/tenants/${T}/customers/new`)).toBe("customers");
     for (const p of ["item-types", "price-list", "products/new", "quote-policy"]) expect(at(`/app/tenants/${T}/${p}`), p).toBe("catalogue");
+    for (const p of ["catalogue", "catalogue/new", "catalogue/abc/edit", "catalogue/abc"]) expect(at(`/app/tenants/${T}/${p}`), p).toBe("sarees");
     expect(at(`/app/tenants/${T}/agents`)).toBe("office");
     for (const p of ["privacy", "suppression", "settings"]) expect(at(`/app/tenants/${T}/${p}`), p).toBe("settings");
     expect(at(`/app/tenants/${T}/nothing-here`)).toBeNull();

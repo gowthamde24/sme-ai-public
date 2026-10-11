@@ -7,18 +7,20 @@
  *  - connect-src 'self': the browser talks only to this app. The API and Supabase are called from the server.
  *  - style-src: nonce only in production; development adds 'unsafe-inline' (hot-reload injects un-nonced <style>).
  *  - style-src-attr 'unsafe-inline': React renders `style="..."` attributes; an attribute cannot run code. Style ELEMENTS still need the nonce.
- *  - img-src data: blob: for the authenticator QR code (an SVG data URI) and Next's image placeholders.
+ *  - img-src data: blob: for the authenticator QR code (an SVG data URI) and Next's image placeholders; blob: also shows the photo a person has just picked, before it is uploaded. The catalogue's photos
+ *    (job BC) are signed links into the project's own Storage service, so exactly ONE more origin is allowed for images: the Supabase project's (`imageOrigin`). Never a wildcard, never for scripts,
+ *    styles, frames or connections (the browser still talks only to this app).
  *  - 'unsafe-eval' only in development (React's debugging needs it), never in production.
  *  - upgrade-insecure-requests only in production, so plain-http local development keeps working.
  */
-export function buildCsp(nonce: string, dev: boolean): string {
+export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null = null): string {
   const directives = [
     "default-src 'self'",
     `script-src 'self' 'nonce-${nonce}' 'strict-dynamic'${dev ? " 'unsafe-eval'" : ""}`,
     // development only: Next's hot-reload injects <style> elements without a nonce ('unsafe-inline' is ignored when a nonce is present)
     dev ? "style-src 'self' 'unsafe-inline'" : `style-src 'self' 'nonce-${nonce}'`,
     "style-src-attr 'unsafe-inline'",
-    "img-src 'self' blob: data:",
+    `img-src 'self' blob: data:${imageOrigin ? ` ${imageOrigin}` : ""}`,
     "font-src 'self'",
     `connect-src 'self'${dev ? " ws: wss:" : ""}`,
     "object-src 'none'",
@@ -37,4 +39,18 @@ export function newNonce(): string {
   let binary = "";
   for (const b of bytes) binary += String.fromCharCode(b);
   return btoa(binary);
+}
+
+/**
+ * The origin (scheme, host, port) of the Supabase project, from its public URL, or null if there is none or it is not an http(s) address. Only an origin is ever returned, so nothing from the setting
+ * can add a second source, a path or a wildcard to the policy.
+ */
+export function storageOrigin(url: string | undefined): string | null {
+  if (!url) return null;
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" || u.protocol === "http:" ? u.origin : null;
+  } catch {
+    return null;
+  }
 }

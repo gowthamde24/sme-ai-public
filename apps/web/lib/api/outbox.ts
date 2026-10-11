@@ -1,4 +1,5 @@
 import { ApiContractError, apiRequest } from "./client";
+import { pictureUrl } from "./catalogue";
 import { isCanonicalUuid } from "./crm";
 
 /**
@@ -55,6 +56,14 @@ export interface OutboxMessage {
   decided_at: string | null;
   sent_at: string | null;
   failure_code: "adapter_error" | "timeout" | "rejected" | null;
+  /** The photos the message carries (catalogue sends, job AY), in order; empty for a text message and for an API from before photos. `thumb_url` is a signed link that runs out in ten minutes, or null if it could not be signed. */
+  media: OutboxMedia[];
+}
+
+export interface OutboxMedia {
+  photo_id: string;
+  position: number;
+  thumb_url: string | null;
 }
 
 export interface CallRequest {
@@ -91,6 +100,16 @@ function when(v: unknown, what: string): string {
 }
 const nullableWhen = (v: unknown, what: string): string | null => (v === null ? null : when(v, what));
 
+const MAX_MEDIA = 4;
+function parseMedia(v: unknown): OutboxMedia[] {
+  if (v === undefined || v === null) return [];
+  if (!Array.isArray(v) || v.length > MAX_MEDIA) return bad("media");
+  return v.map((m): OutboxMedia => {
+    if (!isRecord(m) || !Number.isInteger(m.position) || (m.position as number) < 1 || (m.position as number) > MAX_MEDIA) return bad("media item");
+    return { photo_id: uuid(m.photo_id, "photo_id"), position: m.position as number, thumb_url: pictureUrl(m.thumb_url ?? null, "thumb_url") };
+  });
+}
+
 export function parseOutboxMessage(json: unknown): OutboxMessage {
   if (!isRecord(json)) return bad("message");
   if (json.channel !== "whatsapp") return bad("channel");
@@ -119,6 +138,7 @@ export function parseOutboxMessage(json: unknown): OutboxMessage {
     decided_at: nullableWhen(json.decided_at, "decided_at"),
     sent_at: nullableWhen(json.sent_at, "sent_at"),
     failure_code: failure === null ? null : oneOf(["adapter_error", "timeout", "rejected"] as const, failure, "failure_code"),
+    media: parseMedia(json.media),
   };
 }
 
@@ -225,7 +245,7 @@ export async function approveCallRequest(accessToken: string, tenantId: string, 
 export async function submitOutboxMessage(
   accessToken: string,
   tenantId: string,
-  input: { messageId: string; leadId: string; text: string; language: OutboxLanguage; category: OutboxCategory },
+  input: { messageId: string; leadId: string; text: string; language: OutboxLanguage; category: OutboxCategory; photoIds?: readonly string[]; keepRecord?: boolean },
 ): Promise<{ message: OutboxMessage; replayed: boolean }> {
   const json = await post(tenantPath(tenantId, "outbox/messages"), accessToken, {
     message_id: idPath(input.messageId),
@@ -234,6 +254,9 @@ export async function submitOutboxMessage(
     language: input.language,
     category: input.category,
     source: "owner",
+    // photos (up to four catalogue photos, job AY) and the record flag are sent only when used, so a plain text message is the request it always was
+    ...(input.photoIds && input.photoIds.length > 0 ? { photo_ids: input.photoIds.map(idPath) } : {}),
+    ...(input.keepRecord ? { keep_record: true } : {}),
   });
   if (!isRecord(json)) return bad("submit result");
   return { message: parseOutboxMessage(json.message), replayed: json.replayed === true };

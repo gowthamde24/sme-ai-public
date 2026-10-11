@@ -7,8 +7,8 @@ import { KEEP_RECORD_KEY, resetKeepRecordMemory } from "./use-keep-record";
 
 const BOOK = "/app/tenants/T/visits?lead=L#book";
 const TODAY = "/app/tenants/T#needs-you";
-const show = async (actions = fakeContactActions(), noContact = false) => {
-  await act(async () => void render(<ContactLead words={WORDS} actions={actions} bookHref={BOOK} todayHref={TODAY} addCustomerHref="/app/tenants/T/customers/new" noContact={noContact} />));
+const show = async (actions = fakeContactActions(), noContact = false, sareeHref?: string) => {
+  await act(async () => void render(<ContactLead words={WORDS} actions={actions} bookHref={BOOK} sareeHref={sareeHref} todayHref={TODAY} addCustomerHref="/app/tenants/T/customers/new" noContact={noContact} />));
   return actions;
 };
 const click = (name: string | RegExp) => act(async () => fireEvent.click(screen.getByRole("button", { name })));
@@ -20,6 +20,19 @@ beforeEach(() => {
   window.localStorage.clear();
 });
 afterEach(cleanup);
+
+describe("Contact this lead: send a saree (job BC)", () => {
+  it("offers the catalogue with this lead already chosen; without a link it offers nothing; a lead with no contact cannot be sent one", async () => {
+    await show(fakeContactActions(), false, "/app/tenants/T/catalogue?lead=L");
+    expect(screen.getByRole("link", { name: "Send a saree" })).toHaveAttribute("href", "/app/tenants/T/catalogue?lead=L");
+    cleanup();
+    await show();
+    expect(screen.queryByRole("link", { name: "Send a saree" })).toBeNull();
+    cleanup();
+    await show(fakeContactActions(), true, "/app/tenants/T/catalogue?lead=L");
+    expect(screen.queryByRole("link", { name: "Send a saree" })).toBeNull();
+  });
+});
 
 describe("Contact this lead: what is offered", () => {
   it("two ways to reach the lead, a button to book a visit, and the record box ticked", async () => {

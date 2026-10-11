@@ -7,6 +7,7 @@ import * as React from "react";
 
 import type { OutboxMessage } from "@/lib/api/outbox";
 
+import { MessagePhotos } from "../catalogue/MessagePhotos";
 import { OwlSvg } from "../owl/OwlSvg";
 import type { DecisionResult } from "../today/actions-types";
 import { say, type TodayWords } from "../today/today-words";
@@ -94,6 +95,11 @@ function Row({ m, ctx, open, onToggle }: { m: OutboxMessage; ctx: Ctx; open: boo
           {firstLine(text)}
         </span>
       </button>
+      {m.media.length > 0 ? (
+        <div className="px-4 pb-3 md:px-5">
+          <MessagePhotos media={m.media} words={words} size={open ? "md" : "sm"} />
+        </div>
+      ) : null}
       {open ? (
         <div id={bodyId} className="flex flex-col gap-3 border-t border-line p-4 md:p-5">
           {editing ? (

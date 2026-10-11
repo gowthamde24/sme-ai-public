@@ -30,6 +30,21 @@ const base = `/v1/tenants/${TENANT}`;
 
 beforeEach(() => vi.clearAllMocks());
 
+describe("the photos a message carries (job AY/BC)", () => {
+  const P1 = "0f8a927d-1111-4a11-8a11-000000000001";
+  it("reads the thumbnails in order; a message with none (or from an API before photos) has an empty list", () => {
+    expect(parseOutboxMessage(PRICE_JSON).media).toEqual([]);
+    const m = parseOutboxMessage({ ...PRICE_JSON, media: [{ photo_id: P1, position: 1, thumb_url: "https://s.example/a.jpg?token=1" }, { photo_id: P1, position: 2, thumb_url: null }] });
+    expect(m.media.map((x) => [x.position, x.thumb_url])).toEqual([[1, "https://s.example/a.jpg?token=1"], [2, null]]);
+  });
+  it("refuses more than four photos, a bad id, and a link that is not http(s)", () => {
+    const five = Array.from({ length: 5 }, (_, i) => ({ photo_id: P1, position: i + 1, thumb_url: null }));
+    expect(() => parseOutboxMessage({ ...PRICE_JSON, media: five })).toThrow(ApiContractError);
+    expect(() => parseOutboxMessage({ ...PRICE_JSON, media: [{ photo_id: "x", position: 1, thumb_url: null }] })).toThrow(ApiContractError);
+    expect(() => parseOutboxMessage({ ...PRICE_JSON, media: [{ photo_id: P1, position: 1, thumb_url: "javascript:alert(1)" }] })).toThrow(ApiContractError);
+  });
+});
+
 describe("parsing the outbox as the API sends it", () => {
   it("reads every state a message can be in, with the exact words and the closed reason", () => {
     const m = parseOutboxMessage(PRICE_JSON);
@@ -120,6 +135,18 @@ describe("making a message and asking for a call", () => {
     const [path, , init] = apiRequest.mock.calls[0];
     expect(path).toBe(`${base}/outbox/messages`);
     expect(JSON.parse(init.body)).toEqual({ message_id: MSG_PRICE, lead_id: LEAD, text: "Hello, we are open today.", language: "en", category: "info", source: "owner" });
+  });
+  it("sends up to four catalogue photos and the record flag only when they are used (a plain text message is the request it always was)", async () => {
+    apiRequest.mockResolvedValue({ message: { ...PRICE_JSON, status: "queued" }, replayed: false, dispatched: null });
+    const P1 = "0f8a927d-1111-4a11-8a11-000000000001";
+    const P2 = "0f8a927d-1111-4a11-8a11-000000000002";
+    await submitOutboxMessage("tok", TENANT, { messageId: MSG_PRICE, leadId: LEAD, text: "Here is a saree.", language: "en", category: "info", photoIds: [P1, P2], keepRecord: true });
+    expect(JSON.parse(apiRequest.mock.calls[0][2].body)).toEqual({ message_id: MSG_PRICE, lead_id: LEAD, text: "Here is a saree.", language: "en", category: "info", source: "owner", photo_ids: [P1, P2], keep_record: true });
+    apiRequest.mockClear();
+    await submitOutboxMessage("tok", TENANT, { messageId: MSG_PRICE, leadId: LEAD, text: "Hello.", language: "en", category: "info", photoIds: [], keepRecord: false });
+    expect(JSON.parse(apiRequest.mock.calls[0][2].body)).not.toHaveProperty("photo_ids");
+    expect(JSON.parse(apiRequest.mock.calls[0][2].body)).not.toHaveProperty("keep_record");
+    await expect(submitOutboxMessage("tok", TENANT, { messageId: MSG_PRICE, leadId: LEAD, text: "x", language: "en", category: "info", photoIds: ["../x"] })).rejects.toThrow(ApiContractError);
   });
   it("asks for a call with a reason and the words to say", async () => {
     apiRequest.mockResolvedValue({ request: CALL_JSON, replayed: true });

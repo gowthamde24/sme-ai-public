@@ -7,6 +7,7 @@ import { indiaClock } from "../today/time";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
 import { card, field, secondary } from "../visits/styles";
+import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { OutboxList, type OutboxActions } from "./OutboxList";
 import { SendingBanner } from "./SendingBanner";
 import { TABS, type OutboxTab } from "./reasons";
@@ -145,7 +146,9 @@ export function OutboxView(p: OutboxViewProps) {
         </div>
       ) : (
         <>
-          <OutboxList key={`${tab}-${p.range}-${p.q}`} items={p.items} tab={tab} role={role} words={words} lang={p.lang} now={p.now} actions={p.actions} leadBase={`${base}/leads`} />
+          <FreshPhotos seconds={p.items.some((m) => m.media.length > 0) ? 600 : null}>
+            <OutboxList key={`${tab}-${p.range}-${p.q}`} items={p.items} tab={tab} role={role} words={words} lang={p.lang} now={p.now} actions={p.actions} leadBase={`${base}/leads`} />
+          </FreshPhotos>
           {p.more ? (
             <Link href={href({ after: p.more })} className="inline-flex min-h-11 items-center self-start font-semibold text-brand-text hover:underline">
               {say(words, "outbox.older")}

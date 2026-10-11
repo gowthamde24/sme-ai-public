@@ -7,6 +7,8 @@ import * as React from "react";
 
 import { formatINR } from "@/design/format";
 
+import { FreshPhotos } from "../catalogue/FreshPhotos";
+import { MessagePhotos } from "../catalogue/MessagePhotos";
 import { OwlSvg } from "../owl/OwlSvg";
 import { dayShort, todayInIndia } from "../visits/dates";
 import { SlotPicker, type SlotChoice } from "../visits/SlotPicker";
@@ -196,6 +198,11 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
       ) : (
         <>
           <div className="rounded-2xl rounded-bl-sm bg-surface-2 px-4 py-3.5">
+            {m.media.length > 0 ? (
+              <div className="mb-2">
+                <MessagePhotos media={m.media} words={words} size="md" />
+              </div>
+            ) : null}
             <p lang={m.language} className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]">
               {m.text}
             </p>
@@ -388,7 +395,10 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
   const ctx: Ctx = { words, now, role, actions, lang };
+  // the photo links of a catalogue send run out after ten minutes: while a card shows photos, the page reads its data again before they do
+  const hasPhotos = cards?.some((c) => c.type === "outbox" && (c.message?.media.length ?? 0) > 0) === true;
   return (
+    <FreshPhotos seconds={hasPhotos ? 600 : null}>
     <section id="needs-you" aria-labelledby="needs-you-heading" className="flex min-w-0 scroll-mt-24 flex-col gap-3">
       <div className="flex items-center gap-2.5">
         <h2 id="needs-you-heading" className="font-display text-xl font-semibold md:text-2xl">
@@ -430,5 +440,6 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
       )}
       <Toast words={words} />
     </section>
+    </FreshPhotos>
   );
 }
