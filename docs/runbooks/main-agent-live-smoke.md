@@ -1,5 +1,7 @@
 # Runbook: the first live run of the Main agent (`make assistant-smoke`)
 
+> **Which local stack (job BG, [two-local-stacks.md](two-local-stacks.md)).** The make targets and scripts here default to the AGENT stack (`make agent-db-up`; your own API on 8001, web on 3001). The owner runs the same steps on the demo stack with `STACK=owner` (Supabase 54321/54322, API 8000, web 3000). Where this page names `make db-start`, `supabase_db_sme-ai` or port `54322`, that is the owner's stack; the agent stack is `make agent-db-up`, `supabase_db_sme-ai-agent` and `54422`.
+
 Job AJ. OPT-IN: not part of `make check`, and nothing runs it for you. It asks the Main agent five fixed questions on the seeded **demo** workspace, through our own API on the **local**
 stack, with the **real Anthropic adapter**, and prints PASS or FAIL for each. It costs real money (a few rupees to a few tens of rupees at most); read "Before you run it".
 

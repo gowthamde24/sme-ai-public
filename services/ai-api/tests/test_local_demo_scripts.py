@@ -58,7 +58,11 @@ def test_it_gives_each_app_the_names_it_needs_from_the_local_stack(tmp_path: Pat
         == got["NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY"]
         == "sb_publishable_FAKE_FOR_TEST"
     )
-    assert got["NEXT_PUBLIC_API_BASE_URL"] == "http://localhost:8000"
+    assert got["NEXT_PUBLIC_API_BASE_URL"] == "http://localhost:8001", "the agent stack is the default, and its API is :8001"
+    owner = run_wrapper({**env, "SME_STACK": "owner"}, "sh", "-c", "echo $NEXT_PUBLIC_API_BASE_URL")
+    assert owner.stdout.strip() == "http://localhost:8000", "the owner's API is :8000"
+    agent = run_wrapper({**env, "SME_STACK": "agent", "OWNER_OK": "1"}, "sh", "-c", "echo $NEXT_PUBLIC_API_BASE_URL")
+    assert agent.stdout.strip() == "http://localhost:8001", "OWNER_OK does not change which stack is chosen"
 
 
 def test_no_secret_or_service_role_key_reaches_the_command_or_the_output(tmp_path: Path) -> None:

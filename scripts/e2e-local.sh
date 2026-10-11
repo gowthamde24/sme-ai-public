@@ -6,6 +6,7 @@
 set -uo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
+. scripts/stack.sh   # the AGENT stack unless SME_STACK=owner (docs/runbooks/two-local-stacks.md)
 WEB_PORT="${E2E_WEB_PORT:-3002}"
 API_PORT="${E2E_API_PORT:-8002}"
 case "$WEB_PORT" in 3000) echo "e2e-local: port 3000 is the owner's demo; use another (default 3002)." >&2; exit 2 ;; esac
@@ -13,8 +14,8 @@ case "$API_PORT" in 8000|8001) echo "e2e-local: ports 8000 and 8001 belong to so
 for port in "$WEB_PORT" "$API_PORT"; do
   if lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1; then echo "e2e-local: port $port is already in use (not by this run); stop whatever you started there, or set E2E_WEB_PORT / E2E_API_PORT." >&2; exit 2; fi
 done
-if ! supabase status -o env >/dev/null 2>&1; then echo "e2e-local: the local Supabase stack is not running. Run: make db-start" >&2; exit 2; fi
-if ! docker ps --format '{{.Names}}' | grep -q '^supabase_storage_'; then echo "e2e-local: Supabase Storage is not running in the local stack (the catalogue needs it). Run: make db-stop && make db-start" >&2; exit 2; fi
+if ! scripts/sb status -o env >/dev/null 2>&1; then echo "e2e-local: the local Supabase stack ($SME_STACK) is not running. Run: make agent-db-up" >&2; exit 2; fi
+if ! docker ps --format '{{.Names}}' | grep -q "^supabase_storage_$SME_PROJECT_ID\$"; then echo "e2e-local: Supabase Storage is not running in the $SME_STACK stack (the catalogue needs it). Run: make agent-db-down && make agent-db-up" >&2; exit 2; fi
 
 LOGDIR="${E2E_LOGS:-$(mktemp -d "${TMPDIR:-/tmp}/e2e-local.XXXXXX")}"
 mkdir -p "$LOGDIR"

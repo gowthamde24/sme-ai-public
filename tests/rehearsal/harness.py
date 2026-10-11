@@ -29,6 +29,7 @@ import httpx
 from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+import stack_env  # noqa: E402
 from local_confirm import confirm_email  # noqa: E402  (the scripts folder is not a package)
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -473,10 +474,7 @@ class Api:
 
 # ============================================================================ the local database, as the operator (counts only)
 def _container() -> str:
-    for line in (ROOT / "supabase" / "config.toml").read_text().splitlines():
-        if line.strip().startswith("project_id"):
-            return f"supabase_db_{line.split('=')[1].strip().strip(chr(34))}"
-    raise SystemExit("supabase/config.toml has no project_id")
+    return stack_env.db_container()  # the AGENT stack unless SME_STACK=owner
 
 
 def operator_sql(statement: str) -> str:

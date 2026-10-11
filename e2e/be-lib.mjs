@@ -2,15 +2,12 @@
 // Everything this run makes belongs to ONE throwaway account and workspace named e2e-<stamp>; `node cleanup-be.mjs` removes them. The owner's demo data is never touched.
 import "./be-env.mjs";
 import { execFileSync } from "node:child_process";
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 
-import { API, BASE, PW, factorSecret, supabasePublic, totp } from "./lib.mjs";
+import { API, BASE, PW, dbContainer, factorSecret, supabasePublic, totp } from "./lib.mjs";
 
-export { API, BASE, PW, totp };
+// dbContainer: the local database container this run talks to (docker exec). It is on this machine by construction (the agent stack's unless SME_STACK=owner, e2e/lib.mjs) and the clean-up lock checks it.
+export { API, BASE, PW, dbContainer, totp };
 
-const here = path.dirname(fileURLToPath(import.meta.url));
 const PORTS_NOT_MINE = new Set(["3000", "8000", "8001"]);
 for (const url of [BASE, API]) {
   if (PORTS_NOT_MINE.has(new URL(url).port)) {
@@ -22,11 +19,6 @@ for (const url of [BASE, API]) {
 export const STAMP = process.env.E2E_STAMP || Date.now().toString(36);
 export const EMAIL = `e2e-${STAMP}@e2e.example.test`;
 export const SLUG_PREFIX = "e2e-";
-
-const project = () => /^project_id\s*=\s*"([^"]+)"/m.exec(readFileSync(path.join(here, "..", "supabase", "config.toml"), "utf8"))[1];
-
-/** The name of the local database container this run talks to (docker exec): it is on this machine by construction, and the clean-up lock checks it. */
-export const dbContainer = () => `supabase_db_${project()}`;
 
 /** SQL in the LOCAL database container (docker exec): used for the local-only operator steps, never for data a person would make. */
 export function psql(sql) {

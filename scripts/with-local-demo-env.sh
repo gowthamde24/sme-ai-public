@@ -20,6 +20,8 @@ export NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$SUPABASE_PUBLISHABLE_KEY"
 # A synthetic, local-only value so the demo contacts get suppression keys (the follow-up screens need them). It protects nothing: this script refuses to run
 # against anything but a stack on this machine, and a real key (the environment) always wins.
 export SUPPRESSION_HMAC_KEY="${SUPPRESSION_HMAC_KEY:-synthetic-local-demo-suppression-key-0123456789}"
-export NEXT_PUBLIC_API_BASE_URL="${LOCAL_DEMO_API_URL:-http://localhost:8000}"
+# the owner API is :8000; the agent API is :8001 (docs/runbooks/two-local-stacks.md)
+if [ "${SME_STACK:-agent}" = owner ]; then default_api=http://localhost:8000; else default_api=http://localhost:8001; fi
+export NEXT_PUBLIC_API_BASE_URL="${LOCAL_DEMO_API_URL:-$default_api}"
 exec "$@"
 ' sh "$@"

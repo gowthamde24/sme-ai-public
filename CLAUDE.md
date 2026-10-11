@@ -34,7 +34,7 @@ Read `AGENTS.md` and `docs/lanes.md` first; their owner rules govern agent work.
 3. Implement that ticket only. No unrelated refactors or features.
 4. Run lint, type-check, unit/integration tests and relevant agent evals under AGENTS.md tiers. Lane A performs mandatory security-tier checks against its local stack and runs `make check` once before each commit.
 5. Manually inspect security-sensitive migrations, RLS and tool permissions.
-6. Run the feature locally and verify the flow. Lane A may use its local stack and ports 8000/3000/54321; B and C use mocks with no local database or shared ports.
+6. Run the feature locally and verify the flow. Lane A uses the AGENT stack (`make agent-db-up`; ports 54421/54422, API 8001, web 3001; the owner’s demo stack and ports 8000/3000/54321 are not touched; `docs/runbooks/two-local-stacks.md`); B and C use mocks with no local database or shared ports.
 7. Update docs/ADR if an architectural decision changed.
 8. Commit with the ticket ID (for example `T001: ...`).
 9. Only then start the next ticket.
@@ -59,7 +59,7 @@ make install     # install web + api dependencies
 make lint        # eslint + ruff
 make typecheck   # tsc + mypy
 make test        # vitest + pytest
-make check       # lint + typecheck + unit + pgTAP (db-test) + integration (the definition of done; needs Docker + `supabase start`)
+make check       # lint + typecheck + unit + pgTAP (db-test) + integration (the definition of done; needs Docker + `make agent-db-up`: it runs on the AGENT stack)
 make check-fast  # lint + typecheck + unit tests only (no Docker)
 make dev-web     # Next.js on :3000
 make contracts   # regenerate packages/contracts/{crm,evidence,leads}.* from the API models (a test fails if stale)
@@ -73,6 +73,8 @@ make rehearse-prepare-followups # OPT-IN: a NEW synthetic follow-up workspace (t
 make rehearse-followups # OPT-IN, never in make check: the headless follow-up journey and every refusal through the API; writes rehearsal-followups-report.md
 python3 tools/mutation-followups/run_sql.py # OPT-IN, never in make check (about 45 minutes): the follow-up mutation pass, SQL (also run_source.py py|web, summary.py); see tools/mutation-followups/README.md
 # OPT-IN timing of the due-candidates function (20,000 leads; never in make check): cd services/ai-api && DUE_SPIKE=1 ../../scripts/with-local-supabase-env.sh .venv/bin/pytest -c pyproject.toml ../../tests/integration/test_followup_due_spike.py -q -s
+make agent-db-up # job BG: the second, fully separate local Supabase stack for agents (project sme-ai-agent, ports 544xx); db-reset, db-test, test-integration, eval, check, seeds and rehearsals default to it. Also agent-db-down, agent-db-reset, agent-db-test, stack-info
+                 # the OWNER's demo stack (make db-start, :8000/:3000) is never reset, stopped, pgTAP-tested or clock-pinned by an agent: scripts/sb and tests/integration/conftest.py refuse unless OWNER_OK=1 (owner only); STACK=owner chooses it
 make dev-api     # FastAPI on :8000
 make seed-demo-catalogue # OPT-IN, local stack only (job AY, ADR 0069): twelve invented sarees with GENERATED placeholder pictures in the demo workspace, uploaded through the API into the local Storage (needs `make db-start` with Storage on, `make dev-api-local`, `make seed-demo-manual`; docs/runbooks/catalogue-local.md)
 make e2e-local   # OPT-IN, never in make check or CI (job BE): the real-stack end-to-end run (own API :8002 + web :3002 + the local Supabase with Storage + a real browser); stops what it started and removes its throwaway workspace; its clean-up refuses unless the database is local and the workspace slug starts with e2e- (job BF); includes fake-voice steps (docs/runbooks/e2e-real-stack.md)

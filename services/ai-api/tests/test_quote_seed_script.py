@@ -2,11 +2,15 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 
 import pytest
 
 from seeds import seed_quote_reference_data as seed
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "scripts"))
+import stack_env  # noqa: E402  (the scripts folder is not a package)
 
 
 @pytest.mark.parametrize(
@@ -58,10 +62,12 @@ def test_an_invalid_slug_is_refused(slug: str) -> None:
         seed.seed_sql(slug)
 
 
-def test_the_container_name_comes_from_the_project_id() -> None:
-    assert seed.container_name('project_id = "sme-ai"\n') == "supabase_db_sme-ai"
-    with pytest.raises(ValueError):
-        seed.container_name("name = 'x'")
+def test_the_container_is_the_agent_stacks_unless_the_owners_is_chosen(monkeypatch: pytest.MonkeyPatch) -> None:
+    for name in ("SME_STACK", "SME_DB_CONTAINER", "SUPABASE_URL"):
+        monkeypatch.delenv(name, raising=False)
+    assert stack_env.db_container() == "supabase_db_sme-ai-agent"
+    monkeypatch.setenv("SME_STACK", "owner")
+    assert stack_env.db_container() == "supabase_db_sme-ai"
 
 
 def test_the_script_reads_no_secret_and_runs_only_the_operator_function() -> None:

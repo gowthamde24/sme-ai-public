@@ -16,8 +16,8 @@ case "$slug" in
   *[!a-z0-9-]* | "") echo "dev-enable-selftest: the workspace slug may only contain a-z, 0-9 and '-'" >&2; exit 2 ;;
 esac
 
-project="$(sed -n 's/^project_id *= *"\(.*\)"/\1/p' supabase/config.toml | head -1)"
-container="supabase_db_${project}"
+. "$(dirname "$0")/stack.sh"   # the agent stack by default (SME_STACK=owner for the owner's; docs/runbooks/two-local-stacks.md)
+container="$SME_DB_CONTAINER"
 if ! docker inspect "$container" >/dev/null 2>&1; then
   echo "dev-enable-selftest: the local database container '$container' is not running. Run \`make db-start\` first." >&2
   exit 1

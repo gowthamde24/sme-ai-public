@@ -13,17 +13,18 @@ from __future__ import annotations
 import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import stack_env  # noqa: E402  (the scripts folder is not a package)
 
 _EMAIL = re.compile(r"^[A-Za-z0-9._+-]{1,64}@[A-Za-z0-9.-]{1,120}$")
 
 
 def container() -> str:
-    config = (Path(__file__).resolve().parents[1] / "supabase" / "config.toml").read_text()
-    match = re.search(r'^project_id\s*=\s*"([^"]+)"', config, re.M)
-    if match is None:
-        raise RuntimeError("supabase/config.toml has no project_id")
-    return f"supabase_db_{match.group(1)}"
+    """The database container of the stack in use: the AGENT stack unless SME_STACK=owner (scripts/stack_env.py, docs/runbooks/two-local-stacks.md)."""
+    return stack_env.db_container()
 
 
 def confirm_email(email: str) -> None:

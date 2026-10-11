@@ -115,6 +115,7 @@ def test_one_question_fits_a_free_tier_per_minute_budget(
     app: TestClient, scene: Scene, recorder: Recording
 ) -> None:
     rows: list[tuple[str, str, int, int, int]] = []
+    first_call: dict[tuple[str, str], int] = {}  # the FIRST model call of a question (tools described, no tool results yet), in estimated tokens
     conversation: str | None = None
     for path, questions in PATH_QUESTIONS.items():
         for key, text in questions.items():
@@ -125,6 +126,7 @@ def test_one_question_fits_a_free_tier_per_minute_budget(
             if key == "today":
                 conversation = conversation_of(evts)
             sizes = list(recorder.sizes)
+            first_call[(path, key)] = tokens(sizes[0])
             rows.append((path, key, len(sizes), tokens(sum(sizes)), tokens(max(sizes))))
     print("\nTOKENS per question (estimate = bytes / 4):")
     for path, key, calls, total, biggest in rows:
@@ -139,4 +141,7 @@ def test_one_question_fits_a_free_tier_per_minute_budget(
         for p in PATH_QUESTIONS
     }
     assert mean_of["base"] < mean_of["visits"] < mean_of["catalogue"] < mean_of["both"], mean_of
-    assert mean_of["catalogue"] - mean_of["base"] > 400, "the catalogue tools are about 600 tokens a question"
+    # The catalogue tools are about 300 tokens in every call that describes them (600 a question of two calls). That is measured on the first call (the definitions and the question, no tool results yet): the total also holds the size of
+    # what the scripted model's first tool returned, and since job BG it looks sarees up for a catalogue question (a small result) instead of reading Today (a big one), which would hide the definitions' cost.
+    cost = first_call[("catalogue", "photos")] - first_call[("base", "today")]
+    assert cost > 200, ("the catalogue tools are about 300 tokens a call", cost)

@@ -23,8 +23,9 @@ Requirements: Node 22.13.0 (pinned in `.nvmrc`; run `nvm install` to match CI), 
 
 ```
 make install
-make db-start      # local Supabase stack (Postgres, Auth, PostgREST); applies supabase/migrations
-make check         # lint + typecheck + unit + pgTAP + integration (needs the stack running)
+make db-start      # YOUR local Supabase stack, the demo's (Postgres, Auth, PostgREST); applies supabase/migrations
+make agent-db-up   # the separate AGENT test stack (ports 544xx): what make check, db-reset, db-test and the integration tests use
+make check         # lint + typecheck + unit + pgTAP + integration (needs the AGENT stack running; it never touches yours)
 make check-fast    # same without Docker: lint + typecheck + unit tests
 ```
 
@@ -61,9 +62,9 @@ make seed-demo-manual   # 4. (a fourth terminal) a workspace named DEMO: 12 item
 make demo-code          # prints the 6-digit second-factor code to type after the password
 ```
 
-Open http://localhost:3000/login and sign in as `demo-owner@demo.example.test`; the password is the constant `DEMO_PASSWORD` in `scripts/seed_demo.py` (a local-only value). The seed prints the links to the item types page and the enquiry. The demo owner has exactly one workspace and always lands on Today, which shows a quote waiting for approval, a follow-up draft and an order step with money held. The Main agent (assistant) is switched off; to try it locally see `docs/runbooks/main-agent-local.md`. A code lasts about 30 seconds; run `make demo-code` again for a new one. These commands refuse to start unless the database is this machine, and `make db-reset` wipes the demo (run `make seed-demo-manual` again after it).
+Open http://localhost:3000/login and sign in as `demo-owner@demo.example.test`; the password is the constant `DEMO_PASSWORD` in `scripts/seed_demo.py` (a local-only value). The seed prints the links to the item types page and the enquiry. The demo owner has exactly one workspace and always lands on Today, which shows a quote waiting for approval, a follow-up draft and an order step with money held. The Main agent (assistant) is switched off; to try it locally see `docs/runbooks/main-agent-local.md`. A code lasts about 30 seconds; run `make demo-code` again for a new one. These commands refuse to start unless the database is this machine. The seeds and `make db-reset` default to the separate agent stack (so a coding agent can never wipe your demo): name yours with `STACK=owner`, for example `make seed-demo-manual STACK=owner`, and `make db-reset STACK=owner OWNER_OK=1` wipes the demo (run the seed again after it). See `docs/runbooks/two-local-stacks.md`.
 
-If it does not start: Next.js allows one `next dev` per folder, so stop an older `make dev-web` first (it prints the PID to stop); if a port is taken, use `make dev-api-local API_PORT=8001` and `make dev-web-local WEB_PORT=3001 API_PORT=8001`, and `SEED_API_URL=http://localhost:8001 make seed-demo-manual`. The links the seed prints always say port 3000.
+If it does not start: Next.js allows one `next dev` per folder, so stop an older `make dev-web` first (it prints the PID to stop); if a port is taken, use `make dev-api-local API_PORT=8001 STACK=owner` and `make dev-web-local WEB_PORT=3001 API_PORT=8001 STACK=owner`, and `SEED_API_URL=http://localhost:8001 make seed-demo-manual STACK=owner` (a port other than 8000 means the agent stack unless you say `STACK=owner`). The links the seed prints always say port 3000.
 
 ## Status
 

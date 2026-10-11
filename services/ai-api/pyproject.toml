@@ -51,6 +51,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../scripts/local_confirm.py" = ["E501"]
 "../../scripts/demo_code.py" = ["E501"]
 "../../scripts/dev_worker_local.py" = ["E501"]
+"../../scripts/stack_env.py" = ["E501"]
+"../../scripts/gen_agent_stack.py" = ["E501"]
 "tests/test_local_demo_scripts.py" = ["E501"]
 # T008: word lists, synonym tables and regular expressions that read better on one line, and long explanatory docstrings
 "app/requirements/*" = ["E501"]

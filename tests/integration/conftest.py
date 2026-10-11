@@ -19,6 +19,7 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
+from urllib.parse import urlparse
 
 import httpx
 import pytest
@@ -29,7 +30,38 @@ from app.config import Settings
 from app.main import create_app
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "scripts"))
+import stack_env  # noqa: E402
 from local_confirm import confirm_email  # noqa: E402  (the scripts folder is not a package)
+
+
+def _stack_guard(env: dict[str, str]) -> str | None:
+    """Job BG (docs/runbooks/two-local-stacks.md): these tests reset data, pin the database
+    clock and write audit rows, so they must never run on the OWNER's demo stack by accident.
+    Returns the reason to abort, or None."""
+    try:
+        stack = stack_env.current(env)
+    except stack_env.StackError as exc:
+        return str(exc)
+    port = urlparse(env.get("SUPABASE_URL", "")).port
+    known = {s.api_port: s for s in stack_env.STACKS.values()}
+    if port in known and known[port] is not stack:
+        return (
+            f"SUPABASE_URL (port {port}) is the {known[port].name} stack's, but SME_STACK says "
+            f"{stack.name}: the tests would talk to one database and pin the clock of another. "
+            "Run through `make test-integration` (or scripts/with-local-supabase-env.sh)."
+        )
+    if stack is stack_env.OWNER and not stack_env.owner_ok(env):
+        return (
+            "these integration tests are pointed at the OWNER's local stack (port 54321, the "
+            "demo's database): they pin its clock and write to it. Use the agent stack "
+            "(make agent-db-up; it is the default), or set OWNER_OK=1 if the owner means it."
+        )
+    return None
+
+
+_reason = _stack_guard(dict(os.environ))
+if _reason:
+    pytest.exit(f"tests/integration refused to start: {_reason}", returncode=3)
 
 
 @dataclass(frozen=True)

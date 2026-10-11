@@ -3,30 +3,29 @@ flip an agent switch, move a run's clock. Nothing in the application can do this
 no client grant); a migration or the database owner can.
 
 It talks to the local database container (`docker exec ... psql`), so it cannot reach anything but
-this machine's stack, and it needs no key of any kind. The container name is derived from
-supabase/config.toml's project_id."""
+this machine's stack, and it needs no key of any kind. The container is the AGENT stack's unless
+SME_STACK=owner (scripts/stack_env.py, docs/runbooks/two-local-stacks.md)."""
 
 # ruff: noqa: E501, S608  (test code: long messages; SQL built from ids we generate ourselves)
 
 from __future__ import annotations
 
 import json
-import re
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+import stack_env  # noqa: E402  (the scripts folder is not a package)
 
 
 def container() -> str:
-    match = re.search(
-        r'^project_id\s*=\s*"([^"]+)"', (ROOT / "supabase" / "config.toml").read_text(), re.M
-    )
-    assert match, "supabase/config.toml has no project_id"
-    return f"supabase_db_{match.group(1)}"
+    """The database container of the stack in use: the AGENT stack unless SME_STACK=owner (scripts/stack_env.py, docs/runbooks/two-local-stacks.md)."""
+    return stack_env.db_container()
 
 
 def sql(statement: str) -> str:

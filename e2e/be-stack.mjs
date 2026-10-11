@@ -438,21 +438,17 @@ await step("H1", "Ask Agent OWL (the scripted model of the local stack): the que
   await shot(page, "ask-answer");
 }, page);
 
-await step("H2", "A saree named in an answer links to its page (the real box with a stand-in for the model: the scripted model of the local stack has no catalogue keyword)", async () => {
+await step("H2", "A saree named in an answer links to its page (the scripted model of the local stack has a catalogue path since job BG: the real box, the real API, the real catalogue)", async () => {
   const itemId = itemUrl.split("/").pop();
-  await context.route(`**/app/tenants/${tenant}/ask`, async (route) => {
-    const lines = [{ type: "text", delta: "I found one saree. " }, { type: "source", label: "E2E Maroon Kanchi pattu", href: `/app/tenants/${tenant}/catalogue/${itemId}` }, { type: "done" }].map((e) => JSON.stringify(e)).join("\n") + "\n";
-    await route.fulfill({ status: 200, contentType: "application/x-ndjson", body: lines });
-  });
   await page.goto(`${BASE}/app/tenants/${tenant}`);
   const box = page.locator("#ask-input");
   await box.fill("Show me a maroon saree");
   await box.press("Enter");
   const link = page.getByRole("link", { name: /E2E Maroon Kanchi pattu/ });
-  await link.waitFor({ timeout: 30000 });
-  await link.click();
+  await link.first().waitFor({ timeout: 60000 });
+  await shot(page, "ask-saree-link");
+  await link.first().click();
   await page.waitForURL(new RegExp(`/catalogue/${itemId}`));
-  await context.unroute(`**/app/tenants/${tenant}/ask`);
 }, page);
 
 // ---- 8a. voice in the Ask box (job BF): the API runs the FAKE speech adapters (development only, no key, no cost); Chrome has a fake microphone ---------------------------
