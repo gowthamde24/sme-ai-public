@@ -47,6 +47,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../scripts/seed_demo_outbox.py" = ["E501"]
 "../../scripts/local_confirm.py" = ["E501"]
 "../../scripts/demo_code.py" = ["E501"]
+"../../scripts/dev_worker_local.py" = ["E501"]
 "tests/test_local_demo_scripts.py" = ["E501"]
 # T008: word lists, synonym tables and regular expressions that read better on one line, and long explanatory docstrings
 "app/requirements/*" = ["E501"]
@@ -61,6 +62,8 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/pricelists/*" = ["E501"]
 # job AS: store visits (fixed message templates in five languages, long explanatory docstrings)
 "app/visits/*" = ["E501"]
+# job AW: the scheduler (long explanatory docstrings)
+"app/scheduler/*" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # job AK / K3: the model adapters (long explanatory docstrings, long payload lines)
 "app/agents/llm/openai_compat.py" = ["E501"]

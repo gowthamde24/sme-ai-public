@@ -89,6 +89,13 @@ class Settings(BaseSettings):
     # Job AT (ADR 0066): the channel adapter of the outbox. Only "fake" exists (a local stand-in
     # that sends nothing to anyone); anything else stops the process at start.
     outbox_adapter: str = "fake"
+    # Job AW (ADR 0068): the scheduler worker (`make dev-worker-local`). It signs in as ITS OWN
+    # account, which the operator registered in the database (no workspace, no key of any kind).
+    # The address and the password come from the environment only, are never logged, and are
+    # not used by the API. The interval is in seconds.
+    scheduler_email: str | None = None
+    scheduler_password: SecretStr | None = None
+    scheduler_interval_seconds: int = 60
     agents_max_workers: int = 2
     agents_max_queue: int = 8
     # The Research Agent (T007) reads web pages. Until a real fetcher and a real model are approved

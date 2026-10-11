@@ -723,7 +723,8 @@ AT_CLOCK_CHANGED: dict[str, tuple[set[str], set[str]]] = {
 def test_the_outbox_clock_copy_is_the_last_definition_and_changes_exactly_the_clock_lines(
     name: str,
 ) -> None:
-    defs = definitions(name)
+    # job AW (below) turns three of them into thin wrappers around cores, so this pins the clock migration's copy as the last definition up to that migration
+    defs = [d for d in definitions(name) if d[0] <= AT_CLOCK]
     assert defs[-1][0] == AT_CLOCK, (
         f"{name} is redefined after the clock migration ({defs[-1][0]}): re-copy it from the latest definition"
     )
@@ -746,9 +747,15 @@ def test_the_outbox_clock_copy_is_the_last_definition_and_changes_exactly_the_cl
 def test_no_outbox_function_other_than_the_seam_reads_now_for_a_decision() -> None:
     """The decisions (submit, approve, claim) and the send time read app.outbox_now(); a bare now() in them would put the real clock back."""
     for name in AT_CLOCK_CHANGED:
-        body = definitions(name)[-1][1]
-        code = "\n".join(line for line in body.split("\n") if not line.lstrip().startswith("--"))
-        assert "now()" not in code.replace("app.outbox_now()", ""), name
+        # the last definition of the function itself and (job AW) of the core that now holds its code
+        last = [definitions(name)[-1][1]]
+        if name in AW_CORES:
+            last.append(definitions(AW_CORES[name])[-1][1])
+        for body in last:
+            code = "\n".join(
+                line for line in body.split("\n") if not line.lstrip().startswith("--")
+            )
+            assert "now()" not in code.replace("app.outbox_now()", ""), name
 
 
 # ---------------------------------------------------------------------------------------------- job AS: store visits
@@ -810,3 +817,110 @@ def test_the_erasure_copies_erase_the_three_visit_columns(name: str) -> None:
     body = definitions(name)[-1][1]
     for column in ("purpose", "note", "cancel_reason"):
         assert f"'store_visits', '{column}'" in body, (name, column)
+
+
+# ---------------------------------------------------------------------------------------------- job AW: the scheduler
+# Migration 20261109090000 moves the code of three outbox functions into core functions (app.outbox_submit_core / outbox_claim_due_core / outbox_mark_core) that take no role decision, and makes the old
+# public functions thin wrappers: the SAME role check as before, then the core. The scheduler's functions call the same cores, so a person's "dispatch now" and the worker run ONE code path.
+# This pins that nothing else moved: each core is the clock migration's definition with EXACTLY the lines below dropped and added (the header, the caller's identity and the role check), and each
+# wrapper still holds the original role check, word for word, and calls the core with every argument.
+AW = "20261109090000_aw_scheduler.sql"
+AW_CORES = {
+    "public.outbox_submit": "app.outbox_submit_core",
+    "public.outbox_claim_due": "app.outbox_claim_due_core",
+    "public.outbox_mark": "app.outbox_mark_core",
+}
+AW_CORE_CHANGED: dict[str, tuple[set[str], set[str]]] = {
+    "public.outbox_submit": (
+        {
+            "create or replace function public.outbox_submit(",
+            "p_message_id uuid, p_tenant_id uuid, p_lead_id uuid, p_channel text, p_body text, p_language text, p_category text,",
+            "security definer",
+            "v_uid     uuid := auth.uid();",
+            "if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then",
+            "p_model_flagged, p_uncertain, v_added, v_sha, v_sched, v_uid, v_now)",
+        },
+        {
+            "create or replace function app.outbox_submit_core(",
+            "p_actor uuid, p_message_id uuid, p_tenant_id uuid, p_lead_id uuid, p_channel text, p_body text, p_language text, p_category text,",
+            "if p_actor is null or p_tenant_id is null then",
+            "p_model_flagged, p_uncertain, v_added, v_sha, v_sched, p_actor, v_now)",
+        },
+    ),
+    "public.outbox_claim_due": (
+        {
+            "create or replace function public.outbox_claim_due(p_tenant_id uuid, p_limit integer default 20) returns jsonb",
+            "security definer",
+            "v_uid  uuid := auth.uid();",
+            "if v_uid is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then",
+            "perform app.outbox_error('deny');",
+            "end if;",
+        },
+        {
+            "create or replace function app.outbox_claim_due_core(p_tenant_id uuid, p_limit integer) returns jsonb"
+        },
+    ),
+    "public.outbox_mark": (
+        {
+            "create or replace function public.outbox_mark(",
+            "security definer",
+            "v_uid uuid := auth.uid();",
+            "if v_uid is null or p_tenant_id is null or p_message_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then",
+        },
+        {
+            "create or replace function app.outbox_mark_core(",
+            "if p_tenant_id is null or p_message_id is null then",
+        },
+    ),
+}
+
+
+@pytest.mark.parametrize("name", sorted(AW_CORE_CHANGED))
+def test_the_outbox_core_is_the_clock_definition_with_exactly_the_role_lines_changed(
+    name: str,
+) -> None:
+    before = [d for d in definitions(name) if d[0] == AT_CLOCK]
+    assert len(before) == 1
+    core = definitions(AW_CORES[name])
+    assert len(core) == 1 and core[0][0] == AW, (
+        "the core is defined once, in the scheduler migration"
+    )
+    diff = [
+        line
+        for line in difflib.unified_diff(
+            normalised(before[0][1]), normalised(core[0][1]), lineterm="", n=0
+        )
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    dropped = {line[1:].strip() for line in diff if line[0] == "-"}
+    added = {line[1:].strip() for line in diff if line[0] == "+"}
+    want_dropped, want_added = AW_CORE_CHANGED[name]
+    assert dropped == {w.strip() for w in want_dropped}, f"{name}: dropped {dropped}"
+    assert added == {w.strip() for w in want_added}, f"{name}: added {added}"
+
+
+WRAPPER_ROLE_LINE = {
+    "public.outbox_submit": "array['owner', 'admin', 'sales']",
+    "public.outbox_claim_due": "array['owner', 'admin']",
+    "public.outbox_mark": "array['owner', 'admin']",
+}
+
+
+@pytest.mark.parametrize("name", sorted(AW_CORES))
+def test_the_outbox_wrapper_keeps_its_role_check_and_calls_the_core(name: str) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == AW, f"{name} is redefined after the scheduler migration ({defs[-1][0]})"
+    body = defs[-1][1]
+    assert "security definer" in body and "set search_path = ''" in body
+    checks = [line.strip() for line in body.split("\n") if "app.has_tenant_role" in line]
+    assert (
+        len(checks) == 1 and "v_uid is null" in checks[0] and WRAPPER_ROLE_LINE[name] in checks[0]
+    ), checks
+    assert f"return {AW_CORES[name]}(" in body
+    # same signature as the clock migration's function (so its grants and every caller still apply)
+    clock = [d for d in defs if d[0] == AT_CLOCK][0][1]
+
+    def head(text: str) -> str:
+        return " ".join(text.split("as $$")[0].split())
+
+    assert head(body) == head(clock)

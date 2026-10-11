@@ -47,6 +47,8 @@ from app.pricelists.routes import router as pricelists_router
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
+from app.scheduler.repository import PostgrestSchedulerRepository
+from app.scheduler.routes import router as scheduler_router
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
@@ -115,6 +117,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         outbox=PostgrestOutboxRepository(config.rest_url, config.anon_key),
         outbox_adapter=_outbox_adapter(settings),
         visits=PostgrestVisitsRepository(config.rest_url, config.anon_key),
+        scheduler=PostgrestSchedulerRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -374,6 +377,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.today,
                 runtime.outbox,
                 runtime.visits,
+                runtime.scheduler,
             ):
                 if isinstance(
                     repository,
@@ -391,7 +395,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestFollowupsRepository
                     | PostgrestTodayRepository
                     | PostgrestOutboxRepository
-                    | PostgrestVisitsRepository,
+                    | PostgrestVisitsRepository
+                    | PostgrestSchedulerRepository,
                 ):
                     repository.close()
 
@@ -465,6 +470,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(followups_router)
     app.include_router(outbox_router)
     app.include_router(visits_router)
+    app.include_router(scheduler_router)
     app.include_router(pricelists_router)
     app.include_router(today_router)
     app.include_router(assistant_router)

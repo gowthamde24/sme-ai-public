@@ -527,7 +527,7 @@ select is(pg_temp.try('a_owner', format($q$update public.store_visits set status
 select is(pg_temp.try('a_owner', format($q$delete from public.store_visits where id = %L$q$, tests.rid('b2'))), '42501', 'DENY: nor delete one');
 select is(pg_temp.try('a_owner', format($q$update public.store_settings set slot_minutes = 15 where tenant_id = %L$q$, tests.tid('a'))), '42501', 'DENY: nor change the settings directly');
 select is(pg_temp.priv(format($q$delete from public.store_visits where id = %L$q$, tests.rid('b2'))), '42501', 'GUARD: no visit is ever deleted (not even by the owner of the database)');
-select is(pg_temp.priv('truncate public.store_visits'), '42501', '...nor truncated');
+select is(pg_temp.priv('truncate public.store_visits'), '0A000', '...a plain TRUNCATE is refused by the foreign key from visit_reminders (job AW); the next check shows our guard fires');
 select is(pg_temp.priv('truncate public.store_visits cascade'), '42501', '...nor truncated with CASCADE (our guard fires)');
 select is((select count(*) from pg_trigger g where g.tgrelid = 'public.store_visits'::regclass and not g.tgisinternal and g.tgenabled = 'O' and (g.tgtype & 32) <> 0 and (g.tgtype & 1) = 0), 1::bigint,
           'GUARD: store_visits has its own enabled BEFORE TRUNCATE statement trigger');

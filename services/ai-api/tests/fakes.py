@@ -22,6 +22,7 @@ from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.pricelists.repository import PriceListRepository
 from app.quotes.repository import QuotesRepository
+from app.scheduler.repository import SchedulerRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.tenancy.models import (
@@ -200,6 +201,7 @@ def make_client(
     outbox: OutboxRepository | None = None,
     outbox_adapter: ChannelAdapter | None = None,
     visits: VisitsRepository | None = None,
+    scheduler: SchedulerRepository | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -230,6 +232,7 @@ def make_client(
             outbox=outbox,
             outbox_adapter=outbox_adapter,
             visits=visits,
+            scheduler=scheduler,
         ),
     )
     return TestClient(app), repo

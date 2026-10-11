@@ -155,6 +155,18 @@ select is(
         'public.call_request_offer_visit',
         'public.visit_list',
         'public.ai_usage_week',
+        -- job AW: the scheduler. Six are the worker's (each starts with the principal check), two are the Owner's settings, one is the Owner's read.
+        'public.scheduler_settings_get',
+        'public.scheduler_settings_set',
+        'public.scheduler_tenants',
+        'public.scheduler_heartbeat',
+        'public.scheduler_claim_due',
+        'public.scheduler_mark',
+        'public.scheduler_due_reminders',
+        'public.scheduler_queue_reminder',
+        'public.scheduler_mark_no_shows',
+        'public.scheduler_record',
+        'public.scheduler_status',
         'app.agent_switch_on',
         'app.is_tenant_member',
         'app.has_tenant_role',
@@ -263,7 +275,9 @@ select is(
                      'public.assistant_begin_message', 'public.assistant_save_reply', 'public.assistant_save_reply_draft',
                      'public.outbox_submit', 'public.outbox_edit', 'public.outbox_decide', 'public.outbox_claim_due', 'public.outbox_mark', 'public.outbox_set_settings', 'public.outbox_settings_get', 'public.call_request_create', 'public.call_request_decide',
                      'public.visit_settings_get', 'public.visit_settings_set', 'public.visit_slots', 'public.visit_book', 'public.visit_change', 'public.visit_step', 'public.visit_complete', 'public.visit_send_message',
-                     'public.call_request_offer_visit', 'public.visit_list', 'public.ai_usage_week')),
+                     'public.call_request_offer_visit', 'public.visit_list', 'public.ai_usage_week',
+                     'public.scheduler_settings_get', 'public.scheduler_settings_set', 'public.scheduler_tenants', 'public.scheduler_heartbeat', 'public.scheduler_claim_due', 'public.scheduler_mark',
+                     'public.scheduler_due_reminders', 'public.scheduler_queue_reminder', 'public.scheduler_mark_no_shows', 'public.scheduler_record', 'public.scheduler_status')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(
