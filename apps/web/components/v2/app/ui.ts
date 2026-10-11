@@ -7,7 +7,6 @@ import { btnPrimary } from "@/components/v2/landing/ui";
  */
 /** The page's own <main>. */
 export const pageMain = "mx-auto w-full max-w-[1200px] px-4 py-6 md:px-8 md:py-8";
-export const pageMainNarrow = "mx-auto w-full max-w-2xl px-4 py-6 sm:px-6 sm:py-8";
 export const pageH1 = "mb-2 mt-3 font-display text-3xl font-bold leading-tight sm:text-4xl";
 export const pageH2 = "mb-3 mt-8 font-display text-2xl font-bold leading-tight";
 export const pageH3 = "mb-2 mt-5 font-display text-xl font-bold leading-tight";
@@ -32,9 +31,6 @@ export const checkBox = "size-6 shrink-0 accent-brand-text";
 export const btnMain = `${btnPrimary} disabled:opacity-60`;
 export const btnQuiet =
   "inline-flex min-h-12 items-center justify-center rounded-lg border border-edge bg-surface px-4 text-base font-semibold text-ink hover:bg-surface-2 disabled:opacity-60";
-export const btnDanger =
-  "inline-flex min-h-12 items-center justify-center rounded-lg border border-red-text bg-red-bg px-4 text-base font-semibold text-red-text hover:brightness-95 disabled:opacity-60";
-export const btnRow = "mt-4 flex flex-wrap items-center gap-3";
 export const stickyActions = "sticky bottom-20 z-10 mt-6 flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface p-3 md:bottom-4";
 export const pill = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold";
 export const pillNeutral = `${pill} border-line bg-surface-2 text-muted`;
@@ -63,8 +59,6 @@ export const tabsItemIdle = "border-transparent font-medium text-muted hover:tex
 export const tabsItemOn = "border-brand-edge font-semibold text-brand-text";
 /** A small grey line under a list entry. */
 export const metaLine = "mt-1 block text-sm text-muted";
-/** A bold sentence on its own line inside a list entry. */
-export const emphasisLine = "mt-2 block font-semibold";
 export const spaceTop = "mt-4";
 export const formCard = "mt-4 flex max-w-xl flex-col gap-3 rounded-xl border border-line bg-surface p-4";
 export const formTitle = "font-display text-lg font-bold";
@@ -89,17 +83,17 @@ export const lineGrid = "grid gap-3 sm:grid-cols-3";
 export const fieldBlock = "flex flex-col";
 export const formCardWide = "mt-4 flex max-w-2xl flex-col gap-3 rounded-xl border border-line bg-surface p-4";
 export const bigText = "mt-1 text-lg";
-export const sectionGap = "mt-6";
 export const noteBlock = "mt-4 rounded-lg border border-line bg-info-bg p-3 text-sm font-medium text-info-text";
 export const formCol = "mt-4 flex flex-col gap-2";
 export const formInline = "mt-2 flex flex-wrap items-center gap-2";
 /** A table of records that stacks on a phone: each row becomes a block and each cell says what it is (its data-label). */
 export const dataTable = "w-full border-collapse text-left text-base max-sm:block max-sm:[&_thead]:sr-only max-sm:[&>tbody]:block";
+/** A column a phone does not need (the stacked card shows the main ones only): hidden below 640 px, shown as a normal cell above. */
+export const dataThSecondary = "whitespace-nowrap bg-surface-2 px-3 py-2 text-sm font-semibold text-muted max-sm:hidden";
+export const dataTdSecondary = "px-3 py-2 align-top max-sm:hidden";
 export const dataTr = "border-b border-line max-sm:block max-sm:py-2";
 export const dataThCol = "whitespace-nowrap bg-surface-2 px-3 py-2 text-sm font-semibold text-muted";
-export const dataThRow = "px-3 py-2 text-left font-semibold max-sm:block";
 export const dataTd = "px-3 py-2 align-top max-sm:flex max-sm:justify-between max-sm:gap-4 max-sm:before:text-muted max-sm:before:content-[attr(data-label)]";
-export const dataTdEdit = "whitespace-nowrap px-3 py-2 align-top max-sm:block";
 /** The edit form of a row sits in the row under it and shows only while that row's Edit control is open. A browser that cannot tell (no :has) shows every form. */
 export const dataEditRow =
   "supports-[selector(:has(*))]:hidden supports-[selector(:has(*))]:[tr:has(details[open])+&]:table-row max-sm:supports-[selector(:has(*))]:[tr:has(details[open])+&]:block";
@@ -113,10 +107,7 @@ export const formGrid = "grid gap-x-4 gap-y-3 sm:grid-cols-2";
 export const colSpanFull = "col-span-full";
 export const codeInline = "rounded bg-surface-2 px-1.5 py-0.5 font-mono text-sm [overflow-wrap:anywhere]";
 export const qrImage = "rounded-lg border border-line bg-white p-2";
-/** The workspace home's row of links to every screen (kept until the clean-up batch; the menu carries the same links). */
-export const linkRow = "mt-4 flex flex-wrap items-center gap-x-1 gap-y-1";
 export const rowLink = "inline-flex min-h-11 items-center rounded-lg font-semibold text-brand-text hover:underline";
-export const mutedInline = "text-muted";
 export const cardGrid = "mt-3 grid items-start gap-4 [grid-template-columns:repeat(auto-fit,minmax(min(100%,18rem),1fr))]";
 export const cardBox = "rounded-xl border border-line bg-surface p-3 [overflow-wrap:anywhere]";
 export const quoteBlock = "my-1 border-l-4 border-edge pl-3 [overflow-wrap:anywhere]";
@@ -153,3 +144,16 @@ export const tileGrid = "mt-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols
 export const memberRow = "flex min-h-12 items-center justify-between gap-3 border-b border-line py-2 last:border-b-0";
 export const breakAll = "break-all font-semibold";
 export const youMark = "ml-2 text-sm font-normal text-muted";
+
+/** The line under a page's title (the lead's city and status). */
+export const pageSub = "-mt-1 text-base text-muted";
+/** A folded part of a page ("I sent a message myself"): a card whose summary is a 48 px line. */
+export const foldCard = "mt-8 rounded-[20px] border border-line bg-surface";
+export const foldSummary = "flex min-h-12 cursor-pointer items-center px-4 text-base font-semibold text-brand-text";
+export const foldBody = "px-4 pb-4";
+/** The not-found page: one centred column with the owl, a sentence and one way out. */
+export const notFoundMain = "mx-auto flex min-h-dvh w-full max-w-md flex-col items-center justify-center gap-4 px-6 py-10 text-center";
+export const notFoundRoot = "min-h-dvh bg-bg text-ink";
+export const notFoundTitle = "font-display text-3xl font-semibold";
+export const notFoundBack = "inline-flex min-h-12 items-center justify-center rounded-full border border-brand-edge bg-brand px-6 text-base font-bold text-on-brand hover:brightness-95";
+export const notFoundOwl = "size-24";

@@ -50,10 +50,12 @@ describe("the day and time picker", () => {
     await act(async () => fireEvent.change(screen.getByLabelText("Day"), { target: { value: TODAY } }));
     expect(load).toHaveBeenCalledTimes(2);
   });
-  it("an earlier slot of today can be chosen and says so", async () => {
+  it("an earlier slot of today can still be chosen (a walk-in), drawn quietly with a dashed edge and no label", async () => {
     const earlier = { ...slotsJson(TODAY), slots: slotsJson(TODAY).slots.map((s, i) => ({ ...s, past: i === 0 })) };
     await mount(async () => ({ ok: true, slots: earlier }));
-    expect(screen.getByRole("button", { name: /^10:00\s*Earlier today$/ })).toBeEnabled();
+    const b = screen.getByRole("button", { name: "10:00" });
+    expect(b).toBeEnabled();
+    expect(b.className).toContain("border-dashed");
   });
   it("says why a day has no times: a closed date, the weekday, a day that has passed, or nothing", async () => {
     const closed = (reason: string | null) => async (d: string) => ({ ok: true, slots: { ...slotsJson(d), open: false, reason, slots: [] } });

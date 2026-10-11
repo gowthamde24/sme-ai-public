@@ -8,4 +8,4 @@ The records of Demo Silks (synthetic), as saved.
 ## Opportunities
 table:
   | th Title | th Status | th Closed | th Created | th Origin |
-  | Festival order (synthetic) | open | — | 2026-10-03 | manual |
+  | Festival order (synthetic) | open | — | 3 Oct 2026 | manual |

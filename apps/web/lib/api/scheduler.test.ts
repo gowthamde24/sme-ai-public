@@ -16,6 +16,14 @@ describe("the scheduler's status", () => {
   it("reads both switches, the worker's last and next check and today's counts", () => {
     expect(parseSchedulerStatus(STATUS_JSON)).toMatchObject({ active: true, worker_running: true, last_run_at: "2026-10-14T04:28:00Z", next_run_at: "2026-10-14T04:29:00Z", today: { sent: 2, reminders: 1 } });
   });
+  it("reads releases_approved; an API from before it reads as false (the stricter reading), and a non-boolean is an error", () => {
+    expect(parseSchedulerStatus(STATUS_JSON).releases_approved).toBe(true);
+    const { releases_approved: _r, ...old } = STATUS_JSON;
+    void _r;
+    expect(parseSchedulerStatus(old).releases_approved).toBe(false);
+    expect(parseSchedulerStatus({ ...STATUS_JSON, auto_send_enabled: false, active: false, releases_approved: true }).releases_approved).toBe(true);
+    expect(() => parseSchedulerStatus({ ...STATUS_JSON, releases_approved: "yes" })).toThrow(ApiContractError);
+  });
   it("a worker never heard from has no times", () => {
     expect(parseSchedulerStatus({ ...STATUS_JSON, worker_running: false, last_run_at: null, next_run_at: null, interval_seconds: null, last_activity_at: null })).toMatchObject({ last_run_at: null, next_run_at: null, interval_seconds: null });
   });

@@ -35,7 +35,8 @@ export type OutboxViewProps = {
   actions: OutboxActions | null;
 };
 
-const tabLink = (on: boolean) => `-mb-px inline-flex min-h-11 shrink-0 items-center gap-2 border-b-2 px-4 text-base whitespace-nowrap ${on ? "border-brand-edge font-semibold text-brand-text" : "border-transparent font-medium text-muted hover:text-ink"}`;
+const tabLink = (on: boolean) =>
+  `inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-3 text-center text-base leading-tight max-md:py-1.5 md:-mb-px md:shrink-0 md:rounded-none md:border-0 md:border-b-2 md:px-4 md:whitespace-nowrap ${on ? "border-brand-edge bg-brand-bg font-semibold text-brand-text md:bg-transparent" : "border-edge font-medium text-muted hover:text-ink md:border-transparent"}`;
 
 /** Agent OWL's last check, in words: "last checked 2 min ago · next check 14:03", or the calm warning when it has not run for more than five minutes while it should. */
 function SchedulerLine({ s, now, words }: { s: SchedulerStatus; now: number; words: TodayWords }) {
@@ -94,7 +95,7 @@ export function OutboxView(p: OutboxViewProps) {
         </p>
       ) : null}
 
-      <nav aria-label={say(words, "nav.item.outbox")} className="-mx-4 flex overflow-x-auto border-b border-line px-4 md:mx-0 md:px-0">
+      <nav aria-label={say(words, "nav.item.outbox")} className="grid grid-cols-2 gap-2 md:flex md:gap-0 md:border-b md:border-line">
         {TABS.map((t) => (
           <Link key={t} href={href({ tab: t, after: undefined })} aria-current={t === tab ? "page" : undefined} className={tabLink(t === tab)}>
             {say(words, `outbox.tab.${t}`)}

@@ -384,72 +384,6 @@
    "kn": "draft"
   }
  },
- "today.sub.none": {
-  "en": "Nothing is waiting for you.",
-  "te": "మీ కోసం ఏదీ వేచి లేదు.",
-  "hi": "आपके लिए कुछ भी इंतज़ार में नहीं है।",
-  "kn": "ನಿಮಗಾಗಿ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "today.sub.one": {
-  "en": "1 thing is waiting for you.",
-  "te": "1 విషయం మీ కోసం వేచి ఉంది.",
-  "hi": "1 बात आपके इंतज़ार में है।",
-  "kn": "1 ವಿಷಯ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "today.sub.other": {
-  "en": "{n} things are waiting for you.",
-  "te": "{n} విషయాలు మీ కోసం వేచి ఉన్నాయి.",
-  "hi": "{n} बातें आपके इंतज़ार में हैं।",
-  "kn": "{n} ವಿಷಯಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "today.stat.waitingHint": {
-  "en": "Decisions below",
-  "te": "కింద నిర్ణయాలు",
-  "hi": "नीचे फ़ैसले",
-  "kn": "ಕೆಳಗೆ ನಿರ್ಧಾರಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "today.stat.open": {
-  "en": "Orders in progress",
-  "te": "ప్రోగ్రెస్‌లో ఉన్న ఆర్డర్లు",
-  "hi": "चालू ऑर्डर",
-  "kn": "ಪ್ರಗತಿಯಲ್ಲಿರುವ ಆರ್ಡರ್‌ಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "today.stat.openHint": {
-  "en": "Not closed yet",
-  "te": "ఇంకా ముగియలేదు",
-  "hi": "अभी बंद नहीं हुए",
-  "kn": "ಇನ್ನೂ ಮುಚ್ಚಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "today.needsYou": {
   "en": "Needs you",
   "te": "మీరు చూడాలి",
@@ -466,17 +400,6 @@
   "te": "మీ టీమ్",
   "hi": "आपकी टीम",
   "kn": "ನಿಮ್ಮ ಟೀಮ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "today.recent": {
-  "en": "Recently recorded",
-  "te": "ఇటీవల నమోదైనవి",
-  "hi": "हाल में दर्ज",
-  "kn": "ಇತ್ತೀಚೆಗೆ ದಾಖಲಾದವು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -592,30 +515,6 @@
    "hi": "draft",
    "kn": "draft"
   }
- },
- "today.stat.held": {
-  "en": "Customer money held",
-  "te": "Customer money held",
-  "hi": "Customer money held",
-  "kn": "Customer money held",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "today.stat.heldHint": {
-  "en": "On closed orders, not yet refunded",
-  "te": "On closed orders, not yet refunded",
-  "hi": "On closed orders, not yet refunded",
-  "kn": "On closed orders, not yet refunded",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
  },
  "today.fact.amount": {
   "en": "Amount",
@@ -2290,15 +2189,14 @@
  },
  "today.act.approve": {
   "en": "Approve and send",
-  "te": "Approve and send",
-  "hi": "Approve and send",
-  "kn": "Approve and send",
+  "te": "ఓకే చేసి పంపండి",
+  "hi": "OK करके भेजें",
+  "kn": "ಓಕೆ ಮಾಡಿ ಕಳುಹಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "today.act.edit": {
   "en": "Edit",
@@ -2346,27 +2244,25 @@
  },
  "today.act.callok": {
   "en": "Approve call",
-  "te": "Approve call",
-  "hi": "Approve call",
-  "kn": "Approve call",
+  "te": "కాల్ ఓకే చేయండి",
+  "hi": "कॉल OK करें",
+  "kn": "ಕರೆ ಓಕೆ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "today.act.visit": {
   "en": "Offer a store visit",
-  "te": "Offer a store visit",
-  "hi": "Offer a store visit",
-  "kn": "Offer a store visit",
+  "te": "షాప్ విజిట్ ఆఫర్ చేయండి",
+  "hi": "दुकान की विज़िट ऑफ़र करें",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ ಆಫರ್ ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "today.act.working": {
   "en": "Working…",
@@ -3499,17 +3395,6 @@
    "kn": "draft"
   }
  },
- "visits.slot.earlier": {
-  "en": "Earlier today",
-  "te": "ఈ రోజు ముందుది",
-  "hi": "आज पहले का",
-  "kn": "ಇಂದು ಮೊದಲಿನದು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "visits.closed.date": {
   "en": "The shop is closed on this date.",
   "te": "ఈ తేదీన షాప్ మూసి ఉంటుంది.",
@@ -3900,27 +3785,25 @@
  },
  "visits.complete.order": {
   "en": "Bought: start the order",
-  "te": "Bought: start the order",
-  "hi": "Bought: start the order",
-  "kn": "Bought: start the order",
+  "te": "కొన్నారు: ఆర్డర్ మొదలుపెట్టండి",
+  "hi": "खरीदा: ऑर्डर शुरू करें",
+  "kn": "ಖರೀದಿಸಿದರು: ಆರ್ಡರ್ ಶುರು ಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "visits.complete.bought": {
   "en": "Bought: I will make the order later",
-  "te": "Bought: I will make the order later",
-  "hi": "Bought: I will make the order later",
-  "kn": "Bought: I will make the order later",
+  "te": "కొన్నారు: ఆర్డర్ తర్వాత చేస్తాను",
+  "hi": "खरीदा: ऑर्डर बाद में बनाऊँगा",
+  "kn": "ಖರೀದಿಸಿದರು: ಆರ್ಡರ್ ನಂತರ ಮಾಡುತ್ತೇನೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "visits.complete.hint": {
   "en": "Starting the order uses this customer's approved quote. It needs the owner or an admin, with the second check.",
@@ -5686,10 +5569,10 @@
   }
  },
  "outbox.autooff": {
-  "en": "Automatic sending is off for this business: every message waits for you.",
-  "te": "Automatic sending is off for this business: every message waits for you.",
-  "hi": "Automatic sending is off for this business: every message waits for you.",
-  "kn": "Automatic sending is off for this business: every message waits for you.",
+  "en": "Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out.",
+  "te": "Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out.",
+  "hi": "Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out.",
+  "kn": "Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6097,10 +5980,10 @@
   "humanOnly": true
  },
  "agentset.sending.off": {
-  "en": "Off: every message waits for you.",
-  "te": "Off: every message waits for you.",
-  "hi": "Off: every message waits for you.",
-  "kn": "Off: every message waits for you.",
+  "en": "Off: new messages wait for you to approve them. Messages you approve still go out.",
+  "te": "Off: new messages wait for you to approve them. Messages you approve still go out.",
+  "hi": "Off: new messages wait for you to approve them. Messages you approve still go out.",
+  "kn": "Off: new messages wait for you to approve them. Messages you approve still go out.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6166,10 +6049,10 @@
   "humanOnly": true
  },
  "agentset.saved.off": {
-  "en": "Saved. Automatic sending is off: every message waits for you.",
-  "te": "Saved. Automatic sending is off: every message waits for you.",
-  "hi": "Saved. Automatic sending is off: every message waits for you.",
-  "kn": "Saved. Automatic sending is off: every message waits for you.",
+  "en": "Saved. Automatic sending is off: new messages wait for you to approve them. Messages you approve still go out.",
+  "te": "Saved. Automatic sending is off: new messages wait for you to approve them. Messages you approve still go out.",
+  "hi": "Saved. Automatic sending is off: new messages wait for you to approve them. Messages you approve still go out.",
+  "kn": "Saved. Automatic sending is off: new messages wait for you to approve them. Messages you approve still go out.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6640,6 +6523,317 @@
   "te": "{minutes} నిమిషాల క్రితం",
   "hi": "{minutes} मिनट पहले",
   "kn": "{minutes} ನಿಮಿಷ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.back": {
+  "en": "All leads",
+  "te": "అన్ని లీడ్‌లు",
+  "hi": "सभी लीड",
+  "kn": "ಎಲ್ಲಾ ಲೀಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.untitled": {
+  "en": "Lead",
+  "te": "లీడ్",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.tabs": {
+  "en": "Parts of this lead",
+  "te": "ఈ లీడ్ భాగాలు",
+  "hi": "इस लीड के हिस्से",
+  "kn": "ಈ ಲೀಡ್‌ನ ಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.tab.overview": {
+  "en": "Overview",
+  "te": "సారాంశం",
+  "hi": "सारांश",
+  "kn": "ಸಾರಾಂಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.tab.evidence": {
+  "en": "Evidence",
+  "te": "ఆధారాలు",
+  "hi": "सबूत",
+  "kn": "ಪುರಾವೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.tab.suggestions": {
+  "en": "Suggestions",
+  "te": "సూచనలు",
+  "hi": "सुझाव",
+  "kn": "ಸಲಹೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.followup": {
+  "en": "Follow-up for this lead",
+  "te": "ఈ లీడ్‌కి ఫాలో-అప్",
+  "hi": "इस लीड का फ़ॉलो-अप",
+  "kn": "ಈ ಲೀಡ್‌ಗೆ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.about": {
+  "en": "About this lead",
+  "te": "ఈ లీడ్ గురించి",
+  "hi": "इस लीड के बारे में",
+  "kn": "ಈ ಲೀಡ್ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.source": {
+  "en": "Source",
+  "te": "మూలం",
+  "hi": "स्रोत",
+  "kn": "ಮೂಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.added": {
+  "en": "Added",
+  "te": "చేర్చినది",
+  "hi": "जोड़ा गया",
+  "kn": "ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.origin": {
+  "en": "How it was added",
+  "te": "ఎలా చేర్చారు",
+  "hi": "कैसे जोड़ा गया",
+  "kn": "ಹೇಗೆ ಸೇರಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.status.new": {
+  "en": "New",
+  "te": "కొత్తది",
+  "hi": "नया",
+  "kn": "ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.status.in_review": {
+  "en": "Being looked at",
+  "te": "చూస్తున్నాము",
+  "hi": "देखा जा रहा है",
+  "kn": "ನೋಡುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.status.qualified": {
+  "en": "Good fit",
+  "te": "సరైనది",
+  "hi": "सही है",
+  "kn": "ಸರಿಯಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.status.disqualified": {
+  "en": "Not a fit",
+  "te": "సరిపోదు",
+  "hi": "सही नहीं",
+  "kn": "ಸರಿಹೊಂದುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.origin.manual": {
+  "en": "Added by hand",
+  "te": "చేత్తో చేర్చారు",
+  "hi": "हाथ से जोड़ा",
+  "kn": "ಕೈಯಿಂದ ಸೇರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.origin.import": {
+  "en": "Imported from a file",
+  "te": "ఫైల్ నుండి వచ్చింది",
+  "hi": "फ़ाइल से आया",
+  "kn": "ಫೈಲ್‌ನಿಂದ ಬಂದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.origin.agent": {
+  "en": "Found by Agent OWL",
+  "te": "Agent OWL కనుగొంది",
+  "hi": "Agent OWL ने ढूँढा",
+  "kn": "Agent OWL ಕಂಡುಹಿಡಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.sent.title": {
+  "en": "I sent a message myself",
+  "te": "నేనే మెసేజ్ పంపాను",
+  "hi": "मैंने खुद मैसेज भेजा",
+  "kn": "ನಾನೇ ಮೆಸೇಜ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lead.sent.hint": {
+  "en": "Use this to write down a message you sent yourself, outside this system. Nothing is sent from here.",
+  "te": "Use this to write down a message you sent yourself, outside this system. Nothing is sent from here.",
+  "hi": "Use this to write down a message you sent yourself, outside this system. Nothing is sent from here.",
+  "kn": "Use this to write down a message you sent yourself, outside this system. Nothing is sent from here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.addcustomer": {
+  "en": "Add the customer",
+  "te": "కస్టమర్‌ని చేర్చండి",
+  "hi": "ग्राहक जोड़ें",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notfound.title": {
+  "en": "Not found",
+  "te": "దొరకలేదు",
+  "hi": "नहीं मिला",
+  "kn": "ಸಿಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notfound.body": {
+  "en": "We could not find that page.",
+  "te": "ఆ పేజీ దొరకలేదు.",
+  "hi": "वह पेज नहीं मिला।",
+  "kn": "ಆ ಪುಟ ಸಿಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notfound.back": {
+  "en": "Back to your workspaces",
+  "te": "మీ వర్క్‌స్పేస్‌లకు వెళ్ళండి",
+  "hi": "अपने वर्कस्पेस पर लौटें",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳಿಗೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "frame.draft.label": {
+  "en": "Translation notice",
+  "te": "అనువాద సూచన",
+  "hi": "अनुवाद की सूचना",
+  "kn": "ಅನುವಾದ ಸೂಚನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.approved": {
+  "en": "Approved messages still go out when automatic sending is off.",
+  "te": "Approved messages still go out when automatic sending is off.",
+  "hi": "Approved messages still go out when automatic sending is off.",
+  "kn": "Approved messages still go out when automatic sending is off.",
+  "humanOnly": true,
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.sched.approved.no": {
+  "en": "Approved messages wait: sending is stopped for the whole system.",
+  "te": "Approved messages wait: sending is stopped for the whole system.",
+  "hi": "Approved messages wait: sending is stopped for the whole system.",
+  "kn": "Approved messages wait: sending is stopped for the whole system.",
+  "humanOnly": true,
   "status": {
    "te": "draft",
    "hi": "draft",

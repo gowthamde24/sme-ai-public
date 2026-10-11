@@ -23,7 +23,7 @@ const KINDS = OUTBOX_CATEGORIES;
  *   gone out; every other rule (consent, stop lists, limits, the owner's approval) applies whether it is ticked or not. The result says exactly what was and was not recorded.
  * One id per attempt, so pressing twice is a retry, and a fresh id after a request went through.
  */
-export function ContactLead({ words, actions, bookHref, todayHref, noContact }: { words: TodayWords; actions: ContactActions; bookHref: string; todayHref: string; noContact: boolean }) {
+export function ContactLead({ words, actions, bookHref, todayHref, addCustomerHref, noContact }: { words: TodayWords; actions: ContactActions; bookHref: string; todayHref: string; addCustomerHref: string; noContact: boolean }) {
   const [mode, setMode] = React.useState<Mode>("none");
   const [keep, setKeep] = useKeepRecord();
   const [ids, setIds] = React.useState(() => ({ message: crypto.randomUUID(), touch: crypto.randomUUID(), call: crypto.randomUUID() }));
@@ -64,14 +64,17 @@ export function ContactLead({ words, actions, bookHref, todayHref, noContact }: 
 
   const ready = mode === "whatsapp" ? text.trim().length >= 2 : reason.trim().length >= 2 && script.trim().length >= 2;
   return (
-    <section aria-labelledby="contact-heading" data-part="contact" className={`${card} mt-8`}>
+    <section aria-labelledby="contact-heading" data-part="contact" className={`${card} mt-4`}>
       <h2 id="contact-heading" className="font-display text-2xl font-bold leading-tight">
         {say(words, "contact.title")}
       </h2>
       <p className="text-sm text-muted">{say(words, "contact.intro")}</p>
       {noContact ? (
         <p role="note" className="text-base">
-          {say(words, "contact.nocontact")}
+          {say(words, "contact.nocontact")}{" "}
+          <Link href={addCustomerHref} className="font-semibold text-brand-text underline">
+            {say(words, "contact.addcustomer")}
+          </Link>
         </p>
       ) : (
         <>

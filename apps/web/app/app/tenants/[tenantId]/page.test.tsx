@@ -232,8 +232,8 @@ describe("/app/tenants/[tenantId]", () => {
       ],
     ],
     ["products", ["S-1", "Kanjivaram", "pc", "yes", "import"]],
-    ["leads", ["qualified", "trade fair", "2026-02-03"]],
-    ["opportunities", ["Wedding order", "lost", "2026-03-04", "agent"]],
+    ["leads", ["qualified", "trade fair", "3 Feb 2026"]],
+    ["opportunities", ["Wedding order", "lost", "4 Mar 2026", "agent"]],
   ])("shows the %s table with real rows", async (tab, expected) => {
     render(await TenantPage(props({ query: { tab } })));
     const table = screen.getByRole("table");

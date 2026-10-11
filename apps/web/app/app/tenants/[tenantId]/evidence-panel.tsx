@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { indiaDayText } from "@/components/v2/app/visits/dates";
 
 import {
   type EvidenceItem,
@@ -34,7 +35,7 @@ type Props = {
 };
 
 function day(iso: string): string {
-  return iso.slice(0, 10);
+  return indiaDayText(iso);
 }
 
 export function EvidencePanel({

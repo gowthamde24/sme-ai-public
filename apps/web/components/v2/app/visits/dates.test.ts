@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { dayHeading, dayShort, isDay, minutesOf, shiftDay, todayInIndia, weekdayName } from "./dates";
+import { dayHeading, dayShort, indiaDayText, isDay, shiftDay, todayInIndia, weekdayName } from "./dates";
 
 describe("calendar days of the Visits page", () => {
   it("knows a real calendar date from text that only looks like one", () => {
@@ -31,8 +31,9 @@ describe("calendar days of the Visits page", () => {
   it("names the weekdays Monday first", () => {
     expect([0, 1, 2, 3, 4, 5, 6].map((i) => weekdayName(i, "en"))).toEqual(["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]);
   });
-  it("turns a clock into minutes", () => {
-    expect(minutesOf("10:30")).toBe(630);
-    expect(minutesOf("00:00")).toBe(0);
+  it("writes a moment as its Indian day, the Indian way", () => {
+    expect(indiaDayText("2026-10-02T05:00:00+00:00")).toBe("2 Oct 2026");
+    expect(indiaDayText("2026-10-01T19:00:00Z")).toBe("2 Oct 2026"); // past midnight in India
+    expect(indiaDayText("2026-10-02T05:00:00Z", "te")).toMatch(/[ఀ-౿]/);
   });
 });

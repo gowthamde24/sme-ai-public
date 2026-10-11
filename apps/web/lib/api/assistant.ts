@@ -17,7 +17,8 @@ import { isCanonicalUuid } from "./crm";
 export const ASSISTANT_LANGUAGES = ["en", "te", "hi", "kn", "ta"] as const;
 export type AssistantLanguage = (typeof ASSISTANT_LANGUAGES)[number];
 
-export const SOURCE_KINDS = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft", "outbox_message", "call_request", "store_visit"] as const;
+/** `catalogue_item` (job AY): a saree of the shop's catalogue; its label is the saree's name and it has no page yet (`target: null`), so the box shows the name as plain text. */
+export const SOURCE_KINDS = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft", "outbox_message", "call_request", "store_visit", "catalogue_item"] as const;
 export type SourceKind = (typeof SOURCE_KINDS)[number];
 /** `store_visit` (job AS): a visit Agent OWL proposed. It is booked but not confirmed; a person confirms it on the Visits page. */
 export const DRAFT_KINDS = ["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"] as const;
@@ -107,6 +108,9 @@ export function parseTarget(json: unknown): Target {
 
 const optionalTarget = (v: unknown): Target | null => (v === null || v === undefined ? null : parseTarget(v));
 
+/** A source whose `kind` this screen draws. Anything else (a newer API's kind) is skipped by the readers below. */
+export const isKnownSource = (v: unknown): boolean => isRecord(v) && typeof v.kind === "string" && (SOURCE_KINDS as readonly string[]).includes(v.kind);
+
 export function parseSource(json: unknown): AssistantSource {
   if (!isRecord(json)) return bad("source");
   return {
@@ -137,13 +141,14 @@ export function parseDraftCard(json: unknown): DraftCard {
 const list = <T>(v: unknown, f: (x: unknown) => T, what: string, max = 50): T[] => (Array.isArray(v) && v.length <= max ? v.map(f) : bad(what));
 
 /** One server-sent event as the screens get it. An event the API does not send, or one whose `type` is not its name, is a contract error: nothing is guessed. */
-export function parseAssistantEvent(name: string, data: unknown): AssistantEvent {
+export function parseAssistantEvent(name: string, data: unknown): AssistantEvent | null {
   if (!isRecord(data) || data.type !== name) return bad("event");
   switch (name) {
     case "text":
       return { type: "text", delta: str(data.delta, "delta") };
     case "source":
-      return { type: "source", ...parseSource(data) };
+      // a source of a kind this screen does not know yet (a newer API) is left out, never an error: the answer is still whole without it
+      return isKnownSource(data) ? { type: "source", ...parseSource(data) } : null;
     case "draft":
       return { type: "draft", ...parseDraftCard(data) };
     case "error":
@@ -215,7 +220,10 @@ export async function* sendAssistantMessage(accessToken: string, tenantId: strin
     ...(input.conversationId ? { conversation_id: input.conversationId } : {}),
     text,
   });
-  for await (const { name, data } of readSse(response.body as ReadableStream<Uint8Array>)) yield parseAssistantEvent(name, data);
+  for await (const { name, data } of readSse(response.body as ReadableStream<Uint8Array>)) {
+    const event = parseAssistantEvent(name, data);
+    if (event !== null) yield event;
+  }
 }
 
 export function parseMessage(json: unknown): AssistantMessage {
@@ -225,7 +233,7 @@ export function parseMessage(json: unknown): AssistantMessage {
     role: oneOf(["user", "assistant"] as const, json.role, "role"),
     text: str(json.text, "text", 12_000),
     language: nullable(json.language ?? null, (x) => oneOf(ASSISTANT_LANGUAGES, x, "language")),
-    sources: list(json.sources, parseSource, "sources", 20),
+    sources: list(Array.isArray(json.sources) ? json.sources.filter(isKnownSource) : json.sources, parseSource, "sources", 20),
     drafts: list(json.drafts, parseDraftCard, "drafts", 10),
     created_at: str(json.created_at, "created_at", 60),
   };

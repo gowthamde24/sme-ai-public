@@ -4,6 +4,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { fetchCompany, isCanonicalUuid } from "@/lib/api/crm";
 import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
+import { indiaDayText } from "@/components/v2/app/visits/dates";
 import { requireUser } from "@/lib/auth/session";
 
 import { EvidencePanel } from "../../evidence-panel";
@@ -113,7 +114,7 @@ export default async function CompanyPage({
             <dt>Industry</dt>
             <dd>{company.industry ?? "—"}</dd>
             <dt>Created</dt>
-            <dd>{company.created_at.slice(0, 10)}</dd>
+            <dd>{indiaDayText(company.created_at)}</dd>
             <dt>Origin</dt>
             <dd>{company.created_via}</dd>
           </dl>

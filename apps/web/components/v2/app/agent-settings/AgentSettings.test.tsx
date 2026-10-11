@@ -20,7 +20,7 @@ describe("automatic sending", () => {
     render(<SendingForm words={WORDS} settings={SETTINGS} save={ok("Saved.")} />);
     expect(screen.getByText("Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you.")).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Agent OWL may send routine replies by itself" })).not.toBeChecked();
-    expect(screen.getByText("Off: every message waits for you.")).toBeInTheDocument();
+    expect(screen.getByText("Off: new messages wait for you to approve them. Messages you approve still go out.")).toBeInTheDocument();
     expect(screen.getByLabelText("Messages per customer per day")).toHaveValue(3);
     expect(screen.getByText("Saving needs your authenticator app.")).toBeInTheDocument();
   });
@@ -144,6 +144,13 @@ describe("Agent OWL's checks card", () => {
     expect(screen.getByText("9:00")).toBeInTheDocument(); // last activity 03:30Z
     expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["2 sent", "1 reminders", "0 marked did not come", "0 failed", "0 errors"]);
     expect(document.querySelector('[data-scheduler="stale"]')).toBeNull();
+  });
+  it("says approved messages still go out when automatic sending is off (releases_approved), and that they wait when the system switch is off", () => {
+    render(<SchedulerCard words={WORDS} status={status({ auto_send_enabled: false, active: false, releases_approved: true })} now={NOW} />);
+    expect(document.querySelector('[data-line="releases-approved"]')).toHaveTextContent("Approved messages still go out when automatic sending is off.");
+    cleanup();
+    render(<SchedulerCard words={WORDS} status={status({ platform_switch_on: false, active: false, releases_approved: false })} now={NOW} />);
+    expect(document.querySelector('[data-line="releases-approved"]')).toHaveTextContent("Approved messages wait: sending is stopped for the whole system.");
   });
   it("a calm warning when it should be working and has not checked for more than five minutes", () => {
     render(<SchedulerCard words={WORDS} status={status({ last_run_at: "2026-10-14T04:10:00Z" })} now={NOW} />);

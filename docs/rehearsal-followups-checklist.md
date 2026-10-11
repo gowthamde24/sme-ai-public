@@ -33,7 +33,7 @@ The twelve leads (each has a keyed contact who gave consent for e-mail and Whats
 
 **Finding your way:** the follow-up screens do not show the company's name, so use the printed addresses (the script lists them by lead number and company, with the WhatsApp tab's address for leads 10, 11 and 12). On a lead's follow-up page the link "← Lead" opens the lead itself, where the company is named.
 
-Where things are: the menu has "Follow-ups due" (the due list) and, on a lead, "Follow-up for this lead →". The due list has a link "The follow-up policy".
+Where things are: the menu has "Follow-ups due" (the due list) and, on a lead, "Follow-up for this lead". The due list has a link "The follow-up policy".
 
 ---
 

@@ -43,12 +43,11 @@ beforeEach(() => {
 });
 
 describe("the lead page: Contact this lead", () => {
-  it.each(["owner", "admin", "sales"])("a %s gets the two ways to reach the lead and the visit button, above 'I sent a message'", async (role) => {
+  it.each(["owner", "admin", "sales"])("a %s gets the two ways to reach the lead and the visit button, FIRST on the page", async (role) => {
     fetchTenant.mockResolvedValue(tenant(role));
     render(await LeadPage(props()));
     const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(headings.indexOf("Contact this lead")).toBeGreaterThan(-1);
-    expect(headings.indexOf("Contact this lead")).toBeLessThan(headings.indexOf("I sent a message"));
+    expect(headings[0]).toBe("Contact this lead");
     expect(screen.getByRole("button", { name: "Contact on WhatsApp" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Request a call" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Book a store visit" })).toHaveAttribute("href", `/app/tenants/${T}/visits?lead=${L}#book`);
@@ -66,6 +65,7 @@ describe("the lead page: Contact this lead", () => {
     expect(screen.getByRole("heading", { name: "Contact this lead" })).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Contact on WhatsApp" })).toBeNull();
     expect(screen.getByRole("link", { name: "Book a store visit" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Add the customer" })).toBeInTheDocument();
   });
   it("a contact that could not be read still offers the buttons (the database decides)", async () => {
     fetchLeadContactId.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));

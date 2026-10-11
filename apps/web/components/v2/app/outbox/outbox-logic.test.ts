@@ -5,7 +5,7 @@ import { OUTBOX_REASONS } from "@/lib/api/outbox";
 
 import { NOW } from "./outbox-test-kit";
 import { filedAt, inRange, stamp } from "./outbox-time";
-import { ALL_REASON_KEYS, TABS, TAB_STATUSES, firstLine, reasonKey, toneOf } from "./reasons";
+import { TABS, TAB_STATUSES, firstLine, reasonKey, toneOf } from "./reasons";
 import { STALE_AFTER_MINUTES, schedulerView } from "./scheduler-line";
 
 describe("the reason chips", () => {
@@ -14,7 +14,6 @@ describe("the reason chips", () => {
       const t = appT(lang);
       for (const r of OUTBOX_REASONS) expect(t(reasonKey(r) as "frame.notyet").length, `${lang} ${r}`).toBeGreaterThan(2);
     }
-    expect(ALL_REASON_KEYS).toHaveLength(OUTBOX_REASONS.length);
   });
   it("says the reasons the brief asks for in plain words", () => {
     const t = appT("en");

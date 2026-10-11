@@ -52,7 +52,7 @@ describe("EvidencePanel", () => {
     for (const text of [
       "Web page",
       "manual",
-      "2026-01-01",
+      "1 Jan 2026",
       "agent",
       "https://example.test/catalogue",
       "doc:cat-1",

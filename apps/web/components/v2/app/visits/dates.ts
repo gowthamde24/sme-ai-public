@@ -51,5 +51,8 @@ export function weekdayName(index: number, lang: string): string {
   return new Intl.DateTimeFormat(lang === "en" ? "en-IN" : `${lang}-IN`, { timeZone: "UTC", weekday: "long" }).format(new Date(Date.UTC(2026, 9, 5 + index)));
 }
 
-/** "10:30" -> minutes since midnight. */
-export const minutesOf = (clock: string): number => Number(clock.slice(0, 2)) * 60 + Number(clock.slice(3, 5));
+
+/** "2 Oct 2026": the Indian day of a moment, written the Indian way (`lang` picks the month's name). */
+export function indiaDayText(iso: string, lang = "en"): string {
+  return new Intl.DateTimeFormat(lang === "en" ? "en-IN" : `${lang}-IN`, { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" }).format(new Date(iso));
+}

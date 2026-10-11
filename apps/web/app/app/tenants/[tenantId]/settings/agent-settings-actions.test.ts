@@ -31,7 +31,7 @@ describe("automatic sending", () => {
     expect(putOutboxSettings).toHaveBeenCalledWith("tok", T, { auto_send_enabled: true, per_customer_daily_limit: 4 });
     expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/outbox`);
     putOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 4 });
-    expect(await saveSendingAction(T, { auto_send_enabled: false, per_customer_daily_limit: 4 })).toEqual({ ok: true, message: "Saved. Automatic sending is off: every message waits for you." });
+    expect(await saveSendingAction(T, { auto_send_enabled: false, per_customer_daily_limit: 4 })).toEqual({ ok: true, message: "Saved. Automatic sending is off: new messages wait for you to approve them. Messages you approve still go out." });
   });
   it.each([["a limit of 0", { per_customer_daily_limit: 0 }], ["a limit of 21", { per_customer_daily_limit: 21 }], ["a limit that is not a whole number", { per_customer_daily_limit: 2.5 }], ["a switch that is not a boolean", { auto_send_enabled: "yes" }]])("%s never reaches the API", async (_n, over) => {
     expect(await saveSendingAction(T, { auto_send_enabled: true, per_customer_daily_limit: 3, ...over } as never)).toMatchObject({ ok: false });

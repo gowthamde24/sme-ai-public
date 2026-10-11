@@ -6,7 +6,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined
 import { appT } from "@/i18n/app";
 
 import { TodayView, dayLine } from "./TodayView";
-import { NOW, call, classic, fakeActions, outbox, t } from "./today-test-kit";
+import { NOW, call, classic, fakeActions, outbox, proposal, t } from "./today-test-kit";
 import { NOTHING_TODAY, type Digest, type NeedsCard, type Role, type StoreToday, type StoreVisit, type TodayData } from "./types";
 
 const READY: Digest = { state: "ready", sent: 6, held: 1, lines: [{ kind: "reply_to_inbound", n: 6 }, { kind: "quiet", n: 1, time: "9:00" }] };
@@ -251,6 +251,18 @@ describe("Today: the side sections", () => {
   it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
     await view(data({ team: null }));
     expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+  });
+});
+
+describe("Today: the count is the cards", () => {
+  it("the badge and the sentence say 3 for three cards, one of them a visit Agent OWL proposed (the API already counts it)", async () => {
+    await view(data({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), proposal()] }));
+    expect(screen.getByRole("heading", { level: 2, name: "3 things need you. The rest is handled." })).toBeInTheDocument();
+    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "3");
+  });
+  it("when the API counts more than it lists, the difference is said, never a card-less number hidden", async () => {
+    await view(data({ cards: { waiting: 5, money_held_paise: 0, orders_open: 0 }, needs: [outbox(), call(), proposal()] }));
+    expect(document.querySelector("[data-count]")).toHaveAttribute("data-count", "5");
   });
 });
 

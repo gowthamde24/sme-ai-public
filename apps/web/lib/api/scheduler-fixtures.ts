@@ -5,6 +5,7 @@ export const STATUS_JSON = {
   platform_switch_on: true,
   auto_send_enabled: true,
   active: true,
+  releases_approved: true,
   worker_running: true,
   last_run_at: "2026-10-14T04:28:00Z",
   next_run_at: "2026-10-14T04:29:00Z",

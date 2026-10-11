@@ -159,7 +159,7 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "Lead" }),
     ).toBeInTheDocument();
-    for (const text of ["qualified", "DEMO trade fair", "2026-02-03", "manual"])
+    for (const text of ["Good fit", "DEMO trade fair", "3 Feb 2026", "Added by hand"]) // the status and the origin in words, the day the Indian way
       expect(screen.getAllByText(text).length).toBeGreaterThan(0);
     expect(screen.getByText("Catalogue says <b>silk</b>")).toBeInTheDocument();
     expect(screen.getByText("doc:cat-1")).toBeInTheDocument();

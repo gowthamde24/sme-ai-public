@@ -64,12 +64,8 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
       return { type: "call", key, at: i.at, id: i.id, customer, city: i.city, request: c ? { reason: c.reason, language: c.language } : null };
     });
     data.recent = t.recent.map((r): RecentItem => ({ ...r, href: where(r.target) }));
-    // the visits Agent OWL proposed wait for a person as well: they follow the API's own items
-    // (and they count: the API's number of things waiting does not know about visits, so the proposals are added to it, and the screen's count agrees with its cards)
-    if (proposals.status === "fulfilled" && proposals.value.length > 0) {
-      data.needs = [...(data.needs ?? []), ...proposals.value];
-      if (data.cards.waiting !== null) data.cards = { ...data.cards, waiting: data.cards.waiting + proposals.value.length };
-    }
+    // the visits Agent OWL proposed wait for a person as well: they follow the API's own items. The API's `waiting` already counts them (job AY), so nothing is added to it here: the badge is the API's number.
+    if (proposals.status === "fulfilled" && proposals.value.length > 0) data.needs = [...(data.needs ?? []), ...proposals.value];
   }
   return data;
 }
