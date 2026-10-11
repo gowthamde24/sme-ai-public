@@ -9,17 +9,23 @@ import base64
 import logging
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Any, Protocol
 
 from app.errors import ApiError
 from app.outbox.adapter import ChannelAdapter, OutgoingMessage, SendResult
 from app.outbox.models import REASON_TEXT, CallRequestOut, DispatchOut, OutboxMessageOut
-from app.outbox.repository import OutboxRepository
 from app.tenancy.repository import RepositoryError, UpstreamError
 
 logger = logging.getLogger("app.outbox.service")
 
 DISPATCH_BATCH = 20
+
+
+class DispatchPort(Protocol):
+    """The two calls the dispatch loop needs. The outbox repository (a person's "dispatch now") and the scheduler's repository (the worker) both have them with these shapes."""
+
+    def claim_due(self, token: str, tenant_id: uuid.UUID, limit: int) -> list[dict[str, Any]]: ...
+    def mark(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
 
 
 def _customer(row: dict[str, Any]) -> tuple[str | None, str | None]:
@@ -111,7 +117,7 @@ def next_cursor(rows: list[dict[str, Any]], limit: int) -> str | None:
 
 # ---------------------------------------------------------------------------------------------- dispatch
 def dispatch_due(
-    repository: OutboxRepository,
+    repository: DispatchPort,
     adapter: ChannelAdapter,
     token: str,
     tenant_id: uuid.UUID,

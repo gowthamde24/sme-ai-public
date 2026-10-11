@@ -360,9 +360,19 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | Phase | Item |
 |---|---|
 | [ ] | **The Telugu, Hindi, Kannada and Tamil templates of the visit messages are machine drafts.** Every message in those languages waits for a person (`uncertain`) until a native reader has read `app/visits/texts.py` and `CHECKED_LANGUAGES` names the language. Tamil dates are numbers on purpose (the month names end in the word for tax, which the money list reads as money). |
-| [ ] | **No reminder is made automatically.** A person (or a later worker with its own principal, ADR 0013 option B) calls `POST /visits/{id}/messages`; there is no scheduler. |
+| [x] | **Reminders are made by the scheduler (job AW, ADR 0068)** for businesses that switched automatic sending on; a person can still call `POST /visits/{id}/messages`. |
 | [ ] | **Customer replies are not wired.** "Yes, I will come", a changed plan and a STOP are recorded by a person (confirm / change / cancel, and the suppression flow). |
 | [ ] | **An order from a visit needs an approved quote.** There is no order without one (ADR 0021); a customer who buys on the spot needs the quote made and approved first, or a later "quick sale" decision. |
 | [ ] | **Opening hours are per business, one set of hours a day.** No lunch break, no staff calendar, no per-room capacity; a shop that needs them is a later ticket. |
 | [ ] | **Agent OWL can propose only a bare visit** (lead, date, time). Party size, purpose and an advance are added by a person; the tool is small on purpose (token budget, ADR 0067). |
 
+## Scheduler (ADR 0068, job AW)
+| Phase | Item |
+|---|---|
+| [ ] | **One worker principal for every business.** The worker's account (registered by the operator, no workspace) may call eleven `scheduler_*` functions for any business that has switched automatic sending on. Decide before the first external customer whether that is enough or whether to issue one principal per business (ADR 0013 option B). |
+| [ ] | **Delivery is at-least-once.** A tick that dies between the channel and the database is offered again after two minutes with the same message id. A real WhatsApp adapter MUST use the id as its idempotency key (ADR 0066 decision 6) before it exists. |
+| [ ] | **Hosted worker.** Its account, its password in the host's secret store, one process, a restart policy, an alert when `worker_running` turns false. Nothing exists; ADR 0017 keeps this for the Customer Zero stage. |
+| [ ] | **Messages the Owner approved in a business with automatic sending OFF are not released by the worker.** They wait for "dispatch now". Decide whether the worker should release owner-approved rows regardless. |
+| [ ] | **Reminder wording in te, hi, kn, ta is unchecked** (same item as store visits above): a reminder in those languages waits in the approval queue until a native reader has read the templates. |
+| [ ] | **Retention** of `scheduler_runs` (one row per eventful tick per business) and `visit_reminders` is not decided; both are append-only. |
+| [ ] | **The status card is API-only.** `GET /scheduler/status` and `GET|PUT /scheduler/settings` exist; the web card is a later job. |

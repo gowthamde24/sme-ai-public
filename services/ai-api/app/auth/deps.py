@@ -24,6 +24,7 @@ from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.pricelists.repository import PriceListRepository
 from app.quotes.repository import QuotesRepository
+from app.scheduler.repository import SchedulerRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.tenancy.models import Role, TenantOut
@@ -56,6 +57,7 @@ class Runtime:
     outbox: OutboxRepository | None = None
     outbox_adapter: ChannelAdapter | None = None
     visits: VisitsRepository | None = None
+    scheduler: SchedulerRepository | None = None
 
 
 @dataclass(frozen=True)

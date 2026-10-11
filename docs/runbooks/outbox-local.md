@@ -27,7 +27,7 @@ Then, as the demo owner: `GET /outbox/messages` (the log), `GET /outbox/approval
 * A person can approve what waited (even money), edit it, or reject it. The blocks are checked again at approval and at dispatch.
 
 ## Dispatch
-There is no scheduler yet. Owner and Admin dispatch right after they submit or approve, and with `POST /outbox/dispatch`. A scheduled worker needs its own principal first (ADR 0013 option B).
+Owner and Admin dispatch right after they submit or approve, and with `POST /outbox/dispatch`. A worker (`make dev-worker-local`, job AW) also releases what is due every minute for businesses that switched automatic sending on: `docs/runbooks/scheduler-local.md`, ADR 0068.
 
 ## Stop everything
 `./scripts/dev-enable-outbox.sh off` (nothing is claimed while it is off; the queue waits). To remove the demo rows: `make db-reset`.

@@ -264,6 +264,18 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
      select %2$L, %1$L, l.id, l.contact_id, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', repeat('6', 64), %5$L
        from (select id, contact_id from public.leads where tenant_id = %1$L order by id limit 1) l$$,
    'status = status', $$delete from public.store_visits where id = %2$L$$, true),
+  -- job AW: the scheduler. Written only by SECURITY DEFINER functions (the worker's principal); Owner and Admin read (visit_reminders: Sales too).
+  ('scheduler_settings',
+   $$insert into public.scheduler_settings (tenant_id) values (%1$L) on conflict (tenant_id) do update set no_show_after_minutes = 30$$,
+   'no_show_after_minutes = no_show_after_minutes', $$delete from public.scheduler_settings where tenant_id = %1$L$$, false),
+  ('visit_reminders',
+   $$insert into public.visit_reminders (id, tenant_id, visit_id, kind, for_starts_at, message_id)
+     select %2$L, %1$L, v.id, 'heads_up', v.starts_at + make_interval(secs => mod(abs(hashtext(%2$L)), 1000000)), m.id
+       from (select id, starts_at from public.store_visits where tenant_id = %1$L order by id limit 1) v, (select id from public.outbox_messages where tenant_id = %1$L order by id limit 1) m$$,
+   'kind = kind', $$delete from public.visit_reminders where id = %2$L$$, false),
+  ('scheduler_runs',
+   $$insert into public.scheduler_runs (id, tenant_id, run_at, sent) values (%2$L, %1$L, timestamptz '2026-10-06 11:00+05:30', 1)$$,
+   'sent = sent', $$delete from public.scheduler_runs where id = %2$L$$, false),
   ('assistant_conversations',
    $$insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L)$$,
    'updated_at = updated_at', $$delete from public.assistant_conversations where id = %2$L$$, true),
@@ -397,6 +409,12 @@ select t, r, s, i, u, d from (values
   ('store_settings',       'sales', true, false, false, false), ('store_settings',       'viewer', true, false, false, false),
   ('store_visits',         'owner', true, false, false, false), ('store_visits',         'admin', true, false, false, false),
   ('store_visits',         'sales', true, false, false, false), ('store_visits',         'viewer', true, false, false, false),
+  ('scheduler_settings',   'owner', true, false, false, false), ('scheduler_settings',   'admin', true, false, false, false),
+  ('scheduler_settings',   'sales', false, false, false, false), ('scheduler_settings',   'viewer', false, false, false, false),
+  ('visit_reminders',      'owner', true, false, false, false), ('visit_reminders',      'admin', true, false, false, false),
+  ('visit_reminders',      'sales', true, false, false, false), ('visit_reminders',      'viewer', false, false, false, false),
+  ('scheduler_runs',       'owner', true, false, false, false), ('scheduler_runs',       'admin', true, false, false, false),
+  ('scheduler_runs',       'sales', false, false, false, false), ('scheduler_runs',       'viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

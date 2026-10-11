@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -183,6 +183,12 @@ dev-api-local:
 # Needs `make db-start` and `make seed-demo-manual`. See docs/runbooks/main-agent-hosted-free.md.
 dev-api-groq:
 	API_PORT=$(API_PORT) ./scripts/dev-api-hosted-free.sh
+
+# Job AW (ADR 0068): the scheduler worker, one process, local stack only. It releases messages held for the morning, queues visit reminders and (if the business asks) marks missed visits. It signs in
+# as its own account, which the first run creates and registers (see scripts/dev_worker_local.py); it acts only while the global outbox switch is on AND the business has automatic sending on, and the only
+# channel is the local fake. Ctrl-C stops it. `make dev-worker-local ARGS=--once` runs a single tick. See docs/runbooks/scheduler-local.md.
+dev-worker-local:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/dev_worker_local.py $(ARGS)
 
 dev-web-local:
 	cd $(WEB) && LOCAL_DEMO_API_URL=http://localhost:$(API_PORT) ../../scripts/with-local-demo-env.sh npm run dev -- --port $(WEB_PORT)
