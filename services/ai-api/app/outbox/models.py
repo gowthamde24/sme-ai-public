@@ -9,12 +9,13 @@ import uuid
 from datetime import datetime
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StrictBool, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, StringConstraints
 
 Language = Literal["en", "te", "hi", "kn", "ta"]
 Category = Literal["reply_to_inbound", "info", "visit", "followup", "order_status", "other"]
 Source = Literal["assistant", "owner"]
 Status = Literal["queued", "needs_approval", "sent", "blocked", "failed"]
+Tab = Literal["waiting", "scheduled", "sent", "blocked"]
 Reason = Literal[
     "auto_allowed",
     "quiet_hours",
@@ -43,7 +44,7 @@ Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max
 
 REASON_TEXT: dict[str, str] = {
     "auto_allowed": "Allowed to go automatically.",
-    "quiet_hours": "Waiting for 9 am: no messages between 9 pm and 9 am (India time).",
+    "quiet_hours": "Waiting for the morning: this business sends no messages during its quiet hours (India time).",
     "owner_approved": "A person approved it.",
     "money": "It mentions money (a price, an amount, a discount, GST, an advance, a payment...). A person decides.",
     "commitment": "It makes a promise or guarantee. A person decides.",
@@ -86,6 +87,8 @@ class SubmitMessageIn(_Strict):
     photo_ids: Annotated[list[uuid.UUID], Field(max_length=4)] = []
     # when true the server logs the lead touch at the moment the message is really SENT (never when it is queued, never for a message that is blocked or fails)
     keep_record: StrictBool = False
+    # the English gloss of `text` when it is written in another language (what the owner reads to understand it); personal data like the words, erased with them
+    gloss_en: Text | None = None
 
 
 class MediaOut(_Strict):
@@ -98,6 +101,41 @@ class MediaOut(_Strict):
 
 class EditMessageIn(_Strict):
     text: Text
+    # the gloss of the NEW words; leaving it out clears the old gloss (it would describe other words)
+    gloss_en: Text | None = None
+
+
+EventKind = Literal[
+    "made",
+    "queued",
+    "held",
+    "needs_approval",
+    "approved",
+    "rejected",
+    "edited",
+    "blocked",
+    "sent",
+    "failed",
+]
+ActorKind = Literal["person", "assistant", "worker", "system"]
+
+
+class ActorOut(_Strict):
+    """Who did a step. `name` is the person's display name when they are in the business (null for the worker and the system, or someone since removed); never an e-mail address or phone number."""
+
+    kind: ActorKind
+    user_id: uuid.UUID | None
+    name: str | None
+
+
+class EventOut(_Strict):
+    """One step of a message. NO message text, phone number or name of the customer is ever in an event: `reason` is a closed word (and `reason_text` its fixed sentence)."""
+
+    kind: EventKind
+    reason: str | None
+    reason_text: str | None
+    at: datetime
+    actor: ActorOut
 
 
 class OutboxMessageOut(_Strict):
@@ -126,6 +164,10 @@ class OutboxMessageOut(_Strict):
     failure_code: Literal["adapter_error", "timeout", "rejected"] | None
     keep_record: bool
     media: list[MediaOut]
+    # the English gloss of `text`, or null
+    gloss_en: str | None = None
+    # the steps of the message in order (queued, held, approved, edited, sent ...). Present in the DETAIL (GET /outbox/messages/{id}); null in the log and the approvals list
+    events: list[EventOut] | None = None
 
 
 class DispatchOut(_Strict):
@@ -134,6 +176,12 @@ class DispatchOut(_Strict):
 
     sent: int
     failed: int
+    # messages the channel was not given because its photos could not be given a signed address this time: they stay claimed for two minutes and are offered again (0 in the usual case)
+    retry_later: int = 0
+    # only on POST /outbox/dispatch (the Dispatch button): what is still waiting after the round. null elsewhere.
+    still_due: int | None = None
+    held_for_later: int | None = None
+    platform_switch_on: bool | None = None
 
 
 class SubmitResultOut(_Strict):
@@ -158,11 +206,28 @@ class OutboxSettingsOut(_Strict):
     platform_switch_on: bool
     auto_send_enabled: bool
     per_customer_daily_limit: int
+    # quiet hours, India time, whole hours: no message goes from `quiet_hours_start`:00 until `quiet_hours_end`:00 (default 21 and 9)
+    quiet_hours_start: int = 21
+    quiet_hours_end: int = 9
 
 
 class OutboxSettingsIn(_Strict):
     auto_send_enabled: StrictBool
     per_customer_daily_limit: Annotated[int, Field(ge=1, le=20)]
+    # optional: leave a field out to keep its value. The start may be 19 to 23, the end 7 to 10 (the Owner with a second factor, like every setting here).
+    quiet_hours_start: Annotated[StrictInt, Field(ge=19, le=23)] | None = None
+    quiet_hours_end: Annotated[StrictInt, Field(ge=7, le=10)] | None = None
+
+
+class OutboxSummaryOut(_Strict):
+    """The counts behind the tabs of the log (the same customer and date filters as the list) and what the Dispatch button would act on (not filtered)."""
+
+    waiting: int
+    scheduled: int
+    sent: int
+    blocked: int
+    due_now: int
+    held_for_later: int
 
 
 class CreateCallRequestIn(_Strict):

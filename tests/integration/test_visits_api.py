@@ -28,6 +28,11 @@ from test_outbox_api import restore_clock
 from app.outbox.adapter import LocalFakeAdapter
 from app.visits import texts
 
+
+def sf(dispatched: dict[str, Any]) -> dict[str, int]:
+    """Just what the channel did (sent, failed): the dispatch answer also carries counts of what is still waiting (job BB)."""
+    return {"sent": dispatched["sent"], "failed": dispatched["failed"]}
+
 IST = timezone(timedelta(hours=5, minutes=30))
 # the day-run is pinned to this India date, the night-run to the date three days later
 FIRST_DAY = datetime.now(IST).date() - timedelta(days=21)
@@ -353,9 +358,9 @@ def test_a_confirmation_goes_through_the_outbox_by_day_and_waits_for_nine_at_nig
     assert "confirmed" in message["text"] and "11:00 am" in message["text"], "India time, 12-hour in English"
     if vbox.night:
         assert (message["status"], message["reason"]) == ("queued", "quiet_hours") and message["scheduled_for"] is not None
-        assert out["dispatched"] == {"sent": 0, "failed": 0} and len(vbox.adapter.sent) == before, "nothing goes between 9 pm and 9 am"
+        assert sf(out["dispatched"]) == {"sent": 0, "failed": 0} and len(vbox.adapter.sent) == before, "nothing goes between 9 pm and 9 am"
     else:
-        assert out["dispatched"] == {"sent": 1, "failed": 0}
+        assert sf(out["dispatched"]) == {"sent": 1, "failed": 0}
         assert vbox.adapter.sent[-1].body == message["text"] and vbox.adapter.sent[-1].to_phone == lead.phone
         assert ok(vbox.call("owner", "GET", f"/outbox/messages/{message['id']}"))["status"] == "sent"
     visit = ok(vbox.call("viewer", "GET", f"/visits/{vid}"))
@@ -447,7 +452,7 @@ def test_offering_a_store_visit_declines_the_call_and_queues_the_offer(vbox: Vis
     if vbox.night:
         assert (message["status"], message["reason"]) == ("queued", "quiet_hours") and len(vbox.adapter.sent) == before
     else:
-        assert out["dispatched"] == {"sent": 1, "failed": 0} and vbox.adapter.sent[-1].body == message["text"]
+        assert sf(out["dispatched"]) == {"sent": 1, "failed": 0} and vbox.adapter.sent[-1].body == message["text"]
     today = ok(vbox.call("owner", "GET", "/today"))["needs_you"]
     assert not any(i["kind"] == "call_approval" and i["id"] == rid for i in today), "the call no longer waits"
     again = ok(vbox.call("owner", "POST", f"/call-requests/{rid}/offer-visit"))

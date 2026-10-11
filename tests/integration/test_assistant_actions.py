@@ -44,13 +44,14 @@ def run(
     calls: list[ToolCall],
     reply: str = "Done: drafted. Nothing was sent.",
     lang: str = "en",
+    text: str = "please draft it",
 ) -> list[tuple[str, dict[str, Any]]]:
     HOLDER["model"] = Scripted(
         [lambda r: respond(*calls), lambda r: final("answer", reply, lang, ["s1"])]
     )
     r = app.post(
         f"/v1/tenants/{scene.a.id}/assistant/messages",
-        json={"message_id": str(uuid.uuid4()), "text": "please draft it"},
+        json={"message_id": str(uuid.uuid4()), "text": text},
         headers=bearer(scene.a.users["owner"]),
     )
     assert r.status_code == 200, r.text
@@ -340,7 +341,9 @@ def test_a_proposed_visit_is_booked_for_a_person_to_confirm_and_nothing_is_sent(
     before_messages = operator_sql.sql(
         f"select count(*) from public.outbox_messages where tenant_id = '{scene.a.id}'"
     )
-    evts = run(app, scene, [call], "I proposed a visit. It is booked, not confirmed.")
+    evts = run(
+        app, scene, [call], "I proposed a visit. It is booked, not confirmed.", text="Please book a visit for this customer"
+    )
     cards = drafts_of(evts)
     assert (
         [c["kind"] for c in cards] == ["store_visit"]
@@ -365,6 +368,7 @@ def test_a_proposed_visit_is_booked_for_a_person_to_confirm_and_nothing_is_sent(
         scene,
         [ToolCall("propose_visit", {**args, "time": "12:00"}), ToolCall("get_today", {})],
         "Done.",
+        text="Please book a visit for this customer",
     )
     assert (
         operator_sql.sql(
@@ -390,6 +394,7 @@ def test_a_proposed_visit_is_booked_for_a_person_to_confirm_and_nothing_is_sent(
             scene,
             [ToolCall("propose_visit", bad), ToolCall("get_today", {})],
             "I could not book that.",
+            text="Please book a visit for this customer",
         )
         assert drafts_of(evts) == [], bad
     assert operator_sql.sql("select count(*) from public.store_visits") == before

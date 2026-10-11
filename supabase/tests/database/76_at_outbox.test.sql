@@ -151,7 +151,7 @@ select is(pg_temp.verdict(pg_temp.sub('d1', 'k1', 'Yes, we are open on Sunday fr
 select is(pg_temp.st('d1'), 'blocked/switch_off', '...and the row says so');
 select is((select count(*) from public.outbox_messages where tenant_id = tests.tid('a') and status in ('queued', 'sent')), 0::bigint, 'nothing is queued or sent');
 update public.platform_flags set enabled = true where key = 'outbox_enabled';
-select is(pg_temp.sc('a_owner', format($q$select public.outbox_set_settings(%L, true, 3)$q$, tests.tid('a'))), '{"auto_send_enabled": true, "per_customer_daily_limit": 3}', 'the Owner switches auto-send on (limit 3) with a second factor');
+select is(pg_temp.sc('a_owner', format($q$select public.outbox_set_settings(%L, true, 3)$q$, tests.tid('a'))), '{"quiet_hours_end": 9, "auto_send_enabled": true, "quiet_hours_start": 21, "per_customer_daily_limit": 3}', 'the Owner switches auto-send on (limit 3) with a second factor');
 
 -- ---------------------------------------------------------------------------------------------
 -- E. the policy through outbox_submit (switch on, auto on, consent granted, an inbound message an hour ago)

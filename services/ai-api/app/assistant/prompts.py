@@ -14,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from app.agents.llm.interface import Block, LlmRequest, TaskClass, ToolSpec, Trust
 from app.agents.prompts import escape_value
 from app.assistant.language import LANGUAGES, Language
+from app.assistant.router import CATALOGUE_TOOLS
 from app.assistant.tools import TOOLS, Item
 
 LANGUAGE_NAMES: dict[str, str] = {
@@ -96,6 +97,16 @@ SYSTEM_PROMPT = (
     'with underscores (such as find_price, refused_call or draft_quote). Say in plain words what you did or could not do ("I looked at your price list", "I could not do that"). Be brief.'
 )
 
+# Without the catalogue tools the prompt does not mention them (job BB): the sentence about the photos tool is for the requests that offer it
+_CATALOGUE_CLAUSE = ", except the catalogue photos tool, which queues a message under the sending policy (a price or an amount in it waits for the owner). You cannot send otherwise, approve,"
+SYSTEM_PROMPT_NO_CATALOGUE = SYSTEM_PROMPT.replace(_CATALOGUE_CLAUSE, ". You cannot send, approve,")
+
+
+def tool_specs(offered: frozenset[str] | None) -> tuple[ToolSpec, ...]:
+    """The definitions of the tools offered (all of them when `offered` is None), in the fixed order of TOOLS."""
+    return TOOL_SPECS if offered is None else tuple(t for t in TOOL_SPECS if t.name in offered)
+
+
 TURN_HINTS = (
     "Decide what to look up. Call the read tools you need (several in one reply is fine). If the question needs no lookup (a greeting, or something you must refuse), reply now.",
     "If you still need information, call the tools now; if you have what you need, give your answer with the `reply` tool.",
@@ -162,15 +173,18 @@ def build_request(
     notes: Sequence[str],
     today: datetime,
     max_output_tokens: int,
+    offered: frozenset[str] | None = None,
 ) -> LlmRequest:
+    """`offered`: the names of the tools to describe to the model (job BB: the router decides once per question; None = every tool, for tests)."""
     if not re.fullmatch(r"[0-9a-f]{6,64}", delimiter):
         raise ValueError("the delimiter must be a random hex string")
     for note in notes:
         if note not in FIXED_NOTES:
             raise ValueError("only fixed phrases may flow back to the model as trusted text")
     hint = TURN_HINTS[min(turn, len(TURN_HINTS)) - 1]
+    with_catalogue = offered is None or bool(offered & CATALOGUE_TOOLS)
     blocks = [
-        Block(Trust.SYSTEM, SYSTEM_PROMPT),
+        Block(Trust.SYSTEM, SYSTEM_PROMPT if with_catalogue else SYSTEM_PROMPT_NO_CATALOGUE),
         Block(
             Trust.TRUSTED,
             f"Turn {turn}. {hint} Today (India) is {today.date().isoformat()}. Reply in {LANGUAGE_NAMES[language]} ({language}).",
@@ -188,7 +202,7 @@ def build_request(
     blocks.extend(results)
     return LlmRequest(
         blocks=tuple(blocks),
-        tools=TOOL_SPECS if turn < FINAL_TURN else (),
+        tools=tool_specs(offered) if turn < FINAL_TURN else (),
         max_output_tokens=max_output_tokens,
         task_class=TASK_CLASS,
         final_result=FINAL_REPLY,

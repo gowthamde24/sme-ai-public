@@ -179,6 +179,10 @@ select is(
         'public.catalogue_get',
         'public.catalogue_search',
         'public.lead_search',
+        -- job BB: the outbox log (a page of ids, the counts) proves Owner / Admin / Sales first; the worker's read rule for the files of a message it has claimed, evaluated by storage as the signed-in caller
+        'public.outbox_list',
+        'public.outbox_summary',
+        'app.worker_may_read_object',
         'app.agent_switch_on',
         'app.is_tenant_member',
         'app.has_tenant_role',
@@ -290,7 +294,8 @@ select is(
                      'public.call_request_offer_visit', 'public.visit_list', 'public.ai_usage_week',
                      'public.scheduler_settings_get', 'public.scheduler_settings_set', 'public.scheduler_tenants', 'public.scheduler_heartbeat', 'public.scheduler_claim_due', 'public.scheduler_mark',
                      'public.scheduler_due_reminders', 'public.scheduler_queue_reminder', 'public.scheduler_mark_no_shows', 'public.scheduler_record', 'public.scheduler_status',
-                     'public.catalogue_ensure_bucket', 'public.catalogue_item_save', 'public.catalogue_photo_add', 'public.catalogue_photo_remove', 'public.catalogue_photos_reorder')),
+                     'public.catalogue_ensure_bucket', 'public.catalogue_item_save', 'public.catalogue_photo_add', 'public.catalogue_photo_remove', 'public.catalogue_photos_reorder',
+                     'public.outbox_list', 'public.outbox_summary')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

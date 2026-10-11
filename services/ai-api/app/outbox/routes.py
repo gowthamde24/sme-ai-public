@@ -10,6 +10,7 @@ token proved. Nothing here dials a number. A message leaves only through the cha
 NOTE: no `from __future__ import annotations` here, for the same reason as app/orders/routes.py (request models are attached to the endpoint signatures at registration time)."""
 
 import uuid
+from datetime import date
 from typing import Annotated, Any, Literal
 
 from fastapi import APIRouter, Depends, Query
@@ -28,10 +29,12 @@ from app.outbox.models import (
     DecisionOut,
     DispatchOut,
     EditMessageIn,
+    EventOut,
     OutboxMessageOut,
     OutboxPageOut,
     OutboxSettingsIn,
     OutboxSettingsOut,
+    OutboxSummaryOut,
     SubmitMessageIn,
     SubmitResultOut,
 )
@@ -49,6 +52,7 @@ OwnerAdminStrong = Annotated[
 ]
 OwnerStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, strong=True))]
 MessageStatus = Literal["queued", "needs_approval", "sent", "blocked", "failed"]
+MessageTab = Literal["waiting", "scheduled", "sent", "blocked"]
 CallStatus = Literal["requested", "approved", "rejected"]
 Limit = Annotated[int, Query(ge=1, le=100)]
 
@@ -73,11 +77,25 @@ def _urls(runtime: Runtime, ctx: TenantContext, rows: list[dict[str, Any]]) -> d
     )
 
 
+def _events(runtime: Runtime, ctx: TenantContext, message_id: uuid.UUID) -> list[EventOut]:
+    """The steps of one message, in order, with the display name of each person (a name the database does not show the caller is simply left out)."""
+    repository = _repo(runtime)
+    rows = repository.list_events(ctx.principal.token, ctx.tenant.id, [message_id])
+    people = sorted({str(r["actor_user_id"]) for r in rows if r.get("actor_user_id")})
+    names = (
+        repository.display_names(ctx.principal.token, [uuid.UUID(p) for p in people])
+        if people
+        else {}
+    )
+    return [service.event_out(r, names) for r in rows]
+
+
 def _message(runtime: Runtime, ctx: TenantContext, message_id: uuid.UUID) -> OutboxMessageOut:
+    """One message with its media and its events (the detail shape)."""
     row = _repo(runtime).get_message(ctx.principal.token, ctx.tenant.id, message_id)
     if row is None:
         raise not_found()
-    return service.message_out(row, _urls(runtime, ctx, [row]))
+    return service.message_out(row, _urls(runtime, ctx, [row]), _events(runtime, ctx, message_id))
 
 
 def _dispatch(runtime: Runtime, ctx: TenantContext) -> DispatchOut | None:
@@ -88,7 +106,13 @@ def _dispatch(runtime: Runtime, ctx: TenantContext) -> DispatchOut | None:
     adapter = runtime.outbox_adapter
     if adapter is None:
         raise ApiError(503, "outbox_unavailable", "Messages are not available right now.")
-    return service.dispatch_due(repository, adapter, ctx.principal.token, ctx.tenant.id)
+    return service.dispatch_due(
+        repository,
+        adapter,
+        ctx.principal.token,
+        ctx.tenant.id,
+        sign_media=service.media_signer(runtime.catalogue_storage),
+    )
 
 
 # ------------------------------------------------------------------------------------------------ messages
@@ -111,6 +135,7 @@ def submit_message(body: SubmitMessageIn, ctx: SalesPlus, runtime: RuntimeDep) -
             "p_uncertain": body.uncertain,
             "p_media": [str(p) for p in body.photo_ids],
             "p_keep_record": body.keep_record,
+            "p_gloss_en": body.gloss_en,
         },
     )
     replayed = result.get("replayed") is True
@@ -126,23 +151,67 @@ def list_messages(
     runtime: RuntimeDep,
     status: MessageStatus | None = None,
     lead_id: str | None = None,
+    tab: MessageTab | None = None,
+    customer: Annotated[str | None, Query(min_length=2, max_length=60)] = None,
+    date_from: Annotated[date | None, Query(alias="from")] = None,
+    date_to: Annotated[date | None, Query(alias="to")] = None,
     after: str | None = None,
     limit: Limit = 30,
 ) -> OutboxPageOut:
-    """The outbox log, newest first."""
-    lead = _row_id(lead_id) if lead_id is not None else None
-    rows = _repo(runtime).list_messages(
-        ctx.principal.token,
-        ctx.tenant.id,
-        status=status,
-        lead_id=lead,
-        after=service.decode_cursor(after),
-        limit=limit,
+    """The outbox log, newest first. Either `status` (and `lead_id`), or the log's own filters: `tab` (waiting, scheduled, sent, blocked), `customer` (part of the company's or contact's name; never the
+    words of a message) and `from` / `to` (India dates, both included). The two ways are not combined (422). Paged by the cursor in `next_cursor`."""
+    filtered = (
+        tab is not None or customer is not None or date_from is not None or date_to is not None
     )
+    if filtered and (status is not None or lead_id is not None):
+        raise ApiError(
+            422, "validation_error", "Use either status / lead_id or tab / customer / from / to."
+        )
+    repository = _repo(runtime)
+    if filtered:
+        rows = repository.list_messages_filtered(
+            ctx.principal.token,
+            ctx.tenant.id,
+            tab=tab,
+            customer=customer,
+            date_from=date_from,
+            date_to=date_to,
+            after=service.decode_cursor(after),
+            limit=limit,
+        )
+    else:
+        rows = repository.list_messages(
+            ctx.principal.token,
+            ctx.tenant.id,
+            status=status,
+            lead_id=_row_id(lead_id) if lead_id is not None else None,
+            after=service.decode_cursor(after),
+            limit=limit,
+        )
     urls = _urls(runtime, ctx, rows)
     return OutboxPageOut(
         items=[service.message_out(r, urls) for r in rows],
         next_cursor=service.next_cursor(rows, limit),
+    )
+
+
+@router.get("/outbox/summary", response_model=OutboxSummaryOut)
+def summary(
+    ctx: SalesPlus,
+    runtime: RuntimeDep,
+    customer: Annotated[str | None, Query(min_length=2, max_length=60)] = None,
+    date_from: Annotated[date | None, Query(alias="from")] = None,
+    date_to: Annotated[date | None, Query(alias="to")] = None,
+) -> OutboxSummaryOut:
+    """The counts behind the tabs (with the same `customer` and `from` / `to` filters as the log), and `due_now` / `held_for_later`: what Dispatch would act on, never filtered."""
+    return OutboxSummaryOut.model_validate(
+        _repo(runtime).summary(
+            ctx.principal.token,
+            ctx.tenant.id,
+            customer=customer,
+            date_from=date_from,
+            date_to=date_to,
+        )
     )
 
 
@@ -175,10 +244,10 @@ def get_message(message_id: str, ctx: SalesPlus, runtime: RuntimeDep) -> OutboxM
 def edit_message(
     message_id: str, body: EditMessageIn, ctx: OwnerAdmin, runtime: RuntimeDep
 ) -> OutboxMessageOut:
-    """Change the words of a message that waits for approval. It keeps waiting; the first-message disclosure line stays."""
+    """Change the words (and, if given, the English gloss) of a message that waits for approval. It keeps waiting; the first-message disclosure line stays. Without `gloss_en` the old gloss is cleared."""
     row_id = _row_id(message_id)
     _message(runtime, ctx, row_id)  # 404 unless it is visible to this caller
-    _repo(runtime).edit(ctx.principal.token, ctx.tenant.id, row_id, body.text)
+    _repo(runtime).edit(ctx.principal.token, ctx.tenant.id, row_id, body.text, body.gloss_en)
     return _message(runtime, ctx, row_id)
 
 
@@ -202,8 +271,21 @@ def reject_message(message_id: str, ctx: OwnerAdmin, runtime: RuntimeDep) -> Dec
 
 @router.post("/outbox/dispatch", response_model=DispatchOut)
 def dispatch(ctx: OwnerAdmin, runtime: RuntimeDep) -> DispatchOut:
-    """Hand every due message to the channel (the database re-checks every block first; while the kill switch is off nothing goes)."""
-    return _dispatch(runtime, ctx) or DispatchOut(sent=0, failed=0)
+    """Hand this BUSINESS's due messages to the channel (the tenant is in the path; the database re-checks every block first; while the kill switch is off nothing goes), then say what is still
+    waiting: `still_due` (due but not handed over: blocked at the re-check, or retried later), `held_for_later` (scheduled for the morning) and `platform_switch_on`."""
+    result = _dispatch(runtime, ctx) or DispatchOut(sent=0, failed=0)
+    repository = _repo(runtime)
+    counts = repository.summary(
+        ctx.principal.token, ctx.tenant.id, customer=None, date_from=None, date_to=None
+    )
+    settings = repository.get_settings(ctx.principal.token, ctx.tenant.id)
+    return result.model_copy(
+        update={
+            "still_due": int(counts["due_now"]),
+            "held_for_later": int(counts["held_for_later"]),
+            "platform_switch_on": settings.get("platform_switch_on") is True,
+        }
+    )
 
 
 # ------------------------------------------------------------------------------------------------ settings
@@ -218,10 +300,16 @@ def get_settings(ctx: OwnerAdmin, runtime: RuntimeDep) -> OutboxSettingsOut:
 def put_settings(
     body: OutboxSettingsIn, ctx: OwnerStrong, runtime: RuntimeDep
 ) -> OutboxSettingsOut:
-    """Automatic sending on or off (off by default) and the per-customer daily limit. Owner, with a second factor."""
+    """Automatic sending on or off (off by default), the per-customer daily limit and, optionally, the quiet hours (start 19 to 23, end 7 to 10, India time; a field left out keeps its value).
+    Owner, with a second factor."""
     repository = _repo(runtime)
     repository.set_settings(
-        ctx.principal.token, ctx.tenant.id, body.auto_send_enabled, body.per_customer_daily_limit
+        ctx.principal.token,
+        ctx.tenant.id,
+        body.auto_send_enabled,
+        body.per_customer_daily_limit,
+        body.quiet_hours_start,
+        body.quiet_hours_end,
     )
     return OutboxSettingsOut.model_validate(
         repository.get_settings(ctx.principal.token, ctx.tenant.id)

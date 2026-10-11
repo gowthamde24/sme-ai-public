@@ -44,7 +44,7 @@ from app.agents.errors import (
 from app.agents.llm.interface import Block, LlmClient, LlmError, LlmRequest
 from app.agents.llm.routing import ModelRouter, as_router
 from app.agents.runtime import NOT_BILLED, input_token_bound
-from app.assistant import prompts
+from app.assistant import prompts, router
 from app.assistant.db import AssistantDb
 from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
@@ -164,6 +164,8 @@ class AssistantRunner:
             notes: tuple[str, ...] = ()
             repaired: set[str] = set()
             actions = 0
+            # job BB: the tools offered are decided ONCE per question from the question and the lines before it (a deterministic router, no model call). A call to a tool that was not offered is refused.
+            offered = router.offered_tools(question, history)
             for turn in range(1, MAX_TURNS + 1):
                 turns = turn
                 self._guard()
@@ -177,6 +179,7 @@ class AssistantRunner:
                     notes=notes,
                     today=self._now(),
                     max_output_tokens=MAX_OUTPUT_TOKENS,
+                    offered=offered,
                 )
                 llm = self._pick(request)
                 self._db.reserve_cost(
@@ -209,7 +212,9 @@ class AssistantRunner:
                         notes = (prompts.NOTE_TOOL_REFUSED,)
                         continue
                     key = f"t{turn}-c{index}"
-                    tool = next((t for t in TOOLS if t.name == call.name), None)
+                    tool = next(
+                        (t for t in TOOLS if t.name == call.name and t.name in offered), None
+                    )
                     args: Any = None
                     if tool is not None:
                         try:

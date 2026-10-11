@@ -20,7 +20,7 @@ Then, as the demo owner: `GET /outbox/messages` (the log), `GET /outbox/approval
 **The web's Today must know the new kinds `outbox_approval` and `call_approval` first.** An older web build shows an error for Today (it checks every item strictly) while one of them waits. If you see that, `make db-reset` and `make seed-demo-manual` give you the old Today back.
 
 ## What the policy does (the short version; the full rules are in ADR 0066 and the migration header)
-* Goes by itself: a reply within 24 hours of the customer's message; catalogue, hours, location; visit booking, confirmation, reminder; a follow-up without prices; an order status without amounts. Between 21:00 and 09:00 India time it waits for 09:00.
+* Goes by itself: a reply within 24 hours of the customer's message; catalogue, hours, location; visit booking, confirmation, reminder; a follow-up without prices; an order status without amounts. Between the business's quiet hours (default 21:00 to 09:00 India time; the Owner can set the start between 19:00 and 23:00 and the end between 07:00 and 10:00 with a second factor) it waits for the morning.
 * Waits for a person (the default): money in any of English, Telugu, Hindi, Kannada, Tamil (a rupee sign, rupee words, price, discount, GST, advance, payment, refund, credit, UPI, bank...), a promise or guarantee, a complaint, anything the assistant flagged or was unsure about, anything uncategorised, a "reply" with no message from the customer in the last 24 hours.
 * Blocked: the kill switch is off; the customer asked us to stop (STOP is `POST /contacts/{id}/suppress`); the contact is erased; no phone; no suppression key on record; no opt-in and no contact history; more than the per-customer daily limit (default 3) today.
 * The first message to a customer carries "This message is from the business's AI assistant." in their language.
@@ -31,3 +31,10 @@ Owner and Admin dispatch right after they submit or approve, and with `POST /out
 
 ## Stop everything
 `./scripts/dev-enable-outbox.sh off` (nothing is claimed while it is off; the queue waits). To remove the demo rows: `make db-reset`.
+
+## Job BB additions
+* **The steps of a message** (made, queued, held, needs approval, approved, rejected, edited, blocked, sent, failed; who and when; no text) are in `events` of `GET /outbox/messages/{id}`. In SQL: `select kind, reason, at, actor_kind from outbox_events where message_id = '...' order by seq`.
+* **The log** filters on the server: `GET /outbox/messages?tab=waiting|scheduled|sent|blocked&customer=Ravi&from=2026-10-01&to=2026-10-04&limit=30&after=...`; `GET /outbox/summary` gives the counts. `POST /outbox/dispatch` is this business's button and says what is still waiting.
+* **The English gloss** goes in `gloss_en` on submit and edit.
+* **Quiet hours**: `PUT /outbox/settings` with `quiet_hours_start` (19 to 23) and `quiet_hours_end` (7 to 10).
+* **Photos for a real channel**: see `docs/runbooks/scheduler-local.md` (the worker signs five-minute addresses for the photos of the messages it claims).

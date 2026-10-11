@@ -81,7 +81,7 @@ select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.prona
 select is((select count(*) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
             where n.nspname = 'public' and p.proname in ('catalogue_ensure_bucket', 'catalogue_item_save', 'catalogue_photo_add', 'catalogue_photo_remove', 'catalogue_photos_reorder', 'catalogue_get', 'catalogue_search', 'lead_search')
               and has_function_privilege('anon', p.oid, 'execute')), 0::bigint, 'anon cannot execute any of them');
-select is((select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname like 'catalogue\_objects\_%'), 3::bigint, 'three storage rules: read, add and remove');
+select is((select count(*) from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname like 'catalogue\_objects\_%' and policyname <> 'catalogue_objects_select_worker'), 3::bigint, 'three storage rules: read, add and remove (job BB adds a fourth, the worker''s, tested in 81)');
 select is((select string_agg(distinct roles::text, ',') from pg_policies where schemaname = 'storage' and tablename = 'objects' and policyname like 'catalogue\_objects\_%'), '{authenticated}', '...all for signed-in callers only');
 select is(app.catalogue_bucket_tenant(app.catalogue_bucket(tests.tid('a'))), tests.tid('a'), 'the bucket name leads back to the business...');
 select is(app.catalogue_bucket_tenant('cat-not-a-uuid'), null, '...and any other name leads nowhere');

@@ -31,3 +31,6 @@ The owner decided (project decision "auto-send policy"): the agent sends WhatsAp
 ## Addendum: the outbox clock (CI fix)
 
 The policy depends on the hour in India (quiet hours 21:00 to 09:00), so the outbox functions read their clock through one seam, `app.outbox_now()` (migration `20261107090000_at_outbox_clock.sql`). At run time it is exactly `now()`; nothing (no setting, header or argument) can change it. A test replaces the function inside its own transaction, the way pgTAP 73 does for the AI-cap day, and tests both paths (14:00 IST: sent at once; 23:30 IST: held until 09:00). The first version of pgTAP 76 and the integration tests leaned on the real clock and failed in CI in the daytime; they are now pinned.
+
+## Addendum (job BB): quiet hours per business, the steps of a message, the gloss
+Quiet hours are no longer fixed at 21:00 to 09:00: each business has its own start (19 to 23) and end (7 to 10), default 21 and 9, read in one place by the policy, the approval, the release and the reminders (ADR 0070, decision 5). Every message has an append-only list of steps (`outbox_events`, no text) and may carry an English gloss (`gloss_en`). `REASON_TEXT["quiet_hours"]` no longer names 9 am.

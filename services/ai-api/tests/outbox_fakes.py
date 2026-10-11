@@ -4,6 +4,7 @@ database's, tested in pgTAP 76 and tests/integration/test_outbox_*.py)."""
 from __future__ import annotations
 
 import uuid
+from datetime import date
 from typing import Any
 
 from app.outbox.errors import CustomerStoppedError, OutboxStateError
@@ -69,7 +70,20 @@ class FakeOutbox:
             "platform_switch_on": True,
             "auto_send_enabled": False,
             "per_customer_daily_limit": 3,
+            "quiet_hours_start": 21,
+            "quiet_hours_end": 9,
         }
+        self.events: list[dict[str, Any]] = []
+        self.people: dict[str, str] = {}
+        self.summary_answer: dict[str, Any] = {
+            "waiting": 0,
+            "scheduled": 0,
+            "sent": 0,
+            "blocked": 0,
+            "due_now": 0,
+            "held_for_later": 0,
+        }
+        self.filtered_rows: list[dict[str, Any]] = []
 
     def _log(self, name: str, token: str, args: dict[str, Any]) -> None:
         self.calls.append((name, token, args))
@@ -97,12 +111,20 @@ class FakeOutbox:
         return self.submit_answer
 
     def edit(
-        self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID, text: str
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        message_id: uuid.UUID,
+        text: str,
+        gloss_en: str | None = None,
     ) -> dict[str, Any]:
         self._log(
-            "outbox_edit", token, {"tenant": str(tenant_id), "id": str(message_id), "text": text}
+            "outbox_edit",
+            token,
+            {"tenant": str(tenant_id), "id": str(message_id), "text": text, "gloss_en": gloss_en},
         )
         self.messages[str(message_id)]["body"] = text
+        self.messages[str(message_id)]["gloss_en"] = gloss_en
         return {}
 
     def decide(
@@ -132,10 +154,24 @@ class FakeOutbox:
         return {}
 
     def set_settings(
-        self, token: str, tenant_id: uuid.UUID, auto_send_enabled: bool, limit: int
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        auto_send_enabled: bool,
+        limit: int,
+        quiet_start: int | None = None,
+        quiet_end: int | None = None,
     ) -> dict[str, Any]:
-        self._log("outbox_set_settings", token, {"auto": auto_send_enabled, "limit": limit})
+        self._log(
+            "outbox_set_settings",
+            token,
+            {"auto": auto_send_enabled, "limit": limit, "start": quiet_start, "end": quiet_end},
+        )
         self.settings.update(auto_send_enabled=auto_send_enabled, per_customer_daily_limit=limit)
+        if quiet_start is not None:
+            self.settings["quiet_hours_start"] = quiet_start
+        if quiet_end is not None:
+            self.settings["quiet_hours_end"] = quiet_end
         return {}
 
     def create_call(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
@@ -198,6 +234,62 @@ class FakeOutbox:
         return [r for r in self.messages.values() if status is None or r["status"] == status][
             :limit
         ]
+
+    def list_messages_filtered(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        tab: str | None,
+        customer: str | None,
+        date_from: date | None,
+        date_to: date | None,
+        after: tuple[str, uuid.UUID] | None,
+        limit: int,
+    ) -> list[dict[str, Any]]:
+        self._log(
+            "outbox_list",
+            token,
+            {
+                "tab": tab,
+                "customer": customer,
+                "from": date_from.isoformat() if date_from else None,
+                "to": date_to.isoformat() if date_to else None,
+                "after": after,
+                "limit": limit,
+            },
+        )
+        return self.filtered_rows[:limit]
+
+    def summary(
+        self,
+        token: str,
+        tenant_id: uuid.UUID,
+        *,
+        customer: str | None,
+        date_from: date | None,
+        date_to: date | None,
+    ) -> dict[str, Any]:
+        self._log(
+            "outbox_summary",
+            token,
+            {
+                "customer": customer,
+                "from": date_from.isoformat() if date_from else None,
+                "to": date_to.isoformat() if date_to else None,
+            },
+        )
+        return dict(self.summary_answer)
+
+    def list_events(
+        self, token: str, tenant_id: uuid.UUID, message_ids: list[uuid.UUID]
+    ) -> list[dict[str, Any]]:
+        self._log("list_events", token, {"ids": [str(m) for m in message_ids]})
+        return [e for e in self.events if e["message_id"] in {str(m) for m in message_ids}]
+
+    def display_names(self, token: str, user_ids: list[uuid.UUID]) -> dict[str, str]:
+        self._log("display_names", token, {"ids": [str(u) for u in user_ids]})
+        return {u: n for u, n in self.people.items() if u in {str(i) for i in user_ids}}
 
     def get_message(
         self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID

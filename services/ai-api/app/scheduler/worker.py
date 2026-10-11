@@ -19,8 +19,10 @@ from typing import Protocol
 
 import httpx
 
+from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.outbox.adapter import ChannelAdapter, build_adapter
+from app.outbox.service import media_signer
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
@@ -48,6 +50,7 @@ class Worker:
         *,
         interval_seconds: int = 60,
         monotonic: Callable[[], float] = time.monotonic,
+        storage: StorageClient | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -56,13 +59,19 @@ class Worker:
         self._session = session
         self.interval_seconds = interval_seconds
         self._monotonic = monotonic
+        # the worker signs the photos of a message it has CLAIMED with its own token: the database lets the registered worker read exactly those files (job BB), and no service key exists
+        self._sign_media = media_signer(storage)
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
         try:
             token = self._session.token()
             return run_tick(
-                self._repository, self._adapter, token, interval_seconds=self.interval_seconds
+                self._repository,
+                self._adapter,
+                token,
+                interval_seconds=self.interval_seconds,
+                sign_media=self._sign_media,
             )
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -117,6 +126,7 @@ def build_worker(settings: Settings) -> Worker:
         adapter,
         session,
         interval_seconds=settings.scheduler_interval_seconds,
+        storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
     )
 
 
