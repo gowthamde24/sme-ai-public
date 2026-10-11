@@ -3,7 +3,20 @@
 // Why SQL and not the app: the app never deletes a workspace (its audit trail and many tables are append-only on purpose), so this is the one place, and only for these throwaway workspaces, that switches the
 // row guards off (session_replication_role = replica inside one transaction). The picture FILES of the bucket stay in the local Storage volume (Storage refuses to delete them from SQL); they are small and synthetic.
 import "./be-env.mjs";
-import { psql } from "./be-lib.mjs";
+import { psql, dbContainer } from "./be-lib.mjs";
+import { cleanupRefusal, hostsFromEnv } from "./cleanup-guard.mjs";
+
+// The safety lock (job BF): this script switches row guards off, so it runs only against a database on THIS machine and only for workspaces whose slug starts with "e2e-".
+const hosts = hostsFromEnv(process.env, dbContainer());
+const fail = (why) => {
+  console.error(`cleanup: REFUSED: ${why}.`);
+  process.exit(2);
+};
+const hostProblem = cleanupRefusal({ hosts, slugs: [] }); // before any query at all
+if (hostProblem) fail(hostProblem);
+const named = psql("select coalesce(string_agg(slug, ','), '') from public.tenants where name like 'E2E Silks %'");
+const slugProblem = cleanupRefusal({ hosts, slugs: named === "" ? [] : named.split(",") });
+if (slugProblem) fail(slugProblem);
 
 const found = psql("select count(*) || '|' || coalesce(string_agg(slug, ','), '') from public.tenants where slug like 'e2e-%' and name like 'E2E Silks %'");
 const [count, slugs] = found.split("|");
@@ -23,6 +36,7 @@ do $$
 declare v_ids uuid[]; v_users uuid[]; r record; n bigint; total bigint := 0;
 begin
   select array_agg(t.id) into v_ids from public.tenants t where t.slug like 'e2e-%' and t.name like 'E2E Silks %';
+  if exists (select 1 from public.tenants t where t.id = any (v_ids) and t.slug not like 'e2e-%') then raise exception 'cleanup: a workspace without the e2e- prefix is in the list'; end if;
   select array_agg(u.id) into v_users from auth.users u where u.email like 'e2e-%@e2e.example.test';
   if v_ids is not null then
     for r in

@@ -25,9 +25,12 @@ export const SLUG_PREFIX = "e2e-";
 
 const project = () => /^project_id\s*=\s*"([^"]+)"/m.exec(readFileSync(path.join(here, "..", "supabase", "config.toml"), "utf8"))[1];
 
+/** The name of the local database container this run talks to (docker exec): it is on this machine by construction, and the clean-up lock checks it. */
+export const dbContainer = () => `supabase_db_${project()}`;
+
 /** SQL in the LOCAL database container (docker exec): used for the local-only operator steps, never for data a person would make. */
 export function psql(sql) {
-  return execFileSync("docker", ["exec", "-i", `supabase_db_${project()}`, "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-v", "ON_ERROR_STOP=1", "-c", sql], { encoding: "utf8" }).trim();
+  return execFileSync("docker", ["exec", "-i", dbContainer(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-v", "ON_ERROR_STOP=1", "-c", sql], { encoding: "utf8" }).trim();
 }
 
 const { url: SUPABASE_URL, anon: ANON } = supabasePublic();

@@ -49,6 +49,7 @@ describe("buildCsp", () => {
 
   it("allows the authenticator QR code (a data URI image) and nothing remote", () => {
     expect(directive(prod, "img-src")).toBe("img-src 'self' blob: data:");
+    expect(directive(prod, "media-src")).toBe("media-src 'self' blob:"); // the spoken answer, played from a blob: only (job BF)
   });
 });
 
@@ -90,7 +91,8 @@ describe("securityHeaders", () => {
     expect(h["Referrer-Policy"]).toBe("strict-origin-when-cross-origin");
     expect(h["X-Frame-Options"]).toBe("DENY");
     expect(h["Cross-Origin-Opener-Policy"]).toBe("same-origin");
-    expect(h["Permissions-Policy"]).toMatch(/camera=\(\).*microphone=\(\).*geolocation=\(\)/);
+    expect(h["Permissions-Policy"]).toMatch(/camera=\(\).*microphone=\(self\).*geolocation=\(\)/);
+    expect(h["Permissions-Policy"]).not.toMatch(/microphone=(\(\)|\*)/); // not shut off (the Ask box records) and not open to every origin
   });
 
   it("sends HSTS in production only, for two years including subdomains", () => {

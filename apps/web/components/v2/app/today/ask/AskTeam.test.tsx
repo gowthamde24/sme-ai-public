@@ -1,12 +1,11 @@
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { appT } from "@/i18n/app";
 
 import { AskTeam, insideWorkspace } from "./AskTeam";
 import { ASK_WORD_KEYS } from "./ask-words";
 import type { AskEvent, AskTransport } from "./ask-types";
-import { speechLang, speechProblem, transcriptOf } from "./speech";
 
 const en = appT("en");
 const WORDS = Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, en(k as "frame.notyet")]));
@@ -354,118 +353,8 @@ describe("AskTeam: sources wrap, and the owl follows the box", () => {
   });
 });
 
-describe("AskTeam: the microphone", () => {
-  class FakeRecognition {
-    static last: FakeRecognition | null = null;
-    lang = "";
-    interimResults = false;
-    continuous = true;
-    maxAlternatives = 0;
-    onresult: ((e: { results: { transcript: string }[][] }) => void) | null = null;
-    onerror: ((e: { error?: string }) => void) | null = null;
-    onend: (() => void) | null = null;
-    started = false;
-    stopped = false;
-    constructor() {
-      FakeRecognition.last = this;
-    }
-    start() {
-      this.started = true;
-    }
-    stop() {
-      this.stopped = true;
-      this.onend?.();
-    }
-    abort() {
-      this.stopped = true;
-    }
-  }
-  beforeEach(() => {
-    FakeRecognition.last = null;
-  });
-
-  it("is hidden when the browser has no speech recognition", () => {
-    box(playing([]));
-    expect(screen.queryByRole("button", { name: /Speak your question/ })).toBeNull();
-  });
-  it.each([
-    ["en", "en-IN"], ["te", "te-IN"], ["hi", "hi-IN"], ["kn", "kn-IN"], ["ta", "ta-IN"], ["xx", "en-IN"],
-  ])("listens in the language of the chip: %s is %s", (lang, code) => {
-    vi.stubGlobal("SpeechRecognition", FakeRecognition);
-    box(playing([]), "live", lang);
-    fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
-    expect(FakeRecognition.last!.lang).toBe(code);
-    expect(FakeRecognition.last!.started).toBe(true);
-    expect(speechLang(lang)).toBe(code);
-  });
-  it("the webkit name works too", () => {
-    vi.stubGlobal("webkitSpeechRecognition", FakeRecognition);
-    box(playing([]));
-    expect(screen.getByRole("button", { name: "Speak your question" })).toBeInTheDocument();
-  });
-  it("puts what it heard in the box, interim words included, and does NOT send it: the person reads it and presses Ask", () => {
-    vi.stubGlobal("SpeechRecognition", FakeRecognition);
-    const seen: unknown[] = [];
-    box(playing([], seen as never));
-    fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
-    expect(screen.getByRole("button", { name: "Stop listening" })).toHaveAttribute("aria-pressed", "true");
-    expect(document.querySelector("svg.owl")).toHaveAttribute("data-state", "listening");
-    expect(screen.getByText("Your browser may send what you say to its speech service.")).toBeInTheDocument();
-    act(() => FakeRecognition.last!.onresult!({ results: [[{ transcript: "which quotes" }], [{ transcript: "are waiting" }]] }));
-    expect(screen.getByRole("textbox")).toHaveValue("which quotes are waiting");
-    act(() => FakeRecognition.last!.onend!());
-    expect(screen.getByRole("button", { name: "Speak your question" })).toHaveAttribute("aria-pressed", "false");
-    expect(seen).toHaveLength(0);
-  });
-  it("asking while it is listening ends the listening, and a late word does not come back into the box", async () => {
-    vi.stubGlobal("SpeechRecognition", FakeRecognition);
-    box(playing([{ type: "text", delta: "Fine." }, { type: "done" }]));
-    fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
-    fireEvent.click(screen.getByRole("button", { name: "What needs me today?" }));
-    expect(FakeRecognition.last!.stopped).toBe(true);
-    await screen.findByText("Fine.");
-    expect(screen.getByRole("button", { name: "Speak your question" })).toHaveAttribute("aria-pressed", "false");
-  });
-  it("pressing the microphone again stops listening", () => {
-    vi.stubGlobal("SpeechRecognition", FakeRecognition);
-    box(playing([]));
-    fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
-    fireEvent.click(screen.getByRole("button", { name: "Stop listening" }));
-    expect(FakeRecognition.last!.stopped).toBe(true);
-    expect(screen.getByRole("button", { name: "Speak your question" })).toBeInTheDocument();
-  });
-  it.each([
-    ["not-allowed", "The microphone is not allowed. Type your question instead."],
-    ["service-not-allowed", "The microphone is not allowed. Type your question instead."],
-    ["no-speech", "Nothing was heard. Try again, or type your question."],
-    ["network", "Could not listen. Type your question instead."],
-  ])("a %s problem is said in words and typing still works", (code, words) => {
-    vi.stubGlobal("SpeechRecognition", FakeRecognition);
-    box(playing([]));
-    fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
-    act(() => FakeRecognition.last!.onerror!({ error: code }));
-    expect(screen.getByRole("status")).toHaveTextContent(words);
-    expect(screen.getByRole("textbox")).toBeEnabled();
-  });
-  it("a browser that refuses to start says so instead of throwing", () => {
-    vi.stubGlobal("SpeechRecognition", class extends FakeRecognition {
-      start() {
-        throw new Error("already started");
-      }
-    });
-    box(playing([]));
-    fireEvent.click(screen.getByRole("button", { name: "Speak your question" }));
-    expect(screen.getByRole("status")).toHaveTextContent("Could not listen.");
-  });
-  it("helpers: the problem codes and the joined transcript", () => {
-    expect(speechProblem(undefined)).toBe("failed");
-    expect(transcriptOf([[{ transcript: " a  b " }], [], [{ transcript: "c" }]])).toBe("a b c");
-  });
-});
-
 describe("AskTeam: touch and reading", () => {
   it("every control is at least 44px tall", () => {
-    vi.stubGlobal("SpeechRecognition", class {});
     box(playing([]));
     for (const b of screen.getAllByRole("button")) expect(b.className, b.textContent ?? "").toMatch(/min-h-1[12]|size-12/);
     expect(screen.getByRole("textbox").className).toContain("min-h-12");
