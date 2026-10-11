@@ -40,11 +40,19 @@ describe("pathFor: a target becomes a page of THIS workspace", () => {
   });
 });
 
-describe("toAskEvents: a catalogue item", () => {
-  it("is a source with the saree's name and no link (the catalogue has no page yet)", async () => {
+describe("toAskEvents: a catalogue item (job BC)", () => {
+  it("links the saree's name to its page, built from the source's own id", async () => {
     const item: AssistantEvent = { type: "source", kind: "catalogue_item", id: ID(9), label: "Kanjivaram bridal, red and gold", target: null };
     const out = await run([item, done]);
-    expect(out[0]).toEqual({ type: "source", label: "Kanjivaram bridal, red and gold", href: null });
+    expect(out[0]).toEqual({ type: "source", label: "Kanjivaram bridal, red and gold", href: `${B}/catalogue/${ID(9)}` });
+  });
+
+  it("uses a catalogue_item target when an API sends one, and still links nothing for other kinds without a target", async () => {
+    const withTarget: AssistantEvent = { type: "source", kind: "catalogue_item", id: ID(9), label: "A saree", target: target("catalogue_item", 9) };
+    const company: AssistantEvent = { type: "source", kind: "company", id: ID(4), label: "Sri Lakshmi Silks", target: null };
+    const out = await run([withTarget, company, done]);
+    expect(out[0]).toMatchObject({ href: `${B}/catalogue/${ID(9)}` });
+    expect(out[1]).toMatchObject({ href: null });
   });
 });
 

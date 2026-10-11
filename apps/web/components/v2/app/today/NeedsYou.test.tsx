@@ -23,6 +23,19 @@ const count = () => screen.getByRole("heading", { name: "Needs you" }).parentEle
 beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
 
+describe("Needs you: a message that carries photos (job BC)", () => {
+  it("shows the photos with the words, so the person who approves sees what goes out; a message without photos shows none", () => {
+    const card = outbox() as Extract<NeedsCard, { type: "outbox" }>;
+    board([{ ...card, message: { ...card.message!, media: [{ position: 1, thumb_url: "https://s.example/1_t.jpg?token=a" }, { position: 2, thumb_url: null }] } } as NeedsCard]);
+    const a = cardOf(/^Reply to Lakshmi R\./);
+    expect(within(a).getByAltText("Photo 1 of 2 sent with this message")).toHaveAttribute("src", "https://s.example/1_t.jpg?token=a");
+    expect(within(a).getByText("No photo")).toBeInTheDocument();
+    cleanup();
+    board([outbox()]);
+    expect(within(cardOf(/^Reply to Lakshmi R\./)).queryByRole("img")).toBeNull();
+  });
+});
+
 describe("Needs you: each kind of card", () => {
   it("a WhatsApp message held for approval shows its exact words, the language it goes out in, why it waits and the three choices", () => {
     board([outbox()]);

@@ -5,6 +5,7 @@ const refresh = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 
 import type { OutboxMessage } from "@/lib/api/outbox";
+import { SENT_JSON } from "@/lib/api/outbox-fixtures";
 
 import type { Role } from "../today/types";
 import { OutboxList, historyOf } from "./OutboxList";
@@ -20,6 +21,28 @@ const click = (name: string | RegExp) => act(async () => fireEvent.click(screen.
 
 beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
+
+describe("a message that carries photos (a catalogue send, job BC)", () => {
+  const withPhotos = () => msg(SENT_JSON, { id: "11111111-aaaa-4aaa-8aaa-0000000000c1", media: [{ photo_id: "0f8a927d-1111-4a11-8a11-000000000001", position: 1, thumb_url: "https://s.example/1_t.jpg?token=a" }, { photo_id: "0f8a927d-1111-4a11-8a11-000000000002", position: 2, thumb_url: "https://s.example/2_t.jpg?token=b" }] });
+  it("shows the thumbnails in order under the first line, lazily, with words for a screen reader", () => {
+    show([withPhotos()], { tab: "sent" });
+    const imgs = within(document.querySelector("li[data-status]") as HTMLElement).getAllByRole("img");
+    expect(imgs.map((i) => i.getAttribute("src"))).toEqual(["https://s.example/1_t.jpg?token=a", "https://s.example/2_t.jpg?token=b"]);
+    expect(imgs.map((i) => i.getAttribute("alt"))).toEqual(["Photo 1 of 2 sent with this message", "Photo 2 of 2 sent with this message"]);
+    expect(imgs.every((i) => i.getAttribute("loading") === "lazy")).toBe(true);
+  });
+  it("a message without photos draws none", () => {
+    show([SENT()], { tab: "sent" });
+    expect(screen.queryByRole("img")).toBeNull();
+  });
+  it("opening the row keeps the photos and draws them larger", async () => {
+    show([withPhotos()], { tab: "sent" });
+    const before = document.querySelector("[data-part=message-photos] li")!.className;
+    await open(/DEMO Lakshmi Textiles/);
+    expect(screen.getAllByRole("img")).toHaveLength(2);
+    expect(document.querySelector("[data-part=message-photos] li")!.className).not.toBe(before);
+  });
+});
 
 describe("a row of the Outbox", () => {
   it("shows the reason in plain words, the channel, the language, the time, the customer and the first line", () => {

@@ -22,6 +22,8 @@ import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
 import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
 import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
+import { parseItem, parseItemPage } from "@/lib/api/catalogue";
+import { ITEM_A, ITEM_HIDDEN, SUMMARIES, itemJson, pageJson, photoJson, PHOTO_B1, summaryJson } from "@/lib/api/catalogue-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
 import { parseRequirementView } from "@/lib/api/enquiries";
 import { parseDueList, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
@@ -592,3 +594,31 @@ for (const section of ["business", "language", "security", "privacy"] as const) 
 }
 add({ id: "settings-members", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => parseMembers(MEMBERS_JSON) }) });
 add({ id: "settings-members-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+
+// ---- the saree catalogue (job BC) ----------------------------------------------------------------------------------------------
+const catalogueRows = (opts: unknown): Record<string, unknown>[] => {
+  const o = (opts ?? {}) as { includeInactive?: boolean; fabric?: string; inStock?: boolean };
+  return SUMMARIES.filter((r) => (r.active === true || o.includeInactive === true) && (!o.fabric || r.fabric === o.fabric) && (!o.inStock || r.stock_status !== "made_to_order"));
+};
+const catalogueHandlers = (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  listCatalogueItems: (_t: unknown, _i: unknown, opts: unknown) => parseItemPage(pageJson(catalogueRows(opts))),
+  getCatalogueItem: (_t: unknown, _i: unknown, id: unknown) => {
+    if (id === ITEM_HIDDEN) return parseItem(itemJson({ id: ITEM_HIDDEN, name: "DEMO Old Banarasi (hidden)", active: false, fabric: "banarasi", fabric_label: "Banarasi", price_paise: null, price_text: null }, [photoJson(PHOTO_B1, 1)]));
+    if (id === ITEM_A) return parseItem(itemJson());
+    throw new ApiRequestError(404, "not_found", "x");
+  },
+});
+const cataloguePage = async () => (await import("@/app/app/tenants/[tenantId]/catalogue/page")).default;
+add({ id: "catalogue", render: async () => (await cataloguePage())(props({}, {})), handlers: catalogueHandlers });
+add({ id: "catalogue-filtered", roles: ["owner"], render: async () => (await cataloguePage())(props({}, { fabric: "soft_silk", stock: "few_left", q: "blue" })), handlers: catalogueHandlers });
+add({ id: "catalogue-nomatch", roles: ["owner"], render: async () => (await cataloguePage())(props({}, { q: "zzz" })), handlers: catalogueHandlers });
+add({ id: "catalogue-empty", roles: ["owner", "sales"], render: async () => (await cataloguePage())(props({}, {})), handlers: (role) => ({ ...base(role), listCatalogueItems: () => parseItemPage(pageJson([])) }) });
+add({ id: "catalogue-unreadable", roles: ["owner"], render: async () => (await cataloguePage())(props({}, {})), handlers: (role) => ({ ...base(role), listCatalogueItems: () => { throw new ApiRequestError(503, "catalogue_unavailable", "x"); } }) });
+add({ id: "catalogue-item", render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/page")).default(props({ itemId: ITEM_A }, {})), handlers: catalogueHandlers });
+add({ id: "catalogue-item-saved", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/page")).default(props({ itemId: ITEM_A }, { saved: "1" })), handlers: catalogueHandlers });
+add({ id: "catalogue-item-hidden", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/page")).default(props({ itemId: ITEM_HIDDEN }, {})), handlers: catalogueHandlers });
+add({ id: "catalogue-item-missing", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/page")).default(props({ itemId: "9d9d9d9d-9d9d-4d9d-8d9d-9d9d9d9d9d9d" }, {})), handlers: catalogueHandlers });
+add({ id: "catalogue-new", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({}, {})), handlers: base });
+add({ id: "catalogue-edit", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {})), handlers: catalogueHandlers });
+void summaryJson;

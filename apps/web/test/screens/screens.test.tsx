@@ -48,6 +48,7 @@ vi.mock("@/lib/api/plan", async (orig) => (await import("./state")).wrap(await o
 vi.mock("@/lib/api/today", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/today")>(), ["getToday", "getAgentsStatus"]));
 vi.mock("@/lib/api/outbox", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outbox")>(), ["listOutboxMessages", "listOutboxApprovals", "listCallRequests", "getOutboxSettings"]));
 vi.mock("@/lib/api/visits", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/visits")>(), ["getTodayVisits", "getSlots", "getVisitSettings", "listVisits", "getAiUsageWeek"]));
+vi.mock("@/lib/api/catalogue", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/catalogue")>(), ["listCatalogueItems", "getCatalogueItem"]));
 vi.mock("@/lib/api/scheduler", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/scheduler")>(), ["getSchedulerStatus", "getSchedulerSettings"]));
 vi.mock("@/lib/api/ai-usage", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/ai-usage")>(), ["getAiUsage"]));
 vi.mock("@/lib/api/quote-policies", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quote-policies")>(), ["fetchQuotePolicyVersions"]));

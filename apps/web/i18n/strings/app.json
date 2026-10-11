@@ -99,10 +99,10 @@
   }
  },
  "nav.item.catalogue": {
-  "en": "Catalogue and prices",
-  "te": "క్యాటలాగ్, ధరలు",
-  "hi": "कैटलॉग और दाम",
-  "kn": "ಕ್ಯಾಟಲಾಗ್ ಮತ್ತು ಬೆಲೆಗಳು",
+  "en": "Prices and products",
+  "te": "ధరలు, ప్రొడక్ట్స్",
+  "hi": "दाम और प्रोडक्ट",
+  "kn": "ಬೆಲೆ ಮತ್ತು ಪ್ರಾಡಕ್ಟ್ಸ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6839,5 +6839,2122 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.sarees": {
+  "en": "Catalogue",
+  "te": "క్యాటలాగ్",
+  "hi": "कैटलॉग",
+  "kn": "ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.sub": {
+  "en": "Your sarees, with photos. Show them to customers or send them in a message.",
+  "te": "మీ చీరలు, ఫోటోలతో. కస్టమర్‌కి చూపించండి లేదా మెసేజ్‌లో పంపండి.",
+  "hi": "आपकी साड़ियाँ, फोटो के साथ। ग्राहक को दिखाएँ या मैसेज में भेजें।",
+  "kn": "ನಿಮ್ಮ ಸೀರೆಗಳು, ಫೋಟೋಗಳೊಂದಿಗೆ. ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಿ ಅಥವಾ ಮೆಸೇಜ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.add": {
+  "en": "Add a saree",
+  "te": "చీర చేర్చండి",
+  "hi": "साड़ी जोड़ें",
+  "kn": "ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.search.label": {
+  "en": "Search by name",
+  "te": "పేరుతో వెతకండి",
+  "hi": "नाम से खोजें",
+  "kn": "ಹೆಸರಿನಿಂದ ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.search.placeholder": {
+  "en": "Name, fabric or border",
+  "te": "పేరు, ఫ్యాబ్రిక్ లేదా బార్డర్",
+  "hi": "नाम, कपड़ा या बॉर्डर",
+  "kn": "ಹೆಸರು, ಫ್ಯಾಬ್ರಿಕ್ ಅಥವಾ ಬಾರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.search.go": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.filters": {
+  "en": "Filters",
+  "te": "ఫిల్టర్లు",
+  "hi": "फ़िल्टर",
+  "kn": "ಫಿಲ್ಟರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.filters.count": {
+  "en": "Filters ({n})",
+  "te": "ఫిల్టర్లు ({n})",
+  "hi": "फ़िल्टर ({n})",
+  "kn": "ಫಿಲ್ಟರ್‌ಗಳು ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.filter.fabric": {
+  "en": "Fabric",
+  "te": "ఫ్యాబ్రిక్",
+  "hi": "कपड़ा",
+  "kn": "ಫ್ಯಾಬ್ರಿಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.filter.colour": {
+  "en": "Colour",
+  "te": "రంగు",
+  "hi": "रंग",
+  "kn": "ಬಣ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.filter.occasion": {
+  "en": "Occasion",
+  "te": "సందర్భం",
+  "hi": "मौका",
+  "kn": "ಸಂದರ್ಭ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.filter.band": {
+  "en": "Price",
+  "te": "Price",
+  "hi": "Price",
+  "kn": "Price",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.filter.stock": {
+  "en": "Stock",
+  "te": "స్టాక్",
+  "hi": "स्टॉक",
+  "kn": "ಸ್ಟಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.stock.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.stock.available": {
+  "en": "Available now",
+  "te": "ఇప్పుడు ఉన్నవి",
+  "hi": "अभी उपलब्ध",
+  "kn": "ಈಗ ಲಭ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.stock.in_stock": {
+  "en": "In stock",
+  "te": "స్టాక్‌లో ఉంది",
+  "hi": "स्टॉक में है",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.stock.few_left": {
+  "en": "Few left",
+  "te": "కొన్నే ఉన్నాయి",
+  "hi": "कुछ ही बचे हैं",
+  "kn": "ಕೆಲವೇ ಉಳಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.stock.made_to_order": {
+  "en": "Made to order",
+  "te": "ఆర్డర్‌పై తయారు చేస్తారు",
+  "hi": "ऑर्डर पर बनती है",
+  "kn": "ಆರ್ಡರ್ ಮೇಲೆ ತಯಾರಿಸಲಾಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.chip.on": {
+  "en": "selected",
+  "te": "ఎంచుకున్నారు",
+  "hi": "चुना हुआ",
+  "kn": "ಆಯ್ಕೆ ಮಾಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.clear": {
+  "en": "Clear filters",
+  "te": "ఫిల్టర్లు తీసేయండి",
+  "hi": "फ़िल्टर हटाएँ",
+  "kn": "ಫಿಲ್ಟರ್ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.results.one": {
+  "en": "1 saree",
+  "te": "1 చీర",
+  "hi": "1 साड़ी",
+  "kn": "1 ಸೀರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.results.other": {
+  "en": "{n} sarees",
+  "te": "{n} చీరలు",
+  "hi": "{n} साड़ियाँ",
+  "kn": "{n} ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.results.more": {
+  "en": "{n} sarees so far",
+  "te": "ఇప్పటివరకు {n} చీరలు",
+  "hi": "अब तक {n} साड़ियाँ",
+  "kn": "ಇಲ್ಲಿಯವರೆಗೆ {n} ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.more": {
+  "en": "Show more sarees",
+  "te": "ఇంకా చీరలు చూపించండి",
+  "hi": "और साड़ियाँ दिखाएँ",
+  "kn": "ಇನ್ನಷ್ಟು ಸೀರೆಗಳನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.badge.inactive": {
+  "en": "Hidden from customers",
+  "te": "కస్టమర్లకు కనిపించదు",
+  "hi": "ग्राहकों को नहीं दिखती",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.none": {
+  "en": "No photo",
+  "te": "ఫోటో లేదు",
+  "hi": "फोटो नहीं है",
+  "kn": "ಫೋಟೋ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.error": {
+  "en": "Photo not available",
+  "te": "ఫోటో అందుబాటులో లేదు",
+  "hi": "फोटो उपलब्ध नहीं है",
+  "kn": "ಫೋಟೋ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.alt": {
+  "en": "{name}, photo {n}",
+  "te": "{name}, ఫోటో {n}",
+  "hi": "{name}, फोटो {n}",
+  "kn": "{name}, ಫೋಟೋ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.empty.title": {
+  "en": "Add your first saree",
+  "te": "మీ మొదటి చీరను చేర్చండి",
+  "hi": "अपनी पहली साड़ी जोड़ें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಸೀರೆಯನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.empty.admin": {
+  "en": "Take a photo, write a few words, and your catalogue is ready to show and send.",
+  "te": "ఫోటో తీయండి, కొన్ని మాటలు రాయండి — మీ క్యాటలాగ్ చూపించడానికి, పంపడానికి సిద్ధం.",
+  "hi": "फोटो लें, कुछ शब्द लिखें, और आपका कैटलॉग दिखाने और भेजने के लिए तैयार है।",
+  "kn": "ಫೋಟೋ ತೆಗೆಯಿರಿ, ಕೆಲವು ಮಾತು ಬರೆಯಿರಿ — ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್ ತೋರಿಸಲು, ಕಳುಹಿಸಲು ಸಿದ್ಧ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.empty.other": {
+  "en": "No sarees are in the catalogue yet. The owner or an admin can add them.",
+  "te": "క్యాటలాగ్‌లో ఇంకా చీరలు లేవు. ఓనర్ లేదా అడ్మిన్ చేర్చగలరు.",
+  "hi": "कैटलॉग में अभी कोई साड़ी नहीं है। ओनर या एडमिन जोड़ सकते हैं।",
+  "kn": "ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಇನ್ನೂ ಸೀರೆಗಳಿಲ್ಲ. ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಸೇರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.nomatch.title": {
+  "en": "No saree matches",
+  "te": "సరిపోయే చీర లేదు",
+  "hi": "कोई साड़ी मेल नहीं खाती",
+  "kn": "ಹೊಂದುವ ಸೀರೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.nomatch.body": {
+  "en": "Try fewer filters or another word.",
+  "te": "ఫిల్టర్లు తగ్గించండి లేదా వేరే మాట వాడండి.",
+  "hi": "कम फ़िल्टर लगाएँ या कोई और शब्द आज़माएँ।",
+  "kn": "ಫಿಲ್ಟರ್ ಕಡಿಮೆ ಮಾಡಿ ಅಥವಾ ಬೇರೆ ಮಾತು ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.error.body": {
+  "en": "The catalogue could not be read right now. Try again in a moment.",
+  "te": "క్యాటలాగ్ ఇప్పుడు చదవలేకపోయాం. కొంచెం సేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कैटलॉग अभी पढ़ा नहीं जा सका। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಈಗ ಓದಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.loading": {
+  "en": "Loading the catalogue…",
+  "te": "క్యాటలాగ్ లోడ్ అవుతోంది…",
+  "hi": "कैटलॉग लोड हो रहा है…",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.kanchi_pattu": {
+  "en": "Kanchi pattu",
+  "te": "కంచి పట్టు",
+  "hi": "कांची पट्टू",
+  "kn": "ಕಾಂಚಿ ಪಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.dharmavaram_silk": {
+  "en": "Dharmavaram silk",
+  "te": "ధర్మవరం సిల్క్",
+  "hi": "धर्मावरम सिल्क",
+  "kn": "ಧರ್ಮಾವರಂ ಸಿಲ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.soft_silk": {
+  "en": "Soft silk",
+  "te": "సాఫ్ట్ సిల్క్",
+  "hi": "सॉफ्ट सिल्क",
+  "kn": "ಸಾಫ್ಟ್ ಸಿಲ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.cotton_silk": {
+  "en": "Cotton silk",
+  "te": "కాటన్ సిల్క్",
+  "hi": "कॉटन सिल्क",
+  "kn": "ಕಾಟನ್ ಸಿಲ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.banarasi": {
+  "en": "Banarasi",
+  "te": "బనారసి",
+  "hi": "बनारसी",
+  "kn": "ಬನಾರಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.mysore_silk": {
+  "en": "Mysore silk",
+  "te": "మైసూర్ సిల్క్",
+  "hi": "मैसूर सिल्क",
+  "kn": "ಮೈಸೂರು ಸಿಲ್ಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.uppada": {
+  "en": "Uppada",
+  "te": "ఉప్పాడ",
+  "hi": "उप्पाडा",
+  "kn": "ಉಪ್ಪಾಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.pure_cotton": {
+  "en": "Pure cotton",
+  "te": "ప్యూర్ కాటన్",
+  "hi": "प्योर कॉटन",
+  "kn": "ಪ್ಯೂರ್ ಕಾಟನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.georgette": {
+  "en": "Georgette",
+  "te": "జార్జెట్",
+  "hi": "जॉर्जेट",
+  "kn": "ಜಾರ್ಜೆಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.fabric.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "दूसरा",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.red": {
+  "en": "Red",
+  "te": "ఎరుపు",
+  "hi": "लाल",
+  "kn": "ಕೆಂಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.maroon": {
+  "en": "Maroon",
+  "te": "మెరూన్",
+  "hi": "मरून",
+  "kn": "ಮರೂನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.pink": {
+  "en": "Pink",
+  "te": "పింక్",
+  "hi": "गुलाबी",
+  "kn": "ಗುಲಾಬಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.orange": {
+  "en": "Orange",
+  "te": "ఆరెంజ్",
+  "hi": "नारंगी",
+  "kn": "ಕಿತ್ತಳೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.yellow": {
+  "en": "Yellow",
+  "te": "పసుపు",
+  "hi": "पीला",
+  "kn": "ಹಳದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.green": {
+  "en": "Green",
+  "te": "ఆకుపచ్చ",
+  "hi": "हरा",
+  "kn": "ಹಸಿರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.blue": {
+  "en": "Blue",
+  "te": "నీలం",
+  "hi": "नीला",
+  "kn": "ನೀಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.navy": {
+  "en": "Navy blue",
+  "te": "నేవీ బ్లూ",
+  "hi": "नेवी ब्लू",
+  "kn": "ನೇವಿ ಬ್ಲೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.purple": {
+  "en": "Purple",
+  "te": "ఊదా",
+  "hi": "बैंगनी",
+  "kn": "ನೇರಳೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.black": {
+  "en": "Black",
+  "te": "నలుపు",
+  "hi": "काला",
+  "kn": "ಕಪ್ಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.white": {
+  "en": "White",
+  "te": "తెలుపు",
+  "hi": "सफेद",
+  "kn": "ಬಿಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.cream": {
+  "en": "Cream",
+  "te": "క్రీమ్",
+  "hi": "क्रीम",
+  "kn": "ಕ್ರೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.gold": {
+  "en": "Gold",
+  "te": "బంగారు రంగు",
+  "hi": "सुनहरा",
+  "kn": "ಚಿನ್ನದ ಬಣ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.silver": {
+  "en": "Silver",
+  "te": "వెండి రంగు",
+  "hi": "सिल्वर",
+  "kn": "ಬೆಳ್ಳಿ ಬಣ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.brown": {
+  "en": "Brown",
+  "te": "గోధుమ రంగు",
+  "hi": "भूरा",
+  "kn": "ಕಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.grey": {
+  "en": "Grey",
+  "te": "బూడిద రంగు",
+  "hi": "ग्रे",
+  "kn": "ಬೂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.colour.multi": {
+  "en": "Many colours",
+  "te": "చాలా రంగులు",
+  "hi": "कई रंग",
+  "kn": "ಹಲವು ಬಣ್ಣಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.occasion.wedding": {
+  "en": "Wedding",
+  "te": "పెళ్లి",
+  "hi": "शादी",
+  "kn": "ಮದುವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.occasion.festival": {
+  "en": "Festival",
+  "te": "పండుగ",
+  "hi": "त्योहार",
+  "kn": "ಹಬ್ಬ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.occasion.daily": {
+  "en": "Every day",
+  "te": "రోజూ వాడేది",
+  "hi": "रोज़ पहनने की",
+  "kn": "ದಿನನಿತ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.occasion.party": {
+  "en": "Party",
+  "te": "పార్టీ",
+  "hi": "पार्टी",
+  "kn": "ಪಾರ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.zari.none": {
+  "en": "No zari",
+  "te": "జరీ లేదు",
+  "hi": "ज़री नहीं",
+  "kn": "ಜರಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.zari.light": {
+  "en": "Light zari",
+  "te": "తేలిక జరీ",
+  "hi": "हल्की ज़री",
+  "kn": "ಹಗುರ ಜರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.zari.rich": {
+  "en": "Rich zari",
+  "te": "రిచ్ జరీ",
+  "hi": "भारी ज़री",
+  "kn": "ಭಾರಿ ಜರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.item.back": {
+  "en": "All sarees",
+  "te": "అన్ని చీరలు",
+  "hi": "सभी साड़ियाँ",
+  "kn": "ಎಲ್ಲಾ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.item.edit": {
+  "en": "Edit this saree",
+  "te": "ఈ చీరను మార్చండి",
+  "hi": "यह साड़ी बदलें",
+  "kn": "ಈ ಸೀರೆಯನ್ನು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.item.hidden": {
+  "en": "This saree is hidden. Customers and sales staff do not see it, and it cannot be sent.",
+  "te": "ఈ చీర దాచి ఉంది. కస్టమర్లకు, సేల్స్ వారికి కనిపించదు, పంపలేరు.",
+  "hi": "यह साड़ी छिपी है। ग्राहकों और सेल्स स्टाफ को नहीं दिखती, और भेजी नहीं जा सकती।",
+  "kn": "ಈ ಸೀರೆ ಮರೆಯಾಗಿದೆ. ಗ್ರಾಹಕರಿಗೆ, ಸೇಲ್ಸ್ ಸಿಬ್ಬಂದಿಗೆ ಕಾಣುವುದಿಲ್ಲ, ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.fabric": {
+  "en": "Fabric",
+  "te": "ఫ్యాబ్రిక్",
+  "hi": "कपड़ा",
+  "kn": "ಫ್ಯಾಬ್ರಿಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.colours": {
+  "en": "Colours",
+  "te": "రంగులు",
+  "hi": "रंग",
+  "kn": "ಬಣ್ಣಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.zari": {
+  "en": "Zari",
+  "te": "జరీ",
+  "hi": "ज़री",
+  "kn": "ಜರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.border": {
+  "en": "Border",
+  "te": "బార్డర్",
+  "hi": "बॉर्डर",
+  "kn": "ಬಾರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.occasions": {
+  "en": "Occasions",
+  "te": "సందర్భాలు",
+  "hi": "मौके",
+  "kn": "ಸಂದರ್ಭಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.price_band": {
+  "en": "Price range",
+  "te": "Price range",
+  "hi": "Price range",
+  "kn": "Price range",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.field.price": {
+  "en": "Exact price",
+  "te": "Exact price",
+  "hi": "Exact price",
+  "kn": "Exact price",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.field.stock": {
+  "en": "Stock",
+  "te": "స్టాక్",
+  "hi": "स्टॉक",
+  "kn": "ಸ್ಟಾಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.field.none": {
+  "en": "Not set",
+  "te": "ఇవ్వలేదు",
+  "hi": "तय नहीं",
+  "kn": "ಹೊಂದಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.gallery.label": {
+  "en": "Photos of {name}",
+  "te": "{name} ఫోటోలు",
+  "hi": "{name} के फोटो",
+  "kn": "{name} ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.gallery.prev": {
+  "en": "Previous photo",
+  "te": "ముందు ఫోటో",
+  "hi": "पिछला फोटो",
+  "kn": "ಹಿಂದಿನ ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.gallery.next": {
+  "en": "Next photo",
+  "te": "తర్వాతి ఫోటో",
+  "hi": "अगला फोटो",
+  "kn": "ಮುಂದಿನ ಫೋಟೋ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.gallery.count": {
+  "en": "Photo {n} of {total}",
+  "te": "ఫోటో {n} / {total}",
+  "hi": "फोटो {n} / {total}",
+  "kn": "ಫೋಟೋ {n} / {total}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.gallery.go": {
+  "en": "Show photo {n}",
+  "te": "{n}వ ఫోటో చూపించు",
+  "hi": "फोटो {n} दिखाएँ",
+  "kn": "{n}ನೇ ಫೋಟೋ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.gallery.none": {
+  "en": "This saree has no photo yet.",
+  "te": "ఈ చీరకు ఇంకా ఫోటో లేదు.",
+  "hi": "इस साड़ी का अभी कोई फोटो नहीं है।",
+  "kn": "ಈ ಸೀರೆಗೆ ಇನ್ನೂ ಫೋಟೋ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.new.title": {
+  "en": "Add a saree",
+  "te": "చీర చేర్చండి",
+  "hi": "साड़ी जोड़ें",
+  "kn": "ಸೀರೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.edit.title": {
+  "en": "Edit {name}",
+  "te": "{name} మార్చండి",
+  "hi": "{name} बदलें",
+  "kn": "{name} ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.name.help": {
+  "en": "For example: Maroon Kanchi pattu with temple border",
+  "te": "ఉదాహరణ: టెంపుల్ బార్డర్‌తో మెరూన్ కంచి పట్టు",
+  "hi": "जैसे: टेंपल बॉर्डर वाली मरून कांची पट्टू",
+  "kn": "ಉದಾಹರಣೆ: ಟೆಂಪಲ್ ಬಾರ್ಡರ್ ಇರುವ ಮರೂನ್ ಕಾಂಚಿ ಪಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.colours.help": {
+  "en": "Pick one to four.",
+  "te": "ఒకటి నుంచి నాలుగు ఎంచుకోండి.",
+  "hi": "एक से चार चुनें।",
+  "kn": "ಒಂದರಿಂದ ನಾಲ್ಕು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.occasions.help": {
+  "en": "Optional. Pick up to four.",
+  "te": "ఐచ్ఛికం. నాలుగు వరకు ఎంచుకోండి.",
+  "hi": "ज़रूरी नहीं। चार तक चुनें।",
+  "kn": "ಐಚ್ಛಿಕ. ನಾಲ್ಕರವರೆಗೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.border.help": {
+  "en": "Optional. A few words, for example: Temple border in gold zari.",
+  "te": "ఐచ్ఛికం. కొన్ని మాటలు, ఉదా: బంగారు జరీ టెంపుల్ బార్డర్.",
+  "hi": "ज़रूरी नहीं। कुछ शब्द, जैसे: सुनहरी ज़री का टेंपल बॉर्डर।",
+  "kn": "ಐಚ್ಛಿಕ. ಕೆಲವು ಮಾತು, ಉದಾ: ಚಿನ್ನದ ಜರಿಯ ಟೆಂಪಲ್ ಬಾರ್ಡರ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.band.help": {
+  "en": "Customers are told this range. It is not an exact price.",
+  "te": "Customers are told this range. It is not an exact price.",
+  "hi": "Customers are told this range. It is not an exact price.",
+  "kn": "Customers are told this range. It is not an exact price.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.form.price.owner": {
+  "en": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
+  "te": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
+  "hi": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
+  "kn": "Optional. Only the owner can set this, and it needs your authenticator code. Leave it empty to keep it as it is.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.form.price.other": {
+  "en": "Only the owner can set an exact price. Customers are told the price range.",
+  "te": "Only the owner can set an exact price. Customers are told the price range.",
+  "hi": "Only the owner can set an exact price. Customers are told the price range.",
+  "kn": "Only the owner can set an exact price. Customers are told the price range.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.form.price.now": {
+  "en": "Exact price now: {price}",
+  "te": "Exact price now: {price}",
+  "hi": "Exact price now: {price}",
+  "kn": "Exact price now: {price}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.form.price.clear": {
+  "en": "Remove the exact price",
+  "te": "Remove the exact price",
+  "hi": "Remove the exact price",
+  "kn": "Remove the exact price",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.form.active": {
+  "en": "Show this saree to customers",
+  "te": "ఈ చీరను కస్టమర్లకు చూపించండి",
+  "hi": "यह साड़ी ग्राहकों को दिखाएँ",
+  "kn": "ಈ ಸೀರೆಯನ್ನು ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.active.help": {
+  "en": "A hidden saree is seen only by the owner and admins and cannot be sent. A saree needs at least one photo before it can be shown.",
+  "te": "దాచిన చీరను ఓనర్, అడ్మిన్ మాత్రమే చూస్తారు, పంపలేరు. చూపించాలంటే కనీసం ఒక ఫోటో ఉండాలి.",
+  "hi": "छिपी साड़ी सिर्फ ओनर और एडमिन देखते हैं और भेजी नहीं जा सकती। दिखाने के लिए कम से कम एक फोटो चाहिए।",
+  "kn": "ಮರೆಯಾದ ಸೀರೆಯನ್ನು ಓನರ್, ಅಡ್ಮಿನ್ ಮಾತ್ರ ನೋಡುತ್ತಾರೆ, ಕಳುಹಿಸಲಾಗದು. ತೋರಿಸಲು ಕನಿಷ್ಠ ಒಂದು ಫೋಟೋ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.active.needs": {
+  "en": "Add at least one photo to show this saree to customers.",
+  "te": "కస్టమర్లకు చూపించడానికి కనీసం ఒక ఫోటో చేర్చండి.",
+  "hi": "ग्राहकों को दिखाने के लिए कम से कम एक फोटो जोड़ें।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಲು ಕನಿಷ್ಠ ಒಂದು ಫೋಟೋ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.photos": {
+  "en": "Photos",
+  "te": "ఫోటోలు",
+  "hi": "फोटो",
+  "kn": "ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.form.photos.help": {
+  "en": "Up to 8 photos. The first one is the cover. Drag a photo, or use the arrow buttons, to change the order.",
+  "te": "8 ఫోటోల వరకు. మొదటిది కవర్. వరస మార్చడానికి ఫోటోను లాగండి లేదా బాణం బటన్లు వాడండి.",
+  "hi": "आठ फोटो तक। पहला कवर होता है। क्रम बदलने के लिए फोटो को खींचें या तीर वाले बटन दबाएँ।",
+  "kn": "ಎಂಟು ಫೋಟೋಗಳವರೆಗೆ. ಮೊದಲನೆಯದು ಕವರ್. ಕ್ರಮ ಬದಲಿಸಲು ಫೋಟೋ ಎಳೆಯಿರಿ ಅಥವಾ ಬಾಣದ ಬಟನ್ ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.take": {
+  "en": "Take a photo",
+  "te": "ఫోటో తీయండి",
+  "hi": "फोटो लें",
+  "kn": "ಫೋಟೋ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.choose": {
+  "en": "Choose photos",
+  "te": "ఫోటోలు ఎంచుకోండి",
+  "hi": "फोटो चुनें",
+  "kn": "ಫೋಟೋಗಳನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.cover": {
+  "en": "Cover",
+  "te": "కవర్",
+  "hi": "कवर",
+  "kn": "ಕವರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.setcover": {
+  "en": "Make photo {n} the cover",
+  "te": "{n}వ ఫోటోను కవర్ చేయండి",
+  "hi": "फोटो {n} को कवर बनाएँ",
+  "kn": "{n}ನೇ ಫೋಟೋವನ್ನು ಕವರ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.up": {
+  "en": "Move photo {n} earlier",
+  "te": "{n}వ ఫోటోను ముందుకు జరపండి",
+  "hi": "फोटो {n} को आगे करें",
+  "kn": "{n}ನೇ ಫೋಟೋವನ್ನು ಮುಂದೆ ಸರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.down": {
+  "en": "Move photo {n} later",
+  "te": "{n}వ ఫోటోను వెనక్కి జరపండి",
+  "hi": "फोटो {n} को पीछे करें",
+  "kn": "{n}ನೇ ಫೋಟೋವನ್ನು ಹಿಂದೆ ಸರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.remove": {
+  "en": "Remove photo {n}",
+  "te": "{n}వ ఫోటోను తీసేయండి",
+  "hi": "फोटो {n} हटाएँ",
+  "kn": "{n}ನೇ ಫೋಟೋ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.drag": {
+  "en": "Drag photo {n}",
+  "te": "{n}వ ఫోటోను లాగండి",
+  "hi": "फोटो {n} खींचें",
+  "kn": "{n}ನೇ ಫೋಟೋ ಎಳೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.moved": {
+  "en": "Photo moved to place {n} of {total}.",
+  "te": "ఫోటో {n}/{total} స్థానానికి వెళ్ళింది.",
+  "hi": "फोटो {n}/{total} जगह पर गया।",
+  "kn": "ಫೋಟೋ {n}/{total} ಸ್ಥಾನಕ್ಕೆ ಹೋಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.waiting": {
+  "en": "Waiting",
+  "te": "వేచి ఉంది",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.uploading": {
+  "en": "Uploading {percent}%",
+  "te": "అప్‌లోడ్ అవుతోంది {percent}%",
+  "hi": "अपलोड हो रहा है {percent}%",
+  "kn": "ಅಪ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ {percent}%",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.done": {
+  "en": "Uploaded",
+  "te": "అప్‌లోడ్ అయింది",
+  "hi": "अपलोड हो गया",
+  "kn": "ಅಪ್‌ಲೋಡ್ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.failed": {
+  "en": "Not uploaded: {why}",
+  "te": "అప్‌లోడ్ కాలేదు: {why}",
+  "hi": "अपलोड नहीं हुआ: {why}",
+  "kn": "ಅಪ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.new": {
+  "en": "New",
+  "te": "కొత్తది",
+  "hi": "नया",
+  "kn": "ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.full": {
+  "en": "An item can have 8 photos at most.",
+  "te": "ఒక చీరకు 8 ఫోటోల వరకే పెట్టవచ్చు.",
+  "hi": "एक साड़ी में आठ फोटो तक ही लग सकते हैं।",
+  "kn": "ಒಂದು ಸೀರೆಗೆ ಎಂಟು ಫೋಟೋ ಮಾತ್ರ ಹಾಕಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.skipped": {
+  "en": "{n} photo(s) were not added: the limit is 8.",
+  "te": "{n} ఫోటో(లు) చేర్చలేదు: పరిమితి 8.",
+  "hi": "{n} फोटो नहीं जोड़े गए: सीमा 8 है।",
+  "kn": "{n} ಫೋಟೋ ಸೇರಿಸಲಿಲ್ಲ: ಮಿತಿ 8.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.type": {
+  "en": "Use a JPEG, PNG or WebP photo.",
+  "te": "JPEG, PNG లేదా WebP ఫోటో వాడండి.",
+  "hi": "JPEG, PNG या WebP फोटो इस्तेमाल करें।",
+  "kn": "JPEG, PNG ಅಥವಾ WebP ಫೋಟೋ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.large": {
+  "en": "This photo is bigger than 5 MB.",
+  "te": "ఈ ఫోటో 5 MB కంటే పెద్దది.",
+  "hi": "यह फोटो 5 MB से बड़ा है।",
+  "kn": "ಈ ಫೋಟೋ 5 MB ಗಿಂತ ದೊಡ್ಡದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.unreadable": {
+  "en": "This file could not be read as a photo.",
+  "te": "ఈ ఫైల్‌ను ఫోటోగా చదవలేకపోయాం.",
+  "hi": "यह फ़ाइल फोटो की तरह पढ़ी नहीं जा सकी।",
+  "kn": "ಈ ಫೈಲ್ ಅನ್ನು ಫೋಟೋ ಆಗಿ ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.pixels": {
+  "en": "This photo is too large in pixels. Take it again at a lower size.",
+  "te": "ఈ ఫోటో పిక్సెల్స్‌లో చాలా పెద్దది. చిన్న సైజులో మళ్ళీ తీయండి.",
+  "hi": "यह फोटो पिक्सल में बहुत बड़ा है। छोटे साइज़ में फिर से लें।",
+  "kn": "ಈ ಫೋಟೋ ಪಿಕ್ಸೆಲ್‌ಗಳಲ್ಲಿ ತುಂಬಾ ದೊಡ್ಡದು. ಚಿಕ್ಕ ಗಾತ್ರದಲ್ಲಿ ಮತ್ತೆ ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.animated": {
+  "en": "Animated pictures cannot be used. Choose a still photo.",
+  "te": "కదిలే చిత్రాలు వాడలేరు. స్టిల్ ఫోటో ఎంచుకోండి.",
+  "hi": "एनिमेटेड तस्वीरें नहीं चल सकतीं। सादा फोटो चुनें।",
+  "kn": "ಚಲಿಸುವ ಚಿತ್ರಗಳನ್ನು ಬಳಸಲಾಗದು. ಸ್ಥಿರ ಫೋಟೋ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.missing": {
+  "en": "The photo did not finish uploading. Try again.",
+  "te": "ఫోటో పూర్తిగా అప్‌లోడ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "फोटो पूरा अपलोड नहीं हुआ। फिर कोशिश करें।",
+  "kn": "ಫೋಟೋ ಪೂರ್ತಿ ಅಪ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.net": {
+  "en": "The connection dropped. Try again.",
+  "te": "కనెక్షన్ తెగింది. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "कनेक्शन टूट गया। फिर कोशिश करें।",
+  "kn": "ಕನೆಕ್ಷನ್ ಕಡಿತವಾಯಿತು. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.err.generic": {
+  "en": "The photo could not be uploaded. Try again.",
+  "te": "ఫోటో అప్‌లోడ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "फोटो अपलोड नहीं हो सका। फिर कोशिश करें।",
+  "kn": "ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.photo.retry": {
+  "en": "Try this photo again",
+  "te": "ఈ ఫోటోను మళ్ళీ ప్రయత్నించండి",
+  "hi": "इस फोटो को फिर से भेजें",
+  "kn": "ಈ ಫೋಟೋವನ್ನು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.save.details": {
+  "en": "Saving the details…",
+  "te": "వివరాలు సేవ్ అవుతున్నాయి…",
+  "hi": "जानकारी सेव हो रही है…",
+  "kn": "ವಿವರಗಳು ಸೇವ್ ಆಗುತ್ತಿವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.save.photo": {
+  "en": "Uploading photo {n} of {total}…",
+  "te": "ఫోటో {n}/{total} అప్‌లోడ్ అవుతోంది…",
+  "hi": "फोटो {n}/{total} अपलोड हो रहा है…",
+  "kn": "ಫೋಟೋ {n}/{total} ಅಪ್‌ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.save.order": {
+  "en": "Putting the photos in order…",
+  "te": "ఫోటోలను వరసలో పెడుతున్నాం…",
+  "hi": "फोटो क्रम में लगाए जा रहे हैं…",
+  "kn": "ಫೋಟೋಗಳನ್ನು ಕ್ರಮದಲ್ಲಿ ಇಡಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.save.show": {
+  "en": "Switching the saree on…",
+  "te": "చీరను చూపించేలా పెడుతున్నాం…",
+  "hi": "साड़ी दिखाने के लिए चालू की जा रही है…",
+  "kn": "ಸೀರೆಯನ್ನು ತೋರಿಸುವಂತೆ ಮಾಡಲಾಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.saved.shown": {
+  "en": "Saved. {name} is shown to customers.",
+  "te": "సేవ్ అయింది. {name} కస్టమర్లకు కనిపిస్తుంది.",
+  "hi": "सेव हो गया। {name} ग्राहकों को दिखेगी।",
+  "kn": "ಸೇವ್ ಆಯಿತು. {name} ಗ್ರಾಹಕರಿಗೆ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.saved.hidden": {
+  "en": "Saved. {name} is hidden from customers.",
+  "te": "సేవ్ అయింది. {name} కస్టమర్లకు కనిపించదు.",
+  "hi": "सेव हो गया। {name} ग्राहकों को नहीं दिखेगी।",
+  "kn": "ಸೇವ್ ಆಯಿತು. {name} ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.saved.open": {
+  "en": "Open the saree",
+  "te": "చీరను తెరవండి",
+  "hi": "साड़ी खोलें",
+  "kn": "ಸೀರೆಯನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.saved.partial": {
+  "en": "The details were saved, but some photos did not upload. Try those again below.",
+  "te": "వివరాలు సేవ్ అయ్యాయి, కానీ కొన్ని ఫోటోలు అప్‌లోడ్ కాలేదు. వాటిని కింద మళ్ళీ ప్రయత్నించండి.",
+  "hi": "जानकारी सेव हो गई, पर कुछ फोटो अपलोड नहीं हुए। नीचे उन्हें फिर आज़माएँ।",
+  "kn": "ವಿವರಗಳು ಸೇವ್ ಆದವು, ಆದರೆ ಕೆಲವು ಫೋಟೋ ಅಪ್‌ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಕೆಳಗೆ ಅವನ್ನು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.name": {
+  "en": "Write a name for the saree.",
+  "te": "చీరకు ఒక పేరు రాయండి.",
+  "hi": "साड़ी का नाम लिखें।",
+  "kn": "ಸೀರೆಗೆ ಹೆಸರು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.colours": {
+  "en": "Pick one to four colours.",
+  "te": "ఒకటి నుంచి నాలుగు రంగులు ఎంచుకోండి.",
+  "hi": "एक से चार रंग चुनें।",
+  "kn": "ಒಂದರಿಂದ ನಾಲ್ಕು ಬಣ್ಣ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.price": {
+  "en": "The exact price must be between ₹1 and ₹10,00,000.",
+  "te": "The exact price must be between ₹1 and ₹10,00,000.",
+  "hi": "The exact price must be between ₹1 and ₹10,00,000.",
+  "kn": "The exact price must be between ₹1 and ₹10,00,000.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.err.invalid": {
+  "en": "Something in the form was not accepted. Check it and try again.",
+  "te": "ఫారమ్‌లో ఏదో అంగీకరించలేదు. చూసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "फ़ॉर्म में कुछ मंज़ूर नहीं हुआ। देखकर फिर कोशिश करें।",
+  "kn": "ಫಾರ್ಮ್‌ನಲ್ಲಿ ಏನೋ ಒಪ್ಪಲಿಲ್ಲ. ನೋಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.needs_photo": {
+  "en": "A saree needs at least one photo before it can be shown to customers. Add a photo and save again.",
+  "te": "కస్టమర్లకు చూపించాలంటే చీరకు కనీసం ఒక ఫోటో ఉండాలి. ఫోటో చేర్చి మళ్ళీ సేవ్ చేయండి.",
+  "hi": "ग्राहकों को दिखाने से पहले साड़ी में कम से कम एक फोटो चाहिए। फोटो जोड़कर फिर सेव करें।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ತೋರಿಸಲು ಸೀರೆಗೆ ಕನಿಷ್ಠ ಒಂದು ಫೋಟೋ ಬೇಕು. ಫೋಟೋ ಸೇರಿಸಿ ಮತ್ತೆ ಸೇವ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.last_photo": {
+  "en": "The last photo of a saree that is shown cannot be removed. Hide the saree first, or add another photo.",
+  "te": "చూపిస్తున్న చీర చివరి ఫోటోను తీయలేరు. ముందు చీరను దాచండి, లేదా మరో ఫోటో చేర్చండి.",
+  "hi": "दिखाई जा रही साड़ी का आख़िरी फोटो नहीं हटाया जा सकता। पहले साड़ी छिपाएँ या दूसरा फोटो जोड़ें।",
+  "kn": "ತೋರಿಸುತ್ತಿರುವ ಸೀರೆಯ ಕೊನೆಯ ಫೋಟೋ ತೆಗೆಯಲಾಗದು. ಮೊದಲು ಸೀರೆ ಮರೆಮಾಡಿ ಅಥವಾ ಇನ್ನೊಂದು ಫೋಟೋ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.unavailable": {
+  "en": "The catalogue is not available right now. Try again shortly.",
+  "te": "క్యాటలాగ్ ఇప్పుడు అందుబాటులో లేదు. కొంచెం సేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "कैटलॉग अभी उपलब्ध नहीं है। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.err.price_owner": {
+  "en": "Only the owner can set the exact price. The other changes were not saved either; take the price field out and save again.",
+  "te": "Only the owner can set the exact price. The other changes were not saved either; take the price field out and save again.",
+  "hi": "Only the owner can set the exact price. The other changes were not saved either; take the price field out and save again.",
+  "kn": "Only the owner can set the exact price. The other changes were not saved either; take the price field out and save again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.send.title": {
+  "en": "Send to a customer",
+  "te": "కస్టమర్‌కి పంపండి",
+  "hi": "ग्राहक को भेजें",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.intro": {
+  "en": "Choose a customer and check the message. It goes to the outbox, where the shop’s rules decide if it goes now or waits for approval.",
+  "te": "Choose a customer and check the message. It goes to the outbox, where the shop’s rules decide if it goes now or waits for approval.",
+  "hi": "Choose a customer and check the message. It goes to the outbox, where the shop’s rules decide if it goes now or waits for approval.",
+  "kn": "Choose a customer and check the message. It goes to the outbox, where the shop’s rules decide if it goes now or waits for approval.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.send.inactive": {
+  "en": "Show this saree to customers before you send it.",
+  "te": "పంపే ముందు ఈ చీరను కస్టమర్లకు కనిపించేలా చేయండి.",
+  "hi": "भेजने से पहले इस साड़ी को ग्राहकों के लिए दिखने वाला करें।",
+  "kn": "ಕಳುಹಿಸುವ ಮೊದಲು ಈ ಸೀರೆಯನ್ನು ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವಂತೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.search": {
+  "en": "Find a customer",
+  "te": "కస్టమర్‌ను వెతకండి",
+  "hi": "ग्राहक खोजें",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.placeholder": {
+  "en": "Name or last 4 digits",
+  "te": "పేరు లేదా చివరి 4 అంకెలు",
+  "hi": "नाम या आख़िरी 4 अंक",
+  "kn": "ಹೆಸರು ಅಥವಾ ಕೊನೆಯ 4 ಅಂಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.go": {
+  "en": "Find",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.short": {
+  "en": "Type at least 2 letters.",
+  "te": "కనీసం 2 అక్షరాలు రాయండి.",
+  "hi": "कम से कम 2 अक्षर लिखें।",
+  "kn": "ಕನಿಷ್ಠ 2 ಅಕ್ಷರ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.none": {
+  "en": "No customer found. Try another name.",
+  "te": "కస్టమర్ దొరకలేదు. వేరే పేరు ప్రయత్నించండి.",
+  "hi": "कोई ग्राहक नहीं मिला। दूसरा नाम आज़माएँ।",
+  "kn": "ಗ್ರಾಹಕರು ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ಹೆಸರು ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.error": {
+  "en": "The search did not work. Try again.",
+  "te": "వెతకడం కుదరలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "खोज नहीं हो पाई। फिर कोशिश करें।",
+  "kn": "ಹುಡುಕಾಟ ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.change": {
+  "en": "Change customer",
+  "te": "కస్టమర్‌ను మార్చండి",
+  "hi": "ग्राहक बदलें",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.chosen": {
+  "en": "Sending to {who}",
+  "te": "{who}కి పంపుతున్నాం",
+  "hi": "{who} को भेज रहे हैं",
+  "kn": "{who} ಅವರಿಗೆ ಕಳುಹಿಸಲಾಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.lead.ends": {
+  "en": "phone ends {digits}",
+  "te": "ఫోన్ చివర {digits}",
+  "hi": "फोन के आख़िरी अंक {digits}",
+  "kn": "ಫೋನ್ ಕೊನೆ {digits}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.photos": {
+  "en": "Photos to send",
+  "te": "పంపాల్సిన ఫోటోలు",
+  "hi": "भेजने के फोटो",
+  "kn": "ಕಳುಹಿಸಬೇಕಾದ ಫೋಟೋಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.photos.help": {
+  "en": "Up to 4 photos go in one message.",
+  "te": "ఒక మెసేజ్‌లో 4 ఫోటోల వరకు వెళ్తాయి.",
+  "hi": "एक मैसेज में 4 फोटो तक जाते हैं।",
+  "kn": "ಒಂದು ಮೆಸೇಜ್‌ನಲ್ಲಿ 4 ಫೋಟೋಗಳವರೆಗೆ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.photos.full": {
+  "en": "4 photos are chosen. Untick one to choose another.",
+  "te": "4 ఫోటోలు ఎంచుకున్నారు. మరొకటి ఎంచుకోవాలంటే ఒకదాన్ని తీసేయండి.",
+  "hi": "4 फोटो चुने हैं। दूसरा चुनने के लिए एक हटाएँ।",
+  "kn": "4 ಫೋಟೋ ಆರಿಸಲಾಗಿದೆ. ಇನ್ನೊಂದು ಆರಿಸಲು ಒಂದನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.photos.none": {
+  "en": "Choose at least one photo.",
+  "te": "కనీసం ఒక ఫోటో ఎంచుకోండి.",
+  "hi": "कम से कम एक फोटो चुनें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಫೋಟೋ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.caption": {
+  "en": "Caption",
+  "te": "క్యాప్షన్",
+  "hi": "कैप्शन",
+  "kn": "ಕ್ಯಾಪ್ಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.caption.help": {
+  "en": "Write it in the customer’s language. If it mentions a price or makes a promise, it waits for the owner to approve.",
+  "te": "Write it in the customer’s language. If it mentions a price or makes a promise, it waits for the owner to approve.",
+  "hi": "Write it in the customer’s language. If it mentions a price or makes a promise, it waits for the owner to approve.",
+  "kn": "Write it in the customer’s language. If it mentions a price or makes a promise, it waits for the owner to approve.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.send.template": {
+  "en": "Here is {name} from our shop. Tell us if you would like to see more.",
+  "te": "Here is {name} from our shop. Tell us if you would like to see more.",
+  "hi": "Here is {name} from our shop. Tell us if you would like to see more.",
+  "kn": "Here is {name} from our shop. Tell us if you would like to see more.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.send.preview": {
+  "en": "Preview",
+  "te": "ప్రివ్యూ",
+  "hi": "प्रीव्यू",
+  "kn": "ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.preview.note": {
+  "en": "This is how the message will look on WhatsApp. Nothing has been sent yet.",
+  "te": "This is how the message will look on WhatsApp. Nothing has been sent yet.",
+  "hi": "This is how the message will look on WhatsApp. Nothing has been sent yet.",
+  "kn": "This is how the message will look on WhatsApp. Nothing has been sent yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.send.preview.empty": {
+  "en": "Your caption shows here.",
+  "te": "మీ క్యాప్షన్ ఇక్కడ కనిపిస్తుంది.",
+  "hi": "आपका कैप्शन यहाँ दिखेगा।",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಪ್ಶನ್ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.go": {
+  "en": "Send to the outbox",
+  "te": "అవుట్‌బాక్స్‌కి పంపండి",
+  "hi": "आउटबॉक्स में भेजें",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್‌ಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.outbox": {
+  "en": "Open the outbox",
+  "te": "అవుట్‌బాక్స్ తెరవండి",
+  "hi": "आउटबॉक्स खोलें",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.today": {
+  "en": "Open Today",
+  "te": "టుడే తెరవండి",
+  "hi": "टुडे खोलें",
+  "kn": "ಟುಡೇ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.another": {
+  "en": "Send to another customer",
+  "te": "మరో కస్టమర్‌కి పంపండి",
+  "hi": "दूसरे ग्राहक को भेजें",
+  "kn": "ಇನ್ನೊಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.send.why": {
+  "en": "Why it waits: {why}",
+  "te": "Why it waits: {why}",
+  "hi": "Why it waits: {why}",
+  "kn": "Why it waits: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.money": {
+  "en": "the caption mentions a price.",
+  "te": "the caption mentions a price.",
+  "hi": "the caption mentions a price.",
+  "kn": "the caption mentions a price.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.commitment": {
+  "en": "the caption makes a promise.",
+  "te": "the caption makes a promise.",
+  "hi": "the caption makes a promise.",
+  "kn": "the caption makes a promise.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.complaint": {
+  "en": "the caption touches a complaint.",
+  "te": "the caption touches a complaint.",
+  "hi": "the caption touches a complaint.",
+  "kn": "the caption touches a complaint.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.model_flagged": {
+  "en": "the checker asked for a person to look at it.",
+  "te": "the checker asked for a person to look at it.",
+  "hi": "the checker asked for a person to look at it.",
+  "kn": "the checker asked for a person to look at it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.uncertain": {
+  "en": "the words could not be checked yet.",
+  "te": "the words could not be checked yet.",
+  "hi": "the words could not be checked yet.",
+  "kn": "the words could not be checked yet.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.category_other": {
+  "en": "it is not a routine message.",
+  "te": "it is not a routine message.",
+  "hi": "it is not a routine message.",
+  "kn": "it is not a routine message.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.no_inbound_window": {
+  "en": "this customer has not written to the shop lately.",
+  "te": "this customer has not written to the shop lately.",
+  "hi": "this customer has not written to the shop lately.",
+  "kn": "this customer has not written to the shop lately.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.auto_off": {
+  "en": "automatic sending is off for this business, so every message waits for approval.",
+  "te": "automatic sending is off for this business, so every message waits for approval.",
+  "hi": "automatic sending is off for this business, so every message waits for approval.",
+  "kn": "automatic sending is off for this business, so every message waits for approval.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.why.other": {
+  "en": "a rule of the shop asks for approval.",
+  "te": "a rule of the shop asks for approval.",
+  "hi": "a rule of the shop asks for approval.",
+  "kn": "a rule of the shop asks for approval.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.err.send.photo": {
+  "en": "One of the photos is no longer available. Reload the page and choose again. Nothing was sent.",
+  "te": "One of the photos is no longer available. Reload the page and choose again. Nothing was sent.",
+  "hi": "One of the photos is no longer available. Reload the page and choose again. Nothing was sent.",
+  "kn": "One of the photos is no longer available. Reload the page and choose again. Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.err.send.hidden": {
+  "en": "This saree is hidden, so it cannot be sent. Nothing was sent.",
+  "te": "This saree is hidden, so it cannot be sent. Nothing was sent.",
+  "hi": "This saree is hidden, so it cannot be sent. Nothing was sent.",
+  "kn": "This saree is hidden, so it cannot be sent. Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "catalogue.fromlead": {
+  "en": "Send a saree",
+  "te": "చీర పంపండి",
+  "hi": "साड़ी भेजें",
+  "kn": "ಸೀರೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.picking": {
+  "en": "Choose a saree to send to {who}.",
+  "te": "{who}కి పంపడానికి ఒక చీరను ఎంచుకోండి.",
+  "hi": "{who} को भेजने के लिए एक साड़ी चुनें।",
+  "kn": "{who} ಅವರಿಗೆ ಕಳುಹಿಸಲು ಒಂದು ಸೀರೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.thumb.alt": {
+  "en": "Photo {n} of {total} sent with this message",
+  "te": "ఈ మెసేజ్‌తో వెళ్లిన ఫోటో {n}/{total}",
+  "hi": "इस मैसेज के साथ गया फोटो {n}/{total}",
+  "kn": "ಈ ಮೆಸೇಜ್‌ನೊಂದಿಗೆ ಹೋದ ಫೋಟೋ {n}/{total}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.thumb.none": {
+  "en": "Photo not available",
+  "te": "ఫోటో అందుబాటులో లేదు",
+  "hi": "फोटो उपलब्ध नहीं है",
+  "kn": "ಫೋಟೋ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "catalogue.record.on": {
+  "en": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
+  "te": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
+  "hi": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
+  "kn": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

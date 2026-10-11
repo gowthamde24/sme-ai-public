@@ -17,14 +17,14 @@ import { isCanonicalUuid } from "./crm";
 export const ASSISTANT_LANGUAGES = ["en", "te", "hi", "kn", "ta"] as const;
 export type AssistantLanguage = (typeof ASSISTANT_LANGUAGES)[number];
 
-/** `catalogue_item` (job AY): a saree of the shop's catalogue; its label is the saree's name and it has no page yet (`target: null`), so the box shows the name as plain text. */
+/** `catalogue_item` (job AY): a saree of the shop's catalogue; its label is the saree's name. The API sends `target: null` for it; the box links it to the saree's page from the source's own id (job BC). A `catalogue_item` target is read too, for an API that sends one. */
 export const SOURCE_KINDS = ["quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft", "outbox_message", "call_request", "store_visit", "catalogue_item"] as const;
 export type SourceKind = (typeof SOURCE_KINDS)[number];
 /** `store_visit` (job AS): a visit Agent OWL proposed. It is booked but not confirmed; a person confirms it on the Visits page. */
 export const DRAFT_KINDS = ["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"] as const;
 export type DraftKind = (typeof DRAFT_KINDS)[number];
 /** `outbox_message` and `call_request` (job AT) are decided on Today in place: they have no page, so the Ask box shows them as a source without a link. `store_visit` opens the Visits page at that visit. */
-export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "store_visit"] as const;
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request", "store_visit", "catalogue_item"] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 
 /** The screen of this business that shows a source, or approves a draft. */

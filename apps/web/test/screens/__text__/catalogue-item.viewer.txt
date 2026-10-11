@@ -1,0 +1,32 @@
+[← All sarees](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue)
+# DEMO Maroon Kanchi pattu
+₹38,500.00
+{label="Photos of DEMO Maroon Kanchi pattu"}
+{role=group label="Photo 1 of 3"} [image: DEMO Maroon Kanchi pattu, photo 1]
+{role=group label="Photo 2 of 3"} [image: DEMO Maroon Kanchi pattu, photo 2]
+{role=group label="Photo 3 of 3"} [image: DEMO Maroon Kanchi pattu, photo 3]
+[button type=button disabled: Previous photo]
+[button type=button: Next photo]
+Photo 1 of 3
+-
+[button type=button: Show photo 1]
+-
+[button type=button: Show photo 2]
+-
+[button type=button: Show photo 3]
+Fabric
+Kanchi pattu
+Colours
+Maroon, Gold
+Zari
+Rich zari
+Border
+Temple border in gold zari
+Occasions
+Festival, Wedding
+Stock
+In stock
+Price range
+₹25,000 to ₹50,000
+Exact price
+₹38,500.00

@@ -24,7 +24,7 @@ export const TODAY_WORD_KEYS = [
   "frame.notyet", "office.working", "office.idle", "office.switchedoff", "nav.item.office", "nav.item.settings", "ask.hero.note", "frame.ailight", "frame.aipaused",
   "frame.aipausednow", "today.badge.visit", "today.title.visit.proposed", "today.visit.when", "today.visit.party", "today.visit.purpose", "today.visit.hint", "today.act.vconfirm", "today.act.vchange",
   "today.act.vcancel", "visits.party.one", "visits.party.other", "visits.act.move", "visits.slot.day", "visits.slot.time", "visits.slot.pickday", "visits.slot.loading", "visits.slot.error",
-  "visits.slot.free", "visits.slot.full", "visits.closed.date", "visits.closed.past", "visits.closed.weekday", "visits.closed.other", "outbox.stopped.title", "outbox.stopped.body",
+  "visits.slot.free", "visits.slot.full", "visits.closed.date", "visits.closed.past", "visits.closed.weekday", "visits.closed.other", "outbox.stopped.title", "outbox.stopped.body", "catalogue.thumb.alt", "catalogue.photo.none", "catalogue.photo.error",
 ] as const;
 export type TodayWords = Readonly<Record<string, string>>;
 

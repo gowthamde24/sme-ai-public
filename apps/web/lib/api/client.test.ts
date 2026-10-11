@@ -4,6 +4,7 @@ import {
   ApiAuthError,
   ApiContractError,
   ApiRequestError,
+  apiUploadRequest,
   createTenant,
   fetchMe,
   parseMe,
@@ -152,5 +153,37 @@ describe("response validation (the API is not blindly trusted)", () => {
     expect(() =>
       parseTenantDetail({ id: "i", name: "n", slug: "s", role: "god" }),
     ).toThrow(ApiContractError);
+  });
+});
+
+describe("a file as the body of a request (the catalogue's photos)", () => {
+  const original = globalThis.fetch;
+  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://api.test"));
+  afterEach(() => {
+    globalThis.fetch = original;
+    vi.unstubAllEnvs();
+  });
+
+  it("sends the bytes as they are with their own type and the person's token, and returns the JSON answer", async () => {
+    const fetchMock = respond(200, { ok: 1 });
+    globalThis.fetch = fetchMock as unknown as typeof fetch;
+    const bytes = new ArrayBuffer(4);
+    await expect(apiUploadRequest("/v1/x", "tok", bytes, "image/webp")).resolves.toEqual({ ok: 1 });
+    const [url, init] = fetchMock.mock.calls[0] as unknown as [string, RequestInit];
+    expect(url).toBe("http://api.test/v1/x");
+    expect(init.method).toBe("POST");
+    expect(init.body).toBe(bytes);
+    expect(init.headers).toEqual({ "Content-Type": "image/webp", Authorization: "Bearer tok" });
+  });
+
+  it("judges the status like every other request: 401 is the session, a refusal keeps only the API's code, a dead API is 503", async () => {
+    globalThis.fetch = respond(401, {}) as unknown as typeof fetch;
+    await expect(apiUploadRequest("/v1/x", "tok", new Blob(["x"]), "image/png")).rejects.toBeInstanceOf(ApiAuthError);
+    globalThis.fetch = respond(413, { error: { code: "photo_too_large", message: "That photo is bigger than 5 MB." } }) as unknown as typeof fetch;
+    await expect(apiUploadRequest("/v1/x", "tok", new Blob(["x"]), "image/png")).rejects.toMatchObject({ status: 413, code: "photo_too_large" });
+    globalThis.fetch = vi.fn(async () => {
+      throw new Error("down");
+    }) as unknown as typeof fetch;
+    await expect(apiUploadRequest("/v1/x", "tok", new Blob(["x"]), "image/png")).rejects.toMatchObject({ status: 503, code: "api_unreachable" });
   });
 });

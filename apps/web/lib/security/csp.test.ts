@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { buildCsp, newNonce } from "./csp";
+import { buildCsp, newNonce, storageOrigin } from "./csp";
 import { securityHeaders } from "./headers";
 
 const directive = (csp: string, name: string) =>
@@ -49,6 +49,27 @@ describe("buildCsp", () => {
 
   it("allows the authenticator QR code (a data URI image) and nothing remote", () => {
     expect(directive(prod, "img-src")).toBe("img-src 'self' blob: data:");
+  });
+});
+
+describe("the catalogue's photos (job BC)", () => {
+  it("allows ONE more origin for images, the Supabase project's, and nothing else changes", () => {
+    const withStorage = buildCsp("NONCE123", false, "https://abc.supabase.co");
+    expect(directive(withStorage, "img-src")).toBe("img-src 'self' blob: data: https://abc.supabase.co");
+    expect(directive(withStorage, "connect-src")).toBe("connect-src 'self'");
+    expect(directive(withStorage, "script-src")).not.toContain("supabase");
+    expect(directive(withStorage, "style-src")).not.toContain("supabase");
+    expect(withStorage.replace(" https://abc.supabase.co", "")).toBe(buildCsp("NONCE123", false));
+  });
+
+  it("takes only the origin of the public URL: no path, no wildcard, no other scheme", () => {
+    expect(storageOrigin("https://abc.supabase.co/storage/v1/x?token=1")).toBe("https://abc.supabase.co");
+    expect(storageOrigin("http://127.0.0.1:54321")).toBe("http://127.0.0.1:54321");
+    expect(storageOrigin("javascript:alert(1)")).toBeNull();
+    expect(storageOrigin("data:text/html,x")).toBeNull();
+    expect(storageOrigin("not a url")).toBeNull();
+    expect(storageOrigin(undefined)).toBeNull();
+    expect(storageOrigin("")).toBeNull();
   });
 });
 

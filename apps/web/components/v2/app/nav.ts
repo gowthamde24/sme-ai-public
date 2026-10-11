@@ -9,7 +9,7 @@ export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 export const OWNER_ONLY: readonly Role[] = ["owner"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "visits" | "outbox" | "office" | "integrations" | "settings";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "settings";
 
 export type NavItem = {
   id: string;
@@ -33,8 +33,8 @@ export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
 /**
  * The menu as the design-lab app draws it: four labelled groups (Work, Your business, Your team, Connect), then, below the scrolling part, Settings. The
- * pages the old menu listed one by one are reached from the screens now: follow-ups and suggestions from Leads, the catalogue's four pages from "Catalogue and
- * prices", the privacy and security pages from Settings, runs and cost from Office. Each page still belongs to one item (`also`), so the marker and the way back stay right.
+ * pages the old menu listed one by one are reached from the screens now: follow-ups and suggestions from Leads, the item types, price list, products and quote policy from "Prices and
+ * products" (the word "Catalogue" is the saree photo catalogue since job BC), the privacy and security pages from Settings, runs and cost from Office. Each page still belongs to one item (`also`), so the marker and the way back stay right.
  * There is no "Your team" members page yet (docs/plans/members-and-invitations.md): "Your team" is the group of the AI team (Office).
  */
 export const NAV: readonly NavGroup[] = [
@@ -54,7 +54,11 @@ export const NAV: readonly NavGroup[] = [
   {
     id: "business",
     label: "Your business",
-    items: [{ id: "catalogue", label: "Catalogue and prices", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], roles: WRITERS }],
+    items: [
+      // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
+      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", roles: ALL_ROLES },
+      { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], roles: WRITERS },
+    ],
   },
   {
     id: "team",

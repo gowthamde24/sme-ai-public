@@ -162,6 +162,7 @@ export default async function LeadPage({
             words={contactWords(await getLang())}
             actions={{ whatsapp: contactWhatsAppAction.bind(null, tenantId, leadId), call: requestCallAction.bind(null, tenantId, leadId) }}
             bookHref={`/app/tenants/${tenantId}/visits?lead=${leadId}#book`}
+            sareeHref={`/app/tenants/${tenantId}/catalogue?lead=${leadId}`}
             todayHref={`/app/tenants/${tenantId}#needs-you`}
             addCustomerHref={`/app/tenants/${tenantId}/customers/new`}
             noContact={contactId === null}

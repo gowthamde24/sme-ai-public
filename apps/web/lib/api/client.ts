@@ -224,6 +224,37 @@ export async function apiStreamRequest(path: string, accessToken: string, body: 
   return response;
 }
 
+/**
+ * A POST whose BODY is a file, sent as it is with its own Content-Type (a photo of the catalogue: the API reads the raw body, not JSON). The status is judged exactly as apiRequest does, and the
+ * answer is JSON. The caller has already checked the size and the type; the API checks them again from the bytes.
+ */
+export async function apiUploadRequest(path: string, accessToken: string, body: ArrayBuffer | Blob, contentType: string): Promise<unknown> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, {
+      method: "POST",
+      cache: "no-store",
+      headers: { "Content-Type": contentType, Authorization: `Bearer ${accessToken}` },
+      body,
+    });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  }
+  let json: unknown = null;
+  try {
+    json = await response.json();
+  } catch {
+    // non-JSON body; handled by the status checks below
+  }
+  if (response.status === 401) throw new ApiAuthError("The API rejected the session.");
+  if (!response.ok) {
+    const err = isRecord(json) && isRecord(json.error) ? (json.error as ApiError["error"]) : null;
+    throw new ApiRequestError(response.status, err && isString(err.code) ? err.code : "http_error", err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err));
+  }
+  return json;
+}
+
 export async function apiExportRequest(
   path: string,
   accessToken: string,

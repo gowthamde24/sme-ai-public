@@ -23,7 +23,7 @@ const KINDS = OUTBOX_CATEGORIES;
  *   gone out; every other rule (consent, stop lists, limits, the owner's approval) applies whether it is ticked or not. The result says exactly what was and was not recorded.
  * One id per attempt, so pressing twice is a retry, and a fresh id after a request went through.
  */
-export function ContactLead({ words, actions, bookHref, todayHref, addCustomerHref, noContact }: { words: TodayWords; actions: ContactActions; bookHref: string; todayHref: string; addCustomerHref: string; noContact: boolean }) {
+export function ContactLead({ words, actions, bookHref, sareeHref, todayHref, addCustomerHref, noContact }: { words: TodayWords; actions: ContactActions; bookHref: string; /** The catalogue, with this lead already chosen (job BC); without it the link is not drawn. */ sareeHref?: string; todayHref: string; addCustomerHref: string; noContact: boolean }) {
   const [mode, setMode] = React.useState<Mode>("none");
   const [keep, setKeep] = useKeepRecord();
   const [ids, setIds] = React.useState(() => ({ message: crypto.randomUUID(), touch: crypto.randomUUID(), call: crypto.randomUUID() }));
@@ -99,10 +99,15 @@ export function ContactLead({ words, actions, bookHref, todayHref, addCustomerHr
           </div>
         </>
       )}
-      <div>
+      <div className="flex flex-wrap gap-2">
         <Link href={bookHref} className={secondary}>
           {say(words, "contact.visit")}
         </Link>
+        {sareeHref && !noContact ? (
+          <Link href={sareeHref} className={secondary}>
+            {say(words, "catalogue.fromlead")}
+          </Link>
+        ) : null}
       </div>
 
       {mode !== "none" ? (
