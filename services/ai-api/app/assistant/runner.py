@@ -47,7 +47,13 @@ from app.agents.runtime import NOT_BILLED, input_token_bound
 from app.assistant import prompts
 from app.assistant.db import AssistantDb
 from app.assistant.hygiene import leaked_names
-from app.assistant.language import NO_ANSWER, PLAIN_WORDS, Language, reply_matches
+from app.assistant.language import (
+    NO_ANSWER,
+    PLAIN_WORDS,
+    WAITING_ALSO,
+    Language,
+    reply_matches,
+)
 from app.assistant.models import DraftCardOut, SourceOut
 from app.assistant.tools import TOOLS, Ctx, Item, State
 from app.errors import ApiError
@@ -247,7 +253,7 @@ class AssistantRunner:
                     if status != "ok":
                         notes = (prompts.NOTE_TOOL_REFUSED,)
 
-                verdict = self._judge(response.structured, language, repaired)
+                verdict = self._judge(response.structured, language, repaired, turn)
                 if isinstance(verdict, Reply):
                     return self._finish(verdict, message_id, emit, turns)
                 if verdict is not None:
@@ -304,7 +310,11 @@ class AssistantRunner:
 
     # ------------------------------------------------------------------ judging a final reply
     def _judge(
-        self, structured: dict[str, Any] | None, language: Language, repaired: set[str]
+        self,
+        structured: dict[str, Any] | None,
+        language: Language,
+        repaired: set[str],
+        turn: int = MAX_TURNS,
     ) -> Reply | str | None:
         """A Reply that may be shown, a fixed repair note to send back (once per kind), or None when there is no reply yet."""
         if structured is None:
@@ -334,13 +344,37 @@ class AssistantRunner:
         # an amount is stated only exactly as a tool returned it: not the owner's own number repeated back as if it were done, not a sum, not a guess
         if any(a not in self._state.allowed_paise for a in money_amounts(final.answer)):
             return self._once("money", prompts.NOTE_REPAIR_MONEY, repaired)
+        text = final.answer
+        # an answer about today's list names EVERY item that waits for the owner (job AO): the model is asked once; if it still leaves one out, the code adds it from the tool's own list
+        missing = self._left_out(final.kind, known)
+        if missing:
+            if "complete" not in repaired and turn < MAX_TURNS:
+                return self._once("complete", prompts.NOTE_REPAIR_COMPLETE, repaired)
+            logger.warning(
+                "assistant run %s: an answer left out %d waiting item(s); added from the tool's list",
+                self._ctx.run_id,
+                len(missing),
+            )
+            text = f"{text}\n{WAITING_ALSO[language]} " + "; ".join(i.label for i in missing)
+            known = [*known, *missing]
         return Reply(
-            final.answer,
+            text,
             language,
             final.kind,
             [source_of(i) for i in known] if final.kind == "answer" else [],
             list(self._state.drafts),
         )
+
+    def _left_out(self, kind: str, cited: list[Item]) -> list[Item]:
+        """The waiting items of today's list that an answer about that list did not cite. An answer is 'about the list' when get_today ran in this run and the answer cites at least one of
+        what it showed (a waiting item or a recent step); an answer to some other question that happens to call get_today too, and cites none of it, is left alone."""
+        state = self._state
+        if kind != "answer" or not state.waiting:
+            return []
+        handles = {i.handle for i in cited}
+        if not handles & {*state.waiting, *state.today_recent}:
+            return []
+        return [state.items[h] for h in state.waiting if h not in handles]
 
     @staticmethod
     def _once(kind: str, note: str, repaired: set[str]) -> str | None:

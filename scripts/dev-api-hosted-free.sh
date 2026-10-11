@@ -5,6 +5,7 @@
 # What it does, in order. It stops at the first problem, before anything is changed or started:
 #   1. checks the address is one of the three allowed hosted free-tier services and the model id is plain (the API refuses anything else too);
 #   2. takes the API key from LLM_API_KEY if it is already in the environment, else READS IT HIDDEN from the terminal (nothing is echoed, written to a file or printed);
+#      then asks the service itself whether it knows the key (Groq's models endpoint) and refuses an empty or refused key with one line, before anything is changed;
 #   3. records the model's price in the LOCAL database at the minimum the database allows (1 micro per million tokens), so there is no manual SQL;
 #      an existing price row for the model is left as it is;
 #   4. switches the Main agent on for the demo workspace (the same operator function as docs/runbooks/main-agent-local.md);
@@ -17,7 +18,7 @@ here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/.." && pwd)"
 
 base_url="${LLM_BASE_URL:-https://api.groq.com/openai/v1}"
-model="${LLM_MODEL:-llama-3.3-70b-versatile}"
+model="${LLM_MODEL:-openai/gpt-oss-120b}"
 slug="${DEMO_SLUG:-demo-synthetic-sme}"
 port="${API_PORT:-8000}"
 
@@ -52,6 +53,23 @@ key="$(printf '%s' "$key" | tr -d '[:space:]')"
 if [ -z "$key" ]; then
   echo "dev-api-hosted-free: no key was given. Nothing was started." >&2; exit 2
 fi
+
+# the key must look like a key (it goes into a curl config on stdin: no quotes, spaces or backslashes), and the service must know it. The key is sent only to the address checked above,
+# and never on a command line (a command line is visible to other programs on the machine).
+service="${base_url#https://}"; service="${service%%/*}"
+if [ "${#key}" -lt 8 ] || [ "${#key}" -gt 512 ] || ! printf '%s' "$key" | grep -Eq '^[A-Za-z0-9._~+/=-]+$'; then
+  echo "dev-api-hosted-free: that does not look like an API key (unexpected characters or too short). Nothing was started." >&2; exit 2
+fi
+case "$base_url" in
+  https://openrouter.ai/*) check_url="$base_url/key" ;;
+  *) check_url="$base_url/models" ;;
+esac
+status="$(printf 'header = "Authorization: Bearer %s"\n' "$key" | curl -sS --config - --max-time 15 -o /dev/null -w '%{http_code}' "$check_url" 2>/dev/null || true)"
+case "$status" in
+  200) ;;
+  401 | 403) echo "dev-api-hosted-free: $service does not accept this API key (invalid, expired or revoked). Paste a new one. Nothing was started." >&2; exit 2 ;;
+  *) echo "dev-api-hosted-free: could not check the key with $service (HTTP ${status:-none}); going on, the first question will show if it is wrong." >&2 ;;
+esac
 
 # the local database container (the same way scripts/dev-enable-selftest.sh finds it)
 project="$(sed -n 's/^project_id *= *"\(.*\)"/\1/p' "$root/supabase/config.toml" | head -1)"

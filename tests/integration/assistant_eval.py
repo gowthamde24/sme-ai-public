@@ -173,6 +173,38 @@ def reads_factory(call: ToolCall, intro: str, lang: str) -> Callable[[], Scripte
     return lambda: reads(call, intro=intro, lang=lang)
 
 
+def _waiting(request: LlmRequest) -> list[tuple[str, str, str, str, str]]:
+    """The items get_today showed as WAITING for the owner (not the recent order steps)."""
+    return [x for x in seen_items(request) if "waiting_for_you:" in x[4]]
+
+
+def _today_answer(request: LlmRequest, intro: str, lang: str, drop_quote: bool) -> LlmResponse:
+    """An answer about today's list citing every waiting item, or (a careless model) every one except the quote that waits for approval."""
+    items = [x for x in _waiting(request) if not (drop_quote and "quote_approval" in x[4])]
+    return final(
+        "answer", intro + " " + "; ".join(x[3].split(":")[0][:30] for x in items), lang, [x[0] for x in items]
+    )
+
+
+def today_script(intro: str, lang: str, mode: str) -> Scripted:
+    """Job AO. mode: all (names everything), once (drops the quote, then names everything when asked again), always (drops the quote every time)."""
+    answers = {
+        "all": [False],
+        "once": [True, False],
+        "always": [True, True],
+    }[mode]
+    return Scripted(
+        [
+            lambda r: respond(ToolCall("get_today", {})),
+            *[partial(lambda r, d: _today_answer(r, intro, lang, d), d=d) for d in answers],
+        ]
+    )
+
+
+def today_script_factory(intro: str, lang: str, mode: str) -> Callable[[], Scripted]:
+    return lambda: today_script(intro, lang, mode)
+
+
 Ids = dict[str, str]
 Words = dict[str, str]
 
@@ -310,7 +342,7 @@ def build_cases(ids: Ids) -> list[Case]:
                 today_reply,
                 "answers_with_sources",
                 today_q,
-                reads_factory(ToolCall("get_today", {}), intro, today_reply),
+                today_script_factory(intro, today_reply, "all"),
             )
         )
         cases.append(
@@ -413,6 +445,31 @@ def build_cases(ids: Ids) -> list[Case]:
             )
         )
     assert len(cases) == 30
+    return cases
+
+
+# ----------------------------------------------------------------------------------------- job AO: an answer about today's list drops nothing
+def build_complete_cases() -> list[Case]:
+    """"What needs me today?" must name EVERY item of GET /today. A careless model leaves the quote waiting for approval out: it is asked once more (`once`), and if it still leaves it out
+    (`always`) the code adds the item from the tool's own list under a fixed phrase in the owner's language. Either way no item is dropped. Three languages, two modes."""
+    cases: list[Case] = []
+    for language in ("en", "te", "mixed"):
+        t = TEXT[language]
+        question, intro, reply = t["today"], t["intro"], {"en": "en", "te": "te", "mixed": "hi"}[language]
+        if language == "mixed":
+            question, intro = HINDI_MIXED["today"], HINDI_MIXED["intro"]
+        for mode, requests in (("once", 3), ("always", 3)):
+            cases.append(
+                Case(
+                    f"{language}-today-drops-{mode}",
+                    language,
+                    reply,
+                    "today_complete",
+                    question,
+                    today_script_factory(intro, reply, mode),
+                    {"mode": mode, "requests": requests},
+                )
+            )
     return cases
 
 

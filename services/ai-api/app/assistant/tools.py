@@ -53,6 +53,9 @@ class State:
     drafts: list[DraftCardOut] = field(default_factory=list)
     allowed_paise: set[int] = field(default_factory=set)
     counter: int = 0
+    # the handles get_today showed: what is WAITING for the owner (every one must be in an answer about it) and the recent order steps (job AO)
+    waiting: list[str] = field(default_factory=list)
+    today_recent: list[str] = field(default_factory=list)
 
     def add(
         self,
@@ -132,42 +135,42 @@ class NoArgs(_Args):
 
 
 def get_today(ctx: Ctx, _: NoArgs) -> Output:
+    """EVERY item that waits for the owner (the same list as GET /today), then the last order steps. The handles of the waiting ones are kept so the runner can see whether an answer left one out."""
     raw = ctx.runtime.today.today_summary(ctx.token, ctx.tenant) if ctx.runtime.today else None
     if raw is None:
         return Output(note="unavailable")
     today = shape_today(raw)
     items: list[Item] = []
+    ctx.state.waiting.clear()
+    ctx.state.today_recent.clear()
     for entry in today.needs_you:
         paise = (entry.amount_paise,) if entry.amount_paise is not None else ()
         kind = entry.target.type
-        items.append(
-            ctx.state.add(
-                kind,
-                entry.target.id,
-                f"{entry.customer}: {entry.summary}"[:160],
-                {
-                    "waiting_for_you": entry.kind,
-                    "customer": entry.customer,
-                    "city": entry.city,
-                    "amount": _money(entry.amount_paise)
-                    if entry.amount_paise is not None
-                    else None,
-                    "amount_paise": entry.amount_paise,
-                },
-                (kind, entry.target.id),
-                money=paise,
-            )
+        item = ctx.state.add(
+            kind,
+            entry.target.id,
+            f"{entry.customer}: {entry.summary}"[:160],
+            {
+                "waiting_for_you": entry.kind,
+                "city": entry.city,
+                "amount": _money(entry.amount_paise) if entry.amount_paise is not None else None,
+            },
+            (kind, entry.target.id),
+            money=paise,
         )
+        items.append(item)
+        if item.handle not in ctx.state.waiting:
+            ctx.state.waiting.append(item.handle)
     for step in today.recent:
-        items.append(
-            ctx.state.add(
-                "order",
-                step.target.id,
-                f"{step.order_ref}: {step.text} ({step.customer})"[:160],
-                {"recent_step": step.text, "customer": step.customer},
-                ("order", step.target.id),
-            )
+        item = ctx.state.add(
+            "order",
+            step.target.id,
+            f"{step.order_ref}: {step.text} ({step.customer})"[:160],
+            {"recent_step": step.text},
+            ("order", step.target.id),
         )
+        items.append(item)
+        ctx.state.today_recent.append(item.handle)
     ctx.state.allowed_paise.add(today.cards.money_held_paise)
     facts = (
         ("waiting_for_you", str(today.cards.waiting)),
@@ -201,10 +204,8 @@ def list_quotes(ctx: Ctx, args: ListQuotesArgs) -> Output:
                 {
                     "status": quote.status,
                     "outcome": quote.outcome,
-                    "customer": quote.customer,
                     "city": quote.city,
                     "total": _money(quote.total_paise),
-                    "total_paise": quote.total_paise,
                     "valid_until": quote.valid_until.isoformat(),
                     "enquiry_id": str(quote.enquiry_id),
                     "typed_by_a_person": quote.pricing_kind == "manual",
@@ -258,14 +259,11 @@ def list_orders(ctx: Ctx, args: ListOrdersArgs) -> Output:
                 f"Order {row['order_no']} for {customer}",
                 {
                     "state": row["state"],
-                    "customer": customer,
                     "city": city,
                     "total": _money(int(row["order_total_paise"])),
-                    "total_paise": int(row["order_total_paise"]),
                     "paid": _money(paid),
                     "refunded": _money(refunded),
                     "money_held": _money(net) if closed_lost and net > 0 else None,
-                    "money_held_paise": net if closed_lost and net > 0 else None,
                 },
                 ("order", uuid.UUID(str(row["id"]))),
                 money=(
@@ -414,7 +412,6 @@ def find_price(ctx: Ctx, args: FindPriceArgs) -> Output:
             f"{str(r['name'])[:100]} ({str(r['sku'])[:40]})",
             {
                 "price_each": _money(int(r["unit_price_paise"])),
-                "price_each_paise": int(r["unit_price_paise"]),
                 "minimum_order_quantity": int(r["minimum_order_quantity"]),
             },
             money=(int(r["unit_price_paise"]),),
@@ -506,7 +503,6 @@ def draft_quote(ctx: Ctx, args: DraftQuoteArgs) -> Output:
         {
             "status": "draft",
             "total": _money(paise),
-            "total_paise": paise,
             "priced_by": "the quote engine",
         },
         ("quote", quote_id),
@@ -682,43 +678,43 @@ def record_enquiry(ctx: Ctx, args: RecordEnquiryArgs) -> Output:
 READ_TOOLS: tuple[Tool, ...] = (
     Tool(
         "get_today",
-        "What is waiting for the owner today, the money held, open orders and the last order steps.",
+        "Everything waiting for the owner today, money held, open orders, last order steps.",
         NoArgs,
         get_today,
     ),
     Tool(
         "list_quotes",
-        "The newest quotes with customer, status and total.",
+        "Newest quotes: customer, status, total.",
         ListQuotesArgs,
         list_quotes,
     ),
     Tool(
         "list_orders",
-        "The newest orders with their totals, payments and any money still held.",
+        "Newest orders: totals, payments, money held.",
         ListOrdersArgs,
         list_orders,
     ),
     Tool(
         "find_customers",
-        "Find customers (companies) by name; also returns their lead ids.",
+        "Find customers by name (also gives lead ids).",
         FindCustomersArgs,
         find_customers,
     ),
     Tool(
         "list_enquiries",
-        "The newest enquiries, optionally for one lead; shows what the customer wrote.",
+        "Newest enquiries (optionally one lead), with what the customer wrote.",
         ListEnquiriesArgs,
         list_enquiries,
     ),
     Tool(
         "find_price",
-        "Look up a product's price in the owner's current price list (read only: quote a price only from here).",
+        "A product's price in the owner's price list (the only source of a price).",
         FindPriceArgs,
         find_price,
     ),
     Tool(
         "list_followups",
-        "Follow-up message drafts that are waiting.",
+        "Follow-up drafts that are waiting.",
         ListFollowupsArgs,
         list_followups,
     ),
@@ -726,21 +722,21 @@ READ_TOOLS: tuple[Tool, ...] = (
 ACTION_TOOLS: tuple[Tool, ...] = (
     Tool(
         "draft_quote",
-        "Make a DRAFT quote for an enquiry. The quote engine prices it; you give no price. A person approves it.",
+        "Make a DRAFT quote for an enquiry. The quote engine prices it; give no price.",
         DraftQuoteArgs,
         draft_quote,
         True,
     ),
     Tool(
         "draft_followup",
-        "Make a DRAFT follow-up message for a lead. A person approves it and sends it.",
+        "Make a DRAFT follow-up for a lead.",
         DraftFollowupArgs,
         draft_followup,
         True,
     ),
     Tool(
         "draft_reply",
-        "Save a DRAFT reply to a customer, written in the customer's language, with an English gloss. No price in it. Nothing is sent.",
+        "Save a DRAFT reply to a customer in their language, with an English gloss. No price.",
         DraftReplyArgs,
         draft_reply,
         True,
