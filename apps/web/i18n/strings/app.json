@@ -1860,10 +1860,10 @@
   }
  },
  "today.usage.title": {
-  "en": "Agent OWL this month",
-  "te": "Agent OWL ఈ నెల",
-  "hi": "Agent OWL इस महीने",
-  "kn": "Agent OWL ಈ ತಿಂಗಳು",
+  "en": "Agent OWL this week",
+  "te": "Agent OWL ఈ వారం",
+  "hi": "Agent OWL इस हफ़्ते",
+  "kn": "Agent OWL ಈ ವಾರ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1882,10 +1882,10 @@
   }
  },
  "today.usage.aria": {
-  "en": "Agent OWL usage this month: {percent}% left",
-  "te": "ఈ నెల Agent OWL వాడకం: {percent}% మిగిలింది",
-  "hi": "इस महीने Agent OWL का इस्तेमाल: {percent}% बचा है",
-  "kn": "ಈ ತಿಂಗಳ Agent OWL ಬಳಕೆ: {percent}% ಉಳಿದಿದೆ",
+  "en": "Agent OWL usage this week: {percent}% left",
+  "te": "ఈ వారం Agent OWL వాడకం: {percent}% మిగిలింది",
+  "hi": "इस हफ़्ते Agent OWL का इस्तेमाल: {percent}% बचा है",
+  "kn": "ಈ ವಾರದ Agent OWL ಬಳಕೆ: {percent}% ಉಳಿದಿದೆ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2512,10 +2512,10 @@
   "humanOnly": true
  },
  "today.toast.visit": {
-  "en": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
-  "te": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
-  "hi": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
-  "kn": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
+  "en": "The call is declined and the visit offer is queued in the outbox.",
+  "te": "The call is declined and the visit offer is queued in the outbox.",
+  "hi": "The call is declined and the visit offer is queued in the outbox.",
+  "kn": "The call is declined and the visit offer is queued in the outbox.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -2994,6 +2994,2105 @@
   "te": "ఆఫీస్ తెరవండి",
   "hi": "ऑफ़िस खोलें",
   "kn": "ಆಫೀಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.visits": {
+  "en": "Store visits",
+  "te": "షాప్ విజిట్లు",
+  "hi": "दुकान की विज़िट",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.tab.visits": {
+  "en": "Visits",
+  "te": "విజిట్లు",
+  "hi": "विज़िट",
+  "kn": "ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.kind.visit": {
+  "en": "Store visit",
+  "te": "షాప్ విజిట్",
+  "hi": "दुकान की विज़िट",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.toast.visit.sent": {
+  "en": "The call is declined and the visit offer was sent.",
+  "te": "The call is declined and the visit offer was sent.",
+  "hi": "The call is declined and the visit offer was sent.",
+  "kn": "The call is declined and the visit offer was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.visit.notsent": {
+  "en": "The call is declined, but the visit offer was not sent. Look in the outbox.",
+  "te": "The call is declined, but the visit offer was not sent. Look in the outbox.",
+  "hi": "The call is declined, but the visit offer was not sent. Look in the outbox.",
+  "kn": "The call is declined, but the visit offer was not sent. Look in the outbox.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.visits.zero": {
+  "en": "None yet",
+  "te": "ఇంకా లేవు",
+  "hi": "अभी कोई नहीं",
+  "kn": "ಇನ್ನೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.none": {
+  "en": "No visits booked for today.",
+  "te": "ఈ రోజుకి విజిట్లు బుక్ కాలేదు.",
+  "hi": "आज के लिए कोई विज़िट बुक नहीं है।",
+  "kn": "ಇಂದಿಗೆ ಯಾವುದೇ ಭೇಟಿ ಬುಕ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.open": {
+  "en": "Next free time today: {time}",
+  "te": "ఈ రోజు తదుపరి ఖాళీ టైమ్: {time}",
+  "hi": "आज का अगला खाली समय: {time}",
+  "kn": "ಇಂದಿನ ಮುಂದಿನ ಖಾಲಿ ಸಮಯ: {time}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.full": {
+  "en": "Every time left today is taken.",
+  "te": "ఈ రోజు మిగిలిన టైమ్‌లన్నీ నిండిపోయాయి.",
+  "hi": "आज के बाकी सभी समय भर चुके हैं।",
+  "kn": "ಇಂದು ಉಳಿದ ಎಲ್ಲಾ ಸಮಯಗಳು ತುಂಬಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.closed": {
+  "en": "The shop is closed today.",
+  "te": "ఈ రోజు షాప్ మూసి ఉంది.",
+  "hi": "आज दुकान बंद है।",
+  "kn": "ಇಂದು ಅಂಗಡಿ ಮುಚ್ಚಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.here": {
+  "en": "Here now",
+  "te": "ఇప్పుడు ఇక్కడే ఉన్నారు",
+  "hi": "अभी यहीं हैं",
+  "kn": "ಈಗ ಇಲ್ಲೇ ಇದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.book": {
+  "en": "Book a visit",
+  "te": "విజిట్ బుక్ చేయండి",
+  "hi": "विज़िट बुक करें",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.visit": {
+  "en": "Visit · needs your OK",
+  "te": "Visit · needs your OK",
+  "hi": "Visit · needs your OK",
+  "kn": "Visit · needs your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.title.visit.proposed": {
+  "en": "Agent OWL proposed a visit for {who}",
+  "te": "{who} కోసం Agent OWL ఒక విజిట్ సూచించింది",
+  "hi": "{who} के लिए Agent OWL ने एक विज़िट सुझाई है",
+  "kn": "{who} ಅವರಿಗೆ Agent OWL ಒಂದು ಭೇಟಿ ಸೂಚಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visit.when": {
+  "en": "When",
+  "te": "ఎప్పుడు",
+  "hi": "कब",
+  "kn": "ಯಾವಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visit.party": {
+  "en": "People",
+  "te": "ఎంతమంది",
+  "hi": "कितने लोग",
+  "kn": "ಎಷ್ಟು ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visit.purpose": {
+  "en": "For",
+  "te": "దేనికి",
+  "hi": "किसलिए",
+  "kn": "ಏಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visit.hint": {
+  "en": "Booked, but not confirmed with the customer yet. Nothing was sent to the customer.",
+  "te": "Booked, but not confirmed with the customer yet. Nothing was sent to the customer.",
+  "hi": "Booked, but not confirmed with the customer yet. Nothing was sent to the customer.",
+  "kn": "Booked, but not confirmed with the customer yet. Nothing was sent to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.act.vconfirm": {
+  "en": "Confirm the visit",
+  "te": "విజిట్ కన్ఫర్మ్ చేయండి",
+  "hi": "विज़िट कन्फ़र्म करें",
+  "kn": "ಭೇಟಿ ಕನ್ಫರ್ಮ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.vchange": {
+  "en": "Change time",
+  "te": "టైమ్ మార్చండి",
+  "hi": "समय बदलें",
+  "kn": "ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.vcancel": {
+  "en": "Cancel the visit",
+  "te": "విజిట్ రద్దు చేయండి",
+  "hi": "विज़िट रद्द करें",
+  "kn": "ಭೇಟಿ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.sub": {
+  "en": "Who is coming to the shop, and when.",
+  "te": "షాప్‌కి ఎవరు ఎప్పుడు వస్తున్నారో ఇక్కడ చూడండి.",
+  "hi": "दुकान पर कौन कब आ रहा है, यहाँ देखें।",
+  "kn": "ಅಂಗಡಿಗೆ ಯಾರು ಯಾವಾಗ ಬರುತ್ತಿದ್ದಾರೆ ಎಂದು ಇಲ್ಲಿ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.tab.day": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.tab.hours": {
+  "en": "Store hours",
+  "te": "షాప్ టైమింగ్స్",
+  "hi": "दुकान का समय",
+  "kn": "ಅಂಗಡಿ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.day.nav": {
+  "en": "Choose a day",
+  "te": "రోజు ఎంచుకోండి",
+  "hi": "दिन चुनें",
+  "kn": "ದಿನ ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.day.prev": {
+  "en": "Previous day",
+  "te": "ముందు రోజు",
+  "hi": "पिछला दिन",
+  "kn": "ಹಿಂದಿನ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.day.next": {
+  "en": "Next day",
+  "te": "తరువాతి రోజు",
+  "hi": "अगला दिन",
+  "kn": "ಮುಂದಿನ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.day.today": {
+  "en": "Today",
+  "te": "ఈ రోజు",
+  "hi": "आज",
+  "kn": "ಇಂದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.day.pick": {
+  "en": "Pick a date",
+  "te": "తేదీ ఎంచుకోండి",
+  "hi": "तारीख़ चुनें",
+  "kn": "ದಿನಾಂಕ ಆಯ್ಕೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.day.show": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.count.one": {
+  "en": "1 visit",
+  "te": "1 విజిట్",
+  "hi": "1 विज़िट",
+  "kn": "1 ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.count.other": {
+  "en": "{n} visits",
+  "te": "{n} విజిట్లు",
+  "hi": "{n} विज़िट",
+  "kn": "{n} ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.empty": {
+  "en": "No visits booked for this day yet.",
+  "te": "ఈ రోజుకి ఇంకా విజిట్లు బుక్ కాలేదు.",
+  "hi": "इस दिन के लिए अभी कोई विज़िट बुक नहीं है।",
+  "kn": "ಈ ದಿನಕ್ಕೆ ಇನ್ನೂ ಯಾವುದೇ ಭೇಟಿ ಬುಕ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.empty.past": {
+  "en": "No visits were booked for this day.",
+  "te": "ఈ రోజుకి విజిట్లు ఏవీ బుక్ కాలేదు.",
+  "hi": "इस दिन कोई विज़िट बुक नहीं थी।",
+  "kn": "ಈ ದಿನ ಯಾವುದೇ ಭೇಟಿ ಬುಕ್ ಆಗಿರಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.finished": {
+  "en": "Finished",
+  "te": "అయినవి",
+  "hi": "पूरी हो चुकीं",
+  "kn": "ಮುಗಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.free.title": {
+  "en": "Free times",
+  "te": "ఖాళీ టైమ్‌లు",
+  "hi": "खाली समय",
+  "kn": "ಖಾಲಿ ಸಮಯಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.free.none": {
+  "en": "Every time left on this day is taken.",
+  "te": "ఈ రోజు మిగిలిన టైమ్‌లన్నీ నిండిపోయాయి.",
+  "hi": "इस दिन के बाकी सभी समय भर चुके हैं।",
+  "kn": "ಈ ದಿನ ಉಳಿದ ಎಲ್ಲಾ ಸಮಯಗಳು ತುಂಬಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.viewer": {
+  "en": "You can look at the visits. Booking and changing them is for the owner, admins and sales.",
+  "te": "మీరు విజిట్లను చూడవచ్చు. బుక్ చేయడం, మార్చడం ఓనర్, అడ్మిన్, సేల్స్ వాళ్ళకే.",
+  "hi": "आप विज़िट देख सकते हैं। बुक करना और बदलना ओनर, एडमिन और सेल्स के लिए है।",
+  "kn": "ನೀವು ಭೇಟಿಗಳನ್ನು ನೋಡಬಹುದು. ಬುಕ್ ಮಾಡುವುದು, ಬದಲಿಸುವುದು ಓನರ್, ಅಡ್ಮಿನ್ ಮತ್ತು ಸೇಲ್ಸ್‌ಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.day": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.time": {
+  "en": "Time",
+  "te": "టైమ్",
+  "hi": "समय",
+  "kn": "ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.pickday": {
+  "en": "Pick a day first.",
+  "te": "ముందు రోజు ఎంచుకోండి.",
+  "hi": "पहले दिन चुनें।",
+  "kn": "ಮೊದಲು ದಿನ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.loading": {
+  "en": "Looking for free times…",
+  "te": "ఖాళీ టైమ్‌లు చూస్తున్నాను…",
+  "hi": "खाली समय देख रहा हूँ…",
+  "kn": "ಖಾಲಿ ಸಮಯಗಳನ್ನು ನೋಡುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.error": {
+  "en": "The times could not be loaded. Try another day or try again.",
+  "te": "టైమ్‌లు లోడ్ కాలేదు. వేరే రోజు ప్రయత్నించండి లేదా మళ్ళీ ప్రయత్నించండి.",
+  "hi": "समय लोड नहीं हो पाए। दूसरा दिन चुनें या फिर कोशिश करें।",
+  "kn": "ಸಮಯಗಳು ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಬೇರೆ ದಿನ ಪ್ರಯತ್ನಿಸಿ ಅಥವಾ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.free": {
+  "en": "{n} free",
+  "te": "{n} ఖాళీ",
+  "hi": "{n} खाली",
+  "kn": "{n} ಖಾಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.full": {
+  "en": "Full",
+  "te": "నిండింది",
+  "hi": "भरा है",
+  "kn": "ತುಂಬಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slot.earlier": {
+  "en": "Earlier today",
+  "te": "ఈ రోజు ముందుది",
+  "hi": "आज पहले का",
+  "kn": "ಇಂದು ಮೊದಲಿನದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.date": {
+  "en": "The shop is closed on this date.",
+  "te": "ఈ తేదీన షాప్ మూసి ఉంటుంది.",
+  "hi": "इस तारीख़ को दुकान बंद है।",
+  "kn": "ಈ ದಿನಾಂಕದಂದು ಅಂಗಡಿ ಮುಚ್ಚಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.past": {
+  "en": "This day has already passed.",
+  "te": "ఈ రోజు ఇప్పటికే గడిచిపోయింది.",
+  "hi": "यह दिन बीत चुका है।",
+  "kn": "ಈ ದಿನ ಈಗಾಗಲೇ ಕಳೆದುಹೋಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.weekday": {
+  "en": "The shop is closed on this day of the week.",
+  "te": "వారంలో ఈ రోజు షాప్ మూసి ఉంటుంది.",
+  "hi": "हफ़्ते के इस दिन दुकान बंद रहती है।",
+  "kn": "ವಾರದ ಈ ದಿನ ಅಂಗಡಿ ಮುಚ್ಚಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.other": {
+  "en": "There are no visit times on this day.",
+  "te": "ఈ రోజు విజిట్ టైమ్‌లు లేవు.",
+  "hi": "इस दिन विज़िट के समय नहीं हैं।",
+  "kn": "ಈ ದಿನ ಭೇಟಿಯ ಸಮಯಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.booked": {
+  "en": "Waiting for the customer",
+  "te": "కస్టమర్ కోసం ఎదురుచూస్తోంది",
+  "hi": "ग्राहक का इंतज़ार है",
+  "kn": "ಗ್ರಾಹಕರಿಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.confirmed": {
+  "en": "Confirmed",
+  "te": "కన్ఫర్మ్ అయింది",
+  "hi": "कन्फ़र्म है",
+  "kn": "ಕನ್ಫರ್ಮ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.arrived": {
+  "en": "Here now",
+  "te": "ఇప్పుడు ఇక్కడే ఉన్నారు",
+  "hi": "अभी यहीं हैं",
+  "kn": "ಈಗ ಇಲ್ಲೇ ಇದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.completed": {
+  "en": "Done",
+  "te": "అయిపోయింది",
+  "hi": "हो गई",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.no_show": {
+  "en": "Did not come",
+  "te": "రాలేదు",
+  "hi": "नहीं आए",
+  "kn": "ಬರಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.cancelled": {
+  "en": "Cancelled",
+  "te": "రద్దు అయింది",
+  "hi": "रद्द हुई",
+  "kn": "ರದ್ದಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.proposed": {
+  "en": "Proposed by Agent OWL · waiting for you",
+  "te": "Agent OWL సూచించింది · మీ కోసం ఎదురుచూస్తోంది",
+  "hi": "Agent OWL ने सुझाई · आपका इंतज़ार है",
+  "kn": "Agent OWL ಸೂಚಿಸಿದೆ · ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.status.reminder": {
+  "en": "Reminder sent",
+  "te": "రిమైండర్ పంపాను",
+  "hi": "रिमाइंडर भेजा गया",
+  "kn": "ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.source.assistant": {
+  "en": "Proposed by Agent OWL",
+  "te": "Agent OWL సూచించింది",
+  "hi": "Agent OWL ने सुझाई",
+  "kn": "Agent OWL ಸೂಚಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.outcome.bought": {
+  "en": "Bought",
+  "te": "కొన్నారు",
+  "hi": "खरीदा",
+  "kn": "ಖರೀದಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.outcome.will_return": {
+  "en": "Will come back",
+  "te": "మళ్ళీ వస్తారు",
+  "hi": "फिर आएँगे",
+  "kn": "ಮತ್ತೆ ಬರುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.outcome.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "दिलचस्पी नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.party.one": {
+  "en": "1 person",
+  "te": "1 వ్యక్తి",
+  "hi": "1 व्यक्ति",
+  "kn": "1 ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.party.other": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.advance": {
+  "en": "Advance asked: {amount}",
+  "te": "Advance asked: {amount}",
+  "hi": "Advance asked: {amount}",
+  "kn": "Advance asked: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.cancelled.reason": {
+  "en": "Reason: {reason}",
+  "te": "కారణం: {reason}",
+  "hi": "कारण: {reason}",
+  "kn": "ಕಾರಣ: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.order.open": {
+  "en": "Open the order",
+  "te": "ఆర్డర్ తెరవండి",
+  "hi": "ऑर्डर खोलें",
+  "kn": "ಆರ್ಡರ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.confirm": {
+  "en": "Confirm",
+  "te": "కన్ఫర్మ్ చేయండి",
+  "hi": "कन्फ़र्म करें",
+  "kn": "ಕನ್ಫರ್ಮ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.arrive": {
+  "en": "They are here",
+  "te": "వచ్చారు",
+  "hi": "आ गए हैं",
+  "kn": "ಬಂದಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.complete": {
+  "en": "Complete",
+  "te": "పూర్తి చేయండి",
+  "hi": "पूरा करें",
+  "kn": "ಪೂರ್ಣಗೊಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.change": {
+  "en": "Change time",
+  "te": "టైమ్ మార్చండి",
+  "hi": "समय बदलें",
+  "kn": "ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.move": {
+  "en": "Move the visit",
+  "te": "విజిట్ మార్చండి",
+  "hi": "विज़िट खिसकाएँ",
+  "kn": "ಭೇಟಿ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.noshow": {
+  "en": "Did not come",
+  "te": "రాలేదు",
+  "hi": "नहीं आए",
+  "kn": "ಬರಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు చేయండి",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.cancel.confirm": {
+  "en": "Cancel this visit",
+  "te": "ఈ విజిట్ రద్దు చేయండి",
+  "hi": "यह विज़िट रद्द करें",
+  "kn": "ಈ ಭೇಟಿ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.act.keep": {
+  "en": "Keep it",
+  "te": "ఉంచండి",
+  "hi": "रहने दें",
+  "kn": "ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.move.title": {
+  "en": "Move this visit",
+  "te": "ఈ విజిట్ వేరే టైమ్‌కి మార్చండి",
+  "hi": "इस विज़िट का समय बदलें",
+  "kn": "ಈ ಭೇಟಿಯ ಸಮಯ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.move.hint": {
+  "en": "After a move the visit waits for the customer to confirm again. Nothing is sent to the customer.",
+  "te": "After a move the visit waits for the customer to confirm again. Nothing is sent to the customer.",
+  "hi": "After a move the visit waits for the customer to confirm again. Nothing is sent to the customer.",
+  "kn": "After a move the visit waits for the customer to confirm again. Nothing is sent to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.cancel.reason": {
+  "en": "Reason (optional)",
+  "te": "కారణం (ఐచ్ఛికం)",
+  "hi": "कारण (ज़रूरी नहीं)",
+  "kn": "ಕಾರಣ (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.cancel.hint": {
+  "en": "Cancelling frees the place. Nothing is sent to the customer; tell them yourself.",
+  "te": "Cancelling frees the place. Nothing is sent to the customer; tell them yourself.",
+  "hi": "Cancelling frees the place. Nothing is sent to the customer; tell them yourself.",
+  "kn": "Cancelling frees the place. Nothing is sent to the customer; tell them yourself.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.complete.title": {
+  "en": "How did the visit end?",
+  "te": "విజిట్ ఎలా ముగిసింది?",
+  "hi": "विज़िट कैसे ख़त्म हुई?",
+  "kn": "ಭೇಟಿ ಹೇಗೆ ಮುಗಿಯಿತು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.complete.order": {
+  "en": "Bought: start the order",
+  "te": "Bought: start the order",
+  "hi": "Bought: start the order",
+  "kn": "Bought: start the order",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.complete.bought": {
+  "en": "Bought: I will make the order later",
+  "te": "Bought: I will make the order later",
+  "hi": "Bought: I will make the order later",
+  "kn": "Bought: I will make the order later",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.complete.hint": {
+  "en": "Starting the order uses this customer's approved quote. It needs the owner or an admin, with the second check.",
+  "te": "Starting the order uses this customer's approved quote. It needs the owner or an admin, with the second check.",
+  "hi": "Starting the order uses this customer's approved quote. It needs the owner or an admin, with the second check.",
+  "kn": "Starting the order uses this customer's approved quote. It needs the owner or an admin, with the second check.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.complete.hint.sales": {
+  "en": "Only the owner or an admin can start the order from a visit. Choose “Bought” and they can start it from the quotes.",
+  "te": "Only the owner or an admin can start the order from a visit. Choose “Bought” and they can start it from the quotes.",
+  "hi": "Only the owner or an admin can start the order from a visit. Choose “Bought” and they can start it from the quotes.",
+  "kn": "Only the owner or an admin can start the order from a visit. Choose “Bought” and they can start it from the quotes.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.err.state": {
+  "en": "This visit has changed since you opened the page. It is shown again as it is now.",
+  "te": "మీరు పేజీ తెరిచాక ఈ విజిట్ మారింది. ఇప్పుడు ఉన్నట్టే మళ్ళీ చూపిస్తున్నాను.",
+  "hi": "पेज खोलने के बाद यह विज़िट बदल गई है। अब जैसी है वैसी दोबारा दिखा रहा हूँ।",
+  "kn": "ನೀವು ಪುಟ ತೆರೆದ ನಂತರ ಈ ಭೇಟಿ ಬದಲಾಗಿದೆ. ಈಗ ಇರುವಂತೆ ಮತ್ತೆ ತೋರಿಸುತ್ತಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.shop_closed": {
+  "en": "The shop is closed that day. Choose another day.",
+  "te": "ఆ రోజు షాప్ మూసి ఉంది. వేరే రోజు ఎంచుకోండి.",
+  "hi": "उस दिन दुकान बंद है। दूसरा दिन चुनें।",
+  "kn": "ಆ ದಿನ ಅಂಗಡಿ ಮುಚ್ಚಿದೆ. ಬೇರೆ ದಿನ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.slot_invalid": {
+  "en": "That is not one of the visit times of that day.",
+  "te": "అది ఆ రోజు విజిట్ టైమ్‌లలో లేదు.",
+  "hi": "यह उस दिन के विज़िट समयों में नहीं है।",
+  "kn": "ಅದು ಆ ದಿನದ ಭೇಟಿ ಸಮಯಗಳಲ್ಲಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.slot_full": {
+  "en": "Every place at that time is taken. Choose another time.",
+  "te": "ఆ టైమ్‌లో అన్ని చోట్లూ నిండిపోయాయి. వేరే టైమ్ ఎంచుకోండి.",
+  "hi": "उस समय सभी जगहें भर चुकी हैं। दूसरा समय चुनें।",
+  "kn": "ಆ ಸಮಯದಲ್ಲಿ ಎಲ್ಲಾ ಸ್ಥಳಗಳು ತುಂಬಿವೆ. ಬೇರೆ ಸಮಯ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.date_past": {
+  "en": "That date has already passed.",
+  "te": "ఆ తేదీ ఇప్పటికే గడిచిపోయింది.",
+  "hi": "वह तारीख़ बीत चुकी है।",
+  "kn": "ಆ ದಿನಾಂಕ ಈಗಾಗಲೇ ಕಳೆದುಹೋಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.erased": {
+  "en": "This customer's record was erased, so no visit can be booked or changed for them.",
+  "te": "This customer's record was erased, so no visit can be booked or changed for them.",
+  "hi": "This customer's record was erased, so no visit can be booked or changed for them.",
+  "kn": "This customer's record was erased, so no visit can be booked or changed for them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.err.conflict": {
+  "en": "This does not match the request sent before. Reload the page and try again.",
+  "te": "ఇది ఇంతకు ముందు పంపిన రిక్వెస్ట్‌తో సరిపోలడం లేదు. పేజీ రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह पहले भेजे गए अनुरोध से मेल नहीं खाता। पेज रीलोड करके फिर कोशिश करें।",
+  "kn": "ಇದು ಮೊದಲು ಕಳುಹಿಸಿದ ವಿನಂತಿಗೆ ಹೊಂದುತ್ತಿಲ್ಲ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.invalid": {
+  "en": "Something in the form was not accepted. Check the day, the time and the numbers.",
+  "te": "ఫారమ్‌లో ఏదో అంగీకరించలేదు. రోజు, టైమ్, సంఖ్యలు చూడండి.",
+  "hi": "फ़ॉर्म में कुछ स्वीकार नहीं हुआ। दिन, समय और संख्याएँ देखें।",
+  "kn": "ಫಾರ್ಮ್‌ನಲ್ಲಿ ಏನೋ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ. ದಿನ, ಸಮಯ ಮತ್ತು ಸಂಖ್ಯೆಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.unavailable": {
+  "en": "Visits are not available right now. Try again shortly.",
+  "te": "ఇప్పుడు విజిట్లు అందుబాటులో లేవు. కొంత సేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी विज़िट उपलब्ध नहीं हैं। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಈಗ ಭೇಟಿಗಳು ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.err.no_quote": {
+  "en": "This customer has no approved quote without an order yet, so no order can be made. The visit is still marked as here. Make and approve the quote first, then complete the visit again.",
+  "te": "This customer has no approved quote without an order yet, so no order can be made. The visit is still marked as here. Make and approve the quote first, then complete the visit again.",
+  "hi": "This customer has no approved quote without an order yet, so no order can be made. The visit is still marked as here. Make and approve the quote first, then complete the visit again.",
+  "kn": "This customer has no approved quote without an order yet, so no order can be made. The visit is still marked as here. Make and approve the quote first, then complete the visit again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.err.quote_expired": {
+  "en": "The customer's approved quote has expired. Open the quotes to renew it, then complete the visit again.",
+  "te": "The customer's approved quote has expired. Open the quotes to renew it, then complete the visit again.",
+  "hi": "The customer's approved quote has expired. Open the quotes to renew it, then complete the visit again.",
+  "kn": "The customer's approved quote has expired. Open the quotes to renew it, then complete the visit again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.err.order_exists": {
+  "en": "An order already exists for that quote.",
+  "te": "An order already exists for that quote.",
+  "hi": "An order already exists for that quote.",
+  "kn": "An order already exists for that quote.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.err.order_other": {
+  "en": "The order could not be started from this quote. The visit is still marked as here. Check the quote and try again.",
+  "te": "The order could not be started from this quote. The visit is still marked as here. Check the quote and try again.",
+  "hi": "The order could not be started from this quote. The visit is still marked as here. Check the quote and try again.",
+  "kn": "The order could not be started from this quote. The visit is still marked as here. Check the quote and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.err.quotes.link": {
+  "en": "Open the quotes",
+  "te": "Open the quotes",
+  "hi": "Open the quotes",
+  "kn": "Open the quotes",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.toast.booked": {
+  "en": "Booked: {who}, {when}. Nothing was sent to the customer. Confirm the visit when the customer agrees.",
+  "te": "Booked: {who}, {when}. Nothing was sent to the customer. Confirm the visit when the customer agrees.",
+  "hi": "Booked: {who}, {when}. Nothing was sent to the customer. Confirm the visit when the customer agrees.",
+  "kn": "Booked: {who}, {when}. Nothing was sent to the customer. Confirm the visit when the customer agrees.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.toast.moved": {
+  "en": "Moved to {when}. It waits for the customer to confirm again. Nothing was sent.",
+  "te": "Moved to {when}. It waits for the customer to confirm again. Nothing was sent.",
+  "hi": "Moved to {when}. It waits for the customer to confirm again. Nothing was sent.",
+  "kn": "Moved to {when}. It waits for the customer to confirm again. Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.toast.confirmed": {
+  "en": "Confirmed for {who}, and nothing was sent to the customer.",
+  "te": "Confirmed for {who}, and nothing was sent to the customer.",
+  "hi": "Confirmed for {who}, and nothing was sent to the customer.",
+  "kn": "Confirmed for {who}, and nothing was sent to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.toast.cancelled": {
+  "en": "Cancelled for {who}, and nothing was sent to the customer.",
+  "te": "Cancelled for {who}, and nothing was sent to the customer.",
+  "hi": "Cancelled for {who}, and nothing was sent to the customer.",
+  "kn": "Cancelled for {who}, and nothing was sent to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.toast.arrived": {
+  "en": "{who} is marked as here.",
+  "te": "{who} వచ్చినట్టు గుర్తించాను.",
+  "hi": "{who} आ गए हैं, ऐसा लिख दिया।",
+  "kn": "{who} ಬಂದಿದ್ದಾರೆ ಎಂದು ಗುರುತಿಸಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.toast.noshow": {
+  "en": "{who} is marked as did not come.",
+  "te": "{who} రాలేదని గుర్తించాను.",
+  "hi": "{who} नहीं आए, ऐसा लिख दिया।",
+  "kn": "{who} ಬರಲಿಲ್ಲ ಎಂದು ಗುರುತಿಸಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.toast.completed": {
+  "en": "{who}: done.",
+  "te": "{who}: పూర్తయింది.",
+  "hi": "{who}: पूरा हुआ।",
+  "kn": "{who}: ಮುಗಿಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.toast.order": {
+  "en": "Done. The order was started from the approved quote.",
+  "te": "Done. The order was started from the approved quote.",
+  "hi": "Done. The order was started from the approved quote.",
+  "kn": "Done. The order was started from the approved quote.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.book.title": {
+  "en": "Book a visit",
+  "te": "విజిట్ బుక్ చేయండి",
+  "hi": "विज़िट बुक करें",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.note": {
+  "en": "Booking does not message the customer. The visit waits until you confirm it with them.",
+  "te": "Booking does not message the customer. The visit waits until you confirm it with them.",
+  "hi": "Booking does not message the customer. The visit waits until you confirm it with them.",
+  "kn": "Booking does not message the customer. The visit waits until you confirm it with them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.book.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.search.placeholder": {
+  "en": "Type a customer name",
+  "te": "కస్టమర్ పేరు టైప్ చేయండి",
+  "hi": "ग्राहक का नाम लिखें",
+  "kn": "ಗ್ರಾಹಕರ ಹೆಸರು ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.search": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.search.hint": {
+  "en": "Searches the newest customers by name. For an older lead, use “Book a store visit” on the lead's page.",
+  "te": "కొత్త కస్టమర్లను పేరుతో వెతుకుతుంది. పాత లీడ్ కోసం లీడ్ పేజీలో “షాప్ విజిట్ బుక్ చేయండి” వాడండి.",
+  "hi": "नए ग्राहकों को नाम से खोजता है। पुराने लीड के लिए लीड के पेज पर “दुकान की विज़िट बुक करें” इस्तेमाल करें।",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕರನ್ನು ಹೆಸರಿನಿಂದ ಹುಡುಕುತ್ತದೆ. ಹಳೆಯ ಲೀಡ್‌ಗೆ ಲೀಡ್ ಪುಟದಲ್ಲಿ “ಅಂಗಡಿ ಭೇಟಿ ಬುಕ್ ಮಾಡಿ” ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.none": {
+  "en": "No customer found with that name. Add the customer first.",
+  "te": "ఆ పేరుతో కస్టమర్ దొరకలేదు. ముందు కస్టమర్‌ని చేర్చండి.",
+  "hi": "इस नाम का कोई ग्राहक नहीं मिला। पहले ग्राहक जोड़ें।",
+  "kn": "ಆ ಹೆಸರಿನ ಗ್ರಾಹಕ ಸಿಗಲಿಲ್ಲ. ಮೊದಲು ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.party": {
+  "en": "How many people",
+  "te": "ఎంతమంది వస్తారు",
+  "hi": "कितने लोग आएँगे",
+  "kn": "ಎಷ್ಟು ಜನ ಬರುತ್ತಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.purpose": {
+  "en": "What for",
+  "te": "దేనికి",
+  "hi": "किसलिए",
+  "kn": "ಏಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.purpose.placeholder": {
+  "en": "For example: bridal sarees",
+  "te": "ఉదా: పెళ్లి చీరలు",
+  "hi": "जैसे: दुल्हन की साड़ियाँ",
+  "kn": "ಉದಾ: ಮದುವೆ ಸೀರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.note.label": {
+  "en": "Note (optional)",
+  "te": "నోట్ (ఐచ్ఛికం)",
+  "hi": "नोट (ज़रूरी नहीं)",
+  "kn": "ನೋಟ್ (ಬೇಕಾದರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.advance": {
+  "en": "Ask for an advance",
+  "te": "Ask for an advance",
+  "hi": "Ask for an advance",
+  "kn": "Ask for an advance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.book.advance.amount": {
+  "en": "Advance (₹)",
+  "te": "Advance (₹)",
+  "hi": "Advance (₹)",
+  "kn": "Advance (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.book.advance.hint": {
+  "en": "Optional. Asking for an advance does not stop the visit. A confirmation that mentions it waits for you to approve it.",
+  "te": "Optional. Asking for an advance does not stop the visit. A confirmation that mentions it waits for you to approve it.",
+  "hi": "Optional. Asking for an advance does not stop the visit. A confirmation that mentions it waits for you to approve it.",
+  "kn": "Optional. Asking for an advance does not stop the visit. A confirmation that mentions it waits for you to approve it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "visits.book.submit": {
+  "en": "Book the visit",
+  "te": "విజిట్ బుక్ చేయండి",
+  "hi": "विज़िट बुक करें",
+  "kn": "ಭೇಟಿ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.need.customer": {
+  "en": "Choose the customer first.",
+  "te": "ముందు కస్టమర్‌ని ఎంచుకోండి.",
+  "hi": "पहले ग्राहक चुनें।",
+  "kn": "ಮೊದಲು ಗ್ರಾಹಕರನ್ನು ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.book.need.time": {
+  "en": "Choose a free time.",
+  "te": "ఖాళీ టైమ్ ఎంచుకోండి.",
+  "hi": "खाली समय चुनें।",
+  "kn": "ಖಾಲಿ ಸಮಯ ಆಯ್ಕೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.title": {
+  "en": "Opening hours",
+  "te": "షాప్ తెరిచే టైమ్",
+  "hi": "दुकान खुलने का समय",
+  "kn": "ಅಂಗಡಿ ತೆರೆಯುವ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.default": {
+  "en": "These are the standard hours (10:00 to 20:30, every day). Save your own to replace them.",
+  "te": "ఇవి సాధారణ టైమింగ్స్ (ప్రతి రోజు 10:00 నుండి 20:30). మీవి సేవ్ చేస్తే ఇవి మారతాయి.",
+  "hi": "ये आम समय हैं (हर दिन 10:00 से 20:30)। अपना समय सेव करेंगे तो ये बदल जाएँगे।",
+  "kn": "ಇವು ಸಾಮಾನ್ಯ ಸಮಯಗಳು (ಪ್ರತಿದಿನ 10:00 ರಿಂದ 20:30). ನಿಮ್ಮದನ್ನು ಸೇವ್ ಮಾಡಿದರೆ ಇವು ಬದಲಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.readonly": {
+  "en": "Only the owner or an admin can change the hours.",
+  "te": "టైమింగ్స్ ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "समय सिर्फ़ ओनर या एडमिन बदल सकते हैं।",
+  "kn": "ಸಮಯವನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.from": {
+  "en": "from",
+  "te": "నుండి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.to": {
+  "en": "to",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.closed": {
+  "en": "Closed",
+  "te": "మూసి ఉంటుంది",
+  "hi": "बंद",
+  "kn": "ಮುಚ್ಚಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.order": {
+  "en": "The closing time must be after the opening time.",
+  "te": "మూసే టైమ్ తెరిచే టైమ్ తర్వాత ఉండాలి.",
+  "hi": "बंद होने का समय खुलने के समय के बाद होना चाहिए।",
+  "kn": "ಮುಚ್ಚುವ ಸಮಯ ತೆರೆಯುವ ಸಮಯದ ನಂತರ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.save": {
+  "en": "Save the hours",
+  "te": "టైమింగ్స్ సేవ్ చేయండి",
+  "hi": "समय सेव करें",
+  "kn": "ಸಮಯ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.reset": {
+  "en": "Undo my changes",
+  "te": "నా మార్పులు వెనక్కి",
+  "hi": "मेरे बदलाव वापस लें",
+  "kn": "ನನ್ನ ಬದಲಾವಣೆ ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.note": {
+  "en": "Saving changes the free times from now on. Visits already booked do not change.",
+  "te": "సేవ్ చేస్తే ఇకపై ఖాళీ టైమ్‌లు మారతాయి. ఇప్పటికే బుక్ అయిన విజిట్లు మారవు.",
+  "hi": "सेव करने पर आगे के खाली समय बदलेंगे। पहले से बुक विज़िट नहीं बदलतीं।",
+  "kn": "ಸೇವ್ ಮಾಡಿದರೆ ಇನ್ನು ಮುಂದೆ ಖಾಲಿ ಸಮಯಗಳು ಬದಲಾಗುತ್ತವೆ. ಈಗಾಗಲೇ ಬುಕ್ ಆದ ಭೇಟಿಗಳು ಬದಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.hours.saved": {
+  "en": "Hours saved. Visits already booked were not changed.",
+  "te": "టైమింగ్స్ సేవ్ అయ్యాయి. ఇప్పటికే బుక్ అయిన విజిట్లు మారలేదు.",
+  "hi": "समय सेव हो गया। पहले से बुक विज़िट नहीं बदलीं।",
+  "kn": "ಸಮಯ ಸೇವ್ ಆಯಿತು. ಈಗಾಗಲೇ ಬುಕ್ ಆದ ಭೇಟಿಗಳು ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slots.title": {
+  "en": "Visit times",
+  "te": "విజిట్ టైమ్‌లు",
+  "hi": "विज़िट के समय",
+  "kn": "ಭೇಟಿ ಸಮಯಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slots.length": {
+  "en": "Length of one visit",
+  "te": "ఒక విజిట్ ఎంత సేపు",
+  "hi": "एक विज़िट कितनी देर की",
+  "kn": "ಒಂದು ಭೇಟಿ ಎಷ್ಟು ಹೊತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slots.minutes": {
+  "en": "{n} minutes",
+  "te": "{n} నిమిషాలు",
+  "hi": "{n} मिनट",
+  "kn": "{n} ನಿಮಿಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slots.parallel": {
+  "en": "Visits at the same time",
+  "te": "ఒకేసారి విజిట్లు",
+  "hi": "एक साथ विज़िट",
+  "kn": "ಒಂದೇ ಬಾರಿಗೆ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.slots.parallel.hint": {
+  "en": "How many visits the shop can have at once.",
+  "te": "షాప్‌లో ఒకేసారి ఎన్ని విజిట్లు ఉండగలవు.",
+  "hi": "दुकान में एक साथ कितनी विज़िट हो सकती हैं।",
+  "kn": "ಅಂಗಡಿಯಲ್ಲಿ ಒಂದೇ ಬಾರಿಗೆ ಎಷ್ಟು ಭೇಟಿಗಳು ಇರಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.title": {
+  "en": "Days the shop is closed",
+  "te": "షాప్ మూసి ఉండే రోజులు",
+  "hi": "दुकान बंद रहने के दिन",
+  "kn": "ಅಂಗಡಿ ಮುಚ್ಚಿರುವ ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.none": {
+  "en": "No closed days saved.",
+  "te": "మూసి ఉండే రోజులు ఏవీ సేవ్ చేయలేదు.",
+  "hi": "बंद रहने का कोई दिन सेव नहीं है।",
+  "kn": "ಮುಚ್ಚಿರುವ ದಿನಗಳು ಯಾವುದೂ ಸೇವ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.add.label": {
+  "en": "Add a closed day",
+  "te": "మూసి ఉండే రోజు చేర్చండి",
+  "hi": "बंद रहने का दिन जोड़ें",
+  "kn": "ಮುಚ್ಚಿರುವ ದಿನ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.add": {
+  "en": "Add",
+  "te": "చేర్చండి",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "visits.closed.remove": {
+  "en": "Remove {date}",
+  "te": "{date} తొలగించండి",
+  "hi": "{date} हटाएँ",
+  "kn": "{date} ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.title": {
+  "en": "Contact this lead",
+  "te": "ఈ లీడ్‌ని సంప్రదించండి",
+  "hi": "इस लीड से संपर्क करें",
+  "kn": "ಈ ಲೀಡ್ ಅನ್ನು ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.intro": {
+  "en": "Messages go through the outbox: the shop's send rules decide if a message goes now or waits for the owner. You never see the customer's number here.",
+  "te": "Messages go through the outbox: the shop's send rules decide if a message goes now or waits for the owner. You never see the customer's number here.",
+  "hi": "Messages go through the outbox: the shop's send rules decide if a message goes now or waits for the owner. You never see the customer's number here.",
+  "kn": "Messages go through the outbox: the shop's send rules decide if a message goes now or waits for the owner. You never see the customer's number here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.nocontact": {
+  "en": "This lead has no contact attached, so nobody can be messaged. Add the customer first.",
+  "te": "ఈ లీడ్‌కి కాంటాక్ట్ లేదు, అందుకే ఎవరికీ మెసేజ్ పంపలేం. ముందు కస్టమర్‌ని చేర్చండి.",
+  "hi": "इस लीड से कोई कॉन्टैक्ट जुड़ा नहीं है, इसलिए किसी को मैसेज नहीं जा सकता। पहले ग्राहक जोड़ें।",
+  "kn": "ಈ ಲೀಡ್‌ಗೆ ಕಾಂಟ್ಯಾಕ್ಟ್ ಇಲ್ಲ, ಆದ್ದರಿಂದ ಯಾರಿಗೂ ಮೆಸೇಜ್ ಕಳುಹಿಸಲಾಗದು. ಮೊದಲು ಗ್ರಾಹಕರನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.wa": {
+  "en": "Contact on WhatsApp",
+  "te": "WhatsApp లో సంప్రదించండి",
+  "hi": "WhatsApp पर संपर्क करें",
+  "kn": "WhatsApp ನಲ್ಲಿ ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.call": {
+  "en": "Request a call",
+  "te": "కాల్ అడగండి",
+  "hi": "कॉल का अनुरोध करें",
+  "kn": "ಕರೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.visit": {
+  "en": "Book a store visit",
+  "te": "షాప్ విజిట్ బుక్ చేయండి",
+  "hi": "दुकान की विज़िट बुक करें",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.keep": {
+  "en": "Keep a record of this",
+  "te": "దీని రికార్డ్ ఉంచండి",
+  "hi": "इसका रिकॉर्ड रखें",
+  "kn": "ಇದರ ರೆಕಾರ್ಡ್ ಇಟ್ಟುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.keep.help": {
+  "en": "Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.",
+  "te": "Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.",
+  "hi": "Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.",
+  "kn": "Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.wa.text": {
+  "en": "Your message",
+  "te": "మీ మెసేజ్",
+  "hi": "आपका मैसेज",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.wa.help": {
+  "en": "Write what you want to say. A message about price, money or a promise always waits for the owner to approve it.",
+  "te": "Write what you want to say. A message about price, money or a promise always waits for the owner to approve it.",
+  "hi": "Write what you want to say. A message about price, money or a promise always waits for the owner to approve it.",
+  "kn": "Write what you want to say. A message about price, money or a promise always waits for the owner to approve it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.language": {
+  "en": "Language of the message",
+  "te": "మెసేజ్ భాష",
+  "hi": "मैसेज की भाषा",
+  "kn": "ಮೆಸೇಜ್‌ನ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind": {
+  "en": "What is it about?",
+  "te": "ఇది దేని గురించి?",
+  "hi": "यह किस बारे में है?",
+  "kn": "ಇದು ಯಾವುದರ ಬಗ್ಗೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind.info": {
+  "en": "Shop information",
+  "te": "షాప్ వివరాలు",
+  "hi": "दुकान की जानकारी",
+  "kn": "ಅಂಗಡಿಯ ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind.followup": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind.visit": {
+  "en": "A visit to the shop",
+  "te": "షాప్ విజిట్ గురించి",
+  "hi": "दुकान की विज़िट के बारे में",
+  "kn": "ಅಂಗಡಿ ಭೇಟಿಯ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind.order_status": {
+  "en": "An order update",
+  "te": "ఆర్డర్ అప్‌డేట్",
+  "hi": "ऑर्डर अपडेट",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind.reply_to_inbound": {
+  "en": "Reply to the customer",
+  "te": "కస్టమర్‌కి జవాబు",
+  "hi": "ग्राहक को जवाब",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.kind.other": {
+  "en": "Something else",
+  "te": "ఇంకేదైనా",
+  "hi": "कुछ और",
+  "kn": "ಬೇರೇನಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.wa.send": {
+  "en": "Send to the outbox",
+  "te": "అవుట్‌బాక్స్‌కి పంపండి",
+  "hi": "आउटबॉक्स में भेजें",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್‌ಗೆ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.wa.note": {
+  "en": "Nothing opens WhatsApp. The message goes to the outbox, and the rules there decide.",
+  "te": "Nothing opens WhatsApp. The message goes to the outbox, and the rules there decide.",
+  "hi": "Nothing opens WhatsApp. The message goes to the outbox, and the rules there decide.",
+  "kn": "Nothing opens WhatsApp. The message goes to the outbox, and the rules there decide.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.call.reason": {
+  "en": "Why call?",
+  "te": "ఎందుకు కాల్ చేయాలి?",
+  "hi": "कॉल क्यों करना है?",
+  "kn": "ಏಕೆ ಕರೆ ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.call.script": {
+  "en": "What to say on the call",
+  "te": "కాల్‌లో ఏం చెప్పాలి",
+  "hi": "कॉल पर क्या कहना है",
+  "kn": "ಕರೆಯಲ್ಲಿ ಏನು ಹೇಳಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.call.language": {
+  "en": "Language of the call",
+  "te": "కాల్ భాష",
+  "hi": "कॉल की भाषा",
+  "kn": "ಕರೆಯ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.call.send": {
+  "en": "Ask the owner to approve the call",
+  "te": "కాల్‌కి ఓనర్ ఓకే అడగండి",
+  "hi": "कॉल के लिए ओनर से OK माँगें",
+  "kn": "ಕರೆಗೆ ಓನರ್ ಓಕೆ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.call.note": {
+  "en": "Nobody is called from here. The owner decides on Today.",
+  "te": "Nobody is called from here. The owner decides on Today.",
+  "hi": "Nobody is called from here. The owner decides on Today.",
+  "kn": "Nobody is called from here. The owner decides on Today.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.today": {
+  "en": "Open Today",
+  "te": "ఈ రోజు పేజీ తెరవండి",
+  "hi": "आज का पेज खोलें",
+  "kn": "ಇಂದಿನ ಪುಟ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.state.sent": {
+  "en": "Sent to the customer.",
+  "te": "Sent to the customer.",
+  "hi": "Sent to the customer.",
+  "kn": "Sent to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.state.queued": {
+  "en": "Ready. It goes out when the owner or an admin sends the waiting messages.",
+  "te": "Ready. It goes out when the owner or an admin sends the waiting messages.",
+  "hi": "Ready. It goes out when the owner or an admin sends the waiting messages.",
+  "kn": "Ready. It goes out when the owner or an admin sends the waiting messages.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.state.queued.time": {
+  "en": "Queued. It goes out at {time}.",
+  "te": "Queued. It goes out at {time}.",
+  "hi": "Queued. It goes out at {time}.",
+  "kn": "Queued. It goes out at {time}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.state.needs": {
+  "en": "Waiting for the owner or an admin to approve it.",
+  "te": "Waiting for the owner or an admin to approve it.",
+  "hi": "Waiting for the owner or an admin to approve it.",
+  "kn": "Waiting for the owner or an admin to approve it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.state.blocked": {
+  "en": "Not sent: {reason}",
+  "te": "Not sent: {reason}",
+  "hi": "Not sent: {reason}",
+  "kn": "Not sent: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.state.call": {
+  "en": "Requested. The owner decides on Today. Nobody is called until then.",
+  "te": "Requested. The owner decides on Today. Nobody is called until then.",
+  "hi": "Requested. The owner decides on Today. Nobody is called until then.",
+  "kn": "Requested. The owner decides on Today. Nobody is called until then.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.record.kept": {
+  "en": "A record was added to this lead's history.",
+  "te": "A record was added to this lead's history.",
+  "hi": "A record was added to this lead's history.",
+  "kn": "A record was added to this lead's history.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.record.off": {
+  "en": "No record was made, as you chose.",
+  "te": "No record was made, as you chose.",
+  "hi": "No record was made, as you chose.",
+  "kn": "No record was made, as you chose.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.record.later": {
+  "en": "No record yet: it is only made once a message has really gone out. You can add one later with “I sent a message”.",
+  "te": "No record yet: it is only made once a message has really gone out. You can add one later with “I sent a message”.",
+  "hi": "No record yet: it is only made once a message has really gone out. You can add one later with “I sent a message”.",
+  "kn": "No record yet: it is only made once a message has really gone out. You can add one later with “I sent a message”.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.record.failed": {
+  "en": "The message went out, but the record could not be saved. {reason}",
+  "te": "The message went out, but the record could not be saved. {reason}",
+  "hi": "The message went out, but the record could not be saved. {reason}",
+  "kn": "The message went out, but the record could not be saved. {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.record.call": {
+  "en": "A call request is not a record: a call is recorded when it happens.",
+  "te": "A call request is not a record: a call is recorded when it happens.",
+  "hi": "A call request is not a record: a call is recorded when it happens.",
+  "kn": "A call request is not a record: a call is recorded when it happens.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "contact.err.lead": {
+  "en": "This lead is not available.",
+  "te": "ఈ లీడ్ అందుబాటులో లేదు.",
+  "hi": "यह लीड उपलब्ध नहीं है।",
+  "kn": "ಈ ಲೀಡ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.words": {
+  "en": "The text is too short or too long.",
+  "te": "టెక్స్ట్ మరీ చిన్నగా లేదా మరీ పెద్దగా ఉంది.",
+  "hi": "लिखा हुआ बहुत छोटा या बहुत बड़ा है।",
+  "kn": "ಬರಹ ತುಂಬಾ ಚಿಕ್ಕದಾಗಿದೆ ಅಥವಾ ತುಂಬಾ ದೊಡ್ಡದಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.invalid": {
+  "en": "Something in the form was not accepted.",
+  "te": "ఫారమ్‌లో ఏదో అంగీకరించలేదు.",
+  "hi": "फ़ॉर्म में कुछ स्वीकार नहीं हुआ।",
+  "kn": "ಫಾರ್ಮ್‌ನಲ್ಲಿ ಏನೋ ಒಪ್ಪಿಕೊಳ್ಳಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.unavailable": {
+  "en": "Messages are not available right now. Try again shortly.",
+  "te": "ఇప్పుడు మెసేజ్‌లు అందుబాటులో లేవు. కొంత సేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी मैसेज उपलब्ध नहीं हैं। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಈಗ ಮೆಸೇಜ್‌ಗಳು ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",

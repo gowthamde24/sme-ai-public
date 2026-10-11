@@ -9,7 +9,7 @@ export const MAX_DRAFTS = 5;
 export type QuoteLookup = (quoteId: string) => Promise<string | null>;
 
 /**
- * The page of THIS workspace that a `target` ({type, id} from the Agent OWL) opens. The path is built here from a type the API cannot invent (the parser accepts only these six) and
+ * The page of THIS workspace that a `target` ({type, id} from the Agent OWL) opens. The path is built here from a type the API cannot invent (the parser accepts only these seven) and
  * an id that is a canonical uuid: no part of it is text from the answer. A quote opens the enquiry it belongs to; when that cannot be found it opens the list of quotes.
  */
 export async function pathFor(target: Target | null, base: string, enquiryOfQuote: QuoteLookup): Promise<string | null> {
@@ -28,6 +28,8 @@ export async function pathFor(target: Target | null, base: string, enquiryOfQuot
     case "outbox_message":
     case "call_request":
       return `${base}#needs-you`; // decided on Today itself (job AU): the link goes to the list of what needs the person
+    case "store_visit":
+      return `${base}/visits?visit=${target.id}`; // the Visits page opens on the day of that visit (job AV)
   }
 }
 

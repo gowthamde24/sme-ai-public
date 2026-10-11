@@ -47,7 +47,7 @@ describe("the lead screen, one part at a time", () => {
     render(await LeadPage(props()));
     expect(current()).toBe("Overview");
     const headings = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(headings).toEqual(["Lead", "Enquiries", "I sent a message"]);
+    expect(headings).toEqual(["Lead", "Enquiries", "Contact this lead", "I sent a message"]);
     expect(screen.queryByText("Catalogue says silk")).toBeNull();
   });
   it("Evidence and Suggestions are real links to the same page; the suggestions tab says how many there are", async () => {

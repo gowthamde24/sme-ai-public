@@ -1,0 +1,48 @@
+# Store visits
+Who is coming to the shop, and when.
+{label="Store visits"} [Day](/app/tenants/22222222-2222-2222-2222-222222222222/visits?date=2026-10-06 current=page) [Store hours](/app/tenants/22222222-2222-2222-2222-222222222222/visits?view=hours)
+{label="Choose a day"} [](/app/tenants/22222222-2222-2222-2222-222222222222/visits?date=2026-10-05 label="Previous day")
+## Tuesday, 6 October 2026
+[](/app/tenants/22222222-2222-2222-2222-222222222222/visits?date=2026-10-07 label="Next day")
+form:
+Pick a date
+<date name=date label="Pick a date" value=2026-10-06>
+[button type=submit: Show]
+3 visits
+-
+{label="Priya S. + 2 · Hyderabad"} Confirmed
+### Priya S. + 2 · Hyderabad
+10:30 – 11:00 3 people Sri Lakshmi Silks Bridal sarees
+-
+{label="Anita R. · Hyderabad"} Proposed by Agent OWL · waiting for you
+### Anita R. · Hyderabad
+12:00 – 12:30 1 person Sri Lakshmi Silks
+{label="Finished"}
+### Finished
+-
+{label="Lakshmi Textiles + 1 · Hyderabad"} Done Will come back
+### Lakshmi Textiles + 1 · Hyderabad
+10:00 – 10:30 2 people Sri Lakshmi Silks Silk saree wholesale
+{label="Free times"}
+### Free times
+- 10:00
+- 10:30
+- 11:30
+- 12:00
+- 12:30
+- 13:00
+- 13:30
+- 14:00
+- 14:30
+- 15:00
+- 15:30
+- 16:00
+- 16:30
+- 17:00
+- 17:30
+- 18:00
+- 18:30
+- 19:00
+- 19:30
+- 20:00
+You can look at the visits. Booking and changing them is for the owner, admins and sales.

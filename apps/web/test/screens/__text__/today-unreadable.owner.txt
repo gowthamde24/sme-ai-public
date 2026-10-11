@@ -1,5 +1,6 @@
 Tuesday, 6 October
 # Good morning
+Agent OWL this week : Not available yet
 {label="Not available yet"}
 {role=img label="Agent OWL, Resting"}
 Resting Resting Resting Agent OWL
@@ -9,6 +10,9 @@ The overnight summary is not available yet. Not available yet Speak or type in T
 ## Needs you
 Not available yet
 {role=status}
+{label="At the store today"}
+## At the store today
+Not available yet
 {label="Done while you slept"}
 ## Done while you slept
 Not available yet

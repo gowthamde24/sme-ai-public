@@ -22,7 +22,9 @@ export const TODAY_WORD_KEYS = [
   "today.done.empty", "today.done.link", "today.team.open", "agent.main", "agent.lead_finder", "agent.researcher", "agent.requirement_analyst", "agent.quote_writer",
   "agent.followup_desk", "agent.order_desk", "owl.mood.idle", "owl.mood.listening", "owl.mood.thinking", "owl.mood.answering", "owl.mood.resting", "common.open",
   "frame.notyet", "office.working", "office.idle", "office.switchedoff", "nav.item.office", "nav.item.settings", "ask.hero.note", "frame.ailight", "frame.aipaused",
-  "frame.aipausednow",
+  "frame.aipausednow", "today.badge.visit", "today.title.visit.proposed", "today.visit.when", "today.visit.party", "today.visit.purpose", "today.visit.hint", "today.act.vconfirm", "today.act.vchange",
+  "today.act.vcancel", "visits.party.one", "visits.party.other", "visits.act.move", "visits.slot.day", "visits.slot.time", "visits.slot.pickday", "visits.slot.loading", "visits.slot.error",
+  "visits.slot.free", "visits.slot.full", "visits.slot.earlier", "visits.closed.date", "visits.closed.past", "visits.closed.weekday", "visits.closed.other",
 ] as const;
 export type TodayWords = Readonly<Record<string, string>>;
 

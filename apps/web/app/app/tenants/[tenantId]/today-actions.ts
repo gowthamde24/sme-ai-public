@@ -8,10 +8,11 @@ import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { approveCallRequest, approveOutboxMessage, editOutboxMessage, rejectCallRequest, rejectOutboxMessage } from "@/lib/api/outbox";
+import { OUTBOX_LANGUAGES, approveCallRequest, approveOutboxMessage, editOutboxMessage, rejectOutboxMessage, type OutboxLanguage } from "@/lib/api/outbox";
+import { offerStoreVisit } from "@/lib/api/visits";
 import { requireUser } from "@/lib/auth/session";
 
-import { OFFER_VISIT_NOTE, customerOf, decidedToast, type Words } from "./today-decisions";
+import { customerOf, decidedToast, offeredToast, type Words } from "./today-decisions";
 
 const WORDS_MIN = 2;
 const WORDS_MAX = 3000;
@@ -89,14 +90,17 @@ export async function approveCallAction(tenantId: string, id: string): Promise<D
   }
 }
 
-/** "Offer a store visit": the Owner only. The call is not approved (rejected) and the choice is kept with the request. This sends nothing to the customer. */
-export async function offerVisitAction(tenantId: string, id: string): Promise<DecisionResult> {
+/**
+ * "Offer a store visit": the Owner only, with the second factor. ONE call to the API (job AS): the call request is declined with a fixed note AND the offer message (fixed words, in the language of the
+ * request) is made in the outbox, where the send policy decides. The toast says where the offer stands: queued in the outbox, sent, or not sent and why.
+ */
+export async function offerVisitAction(tenantId: string, id: string, language: OutboxLanguage): Promise<DecisionResult> {
   const { user, t, valid } = await context(tenantId, id);
   if (!valid) return { ok: false, error: t("today.err.state"), stale: true };
   try {
-    const request = await rejectCallRequest(user.accessToken, tenantId, id, OFFER_VISIT_NOTE);
+    const offer = await offerStoreVisit(user.accessToken, tenantId, id, (OUTBOX_LANGUAGES as readonly string[]).includes(language) ? language : "en");
     refresh(tenantId);
-    return { ok: true, message: t("today.toast.visit", { customer: request.customer ?? t("today.customer.unknown") }) };
+    return { ok: true, message: offeredToast(offer, t) };
   } catch (error) {
     return failure(error, t);
   }

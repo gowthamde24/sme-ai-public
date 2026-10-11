@@ -8,9 +8,11 @@ import * as React from "react";
 import { formatINR } from "@/design/format";
 
 import { OwlSvg } from "../owl/OwlSvg";
+import { dayShort, todayInIndia } from "../visits/dates";
+import { SlotPicker, type SlotChoice } from "../visits/SlotPicker";
 import type { DecisionResult, TodayActions } from "./actions-types";
 import { useNeeds } from "./needs-store";
-import { whenLabel, ago } from "./time";
+import { whenLabel, ago, indiaClock, indiaDay as indiaDayOf } from "./time";
 import { say, type TodayWords } from "./today-words";
 import type { CallCardRequest, NeedsCard, NeedsYouItem, OutboxCardMessage, Role } from "./types";
 
@@ -35,7 +37,7 @@ function badgeOf(m: OutboxCardMessage | null): { key: string; tone: string } {
   return { key: "today.badge.message", tone: "bg-surface-2 text-ink" };
 }
 
-type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null };
+type Ctx = { words: TodayWords; now: number; role: Role; actions: TodayActions | null; lang: string };
 
 function Note({ id, words }: { id: string; words: TodayWords }) {
   const { notes } = useNeeds();
@@ -248,13 +250,116 @@ function CallCard({ c, ctx }: { c: Extract<NeedsCard, { type: "call" }>; ctx: Ct
           <button type="button" onClick={() => void decide(() => actions.approveCall(c.id))} className={`${primary} max-md:grow`}>
             {say(words, "today.act.callok")}
           </button>
-          <button type="button" onClick={() => void decide(() => actions.offerVisit(c.id))} className={secondary}>
+          <button type="button" onClick={() => void decide(() => actions.offerVisit(c.id, r?.language ?? "en"))} className={secondary}>
             {say(words, "today.act.visit")}
           </button>
         </div>
       ) : (
         <p className="text-sm text-muted">{say(words, "today.owneronly")}</p>
       )}
+    </article>
+  );
+}
+
+
+/** Moves the time shown on a proposal after a move: the day and the slot are India time. */
+const startsAt = (date: string, slot: string) => new Date(`${date}T${slot}:00+05:30`).toISOString();
+
+function VisitProposalCard({ c, ctx }: { c: Extract<NeedsCard, { type: "visit" }>; ctx: Ctx }) {
+  const { words, actions, role, lang, now } = ctx;
+  const decide = useDecide(c);
+  const store = useNeeds();
+  const [moving, setMoving] = React.useState(false);
+  const [pick, setPick] = React.useState<SlotChoice>({ date: indiaDayOf(c.visit.startsAt), slot: null });
+  const [busy, setBusy] = React.useState(false);
+  const [moveError, setMoveError] = React.useState<string | null>(null);
+  const v = c.visit;
+  const may = role !== "viewer" && actions !== null && actions.visit !== null;
+  const today = todayInIndia(now);
+  const when = `${dayShort(indiaDayOf(v.startsAt), lang)}, ${indiaClock(v.startsAt)}`;
+  const facts: [string, string][] = [
+    [say(words, "today.visit.when"), when],
+    [say(words, "today.visit.party"), say(words, v.partySize === 1 ? "visits.party.one" : "visits.party.other", { n: v.partySize })],
+  ];
+  if (v.purpose) facts.push([say(words, "today.visit.purpose"), v.purpose]);
+
+  const move = async () => {
+    if (!actions?.visit || pick.slot === null) return;
+    setBusy(true);
+    setMoveError(null);
+    let result: DecisionResult;
+    try {
+      result = await actions.visit.move(c.id, pick.date, pick.slot);
+    } catch {
+      result = { ok: false, error: say(words, "today.err.generic") };
+    }
+    setBusy(false);
+    if (!result.ok) {
+      setMoveError(result.error || say(words, "today.err.generic"));
+      return;
+    }
+    const at = startsAt(pick.date, pick.slot);
+    store.update(c.key, (x) => (x.type === "visit" ? { ...x, visit: { ...x.visit, startsAt: at } } : x));
+    setMoving(false);
+    store.notify(result.message);
+  };
+
+  return (
+    <article aria-labelledby={`needs-${c.key}`} className={card}>
+      <Head tone="bg-amber-bg text-amber-text" label={say(words, "today.badge.visit")} at={c.at} ctx={ctx} />
+      <h3 id={`needs-${c.key}`} className="text-lg font-semibold leading-snug [overflow-wrap:anywhere]">
+        {say(words, "today.title.visit.proposed", { who: v.who })}
+        {v.city ? <span className="font-normal text-muted"> · {v.city}</span> : null}
+      </h3>
+      <dl className="grid grid-cols-2 gap-x-4 gap-y-3 rounded-2xl bg-surface-2 p-3 lg:grid-cols-3">
+        {facts.map(([label, value]) => (
+          <div key={label} className="min-w-0">
+            <dt className="text-sm text-muted">{label}</dt>
+            <dd className="break-words font-semibold tabular-nums">{value}</dd>
+          </div>
+        ))}
+      </dl>
+      <p className="text-sm text-muted">{say(words, "today.visit.hint")}</p>
+      <Note id={c.key} words={words} />
+      {moving && actions?.visit ? (
+        <div className="flex flex-col gap-3 rounded-2xl bg-surface-2 p-3.5">
+          <SlotPicker words={words} lang={lang} min={today} value={pick} onChange={setPick} load={actions.visit.slots} idPrefix={`pm-${c.key}`} />
+          {moveError ? (
+            <p role="alert" className="text-sm font-medium text-red-text">
+              {moveError}
+            </p>
+          ) : null}
+          <div className="flex flex-wrap gap-2">
+            <button type="button" disabled={busy || pick.slot === null} onClick={() => void move()} className={primary}>
+              {busy ? say(words, "today.act.working") : say(words, "visits.act.move")}
+            </button>
+            <button type="button" disabled={busy} onClick={() => setMoving(false)} className={quiet}>
+              {say(words, "today.act.cancel")}
+            </button>
+          </div>
+        </div>
+      ) : null}
+      {may && !moving ? (
+        <div className="flex flex-wrap gap-2">
+          <button type="button" onClick={() => void decide(() => actions.visit!.confirm(c.id))} className={`${primary} max-md:grow`}>
+            {say(words, "today.act.vconfirm")}
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setPick({ date: indiaDayOf(v.startsAt), slot: null });
+              setMoveError(null);
+              setMoving(true);
+            }}
+            className={secondary}
+          >
+            {say(words, "today.act.vchange")}
+          </button>
+          <button type="button" onClick={() => void decide(() => actions.visit!.cancel(c.id, ""))} className={quiet}>
+            {say(words, "today.act.vcancel")}
+          </button>
+        </div>
+      ) : null}
     </article>
   );
 }
@@ -275,14 +380,14 @@ function Toast({ words }: { words: TodayWords }) {
 
 /**
  * "Needs you" (job AU): the count, then one card per thing that waits. A WhatsApp message held for approval shows its exact words, the language it goes out in and why it waits, with Approve and send,
- * Edit and Not now; a request for a call has Approve call and Offer a store visit; the three older kinds are cards that open the page that decides. A decision takes its card off the list at once and
+ * Edit and Not now; a request for a call has Approve call and Offer a store visit (which declines the call and queues a message offering a visit in the outbox); a visit Agent OWL proposed has Confirm, Change time and Cancel (nothing is sent to the customer by them); the three older kinds are cards that open the page that decides. A decision takes its card off the list at once and
  * a toast says what really happened ("Sent", "Approved, it goes out at 9:00", "Not sent: ..."); a refusal puts the card back with the reason. The buttons shown follow the role (a message: Owner and Admin;
- * a call: the Owner); the API checks again. On a phone only the two newest cards show, with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
+ * a call: the Owner; a visit Agent OWL proposed: Owner, Admin and Sales); the API checks again. On a phone only the two newest cards show, with "See all". Nothing here sends a thing: the outbox does, after re-checking every rule.
  */
-export function NeedsYou({ words, role, actions, now }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number }) {
+export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: TodayWords; role: Role; actions: TodayActions | null; now: number; lang?: string }) {
   const { cards, total, extra } = useNeeds();
   const [all, setAll] = React.useState(false);
-  const ctx: Ctx = { words, now, role, actions };
+  const ctx: Ctx = { words, now, role, actions, lang };
   return (
     <section id="needs-you" aria-labelledby="needs-you-heading" className="flex min-w-0 scroll-mt-24 flex-col gap-3">
       <div className="flex items-center gap-2.5">
@@ -316,7 +421,7 @@ export function NeedsYou({ words, role, actions, now }: { words: TodayWords; rol
           <ul className="flex flex-col gap-3">
             {cards.map((c, i) => (
               <li key={c.key} className={!all && i >= 2 ? "max-md:hidden" : ""}>
-                {c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={ctx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={ctx} /> : <CallCard c={c} ctx={ctx} />}
+                {c.type === "item" ? <ClassicCard c={c} item={c.item} ctx={ctx} /> : c.type === "outbox" ? <OutboxCard c={c} ctx={ctx} /> : c.type === "visit" ? <VisitProposalCard c={c} ctx={ctx} /> : <CallCard c={c} ctx={ctx} />}
               </li>
             ))}
           </ul>

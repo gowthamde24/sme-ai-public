@@ -18,6 +18,7 @@ import { parsePlan } from "@/lib/api/plan";
 import { parseAccountSetup } from "@/lib/api/account";
 import { parseAiUsage } from "@/lib/api/ai-usage";
 import { agentsStatus, todayFor } from "./today-fixtures";
+import { SETTINGS, TODAY_VISITS, parseVisitFixture, slotsJson, visitJson } from "@/lib/api/visits-fixtures";
 import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
 import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
@@ -166,6 +167,11 @@ add({
     getAgentsStatus: () => agentsStatus(),
     fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)],
     fetchMembers: () => parseMembers(MEMBERS_JSON),
+    // the store today (job AV): three visits, the first free time, the week's figure (Owner and Admin) and a visit Agent OWL proposed (everyone but a Viewer)
+    getTodayVisits: () => ({ date: "2026-10-06", items: TODAY_VISITS.map((v, i) => ({ ...v, starts_at: ["2026-10-06T05:00:00Z", "2026-10-06T06:30:00Z", "2026-10-06T10:30:00Z"][i] })) }),
+    getSlots: () => slotsJson("2026-10-06"),
+    listVisits: () => ({ from: "2026-10-06", to: "2026-12-06", items: [parseVisitFixture(visitJson({ source: "assistant", status: "booked", date: "2026-10-08", starts_at: "2026-10-08T05:30:00Z", ends_at: "2026-10-08T06:00:00Z", created_at: "2026-10-06T03:30:00Z" }))] }),
+    getAiUsageWeek: () => ({ week_percent: 12, resets_at_week: "2026-10-11T18:30:00Z" }),
     // the words of the message held for approval (Owner and Admin), the call request (Owner), and the last 24 hours of the log (everyone but a Viewer; the clock of this test is 2026-10-06 10:00 in India)
     listOutboxApprovals: () => parseOutboxPage(outboxPage([PRICE_JSON])),
     listCallRequests: () => parseCallRequestPage(outboxPage([CALL_JSON])),
@@ -185,7 +191,16 @@ add({
   id: "today-unreadable",
   roles: ["owner"],
   render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})),
-  handlers: (role) => ({ ...base(role), getToday: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
+  handlers: (role) => ({
+    ...base(role),
+    getToday: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getTodayVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getSlots: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    listVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getAiUsageWeek: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+  }),
 });
 add({
   id: "workspace-home-empty",
@@ -519,6 +534,28 @@ add({
 add({ id: "quotes-list", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON), parseQuoteSummary(MANUAL_SUMMARY_JSON)] }) });
 add({ id: "quotes-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...base(role), fetchQuotes: () => [] }) });
 add({ id: "quotes-viewer", roles: ["viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => base(role) });
+// ---- store visits (job AV) -------------------------------------------------------------------------------------------------
+const dayVisits = [
+  parseVisitFixture(visitJson({ id: "d894bfa2-0aaf-4700-85a9-70e4fa125fc1", status: "confirmed", date: "2026-10-06", starts_at: "2026-10-06T05:00:00Z", ends_at: "2026-10-06T05:30:00Z" })),
+  parseVisitFixture(visitJson({ id: "7e456fad-378a-485d-839a-5d34ee346c42", who: "Anita R.", contact_name: "Anita R.", party_size: 1, purpose: null, status: "booked", source: "assistant", date: "2026-10-06", starts_at: "2026-10-06T06:30:00Z", ends_at: "2026-10-06T07:00:00Z" })),
+  parseVisitFixture(visitJson({ id: "7604201c-580a-4c63-93b4-8bc4c3b7724e", who: "Lakshmi Textiles", contact_name: null, party_size: 2, purpose: "Silk saree wholesale", status: "completed", outcome: "will_return", date: "2026-10-06", starts_at: "2026-10-06T04:30:00Z", ends_at: "2026-10-06T05:00:00Z" })),
+];
+add({
+  id: "visits",
+  render: async () => (await import("@/app/app/tenants/[tenantId]/visits/page")).default(props({}, {})),
+  handlers: (role) => ({ ...base(role), listVisits: () => ({ from: "2026-10-06", to: "2026-10-06", items: dayVisits }), getSlots: () => slotsJson("2026-10-06", { "11:00": 0 }) }),
+});
+add({
+  id: "visits-hours",
+  render: async () => (await import("@/app/app/tenants/[tenantId]/visits/page")).default(props({}, { view: "hours" })),
+  handlers: (role) => ({ ...base(role), getVisitSettings: () => SETTINGS }),
+});
+add({
+  id: "visits-unreadable",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/visits/page")).default(props({}, {})),
+  handlers: (role) => ({ ...base(role), listVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, getSlots: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
+});
 add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });

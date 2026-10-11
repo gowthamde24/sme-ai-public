@@ -29,9 +29,22 @@ describe("pathFor: a target becomes a page of THIS workspace", () => {
     expect(await pathFor(target("enquiry"), B, none)).toBe(`${B}/enquiries/${ID(1)}`);
     expect(await pathFor(null, B, none)).toBeNull();
   });
+  it("a visit Agent OWL proposed opens the Visits page at that visit; a message or call waiting opens the list on Today", async () => {
+    expect(await pathFor(target("store_visit"), B, none)).toBe(`${B}/visits?visit=${ID(1)}`);
+    expect(await pathFor(target("outbox_message"), B, none)).toBe(`${B}#needs-you`);
+    expect(await pathFor(target("call_request"), B, none)).toBe(`${B}#needs-you`);
+  });
   it("a quote opens the enquiry it belongs to; when that is not found, the list of quotes", async () => {
     expect(await pathFor(target("quote", 5), B, async (q) => (q === ID(5) ? ID(6) : null))).toBe(`${B}/enquiries/${ID(6)}?quote=${ID(5)}`);
     expect(await pathFor(target("quote", 5), B, none)).toBe(`${B}/quotes`);
+  });
+});
+
+describe("toAskEvents: a proposed visit", () => {
+  it("is a draft card that links to the Visits page and says it was only proposed", async () => {
+    const card: AssistantEvent = { type: "draft", id: ID(7), kind: "store_visit", status: "draft", title: "Proposed visit on 2026-10-14 at 11:30", summary: "A store visit I proposed. It is booked but not confirmed. Nothing has been sent.", target: target("store_visit", 7), language: null, gloss_en: null, machine_draft: false };
+    const out = await run([card, done]);
+    expect(out[0]).toMatchObject({ type: "draft", kind: "store_visit", title: "Proposed visit on 2026-10-14 at 11:30", href: `${B}/visits?visit=${ID(7)}` });
   });
 });
 

@@ -18,7 +18,8 @@ export const OUTBOX_STATUSES = ["queued", "needs_approval", "sent", "blocked", "
 export type OutboxStatus = (typeof OUTBOX_STATUSES)[number];
 export const OUTBOX_FLAGS = ["money", "commitment", "complaint"] as const;
 export type OutboxFlag = (typeof OUTBOX_FLAGS)[number];
-export const OUTBOX_SOURCES = ["owner", "assistant"] as const;
+/** `system` = made by a fixed template of the shop itself (a visit confirmation, a reminder, an offered visit), job AS. */
+export const OUTBOX_SOURCES = ["owner", "assistant", "system"] as const;
 export type OutboxSource = (typeof OUTBOX_SOURCES)[number];
 /** The closed set of reasons a message is in the state it is in (fixed English `reason_text` comes with it). */
 export const OUTBOX_REASONS = [
@@ -222,4 +223,39 @@ export async function approveCallRequest(accessToken: string, tenantId: string, 
 /** `POST /call-requests/{id}/reject`: the Owner only, with the second factor. `note` is kept with the decision. */
 export async function rejectCallRequest(accessToken: string, tenantId: string, id: string, note?: string): Promise<CallRequest> {
   return parseCallRequest(await post(tenantPath(tenantId, `call-requests/${idPath(id)}/reject`), accessToken, note ? { note } : {}));
+}
+
+/** `POST /outbox/messages`: one WhatsApp message to the lead's contact, with the words the person wrote. The same `messageId` is a retry and replays. The policy decides: it goes (Owner/Admin hand it to the channel at once), waits for 9:00, waits for a person, or is blocked. Owner, Admin, Sales. */
+export async function submitOutboxMessage(
+  accessToken: string,
+  tenantId: string,
+  input: { messageId: string; leadId: string; text: string; language: OutboxLanguage; category: OutboxCategory },
+): Promise<{ message: OutboxMessage; replayed: boolean }> {
+  const json = await post(tenantPath(tenantId, "outbox/messages"), accessToken, {
+    message_id: idPath(input.messageId),
+    lead_id: idPath(input.leadId),
+    text: input.text,
+    language: input.language,
+    category: input.category,
+    source: "owner",
+  });
+  if (!isRecord(json)) return bad("submit result");
+  return { message: parseOutboxMessage(json.message), replayed: json.replayed === true };
+}
+
+/** `POST /call-requests`: ask to phone the lead's contact. Only a request until the Owner approves it; nothing dials. Owner, Admin, Sales. */
+export async function createCallRequest(
+  accessToken: string,
+  tenantId: string,
+  input: { requestId: string; leadId: string; reason: string; scriptDraft: string; language: OutboxLanguage },
+): Promise<{ request: CallRequest; replayed: boolean }> {
+  const json = await post(tenantPath(tenantId, "call-requests"), accessToken, {
+    request_id: idPath(input.requestId),
+    lead_id: idPath(input.leadId),
+    reason: input.reason,
+    script_draft: input.scriptDraft,
+    language: input.language,
+  });
+  if (!isRecord(json)) return bad("call request result");
+  return { request: parseCallRequest(json.request), replayed: json.replayed === true };
 }

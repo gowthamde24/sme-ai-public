@@ -10,6 +10,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Today", "", "today", [true, true, true, true]],
     ["Leads", "/review", "leads", [true, true, true, true]],
     ["Quotes", "/quotes", "quotes", [true, true, true, false]],
+    ["Store visits", "/visits", "visits", [true, true, true, true]],
     ["Orders", "/orders", "orders", [true, true, true, false]],
     ["Customers", "", "customers", [true, true, true, true]],
   ],
@@ -41,9 +42,9 @@ describe("the menu table", () => {
     expect(visibleGroups("owner").map((g) => g.label)).toEqual(["Work", "Your business", "Your team", "Connect"]);
   });
 
-  it("the phone's tabs are the daily pages (Today, Leads, Quotes, Orders, Office), then More", () => {
-    expect(barItems("owner").map((i) => i.id)).toEqual(["today", "leads", "quotes", "orders", "office"]);
-    expect(barItems("viewer").map((i) => i.id)).toEqual(["today", "leads", "office"]);
+  it("the phone's tabs are the daily pages (Today, Leads, Quotes, Visits, Office), then More (Orders is in More)", () => {
+    expect(barItems("owner").map((i) => i.id)).toEqual(["today", "leads", "quotes", "visits", "office"]);
+    expect(barItems("viewer").map((i) => i.id)).toEqual(["today", "leads", "visits", "office"]);
   });
 
   it("makes addresses inside the workspace", () => {
@@ -67,6 +68,7 @@ describe("which item a page belongs to", () => {
     expect(at(`/app/tenants/${T}/orders/abc`)).toBe("orders");
     expect(at(`/app/tenants/${T}/quotes`)).toBe("quotes");
     expect(at(`/app/tenants/${T}/office`)).toBe("office");
+    expect(at(`/app/tenants/${T}/visits`)).toBe("visits");
     expect(at(`/app/tenants/${T}/integrations`)).toBe("integrations");
     expect(at("/app/security")).toBe("settings");
   });

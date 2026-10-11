@@ -18,7 +18,7 @@ describe("the menu's shape", () => {
   });
   it("the phone's bar has at most five tabs, all of them daily pages that every role that sees them can open", () => {
     for (const role of ALL_ROLES) expect(barItems(role).length).toBeLessThanOrEqual(5);
-    expect(NAV.flatMap((g) => g.items).filter((i) => i.bar).map((i) => i.id)).toEqual(["today", "leads", "quotes", "orders", "office"]);
+    expect(NAV.flatMap((g) => g.items).filter((i) => i.bar).map((i) => i.id)).toEqual(["today", "leads", "quotes", "visits", "office"]);
   });
   it("every entry opens a page that exists (no entry for a page that is not built)", () => {
     for (const i of [...NAV.flatMap((g) => g.items), ...FOOT]) {

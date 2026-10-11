@@ -233,6 +233,13 @@ describe("AskTeam: the real Agent OWL's shapes (Job AG)", () => {
     expect(within(f).getByRole("link", { name: /Approve/ })).toHaveAttribute("href", `${B}/leads/L`);
     expect(within(screen.getByRole("article", { name: "Enquiry" })).getByText("Enquiry", { selector: "span" })).toBeInTheDocument();
   });
+  it("a visit Agent OWL proposed says it is a store visit and opens the Visits page at it", async () => {
+    box(playing([{ type: "draft", id: "v", kind: "store_visit", title: "Proposed visit on 2026-10-14 at 11:30", summary: "A store visit I proposed. It is booked but not confirmed. Nothing has been sent.", href: `${B}/visits?visit=V` }, { type: "done" }]));
+    ask("x");
+    const v = await screen.findByRole("article", { name: "Proposed visit on 2026-10-14 at 11:30" });
+    expect(within(v).getByText("Store visit")).toBeInTheDocument();
+    expect(within(v).getByRole("link", { name: /Approve/ })).toHaveAttribute("href", `${B}/visits?visit=V`);
+  });
   it.each([
     ["ai_paused_until", "Today's AI spending limit has been reached. Try again tomorrow."],
     ["run_limit_reached", "Too many questions just now. Wait a little and ask again."],

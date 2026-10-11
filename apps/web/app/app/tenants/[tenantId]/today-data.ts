@@ -6,6 +6,7 @@ import { fetchMembers } from "@/lib/api/orders";
 import { getAgentsStatus, type NeedsYouItem as ApiItem } from "@/lib/api/today";
 
 import { readDigest } from "./outbox-digest";
+import { readProposals, readStore, readWeek } from "./today-visits";
 import { targetPaths } from "./target-path";
 import { readTodayCached } from "./today-read";
 
@@ -21,15 +22,24 @@ const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.
  * from the newest 50 quotes (`fetchQuotes`) or, for an older one, from the quote itself; if neither can be read it opens the list of quotes. A WhatsApp message held for approval and a call request
  * are decided on Today itself: their words (`GET /outbox/approvals`, Owner and Admin) and reason (`GET /call-requests`) are read here and put on the card; if they cannot be read the card says so
  * and offers no button, because nobody should approve words they cannot read. The last 24 hours of the outbox are one promise that never rejects (`readDigest`), read under a Suspense each.
- * Store visits are not in the API yet (job AS): `visits` is null.
+ * "At the store today" is `GET /visits/today` (any member), the usage card's weekly figure is `GET /ai-usage/week` (Owner and Admin) and a visit Agent OWL proposed is a card of its own (job AV).
  */
 export async function readToday(accessToken: string, tenantId: string, role: Role, now: () => number = Date.now): Promise<TodayData> {
   const digest = role === "viewer" ? null : readDigest(accessToken, tenantId, now); // a Viewer may not read the outbox: nothing to ask
-  const [today, team] = await Promise.allSettled([readTodayCached(accessToken, tenantId), getAgentsStatus(accessToken, tenantId)]);
-  for (const r of [today, team]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
+  const [today, team, store, proposals, week] = await Promise.allSettled([
+    readTodayCached(accessToken, tenantId),
+    getAgentsStatus(accessToken, tenantId),
+    readStore(accessToken, tenantId, now()),
+    role === "viewer" ? Promise.resolve([] as NeedsCard[]) : readProposals(accessToken, tenantId, now()),
+    role === "owner" || role === "admin" ? readWeek(accessToken, tenantId) : Promise.resolve(null),
+  ]);
+  for (const r of [today, team, store, proposals, week]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
 
   const data: TodayData = { ...NOTHING_TODAY, cards: { ...NOTHING_TODAY.cards }, digest };
   if (team.status === "fulfilled") data.team = team.value;
+  data.store = store.status === "fulfilled" ? store.value : { state: "error" };
+  if (week.status === "fulfilled") data.week = week.value;
+  else if (role === "owner" || role === "admin") data.week = "error";
   if (today.status === "fulfilled") {
     const t = today.value;
     const wantsMessages = t.needs_you.some((i) => i.kind === "outbox_approval");
@@ -49,9 +59,15 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
         return { type: "outbox", key, at: i.at, id: i.id, customer, city: i.city, message: m ? { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text } : null };
       }
       const c = calls?.get(i.id);
-      return { type: "call", key, at: i.at, id: i.id, customer, city: i.city, request: c ? { reason: c.reason } : null };
+      return { type: "call", key, at: i.at, id: i.id, customer, city: i.city, request: c ? { reason: c.reason, language: c.language } : null };
     });
     data.recent = t.recent.map((r): RecentItem => ({ ...r, href: where(r.target) }));
+    // the visits Agent OWL proposed wait for a person as well: they follow the API's own items
+    // (and they count: the API's number of things waiting does not know about visits, so the proposals are added to it, and the screen's count agrees with its cards)
+    if (proposals.status === "fulfilled" && proposals.value.length > 0) {
+      data.needs = [...(data.needs ?? []), ...proposals.value];
+      if (data.cards.waiting !== null) data.cards = { ...data.cards, waiting: data.cards.waiting + proposals.value.length };
+    }
   }
   return data;
 }

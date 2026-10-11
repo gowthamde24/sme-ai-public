@@ -16,6 +16,13 @@ import
 Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.
 - [WhatsApp enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) received Oct 5, 2026, 3:30 PM (18 hours ago)
 [button type=button: Add enquiry]
+{label="Contact this lead"}
+## Contact this lead
+Messages go through the outbox: the shop's send rules decide if a message goes now or waits for the owner. You never see the customer's number here.
+[button type=button: Contact on WhatsApp]
+[button type=button: Request a call]
+<checkbox label="Keep a record of this" checked described-by="Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made.">
+Keep a record of this Ticked: when a WhatsApp message has really gone out, it is added to this lead's history so follow-ups know. Unticked: it still goes under the same rules, but no record is made. [Book a store visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits?lead=33333333-3333-3333-3333-333333333333#book)
 {label="I sent a message"}
 ## I sent a message
 {label="I sent a message"}
