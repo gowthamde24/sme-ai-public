@@ -99,6 +99,31 @@ def _labels(
             target,
             {"language": r["language"], "preview": r["body"], "gloss_en": r["gloss_en"]},
         )
+    # job AT: what Today lists for the Owner and Admin. The label never carries the text of a message or a call script.
+    for r in rows(
+        "labels_outbox",
+        "/outbox_messages",
+        "id,status,lead:leads(company:companies(name))",
+        wanted.get("outbox_message", []),
+    ):
+        m = uuid.UUID(str(r["id"]))
+        out[("outbox_message", m)] = (
+            f"WhatsApp message to {_customer(r)} ({str(r['status']).replace('_', ' ')})",
+            ("outbox_message", m),
+            {},
+        )
+    for r in rows(
+        "labels_calls",
+        "/call_requests",
+        "id,status,lead:leads(company:companies(name))",
+        wanted.get("call_request", []),
+    ):
+        c = uuid.UUID(str(r["id"]))
+        out[("call_request", c)] = (
+            f"Call request for {_customer(r)} ({r['status']})",
+            ("call_request", c),
+            {},
+        )
     return out
 
 

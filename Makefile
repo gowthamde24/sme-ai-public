@@ -1,4 +1,4 @@
-.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
 
 WEB := apps/web
 API := services/ai-api
@@ -11,7 +11,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -127,6 +127,13 @@ seed-demo:
 # Same sign-in as seed-demo (no service-role key, no new secret); refuses any URL that is not this machine; idempotent. Needs `make db-start` and `make dev-api`. Wipe: `make db-reset`.
 seed-demo-manual:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo_manual.py
+
+# Job AT (ADR 0066), LOCAL ONLY: turns the outbox kill switch on in the local database, then makes a few outbox rows (one that goes by itself, two that wait for approval, one blocked) and one call
+# request in the demo workspace, through the API as the demo owner. Nothing is sent to anyone: the only channel is a stand-in inside the API. Needs `make db-start`, `make dev-api-local` and
+# `make seed-demo-manual`. The web's Today must know the new kinds of waiting item first (see docs/runbooks/outbox-local.md).
+seed-demo-outbox:
+	./scripts/dev-enable-outbox.sh on
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo_outbox.py
 
 # T009: SYNTHETIC quote reference data (six invented products, a price list, a quote policy, a mapper config) for a LOCAL workspace:
 #     make seed-quote-data TENANT=demo-synthetic-sme

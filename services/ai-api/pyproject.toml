@@ -44,6 +44,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # a script of readable data tables and a long explanatory header
 "../../scripts/seed_demo.py" = ["E501"]
 "../../scripts/seed_demo_manual.py" = ["E501"]
+"../../scripts/seed_demo_outbox.py" = ["E501"]
 "../../scripts/local_confirm.py" = ["E501"]
 "../../scripts/demo_code.py" = ["E501"]
 "tests/test_local_demo_scripts.py" = ["E501"]
@@ -76,6 +77,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 # job AG: the Main agent (its policy text, fixed sentences in five languages, long explanatory docstrings)
 "app/assistant/*" = ["E501"]
 "app/today/*" = ["E501"]
+# job AT: the outbox (long explanatory docstrings, fixed sentences in plain words)
+"app/outbox/*" = ["E501"]
+"tests/test_outbox_*.py" = ["E501"]
+"tests/outbox_fakes.py" = ["E501"]
 "seeds/*" = ["E501"]
 "tests/test_quote_seed_script.py" = ["E501"]
 

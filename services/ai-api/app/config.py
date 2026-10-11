@@ -86,6 +86,9 @@ class Settings(BaseSettings):
     llm_light_model: str | None = None
     llm_light_input_micros_per_mtok: int | None = None
     llm_light_output_micros_per_mtok: int | None = None
+    # Job AT (ADR 0066): the channel adapter of the outbox. Only "fake" exists (a local stand-in
+    # that sends nothing to anyone); anything else stops the process at start.
+    outbox_adapter: str = "fake"
     agents_max_workers: int = 2
     agents_max_queue: int = 8
     # The Research Agent (T007) reads web pages. Until a real fetcher and a real model are approved

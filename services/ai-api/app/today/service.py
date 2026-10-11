@@ -63,6 +63,10 @@ def _summary(kind: str, ref: str, amount: int | None) -> str:
         return f"Quote {ref} for {total} is ready for your approval."
     if kind == "followup_due":
         return f"A follow-up message (number {ref}) is drafted and waiting for your approval."
+    if kind == "outbox_approval":
+        return "A WhatsApp message to a customer is waiting for your approval."
+    if kind == "call_approval":
+        return "A request to phone a customer is waiting for your approval."
     held = format_rupees(amount) if amount is not None else "money"
     return f"Order {ref} is closed but still holds {held}. A refund may be owed."
 
@@ -157,7 +161,10 @@ def shape_ai_usage_percent(raw: Any) -> AiUsagePercentOut:
     """Percentages are the database's (spent / allowance, rounded down, at most 100); this only checks the shape. No paise, no tokens exist in this answer."""
     if not isinstance(raw, dict):
         raise _bad("usage answer")
-    today, month = _int(raw.get("today_percent"), "percent"), _int(raw.get("month_percent"), "percent")
+    today, month = (
+        _int(raw.get("today_percent"), "percent"),
+        _int(raw.get("month_percent"), "percent"),
+    )
     if not (0 <= today <= 100 and 0 <= month <= 100):
         raise _bad("usage percent")
     try:

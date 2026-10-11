@@ -11,10 +11,19 @@ from pydantic import BaseModel, ConfigDict, StringConstraints
 from app.assistant.language import Language
 
 SourceType = Literal[
-    "quote", "lead", "enquiry", "order", "company", "price_item", "followup_draft", "reply_draft"
+    "quote",
+    "lead",
+    "enquiry",
+    "order",
+    "company",
+    "price_item",
+    "followup_draft",
+    "reply_draft",
+    "outbox_message",
+    "call_request",
 ]
 DraftType = Literal["quote", "followup_draft", "reply_draft", "enquiry"]
-OpenType = Literal["quote", "lead", "enquiry", "order"]
+OpenType = Literal["quote", "lead", "enquiry", "order", "outbox_message", "call_request"]
 
 
 class _Strict(BaseModel):

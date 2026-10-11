@@ -133,6 +133,16 @@ select is(
         'public.assistant_begin_message',
         'public.assistant_save_reply',
         'public.assistant_save_reply_draft',
+        -- job AT: the outbox and call requests. Each proves the role first (Owner / Admin / Sales as stated in migration 20261106090000) and derives the person from auth.uid()
+        'public.outbox_submit',
+        'public.outbox_edit',
+        'public.outbox_decide',
+        'public.outbox_claim_due',
+        'public.outbox_mark',
+        'public.outbox_set_settings',
+        'public.outbox_settings_get',
+        'public.call_request_create',
+        'public.call_request_decide',
         'app.agent_switch_on',
         'app.is_tenant_member',
         'app.has_tenant_role',
@@ -238,7 +248,8 @@ select is(
                      'public.create_followup_policy_version', 'public.followup_gate', 'public.followup_due_candidates', 'public.record_touch', 'public.create_followup_draft', 'public.approve_followup_draft',
                      'public.discard_followup_draft', 'public.record_draft_sent', 'public.persist_question_drafts', 'public.decide_question_draft',
                      'public.get_account_setup', 'public.complete_setup', 'public.ai_usage_today', 'public.ai_usage', 'public.ai_paused_until',
-                     'public.assistant_begin_message', 'public.assistant_save_reply', 'public.assistant_save_reply_draft')),
+                     'public.assistant_begin_message', 'public.assistant_save_reply', 'public.assistant_save_reply_draft',
+                     'public.outbox_submit', 'public.outbox_edit', 'public.outbox_decide', 'public.outbox_claim_due', 'public.outbox_mark', 'public.outbox_set_settings', 'public.outbox_settings_get', 'public.call_request_create', 'public.call_request_decide')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

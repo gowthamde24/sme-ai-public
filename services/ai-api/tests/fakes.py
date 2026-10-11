@@ -18,6 +18,8 @@ from app.erasure.repository import ErasureRepository
 from app.followups.repository import FollowupsRepository
 from app.main import create_app
 from app.orders.repository import OrdersRepository
+from app.outbox.adapter import ChannelAdapter
+from app.outbox.repository import OutboxRepository
 from app.pricelists.repository import PriceListRepository
 from app.quotes.repository import QuotesRepository
 from app.suppression.keys import KeyRing
@@ -194,6 +196,8 @@ def make_client(
     key_ring: KeyRing | None = None,
     followups: FollowupsRepository | None = None,
     today: TodayRepository | None = None,
+    outbox: OutboxRepository | None = None,
+    outbox_adapter: ChannelAdapter | None = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -221,6 +225,8 @@ def make_client(
             key_ring=key_ring,
             followups=followups,
             today=today,
+            outbox=outbox,
+            outbox_adapter=outbox_adapter,
         ),
     )
     return TestClient(app), repo

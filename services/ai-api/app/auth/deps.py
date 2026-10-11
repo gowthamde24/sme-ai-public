@@ -20,6 +20,8 @@ from app.evidence.repository import EvidenceRepository
 from app.followups.repository import FollowupsRepository
 from app.leads.repository import LeadsRepository
 from app.orders.repository import OrdersRepository
+from app.outbox.adapter import ChannelAdapter
+from app.outbox.repository import OutboxRepository
 from app.pricelists.repository import PriceListRepository
 from app.quotes.repository import QuotesRepository
 from app.suppression.keys import KeyRing
@@ -50,6 +52,8 @@ class Runtime:
     key_ring: KeyRing | None = None
     followups: FollowupsRepository | None = None
     today: TodayRepository | None = None
+    outbox: OutboxRepository | None = None
+    outbox_adapter: ChannelAdapter | None = None
 
 
 @dataclass(frozen=True)
