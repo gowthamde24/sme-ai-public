@@ -1,16 +1,17 @@
+Tuesday, 6 October
 # Good morning
-[Waiting for you Not available yet](#needs-you) [Customer money held Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders) [Orders in progress Not available yet](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
-{label="Ask your team"}
+{label="Not available yet"}
 {role=img label="Agent OWL, Resting"}
-Resting
-## Ask your team
-Not available yet
+Resting Resting Resting Agent OWL
+## Not available yet
+The overnight summary is not available yet. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.
 {label="Needs you"}
 ## Needs you
 Not available yet
-{label="Your team right now"}
-## Your team right now
-Not available yet [Office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
-{label="Recently recorded"}
-## Recently recorded
+{role=status}
+{label="Done while you slept"}
+## Done while you slept
 Not available yet
+{label="Your team"}
+## Your team
+[Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office) Not available yet

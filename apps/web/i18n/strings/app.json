@@ -462,10 +462,10 @@
   }
  },
  "today.team": {
-  "en": "Your team right now",
-  "te": "మీ టీమ్ ఇప్పుడు",
-  "hi": "आपकी टीम अभी",
-  "kn": "ನಿಮ್ಮ ಟೀಮ್ ಈಗ",
+  "en": "Your team",
+  "te": "మీ టీమ్",
+  "hi": "आपकी टीम",
+  "kn": "ನಿಮ್ಮ ಟೀಮ್",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1853,6 +1853,1147 @@
   "te": "విశ్రాంతిలో ఉంది",
   "hi": "आराम कर रहा है",
   "kn": "ವಿಶ್ರಾಂತಿಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.usage.title": {
+  "en": "Agent OWL this month",
+  "te": "Agent OWL ఈ నెల",
+  "hi": "Agent OWL इस महीने",
+  "kn": "Agent OWL ಈ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.usage.left": {
+  "en": "{percent}% left",
+  "te": "{percent}% మిగిలింది",
+  "hi": "{percent}% बचा है",
+  "kn": "{percent}% ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.usage.aria": {
+  "en": "Agent OWL usage this month: {percent}% left",
+  "te": "ఈ నెల Agent OWL వాడకం: {percent}% మిగిలింది",
+  "hi": "इस महीने Agent OWL का इस्तेमाल: {percent}% बचा है",
+  "kn": "ಈ ತಿಂಗಳ Agent OWL ಬಳಕೆ: {percent}% ಉಳಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.hero.one": {
+  "en": "1 thing needs you. The rest is handled.",
+  "te": "1 విషయం మీ కోసం ఎదురుచూస్తోంది. మిగతాది చూసుకున్నాను.",
+  "hi": "1 चीज़ को आपकी ज़रूरत है। बाकी मैंने संभाल लिया है।",
+  "kn": "1 ವಿಷಯಕ್ಕೆ ನಿಮ್ಮ ಅಗತ್ಯವಿದೆ. ಉಳಿದದ್ದನ್ನು ನೋಡಿಕೊಂಡಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.hero.other": {
+  "en": "{n} things need you. The rest is handled.",
+  "te": "{n} విషయాలు మీ కోసం ఎదురుచూస్తున్నాయి. మిగతావి చూసుకున్నాను.",
+  "hi": "{n} चीज़ों को आपकी ज़रूरत है। बाकी मैंने संभाल लिया है।",
+  "kn": "{n} ವಿಷಯಗಳಿಗೆ ನಿಮ್ಮ ಅಗತ್ಯವಿದೆ. ಉಳಿದವನ್ನು ನೋಡಿಕೊಂಡಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.hero.none": {
+  "en": "Nothing needs you right now.",
+  "te": "ఇప్పుడు మీరు చేయాల్సిందేమీ లేదు.",
+  "hi": "अभी आपको कुछ करने की ज़रूरत नहीं है।",
+  "kn": "ಈಗ ನೀವು ಮಾಡಬೇಕಾದದ್ದು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.over.some": {
+  "en": "Overnight on WhatsApp: {sent} sent, {held} held for your OK.",
+  "te": "Overnight on WhatsApp: {sent} sent, {held} held for your OK.",
+  "hi": "Overnight on WhatsApp: {sent} sent, {held} held for your OK.",
+  "kn": "Overnight on WhatsApp: {sent} sent, {held} held for your OK.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.over.none": {
+  "en": "Nothing was sent on WhatsApp in the last 24 hours.",
+  "te": "Nothing was sent on WhatsApp in the last 24 hours.",
+  "hi": "Nothing was sent on WhatsApp in the last 24 hours.",
+  "kn": "Nothing was sent on WhatsApp in the last 24 hours.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.over.notyet": {
+  "en": "The overnight summary is not available yet.",
+  "te": "రాత్రి సారాంశం ఇంకా అందుబాటులో లేదు.",
+  "hi": "रात का सारांश अभी उपलब्ध नहीं है।",
+  "kn": "ರಾತ್ರಿಯ ಸಾರಾಂಶ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.hero.note": {
+  "en": "Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.",
+  "te": "తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో మాట్లాడండి లేదా టైప్ చేయండి. Agent OWL రాతలో జవాబు ఇస్తుంది.",
+  "hi": "तेलुगु, हिंदी, कन्नड़ या अंग्रेज़ी में बोलें या लिखें। Agent OWL लिखकर जवाब देता है।",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಮಾತನಾಡಿ ಅಥವಾ ಟೈಪ್ ಮಾಡಿ. Agent OWL ಬರಹದಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.call": {
+  "en": "Who should I call first?",
+  "te": "ముందు ఎవరికి కాల్ చేయాలి?",
+  "hi": "पहले किसे कॉल करूँ?",
+  "kn": "ಮೊದಲು ಯಾರಿಗೆ ಕರೆ ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.placeholder.hero": {
+  "en": "Ask anything, in any language…",
+  "te": "ఏదైనా అడగండి, ఏ భాషలోనైనా…",
+  "hi": "कुछ भी पूछें, किसी भी भाषा में…",
+  "kn": "ಏನಾದರೂ ಕೇಳಿ, ಯಾವ ಭಾಷೆಯಲ್ಲಾದರೂ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.needs.note": {
+  "en": "Messages about money, promises or complaints, and calls, always wait for you.",
+  "te": "Messages about money, promises or complaints, and calls, always wait for you.",
+  "hi": "Messages about money, promises or complaints, and calls, always wait for you.",
+  "kn": "Messages about money, promises or complaints, and calls, always wait for you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.needs.count": {
+  "en": "{n} waiting for you",
+  "te": "{n} మీ కోసం ఎదురుచూస్తున్నాయి",
+  "hi": "{n} आपका इंतज़ार कर रहे हैं",
+  "kn": "{n} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.needs.more": {
+  "en": "Showing the newest {shown} of {total}. The rest are in the lists of each screen.",
+  "te": "Showing the newest {shown} of {total}. The rest are in the lists of each screen.",
+  "hi": "Showing the newest {shown} of {total}. The rest are in the lists of each screen.",
+  "kn": "Showing the newest {shown} of {total}. The rest are in the lists of each screen.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.seeall": {
+  "en": "See all ({n})",
+  "te": "అన్నీ చూడండి ({n})",
+  "hi": "सब देखें ({n})",
+  "kn": "ಎಲ್ಲವನ್ನೂ ನೋಡಿ ({n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.seeless": {
+  "en": "Show fewer",
+  "te": "తక్కువ చూపండి",
+  "hi": "कम दिखाएँ",
+  "kn": "ಕಡಿಮೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.empty": {
+  "en": "All clear. I will tell you the moment something needs you.",
+  "te": "అంతా సరిగ్గా ఉంది. మీరు చేయాల్సింది ఏదైనా వస్తే వెంటనే చెబుతాను.",
+  "hi": "सब ठीक है। जैसे ही आपको कुछ करना होगा, मैं तुरंत बताऊँगा।",
+  "kn": "ಎಲ್ಲವೂ ಸರಿಯಾಗಿದೆ. ನೀವು ಮಾಡಬೇಕಾದದ್ದು ಬಂದ ತಕ್ಷಣ ಹೇಳುತ್ತೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.badge.price": {
+  "en": "Price · needs your OK",
+  "te": "Price · needs your OK",
+  "hi": "Price · needs your OK",
+  "kn": "Price · needs your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.badge.promise": {
+  "en": "Promise · needs your OK",
+  "te": "Promise · needs your OK",
+  "hi": "Promise · needs your OK",
+  "kn": "Promise · needs your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.badge.complaint": {
+  "en": "Complaint · needs your OK",
+  "te": "Complaint · needs your OK",
+  "hi": "Complaint · needs your OK",
+  "kn": "Complaint · needs your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.badge.message": {
+  "en": "Message · needs your OK",
+  "te": "Message · needs your OK",
+  "hi": "Message · needs your OK",
+  "kn": "Message · needs your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.badge.call": {
+  "en": "Call · needs your OK",
+  "te": "Call · needs your OK",
+  "hi": "Call · needs your OK",
+  "kn": "Call · needs your OK",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.title.reply_to_inbound": {
+  "en": "Reply to {customer}",
+  "te": "{customer} కి జవాబు",
+  "hi": "{customer} को जवाब",
+  "kn": "{customer} ಗೆ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.info": {
+  "en": "Shop information for {customer}",
+  "te": "{customer} కి షాప్ వివరాలు",
+  "hi": "{customer} के लिए दुकान की जानकारी",
+  "kn": "{customer} ಗೆ ಅಂಗಡಿಯ ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.visit": {
+  "en": "Visit message for {customer}",
+  "te": "{customer} కి షాప్ విజిట్ మెసేజ్",
+  "hi": "{customer} के लिए विज़िट का मैसेज",
+  "kn": "{customer} ಗೆ ಭೇಟಿಯ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.followup": {
+  "en": "Follow-up for {customer}",
+  "te": "{customer} కి ఫాలో-అప్",
+  "hi": "{customer} के लिए फ़ॉलो-अप",
+  "kn": "{customer} ಗೆ ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.order_status": {
+  "en": "Order update for {customer}",
+  "te": "{customer} కి ఆర్డర్ అప్‌డేట్",
+  "hi": "{customer} के लिए ऑर्डर अपडेट",
+  "kn": "{customer} ಗೆ ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.other": {
+  "en": "Message for {customer}",
+  "te": "{customer} కి మెసేజ్",
+  "hi": "{customer} के लिए मैसेज",
+  "kn": "{customer} ಗೆ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.title.call": {
+  "en": "{customer} asked for a call",
+  "te": "{customer} కాల్ అడిగారు",
+  "hi": "{customer} ने कॉल माँगा है",
+  "kn": "{customer} ಕರೆ ಕೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.customer.unknown": {
+  "en": "a customer",
+  "te": "ఒక కస్టమర్",
+  "hi": "एक ग्राहक",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.goes": {
+  "en": "Goes out in {language}",
+  "te": "Goes out in {language}",
+  "hi": "Goes out in {language}",
+  "kn": "Goes out in {language}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.why": {
+  "en": "Why it waits: {reason}",
+  "te": "Why it waits: {reason}",
+  "hi": "Why it waits: {reason}",
+  "kn": "Why it waits: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.lang.en": {
+  "en": "English",
+  "te": "ఇంగ్లీష్",
+  "hi": "अंग्रेज़ी",
+  "kn": "ಇಂಗ್ಲಿಷ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.lang.te": {
+  "en": "Telugu",
+  "te": "తెలుగు",
+  "hi": "तेलुगु",
+  "kn": "ತೆಲುಗು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.lang.hi": {
+  "en": "Hindi",
+  "te": "హిందీ",
+  "hi": "हिंदी",
+  "kn": "ಹಿಂದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.lang.kn": {
+  "en": "Kannada",
+  "te": "కన్నడ",
+  "hi": "कन्नड़",
+  "kn": "ಕನ್ನಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.lang.ta": {
+  "en": "Tamil",
+  "te": "తమిళం",
+  "hi": "तमिल",
+  "kn": "ತಮಿಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.approve": {
+  "en": "Approve and send",
+  "te": "Approve and send",
+  "hi": "Approve and send",
+  "kn": "Approve and send",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.act.edit": {
+  "en": "Edit",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.notnow": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.save": {
+  "en": "Save the new words",
+  "te": "కొత్త మాటలు సేవ్ చేయండి",
+  "hi": "नए शब्द सेव करें",
+  "kn": "ಹೊಸ ಮಾತುಗಳನ್ನು ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.act.callok": {
+  "en": "Approve call",
+  "te": "Approve call",
+  "hi": "Approve call",
+  "kn": "Approve call",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.act.visit": {
+  "en": "Offer a store visit",
+  "te": "Offer a store visit",
+  "hi": "Offer a store visit",
+  "kn": "Offer a store visit",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.act.working": {
+  "en": "Working…",
+  "te": "చేస్తున్నాను…",
+  "hi": "हो रहा है…",
+  "kn": "ಮಾಡುತ್ತಿದ್ದೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.edit.label": {
+  "en": "The words that go to the customer",
+  "te": "The words that go to the customer",
+  "hi": "The words that go to the customer",
+  "kn": "The words that go to the customer",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.edit.hint": {
+  "en": "The line that says an AI assistant wrote it stays. Nothing is sent until you approve.",
+  "te": "The line that says an AI assistant wrote it stays. Nothing is sent until you approve.",
+  "hi": "The line that says an AI assistant wrote it stays. Nothing is sent until you approve.",
+  "kn": "The line that says an AI assistant wrote it stays. Nothing is sent until you approve.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.notext": {
+  "en": "The words of this message could not be loaded, so it cannot be approved here. Reload to read them before you decide.",
+  "te": "The words of this message could not be loaded, so it cannot be approved here. Reload to read them before you decide.",
+  "hi": "The words of this message could not be loaded, so it cannot be approved here. Reload to read them before you decide.",
+  "kn": "The words of this message could not be loaded, so it cannot be approved here. Reload to read them before you decide.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.owneronly": {
+  "en": "Only the owner decides a call.",
+  "te": "Only the owner decides a call.",
+  "hi": "Only the owner decides a call.",
+  "kn": "Only the owner decides a call.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.sent": {
+  "en": "Sent to {customer}.",
+  "te": "Sent to {customer}.",
+  "hi": "Sent to {customer}.",
+  "kn": "Sent to {customer}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.queued": {
+  "en": "Approved. It goes out at {time}.",
+  "te": "Approved. It goes out at {time}.",
+  "hi": "Approved. It goes out at {time}.",
+  "kn": "Approved. It goes out at {time}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.queuedNow": {
+  "en": "Approved. It is on its way.",
+  "te": "Approved. It is on its way.",
+  "hi": "Approved. It is on its way.",
+  "kn": "Approved. It is on its way.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.blocked": {
+  "en": "Not sent: {reason}",
+  "te": "Not sent: {reason}",
+  "hi": "Not sent: {reason}",
+  "kn": "Not sent: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.rejected": {
+  "en": "Not sent. Nothing was sent to {customer}.",
+  "te": "Not sent. Nothing was sent to {customer}.",
+  "hi": "Not sent. Nothing was sent to {customer}.",
+  "kn": "Not sent. Nothing was sent to {customer}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.edited": {
+  "en": "Saved. Read it once more, then approve.",
+  "te": "Saved. Read it once more, then approve.",
+  "hi": "Saved. Read it once more, then approve.",
+  "kn": "Saved. Read it once more, then approve.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.callok": {
+  "en": "Call approved for {customer}. Nothing is dialled by this app.",
+  "te": "Call approved for {customer}. Nothing is dialled by this app.",
+  "hi": "Call approved for {customer}. Nothing is dialled by this app.",
+  "kn": "Call approved for {customer}. Nothing is dialled by this app.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.toast.visit": {
+  "en": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
+  "te": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
+  "hi": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
+  "kn": "Call not approved. Saved with the request: offer {customer} a store visit. This app has not sent the offer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.err.mfa": {
+  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "te": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "hi": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "kn": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.err.mfa.link": {
+  "en": "Open Security",
+  "te": "సెక్యూరిటీ తెరవండి",
+  "hi": "सिक्योरिटी खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.err.state": {
+  "en": "This changed while you were looking. Reload and look again. Nothing was changed.",
+  "te": "This changed while you were looking. Reload and look again. Nothing was changed.",
+  "hi": "This changed while you were looking. Reload and look again. Nothing was changed.",
+  "kn": "This changed while you were looking. Reload and look again. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.err.role": {
+  "en": "Your role does not allow this. Nothing was changed.",
+  "te": "Your role does not allow this. Nothing was changed.",
+  "hi": "Your role does not allow this. Nothing was changed.",
+  "kn": "Your role does not allow this. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.err.stopped": {
+  "en": "This customer asked us to stop. Nothing more is sent or called.",
+  "te": "This customer asked us to stop. Nothing more is sent or called.",
+  "hi": "This customer asked us to stop. Nothing more is sent or called.",
+  "kn": "This customer asked us to stop. Nothing more is sent or called.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.err.generic": {
+  "en": "That did not work. Nothing was changed. Try again.",
+  "te": "That did not work. Nothing was changed. Try again.",
+  "hi": "That did not work. Nothing was changed. Try again.",
+  "kn": "That did not work. Nothing was changed. Try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.err.short": {
+  "en": "Write at least two characters.",
+  "te": "కనీసం రెండు అక్షరాలు రాయండి.",
+  "hi": "कम से कम दो अक्षर लिखें।",
+  "kn": "ಕನಿಷ್ಠ ಎರಡು ಅಕ್ಷರ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.block.switch_off": {
+  "en": "sending is switched off.",
+  "te": "sending is switched off.",
+  "hi": "sending is switched off.",
+  "kn": "sending is switched off.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.stopped": {
+  "en": "this customer asked us to stop.",
+  "te": "this customer asked us to stop.",
+  "hi": "this customer asked us to stop.",
+  "kn": "this customer asked us to stop.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.erased": {
+  "en": "this customer's details were erased.",
+  "te": "this customer's details were erased.",
+  "hi": "this customer's details were erased.",
+  "kn": "this customer's details were erased.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.no_phone": {
+  "en": "there is no phone number on record.",
+  "te": "there is no phone number on record.",
+  "hi": "there is no phone number on record.",
+  "kn": "there is no phone number on record.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.no_key": {
+  "en": "the do-not-contact check cannot be made for this number.",
+  "te": "the do-not-contact check cannot be made for this number.",
+  "hi": "the do-not-contact check cannot be made for this number.",
+  "kn": "the do-not-contact check cannot be made for this number.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.no_opt_in": {
+  "en": "the customer has not agreed to WhatsApp messages.",
+  "te": "the customer has not agreed to WhatsApp messages.",
+  "hi": "the customer has not agreed to WhatsApp messages.",
+  "kn": "the customer has not agreed to WhatsApp messages.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.daily_limit": {
+  "en": "this customer already has the daily limit of messages.",
+  "te": "this customer already has the daily limit of messages.",
+  "hi": "this customer already has the daily limit of messages.",
+  "kn": "this customer already has the daily limit of messages.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.send_failed": {
+  "en": "WhatsApp did not take it.",
+  "te": "WhatsApp did not take it.",
+  "hi": "WhatsApp did not take it.",
+  "kn": "WhatsApp did not take it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.owner_rejected": {
+  "en": "you said no.",
+  "te": "you said no.",
+  "hi": "you said no.",
+  "kn": "you said no.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.block.other": {
+  "en": "a rule of the system stopped it.",
+  "te": "a rule of the system stopped it.",
+  "hi": "a rule of the system stopped it.",
+  "kn": "a rule of the system stopped it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "today.visits.title": {
+  "en": "At the store today",
+  "te": "ఈ రోజు షాప్‌లో",
+  "hi": "आज दुकान में",
+  "kn": "ಇಂದು ಅಂಗಡಿಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.one": {
+  "en": "1 visit",
+  "te": "1 విజిట్",
+  "hi": "1 विज़िट",
+  "kn": "1 ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.other": {
+  "en": "{n} visits",
+  "te": "{n} విజిట్లు",
+  "hi": "{n} विज़िट",
+  "kn": "{n} ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.confirmed": {
+  "en": "Confirmed",
+  "te": "కన్ఫర్మ్ అయింది",
+  "hi": "कन्फ़र्म",
+  "kn": "ಖಚಿತವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.reminder": {
+  "en": "Reminder sent",
+  "te": "రిమైండర్ పంపాను",
+  "hi": "रिमाइंडर भेजा",
+  "kn": "ರಿಮೈಂಡರ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.requested": {
+  "en": "Waiting for the customer",
+  "te": "కస్టమర్ జవాబు కోసం చూస్తున్నాను",
+  "hi": "ग्राहक के जवाब का इंतज़ार",
+  "kn": "ಗ್ರಾಹಕರ ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.visits.cal": {
+  "en": "Open the visit calendar",
+  "te": "విజిట్ క్యాలెండర్ తెరవండి",
+  "hi": "विज़िट कैलेंडर खोलें",
+  "kn": "ಭೇಟಿ ಕ್ಯಾಲೆಂಡರ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.title": {
+  "en": "Done while you slept",
+  "te": "మీరు నిద్రపోయినప్పుడు జరిగింది",
+  "hi": "आपके सोते समय हुआ",
+  "kn": "ನೀವು ಮಲಗಿದ್ದಾಗ ಆದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.reply_to_inbound.one": {
+  "en": "Replied to 1 customer on WhatsApp",
+  "te": "WhatsApp లో 1 కస్టమర్‌కి జవాబు ఇచ్చాను",
+  "hi": "WhatsApp पर 1 ग्राहक को जवाब दिया",
+  "kn": "WhatsApp ನಲ್ಲಿ 1 ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.reply_to_inbound.other": {
+  "en": "Replied to {n} customers on WhatsApp",
+  "te": "WhatsApp లో {n} కస్టమర్లకు జవాబు ఇచ్చాను",
+  "hi": "WhatsApp पर {n} ग्राहकों को जवाब दिया",
+  "kn": "WhatsApp ನಲ್ಲಿ {n} ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.info.one": {
+  "en": "Sent shop information to 1 customer",
+  "te": "1 కస్టమర్‌కి షాప్ వివరాలు పంపాను",
+  "hi": "1 ग्राहक को दुकान की जानकारी भेजी",
+  "kn": "1 ಗ್ರಾಹಕರಿಗೆ ಅಂಗಡಿಯ ಮಾಹಿತಿ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.info.other": {
+  "en": "Sent shop information to {n} customers",
+  "te": "{n} కస్టమర్లకు షాప్ వివరాలు పంపాను",
+  "hi": "{n} ग्राहकों को दुकान की जानकारी भेजी",
+  "kn": "{n} ಗ್ರಾಹಕರಿಗೆ ಅಂಗಡಿಯ ಮಾಹಿತಿ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.visit.one": {
+  "en": "Sent a visit message to 1 customer",
+  "te": "1 కస్టమర్‌కి విజిట్ మెసేజ్ పంపాను",
+  "hi": "1 ग्राहक को विज़िट का मैसेज भेजा",
+  "kn": "1 ಗ್ರಾಹಕರಿಗೆ ಭೇಟಿಯ ಮೆಸೇಜ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.visit.other": {
+  "en": "Sent visit messages to {n} customers",
+  "te": "{n} కస్టమర్లకు విజిట్ మెసేజ్‌లు పంపాను",
+  "hi": "{n} ग्राहकों को विज़िट के मैसेज भेजे",
+  "kn": "{n} ಗ್ರಾಹಕರಿಗೆ ಭೇಟಿಯ ಮೆಸೇಜ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.followup.one": {
+  "en": "Sent a follow-up to 1 customer",
+  "te": "1 కస్టమర్‌కి ఫాలో-అప్ పంపాను",
+  "hi": "1 ग्राहक को फ़ॉलो-अप भेजा",
+  "kn": "1 ಗ್ರಾಹಕರಿಗೆ ಫಾಲೋ-ಅಪ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.followup.other": {
+  "en": "Sent follow-ups to {n} customers",
+  "te": "{n} కస్టమర్లకు ఫాలో-అప్‌లు పంపాను",
+  "hi": "{n} ग्राहकों को फ़ॉलो-अप भेजे",
+  "kn": "{n} ಗ್ರಾಹಕರಿಗೆ ಫಾಲೋ-ಅಪ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.order_status.one": {
+  "en": "Sent an order update to 1 customer",
+  "te": "1 కస్టమర్‌కి ఆర్డర్ అప్‌డేట్ పంపాను",
+  "hi": "1 ग्राहक को ऑर्डर अपडेट भेजा",
+  "kn": "1 ಗ್ರಾಹಕರಿಗೆ ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.order_status.other": {
+  "en": "Sent order updates to {n} customers",
+  "te": "{n} కస్టమర్లకు ఆర్డర్ అప్‌డేట్‌లు పంపాను",
+  "hi": "{n} ग्राहकों को ऑर्डर अपडेट भेजे",
+  "kn": "{n} ಗ್ರಾಹಕರಿಗೆ ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.other.one": {
+  "en": "Sent 1 other message",
+  "te": "మరో 1 మెసేజ్ పంపాను",
+  "hi": "1 और मैसेज भेजा",
+  "kn": "ಇನ್ನೊಂದು 1 ಮೆಸೇಜ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.other.other": {
+  "en": "Sent {n} other messages",
+  "te": "మరో {n} మెసేజ్‌లు పంపాను",
+  "hi": "{n} और मैसेज भेजे",
+  "kn": "ಇನ್ನೂ {n} ಮೆಸೇಜ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.quiet.one": {
+  "en": "Held 1 message until {time} (quiet hours)",
+  "te": "1 మెసేజ్‌ని {time} వరకు ఆపాను (నిశ్శబ్ద సమయం)",
+  "hi": "1 मैसेज {time} तक रोका (शांत समय)",
+  "kn": "1 ಮೆಸೇಜ್ ಅನ್ನು {time} ವರೆಗೆ ತಡೆದಿದ್ದೇನೆ (ಮೌನ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.quiet.other": {
+  "en": "Held {n} messages until {time} (quiet hours)",
+  "te": "{n} మెసేజ్‌లను {time} వరకు ఆపాను (నిశ్శబ్ద సమయం)",
+  "hi": "{n} मैसेज {time} तक रोके (शांत समय)",
+  "kn": "{n} ಮೆಸೇಜ್‌ಗಳನ್ನು {time} ವರೆಗೆ ತಡೆದಿದ್ದೇನೆ (ಮೌನ ಸಮಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.empty": {
+  "en": "Nothing was sent in the last 24 hours.",
+  "te": "గత 24 గంటల్లో ఏమీ పంపలేదు.",
+  "hi": "पिछले 24 घंटों में कुछ नहीं भेजा गया।",
+  "kn": "ಕಳೆದ 24 ಗಂಟೆಗಳಲ್ಲಿ ಏನನ್ನೂ ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.done.link": {
+  "en": "See everything in the outbox",
+  "te": "అవుట్‌బాక్స్‌లో అన్నీ చూడండి",
+  "hi": "आउटबॉक्स में सब देखें",
+  "kn": "ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಎಲ್ಲವನ್ನೂ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.team.open": {
+  "en": "Open the office",
+  "te": "ఆఫీస్ తెరవండి",
+  "hi": "ऑफ़िस खोलें",
+  "kn": "ಆಫೀಸ್ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

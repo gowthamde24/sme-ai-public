@@ -471,3 +471,71 @@ describe("AskTeam: touch and reading", () => {
     expect(screen.getByText("Hi.").closest("[aria-live]")).toHaveAttribute("aria-live", "polite");
   });
 });
+
+describe("AskTeam: the hero variant (the Agent OWL card of Today)", () => {
+  const hero = (transport: AskTransport | null, onMood = vi.fn(), availability: "live" | "not_available" | "switched_off" = "live", chips?: string[]) => {
+    const out = render(<AskTeam variant="hero" lang="en" base={B} words={WORDS} availability={availability} transport={transport} onMood={onMood} chips={chips} />);
+    return { ...out, onMood };
+  };
+  it("is only the question line, the chips and the answer: no card, no heading, no owl of its own", () => {
+    hero(playing([]));
+    const root = document.querySelector('[data-ask="live"]')!;
+    expect(root.tagName).toBe("DIV");
+    expect(root.className).not.toContain("rounded-xl");
+    expect(screen.queryByRole("heading")).toBeNull();
+    expect(root.querySelector('[role="img"]')).toBeNull();
+  });
+  it("the question line is 56 px on a laptop, round, with the hero placeholder, and the chips are the three given", () => {
+    hero(playing([]), vi.fn(), "live", ["One?", "Two?", "Three?"]);
+    const input = screen.getByRole("textbox", { name: "Your question for Agent OWL" });
+    expect(input).toHaveAttribute("placeholder", "Ask anything, in any language…");
+    expect(input.className).toContain("md:min-h-14");
+    expect(input.className).toContain("rounded-full");
+    expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(["One?", "Two?", "Three?"]);
+    const send = screen.getByRole("button", { name: "Ask" });
+    expect(send.className).toContain("md:size-14");
+  });
+  it("on a phone the chips are out of the way (the bar is fixed above the tab bar) and a chip asks its question", async () => {
+    const seen: { question: string; lang: string; signal: AbortSignal }[] = [];
+    hero(playing([{ type: "text", delta: "ok" }, { type: "done" }], seen), vi.fn(), "live", ["One?", "Two?", "Three?"]);
+    expect(document.querySelector("ul")!.className).toContain("max-md:hidden");
+    fireEvent.click(screen.getByRole("button", { name: "Two?" }));
+    await waitFor(() => expect(seen[0]?.question).toBe("Two?"));
+  });
+  it("tells the card the mood as the question goes: idle, listening while typing, thinking, answering, and idle again after the answer", async () => {
+    const hold: { first?: () => void; second?: () => void } = {};
+    const slow: AskTransport = async function* () {
+      await new Promise<void>((r) => (hold.first = r));
+      yield { type: "text", delta: "Two quotes wait." };
+      await new Promise<void>((r) => (hold.second = r));
+      yield { type: "done" };
+    };
+    const { onMood } = hero(slow);
+    expect(onMood).toHaveBeenLastCalledWith("idle");
+    const input = screen.getByRole("textbox", { name: "Your question for Agent OWL" });
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "What needs me?" } });
+    expect(onMood).toHaveBeenLastCalledWith("listening");
+    fireEvent.click(screen.getByRole("button", { name: "Ask" }));
+    await waitFor(() => expect(onMood).toHaveBeenLastCalledWith("thinking"));
+    await act(async () => hold.first?.());
+    await waitFor(() => expect(onMood).toHaveBeenLastCalledWith("answering"));
+    await act(async () => hold.second?.());
+    await waitFor(() => expect(onMood).toHaveBeenLastCalledWith("idle"));
+  });
+  it("rests when the answer is refused for the cost, the switch or the limit", async () => {
+    const { onMood } = hero(playing([{ type: "error", code: "ai_paused_until" }]));
+    fireEvent.change(screen.getByRole("textbox", { name: "Your question for Agent OWL" }), { target: { value: "Hi" } });
+    fireEvent.click(screen.getByRole("button", { name: "Ask" }));
+    await waitFor(() => expect(onMood).toHaveBeenLastCalledWith("resting"));
+  });
+  it.each([
+    ["not_available" as const, "Not available yet"],
+    ["switched_off" as const, "Switched off"],
+  ])("when %s it says so in a line and offers nothing to press", (availability, text) => {
+    const { onMood } = hero(playing([]), vi.fn(), availability);
+    expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent(text);
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(onMood).toHaveBeenLastCalledWith("resting");
+  });
+});

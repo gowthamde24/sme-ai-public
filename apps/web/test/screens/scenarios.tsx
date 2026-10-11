@@ -18,6 +18,8 @@ import { parsePlan } from "@/lib/api/plan";
 import { parseAccountSetup } from "@/lib/api/account";
 import { parseAiUsage } from "@/lib/api/ai-usage";
 import { agentsStatus, todayFor } from "./today-fixtures";
+import { parseCallRequestPage, parseOutboxPage } from "@/lib/api/outbox";
+import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from "@/lib/api/outbox-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
 import { parseRequirementView } from "@/lib/api/enquiries";
 import { parseDueList, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
@@ -158,7 +160,26 @@ for (const tab of Object.keys(TABS) as (keyof typeof TABS)[]) {
 add({
   id: "today",
   render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})),
-  handlers: (role) => ({ ...base(role), getToday: () => todayFor(role), getAgentsStatus: () => agentsStatus(), fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)], fetchMembers: () => parseMembers(MEMBERS_JSON) }),
+  handlers: (role) => ({
+    ...base(role),
+    getToday: () => todayFor(role),
+    getAgentsStatus: () => agentsStatus(),
+    fetchQuotes: () => [parseQuoteSummary(SUMMARY_JSON)],
+    fetchMembers: () => parseMembers(MEMBERS_JSON),
+    // the words of the message held for approval (Owner and Admin), the call request (Owner), and the last 24 hours of the log (everyone but a Viewer; the clock of this test is 2026-10-06 10:00 in India)
+    listOutboxApprovals: () => parseOutboxPage(outboxPage([PRICE_JSON])),
+    listCallRequests: () => parseCallRequestPage(outboxPage([CALL_JSON])),
+    listOutboxMessages: () =>
+      parseOutboxPage(
+        outboxPage([
+          { ...SENT_JSON, id: "11111111-aaaa-4aaa-8aaa-0000000000a1", sent_at: "2026-10-06T02:00:00Z" },
+          { ...SENT_JSON, id: "11111111-aaaa-4aaa-8aaa-0000000000a2", sent_at: "2026-10-05T20:00:00Z" },
+          { ...SENT_JSON, id: "11111111-aaaa-4aaa-8aaa-0000000000a3", category: "info", sent_at: "2026-10-05T19:00:00Z" },
+          { ...QUIET_JSON, scheduled_for: "2026-10-06T06:30:00Z" },
+          { ...PRICE_JSON, created_at: "2026-10-06T04:45:00Z" },
+        ]),
+      ),
+  }),
 });
 add({
   id: "today-unreadable",

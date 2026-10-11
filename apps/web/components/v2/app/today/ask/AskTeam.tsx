@@ -5,7 +5,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { AgentOwl3D } from "../../owl/AgentOwl3D";
-import { owlMood } from "../../owl/owl-mood";
+import { owlMood, type OwlMood } from "../../owl/owl-mood";
 import { ERROR_CODES, type AskDraft, type AskSource, type AskTransport, type Availability } from "./ask-types";
 import type { AskWords } from "./ask-words";
 import { makeAskTransport } from "./transport";
@@ -18,6 +18,7 @@ const MAX_DRAFTS = 5;
 const MAX_LABEL = 160; // a source label carries an amount or a name; it wraps on the screen, so it is not cut short
 const card = "rounded-xl border border-line bg-surface shadow-[var(--v2-shadow)]";
 const chip = "inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-base text-ink hover:bg-surface-2 disabled:opacity-50";
+const heroChip = "inline-flex min-h-11 items-center rounded-full border border-edge bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-2 disabled:opacity-50";
 
 /** A link the answer asks for, kept only when it stays inside this workspace: the answer can quote a customer's e-mail, so nothing it contains is followed blindly. */
 export function insideWorkspace(href: string, base: string): string | null {
@@ -43,7 +44,7 @@ type Problem = "denied" | "silent" | "failed" | null;
  * language of the language chip) fills the box with what it heard; the person reads it and presses Ask. It is hidden when the browser has no speech recognition.
  * While there is no Agent OWL to ask (it is not built, its switch is off, or the answer stream does not exist yet) the box says so and offers nothing to press.
  */
-export function AskTeam({ lang, base, words, availability, transport: given }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null }) {
+export function AskTeam({ lang, base, words, availability, transport: given, variant = "box", onMood, chips: chipTexts }: { lang: string; base: string; words: AskWords; availability: Availability; transport?: AskTransport | null; /** `box`: the card with the owl in its header. `hero`: only the question line, the chips and the answer, for the Agent OWL card of Today (the owl is drawn by the card, which learns the mood from `onMood`). */ variant?: "box" | "hero"; onMood?: (mood: OwlMood) => void; /** The suggestion chips, when the caller chooses them (`hero`: three). */ chips?: readonly string[] }) {
   const w = (key: string) => words[key] ?? key;
   const own = React.useMemo(() => (availability === "live" && given === undefined ? makeAskTransport(`${base}/ask`) : null), [availability, given, base]);
   const transport = given === undefined ? own : given;
@@ -75,7 +76,11 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
 
   const live = availability === "live" && transport !== null;
   const mood = owlMood({ live, typing: focused && text.trim() !== "", micOn: listening, phase, hasText: answer !== "", errorCode });
-  const title = (
+  React.useEffect(() => {
+    onMood?.(mood);
+  }, [mood, onMood]);
+  const hero = variant === "hero";
+  const title = hero ? null : (
     <div className="flex items-center gap-3 sm:gap-4">
       <AgentOwl3D mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
       <div className="min-w-0">
@@ -87,6 +92,12 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
     </div>
   );
   if (!live || transport === null) {
+    if (hero)
+      return (
+        <p data-ask="unavailable" className="text-base text-muted">
+          {availability === "switched_off" ? w("office.switchedoff") : w("frame.notyet")}
+        </p>
+      );
     return (
       <section aria-labelledby="ask-heading" data-ask="unavailable" className={`${card} mx-auto mb-8 max-w-3xl p-4 sm:p-5`}>
         {title}
@@ -171,13 +182,23 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
     }
   };
 
-  const chips = [w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.money"), w("ask.chip.team")];
+  const chips = chipTexts ?? [w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.money"), w("ask.chip.team")];
   const asking = phase === "asking";
+  const Shell = hero ? "div" : "section";
+  const shellProps = hero ? { "data-ask": "live" } : { "aria-labelledby": "ask-heading", "data-ask": "live", className: `${card} mx-auto mb-8 max-w-3xl p-4 sm:p-5` };
+  // hero: on a phone the question line is fixed above the bottom bar (64 px and the safe area), on a laptop it sits in the card
+  const formClass = hero
+    ? "flex items-center gap-2 max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))] max-md:z-30 max-md:border-t max-md:border-line max-md:bg-bg max-md:px-4 max-md:py-2.5"
+    : "mt-4 flex items-stretch gap-2";
+  const inputClass = hero
+    ? "min-h-12 min-w-0 flex-1 rounded-full border border-edge bg-bg px-5 text-base text-ink placeholder:text-muted focus:border-brand-edge md:min-h-14 md:bg-bg"
+    : "min-h-12 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 text-base text-ink placeholder:text-muted focus:border-brand-edge";
+  const round = hero ? "rounded-full size-12 md:size-14" : "rounded-lg size-12";
   return (
-    <section aria-labelledby="ask-heading" data-ask="live" className={`${card} mx-auto mb-8 max-w-3xl p-4 sm:p-5`}>
+    <Shell {...shellProps}>
       {title}
       <form
-        className="mt-4 flex items-stretch gap-2"
+        className={formClass}
         onSubmit={(e) => {
           e.preventDefault();
           void ask(text);
@@ -193,24 +214,24 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
           onChange={(e) => setText(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
-          placeholder={listening ? w("ask.listening") : w("ask.placeholder")}
+          placeholder={listening ? w("ask.listening") : hero ? w("ask.placeholder.hero") : w("ask.placeholder")}
           autoComplete="off"
-          className="min-h-12 min-w-0 flex-1 rounded-lg border border-edge bg-surface px-3 text-base text-ink placeholder:text-muted focus:border-brand-edge"
+          className={inputClass}
         />
         {canSpeak ? (
-          <button type="button" onClick={listen} aria-pressed={listening} aria-label={listening ? w("ask.mic.stop") : w("ask.mic")} title={listening ? w("ask.mic.stop") : w("ask.mic")} className={`inline-flex size-12 shrink-0 items-center justify-center rounded-lg border ${listening ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
+          <button type="button" onClick={listen} aria-pressed={listening} aria-label={listening ? w("ask.mic.stop") : w("ask.mic")} title={listening ? w("ask.mic.stop") : w("ask.mic")} className={`inline-flex ${round} shrink-0 items-center justify-center border ${listening || hero ? "border-brand-edge bg-brand text-on-brand" : "border-edge bg-surface text-ink hover:bg-surface-2"}`}>
             {listening ? <MicOff className="size-5" aria-hidden="true" /> : <Mic className="size-5" aria-hidden="true" />}
           </button>
         ) : null}
         {asking ? (
-          <button type="button" onClick={stop} className="inline-flex min-h-12 min-w-12 shrink-0 items-center justify-center gap-2 rounded-lg border border-edge bg-surface px-3 text-base font-semibold text-ink hover:bg-surface-2 sm:px-4">
+          <button type="button" onClick={stop} className={`inline-flex min-h-12 min-w-12 shrink-0 items-center justify-center gap-2 border border-edge bg-surface text-base font-semibold text-ink hover:bg-surface-2 ${hero ? "rounded-full md:size-14" : "rounded-lg px-3 sm:px-4"}`}>
             <Square className="size-4" aria-hidden="true" />
             <span className="sr-only sm:not-sr-only">{w("ask.stop")}</span>
           </button>
         ) : (
-          <button type="submit" disabled={text.trim() === ""} className="inline-flex min-h-12 min-w-12 shrink-0 items-center justify-center gap-2 rounded-lg border border-brand-edge bg-brand px-3 text-base font-semibold text-on-brand hover:brightness-95 disabled:opacity-50 sm:px-4">
-            <Send className="size-4" aria-hidden="true" />
-            <span className="sr-only sm:not-sr-only">{w("ask.send")}</span>
+          <button type="submit" disabled={text.trim() === ""} className={`inline-flex min-h-12 min-w-12 shrink-0 items-center justify-center gap-2 border text-base font-semibold hover:brightness-95 disabled:opacity-50 ${hero ? "size-12 rounded-full border-edge bg-surface text-ink md:size-14" : "rounded-lg border-brand-edge bg-brand px-3 text-on-brand sm:px-4"}`}>
+            <Send className={hero ? "size-5" : "size-4"} aria-hidden="true" />
+            <span className={hero ? "sr-only" : "sr-only sm:not-sr-only"}>{w("ask.send")}</span>
           </button>
         )}
       </form>
@@ -221,10 +242,10 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
         </p>
       ) : null}
       {phase === "idle" ? (
-        <ul className="mt-3 flex flex-wrap gap-2" aria-label={w("ask.title")}>
+        <ul className={`mt-3 flex flex-wrap gap-2 ${hero ? "max-md:hidden" : ""}`} aria-label={w("ask.title")}>
           {chips.map((c) => (
             <li key={c}>
-              <button type="button" onClick={() => void ask(c)} className={chip}>
+              <button type="button" onClick={() => void ask(c)} className={hero ? heroChip : chip}>
                 {c}
               </button>
             </li>
@@ -296,10 +317,10 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
             </div>
           ) : null}
           {phase !== "asking" ? (
-            <ul className="mt-4 flex flex-wrap gap-2" aria-label={w("ask.title")}>
+            <ul className={`mt-4 flex flex-wrap gap-2 ${hero ? "max-md:hidden" : ""}`} aria-label={w("ask.title")}>
               {chips.map((c) => (
                 <li key={c}>
-                  <button type="button" onClick={() => void ask(c)} className={chip}>
+                  <button type="button" onClick={() => void ask(c)} className={hero ? heroChip : chip}>
                     {c}
                   </button>
                 </li>
@@ -308,6 +329,6 @@ export function AskTeam({ lang, base, words, availability, transport: given }: {
           ) : null}
         </div>
       ) : null}
-    </section>
+    </Shell>
   );
 }
