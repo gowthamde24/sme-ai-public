@@ -157,6 +157,8 @@ def test_the_caller_token_is_what_the_data_layer_gets(w: World) -> None:
         "p_source": "owner",
         "p_model_flagged": False,
         "p_uncertain": False,
+        "p_media": [],
+        "p_keep_record": False,
     }, "no phone number, no contact, no status, no approver: only what the person said"
 
 
@@ -478,7 +480,9 @@ def test_the_only_adapter_is_the_local_fake_and_it_opens_no_connection() -> None
             imported |= {n.name.split(".")[0] for n in node.names}
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.add(node.module.split(".")[0])
-    assert imported <= {"__future__", "hashlib", "threading", "uuid", "dataclasses", "typing"}, imported
+    assert imported <= {"__future__", "hashlib", "threading", "uuid", "dataclasses", "typing"}, (
+        imported
+    )
     assert isinstance(build_adapter("fake"), LocalFakeAdapter)
     for name in ("twilio", "whatsapp", "meta", "", "FAKE"):
         with pytest.raises(ValueError):
@@ -506,3 +510,109 @@ def test_the_outbox_is_unavailable_without_a_repository_or_adapter() -> None:
     client, _ = make_client()
     r = client.get(BASE + "/outbox/messages", headers=auth("a_owner"))
     assert r.status_code == 503 and r.json()["error"]["code"] == "outbox_unavailable"
+
+
+# ---------------------------------------------------------------------------------------------- job AY: photos and "keep a record"
+PH1 = "dddddddd-dddd-4ddd-8ddd-ddddddddddd1"
+PH2 = "dddddddd-dddd-4ddd-8ddd-ddddddddddd2"
+
+
+def test_photos_and_keep_record_are_passed_on_by_id_and_flag_only(w: World) -> None:
+    body = {**SUBMIT, "message_id": str(uuid.uuid4()), "photo_ids": [PH1, PH2], "keep_record": True}
+    assert w.call("POST", "/outbox/messages", "a_sales", body).status_code == 200
+    args = w.db.calls[0][2]
+    assert args["p_media"] == [PH1, PH2] and args["p_keep_record"] is True
+
+
+@pytest.mark.parametrize(
+    "bad",
+    [
+        {"photo_ids": ["nope"]},
+        {"photo_ids": [PH1, PH2, PH1, PH2, PH1]},
+        {"photo_ids": "x"},
+        {"keep_record": "yes"},
+        {"keep_record": 1},
+        {"photos": [PH1]},
+        {"media": [{"url": "http://x"}]},
+    ],
+)
+def test_photos_and_keep_record_are_validated_before_the_data_layer(
+    w: World, bad: dict[str, Any]
+) -> None:
+    r = w.call(
+        "POST", "/outbox/messages", "a_owner", {**SUBMIT, "message_id": str(uuid.uuid4()), **bad}
+    )
+    assert r.status_code == 422 and w.db.calls == []
+
+
+def test_a_message_shows_its_photos_as_short_lived_thumbnails_and_never_a_path() -> None:
+    from tests.catalogue_fakes import FakeStorage
+
+    db, storage = FakeOutbox(), FakeStorage()
+    client, _ = make_client(outbox=db, outbox_adapter=LocalFakeAdapter(), catalogue_storage=storage)
+    db.messages[M1] = message_row(
+        M1,
+        keep_record=True,
+        media=[
+            {
+                "photo_id": PH2,
+                "position": 2,
+                "photo": {"bucket": "cat-x", "thumb_path": "i/b_t.jpg"},
+            },
+            {
+                "photo_id": PH1,
+                "position": 1,
+                "photo": {"bucket": "cat-x", "thumb_path": "i/a_t.jpg"},
+            },
+        ],
+    )
+    body = client.get(BASE + f"/outbox/messages/{M1}", headers=auth("a_sales")).json()
+    assert body["keep_record"] is True
+    assert [(m["photo_id"], m["position"]) for m in body["media"]] == [(PH1, 1), (PH2, 2)], (
+        "in order"
+    )
+    assert (
+        body["media"][0]["thumb_url"]
+        == "http://storage.local/object/sign/cat-x/i/a_t.jpg?token=abc"
+    )
+    assert set(body["media"][0]) == {"photo_id", "position", "thumb_url"} and "thumb_path" not in str(body) and "bucket" not in str(body)
+    signs = [c for c in storage.calls if c[0] == "sign"]
+    assert len(signs) == 1 and sorted(signs[0][3]) == ["i/a_t.jpg", "i/b_t.jpg"], (
+        "one batch, thumbnails only"
+    )
+    listing = client.get(BASE + "/outbox/messages", headers=auth("a_sales")).json()
+    assert listing["items"][0]["media"][0]["thumb_url"] is not None
+
+
+def test_a_message_without_photos_has_an_empty_list_and_no_signing(w: World) -> None:
+    body = w.call("GET", f"/outbox/messages/{M2}", "a_owner").json()
+    assert body["media"] == [] and body["keep_record"] is False
+
+
+def test_the_channel_is_handed_the_photos_by_reference(w: World) -> None:
+    w.db.claims = [
+        {
+            "id": M2,
+            "lead_id": LEAD,
+            "contact_id": C1,
+            "phone": PHONE,
+            "body": "Two sarees",
+            "language": "en",
+            "media": [
+                {
+                    "photo_id": PH1,
+                    "bucket": "cat-x",
+                    "path": "i/a.jpg",
+                    "content_type": "image/jpeg",
+                }
+            ],
+        }
+    ]
+    w.db.messages[M2]["status"] = "queued"
+    r = w.call("POST", "/outbox/dispatch", "a_owner")
+    assert r.json() == {"sent": 1, "failed": 0}
+    (sent,) = w.adapter.sent
+    assert [(m.photo_id, m.bucket, m.path, m.content_type) for m in sent.media] == [
+        (uuid.UUID(PH1), "cat-x", "i/a.jpg", "image/jpeg")
+    ]
+    assert "http" not in repr(sent), "a reference, not bytes and not a URL"

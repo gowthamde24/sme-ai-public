@@ -139,8 +139,14 @@ def test_tool_surface_cannot_send_approve_or_price() -> None:
     names = {t.name for t in TOOLS}
     assert names == {t.name for t in READ_TOOLS} | {t.name for t in ACTION_TOOLS}
     assert len(names) == len(TOOLS)
-    for forbidden in ("send", "approve", "set_price", "delete", "pay", "create_order", "update"):
+    for forbidden in ("approve", "set_price", "delete", "pay", "create_order", "update"):
         assert not any(forbidden in n for n in names), forbidden
+    # job AY (ADR 0069): the ONE tool with "send" in its name queues a WhatsApp message with
+    # catalogue photos UNDER THE SEND POLICY (a price or an amount in the caption waits for the
+    # owner; photos with no price go by themselves only if the business switched automatic
+    # sending on). It dispatches nothing, approves nothing and takes no price, phone, status
+    # or tenant.
+    assert {n for n in names if "send" in n} == {"send_catalogue_items"}
     assert all(t.action for t in ACTION_TOOLS)
     assert not any(t.action for t in READ_TOOLS)
     assert {t.name for t in ACTION_TOOLS} == {
@@ -149,6 +155,7 @@ def test_tool_surface_cannot_send_approve_or_price() -> None:
         "draft_reply",
         "record_enquiry",
         "propose_visit",
+        "send_catalogue_items",
     }
 
 
@@ -157,6 +164,14 @@ def test_every_tool_schema_is_closed_and_no_tool_accepts_a_tenant_or_a_price() -
         schema = tool.args.model_json_schema()
         assert schema.get("additionalProperties") is False, tool.name
         for field in schema.get("properties", {}):
+            if (tool.name, field) == ("find_catalogue_items", "price_band"):
+                # job AY: a FILTER, one of five closed words (under_5k ... above_50k)
+                assert (
+                    schema["properties"][field].get("enum")
+                    or "$ref" in schema["properties"][field]
+                    or "anyOf" in schema["properties"][field]
+                )
+                continue
             assert not any(
                 w in field for w in ("tenant", "price", "amount", "total", "rate", "discount")
             ), (tool.name, field)

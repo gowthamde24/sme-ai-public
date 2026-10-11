@@ -22,6 +22,7 @@ SourceType = Literal[
     "outbox_message",
     "call_request",
     "store_visit",
+    "catalogue_item",
 ]
 DraftType = Literal["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"]
 OpenType = Literal[

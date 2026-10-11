@@ -15,6 +15,7 @@ from typing import Annotated, Any, Literal
 from fastapi import APIRouter, Depends, Query
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
+from app.catalogue import service as catalogue_service
 from app.crm.models import parse_uuid
 from app.errors import ApiError, not_found
 from app.outbox import service
@@ -65,11 +66,18 @@ def _row_id(raw: str) -> uuid.UUID:
     return parsed
 
 
+def _urls(runtime: Runtime, ctx: TenantContext, rows: list[dict[str, Any]]) -> dict[str, str]:
+    """Signed thumbnail URLs for the photos the messages carry (one batch)."""
+    return catalogue_service.sign_urls(
+        runtime.catalogue_storage, ctx.principal.token, service.media_photos(rows), thumbs_only=True
+    )
+
+
 def _message(runtime: Runtime, ctx: TenantContext, message_id: uuid.UUID) -> OutboxMessageOut:
     row = _repo(runtime).get_message(ctx.principal.token, ctx.tenant.id, message_id)
     if row is None:
         raise not_found()
-    return service.message_out(row)
+    return service.message_out(row, _urls(runtime, ctx, [row]))
 
 
 def _dispatch(runtime: Runtime, ctx: TenantContext) -> DispatchOut | None:
@@ -101,6 +109,8 @@ def submit_message(body: SubmitMessageIn, ctx: SalesPlus, runtime: RuntimeDep) -
             "p_source": body.source,
             "p_model_flagged": body.model_flagged,
             "p_uncertain": body.uncertain,
+            "p_media": [str(p) for p in body.photo_ids],
+            "p_keep_record": body.keep_record,
         },
     )
     replayed = result.get("replayed") is True
@@ -129,8 +139,10 @@ def list_messages(
         after=service.decode_cursor(after),
         limit=limit,
     )
+    urls = _urls(runtime, ctx, rows)
     return OutboxPageOut(
-        items=[service.message_out(r) for r in rows], next_cursor=service.next_cursor(rows, limit)
+        items=[service.message_out(r, urls) for r in rows],
+        next_cursor=service.next_cursor(rows, limit),
     )
 
 
@@ -147,8 +159,10 @@ def list_approvals(
         after=service.decode_cursor(after),
         limit=limit,
     )
+    urls = _urls(runtime, ctx, rows)
     return OutboxPageOut(
-        items=[service.message_out(r) for r in rows], next_cursor=service.next_cursor(rows, limit)
+        items=[service.message_out(r, urls) for r in rows],
+        next_cursor=service.next_cursor(rows, limit),
     )
 
 

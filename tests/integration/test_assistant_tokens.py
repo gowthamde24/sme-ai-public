@@ -34,8 +34,10 @@ QUESTIONS = {
 # ceilings in ESTIMATED tokens: a whole question (all its model calls), and one call
 # job AS added ONE tool (propose_visit: 77 estimated tokens, sent with each of the two calls = +154 a question); the ceiling went from 3400 to 3450 for exactly that. The tool is kept to three small
 # fields for this reason. Anything beyond it fails here.
-QUESTION_CEILING = 3450
-CALL_CEILING = 2000
+# job AY added TWO tools (find_catalogue_items and send_catalogue_items; measured below), sent with each of the two calls of a question: the ceilings went from 3450 to 4050 a question and from 2000 to 2250 a call for exactly those two (measured: 3,705 to 3,986 a question, 1,855 to 2,190 a call). Both are kept to
+# closed words, a lead, up to four ids and one caption.
+QUESTION_CEILING = 4050
+CALL_CEILING = 2250
 
 
 def size_bytes(request: LlmRequest) -> int:

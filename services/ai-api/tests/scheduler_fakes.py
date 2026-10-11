@@ -63,6 +63,7 @@ class FakeScheduler:
             "platform_switch_on": True,
             "auto_send_enabled": True,
             "active": True,
+            "releases_approved": True,
             "worker_running": True,
             "last_run_at": "2026-10-05T08:30:00+00:00",
             "next_run_at": "2026-10-05T08:31:00+00:00",

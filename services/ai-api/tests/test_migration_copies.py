@@ -773,7 +773,8 @@ AS_CHANGED: dict[str, set[str]] = {
 
 @pytest.mark.parametrize("name", AS_COPIES)
 def test_the_store_visits_copy_is_the_last_definition_and_only_adds_lines(name: str) -> None:
-    defs = definitions(name)
+    # job AY (tests/test_migration_copies_ay.py) adds one word to assistant_save_reply: this pins the store-visits copy as the last definition up to that migration
+    defs = [d for d in definitions(name) if d[0] <= AS]
     assert defs[-1][0] == AS, (
         f"{name} is redefined after the store-visits migration ({defs[-1][0]}) or the migration does not define it: re-copy it from the latest definition"
     )
@@ -881,7 +882,7 @@ def test_the_outbox_core_is_the_clock_definition_with_exactly_the_role_lines_cha
 ) -> None:
     before = [d for d in definitions(name) if d[0] == AT_CLOCK]
     assert len(before) == 1
-    core = definitions(AW_CORES[name])
+    core = [d for d in definitions(AW_CORES[name]) if d[0] <= AW]  # job AY replaces the cores again (test_migration_copies_ay.py)
     assert len(core) == 1 and core[0][0] == AW, (
         "the core is defined once, in the scheduler migration"
     )
@@ -908,7 +909,7 @@ WRAPPER_ROLE_LINE = {
 
 @pytest.mark.parametrize("name", sorted(AW_CORES))
 def test_the_outbox_wrapper_keeps_its_role_check_and_calls_the_core(name: str) -> None:
-    defs = definitions(name)
+    defs = [d for d in definitions(name) if d[0] <= AW]  # job AY replaces two of the wrappers (test_migration_copies_ay.py)
     assert defs[-1][0] == AW, f"{name} is redefined after the scheduler migration ({defs[-1][0]})"
     body = defs[-1][1]
     assert "security definer" in body and "set search_path = ''" in body

@@ -24,6 +24,13 @@ insert into public.store_visits (id, tenant_id, lead_id, contact_id, visit_date,
 select tests.rid('b_fk_visit'), tests.tid('b'), l.id, l.contact_id, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', repeat('6', 64), tests.uid('b_owner')
   from (select id, contact_id from public.leads where tenant_id = tests.tid('b') order by id limit 1) l;
 
+-- job AY: the photos of a message reference a catalogue photo of the business, and a photo its item; the generic attack needs a tenant-B item and photo to aim at
+insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by)
+values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', tests.uid('b_owner'));
+insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, width, height, bytes, thumb_bytes, created_by)
+values (tests.rid('b_fk_photo'), tests.tid('b'), tests.rid('b_fk_item'), 1, app.catalogue_bucket(tests.tid('b')), tests.rid('b_fk_item')::text || '/' || tests.rid('b_fk_photo')::text || '.jpg',
+        tests.rid('b_fk_item')::text || '/' || tests.rid('b_fk_photo')::text || '_t.jpg', 640, 640, 1000, 100, tests.uid('b_owner'));
+
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
 language plpgsql as $$
@@ -103,7 +110,8 @@ begin
                                 and not t.tgisinternal
                                 and fp.pronamespace = 'app'::regnamespace
                                 and fp.proname in ('append_only', 'guard_immutable_record', 'quote_guard_update', 'order_guard_update',
-                                                            'followup_drafts_guard_update', 'question_drafts_guard_update', 'outbox_messages_guard_update', 'call_requests_guard_update', 'store_visits_guard_update', 'visit_reminders_guard_update'));
+                                                            'followup_drafts_guard_update', 'question_drafts_guard_update', 'outbox_messages_guard_update', 'call_requests_guard_update', 'store_visits_guard_update', 'visit_reminders_guard_update',
+                                                            'catalogue_items_guard_update', 'catalogue_photos_guard_update', 'outbox_message_media_guard'));
     -- agent_runs.lead_id / enquiry_id / conversation_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.

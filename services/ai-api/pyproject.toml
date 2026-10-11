@@ -9,6 +9,8 @@ dependencies = [
     "pydantic-settings>=2.4",
     "httpx>=0.27",
     "pyjwt[crypto]>=2.9",
+    # job AY (ADR 0069): resize catalogue photos, make thumbnails and strip EXIF/location data on the server
+    "pillow>=11.3",
 ]
 
 [project.optional-dependencies]
@@ -45,6 +47,7 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../scripts/seed_demo.py" = ["E501"]
 "../../scripts/seed_demo_manual.py" = ["E501"]
 "../../scripts/seed_demo_outbox.py" = ["E501"]
+"../../scripts/seed_demo_catalogue.py" = ["E501"]
 "../../scripts/local_confirm.py" = ["E501"]
 "../../scripts/demo_code.py" = ["E501"]
 "../../scripts/dev_worker_local.py" = ["E501"]
@@ -64,6 +67,10 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/visits/*" = ["E501"]
 # job AW: the scheduler (long explanatory docstrings)
 "app/scheduler/*" = ["E501"]
+# job AY: the catalogue (long explanatory docstrings)
+"app/catalogue/*" = ["E501"]
+"app/leadtools/*" = ["E501"]
+"app/assistant/draft.py" = ["E501"]
 "app/agents/llm/fake_requirement.py" = ["E501"]
 # job AK / K3: the model adapters (long explanatory docstrings, long payload lines)
 "app/agents/llm/openai_compat.py" = ["E501"]

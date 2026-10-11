@@ -1,6 +1,6 @@
 # ADR 0068: the scheduler (quiet-hours release, visit reminders, automatic no-show) and the worker's principal
 
-Status: accepted for the local stage (job AW, 2026-10-11). Builds on ADR 0013 (a non-human actor needs a dedicated principal, option B), ADR 0066 (the outbox and its policy) and ADR 0067 (store visits). Nothing is deployed; the only channel is the local fake.
+Status: accepted for the local stage (job AW, 2026-10-11); amended by the owner's decision "approved = send" (job AY, see the addendum at the end). Builds on ADR 0013 (a non-human actor needs a dedicated principal, option B), ADR 0066 (the outbox and its policy) and ADR 0067 (store visits). Nothing is deployed; the only channel is the local fake.
 
 ## Context
 Three things need something to happen **without a person at the keyboard**: a message held for the morning must go at 09:00 (quiet hours 21:00 to 09:00 India time), a customer with a confirmed visit should be reminded (the evening before, and a few hours before), and a visit nobody came to should not stay "confirmed" for ever. Until now the outbox dispatched only when an Owner or Admin submitted, approved or pressed "dispatch now".
@@ -36,3 +36,16 @@ The obstacle is **identity**. The API has no service-role key by design and acts
 * The heartbeat is one row for the installation, not per business: a business sees whether the worker is alive, not that it looked at them specifically.
 * `scheduler_runs`, `visit_reminders` and `scheduler_settings` hold no personal data (ids, kinds, times, integers); the erasure registry needs no entry. They are append-only (no update, delete or truncate); retention is not decided.
 * The worker adds no dependency (httpx and the existing repository pattern).
+
+## Addendum (job AY): approved = send
+
+**Owner decision.** A message the Owner has approved is released by the worker **even when the business's automatic sending is off**, as long as the global switch is on. Approval is the Owner's consent to send. Automatic sending off still means nothing goes **without** an approval.
+
+What changed (migration `20261110090100_ay_outbox_media.sql`; the cores and the three scheduler functions are replaced as full copies, pinned by `test_migration_copies_ay.py`):
+* `scheduler_tenants()` lists a business that switched automatic sending on **or** has a queued message whose reason is `owner_approved`. While the global switch is off it is still `[]`.
+* `scheduler_claim_due` asks the same core as before, with a new argument: `p_approved_only = not (automatic sending on)`. The core adds one line, `and (not p_approved_only or x.reason = 'owner_approved')`, so with automatic sending off the worker claims **only** approved messages. Everything else is unchanged and still applies at send time, in the same code a person's "dispatch now" runs: quiet hours (an approval at night is scheduled for the next 09:00 and released then, not at 08:59), STOP / withdrawn consent / erasure, the suppression key and opt-in, and the per-customer daily limit.
+* A message that was **auto-allowed** earlier and is still queued when the business then switches automatic sending off is **not** released (nobody approved it); it waits for the Owner's "dispatch now". The people's `outbox_claim_due` is unchanged (`p_approved_only = false`).
+* Reminders and the automatic no-show stay behind automatic sending (decision 3 stands for them). `scheduler_status` gains `releases_approved` (true while the global switch is on) beside `active` (both switches on), so the card can say "approved messages still go out".
+* The Python side did not change: it asks the database which businesses to visit and hands each claim to the outbox's own dispatch loop.
+
+Tests: pgTAP 80 section I pins 13:00, 22:00, 08:59 and 09:00 India time (day and night) and checks that approved messages go with automatic sending off, an auto-allowed one does not, STOP after approval blocks, the global switch off releases nothing, the status flag and the people's dispatch; `tests/integration/test_scheduler_api.py` runs it end to end with the real worker (approve at 22:00, nothing at 08:59, sent at 09:00). The consequence listed above ("Messages the Owner approved in a business with automatic sending OFF are not released by the worker") no longer holds and is struck from the pre-pilot checklist.

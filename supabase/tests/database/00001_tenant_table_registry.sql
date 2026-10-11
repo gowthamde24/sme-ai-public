@@ -276,6 +276,25 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('scheduler_runs',
    $$insert into public.scheduler_runs (id, tenant_id, run_at, sent) values (%2$L, %1$L, timestamptz '2026-10-06 11:00+05:30', 1)$$,
    'sent = sent', $$delete from public.scheduler_runs where id = %2$L$$, false),
+  -- job AY: the catalogue and the photos of a message. Written only by SECURITY DEFINER functions; every member reads the catalogue.
+  ('catalogue_items',
+   $$insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (%2$L, %1$L, 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', %5$L)$$,
+   'name = name', $$delete from public.catalogue_items where id = %2$L$$, false),
+  ('catalogue_photos',
+   $$with i as (insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (gen_random_uuid(), %1$L, 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', %5$L) returning id)
+     insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, width, height, bytes, thumb_bytes, created_by)
+     select %2$L, %1$L, i.id, 1, app.catalogue_bucket(%1$L), i.id::text || '/' || %2$L || '.jpg', i.id::text || '/' || %2$L || '_t.jpg', 640, 640, 1000, 100, %5$L from i$$,
+   'position = position', $$delete from public.catalogue_photos where id = %2$L$$, false),
+  ('outbox_message_media',
+   $$with i as (insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (gen_random_uuid(), %1$L, 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', %5$L) returning id),
+          ph as (select gen_random_uuid() as pid),
+          p as (insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, width, height, bytes, thumb_bytes, created_by)
+                select ph.pid, %1$L, i.id, 1, app.catalogue_bucket(%1$L), i.id::text || '/' || ph.pid::text || '.jpg', i.id::text || '/' || ph.pid::text || '_t.jpg', 640, 640, 1000, 100, %5$L from i, ph returning id),
+          m as (insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by)
+                select gen_random_uuid(), %1$L, l.id, l.contact_id, 'whatsapp', 'Synthetic generic message', 'en', 'info', 'needs_approval', 'category_other', repeat('1', 64), %5$L
+                  from (select id, contact_id from public.leads where tenant_id = %1$L order by id limit 1) l returning id)
+     insert into public.outbox_message_media (id, tenant_id, message_id, photo_id, position) select %2$L, %1$L, m.id, p.id, 1 from m, p$$,
+   'position = position', $$delete from public.outbox_message_media where id = %2$L$$, false),
   ('assistant_conversations',
    $$insert into public.assistant_conversations (id, tenant_id, created_by) values (%2$L, %1$L, %5$L)$$,
    'updated_at = updated_at', $$delete from public.assistant_conversations where id = %2$L$$, true),
@@ -409,6 +428,12 @@ select t, r, s, i, u, d from (values
   ('store_settings',       'sales', true, false, false, false), ('store_settings',       'viewer', true, false, false, false),
   ('store_visits',         'owner', true, false, false, false), ('store_visits',         'admin', true, false, false, false),
   ('store_visits',         'sales', true, false, false, false), ('store_visits',         'viewer', true, false, false, false),
+  ('catalogue_items',      'owner', true, false, false, false), ('catalogue_items',      'admin', true, false, false, false),
+  ('catalogue_items',      'sales', true, false, false, false), ('catalogue_items',      'viewer', true, false, false, false),
+  ('catalogue_photos',     'owner', true, false, false, false), ('catalogue_photos',     'admin', true, false, false, false),
+  ('catalogue_photos',     'sales', true, false, false, false), ('catalogue_photos',     'viewer', true, false, false, false),
+  ('outbox_message_media', 'owner', true, false, false, false), ('outbox_message_media', 'admin', true, false, false, false),
+  ('outbox_message_media', 'sales', true, false, false, false), ('outbox_message_media', 'viewer', false, false, false, false),
   ('scheduler_settings',   'owner', true, false, false, false), ('scheduler_settings',   'admin', true, false, false, false),
   ('scheduler_settings',   'sales', false, false, false, false), ('scheduler_settings',   'viewer', false, false, false, false),
   ('visit_reminders',      'owner', true, false, false, false), ('visit_reminders',      'admin', true, false, false, false),

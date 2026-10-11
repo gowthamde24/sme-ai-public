@@ -21,6 +21,7 @@ from app.assistant.db import AssistantDb
 from app.assistant.language import Language
 from app.assistant.models import DraftCardOut, OpenTarget, draft_summary
 from app.auth.deps import Runtime
+from app.catalogue.vocab import BAND_LABEL, COLOURS, FABRIC_LABEL, STOCK_LABEL, Occasion, PriceBand
 from app.requirements.capture_text import prepare_body, prepare_subject
 from app.today.service import format_rupees, shape_today
 
@@ -764,6 +765,154 @@ def propose_visit(ctx: Ctx, args: ProposeVisitArgs) -> Output:
     return Output(items=(item,))
 
 
+_FABRIC_ALIASES = {
+    "kanjivaram": "kanchi_pattu", "kanchipuram": "kanchi_pattu", "kanchi": "kanchi_pattu", "pattu": "kanchi_pattu", "kanchi_pattu": "kanchi_pattu",
+    "dharmavaram": "dharmavaram_silk", "dharmavaram_silk": "dharmavaram_silk", "soft_silk": "soft_silk", "soft": "soft_silk",
+    "cotton_silk": "cotton_silk", "banarasi": "banarasi", "benarasi": "banarasi", "mysore": "mysore_silk", "mysore_silk": "mysore_silk",
+    "uppada": "uppada", "cotton": "pure_cotton", "pure_cotton": "pure_cotton", "georgette": "georgette", "other": "other",
+}  # fmt: skip
+
+
+def _word(raw: str) -> str:
+    return re.sub(r"[\s\-]+", "_", raw.strip().lower())
+
+
+class FindCatalogueArgs(_Args):
+    """Find the shop's sarees (fabric such as kanchi pattu or soft silk; colour; occasion; price band). Every field is optional; only active items with a photo are found. (Small on purpose: every tool is
+    sent to the model with every question, so fabric and colour are plain words that the code matches to its closed lists.)"""
+
+    fabric: Annotated[str, StringConstraints(max_length=24)] | None = None
+    colour: Annotated[str, StringConstraints(max_length=12)] | None = None
+    occasion: Occasion | None = None
+    price_band: PriceBand | None = None
+    in_stock: bool = False
+
+
+def find_catalogue_items(ctx: Ctx, args: FindCatalogueArgs) -> Output:
+    if ctx.runtime.catalogue is None:
+        return Output(note="unavailable")
+    fabric = _FABRIC_ALIASES.get(_word(args.fabric)) if args.fabric else None
+    if args.fabric and fabric is None:
+        return Output(note="unknown_fabric")
+    colour = _word(args.colour) if args.colour else None
+    if colour is not None and colour not in COLOURS:
+        return Output(note="unknown_colour")
+    rows = ctx.runtime.catalogue.search(
+        ctx.token,
+        ctx.tenant,
+        {
+            "p_fabric": fabric,
+            "p_colours": [colour] if colour else None,
+            "p_occasions": [args.occasion] if args.occasion else None,
+            "p_price_bands": [args.price_band] if args.price_band else None,
+            "p_in_stock_only": args.in_stock,
+            "p_include_inactive": False,
+            "p_limit": 6,
+        },
+    )
+    items: list[Item] = []
+    for row in rows:
+        item_id = uuid.UUID(str(row["id"]))
+        paise = row.get("price_paise")
+        exact = int(paise) if isinstance(paise, int) and not isinstance(paise, bool) else None
+        fields: dict[str, str | int | None] = {
+            "fabric": FABRIC_LABEL.get(str(row["fabric"]), str(row["fabric"])),
+            "colours": ", ".join(row["colours"]),
+            "occasions": ", ".join(row["occasions"]) or None,
+            "price_band": BAND_LABEL.get(str(row["price_band"]), str(row["price_band"])),
+            "price": _money(exact) if exact is not None else None,
+            "stock": STOCK_LABEL.get(str(row["stock_status"]), str(row["stock_status"])),
+            "photos": len(row.get("photos") or []),
+        }
+        items.append(
+            ctx.state.add(
+                "catalogue_item",
+                item_id,
+                str(row["name"]),
+                fields,
+                None,
+                money=(exact,) if exact is not None else (),
+            )
+        )
+    return Output(items=tuple(items)) if items else Output(note="no_matching_items")
+
+
+class SendCatalogueArgs(_Args):
+    """Queue ONE WhatsApp message to a lead with the cover photo of 1 to 4 catalogue items and a short caption in the CUSTOMER's language. The sending policy decides: a caption that mentions a price band or an
+    amount waits for the owner's approval; photos without a price can go by themselves only if automatic sending is on."""
+
+    lead_id: uuid.UUID
+    item_ids: Annotated[list[uuid.UUID], Field(min_length=1, max_length=4)]
+    language: Language
+    caption: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=300)]
+
+
+def send_catalogue_items(ctx: Ctx, args: SendCatalogueArgs) -> Output:
+    from app.assistant.language import reply_matches
+    from app.crm.repository import ConflictError, InvalidReferenceError, InvalidValueError
+    from app.tenancy.repository import Forbidden
+
+    if ctx.runtime.catalogue is None or ctx.runtime.outbox is None:
+        return Output(note="unavailable")
+    if not reply_matches(args.caption, args.language):
+        return Output(note="caption_not_in_the_stated_language")
+    photos: list[uuid.UUID] = []
+    for item_id in dict.fromkeys(args.item_ids):
+        try:
+            row = ctx.runtime.catalogue.get_item(ctx.token, ctx.tenant, item_id)
+        except InvalidReferenceError:
+            return Output(note="item_not_found")
+        live = row.get("photos") or []
+        if not row.get("active") or not live:
+            return Output(note="item_not_available")
+        photos.append(uuid.UUID(str(live[0]["id"])))
+    message_id = _derived(
+        ctx.run_id,
+        "catalogue",
+        args.lead_id,
+        ",".join(str(p) for p in photos),
+        args.language,
+        args.caption,
+    )
+    try:
+        ctx.runtime.outbox.submit(
+            ctx.token,
+            {
+                "p_message_id": str(message_id),
+                "p_tenant_id": str(ctx.tenant),
+                "p_lead_id": str(args.lead_id),
+                "p_channel": "whatsapp",
+                "p_body": args.caption,
+                "p_language": args.language,
+                "p_category": "info",
+                "p_source": "assistant",
+                "p_model_flagged": False,
+                "p_uncertain": False,
+                "p_media": [str(p) for p in photos],
+                "p_keep_record": False,
+            },
+        )
+    except Forbidden:
+        return Output(note="not_allowed_for_this_person")
+    except (InvalidReferenceError, InvalidValueError):
+        return Output(note="not_found")
+    except ConflictError:
+        return Output(note="already_exists_with_other_details")
+    sent = ctx.runtime.outbox.get_message(ctx.token, ctx.tenant, message_id)
+    status = str((sent or {}).get("status") or "queued").replace("_", " ")
+    item = ctx.state.add(
+        "outbox_message",
+        message_id,
+        f"WhatsApp message with {len(photos)} photo{'s' if len(photos) != 1 else ''} ({status})",
+        {
+            "status": str((row or {}).get("status") or "queued"),
+            "reason": str((row or {}).get("reason") or ""),
+        },
+        ("outbox_message", message_id),
+    )
+    return Output(items=(item,))
+
+
 READ_TOOLS: tuple[Tool, ...] = (
     Tool(
         "get_today",
@@ -807,6 +956,12 @@ READ_TOOLS: tuple[Tool, ...] = (
         ListFollowupsArgs,
         list_followups,
     ),
+    Tool(
+        "find_catalogue_items",
+        "Find sarees in the shop's catalogue (fabric, colour, occasion, price band, in stock).",
+        FindCatalogueArgs,
+        find_catalogue_items,
+    ),
 )
 ACTION_TOOLS: tuple[Tool, ...] = (
     Tool(
@@ -842,6 +997,13 @@ ACTION_TOOLS: tuple[Tool, ...] = (
         "Propose a store visit (YYYY-MM-DD, HH:MM India time); a person confirms.",
         ProposeVisitArgs,
         propose_visit,
+        True,
+    ),
+    Tool(
+        "send_catalogue_items",
+        "Queue a WhatsApp message with 1-4 catalogue sarees' photos and a short caption to a lead; the sending policy decides.",
+        SendCatalogueArgs,
+        send_catalogue_items,
         True,
     ),
 )
