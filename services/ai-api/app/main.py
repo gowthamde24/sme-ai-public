@@ -36,6 +36,14 @@ from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
+from app.integrations import errors as integration_errors
+from app.integrations.policy import PolicyVersions
+from app.integrations.repository import PostgrestIntegrationsRepository
+from app.integrations.routes_accounting import router as accounting_export_router
+from app.integrations.routes_calendar import member_router as calendar_member_router
+from app.integrations.routes_calendar import public_router as calendar_public_router
+from app.integrations.routes_import import router as spreadsheet_import_router
+from app.integrations.routes_policy import router as policy_router
 from app.leads.repository import PostgrestLeadsRepository
 from app.leads.routes import router as leads_router
 from app.leadtools.repository import PostgrestLeadSearchRepository
@@ -130,6 +138,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         catalogue_storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
         lead_search=PostgrestLeadSearchRepository(config.rest_url, config.anon_key),
         voice=build_voice(settings),
+        integrations=PostgrestIntegrationsRepository(config.rest_url, config.anon_key),
+        policies=PolicyVersions(settings.terms_version, settings.privacy_version),
     )
 
 
@@ -302,6 +312,18 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     outbox_errors.CustomerStoppedError: ApiError(
         409, "customer_stopped", "This customer asked us to stop. Nothing more is sent or called."
     ),
+    # Integrations (job BI, ADR 0073). Fixed messages: nothing from the data layer reaches a client.
+    integration_errors.ExportTooLargeError: ApiError(
+        422, "export_too_large", "That window holds too much to export at once. Choose fewer days."
+    ),
+    integration_errors.ImportJobStateError: ApiError(
+        409, "import_state", "That import is not in a state that allows this. Check the file again."
+    ),
+    integration_errors.ImportMismatchError: ApiError(
+        409,
+        "import_file_changed",
+        "This is not the file (or the column choices) that was checked. Check it again.",
+    ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
         409,
@@ -426,7 +448,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestSchedulerRepository
                     | PostgrestCatalogueRepository
                     | HttpStorageClient
-                    | PostgrestLeadSearchRepository,
+                    | PostgrestLeadSearchRepository
+                    | PostgrestIntegrationsRepository,
                 ):
                     repository.close()
 
@@ -509,6 +532,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(today_router)
     app.include_router(assistant_router)
     app.include_router(voice_router)
+    app.include_router(accounting_export_router)
+    app.include_router(spreadsheet_import_router)
+    app.include_router(calendar_member_router)
+    app.include_router(calendar_public_router)
+    app.include_router(policy_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

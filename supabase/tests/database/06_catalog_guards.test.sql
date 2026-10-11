@@ -110,8 +110,13 @@ select is(
   '', 'every SECURITY DEFINER function pins search_path to empty');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
-    where has_function_privilege('anon', oid, 'execute')),
-  '', 'anon can execute none of our functions');
+    where has_function_privilege('anon', oid, 'execute')
+      -- job BI (ADR 0073): a calendar app has no sign-in; the hash of a private token is its credential. This is the ONE exception.
+      and fq not in ('public.calendar_feed_read')),
+  '', 'anon can execute none of our functions except the calendar feed read');
+select is(
+  (select coalesce(string_agg(sig, ', '), '') from our_functions where has_function_privilege('anon', oid, 'execute')),
+  'calendar_feed_read(text)', 'the calendar feed read is the only function anon can execute (job BI, ADR 0073)');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
     where has_function_privilege('authenticated', oid, 'execute')
@@ -265,7 +270,11 @@ select is(
         'public.discard_followup_draft',
         'public.record_draft_sent',
         'public.persist_question_drafts',
-        'public.decide_question_draft')),
+        'public.decide_question_draft',
+        -- job BI (ADR 0073): the accounting export, the spreadsheet import jobs, the stock import, the calendar feed and the policy acceptance. Role first in every one; aal2 for the export and for running an import
+        'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
+        'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',
+        'public.policy_accept', 'public.policy_acceptances_mine')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -295,8 +304,11 @@ select is(
                      'public.scheduler_settings_get', 'public.scheduler_settings_set', 'public.scheduler_tenants', 'public.scheduler_heartbeat', 'public.scheduler_claim_due', 'public.scheduler_mark',
                      'public.scheduler_due_reminders', 'public.scheduler_queue_reminder', 'public.scheduler_mark_no_shows', 'public.scheduler_record', 'public.scheduler_status',
                      'public.catalogue_ensure_bucket', 'public.catalogue_item_save', 'public.catalogue_photo_add', 'public.catalogue_photo_remove', 'public.catalogue_photos_reorder',
-                     'public.outbox_list', 'public.outbox_summary')),
-  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2)');
+                     'public.outbox_list', 'public.outbox_summary',
+                     'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
+                     'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',
+                     'public.policy_accept', 'public.policy_acceptances_mine')),
+  '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions

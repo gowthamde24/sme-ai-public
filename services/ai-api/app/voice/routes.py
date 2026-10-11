@@ -36,7 +36,7 @@ from app.crm.models import parse_uuid
 from app.errors import ApiError
 from app.tenancy.models import Role
 from app.voice import usage
-from app.voice.audio import MAX_WAV_BYTES, AudioInfo, AudioRefused, inspect_audio
+from app.voice.audio import MAX_SECONDS, MAX_WAV_BYTES, AudioInfo, AudioRefused, inspect_audio
 from app.voice.interface import LANGUAGES, VoiceError
 
 logger = logging.getLogger("app.voice.routes")
@@ -117,6 +117,22 @@ async def _read_body(request: Request) -> bytes:
             raise ApiError(*REFUSALS["too_large"])
         chunks.append(chunk)
     return b"".join(chunks)
+
+
+@router.get("/assistant/voice/status")
+def voice_status(ctx: SalesPlus, runtime: RuntimeDep) -> dict[str, Any]:
+    """Is voice available, in which languages and for how long (job BI). The web reads this instead of probing with an empty recording. It touches no provider and charges nothing: it only says what
+    this system has switched on. `available` = the microphone can be offered (speech-to-text is configured); `speech_available` = answers can be spoken (text-to-speech is configured)."""
+    voice = runtime.voice
+    on = voice is not None and voice.stt is not None
+    return {
+        "available": on,
+        "speech_available": bool(voice is not None and voice.tts is not None),
+        "languages": list(LANGUAGES) if on else [],
+        "max_seconds": int(MAX_SECONDS),
+        "max_bytes": MAX_WAV_BYTES,
+        "content_types": ["audio/webm", "audio/ogg", "audio/mp4", "audio/wav", "audio/flac", "audio/mpeg"] if on else [],
+    }
 
 
 @router.post("/assistant/voice")

@@ -31,6 +31,10 @@ ROUTE_WORDS = frozenset(
         "confirm", "decision", "discard",
         "quote-setup", "quotes", "picks", "approve", "reject", "withdraw", "text",
         "suppression", "status", "backfill", "allow-without-key",
+        # job BI: exports, imports, the calendar feed (its token is never a word: always redacted)
+        "accounting", "formats", "imports", "spreadsheet", "inspect", "jobs",
+        "calendar-feed", "calendar", "feed", "revoke", "policies", "current",
+        "policy-acceptances",
         "orders", "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",

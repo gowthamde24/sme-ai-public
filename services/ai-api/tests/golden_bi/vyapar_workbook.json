@@ -1,0 +1,244 @@
+{
+ "Parties": [
+  [
+   "Party Name",
+   "GSTIN",
+   "Phone No",
+   "Email",
+   "City",
+   "State",
+   "Opening Balance"
+  ],
+  [
+   "'=HYPERLINK(\"http://x.example\",\"pay\")"
+  ],
+  [
+   "Ravi & Sons Silks",
+   "",
+   "",
+   "",
+   "Hyderabad"
+  ],
+  [
+   "శ్రీ లక్ష్మి చీరలు",
+   "",
+   "",
+   "",
+   "Bengaluru"
+  ]
+ ],
+ "Items": [
+  [
+   "Item Name",
+   "Item Code",
+   "HSN",
+   "Unit",
+   "Sale Price",
+   "Tax Rate"
+  ],
+  [
+   "Pure cotton",
+   "CT-100",
+   "",
+   "piece",
+   "1000",
+   "0"
+  ],
+  [
+   "Kanchi pattu, maroon",
+   "KP-001",
+   "",
+   "piece",
+   "10000",
+   "5"
+  ],
+  [
+   "Soft silk, green",
+   "SS-014",
+   "",
+   "piece",
+   "8000",
+   "5"
+  ],
+  [
+   "Uppada, \"peacock\" <border>",
+   "UP-003",
+   "",
+   "piece",
+   "5000",
+   "12"
+  ]
+ ],
+ "Sales": [
+  [
+   "Invoice No",
+   "Invoice Date",
+   "Party Name",
+   "GSTIN",
+   "Place of Supply",
+   "Item Name",
+   "Item Code",
+   "Quantity",
+   "Unit",
+   "Rate",
+   "Tax Rate",
+   "Taxable Amount",
+   "Tax Amount",
+   "Total Amount"
+  ],
+  [
+   "SO-00012",
+   "05/10/2026",
+   "Ravi & Sons Silks",
+   "",
+   "TS",
+   "Kanchi pattu, maroon",
+   "KP-001",
+   "2",
+   "piece",
+   "30000",
+   "5",
+   "60000",
+   "3000",
+   "63000"
+  ],
+  [
+   "SO-00012",
+   "05/10/2026",
+   "Ravi & Sons Silks",
+   "",
+   "TS",
+   "Soft silk, green",
+   "SS-014",
+   "1",
+   "piece",
+   "8000",
+   "5",
+   "8000",
+   "400",
+   "8400"
+  ],
+  [
+   "SO-00012",
+   "05/10/2026",
+   "Ravi & Sons Silks",
+   "",
+   "TS",
+   "Freight Charges",
+   "",
+   "1",
+   "",
+   "500",
+   "",
+   "500",
+   "25",
+   "525"
+  ],
+  [
+   "SO-00013",
+   "08/10/2026",
+   "శ్రీ లక్ష్మి చీరలు",
+   "",
+   "KA",
+   "Kanchi pattu, maroon",
+   "KP-001",
+   "1",
+   "piece",
+   "10000",
+   "5",
+   "10000",
+   "500",
+   "10500"
+  ],
+  [
+   "SO-00013",
+   "08/10/2026",
+   "శ్రీ లక్ష్మి చీరలు",
+   "",
+   "KA",
+   "Uppada, \"peacock\" <border>",
+   "UP-003",
+   "1",
+   "piece",
+   "5000",
+   "12",
+   "5000",
+   "600",
+   "5600"
+  ],
+  [
+   "SO-00013",
+   "08/10/2026",
+   "శ్రీ లక్ష్మి చీరలు",
+   "",
+   "KA",
+   "Round Off",
+   "",
+   "1",
+   "",
+   "0.5",
+   "",
+   "0.5",
+   "0",
+   "0.5"
+  ],
+  [
+   "SO-00014",
+   "20/10/2026",
+   "'=HYPERLINK(\"http://x.example\",\"pay\")",
+   "",
+   "TS",
+   "Pure cotton",
+   "CT-100",
+   "1",
+   "piece",
+   "1000",
+   "0",
+   "1000",
+   "0",
+   "1000"
+  ],
+  [
+   "SO-00014",
+   "20/10/2026",
+   "'=HYPERLINK(\"http://x.example\",\"pay\")",
+   "",
+   "TS",
+   "Round Off",
+   "",
+   "1",
+   "",
+   "-1",
+   "",
+   "-1",
+   "0",
+   "-1"
+  ]
+ ],
+ "Payments": [
+  [
+   "Receipt No",
+   "Date",
+   "Party Name",
+   "Type",
+   "Amount",
+   "Against Invoice No"
+  ],
+  [
+   "RC-00012-aaaaaaaa",
+   "05/10/2026",
+   "Ravi & Sons Silks",
+   "Payment In",
+   "10000",
+   "SO-00012"
+  ],
+  [
+   "PY-00013-bbbbbbbb",
+   "09/10/2026",
+   "శ్రీ లక్ష్మి చీరలు",
+   "Payment Out",
+   "500",
+   "SO-00013"
+  ]
+ ]
+}

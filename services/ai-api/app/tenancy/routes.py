@@ -5,6 +5,7 @@ from typing import Annotated
 from fastapi import APIRouter, Query
 
 from app.auth.deps import AnyMember, OwnerOrAdmin, PrincipalDep, RuntimeDep
+from app.integrations.routes_policy import record_acceptance
 from app.tenancy.models import (
     AccountSetupIn,
     AccountSetupOut,
@@ -44,6 +45,16 @@ def complete_account_setup(
     Idempotent: a repeat, a double click or a second tab returns the same business. The API
     sets nothing; the database checks everything.
     """
+    if body.accepted_terms_version is not None or body.accepted_privacy_version is not None:
+        # job BI: the evidence is written first (idempotent), so a business is never made
+        # for a version that is not current
+        record_acceptance(
+            runtime,
+            principal.token,
+            body.accepted_terms_version,
+            body.accepted_privacy_version,
+            "setup",
+        )
     return runtime.repository.complete_setup(principal.token, body.business_type, body.language)
 
 

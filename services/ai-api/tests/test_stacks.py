@@ -64,6 +64,7 @@ def test_the_two_stacks_share_no_project_id_and_no_port() -> None:
     assert ports(owner) and ports(agent)
     assert not ports(owner) & ports(agent), "the two stacks must not bind the same port"
     assert agent["api.port"] == stack_env.AGENT.api_port and agent["db.port"] == stack_env.AGENT.db_port
+    assert agent["local_smtp.port"] == stack_env.AGENT.mail_port and owner["local_smtp.port"] == stack_env.OWNER.mail_port, "the mail catcher's port is the stack's (the sign-up tests read it)"
     assert owner["api.port"] == stack_env.OWNER.api_port and owner["db.port"] == stack_env.OWNER.db_port
 
 
@@ -96,10 +97,10 @@ CASES = [
 def shell_view(extra: dict[str, str]) -> dict[str, str]:
     env = {"PATH": os.environ["PATH"], "HOME": os.environ.get("HOME", "/"), **extra}
     out = subprocess.run(  # noqa: S603 - fixed argv
-        ["/bin/sh", "-c", ". ./scripts/stack.sh && echo \"$SME_STACK $SME_PROJECT_ID $SME_WORKDIR $SME_API_PORT $SME_DB_PORT $SME_DB_CONTAINER\""],
+        ["/bin/sh", "-c", ". ./scripts/stack.sh && echo \"$SME_STACK $SME_PROJECT_ID $SME_WORKDIR $SME_API_PORT $SME_DB_PORT $SME_MAIL_PORT $SME_DB_CONTAINER\""],
         cwd=ROOT, env=env, capture_output=True, text=True, check=True,
     ).stdout.split()
-    return dict(zip(["stack", "project", "workdir", "api", "db", "container"], out, strict=True))
+    return dict(zip(["stack", "project", "workdir", "api", "db", "mail", "container"], out, strict=True))
 
 
 @pytest.mark.parametrize("extra", CASES)
@@ -109,7 +110,7 @@ def test_the_python_and_shell_resolvers_agree(extra: dict[str, str]) -> None:
     assert sh["stack"] == stack.name
     assert sh["project"] == stack.project_id
     assert sh["workdir"] == stack.workdir
-    assert (int(sh["api"]), int(sh["db"])) == (stack.api_port, stack.db_port)
+    assert (int(sh["api"]), int(sh["db"]), int(sh["mail"])) == (stack.api_port, stack.db_port, stack.mail_port)
     assert sh["container"] == stack_env.db_container(extra)
 
 

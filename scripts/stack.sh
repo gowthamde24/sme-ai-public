@@ -9,12 +9,12 @@ if [ -z "${SME_STACK:-}" ]; then
   esac
 fi
 case "$SME_STACK" in
-  owner) SME_PROJECT_ID=sme-ai; SME_WORKDIR=.; SME_API_PORT=54321; SME_DB_PORT=54322 ;;
-  agent) SME_PROJECT_ID=sme-ai-agent; SME_WORKDIR=stacks/sme-ai-agent; SME_API_PORT=54421; SME_DB_PORT=54422 ;;
+  owner) SME_PROJECT_ID=sme-ai; SME_WORKDIR=.; SME_API_PORT=54321; SME_DB_PORT=54322; SME_MAIL_PORT=54324 ;;
+  agent) SME_PROJECT_ID=sme-ai-agent; SME_WORKDIR=stacks/sme-ai-agent; SME_API_PORT=54421; SME_DB_PORT=54422; SME_MAIL_PORT=54424 ;;
   *) echo "SME_STACK must be 'agent' or 'owner', not '$SME_STACK'." >&2; return 2 2>/dev/null || exit 2 ;;
 esac
 SME_DB_CONTAINER="${SME_DB_CONTAINER:-supabase_db_$SME_PROJECT_ID}"
-export SME_STACK SME_PROJECT_ID SME_WORKDIR SME_API_PORT SME_DB_PORT SME_DB_CONTAINER
+export SME_STACK SME_PROJECT_ID SME_WORKDIR SME_API_PORT SME_DB_PORT SME_MAIL_PORT SME_DB_CONTAINER
 
 # sme_require_owner_ok <what>: on the owner's stack, refuse unless OWNER_OK=1.
 sme_require_owner_ok() {

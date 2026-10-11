@@ -209,6 +209,8 @@ def make_client(
     catalogue_storage: StorageClient | None = None,
     lead_search: LeadSearchRepository | None = None,
     voice: Any = None,
+    integrations: Any = None,
+    policies: Any = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -244,6 +246,8 @@ def make_client(
             catalogue_storage=catalogue_storage,
             lead_search=lead_search,
             voice=voice,
+            integrations=integrations,
+            policies=policies,
         ),
     )
     return TestClient(app), repo

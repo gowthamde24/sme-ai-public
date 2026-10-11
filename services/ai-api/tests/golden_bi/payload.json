@@ -1,0 +1,36 @@
+{
+  "from": "2026-10-01",
+  "to": "2026-10-31",
+  "orders": [
+    {
+      "order_id": "11111111-1111-4111-8111-111111111112", "order_no": 12, "state": "accepted", "accepted_on": "2026-10-05", "party": "Ravi & Sons Silks", "city": "Hyderabad",
+      "quote_no": 7, "delivery_state": "TS", "gst_supply": "intra_state",
+      "merchandise_net_paise": 6800000, "item_tax_paise": 340000, "shipping_net_paise": 50000, "shipping_tax_paise": 2500, "total_paise": 7192500, "advance_paise": 1000000,
+      "lines": [
+        {"line_no": 1, "sku": "KP-001", "name": "Kanchi pattu, maroon", "sale_unit": "piece", "qty": 2, "unit_price_paise": 3000000, "net_paise": 6000000, "tax_paise": 300000, "tax_bps": 500},
+        {"line_no": 2, "sku": "SS-014", "name": "Soft silk, green", "sale_unit": "piece", "qty": 1, "unit_price_paise": 800000, "net_paise": 800000, "tax_paise": 40000, "tax_bps": 500}
+      ]
+    },
+    {
+      "order_id": "22222222-2222-4222-8222-222222222213", "order_no": 13, "state": "dispatched", "accepted_on": "2026-10-08", "party": "శ్రీ లక్ష్మి చీరలు", "city": "Bengaluru",
+      "quote_no": 9, "delivery_state": "KA", "gst_supply": "inter_state",
+      "merchandise_net_paise": 1500000, "item_tax_paise": 110000, "shipping_net_paise": 0, "shipping_tax_paise": 0, "total_paise": 1610050, "advance_paise": 0,
+      "lines": [
+        {"line_no": 1, "sku": "KP-001", "name": "Kanchi pattu, maroon", "sale_unit": "piece", "qty": 1, "unit_price_paise": 1000000, "net_paise": 1000000, "tax_paise": 50000, "tax_bps": 500},
+        {"line_no": 2, "sku": "UP-003", "name": "Uppada, \"peacock\" <border>", "sale_unit": "piece", "qty": 1, "unit_price_paise": 500000, "net_paise": 500000, "tax_paise": 60000, "tax_bps": 1200}
+      ]
+    },
+    {
+      "order_id": "33333333-3333-4333-8333-333333333314", "order_no": 14, "state": "closed_paid", "accepted_on": "2026-10-20", "party": "=HYPERLINK(\"http://x.example\",\"pay\")", "city": null,
+      "quote_no": 11, "delivery_state": "TS", "gst_supply": "intra_state",
+      "merchandise_net_paise": 100000, "item_tax_paise": 0, "shipping_net_paise": 0, "shipping_tax_paise": 0, "total_paise": 99900, "advance_paise": 0,
+      "lines": [
+        {"line_no": 1, "sku": "CT-100", "name": "Pure cotton", "sale_unit": "piece", "qty": 1, "unit_price_paise": 100000, "net_paise": 100000, "tax_paise": 0, "tax_bps": 0}
+      ]
+    }
+  ],
+  "payments": [
+    {"payment_id": "aaaaaaaa-0000-4000-8000-000000000001", "event_id": "e1", "order_id": "11111111-1111-4111-8111-111111111112", "order_no": 12, "kind": "payment", "amount_paise": 1000000, "occurred_on": "2026-10-05", "party": "Ravi & Sons Silks"},
+    {"payment_id": "bbbbbbbb-0000-4000-8000-000000000002", "event_id": "e2", "order_id": "22222222-2222-4222-8222-222222222213", "order_no": 13, "kind": "refund", "amount_paise": 50000, "occurred_on": "2026-10-09", "party": "శ్రీ లక్ష్మి చీరలు"}
+  ]
+}
