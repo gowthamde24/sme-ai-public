@@ -1,8 +1,9 @@
 """Job AT (ADR 0066) on the real stack: the outbox through OUR API with real JWT verification, real PostgREST and the real database functions, the LOCAL FAKE adapter as the only channel.
 A message is decided by the database (policy, blocks, quiet hours, limit, disclosure), delivered only by the fake adapter, and every refusal is a fixed answer. NOTHING reaches a real channel.
 
-Time: the policy keeps quiet hours 21:00 to 09:00 India time by the database's own clock. A test that needs a delivery therefore asserts the delivery outside quiet hours and the hold inside them
-(the clock itself is tested at explicit instants in pgTAP 76)."""
+Time: the policy keeps quiet hours 21:00 to 09:00 India time by the database's outbox clock, app.outbox_now(). These tests NEVER lean on the real time: the `box` fixture runs the whole module
+twice, with that clock pinned (for the module, restored afterwards) to 14:00 IST ("day": a message goes at once) and to 23:30 IST ("night": it is held until 09:00). The pins are on yesterday's India
+date, so they are always in the past (an enquiry may not be received in the future). The clock itself is also tested at explicit instants in pgTAP 76."""
 
 # ruff: noqa: E501, S608
 
@@ -10,6 +11,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Iterator
+from datetime import datetime, time, timedelta, timezone
 from typing import Any
 
 import operator_sql
@@ -24,8 +26,29 @@ from app.outbox.adapter import LocalFakeAdapter
 TELUGU_PRICE = "ఈ చీర ధర 500 రూపాయలు మాత్రమే"
 
 
+IST = timezone(timedelta(hours=5, minutes=30))
+PINS = {"day": time(14, 0), "night": time(23, 30)}
+
+
+def pin_clock(at: time) -> str:
+    """Pin the outbox clock (for the whole local database, until restore_clock) to `at` India time yesterday; returns the instant."""
+    yesterday = datetime.now(IST).date() - timedelta(days=1)
+    instant = datetime.combine(yesterday, at, tzinfo=IST).isoformat()
+    operator_sql.sql(
+        "create or replace function app.outbox_now() returns timestamptz language sql stable security definer set search_path = '' "
+        f"as $b$ select timestamptz '{instant}' $b$"
+    )
+    return instant
+
+
+def restore_clock() -> None:
+    operator_sql.sql(
+        "create or replace function app.outbox_now() returns timestamptz language sql stable security definer set search_path = '' as $b$ select now() $b$"
+    )
+
+
 def quiet() -> bool:
-    return operator_sql.sql("select app.outbox_in_quiet_hours(now())").strip() == "t"
+    return operator_sql.sql("select app.outbox_in_quiet_hours(app.outbox_now())").strip() == "t"
 
 
 class Box:
@@ -64,7 +87,7 @@ class Box:
     ) -> None:
         operator_sql.sql(
             f"insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body, body_sha256) "
-            f"values ('{uuid.uuid4()}', '{self.tenant}', '{lead.id}', 'whatsapp', now() - interval '{ago}', '{body}', repeat('a', 64))"
+            f"values ('{uuid.uuid4()}', '{self.tenant}', '{lead.id}', 'whatsapp', app.outbox_now() - interval '{ago}', '{body}', repeat('a', 64))"
         )
 
     def submit(
@@ -92,8 +115,10 @@ class Box:
         )
 
 
-@pytest.fixture(scope="module")
-def box(client: TestClient, eval_world: World) -> Iterator[Box]:
+@pytest.fixture(scope="module", params=sorted(PINS))
+def box(request: pytest.FixtureRequest, client: TestClient, eval_world: World) -> Iterator[Box]:
+    pin_clock(PINS[request.param])
+    assert quiet() == (request.param == "night"), "the pin put the clock where it was asked to"
     operator_sql.sql("update public.platform_flags set enabled = true where key = 'outbox_enabled'")
     b = Box(client, eval_world)
     r = b.call(
@@ -109,6 +134,7 @@ def box(client: TestClient, eval_world: World) -> Iterator[Box]:
         operator_sql.sql(
             "update public.platform_flags set enabled = false where key = 'outbox_enabled'"
         )
+        restore_clock()
 
 
 def body_of(r: Any, code: int = 200) -> Any:
@@ -332,15 +358,16 @@ def test_a_retry_with_the_same_id_replays_and_sends_once(box: Box) -> None:
 
 
 def test_a_failing_channel_marks_the_message_failed(box: Box) -> None:
-    if quiet():
-        pytest.skip(
-            "delivery is held in quiet hours; the failure path is covered by tests/test_outbox_routes.py"
-        )
     lead = box.lead()
     box.inbound(lead)
     mid = uuid.uuid4()
     box.adapter.fail_next(mid, "timeout")
     out = body_of(box.submit("owner", lead, "Thank you for writing to us.", message_id=str(mid)))
+    if quiet():
+        # at night nothing reaches the channel, so the failure cannot happen yet: the message is only held for 09:00
+        assert out["dispatched"] == {"sent": 0, "failed": 0}
+        assert (out["message"]["status"], out["message"]["reason"]) == ("queued", "quiet_hours")
+        return
     assert out["dispatched"] == {"sent": 0, "failed": 1}
     assert (out["message"]["status"], out["message"]["reason"], out["message"]["failure_code"]) == (
         "failed",

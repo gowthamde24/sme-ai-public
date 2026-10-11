@@ -27,3 +27,7 @@ The owner decided (project decision "auto-send policy"): the agent sends WhatsAp
 * Sent outbox messages do not yet write a `lead_touches` row, so the follow-up cadence does not know about them: the follow-up desk integration is the next step.
 * Today and the Main agent: Today's waiting list gains `outbox_approval` (Owner, Admin) and `call_approval` (Owner); the Main agent may cite them as sources (`outbox_message`, `call_request`; labels never carry the text). A web build that does not know the two kinds rejects Today while one waits: the web ships with this API.
 * Word lists err on the side of asking a person (Indic words are matched as substrings). A message that needs the words changed is an edit, not a code change; the lists are one function (`app.outbox_content_flags`) and its pgTAP table.
+
+## Addendum: the outbox clock (CI fix)
+
+The policy depends on the hour in India (quiet hours 21:00 to 09:00), so the outbox functions read their clock through one seam, `app.outbox_now()` (migration `20261107090000_at_outbox_clock.sql`). At run time it is exactly `now()`; nothing (no setting, header or argument) can change it. A test replaces the function inside its own transaction, the way pgTAP 73 does for the AI-cap day, and tests both paths (14:00 IST: sent at once; 23:30 IST: held until 09:00). The first version of pgTAP 76 and the integration tests leaned on the real clock and failed in CI in the daytime; they are now pinned.

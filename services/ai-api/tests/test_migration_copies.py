@@ -642,7 +642,12 @@ def test_slice2_approval_keeps_the_list_path_and_adds_the_manual_branch() -> Non
 # ---------------------------------------------------------------------------------------------- job AT: the outbox migration
 # Migration 20261106090000 replaces four functions as whole copies: the two erasure functions (the person's and the company's messages and call requests are erased), today_summary (two more
 # kinds of waiting item) and assistant_save_reply (two more source types). Last definition each; compared with the latest earlier one it may only ADD lines.
-AT_COPIES = ("app.erase_contact", "app.erase_company", "public.today_summary", "public.assistant_save_reply")
+AT_COPIES = (
+    "app.erase_contact",
+    "app.erase_company",
+    "public.today_summary",
+    "public.assistant_save_reply",
+)
 
 
 @pytest.mark.parametrize("name", AT_COPIES)
@@ -661,8 +666,12 @@ def test_the_outbox_copy_is_the_last_definition_and_only_adds_lines(name: str) -
         )
         if line.startswith("-") and not line.startswith("---")
     ]
-    unexpected = [line for line in removed if line not in kept and line not in AT_CHANGED.get(name, set())]
-    assert not unexpected, f"{name}: the outbox migration drops lines of {earlier[-1][0]}: {unexpected}"
+    unexpected = [
+        line for line in removed if line not in kept and line not in AT_CHANGED.get(name, set())
+    ]
+    assert not unexpected, (
+        f"{name}: the outbox migration drops lines of {earlier[-1][0]}: {unexpected}"
+    )
 
 
 # lines of an earlier definition that the copy rewrites on purpose (the same statement, one more value)
@@ -671,3 +680,71 @@ AT_CHANGED: dict[str, set[str]] = {
         "or not app.assistant_pairs_ok(coalesce(p_sources, '[]'::jsonb), array['quote', 'lead', 'enquiry', 'order', 'company', 'customer', 'price_item', 'followup_draft', 'reply_draft'])",
     },
 }
+
+
+# ---------------------------------------------------------------------------------------------- job AT, CI fix: the outbox clock seam
+# Migration 20261107090000 replaces four outbox functions so that they read their clock through app.outbox_now() (a test pins it; at run time it is now()). It must be the LAST definition of each, and
+# compared with the outbox migration's copy it may drop and add EXACTLY the lines below: the clock read, and the new row's created_at taken from the same instant.
+AT_CLOCK = "20261107090000_at_outbox_clock.sql"
+AT_CLOCK_CHANGED: dict[str, tuple[set[str], set[str]]] = {
+    "public.outbox_submit": (
+        {
+            "v_now     timestamptz := now();",
+            "disclosure_added, request_sha256, scheduled_for, created_by)",
+            "p_model_flagged, p_uncertain, v_added, v_sha, v_sched, v_uid)",
+        },
+        {
+            "v_now     timestamptz := app.outbox_now();",
+            "disclosure_added, request_sha256, scheduled_for, created_by, created_at)",
+            "p_model_flagged, p_uncertain, v_added, v_sha, v_sched, v_uid, v_now)",
+        },
+    ),
+    "public.outbox_decide": (
+        {"v_now  timestamptz := now();"},
+        {"v_now  timestamptz := app.outbox_now();"},
+    ),
+    "public.outbox_claim_due": (
+        {"v_now  timestamptz := now();"},
+        {"v_now  timestamptz := app.outbox_now();"},
+    ),
+    "public.outbox_mark": (
+        {
+            "update public.outbox_messages set status = 'sent', sent_at = now(), adapter = p_adapter, adapter_message_id = p_adapter_message_id where id = m.id returning * into m;"
+        },
+        {
+            "update public.outbox_messages set status = 'sent', sent_at = app.outbox_now(), adapter = p_adapter, adapter_message_id = p_adapter_message_id where id = m.id returning * into m;"
+        },
+    ),
+}
+
+
+@pytest.mark.parametrize("name", sorted(AT_CLOCK_CHANGED))
+def test_the_outbox_clock_copy_is_the_last_definition_and_changes_exactly_the_clock_lines(
+    name: str,
+) -> None:
+    defs = definitions(name)
+    assert defs[-1][0] == AT_CLOCK, (
+        f"{name} is redefined after the clock migration ({defs[-1][0]}): re-copy it from the latest definition"
+    )
+    earlier = [d for d in defs if d[0] < AT_CLOCK]
+    assert earlier and earlier[-1][0] == AT
+    diff = [
+        line
+        for line in difflib.unified_diff(
+            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+        )
+        if line[:1] in "+-" and not line.startswith(("---", "+++"))
+    ]
+    dropped = {line[1:].strip() for line in diff if line[0] == "-"}
+    added = {line[1:].strip() for line in diff if line[0] == "+"}
+    want_dropped, want_added = AT_CLOCK_CHANGED[name]
+    assert dropped == {w.strip() for w in want_dropped}, f"{name}: dropped {dropped}"
+    assert added == {w.strip() for w in want_added}, f"{name}: added {added}"
+
+
+def test_no_outbox_function_other_than_the_seam_reads_now_for_a_decision() -> None:
+    """The decisions (submit, approve, claim) and the send time read app.outbox_now(); a bare now() in them would put the real clock back."""
+    for name in AT_CLOCK_CHANGED:
+        body = definitions(name)[-1][1]
+        code = "\n".join(line for line in body.split("\n") if not line.lstrip().startswith("--"))
+        assert "now()" not in code.replace("app.outbox_now()", ""), name

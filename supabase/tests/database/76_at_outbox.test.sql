@@ -12,6 +12,17 @@ select tests.seed_crm();
 -- ---------------------------------------------------------------------------------------------
 -- helpers
 -- ---------------------------------------------------------------------------------------------
+-- THE CLOCK. The policy depends on the hour in India (quiet hours 21:00-09:00), so this file never leans on the real time: the outbox clock app.outbox_now() is replaced for this
+-- transaction (rolled back at the end, the way pgTAP 73 does it). The main body runs at one pinned instant, 14:00 IST by default; to run it at another, start psql with
+-- PGOPTIONS='-c tests.outbox_pin=2026-10-10T23:30:00+05:30'. Section P (the end) pins 14:00 and 23:30 itself and tests BOTH paths side by side, whatever the main pin is.
+create function pg_temp.pin(p_instant timestamptz) returns void language plpgsql as $fn$
+begin
+  execute format('create or replace function app.outbox_now() returns timestamptz language sql stable security definer set search_path = '''' as $b$ select timestamptz %L $b$', p_instant::text);
+end $fn$;
+select is((select regexp_replace(p.prosrc, '\s', '', 'g') from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'app' and p.proname = 'outbox_now'), 'selectnow()',
+          'CLOCK: as shipped, the outbox clock is exactly now() (nothing else can set it)');
+select is((select count(*) from unnest(array['anon', 'authenticated', 'service_role']) r where has_function_privilege(r, 'app.outbox_now()', 'execute')), 0::bigint, 'CLOCK: no client role can call the seam');
+select pg_temp.pin(coalesce(nullif(current_setting('tests.outbox_pin', true), ''), '2026-10-10T14:00:00+05:30')::timestamptz);
 create function pg_temp.at(p_aal text, p_user text, p_sql text) returns text language plpgsql as $$
 declare r text;
 begin
@@ -48,7 +59,7 @@ end $$;
 -- the customer wrote to us on WhatsApp p_ago ago
 create function pg_temp.inbound(p_label text, p_body text, p_ago interval default '1 hour') returns void language sql as $$
   insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body, body_sha256)
-  values (gen_random_uuid(), tests.tid('a'), tests.rid(p_label), 'whatsapp', now() - p_ago, p_body, repeat('a', 64)) $$;
+  values (gen_random_uuid(), tests.tid('a'), tests.rid(p_label), 'whatsapp', app.outbox_now() - p_ago, p_body, repeat('a', 64)) $$;
 -- submit a message as a user (default the Owner); the answer as JSON text, or 'ERR:<sqlstate>'
 create function pg_temp.sub(p_msg text, p_lead text, p_text text, p_cat text default 'info', p_lang text default 'en', p_flag boolean default false, p_unc boolean default false,
                             p_user text default 'a_owner', p_tenant text default 'a') returns text language sql as $$
@@ -364,13 +375,13 @@ update public.platform_flags set enabled = true where key = 'outbox_enabled';
 -- K. dispatch: claim, mark, re-checks
 -- ---------------------------------------------------------------------------------------------
 -- (clear the way: close every queued message of the earlier sections, so the claims below see only their own)
-update public.outbox_messages set scheduled_for = now() + interval '30 days' where tenant_id = tests.tid('a') and status = 'queued' and id not in (tests.rid('ja'), tests.rid('jd'));
+update public.outbox_messages set scheduled_for = app.outbox_now() + interval '30 days' where tenant_id = tests.tid('a') and status = 'queued' and id not in (tests.rid('ja'), tests.rid('jd'));
 select pg_temp.mk('k2'); select pg_temp.inbound('k2', 'Hello');
 select pg_temp.mk('k3'); select pg_temp.inbound('k3', 'Hello');
 select pg_temp.sub('ka', 'k2', 'Thanks for writing to us.', 'reply_to_inbound');
 select pg_temp.sub('kb', 'k3', 'Thanks for writing to us.', 'reply_to_inbound');
-update public.outbox_messages set scheduled_for = now() - interval '1 minute' where id in (tests.rid('ka'), tests.rid('kb'), tests.rid('ja'), tests.rid('jd'));
--- quiet hours at claim time cannot be faked from here; assert the other behaviours when it is daytime and the shape when it is not
+update public.outbox_messages set scheduled_for = app.outbox_now() - interval '1 minute' where id in (tests.rid('ka'), tests.rid('kb'), tests.rid('ja'), tests.rid('jd'));
+-- the claim runs at the pinned instant (14:00 IST by default: due messages are handed out; at night they are pushed to 09:00); section P tests both hours side by side
 select is(pg_temp.sc('a_sales', format($q$select public.outbox_claim_due(%L, 10)$q$, tests.tid('a'))), 'ERR:42501', 'DENY: Sales cannot dispatch');
 select is(pg_temp.sc('a_viewer', format($q$select public.outbox_claim_due(%L, 10)$q$, tests.tid('a'))), 'ERR:42501', 'DENY: a Viewer cannot dispatch');
 select is(pg_temp.sc('a_owner', format($q$select public.outbox_claim_due(%L, 0)$q$, tests.tid('a'))), 'ERR:22023', 'INVALID: a limit of 0');
@@ -379,13 +390,13 @@ select is(pg_temp.sc('a_owner', format($q$select public.outbox_claim_due(%L, 10)
 select is((select count(*) from public.outbox_messages where id in (tests.rid('ka'), tests.rid('kb')) and status = 'queued' and claimed_at is null), 2::bigint, '...and the queue waits unchanged');
 update public.platform_flags set enabled = true where key = 'outbox_enabled';
 create temp table claimed as select pg_temp.sc('a_owner', format($q$select public.outbox_claim_due(%L, 10)$q$, tests.tid('a')))::jsonb as j;
-select ok((select case when app.outbox_in_quiet_hours(now()) then jsonb_array_length(j) = 0 else jsonb_array_length(j) >= 2 end from claimed), 'CLAIM: due messages are returned (none during quiet hours: they are pushed to 09:00)');
-select ok((select case when app.outbox_in_quiet_hours(now()) then true else (j -> 0) ?& array['id', 'lead_id', 'contact_id', 'phone', 'body', 'language'] end from claimed), 'a claim carries what the adapter needs: id, lead, contact, phone, body, language');
-select ok((select case when app.outbox_in_quiet_hours(now()) then (select scheduled_for > now() from public.outbox_messages where id = tests.rid('ka'))
+select ok((select case when app.outbox_in_quiet_hours(app.outbox_now()) then jsonb_array_length(j) = 0 else jsonb_array_length(j) >= 2 end from claimed), 'CLAIM: due messages are returned (none during quiet hours: they are pushed to 09:00)');
+select ok((select case when app.outbox_in_quiet_hours(app.outbox_now()) then true else (j -> 0) ?& array['id', 'lead_id', 'contact_id', 'phone', 'body', 'language'] end from claimed), 'a claim carries what the adapter needs: id, lead, contact, phone, body, language');
+select ok((select case when app.outbox_in_quiet_hours(app.outbox_now()) then (select scheduled_for > app.outbox_now() from public.outbox_messages where id = tests.rid('ka'))
                        else (select claimed_at is not null and attempts = 1 from public.outbox_messages where id = tests.rid('ka')) end), 'a claimed message is marked claimed (attempt 1); in quiet hours it was rescheduled instead');
-select ok((select case when app.outbox_in_quiet_hours(now()) then true else jsonb_array_length(pg_temp.sc('a_owner', format($q$select public.outbox_claim_due(%L, 10)$q$, tests.tid('a')))::jsonb) = 0 end), 'a second claim right away returns nothing: claimed messages are not handed out twice');
+select ok((select case when app.outbox_in_quiet_hours(app.outbox_now()) then true else jsonb_array_length(pg_temp.sc('a_owner', format($q$select public.outbox_claim_due(%L, 10)$q$, tests.tid('a')))::jsonb) = 0 end), 'a second claim right away returns nothing: claimed messages are not handed out twice');
 -- mark (needs a claim; forced here so it runs at any hour)
-update public.outbox_messages set claimed_at = now(), attempts = 1 where id in (tests.rid('ka'), tests.rid('kb'));
+update public.outbox_messages set claimed_at = app.outbox_now(), attempts = 1 where id in (tests.rid('ka'), tests.rid('kb'));
 select is(pg_temp.sc('a_sales', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-1')$q$, tests.tid('a'), tests.rid('ka'))), 'ERR:42501', 'DENY: Sales cannot mark');
 select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'twilio', 'x-1')$q$, tests.tid('a'), tests.rid('ka'))), 'ERR:22023', 'INVALID: only the fake adapter exists');
 select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake')$q$, tests.tid('a'), tests.rid('ka'))), 'ERR:22023', 'INVALID: sent needs the adapter''s message id');
@@ -396,16 +407,21 @@ select is((select sent_at is not null and adapter = 'fake' and adapter_message_i
 select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'failed', 'fake', null, 'timeout')$q$, tests.tid('a'), tests.rid('ka'))), 'ERR:SM501', 'STATE: a sent message cannot be marked failed');
 select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'failed', 'fake', null, 'timeout')$q$, tests.tid('a'), tests.rid('kb'))), 'reason'), 'send_failed', 'MARK: failed (send_failed)');
 select is((select failure_code from public.outbox_messages where id = tests.rid('kb')), 'timeout', '...with its closed code');
-select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-x')$q$, tests.tid('a'), tests.rid('jd'))), 'ERR:SM501', 'STATE: a message nobody claimed cannot be marked');
+-- a queued message nobody has claimed: parked 30 days ahead so no claim in this file ever picks it up, whatever the hour
+select pg_temp.mk('k5'); select pg_temp.inbound('k5', 'Hello');
+select pg_temp.sub('ku', 'k5', 'Thanks for writing to us.', 'reply_to_inbound');
+update public.outbox_messages set scheduled_for = app.outbox_now() + interval '30 days' where id = tests.rid('ku');
+select is(pg_temp.st('ku') in ('queued/auto_allowed', 'queued/quiet_hours'), true, 'an unclaimed queued message exists for the state tests');
+select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-x')$q$, tests.tid('a'), tests.rid('ku'))), 'ERR:SM501', 'STATE: a message nobody claimed cannot be marked');
 -- the re-check at claim: STOP after queueing blocks the message instead of handing it out
 select pg_temp.mk('k4'); select pg_temp.inbound('k4', 'Hello');
 select pg_temp.sub('kc', 'k4', 'Thanks for writing to us.', 'reply_to_inbound');
-update public.outbox_messages set scheduled_for = now() - interval '1 minute' where id = tests.rid('kc');
+update public.outbox_messages set scheduled_for = app.outbox_now() - interval '1 minute' where id = tests.rid('kc');
 update public.contacts set suppressed_at = now(), suppression_reason = 'opted_out' where id = tests.rid('k4_c');  -- a privileged edit that does not pass through the contact functions
 select ok(pg_temp.st('kc') = 'blocked/stopped', 'a STOP written even outside the consent functions still blocks the queued message (trigger)');
 -- the state machine: nothing moves backwards or sideways
 select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'queued' where id = %L$q$, tests.rid('ka'))), '42501', 'a sent message cannot go back to queued');
-select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'sent', sent_at = now(), adapter = 'fake', adapter_message_id = 'z' where id = %L$q$, tests.rid('jd'))), 'ok', 'queued -> sent is the legal move (privileged here)');
+select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'sent', sent_at = app.outbox_now(), adapter = 'fake', adapter_message_id = 'z' where id = %L$q$, tests.rid('ku'))), 'ok', 'queued -> sent is the legal move (privileged here)');
 select is(pg_temp.priv(format($q$update public.outbox_messages set body = 'rewritten' where id = %L$q$, tests.rid('ka'))), '42501', 'the text of a sent message never changes');
 select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'needs_approval' where id = %L$q$, tests.rid('kb'))), '42501', 'a failed message does not go back to waiting');
 select is(pg_temp.priv(format($q$update public.outbox_messages set lead_id = %L where id = %L$q$, tests.rid('a_lead'), tests.rid('ka'))), '42501', 'the lead of a message never changes');
@@ -413,7 +429,7 @@ select is(pg_temp.priv(format($q$update public.outbox_messages set category = 'i
 select is(pg_temp.priv(format($q$delete from public.outbox_messages where id = %L$q$, tests.rid('ka'))), '42501', 'a message is never deleted (not even by the owner of the database)');
 select is(pg_temp.priv('truncate public.outbox_messages'), '42501', '...nor truncated');
 select is(pg_temp.priv(format($q$insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by, sent_at, adapter, adapter_message_id)
-                                 values (gen_random_uuid(), %L, %L, %L, 'whatsapp', 'forged as sent', 'en', 'info', 'sent', 'auto_allowed', repeat('a', 64), %L, now(), 'fake', 'f')$q$,
+                                 values (gen_random_uuid(), %L, %L, %L, 'whatsapp', 'forged as sent', 'en', 'info', 'sent', 'auto_allowed', repeat('a', 64), %L, app.outbox_now(), 'fake', 'f')$q$,
                  tests.tid('a'), tests.rid('a_lead'), tests.rid('a_contact'), tests.uid('a_owner'))), '42501', 'a row cannot be inserted already sent');
 
 -- ---------------------------------------------------------------------------------------------
@@ -501,6 +517,72 @@ select is((select count(*) from public.audit_events where tenant_id = tests.tid(
           0::bigint, 'the audit trail holds no message text and no call script');
 select ok((select count(*) from public.audit_events where tenant_id = tests.tid('a') and entity_type = 'call_request') > 0, 'every call request decision is audited');
 select ok((select count(*) from public.audit_events where tenant_id = tests.tid('a') and entity_type = 'outbox_settings') > 0, 'the settings changes are audited');
+
+-- ---------------------------------------------------------------------------------------------
+-- P. TIME: both paths, each at an instant pinned here (whatever the pin of the main body was). The instants are in the past: an enquiry may not be received in the future.
+-- ---------------------------------------------------------------------------------------------
+create function pg_temp.claim() returns jsonb language sql as $$ select pg_temp.sc('a_owner', format($q$select public.outbox_claim_due(%L, 50)$q$, tests.tid('a')))::jsonb $$;
+create function pg_temp.has(p_claim jsonb, p_msg text) returns boolean language sql as $$ select exists (select 1 from jsonb_array_elements(p_claim) x where x ->> 'id' = tests.rid(p_msg)::text) $$;
+create function pg_temp.sched(p_msg text) returns timestamptz language sql as $$ select scheduled_for from public.outbox_messages where id = tests.rid(p_msg) $$;
+create function pg_temp.approve(p_msg text) returns text language sql as $$ select pg_temp.verdict(pg_temp.sc('a_owner', format($q$select public.outbox_decide(%L, %L, 'approve')$q$, tests.tid('a'), tests.rid(p_msg)))) $$;
+
+-- P1. outside quiet hours: 14:00 IST
+select pg_temp.pin('2026-10-05 14:00:00+05:30');
+select pg_temp.mk('pd1'); select pg_temp.inbound('pd1', 'Hello');
+select is(pg_temp.verdict(pg_temp.sub('pda', 'pd1', 'Thanks for writing to us.', 'reply_to_inbound')), 'queued/auto_allowed', 'DAY 14:00 IST: a plain reply is queued as auto_allowed');
+select is(pg_temp.sched('pda'), '2026-10-05 14:00:00+05:30'::timestamptz, 'DAY: it is due at once');
+select is((select created_at from public.outbox_messages where id = tests.rid('pda')), '2026-10-05 14:00:00+05:30'::timestamptz, 'DAY: it was created at the clock instant');
+select pg_temp.mk('pm1'); select pg_temp.inbound('pm1', 'Hello');
+select is(pg_temp.verdict(pg_temp.sub('pma', 'pm1', 'The price is ₹800 each', 'reply_to_inbound')), 'needs_approval/money', 'DAY: a price waits for a person');
+select is(pg_temp.approve('pma'), 'queued/owner_approved', 'DAY: approved by the Owner');
+select is(pg_temp.sched('pma'), '2026-10-05 14:00:00+05:30'::timestamptz, 'DAY: an approved message is due at once');
+create temp table p_day as select pg_temp.claim() as j;
+select ok(pg_temp.has((select j from p_day), 'pda') and pg_temp.has((select j from p_day), 'pma'), 'DAY: the claim hands out both due messages');
+select is((select claimed_at from public.outbox_messages where id = tests.rid('pda')), '2026-10-05 14:00:00+05:30'::timestamptz, 'DAY: ...marked claimed at the clock instant');
+select is((select attempts from public.outbox_messages where id = tests.rid('pda'))::int, 1, 'DAY: ...attempt 1');
+select is(pg_temp.has(pg_temp.claim(), 'pda'), false, 'DAY: a second claim does not hand the same message out again');
+select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-pda')$q$, tests.tid('a'), tests.rid('pda'))), 'status'), 'sent', 'DAY: a claimed message can be marked sent');
+select is((select sent_at from public.outbox_messages where id = tests.rid('pda')), '2026-10-05 14:00:00+05:30'::timestamptz, 'DAY: ...sent at the clock instant');
+
+-- P2. inside quiet hours: 23:30 IST
+select pg_temp.pin('2026-10-05 23:30:00+05:30');
+select pg_temp.mk('pn1'); select pg_temp.inbound('pn1', 'Hello');
+select pg_temp.mk('pn2'); select pg_temp.inbound('pn2', 'Hello');
+select pg_temp.mk('pm2'); select pg_temp.inbound('pm2', 'Hello');
+select is(pg_temp.verdict(pg_temp.sub('pna', 'pn1', 'Thanks for writing to us.', 'reply_to_inbound')), 'queued/quiet_hours', 'NIGHT 23:30 IST: the same reply is queued with reason quiet_hours');
+select is(pg_temp.sched('pna'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: ...until 09:00 India time the next morning');
+select is(pg_temp.verdict(pg_temp.sub('pnb', 'pn2', 'Thanks for writing to us.', 'reply_to_inbound')), 'queued/quiet_hours', 'NIGHT: a second customer is held the same way');
+select is(pg_temp.verdict(pg_temp.sub('pmb', 'pm2', 'The price is ₹800 each', 'reply_to_inbound')), 'needs_approval/money', 'NIGHT: a price still waits for a person (the hour does not change that)');
+select is(pg_temp.approve('pmb'), 'queued/owner_approved', 'NIGHT: approved by the Owner');
+select is(pg_temp.sched('pmb'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: an approved message also waits for 09:00');
+update public.outbox_messages set scheduled_for = app.outbox_now() - interval '1 minute' where id in (tests.rid('pna'), tests.rid('pnb'), tests.rid('pmb'));  -- forced due, to show that the claim itself keeps quiet hours
+create temp table p_night as select pg_temp.claim() as j;
+select is((select jsonb_array_length(j) from p_night), 0, 'NIGHT: a claim at 23:30 hands out nothing');
+select is(pg_temp.sched('pna'), '2026-10-06 09:00:00+05:30'::timestamptz, 'NIGHT: ...a due message is pushed to 09:00 instead');
+select is((select count(*) from public.outbox_messages where id in (tests.rid('pna'), tests.rid('pnb'), tests.rid('pmb')) and claimed_at is null and attempts = 0), 3::bigint, 'NIGHT: ...and none of them is claimed');
+select is(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-pna')$q$, tests.tid('a'), tests.rid('pna'))), 'ERR:SM501', 'NIGHT: STATE: a queued message nobody claimed cannot be marked');
+select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'sent', sent_at = app.outbox_now(), adapter = 'fake', adapter_message_id = 'z' where id = %L$q$, tests.rid('pnb'))), 'ok', 'NIGHT: STATE: queued -> sent is the legal move (privileged)');
+select is(pg_temp.priv(format($q$update public.outbox_messages set status = 'queued' where id = %L$q$, tests.rid('pnb'))), '42501', 'NIGHT: STATE: and a sent message cannot go back to queued');
+
+-- P3. 09:00 sharp: the held messages go
+select pg_temp.pin('2026-10-06 09:00:00+05:30');
+create temp table p_morning as select pg_temp.claim() as j;
+select ok(pg_temp.has((select j from p_morning), 'pna') and pg_temp.has((select j from p_morning), 'pmb'), 'MORNING 09:00 IST: the held messages are handed out');
+select is((select claimed_at from public.outbox_messages where id = tests.rid('pna')), '2026-10-06 09:00:00+05:30'::timestamptz, 'MORNING: ...claimed at the clock instant');
+select is(pg_temp.j(pg_temp.sc('a_owner', format($q$select public.outbox_mark(%L, %L, 'sent', 'fake', 'fake-pna')$q$, tests.tid('a'), tests.rid('pna'))), 'status'), 'sent', 'MORNING: ...and sent');
+
+-- P4. the day count is the India day of the clock: 23:30 and 00:30 are two different days
+select pg_temp.pin('2026-10-06 23:30:00+05:30');
+select pg_temp.mk('pl1'); select pg_temp.inbound('pl1', 'Hello');
+select pg_temp.sub('pla', 'pl1', 'Thanks for writing to us.', 'reply_to_inbound');
+select pg_temp.sub('plb', 'pl1', 'We also have a few new designs.', 'reply_to_inbound');
+select pg_temp.sub('plc', 'pl1', 'Our shop is open every day from ten.', 'reply_to_inbound');
+select pg_temp.sub('pld', 'pl1', 'You can visit us any day this week.', 'reply_to_inbound');
+select is((select count(*) from public.outbox_messages where lead_id = tests.rid('pl1') and status = 'queued' and reason = 'quiet_hours'), 3::bigint, 'DAY COUNT: three messages fit the default limit of three a day');
+select is(pg_temp.st('pld'), 'blocked/daily_limit', 'DAY COUNT: the fourth on the same India day is blocked (daily_limit)');
+select pg_temp.pin('2026-10-07 00:30:00+05:30');
+select pg_temp.sub('ple', 'pl1', 'Good morning, our shop opens at ten.', 'reply_to_inbound');
+select is(pg_temp.st('ple'), 'queued/quiet_hours', 'DAY COUNT: an hour later (the next India day) it fits again');
 
 select * from finish();
 rollback;
