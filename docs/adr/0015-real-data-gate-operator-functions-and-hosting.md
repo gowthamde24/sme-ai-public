@@ -14,6 +14,8 @@ Tests: `supabase/tests/database/45_real_data_gate.test.sql`, `46_sole_owner_and_
 > locally on synthetic data. The hosting recommendation below stays as written but is **deferred; re-check prices when the Customer Zero stage
 > (T012) starts**. The gate stays closed by default. The deploy files, the hosted verifier and the runbooks stay in the repository for T012.
 
+> **Superseded in part, 2026-10-11 (job BG):** the hosting recommendation is now free-tier first, in [ADR 0072](0072-hosting-free-tier-first.md) (Supabase Free for the rehearsal, Pro before real data; Cloud Run Mumbai; the CPU-always price is about USD 44, not 54).
+
 ## Context
 
 Until the erasure workflow existed, the only thing keeping real people's data out was a constant inside `import_lead_rows`

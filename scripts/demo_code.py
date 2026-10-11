@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+import stack_env  # noqa: E402
 from seed_demo import (  # noqa: E402
     DEMO_EMAIL,
     SeedError,
@@ -28,12 +29,10 @@ from seed_demo import (  # noqa: E402
 def demo_user_id() -> str:
     """The demo owner's id, read from the LOCAL database container (the same `docker exec` as `local_factor_secret`)."""
     docker = shutil.which("docker")
-    config = (Path(__file__).resolve().parents[1] / "supabase" / "config.toml").read_text()
-    match = re.search(r'^project_id\s*=\s*"([^"]+)"', config, re.M)
-    if docker is None or match is None:
+    if docker is None:
         raise SeedError("Cannot reach the local database container. Is Docker running, and did you run `make db-start`?")
     out = subprocess.run(  # noqa: S603 - fixed argv; the email is a constant of this repository
-        [docker, "exec", "-i", f"supabase_db_{match.group(1)}", "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
+        [docker, "exec", "-i", stack_env.db_container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
          f"select id from auth.users where email = '{DEMO_EMAIL}' limit 1"],  # noqa: S608
         capture_output=True, text=True, timeout=30, check=False,
     )

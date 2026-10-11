@@ -19,19 +19,15 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 ROOT = Path(__file__).resolve().parents[3]
+sys.path.insert(0, str(ROOT / "scripts"))
+import stack_env  # noqa: E402  (the scripts folder is not a package)
+
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
 SLUG = re.compile(r"^[a-z0-9][a-z0-9-]{0,62}$")
 
 
 def is_local(url: str) -> bool:
     return (urlparse(url).hostname or "") in LOCAL_HOSTS
-
-
-def container_name(config_text: str) -> str:
-    match = re.search(r'^project_id\s*=\s*"([^"]+)"', config_text, re.M)
-    if match is None:
-        raise ValueError("supabase/config.toml has no project_id")
-    return f"supabase_db_{match.group(1)}"
 
 
 def seed_sql(slug: str, *, price_list: bool = True) -> str:
@@ -64,7 +60,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
     try:
         sql = seed_sql(args.tenant_slug, price_list=not args.without_price_list)
-        container = container_name((ROOT / "supabase" / "config.toml").read_text())
+        container = stack_env.db_container()
     except (ValueError, OSError) as exc:
         print(f"refusing: {exc}", file=sys.stderr)
         return 2

@@ -57,12 +57,16 @@ from typing import Any
 from urllib.parse import urlparse
 
 import httpx
+import stack_env
 from local_confirm import confirm_email
 
 ROOT = Path(__file__).resolve().parents[1]
 LOCAL_HOSTS = {"127.0.0.1", "localhost", "::1"}
+# The owner's demo stack and API (job BG: the AGENT stack, the default, has its own ports; see scripts/stack_env.py)
 DEFAULT_SUPABASE_URL = "http://127.0.0.1:54321"
 DEFAULT_API_URL = "http://localhost:8000"
+AGENT_SUPABASE_URL = f"http://127.0.0.1:{stack_env.AGENT.api_port}"
+AGENT_API_URL = "http://localhost:8001"  # the agents' own API (the owner's is 8000)
 
 DEMO_EMAIL = "demo-owner@demo.example.test"
 DEMO_PASSWORD = "Demo-Only-Local-Password-1!"  # noqa: S105 - synthetic user, local stack only
@@ -146,12 +150,17 @@ def load_config(environ: dict[str, str] | None = None) -> Config:
     for candidate in (ROOT / "apps/web/.env.local", ROOT / "services/ai-api/.env"):
         files.update(_read_env_file(candidate, wanted))
     merged = {**files, **{k: v for k, v in env.items() if v}}  # the environment wins
+    if stack_env.current(env) is stack_env.OWNER:
+        supabase_url = merged.get("SUPABASE_URL", DEFAULT_SUPABASE_URL)
+        api_url = merged.get("SEED_API_URL") or merged.get("NEXT_PUBLIC_API_BASE_URL") or DEFAULT_API_URL
+    else:
+        # the AGENT stack (the default): never an address from a .env file (those are the owner's, and the owner's API is wired to the owner's database); the environment, else the agent stack and :8001
+        supabase_url = env.get("SUPABASE_URL") or AGENT_SUPABASE_URL
+        api_url = env.get("SEED_API_URL") or AGENT_API_URL
     return Config(
-        supabase_url=merged.get("SUPABASE_URL", DEFAULT_SUPABASE_URL).rstrip("/"),
+        supabase_url=supabase_url.rstrip("/"),
         anon_key=merged.get("SUPABASE_PUBLISHABLE_KEY") or merged.get("SUPABASE_ANON_KEY", ""),
-        api_url=(
-            merged.get("SEED_API_URL") or merged.get("NEXT_PUBLIC_API_BASE_URL") or DEFAULT_API_URL
-        ).rstrip("/"),
+        api_url=api_url.rstrip("/"),
     )
 
 
@@ -358,12 +367,10 @@ def totp_code(secret_b32: str, offset_steps: int = 0) -> str:
 def local_factor_secret(user_id: str) -> str:
     """The demo user's authenticator secret, read from the LOCAL database container (never a hosted database)."""
     docker = shutil.which("docker")
-    config = (Path(__file__).resolve().parents[1] / "supabase" / "config.toml").read_text()
-    match = re.search(r'^project_id\s*=\s*"([^"]+)"', config, re.M)
-    if docker is None or match is None or not re.fullmatch(r"[0-9a-f-]{36}", user_id):
+    if docker is None or not re.fullmatch(r"[0-9a-f-]{36}", user_id):
         raise SeedError("Cannot read the demo authenticator from the local database container.")
     out = subprocess.run(  # noqa: S603 - fixed argv; the id is a validated uuid
-        [docker, "exec", "-i", f"supabase_db_{match.group(1)}", "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
+        [docker, "exec", "-i", stack_env.db_container(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
          f"select secret from auth.mfa_factors where user_id = '{user_id}' and status = 'verified' order by created_at limit 1"],  # noqa: S608
         capture_output=True, text=True, timeout=30, check=False,
     )

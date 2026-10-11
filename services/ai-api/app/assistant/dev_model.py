@@ -7,6 +7,7 @@ from __future__ import annotations
 import re
 
 from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall, Usage
+from app.catalogue.vocab import COLOURS, FABRIC_ALIASES
 
 _QUESTION = re.compile(r"THE OWNER'S QUESTION: (.*)", re.DOTALL)
 _HANDLE = re.compile(r"^(s\d+) \| ([a-z_]+) \| id [0-9a-f-]+ \| ([^|]*)", re.MULTILINE)
@@ -33,6 +34,26 @@ _KEYWORDS: tuple[tuple[re.Pattern[str], str], ...] = (
     (re.compile(r"quote|కోట్|कोट|ಕೋಟ್|கோட்", re.I), "list_quotes"),
     (re.compile(r"enquir|ఎంక్వైరీ|पूछताछ|ವಿಚಾರಣೆ|விசாரணை", re.I), "list_enquiries"),
 )
+
+
+# The catalogue path (job BG): when the router has offered the catalogue tools (it does so only for a question about photos, designs, colours, fabrics, stock, or sarees with a verb of showing or sending), the scripted
+# model looks the sarees up instead of picking a price or order tool, so the chat can be tried end to end with a saree link in the answer. It passes a colour and a fabric only when the question names one, as plain words.
+_COLOUR_WORDS = {c: re.compile(rf"\b{c}\b", re.I) for c in COLOURS}
+_FABRIC_WORDS = sorted(
+    ((alias.replace("_", " "), re.compile(rf"\b{alias.replace('_', ' ')}\b", re.I)) for alias in FABRIC_ALIASES),
+    key=lambda pair: -len(pair[0]),
+)
+
+
+def catalogue_args(question: str) -> dict[str, str]:
+    args: dict[str, str] = {}
+    colour = next((c for c, pattern in _COLOUR_WORDS.items() if pattern.search(question)), None)
+    if colour is not None:
+        args["colour"] = colour
+    fabric = next((word for word, pattern in _FABRIC_WORDS if pattern.search(question)), None)
+    if fabric is not None:
+        args["fabric"] = fabric
+    return args
 
 
 _DRAFT_LANG = re.compile(r"Write the message in [A-Za-z]+ \(([a-z]{2})\)")
@@ -89,6 +110,12 @@ class DevAssistantModel:
         usage = Usage(120, 60, 0)
         handles = _HANDLE.findall(text)
         if "tool: " not in text:
+            if any(spec.name == "find_catalogue_items" for spec in request.tools):
+                return LlmResponse(
+                    tool_calls=(ToolCall("find_catalogue_items", catalogue_args(question)),),
+                    structured=None,
+                    usage=usage,
+                )
             tool = next(
                 (name for pattern, name in _KEYWORDS if pattern.search(question)), "get_today"
             )

@@ -4,7 +4,9 @@
 # code uses) and the legacy SUPABASE_ANON_KEY (kept so the legacy name stays tested). The secret and
 # service-role keys are deliberately filtered out: nothing in this repository uses them.
 set -eu
-vars="$(supabase status -o env | grep -E '^(API_URL|ANON_KEY|PUBLISHABLE_KEY)=')"
+here="$(cd "$(dirname "$0")" && pwd)"
+. "$here/stack.sh"   # which local stack: SME_STACK, else the port of SUPABASE_URL, else the AGENT stack (docs/runbooks/two-local-stacks.md)
+vars="$("$here/sb" status -o env | grep -E '^(API_URL|ANON_KEY|PUBLISHABLE_KEY)=')"
 eval "$vars"
 export SUPABASE_URL="$API_URL"
 export SUPABASE_ANON_KEY="$ANON_KEY"

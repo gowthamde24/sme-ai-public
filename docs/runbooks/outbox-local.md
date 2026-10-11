@@ -1,5 +1,7 @@
 # Runbook: the outbox on the local stack (job AT, ADR 0066)
 
+> **Which local stack (job BG, [two-local-stacks.md](two-local-stacks.md)).** The make targets and scripts here default to the AGENT stack (`make agent-db-up`; your own API on 8001, web on 3001). The owner runs the same steps on the demo stack with `STACK=owner` (Supabase 54321/54322, API 8000, web 3000). Where this page names `make db-start`, `supabase_db_sme-ai` or port `54322`, that is the owner's stack; the agent stack is `make agent-db-up`, `supabase_db_sme-ai-agent` and `54422`.
+
 Everything here is local and synthetic. **Nothing is ever sent to anyone**: the only channel is a stand-in inside the API process (`OUTBOX_ADAPTER=fake`, the only value that exists). A real WhatsApp channel is a later job and needs the owner's written approval.
 
 ## The switches (all closed by default)

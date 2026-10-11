@@ -1,8 +1,21 @@
-.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local
+.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
 PY  := $(API)/.venv/bin
+
+# Two separate local Supabase stacks (job BG, docs/runbooks/two-local-stacks.md). The OWNER's demo runs on the default stack (supabase/, project sme-ai, ports 543xx, API :8000, web :3000). Everything an
+# AGENT runs defaults to the AGENT stack (stacks/sme-ai-agent, project sme-ai-agent, ports 544xx; API :8001, web :3001): reset, pgTAP, integration tests, evals, seeds, rehearsals. STACK=owner chooses the owner's
+# stack on purpose, and its destructive actions (reset, stop, pgTAP, a clock pin) also need OWNER_OK=1; scripts/sb and tests/integration/conftest.py refuse them otherwise.
+# The serving targets (dev-api-local, dev-web-local, dev-worker-local, demo-code, dev-api-groq) follow the port: the default :8000 is the owner's API, any other port is the agents'.
+ifdef STACK
+SERVE_STACK := $(STACK)
+else
+STACK := agent
+SERVE_STACK = $(if $(filter 8000,$(API_PORT)),owner,agent)
+endif
+export SME_STACK := $(STACK)
+SB := ./scripts/sb
 
 install:
 	cd $(WEB) && npm ci
@@ -11,7 +24,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -37,20 +50,38 @@ check-fast: check-leftovers lint typecheck test test-packages
 # db-reset first: audit rows of earlier integration runs are append-only, so a stale database could trip a pgTAP canary (T008 owner change I).
 check: check-fast db-reset db-test test-integration eval
 
-# Local Supabase stack (Docker). Migrations in supabase/migrations are applied on start.
-db-start:
-	supabase start
+# Local Supabase stacks (Docker). Migrations in supabase/migrations are applied on start.
+# db-start / db-stop are the OWNER's stack (the demo's), as before; db-stop needs OWNER_OK=1. Agents use agent-db-up / agent-db-down.
+db-start owner-db-start:
+	SME_STACK=owner $(SB) start
 
 db-stop:
-	supabase stop
+	SME_STACK=owner $(SB) stop
 
-# Rebuild the local DB from migrations (drops all local data).
+# The AGENT stack: its own project id, containers, volumes and ports (docs/runbooks/two-local-stacks.md). Its migrations and pgTAP files are copies of supabase/'s, made by scripts/sb before each command.
+agent-db-up:
+	SME_STACK=agent $(SB) start
+
+agent-db-down:
+	SME_STACK=agent $(SB) stop
+
+agent-db-reset:
+	SME_STACK=agent $(SB) db reset
+
+agent-db-test:
+	SME_STACK=agent $(SB) test db
+
+# Which stack is each thing on, and is it running? (prints no key)
+agent-db-status stack-info:
+	@. ./scripts/stack.sh; echo "this shell's stack: $$SME_STACK (project $$SME_PROJECT_ID, API :$$SME_API_PORT, database :$$SME_DB_PORT)"; for c in supabase_db_sme-ai supabase_db_sme-ai-agent; do if docker inspect -f '{{.State.Running}}' $$c >/dev/null 2>&1; then echo "  $$c: running"; else echo "  $$c: not running"; fi; done
+
+# Rebuild the local DB from migrations (drops all local data). The AGENT stack by default; STACK=owner needs OWNER_OK=1.
 db-reset:
-	supabase db reset
+	$(SB) db reset
 
-# pgTAP suite in supabase/tests/database (RLS isolation, roles, audit, catalog guards).
+# pgTAP suite in supabase/tests/database (RLS isolation, roles, audit, catalog guards). The AGENT stack by default; STACK=owner needs OWNER_OK=1.
 db-test:
-	supabase test db
+	$(SB) test db
 
 # Regenerate packages/contracts/{crm,evidence,leads}.schema.json + .ts from the API models (a test fails if stale).
 contracts:
@@ -59,7 +90,7 @@ contracts:
 # RLS policy-cost benchmark (rolled back; local stack only). Compares the T002 per-row pattern
 # with the shipped once-per-statement pattern. See ADR 0004. Override size: make bench-rls ARGS="-v tenants=1000"
 bench-rls:
-	psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres" -X $(ARGS) -f supabase/bench/rls_policy_cost.sql
+	@. ./scripts/stack.sh; psql "postgresql://postgres:postgres@127.0.0.1:$$SME_DB_PORT/postgres" -X $(ARGS) -f supabase/bench/rls_policy_cost.sql
 
 # API + real local Supabase (GoTrue, PostgREST, Postgres): isolation end to end, private-schema
 # exposure, concurrent last-owner race. Needs `make db-start`. Exports only the public URL and anon key.
@@ -182,26 +213,26 @@ API_PORT ?= 8000
 WEB_PORT ?= 3000
 
 dev-api-local:
-	cd $(API) && ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port $(API_PORT)
+	cd $(API) && SME_STACK=$(SERVE_STACK) ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port $(API_PORT)
 
 # OPT-IN (job AN): the local API with the Main agent on a hosted FREE-tier model, Groq openai/gpt-oss-120b (LLM_MODEL=... to choose another). Reads the API key HIDDEN (or takes LLM_API_KEY if it is
 # already set), checks it against Groq's models endpoint and refuses an empty or refused key, records the model's price at the minimum, switches the assistant on for the demo workspace and starts the API on API_PORT with AGENTS_ENABLED=true. Local stack and synthetic data only.
 # Needs `make db-start` and `make seed-demo-manual`. See docs/runbooks/main-agent-hosted-free.md.
 dev-api-groq:
-	API_PORT=$(API_PORT) ./scripts/dev-api-hosted-free.sh
+	SME_STACK=$(SERVE_STACK) API_PORT=$(API_PORT) ./scripts/dev-api-hosted-free.sh
 
 # Job AW (ADR 0068): the scheduler worker, one process, local stack only. It releases messages held for the morning, queues visit reminders and (if the business asks) marks missed visits. It signs in
 # as its own account, which the first run creates and registers (see scripts/dev_worker_local.py); it acts only while the global outbox switch is on AND the business has automatic sending on, and the only
 # channel is the local fake. Ctrl-C stops it. `make dev-worker-local ARGS=--once` runs a single tick. See docs/runbooks/scheduler-local.md.
 dev-worker-local:
-	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/dev_worker_local.py $(ARGS)
+	cd $(API) && SME_STACK=$(SERVE_STACK) ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/dev_worker_local.py $(ARGS)
 
 dev-web-local:
-	cd $(WEB) && LOCAL_DEMO_API_URL=http://localhost:$(API_PORT) ../../scripts/with-local-demo-env.sh npm run dev -- --port $(WEB_PORT)
+	cd $(WEB) && SME_STACK=$(SERVE_STACK) LOCAL_DEMO_API_URL=http://localhost:$(API_PORT) ../../scripts/with-local-demo-env.sh npm run dev -- --port $(WEB_PORT)
 
 # Prints the current 6-digit second-factor code of the local demo owner (a local demo code; the local database container only).
 demo-code:
-	@cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/demo_code.py
+	@cd $(API) && SME_STACK=$(SERVE_STACK) ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/demo_code.py
 
 # Job BE: the REAL-STACK end-to-end run. Starts your own API (:8002) and web (:3002) against the local Supabase stack (with Storage), drives the real web with a real browser (sign-up, sign-in with the authenticator,
 # Today, Outbox, Settings, Visits, the saree Catalogue with a real photo upload, Ask), prints PASS/FAIL per step, stops what it started and removes its throwaway workspace. Local only, invented data. Opt-in: needs Docker,

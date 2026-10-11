@@ -10,7 +10,7 @@ const P = MODE === "phone" ? "C" : "B";
 const phone = MODE === "phone";
 const { browser, context } = await launch(phone ? { width: Number(process.env.E2E_PHONE_WIDTH || 390), height: 844 } : { width: 1280, height: 900 }, phone ? { hasTouch: true, isMobile: true } : {});
 const page = await context.newPage();
-const psql = (sql) => execFileSync("docker", ["exec", "-i", `supabase_db_${process.env.E2E_SUPABASE_PROJECT || "sme-ai"}`, "psql", "-U", "postgres", "-d", "postgres", "-Atc", sql], { encoding: "utf8" }).trim();
+const psql = (sql) => execFileSync("docker", ["exec", "-i", process.env.SME_DB_CONTAINER || `supabase_db_${process.env.E2E_SUPABASE_PROJECT || "sme-ai-agent"}`, "psql", "-U", "postgres", "-d", "postgres", "-Atc", sql], { encoding: "utf8" }).trim();
 let s;
 try {
   await login(page, ROLE);

@@ -21,7 +21,15 @@ from app.assistant.db import AssistantDb
 from app.assistant.language import Language
 from app.assistant.models import DraftCardOut, OpenTarget, draft_summary
 from app.auth.deps import Runtime
-from app.catalogue.vocab import BAND_LABEL, COLOURS, FABRIC_LABEL, STOCK_LABEL, Occasion, PriceBand
+from app.catalogue.vocab import (
+    BAND_LABEL,
+    COLOURS,
+    FABRIC_ALIASES,
+    FABRIC_LABEL,
+    STOCK_LABEL,
+    Occasion,
+    PriceBand,
+)
 from app.requirements.capture_text import prepare_body, prepare_subject
 from app.today.service import format_rupees, shape_today
 
@@ -765,12 +773,6 @@ def propose_visit(ctx: Ctx, args: ProposeVisitArgs) -> Output:
     return Output(items=(item,))
 
 
-_FABRIC_ALIASES = {
-    "kanjivaram": "kanchi_pattu", "kanchipuram": "kanchi_pattu", "kanchi": "kanchi_pattu", "pattu": "kanchi_pattu", "kanchi_pattu": "kanchi_pattu",
-    "dharmavaram": "dharmavaram_silk", "dharmavaram_silk": "dharmavaram_silk", "soft_silk": "soft_silk", "soft": "soft_silk",
-    "cotton_silk": "cotton_silk", "banarasi": "banarasi", "benarasi": "banarasi", "mysore": "mysore_silk", "mysore_silk": "mysore_silk",
-    "uppada": "uppada", "cotton": "pure_cotton", "pure_cotton": "pure_cotton", "georgette": "georgette", "other": "other",
-}  # fmt: skip
 
 
 def _word(raw: str) -> str:
@@ -791,7 +793,7 @@ class FindCatalogueArgs(_Args):
 def find_catalogue_items(ctx: Ctx, args: FindCatalogueArgs) -> Output:
     if ctx.runtime.catalogue is None:
         return Output(note="unavailable")
-    fabric = _FABRIC_ALIASES.get(_word(args.fabric)) if args.fabric else None
+    fabric = FABRIC_ALIASES.get(_word(args.fabric)) if args.fabric else None
     if args.fabric and fabric is None:
         return Output(note="unknown_fabric")
     colour = _word(args.colour) if args.colour else None

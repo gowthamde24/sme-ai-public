@@ -2,7 +2,7 @@
 
 A SQL mutant is the LATEST definition of ONE function with ONE text replacement (or ONE statement and its undo), applied to the LOCAL database, run against the pgTAP files, and restored. A source mutant
 (Python, web) is ONE text replacement in ONE file, restored with `git checkout`. Every result is appended to `out/*.jsonl` (git-ignored), keyed by the mutant's description, so a run can resume and the
-survivors can be re-run after the tests were strengthened. Only the local stack is ever touched: the database container is the one `supabase/config.toml` names."""
+survivors can be re-run after the tests were strengthened. Only the local stack is ever touched: the database container is the AGENT stack's (SME_STACK=owner chooses the owner's, with OWNER_OK=1)."""
 
 # ruff: noqa: E501, S608
 
@@ -12,11 +12,14 @@ import json
 import re
 import shutil
 import subprocess
-import tomllib
+import sys
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[2]
+sys.path.insert(0, str(ROOT / "scripts"))
+import stack_env  # noqa: E402  (the scripts folder is not a package)
+
 HERE = Path(__file__).resolve().parent
 OUT = HERE / "out"
 MIGRATIONS = sorted((ROOT / "supabase" / "migrations").glob("2026*.sql"))
@@ -28,8 +31,8 @@ QUESTION_FILES = ["63_t010_part2_question_drafts"]  # the question objects are f
 
 
 def container() -> str:
-    config = tomllib.loads((ROOT / "supabase" / "config.toml").read_text())
-    return f"supabase_db_{config['project_id']}"
+    """The database container of the stack in use: the AGENT stack unless SME_STACK=owner (scripts/stack_env.py)."""
+    return stack_env.db_container()
 
 
 def _docker() -> str:

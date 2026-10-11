@@ -38,8 +38,8 @@ class Sandbox:
         (self.root / "scripts").mkdir(parents=True)
         (self.root / "supabase").mkdir()
         (self.root / "services" / "ai-api").mkdir(parents=True)
-        (self.root / "supabase" / "config.toml").write_text('project_id = "sme-test"\n')
         shutil.copy(SCRIPT, self.root / "scripts" / "dev-api-hosted-free.sh")
+        shutil.copy(SCRIPT.parent / "stack.sh", self.root / "scripts" / "stack.sh")  # which local stack (job BG): the AGENT stack unless SME_STACK=owner
         self.log = tmp / "docker.log"
         self.started = tmp / "started.txt"
         bin_dir = tmp / "bin"
@@ -111,7 +111,7 @@ def test_it_records_the_price_switches_the_assistant_on_and_starts_the_api_with_
     assert started["LLM_MODEL"] == "openai/gpt-oss-120b" and "key_ok" in started
     assert started["cmd"].endswith("uvicorn app.main:app --port 8000")
     calls = " ".join(box.docker_calls())
-    assert "supabase_db_sme-test" in calls
+    assert "supabase_db_sme-ai-agent" in calls and "supabase_db_sme-ai " not in calls, "the agent stack's container by default, never the owner's"
     assert "values ('openai/gpt-oss-120b', 1, 1) on conflict (model) do nothing" in calls, (
         "the minimum price, and an existing row is kept"
     )

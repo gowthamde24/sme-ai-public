@@ -1,5 +1,7 @@
 # Runbook: the Main agent on the local stack
 
+> **Which local stack (job BG, [two-local-stacks.md](two-local-stacks.md)).** The make targets and scripts here default to the AGENT stack (`make agent-db-up`; your own API on 8001, web on 3001). The owner runs the same steps on the demo stack with `STACK=owner` (Supabase 54321/54322, API 8000, web 3000). Where this page names `make db-start`, `supabase_db_sme-ai` or port `54322`, that is the owner's stack; the agent stack is `make agent-db-up`, `supabase_db_sme-ai-agent` and `54422`.
+
 The assistant is OFF at every layer. Nothing here touches a hosted project, sends anything or needs a key.
 
 ## Switch it on for the demo business (local only)

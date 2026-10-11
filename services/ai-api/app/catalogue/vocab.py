@@ -54,3 +54,12 @@ STOCK_LABEL: dict[str, str] = {
     "few_left": "Few left",
     "made_to_order": "Made to order",
 }
+
+
+# plain words an owner or a model may use for a fabric -> the catalogue's closed list (the assistant's find tool and the scripted development model)
+FABRIC_ALIASES = {
+    "kanjivaram": "kanchi_pattu", "kanchipuram": "kanchi_pattu", "kanchi": "kanchi_pattu", "pattu": "kanchi_pattu", "kanchi_pattu": "kanchi_pattu",
+    "dharmavaram": "dharmavaram_silk", "dharmavaram_silk": "dharmavaram_silk", "soft_silk": "soft_silk", "soft": "soft_silk",
+    "cotton_silk": "cotton_silk", "banarasi": "banarasi", "benarasi": "banarasi", "mysore": "mysore_silk", "mysore_silk": "mysore_silk",
+    "uppada": "uppada", "cotton": "pure_cotton", "pure_cotton": "pure_cotton", "georgette": "georgette", "other": "other",
+}  # fmt: skip

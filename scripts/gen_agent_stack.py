@@ -3,25 +3,29 @@
 
 The owner's demo runs on the default local stack (supabase/config.toml, project `sme-ai`, ports 543x1). Agents test on a SECOND, fully separate stack: its own project id (so its own containers and its own
 Docker volumes) and its own ports (the owner's plus 100). Everything else is the owner's configuration, unchanged, so the two stacks behave the same. This script writes
-supabase-agent/supabase/config.toml from supabase/config.toml by the substitutions below and nothing else; `--check` fails if the committed file differs (tests/test_stacks.py runs it).
+stacks/sme-ai-agent/supabase/config.toml from supabase/config.toml by the substitutions below and nothing else; `--check` fails if the committed file differs (tests/test_stacks.py runs it).
 
 The agent stack's `migrations`, `tests` and `templates` are COPIES of the owner's (the Supabase CLI refuses a link that leaves the project folder), made by `--sync` before every start, reset and test, and git-ignored: there is one
 source of truth (supabase/), never two.
 
   python3 scripts/gen_agent_stack.py          write the config file
   python3 scripts/gen_agent_stack.py --check  exit 1 if the committed file is out of date
-  python3 scripts/gen_agent_stack.py --sync   copy migrations, tests and templates from supabase/ (scripts/sb does this)
+  python3 scripts/gen_agent_stack.py --sync   write the config if stale and copy migrations, tests and templates from supabase/ (scripts/sb does this before start, db, test)
+  python3 scripts/gen_agent_stack.py --ensure write the config if stale, copy nothing (scripts/sb does this for status and the like)
 """
 
 from __future__ import annotations
 
+import fcntl
+import os
 import shutil
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OWNER = ROOT / "supabase" / "config.toml"
-AGENT = ROOT / "supabase-agent" / "supabase" / "config.toml"
+STACK_DIR = ROOT / "stacks" / "sme-ai-agent"  # the folder is named like the project id: the Supabase CLI names its containers and network by the folder for some commands
+AGENT = STACK_DIR / "supabase" / "config.toml"
 
 PROJECT_ID = "sme-ai-agent"
 # (section, key) -> (the owner's value, the agent stack's value)
@@ -78,27 +82,44 @@ SYNCED = ("migrations", "tests", "templates")
 
 
 def sync() -> None:
-    """Make supabase-agent/supabase/{migrations,tests,templates} exact copies of supabase/ (a deleted migration disappears too)."""
-    for name in SYNCED:
-        source, target = ROOT / "supabase" / name, AGENT.parent / name
-        if target.is_symlink() or target.is_file():
-            target.unlink()
-        elif target.is_dir():
-            shutil.rmtree(target)
-        shutil.copytree(source, target)
+    """Make stacks/sme-ai-agent/supabase/{migrations,tests,templates} exact copies of supabase/ (a deleted migration disappears too). Two callers at once (the API and the web of one run both ask for the
+    stack's status) must not trample each other: an exclusive lock serialises them, and each copy is made beside the target and renamed into place, so nobody ever sees a half-copied folder."""
+    AGENT.parent.mkdir(parents=True, exist_ok=True)
+    with open(AGENT.parent / ".sync.lock", "w") as lock:
+        fcntl.flock(lock, fcntl.LOCK_EX)
+        for name in SYNCED:
+            source, target = ROOT / "supabase" / name, AGENT.parent / name
+            staging = AGENT.parent / f".{name}.new"
+            if staging.exists():
+                shutil.rmtree(staging)
+            shutil.copytree(source, staging)
+            if target.is_symlink() or target.is_file():
+                target.unlink()
+            elif target.is_dir():
+                shutil.rmtree(target)
+            staging.rename(target)
+
+
+def ensure_config() -> None:
+    """Write the config file if it is missing or stale (through a temporary file, so a reader never sees half of it)."""
+    AGENT.parent.mkdir(parents=True, exist_ok=True)
+    wanted = generate(OWNER.read_text())
+    if not AGENT.exists() or AGENT.read_text() != wanted:
+        staging = AGENT.with_name(f".config.toml.{os.getpid()}")
+        staging.write_text(wanted)
+        staging.replace(AGENT)
 
 
 def main(argv: list[str]) -> int:
-    if "--sync" in argv:
-        AGENT.parent.mkdir(parents=True, exist_ok=True)
-        if not AGENT.exists() or AGENT.read_text() != generate(OWNER.read_text()):
-            AGENT.write_text(generate(OWNER.read_text()))
-        sync()
+    if "--sync" in argv or "--ensure" in argv:
+        ensure_config()
+        if "--sync" in argv:
+            sync()
         return 0
     wanted = generate(OWNER.read_text())
     if "--check" in argv:
         if not AGENT.exists() or AGENT.read_text() != wanted:
-            print("supabase-agent/supabase/config.toml is out of date: run python3 scripts/gen_agent_stack.py", file=sys.stderr)
+            print("stacks/sme-ai-agent/supabase/config.toml is out of date: run python3 scripts/gen_agent_stack.py", file=sys.stderr)
             return 1
         return 0
     AGENT.parent.mkdir(parents=True, exist_ok=True)

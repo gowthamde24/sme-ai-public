@@ -22,7 +22,8 @@ for (const url of [BASE, API]) {
 
 /** The local stack's public URL and publishable key (legacy anon as a fallback), from `supabase status` (the same public values the app itself uses). */
 export function supabasePublic() {
-  const out = execFileSync("supabase", ["status", "-o", "env"], { encoding: "utf8" });
+  // through scripts/sb: the AGENT stack unless SME_STACK=owner (docs/runbooks/two-local-stacks.md)
+  const out = execFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "scripts", "sb"), ["status", "-o", "env"], { encoding: "utf8" });
   const env = Object.fromEntries(out.split("\n").filter((l) => l.includes("=")).map((l) => {
     const i = l.indexOf("=");
     return [l.slice(0, i), l.slice(i + 1).replace(/^"|"$/g, "")];
@@ -57,22 +58,23 @@ export function totp(secretBase32, offsetSteps = 0) {
   return String(((h.readUInt32BE(o) & 0x7fffffff) % 1000000)).padStart(6, "0");
 }
 
+/** The database container of the local stack in use: SME_DB_CONTAINER (set by scripts/stack.sh), else the AGENT stack's unless SME_STACK=owner. */
+export function dbContainer() {
+  return process.env.SME_DB_CONTAINER || (process.env.SME_STACK === "owner" ? "supabase_db_sme-ai" : "supabase_db_sme-ai-agent");
+}
+
 /** The LOCAL demo user's authenticator secret, read from the local database container (never a hosted database). */
 export function factorSecret(email) {
-  const config = execFileSync("cat", [path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "supabase", "config.toml")], { encoding: "utf8" });
-  const project = /^project_id\s*=\s*"([^"]+)"/m.exec(config)[1];
   if (!/^[a-z0-9.@-]+$/.test(email)) throw new Error("unexpected e-mail");
-  const out = execFileSync("docker", ["exec", "-i", `supabase_db_${project}`, "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
+  const out = execFileSync("docker", ["exec", "-i", dbContainer(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-At", "-c",
     `select f.secret from auth.mfa_factors f join auth.users u on u.id = f.user_id where u.email = '${email}' and f.status = 'verified' order by f.created_at limit 1`], { encoding: "utf8" });
   return out.trim();
 }
 
 /** Mark a throwaway LOCAL account's e-mail address confirmed (the local stack asks for confirmation since job AD / D2), through the local database container. */
 export function confirmEmail(email) {
-  const config = execFileSync("cat", [path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "supabase", "config.toml")], { encoding: "utf8" });
-  const project = /^project_id\s*=\s*"([^"]+)"/m.exec(config)[1];
   if (!/^[A-Za-z0-9._+-]{1,64}@[A-Za-z0-9.-]{1,120}$/.test(email)) throw new Error("unexpected e-mail");
-  execFileSync("docker", ["exec", "-i", `supabase_db_${project}`, "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c",
+  execFileSync("docker", ["exec", "-i", dbContainer(), "psql", "-U", "postgres", "-d", "postgres", "-X", "-q", "-At", "-c",
     `update auth.users set email_confirmed_at = coalesce(email_confirmed_at, now()) where lower(email) = lower('${email}')`], { encoding: "utf8" });
 }
 

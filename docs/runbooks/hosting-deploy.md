@@ -2,6 +2,8 @@
 
 > **Deferred (2026-10-05):** This runbook is for the Customer Zero stage (T012). Nothing is deployed before; the hosting recommendation is deferred, re-check prices then (ADR 0017).
 
+> **Updated 2026-10-11 (job BG, [ADR 0072](../adr/0072-hosting-free-tier-first.md)):** the start-to-finish owner checklist, written free-tier first, is **`hosting-owner-runbook.md`**; read that first. This page keeps the command detail. Two corrections: the API is NOT secret-free any more (`SUPPRESSION_HMAC_KEY`, ADR 0020, is required outside development: `./deploy/cloudrun.sh secrets` stores it in Secret Manager and the deploy passes it as a secret reference), and the scheduler worker is deployed with `./deploy/cloudrun.sh worker` (a Cloud Run job).
+
 Nothing here has been run. It needs accounts only the owner can create (ADR 0015 recommends Supabase Pro in Mumbai plus Google Cloud Run
 in `asia-south1`). Every command is printed by `deploy/cloudrun.sh` before it runs; the script is a **dry run unless you pass `--execute`**.
 
@@ -26,7 +28,7 @@ export API_URL=https://<api url printed by gcloud>
 ./deploy/cloudrun.sh web --execute
 ./deploy/cloudrun.sh api --execute    # again, now that WEB_ORIGIN is the real web URL (CORS)
 ```
-The API needs **no secret** (it acts with each user's JWT); the three values the web build takes are public by design. The API refuses to
+The API needs **no Supabase secret** (it acts with each user's JWT; it does need the suppression key above); the three values the web build takes are public by design. The API refuses to
 start if its auth settings are missing or not https (`API_ENV=production`). Agents stay off: `AGENTS_ENABLED=false`.
 The API deploys on **request-based CPU, scaling to zero** (about $0-2 a month): enough while agents are off. To turn agents on, redeploy with
 `CPU_ALWAYS=true AGENTS_ENABLED=true` (instance-based billing, one warm instance, about $54 a month); the script refuses `AGENTS_ENABLED=true`

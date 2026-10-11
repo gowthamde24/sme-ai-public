@@ -9,28 +9,86 @@
 #   API_URL=https://<api service url>  WEB_ORIGIN=https://<web service url or your domain> \
 #   ./deploy/cloudrun.sh api   [--execute]      # build, push, deploy the API  (request-based CPU; CPU_ALWAYS=true for agents)
 #   ./deploy/cloudrun.sh web   [--execute]      # build, push, deploy the web  (request-based CPU, scales to zero)
+#   ./deploy/cloudrun.sh secrets [--execute]    # create the two secrets in Secret Manager (job BG): the suppression key is GENERATED here and never shown; the scheduler password is typed HIDDEN
+#   ./deploy/cloudrun.sh worker [--execute]     # the scheduler worker as a Cloud Run JOB run every few minutes by Cloud Scheduler (job BG): no always-on cost (SCHEDULER_EMAIL, SCHEDULER_SA, WORKER_SCHEDULE)
 #
-# Order for a first deploy: api, read its URL, then web with API_URL set to it, then set WEB_ORIGIN on the API (redeploy it) and run
-# scripts/verify_hosted.py.
+# Order for a first deploy: secrets, api, read its URL, then web with API_URL set to it, then set WEB_ORIGIN on the API (redeploy it), run
+# scripts/verify_hosted.py, and last the worker. The full walk-through, with the accounts only the owner can create: docs/runbooks/hosting-owner-runbook.md.
 set -euo pipefail
 
 what="${1:-}"; shift || true
 execute=false
 for arg in "$@"; do [ "$arg" = "--execute" ] && execute=true; done
-[ "$what" = "api" ] || [ "$what" = "web" ] || { echo "usage: $0 api|web [--execute]" >&2; exit 2; }
+case "$what" in api | web | secrets | worker) ;; *) echo "usage: $0 api|web|secrets|worker [--execute]" >&2; exit 2 ;; esac
 
-: "${PROJECT_ID:?set PROJECT_ID}" "${SUPABASE_URL:?set SUPABASE_URL}" "${WEB_ORIGIN:?set WEB_ORIGIN}"
-PUBLIC_KEY="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-}}"
-[ -n "$PUBLIC_KEY" ] || { echo "set SUPABASE_PUBLISHABLE_KEY (public; the legacy SUPABASE_ANON_KEY is also accepted)" >&2; exit 2; }
-case "$SUPABASE_URL$WEB_ORIGIN" in *http://*) echo "refusing a non-https URL" >&2; exit 2;; esac
+: "${PROJECT_ID:?set PROJECT_ID}"
+SECRET_SUPPRESSION="${SECRET_SUPPRESSION:-sme-suppression-hmac-key}"
+SECRET_SCHEDULER="${SECRET_SCHEDULER:-sme-scheduler-password}"
+if [ "$what" != "secrets" ]; then
+  : "${SUPABASE_URL:?set SUPABASE_URL}" "${WEB_ORIGIN:?set WEB_ORIGIN}"
+  PUBLIC_KEY="${SUPABASE_PUBLISHABLE_KEY:-${SUPABASE_ANON_KEY:-}}"
+  [ -n "$PUBLIC_KEY" ] || { echo "set SUPABASE_PUBLISHABLE_KEY (public; the legacy SUPABASE_ANON_KEY is also accepted)" >&2; exit 2; }
+  case "$SUPABASE_URL$WEB_ORIGIN" in *http://*) echo "refusing a non-https URL" >&2; exit 2;; esac
+fi
 REGION="${REGION:-asia-south1}"
 REPO="${REPO:-sme}"
 TAG="${TAG:-$(git rev-parse --short HEAD)}"
 registry="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO"
 
-run() { printf '+ %s\n' "$*"; if $execute; then "$@"; fi; }
+run() { printf '+'; printf ' %q' "$@"; printf '\n'; if $execute; then "$@"; fi; }
 
 cd "$(dirname "$0")/.."
+
+# The settings the API and the worker share (all public values; the secrets come from Secret Manager below)
+common_env() {
+  printf 'API_ENV=production,SUPABASE_URL=%s,SUPABASE_PUBLISHABLE_KEY=%s,SUPABASE_JWT_ISSUER=%s/auth/v1,SUPABASE_JWT_AUDIENCE=authenticated,SUPABASE_JWKS_URL=%s/auth/v1/.well-known/jwks.json,SUPABASE_JWT_ALGORITHMS=ES256' \
+    "$SUPABASE_URL" "$PUBLIC_KEY" "$SUPABASE_URL" "$SUPABASE_URL"
+}
+
+if [ "$what" = "secrets" ]; then
+  # Secret Manager holds the two server-side secrets (the first 6 secret versions are free; check the pricing page). Neither value is ever printed, put on a command line, or written to a file:
+  # the suppression key is generated here and piped into gcloud; the scheduler password is typed hidden and piped the same way. An existing secret gets a new VERSION (the old one stays until you destroy it).
+  run gcloud services enable secretmanager.googleapis.com --project "$PROJECT_ID"
+  for name in "$SECRET_SUPPRESSION" "$SECRET_SCHEDULER"; do
+    printf '+ gcloud secrets create %s --project %s --replication-policy=automatic --data-file=-   (value on stdin; if it exists: gcloud secrets versions add %s --data-file=-)\n' "$name" "$PROJECT_ID" "$name"
+  done
+  if $execute; then
+    gen() { python3 -c 'import secrets; print(secrets.token_hex(32), end="")'; }
+    put() { # name, value-producing command
+      if gcloud secrets describe "$1" --project "$PROJECT_ID" >/dev/null 2>&1; then
+        "${@:2}" | gcloud secrets versions add "$1" --project "$PROJECT_ID" --data-file=-
+      else
+        "${@:2}" | gcloud secrets create "$1" --project "$PROJECT_ID" --replication-policy=automatic --data-file=-
+      fi
+    }
+    put "$SECRET_SUPPRESSION" gen
+    read -rsp "Scheduler account password (the one you registered for the scheduler; typed hidden): " sched_pw; echo
+    [ -n "$sched_pw" ] || { echo "empty password: nothing stored for the scheduler" >&2; exit 2; }
+    put "$SECRET_SCHEDULER" printf '%s' "$sched_pw"
+    unset sched_pw
+    echo "Stored. Let the Cloud Run service account read them: gcloud secrets add-iam-policy-binding <name> --member serviceAccount:<its email> --role roles/secretmanager.secretAccessor"
+  fi
+  $execute || echo "(dry run: nothing was run. Add --execute to run the commands above.)"
+  exit 0
+fi
+
+if [ "$what" = "worker" ]; then
+  # The scheduler worker (ADR 0068) is one tick every interval. As a Cloud Run JOB started by Cloud Scheduler it costs nothing while it waits (no always-on instance): each run signs in,
+  # runs one tick (`--once`) and exits. Two ticks at once are safe (the database hands each message to exactly one). It acts only while the global outbox switch AND the business's automatic sending are on.
+  : "${SCHEDULER_EMAIL:?set SCHEDULER_EMAIL (the registered scheduler account; its password is the secret $SECRET_SCHEDULER)}"
+  : "${SCHEDULER_SA:?set SCHEDULER_SA (the service account Cloud Scheduler uses to start the job, an email)}"
+  SCHEDULE="${WORKER_SCHEDULE:-*/5 * * * *}"
+  image="$registry/api:$TAG"
+  run gcloud run jobs deploy sme-worker --project "$PROJECT_ID" --region "$REGION" --image "$image" \
+    --command python --args=-m,app.scheduler.worker,--once --cpu 1 --memory 512Mi --max-retries 0 --task-timeout 120s \
+    --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL" \
+    --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest"
+  run gcloud scheduler jobs create http sme-worker-tick --project "$PROJECT_ID" --location "$REGION" --schedule "$SCHEDULE" --time-zone "Asia/Kolkata" \
+    --uri "https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/sme-worker:run" --http-method POST \
+    --oauth-service-account-email "$SCHEDULER_SA"
+  $execute || echo "(dry run: nothing was run. Add --execute to run the commands above. If the schedule job exists already, use: gcloud scheduler jobs update http ...)"
+  exit 0
+fi
 
 if [ "$what" = "api" ]; then
   image="$registry/api:$TAG"
@@ -50,7 +108,8 @@ if [ "$what" = "api" ]; then
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     "${cpu_flags[@]}" --cpu 1 --memory 512Mi --max-instances 2 --concurrency 40 --timeout 300 --port 8080 \
     --allow-unauthenticated \
-    --set-env-vars "API_ENV=production,API_CORS_ORIGINS=$WEB_ORIGIN,SUPABASE_URL=$SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY,SUPABASE_JWT_ISSUER=$SUPABASE_URL/auth/v1,SUPABASE_JWT_AUDIENCE=authenticated,SUPABASE_JWKS_URL=$SUPABASE_URL/auth/v1/.well-known/jwks.json,SUPABASE_JWT_ALGORITHMS=ES256,AGENTS_ENABLED=$AGENTS"
+    --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS" \
+    --set-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}"
 else
   : "${API_URL:?set API_URL (the API service URL, https)}"
   case "$API_URL" in https://*) ;; *) echo "API_URL must be https" >&2; exit 2;; esac

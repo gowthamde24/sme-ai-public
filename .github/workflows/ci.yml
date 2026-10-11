@@ -12,6 +12,10 @@ permissions:
 # group 3 is "everything else in tests/integration", so a NEW test file lands in group 3 automatically and no file can be left out. A file listed here that no longer
 # exists makes pytest fail ("file or directory not found"), so a stale list is loud. Expected time per group (measured on run 37840506972): about 6.5 minutes of tests each.
 env:
+  # CI has ONE local stack per runner (a plain `supabase start`), the repository's own supabase/ project: it is the "owner" stack in the sense of docs/runbooks/two-local-stacks.md, and it is
+  # throwaway, so the destructive-action guard is released here. (On a person's machine the default is the separate AGENT stack; see that runbook.)
+  SME_STACK: owner
+  OWNER_OK: "1"
   INTEGRATION_GROUP_1: >-
     test_demo_seed.py test_erasure_direct_postgrest.py test_evidence_direct_postgrest.py test_followup_due_spike.py test_followup_races.py test_followup_whatsapp.py
     test_mfa_enforcement.py test_order_api.py test_order_equivalence.py test_order_erasure.py test_price_list_import_api.py test_quote_api.py
