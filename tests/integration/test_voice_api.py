@@ -164,25 +164,133 @@ def test_the_recording_is_never_stored(harness: Harness) -> None:
     )
 
 
-def test_the_same_message_id_again_replays_the_stored_answer_and_speaks_nothing_new(
+def test_the_same_message_id_again_reuses_the_stored_words_calls_no_speech_engine_and_charges_nothing(
     harness: Harness,
 ) -> None:
     mid = str(uuid.uuid4())
     first = harness.post(message_id=mid, query="&speak=true")
     assert first.status_code == 200 and events(first)[-1][0] == "audio"
+    first_events = events(first)
+    assert first_events[0][1]["reused"] is False
     conversation = next(
-        d["conversation_id"] for e, d in events(first) if e == "done"
+        d["conversation_id"] for e, d in first_events if e == "done"
     )  # a retry names the chat, like the text route
     ledger_after_first = harness.ledger()
     harness.tts.calls.clear()
-    second = harness.post(message_id=mid, query=f"&speak=true&conversation_id={conversation}")
+    harness.stt.calls.clear()
+    harness.stt.text = "A completely different sentence"  # the engine would now hear something else: it is not asked
+    try:
+        second = harness.post(message_id=mid, query=f"&speak=true&conversation_id={conversation}")
+    finally:
+        harness.stt.text = "What needs me today?"
     assert second.status_code == 200, second.text
     again = events(second)
+    assert harness.stt.calls == [], "the speech engine was NOT called for a retry"
+    assert (
+        again[0][0] == "transcript"
+        and again[0][1]["reused"] is True
+        and again[0][1]["text"] == "What needs me today?"
+    ), "the stored words, not a new transcription"
     done = next(d for e, d in again if e == "done")
-    assert done["kind"] == "replayed" and again[0][0] == "transcript"
+    assert done["kind"] == "replayed"
     assert harness.tts.calls == [] and harness.ledger() == ledger_after_first, (
-        "a replay makes and charges no new spoken answer"
+        "a replay makes and charges nothing new"
     )
+    # the recording itself is only checked and dropped: nothing about it is stored, and a bad one is still refused the same way
+    assert (
+        harness.post(
+            b"not audio at all" * 40, message_id=mid, query=f"&conversation_id={conversation}"
+        ).status_code
+        == 415
+    )
+
+
+def test_a_retry_still_works_when_the_allowance_is_used_up_because_it_spends_nothing(
+    harness: Harness,
+) -> None:
+    tenant = harness.scene.a.id
+    mid = str(uuid.uuid4())
+    first = harness.post(message_id=mid)
+    assert first.status_code == 200
+    conversation = next(d["conversation_id"] for e, d in events(first) if e == "done")
+    operator_sql.sql(
+        f"insert into public.tenant_agent_settings (tenant_id, enabled, daily_cost_cap_micros) values ('{tenant}', true, 1) on conflict (tenant_id) do update set daily_cost_cap_micros = 1"
+    )
+    try:
+        assert harness.post().status_code == 429, "a NEW recording is refused"
+        calls = len(harness.stt.calls)
+        retry = harness.post(message_id=mid, query=f"&conversation_id={conversation}")
+        assert (
+            retry.status_code == 200
+            and events(retry)[0][1]["reused"] is True
+            and len(harness.stt.calls) == calls
+        )
+    finally:
+        operator_sql.sql(
+            f"update public.tenant_agent_settings set daily_cost_cap_micros = null where tenant_id = '{tenant}'"
+        )
+
+
+def test_a_message_id_that_is_not_the_callers_is_never_reused(harness: Harness) -> None:
+    """Another member's message id (or another business's) is invisible to the caller, so the engine is used and the shared start refuses the id as it does for text."""
+    mid = str(uuid.uuid4())
+    assert harness.post(message_id=mid, user="owner").status_code == 200
+    calls = len(harness.stt.calls)
+    other = harness.post(message_id=mid, user="sales")
+    assert len(harness.stt.calls) == calls + 1, (
+        "the second person's recording is transcribed: the first person's chat is theirs alone, so nothing is reused"
+    )
+    assert other.status_code == 409 and other.json()["error"]["code"] == "message_id_used"
+
+
+def test_the_run_budget_is_one_rupee_for_text_and_voice_charges_ride_the_ledger_only(
+    harness: Harness,
+) -> None:
+    tenant = harness.scene.a.id
+    assert (
+        operator_sql.sql(
+            "select max_cost_micros from public.agent_definitions where agent_name = 'assistant'"
+        )
+        == "1000000"
+    )
+    # a TEXT question: the run has the rupee, spends a fraction of it and carries no voice charge
+    mid = str(uuid.uuid4())
+    r = harness.client.post(
+        f"/v1/tenants/{tenant}/assistant/messages",
+        json={"message_id": mid, "text": "What needs me today?"},
+        headers=bearer(harness.scene.a.users["owner"]),
+    )
+    assert r.status_code == 200 and events(r)[-1][0] == "done"
+    done = events(r)[-1][1]
+    text_run = operator_sql.sql(
+        f"select max_cost_micros || '/' || (cost_micros_used < max_cost_micros)::text from public.agent_runs where conversation_id = '{done['conversation_id']}'"
+    )
+    assert text_run == "1000000/true"
+    assert (
+        operator_sql.sql(
+            f"select count(*) from public.agent_cost_reservations where run_id = (select id from public.agent_runs where conversation_id = '{done['conversation_id']}') and model like 'voice-%'"
+        )
+        == "0"
+    )
+    # a VOICE question with a spoken answer: the run's own budget is still the rupee and its own counter stays inside it; the voice charges are on the ledger, and together they pass the rupee (up to Rs 3.00)
+    before = harness.ledger()
+    v = harness.post(query="&speak=true")
+    assert v.status_code == 200 and events(v)[-1][0] == "audio"
+    vdone = next(d for e, d in events(v) if e == "done")
+    row = operator_sql.sql(
+        f"select max_cost_micros || '/' || (cost_micros_used <= max_cost_micros)::text from public.agent_runs where conversation_id = '{vdone['conversation_id']}'"
+    )
+    assert row == "1000000/true"
+    voice_total = int(
+        operator_sql.sql(
+            f"select sum(settled_micros) from public.agent_cost_reservations where run_id = (select id from public.agent_runs where conversation_id = '{vdone['conversation_id']}') and model like 'voice-%'"
+        )
+    )
+    assert voice_total > 1_000_000, (
+        "the spoken answer alone is more than the text budget: it is allowed only because the run carries voice"
+    )
+    assert voice_total <= 3_000_000
+    assert len(harness.ledger()) - len(before) == 2
 
 
 def test_speak_in_a_language_with_no_voice_is_an_audio_error_and_the_text_stands(

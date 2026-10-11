@@ -24,7 +24,7 @@ Enter the key hidden, in the terminal that starts the API, never in a file:
 Voice needs speech to text; speaking the answer is optional (`speak=true`). A provider named without its key stops the API at start.
 
 ## Limits and costs
-60 seconds a recording; 500 spoken characters an answer; both are counted against the workspace's AI allowance (ADR 0071: Rs 0.60 a minute listening, Rs 4 per 1,000 characters speaking, deliberately a little above the dearest list price). A used-up allowance answers 429 `ai_paused_until` before any audio is sent.
+60 seconds a recording; 500 spoken characters an answer; both are counted against the workspace's AI allowance (ADR 0071: Rs 0.60 a minute listening, Rs 4 per 1,000 characters speaking, deliberately a little above the dearest list price). A used-up allowance answers 429 `ai_paused_until` before any audio is sent. A run's own budget for the model is Rs 1.00; a run that carries voice may be charged up to Rs 3.00 in all for its voice charges. A RETRY (same message id and conversation) reuses the stored words, calls no speech engine and charges nothing.
 
 ## Compare the engines on your own voices
 `~/Desktop/v2-overnight/voice-recording-guide.md` says what to record and how. Then `make stt-bakeoff` (DIR defaults to `~/Desktop/voice-samples`); the table lands in `~/Desktop/v2-overnight/voice-bakeoff.md`.

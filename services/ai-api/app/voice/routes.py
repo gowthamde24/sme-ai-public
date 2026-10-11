@@ -3,7 +3,7 @@
   query:  message_id (required, a uuid; a retry with the same id replays), conversation_id, language (te | hi | kn | en | ta: a hint for the recogniser), speak (true = also return the spoken answer)
   body:   the recording itself (raw bytes; Content-Type audio/*): WAV, M4A / MP4, WebM, Ogg, FLAC or MP3, at most 60 seconds
   answer: server-sent events, as for /assistant/messages, plus
-            event: transcript   {type, text, language, seconds}                      first: what was heard
+            event: transcript   {type, text, language, seconds, reused}              first: what was heard (reused = true: this message id was heard before; the stored words are used, the engine is not called, nothing is charged)
             ... text / source / draft / done as usual ...
             event: audio        {type, content_type, encoding: "base64", data, characters}   last, only when speak=true and text-to-speech is configured
             event: audio_error  {type, code}                                          instead of audio when speaking failed (the text answer stands)
@@ -19,6 +19,7 @@ NOTE: no `from __future__ import annotations` here, for the same reason as app/a
 import base64
 import json
 import logging
+import uuid
 from collections.abc import Iterator
 from typing import Annotated, Any
 
@@ -27,6 +28,7 @@ from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import StreamingResponse
 
 from app.agent_runs import pause
+from app.agents.errors import AgentDbError
 from app.assistant.models import MessageIn
 from app.assistant.routes import SSE_HEADERS, start_message
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
@@ -80,6 +82,22 @@ def _sse(event: str, data: dict[str, Any]) -> str:
     return f"event: {event}\ndata: {json.dumps(data, ensure_ascii=False)}\n\n"
 
 
+def _stored_transcript(
+    runtime: Runtime, token: str, tenant: uuid.UUID, message_id: uuid.UUID
+) -> str | None:
+    """The words of this message id if the caller already has such a message in this business, else None (also None when the data layer cannot say: the engine is then used as for a new message)."""
+    agents = runtime.agents
+    if agents is None or agents.assistant_db is None:
+        return None
+    db = agents.assistant_db(token, uuid.uuid4())
+    try:
+        return db.user_message_text(message_id, tenant)
+    except AgentDbError:
+        return None
+    finally:
+        db.close()
+
+
 def _voice_error(exc: VoiceError) -> ApiError:
     status, code, message = VOICE_FAILURES.get(
         exc.code, (502, "voice_failed", "The speech service could not do that just now.")
@@ -128,21 +146,28 @@ async def voice_message(
     except AudioRefused as exc:
         raise ApiError(*REFUSALS[exc.code]) from None
     token, tenant = ctx.principal.token, ctx.tenant.id
-    # the allowance is checked BEFORE any audio leaves this machine
-    until = await run_in_threadpool(pause.paused_until_or_none, runtime.today, token, tenant)
-    if until is not None:
-        raise pause.paused_error(until)
-    try:
-        transcript = await run_in_threadpool(
-            voice.stt.transcribe, data, info.content_type, language, ()
-        )
-    except VoiceError as exc:
-        logger.warning("voice transcription failed: %s", exc.code)
-        raise _voice_error(exc) from None
-    text = transcript.text.strip()[:4000]
-    if not text:
-        raise ApiError(*VOICE_FAILURES["no_speech"])
-    heard_language = transcript.language or language
+    # A RETRY of a message that was already heard (the same message id): the speech engine is NOT called again. The words it was heard as are in the chat already (the owner's own message, which only they
+    # can read); they are reused, the recording is only checked and dropped, and nothing new is charged. The shared start then replays the stored answer (or refuses, as for text).
+    stored = await run_in_threadpool(_stored_transcript, runtime, token, tenant, mid)
+    reused = stored is not None
+    if stored is not None:
+        text, heard_language = stored, language
+    else:
+        # the allowance is checked BEFORE any audio leaves this machine
+        until = await run_in_threadpool(pause.paused_until_or_none, runtime.today, token, tenant)
+        if until is not None:
+            raise pause.paused_error(until)
+        try:
+            transcript = await run_in_threadpool(
+                voice.stt.transcribe, data, info.content_type, language, ()
+            )
+        except VoiceError as exc:
+            logger.warning("voice transcription failed: %s", exc.code)
+            raise _voice_error(exc) from None
+        text = transcript.text.strip()[:4000]
+        if not text:
+            raise ApiError(*VOICE_FAILURES["no_speech"])
+        heard_language = transcript.language or language
     body = MessageIn(message_id=mid, conversation_id=cid, text=text)
     spoken: dict[str, Any] = {}
 
@@ -172,7 +197,7 @@ async def voice_message(
         spoken["characters"] = len(words)
 
     events = await run_in_threadpool(
-        start_message, runtime, ctx, body, charge=charge, on_reply=on_reply
+        start_message, runtime, ctx, body, charge=None if reused else charge, on_reply=on_reply
     )
 
     def stream() -> Iterator[str]:
@@ -183,6 +208,7 @@ async def voice_message(
                 "text": text,
                 "language": heard_language,
                 "seconds": info.seconds,
+                "reused": reused,
             },
         )
         yield from events

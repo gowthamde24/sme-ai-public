@@ -75,7 +75,7 @@ select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros
 select throws_ok($$update public.tenant_agent_settings set daily_cost_cap_micros = -1 where tenant_id = tests.tid('a')$$, '23514', null, '...nor be negative');
 select results_eq($$select model, input_micros_per_mtok, output_micros_per_mtok from public.agent_model_prices order by model$$, $$values ('fake-selftest'::text, 1000000::bigint, 1000000::bigint), ('voice-stt', 1000000000::bigint, 1000000000::bigint), ('voice-tts', 1000000000::bigint, 1000000000::bigint)$$,
   'the seeded prices are the scripted development model and the two voice accounting models (job BD); no real language model has a price until the operator adds one');
-select is((select max_cost_micros from public.agent_definitions where agent_name = 'assistant'), 3000000::bigint, 'the assistant run may spend Rs 3.00 (job BD: a minute of speech and a spoken answer are charged to the same run)');
+select is((select max_cost_micros from public.agent_definitions where agent_name = 'assistant'), 1000000::bigint, 'the assistant run may spend Rs 1.00 (job BD review: a run that carries voice may reach Rs 3.00 in all, tested in 82)');
 select is(app.agent_cost_micros(600, 0, 1000000000, 1000000000), 600000::bigint, 'a minute of speech (600 tokens of voice-stt) is Rs 0.60');
 select is(app.agent_cost_micros(2000, 0, 1000000000, 1000000000), 2000000::bigint, 'a spoken answer of 500 characters (2,000 tokens of voice-tts) is Rs 2.00');
 select is(app.agent_utc_today(), (now() at time zone 'Asia/Kolkata')::date, 'the clock helper is the Indian date (since job AF; tested at the boundary in 73)');

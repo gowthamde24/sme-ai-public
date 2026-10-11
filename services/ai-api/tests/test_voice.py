@@ -587,3 +587,44 @@ def test_a_provider_failure_is_a_fixed_answer_without_the_providers_words() -> N
     assert post(client, "a_owner", WAV).json()["error"]["code"] == "no_speech", (
         "an empty transcript is no speech"
     )
+
+
+# ---------------------------------------------------------------------------------------------- job BD review: a retry reuses the stored words
+def test_the_stored_transcript_is_read_for_the_callers_own_message_and_the_connection_is_closed() -> (
+    None
+):
+    from types import SimpleNamespace
+
+    from app.agents.errors import DataLayerUnavailable
+    from app.voice.routes import _stored_transcript
+
+    class Db:
+        def __init__(self, answer: Any) -> None:
+            self.answer, self.closed = answer, False
+            self.asked: list[tuple[uuid.UUID, uuid.UUID]] = []
+
+        def user_message_text(self, message_id: uuid.UUID, tenant_id: uuid.UUID) -> str | None:
+            self.asked.append((message_id, tenant_id))
+            if isinstance(self.answer, Exception):
+                raise self.answer
+            return self.answer  # type: ignore[no-any-return]
+
+        def close(self) -> None:
+            self.closed = True
+
+    mid, tenant = uuid.uuid4(), uuid.uuid4()
+    for answer, want in (
+        ("What needs me today?", "What needs me today?"),
+        (None, None),
+        (DataLayerUnavailable(), None),
+    ):
+        db = Db(answer)
+        runtime: Any = SimpleNamespace(
+            agents=SimpleNamespace(assistant_db=lambda token, run, db=db: db)
+        )
+        assert _stored_transcript(runtime, "tok", tenant, mid) == want
+        assert db.closed and db.asked == [(mid, tenant)]
+    none: Any = SimpleNamespace(agents=None)
+    no_db: Any = SimpleNamespace(agents=SimpleNamespace(assistant_db=None))
+    assert _stored_transcript(none, "tok", tenant, mid) is None
+    assert _stored_transcript(no_db, "tok", tenant, mid) is None
