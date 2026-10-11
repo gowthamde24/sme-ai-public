@@ -22,6 +22,9 @@ export async function targetPaths(accessToken: string, tenantId: string, targets
         const enquiry = enquiryOfQuote.get(target.id);
         return enquiry ? `${base}/enquiries/${enquiry}?quote=${target.id}` : `${base}/quotes`;
       }
+      case "outbox_message":
+      case "call_request":
+        return `${base}#needs-you`; // decided on Today itself (job AU)
     }
   };
 }

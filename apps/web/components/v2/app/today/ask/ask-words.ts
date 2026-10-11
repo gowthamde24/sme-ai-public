@@ -3,7 +3,7 @@
  * constant from a client file gets a reference to it, not the value. The server resolves each key in the person's language and hands the result down as props.
  */
 export const ASK_WORD_KEYS = [
-  "ask.title", "ask.sub", "ask.label", "ask.placeholder", "ask.send", "ask.stop", "ask.mic", "ask.mic.stop", "ask.listening", "ask.mic.privacy", "ask.mic.denied", "ask.mic.silent", "ask.mic.failed",
+  "ask.title", "ask.sub", "ask.label", "ask.placeholder", "ask.placeholder.hero", "ask.send", "ask.stop", "ask.mic", "ask.mic.stop", "ask.listening", "ask.mic.privacy", "ask.mic.denied", "ask.mic.silent", "ask.mic.failed",
   "ask.chip.needs", "ask.chip.quotes", "ask.chip.money", "ask.chip.team", "ask.asked", "ask.thinking", "ask.sources", "ask.drafts", "today.state.draft", "today.kind.quote", "today.kind.followup", "ask.approve",
   "ask.approve.hint", "ask.error", "ask.err.cost", "ask.err.limit", "ask.err.role", "ask.err.busy", "ask.err.notset", "ask.machine", "ask.gloss", "ask.noscreen", "ask.kind.reply", "ask.kind.enquiry", "frame.notyet", "office.switchedoff", "agent.main", "owl.mood.idle", "owl.mood.listening", "owl.mood.thinking", "owl.mood.answering", "owl.mood.resting",
 ] as const;

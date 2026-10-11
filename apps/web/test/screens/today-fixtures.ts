@@ -6,6 +6,7 @@
 import { parseAgentsStatus, parseToday, type Today } from "@/lib/api/today";
 import { QUOTE } from "@/lib/api/quotes-fixtures";
 import { LEAD } from "@/test/screens/fixtures";
+import { CALL_ID, MSG_PRICE } from "@/lib/api/outbox-fixtures";
 
 /** the quote of SUMMARY_JSON, so the quote list can place it */
 export const T_QUOTE = QUOTE;
@@ -13,8 +14,10 @@ export const T_ORDER = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1";
 const AT = "2026-10-06T04:00:00+00:00";
 
 export const TODAY_JSON = {
-  cards: { waiting: 3, money_held_paise: 40000, orders_open: 1 },
+  cards: { waiting: 5, money_held_paise: 40000, orders_open: 1 },
   needs_you: [
+    { kind: "outbox_approval", id: MSG_PRICE, customer: "Synthetic Buyer", city: "Hyderabad", agent: "followup_desk", summary: "A WhatsApp message to a customer is waiting for your approval.", at: "2026-10-06T04:45:00+00:00", amount_paise: null, target: { type: "outbox_message", id: MSG_PRICE } },
+    { kind: "call_approval", id: CALL_ID, customer: "Synthetic Buyer", city: "Hyderabad", agent: "followup_desk", summary: "A request to phone a customer is waiting for your approval.", at: "2026-10-06T04:40:00+00:00", amount_paise: null, target: { type: "call_request", id: CALL_ID } },
     { kind: "followup_due", id: "cccccccc-cccc-4ccc-8ccc-ccccccccccc1", customer: "Synthetic Buyer", city: null, agent: "followup_desk", summary: "A follow-up message (number 2) is drafted and waiting for your approval.", at: "2026-10-06T04:30:00+00:00", amount_paise: null, target: { type: "lead", id: LEAD } },
     { kind: "order_money_held", id: T_ORDER, customer: "Synthetic Buyer", city: "Hyderabad", agent: "order_desk", summary: "Order 1 is closed but still holds ₹400.00. A refund may be owed.", at: "2026-10-06T03:00:00+00:00", amount_paise: 40000, target: { type: "order", id: T_ORDER } },
     { kind: "quote_approval", id: T_QUOTE, customer: "Synthetic Buyer", city: "Hyderabad", agent: "quote_writer", summary: "Quote 1 for ₹50,400.00 is ready for your approval.", at: "2026-10-06T02:00:00+00:00", amount_paise: 5040000, target: { type: "quote", id: T_QUOTE } },
@@ -27,7 +30,8 @@ export const TODAY_JSON = {
 
 export function todayFor(role: "owner" | "admin" | "sales" | "viewer"): Today {
   if (role === "owner") return parseToday(TODAY_JSON);
-  if (role === "admin") return parseToday({ ...TODAY_JSON, cards: { ...TODAY_JSON.cards, waiting: 2 }, needs_you: TODAY_JSON.needs_you.filter((i) => i.kind !== "order_money_held") });
+  // an Admin is given the approvals (a quote, a follow-up, a message) but not the money held on closed orders and not the calls (the Owner decides those)
+  if (role === "admin") return parseToday({ ...TODAY_JSON, cards: { ...TODAY_JSON.cards, waiting: 3 }, needs_you: TODAY_JSON.needs_you.filter((i) => i.kind !== "order_money_held" && i.kind !== "call_approval") });
   if (role === "sales") return parseToday({ ...TODAY_JSON, cards: { ...TODAY_JSON.cards, waiting: 0 }, needs_you: [] });
   return parseToday({ cards: { waiting: 0, money_held_paise: 0, orders_open: 0 }, needs_you: [], recent: [] });
 }

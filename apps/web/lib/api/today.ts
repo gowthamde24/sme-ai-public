@@ -9,11 +9,14 @@ import { isCanonicalUuid } from "./crm";
  * What a person is shown depends on their role, decided by the database: a Viewer gets zeros and empty lists, Sales get the cards and the recent steps but nothing
  * to approve, an Admin gets approvals, and only the Owner is asked about money held on closed orders. A screen should show what it is given.
  */
-export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held";
+export type NeedsYouKind = "quote_approval" | "followup_due" | "order_money_held" | "outbox_approval" | "call_approval";
 export type NeedsYouAgent = "quote_writer" | "followup_desk" | "order_desk";
 
-/** Where "Open" goes: a quote, a lead (its follow-ups), an enquiry or an order. Today's items carry a quote, a lead or an order; a quote's own row (`fetchQuotes`) carries its `enquiry_id`. */
-export const TARGET_TYPES = ["quote", "lead", "enquiry", "order"] as const;
+/**
+ * Where "Open" goes: a quote, a lead (its follow-ups), an enquiry or an order. Today's items carry a quote, a lead or an order; a quote's own row (`fetchQuotes`) carries its `enquiry_id`.
+ * `outbox_message` and `call_request` (job AT) are the ids of a WhatsApp message held for approval and of a request to phone a customer: they have no page of their own, Today decides them in place.
+ */
+export const TARGET_TYPES = ["quote", "lead", "enquiry", "order", "outbox_message", "call_request"] as const;
 export type TargetType = (typeof TARGET_TYPES)[number];
 export interface Target {
   type: TargetType;
@@ -82,7 +85,7 @@ function when(v: unknown, what: string): string {
   return typeof v === "string" && /^\d{4}-\d{2}-\d{2}T/.test(v) && !Number.isNaN(Date.parse(v)) ? v : bad(what);
 }
 
-const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held"];
+const KINDS: readonly NeedsYouKind[] = ["quote_approval", "followup_due", "order_money_held", "outbox_approval", "call_approval"];
 const AGENTS: readonly NeedsYouAgent[] = ["quote_writer", "followup_desk", "order_desk"];
 
 export function parseTarget(json: unknown): Target {
@@ -101,7 +104,8 @@ export function parseNeedsYouItem(json: unknown): NeedsYouItem {
   return {
     kind: kind as NeedsYouKind,
     id,
-    customer: text(customer, "customer", 200),
+    // a message or a call about a lead with no company on record has no customer name: the API sends null and the card says "a customer"
+    customer: customer === null && (kind === "outbox_approval" || kind === "call_approval") ? "" : text(customer, "customer", 200),
     city: city as string | null,
     agent: agent as NeedsYouAgent,
     summary: text(summary, "summary"),

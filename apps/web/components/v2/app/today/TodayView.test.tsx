@@ -1,128 +1,237 @@
-import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { act, cleanup, render, screen, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 
 import { appT } from "@/i18n/app";
 
-import { TodayView, ago } from "./TodayView";
-import { NOTHING_TODAY, type NeedsYouItem, type TodayData } from "./types";
+import { TodayView, dayLine } from "./TodayView";
+import { NOW, call, classic, fakeActions, outbox, t } from "./today-test-kit";
+import { NOTHING_TODAY, type Digest, type NeedsCard, type Role, type TodayData } from "./types";
 
-const en = appT("en");
-const t = (k: string, v?: Record<string, string | number>) => en(k as "frame.notyet", v);
-const NOW = new Date("2026-10-09T10:00:00Z").getTime();
-const at = (minutes: number) => new Date(NOW - minutes * 60_000).toISOString();
-const U = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaa1";
-const item = (over: Partial<NeedsYouItem>): NeedsYouItem => ({ kind: "quote_approval", id: U, customer: "SYNTHETIC Textiles", city: "Hyderabad", agent: "quote_writer", summary: "A quote draft is ready.", at: at(28), amount_paise: 14175000, target: { type: "quote", id: U }, href: "/app/tenants/T/enquiries/E", ...over });
-const full: TodayData = {
-  cards: { waiting: 3, money_held_paise: 782000, orders_open: 2 },
-  needs_you: [item({}), item({ kind: "followup_due", id: "f1", agent: "followup_desk", city: null, amount_paise: null, href: "/app/tenants/T/leads/L" }), item({ kind: "order_money_held", id: "o1", agent: "order_desk", href: "/app/tenants/T/orders/O" })],
-  recent: [{ kind: "order_step", order_ref: "ORD-1", customer: "SYNTHETIC Silks", text: "Dispatched", at: at(2000), target: { type: "order", id: U }, href: "/app/tenants/T/orders/O1" }],
-  team: [
-    { agent: "main", state: "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null },
-    { agent: "researcher", state: "working", job: "Reads public pages about a lead.", last_event: { text: "Read a page", at: new Date(Date.now() - 5 * 60_000).toISOString() } },
-    { agent: "order_desk", state: "idle", job: "Keeps each order's steps in order.", last_event: null },
-  ],
+const READY: Digest = { state: "ready", sent: 6, held: 1, lines: [{ kind: "reply_to_inbound", n: 6 }, { kind: "quiet", n: 1, time: "9:00" }] };
+const TEAM: TodayData["team"] = [
+  { agent: "main", state: "idle", job: "Answers.", last_event: null },
+  { agent: "lead_finder", state: "not_available", job: "Finds new businesses.", last_event: null },
+  { agent: "researcher", state: "working", job: "Reads public pages.", last_event: null },
+  { agent: "requirement_analyst", state: "switched_off", job: "Reads an enquiry.", last_event: null },
+  { agent: "quote_writer", state: "idle", job: "Prepares a quote.", last_event: { text: "Prepared quote 3", at: "2026-10-11T02:00:00Z" } },
+  { agent: "followup_desk", state: "idle", job: "Drafts follow-ups.", last_event: null },
+  { agent: "order_desk", state: "idle", job: "Keeps orders in order.", last_event: null },
+];
+const CARDS: NeedsCard[] = [outbox(), call(), classic()];
+const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, visits: null, digest: Promise.resolve(READY), ...over });
+const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
+  const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
+  // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
+  let out!: ReturnType<typeof render>;
+  await act(async () => {
+    out = render(<TodayView data={d} name={name} hour={hour} now={NOW} base="/app/tenants/T" t={words ? (k, v) => words(k as "frame.notyet", v) : t} role={role} actions={fakeActions()} {...rest} />);
+  });
+  return out;
 };
-const view = (data: TodayData, name: string | null = "Asha", hour = 9) => render(<TodayView data={data} name={name} hour={hour} base="/app/tenants/T" t={t} />);
+
+beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
 
-describe("ago", () => {
-  it("is short and needs no words", () => {
-    expect([ago(at(0.2), NOW), ago(at(28), NOW), ago(at(180), NOW), ago(at(3000), NOW)]).toEqual(["1m", "28m", "3h", "2d"]);
+describe("dayLine", () => {
+  it("is the day in India, whatever zone the machine is in", () => {
+    expect(dayLine(Date.parse("2026-10-11T05:00:00Z"), "en")).toBe("Sunday, 11 October");
+    expect(dayLine(Date.parse("2026-10-10T19:00:00Z"), "en")).toBe("Sunday, 11 October"); // past midnight in India
   });
 });
 
-describe("TodayView", () => {
-  it("greets by the hour and by name, and says how many things wait", () => {
-    view(full, "Asha", 9);
+describe("Today: the header", () => {
+  it("greets by the hour and by name, with the date", async () => {
+    await view(data(), { name: "Asha", hour: 9 });
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good morning, Asha");
-    expect(screen.getByText("3 things are waiting for you.")).toBeInTheDocument();
+    expect(screen.getByText("Sunday, 11 October")).toBeInTheDocument();
     cleanup();
-    view(full, null, 14);
+    await view(data(), { name: null, hour: 14 });
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(/^Good afternoon$/);
     cleanup();
-    view({ ...full, cards: { ...full.cards, waiting: 1 } }, "Asha", 20);
+    await view(data(), { name: "Asha", hour: 20 });
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Good evening, Asha");
-    expect(screen.getByText("1 thing is waiting for you.")).toBeInTheDocument();
   });
-  it("draws one card per item with one main button (the first in the main colour) and Open, both to the page that decides", () => {
-    view(full);
-    const needs = screen.getByRole("heading", { name: "Needs you" }).closest("section")!;
-    const articles = within(needs).getAllByRole("article");
-    expect(articles).toHaveLength(3);
-    const first = articles[0];
-    expect(within(first).getByRole("heading", { level: 3 })).toHaveTextContent("SYNTHETIC Textiles, Hyderabad");
-    expect(within(first).getByText("Quote draft")).toBeInTheDocument();
-    expect(within(first).getByText(/Quote Writer · /)).toBeInTheDocument(); // the agent's name
-    expect(within(first).getByText("₹1,41,750.00")).toBeInTheDocument();
-    expect(within(first).getByRole("link", { name: "Check the quote" })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
-    expect(within(first).getByRole("link", { name: "Check the quote" }).className).toContain("bg-brand");
-    expect(within(first).getByRole("link", { name: /Open/ })).toHaveAttribute("href", "/app/tenants/T/enquiries/E");
-    expect(within(first).getByText("Nothing is sent, approved or recorded by opening this.")).toBeInTheDocument();
-    expect(within(articles[1]).getByRole("link", { name: "Check the follow-up" }).className).not.toContain("bg-brand ");
-    expect(within(articles[1]).queryByText("City")).toBeNull(); // no city: no fact is invented
-    expect(within(articles[2]).getByRole("link", { name: "Check the order" })).toHaveAttribute("href", "/app/tenants/T/orders/O");
-    expect(within(articles[2]).getByText("Order: money still held")).toBeInTheDocument();
+});
+
+describe("Today: the Agent OWL card", () => {
+  it("says in one sentence how many things need the person, built from the real cards", async () => {
+    await view(data());
+    const hero = screen.getByRole("region", { name: "3 things need you. The rest is handled." });
+    expect(within(hero).getByText("Agent OWL", { selector: "p" })).toBeInTheDocument();
+    expect(hero).toHaveAttribute("data-part", "agent-owl");
   });
-  it("says 'Not available yet' in place of every part that is null, and shows no number it was not given", () => {
-    view(NOTHING_TODAY, null);
-    expect(screen.queryByText(/things are waiting/)).toBeNull();
-    expect(screen.getAllByText("Not available yet")).toHaveLength(7); // three cards, Ask your team, Needs you, the team, Recently recorded
+  it.each([
+    [[], "Nothing needs you right now."],
+    [[classic()], "1 thing needs you. The rest is handled."],
+    [[classic(), call()], "2 things need you. The rest is handled."],
+  ])("%# cards: '%s'", async (needs, text) => {
+    await view(data({ needs: needs as NeedsCard[], cards: { waiting: (needs as NeedsCard[]).length, money_held_paise: 0, orders_open: 0 } }));
+    expect(screen.getByRole("heading", { level: 2, name: text as string })).toBeInTheDocument();
+  });
+  it("an unreadable Today says 'Not available yet' instead of a number", async () => {
+    await view(data({ needs: null, cards: NOTHING_TODAY.cards }));
+    expect(within(screen.getByRole("region", { name: "Not available yet" })).queryByText(/things need you/)).toBeNull();
+  });
+  it("the overnight line comes from the outbox log, while a pulse stands in until it has been read", async () => {
+    let settle!: (d: Digest) => void;
+    const digest = new Promise<Digest>((r) => (settle = r));
+    await view(data({ digest }));
+    expect(screen.queryByText(/Overnight on WhatsApp/)).toBeNull();
+    expect(document.querySelector('[data-part="agent-owl"] .animate-pulse')).not.toBeNull();
+    await act(async () => settle(READY));
+    expect(screen.getByText("Overnight on WhatsApp: 6 sent, 1 held for your OK.")).toBeInTheDocument();
+  });
+  it("says so when nothing was sent, says it could not be read when it could not, and says nothing at all to a person who may not read the log", async () => {
+    await view(data({ digest: Promise.resolve({ state: "ready", sent: 0, held: 0, lines: [] }) }));
+    expect(screen.getByText("Nothing was sent on WhatsApp in the last 24 hours.", { selector: "p" })).toBeInTheDocument();
+    cleanup();
+    await view(data({ digest: Promise.resolve({ state: "error" }) }));
+    expect(screen.getByText("The overnight summary is not available yet.")).toBeInTheDocument();
+    cleanup();
+    await view(data({ digest: Promise.resolve({ state: "none" }) }));
+    expect(document.querySelector('[data-part="overnight"]')).toBeNull();
+    cleanup();
+    await view(data({ digest: null }), { role: "viewer" });
+    expect(document.querySelector('[data-part="overnight"]')).toBeNull();
+    expect(document.querySelector('[data-part="done"]')).toBeNull();
+  });
+  it("the Ask box is in the card, 56 px high, with a microphone slot and three chips, the middle one in English and the last in the person's language", async () => {
+    await view(data());
+    const ask = document.querySelector('[data-ask="live"]')!;
+    expect(ask.closest('[data-part="agent-owl"]')).not.toBeNull();
+    const input = within(ask as HTMLElement).getByRole("textbox", { name: "Your question for Agent OWL" });
+    expect(input.className).toContain("md:min-h-14");
+    expect(input).toHaveAttribute("placeholder", "Ask anything, in any language…");
+    expect(within(ask as HTMLElement).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["What needs me today?", "Who should I call first?", "How much customer money is held?"]);
+    cleanup();
+    await view(data(), { lang: "te" });
+    const chips = within(document.querySelector('[data-ask="live"]') as HTMLElement).getAllByRole("listitem").map((li) => li.textContent);
+    expect(chips.slice(0, 2)).toEqual(["What needs me today?", "Who should I call first?"]); // always English
+    expect(chips[2]).toBe(appT("te")("ask.chip.money")); // the person's language
+  });
+  it("the question line is fixed above the bottom bar on a phone and sits in the card on a laptop", async () => {
+    await view(data());
+    const form = document.querySelector('[data-ask="live"] form')!;
+    expect(form.className).toContain("max-md:fixed");
+    expect(form.className).toContain("max-md:bottom-[calc(4rem+env(safe-area-inset-bottom))]");
+  });
+  it("is 'Not available yet' while Agent OWL is not built, 'Switched off' when its switch is off, and the owl rests", async () => {
+    await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "not_available" as const } : a)) }));
+    expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Not available yet");
+    expect(screen.getByRole("img", { name: "Agent OWL, Resting" })).toBeInTheDocument();
+    cleanup();
+    await view(data({ team: TEAM!.map((a) => (a.agent === "main" ? { ...a, state: "switched_off" as const } : a)) }));
+    expect(document.querySelector('[data-ask="unavailable"]')).toHaveTextContent("Switched off");
+  });
+  it("the owl starts in the 'Ready' mood when Agent OWL is live", async () => {
+    await view(data());
+    expect(screen.getByRole("img", { name: "Agent OWL, Ready" })).toBeInTheDocument();
+  });
+});
+
+describe("Today: the order of the sections", () => {
+  it("header, then the Agent OWL card, then Needs you; the side sections follow in the document (below it on a phone)", async () => {
+    await view(data({ visits: [{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed" }], digest: Promise.resolve(READY) }));
+    const at = (el: Element | null) => (el ? [...document.querySelectorAll("h1, h2")].indexOf(el.querySelector("h1, h2") ?? el) : -1);
+    const order = ["h1", '[data-part="agent-owl"]', "#needs-you", '[data-part="visits"]', '[data-part="done"]', '[data-part="team"]'].map((sel) => document.querySelector(sel));
+    expect(order.every(Boolean)).toBe(true);
+    order.slice(1).forEach((el, i) => expect(order[i]!.compareDocumentPosition(el!) & Node.DOCUMENT_POSITION_FOLLOWING, `${i}`).toBeTruthy());
+    void at;
+  });
+  it("the side column is store visits, then done while you slept, then your team", async () => {
+    await view(data({ visits: [{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed" }] }));
+    expect([...document.querySelectorAll("aside > section")].map((s) => s.getAttribute("data-part"))).toEqual(["visits", "done", "team"]);
+  });
+  it("leaves a room under the content for the fixed question line and bottom bar (phone only)", async () => {
+    const { container } = await view(data());
+    const spacer = container.querySelector('[data-screen="today"] > div[aria-hidden="true"]')!;
+    expect(spacer.className).toContain("h-20");
+    expect(spacer.className).toContain("md:hidden");
+  });
+});
+
+describe("Today: the side sections", () => {
+  it("store visits are not drawn without data, and are drawn, in time order, with data", async () => {
+    await view(data({ visits: null }));
+    expect(document.querySelector('[data-part="visits"]')).toBeNull();
+    cleanup();
+    await view(data({ visits: [] }));
+    expect(document.querySelector('[data-part="visits"]')).toBeNull();
+    cleanup();
+    await view(
+      data({ visits: [
+        { id: "b", starts_at: "2026-10-11T10:00:00Z", who: "Mahesh, Hindupur", extra: 0, topic: "Shop restock, about 40 pieces", status: "reminder_sent" },
+        { id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 2, topic: "Bridal sarees", status: "confirmed" },
+      ] }),
+      { calendarHref: "/app/tenants/T/visits" },
+    );
+    const s = screen.getByRole("heading", { name: "At the store today" }).closest("section")!;
+    expect(within(s).getByText("2 visits")).toBeInTheDocument();
+    expect(within(s).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["11:00Priya S. + 2Bridal sareesConfirmed", "15:30Mahesh, HindupurShop restock, about 40 piecesReminder sent"]);
+    expect(within(s).getByRole("link", { name: "Open the visit calendar" })).toHaveAttribute("href", "/app/tenants/T/visits");
+  });
+  it("no calendar link without a calendar", async () => {
+    await view(data({ visits: [{ id: "a", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "requested" }] }));
+    expect(screen.queryByRole("link", { name: "Open the visit calendar" })).toBeNull();
+    expect(screen.getByText("Waiting for the customer")).toBeInTheDocument();
+    expect(screen.getByText("1 visit")).toBeInTheDocument();
+  });
+  it("'Done while you slept' lists at most four lines from the outbox log, with plurals, and a link only when there is an outbox page", async () => {
+    const lines: Digest = { state: "ready", sent: 8, held: 0, lines: [{ kind: "reply_to_inbound", n: 6 }, { kind: "info", n: 1 }, { kind: "visit", n: 2 }, { kind: "quiet", n: 1, time: "9:00" }] };
+    await view(data({ digest: Promise.resolve(lines) }));
+    const s = screen.getByRole("heading", { name: "Done while you slept" }).closest("section")!;
+    expect(within(s).getAllByRole("listitem").map((li) => li.textContent)).toEqual(["Replied to 6 customers on WhatsApp", "Sent shop information to 1 customer", "Sent visit messages to 2 customers", "Held 1 message until 9:00 (quiet hours)"]);
+    expect(within(s).queryByRole("link")).toBeNull();
+    cleanup();
+    await view(data({ digest: Promise.resolve(lines) }), { outboxHref: "/app/tenants/T/outbox" });
+    expect(screen.getByRole("link", { name: "See everything in the outbox" })).toHaveAttribute("href", "/app/tenants/T/outbox");
+  });
+  it("'Done while you slept' has a loading state, an empty state, an error state, and is not drawn for someone who may not read the log", async () => {
+    await view(data({ digest: new Promise<Digest>(() => {}) }));
+    expect(document.querySelector('[data-part="done"]')).toBeNull();
+    expect(screen.getByRole("heading", { name: "Done while you slept" }).closest("section")).toHaveAttribute("aria-busy", "true");
+    cleanup();
+    await view(data({ digest: Promise.resolve({ state: "ready", sent: 0, held: 0, lines: [] }) }));
+    expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Nothing was sent in the last 24 hours.")).toBeInTheDocument();
+    cleanup();
+    await view(data({ digest: Promise.resolve({ state: "error" }) }));
+    expect(within(document.querySelector('[data-part="done"]') as HTMLElement).getByText("Not available yet")).toBeInTheDocument();
+    cleanup();
+    await view(data({ digest: Promise.resolve({ state: "none" }) }));
+    expect(screen.queryByRole("heading", { name: "Done while you slept" })).toBeNull();
+  });
+  it("'Your team' shows the six helpers as owls in their own colours, one live status line each, and not Agent OWL itself", async () => {
+    await view(data());
+    const s = screen.getByRole("heading", { name: "Your team" }).closest("section")!;
+    const rows = within(s).getAllByRole("listitem");
+    expect(rows).toHaveLength(6);
+    expect(rows.map((r) => r.querySelector("svg")?.getAttribute("data-owl"))).toEqual(["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
+    expect(within(s).queryByText("Agent OWL")).toBeNull();
+    expect(rows.map((r) => r.querySelectorAll("span")[1]?.textContent ?? r.textContent)).toEqual([
+      expect.stringContaining("Not available yet"),
+      expect.stringContaining("Working"),
+      expect.stringContaining("Switched off"),
+      expect.stringContaining("Prepared quote 3 · 3h"),
+      expect.stringContaining("Idle"),
+      expect.stringContaining("Idle"),
+    ]);
+    expect(within(s).getByRole("link", { name: /Open the office/ })).toHaveAttribute("href", "/app/tenants/T/office");
+  });
+  it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
+    await view(data({ team: null }));
+    expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+  });
+});
+
+describe("Today: sections that have no data are not drawn, and nothing is invented", () => {
+  it("with nothing readable it still draws the header, the card and the two honest places", async () => {
+    await view({ ...NOTHING_TODAY }, { name: null });
+    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+    expect(document.querySelector('[data-part="visits"]')).toBeNull();
+    expect(document.querySelector('[data-part="done"]')).toBeNull();
+    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(3);
     expect(screen.queryByText(/₹/)).toBeNull();
-  });
-  it("an empty list is 'nothing is waiting', not 'not available'", () => {
-    view({ ...full, cards: { ...full.cards, waiting: 0 }, needs_you: [] });
-    expect(screen.getAllByText("Nothing is waiting for you.").length).toBeGreaterThan(0);
-  });
-  it("lists the agents with their state and the last job, and the recent records, linked to the orders", () => {
-    view(full);
-    const team = screen.getByRole("heading", { name: "Your team right now" }).closest("section")!;
-    expect(within(team).getByText("Working")).toBeInTheDocument();
-    expect(within(team).getByText("Researcher")).toBeInTheDocument(); // the agent's name, not its code
-    expect(within(team).getByText("Read a page · 5m")).toBeInTheDocument(); // the last event when there is one
-    expect(within(team).getByText("Keeps each order's steps in order.")).toBeInTheDocument(); // else what it does
-    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // the agent that is not built (Agent OWL)
-    expect(within(team).getByText("Agent OWL")).toBeInTheDocument();
-  });
-  it("'Ask your team' is centred above 'Needs you', and with the Agent OWL not built it says 'Not available yet' and offers nothing to press", () => {
-    view(full);
-    const ask = screen.getByRole("region", { name: "Ask your team" });
-    expect(ask).toHaveAttribute("data-ask", "unavailable");
-    expect(within(ask).getByText("Not available yet")).toBeInTheDocument();
-    expect(within(ask).queryByRole("textbox")).toBeNull();
-    expect(within(ask).queryByRole("button")).toBeNull();
-    expect(ask.className).toContain("mx-auto");
-    const needs = screen.getByRole("heading", { name: "Needs you" });
-    expect(ask.compareDocumentPosition(needs) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy(); // the box comes first
-  });
-  it("the box is live when the Agent OWL is idle or working; 'Switched off' when its switch is off; 'Not available yet' when it is not built or cannot be read", () => {
-    view({ ...full, team: [{ agent: "main", state: "idle", job: "Answers.", last_event: null }] });
-    expect(screen.getByRole("region", { name: "Ask your team" })).toHaveAttribute("data-ask", "live");
-    cleanup();
-    view({ ...full, team: [{ agent: "main", state: "working", job: "Answers.", last_event: null }] });
-    expect(screen.getByRole("region", { name: "Ask your team" })).toHaveAttribute("data-ask", "live");
-    cleanup();
-    view({ ...full, team: [{ agent: "main", state: "not_available", job: "Answers.", last_event: null }] });
-    expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Not available yet")).toBeInTheDocument();
-    cleanup();
-    view({ ...full, team: [{ agent: "main", state: "switched_off", job: "Answers.", last_event: null }] });
-    expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Switched off")).toBeInTheDocument();
-    cleanup();
-    view({ ...full, team: null });
-    expect(within(screen.getByRole("region", { name: "Ask your team" })).getByText("Not available yet")).toBeInTheDocument();
-  });
-  it("a helper whose switch is off says 'Switched off' on its row, not 'Not available yet'", () => {
-    view({ ...full, team: [{ agent: "researcher", state: "switched_off", job: "Reads public pages about a lead.", last_event: null }, { agent: "main", state: "not_available", job: "Coordinates the other helpers. Not built yet.", last_event: null }] });
-    const team = screen.getByRole("heading", { name: "Your team right now" }).closest("section")!;
-    expect(within(team).getByText("Switched off")).toBeInTheDocument();
-    expect(within(team).getAllByText("Not available yet")).toHaveLength(1); // only the one that is not built
-    expect(within(team).getByRole("link", { name: /Office/ })).toHaveAttribute("href", "/app/tenants/T/office");
-    const recent = screen.getByRole("heading", { name: "Recently recorded" }).closest("section")!;
-    expect(within(recent).getByRole("link", { name: /ORD-1 · SYNTHETIC Silks/ })).toHaveAttribute("href", "/app/tenants/T/orders/O1"); // the order the step belongs to
-  });
-  it("the money card links to the orders and is the amber one", () => {
-    view(full);
-    const money = screen.getByRole("link", { name: /Customer money held/ });
-    expect(money).toHaveAttribute("href", "/app/tenants/T/orders");
-    expect(money).toHaveTextContent("₹7,820.00");
   });
 });

@@ -6,7 +6,7 @@
  * answered from fixtures (test/screens/state.ts). Sign-in, the clock, the time zone and the ids a page makes up are fixed.
  * To accept a deliberate change of words (the owner decides, never a batch alone): `npx vitest run test/screens -u`.
  */
-import { render } from "@testing-library/react";
+import { act, render } from "@testing-library/react";
 import fs from "node:fs";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -46,6 +46,7 @@ vi.mock("@/lib/api/orders", async (orig) => (await import("./state")).wrap(await
 vi.mock("@/lib/api/account", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/account")>(), ["fetchAccountSetup"]));
 vi.mock("@/lib/api/plan", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/plan")>(), ["getPlan"]));
 vi.mock("@/lib/api/today", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/today")>(), ["getToday", "getAgentsStatus"]));
+vi.mock("@/lib/api/outbox", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/outbox")>(), ["listOutboxMessages", "listOutboxApprovals", "listCallRequests"]));
 vi.mock("@/lib/api/ai-usage", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/ai-usage")>(), ["getAiUsage"]));
 vi.mock("@/lib/api/quote-policies", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quote-policies")>(), ["fetchQuotePolicyVersions"]));
 vi.mock("@/lib/api/quotes", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quotes")>(), ["fetchQuoteSetup", "fetchEnquiryQuotes", "fetchQuote", "fetchQuoteText", "fetchQuotes"]));
@@ -82,7 +83,11 @@ async function capture(scenario: (typeof SCENARIOS)[number], role: (typeof ROLES
   setHandlers(scenario.handlers(role));
   try {
     const element = await scenario.render();
-    const { container } = render(element);
+    // rendered inside an awaited act, so the parts that read a promise (the outbox log under its Suspense) have settled when the text is taken
+    let container!: HTMLElement;
+    await act(async () => {
+      container = render(element).container;
+    });
     return screenText(container);
   } catch (error) {
     if (error instanceof Error && error.message === "NEXT_NOT_FOUND") return "[not found]\n";

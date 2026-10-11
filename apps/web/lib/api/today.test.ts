@@ -50,7 +50,7 @@ describe("Today", () => {
   it("every item and step says where Open goes", () => {
     expect(parseNeedsYouItem(ITEM).target).toEqual({ type: "quote", id: ID });
     expect(parseRecentStep(STEP).target).toEqual({ type: "order", id: ID });
-    for (const type of ["quote", "lead", "enquiry", "order"]) expect(parseTarget({ type, id: ID })).toEqual({ type, id: ID });
+    for (const type of ["quote", "lead", "enquiry", "order", "outbox_message", "call_request"]) expect(parseTarget({ type, id: ID })).toEqual({ type, id: ID });
   });
   it.each([[null], [{}], [{ type: "quote" }], [{ id: ID }], [{ type: "dashboard", id: ID }], [{ type: "quote", id: "x" }], [{ type: "quote", id: 5 }], ["quote"]])(
     "a target of %j is a contract error, on an item and on a step",
@@ -68,22 +68,33 @@ describe("Today", () => {
     expect(() => parseNeedsYouItem(item)).toThrow(ApiContractError);
     expect(() => parseRecentStep(step)).toThrow(ApiContractError);
   });
-  it("skips an item of a kind it does not know (outbox_approval, call_approval) instead of failing, and keeps the rest in order", () => {
-    const outbox = { ...ITEM, kind: "outbox_approval", agent: "followup_desk", target: { type: "lead", id: ID } };
-    const call = { kind: "call_approval", anything: "else", at: AT };
+  const OUTBOX = { ...ITEM, kind: "outbox_approval", agent: "followup_desk", city: "Demoville", amount_paise: null, summary: "A WhatsApp message to a customer is waiting for your approval.", target: { type: "outbox_message", id: ID } };
+  const CALL = { ...OUTBOX, kind: "call_approval", summary: "A request to phone a customer is waiting for your approval.", target: { type: "call_request", id: ID } };
+  it("reads the two kinds job AT added (a WhatsApp message and a call, each with its own kind of target)", () => {
+    const today = parseToday({ ...TODAY, needs_you: [OUTBOX, CALL, ITEM] });
+    expect(today.needs_you.map((i) => [i.kind, i.target.type, i.agent, i.amount_paise])).toEqual([["outbox_approval", "outbox_message", "followup_desk", null], ["call_approval", "call_request", "followup_desk", null], ["quote_approval", "quote", "quote_writer", 500_000]]);
+  });
+  it("a message or a call about a lead with no company has no customer name: the item says so with an empty name, the other kinds still need one", () => {
+    expect(parseNeedsYouItem({ ...OUTBOX, customer: null }).customer).toBe("");
+    expect(parseNeedsYouItem({ ...CALL, customer: null }).customer).toBe("");
+    expect(() => parseNeedsYouItem({ ...ITEM, customer: null })).toThrow(ApiContractError);
+    expect(() => parseNeedsYouItem({ ...OUTBOX, customer: "" })).toThrow(ApiContractError);
+  });
+  it("skips an item of a kind it does not know instead of failing, and keeps the rest in order", () => {
+    const later = { kind: "something_new", anything: "else", at: AT };
     const second = { ...ITEM, kind: "followup_due", agent: "followup_desk", target: { type: "lead", id: ID } };
-    const today = parseToday({ ...TODAY, needs_you: [outbox, ITEM, call, second, { kind: "something_new" }] });
+    const today = parseToday({ ...TODAY, needs_you: [later, ITEM, { kind: "other_new" }, second, later] });
     expect(today.needs_you.map((i) => i.kind)).toEqual(["quote_approval", "followup_due"]);
     expect(today.cards).toEqual(parseToday(TODAY).cards);
-    expect(parseToday({ ...TODAY, needs_you: [outbox, call] }).needs_you).toEqual([]);
+    expect(parseToday({ ...TODAY, needs_you: [later] }).needs_you).toEqual([]);
   });
   it("still fails on an item that is not an object, has no text kind, or is a known kind with a bad field", () => {
-    for (const bad of ["x", 5, null, [], {}, { ...ITEM, kind: 5 }, { ...ITEM, kind: null }, { ...ITEM, id: "x" }, { ...ITEM, agent: "main" }, { ...ITEM, amount_paise: -1 }]) {
+    for (const bad of ["x", 5, null, [], {}, { ...ITEM, kind: 5 }, { ...ITEM, kind: null }, { ...ITEM, id: "x" }, { ...ITEM, agent: "main" }, { ...ITEM, amount_paise: -1 }, { ...OUTBOX, target: { type: "outbox_message", id: "x" } }, { ...CALL, target: { type: "dashboard", id: ID } }]) {
       expect(() => parseToday({ ...TODAY, needs_you: [ITEM, bad] }), JSON.stringify(bad)).toThrow(ApiContractError);
     }
   });
   it("parseNeedsYouItem stays strict about the kind (the skip is Today's, not the parser's)", () => {
-    expect(() => parseNeedsYouItem({ ...ITEM, kind: "outbox_approval" })).toThrow(ApiContractError);
+    expect(() => parseNeedsYouItem({ ...ITEM, kind: "something_new" })).toThrow(ApiContractError);
   });
   it.each([["kind", "x"], ["order_ref", ""], ["customer", ""], ["text", ""], ["at", "soon"]])("a recent step with %s = %j is a contract error", (key, value) => {
     expect(() => parseRecentStep({ ...STEP, [key]: value })).toThrow(ApiContractError);
@@ -103,7 +114,7 @@ describe("Today", () => {
     expect(apiRequest).toHaveBeenLastCalledWith("/v1/tenants/a%2Fb%3Fc/today", "tok");
   });
   it("getToday shows what it knows when the API sends a new kind of item (no error, the unknown one is left out)", async () => {
-    apiRequest.mockResolvedValue({ ...TODAY, needs_you: [{ ...ITEM, kind: "outbox_approval" }, ITEM, { kind: "call_approval" }] });
+    apiRequest.mockResolvedValue({ ...TODAY, needs_you: [{ ...ITEM, kind: "something_new" }, ITEM, { kind: "other_new" }] });
     expect((await getToday("tok", TENANT)).needs_you).toEqual([ITEM]);
   });
   it("shows nothing for an answer that does not match", async () => {
