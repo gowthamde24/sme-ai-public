@@ -7,8 +7,11 @@ import { ApiDownV2, NotShownV2, PageTop, Pill } from "@/components/v2/app/parts"
 import { btnMain, cellRight, pageMain, table, tableWrap, td, th } from "@/components/v2/app/ui";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { OUTCOME_LABELS, fetchQuotes, formatDate, formatRupees } from "@/lib/api/quotes";
+import { fetchQuotes, formatDate, formatRupees } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
+import { makeT, type Words } from "@/components/v2/app/words";
+import { wordsFor } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 
 export const metadata = { title: "Quotes · SME AI Revenue Engine" };
@@ -22,6 +25,9 @@ const TONE = { draft: "neutral", approved: "brand", rejected: "red", withdrawn: 
  * A quote's price comes from the price list by fixed rules; the list shows what the API says, nothing more. A viewer sees none (the API refuses them too).
  */
 export default async function QuotesPage({ params }: PageProps<"/app/tenants/[tenantId]/quotes">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["enq."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -33,7 +39,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return <ApiDownV2 />;
   }
-  if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Quotes" message="Quotes are shown to owners, admins and sales users." />;
+  if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("enq.quotes")} message={t("enq.quotes_are_shown_to_owners_admins")} />;
 
   let quotes;
   try {
@@ -44,31 +50,31 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
   }
   const base = `/app/tenants/${tenantId}`;
   return (
-    <main className={pageMain}>
+    <main className={pageMain} lang={lang}>
       <PageTop
-        title="Quotes"
-        sub="Prices come from your price list by fixed rules. AI never sets a price."
+        title={t("enq.quotes")}
+        sub={t("enq.prices_come_from_your_price_list")}
         action={
           <Link href={`${base}/review`} className={`${btnMain} gap-2`}>
             <Plus className="size-5" aria-hidden="true" />
-            New quote
+            {t("enq.new_quote")}
           </Link>
         }
       />
-      <p className="mt-2 text-sm text-muted">A quote starts from an enquiry on a lead: open the lead, then the enquiry.</p>
+      <p className="mt-2 text-sm text-muted">{t("enq.a_quote_starts_from_an_enquiry")}</p>
       {quotes.length === 0 ? (
-        <p className="mt-6 text-base">No quotes yet.</p>
+        <p className="mt-6 text-base">{t("enq.no_quotes_yet")}</p>
       ) : (
         <div className={tableWrap}>
           <table className={table}>
-            <caption className="sr-only">Quotes, newest first</caption>
+            <caption className="sr-only">{t("enq.quotes_newest_first")}</caption>
             <thead>
               <tr>
-                <th scope="col" className={th}>Quote</th>
-                <th scope="col" className={th}>Customer</th>
-                <th scope="col" className={`${th} ${cellRight}`}>Total</th>
-                <th scope="col" className={th}>Valid until</th>
-                <th scope="col" className={th}>Status</th>
+                <th scope="col" className={th}>{t("enq.quote")}</th>
+                <th scope="col" className={th}>{t("enq.customer")}</th>
+                <th scope="col" className={`${th} ${cellRight}`}>{t("enq.total")}</th>
+                <th scope="col" className={th}>{t("enq.valid_until")}</th>
+                <th scope="col" className={th}>{t("enq.status")}</th>
               </tr>
             </thead>
             <tbody>
@@ -76,17 +82,17 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
                 <tr key={q.id}>
                   <td className={td}>
                     <Link href={`${base}/enquiries/${q.enquiry_id}?quote=${q.id}`} className="inline-flex min-h-11 items-center font-mono font-bold text-brand-text hover:underline">
-                      Quote {q.quote_no}
+                      {t("enq.quote_n", { n: q.quote_no })}
                     </Link>
                   </td>
                   <td className={td}>
-                    <span className="block font-medium">{q.customer ?? "A customer"}</span>
-                    <span className="block text-sm text-muted">{[q.city, q.customer_kind === "repeat" ? "Repeat customer" : "New customer"].filter(Boolean).join(" · ")}</span>
+                    <span className="block font-medium">{q.customer ?? t("enq.a_customer")}</span>
+                    <span className="block text-sm text-muted">{[q.city, t(`enq.kind.${q.customer_kind}`)].filter(Boolean).join(" · ")}</span>
                   </td>
                   <td className={`${td} ${cellRight} font-semibold tabular-nums`}>{formatRupees(q.total_paise)}</td>
                   <td className={`${td} text-muted`}>{formatDate(q.valid_until)}</td>
                   <td className={td}>
-                    <Pill tone={TONE[q.outcome]}>{OUTCOME_LABELS[q.outcome]}</Pill>
+                    <Pill tone={TONE[q.outcome]}>{t(`enq.outcome.${q.outcome}`)}</Pill>
                   </td>
                 </tr>
               ))}

@@ -7,10 +7,11 @@ import { alertBox, link, mutedText, noteBox, pageH4, surfaceFlat } from "@/compo
 import { SentOnWhatsappForm } from "./sent-on-whatsapp-form";
 import type { SentMessageState } from "./sent-on-whatsapp-actions";
 import type { WhatsappView } from "./whatsapp-view";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 /** `sent` is the "I sent it on WhatsApp" form: the server action already bound to this workspace and quote, and the id the page made for this render. Without it the button is not shown. */
 export type SentOnWhatsapp = { action: (prev: SentMessageState, formData: FormData) => Promise<SentMessageState>; touchId: string };
-type Props = { tenantId: string; quoteId: string; view: WhatsappView; sent?: SentOnWhatsapp | null };
+type Props = { tenantId: string; quoteId: string; view: WhatsappView; sent?: SentOnWhatsapp | null; words?: Words; };
 
 /**
  * The WhatsApp controls of an APPROVED quote, under "Copy text" (which is always there). A server component with NO number, NO text and NO link to WhatsApp in it: "Open in WhatsApp" is a link to this site's own redirect route
@@ -19,12 +20,13 @@ type Props = { tenantId: string; quoteId: string; view: WhatsappView; sent?: Sen
  * What is shown, in this order: a closed-code sentence if the redirect sent the person back; then, for an expired quote, only the sentence that it expired; for a gate word, the sentence for that word (and for `consent` a link to the
  * consent page); and only if the database's own gate lets the channel through, the controls.
  */
-export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props) {
+export function WhatsappActions({ tenantId, quoteId, view, sent = null, words }: Props) {
+  const t = makeT(words);
   const route = `/app/tenants/${tenantId}/quotes/${quoteId}/whatsapp`;
   return (
     <div aria-labelledby="whatsapp-heading" className={`mt-6 ${surfaceFlat}`}>
       <h4 id="whatsapp-heading" className={pageH4}>
-        WhatsApp
+        {t("enq.whatsapp")}
       </h4>
       {view.notice ? (
         <p role="alert" className={alertBox}>
@@ -33,7 +35,7 @@ export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props)
       ) : null}
       {view.expired ? (
         <p role="note" className={noteBox}>
-          This quote expired after {view.validUntil}, so WhatsApp is not offered. You can still copy the text.
+          {t("enq.wa_expired", { date: view.validUntil })}
         </p>
       ) : view.gate === "unread" ? (
         <p role="note" className={mutedText}>
@@ -45,7 +47,7 @@ export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props)
           {view.gate === "consent" && view.consentContactId ? (
             <p>
               <Link href={`/app/tenants/${tenantId}/contacts/${view.consentContactId}/consent`} className={link}>
-                Record consent for this person →
+                {t("enq.record_consent_for_this_person")}
               </Link>
             </p>
           ) : null}
@@ -55,7 +57,7 @@ export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props)
           {view.fits ? (
             <p>
               <a href={route} target="_blank" rel="noopener noreferrer" className={link}>
-                Open in WhatsApp
+                {t("enq.open_in_whatsapp")}
               </a>
             </p>
           ) : (
@@ -65,7 +67,7 @@ export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props)
               </p>
               <p>
                 <a href={`${route}?chat=1`} target="_blank" rel="noopener noreferrer" className={link}>
-                  Open the WhatsApp chat
+                  {t("enq.open_the_whatsapp_chat")}
                 </a>
               </p>
             </>
@@ -76,7 +78,7 @@ export function WhatsappActions({ tenantId, quoteId, view, sent = null }: Props)
               {NO_POLICY_NOTE}
             </p>
           ) : null}
-          {sent ? <SentOnWhatsappForm action={sent.action} tenantId={tenantId} touchId={sent.touchId} consentContactId={view.consentContactId} /> : null}
+          {sent ? <SentOnWhatsappForm words={words} action={sent.action} tenantId={tenantId} touchId={sent.touchId} consentContactId={view.consentContactId} /> : null}
         </>
       )}
     </div>

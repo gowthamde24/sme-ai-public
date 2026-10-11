@@ -5,6 +5,7 @@ import { useActionState } from "react";
 import type { EnquiryActionState } from "./actions";
 import { ActionResultV2 } from "@/components/v2/app/parts";
 import { btnMain, btnQuiet, detailsBox, formCol, mutedText, summaryLine } from "@/components/v2/app/ui";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Action = (prev: EnquiryActionState, formData: FormData) => Promise<EnquiryActionState>;
 
@@ -16,13 +17,14 @@ export function RequirementActions({
   confirm,
   discard,
   status,
-  confirmable,
+  confirmable, words,
 }: {
   confirm: Action;
   discard: Action;
   status: "draft" | "confirmed";
-  confirmable: boolean;
+  confirmable: boolean; words?: Words;
 }) {
+  const t = makeT(words);
   const [confirmState, confirmAction, confirming] = useActionState(confirm, undefined);
   const [discardState, discardAction, discarding] = useActionState(discard, undefined);
   return (
@@ -30,20 +32,20 @@ export function RequirementActions({
       {status === "draft" ? (
         <form action={confirmAction} className={formCol}>
           <button type="submit" className={btnMain} disabled={!confirmable || confirming || discarding}>
-            {confirming ? "Saving..." : "Approve requirement"}
+            {confirming ? t("enq.saving") : t("enq.approve_requirement")}
           </button>
           {confirmable ? null : (
-            <p className={mutedText}>Approve (or correct) a saree type and a quantity on the same line first.</p>
+            <p className={mutedText}>{t("enq.approve_or_correct_a_saree_type")}</p>
           )}
           <ActionResultV2 state={confirmState} />
         </form>
       ) : null}
       <details className={detailsBox}>
-        <summary className={summaryLine}>Discard this requirement</summary>
-        <p className={mutedText}>A discarded requirement can be replaced by a new suggestion run. It is kept in the history.</p>
+        <summary className={summaryLine}>{t("enq.discard_this_requirement")}</summary>
+        <p className={mutedText}>{t("enq.a_discarded_requirement_can_be_replaced")}</p>
         <form action={discardAction} className={formCol}>
           <button type="submit" className={btnQuiet} disabled={confirming || discarding}>
-            {discarding ? "Saving..." : "Discard"}
+            {discarding ? t("enq.saving") : t("enq.discard")}
           </button>
           <ActionResultV2 state={discardState} />
         </form>

@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { CHANNEL_LABELS, type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
+import { type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
 import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
 import { fetchOrders, type Order } from "@/lib/api/orders";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
@@ -16,6 +16,9 @@ import { QuotePanel, type ManualQuoteData } from "../quote-panel";
 import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
 import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
 import { RequirementPanel } from "../requirement-panel";
+import { makeT, type Words } from "@/components/v2/app/words";
+import { wordsFor } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Enquiry · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -24,11 +27,7 @@ export const dynamic = "force-dynamic";
 const WRITE_ROLES = ["owner", "admin", "sales"];
 // Only an owner or an admin may type a price: Sales and Viewer never see the form and the page never asks for its data.
 const TYPED_PRICE_ROLES = ["owner", "admin"];
-const NOTICES: Record<string, string> = {
-  changed: "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
-  truncated: "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
-  stored: "Saved.",
-};
+const NOTICE_CODES = ["changed", "truncated", "stored"];
 
 function pick(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;
@@ -40,6 +39,9 @@ function pick(value: string | string[] | undefined): string | undefined {
  * does not exist, is malformed or belongs to someone else produces the SAME not-found page.
  */
 export default async function EnquiryPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/enquiries/[enquiryId]">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["enq.", "orders."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId, enquiryId } = await params;
   const query = await searchParams;
@@ -102,7 +104,8 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
       }
     }
   }
-  const notice = NOTICES[pick(query.captured) ?? ""];
+  const captured = pick(query.captured) ?? "";
+  const notice = NOTICE_CODES.includes(captured) ? t(`enq.notice.${captured}`) : undefined;
   // One part of the screen at a time: the request, making a quote, the quote made, and (once a quote is approved) what to do with it. Where the work is decides the first part.
   const canSend = canQuote && selected?.outcome === "approved";
   const canView = canQuote && selected !== null;
@@ -114,61 +117,60 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   const base = `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
   const keep = pick(query.quote) && selected ? `&quote=${selected.id}` : "";
   const parts = [
-    { key: "request", label: "Request", href: `${base}?section=request`, current: section === "request" },
-    ...(canMake ? [{ key: "make", label: "Make a quote", href: `${base}?section=make`, current: section === "make" }] : []),
-    ...(canView ? [{ key: "view", label: "Quote", href: `${base}?section=view${keep}`, current: section === "view" }] : []),
-    ...(canSend ? [{ key: "send", label: "Copy and order", href: `${base}?section=send${keep}`, current: section === "send" }] : []),
+    { key: "request", label: t("enq.part.request"), href: `${base}?section=request`, current: section === "request" },
+    ...(canMake ? [{ key: "make", label: t("enq.part.make"), href: `${base}?section=make`, current: section === "make" }] : []),
+    ...(canView ? [{ key: "view", label: t("enq.part.view"), href: `${base}?section=view${keep}`, current: section === "view" }] : []),
+    ...(canSend ? [{ key: "send", label: t("enq.part.send"), href: `${base}?section=send${keep}`, current: section === "send" }] : []),
   ];
   const quoteProblem =
     canQuote && (quotesDown || setup === null) ? (
       <p role="alert" className={alertBox}>
-        The quote could not be loaded right now. The enquiry above is unaffected: try again shortly.
+        {t("enq.the_quote_could_not_be_loaded")}
       </p>
     ) : null;
   return (
-    <main className={pageMain}>
-      <BackLink href={`/app/tenants/${tenantId}/quotes`} label="All quotes" then={{ href: `/app/tenants/${tenantId}/leads/${enquiry.lead_id}`, label: "The lead" }} />
-      <h1 className={pageH1}>Enquiry</h1>
+    <main className={pageMain} lang={lang}>
+      <BackLink href={`/app/tenants/${tenantId}/quotes`} label={t("enq.all_quotes")} then={{ href: `/app/tenants/${tenantId}/leads/${enquiry.lead_id}`, label: t("enq.the_lead") }} />
+      <h1 className={pageH1}>{t("enq.enquiry")}</h1>
       {notice ? (
         <p role="status" className={noteBox}>
           {notice}
         </p>
       ) : null}
-      {parts.length > 1 && section !== "all" ? <SectionTabs label="Parts of this enquiry" items={parts} /> : null}
+      {parts.length > 1 && section !== "all" ? <SectionTabs label={t("enq.parts_of_this_enquiry")} items={parts} /> : null}
       {section === "request" || section === "all" ? (
         <>
         <section aria-labelledby="enquiry-heading">
           <h2 id="enquiry-heading" className={pageH2}>
-            What the customer wrote
+            {t("enq.what_the_customer_wrote")}
           </h2>
           <dl className={kvList}>
-            <dt>Channel</dt>
-            <dd>{CHANNEL_LABELS[enquiry.channel]}</dd>
-            <dt>Received</dt>
+            <dt>{t("enq.channel")}</dt>
+            <dd>{t(`enq.channel.${enquiry.channel}`)}</dd>
+            <dt>{t("enq.received")}</dt>
             <dd>
               <LocalTime iso={enquiry.received_at} />
             </dd>
             {enquiry.subject ? (
               <>
-                <dt>Subject</dt>
+                <dt>{t("enq.subject")}</dt>
                 <dd className={plainText}>{enquiry.subject}</dd>
               </>
             ) : null}
           </dl>
-          <EnquiryText body={enquiry.body} fields={view.fields} />
+          <EnquiryText words={words} body={enquiry.body} fields={view.fields} />
           <p className={mutedText}>
-            This is the customer&apos;s text, shown as plain text. Contact details were removed before it was saved
-            {enquiry.truncated_from ? `; it was cut from ${enquiry.truncated_from} characters` : ""}. Marked words are the ones a field relies on.
+            {t("enq.customer_text_note", { cut: enquiry.truncated_from ? t("enq.cut_from", { n: enquiry.truncated_from }) : "" })}
           </p>
         </section>
-          <RequirementPanel tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
-          {!canQuote ? <p className={mutedText}>Quotes are shown to owners, admins and sales users.</p> : quoteProblem}
+          <RequirementPanel words={words} tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} />
+          {!canQuote ? <p className={mutedText}>{t("enq.quotes_are_shown_to_owners_admins")}</p> : quoteProblem}
         </>
       ) : null}
       {section === "request" ? null : quoteProblem && section !== "all" ? (
         quoteProblem
       ) : setup !== null ? (
-        <QuotePanel
+        <QuotePanel words={words}
           tenantId={tenantId}
           enquiryId={enquiryId}
           role={tenant.role}

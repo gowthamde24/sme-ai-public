@@ -2,8 +2,9 @@
 
 import { startTransition, useActionState, useState } from "react";
 
+import { makeT, type Words } from "@/components/v2/app/words";
 import type { ItemType } from "@/lib/api/item-types";
-import { CUSTOMER_KINDS, CUSTOMER_KIND_LABELS, formatBps, formatDate } from "@/lib/api/quotes";
+import { CUSTOMER_KINDS, formatBps, formatDate } from "@/lib/api/quotes";
 
 import { alertBox, btnMain, btnQuiet, checkBox, fieldBlock, fieldHelp, fieldInput, fieldLabel, fieldsetLine, fieldsetPlain, formCardWide, legendText, lineGrid, mutedText, noteBox, pageH3, radioRow } from "@/components/v2/app/ui";
 
@@ -23,6 +24,7 @@ type Props = {
   /** The ACTIVE item types, in the owner's display order. */
   itemTypes: ItemType[];
   gst: GstInForce | null;
+  words?: Words;
 };
 
 /**
@@ -31,7 +33,8 @@ type Props = {
  * neutral note and never stops the form. The id comes from the page (one per render), so pressing again after a failure is a retry that replays, not a second quote.
  * Held in state and sent with onSubmit, so a refusal keeps what the person typed.
  */
-export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
+export function ManualQuoteForm({ create, quoteId, itemTypes, gst, words }: Props) {
+  const t = makeT(words);
   const [lines, setLines] = useState<LineValues[]>([{ ...EMPTY_LINE }]);
   const [kind, setKind] = useState<string>("new");
   const [localError, setLocalError] = useState<string | null>(null);
@@ -62,14 +65,14 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
       }}
     >
       <h3 id="manual-quote-title" className={pageH3}>
-        Quote with typed prices
+        {t("enq.quote_with_typed_prices")}
       </h3>
       <p className={mutedText}>
-        You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.
+        {t("enq.you_type_the_price_of_each")}
       </p>
       {gst ? (
         <p>
-          GST rate: <strong>{formatBps(gst.rateBps)}</strong>, from {formatDate(gst.from)}, added on top of every price you type. It comes from the quote policy.
+          {t("enq.gst_rate")} <strong>{formatBps(gst.rateBps)}</strong>, {t("enq.from")} {formatDate(gst.from)}{t("enq.gst_added_on_top")}
         </p>
       ) : (
         <p role="note" className={noteBox}>
@@ -80,43 +83,43 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
       <input type="hidden" name="line_count" value={lines.length} />
 
       <fieldset disabled={pending} className={fieldsetPlain}>
-        <legend className={legendText}>The customer</legend>
+        <legend className={legendText}>{t("enq.the_customer")}</legend>
         {CUSTOMER_KINDS.map((k) => (
           <label key={k} className={radioRow}>
-            <input type="radio" name="customer_kind" value={k} checked={kind === k} onChange={() => setKind(k)} className={checkBox} /> {CUSTOMER_KIND_LABELS[k]}
+            <input type="radio" name="customer_kind" value={k} checked={kind === k} onChange={() => setKind(k)} className={checkBox} /> {t(`enq.kind.${k}`)}
           </label>
         ))}
-        <p className={mutedText}>A repeat customer is your word: nobody has verified it, so the owner decides such a quote.</p>
+        <p className={mutedText}>{t("enq.a_repeat_customer_is_your_word")}</p>
       </fieldset>
 
       {lines.map((line, index) => {
         const n = index + 1;
         return (
           <fieldset key={n} disabled={pending} className={fieldsetLine}>
-            <legend className={legendText}>Line {n}</legend>
+            <legend className={legendText}>{t("enq.line_n", { n })}</legend>
             <div className={lineGrid}>
               <div className={fieldBlock}>
                 <label htmlFor={`mq-code-${n}`} className={fieldLabel}>
-                  Item type
+                  {t("enq.item_type")}
                 </label>
                 <select id={`mq-code-${n}`} className={fieldInput} name={`code_${n}`} value={line.code} onChange={(e) => change(index, "code", e.target.value)}>
-                  <option value="">Choose an item type</option>
-                  {itemTypes.map((t) => (
-                    <option key={t.code} value={t.code}>
-                      {t.name}
+                  <option value="">{t("enq.choose_an_item_type")}</option>
+                  {itemTypes.map((it) => (
+                    <option key={it.code} value={it.code}>
+                      {it.name}
                     </option>
                   ))}
                 </select>
               </div>
               <div className={fieldBlock}>
                 <label htmlFor={`mq-qty-${n}`} className={fieldLabel}>
-                  Quantity (pieces)
+                  {t("enq.quantity_pieces")}
                 </label>
                 <input id={`mq-qty-${n}`} className={fieldInput} name={`qty_${n}`} inputMode="numeric" autoComplete="off" value={line.qty} onChange={(e) => change(index, "qty", e.target.value)} />
               </div>
               <div className={fieldBlock}>
                 <label htmlFor={`mq-price-${n}`} className={fieldLabel}>
-                  Price per piece (rupees)
+                  {t("enq.price_per_piece_rupees")}
                 </label>
                 <input
                   id={`mq-price-${n}`}
@@ -140,7 +143,7 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
             ) : null}
             {lines.length > 1 ? (
               <button type="button" className={btnQuiet} onClick={() => setLines((current) => current.filter((_, i) => i !== index))}>
-                Remove line {n}
+                {t("enq.remove_line_n", { n })}
               </button>
             ) : null}
           </fieldset>
@@ -149,9 +152,9 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
 
       <p>
         <button type="button" className={btnQuiet} disabled={pending || lines.length >= MAX_LINES} onClick={() => setLines((current) => [...current, { ...EMPTY_LINE }])}>
-          Add a line
+          {t("enq.add_a_line")}
         </button>
-        {lines.length >= MAX_LINES ? <span className={mutedText}> A quote has at most 5 lines.</span> : null}
+        {lines.length >= MAX_LINES ? <span className={mutedText}> {t("enq.a_quote_has_at_most_5")}</span> : null}
       </p>
 
       {error ? (
@@ -160,7 +163,7 @@ export function ManualQuoteForm({ create, quoteId, itemTypes, gst }: Props) {
         </p>
       ) : null}
       <button type="submit" className={btnMain} disabled={pending || noRate || blocked}>
-        {pending ? "Making the draft..." : "Make draft quote"}
+        {pending ? t("enq.making_the_draft") : t("enq.make_draft_quote")}
       </button>
     </form>
   );

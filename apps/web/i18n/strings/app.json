@@ -10168,5 +10168,5886 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "orders.orders": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.history": {
+  "en": "History",
+  "te": "చరిత్ర",
+  "hi": "इतिहास",
+  "kn": "ಇತಿಹಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.cancelled": {
+  "en": "Cancelled",
+  "te": "రద్దు అయింది",
+  "hi": "रद्द हुई",
+  "kn": "ರದ್ದಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.cancelled": {
+  "en": "Cancelled",
+  "te": "రద్దు అయింది",
+  "hi": "रद्द हुई",
+  "kn": "ರದ್ದಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.filter.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.filter.closed": {
+  "en": "Closed",
+  "te": "మూసి ఉంటుంది",
+  "hi": "बंद",
+  "kn": "ಮುಚ್ಚಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.orders_are_shown_to_owners_admins": {
+  "en": "Orders are shown to owners, admins and sales users.",
+  "te": "ఆర్డర్లు యజమానులు, అడ్మిన్‌లు, సేల్స్ వాళ్ళకే కనిపిస్తాయి.",
+  "hi": "ऑर्डर सिर्फ़ मालिक, एडमिन और सेल्स वालों को दिखते हैं।",
+  "kn": "ಆರ್ಡರ್‌ಗಳು ಮಾಲೀಕರು, ಅಡ್ಮಿನ್‌ಗಳು ಮತ್ತು ಸೇಲ್ಸ್ ಬಳಕೆದಾರರಿಗೆ ಮಾತ್ರ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.nothing_is_sent_by_this_system": {
+  "en": "Nothing is sent by this system: every entry in an order is a record of something that happened outside it.",
+  "te": "Nothing is sent by this system: every entry in an order is a record of something that happened outside it.",
+  "hi": "Nothing is sent by this system: every entry in an order is a record of something that happened outside it.",
+  "kn": "Nothing is sent by this system: every entry in an order is a record of something that happened outside it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.show_orders": {
+  "en": "Show orders",
+  "te": "ఆర్డర్లు చూపించు",
+  "hi": "ऑर्डर दिखाएँ",
+  "kn": "ಆರ್ಡರ್‌ಗಳನ್ನು ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.no_orders_yet_an_owner_or": {
+  "en": "No orders yet. An owner or admin starts one from an approved quote.",
+  "te": "ఇంకా ఆర్డర్లు లేవు. ఓకే చేసిన కొటేషన్ నుంచి యజమాని లేదా అడ్మిన్ ఒకటి మొదలుపెడతారు.",
+  "hi": "अभी कोई ऑर्डर नहीं। मंज़ूर हुए कोटेशन से मालिक या एडमिन एक शुरू करता है।",
+  "kn": "ಇನ್ನೂ ಆರ್ಡರ್‌ಗಳಿಲ್ಲ. ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್‌ನಿಂದ ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಒಂದನ್ನು ಆರಂಭಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.no_order_on_this_page_matches": {
+  "en": "No order on this page matches. Older orders may.",
+  "te": "ఈ పేజీలో ఏ ఆర్డర్ సరిపోలలేదు. పాత ఆర్డర్లు సరిపోవచ్చు.",
+  "hi": "इस पेज पर कोई ऑर्डर मेल नहीं खाता। पुराने ऑर्डर खा सकते हैं।",
+  "kn": "ಈ ಪುಟದಲ್ಲಿ ಯಾವ ಆರ್ಡರ್ ಹೊಂದುವುದಿಲ್ಲ. ಹಳೆಯ ಆರ್ಡರ್‌ಗಳು ಹೊಂದಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.orders_newest_first": {
+  "en": "Orders, newest first",
+  "te": "ఆర్డర్లు, కొత్తవి మొదట",
+  "hi": "ऑर्डर, सबसे नए पहले",
+  "kn": "ಆರ್ಡರ್‌ಗಳು, ಹೊಸದು ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.total": {
+  "en": "Total",
+  "te": "Total",
+  "hi": "Total",
+  "kn": "Total",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.received": {
+  "en": "Received",
+  "te": "Received",
+  "hi": "Received",
+  "kn": "Received",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.older_orders": {
+  "en": "Older orders →",
+  "te": "పాత ఆర్డర్లు →",
+  "hi": "पुराने ऑर्डर →",
+  "kn": "ಹಳೆಯ ಆರ್ಡರ್‌ಗಳು →",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.nothing_is_sent_by_this_system_2": {
+  "en": "Nothing is sent by this system: every entry here is a record of something that happened outside it.",
+  "te": "Nothing is sent by this system: every entry here is a record of something that happened outside it.",
+  "hi": "Nothing is sent by this system: every entry here is a record of something that happened outside it.",
+  "kn": "Nothing is sent by this system: every entry here is a record of something that happened outside it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.order_total": {
+  "en": "Order total",
+  "te": "Order total",
+  "hi": "Order total",
+  "kn": "Order total",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.balance": {
+  "en": "Balance",
+  "te": "Balance",
+  "hi": "Balance",
+  "kn": "Balance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.money_held": {
+  "en": "Money held",
+  "te": "Money held",
+  "hi": "Money held",
+  "kn": "Money held",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.balance_not_owed_the_order_is": {
+  "en": "Balance: not owed, the order is closed.",
+  "te": "Balance: not owed, the order is closed.",
+  "hi": "Balance: not owed, the order is closed.",
+  "kn": "Balance: not owed, the order is closed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.where_it_stands": {
+  "en": "Where it stands",
+  "te": "ప్రస్తుత స్థితి",
+  "hi": "अभी की स्थिति",
+  "kn": "ಈಗಿನ ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_steps_of_an_order": {
+  "en": "The steps of an order",
+  "te": "ఆర్డర్ స్టెప్‌లు",
+  "hi": "ऑर्डर के चरण",
+  "kn": "ಆರ್ಡರ್‌ನ ಹಂತಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.not_reached": {
+  "en": "Not reached",
+  "te": "ఇంకా చేరలేదు",
+  "hi": "अभी यहाँ नहीं पहुँचा",
+  "kn": "ಇನ್ನೂ ತಲುಪಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.you_record_each_step_yourself_after": {
+  "en": "You record each step yourself, after it happens outside this app.",
+  "te": "ప్రతి స్టెప్ ఈ యాప్ బయట జరిగిన తర్వాత మీరే రికార్డ్ చేస్తారు.",
+  "hi": "हर चरण आप खुद दर्ज करते हैं, ऐप के बाहर होने के बाद।",
+  "kn": "ಪ್ರತಿ ಹಂತವನ್ನು ಈ ಆ್ಯಪ್ ಹೊರಗೆ ನಡೆದ ನಂತರ ನೀವೇ ದಾಖಲಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_money": {
+  "en": "The money",
+  "te": "The money",
+  "hi": "The money",
+  "kn": "The money",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.advance_asked_for": {
+  "en": "Advance asked for",
+  "te": "Advance asked for",
+  "hi": "Advance asked for",
+  "kn": "Advance asked for",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refunded": {
+  "en": "Refunded",
+  "te": "Refunded",
+  "hi": "Refunded",
+  "kn": "Refunded",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.net_received": {
+  "en": "Net received",
+  "te": "Net received",
+  "hi": "Net received",
+  "kn": "Net received",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.quote_valid_until": {
+  "en": "Quote valid until",
+  "te": "కొటేషన్ చెల్లుబాటు తేదీ",
+  "hi": "कोटेशन इस तारीख़ तक मान्य",
+  "kn": "ಕೊಟೇಶನ್ ಮಾನ್ಯತೆ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.what_to_record_next": {
+  "en": "What to record next",
+  "te": "తరువాత ఏం రికార్డ్ చేయాలి",
+  "hi": "आगे क्या दर्ज करें",
+  "kn": "ಮುಂದೆ ಏನು ದಾಖಲಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.where_it_came_from": {
+  "en": "Where it came from",
+  "te": "ఇది ఎక్కడి నుంచి వచ్చింది",
+  "hi": "यह कहाँ से आया",
+  "kn": "ಇದು ಎಲ್ಲಿಂದ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_approved_quote": {
+  "en": "The approved quote",
+  "te": "ఓకే చేసిన కొటేషన్",
+  "hi": "मंज़ूर हुआ कोटेशन",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_enquiry": {
+  "en": "The enquiry",
+  "te": "ఎంక్వయిరీ",
+  "hi": "इन्क्वायरी",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_lead": {
+  "en": "The lead",
+  "te": "లీడ్",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.events_oldest_first": {
+  "en": "Events, oldest first",
+  "te": "సంఘటనలు, పాతవి మొదట",
+  "hi": "घटनाएँ, सबसे पुरानी पहले",
+  "kn": "ಘಟನೆಗಳು, ಹಳೆಯದು ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.set_it_up_on_the_security": {
+  "en": "Set it up on the Security page",
+  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
+  "hi": "सिक्योरिटी पेज पर सेट करें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.amount_in_rupees": {
+  "en": "Amount in rupees",
+  "te": "Amount in rupees",
+  "hi": "Amount in rupees",
+  "kn": "Amount in rupees",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.the_day_it_happened": {
+  "en": "The day it happened",
+  "te": "ఇది జరిగిన రోజు",
+  "hi": "जिस दिन यह हुआ",
+  "kn": "ಇದು ನಡೆದ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_amount_is_your_record_of": {
+  "en": "The amount is your record of what arrived or went out. Nothing is collected or paid from here.",
+  "te": "The amount is your record of what arrived or went out. Nothing is collected or paid from here.",
+  "hi": "The amount is your record of what arrived or went out. Nothing is collected or paid from here.",
+  "kn": "The amount is your record of what arrived or went out. Nothing is collected or paid from here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.why": {
+  "en": "Why",
+  "te": "ఎందుకు",
+  "hi": "क्यों",
+  "kn": "ಏಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.choose_a_reason": {
+  "en": "Choose a reason",
+  "te": "కారణం ఎంచుకోండి",
+  "hi": "कारण चुनें",
+  "kn": "ಕಾರಣ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.if_the_advance_has_not_been": {
+  "en": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
+  "te": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
+  "hi": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
+  "kn": "If the advance has not been paid, only the owner can dispatch (with their authenticator app).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.an_owner_or_admin_starts_an": {
+  "en": "An owner or admin starts an order from an approved quote.",
+  "te": "ఓకే చేసిన కొటేషన్ నుంచి ఓనర్ లేదా అడ్మిన్ ఆర్డర్ మొదలుపెడతారు.",
+  "hi": "मंज़ूर हुए कोटेशन से मालिक या एडमिन ऑर्डर शुरू करता है।",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್‌ನಿಂದ ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಆರ್ಡರ್ ಆರಂಭಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.the_order_copies_this_quote_s": {
+  "en": "The order copies this quote's total and advance. It is a record you keep up to date: nothing is sent to anyone.",
+  "te": "The order copies this quote's total and advance. It is a record you keep up to date: nothing is sent to anyone.",
+  "hi": "The order copies this quote's total and advance. It is a record you keep up to date: nothing is sent to anyone.",
+  "kn": "The order copies this quote's total and advance. It is a record you keep up to date: nothing is sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.these_are_the_entries_the_rules": {
+  "en": "These are the entries the rules allow now. They are guidance: the database decides again when you save.",
+  "te": "ఇవి ఇప్పుడు నియమాలు అనుమతించే ఎంట్రీలు. ఇవి సూచన మాత్రమే: సేవ్ చేసినప్పుడు డేటాబేస్ మళ్ళీ తేలుస్తుంది.",
+  "hi": "ये वे एंट्री हैं जिन्हें नियम अभी मानते हैं। ये सिर्फ़ मार्गदर्शन हैं: सहेजते समय डेटाबेस फिर तय करता है।",
+  "kn": "ಇವು ಈಗ ನಿಯಮಗಳು ಅನುಮತಿಸುವ ದಾಖಲೆಗಳು. ಇವು ಸೂಚನೆ ಮಾತ್ರ: ಉಳಿಸುವಾಗ ಡೇಟಾಬೇಸ್ ಮತ್ತೆ ತೀರ್ಮಾನಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.all_orders": {
+  "en": "All orders",
+  "te": "అన్ని ఆర్డర్లు",
+  "hi": "सभी ऑर्डर",
+  "kn": "ಎಲ್ಲಾ ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.quote_approved": {
+  "en": "Quote approved",
+  "te": "కొటేషన్ ఓకే అయింది",
+  "hi": "कोटेशन मंज़ूर हुआ",
+  "kn": "ಕೊಟೇಶನ್ ಒಪ್ಪಿಗೆ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.quote_sent": {
+  "en": "Quote marked as sent",
+  "te": "కొటేషన్ పంపినట్లు గుర్తు పెట్టారు",
+  "hi": "कोटेशन भेजा हुआ दर्ज है",
+  "kn": "ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದ್ದು ಎಂದು ಗುರುತಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.accepted": {
+  "en": "Accepted by the customer",
+  "te": "కస్టమర్ ఒప్పుకున్నారు",
+  "hi": "ग्राहक ने मंज़ूर किया",
+  "kn": "ಗ್ರಾಹಕರು ಒಪ್ಪಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.advance_requested": {
+  "en": "Advance asked for",
+  "te": "Advance asked for",
+  "hi": "Advance asked for",
+  "kn": "Advance asked for",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.state.advance_paid": {
+  "en": "Advance received",
+  "te": "Advance received",
+  "hi": "Advance received",
+  "kn": "Advance received",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.state.in_preparation": {
+  "en": "In preparation",
+  "te": "తయారవుతోంది",
+  "hi": "तैयारी में है",
+  "kn": "ತಯಾರಿಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.dispatched": {
+  "en": "Dispatched",
+  "te": "పంపించారు",
+  "hi": "भेज दिया गया",
+  "kn": "ಕಳುಹಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.delivered": {
+  "en": "Delivered",
+  "te": "డెలివర్ అయింది",
+  "hi": "डिलीवर हो गया",
+  "kn": "ಡೆಲಿವರಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.closed_paid": {
+  "en": "Closed, fully paid",
+  "te": "Closed, fully paid",
+  "hi": "Closed, fully paid",
+  "kn": "Closed, fully paid",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.state.declined": {
+  "en": "Declined by the customer",
+  "te": "కస్టమర్ వద్దన్నారు",
+  "hi": "ग्राहक ने मना किया",
+  "kn": "ಗ್ರಾಹಕರು ಬೇಡವೆಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.state.expired": {
+  "en": "Expired",
+  "te": "గడువు ముగిసింది",
+  "hi": "समय ख़त्म हो गया",
+  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.won": {
+  "en": "Won",
+  "te": "గెలిచాం",
+  "hi": "जीत गए",
+  "kn": "ಗೆದ್ದೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.lost": {
+  "en": "Lost",
+  "te": "పోయింది",
+  "hi": "हाथ से गया",
+  "kn": "ಕೈತಪ್ಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.expired": {
+  "en": "Expired",
+  "te": "గడువు ముగిసింది",
+  "hi": "समय ख़त्म हो गया",
+  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.created": {
+  "en": "Order started from the approved quote",
+  "te": "ఓకే చేసిన కొటేషన్ నుంచి ఆర్డర్ మొదలైంది",
+  "hi": "मंज़ूर कोटेशन से ऑर्डर शुरू हुआ",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್‌ನಿಂದ ಆರ್ಡರ್ ಆರಂಭವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.send_quote": {
+  "en": "I sent the quote",
+  "te": "నేను కొటేషన్ పంపాను",
+  "hi": "मैंने कोटेशन भेजा",
+  "kn": "ನಾನು ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.customer_accept": {
+  "en": "The customer accepted",
+  "te": "కస్టమర్ ఒప్పుకున్నారు",
+  "hi": "ग्राहक ने मंज़ूर किया",
+  "kn": "ಗ್ರಾಹಕರು ಒಪ್ಪಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.customer_decline": {
+  "en": "The customer declined",
+  "te": "కస్టమర్ వద్దన్నారు",
+  "hi": "ग्राहक ने मना किया",
+  "kn": "ಗ್ರಾಹಕರು ಬೇಡವೆಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.expire": {
+  "en": "The quote expired",
+  "te": "కొటేషన్ గడువు ముగిసింది",
+  "hi": "कोटेशन की समय सीमा ख़त्म हो गई",
+  "kn": "ಕೊಟೇಶನ್ ಅವಧಿ ಮುಗಿಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.request_advance": {
+  "en": "I asked for the advance",
+  "te": "I asked for the advance",
+  "hi": "I asked for the advance",
+  "kn": "I asked for the advance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.outcome.record_payment": {
+  "en": "A payment was received",
+  "te": "A payment was received",
+  "hi": "A payment was received",
+  "kn": "A payment was received",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.outcome.start_preparation": {
+  "en": "Preparation started",
+  "te": "తయారీ మొదలైంది",
+  "hi": "तैयारी शुरू हुई",
+  "kn": "ತಯಾರಿ ಆರಂಭವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.dispatch": {
+  "en": "The goods were dispatched",
+  "te": "సరుకు పంపించారు",
+  "hi": "माल भेज दिया गया",
+  "kn": "ಸರಕು ಕಳುಹಿಸಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.deliver": {
+  "en": "The goods were delivered",
+  "te": "సరుకు డెలివర్ అయింది",
+  "hi": "माल डिलीवर हो गया",
+  "kn": "ಸರಕು ಡೆಲಿವರಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.cancel": {
+  "en": "Cancel this order",
+  "te": "ఈ ఆర్డర్‌ని రద్దు చేయండి",
+  "hi": "यह ऑर्डर रद्द करें",
+  "kn": "ಈ ಆರ್ಡರ್ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.outcome.record_refund": {
+  "en": "A refund was given",
+  "te": "A refund was given",
+  "hi": "A refund was given",
+  "kn": "A refund was given",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.event.created": {
+  "en": "Order started from the approved quote",
+  "te": "ఓకే చేసిన కొటేషన్ నుంచి ఆర్డర్ మొదలైంది",
+  "hi": "मंज़ूर कोटेशन से ऑर्डर शुरू हुआ",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್‌ನಿಂದ ಆರ್ಡರ್ ಆರಂಭವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.send_quote": {
+  "en": "I sent the quote",
+  "te": "నేను కొటేషన్ పంపాను",
+  "hi": "मैंने कोटेशन भेजा",
+  "kn": "ನಾನು ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.customer_accept": {
+  "en": "The customer accepted",
+  "te": "కస్టమర్ ఒప్పుకున్నారు",
+  "hi": "ग्राहक ने मंज़ूर किया",
+  "kn": "ಗ್ರಾಹಕರು ಒಪ್ಪಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.customer_decline": {
+  "en": "The customer declined",
+  "te": "కస్టమర్ వద్దన్నారు",
+  "hi": "ग्राहक ने मना किया",
+  "kn": "ಗ್ರಾಹಕರು ಬೇಡವೆಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.expire": {
+  "en": "The quote expired",
+  "te": "కొటేషన్ గడువు ముగిసింది",
+  "hi": "कोटेशन की समय सीमा ख़त्म हो गई",
+  "kn": "ಕೊಟೇಶನ್ ಅವಧಿ ಮುಗಿಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.request_advance": {
+  "en": "I asked for the advance",
+  "te": "I asked for the advance",
+  "hi": "I asked for the advance",
+  "kn": "I asked for the advance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.event.record_payment": {
+  "en": "A payment was received",
+  "te": "A payment was received",
+  "hi": "A payment was received",
+  "kn": "A payment was received",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.event.start_preparation": {
+  "en": "Preparation started",
+  "te": "తయారీ మొదలైంది",
+  "hi": "तैयारी शुरू हुई",
+  "kn": "ತಯಾರಿ ಆರಂಭವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.dispatch": {
+  "en": "The goods were dispatched",
+  "te": "సరుకు పంపించారు",
+  "hi": "माल भेज दिया गया",
+  "kn": "ಸರಕು ಕಳುಹಿಸಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.deliver": {
+  "en": "The goods were delivered",
+  "te": "సరుకు డెలివర్ అయింది",
+  "hi": "माल डिलीवर हो गया",
+  "kn": "ಸರಕು ಡೆಲಿವರಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.cancel": {
+  "en": "Cancel this order",
+  "te": "ఈ ఆర్డర్‌ని రద్దు చేయండి",
+  "hi": "यह ऑर्डर रद्द करें",
+  "kn": "ಈ ಆರ್ಡರ್ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.event.record_refund": {
+  "en": "A refund was given",
+  "te": "A refund was given",
+  "hi": "A refund was given",
+  "kn": "A refund was given",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.lost.price": {
+  "en": "The price",
+  "te": "ధర",
+  "hi": "दाम",
+  "kn": "ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.timing": {
+  "en": "The timing",
+  "te": "టైమింగ్",
+  "hi": "समय",
+  "kn": "ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.bought_elsewhere": {
+  "en": "They bought elsewhere",
+  "te": "వాళ్ళు వేరే చోట కొన్నారు",
+  "hi": "उन्होंने कहीं और से खरीदा",
+  "kn": "ಅವರು ಬೇರೆಡೆ ಖರೀದಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.no_response": {
+  "en": "No response",
+  "te": "జవాబు రాలేదు",
+  "hi": "कोई जवाब नहीं आया",
+  "kn": "ಉತ್ತರ ಬರಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.requirement_changed": {
+  "en": "Their requirement changed",
+  "te": "వాళ్ళ అవసరం మారింది",
+  "hi": "उनकी ज़रूरत बदल गई",
+  "kn": "ಅವರ ಅಗತ್ಯ ಬದಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.product_unavailable": {
+  "en": "The product was not available",
+  "te": "ఆ సరుకు అందుబాటులో లేదు",
+  "hi": "वह माल उपलब्ध नहीं था",
+  "kn": "ಆ ಸರಕು ಲಭ್ಯವಿರಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.credit_terms": {
+  "en": "The credit terms",
+  "te": "క్రెడిట్ నిబంధనలు",
+  "hi": "उधार की शर्तें",
+  "kn": "ಸಾಲದ ನಿಯಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.lost.other": {
+  "en": "Another reason",
+  "te": "ఇంకో కారణం",
+  "hi": "कोई और कारण",
+  "kn": "ಬೇರೆ ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.ILLEGAL_TRANSITION": {
+  "en": "That cannot happen at this stage of the order.",
+  "te": "ఆర్డర్ ఈ దశలో అది జరగదు.",
+  "hi": "ऑर्डर के इस चरण में यह नहीं हो सकता।",
+  "kn": "ಆರ್ಡರ್‌ನ ಈ ಹಂತದಲ್ಲಿ ಇದು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.QUOTE_NOT_EXPIRED": {
+  "en": "The quote has not expired yet.",
+  "te": "కొటేషన్ గడువు ఇంకా ముగియలేదు.",
+  "hi": "कोटेशन की समय सीमा अभी ख़त्म नहीं हुई।",
+  "kn": "ಕೊಟೇಶನ್ ಅವಧಿ ಇನ್ನೂ ಮುಗಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.QUOTE_EXPIRED": {
+  "en": "The quote has expired.",
+  "te": "కొటేషన్ గడువు ముగిసింది.",
+  "hi": "कोटेशन की समय सीमा ख़त्म हो गई है।",
+  "kn": "ಕೊಟೇಶನ್ ಅವಧಿ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.CANCEL_WINDOW_CLOSED": {
+  "en": "It is too late to cancel this order.",
+  "te": "ఈ ఆర్డర్‌ని రద్దు చేయడానికి ఇప్పుడు ఆలస్యమైంది.",
+  "hi": "इस ऑर्डर को रद्द करने में अब देर हो चुकी है।",
+  "kn": "ಈ ಆರ್ಡರ್ ರದ್ದು ಮಾಡಲು ಈಗ ತಡವಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.ADVANCE_NOT_PAID": {
+  "en": "The advance has not been paid.",
+  "te": "The advance has not been paid.",
+  "hi": "The advance has not been paid.",
+  "kn": "The advance has not been paid.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.DUPLICATE_PAYMENT_ID": {
+  "en": "That payment was already recorded.",
+  "te": "That payment was already recorded.",
+  "hi": "That payment was already recorded.",
+  "kn": "That payment was already recorded.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.DUPLICATE_REFUND_ID": {
+  "en": "That refund was already recorded.",
+  "te": "That refund was already recorded.",
+  "hi": "That refund was already recorded.",
+  "kn": "That refund was already recorded.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.OVERPAYMENT": {
+  "en": "That payment would pay more than the order's total.",
+  "te": "That payment would pay more than the order's total.",
+  "hi": "That payment would pay more than the order's total.",
+  "kn": "That payment would pay more than the order's total.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.REFUND_EXCEEDS_PAID": {
+  "en": "That refund is more than has been paid.",
+  "te": "That refund is more than has been paid.",
+  "hi": "That refund is more than has been paid.",
+  "kn": "That refund is more than has been paid.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.CLOSED_UNPAID": {
+  "en": "A closed order must be fully paid.",
+  "te": "A closed order must be fully paid.",
+  "hi": "A closed order must be fully paid.",
+  "kn": "A closed order must be fully paid.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.INVALID_ADVANCE": {
+  "en": "The order's advance does not fit its policy.",
+  "te": "The order's advance does not fit its policy.",
+  "hi": "The order's advance does not fit its policy.",
+  "kn": "The order's advance does not fit its policy.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.refusal.INVALID_CANCEL_WINDOW": {
+  "en": "The order's cancel window is not valid.",
+  "te": "ఆర్డర్ రద్దు గడువు సరైనది కాదు.",
+  "hi": "ऑर्डर की रद्द करने की अवधि सही नहीं है।",
+  "kn": "ಆರ್ಡರ್ ರದ್ದು ಅವಧಿ ಸರಿಯಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.INVALID_STATE": {
+  "en": "The order is in a state the rules do not know.",
+  "te": "ఆర్డర్ నియమాలకు తెలియని స్థితిలో ఉంది.",
+  "hi": "ऑर्डर ऐसी स्थिति में है जो नियमों को नहीं पता।",
+  "kn": "ಆರ್ಡರ್ ನಿಯಮಗಳಿಗೆ ತಿಳಿಯದ ಸ್ಥಿತಿಯಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.INVALID_EVENT": {
+  "en": "The rules do not know that event.",
+  "te": "ఆ ఎంట్రీ నియమాలకు తెలియదు.",
+  "hi": "यह एंट्री नियमों को नहीं पता।",
+  "kn": "ಆ ದಾಖಲೆ ನಿಯಮಗಳಿಗೆ ತಿಳಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.OUT_OF_RANGE": {
+  "en": "A value is outside the allowed range.",
+  "te": "ఒక విలువ అనుమతించిన పరిధి బయట ఉంది.",
+  "hi": "एक मान तय सीमा से बाहर है।",
+  "kn": "ಒಂದು ಮೌಲ್ಯ ಅನುಮತಿಸಿದ ಮಿತಿಯ ಹೊರಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.refusal.OTHER": {
+  "en": "The order rules refuse this event.",
+  "te": "ఆర్డర్ నియమాలు ఈ ఎంట్రీని అంగీకరించవు.",
+  "hi": "ऑर्डर के नियम इस एंट्री को नहीं मानते।",
+  "kn": "ಆರ್ಡರ್ ನಿಯಮಗಳು ಈ ದಾಖಲೆಯನ್ನು ಒಪ್ಪುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.held": {
+  "en": "Money still held: {amount}. A refund may be owed to the customer.",
+  "te": "Money still held: {amount}. A refund may be owed to the customer.",
+  "hi": "Money still held: {amount}. A refund may be owed to the customer.",
+  "kn": "Money still held: {amount}. A refund may be owed to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.who.system": {
+  "en": "The system",
+  "te": "సిస్టమ్",
+  "hi": "सिस्टम",
+  "kn": "ಸಿಸ್ಟಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.who.member": {
+  "en": "A team member",
+  "te": "టీమ్ సభ్యుడు",
+  "hi": "टीम का एक सदस्य",
+  "kn": "ತಂಡದ ಸದಸ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.who.role": {
+  "en": "A {role}",
+  "te": "ఒక {role}",
+  "hi": "एक {role}",
+  "kn": "ಒಬ್ಬ {role}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.who.named": {
+  "en": "{name} ({role})",
+  "te": "{name} ({role})",
+  "hi": "{name} ({role})",
+  "kn": "{name} ({role})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.title.tab": {
+  "en": "Orders · SME AI Revenue Engine",
+  "te": "Orders · SME AI Revenue Engine",
+  "hi": "Orders · SME AI Revenue Engine",
+  "kn": "Orders · SME AI Revenue Engine",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.order_n": {
+  "en": "Order {n}",
+  "te": "ఆర్డర్ {n}",
+  "hi": "ऑर्डर {n}",
+  "kn": "ಆರ್ಡರ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.recorded_by": {
+  "en": "recorded by {who}",
+  "te": "{who} రికార్డ్ చేశారు",
+  "hi": "{who} ने दर्ज किया",
+  "kn": "{who} ದಾಖಲಿಸಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.owner_approval": {
+  "en": "with the owner's approval ({who})",
+  "te": "యజమాని ఓకే తో ({who})",
+  "hi": "मालिक की मंज़ूरी से ({who})",
+  "kn": "ಮಾಲೀಕರ ಒಪ್ಪಿಗೆಯೊಂದಿಗೆ ({who})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.it_happened": {
+  "en": "it happened",
+  "te": "ఇది జరిగింది",
+  "hi": "यह हुआ",
+  "kn": "ಇದು ನಡೆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.recorded": {
+  "en": "recorded",
+  "te": "రికార్డ్ చేశారు",
+  "hi": "दर्ज किया गया",
+  "kn": "ದಾಖಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.quote_unavailable": {
+  "en": "This quote is not available.",
+  "te": "ఈ కొటేషన్ అందుబాటులో లేదు.",
+  "hi": "यह कोटेशन उपलब्ध नहीं है।",
+  "kn": "ಈ ಕೊಟೇಶನ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.out_of_date": {
+  "en": "This form is out of date. Reload the page and try again.",
+  "te": "ఈ ఫారమ్ పాతది అయింది. పేజీని రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह फ़ॉर्म पुराना हो गया है। पेज रीलोड करके फिर कोशिश करें।",
+  "kn": "ಈ ಫಾರ್ಮ್ ಹಳೆಯದಾಗಿದೆ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.order_unavailable": {
+  "en": "This order is not available.",
+  "te": "ఈ ఆర్డర్ అందుబాటులో లేదు.",
+  "hi": "यह ऑर्डर उपलब्ध नहीं है।",
+  "kn": "ಈ ಆರ್ಡರ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.choose_day": {
+  "en": "Choose the day it happened: today or an earlier day.",
+  "te": "ఇది జరిగిన రోజు ఎంచుకోండి: ఈ రోజు లేదా అంతకు ముందు రోజు.",
+  "hi": "वह दिन चुनें जब यह हुआ: आज या उससे पहले का दिन।",
+  "kn": "ಇದು ನಡೆದ ದಿನ ಆರಿಸಿ: ಇಂದು ಅಥವಾ ಅದಕ್ಕೂ ಮೊದಲಿನ ದಿನ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.amount": {
+  "en": "Enter the amount in rupees, for example 25,000 or 1,50,000.50.",
+  "te": "Enter the amount in rupees, for example 25,000 or 1,50,000.50.",
+  "hi": "Enter the amount in rupees, for example 25,000 or 1,50,000.50.",
+  "kn": "Enter the amount in rupees, for example 25,000 or 1,50,000.50.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.err.why_declined": {
+  "en": "Choose why the customer declined.",
+  "te": "కస్టమర్ ఎందుకు వద్దన్నారో ఎంచుకోండి.",
+  "hi": "ग्राहक ने मना क्यों किया, चुनें।",
+  "kn": "ಗ್ರಾಹಕರು ಏಕೆ ಬೇಡವೆಂದರು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.mfa": {
+  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
+  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
+  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.owner": {
+  "en": "This needs the owner.",
+  "te": "దీనికి యజమాని కావాలి.",
+  "hi": "इसके लिए मालिक चाहिए।",
+  "kn": "ಇದಕ್ಕೆ ಮಾಲೀಕರು ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.role": {
+  "en": "Your role does not allow this.",
+  "te": "మీ పాత్రకు దీనికి అనుమతి లేదు.",
+  "hi": "आपकी भूमिका को इसकी अनुमति नहीं है।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರಕ್ಕೆ ಇದಕ್ಕೆ ಅನುಮತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.closed": {
+  "en": "This order is closed.",
+  "te": "ఈ ఆర్డర్ ముగిసింది.",
+  "hi": "यह ऑर्डर बंद है।",
+  "kn": "ಈ ಆರ್ಡರ್ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.changed": {
+  "en": "The order changed while you were working on it. Reload it and try again.",
+  "te": "మీరు పని చేస్తుండగా ఆర్డర్ మారింది. రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "आपके काम करते समय ऑर्डर बदल गया। रीलोड करके फिर कोशिश करें।",
+  "kn": "ನೀವು ಕೆಲಸ ಮಾಡುತ್ತಿದ್ದಾಗ ಆರ್ಡರ್ ಬದಲಾಯಿತು. ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.exists": {
+  "en": "This quote already has an order.",
+  "te": "ఈ కొటేషన్‌కి ఇప్పటికే ఆర్డర్ ఉంది.",
+  "hi": "इस कोटेशन का ऑर्डर पहले से है।",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ಗೆ ಈಗಾಗಲೇ ಆರ್ಡರ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.not_approved": {
+  "en": "Only an approved quote can become an order.",
+  "te": "ఓకే చేసిన కొటేషన్ మాత్రమే ఆర్డర్ అవుతుంది.",
+  "hi": "सिर्फ़ मंज़ूर हुआ कोटेशन ही ऑर्डर बन सकता है।",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್ ಮಾತ್ರ ಆರ್ಡರ್ ಆಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.quote_expired": {
+  "en": "The quote has expired.",
+  "te": "కొటేషన్ గడువు ముగిసింది.",
+  "hi": "कोटेशन की समय सीमा ख़त्म हो गई है।",
+  "kn": "ಕೊಟೇಶನ್ ಅವಧಿ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.has_order": {
+  "en": "This quote has a live order: lose or cancel the order first.",
+  "te": "ఈ కొటేషన్‌కి నడుస్తున్న ఆర్డర్ ఉంది: ముందు ఆ ఆర్డర్‌ని పోయినట్లు లేదా రద్దు చేయండి.",
+  "hi": "इस कोटेशन का एक चालू ऑर्डर है: पहले उस ऑर्डर को हारा हुआ या रद्द करें।",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ಗೆ ನಡೆಯುತ್ತಿರುವ ಆರ್ಡರ್ ಇದೆ: ಮೊದಲು ಆ ಆರ್ಡರ್ ಕೈತಪ್ಪಿದೆ ಎಂದು ಅಥವಾ ರದ್ದು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.no_policy": {
+  "en": "No order policy is in force: the owner must publish one.",
+  "te": "ఆర్డర్ పాలసీ ఏదీ అమల్లో లేదు: యజమాని ఒకటి పబ్లిష్ చేయాలి.",
+  "hi": "कोई ऑर्डर पॉलिसी लागू नहीं है: मालिक को एक पब्लिश करनी होगी।",
+  "kn": "ಯಾವ ಆರ್ಡರ್ ಪಾಲಿಸಿಯೂ ಜಾರಿಯಲ್ಲಿಲ್ಲ: ಮಾಲೀಕರು ಒಂದನ್ನು ಪ್ರಕಟಿಸಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.figures": {
+  "en": "This quote cannot become an order under the current order policy.",
+  "te": "ప్రస్తుత ఆర్డర్ పాలసీ ప్రకారం ఈ కొటేషన్ ఆర్డర్ కాదు.",
+  "hi": "मौजूदा ऑर्डर पॉलिसी में यह कोटेशन ऑर्डर नहीं बन सकता।",
+  "kn": "ಈಗಿನ ಆರ್ಡರ್ ಪಾಲಿಸಿಯ ಪ್ರಕಾರ ಈ ಕೊಟೇಶನ್ ಆರ್ಡರ್ ಆಗಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.unavailable": {
+  "en": "Orders are not available right now. Try again shortly.",
+  "te": "ఆర్డర్లు ఇప్పుడు అందుబాటులో లేవు. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "ऑर्डर अभी उपलब्ध नहीं हैं। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಆರ್ಡರ್‌ಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.conflict": {
+  "en": "That is not possible right now. Reload the page and try again.",
+  "te": "ఇప్పుడు అది కుదరదు. పేజీని రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो सकता। पेज रीलोड करके फिर कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಸಾಧ್ಯವಿಲ್ಲ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.invalid": {
+  "en": "That input was not accepted.",
+  "te": "ఆ ఇన్‌పుట్ తీసుకోలేదు.",
+  "hi": "वह इनपुट स्वीकार नहीं हुआ।",
+  "kn": "ಆ ಇನ್‌ಪುಟ್ ಸ್ವೀಕಾರವಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.err.generic": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सहेज नहीं पाए। फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.flag.ADVANCE_OVERRIDE": {
+  "en": "The advance had not been paid: this used the owner's override.",
+  "te": "The advance had not been paid: this used the owner's override.",
+  "hi": "The advance had not been paid: this used the owner's override.",
+  "kn": "The advance had not been paid: this used the owner's override.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.flag.CANCELLATION_WITH_FUNDS": {
+  "en": "This order had money in it: a refund may be owed.",
+  "te": "This order had money in it: a refund may be owed.",
+  "hi": "This order had money in it: a refund may be owed.",
+  "kn": "This order had money in it: a refund may be owed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.flag.REFUND_REQUIRES_OWNER_APPROVAL": {
+  "en": "A refund needs the owner's attention.",
+  "te": "A refund needs the owner's attention.",
+  "hi": "A refund needs the owner's attention.",
+  "kn": "A refund needs the owner's attention.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.flag.other": {
+  "en": "The rules flagged this for the owner to review.",
+  "te": "యజమాని చూడడానికి నియమాలు దీన్ని గుర్తు పెట్టాయి.",
+  "hi": "नियमों ने इसे मालिक के देखने के लिए चिह्नित किया।",
+  "kn": "ಮಾಲೀಕರು ನೋಡಲು ನಿಯಮಗಳು ಇದನ್ನು ಗುರುತಿಸಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.recorded_event": {
+  "en": "Recorded: {event}. Nothing was sent to anyone.",
+  "te": "Recorded: {event}. Nothing was sent to anyone.",
+  "hi": "Recorded: {event}. Nothing was sent to anyone.",
+  "kn": "Recorded: {event}. Nothing was sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.btn.send_quote": {
+  "en": "Record: quote sent",
+  "te": "రికార్డ్: కొటేషన్ పంపాను",
+  "hi": "दर्ज करें: कोटेशन भेजा",
+  "kn": "ದಾಖಲಿಸಿ: ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.customer_accept": {
+  "en": "Record: customer accepted",
+  "te": "రికార్డ్: కస్టమర్ ఒప్పుకున్నారు",
+  "hi": "दर्ज करें: ग्राहक ने मंज़ूर किया",
+  "kn": "ದಾಖಲಿಸಿ: ಗ್ರಾಹಕರು ಒಪ್ಪಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.customer_decline": {
+  "en": "Record: customer declined",
+  "te": "రికార్డ్: కస్టమర్ వద్దన్నారు",
+  "hi": "दर्ज करें: ग्राहक ने मना किया",
+  "kn": "ದಾಖಲಿಸಿ: ಗ್ರಾಹಕರು ಬೇಡವೆಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.expire": {
+  "en": "Record: quote expired",
+  "te": "రికార్డ్: కొటేషన్ గడువు ముగిసింది",
+  "hi": "दर्ज करें: कोटेशन की समय सीमा ख़त्म",
+  "kn": "ದಾಖಲಿಸಿ: ಕೊಟೇಶನ್ ಅವಧಿ ಮುಗಿಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.request_advance": {
+  "en": "Record: advance asked for",
+  "te": "Record: advance asked for",
+  "hi": "Record: advance asked for",
+  "kn": "Record: advance asked for",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.btn.record_payment": {
+  "en": "Record this payment",
+  "te": "Record this payment",
+  "hi": "Record this payment",
+  "kn": "Record this payment",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.btn.start_preparation": {
+  "en": "Record: preparation started",
+  "te": "రికార్డ్: తయారీ మొదలైంది",
+  "hi": "दर्ज करें: तैयारी शुरू हुई",
+  "kn": "ದಾಖಲಿಸಿ: ತಯಾರಿ ಆರಂಭವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.dispatch": {
+  "en": "Record: dispatched",
+  "te": "రికార్డ్: పంపించారు",
+  "hi": "दर्ज करें: भेज दिया",
+  "kn": "ದಾಖಲಿಸಿ: ಕಳುಹಿಸಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.deliver": {
+  "en": "Record: delivered",
+  "te": "రికార్డ్: డెలివర్ అయింది",
+  "hi": "दर्ज करें: डिलीवर हुआ",
+  "kn": "ದಾಖಲಿಸಿ: ಡೆಲಿವರಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.cancel": {
+  "en": "Cancel this order",
+  "te": "ఈ ఆర్డర్‌ని రద్దు చేయండి",
+  "hi": "यह ऑर्डर रद्द करें",
+  "kn": "ಈ ಆರ್ಡರ್ ರದ್ದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.btn.record_refund": {
+  "en": "Record this refund",
+  "te": "Record this refund",
+  "hi": "Record this refund",
+  "kn": "Record this refund",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.saving": {
+  "en": "Saving...",
+  "te": "సేవ్ అవుతోంది...",
+  "hi": "सहेज रहे हैं...",
+  "kn": "ಉಳಿಸಲಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.starting": {
+  "en": "Starting...",
+  "te": "మొదలవుతోంది...",
+  "hi": "शुरू हो रहा है...",
+  "kn": "ಆರಂಭವಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.start_order": {
+  "en": "Start order",
+  "te": "ఆర్డర్ మొదలుపెట్టండి",
+  "hi": "ऑर्डर शुरू करें",
+  "kn": "ಆರ್ಡರ್ ಆರಂಭಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.mfa_a": {
+  "en": "This needs your authenticator app.",
+  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
+  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.mfa_start_a": {
+  "en": "Starting an order needs your authenticator app.",
+  "te": "ఆర్డర్ మొదలుపెట్టడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
+  "hi": "ऑर्डर शुरू करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
+  "kn": "ಆರ್ಡರ್ ಆರಂಭಿಸಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.mfa_b": {
+  "en": ", then sign in again with its code.",
+  "te": ", ఆ తర్వాత దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేయండి.",
+  "hi": ", फिर उसके कोड से दोबारा साइन इन करें।",
+  "kn": ", ನಂತರ ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.filter.open": {
+  "en": "In progress",
+  "te": "జరుగుతున్నవి",
+  "hi": "चल रहे",
+  "kn": "ನಡೆಯುತ್ತಿರುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.filter.held": {
+  "en": "Money held",
+  "te": "Money held",
+  "hi": "Money held",
+  "kn": "Money held",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "orders.started": {
+  "en": "Started",
+  "te": "మొదలైంది",
+  "hi": "शुरू हुआ",
+  "kn": "ಆರಂಭವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.details": {
+  "en": "Details",
+  "te": "వివరాలు",
+  "hi": "विवरण",
+  "kn": "ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.nothing_more": {
+  "en": "Nothing more can be recorded: this order is closed.",
+  "te": "ఇంకేమీ రికార్డ్ చేయలేరు: ఈ ఆర్డర్ ముగిసింది.",
+  "hi": "अब कुछ दर्ज नहीं हो सकता: यह ऑर्डर बंद है।",
+  "kn": "ಇನ್ನೇನೂ ದಾಖಲಿಸಲಾಗದು: ಈ ಆರ್ಡರ್ ಮುಗಿದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "orders.nothing_left": {
+  "en": "Nothing is left for your role to record. An owner or admin records the rest.",
+  "te": "మీ పాత్రకు రికార్డ్ చేయడానికి ఏమీ మిగలలేదు. మిగతాది యజమాని లేదా అడ్మిన్ రికార్డ్ చేస్తారు.",
+  "hi": "आपकी भूमिका के लिए दर्ज करने को कुछ नहीं बचा। बाकी मालिक या एडमिन दर्ज करता है।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರಕ್ಕೆ ದಾಖಲಿಸಲು ಏನೂ ಉಳಿದಿಲ್ಲ. ಉಳಿದದ್ದನ್ನು ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ದಾಖಲಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.enquiry": {
+  "en": "Enquiry",
+  "te": "ఎంక్వైరీ",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.received": {
+  "en": "Received",
+  "te": "Received",
+  "hi": "Received",
+  "kn": "Received",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.approve": {
+  "en": "Approve",
+  "te": "ఓకే చేయండి",
+  "hi": "ओके करें",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.set_it_up_on_the_security": {
+  "en": "Set it up on the Security page",
+  "te": "సెక్యూరిటీ పేజీలో సెట్ చేయండి",
+  "hi": "सिक्योरिटी पेज पर सेट करें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.why": {
+  "en": "Why",
+  "te": "ఎందుకు",
+  "hi": "क्यों",
+  "kn": "ಏಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.total": {
+  "en": "Total",
+  "te": "Total",
+  "hi": "Total",
+  "kn": "Total",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.balance": {
+  "en": "Balance",
+  "te": "Balance",
+  "hi": "Balance",
+  "kn": "Balance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.reject.other": {
+  "en": "Another reason",
+  "te": "ఇంకో కారణం",
+  "hi": "कोई और कारण",
+  "kn": "ಬೇರೆ ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdraw.other": {
+  "en": "Another reason",
+  "te": "ఇంకో కారణం",
+  "hi": "कोई और कारण",
+  "kn": "ಬೇರೆ ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.outcome.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.channel.email": {
+  "en": "E-mail",
+  "te": "ఇ-మెయిల్",
+  "hi": "ई-मेल",
+  "kn": "ಇ-ಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.channel.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "दूसरा",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.fabric": {
+  "en": "Fabric",
+  "te": "ఫ్యాబ్రిక్",
+  "hi": "कपड़ा",
+  "kn": "ಫ್ಯಾಬ್ರಿಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.colour": {
+  "en": "Colour",
+  "te": "రంగు",
+  "hi": "रंग",
+  "kn": "ಬಣ್ಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reqstatus.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.mfa_a": {
+  "en": "This needs your authenticator app.",
+  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
+  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.mfa_b": {
+  "en": ", then sign in again with its code.",
+  "te": ", ఆ తర్వాత దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేయండి.",
+  "hi": ", फिर उसके कोड से दोबारा साइन इन करें।",
+  "kn": ", ನಂತರ ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.from": {
+  "en": "from",
+  "te": "నుండి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.order_n_link": {
+  "en": "Order {n}",
+  "te": "ఆర్డర్ {n}",
+  "hi": "ऑर्डर {n}",
+  "kn": "ಆರ್ಡರ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.starting": {
+  "en": "Starting...",
+  "te": "మొదలవుతోంది...",
+  "hi": "शुरू हो रहा है...",
+  "kn": "ಆರಂಭವಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.saving": {
+  "en": "Saving...",
+  "te": "సేవ్ అవుతోంది...",
+  "hi": "सहेज रहे हैं...",
+  "kn": "ಉಳಿಸಲಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_form_is_out_of_date": {
+  "en": "This form is out of date. Reload the page and try again.",
+  "te": "ఈ ఫారమ్ పాతది అయింది. పేజీని రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह फ़ॉर्म पुराना हो गया है। पेज रीलोड करके फिर कोशिश करें।",
+  "kn": "ಈ ಫಾರ್ಮ್ ಹಳೆಯದಾಗಿದೆ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_is_not_available_right_now": {
+  "en": "This is not available right now. Try again shortly.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు. కొంత సేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह अभी उपलब्ध नहीं है। थोड़ी देर बाद फिर कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_is_not_possible_right_now": {
+  "en": "That is not possible right now. Reload the page and try again.",
+  "te": "ఇప్పుడు అది కుదరదు. పేజీని రీలోడ్ చేసి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "अभी यह नहीं हो सकता। पेज रीलोड करके फिर कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಸಾಧ್ಯವಿಲ್ಲ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_input_was_not_accepted": {
+  "en": "That input was not accepted.",
+  "te": "ఆ ఇన్‌పుట్ తీసుకోలేదు.",
+  "hi": "वह इनपुट स्वीकार नहीं हुआ।",
+  "kn": "ಆ ಇನ್‌ಪುಟ್ ಸ್ವೀಕಾರವಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.could_not_save_try_again": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ కాలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सहेज नहीं पाए। फिर कोशिश करें।",
+  "kn": "ಉಳಿಸಲಾಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_lead_is_not_available": {
+  "en": "This lead is not available.",
+  "te": "ఈ లీడ్ అందుబాటులో లేదు.",
+  "hi": "यह लीड उपलब्ध नहीं है।",
+  "kn": "ಈ ಲೀಡ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_needs_your_authenticator_app_set": {
+  "en": "This needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more.",
+  "te": "దీనికి మీ ఆథెంటికేటర్ యాప్ కావాలి. సెక్యూరిటీ పేజీలో సెట్ చేసి, దాని కోడ్‌తో మళ్ళీ సైన్ ఇన్ చేసి, ఇంకోసారి ప్రయత్నించండి.",
+  "hi": "इसके लिए आपका ऑथेंटिकेटर ऐप चाहिए। सिक्योरिटी पेज पर सेट करें, उसके कोड से दोबारा साइन इन करें, और एक बार फिर कोशिश करें।",
+  "kn": "ಇದಕ್ಕೆ ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು. ಸೆಕ್ಯುರಿಟಿ ಪುಟದಲ್ಲಿ ಸೆಟ್ ಮಾಡಿ, ಅದರ ಕೋಡ್‌ನೊಂದಿಗೆ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ, ಇನ್ನೊಮ್ಮೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.your_role_does_not_allow_this": {
+  "en": "Your role does not allow this.",
+  "te": "మీ పాత్రకు దీనికి అనుమతి లేదు.",
+  "hi": "आपकी भूमिका को इसकी अनुमति नहीं है।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರಕ್ಕೆ ಇದಕ್ಕೆ ಅನುಮತಿ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_quote_is_not_available": {
+  "en": "This quote is not available.",
+  "te": "ఈ కొటేషన్ అందుబాటులో లేదు.",
+  "hi": "यह कोटेशन उपलब्ध नहीं है।",
+  "kn": "ಈ ಕೊಟೇಶನ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_quote_could_not_be_loaded": {
+  "en": "The quote could not be loaded right now. The enquiry above is unaffected: try again shortly.",
+  "te": "కొటేషన్ ఇప్పుడు లోడ్ కాలేదు. పైన ఉన్న ఎంక్వయిరీపై ప్రభావం లేదు: కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "कोटेशन अभी लोड नहीं हो सका। ऊपर की इन्क्वायरी पर असर नहीं है: थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಕೊಟೇಶನ್ ಈಗ ಲೋಡ್ ಆಗಲಿಲ್ಲ. ಮೇಲಿನ ಎನ್‌ಕ್ವೈರಿಗೆ ಏನೂ ಆಗಿಲ್ಲ: ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.all_quotes": {
+  "en": "All quotes",
+  "te": "అన్ని కొటేషన్లు",
+  "hi": "सभी कोटेशन",
+  "kn": "ಎಲ್ಲಾ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.parts_of_this_enquiry": {
+  "en": "Parts of this enquiry",
+  "te": "ఈ ఎంక్వయిరీ భాగాలు",
+  "hi": "इस इन्क्वायरी के हिस्से",
+  "kn": "ಈ ಎನ್‌ಕ್ವೈರಿಯ ಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.what_the_customer_wrote": {
+  "en": "What the customer wrote",
+  "te": "కస్టమర్ రాసినది",
+  "hi": "ग्राहक ने जो लिखा",
+  "kn": "ಗ್ರಾಹಕರು ಬರೆದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.channel": {
+  "en": "Channel",
+  "te": "ఛానెల్",
+  "hi": "चैनल",
+  "kn": "ಚಾನೆಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.subject": {
+  "en": "Subject",
+  "te": "సబ్జెక్ట్",
+  "hi": "विषय",
+  "kn": "ವಿಷಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quotes_are_shown_to_owners_admins": {
+  "en": "Quotes are shown to owners, admins and sales users.",
+  "te": "కొటేషన్లు యజమానులు, అడ్మిన్‌లు, సేల్స్ వాళ్ళకే కనిపిస్తాయి.",
+  "hi": "कोटेशन सिर्फ़ मालिक, एडमिन और सेल्स वालों को दिखते हैं।",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು ಮಾಲೀಕರು, ಅಡ್ಮಿನ್‌ಗಳು ಮತ್ತು ಸೇಲ್ಸ್ ಬಳಕೆದಾರರಿಗೆ ಮಾತ್ರ ಕಾಣಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field": {
+  "en": "Field",
+  "te": "ఫీల్డ్",
+  "hi": "फ़ील्ड",
+  "kn": "ಫೀಲ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.line_which_kind_of_saree": {
+  "en": "Line (which kind of saree)",
+  "te": "లైన్ (ఏ రకం చీర)",
+  "hi": "लाइन (किस तरह की साड़ी)",
+  "kn": "ಲೈನ್ (ಯಾವ ರೀತಿಯ ಸೀರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.value": {
+  "en": "Value",
+  "te": "విలువ",
+  "hi": "मान",
+  "kn": "ಮೌಲ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.for_example_kanchipuram_20_rs_5k": {
+  "en": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
+  "te": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
+  "hi": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
+  "kn": "For example: Kanchipuram, 20, Rs 5k each, next Friday",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.words_of_the_enquiry_that_say": {
+  "en": "Words of the enquiry that say it (optional)",
+  "te": "ఎంక్వయిరీలో అది చెప్పే మాటలు (ఐచ్ఛికం)",
+  "hi": "इन्क्वायरी के वे शब्द जो यह कहते हैं (वैकल्पिक)",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಯಲ್ಲಿ ಅದನ್ನು ಹೇಳುವ ಮಾತುಗಳು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.nothing_is_sent_by_the_system": {
+  "en": "Nothing is sent by the system.",
+  "te": "Nothing is sent by the system.",
+  "hi": "Nothing is sent by the system.",
+  "kn": "Nothing is sent by the system.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.quote_text_for_the_customer": {
+  "en": "Quote text for the customer",
+  "te": "కస్టమర్‌కి కొటేషన్ టెక్స్ట్",
+  "hi": "ग्राहक के लिए कोटेशन का टेक्स्ट",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಕೊಟೇಶನ್ ಪಠ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.copy_text": {
+  "en": "Copy text",
+  "te": "టెక్స్ట్ కాపీ చేయండి",
+  "hi": "टेक्स्ट कॉपी करें",
+  "kn": "ಪಠ್ಯ ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.copied_paste_it_into_your_own": {
+  "en": "Copied. Paste it into your own message.",
+  "te": "కాపీ అయింది. మీ సొంత మెసేజ్‌లో పేస్ట్ చేయండి.",
+  "hi": "कॉपी हो गया। अपने मैसेज में पेस्ट करें।",
+  "kn": "ಕಾಪಿ ಆಯಿತು. ನಿಮ್ಮ ಸ್ವಂತ ಮೆಸೇಜ್‌ನಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.could_not_copy_select_the_text": {
+  "en": "Could not copy. Select the text above and copy it yourself.",
+  "te": "కాపీ కాలేదు. పైన ఉన్న టెక్స్ట్ ఎంచుకుని మీరే కాపీ చేయండి.",
+  "hi": "कॉपी नहीं हो सका। ऊपर का टेक्स्ट चुनकर खुद कॉपी करें।",
+  "kn": "ಕಾಪಿ ಆಗಲಿಲ್ಲ. ಮೇಲಿನ ಪಠ್ಯ ಆರಿಸಿ ನೀವೇ ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_customer": {
+  "en": "The customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_repeat_customer_is_your_word": {
+  "en": "A repeat customer is your word: nobody has verified it, so the owner decides such a quote.",
+  "te": "A repeat customer is your word: nobody has verified it, so the owner decides such a quote.",
+  "hi": "A repeat customer is your word: nobody has verified it, so the owner decides such a quote.",
+  "kn": "A repeat customer is your word: nobody has verified it, so the owner decides such a quote.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.delivery_state": {
+  "en": "Delivery state",
+  "te": "డెలివరీ రాష్ట్రం",
+  "hi": "डिलीवरी का राज्य",
+  "kn": "ಡೆಲಿವರಿ ರಾಜ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_a_state_or_union_territory": {
+  "en": "Choose a state or union territory",
+  "te": "రాష్ట్రం లేదా కేంద్రపాలిత ప్రాంతం ఎంచుకోండి",
+  "hi": "राज्य या केंद्र शासित प्रदेश चुनें",
+  "kn": "ರಾಜ್ಯ ಅಥವಾ ಕೇಂದ್ರಾಡಳಿತ ಪ್ರದೇಶ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_makes_a_draft_nothing_is": {
+  "en": "This makes a draft. Nothing is approved and nothing is sent.",
+  "te": "This makes a draft. Nothing is approved and nothing is sent.",
+  "hi": "This makes a draft. Nothing is approved and nothing is sent.",
+  "kn": "This makes a draft. Nothing is approved and nothing is sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.enquiries": {
+  "en": "Enquiries",
+  "te": "ఎంక్వయిరీలు",
+  "hi": "इन्क्वायरी",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.paste_an_e_mail_or_whatsapp": {
+  "en": "Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.",
+  "te": "Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.",
+  "hi": "Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.",
+  "kn": "Paste an e-mail or WhatsApp message from this lead to turn it into an order requirement. Nothing is sent to anyone from here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.could_not_load_the_enquiries_from": {
+  "en": "Could not load the enquiries from the API. Try again shortly.",
+  "te": "ఎంక్వయిరీలను లోడ్ చేయలేకపోయాం. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "इन्क्वायरी लोड नहीं हो सकीं। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಗಳನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.no_enquiries_yet": {
+  "en": "No enquiries yet.",
+  "te": "ఇంకా ఎంక్వయిరీలు లేవు.",
+  "hi": "अभी कोई इन्क्वायरी नहीं।",
+  "kn": "ಇನ್ನೂ ಎನ್‌ಕ್ವೈರಿಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.add_enquiry": {
+  "en": "Add enquiry",
+  "te": "ఎంక్వయిరీ జోడించండి",
+  "hi": "इन्क्वायरी जोड़ें",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.only_an_owner_admin_or_sales": {
+  "en": "Only an owner, admin or sales user can paste an enquiry.",
+  "te": "ఎంక్వయిరీని యజమాని, అడ్మిన్ లేదా సేల్స్ వాళ్ళు మాత్రమే పేస్ట్ చేయగలరు.",
+  "hi": "इन्क्वायरी सिर्फ़ मालिक, एडमिन या सेल्स वाले पेस्ट कर सकते हैं।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಯನ್ನು ಮಾಲೀಕರು, ಅಡ್ಮಿನ್ ಅಥವಾ ಸೇಲ್ಸ್ ಬಳಕೆದಾರರು ಮಾತ್ರ ಪೇಸ್ಟ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reject": {
+  "en": "Reject",
+  "te": "తిరస్కరించండి",
+  "hi": "अस्वीकार करें",
+  "kn": "ತಿರಸ್ಕರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.correct_to": {
+  "en": "Correct to",
+  "te": "ఇలా సరిదిద్దండి",
+  "hi": "इसमें सही करें",
+  "kn": "ಹೀಗೆ ತಿದ್ದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.write_it_as_the_enquiry_would": {
+  "en": "Write it as the enquiry would",
+  "te": "ఎంక్వయిరీ రాసినట్లే రాయండి",
+  "hi": "इन्क्वायरी जैसे लिखती है वैसे लिखें",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಬರೆದಂತೆಯೇ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.save_correction": {
+  "en": "Save correction",
+  "te": "సరిదిద్దినది సేవ్ చేయండి",
+  "hi": "सुधार सहेजें",
+  "kn": "ತಿದ್ದುಪಡಿ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quote_with_typed_prices": {
+  "en": "Quote with typed prices",
+  "te": "Quote with typed prices",
+  "hi": "Quote with typed prices",
+  "kn": "Quote with typed prices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.you_type_the_price_of_each": {
+  "en": "You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.",
+  "te": "You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.",
+  "hi": "You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.",
+  "kn": "You type the price of each piece. The GST and the totals are worked out for you, and the owner approves the draft before it can be used. Nothing is sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.item_type": {
+  "en": "Item type",
+  "te": "ఐటెమ్ రకం",
+  "hi": "आइटम का प्रकार",
+  "kn": "ಐಟಂ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_an_item_type": {
+  "en": "Choose an item type",
+  "te": "ఐటెమ్ రకం ఎంచుకోండి",
+  "hi": "आइटम का प्रकार चुनें",
+  "kn": "ಐಟಂ ಪ್ರಕಾರ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quantity_pieces": {
+  "en": "Quantity (pieces)",
+  "te": "సంఖ్య (ముక్కలు)",
+  "hi": "मात्रा (पीस)",
+  "kn": "ಪ್ರಮಾಣ (ತುಂಡುಗಳು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.price_per_piece_rupees": {
+  "en": "Price per piece (rupees)",
+  "te": "Price per piece (rupees)",
+  "hi": "Price per piece (rupees)",
+  "kn": "Price per piece (rupees)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.add_a_line": {
+  "en": "Add a line",
+  "te": "లైన్ జోడించండి",
+  "hi": "लाइन जोड़ें",
+  "kn": "ಲೈನ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_quote_has_at_most_5": {
+  "en": "A quote has at most 5 lines.",
+  "te": "ఒక కొటేషన్‌లో గరిష్టంగా 5 లైన్లు ఉంటాయి.",
+  "hi": "एक कोटेशन में अधिकतम 5 लाइनें होती हैं।",
+  "kn": "ಒಂದು ಕೊಟೇಶನ್‌ನಲ್ಲಿ ಗರಿಷ್ಠ 5 ಲೈನ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.where_did_it_come_from": {
+  "en": "Where did it come from?",
+  "te": "ఇది ఎక్కడి నుంచి వచ్చింది?",
+  "hi": "यह कहाँ से आई?",
+  "kn": "ಇದು ಎಲ್ಲಿಂದ ಬಂದಿತು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.when_was_it_received": {
+  "en": "When was it received?",
+  "te": "ఇది ఎప్పుడు వచ్చింది?",
+  "hi": "यह कब आई?",
+  "kn": "ಇದು ಯಾವಾಗ ಬಂದಿತು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.subject_optional": {
+  "en": "Subject (optional)",
+  "te": "సబ్జెక్ట్ (ఐచ్ఛికం)",
+  "hi": "विषय (वैकल्पिक)",
+  "kn": "ವಿಷಯ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_enquiry_as_you_received_it": {
+  "en": "The enquiry, as you received it",
+  "te": "ఎంక్వయిరీ, మీకు వచ్చినట్లే",
+  "hi": "इन्क्वायरी, जैसी आपको मिली",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ, ನಿಮಗೆ ಬಂದಂತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.paste_the_e_mail_or_message": {
+  "en": "Paste the e-mail or message here",
+  "te": "ఈమెయిల్ లేదా మెసేజ్ ఇక్కడ పేస్ట్ చేయండి",
+  "hi": "ईमेल या मैसेज यहाँ पेस्ट करें",
+  "kn": "ಇಮೇಲ್ ಅಥವಾ ಮೆಸೇಜ್ ಇಲ್ಲಿ ಪೇಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.e_mail_addresses_and_mobile_numbers": {
+  "en": "E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.",
+  "te": "E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.",
+  "hi": "E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.",
+  "kn": "E-mail addresses and mobile numbers are removed before this is saved, and so are hidden characters. The pasted original is not kept. Nothing is sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.no_product_chosen_yet": {
+  "en": "No product chosen yet.",
+  "te": "ఇంకా ప్రొడక్ట్ ఎంచుకోలేదు.",
+  "hi": "अभी कोई प्रोडक्ट नहीं चुना।",
+  "kn": "ಇನ್ನೂ ಪ್ರೊಡಕ್ಟ್ ಆರಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.product": {
+  "en": "Product",
+  "te": "ప్రొడక్ట్",
+  "hi": "प्रोडक्ट",
+  "kn": "ಪ್ರೊಡಕ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_a_product": {
+  "en": "Choose a product",
+  "te": "ప్రొడక్ట్ ఎంచుకోండి",
+  "hi": "प्रोडक्ट चुनें",
+  "kn": "ಪ್ರೊಡಕ್ಟ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quantity_to_quote": {
+  "en": "Quantity to quote",
+  "te": "కొటేషన్ ఇవ్వాల్సిన సంఖ్య",
+  "hi": "कोटेशन के लिए मात्रा",
+  "kn": "ಕೊಟೇಶನ್‌ಗೆ ಪ್ರಮಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.nothing_to_ask_every_needed_field": {
+  "en": "Nothing to ask: every needed field is present.",
+  "te": "అడగడానికి ఏమీ లేదు: కావలసిన ఫీల్డ్‌లన్నీ ఉన్నాయి.",
+  "hi": "पूछने को कुछ नहीं: ज़रूरी सभी फ़ील्ड मौजूद हैं।",
+  "kn": "ಕೇಳಲು ಏನೂ ಇಲ್ಲ: ಬೇಕಾದ ಎಲ್ಲಾ ಫೀಲ್ಡ್‌ಗಳಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_quote_carries_a_flag_so": {
+  "en": "This quote carries a flag, so only the owner can approve it. You can reject it.",
+  "te": "ఈ కొటేషన్‌కి ఫ్లాగ్ ఉంది, కాబట్టి యజమాని మాత్రమే ఓకే చేయగలరు. మీరు తిరస్కరించవచ్చు.",
+  "hi": "इस कोटेशन पर फ़्लैग है, इसलिए सिर्फ़ मालिक मंज़ूर कर सकता है। आप अस्वीकार कर सकते हैं।",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ಗೆ ಫ್ಲ್ಯಾಗ್ ಇದೆ, ಆದ್ದರಿಂದ ಮಾಲೀಕರು ಮಾತ್ರ ಒಪ್ಪಿಗೆ ನೀಡಬಹುದು. ನೀವು ತಿರಸ್ಕರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approving_records_your_decision_it_does": {
+  "en": "Approving records your decision. It does not send anything to the customer.",
+  "te": "Approving records your decision. It does not send anything to the customer.",
+  "hi": "Approving records your decision. It does not send anything to the customer.",
+  "kn": "Approving records your decision. It does not send anything to the customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.reject_this_draft": {
+  "en": "Reject this draft",
+  "te": "ఈ డ్రాఫ్ట్‌ని తిరస్కరించండి",
+  "hi": "इस ड्राफ़्ट को अस्वीकार करें",
+  "kn": "ಈ ಡ್ರಾಫ್ಟ್ ತಿರಸ್ಕರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdraw_my_draft": {
+  "en": "Withdraw my draft",
+  "te": "నా డ్రాఫ్ట్ వెనక్కి తీసుకోండి",
+  "hi": "मेरा ड्राफ़्ट वापस लें",
+  "kn": "ನನ್ನ ಡ್ರಾಫ್ಟ್ ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.an_owner_or_admin_approves_a": {
+  "en": "An owner or admin approves a quote. You can withdraw a draft you made yourself.",
+  "te": "కొటేషన్‌ని యజమాని లేదా అడ్మిన్ ఓకే చేస్తారు. మీరు తయారు చేసిన డ్రాఫ్ట్‌ని మీరు వెనక్కి తీసుకోవచ్చు.",
+  "hi": "कोटेशन को मालिक या एडमिन मंज़ूर करता है। अपना बनाया ड्राफ़्ट आप वापस ले सकते हैं।",
+  "kn": "ಕೊಟೇಶನ್‌ಗೆ ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಒಪ್ಪಿಗೆ ನೀಡುತ್ತಾರೆ. ನೀವು ಮಾಡಿದ ಡ್ರಾಫ್ಟ್ ಅನ್ನು ನೀವು ಹಿಂತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdraw_this_approved_quote": {
+  "en": "Withdraw this approved quote",
+  "te": "ఓకే అయిన ఈ కొటేషన్‌ని వెనక్కి తీసుకోండి",
+  "hi": "मंज़ूर हुए इस कोटेशन को वापस लें",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಈ ಕೊಟೇಶನ್ ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_withdrawn_quote_is_kept_in": {
+  "en": "A withdrawn quote is kept in the history and can no longer be approved or copied.",
+  "te": "వెనక్కి తీసుకున్న కొటేషన్ హిస్టరీలో ఉంటుంది; ఇక దాన్ని ఓకే చేయలేరు, కాపీ చేయలేరు.",
+  "hi": "वापस लिया गया कोटेशन हिस्ट्री में रहता है; अब उसे मंज़ूर या कॉपी नहीं किया जा सकता।",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಂಡ ಕೊಟೇಶನ್ ಹಿಸ್ಟರಿಯಲ್ಲಿರುತ್ತದೆ; ಇನ್ನು ಅದನ್ನು ಒಪ್ಪಿಗೆ ಮಾಡಲು ಅಥವಾ ಕಾಪಿ ಮಾಡಲು ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quote": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.copy_and_order": {
+  "en": "Copy and order",
+  "te": "కాపీ, ఆర్డర్",
+  "hi": "कॉपी और ऑर्डर",
+  "kn": "ಕಾಪಿ ಮತ್ತು ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.nothing_on_this_page_is_ever": {
+  "en": "Nothing on this page is ever sent to anyone.",
+  "te": "Nothing on this page is ever sent to anyone.",
+  "hi": "Nothing on this page is ever sent to anyone.",
+  "kn": "Nothing on this page is ever sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.1_choose_the_product_for_each": {
+  "en": "1. Choose the product for each line",
+  "te": "1. ప్రతి లైన్‌కి ప్రొడక్ట్ ఎంచుకోండి",
+  "hi": "1. हर लाइन के लिए प्रोडक्ट चुनें",
+  "kn": "1. ಪ್ರತಿ ಲೈನ್‌ಗೆ ಪ್ರೊಡಕ್ಟ್ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_assistant_suggests_products_nothing_is": {
+  "en": "The assistant suggests products; nothing is chosen until you press the button for that line.",
+  "te": "అసిస్టెంట్ ప్రొడక్ట్‌లను సూచిస్తుంది; ఆ లైన్ బటన్ నొక్కే వరకు ఏదీ ఎంచుకోబడదు.",
+  "hi": "असिस्टेंट प्रोडक्ट सुझाता है; उस लाइन का बटन दबाने तक कुछ नहीं चुना जाता।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಪ್ರೊಡಕ್ಟ್‌ಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ; ಆ ಲೈನ್‌ನ ಬಟನ್ ಒತ್ತುವವರೆಗೆ ಏನೂ ಆರಿಸಲ್ಪಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.no_line_has_a_saree_type": {
+  "en": "No line has a saree type and a quantity that a person approved yet.",
+  "te": "ఏ లైన్‌కీ ఇంకా వ్యక్తి ఓకే చేసిన చీర రకం, సంఖ్య లేవు.",
+  "hi": "अभी किसी लाइन में इंसान के मंज़ूर किए साड़ी के प्रकार और मात्रा नहीं हैं।",
+  "kn": "ಯಾವ ಲೈನ್‌ಗೂ ಇನ್ನೂ ವ್ಯಕ್ತಿ ಒಪ್ಪಿದ ಸೀರೆ ಪ್ರಕಾರ ಮತ್ತು ಪ್ರಮಾಣ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.not_quoted": {
+  "en": "Not quoted",
+  "te": "కొటేషన్ ఇవ్వలేదు",
+  "hi": "कोटेशन नहीं दिया",
+  "kn": "ಕೊಟೇಶನ್ ನೀಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.2_make_a_draft_quote": {
+  "en": "2. Make a draft quote",
+  "te": "2. డ్రాఫ్ట్ కొటేషన్ తయారు చేయండి",
+  "hi": "2. ड्राफ़्ट कोटेशन बनाएँ",
+  "kn": "2. ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_a_product_for_every_line": {
+  "en": "Choose a product for every line above first.",
+  "te": "ముందు పైన ఉన్న ప్రతి లైన్‌కి ప్రొడక్ట్ ఎంచుకోండి.",
+  "hi": "पहले ऊपर की हर लाइन के लिए प्रोडक्ट चुनें।",
+  "kn": "ಮೊದಲು ಮೇಲಿನ ಪ್ರತಿ ಲೈನ್‌ಗೆ ಪ್ರೊಡಕ್ಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.making_a_new_draft_replaces_the": {
+  "en": "Making a new draft replaces the current draft.",
+  "te": "కొత్త డ్రాఫ్ట్ చేస్తే ప్రస్తుత డ్రాఫ్ట్ మారిపోతుంది.",
+  "hi": "नया ड्राफ़्ट बनाने पर मौजूदा ड्राफ़्ट बदल जाएगा।",
+  "kn": "ಹೊಸ ಡ್ರಾಫ್ಟ್ ಮಾಡಿದರೆ ಈಗಿನ ಡ್ರಾಫ್ಟ್ ಬದಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.or_make_a_quote_with_typed": {
+  "en": "Or make a quote with typed prices instead of using the price list:",
+  "te": "Or make a quote with typed prices instead of using the price list:",
+  "hi": "Or make a quote with typed prices instead of using the price list:",
+  "kn": "Or make a quote with typed prices instead of using the price list:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.the_item_types_or_the_quote": {
+  "en": "The item types or the quote policy could not be loaded right now. Reload the page to try again.",
+  "te": "The item types or the quote policy could not be loaded right now. Reload the page to try again.",
+  "hi": "The item types or the quote policy could not be loaded right now. Reload the page to try again.",
+  "kn": "The item types or the quote policy could not be loaded right now. Reload the page to try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.text_for_the_customer": {
+  "en": "Text for the customer",
+  "te": "కస్టమర్‌కి టెక్స్ట్",
+  "hi": "ग्राहक के लिए टेक्स्ट",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಪಠ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.order": {
+  "en": "Order",
+  "te": "ఆర్డర్",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.earlier_quotes_of_this_enquiry": {
+  "en": "Earlier quotes of this enquiry",
+  "te": "ఈ ఎంక్వయిరీ పాత కొటేషన్లు",
+  "hi": "इस इन्क्वायरी के पुराने कोटेशन",
+  "kn": "ಈ ಎನ್‌ಕ್ವೈರಿಯ ಹಳೆಯ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.typed_prices": {
+  "en": "Typed prices",
+  "te": "Typed prices",
+  "hi": "Typed prices",
+  "kn": "Typed prices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.needs_the_owner_s_approval": {
+  "en": "Needs the owner's approval",
+  "te": "యజమాని ఓకే కావాలి",
+  "hi": "मालिक की मंज़ूरी चाहिए",
+  "kn": "ಮಾಲೀಕರ ಒಪ್ಪಿಗೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.please_read_before_approving": {
+  "en": "Please read before approving:",
+  "te": "ఓకే చేసే ముందు చదవండి:",
+  "hi": "मंज़ूर करने से पहले पढ़ें:",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡುವ ಮೊದಲು ಓದಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.delivery": {
+  "en": "Delivery",
+  "te": "డెలివరీ",
+  "hi": "डिलीवरी",
+  "kn": "ಡೆಲಿವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.made_on": {
+  "en": "Made on",
+  "te": "తయారైన తేదీ",
+  "hi": "बनाया गया",
+  "kn": "ಮಾಡಿದ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.valid_until": {
+  "en": "Valid until",
+  "te": "Valid until",
+  "hi": "Valid until",
+  "kn": "Valid until",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.balance_due_by": {
+  "en": "Balance due by",
+  "te": "Balance due by",
+  "hi": "Balance due by",
+  "kn": "Balance due by",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.lines": {
+  "en": "Lines",
+  "te": "లైన్లు",
+  "hi": "लाइनें",
+  "kn": "ಲೈನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.price_typed_by_a_person": {
+  "en": "Price typed by a person",
+  "te": "Price typed by a person",
+  "hi": "Price typed by a person",
+  "kn": "Price typed by a person",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.quantity": {
+  "en": "Quantity",
+  "te": "సంఖ్య",
+  "hi": "मात्रा",
+  "kn": "ಪ್ರಮಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.price": {
+  "en": "Price",
+  "te": "Price",
+  "hi": "Price",
+  "kn": "Price",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.amount": {
+  "en": "Amount",
+  "te": "Amount",
+  "hi": "Amount",
+  "kn": "Amount",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.line_total": {
+  "en": "Line total",
+  "te": "Line total",
+  "hi": "Line total",
+  "kn": "Line total",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.not_in_this_quote": {
+  "en": "Not in this quote",
+  "te": "ఈ కొటేషన్‌లో లేదు",
+  "hi": "इस कोटेशन में नहीं",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ನಲ್ಲಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.totals": {
+  "en": "Totals",
+  "te": "Totals",
+  "hi": "Totals",
+  "kn": "Totals",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.goods": {
+  "en": "Goods",
+  "te": "సరుకు",
+  "hi": "माल",
+  "kn": "ಸರಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.gst_on_goods": {
+  "en": "GST on goods",
+  "te": "GST on goods",
+  "hi": "GST on goods",
+  "kn": "GST on goods",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.freight": {
+  "en": "Freight",
+  "te": "Freight",
+  "hi": "Freight",
+  "kn": "Freight",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.gst_on_freight": {
+  "en": "GST on freight",
+  "te": "GST on freight",
+  "hi": "GST on freight",
+  "kn": "GST on freight",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.advance": {
+  "en": "Advance",
+  "te": "Advance",
+  "hi": "Advance",
+  "kn": "Advance",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.how_these_figures_were_made": {
+  "en": "How these figures were made",
+  "te": "How these figures were made",
+  "hi": "How these figures were made",
+  "kn": "How these figures were made",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.price_list_version": {
+  "en": "Price list version",
+  "te": "Price list version",
+  "hi": "Price list version",
+  "kn": "Price list version",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.policy_version": {
+  "en": "Policy version",
+  "te": "Policy version",
+  "hi": "Policy version",
+  "kn": "Policy version",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.fingerprint": {
+  "en": "Fingerprint",
+  "te": "ఫింగర్‌ప్రింట్",
+  "hi": "फ़िंगरप्रिंट",
+  "kn": "ಫಿಂಗರ್‌ಪ್ರಿಂಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approve_or_correct_a_saree_type": {
+  "en": "Approve (or correct) a saree type and a quantity on the same line first.",
+  "te": "ముందు ఒకే లైన్‌లో చీర రకం, సంఖ్యను ఓకే చేయండి (లేదా సరిదిద్దండి).",
+  "hi": "पहले एक ही लाइन में साड़ी का प्रकार और मात्रा मंज़ूर (या सही) करें।",
+  "kn": "ಮೊದಲು ಒಂದೇ ಲೈನ್‌ನಲ್ಲಿ ಸೀರೆ ಪ್ರಕಾರ ಮತ್ತು ಪ್ರಮಾಣ ಒಪ್ಪಿಗೆ (ಅಥವಾ ತಿದ್ದುಪಡಿ) ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.discard_this_requirement": {
+  "en": "Discard this requirement",
+  "te": "ఈ అవసరాన్ని తొలగించండి",
+  "hi": "यह ज़रूरत हटाएँ",
+  "kn": "ಈ ಅಗತ್ಯವನ್ನು ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_discarded_requirement_can_be_replaced": {
+  "en": "A discarded requirement can be replaced by a new suggestion run. It is kept in the history.",
+  "te": "రద్దు చేసిన అవసరం స్థానంలో కొత్త సూచనల రన్ చేయవచ్చు. ఇది హిస్టరీలో ఉంటుంది.",
+  "hi": "हटाई गई ज़रूरत की जगह नया सुझाव रन चलाया जा सकता है। यह हिस्ट्री में रहती है।",
+  "kn": "ತೆಗೆದುಹಾಕಿದ ಅಗತ್ಯದ ಬದಲು ಹೊಸ ಸಲಹೆಯ ರನ್ ಮಾಡಬಹುದು. ಇದು ಹಿಸ್ಟರಿಯಲ್ಲಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.requirement": {
+  "en": "Requirement",
+  "te": "అవసరం",
+  "hi": "ज़रूरत",
+  "kn": "ಅಗತ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_enquiry_is_quoted_with_typed": {
+  "en": "This enquiry is quoted with typed prices, so there are no lines to approve here.",
+  "te": "This enquiry is quoted with typed prices, so there are no lines to approve here.",
+  "hi": "This enquiry is quoted with typed prices, so there are no lines to approve here.",
+  "kn": "This enquiry is quoted with typed prices, so there are no lines to approve here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.to_quote_it_line_by_line": {
+  "en": "To quote it line by line from the price list instead, reject or withdraw its quotes, then discard this requirement. Nothing here is ever sent.",
+  "te": "To quote it line by line from the price list instead, reject or withdraw its quotes, then discard this requirement. Nothing here is ever sent.",
+  "hi": "To quote it line by line from the price list instead, reject or withdraw its quotes, then discard this requirement. Nothing here is ever sent.",
+  "kn": "To quote it line by line from the price list instead, reject or withdraw its quotes, then discard this requirement. Nothing here is ever sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.approving_needs_a_saree_type_and": {
+  "en": "Approving needs a saree type and a quantity on the same line, approved by a person. \"Ready for a quote\" also needs the delivery city, the date it is needed and the payment terms. Nothing here is ever sent.",
+  "te": "Approving needs a saree type and a quantity on the same line, approved by a person. \"Ready for a quote\" also needs the delivery city, the date it is needed and the payment terms. Nothing here is ever sent.",
+  "hi": "Approving needs a saree type and a quantity on the same line, approved by a person. \"Ready for a quote\" also needs the delivery city, the date it is needed and the payment terms. Nothing here is ever sent.",
+  "kn": "Approving needs a saree type and a quantity on the same line, approved by a person. \"Ready for a quote\" also needs the delivery city, the date it is needed and the payment terms. Nothing here is ever sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.stored_questions_for_the_customer": {
+  "en": "Stored questions for the customer →",
+  "te": "కస్టమర్‌కి దాచిన ప్రశ్నలు →",
+  "hi": "ग्राहक के लिए सहेजे सवाल →",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಉಳಿಸಿದ ಪ್ರಶ್ನೆಗಳು →",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.missing": {
+  "en": "Missing:",
+  "te": "లేనివి:",
+  "hi": "कमी:",
+  "kn": "ಇಲ್ಲದವು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.please_check": {
+  "en": "Please check:",
+  "te": "దయచేసి చూడండి:",
+  "hi": "ज़रा देख लें:",
+  "kn": "ದಯವಿಟ್ಟು ನೋಡಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.questions_you_may_want_to_ask": {
+  "en": "Questions you may want to ask the customer",
+  "te": "కస్టమర్‌ని అడగాల్సిన ప్రశ్నలు",
+  "hi": "ग्राहक से पूछने लायक सवाल",
+  "kn": "ಗ್ರಾಹಕರನ್ನು ಕೇಳಬಹುದಾದ ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.draft_wording_only_copy_it_into": {
+  "en": "Draft wording only: copy it into your own message. This application does not send anything.",
+  "te": "Draft wording only: copy it into your own message. This application does not send anything.",
+  "hi": "Draft wording only: copy it into your own message. This application does not send anything.",
+  "kn": "Draft wording only: copy it into your own message. This application does not send anything.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.add_a_field_the_suggestions_missed": {
+  "en": "Add a field the suggestions missed",
+  "te": "సూచనల్లో లేని ఫీల్డ్ జోడించండి",
+  "hi": "सुझावों में छूटा फ़ील्ड जोड़ें",
+  "kn": "ಸಲಹೆಗಳಲ್ಲಿ ಬಿಟ್ಟುಹೋದ ಫೀಲ್ಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.record_that_you_sent_this_quote": {
+  "en": "Record that you sent this quote on WhatsApp",
+  "te": "ఈ కొటేషన్‌ని WhatsApp లో పంపినట్లు రికార్డ్ చేయండి",
+  "hi": "दर्ज करें कि आपने यह कोटेशन WhatsApp पर भेजा",
+  "kn": "ಈ ಕೊಟೇಶನ್ ಅನ್ನು WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸಿದ್ದೀರಿ ಎಂದು ದಾಖಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.record_consent_for_this_person": {
+  "en": "Record consent for this person →",
+  "te": "ఈ వ్యక్తి సమ్మతి రికార్డ్ చేయండి →",
+  "hi": "इस व्यक्ति की सहमति दर्ज करें →",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯ ಒಪ್ಪಿಗೆ ದಾಖಲಿಸಿ →",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.whatsapp": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.open_in_whatsapp": {
+  "en": "Open in WhatsApp",
+  "te": "WhatsApp లో తెరవండి",
+  "hi": "WhatsApp में खोलें",
+  "kn": "WhatsApp ನಲ್ಲಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.open_the_whatsapp_chat": {
+  "en": "Open the WhatsApp chat",
+  "te": "WhatsApp చాట్ తెరవండి",
+  "hi": "WhatsApp चैट खोलें",
+  "kn": "WhatsApp ಚಾಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.kind.new": {
+  "en": "New customer",
+  "te": "కొత్త కస్టమర్",
+  "hi": "नया ग्राहक",
+  "kn": "ಹೊಸ ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.kind.repeat": {
+  "en": "Repeat customer",
+  "te": "పాత కస్టమర్",
+  "hi": "पुराना ग्राहक",
+  "kn": "ಹಳೆಯ ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reject.wrong_prices": {
+  "en": "The prices were wrong",
+  "te": "The prices were wrong",
+  "hi": "The prices were wrong",
+  "kn": "The prices were wrong",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.reject.customer_changed": {
+  "en": "The customer changed the order",
+  "te": "కస్టమర్ ఆర్డర్ మార్చారు",
+  "hi": "ग्राहक ने ऑर्डर बदल दिया",
+  "kn": "ಗ್ರಾಹಕರು ಆರ್ಡರ್ ಬದಲಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reject.duplicate": {
+  "en": "It duplicates another quote",
+  "te": "ఇది మరో కొటేషన్‌కి డూప్లికేట్",
+  "hi": "यह दूसरे कोटेशन की नक़ल है",
+  "kn": "ಇದು ಇನ್ನೊಂದು ಕೊಟೇಶನ್‌ನ ನಕಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reject.withdrawn": {
+  "en": "I am withdrawing my draft",
+  "te": "నా డ్రాఫ్ట్‌ని వెనక్కి తీసుకుంటున్నాను",
+  "hi": "मैं अपना ड्राफ़्ट वापस ले रहा हूँ",
+  "kn": "ನನ್ನ ಡ್ರಾಫ್ಟ್ ಅನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳುತ್ತಿದ್ದೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdraw.price_changed": {
+  "en": "A price changed",
+  "te": "A price changed",
+  "hi": "A price changed",
+  "kn": "A price changed",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.withdraw.customer_cancelled": {
+  "en": "The customer cancelled",
+  "te": "కస్టమర్ రద్దు చేశారు",
+  "hi": "ग्राहक ने रद्द किया",
+  "kn": "ಗ್ರಾಹಕರು ರದ್ದು ಮಾಡಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdraw.entered_in_error": {
+  "en": "It was made in error",
+  "te": "ఇది పొరపాటున తయారైంది",
+  "hi": "यह गलती से बन गया",
+  "kn": "ಇದು ತಪ್ಪಾಗಿ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.outcome.approved": {
+  "en": "Approved",
+  "te": "ఓకే అయింది",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.outcome.rejected": {
+  "en": "Rejected",
+  "te": "తిరస్కరించారు",
+  "hi": "अस्वीकार किया गया",
+  "kn": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.outcome.withdrawn": {
+  "en": "Withdrawn",
+  "te": "వెనక్కి తీసుకున్నారు",
+  "hi": "वापस लिया गया",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.outcome.superseded": {
+  "en": "Replaced",
+  "te": "మార్చబడింది",
+  "hi": "बदल दिया गया",
+  "kn": "ಬದಲಾಯಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.channel.whatsapp": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.channel.form": {
+  "en": "Form",
+  "te": "ఫారమ్",
+  "hi": "फ़ॉर्म",
+  "kn": "ಫಾರ್ಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.saree_type": {
+  "en": "Saree type",
+  "te": "చీర రకం",
+  "hi": "साड़ी का प्रकार",
+  "kn": "ಸೀರೆ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.quantity": {
+  "en": "Quantity",
+  "te": "సంఖ్య",
+  "hi": "मात्रा",
+  "kn": "ಪ್ರಮಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.budget": {
+  "en": "Budget",
+  "te": "Budget",
+  "hi": "Budget",
+  "kn": "Budget",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.field.deadline": {
+  "en": "Needed by",
+  "te": "ఎప్పటికి కావాలి",
+  "hi": "कब तक चाहिए",
+  "kn": "ಯಾವಾಗಕ್ಕೆ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.delivery_city": {
+  "en": "Delivery city",
+  "te": "డెలివరీ నగరం",
+  "hi": "डिलीवरी का शहर",
+  "kn": "ಡೆಲಿವರಿ ನಗರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.field.payment_terms": {
+  "en": "Payment terms",
+  "te": "Payment terms",
+  "hi": "Payment terms",
+  "kn": "Payment terms",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.fstate.proposed": {
+  "en": "Suggested",
+  "te": "సూచించినది",
+  "hi": "सुझाया गया",
+  "kn": "ಸೂಚಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.fstate.confirmed": {
+  "en": "Approved",
+  "te": "ఓకే అయింది",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.fstate.corrected": {
+  "en": "Approved (corrected)",
+  "te": "ఓకే అయింది (సరిదిద్దారు)",
+  "hi": "मंज़ूर (सही किया गया)",
+  "kn": "ಒಪ್ಪಿಗೆ ಆಗಿದೆ (ತಿದ್ದಲಾಗಿದೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.fstate.rejected": {
+  "en": "Rejected",
+  "te": "తిరస్కరించారు",
+  "hi": "अस्वीकार किया गया",
+  "kn": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.certainty.stated": {
+  "en": "stated in the enquiry",
+  "te": "ఎంక్వయిరీలో చెప్పారు",
+  "hi": "इन्क्वायरी में कहा गया",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಯಲ್ಲಿ ಹೇಳಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.certainty.implied": {
+  "en": "implied: please check",
+  "te": "అర్థమవుతోంది: దయచేసి చూడండి",
+  "hi": "अनुमानित: कृपया देखें",
+  "kn": "ಸೂಚ್ಯ: ದಯವಿಟ್ಟು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.certainty.ambiguous": {
+  "en": "ambiguous: please check",
+  "te": "స్పష్టత లేదు: దయచేసి చూడండి",
+  "hi": "साफ़ नहीं: कृपया देखें",
+  "kn": "ಸ್ಪಷ್ಟವಿಲ್ಲ: ದಯವಿಟ್ಟು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reqstatus.confirmed": {
+  "en": "Approved",
+  "te": "ఓకే అయింది",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reqstatus.superseded": {
+  "en": "Replaced",
+  "te": "మార్చబడింది",
+  "hi": "बदल दिया गया",
+  "kn": "ಬದಲಾಯಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.reqstatus.discarded": {
+  "en": "Discarded",
+  "te": "తొలగించారు",
+  "hi": "हटा दिया",
+  "kn": "ತೆಗೆದುಹಾಕಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.flagkind.missing": {
+  "en": "missing",
+  "te": "లేదు",
+  "hi": "कमी",
+  "kn": "ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.flagkind.low_certainty": {
+  "en": "please check",
+  "te": "దయచేసి చూడండి",
+  "hi": "कृपया देखें",
+  "kn": "ದಯವಿಟ್ಟು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.flagkind.conflicting": {
+  "en": "the enquiry contradicts itself",
+  "te": "ఎంక్వయిరీ తనకు తానే విరుద్ధంగా ఉంది",
+  "hi": "इन्क्वायरी खुद का विरोध करती है",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ತನಗೆ ತಾನೇ ವಿರುದ್ಧವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.qflag.BELOW_MINIMUM_ORDER_QUANTITY": {
+  "en": "A line is below its minimum order quantity.",
+  "te": "A line is below its minimum order quantity.",
+  "hi": "A line is below its minimum order quantity.",
+  "kn": "A line is below its minimum order quantity.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.qflag.CREDIT_LIMIT_EXCEEDED": {
+  "en": "The balance is above the credit limit for a repeat customer.",
+  "te": "The balance is above the credit limit for a repeat customer.",
+  "hi": "The balance is above the credit limit for a repeat customer.",
+  "kn": "The balance is above the credit limit for a repeat customer.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.qflag.TERMS_REQUESTED_BY_CUSTOMER": {
+  "en": "The customer asked for payment terms of their own: the owner decides.",
+  "te": "The customer asked for payment terms of their own: the owner decides.",
+  "hi": "The customer asked for payment terms of their own: the owner decides.",
+  "kn": "The customer asked for payment terms of their own: the owner decides.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.qflag.MIXED_GST_RATES_SHIPPING": {
+  "en": "The lines carry different GST rates and freight is charged: check how the freight is taxed.",
+  "te": "The lines carry different GST rates and freight is charged: check how the freight is taxed.",
+  "hi": "The lines carry different GST rates and freight is charged: check how the freight is taxed.",
+  "kn": "The lines carry different GST rates and freight is charged: check how the freight is taxed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.qflag.REPEAT_CUSTOMER_CLAIMED": {
+  "en": "Marked as a repeat customer, which nobody has verified: the owner decides.",
+  "te": "Marked as a repeat customer, which nobody has verified: the owner decides.",
+  "hi": "Marked as a repeat customer, which nobody has verified: the owner decides.",
+  "kn": "Marked as a repeat customer, which nobody has verified: the owner decides.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.qflag.TYPED_PRICE_OUTSIDE_RANGE": {
+  "en": "A price typed by a person is outside the usual range for its item type: check it before approving.",
+  "te": "A price typed by a person is outside the usual range for its item type: check it before approving.",
+  "hi": "A price typed by a person is outside the usual range for its item type: check it before approving.",
+  "kn": "A price typed by a person is outside the usual range for its item type: check it before approving.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.missing.no_requirement": {
+  "en": "This enquiry has no requirement yet.",
+  "te": "ఈ ఎంక్వయిరీకి ఇంకా అవసరం లేదు.",
+  "hi": "इस इन्क्वायरी की अभी कोई ज़रूरत नहीं है।",
+  "kn": "ಈ ಎನ್‌ಕ್ವೈರಿಗೆ ಇನ್ನೂ ಅಗತ್ಯ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.missing.requirement_not_confirmed": {
+  "en": "Approve the requirement first.",
+  "te": "ముందు అవసరాన్ని ఓకే చేయండి.",
+  "hi": "पहले ज़रूरत मंज़ूर करें।",
+  "kn": "ಮೊದಲು ಅಗತ್ಯಕ್ಕೆ ಒಪ್ಪಿಗೆ ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.missing.no_price_list": {
+  "en": "The workspace has no price list in force. An owner has to publish one before a quote can be made.",
+  "te": "The workspace has no price list in force. An owner has to publish one before a quote can be made.",
+  "hi": "The workspace has no price list in force. An owner has to publish one before a quote can be made.",
+  "kn": "The workspace has no price list in force. An owner has to publish one before a quote can be made.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.missing.no_policy": {
+  "en": "The workspace has no quote policy in force. An owner has to publish one before a quote can be made.",
+  "te": "The workspace has no quote policy in force. An owner has to publish one before a quote can be made.",
+  "hi": "The workspace has no quote policy in force. An owner has to publish one before a quote can be made.",
+  "kn": "The workspace has no quote policy in force. An owner has to publish one before a quote can be made.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.missing.mapper_unavailable": {
+  "en": "Product suggestions are not available right now. You can still pick products by hand.",
+  "te": "ప్రొడక్ట్ సూచనలు ఇప్పుడు అందుబాటులో లేవు. ప్రొడక్ట్‌లను చేత్తో ఎంచుకోవచ్చు.",
+  "hi": "प्रोडक्ट के सुझाव अभी उपलब्ध नहीं हैं। प्रोडक्ट हाथ से चुन सकते हैं।",
+  "kn": "ಪ್ರೊಡಕ್ಟ್ ಸಲಹೆಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಪ್ರೊಡಕ್ಟ್‌ಗಳನ್ನು ಕೈಯಿಂದ ಆರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.copy_it_yourself": {
+  "en": "Copy this text and send it yourself, in your own message.",
+  "te": "Copy this text and send it yourself, in your own message.",
+  "hi": "Copy this text and send it yourself, in your own message.",
+  "kn": "Copy this text and send it yourself, in your own message.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.enquiry_suffix": {
+  "en": "{channel} enquiry",
+  "te": "{channel} ఎంక్వయిరీ",
+  "hi": "{channel} इन्क्वायरी",
+  "kn": "{channel} ಎನ್‌ಕ್ವೈರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.received_word": {
+  "en": "received",
+  "te": "వచ్చింది",
+  "hi": "मिला",
+  "kn": "ಬಂದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.extract_replaces": {
+  "en": "A new run replaces the draft's suggestions.",
+  "te": "కొత్త రన్ డ్రాఫ్ట్ సూచనలను మార్చేస్తుంది.",
+  "hi": "नया रन ड्राफ़्ट के सुझावों को बदल देता है।",
+  "kn": "ಹೊಸ ರನ್ ಡ್ರಾಫ್ಟ್‌ನ ಸಲಹೆಗಳನ್ನು ಬದಲಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.line_n": {
+  "en": "Line {n}",
+  "te": "లైన్ {n}",
+  "hi": "लाइन {n}",
+  "kn": "ಲೈನ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.chosen": {
+  "en": "Chosen:",
+  "te": "ఎంచుకున్నది:",
+  "hi": "चुना गया:",
+  "kn": "ಆರಿಸಿದ್ದು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.from_assistant": {
+  "en": "(from the assistant's suggestion, confirmed by a person)",
+  "te": "(అసిస్టెంట్ సూచన నుంచి, వ్యక్తి ధృవీకరించారు)",
+  "hi": "(असिस्टेंट के सुझाव से, इंसान ने पक्का किया)",
+  "kn": "(ಅಸಿಸ್ಟೆಂಟ್ ಸಲಹೆಯಿಂದ, ವ್ಯಕ್ತಿ ದೃಢಪಡಿಸಿದ್ದಾರೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.by_hand": {
+  "en": "(picked by hand)",
+  "te": "(చేత్తో ఎంచుకున్నది)",
+  "hi": "(हाथ से चुना गया)",
+  "kn": "(ಕೈಯಿಂದ ಆರಿಸಿದ್ದು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.asked_for_unit": {
+  "en": "The enquiry asked for {qty} {unit}. If the price list sells this product in a different unit (pieces or sets), enter the converted count.",
+  "te": "The enquiry asked for {qty} {unit}. If the price list sells this product in a different unit (pieces or sets), enter the converted count.",
+  "hi": "The enquiry asked for {qty} {unit}. If the price list sells this product in a different unit (pieces or sets), enter the converted count.",
+  "kn": "The enquiry asked for {qty} {unit}. If the price list sells this product in a different unit (pieces or sets), enter the converted count.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.change_product": {
+  "en": "Change the product",
+  "te": "ప్రొడక్ట్ మార్చండి",
+  "hi": "प्रोडक्ट बदलें",
+  "kn": "ಪ್ರೊಡಕ್ಟ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.use_product": {
+  "en": "Use this product",
+  "te": "ఈ ప్రొడక్ట్ వాడండి",
+  "hi": "यह प्रोडक्ट इस्तेमाल करें",
+  "kn": "ಈ ಪ್ರೊಡಕ್ಟ್ ಬಳಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approve_mfa_a": {
+  "en": "Approving needs your authenticator app.",
+  "te": "ఓకే చేయడానికి మీ ఆథెంటికేటర్ యాప్ కావాలి.",
+  "hi": "मंज़ूर करने के लिए आपका ऑथेंटिकेटर ऐप चाहिए।",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.remove_line_n": {
+  "en": "Remove line {n}",
+  "te": "లైన్ {n} తొలగించండి",
+  "hi": "लाइन {n} हटाएँ",
+  "kn": "ಲೈನ್ {n} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.gst_rate": {
+  "en": "GST rate:",
+  "te": "GST rate:",
+  "hi": "GST rate:",
+  "kn": "GST rate:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.gst_added_on_top": {
+  "en": ", added on top of every price you type. It comes from the quote policy.",
+  "te": ", added on top of every price you type. It comes from the quote policy.",
+  "hi": ", added on top of every price you type. It comes from the quote policy.",
+  "kn": ", added on top of every price you type. It comes from the quote policy.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.i_sent_it_on_whatsapp": {
+  "en": "I sent it on WhatsApp",
+  "te": "నేను దీన్ని WhatsApp లో పంపాను",
+  "hi": "मैंने इसे WhatsApp पर भेजा",
+  "kn": "ನಾನು ಇದನ್ನು WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.recorded_sent_wa_at": {
+  "en": "Recorded: you sent this quote on WhatsApp at",
+  "te": "Recorded: you sent this quote on WhatsApp at",
+  "hi": "Recorded: you sent this quote on WhatsApp at",
+  "kn": "Recorded: you sent this quote on WhatsApp at",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.recorded_sent_wa_after": {
+  "en": "The follow-up list will show this lead when it is due.",
+  "te": "ఫాలో-అప్ గడువు రాగానే ఫాలో-అప్ జాబితాలో ఈ లీడ్ కనిపిస్తుంది.",
+  "hi": "फ़ॉलो-अप का समय आने पर फ़ॉलो-अप सूची में यह लीड दिखेगी।",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಸಮಯ ಬಂದಾಗ ಫಾಲೋ-ಅಪ್ ಪಟ್ಟಿಯಲ್ಲಿ ಈ ಲೀಡ್ ಕಾಣಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quote_draft_a": {
+  "en": "A quote is a draft until an owner or admin approves it.",
+  "te": "యజమాని లేదా అడ్మిన్ ఓకే చేసే వరకు కొటేషన్ డ్రాఫ్ట్‌గానే ఉంటుంది.",
+  "hi": "मालिक या एडमिन के मंज़ूर करने तक कोटेशन ड्राफ़्ट रहता है।",
+  "kn": "ಮಾಲೀಕರು ಅಥವಾ ಅಡ್ಮಿನ್ ಒಪ್ಪಿಗೆ ನೀಡುವವರೆಗೆ ಕೊಟೇಶನ್ ಡ್ರಾಫ್ಟ್ ಆಗಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.prices_typed": {
+  "en": "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant.",
+  "te": "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant.",
+  "hi": "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant.",
+  "kn": "Prices come from the price list, or are typed by an owner or an admin; the pricing engine works out GST and the totals, never an assistant.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.prices_list": {
+  "en": "Prices come from the price list and the pricing engine, never from a person or an assistant.",
+  "te": "Prices come from the price list and the pricing engine, never from a person or an assistant.",
+  "hi": "Prices come from the price list and the pricing engine, never from a person or an assistant.",
+  "kn": "Prices come from the price list and the pricing engine, never from a person or an assistant.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.nothing_sent_page": {
+  "en": "Nothing on this page is ever sent to anyone.",
+  "te": "Nothing on this page is ever sent to anyone.",
+  "hi": "Nothing on this page is ever sent to anyone.",
+  "kn": "Nothing on this page is ever sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.approve_first": {
+  "en": "(approve its saree type and quantity first):",
+  "te": "(ముందు దాని చీర రకం, సంఖ్యను ఓకే చేయండి):",
+  "hi": "(पहले इसकी साड़ी का प्रकार और मात्रा मंज़ूर करें):",
+  "kn": "(ಮೊದಲು ಅದರ ಸೀರೆ ಪ್ರಕಾರ ಮತ್ತು ಪ್ರಮಾಣ ಒಪ್ಪಿಗೆ ಮಾಡಿ):",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.text_failed": {
+  "en": "The text could not be prepared right now ({why}). The approval stands: reload the page to try again. Nothing was sent.",
+  "te": "The text could not be prepared right now ({why}). The approval stands: reload the page to try again. Nothing was sent.",
+  "hi": "The text could not be prepared right now ({why}). The approval stands: reload the page to try again. Nothing was sent.",
+  "kn": "The text could not be prepared right now ({why}). The approval stands: reload the page to try again. Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.unavailable": {
+  "en": "unavailable",
+  "te": "అందుబాటులో లేదు",
+  "hi": "उपलब्ध नहीं",
+  "kn": "ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quote_n": {
+  "en": "Quote {n}",
+  "te": "కొటేషన్ {n}",
+  "hi": "कोटेशन {n}",
+  "kn": "ಕೊಟೇಶನ್ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.whole_order": {
+  "en": "The whole order",
+  "te": "మొత్తం ఆర్డర్",
+  "hi": "पूरा ऑर्डर",
+  "kn": "ಇಡೀ ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.no_fields_yet": {
+  "en": "No fields yet.",
+  "te": "ఇంకా ఫీల్డ్‌లు లేవు.",
+  "hi": "अभी कोई फ़ील्ड नहीं।",
+  "kn": "ಇನ್ನೂ ಫೀಲ್ಡ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.suggest_or_add": {
+  "en": "Suggest the fields, or add them by hand below.",
+  "te": "ఫీల్డ్‌లను సూచించండి, లేదా కింద చేత్తో జోడించండి.",
+  "hi": "फ़ील्ड सुझाएँ, या नीचे हाथ से जोड़ें।",
+  "kn": "ಫೀಲ್ಡ್‌ಗಳನ್ನು ಸೂಚಿಸಿ, ಅಥವಾ ಕೆಳಗೆ ಕೈಯಿಂದ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.from_enquiry": {
+  "en": "From the enquiry:",
+  "te": "ఎంక్వయిరీ నుంచి:",
+  "hi": "इन्क्वायरी से:",
+  "kn": "ಎನ್‌ಕ್ವೈರಿಯಿಂದ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.wa_expired": {
+  "en": "This quote expired after {date}, so WhatsApp is not offered. You can still copy the text.",
+  "te": "ఈ కొటేషన్ {date} తర్వాత గడువు ముగిసింది, కాబట్టి WhatsApp చూపించడం లేదు. టెక్స్ట్ కాపీ చేయవచ్చు.",
+  "hi": "यह कोटेशन {date} के बाद समाप्त हो गया, इसलिए WhatsApp नहीं दिखाया गया। आप टेक्स्ट कॉपी कर सकते हैं।",
+  "kn": "ಈ ಕೊಟೇಶನ್ {date} ನಂತರ ಅವಧಿ ಮುಗಿದಿದೆ, ಆದ್ದರಿಂದ WhatsApp ತೋರಿಸುತ್ತಿಲ್ಲ. ಪಠ್ಯ ಕಾಪಿ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.by_assistant": {
+  "en": "suggested by the assistant",
+  "te": "అసిస్టెంట్ సూచించింది",
+  "hi": "असिस्टेंट ने सुझाया",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಸೂಚಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.by_person": {
+  "en": "entered by a person",
+  "te": "వ్యక్తి ఎంటర్ చేశారు",
+  "hi": "इंसान ने दर्ज किया",
+  "kn": "ವ್ಯಕ್ತಿ ದಾಖಲಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.adding": {
+  "en": "Adding...",
+  "te": "జోడిస్తోంది...",
+  "hi": "जोड़ रहे हैं...",
+  "kn": "ಸೇರಿಸಲಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.add_field": {
+  "en": "Add field",
+  "te": "ఫీల్డ్ జోడించండి",
+  "hi": "फ़ील्ड जोड़ें",
+  "kn": "ಫೀಲ್ಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.making_the_draft": {
+  "en": "Making the draft...",
+  "te": "డ్రాఫ్ట్ తయారవుతోంది...",
+  "hi": "ड्राफ़्ट बन रहा है...",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಆಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.make_draft_quote": {
+  "en": "Make draft quote",
+  "te": "డ్రాఫ్ట్ కొటేషన్ తయారు చేయండి",
+  "hi": "ड्राफ़्ट कोटेशन बनाएँ",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಕೊಟೇಶನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.suggest_the_fields_again": {
+  "en": "Suggest the fields again",
+  "te": "ఫీల్డ్‌లను మళ్ళీ సూచించండి",
+  "hi": "फ़ील्ड फिर से सुझाएँ",
+  "kn": "ಫೀಲ್ಡ್‌ಗಳನ್ನು ಮತ್ತೆ ಸೂಚಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.suggest_the_fields": {
+  "en": "Suggest the fields",
+  "te": "ఫీల్డ్‌లను సూచించండి",
+  "hi": "फ़ील्ड सुझाएँ",
+  "kn": "ಫೀಲ್ಡ್‌ಗಳನ್ನು ಸೂಚಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.save_enquiry": {
+  "en": "Save enquiry",
+  "te": "ఎంక్వయిరీ సేవ్ చేయండి",
+  "hi": "इन्क्वायरी सहेजें",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.only_the_first_candidates_are_shown": {
+  "en": "Only the first candidates are shown.",
+  "te": "మొదటి కొన్ని ఎంపికలు మాత్రమే చూపిస్తున్నాం.",
+  "hi": "सिर्फ़ पहले कुछ विकल्प दिखाए गए हैं।",
+  "kn": "ಮೊದಲ ಕೆಲವು ಆಯ್ಕೆಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गया",
+  "kn": "ಕಾಪಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ಕಾಪಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approving": {
+  "en": "Approving...",
+  "te": "ఓకే చేస్తోంది...",
+  "hi": "मंज़ूर हो रहा है...",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಲಾಗುತ್ತಿದೆ...",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approve_this_quote": {
+  "en": "Approve this quote",
+  "te": "ఈ కొటేషన్‌ని ఓకే చేయండి",
+  "hi": "इस कोटेशन को मंज़ूर करें",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ಗೆ ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdraw": {
+  "en": "Withdraw",
+  "te": "వెనక్కి తీసుకోండి",
+  "hi": "वापस लें",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಳ್ಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.typed_prices_2": {
+  "en": ", typed prices",
+  "te": ", typed prices",
+  "hi": ", typed prices",
+  "kn": ", typed prices",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.this_quote_carries_a_flag_the": {
+  "en": "This quote carries a flag the owner must look at.",
+  "te": "ఈ కొటేషన్‌కి యజమాని చూడాల్సిన ఫ్లాగ్ ఉంది.",
+  "hi": "इस कोटेशन पर एक फ़्लैग है जिसे मालिक को देखना होगा।",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ಗೆ ಮಾಲೀಕರು ನೋಡಬೇಕಾದ ಫ್ಲ್ಯಾಗ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_seller_s_own_state": {
+  "en": "the seller's own state",
+  "te": "అమ్మేవారి సొంత రాష్ట్రం",
+  "hi": "बेचने वाले का अपना राज्य",
+  "kn": "ಮಾರಾಟಗಾರರ ಸ್ವಂತ ರಾಜ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.another_state": {
+  "en": "another state",
+  "te": "ఇంకో రాష్ట్రం",
+  "hi": "दूसरा राज्य",
+  "kn": "ಬೇರೆ ರಾಜ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approve_requirement": {
+  "en": "Approve requirement",
+  "te": "అవసరాన్ని ఓకే చేయండి",
+  "hi": "ज़रूरत मंज़ूर करें",
+  "kn": "ಅಗತ್ಯಕ್ಕೆ ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.discard": {
+  "en": "Discard",
+  "te": "తొలగించండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆದುಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.not_started": {
+  "en": "Not started",
+  "te": "మొదలు కాలేదు",
+  "hi": "शुरू नहीं हुआ",
+  "kn": "ಆರಂಭವಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.can_approve": {
+  "en": "Can approve",
+  "te": "ఓకే చేయవచ్చు",
+  "hi": "मंज़ूर कर सकते हैं",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಬಹುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.cannot_approve_yet": {
+  "en": "Cannot approve yet",
+  "te": "ఇంకా ఓకే చేయలేరు",
+  "hi": "अभी मंज़ूर नहीं कर सकते",
+  "kn": "ಇನ್ನೂ ಒಪ್ಪಿಗೆ ನೀಡಲಾಗದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.ready_for_a_quote": {
+  "en": "Ready for a quote",
+  "te": "కొటేషన్‌కి సిద్ధం",
+  "hi": "कोटेशन के लिए तैयार",
+  "kn": "ಕೊಟೇಶನ್‌ಗೆ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.not_ready_for_a_quote": {
+  "en": "Not ready for a quote",
+  "te": "కొటేషన్‌కి ఇంకా సిద్ధంగా లేదు",
+  "hi": "कोटेशन के लिए अभी तैयार नहीं",
+  "kn": "ಕೊಟೇಶನ್‌ಗೆ ಇನ್ನೂ ಸಿದ್ಧವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_enquiry_gives_more_than_one": {
+  "en": "; the enquiry gives more than one value",
+  "te": "; ఎంక్వయిరీలో ఒకటి కంటే ఎక్కువ విలువలు ఉన్నాయి",
+  "hi": "; इन्क्वायरी में एक से ज़्यादा मान हैं",
+  "kn": "; ಎನ್‌ಕ್ವೈರಿಯಲ್ಲಿ ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಮೌಲ್ಯಗಳಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_requirement_is_approved": {
+  "en": "This requirement is approved",
+  "te": "ఈ అవసరం ఓకే అయింది",
+  "hi": "यह ज़रूरत मंज़ूर है",
+  "kn": "ಈ ಅಗತ್ಯಕ್ಕೆ ಒಪ್ಪಿಗೆ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approve_the_requirement": {
+  "en": "Approve the requirement",
+  "te": "అవసరాన్ని ఓకే చేయండి",
+  "hi": "ज़रूरत मंज़ूर करें",
+  "kn": "ಅಗತ್ಯಕ್ಕೆ ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_quote_starts_from_an_enquiry": {
+  "en": "A quote starts from an enquiry on a lead: open the lead, then the enquiry.",
+  "te": "కొటేషన్ లీడ్‌లోని ఎంక్వయిరీ నుంచి మొదలవుతుంది: లీడ్ తెరిచి, తర్వాత ఎంక్వయిరీ తెరవండి.",
+  "hi": "कोटेशन लीड की इन्क्वायरी से शुरू होता है: पहले लीड खोलें, फिर इन्क्वायरी।",
+  "kn": "ಕೊಟೇಶನ್ ಲೀಡ್‌ನ ಎನ್‌ಕ್ವೈರಿಯಿಂದ ಆರಂಭವಾಗುತ್ತದೆ: ಮೊದಲು ಲೀಡ್ ತೆರೆಯಿರಿ, ನಂತರ ಎನ್‌ಕ್ವೈರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.no_quotes_yet": {
+  "en": "No quotes yet.",
+  "te": "ఇంకా కొటేషన్లు లేవు.",
+  "hi": "अभी कोई कोटेशन नहीं।",
+  "kn": "ಇನ್ನೂ ಕೊಟೇಶನ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.quotes_newest_first": {
+  "en": "Quotes, newest first",
+  "te": "కొటేషన్లు, కొత్తవి మొదట",
+  "hi": "कोटेशन, सबसे नए पहले",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು, ಹೊಸದು ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_customer": {
+  "en": "A customer",
+  "te": "ఒక కస్టమర్",
+  "hi": "एक ग्राहक",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_record_is_not_available": {
+  "en": "This record is not available.",
+  "te": "ఈ రికార్డ్ అందుబాటులో లేదు.",
+  "hi": "यह रिकॉर्ड उपलब्ध नहीं है।",
+  "kn": "ಈ ದಾಖಲೆ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_enquiry_already_has_an_approved": {
+  "en": "This enquiry already has an approved requirement. Discard it first to change it.",
+  "te": "ఈ ఎంక్వయిరీకి ఇప్పటికే ఓకే అయిన అవసరం ఉంది. మార్చడానికి ముందు దాన్ని తొలగించండి.",
+  "hi": "इस इन्क्वायरी की ज़रूरत पहले से मंज़ूर है। बदलने के लिए पहले उसे हटाएँ।",
+  "kn": "ಈ ಎನ್‌ಕ್ವೈರಿಗೆ ಈಗಾಗಲೇ ಒಪ್ಪಿಗೆ ಆದ ಅಗತ್ಯ ಇದೆ. ಬದಲಿಸಲು ಮೊದಲು ಅದನ್ನು ತೆಗೆದುಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.discard_the_current_draft_to_re": {
+  "en": "Discard the current draft to re-run.",
+  "te": "మళ్ళీ రన్ చేయడానికి ప్రస్తుత డ్రాఫ్ట్‌ని తొలగించండి.",
+  "hi": "दोबारा रन करने के लिए मौजूदा ड्राफ़्ट हटाएँ।",
+  "kn": "ಮತ್ತೆ ರನ್ ಮಾಡಲು ಈಗಿನ ಡ್ರಾಫ್ಟ್ ತೆಗೆದುಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_requirement_is_no_longer_a": {
+  "en": "This requirement is no longer a draft. Reload the page.",
+  "te": "ఈ అవసరం ఇక డ్రాఫ్ట్ కాదు. పేజీని రీలోడ్ చేయండి.",
+  "hi": "यह ज़रूरत अब ड्राफ़्ट नहीं है। पेज रीलोड करें।",
+  "kn": "ಈ ಅಗತ್ಯ ಇನ್ನು ಡ್ರಾಫ್ಟ್ ಅಲ್ಲ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approve_a_saree_type_and_a": {
+  "en": "Approve a saree type and a quantity for at least one line first.",
+  "te": "ముందు కనీసం ఒక లైన్‌కి చీర రకం, సంఖ్యను ఓకే చేయండి.",
+  "hi": "पहले कम से कम एक लाइन के लिए साड़ी का प्रकार और मात्रा मंज़ूर करें।",
+  "kn": "ಮೊದಲು ಕನಿಷ್ಠ ಒಂದು ಲೈನ್‌ಗೆ ಸೀರೆ ಪ್ರಕಾರ ಮತ್ತು ಪ್ರಮಾಣ ಒಪ್ಪಿಗೆ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_value_could_not_be_read": {
+  "en": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
+  "te": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
+  "hi": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
+  "kn": "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.that_quote_is_not_in_the": {
+  "en": "That quote is not in the enquiry text, word for word.",
+  "te": "ఆ కోట్ ఎంక్వయిరీ టెక్స్ట్‌లో అక్షరం అక్షరం ఉన్నది కాదు.",
+  "hi": "वह उद्धरण इन्क्वायरी के टेक्स्ट में शब्दशः नहीं है।",
+  "kn": "ಆ ಉಲ್ಲೇಖ ಎನ್‌ಕ್ವೈರಿ ಪಠ್ಯದಲ್ಲಿ ಪದಶಃ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.saree_type_fabric_colour_and_quantity": {
+  "en": "Saree type, fabric, colour and quantity need a line (1 to 5); the other fields have none.",
+  "te": "చీర రకం, ఫాబ్రిక్, రంగు, సంఖ్యకు లైన్ (1 నుంచి 5) కావాలి; మిగతా ఫీల్డ్‌లకు అవసరం లేదు.",
+  "hi": "साड़ी का प्रकार, कपड़ा, रंग और मात्रा के लिए लाइन (1 से 5) चाहिए; बाकी फ़ील्ड को नहीं।",
+  "kn": "ಸೀರೆ ಪ್ರಕಾರ, ಬಟ್ಟೆ, ಬಣ್ಣ, ಪ್ರಮಾಣಕ್ಕೆ ಲೈನ್ (1 ರಿಂದ 5) ಬೇಕು; ಉಳಿದ ಫೀಲ್ಡ್‌ಗಳಿಗೆ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_field_already_has_a_value": {
+  "en": "That field already has a value on this requirement. Correct it instead.",
+  "te": "ఈ అవసరంలో ఆ ఫీల్డ్‌కి ఇప్పటికే విలువ ఉంది. బదులుగా దాన్ని సరిదిద్దండి.",
+  "hi": "इस ज़रूरत में उस फ़ील्ड का मान पहले से है। इसके बजाय उसे सही करें।",
+  "kn": "ಈ ಅಗತ್ಯದಲ್ಲಿ ಆ ಫೀಲ್ಡ್‌ಗೆ ಈಗಾಗಲೇ ಮೌಲ್ಯ ಇದೆ. ಬದಲಿಗೆ ಅದನ್ನು ತಿದ್ದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.there_is_no_text_left_to": {
+  "en": "There is no text left to store after cleaning it.",
+  "te": "శుభ్రం చేసిన తర్వాత సేవ్ చేయడానికి టెక్స్ట్ ఏమీ మిగలలేదు.",
+  "hi": "साफ़ करने के बाद सहेजने के लिए कोई टेक्स्ट नहीं बचा।",
+  "kn": "ಸ್ವಚ್ಛಗೊಳಿಸಿದ ನಂತರ ಉಳಿಸಲು ಯಾವ ಪಠ್ಯವೂ ಉಳಿದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.an_enquiry_cannot_be_received_in": {
+  "en": "An enquiry cannot be received in the future.",
+  "te": "ఎంక్వయిరీ భవిష్యత్తు తేదీలో వచ్చినట్లు ఉండదు.",
+  "hi": "इन्क्वायरी भविष्य की तारीख़ में नहीं आ सकती।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಭವಿಷ್ಯದ ದಿನಾಂಕದಲ್ಲಿ ಬರಲು ಸಾಧ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.ai_help_is_paused_because_this": {
+  "en": "AI help is paused because this workspace's AI allowance for the period is used up. Everything else keeps working. Try again later.",
+  "te": "ఈ వర్క్‌స్పేస్ AI కోటా ఈ కాలానికి అయిపోయినందున AI సహాయం ఆగింది. మిగతావన్నీ పని చేస్తాయి. తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "इस वर्कस्पेस का AI कोटा इस अवधि के लिए पूरा हो गया है, इसलिए AI मदद रुकी है। बाकी सब चलता रहेगा। बाद में फिर कोशिश करें।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ನ AI ಕೋಟಾ ಈ ಅವಧಿಗೆ ಮುಗಿದಿರುವುದರಿಂದ AI ಸಹಾಯ ನಿಂತಿದೆ. ಉಳಿದೆಲ್ಲವೂ ಕೆಲಸ ಮಾಡುತ್ತವೆ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.agents_are_not_enabled_for_this": {
+  "en": "Agents are not enabled for this workspace.",
+  "te": "ఈ వర్క్‌స్పేస్‌కి ఏజెంట్లు ఆన్‌లో లేవు.",
+  "hi": "इस वर्कस्पेस के लिए एजेंट चालू नहीं हैं।",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗೆ ಏಜೆಂಟ್‌ಗಳು ಆನ್ ಆಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.too_many_requests_try_again_later": {
+  "en": "Too many requests. Try again later.",
+  "te": "చాలా రిక్వెస్ట్‌లు. తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "बहुत ज़्यादा अनुरोध। बाद में फिर कोशिश करें।",
+  "kn": "ತುಂಬಾ ವಿನಂತಿಗಳು. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_where_the_enquiry_came_from": {
+  "en": "Choose where the enquiry came from.",
+  "te": "ఎంక్వయిరీ ఎక్కడి నుంచి వచ్చిందో ఎంచుకోండి.",
+  "hi": "चुनें कि इन्क्वायरी कहाँ से आई।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಎಲ್ಲಿಂದ ಬಂದಿತು ಎಂದು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.paste_the_enquiry_text": {
+  "en": "Paste the enquiry text.",
+  "te": "ఎంక్వయిరీ టెక్స్ట్ పేస్ట్ చేయండి.",
+  "hi": "इन्क्वायरी का टेक्स्ट पेस्ट करें।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಪಠ್ಯ ಪೇಸ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_text_is_too_long_to": {
+  "en": "That text is too long to paste.",
+  "te": "ఆ టెక్స్ట్ పేస్ట్ చేయడానికి చాలా పొడవుగా ఉంది.",
+  "hi": "वह टेक्स्ट पेस्ट करने के लिए बहुत लंबा है।",
+  "kn": "ಆ ಪಠ್ಯ ಪೇಸ್ಟ್ ಮಾಡಲು ತುಂಬಾ ಉದ್ದವಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_subject_is_too_long": {
+  "en": "That subject is too long.",
+  "te": "ఆ సబ్జెక్ట్ చాలా పొడవుగా ఉంది.",
+  "hi": "वह विषय बहुत लंबा है।",
+  "kn": "ಆ ವಿಷಯ ತುಂಬಾ ಉದ್ದವಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.say_when_the_enquiry_was_received": {
+  "en": "Say when the enquiry was received.",
+  "te": "ఎంక్వయిరీ ఎప్పుడు వచ్చిందో చెప్పండి.",
+  "hi": "बताएँ कि इन्क्वायरी कब आई।",
+  "kn": "ಎನ್‌ಕ್ವೈರಿ ಯಾವಾಗ ಬಂದಿತು ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_enquiry_is_not_available": {
+  "en": "This enquiry is not available.",
+  "te": "ఈ ఎంక్వయిరీ అందుబాటులో లేదు.",
+  "hi": "यह इन्क्वायरी उपलब्ध नहीं है।",
+  "kn": "ಈ ಎನ್‌ಕ್ವೈರಿ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.started_the_suggestions_appear_on_this": {
+  "en": "Started. The suggestions appear on this page when the run is Completed: reload in a moment.",
+  "te": "మొదలైంది. రన్ పూర్తయ్యాక సూచనలు ఈ పేజీలో కనిపిస్తాయి: కాసేపటిలో రీలోడ్ చేయండి.",
+  "hi": "शुरू हुआ। रन पूरा होने पर सुझाव इस पेज पर दिखेंगे: थोड़ी देर में रीलोड करें।",
+  "kn": "ಆರಂಭವಾಗಿದೆ. ರನ್ ಮುಗಿದ ಮೇಲೆ ಸಲಹೆಗಳು ಈ ಪುಟದಲ್ಲಿ ಕಾಣಿಸುತ್ತವೆ: ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ರೀಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_field_is_not_available": {
+  "en": "This field is not available.",
+  "te": "ఈ ఫీల్డ్ అందుబాటులో లేదు.",
+  "hi": "यह फ़ील्ड उपलब्ध नहीं है।",
+  "kn": "ಈ ಫೀಲ್ಡ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.write_the_corrected_value": {
+  "en": "Write the corrected value.",
+  "te": "సరిదిద్దిన విలువ రాయండి.",
+  "hi": "सही किया हुआ मान लिखें।",
+  "kn": "ತಿದ್ದಿದ ಮೌಲ್ಯ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_value_is_too_long": {
+  "en": "That value is too long.",
+  "te": "ఆ విలువ చాలా పొడవుగా ఉంది.",
+  "hi": "वह मान बहुत लंबा है।",
+  "kn": "ಆ ಮೌಲ್ಯ ತುಂಬಾ ಉದ್ದವಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_confirm_correct_or_reject": {
+  "en": "Choose confirm, correct or reject.",
+  "te": "ఓకే, సరిదిద్దు లేదా తిరస్కరించు ఎంచుకోండి.",
+  "hi": "मंज़ूर, सही करें या अस्वीकार चुनें।",
+  "kn": "ಒಪ್ಪಿ, ತಿದ್ದು ಅಥವಾ ತಿರಸ್ಕರಿಸು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_a_field": {
+  "en": "Choose a field.",
+  "te": "ఒక ఫీల్డ్ ఎంచుకోండి.",
+  "hi": "एक फ़ील्ड चुनें।",
+  "kn": "ಒಂದು ಫೀಲ್ಡ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_the_line_1_to_5": {
+  "en": "Choose the line (1 to 5).",
+  "te": "లైన్ ఎంచుకోండి (1 నుంచి 5).",
+  "hi": "लाइन चुनें (1 से 5)।",
+  "kn": "ಲೈನ್ ಆರಿಸಿ (1 ರಿಂದ 5).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.write_the_value_in_at_most": {
+  "en": "Write the value, in at most 120 characters.",
+  "te": "విలువ రాయండి, గరిష్టంగా 120 అక్షరాల్లో.",
+  "hi": "मान लिखें, अधिकतम 120 अक्षरों में।",
+  "kn": "ಮೌಲ್ಯ ಬರೆಯಿರಿ, ಗರಿಷ್ಠ 120 ಅಕ್ಷರಗಳಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_quote_is_too_long_at": {
+  "en": "That quote is too long (at most 300 characters).",
+  "te": "ఆ కోట్ చాలా పొడవుగా ఉంది (గరిష్టంగా 300 అక్షరాలు).",
+  "hi": "वह उद्धरण बहुत लंबा है (अधिकतम 300 अक्षर)।",
+  "kn": "ಆ ಉಲ್ಲೇಖ ತುಂಬಾ ಉದ್ದವಿದೆ (ಗರಿಷ್ಠ 300 ಅಕ್ಷರಗಳು).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.added_and_approved": {
+  "en": "Added and approved.",
+  "te": "జోడించి, ఓకే చేశాం.",
+  "hi": "जोड़ा और मंज़ूर किया।",
+  "kn": "ಸೇರಿಸಿ, ಒಪ್ಪಿಗೆ ಮಾಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_requirement_is_not_available": {
+  "en": "This requirement is not available.",
+  "te": "ఈ అవసరం అందుబాటులో లేదు.",
+  "hi": "यह ज़रूरत उपलब्ध नहीं है।",
+  "kn": "ಈ ಅಗತ್ಯ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approved_nothing_was_sent_to_anyone": {
+  "en": "Approved. Nothing was sent to anyone.",
+  "te": "Approved. Nothing was sent to anyone.",
+  "hi": "Approved. Nothing was sent to anyone.",
+  "kn": "Approved. Nothing was sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.this_enquiry_already_has_a_requirement": {
+  "en": "This enquiry already has a requirement from the line-by-line flow, so a quote with typed prices cannot be made on it. Discard that requirement first (in the requirement section above), then reload this page.",
+  "te": "This enquiry already has a requirement from the line-by-line flow, so a quote with typed prices cannot be made on it. Discard that requirement first (in the requirement section above), then reload this page.",
+  "hi": "This enquiry already has a requirement from the line-by-line flow, so a quote with typed prices cannot be made on it. Discard that requirement first (in the requirement section above), then reload this page.",
+  "kn": "This enquiry already has a requirement from the line-by-line flow, so a quote with typed prices cannot be made on it. Discard that requirement first (in the requirement section above), then reload this page.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.only_a_person_can_type_a": {
+  "en": "Only a person can type a price.",
+  "te": "Only a person can type a price.",
+  "hi": "Only a person can type a price.",
+  "kn": "Only a person can type a price.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.one_of_the_item_types_is": {
+  "en": "One of the item types is not available. Reload the page and choose again.",
+  "te": "One of the item types is not available. Reload the page and choose again.",
+  "hi": "One of the item types is not available. Reload the page and choose again.",
+  "kn": "One of the item types is not available. Reload the page and choose again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.an_item_type_that_is_no": {
+  "en": "An item type that is no longer sold, or a value that is not allowed, was sent. Reload the page and choose again.",
+  "te": "An item type that is no longer sold, or a value that is not allowed, was sent. Reload the page and choose again.",
+  "hi": "An item type that is no longer sold, or a value that is not allowed, was sent. Reload the page and choose again.",
+  "kn": "An item type that is no longer sold, or a value that is not allowed, was sent. Reload the page and choose again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.a_quantity_a_price_or_a": {
+  "en": "A quantity, a price or a choice was not accepted. Check every line.",
+  "te": "A quantity, a price or a choice was not accepted. Check every line.",
+  "hi": "A quantity, a price or a choice was not accepted. Check every line.",
+  "kn": "A quantity, a price or a choice was not accepted. Check every line.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.the_draft_did_not_match_the": {
+  "en": "The draft did not match the database's own check, so nothing was saved. Reload the page and try again.",
+  "te": "The draft did not match the database's own check, so nothing was saved. Reload the page and try again.",
+  "hi": "The draft did not match the database's own check, so nothing was saved. Reload the page and try again.",
+  "kn": "The draft did not match the database's own check, so nothing was saved. Reload the page and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.the_quote_policy_changed_while_you": {
+  "en": "The quote policy changed while you were typing. Reload the page and try again.",
+  "te": "The quote policy changed while you were typing. Reload the page and try again.",
+  "hi": "The quote policy changed while you were typing. Reload the page and try again.",
+  "kn": "The quote policy changed while you were typing. Reload the page and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.only_an_owner_or_an_admin": {
+  "en": "Only an owner or an admin can make a quote with typed prices.",
+  "te": "Only an owner or an admin can make a quote with typed prices.",
+  "hi": "Only an owner or an admin can make a quote with typed prices.",
+  "kn": "Only an owner or an admin can make a quote with typed prices.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.quotes_are_not_available_right_now": {
+  "en": "Quotes are not available right now. Try again shortly.",
+  "te": "కొటేషన్లు ఇప్పుడు అందుబాటులో లేవు. కాసేపటి తర్వాత ప్రయత్నించండి.",
+  "hi": "कोटेशन अभी उपलब्ध नहीं हैं। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_quote_has_a_flag_that": {
+  "en": "This quote has a flag that only the owner can approve.",
+  "te": "ఈ కొటేషన్‌కి యజమాని మాత్రమే ఓకే చేయగల ఫ్లాగ్ ఉంది.",
+  "hi": "इस कोटेशन पर ऐसा फ़्लैग है जिसे सिर्फ़ मालिक मंज़ूर कर सकता है।",
+  "kn": "ಈ ಕೊಟೇಶನ್‌ಗೆ ಮಾಲೀಕರು ಮಾತ್ರ ಒಪ್ಪಿಗೆ ನೀಡಬಹುದಾದ ಫ್ಲ್ಯಾಗ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_price_list_a_policy_a": {
+  "en": "A price list, a policy, a product pick or the requirement changed since this draft, or the draft expired. Make a new draft.",
+  "te": "A price list, a policy, a product pick or the requirement changed since this draft, or the draft expired. Make a new draft.",
+  "hi": "A price list, a policy, a product pick or the requirement changed since this draft, or the draft expired. Make a new draft.",
+  "kn": "A price list, a policy, a product pick or the requirement changed since this draft, or the draft expired. Make a new draft.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.this_draft_no_longer_matches_what": {
+  "en": "This draft no longer matches what it was made from. Make a new draft.",
+  "te": "This draft no longer matches what it was made from. Make a new draft.",
+  "hi": "This draft no longer matches what it was made from. Make a new draft.",
+  "kn": "This draft no longer matches what it was made from. Make a new draft.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.pick_a_product_for_every_approved": {
+  "en": "Pick a product for every approved line, and say where it is delivered, before making a quote.",
+  "te": "కొటేషన్ చేసే ముందు ఓకే చేసిన ప్రతి లైన్‌కి ప్రొడక్ట్ ఎంచుకుని, ఎక్కడికి డెలివరీనో చెప్పండి.",
+  "hi": "कोटेशन बनाने से पहले मंज़ूर हर लाइन के लिए प्रोडक्ट चुनें और बताएँ कि डिलीवरी कहाँ होगी।",
+  "kn": "ಕೊಟೇಶನ್ ಮಾಡುವ ಮೊದಲು ಒಪ್ಪಿಗೆ ಆದ ಪ್ರತಿ ಲೈನ್‌ಗೆ ಪ್ರೊಡಕ್ಟ್ ಆರಿಸಿ, ಎಲ್ಲಿಗೆ ಡೆಲಿವರಿ ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_quote_is_not_a_draft": {
+  "en": "This quote is not a draft any more. Reload the page.",
+  "te": "ఇది ఇక డ్రాఫ్ట్ కాదు. పేజీని రీలోడ్ చేయండి.",
+  "hi": "यह कोटेशन अब ड्राफ़्ट नहीं रहा। पेज रीलोड करें।",
+  "kn": "ಈ ಕೊಟೇಶನ್ ಇನ್ನು ಡ್ರಾಫ್ಟ್ ಅಲ್ಲ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.only_an_approved_quote_can_be": {
+  "en": "Only an approved quote can be withdrawn.",
+  "te": "ఓకే అయిన కొటేషన్‌ని మాత్రమే వెనక్కి తీసుకోవచ్చు.",
+  "hi": "सिर्फ़ मंज़ूर कोटेशन ही वापस लिया जा सकता है।",
+  "kn": "ಒಪ್ಪಿಗೆ ಆದ ಕೊಟೇಶನ್ ಅನ್ನು ಮಾತ್ರ ಹಿಂತೆಗೆದುಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_suggestion_changed_reload_the_page": {
+  "en": "The suggestion changed. Reload the page and pick again.",
+  "te": "సూచన మారింది. పేజీని రీలోడ్ చేసి మళ్ళీ ఎంచుకోండి.",
+  "hi": "सुझाव बदल गया। पेज रीलोड करके फिर चुनें।",
+  "kn": "ಸಲಹೆ ಬದಲಾಗಿದೆ. ಪುಟವನ್ನು ರೀಲೋಡ್ ಮಾಡಿ ಮತ್ತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_the_delivery_state_from_the": {
+  "en": "Choose the delivery state from the list.",
+  "te": "జాబితా నుంచి డెలివరీ రాష్ట్రం ఎంచుకోండి.",
+  "hi": "सूची से डिलीवरी का राज्य चुनें।",
+  "kn": "ಪಟ್ಟಿಯಿಂದ ಡೆಲಿವರಿ ರಾಜ್ಯ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.a_quote_cannot_be_made_from": {
+  "en": "A quote cannot be made from these inputs. Check that every approved line has a product and a quantity.",
+  "te": "ఈ వివరాలతో కొటేషన్ తయారు కాదు. ఓకే చేసిన ప్రతి లైన్‌కి ప్రొడక్ట్, సంఖ్య ఉన్నాయో చూడండి.",
+  "hi": "इन जानकारियों से कोटेशन नहीं बन सकता। देखें कि मंज़ूर हर लाइन में प्रोडक्ट और मात्रा है।",
+  "kn": "ಈ ವಿವರಗಳಿಂದ ಕೊಟೇಶನ್ ಆಗುವುದಿಲ್ಲ. ಒಪ್ಪಿಗೆ ಆದ ಪ್ರತಿ ಲೈನ್‌ಗೆ ಪ್ರೊಡಕ್ಟ್ ಮತ್ತು ಪ್ರಮಾಣ ಇದೆಯೇ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.that_product_or_quantity_was_not": {
+  "en": "That product or quantity was not accepted. The quantity must be the enquiry's, unless the unit differs: then enter the converted count.",
+  "te": "That product or quantity was not accepted. The quantity must be the enquiry's, unless the unit differs: then enter the converted count.",
+  "hi": "That product or quantity was not accepted. The quantity must be the enquiry's, unless the unit differs: then enter the converted count.",
+  "kn": "That product or quantity was not accepted. The quantity must be the enquiry's, unless the unit differs: then enter the converted count.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.this_line_is_not_available": {
+  "en": "This line is not available.",
+  "te": "ఈ లైన్ అందుబాటులో లేదు.",
+  "hi": "यह लाइन उपलब्ध नहीं है।",
+  "kn": "ಈ ಲೈನ್ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.choose_a_product_2": {
+  "en": "Choose a product.",
+  "te": "ఒక ప్రొడక్ట్ ఎంచుకోండి.",
+  "hi": "एक प्रोडक्ट चुनें।",
+  "kn": "ಒಂದು ಪ್ರೊಡಕ್ಟ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_quantity_must_be_a_whole": {
+  "en": "The quantity must be a whole number from 1 to 10,000.",
+  "te": "సంఖ్య 1 నుంచి 10,000 మధ్య పూర్ణాంకం అయి ఉండాలి.",
+  "hi": "मात्रा 1 से 10,000 के बीच पूरी संख्या होनी चाहिए।",
+  "kn": "ಪ್ರಮಾಣ 1 ರಿಂದ 10,000 ರ ನಡುವಿನ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.say_whether_this_is_a_new": {
+  "en": "Say whether this is a new or a repeat customer.",
+  "te": "ఇది కొత్త కస్టమరా, పాత కస్టమరా చెప్పండి.",
+  "hi": "बताएँ कि यह नया ग्राहक है या पुराना।",
+  "kn": "ಇದು ಹೊಸ ಗ್ರಾಹಕರೇ ಅಥವಾ ಹಳೆಯವರೇ ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approved_the_text_below_is_ready": {
+  "en": "Approved. The text below is ready to copy. Nothing was sent to anyone.",
+  "te": "Approved. The text below is ready to copy. Nothing was sent to anyone.",
+  "hi": "Approved. The text below is ready to copy. Nothing was sent to anyone.",
+  "kn": "Approved. The text below is ready to copy. Nothing was sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.choose_a_reason": {
+  "en": "Choose a reason.",
+  "te": "ఒక కారణం ఎంచుకోండి.",
+  "hi": "एक कारण चुनें।",
+  "kn": "ಒಂದು ಕಾರಣ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdrawn_it_is_kept_in_the": {
+  "en": "Withdrawn. It is kept in the history and can no longer be approved.",
+  "te": "వెనక్కి తీసుకున్నాం. ఇది హిస్టరీలో ఉంటుంది; ఇక ఓకే చేయలేరు.",
+  "hi": "वापस लिया गया। यह हिस्ट्री में रहता है; अब मंज़ूर नहीं हो सकता।",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗಿದೆ. ಇದು ಹಿಸ್ಟರಿಯಲ್ಲಿರುತ್ತದೆ; ಇನ್ನು ಒಪ್ಪಿಗೆ ನೀಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.this_quote_is_not_approved_any": {
+  "en": "This quote is not approved (any more), so nothing was recorded.",
+  "te": "This quote is not approved (any more), so nothing was recorded.",
+  "hi": "This quote is not approved (any more), so nothing was recorded.",
+  "kn": "This quote is not approved (any more), so nothing was recorded.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.this_quote_has_expired_so_nothing": {
+  "en": "This quote has expired, so nothing was recorded. If you did send something, use \"I sent a message\" on the lead page.",
+  "te": "This quote has expired, so nothing was recorded. If you did send something, use \"I sent a message\" on the lead page.",
+  "hi": "This quote has expired, so nothing was recorded. If you did send something, use \"I sent a message\" on the lead page.",
+  "kn": "This quote has expired, so nothing was recorded. If you did send something, use \"I sent a message\" on the lead page.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.extract_note": {
+  "en": "An assistant reads the text and suggests the fields, each with the words it relies on. Every suggestion stays \"Suggested\" until a person approves, corrects or rejects it.",
+  "te": "అసిస్టెంట్ టెక్స్ట్ చదివి, ఆధారమైన మాటలతో పాటు ఫీల్డ్‌లను సూచిస్తుంది. వ్యక్తి ఓకే చేసే, సరిదిద్దే లేదా తిరస్కరించే వరకు ప్రతి సూచన \"సూచించినది\"గానే ఉంటుంది.",
+  "hi": "असिस्टेंट टेक्स्ट पढ़कर, आधार वाले शब्दों के साथ फ़ील्ड सुझाता है। कोई इंसान मंज़ूर, सही या अस्वीकार करे, तब तक हर सुझाव \"सुझाया गया\" ही रहता है।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಪಠ್ಯ ಓದಿ, ಆಧಾರದ ಮಾತುಗಳೊಂದಿಗೆ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಸೂಚಿಸುತ್ತದೆ. ವ್ಯಕ್ತಿ ಒಪ್ಪಿ, ತಿದ್ದಿ ಅಥವಾ ತಿರಸ್ಕರಿಸುವವರೆಗೆ ಪ್ರತಿ ಸಲಹೆ \"ಸೂಚಿಸಿದ್ದು\" ಆಗಿಯೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.part.view": {
+  "en": "Quote",
+  "te": "కొటేషన్",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.part.send": {
+  "en": "Copy and order",
+  "te": "కాపీ, ఆర్డర్",
+  "hi": "कॉपी और ऑर्डर",
+  "kn": "ಕಾಪಿ ಮತ್ತು ಆರ್ಡರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.the_lead": {
+  "en": "The lead",
+  "te": "లీడ్",
+  "hi": "लीड",
+  "kn": "ಲೀಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.sug.matched": {
+  "en": "The assistant suggests this product. It is only a suggestion: you choose.",
+  "te": "అసిస్టెంట్ ఈ ప్రొడక్ట్‌ని సూచిస్తోంది. ఇది సూచన మాత్రమే: మీరే ఎంచుకోండి.",
+  "hi": "असिस्टेंट यह प्रोडक्ट सुझा रहा है। यह सिर्फ़ सुझाव है: आप चुनें।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್ ಈ ಪ್ರೊಡಕ್ಟ್ ಅನ್ನು ಸೂಚಿಸುತ್ತಿದೆ. ಇದು ಸಲಹೆ ಮಾತ್ರ: ನೀವೇ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.sug.ambiguous": {
+  "en": "Several products could match. The assistant did not choose: you do.",
+  "te": "చాలా ప్రొడక్ట్‌లు సరిపోవచ్చు. అసిస్టెంట్ ఎంచుకోలేదు: మీరు ఎంచుకోండి.",
+  "hi": "कई प्रोडक्ट मेल खा सकते हैं। असिस्टेंट ने नहीं चुना: आप चुनें।",
+  "kn": "ಹಲವು ಪ್ರೊಡಕ್ಟ್‌ಗಳು ಹೊಂದಬಹುದು. ಅಸಿಸ್ಟೆಂಟ್ ಆರಿಸಲಿಲ್ಲ: ನೀವು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.sug.unmatched": {
+  "en": "No product on the price list matched. Choose one by hand.",
+  "te": "ధరల జాబితాలో ఏ ప్రొడక్ట్ సరిపోలలేదు. చేత్తో ఒకటి ఎంచుకోండి.",
+  "hi": "दाम-सूची में कोई प्रोडक्ट मेल नहीं खाया। हाथ से एक चुनें।",
+  "kn": "ಬೆಲೆ ಪಟ್ಟಿಯಲ್ಲಿ ಯಾವ ಪ್ರೊಡಕ್ಟ್ ಹೊಂದಲಿಲ್ಲ. ಕೈಯಿಂದ ಒಂದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.sug.needs_human": {
+  "en": "The assistant could not decide. Choose one by hand.",
+  "te": "అసిస్టెంట్ తేల్చుకోలేకపోయింది. చేత్తో ఒకటి ఎంచుకోండి.",
+  "hi": "असिस्टेंट तय नहीं कर सका। हाथ से एक चुनें।",
+  "kn": "ಅಸಿಸ್ಟೆಂಟ್‌ಗೆ ತೀರ್ಮಾನಿಸಲು ಆಗಲಿಲ್ಲ. ಕೈಯಿಂದ ಒಂದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.sug.needs_input": {
+  "en": "More detail is needed to suggest a product. Choose one by hand.",
+  "te": "ప్రొడక్ట్ సూచించడానికి మరిన్ని వివరాలు కావాలి. చేత్తో ఒకటి ఎంచుకోండి.",
+  "hi": "प्रोडक्ट सुझाने के लिए और जानकारी चाहिए। हाथ से एक चुनें।",
+  "kn": "ಪ್ರೊಡಕ್ಟ್ ಸೂಚಿಸಲು ಇನ್ನಷ್ಟು ವಿವರ ಬೇಕು. ಕೈಯಿಂದ ಒಂದನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.write_roles": {
+  "en": "Only an owner, admin or sales user can do this.",
+  "te": "దీన్ని యజమాని, అడ్మిన్ లేదా సేల్స్ వాళ్ళు మాత్రమే చేయగలరు.",
+  "hi": "यह सिर्फ़ मालिक, एडमिन या सेल्स वाले कर सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು, ಅಡ್ಮಿನ್ ಅಥವಾ ಸೇಲ್ಸ್ ಬಳಕೆದಾರರು ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.notice.changed": {
+  "en": "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
+  "te": "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
+  "hi": "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
+  "kn": "Saved. Contact details and hidden characters were removed from the text before it was saved; the original is not kept.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.notice.truncated": {
+  "en": "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
+  "te": "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
+  "hi": "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
+  "kn": "Saved. The text was longer than 6,000 characters and was cut (contact details and hidden characters were removed too).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.notice.stored": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सहेजा गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.part.request": {
+  "en": "Request",
+  "te": "రిక్వెస్ట్",
+  "hi": "अनुरोध",
+  "kn": "ವಿನಂತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.part.make": {
+  "en": "Make a quote",
+  "te": "కొటేషన్ తయారు చేయండి",
+  "hi": "कोटेशन बनाएँ",
+  "kn": "ಕೊಟೇಶನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.customer_text_note": {
+  "en": "This is the customer's text, shown as plain text. Contact details were removed before it was saved{cut}. Marked words are the ones a field relies on.",
+  "te": "ఇది కస్టమర్ రాసిన టెక్స్ట్, సాదా టెక్స్ట్‌గా చూపిస్తున్నాం. సేవ్ చేసే ముందు కాంటాక్ట్ వివరాలు తీసేశాం{cut}. గుర్తు పెట్టిన మాటలు ఒక ఫీల్డ్ ఆధారపడేవి.",
+  "hi": "यह ग्राहक का टेक्स्ट है, सादे टेक्स्ट में दिखाया गया। सहेजने से पहले संपर्क विवरण हटा दिए गए{cut}। चिह्नित शब्द वे हैं जिन पर कोई फ़ील्ड टिका है।",
+  "kn": "ಇದು ಗ್ರಾಹಕರ ಪಠ್ಯ, ಸಾದಾ ಪಠ್ಯವಾಗಿ ತೋರಿಸಲಾಗಿದೆ. ಉಳಿಸುವ ಮೊದಲು ಸಂಪರ್ಕ ವಿವರಗಳನ್ನು ತೆಗೆಯಲಾಗಿದೆ{cut}. ಗುರುತಿಸಿದ ಮಾತುಗಳು ಒಂದು ಫೀಲ್ಡ್ ಆಧರಿಸಿರುವವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.cut_from": {
+  "en": "; it was cut from {n} characters",
+  "te": "; ఇది {n} అక్షరాల నుంచి కత్తిరించారు",
+  "hi": "; इसे {n} अक्षरों से काटा गया",
+  "kn": "; ಇದನ್ನು {n} ಅಕ್ಷರಗಳಿಂದ ಕತ್ತರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.sku_req_line": {
+  "en": "({sku}; requirement line {n})",
+  "te": "({sku}; అవసరం లైన్ {n})",
+  "hi": "({sku}; ज़रूरत की लाइन {n})",
+  "kn": "({sku}; ಅಗತ್ಯದ ಲೈನ್ {n})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.price_each": {
+  "en": "{price} each",
+  "te": "{price} each",
+  "hi": "{price} each",
+  "kn": "{price} each",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.price_break": {
+  "en": "(the price for {n} or more)",
+  "te": "(the price for {n} or more)",
+  "hi": "(the price for {n} or more)",
+  "kn": "(the price for {n} or more)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.gst_bps": {
+  "en": "GST ({rate})",
+  "te": "GST ({rate})",
+  "hi": "GST ({rate})",
+  "kn": "GST ({rate})",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.not_in_quote_because": {
+  "en": "(no saree type and quantity that a person approved):",
+  "te": "(వ్యక్తి ఓకే చేసిన చీర రకం, సంఖ్య లేవు):",
+  "hi": "(इंसान के मंज़ूर किए साड़ी के प्रकार और मात्रा नहीं हैं):",
+  "kn": "(ವ್ಯಕ್ತಿ ಒಪ್ಪಿದ ಸೀರೆ ಪ್ರಕಾರ ಮತ್ತು ಪ್ರಮಾಣ ಇಲ್ಲ):",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.approved_on": {
+  "en": "Approved by a person on",
+  "te": "వ్యక్తి ఓకే చేసిన తేదీ",
+  "hi": "इंसान ने मंज़ूर किया, तारीख़",
+  "kn": "ವ್ಯಕ್ತಿ ಒಪ್ಪಿದ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.nothing_was_sent_dot": {
+  "en": ". Nothing was sent.",
+  "te": ". Nothing was sent.",
+  "hi": ". Nothing was sent.",
+  "kn": ". Nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.rejected_on": {
+  "en": "Rejected on",
+  "te": "తిరస్కరించిన తేదీ",
+  "hi": "अस्वीकार किया, तारीख़",
+  "kn": "ತಿರಸ್ಕರಿಸಿದ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.withdrawn_on": {
+  "en": "Withdrawn on",
+  "te": "వెనక్కి తీసుకున్న తేదీ",
+  "hi": "वापस लिया, तारीख़",
+  "kn": "ಹಿಂತೆಗೆದುಕೊಂಡ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.engine_manual": {
+  "en": "A person typed the price of each line. The pricing engine (version {version}) worked out the GST and the totals from those prices and the quote policy that was in force, and the database checked every figure again. No language model calculated a price.",
+  "te": "A person typed the price of each line. The pricing engine (version {version}) worked out the GST and the totals from those prices and the quote policy that was in force, and the database checked every figure again. No language model calculated a price.",
+  "hi": "A person typed the price of each line. The pricing engine (version {version}) worked out the GST and the totals from those prices and the quote policy that was in force, and the database checked every figure again. No language model calculated a price.",
+  "kn": "A person typed the price of each line. The pricing engine (version {version}) worked out the GST and the totals from those prices and the quote policy that was in force, and the database checked every figure again. No language model calculated a price.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.engine_list": {
+  "en": "The pricing engine (version {version}) worked them out from the price list and the quote policy that were in force, and the database checked every figure again. No person typed a price and no language model calculated one.",
+  "te": "The pricing engine (version {version}) worked them out from the price list and the quote policy that were in force, and the database checked every figure again. No person typed a price and no language model calculated one.",
+  "hi": "The pricing engine (version {version}) worked them out from the price list and the quote policy that were in force, and the database checked every figure again. No person typed a price and no language model calculated one.",
+  "kn": "The pricing engine (version {version}) worked them out from the price list and the quote policy that were in force, and the database checked every figure again. No person typed a price and no language model calculated one.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.prices_come_from_your_price_list": {
+  "en": "Prices come from your price list by fixed rules. AI never sets a price.",
+  "te": "Prices come from your price list by fixed rules. AI never sets a price.",
+  "hi": "Prices come from your price list by fixed rules. AI never sets a price.",
+  "kn": "Prices come from your price list by fixed rules. AI never sets a price.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "enq.done.approved": {
+  "en": "Approved.",
+  "te": "ఓకే చేశాం.",
+  "hi": "मंज़ूर किया।",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.done.rejected": {
+  "en": "Rejected.",
+  "te": "తిరస్కరించాం.",
+  "hi": "अस्वीकार किया।",
+  "kn": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.done.corrected": {
+  "en": "Corrected and approved.",
+  "te": "సరిదిద్ది, ఓకే చేశాం.",
+  "hi": "सही करके मंज़ूर किया।",
+  "kn": "ತಿದ್ದಿ, ಒಪ್ಪಿಗೆ ನೀಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.done.discarded": {
+  "en": "Discarded.",
+  "te": "తొలగించాం.",
+  "hi": "हटा दिया।",
+  "kn": "ತೆಗೆದುಹಾಕಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.suggested_for_line": {
+  "en": "Suggested for this line",
+  "te": "ఈ లైన్‌కి సూచించినవి",
+  "hi": "इस लाइन के लिए सुझाए गए",
+  "kn": "ಈ ಲೈನ್‌ಗೆ ಸೂಚಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.whole_price_list": {
+  "en": "The whole price list",
+  "te": "మొత్తం ధరల జాబితా",
+  "hi": "पूरी दाम-सूची",
+  "kn": "ಇಡೀ ಬೆಲೆ ಪಟ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "enq.new_quote": {
+  "en": "New quote",
+  "te": "కొత్త కొటేషన్",
+  "hi": "नया कोटेशन",
+  "kn": "ಹೊಸ ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }
