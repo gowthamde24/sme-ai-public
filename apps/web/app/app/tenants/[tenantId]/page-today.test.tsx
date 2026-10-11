@@ -164,6 +164,21 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(document.querySelector('[data-part="done"]')).toBeNull();
     expect(document.querySelector('[data-part="overnight"]')).toBeNull();
   });
+  it("'See everything in the outbox' opens the Outbox for the people who may read it (Owner, Admin, Sales)", async () => {
+    await show(props());
+    expect(screen.getByRole("link", { name: "See everything in the outbox" })).toHaveAttribute("href", `/app/tenants/${TENANT}/outbox?tab=sent`);
+    document.body.innerHTML = "";
+    fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "sales" });
+    getToday.mockResolvedValue(todayFor("sales"));
+    await show(props());
+    expect(screen.getByRole("link", { name: "See everything in the outbox" })).toBeInTheDocument();
+  });
+  it("a Viewer is not given the link (the API would refuse the page)", async () => {
+    fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "viewer" });
+    getToday.mockResolvedValue(todayFor("viewer"));
+    await show(props());
+    expect(screen.queryByRole("link", { name: "See everything in the outbox" })).toBeNull();
+  });
   it("the buttons follow the role: an Admin decides a message but not a call", async () => {
     fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role: "admin" });
     getToday.mockResolvedValue(todayFor("admin"));

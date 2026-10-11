@@ -1,6 +1,7 @@
 import type { NeedsCard, StoreToday, TodayData } from "@/components/v2/app/today/types";
 import { shiftDay, todayInIndia } from "@/components/v2/app/visits/dates";
 import { ApiAuthError } from "@/lib/api/client";
+import { getOutboxSettings } from "@/lib/api/outbox";
 import { getAiUsageWeek, getSlots, getTodayVisits, listVisits } from "@/lib/api/visits";
 
 /** A read that failed is its own answer (the screen says "Not available yet" in that place only); a rejected session still sends the person to sign in. */
@@ -48,4 +49,10 @@ export async function readProposals(accessToken: string, tenantId: string, now: 
 export async function readWeek(accessToken: string, tenantId: string): Promise<TodayData["week"]> {
   const week = await getAiUsageWeek(accessToken, tenantId).catch(rethrowAuth);
   return week === null ? "error" : { percent: week.week_percent };
+}
+
+/** Whether sending is stopped for the whole system (`GET /outbox/settings`, Owner and Admin): the banner on Today. A read that fails draws no banner: the page does not claim what it does not know. */
+export async function readSending(accessToken: string, tenantId: string): Promise<TodayData["sending"]> {
+  const settings = await getOutboxSettings(accessToken, tenantId).catch(rethrowAuth);
+  return settings === null ? null : { stopped: !settings.platform_switch_on };
 }

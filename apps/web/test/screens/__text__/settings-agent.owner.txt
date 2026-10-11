@@ -1,0 +1,52 @@
+# Settings
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent current=page) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Automatic sending"}
+## Automatic sending
+<checkbox label="Agent OWL may send routine replies by itself">
+Agent OWL may send routine replies by itself Agent OWL sends routine replies by itself. Anything about money, complaints or calls waits for you. Off: every message waits for you. Messages per customer per day
+<number label="Messages per customer per day" min=1 max=20 inputmode=numeric value=3 aria-invalid=false>
+Between 1 and 20. Most shops keep it at 3.
+[button type=submit: Save]
+Saving needs your authenticator app.
+{label="Quiet hours"}
+## Quiet hours
+21:00 – 09:00 India time. Nothing goes out in these hours; what is due waits until 09:00. You cannot change this yet.
+{label="Visit reminders"}
+## Visit reminders
+These are the standard settings. Save your own to replace them. Agent OWL reminds customers of a confirmed visit that has not started. It never sends in quiet hours, and only works while sending is on for the system and for this business.
+<checkbox label="Remind the evening before" checked>
+Remind the evening before From
+<select label="From">
+  options: 09:00=9 | 10:00=10 | 11:00=11 | 12:00=12 | 13:00=13 | 14:00=14 | 15:00=15 | 16:00=16 | 17:00=17 | 18:00=18* | 19:00=19 | 20:00=20
+From this hour until 21:00 on the evening before the visit.
+<checkbox label="Send a heads-up before the visit" checked>
+Send a heads-up before the visit How long before
+<select label="How long before">
+  options: 60 minutes=60 | 90 minutes=90 | 120 minutes=120* | 150 minutes=150 | 180 minutes=180 | 240 minutes=240 | 300 minutes=300 | 360 minutes=360 | 420 minutes=420 | 480 minutes=480
+Never closer than 30 minutes and never in quiet hours.
+<checkbox label="Mark a visit as “did not come” by itself">
+Mark a visit as “did not come” by itself After the visit time has ended by
+<select label="After the visit time has ended by" disabled>
+  options: 5 minutes=5 | 10 minutes=10 | 15 minutes=15 | 30 minutes=30* | 45 minutes=45 | 60 minutes=60 | 90 minutes=90 | 120 minutes=120 | 180 minutes=180 | 240 minutes=240 | 360 minutes=360 | 480 minutes=480 | 720 minutes=720
+Only for a confirmed visit. Off unless you switch it on.
+[button type=submit: Save]
+Saving needs your authenticator app.
+{label="System-wide sending switch"}
+## System-wide sending switch
+On Sending is allowed for the whole system. The operator owns this switch; you can only see it.
+{label="Agent OWL's checks"}
+## Agent OWL's checks
+State
+Working for this business
+Last checked
+2 min ago
+Next check
+10:01
+Last did something
+9:00
+Today
+- 2 sent
+- 1 reminders
+- 0 marked did not come
+- 0 failed
+- 0 errors

@@ -21,7 +21,7 @@ const TEAM: TodayData["team"] = [
 ];
 const CARDS: NeedsCard[] = [outbox(), call(), classic()];
 const ready = (visits: StoreVisit[], over: Partial<StoreToday> = {}): TodayData["store"] => ({ state: "ready", visits, slots: "unknown", nextFree: null, ...over });
-const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, store: null, week: null, digest: Promise.resolve(READY), ...over });
+const data = (over: Partial<TodayData> = {}): TodayData => ({ cards: { waiting: 3, money_held_paise: 0, orders_open: 0 }, needs: CARDS, recent: [], team: TEAM, store: null, week: null, sending: null, digest: Promise.resolve(READY), ...over });
 const view = async (d: TodayData, { name = "Asha" as string | null, hour = 9, role = "owner" as Role, ...rest }: { name?: string | null; hour?: number; role?: Role; lang?: string; outboxHref?: string | null; calendarHref?: string | null } = {}) => {
   const words = rest.lang && rest.lang !== "en" ? appT(rest.lang as "te") : null;
   // rendered inside an awaited act, so the parts that read a promise (use) settle before the test looks
@@ -251,6 +251,23 @@ describe("Today: the side sections", () => {
   it("'Your team' says 'Not available yet' when the helpers could not be read", async () => {
     await view(data({ team: null }));
     expect(within(screen.getByRole("heading", { name: "Your team" }).closest("section")!).getByText("Not available yet")).toBeInTheDocument();
+  });
+});
+
+describe("Today: sending stopped", () => {
+  it("a clear banner above the Agent OWL card when sending is stopped for the whole system", async () => {
+    await view(data({ sending: { stopped: true } }));
+    const banner = document.querySelector('[data-banner="sending-stopped"]') as HTMLElement;
+    expect(banner).toHaveTextContent("Sending is stopped");
+    expect(banner).toHaveTextContent("Nothing goes out and everything waits until the operator switches sending back on.");
+    expect(banner.compareDocumentPosition(document.querySelector('[data-part="agent-owl"]') as Element) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+  it("no banner when sending is on, or when it is not known (a Sales, a Viewer, a read that failed)", async () => {
+    await view(data({ sending: { stopped: false } }));
+    expect(document.querySelector('[data-banner="sending-stopped"]')).toBeNull();
+    cleanup();
+    await view(data({ sending: null }));
+    expect(document.querySelector('[data-banner="sending-stopped"]')).toBeNull();
   });
 });
 

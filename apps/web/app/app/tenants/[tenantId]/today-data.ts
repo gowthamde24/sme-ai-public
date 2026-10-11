@@ -6,7 +6,7 @@ import { fetchMembers } from "@/lib/api/orders";
 import { getAgentsStatus, type NeedsYouItem as ApiItem } from "@/lib/api/today";
 
 import { readDigest } from "./outbox-digest";
-import { readProposals, readStore, readWeek } from "./today-visits";
+import { readProposals, readSending, readStore, readWeek } from "./today-visits";
 import { targetPaths } from "./target-path";
 import { readTodayCached } from "./today-read";
 
@@ -26,20 +26,22 @@ const isClassic = (i: ApiItem): i is ApiItem & { kind: ClassicKind } => CLASSIC.
  */
 export async function readToday(accessToken: string, tenantId: string, role: Role, now: () => number = Date.now): Promise<TodayData> {
   const digest = role === "viewer" ? null : readDigest(accessToken, tenantId, now); // a Viewer may not read the outbox: nothing to ask
-  const [today, team, store, proposals, week] = await Promise.allSettled([
+  const [today, team, store, proposals, week, sending] = await Promise.allSettled([
     readTodayCached(accessToken, tenantId),
     getAgentsStatus(accessToken, tenantId),
     readStore(accessToken, tenantId, now()),
     role === "viewer" ? Promise.resolve([] as NeedsCard[]) : readProposals(accessToken, tenantId, now()),
     role === "owner" || role === "admin" ? readWeek(accessToken, tenantId) : Promise.resolve(null),
+    role === "owner" || role === "admin" ? readSending(accessToken, tenantId) : Promise.resolve(null),
   ]);
-  for (const r of [today, team, store, proposals, week]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
+  for (const r of [today, team, store, proposals, week, sending]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
 
   const data: TodayData = { ...NOTHING_TODAY, cards: { ...NOTHING_TODAY.cards }, digest };
   if (team.status === "fulfilled") data.team = team.value;
   data.store = store.status === "fulfilled" ? store.value : { state: "error" };
   if (week.status === "fulfilled") data.week = week.value;
   else if (role === "owner" || role === "admin") data.week = "error";
+  if (sending.status === "fulfilled") data.sending = sending.value;
   if (today.status === "fulfilled") {
     const t = today.value;
     const wantsMessages = t.needs_you.some((i) => i.kind === "outbox_approval");

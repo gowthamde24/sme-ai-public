@@ -8,6 +8,7 @@ import { TodayUsage } from "./TodayUsage";
 import type { TodayActions } from "./actions-types";
 import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
+import { SendingBanner } from "../outbox/SendingBanner";
 import { NeedsProvider } from "./needs-store";
 import { ago } from "./time";
 import { todayWords } from "./today-words";
@@ -33,7 +34,7 @@ export function dayLine(now: number, lang: string): string {
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
 export function TodayView({ data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null }: { data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
-  const { cards, needs, team, store, week, digest } = data;
+  const { cards, needs, team, store, week, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
   const greet = t(hour < 12 ? "today.greeting.morning" : hour < 17 ? "today.greeting.afternoon" : "today.greeting.evening");
@@ -49,6 +50,7 @@ export function TodayView({ data, name, hour, now, base, t, lang = "en", role, a
         </div>
         <TodayUsage words={words} settingsHref={`${base}/settings`} week={week} />
       </header>
+      {sending?.stopped ? <SendingBanner words={words} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         <AgentHero lang={lang} base={base} availability={availability} askWords={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} words={words} chips={chips} digest={digest} />
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">

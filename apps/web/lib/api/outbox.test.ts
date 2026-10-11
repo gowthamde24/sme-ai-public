@@ -18,6 +18,10 @@ import {
   rejectCallRequest,
   rejectOutboxMessage,
   createCallRequest,
+  dispatchOutbox,
+  getOutboxSettings,
+  parseOutboxSettings,
+  putOutboxSettings,
   submitOutboxMessage,
 } from "./outbox";
 import { BLOCKED_JSON, CALL_ID, CALL_JSON, MSG_PRICE, PRICE_JSON, QUIET_JSON, SENT_JSON, page } from "./outbox-fixtures";
@@ -132,5 +136,30 @@ describe("making a message and asking for a call", () => {
     expect(apiRequest).not.toHaveBeenCalled();
     apiRequest.mockResolvedValue({ message: { ...PRICE_JSON, status: "weird" }, replayed: false });
     await expect(submitOutboxMessage("tok", TENANT, { messageId: MSG_PRICE, leadId: LEAD, text: "hello", language: "en", category: "info" })).rejects.toThrow(ApiContractError);
+  });
+});
+
+
+describe("the sending settings and dispatch", () => {
+  const SETTINGS = { platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 };
+  it("reads the system switch, this business's automatic sending and the daily limit", async () => {
+    apiRequest.mockResolvedValue(SETTINGS);
+    expect(await getOutboxSettings("tok", TENANT)).toEqual(SETTINGS);
+    expect(apiRequest).toHaveBeenCalledWith(`${base}/outbox/settings`, "tok");
+    for (const bad of [{ ...SETTINGS, per_customer_daily_limit: 0 }, { ...SETTINGS, per_customer_daily_limit: 21 }, { ...SETTINGS, auto_send_enabled: "yes" }, { ...SETTINGS, platform_switch_on: null }]) expect(() => parseOutboxSettings(bad)).toThrow(ApiContractError);
+  });
+  it("saves only the two things the Owner may set", async () => {
+    apiRequest.mockResolvedValue({ ...SETTINGS, auto_send_enabled: true });
+    await putOutboxSettings("tok", TENANT, { auto_send_enabled: true, per_customer_daily_limit: 5 });
+    const [, , init] = apiRequest.mock.calls[0];
+    expect(init.method).toBe("PUT");
+    expect(JSON.parse(init.body)).toEqual({ auto_send_enabled: true, per_customer_daily_limit: 5 });
+  });
+  it("dispatches what is due and reads how many went", async () => {
+    apiRequest.mockResolvedValue({ sent: 2, failed: 1 });
+    expect(await dispatchOutbox("tok", TENANT)).toEqual({ sent: 2, failed: 1 });
+    expect(apiRequest).toHaveBeenCalledWith(`${base}/outbox/dispatch`, "tok", { method: "POST" });
+    apiRequest.mockResolvedValue({ sent: "2", failed: 1 });
+    await expect(dispatchOutbox("tok", TENANT)).rejects.toThrow(ApiContractError);
   });
 });

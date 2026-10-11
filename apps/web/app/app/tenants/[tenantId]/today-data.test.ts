@@ -18,11 +18,13 @@ vi.mock("@/lib/api/outbox", async (importOriginal) => ({
   listOutboxApprovals: (...a: unknown[]) => listOutboxApprovals(...a),
   listCallRequests: (...a: unknown[]) => listCallRequests(...a),
   listOutboxMessages: (...a: unknown[]) => listOutboxMessages(...a),
+  getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a),
 }));
 const getTodayVisits = vi.fn();
 const getSlots = vi.fn();
 const listVisits = vi.fn();
 const getAiUsageWeek = vi.fn();
+const getOutboxSettings = vi.fn();
 vi.mock("@/lib/api/visits", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/visits")>()),
   getTodayVisits: (...a: unknown[]) => getTodayVisits(...a),
@@ -47,6 +49,7 @@ beforeEach(() => {
   getTodayVisits.mockResolvedValue({ date: "2026-10-11", items: TODAY_VISITS });
   getSlots.mockResolvedValue(slotsJson("2026-10-11"));
   listVisits.mockResolvedValue({ from: "2026-10-11", to: "2026-12-11", items: [] });
+  getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 3 });
   getAiUsageWeek.mockResolvedValue({ week_percent: 12, resets_at_week: "2026-10-18T18:30:00Z" });
 });
 
@@ -189,5 +192,27 @@ describe("readToday: this week's AI figure", () => {
   it("a figure that cannot be read is 'error', never another window's number", async () => {
     getAiUsageWeek.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
     expect((await readToday("tok", T, "owner", clock)).week).toBe("error");
+  });
+});
+
+
+describe("readToday: is sending stopped?", () => {
+  it("Owner and Admin read the system switch; stopped is true when it is off", async () => {
+    expect((await readToday("tok", T, "owner", clock)).sending).toEqual({ stopped: false });
+    getOutboxSettings.mockResolvedValue({ platform_switch_on: false, auto_send_enabled: true, per_customer_daily_limit: 3 });
+    expect((await readToday("tok", T, "admin", clock)).sending).toEqual({ stopped: true });
+    expect(getOutboxSettings).toHaveBeenCalledWith("tok", T);
+  });
+  it("is not asked for Sales or a Viewer", async () => {
+    getToday.mockResolvedValue(todayFor("sales"));
+    expect((await readToday("tok", T, "sales", clock)).sending).toBeNull();
+    expect((await readToday("tok", T, "viewer", clock)).sending).toBeNull();
+    expect(getOutboxSettings).not.toHaveBeenCalled();
+  });
+  it("a read that fails draws no banner, and a rejected session is thrown", async () => {
+    getOutboxSettings.mockRejectedValue(new ApiRequestError(500, "api_error", "x"));
+    expect((await readToday("tok", T, "owner", clock)).sending).toBeNull();
+    getOutboxSettings.mockRejectedValue(new ApiAuthError("x"));
+    await expect(readToday("tok", T, "owner", clock)).rejects.toThrow(ApiAuthError);
   });
 });

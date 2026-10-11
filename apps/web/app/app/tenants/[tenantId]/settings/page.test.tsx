@@ -5,18 +5,25 @@ import { ApiRequestError } from "@/lib/api/client";
 import { parseMembers } from "@/lib/api/orders";
 import { MEMBERS_JSON, TENANT } from "@/lib/api/orders-fixtures";
 import { notFoundMock, redirectMock } from "@/test/helpers";
+import { SETTINGS_JSON, STATUS_JSON } from "@/lib/api/scheduler-fixtures";
+import { ApiAuthError } from "@/lib/api/client";
 
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const fetchMembers = vi.fn();
 const getPlan = vi.fn();
 const getAiUsage = vi.fn();
+const getOutboxSettings = vi.fn();
+const getSchedulerSettings = vi.fn();
+const getSchedulerStatus = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: vi.fn() }) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
 vi.mock("@/lib/api/orders", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/orders")>()), fetchMembers: (...a: unknown[]) => fetchMembers(...a) }));
 
 vi.mock("@/lib/api/plan", () => ({ getPlan: (...a: unknown[]) => getPlan(...a) }));
+vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a) }));
+vi.mock("@/lib/api/scheduler", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/scheduler")>()), getSchedulerSettings: (...a: unknown[]) => getSchedulerSettings(...a), getSchedulerStatus: (...a: unknown[]) => getSchedulerStatus(...a) }));
 vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsage(...a) }));
 
 import SettingsPage from "./page";
@@ -31,13 +38,16 @@ beforeEach(() => {
   fetchTenant.mockResolvedValue(tenant("owner"));
   fetchMembers.mockResolvedValue(parseMembers(MEMBERS_JSON));
   getPlan.mockResolvedValue({ plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" });
+  getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 });
+  getSchedulerSettings.mockResolvedValue(SETTINGS_JSON);
+  getSchedulerStatus.mockResolvedValue({ ...STATUS_JSON, last_run_at: new Date().toISOString(), next_run_at: null });
   getAiUsage.mockResolvedValue({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" });
 });
 
 describe("Settings, one part at a time", () => {
   it("opens on the business: its name, URL name, plan and today's AI usage from the API; the members are not asked for", async () => {
     render(await SettingsPage(props()));
-    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Language and look", "Security", "Privacy"]);
+    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Language and look", "Agent OWL", "Security", "Privacy"]);
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
@@ -109,5 +119,44 @@ describe("Settings, one part at a time", () => {
   it("a missing workspace is not-found and a rejected session goes to sign-in", async () => {
     fetchTenant.mockRejectedValue(new ApiRequestError(404, "not_found", "x"));
     await expect(SettingsPage(props())).rejects.toThrow();
+  });
+});
+
+describe("Settings: Agent OWL (the Owner only)", () => {
+  it("is a tab for the Owner and for nobody else; a member who asks for it by hand gets the business", async () => {
+    for (const role of ["admin", "sales", "viewer"]) {
+      fetchTenant.mockResolvedValue(tenant(role));
+      document.body.innerHTML = "";
+      render(await SettingsPage(props({ section: "agent" })));
+      expect(tabs().queryByRole("link", { name: "Agent OWL" })).toBeNull();
+      expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
+    }
+    expect(getOutboxSettings).not.toHaveBeenCalled();
+    expect(getSchedulerSettings).not.toHaveBeenCalled();
+  });
+  it("reads the sending settings, the reminders and the status with the Owner's token and draws the five parts", async () => {
+    render(await SettingsPage(props({ section: "agent" })));
+    expect(tabs().getByRole("link", { name: "Agent OWL" })).toHaveAttribute("aria-current", "page");
+    expect(getOutboxSettings).toHaveBeenCalledWith("tok", TENANT);
+    expect(getSchedulerSettings).toHaveBeenCalledWith("tok", TENANT);
+    expect(getSchedulerStatus).toHaveBeenCalledWith("tok", TENANT);
+    expect(screen.getByRole("heading", { name: "Automatic sending" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Quiet hours" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Visit reminders" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "System-wide sending switch" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Agent OWL's checks" })).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: /Agent OWL may send routine replies/ })).not.toBeChecked();
+  });
+  it("a part that cannot be read says 'Not available yet' in its own place and the rest is drawn", async () => {
+    getOutboxSettings.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    getSchedulerSettings.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    getSchedulerStatus.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await SettingsPage(props({ section: "agent" })));
+    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(4);
+    expect(screen.getByRole("heading", { name: "Quiet hours" })).toBeInTheDocument();
+  });
+  it("a rejected session goes to sign-in", async () => {
+    getSchedulerStatus.mockRejectedValue(new ApiAuthError("x"));
+    await expect(SettingsPage(props({ section: "agent" }))).rejects.toThrow("NEXT_REDIRECT:/login");
   });
 });
