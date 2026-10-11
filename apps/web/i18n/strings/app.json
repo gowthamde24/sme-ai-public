@@ -5071,28 +5071,6 @@
    "kn": "draft"
   }
  },
- "outbox.tab.count": {
-  "en": "{n} waiting for you",
-  "te": "{n} మీ కోసం ఎదురుచూస్తున్నాయి",
-  "hi": "{n} आपका इंतज़ार कर रहे हैं",
-  "kn": "{n} ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿವೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "outbox.range": {
-  "en": "Show",
-  "te": "చూపించు",
-  "hi": "दिखाएँ",
-  "kn": "ತೋರಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "outbox.range.today": {
   "en": "Today",
   "te": "ఈ రోజు",
@@ -5466,10 +5444,10 @@
   }
  },
  "outbox.dispatch.hint": {
-  "en": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
-  "te": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
-  "hi": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
-  "kn": "Sends only what may go. Messages held for quiet hours wait until 9:00.",
+  "en": "Sends only what may go. Messages held for quiet hours wait for the morning.",
+  "te": "Sends only what may go. Messages held for quiet hours wait for the morning.",
+  "hi": "Sends only what may go. Messages held for quiet hours wait for the morning.",
+  "kn": "Sends only what may go. Messages held for quiet hours wait for the morning.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5482,30 +5460,6 @@
   "te": "Nothing was due.",
   "hi": "Nothing was due.",
   "kn": "Nothing was due.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "outbox.dispatch.sent": {
-  "en": "{sent} sent.",
-  "te": "{sent} sent.",
-  "hi": "{sent} sent.",
-  "kn": "{sent} sent.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
- "outbox.dispatch.some": {
-  "en": "{sent} sent, {failed} failed.",
-  "te": "{sent} sent, {failed} failed.",
-  "hi": "{sent} sent, {failed} failed.",
-  "kn": "{sent} sent, {failed} failed.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -5660,10 +5614,10 @@
   }
  },
  "outbox.sched.stale": {
-  "en": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
-  "te": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
-  "hi": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
-  "kn": "Agent OWL has not checked for {minutes} minutes. Messages held for 9:00 and visit reminders may be late.",
+  "en": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "te": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "hi": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
+  "kn": "Agent OWL has not checked for {minutes} minutes. Messages held for the morning and visit reminders may be late.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6083,23 +6037,11 @@
    "kn": "draft"
   }
  },
- "agentset.quiet.range": {
-  "en": "21:00 – 09:00",
-  "te": "21:00 – 09:00",
-  "hi": "21:00 – 09:00",
-  "kn": "21:00 – 09:00",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  },
-  "humanOnly": true
- },
  "agentset.quiet.note": {
-  "en": "India time. Nothing goes out in these hours; what is due waits until 09:00. You cannot change this yet.",
-  "te": "భారత సమయం. ఈ గంటల్లో ఏదీ వెళ్ళదు; పంపాల్సినవి 09:00 వరకు ఆగుతాయి. దీన్ని ఇంకా మార్చలేరు.",
-  "hi": "भारतीय समय। इन घंटों में कुछ नहीं जाता; जो जाना है वह 09:00 तक रुकता है। इसे अभी बदला नहीं जा सकता।",
-  "kn": "ಭಾರತೀಯ ಸಮಯ. ಈ ಗಂಟೆಗಳಲ್ಲಿ ಏನೂ ಹೋಗುವುದಿಲ್ಲ; ಹೋಗಬೇಕಾದದ್ದು 09:00 ವರೆಗೆ ಕಾಯುತ್ತದೆ. ಇದನ್ನು ಇನ್ನೂ ಬದಲಿಸಲಾಗದು.",
+  "en": "India time. Nothing goes out from the start hour until the end hour; what is due waits for the morning. Start between 19:00 and 23:00, end between 07:00 and 10:00.",
+  "te": "భారత సమయం. మొదలు గంట నుంచి ముగింపు గంట వరకు ఏదీ వెళ్ళదు; పంపాల్సినవి ఉదయం వరకు ఆగుతాయి. మొదలు 19:00 నుంచి 23:00 మధ్య, ముగింపు 07:00 నుంచి 10:00 మధ్య.",
+  "hi": "भारतीय समय। शुरू के घंटे से खत्म के घंटे तक कुछ नहीं जाता; भेजने वाले मैसेज सुबह तक रुकते हैं। शुरू 19:00 से 23:00 के बीच, खत्म 07:00 से 10:00 के बीच।",
+  "kn": "ಭಾರತೀಯ ಸಮಯ. ಆರಂಭದ ಗಂಟೆಯಿಂದ ಮುಕ್ತಾಯದ ಗಂಟೆಯವರೆಗೆ ಏನೂ ಹೋಗುವುದಿಲ್ಲ; ಕಳುಹಿಸಬೇಕಾದವು ಬೆಳಿಗ್ಗೆಯವರೆಗೆ ಕಾಯುತ್ತವೆ. ಆರಂಭ 19:00 ರಿಂದ 23:00 ರ ನಡುವೆ, ಮುಕ್ತಾಯ 07:00 ರಿಂದ 10:00 ರ ನಡುವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -6163,10 +6105,10 @@
   }
  },
  "agentset.rem.evening.hint": {
-  "en": "From this hour until 21:00 on the evening before the visit.",
-  "te": "విజిట్ ముందు రోజు సాయంత్రం ఈ గంట నుండి 21:00 వరకు.",
-  "hi": "विज़िट से एक दिन पहले शाम को इस घंटे से 21:00 तक।",
-  "kn": "ಭೇಟಿಯ ಹಿಂದಿನ ದಿನ ಸಂಜೆ ಈ ಗಂಟೆಯಿಂದ 21:00 ವರೆಗೆ.",
+  "en": "From this hour until quiet hours start, on the evening before the visit.",
+  "te": "ఈ గంట నుంచి నిశ్శబ్ద సమయం మొదలయ్యే వరకు, విజిట్‌కి ముందు సాయంత్రం.",
+  "hi": "इस घंटे से शांत समय शुरू होने तक, विज़िट से पहले की शाम को।",
+  "kn": "ಈ ಗಂಟೆಯಿಂದ ಶಾಂತ ಸಮಯ ಆರಂಭವಾಗುವವರೆಗೆ, ವಿಸಿಟ್‌ಗೆ ಮುನ್ನ ಸಂಜೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -8950,6 +8892,478 @@
   "te": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
   "hi": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
   "kn": "Keep a record is on: when the message has really gone out, a line is added to this lead’s history.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.from": {
+  "en": "From",
+  "te": "ఈ తేదీ నుంచి",
+  "hi": "इस तारीख से",
+  "kn": "ಈ ದಿನಾಂಕದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.to": {
+  "en": "To",
+  "te": "ఈ తేదీ వరకు",
+  "hi": "इस तारीख तक",
+  "kn": "ಈ ದಿನಾಂಕದವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.empty.filtered": {
+  "en": "No message matches these filters.",
+  "te": "ఈ ఫిల్టర్లకు సరిపోయే మెసేజ్ లేదు.",
+  "hi": "इन फ़िल्टर से कोई मैसेज मेल नहीं खाता।",
+  "kn": "ಈ ಫಿಲ್ಟರ್‌ಗಳಿಗೆ ಹೊಂದುವ ಮೆಸೇಜ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.due.line": {
+  "en": "Due now: {due}. Held for the morning: {held}.",
+  "te": "Due now: {due}. Held for the morning: {held}.",
+  "hi": "Due now: {due}. Held for the morning: {held}.",
+  "kn": "Due now: {due}. Held for the morning: {held}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.gloss": {
+  "en": "In English",
+  "te": "ఇంగ్లీష్‌లో",
+  "hi": "अंग्रेज़ी में",
+  "kn": "ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.dr.stopped": {
+  "en": "Sending is stopped for the whole system, so nothing was sent.",
+  "te": "Sending is stopped for the whole system, so nothing was sent.",
+  "hi": "Sending is stopped for the whole system, so nothing was sent.",
+  "kn": "Sending is stopped for the whole system, so nothing was sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dr.sent": {
+  "en": "{n} sent.",
+  "te": "{n} sent.",
+  "hi": "{n} sent.",
+  "kn": "{n} sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dr.failed": {
+  "en": "{n} did not go: WhatsApp did not take them.",
+  "te": "{n} did not go: WhatsApp did not take them.",
+  "hi": "{n} did not go: WhatsApp did not take them.",
+  "kn": "{n} did not go: WhatsApp did not take them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dr.retry": {
+  "en": "{n} will be tried again in a minute: a photo link could not be made just now.",
+  "te": "{n} will be tried again in a minute: a photo link could not be made just now.",
+  "hi": "{n} will be tried again in a minute: a photo link could not be made just now.",
+  "kn": "{n} will be tried again in a minute: a photo link could not be made just now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dr.stilldue": {
+  "en": "{n} still due but not sent: a rule stopped them at the last check (see Blocked).",
+  "te": "{n} still due but not sent: a rule stopped them at the last check (see Blocked).",
+  "hi": "{n} still due but not sent: a rule stopped them at the last check (see Blocked).",
+  "kn": "{n} still due but not sent: a rule stopped them at the last check (see Blocked).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.dr.held": {
+  "en": "{n} held for the morning.",
+  "te": "{n} held for the morning.",
+  "hi": "{n} held for the morning.",
+  "kn": "{n} held for the morning.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.made.person": {
+  "en": "Made by {name}",
+  "te": "Made by {name}",
+  "hi": "Made by {name}",
+  "kn": "Made by {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.made.person.noname": {
+  "en": "Made by a team member",
+  "te": "Made by a team member",
+  "hi": "Made by a team member",
+  "kn": "Made by a team member",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.made.assistant": {
+  "en": "Made by Agent OWL",
+  "te": "Made by Agent OWL",
+  "hi": "Made by Agent OWL",
+  "kn": "Made by Agent OWL",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.made.system": {
+  "en": "Made from the shop's own template",
+  "te": "Made from the shop's own template",
+  "hi": "Made from the shop's own template",
+  "kn": "Made from the shop's own template",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.queued": {
+  "en": "Queued to go out",
+  "te": "Queued to go out",
+  "hi": "Queued to go out",
+  "kn": "Queued to go out",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.held.quiet": {
+  "en": "Held for the morning: nothing goes out from {start} to {end} (India time)",
+  "te": "Held for the morning: nothing goes out from {start} to {end} (India time)",
+  "hi": "Held for the morning: nothing goes out from {start} to {end} (India time)",
+  "kn": "Held for the morning: nothing goes out from {start} to {end} (India time)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.held": {
+  "en": "Held for later",
+  "te": "Held for later",
+  "hi": "Held for later",
+  "kn": "Held for later",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.held.other": {
+  "en": "Held: {reason}",
+  "te": "Held: {reason}",
+  "hi": "Held: {reason}",
+  "kn": "Held: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.needs": {
+  "en": "Waits for a person: {reason}",
+  "te": "Waits for a person: {reason}",
+  "hi": "Waits for a person: {reason}",
+  "kn": "Waits for a person: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.approved": {
+  "en": "Approved by {name}",
+  "te": "Approved by {name}",
+  "hi": "Approved by {name}",
+  "kn": "Approved by {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.approved.noname": {
+  "en": "Approved by a team member",
+  "te": "Approved by a team member",
+  "hi": "Approved by a team member",
+  "kn": "Approved by a team member",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.rejected": {
+  "en": "{name} said not now",
+  "te": "{name} said not now",
+  "hi": "{name} said not now",
+  "kn": "{name} said not now",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.rejected.noname": {
+  "en": "A team member said not now",
+  "te": "A team member said not now",
+  "hi": "A team member said not now",
+  "kn": "A team member said not now",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.edited": {
+  "en": "Words edited by {name}",
+  "te": "Words edited by {name}",
+  "hi": "Words edited by {name}",
+  "kn": "Words edited by {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.edited.noname": {
+  "en": "Words edited by a team member",
+  "te": "Words edited by a team member",
+  "hi": "Words edited by a team member",
+  "kn": "Words edited by a team member",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.blocked": {
+  "en": "Not sent: {reason}",
+  "te": "Not sent: {reason}",
+  "hi": "Not sent: {reason}",
+  "kn": "Not sent: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.sent": {
+  "en": "Sent",
+  "te": "Sent",
+  "hi": "Sent",
+  "kn": "Sent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.sent.worker": {
+  "en": "Sent by Agent OWL's checks",
+  "te": "Sent by Agent OWL's checks",
+  "hi": "Sent by Agent OWL's checks",
+  "kn": "Sent by Agent OWL's checks",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.ev.failed": {
+  "en": "WhatsApp did not take it",
+  "te": "WhatsApp did not take it",
+  "hi": "WhatsApp did not take it",
+  "kn": "WhatsApp did not take it",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.quiet.start": {
+  "en": "Quiet hours start",
+  "te": "నిశ్శబ్ద సమయం మొదలు",
+  "hi": "शांत समय शुरू",
+  "kn": "ಶಾಂತ ಸಮಯ ಆರಂಭ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.quiet.end": {
+  "en": "Quiet hours end",
+  "te": "నిశ్శబ్ద సమయం ముగింపు",
+  "hi": "शांत समय खत्म",
+  "kn": "ಶಾಂತ ಸಮಯ ಮುಕ್ತಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.quiet.save": {
+  "en": "Save quiet hours",
+  "te": "నిశ్శబ్ద సమయం సేవ్ చేయండి",
+  "hi": "शांत समय सेव करें",
+  "kn": "ಶಾಂತ ಸಮಯ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "agentset.quiet.saved": {
+  "en": "Saved. Quiet hours are now {start} to {end}. A message already waiting for the old morning goes out when the hours in force allow.",
+  "te": "Saved. Quiet hours are now {start} to {end}. A message already waiting for the old morning goes out when the hours in force allow.",
+  "hi": "Saved. Quiet hours are now {start} to {end}. A message already waiting for the old morning goes out when the hours in force allow.",
+  "kn": "Saved. Quiet hours are now {start} to {end}. A message already waiting for the old morning goes out when the hours in force allow.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.quiet.evening": {
+  "en": "The evening reminder ({hour}) is inside quiet hours that start at {start}, so no evening reminder is sent. The heads-up before the visit still goes.",
+  "te": "The evening reminder ({hour}) is inside quiet hours that start at {start}, so no evening reminder is sent. The heads-up before the visit still goes.",
+  "hi": "The evening reminder ({hour}) is inside quiet hours that start at {start}, so no evening reminder is sent. The heads-up before the visit still goes.",
+  "kn": "The evening reminder ({hour}) is inside quiet hours that start at {start}, so no evening reminder is sent. The heads-up before the visit still goes.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "agentset.err.quiet": {
+  "en": "Pick a start between 19:00 and 23:00 and an end between 07:00 and 10:00. Nothing was changed.",
+  "te": "మొదలు 19:00 నుంచి 23:00 మధ్య, ముగింపు 07:00 నుంచి 10:00 మధ్య ఎంచుకోండి. ఏమీ మారలేదు.",
+  "hi": "शुरू 19:00 से 23:00 के बीच और खत्म 07:00 से 10:00 के बीच चुनें। कुछ नहीं बदला।",
+  "kn": "ಆರಂಭ 19:00 ರಿಂದ 23:00 ರ ನಡುವೆ, ಮುಕ್ತಾಯ 07:00 ರಿಂದ 10:00 ರ ನಡುವೆ ಆರಿಸಿ. ಏನೂ ಬದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "outbox.tab.count.waiting": {
+  "en": "{n} waiting for you",
+  "te": "{n} waiting for you",
+  "hi": "{n} waiting for you",
+  "kn": "{n} waiting for you",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.tab.count.scheduled": {
+  "en": "{n} scheduled",
+  "te": "{n} scheduled",
+  "hi": "{n} scheduled",
+  "kn": "{n} scheduled",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.tab.count.sent": {
+  "en": "{n} sent",
+  "te": "{n} sent",
+  "hi": "{n} sent",
+  "kn": "{n} sent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "outbox.tab.count.blocked": {
+  "en": "{n} blocked or failed",
+  "te": "{n} blocked or failed",
+  "hi": "{n} blocked or failed",
+  "kn": "{n} blocked or failed",
   "status": {
    "te": "draft",
    "hi": "draft",

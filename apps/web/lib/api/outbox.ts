@@ -58,6 +58,24 @@ export interface OutboxMessage {
   failure_code: "adapter_error" | "timeout" | "rejected" | null;
   /** The photos the message carries (catalogue sends, job AY), in order; empty for a text message and for an API from before photos. `thumb_url` is a signed link that runs out in ten minutes, or null if it could not be signed. */
   media: OutboxMedia[];
+  /** An English gloss of the words (job BB): what a person who does not read the message's language can read; null when none was written. Personal data like the words. */
+  gloss_en: string | null;
+  /** The real history of the message, oldest first (job BB): only in the answer for ONE message (`GET /outbox/messages/{id}`); null in a list. */
+  events: OutboxEvent[] | null;
+}
+
+export const OUTBOX_EVENT_KINDS = ["made", "queued", "held", "needs_approval", "approved", "rejected", "edited", "blocked", "sent", "failed"] as const;
+export type OutboxEventKind = (typeof OUTBOX_EVENT_KINDS)[number];
+export const OUTBOX_ACTOR_KINDS = ["person", "assistant", "worker", "system"] as const;
+export type OutboxActorKind = (typeof OUTBOX_ACTOR_KINDS)[number];
+
+/** One step of a message's life. `reason_text` is the API's fixed English sentence for `reason`. An event carries no words of the message. `actor.name` is null for the worker, the system or someone who is no longer a co-member. */
+export interface OutboxEvent {
+  kind: OutboxEventKind;
+  reason: string | null;
+  reason_text: string | null;
+  at: string;
+  actor: { kind: OutboxActorKind; user_id: string | null; name: string | null };
 }
 
 export interface OutboxMedia {
@@ -110,6 +128,25 @@ function parseMedia(v: unknown): OutboxMedia[] {
   });
 }
 
+function parseEvents(v: unknown): OutboxEvent[] | null {
+  if (v === undefined || v === null) return null;
+  if (!Array.isArray(v) || v.length > 200) return bad("events");
+  return v.map((e): OutboxEvent => {
+    if (!isRecord(e) || !isRecord(e.actor)) return bad("event");
+    return {
+      kind: oneOf(OUTBOX_EVENT_KINDS, e.kind, "event kind"),
+      reason: e.reason === null || e.reason === undefined ? null : str(e.reason, "event reason", 60),
+      reason_text: e.reason_text === null || e.reason_text === undefined ? null : str(e.reason_text, "event reason_text", 400),
+      at: when(e.at, "event at"),
+      actor: {
+        kind: oneOf(OUTBOX_ACTOR_KINDS, e.actor.kind, "actor kind"),
+        user_id: e.actor.user_id === null || e.actor.user_id === undefined ? null : uuid(e.actor.user_id, "actor user_id"),
+        name: e.actor.name === null || e.actor.name === undefined ? null : str(e.actor.name, "actor name", 200),
+      },
+    };
+  });
+}
+
 export function parseOutboxMessage(json: unknown): OutboxMessage {
   if (!isRecord(json)) return bad("message");
   if (json.channel !== "whatsapp") return bad("channel");
@@ -139,6 +176,9 @@ export function parseOutboxMessage(json: unknown): OutboxMessage {
     sent_at: nullableWhen(json.sent_at, "sent_at"),
     failure_code: failure === null ? null : oneOf(["adapter_error", "timeout", "rejected"] as const, failure, "failure_code"),
     media: parseMedia(json.media),
+    // an API from before job BB has neither: no gloss and no events
+    gloss_en: json.gloss_en === null || json.gloss_en === undefined ? null : str(json.gloss_en, "gloss_en", 3200),
+    events: parseEvents(json.events),
   };
 }
 
@@ -200,12 +240,68 @@ const idPath = (id: string) => {
 };
 const post = (path: string, accessToken: string, body?: unknown) => apiRequest(path, accessToken, { method: "POST", ...(body === undefined ? {} : { body: JSON.stringify(body) }) });
 
-/** `GET /outbox/messages`: the log, newest first. Owner, Admin, Sales. `limit` 1 to 100. */
-export async function listOutboxMessages(accessToken: string, tenantId: string, opts: { limit?: number; after?: string | null; status?: OutboxStatus } = {}): Promise<OutboxPage> {
+/** The four tabs of the log, as the API names them (`GET /outbox/messages?tab=`): waiting = needs approval, scheduled = queued, sent, blocked = blocked and failed. */
+export const OUTBOX_TABS = ["waiting", "scheduled", "sent", "blocked"] as const;
+export type OutboxTabName = (typeof OUTBOX_TABS)[number];
+const DAY = /^\d{4}-\d{2}-\d{2}$/;
+
+/** The filters of the log (job BB): done by the server, with a cursor that keeps them. `customer` is a part of a company's or contact's NAME (never the words of a message); `from` and `to` are India dates, both included. Not combined with `status`. */
+export interface OutboxFilters {
+  tab?: OutboxTabName;
+  customer?: string;
+  from?: string;
+  to?: string;
+}
+
+function filterQuery(q: URLSearchParams, f: OutboxFilters): void {
+  if (f.tab) q.set("tab", f.tab);
+  if (f.customer && f.customer.trim() !== "") q.set("customer", f.customer.trim().slice(0, 100));
+  if (f.from) {
+    if (!DAY.test(f.from)) throw new ApiContractError("date");
+    q.set("from", f.from);
+  }
+  if (f.to) {
+    if (!DAY.test(f.to)) throw new ApiContractError("date");
+    q.set("to", f.to);
+  }
+}
+
+/** `GET /outbox/messages`: the log, newest first. Owner, Admin, Sales. `limit` 1 to 100. Either `status` (one state) or the server filters (`tab`, `customer`, `from`, `to`), never both. */
+export async function listOutboxMessages(accessToken: string, tenantId: string, opts: ({ limit?: number; after?: string | null; status?: OutboxStatus } & OutboxFilters) = {}): Promise<OutboxPage> {
   const q = new URLSearchParams({ limit: String(opts.limit ?? 30) });
   if (opts.after) q.set("after", opts.after);
   if (opts.status) q.set("status", opts.status);
+  filterQuery(q, opts);
   return parseOutboxPage(await apiRequest(tenantPath(tenantId, `outbox/messages?${q.toString()}`), accessToken));
+}
+
+/** `GET /outbox/messages/{id}`: one message with its real history (`events`). Owner, Admin, Sales. */
+export async function getOutboxMessage(accessToken: string, tenantId: string, id: string): Promise<OutboxMessage> {
+  return parseOutboxMessage(await apiRequest(tenantPath(tenantId, `outbox/messages/${idPath(id)}`), accessToken));
+}
+
+/** The counts behind the tabs, with the same `customer` and `from` / `to` filters as the log, and what Dispatch would act on: `due_now` (due and may go) and `held_for_later` (scheduled for the morning); those two are never filtered. */
+export interface OutboxSummary {
+  waiting: number;
+  scheduled: number;
+  sent: number;
+  blocked: number;
+  due_now: number;
+  held_for_later: number;
+}
+
+export function parseOutboxSummary(json: unknown): OutboxSummary {
+  if (!isRecord(json)) return bad("summary");
+  const n = (v: unknown, what: string): number => (typeof v === "number" && Number.isSafeInteger(v) && v >= 0 && v <= 10_000_000 ? v : bad(what));
+  return { waiting: n(json.waiting, "waiting"), scheduled: n(json.scheduled, "scheduled"), sent: n(json.sent, "sent"), blocked: n(json.blocked, "blocked"), due_now: n(json.due_now, "due_now"), held_for_later: n(json.held_for_later, "held_for_later") };
+}
+
+/** `GET /outbox/summary`: the counts per tab. Owner, Admin, Sales. */
+export async function getOutboxSummary(accessToken: string, tenantId: string, f: Omit<OutboxFilters, "tab"> = {}): Promise<OutboxSummary> {
+  const q = new URLSearchParams();
+  filterQuery(q, f);
+  const s = q.toString();
+  return parseOutboxSummary(await apiRequest(tenantPath(tenantId, `outbox/summary${s ? `?${s}` : ""}`), accessToken));
 }
 
 /** `GET /outbox/approvals`: the messages waiting for a person, newest first. Owner and Admin. */
@@ -279,32 +375,62 @@ export async function createCallRequest(
   return { request: parseCallRequest(json.request), replayed: json.replayed === true };
 }
 
-/** The business's sending settings (`GET /outbox/settings`, Owner and Admin): the system-wide switch (the operator's, read only here), this business's automatic sending and the per-customer daily limit. */
+/** The business's sending settings (`GET /outbox/settings`, Owner and Admin): the system-wide switch (the operator's, read only here), this business's automatic sending, the per-customer daily limit and the quiet hours (job BB). */
 export interface OutboxSettings {
   platform_switch_on: boolean;
   auto_send_enabled: boolean;
   per_customer_daily_limit: number;
+  /** The hour (India time) from which no message is sent, 19 to 23. */
+  quiet_hours_start: number;
+  /** The hour (India time) from which messages may go again, 7 to 10. */
+  quiet_hours_end: number;
 }
+/** The limits of the quiet hours the API accepts. */
+export const QUIET_START = { min: 19, max: 23 } as const;
+export const QUIET_END = { min: 7, max: 10 } as const;
+const inRange = (v: unknown, r: { min: number; max: number }): v is number => typeof v === "number" && Number.isInteger(v) && v >= r.min && v <= r.max;
 
 export function parseOutboxSettings(json: unknown): OutboxSettings {
   if (!isRecord(json)) return bad("settings");
   const limit = json.per_customer_daily_limit;
   if (typeof limit !== "number" || !Number.isInteger(limit) || limit < 1 || limit > 20) return bad("per_customer_daily_limit");
-  return { platform_switch_on: bool(json.platform_switch_on, "platform_switch_on"), auto_send_enabled: bool(json.auto_send_enabled, "auto_send_enabled"), per_customer_daily_limit: limit };
+  // an API from before job BB has no quiet hours of its own: the fixed 21:00 to 09:00 it always used
+  const start = json.quiet_hours_start === undefined ? 21 : json.quiet_hours_start;
+  const end = json.quiet_hours_end === undefined ? 9 : json.quiet_hours_end;
+  if (!inRange(start, QUIET_START)) return bad("quiet_hours_start");
+  if (!inRange(end, QUIET_END)) return bad("quiet_hours_end");
+  return { platform_switch_on: bool(json.platform_switch_on, "platform_switch_on"), auto_send_enabled: bool(json.auto_send_enabled, "auto_send_enabled"), per_customer_daily_limit: limit, quiet_hours_start: start, quiet_hours_end: end };
 }
 
 export async function getOutboxSettings(accessToken: string, tenantId: string): Promise<OutboxSettings> {
   return parseOutboxSettings(await apiRequest(tenantPath(tenantId, "outbox/settings"), accessToken));
 }
 
-/** `PUT /outbox/settings`: the Owner only, with the second factor. Automatic sending is off until the Owner turns it on. */
-export async function putOutboxSettings(accessToken: string, tenantId: string, input: { auto_send_enabled: boolean; per_customer_daily_limit: number }): Promise<OutboxSettings> {
-  return parseOutboxSettings(await apiRequest(tenantPath(tenantId, "outbox/settings"), accessToken, { method: "PUT", body: JSON.stringify({ auto_send_enabled: input.auto_send_enabled, per_customer_daily_limit: input.per_customer_daily_limit }) }));
+/** `PUT /outbox/settings`: the Owner only, with the second factor. Automatic sending is off until the Owner turns it on. A quiet hour left out keeps its value (the API's rule). */
+export async function putOutboxSettings(accessToken: string, tenantId: string, input: { auto_send_enabled: boolean; per_customer_daily_limit: number; quiet_hours_start?: number; quiet_hours_end?: number }): Promise<OutboxSettings> {
+  const body: Record<string, unknown> = { auto_send_enabled: input.auto_send_enabled, per_customer_daily_limit: input.per_customer_daily_limit };
+  if (input.quiet_hours_start !== undefined) body.quiet_hours_start = input.quiet_hours_start;
+  if (input.quiet_hours_end !== undefined) body.quiet_hours_end = input.quiet_hours_end;
+  return parseOutboxSettings(await apiRequest(tenantPath(tenantId, "outbox/settings"), accessToken, { method: "PUT", body: JSON.stringify(body) }));
 }
 
-/** `POST /outbox/dispatch`: hand what is due to the channel now. Owner and Admin. Returns how many went and how many failed. */
-export async function dispatchOutbox(accessToken: string, tenantId: string): Promise<{ sent: number; failed: number }> {
+/** What "Send what is due now" did (job BB): how many went and failed, how many will be tried again shortly (`retry_later`: a photo link could not be made), how many are still due but were not handed over (blocked at the last check), how many are held for the morning, and whether the system-wide switch is on. */
+export interface DispatchResult {
+  sent: number;
+  failed: number;
+  retry_later: number;
+  still_due: number;
+  held_for_later: number;
+  /** null from an API that does not say. */
+  platform_switch_on: boolean | null;
+}
+
+/** `POST /outbox/dispatch`: hand what is due to the channel now, for THIS business. Owner and Admin. */
+export async function dispatchOutbox(accessToken: string, tenantId: string): Promise<DispatchResult> {
   const json = await post(tenantPath(tenantId, "outbox/dispatch"), accessToken);
-  if (!isRecord(json) || !Number.isSafeInteger(json.sent) || !Number.isSafeInteger(json.failed)) return bad("dispatch");
-  return { sent: json.sent as number, failed: json.failed as number };
+  const n = (v: unknown, def: number | null): number => (v === undefined || v === null ? (def ?? bad("dispatch")) : typeof v === "number" && Number.isSafeInteger(v) && v >= 0 ? v : bad("dispatch"));
+  if (!isRecord(json)) return bad("dispatch");
+  const sw = json.platform_switch_on;
+  if (sw !== undefined && sw !== null && typeof sw !== "boolean") return bad("platform_switch_on");
+  return { sent: n(json.sent, null), failed: n(json.failed, null), retry_later: n(json.retry_later, 0), still_due: n(json.still_due, 0), held_for_later: n(json.held_for_later, 0), platform_switch_on: typeof sw === "boolean" ? sw : null };
 }

@@ -58,7 +58,7 @@ export async function readToday(accessToken: string, tenantId: string, role: Rol
       const customer = i.customer === "" ? null : i.customer;
       if (i.kind === "outbox_approval") {
         const m = messages?.get(i.id);
-        return { type: "outbox", key, at: i.at, id: i.id, customer, city: i.city, message: m ? { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text, media: m.media.map((x) => ({ position: x.position, thumb_url: x.thumb_url })) } : null };
+        return { type: "outbox", key, at: i.at, id: i.id, customer, city: i.city, message: m ? { text: m.text, language: m.language, category: m.category, flags: m.flags, reasonText: m.reason_text, gloss: m.gloss_en, media: m.media.map((x) => ({ position: x.position, thumb_url: x.thumb_url })) } : null };
       }
       const c = calls?.get(i.id);
       return { type: "call", key, at: i.at, id: i.id, customer, city: i.city, request: c ? { reason: c.reason, language: c.language } : null };

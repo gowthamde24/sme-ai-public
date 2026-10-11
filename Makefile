@@ -1,4 +1,4 @@
-.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api
+.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local
 
 WEB := apps/web
 API := services/ai-api
@@ -201,3 +201,9 @@ dev-web-local:
 # Prints the current 6-digit second-factor code of the local demo owner (a local demo code; the local database container only).
 demo-code:
 	@cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/demo_code.py
+
+# Job BE: the REAL-STACK end-to-end run. Starts your own API (:8002) and web (:3002) against the local Supabase stack (with Storage), drives the real web with a real browser (sign-up, sign-in with the authenticator,
+# Today, Outbox, Settings, Visits, the saree Catalogue with a real photo upload, Ask), prints PASS/FAIL per step, stops what it started and removes its throwaway workspace. Local only, invented data. Opt-in: needs Docker,
+# `make db-start`, the API's virtualenv and a browser; it refuses to start while an integration or pgTAP session is using the database. Never uses :3000, :8000 or :8001. See docs/runbooks/e2e-real-stack.md.
+e2e-local:
+	./scripts/e2e-local.sh

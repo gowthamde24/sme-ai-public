@@ -4,7 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 
 import { EVENING_HOURS, HEADS_UP_MINUTES, NO_SHOW_MINUTES, type SchedulerSettings } from "@/lib/api/scheduler";
-import type { OutboxSettings } from "@/lib/api/outbox";
+import { QUIET_END, QUIET_START, type OutboxSettings } from "@/lib/api/outbox";
 
 import { say, type TodayWords } from "../today/today-words";
 import { card, errorLine, field, help, label, okLine, primary } from "../visits/styles";
@@ -105,6 +105,80 @@ export function SendingForm({ words, settings, save: saveAction }: { words: Toda
       <div>
         <button type="submit" disabled={busy || !ok} className={primary}>
           {busy ? say(words, "today.act.working") : say(words, "agentset.save")}
+        </button>
+        <p className={help}>{say(words, "agentset.mfa")}</p>
+      </div>
+    </form>
+  );
+}
+
+const QUIET_STARTS = Array.from({ length: QUIET_START.max - QUIET_START.min + 1 }, (_, i) => QUIET_START.min + i);
+const QUIET_ENDS = Array.from({ length: QUIET_END.max - QUIET_END.min + 1 }, (_, i) => QUIET_END.min + i);
+const hh = (h: number) => `${String(h).padStart(2, "0")}:00`;
+
+/** True when the evening reminder (from `eveningHour` on) starts at or after the first quiet hour: the worker never queues a reminder in quiet hours, so there is then no evening reminder at all (the heads-up still goes). */
+export const eveningInsideQuiet = (eveningEnabled: boolean, eveningHour: number, quietStart: number): boolean => eveningEnabled && eveningHour >= quietStart;
+
+/**
+ * Quiet hours (job BE on BB's API): no message goes out from the start hour (19:00 to 23:00) until the end hour (07:00 to 10:00), India time; what is due waits for the morning. The Owner only, with the second factor
+ * (the refusal says so and points at Security). When the evening visit reminder falls inside the chosen hours, one sentence says there will be no evening reminder (the heads-up before the visit still goes): it follows the
+ * start hour as it is picked, before saving.
+ */
+export function QuietHoursForm({ words, settings, reminders, save: saveAction }: { words: TodayWords; settings: OutboxSettings; reminders: SchedulerSettings | null; save: AgentSettingsActions["saveQuietHours"] }) {
+  const [start, setStart] = React.useState(String(settings.quiet_hours_start));
+  const [end, setEnd] = React.useState(String(settings.quiet_hours_end));
+  const { busy, result, save } = useSave(words);
+  const clash = reminders !== null && eveningInsideQuiet(reminders.reminder_evening_enabled, reminders.reminder_evening_hour, Number(start));
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!busy)
+          void save(() => saveAction({ quiet_hours_start: Number(start), quiet_hours_end: Number(end), auto_send_enabled: settings.auto_send_enabled, per_customer_daily_limit: settings.per_customer_daily_limit }));
+      }}
+      className={card}
+      aria-labelledby="quiet-heading"
+      data-card="quiet"
+    >
+      <h2 id="quiet-heading" className="font-display text-xl font-semibold">
+        {say(words, "agentset.quiet.title")}
+      </h2>
+      <p className="text-sm text-muted">{say(words, "agentset.quiet.note")}</p>
+      <div className="grid grid-cols-1 gap-3 min-[420px]:grid-cols-2">
+        <div>
+          <label htmlFor="quiet-start" className={label}>
+            {say(words, "agentset.quiet.start")}
+          </label>
+          <select id="quiet-start" value={start} onChange={(e) => setStart(e.target.value)} className={field}>
+            {QUIET_STARTS.map((h) => (
+              <option key={h} value={h}>
+                {hh(h)}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor="quiet-end" className={label}>
+            {say(words, "agentset.quiet.end")}
+          </label>
+          <select id="quiet-end" value={end} onChange={(e) => setEnd(e.target.value)} className={field}>
+            {QUIET_ENDS.map((h) => (
+              <option key={h} value={h}>
+                {hh(h)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {clash && reminders ? (
+        <p data-note="evening-inside-quiet" role="note" className="rounded-lg bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
+          {say(words, "agentset.quiet.evening", { hour: hh(reminders.reminder_evening_hour), start: hh(Number(start)) })}
+        </p>
+      ) : null}
+      <Result words={words} r={result} />
+      <div>
+        <button type="submit" disabled={busy} className={primary}>
+          {busy ? say(words, "today.act.working") : say(words, "agentset.quiet.save")}
         </button>
         <p className={help}>{say(words, "agentset.mfa")}</p>
       </div>

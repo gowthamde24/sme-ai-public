@@ -4,16 +4,16 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const refresh = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 
-import type { OutboxMessage } from "@/lib/api/outbox";
-import { SENT_JSON } from "@/lib/api/outbox-fixtures";
+import { parseOutboxSummary, type OutboxMessage, type OutboxSummary } from "@/lib/api/outbox";
+import { PRICE_JSON, SENT_JSON } from "@/lib/api/outbox-fixtures";
 
 import type { Role } from "../today/types";
 import { OutboxList, historyOf } from "./OutboxList";
 import { BASE, FAILED, HELD, NOW, SENT, STOPPED, WAITING, WORDS, fakeOutboxActions, msg } from "./outbox-test-kit";
 import type { OutboxTab } from "./reasons";
 
-const show = (items: OutboxMessage[], { tab = "waiting" as OutboxTab, role = "owner" as Role, actions = fakeOutboxActions() } = {}) => {
-  render(<OutboxList items={items} tab={tab} role={role} words={WORDS} lang="en" now={NOW} actions={actions} leadBase={`${BASE}/leads`} />);
+const show = (items: OutboxMessage[], { tab = "waiting" as OutboxTab, role = "owner" as Role, actions = fakeOutboxActions(), counts = null as OutboxSummary | null, quiet = null as { start: number; end: number } | null, filtered = false } = {}) => {
+  render(<OutboxList items={items} tab={tab} role={role} words={WORDS} lang="en" now={NOW} actions={actions} leadBase={`${BASE}/leads`} counts={counts} quiet={quiet} filtered={filtered} />);
   return actions;
 };
 const open = async (name: RegExp | string) => act(async () => fireEvent.click(screen.getByRole("button", { name })));
@@ -21,6 +21,114 @@ const click = (name: string | RegExp) => act(async () => fireEvent.click(screen.
 
 beforeEach(() => vi.clearAllMocks());
 afterEach(cleanup);
+
+const EV = (kind: string, at: string, actor: Record<string, unknown> = { kind: "system", user_id: null, name: null }, reason: string | null = null, reason_text: string | null = null) => ({ kind, reason, reason_text, at, actor });
+const HISTORY = [
+  EV("made", "2026-10-13T03:00:00Z", { kind: "assistant", user_id: "11111111-1111-4111-8111-111111111111", name: "Asha" }),
+  EV("needs_approval", "2026-10-13T03:00:00Z", undefined, "category_other", "It is not one of the kinds that go automatically."),
+  EV("approved", "2026-10-13T15:30:00Z", { kind: "person", user_id: "11111111-1111-4111-8111-111111111111", name: "Asha" }),
+  EV("held", "2026-10-13T15:30:00Z", undefined, "quiet_hours", "Waiting for the morning: this business sends no messages during its quiet hours (India time)."),
+  EV("sent", "2026-10-14T03:30:00Z", { kind: "worker", user_id: null, name: null }),
+];
+
+describe("the real history of a message (job BE on BB's events)", () => {
+  it("reads the events when the row is opened and draws them instead of the history made from the times", async () => {
+    const actions = fakeOutboxActions({ detail: vi.fn(async () => ({ ok: true as const, events: HISTORY })) });
+    show([SENT()], { tab: "sent", actions, quiet: { start: 21, end: 9 } });
+    await open(/DEMO Lakshmi Textiles/);
+    expect(actions.detail).toHaveBeenCalledWith(SENT().id);
+    const ol = document.querySelector("[data-history]") as HTMLElement;
+    expect(ol).toHaveAttribute("data-history", "events");
+    expect(Array.from(ol.querySelectorAll("li")).map((li) => li.textContent)).toEqual([
+      "13 Oct, 8:30 · Made by Agent OWL",
+      "13 Oct, 8:30 · Waits for a person: Not a routine message",
+      "13 Oct, 21:00 · Approved by Asha",
+      "13 Oct, 21:00 · Held for the morning: nothing goes out from 21:00 to 09:00 (India time)",
+      "9:00 · Sent by Agent OWL's checks",
+    ]);
+  });
+
+  it("says the actual quiet hours when this person may read them, else the API's own sentence", async () => {
+    const actions = fakeOutboxActions({ detail: vi.fn(async () => ({ ok: true as const, events: [HISTORY[3]] })) });
+    show([SENT()], { tab: "sent", actions, quiet: null });
+    await open(/DEMO Lakshmi Textiles/);
+    expect(document.querySelector("[data-history] li")).toHaveTextContent("Waiting for the morning: this business sends no messages during its quiet hours (India time).");
+  });
+
+  it("says who did it by name when the API gives one, and 'a team member' when it does not (someone no longer a co-member)", async () => {
+    const events = [EV("approved", "2026-10-14T03:00:00Z", { kind: "person", user_id: null, name: null }), EV("rejected", "2026-10-14T03:01:00Z", { kind: "person", user_id: "11111111-1111-4111-8111-111111111111", name: "Ravi" }), EV("edited", "2026-10-14T03:02:00Z", { kind: "person", user_id: null, name: null }), EV("made", "2026-10-14T02:00:00Z", { kind: "system", user_id: null, name: null }), EV("blocked", "2026-10-14T03:03:00Z", undefined, "stopped", "x"), EV("failed", "2026-10-14T03:04:00Z")];
+    show([SENT()], { tab: "sent", actions: fakeOutboxActions({ detail: vi.fn(async () => ({ ok: true as const, events })) }) });
+    await open(/DEMO Lakshmi Textiles/);
+    expect(Array.from(document.querySelectorAll("[data-history] li")).map((li) => li.textContent!.split(" · ")[1])).toEqual(["Made from the shop's own template", "Approved by a team member", "Ravi said not now", "Words edited by a team member", "Not sent: Customer said STOP", "WhatsApp did not take it"]);
+  });
+
+  it("while it is being read the row has the history made from its own times; if it cannot be read it keeps it", async () => {
+    let release!: (v: unknown) => void;
+    const actions = fakeOutboxActions({ detail: vi.fn(() => new Promise((r) => (release = r))) });
+    show([SENT()], { tab: "sent", actions });
+    await open(/DEMO Lakshmi Textiles/);
+    expect(document.querySelector("[data-history]")).toHaveAttribute("data-history", "derived");
+    await act(async () => release({ ok: false }));
+    expect(document.querySelector("[data-history]")).toHaveAttribute("data-history", "derived");
+    expect(document.querySelectorAll("[data-history] li").length).toBeGreaterThan(0);
+  });
+
+  it("a read that throws is the same as 'not available'; it is read once per row, not every time the row opens", async () => {
+    const detail = vi.fn(async () => {
+      throw new Error("down");
+    });
+    show([SENT()], { tab: "sent", actions: fakeOutboxActions({ detail }) });
+    await open(/DEMO Lakshmi Textiles/);
+    await open(/DEMO Lakshmi Textiles/);
+    await open(/DEMO Lakshmi Textiles/);
+    expect(detail).toHaveBeenCalledTimes(1);
+    expect(document.querySelector("[data-history]")).toHaveAttribute("data-history", "derived");
+  });
+});
+
+describe("the English gloss", () => {
+  const withGloss = () => msg(PRICE_JSON as never, { gloss_en: "This saree costs ₹500 only." });
+  it("is shown under the words of a message, marked as English, for whoever opens the row", async () => {
+    show([withGloss()]);
+    await open(/DEMO Lakshmi Textiles/);
+    const g = document.querySelector("[data-part=gloss]") as HTMLElement;
+    expect(g).toHaveTextContent("In English");
+    expect(g).toHaveTextContent("This saree costs ₹500 only.");
+    expect(g.querySelector("p[lang=en]")).not.toBeNull();
+  });
+  it("is not drawn when there is none", async () => {
+    show([WAITING()]);
+    await open(/DEMO Lakshmi Textiles/);
+    expect(document.querySelector("[data-part=gloss]")).toBeNull();
+  });
+  it("editing the words drops the gloss (the API clears it too: it no longer says what the words say)", async () => {
+    show([withGloss()]);
+    await open(/DEMO Lakshmi Textiles/);
+    await click("Edit");
+    expect(document.querySelector("[data-part=gloss]")).toBeNull();
+    fireEvent.change(screen.getByLabelText(/words/i), { target: { value: "కొత్త మాటలు ఇవి" } });
+    await click("Save the new words");
+    expect(document.querySelector("[data-part=gloss]")).toBeNull();
+  });
+});
+
+describe("the due line of the Scheduled tab", () => {
+  it("says how many are due now and how many are held for the morning, from the server's counts", () => {
+    show([HELD()], { tab: "scheduled", counts: parseOutboxSummary({ waiting: 0, scheduled: 5, sent: 0, blocked: 0, due_now: 1, held_for_later: 4 }) });
+    expect(document.querySelector("[data-part=due-line]")).toHaveTextContent("Due now: 1. Held for the morning: 4.");
+  });
+  it("without counts it keeps the general hint", () => {
+    show([HELD()], { tab: "scheduled" });
+    expect(document.querySelector("[data-part=due-line]")).toHaveTextContent("Messages held for quiet hours wait for the morning.");
+  });
+  it("an empty list under a filter says nothing matches", () => {
+    show([], { tab: "sent", filtered: true });
+    expect(screen.getByText("No message matches these filters.")).toBeInTheDocument();
+    cleanup();
+    show([], { tab: "sent" });
+    expect(document.querySelector('[data-empty="sent"]')).not.toHaveTextContent("No message matches these filters.");
+  });
+});
 
 describe("a message that carries photos (a catalogue send, job BC)", () => {
   const withPhotos = () => msg(SENT_JSON, { id: "11111111-aaaa-4aaa-8aaa-0000000000c1", media: [{ photo_id: "0f8a927d-1111-4a11-8a11-000000000001", position: 1, thumb_url: "https://s.example/1_t.jpg?token=a" }, { photo_id: "0f8a927d-1111-4a11-8a11-000000000002", position: 2, thumb_url: "https://s.example/2_t.jpg?token=b" }] });
@@ -208,7 +316,7 @@ describe("who may decide, and what the decision does", () => {
 describe("Send what is due now", () => {
   it("is offered to the Owner and the Admin in the Scheduled tab only, calls dispatch and says how many went", async () => {
     const actions = show([HELD()], { tab: "scheduled" });
-    expect(screen.getByText("Sends only what may go. Messages held for quiet hours wait until 9:00.")).toBeInTheDocument();
+    expect(screen.getByText("Sends only what may go. Messages held for quiet hours wait for the morning.")).toBeInTheDocument();
     await click("Send what is due now");
     expect(actions.dispatch).toHaveBeenCalledTimes(1);
     expect(screen.getByRole("status")).toHaveTextContent("2 sent.");

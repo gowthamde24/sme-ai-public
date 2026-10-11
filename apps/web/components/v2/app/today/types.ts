@@ -14,7 +14,7 @@ export type AgentRow = AgentStatus;
 export type TodayCards = { waiting: number | null; money_held_paise: number | null; orders_open: number | null };
 
 /** The words of a WhatsApp message held for approval, as the card shows them. Only a person who may decide it is given them (the API sends them to the Owner and Admin only). */
-export type OutboxCardMessage = { text: string; language: OutboxLanguage; category: OutboxCategory; flags: OutboxFlag[]; reasonText: string; /** The photos the message carries (a catalogue send), in order. */ media: { position: number; thumb_url: string | null }[] };
+export type OutboxCardMessage = { text: string; language: OutboxLanguage; category: OutboxCategory; flags: OutboxFlag[]; reasonText: string; /** An English gloss of the words (job BB), or null. */ gloss: string | null; /** The photos the message carries (a catalogue send), in order. */ media: { position: number; thumb_url: string | null }[] };
 /** Why a call was asked for, as the card shows it, and the language the customer is spoken to in (the visit offer goes out in it). */
 export type CallCardRequest = { reason: string; language: OutboxLanguage };
 /** A visit Agent OWL proposed (booked, not confirmed): the card asks the person to confirm it, move it or cancel it. `startsAt` is ISO 8601. */

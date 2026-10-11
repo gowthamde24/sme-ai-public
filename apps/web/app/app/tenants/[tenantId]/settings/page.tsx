@@ -12,8 +12,8 @@ import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
 import { getLang } from "@/i18n/get-lang";
 import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
-import { QuietHoursCard, SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
-import { RemindersForm, SendingForm } from "@/components/v2/app/agent-settings/AgentSettingsForms";
+import { SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
+import { QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/agent-settings/AgentSettingsForms";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
 import { getSchedulerSettings, getSchedulerStatus, type SchedulerSettings, type SchedulerStatus } from "@/lib/api/scheduler";
@@ -23,7 +23,7 @@ import { getPlan, type Plan } from "@/lib/api/plan";
 import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 
-import { saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
+import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 import { agentWords } from "./agent-words";
 
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
@@ -179,7 +179,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         {section === "agent" ? (
           <div className="flex flex-col gap-5">
             {sending ? <SendingForm words={words} settings={sending} save={saveSendingAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
-            <QuietHoursCard words={words} />
+            {sending ? <QuietHoursForm words={words} settings={sending} reminders={reminders} save={saveQuietHoursAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
             {reminders ? <RemindersForm words={words} settings={reminders} save={saveRemindersAction.bind(null, tenantId)} /> : <UnreadCard note={t("frame.notyet")} />}
             <SystemSwitchCard words={words} settings={sending} />
             <SchedulerCard words={words} status={scheduler} now={clock()} />

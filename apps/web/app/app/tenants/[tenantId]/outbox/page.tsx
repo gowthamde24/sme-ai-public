@@ -4,7 +4,7 @@ import { ApiDownV2 } from "@/components/v2/app/parts";
 import type { OutboxActions } from "@/components/v2/app/outbox/OutboxList";
 import { OutboxView } from "@/components/v2/app/outbox/OutboxView";
 import { TABS, type OutboxTab } from "@/components/v2/app/outbox/reasons";
-import { RANGES, type Range } from "@/components/v2/app/outbox/outbox-time";
+import { parseFilters } from "@/components/v2/app/outbox/outbox-time";
 import { pageMain } from "@/components/v2/app/ui";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -12,7 +12,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { appT } from "@/i18n/app";
-import { approveFromOutboxAction, dispatchNowAction, editFromOutboxAction, rejectFromOutboxAction } from "./outbox-actions";
+import { approveFromOutboxAction, dispatchNowAction, outboxDetailAction, editFromOutboxAction, rejectFromOutboxAction } from "./outbox-actions";
 import { readOutbox } from "./outbox-data";
 import { outboxWords } from "./outbox-words";
 
@@ -55,15 +55,13 @@ export default async function OutboxPage({ params, searchParams }: PageProps<"/a
     );
   const wantedTab = pick(query.tab);
   const tab: OutboxTab = (TABS as readonly string[]).includes(wantedTab ?? "") ? (wantedTab as OutboxTab) : "waiting";
-  const wantedRange = pick(query.range);
-  const range: Range = (RANGES as readonly string[]).includes(wantedRange ?? "") ? (wantedRange as Range) : "7d";
-  const q = (pick(query.q) ?? "").slice(0, 100);
+  const filters = parseFilters(query, clock());
   const rawAfter = pick(query.after);
   const after = rawAfter && rawAfter.length <= MAX_CURSOR ? rawAfter : null;
   const now = clock();
   let data;
   try {
-    data = await readOutbox(user.accessToken, tenantId, { tab, range, q, after, role: tenant.role, now });
+    data = await readOutbox(user.accessToken, tenantId, { tab, filters, after, role: tenant.role });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     throw error;
@@ -73,10 +71,11 @@ export default async function OutboxPage({ params, searchParams }: PageProps<"/a
     reject: rejectFromOutboxAction.bind(null, tenantId),
     edit: editFromOutboxAction.bind(null, tenantId),
     dispatch: dispatchNowAction.bind(null, tenantId),
+    detail: outboxDetailAction.bind(null, tenantId),
   };
   return (
     <main className={pageMain} lang={lang}>
-      <OutboxView tab={tab} range={range} q={q} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} waiting={data.waiting} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
+      <OutboxView tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
     </main>
   );
 }

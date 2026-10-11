@@ -5,19 +5,6 @@ import { card } from "../visits/styles";
 import type { OutboxSettings } from "@/lib/api/outbox";
 import type { SchedulerStatus } from "@/lib/api/scheduler";
 
-/** Quiet hours, read only for now: 21:00 to 09:00 India time. Nothing goes out in these hours; what is due waits until 9:00. */
-export function QuietHoursCard({ words }: { words: TodayWords }) {
-  return (
-    <section aria-labelledby="quiet-heading" className={card} data-card="quiet">
-      <h2 id="quiet-heading" className="font-display text-xl font-semibold">
-        {say(words, "agentset.quiet.title")}
-      </h2>
-      <p className="text-2xl font-bold tabular-nums">{say(words, "agentset.quiet.range")}</p>
-      <p className="text-sm text-muted">{say(words, "agentset.quiet.note")}</p>
-    </section>
-  );
-}
-
 /** The system-wide sending switch (the operator's): read only here. Off = nothing goes out, everything waits. null = could not be read. */
 export function SystemSwitchCard({ words, settings }: { words: TodayWords; settings: OutboxSettings | null }) {
   return (

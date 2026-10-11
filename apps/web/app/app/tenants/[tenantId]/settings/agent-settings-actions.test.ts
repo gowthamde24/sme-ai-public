@@ -16,7 +16,7 @@ vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "en" }));
 vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), putOutboxSettings: (...a: unknown[]) => putOutboxSettings(...a) }));
 vi.mock("@/lib/api/scheduler", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/scheduler")>()), putSchedulerSettings: (...a: unknown[]) => putSchedulerSettings(...a) }));
 
-import { saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
+import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 
 const T = "22222222-2222-4222-8222-222222222222";
 const { is_default: _d, ...SET } = SETTINGS_JSON;
@@ -72,5 +72,48 @@ describe("visit reminders", () => {
     expect(await saveRemindersAction(T, SET)).toMatchObject({ ok: false, mfa: true });
     putSchedulerSettings.mockRejectedValue(refusal(403, "forbidden"));
     expect(await saveRemindersAction(T, SET)).toMatchObject({ ok: false, error: "Only the owner can change this." });
+  });
+});
+
+describe("quiet hours (job BE on BB's API)", () => {
+  const good = { quiet_hours_start: 22, quiet_hours_end: 8, auto_send_enabled: true, per_customer_daily_limit: 4 };
+  it("saves the hours with the sending values on record, says the hours in force, and reads Settings and the Outbox again", async () => {
+    putOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: true, per_customer_daily_limit: 4, quiet_hours_start: 22, quiet_hours_end: 8 });
+    expect(await saveQuietHoursAction(T, good)).toEqual({ ok: true, message: expect.stringContaining("Quiet hours are now 22:00 to 08:00.") });
+    expect(putOutboxSettings).toHaveBeenCalledWith("tok", T, good);
+    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/settings`);
+    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}/outbox`);
+  });
+  it.each([
+    ["a start of 18", { quiet_hours_start: 18 }],
+    ["a start of 24", { quiet_hours_start: 24 }],
+    ["an end of 6", { quiet_hours_end: 6 }],
+    ["an end of 11", { quiet_hours_end: 11 }],
+    ["an hour that is not whole", { quiet_hours_start: 21.5 }],
+    ["an hour that is a word", { quiet_hours_end: "nine" }],
+  ])("%s never reaches the API and is explained", async (_n, over) => {
+    expect(await saveQuietHoursAction(T, { ...good, ...over } as never)).toEqual({ ok: false, error: "Pick a start between 19:00 and 23:00 and an end between 07:00 and 10:00. Nothing was changed." });
+    expect(putOutboxSettings).not.toHaveBeenCalled();
+  });
+  it("refuses a bad sending value or workspace before the API", async () => {
+    expect(await saveQuietHoursAction(T, { ...good, per_customer_daily_limit: 0 })).toMatchObject({ ok: false });
+    expect(await saveQuietHoursAction("nope", good)).toMatchObject({ ok: false });
+    expect(putOutboxSettings).not.toHaveBeenCalled();
+  });
+  it.each([
+    [403, "mfa_required", "This needs your authenticator app", true],
+    [403, "forbidden", "Only the owner can change this", undefined],
+    [422, "validation_error", "Something was not accepted", undefined],
+    [500, "boom", "That did not work", undefined],
+  ])("a %s %s is OUR sentence", async (status, code, start, mfa) => {
+    putOutboxSettings.mockRejectedValue(refusal(status, code));
+    const r = await saveQuietHoursAction(T, good);
+    expect(r).toMatchObject({ ok: false, error: expect.stringContaining(start) });
+    expect((r as { mfa?: boolean }).mfa).toBe(mfa);
+    expect(JSON.stringify(r)).not.toContain("API's own English");
+  });
+  it("a rejected session signs in", async () => {
+    putOutboxSettings.mockRejectedValue(new ApiAuthError("x"));
+    await expect(saveQuietHoursAction(T, good)).rejects.toThrow("NEXT_REDIRECT:/login");
   });
 });

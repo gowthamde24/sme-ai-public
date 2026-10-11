@@ -7,11 +7,12 @@ import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { dispatchOutbox } from "@/lib/api/outbox";
+import { dispatchOutbox, getOutboxMessage, type OutboxEvent } from "@/lib/api/outbox";
 import { requireUser } from "@/lib/auth/session";
 import { redirect } from "next/navigation";
 
 import { approveMessageAction, editMessageAction, rejectMessageAction } from "../today-actions";
+import { dispatchWords } from "./outbox-dispatch-words";
 
 const refresh = (tenantId: string) => revalidatePath(`/app/tenants/${tenantId}/outbox`);
 
@@ -35,19 +36,19 @@ export async function editFromOutboxAction(tenantId: string, id: string, text: s
 }
 
 /**
- * "Send what is due now" (Owner and Admin): hands what is due to the channel. The outbox re-checks every rule at send time (a customer who said STOP, the daily limit, the switches), so what is "due" is only what
- * may go; messages held for quiet hours stay held until 9:00. The answer says how many went and how many failed, and nothing else.
+ * "Send what is due now" (Owner and Admin), for THIS business: hands what is due to the channel. The outbox re-checks every rule at send time (a customer who said STOP, the daily limit, the switches), so what is "due" is only
+ * what may go; messages held for quiet hours stay held until the hour they were given. The answer says, in plain words, how many went, how many failed, how many will be tried again shortly, how many are still due but were
+ * not handed over, how many are held for later, and whether the whole system is stopped.
  */
 export async function dispatchNowAction(tenantId: string): Promise<DecisionResult> {
   const user = await requireUser();
   const t = appT(await getLang());
   if (!isCanonicalUuid(tenantId)) return { ok: false, error: t("today.err.state"), stale: true };
   try {
-    const { sent, failed } = await dispatchOutbox(user.accessToken, tenantId);
+    const result = await dispatchOutbox(user.accessToken, tenantId);
     refresh(tenantId);
     revalidatePath(`/app/tenants/${tenantId}`);
-    if (sent === 0 && failed === 0) return { ok: true, message: t("outbox.dispatch.none") };
-    return { ok: true, message: failed > 0 ? t("outbox.dispatch.some", { sent, failed }) : t("outbox.dispatch.sent", { sent }) };
+    return { ok: true, message: dispatchWords(result, t) };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
@@ -55,5 +56,18 @@ export async function dispatchNowAction(tenantId: string): Promise<DecisionResul
       if (error.status === 503) return { ok: false, error: t("outbox.err.unavailable") };
     }
     return { ok: false, error: t("today.err.generic") };
+  }
+}
+
+/** One message with its real history, read when its row is opened (Owner, Admin, Sales; the API refuses a Viewer). Only the events come back: the row already has the words. */
+export async function outboxDetailAction(tenantId: string, id: string): Promise<{ ok: true; events: OutboxEvent[] } | { ok: false }> {
+  const user = await requireUser();
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(id)) return { ok: false };
+  try {
+    const m = await getOutboxMessage(user.accessToken, tenantId, id);
+    return m.events === null ? { ok: false } : { ok: true, events: m.events };
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return { ok: false };
   }
 }

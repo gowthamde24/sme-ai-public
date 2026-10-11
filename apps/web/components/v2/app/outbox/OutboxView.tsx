@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-import type { OutboxMessage, OutboxSettings } from "@/lib/api/outbox";
+import type { OutboxMessage, OutboxSettings, OutboxSummary } from "@/lib/api/outbox";
 import type { SchedulerStatus } from "@/lib/api/scheduler";
 
 import { indiaClock } from "../today/time";
@@ -11,13 +11,13 @@ import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { OutboxList, type OutboxActions } from "./OutboxList";
 import { SendingBanner } from "./SendingBanner";
 import { TABS, type OutboxTab } from "./reasons";
-import { RANGES, type Range } from "./outbox-time";
+import { presetDates, type LogFilters } from "./outbox-time";
 import { schedulerView } from "./scheduler-line";
 
 export type OutboxViewProps = {
   tab: OutboxTab;
-  range: Range;
-  q: string;
+  /** The customer's name and the two India dates: the server has already applied them. */
+  filters: LogFilters;
   role: Role;
   /** The moment the page was drawn (ms): read once so the page and a test agree. */
   now: number;
@@ -26,8 +26,8 @@ export type OutboxViewProps = {
   words: TodayWords;
   /** null = the list could not be read. */
   items: readonly OutboxMessage[] | null;
-  /** How many wait for a person (null = not known); 100 means "100 or more". */
-  waiting: number | null;
+  /** The counts behind the four tabs (with the same filters) and what Dispatch would act on; null = could not be read. */
+  counts: OutboxSummary | null;
   /** Older messages exist: the cursor for the link. */
   more: string | null;
   /** null = could not be read, or the role may not read them (Sales). */
@@ -65,15 +65,20 @@ function SchedulerLine({ s, now, words }: { s: SchedulerStatus; now: number; wor
 
 /** The Outbox page (job AX), drawn from what the server read: it only draws; a part that could not be read says "Not available yet" in its place. */
 export function OutboxView(p: OutboxViewProps) {
-  const { tab, words, base, role } = p;
-  const href = (over: Partial<{ tab: OutboxTab; range: Range; q: string; after: string }>) => {
-    const q = new URLSearchParams({ tab: over.tab ?? tab, range: over.range ?? p.range });
-    const text = over.q ?? p.q;
-    if (text) q.set("q", text);
+  const { tab, words, base, role, filters } = p;
+  const query = (f: LogFilters, over: { tab?: OutboxTab; after?: string } = {}) => {
+    const q = new URLSearchParams({ tab: over.tab ?? tab });
+    if (f.q) q.set("q", f.q);
+    if (f.from) q.set("from", f.from);
+    if (f.to) q.set("to", f.to);
     if (over.after) q.set("after", over.after);
     return `${base}/outbox?${q.toString()}`;
   };
+  const href = (over: { tab?: OutboxTab; after?: string } = {}) => query(filters, over);
   const admin = role === "owner" || role === "admin";
+  const presets = presetDates(p.now);
+  const filtered = filters.q !== "" || filters.from !== null || filters.to !== null;
+  const count = (t: OutboxTab): number | null => (p.counts ? p.counts[t] : null);
   return (
     <div data-screen="outbox" className="flex flex-col gap-5">
       <header className="flex flex-col gap-1">
@@ -88,7 +93,7 @@ export function OutboxView(p: OutboxViewProps) {
           {role === "owner" ? (
             <>
               {" "}
-              <Link href={`${base}/settings?section=agent`} className="font-semibold text-brand-text underline">
+              <Link href={`${base}/settings?section=agent`} className="inline-flex min-h-11 items-center font-semibold text-brand-text underline">
                 {say(words, "outbox.autooff.link")}
               </Link>
             </>
@@ -98,12 +103,12 @@ export function OutboxView(p: OutboxViewProps) {
 
       <nav aria-label={say(words, "nav.item.outbox")} className="grid grid-cols-2 gap-2 md:flex md:gap-0 md:border-b md:border-line">
         {TABS.map((t) => (
-          <Link key={t} href={href({ tab: t, after: undefined })} aria-current={t === tab ? "page" : undefined} className={tabLink(t === tab)}>
+          <Link key={t} href={href({ tab: t })} aria-current={t === tab ? "page" : undefined} className={tabLink(t === tab)}>
             {say(words, `outbox.tab.${t}`)}
-            {t === "waiting" && p.waiting !== null && p.waiting > 0 ? (
-              <span className="inline-flex h-6 min-w-6 items-center justify-center rounded-full bg-brand px-1.5 text-sm font-bold text-on-brand">
-                <span aria-hidden="true">{p.waiting >= 100 ? "100+" : p.waiting}</span>
-                <span className="sr-only">{say(words, "outbox.tab.count", { n: p.waiting })}</span>
+            {count(t) !== null && (count(t) as number) > 0 ? (
+              <span data-count={t} className={`inline-flex h-6 min-w-6 items-center justify-center rounded-full px-1.5 text-sm font-bold ${t === "waiting" ? "bg-brand text-on-brand" : "bg-surface-2 text-ink"}`}>
+                <span aria-hidden="true">{(count(t) as number) > 999 ? "999+" : count(t)}</span>
+                <span className="sr-only">{say(words, `outbox.tab.count.${t}`, { n: count(t) as number })}</span>
               </span>
             ) : null}
           </Link>
@@ -112,33 +117,41 @@ export function OutboxView(p: OutboxViewProps) {
 
       <form method="get" action={`${base}/outbox`} className="flex flex-wrap items-end gap-3" role="search">
         <input type="hidden" name="tab" value={tab} />
-        <div>
-          <label htmlFor="outbox-range" className="mb-1.5 block text-sm font-semibold">
-            {say(words, "outbox.range")}
-          </label>
-          <select id="outbox-range" name="range" defaultValue={p.range} className={`${field} w-auto`}>
-            {RANGES.map((r) => (
-              <option key={r} value={r}>
-                {say(words, `outbox.range.${r}`)}
-              </option>
-            ))}
-          </select>
-        </div>
         <div className="min-w-48 flex-1">
           <label htmlFor="outbox-q" className="mb-1.5 block text-sm font-semibold">
             {say(words, "outbox.search")}
           </label>
-          <input id="outbox-q" name="q" type="search" maxLength={100} defaultValue={p.q} placeholder={say(words, "outbox.search.placeholder")} className={field} />
+          <input id="outbox-q" name="q" type="search" maxLength={100} defaultValue={filters.q} placeholder={say(words, "outbox.search.placeholder")} className={field} />
+        </div>
+        <div>
+          <label htmlFor="outbox-from" className="mb-1.5 block text-sm font-semibold">
+            {say(words, "outbox.from")}
+          </label>
+          <input id="outbox-from" name="from" type="date" defaultValue={filters.from ?? ""} className={`${field} w-auto`} />
+        </div>
+        <div>
+          <label htmlFor="outbox-to" className="mb-1.5 block text-sm font-semibold">
+            {say(words, "outbox.to")}
+          </label>
+          <input id="outbox-to" name="to" type="date" defaultValue={filters.to ?? ""} className={`${field} w-auto`} />
         </div>
         <button type="submit" className={secondary}>
           {say(words, "outbox.filter")}
         </button>
-        {p.q || p.range !== "7d" ? (
-          <Link href={`${base}/outbox?tab=${tab}`} className="inline-flex min-h-11 items-center text-sm font-semibold text-brand-text hover:underline">
+      </form>
+      <p className="flex flex-wrap items-center gap-x-4 text-sm" data-part="quick-dates">
+        <Link href={query({ ...presets.today, q: filters.q })} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
+          {say(words, "outbox.range.today")}
+        </Link>
+        <Link href={query({ ...presets.week, q: filters.q })} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
+          {say(words, "outbox.range.7d")}
+        </Link>
+        {filtered ? (
+          <Link href={`${base}/outbox?tab=${tab}`} className="inline-flex min-h-11 items-center font-semibold text-brand-text hover:underline">
             {say(words, "outbox.clear")}
           </Link>
         ) : null}
-      </form>
+      </p>
 
       {p.items === null ? (
         <div className={card}>
@@ -147,7 +160,7 @@ export function OutboxView(p: OutboxViewProps) {
       ) : (
         <>
           <FreshPhotos seconds={p.items.some((m) => m.media.length > 0) ? 600 : null}>
-            <OutboxList key={`${tab}-${p.range}-${p.q}`} items={p.items} tab={tab} role={role} words={words} lang={p.lang} now={p.now} actions={p.actions} leadBase={`${base}/leads`} />
+            <OutboxList key={`${tab}-${filters.q}-${filters.from}-${filters.to}`} items={p.items} tab={tab} role={role} words={words} lang={p.lang} now={p.now} actions={p.actions} leadBase={`${base}/leads`} counts={p.counts} quiet={p.settings ? { start: p.settings.quiet_hours_start, end: p.settings.quiet_hours_end } : null} filtered={filtered} />
           </FreshPhotos>
           {p.more ? (
             <Link href={href({ after: p.more })} className="inline-flex min-h-11 items-center self-start font-semibold text-brand-text hover:underline">

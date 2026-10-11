@@ -10,7 +10,8 @@ import { ASK_WORD_KEYS } from "./ask/ask-words";
 import type { Availability } from "./ask/ask-types";
 import { SendingBanner } from "../outbox/SendingBanner";
 import { NeedsProvider } from "./needs-store";
-import { ago } from "./time";
+import { dayText } from "../date-words";
+import { ago, indiaDay } from "./time";
 import { todayWords } from "./today-words";
 import type { Role, T, TodayData } from "./types";
 
@@ -18,13 +19,8 @@ export { ago };
 
 /** "Sunday, 11 October": the day in India, in English; the other languages get the date the way their own locale writes it. */
 export function dayLine(now: number, lang: string): string {
-  const zone = "Asia/Kolkata";
-  if (lang === "en") {
-    const parts = new Intl.DateTimeFormat("en-IN", { timeZone: zone, weekday: "long", day: "numeric", month: "long" }).formatToParts(new Date(now));
-    const get = (type: string) => parts.find((p) => p.type === type)?.value ?? "";
-    return `${get("weekday")}, ${get("day")} ${get("month")}`;
-  }
-  return new Intl.DateTimeFormat(`${lang}-IN`, { timeZone: zone, weekday: "long", day: "numeric", month: "long" }).format(new Date(now));
+  const [y, m, d] = indiaDay(new Date(now).toISOString()).split("-").map(Number);
+  return dayText(lang, y, m, d, { weekday: "long", month: "long" });
 }
 
 /**

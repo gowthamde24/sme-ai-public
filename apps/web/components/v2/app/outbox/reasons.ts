@@ -1,4 +1,4 @@
-import type { OutboxMessage, OutboxReason } from "@/lib/api/outbox";
+import { OUTBOX_TABS, type OutboxMessage, type OutboxReason, type OutboxTabName } from "@/lib/api/outbox";
 
 /** The word key of every reason a message is in the state it is in (`outbox.reason.<reason>` in the string store). */
 export const reasonKey = (r: OutboxReason) => `outbox.reason.${r}`;
@@ -20,15 +20,9 @@ export function toneOf(m: Pick<OutboxMessage, "status">): string {
   }
 }
 
-/** The four tabs and the API's statuses each one reads (`GET /outbox/messages?status=`). */
-export const TABS = ["waiting", "scheduled", "sent", "blocked"] as const;
-export type OutboxTab = (typeof TABS)[number];
-export const TAB_STATUSES: Record<OutboxTab, readonly OutboxMessage["status"][]> = {
-  waiting: ["needs_approval"],
-  scheduled: ["queued"],
-  sent: ["sent"],
-  blocked: ["blocked", "failed"],
-};
+/** The four tabs, named as the API names them (`GET /outbox/messages?tab=`: blocked also holds the messages that failed). */
+export const TABS = OUTBOX_TABS;
+export type OutboxTab = OutboxTabName;
 
 /** The first non-empty line of the words, for the list. */
 export function firstLine(text: string): string {

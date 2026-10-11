@@ -206,6 +206,14 @@ function OutboxCard({ c, ctx }: { c: Extract<NeedsCard, { type: "outbox" }>; ctx
             <p lang={m.language} className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]">
               {m.text}
             </p>
+            {m.gloss ? (
+              <div data-part="gloss" className="mt-2 border-t border-line pt-2">
+                <p className="text-sm font-semibold text-muted">{say(words, "outbox.gloss")}</p>
+                <p lang="en" className="whitespace-pre-wrap text-base [overflow-wrap:anywhere]">
+                  {m.gloss}
+                </p>
+              </div>
+            ) : null}
             <p className="mt-2 text-sm text-muted">{say(words, "today.goes", { language: say(words, `today.lang.${m.language}`) })}</p>
           </div>
           <p className="text-sm text-muted">{say(words, "today.why", { reason: m.reasonText })}</p>
