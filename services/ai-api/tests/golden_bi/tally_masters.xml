@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ENVELOPE>
+  <HEADER>
+    <TALLYREQUEST>Import Data</TALLYREQUEST>
+  </HEADER>
+  <BODY>
+    <IMPORTDATA>
+      <REQUESTDESC>
+        <REPORTNAME>All Masters</REPORTNAME>
+      </REQUESTDESC>
+      <REQUESTDATA>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>=HYPERLINK("http://x.example","pay")</NAME>
+            <PARENT>Sundry Debtors</PARENT>
+            <COUNTRYNAME>India</COUNTRYNAME>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Ravi &amp; Sons Silks</NAME>
+            <PARENT>Sundry Debtors</PARENT>
+            <ADDRESS.LIST TYPE="String">
+              <ADDRESS>Hyderabad</ADDRESS>
+            </ADDRESS.LIST>
+            <COUNTRYNAME>India</COUNTRYNAME>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>శ్రీ లక్ష్మి చీరలు</NAME>
+            <PARENT>Sundry Debtors</PARENT>
+            <ADDRESS.LIST TYPE="String">
+              <ADDRESS>Bengaluru</ADDRESS>
+            </ADDRESS.LIST>
+            <COUNTRYNAME>India</COUNTRYNAME>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Sales</NAME>
+            <PARENT>Sales Accounts</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Freight Charges</NAME>
+            <PARENT>Indirect Incomes</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Round Off</NAME>
+            <PARENT>Indirect Expenses</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Output CGST @ 2.5%</NAME>
+            <PARENT>Duties &amp; Taxes</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Output IGST @ 5%</NAME>
+            <PARENT>Duties &amp; Taxes</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Output IGST @ 12%</NAME>
+            <PARENT>Duties &amp; Taxes</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+        <TALLYMESSAGE xmlns:UDF="TallyUDF">
+          <LEDGER Action="Create">
+            <NAME>Output SGST @ 2.5%</NAME>
+            <PARENT>Duties &amp; Taxes</PARENT>
+          </LEDGER>
+        </TALLYMESSAGE>
+      </REQUESTDATA>
+    </IMPORTDATA>
+  </BODY>
+</ENVELOPE>

@@ -7,7 +7,7 @@ from datetime import datetime
 from enum import StrEnum
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints
 
 SLUG_PATTERN = r"^[a-z0-9][a-z0-9-]{1,38}[a-z0-9]$"
 
@@ -76,6 +76,14 @@ class AccountSetupIn(BaseModel):
 
     business_type: Literal["textiles", "construction", "other"]
     language: Literal["en", "te", "hi", "kn"]
+    # job BI: the terms and privacy-notice versions the person accepted on the sign-up page (the
+    # current ones: GET /v1/policies/current). Recorded before the business is made.
+    accepted_terms_version: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$"
+    )
+    accepted_privacy_version: str | None = Field(
+        default=None, pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$"
+    )
 
 
 class AccountSetupResultOut(_Out):

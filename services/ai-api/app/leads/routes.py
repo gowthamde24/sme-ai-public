@@ -134,29 +134,25 @@ def preview_lead_import(
     )
 
 
-@router.post("/leads/import", response_model=ImportBatchReport, status_code=201)
-def commit_lead_import(
-    payload: ImportBatchRequest,
-    ctx: SalesPlus,
-    runtime: RuntimeDep,
-    response: Response,
+def commit_import_batch(
+    runtime: Runtime,
+    token: str,
+    tenant_id: uuid.UUID,
+    batch_id: uuid.UUID,
+    rows: list[dict[str, Any]],
+    label: Any,
 ) -> ImportBatchReport:
-    rows = [r.model_dump(exclude_none=True) for r in payload.rows]
+    """Run an import batch for real and key the contacts it CREATED.
+
+    ADR 0020: the keys are computed here, the database flags one that arrives with a suppressed
+    key. Contacts that already existed keep the keys they have (or get them from the backfill). A
+    failure while keying never fails the import. Shared by `POST /leads/import` and the
+    spreadsheet import (job BI).
+    """
     report = runtime.leads.import_leads(
-        ctx.principal.token,
-        ctx.tenant.id,
-        payload.batch_id,
-        rows,
-        dry_run=False,
-        label=payload.label,
+        token, tenant_id, batch_id, rows, dry_run=False, label=label
     )
-    if report.replayed:
-        response.status_code = 200
-    else:
-        # ADR 0020: key every contact this batch CREATED (the keys are computed here, the database
-        # flags one that arrives with a suppressed key). Contacts that already existed
-        # keep the keys they have (or get them from the backfill). A failure here never fails the
-        # import.
+    if not report.replayed:
         for outcome in report.rows:
             if (
                 outcome.contact_created
@@ -167,11 +163,27 @@ def commit_lead_import(
                 suppression.record_for_contact(
                     runtime.suppression,
                     runtime.key_ring,
-                    ctx.principal.token,
+                    token,
                     outcome.contact_id,
                     row.get("contact_email"),
                     row.get("contact_phone"),
                 )
+    return report
+
+
+@router.post("/leads/import", response_model=ImportBatchReport, status_code=201)
+def commit_lead_import(
+    payload: ImportBatchRequest,
+    ctx: SalesPlus,
+    runtime: RuntimeDep,
+    response: Response,
+) -> ImportBatchReport:
+    rows = [r.model_dump(exclude_none=True) for r in payload.rows]
+    report = commit_import_batch(
+        runtime, ctx.principal.token, ctx.tenant.id, payload.batch_id, rows, payload.label
+    )
+    if report.replayed:
+        response.status_code = 200
     return report
 
 

@@ -126,6 +126,11 @@ class Settings(BaseSettings):
     suppression_hmac_key_version: int = 1
     suppression_hmac_key_previous: SecretStr | None = None
     suppression_hmac_key_previous_version: int | None = None
+    # Job BI (ADR 0073): the versions of the terms and the privacy notice that a person accepts.
+    # A new version is a new value here (and the new text on the web); the API refuses to record
+    # an acceptance of any other.
+    terms_version: str = "2026-10-01"
+    privacy_version: str = "2026-10-01"
 
     @property
     def cors_origins(self) -> list[str]:

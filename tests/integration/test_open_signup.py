@@ -1,5 +1,5 @@
 """Job AD / D2 on the real local stack: open sign-up, from the sign-up call to the one business. Real GoTrue (e-mail confirmation ON), the real local
-mail catcher (Mailpit, http://127.0.0.1:54324), real PostgREST and Postgres, our API in-process with the caller's own token.
+mail catcher (Mailpit, the stack's own: 54324 for the owner's stack, 54424 for the agent stack), real PostgREST and Postgres, our API in-process with the caller's own token.
 
 The web server action `signUp` makes exactly the Auth call made here (same body, same metadata); its logic is unit-tested in apps/web.
 Throwaway accounts only; the only mail server involved is the one inside the local stack."""
@@ -20,11 +20,12 @@ from urllib.parse import urlparse
 import httpx
 import operator_sql
 import pytest
+import stack_env
 from conftest import Stack, User, bearer, unique_slug
 from fastapi.testclient import TestClient
 
 ROOT = Path(__file__).resolve().parents[2]
-MAIL = "http://127.0.0.1:54324"
+MAIL = f"http://127.0.0.1:{stack_env.current().mail_port}"  # the mail catcher of the stack in use (54324 owner, 54424 agent)
 META = {"display_name": "Asha Rao", "business_name": "Sri Lakshmi Silks", "terms_version": "draft-1"}
 
 

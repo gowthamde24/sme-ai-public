@@ -20,6 +20,8 @@ from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
 from app.evidence.repository import EvidenceRepository
 from app.followups.repository import FollowupsRepository
+from app.integrations.policy import PolicyVersions
+from app.integrations.repository import IntegrationsRepository
 from app.leads.repository import LeadsRepository
 from app.leadtools.repository import LeadSearchRepository
 from app.orders.repository import OrdersRepository
@@ -66,6 +68,8 @@ class Runtime:
     catalogue_storage: StorageClient | None = None
     lead_search: LeadSearchRepository | None = None
     voice: VoiceStack | None = None
+    integrations: IntegrationsRepository | None = None
+    policies: PolicyVersions | None = None
 
 
 @dataclass(frozen=True)

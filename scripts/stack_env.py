@@ -24,6 +24,7 @@ class Stack:
     project_id: str
     api_port: int
     db_port: int
+    mail_port: int  # the mail catcher's web/API port (Mailpit): where the confirmation mails of the local sign-up land
     workdir: str  # relative to the repository root
 
     @property
@@ -31,8 +32,8 @@ class Stack:
         return f"supabase_db_{self.project_id}"
 
 
-OWNER = Stack("owner", "sme-ai", 54321, 54322, ".")
-AGENT = Stack("agent", "sme-ai-agent", 54421, 54422, "stacks/sme-ai-agent")
+OWNER = Stack("owner", "sme-ai", 54321, 54322, 54324, ".")
+AGENT = Stack("agent", "sme-ai-agent", 54421, 54422, 54424, "stacks/sme-ai-agent")
 STACKS = {s.name: s for s in (OWNER, AGENT)}
 
 

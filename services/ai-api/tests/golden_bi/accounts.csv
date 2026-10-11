@@ -1,0 +1,6 @@
+Record,Date,Voucher No,Order No,Party,GSTIN,Place of Supply,Supply,Taxable Value (INR),CGST (INR),SGST (INR),IGST (INR),Freight (INR),Round Off (INR),Total (INR),Reference
+Sale,05/10/2026,SO-00012,12,Ravi & Sons Silks,,TS,intra-state,68000.00,1712.50,1712.50,0.00,500.00,0.00,71925.00,quote 7
+Sale,08/10/2026,SO-00013,13,శ్రీ లక్ష్మి చీరలు,,KA,inter-state,15000.00,0.00,0.00,1100.00,0.00,0.50,16100.50,quote 9
+Sale,20/10/2026,SO-00014,14,"'=HYPERLINK(""http://x.example"",""pay"")",,TS,intra-state,1000.00,0.00,0.00,0.00,0.00,-1.00,999.00,quote 11
+Payment received,05/10/2026,RC-00012-aaaaaaaa,12,Ravi & Sons Silks,,,,,,,,,,10000.00,against SO-00012
+Refund paid,09/10/2026,PY-00013-bbbbbbbb,13,శ్రీ లక్ష్మి చీరలు,,,,,,,,,,500.00,against SO-00013
