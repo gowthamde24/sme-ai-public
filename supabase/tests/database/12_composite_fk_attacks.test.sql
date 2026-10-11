@@ -15,6 +15,10 @@ select tests.seed_t009();
 select tests.seed_orders();
 select tests.seed_followups();
 select tests.seed_assistant();
+-- job AS: store visits reference outbox messages; the generic attack needs a tenant-B message to aim at (written the way a privileged fixture may)
+insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by)
+select tests.rid('b_fk_message'), tests.tid('b'), l.id, l.contact_id, 'whatsapp', 'Synthetic generic message', 'en', 'info', 'needs_approval', 'category_other', repeat('1', 64), tests.uid('b_owner')
+  from (select id, contact_id from public.leads where tenant_id = tests.tid('b') order by id limit 1) l;
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
@@ -95,7 +99,7 @@ begin
                                 and not t.tgisinternal
                                 and fp.pronamespace = 'app'::regnamespace
                                 and fp.proname in ('append_only', 'guard_immutable_record', 'quote_guard_update', 'order_guard_update',
-                                                            'followup_drafts_guard_update', 'question_drafts_guard_update', 'outbox_messages_guard_update', 'call_requests_guard_update'));
+                                                            'followup_drafts_guard_update', 'question_drafts_guard_update', 'outbox_messages_guard_update', 'call_requests_guard_update', 'store_visits_guard_update'));
     -- agent_runs.lead_id / enquiry_id / conversation_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.

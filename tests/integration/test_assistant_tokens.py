@@ -32,7 +32,9 @@ QUESTIONS = {
     "enquiry": "What does the newest enquiry say?",
 }
 # ceilings in ESTIMATED tokens: a whole question (all its model calls), and one call
-QUESTION_CEILING = 3400
+# job AS added ONE tool (propose_visit: 77 estimated tokens, sent with each of the two calls = +154 a question); the ceiling went from 3400 to 3450 for exactly that. The tool is kept to three small
+# fields for this reason. Anything beyond it fails here.
+QUESTION_CEILING = 3450
 CALL_CEILING = 2000
 
 

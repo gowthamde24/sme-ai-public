@@ -55,6 +55,9 @@ from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
 from app.today.repository import PostgrestTodayRepository
 from app.today.routes import router as today_router
+from app.visits import errors as visit_errors
+from app.visits.repository import PostgrestVisitsRepository
+from app.visits.routes import router as visits_router
 
 SERVICE_NAME = "ai-api"
 SERVICE_VERSION = "0.1.0"
@@ -111,6 +114,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         today=PostgrestTodayRepository(config.rest_url, config.anon_key),
         outbox=PostgrestOutboxRepository(config.rest_url, config.anon_key),
         outbox_adapter=_outbox_adapter(settings),
+        visits=PostgrestVisitsRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -155,8 +159,7 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     repo.WorkspaceLimitReached: ApiError(
         409,
         "workspace_limit_reached",
-        "Your plan includes one workspace and you already have it. "
-        "Ask us if you need another.",
+        "Your plan includes one workspace and you already have it. Ask us if you need another.",
     ),
     # CRM. Deliberately generic: none of these bodies carries a field name, a value, or a hint
     # about whether an id exists in another tenant.
@@ -284,6 +287,28 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     outbox_errors.CustomerStoppedError: ApiError(
         409, "customer_stopped", "This customer asked us to stop. Nothing more is sent or called."
     ),
+    # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
+    visit_errors.VisitStateError: ApiError(
+        409,
+        "visit_state",
+        "That cannot be done in the state the visit is in now. Reload and look again.",
+    ),
+    visit_errors.CustomerErasedError: ApiError(
+        409, "customer_erased", "This customer's record was erased. No visit can be booked."
+    ),
+    visit_errors.ShopClosedError: ApiError(409, "shop_closed", "The shop is closed that day."),
+    visit_errors.SlotInvalidError: ApiError(
+        409, "slot_invalid", "That is not one of the day's visit times."
+    ),
+    visit_errors.SlotFullError: ApiError(
+        409, "slot_full", "Every place in that time is taken. Choose another time."
+    ),
+    visit_errors.PastDateError: ApiError(409, "date_past", "That date has already passed."),
+    visit_errors.NoQuoteError: ApiError(
+        409,
+        "no_approved_quote",
+        "This customer has no approved quote without an order yet, so no order can be made.",
+    ),
     runs_repo.RequirementConfirmedError: ApiError(
         409,
         "requirement_confirmed",
@@ -348,6 +373,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.followups,
                 runtime.today,
                 runtime.outbox,
+                runtime.visits,
             ):
                 if isinstance(
                     repository,
@@ -364,7 +390,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestSuppressionRepository
                     | PostgrestFollowupsRepository
                     | PostgrestTodayRepository
-                    | PostgrestOutboxRepository,
+                    | PostgrestOutboxRepository
+                    | PostgrestVisitsRepository,
                 ):
                     repository.close()
 
@@ -437,6 +464,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(orders_router)
     app.include_router(followups_router)
     app.include_router(outbox_router)
+    app.include_router(visits_router)
     app.include_router(pricelists_router)
     app.include_router(today_router)
     app.include_router(assistant_router)

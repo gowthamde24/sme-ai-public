@@ -529,6 +529,10 @@ begin
     (tests.rid(p || '_er_ob'), t, l, k, 'whatsapp', 'Hello Zed Qxjv, call 98765 43210 or write to zed.qxjv@canary.test', 'en', 'info', 'needs_approval', 'category_other', repeat('3', 64), tests.uid(p || '_owner'));
   insert into public.call_requests (id, tenant_id, lead_id, contact_id, reason, script_draft, language, status, request_sha256, requested_by, decided_by, decided_at, decision_note) values
     (tests.rid(p || '_er_cr'), t, l, k, 'Call Zed Qxjv about the order', 'Hello Zed Qxjv, this is about 9876543210', 'en', 'approved', repeat('4', 64), tests.uid(p || '_owner'), tests.uid(p || '_owner'), now(), 'Reach zed.qxjv@canary.test first');
+  -- job AS: a store visit for the person, with free text that names them (what it is for, a note, why it was cancelled)
+  insert into public.store_visits (id, tenant_id, lead_id, contact_id, company_id, visit_date, starts_at, ends_at, purpose, note, request_sha256, created_by)
+  values (tests.rid(p || '_er_sv'), t, l, k, c, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', 'Bridal sarees for Zed Qxjv', 'Call 98765 43210 before the visit', repeat('5', 64), tests.uid(p || '_owner'));
+  update public.store_visits set status = 'cancelled', closed_at = now(), cancel_reason = 'Zed Qxjv wrote from zed.qxjv@canary.test' where id = tests.rid(p || '_er_sv');
 end $$;
 
 -- Every place a pattern still appears in tenant p, as 'table.column#row id' strings (text, text[] and jsonb columns of EVERY table with a

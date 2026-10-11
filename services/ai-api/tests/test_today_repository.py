@@ -42,6 +42,7 @@ def repo_with(handler: Any) -> tuple[PostgrestTodayRepository, list[httpx.Reques
         ("ai_usage", "ai_usage_today"),
         ("ai_usage_percent", "ai_usage"),
         ("paused_until", "ai_paused_until"),
+        ("ai_usage_week", "ai_usage_week"),
     ],
 )
 def test_each_read_is_one_rpc_with_the_callers_token_and_only_the_tenant(

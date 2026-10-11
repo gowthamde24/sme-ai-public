@@ -37,6 +37,7 @@ ROUTE_WORDS = frozenset(
         "touches", "due", "sent", "sync",
         "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
+        "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }
 )  # fmt: skip

@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta, timezone
 from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
 
 from app.assistant.db import AssistantDb
 from app.assistant.language import Language
@@ -675,6 +675,95 @@ def record_enquiry(ctx: Ctx, args: RecordEnquiryArgs) -> Output:
     return Output(items=(item,))
 
 
+class ProposeVisitArgs(_Args):
+    """A visit to the shop for a customer, as a PROPOSAL: it is booked, not confirmed, and a person confirms it. No amount, no status, no details: the person adds them on the Visits page. The shop's
+    hours, slots and places are checked by the database. (Kept to three small fields: every tool is sent to the model with every question, and job AO's budget for a question is 3,400 tokens.)"""
+
+    lead_id: uuid.UUID
+    date: Annotated[str, StringConstraints(max_length=10)]
+    time: Annotated[str, StringConstraints(max_length=5)]
+
+    @field_validator("date")
+    @classmethod
+    def _a_calendar_date(cls, value: str) -> str:
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", value):
+            raise ValueError("date must be YYYY-MM-DD")
+        return value
+
+    @field_validator("time")
+    @classmethod
+    def _a_clock_time(cls, value: str) -> str:
+        if not re.fullmatch(r"([01][0-9]|2[0-3]):[0-5][0-9]", value):
+            raise ValueError("time must be HH:MM")
+        return value
+
+
+def propose_visit(ctx: Ctx, args: ProposeVisitArgs) -> Output:
+    from app.crm.repository import ConflictError, InvalidReferenceError, InvalidValueError
+    from app.tenancy.repository import Forbidden
+    from app.visits import errors as visit_errors
+
+    if ctx.runtime.visits is None:
+        return Output(note="unavailable")
+    try:
+        datetime.strptime(args.date, "%Y-%m-%d")  # noqa: DTZ007 - a calendar date, not an instant
+    except ValueError:
+        return Output(note="not_a_date")
+    visit_id = _derived(ctx.run_id, "visit", args.lead_id, args.date, args.time)
+    try:
+        ctx.runtime.visits.book(
+            ctx.token,
+            {
+                "p_visit_id": str(visit_id),
+                "p_tenant_id": str(ctx.tenant),
+                "p_lead_id": str(args.lead_id),
+                "p_date": args.date,
+                "p_slot_start": args.time,
+                "p_party_size": 1,
+                "p_purpose": None,
+                "p_note": None,
+                "p_advance_paise": None,
+                "p_source": "assistant",
+            },
+        )
+    except visit_errors.ShopClosedError:
+        return Output(note="shop_closed_that_day")
+    except visit_errors.SlotInvalidError:
+        return Output(note="not_a_visit_time")
+    except visit_errors.SlotFullError:
+        return Output(note="that_time_is_full")
+    except visit_errors.PastDateError:
+        return Output(note="date_has_passed")
+    except visit_errors.VisitStateError:
+        return Output(note="customer_already_booked_then")
+    except visit_errors.CustomerErasedError:
+        return Output(note="customer_erased")
+    except Forbidden:
+        return Output(note="not_allowed_for_this_person")
+    except (InvalidReferenceError, InvalidValueError):
+        return Output(note="not_found")
+    except ConflictError:
+        return Output(note="already_exists_with_other_details")
+    item = ctx.state.add(
+        "store_visit",
+        visit_id,
+        f"Proposed visit on {args.date} at {args.time}",
+        {"status": "booked", "date": args.date, "time": args.time},
+        ("store_visit", visit_id),
+    )
+    _card(
+        ctx,
+        DraftCardOut(
+            id=visit_id,
+            kind="store_visit",
+            title=item.label,
+            summary=draft_summary("store_visit"),
+            target=OpenTarget(type="store_visit", id=visit_id),
+        ),
+    )
+    return Output(items=(item,))
+
+
 READ_TOOLS: tuple[Tool, ...] = (
     Tool(
         "get_today",
@@ -746,6 +835,13 @@ ACTION_TOOLS: tuple[Tool, ...] = (
         "Record an enquiry the owner pasted, against a lead.",
         RecordEnquiryArgs,
         record_enquiry,
+        True,
+    ),
+    Tool(
+        "propose_visit",
+        "Propose a store visit (YYYY-MM-DD, HH:MM India time); a person confirms.",
+        ProposeVisitArgs,
+        propose_visit,
         True,
     ),
 )

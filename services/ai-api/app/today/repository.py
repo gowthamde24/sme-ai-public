@@ -31,6 +31,8 @@ class TodayRepository(Protocol):
 
     def paused_until(self, token: str, tenant_id: uuid.UUID) -> Any: ...
 
+    def ai_usage_week(self, token: str, tenant_id: uuid.UUID) -> Any: ...
+
 
 class PostgrestTodayRepository:
     def __init__(self, rest_url: str, anon_key: str, *, client: httpx.Client | None = None) -> None:
@@ -82,3 +84,7 @@ class PostgrestTodayRepository:
     def paused_until(self, token: str, tenant_id: uuid.UUID) -> Any:
         """Any member: when the AI features are back (an ISO time) or null."""
         return self._rpc("ai_paused_until", token, tenant_id)
+
+    def ai_usage_week(self, token: str, tenant_id: uuid.UUID) -> Any:
+        """Owner or Admin: this week's share of the AI allowance as a percentage, and when the week resets (job AS)."""
+        return self._rpc("ai_usage_week", token, tenant_id)

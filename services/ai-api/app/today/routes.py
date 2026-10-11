@@ -15,7 +15,7 @@ from fastapi import APIRouter, Depends
 from app.auth.deps import AnyMember, OwnerOrAdmin, Runtime, get_runtime
 from app.errors import ApiError
 from app.today import service
-from app.today.models import AgentStatusOut, AiUsageOut, AiUsagePercentOut, TodayOut
+from app.today.models import AgentStatusOut, AiUsageOut, AiUsagePercentOut, AiUsageWeekOut, TodayOut
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}", tags=["today"])
 
@@ -48,6 +48,14 @@ def get_ai_usage(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> AiUsagePercentOut:
     """How much of today's (India day) and this month's AI allowance is used, as percentages. Owner, Admin. No amounts."""
     return service.shape_ai_usage_percent(
         _repo(runtime).ai_usage_percent(ctx.principal.token, ctx.tenant.id)
+    )
+
+
+@router.get("/ai-usage/week", response_model=AiUsageWeekOut)
+def get_ai_usage_week(ctx: OwnerOrAdmin, runtime: RuntimeDep) -> AiUsageWeekOut:
+    """This week's (Monday to Sunday, India time) share of the AI allowance as a percentage, and when the week resets. Owner, Admin. No amounts, no counts."""
+    return service.shape_ai_usage_week(
+        _repo(runtime).ai_usage_week(ctx.principal.token, ctx.tenant.id)
     )
 
 

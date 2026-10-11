@@ -203,6 +203,44 @@ def test_the_second_run_creates_nothing_new(demo: Any) -> None:
     )
 
 
+def test_the_demo_has_store_visits_for_today_and_tomorrow_in_mixed_states(
+    demo: Any, stack: Stack, client: TestClient
+) -> None:
+    """Job AS: invented visits (every name starts with DEMO) so the Visits page and the Today list have something to show. The state of a step the clock allows depends on the hour, so
+    this checks the shape, not the exact states: two days, both today's and tomorrow's, several statuses, every customer DEMO, nothing sent."""
+    summary, _ = demo
+    user = demo_token(stack)
+    base = f"/v1/tenants/{summary.tenant_id}"
+    from datetime import datetime, timedelta, timezone
+
+    today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
+    r = client.get(
+        f"{base}/visits?from={today}&to={today + timedelta(days=1)}", headers=bearer(user)
+    )
+    assert r.status_code == 200, r.text
+    items = r.json()["items"]
+    assert len(items) >= 7, (
+        "five visits today and three tomorrow (one may be skipped if the hours changed)"
+    )
+    assert {i["date"] for i in items} == {
+        today.isoformat(),
+        (today + timedelta(days=1)).isoformat(),
+    }
+    assert len({i["status"] for i in items}) >= 4, "mixed statuses"
+    assert all(i["customer"].startswith("DEMO ") for i in items) and all(
+        i["source"] == "staff" for i in items
+    )
+    assert any(i["advance_requested"] for i in items) and not all(
+        i["advance_requested"] for i in items
+    ), "an advance is optional"
+    assert all(
+        i["confirmation_message_id"] is None and i["reminder_message_id"] is None for i in items
+    ), "the seed sends nothing"
+    now = client.get(f"{base}/visits/today", headers=bearer(user)).json()
+    assert now["date"] == today.isoformat() and now["items"], "Today's list has something to show"
+    assert all(i["who"].startswith("DEMO ") for i in now["items"])
+
+
 def test_a_synthetic_sme_is_represented_end_to_end(
     demo: Any, stack: Stack, client: TestClient
 ) -> None:

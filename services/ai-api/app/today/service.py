@@ -16,6 +16,7 @@ from app.today.models import (
     AgentStatusOut,
     AiUsageOut,
     AiUsagePercentOut,
+    AiUsageWeekOut,
     LastEvent,
     NeedsYouItem,
     RecentStep,
@@ -175,6 +176,19 @@ def shape_ai_usage_percent(raw: Any) -> AiUsagePercentOut:
             resets_at_month=raw["resets_at_month"],
             state=raw["state"],
         )
+    except (KeyError, ValueError):
+        raise _bad("usage answer") from None
+
+
+def shape_ai_usage_week(raw: Any) -> AiUsageWeekOut:
+    """The database's percentage (rounded down, at most 100) and the reset time; this only checks the shape."""
+    if not isinstance(raw, dict):
+        raise _bad("usage answer")
+    week = _int(raw.get("week_percent"), "percent")
+    if not 0 <= week <= 100:
+        raise _bad("usage percent")
+    try:
+        return AiUsageWeekOut(week_percent=week, resets_at_week=raw["resets_at_week"])
     except (KeyError, ValueError):
         raise _bad("usage answer") from None
 
