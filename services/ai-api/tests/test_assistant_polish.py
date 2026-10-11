@@ -189,3 +189,43 @@ def test_old_chat_lines_are_cut_short_and_the_data_markers_hold() -> None:
     assert long_line not in blocks[0].text and "x" * prompts.HISTORY_LINE_CHARS in blocks[0].text
     assert "x" * (prompts.HISTORY_LINE_CHARS + 1) not in blocks[0].text
     assert blocks[0].trust.value == "untrusted"
+
+
+# ------------------------------------------------------- job AY CI fix: a failed run says why in the log
+def _tool_that_raises(exc: Exception) -> Any:
+    def handler(ctx: Any, args: Any) -> None:
+        raise exc
+
+    return SimpleNamespace(name="get_today", handler=handler)
+
+
+def test_a_data_layer_failure_of_a_tool_leaves_a_trace_with_the_code_only(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    from app.agents.errors import AgentDbError
+    from app.errors import ApiError
+
+    runner, _ = runner_with_today()
+    with caplog.at_level("WARNING", logger="app.assistant.runner"):
+        status, *_ = runner._execute(_tool_that_raises(AgentDbError()), None)
+        assert status == "failed"
+        status, *_ = runner._execute(
+            _tool_that_raises(ApiError(502, "upstream_error", "private words")), None
+        )
+        assert status == "refused"
+        # a plain refusal (4xx) is the tool saying no, not a failure: no warning
+        runner._execute(_tool_that_raises(ApiError(404, "not_found", "private words")), None)
+    lines = [r.getMessage() for r in caplog.records if r.name == "app.assistant.runner"]
+    assert len(lines) == 2
+    assert "data_layer_error" in lines[0] and "502 upstream_error" in lines[1]
+    assert not any("private words" in line for line in lines)
+
+
+def test_the_fixed_reply_names_the_repairs_that_were_asked_for(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    runner, _ = runner_with_today()
+    with caplog.at_level("WARNING", logger="app.assistant.runner"):
+        runner._note_fallback(4, {"sources", "complete"})
+    (line,) = [r.getMessage() for r in caplog.records if r.name == "app.assistant.runner"]
+    assert "after 4 turn(s)" in line and line.endswith("repairs asked: complete,sources")
