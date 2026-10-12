@@ -55,7 +55,12 @@ describe("the frame's string store (language track L0)", () => {
   it("fills a placeholder and ships the dictionary of ONE language as props", () => {
     expect(appT("en")("frame.aiused", { percent: 85 })).toBe("85% used");
     expect(appT("te")("frame.ailight", { time: "11 Oct, 12:00 am" })).toContain("11 Oct, 12:00 am");
-    expect(Object.keys(frameLabels("te")).length).toBe(keys.length);
+    // the frame carries its own words, not the screens' (those travel with their page: wordsFor); the payload of every page stays small
+    const frame = frameLabels("te");
+    expect(Object.keys(frame).length).toBeLessThan(keys.length);
+    expect(Object.keys(frame).some((k) => /^(enq|orders|fu|ws|rev|ag|prv|qp|pl|it|acct|cont|cust|supp|prod|comp|sug)\./.test(k))).toBe(false);
+    expect(new TextEncoder().encode(JSON.stringify(frame)).length).toBeLessThan(110_000);
+    expect(frame["nav.item.today"]).toBeTruthy();
   });
   it("is server only: no client component imports it (all four dictionaries would land in the browser bundle)", () => {
     const WEB = path.resolve(import.meta.dirname, "..");
