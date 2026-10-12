@@ -1,4 +1,4 @@
-.PHONY: dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -250,3 +250,12 @@ demo-code:
 # `make db-start`, the API's virtualenv and a browser; it refuses to start while an integration or pgTAP session is using the database. Never uses :3000, :8000 or :8001. See docs/runbooks/e2e-real-stack.md.
 e2e-local:
 	./scripts/e2e-local.sh
+
+# The visual tests (job BX, e2e/visual/README.md): pictures of Today, Visits, Outbox, Catalogue, a lead page, Settings and the landing page at 360 px and on a desktop, light and dark, English and Telugu, compared with the baselines of this
+# system. They run on an invented stand-in backend (no database, no keys, no Docker, nothing of the owner's): ports 54999 and 3014 only. `make visual` builds the web app once and compares (exit 1 if a picture changed; the changed
+# pictures and their diffs go to e2e/visual/out/). `make visual-update` writes the baselines of this system after a change you meant to make. Add ARGS="--no-build --only today,lead" to reuse the last build or pick screens.
+visual:
+	node e2e/visual/run.mjs $(ARGS)
+
+visual-update:
+	node e2e/visual/run.mjs --update $(ARGS)

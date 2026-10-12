@@ -1,0 +1,60 @@
+name: Visual
+
+# The visual tests of job BX (e2e/visual/README.md). They need no secrets and no database: an invented stand-in backend answers for the API and the Auth server.
+# The pictures are compared with e2e/visual/baselines/linux/. Until that folder is committed the job skips itself (it says so); make it by running this workflow by hand with "update" ticked,
+# then download the artifact and commit its baselines/linux/ folder.
+
+on:
+  workflow_dispatch:
+    inputs:
+      update:
+        description: "Write new Linux baselines (uploaded as an artifact) instead of comparing"
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - "apps/web/**"
+      - "e2e/visual/**"
+      - ".github/workflows/visual.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  visual:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Are there Linux baselines?
+        id: baselines
+        run: |
+          if ls e2e/visual/baselines/linux/*.jpg >/dev/null 2>&1; then echo "have=true" >> "$GITHUB_OUTPUT"; else echo "have=false" >> "$GITHUB_OUTPUT"; echo "No Linux baselines are committed yet: the visual comparison is skipped. Run this workflow by hand with update ticked to make them." >> "$GITHUB_STEP_SUMMARY"; fi
+      - uses: actions/setup-node@v4
+        if: ${{ inputs.update || steps.baselines.outputs.have == 'true' }}
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - name: Install
+        if: ${{ inputs.update || steps.baselines.outputs.have == 'true' }}
+        working-directory: apps/web
+        run: |
+          npm ci
+          npx playwright-core install --with-deps chromium
+      - name: Compare with the baselines
+        if: ${{ !inputs.update && steps.baselines.outputs.have == 'true' }}
+        run: node e2e/visual/run.mjs
+      - name: Write the Linux baselines
+        if: ${{ inputs.update }}
+        run: node e2e/visual/run.mjs --update
+      - uses: actions/upload-artifact@v4
+        if: ${{ inputs.update }}
+        with:
+          name: visual-baselines-linux
+          path: e2e/visual/baselines/linux
+      - uses: actions/upload-artifact@v4
+        if: ${{ failure() }}
+        with:
+          name: visual-changed-pictures
+          path: e2e/visual/out
+          if-no-files-found: ignore
