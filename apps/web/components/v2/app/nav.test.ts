@@ -13,6 +13,7 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Store visits", "/visits", "visits", [true, true, true, true]],
     ["Orders", "/orders", "orders", [true, true, true, false]],
     ["Outbox", "/outbox", "outbox", [true, true, true, false]],
+    ["This week", "/report", "report", [true, true, false, false]],
     ["Customers", "", "customers", [true, true, true, true]],
   ],
   "Your business": [

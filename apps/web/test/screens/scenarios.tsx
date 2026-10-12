@@ -561,6 +561,39 @@ add({
   render: async () => (await import("@/app/app/tenants/[tenantId]/visits/page")).default(props({}, {})),
   handlers: (role) => ({ ...base(role), listVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); }, getSlots: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }),
 });
+// ---- This week, the owner's report (job BV) ---------------------------------------------------------------------------------
+const reportHandlers = (role: Role): Record<string, Handler> => ({
+  ...base(role),
+  listVisits: () => ({ from: "2026-10-05", to: "2026-10-11", items: dayVisits }),
+  getOutboxSummary: () => parseOutboxSummary({ waiting: 1, scheduled: 1, sent: 7, blocked: 2, due_now: 0, held_for_later: 1 }),
+  listOutboxMessages: () => parseOutboxPage(outboxPage([{ ...SENT_JSON, reason: "owner_approved", created_at: "2026-10-06T01:00:00Z", decided_at: "2026-10-06T01:20:00Z", sent_at: "2026-10-06T01:21:00Z" }])),
+  getAiUsageWeek: () => ({ week_percent: 37, resets_at_week: "2026-10-11T18:30:00Z" }),
+});
+add({ id: "report", render: async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({})), handlers: reportHandlers });
+add({
+  id: "report-empty",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({})),
+  handlers: (role) => ({
+    ...reportHandlers(role),
+    listVisits: () => ({ from: "2026-10-05", to: "2026-10-11", items: [] }),
+    getOutboxSummary: () => parseOutboxSummary({ waiting: 0, scheduled: 0, sent: 0, blocked: 0, due_now: 0, held_for_later: 0 }),
+    listOutboxMessages: () => parseOutboxPage(outboxPage([])),
+    getAiUsageWeek: () => ({ week_percent: 0, resets_at_week: "2026-10-11T18:30:00Z" }),
+  }),
+});
+add({
+  id: "report-unreadable",
+  roles: ["owner"],
+  render: async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({})),
+  handlers: (role) => ({
+    ...reportHandlers(role),
+    listVisits: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getOutboxSummary: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    listOutboxMessages: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+    getAiUsageWeek: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
+  }),
+});
 // ---- the outbox and Agent OWL's settings (job AX) ---------------------------------------------------------------------------
 const outboxItems = (status: string) => {
   const m = (over: Record<string, unknown>) => ({ ...SENT_JSON, ...over });
