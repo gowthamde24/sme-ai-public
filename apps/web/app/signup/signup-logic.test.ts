@@ -152,3 +152,27 @@ describe("runSignUp", () => {
     expect(out.toLowerCase()).not.toContain("example.test");
   });
 });
+
+describe("the Terms and Privacy Policy versions the page showed (job CF)", () => {
+  it("are kept with the account as metadata, so the first-login setup can record them", async () => {
+    const { signUp, d } = deps();
+    await runSignUp({ ...GOOD, policyVersions: { terms: "2026-11-01", privacy: "2026-10-01" } }, d);
+    expect(signUp).toHaveBeenCalledWith(expect.objectContaining({ options: { data: { display_name: "Asha Rao", business_name: "Sri Lakshmi Silks", terms_version: TERMS_VERSION, accepted_terms_version: "2026-11-01", accepted_privacy_version: "2026-10-01" } } }));
+  });
+  it.each([
+    ["none", undefined],
+    ["a version that is not well formed", { terms: "<script>", privacy: "2026-10-01" }],
+    ["only one of the two", { terms: "2026-11-01" }],
+    ["a number", { terms: 5, privacy: 6 }],
+    ["a version over 32 characters", { terms: "x".repeat(33), privacy: "2026-10-01" }],
+  ])("%s: nothing is kept (the person is asked on the accept page instead), and the sign-up still works", async (_n, policyVersions) => {
+    const { signUp, d } = deps();
+    expect(await runSignUp({ ...GOOD, policyVersions }, d)).toEqual({ ok: true, next: "check-email" });
+    expect(Object.keys((signUp.mock.calls[0][0] as { options: { data: object } }).options.data).sort()).toEqual(["business_name", "display_name", "terms_version"]);
+  });
+  it("are not asked for when the box is not ticked", async () => {
+    const { signUp, d } = deps();
+    expect(await runSignUp({ ...GOOD, acceptTerms: false, policyVersions: { terms: "a", privacy: "b" } }, d)).toEqual({ ok: false, error: "terms_required" });
+    expect(signUp).not.toHaveBeenCalled();
+  });
+});

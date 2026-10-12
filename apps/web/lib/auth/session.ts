@@ -14,6 +14,8 @@ export type AuthenticatedUser = {
   aal: "aal1" | "aal2";
   /** Whether the person has a verified authenticator (from the Auth server, via getUser). */
   hasSecondFactor: boolean;
+  /** The Terms and Privacy Policy versions the person accepted on the sign-up page, kept with the account (job CF); read from what the Auth server just validated. Each is absent unless it is a well-formed version. */
+  signupPolicies?: { terms?: string; privacy?: string };
 };
 
 type Factor = { status?: string; factor_type?: string };
@@ -60,12 +62,16 @@ async function load(strict: boolean): Promise<AuthenticatedUser> {
   // optimistically; this is the check that counts.) The challenge page itself loads with strict = false.
   if (strict && hasSecondFactor && aal !== "aal2") redirect("/auth/mfa");
 
+  const meta = (data.user.user_metadata ?? {}) as Record<string, unknown>;
+  const version = (v: unknown): string | undefined => (typeof v === "string" && /^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$/.test(v) ? v : undefined);
+  const signupPolicies = { terms: version(meta.accepted_terms_version), privacy: version(meta.accepted_privacy_version) };
   return {
     id: data.user.id,
     email: data.user.email ?? null,
     accessToken,
     aal,
     hasSecondFactor,
+    ...(signupPolicies.terms && signupPolicies.privacy ? { signupPolicies } : {}),
   };
 }
 

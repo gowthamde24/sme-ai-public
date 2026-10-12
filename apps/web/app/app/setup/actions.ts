@@ -15,7 +15,7 @@ import { runCompleteSetup } from "./setup-logic";
  */
 export async function completeSetup(input: CompleteSetupInput): Promise<CompleteSetupResult> {
   const user = await requireUser();
-  const result = await runCompleteSetup(input, { token: user.accessToken, submit: submitAccountSetup });
+  const result = await runCompleteSetup(input, { token: user.accessToken, submit: submitAccountSetup, policies: user.signupPolicies });
   if (result.ok) revalidatePath("/app");
   return result;
 }

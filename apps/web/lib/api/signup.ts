@@ -21,6 +21,8 @@ export type SignUpInput = {
   password: string;
   businessName: string;
   acceptTerms: boolean;
+  /** The versions of the Terms and the Privacy Policy the page showed (job CF). Kept with the account and recorded, as accepted at sign-up, when the first-login setup makes the business. Left out when the page could not read them. */
+  policyVersions?: { terms: string; privacy: string };
 };
 
 export type SignUpResult = { ok: true; next: "check-email" } | { ok: false; error: SignUpError };

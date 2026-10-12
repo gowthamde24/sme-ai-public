@@ -121,6 +121,18 @@ await step("A3", "first-login setup makes the business with this person as Owner
   return slug;
 }, page);
 
+await step("A3b", "the Terms and the Privacy Policy accepted on the sign-up page are recorded at the first-login setup (via setup, the versions the API has in force), so the accept page has nothing to ask (job CF)", async () => {
+  const rows = psql(`select string_agg(p.kind || ':' || p.version || ':' || p.via, ',' order by p.kind) from integrations.policy_acceptances p join auth.users u on u.id = p.user_id where u.email = '${EMAIL}'`);
+  const current = await (await fetch(`${API}/v1/policies/current`)).json();
+  const want = `privacy:${current.privacy.version}:setup,terms:${current.terms.version}:setup`;
+  must(rows === want, `the acceptances are "${rows}", wanted "${want}"`);
+  await page.goto(`${BASE}/app/accept`, { waitUntil: "networkidle" });
+  must((await text(page)).includes("You are up to date. There is nothing to accept."), "the accept page still asks");
+  const me = await api("GET", "/v1/me/policy-acceptances", null, await aal2Token());
+  must(me.status === 200 && me.body.needs_acceptance.terms === false && me.body.needs_acceptance.privacy === false, `the API still says ${JSON.stringify(me.body?.needs_acceptance)}`);
+  return `recorded: ${rows}`;
+}, page);
+
 await step("A4", "enrol an authenticator in the browser (QR, key, six digits)", async () => {
   await page.goto(`${BASE}/app/security`);
   await page.click('button:has-text("Set up an authenticator")');

@@ -1,4 +1,4 @@
-import { apiRequest } from "./client";
+import { apiPublicRequest, apiRequest } from "./client";
 import { bad, bool, iso, list, oneOf, optStr, rec, str } from "./shape";
 
 /**
@@ -45,4 +45,21 @@ export async function acceptPolicies(token: string, versions: { terms?: string; 
   if (versions.privacy) body.privacy_version = versions.privacy;
   if (Object.keys(body).length === 0) bad("nothing to accept");
   return parsePolicyStatus(await apiRequest("/v1/me/policy-acceptances", token, { method: "POST", body: JSON.stringify(body) }));
+}
+
+/** The versions an acceptance may name: the API's own pattern (letters, digits, dot, dash, underscore; 1 to 32 characters). */
+export const POLICY_VERSION = /^[A-Za-z0-9][A-Za-z0-9._-]{0,31}$/;
+export type CurrentPolicies = { terms: string; privacy: string };
+
+/** `GET /v1/policies/current` (no sign-in): the versions in force, for the sign-up page to show and to send back. */
+export function parseCurrentPolicies(json: unknown): CurrentPolicies {
+  const x = rec(json, "policies");
+  const v = (k: string): string => {
+    const version = str(rec(x[k], k).version, `${k} version`, 32);
+    return POLICY_VERSION.test(version) ? version : bad(`${k} version`);
+  };
+  return { terms: v("terms"), privacy: v("privacy") };
+}
+export async function getCurrentPolicies(): Promise<CurrentPolicies> {
+  return parseCurrentPolicies(await apiPublicRequest("/v1/policies/current"));
 }

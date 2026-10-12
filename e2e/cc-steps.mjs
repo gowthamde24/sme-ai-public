@@ -488,7 +488,7 @@ export async function ccSteps(c) {
     // the owner signed up through the sign-up page (the terms ticked there): nothing to accept
     await page.goto(`${c.BASE}/app/accept`, { waitUntil: "networkidle" });
     const ownerAccept = await text(page);
-    must(ownerAccept.includes("You are up to date. There is nothing to accept.") || ownerAccept.includes("I have read the Terms and I agree."), "the owner's accept page shows neither 'up to date' nor the boxes");
+    must(ownerAccept.includes("You are up to date. There is nothing to accept."), "the owner (who accepted at sign-up, job CF) is asked again on the accept page");
     // the viewer is removed again (the owner's Team page)
     const me = await gotrue("GET", "/auth/v1/user", null, vt);
     const removed = await api("POST", `${T}/members/${me.body.id}/remove`, { reason: "access_no_longer_needed" }, token);

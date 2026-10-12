@@ -55,12 +55,12 @@ export async function fetchAccountSetup(accessToken: string): Promise<AccountSet
 /** `POST /v1/account/setup`: make the account's one business (once). Two choices only. */
 export async function submitAccountSetup(
   accessToken: string,
-  choices: { businessType: BusinessType; language: SetupLanguage },
+  choices: { businessType: BusinessType; language: SetupLanguage; acceptedTerms?: string; acceptedPrivacy?: string },
 ): Promise<SetupResult> {
   return parseSetupResult(
     await apiRequest("/v1/account/setup", accessToken, {
       method: "POST",
-      body: JSON.stringify({ business_type: choices.businessType, language: choices.language }),
+      body: JSON.stringify({ business_type: choices.businessType, language: choices.language, ...(choices.acceptedTerms && choices.acceptedPrivacy ? { accepted_terms_version: choices.acceptedTerms, accepted_privacy_version: choices.acceptedPrivacy } : {}) }),
     }),
   );
 }
