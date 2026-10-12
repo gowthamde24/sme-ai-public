@@ -190,6 +190,7 @@ await step("J1", "setup wizard on a phone (360 px, light and dark): every step i
     const titles = [];
     for (const [name, advance] of [["shop", "Next"], ["hours", "Next"], ["saree", "Skip for now"], ["agent", "Next"], ["ready", null]]) {
       await p.getByRole("heading", { level: 1 }).waitFor();
+      if (titles.length) await p.waitForFunction((prev) => (document.querySelector("h1")?.textContent || "").trim() !== prev, titles[titles.length - 1]); // the tap has to have moved on before the next step is read
       titles.push((await p.getByRole("heading", { level: 1 }).innerText()).trim());
       await p.screenshot({ path: path.join(SHOTS, `V-wizard-${name}-phone-${scheme}.png`), fullPage: true });
       const m = await measure(p);
@@ -539,6 +540,7 @@ await step("G4", "Outbox: the catalogue message carries its photo as a thumbnail
   await page.waitForSelector("[data-screen=outbox]");
   const there = page.locator("li[data-status]").filter({ hasText: "E2E Kavitha Silks" }).filter({ has: page.locator("[data-part=message-photos]") });
   must((await there.count()) === 1, "the catalogue message is not where it should be");
+  await there.locator("[data-part=message-photos] img").first().evaluate((el) => (el.complete && el.naturalWidth > 0 ? true : new Promise((resolve) => { el.addEventListener("load", () => resolve(true)); el.addEventListener("error", () => resolve(false)); setTimeout(() => resolve(false), 20000); }))); // a picture is judged once it has had time to load
   const thumbs = await there.locator("[data-part=message-photos] img").evaluateAll((els) => els.map((e) => e.complete && e.naturalWidth > 0));
   must(thumbs.length === 1 && thumbs[0], `thumbnails after: ${JSON.stringify(thumbs)}`);
   await shot(page, "outbox-photo-thumbnail");
@@ -765,6 +767,7 @@ await step("Q1", "Help: the menu opens the guides, a guide has its steps and in 
   await page.goto(home, { waitUntil: "networkidle" });
   await page.getByRole("link", { name: "Help", exact: true }).first().click();
   await page.waitForURL(/\/help$/);
+  await page.getByRole("list", { name: "Guides" }).waitFor();
   must((await page.getByRole("list", { name: "Guides" }).getByRole("link").count()) === 8, "the Help screen does not list eight guides");
   await shot(page, "help-index");
   await page.getByRole("link", { name: /Approve a message/ }).click();
