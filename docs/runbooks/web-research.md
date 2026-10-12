@@ -29,6 +29,7 @@ Enter the key hidden, in the terminal that starts the API, never in a file. A pr
 ## What is never stored
 * No web result is saved. The answer's text keeps one line "From the web: title (address)".
 * From Google Places nothing is saved but the place ID, and only when the owner confirms a shop (`POST /places/confirm` with the name and city the owner typed).
+* The map card in the assistant's stream carries Google's real place ID in `place_id` (job CE), live only; the screen sends it as it is to `POST /places/confirm`. It is the one thing from Google that may be kept, and it is kept only when the owner confirms.
 
 ## If something goes wrong
 * "not available" in an answer: the provider is not switched on. "daily limit": see the table above. A provider error is shown as a closed note (`search_unauthorized`, `search_rate_limited`, `search_quota`, `search_timeout`, `search_unavailable`) and, when nothing was billed, the reservation is released.

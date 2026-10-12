@@ -1,6 +1,7 @@
-# The FastAPI service (T006b M2, ADR 0015). Build from the REPOSITORY ROOT:
+# The FastAPI service AND the scheduler worker (T006b M2, ADR 0015, ADR 0072; job CE). ONE image, two commands: Cloud Run runs the API with the default command below; the worker is the same image run as a Cloud Run JOB with
+# `python -m app.scheduler.worker --once` (deploy/cloudrun.sh worker), so there is one thing to build, scan and keep patched. Build from the REPOSITORY ROOT:
 #   docker build -f deploy/Dockerfile.api -t sme-api .
-# No secret is baked in: every setting arrives as an environment variable at run time (see docs/runbooks/hosting-deploy.md).
+# No secret is baked in: every setting arrives as an environment variable at run time (docs/runbooks/hosting-env-and-secrets.md). `make container-smoke` builds it and proves it starts, answers /health, runs as a non-root user and stops cleanly.
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1
@@ -11,11 +12,17 @@ COPY services/ai-api/app ./app
 COPY packages/quote-engine/src ./packages/quote-engine/src
 COPY packages/pure ./packages/pure
 ENV PYTHONPATH=/srv/packages/quote-engine/src:/srv/packages/pure
-RUN pip install . && useradd --system --no-create-home --uid 10001 api
+# Not root: a fixed numeric user with no home and no shell; the code in /srv belongs to root and is read-only to it.
+RUN pip install . && useradd --system --no-create-home --shell /usr/sbin/nologin --uid 10001 api
 USER 10001
 
-# Cloud Run sets PORT. API_ENV must NOT be "development" in a deployment: the API then refuses to start unless the Supabase issuer,
-# audience and JWKS settings are present and https.
+# Cloud Run sets PORT. API_ENV must NOT be "development" in a deployment: the API then refuses to start unless the Supabase issuer, audience and JWKS settings are present and https, and the suppression key is set.
 ENV PORT=8080
 EXPOSE 8080
-CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --proxy-headers --forwarded-allow-ips='*'"]
+# Liveness for `docker run` and compose (Cloud Run ignores this line and uses its own startup probe: deploy/cloudrun.sh). /health touches no dependency, so a database outage does not restart a healthy process.
+HEALTHCHECK --interval=30s --timeout=3s --start-period=20s --retries=3 \
+  CMD ["python", "-c", "import os, sys, urllib.request; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:' + os.environ.get('PORT', '8080') + '/health', timeout=2).status == 200 else 1)"]
+# Graceful stop: Cloud Run sends SIGTERM and waits 10 seconds before it kills the instance. uvicorn then stops accepting, lets a request in flight finish for up to 8 seconds, runs the app's shutdown
+# (the agent pool stops) and exits 0. `exec` makes uvicorn process 1 so it receives the signal. No client address is taken from X-Forwarded-For by uvicorn: the API does that itself, for rate limits only, and only
+# as far as TRUSTED_PROXY_HOPS says (app/hardening/clientip.py).
+CMD ["sh", "-c", "exec uvicorn app.main:app --host 0.0.0.0 --port ${PORT} --no-server-header --no-proxy-headers --timeout-graceful-shutdown 8"]

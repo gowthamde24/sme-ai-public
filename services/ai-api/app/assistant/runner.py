@@ -129,6 +129,7 @@ def source_of(item: Item) -> SourceOut:
             "label": item.label,
             "target": {"type": item.open[0], "id": item.open[1]} if item.open else None,
             "url": str(link) if link else None,
+            "place_id": str(item.fields["place_id"]) if item.type == "place" and item.fields.get("place_id") else None,
         }
     )
 

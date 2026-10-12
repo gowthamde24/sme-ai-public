@@ -1,8 +1,9 @@
 # The Next.js web app (T006b M2, ADR 0015). Build from the REPOSITORY ROOT:
 #   docker build -f deploy/Dockerfile.web -t sme-web \
 #     --build-arg NEXT_PUBLIC_API_BASE_URL=https://<api> --build-arg NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co \
-#     --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<public publishable key> .   (the legacy NEXT_PUBLIC_SUPABASE_ANON_KEY is still accepted)
-# The three NEXT_PUBLIC_ values are PUBLIC by design (they reach the browser) and are fixed at BUILD time. No server secret exists for the web app.
+#     --build-arg NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<public publishable key> --build-arg NEXT_PUBLIC_SITE_URL=https://<the web address> .   (the legacy NEXT_PUBLIC_SUPABASE_ANON_KEY is still accepted)
+# The NEXT_PUBLIC_ values are PUBLIC by design (they reach the browser) and are fixed at BUILD time (changing one means building again). No server secret exists for the web app.
+# NEXT_PUBLIC_SITE_URL is the address the pages are served from (sitemap, share pictures); without it the build says http://localhost:3000. NEXT_PUBLIC_SITE_LIVE=1 is the launch switch (until then every page says noindex).
 FROM node:22-slim AS build
 WORKDIR /repo
 COPY packages/contracts ./packages/contracts
@@ -13,12 +14,19 @@ ARG NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG NEXT_PUBLIC_SITE_URL
+ARG NEXT_PUBLIC_SITE_LIVE
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
+    NEXT_PUBLIC_SITE_LIVE=$NEXT_PUBLIC_SITE_LIVE
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
     NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL \
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY \
     NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY \
     NEXT_TELEMETRY_DISABLED=1
-RUN cd apps/web && npm run build
+# `next build` type-checks every .ts file under apps/web, and a few tests import files from /e2e, which is not (and should not be) in the image: the tests are not part of the running app, so they are removed first.
+RUN cd apps/web && find . -type f -not -path './node_modules/*' \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.test.mts' \) -delete && npm run build
+# Smaller to pull on a cold start: the build cache and the development packages are not needed to run `next start`.
+RUN cd apps/web && rm -rf .next/cache && npm prune --omit=dev
 
 FROM node:22-slim
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=8080
@@ -27,4 +35,6 @@ COPY --from=build /repo /repo
 WORKDIR /repo/apps/web
 USER node
 EXPOSE 8080
-CMD ["sh", "-c", "exec npx next start -p ${PORT} -H 0.0.0.0"]
+# `next` itself, not `npx` (npx may look for a package on the network at start). `exec` makes it process 1, so Cloud Run's SIGTERM reaches it and it stops cleanly. The page /login needs no sign-in and no API:
+# it is the web's "is it up" address (scripts/hosted_smoke.py). The Host header the browser sent must reach this process unchanged (docs/adr/0072, "the Host header question").
+CMD ["sh", "-c", "exec ./node_modules/.bin/next start -p ${PORT} -H 0.0.0.0"]

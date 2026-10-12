@@ -10,10 +10,14 @@
 #   ./deploy/cloudrun.sh api   [--execute]      # build, push, deploy the API  (request-based CPU; CPU_ALWAYS=true for agents)
 #   ./deploy/cloudrun.sh web   [--execute]      # build, push, deploy the web  (request-based CPU, scales to zero)
 #   ./deploy/cloudrun.sh secrets [--execute]    # create the two secrets in Secret Manager (job BG): the suppression key is GENERATED here and never shown; the scheduler password is typed HIDDEN
-#   ./deploy/cloudrun.sh worker [--execute]     # the scheduler worker as a Cloud Run JOB run every few minutes by Cloud Scheduler (job BG): no always-on cost (SCHEDULER_EMAIL, SCHEDULER_SA, WORKER_SCHEDULE)
+#   ./deploy/cloudrun.sh worker [--execute]     # the scheduler worker as a Cloud Run JOB run every few minutes by Cloud Scheduler (job BG): no always-on cost (SCHEDULER_EMAIL, SCHEDULER_SA, WORKER_EVERY_MINUTES)
 #
 # Order for a first deploy: secrets, api, read its URL, then web with API_URL set to it, then set WEB_ORIGIN on the API (redeploy it), run
-# scripts/verify_hosted.py, and last the worker. The full walk-through, with the accounts only the owner can create: docs/runbooks/hosting-owner-runbook.md.
+# `make hosted-smoke` and scripts/verify_hosted.py, and last the worker. The full walk-through, with the accounts only the owner can create: docs/runbooks/hosting-owner-runbook.md
+# (the rehearsal with synthetic data: docs/runbooks/hosting-rehearsal-owner.md; every variable and secret: docs/runbooks/hosting-env-and-secrets.md).
+#
+# Optional, all public values:  RUN_SA=<service account e-mail the service runs as; give it ONLY roles/secretmanager.secretAccessor>   TRUSTED_PROXY_HOPS=1 (how many proxies write X-Forwarded-For; 1 = Cloud Run itself)
+#                               WORKER_EVERY_MINUTES=5 (1 to 59; it is the schedule AND the worker's own interval, which the status card judges "running" by)
 set -euo pipefail
 
 what="${1:-}"; shift || true
@@ -41,7 +45,7 @@ cd "$(dirname "$0")/.."
 
 # The settings the API and the worker share (all public values; the secrets come from Secret Manager below)
 common_env() {
-  printf 'API_ENV=production,SUPABASE_URL=%s,SUPABASE_PUBLISHABLE_KEY=%s,SUPABASE_JWT_ISSUER=%s/auth/v1,SUPABASE_JWT_AUDIENCE=authenticated,SUPABASE_JWKS_URL=%s/auth/v1/.well-known/jwks.json,SUPABASE_JWT_ALGORITHMS=ES256' \
+  printf 'API_ENV=production,LOG_FORMAT=json,SUPABASE_URL=%s,SUPABASE_PUBLISHABLE_KEY=%s,SUPABASE_JWT_ISSUER=%s/auth/v1,SUPABASE_JWT_AUDIENCE=authenticated,SUPABASE_JWKS_URL=%s/auth/v1/.well-known/jwks.json,SUPABASE_JWT_ALGORITHMS=ES256' \
     "$SUPABASE_URL" "$PUBLIC_KEY" "$SUPABASE_URL" "$SUPABASE_URL"
 }
 
@@ -77,11 +81,18 @@ if [ "$what" = "worker" ]; then
   # runs one tick (`--once`) and exits. Two ticks at once are safe (the database hands each message to exactly one). It acts only while the global outbox switch AND the business's automatic sending are on.
   : "${SCHEDULER_EMAIL:?set SCHEDULER_EMAIL (the registered scheduler account; its password is the secret $SECRET_SCHEDULER)}"
   : "${SCHEDULER_SA:?set SCHEDULER_SA (the service account Cloud Scheduler uses to start the job, an email)}"
-  SCHEDULE="${WORKER_SCHEDULE:-*/5 * * * *}"
+  # The schedule and the worker's interval are ONE setting: the status card says the worker is running when its last tick is less than three intervals old, and a job started every 5 minutes that believed
+  # the default interval (60 s) would look stopped four minutes out of five.
+  EVERY="${WORKER_EVERY_MINUTES:-5}"
+  case "$EVERY" in '' | *[!0-9]*) echo "WORKER_EVERY_MINUTES must be a whole number from 1 to 59" >&2; exit 2 ;; esac
+  { [ "$EVERY" -ge 1 ] && [ "$EVERY" -le 59 ]; } || { echo "WORKER_EVERY_MINUTES must be from 1 to 59" >&2; exit 2; }
+  SCHEDULE="*/$EVERY * * * *"
+  INTERVAL=$((EVERY * 60))
   image="$registry/api:$TAG"
   run gcloud run jobs deploy sme-worker --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --command python --args=-m,app.scheduler.worker,--once --cpu 1 --memory 512Mi --max-retries 0 --task-timeout 120s \
-    --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL" \
+    ${RUN_SA:+--service-account "$RUN_SA"} \
+    --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL" \
     --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest"
   run gcloud scheduler jobs create http sme-worker-tick --project "$PROJECT_ID" --location "$REGION" --schedule "$SCHEDULE" --time-zone "Asia/Kolkata" \
     --uri "https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/sme-worker:run" --http-method POST \
@@ -104,11 +115,13 @@ if [ "$what" = "api" ]; then
   if [ "$CPU_ALWAYS" = "true" ]; then cpu_flags=(--no-cpu-throttling --min-instances 1); else cpu_flags=(--cpu-throttling --min-instances 0); fi
   run docker build --platform linux/amd64 -f deploy/Dockerfile.api -t "$image" .
   run docker push "$image"
-  # Two instances at most (--max-instances 2) so a loop cannot run the bill up.
+  # Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
+  # address: the browser never calls the API (the web server does, with the person's token), so this is a fence, not a need. TRUSTED_PROXY_HOPS is what lets the rate limits tell callers apart behind Cloud Run.
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     "${cpu_flags[@]}" --cpu 1 --memory 512Mi --max-instances 2 --concurrency 40 --timeout 300 --port 8080 \
-    --allow-unauthenticated \
-    --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS" \
+    --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=3,periodSeconds=5,failureThreshold=12 \
+    --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
+    --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}" \
     --set-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}"
 else
   : "${API_URL:?set API_URL (the API service URL, https)}"
@@ -116,9 +129,11 @@ else
   image="$registry/web:$TAG"
   run docker build --platform linux/amd64 -f deploy/Dockerfile.web -t "$image" \
     --build-arg "NEXT_PUBLIC_API_BASE_URL=$API_URL" --build-arg "NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL" \
-    --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" .
+    --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" .
   run docker push "$image"
   run gcloud run deploy sme-web --project "$PROJECT_ID" --region "$REGION" --image "$image" \
-    --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 60 --port 8080 --allow-unauthenticated
+    --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 300 --port 8080 \
+    --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=3,periodSeconds=5,failureThreshold=12 \
+    --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"}
 fi
 $execute || echo "(dry run: nothing was run. Add --execute to run the commands above.)"

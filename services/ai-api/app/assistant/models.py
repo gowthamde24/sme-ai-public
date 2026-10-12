@@ -64,6 +64,9 @@ class SourceOut(_Strict):
     target: OpenTarget | None = None
     # job BP: a web page's address, or the link to a place on the map (null for a record of this business)
     url: str | None = None
+    # job CE: for a place on the map ONLY, Google's own place ID (the one thing Google's terms let us keep; `id` above is a stable uuid made from it, for the handle). Sent live with the card so that
+    # the Find retailers screen can send it unchanged to POST /places/confirm. Never stored: a stored chat's sources leave places out (NOT_STORED_SOURCES), and a replay has none. Null for everything else.
+    place_id: str | None = None
 
 
 DRAFT_SUMMARY: dict[str, str] = {

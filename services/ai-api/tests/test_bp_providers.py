@@ -248,6 +248,18 @@ def test_places_request_shape_and_parsing_pro() -> None:
     assert KEY not in repr(places) and "Sri" not in repr(hits[0])  # names and addresses stay out of reprs and logs
 
 
+def test_the_place_id_google_sends_is_kept_exactly_and_an_id_that_could_not_be_confirmed_is_not_shown() -> None:
+    """Job CE: `place_id` is Google's own `id`, unchanged (the stream and POST /places/confirm carry it as it is); one longer than a lead's source can hold (`places:` + 90) is left out."""
+    real = "ChIJN1t_tDeuEmsRUsoyG83frY4"  # the shape Google documents for a place ID
+    long = "ChIJ" + "x" * 87
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json={"places": [{"id": real}, {"id": long}, {"id": "ChIJ" + "x" * 86}]})
+
+    hits = GooglePlaces(KEY, client=_client(handler)).search("saree shops in Guntur")
+    assert [h.place_id for h in hits] == [real, "ChIJ" + "x" * 86]
+
+
 def test_places_ids_tier_asks_for_the_free_field_only() -> None:
     seen: dict[str, Any] = {}
 

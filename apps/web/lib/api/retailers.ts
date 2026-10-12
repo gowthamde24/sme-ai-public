@@ -32,7 +32,11 @@ export async function getResearchStatus(token: string, tenantId: string): Promis
   return parseResearchStatus(await apiRequest(`/v1/tenants/${tenantId}/research/status`, token));
 }
 
+/** Google's place ID: letters, digits, `_` and `-`, 10 to 90 characters (the API shows no longer one and `POST /places/confirm` takes no longer one; job CE). */
+export const PLACE_ID = /^[A-Za-z0-9_-]{10,90}$/;
+
 export interface PlaceCard {
+  /** Google's own place ID, exactly as the stream's `place_id` carries it (job CE). The screen sends it unchanged to `confirmPlace`. It is not a uuid; the stream's own `id` (a uuid made from it) is not used. */
   id: string;
   /** The name Google gives the place, drawn on the card only. */
   label: string;
@@ -56,7 +60,8 @@ export async function searchRetailers(token: string, tenantId: string, input: { 
     if (!isRec(data)) continue;
     if (name === "text" && typeof data.delta === "string") text += data.delta;
     else if (name === "source" && data.kind === "place") {
-      if (cards.length < MAX_CARDS) cards.push({ id: uuid(data.id, "place id"), label: str(data.label, "place label", 200), url: mapsLink(data.url) });
+      // a card without a well-formed place ID cannot be confirmed (an older API): it is left out, not guessed
+      if (cards.length < MAX_CARDS && typeof data.place_id === "string" && PLACE_ID.test(data.place_id)) cards.push({ id: data.place_id, label: str(data.label, "place label", 200), url: mapsLink(data.url) });
     } else if (name === "error") error = word(data.code, "error code", 60);
   }
   return { cards, text: text.slice(0, 4000), error };
@@ -72,11 +77,11 @@ export function parseConfirmedPlace(json: unknown): ConfirmedPlace {
   return { company_id: uuid(x.company_id, "company_id"), lead_id: uuid(x.lead_id, "lead_id"), created: bool(x.created, "created") };
 }
 /**
- * `POST /places/confirm`: the person confirms a shop and TYPES its name and city. The card's own id stands in for the place ID (the stream does not carry Google's: its id is a stable id made from it, so the same place
- * is always the same lead). Owner, Admin and Sales.
+ * `POST /places/confirm`: the person confirms a shop and TYPES its name and city. `placeId` is the card's `id`, which is Google's real place ID from the stream (job CE; the same place is always the same lead,
+ * the API makes the lead's id from it). Owner, Admin and Sales.
  */
 export async function confirmPlace(token: string, tenantId: string, input: { placeId: string; companyName: string; city?: string; region?: string }): Promise<ConfirmedPlace> {
-  if (!isCanonicalUuid(tenantId) || !/^[A-Za-z0-9_-]{10,90}$/.test(input.placeId)) bad("place id");
+  if (!isCanonicalUuid(tenantId) || !PLACE_ID.test(input.placeId)) bad("place id");
   const body: Record<string, string> = { place_id: input.placeId, company_name: input.companyName.trim() };
   if (input.city?.trim()) body.city = input.city.trim();
   if (input.region?.trim()) body.region = input.region.trim();

@@ -6,6 +6,7 @@ web amounts cannot be repeated; the metal price can, labelled as a reference; we
 
 from __future__ import annotations
 
+import json
 import uuid
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
@@ -17,6 +18,7 @@ from app.agents.errors import WebLimitReached
 from app.agents.llm.interface import LlmRequest, LlmResponse, ToolCall, Usage
 from app.agents.web import FetchedPage, FetchError, SearchError, SearchHit
 from app.assistant import prompts
+from app.assistant.models import SourceOut
 from app.assistant.router import CORE, WEB_TOOLS, offered_tools, wants_web
 from app.assistant.runner import AssistantRunner
 from app.assistant.tools import State
@@ -225,7 +227,7 @@ def test_a_search_is_metered_cited_shown_live_and_never_stored_as_a_source() -> 
     assert db.saved is not None and db.saved["sources"] == []  # not a stored pair
     assert "From the web: Saree news (https://news.example-sarees.test/a)" in db.saved["text"]
     live = [d for k, d in events if k == "source"]
-    assert live == [{"type": "source", "kind": "web", "id": live[0]["id"], "label": "Saree news", "target": None, "url": "https://news.example-sarees.test/a"}]
+    assert live == [{"type": "source", "kind": "web", "id": live[0]["id"], "label": "Saree news", "target": None, "url": "https://news.example-sarees.test/a", "place_id": None}]
 
 
 def test_what_the_model_sees_is_marked_untrusted_and_an_obeyed_injection_is_refused() -> None:
@@ -431,9 +433,26 @@ def test_places_are_shown_live_with_a_map_link_but_their_names_are_not_stored() 
     assert db.saved["sources"] == []
     live = [d for k, d in events if k == "source"]
     assert [d["kind"] for d in live] == ["place"] and live[0]["url"].startswith("https://maps.google.com/")
+    # job CE: the card carries Google's REAL place ID (what POST /places/confirm takes), beside the stable uuid made from it
+    assert live[0]["place_id"] == "ChIJFIXTURE000000002" and live[0]["label"] == "Balaji Sarees Wholesale"
+    assert live[0]["id"] != live[0]["place_id"] and uuid.UUID(live[0]["id"])
     # the closed shop is not offered
     assert not any(i.label == "Closed Textiles" for i in state.items.values())
     assert ("quota", "places-search") in db.events
+
+
+def test_only_a_place_carries_a_place_id_and_it_is_never_stored() -> None:
+    """Job CE: web pages and metal prices have `place_id` null; the place ID is not in the stored message (places are not stored), and a replayed or re-read source has none."""
+    places = FixturePlaces()
+    model = Seq(
+        calls(ToolCall("find_retailers", {"query": "saree wholesalers", "city": "Guntur"}), ToolCall("get_metal_prices", {})),
+        answer("Balaji Sarees Wholesale is a match; gold is shown as a reference.", ["s1", "s2"]),
+    )
+    _, db, events, _ = run("find wholesalers in Guntur and the gold rate", model, ResearchWeb(places=places, metals=FixtureMetals()))
+    live = {d["kind"]: d for k, d in events if k == "source"}
+    assert live["place"]["place_id"] == "ChIJFIXTURE000000002" and live["metal_price"]["place_id"] is None
+    assert db.saved is not None and "ChIJFIXTURE" not in json.dumps(db.saved, default=str)
+    assert SourceOut(kind="lead", id=uuid.uuid4(), label="x").place_id is None
 
 
 def test_a_place_query_with_a_phone_number_never_leaves() -> None:
