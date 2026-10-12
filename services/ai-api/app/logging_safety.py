@@ -50,7 +50,7 @@ ROUTE_WORDS = frozenset(
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
         "scheduler", "catalogue", "items", "photos", "order", "remove", "search", "draft-message",
-        "summary", "voice", "research", "places", "business-profile",
+        "summary", "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
         "connectors", "indiamart", "pull", "payment-links", "send", "record",
         "missed-calls", "handle", "connect",

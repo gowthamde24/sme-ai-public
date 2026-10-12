@@ -420,3 +420,15 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | [ ] | **GSTIN is checked for form only.** The check character and the state code prove a number is well formed, not that the business exists or is active. A verification provider (GST Suvidha Provider or reseller, paid per call) needs the owner's written approval (ADR 0017); until then a person trusts what the customer gave. | job CA, ADR 0081 | Owner | Before the first GST invoice is issued from these numbers |
 | [ ] | **A GSTIN typed into a free-text note is not found by the erasure sweep** (the sweep looks for e-mail addresses, phone numbers, website hosts and names). The structured column is nulled by the company-scope erasure. Decide whether the sweep should also search for the company's GSTIN. | job CA, ADR 0081 | Claude 1 | T012 |
 | [ ] | **Tally files carry no GSTIN.** The tag names for a ledger's registration details were not verified against Tally. Export one voucher with GST details from a real TallyPrime, read the XML, then add the tags. | job CA | Owner / Claude 1 | When the accountant uses Tally |
+
+## Hardening and operations (ADR 0082, job CB)
+
+| Status | Item | Source | Owner | When |
+|---|---|---|---|---|
+| [ ] | **Shared rate-limit store** if the API runs more than one worker or instance (the limiter is in process memory). | ADR 0082 | Owner + Claude 1 | Before more than one instance |
+| [ ] | **Set `TRUSTED_PROXY_HOPS`** to the real number of proxies, `METRICS_TOKEN`, `LOG_FORMAT=json`; start uvicorn with `--no-server-header`; use `/ready` for the host health check. | docs/runbooks/hardening.md | Owner | At hosting |
+| [ ] | **Restore drill on a hosted throwaway project** (the local figure, 18.9 s for 2 MB, is plumbing only); record the RTO. | scripts/restore_drill.py | Owner | Before real data |
+| [ ] | **Re-run the load test on hosted infrastructure** with the real model and note p95 per class. | scripts/loadtest.py | Owner + Claude 1 | Before external customers |
+| [ ] | **Re-run `pip-audit` and `npm audit`** before launch and monthly; the 5 dev-only npm advisories (eslint-config-next chain) are open on purpose. | docs/security/owasp-top10-review.md | Claude 1 / Claude 2 | Before launch |
+| [ ] | **Alerting** on 5xx rate, `/ready` failures and 429 spikes. | ADR 0082 | Owner | At hosting |
+| [x] | Security headers, body ceiling, global rate limits, docs off in production, request id and scrubbed access log, `/ready`, `/metrics`, secret scan, restore-drill and load-test scripts. | job CB | |
