@@ -109,6 +109,14 @@ describe("proxy", () => {
     expect(req.headers.get("content-security-policy")).toContain(`'nonce-${req.headers.get("x-nonce")}'`);
   });
 
+  it("tells the renderer where the person is (x-sme-path), and a caller cannot choose it", async () => {
+    refreshSession.mockResolvedValue(signedOut());
+    const req = request("/app/tenants/t1/orders?tab=open");
+    req.headers.set("x-sme-path", "/evil");
+    await proxy(req);
+    expect(req.headers.get("x-sme-path")).toBe("/app/tenants/t1/orders?tab=open");
+  });
+
   it("does not touch the session for pages that need none", async () => {
     await proxy(request("/"));
     expect(refreshSession).not.toHaveBeenCalled();

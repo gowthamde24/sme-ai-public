@@ -11,6 +11,8 @@ import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
 import { FRAME_LOADING, type FrameData } from "./contract";
+import { LabelsProvider } from "./robust/labels-context";
+import { RobustShell } from "./robust/RobustShell";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
 import { TopBar } from "./TopBar";
@@ -47,13 +49,14 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
               <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
             </span>
           </TopBar>
+          <RobustShell labels={labels} />
           {lang !== "en" ? (
             <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8">
               {appT(lang)("frame.draft")}
             </div>
           ) : null}
           <div id="main-content" lang="en" tabIndex={-1} className="min-w-0 flex-1 outline-none">
-            {children}
+            <LabelsProvider labels={labels}>{children}</LabelsProvider>
           </div>
           {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone */}
           <footer data-frame="legal" className="border-t border-line px-4 pb-20 pt-1 md:px-8 md:pb-2">

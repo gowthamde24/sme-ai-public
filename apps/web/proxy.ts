@@ -21,6 +21,8 @@ export async function proxy(request: NextRequest) {
   request.headers.set("Content-Security-Policy", csp);
 
   const { pathname, search } = request.nextUrl;
+  // where the person is, for requireUser(): a signed-out redirect from deep in a page can then carry ?next= (job BW). Always set here, so a caller cannot choose it.
+  request.headers.set("x-sme-path", pathname + search);
   const needsSession =
     pathname.startsWith("/app") ||
     pathname === "/login" ||

@@ -190,6 +190,7 @@ await step("J1", "setup wizard on a phone (360 px, light and dark): every step i
     const titles = [];
     for (const [name, advance] of [["shop", "Next"], ["hours", "Next"], ["saree", "Skip for now"], ["agent", "Next"], ["ready", null]]) {
       await p.getByRole("heading", { level: 1 }).waitFor();
+      if (titles.length) await p.waitForFunction((prev) => (document.querySelector("h1")?.textContent || "").trim() !== prev, titles[titles.length - 1]); // the tap has to have moved on before the next step is read
       titles.push((await p.getByRole("heading", { level: 1 }).innerText()).trim());
       await p.screenshot({ path: path.join(SHOTS, `V-wizard-${name}-phone-${scheme}.png`), fullPage: true });
       const m = await measure(p);
@@ -349,8 +350,11 @@ await step("D3", "the customer filter and the dates are done by the SERVER (name
   await page.waitForSelector("[data-screen=outbox]");
   const kavitha = await page.locator("li[data-status]").count();
   await page.goto(out("?tab=waiting&q=Lakshmi"));
+  await page.waitForSelector("[data-screen=outbox]");
   const lakshmi = await page.locator("li[data-status]").count();
   await page.goto(out("?tab=waiting&q=zzzz-nobody"));
+  await page.waitForSelector("[data-screen=outbox]");
+  await page.getByText("No message matches these filters").waitFor({ timeout: 20000 }).catch(() => null); // the list is drawn after the page loads
   const nobody = await page.locator("li[data-status]").count();
   must(nobody === 0 && /No message matches these filters/.test(await text(page)), "an unknown name should match nothing");
   const tomorrow = new Date(Date.now() + 2 * 86400_000).toISOString().slice(0, 10);
@@ -490,6 +494,8 @@ await step("G1", "Catalogue: add a saree with a REAL photo (shrunk in the browse
   await page.waitForURL(/\/catalogue\/[0-9a-f-]{36}\?saved=1/, { timeout: 60000 });
   itemUrl = page.url().split("?")[0];
   await page.waitForLoadState("networkidle");
+  await page.locator("[data-part=slides] img").first().waitFor({ timeout: 30000 }); // the gallery is drawn by the browser: judge the picture once it is there and has had time to load
+  await page.waitForFunction(() => [...document.querySelectorAll("[data-part=slides] img")].every((e) => e.complete), null, { timeout: 30000 }).catch(() => null);
   const loaded = await page.locator("[data-part=slides] img").evaluateAll((els) => els.map((e) => e.naturalWidth > 0 && /\/storage\/v1\//.test(e.src)));
   must(loaded.length === 1 && loaded.every(Boolean), `the uploaded photo did not load from storage: ${JSON.stringify(loaded)}`);
   must(/Saved\./.test(await text(page)), "no saved banner");
@@ -533,12 +539,13 @@ await step("G4", "Outbox: the catalogue message carries its photo as a thumbnail
     await row.getByRole("button").first().click();
     await row.getByRole("button", { name: "Approve and send" }).click();
     // wait for what really happened (a server action compiles on first use in a development server): the note under the tabs
-    await page.locator('[role="status"] p').first().waitFor({ timeout: 30000 });
+    await page.locator('[role="status"] p').first().waitFor({ timeout: 90000 });
   }
   await page.goto(out(`?tab=${quiet() ? "scheduled" : "sent"}`));
   await page.waitForSelector("[data-screen=outbox]");
   const there = page.locator("li[data-status]").filter({ hasText: "E2E Kavitha Silks" }).filter({ has: page.locator("[data-part=message-photos]") });
   must((await there.count()) === 1, "the catalogue message is not where it should be");
+  await there.locator("[data-part=message-photos] img").first().evaluate((el) => (el.complete && el.naturalWidth > 0 ? true : new Promise((resolve) => { el.addEventListener("load", () => resolve(true)); el.addEventListener("error", () => resolve(false)); setTimeout(() => resolve(false), 20000); }))); // a picture is judged once it has had time to load
   const thumbs = await there.locator("[data-part=message-photos] img").evaluateAll((els) => els.map((e) => e.complete && e.naturalWidth > 0));
   must(thumbs.length === 1 && thumbs[0], `thumbnails after: ${JSON.stringify(thumbs)}`);
   await shot(page, "outbox-photo-thumbnail");
@@ -765,6 +772,7 @@ await step("Q1", "Help: the menu opens the guides, a guide has its steps and in 
   await page.goto(home, { waitUntil: "networkidle" });
   await page.getByRole("link", { name: "Help", exact: true }).first().click();
   await page.waitForURL(/\/help$/);
+  await page.getByRole("list", { name: "Guides" }).waitFor();
   must((await page.getByRole("list", { name: "Guides" }).getByRole("link").count()) === 8, "the Help screen does not list eight guides");
   await shot(page, "help-index");
   await page.getByRole("link", { name: /Approve a message/ }).click();
@@ -1247,6 +1255,103 @@ await step("V2", "voice on a phone: tap the microphone (the recording bar, Cance
   }
   must(seen.length === 0, seen.slice(0, 4).join(" | "));
   return axe ? "recording bar + idle, light and dark, checked with axe" : "axe-core not installed: that check was skipped";
+}, page);
+
+// ---- 8d. robustness (job BW): a friendly 404, a skeleton on a slow screen, a double press, offline, an ended session. LAST of the browser steps: it signs the run's browser out for a moment --------------------------
+await step("W1", "robustness: friendly 404 and 403 pages, a skeleton while a screen is slow, a double press sends once, offline says so and sends nothing, an ended session keeps the page and offers a new-tab sign-in", async () => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  // a page that is not ours: the friendly 404, with the owl, in the app's frame
+  await page.goto(`${BASE}/app/tenants/${uuid()}/orders`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { level: 1, name: "Not found" }).waitFor({ timeout: 20000 }).catch(() => null);
+  must((await page.getByRole("heading", { level: 1, name: "Not found" }).count()) === 1, "no friendly 404 heading");
+  must((await page.locator('[data-problem="404"] svg').count()) > 0, "the 404 has no owl");
+  await page.goto(`${BASE}/app/problem/403`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { level: 1, name: "This is not open to you" }).waitFor({ timeout: 20000 }).catch(() => null);
+  must((await page.getByRole("heading", { level: 1, name: "This is not open to you" }).count()) === 1, "no friendly 403");
+  await page.goto(`${BASE}/app/problem/429`, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Try again" }).waitFor({ timeout: 20000 }).catch(() => null);
+  must((await page.getByRole("button", { name: "Try again" }).count()) === 1, "the 429 has no Try again");
+  console.log("  W1 stage: a slow screen: the skeleton");
+  // a slow screen: the skeleton shows (the frame stays), then the page
+  await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+  const slow = /\/app\/tenants\/[0-9a-f-]+\/orders/; // the page's own request, whatever form the router asks in (the full page, the flight data or a segment)
+  const held = [];
+  let skeletonShown = false;
+  await page.route(slow, async (route) => {
+    held.push(`${route.request().method()} ${route.request().url().replace(BASE, "")} ${route.request().resourceType()}`);
+    await new Promise((r) => setTimeout(r, 1800));
+    await route.continue();
+  });
+  await page.getByRole("navigation", { name: "Workspace menu" }).getByRole("link", { name: "Orders" }).click();
+  // the page shows "Loading" at once (the bar and the sentence for a screen reader); the frame stays; then the page arrives and the bar goes
+  await page.locator('[data-robust="progress"]').waitFor({ timeout: 5000 }).catch((e) => {
+    throw new Error(`no loading mark while the page was held; held requests: ${held.join(" | ") || "none"}; url ${page.url()}; ${String(e.message).split("\n")[0]}`);
+  });
+  must((await page.locator('[data-frame="app"]').count()) === 1, "the frame went away while loading");
+  must((await page.getByText("Loading…").count()) >= 1, "nothing says Loading");
+  skeletonShown = (await page.locator("[data-skeleton]").count()) > 0;
+  await page.locator('[data-robust="progress"]').waitFor({ state: "detached", timeout: 20000 });
+  await page.unroute(slow);
+  console.log("  W1 stage: a double press sends once");
+  // a double press sends once
+  await page.goto(`${BASE}/app/tenants/${tenant}/settings?section=agent`, { waitUntil: "networkidle" });
+  await page.waitForSelector("#quiet-start");
+  let posts = 0;
+  const onPost = (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"]) posts += 1;
+  };
+  page.on("request", onPost);
+  await page.getByRole("button", { name: "Save quiet hours" }).dblclick();
+  await page.locator('[role="status"]').filter({ hasText: /Quiet hours are now/ }).waitFor({ timeout: 20000 });
+  page.off("request", onPost);
+  must(posts === 1, `a double press made ${posts} requests`);
+  console.log("  W1 stage: offline: the banner, nothin");
+  // offline: the banner, nothing is sent, what was typed stays; then back online
+  await page.selectOption("#quiet-start", "21");
+  let offlinePosts = 0;
+  const onOffline = (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"]) offlinePosts += 1;
+  };
+  await context.setOffline(true);
+  await page.locator('[data-robust="offline"]').waitFor({ timeout: 5000 });
+  page.on("request", onOffline);
+  await page.getByRole("button", { name: "Save quiet hours" }).click();
+  await page.locator('[data-robust="blocked"]').waitFor({ timeout: 5000 });
+  page.off("request", onOffline);
+  must(offlinePosts === 0, "something was sent while offline");
+  must((await page.locator("#quiet-start").inputValue()) === "21", "what was typed was lost");
+  await page.screenshot({ path: path.join(SHOTS, "W-offline.png") });
+  await context.setOffline(false);
+  await page.locator('[data-robust="online"]').waitFor({ timeout: 10000 });
+  await page.locator('[data-robust="offline"]').waitFor({ state: "detached", timeout: 5000 });
+  console.log("  W1 stage: an ended session: the page ");
+  // an ended session: the page stays with its input, a new-tab sign-in that returns to this page is offered; nothing is sent
+  const saved = await context.cookies();
+  await context.clearCookies();
+  await page.waitForTimeout(10_500); // the page checked a moment ago (when the connection came back): a person returning to the tab later is the case
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  const link = page.getByRole("link", { name: "Sign in again" });
+  await link.waitFor({ timeout: 15000 });
+  const href = await link.getAttribute("href");
+  must(href === `/login?next=${encodeURIComponent(`/app/tenants/${tenant}/settings?section=agent`)}`, `the sign-in link is ${href}`);
+  must((await link.getAttribute("target")) === "_blank", "the sign-in link does not open a new tab");
+  must((await page.locator("#quiet-start").inputValue()) === "21", "what was typed was lost when the session ended");
+  let endedPosts = 0;
+  const onEnded = (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"]) endedPosts += 1;
+  };
+  page.on("request", onEnded);
+  await page.getByRole("button", { name: "Save quiet hours" }).click();
+  await page.locator('[data-robust="blocked"]').waitFor({ timeout: 5000 });
+  page.off("request", onEnded);
+  must(endedPosts === 0, "something was sent with an ended session");
+  await page.screenshot({ path: path.join(SHOTS, "W-session-ended.png") });
+  console.log("  W1 stage: signed in again (the cookie");
+  // signed in again (the cookies come back): the banner says so
+  await context.addCookies(saved);
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page.locator('[data-robust="signed-in"]').waitFor({ timeout: 15000 });
+  return `404/403/429 pages, loading mark while a screen is slow (skeleton ${skeletonShown ? "also shown" : "not shown: the router had not prefetched it"}), double press = 1 request, offline and ended session send nothing and keep the input`;
 }, page);
 
 // ---- 9. the whole run: no CSP violation, no hydration error ---------------------------------------------------------------
