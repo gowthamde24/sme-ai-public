@@ -1006,6 +1006,8 @@ def test_an_erased_key_is_shown_to_a_client_as_a_plain_key_and_the_server_still_
         "code": "contact_blocked",
         "message": plain,
         "reason": "key",
+        "retry_after": None,
+        "request_id": "test-request-0001",
     }
     assert (
         not re.search(r"erased[\s_-]*key", r.text, re.I) and "erased by right" not in r.text.lower()

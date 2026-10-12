@@ -245,7 +245,10 @@ def client(stack: Stack) -> Iterator[TestClient]:
         # T010 (ADR 0020): a synthetic key (not a secret): contacts made through this app are keyed
         suppression_hmac_key=SecretStr(TEST_SUPPRESSION_KEY),
     )
-    with TestClient(create_app(settings)) as test_client:
+    # a fixed request id on every request: an error body carries it, and the tests that prove a
+    # foreign and an unknown workspace look identical compare whole bodies (job CD)
+    fixed_id = {"x-request-id": "integration-test-0001"}
+    with TestClient(create_app(settings), headers=fixed_id) as test_client:
         yield test_client
 
 

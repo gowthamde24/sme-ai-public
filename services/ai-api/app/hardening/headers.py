@@ -10,6 +10,8 @@ import json
 from collections.abc import Awaitable, Callable, MutableMapping
 from typing import Any
 
+from app.errors import error_body, request_id_of
+
 Scope = MutableMapping[str, Any]
 Message = MutableMapping[str, Any]
 Receive = Callable[[], Awaitable[Message]]
@@ -66,7 +68,7 @@ class SecurityHeadersMiddleware:
 
         declared = next((v for k, v in scope["headers"] if k == b"content-length"), None)
         if declared is not None and declared.isdigit() and int(declared) > self.max_body:
-            await self._too_large(respond)
+            await self._too_large(respond, scope)
             return
 
         seen = 0
@@ -84,10 +86,10 @@ class SecurityHeadersMiddleware:
             await self.app(scope, counted, respond)
         except TooLarge:
             if not started:
-                await self._too_large(respond)
+                await self._too_large(respond, scope)
 
     @staticmethod
-    async def _too_large(send: Send) -> None:
-        body = json.dumps({"error": {"code": "payload_too_large", "message": "The request is too large."}}).encode()
+    async def _too_large(send: Send, scope: Scope) -> None:
+        body = json.dumps(error_body("payload_too_large", "The request is too large.", request_id=request_id_of(scope))).encode()
         await send({"type": "http.response.start", "status": 413, "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode())]})
         await send({"type": "http.response.body", "body": body})

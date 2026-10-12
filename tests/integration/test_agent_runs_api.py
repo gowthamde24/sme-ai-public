@@ -105,7 +105,7 @@ def app_client(
     assert runtime is not None
     if factory is not None:
         runtime = dataclasses.replace(runtime, agents=agents_runtime(stack, factory, **pool))
-    with TestClient(create_app(settings, runtime=runtime)) as client:
+    with TestClient(create_app(settings, runtime=runtime), headers={"x-request-id": "integration-test-0002"}) as client:  # a fixed request id (job CD)
         yield client
 
 
@@ -393,7 +393,7 @@ def test_foreign_tenants_viewers_and_sales_are_refused_by_the_real_database(api:
     # the same run id through tenant B's own path: not found, and the generic message
     r = api.client.get(url(w.b, f"/agent-runs/{run_id}"), headers=bearer(w.b.users["owner"]))
     assert r.status_code == 404 and r.json() == {
-        "error": {"code": "not_found", "message": "Not found."}
+        "error": {"code": "not_found", "message": "Not found.", "retry_after": None, "request_id": "integration-test-0002"}
     }
     # a Viewer cannot start, a Sales user cannot flip the switch, a Sales user cannot see
     # another's run
@@ -511,6 +511,8 @@ def test_a_manual_claim_cannot_be_reviewed_and_the_refusal_has_a_fixed_message(a
     assert r.status_code == 422 and r.json()["error"] == {
         "code": "invalid_value",
         "message": "A value was not accepted.",
+        "retry_after": None,
+        "request_id": "integration-test-0002",
     }
 
 
@@ -856,6 +858,8 @@ def test_the_hourly_start_cap_is_a_429_with_a_fixed_message(operator_on: World, 
         assert over.status_code == 429 and over.json()["error"] == {
             "code": "run_limit_reached",
             "message": "Too many agent runs. Try again later.",
+            "retry_after": None,
+            "request_id": "integration-test-0002",
         }
     finally:
         operator_sql.sql(

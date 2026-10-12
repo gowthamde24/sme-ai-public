@@ -14,10 +14,15 @@
         "error": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["code", "message"],
+          "required": ["code", "message", "retry_after", "request_id"],
           "properties": {
             "code": { "type": "string" },
-            "message": { "type": "string" }
+            "message": { "type": "string" },
+            "retry_after": { "type": ["integer", "null"], "minimum": 0, "description": "Whole seconds to wait before trying again (also the Retry-After header); null when waiting does not help." },
+            "request_id": { "type": ["string", "null"], "description": "The x-request-id of this response, to quote to the owner." },
+            "fields": { "type": "array", "items": { "type": "string" }, "description": "422 only: the NAMES of the fields that were refused (never their values)." },
+            "reason": { "type": "string", "description": "A closed word that says why, on the refusals that have one." },
+            "until": { "type": "string", "description": "A time, on a pause (ai_paused_until)." }
           }
         }
       }

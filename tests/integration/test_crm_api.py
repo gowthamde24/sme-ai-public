@@ -351,6 +351,8 @@ def test_foreign_and_nonexistent_parents_give_identical_422s(world: World) -> No
                 "error": {
                     "code": "invalid_reference",
                     "message": "A referenced record does not exist.",
+                    "retry_after": None,
+                    "request_id": "integration-test-0001",
                 }
             }
         ), (entity, what)
@@ -1012,7 +1014,8 @@ def test_personal_data_never_appears_in_an_error_body_or_a_log_line(
     assert "canary" not in bodies.lower() and "zq91" not in bodies.lower() and "98765" not in bodies
     for r in erroring:
         body = r.json()
-        assert set(body) == {"error"} and set(body["error"]) <= {"code", "message"}, r.text
+        allowed = {"code", "message", "retry_after", "request_id", "fields"}
+        assert set(body) == {"error"} and set(body["error"]) <= allowed, r.text
 
     logs = "\n".join(rec.getMessage() + str(rec.exc_text or "") for rec in caplog.records)
     assert logs, "logging was captured"

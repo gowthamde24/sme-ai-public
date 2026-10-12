@@ -8,11 +8,11 @@ NOTE: no `from __future__ import annotations` here, for the same reason as app/o
 
 from typing import Annotated, Any
 
-from fastapi import APIRouter, Depends, Response
+from fastapi import APIRouter, Depends, Request, Response
 from fastapi.responses import JSONResponse
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
-from app.errors import ApiError
+from app.errors import ApiError, error_body, request_id_of
 from app.pricelists import csv_port, service
 from app.pricelists.models import CommitIn, CommitOut, PreviewIn, PreviewOut
 from app.tenancy.models import Role
@@ -50,7 +50,7 @@ def preview_price_list(body: PreviewIn, ctx: OwnerAdminStrong, runtime: RuntimeD
 
 @router.post("/price-lists/import", response_model=CommitOut, status_code=201)
 def commit_price_list(
-    body: CommitIn, ctx: OwnerAdminStrong, runtime: RuntimeDep, response: Response
+    body: CommitIn, ctx: OwnerAdminStrong, runtime: RuntimeDep, response: Response, request: Request
 ) -> CommitOut | JSONResponse:
     """Make a price-list VERSION from a file (Owner or Admin, second factor). An exact retry replays (200); a file with issues is refused with them (422) and nothing is saved."""
     try:
@@ -65,10 +65,11 @@ def commit_price_list(
     except service.PriceListInvalid as exc:
         return JSONResponse(
             {
-                "error": {
-                    "code": "price_list_invalid",
-                    "message": "The file has problems. Nothing was saved.",
-                },
+                **error_body(
+                    "price_list_invalid",
+                    "The file has problems. Nothing was saved.",
+                    request_id=request_id_of(request.scope),
+                ),
                 "issues": [i.model_dump(mode="json") for i in exc.issues],
             },
             status_code=422,

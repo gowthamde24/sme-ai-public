@@ -252,6 +252,8 @@ def test_a_file_with_issues_is_refused_with_them_and_nothing_is_sent(w: World) -
         "error": {
             "code": "price_list_invalid",
             "message": "The file has problems. Nothing was saved.",
+            "retry_after": None,
+            "request_id": "test-request-0001",
         },
         "issues": [{"row": 1, "column": "sku", "code": "UNKNOWN_SKU"}],
     }
@@ -442,7 +444,7 @@ def test_a_malformed_parser_result_is_a_fixed_502_and_nothing_is_saved(
     assert r.status_code == 502 and code(r) == "price_csv_failed"
     assert r.json()["error"]["message"] == "The file could not be checked. Nothing was saved."
     assert (
-        set(r.json()["error"]) == {"code", "message"}
+        set(r.json()["error"]) == {"code", "message", "retry_after", "request_id"}
         and "pydantic" not in r.text.lower()
         and "input_value" not in r.text
     )
