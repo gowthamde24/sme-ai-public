@@ -147,7 +147,7 @@ def test_preview_gives_a_verdict_per_row_and_a_job(w: World) -> None:
     assert r.status_code == 200
     body = r.json()
     assert [(x["line"], x["status"], x["label"]) for x in body["rows"]] == [(2, "will_create", "Ravi Silks"), (3, "will_create", "Lakshmi Sarees")]
-    assert body["rows"][0]["note"] == "contact_needs_email" and body["counts"]["rows"] == 2 and body["counts"]["will_create"] == 2
+    assert body["rows"][0]["note"] == "contact_named_after_company" and body["counts"]["rows"] == 2 and body["counts"]["will_create"] == 2
     assert body["job"]["id"] == JOB and body["job"]["status"] == "previewed" and body["job"]["file_sha256"] == hashlib.sha256(CUSTOMERS).hexdigest()
     assert "Ravi" not in json.dumps(w.db.jobs[JOB]), "the stored job holds hashes, numbers and counts, no cell value"
 

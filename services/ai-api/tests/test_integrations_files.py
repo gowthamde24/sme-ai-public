@@ -201,7 +201,7 @@ def test_customer_rows_become_import_rows() -> None:
 
 def test_contact_details_without_an_email_keep_the_company_and_say_so() -> None:
     p = prep_customers("Party,Mobile,Name\nRavi Silks,9876543210,Ravi\n")
-    assert p.rows == [{"company_name": "Ravi Silks", "source": "Spreadsheet import"}] and p.notes == ["contact_needs_email"]
+    assert p.rows == [{"company_name": "Ravi Silks", "contact_name": "Ravi", "contact_phone": "+919876543210", "source": "Spreadsheet import"}] and p.notes == [None], "a phone-only contact is kept, its number stored as +91 and ten digits"
 
 
 @pytest.mark.parametrize(
@@ -217,7 +217,7 @@ def test_dangerous_cells_refuse_their_row_with_a_code_and_no_echo(cell: str, cod
 
 def test_a_phone_with_a_plus_is_not_a_formula_and_a_missing_name_is_an_issue() -> None:
     p = prep_customers("Party,Phone,Email,Name\nA Silks,+91 98765 43210,a@example.test,A\n,+91 1,,\n")
-    assert len(p.rows) == 1 and p.rows[0]["contact_phone"] == "+91 98765 43210"
+    assert len(p.rows) == 1 and p.rows[0]["contact_phone"] == "+919876543210"
     assert [(i.line, i.code) for i in p.issues] == [(3, "company_name_missing")]
 
 
@@ -289,7 +289,7 @@ def test_the_sample_files_read_as_documented() -> None:
     te = load_grid((golden / "sample_customers_telugu.csv").read_bytes())
     assert suggest(te.header) == {"company_name": 0, "contact_name": 1, "contact_phone": 2, "contact_email": 3, "city": 4}
     prepared = importer.prepare_customers(te, suggest(te.header))
-    assert len(prepared.rows) == 2 and prepared.issues == [] and prepared.notes == [None, "contact_needs_email"]
+    assert len(prepared.rows) == 2 and prepared.issues == [] and prepared.notes == [None, "contact_named_after_company"]
     hi = load_grid((golden / "sample_customers_hindi.csv").read_bytes())
     assert suggest(hi.header) == {"company_name": 0, "contact_phone": 1, "city": 2}
     st = load_grid((golden / "sample_stock.csv").read_bytes())

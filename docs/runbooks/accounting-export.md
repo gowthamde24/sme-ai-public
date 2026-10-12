@@ -18,7 +18,7 @@ Source (read 2026-10-11): TallyPrime help, "How to Import Data from JSON or XML 
 4. **Alt+O (Import) > Transactions**, give the path of `2-vouchers.xml`; Enter.
 5. Check **Day Book**, **Sales Register** and the party ledgers. Problems are in the **Exceptions report**; the details are in `Tally.imp` (Alt+O > Configuration > Enable detailed log).
 6. Receipts and refunds use the ledger **Cash** (it exists in every company). If the money went to a bank, change it in Tally afterwards, or edit the file's ledger name before importing.
-7. Import **each range once**: the files carry no GUID, so importing the same file again creates the vouchers again.
+7. Importing a range **again**: every voucher carries a stable GUID (the same order or payment always has the same one; job BO). Set **Alt+O > Configuration > "Overwrite voucher when a voucher with same GUID exists" = Yes** first and the earlier vouchers are replaced; with the default (No) Tally creates them a second time. Voucher numbers (`SO-00012`...) never change.
 * Release notes: XML works in every TallyPrime release (Excel needs 4.0+, JSON 7.0+). Names in Telugu, Hindi and other scripts need TallyPrime (Unicode); ERP 9 may show them wrongly. The company's F11 features must be the ones its vouchers use.
 * The GST ledgers are plain ledgers: if you file GST from Tally, set each one's GST type and rate in Tally (F12).
 * A sample of the files: `services/ai-api/tests/golden_bi/tally_masters.xml` and `tally_vouchers.xml` (invented names; the file is the test's golden, so it cannot drift).

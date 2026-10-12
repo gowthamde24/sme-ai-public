@@ -31,6 +31,8 @@ from app.catalogue.vocab import (
     PriceBand,
 )
 from app.requirements.capture_text import prepare_body, prepare_subject
+from app.suppression.keys import normalise_phone
+from app.tenancy.repository import RepositoryError
 from app.today.service import format_rupees, shape_today
 
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -291,21 +293,46 @@ class FindCustomersArgs(_Args):
     query: Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=60)]
 
 
+_PHONE_QUERY = re.compile(r"^[+\d\s().\-]{6,40}$")
+
+
+def _company_of_phone(ctx: Ctx, query: str) -> list[dict[str, Any]]:
+    """A question that is a phone number (any way of writing it: +91, spaces, a leading 0): the company of the contact who holds it (job BO). Nothing about the number goes back to the model."""
+    if not _PHONE_QUERY.fullmatch(query) or ctx.runtime.integrations is None:
+        return []
+    digits = normalise_phone(query)
+    if digits is None or len(digits) < 6:
+        return []
+    try:
+        hit = ctx.runtime.integrations.contact_by_phone(ctx.token, ctx.tenant, query)
+    except RepositoryError:
+        return []
+    if not hit.get("found") or hit.get("company_id") is None:
+        return []
+    return ctx.db.rest_rows(
+        "assistant_companies",
+        "/companies",
+        {"select": "id,name,city", "id": f"eq.{hit['company_id']}", "archived_at": "is.null", "limit": "1"},
+    )
+
+
 def find_customers(ctx: Ctx, args: FindCustomersArgs) -> Output:
     q = _like(args.query)
     if len(q) < 2:
         return Output(note="empty_query")
-    companies = ctx.db.rest_rows(
-        "assistant_companies",
-        "/companies",
-        {
-            "select": "id,name,city",
-            "name": f"ilike.*{q}*",
-            "archived_at": "is.null",
-            "order": "name.asc",
-            "limit": "5",
-        },
-    )
+    companies = _company_of_phone(ctx, args.query)
+    if not companies:
+        companies = ctx.db.rest_rows(
+            "assistant_companies",
+            "/companies",
+            {
+                "select": "id,name,city",
+                "name": f"ilike.*{q}*",
+                "archived_at": "is.null",
+                "order": "name.asc",
+                "limit": "5",
+            },
+        )
     items: list[Item] = []
     if companies:
         ids = ",".join(str(c["id"]) for c in companies)

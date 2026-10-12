@@ -9,6 +9,7 @@ bank details (receipts go to the ledger named Cash unless you pass another). The
 from __future__ import annotations
 
 import re
+import uuid
 from xml.dom import minidom  # noqa: S408 - only our own output is parsed, to indent it
 from xml.sax.saxutils import escape
 
@@ -75,10 +76,19 @@ def _entry(ledger: str, paise: int, *, debit: bool, party: bool = False, bill: s
     return f"<LEDGERENTRIES.LIST>{''.join(bits)}</LEDGERENTRIES.LIST>"
 
 
-def _voucher(kind: str, date: str, number: str, party: str, narration: str, entries: list[str]) -> str:
+NAMESPACE = uuid.UUID("5e5d4a52-6a0f-4d5c-9c0e-3f7b1d2a9b10")  # fixed: the same order or payment always gets the same GUID
+
+
+def voucher_guid(kind: str, record_id: str) -> str:
+    """A STABLE Tally voucher GUID (job BO): `<uuid>-00000001`, the shape Tally writes itself, derived from the order or payment id, so importing the same range again REPLACES the voucher when
+    Tally's import option "Overwrite voucher when a voucher with same GUID exists" is Yes, instead of creating it twice."""
+    return f"{uuid.uuid5(NAMESPACE, f'{kind}:{record_id}')}-00000001"
+
+
+def _voucher(kind: str, date: str, number: str, party: str, narration: str, entries: list[str], guid: str) -> str:
     return (
         f'<TALLYMESSAGE xmlns:UDF="TallyUDF"><VOUCHER VCHTYPE="{kind}" ACTION="Create" OBJVIEW="Accounting Voucher View">'
-        f"<DATE>{tally_date(date)}</DATE><VOUCHERTYPENAME>{kind}</VOUCHERTYPENAME><VOUCHERNUMBER>{x(number)}</VOUCHERNUMBER>"
+        f"<DATE>{tally_date(date)}</DATE><GUID>{guid}</GUID><REMOTEID>{guid}</REMOTEID><VOUCHERTYPENAME>{kind}</VOUCHERTYPENAME><VOUCHERNUMBER>{x(number)}</VOUCHERNUMBER>"
         f"<PARTYLEDGERNAME>{x(party)}</PARTYLEDGERNAME><PERSISTEDVIEW>Accounting Voucher View</PERSISTEDVIEW><ISINVOICE>No</ISINVOICE>"
         f"<NARRATION>{x(narration)}</NARRATION>{''.join(entries)}</VOUCHER></TALLYMESSAGE>"
     )
@@ -94,15 +104,15 @@ def sale_voucher(s: Sale) -> str:
         entries.append(_entry(t.ledger, t.paise, debit=False))
     if s.round_off_paise:
         entries.append(_entry(ROUND_LEDGER, abs(s.round_off_paise), debit=s.round_off_paise < 0))
-    return _voucher("Sales", s.date, s.voucher_no, s.party, f"Order {s.order_no} (quote {s.quote_no}), {s.supply.replace('_', '-')} supply to {s.state_code}", entries)
+    return _voucher("Sales", s.date, s.voucher_no, s.party, f"Order {s.order_no} (quote {s.quote_no}), {s.supply.replace('_', '-')} supply to {s.state_code}", entries, voucher_guid("sale", s.order_id))
 
 
 def payment_voucher(p: Payment, cash_ledger: str = CASH_LEDGER) -> str:
     if p.kind == "payment":  # money in: the cash or bank ledger is debited, the party credited
         entries = [_entry(cash_ledger, p.amount_paise, debit=True), _entry(p.party, p.amount_paise, debit=False, party=True)]
-        return _voucher("Receipt", p.date, p.voucher_no, p.party, f"Received against order {p.order_no} ({p.sale_voucher_no})", entries)
+        return _voucher("Receipt", p.date, p.voucher_no, p.party, f"Received against order {p.order_no} ({p.sale_voucher_no})", entries, voucher_guid("payment", p.payment_id))
     entries = [_entry(p.party, p.amount_paise, debit=True, party=True), _entry(cash_ledger, p.amount_paise, debit=False)]
-    return _voucher("Payment", p.date, p.voucher_no, p.party, f"Refunded against order {p.order_no} ({p.sale_voucher_no})", entries)
+    return _voucher("Payment", p.date, p.voucher_no, p.party, f"Refunded against order {p.order_no} ({p.sale_voucher_no})", entries, voucher_guid("refund", p.payment_id))
 
 
 def vouchers_xml(acc: Accounting, cash_ledger: str = CASH_LEDGER) -> str:
@@ -128,7 +138,8 @@ Import, in this order (TallyPrime Release 4.0 or later: XML works in every relea
      (Alt+O > Configuration > Enable detailed log).
 
 Notes
-  * Import each date range ONCE. Importing the same file again creates the vouchers again (there is no GUID in the file); to redo a range, delete the earlier vouchers first.
+  * Every voucher carries a STABLE GUID (the same order or payment always has the same one). To import a range again without doubling it, set Alt+O > Configuration > "Overwrite voucher when
+    a voucher with same GUID exists" to Yes first: the earlier vouchers are replaced. With the default (No) Tally creates them again. The voucher numbers (SO-00012 ...) never change either.
   * A voucher is Sales (the party is debited the order total; Sales, Freight Charges and the GST ledgers are credited), Receipt (money in) or Payment (a refund). Round Off holds
     any paisa difference between an order total and its parts.
   * Names in Telugu, Hindi or other scripts need TallyPrime (Unicode); Tally ERP 9 may show them wrongly.

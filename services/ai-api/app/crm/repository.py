@@ -148,7 +148,10 @@ CLAIMS_PER_COMPANY = 200
 
 # ----------------------------------------------------------------------------- classification
 _CONSTRAINT = re.compile(r'constraint "([A-Za-z0-9_]+)"')
-_UNIQUE_FIELDS = {"contacts_tenant_email_key": "email", "products_tenant_id_sku_key": "sku"}
+_UNIQUE_FIELDS = {
+    "contacts_tenant_email_key": "email",
+    "products_tenant_id_sku_key": "sku",
+}
 _VALUE_CODES = {"22023", "22P02", "22001", "22003", "22007", "22008", "23502", "22P05"}
 
 

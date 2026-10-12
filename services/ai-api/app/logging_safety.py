@@ -34,7 +34,7 @@ ROUTE_WORDS = frozenset(
         # job BI: exports, imports, the calendar feed (its token is never a word: always redacted)
         "accounting", "formats", "imports", "spreadsheet", "inspect", "jobs",
         "calendar-feed", "calendar", "feed", "revoke", "policies", "current",
-        "policy-acceptances",
+        "policy-acceptances", "by-phone",
         "orders", "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",

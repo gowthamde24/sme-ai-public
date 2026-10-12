@@ -21,6 +21,7 @@ from enum import StrEnum
 from typing import Annotated, Any, Generic, TypeVar
 
 from pydantic import (
+    AfterValidator,
     BaseModel,
     BeforeValidator,
     ConfigDict,
@@ -29,6 +30,8 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+
+from app.crm.phone import canonical_phone  # noqa: E402
 
 # ----------------------------------------------------------------------------- primitives
 _CANONICAL_UUID = re.compile(
@@ -63,7 +66,11 @@ Email = Annotated[
     str,
     StringConstraints(strip_whitespace=True, max_length=254, pattern=r"^[^@\s]+@[^@\s]+\.[^@\s]+$"),
 ]
-Phone = Annotated[str, StringConstraints(strip_whitespace=True, min_length=3, max_length=32)]
+Phone = Annotated[
+    str,
+    StringConstraints(strip_whitespace=True, min_length=3, max_length=32),
+    AfterValidator(canonical_phone),  # job BO: an Indian mobile is stored as +91 and ten digits
+]
 
 # Same shape as the database CHECK on consent_events.evidence_ref.
 EVIDENCE_REF_PATTERN = r"^[a-z][a-z0-9_-]{1,19}:[A-Za-z0-9._#/-]{1,96}$"
