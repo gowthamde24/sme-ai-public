@@ -39,6 +39,9 @@ ROUTE_WORDS = frozenset(
         "data-exports", "deletion-requests", "retention", "grievances", "link",
         # job BR: WhatsApp (no secret in the path; the verify token travels in the query, redacted)
         "webhooks", "whatsapp", "templates", "activate", "disable", "submit", "read",
+        # job BY: the team, the shop's basics, the report, notifications and push
+        "team", "invitations", "accept", "role", "reports", "weekly", "profile",
+        "notifications", "seen", "push", "push-subscriptions", "public-key",
         "orders", "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",

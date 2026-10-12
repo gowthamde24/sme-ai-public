@@ -21,6 +21,10 @@ import httpx
 
 from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
+from app.notifications.repository import PostgrestNotificationsRepository
+from app.notifications.runner import PushRunner
+from app.notifications.webpush import WebPushSender
+from app.notifications.wiring import build_vapid
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
 from app.privacy.housekeeping import Housekeeping
@@ -54,6 +58,7 @@ class Worker:
         monotonic: Callable[[], float] = time.monotonic,
         storage: StorageClient | None = None,
         housekeeping: Housekeeping | None = None,
+        push: PushRunner | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -65,6 +70,7 @@ class Worker:
         # the worker signs the photos of a message it has CLAIMED with its own token: the database lets the registered worker read exactly those files (job BB), and no service key exists
         self._sign_media = media_signer(storage)
         self._housekeeping = housekeeping
+        self._push = push
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -78,6 +84,7 @@ class Worker:
                 sign_media=self._sign_media,
             )
             self._privacy_housekeeping(token)
+            self._push_to_the_team(token)
             return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
@@ -98,6 +105,17 @@ class Worker:
             raise
         except Exception as exc:
             logger.error("privacy housekeeping crashed: %s", exc.__class__.__name__)
+
+    def _push_to_the_team(self, token: str) -> None:
+        """Job BY: tell opted-in members what newly waits for them (web-push; off unless VAPID keys are set). Independent of the outbox switches; a failure here never fails the tick."""
+        if self._push is None:
+            return
+        try:
+            self._push.run(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("push pass crashed: %s", exc.__class__.__name__)
 
     def run_forever(self, stop: threading.Event) -> None:
         """Tick, then wait for the next deadline (not `interval` after the tick ended: a slow tick does not push the schedule back). Returns when `stop` is set."""
@@ -139,6 +157,7 @@ def build_worker(settings: Settings) -> Worker:
         client=httpx.Client(timeout=httpx.Timeout(10.0, connect=5.0)),
     )
     storage = HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key)
+    vapid = build_vapid(settings)
     return Worker(
         PostgrestSchedulerRepository(config.rest_url, config.anon_key),
         adapter,
@@ -146,6 +165,7 @@ def build_worker(settings: Settings) -> Worker:
         interval_seconds=settings.scheduler_interval_seconds,
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
+        push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
     )
 
 

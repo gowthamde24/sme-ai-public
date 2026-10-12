@@ -163,6 +163,12 @@ class Settings(BaseSettings):
     channel_agent_email: str | None = None
     channel_agent_password: SecretStr | None = None
 
+    # Job BY (ADR 0077): web-push to the team's browsers. Off until BOTH are set. The private
+    # key is a secret: only from the environment, entered hidden, never logged or returned.
+    vapid_private_key: SecretStr | None = None
+    vapid_subject: str | None = None
+    vapid_public_key: str | None = None
+
     @property
     def cors_origins(self) -> list[str]:
         """The validated list. A wildcard, a path, a trailing slash or (outside development) a

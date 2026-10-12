@@ -24,6 +24,7 @@ from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.leads.repository import LeadsRepository
 from app.leadtools.repository import LeadSearchRepository
+from app.notifications.runtime import NotificationsRuntime
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
@@ -34,12 +35,14 @@ from app.quotes.repository import QuotesRepository
 from app.scheduler.repository import SchedulerRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
+from app.team.repository import TeamRepository
 from app.tenancy.models import Role, TenantOut
 from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
 from app.voice.interface import VoiceStack
 from app.whatsapp.runtime import WhatsAppRuntime
+from app.workspace.repository import WorkspaceRepository
 
 logger = logging.getLogger("app.auth")
 
@@ -76,6 +79,9 @@ class Runtime:
     privacy: PrivacyRepository | None = None
     policy_gate: PolicyGate | None = None
     whatsapp: WhatsAppRuntime | None = None
+    team: TeamRepository | None = None
+    workspace: WorkspaceRepository | None = None
+    notifications: NotificationsRuntime | None = None
 
 
 @dataclass(frozen=True)
