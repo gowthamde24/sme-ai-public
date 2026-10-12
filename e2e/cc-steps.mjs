@@ -407,8 +407,8 @@ export async function ccSteps(c) {
 
     // the customers form takes one too
     // a development server compiles the page on first use and may re-render it (new ids reset the form): type it all, press, and if the answer does not come, start again (the same ids are not reused, but a duplicate shop name is fine here)
-    let made = false;
-    for (let attempt = 0; attempt < 3 && !made; attempt += 1) {
+    let formMade = false;
+    for (let attempt = 0; attempt < 3 && !formMade; attempt += 1) {
       await page.goto(`${base()}/customers/new`, { waitUntil: "networkidle" });
       await page.waitForTimeout(2500);
       await page.getByLabel("Customer's name").fill(`E2E GST Person ${stamp}`);
@@ -417,9 +417,9 @@ export async function ccSteps(c) {
       await page.getByLabel(/^GSTIN \(for a business/).fill("24AAACC1206D1ZM");
       if ((await page.getByLabel(/^GSTIN \(for a business/).inputValue()) !== "24AAACC1206D1ZM") continue;
       await page.getByRole("button", { name: "Add this customer" }).click();
-      made = await page.getByRole("status").waitFor({ timeout: 20000 }).then(() => true, () => false);
+      formMade = await page.getByRole("status").waitFor({ timeout: 20000 }).then(() => true, () => false);
     }
-    must(made, "the new-customer form never answered");
+    must(formMade, "the new-customer form never answered");
     must(psql(`select gstin from public.companies where tenant_id = '${c.tenant}' and name = 'E2E GST Shop ${stamp}'`) === "24AAACC1206D1ZM", "the customer form did not keep the number");
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "shop number: bad stopped, good saved with state Maharashtra; customer number set (Karnataka), removed; the new-customer form keeps one; phone and dark clean";
