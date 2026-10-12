@@ -98,6 +98,30 @@ class Settings(BaseSettings):
     scheduler_email: str | None = None
     scheduler_password: SecretStr | None = None
     scheduler_interval_seconds: int = 60
+    # Job BZ (ADR 0080): connectors. Every one is OFF unless named, and bound to ONE workspace
+    # (INTEGRATIONS_TENANT_ID): the credentials below belong to the installation, not to a business,
+    # so no other workspace may use them. Keys come from the environment only (never logged, never
+    # returned, never in the database). The webhooks sign in as the registered worker account above.
+    integrations_tenant_id: str | None = None
+    indiamart_provider: str = "off"  # off | fake | real
+    indiamart_crm_key: SecretStr | None = None
+    payments_provider: str = "off"  # off | fake | razorpay | cashfree
+    razorpay_key_id: str | None = None
+    razorpay_key_secret: SecretStr | None = None
+    razorpay_webhook_secret: SecretStr | None = None
+    cashfree_client_id: str | None = None
+    cashfree_client_secret: SecretStr | None = None
+    cashfree_env: str = "sandbox"  # sandbox | production
+    public_base_url: str | None = None  # https address of this API as providers reach it
+    calls_provider: str = "off"  # off | fake | exotel
+    exotel_sid: str | None = None
+    exotel_api_key: str | None = None
+    exotel_api_token: SecretStr | None = None
+    exotel_subdomain: str = "api.in.exotel.com"
+    exotel_caller_id: str | None = None  # the ExoPhone shown to the customer
+    exotel_agent_number: str | None = None  # the shop's own phone, rung first
+    exotel_webhook_token: SecretStr | None = None  # the secret in the webhook addresses
+    missed_call_reply_language: str = "en"
     # Job BD (ADR 0071): voice. OFF unless a provider is named: VOICE_STT_PROVIDER and
     # VOICE_TTS_PROVIDER = off | fake | sarvam | bhashini | google | ai4bharat. Each provider
     # needs its own key(s) from the environment only (never logged, never returned, never in

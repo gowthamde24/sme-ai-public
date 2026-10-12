@@ -30,7 +30,7 @@ create function pg_temp.hash(p text) returns text language sql immutable as $$ s
 -- ---------------------------------------------------------------------------------------------
 -- A. catalog
 -- ---------------------------------------------------------------------------------------------
-select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'integrations' and c.relname in ('import_jobs', 'calendar_tokens', 'policy_acceptances') and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 3::bigint,
+select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'integrations' and c.relkind = 'r' and c.relname in ('import_jobs', 'calendar_tokens', 'policy_acceptances') and c.relrowsecurity and c.relforcerowsecurity), 3::bigint,
           'A: the three integration tables have row-level security on and forced');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'integrations' and table_name in ('import_jobs', 'calendar_tokens', 'policy_acceptances') and grantee in ('anon', 'authenticated', 'public', 'service_role')), 0::bigint,
           'A: no client role holds any privilege on an integration table');

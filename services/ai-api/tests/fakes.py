@@ -219,6 +219,7 @@ def make_client(
     notifications: Any = None,
     research_web: Any = None,
     research_usage: Any = None,
+    connectors: Any = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -264,6 +265,7 @@ def make_client(
             notifications=notifications,
             research_web=research_web,
             research_usage=research_usage,
+            connectors=connectors,
         ),
     )
     return TestClient(app), repo

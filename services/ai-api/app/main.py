@@ -20,6 +20,10 @@ from app.catalogue.repository import PostgrestCatalogueRepository
 from app.catalogue.routes import router as catalogue_router
 from app.catalogue.storage import HttpStorageClient
 from app.config import ConfigurationError, Settings, build_auth_config, get_settings
+from app.connectors.repository import PostgrestConnectorsRepository
+from app.connectors.routes import router as connectors_router
+from app.connectors.webhooks import router as webhooks_router
+from app.connectors.wiring import build_connectors
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
@@ -177,6 +181,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         notifications=build_notifications(settings, config),
         research_web=build_research_web(settings),
         research_usage=PostgrestResearchUsageRepository(config.rest_url, config.anon_key),
+        connectors=build_connectors(
+            settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
+        ),
     )
 
 
@@ -514,6 +521,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.catalogue_storage,
                 runtime.lead_search,
                 runtime.research_usage,
+                runtime.connectors.repo if runtime.connectors is not None else None,
             ):
                 if isinstance(
                     repository,
@@ -537,7 +545,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | HttpStorageClient
                     | PostgrestLeadSearchRepository
                     | PostgrestIntegrationsRepository
-                    | PostgrestResearchUsageRepository,
+                    | PostgrestResearchUsageRepository
+                    | PostgrestConnectorsRepository,
                 ):
                     repository.close()
 
@@ -622,6 +631,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(today_router)
     app.include_router(assistant_router)
     app.include_router(voice_router)
+    app.include_router(connectors_router)
+    app.include_router(webhooks_router)
     app.include_router(accounting_export_router)
     app.include_router(spreadsheet_import_router)
     app.include_router(calendar_member_router)
