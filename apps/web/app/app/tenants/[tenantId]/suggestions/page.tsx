@@ -69,7 +69,7 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
         {t("sug.intro")}
         {!canReview && " " + t("sug.only_an_owner_or_admin_can")}
       </p>
-      <ReviewScreen tenantId={tenantId} claims={claims} canReview={canReview} reviewIds={reviewIds} />
+      <ReviewScreen words={words} tenantId={tenantId} claims={claims} canReview={canReview} reviewIds={reviewIds} />
     </main>
   );
 }

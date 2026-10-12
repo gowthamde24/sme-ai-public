@@ -71,15 +71,15 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   const maxNow = indiaNowLocal(new Date());
   const ids = { sentTouchIds: Object.fromEntries(data.drafts.map((d) => [d.id, crypto.randomUUID()])), maxNow };
   // `key` makes a form start afresh when the tab changes (an uncontrolled field keeps its value while the same form stays mounted).
-  const draftForm = <CreateDraftForm key={`draft-${data.channel}`} action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={data.channel} />;
-  const touchForm = <TouchForm key={`touch-${data.channel}`} action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} channel={data.channel} />;
+  const draftForm = <CreateDraftForm words={words} key={`draft-${data.channel}`} action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={data.channel} />;
+  const touchForm = <TouchForm words={words} key={`touch-${data.channel}`} action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} channel={data.channel} />;
   return (
     <main className={pageMain} lang={lang}>
       <p>
         <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>{t("lead.lead")}</Link> · <Link href={`/app/tenants/${tenantId}/followups`} className={link}>{t("lead.follow_ups_due")}</Link>
       </p>
       <NoticeV2>{t("fu.nothing_sent")}</NoticeV2>
-      <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
+      <LeadFollowupView words={words} tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
     </main>
   );
 }

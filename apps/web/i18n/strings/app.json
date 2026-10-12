@@ -12060,16 +12060,15 @@
   }
  },
  "enq.received": {
-  "en": "Received",
-  "te": "Received",
-  "hi": "Received",
-  "kn": "Received",
+  "en": "Enquiry received",
+  "te": "ఎంక్వైరీ వచ్చిన సమయం",
+  "hi": "इंक्वायरी आने का समय",
+  "kn": "ಎಂಕ್ವೈರಿ ಬಂದ ಸಮಯ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
-  },
-  "humanOnly": true
+  }
  },
  "enq.approve": {
   "en": "Approve",

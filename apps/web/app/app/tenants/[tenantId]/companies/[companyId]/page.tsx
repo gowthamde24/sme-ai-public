@@ -130,6 +130,7 @@ export default async function CompanyPage({
       {section === "evidence" || section === "all" ? (
         <>
         <EvidencePanel
+          words={words}
           tenantId={tenantId}
           target="companies"
           targetId={companyId}
@@ -143,6 +144,7 @@ export default async function CompanyPage({
       {section === "suggestions" || section === "all" ? (
         <>
         <SuggestionsPanel
+          words={words}
           tenantId={tenantId}
           target="companies"
           targetId={companyId}

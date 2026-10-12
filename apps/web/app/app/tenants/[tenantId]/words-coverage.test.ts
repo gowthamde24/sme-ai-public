@@ -70,6 +70,49 @@ describe("the workspace screens keep their words in the string store", () => {
     expect(bad).toEqual([]);
   });
 
+  it("hand their words to every part that takes them (a part drawn without words shows raw keys)", () => {
+    // 1. the parts (capitalised functions) whose first parameter has a `words` property
+    const defs = new Map<string, Map<string, boolean>>(); // file -> part name -> takes words
+    const takes = new Set<string>();
+    const refuses = new Set<string>(); // names some file defines WITHOUT words (two parts of one name: only a use in a file that does not define it is judged)
+    const parsed = [...all, ...files(path.join(WEB, "components/v2/app"))].map((f) => ({ f, sf: ts.createSourceFile(f, fs.readFileSync(f, "utf8"), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX) }));
+    const hasWords = (p: ts.ParameterDeclaration | undefined) => (p ? /\bwords\b/.test(p.getText()) : false);
+    for (const { f, sf } of parsed) {
+      const local = new Map<string, boolean>();
+      defs.set(f, local);
+      const note = (name: string, yes: boolean) => {
+        local.set(name, yes);
+        if (yes) takes.add(name);
+        else refuses.add(name);
+      };
+      const visit = (n: ts.Node) => {
+        if (ts.isFunctionDeclaration(n) && n.name && /^[A-Z]/.test(n.name.text)) note(n.name.text, hasWords(n.parameters[0]));
+        if (ts.isVariableDeclaration(n) && ts.isIdentifier(n.name) && /^[A-Z]/.test(n.name.text) && n.initializer && (ts.isArrowFunction(n.initializer) || ts.isFunctionExpression(n.initializer))) note(n.name.text, hasWords(n.initializer.parameters[0]));
+        ts.forEachChild(n, visit);
+      };
+      visit(sf);
+    }
+    expect(takes.size).toBeGreaterThan(40);
+    // 2. every use of such a part passes `words` (or spreads props that do)
+    const bad: string[] = [];
+    for (const { f, sf } of parsed) {
+      if (!f.startsWith(SCREENS)) continue;
+      const visit = (n: ts.Node) => {
+        if (ts.isJsxOpeningElement(n) || ts.isJsxSelfClosingElement(n)) {
+          const name = n.tagName.getText();
+          const own = defs.get(f)?.get(name);
+          if (own === true || (own === undefined && takes.has(name) && !refuses.has(name))) {
+            const given = n.attributes.properties.some((a) => ts.isJsxSpreadAttribute(a) || (ts.isJsxAttribute(a) && a.name.getText() === "words"));
+            if (!given) bad.push(`${path.relative(SCREENS, f)}:${sf.getLineAndCharacterOfPosition(n.getStart()).line + 1} <${name}> has no words`);
+          }
+        }
+        ts.forEachChild(n, visit);
+      };
+      visit(sf);
+    }
+    expect(bad).toEqual([]);
+  });
+
   it("only ask for keys the string store has", () => {
     const keys = dict as Record<string, unknown>;
     const asked = /\b(?:t|say)\(\s*"([a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+)+)"|\bk="([a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+)+)"|labelOr\(t,\s*[^,]+,\s*"([a-z][a-zA-Z0-9]*(?:\.[a-zA-Z0-9_]+)+)"/g;

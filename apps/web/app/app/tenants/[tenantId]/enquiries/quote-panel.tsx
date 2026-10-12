@@ -189,7 +189,7 @@ export function QuotePanel({ tenantId, enquiryId, role, secondFactorMissing, set
                   </span>
                 </p>
               ) : (
-                <StartOrderForm start={startOrderAction.bind(null, tenantId, enquiryId, selected.id)} orderId={newOrderId} role={role} secondFactorMissing={secondFactorMissing} />
+                <StartOrderForm words={words} start={startOrderAction.bind(null, tenantId, enquiryId, selected.id)} orderId={newOrderId} role={role} secondFactorMissing={secondFactorMissing} />
               )}
             </div>
           ) : null}

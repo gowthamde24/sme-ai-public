@@ -82,7 +82,7 @@ export function LeadFollowupView({
   return (
     <section aria-labelledby="followup-heading">
       <h1 id="followup-heading" className={pageH1}>{t("fu.follow_up")}</h1>
-      <ChannelTabs tenantId={tenantId} leadId={leadId} tabs={channelTabs(data, t)} />
+      <ChannelTabs words={words} tenantId={tenantId} leadId={leadId} tabs={channelTabs(data, t)} />
       <h2 className={pageH2}>{t("fu.is_anything_blocking_a_follow_up")}</h2>
       {lines.length === 0 ? (
         <p>{t("fu.nothing_blocks_a_follow_up_for")}</p>
