@@ -539,7 +539,7 @@ await step("G4", "Outbox: the catalogue message carries its photo as a thumbnail
     await row.getByRole("button").first().click();
     await row.getByRole("button", { name: "Approve and send" }).click();
     // wait for what really happened (a server action compiles on first use in a development server): the note under the tabs
-    await page.locator('[role="status"] p').first().waitFor({ timeout: 30000 });
+    await page.locator('[role="status"] p').first().waitFor({ timeout: 90000 });
   }
   await page.goto(out(`?tab=${quiet() ? "scheduled" : "sent"}`));
   await page.waitForSelector("[data-screen=outbox]");
