@@ -688,3 +688,17 @@ const RESEARCH_STATUS = { tools: { web_search: { enabled: false, used_today: nul
 add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => RESEARCH_STATUS }) });
 add({ id: "retailers-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => ({ tools: { ...RESEARCH_STATUS.tools, find_retailers: { enabled: false, used_today: null, daily_limit: null } } }) }) });
 add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+
+// ---- the team and joining a business (job CC) ----------------------------------------------------------------------------------
+const TEAM = {
+  members: [
+    { user_id: "11111111-1111-4111-8111-111111111111", display_name: "Asha Rao", role: "owner", joined_at: "2026-10-01T04:00:00Z", is_you: true },
+    { user_id: "22222222-aaaa-4aaa-8aaa-000000000001", display_name: "Ravi Kumar", role: "sales", joined_at: "2026-10-03T04:00:00Z", is_you: false },
+    { user_id: "22222222-aaaa-4aaa-8aaa-000000000002", display_name: null, role: "viewer", joined_at: null, is_you: false },
+  ],
+  pending_invitations: 1,
+};
+const INVITATIONS = [{ id: "22222222-aaaa-4aaa-8aaa-0000000000a1", role: "sales", label: "for the new cutter", status: "pending", created_at: "2026-10-05T04:00:00Z", expires_at: "2026-10-12T04:00:00Z", accepted_at: null, revoked_at: null, created_by_name: "Asha Rao" }];
+add({ id: "team", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/team/page")).default(props({})), handlers: (role) => ({ ...base(role), getTeam: () => ({ ...TEAM, members: TEAM.members.map((m) => ({ ...m, is_you: m.user_id === "11111111-1111-4111-8111-111111111111" ? role === "owner" : false })) }), listInvitations: () => INVITATIONS }) });
+add({ id: "team-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/team/page")).default(props({})), handlers: (role) => ({ ...base(role), getTeam: () => { throw new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 20); }, listInvitations: () => { throw new ApiRequestError(403, "forbidden", "x"); } }) });
+add({ id: "join", roles: ["sales"], render: async () => (await import("@/app/app/join/page")).default(), handlers: (role) => base(role) });

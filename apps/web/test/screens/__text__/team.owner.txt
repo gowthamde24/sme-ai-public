@@ -1,0 +1,35 @@
+# Team
+Who is in your business, and who is invited. Each person has their own owl.
+{label="People"}
+## People
+- Asha Rao ( you ) Joined Oct 1, 2026, 9:30 AM (5 days ago) Owner
+- Ravi Kumar Joined Oct 3, 2026, 9:30 AM (3 days ago) Sales Role
+<select label="Role">
+  options: Admin=admin | Sales=sales* | Viewer=viewer
+[button type=button disabled: Change role]
+[button type=button: Remove]
+- Team member Viewer Role
+<select label="Role">
+  options: Admin=admin | Sales=sales | Viewer=viewer*
+[button type=button disabled: Change role]
+[button type=button: Remove]
+Owners are added by the operator, not here.
+{label="Invite a person"}
+## Invite a person
+Make a one-time code and give it to the person yourself. They sign in, type the code and join.
+form:
+Role
+<select label="Role">
+  options: Admin=admin | Sales=sales* | Viewer=viewer
+Works with customers: leads, quotes, orders and messages. The code works for
+<select label="The code works for">
+  options: 3 days=3 | 7 days=7* | 14 days=14 | 30 days=30
+Label (for you to remember)
+<text label="Label (for you to remember)" maxlength=60 autocomplete=off>
+For example: for the new cutter. Do not type a phone number or an e-mail address. Inviting needs your second step (your authenticator code). If you are asked, open Security first.
+[button type=submit: Make an invitation code]
+{label="Invitations"}
+## Invitations
+table:
+  | th For | th Role | th Status | th Ends | th Action |
+  | for the new cutter Made by Asha Rao | Sales | Waiting | Oct 12, 2026, 9:30 AM (in 6 days) | [button type=button: Cancel invitation for the new cutter] |

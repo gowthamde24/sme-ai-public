@@ -65,7 +65,11 @@ export const NAV: readonly NavGroup[] = [
   {
     id: "team",
     label: "Your team",
-    items: [{ id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES }],
+    items: [
+      // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
+      { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
+      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES },
+    ],
   },
   {
     id: "connect",

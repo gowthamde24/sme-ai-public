@@ -50,6 +50,8 @@ export async function proxy(request: NextRequest) {
     return redirectWithCookies(challenge, response, csp);
   }
   response.headers.set("Content-Security-Policy", csp);
+  // the page where an invitation code is entered (job CC): nothing of its address may leave in a Referer header
+  if (pathname === "/app/join") response.headers.set("Referrer-Policy", "no-referrer");
   return response;
 }
 

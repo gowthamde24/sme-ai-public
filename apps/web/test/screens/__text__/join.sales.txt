@@ -1,0 +1,8 @@
+{label="Join a business"}
+# Join a business
+Type the invitation code you were given. You must be signed in.
+form:
+Invitation code
+<text label="Invitation code" maxlength=100 autocomplete=off>
+Capital or small letters, spaces and dashes do not matter.
+[button type=submit disabled: Join]

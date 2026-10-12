@@ -7,6 +7,8 @@ import { STOCK_STATUSES } from "@/lib/api/catalogue";
 import { EXPORT_FORMATS } from "@/lib/api/data";
 
 import { FIELD_WORDS, ISSUES, NOTES, PREVIEW_COUNTS, REASONS, RESULT_COUNTS, STATUSES } from "../data/import-model";
+import { INVITATION_STATUSES, INVITED_ROLES, ROLES } from "@/lib/api/team";
+import { REASONS as REMOVE_REASONS, TEAM_CODES } from "../team/team-model";
 import { FAILURE_KEY } from "./kit";
 
 /**
@@ -40,7 +42,13 @@ describe("the words of the job CC screens", () => {
       ...["exact", "partial", "weak", "none"].map((c) => `dta.conf.${c}`),
       ...STOCK_STATUSES.map((c) => `catalogue.stock.${c}`),
       ...["customers", "stock"].map((k) => `dta.kind.${k}`),
-      ...["tally", "vyapar", "sheet"].map((k) => `dta.src.tip.${k}`)];
+      ...["tally", "vyapar", "sheet"].map((k) => `dta.src.tip.${k}`),
+      ...ROLES.map((r) => `team.role.${r}`),
+      ...INVITED_ROLES.map((r) => `team.role.help.${r}`),
+      ...REMOVE_REASONS.map((r) => `team.reason.${r}`),
+      ...INVITATION_STATUSES.map((s) => `team.inv.status.${s}`),
+      ...TEAM_CODES.map((c) => `team.err.${c}`),
+      ...["tally_zip"].map(() => "dta.fmt.csv")];
     expect(need.filter((k) => !(k in en))).toEqual([]);
   });
   it("every kind of failure has its sentence", () => {

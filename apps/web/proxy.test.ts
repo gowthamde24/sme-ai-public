@@ -48,6 +48,12 @@ describe("proxy", () => {
     expect(response.headers.get("location")).toBeNull();
   });
 
+  it("the page where an invitation code is entered is served with no Referer, and no other page is (job CC)", async () => {
+    refreshSession.mockImplementation(async () => signedIn());
+    expect((await proxy(request("/app/join"))).headers.get("referrer-policy")).toBe("no-referrer");
+    expect((await proxy(request("/app/tenants"))).headers.get("referrer-policy")).toBeNull();
+  });
+
   it("sends signed-in users away from /login", async () => {
     refreshSession.mockResolvedValue(signedIn());
     const response = await proxy(request("/login"));

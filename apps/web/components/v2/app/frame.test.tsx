@@ -44,7 +44,7 @@ describe("SideNav", () => {
     expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
     expect(within(menu).getByRole("link", { name: "Orders" })).toHaveAttribute("href", `/app/tenants/${A}/orders`);
     for (const name of ["Work", "Your business", "Your team", "Connect"]) expect(within(menu).getByRole("group", { name })).toBeInTheDocument();
-    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Quotes", "Store visits", "Orders", "Outbox", "This week", "Customers", "Find retailers", "Catalogue", "Prices and products", "Office", "Integrations"]);
+    expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Quotes", "Store visits", "Orders", "Outbox", "This week", "Customers", "Find retailers", "Catalogue", "Prices and products", "Team", "Office", "Integrations"]);
   });
   it("the foot holds the AI usage card, Settings, Help (a link to the guides), the user card and Collapse menu", () => {
     side(owner, loaded);
@@ -151,7 +151,7 @@ describe("TabBar", () => {
     expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Visits", "Office"]);
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Customers", "Catalogue", "Settings", "Help"]);
+    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Customers", "Catalogue", "Team", "Settings", "Help"]);
     expect(within(dialog).queryByText("Your workspaces")).toBeNull();
   });
   it("draws nothing outside a workspace", () => {

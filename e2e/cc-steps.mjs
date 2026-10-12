@@ -2,6 +2,9 @@
 // The API's providers are the ones of the local stack: WhatsApp is the FAKE channel, web search and the places search are the API's own fakes, nothing leaves this machine. Run only these with E2E_ONLY=CC (see be-stack.mjs).
 import path from "node:path";
 
+import { gotrue } from "./be-lib.mjs";
+import { PW, confirmEmail } from "./lib.mjs";
+
 /** The page on a phone (360 px) and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, no accessibility violation. Restores the desktop view. Returns the list of problems (empty = clean). */
 export async function phoneAudit(c, label) {
   const { page, SHOTS, measure, axeOf } = c;
@@ -23,6 +26,8 @@ export async function phoneAudit(c, label) {
   }
   return seen;
 }
+
+const BASE_OF = (c) => c.BASE;
 
 export async function ccSteps(c) {
   const { step, page, must, text, BASE, SHOTS, SLOW, psql } = c;
@@ -191,5 +196,84 @@ export async function ccSteps(c) {
     await page.unroute("**/retailers/search");
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "status, a real search answered, two cards with attribution, a lead made from typed details (source places:<id>), the same shop saved twice is one lead; phone and dark clean";
+  }, page);
+
+  // ---- CC4. Team ------------------------------------------------------------------------------------------------------------------------------------------------
+  await step("CC4", "Team: the people with their owls, an invitation code shown once, a second person joins with it from the link (the code leaves the address bar), the owner changes their role and removes them", async () => {
+    await page.goto(`${base()}/team`, { waitUntil: "networkidle" });
+    await page.getByRole("heading", { level: 1, name: "Team" }).waitFor();
+    must((await page.locator("[data-team=members] svg.owl").count()) >= 1, "no owl on the owner's row");
+    must((await text(page)).includes("(you)"), "'you' is not marked");
+    must((await text(page)).includes("Owners are added by the operator, not here."), "the owner note is missing");
+    await page.screenshot({ path: path.join(SHOTS, "CC4-team-desktop.png"), fullPage: true });
+
+    // an invitation: the code is shown once, with the join address carrying it after a #
+    await page.getByLabel("Role", { exact: true }).first().selectOption("sales");
+    await page.getByLabel(/Label/).fill("for the e2e cutter");
+    await page.getByRole("button", { name: "Make an invitation code" }).click();
+    const code = (await page.locator("[data-invite-code]").innerText()).trim();
+    must(/^[0-9A-Z]{5}(-[0-9A-Z]{5}){3}$/.test(code), `the code looks like ${code}`);
+    must((await text(page)).includes("Give this code to the person yourself."), "the warning is missing");
+    must((await page.getByRole("link", { name: "Send by WhatsApp" }).getAttribute("href")).startsWith("https://wa.me/?text="), "the WhatsApp link is not a share link");
+    must((await text(page)).includes(`/app/join#code=${code}`), "the join address does not carry the code");
+    await page.screenshot({ path: path.join(SHOTS, "CC4-team-invited.png"), fullPage: true });
+    const audit = await phoneAudit(c, "CC4-team");
+    // the code is stored as a hash only
+    must(psql(`select count(*) from public.invitations where tenant_id = '${c.tenant}' and status = 'pending'`) === "1", "the invitation is not in the database");
+    must(!psql(`select row_to_json(i)::text from public.invitations i where tenant_id = '${c.tenant}' limit 1`).includes(code), "the code is stored in the clear");
+
+    // a second person: a new account, signed in a new browser, opens the link
+    const second = `e2e-join-${stamp}@e2e.example.test`;
+    const made = await gotrue("POST", "/auth/v1/signup", { email: second, password: PW });
+    must(made.status === 200, `could not make the second account (HTTP ${made.status})`);
+    confirmEmail(second);
+    const ctx2 = await c.browser.newContext({ viewport: { width: 1280, height: 900 }, locale: "en-IN", timezoneId: "Asia/Kolkata" });
+    const p2 = await ctx2.newPage();
+    p2.setDefaultTimeout(c.SLOW);
+    p2.setDefaultNavigationTimeout(c.SLOW);
+    try {
+      await p2.goto(`${BASE_OF(c)}/login`);
+      await p2.fill('input[name="email"]', second);
+      await p2.fill('input[name="password"]', PW);
+      await p2.click('button:has-text("Sign in")');
+      await p2.waitForURL(/\/(setup|app)/, { timeout: 30000 });
+      await p2.goto(`${BASE_OF(c)}/app/join#code=${code}`);
+      await p2.getByRole("heading", { level: 1, name: "Join a business" }).waitFor();
+      await p2.waitForFunction(() => document.querySelector("input")?.value !== "");
+      must((await p2.getByLabel("Invitation code").inputValue()) === code, "the code was not taken from the link");
+      must(!p2.url().includes("#"), `the code is still in the address bar: ${p2.url()}`);
+      await p2.screenshot({ path: path.join(SHOTS, "CC4-join.png"), fullPage: true });
+      await p2.getByRole("button", { name: "Join", exact: true }).click();
+      await p2.waitForURL(new RegExp(`/app/tenants/${c.tenant}`), { timeout: 60000 });
+      // a wrong code is one plain answer
+      await p2.goto(`${BASE_OF(c)}/app/join`);
+      await p2.getByLabel("Invitation code").fill("AAAAA-BBBBB-CCCCC-DDDDD");
+      await p2.getByRole("button", { name: "Join", exact: true }).click();
+      await p2.getByRole("alert").filter({ hasText: "That code is not valid" }).waitFor();
+    } finally {
+      await ctx2.close();
+    }
+    must(psql(`select count(*) from public.memberships m join auth.users u on u.id = m.user_id where m.tenant_id = '${c.tenant}' and u.email = '${second}' and m.role = 'sales'`) === "1", "the second person is not a Sales member");
+
+    // the owner sees the new member, changes the role, then removes them with a reason
+    await page.reload({ waitUntil: "networkidle" });
+    const rows = page.locator("[data-team=members] li");
+    must((await rows.count()) === 2, `the team has ${await rows.count()} people`);
+    const row = page.locator('[data-team=members] li[data-member="sales"]');
+    await row.getByLabel("Role").selectOption("viewer");
+    await row.getByRole("button", { name: "Change role" }).click();
+    await page.getByText("Role changed.").waitFor();
+    must(psql(`select m.role from public.memberships m join auth.users u on u.id = m.user_id where m.tenant_id = '${c.tenant}' and u.email = '${second}'`) === "viewer", "the role was not changed");
+    const viewer = page.locator('[data-team=members] li[data-member="viewer"]');
+    await viewer.getByRole("button", { name: "Remove" }).click();
+    await viewer.getByLabel("Why?").selectOption("access_no_longer_needed");
+    await viewer.getByRole("button", { name: "Yes, remove" }).click();
+    await page.getByText(/Removed\. \d+ leads and \d+ opportunities now have no owner/).waitFor();
+    must(psql(`select count(*) from public.memberships m join auth.users u on u.id = m.user_id where m.tenant_id = '${c.tenant}' and u.email = '${second}'`) === "0", "the person is still a member");
+    // the invitation list shows it was used
+    await page.reload({ waitUntil: "networkidle" });
+    must((await page.locator("[data-team=invitations]").innerText()).includes("Used"), "the invitation does not show as used");
+    must(audit.length === 0, `phone: ${audit.join(" | ")}`);
+    return "owls, one-time code (stored as a hash), joined from the link with the code taken out of the address bar, a wrong code refused in words, role changed, member removed; phone and dark clean";
   }, page);
 }

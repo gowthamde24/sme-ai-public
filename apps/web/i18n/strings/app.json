@@ -33818,5 +33818,914 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.team": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ಟೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.title": {
+  "en": "Team",
+  "te": "టీమ్",
+  "hi": "टीम",
+  "kn": "ಟೀಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.sub": {
+  "en": "Who is in your business, and who is invited. Each person has their own owl.",
+  "te": "మీ వ్యాపారంలో ఎవరున్నారు, ఎవరిని పిలిచారు. ప్రతి ఒక్కరికీ వారి సొంత గుడ్లగూబ ఉంటుంది.",
+  "hi": "आपके व्यापार में कौन है और किसे बुलाया गया है। हर किसी का अपना उल्लू है।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದಲ್ಲಿ ಯಾರಿದ್ದಾರೆ, ಯಾರನ್ನು ಕರೆದಿದ್ದೀರಿ. ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಅವರದೇ ಗೂಬೆ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.members.title": {
+  "en": "People",
+  "te": "మనుషులు",
+  "hi": "लोग",
+  "kn": "ಜನರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.members.none": {
+  "en": "There is nobody on the team yet.",
+  "te": "టీమ్‌లో ఇంకా ఎవరూ లేరు.",
+  "hi": "टीम में अभी कोई नहीं है।",
+  "kn": "ಟೀಮ್‌ನಲ್ಲಿ ಇನ್ನೂ ಯಾರೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.you": {
+  "en": "you",
+  "te": "మీరు",
+  "hi": "आप",
+  "kn": "ನೀವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.joined": {
+  "en": "Joined",
+  "te": "చేరింది",
+  "hi": "जुड़े",
+  "kn": "ಸೇರಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.member.unnamed": {
+  "en": "Team member",
+  "te": "టీమ్ సభ్యుడు",
+  "hi": "टीम सदस्य",
+  "kn": "ಟೀಮ್ ಸದಸ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.owner": {
+  "en": "Owner",
+  "te": "ఓనర్",
+  "hi": "ओनर",
+  "kn": "ಓನರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.admin": {
+  "en": "Admin",
+  "te": "అడ్మిన్",
+  "hi": "एडमिन",
+  "kn": "ಅಡ್ಮಿನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.sales": {
+  "en": "Sales",
+  "te": "సేల్స్",
+  "hi": "सेल्स",
+  "kn": "ಸೇಲ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.viewer": {
+  "en": "Viewer",
+  "te": "చూసేవారు",
+  "hi": "देखने वाला",
+  "kn": "ನೋಡುವವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.label": {
+  "en": "Role",
+  "te": "పాత్ర",
+  "hi": "रोल",
+  "kn": "ಪಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.save": {
+  "en": "Change role",
+  "te": "పాత్ర మార్చండి",
+  "hi": "रोल बदलें",
+  "kn": "ಪಾತ್ರ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.changed": {
+  "en": "Role changed.",
+  "te": "పాత్ర మారింది.",
+  "hi": "रोल बदल गया।",
+  "kn": "ಪಾತ್ರ ಬದಲಾಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.help.admin": {
+  "en": "Runs the business with you and can manage the team.",
+  "te": "మీతో కలిసి వ్యాపారం నడుపుతారు, టీమ్‌ని చూసుకోగలరు.",
+  "hi": "आपके साथ व्यापार चलाता है और टीम संभाल सकता है।",
+  "kn": "ನಿಮ್ಮೊಂದಿಗೆ ವ್ಯಾಪಾರ ನಡೆಸುತ್ತಾರೆ, ಟೀಮ್ ನೋಡಿಕೊಳ್ಳಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.help.sales": {
+  "en": "Works with customers: leads, quotes, orders and messages.",
+  "te": "కస్టమర్లతో పని చేస్తారు: లీడ్స్, కోట్లు, ఆర్డర్లు, మెసేజ్‌లు.",
+  "hi": "कस्टमर के साथ काम करता है: लीड, कोट, ऑर्डर और मैसेज।",
+  "kn": "ಕಸ್ಟಮರ್‌ಗಳೊಂದಿಗೆ ಕೆಲಸ: ಲೀಡ್, ಕೋಟ್, ಆರ್ಡರ್, ಮೆಸೇಜ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.role.help.viewer": {
+  "en": "Can look, but cannot change anything.",
+  "te": "చూడగలరు, కానీ ఏదీ మార్చలేరు.",
+  "hi": "देख सकता है, पर कुछ बदल नहीं सकता।",
+  "kn": "ನೋಡಬಹುದು, ಆದರೆ ಏನನ್ನೂ ಬದಲಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.owners_note": {
+  "en": "Owners are added by the operator, not here.",
+  "te": "Owners are added by the operator, not here.",
+  "hi": "Owners are added by the operator, not here.",
+  "kn": "Owners are added by the operator, not here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.remove": {
+  "en": "Remove",
+  "te": "తీసివేయండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.leave": {
+  "en": "Leave this business",
+  "te": "ఈ వ్యాపారం నుంచి వెళ్ళండి",
+  "hi": "इस व्यापार से बाहर हों",
+  "kn": "ಈ ವ್ಯಾಪಾರದಿಂದ ಹೊರಬನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.remove.sure": {
+  "en": "Remove {name} from this business? They lose access at once.",
+  "te": "Remove {name} from this business? They lose access at once.",
+  "hi": "Remove {name} from this business? They lose access at once.",
+  "kn": "Remove {name} from this business? They lose access at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.leave.sure": {
+  "en": "Leave this business? You lose access at once.",
+  "te": "Leave this business? You lose access at once.",
+  "hi": "Leave this business? You lose access at once.",
+  "kn": "Leave this business? You lose access at once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.reason.label": {
+  "en": "Why?",
+  "te": "ఎందుకు?",
+  "hi": "क्यों?",
+  "kn": "ಏಕೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.reason.no_longer_works_here": {
+  "en": "They no longer work here",
+  "te": "ఇక్కడ పని చేయడం లేదు",
+  "hi": "अब यहाँ काम नहीं करते",
+  "kn": "ಇಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.reason.access_no_longer_needed": {
+  "en": "They no longer need access",
+  "te": "ఇక యాక్సెస్ అవసరం లేదు",
+  "hi": "अब एक्सेस की ज़रूरत नहीं",
+  "kn": "ಇನ್ನು ಪ್ರವೇಶ ಬೇಕಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.reason.security_concern": {
+  "en": "A security concern",
+  "te": "సెక్యూరిటీ సమస్య",
+  "hi": "सिक्योरिटी की चिंता",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಚಿಂತೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.reason.other": {
+  "en": "Another reason",
+  "te": "వేరే కారణం",
+  "hi": "कोई और कारण",
+  "kn": "ಬೇರೆ ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.remove.tidy": {
+  "en": "Their open leads and opportunities will have no owner, and their running agent tasks stop.",
+  "te": "Their open leads and opportunities will have no owner, and their running agent tasks stop.",
+  "hi": "Their open leads and opportunities will have no owner, and their running agent tasks stop.",
+  "kn": "Their open leads and opportunities will have no owner, and their running agent tasks stop.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.remove.yes": {
+  "en": "Yes, remove",
+  "te": "అవును, తీసివేయండి",
+  "hi": "हाँ, हटाएँ",
+  "kn": "ಹೌದು, ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.leave.yes": {
+  "en": "Yes, leave",
+  "te": "అవును, వెళ్తాను",
+  "hi": "हाँ, बाहर हों",
+  "kn": "ಹೌದು, ಹೊರಬರುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.keep": {
+  "en": "Keep",
+  "te": "ఉంచండి",
+  "hi": "रहने दें",
+  "kn": "ಇರಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.removed": {
+  "en": "Removed. {leads} leads and {opps} opportunities now have no owner; {runs} agent tasks were stopped.",
+  "te": "Removed. {leads} leads and {opps} opportunities now have no owner; {runs} agent tasks were stopped.",
+  "hi": "Removed. {leads} leads and {opps} opportunities now have no owner; {runs} agent tasks were stopped.",
+  "kn": "Removed. {leads} leads and {opps} opportunities now have no owner; {runs} agent tasks were stopped.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.left": {
+  "en": "You left this business.",
+  "te": "You left this business.",
+  "hi": "You left this business.",
+  "kn": "You left this business.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.invite.title": {
+  "en": "Invite a person",
+  "te": "ఒకరిని పిలవండి",
+  "hi": "किसी को बुलाएँ",
+  "kn": "ಒಬ್ಬರನ್ನು ಕರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.intro": {
+  "en": "Make a one-time code and give it to the person yourself. They sign in, type the code and join.",
+  "te": "ఒకసారి పని చేసే కోడ్ చేసి, ఆ వ్యక్తికి మీరే ఇవ్వండి. వారు సైన్ ఇన్ అయి కోడ్ టైప్ చేసి చేరతారు.",
+  "hi": "एक बार चलने वाला कोड बनाएँ और उस व्यक्ति को खुद दें। वह साइन इन करके कोड लिखता है और जुड़ जाता है।",
+  "kn": "ಒಮ್ಮೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡುವ ಕೋಡ್ ಮಾಡಿ, ಆ ವ್ಯಕ್ತಿಗೆ ನೀವೇ ಕೊಡಿ. ಅವರು ಸೈನ್ ಇನ್ ಆಗಿ ಕೋಡ್ ಬರೆದು ಸೇರುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.days": {
+  "en": "The code works for",
+  "te": "కోడ్ పని చేసే రోజులు",
+  "hi": "कोड कितने दिन चलेगा",
+  "kn": "ಕೋಡ್ ಎಷ್ಟು ದಿನ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.days_n": {
+  "en": "{n} days",
+  "te": "{n} రోజులు",
+  "hi": "{n} दिन",
+  "kn": "{n} ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.label": {
+  "en": "Label (for you to remember)",
+  "te": "లేబుల్ (మీ గుర్తు కోసం)",
+  "hi": "लेबल (आपकी याद के लिए)",
+  "kn": "ಲೇಬಲ್ (ನಿಮ್ಮ ನೆನಪಿಗಾಗಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.label_help": {
+  "en": "For example: for the new cutter. Do not type a phone number or an e-mail address.",
+  "te": "ఉదాహరణ: కొత్త కటర్ కోసం. ఫోన్ నంబర్ లేదా ఈమెయిల్ టైప్ చేయకండి.",
+  "hi": "जैसे: नए कटर के लिए। फ़ोन नंबर या ईमेल न लिखें।",
+  "kn": "ಉದಾಹರಣೆ: ಹೊಸ ಕಟರ್‌ಗಾಗಿ. ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇಮೇಲ್ ಬರೆಯಬೇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.label_bad": {
+  "en": "Take out the phone number or e-mail address. A label is only for you to recognise the invitation.",
+  "te": "ఫోన్ నంబర్ లేదా ఈమెయిల్ తీసేయండి. లేబుల్ మీరు గుర్తుపట్టడానికి మాత్రమే.",
+  "hi": "फ़ोन नंबर या ईमेल हटाएँ। लेबल सिर्फ़ आपकी पहचान के लिए है।",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಅಥವಾ ಇಮೇಲ್ ತೆಗೆಯಿರಿ. ಲೇಬಲ್ ನಿಮ್ಮ ಗುರುತಿಗೆ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.mfa": {
+  "en": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
+  "te": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
+  "hi": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
+  "kn": "Inviting needs your second step (your authenticator code). If you are asked, open Security first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.invite.make": {
+  "en": "Make an invitation code",
+  "te": "ఆహ్వాన కోడ్ చేయండి",
+  "hi": "न्योते का कोड बनाएँ",
+  "kn": "ಆಹ್ವಾನ ಕೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.code_title": {
+  "en": "Invitation code",
+  "te": "ఆహ్వాన కోడ్",
+  "hi": "न्योते का कोड",
+  "kn": "ಆಹ್ವಾನ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.code_once": {
+  "en": "Give this code to the person yourself. It works once, for {days} days, and nobody can read it again.",
+  "te": "Give this code to the person yourself. It works once, for {days} days, and nobody can read it again.",
+  "hi": "Give this code to the person yourself. It works once, for {days} days, and nobody can read it again.",
+  "kn": "Give this code to the person yourself. It works once, for {days} days, and nobody can read it again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.invite.copy": {
+  "en": "Copy the code",
+  "te": "కోడ్ కాపీ చేయండి",
+  "hi": "कोड कॉपी करें",
+  "kn": "ಕೋಡ್ ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.whatsapp": {
+  "en": "Send by WhatsApp",
+  "te": "WhatsApp లో పంపండి",
+  "hi": "WhatsApp से भेजें",
+  "kn": "WhatsApp ನಲ್ಲಿ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.email": {
+  "en": "Send by e-mail",
+  "te": "ఈమెయిల్‌లో పంపండి",
+  "hi": "ईमेल से भेजें",
+  "kn": "ಇಮೇಲ್‌ನಲ್ಲಿ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.join_at": {
+  "en": "The person opens this address, or goes to it and types the code:",
+  "te": "ఆ వ్యక్తి ఈ అడ్రస్ తెరుస్తారు, లేదా ఇక్కడికి వెళ్ళి కోడ్ టైప్ చేస్తారు:",
+  "hi": "वह व्यक्ति यह पता खोलता है, या यहाँ जाकर कोड लिखता है:",
+  "kn": "ಆ ವ್ಯಕ್ತಿ ಈ ವಿಳಾಸ ತೆರೆಯುತ್ತಾರೆ, ಅಥವಾ ಇಲ್ಲಿಗೆ ಹೋಗಿ ಕೋಡ್ ಬರೆಯುತ್ತಾರೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.invite.nothing_sent": {
+  "en": "Nothing is sent from here. You pass the code on yourself.",
+  "te": "Nothing is sent from here. You pass the code on yourself.",
+  "hi": "Nothing is sent from here. You pass the code on yourself.",
+  "kn": "Nothing is sent from here. You pass the code on yourself.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.invite.replayed": {
+  "en": "This invitation was already made, so its code cannot be shown again. Cancel it in the list below and make a new one.",
+  "te": "This invitation was already made, so its code cannot be shown again. Cancel it in the list below and make a new one.",
+  "hi": "This invitation was already made, so its code cannot be shown again. Cancel it in the list below and make a new one.",
+  "kn": "This invitation was already made, so its code cannot be shown again. Cancel it in the list below and make a new one.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.share.text": {
+  "en": "{shop} invited you to join its team in Agent OWL. Open {url} and sign in. If you are asked for a code, type {code}. The code works once.",
+  "te": "{shop} మిమ్మల్ని Agent OWL లో తమ టీమ్‌లో చేరమని పిలిచింది. {url} తెరిచి సైన్ ఇన్ అవ్వండి. కోడ్ అడిగితే {code} టైప్ చేయండి. కోడ్ ఒకసారే పని చేస్తుంది.",
+  "hi": "{shop} ने आपको Agent OWL में अपनी टीम से जुड़ने के लिए बुलाया है। {url} खोलकर साइन इन करें। कोड माँगे तो {code} लिखें। कोड एक ही बार चलता है।",
+  "kn": "{shop} ನಿಮ್ಮನ್ನು Agent OWL ನಲ್ಲಿ ತಮ್ಮ ಟೀಮ್‌ಗೆ ಸೇರಲು ಕರೆದಿದೆ. {url} ತೆರೆದು ಸೈನ್ ಇನ್ ಆಗಿ. ಕೋಡ್ ಕೇಳಿದರೆ {code} ಬರೆಯಿರಿ. ಕೋಡ್ ಒಮ್ಮೆ ಮಾತ್ರ ಕೆಲಸ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.share.subject": {
+  "en": "Your invitation to {shop}",
+  "te": "{shop} నుంచి మీకు ఆహ్వానం",
+  "hi": "{shop} की ओर से आपका न्योता",
+  "kn": "{shop} ನಿಂದ ನಿಮಗೆ ಆಹ್ವಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.title": {
+  "en": "Invitations",
+  "te": "ఆహ్వానాలు",
+  "hi": "न्योते",
+  "kn": "ಆಹ್ವಾನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.none": {
+  "en": "No invitations yet.",
+  "te": "ఇంకా ఆహ్వానాలు లేవు.",
+  "hi": "अभी कोई न्योता नहीं।",
+  "kn": "ಇನ್ನೂ ಆಹ್ವಾನಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.nolabel": {
+  "en": "(no label)",
+  "te": "(లేబుల్ లేదు)",
+  "hi": "(लेबल नहीं)",
+  "kn": "(ಲೇಬಲ್ ಇಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.by": {
+  "en": "Made by {name}",
+  "te": "{name} చేసారు",
+  "hi": "{name} ने बनाया",
+  "kn": "{name} ಮಾಡಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.col.for": {
+  "en": "For",
+  "te": "ఎవరికి",
+  "hi": "किसके लिए",
+  "kn": "ಯಾರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.col.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.col.ends": {
+  "en": "Ends",
+  "te": "ముగిసేది",
+  "hi": "खत्म होगा",
+  "kn": "ಮುಗಿಯುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.col.action": {
+  "en": "Action",
+  "te": "చర్య",
+  "hi": "कार्रवाई",
+  "kn": "ಕ್ರಿಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.status.pending": {
+  "en": "Waiting",
+  "te": "వేచి ఉంది",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.status.accepted": {
+  "en": "Used",
+  "te": "వాడారు",
+  "hi": "इस्तेमाल हुआ",
+  "kn": "ಬಳಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.status.revoked": {
+  "en": "Cancelled",
+  "te": "రద్దు",
+  "hi": "रद्द",
+  "kn": "ರದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.status.expired": {
+  "en": "Ended",
+  "te": "ముగిసింది",
+  "hi": "खत्म",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.inv.revoke": {
+  "en": "Cancel invitation",
+  "te": "ఆహ్వానం రద్దు చేయండి",
+  "hi": "न्योता रद्द करें",
+  "kn": "ಆಹ್ವಾನ ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.err.too_many_invitations": {
+  "en": "20 invitations are waiting. Cancel one you do not need, then try again.",
+  "te": "20 invitations are waiting. Cancel one you do not need, then try again.",
+  "hi": "20 invitations are waiting. Cancel one you do not need, then try again.",
+  "kn": "20 invitations are waiting. Cancel one you do not need, then try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.role_not_allowed": {
+  "en": "You cannot do that with your role. For example, an Admin cannot invite or change another Admin.",
+  "te": "You cannot do that with your role. For example, an Admin cannot invite or change another Admin.",
+  "hi": "You cannot do that with your role. For example, an Admin cannot invite or change another Admin.",
+  "kn": "You cannot do that with your role. For example, an Admin cannot invite or change another Admin.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.own_role": {
+  "en": "You cannot change your own role.",
+  "te": "You cannot change your own role.",
+  "hi": "You cannot change your own role.",
+  "kn": "You cannot change your own role.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.keep_owner": {
+  "en": "The only owner cannot leave. Hand the business over first.",
+  "te": "The only owner cannot leave. Hand the business over first.",
+  "hi": "The only owner cannot leave. Hand the business over first.",
+  "kn": "The only owner cannot leave. Hand the business over first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.invitation_not_pending": {
+  "en": "That invitation was already used or cancelled.",
+  "te": "That invitation was already used or cancelled.",
+  "hi": "That invitation was already used or cancelled.",
+  "kn": "That invitation was already used or cancelled.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.invitation_invalid": {
+  "en": "That code is not valid. Check it, or ask for a new one.",
+  "te": "That code is not valid. Check it, or ask for a new one.",
+  "hi": "That code is not valid. Check it, or ask for a new one.",
+  "kn": "That code is not valid. Check it, or ask for a new one.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.invitation_locked": {
+  "en": "Too many wrong codes. Wait an hour, or ask for a new code.",
+  "te": "Too many wrong codes. Wait an hour, or ask for a new code.",
+  "hi": "Too many wrong codes. Wait an hour, or ask for a new code.",
+  "kn": "Too many wrong codes. Wait an hour, or ask for a new code.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.err.already_member": {
+  "en": "You are already in this business.",
+  "te": "You are already in this business.",
+  "hi": "You are already in this business.",
+  "kn": "You are already in this business.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "team.join.title": {
+  "en": "Join a business",
+  "te": "వ్యాపారంలో చేరండి",
+  "hi": "व्यापार से जुड़ें",
+  "kn": "ವ್ಯಾಪಾರಕ್ಕೆ ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.join.intro": {
+  "en": "Type the invitation code you were given. You must be signed in.",
+  "te": "మీకు ఇచ్చిన ఆహ్వాన కోడ్ టైప్ చేయండి. మీరు సైన్ ఇన్ అయి ఉండాలి.",
+  "hi": "आपको जो न्योते का कोड मिला है वह लिखें। आपका साइन इन होना ज़रूरी है।",
+  "kn": "ನಿಮಗೆ ಕೊಟ್ಟ ಆಹ್ವಾನ ಕೋಡ್ ಬರೆಯಿರಿ. ನೀವು ಸೈನ್ ಇನ್ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.join.code": {
+  "en": "Invitation code",
+  "te": "ఆహ్వాన కోడ్",
+  "hi": "न्योते का कोड",
+  "kn": "ಆಹ್ವಾನ ಕೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.join.help": {
+  "en": "Capital or small letters, spaces and dashes do not matter.",
+  "te": "పెద్ద లేదా చిన్న అక్షరాలు, ఖాళీలు, డాష్‌లు పట్టింపు లేదు.",
+  "hi": "बड़े या छोटे अक्षर, स्पेस और डैश का फ़र्क नहीं पड़ता।",
+  "kn": "ದೊಡ್ಡ ಅಥವಾ ಚಿಕ್ಕ ಅಕ್ಷರ, ಖಾಲಿ ಜಾಗ, ಡ್ಯಾಶ್ ಪರವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.join.button": {
+  "en": "Join",
+  "te": "చేరండి",
+  "hi": "जुड़ें",
+  "kn": "ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.join.done": {
+  "en": "You joined {name}.",
+  "te": "మీరు {name} లో చేరారు.",
+  "hi": "आप {name} से जुड़ गए।",
+  "kn": "ನೀವು {name} ಗೆ ಸೇರಿದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "team.join.open": {
+  "en": "Open it",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

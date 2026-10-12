@@ -21,7 +21,10 @@ const PLAN: Record<string, [string, string, string, [boolean, boolean, boolean, 
     ["Catalogue", "/catalogue", "sarees", [true, true, true, true]],
     ["Prices and products", "/item-types", "catalogue", [true, true, true, false]],
   ],
-  "Your team": [["Office", "/office", "office", [true, true, true, true]]],
+  "Your team": [
+    ["Team", "/team", "team", [true, true, true, true]],
+    ["Office", "/office", "office", [true, true, true, true]],
+  ],
   Connect: [["Integrations", "/integrations", "integrations", [true, true, false, false]]],
 };
 const PLAN_FOOT: [string, string, string, [boolean, boolean, boolean, boolean]] = ["Settings", "/settings", "settings", [true, true, true, true]];
