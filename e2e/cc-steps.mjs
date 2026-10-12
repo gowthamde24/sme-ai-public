@@ -33,6 +33,7 @@ export async function ccSteps(c) {
   const { step, page, must, text, BASE, SHOTS, SLOW, psql, api, aal2Token } = c;
   const base = () => `${BASE}/app/tenants/${c.tenant}`;
   const stamp = Date.now().toString(36);
+  const phoneId = `9${Date.now()}`; // a phone number ID belongs to one business only: a fresh one per run
 
   // ---- CC1. Settings > Data -------------------------------------------------------------------------------------------------------------------------------------
   await step("CC1", "Settings > Data: import a spreadsheet (one customer with only a phone, one with nothing) with the preview and the mapping, import it once, export a file, make and stop the calendar address", async () => {
@@ -240,8 +241,13 @@ export async function ccSteps(c) {
       await p2.waitForURL(/\/(setup|app)/, { timeout: 30000 });
       await p2.goto(`${BASE_OF(c)}/app/join#code=${code}`);
       await p2.getByRole("heading", { level: 1, name: "Join a business" }).waitFor();
-      await p2.waitForFunction(() => document.querySelector("input")?.value !== "");
-      must((await p2.getByLabel("Invitation code").inputValue()) === code, "the code was not taken from the link");
+      let got = "";
+      for (let i = 0; i < 40 && got === ""; i += 1) {
+        got = await p2.getByLabel("Invitation code").inputValue().catch(() => "");
+        if (got === "") await p2.waitForTimeout(250);
+      }
+      if (got !== code) await p2.screenshot({ path: path.join(SHOTS, "CC4-join-FAIL.png"), fullPage: true });
+      must(got === code, `the code was not taken from the link (the box holds "${got}", the page is ${p2.url()})`);
       must(!p2.url().includes("#"), `the code is still in the address bar: ${p2.url()}`);
       await p2.screenshot({ path: path.join(SHOTS, "CC4-join.png"), fullPage: true });
       await p2.getByRole("button", { name: "Join", exact: true }).click();
@@ -287,7 +293,7 @@ export async function ccSteps(c) {
     must((await stateOf()) === "not_connected", `the first state is ${await stateOf()}`);
     await page.screenshot({ path: path.join(SHOTS, "CC5-connect-not-connected.png"), fullPage: true });
     await page.getByLabel("WhatsApp Business account ID").fill("123456789012345");
-    await page.getByLabel("Phone number ID").fill("109876543210987");
+    await page.getByLabel("Phone number ID").fill(phoneId);
     await page.getByLabel(/Number customers see/).fill("+91 98765 43210");
     await page.getByLabel("Name of the access key").fill("SHOP_E2E_TOKEN");
     await page.getByRole("button", { name: "Save details" }).click();
@@ -400,22 +406,20 @@ export async function ccSteps(c) {
     must(psql(`select coalesce(gstin, 'none') from public.companies where id = '${company}'`) === "none", "the number was not removed");
 
     // the customers form takes one too
-    await page.goto(`${base()}/customers/new`, { waitUntil: "networkidle" });
-    // a development server may fill a field before the page has hydrated, and hydration then clears it: fill until it stays
-    const fillSure = async (locator, value) => {
-      for (let i = 0; i < 6; i += 1) {
-        await locator.fill(value);
-        await page.waitForTimeout(400);
-        if ((await locator.inputValue()) === value) return;
-      }
-      throw new Error(`could not type into ${value}`);
-    };
-    await fillSure(page.getByLabel("Customer's name"), `E2E GST Person ${stamp}`);
-    await fillSure(page.getByLabel("WhatsApp or phone number"), "+00 90002 00088");
-    await fillSure(page.getByLabel("Shop or business name (optional)"), `E2E GST Shop ${stamp}`);
-    await fillSure(page.getByLabel(/^GSTIN \(for a business/), "24AAACC1206D1ZM");
-    await page.getByRole("button", { name: "Add this customer" }).click();
-    await page.getByRole("status").waitFor();
+    // a development server compiles the page on first use and may re-render it (new ids reset the form): type it all, press, and if the answer does not come, start again (the same ids are not reused, but a duplicate shop name is fine here)
+    let made = false;
+    for (let attempt = 0; attempt < 3 && !made; attempt += 1) {
+      await page.goto(`${base()}/customers/new`, { waitUntil: "networkidle" });
+      await page.waitForTimeout(2500);
+      await page.getByLabel("Customer's name").fill(`E2E GST Person ${stamp}`);
+      await page.getByLabel("WhatsApp or phone number").fill("+00 90002 00088");
+      await page.getByLabel("Shop or business name (optional)").fill(`E2E GST Shop ${stamp}`);
+      await page.getByLabel(/^GSTIN \(for a business/).fill("24AAACC1206D1ZM");
+      if ((await page.getByLabel(/^GSTIN \(for a business/).inputValue()) !== "24AAACC1206D1ZM") continue;
+      await page.getByRole("button", { name: "Add this customer" }).click();
+      made = await page.getByRole("status").waitFor({ timeout: 20000 }).then(() => true, () => false);
+    }
+    must(made, "the new-customer form never answered");
     must(psql(`select gstin from public.companies where tenant_id = '${c.tenant}' and name = 'E2E GST Shop ${stamp}'`) === "24AAACC1206D1ZM", "the customer form did not keep the number");
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "shop number: bad stopped, good saved with state Maharashtra; customer number set (Karnataka), removed; the new-customer form keeps one; phone and dark clean";
