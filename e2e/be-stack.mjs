@@ -1054,6 +1054,81 @@ await step("N1", "the bell: count, panel, deep link, per-device unread, polling 
   return axe ? "bell, panel, deep link, per-device unread, 360 px dark, axe" : "bell checked; axe-core not installed: that check was skipped";
 }, page);
 
+// ---- 8a3. "This week", the owner's report (job BV): real numbers from the API, a link in the menu, a phone in the dark --------------------------
+await step("R1", "This week: the menu link, the real numbers of the week (visits, messages, AI use) equal the API's, no CSP problem; at 360 px dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
+  let axe = "";
+  try {
+    axe = readFileSync(path.join(here, "..", "apps", "web", "node_modules", "axe-core", "axe.min.js"), "utf8");
+  } catch {
+    // axe-core is the web app's dev dependency: without it that one check is skipped and said so
+  }
+  const before = problems.length;
+  const todayIst = new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+  const [y, mo, d] = todayIst.split("-").map(Number);
+  const dow = new Date(Date.UTC(y, mo - 1, d)).getUTCDay();
+  const day = (n) => new Date(Date.UTC(y, mo - 1, d + n)).toISOString().slice(0, 10);
+  const from = day(-((dow + 6) % 7));
+  const to = day(-((dow + 6) % 7) + 6);
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+  await page.getByRole("navigation", { name: "Workspace menu" }).getByRole("link", { name: "This week" }).click();
+  await page.waitForURL(/\/report$/);
+  await page.getByRole("heading", { level: 1, name: "This week" }).waitFor();
+  for (const name of ["Store visits", "WhatsApp messages", "How fast you say OK", "Sarees sent most", "Agent OWL this week"]) must((await page.getByRole("region", { name }).count()) === 1, `no card named ${name}`);
+  must(!(await text(page)).includes("Could not read this part"), "a part of the report could not be read");
+  // the numbers are the API's
+  const token = await aal2Token();
+  const visits = await api("GET", `${T()}/visits?from=${from}&to=${to}`, null, token);
+  must(visits.status === 200, `visits ${visits.status}`);
+  const booked = visits.body.items.filter((v) => v.status !== "cancelled").length;
+  const summary = await api("GET", `${T()}/outbox/summary?from=${from}&to=${to}`, null, token);
+  must(summary.status === 200, `summary ${summary.status}`);
+  const rowOf = async (card, label) => (await page.getByRole("region", { name: card }).getByText(label, { exact: true }).locator("xpath=ancestor::li[1]").innerText()).replace(/\s+/g, " ");
+  must((await rowOf("Store visits", "Booked")).endsWith(` ${booked}`), `booked on the page: ${await rowOf("Store visits", "Booked")}, API: ${booked}`);
+  must((await rowOf("WhatsApp messages", "Sent")).endsWith(` ${summary.body.sent}`), `sent on the page: ${await rowOf("WhatsApp messages", "Sent")}, API: ${summary.body.sent}`);
+  must((await rowOf("WhatsApp messages", "Blocked")).endsWith(` ${summary.body.blocked}`), "blocked differs from the API");
+  const usage = await api("GET", `${T()}/ai-usage/week`, null, token);
+  must(usage.status === 200, `ai usage ${usage.status}`);
+  must((await page.getByRole("region", { name: "Agent OWL this week" }).getByRole("meter").getAttribute("aria-valuenow")) === String(usage.body.week_percent), "the AI figure differs from the API");
+  await page.screenshot({ path: path.join(SHOTS, "R-report-desktop.png"), fullPage: true });
+  // a phone, dark
+  await page.setViewportSize({ width: 360, height: 780 });
+  await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+  try {
+    await page.reload({ waitUntil: "networkidle" });
+    await page.getByRole("heading", { level: 1, name: "This week" }).waitFor();
+    await page.screenshot({ path: path.join(SHOTS, "R-report-phone-dark.png"), fullPage: true });
+    const m = await page.evaluate(() => {
+      const bad = [];
+      for (const el of document.querySelectorAll("main a, main button")) {
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        if (r.height < 43.5) bad.push(`${el.tagName.toLowerCase()} "${(el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 24)}" ${Math.round(r.height)}px`);
+      }
+      const small = new Set();
+      for (const el of document.querySelectorAll("main *")) {
+        if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+        const fs = parseFloat(getComputedStyle(el).fontSize);
+        if (fs < 13.99) small.add(`${el.tagName.toLowerCase()} ${fs}px`);
+      }
+      return { scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth, bad: bad.slice(0, 5), small: [...small].slice(0, 4) };
+    });
+    must(m.scrollW <= m.clientW, `sideways scroll ${m.scrollW}>${m.clientW}`);
+    must(m.bad.length === 0, `small targets ${m.bad.join("; ")}`);
+    must(m.small.length === 0, `small text ${m.small.join("; ")}`);
+    if (axe) {
+      await page.evaluate(axe);
+      const v = await page.evaluate(async () => (await window.axe.run(document, { resultTypes: ["violations"] })).violations.filter((x) => !/nextjs|portal/.test(JSON.stringify(x.nodes[0]?.target ?? ""))).map((x) => `${x.id}(${x.nodes.length})`));
+      must(v.length === 0, `axe ${v.join(", ")}`);
+    }
+  } finally {
+    await page.emulateMedia({ colorScheme: null, reducedMotion: null }).catch(() => null);
+    await page.setViewportSize({ width: 1280, height: 900 }).catch(() => null);
+  }
+  must(problems.length === before, `console problems: ${problems.slice(before).join(" | ")}`);
+  return `week ${from}..${to}: booked ${booked}, sent ${summary.body.sent}, AI ${usage.body.week_percent}%` + (axe ? ", axe clean" : "; axe-core not installed: that check was skipped");
+}, page);
+
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
 await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hours) and the saree page at 360 px and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";
