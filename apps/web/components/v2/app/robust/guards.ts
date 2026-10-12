@@ -43,7 +43,15 @@ export function startsNavigation(anchor: HTMLAnchorElement | null, e: { button: 
 
 /** What a form is about to send, as one string: names and values (a file by its name and size). Two submits with the same string are the same submit. */
 export function formKey(form: HTMLFormElement): string {
-  const parts: string[] = [];
+  const parts: string[] = [screenKey()];
   new FormData(form).forEach((value, name) => parts.push(`${name}=${typeof value === "string" ? value : `file:${value.name}:${value.size}`}`));
   return parts.join("&");
+}
+
+/**
+ * What the person is looking at, as a short string: the page's first heading. A step-by-step screen (a wizard) reuses the same button and the same form for each step, so "the same button again" is only a double press if the screen has not
+ * moved on in between: the guards remember this string with the press and let a press through when it has changed.
+ */
+export function screenKey(): string {
+  return (document.querySelector("h1")?.textContent ?? "").trim().slice(0, 120);
 }

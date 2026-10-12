@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { retryWithBackoff } from "@/lib/net/backoff";
 
 import { word, type Labels } from "../labels";
-import { CLICK_LOCK_MS, SUBMIT_LOCK_MS, formKey, guardedButton, startsNavigation, tooSoon } from "./guards";
+import { CLICK_LOCK_MS, SUBMIT_LOCK_MS, formKey, guardedButton, screenKey, startsNavigation, tooSoon } from "./guards";
 import { useOnline } from "./use-online";
 
 type Session = "ok" | "ended" | "back";
@@ -124,7 +124,7 @@ export function RobustShell({ labels }: { labels?: Labels }) {
   // the guards on the whole document (capture phase: before the page's own handlers see the event)
   useEffect(() => {
     const locked = new WeakMap<HTMLFormElement, { at: number; key: string }>();
-    const clicks = new WeakMap<HTMLButtonElement, number>();
+    const clicks = new WeakMap<HTMLButtonElement, { at: number; screen: string }>();
     const stop = (e: Event) => {
       e.preventDefault();
       e.stopImmediatePropagation();
@@ -162,11 +162,14 @@ export function RobustShell({ labels }: { labels?: Labels }) {
     const onClick = (e: Event) => {
       const button = guardedButton(e.target);
       if (!button) return;
-      if (tooSoon(clicks.get(button), e.timeStamp, CLICK_LOCK_MS)) {
+      // the same button on the same screen: a screen that has moved on (a wizard's next step) is a new press
+      const screen = screenKey();
+      const last = clicks.get(button);
+      if (last && last.screen === screen && tooSoon(last.at, e.timeStamp, CLICK_LOCK_MS)) {
         stop(e);
         return;
       }
-      clicks.set(button, e.timeStamp);
+      clicks.set(button, { at: e.timeStamp, screen });
     };
     const onLink = (e: MouseEvent) => {
       const anchor = e.target instanceof Element ? e.target.closest("a") : null;

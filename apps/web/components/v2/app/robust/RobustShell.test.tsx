@@ -314,3 +314,45 @@ describe("moving to another page", () => {
     expect(document.querySelector('[data-robust="progress"]')).toBeNull();
   });
 });
+
+describe("a step-by-step screen reuses its button", () => {
+  it("a press on the same button is let through when the heading has changed in between (a wizard's next step), and held back when it has not", () => {
+    const pressed = vi.fn();
+    render(
+      <div>
+        <RobustShell />
+        <h1>Step one</h1>
+        <button type="button" onClick={pressed}>
+          Next
+        </button>
+      </div>,
+    );
+    const next = screen.getByRole("button", { name: "Next" });
+    fireEvent.click(next);
+    fireEvent.click(next); // the same screen: a double press
+    expect(pressed).toHaveBeenCalledTimes(1);
+    screen.getByRole("heading").textContent = "Step two"; // the screen moved on
+    fireEvent.click(next);
+    expect(pressed).toHaveBeenCalledTimes(2);
+  });
+  it("the same goes for a form: the same contents on a new screen are a new submit", () => {
+    const sent = vi.fn();
+    render(
+      <div>
+        <RobustShell />
+        <h1>Hours</h1>
+        <form aria-label="Step" onSubmit={(e) => (e.preventDefault(), sent())}>
+          <input name="x" defaultValue="1" aria-label="x" />
+          <button type="submit">Save</button>
+        </form>
+      </div>,
+    );
+    const form = screen.getByRole("form", { name: "Step" });
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    expect(sent).toHaveBeenCalledTimes(1);
+    screen.getByRole("heading").textContent = "Saree";
+    fireEvent.submit(form);
+    expect(sent).toHaveBeenCalledTimes(2);
+  });
+});
