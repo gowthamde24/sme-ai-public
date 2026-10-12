@@ -128,6 +128,10 @@ assistant-smoke:
 # OPT-IN, NEVER part of make check (job AK / K3): which model is best for the Main agent, MEASURED. The 30 assistant eval questions plus 10 code-mixed Telugu/Kannada ones, asked of each named model on the
 # seeded demo through the REAL provider adapters; one table row per model (pass rate, Telugu quality, price refusal, injection refusal, median latency, paise per answer). At most 30 rupees per model; keys from
 # the environment only (a model without its key is skipped). MODELS="provider:model:input_price:output_price ..." (a model on your own Mac: openai_compat:llama3.2:3b:0:0 with LLM_BASE_URL=http://localhost:11434/v1, no key, labelled a plumbing check) ; LIMIT=n asks only the first n questions (a spread). See docs/runbooks/model-bakeoff.md.
+# Job BQ (ADR 0079) adds 36 SHOP TASKS (nine things an owner really asks, in English, Telugu, Hindi and Kannada: SUITE=shop|classic|all, default all = 76 questions), scored for tool correctness (read from the run's
+# recorded steps) and rule-following; the providers groq (the hosted FREE tier: GROQ_API_KEY, openai/gpt-oss-120b, price 0:0) and fake (the scripted stand-in: no key, a plumbing check); ONE spending limit for the
+# whole command, Rs 100, unless CONFIRM_SPEND=1 (then SPEND_CAP_RS, at most Rs 500); and the report is written OUTSIDE the repository, ~/Desktop/v2-overnight/model-bakeoff.md (REPORT=...), with a sheet for a native
+# reader next to it. SUITE, REPORT, CONFIRM_SPEND and SPEND_CAP_RS are read from the environment or the make line. See docs/runbooks/model-bakeoff.md.
 model-bakeoff:
 	cd $(API) && MODELS="$(MODELS)" LIMIT="$(LIMIT)" ../../scripts/with-local-demo-env.sh .venv/bin/python ../../tests/integration/model_bakeoff.py
 
