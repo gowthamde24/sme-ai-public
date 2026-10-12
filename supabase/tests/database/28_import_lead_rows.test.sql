@@ -129,8 +129,9 @@ select pg_temp.gate('company-level fields may be real (website, city, industry, 
 -- refused: contact fields without a contact e-mail
 select pg_temp.gate('contact_name alone', '{"contact_name":"DEMO A"}', 'rejected', 'contact_requires_email');
 select pg_temp.gate('contact_job_title alone', '{"contact_job_title":"Owner"}', 'rejected', 'contact_requires_email');
-select pg_temp.gate('contact_phone alone', '{"contact_phone":"+00 1234"}', 'rejected', 'contact_requires_email');
-select pg_temp.gate('name and phone, no e-mail', '{"contact_name":"DEMO A","contact_phone":"+00 1234"}', 'rejected', 'contact_requires_email');
+-- job BO (migration 20261115090000): a phone number is enough to reach a contact, an e-mail is no longer required
+select pg_temp.gate('contact_phone alone', '{"contact_phone":"+00 1234"}', 'rejected', 'contact_name_missing');
+select pg_temp.gate('name and phone, no e-mail', '{"contact_name":"DEMO A","contact_phone":"+00 1234"}', 'created', null);
 select pg_temp.gate('an empty e-mail with a name', '{"contact_name":"DEMO A","contact_email":""}', 'rejected', 'contact_requires_email');
 select pg_temp.gate('a blank e-mail with a name', '{"contact_name":"DEMO A","contact_email":"   "}', 'rejected', 'contact_requires_email');
 select pg_temp.gate('a null e-mail with a name', '{"contact_name":"DEMO A","contact_email":null}', 'rejected', 'contact_requires_email');

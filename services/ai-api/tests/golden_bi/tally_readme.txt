@@ -15,7 +15,8 @@ Import, in this order (TallyPrime Release 4.0 or later: XML works in every relea
      (Alt+O > Configuration > Enable detailed log).
 
 Notes
-  * Import each date range ONCE. Importing the same file again creates the vouchers again (there is no GUID in the file); to redo a range, delete the earlier vouchers first.
+  * Every voucher carries a STABLE GUID (the same order or payment always has the same one). To import a range again without doubling it, set Alt+O > Configuration > "Overwrite voucher when
+    a voucher with same GUID exists" to Yes first: the earlier vouchers are replaced. With the default (No) Tally creates them again. The voucher numbers (SO-00012 ...) never change either.
   * A voucher is Sales (the party is debited the order total; Sales, Freight Charges and the GST ledgers are credited), Receipt (money in) or Payment (a refund). Round Off holds
     any paisa difference between an order total and its parts.
   * Names in Telugu, Hindi or other scripts need TallyPrime (Unicode); Tally ERP 9 may show them wrongly.

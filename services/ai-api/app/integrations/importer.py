@@ -1,8 +1,9 @@
 """Turn a mapped grid into import rows, with a per-row verdict and a CLOSED reason code for every refusal (an issue is a line number, a code and a field name; it never echoes a cell).
 
-CUSTOMERS become the rows `POST /leads/import` already takes, so the existing rules apply unchanged: duplicates are found by the same match keys and SKIPPED (an existing customer is never changed by an
-import), a contact needs an e-mail address, the real-data gate decides what a workspace may hold. A row that has contact details but no e-mail keeps its company and its lead; the contact details are left
-out and the row says so (`contact_needs_email`), so nothing is lost silently.
+CUSTOMERS become the rows `POST /leads/import` already takes, so the existing rules apply unchanged: duplicates are found by the same match keys (and, since job BO, by the normalised PHONE) and
+SKIPPED (an existing customer is never changed by an import); the real-data gate decides what a workspace may hold. A contact needs an e-mail address OR a phone number: a phone-only contact is
+imported (its number stored as +91 and ten digits; named after the shop when the sheet has no contact name: `contact_named_after_company`); a name or role with no way to reach the person keeps the
+company and its lead and says `contact_needs_phone_or_email`, so nothing is lost silently.
 
 STOCK rows change the stock status of catalogue items found BY NAME (same match key as the leads: case, spaces and joiners ignored). Nothing is created or deleted. The status comes from a status
 column (English, Telugu, Hindi words) or from a quantity column (3 or more: in stock; 1 or 2: few left; 0: made to order, the closest status the catalogue has to "none on the shelf")."""
@@ -13,6 +14,7 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from app.crm.phone import canonical_phone
 from app.integrations.mapping import normalise
 from app.integrations.sheet import MAX_CELL, Grid
 from app.leads.csv_rows import _formula_like
@@ -77,10 +79,17 @@ def prepare_customers(grid: Grid, mapping: dict[str, int]) -> Prepared:
             out.issues.append(issue)
             continue
         note = None
-        if not item.get("contact_email") and any(item.get(k) for k in ("contact_name", "contact_phone", "contact_job_title")):
-            for k in ("contact_name", "contact_phone", "contact_job_title"):
+        if item.get("contact_phone"):
+            item["contact_phone"] = canonical_phone(item["contact_phone"])  # an Indian mobile becomes +91 and ten digits
+        has_contact = any(item.get(k) for k in ("contact_name", "contact_phone", "contact_email", "contact_job_title"))
+        if has_contact and not (item.get("contact_email") or item.get("contact_phone")):
+            # a name or a role with no way to reach the person: the company and its lead are kept, the contact is not
+            for k in ("contact_name", "contact_job_title"):
                 item.pop(k, None)
-            note = "contact_needs_email"
+            note = "contact_needs_phone_or_email"
+        elif has_contact and not item.get("contact_name"):
+            item["contact_name"] = item["company_name"]  # a shop's own phone: the contact is named after the shop
+            note = "contact_named_after_company"
         item.setdefault("source", "Spreadsheet import")
         out.rows.append(item)
         out.lines.append(line)

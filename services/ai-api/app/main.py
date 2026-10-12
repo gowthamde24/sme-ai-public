@@ -42,6 +42,7 @@ from app.integrations.repository import PostgrestIntegrationsRepository
 from app.integrations.routes_accounting import router as accounting_export_router
 from app.integrations.routes_calendar import member_router as calendar_member_router
 from app.integrations.routes_calendar import public_router as calendar_public_router
+from app.integrations.routes_contacts import router as contacts_by_phone_router
 from app.integrations.routes_import import router as spreadsheet_import_router
 from app.integrations.routes_policy import router as policy_router
 from app.leads.repository import PostgrestLeadsRepository
@@ -518,6 +519,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     )  # before the generic /leads/{id} routes: /leads/search must not be read as an id
     app.include_router(leads_router)
     app.include_router(evidence_router)
+    app.include_router(contacts_by_phone_router)  # before the generic /contacts/{id} routes
     app.include_router(crm_router)
     app.include_router(agent_runs_router)
     app.include_router(enquiries_router)

@@ -165,7 +165,7 @@ def test_the_customer_import_previews_confirms_replays_and_never_overwrites(clie
         [
             ["Party Name", "Contact Person", "Mobile", "Email", "City"],
             [f"Import Silks {tag} One", "Contact One", "+00 90000 21001", f"one{tag}@example.test", "Hyderabad"],
-            [f"Import Silks {tag} Two", "", "98765 43210", "", "Guntur"],
+            [f"Import Silks {tag} Two", "", "+00 90000 21002", "", "Guntur"],
             [f"Real Shop {tag}", "Real Person", "+91 98765 00000", f"real{tag}@gmail.com", "Vijayawada"],
             ["=HYPERLINK(\"http://evil\",\"x\")", "", "", "", "Nellore"],
         ]
@@ -177,7 +177,7 @@ def test_the_customer_import_previews_confirms_replays_and_never_overwrites(clie
     assert pv.status_code == 200, pv.text
     body = pv.json()
     by_line = {r["line"]: r for r in body["rows"]}
-    assert by_line[2]["status"] == "will_create" and by_line[3]["status"] == "will_create" and by_line[3]["note"] == "contact_needs_email"
+    assert by_line[2]["status"] == "will_create" and by_line[3]["status"] == "will_create" and by_line[3]["note"] == "contact_named_after_company"
     assert by_line[4]["status"] == "rejected" and by_line[4]["reason"] == "contact_domain_not_reserved", "the real-data gate is closed: a real e-mail address is refused, with its code"
     assert [(i["line"], i["code"]) for i in body["issues"]] == [(5, "formula_like")]
     assert f"Import Silks {tag}" not in json.dumps(body["issues"])

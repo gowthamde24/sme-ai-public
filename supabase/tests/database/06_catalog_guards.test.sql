@@ -271,6 +271,8 @@ select is(
         'public.record_draft_sent',
         'public.persist_question_drafts',
         'public.decide_question_draft',
+        -- job BO (ADR 0074): the phone comparison form (the unique index on contacts is evaluated as the writer) and the duplicate lookup
+        'app.phone_norm', 'public.find_contact_by_phone',
         -- job BI (ADR 0073): the accounting export, the spreadsheet import jobs, the stock import, the calendar feed and the policy acceptance. Role first in every one; aal2 for the export and for running an import
         'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
         'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',
@@ -307,7 +309,8 @@ select is(
                      'public.outbox_list', 'public.outbox_summary',
                      'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
                      'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',
-                     'public.policy_accept', 'public.policy_acceptances_mine')),
+                     'public.policy_accept', 'public.policy_acceptances_mine',
+                     'public.find_contact_by_phone')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

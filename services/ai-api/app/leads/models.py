@@ -15,6 +15,7 @@ from enum import StrEnum
 from typing import Annotated, Any
 
 from pydantic import (
+    AfterValidator,
     BaseModel,
     ConfigDict,
     Field,
@@ -24,6 +25,7 @@ from pydantic import (
 )
 
 from app.crm.models import ApiUuid, RecordOrigin
+from app.crm.phone import canonical_phone
 from app.evidence.models import text_is_clean
 from app.leads.scoring import validate_icp_config
 
@@ -127,7 +129,8 @@ class ImportRowInput(BaseModel):
     categories: list[str] = Field(default_factory=list)
     contact_name: str | None = None
     contact_email: str | None = None
-    contact_phone: str | None = None
+    # job BO: an Indian mobile is stored as +91 and ten digits
+    contact_phone: Annotated[str, AfterValidator(canonical_phone)] | None = None
     contact_job_title: str | None = None
     source: str | None = None
     buyer_type: str | None = None

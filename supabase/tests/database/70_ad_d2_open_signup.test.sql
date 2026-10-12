@@ -64,7 +64,10 @@ select is(tests.sqlstate_as(tests.uid('noterms'), $$select public.complete_setup
 select is(tests.sqlstate_as(tests.uid('badterms'), $$select public.complete_setup('textiles', 'en')$$), 'SM308', 'DENY: a malformed terms version counts as not accepted');
 select is(tests.sqlstate_as(tests.uid('noname'), $$select public.complete_setup('textiles', 'en')$$), '22023', 'DENY: no business name from sign-up');
 select is(tests.sqlstate_as(tests.uid('longname'), $$select public.complete_setup('textiles', 'en')$$), '22023', 'DENY: a business name over 120 characters');
-select is((select count(*) from public.account_setups), 0::bigint, 'none of the refusals left a setup row');
+-- (only THIS file's fixture people are counted: account_setups has no foreign key, so a real sign-up that another session made and deleted on the same local database leaves a row behind, which made
+-- the old global count fail at random; found in job BO)
+select is((select count(*) from public.account_setups where user_id in (tests.uid('ok1'), tests.uid('unconf'), tests.uid('noterms'), tests.uid('badterms'), tests.uid('noname'), tests.uid('longname'))), 0::bigint,
+  'none of the refusals left a setup row');
 
 -- ---- complete_setup: the first call
 select is(tests.scalar_as(tests.uid('ok1'), $$select (public.complete_setup('textiles', 'te') ->> 'created')$$), 'true', 'ALLOW: the first call makes the business');

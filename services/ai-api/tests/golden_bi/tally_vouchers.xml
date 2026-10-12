@@ -12,6 +12,8 @@
         <TALLYMESSAGE xmlns:UDF="TallyUDF">
           <VOUCHER VCHTYPE="Sales" ACTION="Create" OBJVIEW="Accounting Voucher View">
             <DATE>20261005</DATE>
+            <GUID>2e0abee5-a2f4-50bd-a634-fed4962a1fd2-00000001</GUID>
+            <REMOTEID>2e0abee5-a2f4-50bd-a634-fed4962a1fd2-00000001</REMOTEID>
             <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
             <VOUCHERNUMBER>SO-00012</VOUCHERNUMBER>
             <PARTYLEDGERNAME>Ravi &amp; Sons Silks</PARTYLEDGERNAME>
@@ -54,6 +56,8 @@
         <TALLYMESSAGE xmlns:UDF="TallyUDF">
           <VOUCHER VCHTYPE="Sales" ACTION="Create" OBJVIEW="Accounting Voucher View">
             <DATE>20261008</DATE>
+            <GUID>5aaddcc7-6a68-53fd-96d5-576bdb669830-00000001</GUID>
+            <REMOTEID>5aaddcc7-6a68-53fd-96d5-576bdb669830-00000001</REMOTEID>
             <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
             <VOUCHERNUMBER>SO-00013</VOUCHERNUMBER>
             <PARTYLEDGERNAME>శ్రీ లక్ష్మి చీరలు</PARTYLEDGERNAME>
@@ -96,6 +100,8 @@
         <TALLYMESSAGE xmlns:UDF="TallyUDF">
           <VOUCHER VCHTYPE="Sales" ACTION="Create" OBJVIEW="Accounting Voucher View">
             <DATE>20261020</DATE>
+            <GUID>f4f923d4-6238-5314-be5e-44705adfe91b-00000001</GUID>
+            <REMOTEID>f4f923d4-6238-5314-be5e-44705adfe91b-00000001</REMOTEID>
             <VOUCHERTYPENAME>Sales</VOUCHERTYPENAME>
             <VOUCHERNUMBER>SO-00014</VOUCHERNUMBER>
             <PARTYLEDGERNAME>=HYPERLINK("http://x.example","pay")</PARTYLEDGERNAME>
@@ -128,6 +134,8 @@
         <TALLYMESSAGE xmlns:UDF="TallyUDF">
           <VOUCHER VCHTYPE="Receipt" ACTION="Create" OBJVIEW="Accounting Voucher View">
             <DATE>20261005</DATE>
+            <GUID>bdf31387-2daa-5d65-8afa-724140cfbd9f-00000001</GUID>
+            <REMOTEID>bdf31387-2daa-5d65-8afa-724140cfbd9f-00000001</REMOTEID>
             <VOUCHERTYPENAME>Receipt</VOUCHERTYPENAME>
             <VOUCHERNUMBER>RC-00012-aaaaaaaa</VOUCHERNUMBER>
             <PARTYLEDGERNAME>Ravi &amp; Sons Silks</PARTYLEDGERNAME>
@@ -150,6 +158,8 @@
         <TALLYMESSAGE xmlns:UDF="TallyUDF">
           <VOUCHER VCHTYPE="Payment" ACTION="Create" OBJVIEW="Accounting Voucher View">
             <DATE>20261009</DATE>
+            <GUID>38f1fd5b-e8fa-5b9a-a903-a6bbf85a241a-00000001</GUID>
+            <REMOTEID>38f1fd5b-e8fa-5b9a-a903-a6bbf85a241a-00000001</REMOTEID>
             <VOUCHERTYPENAME>Payment</VOUCHERTYPENAME>
             <VOUCHERNUMBER>PY-00013-bbbbbbbb</VOUCHERNUMBER>
             <PARTYLEDGERNAME>శ్రీ లక్ష్మి చీరలు</PARTYLEDGERNAME>

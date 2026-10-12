@@ -5,7 +5,7 @@ A plain hash would not do: phone numbers are brute-forceable, a keyed HMAC is no
 
 Normalisation is CONSERVATIVE on purpose: an address written another way (a plus-tag, different dots, another mailbox) is a different key. Over-matching would suppress real people.
   * e-mail: Unicode NFKC, trimmed, lower-cased. Dots and plus-tags are NOT collapsed.
-  * phone: digits only; the international call prefix `00` is dropped; an Indian mobile written with `+91`, `91` or a leading `0` is reduced to its ten digits; anything else keeps its digits
+  * phone: digits only (any script's decimal digits count as the digits they are); the international call prefix `00` is dropped; an Indian mobile written with `+91`, `91` or a leading `0` is reduced to its ten digits; anything else keeps its digits
     without leading zeros. 3 to 32 digits (the contact column's own limit).
 A key is `HMAC-SHA256(key, kind + ":" + normalised)` in lower-case hex; the database stores it with the key's version."""
 
@@ -36,7 +36,8 @@ def normalise_email(value: str | None) -> str | None:
 def normalise_phone(value: str | None) -> str | None:
     if value is None:
         return None
-    digits = _NON_DIGIT.sub("", unicodedata.normalize("NFKC", value))
+    # every script's decimal digits (Devanagari, Telugu, Kannada, Tamil, Arabic-Indic ...) are read as the digits they are, like app.phone_norm in the database (job BO)
+    digits = "".join(str(unicodedata.decimal(ch)) for ch in unicodedata.normalize("NFKC", value) if ch.isdecimal())
     if digits.startswith("00"):
         digits = digits[2:]
     if len(digits) == 12 and digits.startswith("91"):
