@@ -29,7 +29,7 @@ export function dayLine(now: number, lang: string): string {
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.
  */
-export function TodayView({ data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null }: { data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
+export function TodayView({ data, name, hour, now, base, t, lang = "en", role, actions = null, outboxHref = null, calendarHref = null, help = null }: { /** The "?" tip of the screen (job BT): drawn under the heading. */ help?: React.ReactNode; data: TodayData; name: string | null; hour: number; now: number; base: string; t: T; lang?: string; role: Role; actions?: TodayActions | null; outboxHref?: string | null; calendarHref?: string | null }) {
   const { cards, needs, team, store, week, sending, digest } = data;
   const main = team?.find((a) => a.agent === "main")?.state;
   const availability: Availability = main === "idle" || main === "working" ? "live" : main === "switched_off" ? "switched_off" : "not_available";
@@ -46,16 +46,17 @@ export function TodayView({ data, name, hour, now, base, t, lang = "en", role, a
         </div>
         <TodayUsage words={words} settingsHref={`${base}/settings`} week={week} />
       </header>
+      {help}
       {sending?.stopped ? <SendingBanner words={words} /> : null}
       <NeedsProvider initial={needs} waiting={cards.waiting}>
         <AgentHero lang={lang} base={base} availability={availability} askWords={Object.fromEntries(ASK_WORD_KEYS.map((k) => [k, t(k)]))} words={words} chips={chips} digest={digest} />
         <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
           <NeedsYou words={words} role={role} actions={actions} now={now} lang={lang} />
-          <aside className="flex min-w-0 flex-col gap-6">
+          <div className="flex min-w-0 flex-col gap-6">
             <StoreVisits store={store} calendarHref={calendarHref ?? `${base}/visits`} bookHref={role === "viewer" ? null : `${base}/visits#book`} t={t} />
             <DoneSection digest={digest} words={words} outboxHref={outboxHref} />
             <TeamSection team={team} base={base} t={t} now={now} />
-          </aside>
+          </div>
         </div>
       </NeedsProvider>
       {/* room for the question line and the bottom bar, which are fixed on a phone */}

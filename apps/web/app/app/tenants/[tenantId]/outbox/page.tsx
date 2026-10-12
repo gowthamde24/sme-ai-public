@@ -5,6 +5,7 @@ import type { OutboxActions } from "@/components/v2/app/outbox/OutboxList";
 import { OutboxView } from "@/components/v2/app/outbox/OutboxView";
 import { TABS, type OutboxTab } from "@/components/v2/app/outbox/reasons";
 import { parseFilters } from "@/components/v2/app/outbox/outbox-time";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { pageMain } from "@/components/v2/app/ui";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -76,7 +77,7 @@ export default async function OutboxPage({ params, searchParams }: PageProps<"/a
   };
   return (
     <main className={pageMain} lang={lang}>
-      <OutboxView tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
+      <OutboxView help={helpTipFor(lang, base, "outbox")} tab={tab} filters={filters} role={tenant.role} now={now} lang={lang} base={base} words={outboxWords(lang)} items={data.items} counts={data.counts} more={data.more} settings={data.settings} scheduler={data.scheduler} actions={actions} />
     </main>
   );
 }

@@ -51,11 +51,18 @@ export function SideNav({ memberships, labels, frame: given, email, signOut }: {
       <div className="space-y-1.5 border-t border-line p-2">
         {collapsed || !current || !frame.showUsage ? null : <UsageCard usage={frame.usage} loading={!frame.ready} labels={labels} />}
         {current ? foot.map((i) => <NavLink key={i.id} item={i} tenantId={current.id} on={active?.item.id === i.id} labels={labels} collapsed={collapsed} />) : null}
-        <button type="button" aria-disabled="true" title={collapsed ? `${help}: ${word(labels, "frame.notyet", "Not available yet")}` : undefined} className={`${itemBase} w-full text-muted ${collapsed ? "justify-center px-0" : ""}`}>
-          <CircleHelp className="size-5 shrink-0" aria-hidden="true" />
-          {collapsed ? <span className="sr-only">{help}</span> : <span className="min-w-0 flex-1 truncate text-left text-ink">{help}</span>}
-          {collapsed ? null : <span className="text-sm font-normal">{word(labels, "frame.notyet", "Not available yet")}</span>}
-        </button>
+        {current ? (
+          <Link href={`/app/tenants/${current.id}/help`} aria-current={pathname.startsWith(`/app/tenants/${current.id}/help`) ? "page" : undefined} title={collapsed ? help : undefined} className={`${itemBase} w-full ${pathname.startsWith(`/app/tenants/${current.id}/help`) ? itemCurrent : itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>
+            <CircleHelp className="size-5 shrink-0" aria-hidden="true" />
+            {collapsed ? <span className="sr-only">{help}</span> : <span className="min-w-0 flex-1 truncate text-left">{help}</span>}
+          </Link>
+        ) : (
+          <button type="button" aria-disabled="true" title={collapsed ? `${help}: ${word(labels, "frame.notyet", "Not available yet")}` : undefined} className={`${itemBase} w-full text-muted ${collapsed ? "justify-center px-0" : ""}`}>
+            <CircleHelp className="size-5 shrink-0" aria-hidden="true" />
+            {collapsed ? <span className="sr-only">{help}</span> : <span className="min-w-0 flex-1 truncate text-left text-ink">{help}</span>}
+            {collapsed ? null : <span className="text-sm font-normal">{word(labels, "frame.notyet", "Not available yet")}</span>}
+          </button>
+        )}
         <AccountMenu email={email} role={current?.role ?? null} signOut={signOut} labels={labels} collapsed={collapsed} several={memberships.length > 1} />
         <button type="button" onClick={toggle} aria-label={collapsed ? word(labels, "frame.expand", "Expand menu") : word(labels, "frame.collapse", "Collapse menu")} className={`${itemBase} w-full ${itemIdle} ${collapsed ? "justify-center px-0" : ""}`}>
           {collapsed ? <PanelLeftOpen className="size-5" aria-hidden="true" /> : <PanelLeftClose className="size-5" aria-hidden="true" />}

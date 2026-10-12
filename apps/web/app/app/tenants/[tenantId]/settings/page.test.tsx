@@ -114,7 +114,7 @@ describe("Settings, one part at a time", () => {
   it("the language part has the language select and the three looks", async () => {
     render(await SettingsPage(props({ section: "language" })));
     expect(screen.getByRole("combobox")).toBeInTheDocument();
-    expect(screen.getAllByRole("button").map((b) => b.textContent)).toEqual(["System", "Light", "Dark"]);
+    expect(screen.getAllByRole("button").map((b) => b.textContent)).toEqual(["Help for this screen", "System", "Light", "Dark"]); // the first is the "?" tip of the screen (job BT)
   });
   it("a missing workspace is not-found and a rejected session goes to sign-in", async () => {
     fetchTenant.mockRejectedValue(new ApiRequestError(404, "not_found", "x"));

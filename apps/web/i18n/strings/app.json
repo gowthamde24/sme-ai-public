@@ -28203,5 +28203,1100 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "help.title": {
+  "en": "Help",
+  "te": "సహాయం",
+  "hi": "मदद",
+  "kn": "ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.sub": {
+  "en": "Short guides, with Agent OWL to show the way.",
+  "te": "చిన్న గైడ్‌లు, దారి చూపడానికి Agent OWL.",
+  "hi": "छोटी गाइड, रास्ता दिखाने के लिए Agent OWL।",
+  "kn": "ಚಿಕ್ಕ ಗೈಡ್‌ಗಳು, ದಾರಿ ತೋರಿಸಲು Agent OWL.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guides": {
+  "en": "Guides",
+  "te": "గైడ్‌లు",
+  "hi": "गाइड",
+  "kn": "ಗೈಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.steps": {
+  "en": "What to do",
+  "te": "ఏం చేయాలి",
+  "hi": "क्या करना है",
+  "kn": "ಏನು ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.back": {
+  "en": "All guides",
+  "te": "అన్ని గైడ్‌లు",
+  "hi": "सभी गाइड",
+  "kn": "ಎಲ್ಲಾ ಗೈಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.next": {
+  "en": "Next guide",
+  "te": "తర్వాతి గైడ్",
+  "hi": "अगली गाइड",
+  "kn": "ಮುಂದಿನ ಗೈಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.read": {
+  "en": "Read the guide",
+  "te": "గైడ్ చదవండి",
+  "hi": "गाइड पढ़ें",
+  "kn": "ಗೈಡ್ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.english": {
+  "en": "This guide is in English until a person who reads your language has checked it.",
+  "te": "మీ భాష తెలిసిన వ్యక్తి చూసే వరకు ఈ గైడ్ ఇంగ్లీష్‌లోనే ఉంటుంది.",
+  "hi": "जब तक आपकी भाषा जानने वाला कोई व्यक्ति इसे जाँच न ले, यह गाइड अंग्रेज़ी में ही रहेगी।",
+  "kn": "ನಿಮ್ಮ ಭಾಷೆ ಗೊತ್ತಿರುವ ವ್ಯಕ್ತಿ ಪರಿಶೀಲಿಸುವವರೆಗೆ ಈ ಗೈಡ್ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.label": {
+  "en": "Help for this screen",
+  "te": "ఈ స్క్రీన్‌కి సహాయం",
+  "hi": "इस स्क्रीन की मदद",
+  "kn": "ಈ ಸ್ಕ್ರೀನ್‌ಗೆ ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.more": {
+  "en": "Read the full guide",
+  "te": "పూర్తి గైడ్ చదవండి",
+  "hi": "पूरी गाइड पढ़ें",
+  "kn": "ಪೂರ್ತಿ ಗೈಡ್ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.nav.label": {
+  "en": "Guides",
+  "te": "గైడ్‌లు",
+  "hi": "गाइड",
+  "kn": "ಗೈಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.t": {
+  "en": "Today: what needs you",
+  "te": "ఈ రోజు: మీ కోసం ఏం ఆగి ఉంది",
+  "hi": "आज: आपके लिए क्या रुका है",
+  "kn": "ಇಂದು: ನಿಮಗಾಗಿ ಏನು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.s": {
+  "en": "Your day on one screen.",
+  "te": "మీ రోజు ఒకే స్క్రీన్‌లో.",
+  "hi": "आपका दिन एक ही स्क्रीन पर।",
+  "kn": "ನಿಮ್ಮ ದಿನ ಒಂದೇ ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.1": {
+  "en": "Open Today. The line at the top says how many things need you.",
+  "te": "ఈ రోజు స్క్రీన్ తెరవండి. పైన ఉన్న లైన్ మీ కోసం ఎన్ని ఆగి ఉన్నాయో చెబుతుంది.",
+  "hi": "आज वाली स्क्रीन खोलें। ऊपर की लाइन बताती है कि आपके लिए कितनी चीज़ें रुकी हैं।",
+  "kn": "ಇಂದು ಸ್ಕ್ರೀನ್ ತೆರೆಯಿರಿ. ಮೇಲಿನ ಸಾಲು ನಿಮಗಾಗಿ ಎಷ್ಟು ಕಾಯುತ್ತಿವೆ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.2": {
+  "en": "Read each card under Needs you. It says who it is for and why it waits.",
+  "te": "\"మీ కోసం\" కింద ప్రతి కార్డ్ చదవండి. అది ఎవరికో, ఎందుకు ఆగిందో చెబుతుంది.",
+  "hi": "\"आपके लिए\" के नीचे हर कार्ड पढ़ें। उसमें लिखा है कि वह किसके लिए है और क्यों रुका है।",
+  "kn": "\"ನಿಮಗಾಗಿ\" ಕೆಳಗಿನ ಪ್ರತಿ ಕಾರ್ಡ್ ಓದಿ. ಅದು ಯಾರಿಗಾಗಿ, ಏಕೆ ಕಾಯುತ್ತಿದೆ ಎಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.3": {
+  "en": "Press Approve, change the words with Edit, or say no. Nothing on these cards goes out until you decide.",
+  "te": "ఓకే నొక్కండి, మార్చాలంటే ఎడిట్ చేయండి, లేదా వద్దనండి. ఈ కార్డ్‌లలో ఏదీ మీరు నిర్ణయించే వరకు వెళ్ళదు.",
+  "hi": "OK दबाएँ, शब्द बदलने हों तो Edit करें, या मना करें। इन कार्ड का कुछ भी आपके फ़ैसले तक नहीं जाता।",
+  "kn": "OK ಒತ್ತಿ, ಪದಗಳನ್ನು ಬದಲಿಸಲು Edit ಮಾಡಿ, ಅಥವಾ ಬೇಡ ಎನ್ನಿ. ಈ ಕಾರ್ಡ್‌ಗಳಲ್ಲಿ ಯಾವುದೂ ನೀವು ನಿರ್ಧರಿಸುವವರೆಗೆ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.4": {
+  "en": "Below, Done while you slept shows what Agent OWL already handled.",
+  "te": "కింద, \"మీరు నిద్రపోతుండగా అయినవి\" Agent OWL ఇప్పటికే చేసినవి చూపిస్తుంది.",
+  "hi": "नीचे, \"आपके सोते हुए हुआ\" में दिखता है कि Agent OWL ने क्या संभाल लिया।",
+  "kn": "ಕೆಳಗೆ, \"ನೀವು ಮಲಗಿದ್ದಾಗ ಆದವು\" Agent OWL ಈಗಾಗಲೇ ಏನು ಮಾಡಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.today.go": {
+  "en": "Open Today",
+  "te": "ఈ రోజు తెరవండి",
+  "hi": "आज खोलें",
+  "kn": "ಇಂದು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.t": {
+  "en": "Approve a message",
+  "te": "మెసేజ్‌కి ఓకే చెప్పడం",
+  "hi": "मैसेज को OK करना",
+  "kn": "ಮೆಸೇಜ್‌ಗೆ OK ಹೇಳುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.s": {
+  "en": "What to check before you press Approve.",
+  "te": "ఓకే నొక్కే ముందు ఏం చూడాలి.",
+  "hi": "OK दबाने से पहले क्या देखें।",
+  "kn": "OK ಒತ್ತುವ ಮೊದಲು ಏನು ನೋಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.1": {
+  "en": "Open the card on Today, or the message in Outbox.",
+  "te": "ఈ రోజు స్క్రీన్‌లో కార్డ్, లేదా అవుట్‌బాక్స్‌లో మెసేజ్ తెరవండి.",
+  "hi": "आज वाली स्क्रीन पर कार्ड, या आउटबॉक्स में मैसेज खोलें।",
+  "kn": "ಇಂದು ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಕಾರ್ಡ್, ಅಥವಾ ಔಟ್‌ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಮೆಸೇಜ್ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.2": {
+  "en": "Read the words the customer will get. If they are in another language, the English meaning is shown under them.",
+  "te": "కస్టమర్‌కి వెళ్లే మాటలు చదవండి. అవి వేరే భాషలో ఉంటే, వాటి కింద ఇంగ్లీష్ అర్థం కనిపిస్తుంది.",
+  "hi": "ग्राहक को जाने वाले शब्द पढ़ें। अगर वे किसी और भाषा में हैं, तो उनके नीचे अंग्रेज़ी मतलब दिखता है।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಹೋಗುವ ಪದಗಳನ್ನು ಓದಿ. ಅವು ಬೇರೆ ಭಾಷೆಯಲ್ಲಿದ್ದರೆ, ಅವುಗಳ ಕೆಳಗೆ ಇಂಗ್ಲಿಷ್ ಅರ್ಥ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.3": {
+  "en": "Change anything with Edit. The line saying an AI assistant wrote it stays.",
+  "te": "ఏదైనా మార్చాలంటే ఎడిట్ చేయండి. AI సహాయకుడు రాసిందని చెప్పే లైన్ అలాగే ఉంటుంది.",
+  "hi": "कुछ भी बदलना हो तो Edit करें। AI सहायक ने लिखा है, यह बताने वाली लाइन बनी रहती है।",
+  "kn": "ಏನಾದರೂ ಬದಲಿಸಲು Edit ಮಾಡಿ. AI ಸಹಾಯಕ ಬರೆದಿದೆ ಎಂದು ಹೇಳುವ ಸಾಲು ಹಾಗೆಯೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.4": {
+  "en": "Press Approve. A call is only for the owner to decide.",
+  "te": "ఓకే నొక్కండి. కాల్ గురించి ఓనర్ మాత్రమే నిర్ణయిస్తారు.",
+  "hi": "OK दबाएँ। कॉल का फ़ैसला सिर्फ़ ओनर करते हैं।",
+  "kn": "OK ಒತ್ತಿ. ಕರೆಯ ಬಗ್ಗೆ ಓನರ್ ಮಾತ್ರ ನಿರ್ಧರಿಸುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.approve.go": {
+  "en": "Open Today",
+  "te": "ఈ రోజు తెరవండి",
+  "hi": "आज खोलें",
+  "kn": "ಇಂದು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.t": {
+  "en": "Store visits",
+  "te": "షాప్ విజిట్లు",
+  "hi": "दुकान की विज़िट",
+  "kn": "ಅಂಗಡಿ ವಿಸಿಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.s": {
+  "en": "Book, confirm and finish a visit.",
+  "te": "విజిట్ బుక్ చేయండి, కన్ఫర్మ్ చేయండి, ముగించండి.",
+  "hi": "विज़िट बुक करें, कन्फ़र्म करें और पूरी करें।",
+  "kn": "ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ, ಕನ್ಫರ್ಮ್ ಮಾಡಿ, ಮುಗಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.1": {
+  "en": "Open Store visits, pick a day and a free time, and book the customer. Booking does not message the customer.",
+  "te": "షాప్ విజిట్లు తెరిచి, రోజు, ఖాళీ సమయం ఎంచుకుని కస్టమర్‌ని బుక్ చేయండి. బుక్ చేస్తే కస్టమర్‌కి మెసేజ్ వెళ్ళదు.",
+  "hi": "दुकान की विज़िट खोलें, दिन और खाली समय चुनें और ग्राहक को बुक करें। बुक करने से ग्राहक को मैसेज नहीं जाता।",
+  "kn": "ಅಂಗಡಿ ವಿಸಿಟ್ ತೆರೆದು, ದಿನ ಮತ್ತು ಖಾಲಿ ಸಮಯ ಆರಿಸಿ ಗ್ರಾಹಕರನ್ನು ಬುಕ್ ಮಾಡಿ. ಬುಕ್ ಮಾಡಿದರೆ ಗ್ರಾಹಕರಿಗೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.2": {
+  "en": "When the customer agrees, press Confirm.",
+  "te": "కస్టమర్ ఒప్పుకున్నాక కన్ఫర్మ్ నొక్కండి.",
+  "hi": "ग्राहक के हाँ कहने पर Confirm दबाएँ।",
+  "kn": "ಗ್ರಾಹಕರು ಒಪ್ಪಿದ ಮೇಲೆ Confirm ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.3": {
+  "en": "When they arrive, press They are here.",
+  "te": "వాళ్ళు వచ్చాక \"వాళ్ళు వచ్చారు\" నొక్కండి.",
+  "hi": "जब वे आ जाएँ तो \"वे आ गए\" दबाएँ।",
+  "kn": "ಅವರು ಬಂದ ಮೇಲೆ \"ಅವರು ಬಂದಿದ್ದಾರೆ\" ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.4": {
+  "en": "Then press Complete and choose how it ended: Bought, Will come back or Not interested. The owner or an admin can start the order from a visit.",
+  "te": "తర్వాత పూర్తి నొక్కి, ఎలా ముగిసిందో ఎంచుకోండి: కొన్నారు, మళ్ళీ వస్తారు, లేదా ఆసక్తి లేదు. విజిట్ నుంచి ఆర్డర్‌ని ఓనర్ లేదా అడ్మిన్ మొదలుపెట్టవచ్చు.",
+  "hi": "फिर Complete दबाएँ और चुनें कि कैसे खत्म हुई: खरीदा, फिर आएँगे, या दिलचस्पी नहीं। विज़िट से ऑर्डर ओनर या एडमिन शुरू कर सकते हैं।",
+  "kn": "ನಂತರ Complete ಒತ್ತಿ, ಹೇಗೆ ಮುಗಿಯಿತು ಎಂದು ಆರಿಸಿ: ಖರೀದಿಸಿದರು, ಮತ್ತೆ ಬರುತ್ತಾರೆ, ಅಥವಾ ಆಸಕ್ತಿ ಇಲ್ಲ. ವಿಸಿಟ್‌ನಿಂದ ಆರ್ಡರ್ ಅನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಶುರು ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.visits.go": {
+  "en": "Open Store visits",
+  "te": "షాప్ విజిట్లు తెరవండి",
+  "hi": "दुकान की विज़िट खोलें",
+  "kn": "ಅಂಗಡಿ ವಿಸಿಟ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.t": {
+  "en": "Your saree catalogue",
+  "te": "మీ చీరల క్యాటలాగ్",
+  "hi": "आपका साड़ी कैटलॉग",
+  "kn": "ನಿಮ್ಮ ಸೀರೆ ಕ್ಯಾಟಲಾಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.s": {
+  "en": "Photos and details that Agent OWL can send.",
+  "te": "Agent OWL పంపగల ఫోటోలు, వివరాలు.",
+  "hi": "फ़ोटो और जानकारी जो Agent OWL भेज सकता है।",
+  "kn": "Agent OWL ಕಳುಹಿಸಬಹುದಾದ ಫೋಟೋ, ವಿವರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.1": {
+  "en": "Open Catalogue and press Add a saree. Give it a name and a few details: fabric, colour, occasion.",
+  "te": "క్యాటలాగ్ తెరిచి \"చీర చేర్చండి\" నొక్కండి. పేరు, కొన్ని వివరాలు ఇవ్వండి: ఫ్యాబ్రిక్, రంగు, సందర్భం.",
+  "hi": "कैटलॉग खोलें और \"साड़ी जोड़ें\" दबाएँ। नाम और कुछ जानकारी दें: कपड़ा, रंग, मौका।",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ತೆರೆದು \"ಸೀರೆ ಸೇರಿಸಿ\" ಒತ್ತಿ. ಹೆಸರು ಮತ್ತು ಕೆಲವು ವಿವರ ಕೊಡಿ: ಬಟ್ಟೆ, ಬಣ್ಣ, ಸಂದರ್ಭ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.2": {
+  "en": "Add photos. They are made smaller on your phone before they are uploaded.",
+  "te": "ఫోటోలు చేర్చండి. అప్‌లోడ్ చేసే ముందు అవి మీ ఫోన్‌లోనే చిన్నవి అవుతాయి.",
+  "hi": "फ़ोटो जोड़ें। अपलोड से पहले वे आपके फ़ोन पर ही छोटी हो जाती हैं।",
+  "kn": "ಫೋಟೋ ಸೇರಿಸಿ. ಅಪ್‌ಲೋಡ್ ಮಾಡುವ ಮೊದಲು ಅವು ನಿಮ್ಮ ಫೋನ್‌ನಲ್ಲೇ ಚಿಕ್ಕದಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.3": {
+  "en": "Say if it is In stock, Few left or Made to order. A hidden saree is not shown to customers.",
+  "te": "స్టాక్‌లో ఉందా, కొన్నే మిగిలాయా, ఆర్డర్ మీద చేస్తారా చెప్పండి. దాచిన చీర కస్టమర్లకు కనిపించదు.",
+  "hi": "बताएँ कि स्टॉक में है, कुछ ही बची हैं या ऑर्डर पर बनती है। छिपाई गई साड़ी ग्राहकों को नहीं दिखती।",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿದೆಯೇ, ಕೆಲವೇ ಉಳಿದಿವೆಯೇ, ಆರ್ಡರ್ ಮೇಲೆ ಮಾಡುವುದೇ ಎಂದು ಹೇಳಿ. ಮರೆಮಾಡಿದ ಸೀರೆ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.4": {
+  "en": "To send a saree to a customer, open it, choose the customer and check the message before it goes.",
+  "te": "చీరను కస్టమర్‌కి పంపాలంటే, దాన్ని తెరిచి, కస్టమర్‌ని ఎంచుకుని, వెళ్లే ముందు మెసేజ్ చూడండి.",
+  "hi": "साड़ी ग्राहक को भेजनी हो तो उसे खोलें, ग्राहक चुनें और जाने से पहले मैसेज देख लें।",
+  "kn": "ಸೀರೆಯನ್ನು ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಲು, ಅದನ್ನು ತೆರೆದು, ಗ್ರಾಹಕರನ್ನು ಆರಿಸಿ, ಹೋಗುವ ಮೊದಲು ಮೆಸೇಜ್ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.go": {
+  "en": "Open Catalogue",
+  "te": "క్యాటలాగ్ తెరవండి",
+  "hi": "कैटलॉग खोलें",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.t": {
+  "en": "Agent OWL settings",
+  "te": "Agent OWL సెట్టింగ్స్",
+  "hi": "Agent OWL की सेटिंग",
+  "kn": "Agent OWL ಸೆಟ್ಟಿಂಗ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.s": {
+  "en": "Choose how much Agent OWL does by itself.",
+  "te": "Agent OWL తనంతట తానే ఎంత చేయాలో ఎంచుకోండి.",
+  "hi": "तय करें कि Agent OWL अपने आप कितना करे।",
+  "kn": "Agent OWL ತಾನಾಗಿ ಎಷ್ಟು ಮಾಡಬೇಕು ಎಂದು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.1": {
+  "en": "Open Settings, then the Agent OWL tab. Only the owner can change these, with the authenticator app.",
+  "te": "సెట్టింగ్స్ తెరిచి, Agent OWL ట్యాబ్‌కి వెళ్ళండి. వీటిని ఓనర్ మాత్రమే, ఆథెంటికేటర్ యాప్‌తో మార్చగలరు.",
+  "hi": "सेटिंग खोलें, फिर Agent OWL टैब। इन्हें सिर्फ़ ओनर, ऑथेंटिकेटर ऐप के साथ बदल सकते हैं।",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆದು, Agent OWL ಟ್ಯಾಬ್‌ಗೆ ಹೋಗಿ. ಇವನ್ನು ಓನರ್ ಮಾತ್ರ, ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್‌ನೊಂದಿಗೆ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.2": {
+  "en": "Automatic sending: on means routine replies go out by themselves; off means every new message waits for you.",
+  "te": "ఆటోమేటిక్ పంపడం: ఆన్ అంటే మామూలు జవాబులు వాటంతట అవే వెళ్తాయి; ఆఫ్ అంటే ప్రతి కొత్త మెసేజ్ మీ కోసం ఆగుతుంది.",
+  "hi": "ऑटोमैटिक भेजना: चालू का मतलब रोज़ के जवाब अपने आप जाते हैं; बंद का मतलब हर नया मैसेज आपके इंतज़ार में रुकता है।",
+  "kn": "ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು: ಆನ್ ಎಂದರೆ ಸಾಮಾನ್ಯ ಉತ್ತರಗಳು ತಾನಾಗಿ ಹೋಗುತ್ತವೆ; ಆಫ್ ಎಂದರೆ ಪ್ರತಿ ಹೊಸ ಮೆಸೇಜ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.3": {
+  "en": "Set how many messages one customer may get in a day, and the quiet hours when nothing goes out.",
+  "te": "ఒక కస్టమర్‌కి రోజుకి ఎన్ని మెసేజ్‌లు వెళ్లవచ్చో, ఏమీ వెళ్లని నిశ్శబ్ద వేళలు ఏవో సెట్ చేయండి.",
+  "hi": "तय करें कि एक ग्राहक को दिन में कितने मैसेज जा सकते हैं, और शांत घंटे जब कुछ नहीं जाता।",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಎಷ್ಟು ಮೆಸೇಜ್ ಹೋಗಬಹುದು, ಏನೂ ಹೋಗದ ಶಾಂತ ಸಮಯ ಯಾವುದು ಎಂದು ಹೊಂದಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.4": {
+  "en": "Choose visit reminders: the evening before, and a heads-up shortly before the visit. Reminders never go out in quiet hours.",
+  "te": "విజిట్ రిమైండర్లు ఎంచుకోండి: ముందు రోజు సాయంత్రం, విజిట్‌కి కాస్త ముందు ఒక సూచన. నిశ్శబ్ద వేళల్లో రిమైండర్లు వెళ్ళవు.",
+  "hi": "विज़िट रिमाइंडर चुनें: एक शाम पहले, और विज़िट से थोड़ा पहले एक सूचना। शांत घंटों में रिमाइंडर नहीं जाते।",
+  "kn": "ವಿಸಿಟ್ ರಿಮೈಂಡರ್ ಆರಿಸಿ: ಹಿಂದಿನ ಸಂಜೆ, ಮತ್ತು ವಿಸಿಟ್‌ಗೆ ಸ್ವಲ್ಪ ಮೊದಲು ಒಂದು ಸೂಚನೆ. ಶಾಂತ ಸಮಯದಲ್ಲಿ ರಿಮೈಂಡರ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.agent.go": {
+  "en": "Open Settings",
+  "te": "సెట్టింగ్స్ తెరవండి",
+  "hi": "सेटिंग खोलें",
+  "kn": "ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.t": {
+  "en": "Ask Agent OWL by voice",
+  "te": "Agent OWLని గొంతుతో అడగండి",
+  "hi": "Agent OWL से बोलकर पूछें",
+  "kn": "Agent OWL ಅನ್ನು ಧ್ವನಿಯಿಂದ ಕೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.s": {
+  "en": "Speak your question and read the answer.",
+  "te": "మీ ప్రశ్న చెప్పి, జవాబు చదవండి.",
+  "hi": "अपना सवाल बोलें और जवाब पढ़ें।",
+  "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆ ಹೇಳಿ, ಉತ್ತರ ಓದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.1": {
+  "en": "On Today, press the microphone in the Ask box and allow the microphone when your phone asks.",
+  "te": "ఈ రోజు స్క్రీన్‌లో అడిగే బాక్స్‌లో మైక్రోఫోన్ నొక్కి, ఫోన్ అడిగినప్పుడు మైక్రోఫోన్‌కి అనుమతి ఇవ్వండి.",
+  "hi": "आज वाली स्क्रीन पर पूछने वाले बॉक्स में माइक्रोफ़ोन दबाएँ और फ़ोन पूछे तो माइक्रोफ़ोन की इजाज़त दें।",
+  "kn": "ಇಂದು ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ಕೇಳುವ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ಮೈಕ್ರೋಫೋನ್ ಒತ್ತಿ, ಫೋನ್ ಕೇಳಿದಾಗ ಮೈಕ್ರೋಫೋನ್‌ಗೆ ಅನುಮತಿ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.2": {
+  "en": "Speak for up to a minute in Telugu, Hindi, Kannada or English. Press Stop and ask, or Cancel to throw the recording away.",
+  "te": "తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో ఒక నిమిషం వరకు మాట్లాడండి. \"ఆపి అడగండి\" నొక్కండి, లేదా రికార్డింగ్‌ని వదిలేయాలంటే రద్దు చేయండి.",
+  "hi": "तेलुगु, हिन्दी, कन्नड़ या अंग्रेज़ी में एक मिनट तक बोलें। \"रोककर पूछें\" दबाएँ, या रिकॉर्डिंग हटाने के लिए Cancel दबाएँ।",
+  "kn": "ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಒಂದು ನಿಮಿಷದವರೆಗೆ ಮಾತನಾಡಿ. \"ನಿಲ್ಲಿಸಿ ಕೇಳಿ\" ಒತ್ತಿ, ಅಥವಾ ರೆಕಾರ್ಡಿಂಗ್ ಬಿಡಲು Cancel ಒತ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.3": {
+  "en": "You see what was heard as your message, then the written answer. If Agent OWL heard it wrong, type the question instead.",
+  "te": "ఏం వినిపించిందో మీ మెసేజ్‌గా కనిపిస్తుంది, తర్వాత రాతలో జవాబు. Agent OWLకి తప్పుగా వినిపిస్తే, బదులుగా ప్రశ్నని టైప్ చేయండి.",
+  "hi": "जो सुनाई दिया वह आपके मैसेज के रूप में दिखता है, फिर लिखा हुआ जवाब। अगर Agent OWL ने गलत सुना, तो सवाल टाइप कर दें।",
+  "kn": "ಏನು ಕೇಳಿಸಿತೋ ಅದು ನಿಮ್ಮ ಮೆಸೇಜ್ ಆಗಿ ಕಾಣುತ್ತದೆ, ನಂತರ ಬರೆದ ಉತ್ತರ. Agent OWL ತಪ್ಪಾಗಿ ಕೇಳಿದರೆ, ಪ್ರಶ್ನೆಯನ್ನು ಟೈಪ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.4": {
+  "en": "Spoken answers can play by themselves; the switch is next to the microphone.",
+  "te": "మాట రూపంలో జవాబులు వాటంతట అవే ప్లే కావచ్చు; స్విచ్ మైక్రోఫోన్ పక్కనే ఉంటుంది.",
+  "hi": "बोलकर दिए जवाब अपने आप चल सकते हैं; स्विच माइक्रोफ़ोन के पास है।",
+  "kn": "ಮಾತಿನ ಉತ್ತರಗಳು ತಾನಾಗಿ ಪ್ಲೇ ಆಗಬಹುದು; ಸ್ವಿಚ್ ಮೈಕ್ರೋಫೋನ್ ಪಕ್ಕದಲ್ಲೇ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.voice.go": {
+  "en": "Open Today",
+  "te": "ఈ రోజు తెరవండి",
+  "hi": "आज खोलें",
+  "kn": "ಇಂದು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.outbox.t": {
+  "en": "Outbox: why a message waits",
+  "te": "Outbox: why a message waits",
+  "hi": "Outbox: why a message waits",
+  "kn": "Outbox: why a message waits",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.outbox.s": {
+  "en": "Every message has a status and a reason.",
+  "te": "Every message has a status and a reason.",
+  "hi": "Every message has a status and a reason.",
+  "kn": "Every message has a status and a reason.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.outbox.1": {
+  "en": "Open Outbox. The tabs are Waiting, Scheduled, Sent and Blocked, each with a count.",
+  "te": "Open Outbox. The tabs are Waiting, Scheduled, Sent and Blocked, each with a count.",
+  "hi": "Open Outbox. The tabs are Waiting, Scheduled, Sent and Blocked, each with a count.",
+  "kn": "Open Outbox. The tabs are Waiting, Scheduled, Sent and Blocked, each with a count.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.outbox.2": {
+  "en": "A message waits for you when it is about price, a promise or a complaint.",
+  "te": "A message waits for you when it is about price, a promise or a complaint.",
+  "hi": "A message waits for you when it is about price, a promise or a complaint.",
+  "kn": "A message waits for you when it is about price, a promise or a complaint.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.outbox.3": {
+  "en": "It is held for the morning when sending would fall in quiet hours.",
+  "te": "It is held for the morning when sending would fall in quiet hours.",
+  "hi": "It is held for the morning when sending would fall in quiet hours.",
+  "kn": "It is held for the morning when sending would fall in quiet hours.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.outbox.4": {
+  "en": "Blocked means a rule stopped it (for example the customer asked us to stop, or has not agreed to WhatsApp messages). Open the row to read the reason.",
+  "te": "Blocked means a rule stopped it (for example the customer asked us to stop, or has not agreed to WhatsApp messages). Open the row to read the reason.",
+  "hi": "Blocked means a rule stopped it (for example the customer asked us to stop, or has not agreed to WhatsApp messages). Open the row to read the reason.",
+  "kn": "Blocked means a rule stopped it (for example the customer asked us to stop, or has not agreed to WhatsApp messages). Open the row to read the reason.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.outbox.go": {
+  "en": "Open Outbox",
+  "te": "Open Outbox",
+  "hi": "Open Outbox",
+  "kn": "Open Outbox",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.t": {
+  "en": "Privacy and your customers' data",
+  "te": "Privacy and your customers' data",
+  "hi": "Privacy and your customers' data",
+  "kn": "Privacy and your customers' data",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.s": {
+  "en": "Agreement, stopping and erasing.",
+  "te": "Agreement, stopping and erasing.",
+  "hi": "Agreement, stopping and erasing.",
+  "kn": "Agreement, stopping and erasing.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.1": {
+  "en": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
+  "te": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
+  "hi": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
+  "kn": "A customer's agreement to WhatsApp messages is recorded. Agent OWL messages only customers who agreed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.2": {
+  "en": "If a customer asks us to stop, they are not messaged again.",
+  "te": "If a customer asks us to stop, they are not messaged again.",
+  "hi": "If a customer asks us to stop, they are not messaged again.",
+  "kn": "If a customer asks us to stop, they are not messaged again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.3": {
+  "en": "The owner or an admin can ask for personal data to be erased in Settings, Privacy. Nothing is erased until the owner runs the request after the waiting time.",
+  "te": "The owner or an admin can ask for personal data to be erased in Settings, Privacy. Nothing is erased until the owner runs the request after the waiting time.",
+  "hi": "The owner or an admin can ask for personal data to be erased in Settings, Privacy. Nothing is erased until the owner runs the request after the waiting time.",
+  "kn": "The owner or an admin can ask for personal data to be erased in Settings, Privacy. Nothing is erased until the owner runs the request after the waiting time.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.4": {
+  "en": "Messages from Agent OWL say that an AI assistant wrote them.",
+  "te": "Messages from Agent OWL say that an AI assistant wrote them.",
+  "hi": "Messages from Agent OWL say that an AI assistant wrote them.",
+  "kn": "Messages from Agent OWL say that an AI assistant wrote them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.guide.privacy.go": {
+  "en": "Open Settings",
+  "te": "Open Settings",
+  "hi": "Open Settings",
+  "kn": "Open Settings",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.tip.today.1": {
+  "en": "Cards under Needs you wait for your decision: Approve, Edit or say no.",
+  "te": "\"మీ కోసం\" కింది కార్డ్‌లు మీ నిర్ణయం కోసం ఆగుతాయి: ఓకే, ఎడిట్, లేదా వద్దనండి.",
+  "hi": "\"आपके लिए\" के नीचे के कार्ड आपके फ़ैसले का इंतज़ार करते हैं: OK, Edit या मना।",
+  "kn": "\"ನಿಮಗಾಗಿ\" ಕೆಳಗಿನ ಕಾರ್ಡ್‌ಗಳು ನಿಮ್ಮ ನಿರ್ಧಾರಕ್ಕೆ ಕಾಯುತ್ತವೆ: OK, Edit ಅಥವಾ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.today.2": {
+  "en": "Done shows what Agent OWL already handled.",
+  "te": "\"అయినవి\" Agent OWL ఇప్పటికే చేసినవి చూపిస్తుంది.",
+  "hi": "\"हो गया\" में दिखता है कि Agent OWL ने क्या संभाल लिया।",
+  "kn": "\"ಆದವು\" Agent OWL ಈಗಾಗಲೇ ಏನು ಮಾಡಿದೆ ಎಂದು ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.today.3": {
+  "en": "Ask Agent OWL anything about your shop in the Ask box.",
+  "te": "అడిగే బాక్స్‌లో మీ షాప్ గురించి ఏదైనా Agent OWLని అడగండి.",
+  "hi": "पूछने वाले बॉक्स में अपनी दुकान के बारे में Agent OWL से कुछ भी पूछें।",
+  "kn": "ಕೇಳುವ ಬಾಕ್ಸ್‌ನಲ್ಲಿ ನಿಮ್ಮ ಅಂಗಡಿ ಬಗ್ಗೆ Agent OWL ಅನ್ನು ಏನು ಬೇಕಾದರೂ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.outbox.1": {
+  "en": "Waiting: needs your OK. Scheduled: due later, or held for the morning.",
+  "te": "Waiting: needs your OK. Scheduled: due later, or held for the morning.",
+  "hi": "Waiting: needs your OK. Scheduled: due later, or held for the morning.",
+  "kn": "Waiting: needs your OK. Scheduled: due later, or held for the morning.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.tip.outbox.2": {
+  "en": "Sent: it went out. Blocked: a rule stopped it; open the row to read why.",
+  "te": "Sent: it went out. Blocked: a rule stopped it; open the row to read why.",
+  "hi": "Sent: it went out. Blocked: a rule stopped it; open the row to read why.",
+  "kn": "Sent: it went out. Blocked: a rule stopped it; open the row to read why.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.tip.outbox.3": {
+  "en": "Send what is due now sends only what is due and allowed.",
+  "te": "Send what is due now sends only what is due and allowed.",
+  "hi": "Send what is due now sends only what is due and allowed.",
+  "kn": "Send what is due now sends only what is due and allowed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "help.tip.visits.1": {
+  "en": "Pick a day, then a free time, to book a visit. Booking does not message the customer.",
+  "te": "రోజు, తర్వాత ఖాళీ సమయం ఎంచుకుని విజిట్ బుక్ చేయండి. బుక్ చేస్తే కస్టమర్‌కి మెసేజ్ వెళ్ళదు.",
+  "hi": "दिन चुनें, फिर खाली समय, और विज़िट बुक करें। बुक करने से ग्राहक को मैसेज नहीं जाता।",
+  "kn": "ದಿನ ಆರಿಸಿ, ನಂತರ ಖಾಲಿ ಸಮಯ, ವಿಸಿಟ್ ಬುಕ್ ಮಾಡಿ. ಬುಕ್ ಮಾಡಿದರೆ ಗ್ರಾಹಕರಿಗೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.visits.2": {
+  "en": "Confirm when the customer agrees, They are here on arrival, then Complete with what happened.",
+  "te": "కస్టమర్ ఒప్పుకున్నాక కన్ఫర్మ్, వచ్చాక \"వాళ్ళు వచ్చారు\", తర్వాత ఏం జరిగిందో చెప్పి పూర్తి చేయండి.",
+  "hi": "ग्राहक के हाँ कहने पर Confirm, आने पर \"वे आ गए\", फिर क्या हुआ बताकर Complete करें।",
+  "kn": "ಗ್ರಾಹಕರು ಒಪ್ಪಿದ ಮೇಲೆ Confirm, ಬಂದಾಗ \"ಅವರು ಬಂದಿದ್ದಾರೆ\", ನಂತರ ಏನಾಯಿತು ಎಂದು ಹೇಳಿ Complete ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.visits.3": {
+  "en": "A visit proposed by Agent OWL waits for you to confirm it.",
+  "te": "Agent OWL సూచించిన విజిట్ మీరు కన్ఫర్మ్ చేసే వరకు ఆగుతుంది.",
+  "hi": "Agent OWL की सुझाई विज़िट आपके कन्फ़र्म करने तक रुकी रहती है।",
+  "kn": "Agent OWL ಸೂಚಿಸಿದ ವಿಸಿಟ್ ನೀವು ಕನ್ಫರ್ಮ್ ಮಾಡುವವರೆಗೆ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.catalogue.1": {
+  "en": "Add sarees with photos. A hidden saree is not shown to customers.",
+  "te": "చీరలను ఫోటోలతో చేర్చండి. దాచిన చీర కస్టమర్లకు కనిపించదు.",
+  "hi": "साड़ियाँ फ़ोटो के साथ जोड़ें। छिपाई गई साड़ी ग्राहकों को नहीं दिखती।",
+  "kn": "ಸೀರೆಗಳನ್ನು ಫೋಟೋದೊಂದಿಗೆ ಸೇರಿಸಿ. ಮರೆಮಾಡಿದ ಸೀರೆ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.catalogue.2": {
+  "en": "Open a saree to edit it, add photos or send it to a customer.",
+  "te": "చీరను ఎడిట్ చేయడానికి, ఫోటోలు చేర్చడానికి లేదా కస్టమర్‌కి పంపడానికి దాన్ని తెరవండి.",
+  "hi": "साड़ी को बदलने, फ़ोटो जोड़ने या ग्राहक को भेजने के लिए उसे खोलें।",
+  "kn": "ಸೀರೆಯನ್ನು ಎಡಿಟ್ ಮಾಡಲು, ಫೋಟೋ ಸೇರಿಸಲು ಅಥವಾ ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಲು ಅದನ್ನು ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.catalogue.3": {
+  "en": "Use the filters (fabric, colour, occasion, stock) to find one quickly.",
+  "te": "ఒకటి త్వరగా వెతకడానికి ఫిల్టర్లు (ఫ్యాబ్రిక్, రంగు, సందర్భం, స్టాక్) వాడండి.",
+  "hi": "कोई साड़ी जल्दी ढूँढने के लिए फ़िल्टर (कपड़ा, रंग, मौका, स्टॉक) इस्तेमाल करें।",
+  "kn": "ಒಂದನ್ನು ಬೇಗ ಹುಡುಕಲು ಫಿಲ್ಟರ್‌ಗಳನ್ನು (ಬಟ್ಟೆ, ಬಣ್ಣ, ಸಂದರ್ಭ, ಸ್ಟಾಕ್) ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.settings.1": {
+  "en": "The Agent OWL tab holds automatic sending, messages per customer per day, quiet hours and visit reminders.",
+  "te": "Agent OWL ట్యాబ్‌లో ఆటోమేటిక్ పంపడం, కస్టమర్‌కి రోజుకి మెసేజ్‌లు, నిశ్శబ్ద వేళలు, విజిట్ రిమైండర్లు ఉంటాయి.",
+  "hi": "Agent OWL टैब में ऑटोमैटिक भेजना, ग्राहक को रोज़ के मैसेज, शांत घंटे और विज़िट रिमाइंडर हैं।",
+  "kn": "Agent OWL ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು, ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಮೆಸೇಜ್, ಶಾಂತ ಸಮಯ, ವಿಸಿಟ್ ರಿಮೈಂಡರ್ ಇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.settings.2": {
+  "en": "Changing them needs the owner and the authenticator app.",
+  "te": "వాటిని మార్చడానికి ఓనర్, ఆథెంటికేటర్ యాప్ కావాలి.",
+  "hi": "इन्हें बदलने के लिए ओनर और ऑथेंटिकेटर ऐप चाहिए।",
+  "kn": "ಇವನ್ನು ಬದಲಿಸಲು ಓನರ್ ಮತ್ತು ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.settings.3": {
+  "en": "Security and Privacy have their own tabs.",
+  "te": "సెక్యూరిటీ, ప్రైవసీకి వేర్వేరు ట్యాబ్‌లు ఉన్నాయి.",
+  "hi": "सिक्योरिटी और प्राइवेसी के अपने टैब हैं।",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ಮತ್ತು ಪ್ರೈವಸಿಗೆ ತಮ್ಮದೇ ಟ್ಯಾಬ್‌ಗಳಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.button": {
+  "en": "What can Agent OWL do?",
+  "te": "Agent OWL ఏం చేయగలదు?",
+  "hi": "Agent OWL क्या कर सकता है?",
+  "kn": "Agent OWL ಏನು ಮಾಡಬಲ್ಲದು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.title": {
+  "en": "What Agent OWL can do for you",
+  "te": "Agent OWL మీ కోసం ఏం చేయగలదు",
+  "hi": "Agent OWL आपके लिए क्या कर सकता है",
+  "kn": "Agent OWL ನಿಮಗಾಗಿ ಏನು ಮಾಡಬಲ್ಲದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.yes": {
+  "en": "It can",
+  "te": "ఇది చేయగలదు",
+  "hi": "यह कर सकता है",
+  "kn": "ಇದು ಮಾಡಬಲ್ಲದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.no": {
+  "en": "It cannot",
+  "te": "ఇది చేయలేదు",
+  "hi": "यह नहीं कर सकता",
+  "kn": "ಇದು ಮಾಡಲಾಗದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y1": {
+  "en": "Tell you what is waiting for you today.",
+  "te": "ఈ రోజు మీ కోసం ఏం ఆగి ఉందో చెప్పగలదు.",
+  "hi": "बता सकता है कि आज आपके लिए क्या रुका है।",
+  "kn": "ಇಂದು ನಿಮಗಾಗಿ ಏನು ಕಾಯುತ್ತಿದೆ ಎಂದು ಹೇಳಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y2": {
+  "en": "Find a customer, a quote, an order or a visit in your records.",
+  "te": "మీ రికార్డుల్లో కస్టమర్, కొటేషన్, ఆర్డర్ లేదా విజిట్‌ని వెతకగలదు.",
+  "hi": "आपके रिकॉर्ड में ग्राहक, कोटेशन, ऑर्डर या विज़िट ढूँढ सकता है।",
+  "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಗ್ರಾಹಕರು, ಕೊಟೇಶನ್, ಆರ್ಡರ್ ಅಥವಾ ವಿಸಿಟ್ ಹುಡುಕಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y3": {
+  "en": "Find sarees in your catalogue by fabric, colour or occasion.",
+  "te": "మీ క్యాటలాగ్‌లో ఫ్యాబ్రిక్, రంగు లేదా సందర్భం బట్టి చీరలు వెతకగలదు.",
+  "hi": "आपके कैटलॉग में कपड़े, रंग या मौके से साड़ियाँ ढूँढ सकता है।",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಬಟ್ಟೆ, ಬಣ್ಣ ಅಥವಾ ಸಂದರ್ಭದ ಪ್ರಕಾರ ಸೀರೆ ಹುಡುಕಬಲ್ಲದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y4": {
+  "en": "Write a draft reply for you to check. A draft is not sent.",
+  "te": "మీరు చూడడానికి డ్రాఫ్ట్ జవాబు రాయగలదు. డ్రాఫ్ట్ పంపబడదు.",
+  "hi": "आपके देखने के लिए ड्राफ़्ट जवाब लिख सकता है। ड्राफ़्ट भेजा नहीं जाता।",
+  "kn": "ನೀವು ನೋಡಲು ಡ್ರಾಫ್ಟ್ ಉತ್ತರ ಬರೆಯಬಲ್ಲದು. ಡ್ರಾಫ್ಟ್ ಕಳುಹಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.n1": {
+  "en": "Change your records or your prices.",
+  "te": "మీ రికార్డులను లేదా రేట్లను మార్చలేదు.",
+  "hi": "आपके रिकॉर्ड या रेट नहीं बदल सकता।",
+  "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಅಥವಾ ದರಗಳನ್ನು ಬದಲಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.n2": {
+  "en": "Send or approve a message from this box. Messages go through Today and Outbox.",
+  "te": "ఈ బాక్స్ నుంచి మెసేజ్ పంపలేదు, ఓకే చేయలేదు. మెసేజ్‌లు ఈ రోజు, అవుట్‌బాక్స్ ద్వారా వెళ్తాయి.",
+  "hi": "इस बॉक्स से मैसेज भेज या OK नहीं कर सकता। मैसेज आज और आउटबॉक्स से जाते हैं।",
+  "kn": "ಈ ಬಾಕ್ಸ್‌ನಿಂದ ಮೆಸೇಜ್ ಕಳುಹಿಸಲಾಗದು, OK ಮಾಡಲಾಗದು. ಮೆಸೇಜ್‌ಗಳು ಇಂದು ಮತ್ತು ಔಟ್‌ಬಾಕ್ಸ್ ಮೂಲಕ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.n3": {
+  "en": "Answer from anything that is not in your own records.",
+  "te": "మీ సొంత రికార్డుల్లో లేని దేని నుంచీ జవాబివ్వలేదు.",
+  "hi": "जो आपके अपने रिकॉर्ड में नहीं है, उससे जवाब नहीं दे सकता।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ದಾಖಲೆಗಳಲ್ಲಿ ಇಲ್ಲದ ಯಾವುದರಿಂದಲೂ ಉತ್ತರಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.n4": {
+  "en": "Decide for you. You approve what matters.",
+  "te": "మీ బదులు నిర్ణయించలేదు. ముఖ్యమైనవాటికి మీరే ఓకే చెబుతారు.",
+  "hi": "आपकी जगह फ़ैसला नहीं कर सकता। जो ज़रूरी है उसे आप OK करते हैं।",
+  "kn": "ನಿಮ್ಮ ಬದಲು ನಿರ್ಧರಿಸಲಾಗದು. ಮುಖ್ಯವಾದವಕ್ಕೆ ನೀವೇ OK ಹೇಳುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.try": {
+  "en": "Try asking",
+  "te": "ఇలా అడిగి చూడండి",
+  "hi": "ऐसे पूछकर देखें",
+  "kn": "ಹೀಗೆ ಕೇಳಿ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.guide": {
+  "en": "Read the guide",
+  "te": "గైడ్ చదవండి",
+  "hi": "गाइड पढ़ें",
+  "kn": "ಗೈಡ್ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

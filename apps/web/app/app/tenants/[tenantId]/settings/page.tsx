@@ -6,6 +6,7 @@ import { cookies } from "next/headers";
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeChoice, type ThemePick } from "@/components/v2/controls/ThemeChoice";
 import { UsageCard, planText } from "@/components/v2/app/frame-parts";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { ApiDownV2, PageTop, Pill, SectionTabs } from "@/components/v2/app/parts";
 import { breakAll, link, listPlain, memberRow, youMark, mutedText, pageH2, pageMain, surface } from "@/components/v2/app/ui";
 import { appT, frameLabels } from "@/i18n/app";
@@ -118,6 +119,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.settings")} />
+      {helpTipFor(lang, base, "settings")}
       <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
       <div className="mt-6 max-w-3xl space-y-4">
         {section === "business" ? (

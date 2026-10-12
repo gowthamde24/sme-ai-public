@@ -1,0 +1,10 @@
+[All guides](/app/tenants/22222222-2222-2222-2222-222222222222/help)
+# Today: what needs you
+Your day on one screen.
+{label="What to do"}
+## What to do
+- 1 Open Today. The line at the top says how many things need you.
+- 2 Read each card under Needs you. It says who it is for and why it waits.
+- 3 Press Approve, change the words with Edit, or say no. Nothing on these cards goes out until you decide.
+- 4 Below, Done while you slept shows what Agent OWL already handled.
+[Open Today](/app/tenants/22222222-2222-2222-2222-222222222222) [Next guide : Approve a message](/app/tenants/22222222-2222-2222-2222-222222222222/help/approve)

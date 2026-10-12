@@ -587,6 +587,9 @@ add({
   render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "agent" })),
   handlers: (role) => ({ ...outboxHandlers(role), getSchedulerSettings: () => SETTINGS_JSON }),
 });
+add({ id: "help", render: async () => (await import("@/app/app/tenants/[tenantId]/help/page")).default(props({})), handlers: (role) => ({ ...base(role) }) });
+add({ id: "help-guide-today", render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "today" })), handlers: (role) => ({ ...base(role) }) });
+add({ id: "help-guide-outbox-english-only", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/help/[guide]/page")).default(props({ guide: "outbox" })), handlers: (role) => ({ ...base(role) }) });
 add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });

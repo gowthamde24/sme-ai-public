@@ -1,0 +1,10 @@
+[All guides](/app/tenants/22222222-2222-2222-2222-222222222222/help)
+# Outbox: why a message waits
+Every message has a status and a reason.
+{label="What to do"}
+## What to do
+- 1 Open Outbox. The tabs are Waiting, Scheduled, Sent and Blocked, each with a count.
+- 2 A message waits for you when it is about price, a promise or a complaint.
+- 3 It is held for the morning when sending would fall in quiet hours.
+- 4 Blocked means a rule stopped it (for example the customer asked us to stop, or has not agreed to WhatsApp messages). Open the row to read the reason.
+[Open Outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox) [Next guide : Agent OWL settings](/app/tenants/22222222-2222-2222-2222-222222222222/help/agent)

@@ -4,6 +4,7 @@ import { ApiDownV2 } from "@/components/v2/app/parts";
 import { isDay, todayInIndia } from "@/components/v2/app/visits/dates";
 import type { VisitsActions } from "@/components/v2/app/visits/actions-types";
 import { VisitsView } from "@/components/v2/app/visits/VisitsView";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { pageMain } from "@/components/v2/app/ui";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -88,6 +89,7 @@ export default async function VisitsPage({ params, searchParams }: PageProps<"/a
   return (
     <main className={pageMain} lang={lang}>
       <VisitsView
+        help={helpTipFor(lang, `/app/tenants/${tenantId}`, "visits")}
         view={view}
         day={day}
         today={today}

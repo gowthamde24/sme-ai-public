@@ -45,22 +45,22 @@ describe("SideNav", () => {
     for (const name of ["Work", "Your business", "Your team", "Connect"]) expect(within(menu).getByRole("group", { name })).toBeInTheDocument();
     expect(within(menu).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Quotes", "Store visits", "Orders", "Outbox", "Customers", "Catalogue", "Prices and products", "Office", "Integrations"]);
   });
-  it("the foot holds the AI usage card, Settings, Help (not available yet), the user card and Collapse menu", () => {
+  it("the foot holds the AI usage card, Settings, Help (a link to the guides), the user card and Collapse menu", () => {
     side(owner, loaded);
     expect(screen.getByText("AI usage today")).toBeInTheDocument();
     expect(screen.getByText("38% used")).toBeInTheDocument();
     expect(screen.getByText("12% of this month")).toBeInTheDocument();
     expect(screen.getByRole("meter", { name: "AI usage today" })).toHaveAttribute("aria-valuenow", "38");
     expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
-    expect(screen.getByRole("button", { name: /^Help/ })).toHaveAttribute("aria-disabled", "true");
-    expect(screen.getByRole("button", { name: /^Help/ })).toHaveTextContent("Not available yet");
+    expect(screen.getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
+    expect(screen.queryByRole("button", { name: /^Help/ })).toBeNull();
     expect(screen.getAllByText("o@example.test").length).toBeGreaterThan(0);
     expect(screen.getByRole("button", { name: "Collapse menu" })).toBeInTheDocument();
     expect(within(screen.getByRole("navigation", { name: "Workspace menu" })).getByRole("link", { name: /Today/ })).toHaveTextContent("Waiting for you: 5");
   });
   it("says 'Not available yet' for the plan, the AI usage and the count while they cannot be read, and invents nothing", () => {
     side(owner);
-    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(3); // the plan, the usage card, Help
+    expect(screen.getAllByText("Not available yet").length).toBeGreaterThanOrEqual(2); // the plan and the usage card (Help is a link now)
     expect(screen.queryByText(/₹/)).toBeNull();
     expect(screen.queryByText(/Waiting for you/)).toBeNull();
     expect(screen.queryByRole("meter")).toBeNull();
@@ -68,8 +68,8 @@ describe("SideNav", () => {
   it("while the numbers are still being read it leaves the places empty instead of saying 'Not available yet'", () => {
     side(only("owner"), FRAME_LOADING);
     expect(screen.getByText("AI usage today")).toBeInTheDocument();
-    // only Help says it: the plan line and the usage card are empty
-    expect(screen.getAllByText("Not available yet")).toHaveLength(1);
+    // the plan line and the usage card are empty (Help is a link, it says nothing of the kind)
+    expect(screen.queryAllByText("Not available yet")).toHaveLength(0);
   });
   it("does not draw the AI usage card for a role the API gives no usage to", () => {
     side(only("sales"), { ...loaded, showUsage: false });
@@ -138,7 +138,7 @@ describe("TabBar", () => {
     expect(within(dialog).getByRole("link", { name: "Orders" })).toHaveAttribute("aria-current", "page");
     expect(within(dialog).getByRole("link", { name: "Settings" })).toHaveAttribute("href", `/app/tenants/${A}/settings`);
     expect(within(dialog).getByText("AI usage today")).toBeInTheDocument();
-    expect(within(dialog).getByRole("button", { name: /^Help/ })).toHaveAttribute("aria-disabled", "true");
+    expect(within(dialog).getByRole("link", { name: "Help" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
     expect(within(dialog).getByRole("button", { name: "Sign out" })).toHaveAttribute("type", "submit");
     expect(within(dialog).getByRole("link", { name: /Second Shop/ })).toHaveAttribute("href", `/app/tenants/${B}`); // two businesses: the list is here
     fireEvent.keyDown(document, { key: "Escape" });
@@ -150,7 +150,7 @@ describe("TabBar", () => {
     expect(within(quick).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Visits", "Office"]);
     fireEvent.click(within(quick).getByRole("button", { name: "More" }));
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Customers", "Catalogue", "Settings"]);
+    expect(within(dialog).getAllByRole("link").map((a) => a.textContent)).toEqual(["Customers", "Catalogue", "Settings", "Help"]);
     expect(within(dialog).queryByText("Your workspaces")).toBeNull();
   });
   it("draws nothing outside a workspace", () => {
