@@ -1,10 +1,10 @@
 import { act, cleanup, fireEvent, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const refresh = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push: vi.fn() }) }));
 
-import { SetupGate } from "./SetupGate";
+import { SetupGate, preloadSetupWizard } from "./SetupGate";
 import { NEW_LOCAL } from "./setup-logic";
 import { readLocal, resetSetupStore, writeLocal } from "./setup-store";
 import { BASE, T, actions, defaultHours, fresh, words } from "./setup-test-kit";
@@ -30,6 +30,7 @@ function gate(facts: SetupFacts, act: SetupActions = actions(), extra: { uploade
 const title = () => screen.getByRole("heading", { level: 1 }).textContent;
 const next = () => fireEvent.click(screen.getByRole("button", { name: "Next" }));
 
+beforeAll(() => preloadSetupWizard()); // the wizard is its own chunk in the app (job CF); here it is ready, so the first render is complete (the waiting is tested in SetupGate.lazy.test.tsx)
 beforeEach(() => {
   window.localStorage.clear();
   resetSetupStore();

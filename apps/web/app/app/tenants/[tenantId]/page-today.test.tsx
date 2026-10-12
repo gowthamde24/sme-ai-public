@@ -219,7 +219,8 @@ describe("the first-run setup on Today (job BJ)", () => {
   it("the Owner of a brand-new workspace sees the wizard, greeting the shop by name, instead of Today", async () => {
     brandNew();
     await show();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Welcome to Acme Silks");
+    // the wizard is its own chunk (job CF): it arrives a moment after the first paint, which shows the waiting line
+    expect(await screen.findByRole("heading", { level: 1 })).toHaveTextContent("Welcome to Acme Silks");
     expect(screen.queryByText("Needs you")).toBeNull();
     expect(getVisitSettings).toHaveBeenCalledWith("tok", TENANT);
     expect(listCatalogueItems).toHaveBeenCalledWith("tok", TENANT, { limit: 1, includeInactive: true });
