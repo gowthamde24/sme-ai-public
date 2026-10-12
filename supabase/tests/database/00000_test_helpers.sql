@@ -474,7 +474,7 @@ declare
 begin
   perform tests.open_gate(p);  -- the canary phone is a real-looking number: this is the world where erasure matters
   update public.contacts set full_name = 'Zed Qxjv', email = 'zed.qxjv@canary.test', phone = '+91 98765 43210', job_title = 'Qxjv director' where id = k;
-  update public.companies set name = 'Kzv9 Silks', website = 'https://kzv9-silks.test/shop', city = 'Kzv9pur', region = 'Kzv9 State', tags = array['kzv9'] where id = c;
+  update public.companies set name = 'Kzv9 Silks', website = 'https://kzv9-silks.test/shop', city = 'Kzv9pur', region = 'Kzv9 State', tags = array['kzv9'], gstin = '27AAPFU0939F1ZV' where id = c;
   insert into public.companies (id, tenant_id, name, tags) values (c2, t, 'Other Co', array['zed.qxjv@canary.test', 'vip']);
   insert into public.consent_events (id, tenant_id, contact_id, event_type, channel, basis, evidence_type, evidence_ref)
   values (tests.rid(p || '_er_consent'), t, k, 'granted', 'email', 'explicit_consent', 'web_form', 'form:qxjv-9876543210');

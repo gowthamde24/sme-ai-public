@@ -36,6 +36,18 @@
           "default": null,
           "title": "Website"
         },
+        "gstin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gstin"
+        },
         "country": {
           "anyOf": [
             {
@@ -173,6 +185,17 @@
           ],
           "title": "Website"
         },
+        "gstin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Gstin"
+        },
         "country": {
           "anyOf": [
             {
@@ -235,6 +258,7 @@
         "name",
         "type",
         "website",
+        "gstin",
         "country",
         "region",
         "city",
@@ -295,6 +319,18 @@
           ],
           "default": null,
           "title": "Website"
+        },
+        "gstin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gstin"
         },
         "country": {
           "anyOf": [

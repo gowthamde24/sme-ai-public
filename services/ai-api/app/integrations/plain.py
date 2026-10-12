@@ -1,5 +1,5 @@
 """The plain exports: one CSV (UTF-8 with a byte-order mark so Excel reads Telugu and Hindi names) and one XLSX with the same rows split over three sheets. For an accountant or a spreadsheet:
-amounts are rupees with two decimals in columns that say (INR), dates are DD/MM/YYYY, a party's GSTIN is a column that is empty when we hold none. Every text cell is made safe against spreadsheet
+amounts are rupees with two decimals in columns that say (INR), dates are DD/MM/YYYY, a party's GSTIN and the seller's (the shop's own) are columns that are empty when we hold none. Every text cell is made safe against spreadsheet
 formula injection (CSV: a leading apostrophe is added when a cell starts with = + - @ tab or CR)."""
 
 from __future__ import annotations
@@ -16,7 +16,7 @@ from app.leads.export import sanitize_csv_cell
 
 CSV_HEADERS = [
     "Record", "Date", "Voucher No", "Order No", "Party", "GSTIN", "Place of Supply", "Supply", "Taxable Value (INR)", "CGST (INR)", "SGST (INR)", "IGST (INR)", "Freight (INR)",
-    "Round Off (INR)", "Total (INR)", "Reference",
+    "Round Off (INR)", "Total (INR)", "Reference", "Seller GSTIN",
 ]  # fmt: skip
 SALE_LINE_HEADERS = ["Voucher No", "Date", "Party", "Item", "Item Code", "Quantity", "Unit", "Rate (INR)", "Taxable Value (INR)", "GST %", "GST (INR)", "Line Total (INR)"]
 PAYMENT_HEADERS = ["Voucher No", "Date", "Party", "Type", "Amount (INR)", "Order No", "Against Invoice"]
@@ -40,10 +40,10 @@ def register_rows(acc: Accounting) -> list[list[Any]]:
     for s in acc.sales:
         rows.append(["Sale", dmy(s.date), s.voucher_no, s.order_no, s.party, s.gstin, s.state_code, s.supply.replace("_", "-"), rupees(s.merchandise_net_paise),
                      rupees(_tax(s, "cgst")), rupees(_tax(s, "sgst")), rupees(_tax(s, "igst")), rupees(s.shipping_net_paise), rupees(s.round_off_paise), rupees(s.total_paise),
-                     f"quote {s.quote_no}"])
+                     f"quote {s.quote_no}", acc.shop_gstin])
     for p in acc.payments:
-        rows.append(["Payment received" if p.kind == "payment" else "Refund paid", dmy(p.date), p.voucher_no, p.order_no, p.party, "", "", "", "", "", "", "", "", "", rupees(p.amount_paise),
-                     f"against {p.sale_voucher_no}"])
+        rows.append(["Payment received" if p.kind == "payment" else "Refund paid", dmy(p.date), p.voucher_no, p.order_no, p.party, p.gstin, "", "", "", "", "", "", "", "", rupees(p.amount_paise),
+                     f"against {p.sale_voucher_no}", acc.shop_gstin])
     return rows
 
 

@@ -245,6 +245,10 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('outbox_settings',
    $$insert into public.outbox_settings (tenant_id) values (%1$L) on conflict (tenant_id) do update set per_customer_daily_limit = 3$$,
    'per_customer_daily_limit = per_customer_daily_limit', $$delete from public.outbox_settings where tenant_id = %1$L$$, false),
+  -- job CA: the shop's own GSTIN; one row per business, written only by public.business_profile_set
+  ('business_profile',
+   $$insert into public.business_profile (tenant_id, gstin) values (%1$L, null) on conflict (tenant_id) do update set gstin = null$$,
+   'gstin = gstin', $$delete from public.business_profile where tenant_id = %1$L$$, false),
   ('outbox_messages',
    $$insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by)
      select %2$L, %1$L, l.id, l.contact_id, 'whatsapp', 'Synthetic generic message', 'en', 'info', 'needs_approval', 'category_other', repeat('1', 64), %5$L
@@ -426,6 +430,8 @@ select t, r, s, i, u, d from (values
   -- job AT: the outbox, its settings and call requests. Owner / Admin / Sales read; a Viewer reads none (a message can hold a price); nobody writes directly.
   ('outbox_settings',      'owner', true, false, false, false), ('outbox_settings',      'admin', true, false, false, false),
   ('outbox_settings',      'sales', true, false, false, false), ('outbox_settings',      'viewer', false, false, false, false),
+  ('business_profile',     'owner', true, false, false, false), ('business_profile',     'admin', true, false, false, false),
+  ('business_profile',     'sales', true, false, false, false), ('business_profile',     'viewer', true, false, false, false),
   ('outbox_messages',      'owner', true, false, false, false), ('outbox_messages',      'admin', true, false, false, false),
   ('outbox_messages',      'sales', true, false, false, false), ('outbox_messages',      'viewer', false, false, false, false),
   ('call_requests',        'owner', true, false, false, false), ('call_requests',        'admin', true, false, false, false),
