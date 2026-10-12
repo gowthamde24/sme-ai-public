@@ -99,7 +99,8 @@ def test_the_scripts_hold_no_secret_and_the_makefile_leaves_the_old_targets_alon
         )
     makefile = (ROOT / "Makefile").read_text()
     assert (
-        "dev-api:\n\tcd $(API) && .venv/bin/uvicorn app.main:app --reload --port 8000\n" in makefile
+        "dev-api:\n\tcd $(API) && .venv/bin/uvicorn app.main:app --reload --no-server-header --port 8000\n"
+        in makefile  # job CB added only --no-server-header
     )
     assert "dev-web:\n\tcd $(WEB) && npm run dev\n" in makefile
     assert (

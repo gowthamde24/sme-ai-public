@@ -36,6 +36,15 @@ class Settings(BaseSettings):
     # the API from its SERVER, so the browser needs no CORS access at all. Explicit origins only
     # (scheme://host[:port], no path, no "*"); https outside development.
     api_cors_origins: str = ""
+    # Job CB (ADR 0082): hardening and operations.
+    rate_limit_enabled: bool = True
+    # how many proxies in front of the API may write X-Forwarded-For (0: the header is ignored)
+    trusted_proxy_hops: int = 0
+    # /metrics answers 404 unless this is set, and then only to `Authorization: Bearer <it>`
+    metrics_token: SecretStr | None = None
+    log_format: str = "text"  # text | json
+    # /docs, /redoc and /openapi.json: on in development, off elsewhere unless this is true
+    expose_api_docs: bool = False
 
     # Supabase (T002). The publishable key (formerly "anon") is public by design: it identifies
     # the project to PostgREST and grants nothing without a user JWT. Use SUPABASE_PUBLISHABLE_KEY;

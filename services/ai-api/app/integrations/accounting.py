@@ -4,13 +4,14 @@ Pure and deterministic: no database, no clock, integer paise throughout; the fil
 GST: the quote carries the item tax, the shipping tax and the supply type (intra_state or inter_state). The tax is grouped by RATE (each quote line has a rate in basis points; the shipping rate is
 derived from its tax and net). For an intra-state supply every rate's tax is split half CGST and half SGST (an odd paisa goes to SGST); for an inter-state supply it is IGST. The party is debited the
 ORDER TOTAL; sales, freight and the tax ledgers are credited; any difference between the order total and the sum of those (a manual price with a rounded total, say) goes to a Round Off line, so a
-voucher always balances to the paisa. There is NO GSTIN in this application's data today, so none is written (the column exists and is empty)."""
+voucher always balances to the paisa. A customer's GSTIN and the shop's own (job CA) come with the data and are written where the file format has a place for them (CSV, XLSX, Vyapar); the Tally files do not carry them (see tally.py)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 from typing import Any
 
+from app import gstin as gstin_module
 from app.integrations.indian import percent
 
 SALES_LEDGER = "Sales"
@@ -87,6 +88,16 @@ class Accounting:
     date_to: str
     sales: list[Sale]
     payments: list[Payment]
+    shop_gstin: str = ""
+
+    def party_gstins(self) -> dict[str, str]:
+        """The GSTIN of every party that has one in the window, by party name."""
+        found: dict[str, str] = {}
+        parties: list[tuple[str, str]] = [(s.party, s.gstin) for s in self.sales] + [(p.party, p.gstin) for p in self.payments]
+        for name, gstin in parties:
+            if gstin:
+                found.setdefault(name, gstin)
+        return found
 
     def parties(self) -> list[tuple[str, str | None]]:
         """Every distinct party (name, city) in the window, by name."""
@@ -110,6 +121,11 @@ class Accounting:
 
     def uses_round_off(self) -> bool:
         return any(s.round_off_paise != 0 for s in self.sales)
+
+
+def _gstin(value: object) -> str:
+    """A GSTIN as the database gave it, only if it is well formed (a file never carries a number the application would refuse)."""
+    return value if isinstance(value, str) and gstin_module.is_valid(value) else ""
 
 
 def sale_voucher_no(order_no: int) -> str:
@@ -160,6 +176,7 @@ def build_sale(order: dict[str, Any]) -> Sale:
         date=str(order["accepted_on"]),
         party=str(order.get("party") or "Walk-in customer"),
         city=order.get("city"),
+        gstin=_gstin(order.get("gstin")),
         state_code=str(order.get("delivery_state") or ""),
         supply=supply,
         merchandise_net_paise=merch,
@@ -186,7 +203,8 @@ def build(payload: dict[str, Any]) -> Accounting:
             party=str(p.get("party") or "Walk-in customer"),
             kind=str(p["kind"]),
             amount_paise=int(p["amount_paise"]),
+            gstin=_gstin(p.get("gstin")),
         )
         for p in payload.get("payments", [])
     ]
-    return Accounting(str(payload["from"]), str(payload["to"]), sales, payments)
+    return Accounting(str(payload["from"]), str(payload["to"]), sales, payments, shop_gstin=_gstin(payload.get("shop_gstin")))

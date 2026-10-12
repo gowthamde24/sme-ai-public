@@ -12,6 +12,7 @@ from fastapi import Depends, Request
 
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
+from app.businessprofile.repository import BusinessProfileRepository
 from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
 from app.connectors.runtime import Connectors
@@ -88,6 +89,7 @@ class Runtime:
     research_web: ResearchWeb | None = None
     research_usage: ResearchUsageRepository | None = None
     connectors: Connectors | None = None
+    business_profile: BusinessProfileRepository | None = None
 
 
 @dataclass(frozen=True)

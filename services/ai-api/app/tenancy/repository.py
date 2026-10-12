@@ -104,6 +104,14 @@ class PostgrestTenantRepository:
     def close(self) -> None:
         self._client.close()
 
+    def ping(self) -> bool:
+        """Can the data layer be reached? One HEAD on the root, a short timeout."""
+        try:
+            response = self._client.head("/", headers={"apikey": self._anon_key}, timeout=2.0)
+        except httpx.HTTPError:
+            return False
+        return response.status_code < 500
+
     # ------------------------------------------------------------------ plumbing
     def _headers(self, token: str) -> dict[str, str]:
         return {

@@ -15,6 +15,8 @@ from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
+from app.businessprofile.repository import PostgrestBusinessProfileRepository
+from app.businessprofile.routes import router as business_profile_router
 from app.catalogue import errors as catalogue_errors
 from app.catalogue.repository import PostgrestCatalogueRepository
 from app.catalogue.routes import router as catalogue_router
@@ -40,6 +42,10 @@ from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
+from app.hardening.headers import SecurityHeadersMiddleware
+from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
+from app.hardening.ops_routes import build_router as build_ops_router
+from app.hardening.ratelimit import RateLimitMiddleware
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import PostgrestIntegrationsRepository
@@ -184,6 +190,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         connectors=build_connectors(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
+        business_profile=PostgrestBusinessProfileRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -522,6 +529,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.lead_search,
                 runtime.research_usage,
                 runtime.connectors.repo if runtime.connectors is not None else None,
+                runtime.business_profile,
             ):
                 if isinstance(
                     repository,
@@ -546,11 +554,22 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestLeadSearchRepository
                     | PostgrestIntegrationsRepository
                     | PostgrestResearchUsageRepository
-                    | PostgrestConnectorsRepository,
+                    | PostgrestConnectorsRepository
+                    | PostgrestBusinessProfileRepository,
                 ):
                     repository.close()
 
-    app = FastAPI(title="SME AI Revenue Engine API", version=SERVICE_VERSION, lifespan=lifespan)
+    docs = settings.is_development or settings.expose_api_docs
+    app = FastAPI(
+        title="SME AI Revenue Engine API",
+        version=SERVICE_VERSION,
+        lifespan=lifespan,
+        docs_url="/docs" if docs else None,
+        redoc_url="/redoc" if docs else None,
+        openapi_url="/openapi.json" if docs else None,
+    )
+    metrics = Metrics()
+    install_logging(settings.log_format)
     app.state.runtime = runtime
     install_log_redaction()
     install_error_handlers(app)
@@ -600,6 +619,22 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             max_age=600,
         )
 
+    # job CB (ADR 0082): innermost the rate limits, then the security headers and the size limit,
+    # outermost the request id, the access line and the counters
+    if settings.rate_limit_enabled:
+        app.add_middleware(
+            RateLimitMiddleware,
+            trusted_hops=settings.trusted_proxy_hops,
+            on_limited=metrics.limit_hit,
+        )
+    app.add_middleware(SecurityHeadersMiddleware, production=not settings.is_development)
+    app.add_middleware(ObserveMiddleware, metrics=metrics, trusted_hops=settings.trusted_proxy_hops)
+    app.include_router(
+        build_ops_router(
+            metrics, settings.metrics_token.get_secret_value() if settings.metrics_token else None
+        )
+    )
+
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:
         return HealthResponse(
@@ -633,6 +668,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(voice_router)
     app.include_router(connectors_router)
     app.include_router(webhooks_router)
+    app.include_router(business_profile_router)
     app.include_router(accounting_export_router)
     app.include_router(spreadsheet_import_router)
     app.include_router(calendar_member_router)

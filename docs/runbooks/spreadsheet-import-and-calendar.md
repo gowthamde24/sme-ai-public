@@ -10,7 +10,7 @@ Who: Owner or Admin (the final step needs a second factor). File: CSV (UTF-8; Ex
 3. **Confirm** (`POST .../imports/spreadsheet/{job_id}/confirm`, the **same file** again, second factor): runs it and closes the job with its counts. A different file is refused (`409 import_file_changed`); running a finished job again returns its result (`replay: true`), so a double click or a retry imports nothing twice; a failed job may be run again.
 4. `GET .../imports/spreadsheet/jobs` and `.../jobs/{job_id}` show the jobs and their results.
 Samples: `services/ai-api/tests/golden_bi/sample_customers_telugu.csv`, `sample_customers_hindi.csv`, `sample_stock.csv` (invented).
-Limits worth knowing: a customer's contact needs a phone number or an e-mail address; GSTIN is not imported (nothing stores it yet).
+Limits worth knowing: a customer's contact needs a phone number or an e-mail address; GSTIN is not imported by the spreadsheet import (the application stores a customer's GSTIN since job CA, but the spreadsheet import has no GSTIN column yet).
 
 ## The visits calendar feed (Google or Apple Calendar, no Google account needed)
 * Make yours: `POST /v1/tenants/{id}/calendar-feed` (any member). The answer has the **token once** and the path `/v1/calendar/feed/<token>.ics`; the address to give a calendar app is the API's public address + that path (the calendar app calls the API directly). Google Calendar: *Other calendars > From URL*; Apple: *File > New Calendar Subscription*.
