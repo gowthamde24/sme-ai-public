@@ -8,6 +8,7 @@ import { AgentOwl3D } from "../../owl/AgentOwl3D";
 import { owlMood, type OwlMood } from "../../owl/owl-mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
 import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type VoiceStatus, type VoiceTransport } from "./ask-types";
+import { AskCapabilities } from "./AskCapabilities";
 import type { AskWords } from "./ask-words";
 import { canRecord, clock } from "./recorder";
 import { fetchVoiceStatus, makeAskTransport, makeVoiceTransport } from "./transport";
@@ -415,6 +416,8 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
           ))}
         </ul>
       ) : null}
+
+      <AskCapabilities w={w} examples={[w("ask.chip.needs"), w("ask.chip.quotes"), w("ask.chip.team")]} onTry={(q) => void ask(q)} guideHref={`${base}/help/today`} />
 
       {phase !== "idle" ? (
         <div className="mt-4 border-t border-line pt-4" aria-live="polite" aria-busy={asking}>

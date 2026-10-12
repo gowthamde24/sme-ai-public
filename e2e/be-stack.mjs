@@ -759,6 +759,116 @@ if (process.env.E2E_BEFORE_URL) {
   }, page);
 }
 
+// ---- 8a. Help (job BT): the guides, the "?" tips, "What can Agent OWL do?" -------------------------------------------------------------------
+await step("Q1", "Help: the menu opens the guides, a guide has its steps and in Telugu no raw key; the '?' tip of the Outbox opens and links to its guide; 'What can Agent OWL do?' opens under the Ask box and an example asks", async () => {
+  const home = `${BASE}/app/tenants/${tenant}`;
+  await page.goto(home, { waitUntil: "networkidle" });
+  await page.getByRole("link", { name: "Help", exact: true }).first().click();
+  await page.waitForURL(/\/help$/);
+  must((await page.getByRole("list", { name: "Guides" }).getByRole("link").count()) === 8, "the Help screen does not list eight guides");
+  await shot(page, "help-index");
+  await page.getByRole("link", { name: /Approve a message/ }).click();
+  await page.waitForURL(/\/help\/approve$/);
+  must((await page.locator("ol > li").count()) === 4, "the guide does not have four steps");
+  await shot(page, "help-guide");
+  // Telugu: a translated guide and an English-only one
+  await context.addCookies([{ name: "sme_lang", value: "te", url: BASE }]);
+  for (const g of ["today", "outbox"]) {
+    await page.goto(`${home}/help/${g}`, { waitUntil: "networkidle" });
+    const body = await text(page);
+    must(!/help\.guide\./.test(body), `${g}: a raw key shows`);
+    if (g === "today") must(/[\u0C00-\u0C7F]/.test(body), "the Telugu guide has no Telugu on it");
+    else must(/English/.test(body) || /ఇంగ్లీష్/.test(body), "the English-only guide does not say so");
+  }
+  await context.addCookies([{ name: "sme_lang", value: "en", url: BASE }]);
+  // the "?" tip of the Outbox
+  await page.goto(out(""), { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Help for this screen" }).click();
+  const region = page.getByRole("region", { name: "Help for this screen" });
+  await region.waitFor();
+  must((await region.locator("li").count()) === 3, "the tip does not have three lines");
+  await shot(page, "help-tip-outbox");
+  await region.getByRole("link", { name: "Read the full guide" }).click();
+  await page.waitForURL(/\/help\/outbox$/);
+  // the other four screens carry a tip too
+  for (const [name, url] of [["today", home], ["visits", `${home}/visits`], ["catalogue", `${home}/catalogue`], ["settings", `${home}/settings`]]) {
+    await page.goto(url, { waitUntil: "networkidle" });
+    must((await page.getByRole("button", { name: "Help for this screen" }).count()) === 1, `${name}: no '?' tip`);
+  }
+  // What can Agent OWL do? (the Ask box on Today)
+  await page.goto(home, { waitUntil: "networkidle" });
+  const can = page.getByRole("button", { name: "What can Agent OWL do?" });
+  await can.waitFor({ timeout: 30000 });
+  await can.click();
+  const sheet = page.getByRole("region", { name: "What Agent OWL can do for you" });
+  await sheet.waitFor();
+  must(/Change your records or your prices/.test(await sheet.innerText()), "the sheet does not say what Agent OWL cannot do");
+  await shot(page, "help-can-sheet");
+  await sheet.getByRole("button", { name: "What needs me today?" }).click();
+  await page.getByText("Looking at your records…").or(page.getByText("Where this came from")).first().waitFor({ timeout: 30000 });
+}, page);
+
+await step("Q2", "Help on a phone (360 px) and in the dark: the index, a guide, the open '?' tip and the open 'What can Agent OWL do?' card: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
+  let axe = "";
+  try {
+    axe = readFileSync(path.join(here, "..", "apps", "web", "node_modules", "axe-core", "axe.min.js"), "utf8");
+  } catch {
+    // axe-core is the web app's dev dependency: without it that one check is skipped and said so
+  }
+  const seen = [];
+  const home = `${BASE}/app/tenants/${tenant}`;
+  for (const [label, viewport, mobile, scheme] of [["phone-light", { width: 360, height: 780 }, true, "light"], ["phone-dark", { width: 360, height: 780 }, true, "dark"], ["desktop-dark", { width: 1280, height: 900 }, false, "dark"]]) {
+    // the run's own page (its session cookies rotate; a copy of them would be refused): resized and given the colour scheme, no second browser context
+    const p = page;
+    await p.setViewportSize(viewport);
+    await p.emulateMedia({ colorScheme: scheme });
+    void mobile;
+    for (const [name, url, open] of [["help", `${home}/help`, null], ["help-guide", `${home}/help/visits`, null], ["outbox-tip", out(""), "tip"], ["ask-can", home, "can"]]) {
+      await p.goto(url, { waitUntil: "networkidle" });
+      try {
+        if (open === "tip") await p.getByRole("button", { name: "Help for this screen" }).click({ timeout: 15000 });
+        if (open === "can") {
+          await p.getByRole("button", { name: "What can Agent OWL do?" }).click({ timeout: 15000 });
+          await p.getByRole("region", { name: "What Agent OWL can do for you" }).waitFor({ timeout: 15000 });
+        }
+      } catch (error) {
+        await p.screenshot({ path: path.join(SHOTS, `Q-FAIL-${name}-${label}.png`) });
+        throw new Error(`${label} ${name}: ${String(error.message).split("\n")[0]}`);
+      }
+      await p.waitForTimeout(400);
+      await p.screenshot({ path: path.join(SHOTS, `Q-${name}-${label}.png`), fullPage: true });
+      const m = await p.evaluate(() => {
+        const bad = [];
+        for (const el of document.querySelectorAll("a, button, select, input:not([type=hidden]):not([type=checkbox]):not([type=radio]):not(.sr-only), summary, textarea")) {
+          const r = el.getBoundingClientRect();
+          const cs = getComputedStyle(el);
+          if (r.width === 0 || r.height === 0 || cs.visibility === "hidden" || el.closest("[aria-hidden=true]") || el.classList.contains("sr-only")) continue;
+          if (r.height < 43.5) bad.push(`${el.tagName.toLowerCase()} "${(el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 24)}" ${Math.round(r.height)}px`);
+        }
+        const small = new Set();
+        for (const el of document.querySelectorAll("body *")) {
+          if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+          const fs = parseFloat(getComputedStyle(el).fontSize);
+          if (fs < 13.99 && !el.closest("nextjs-portal")) small.add(`${el.tagName.toLowerCase()} ${fs}px`);
+        }
+        return { scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth, bad: bad.slice(0, 5), small: [...small].slice(0, 4) };
+      });
+      if (m.scrollW > m.clientW) seen.push(`${label} ${name}: sideways scroll ${m.scrollW}>${m.clientW}`);
+      if (m.bad.length) seen.push(`${label} ${name}: small targets ${m.bad.join("; ")}`);
+      if (m.small.length) seen.push(`${label} ${name}: small text ${m.small.join("; ")}`);
+      if (axe) {
+        await p.evaluate(axe);
+        const v = await p.evaluate(async () => (await window.axe.run(document, { resultTypes: ["violations"] })).violations.filter((x) => !/nextjs|portal/.test(JSON.stringify(x.nodes[0]?.target ?? ""))).map((x) => `${x.id}(${x.nodes.length}: ${JSON.stringify(x.nodes.map((n) => n.target)).slice(0, 160)})`));
+        if (v.length) seen.push(`${label} ${name}: axe ${v.join(", ")}`);
+      }
+    }
+  }
+  await page.setViewportSize({ width: 1280, height: 900 });
+  await page.emulateMedia({ colorScheme: "light" });
+  must(seen.length === 0, seen.slice(0, 4).join(" | "));
+  return axe ? "12 page views checked with axe" : "axe-core not installed: that check was skipped";
+}, page);
+
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
 await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hours) and the saree page at 360 px and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";

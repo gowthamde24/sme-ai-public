@@ -54,14 +54,13 @@ describe("the frame in Telugu", () => {
     expect(screen.getByRole("region", { name: "అనువాద సూచన" })).toHaveTextContent("యంత్రం రాసింది");
     expect(screen.getByText("The page")).toBeInTheDocument();
   });
-  it("draws the words of the new frame in Telugu too: the groups, the foot, Help and 'Not available yet'", () => {
+  it("draws the words of the new frame in Telugu too: the groups, the foot and Help", () => {
     nav.pathname = `/app/tenants/${A}/orders`;
     frame("te");
     const menu = screen.getByRole("navigation", { name: "వర్క్‌స్పేస్ మెనూ" });
     expect(within(menu).getByRole("group", { name: "పని" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "సెట్టింగ్స్" })).toBeInTheDocument();
-    expect(screen.getAllByText("ఇంకా అందుబాటులో లేదు").length).toBeGreaterThan(0);
-    expect(screen.getByRole("button", { name: /సహాయం/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "సహాయం" })).toHaveAttribute("href", `/app/tenants/${A}/help`);
   });
   it("English has no draft note and the page area is English too", () => {
     nav.pathname = `/app/tenants/${A}/orders`;

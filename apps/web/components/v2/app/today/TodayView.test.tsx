@@ -143,7 +143,7 @@ describe("Today: the order of the sections", () => {
   });
   it("the side column is store visits, then done while you slept, then your team", async () => {
     await view(data({ store: ready([{ id: "v1", starts_at: "2026-10-11T05:30:00Z", who: "Priya S.", extra: 0, topic: null, status: "confirmed", here: false }]) }));
-    expect([...document.querySelectorAll("aside > section")].map((s) => s.getAttribute("data-part"))).toEqual(["visits", "done", "team"]);
+    expect([...document.querySelectorAll('[data-screen="today"] section[data-part]:not([data-part="agent-owl"])')].map((s) => s.getAttribute("data-part"))).toEqual(["visits", "done", "team"]);
   });
   it("leaves a room under the content for the fixed question line and bottom bar (phone only)", async () => {
     const { container } = await view(data());

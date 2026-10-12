@@ -1,5 +1,6 @@
 # Catalogue
 Your sarees, with photos. Show them to customers or send them in a message. [Add a saree](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
+[button type=button: Help for this screen]
 {role=search}
 <hidden name=fabric value=soft_silk>
 <hidden name=stock value=few_left>

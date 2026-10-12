@@ -1,5 +1,7 @@
 # Outbox
-Every WhatsApp message the shop makes, and what happened to it. Agent OWL last checked 2 min ago · next check 10:01 Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out. [Change it in Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
+Every WhatsApp message the shop makes, and what happened to it. Agent OWL last checked 2 min ago · next check 10:01
+[button type=button: Help for this screen]
+Automatic sending is off for this business: new messages wait for you to approve them. Messages you approve still go out. [Change it in Settings](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent)
 {label="Outbox"} [Waiting for you 1 1 waiting for you](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=waiting) [Scheduled 1 1 scheduled](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=scheduled) [Sent 1 1 sent](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent current=page) [Blocked 1 1 blocked or failed](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=blocked)
 {role=search}
 <hidden name=tab value=sent>

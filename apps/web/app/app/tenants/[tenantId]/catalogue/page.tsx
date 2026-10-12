@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { CatalogueView } from "@/components/v2/app/catalogue/CatalogueView";
 import { parseQuery } from "@/components/v2/app/catalogue/catalogue-logic";
 import { ApiDownV2 } from "@/components/v2/app/parts";
+import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { pageMain } from "@/components/v2/app/ui";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
@@ -54,7 +55,7 @@ export default async function CataloguePage({ params, searchParams }: PageProps<
   }
   return (
     <main className={pageMain} lang={lang}>
-      <CatalogueView base={`/app/tenants/${tenantId}`} words={catalogueWords(lang)} role={tenant.role} query={query} items={data.items} more={data.more} lead={lead} />
+      <CatalogueView help={helpTipFor(lang, `/app/tenants/${tenantId}`, "catalogue")} base={`/app/tenants/${tenantId}`} words={catalogueWords(lang)} role={tenant.role} query={query} items={data.items} more={data.more} lead={lead} />
     </main>
   );
 }

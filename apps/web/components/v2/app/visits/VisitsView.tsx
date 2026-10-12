@@ -18,6 +18,8 @@ const FINISHED: ReadonlySet<Visit["status"]> = new Set(["completed", "no_show", 
 const navButton = "inline-flex size-11 items-center justify-center rounded-full border border-edge bg-surface hover:bg-surface-2";
 
 export type VisitsViewProps = {
+  /** The "?" tip of the screen (job BT): drawn under the heading. */
+  help?: React.ReactNode;
   view: "day" | "hours";
   day: string;
   /** Today in India (`YYYY-MM-DD`) and the moment the page was drawn (ms): read once so the page and a test agree. */
@@ -59,6 +61,7 @@ export function VisitsView(p: VisitsViewProps) {
         <h1 className="font-display text-[26px] font-semibold leading-[1.15] md:text-4xl md:leading-[1.1]">{say(words, "nav.item.visits")}</h1>
         <p className="text-base text-muted">{say(words, "visits.sub")}</p>
       </header>
+      {p.help}
       <nav aria-label={say(words, "nav.item.visits")} className="flex gap-1 border-b border-line">
         <Link href={href(day)} aria-current={view === "day" ? "page" : undefined} className={tab(view === "day")}>
           {say(words, "visits.tab.day")}

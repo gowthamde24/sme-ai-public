@@ -11,6 +11,8 @@ import { ItemCard, vocab } from "./ItemCard";
 import { BAND_WORDS, STOCK_CHOICES, activeFilters, hrefFor, isFiltered, soonestExpiry, toggled, type CatalogueQuery } from "./catalogue-logic";
 
 export type CatalogueViewProps = {
+  /** The "?" tip of the screen (job BT): drawn under the heading. */
+  help?: React.ReactNode;
   base: string;
   words: TodayWords;
   role: Role;
@@ -36,7 +38,7 @@ function Chip({ href, on, children, words }: { href: string; on: boolean; childr
 }
 
 /** The catalogue page (job BC): search, filters as chips, the photo grid. It only draws what the server read; a catalogue that could not be read says so in its place. */
-export function CatalogueView({ base, words, role, query, items, more, lead }: CatalogueViewProps) {
+export function CatalogueView({ base, words, role, query, items, more, lead, help }: CatalogueViewProps) {
   const admin = role === "owner" || role === "admin";
   const leadId = lead?.leadId ?? null;
   const link = (q: CatalogueQuery) => hrefFor(base, q, { lead: leadId });
@@ -63,6 +65,7 @@ export function CatalogueView({ base, words, role, query, items, more, lead }: C
             </Link>
           ) : null}
         </header>
+        {help}
 
         {lead ? (
           <p data-note="lead" className="rounded-2xl bg-surface-2 px-4 py-3 text-base">

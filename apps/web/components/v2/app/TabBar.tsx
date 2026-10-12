@@ -109,11 +109,10 @@ export function TabBar({ memberships, labels, frame: given, email, signOut }: { 
                     {word(labels, `nav.item.${i.id}`, i.label)}
                   </Link>
                 ))}
-                <button type="button" aria-disabled="true" className={`${row} text-muted`}>
+                <Link href={`/app/tenants/${current.id}/help`} aria-current={pathname.startsWith(`/app/tenants/${current.id}/help`) ? "page" : undefined} onClick={() => setOpen(false)} className={`${row} ${pathname.startsWith(`/app/tenants/${current.id}/help`) ? "border-brand-edge bg-brand-bg text-brand-text" : ""}`}>
                   <CircleHelp className="size-5" aria-hidden="true" />
-                  <span className="flex-1 text-ink">{help}</span>
-                  <span className="text-sm font-normal">{word(labels, "frame.notyet", "Not available yet")}</span>
-                </button>
+                  <span className="flex-1">{help}</span>
+                </Link>
               </div>
               {frame.showUsage ? <UsageCard usage={frame.usage} loading={!frame.ready} labels={labels} /> : null}
               {memberships.length > 1 ? (

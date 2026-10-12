@@ -1,6 +1,7 @@
 Tuesday, 6 October
 # Good morning
 Agent OWL this week : Not available yet
+[button type=button: Help for this screen]
 {label="1 thing needs you. The rest is handled."}
 {role=img label="Agent OWL, Resting"}
 Resting Resting Resting Agent OWL
