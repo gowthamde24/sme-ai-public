@@ -115,7 +115,7 @@ describe("first-pass sheet and sensitive wording", () => {
     expect(sensitivityNote("Request early access")).toBe("");
     expect(sensitivityNote("Turn enquiries into orders")).toBe("");
     const rows = parseCsv(buildReviewCsv(loadSets(), {}, { firstPass: true }));
-    expect(cell(rows, "landing.ctl.money", "te", 8)).toMatch(/money held/);
+    expect(cell(rows, "landing.priv.2.t", "te", 8)).toMatch(/consent/);
   });
 });
 

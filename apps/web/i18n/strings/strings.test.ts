@@ -27,7 +27,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
@@ -49,19 +49,21 @@ describe("honesty: no claims we cannot prove today", () => {
     }
   }
   const en = dictFor(landing, "en") as Record<string, string>;
-  it("the English landing copy says what it must: drafts, approval, you send, and that sign-up is open and free", () => {
-    expect(en["hero.sub"]).toMatch(/approve/i);
-    expect(en["hero.sub"]).toMatch(/send it yourself/i);
-    // job BJ: automatic sending exists (switched off by default), so the answer says exactly when Agent OWL sends by itself and what always waits
-    expect(en["faq.1.a"]).toBe("Agent OWL only sends routine replies by itself when you switch automatic sending on. Anything about money, complaints or calls always waits for you.");
-    expect(en["faq.1.a"]).not.toMatch(/Nothing is sent automatically/);
-    expect(en["faq.6.a"]).toBe("You can sign up and try it free. Nothing is charged.");
+  it("the English landing copy says what it must: money talk waits for the owner, sending is automatic only when switched on, and that sign-up is open and free (job BS)", () => {
+    expect(en["hero.sub"]).toMatch(/price, promises or complaints waits for your OK/i);
+    expect(en["faq.1.a"]).toMatch(/Only if you switch automatic sending on/);
+    expect(en["faq.1.a"]).toMatch(/waits for your OK/);
+    expect(en["shop.5.d"]).toMatch(/never sets or changes a price/);
+    expect(en["hero.note"]).toBe("You can sign up and try it free. Nothing is charged.");
+    expect(en["faq.7.a"]).toMatch(/try it free/i);
+    expect(en["faq.7.a"]).toMatch(/not final/i); // the price is not decided: the page says so
     for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/invitation only|by invitation|early access/i); // sign-up is open (Job AC review)
     expect(en["hero.cta"]).toBe("Sign up"); // Job AC C5: the main button on the home page goes to the sign-up screen
   });
-  it("money held is shown, never hidden", () => {
-    expect(en["ctl.money"]).toBe("Money still held: {held}. A refund may be owed to the customer.");
-    expect(en["ctl.moneyNote"]).toMatch(/never hidden/);
+  it("the pricing copy never counts questions and never states a price (the price is the placeholder)", () => {
+    expect(en["price.sub"]).toMatch(/no question counts/i);
+    expect(en["price.shop.p"]).toBe("[PRICE] a month");
+    for (const k of Object.keys(en).filter((x) => x.startsWith("price."))) expect(en[k], k).not.toMatch(/₹|\d/);
   });
   it("the privacy copy claims only what exists and says what does not", () => {
     expect(en["priv.3.d"]).toMatch(/not had an independent review/);

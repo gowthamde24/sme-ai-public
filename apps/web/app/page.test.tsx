@@ -5,7 +5,7 @@ vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (name: string) => (name in cookieValues ? { name, value: cookieValues[name] } : undefined) }),
 }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -37,10 +37,10 @@ describe('"/" is the landing page', () => {
     expect((await Home()).props).toEqual({ lang: "en", theme: undefined });
   });
 
-  it("keeps the pre-launch rules: noindex, no og:image, no JSON-LD", async () => {
+  it("keeps the pre-launch rules: noindex (the launch switch is off), a share picture, no JSON-LD", async () => {
     const m = await generateMetadata();
     expect(m.robots).toEqual({ index: false, follow: false });
-    expect(m.openGraph).not.toHaveProperty("images");
+    expect(m.openGraph).toHaveProperty("images");
     expect(JSON.stringify(m)).not.toMatch(/ld\+json|schema\.org/);
   });
 });

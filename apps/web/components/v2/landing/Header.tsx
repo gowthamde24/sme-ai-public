@@ -10,11 +10,10 @@ import type { Lang } from "@/i18n/lang";
 import type { Theme } from "@/i18n/preferences";
 
 const NAV: [string, LandingKey][] = [
+  ["#shop", "nav.shop"],
+  ["#whatsapp", "nav.whatsapp"],
   ["#how", "nav.how"],
-  ["#control", "nav.control"],
-  ["#team", "nav.team"],
-  ["#languages", "nav.languages"],
-  ["#privacy", "nav.privacy"],
+  ["#pricing", "nav.pricing"],
   ["#faq", "nav.faq"],
 ];
 
@@ -36,7 +35,7 @@ export function Header({ t, lang, theme }: { t: LandingT; lang: Lang; theme?: Th
           <Link href="/login" className="inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center rounded-lg px-1.5 text-sm font-semibold text-brand-text hover:underline sm:px-3">
             {t("nav.signin")}
           </Link>
-          <LangSelect lang={lang} label={t("lang.label")} />
+          <LangSelect lang={lang} label={t("lang.label")} landingRoutes />
           <ThemeButton initial={theme} toDark={t("theme.toDark")} toLight={t("theme.toLight")} />
         </div>
       </div>

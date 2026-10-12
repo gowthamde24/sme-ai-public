@@ -2,27 +2,17 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { LandingView } from "@/components/v2/landing/LandingView";
-import { BRAND_NAME } from "@/design/brand";
-import { fillPlain } from "@/i18n/fill";
-import { landingDict } from "@/i18n/landing";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
+import { landingMetadata } from "@/lib/seo/landing-metadata";
 
 /**
  * The public landing page (design v2, Stage 2). Dynamically rendered under the nonce CSP (ADR 0060): it reads the two
  * functional preference cookies, so the first response is already in the visitor's language and theme.
- * Until launch: noindex, no og:image, no JSON-LD (owner decision, 2026-10-07).
+ * The head (title, description, share picture, alternates, noindex until launch) is lib/seo/landing-metadata.ts (job BS).
  */
 export async function generateMetadata(): Promise<Metadata> {
   const jar = await cookies();
-  const dict = landingDict(readLang(jar.get(LANG_COOKIE)?.value));
-  const title = fillPlain(dict["meta.title"]);
-  const description = fillPlain(dict["meta.description"]);
-  return {
-    title,
-    description,
-    robots: { index: false, follow: false },
-    openGraph: { type: "website", siteName: BRAND_NAME, title, description },
-  };
+  return landingMetadata(readLang(jar.get(LANG_COOKIE)?.value), "/");
 }
 
 export default async function LandingPage() {

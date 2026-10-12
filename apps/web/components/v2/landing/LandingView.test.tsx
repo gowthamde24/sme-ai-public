@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 // next/font only works inside the Next build, and the router only inside a mounted app.
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 import { LandingView } from "@/components/v2/landing/LandingView";
 import { BRAND_NAME } from "@/design/brand";
@@ -29,7 +29,7 @@ const shows = (rendered: string, template: string) => {
   return new RegExp(esc).test(rendered);
 };
 // strings that show only after an action, in <head> (route metadata), or in the other state of a toggle
-const NOT_ON_FIRST_RENDER = /^(meta\.|early\.clicked|anim\.(play|motionPlay|motionStop)|theme\.toLight)/;
+const NOT_ON_FIRST_RENDER = /^(meta\.|theme\.toLight|draft\.banner)/;
 const ALLOWED_SAME = /^(langs\.sample\.en)/;
 
 describe("landing page: every string of the store is on the page", () => {
@@ -85,34 +85,6 @@ describe("landing page: structure and honesty", () => {
     expect(html("en", "dark")).toContain('data-theme="dark"');
     expect(html("en")).not.toContain("data-theme");
   });
-  it("the hero flow has all six steps with their cards in the markup, and draft states say a person approves", () => {
-    const h = html("en");
-    const strip = h.slice(h.indexOf('data-mode="strip"'), h.indexOf('data-mode="swipe"'));
-    for (let i = 0; i < 6; i++) expect(strip, `card ${i}`).toContain(`data-card="${i}"`);
-    expect((strip.match(/Draft, a person approves/g) ?? []).length).toBe(2); // the quote draft and the follow-up draft
-    expect(strip).toContain("Money still held");
-  });
-  it("labels every made-up example: the flow (both layouts) and the money-held note", () => {
-    const h = html("en");
-    const label = en["flow.example"];
-    expect(label).toBe("Example, not real data");
-    const stripStart = h.indexOf('data-mode="strip"');
-    const swipeStart = h.indexOf('data-mode="swipe"');
-    const blocks = { strip: h.slice(stripStart, swipeStart), swipe: h.slice(swipeStart, h.indexOf('id="problem"')) };
-    for (const [mode, block] of Object.entries(blocks)) expect(block, mode).toContain(label);
-    const control = h.slice(h.indexOf('id="control"'), h.indexOf('id="team"'));
-    expect(control).toContain("₹7,820.00");
-    expect(control).toContain(label);
-    const amounts = (h.match(/₹[\d,]+(\.\d\d)?/g) ?? []).length;
-    expect(amounts).toBeGreaterThan(0);
-    expect((h.match(new RegExp(label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")) ?? []).length).toBeGreaterThanOrEqual(3);
-  });
-  it("has no Play button in the normal case: only a small pause control", () => {
-    const h = html("en");
-    expect(h).not.toContain("Play animation");
-    expect(h).not.toContain("Play motion");
-    expect(h).toContain('aria-label="Pause animation"');
-  });
   it("the footer links to the Privacy Policy and the Terms, has a Cookie settings button, and Contact stays a plain label (job BH)", () => {
     const h = html("en");
     const footer = h.slice(h.indexOf("<footer"));
@@ -142,15 +114,85 @@ describe("landing page: structure and honesty", () => {
       for (const [re, label] of FORBIDDEN_CLAIMS) expect(re.test(rendered), `${lang} contains ${label}`).toBe(false);
     });
   }
-  it("names no customer, no person and no logo: the only business name is the labelled example", () => {
+  it("names no customer, no person and no logo: the example conversation is labelled and has no name", () => {
     const rendered = text(html("en"));
-    expect(rendered).toContain("Example Textiles");
-    expect(rendered).not.toMatch(/Pooja|Ananya|Lakshmi|Sample Silks/);
+    expect(rendered).toContain(en["chat.example"]);
+    expect(rendered).not.toMatch(/Pooja|Ananya|Lakshmi|Sample Silks|Example Textiles/);
     expect(html("en")).not.toMatch(/<img/);
   });
   it("uses the brand constant for its name", () => {
     expect(text(html("en"))).toContain("Sme-AI");
     expect(BRAND_NAME).toBe("Sme-AI (working name)");
+  });
+});
+
+describe("landing page: the saree and textile shop page (job BS)", () => {
+  it("has the sections in the order a shop owner reads them, each with its anchor", () => {
+    const h = html("en");
+    const ids = ["shop", "whatsapp", "how", "languages", "privacy", "pricing", "faq"].map((id) => h.indexOf(`id="${id}"`));
+    for (const [i, at] of ids.entries()) expect(at, `section ${i}`).toBeGreaterThan(0);
+    expect([...ids].sort((a, b) => a - b)).toEqual(ids);
+    expect(h).not.toContain('id="control"');
+    expect(h).not.toContain('id="team"');
+  });
+  it("the first screen has the promise, Agent OWL (3D with the flat owl standing in), and a made-up conversation that says so", () => {
+    const h = html("en");
+    const hero = h.slice(h.indexOf('aria-labelledby="h1"'), h.indexOf('id="shop"'));
+    expect(hero).toContain(en["hero.h1"]);
+    expect(hero).toMatch(/role="img" aria-label="Agent OWL, ready to help"/);
+    expect(hero).toContain('data-owl-render="svg"'); // the server draws the flat owl; the 3D chunk is requested in the browser when idle
+    expect(hero).toContain(en["chat.example"]);
+    expect(hero).toContain(en["chat.owl"]); // the owl's lines say who wrote them
+  });
+  it("says in what the app really does, for a saree shop: answers, shows sarees, books visits, follows up", () => {
+    const rendered = text(html("en"));
+    for (const k of ["shop.1.t", "shop.2.t", "shop.3.t", "shop.4.t", "shop.5.t", "shop.6.t"]) expect(rendered).toContain(en[k as keyof typeof en]);
+    expect(rendered).toMatch(/saree/i);
+  });
+  it("has a WhatsApp safety section with six habits and no promise about what WhatsApp decides", () => {
+    const h = html("en");
+    const wa = h.slice(h.indexOf('id="whatsapp"'), h.indexOf('id="how"'));
+    expect(wa).toContain(en["wa.title"]);
+    expect((wa.match(/<h3/g) ?? []).length).toBe(6);
+    expect(text(wa)).toContain(en["wa.note"]);
+    expect(text(wa)).not.toMatch(/never (be )?(banned|blocked)|cannot be (banned|blocked)|100%|guarantee/i);
+  });
+  it("explains how it works in exactly three steps", () => {
+    const h = html("en");
+    const how = h.slice(h.indexOf('id="how"'), h.indexOf('id="languages"'));
+    expect((how.match(/<li/g) ?? []).length).toBe(3);
+  });
+  it("pricing: two cards with the placeholder [PRICE], a fair-use meter in percent, no question counts and no number", () => {
+    const h = html("en");
+    const pricing = text(h.slice(h.lastIndexOf("<section", h.indexOf('id="pricing"')), h.indexOf('id="faq"')));
+    expect((pricing.match(/\[PRICE\]/g) ?? []).length).toBeGreaterThanOrEqual(2); // the plan and the note
+    expect(pricing).toContain(en["price.fair.1"]);
+    expect(pricing).toMatch(/percentage/);
+    expect(pricing).toMatch(/no question counts/i);
+    expect(pricing).not.toMatch(/\d/); // no price, no allowance, no count of anything
+    expect(pricing).not.toMatch(/₹|\$|Rs\.?\s?\d/);
+    expect(h.slice(h.indexOf('id="pricing"'), h.indexOf('id="faq"'))).toContain('href="/signup"');
+  });
+  it("the FAQ is honest about sending: only when automatic sending is on, and money talk always waits", () => {
+    const rendered = text(html("en"));
+    expect(rendered).toContain(en["faq.1.a"]);
+    expect(en["faq.1.a"]).toMatch(/only if you switch automatic sending on/i);
+    expect(rendered).not.toMatch(/does not send anything|never sends|you send it yourself/i);
+  });
+  it("the sections carry their links in the header and the footer", () => {
+    const h = html("en");
+    for (const id of ["shop", "whatsapp", "how", "pricing", "faq"]) {
+      expect(h.slice(0, h.indexOf("</header>"))).toContain(`href="#${id}"`);
+      expect(h.slice(h.indexOf("<footer"))).toContain(`href="#${id}"`);
+    }
+  });
+  it("Telugu, Hindi and Kannada say at the top that their words are a machine-written draft; English has no such note", () => {
+    for (const lang of ["te", "hi", "kn"] as const) expect(html(lang)).toMatch(new RegExp(`<p role="note"[^>]*>${landingDict(lang)["draft.banner"].replaceAll("⁠", "⁠?")}`));
+    expect(html("en")).not.toContain(en["draft.banner"]);
+  });
+  it("the language select links the page's own addresses (/, /te, /hi, /kn)", () => {
+    // LangSelect is a client island: its options are in the markup
+    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ"]) expect(html("en")).toContain(`>${l}</option>`);
   });
 });
 

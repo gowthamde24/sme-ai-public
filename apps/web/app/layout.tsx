@@ -9,6 +9,7 @@ import { V2Root } from "@/components/v2/V2Root";
 import { legalT } from "@/i18n/legal";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
 import { CONSENT_COOKIE, readConsent } from "@/lib/consent/consent";
+import { SITE_URL } from "@/lib/seo/site";
 
 import "./globals.css";
 
@@ -17,6 +18,7 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL), // the share pictures and canonical links are absolute (job BS)
   title: "SME AI Revenue Engine",
   description: "An AI workforce for SMEs.",
   // installable on a phone (job BL): the manifest is app/manifest.ts; the owl icons are in public/icons

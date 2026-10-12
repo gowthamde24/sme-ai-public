@@ -21,39 +21,6 @@
    "kn": "draft"
   }
  },
- "nav.control": {
-  "en": "You stay in control",
-  "te": "కంట్రోల్ మీ చేతిలోనే",
-  "hi": "कंट्रोल आपके हाथ में",
-  "kn": "ಕಂಟ್ರೋಲ್ ನಿಮ್ಮ ಕೈಯಲ್ಲೇ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.team": {
-  "en": "The team",
-  "te": "టీమ్",
-  "hi": "टीम",
-  "kn": "ತಂಡ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "nav.languages": {
-  "en": "Languages",
-  "te": "భాషలు",
-  "hi": "भाषाएँ",
-  "kn": "ಭಾಷೆಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "nav.privacy": {
   "en": "Privacy",
   "te": "ప్రైవసీ",
@@ -70,6 +37,17 @@
   "te": "ప్రశ్నలు",
   "hi": "सवाल",
   "kn": "ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.languages": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -131,39 +109,6 @@
    "kn": "draft"
   }
  },
- "hero.eyebrow": {
-  "en": "For Indian wholesalers, manufacturers and traders",
-  "te": "భారతదేశంలోని హోల్‌సేల్ వ్యాపారులు, తయారీదారులు, ట్రేడర్ల కోసం",
-  "hi": "भारत के थोक व्यापारियों, निर्माताओं और ट्रेडर्स के लिए",
-  "kn": "ಭಾರತದ ಸಗಟು ವ್ಯಾಪಾರಿಗಳು, ತಯಾರಕರು ಮತ್ತು ಟ್ರೇಡರ್‌ಗಳಿಗಾಗಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "hero.h1": {
-  "en": "Turn enquiries into orders, one approved draft at a time.",
-  "te": "ఎంక్వైరీలను ఆర్డర్లుగా మార్చండి, మీరు ఓకే చేసిన ఒక్కో డ్రాఫ్ట్‌తో.",
-  "hi": "पूछताछ को ऑर्डर में बदलें, आपके मंज़ूर किए हर ड्राफ़्ट के साथ।",
-  "kn": "ಎನ್‌ಕ್ವೈರಿಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡಿ, ನೀವು ಒಪ್ಪಿದ ಒಂದೊಂದು ಡ್ರಾಫ್ಟ್‌ನೊಂದಿಗೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "hero.sub": {
-  "en": "{brand} is an AI team that finds leads, researches them, drafts your quotes and follow-ups, and tracks every order. You approve each message and send it yourself.",
-  "te": "{brand} ఒక AI టీమ్. లీడ్స్‌ను వెతుకుతుంది, వివరాలు చూస్తుంది, మీ కొటేషన్లు, ఫాలో-అప్‌లు డ్రాఫ్ట్ చేస్తుంది, ప్రతి ఆర్డర్‌నూ గమనిస్తుంది. ప్రతి మెసేజ్‌ను మీరే ఓకే చేసి, మీరే పంపుతారు.",
-  "hi": "{brand} एक AI टीम है। यह लीड ढूँढती है, उनकी जाँच-पड़ताल करती है, आपके कोटेशन और फ़ॉलो-अप के ड्राफ़्ट बनाती है और हर ऑर्डर पर नज़र रखती है। हर मैसेज आप खुद मंज़ूर करते हैं और खुद भेजते हैं।",
-  "kn": "{brand} ಒಂದು AI ತಂಡ. ಲೀಡ್‌ಗಳನ್ನು ಹುಡುಕುತ್ತದೆ, ವಿವರ ನೋಡುತ್ತದೆ, ನಿಮ್ಮ ಕೊಟೇಶನ್ ಮತ್ತು ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಪ್ರತಿ ಆರ್ಡರ್ ಮೇಲೂ ಕಣ್ಣಿಡುತ್ತದೆ. ಪ್ರತಿ ಮೆಸೇಜ್ ಅನ್ನು ನೀವೇ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು, ನೀವೇ ಕಳುಹಿಸುತ್ತೀರಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "hero.cta": {
   "en": "Sign up",
   "te": "సైన్ అప్",
@@ -191,864 +136,6 @@
   "te": "మీరు సైన్ అప్ చేసి ఉచితంగా ప్రయత్నించవచ్చు. ఏదీ ఛార్జ్ చేయబడదు.",
   "hi": "आप साइन अप करके मुफ़्त में आज़मा सकते हैं। कुछ भी चार्ज नहीं किया जाता।",
   "kn": "ನೀವು ಸೈನ್ ಅಪ್ ಮಾಡಿ ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಬಹುದು. ಏನೂ ಶುಲ್ಕ ವಿಧಿಸುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.title": {
-  "en": "Sound familiar?",
-  "te": "మీకూ ఇలాగే అనిపిస్తోందా?",
-  "hi": "क्या आपके साथ भी ऐसा होता है?",
-  "kn": "ನಿಮಗೂ ಹೀಗೇ ಆಗುತ್ತಿದೆಯೇ?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.sub": {
-  "en": "Most small businesses sell from places that were never built for selling.",
-  "te": "చాలా చిన్న వ్యాపారాలు అమ్మకాల కోసం తయారు చేయని సాధనాలతోనే నడుస్తాయి.",
-  "hi": "ज़्यादातर छोटे व्यापारी ऐसे तरीकों से बेचते हैं जो बिक्री के लिए बने ही नहीं थे।",
-  "kn": "ಹೆಚ್ಚಿನ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳು ಮಾರಾಟಕ್ಕಾಗಿ ಮಾಡದ ಸಾಧನಗಳಲ್ಲೇ ನಡೆಯುತ್ತವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.1.t": {
-  "en": "Enquiries are everywhere",
-  "te": "ఎంక్వైరీలు ఎక్కడెక్కడో ఉంటాయి",
-  "hi": "पूछताछ हर जगह बिखरी रहती है",
-  "kn": "ಎನ್‌ಕ್ವೈರಿಗಳು ಎಲ್ಲೆಲ್ಲೋ ಇರುತ್ತವೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.1.d": {
-  "en": "A message on WhatsApp, a name in a notebook, a call you meant to return.",
-  "te": "వాట్సాప్‌లో ఒక మెసేజ్, నోట్‌బుక్‌లో ఒక పేరు, తిరిగి చేయాలనుకున్న ఒక ఫోన్ కాల్.",
-  "hi": "WhatsApp पर एक मैसेज, नोटबुक में एक नाम, एक कॉल जो वापस करनी थी।",
-  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಒಂದು ಮೆಸೇಜ್, ನೋಟ್‌ಬುಕ್‌ನಲ್ಲಿ ಒಂದು ಹೆಸರು, ವಾಪಸ್ ಮಾಡಬೇಕೆಂದಿದ್ದ ಒಂದು ಕಾಲ್.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.2.t": {
-  "en": "Follow-ups get forgotten",
-  "te": "ఫాలో-అప్‌లు మర్చిపోతారు",
-  "hi": "फ़ॉलो-अप भूल जाते हैं",
-  "kn": "ಫಾಲೋ-ಅಪ್‌ಗಳು ಮರೆತುಹೋಗುತ್ತವೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.2.d": {
-  "en": "The quote went out on Monday. By Friday nobody remembers to ask.",
-  "te": "కొటేషన్ సోమవారం పంపారు. శుక్రవారం అయ్యేసరికి ఎవరికీ అడగడం గుర్తుండదు.",
-  "hi": "कोटेशन सोमवार को भेजा। शुक्रवार तक किसी को पूछना याद नहीं रहता।",
-  "kn": "ಕೊಟೇಶನ್ ಸೋಮವಾರ ಕಳುಹಿಸಿದ್ದು. ಶುಕ್ರವಾರದ ಹೊತ್ತಿಗೆ ಕೇಳಲು ಯಾರಿಗೂ ನೆನಪಿರುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.3.t": {
-  "en": "Quotes take too long",
-  "te": "కొటేషన్‌కి చాలా టైమ్ పడుతుంది",
-  "hi": "कोटेशन बनाने में बहुत वक़्त लगता है",
-  "kn": "ಕೊಟೇಶನ್‌ಗೆ ತುಂಬ ಟೈಮ್ ಹಿಡಿಯುತ್ತದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "problem.3.d": {
-  "en": "Finding the price, working out GST, typing it all out while the buyer waits.",
-  "te": "రేటు వెతకడం, GST లెక్క వేయడం, కొనేవాళ్ళు ఎదురుచూస్తుంటే అంతా టైప్ చేయడం.",
-  "hi": "रेट ढूँढना, GST का हिसाब लगाना, और खरीदार इंतज़ार कर रहा हो तो सब टाइप करना।",
-  "kn": "ರೇಟ್ ಹುಡುಕುವುದು, GST ಲೆಕ್ಕ ಹಾಕುವುದು, ಖರೀದಿದಾರ ಕಾಯುತ್ತಿರುವಾಗ ಎಲ್ಲವನ್ನೂ ಟೈಪ್ ಮಾಡುವುದು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "how.title": {
-  "en": "From first enquiry to order, in six steps",
-  "te": "మొదటి ఎంక్వైరీ నుంచి ఆర్డర్ వరకు, ఆరు స్టెప్పుల్లో",
-  "hi": "पहली पूछताछ से ऑर्डर तक, छह कदमों में",
-  "kn": "ಮೊದಲ ಎನ್‌ಕ್ವೈರಿಯಿಂದ ಆರ್ಡರ್‌ವರೆಗೆ, ಆರು ಹಂತಗಳಲ್ಲಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "how.sub": {
-  "en": "Your team does the legwork and prepares drafts. You decide what goes out.",
-  "te": "టీమ్ కష్టపడి డ్రాఫ్ట్‌లు సిద్ధం చేస్తుంది. ఏది వెళ్ళాలో మీరే నిర్ణయిస్తారు.",
-  "hi": "मेहनत टीम करती है और ड्राफ़्ट तैयार रखती है। क्या भेजना है, यह आप तय करते हैं।",
-  "kn": "ತಂಡ ದುಡಿದು ಡ್ರಾಫ್ಟ್‌ಗಳನ್ನು ಸಿದ್ಧ ಮಾಡಿಡುತ್ತದೆ. ಯಾವುದು ಹೋಗಬೇಕೆಂದು ನೀವೇ ತೀರ್ಮಾನಿಸುತ್ತೀರಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.lead.t": {
-  "en": "Lead",
-  "te": "లీడ్",
-  "hi": "लीड",
-  "kn": "ಲೀಡ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.lead.d": {
-  "en": "A new business is found, or an enquiry arrives.",
-  "te": "కొత్త వ్యాపారం దొరుకుతుంది, లేదా ఎంక్వైరీ వస్తుంది.",
-  "hi": "कोई नया व्यापारी मिलता है, या पूछताछ आती है।",
-  "kn": "ಹೊಸ ವ್ಯಾಪಾರ ಸಿಗುತ್ತದೆ, ಅಥವಾ ಎನ್‌ಕ್ವೈರಿ ಬರುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.research.t": {
-  "en": "Research",
-  "te": "వివరాలు వెతకడం",
-  "hi": "जाँच-पड़ताल",
-  "kn": "ವಿವರ ಹುಡುಕುವುದು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.research.d": {
-  "en": "Public pages are read. What is known, and where from, is recorded.",
-  "te": "అందరికీ కనిపించే వెబ్ పేజీలు చదువుతుంది. ఏం తెలిసింది, ఎక్కడ నుంచి తెలిసింది అని రాసి పెడుతుంది.",
-  "hi": "सबके लिए खुले पन्ने पढ़े जाते हैं। क्या पता चला और कहाँ से, यह लिख लिया जाता है।",
-  "kn": "ಎಲ್ಲರಿಗೂ ಕಾಣುವ ವೆಬ್ ಪುಟಗಳನ್ನು ಓದುತ್ತದೆ. ಏನು ಗೊತ್ತಾಯಿತು, ಎಲ್ಲಿಂದ ಗೊತ್ತಾಯಿತು ಎಂದು ಬರೆದಿಡುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.requirement.t": {
-  "en": "Requirement",
-  "te": "కావలసినవి",
-  "hi": "ज़रूरत",
-  "kn": "ಬೇಕಾದದ್ದು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.requirement.d": {
-  "en": "What the customer wants becomes rows in your price list.",
-  "te": "కస్టమర్‌కి కావలసినవి మీ రేట్ల లిస్ట్‌లోని వరుసలుగా మారతాయి.",
-  "hi": "ग्राहक को जो चाहिए, वह आपकी रेट लिस्ट की लाइनें बन जाता है।",
-  "kn": "ಗ್ರಾಹಕರಿಗೆ ಬೇಕಾದದ್ದು ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನ ಸಾಲುಗಳಾಗುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.quote.t": {
-  "en": "Quote",
-  "te": "కొటేషన్",
-  "hi": "कोटेशन",
-  "kn": "ಕೊಟೇಶನ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.quote.d": {
-  "en": "A draft is priced from your price list by fixed rules. You approve it.",
-  "te": "మీ రేట్ల లిస్ట్ నుంచి, ఎప్పుడూ ఒకే పద్ధతిలో డ్రాఫ్ట్ తయారవుతుంది. మీరు ఓకే చేస్తారు.",
-  "hi": "आपकी रेट लिस्ट से हर बार एक ही तरीके से ड्राफ़्ट बनता है। आप मंज़ूर करते हैं।",
-  "kn": "ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದ ಯಾವಾಗಲೂ ಒಂದೇ ರೀತಿಯಲ್ಲಿ ಡ್ರಾಫ್ಟ್ ಆಗುತ್ತದೆ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.followup.t": {
-  "en": "Follow-up",
-  "te": "ఫాలో-అప్",
-  "hi": "फ़ॉलो-अप",
-  "kn": "ಫಾಲೋ-ಅಪ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.followup.d": {
-  "en": "If there is no reply, a short reminder is drafted. You approve it.",
-  "te": "జవాబు రాకపోతే చిన్న రిమైండర్ డ్రాఫ్ట్ అవుతుంది. మీరు ఓకే చేస్తారు.",
-  "hi": "जवाब न आए तो छोटा रिमाइंडर ड्राफ़्ट बनता है। आप मंज़ूर करते हैं।",
-  "kn": "ಉತ್ತರ ಬರದಿದ್ದರೆ ಚಿಕ್ಕ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಆಗುತ್ತದೆ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.order.t": {
-  "en": "Order",
-  "te": "ఆర్డర్",
-  "hi": "ऑर्डर",
-  "kn": "ಆರ್ಡರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "step.order.d": {
-  "en": "You record what happens: advance, preparation, dispatch, delivery.",
-  "te": "జరిగినది మీరు రాసుకుంటారు: అడ్వాన్స్, తయారీ, పంపడం, డెలివరీ.",
-  "hi": "जो होता है, वह आप लिख लेते हैं: एडवांस, तैयारी, माल भेजना, पहुँचना।",
-  "kn": "ನಡೆದದ್ದನ್ನು ನೀವು ಬರೆದುಕೊಳ್ಳುತ್ತೀರಿ: ಮುಂಗಡ, ತಯಾರಿ, ಸರಕು ಕಳುಹಿಸುವುದು, ತಲುಪುವುದು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "anim.pause": {
-  "en": "Pause animation",
-  "te": "యానిమేషన్ ఆపండి",
-  "hi": "एनिमेशन रोकें",
-  "kn": "ಆನಿಮೇಷನ್ ನಿಲ್ಲಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "anim.play": {
-  "en": "Play animation",
-  "te": "యానిమేషన్ ప్లే చేయండి",
-  "hi": "एनिमेशन चलाएँ",
-  "kn": "ಆನಿಮೇಷನ್ ಪ್ಲೇ ಮಾಡಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "flow.label": {
-  "en": "How an enquiry becomes an order (example)",
-  "te": "ఒక ఎంక్వైరీ ఆర్డర్ ఎలా అవుతుంది (ఉదాహరణ)",
-  "hi": "एक पूछताछ ऑर्डर कैसे बनती है (उदाहरण)",
-  "kn": "ಒಂದು ಎನ್‌ಕ್ವೈರಿ ಆರ್ಡರ್ ಆಗುವುದು ಹೇಗೆ (ಉದಾಹರಣೆ)",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "flow.example": {
-  "en": "Example, not real data",
-  "te": "ఉదాహరణ మాత్రమే, నిజమైన డేటా కాదు",
-  "hi": "उदाहरण है, असली डेटा नहीं",
-  "kn": "ಉದಾಹರಣೆ ಮಾತ್ರ, ನಿಜವಾದ ಡೇಟಾ ಅಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "flow.draft": {
-  "en": "Draft, a person approves",
-  "te": "డ్రాఫ్ట్, మనిషి ఓకే చేస్తారు",
-  "hi": "ड्राफ़्ट, इंसान मंज़ूर करता है",
-  "kn": "ಡ್ರಾಫ್ಟ್, ಮನುಷ್ಯರು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತಾರೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.lead.t": {
-  "en": "Example Textiles, Hyderabad",
-  "te": "ఎగ్జాంపుల్ టెక్స్‌టైల్స్, హైదరాబాద్",
-  "hi": "एग्ज़ाम्पल टेक्सटाइल्स, हैदराबाद",
-  "kn": "ಎಗ್ಸಾಂಪಲ್ ಟೆಕ್ಸ್‌ಟೈಲ್ಸ್, ಹೈದರಾಬಾದ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.lead.s": {
-  "en": "Found in a trade directory.",
-  "te": "ట్రేడ్ డైరెక్టరీలో దొరికింది.",
-  "hi": "ट्रेड डायरेक्टरी में मिली।",
-  "kn": "ಟ್ರೇಡ್ ಡೈರೆಕ್ಟರಿಯಲ್ಲಿ ಸಿಕ್ಕಿತು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.research.t": {
-  "en": "2 public pages read",
-  "te": "2 పేజీలు చదివాం",
-  "hi": "2 पन्ने पढ़े",
-  "kn": "2 ಪುಟ ಓದಿದ್ದೇವೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.research.s": {
-  "en": "Suggested, not verified.",
-  "te": "అంచనా మాత్రమే, ఇంకా సరిచూడలేదు.",
-  "hi": "अंदाज़ा है, अभी जाँचा नहीं।",
-  "kn": "ಅಂದಾಜು ಮಾತ್ರ, ಇನ್ನೂ ಚೆಕ್ ಮಾಡಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.requirement.c1": {
-  "en": "120 silk dupattas",
-  "te": "120 సిల్క్ దుపట్టాలు",
-  "hi": "120 सिल्क दुपट्टे",
-  "kn": "120 ರೇಷ್ಮೆ ದುಪಟ್ಟಾಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.requirement.c2": {
-  "en": "Matched to your price list",
-  "te": "మీ రేట్ల లిస్ట్‌తో సరిపోయింది",
-  "hi": "आपकी रेट लिस्ट से मिला लिया",
-  "kn": "ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ಗೆ ಹೊಂದಿಸಿದ್ದೇವೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.quote.t": {
-  "en": "{amount}, GST included",
-  "te": "{amount}, GST కలిపి",
-  "hi": "{amount}, GST मिलाकर",
-  "kn": "{amount}, GST ಸೇರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.followup.t": {
-  "en": "No reply after two days",
-  "te": "రెండు రోజులైనా జవాబు రాలేదు",
-  "hi": "दो दिन बाद भी जवाब नहीं",
-  "kn": "ಎರಡು ದಿನ ಆದರೂ ಉತ್ತರ ಬಂದಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "card.followup.s": {
-  "en": "A short reminder is drafted.",
-  "te": "చిన్న రిమైండర్ డ్రాఫ్ట్ రాశాం.",
-  "hi": "छोटा रिमाइंडर ड्राफ़्ट बन गया।",
-  "kn": "ಚಿಕ್ಕ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಬರೆದಿದ್ದೇವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "anim.motionPlay": {
-  "en": "Play motion",
-  "te": "కదలిక చూడండి",
-  "hi": "हलचल चलाएँ",
-  "kn": "ಚಲನೆ ನೋಡಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "anim.motionStop": {
-  "en": "Stop motion",
-  "te": "కదలిక ఆపండి",
-  "hi": "हलचल रोकें",
-  "kn": "ಚಲನೆ ನಿಲ್ಲಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "anim.dots": {
-  "en": "Choose a step",
-  "te": "ఒక స్టెప్ ఎంచుకోండి",
-  "hi": "कोई स्टेप चुनें",
-  "kn": "ಒಂದು ಸ್ಟೆಪ್ ಆರಿಸಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "anim.dot": {
-  "en": "Show step {n}: {name}",
-  "te": "{n}వ స్టెప్ చూడండి: {name}",
-  "hi": "स्टेप {n} देखें: {name}",
-  "kn": "{n}ನೇ ಸ್ಟೆಪ್ ನೋಡಿ: {name}",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "control.title": {
-  "en": "You stay in control",
-  "te": "కంట్రోల్ మీ చేతిలోనే",
-  "hi": "कंट्रोल आपके हाथ में",
-  "kn": "ಕಂಟ್ರೋಲ್ ನಿಮ್ಮ ಕೈಯಲ್ಲೇ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "control.sub": {
-  "en": "Nothing leaves the system. Every message is a draft until you approve it and send it yourself.",
-  "te": "సిస్టమ్ నుంచి ఏదీ బయటకు వెళ్ళదు. మీరు ఓకే చేసి, మీరే పంపేవరకు ప్రతి మెసేజ్ డ్రాఫ్ట్ మాత్రమే.",
-  "hi": "सिस्टम से कुछ बाहर नहीं जाता। जब तक आप मंज़ूर करके खुद नहीं भेजते, हर मैसेज सिर्फ़ ड्राफ़्ट रहता है।",
-  "kn": "ಸಿಸ್ಟಮ್‌ನಿಂದ ಏನೂ ಹೊರಗೆ ಹೋಗುವುದಿಲ್ಲ. ನೀವು ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು ನೀವೇ ಕಳುಹಿಸುವವರೆಗೆ ಪ್ರತಿ ಮೆಸೇಜ್ ಡ್ರಾಫ್ಟ್ ಮಾತ್ರ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.1.t": {
-  "en": "Drafts, never sends",
-  "te": "డ్రాఫ్ట్ చేస్తుంది, పంపదు",
-  "hi": "ड्राफ़्ट बनाता है, भेजता नहीं",
-  "kn": "ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಕಳುಹಿಸುವುದಿಲ್ಲ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.1.d": {
-  "en": "First messages, quotes and follow-ups are drafts. {brand} does not send anything.",
-  "te": "మొదటి మెసేజ్‌లు, కొటేషన్లు, ఫాలో-అప్‌లు డ్రాఫ్ట్‌లే. {brand} ఏదీ పంపదు.",
-  "hi": "पहले मैसेज, कोटेशन और फ़ॉलो-अप सब ड्राफ़्ट होते हैं। {brand} कुछ नहीं भेजता।",
-  "kn": "ಮೊದಲ ಮೆಸೇಜ್‌ಗಳು, ಕೊಟೇಶನ್‌ಗಳು, ಫಾಲೋ-ಅಪ್‌ಗಳು ಡ್ರಾಫ್ಟ್‌ಗಳೇ. {brand} ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.2.t": {
-  "en": "You approve",
-  "te": "మీరు ఓకే చేస్తారు",
-  "hi": "आप मंज़ूर करते हैं",
-  "kn": "ನೀವು ಒಪ್ಪಿಗೆ ಕೊಡುತ್ತೀರಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.2.d": {
-  "en": "Every draft waits for you. Edit it first if you like.",
-  "te": "ప్రతి డ్రాఫ్ట్ మీ కోసం ఆగి ఉంటుంది. కావాలంటే ముందు మార్చుకోవచ్చు.",
-  "hi": "हर ड्राफ़्ट आपके इंतज़ार में रहता है। चाहें तो पहले बदल लें।",
-  "kn": "ಪ್ರತಿ ಡ್ರಾಫ್ಟ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ. ಬೇಕಿದ್ದರೆ ಮೊದಲು ಬದಲಿಸಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.3.t": {
-  "en": "Prices by fixed rules",
-  "te": "రేట్లు ఒకే పద్ధతిలో",
-  "hi": "रेट हर बार एक ही तरीके से",
-  "kn": "ರೇಟ್ ಯಾವಾಗಲೂ ಒಂದೇ ರೀತಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.3.d": {
-  "en": "Prices come from your price list. The AI never sets or changes a price.",
-  "te": "రేట్లు మీ రేట్ల లిస్ట్ నుంచే వస్తాయి. AI ఏ రేటునూ పెట్టదు, మార్చదు.",
-  "hi": "रेट आपकी रेट लिस्ट से आते हैं। AI कोई रेट न तय करता है, न बदलता है।",
-  "kn": "ರೇಟ್ ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದಲೇ ಬರುತ್ತದೆ. AI ಯಾವ ರೇಟ್ ಅನ್ನೂ ಹಾಕುವುದಿಲ್ಲ, ಬದಲಿಸುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.4.t": {
-  "en": "A real order record",
-  "te": "నిజమైన ఆర్డర్ రికార్డు",
-  "hi": "असली ऑर्डर रिकॉर्ड",
-  "kn": "ನಿಜವಾದ ಆರ್ಡರ್ ದಾಖಲೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.4.d": {
-  "en": "From quote sent to closed, each step is recorded by you.",
-  "te": "కొటేషన్ పంపినప్పటి నుంచి ఆర్డర్ ముగిసేవరకు, ప్రతి స్టెప్ మీరే రాసుకుంటారు.",
-  "hi": "कोटेशन भेजने से ऑर्डर बंद होने तक, हर स्टेप आप खुद लिखते हैं।",
-  "kn": "ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದಾಗಿನಿಂದ ಆರ್ಡರ್ ಮುಗಿಯುವವರೆಗೆ, ಪ್ರತಿ ಹಂತವನ್ನು ನೀವೇ ಬರೆದುಕೊಳ್ಳುತ್ತೀರಿ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.lifecycle": {
-  "en": "The order lifecycle",
-  "te": "ఆర్డర్ ఎలా నడుస్తుంది",
-  "hi": "ऑर्डर कैसे आगे बढ़ता है",
-  "kn": "ಆರ್ಡರ್ ಹೇಗೆ ನಡೆಯುತ್ತದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.1": {
-  "en": "Quote sent",
-  "te": "కొటేషన్ పంపారు",
-  "hi": "कोटेशन भेजा",
-  "kn": "ಕೊಟೇಶನ್ ಕಳುಹಿಸಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.2": {
-  "en": "Customer accepted",
-  "te": "కస్టమర్ ఒప్పుకున్నారు",
-  "hi": "ग्राहक ने हाँ कही",
-  "kn": "ಗ್ರಾಹಕ ಒಪ್ಪಿದರು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.3": {
-  "en": "Advance asked for",
-  "te": "అడ్వాన్స్ అడిగారు",
-  "hi": "एडवांस माँगा",
-  "kn": "ಮುಂಗಡ ಕೇಳಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.4": {
-  "en": "Advance received",
-  "te": "అడ్వాన్స్ వచ్చింది",
-  "hi": "एडवांस आ गया",
-  "kn": "ಮುಂಗಡ ಬಂತು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.5": {
-  "en": "In preparation",
-  "te": "తయారవుతోంది",
-  "hi": "तैयारी चल रही है",
-  "kn": "ತಯಾರಿ ನಡೆಯುತ್ತಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.6": {
-  "en": "Dispatched",
-  "te": "పంపించారు",
-  "hi": "माल भेज दिया",
-  "kn": "ಸರಕು ಹೊರಟಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.7": {
-  "en": "Delivered",
-  "te": "డెలివరీ అయింది",
-  "hi": "पहुँच गया",
-  "kn": "ತಲುಪಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "life.8": {
-  "en": "Closed",
-  "te": "ముగిసింది",
-  "hi": "बंद",
-  "kn": "ಮುಗಿದಿದೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.money": {
-  "en": "Money still held: {held}. A refund may be owed to the customer.",
-  "te": "ఇంకా మన దగ్గర ఉన్న డబ్బు: {held}. కస్టమర్‌కి డబ్బు వెనక్కి ఇవ్వాల్సి రావచ్చు.",
-  "hi": "हमारे पास रुका पैसा: {held}। ग्राहक को पैसे वापस करने पड़ सकते हैं।",
-  "kn": "ನಮ್ಮ ಬಳಿ ಇನ್ನೂ ಇರುವ ಹಣ: {held}. ಗ್ರಾಹಕರಿಗೆ ಹಣ ವಾಪಸ್ ಕೊಡಬೇಕಾಗಬಹುದು.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "ctl.moneyNote": {
-  "en": "If an order is cancelled after an advance, the money held stays on screen in amber until you record the refund. It is never hidden.",
-  "te": "అడ్వాన్స్ తీసుకున్న తర్వాత ఆర్డర్ క్యాన్సిల్ అయితే, మీరు డబ్బు వెనక్కి ఇచ్చినట్టు రాసుకునేవరకు ఆ డబ్బు స్క్రీన్‌పై అంబర్ రంగులో కనిపిస్తూనే ఉంటుంది. దాన్ని ఎప్పుడూ దాచం.",
-  "hi": "एडवांस के बाद ऑर्डर रद्द हो जाए, तो रुका हुआ पैसा तब तक स्क्रीन पर एम्बर रंग में दिखता रहता है जब तक आप पैसे वापस करने की बात लिख नहीं लेते। इसे कभी छिपाया नहीं जाता।",
-  "kn": "ಮುಂಗಡ ತೆಗೆದುಕೊಂಡ ಮೇಲೆ ಆರ್ಡರ್ ರದ್ದಾದರೆ, ನೀವು ಹಣ ವಾಪಸ್ ಕೊಟ್ಟಿದ್ದನ್ನು ಬರೆದುಕೊಳ್ಳುವವರೆಗೆ ಆ ಹಣ ಪರದೆಯ ಮೇಲೆ ಅಂಬರ್ ಬಣ್ಣದಲ್ಲಿ ಕಾಣುತ್ತಲೇ ಇರುತ್ತದೆ. ಅದನ್ನು ಎಂದೂ ಮರೆಮಾಡುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "team.title": {
-  "en": "Meet the team",
-  "te": "టీమ్‌ని కలవండి",
-  "hi": "टीम से मिलिए",
-  "kn": "ತಂಡವನ್ನು ಭೇಟಿ ಮಾಡಿ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "team.sub": {
-  "en": "Six assistants and Agent OWL, each with one job. This is an illustration.",
-  "te": "ఆరుగురు అసిస్టెంట్లు, ఒక Agent OWL. ఒక్కొక్కరికి ఒక పని. ఇది బొమ్మ మాత్రమే.",
-  "hi": "छह सहायक और Agent OWL, हर एक का एक काम। यह सिर्फ़ एक तस्वीर है।",
-  "kn": "ಆರು ಅಸಿಸ್ಟೆಂಟ್‌ಗಳು ಮತ್ತು Agent OWL, ಒಬ್ಬೊಬ್ಬರಿಗೆ ಒಂದೊಂದು ಕೆಲಸ. ಇದು ಬರೀ ಚಿತ್ರ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "team.alt": {
-  "en": "Illustration: seven owls seated around a round table, with Agent OWL at the head.",
-  "te": "బొమ్మ: గుండ్రని టేబుల్ చుట్టూ కూర్చున్న ఏడు గుడ్లగూబలు, తలభాగంలో Agent OWL.",
-  "hi": "तस्वीर: गोल मेज़ के चारों तरफ़ बैठे सात उल्लू, सिरे पर Agent OWL।",
-  "kn": "ಚಿತ್ರ: ಸುತ್ತಿನ ಮೇಜಿನ ಸುತ್ತ ಕುಳಿತಿರುವ ಏಳು ಗೂಬೆಗಳು, ತುದಿಯಲ್ಲಿ Agent OWL.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.main.t": {
-  "en": "Agent OWL",
-  "te": "Agent OWL",
-  "hi": "Agent OWL",
-  "kn": "Agent OWL",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.main.d": {
-  "en": "Answers your questions from recorded facts.",
-  "te": "రాసి ఉన్న వివరాల ఆధారంగా మీ ప్రశ్నలకు జవాబు ఇస్తుంది.",
-  "hi": "लिखे हुए तथ्यों के आधार पर आपके सवालों का जवाब देता है।",
-  "kn": "ಬರೆದಿಟ್ಟಿರುವ ಸಂಗತಿಗಳ ಆಧಾರದ ಮೇಲೆ ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳಿಗೆ ಉತ್ತರ ಕೊಡುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.lead.t": {
-  "en": "Lead Finder",
-  "te": "లీడ్ ఫైండర్",
-  "hi": "लीड फ़ाइंडर",
-  "kn": "ಲೀಡ್ ಫೈಂಡರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.lead.d": {
-  "en": "Finds businesses that may buy.",
-  "te": "కొనే అవకాశం ఉన్న వ్యాపారాలను వెతుకుతుంది.",
-  "hi": "खरीद सकने वाले व्यापारियों को ढूँढता है।",
-  "kn": "ಖರೀದಿಸುವ ಸಾಧ್ಯತೆ ಇರುವ ವ್ಯಾಪಾರಗಳನ್ನು ಹುಡುಕುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.research.t": {
-  "en": "Researcher",
-  "te": "రీసెర్చర్",
-  "hi": "रिसर्चर",
-  "kn": "ರಿಸರ್ಚರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.research.d": {
-  "en": "Reads public pages about a lead.",
-  "te": "లీడ్ గురించి అందరికీ కనిపించే పేజీలు చదువుతుంది.",
-  "hi": "लीड के बारे में सबके लिए खुले पन्ने पढ़ता है।",
-  "kn": "ಲೀಡ್ ಬಗ್ಗೆ ಎಲ್ಲರಿಗೂ ಕಾಣುವ ಪುಟಗಳನ್ನು ಓದುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.requirement.t": {
-  "en": "Requirement Analyst",
-  "te": "రిక్వైర్‌మెంట్ అనలిస్ట్",
-  "hi": "ज़रूरत समझने वाला",
-  "kn": "ರಿಕ್ವೈರ್‌ಮೆಂಟ್ ಅನಲಿಸ್ಟ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.requirement.d": {
-  "en": "Turns a request into price list rows.",
-  "te": "కస్టమర్ అడిగినదాన్ని రేట్ల లిస్ట్ వరుసలుగా మారుస్తుంది.",
-  "hi": "ग्राहक की माँग को रेट लिस्ट की लाइनों में बदलता है।",
-  "kn": "ಗ್ರಾಹಕರು ಕೇಳಿದ್ದನ್ನು ರೇಟ್ ಲಿಸ್ಟ್‌ನ ಸಾಲುಗಳಾಗಿ ಬದಲಿಸುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.quote.t": {
-  "en": "Quote Writer",
-  "te": "కొటేషన్ రైటర్",
-  "hi": "कोटेशन राइटर",
-  "kn": "ಕೊಟೇಶನ್ ರೈಟರ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.quote.d": {
-  "en": "Drafts quotes from your price list.",
-  "te": "మీ రేట్ల లిస్ట్ నుంచి కొటేషన్లు డ్రాఫ్ట్ చేస్తుంది.",
-  "hi": "आपकी रेट लिस्ट से कोटेशन का ड्राफ़्ट बनाता है।",
-  "kn": "ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದ ಕೊಟೇಶನ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.followup.t": {
-  "en": "Follow-up Desk",
-  "te": "ఫాలో-అప్ డెస్క్",
-  "hi": "फ़ॉलो-अप डेस्क",
-  "kn": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.followup.d": {
-  "en": "Drafts reminders when nobody replies.",
-  "te": "ఎవరూ జవాబు ఇవ్వనప్పుడు రిమైండర్లు డ్రాఫ్ట్ చేస్తుంది.",
-  "hi": "कोई जवाब न दे तो रिमाइंडर के ड्राफ़्ट बनाता है।",
-  "kn": "ಯಾರೂ ಉತ್ತರ ಕೊಡದಿದ್ದಾಗ ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತಾರೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.order.t": {
-  "en": "Order Desk",
-  "te": "ఆర్డర్ డెస్క్",
-  "hi": "ऑर्डर डेस्क",
-  "kn": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "role.order.d": {
-  "en": "Watches advances and open orders.",
-  "te": "అడ్వాన్స్‌లను, నడుస్తున్న ఆర్డర్లను గమనిస్తుంది.",
-  "hi": "एडवांस और चल रहे ऑर्डर पर नज़र रखता है।",
-  "kn": "ಮುಂಗಡಗಳು ಮತ್ತು ನಡೆಯುತ್ತಿರುವ ಆರ್ಡರ್‌ಗಳ ಮೇಲೆ ಕಣ್ಣಿಡುತ್ತಾರೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1253,55 +340,22 @@
    "kn": "draft"
   }
  },
+ "priv.ai": {
+  "en": "Agent OWL is an AI assistant. Messages it writes to your customers may be written by AI, and are labelled.",
+  "te": "Agent OWL ఒక AI సహాయకుడు. ఇది మీ కస్టమర్లకు రాసే మెసేజ్‌లు AI రాసినవి కావచ్చు, వాటికి లేబుల్ ఉంటుంది.",
+  "hi": "Agent OWL एक AI सहायक है। यह आपके ग्राहकों के लिए जो मैसेज लिखता है वे AI ने लिखे हो सकते हैं, और उन पर लेबल होता है।",
+  "kn": "Agent OWL ಒಂದು AI ಸಹಾಯಕ. ಇದು ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಬರೆಯುವ ಮೆಸೇಜ್‌ಗಳನ್ನು AI ಬರೆದಿರಬಹುದು, ಅವುಗಳಿಗೆ ಲೇಬಲ್ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "faq.title": {
   "en": "Questions, answered calmly",
   "te": "మీ సందేహాలకు సులువైన జవాబులు",
   "hi": "आपके सवाल, सीधे जवाब",
   "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಗಳಿಗೆ ಸರಳ ಉತ್ತರ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.1.q": {
-  "en": "Does it send messages to my customers?",
-  "te": "ఇది నా కస్టమర్లకు మెసేజ్‌లు పంపుతుందా?",
-  "hi": "क्या यह मेरे ग्राहकों को मैसेज भेजता है?",
-  "kn": "ಇದು ನನ್ನ ಗ್ರಾಹಕರಿಗೆ ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತದೆಯೇ?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.1.a": {
-  "en": "Agent OWL only sends routine replies by itself when you switch automatic sending on. Anything about money, complaints or calls always waits for you.",
-  "te": "మీరు ఆటోమేటిక్ సెండింగ్ ఆన్ చేసినప్పుడు మాత్రమే Agent OWL సాధారణ రిప్లైలను తానే పంపుతుంది. డబ్బు, ఫిర్యాదులు, కాల్స్‌కి సంబంధించినవి ఎప్పుడూ మీ కోసం ఆగి ఉంటాయి.",
-  "hi": "आप ऑटोमैटिक सेंडिंग चालू करें, तभी Agent OWL आम रिप्लाई खुद भेजता है। पैसे, शिकायत या कॉल से जुड़ी हर बात हमेशा आपके लिए रुकी रहती है।",
-  "kn": "ನೀವು ಆಟೋಮ್ಯಾಟಿಕ್ ಸೆಂಡಿಂಗ್ ಆನ್ ಮಾಡಿದಾಗ ಮಾತ್ರ Agent OWL ಸಾಮಾನ್ಯ ರಿಪ್ಲೈಗಳನ್ನು ತಾನೇ ಕಳುಹಿಸುತ್ತದೆ. ಹಣ, ದೂರು ಅಥವಾ ಕಾಲ್‌ಗಳಿಗೆ ಸಂಬಂಧಿಸಿದ್ದು ಯಾವಾಗಲೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.2.q": {
-  "en": "Who is it for?",
-  "te": "ఇది ఎవరికి?",
-  "hi": "यह किसके लिए है?",
-  "kn": "ಇದು ಯಾರಿಗಾಗಿ?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.2.a": {
-  "en": "Indian wholesalers, manufacturers and traders who sell by enquiry and quote.",
-  "te": "ఎంక్వైరీ, కొటేషన్ ద్వారా అమ్మే భారతీయ హోల్‌సేల్ వ్యాపారులు, తయారీదారులు, ట్రేడర్లకు.",
-  "hi": "भारत के उन थोक व्यापारियों, निर्माताओं और ट्रेडर्स के लिए जो पूछताछ और कोटेशन से माल बेचते हैं।",
-  "kn": "ಎನ್‌ಕ್ವೈರಿ ಮತ್ತು ಕೊಟೇಶನ್ ಮೂಲಕ ಮಾರುವ ಭಾರತದ ಸಗಟು ವ್ಯಾಪಾರಿಗಳು, ತಯಾರಕರು, ಟ್ರೇಡರ್‌ಗಳಿಗಾಗಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1374,50 +428,6 @@
    "kn": "draft"
   }
  },
- "faq.6.q": {
-  "en": "Is it available now?",
-  "te": "ఇప్పుడు వాడుకోవచ్చా?",
-  "hi": "क्या यह अभी मिल रहा है?",
-  "kn": "ಇದು ಈಗ ಸಿಗುತ್ತದೆಯೇ?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.6.a": {
-  "en": "You can sign up and try it free. Nothing is charged.",
-  "te": "మీరు సైన్ అప్ చేసి ఉచితంగా ప్రయత్నించవచ్చు. ఏదీ ఛార్జ్ చేయబడదు.",
-  "hi": "आप साइन अप करके मुफ़्त में आज़मा सकते हैं। कुछ भी चार्ज नहीं किया जाता।",
-  "kn": "ನೀವು ಸೈನ್ ಅಪ್ ಮಾಡಿ ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಬಹುದು. ಏನೂ ಶುಲ್ಕ ವಿಧಿಸುವುದಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.7.q": {
-  "en": "What does it cost?",
-  "te": "ఖర్చు ఎంత?",
-  "hi": "इसका खर्च कितना है?",
-  "kn": "ಇದಕ್ಕೆ ಎಷ್ಟು ಖರ್ಚಾಗುತ್ತದೆ?",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "faq.7.a": {
-  "en": "Pricing has not been decided yet.",
-  "te": "రేటు ఇంకా నిర్ణయించలేదు.",
-  "hi": "कीमत अभी तय नहीं हुई है।",
-  "kn": "ರೇಟ್ ಇನ್ನೂ ಫಿಕ್ಸ್ ಮಾಡಿಲ್ಲ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "foot.sections": {
   "en": "Page sections",
   "te": "పేజీ విభాగాలు",
@@ -1459,11 +469,800 @@
    "kn": "draft"
   }
  },
+ "nav.shop": {
+  "en": "For your shop",
+  "te": "మీ షాప్ కోసం",
+  "hi": "आपकी दुकान के लिए",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.whatsapp": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {},
+  "only": []
+ },
+ "nav.pricing": {
+  "en": "Pricing",
+  "te": "ధరలు",
+  "hi": "कीमत",
+  "kn": "ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.eyebrow": {
+  "en": "For saree and textile shops",
+  "te": "చీరలు, టెక్స్‌టైల్ షాపుల కోసం",
+  "hi": "साड़ी और टेक्सटाइल दुकानों के लिए",
+  "kn": "ಸೀರೆ ಮತ್ತು ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗಳಿಗಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.h1": {
+  "en": "Agent OWL answers your customers on WhatsApp, so you can run the shop.",
+  "te": "మీరు షాప్ చూసుకుంటే, మీ కస్టమర్లకు WhatsAppలో Agent OWL జవాబు ఇస్తుంది.",
+  "hi": "आप दुकान संभालिए, आपके ग्राहकों को WhatsApp पर जवाब Agent OWL देगा।",
+  "kn": "ನೀವು ಅಂಗಡಿ ನೋಡಿಕೊಳ್ಳಿ, ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ WhatsAppನಲ್ಲಿ Agent OWL ಉತ್ತರ ಕೊಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.sub": {
+  "en": "{brand} is an AI helper for saree and textile shops. It replies to enquiries in Telugu, Hindi, Kannada or English, sends photos of your sarees, books store visits and follows up. Anything about price, promises or complaints waits for your OK.",
+  "te": "{brand} చీరలు, టెక్స్‌టైల్ షాపులకు AI సహాయకుడు. ఎంక్వైరీలకు తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో జవాబిస్తుంది, మీ చీరల ఫోటోలు పంపుతుంది, షాప్ విజిట్లు బుక్ చేస్తుంది, ఫాలో-అప్ చేస్తుంది. రేటు, మాట ఇవ్వడం, ఫిర్యాదుల గురించిన ఏ మెసేజ్ అయినా మీ ఓకే కోసం ఆగుతుంది.",
+  "hi": "{brand} साड़ी और टेक्सटाइल दुकानों के लिए AI सहायक है। यह ग्राहक की भाषा में पूछताछ का जवाब देता है, साड़ियों की फ़ोटो भेजता है, विज़िट बुक करता है और फ़ॉलो-अप करता है। रेट, वादे या शिकायत वाली बात आपके OK का इंतज़ार करती है।",
+  "kn": "{brand} ಸೀರೆ ಮತ್ತು ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗಳಿಗೆ AI ಸಹಾಯಕ. ವಿಚಾರಣೆಗಳಿಗೆ ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ, ನಿಮ್ಮ ಸೀರೆಗಳ ಫೋಟೋ ಕಳುಹಿಸುತ್ತದೆ, ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುತ್ತದೆ ಮತ್ತು ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ದರ, ಮಾತು ಕೊಡುವುದು ಅಥವಾ ದೂರಿಗೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದೇ ಮೆಸೇಜ್ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.owl.mood": {
+  "en": "ready to help",
+  "te": "సహాయానికి సిద్ధం",
+  "hi": "मदद के लिए तैयार",
+  "kn": "ಸಹಾಯಕ್ಕೆ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.label": {
+  "en": "An example conversation",
+  "te": "ఒక ఉదాహరణ సంభాషణ",
+  "hi": "एक उदाहरण बातचीत",
+  "kn": "ಒಂದು ಉದಾಹರಣೆ ಸಂಭಾಷಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.example": {
+  "en": "Example, not real data",
+  "te": "ఉదాహరణ మాత్రమే, నిజమైన డేటా కాదు",
+  "hi": "उदाहरण है, असली डेटा नहीं",
+  "kn": "ಉದಾಹರಣೆ ಮಾತ್ರ, ನಿಜವಾದ ಡೇಟಾ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.owl": {
+  "en": "Agent OWL, AI assistant",
+  "te": "Agent OWL, AI సహాయకుడు",
+  "hi": "Agent OWL, AI सहायक",
+  "kn": "Agent OWL, AI ಸಹಾಯಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.c1": {
+  "en": "Do you have a red Kanchipuram silk saree for a wedding?",
+  "te": "పెళ్లికి ఎరుపు కాంచీపురం పట్టు చీర ఉందా?",
+  "hi": "क्या शादी के लिए लाल कांजीवरम सिल्क साड़ी है?",
+  "kn": "ಮದುವೆಗೆ ಕೆಂಪು ಕಾಂಚೀಪುರಂ ರೇಷ್ಮೆ ಸೀರೆ ಇದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.a1": {
+  "en": "Yes, we have a few in stock. Here are the photos. Would you like to see them at the shop this Saturday?",
+  "te": "ఉంది, కొన్ని స్టాక్‌లో ఉన్నాయి. ఇవిగో ఫోటోలు. ఈ శనివారం షాప్‌లో చూస్తారా?",
+  "hi": "जी हाँ, कुछ स्टॉक में हैं। ये रही फ़ोटो। क्या आप इस शनिवार दुकान पर देखना चाहेंगे?",
+  "kn": "ಹೌದು, ಕೆಲವು ಸ್ಟಾಕ್‌ನಲ್ಲಿವೆ. ಇಗೋ ಫೋಟೋಗಳು. ಈ ಶನಿವಾರ ಅಂಗಡಿಯಲ್ಲಿ ನೋಡುತ್ತೀರಾ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "chat.c2": {
+  "en": "Yes, Saturday at 11 am.",
+  "te": "సరే, శనివారం ఉదయం 11కి.",
+  "hi": "ठीक है, शनिवार सुबह 11 बजे।",
+  "kn": "ಸರಿ, ಶನಿವಾರ ಬೆಳಿಗ್ಗೆ 11ಕ್ಕೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.title": {
+  "en": "What Agent OWL does for your shop",
+  "te": "మీ షాప్ కోసం Agent OWL ఏం చేస్తుంది",
+  "hi": "आपकी दुकान के लिए Agent OWL क्या करता है",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಗಾಗಿ Agent OWL ಏನು ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.sub": {
+  "en": "The daily work of answering, showing and following up, done in your customer's language.",
+  "te": "జవాబివ్వడం, చూపించడం, ఫాలో-అప్ చేయడం అనే రోజువారీ పని, మీ కస్టమర్ భాషలోనే.",
+  "hi": "जवाब देना, दिखाना और फ़ॉलो-अप करना, रोज़ का यह काम आपके ग्राहक की अपनी भाषा में।",
+  "kn": "ಉತ್ತರಿಸುವುದು, ತೋರಿಸುವುದು, ಫಾಲೋ-ಅಪ್ ಮಾಡುವುದು ಎಂಬ ದಿನನಿತ್ಯದ ಕೆಲಸ, ನಿಮ್ಮ ಗ್ರಾಹಕರ ಭಾಷೆಯಲ್ಲೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.1.t": {
+  "en": "Answers enquiries",
+  "te": "ఎంక్వైరీలకు జవాబిస్తుంది",
+  "hi": "पूछताछ का जवाब देता है",
+  "kn": "ವಿಚಾರಣೆಗಳಿಗೆ ಉತ್ತರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.1.d": {
+  "en": "A customer asks about a saree late at night. Agent OWL replies in their language and shows you what it said.",
+  "te": "రాత్రి పొద్దుపోయాక కస్టమర్ చీర గురించి అడుగుతారు. Agent OWL వాళ్ల భాషలో జవాబిచ్చి, ఏం చెప్పిందో మీకు చూపిస్తుంది.",
+  "hi": "देर रात कोई ग्राहक साड़ी के बारे में पूछता है। Agent OWL उनकी भाषा में जवाब देता है और आपको दिखाता है कि उसने क्या कहा।",
+  "kn": "ತಡರಾತ್ರಿ ಗ್ರಾಹಕರು ಸೀರೆ ಬಗ್ಗೆ ಕೇಳುತ್ತಾರೆ. Agent OWL ಅವರ ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸಿ, ಏನು ಹೇಳಿತು ಎಂದು ನಿಮಗೆ ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.2.t": {
+  "en": "Shows your sarees",
+  "te": "మీ చీరలను చూపిస్తుంది",
+  "hi": "आपकी साड़ियाँ दिखाता है",
+  "kn": "ನಿಮ್ಮ ಸೀರೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.2.d": {
+  "en": "Add sarees with photos and details to your catalogue. Agent OWL sends the right ones to the customer.",
+  "te": "మీ క్యాటలాగ్‌లో చీరలను ఫోటోలు, వివరాలతో చేర్చండి. సరైనవాటిని Agent OWL కస్టమర్‌కి పంపుతుంది.",
+  "hi": "अपने कैटलॉग में साड़ियाँ फ़ोटो और जानकारी के साथ जोड़ें। सही साड़ियाँ Agent OWL ग्राहक को भेजता है।",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ಗೆ ಸೀರೆಗಳನ್ನು ಫೋಟೋ ಮತ್ತು ವಿವರಗಳೊಂದಿಗೆ ಸೇರಿಸಿ. ಸರಿಯಾದವನ್ನು Agent OWL ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.3.t": {
+  "en": "Books store visits",
+  "te": "షాప్ విజిట్లు బుక్ చేస్తుంది",
+  "hi": "दुकान की विज़िट बुक करता है",
+  "kn": "ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.3.d": {
+  "en": "A customer who wants to see sarees in person is booked into a free time at your shop.",
+  "te": "చీరలను నేరుగా చూడాలనుకునే కస్టమర్‌ని మీ షాప్‌లో ఖాళీగా ఉన్న సమయానికి బుక్ చేస్తుంది.",
+  "hi": "जो ग्राहक साड़ियाँ सामने देखना चाहता है, उसे आपकी दुकान में खाली समय पर बुक किया जाता है।",
+  "kn": "ಸೀರೆಗಳನ್ನು ನೇರವಾಗಿ ನೋಡಬೇಕೆನ್ನುವ ಗ್ರಾಹಕರನ್ನು ನಿಮ್ಮ ಅಂಗಡಿಯಲ್ಲಿ ಖಾಲಿ ಇರುವ ಸಮಯಕ್ಕೆ ಬುಕ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.4.t": {
+  "en": "Follows up",
+  "te": "ఫాలో-అప్ చేస్తుంది",
+  "hi": "फ़ॉलो-अप करता है",
+  "kn": "ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.4.d": {
+  "en": "If a customer goes quiet, Agent OWL sends a short, polite reminder, never at night.",
+  "te": "కస్టమర్ జవాబివ్వకపోతే Agent OWL చిన్నగా, మర్యాదగా గుర్తు చేస్తుంది, రాత్రిపూట ఎప్పుడూ కాదు.",
+  "hi": "अगर ग्राहक चुप हो जाए तो Agent OWL छोटा-सा विनम्र रिमाइंडर भेजता है, रात में कभी नहीं।",
+  "kn": "ಗ್ರಾಹಕರು ಸುಮ್ಮನಾದರೆ Agent OWL ಚಿಕ್ಕದಾಗಿ, ವಿನಯದಿಂದ ನೆನಪಿಸುತ್ತದೆ, ರಾತ್ರಿ ಎಂದಿಗೂ ಅಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.5.t": {
+  "en": "Quotes you can trust",
+  "te": "నమ్మదగిన కొటేషన్లు",
+  "hi": "भरोसे के कोटेशन",
+  "kn": "ನಂಬಬಹುದಾದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.5.d": {
+  "en": "Prices come from your price list by fixed rules. The AI never sets or changes a price.",
+  "te": "రేట్లు మీ రేట్ల లిస్ట్ నుంచి ఒకే పద్ధతిలో వస్తాయి. AI ఎప్పుడూ రేటు పెట్టదు, మార్చదు.",
+  "hi": "रेट आपकी रेट लिस्ट से तय नियमों से आते हैं। AI कभी रेट तय या बदलता नहीं।",
+  "kn": "ದರ ನಿಮ್ಮ ರೇಟ್ ಲಿಸ್ಟ್‌ನಿಂದ ನಿಗದಿತ ನಿಯಮಗಳಿಂದ ಬರುತ್ತದೆ. AI ಎಂದಿಗೂ ದರ ನಿಗದಿ ಮಾಡುವುದಿಲ್ಲ, ಬದಲಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.6.t": {
+  "en": "You stay in charge",
+  "te": "మీరే బాస్",
+  "hi": "कमान आपके हाथ में",
+  "kn": "ನಿಯಂತ್ರಣ ನಿಮ್ಮದೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "shop.6.d": {
+  "en": "Messages about price, promises or complaints, and calls, wait for your OK. You can turn automatic sending off at any time.",
+  "te": "రేటు, మాట ఇవ్వడం, ఫిర్యాదుల గురించిన మెసేజ్‌లు, కాల్స్ మీ ఓకే కోసం ఆగుతాయి. ఆటోమేటిక్ పంపడాన్ని ఎప్పుడైనా ఆఫ్ చేయవచ్చు.",
+  "hi": "रेट, वादे या शिकायत से जुड़े मैसेज और कॉल आपके OK का इंतज़ार करते हैं। ऑटोमैटिक भेजना आप कभी भी बंद कर सकते हैं।",
+  "kn": "ದರ, ಮಾತು ಕೊಡುವುದು ಅಥವಾ ದೂರಿಗೆ ಸಂಬಂಧಿಸಿದ ಮೆಸೇಜ್‌ಗಳು ಮತ್ತು ಕರೆಗಳು ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತವೆ. ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ಆಫ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.title": {
+  "en": "Your WhatsApp number stays safe",
+  "te": "మీ WhatsApp నంబర్ సేఫ్‌గా ఉంటుంది",
+  "hi": "आपका WhatsApp नंबर सुरक्षित रहता है",
+  "kn": "ನಿಮ್ಮ WhatsApp ನಂಬರ್ ಸುರಕ್ಷಿತವಾಗಿರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.sub": {
+  "en": "A number that gets reported or blocked costs you customers. Agent OWL behaves like a careful shop assistant.",
+  "te": "రిపోర్ట్ అయిన లేదా బ్లాక్ అయిన నంబర్ వల్ల కస్టమర్లు పోతారు. Agent OWL జాగ్రత్తగల షాప్ అసిస్టెంట్‌లా ప్రవర్తిస్తుంది.",
+  "hi": "जिस नंबर की रिपोर्ट हो जाए या जो ब्लॉक हो जाए, उससे ग्राहक खोते हैं। Agent OWL एक सावधान दुकान सहायक की तरह पेश आता है।",
+  "kn": "ರಿಪೋರ್ಟ್ ಆದ ಅಥವಾ ಬ್ಲಾಕ್ ಆದ ನಂಬರ್‌ನಿಂದ ಗ್ರಾಹಕರು ಕೈತಪ್ಪುತ್ತಾರೆ. Agent OWL ಎಚ್ಚರಿಕೆಯ ಅಂಗಡಿ ಸಹಾಯಕನಂತೆ ನಡೆದುಕೊಳ್ಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.1.t": {
+  "en": "Only customers who agreed",
+  "te": "అంగీకరించిన కస్టమర్లకే",
+  "hi": "सिर्फ़ उन ग्राहकों को जिन्होंने हाँ कहा",
+  "kn": "ಒಪ್ಪಿಗೆ ಕೊಟ್ಟ ಗ್ರಾಹಕರಿಗೆ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.1.d": {
+  "en": "Agent OWL messages only customers who have agreed to WhatsApp messages. The agreement is recorded.",
+  "te": "WhatsApp మెసేజ్‌లకు అంగీకరించిన కస్టమర్లకే Agent OWL మెసేజ్ చేస్తుంది. ఆ అంగీకారం రికార్డ్ అవుతుంది.",
+  "hi": "Agent OWL सिर्फ़ उन्हीं ग्राहकों को मैसेज करता है जिन्होंने WhatsApp मैसेज के लिए हाँ कहा है। यह हाँ रिकॉर्ड होती है।",
+  "kn": "WhatsApp ಮೆಸೇಜ್‌ಗೆ ಒಪ್ಪಿಗೆ ಕೊಟ್ಟ ಗ್ರಾಹಕರಿಗೆ ಮಾತ್ರ Agent OWL ಮೆಸೇಜ್ ಮಾಡುತ್ತದೆ. ಆ ಒಪ್ಪಿಗೆಯನ್ನು ನಾವು ಬರೆದಿಟ್ಟುಕೊಳ್ಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.2.t": {
+  "en": "Stop means stop",
+  "te": "ఆపమంటే ఆపేస్తుంది",
+  "hi": "रोकने को कहा तो रुक जाता है",
+  "kn": "ನಿಲ್ಲಿಸಿ ಎಂದರೆ ನಿಲ್ಲಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.2.d": {
+  "en": "A customer who asks us to stop is not messaged again, unless they ask again.",
+  "te": "ఆపమని చెప్పిన కస్టమర్‌కి మళ్ళీ అడిగితే తప్ప ఇక మెసేజ్ చేయదు.",
+  "hi": "जो ग्राहक रोकने को कहे, उसे दोबारा मैसेज नहीं जाता, जब तक वह खुद फिर न कहे।",
+  "kn": "ನಿಲ್ಲಿಸಿ ಎಂದು ಹೇಳಿದ ಗ್ರಾಹಕರಿಗೆ ಅವರೇ ಮತ್ತೆ ಕೇಳದ ಹೊರತು ಮತ್ತೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.3.t": {
+  "en": "A gentle pace",
+  "te": "నెమ్మదైన వేగం",
+  "hi": "धीमी, सलीके की रफ़्तार",
+  "kn": "ನಿಧಾನ, ಸೌಮ್ಯ ವೇಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.3.d": {
+  "en": "There is a daily limit of messages for each customer, and quiet hours at night. You can change the hours.",
+  "te": "ప్రతి కస్టమర్‌కి రోజుకి ఇంత అని మెసేజ్‌ల పరిమితి ఉంటుంది, రాత్రిపూట నిశ్శబ్ద వేళలు ఉంటాయి. ఆ వేళలను మీరు మార్చవచ్చు.",
+  "hi": "हर ग्राहक के लिए रोज़ के मैसेज की एक सीमा है, और रात में शांत घंटे हैं। ये घंटे आप बदल सकते हैं।",
+  "kn": "ಪ್ರತಿ ಗ್ರಾಹಕರಿಗೆ ದಿನಕ್ಕೆ ಇಂತಿಷ್ಟೇ ಮೆಸೇಜ್ ಎಂಬ ಮಿತಿ ಇದೆ, ರಾತ್ರಿ ಶಾಂತ ಸಮಯವಿದೆ. ಆ ಸಮಯವನ್ನು ನೀವು ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.4.t": {
+  "en": "Money talk waits for you",
+  "te": "రేట్ల మాట మీ కోసం ఆగుతుంది",
+  "hi": "रेट की बात आपके लिए रुकती है",
+  "kn": "ದರದ ಮಾತು ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.4.d": {
+  "en": "Anything about price, promises or complaints waits for your OK before it goes out.",
+  "te": "రేటు, మాట ఇవ్వడం, ఫిర్యాదుల గురించిన ఏదైనా మీ ఓకే తర్వాతే వెళ్తుంది.",
+  "hi": "रेट, वादे या शिकायत से जुड़ा कुछ भी आपके OK के बाद ही जाता है।",
+  "kn": "ದರ, ಮಾತು ಕೊಡುವುದು ಅಥವಾ ದೂರಿಗೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದೂ ನಿಮ್ಮ OK ನಂತರವೇ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.5.t": {
+  "en": "Always honest",
+  "te": "ఎప్పుడూ నిజాయితీగా",
+  "hi": "हमेशा ईमानदार",
+  "kn": "ಯಾವಾಗಲೂ ಪ್ರಾಮಾಣಿಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.5.d": {
+  "en": "Every message from Agent OWL says it is written by an AI assistant.",
+  "te": "Agent OWL పంపే ప్రతి మెసేజ్‌లో అది AI సహాయకుడు రాసిందని ఉంటుంది.",
+  "hi": "Agent OWL का हर मैसेज बताता है कि उसे AI सहायक ने लिखा है।",
+  "kn": "Agent OWL ಕಳುಹಿಸುವ ಪ್ರತಿ ಮೆಸೇಜ್‌ನಲ್ಲಿ ಅದನ್ನು AI ಸಹಾಯಕ ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.6.t": {
+  "en": "One switch",
+  "te": "ఒకే స్విచ్",
+  "hi": "एक ही स्विच",
+  "kn": "ಒಂದೇ ಸ್ವಿಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.6.d": {
+  "en": "Turn automatic sending off at any time. Then every message waits for you.",
+  "te": "ఆటోమేటిక్ పంపడాన్ని ఎప్పుడైనా ఆఫ్ చేయండి. అప్పుడు ప్రతి మెసేజ్ మీ కోసం ఆగుతుంది.",
+  "hi": "ऑटोमैटिक भेजना कभी भी बंद करें। तब हर मैसेज आपके इंतज़ार में रुकता है।",
+  "kn": "ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದನ್ನು ಯಾವಾಗ ಬೇಕಾದರೂ ಆಫ್ ಮಾಡಿ. ಆಗ ಪ್ರತಿ ಮೆಸೇಜ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.note": {
+  "en": "No tool can promise how WhatsApp will treat a number. These are the habits that keep it in good standing.",
+  "te": "WhatsApp ఒక నంబర్‌ని ఎలా చూస్తుందో ఏ టూల్ హామీ ఇవ్వలేదు. నంబర్‌ని మంచి స్థితిలో ఉంచే అలవాట్లు ఇవి.",
+  "hi": "WhatsApp किसी नंबर के साथ क्या करेगा, यह कोई टूल पक्का नहीं कह सकता। ये वे आदतें हैं जो नंबर को अच्छी हालत में रखती हैं।",
+  "kn": "WhatsApp ಒಂದು ನಂಬರ್‌ನೊಂದಿಗೆ ಹೇಗೆ ನಡೆದುಕೊಳ್ಳುತ್ತದೆ ಎಂದು ಯಾವ ಟೂಲ್ ಭರವಸೆ ಕೊಡಲಾಗದು. ನಂಬರ್ ಅನ್ನು ಒಳ್ಳೆಯ ಸ್ಥಿತಿಯಲ್ಲಿಡುವ ಅಭ್ಯಾಸಗಳು ಇವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.title": {
+  "en": "How it works, in three steps",
+  "te": "మూడు స్టెప్పుల్లో ఇలా పనిచేస్తుంది",
+  "hi": "तीन कदम में ऐसे काम करता है",
+  "kn": "ಮೂರು ಹಂತಗಳಲ್ಲಿ ಹೀಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.sub": {
+  "en": "You set up the shop once. Agent OWL does the daily work.",
+  "te": "షాప్‌ని ఒక్కసారి సెట్ చేస్తారు. రోజువారీ పని Agent OWL చేస్తుంది.",
+  "hi": "दुकान एक बार सेट करें। रोज़ का काम Agent OWL करता है।",
+  "kn": "ಅಂಗಡಿಯನ್ನು ಒಮ್ಮೆ ಸೆಟ್ ಮಾಡುತ್ತೀರಿ. ದಿನನಿತ್ಯದ ಕೆಲಸ Agent OWL ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.1.t": {
+  "en": "Set up your shop",
+  "te": "మీ షాప్‌ని సెట్ చేయండి",
+  "hi": "अपनी दुकान सेट करें",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಯನ್ನು ಸೆಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.1.d": {
+  "en": "Sign up, add your sarees with photos and your prices, and connect your WhatsApp.",
+  "te": "సైన్ అప్ చేసి, చీరలను ఫోటోలతో, రేట్లతో చేర్చి, మీ WhatsApp కనెక్ట్ చేయండి.",
+  "hi": "साइन अप करें, साड़ियाँ फ़ोटो और रेट के साथ जोड़ें, और अपना WhatsApp जोड़ें।",
+  "kn": "ಸೈನ್ ಅಪ್ ಮಾಡಿ, ಸೀರೆಗಳನ್ನು ಫೋಟೋ ಮತ್ತು ದರದೊಂದಿಗೆ ಸೇರಿಸಿ, ನಿಮ್ಮ WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.2.t": {
+  "en": "Agent OWL answers",
+  "te": "Agent OWL జవాబిస్తుంది",
+  "hi": "Agent OWL जवाब देता है",
+  "kn": "Agent OWL ಉತ್ತರಿಸುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.2.d": {
+  "en": "Customers write. Agent OWL replies, shows sarees and books visits. You see all of it on Today.",
+  "te": "కస్టమర్లు రాస్తారు. Agent OWL జవాబిస్తుంది, చీరలు చూపిస్తుంది, విజిట్లు బుక్ చేస్తుంది. అంతా మీరు ఈరోజు స్క్రీన్‌లో చూస్తారు.",
+  "hi": "ग्राहक लिखते हैं। Agent OWL जवाब देता है, साड़ियाँ दिखाता है और विज़िट बुक करता है। यह सब आप आज वाली स्क्रीन पर देखते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ಬರೆಯುತ್ತಾರೆ. Agent OWL ಉತ್ತರಿಸುತ್ತದೆ, ಸೀರೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ, ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುತ್ತದೆ. ಇದೆಲ್ಲ ನೀವು ಇಂದು ಸ್ಕ್ರೀನ್‌ನಲ್ಲಿ ನೋಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.3.t": {
+  "en": "You decide and sell",
+  "te": "మీరు నిర్ణయించి అమ్ముతారు",
+  "hi": "आप तय करते हैं और बेचते हैं",
+  "kn": "ನೀವು ನಿರ್ಧರಿಸಿ ಮಾರುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.3.d": {
+  "en": "You approve what matters. Customers visit and buy, and you record the order.",
+  "te": "ముఖ్యమైనవాటికి మీరు ఓకే చేస్తారు. కస్టమర్లు వచ్చి కొంటారు, ఆర్డర్‌ని మీరు రాసుకుంటారు.",
+  "hi": "जो ज़रूरी है उसे आप OK करते हैं। ग्राहक आकर खरीदते हैं और ऑर्डर आप लिख लेते हैं।",
+  "kn": "ಮುಖ್ಯವಾದವನ್ನು ನೀವು OK ಮಾಡುತ್ತೀರಿ. ಗ್ರಾಹಕರು ಬಂದು ಖರೀದಿಸುತ್ತಾರೆ, ಆರ್ಡರ್ ಅನ್ನು ನೀವು ಬರೆದುಕೊಳ್ಳುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.title": {
+  "en": "Simple pricing",
+  "te": "సులువైన ధరలు",
+  "hi": "सीधी कीमत",
+  "kn": "ಸರಳ ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.sub": {
+  "en": "One price a month for your shop. No charge for each question and no question counts. A meter shows how much of your plan you have used today and this month, as a percentage.",
+  "te": "మీ షాప్‌కి నెలకి ఒక్క ధర. ప్రతి ప్రశ్నకీ ఛార్జ్ లేదు, ప్రశ్నల లెక్క లేదు. ఈ రోజు, ఈ నెలలో మీ ప్లాన్‌ని ఎంత వాడారో మీటర్ శాతంలో చూపిస్తుంది.",
+  "hi": "आपकी दुकान के लिए महीने की एक कीमत। हर सवाल पर कोई चार्ज नहीं और सवालों की कोई गिनती नहीं। एक मीटर प्रतिशत में दिखाता है कि आज और इस महीने आपने अपना प्लान कितना इस्तेमाल किया।",
+  "kn": "ನಿಮ್ಮ ಅಂಗಡಿಗೆ ತಿಂಗಳಿಗೆ ಒಂದೇ ಬೆಲೆ. ಪ್ರತಿ ಪ್ರಶ್ನೆಗೆ ಶುಲ್ಕವಿಲ್ಲ, ಪ್ರಶ್ನೆಗಳ ಲೆಕ್ಕವಿಲ್ಲ. ಇಂದು ಮತ್ತು ಈ ತಿಂಗಳು ನಿಮ್ಮ ಪ್ಲಾನ್ ಎಷ್ಟು ಬಳಕೆಯಾಗಿದೆ ಎಂದು ಮೀಟರ್ ಶೇಕಡಾದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.trial.t": {
+  "en": "Free trial",
+  "te": "ఉచిత ట్రయల్",
+  "hi": "मुफ़्त ट्रायल",
+  "kn": "ಉಚಿತ ಟ್ರಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.trial.p": {
+  "en": "Free",
+  "te": "ఉచితం",
+  "hi": "मुफ़्त",
+  "kn": "ಉಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.trial.d": {
+  "en": "Try the whole app with your own shop. Nothing is charged.",
+  "te": "మీ సొంత షాప్‌తో పూర్తి యాప్‌ని ప్రయత్నించండి. ఏదీ ఛార్జ్ చేయబడదు.",
+  "hi": "अपनी दुकान के साथ पूरा ऐप आज़माएँ। कुछ भी चार्ज नहीं होता।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಅಂಗಡಿಯೊಂದಿಗೆ ಪೂರ್ತಿ ಆ್ಯಪ್ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಶುಲ್ಕ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.shop.t": {
+  "en": "Shop plan",
+  "te": "షాప్ ప్లాన్",
+  "hi": "शॉप प्लान",
+  "kn": "ಶಾಪ್ ಪ್ಲಾನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.shop.p": {
+  "en": "[PRICE] a month",
+  "te": "నెలకి [PRICE]",
+  "hi": "महीने के [PRICE]",
+  "kn": "ತಿಂಗಳಿಗೆ [PRICE]",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.shop.d": {
+  "en": "Everything in the app for one shop, with a fair-use allowance for Agent OWL.",
+  "te": "ఒక షాప్‌కి యాప్‌లో అన్నీ, Agent OWL కోసం సరైన వినియోగ పరిమితితో.",
+  "hi": "एक दुकान के लिए ऐप में सब कुछ, Agent OWL के लिए उचित इस्तेमाल की सीमा के साथ।",
+  "kn": "ಒಂದು ಅಂಗಡಿಗೆ ಆ್ಯಪ್‌ನಲ್ಲಿ ಎಲ್ಲವೂ, Agent OWL ಗಾಗಿ ಸೂಕ್ತ ಬಳಕೆಯ ಮಿತಿಯೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.t": {
+  "en": "How fair use works",
+  "te": "సరైన వినియోగం ఎలా పనిచేస్తుంది",
+  "hi": "उचित इस्तेमाल कैसे काम करता है",
+  "kn": "ಸೂಕ್ತ ಬಳಕೆ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.1": {
+  "en": "A usage meter shows today's and this month's use as a percentage.",
+  "te": "ఈ రోజు, ఈ నెల వాడకాన్ని ఒక మీటర్ శాతంలో చూపిస్తుంది.",
+  "hi": "एक मीटर आज और इस महीने का इस्तेमाल प्रतिशत में दिखाता है।",
+  "kn": "ಒಂದು ಮೀಟರ್ ಇಂದಿನ ಮತ್ತು ಈ ತಿಂಗಳ ಬಳಕೆಯನ್ನು ಶೇಕಡಾದಲ್ಲಿ ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.2": {
+  "en": "When you are near the top, the app tells you.",
+  "te": "పరిమితికి దగ్గరయితే యాప్ మీకు చెబుతుంది.",
+  "hi": "सीमा के पास पहुँचने पर ऐप आपको बता देता है।",
+  "kn": "ಮಿತಿಯ ಹತ್ತಿರ ಬಂದಾಗ ಆ್ಯಪ್ ನಿಮಗೆ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.3": {
+  "en": "At the limit, Agent OWL switches to a lighter mode until midnight. Quotes, orders and customers keep working.",
+  "te": "పరిమితి చేరితే అర్ధరాత్రి వరకు Agent OWL తేలికపాటి మోడ్‌కి మారుతుంది. కొటేషన్లు, ఆర్డర్లు, కస్టమర్లు పనిచేస్తూనే ఉంటాయి.",
+  "hi": "सीमा पर पहुँचकर Agent OWL आधी रात तक हल्के मोड में चला जाता है। कोटेशन, ऑर्डर और ग्राहक चलते रहते हैं।",
+  "kn": "ಮಿತಿ ತಲುಪಿದಾಗ ಮಧ್ಯರಾತ್ರಿವರೆಗೆ Agent OWL ಹಗುರ ಮೋಡ್‌ಗೆ ಬದಲಾಗುತ್ತದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್, ಗ್ರಾಹಕರು ಕೆಲಸ ಮಾಡುತ್ತಲೇ ಇರುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.note": {
+  "en": "Prices are not final. [PRICE] will be filled in before launch.",
+  "te": "ధరలు ఇంకా ఖరారు కాలేదు. లాంచ్‌కి ముందు [PRICE] స్థానంలో ధర వస్తుంది.",
+  "hi": "कीमतें अभी तय नहीं हैं। लॉन्च से पहले [PRICE] की जगह कीमत भर दी जाएगी।",
+  "kn": "ಬೆಲೆಗಳು ಇನ್ನೂ ಅಂತಿಮವಲ್ಲ. ಲಾಂಚ್‌ಗೆ ಮೊದಲು [PRICE] ಜಾಗದಲ್ಲಿ ಬೆಲೆ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.1.q": {
+  "en": "Does Agent OWL send messages by itself?",
+  "te": "Agent OWL తనంతట తానే మెసేజ్‌లు పంపుతుందా?",
+  "hi": "क्या Agent OWL अपने आप मैसेज भेजता है?",
+  "kn": "Agent OWL ತಾನಾಗಿಯೇ ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.1.a": {
+  "en": "Only if you switch automatic sending on. Even then, anything about price, promises or complaints waits for your OK, and calls always wait. With it off, every message waits for you.",
+  "te": "మీరు ఆటోమేటిక్ పంపడం ఆన్ చేస్తేనే. అప్పుడు కూడా రేటు, మాట ఇవ్వడం, ఫిర్యాదుల గురించినవి మీ ఓకే కోసం ఆగుతాయి, కాల్స్ ఎప్పుడూ ఆగుతాయి. ఆఫ్‌లో ఉంటే ప్రతి మెసేజ్ మీ కోసం ఆగుతుంది.",
+  "hi": "सिर्फ़ तब, जब आप ऑटोमैटिक भेजना चालू करें। तब भी रेट, वादे या शिकायत वाली बातें आपके OK का इंतज़ार करती हैं और कॉल हमेशा रुकते हैं। बंद रखने पर हर मैसेज आपके इंतज़ार में रुकता है।",
+  "kn": "ನೀವು ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದನ್ನು ಆನ್ ಮಾಡಿದರೆ ಮಾತ್ರ. ಆಗಲೂ ದರ, ಮಾತು ಕೊಡುವುದು ಅಥವಾ ದೂರಿನ ವಿಷಯಗಳು ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತವೆ, ಕರೆಗಳು ಯಾವಾಗಲೂ ಕಾಯುತ್ತವೆ. ಆಫ್ ಇದ್ದರೆ ಪ್ರತಿ ಮೆಸೇಜ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.2.q": {
+  "en": "Who is it for?",
+  "te": "ఇది ఎవరికి?",
+  "hi": "यह किसके लिए है?",
+  "kn": "ಇದು ಯಾರಿಗಾಗಿ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.2.a": {
+  "en": "Saree and textile shops that sell to customers who write on WhatsApp.",
+  "te": "WhatsAppలో రాసే కస్టమర్లకు అమ్మే చీరలు, టెక్స్‌టైల్ షాపులకు.",
+  "hi": "साड़ी और टेक्सटाइल की वे दुकानें जिनके ग्राहक WhatsApp पर लिखते हैं।",
+  "kn": "WhatsAppನಲ್ಲಿ ಬರೆಯುವ ಗ್ರಾಹಕರಿಗೆ ಮಾರುವ ಸೀರೆ ಮತ್ತು ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗಳಿಗಾಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.6.q": {
+  "en": "Is my WhatsApp number safe?",
+  "te": "నా WhatsApp నంబర్ సేఫేనా?",
+  "hi": "क्या मेरा WhatsApp नंबर सुरक्षित है?",
+  "kn": "ನನ್ನ WhatsApp ನಂಬರ್ ಸುರಕ್ಷಿತವೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.6.a": {
+  "en": "Agent OWL follows the habits that keep a number in good standing: only customers who agreed, stop means stop, a daily limit and quiet hours. No tool can promise what WhatsApp will decide.",
+  "te": "నంబర్‌ని మంచి స్థితిలో ఉంచే అలవాట్లను Agent OWL పాటిస్తుంది: అంగీకరించిన కస్టమర్లకే, ఆపమంటే ఆపడం, రోజువారీ పరిమితి, నిశ్శబ్ద వేళలు. WhatsApp ఏం నిర్ణయిస్తుందో ఏ టూల్ హామీ ఇవ్వలేదు.",
+  "hi": "Agent OWL वे आदतें अपनाता है जो नंबर को अच्छी हालत में रखती हैं: सिर्फ़ हाँ कहने वाले ग्राहक, रोकने को कहा तो रुकना, रोज़ की सीमा और शांत घंटे। WhatsApp क्या तय करेगा, यह कोई टूल पक्का नहीं कह सकता।",
+  "kn": "ನಂಬರ್ ಅನ್ನು ಒಳ್ಳೆಯ ಸ್ಥಿತಿಯಲ್ಲಿಡುವ ಅಭ್ಯಾಸಗಳನ್ನು Agent OWL ಪಾಲಿಸುತ್ತದೆ: ಒಪ್ಪಿದ ಗ್ರಾಹಕರಿಗೆ ಮಾತ್ರ, ನಿಲ್ಲಿಸಿ ಎಂದರೆ ನಿಲ್ಲಿಸುವುದು, ದಿನದ ಮಿತಿ, ಶಾಂತ ಸಮಯ. WhatsApp ಏನು ನಿರ್ಧರಿಸುತ್ತದೆ ಎಂದು ಯಾವ ಟೂಲ್ ಭರವಸೆ ಕೊಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.7.q": {
+  "en": "What does it cost?",
+  "te": "దీని ఖరీదు ఎంత?",
+  "hi": "इसकी कीमत क्या है?",
+  "kn": "ಇದರ ಬೆಲೆ ಎಷ್ಟು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.7.a": {
+  "en": "You can try it free. The paid plan is one price a month for your shop, with no per-question charge. The price is not final yet.",
+  "te": "ఉచితంగా ప్రయత్నించవచ్చు. డబ్బు కట్టే ప్లాన్ మీ షాప్‌కి నెలకి ఒక్క ధర, ప్రతి ప్రశ్నకీ ఛార్జ్ లేదు. ధర ఇంకా ఖరారు కాలేదు.",
+  "hi": "आप इसे मुफ़्त आज़मा सकते हैं। पेड प्लान आपकी दुकान के लिए महीने की एक कीमत है, हर सवाल पर चार्ज नहीं। कीमत अभी तय नहीं है।",
+  "kn": "ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಬಹುದು. ಹಣ ಕೊಡುವ ಪ್ಲಾನ್ ನಿಮ್ಮ ಅಂಗಡಿಗೆ ತಿಂಗಳಿಗೆ ಒಂದೇ ಬೆಲೆ, ಪ್ರತಿ ಪ್ರಶ್ನೆಗೆ ಶುಲ್ಕವಿಲ್ಲ. ಬೆಲೆ ಇನ್ನೂ ಅಂತಿಮವಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "meta.title": {
-  "en": "{brand}: turn enquiries into orders",
-  "te": "{brand}: ఎంక్వైరీలను ఆర్డర్లుగా మార్చండి",
-  "hi": "{brand}: पूछताछ को ऑर्डर में बदलें",
-  "kn": "{brand}: ಎನ್‌ಕ್ವೈರಿಗಳನ್ನು ಆರ್ಡರ್ ಮಾಡಿ",
+  "en": "{brand}: an AI helper for saree and textile shops",
+  "te": "{brand}: చీరలు, టెక్స్‌టైల్ షాపులకు AI సహాయకుడు",
+  "hi": "{brand}: साड़ी और टेक्सटाइल दुकानों के लिए AI सहायक",
+  "kn": "{brand}: ಸೀರೆ ಮತ್ತು ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗಳಿಗೆ AI ಸಹಾಯಕ",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -1471,21 +1270,21 @@
   }
  },
  "meta.description": {
-  "en": "An AI team for Indian wholesalers, manufacturers and traders. It finds leads, researches them, drafts quotes and follow-ups and tracks orders. Every message is a draft you approve and send yourself.",
-  "te": "హోల్‌సేల్ వ్యాపారులు, తయారీదారులు, ట్రేడర్ల కోసం AI టీమ్. లీడ్స్ వెతుకుతుంది, వివరాలు చూస్తుంది, కొటేషన్లు, ఫాలో-అప్‌లు డ్రాఫ్ట్ చేస్తుంది, ఆర్డర్లను గమనిస్తుంది. ప్రతి మెసేజ్ మీరు ఓకే చేసి, మీరే పంపే డ్రాఫ్ట్.",
-  "hi": "भारत के थोक व्यापारियों, निर्माताओं और ट्रेडर्स के लिए एक AI टीम। लीड ढूँढती है, जाँच-पड़ताल करती है, कोटेशन और फ़ॉलो-अप के ड्राफ़्ट बनाती है और ऑर्डर पर नज़र रखती है। हर मैसेज एक ड्राफ़्ट है जिसे आप मंज़ूर करके खुद भेजते हैं।",
-  "kn": "ಭಾರತದ ಸಗಟು ವ್ಯಾಪಾರಿಗಳು, ತಯಾರಕರು, ಟ್ರೇಡರ್‌ಗಳಿಗಾಗಿ ಒಂದು AI ತಂಡ. ಲೀಡ್ ಹುಡುಕುತ್ತದೆ, ವಿವರ ನೋಡುತ್ತದೆ, ಕೊಟೇಶನ್ ಮತ್ತು ಫಾಲೋ-ಅಪ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ಆರ್ಡರ್‌ಗಳ ಮೇಲೆ ಕಣ್ಣಿಡುತ್ತದೆ. ಪ್ರತಿ ಮೆಸೇಜ್ ನೀವು ಒಪ್ಪಿಗೆ ಕೊಟ್ಟು ನೀವೇ ಕಳುಹಿಸುವ ಡ್ರಾಫ್ಟ್.",
+  "en": "Agent OWL answers your customers' WhatsApp enquiries in Telugu, Hindi, Kannada or English, shows your sarees, books store visits and follows up. Anything about price, promises or complaints waits for your OK.",
+  "te": "మీ కస్టమర్ల WhatsApp ఎంక్వైరీలకు Agent OWL తెలుగు, హిందీ, కన్నడ లేదా ఇంగ్లీష్‌లో జవాబిస్తుంది, మీ చీరలను చూపిస్తుంది, షాప్ విజిట్లు బుక్ చేస్తుంది, ఫాలో-అప్ చేస్తుంది. రేటు, మాట ఇవ్వడం, ఫిర్యాదుల గురించిన ఏదైనా మీ ఓకే కోసం ఆగుతుంది.",
+  "hi": "आपके ग्राहकों की WhatsApp पूछताछ का जवाब Agent OWL तेलुगु, हिन्दी, कन्नड़ या अंग्रेज़ी में देता है, आपकी साड़ियाँ दिखाता है, दुकान की विज़िट बुक करता है और फ़ॉलो-अप करता है। रेट, वादे या शिकायत से जुड़ा हर मैसेज आपके OK का इंतज़ार करता है।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರ WhatsApp ವಿಚಾರಣೆಗಳಿಗೆ Agent OWL ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಅಥವಾ ಇಂಗ್ಲಿಷ್‌ನಲ್ಲಿ ಉತ್ತರಿಸುತ್ತದೆ, ನಿಮ್ಮ ಸೀರೆಗಳನ್ನು ತೋರಿಸುತ್ತದೆ, ಅಂಗಡಿ ವಿಸಿಟ್ ಬುಕ್ ಮಾಡುತ್ತದೆ ಮತ್ತು ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತದೆ. ದರ, ಮಾತು ಕೊಡುವುದು ಅಥವಾ ದೂರಿಗೆ ಸಂಬಂಧಿಸಿದ ಯಾವುದೂ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತದೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "priv.ai": {
-  "en": "Agent OWL is an AI assistant. Messages it writes to your customers may be written by AI, and are labelled.",
-  "te": "Agent OWL ఒక AI సహాయకుడు. ఇది మీ కస్టమర్లకు రాసే మెసేజ్‌లు AI రాసినవి కావచ్చు, వాటికి లేబుల్ ఉంటుంది.",
-  "hi": "Agent OWL एक AI सहायक है। यह आपके ग्राहकों के लिए जो मैसेज लिखता है वे AI ने लिखे हो सकते हैं, और उन पर लेबल होता है।",
-  "kn": "Agent OWL ಒಂದು AI ಸಹಾಯಕ. ಇದು ನಿಮ್ಮ ಗ್ರಾಹಕರಿಗೆ ಬರೆಯುವ ಮೆಸೇಜ್‌ಗಳನ್ನು AI ಬರೆದಿರಬಹುದು, ಅವುಗಳಿಗೆ ಲೇಬಲ್ ಇರುತ್ತದೆ.",
+ "draft.banner": {
+  "en": "This page's text is a machine-written draft. Please tell us if something reads wrongly.",
+  "te": "ఈ పేజీలోని టెక్స్ట్ మెషీన్ రాసిన డ్రాఫ్ట్. ఏదైనా తప్పుగా అనిపిస్తే మాకు చెప్పండి.",
+  "hi": "इस पन्ने का टेक्स्ट मशीन से लिखा ड्राफ़्ट है। कुछ गलत लगे तो हमें बताइए।",
+  "kn": "ಈ ಪುಟದ ಪಠ್ಯ ಮೆಷಿನ್ ಬರೆದ ಡ್ರಾಫ್ಟ್. ಏನಾದರೂ ತಪ್ಪಾಗಿ ಕಂಡರೆ ನಮಗೆ ತಿಳಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
