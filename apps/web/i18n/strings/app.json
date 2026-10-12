@@ -29375,5 +29375,294 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "notify.title": {
+  "en": "Notifications",
+  "te": "నోటిఫికేషన్లు",
+  "hi": "नोटिफ़िकेशन",
+  "kn": "ಅಧಿಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.label": {
+  "en": "Notifications",
+  "te": "నోటిఫికేషన్లు",
+  "hi": "नोटिफ़िकेशन",
+  "kn": "ಅಧಿಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.label.new": {
+  "en": "Notifications, {n} new",
+  "te": "నోటిఫికేషన్లు, {n} కొత్తవి",
+  "hi": "नोटिफ़िकेशन, {n} नए",
+  "kn": "ಅಧಿಸೂಚನೆಗಳು, {n} ಹೊಸವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.close": {
+  "en": "Close",
+  "te": "మూసివేయండి",
+  "hi": "बंद करें",
+  "kn": "ಮುಚ್ಚಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.error": {
+  "en": "Could not check just now. Trying again soon.",
+  "te": "ఇప్పుడు చెక్ చేయలేకపోయాం. కాసేపట్లో మళ్ళీ ప్రయత్నిస్తాం.",
+  "hi": "अभी जाँच नहीं हो पाई। थोड़ी देर में फिर कोशिश करेंगे।",
+  "kn": "ಈಗ ಪರಿಶೀಲಿಸಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.signedout": {
+  "en": "Your session has ended. Reload the page to sign in again.",
+  "te": "మీ సెషన్ ముగిసింది. మళ్ళీ సైన్ ఇన్ అవ్వడానికి పేజీ రీలోడ్ చేయండి.",
+  "hi": "आपका सेशन खत्म हो गया। फिर साइन इन करने के लिए पेज रीलोड करें।",
+  "kn": "ನಿಮ್ಮ ಸೆಷನ್ ಮುಗಿದಿದೆ. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಲು ಪುಟ ರೀಲೋಡ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.loading": {
+  "en": "Checking…",
+  "te": "చెక్ చేస్తున్నాం…",
+  "hi": "जाँच रहे हैं…",
+  "kn": "ಪರಿಶೀಲಿಸುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.empty": {
+  "en": "Nothing needs you right now.",
+  "te": "ఇప్పుడు మీ కోసం ఏదీ ఆగి లేదు.",
+  "hi": "अभी आपके लिए कुछ नहीं रुका है।",
+  "kn": "ಈಗ ನಿಮಗಾಗಿ ಏನೂ ಕಾಯುತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.new": {
+  "en": "New",
+  "te": "కొత్త",
+  "hi": "नया",
+  "kn": "ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.quote_approval": {
+  "en": "A quote waits for you",
+  "te": "ఒక కొటేషన్ మీ కోసం ఆగి ఉంది",
+  "hi": "एक कोटेशन आपके लिए रुका है",
+  "kn": "ಒಂದು ಕೊಟೇಶನ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.followup_due": {
+  "en": "A follow-up is due",
+  "te": "ఒక ఫాలో-అప్ చేయాల్సి ఉంది",
+  "hi": "एक फ़ॉलो-अप करना है",
+  "kn": "ಒಂದು ಫಾಲೋ-ಅಪ್ ಮಾಡಬೇಕಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.order_money_held": {
+  "en": "Money is held on an order",
+  "te": "Money is held on an order",
+  "hi": "Money is held on an order",
+  "kn": "Money is held on an order",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "notify.code.outbox_approval": {
+  "en": "A message waits for your OK",
+  "te": "ఒక మెసేజ్ మీ ఓకే కోసం ఆగి ఉంది",
+  "hi": "एक मैसेज आपके OK का इंतज़ार कर रहा है",
+  "kn": "ಒಂದು ಮೆಸೇಜ್ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.call_approval": {
+  "en": "A call waits for your OK",
+  "te": "ఒక కాల్ మీ ఓకే కోసం ఆగి ఉంది",
+  "hi": "एक कॉल आपके OK का इंतज़ार कर रहा है",
+  "kn": "ಒಂದು ಕರೆ ನಿಮ್ಮ OK ಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.visit_proposed": {
+  "en": "A visit waits for you to confirm",
+  "te": "ఒక విజిట్ మీరు కన్ఫర్మ్ చేయడానికి ఆగి ఉంది",
+  "hi": "एक विज़िट आपके कन्फ़र्म करने का इंतज़ार कर रही है",
+  "kn": "ಒಂದು ವಿಸಿಟ್ ನೀವು ಕನ್ಫರ್ಮ್ ಮಾಡಲು ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.visit_here": {
+  "en": "A customer is at the shop",
+  "te": "ఒక కస్టమర్ షాప్‌లో ఉన్నారు",
+  "hi": "एक ग्राहक दुकान में है",
+  "kn": "ಒಬ್ಬ ಗ್ರಾಹಕರು ಅಂಗಡಿಯಲ್ಲಿ ಇದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.code.message_blocked": {
+  "en": "A message was blocked",
+  "te": "A message was blocked",
+  "hi": "A message was blocked",
+  "kn": "A message was blocked",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "notify.browser.title": {
+  "en": "Browser notifications",
+  "te": "బ్రౌజర్ నోటిఫికేషన్లు",
+  "hi": "ब्राउज़र नोटिफ़िकेशन",
+  "kn": "ಬ್ರೌಸರ್ ಅಧಿಸೂಚನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.browser.hint": {
+  "en": "A pop-up in this browser when something needs you. It says only how many, never a name.",
+  "te": "ఏదైనా మీ కోసం ఆగితే ఈ బ్రౌజర్‌లో ఒక పాప్-అప్ వస్తుంది. అందులో ఎన్ని అనేది మాత్రమే ఉంటుంది, పేరు ఉండదు.",
+  "hi": "जब कुछ आपके लिए रुके तो इस ब्राउज़र में एक पॉप-अप आता है। उसमें सिर्फ़ गिनती होती है, कोई नाम नहीं।",
+  "kn": "ಏನಾದರೂ ನಿಮಗಾಗಿ ಕಾಯುತ್ತಿದ್ದರೆ ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಒಂದು ಪಾಪ್-ಅಪ್ ಬರುತ್ತದೆ. ಅದರಲ್ಲಿ ಎಷ್ಟು ಎಂದು ಮಾತ್ರ ಇರುತ್ತದೆ, ಹೆಸರು ಇರುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.browser.unsupported": {
+  "en": "This browser cannot show them.",
+  "te": "ఈ బ్రౌజర్ వాటిని చూపించలేదు.",
+  "hi": "यह ब्राउज़र इन्हें नहीं दिखा सकता।",
+  "kn": "ಈ ಬ್ರೌಸರ್ ಇವನ್ನು ತೋರಿಸಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.browser.denied": {
+  "en": "They are blocked in this browser. Change it in the browser's site settings.",
+  "te": "ఈ బ్రౌజర్‌లో అవి బ్లాక్ అయ్యాయి. బ్రౌజర్ సైట్ సెట్టింగ్స్‌లో మార్చండి.",
+  "hi": "इस ब्राउज़र में ये ब्लॉक हैं। ब्राउज़र की साइट सेटिंग में बदलें।",
+  "kn": "ಈ ಬ್ರೌಸರ್‌ನಲ್ಲಿ ಇವು ಬ್ಲಾಕ್ ಆಗಿವೆ. ಬ್ರೌಸರ್‌ನ ಸೈಟ್ ಸೆಟ್ಟಿಂಗ್ಸ್‌ನಲ್ಲಿ ಬದಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.browser.on": {
+  "en": "On",
+  "te": "ఆన్",
+  "hi": "चालू",
+  "kn": "ಆನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.browser.off": {
+  "en": "Off",
+  "te": "ఆఫ్",
+  "hi": "बंद",
+  "kn": "ಆಫ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.pop.title": {
+  "en": "Agent OWL",
+  "te": "Agent OWL",
+  "hi": "Agent OWL",
+  "kn": "Agent OWL",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "notify.pop.one": {
+  "en": "1 thing needs you.",
+  "te": "మీ కోసం 1 ఆగి ఉంది.",
+  "hi": "आपके लिए 1 चीज़ रुकी है।",
+  "kn": "ನಿಮಗಾಗಿ 1 ಕಾಯುತ್ತಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "notify.pop.other": {
+  "en": "{n} things need you.",
+  "te": "మీ కోసం {n} ఆగి ఉన్నాయి.",
+  "hi": "आपके लिए {n} चीज़ें रुकी हैं।",
+  "kn": "ನಿಮಗಾಗಿ {n} ಕಾಯುತ್ತಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

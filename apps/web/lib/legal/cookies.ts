@@ -33,4 +33,7 @@ export const DEVICE_SETTINGS = [
   { key: "sme-ask-voice-notice", what: "that you have seen the voice privacy line" },
   { key: "sme-install-hint", what: "how many times you have visited and whether you closed the 'Add to home screen' hint" },
   { key: "sme-prefs", what: "the language the offline page is shown in (kept by the offline worker, in this browser's cache)" },
+  { key: "sme-notify-seen", what: "which notices the bell has already shown you, per workspace" },
+  { key: "sme-notify-announced", what: "which waiting items a browser notification already told you about, per workspace" },
+  { key: "sme-notify-browser", what: "that you turned browser notifications on" },
 ] as const;
