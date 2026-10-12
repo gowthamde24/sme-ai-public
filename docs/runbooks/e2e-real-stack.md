@@ -13,6 +13,7 @@ What it does, in order: refuses unless the ports are free (never 3000, 8000, 800
 ## What it checks
 | Step | What |
 |---|---|
+| J1-J6 | **First-run setup wizard (job BJ)**, right after sign-in on the brand-new workspace: J1 the five screens on a phone (360 px, light and dark: targets, no sideways scroll, axe); J2 the wizard is shown instead of Today; J3 hours saved through the real API (checked with `GET /visits/settings`); J4 the first saree with a real photo (checked with `GET /catalogue/items`); J5 Agent OWL step (automatic sending off, quiet hours), "You're ready", Today; J6 a reload shows Today and automatic sending is still off |
 | A1-A5 | **Sign-up** on the real page; the local stack asks for e-mail confirmation (a local database step); first-login setup makes the business with the person as Owner; **authenticator enrolment** in the browser (QR, key, six digits); sign out, sign in: password alone is not enough, the code is asked for |
 | B0 | The data a person would already have, made through the API with their own second-factor token: two customers (phone, WhatsApp consent, a message they wrote), a message with a price in Telugu **and an English gloss** (waits), a plain one |
 | C1-C2 | **Today** shows the waiting message with its words, the English gloss and why it waits; **Approve and send** |

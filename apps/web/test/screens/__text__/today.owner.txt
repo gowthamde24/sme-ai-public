@@ -1,3 +1,14 @@
+{label="Finish setting up"}
+## Finish setting up
+0 of 3 done
+[button type=button: Hide the setup list]
+-
+[button type=button: Set the shop hoursTo do]
+-
+[button type=button: Add your first sareeTo do]
+-
+[button type=button: See what Agent OWL doesTo do]
+[button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
 Agent OWL this week 88% left
@@ -8,7 +19,7 @@ Agent OWL this week 88% left
 {role=img label="Agent OWL, Resting"}
 Resting Resting Resting Agent OWL
 ## 6 things need you. The rest is handled.
-Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.
+Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 6 6 waiting for you

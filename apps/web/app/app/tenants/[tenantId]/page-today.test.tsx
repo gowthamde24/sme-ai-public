@@ -19,6 +19,9 @@ const fetchMembers = vi.fn();
 const listOutboxMessages = vi.fn();
 const listOutboxApprovals = vi.fn();
 const listCallRequests = vi.fn();
+const getVisitSettings = vi.fn();
+const listCatalogueItems = vi.fn();
+const getOutboxSettings = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to), notFound: () => notFoundMock(), useRouter: () => ({ refresh: () => undefined, push: () => undefined }), usePathname: () => "/", useSearchParams: () => new URLSearchParams() }));
 vi.mock("./today-actions", () => ({ approveMessageAction: vi.fn(), rejectMessageAction: vi.fn(), editMessageAction: vi.fn(), approveCallAction: vi.fn(), offerVisitAction: vi.fn() }));
@@ -32,7 +35,10 @@ vi.mock("@/lib/api/outbox", async (importOriginal) => ({
   listOutboxMessages: (...a: unknown[]) => listOutboxMessages(...a),
   listOutboxApprovals: (...a: unknown[]) => listOutboxApprovals(...a),
   listCallRequests: (...a: unknown[]) => listCallRequests(...a),
+  getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a),
 }));
+vi.mock("@/lib/api/visits", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/visits")>()), getVisitSettings: (...a: unknown[]) => getVisitSettings(...a) }));
+vi.mock("@/lib/api/catalogue", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/catalogue")>()), listCatalogueItems: (...a: unknown[]) => listCatalogueItems(...a) }));
 vi.mock("./actions", () => ({ createCompanyAction: vi.fn(async () => undefined) }));
 
 import TenantPage from "./page";
@@ -51,6 +57,9 @@ beforeEach(() => {
   listOutboxMessages.mockResolvedValue(parseOutboxPage(page([{ ...SENT_JSON, sent_at: new Date(Date.now() - 3600_000).toISOString() }])));
   listOutboxApprovals.mockResolvedValue(parseOutboxPage(page([PRICE_JSON])));
   listCallRequests.mockResolvedValue(parseCallRequestPage(page([CALL_JSON])));
+  getVisitSettings.mockRejectedValue(new Error("not read")); // the setup facts are unknown unless a test gives them: Today is then shown as it is
+  listCatalogueItems.mockRejectedValue(new Error("not read"));
+  getOutboxSettings.mockRejectedValue(new Error("not read"));
 });
 
 const settle = async () => {
@@ -198,3 +207,47 @@ describe("the workspace home with no ?tab= is Today", () => {
     expect(getToday).not.toHaveBeenCalled();
   });
 });
+
+describe("the first-run setup on Today (job BJ)", () => {
+  const settings = { weekly_hours: Object.fromEntries(["mon", "tue", "wed", "thu", "fri", "sat", "sun"].map((d) => [d, { open: "10:00", close: "20:30" }])), closed_dates: [], slot_minutes: 30, max_parallel: 2, is_default: true };
+  const brandNew = () => {
+    getVisitSettings.mockResolvedValue(settings);
+    listCatalogueItems.mockResolvedValue({ items: [], next_cursor: null });
+    getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 });
+  };
+  beforeEach(() => window.localStorage.clear());
+  it("the Owner of a brand-new workspace sees the wizard, greeting the shop by name, instead of Today", async () => {
+    brandNew();
+    await show();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Welcome to Acme Silks");
+    expect(screen.queryByText("Needs you")).toBeNull();
+    expect(getVisitSettings).toHaveBeenCalledWith("tok", TENANT);
+    expect(listCatalogueItems).toHaveBeenCalledWith("tok", TENANT, { limit: 1, includeInactive: true });
+    expect(getOutboxSettings).toHaveBeenCalledWith("tok", TENANT);
+  });
+  it("an Admin and a Sales person see Today: only the Owner is asked to set the shop up (and no setup call is made for them)", async () => {
+    brandNew();
+    for (const role of ["admin", "sales", "viewer"]) {
+      fetchTenant.mockResolvedValue({ id: TENANT, name: "Acme Silks", slug: "acme", role });
+      getToday.mockResolvedValue(todayFor(role === "viewer" ? "viewer" : (role as "admin")));
+      getVisitSettings.mockClear();
+      document.body.innerHTML = "";
+      await show();
+      expect(screen.queryByText("Welcome to Acme Silks"), role).toBeNull();
+      expect(getVisitSettings, role).not.toHaveBeenCalled();
+    }
+  });
+  it("an Owner whose setup facts cannot be read sees Today, never a wizard on a guess", async () => {
+    await show();
+    expect(screen.getByRole("heading", { name: "Needs you" })).toBeInTheDocument();
+    expect(screen.queryByText("Welcome to Acme Silks")).toBeNull();
+  });
+  it("an established workspace (hours saved) shows Today with the checklist card above it", async () => {
+    brandNew();
+    getVisitSettings.mockResolvedValue({ ...settings, is_default: false });
+    await show();
+    expect(screen.getByRole("heading", { name: "Needs you" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Finish setting up" })).toBeInTheDocument();
+  });
+});
+

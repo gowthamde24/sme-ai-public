@@ -1,3 +1,14 @@
+{label="Finish setting up"}
+## Finish setting up
+0 of 3 done
+[button type=button: Hide the setup list]
+-
+[button type=button: Set the shop hoursTo do]
+-
+[button type=button: Add your first sareeTo do]
+-
+[button type=button: See what Agent OWL doesTo do]
+[button type=button: Continue setup]
 Tuesday, 6 October
 # Good morning
 Agent OWL this week : Not available yet
@@ -5,7 +16,7 @@ Agent OWL this week : Not available yet
 {role=img label="Agent OWL, Resting"}
 Resting Resting Resting Agent OWL
 ## Not available yet
-The overnight summary is not available yet. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing.
+The overnight summary is not available yet. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.
 {label="Needs you"}
 ## Needs you
 Not available yet
