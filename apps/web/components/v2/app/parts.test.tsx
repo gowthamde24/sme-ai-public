@@ -11,6 +11,7 @@ describe("the shared v2 pieces say what the old ones said", () => {
     expect(screen.getByRole("alert")).toHaveTextContent("Could not load this from the API. Try again shortly.");
     expect(screen.getByRole("link", { name: "Back to your workspaces" })).toHaveAttribute("href", "/app");
     expect(screen.getByRole("main")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument(); // job BW
   });
   it("NotShown: the way back to the workspace, the title and one closed sentence", () => {
     render(<NotShownV2 tenantId="t1" tenantName="Acme" title="Follow-ups due" message="Follow-ups are shown to owners, admins and sales users." />);

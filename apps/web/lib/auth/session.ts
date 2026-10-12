@@ -1,6 +1,8 @@
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 
+import { safeRedirectPath } from "@/lib/auth/redirect";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export type AuthenticatedUser = {
@@ -16,15 +18,32 @@ export type AuthenticatedUser = {
 
 type Factor = { status?: string; factor_type?: string };
 
+/**
+ * Where to send a signed-out person (job BW): the sign-in page with `?next=` set to the page they were on, so signing in again brings them back to it. The proxy puts the path in `x-sme-path` for every /app request; it
+ * is judged by safeRedirectPath again here (the header is ours, but a path is only ever used if it is a plain same-site one). With no request around (a test) or no usable path it is plain /login.
+ */
+async function loginTarget(): Promise<string> {
+  try {
+    const path = (await headers()).get("x-sme-path");
+    if (path && path !== "/login") {
+      const safe = safeRedirectPath(path, "");
+      if (safe) return `/login?next=${encodeURIComponent(safe)}`;
+    }
+  } catch {
+    // not in a request: plain /login
+  }
+  return "/login";
+}
+
 async function load(strict: boolean): Promise<AuthenticatedUser> {
   const supabase = await createSupabaseServerClient();
 
   const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) redirect("/login");
+  if (error || !data.user) redirect(await loginTarget());
 
   const { data: sessionData } = await supabase.auth.getSession();
   const accessToken = sessionData.session?.access_token;
-  if (!accessToken) redirect("/login");
+  if (!accessToken) redirect(await loginTarget());
 
   const factors = (data.user.factors ?? []) as Factor[];
   const hasSecondFactor = factors.some(

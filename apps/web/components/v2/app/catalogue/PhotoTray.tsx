@@ -120,10 +120,10 @@ export function PhotoTray({ slots, words, name, disabled, onMove, onRemove, onRe
                     {say(words, "catalogue.photo.setcover", { n })}
                   </button>
                 ) : null}
-                <button type="button" disabled={disabled || i === 0} aria-label={say(words, "catalogue.photo.up", { n })} onClick={() => move(i, i - 1)} className="inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2 disabled:opacity-40">
+                <button type="button" data-repeat="" disabled={disabled || i === 0} aria-label={say(words, "catalogue.photo.up", { n })} onClick={() => move(i, i - 1)} className="inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2 disabled:opacity-40">
                   <ArrowUp className="size-5" aria-hidden="true" />
                 </button>
-                <button type="button" disabled={disabled || i === slots.length - 1} aria-label={say(words, "catalogue.photo.down", { n })} onClick={() => move(i, i + 1)} className="inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2 disabled:opacity-40">
+                <button type="button" data-repeat="" disabled={disabled || i === slots.length - 1} aria-label={say(words, "catalogue.photo.down", { n })} onClick={() => move(i, i + 1)} className="inline-flex size-11 items-center justify-center rounded-lg hover:bg-surface-2 disabled:opacity-40">
                   <ArrowDown className="size-5" aria-hidden="true" />
                 </button>
                 {s.status === "failed" ? (

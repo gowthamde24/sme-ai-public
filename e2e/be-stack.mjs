@@ -1249,6 +1249,100 @@ await step("V2", "voice on a phone: tap the microphone (the recording bar, Cance
   return axe ? "recording bar + idle, light and dark, checked with axe" : "axe-core not installed: that check was skipped";
 }, page);
 
+// ---- 8d. robustness (job BW): a friendly 404, a skeleton on a slow screen, a double press, offline, an ended session. LAST of the browser steps: it signs the run's browser out for a moment --------------------------
+await step("W1", "robustness: friendly 404 and 403 pages, a skeleton while a screen is slow, a double press sends once, offline says so and sends nothing, an ended session keeps the page and offers a new-tab sign-in", async () => {
+  await page.setViewportSize({ width: 1280, height: 900 });
+  // a page that is not ours: the friendly 404, with the owl, in the app's frame
+  await page.goto(`${BASE}/app/tenants/${uuid()}/orders`, { waitUntil: "networkidle" });
+  must((await page.getByRole("heading", { level: 1, name: "Not found" }).count()) === 1, "no friendly 404 heading");
+  must((await page.locator('[data-problem="404"] svg').count()) > 0, "the 404 has no owl");
+  await page.goto(`${BASE}/app/problem/403`, { waitUntil: "networkidle" });
+  must((await page.getByRole("heading", { level: 1, name: "This is not open to you" }).count()) === 1, "no friendly 403");
+  await page.goto(`${BASE}/app/problem/429`, { waitUntil: "networkidle" });
+  must((await page.getByRole("button", { name: "Try again" }).count()) === 1, "the 429 has no Try again");
+  console.log("  W1 stage: a slow screen: the skeleton");
+  // a slow screen: the skeleton shows (the frame stays), then the page
+  await page.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+  const slow = /\/app\/tenants\/[0-9a-f-]+\/orders/; // the page's own request, whatever form the router asks in (the full page, the flight data or a segment)
+  const held = [];
+  let skeletonShown = false;
+  await page.route(slow, async (route) => {
+    held.push(`${route.request().method()} ${route.request().url().replace(BASE, "")} ${route.request().resourceType()}`);
+    await new Promise((r) => setTimeout(r, 1800));
+    await route.continue();
+  });
+  await page.getByRole("navigation", { name: "Workspace menu" }).getByRole("link", { name: "Orders" }).click();
+  // the page shows "Loading" at once (the bar and the sentence for a screen reader); the frame stays; then the page arrives and the bar goes
+  await page.locator('[data-robust="progress"]').waitFor({ timeout: 5000 }).catch((e) => {
+    throw new Error(`no loading mark while the page was held; held requests: ${held.join(" | ") || "none"}; url ${page.url()}; ${String(e.message).split("\n")[0]}`);
+  });
+  must((await page.locator('[data-frame="app"]').count()) === 1, "the frame went away while loading");
+  must((await page.getByText("Loading…").count()) >= 1, "nothing says Loading");
+  skeletonShown = (await page.locator("[data-skeleton]").count()) > 0;
+  await page.locator('[data-robust="progress"]').waitFor({ state: "detached", timeout: 20000 });
+  await page.unroute(slow);
+  console.log("  W1 stage: a double press sends once");
+  // a double press sends once
+  await page.goto(`${BASE}/app/tenants/${tenant}/settings?section=agent`, { waitUntil: "networkidle" });
+  await page.waitForSelector("#quiet-start");
+  let posts = 0;
+  const onPost = (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"]) posts += 1;
+  };
+  page.on("request", onPost);
+  await page.getByRole("button", { name: "Save quiet hours" }).dblclick();
+  await page.locator('[role="status"]').filter({ hasText: /Quiet hours are now/ }).waitFor({ timeout: 20000 });
+  page.off("request", onPost);
+  must(posts === 1, `a double press made ${posts} requests`);
+  console.log("  W1 stage: offline: the banner, nothin");
+  // offline: the banner, nothing is sent, what was typed stays; then back online
+  await page.selectOption("#quiet-start", "21");
+  let offlinePosts = 0;
+  const onOffline = (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"]) offlinePosts += 1;
+  };
+  await context.setOffline(true);
+  await page.locator('[data-robust="offline"]').waitFor({ timeout: 5000 });
+  page.on("request", onOffline);
+  await page.getByRole("button", { name: "Save quiet hours" }).click();
+  await page.locator('[data-robust="blocked"]').waitFor({ timeout: 5000 });
+  page.off("request", onOffline);
+  must(offlinePosts === 0, "something was sent while offline");
+  must((await page.locator("#quiet-start").inputValue()) === "21", "what was typed was lost");
+  await page.screenshot({ path: path.join(SHOTS, "W-offline.png") });
+  await context.setOffline(false);
+  await page.locator('[data-robust="online"]').waitFor({ timeout: 10000 });
+  await page.locator('[data-robust="offline"]').waitFor({ state: "detached", timeout: 5000 });
+  console.log("  W1 stage: an ended session: the page ");
+  // an ended session: the page stays with its input, a new-tab sign-in that returns to this page is offered; nothing is sent
+  const saved = await context.cookies();
+  await context.clearCookies();
+  await page.waitForTimeout(10_500); // the page checked a moment ago (when the connection came back): a person returning to the tab later is the case
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  const link = page.getByRole("link", { name: "Sign in again" });
+  await link.waitFor({ timeout: 15000 });
+  const href = await link.getAttribute("href");
+  must(href === `/login?next=${encodeURIComponent(`/app/tenants/${tenant}/settings?section=agent`)}`, `the sign-in link is ${href}`);
+  must((await link.getAttribute("target")) === "_blank", "the sign-in link does not open a new tab");
+  must((await page.locator("#quiet-start").inputValue()) === "21", "what was typed was lost when the session ended");
+  let endedPosts = 0;
+  const onEnded = (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"]) endedPosts += 1;
+  };
+  page.on("request", onEnded);
+  await page.getByRole("button", { name: "Save quiet hours" }).click();
+  await page.locator('[data-robust="blocked"]').waitFor({ timeout: 5000 });
+  page.off("request", onEnded);
+  must(endedPosts === 0, "something was sent with an ended session");
+  await page.screenshot({ path: path.join(SHOTS, "W-session-ended.png") });
+  console.log("  W1 stage: signed in again (the cookie");
+  // signed in again (the cookies come back): the banner says so
+  await context.addCookies(saved);
+  await page.evaluate(() => window.dispatchEvent(new Event("focus")));
+  await page.locator('[data-robust="signed-in"]').waitFor({ timeout: 15000 });
+  return `404/403/429 pages, loading mark while a screen is slow (skeleton ${skeletonShown ? "also shown" : "not shown: the router had not prefetched it"}), double press = 1 request, offline and ended session send nothing and keep the input`;
+}, page);
+
 // ---- 9. the whole run: no CSP violation, no hydration error ---------------------------------------------------------------
 await step("Z1", "no Content-Security-Policy violation and no hydration error in the browser console during the whole run", async () => {
   must(problems.length === 0, problems.slice(0, 3).join(" | "));

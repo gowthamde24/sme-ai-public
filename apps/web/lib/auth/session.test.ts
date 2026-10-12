@@ -3,6 +3,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeSupabase, redirectMock, redirectTarget } from "@/test/helpers";
 
 const createClient = vi.fn();
+const where = vi.hoisted(() => ({ path: null as string | null, fails: false }));
+vi.mock("next/headers", () => ({
+  headers: async () => {
+    if (where.fails) throw new Error("outside a request");
+    return new Headers(where.path ? { "x-sme-path": where.path } : {});
+  },
+}));
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => redirectMock(to),
 }));
@@ -20,6 +27,30 @@ const USER = {
 describe("requireUser", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    where.path = null;
+    where.fails = false;
+  });
+
+  describe("signed out: back to the same page after signing in again (job BW)", () => {
+    const signedOut = () =>
+      createClient.mockResolvedValue(fakeSupabase({ getUser: vi.fn(async () => ({ data: { user: null }, error: { message: "expired" } })), getSession: vi.fn() }));
+    it("carries the page the person was on", async () => {
+      signedOut();
+      where.path = "/app/tenants/t1/orders?tab=open";
+      expect(await redirectTarget(() => requireUser())).toBe("/login?next=%2Fapp%2Ftenants%2Ft1%2Forders%3Ftab%3Dopen");
+    });
+    it("never carries a path that is not a plain same-site one", async () => {
+      signedOut();
+      for (const bad of ["//evil.example", "https://evil.example", "/a\\b", "evil", "/login"]) {
+        where.path = bad;
+        expect(await redirectTarget(() => requireUser()), bad).toBe("/login");
+      }
+    });
+    it("is plain /login with no request around", async () => {
+      signedOut();
+      where.fails = true;
+      expect(await redirectTarget(() => requireUser())).toBe("/login");
+    });
   });
 
   it("authenticates with getUser() and forwards the access token", async () => {

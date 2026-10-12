@@ -30115,5 +30115,238 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "robust.offline.title": {
+  "en": "You are offline",
+  "te": "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు",
+  "hi": "आप ऑफ़लाइन हैं",
+  "kn": "ನೀವು ಆಫ್‌ಲೈನ್‌ನಲ್ಲಿ ಇದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.offline.body": {
+  "en": "What you see may be old. Buttons that need the internet wait until you are back.",
+  "te": "మీరు చూస్తున్నది పాతది కావచ్చు. ఇంటర్నెట్ కావాల్సిన బటన్లు మీరు తిరిగి వచ్చే వరకు ఆగుతాయి.",
+  "hi": "जो दिख रहा है वह पुराना हो सकता है। इंटरनेट वाले बटन आपके लौटने तक रुके रहेंगे।",
+  "kn": "ನೀವು ನೋಡುತ್ತಿರುವುದು ಹಳೆಯದಾಗಿರಬಹುದು. ಇಂಟರ್ನೆಟ್ ಬೇಕಾದ ಬಟನ್‌ಗಳು ನೀವು ಮರಳುವವರೆಗೆ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.offline.blocked": {
+  "en": "Not sent. You are offline. Press the button again when you are back online.",
+  "te": "Not sent. You are offline. Press the button again when you are back online.",
+  "hi": "Not sent. You are offline. Press the button again when you are back online.",
+  "kn": "Not sent. You are offline. Press the button again when you are back online.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "robust.online.back": {
+  "en": "You are back online.",
+  "te": "మీరు మళ్ళీ ఆన్‌లైన్‌లో ఉన్నారు.",
+  "hi": "आप फिर ऑनलाइन हैं।",
+  "kn": "ನೀವು ಮತ್ತೆ ಆನ್‌ಲೈನ್‌ನಲ್ಲಿ ಇದ್ದೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.session.ended": {
+  "en": "Your session has ended",
+  "te": "మీ సెషన్ ముగిసింది",
+  "hi": "आपका सेशन खत्म हो गया है",
+  "kn": "ನಿಮ್ಮ ಸೆಷನ್ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.session.body": {
+  "en": "Sign in again in a new tab. What you typed here stays on this page.",
+  "te": "కొత్త ట్యాబ్‌లో మళ్ళీ సైన్ ఇన్ చేయండి. మీరు ఇక్కడ టైప్ చేసింది ఈ పేజీలోనే ఉంటుంది.",
+  "hi": "नए टैब में फिर साइन इन करें। आपने यहाँ जो लिखा है वह इसी पेज पर रहेगा।",
+  "kn": "ಹೊಸ ಟ್ಯಾಬ್‌ನಲ್ಲಿ ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ. ನೀವು ಇಲ್ಲಿ ಟೈಪ್ ಮಾಡಿದ್ದು ಈ ಪುಟದಲ್ಲೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.session.signin": {
+  "en": "Sign in again",
+  "te": "మళ్ళీ సైన్ ఇన్ చేయండి",
+  "hi": "फिर साइन इन करें",
+  "kn": "ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.session.blocked": {
+  "en": "Not sent. Your session has ended. Sign in again, then press the button again.",
+  "te": "Not sent. Your session has ended. Sign in again, then press the button again.",
+  "hi": "Not sent. Your session has ended. Sign in again, then press the button again.",
+  "kn": "Not sent. Your session has ended. Sign in again, then press the button again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "robust.session.back": {
+  "en": "You are signed in again. You can go on.",
+  "te": "మీరు మళ్ళీ సైన్ ఇన్ అయ్యారు. కొనసాగించవచ్చు.",
+  "hi": "आप फिर साइन इन हैं। आप आगे बढ़ सकते हैं।",
+  "kn": "ನೀವು ಮತ್ತೆ ಸೈನ್ ಇನ್ ಆಗಿದ್ದೀರಿ. ಮುಂದುವರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.loading": {
+  "en": "Loading…",
+  "te": "లోడ్ అవుతోంది…",
+  "hi": "लोड हो रहा है…",
+  "kn": "ಲೋಡ್ ಆಗುತ್ತಿದೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "robust.slow": {
+  "en": "This is taking longer than usual. Still trying.",
+  "te": "ఇది ఎప్పటికంటే ఎక్కువ సమయం తీసుకుంటోంది. ఇంకా ప్రయత్నిస్తున్నాను.",
+  "hi": "इसमें आम से ज़्यादा समय लग रहा है। अभी भी कोशिश जारी है।",
+  "kn": "ಇದಕ್ಕೆ ಸಾಮಾನ್ಯಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಮಯ ಹಿಡಿಯುತ್ತಿದೆ. ಇನ್ನೂ ಪ್ರಯತ್ನಿಸುತ್ತಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.retry": {
+  "en": "Try again",
+  "te": "మళ్ళీ ప్రయత్నించండి",
+  "hi": "फिर कोशिश करें",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.retrying": {
+  "en": "Trying again in {n} s…",
+  "te": "{n} సెకన్లలో మళ్ళీ ప్రయత్నిస్తాను…",
+  "hi": "{n} सेकंड में फिर कोशिश होगी…",
+  "kn": "{n} ಸೆಕೆಂಡ್‌ಗಳಲ್ಲಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸುತ್ತೇನೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.home": {
+  "en": "Back to your workspaces",
+  "te": "మీ వర్క్‌స్పేస్‌లకు తిరిగి",
+  "hi": "अपने वर्कस्पेस पर वापस",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳಿಗೆ ಹಿಂದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.ref": {
+  "en": "Reference for support: {ref}",
+  "te": "సహాయం కోసం రిఫరెన్స్: {ref}",
+  "hi": "सहायता के लिए संदर्भ: {ref}",
+  "kn": "ಸಹಾಯಕ್ಕಾಗಿ ಉಲ್ಲೇಖ: {ref}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.403.title": {
+  "en": "This is not open to you",
+  "te": "ఇది మీకు అందుబాటులో లేదు",
+  "hi": "यह आपके लिए खुला नहीं है",
+  "kn": "ಇದು ನಿಮಗೆ ತೆರೆದಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.403.body": {
+  "en": "Your role does not include this page. Ask the owner if you need it.",
+  "te": "మీ పాత్రలో ఈ పేజీ లేదు. అవసరమైతే ఓనర్‌ను అడగండి.",
+  "hi": "आपकी भूमिका में यह पेज शामिल नहीं है। ज़रूरत हो तो मालिक से पूछें।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರದಲ್ಲಿ ಈ ಪುಟ ಸೇರಿಲ್ಲ. ಬೇಕಾದರೆ ಮಾಲೀಕರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.429.title": {
+  "en": "Too many tries",
+  "te": "చాలా ఎక్కువసార్లు ప్రయత్నించారు",
+  "hi": "बहुत ज़्यादा बार कोशिश हुई",
+  "kn": "ತುಂಬಾ ಬಾರಿ ಪ್ರಯತ್ನಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.429.body": {
+  "en": "Please wait a minute, then try again. Nothing you typed is lost.",
+  "te": "దయచేసి ఒక నిమిషం ఆగి, మళ్ళీ ప్రయత్నించండి. మీరు టైప్ చేసింది పోలేదు.",
+  "hi": "कृपया एक मिनट रुककर फिर कोशिश करें। आपका लिखा हुआ खोया नहीं है।",
+  "kn": "ದಯವಿಟ್ಟು ಒಂದು ನಿಮಿಷ ಕಾಯಿರಿ, ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ನೀವು ಟೈಪ್ ಮಾಡಿದ್ದು ಕಳೆದುಹೋಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.500.title": {
+  "en": "Something went wrong on our side",
+  "te": "మా వైపు ఏదో తప్పు జరిగింది",
+  "hi": "हमारी तरफ़ कुछ गड़बड़ हो गई",
+  "kn": "ನಮ್ಮ ಕಡೆ ಏನೋ ತಪ್ಪಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.500.body": {
+  "en": "It is not you. Please try again in a moment.",
+  "te": "ఇది మీ తప్పు కాదు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह आपकी गलती नहीं है। कृपया थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಇದು ನಿಮ್ಮ ತಪ್ಪಲ್ಲ. ದಯವಿಟ್ಟು ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

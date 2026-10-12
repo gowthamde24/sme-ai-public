@@ -594,6 +594,9 @@ add({
     getAiUsageWeek: () => { throw new ApiRequestError(503, "api_unreachable", "x"); },
   }),
 });
+// ---- the friendly pages for a refused or rate-limited call (job BW) -----------------------------------------------------------
+add({ id: "problem-403", roles: ["owner"], render: async () => (await import("@/app/app/problem/[kind]/page")).default(props({ kind: "403" })), handlers: (role) => base(role) });
+add({ id: "problem-429", roles: ["owner"], render: async () => (await import("@/app/app/problem/[kind]/page")).default(props({ kind: "429" })), handlers: (role) => base(role) });
 // ---- the outbox and Agent OWL's settings (job AX) ---------------------------------------------------------------------------
 const outboxItems = (status: string) => {
   const m = (over: Record<string, unknown>) => ({ ...SENT_JSON, ...over });
