@@ -51,6 +51,10 @@ ROUTE_WORDS = frozenset(
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
         "scheduler", "catalogue", "items", "photos", "order", "remove", "search", "draft-message",
         "summary", "voice", "research", "places",
+        # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
+        "connectors", "indiamart", "pull", "payment-links", "send", "record",
+        "missed-calls", "handle", "connect",
+        "razorpay", "cashfree", "fake-payments", "exotel", "missed-call", "call-status",
         "openapi.json", "docs", "redoc", "oauth2-redirect",
     }
 )  # fmt: skip

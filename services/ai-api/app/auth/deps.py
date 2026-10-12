@@ -14,6 +14,7 @@ from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
+from app.connectors.runtime import Connectors
 from app.crm.repository import CrmRepository
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
@@ -86,6 +87,7 @@ class Runtime:
     notifications: NotificationsRuntime | None = None
     research_web: ResearchWeb | None = None
     research_usage: ResearchUsageRepository | None = None
+    connectors: Connectors | None = None
 
 
 @dataclass(frozen=True)
