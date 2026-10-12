@@ -38,7 +38,7 @@ export async function ccSteps(c) {
 
     // the import: a Tally-style party list with a phone-only customer (a +00 test number: the real-data gate is closed) and one with no phone or e-mail
     const csv = `Party Name,Mobile,Town\nE2E Alpha Silks ${stamp},+00 98765 45551,Guntur\nE2E Beta Silks ${stamp},,Vijayawada\n`;
-    await page.getByRole("radio", { name: "Tally" }).check();
+    await page.getByRole("radio", { name: "Tally", exact: true }).check();
     await page.getByLabel("Choose the file").setInputFiles({ name: "parties.csv", mimeType: "text/csv", buffer: Buffer.from(csv) });
     await page.getByRole("button", { name: "Check the file" }).click();
     await page.getByRole("heading", { name: "Which column is which?" }).waitFor();
@@ -93,5 +93,55 @@ export async function ccSteps(c) {
     must((await text(page)).includes("You do not have a calendar address yet."), "the page does not say there is no address");
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "import (mapping, preview, phone-only customer), a second import is refused as duplicates, CSV export, calendar address made / rotated / stopped; phone and dark clean";
+  }, page);
+
+  // ---- CC2. Settings > Privacy ----------------------------------------------------------------------------------------------------------------------------------
+  await step("CC2", "Settings > Privacy: prepare and download my data (a real zip from real Storage), the consent list, the only owner cannot delete the account, the workspace deletion is scheduled for 14 days and cancelled", async () => {
+    await page.goto(`${base()}/settings?section=privacy`, { waitUntil: "networkidle" });
+    for (const name of ["Download my data", "Delete my account", "Delete this workspace", "Consent and opt-out list", "More privacy tools"]) await page.getByRole("heading", { name }).waitFor();
+    await page.screenshot({ path: path.join(SHOTS, "CC2-privacy-desktop.png"), fullPage: true });
+
+    // my data: made in the background, looked at again, then downloaded (a signed link that works once for five minutes)
+    await page.getByRole("button", { name: "Prepare my file" }).click();
+    await page.locator('[data-privacy="export"]').getByText("Ready", { exact: true }).waitFor({ timeout: 90000 });
+    await page.screenshot({ path: path.join(SHOTS, "CC2-privacy-export-ready.png"), fullPage: true });
+    const [download] = await Promise.all([page.waitForEvent("download", { timeout: 30000 }), page.getByRole("button", { name: "Download", exact: true }).click()]);
+    const file = await download.path();
+    const { readFileSync, statSync } = await import("node:fs");
+    must(statSync(file).size > 100, "the downloaded file is empty");
+    must(readFileSync(file).subarray(0, 2).toString() === "PK", "the downloaded file is not a zip");
+
+    // the consent list counts the customers the earlier steps made
+    const consent = page.locator('[data-privacy="consent"]');
+    await consent.getByText(/Looked at (all|the first) \d+ customers/).waitFor();
+
+    // the only owner cannot delete the account: the typed e-mail is accepted by the button, the API refuses, the page says why and keeps what was typed
+    const mine = page.locator('[data-privacy="delete-account"]');
+    const button = mine.getByRole("button", { name: "Delete my account" });
+    must(await button.isDisabled(), "the delete button was on before anything was typed");
+    await mine.getByLabel(/Type your e-mail address/).fill("someone-else@e2e.example.test");
+    must(await button.isDisabled(), "the delete button was on for the wrong e-mail");
+    await mine.getByLabel(/Type your e-mail address/).fill(c.email.toUpperCase());
+    await button.click();
+    await mine.getByRole("alert").filter({ hasText: "only owner of a workspace" }).waitFor();
+    must((await mine.getByLabel(/Type your e-mail address/).inputValue()) === c.email.toUpperCase(), "what was typed was lost");
+
+    // the workspace: scheduled for 14 days (nothing is erased), shown with its day, cancelled
+    const space = page.locator('[data-privacy="delete-workspace"]');
+    await space.getByLabel(/Type the workspace name/).fill("wrong name");
+    must(await space.getByRole("button", { name: "Delete this workspace" }).isDisabled(), "the workspace delete button was on for a wrong name");
+    const name = psql(`select name from public.tenants where id = '${c.tenant}'`);
+    await space.getByLabel(/Type the workspace name/).fill(name);
+    await space.getByRole("button", { name: "Delete this workspace" }).click();
+    await space.getByText("Deletion is scheduled").waitFor();
+    must(psql(`select count(*) from public.tenants where id = '${c.tenant}'`) === "1", "the workspace was removed at once");
+    await page.screenshot({ path: path.join(SHOTS, "CC2-privacy-scheduled.png"), fullPage: true });
+    const audit = await phoneAudit(c, "CC2-privacy");
+    await space.getByRole("button", { name: "Cancel the deletion" }).click();
+    await space.getByText("Cancelled. Nothing will be deleted.").waitFor();
+    await page.reload({ waitUntil: "networkidle" });
+    must((await page.locator('[data-privacy="delete-workspace"]').getByText("Deletion is scheduled").count()) === 0, "the cancelled deletion is still shown");
+    must(audit.length === 0, `phone: ${audit.join(" | ")}`);
+    return "export made and downloaded as a zip, consent list read, sole owner refused with words, workspace deletion scheduled and cancelled; phone and dark clean";
   }, page);
 }

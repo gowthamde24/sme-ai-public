@@ -630,9 +630,28 @@ add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenant
 add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
-for (const section of ["business", "language", "security", "privacy"] as const) {
-  add({ id: `settings-${section}`, roles: section === "privacy" ? ROLES : ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => base(role) });
+for (const section of ["business", "language", "security"] as const) {
+  add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => base(role) });
 }
+// Settings > Data and > Privacy (job CC): the invented answers of the new reads
+const DATA_HANDLERS = {
+  getCalendarFeed: () => ({ active: true, created_at: "2026-10-06T04:00:00Z", last_used_at: null }),
+  getExportFormats: () => ["tally_zip", "vyapar_xlsx", "csv", "xlsx"],
+  listImportJobs: () => [{ id: "11111111-aaaa-4aaa-8aaa-0000000000d1", kind: "customers", status: "completed", counts: {}, created_at: "2026-10-05T10:00:00Z", completed_at: "2026-10-05T10:01:00Z" }],
+};
+const PRIVACY_HANDLERS = {
+  listMyExports: () => [{ id: "11111111-aaaa-4aaa-8aaa-0000000000e2", scope: "person", status: "ready", requested_at: "2026-10-06T03:00:00Z", ready_at: "2026-10-06T03:00:30Z", expires_at: "2026-10-07T03:00:30Z", size_bytes: 12345, error_code: null }],
+  listMyDeletions: () => [],
+  listWorkspaceDeletions: () => [{ id: "11111111-aaaa-4aaa-8aaa-0000000000e3", kind: "workspace", status: "scheduled", requested_at: "2026-10-06T03:00:00Z", execute_after: "2026-10-20T03:00:00Z", cancelled_at: null, executed_at: null, blocked_reason: null }],
+  readConsentList: () => ({
+    checked: 3,
+    truncated: false,
+    stopped: [{ id: "11111111-aaaa-4aaa-8aaa-0000000000c1", name: "Asha Rao", reason: "opted_out", channels: { email: "unknown", whatsapp: "withdrawn", phone: "unknown" } }],
+    counts: { whatsapp: { unknown: 1, granted: 1, withdrawn: 1 }, phone: { unknown: 3, granted: 0, withdrawn: 0 }, email: { unknown: 2, granted: 1, withdrawn: 0 } },
+  }),
+};
+add({ id: "settings-data", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "data" })), handlers: (role) => ({ ...base(role), ...DATA_HANDLERS }) });
+add({ id: "settings-privacy", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "privacy" })), handlers: (role) => ({ ...base(role), ...PRIVACY_HANDLERS }) });
 add({ id: "settings-members", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => parseMembers(MEMBERS_JSON) }) });
 add({ id: "settings-members-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 

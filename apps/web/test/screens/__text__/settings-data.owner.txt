@@ -1,0 +1,55 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data current=page) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+Bring customers and stock in from a spreadsheet, send your sales to your accountant, and see store visits in your phone's calendar.
+{label="Bring in a spreadsheet"}
+## Bring in a spreadsheet
+Add customers or update saree stock from a CSV or Excel file. You see every row before anything is saved. People and sarees already in your list are never changed.
+legend: Where is your file from?
+{role=radiogroup label="Where is your file from?"}
+<radio name=_r_1f_-src label="Tally" value=tally>
+Tally
+<radio name=_r_1f_-src label="Vyapar" value=vyapar>
+Vyapar
+<radio name=_r_1f_-src label="Excel or Google Sheets" value=sheet checked>
+Excel or Google Sheets
+In Google Sheets use File, Download, CSV or Excel. In Excel use Save As, CSV UTF-8, or keep the .xlsx file. The first row must be the column names.
+legend: What is in the file?
+{role=radiogroup label="What is in the file?"}
+<radio name=_r_1f_-kind label="Customers" value=customers checked>
+Customers
+<radio name=_r_1f_-kind label="Saree stock" value=stock>
+Saree stock
+Choose the file
+<file label="Choose the file" accept=.csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet described-by="No file chosen yet. CSV or Excel (.xlsx), up to 2 MB and 500 rows.">
+No file chosen yet. CSV or Excel (.xlsx), up to 2 MB and 500 rows.
+[button type=button disabled: Check the file]
+{label="Recent imports"}
+## Recent imports
+table:
+  | th Bring in a spreadsheet | th Result | th Made: |
+  | Customers | Done | Oct 5, 2026, 3:30 PM (18 hours ago) |
+{label="Send your books to your accountant"}
+## Send your books to your accountant
+Make a file of your accepted orders and payments for some days, to open in Tally, Vyapar or Excel. Nothing is sent anywhere: the file comes to this device.
+legend: File type
+<radio name=_r_1g_-format label="Tally: masters and vouchers (one zip)" value=tally_zip checked>
+Tally: masters and vouchers (one zip)
+<radio name=_r_1g_-format label="Vyapar workbook (Excel)" value=vyapar_xlsx>
+Vyapar workbook (Excel)
+<radio name=_r_1g_-format label="Spreadsheet (CSV)" value=csv>
+Spreadsheet (CSV)
+<radio name=_r_1g_-format label="Excel workbook (.xlsx)" value=xlsx>
+Excel workbook (.xlsx)
+From
+<date label="From" max=2026-09-30 value=2026-09-01>
+To
+<date label="To" min=2026-09-01 value=2026-09-30>
+Up to one year at a time. Try one voucher on a copy of your Tally company first, and import each period only once. Exports need your second step (your authenticator code). If you are asked, open Security first.
+[button type=button: Download the file]
+{label="Visits in your phone's calendar"}
+## Visits in your phone's calendar
+A private web address your calendar app can subscribe to. It lists upcoming store visits with the time, the party size and a first name with one letter of the last name. No phone numbers, e-mails or notes. This address is yours alone. Each member makes their own. Your calendar address is on. Made: Oct 6, 2026, 9:30 AM (30 minutes ago) Not used yet.
+[button type=button: Make a new address]
+[button type=button: Stop this address]
+A new address stops the old one at once.

@@ -53,6 +53,9 @@ vi.mock("@/lib/api/scheduler", async (orig) => (await import("./state")).wrap(aw
 vi.mock("@/lib/api/ai-usage", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/ai-usage")>(), ["getAiUsage"]));
 vi.mock("@/lib/api/quote-policies", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quote-policies")>(), ["fetchQuotePolicyVersions"]));
 vi.mock("@/lib/api/quotes", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quotes")>(), ["fetchQuoteSetup", "fetchEnquiryQuotes", "fetchQuote", "fetchQuoteText", "fetchQuotes"]));
+vi.mock("@/lib/api/data", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/data")>(), ["getCalendarFeed", "getExportFormats", "listImportJobs"]));
+vi.mock("@/lib/api/privacy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/privacy")>(), ["listMyExports", "listMyDeletions", "listWorkspaceDeletions"]));
+vi.mock("@/lib/api/consent-list", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/consent-list")>(), ["readConsentList"]));
 vi.mock("@/lib/api/suppression", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/suppression")>(), ["fetchSuppressionStatus"]));
 
 // The Office decides on the device which view to draw first (scene/capability.ts); the plain-text snapshot is the List, which every device can show.

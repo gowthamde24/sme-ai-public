@@ -32475,5 +32475,862 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "prx.exp.title": {
+  "en": "Download my data",
+  "te": "నా డేటా డౌన్‌లోడ్ చేయండి",
+  "hi": "मेरा डेटा डाउनलोड करें",
+  "kn": "ನನ್ನ ಡೇಟಾ ಡೌನ್‌ಲೋಡ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.intro": {
+  "en": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
+  "te": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
+  "hi": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
+  "kn": "A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.exp.keep": {
+  "en": "The download link works for 5 minutes. The file is removed after 24 hours. You can ask for up to 5 files a day.",
+  "te": "The download link works for 5 minutes. The file is removed after 24 hours. You can ask for up to 5 files a day.",
+  "hi": "The download link works for 5 minutes. The file is removed after 24 hours. You can ask for up to 5 files a day.",
+  "kn": "The download link works for 5 minutes. The file is removed after 24 hours. You can ask for up to 5 files a day.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.exp.ask": {
+  "en": "Prepare my file",
+  "te": "నా ఫైల్ సిద్ధం చేయండి",
+  "hi": "मेरी फ़ाइल तैयार करें",
+  "kn": "ನನ್ನ ಫೈಲ್ ಸಿದ್ಧ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.ask_workspace": {
+  "en": "Prepare the workspace's data",
+  "te": "వర్క్‌స్పేస్ డేటా సిద్ధం చేయండి",
+  "hi": "वर्कस्पेस का डेटा तैयार करें",
+  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಡೇಟಾ ಸಿದ್ಧ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.workspace_note": {
+  "en": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
+  "te": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
+  "hi": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
+  "kn": "The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.exp.making": {
+  "en": "Preparing your file. This page looks again every few seconds.",
+  "te": "మీ ఫైల్ సిద్ధమవుతోంది. ఈ పేజీ కొన్ని సెకన్లకు ఒకసారి మళ్ళీ చూస్తుంది.",
+  "hi": "आपकी फ़ाइल तैयार हो रही है। यह पेज कुछ सेकंड में फिर देखता है।",
+  "kn": "ನಿಮ್ಮ ಫೈಲ್ ಸಿದ್ಧವಾಗುತ್ತಿದೆ. ಈ ಪುಟ ಕೆಲವು ಸೆಕೆಂಡ್‌ಗಳಿಗೊಮ್ಮೆ ಮತ್ತೆ ನೋಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.none": {
+  "en": "You have not asked for a file yet.",
+  "te": "మీరు ఇంకా ఫైల్ అడగలేదు.",
+  "hi": "आपने अभी कोई फ़ाइल नहीं माँगी।",
+  "kn": "ನೀವು ಇನ್ನೂ ಫೈಲ್ ಕೇಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.scope.person": {
+  "en": "My data",
+  "te": "నా డేటా",
+  "hi": "मेरा डेटा",
+  "kn": "ನನ್ನ ಡೇಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.scope.workspace": {
+  "en": "The workspace's data",
+  "te": "వర్క్‌స్పేస్ డేటా",
+  "hi": "वर्कस्पेस का डेटा",
+  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಡೇಟಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.status.queued": {
+  "en": "Waiting",
+  "te": "వేచి ఉంది",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.status.running": {
+  "en": "Preparing",
+  "te": "సిద్ధమవుతోంది",
+  "hi": "तैयार हो रही है",
+  "kn": "ಸಿದ್ಧವಾಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.status.ready": {
+  "en": "Ready",
+  "te": "సిద్ధం",
+  "hi": "तैयार",
+  "kn": "ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.status.expired": {
+  "en": "Expired",
+  "te": "గడువు ముగిసింది",
+  "hi": "समय खत्म",
+  "kn": "ಅವಧಿ ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.failed": {
+  "en": "Could not be made",
+  "te": "తయారు కాలేదు",
+  "hi": "बन नहीं पाई",
+  "kn": "ತಯಾರಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.failed.too_large": {
+  "en": "Too big to make",
+  "te": "తయారు చేయడానికి చాలా పెద్దది",
+  "hi": "बनाने के लिए बहुत बड़ी",
+  "kn": "ತಯಾರಿಸಲು ತುಂಬಾ ದೊಡ್ಡದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.download": {
+  "en": "Download",
+  "te": "డౌన్‌లోడ్",
+  "hi": "डाउनलोड",
+  "kn": "ಡೌನ್‌ಲೋಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.exp.opened": {
+  "en": "The download started. The link worked once, for 5 minutes, and is gone.",
+  "te": "The download started. The link worked once, for 5 minutes, and is gone.",
+  "hi": "The download started. The link worked once, for 5 minutes, and is gone.",
+  "kn": "The download started. The link worked once, for 5 minutes, and is gone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.privacy_state": {
+  "en": "A file is already being made, or this cannot be done right now. Wait for it to finish, then try again.",
+  "te": "A file is already being made, or this cannot be done right now. Wait for it to finish, then try again.",
+  "hi": "A file is already being made, or this cannot be done right now. Wait for it to finish, then try again.",
+  "kn": "A file is already being made, or this cannot be done right now. Wait for it to finish, then try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.privacy_rate_limited": {
+  "en": "You can ask for 5 files a day. Try again tomorrow.",
+  "te": "You can ask for 5 files a day. Try again tomorrow.",
+  "hi": "You can ask for 5 files a day. Try again tomorrow.",
+  "kn": "You can ask for 5 files a day. Try again tomorrow.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.storage_unavailable": {
+  "en": "Files cannot be made on this system right now. Nothing was changed.",
+  "te": "Files cannot be made on this system right now. Nothing was changed.",
+  "hi": "Files cannot be made on this system right now. Nothing was changed.",
+  "kn": "Files cannot be made on this system right now. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.privacy_unavailable": {
+  "en": "This is not available on this system.",
+  "te": "This is not available on this system.",
+  "hi": "This is not available on this system.",
+  "kn": "This is not available on this system.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.sole_owner": {
+  "en": "You are the only owner of a workspace. Hand the workspace over or delete it first.",
+  "te": "You are the only owner of a workspace. Hand the workspace over or delete it first.",
+  "hi": "You are the only owner of a workspace. Hand the workspace over or delete it first.",
+  "kn": "You are the only owner of a workspace. Hand the workspace over or delete it first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.confirmation_mismatch": {
+  "en": "What you typed does not match. Nothing was changed.",
+  "te": "What you typed does not match. Nothing was changed.",
+  "hi": "What you typed does not match. Nothing was changed.",
+  "kn": "What you typed does not match. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.cooling_off": {
+  "en": "The 14 days are not over yet. Nothing was changed.",
+  "te": "The 14 days are not over yet. Nothing was changed.",
+  "hi": "The 14 days are not over yet. Nothing was changed.",
+  "kn": "The 14 days are not over yet. Nothing was changed.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.err.role_not_allowed": {
+  "en": "Only the owner can do this.",
+  "te": "Only the owner can do this.",
+  "hi": "Only the owner can do this.",
+  "kn": "Only the owner can do this.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.account.title": {
+  "en": "Delete my account",
+  "te": "నా అకౌంట్ తొలగించండి",
+  "hi": "मेरा अकाउंट डिलीट करें",
+  "kn": "ನನ್ನ ಅಕೌಂಟ್ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.account.what": {
+  "en": "This deletes your account and your sign-in. What you typed into a business's records stays with that business, and its audit trail keeps only an anonymous id of you.",
+  "te": "This deletes your account and your sign-in. What you typed into a business's records stays with that business, and its audit trail keeps only an anonymous id of you.",
+  "hi": "This deletes your account and your sign-in. What you typed into a business's records stays with that business, and its audit trail keeps only an anonymous id of you.",
+  "kn": "This deletes your account and your sign-in. What you typed into a business's records stays with that business, and its audit trail keeps only an anonymous id of you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.title": {
+  "en": "Delete this workspace",
+  "te": "ఈ వర్క్‌స్పేస్ తొలగించండి",
+  "hi": "यह वर्कस्पेस डिलीट करें",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.workspace.what": {
+  "en": "This erases the personal data of this workspace: customers, contacts and what they wrote. It cannot be undone once it has run. Download the workspace's data first if you need a copy.",
+  "te": "This erases the personal data of this workspace: customers, contacts and what they wrote. It cannot be undone once it has run. Download the workspace's data first if you need a copy.",
+  "hi": "This erases the personal data of this workspace: customers, contacts and what they wrote. It cannot be undone once it has run. Download the workspace's data first if you need a copy.",
+  "kn": "This erases the personal data of this workspace: customers, contacts and what they wrote. It cannot be undone once it has run. Download the workspace's data first if you need a copy.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.days": {
+  "en": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
+  "te": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
+  "hi": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
+  "kn": "Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.account.type": {
+  "en": "Type your e-mail address ({name}) to confirm.",
+  "te": "Type your e-mail address ({name}) to confirm.",
+  "hi": "Type your e-mail address ({name}) to confirm.",
+  "kn": "Type your e-mail address ({name}) to confirm.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.type": {
+  "en": "Type the workspace name ({name}) to confirm.",
+  "te": "Type the workspace name ({name}) to confirm.",
+  "hi": "Type the workspace name ({name}) to confirm.",
+  "kn": "Type the workspace name ({name}) to confirm.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.account.button": {
+  "en": "Delete my account",
+  "te": "నా అకౌంట్ తొలగించండి",
+  "hi": "मेरा अकाउंट डिलीट करें",
+  "kn": "ನನ್ನ ಅಕೌಂಟ್ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.workspace.button": {
+  "en": "Delete this workspace",
+  "te": "ఈ వర్క్‌స్పేస్ తొలగించండి",
+  "hi": "यह वर्कस्पेस डिलीट करें",
+  "kn": "ಈ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.mfa": {
+  "en": "This needs your second step (your authenticator code). If you are asked, open Security first.",
+  "te": "This needs your second step (your authenticator code). If you are asked, open Security first.",
+  "hi": "This needs your second step (your authenticator code). If you are asked, open Security first.",
+  "kn": "This needs your second step (your authenticator code). If you are asked, open Security first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.scheduled": {
+  "en": "Deletion is scheduled",
+  "te": "తొలగింపు షెడ్యూల్ అయింది",
+  "hi": "डिलीट करना तय है",
+  "kn": "ಅಳಿಸುವುದು ನಿಗದಿಯಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.account.on": {
+  "en": "Your account will be deleted on",
+  "te": "Your account will be deleted on",
+  "hi": "Your account will be deleted on",
+  "kn": "Your account will be deleted on",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.on": {
+  "en": "This workspace can be erased from",
+  "te": "This workspace can be erased from",
+  "hi": "This workspace can be erased from",
+  "kn": "This workspace can be erased from",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.cancel": {
+  "en": "Cancel the deletion",
+  "te": "తొలగింపు రద్దు చేయండి",
+  "hi": "डिलीट करना रद्द करें",
+  "kn": "ಅಳಿಸುವುದನ್ನು ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.cancelled": {
+  "en": "Cancelled. Nothing will be deleted.",
+  "te": "Cancelled. Nothing will be deleted.",
+  "hi": "Cancelled. Nothing will be deleted.",
+  "kn": "Cancelled. Nothing will be deleted.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.account.asked": {
+  "en": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
+  "te": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
+  "hi": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
+  "kn": "Scheduled. Your account will be deleted after the 14 days unless you cancel.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.asked": {
+  "en": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
+  "te": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
+  "hi": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
+  "kn": "Scheduled. The workspace can be erased after the 14 days. Nothing is erased until you confirm it then.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.wait": {
+  "en": "The 14 days are not over yet. The workspace can be erased after that day.",
+  "te": "The 14 days are not over yet. The workspace can be erased after that day.",
+  "hi": "The 14 days are not over yet. The workspace can be erased after that day.",
+  "kn": "The 14 days are not over yet. The workspace can be erased after that day.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.ready": {
+  "en": "The 14 days are over. You can erase the workspace now.",
+  "te": "The 14 days are over. You can erase the workspace now.",
+  "hi": "The 14 days are over. You can erase the workspace now.",
+  "kn": "The 14 days are over. You can erase the workspace now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.now": {
+  "en": "Erase the workspace now",
+  "te": "వర్క్‌స్పేస్ ఇప్పుడే చెరిపేయండి",
+  "hi": "वर्कस्पेस अभी मिटाएँ",
+  "kn": "ವರ್ಕ್‌ಸ್ಪೇಸ್ ಈಗಲೇ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.del.workspace.done": {
+  "en": "The personal data of this workspace has been erased.",
+  "te": "The personal data of this workspace has been erased.",
+  "hi": "The personal data of this workspace has been erased.",
+  "kn": "The personal data of this workspace has been erased.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.account.executed": {
+  "en": "This account has been deleted.",
+  "te": "This account has been deleted.",
+  "hi": "This account has been deleted.",
+  "kn": "This account has been deleted.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.executed": {
+  "en": "The personal data of this workspace has been erased.",
+  "te": "The personal data of this workspace has been erased.",
+  "hi": "The personal data of this workspace has been erased.",
+  "kn": "The personal data of this workspace has been erased.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.blocked": {
+  "en": "The deletion could not run. Nothing was deleted.",
+  "te": "The deletion could not run. Nothing was deleted.",
+  "hi": "The deletion could not run. Nothing was deleted.",
+  "kn": "The deletion could not run. Nothing was deleted.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.also": {
+  "en": "After the workspace is erased you can no longer open it.",
+  "te": "After the workspace is erased you can no longer open it.",
+  "hi": "After the workspace is erased you can no longer open it.",
+  "kn": "After the workspace is erased you can no longer open it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.del.workspace.back": {
+  "en": "Back to your workspaces",
+  "te": "మీ వర్క్‌స్పేస్‌లకు తిరిగి",
+  "hi": "अपने वर्कस्पेस पर वापस",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್‌ಗಳಿಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.title": {
+  "en": "Consent and opt-out list",
+  "te": "సమ్మతి, ఆప్ట్-అవుట్ లిస్ట్",
+  "hi": "सहमति और ऑप्ट-आउट लिस्ट",
+  "kn": "ಒಪ್ಪಿಗೆ ಮತ್ತು ಆಪ್ಟ್-ಔಟ್ ಲಿಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.intro": {
+  "en": "Who has asked us not to contact them, and what the rest of your customers have agreed to. This list only shows what is recorded. To change a record, open the person's consent page.",
+  "te": "Who has asked us not to contact them, and what the rest of your customers have agreed to. This list only shows what is recorded. To change a record, open the person's consent page.",
+  "hi": "Who has asked us not to contact them, and what the rest of your customers have agreed to. This list only shows what is recorded. To change a record, open the person's consent page.",
+  "kn": "Who has asked us not to contact them, and what the rest of your customers have agreed to. This list only shows what is recorded. To change a record, open the person's consent page.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.none_contacts": {
+  "en": "There are no customers in your list yet.",
+  "te": "మీ లిస్ట్‌లో ఇంకా కస్టమర్లు లేరు.",
+  "hi": "आपकी लिस्ट में अभी कोई कस्टमर नहीं है।",
+  "kn": "ನಿಮ್ಮ ಲಿಸ್ಟ್‌ನಲ್ಲಿ ಇನ್ನೂ ಕಸ್ಟಮರ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.channel.phone": {
+  "en": "Phone calls",
+  "te": "ఫోన్ కాల్స్",
+  "hi": "फ़ोन कॉल",
+  "kn": "ಫೋನ್ ಕರೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.channel.email": {
+  "en": "E-mail",
+  "te": "ఈమెయిల్",
+  "hi": "ईमेल",
+  "kn": "ಇಮೇಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.counts": {
+  "en": "{granted} agreed, {unknown} not recorded, {withdrawn} withdrawn",
+  "te": "{granted} agreed, {unknown} not recorded, {withdrawn} withdrawn",
+  "hi": "{granted} agreed, {unknown} not recorded, {withdrawn} withdrawn",
+  "kn": "{granted} agreed, {unknown} not recorded, {withdrawn} withdrawn",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.first": {
+  "en": "Looked at the first {n} customers only.",
+  "te": "Looked at the first {n} customers only.",
+  "hi": "Looked at the first {n} customers only.",
+  "kn": "Looked at the first {n} customers only.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.all": {
+  "en": "Looked at all {n} customers.",
+  "te": "Looked at all {n} customers.",
+  "hi": "Looked at all {n} customers.",
+  "kn": "Looked at all {n} customers.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.stopped": {
+  "en": "Asked us to stop",
+  "te": "ఆపమని అడిగినవారు",
+  "hi": "जिन्होंने रोकने को कहा",
+  "kn": "ನಿಲ್ಲಿಸಲು ಕೇಳಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.stopped_none": {
+  "en": "Nobody has asked us to stop.",
+  "te": "ఎవరూ ఆపమని అడగలేదు.",
+  "hi": "किसी ने रोकने को नहीं कहा।",
+  "kn": "ಯಾರೂ ನಿಲ್ಲಿಸಲು ಕೇಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.col.list": {
+  "en": "Do-not-contact list",
+  "te": "Do-not-contact list",
+  "hi": "Do-not-contact list",
+  "kn": "Do-not-contact list",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.col.channels": {
+  "en": "Withdrawn consent",
+  "te": "Withdrawn consent",
+  "hi": "Withdrawn consent",
+  "kn": "Withdrawn consent",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.col.open": {
+  "en": "Open",
+  "te": "తెరవండి",
+  "hi": "खोलें",
+  "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.consent.reason.opted_out": {
+  "en": "Opted out",
+  "te": "Opted out",
+  "hi": "Opted out",
+  "kn": "Opted out",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.reason.bounced": {
+  "en": "Address bounced",
+  "te": "Address bounced",
+  "hi": "Address bounced",
+  "kn": "Address bounced",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.reason.complained": {
+  "en": "Complained",
+  "te": "Complained",
+  "hi": "Complained",
+  "kn": "Complained",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.reason.legal": {
+  "en": "Legal reason",
+  "te": "Legal reason",
+  "hi": "Legal reason",
+  "kn": "Legal reason",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.reason.manual": {
+  "en": "Added by a person",
+  "te": "Added by a person",
+  "hi": "Added by a person",
+  "kn": "Added by a person",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.not_on_list": {
+  "en": "Not on the list",
+  "te": "Not on the list",
+  "hi": "Not on the list",
+  "kn": "Not on the list",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.withdrawn_on": {
+  "en": "{channel} withdrawn",
+  "te": "{channel} withdrawn",
+  "hi": "{channel} withdrawn",
+  "kn": "{channel} withdrawn",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "prx.consent.open": {
+  "en": "Open consent record",
+  "te": "సమ్మతి రికార్డ్ తెరవండి",
+  "hi": "सहमति रिकॉर्ड खोलें",
+  "kn": "ಒಪ್ಪಿಗೆ ದಾಖಲೆ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "prx.more.title": {
+  "en": "More privacy tools",
+  "te": "ఇంకా ప్రైవసీ టూల్స్",
+  "hi": "और प्राइवेसी टूल",
+  "kn": "ಇನ್ನಷ್ಟು ಪ್ರೈವಸಿ ಟೂಲ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

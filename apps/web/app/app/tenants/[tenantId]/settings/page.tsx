@@ -24,11 +24,15 @@ import { getPlan, type Plan } from "@/lib/api/plan";
 import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
 import { DataSection } from "@/components/v2/app/data/DataSection";
+import { PrivacySection } from "@/components/v2/app/privacy/PrivacySection";
+import { readConsentList } from "@/lib/api/consent-list";
+import { listMyDeletions, listMyExports, listWorkspaceDeletions } from "@/lib/api/privacy";
 import { getCalendarFeed, getExportFormats, listImportJobs, type CalendarFeed, type ExportFormat, type ImportJob } from "@/lib/api/data";
 import { settle, type Part } from "@/lib/api/part";
 
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 import { makeCalendarFeedAction, revokeCalendarFeedAction } from "./data-actions";
+import { cancelAccountDeletionAction, cancelWorkspaceDeletionAction, executeWorkspaceDeletionAction, exportLinkAction, getExportAction, requestAccountDeletionAction, requestExportAction, requestWorkspaceDeletionAction } from "./privacy-actions";
 import { agentWords } from "./agent-words";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 
@@ -112,6 +116,22 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
     try {
       const [formats, jobs, feed] = await Promise.all([admin ? settle(() => getExportFormats(user.accessToken, tenantId)) : null, admin ? settle(() => listImportJobs(user.accessToken, tenantId)) : null, settle(() => getCalendarFeed(user.accessToken, tenantId))]);
       dataParts = { formats, jobs, feed };
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      throw error;
+    }
+  }
+  // Privacy (job CC): my exports and deletions, the workspace's deletion (the Owner's) and the consent list, each read on its own.
+  let privacy: { exports: Part<Awaited<ReturnType<typeof listMyExports>>>; mine: Part<Awaited<ReturnType<typeof listMyDeletions>>>; space: Part<Awaited<ReturnType<typeof listWorkspaceDeletions>>> | null; consent: Part<Awaited<ReturnType<typeof readConsentList>>> | null } | null = null;
+  if (section === "privacy") {
+    try {
+      const [exports, mine, space, consent] = await Promise.all([
+        settle(() => listMyExports(user.accessToken)),
+        settle(() => listMyDeletions(user.accessToken)),
+        tenant.role === "owner" ? settle(() => listWorkspaceDeletions(user.accessToken, tenantId)) : null,
+        tenant.role === "viewer" ? null : settle(() => readConsentList(user.accessToken, tenantId)),
+      ]);
+      privacy = { exports, mine, space, consent };
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       throw error;
@@ -225,26 +245,29 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             </Link>
           </section>
         ) : null}
-        {section === "privacy" ? (
-          <section className={surface} aria-label={t("settings.tab.privacy")}>
-            <ul className={listPlain}>
-              {admin ? (
-                <li>
-                  <Link href={`${base}/privacy`} className={link}>
-                    {t("settings.privacy.erasure")}
-                  </Link>
-                </li>
-              ) : null}
-              {tenant.role === "owner" ? (
-                <li>
-                  <Link href={`${base}/suppression`} className={link}>
-                    {t("settings.privacy.suppression")}
-                  </Link>
-                </li>
-              ) : null}
-            </ul>
-            {tenant.role === "owner" ? null : <p className={mutedText}>{t("settings.privacy.note")}</p>}
-          </section>
+        {section === "privacy" && privacy ? (
+          <PrivacySection
+            tenantId={tenantId}
+            words={wordsFor(lang, ["prx.", "apierr.", "problem."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
+            role={tenant.role}
+            email={user.email ?? ""}
+            workspaceName={tenant.name}
+            exports={privacy.exports}
+            myDeletions={privacy.mine}
+            workspaceDeletions={privacy.space}
+            consent={privacy.consent}
+            now={clock()}
+            actions={{
+              requestExport: requestExportAction.bind(null, tenantId),
+              getExport: getExportAction.bind(null, tenantId),
+              openLink: exportLinkAction.bind(null, tenantId),
+              requestAccountDeletion: requestAccountDeletionAction.bind(null, tenantId),
+              cancelAccountDeletion: cancelAccountDeletionAction.bind(null, tenantId),
+              requestWorkspaceDeletion: requestWorkspaceDeletionAction.bind(null, tenantId),
+              cancelWorkspaceDeletion: cancelWorkspaceDeletionAction.bind(null, tenantId),
+              executeWorkspaceDeletion: executeWorkspaceDeletionAction.bind(null, tenantId),
+            }}
+          />
         ) : null}
       </div>
     </main>

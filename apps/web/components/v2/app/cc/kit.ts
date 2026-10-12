@@ -45,3 +45,14 @@ export function sentenceOf(f: Failed, t: Say, own?: (code: string) => string | n
   if (f.kind === "rate_limited" && f.retryAfter !== undefined && f.retryAfter <= 300) return t("apierr.rate.n", { n: f.retryAfter });
   return f.error || t(FAILURE_KEY[f.kind]);
 }
+
+const PILL = {
+  neutral: "border-line bg-surface-2 text-muted",
+  green: "border-green-text bg-green-bg text-green-text",
+  amber: "border-amber-text bg-amber-bg text-amber-text",
+  red: "border-red-text bg-red-bg text-red-text",
+  brand: "border-brand-edge bg-brand-bg text-brand-text",
+  info: "border-info-text bg-info-bg text-info-text",
+} as const;
+/** The class of a small status pill (14 px text, a border and a tint: the status is in the word too, never in the colour alone). */
+export const pillClass = (tone: keyof typeof PILL): string => `inline-flex items-center rounded-full border px-2.5 py-0.5 text-sm font-semibold ${PILL[tone]}`;

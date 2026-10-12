@@ -1,6 +1,42 @@
 # Settings
 [button type=button: Help for this screen]
 {label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy current=page)
-{label="Privacy"}
+{label="Download my data"}
+## Download my data
+A zip file of the information this system holds about you: your account and what you did here. It is made in the background; when it is ready you can download it. The download link works for 5 minutes. The file is removed after 24 hours. You can ask for up to 5 files a day.
+[button type=button: Prepare my file]
+[button type=button: Prepare the workspace's data]
+The workspace's data is everything this business keeps here. Only the owner can ask for it, and it needs your second step (your authenticator code).
+- My data Oct 6, 2026, 8:30 AM (1 hour ago) · 12 KB Ready
+[button type=button: Download]
+{label="Delete my account"}
+## Delete my account
+This deletes your account and your sign-in. What you typed into a business's records stays with that business, and its audit trail keeps only an anonymous id of you. Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day. Type your e-mail address (owner@example.test) to confirm.
+<text label="Type your e-mail address (owner@example.test) to confirm." autocomplete=off>
+This needs your second step (your authenticator code). If you are asked, open Security first.
+[button type=button disabled: Delete my account]
+{label="Delete this workspace"}
+## Delete this workspace
+This erases the personal data of this workspace: customers, contacts and what they wrote. It cannot be undone once it has run. Download the workspace's data first if you need a copy. Nothing happens at once. There are 14 days to change your mind, and you can cancel until the day.
+### Deletion is scheduled
+This workspace can be erased from Oct 20, 2026, 8:30 AM (in 14 days)
+[button type=button: Cancel the deletion]
+The 14 days are not over yet. The workspace can be erased after that day. After the workspace is erased you can no longer open it. [Back to your workspaces](/app)
+{label="Consent and opt-out list"}
+## Consent and opt-out list
+Who has asked us not to contact them, and what the rest of your customers have agreed to. This list only shows what is recorded. To change a record, open the person's consent page.
+WhatsApp
+1 agreed, 1 not recorded, 1 withdrawn
+Phone calls
+0 agreed, 3 not recorded, 0 withdrawn
+E-mail
+1 agreed, 2 not recorded, 0 withdrawn
+Looked at all 3 customers.
+### Asked us to stop
+table:
+  | th Name | th Do-not-contact list | th Withdrawn consent | th Open |
+  | Asha Rao | Opted out | WhatsApp withdrawn | [Open consent record](/app/tenants/22222222-2222-2222-2222-222222222222/contacts/11111111-aaaa-4aaa-8aaa-0000000000c1/consent label="Open consent record Asha Rao") |
+{label="More privacy tools"}
+## More privacy tools
 - [Privacy and erasure](/app/tenants/22222222-2222-2222-2222-222222222222/privacy)
 - [Suppression keys](/app/tenants/22222222-2222-2222-2222-222222222222/suppression)

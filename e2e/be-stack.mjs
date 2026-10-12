@@ -1361,7 +1361,7 @@ await step("W1", "robustness: friendly 404 and 403 pages, a skeleton while a scr
 
 // ---- 8c. job CC: the screens for the new APIs (e2e/cc-steps.mjs) -----------------------------------------------------------------------------------------------------
 await ccSteps({
-  step, page, context, browser, must, text, BASE, API, SHOTS, SLOW, api, aal2Token, uuid, psql, problems, measure, axeOf,
+  step, page, context, browser, must, text, BASE, API, SHOTS, SLOW, api, aal2Token, uuid, psql, problems, measure, axeOf, email: EMAIL,
   get tenant() {
     return tenant;
   },
