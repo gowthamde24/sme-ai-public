@@ -867,6 +867,7 @@ await step("Q2", "Help on a phone (360 px) and in the dark: the index, a guide, 
   await page.emulateMedia({ colorScheme: "light" });
   must(seen.length === 0, seen.slice(0, 4).join(" | "));
   return axe ? "12 page views checked with axe" : "axe-core not installed: that check was skipped";
+}, page);
 
 // ---- 8a. install on a phone and work offline (job BL) -------------------------------------------------------------------------------
 await step("P1", "installable: the manifest is served, the browser finds no installability error, the offline worker takes control, and with no network the offline page speaks the person's language (no page is stored)", async () => {
