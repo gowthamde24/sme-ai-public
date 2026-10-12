@@ -9,8 +9,18 @@ export interface HealthResponse {
 /** Mirrors tenancy.schema.json (T002). The JSON schema is the source of truth. */
 export type Role = "owner" | "admin" | "sales" | "viewer";
 
+/** Every error the API sends (job CD): one shape for 401/403/404/409/422/429/5xx, from every router and the middleware. `retry_after` is whole seconds (also the Retry-After header) and null when waiting does not help;
+ * `request_id` is the response's x-request-id; `fields` (422) are field NAMES only. The new fields are optional here so older mocks still type-check; the API always sends them. */
 export interface ApiError {
-  error: { code: string; message: string };
+  error: {
+    code: string;
+    message: string;
+    retry_after?: number | null;
+    request_id?: string | null;
+    fields?: string[];
+    reason?: string;
+    until?: string;
+  };
 }
 
 export interface Tenant {

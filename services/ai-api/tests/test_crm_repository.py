@@ -472,7 +472,8 @@ def test_no_error_response_or_log_line_ever_contains_the_row(
     assert "canary" not in blob.lower() and "zq91" not in blob.lower()
     for response in responses:
         body = response.json()
-        assert set(body) == {"error"} and set(body["error"]) <= {"code", "message"}
+        fixed = {"code", "message", "retry_after", "request_id"}
+        assert set(body) == {"error"} and set(body["error"]) <= fixed
 
 
 def test_an_unreachable_data_layer_logs_the_class_only(caplog: pytest.LogCaptureFixture) -> None:

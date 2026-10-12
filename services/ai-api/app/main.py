@@ -35,7 +35,7 @@ from app.enquiries.routes import router as enquiries_router
 from app.erasure import repository as erasure_repo
 from app.erasure.repository import PostgrestErasureRepository
 from app.erasure.routes import router as erasure_router
-from app.errors import ApiError, install_error_handlers, mfa_required
+from app.errors import ApiError, error_body, install_error_handlers, mfa_required, request_id_of
 from app.evidence.repository import PostgrestEvidenceRepository
 from app.evidence.routes import router as evidence_router
 from app.followups import errors as followup_errors
@@ -575,7 +575,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     install_error_handlers(app)
 
     @app.exception_handler(repo.RepositoryError)
-    async def _repository_error(_: Request, exc: repo.RepositoryError) -> JSONResponse:
+    async def _repository_error(request: Request, exc: repo.RepositoryError) -> JSONResponse:
         mapped = _REPOSITORY_ERRORS.get(type(exc))
         reason: str | None = None
         if isinstance(
@@ -599,11 +599,15 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             )
         if mapped is None:
             mapped = ApiError(502, "upstream_error", "The data layer failed.")
-        body: dict[str, str] = {"code": mapped.code, "message": mapped.message}
-        if reason is not None:
-            body["reason"] = reason
+        extra = {**mapped.extra, **({"reason": reason} if reason is not None else {})}
         return JSONResponse(
-            {"error": body},
+            error_body(
+                mapped.code,
+                mapped.message,
+                retry_after=mapped.retry_after,
+                request_id=request_id_of(request.scope),
+                extra=extra,
+            ),
             status_code=mapped.status_code,
             headers=mapped.headers,
         )

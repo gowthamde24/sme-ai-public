@@ -47,6 +47,7 @@ from app.visits.repository import VisitsRepository
 from tests.keys import AUDIENCE, ISSUER, claims, make_ec_key, mint
 
 KEY = make_ec_key()
+TEST_REQUEST_ID = "test-request-0001"
 
 TENANT_A = TenantOut(id=uuid.UUID(int=0xA), name="Tenant A", slug="tenant-a")
 TENANT_B = TenantOut(id=uuid.UUID(int=0xB), name="Tenant B", slug="tenant-b")
@@ -271,7 +272,9 @@ def make_client(
             business_profile=business_profile,
         ),
     )
-    return TestClient(app), repo
+    # a FIXED request id on every request: the error body carries it, and the tests that prove two
+    # refusals are byte-identical (foreign tenant, unknown tenant) must not differ in it
+    return TestClient(app, headers={"x-request-id": TEST_REQUEST_ID}), repo
 
 
 def auth(user: str | uuid.UUID, **overrides: Any) -> dict[str, str]:

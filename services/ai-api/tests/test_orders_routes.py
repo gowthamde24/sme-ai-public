@@ -463,7 +463,7 @@ def test_every_refusal_has_a_fixed_message_and_no_data_layer_text(
         else w.event(EVENT_BODY)
     )
     assert r.status_code == status and code(r) == name
-    assert CANARY not in r.text and set(r.json()["error"]) == {"code", "message"}
+    assert CANARY not in r.text and set(r.json()["error"]) == {"code", "message", "retry_after", "request_id"}
 
 
 @pytest.mark.parametrize("reason", REASONS)
@@ -477,7 +477,7 @@ def test_sm232_is_reported_with_one_closed_reason_and_a_fixed_sentence(
         r.status_code == 409
         and error["code"] == "order_event_refused"
         and error["reason"] == reason
-        and set(error) == {"code", "message", "reason"}
+        and set(error) == {"code", "message", "reason", "retry_after", "request_id"}
     )
     assert error["message"] != reason and error["message"].endswith(".") and CANARY not in r.text
     assert error["message"] == ORDER_REASON_TEXT[reason]

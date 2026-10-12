@@ -76,7 +76,12 @@ def test_sales_and_viewer_can_do_nothing(w: World, user: str) -> None:
         r = client(w).request(method, w.url(path), json=body, headers=auth(user))
         assert r.status_code == 403, (user, method, path)
         assert r.json() == {
-            "error": {"code": "forbidden", "message": "Your role does not allow this action."}
+            "error": {
+                "code": "forbidden",
+                "message": "Your role does not allow this action.",
+                "retry_after": None,
+                "request_id": "test-request-0001",
+            }
         }
     assert w.repo.calls == [], "the database was never asked"
 

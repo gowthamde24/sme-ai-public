@@ -90,6 +90,7 @@ class ObserveMiddleware:
             return
         supplied = next((v.decode("latin-1") for k, v in scope["headers"] if k == b"x-request-id"), "")
         request_id = supplied if _REQUEST_ID.fullmatch(supplied) else uuid.uuid4().hex
+        scope.setdefault("state", {})["request_id"] = request_id  # app/errors.py puts it in every error body
         started = time.perf_counter()
         status = 500
 

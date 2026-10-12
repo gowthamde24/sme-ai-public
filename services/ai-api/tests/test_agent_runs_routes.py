@@ -108,7 +108,14 @@ def test_every_endpoint_needs_a_token_and_hides_a_foreign_tenant(
     assert anon.status_code == 401
     foreign = w.client.request(method, w.url(path), json={}, headers=auth("b_owner"))
     assert foreign.status_code == 404
-    assert foreign.json() == {"error": {"code": "not_found", "message": "Not found."}}
+    assert foreign.json() == {
+        "error": {
+            "code": "not_found",
+            "message": "Not found.",
+            "retry_after": None,
+            "request_id": "test-request-0001",
+        }
+    }
 
 
 def test_the_role_matrix_for_starting_a_run(w: World) -> None:

@@ -1,0 +1,20 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "102290129340398",
+      "changes": [
+        {
+          "value": {
+            "event": "APPROVED",
+            "message_template_id": 1689556908129832,
+            "message_template_name": "visit_reminder",
+            "message_template_language": "en",
+            "reason": "NONE"
+          },
+          "field": "message_template_status_update"
+        }
+      ]
+    }
+  ]
+}

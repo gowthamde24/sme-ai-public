@@ -16,6 +16,7 @@ from collections.abc import Awaitable, Callable, MutableMapping
 from dataclasses import dataclass
 from typing import Any
 
+from app.errors import error_body, request_id_of
 from app.hardening.clientip import client_ip, short_hash
 from app.integrations.ratelimit import SlidingWindow
 
@@ -114,7 +115,7 @@ class RateLimitMiddleware:
             rule, wait = refused
             if self.on_limited is not None:
                 self.on_limited(rule)
-            body = json.dumps({"error": {"code": "rate_limited", "message": f"Too many requests. Try again in {wait} seconds."}}).encode()
+            body = json.dumps(error_body("rate_limited", f"Too many requests. Try again in {wait} seconds.", retry_after=wait, request_id=request_id_of(scope))).encode()
             await send({"type": "http.response.start", "status": 429, "headers": [(b"content-type", b"application/json"), (b"content-length", str(len(body)).encode()), (b"retry-after", str(wait).encode())]})
             await send({"type": "http.response.body", "body": body})
             return

@@ -268,6 +268,8 @@ def test_a_forged_owner_override_in_the_body_is_refused_and_the_derived_override
         "code": "order_event_refused",
         "message": "The advance has not been paid.",
         "reason": "ADVANCE_NOT_PAID",
+        "retry_after": None,
+        "request_id": "integration-test-0001",
     }
     assert err(event(client, ow, order, "owner", "dispatch", weak=True)) == "mfa_required"
     done = event(client, ow, order, "owner", "dispatch")
