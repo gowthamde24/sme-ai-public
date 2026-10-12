@@ -586,10 +586,10 @@
   }
  },
  "integrations.sub": {
-  "en": "Only the price list import exists today. The rest are not built yet.",
-  "te": "ఈరోజు ప్రైస్ లిస్ట్ దిగుమతి మాత్రమే ఉంది. మిగతావి ఇంకా తయారవలేదు.",
-  "hi": "आज सिर्फ़ प्राइस लिस्ट इंपोर्ट है। बाकी अभी बने नहीं हैं।",
-  "kn": "ಇಂದು ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಆಮದು ಮಾತ್ರ ಇದೆ. ಉಳಿದವು ಇನ್ನೂ ಮಾಡಿಲ್ಲ.",
+  "en": "Bring in a price list or a spreadsheet, connect WhatsApp, send your books to your accountant and see visits in your calendar. E-mail and UPI payments are not built yet.",
+  "te": "ప్రైస్ లిస్ట్ లేదా స్ప్రెడ్‌షీట్ తెచ్చుకోండి, WhatsApp కనెక్ట్ చేయండి, అకౌంటెంట్‌కి లెక్కలు పంపండి, విజిట్లను క్యాలెండర్‌లో చూడండి. ఈమెయిల్, UPI పేమెంట్లు ఇంకా తయారవలేదు.",
+  "hi": "प्राइस लिस्ट या स्प्रेडशीट लाएँ, WhatsApp कनेक्ट करें, अकाउंटेंट को हिसाब भेजें और विज़िट कैलेंडर में देखें। ईमेल और UPI पेमेंट अभी बने नहीं हैं।",
+  "kn": "ಪ್ರೈಸ್ ಲಿಸ್ಟ್ ಅಥವಾ ಸ್ಪ್ರೆಡ್‌ಶೀಟ್ ತನ್ನಿ, WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ, ಅಕೌಂಟೆಂಟ್‌ಗೆ ಲೆಕ್ಕ ಕಳುಹಿಸಿ, ವಿಸಿಟ್‌ಗಳನ್ನು ಕ್ಯಾಲೆಂಡರ್‌ನಲ್ಲಿ ನೋಡಿ. ಇಮೇಲ್, UPI ಪೇಮೆಂಟ್ ಇನ್ನೂ ಆಗಿಲ್ಲ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -663,10 +663,10 @@
   }
  },
  "integrations.calendar.body": {
-  "en": "Would add follow-up reminders to your calendar.",
-  "te": "ఫాలో-అప్ రిమైండర్లను మీ క్యాలెండర్‌కు చేర్చుతుంది.",
-  "hi": "फ़ॉलो-अप रिमाइंडर आपके कैलेंडर में जोड़ेगा।",
-  "kn": "ಫಾಲೋ-ಅಪ್ ರಿಮೈಂಡರ್‌ಗಳನ್ನು ನಿಮ್ಮ ಕ್ಯಾಲೆಂಡರ್‌ಗೆ ಸೇರಿಸುತ್ತದೆ.",
+  "en": "See your store visits in your phone's calendar.",
+  "te": "మీ స్టోర్ విజిట్లను మీ ఫోన్ క్యాలెండర్‌లో చూడండి.",
+  "hi": "अपनी स्टोर विज़िट फ़ोन के कैलेंडर में देखें।",
+  "kn": "ನಿಮ್ಮ ಸ್ಟೋರ್ ವಿಸಿಟ್‌ಗಳನ್ನು ಫೋನ್ ಕ್ಯಾಲೆಂಡರ್‌ನಲ್ಲಿ ನೋಡಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -685,10 +685,10 @@
   }
  },
  "integrations.accounting.body": {
-  "en": "Would pass orders to your accounting software.",
-  "te": "ఆర్డర్లను మీ అకౌంటింగ్ సాఫ్ట్‌వేర్‌కు పంపుతుంది.",
-  "hi": "ऑर्डर आपके अकाउंटिंग सॉफ़्टवेयर तक पहुँचाएगा।",
-  "kn": "ಆರ್ಡರ್‌ಗಳನ್ನು ನಿಮ್ಮ ಅಕೌಂಟಿಂಗ್ ಸಾಫ್ಟ್‌ವೇರ್‌ಗೆ ಕಳುಹಿಸುತ್ತದೆ.",
+  "en": "Send your sales and payments to Tally, Vyapar or Excel for your accountant.",
+  "te": "మీ సేల్స్, పేమెంట్లను అకౌంటెంట్ కోసం Tally, Vyapar లేదా Excel కి పంపండి.",
+  "hi": "अपने अकाउंटेंट के लिए सेल्स और पेमेंट Tally, Vyapar या Excel में भेजें।",
+  "kn": "ನಿಮ್ಮ ಅಕೌಂಟೆಂಟ್‌ಗಾಗಿ ಸೇಲ್ಸ್, ಪೇಮೆಂಟ್‌ಗಳನ್ನು Tally, Vyapar ಅಥವಾ Excel ಗೆ ಕಳುಹಿಸಿ.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -851,10 +851,10 @@
   "humanOnly": true
  },
  "integrations.whatsapp.body": {
-  "en": "Would let the app send messages. Today you send them yourself.",
-  "te": "Would let the app send messages. Today you send them yourself.",
-  "hi": "Would let the app send messages. Today you send them yourself.",
-  "kn": "Would let the app send messages. Today you send them yourself.",
+  "en": "Connect the business's WhatsApp number. Messages you approve go out from it, and customers' replies come in as chats.",
+  "te": "Connect the business's WhatsApp number. Messages you approve go out from it, and customers' replies come in as chats.",
+  "hi": "Connect the business's WhatsApp number. Messages you approve go out from it, and customers' replies come in as chats.",
+  "kn": "Connect the business's WhatsApp number. Messages you approve go out from it, and customers' replies come in as chats.",
   "status": {
    "te": "draft",
    "hi": "draft",
@@ -34722,6 +34722,1320 @@
   "te": "తెరవండి",
   "hi": "खोलें",
   "kn": "ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.chats": {
+  "en": "Customer chats",
+  "te": "కస్టమర్ చాట్‌లు",
+  "hi": "कस्टमर चैट",
+  "kn": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.title": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp कनेक्ट करें",
+  "kn": "WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.sub": {
+  "en": "Link the business's WhatsApp number, so messages to customers can go out and their replies come in. Nothing is sent until you approve it.",
+  "te": "వ్యాపారం WhatsApp నంబర్‌ని లింక్ చేయండి, అప్పుడు కస్టమర్లకు మెసేజ్‌లు వెళ్తాయి, వారి జవాబులు వస్తాయి. మీరు ఓకే చేసే వరకు ఏదీ పంపం.",
+  "hi": "व्यापार का WhatsApp नंबर जोड़ें, ताकि कस्टमर को मैसेज जा सकें और उनके जवाब आ सकें। आपके ओके किए बिना कुछ नहीं भेजा जाता।",
+  "kn": "ವ್ಯಾಪಾರದ WhatsApp ನಂಬರ್ ಲಿಂಕ್ ಮಾಡಿ, ಆಗ ಕಸ್ಟಮರ್‌ಗಳಿಗೆ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ, ಅವರ ಉತ್ತರ ಬರುತ್ತದೆ. ನೀವು ಓಕೆ ಮಾಡುವವರೆಗೆ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.title": {
+  "en": "Your WhatsApp number",
+  "te": "మీ WhatsApp నంబర్",
+  "hi": "आपका WhatsApp नंबर",
+  "kn": "ನಿಮ್ಮ WhatsApp ನಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.not_connected": {
+  "en": "Not connected",
+  "te": "కనెక్ట్ కాలేదు",
+  "hi": "कनेक्ट नहीं है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.connecting": {
+  "en": "Connecting",
+  "te": "కనెక్ట్ అవుతోంది",
+  "hi": "कनेक्ट हो रहा है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.connected": {
+  "en": "Connected",
+  "te": "కనెక్ట్ అయింది",
+  "hi": "कनेक्ट है",
+  "kn": "ಕನೆಕ್ಟ್ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.needs_attention": {
+  "en": "Needs attention",
+  "te": "చూడాలి",
+  "hi": "ध्यान चाहिए",
+  "kn": "ಗಮನ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.not_connected.body": {
+  "en": "No WhatsApp number is connected yet, so messages to customers cannot go out from here.",
+  "te": "ఇంకా WhatsApp నంబర్ కనెక్ట్ కాలేదు, కాబట్టి ఇక్కడినుంచి కస్టమర్లకు మెసేజ్‌లు వెళ్ళవు.",
+  "hi": "अभी कोई WhatsApp नंबर कनेक्ट नहीं है, इसलिए यहाँ से कस्टमर को मैसेज नहीं जा सकते।",
+  "kn": "ಇನ್ನೂ WhatsApp ನಂಬರ್ ಕನೆಕ್ಟ್ ಆಗಿಲ್ಲ, ಹಾಗಾಗಿ ಇಲ್ಲಿಂದ ಕಸ್ಟಮರ್‌ಗಳಿಗೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.connecting.body": {
+  "en": "The details are saved. Switch the number on when it is ready.",
+  "te": "వివరాలు సేవ్ అయ్యాయి. నంబర్ సిద్ధమైనప్పుడు ఆన్ చేయండి.",
+  "hi": "जानकारी सेव हो गई है। नंबर तैयार होने पर उसे चालू करें।",
+  "kn": "ವಿವರಗಳು ಸೇವ್ ಆಗಿವೆ. ನಂಬರ್ ಸಿದ್ಧವಾದಾಗ ಆನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.connected.body": {
+  "en": "Your number {phone} is connected. Messages you approve go out from it.",
+  "te": "మీ నంబర్ {phone} కనెక్ట్ అయింది. మీరు ఓకే చేసిన మెసేజ్‌లు దీని నుంచి వెళ్తాయి.",
+  "hi": "आपका नंबर {phone} कनेक्ट है। आपके ओके किए मैसेज इसी से जाते हैं।",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್ {phone} ಕನೆಕ್ಟ್ ಆಗಿದೆ. ನೀವು ಓಕೆ ಮಾಡಿದ ಮೆಸೇಜ್‌ಗಳು ಇದರಿಂದ ಹೋಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.needs_attention.disabled": {
+  "en": "This number was switched off, so nothing goes out. Switch it on again when you want messages to go.",
+  "te": "ఈ నంబర్ ఆఫ్ చేశారు, కాబట్టి ఏదీ వెళ్ళదు. మెసేజ్‌లు వెళ్ళాలంటే మళ్ళీ ఆన్ చేయండి.",
+  "hi": "यह नंबर बंद किया गया है, इसलिए कुछ नहीं जाता। मैसेज भेजने हों तो फिर चालू करें।",
+  "kn": "ಈ ನಂಬರ್ ಆಫ್ ಮಾಡಲಾಗಿದೆ, ಹಾಗಾಗಿ ಏನೂ ಹೋಗುವುದಿಲ್ಲ. ಮೆಸೇಜ್ ಹೋಗಬೇಕಾದರೆ ಮತ್ತೆ ಆನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.state.needs_attention.token_missing": {
+  "en": "The system does not have the access key named {ref}. The person who runs the system must add it. Until then nothing can be sent.",
+  "te": "The system does not have the access key named {ref}. The person who runs the system must add it. Until then nothing can be sent.",
+  "hi": "The system does not have the access key named {ref}. The person who runs the system must add it. Until then nothing can be sent.",
+  "kn": "The system does not have the access key named {ref}. The person who runs the system must add it. Until then nothing can be sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.state.updated": {
+  "en": "Last changed:",
+  "te": "చివరిగా మార్చింది:",
+  "hi": "आखिरी बदलाव:",
+  "kn": "ಕೊನೆಯ ಬದಲಾವಣೆ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.fake_note": {
+  "en": "On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.",
+  "te": "On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.",
+  "hi": "On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.",
+  "kn": "On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.btn.on": {
+  "en": "Switch on",
+  "te": "ఆన్ చేయండి",
+  "hi": "चालू करें",
+  "kn": "ಆನ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.btn.off": {
+  "en": "Switch off",
+  "te": "ఆఫ్ చేయండి",
+  "hi": "बंद करें",
+  "kn": "ಆಫ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.btn.save": {
+  "en": "Save details",
+  "te": "వివరాలు సేవ్ చేయండి",
+  "hi": "जानकारी सेव करें",
+  "kn": "ವಿವರಗಳನ್ನು ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.on": {
+  "en": "The number is switched on.",
+  "te": "నంబర్ ఆన్ అయింది.",
+  "hi": "नंबर चालू हो गया।",
+  "kn": "ನಂಬರ್ ಆನ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.off": {
+  "en": "The number is switched off.",
+  "te": "నంబర్ ఆఫ్ అయింది.",
+  "hi": "नंबर बंद हो गया।",
+  "kn": "ನಂಬರ್ ಆಫ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.title": {
+  "en": "The number's details",
+  "te": "నంబర్ వివరాలు",
+  "hi": "नंबर की जानकारी",
+  "kn": "ನಂಬರ್ ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.steps.1": {
+  "en": "Get your WhatsApp Business account ID and phone number ID from your Meta business account.",
+  "te": "Get your WhatsApp Business account ID and phone number ID from your Meta business account.",
+  "hi": "Get your WhatsApp Business account ID and phone number ID from your Meta business account.",
+  "kn": "Get your WhatsApp Business account ID and phone number ID from your Meta business account.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.steps.2": {
+  "en": "Type them below with the name of the access key, and save.",
+  "te": "Type them below with the name of the access key, and save.",
+  "hi": "Type them below with the name of the access key, and save.",
+  "kn": "Type them below with the name of the access key, and save.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.steps.3": {
+  "en": "The person who runs the system adds the access key under that name.",
+  "te": "The person who runs the system adds the access key under that name.",
+  "hi": "The person who runs the system adds the access key under that name.",
+  "kn": "The person who runs the system adds the access key under that name.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.steps.4": {
+  "en": "Switch the number on.",
+  "te": "Switch the number on.",
+  "hi": "Switch the number on.",
+  "kn": "Switch the number on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.form.waba": {
+  "en": "WhatsApp Business account ID",
+  "te": "WhatsApp Business అకౌంట్ ID",
+  "hi": "WhatsApp Business अकाउंट ID",
+  "kn": "WhatsApp Business ಅಕೌಂಟ್ ID",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.phone_id": {
+  "en": "Phone number ID",
+  "te": "ఫోన్ నంబర్ ID",
+  "hi": "फ़ोन नंबर ID",
+  "kn": "ಫೋನ್ ನಂಬರ್ ID",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.shown": {
+  "en": "Number customers see (optional)",
+  "te": "కస్టమర్లకు కనిపించే నంబర్ (ఐచ్ఛికం)",
+  "hi": "कस्टमर को दिखने वाला नंबर (ज़रूरी नहीं)",
+  "kn": "ಕಸ್ಟಮರ್‌ಗಳಿಗೆ ಕಾಣುವ ನಂಬರ್ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.key_name": {
+  "en": "Name of the access key",
+  "te": "యాక్సెస్ కీ పేరు",
+  "hi": "एक्सेस की का नाम",
+  "kn": "ಆಕ್ಸೆಸ್ ಕೀ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.key_help": {
+  "en": "Type the name only. The key itself is added to the system by the person who runs it; it is never typed or shown here.",
+  "te": "Type the name only. The key itself is added to the system by the person who runs it; it is never typed or shown here.",
+  "hi": "Type the name only. The key itself is added to the system by the person who runs it; it is never typed or shown here.",
+  "kn": "Type the name only. The key itself is added to the system by the person who runs it; it is never typed or shown here.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.form.coexistence": {
+  "en": "The same number is also used in the WhatsApp Business app",
+  "te": "అదే నంబర్ WhatsApp Business యాప్‌లో కూడా వాడుతున్నాం",
+  "hi": "यही नंबर WhatsApp Business ऐप में भी इस्तेमाल होता है",
+  "kn": "ಅದೇ ನಂಬರ್ WhatsApp Business ಆ್ಯಪ್‌ನಲ್ಲಿಯೂ ಬಳಕೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.bad.waba": {
+  "en": "The account ID is the digits from your Meta business account.",
+  "te": "అకౌంట్ ID అంటే మీ Meta బిజినెస్ అకౌంట్‌లోని అంకెలు.",
+  "hi": "अकाउंट ID आपके Meta बिज़नेस अकाउंट के अंक हैं।",
+  "kn": "ಅಕೌಂಟ್ ID ಎಂದರೆ ನಿಮ್ಮ Meta ಬಿಸಿನೆಸ್ ಅಕೌಂಟ್‌ನ ಅಂಕೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.bad.phone": {
+  "en": "The phone number ID is digits only.",
+  "te": "ఫోన్ నంబర్ ID అంకెలు మాత్రమే.",
+  "hi": "फ़ोन नंबर ID सिर्फ़ अंक हैं।",
+  "kn": "ಫೋನ್ ನಂಬರ್ ID ಅಂಕೆಗಳು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.bad.token": {
+  "en": "The key name may use letters, digits, _ and - only.",
+  "te": "కీ పేరులో అక్షరాలు, అంకెలు, _ మరియు - మాత్రమే వాడండి.",
+  "hi": "की के नाम में सिर्फ़ अक्षर, अंक, _ और - चलेंगे।",
+  "kn": "ಕೀ ಹೆಸರಿನಲ್ಲಿ ಅಕ್ಷರ, ಅಂಕೆ, _ ಮತ್ತು - ಮಾತ್ರ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.form.mfa": {
+  "en": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
+  "te": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
+  "hi": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
+  "kn": "Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.owner_only": {
+  "en": "Only the owner can change the number's details.",
+  "te": "నంబర్ వివరాలను ఓనర్ మాత్రమే మార్చగలరు.",
+  "hi": "नंबर की जानकारी सिर्फ़ ओनर बदल सकता है।",
+  "kn": "ನಂಬರ್ ವಿವರಗಳನ್ನು ಓನರ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.err.whatsapp_unavailable": {
+  "en": "WhatsApp is not available on this system.",
+  "te": "WhatsApp is not available on this system.",
+  "hi": "WhatsApp is not available on this system.",
+  "kn": "WhatsApp is not available on this system.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.err.whatsapp_not_configured": {
+  "en": "Set up the number and its access key first.",
+  "te": "Set up the number and its access key first.",
+  "hi": "Set up the number and its access key first.",
+  "kn": "Set up the number and its access key first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.err.validation_error": {
+  "en": "One of the details is not valid. Check them and try again.",
+  "te": "One of the details is not valid. Check them and try again.",
+  "hi": "One of the details is not valid. Check them and try again.",
+  "kn": "One of the details is not valid. Check them and try again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.tpl.title": {
+  "en": "Message templates",
+  "te": "మెసేజ్ టెంప్లేట్‌లు",
+  "hi": "मैसेज टेम्पलेट",
+  "kn": "ಮೆಸೇಜ್ ಟೆಂಪ್ಲೇಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.intro": {
+  "en": "A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.",
+  "te": "A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.",
+  "hi": "A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.",
+  "kn": "A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.tpl.none": {
+  "en": "There are no templates yet.",
+  "te": "ఇంకా టెంప్లేట్‌లు లేవు.",
+  "hi": "अभी कोई टेम्पलेट नहीं है।",
+  "kn": "ಇನ್ನೂ ಟೆಂಪ್ಲೇಟ್‌ಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.col.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.col.language": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.col.purpose": {
+  "en": "For",
+  "te": "దేనికి",
+  "hi": "किसलिए",
+  "kn": "ಯಾವುದಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.col.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.purpose.followup": {
+  "en": "Follow-up",
+  "te": "ఫాలో-అప్",
+  "hi": "फ़ॉलो-अप",
+  "kn": "ಫಾಲೋ-ಅಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.purpose.visit": {
+  "en": "Store visit",
+  "te": "స్టోర్ విజిట్",
+  "hi": "स्टोर विज़िट",
+  "kn": "ಸ್ಟೋರ್ ವಿಸಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.purpose.order_status": {
+  "en": "Order update",
+  "te": "ఆర్డర్ అప్‌డేట్",
+  "hi": "ऑर्डर अपडेट",
+  "kn": "ಆರ್ಡರ್ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.purpose.info": {
+  "en": "Information",
+  "te": "సమాచారం",
+  "hi": "जानकारी",
+  "kn": "ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.status.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "ड्राफ़्ट",
+  "kn": "ಡ್ರಾಫ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.status.submitted": {
+  "en": "Under review",
+  "te": "సమీక్షలో ఉంది",
+  "hi": "समीक्षा में है",
+  "kn": "ಪರಿಶೀಲನೆಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.status.approved": {
+  "en": "Approved",
+  "te": "ఆమోదించారు",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆ ಸಿಕ್ಕಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.status.rejected": {
+  "en": "Rejected",
+  "te": "తిరస్కరించారు",
+  "hi": "नामंज़ूर",
+  "kn": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.status.paused": {
+  "en": "Paused",
+  "te": "నిలిపారు",
+  "hi": "रोका गया",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.tpl.status.disabled": {
+  "en": "Switched off",
+  "te": "ఆఫ్ చేశారు",
+  "hi": "बंद",
+  "kn": "ಆಫ್ ಮಾಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.title": {
+  "en": "Customer chats",
+  "te": "కస్టమర్ చాట్‌లు",
+  "hi": "कस्टमर चैट",
+  "kn": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.sub": {
+  "en": "The people who wrote to your WhatsApp number or were written to, newest first. Open a chat to read it and reply.",
+  "te": "మీ WhatsApp నంబర్‌కి రాసినవారు లేదా మీరు రాసినవారు, కొత్తవి ముందు. చాట్ తెరిచి చదివి జవాబివ్వండి.",
+  "hi": "जिन्होंने आपके WhatsApp नंबर पर लिखा या जिन्हें लिखा गया, नए पहले। चैट खोलकर पढ़ें और जवाब दें।",
+  "kn": "ನಿಮ್ಮ WhatsApp ನಂಬರ್‌ಗೆ ಬರೆದವರು ಅಥವಾ ನೀವು ಬರೆದವರು, ಹೊಸದು ಮೊದಲು. ಚಾಟ್ ತೆರೆದು ಓದಿ, ಉತ್ತರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.viewer": {
+  "en": "Customer chats are for the owner, admins and sales. Ask the owner if you need them.",
+  "te": "కస్టమర్ చాట్‌లు ఓనర్, అడ్మిన్లు, సేల్స్ వారికి. అవసరమైతే ఓనర్‌ని అడగండి.",
+  "hi": "कस्टमर चैट ओनर, एडमिन और सेल्स के लिए हैं। ज़रूरत हो तो ओनर से पूछें।",
+  "kn": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು ಓನರ್, ಅಡ್ಮಿನ್, ಸೇಲ್ಸ್ ಅವರಿಗೆ. ಬೇಕಿದ್ದರೆ ಓನರ್‌ರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.empty.title": {
+  "en": "No chats yet",
+  "te": "ఇంకా చాట్‌లు లేవు",
+  "hi": "अभी कोई चैट नहीं",
+  "kn": "ಇನ್ನೂ ಚಾಟ್‌ಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.empty.body": {
+  "en": "When a customer writes to your WhatsApp number, or you message one, the chat appears here.",
+  "te": "కస్టమర్ మీ WhatsApp నంబర్‌కి రాసినప్పుడు, లేదా మీరు రాసినప్పుడు, చాట్ ఇక్కడ కనిపిస్తుంది.",
+  "hi": "जब कोई कस्टमर आपके WhatsApp नंबर पर लिखे, या आप किसी को लिखें, तो चैट यहाँ दिखेगी।",
+  "kn": "ಕಸ್ಟಮರ್ ನಿಮ್ಮ WhatsApp ನಂಬರ್‌ಗೆ ಬರೆದಾಗ, ಅಥವಾ ನೀವು ಬರೆದಾಗ, ಚಾಟ್ ಇಲ್ಲಿ ಕಾಣುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "कस्टमर",
+  "kn": "ಕಸ್ಟಮರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.new": {
+  "en": "New",
+  "te": "కొత్తది",
+  "hi": "नया",
+  "kn": "ಹೊಸದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.you": {
+  "en": "You:",
+  "te": "మీరు:",
+  "hi": "आप:",
+  "kn": "ನೀವು:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.stopped": {
+  "en": "Asked us to stop",
+  "te": "Asked us to stop",
+  "hi": "Asked us to stop",
+  "kn": "Asked us to stop",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.chats.window_over": {
+  "en": "24 hours over",
+  "te": "24 గంటలు ముగిశాయి",
+  "hi": "24 घंटे खत्म",
+  "kn": "24 ಗಂಟೆ ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.chats.older": {
+  "en": "Older chats",
+  "te": "పాత చాట్‌లు",
+  "hi": "पुरानी चैट",
+  "kn": "ಹಳೆಯ ಚಾಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.thread.messages": {
+  "en": "Messages",
+  "te": "మెసేజ్‌లు",
+  "hi": "मैसेज",
+  "kn": "ಮೆಸೇಜ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.thread.latest": {
+  "en": "Showing the latest messages only.",
+  "te": "తాజా మెసేజ్‌లు మాత్రమే చూపిస్తున్నాం.",
+  "hi": "सिर्फ़ ताज़ा मैसेज दिखा रहे हैं।",
+  "kn": "ಇತ್ತೀಚಿನ ಮೆಸೇಜ್‌ಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸುತ್ತಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.thread.none": {
+  "en": "Nothing has been written yet.",
+  "te": "ఇంకా ఏమీ రాయలేదు.",
+  "hi": "अभी कुछ लिखा नहीं गया।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಬರೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.thread.refresh": {
+  "en": "Check for new messages",
+  "te": "కొత్త మెసేజ్‌లు చూడండి",
+  "hi": "नए मैसेज देखें",
+  "kn": "ಹೊಸ ಮೆಸೇಜ್‌ಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.thread.photos": {
+  "en": "Photos: {n}",
+  "te": "ఫోటోలు: {n}",
+  "hi": "फ़ोटो: {n}",
+  "kn": "ಫೋಟೋಗಳು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.waiting": {
+  "en": "Waiting for OK",
+  "te": "ఓకే కోసం వేచి ఉంది",
+  "hi": "ओके का इंतज़ार",
+  "kn": "ಓಕೆಗಾಗಿ ಕಾಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.queued": {
+  "en": "Held for later",
+  "te": "తర్వాత కోసం ఆపారు",
+  "hi": "बाद के लिए रोका",
+  "kn": "ನಂತರಕ್ಕೆ ಹಿಡಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.sent": {
+  "en": "Sent",
+  "te": "పంపారు",
+  "hi": "भेजा गया",
+  "kn": "ಕಳುಹಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.delivered": {
+  "en": "Delivered",
+  "te": "చేరింది",
+  "hi": "पहुँच गया",
+  "kn": "ತಲುಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.read": {
+  "en": "Read",
+  "te": "చదివారు",
+  "hi": "पढ़ लिया",
+  "kn": "ಓದಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.blocked": {
+  "en": "Not sent",
+  "te": "పంపలేదు",
+  "hi": "नहीं भेजा",
+  "kn": "ಕಳುಹಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.failed": {
+  "en": "Failed",
+  "te": "విఫలమైంది",
+  "hi": "नहीं हो पाया",
+  "kn": "ವಿಫಲವಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.approve": {
+  "en": "Approve and send",
+  "te": "ఓకే చేసి పంపండి",
+  "hi": "ओके करके भेजें",
+  "kn": "ಓಕೆ ಮಾಡಿ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.out.decline": {
+  "en": "Do not send",
+  "te": "పంపవద్దు",
+  "hi": "न भेजें",
+  "kn": "ಕಳುಹಿಸಬೇಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.note.stopped": {
+  "en": "This customer asked us to stop. Nothing more can be sent to them.",
+  "te": "This customer asked us to stop. Nothing more can be sent to them.",
+  "hi": "This customer asked us to stop. Nothing more can be sent to them.",
+  "kn": "This customer asked us to stop. Nothing more can be sent to them.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.note.withdrawn": {
+  "en": "This customer withdrew their consent for WhatsApp. Replies are blocked.",
+  "te": "This customer withdrew their consent for WhatsApp. Replies are blocked.",
+  "hi": "This customer withdrew their consent for WhatsApp. Replies are blocked.",
+  "kn": "This customer withdrew their consent for WhatsApp. Replies are blocked.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.note.window": {
+  "en": "This customer's 24 hours are over. Only a message template that WhatsApp has approved can be sent now.",
+  "te": "This customer's 24 hours are over. Only a message template that WhatsApp has approved can be sent now.",
+  "hi": "This customer's 24 hours are over. Only a message template that WhatsApp has approved can be sent now.",
+  "kn": "This customer's 24 hours are over. Only a message template that WhatsApp has approved can be sent now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.note.quiet": {
+  "en": "Messages made between {start} and {end} (India time) wait until the morning.",
+  "te": "Messages made between {start} and {end} (India time) wait until the morning.",
+  "hi": "Messages made between {start} and {end} (India time) wait until the morning.",
+  "kn": "Messages made between {start} and {end} (India time) wait until the morning.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.reply.title": {
+  "en": "Reply",
+  "te": "జవాబు",
+  "hi": "जवाब",
+  "kn": "ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.reply.text": {
+  "en": "Your message",
+  "te": "మీ మెసేజ్",
+  "hi": "आपका मैसेज",
+  "kn": "ನಿಮ್ಮ ಮೆಸೇಜ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.reply.language": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.reply.rules": {
+  "en": "A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.",
+  "te": "A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.",
+  "hi": "A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.",
+  "kn": "A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.reply.window": {
+  "en": "The customer's 24 hours are over: a reply will fail unless an approved template fits.",
+  "te": "The customer's 24 hours are over: a reply will fail unless an approved template fits.",
+  "hi": "The customer's 24 hours are over: a reply will fail unless an approved template fits.",
+  "kn": "The customer's 24 hours are over: a reply will fail unless an approved template fits.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.reply.send": {
+  "en": "Send reply",
+  "te": "జవాబు పంపండి",
+  "hi": "जवाब भेजें",
+  "kn": "ಉತ್ತರ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.sent": {
+  "en": "Sent.",
+  "te": "పంపారు.",
+  "hi": "भेज दिया।",
+  "kn": "ಕಳುಹಿಸಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.held": {
+  "en": "Held until the morning because of quiet hours. It will go then.",
+  "te": "Held until the morning because of quiet hours. It will go then.",
+  "hi": "Held until the morning because of quiet hours. It will go then.",
+  "kn": "Held until the morning because of quiet hours. It will go then.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.said.queued": {
+  "en": "Queued. It will go soon.",
+  "te": "వరుసలో ఉంది. త్వరలో వెళ్తుంది.",
+  "hi": "कतार में है। जल्दी जाएगा।",
+  "kn": "ಸರತಿಯಲ್ಲಿದೆ. ಶೀಘ್ರದಲ್ಲಿ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.said.waiting": {
+  "en": "Waiting for the owner's OK before it is sent.",
+  "te": "Waiting for the owner's OK before it is sent.",
+  "hi": "Waiting for the owner's OK before it is sent.",
+  "kn": "Waiting for the owner's OK before it is sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.said.blocked": {
+  "en": "Not sent: {why}",
+  "te": "Not sent: {why}",
+  "hi": "Not sent: {why}",
+  "kn": "Not sent: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.said.declined": {
+  "en": "Declined. It will not be sent.",
+  "te": "తిరస్కరించారు. ఇది పంపరు.",
+  "hi": "मना किया। यह नहीं भेजा जाएगा।",
+  "kn": "ತಿರಸ್ಕರಿಸಲಾಗಿದೆ. ಇದನ್ನು ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "wa.derr.window_closed": {
+  "en": "The customer's 24 hours were over.",
+  "te": "The customer's 24 hours were over.",
+  "hi": "The customer's 24 hours were over.",
+  "kn": "The customer's 24 hours were over.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.unreachable": {
+  "en": "WhatsApp could not reach this number.",
+  "te": "WhatsApp could not reach this number.",
+  "hi": "WhatsApp could not reach this number.",
+  "kn": "WhatsApp could not reach this number.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.not_delivered_health": {
+  "en": "WhatsApp did not deliver it.",
+  "te": "WhatsApp did not deliver it.",
+  "hi": "WhatsApp did not deliver it.",
+  "kn": "WhatsApp did not deliver it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.rate_limited": {
+  "en": "WhatsApp is slowing messages down. It will be tried again.",
+  "te": "WhatsApp is slowing messages down. It will be tried again.",
+  "hi": "WhatsApp is slowing messages down. It will be tried again.",
+  "kn": "WhatsApp is slowing messages down. It will be tried again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.spam_limited": {
+  "en": "WhatsApp limited this number for now.",
+  "te": "WhatsApp limited this number for now.",
+  "hi": "WhatsApp limited this number for now.",
+  "kn": "WhatsApp limited this number for now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.opted_out_marketing": {
+  "en": "The customer opted out of this kind of message.",
+  "te": "The customer opted out of this kind of message.",
+  "hi": "The customer opted out of this kind of message.",
+  "kn": "The customer opted out of this kind of message.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.token_expired": {
+  "en": "The access key has expired. The person who runs the system must renew it.",
+  "te": "The access key has expired. The person who runs the system must renew it.",
+  "hi": "The access key has expired. The person who runs the system must renew it.",
+  "kn": "The access key has expired. The person who runs the system must renew it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.derr.other_error": {
+  "en": "It did not go. The reason is not known.",
+  "te": "It did not go. The reason is not known.",
+  "hi": "It did not go. The reason is not known.",
+  "kn": "It did not go. The reason is not known.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.adapter_error": {
+  "en": "The channel had a problem. It will be tried again.",
+  "te": "The channel had a problem. It will be tried again.",
+  "hi": "The channel had a problem. It will be tried again.",
+  "kn": "The channel had a problem. It will be tried again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.timeout": {
+  "en": "The channel did not answer in time.",
+  "te": "The channel did not answer in time.",
+  "hi": "The channel did not answer in time.",
+  "kn": "The channel did not answer in time.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.rejected": {
+  "en": "WhatsApp did not accept it.",
+  "te": "WhatsApp did not accept it.",
+  "hi": "WhatsApp did not accept it.",
+  "kn": "WhatsApp did not accept it.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.window_closed": {
+  "en": "The customer's 24 hours were over.",
+  "te": "The customer's 24 hours were over.",
+  "hi": "The customer's 24 hours were over.",
+  "kn": "The customer's 24 hours were over.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.template_required": {
+  "en": "Only an approved message template can be sent now.",
+  "te": "Only an approved message template can be sent now.",
+  "hi": "Only an approved message template can be sent now.",
+  "kn": "Only an approved message template can be sent now.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.recipient_unreachable": {
+  "en": "WhatsApp could not reach this number.",
+  "te": "WhatsApp could not reach this number.",
+  "hi": "WhatsApp could not reach this number.",
+  "kn": "WhatsApp could not reach this number.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.rate_limited": {
+  "en": "WhatsApp is slowing messages down. It will be tried again.",
+  "te": "WhatsApp is slowing messages down. It will be tried again.",
+  "hi": "WhatsApp is slowing messages down. It will be tried again.",
+  "kn": "WhatsApp is slowing messages down. It will be tried again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "wa.fcode.not_configured": {
+  "en": "WhatsApp is not set up for sending.",
+  "te": "WhatsApp is not set up for sending.",
+  "hi": "WhatsApp is not set up for sending.",
+  "kn": "WhatsApp is not set up for sending.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "integrations.whatsapp.cta": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp कनेक्ट करें",
+  "kn": "WhatsApp ಕನೆಕ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "integrations.data.cta": {
+  "en": "Open Data settings",
+  "te": "డేటా సెట్టింగ్స్ తెరవండి",
+  "hi": "डेटा सेटिंग खोलें",
+  "kn": "ಡೇಟಾ ಸೆಟ್ಟಿಂಗ್ಸ್ ತೆರೆಯಿರಿ",
   "status": {
    "te": "draft",
    "hi": "draft",

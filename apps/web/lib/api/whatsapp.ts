@@ -74,11 +74,14 @@ export async function putWhatsappAccount(token: string, tenantId: string, i: Acc
   if (i.displayPhone.trim()) body.display_phone = i.displayPhone.trim();
   return parseAccount(await apiRequest(`${base(tenantId)}/whatsapp/account`, token, { method: "PUT", body: JSON.stringify(body) }));
 }
+/** Switching on and off: the API answers the row without `token_available`, so the account is read again after the change (the screen then shows what is true, not what was asked for). */
 export async function activateWhatsapp(token: string, tenantId: string): Promise<WhatsappAccount> {
-  return parseAccount(await post(`${base(tenantId)}/whatsapp/account/activate`, token));
+  await post(`${base(tenantId)}/whatsapp/account/activate`, token);
+  return getWhatsappAccount(token, tenantId);
 }
 export async function disableWhatsapp(token: string, tenantId: string): Promise<WhatsappAccount> {
-  return parseAccount(await post(`${base(tenantId)}/whatsapp/account/disable`, token));
+  await post(`${base(tenantId)}/whatsapp/account/disable`, token);
+  return getWhatsappAccount(token, tenantId);
 }
 export async function listTemplates(token: string, tenantId: string): Promise<Template[]> {
   return parseTemplates(await apiRequest(`${base(tenantId)}/whatsapp/templates`, token));

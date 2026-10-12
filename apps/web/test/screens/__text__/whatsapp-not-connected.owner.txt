@@ -1,0 +1,28 @@
+[Integrations](/app/tenants/22222222-2222-2222-2222-222222222222/integrations)
+# Connect WhatsApp
+Link the business's WhatsApp number, so messages to customers can go out and their replies come in. Nothing is sent until you approve it.
+{label="Your WhatsApp number"}
+## Your WhatsApp number
+Not connected No WhatsApp number is connected yet, so messages to customers cannot go out from here. On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.
+{label="The number's details"}
+## The number's details
+- Get your WhatsApp Business account ID and phone number ID from your Meta business account.
+- Type them below with the name of the access key, and save.
+- The person who runs the system adds the access key under that name.
+- Switch the number on.
+form:
+WhatsApp Business account ID
+<text label="WhatsApp Business account ID" inputmode=numeric autocomplete=off>
+Phone number ID
+<text label="Phone number ID" inputmode=numeric autocomplete=off>
+Number customers see (optional)
+<text label="Number customers see (optional)" autocomplete=off>
+Name of the access key
+<text label="Name of the access key" autocomplete=off>
+Type the name only. The key itself is added to the system by the person who runs it; it is never typed or shown here.
+<checkbox label="The same number is also used in the WhatsApp Business app">
+The same number is also used in the WhatsApp Business app Saving and switching on need your second step (your authenticator code). If you are asked, open Security first.
+[button type=submit: Save details]
+{label="Message templates"}
+## Message templates
+A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used. There are no templates yet.

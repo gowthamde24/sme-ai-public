@@ -1,0 +1,4 @@
+# Customer chats
+The people who wrote to your WhatsApp number or were written to, newest first. Open a chat to read it and reply.
+- [Ravi Kumar 1h Do you have red sarees?](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000001)
+- [Asha Rao 2d You: Thank you, see you soon. Asked us to stop](/app/tenants/22222222-2222-2222-2222-222222222222/chats/33333333-aaaa-4aaa-8aaa-000000000002)

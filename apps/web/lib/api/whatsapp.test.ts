@@ -38,10 +38,15 @@ describe("the account calls", () => {
     expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/whatsapp/account`, "tok");
     await putWhatsappAccount("tok", T, { wabaId: " 123456789 ", phoneNumberId: "987654321", displayPhone: "", coexistence: true, tokenRef: "SHOP_TOKEN" });
     expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/whatsapp/account`, "tok", { method: "PUT", body: JSON.stringify({ waba_id: "123456789", phone_number_id: "987654321", coexistence: true, token_ref: "SHOP_TOKEN" }) });
-    await activateWhatsapp("tok", T);
-    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/whatsapp/account/activate`, "tok", { method: "POST" });
-    await disableWhatsapp("tok", T);
-    expect(apiRequest).toHaveBeenLastCalledWith(`/v1/tenants/${T}/whatsapp/account/disable`, "tok", { method: "POST" });
+    apiRequest.mockClear();
+    apiRequest.mockResolvedValueOnce({ id: "x", status: "active" }).mockResolvedValueOnce(ACCOUNT);
+    expect((await activateWhatsapp("tok", T)).configured).toBe(true);
+    expect(apiRequest).toHaveBeenNthCalledWith(1, `/v1/tenants/${T}/whatsapp/account/activate`, "tok", { method: "POST" });
+    expect(apiRequest).toHaveBeenNthCalledWith(2, `/v1/tenants/${T}/whatsapp/account`, "tok"); // read again: what is true, not what was asked
+    apiRequest.mockClear();
+    apiRequest.mockResolvedValueOnce({ id: "x", status: "disabled" }).mockResolvedValueOnce({ ...ACCOUNT, status: "disabled" });
+    expect(connectionState(await disableWhatsapp("tok", T)).state).toBe("needs_attention");
+    expect(apiRequest).toHaveBeenNthCalledWith(1, `/v1/tenants/${T}/whatsapp/account/disable`, "tok", { method: "POST" });
   });
 });
 

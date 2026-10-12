@@ -1,0 +1,19 @@
+[Customer chats](/app/tenants/22222222-2222-2222-2222-222222222222/chats)
+# Ravi Kumar
+{role=note} Messages made between 9 pm and 9 am (India time) wait until the morning.
+{label="Messages"}
+## Messages
+- Do you have red sarees? 10-06 9:00
+- Welcome! Photos: 1 10-06 9:05 Read
+- Yes, we have red sarees. The price is 4,500 each. 10-06 9:10 Waiting for OK Mentions a price
+[button type=button: Check for new messages]
+{label="Reply"}
+## Reply
+form:
+Your message
+<textarea label="Your message" maxlength=1000>
+Language
+<select label="Language">
+  options: English=en* | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta
+A reply follows the same rules as every message: consent, quiet hours, and your OK for anything about money or promises. It may wait for approval or be held.
+[button type=submit disabled: Send reply]

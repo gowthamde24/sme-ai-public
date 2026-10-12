@@ -9,6 +9,7 @@ import { EXPORT_FORMATS } from "@/lib/api/data";
 import { FIELD_WORDS, ISSUES, NOTES, PREVIEW_COUNTS, REASONS, RESULT_COUNTS, STATUSES } from "../data/import-model";
 import { INVITATION_STATUSES, INVITED_ROLES, ROLES } from "@/lib/api/team";
 import { REASONS as REMOVE_REASONS, TEAM_CODES } from "../team/team-model";
+import { DELIVERY_ERRORS, FAILURE_CODES, STATE_TONE, WA_CODES } from "../whatsapp/wa-model";
 import { FAILURE_KEY } from "./kit";
 
 /**
@@ -48,7 +49,18 @@ describe("the words of the job CC screens", () => {
       ...REMOVE_REASONS.map((r) => `team.reason.${r}`),
       ...INVITATION_STATUSES.map((s) => `team.inv.status.${s}`),
       ...TEAM_CODES.map((c) => `team.err.${c}`),
-      ...["tally_zip"].map(() => "dta.fmt.csv")];
+      ...DELIVERY_ERRORS.map((c) => `wa.derr.${c}`),
+      ...FAILURE_CODES.map((c) => `wa.fcode.${c}`),
+      ...WA_CODES.map((c) => `wa.err.${c}`),
+      ...Object.keys(STATE_TONE).map((s) => `wa.state.${s}`),
+      ...["not_connected", "connecting", "connected"].map((s) => `wa.state.${s}.body`),
+      ...["disabled", "token_missing"].map((s) => `wa.state.needs_attention.${s}`),
+      ...["waiting", "queued", "sent", "delivered", "read", "blocked", "failed"].map((s) => `wa.out.${s}`),
+      ...["draft", "submitted", "approved", "rejected", "paused", "disabled"].map((s) => `wa.tpl.status.${s}`),
+      ...["followup", "visit", "order_status", "info"].map((s) => `wa.tpl.purpose.${s}`),
+      ...["waba", "phone", "token"].map((s) => `wa.form.bad.${s}`),
+      ...[1, 2, 3, 4].map((n) => `wa.steps.${n}`),
+      ...["dta.fmt.csv"]];
     expect(need.filter((k) => !(k in en))).toEqual([]);
   });
   it("every kind of failure has its sentence", () => {

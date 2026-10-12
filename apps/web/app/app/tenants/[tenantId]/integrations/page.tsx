@@ -16,17 +16,18 @@ export const metadata = { title: "Integrations · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const OTHERS: { key: string; icon: LucideIcon }[] = [
-  { key: "whatsapp", icon: MessageCircle },
-  { key: "email", icon: Mail },
-  { key: "upi", icon: Wallet },
-  { key: "calendar", icon: CalendarDays },
-  { key: "accounting", icon: Calculator },
+/** The cards that are not built yet; every other card links to the screen that does it. */
+const OTHERS: { key: string; icon: LucideIcon }[] = [{ key: "email", icon: Mail }, { key: "upi", icon: Wallet }];
+/** The cards that open a screen: where it is, the word on the button and the icon (job CC: WhatsApp has its Connect page; the calendar and the accounting export are in Settings > Data). */
+const AVAILABLE: { key: string; icon: LucideIcon; href: (base: string) => string; cta: string }[] = [
+  { key: "whatsapp", icon: MessageCircle, href: (base) => `${base}/integrations/whatsapp`, cta: "integrations.whatsapp.cta" },
+  { key: "calendar", icon: CalendarDays, href: (base) => `${base}/settings?section=data`, cta: "integrations.data.cta" },
+  { key: "accounting", icon: Calculator, href: (base) => `${base}/settings?section=data`, cta: "integrations.data.cta" },
 ];
 
 /**
- * /app/tenants/[tenantId]/integrations (owner and admin): what could be connected. Only the price list import exists, and it goes to the price-list page; every other card says "Not available yet"
- * and what it would do. Nothing here connects, sends or charges anything.
+ * /app/tenants/[tenantId]/integrations (owner and admin): what can be connected. The price list import goes to the price-list page, WhatsApp to its Connect page and the calendar and the accounting export to Settings > Data (job CC);
+ * every other card says "Not available yet" and what it would do. Nothing here connects, sends or charges anything by itself.
  */
 export default async function IntegrationsPage({ params }: PageProps<"/app/tenants/[tenantId]/integrations">) {
   const user = await requireUser();
@@ -61,6 +62,22 @@ export default async function IntegrationsPage({ params }: PageProps<"/app/tenan
             {t("integrations.pricelist.cta")}
           </Link>
         </li>
+        {AVAILABLE.map(({ key, icon: Icon, href, cta }) => (
+          <li key={key} className={tileCard}>
+            <div className="flex items-start justify-between gap-3">
+              <span className={`${tileIcon} bg-brand-bg text-brand-text`}>
+                <Icon className="size-6" aria-hidden="true" />
+              </span>
+              <span className={`${tileBadge} border-green-text bg-green-bg text-green-text`}>{t("integrations.available")}</span>
+            </div>
+            <h2 className="mt-4 text-xl font-semibold">{t(`integrations.${key}.title` as "integrations.email.title")}</h2>
+            <p className="mt-1 text-base text-muted">{t(`integrations.${key}.body` as "integrations.email.body")}</p>
+            <Link href={href(`/app/tenants/${tenantId}`)} className={`${btnMain} mt-4 w-full gap-2`}>
+              <Icon className="size-5" aria-hidden="true" />
+              {t(cta as "integrations.whatsapp.cta")}
+            </Link>
+          </li>
+        ))}
         {OTHERS.map(({ key, icon: Icon }) => (
           <li key={key} className={tileCard}>
             <div className="flex items-start justify-between gap-3">

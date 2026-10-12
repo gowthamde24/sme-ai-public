@@ -47,6 +47,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, roles: ALL_ROLES },
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", roles: WRITERS },
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
+      // job CC: the customer chat inbox (WhatsApp)
+      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", roles: WRITERS },
       { id: "report", label: "This week", icon: "report", path: "/report", roles: ADMINS },
       { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
       // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads

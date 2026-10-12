@@ -30,7 +30,7 @@ export async function phoneAudit(c, label) {
 const BASE_OF = (c) => c.BASE;
 
 export async function ccSteps(c) {
-  const { step, page, must, text, BASE, SHOTS, SLOW, psql } = c;
+  const { step, page, must, text, BASE, SHOTS, SLOW, psql, api, aal2Token } = c;
   const base = () => `${BASE}/app/tenants/${c.tenant}`;
   const stamp = Date.now().toString(36);
 
@@ -275,5 +275,87 @@ export async function ccSteps(c) {
     must((await page.locator("[data-team=invitations]").innerText()).includes("Used"), "the invitation does not show as used");
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "owls, one-time code (stored as a hash), joined from the link with the code taken out of the address bar, a wrong code refused in words, role changed, member removed; phone and dark clean";
+  }, page);
+
+  // ---- CC5. WhatsApp: Connect and the customer chats ------------------------------------------------------------------------------------------------------------
+  await step("CC5", "WhatsApp: Connect shows the four states against the local fake channel; a customer chat shows their message and ours with the reason in words, the owner approves one (= send) and replies", async () => {
+    // Connect: not connected -> connecting (saved) -> connected -> needs attention (switched off) -> connected
+    await page.goto(`${base()}/integrations/whatsapp`, { waitUntil: "networkidle" });
+    await page.getByRole("heading", { level: 1, name: "Connect WhatsApp" }).waitFor();
+    const stateOf = async () => (await page.locator("[data-wa-state]").getAttribute("data-wa-state")) ?? "";
+    must((await stateOf()) === "not_connected", `the first state is ${await stateOf()}`);
+    await page.screenshot({ path: path.join(SHOTS, "CC5-connect-not-connected.png"), fullPage: true });
+    await page.getByLabel("WhatsApp Business account ID").fill("123456789012345");
+    await page.getByLabel("Phone number ID").fill("109876543210987");
+    await page.getByLabel(/Number customers see/).fill("+91 98765 43210");
+    await page.getByLabel("Name of the access key").fill("SHOP_E2E_TOKEN");
+    await page.getByRole("button", { name: "Save details" }).click();
+    await page.locator('[data-wa-state="connecting"]').waitFor();
+    await page.screenshot({ path: path.join(SHOTS, "CC5-connect-connecting.png"), fullPage: true });
+    await page.getByRole("button", { name: "Switch on" }).click();
+    await page.locator('[data-wa-state="connected"]').waitFor();
+    await page.screenshot({ path: path.join(SHOTS, "CC5-connect-connected.png"), fullPage: true });
+    const token = await aal2Token();
+    const acct = await api("GET", `/v1/tenants/${c.tenant}/whatsapp/account`, null, token);
+    must(acct.status === 200 && acct.body.status === "active" && acct.body.token_available === true, `the API says ${JSON.stringify(acct.body).slice(0, 160)}`);
+    await page.getByRole("button", { name: "Switch off" }).click();
+    await page.locator('[data-wa-state="needs_attention"]').waitFor();
+    await page.screenshot({ path: path.join(SHOTS, "CC5-connect-needs-attention.png"), fullPage: true });
+    await page.getByRole("button", { name: "Switch on" }).click();
+    await page.locator('[data-wa-state="connected"]').waitFor();
+    // the Integrations page links to it
+    await page.goto(`${base()}/integrations`, { waitUntil: "networkidle" });
+    await page.getByRole("link", { name: "Connect WhatsApp" }).click();
+    await page.waitForURL(/\/integrations\/whatsapp$/);
+
+    // a customer who wrote to us, and a reply of ours that waits for the OK (it mentions a price)
+    psql("update public.platform_flags set enabled = true where key = 'outbox_enabled' and enabled = false");
+    const company = c.uuid(), contact = c.uuid(), lead = c.uuid();
+    const T = `/v1/tenants/${c.tenant}`;
+    for (const [route, body] of [
+      ["companies", { id: company, name: `E2E Chat Silks ${stamp}`, type: "customer", country: "IN", city: "Demoville", tags: ["e2e", "synthetic"] }],
+      ["contacts", { id: contact, company_id: company, full_name: `E2E Chat Person ${stamp}`, phone: "+00 90002 00077" }],
+      ["leads", { id: lead, company_id: company, contact_id: contact, source: "E2E (synthetic)" }],
+    ]) {
+      const r = await api("POST", `${T}/${route}`, body, token);
+      must(r.status === 200 || r.status === 201, `${route}: HTTP ${r.status}`);
+    }
+    must((await api("POST", `${T}/contacts/${contact}/record-consent`, { channel: "whatsapp", status: "granted", basis: "explicit_consent", evidence_type: "web_form", evidence_ref: `e2e:chat:${stamp}` }, token)).status === 200, "consent not recorded");
+    const inbound = await api("POST", `${T}/leads/${lead}/enquiries`, { id: c.uuid(), channel: "whatsapp", received_at: new Date(Date.now() - 600_000).toISOString(), subject: null, text: "Hello, do you have red silk sarees?" }, token);
+    must([200, 201, 409].includes(inbound.status), `inbound: HTTP ${inbound.status}`);
+    const price = await api("POST", `${T}/outbox/messages`, { message_id: c.uuid(), lead_id: lead, text: "Yes, this saree costs only 500 rupees. There is a discount this week.", language: "en", category: "reply_to_inbound", source: "owner" }, token);
+    must(price.status === 200 && price.body.message.status === "needs_approval", `the price message should wait: ${price.status} ${price.body?.message?.status}`);
+
+    await page.goto(`${base()}/chats`, { waitUntil: "networkidle" });
+    await page.getByRole("heading", { level: 1, name: "Customer chats" }).waitFor();
+    const row = page.getByRole("link").filter({ hasText: `E2E Chat Person ${stamp}` });
+    must((await row.count()) === 1, "the customer is not in the list");
+    must(!(await text(page)).includes("90002 00077"), "the customer's number is on the list");
+    await page.screenshot({ path: path.join(SHOTS, "CC5-chats-list.png"), fullPage: true });
+    await row.click();
+    await page.waitForURL(new RegExp(`/chats/${lead}$`));
+    await page.getByRole("heading", { level: 1, name: `E2E Chat Person ${stamp}` }).waitFor();
+    const body = await text(page);
+    must(body.includes("Hello, do you have red silk sarees?") && body.includes("costs only 500 rupees"), "the thread does not show both messages");
+    must(body.includes("Waiting for OK") && body.includes("Mentions a price"), "the waiting message and its reason are not shown");
+    must(/wait until the morning/.test(body), "the quiet-hours note is missing");
+    must(!body.includes("90002 00077"), "the customer's number is on the chat");
+    await page.screenshot({ path: path.join(SHOTS, "CC5-chat-thread.png"), fullPage: true });
+    const audit = await phoneAudit(c, "CC5-chat");
+
+    // approve = send (or hold for the morning): the state changes through the real outbox
+    await page.getByRole("button", { name: "Approve and send" }).click();
+    await page.locator('[data-chat="thread"]').getByRole("status").first().waitFor();
+    const after = await api("GET", `${T}/outbox/messages/${price.body.message.id}`, null, token);
+    must(["queued", "sent"].includes(after.body.status), `after approval the message is ${after.body.status}`);
+    must(!(await page.getByRole("button", { name: "Approve and send" }).count()), "the approve button is still there");
+    // a reply of ours: a new message, the rules decide
+    await page.getByLabel("Your message").fill("Thank you, we are open until 8 pm today.");
+    await page.getByRole("button", { name: "Send reply" }).click();
+    await page.locator('[data-chat="thread"]').getByRole("status").filter({ hasText: /Sent|Held|Queued|Waiting|Not sent/ }).first().waitFor();
+    const log = await api("GET", `${T}/outbox/messages?limit=20`, null, token);
+    must(log.body.items.some((m) => m.text.includes("we are open until 8 pm") && m.lead_id === lead), "the reply is not in the outbox");
+    must(audit.length === 0, `phone: ${audit.join(" | ")}`);
+    return "Connect: not connected, connecting, connected, needs attention, connected again (real API); chat list and thread with the reason in words and no number; approve moved the real message; a reply reached the real outbox; phone and dark clean";
   }, page);
 }
