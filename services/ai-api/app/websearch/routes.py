@@ -51,7 +51,8 @@ Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max
 
 
 class ConfirmPlaceIn(_Strict):
-    # the place ID of the card the owner confirmed (the only thing kept from Google)
+    # Google's place ID of the card the owner confirmed, exactly as the assistant's stream carried it in the card's `place_id` (the only thing kept from Google). At most 90 characters: the lead's source
+    # (`places:<ID>`) is at most 100, and the search shows only places whose ID fits (websearch.places.PLACE_ID)
     place_id: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=90)]
     # everything below is typed by the owner, not copied from the map
     company_name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]

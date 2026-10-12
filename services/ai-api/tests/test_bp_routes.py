@@ -104,6 +104,15 @@ def test_the_same_place_in_two_workspaces_makes_two_separate_sets_of_rows() -> N
     assert a["lead_id"] != b["lead_id"] and a["company_id"] != b["company_id"]
 
 
+def test_confirm_takes_google_place_ids_up_to_the_length_the_search_accepts() -> None:
+    """Job CE: the stream's `place_id` is sent unchanged, so the route takes every ID the search shows (10 to 90 of letters, digits, _ and -; the lead's source `places:<ID>` must fit its 100) and nothing else."""
+    client, _ = make_client(crm=FakeCrmRepository())
+    for ok in ("ChIJ" + "x" * 6, "ChIJ" + "x" * 86):
+        assert client.post(CONFIRM, json={**BODY, "place_id": ok}, headers=auth("a_owner")).status_code == 201
+    for refused in ("ChIJshort", "x" * 91, "ChIJ has spaces", "ChIJ/../x"):
+        assert client.post(CONFIRM, json={**BODY, "place_id": refused}, headers=auth("a_owner")).status_code == 422
+
+
 @pytest.mark.parametrize(("user", "code"), [("a_owner", 201), ("a_admin", 201), ("a_sales", 201), ("a_viewer", 403), ("outsider", 404), ("b_owner", 404)])
 def test_confirm_roles(user: str, code: int) -> None:
     client, _ = make_client(crm=FakeCrmRepository())
