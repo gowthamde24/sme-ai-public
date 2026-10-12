@@ -8,8 +8,8 @@ const t = makeT({ "x.line": "Added {name}. {link} is next, by {who}.", "x.plain"
 
 describe("Rich", () => {
   it("puts the parts where the sentence has its markers", () => {
-    const html = renderToStaticMarkup(<Rich t={t} k="x.line" with={{ name: <strong>Asha</strong>, link: <a href="/x">Open</a> }} vars={{ who: "me" }} />);
-    expect(html).toBe('Added <strong>Asha</strong>. <a href="/x">Open</a> is next, by me.');
+    const html = renderToStaticMarkup(<Rich t={t} k="x.line" with={{ name: <strong>Asha</strong>, link: <a href="#open">Open</a> }} vars={{ who: "me" }} />);
+    expect(html).toBe('Added <strong>Asha</strong>. <a href="#open">Open</a> is next, by me.');
   });
   it("keeps an unfilled marker visible and fills plain variables", () => {
     expect(renderToStaticMarkup(<Rich t={t} k="x.line" />)).toBe("Added {name}. {link} is next, by {who}.");
