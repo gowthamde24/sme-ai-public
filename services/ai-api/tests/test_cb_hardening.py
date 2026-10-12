@@ -230,8 +230,9 @@ def test_a_body_without_a_length_is_cut_off_at_the_ceiling() -> None:
 # ---------------------------------------------------------------------------------------------- request id, the access line, the metrics
 def test_a_request_id_is_made_or_kept_and_returned() -> None:
     client, _ = make_client()
-    made = client.get("/health").headers["x-request-id"]
-    assert len(made) == 32 and made != client.get("/health").headers["x-request-id"]
+    bare = TestClient(client.app)  # without the fixed id the test client sends
+    made = bare.get("/health").headers["x-request-id"]
+    assert len(made) == 32 and made != bare.get("/health").headers["x-request-id"]
     assert client.get("/health", headers={"X-Request-Id": "abc-12345678"}).headers["x-request-id"] == "abc-12345678"
     for bad in ("short", "has space in it 123", "x" * 80, "<script>alert(1)</script>"):
         assert client.get("/health", headers={"X-Request-Id": bad}).headers["x-request-id"] != bad

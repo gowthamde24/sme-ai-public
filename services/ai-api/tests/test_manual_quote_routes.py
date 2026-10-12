@@ -375,7 +375,7 @@ def test_every_refusal_has_one_status_one_stable_name_and_no_data_layer_text(
     assert (
         CANARY not in r.text
         and "secret" not in r.text
-        and set(r.json()["error"]) == {"code", "message"}
+        and set(r.json()["error"]) == {"code", "message", "retry_after", "request_id"}
     )
     assert w.q.rows == {}, "a refused draft stored nothing"
 

@@ -23,9 +23,13 @@ select pg_temp.mk('longname',   true,  jsonb_build_object('business_name', repea
 select pg_temp.mk('owner_already', true, '{"business_name":"Second Try Co","terms_version":"draft-1"}');
 select pg_temp.mk('invited',    true,  '{}');
 
+-- a stale row for these fixture people (account_setups has no foreign key) is removed first, inside this transaction
+delete from public.account_setups where user_id in (select tests.uid(n) from unnest(array['ok1','ok2','telugu','unconf','noterms','badterms','noname','longname','owner_already','invited']) n);
+
 -- ---- terms
 select is((select terms_version from public.terms_acceptances where user_id = tests.uid('ok1')), 'draft-1', 'the sign-up recorded the terms version');
-select ok((select accepted_at from public.terms_acceptances where user_id = tests.uid('ok1')) between now() - interval '1 minute' and now() + interval '1 minute',
+-- (the clock is pinned by the transaction itself: the trigger ran in THIS transaction, so the stamp is exactly now(); no wall-clock window, nothing to flake; job CD)
+select ok((select accepted_at from public.terms_acceptances where user_id = tests.uid('ok1')) = now(),
   'and the time is the database''s');
 select is((select count(*) from public.terms_acceptances where user_id in (tests.uid('noterms'), tests.uid('badterms'), tests.uid('invited'))), 0::bigint,
   'a sign-up without terms, or with a malformed version, records nothing (and was not blocked)');
@@ -90,12 +94,13 @@ select is(tests.scalar_as(tests.uid('ok1'), $$select (public.complete_setup('tex
 select is(tests.scalar_as(tests.uid('ok1'), $$select (public.complete_setup('construction', 'hi') ->> 'tenant_id')$$), (select created_tenant_id::text from public.account_setups where user_id = tests.uid('ok1')),
   'a repeat with other choices returns the same business');
 select is((select business_type || ':' || language from public.account_setups where user_id = tests.uid('ok1')), 'textiles:te', 'and the first choices stand');
-select is((select count(*) from public.tenants where name = 'Sri Lakshmi Silks'), 1::bigint, 'still one business');
+-- (counts below look only at THIS file's fixture people: the local database is shared with other sessions whose businesses may carry the same names; job CD)
+select is((select count(*) from public.memberships m join public.tenants t on t.id = m.tenant_id where m.user_id = tests.uid('ok1') and t.name = 'Sri Lakshmi Silks'), 1::bigint, 'still one business');
 select is((select count(*) from public.memberships where user_id = tests.uid('ok1') and role = 'owner'), 1::bigint, 'still one owner row');
 
 -- ---- two people with the same business name get two businesses with different addresses
 select is(tests.scalar_as(tests.uid('ok2'), $$select (public.complete_setup('other', 'en') ->> 'created')$$), 'true', 'a second person with the same business name is set up');
-select is((select count(distinct t.slug) from public.tenants t where t.name = 'Sri Lakshmi Silks'), 2::bigint, 'with a different web address');
+select is((select count(distinct t.slug) from public.tenants t join public.memberships m on m.tenant_id = t.id where m.user_id in (tests.uid('ok1'), tests.uid('ok2')) and t.name = 'Sri Lakshmi Silks'), 2::bigint, 'with a different web address');
 
 -- ---- a name with no latin letters still gets a valid address
 select is(tests.scalar_as(tests.uid('telugu'), $$select (public.complete_setup('other', 'te') ->> 'created')$$), 'true', 'a business named in Telugu is set up');
@@ -104,7 +109,7 @@ select matches((select t.slug from public.tenants t join public.account_setups s
 -- ---- one business per account: an account that already owns a workspace is refused, and nothing is left behind
 select is(tests.sqlstate_as(tests.uid('owner_already'), $$select public.create_tenant('Already Mine', 'already-mine')$$), 'ok', 'set-up: this account already owns a workspace');
 select is(tests.sqlstate_as(tests.uid('owner_already'), $$select public.complete_setup('other', 'en')$$), 'SM307', 'DENY: an account that already owns a workspace cannot also be set up');
-select is((select count(*) from public.tenants where name = 'Second Try Co'), 0::bigint, 'no business was left behind');
+select is((select count(*) from public.tenants where name = 'Second Try Co' and created_at >= now()), 0::bigint, 'no business was left behind');
 select is((select count(*) from public.account_setups where user_id = tests.uid('owner_already')), 0::bigint, 'and no setup row');
 
 select * from finish();

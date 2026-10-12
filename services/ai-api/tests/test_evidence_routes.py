@@ -122,7 +122,16 @@ def test_reaching_another_tenants_target_through_my_own_tenant_path_is_404(env: 
         post = env.post("a_owner", segment, t, body())
         assert (get.status_code, post.status_code) == (404, 404)
         assert (
-            get.json() == post.json() == {"error": {"code": "not_found", "message": "Not found."}}
+            get.json()
+            == post.json()
+            == {
+                "error": {
+                    "code": "not_found",
+                    "message": "Not found.",
+                    "retry_after": None,
+                    "request_id": "test-request-0001",
+                }
+            }
         )
     assert env.evidence.calls == [], "the target is looked up first: no evidence call happened"
 
@@ -382,7 +391,7 @@ def test_data_layer_errors_have_stable_generic_bodies(
     r = env.post("a_owner", "companies", t, body(url=CANARY_URL))
     assert r.status_code == status and r.json()["error"]["code"] == code
     assert "canary" not in r.text.lower() and "qq77" not in r.text.lower()
-    assert set(r.json()["error"]) == {"code", "message"}
+    assert set(r.json()["error"]) == {"code", "message", "retry_after", "request_id"}
 
 
 # ==== list ====

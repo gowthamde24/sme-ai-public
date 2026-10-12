@@ -1,0 +1,42 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "102290129340398",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15550783881",
+              "phone_number_id": "106540352242922"
+            },
+            "contacts": [
+              {
+                "profile": {
+                  "name": "Ravi Kumar"
+                },
+                "wa_id": "919876543210"
+              }
+            ],
+            "messages": [
+              {
+                "from": "919876543210",
+                "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhgU3QTdERDg2RjQ2QzM1NTk5MDA3RkQA06",
+                "timestamp": "1749416383",
+                "type": "image",
+                "image": {
+                  "caption": "I want this one",
+                  "mime_type": "image/jpeg",
+                  "sha256": "Y2Jh0QYs2tXrmmPcrF0xkMVjQiXhYEpPk2v1x3vW1lE=",
+                  "id": "1003383421387256"
+                }
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}

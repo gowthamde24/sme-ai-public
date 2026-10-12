@@ -240,7 +240,7 @@ def test_every_refusal_has_a_fixed_message_and_no_data_layer_text(
     w.q.errors.append(error)
     r = w.put()
     assert r.status_code == status and code(r) == name
-    assert CANARY not in r.text and set(r.json()["error"]) == {"code", "message"}
+    assert CANARY not in r.text and set(r.json()["error"]) == {"code", "message", "retry_after", "request_id"}
 
 
 def test_a_refusal_never_echoes_a_value_the_person_typed(w: World) -> None:

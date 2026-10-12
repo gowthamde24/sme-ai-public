@@ -251,7 +251,7 @@ def test_the_database_rules_the_api_does_not_know_refuse_with_a_fixed_sentence_a
     before = count(world, t)
     r = publish(world, t, **over)
     assert r.status_code == 422 and err(r) == "invalid_value", r.text
-    assert set(r.json()["error"]) == {"code", "message"}
+    assert {"code", "message", "retry_after", "request_id"} <= set(r.json()["error"]) <= {"code", "message", "retry_after", "request_id", "fields"}
     assert count(world, t) == before
 
 

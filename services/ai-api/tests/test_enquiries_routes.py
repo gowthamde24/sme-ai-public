@@ -77,7 +77,7 @@ def test_every_endpoint_needs_a_token_and_hides_a_foreign_tenant(
     assert w.client.request(method, w.url(path), json={}).status_code == 401
     foreign = w.client.request(method, w.url(path), json={}, headers=auth("b_owner"))
     assert foreign.status_code == 404 and foreign.json() == {
-        "error": {"code": "not_found", "message": "Not found."}
+        "error": {"code": "not_found", "message": "Not found.", "retry_after": None, "request_id": "test-request-0001"}
     }
 
 
@@ -262,7 +262,7 @@ def test_an_unknown_foreign_or_malformed_enquiry_is_the_same_404(w: World) -> No
     ):
         r = w.client.get(w.url(path), headers=auth("a_owner"))
         assert r.status_code == 404 and r.json() == {
-            "error": {"code": "not_found", "message": "Not found."}
+            "error": {"code": "not_found", "message": "Not found.", "retry_after": None, "request_id": "test-request-0001"}
         }
 
 
