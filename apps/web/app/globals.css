@@ -388,13 +388,6 @@ select {
   display: block;
 }
 
-.sticky-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
 .card-compact summary,
 .factor-breakdown summary {
   cursor: pointer;
@@ -452,15 +445,6 @@ select {
 
   .review-actions button {
     flex: 1 1 5.5rem;
-  }
-
-  .sticky-actions.sticky {
-    position: sticky;
-    bottom: 0;
-    background: var(--bg);
-    padding: 0.5rem 0;
-    border-top: 1px solid var(--muted);
-    z-index: 5;
   }
 
   .review-card {

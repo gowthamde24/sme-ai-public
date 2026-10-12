@@ -7,7 +7,6 @@ export type Role = "owner" | "admin" | "sales" | "viewer";
 export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
-export const OWNER_ONLY: readonly Role[] = ["owner"];
 
 export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "settings";
 

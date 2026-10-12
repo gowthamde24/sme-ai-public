@@ -1,4 +1,4 @@
-import { parseItem, parseItemPage, parseItemSummary, parsePhoto } from "./catalogue";
+import { parseItemSummary } from "./catalogue";
 
 /**
  * Invented answers in the shape of the catalogue contract (job AY report, "Web contract"), for tests and the screenshot pages. Twelve-ish sarees of a pretend shop; the "photos" are links on a made-up
@@ -72,6 +72,3 @@ export const SUMMARIES: Record<string, unknown>[] = [
 
 export const pageJson = (items: Record<string, unknown>[] = SUMMARIES, next: string | null = null) => ({ items, next_cursor: next });
 export const parseSummary = parseItemSummary;
-export const parseFixtureItem = parseItem;
-export const parseFixturePage = parseItemPage;
-export const parseFixturePhoto = parsePhoto;

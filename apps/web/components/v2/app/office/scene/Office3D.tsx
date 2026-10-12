@@ -13,6 +13,7 @@ import * as THREE from "three";
 import { OWL_PALETTE } from "../../owl/owl-colors";
 import type { OwlMood } from "../../owl/owl-mood";
 import { createOwl, type Detail } from "../../owl/owl-model";
+import { quietThreeClockWarning } from "./quiet-three";
 import { SEATS, TABLE_HEIGHT, TABLE_RADIUS, owlYaw, type Seat } from "./seats";
 import { ALL_AGENT_IDS, type AgentId, type Pose, type RoomState } from "./ids";
 import type { LabelPositions } from "./SceneLabels";
@@ -78,13 +79,15 @@ function fade(root: THREE.Object3D, k: number) {
     }
   });
 }
+quietThreeClockWarning(); // before the first Canvas is made (see quiet-three.ts)
+
 const OFF_OPACITY = 0.3;
 /** The owl is about 3.4 units tall in its own frame; these scales make a seated helper (Agent OWL a little larger) a little taller than the table. */
-const OWL_SCALE = 0.27;
-const MAIN_OWL_SCALE = 0.3;
+const OWL_SCALE = 0.25;
+const MAIN_OWL_SCALE = 0.28;
 const SEAT_HEIGHT = 0.47;
 /** The owl sits a little behind the chair centre so its round body clears the table edge. */
-const OWL_BACK = 0.14;
+const OWL_BACK = 0.2;
 
 /** What an owl does for the state the API reported: `working` thinks (tilts its head, three dots), `idle` sits still, and `off` (not built, or switched off) is a faded, sleepy, still owl. */
 const moodOf = (p: Pose): OwlMood => (p === "working" ? "thinking" : p === "off" ? "resting" : "idle");

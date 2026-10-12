@@ -28,7 +28,7 @@ describe("SentOnWhatsappForm", () => {
 
   it("sends only the touch id; a success says what was recorded and takes a fresh id for the next press", async () => {
     vi.stubGlobal("crypto", { randomUUID: () => ID2 });
-    const action = vi.fn(async (_p: SentMessageState, _d: FormData): Promise<SentMessageState> => ({ ok: true, channel: "whatsapp", at: "2026-10-08T10:30:00.000Z" }));
+    const action = vi.fn<(prev: SentMessageState, data: FormData) => Promise<SentMessageState>>(async () => ({ ok: true, channel: "whatsapp", at: "2026-10-08T10:30:00.000Z" }));
     const { container } = setup(action);
     await press();
     await waitFor(() => expect(screen.getByRole("status")).toHaveTextContent("Recorded: you sent this quote on WhatsApp at"));

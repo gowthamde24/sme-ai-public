@@ -7,7 +7,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { ReviewScreen } from "../review-screen";
 import { LeadsTabs } from "@/components/v2/app/parts";
-import { alertBox, link, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
+import { alertBox, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 
 export const metadata = { title: "Review suggestions · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.

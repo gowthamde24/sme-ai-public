@@ -2,7 +2,6 @@
 export const TENANT = "22222222-2222-2222-2222-222222222222";
 export const LEAD = "33333333-3333-3333-3333-333333333333";
 export const DRAFT = "dddddddd-dddd-4ddd-8ddd-ddddddddddd1";
-export const DRAFT2 = "dddddddd-dddd-4ddd-8ddd-ddddddddddd2";
 export const TOUCH = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee1";
 export const TOUCH2 = "eeeeeeee-eeee-4eee-8eee-eeeeeeeeeee2";
 export const PERSON = "ffffffff-ffff-4fff-8fff-fffffffffff1";

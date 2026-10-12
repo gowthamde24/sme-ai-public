@@ -54,14 +54,6 @@ export function angleDiff(a: number, b: number): number {
   return d;
 }
 
-/** Local (person frame) point -> world point for a seat. */
-export function seatToWorld(seat: Seat, p: [number, number, number]): [number, number, number] {
-  const c = Math.cos(seat.yaw);
-  const s = Math.sin(seat.yaw);
-  // rotation about y by yaw: local +z maps to (sin yaw, cos yaw)
-  return [seat.x + p[0] * c + p[2] * s, p[1], seat.z - p[0] * s + p[2] * c];
-}
-
 /** Where the default camera stands (x, z); the owls turn a little toward it. */
 const CAMERA_XZ: [number, number] = [0, 7];
 /** How much of the way from "facing the table" to "facing the camera" an owl turns. */
