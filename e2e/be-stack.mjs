@@ -1262,11 +1262,14 @@ await step("W1", "robustness: friendly 404 and 403 pages, a skeleton while a scr
   await page.setViewportSize({ width: 1280, height: 900 });
   // a page that is not ours: the friendly 404, with the owl, in the app's frame
   await page.goto(`${BASE}/app/tenants/${uuid()}/orders`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { level: 1, name: "Not found" }).waitFor({ timeout: 20000 }).catch(() => null);
   must((await page.getByRole("heading", { level: 1, name: "Not found" }).count()) === 1, "no friendly 404 heading");
   must((await page.locator('[data-problem="404"] svg').count()) > 0, "the 404 has no owl");
   await page.goto(`${BASE}/app/problem/403`, { waitUntil: "networkidle" });
+  await page.getByRole("heading", { level: 1, name: "This is not open to you" }).waitFor({ timeout: 20000 }).catch(() => null);
   must((await page.getByRole("heading", { level: 1, name: "This is not open to you" }).count()) === 1, "no friendly 403");
   await page.goto(`${BASE}/app/problem/429`, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: "Try again" }).waitFor({ timeout: 20000 }).catch(() => null);
   must((await page.getByRole("button", { name: "Try again" }).count()) === 1, "the 429 has no Try again");
   console.log("  W1 stage: a slow screen: the skeleton");
   // a slow screen: the skeleton shows (the frame stays), then the page
