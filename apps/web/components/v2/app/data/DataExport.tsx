@@ -59,7 +59,7 @@ export function DataExport({ tenantId, words, formats }: { tenantId: string; wor
             <legend className={labelClass}>{t("dta.export.format")}</legend>
             {formats.map((f) => (
               <label key={f} className="flex min-h-11 items-center gap-3 text-base">
-                <input type="radio" name={`${id}-format`} value={f} checked={format === f} onChange={() => setFormat(f)} className="size-5 shrink-0 accent-brand-text" />
+                <input type="radio" name="dta-format" value={f} checked={format === f} onChange={() => setFormat(f)} className="size-5 shrink-0 accent-brand-text" />
                 {t(`dta.fmt.${f}`)}
               </label>
             ))}

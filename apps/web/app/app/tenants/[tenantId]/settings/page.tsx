@@ -23,7 +23,10 @@ import { fetchMembers, type Member } from "@/lib/api/orders";
 import { getPlan, type Plan } from "@/lib/api/plan";
 import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
+import { PartProblem } from "@/components/v2/app/cc/PartProblem";
 import { DataSection } from "@/components/v2/app/data/DataSection";
+import { GstinForm } from "@/components/v2/app/gstin/GstinForm";
+import { getBusinessProfile } from "@/lib/api/gstin";
 import { PrivacySection } from "@/components/v2/app/privacy/PrivacySection";
 import { readConsentList } from "@/lib/api/consent-list";
 import { listMyDeletions, listMyExports, listWorkspaceDeletions } from "@/lib/api/privacy";
@@ -32,6 +35,7 @@ import { settle, type Part } from "@/lib/api/part";
 
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 import { makeCalendarFeedAction, revokeCalendarFeedAction } from "./data-actions";
+import { saveShopGstinAction } from "./gstin-actions";
 import { cancelAccountDeletionAction, cancelWorkspaceDeletionAction, executeWorkspaceDeletionAction, exportLinkAction, getExportAction, requestAccountDeletionAction, requestExportAction, requestWorkspaceDeletionAction } from "./privacy-actions";
 import { agentWords } from "./agent-words";
 import { partsWords, wordsFor } from "@/i18n/app-words";
@@ -95,8 +99,14 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
+  let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
   if (section === "business") {
-    [plan, usage] = await Promise.all([getPlan(user.accessToken, tenantId).catch(() => null), admin ? getAiUsage(user.accessToken, tenantId).catch(() => null) : null]);
+    try {
+      [plan, usage, profile] = await Promise.all([getPlan(user.accessToken, tenantId).catch(rethrowAuth), admin ? getAiUsage(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      throw error;
+    }
   }
   // Agent OWL (the Owner only): the sending switches, the reminders and the scheduler's status. Each read stands on its own; one that fails says "Not available yet" in its place.
   let sending: OutboxSettings | null = null;
@@ -176,6 +186,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 </div>
               </dl>
             </section>
+            {profile ? (
+              profile.ok ? (
+                <GstinForm words={wordsFor(lang, ["gst."], ["dta.btn.working"])} title={t("gst.shop.title")} intro={t("gst.shop.intro")} initial={profile.data} canEdit={admin} needsSecondStep save={saveShopGstinAction.bind(null, tenantId)} />
+              ) : (
+                <PartProblem kind={profile.kind} retryAfter={profile.retryAfter} words={wordsFor(lang, ["apierr.", "problem."])} title={t("gst.shop.title")} />
+              )
+            ) : null}
             {admin ? (
               <section className={surface} aria-labelledby="usage-heading">
                 <h2 id="usage-heading" className="mb-3 text-xl font-semibold">

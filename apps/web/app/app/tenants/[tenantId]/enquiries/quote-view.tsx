@@ -46,6 +46,18 @@ export function QuoteView({ quote, stateName, words }: { quote: Quote; stateName
       <dl className={kvList}>
         <dt>{t("enq.customer")}</dt>
         <dd>{t(`enq.kind.${quote.customer_kind}`)}</dd>
+        {quote.customer_gstin ? (
+          <>
+            <dt>{t("gst.customer")}</dt>
+            <dd className={plainText}>{quote.customer_gstin}</dd>
+          </>
+        ) : null}
+        {quote.shop_gstin ? (
+          <>
+            <dt>{t("gst.ours")}</dt>
+            <dd className={plainText}>{quote.shop_gstin}</dd>
+          </>
+        ) : null}
         {quote.delivery_state !== null ? (
           <>
             <dt>{t("enq.delivery")}</dt>

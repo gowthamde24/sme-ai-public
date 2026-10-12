@@ -199,3 +199,13 @@ describe("requests", () => {
     expect(apiRequest).not.toHaveBeenCalled();
   });
 });
+
+describe("the GSTINs of an order (job CA, job CC)", () => {
+  it("reads the customer's and the shop's number when the API gives them, and leaves them out when it does not", () => {
+    expect(parseOrderDetail({ ...DETAIL_JSON, customer_gstin: "29AAGCB7383J1Z4", shop_gstin: null })).toMatchObject({ customer_gstin: "29AAGCB7383J1Z4", shop_gstin: null });
+    expect("customer_gstin" in parseOrderDetail(DETAIL_JSON)).toBe(false);
+  });
+  it("a number that is not text is a contract error", () => {
+    expect(() => parseOrderDetail({ ...DETAIL_JSON, customer_gstin: 12 })).toThrow(ApiContractError);
+  });
+});

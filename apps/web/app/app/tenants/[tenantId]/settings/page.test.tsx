@@ -20,6 +20,7 @@ const listMyExports = vi.fn();
 const listMyDeletions = vi.fn();
 const listWorkspaceDeletions = vi.fn();
 const readConsentList = vi.fn();
+const getBusinessProfile = vi.fn();
 const getOutboxSettings = vi.fn();
 const getSchedulerSettings = vi.fn();
 const getSchedulerStatus = vi.fn();
@@ -36,6 +37,8 @@ vi.mock("@/lib/api/data", async (importOriginal) => ({ ...(await importOriginal<
 
 vi.mock("@/lib/api/privacy", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/privacy")>()), listMyExports: (...a: unknown[]) => listMyExports(...a), listMyDeletions: (...a: unknown[]) => listMyDeletions(...a), listWorkspaceDeletions: (...a: unknown[]) => listWorkspaceDeletions(...a) }));
 vi.mock("@/lib/api/consent-list", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/consent-list")>()), readConsentList: (...a: unknown[]) => readConsentList(...a) }));
+
+vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: (...a: unknown[]) => getBusinessProfile(...a) }));
 
 import SettingsPage from "./page";
 
@@ -55,6 +58,7 @@ beforeEach(() => {
   getCalendarFeed.mockResolvedValue({ active: false, created_at: null, last_used_at: null });
   getExportFormats.mockResolvedValue(["tally_zip", "csv"]);
   listImportJobs.mockResolvedValue([]);
+  getBusinessProfile.mockResolvedValue({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" });
   listMyExports.mockResolvedValue([]);
   listMyDeletions.mockResolvedValue([]);
   listWorkspaceDeletions.mockResolvedValue([]);
@@ -254,5 +258,28 @@ describe("Settings > Privacy (job CC)", () => {
   it("a rejected session on a read goes to sign-in", async () => {
     listMyDeletions.mockRejectedValue(new ApiAuthError("x"));
     await expect(SettingsPage(props({ section: "privacy" }))).rejects.toThrow("/login");
+  });
+});
+
+describe("Settings > Business: the shop's GSTIN (job CC)", () => {
+  it("shows the number and its state; the Owner and Admin can change it, a salesperson only reads", async () => {
+    render(await SettingsPage(props()));
+    expect(screen.getByRole("heading", { name: "Our GSTIN" })).toBeInTheDocument();
+    expect(screen.getByText("27AAPFU0939F1ZV")).toBeInTheDocument();
+    expect(screen.getByText("State: Maharashtra")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove the GSTIN" })).toBeInTheDocument();
+    expect(getBusinessProfile).toHaveBeenCalledWith("tok", TENANT);
+    cleanup();
+    fetchTenant.mockResolvedValue(tenant("sales"));
+    render(await SettingsPage(props()));
+    expect(screen.getByText("27AAPFU0939F1ZV")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Save GSTIN" })).toBeNull();
+    expect(screen.getByText("Only an owner or an admin can change the shop's GSTIN.")).toBeInTheDocument();
+  });
+  it("a number that cannot be read says so in its place and the rest of the business tab stays", async () => {
+    getBusinessProfile.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 12));
+    render(await SettingsPage(props()));
+    expect(screen.getByText(/Wait 12 seconds/)).toBeInTheDocument();
+    expect(screen.getByText("Acme Silks")).toBeInTheDocument();
   });
 });

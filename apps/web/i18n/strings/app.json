@@ -36041,5 +36041,262 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "gst.shop.title": {
+  "en": "Our GSTIN",
+  "te": "మా GSTIN నంబర్",
+  "hi": "हमारा GSTIN नंबर",
+  "kn": "ನಮ್ಮ GSTIN ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.shop.intro": {
+  "en": "The shop's GST registration number. It is shown on quotes and orders and goes into the files for your accountant.",
+  "te": "షాపు GST రిజిస్ట్రేషన్ నంబర్. ఇది కోట్లు, ఆర్డర్లలో కనిపిస్తుంది, అకౌంటెంట్ ఫైళ్ళలోకి వెళ్తుంది.",
+  "hi": "दुकान का GST रजिस्ट्रेशन नंबर। यह कोट और ऑर्डर पर दिखता है और अकाउंटेंट की फ़ाइलों में जाता है।",
+  "kn": "ಅಂಗಡಿಯ GST ನೋಂದಣಿ ಸಂಖ್ಯೆ. ಇದು ಕೋಟ್, ಆರ್ಡರ್‌ಗಳಲ್ಲಿ ಕಾಣುತ್ತದೆ, ಅಕೌಂಟೆಂಟ್ ಫೈಲ್‌ಗಳಿಗೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.label": {
+  "en": "GSTIN (15 characters)",
+  "te": "GSTIN (15 అక్షరాలు)",
+  "hi": "GSTIN (15 अक्षर)",
+  "kn": "GSTIN (15 ಅಕ್ಷರಗಳು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.hint": {
+  "en": "For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine.",
+  "te": "ఉదాహరణ 27AAPFU0939F1ZV. ఖాళీలు, డాష్‌లు, చిన్న అక్షరాలు పరవాలేదు.",
+  "hi": "जैसे 27AAPFU0939F1ZV। स्पेस, डैश और छोटे अक्षर चलेंगे।",
+  "kn": "ಉದಾಹರಣೆ 27AAPFU0939F1ZV. ಖಾಲಿ ಜಾಗ, ಡ್ಯಾಶ್, ಚಿಕ್ಕ ಅಕ್ಷರ ಪರವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.state": {
+  "en": "State: {state}",
+  "te": "రాష్ట్రం: {state}",
+  "hi": "राज्य: {state}",
+  "kn": "ರಾಜ್ಯ: {state}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.none": {
+  "en": "No GSTIN saved.",
+  "te": "GSTIN సేవ్ చేయలేదు.",
+  "hi": "कोई GSTIN सेव नहीं है।",
+  "kn": "GSTIN ಸೇವ್ ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.none_short": {
+  "en": "Not given",
+  "te": "ఇవ్వలేదు",
+  "hi": "दिया नहीं गया",
+  "kn": "ಕೊಟ್ಟಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.save": {
+  "en": "Save GSTIN",
+  "te": "GSTIN సేవ్ చేయండి",
+  "hi": "GSTIN सेव करें",
+  "kn": "GSTIN ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.clear": {
+  "en": "Remove the GSTIN",
+  "te": "GSTIN తీసేయండి",
+  "hi": "GSTIN हटाएँ",
+  "kn": "GSTIN ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.saved": {
+  "en": "GSTIN saved.",
+  "te": "GSTIN సేవ్ అయింది.",
+  "hi": "GSTIN सेव हो गया।",
+  "kn": "GSTIN ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.cleared": {
+  "en": "GSTIN removed.",
+  "te": "GSTIN తీసేశాం.",
+  "hi": "GSTIN हटा दिया।",
+  "kn": "GSTIN ತೆಗೆದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.bad.length": {
+  "en": "A GSTIN has 15 characters. Check how many you typed.",
+  "te": "GSTIN లో 15 అక్షరాలు ఉంటాయి. ఎన్ని టైప్ చేశారో చూడండి.",
+  "hi": "GSTIN में 15 अक्षर होते हैं। देखें कितने लिखे हैं।",
+  "kn": "GSTIN ನಲ್ಲಿ 15 ಅಕ್ಷರಗಳಿರುತ್ತವೆ. ಎಷ್ಟು ಬರೆದಿದ್ದೀರಿ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.bad.shape": {
+  "en": "This GSTIN is not valid: check the 15 characters.",
+  "te": "ఈ GSTIN సరైనది కాదు: 15 అక్షరాలను చూడండి.",
+  "hi": "यह GSTIN सही नहीं है: 15 अक्षर देखें।",
+  "kn": "ಈ GSTIN ಸರಿಯಿಲ್ಲ: 15 ಅಕ್ಷರಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.bad.check": {
+  "en": "The last character does not fit the others. Check the number.",
+  "te": "చివరి అక్షరం మిగతావాటికి సరిపోలేదు. నంబర్ చూడండి.",
+  "hi": "आखिरी अक्षर बाकी से मेल नहीं खाता। नंबर देखें।",
+  "kn": "ಕೊನೆಯ ಅಕ್ಷರ ಉಳಿದವುಗಳಿಗೆ ಹೊಂದುತ್ತಿಲ್ಲ. ಸಂಖ್ಯೆ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.only_form": {
+  "en": "We only check that the number is well formed. We do not check with the GST portal that the business exists or is active.",
+  "te": "We only check that the number is well formed. We do not check with the GST portal that the business exists or is active.",
+  "hi": "We only check that the number is well formed. We do not check with the GST portal that the business exists or is active.",
+  "kn": "We only check that the number is well formed. We do not check with the GST portal that the business exists or is active.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "gst.mfa": {
+  "en": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
+  "te": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
+  "hi": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
+  "kn": "Saving needs your second step (your authenticator code). If you are asked, open Security first.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "gst.personal": {
+  "en": "A GSTIN holds the owner's PAN, so for a sole proprietor it is personal data. Add it only if the customer gave it to you.",
+  "te": "A GSTIN holds the owner's PAN, so for a sole proprietor it is personal data. Add it only if the customer gave it to you.",
+  "hi": "A GSTIN holds the owner's PAN, so for a sole proprietor it is personal data. Add it only if the customer gave it to you.",
+  "kn": "A GSTIN holds the owner's PAN, so for a sole proprietor it is personal data. Add it only if the customer gave it to you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "gst.read_only": {
+  "en": "Only an owner or an admin can change the shop's GSTIN.",
+  "te": "షాపు GSTIN ని ఓనర్ లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "दुकान का GSTIN सिर्फ़ ओनर या एडमिन बदल सकता है।",
+  "kn": "ಅಂಗಡಿಯ GSTIN ಅನ್ನು ಓನರ್ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.customer.title": {
+  "en": "Customer's GSTIN",
+  "te": "కస్టమర్ GSTIN నంబర్",
+  "hi": "कस्टमर का GSTIN नंबर",
+  "kn": "ಕಸ್ಟಮರ್ GSTIN ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.customer.optional": {
+  "en": "GSTIN (for a business, optional)",
+  "te": "GSTIN (వ్యాపారానికి, ఐచ్ఛికం)",
+  "hi": "GSTIN (व्यापार के लिए, ज़रूरी नहीं)",
+  "kn": "GSTIN (ವ್ಯಾಪಾರಕ್ಕೆ, ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.customer.hint": {
+  "en": "Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor.",
+  "te": "Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor.",
+  "hi": "Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor.",
+  "kn": "Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "gst.customer": {
+  "en": "Customer GSTIN",
+  "te": "కస్టమర్ GSTIN నంబర్",
+  "hi": "कस्टमर का GSTIN नंबर",
+  "kn": "ಕಸ್ಟಮರ್ GSTIN ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "gst.ours": {
+  "en": "Our GSTIN",
+  "te": "మా GSTIN నంబర్",
+  "hi": "हमारा GSTIN नंबर",
+  "kn": "ನಮ್ಮ GSTIN ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

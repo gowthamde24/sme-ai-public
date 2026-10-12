@@ -51,7 +51,7 @@ describe("addCustomerAction", () => {
     const r = await run();
     expect(order).toEqual(["company", "contact", "lead"]);
     expect(requireUser).toHaveBeenCalledTimes(1);
-    expect(api.createCustomerCompany).toHaveBeenCalledWith("tok", T, { id: CO, name: "Synthetic Asha" });
+    expect(api.createCustomerCompany).toHaveBeenCalledWith("tok", T, { id: CO, name: "Synthetic Asha", gstin: null });
     expect(api.createContact).toHaveBeenCalledWith("tok", T, { id: CT, companyId: CO, fullName: "Synthetic Asha", phone: PHONE, email: null });
     expect(api.createLead).toHaveBeenCalledWith("tok", T, { id: LD, companyId: CO, contactId: CT, source: "whatsapp" });
     expect(r).toEqual({ ok: true, leadId: LD, contactId: CT, name: "Synthetic Asha" });
@@ -226,5 +226,21 @@ describe("addCustomerAction", () => {
     expect((await run())?.ok).toBe(true);
     expect(api.createContact.mock.calls[0][2].id).toBe(api.createContact.mock.calls[1][2].id);
     expect(api.createLead.mock.calls[1][2].id).toBe(LD);
+  });
+});
+
+describe("a business customer's GSTIN (job CC)", () => {
+  it("is sent to the company in its plain form when it is well formed", async () => {
+    await run({ gstin: " 29aagcb-7383 j1z4 " });
+    expect(api.createCustomerCompany).toHaveBeenCalledWith("tok", T, { id: CO, name: "Synthetic Asha", gstin: "29AAGCB7383J1Z4" });
+  });
+  it("is refused with a sentence of ours, before anything is made, when it is not well formed", async () => {
+    const r = await run({ gstin: "29AAGCB7383J1Z5" });
+    expect(r).toMatchObject({ ok: false, error: "This GSTIN is not valid: check the 15 characters." });
+    expect(api.createCustomerCompany).not.toHaveBeenCalled();
+  });
+  it("nothing typed is none", async () => {
+    await run({ gstin: "   " });
+    expect(api.createCustomerCompany).toHaveBeenCalledWith("tok", T, { id: CO, name: "Synthetic Asha", gstin: null });
   });
 });

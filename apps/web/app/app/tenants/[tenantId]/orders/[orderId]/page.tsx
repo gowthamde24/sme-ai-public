@@ -33,7 +33,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   const user = await requireUser();
   const { tenantId, orderId } = await params;
   const lang = await getLang();
-  const words = wordsFor(lang, ["orders.", "enq."]);
+  const words = wordsFor(lang, ["orders.", "enq."], ["gst.customer", "gst.ours", "gst.none_short"]);
   const t = makeT(words);
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(orderId)) notFound();
 

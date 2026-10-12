@@ -12,10 +12,20 @@ City
 Hyderabad
 Industry
 Textiles
+GSTIN (15 characters)
+—
 Created
 1 Oct 2026
 Origin
 manual
+{label="Customer's GSTIN"}
+## Customer's GSTIN
+No GSTIN saved.
+form:
+GSTIN (15 characters)
+<text label="GSTIN (15 characters)" maxlength=30 autocomplete=off described-by="For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine.">
+For example 27AAPFU0939F1ZV. Spaces, dashes and small letters are fine. A GSTIN holds the owner's PAN, so for a sole proprietor it is personal data. Add it only if the customer gave it to you. We only check that the number is well formed. We do not check with the GST portal that the business exists or is active.
+[button type=submit disabled: Save GSTIN]
 {label="Evidence"}
 ## Evidence
 Sources are shown as plain text. They are never opened, fetched or previewed by this application.

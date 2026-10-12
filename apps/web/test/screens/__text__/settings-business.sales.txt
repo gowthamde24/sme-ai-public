@@ -8,3 +8,6 @@ Plan
 Free trial plan
 URL name
 demo-silks
+{label="Our GSTIN"}
+## Our GSTIN
+The shop's GST registration number. It is shown on quotes and orders and goes into the files for your accountant. 27AAPFU0939F1ZV State: Maharashtra Only an owner or an admin can change the shop's GSTIN.

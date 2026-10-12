@@ -358,4 +358,55 @@ export async function ccSteps(c) {
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "Connect: not connected, connecting, connected, needs attention, connected again (real API); chat list and thread with the reason in words and no number; approve moved the real message; a reply reached the real outbox; phone and dark clean";
   }, page);
+
+  // ---- CC6. GSTIN: the shop's own and a business customer's ----------------------------------------------------------------------------------------------------
+  await step("CC6", "GSTIN: the shop's number (a bad one is stopped, a good one saved with its state), a business customer's number on the company page, removed again", async () => {
+    await page.goto(`${base()}/settings?section=business`, { waitUntil: "networkidle" });
+    await page.getByRole("heading", { name: "Our GSTIN" }).waitFor();
+    must((await text(page)).includes("No GSTIN saved."), "the shop already has a GSTIN");
+    const input = page.getByLabel("GSTIN (15 characters)").first();
+    await input.fill("27AAPFU0939F1ZW");
+    await page.getByRole("alert").filter({ hasText: "The last character does not fit the others." }).waitFor();
+    must(await page.getByRole("button", { name: "Save GSTIN" }).first().isDisabled(), "a bad number could be sent");
+    await input.fill(" 27aapfu-0939 f1zv ");
+    await page.getByRole("button", { name: "Save GSTIN" }).first().click();
+    await page.getByRole("status").filter({ hasText: "GSTIN saved." }).waitFor();
+    const token = await aal2Token();
+    const profile = await api("GET", `/v1/tenants/${c.tenant}/business-profile`, null, token);
+    must(profile.body.gstin === "27AAPFU0939F1ZV" && profile.body.state === "Maharashtra", `the API says ${JSON.stringify(profile.body)}`);
+    await page.reload({ waitUntil: "networkidle" });
+    must((await text(page)).includes("27AAPFU0939F1ZV") && (await text(page)).includes("State: Maharashtra"), "the number is not shown after a reload");
+    await page.screenshot({ path: path.join(SHOTS, "CC6-gstin-shop.png"), fullPage: true });
+    const audit = await phoneAudit(c, "CC6-gstin");
+
+    // a business customer
+    const company = c.uuid();
+    const made = await api("POST", `/v1/tenants/${c.tenant}/companies`, { id: company, name: `E2E GST Silks ${stamp}`, type: "customer", country: "IN", city: "Hyderabad" }, token);
+    must(made.status === 200 || made.status === 201, `company: HTTP ${made.status}`);
+    await page.goto(`${base()}/companies/${company}`, { waitUntil: "networkidle" });
+    await page.getByRole("heading", { name: "Customer's GSTIN" }).waitFor();
+    const cin = page.getByLabel("GSTIN (15 characters)").first();
+    await cin.fill("29AAGCB7383J1Z5");
+    must(await page.getByRole("button", { name: "Save GSTIN" }).first().isDisabled(), "a bad customer number could be sent");
+    await cin.fill("29AAGCB7383J1Z4");
+    await page.getByRole("button", { name: "Save GSTIN" }).first().click();
+    await page.getByRole("status").filter({ hasText: "GSTIN saved." }).waitFor();
+    must(psql(`select gstin from public.companies where id = '${company}'`) === "29AAGCB7383J1Z4", "the customer's number is not in the database");
+    must((await page.getByText("State: Karnataka").count()) >= 1, "the state is not named");
+    await page.getByRole("button", { name: "Remove the GSTIN" }).click();
+    await page.getByRole("status").filter({ hasText: "GSTIN removed." }).waitFor();
+    must(psql(`select coalesce(gstin, 'none') from public.companies where id = '${company}'`) === "none", "the number was not removed");
+
+    // the customers form takes one too
+    await page.goto(`${base()}/customers/new`, { waitUntil: "networkidle" });
+    await page.getByLabel("Customer's name").fill(`E2E GST Person ${stamp}`);
+    await page.getByLabel("WhatsApp or phone number").fill("+00 90002 00088");
+    await page.getByLabel("Shop or business name (optional)").fill(`E2E GST Shop ${stamp}`);
+    await page.getByLabel(/^GSTIN \(for a business/).fill("24AAACC1206D1ZM");
+    await page.getByRole("button", { name: "Add this customer" }).click();
+    await page.getByRole("status").waitFor();
+    must(psql(`select gstin from public.companies where tenant_id = '${c.tenant}' and name = 'E2E GST Shop ${stamp}'`) === "24AAACC1206D1ZM", "the customer form did not keep the number");
+    must(audit.length === 0, `phone: ${audit.join(" | ")}`);
+    return "shop number: bad stopped, good saved with state Maharashtra; customer number set (Karnataka), removed; the new-customer form keeps one; phone and dark clean";
+  }, page);
 }

@@ -632,7 +632,7 @@ add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await im
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
 for (const section of ["business", "language", "security"] as const) {
-  add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => base(role) });
+  add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
 }
 // Settings > Data and > Privacy (job CC): the invented answers of the new reads
 const DATA_HANDLERS = {

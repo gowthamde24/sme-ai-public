@@ -43,7 +43,7 @@ describe("the company screen, one part at a time", () => {
   it("opens on the details: the summary only, no evidence and no suggestions", async () => {
     render(await CompanyPage(props()));
     expect(current()).toBe("Details");
-    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Company"]);
+    expect(screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent)).toEqual(["Company", "Customer's GSTIN"]);
     expect(screen.queryByText("Catalogue says silk")).toBeNull();
     expect(screen.queryByText("DEMO suggestion")).toBeNull();
   });

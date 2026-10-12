@@ -89,6 +89,9 @@ export interface UnquotedLine {
   summary: string[];
 }
 export interface Quote {
+  /** The customer's GSTIN and the shop's own, when there are any (job CA). */
+  customer_gstin?: string;
+  shop_gstin?: string;
   id: string;
   quote_no: number;
   requirement_id: string;
@@ -374,6 +377,9 @@ export function parseQuote(json: unknown): Quote {
     withdrawn_by: strOrNull(json, "withdrawn_by"),
     withdrawn_at: strOrNull(json, "withdrawn_at"),
     withdraw_code: oneOfOrNull(json, "withdraw_code", WITHDRAW_CODES),
+    // the GSTINs are left out of the answer when there are none (job CA)
+    ...(typeof json.customer_gstin === "string" ? { customer_gstin: json.customer_gstin } : {}),
+    ...(typeof json.shop_gstin === "string" ? { shop_gstin: json.shop_gstin } : {}),
     lines: list(json.lines, "lines").map(parseLine),
     unquoted_lines: list(json.unquoted_lines, "unquoted_lines").map((u) => {
       if (!isRecord(u)) return bad("unquoted line");

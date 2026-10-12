@@ -135,6 +135,9 @@ export interface Order {
 export interface OrderDetail extends Order {
   events: OrderEvent[];
   allowed_next_events: EventType[];
+  /** The customer's GSTIN and the shop's own, read when shown (job CA); absent from an API from before it. */
+  customer_gstin?: string | null;
+  shop_gstin?: string | null;
 }
 export interface OrderPage {
   items: Order[];
@@ -279,6 +282,9 @@ export function parseOrderDetail(json: unknown): OrderDetail {
   if (!isRecord(json)) return bad("order");
   return {
     ...parseOrder(json),
+    // the customer's and the shop's GSTIN (job CA); an answer from before it has none
+    ...(json.customer_gstin === undefined ? {} : { customer_gstin: strOrNull(json, "customer_gstin") }),
+    ...(json.shop_gstin === undefined ? {} : { shop_gstin: strOrNull(json, "shop_gstin") }),
     events: list(json.events, "events").map(parseEvent),
     allowed_next_events: strings(json.allowed_next_events, "allowed_next_events").map((e) =>
       (EVENT_TYPES as readonly string[]).includes(e) ? (e as EventType) : bad("allowed_next_events"),

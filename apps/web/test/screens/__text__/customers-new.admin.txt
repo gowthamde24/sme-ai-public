@@ -12,7 +12,9 @@ E-mail (optional)
 <email name=email label="E-mail (optional)" maxlength=254 autocomplete=off>
 Shop or business name (optional)
 <text name=company_name label="Shop or business name (optional)" maxlength=200>
-How did the enquiry come?
+GSTIN (for a business, optional)
+<text name=gstin label="GSTIN (for a business, optional)" maxlength=30 autocomplete=off described-by="Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor.">
+Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor. How did the enquiry come?
 <select name=how label="How did the enquiry come?">
   options: Phone call=phone_call* | WhatsApp=whatsapp
 If you leave the shop name empty, the customer's name is used. Look in the Contacts list first: this form does not check whether you already added this person.

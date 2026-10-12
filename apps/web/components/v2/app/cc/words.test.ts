@@ -60,6 +60,7 @@ describe("the words of the job CC screens", () => {
       ...["followup", "visit", "order_status", "info"].map((s) => `wa.tpl.purpose.${s}`),
       ...["waba", "phone", "token"].map((s) => `wa.form.bad.${s}`),
       ...[1, 2, 3, 4].map((n) => `wa.steps.${n}`),
+      ...["length", "shape", "check"].map((p) => `gst.bad.${p}`),
       ...["dta.fmt.csv"]];
     expect(need.filter((k) => !(k in en))).toEqual([]);
   });

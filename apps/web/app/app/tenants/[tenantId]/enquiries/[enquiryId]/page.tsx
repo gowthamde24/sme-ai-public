@@ -40,7 +40,7 @@ function pick(value: string | string[] | undefined): string | undefined {
  */
 export default async function EnquiryPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/enquiries/[enquiryId]">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp."]);
+  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp."], ["gst.customer", "gst.ours"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId, enquiryId } = await params;

@@ -24,7 +24,7 @@ const WRITERS = ["owner", "admin", "sales"];
  */
 export default async function NewCustomerPage({ params }: PageProps<"/app/tenants/[tenantId]/customers/new">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["cust."]);
+  const words = wordsFor(lang, ["cust."], ["gst.customer.optional", "gst.customer.hint"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;

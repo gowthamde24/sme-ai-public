@@ -7,18 +7,18 @@ Bring customers and stock in from a spreadsheet, send your sales to your account
 Add customers or update saree stock from a CSV or Excel file. You see every row before anything is saved. People and sarees already in your list are never changed.
 legend: Where is your file from?
 {role=radiogroup label="Where is your file from?"}
-<radio name=_r_1f_-src label="Tally" value=tally>
+<radio name=dta-source label="Tally" value=tally>
 Tally
-<radio name=_r_1f_-src label="Vyapar" value=vyapar>
+<radio name=dta-source label="Vyapar" value=vyapar>
 Vyapar
-<radio name=_r_1f_-src label="Excel or Google Sheets" value=sheet checked>
+<radio name=dta-source label="Excel or Google Sheets" value=sheet checked>
 Excel or Google Sheets
 In Google Sheets use File, Download, CSV or Excel. In Excel use Save As, CSV UTF-8, or keep the .xlsx file. The first row must be the column names.
 legend: What is in the file?
 {role=radiogroup label="What is in the file?"}
-<radio name=_r_1f_-kind label="Customers" value=customers checked>
+<radio name=dta-kind label="Customers" value=customers checked>
 Customers
-<radio name=_r_1f_-kind label="Saree stock" value=stock>
+<radio name=dta-kind label="Saree stock" value=stock>
 Saree stock
 Choose the file
 <file label="Choose the file" accept=.csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet described-by="No file chosen yet. CSV or Excel (.xlsx), up to 2 MB and 500 rows.">
@@ -33,13 +33,13 @@ table:
 ## Send your books to your accountant
 Make a file of your accepted orders and payments for some days, to open in Tally, Vyapar or Excel. Nothing is sent anywhere: the file comes to this device.
 legend: File type
-<radio name=_r_1g_-format label="Tally: masters and vouchers (one zip)" value=tally_zip checked>
+<radio name=dta-format label="Tally: masters and vouchers (one zip)" value=tally_zip checked>
 Tally: masters and vouchers (one zip)
-<radio name=_r_1g_-format label="Vyapar workbook (Excel)" value=vyapar_xlsx>
+<radio name=dta-format label="Vyapar workbook (Excel)" value=vyapar_xlsx>
 Vyapar workbook (Excel)
-<radio name=_r_1g_-format label="Spreadsheet (CSV)" value=csv>
+<radio name=dta-format label="Spreadsheet (CSV)" value=csv>
 Spreadsheet (CSV)
-<radio name=_r_1g_-format label="Excel workbook (.xlsx)" value=xlsx>
+<radio name=dta-format label="Excel workbook (.xlsx)" value=xlsx>
 Excel workbook (.xlsx)
 From
 <date label="From" max=2026-09-30 value=2026-09-01>

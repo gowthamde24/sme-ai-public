@@ -108,7 +108,7 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("dta.src.label")}>
               {SOURCES.map((s) => (
                 <label key={s} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-base font-semibold ${source === s ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
-                  <input type="radio" name={`${id}-src`} value={s} checked={source === s} onChange={() => setSource(s)} className="size-5 accent-brand-text" />
+                  <input type="radio" name="dta-source" value={s} checked={source === s} onChange={() => setSource(s)} className="size-5 accent-brand-text" />
                   {s === "sheet" ? t("dta.src.sheet") : s === "tally" ? "Tally" : "Vyapar"}
                 </label>
               ))}
@@ -120,7 +120,7 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("dta.kind.label")}>
               {(["customers", "stock"] as const).map((k) => (
                 <label key={k} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-base font-semibold ${kind === k ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
-                  <input type="radio" name={`${id}-kind`} value={k} checked={kind === k} onChange={() => setKind(k)} className="size-5 accent-brand-text" />
+                  <input type="radio" name="dta-kind" value={k} checked={kind === k} onChange={() => setKind(k)} className="size-5 accent-brand-text" />
                   {t(`dta.kind.${k}`)}
                 </label>
               ))}
