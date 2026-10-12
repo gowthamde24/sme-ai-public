@@ -201,6 +201,7 @@ select is(
         'public.lift_suppression',
         'app.can_contact',
         'app.text_is_clean',
+        'app.gstin_is_valid',  -- job CA: a CHECK on companies.gstin and business_profile.gstin runs with the writer's rights
         'public.create_evidence_with_link',
         'public.import_lead_rows',
         -- T006 (ADR 0013): the agent write path. Every one derives the tenant from the run (or the claim) it is given.
@@ -295,7 +296,9 @@ select is(
         -- job BP (ADR 0078): the web research tools' daily limit, usage read and query check. Each proves the run (or the role) first
         'public.web_quota_take', 'public.web_usage_today', 'public.web_query_check',
         -- job BZ (ADR 0080): the connectors. A person's functions check a workspace role first; the scheduler_* ones check the worker account
-        'public.indiamart_pull_begin', 'public.indiamart_pull_finish', 'public.payment_link_begin', 'public.payment_link_attach', 'public.payment_link_fail', 'public.payment_link_list', 'public.payment_link_get', 'public.payment_link_mark_recorded', 'public.scheduler_payment_event', 'public.scheduler_missed_call', 'public.missed_call_list', 'public.missed_call_handle', 'public.call_bridge_prepare', 'public.call_bridge_finish', 'public.scheduler_call_status', 'public.connectors_status')),
+        'public.indiamart_pull_begin', 'public.indiamart_pull_finish', 'public.payment_link_begin', 'public.payment_link_attach', 'public.payment_link_fail', 'public.payment_link_list', 'public.payment_link_get', 'public.payment_link_mark_recorded', 'public.scheduler_payment_event', 'public.scheduler_missed_call', 'public.missed_call_list', 'public.missed_call_handle', 'public.call_bridge_prepare', 'public.call_bridge_finish', 'public.scheduler_call_status', 'public.connectors_status',
+        -- job CA (ADR 0081): the shop's own GSTIN (Owner or Admin, second factor)
+        'public.business_profile_set')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -344,7 +347,8 @@ select is(
                      'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
                      'public.web_quota_take', 'public.web_usage_today', 'public.web_query_check',
-                     'public.indiamart_pull_begin', 'public.indiamart_pull_finish', 'public.payment_link_begin', 'public.payment_link_attach', 'public.payment_link_fail', 'public.payment_link_list', 'public.payment_link_get', 'public.payment_link_mark_recorded', 'public.scheduler_payment_event', 'public.scheduler_missed_call', 'public.missed_call_list', 'public.missed_call_handle', 'public.call_bridge_prepare', 'public.call_bridge_finish', 'public.scheduler_call_status', 'public.connectors_status')),
+                     'public.indiamart_pull_begin', 'public.indiamart_pull_finish', 'public.payment_link_begin', 'public.payment_link_attach', 'public.payment_link_fail', 'public.payment_link_list', 'public.payment_link_get', 'public.payment_link_mark_recorded', 'public.scheduler_payment_event', 'public.scheduler_missed_call', 'public.missed_call_list', 'public.missed_call_handle', 'public.call_bridge_prepare', 'public.call_bridge_finish', 'public.scheduler_call_status', 'public.connectors_status',
+                     'public.business_profile_set')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

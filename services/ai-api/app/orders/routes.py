@@ -15,6 +15,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Query, Response
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
+from app.businessprofile.taxids import tax_ids
 from app.crm.models import CursorError, Page, decode_cursor, encode_cursor, parse_uuid
 from app.errors import ApiError, not_found
 from app.orders import service
@@ -59,9 +60,11 @@ def _order(runtime: Runtime, ctx: TenantContext, raw_id: str) -> OrderDetailOut:
     )
     if found is None:
         raise not_found()
-    return service.with_guidance(
+    detail = service.with_guidance(
         _repo(runtime), ctx.principal.token, ctx.tenant.id, ctx.role, found
     )
+    customer, shop = tax_ids(runtime, ctx, detail.lead_id)
+    return detail.model_copy(update={"customer_gstin": customer, "shop_gstin": shop})
 
 
 # ----------------------------------------------------------------------------- reading

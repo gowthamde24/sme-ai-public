@@ -201,6 +201,7 @@ def test_responses_forbid_unknown_columns() -> None:
         "name": "A",
         "type": "prospect",
         "website": None,
+        "gstin": None,
         "country": None,
         "region": None,
         "city": None,

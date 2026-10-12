@@ -5,6 +5,7 @@ export interface CompanyCreate {
   name: string;
   type?: CompanyType;
   website?: string | null;
+  gstin?: string | null;
   country?: string | null;
   region?: string | null;
   city?: string | null;
@@ -22,6 +23,7 @@ export interface CompanyOut {
   name: string;
   type: CompanyType;
   website: string | null;
+  gstin: string | null;
   country: string | null;
   region: string | null;
   city: string | null;
@@ -35,6 +37,7 @@ export interface CompanyUpdate {
   name?: string | null;
   type?: CompanyType | null;
   website?: string | null;
+  gstin?: string | null;
   country?: string | null;
   region?: string | null;
   city?: string | null;

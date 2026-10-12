@@ -3,7 +3,7 @@ voucher per refund). The shape follows Tally's own published import examples (he
 with IMPORTDATA / REQUESTDESC (REPORTNAME All Masters or Vouchers) / REQUESTDATA / TALLYMESSAGE. Dates are YYYYMMDD. In a voucher a DEBIT entry has ISDEEMEDPOSITIVE Yes and a NEGATIVE amount; a
 CREDIT entry has ISDEEMEDPOSITIVE No and a POSITIVE amount; the entries of every voucher add up to zero (the builder asserts it).
 
-What is NOT in the files, on purpose: GSTIN and GST registration type (the application holds no GSTIN yet), HSN codes, stock items (the vouchers are accounting vouchers: party, sales, freight, tax),
+What is NOT in the files, on purpose: GSTIN and GST registration type (the application now holds GSTINs, job CA, and the CSV, XLSX and Vyapar files carry them; the Tally files do NOT, because the names of the Tally XML tags for a ledger's registration details could not be verified against Tally's documentation and a wrong tag makes the import fail: set the GSTIN on the party ledger in Tally), HSN codes, stock items (the vouchers are accounting vouchers: party, sales, freight, tax),
 bank details (receipts go to the ledger named Cash unless you pass another). The tax ledgers are plain ledgers under Duties & Taxes: set their GST type and rate in Tally if you file from Tally."""
 
 from __future__ import annotations
