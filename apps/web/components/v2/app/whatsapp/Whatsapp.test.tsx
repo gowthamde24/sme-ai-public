@@ -90,6 +90,12 @@ describe("Connect WhatsApp: the four states", () => {
     expect(a.disable).toHaveBeenCalled();
     expect(screen.getByText("Needs attention")).toBeInTheDocument();
   });
+  it("Switch on and Switch off are different buttons, so the app-wide double-press guard never mistakes one for a repeat of the other", async () => {
+    render(<ConnectWhatsapp words={WORDS} account={parseAccount({ ...ACCOUNT, status: "pending" })} canEdit actions={acts()} />);
+    const on = screen.getByRole("button", { name: "Switch on" });
+    await press("Switch on");
+    expect(screen.getByRole("button", { name: "Switch off" })).not.toBe(on);
+  });
   it.each([
     [fail("mfa", undefined, { mfa: true }), /second step/],
     [fail("forbidden"), /Your role cannot do this/],

@@ -1,3 +1,4 @@
+import { StrictMode } from "react";
 import { act, cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -239,6 +240,16 @@ describe("joining with a code", () => {
     await waitFor(() => expect(screen.getByLabelText("Invitation code")).toHaveValue("7QX2K-M9R4D-0A1B2-C3D4E"));
     expect(window.location.hash).toBe("");
     expect(window.location.pathname).toBe("/app/join");
+  });
+  it("also in a development build, which runs the effect twice (the first run takes the code out of the address)", async () => {
+    window.history.replaceState(null, "", "/app/join#code=7QX2K-M9R4D-0A1B2-C3D4E");
+    render(
+      <StrictMode>
+        <JoinForm words={WORDS} accept={vi.fn()} />
+      </StrictMode>,
+    );
+    await waitFor(() => expect(screen.getByLabelText("Invitation code")).toHaveValue("7QX2K-M9R4D-0A1B2-C3D4E"));
+    expect(window.location.hash).toBe("");
   });
   it("sends the code as typed and goes to the business", async () => {
     window.history.replaceState(null, "", "/app/join");

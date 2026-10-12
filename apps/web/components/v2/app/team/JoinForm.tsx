@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import type { Joined } from "@/lib/api/team";
 
@@ -23,18 +23,26 @@ export function JoinForm({ words, accept }: { words: Words; accept: (code: strin
   const [busy, setBusy] = useState(false);
   const [failure, setFailure] = useState<Failed | null>(null);
   const [joined, setJoined] = useState<Joined | null>(null);
+  const fromLink = useRef<string | null>(null); // the code the link carried; kept because a development build runs the effect twice and the first run takes it out of the address
 
   useEffect(() => {
-    const m = /(?:^#|&)code=([^&]{1,100})/.exec(window.location.hash);
-    if (!m) return;
-    let found = m[1];
-    try {
-      found = decodeURIComponent(m[1]);
-    } catch {
-      // the code as it stands
+    if (fromLink.current === null) {
+      const m = /(?:^#|&)code=([^&]{1,100})/.exec(window.location.hash);
+      if (m) {
+        let found = m[1];
+        try {
+          found = decodeURIComponent(m[1]);
+        } catch {
+          // the code as it stands
+        }
+        fromLink.current = found;
+        // the address bar is cleaned at once
+        window.history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
     }
-    // the address bar is cleaned at once; the box is filled on the next turn (state is not set inside the effect itself)
-    window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    const found = fromLink.current;
+    if (found === null) return;
+    // the box is filled on the next turn (state is not set inside the effect itself)
     const timer = setTimeout(() => setCode(found), 0);
     return () => clearTimeout(timer);
   }, []);

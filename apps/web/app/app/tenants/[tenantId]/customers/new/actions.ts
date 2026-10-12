@@ -2,7 +2,6 @@
 
 import { randomUUID } from "node:crypto";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
@@ -107,6 +106,6 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
     // A duplicate e-mail means the contact was NOT made (the company was). The next try uses a FRESH contact id and the SAME company and lead ids: the company replays, nothing is added twice.
     return { ok: false, error: describe(error, t) + retryNote(error, step, t), ...(duplicateEmail && { nextContactId: randomUUID() }) };
   }
-  revalidatePath(`/app/tenants/${tenantId}`);
+  // No revalidatePath here (job CC): it makes Next draw this page again with NEW ids, which remounts the form and wipes the confirmation the person was about to read (found by the real-stack run). The pages that list customers are dynamic and read fresh.
   return { ok: true, leadId, contactId, name: fullName };
 }

@@ -55,7 +55,7 @@ describe("addCustomerAction", () => {
     expect(api.createContact).toHaveBeenCalledWith("tok", T, { id: CT, companyId: CO, fullName: "Synthetic Asha", phone: PHONE, email: null });
     expect(api.createLead).toHaveBeenCalledWith("tok", T, { id: LD, companyId: CO, contactId: CT, source: "whatsapp" });
     expect(r).toEqual({ ok: true, leadId: LD, contactId: CT, name: "Synthetic Asha" });
-    expect(revalidatePath).toHaveBeenCalledWith(`/app/tenants/${T}`);
+    expect(revalidatePath).not.toHaveBeenCalled(); // it would draw the page again with new ids and wipe the confirmation
   });
   it("a phone-only customer works: no e-mail is sent", async () => {
     await run({ email: "" });

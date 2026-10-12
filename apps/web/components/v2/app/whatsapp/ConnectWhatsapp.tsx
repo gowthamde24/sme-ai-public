@@ -70,11 +70,11 @@ export function ConnectWhatsapp({ words, account: initial, canEdit, actions }: {
         {canEdit && first ? (
           <div className="flex flex-wrap gap-3">
             {first.status !== "active" ? (
-              <button type="button" onClick={() => run("on")} disabled={busy !== null || !first.token_available} className={primary}>
+              <button key="on" type="button" onClick={() => run("on")} disabled={busy !== null || !first.token_available} className={primary}>
                 {busy === "on" ? t("dta.btn.working") : t("wa.btn.on")}
               </button>
             ) : (
-              <button type="button" onClick={() => run("off")} disabled={busy !== null} className={secondary}>
+              <button key="off" type="button" onClick={() => run("off")} disabled={busy !== null} className={secondary}>
                 {busy === "off" ? t("dta.btn.working") : t("wa.btn.off")}
               </button>
             )}
