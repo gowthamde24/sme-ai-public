@@ -1,0 +1,14 @@
+# Find retailers
+Look for shops and wholesalers on Google Maps, then keep the good ones as leads. Nothing is sent to anyone from here.
+{label="Map search"}
+## Map search
+We cannot tell from here whether map search is on. You can still try a search.
+{label="Search"}
+## Search
+form:
+What kind of shops?
+<text label="What kind of shops?" maxlength=100 value=saree retailers>
+City or town
+<text label="City or town" maxlength=60>
+Use plain words. Do not type phone numbers, e-mail addresses or links.
+[button type=submit: Search]

@@ -35,8 +35,9 @@ cleanup() {
 trap cleanup EXIT INT TERM
 
 echo "e2e-local: starting the API on :$API_PORT and the web on :$WEB_PORT (logs in $LOGDIR)"
+# PLACES_PROVIDER=fake: the API's own fixture map search (job CC: the Find retailers screen); WHATSAPP_ACCESS_TOKEN: a synthetic local-only value so the Connect WhatsApp screen can reach "connected" (the outbox adapter stays the fake; nothing is sent to Meta)
 # VOICE_*_PROVIDER=fake: the API's own FAKE speech adapters (development only, no key, no cost, nothing leaves this machine): the recording is "heard" as a fixed sentence and the spoken answer is a short tone
-( cd services/ai-api && AGENTS_ENABLED=true VOICE_STT_PROVIDER=fake VOICE_TTS_PROVIDER=fake exec ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port "$API_PORT" ) >"$LOGDIR/api.log" 2>&1 &
+( cd services/ai-api && AGENTS_ENABLED=true VOICE_STT_PROVIDER=fake VOICE_TTS_PROVIDER=fake PLACES_PROVIDER=fake WHATSAPP_ACCESS_TOKEN=local-fake-whatsapp-token exec ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port "$API_PORT" ) >"$LOGDIR/api.log" 2>&1 &
 API_PID=$!
 ( cd apps/web && LOCAL_DEMO_API_URL="http://localhost:$API_PORT" exec ../../scripts/with-local-demo-env.sh node node_modules/next/dist/bin/next dev -p "$WEB_PORT" ) >"$LOGDIR/web.log" 2>&1 &
 WEB_PID=$!

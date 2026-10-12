@@ -33332,5 +33332,491 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.retailers": {
+  "en": "Find retailers",
+  "te": "రిటైలర్లను వెతకండి",
+  "hi": "रिटेलर खोजें",
+  "kn": "ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.title": {
+  "en": "Find retailers",
+  "te": "రిటైలర్లను వెతకండి",
+  "hi": "रिटेलर खोजें",
+  "kn": "ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.sub": {
+  "en": "Look for shops and wholesalers on Google Maps, then keep the good ones as leads. Nothing is sent to anyone from here.",
+  "te": "Google Maps లో షాపులు, హోల్‌సేలర్లను వెతికి, మంచివాటిని లీడ్స్‌గా ఉంచుకోండి. ఇక్కడినుంచి ఎవరికీ ఏదీ పంపం.",
+  "hi": "Google Maps पर दुकानें और थोक विक्रेता खोजें, फिर अच्छों को लीड के रूप में रखें। यहाँ से किसी को कुछ नहीं भेजा जाता।",
+  "kn": "Google Maps ನಲ್ಲಿ ಅಂಗಡಿಗಳು, ಹೋಲ್‌ಸೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ, ಒಳ್ಳೆಯವರನ್ನು ಲೀಡ್‌ಗಳಾಗಿ ಇಟ್ಟುಕೊಳ್ಳಿ. ಇಲ್ಲಿಂದ ಯಾರಿಗೂ ಏನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.viewer": {
+  "en": "Finding retailers is for the owner, admins and sales. Ask the owner if you need it.",
+  "te": "రిటైలర్లను వెతకడం ఓనర్, అడ్మిన్లు, సేల్స్ వారికి. అవసరమైతే ఓనర్‌ని అడగండి.",
+  "hi": "रिटेलर खोजना ओनर, एडमिन और सेल्स के लिए है। ज़रूरत हो तो ओनर से पूछें।",
+  "kn": "ರಿಟೇಲರ್ ಹುಡುಕುವುದು ಓನರ್, ಅಡ್ಮಿನ್, ಸೇಲ್ಸ್ ಅವರಿಗೆ. ಬೇಕಿದ್ದರೆ ಓನರ್‌ರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.status.title": {
+  "en": "Map search",
+  "te": "మ్యాప్ సెర్చ్",
+  "hi": "मैप सर्च",
+  "kn": "ಮ್ಯಾಪ್ ಸರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.status.on": {
+  "en": "Map search is on.",
+  "te": "మ్యాప్ సెర్చ్ ఆన్‌లో ఉంది.",
+  "hi": "मैप सर्च चालू है।",
+  "kn": "ಮ್ಯಾಪ್ ಸರ್ಚ್ ಆನ್ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.status.on_limit": {
+  "en": "Map search is on. Used today: {used} of {limit}.",
+  "te": "మ్యాప్ సెర్చ్ ఆన్‌లో ఉంది. ఈరోజు వాడింది: {limit} లో {used}.",
+  "hi": "मैप सर्च चालू है। आज इस्तेमाल: {limit} में से {used}।",
+  "kn": "ಮ್ಯಾಪ್ ಸರ್ಚ್ ಆನ್ ಇದೆ. ಇಂದು ಬಳಸಿದ್ದು: {limit} ರಲ್ಲಿ {used}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.status.off": {
+  "en": "Map search is not switched on in this system, so there is nothing to search yet. The person who runs the system can switch it on.",
+  "te": "ఈ సిస్టమ్‌లో మ్యాప్ సెర్చ్ ఆన్ చేయలేదు, కాబట్టి ఇప్పుడు వెతకడానికి ఏమీ లేదు. సిస్టమ్ నడిపేవారు దాన్ని ఆన్ చేయవచ్చు.",
+  "hi": "इस सिस्टम में मैप सर्च चालू नहीं है, इसलिए अभी खोजने को कुछ नहीं। सिस्टम चलाने वाला इसे चालू कर सकता है।",
+  "kn": "ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಮ್ಯಾಪ್ ಸರ್ಚ್ ಆನ್ ಮಾಡಿಲ್ಲ, ಹಾಗಾಗಿ ಈಗ ಹುಡುಕಲು ಏನೂ ಇಲ್ಲ. ಸಿಸ್ಟಮ್ ನಡೆಸುವವರು ಅದನ್ನು ಆನ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.status.unknown": {
+  "en": "We cannot tell from here whether map search is on. You can still try a search.",
+  "te": "మ్యాప్ సెర్చ్ ఆన్‌లో ఉందో లేదో ఇక్కడినుంచి చెప్పలేం. అయినా సెర్చ్ చేసి చూడవచ్చు.",
+  "hi": "यहाँ से पता नहीं चलता कि मैप सर्च चालू है या नहीं। फिर भी खोजकर देख सकते हैं।",
+  "kn": "ಮ್ಯಾಪ್ ಸರ್ಚ್ ಆನ್ ಇದೆಯೇ ಎಂದು ಇಲ್ಲಿಂದ ಹೇಳಲಾಗದು. ಆದರೂ ಹುಡುಕಿ ನೋಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.search.title": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.kind.label": {
+  "en": "What kind of shops?",
+  "te": "ఎలాంటి షాపులు?",
+  "hi": "किस तरह की दुकानें?",
+  "kn": "ಯಾವ ರೀತಿಯ ಅಂಗಡಿಗಳು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.kind.default": {
+  "en": "saree retailers",
+  "te": "చీరల రిటైలర్లు",
+  "hi": "साड़ी रिटेलर",
+  "kn": "ಸೀರೆ ರಿಟೇಲರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.city.label": {
+  "en": "City or town",
+  "te": "ఊరు లేదా పట్టణం",
+  "hi": "शहर या कस्बा",
+  "kn": "ಊರು ಅಥವಾ ಪಟ್ಟಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.hint": {
+  "en": "Use plain words. Do not type phone numbers, e-mail addresses or links.",
+  "te": "సాధారణ మాటలు వాడండి. ఫోన్ నంబర్లు, ఈమెయిల్స్, లింకులు టైప్ చేయకండి.",
+  "hi": "सीधे शब्द इस्तेमाल करें। फ़ोन नंबर, ईमेल या लिंक न लिखें।",
+  "kn": "ಸರಳ ಮಾತುಗಳನ್ನು ಬಳಸಿ. ಫೋನ್ ನಂಬರ್, ಇಮೇಲ್, ಲಿಂಕ್ ಬರೆಯಬೇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.btn.search": {
+  "en": "Search",
+  "te": "వెతకండి",
+  "hi": "खोजें",
+  "kn": "ಹುಡುಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.btn.searching": {
+  "en": "Searching…",
+  "te": "వెతుకుతున్నాం…",
+  "hi": "खोज रहे हैं…",
+  "kn": "ಹುಡುಕುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.searching": {
+  "en": "Agent OWL is looking on the map. This can take a few seconds.",
+  "te": "Agent OWL మ్యాప్‌లో వెతుకుతోంది. కొన్ని సెకన్లు పట్టవచ్చు.",
+  "hi": "Agent OWL मैप पर खोज रहा है। कुछ सेकंड लग सकते हैं।",
+  "kn": "Agent OWL ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕುತ್ತಿದೆ. ಕೆಲವು ಸೆಕೆಂಡ್ ಬೇಕಾಗಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.empty": {
+  "en": "Type what kind of shops you want.",
+  "te": "ఎలాంటి షాపులు కావాలో టైప్ చేయండి.",
+  "hi": "लिखें कि किस तरह की दुकानें चाहिए।",
+  "kn": "ಯಾವ ರೀತಿಯ ಅಂಗಡಿಗಳು ಬೇಕು ಎಂದು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.too_long": {
+  "en": "That is too long. Make it shorter.",
+  "te": "అది చాలా పొడవు. చిన్నగా చేయండి.",
+  "hi": "यह बहुत लंबा है। छोटा करें।",
+  "kn": "ಅದು ತುಂಬಾ ಉದ್ದ. ಚಿಕ್ಕದು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.contact_details": {
+  "en": "Take out phone numbers, e-mail addresses and links, then search again.",
+  "te": "ఫోన్ నంబర్లు, ఈమెయిల్స్, లింకులు తీసేసి మళ్ళీ వెతకండి.",
+  "hi": "फ़ोन नंबर, ईमेल और लिंक हटाकर फिर खोजें।",
+  "kn": "ಫೋನ್ ನಂಬರ್, ಇಮೇಲ್, ಲಿಂಕ್ ತೆಗೆದು ಮತ್ತೆ ಹುಡುಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.agents_disabled": {
+  "en": "Agent OWL is switched off for this business, so the map cannot be searched.",
+  "te": "ఈ వ్యాపారానికి Agent OWL ఆఫ్‌లో ఉంది, అందుకే మ్యాప్‌లో వెతకలేం.",
+  "hi": "इस व्यापार के लिए Agent OWL बंद है, इसलिए मैप में खोज नहीं हो सकती।",
+  "kn": "ಈ ವ್ಯಾಪಾರಕ್ಕೆ Agent OWL ಆಫ್ ಇದೆ, ಹಾಗಾಗಿ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.ai_paused_until": {
+  "en": "Agent OWL's allowance is used up for now. Try again later.",
+  "te": "Agent OWL కి ఇప్పటికి ఇచ్చిన పరిమితి అయిపోయింది. తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "Agent OWL की अभी की सीमा पूरी हो गई। बाद में फिर कोशिश करें।",
+  "kn": "Agent OWL ಗೆ ಈಗಿನ ಮಿತಿ ಮುಗಿದಿದೆ. ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.run_limit_reached": {
+  "en": "Too many questions at once. Try again in a moment.",
+  "te": "ఒకేసారి చాలా ప్రశ్నలు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "एक साथ बहुत सवाल हो गए। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಒಮ್ಮೆಲೇ ತುಂಬಾ ಪ್ರಶ್ನೆಗಳು. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.assistant_unavailable": {
+  "en": "Agent OWL is not available right now. Try again in a moment.",
+  "te": "Agent OWL ఇప్పుడు అందుబాటులో లేదు. కాసేపటి తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "Agent OWL अभी उपलब्ध नहीं है। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "Agent OWL ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.forbidden": {
+  "en": "Your role cannot search the map. Ask the owner if you need it.",
+  "te": "మీ పాత్రకు మ్యాప్‌లో వెతికే అనుమతి లేదు. అవసరమైతే ఓనర్‌ని అడగండి.",
+  "hi": "आपके रोल को मैप में खोजने की अनुमति नहीं है। ज़रूरत हो तो ओनर से पूछें।",
+  "kn": "ನಿಮ್ಮ ಪಾತ್ರಕ್ಕೆ ಮ್ಯಾಪ್‌ನಲ್ಲಿ ಹುಡುಕಲು ಅನುಮತಿ ಇಲ್ಲ. ಬೇಕಿದ್ದರೆ ಓನರ್‌ರನ್ನು ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.err.generic": {
+  "en": "The search did not work this time. Try again.",
+  "te": "ఈసారి సెర్చ్ పని చేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "इस बार खोज नहीं हो पाई। फिर कोशिश करें।",
+  "kn": "ಈ ಬಾರಿ ಹುಡುಕಾಟ ಕೆಲಸ ಮಾಡಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.results.title": {
+  "en": "Shops found",
+  "te": "దొరికిన షాపులు",
+  "hi": "मिली दुकानें",
+  "kn": "ಸಿಕ್ಕ ಅಂಗಡಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.results.source": {
+  "en": "From Google Maps",
+  "te": "Google Maps నుంచి",
+  "hi": "Google Maps से",
+  "kn": "Google Maps ನಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.results.empty": {
+  "en": "Nothing was found. Try another kind of shop or a larger town.",
+  "te": "ఏమీ దొరకలేదు. వేరే రకం షాపు లేదా పెద్ద పట్టణం ప్రయత్నించండి.",
+  "hi": "कुछ नहीं मिला। दूसरी तरह की दुकान या बड़ा शहर आज़माएँ।",
+  "kn": "ಏನೂ ಸಿಗಲಿಲ್ಲ. ಬೇರೆ ರೀತಿಯ ಅಂಗಡಿ ಅಥವಾ ದೊಡ್ಡ ಪಟ್ಟಣ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.results.note": {
+  "en": "These names come from Google Maps through Google's official service. They are shown here now and are not kept. When you add a shop as a lead, only the name you type and the place's ID are kept.",
+  "te": "These names come from Google Maps through Google's official service. They are shown here now and are not kept. When you add a shop as a lead, only the name you type and the place's ID are kept.",
+  "hi": "These names come from Google Maps through Google's official service. They are shown here now and are not kept. When you add a shop as a lead, only the name you type and the place's ID are kept.",
+  "kn": "These names come from Google Maps through Google's official service. They are shown here now and are not kept. When you add a shop as a lead, only the name you type and the place's ID are kept.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rtl.card.view": {
+  "en": "View on Google Maps",
+  "te": "Google Maps లో చూడండి",
+  "hi": "Google Maps पर देखें",
+  "kn": "Google Maps ನಲ್ಲಿ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.card.add": {
+  "en": "Add as a lead",
+  "te": "లీడ్‌గా చేర్చండి",
+  "hi": "लीड के रूप में जोड़ें",
+  "kn": "ಲೀಡ್ ಆಗಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.title": {
+  "en": "Add this shop as a lead",
+  "te": "ఈ షాపును లీడ్‌గా చేర్చండి",
+  "hi": "इस दुकान को लीड के रूप में जोड़ें",
+  "kn": "ಈ ಅಂಗಡಿಯನ್ನು ಲೀಡ್ ಆಗಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.help": {
+  "en": "Type the name and the town yourself. We keep what you type and the place's ID, and nothing else from Google.",
+  "te": "Type the name and the town yourself. We keep what you type and the place's ID, and nothing else from Google.",
+  "hi": "Type the name and the town yourself. We keep what you type and the place's ID, and nothing else from Google.",
+  "kn": "Type the name and the town yourself. We keep what you type and the place's ID, and nothing else from Google.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rtl.form.name": {
+  "en": "Shop name",
+  "te": "షాపు పేరు",
+  "hi": "दुकान का नाम",
+  "kn": "ಅಂಗಡಿ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.city": {
+  "en": "City or town",
+  "te": "ఊరు లేదా పట్టణం",
+  "hi": "शहर या कस्बा",
+  "kn": "ಊರು ಅಥವಾ ಪಟ್ಟಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.region": {
+  "en": "State (optional)",
+  "te": "రాష్ట్రం (ఐచ్ఛికం)",
+  "hi": "राज्य (ज़रूरी नहीं)",
+  "kn": "ರಾಜ್ಯ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.save": {
+  "en": "Save as a lead",
+  "te": "లీడ్‌గా సేవ్ చేయండి",
+  "hi": "लीड के रूप में सेव करें",
+  "kn": "ಲೀಡ್ ಆಗಿ ಸೇವ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.cancel": {
+  "en": "Cancel",
+  "te": "రద్దు",
+  "hi": "रद्द करें",
+  "kn": "ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.name_needed": {
+  "en": "Type the shop's name.",
+  "te": "షాపు పేరు టైప్ చేయండి.",
+  "hi": "दुकान का नाम लिखें।",
+  "kn": "ಅಂಗಡಿ ಹೆಸರು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.saved": {
+  "en": "Saved as a lead.",
+  "te": "లీడ్‌గా సేవ్ అయింది.",
+  "hi": "लीड के रूप में सेव हो गया।",
+  "kn": "ಲೀಡ್ ಆಗಿ ಸೇವ್ ಆಯಿತು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.existing": {
+  "en": "This shop was already saved as a lead.",
+  "te": "ఈ షాపు ఇంతకు ముందే లీడ్‌గా సేవ్ అయింది.",
+  "hi": "यह दुकान पहले ही लीड के रूप में सेव है।",
+  "kn": "ಈ ಅಂಗಡಿ ಈಗಾಗಲೇ ಲೀಡ್ ಆಗಿ ಸೇವ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.form.open": {
+  "en": "Open the lead",
+  "te": "లీడ్ తెరవండి",
+  "hi": "लीड खोलें",
+  "kn": "ಲೀಡ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rtl.answer.title": {
+  "en": "What Agent OWL said",
+  "te": "Agent OWL ఏం చెప్పింది",
+  "hi": "Agent OWL ने क्या कहा",
+  "kn": "Agent OWL ಏನು ಹೇಳಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

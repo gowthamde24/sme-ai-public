@@ -144,4 +144,52 @@ export async function ccSteps(c) {
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "export made and downloaded as a zip, consent list read, sole owner refused with words, workspace deletion scheduled and cancelled; phone and dark clean";
   }, page);
+
+  // ---- CC3. Find retailers --------------------------------------------------------------------------------------------------------------------------------------
+  await step("CC3", "Find retailers: the page and its status, a real search through Agent OWL, a shop kept as a lead from what is typed (real places/confirm), the same shop twice is one lead", async () => {
+    await page.goto(`${base()}/retailers`, { waitUntil: "networkidle" });
+    await page.getByRole("heading", { level: 1, name: "Find retailers" }).waitFor();
+    must((await text(page)).includes("Map search is on."), `the status says: ${(await page.locator("[data-retailers-status]").innerText()).slice(0, 80)}`);
+    await page.screenshot({ path: path.join(SHOTS, "CC3-retailers-desktop.png"), fullPage: true });
+
+    // a real search: the question goes to Agent OWL of the local stack (its scripted model does not use the map tool, so there may be no cards: the page must still answer)
+    await page.getByLabel("City or town").fill("Guntur");
+    await page.getByRole("button", { name: "Search" }).click();
+    await page.locator("[data-retailers-results]").waitFor({ timeout: 60000 });
+    must(!(await text(page)).includes("Could not"), "the real search ended in an error");
+    await page.screenshot({ path: path.join(SHOTS, "CC3-retailers-real-search.png"), fullPage: true });
+
+    // the cards: the search route answers two shops (as it would when the map tool is used); saving them goes to the real API
+    const ids = ["3b1c0000-0000-4000-8000-" + stamp.padEnd(12, "0").slice(0, 12), "3b1c0000-0000-4000-8000-" + ("f" + stamp).padEnd(12, "0").slice(0, 12)];
+    await page.route("**/retailers/search", (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ ok: true, data: { cards: [{ id: ids[0], label: "Balaji Sarees (map)", url: "https://maps.google.com/?cid=2" }, { id: ids[1], label: "Second Silks (map)", url: null }], text: "I found two shops (see the cards).", error: null } }) }));
+    await page.getByRole("button", { name: "Search" }).click();
+    const cards = page.locator("[data-place]");
+    await cards.first().waitFor();
+    must((await cards.count()) === 2, "the two cards are not shown");
+    must((await cards.first().innerText()).includes("From Google Maps"), "no attribution on the card");
+    must((await cards.first().getByRole("link", { name: "View on Google Maps" }).getAttribute("rel")) === "noopener noreferrer", "the Maps link is not safe");
+    await cards.first().getByRole("button", { name: "Add as a lead" }).click();
+    must((await cards.first().getByLabel("Shop name").inputValue()) === "", "the shop name was prefilled from the map");
+    await cards.first().getByLabel("Shop name").fill(`E2E Balaji ${stamp}`);
+    await cards.first().getByRole("button", { name: "Save as a lead" }).click();
+    await cards.first().getByText("Saved as a lead.").waitFor();
+    const lead = psql(`select l.id || '|' || l.source from public.leads l join public.companies c on c.id = l.company_id where l.tenant_id = '${c.tenant}' and c.name = 'E2E Balaji ${stamp}'`);
+    must(lead.endsWith(`|places:${ids[0]}`), `the lead is ${lead}`);
+    const href = await cards.first().getByRole("link", { name: "Open the lead" }).getAttribute("href");
+    must(href === `/app/tenants/${c.tenant}/leads/${lead.split("|")[0]}`, `the link goes to ${href}`);
+
+    // the same shop again (a new search shows the cards again): one lead
+    await page.getByRole("button", { name: "Search" }).click();
+    await cards.first().waitFor();
+    await cards.first().getByRole("button", { name: "Add as a lead" }).click();
+    await cards.first().getByLabel("Shop name").fill(`E2E Balaji ${stamp}`);
+    await cards.first().getByRole("button", { name: "Save as a lead" }).click();
+    await cards.first().getByText("This shop was already saved as a lead.").waitFor();
+    must(psql(`select count(*) from public.leads where tenant_id = '${c.tenant}' and source = 'places:${ids[0]}'`) === "1", "the same shop became two leads");
+    await page.screenshot({ path: path.join(SHOTS, "CC3-retailers-cards.png"), fullPage: true });
+    const audit = await phoneAudit(c, "CC3-retailers");
+    await page.unroute("**/retailers/search");
+    must(audit.length === 0, `phone: ${audit.join(" | ")}`);
+    return "status, a real search answered, two cards with attribution, a lead made from typed details (source places:<id>), the same shop saved twice is one lead; phone and dark clean";
+  }, page);
 }

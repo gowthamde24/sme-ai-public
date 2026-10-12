@@ -682,3 +682,9 @@ add({ id: "catalogue-item-missing", roles: ["owner"], render: async () => (await
 add({ id: "catalogue-new", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({}, {})), handlers: base });
 add({ id: "catalogue-edit", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {})), handlers: catalogueHandlers });
 void summaryJson;
+
+// ---- Find retailers (job CC) ---------------------------------------------------------------------------------------------------
+const RESEARCH_STATUS = { tools: { web_search: { enabled: false, used_today: null, daily_limit: null }, read_page: { enabled: false, used_today: null, daily_limit: null }, find_retailers: { enabled: true, used_today: 2, daily_limit: 10 }, metal_prices: { enabled: false, used_today: null, daily_limit: null } } };
+add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => RESEARCH_STATUS }) });
+add({ id: "retailers-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => ({ tools: { ...RESEARCH_STATUS.tools, find_retailers: { enabled: false, used_today: null, daily_limit: null } } }) }) });
+add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
