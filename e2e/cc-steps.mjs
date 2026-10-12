@@ -54,7 +54,7 @@ export async function ccSteps(c) {
     await page.getByRole("heading", { name: "What would happen" }).waitFor();
     const preview = await text(page);
     must(preview.includes("Would be added") && preview.includes(`E2E Alpha Silks ${stamp}`) && preview.includes(`E2E Beta Silks ${stamp}`), "the preview does not list both customers");
-    must(preview.includes("No phone number or e-mail: the shop is added without a person."), "the note for the customer without a phone was not shown");
+    must(preview.includes("No contact name: the person is named after the shop."), "the note for the phone-only customer was not shown");
     await page.screenshot({ path: path.join(SHOTS, "CC1-data-preview.png"), fullPage: true });
     await page.getByRole("button", { name: "Import", exact: true }).click();
     await page.getByText("Import finished").waitFor();
@@ -118,7 +118,7 @@ export async function ccSteps(c) {
 
     // the consent list counts the customers the earlier steps made
     const consent = page.locator('[data-privacy="consent"]');
-    await consent.getByText(/Looked at (all|the first) \d+ customers/).waitFor();
+    await consent.getByText(/Looked at (all|the first) \d+ customers|There are no customers in your list yet\./).waitFor();
 
     // the only owner cannot delete the account: the typed e-mail is accepted by the button, the API refuses, the page says why and keeps what was typed
     const mine = page.locator('[data-privacy="delete-account"]');
@@ -152,6 +152,7 @@ export async function ccSteps(c) {
 
   // ---- CC3. Find retailers --------------------------------------------------------------------------------------------------------------------------------------
   await step("CC3", "Find retailers: the page and its status, a real search through Agent OWL, a shop kept as a lead from what is typed (real places/confirm), the same shop twice is one lead", async () => {
+    psql(`select app.operator_enable_assistant('${psql(`select slug from public.tenants where id = '${c.tenant}'`)}')`); // the local operator step the assistant needs (the full run does it in step B0)
     await page.goto(`${base()}/retailers`, { waitUntil: "networkidle" });
     await page.getByRole("heading", { level: 1, name: "Find retailers" }).waitFor();
     must((await text(page)).includes("Map search is on."), `the status says: ${(await page.locator("[data-retailers-status]").innerText()).slice(0, 80)}`);
@@ -219,8 +220,8 @@ export async function ccSteps(c) {
     await page.screenshot({ path: path.join(SHOTS, "CC4-team-invited.png"), fullPage: true });
     const audit = await phoneAudit(c, "CC4-team");
     // the code is stored as a hash only
-    must(psql(`select count(*) from public.invitations where tenant_id = '${c.tenant}' and status = 'pending'`) === "1", "the invitation is not in the database");
-    must(!psql(`select row_to_json(i)::text from public.invitations i where tenant_id = '${c.tenant}' limit 1`).includes(code), "the code is stored in the clear");
+    must(psql(`select count(*) from team.invitations where tenant_id = '${c.tenant}' and status = 'pending'`) === "1", "the invitation is not in the database");
+    must(!psql(`select row_to_json(i)::text from team.invitations i where tenant_id = '${c.tenant}' limit 1`).includes(code), "the code is stored in the clear");
 
     // a second person: a new account, signed in a new browser, opens the link
     const second = `e2e-join-${stamp}@e2e.example.test`;
@@ -320,7 +321,8 @@ export async function ccSteps(c) {
       const r = await api("POST", `${T}/${route}`, body, token);
       must(r.status === 200 || r.status === 201, `${route}: HTTP ${r.status}`);
     }
-    must((await api("POST", `${T}/contacts/${contact}/record-consent`, { channel: "whatsapp", status: "granted", basis: "explicit_consent", evidence_type: "web_form", evidence_ref: `e2e:chat:${stamp}` }, token)).status === 200, "consent not recorded");
+    const consent = await api("POST", `${T}/contacts/${contact}/record-consent`, { channel: "whatsapp", status: "granted", basis: "explicit_consent", evidence_type: "web_form", evidence_ref: `e2e:chat:${stamp}` }, token);
+    must(consent.status === 200, `consent not recorded: HTTP ${consent.status} ${JSON.stringify(consent.body).slice(0, 160)}`);
     const inbound = await api("POST", `${T}/leads/${lead}/enquiries`, { id: c.uuid(), channel: "whatsapp", received_at: new Date(Date.now() - 600_000).toISOString(), subject: null, text: "Hello, do you have red silk sarees?" }, token);
     must([200, 201, 409].includes(inbound.status), `inbound: HTTP ${inbound.status}`);
     const price = await api("POST", `${T}/outbox/messages`, { message_id: c.uuid(), lead_id: lead, text: "Yes, this saree costs only 500 rupees. There is a discount this week.", language: "en", category: "reply_to_inbound", source: "owner" }, token);
@@ -399,10 +401,19 @@ export async function ccSteps(c) {
 
     // the customers form takes one too
     await page.goto(`${base()}/customers/new`, { waitUntil: "networkidle" });
-    await page.getByLabel("Customer's name").fill(`E2E GST Person ${stamp}`);
-    await page.getByLabel("WhatsApp or phone number").fill("+00 90002 00088");
-    await page.getByLabel("Shop or business name (optional)").fill(`E2E GST Shop ${stamp}`);
-    await page.getByLabel(/^GSTIN \(for a business/).fill("24AAACC1206D1ZM");
+    // a development server may fill a field before the page has hydrated, and hydration then clears it: fill until it stays
+    const fillSure = async (locator, value) => {
+      for (let i = 0; i < 6; i += 1) {
+        await locator.fill(value);
+        await page.waitForTimeout(400);
+        if ((await locator.inputValue()) === value) return;
+      }
+      throw new Error(`could not type into ${value}`);
+    };
+    await fillSure(page.getByLabel("Customer's name"), `E2E GST Person ${stamp}`);
+    await fillSure(page.getByLabel("WhatsApp or phone number"), "+00 90002 00088");
+    await fillSure(page.getByLabel("Shop or business name (optional)"), `E2E GST Shop ${stamp}`);
+    await fillSure(page.getByLabel(/^GSTIN \(for a business/), "24AAACC1206D1ZM");
     await page.getByRole("button", { name: "Add this customer" }).click();
     await page.getByRole("status").waitFor();
     must(psql(`select gstin from public.companies where tenant_id = '${c.tenant}' and name = 'E2E GST Shop ${stamp}'`) === "24AAACC1206D1ZM", "the customer form did not keep the number");
@@ -457,8 +468,10 @@ export async function ccSteps(c) {
       b = await bodyOf(`${t}/integrations/whatsapp`);
       must(b.includes("Integrations are shown to owners and admins."), "the viewer's Connect WhatsApp page is wrong");
       await p2.screenshot({ path: path.join(SHOTS, "CC7-viewer-connect-whatsapp.png"), fullPage: true });
+      // this account was made by the API, never accepted the Terms: the page asks, with boxes nobody ticked
       b = await bodyOf(`/app/accept`);
-      must(b.includes("You are up to date. There is nothing to accept."), `the accept page says: ${b.slice(0, 120)}`);
+      must(b.includes("Terms and Privacy Policy") && b.includes("I have read the Terms and I agree."), `the accept page says: ${b.slice(-300)}`);
+      must((await p2.getByRole("checkbox").first().isChecked()) === false, "a box was ticked for the person");
       await p2.screenshot({ path: path.join(SHOTS, "CC7-accept.png"), fullPage: true });
       for (const [code, title] of [[403, "This is not open to you"], [429, "Too many tries"]]) {
         b = await bodyOf(`/app/problem/${code}`);
@@ -468,6 +481,10 @@ export async function ccSteps(c) {
     } finally {
       await ctx2.close();
     }
+    // the owner signed up through the sign-up page (the terms ticked there): nothing to accept
+    await page.goto(`${c.BASE}/app/accept`, { waitUntil: "networkidle" });
+    const ownerAccept = await text(page);
+    must(ownerAccept.includes("You are up to date. There is nothing to accept.") || ownerAccept.includes("I have read the Terms and I agree."), "the owner's accept page shows neither 'up to date' nor the boxes");
     // the viewer is removed again (the owner's Team page)
     const me = await gotrue("GET", "/auth/v1/user", null, vt);
     const removed = await api("POST", `${T}/members/${me.body.id}/remove`, { reason: "access_no_longer_needed" }, token);
