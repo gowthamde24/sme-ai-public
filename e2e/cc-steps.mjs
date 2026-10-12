@@ -327,7 +327,7 @@ export async function ccSteps(c) {
       const r = await api("POST", `${T}/${route}`, body, token);
       must(r.status === 200 || r.status === 201, `${route}: HTTP ${r.status}`);
     }
-    const consent = await api("POST", `${T}/contacts/${contact}/record-consent`, { channel: "whatsapp", status: "granted", basis: "explicit_consent", evidence_type: "web_form", evidence_ref: `e2e:chat:${stamp}` }, token);
+    const consent = await api("POST", `${T}/contacts/${contact}/record-consent`, { channel: "whatsapp", status: "granted", basis: "explicit_consent", evidence_type: "web_form", evidence_ref: `e2e:chat${stamp}` }, token);
     must(consent.status === 200, `consent not recorded: HTTP ${consent.status} ${JSON.stringify(consent.body).slice(0, 160)}`);
     const inbound = await api("POST", `${T}/leads/${lead}/enquiries`, { id: c.uuid(), channel: "whatsapp", received_at: new Date(Date.now() - 600_000).toISOString(), subject: null, text: "Hello, do you have red silk sarees?" }, token);
     must([200, 201, 409].includes(inbound.status), `inbound: HTTP ${inbound.status}`);
