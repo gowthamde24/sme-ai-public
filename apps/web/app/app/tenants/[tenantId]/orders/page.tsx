@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchOrders, formatRupees, moneyHeld, type OrderPage } from "@/lib/api/orders";
 import { ApiDownV2, PageTop, SegmentLinks } from "@/components/v2/app/parts";
@@ -42,6 +43,7 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   if (!ORDER_ROLES.includes(tenant.role))
@@ -57,6 +59,7 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
     page = await fetchOrders(user.accessToken, tenantId, { cursor: pick(query.cursor) ?? null });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const filter = FILTERS.some((f) => f.key === pick(query.filter)) ? (pick(query.filter) as FilterKey) : "all";

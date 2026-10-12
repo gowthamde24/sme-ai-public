@@ -87,6 +87,10 @@ export function OrderView({ tenantId, order, members, forms, words }: { tenantId
         <dd className={kvValue}>{formatRupees(order.net_paise)}</dd>
         <dt className={kvTerm}>{t("orders.quote_valid_until")}</dt>
         <dd className={kvValue}>{formatDate(order.valid_until)}</dd>
+        <dt className={kvTerm}>{t("gst.customer")}</dt>
+        <dd className={kvValue}>{order.customer_gstin ?? t("gst.none_short")}</dd>
+        <dt className={kvTerm}>{t("gst.ours")}</dt>
+        <dd className={kvValue}>{order.shop_gstin ?? t("gst.none_short")}</dd>
       </dl>
 
       <h2 className={pageH2}>{t("orders.what_to_record_next")}</h2>

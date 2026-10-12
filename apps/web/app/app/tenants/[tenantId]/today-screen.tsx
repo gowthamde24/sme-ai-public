@@ -6,6 +6,7 @@ import type { Role } from "@/components/v2/app/today/types";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { helpTipFor } from "@/components/v2/app/help/help-tip";
 import { pageMain } from "@/components/v2/app/ui";
 
@@ -37,6 +38,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     [data, name, setup] = await Promise.all([readToday(accessToken, tenantId, role), readDisplayName(accessToken, tenantId, userId), role === "owner" ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null)]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     throw error;
   }
   // the decisions on the cards: server actions bound to this workspace (the browser never holds the token)

@@ -1,0 +1,14 @@
+[Integrations](/app/tenants/22222222-2222-2222-2222-222222222222/integrations)
+# Connect WhatsApp
+Link the business's WhatsApp number, so messages to customers can go out and their replies come in. Nothing is sent until you approve it.
+{label="Your WhatsApp number"}
+## Your WhatsApp number
+Connected Your number +91 98765 43210 is connected. Messages you approve go out from it. Last changed: Oct 6, 2026, 8:30 AM (1 hour ago) On a test or demo system, messages go to a stand-in on that machine, never to customers. Ask the person who runs the system which kind this is.
+### The number's details
+Only the owner can change the number's details.
+{label="Message templates"}
+## Message templates
+A template is a message that WhatsApp has approved in advance. It is the only kind that can be sent to a customer whose 24 hours are over. Only an approved one is ever used.
+table:
+  | th Name | th Language | th For | th Status |
+  | shop_update | Telugu | Follow-up | Approved |

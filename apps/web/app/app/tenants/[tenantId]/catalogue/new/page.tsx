@@ -10,6 +10,7 @@ import { backLink, pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
@@ -31,6 +32,7 @@ export default async function NewCatalogueItemPage({ params }: PageProps<"/app/t
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const base = `/app/tenants/${tenantId}`;

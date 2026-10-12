@@ -1,12 +1,16 @@
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { fetchCompany, isCanonicalUuid } from "@/lib/api/crm";
 import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { indiaDayText } from "@/components/v2/app/visits/dates";
 import { requireUser } from "@/lib/auth/session";
 
+import { GstinForm } from "@/components/v2/app/gstin/GstinForm";
+import { stateOfGstin } from "@/lib/gstin";
+import { saveCompanyGstinAction } from "./gstin-actions";
 import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
@@ -39,7 +43,7 @@ export default async function CompanyPage({
   searchParams,
 }: PageProps<"/app/tenants/[tenantId]/companies/[companyId]">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["comp.", "ag.", "ws."]);
+  const words = wordsFor(lang, ["comp.", "ag.", "ws.", "gst."], ["dta.btn.working", "apierr.generic", "apierr.forbidden", "apierr.mfa", "apierr.rate", "apierr.rate.n", "apierr.invalid", "apierr.security_link", "apierr.unavailable", "apierr.not_found", "apierr.conflict", "apierr.too_big"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId, companyId } = await params;
@@ -55,6 +59,7 @@ export default async function CompanyPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
 
@@ -119,12 +124,24 @@ export default async function CompanyPage({
             <dd>{company.city ?? "—"}</dd>
             <dt>{t("comp.industry")}</dt>
             <dd>{company.industry ?? "—"}</dd>
+            <dt>{t("gst.label")}</dt>
+            <dd>{company.gstin ?? "—"}</dd>
             <dt>{t("comp.created")}</dt>
             <dd>{indiaDayText(company.created_at)}</dd>
             <dt>{t("comp.origin")}</dt>
             <dd>{company.created_via}</dd>
           </dl>
         </section>
+        {WRITE_ROLES.includes(tenant.role) ? (
+          <GstinForm
+            words={words}
+            title={t("gst.customer.title")}
+            personal
+            initial={{ gstin: company.gstin, state: company.gstin ? stateOfGstin(company.gstin) : null }}
+            canEdit
+            save={saveCompanyGstinAction.bind(null, tenantId, companyId)}
+          />
+        ) : null}
         </>
       ) : null}
       {section === "evidence" || section === "all" ? (

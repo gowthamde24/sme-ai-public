@@ -34,6 +34,7 @@ export type CompanyRow = Pick<
   | "country"
   | "city"
   | "industry"
+  | "gstin"
   | "created_via"
   | "created_at"
 >;
@@ -133,6 +134,8 @@ const ROW_PARSERS: Record<EntityKey, (r: Record<string, unknown>) => unknown> =
       country: strOrNull(r, "country"),
       city: strOrNull(r, "city"),
       industry: strOrNull(r, "industry"),
+      // the customer's GSTIN (job CA); an answer from before it has none
+      gstin: r.gstin === undefined ? null : strOrNull(r, "gstin"),
       created_via: oneOf(r, "created_via", ORIGINS),
       created_at: str(r, "created_at"),
     }),
@@ -216,7 +219,7 @@ export async function fetchPage(
 
 export type CreateCompanyInput = Pick<
   CompanyCreate,
-  "id" | "name" | "type" | "website" | "country" | "city" | "industry"
+  "id" | "name" | "type" | "website" | "country" | "city" | "industry" | "gstin"
 >;
 
 /** Idempotent on `input.id`: the API answers 200 with the same row for an identical retry. */

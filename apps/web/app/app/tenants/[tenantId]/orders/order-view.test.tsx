@@ -141,3 +141,17 @@ describe("whoText", () => {
     expect(whoText(null, members)).toBe("The system");
   });
 });
+
+describe("the GSTINs on an order (job CC)", () => {
+  it("shows the customer's and the shop's number, or 'Not given'", () => {
+    show({ customer_gstin: "29AAGCB7383J1Z4", shop_gstin: null });
+    const ledger = screen.getByText("Advance asked for", { selector: "dt" }).closest("dl") as HTMLElement;
+    expect(within(ledger).getByText("Customer GSTIN").nextElementSibling).toHaveTextContent("29AAGCB7383J1Z4");
+    expect(within(ledger).getByText("Our GSTIN").nextElementSibling).toHaveTextContent("Not given");
+  });
+  it("an order from an API before the number was added says 'Not given' for both", () => {
+    show();
+    const ledger = screen.getByText("Advance asked for", { selector: "dt" }).closest("dl") as HTMLElement;
+    expect(within(ledger).getAllByText("Not given")).toHaveLength(2);
+  });
+});

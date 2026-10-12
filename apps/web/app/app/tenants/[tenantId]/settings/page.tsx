@@ -16,6 +16,7 @@ import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 import { SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
 import { QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/agent-settings/AgentSettingsForms";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
 import { getSchedulerSettings, getSchedulerStatus, type SchedulerSettings, type SchedulerStatus } from "@/lib/api/scheduler";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -23,16 +24,28 @@ import { fetchMembers, type Member } from "@/lib/api/orders";
 import { getPlan, type Plan } from "@/lib/api/plan";
 import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
+import { PartProblem } from "@/components/v2/app/cc/PartProblem";
+import { DataSection } from "@/components/v2/app/data/DataSection";
+import { GstinForm } from "@/components/v2/app/gstin/GstinForm";
+import { getBusinessProfile } from "@/lib/api/gstin";
+import { PrivacySection } from "@/components/v2/app/privacy/PrivacySection";
+import { readConsentList } from "@/lib/api/consent-list";
+import { listMyDeletions, listMyExports, listWorkspaceDeletions } from "@/lib/api/privacy";
+import { getCalendarFeed, getExportFormats, listImportJobs, type CalendarFeed, type ExportFormat, type ImportJob } from "@/lib/api/data";
+import { settle, type Part } from "@/lib/api/part";
 
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
+import { makeCalendarFeedAction, revokeCalendarFeedAction } from "./data-actions";
+import { saveShopGstinAction } from "./gstin-actions";
+import { cancelAccountDeletionAction, cancelWorkspaceDeletionAction, executeWorkspaceDeletionAction, exportLinkAction, getExportAction, requestAccountDeletionAction, requestExportAction, requestWorkspaceDeletionAction } from "./privacy-actions";
 import { agentWords } from "./agent-words";
-import { partsWords } from "@/i18n/app-words";
+import { partsWords, wordsFor } from "@/i18n/app-words";
 
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "members", "language", "agent", "security", "privacy"] as const;
+const SECTIONS = ["business", "members", "data", "language", "agent", "security", "privacy"] as const;
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -66,6 +79,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
@@ -87,8 +101,15 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   }
   let plan: Plan | null = null;
   let usage: AiUsage | null = null;
+  let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
   if (section === "business") {
-    [plan, usage] = await Promise.all([getPlan(user.accessToken, tenantId).catch(() => null), admin ? getAiUsage(user.accessToken, tenantId).catch(() => null) : null]);
+    try {
+      [plan, usage, profile] = await Promise.all([getPlan(user.accessToken, tenantId).catch(rethrowAuth), admin ? getAiUsage(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
+      throw error;
+    }
   }
   // Agent OWL (the Owner only): the sending switches, the reminders and the scheduler's status. Each read stands on its own; one that fails says "Not available yet" in its place.
   let sending: OutboxSettings | null = null;
@@ -99,6 +120,36 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       [sending, reminders, scheduler] = await Promise.all([getOutboxSettings(user.accessToken, tenantId).catch(rethrowAuth), getSchedulerSettings(user.accessToken, tenantId).catch(rethrowAuth), getSchedulerStatus(user.accessToken, tenantId).catch(rethrowAuth)]);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
+      throw error;
+    }
+  }
+  // Data (job CC): the calendar address is every member's; the import jobs and the export's file types are the Owner's and Admin's. Each read stands alone.
+  let dataParts: { formats: Part<ExportFormat[]> | null; jobs: Part<ImportJob[]> | null; feed: Part<CalendarFeed> } | null = null;
+  if (section === "data") {
+    try {
+      const [formats, jobs, feed] = await Promise.all([admin ? settle(() => getExportFormats(user.accessToken, tenantId)) : null, admin ? settle(() => listImportJobs(user.accessToken, tenantId)) : null, settle(() => getCalendarFeed(user.accessToken, tenantId))]);
+      dataParts = { formats, jobs, feed };
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
+      throw error;
+    }
+  }
+  // Privacy (job CC): my exports and deletions, the workspace's deletion (the Owner's) and the consent list, each read on its own.
+  let privacy: { exports: Part<Awaited<ReturnType<typeof listMyExports>>>; mine: Part<Awaited<ReturnType<typeof listMyDeletions>>>; space: Part<Awaited<ReturnType<typeof listWorkspaceDeletions>>> | null; consent: Part<Awaited<ReturnType<typeof readConsentList>>> | null } | null = null;
+  if (section === "privacy") {
+    try {
+      const [exports, mine, space, consent] = await Promise.all([
+        settle(() => listMyExports(user.accessToken)),
+        settle(() => listMyDeletions(user.accessToken)),
+        tenant.role === "owner" ? settle(() => listWorkspaceDeletions(user.accessToken, tenantId)) : null,
+        tenant.role === "viewer" ? null : settle(() => readConsentList(user.accessToken, tenantId)),
+      ]);
+      privacy = { exports, mine, space, consent };
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
       throw error;
     }
   }
@@ -111,6 +162,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "members", label: t("settings.tab.members") },
+    { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     { key: "security", label: t("settings.tab.security") },
@@ -140,6 +192,13 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
                 </div>
               </dl>
             </section>
+            {profile ? (
+              profile.ok ? (
+                <GstinForm words={wordsFor(lang, ["gst."], ["dta.btn.working"])} title={t("gst.shop.title")} intro={t("gst.shop.intro")} initial={profile.data} canEdit={admin} needsSecondStep save={saveShopGstinAction.bind(null, tenantId)} />
+              ) : (
+                <PartProblem kind={profile.kind} retryAfter={profile.retryAfter} words={wordsFor(lang, ["apierr.", "problem."])} title={t("gst.shop.title")} />
+              )
+            ) : null}
             {admin ? (
               <section className={surface} aria-labelledby="usage-heading">
                 <h2 id="usage-heading" className="mb-3 text-xl font-semibold">
@@ -170,6 +229,18 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             )}
           </section>
         ) : null}
+        {section === "data" && dataParts ? (
+          <DataSection
+            tenantId={tenantId}
+            words={wordsFor(lang, ["dta.", "apierr.", "problem.", "catalogue.stock."])}
+            admin={admin}
+            formats={dataParts.formats}
+            jobs={dataParts.jobs}
+            feed={dataParts.feed}
+            makeFeed={makeCalendarFeedAction.bind(null, tenantId)}
+            revokeFeed={revokeCalendarFeedAction.bind(null, tenantId)}
+          />
+        ) : null}
         {section === "language" ? (
           <section className={surface} aria-label={t("settings.tab.language")}>
             <h2 className={`${pageH2} mt-0`}>{t("settings.language.language")}</h2>
@@ -197,26 +268,29 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             </Link>
           </section>
         ) : null}
-        {section === "privacy" ? (
-          <section className={surface} aria-label={t("settings.tab.privacy")}>
-            <ul className={listPlain}>
-              {admin ? (
-                <li>
-                  <Link href={`${base}/privacy`} className={link}>
-                    {t("settings.privacy.erasure")}
-                  </Link>
-                </li>
-              ) : null}
-              {tenant.role === "owner" ? (
-                <li>
-                  <Link href={`${base}/suppression`} className={link}>
-                    {t("settings.privacy.suppression")}
-                  </Link>
-                </li>
-              ) : null}
-            </ul>
-            {tenant.role === "owner" ? null : <p className={mutedText}>{t("settings.privacy.note")}</p>}
-          </section>
+        {section === "privacy" && privacy ? (
+          <PrivacySection
+            tenantId={tenantId}
+            words={wordsFor(lang, ["prx.", "apierr.", "problem."], ["dta.btn.working", "dta.col.name", "settings.privacy.erasure", "settings.privacy.suppression", "settings.privacy.note"])}
+            role={tenant.role}
+            email={user.email ?? ""}
+            workspaceName={tenant.name}
+            exports={privacy.exports}
+            myDeletions={privacy.mine}
+            workspaceDeletions={privacy.space}
+            consent={privacy.consent}
+            now={clock()}
+            actions={{
+              requestExport: requestExportAction.bind(null, tenantId),
+              getExport: getExportAction.bind(null, tenantId),
+              openLink: exportLinkAction.bind(null, tenantId),
+              requestAccountDeletion: requestAccountDeletionAction.bind(null, tenantId),
+              cancelAccountDeletion: cancelAccountDeletionAction.bind(null, tenantId),
+              requestWorkspaceDeletion: requestWorkspaceDeletionAction.bind(null, tenantId),
+              cancelWorkspaceDeletion: cancelWorkspaceDeletionAction.bind(null, tenantId),
+              executeWorkspaceDeletion: executeWorkspaceDeletionAction.bind(null, tenantId),
+            }}
+          />
         ) : null}
       </div>
     </main>

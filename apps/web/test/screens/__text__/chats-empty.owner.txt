@@ -1,0 +1,4 @@
+# Customer chats
+The people who wrote to your WhatsApp number or were written to, newest first. Open a chat to read it and reply.
+## No chats yet
+When a customer writes to your WhatsApp number, or you message one, the chat appears here.

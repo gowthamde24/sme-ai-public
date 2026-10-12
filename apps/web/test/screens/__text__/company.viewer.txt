@@ -12,6 +12,8 @@ City
 Hyderabad
 Industry
 Textiles
+GSTIN (15 characters)
+—
 Created
 1 Oct 2026
 Origin

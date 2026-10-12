@@ -1,0 +1,10 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data current=page) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+Bring customers and stock in from a spreadsheet, send your sales to your accountant, and see store visits in your phone's calendar. Importing and exporting is for the owner and admins. You can still add your visits to your phone's calendar below.
+{label="Visits in your phone's calendar"}
+## Visits in your phone's calendar
+A private web address your calendar app can subscribe to. It lists upcoming store visits with the time, the party size and a first name with one letter of the last name. No phone numbers, e-mails or notes. This address is yours alone. Each member makes their own. Your calendar address is on. Made: Oct 6, 2026, 9:30 AM (30 minutes ago) Not used yet.
+[button type=button: Make a new address]
+[button type=button: Stop this address]
+A new address stops the old one at once.

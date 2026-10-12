@@ -66,6 +66,7 @@ const company = {
   country: "IN",
   city: "Chennai",
   industry: "Silk",
+  gstin: null,
   created_via: "manual",
   created_at: "2026-02-03T04:05:06+00:00",
 } as const;

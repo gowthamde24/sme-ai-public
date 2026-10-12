@@ -10,6 +10,7 @@ import "./be-env.mjs";
 import { chromium } from "playwright";
 
 import { SHOTS, factorSecret, passChallenge, confirmEmail } from "./lib.mjs";
+import { ccSteps } from "./cc-steps.mjs";
 import { API, BASE, EMAIL, PW, STAMP, aal2Token, api, indiaHour, psql, sharedDatabaseProblem, totp, uuid } from "./be-lib.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -32,7 +33,11 @@ function changedUnderUs() {
     return "the database cannot be read";
   }
 }
+// E2E_ONLY=CC runs the steps A* (sign-up, sign-in, the authenticator, the workspace), the steps whose id starts with a listed prefix, and Z1 (the console check): for a targeted run of one job's steps
+const ONLY = (process.env.E2E_ONLY || "").split(",").map((x) => x.trim()).filter(Boolean);
+const wanted = (id) => ONLY.length === 0 || /^(A\d|Z1$)/.test(id) || ONLY.some((p) => id.startsWith(p));
 async function step(id, title, fn, page) {
+  if (!wanted(id)) return true;
   const t0 = Date.now();
   try {
     const note = await fn();
@@ -1353,6 +1358,15 @@ await step("W1", "robustness: friendly 404 and 403 pages, a skeleton while a scr
   await page.locator('[data-robust="signed-in"]').waitFor({ timeout: 15000 });
   return `404/403/429 pages, loading mark while a screen is slow (skeleton ${skeletonShown ? "also shown" : "not shown: the router had not prefetched it"}), double press = 1 request, offline and ended session send nothing and keep the input`;
 }, page);
+
+// ---- 8c. job CC: the screens for the new APIs (e2e/cc-steps.mjs) -----------------------------------------------------------------------------------------------------
+await ccSteps({
+  step, page, context, browser, must, text, BASE, API, SHOTS, SLOW, api, aal2Token, uuid, psql, problems, measure, axeOf, email: EMAIL,
+  get tenant() {
+    return tenant;
+  },
+  T,
+});
 
 // ---- 9. the whole run: no CSP violation, no hydration error ---------------------------------------------------------------
 await step("Z1", "no Content-Security-Policy violation and no hydration error in the browser console during the whole run", async () => {

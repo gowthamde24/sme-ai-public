@@ -206,3 +206,12 @@ describe("requests", () => {
     expect(f).not.toHaveBeenCalled();
   });
 });
+
+describe("the GSTINs of a quote (job CA, job CC)", () => {
+  it("are read when the API gives them and left out when there are none", () => {
+    expect(parseQuote({ ...QUOTE_JSON, customer_gstin: "29AAGCB7383J1Z4", shop_gstin: "27AAPFU0939F1ZV" })).toMatchObject({ customer_gstin: "29AAGCB7383J1Z4", shop_gstin: "27AAPFU0939F1ZV" });
+    const none = parseQuote(QUOTE_JSON);
+    expect("customer_gstin" in none).toBe(false);
+    expect("shop_gstin" in none).toBe(false);
+  });
+});

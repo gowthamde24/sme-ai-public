@@ -1,6 +1,6 @@
 # Settings
 [button type=button: Help for this screen]
-{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
 {label="Business and plan"}
 Business
 Demo Silks (synthetic)
@@ -8,3 +8,6 @@ Plan
 Free trial plan
 URL name
 demo-silks
+{label="Our GSTIN"}
+## Our GSTIN
+The shop's GST registration number. It is shown on quotes and orders and goes into the files for your accountant. 27AAPFU0939F1ZV State: Maharashtra Only an owner or an admin can change the shop's GSTIN.

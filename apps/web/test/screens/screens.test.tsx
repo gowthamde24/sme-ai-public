@@ -53,6 +53,14 @@ vi.mock("@/lib/api/scheduler", async (orig) => (await import("./state")).wrap(aw
 vi.mock("@/lib/api/ai-usage", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/ai-usage")>(), ["getAiUsage"]));
 vi.mock("@/lib/api/quote-policies", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quote-policies")>(), ["fetchQuotePolicyVersions"]));
 vi.mock("@/lib/api/quotes", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/quotes")>(), ["fetchQuoteSetup", "fetchEnquiryQuotes", "fetchQuote", "fetchQuoteText", "fetchQuotes"]));
+vi.mock("@/lib/api/data", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/data")>(), ["getCalendarFeed", "getExportFormats", "listImportJobs"]));
+vi.mock("@/lib/api/privacy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/privacy")>(), ["listMyExports", "listMyDeletions", "listWorkspaceDeletions"]));
+vi.mock("@/lib/api/consent-list", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/consent-list")>(), ["readConsentList"]));
+vi.mock("@/lib/api/retailers", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/retailers")>(), ["getResearchStatus"]));
+vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/team")>(), ["getTeam", "listInvitations"]));
+vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "listTemplates", "listConversations", "getThread"]));
+vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
+vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
 vi.mock("@/lib/api/suppression", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/suppression")>(), ["fetchSuppressionStatus"]));
 
 // The Office decides on the device which view to draw first (scene/capability.ts); the plain-text snapshot is the List, which every device can show.

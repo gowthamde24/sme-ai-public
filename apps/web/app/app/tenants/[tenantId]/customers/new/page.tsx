@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
@@ -24,7 +25,7 @@ const WRITERS = ["owner", "admin", "sales"];
  */
 export default async function NewCustomerPage({ params }: PageProps<"/app/tenants/[tenantId]/customers/new">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["cust."]);
+  const words = wordsFor(lang, ["cust."], ["gst.customer.optional", "gst.customer.hint"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
@@ -36,6 +37,7 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   if (!WRITERS.includes(tenant.role))

@@ -52,6 +52,7 @@ function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action:
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [shop, setShop] = useState("");
+  const [gstin, setGstin] = useState("");
   const [how, setHow] = useState("phone_call");
   const [state, formAction, pending] = useActionState(async (prev: CustomerFormState, formData: FormData) => {
     const next = await action(prev, formData);
@@ -119,6 +120,13 @@ function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action:
         {t("cust.shop_or_business_name_optional")}
       </label>
       <input id="cust-shop" name="company_name" value={shop} onChange={(e) => setShop(e.target.value)} maxLength={200} disabled={pending} className={fieldInput} />
+      <label htmlFor="cust-gstin" className={fieldLabel}>
+        {t("gst.customer.optional")}
+      </label>
+      <input id="cust-gstin" name="gstin" value={gstin} onChange={(e) => setGstin(e.target.value)} maxLength={30} autoComplete="off" spellCheck={false} disabled={pending} aria-describedby="cust-gstin-hint" className={`${fieldInput} font-mono uppercase`} />
+      <p id="cust-gstin-hint" className={mutedText}>
+        {t("gst.customer.hint")}
+      </p>
       <label htmlFor="cust-how" className={fieldLabel}>
         {t("cust.how_did_the_enquiry_come")}
       </label>

@@ -1,3 +1,4 @@
+// (job CC: the integrations, privacy and team schemas hold tenant rows too: imports, calendar feeds, WhatsApp accounts, exports, invitations.)
 // Removes what the real-stack run (be-stack.mjs) made: every workspace whose slug starts with "e2e-" and is named "E2E Silks ...", their rows in every tenant table, their catalogue bucket rows, and the throwaway accounts
 // e2e-*@e2e.example.test. LOCAL database only (docker exec into the local container); nothing else is touched, so the owner's demo workspace is safe. A guard stops it if anything it would delete does not look like ours.
 // Why SQL and not the app: the app never deletes a workspace (its audit trail and many tables are append-only on purpose), so this is the one place, and only for these throwaway workspaces, that switches the
@@ -43,7 +44,7 @@ begin
       select c.table_schema as s, c.table_name as t
         from information_schema.columns c
         join information_schema.tables x on x.table_schema = c.table_schema and x.table_name = c.table_name and x.table_type = 'BASE TABLE'
-       where c.column_name = 'tenant_id' and c.table_schema in ('public', 'suppression', 'app', 'private')
+       where c.column_name = 'tenant_id' and c.table_schema in ('public', 'suppression', 'app', 'private', 'integrations', 'privacy', 'team')
        order by 1, 2
     loop
       execute format('delete from %I.%I where tenant_id = any($1)', r.s, r.t) using v_ids;

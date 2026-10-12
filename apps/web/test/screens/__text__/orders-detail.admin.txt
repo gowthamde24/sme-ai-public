@@ -23,6 +23,10 @@ Net received
 ₹0.00
 Quote valid until
 21 Oct 2026
+Customer GSTIN
+Not given
+Our GSTIN
+Not given
 ## What to record next
 These are the entries the rules allow now. They are guidance: the database decides again when you save.
 {label="I sent the quote"}

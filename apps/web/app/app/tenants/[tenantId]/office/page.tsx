@@ -6,6 +6,7 @@ import { pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
@@ -29,6 +30,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
@@ -40,6 +42,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
     links = await readEventLinks(user.accessToken, tenantId, agents);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     throw error;
   }
   const wanted = pick(query.agent);

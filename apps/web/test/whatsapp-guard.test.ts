@@ -9,6 +9,7 @@ import { describe, expect, it } from "vitest";
 
 const WEB_ROOT = path.resolve(import.meta.dirname, "..");
 const SKIP = new Set(["node_modules", ".next", "coverage", "out", "build", ".git"]);
+const SHARE = path.join("lib", "whatsapp", "share.ts");
 const ROUTE = path.join("app", "app", "tenants", "[tenantId]", "quotes", "[quoteId]", "whatsapp", "route.ts");
 
 function walk(dir: string, out: string[] = []): string[] {
@@ -88,11 +89,18 @@ describe("the quote screen's WhatsApp controls hold no number and open nothing t
   it("no source file but the number rule contains a wa.me address, and none opens a window, prefetches the route or links to a tel: address", () => {
     const offenders: string[] = [];
     for (const f of sources) {
-      if (rel(f) === path.join("lib", "whatsapp", "link.ts")) continue;
+      if (rel(f) === path.join("lib", "whatsapp", "link.ts") || rel(f) === SHARE) continue;
       const text = read(f).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
       if (/wa\.me|["'`]tel:|window\.open\(|api\.whatsapp\.com/.test(text)) offenders.push(rel(f));
     }
     expect(offenders).toEqual([]);
+  });
+
+  it("the one other wa.me address is the share link with NO recipient (lib/whatsapp/share.ts): it holds no number, no phone logic and no way out", () => {
+    const text = read(path.join(WEB_ROOT, SHARE)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
+    expect(text).toContain('"https://wa.me/?text="');
+    expect(text).not.toMatch(/wa\.me\/\+?\d|phone|whatsappDigits|INDIAN_MOBILE|console\.|fetch\(|process\.env|window\./i);
+    expect(sources.filter((f) => /@\/lib\/whatsapp\/share|whatsapp\/share["']/.test(read(f))).map(rel)).toEqual([path.join("components", "v2", "app", "team", "team-model.ts")]);
   });
 
   it("the controls are a plain anchor, never a prefetching Link, for the redirect route", () => {

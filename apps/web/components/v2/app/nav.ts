@@ -8,7 +8,7 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats";
 
 export type NavItem = {
   id: string;
@@ -47,8 +47,12 @@ export const NAV: readonly NavGroup[] = [
       { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, roles: ALL_ROLES },
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", roles: WRITERS },
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
+      // job CC: the customer chat inbox (WhatsApp)
+      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", roles: WRITERS },
       { id: "report", label: "This week", icon: "report", path: "/report", roles: ADMINS },
       { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
+      // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
+      { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", roles: WRITERS },
     ],
   },
   {
@@ -63,7 +67,11 @@ export const NAV: readonly NavGroup[] = [
   {
     id: "team",
     label: "Your team",
-    items: [{ id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES }],
+    items: [
+      // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
+      { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
+      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES },
+    ],
   },
   {
     id: "connect",

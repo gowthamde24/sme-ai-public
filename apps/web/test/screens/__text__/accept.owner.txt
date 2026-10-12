@@ -1,0 +1,10 @@
+{label="Terms and Privacy Policy"}
+# Terms and Privacy Policy
+We changed these. Please read what changed and say yes to continue. Nothing is ticked for you.
+form:
+Terms of use Version 2026-11-01 · in force from 2026-11-10 [Read the Terms (opens in a new tab)](/terms)
+<checkbox label="I have read the Terms and I agree.">
+I have read the Terms and I agree. Privacy Policy Version 2026-10-01 [Read the Privacy Policy (opens in a new tab)](/privacy)
+<checkbox label="I have read the Privacy Policy and I agree.">
+I have read the Privacy Policy and I agree.
+[button type=submit disabled: Accept and continue]

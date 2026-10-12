@@ -2,12 +2,12 @@
 
 import { randomUUID } from "node:crypto";
 
-import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { createContact, createCustomerCompany, createLead, HOW_IT_CAME, type HowItCame } from "@/lib/api/customers";
+import { gstinProblem, normaliseGstin } from "@/lib/gstin";
 import { requireUser } from "@/lib/auth/session";
 import { serverT } from "@/i18n/server-t";
 import { makeT, type Say } from "@/components/v2/app/words";
@@ -73,7 +73,7 @@ function describe(error: unknown, t: Say = makeT()): string {
  * duplicates nothing. The shop name is optional; without it the person's name is the company's, because a lead that names a contact needs a company. No consent is recorded here.
  */
 export async function addCustomerAction(tenantId: string, _prev: CustomerFormState, formData: FormData): Promise<CustomerFormState> {
-  const t = await serverT(["cust."]);
+  const t = await serverT(["cust.", "gst.bad."]);
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId)) return { ok: false, error: t("cust.this_workspace_is_not_available") };
   const companyId = field(formData, "company_id");
@@ -85,15 +85,18 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
   const phone = field(formData, "phone");
   const email = field(formData, "email");
   const how = field(formData, "how") as HowItCame;
+  const gstin = normaliseGstin(field(formData, "gstin"));
   if (fullName.length < 1 || fullName.length > 200) return { ok: false, error: t("cust.enter_the_customer_s_name_up") };
   if (shop.length > 200) return { ok: false, error: t("cust.the_shop_name_is_too_long") };
   if (phone.length < 3 || phone.length > 32) return { ok: false, error: t("cust.enter_the_whatsapp_or_phone_number") };
   if (email.length > 254) return { ok: false, error: t("cust.the_e_mail_is_too_long") };
   if (!HOW_IT_CAME.includes(how)) return { ok: false, error: t("cust.choose_how_the_enquiry_came") };
+  // a business customer's GSTIN is optional; when it is given it must be well formed (the API and the database check it again)
+  if (gstinProblem(gstin) !== null) return { ok: false, error: t("gst.bad.shape") };
 
   let step = 0;
   try {
-    await createCustomerCompany(user.accessToken, tenantId, { id: companyId, name: shop || fullName });
+    await createCustomerCompany(user.accessToken, tenantId, { id: companyId, name: shop || fullName, gstin: gstin === "" ? null : gstin });
     step = 1;
     await createContact(user.accessToken, tenantId, { id: contactId, companyId, fullName, phone, email: email === "" ? null : email });
     step = 2;
@@ -103,6 +106,6 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
     // A duplicate e-mail means the contact was NOT made (the company was). The next try uses a FRESH contact id and the SAME company and lead ids: the company replays, nothing is added twice.
     return { ok: false, error: describe(error, t) + retryNote(error, step, t), ...(duplicateEmail && { nextContactId: randomUUID() }) };
   }
-  revalidatePath(`/app/tenants/${tenantId}`);
+  // No revalidatePath here (job CC): it makes Next draw this page again with NEW ids, which remounts the form and wipes the confirmation the person was about to read (found by the real-stack run). The pages that list customers are dynamic and read fresh.
   return { ok: true, leadId, contactId, name: fullName };
 }

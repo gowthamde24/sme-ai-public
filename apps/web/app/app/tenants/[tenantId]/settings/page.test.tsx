@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiRequestError } from "@/lib/api/client";
@@ -13,6 +13,14 @@ const fetchTenant = vi.fn();
 const fetchMembers = vi.fn();
 const getPlan = vi.fn();
 const getAiUsage = vi.fn();
+const getCalendarFeed = vi.fn();
+const getExportFormats = vi.fn();
+const listImportJobs = vi.fn();
+const listMyExports = vi.fn();
+const listMyDeletions = vi.fn();
+const listWorkspaceDeletions = vi.fn();
+const readConsentList = vi.fn();
+const getBusinessProfile = vi.fn();
 const getOutboxSettings = vi.fn();
 const getSchedulerSettings = vi.fn();
 const getSchedulerStatus = vi.fn();
@@ -25,6 +33,12 @@ vi.mock("@/lib/api/plan", () => ({ getPlan: (...a: unknown[]) => getPlan(...a) }
 vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a) }));
 vi.mock("@/lib/api/scheduler", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/scheduler")>()), getSchedulerSettings: (...a: unknown[]) => getSchedulerSettings(...a), getSchedulerStatus: (...a: unknown[]) => getSchedulerStatus(...a) }));
 vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsage(...a) }));
+vi.mock("@/lib/api/data", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/data")>()), getCalendarFeed: (...a: unknown[]) => getCalendarFeed(...a), getExportFormats: (...a: unknown[]) => getExportFormats(...a), listImportJobs: (...a: unknown[]) => listImportJobs(...a) }));
+
+vi.mock("@/lib/api/privacy", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/privacy")>()), listMyExports: (...a: unknown[]) => listMyExports(...a), listMyDeletions: (...a: unknown[]) => listMyDeletions(...a), listWorkspaceDeletions: (...a: unknown[]) => listWorkspaceDeletions(...a) }));
+vi.mock("@/lib/api/consent-list", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/consent-list")>()), readConsentList: (...a: unknown[]) => readConsentList(...a) }));
+
+vi.mock("@/lib/api/gstin", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/gstin")>()), getBusinessProfile: (...a: unknown[]) => getBusinessProfile(...a) }));
 
 import SettingsPage from "./page";
 
@@ -41,13 +55,21 @@ beforeEach(() => {
   getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 });
   getSchedulerSettings.mockResolvedValue(SETTINGS_JSON);
   getSchedulerStatus.mockResolvedValue({ ...STATUS_JSON, last_run_at: new Date().toISOString(), next_run_at: null });
+  getCalendarFeed.mockResolvedValue({ active: false, created_at: null, last_used_at: null });
+  getExportFormats.mockResolvedValue(["tally_zip", "csv"]);
+  listImportJobs.mockResolvedValue([]);
+  getBusinessProfile.mockResolvedValue({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" });
+  listMyExports.mockResolvedValue([]);
+  listMyDeletions.mockResolvedValue([]);
+  listWorkspaceDeletions.mockResolvedValue([]);
+  readConsentList.mockResolvedValue({ checked: 0, truncated: false, stopped: [], counts: { whatsapp: { unknown: 0, granted: 0, withdrawn: 0 }, phone: { unknown: 0, granted: 0, withdrawn: 0 }, email: { unknown: 0, granted: 0, withdrawn: 0 } } });
   getAiUsage.mockResolvedValue({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" });
 });
 
 describe("Settings, one part at a time", () => {
   it("opens on the business: its name, URL name, plan and today's AI usage from the API; the members are not asked for", async () => {
     render(await SettingsPage(props()));
-    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Language and look", "Agent OWL", "Security", "Privacy"]);
+    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Agent OWL", "Security", "Privacy"]);
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
@@ -167,5 +189,97 @@ describe("Settings: Agent OWL (the Owner only)", () => {
   it("a rejected session goes to sign-in", async () => {
     getSchedulerStatus.mockRejectedValue(new ApiAuthError("x"));
     await expect(SettingsPage(props({ section: "agent" }))).rejects.toThrow("NEXT_REDIRECT:/login");
+  });
+});
+
+describe("Settings > Data (job CC)", () => {
+  it("an owner sees the import, the export and the calendar, each read on its own with the person's token", async () => {
+    render(await SettingsPage(props({ section: "data" })));
+    expect(tabs().getByRole("link", { name: "Data" })).toHaveAttribute("aria-current", "page");
+    for (const name of ["Bring in a spreadsheet", "Send your books to your accountant", "Visits in your phone's calendar"]) expect(screen.getByRole("heading", { name })).toBeInTheDocument();
+    expect(getExportFormats).toHaveBeenCalledWith("tok", TENANT);
+    expect(listImportJobs).toHaveBeenCalledWith("tok", TENANT);
+    expect(getCalendarFeed).toHaveBeenCalledWith("tok", TENANT);
+  });
+  it("a salesperson gets the calendar only, and the API is not asked for the admin parts", async () => {
+    fetchTenant.mockResolvedValue(tenant("sales"));
+    render(await SettingsPage(props({ section: "data" })));
+    expect(screen.queryByRole("heading", { name: "Bring in a spreadsheet" })).toBeNull();
+    expect(screen.getByRole("heading", { name: "Visits in your phone's calendar" })).toBeInTheDocument();
+    expect(getExportFormats).not.toHaveBeenCalled();
+    expect(listImportJobs).not.toHaveBeenCalled();
+  });
+  it("a read that is refused (403) or limited (429) says so in its place; the others still show", async () => {
+    getExportFormats.mockRejectedValue(new ApiRequestError(403, "forbidden", "x"));
+    listImportJobs.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 30));
+    getCalendarFeed.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await SettingsPage(props({ section: "data" })));
+    expect(screen.getByText("Your role does not include this page. Ask the owner if you need it.")).toBeInTheDocument();
+    expect(screen.getByText(/Wait 30 seconds/)).toBeInTheDocument();
+    expect(screen.getByText("This part could not be loaded. The rest of the page is fine.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Bring in a spreadsheet" })).toBeInTheDocument();
+  });
+  it("a rejected session on a read goes to sign-in", async () => {
+    getCalendarFeed.mockRejectedValue(new ApiAuthError("x"));
+    await expect(SettingsPage(props({ section: "data" }))).rejects.toThrow("/login");
+  });
+});
+
+describe("Settings > Privacy (job CC)", () => {
+  it("an owner gets every part, each read on its own with the person's token", async () => {
+    render(await SettingsPage(props({ section: "privacy" })));
+    for (const name of ["Download my data", "Delete my account", "Delete this workspace", "Consent and opt-out list"]) expect(screen.getByRole("heading", { name })).toBeInTheDocument();
+    expect(listMyExports).toHaveBeenCalledWith("tok");
+    expect(listMyDeletions).toHaveBeenCalledWith("tok");
+    expect(listWorkspaceDeletions).toHaveBeenCalledWith("tok", TENANT);
+    expect(readConsentList).toHaveBeenCalledWith("tok", TENANT);
+    expect(screen.getByLabelText("Type your e-mail address (e@example.test) to confirm.")).toBeInTheDocument();
+  });
+  it("an admin has no workspace deletion; a viewer has no consent list, and the API is not asked for them", async () => {
+    fetchTenant.mockResolvedValue(tenant("admin"));
+    render(await SettingsPage(props({ section: "privacy" })));
+    expect(screen.queryByRole("heading", { name: "Delete this workspace" })).toBeNull();
+    expect(listWorkspaceDeletions).not.toHaveBeenCalled();
+    cleanup();
+    fetchTenant.mockResolvedValue(tenant("viewer"));
+    readConsentList.mockClear();
+    render(await SettingsPage(props({ section: "privacy" })));
+    expect(readConsentList).not.toHaveBeenCalled();
+    expect(screen.queryByRole("heading", { name: "Consent and opt-out list" })).toBeNull();
+  });
+  it("a read that is refused (403) or limited (429) says so in its place; the others still show", async () => {
+    listMyExports.mockRejectedValue(new ApiRequestError(403, "forbidden", "x"));
+    readConsentList.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 25));
+    render(await SettingsPage(props({ section: "privacy" })));
+    expect(screen.getByText("Your role does not include this page. Ask the owner if you need it.")).toBeInTheDocument();
+    expect(screen.getByText(/Wait 25 seconds/)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Delete my account" })).toBeInTheDocument();
+  });
+  it("a rejected session on a read goes to sign-in", async () => {
+    listMyDeletions.mockRejectedValue(new ApiAuthError("x"));
+    await expect(SettingsPage(props({ section: "privacy" }))).rejects.toThrow("/login");
+  });
+});
+
+describe("Settings > Business: the shop's GSTIN (job CC)", () => {
+  it("shows the number and its state; the Owner and Admin can change it, a salesperson only reads", async () => {
+    render(await SettingsPage(props()));
+    expect(screen.getByRole("heading", { name: "Our GSTIN" })).toBeInTheDocument();
+    expect(screen.getByText("27AAPFU0939F1ZV")).toBeInTheDocument();
+    expect(screen.getByText("State: Maharashtra")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove the GSTIN" })).toBeInTheDocument();
+    expect(getBusinessProfile).toHaveBeenCalledWith("tok", TENANT);
+    cleanup();
+    fetchTenant.mockResolvedValue(tenant("sales"));
+    render(await SettingsPage(props()));
+    expect(screen.getByText("27AAPFU0939F1ZV")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Save GSTIN" })).toBeNull();
+    expect(screen.getByText("Only an owner or an admin can change the shop's GSTIN.")).toBeInTheDocument();
+  });
+  it("a number that cannot be read says so in its place and the rest of the business tab stays", async () => {
+    getBusinessProfile.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 12));
+    render(await SettingsPage(props()));
+    expect(screen.getByText(/Wait 12 seconds/)).toBeInTheDocument();
+    expect(screen.getByText("Acme Silks")).toBeInTheDocument();
   });
 });

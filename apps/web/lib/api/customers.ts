@@ -24,9 +24,9 @@ function idOf(json: unknown, what: string): string {
 const post = (body: unknown): RequestInit => ({ method: "POST", body: JSON.stringify(body) });
 
 /** A prospect company. Idempotent on `id`. */
-export async function createCustomerCompany(accessToken: string, tenantId: string, input: { id: string; name: string }): Promise<void> {
+export async function createCustomerCompany(accessToken: string, tenantId: string, input: { id: string; name: string; gstin?: string | null }): Promise<void> {
   checked(tenantId, input.id);
-  await createCompany(accessToken, tenantId, { id: input.id, name: input.name, type: "prospect" });
+  await createCompany(accessToken, tenantId, { id: input.id, name: input.name, type: "prospect", ...(input.gstin ? { gstin: input.gstin } : {}) });
 }
 
 /** A contact with a phone and, only if given, an e-mail. Sales or above; the API keys it on creation. */

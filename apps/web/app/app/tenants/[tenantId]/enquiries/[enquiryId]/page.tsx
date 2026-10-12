@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { type Enquiry, type RequirementView, fetchEnquiry, fetchRequirement } from "@/lib/api/enquiries";
 import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Quote, type QuoteSetup, type QuoteSummary, type QuoteText } from "@/lib/api/quotes";
@@ -40,7 +41,7 @@ function pick(value: string | string[] | undefined): string | undefined {
  */
 export default async function EnquiryPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/enquiries/[enquiryId]">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp."]);
+  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp."], ["gst.customer", "gst.ours"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId, enquiryId } = await params;
@@ -57,6 +58,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   // A Viewer reads no price and no quote (the API refuses them), so nothing is asked for them. A quote screen that cannot load does not take the enquiry down.

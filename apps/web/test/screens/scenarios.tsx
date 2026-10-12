@@ -32,6 +32,8 @@ import { parseMembers, parseOrderDetail, parseOrderPage } from "@/lib/api/orders
 import { DETAIL_JSON, MEMBERS_JSON, ORDER_JSON } from "@/lib/api/orders-fixtures";
 import { parsePage } from "@/lib/api/crm";
 import { CLAIM, CLAIM_ACCEPTED, COMPANY, COMPANY2_JSON, COMPANY_JSON, CONTACT, CONTACT_JSON, ENQ, ENQUIRY, EVIDENCE_PAGE, LEAD, LEAD_JSON, OPPORTUNITY_JSON, PRODUCT_JSON, REQUIREMENT, REQUIREMENT_CONFIRMED, REQUIREMENT_DRAFT, TENANT, requirementJson } from "./fixtures";
+import { parsePolicyStatus } from "@/lib/api/policy";
+import { parseAccount, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
 import type { Handler } from "./state";
 
 export const ROLES = ["owner", "admin", "sales", "viewer"] as const;
@@ -630,9 +632,28 @@ add({ id: "office", render: async () => (await import("@/app/app/tenants/[tenant
 add({ id: "office-agent-chosen", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({}, { agent: "quote_writer" })), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus() }) });
 add({ id: "office-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 add({ id: "integrations", render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/page")).default(props({})), handlers: (role) => base(role) });
-for (const section of ["business", "language", "security", "privacy"] as const) {
-  add({ id: `settings-${section}`, roles: section === "privacy" ? ROLES : ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => base(role) });
+for (const section of ["business", "language", "security"] as const) {
+  add({ id: `settings-${section}`, roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section })), handlers: (role) => ({ ...base(role), getBusinessProfile: () => ({ gstin: "27AAPFU0939F1ZV", state: "Maharashtra" }) }) });
 }
+// Settings > Data and > Privacy (job CC): the invented answers of the new reads
+const DATA_HANDLERS = {
+  getCalendarFeed: () => ({ active: true, created_at: "2026-10-06T04:00:00Z", last_used_at: null }),
+  getExportFormats: () => ["tally_zip", "vyapar_xlsx", "csv", "xlsx"],
+  listImportJobs: () => [{ id: "11111111-aaaa-4aaa-8aaa-0000000000d1", kind: "customers", status: "completed", counts: {}, created_at: "2026-10-05T10:00:00Z", completed_at: "2026-10-05T10:01:00Z" }],
+};
+const PRIVACY_HANDLERS = {
+  listMyExports: () => [{ id: "11111111-aaaa-4aaa-8aaa-0000000000e2", scope: "person", status: "ready", requested_at: "2026-10-06T03:00:00Z", ready_at: "2026-10-06T03:00:30Z", expires_at: "2026-10-07T03:00:30Z", size_bytes: 12345, error_code: null }],
+  listMyDeletions: () => [],
+  listWorkspaceDeletions: () => [{ id: "11111111-aaaa-4aaa-8aaa-0000000000e3", kind: "workspace", status: "scheduled", requested_at: "2026-10-06T03:00:00Z", execute_after: "2026-10-20T03:00:00Z", cancelled_at: null, executed_at: null, blocked_reason: null }],
+  readConsentList: () => ({
+    checked: 3,
+    truncated: false,
+    stopped: [{ id: "11111111-aaaa-4aaa-8aaa-0000000000c1", name: "Asha Rao", reason: "opted_out", channels: { email: "unknown", whatsapp: "withdrawn", phone: "unknown" } }],
+    counts: { whatsapp: { unknown: 1, granted: 1, withdrawn: 1 }, phone: { unknown: 3, granted: 0, withdrawn: 0 }, email: { unknown: 2, granted: 1, withdrawn: 0 } },
+  }),
+};
+add({ id: "settings-data", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "data" })), handlers: (role) => ({ ...base(role), ...DATA_HANDLERS }) });
+add({ id: "settings-privacy", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "privacy" })), handlers: (role) => ({ ...base(role), ...PRIVACY_HANDLERS }) });
 add({ id: "settings-members", roles: ["owner", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => parseMembers(MEMBERS_JSON) }) });
 add({ id: "settings-members-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "members" })), handlers: (role) => ({ ...base(role), fetchMembers: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
 
@@ -663,3 +684,49 @@ add({ id: "catalogue-item-missing", roles: ["owner"], render: async () => (await
 add({ id: "catalogue-new", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({}, {})), handlers: base });
 add({ id: "catalogue-edit", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/[itemId]/edit/page")).default(props({ itemId: ITEM_A }, {})), handlers: catalogueHandlers });
 void summaryJson;
+
+// ---- Find retailers (job CC) ---------------------------------------------------------------------------------------------------
+const RESEARCH_STATUS = { tools: { web_search: { enabled: false, used_today: null, daily_limit: null }, read_page: { enabled: false, used_today: null, daily_limit: null }, find_retailers: { enabled: true, used_today: 2, daily_limit: 10 }, metal_prices: { enabled: false, used_today: null, daily_limit: null } } };
+add({ id: "retailers", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => RESEARCH_STATUS }) });
+add({ id: "retailers-off", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => ({ tools: { ...RESEARCH_STATUS.tools, find_retailers: { enabled: false, used_today: null, daily_limit: null } } }) }) });
+add({ id: "retailers-unreadable", roles: ["admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/retailers/page")).default(props({})), handlers: (role) => ({ ...base(role), getResearchStatus: () => { throw new ApiRequestError(503, "api_unreachable", "x"); } }) });
+
+// ---- the team and joining a business (job CC) ----------------------------------------------------------------------------------
+const TEAM = {
+  members: [
+    { user_id: "11111111-1111-4111-8111-111111111111", display_name: "Asha Rao", role: "owner", joined_at: "2026-10-01T04:00:00Z", is_you: true },
+    { user_id: "22222222-aaaa-4aaa-8aaa-000000000001", display_name: "Ravi Kumar", role: "sales", joined_at: "2026-10-03T04:00:00Z", is_you: false },
+    { user_id: "22222222-aaaa-4aaa-8aaa-000000000002", display_name: null, role: "viewer", joined_at: null, is_you: false },
+  ],
+  pending_invitations: 1,
+};
+const INVITATIONS = [{ id: "22222222-aaaa-4aaa-8aaa-0000000000a1", role: "sales", label: "for the new cutter", status: "pending", created_at: "2026-10-05T04:00:00Z", expires_at: "2026-10-12T04:00:00Z", accepted_at: null, revoked_at: null, created_by_name: "Asha Rao" }];
+add({ id: "team", roles: ROLES, render: async () => (await import("@/app/app/tenants/[tenantId]/team/page")).default(props({})), handlers: (role) => ({ ...base(role), getTeam: () => ({ ...TEAM, members: TEAM.members.map((m) => ({ ...m, is_you: m.user_id === "11111111-1111-4111-8111-111111111111" ? role === "owner" : false })) }), listInvitations: () => INVITATIONS }) });
+add({ id: "team-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/team/page")).default(props({})), handlers: (role) => ({ ...base(role), getTeam: () => { throw new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 20); }, listInvitations: () => { throw new ApiRequestError(403, "forbidden", "x"); } }) });
+add({ id: "join", roles: ["sales"], render: async () => (await import("@/app/app/join/page")).default(), handlers: (role) => base(role) });
+
+// ---- WhatsApp: Connect, the chat inbox and a chat (job CC) -------------------------------------------------------------------
+const WA_ACCOUNT = { configured: true, status: "active", waba_id: "123456789", phone_number_id: "987654321", display_phone: "+91 98765 43210", coexistence: false, token_ref: "SHOP_TOKEN", token_available: true, updated_at: "2026-10-06T03:00:00Z" };
+const WA_TEMPLATES = { templates: [{ id: "55555555-aaaa-4aaa-8aaa-0000000000b1", name: "shop_update", language: "te", category: "utility", purpose: "followup", body: "x {{1}} y", status: "approved", updated_at: "2026-10-06T03:00:00Z" }] };
+const waHandlers = (role: Role, account: Record<string, unknown> = WA_ACCOUNT) => ({ ...base(role), getWhatsappAccount: () => parseAccount(account), listTemplates: () => parseTemplates(WA_TEMPLATES) });
+add({ id: "whatsapp-connected", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => waHandlers(role) });
+add({ id: "whatsapp-not-connected", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => ({ ...waHandlers(role, { configured: false, status: "none" }), listTemplates: () => parseTemplates({ templates: [] }) }) });
+add({ id: "whatsapp-needs-attention", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => waHandlers(role, { ...WA_ACCOUNT, token_available: false, status: "pending" }) });
+add({ id: "whatsapp-sales", roles: ["sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => waHandlers(role) });
+const LEAD_ID = "33333333-aaaa-4aaa-8aaa-000000000001";
+const CONVERSATIONS = { conversations: [{ lead_id: LEAD_ID, contact_id: "x", name: "Ravi Kumar", company: "WhatsApp customer 3fa9c1", phone: "+919876543210", last_at: "2026-10-06T03:30:00Z", last_direction: "in", preview: "Do you have red sarees?", last_inbound_at: "2026-10-06T03:30:00Z", window_open: true, window_expires_at: "2026-10-07T03:30:00Z", unread: true, stopped: false }, { lead_id: "33333333-aaaa-4aaa-8aaa-000000000002", contact_id: "y", name: "Asha Rao", company: null, phone: "+919876500000", last_at: "2026-10-04T03:30:00Z", last_direction: "out", preview: "Thank you, see you soon.", last_inbound_at: null, window_open: false, window_expires_at: null, unread: false, stopped: true }], next_before: null };
+add({ id: "chats", roles: ["owner", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {})), handlers: (role) => ({ ...base(role), listConversations: () => parseConversationPage(CONVERSATIONS) }) });
+add({ id: "chats-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {})), handlers: (role) => ({ ...base(role), listConversations: () => parseConversationPage({ conversations: [], next_before: null }) }) });
+add({ id: "chats-unreadable", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/page")).default(props({}, {})), handlers: (role) => ({ ...base(role), listConversations: () => { throw new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 30); } }) });
+const THREAD = { lead_id: LEAD_ID, contact_id: "x", name: "Ravi Kumar", phone: "+919876543210", stopped: false, whatsapp_consent: "granted", window_open: true, window_expires_at: "2026-10-07T03:30:00Z", next_before: null, items: [
+  { direction: "out", id: "44444444-aaaa-4aaa-8aaa-000000000003", at: "2026-10-06T03:40:00Z", text: "Yes, we have red sarees. The price is 4,500 each.", status: "needs_approval", reason: "money", source: "owner", delivery: null, delivered_at: null, read_at: null, delivery_error: null, failure_code: null, photos: 0 },
+  { direction: "out", id: "44444444-aaaa-4aaa-8aaa-000000000002", at: "2026-10-06T03:35:00Z", text: "Welcome!", status: "sent", reason: "auto_allowed", source: "owner", delivery: "read", delivered_at: "2026-10-06T03:35:10Z", read_at: "2026-10-06T03:36:00Z", delivery_error: null, failure_code: null, photos: 1 },
+  { direction: "in", id: "44444444-aaaa-4aaa-8aaa-000000000001", at: "2026-10-06T03:30:00Z", text: "Do you have red sarees?" },
+] };
+const chatHandlers = (role: Role, thread: Record<string, unknown> = THREAD) => ({ ...base(role), getThread: () => parseThread(thread), getOutboxSettings: () => ({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 }) });
+add({ id: "chat", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID })), handlers: (role) => chatHandlers(role) });
+add({ id: "chat-stopped", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID })), handlers: (role) => chatHandlers(role, { ...THREAD, stopped: true, window_open: false, items: [{ ...THREAD.items[0], status: "blocked", reason: "stopped" }, THREAD.items[2]] }) });
+
+// ---- accepting a changed Terms or Privacy Policy (job CC) ----------------------------------------------------------------------
+const POLICY = { current: { terms: { version: "2026-11-01", effective_from: "2026-11-10" }, privacy: { version: "2026-10-01" } }, accepted: [], needs_acceptance: { terms: true, privacy: true }, blocking: true };
+add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/app/accept/page")).default({ searchParams: Promise.resolve({}) }), handlers: (role) => ({ ...base(role), getPolicyStatus: () => parsePolicyStatus(POLICY) }) });
