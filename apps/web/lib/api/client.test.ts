@@ -214,6 +214,12 @@ describe("a refusal from the rate limiter and the size ceiling (job CC)", () => 
     expect(retryAfterSeconds(null)).toBeUndefined();
     expect(retryAfterSeconds("30")).toBe(30);
   });
+  it("a 429 of the one error shape of job CD carries its seconds in the body too; the header wins when both are there", async () => {
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ error: { code: "rate_limited", message: "Too many requests.", retry_after: 17, request_id: "abc" } }), { status: 429 })) as unknown as typeof fetch;
+    await expect(fetchMe("tok")).rejects.toMatchObject({ status: 429, code: "rate_limited", retryAfter: 17 });
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ error: { code: "rate_limited", message: "x", retry_after: 17, request_id: "abc" } }), { status: 429, headers: { "Retry-After": "5" } })) as unknown as typeof fetch;
+    await expect(fetchMe("tok")).rejects.toMatchObject({ retryAfter: 5 });
+  });
   it("a 429 with no body at all is still rate_limited", async () => {
     globalThis.fetch = vi.fn(async () => new Response("", { status: 429 })) as unknown as typeof fetch;
     await expect(fetchMe("tok")).rejects.toMatchObject({ status: 429, code: "rate_limited" });

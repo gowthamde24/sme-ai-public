@@ -119,7 +119,9 @@ export function refusal(status: number, body: unknown, retryAfterHeader: string 
   const err = isRecord(raw) ? (raw as ApiError["error"]) : null;
   const plain = typeof raw === "string" && /^[a-z_]{1,40}$/.test(raw) ? raw : null;
   const code = err && isString(err.code) ? err.code : (plain ?? (status === 429 ? "rate_limited" : "http_error"));
-  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 ? retryAfterSeconds(retryAfterHeader) : undefined);
+  // since job CD every refusal is {error: {code, message, retry_after, request_id}}: the seconds are in the body as well as in the header (the header wins)
+  const inBody = err && typeof (err as { retry_after?: unknown }).retry_after === "number" ? retryAfterSeconds(String((err as { retry_after: number }).retry_after)) : undefined;
+  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 ? (retryAfterSeconds(retryAfterHeader) ?? inBody) : undefined);
 }
 
 export async function apiRequest(
