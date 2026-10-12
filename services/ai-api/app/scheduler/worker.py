@@ -23,6 +23,8 @@ from app.catalogue.storage import HttpStorageClient, StorageClient
 from app.config import ConfigurationError, Settings, build_auth_config
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
+from app.privacy.housekeeping import Housekeeping
+from app.privacy.repository import PostgrestPrivacyRepository
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
@@ -51,6 +53,7 @@ class Worker:
         interval_seconds: int = 60,
         monotonic: Callable[[], float] = time.monotonic,
         storage: StorageClient | None = None,
+        housekeeping: Housekeeping | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -61,18 +64,21 @@ class Worker:
         self._monotonic = monotonic
         # the worker signs the photos of a message it has CLAIMED with its own token: the database lets the registered worker read exactly those files (job BB), and no service key exists
         self._sign_media = media_signer(storage)
+        self._housekeeping = housekeeping
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
         try:
             token = self._session.token()
-            return run_tick(
+            result = run_tick(
                 self._repository,
                 self._adapter,
                 token,
                 interval_seconds=self.interval_seconds,
                 sign_media=self._sign_media,
             )
+            self._privacy_housekeeping(token)
+            return result
         except TokenRejected:
             logger.error("scheduler: the data layer refused the token; signing in again")
             self._session.invalidate()
@@ -81,6 +87,17 @@ class Worker:
         except Exception as exc:  # a crashed tick must not stop the next one
             logger.error("scheduler tick crashed: %s", exc.__class__.__name__)
         return None
+
+    def _privacy_housekeeping(self, token: str) -> None:
+        """Job BN: deletions whose cooling-off ended, expired export files, the retention clean-up. Independent of the outbox switches; a failure here never fails the tick (a refused token does, so we sign in again)."""
+        if self._housekeeping is None:
+            return
+        try:
+            self._housekeeping.run_if_due(token)
+        except TokenRejected:
+            raise
+        except Exception as exc:
+            logger.error("privacy housekeeping crashed: %s", exc.__class__.__name__)
 
     def run_forever(self, stop: threading.Event) -> None:
         """Tick, then wait for the next deadline (not `interval` after the tick ended: a slow tick does not push the schedule back). Returns when `stop` is set."""
@@ -121,12 +138,14 @@ def build_worker(settings: Settings) -> Worker:
         settings.scheduler_password.get_secret_value(),
         client=httpx.Client(timeout=httpx.Timeout(10.0, connect=5.0)),
     )
+    storage = HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key)
     return Worker(
         PostgrestSchedulerRepository(config.rest_url, config.anon_key),
         adapter,
         session,
         interval_seconds=settings.scheduler_interval_seconds,
-        storage=HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key),
+        storage=storage,
+        housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
     )
 
 

@@ -28,6 +28,7 @@ class StorageClient(Protocol):
         self, token: str, bucket: str, paths: list[str], expires: int = SIGNED_URL_SECONDS
     ) -> dict[str, str]: ...
     def remove(self, token: str, bucket: str, paths: list[str]) -> None: ...
+    def remove_checked(self, token: str, bucket: str, paths: list[str]) -> bool: ...
 
 
 class HttpStorageClient:
@@ -125,6 +126,36 @@ class HttpStorageClient:
             )
         except httpx.HTTPError as exc:
             logger.warning("storage cleanup failed: %s", exc.__class__.__name__)
+
+    def remove_checked(self, token: str, bucket: str, paths: list[str]) -> bool:
+        """Like `remove`, but says whether the files are really gone (job BN: an expired export is marked removed only when it is). Storage answers 200 with the list of what it deleted, and an
+        empty list both for a file that is not there and for one the caller's rights hide, so a path missing from the answer is looked up before it is called gone."""
+        if not paths:
+            return True
+        try:
+            response = self._client.request(
+                "DELETE",
+                f"{self._base}/object/{bucket}",
+                json={"prefixes": paths},
+                headers=self._headers(token),
+            )
+            if not response.is_success:
+                logger.warning("storage refused a delete: http=%s", response.status_code)
+                return False
+            try:
+                body = response.json()
+            except ValueError:
+                body = []
+            deleted = {str(r.get("name")) for r in body if isinstance(r, dict)} if isinstance(body, list) else set()
+            return all(p in deleted or not self._exists(token, bucket, p) for p in paths)
+        except httpx.HTTPError as exc:
+            logger.warning("storage delete failed: %s", exc.__class__.__name__)
+            return False
+
+    def _exists(self, token: str, bucket: str, path: str) -> bool:
+        """True unless storage says the object is not there (an error is treated as 'still there': the delete is tried again)."""
+        response = self._client.get(f"{self._base}/object/info/{bucket}/{self._quote(path)}", headers=self._headers(token))
+        return response.status_code not in (400, 404)
 
 
 def _duplicate(response: httpx.Response) -> bool:

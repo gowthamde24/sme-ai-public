@@ -188,6 +188,8 @@ select is(
         'public.outbox_list',
         'public.outbox_summary',
         'app.worker_may_read_object',
+        'app.export_bucket_owner',  -- job BN: evaluated by the storage rules as the signed-in caller (the person's own export bucket) and the worker's rule for an EXPIRED export file
+        'app.worker_may_delete_export',
         'app.agent_switch_on',
         'app.is_tenant_member',
         'app.has_tenant_role',
@@ -276,7 +278,12 @@ select is(
         -- job BI (ADR 0073): the accounting export, the spreadsheet import jobs, the stock import, the calendar feed and the policy acceptance. Role first in every one; aal2 for the export and for running an import
         'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
         'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',
-        'public.policy_accept', 'public.policy_acceptances_mine')),
+        'public.policy_accept', 'public.policy_acceptances_mine',
+        -- job BN (ADR 0075): download my data, deletion with a cooling-off, retention, grievances, and the worker's three steps
+        'public.data_export_ensure_bucket', 'public.data_export_request', 'public.data_export_get', 'public.data_export_list', 'public.data_export_begin', 'public.data_export_finish', 'public.data_export_link', 'public.data_export_person_data',
+        'public.deletion_request', 'public.deletion_cancel', 'public.deletion_list', 'public.deletion_execute_workspace',
+        'public.retention_get', 'public.retention_set', 'public.retention_preview', 'public.grievance_submit', 'public.grievance_list', 'public.grievance_get', 'public.grievance_update',
+        'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -310,7 +317,12 @@ select is(
                      'public.export_accounting_data', 'public.import_job_preview_save', 'public.import_job_get', 'public.import_job_list', 'public.import_job_begin', 'public.import_job_finish',
                      'public.catalogue_stock_list', 'public.catalogue_stock_apply', 'public.calendar_feed_create', 'public.calendar_feed_status', 'public.calendar_feed_revoke', 'public.calendar_feed_read',
                      'public.policy_accept', 'public.policy_acceptances_mine',
-                     'public.find_contact_by_phone')),
+                     'public.find_contact_by_phone',
+        -- job BN (ADR 0075): download my data, deletion with a cooling-off, retention, grievances, and the worker's three steps
+        'public.data_export_ensure_bucket', 'public.data_export_request', 'public.data_export_get', 'public.data_export_list', 'public.data_export_begin', 'public.data_export_finish', 'public.data_export_link', 'public.data_export_person_data',
+        'public.deletion_request', 'public.deletion_cancel', 'public.deletion_list', 'public.deletion_execute_workspace',
+        'public.retention_get', 'public.retention_set', 'public.retention_preview', 'public.grievance_submit', 'public.grievance_list', 'public.grievance_get', 'public.grievance_update',
+        'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

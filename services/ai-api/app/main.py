@@ -59,6 +59,11 @@ from app.outbox.repository import PostgrestOutboxRepository
 from app.outbox.routes import router as outbox_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
+from app.privacy import errors as privacy_errors
+from app.privacy.policy_gate import PolicyGate
+from app.privacy.repository import PostgrestPrivacyRepository
+from app.privacy.routes import me_router as privacy_me_router
+from app.privacy.routes import router as privacy_router
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
@@ -115,6 +120,12 @@ def build_runtime(settings: Settings) -> Runtime | None:
             raise
         logger.warning("auth disabled in development: %s", exc)
         return None
+    policies = PolicyVersions(
+        settings.terms_version,
+        settings.privacy_version,
+        settings.terms_effective_from,
+        settings.privacy_effective_from,
+    )
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -140,7 +151,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         lead_search=PostgrestLeadSearchRepository(config.rest_url, config.anon_key),
         voice=build_voice(settings),
         integrations=PostgrestIntegrationsRepository(config.rest_url, config.anon_key),
-        policies=PolicyVersions(settings.terms_version, settings.privacy_version),
+        policies=policies,
+        privacy=PostgrestPrivacyRepository(config.rest_url, config.anon_key),
+        policy_gate=PolicyGate(policies, enforce=settings.policy_enforce),
     )
 
 
@@ -324,6 +337,27 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409,
         "import_file_changed",
         "This is not the file (or the column choices) that was checked. Check it again.",
+    ),
+    # Privacy rights (job BN, ADR 0075). Fixed messages: no data-layer text reaches clients.
+    privacy_errors.SoleOwnerError: ApiError(
+        409,
+        "sole_owner",
+        "You are the only Owner of a workspace. Make someone else an Owner, "
+        "or delete the workspace, first.",
+    ),
+    privacy_errors.CoolingOffError: ApiError(
+        409, "cooling_off", "The waiting period has not ended yet. Try again after it."
+    ),
+    privacy_errors.PrivacyStateError: ApiError(
+        409,
+        "privacy_state",
+        "That cannot be done in the state it is in now. Reload and look again.",
+    ),
+    privacy_errors.PrivacyRateError: ApiError(
+        429, "privacy_rate_limited", "Too many requests today. Try again tomorrow."
+    ),
+    privacy_errors.ConfirmationError: ApiError(
+        422, "confirmation_mismatch", "What you typed does not match. Check it and try again."
     ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
@@ -539,6 +573,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(calendar_member_router)
     app.include_router(calendar_public_router)
     app.include_router(policy_router)
+    app.include_router(privacy_me_router)
+    app.include_router(privacy_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

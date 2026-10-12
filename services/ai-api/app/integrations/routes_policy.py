@@ -8,6 +8,7 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
@@ -17,6 +18,7 @@ from app.auth.deps import PrincipalDep, Runtime, get_runtime
 from app.crm.models import _Strict
 from app.errors import ApiError
 from app.integrations.policy import PolicyVersions
+from app.privacy.policy_gate import needs_acceptance
 
 router = APIRouter(prefix="/v1", tags=["policy"])
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
@@ -47,11 +49,14 @@ def record_acceptance(runtime: Runtime, token: str, terms: str | None, privacy: 
 
 def status_of(runtime: Runtime, accepted: list[dict[str, Any]]) -> dict[str, Any]:
     current = versions_of(runtime)
-    have = {(a["kind"], a["version"]) for a in accepted}
+    gate = runtime.policy_gate
+    needs = needs_acceptance(current, accepted, gate.today() if gate is not None else datetime.now(UTC).date())
     return {
         "current": current.current(),
         "accepted": accepted,
-        "needs_acceptance": {"terms": ("terms", current.terms) not in have, "privacy": ("privacy", current.privacy) not in have},
+        "needs_acceptance": needs,
+        # job BN: true when the workspace routes are refused until the person accepts (POLICY_ENFORCE on and a binding version not yet accepted)
+        "blocking": bool(gate is not None and gate.enforce and any(needs.values())),
     }
 
 
@@ -70,4 +75,6 @@ def my_acceptances(principal: PrincipalDep, runtime: RuntimeDep) -> dict[str, An
 @router.post("/me/policy-acceptances")
 def accept_policies(body: PolicyAcceptanceIn, principal: PrincipalDep, runtime: RuntimeDep) -> dict[str, Any]:
     accepted = record_acceptance(runtime, principal.token, body.terms_version, body.privacy_version, "prompt")
+    if runtime.policy_gate is not None:
+        runtime.policy_gate.forget(str(principal.user_id))
     return status_of(runtime, accepted)

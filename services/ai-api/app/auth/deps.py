@@ -28,6 +28,8 @@ from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
 from app.pricelists.repository import PriceListRepository
+from app.privacy.policy_gate import PolicyGate
+from app.privacy.repository import PrivacyRepository
 from app.quotes.repository import QuotesRepository
 from app.scheduler.repository import SchedulerRepository
 from app.suppression.keys import KeyRing
@@ -70,6 +72,8 @@ class Runtime:
     voice: VoiceStack | None = None
     integrations: IntegrationsRepository | None = None
     policies: PolicyVersions | None = None
+    privacy: PrivacyRepository | None = None
+    policy_gate: PolicyGate | None = None
 
 
 @dataclass(frozen=True)
@@ -129,6 +133,10 @@ def require_tenant_role(*allowed: Role, strong: bool = False) -> Callable[..., T
             raise forbidden()
         if strong and membership.role in (Role.OWNER, Role.ADMIN) and principal.aal != "aal2":
             raise mfa_required()
+        if runtime.policy_gate is not None:
+            # job BN: a changed terms or privacy version must be accepted first (POLICY_ENFORCE)
+            user = str(principal.user_id)
+            runtime.policy_gate.check(runtime.integrations, principal.token, user)
         return TenantContext(principal=principal, tenant=membership.tenant, role=membership.role)
 
     return dependency

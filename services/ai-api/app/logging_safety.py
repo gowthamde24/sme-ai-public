@@ -35,6 +35,8 @@ ROUTE_WORDS = frozenset(
         "accounting", "formats", "imports", "spreadsheet", "inspect", "jobs",
         "calendar-feed", "calendar", "feed", "revoke", "policies", "current",
         "policy-acceptances", "by-phone",
+        # job BN: privacy rights
+        "data-exports", "deletion-requests", "retention", "grievances", "link",
         "orders", "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",
