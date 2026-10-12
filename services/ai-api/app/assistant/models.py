@@ -23,7 +23,12 @@ SourceType = Literal[
     "call_request",
     "store_visit",
     "catalogue_item",
+    # job BP: found on the web, on the map or in the metal price feed in THIS answer; shown now, never stored as a source (they are named in the answer's text)
+    "web",
+    "place",
+    "metal_price",
 ]
+NOT_STORED_SOURCES = frozenset({"web", "place", "metal_price"})
 DraftType = Literal["quote", "followup_draft", "reply_draft", "enquiry", "store_visit"]
 OpenType = Literal[
     "quote", "lead", "enquiry", "order", "outbox_message", "call_request", "store_visit"
@@ -57,6 +62,8 @@ class SourceOut(_Strict):
     id: uuid.UUID
     label: str
     target: OpenTarget | None = None
+    # job BP: a web page's address, or the link to a place on the map (null for a record of this business)
+    url: str | None = None
 
 
 DRAFT_SUMMARY: dict[str, str] = {

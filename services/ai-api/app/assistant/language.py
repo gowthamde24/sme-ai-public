@@ -108,6 +108,23 @@ PLAIN_WORDS: dict[Language, str] = {
     "ta": "இதை எனக்குத் தெளிவாகச் சொல்ல முடியவில்லை. தயவுசெய்து வேறு வார்த்தைகளில் மீண்டும் கேளுங்கள்.",
 }
 
+# job BP: said before the web pages an answer rests on (the answer's text is stored; a web page's address is what lets the owner check it later), and in place of a shop's name or address on the map,
+# which Google's terms do not let us keep (the owner sees them on the cards of the answer). Not model output. A native reader of each language should check these words.
+WEB_SOURCES: dict[Language, str] = {
+    "en": "From the web:",
+    "te": "వెబ్ నుండి:",
+    "hi": "वेब से:",
+    "kn": "ವೆಬ್‌ನಿಂದ:",
+    "ta": "இணையத்திலிருந்து:",
+}
+SEE_CARDS: dict[Language, str] = {
+    "en": "(see the cards)",
+    "te": "(కార్డులు చూడండి)",
+    "hi": "(कार्ड देखें)",
+    "kn": "(ಕಾರ್ಡ್‌ಗಳನ್ನು ನೋಡಿ)",
+    "ta": "(அட்டைகளைப் பாருங்கள்)",
+}
+
 # Said before the items an answer about "what is waiting for me" left out, which the code then adds from the tool's own list (see runner.py, job AO). Not model output.
 WAITING_ALSO: dict[Language, str] = {
     "en": "Also waiting for you:",

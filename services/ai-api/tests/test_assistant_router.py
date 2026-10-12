@@ -19,6 +19,7 @@ from app.assistant.router import (
     CATALOGUE_TOOLS,
     CORE,
     VISIT_TOOLS,
+    WEB_TOOLS,
     offered_tools,
     wants_catalogue,
     wants_visits,
@@ -182,13 +183,14 @@ def test_the_follow_up_of_a_chat_carries_the_group_over() -> None:
 
 def test_every_tool_belongs_to_exactly_one_group_so_a_new_tool_must_be_placed() -> None:
     names = {t.name for t in TOOLS}
-    assert CORE | CATALOGUE_TOOLS | VISIT_TOOLS == names, (
+    assert CORE | CATALOGUE_TOOLS | VISIT_TOOLS | WEB_TOOLS == names, (
         "a new tool must be added to CORE or to a group in app/assistant/router.py"
     )
     assert (
         not (CORE & CATALOGUE_TOOLS)
         and not (CORE & VISIT_TOOLS)
         and not (CATALOGUE_TOOLS & VISIT_TOOLS)
+        and not (WEB_TOOLS & (CORE | CATALOGUE_TOOLS | VISIT_TOOLS))
     )
 
 
@@ -213,8 +215,10 @@ def test_the_request_describes_only_the_tools_offered() -> None:
     core = _request(offered=CORE)
     assert {t.name for t in core.tools} == CORE
     both = _request(offered=CORE | CATALOGUE_TOOLS | VISIT_TOOLS)
-    assert {t.name for t in both.tools} == {t.name for t in TOOLS}
-    assert [t.name for t in both.tools] == [t.name for t in TOOLS], (
+    assert {t.name for t in both.tools} == {t.name for t in TOOLS} - WEB_TOOLS, "the web tools are offered only on request"
+    everything = _request(offered=CORE | CATALOGUE_TOOLS | VISIT_TOOLS | WEB_TOOLS)
+    assert {t.name for t in everything.tools} == {t.name for t in TOOLS}
+    assert [t.name for t in both.tools] == [t.name for t in TOOLS if t.name not in WEB_TOOLS], (
         "in the fixed order of the registry"
     )
     assert {t.name for t in _request().tools} == {t.name for t in TOOLS}, (

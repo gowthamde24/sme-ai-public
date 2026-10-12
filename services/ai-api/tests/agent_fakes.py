@@ -107,6 +107,9 @@ class FakeAgentDb:
         self.evidence: list[dict[str, Any]] = []
         self.claims: list[dict[str, Any]] = []
         self.calls: list[str] = []
+        self._web_used: dict[str, int] = {}
+        self.web_caps: dict[str, int] = {}
+        self.contact_names: list[str] = []
         self.finished: list[tuple[str, str | None]] = []
         # op name -> callable run before an op (to simulate a cancel or a switch mid-run)
         self.before: dict[str, Callable[[FakeAgentDb], None]] = {}
@@ -241,6 +244,20 @@ class FakeAgentDb:
         self._open("ai_mode")
         self.mode_requests.append(light_model)
         return self.mode if light_model in self.prices else "normal"
+
+    # job BP: the web research tools (a fake that counts and can be told to refuse)
+    def web_quota_take(self, model: str) -> None:
+        self._open("web_quota_take")
+        used = self._web_used.get(model, 0)
+        if used >= self.web_caps.get(model, 1000):
+            from app.agents.errors import WebLimitReached
+
+            raise WebLimitReached
+        self._web_used[model] = used + 1
+
+    def web_query_ok(self, query: str) -> bool:
+        self._open("web_query_ok")
+        return not any(name.lower() in query.lower() for name in self.contact_names)
 
     def release_cost(self, step_key: str, *, reason: str) -> None:
         self._open("release_cost")

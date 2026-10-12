@@ -80,6 +80,13 @@ class ReferenceRefused(AgentDbError):
     code = "reference_refused"
 
 
+class WebLimitReached(AgentDbError):
+    """SM251 (job BP): the workspace has made today's allowed number of this kind of web call."""
+
+    sqlstate = "SM251"
+    code = "web_limit_reached"
+
+
 class RequirementChanged(AgentDbError):
     """SM208 / SM209 / SM211: while the run was going, a person confirmed, discarded or worked on
     the enquiry's requirement (or a later run replaced this run's draft). The run's write is
@@ -109,6 +116,7 @@ BY_SQLSTATE: dict[str, type[AgentDbError]] = {
         CostCapReached,
         ValueRefused,
         ReferenceRefused,
+        WebLimitReached,
     )
 }
 BY_SQLSTATE["22023"] = ValueRefused

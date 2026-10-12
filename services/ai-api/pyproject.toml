@@ -87,6 +87,11 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/by_fakes.py" = ["E501"]
 "../../tests/integration/push_support.py" = ["E501"]
 "../../tests/integration/test_by_web_apis.py" = ["E501"]
+# job BP: web research tools (long explanatory docstrings, one-line tables)
+"app/websearch/*" = ["E501"]
+"app/assistant/web_tools.py" = ["E501"]
+"tests/test_bp_*.py" = ["E501"]
+"tests/bp_fakes.py" = ["E501"]
 "tests/integrations_fakes.py" = ["E501"]
 # job AS: store visits (fixed message templates in five languages, long explanatory docstrings)
 "app/visits/*" = ["E501"]

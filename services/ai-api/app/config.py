@@ -169,6 +169,22 @@ class Settings(BaseSettings):
     vapid_subject: str | None = None
     vapid_public_key: str | None = None
 
+    # Job BP (ADR 0078): web research tools for the Main agent and, opt-in, the Research agent.
+    # EVERYTHING is off until the owner sets these; keys come only from the environment (entered
+    # hidden), are never logged, returned or stored. A provider named without its key stops the
+    # process at start.
+    web_search_provider: str = "off"  # off | fake | tavily | brave
+    tavily_api_key: SecretStr | None = None
+    brave_search_api_key: SecretStr | None = None
+    places_provider: str = "off"  # off | fake | google
+    google_places_api_key: SecretStr | None = None
+    places_field_tier: str = "pro"  # pro (name, address, link) | ids (place ids only: free)
+    metals_provider: str = "off"  # off | fake | metals_dev
+    metals_dev_api_key: SecretStr | None = None
+    # reading a page: off | fake (fixture pages, no network) | real (the guarded fetcher:
+    # robots.txt, no private addresses, size and time limits)
+    web_fetch: str = "off"
+
     @property
     def cors_origins(self) -> list[str]:
         """The validated list. A wildcard, a path, a trailing slash or (outside development) a

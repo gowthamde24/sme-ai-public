@@ -50,12 +50,15 @@ from app.assistant.hygiene import leaked_names
 from app.assistant.language import (
     NO_ANSWER,
     PLAIN_WORDS,
+    SEE_CARDS,
     WAITING_ALSO,
+    WEB_SOURCES,
     Language,
     reply_matches,
 )
-from app.assistant.models import DraftCardOut, SourceOut
+from app.assistant.models import NOT_STORED_SOURCES, DraftCardOut, SourceOut
 from app.assistant.tools import TOOLS, Ctx, Item, State
+from app.assistant.web_tools import WEB_TOOL_NAMES, question_urls
 from app.errors import ApiError
 
 logger = logging.getLogger("app.assistant.runner")
@@ -118,14 +121,36 @@ def _sha(obj: Any) -> str:
 
 
 def source_of(item: Item) -> SourceOut:
+    link = item.fields.get("map" if item.type == "place" else "address") if item.type in ("web", "place") else None
     return SourceOut.model_validate(
         {
             "kind": item.type,
             "id": item.id,
             "label": item.label,
             "target": {"type": item.open[0], "id": item.open[1]} if item.open else None,
+            "url": str(link) if link else None,
         }
     )
+
+
+def web_sources_line(language: Language, items: list[Item]) -> str:
+    """One line naming the web pages an answer rests on (the answer's text is what is kept)."""
+    pages = [i for i in items if i.type == "web"]
+    if not pages:
+        return ""
+    return f"{WEB_SOURCES[language]} " + "; ".join(f"{i.label} ({i.fields.get('address')})" for i in pages)
+
+
+def hide_places(text: str, state: State, language: Language) -> str:
+    """Google's terms keep us from storing the names and addresses of places: the answer's text is stored, so wherever it repeats one it says "(see the cards)" instead."""
+    for item in state.items.values():
+        if item.type != "place":
+            continue
+        address = str(item.fields.get("address") or "")
+        for needle in (item.label, address, address.split(",")[0].strip()):
+            if len(needle) >= 6:
+                text = re.sub(re.escape(needle), SEE_CARDS[language], text, flags=re.IGNORECASE)
+    return text
 
 
 class AssistantRunner:
@@ -167,7 +192,8 @@ class AssistantRunner:
             repaired: set[str] = set()
             actions = 0
             # job BB: the tools offered are decided ONCE per question from the question and the lines before it (a deterministic router, no model call). A call to a tool that was not offered is refused.
-            offered = router.offered_tools(question, history)
+            self._state.question_urls = question_urls(question)
+            offered = router.offered_tools(question, history, self._web_tools())
             widened = (
                 False  # job BD, the safety net: at most ONE widening per question, to every tool
             )
@@ -310,6 +336,16 @@ class AssistantRunner:
             status, code, shown = self._classify(exc)
             return self._end(status, code, turns, shown)
 
+    def _web_tools(self) -> frozenset[str]:
+        """The web tools the owner has switched on (job BP): a tool whose provider is not configured is never offered."""
+        web = getattr(getattr(self._ctx, "runtime", None), "research_web", None)
+        if web is None:
+            return frozenset()
+        on = web.enabled()
+        return frozenset(
+            name for name, key in (("web_search", "web_search"), ("read_page", "read_page"), ("find_retailers", "find_retailers"), ("get_metal_prices", "metal_prices")) if on[key] and name in WEB_TOOL_NAMES
+        )
+
     def _note_router_miss(self, what: str, language: str) -> None:
         """The router did not offer a tool the model wanted (or the model declined while a hidden group could have helped). Logged with the tool name (or the group) and the language only, never
         the question, so the word lists in router.py can be improved from real misses."""
@@ -400,7 +436,11 @@ class AssistantRunner:
         # an amount is stated only exactly as a tool returned it: not the owner's own number repeated back as if it were done, not a sum, not a guess
         if any(a not in self._state.allowed_paise for a in money_amounts(final.answer)):
             return self._once("money", prompts.NOTE_REPAIR_MONEY, repaired)
-        text = final.answer
+        text = hide_places(final.answer, self._state, language)
+        if final.kind == "answer":
+            line = web_sources_line(language, known)
+            if line:
+                text = f"{text}\n{line}"
         # an answer about today's list names EVERY item that waits for the owner (job AO): the model is asked once; if it still leaves one out, the code adds it from the tool's own list
         missing = self._left_out(final.kind, known)
         if missing:
@@ -455,7 +495,7 @@ class AssistantRunner:
             message_id=message_id,
             text=reply.text,
             language=reply.language,
-            sources=[{"type": s.kind, "id": str(s.id)} for s in reply.sources],
+            sources=[{"type": s.kind, "id": str(s.id)} for s in reply.sources if s.kind not in NOT_STORED_SOURCES],
             drafts=[{"type": d.kind, "id": str(d.id)} for d in reply.drafts],
         )
         words = reply.text.split(" ")
