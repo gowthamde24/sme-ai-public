@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
         source: "/:path*",
         headers: securityHeaders(process.env.NODE_ENV === "production"),
       },
+      // the offline worker (job BL): always asked for again, so a new version is picked up at once; it may control the whole site
+      {
+        source: "/sw.js",
+        headers: [
+          { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
+          { key: "Service-Worker-Allowed", value: "/" },
+        ],
+      },
     ];
   },
 };

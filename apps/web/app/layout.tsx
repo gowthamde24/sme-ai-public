@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { cookies } from "next/headers";
 
 import { CookieConsent } from "@/components/v2/legal/CookieConsent";
 import { COOKIE_WORD_KEYS } from "@/components/v2/legal/cookie-words";
+import { SHORT_NAME } from "@/design/brand";
+import { ServiceWorker } from "@/components/v2/pwa/ServiceWorker";
 import { V2Root } from "@/components/v2/V2Root";
 import { legalT } from "@/i18n/legal";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
@@ -17,6 +19,18 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title: "SME AI Revenue Engine",
   description: "An AI workforce for SMEs.",
+  // installable on a phone (job BL): the manifest is app/manifest.ts; the owl icons are in public/icons
+  applicationName: SHORT_NAME,
+  appleWebApp: { capable: true, title: SHORT_NAME, statusBarStyle: "default" },
+  icons: { icon: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }, { url: "/icons/owl.svg", type: "image/svg+xml" }], apple: [{ url: "/icons/apple-touch-icon.png", sizes: "180x180", type: "image/png" }] },
+};
+
+// the colour of the phone's address bar and the installed app's title bar: the v2 background, light and dark (design/tokens.css)
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f9f8f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#17161a" },
+  ],
 };
 
 /**
@@ -34,6 +48,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="en" data-theme={theme}>
       <body>
         {children}
+        <ServiceWorker lang={lang} />
         <V2Root theme={theme} lang={lang} className="sticky bottom-0 z-[70]">
           <CookieConsent initial={readConsent(jar.get(CONSENT_COOKIE)?.value)} words={Object.fromEntries(COOKIE_WORD_KEYS.map((k) => [k, t(k)]))} />
         </V2Root>

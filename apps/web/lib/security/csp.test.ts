@@ -51,6 +51,10 @@ describe("buildCsp", () => {
     expect(directive(prod, "img-src")).toBe("img-src 'self' blob: data:");
     expect(directive(prod, "media-src")).toBe("media-src 'self' blob:"); // the spoken answer, played from a blob: only (job BF)
   });
+
+  it("lets the offline worker come from this site only (job BL)", () => {
+    expect(directive(prod, "worker-src")).toBe("worker-src 'self'");
+  });
 });
 
 describe("the catalogue's photos (job BC)", () => {

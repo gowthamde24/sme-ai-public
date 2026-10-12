@@ -4,5 +4,8 @@
  */
 export const BRAND_NAME = "Sme-AI (working name)";
 
+/** The name without the "(working name)" note: for the places that carry a name but not the note (the home-screen icon label, the install hint). */
+export const SHORT_NAME = BRAND_NAME.split(" ")[0];
+
 /** The name as set inside running text: an invisible word joiner after the hyphen keeps "Sme-AI" on one line. */
 export const BRAND_TEXT = BRAND_NAME.replace(/-(?=\p{L})/gu, "-⁠");
