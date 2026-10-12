@@ -506,7 +506,8 @@ def test_the_only_adapter_is_the_local_fake_and_it_opens_no_connection() -> None
             imported |= {n.name.split(".")[0] for n in node.names}
         elif isinstance(node, ast.ImportFrom) and node.module:
             imported.add(node.module.split(".")[0])
-    assert imported <= {"__future__", "hashlib", "threading", "uuid", "dataclasses", "typing"}, (
+    # ("app" is the lazy import of the WhatsApp factory inside build_adapter, job BR: the module itself opens no connection)
+    assert imported <= {"__future__", "hashlib", "threading", "uuid", "dataclasses", "typing", "app"}, (
         imported
     )
     assert isinstance(build_adapter("fake"), LocalFakeAdapter)

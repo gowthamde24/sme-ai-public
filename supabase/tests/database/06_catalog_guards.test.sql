@@ -283,7 +283,10 @@ select is(
         'public.data_export_ensure_bucket', 'public.data_export_request', 'public.data_export_get', 'public.data_export_list', 'public.data_export_begin', 'public.data_export_finish', 'public.data_export_link', 'public.data_export_person_data',
         'public.deletion_request', 'public.deletion_cancel', 'public.deletion_list', 'public.deletion_execute_workspace',
         'public.retention_get', 'public.retention_set', 'public.retention_preview', 'public.grievance_submit', 'public.grievance_list', 'public.grievance_get', 'public.grievance_update',
-        'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention')),
+        'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
+        -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
+        'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
+        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -322,7 +325,10 @@ select is(
         'public.data_export_ensure_bucket', 'public.data_export_request', 'public.data_export_get', 'public.data_export_list', 'public.data_export_begin', 'public.data_export_finish', 'public.data_export_link', 'public.data_export_person_data',
         'public.deletion_request', 'public.deletion_cancel', 'public.deletion_list', 'public.deletion_execute_workspace',
         'public.retention_get', 'public.retention_set', 'public.retention_preview', 'public.grievance_submit', 'public.grievance_list', 'public.grievance_get', 'public.grievance_update',
-        'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention')),
+        'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
+        -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
+                     'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
+                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

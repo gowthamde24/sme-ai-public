@@ -1,4 +1,4 @@
-.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -24,7 +24,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -162,6 +162,13 @@ seed-demo-manual:
 
 # Job AY (ADR 0069), LOCAL ONLY: twelve invented sarees in the demo workspace, each with one to three GENERATED placeholder pictures (a colour and a pattern: no real product photo), uploaded through the
 # API into the demo's private bucket in the local Storage. Idempotent. Needs `make db-start` (Storage is on in supabase/config.toml), `make dev-api-local` and `make seed-demo-manual`.
+# Job BR (ADR 0076), LOCAL ONLY: a stand-in for WhatsApp's Cloud API and for Meta's webhook on 127.0.0.1:8791. It sends nothing to anyone. See docs/runbooks/whatsapp-local.md.
+# Needs the API running with WHATSAPP_APP_SECRET=local-app-secret (same value as APP_SECRET below). Override: make dev-whatsapp-fake WEBHOOK_URL=http://127.0.0.1:8001/v1/webhooks/whatsapp
+WEBHOOK_URL ?= http://127.0.0.1:8001/v1/webhooks/whatsapp
+APP_SECRET ?= local-app-secret
+dev-whatsapp-fake:
+	cd $(API) && .venv/bin/python ../../scripts/fake_whatsapp_server.py --port 8791 --webhook-url $(WEBHOOK_URL) --app-secret $(APP_SECRET) --auto-status
+
 seed-demo-catalogue:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/seed_demo_catalogue.py
 

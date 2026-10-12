@@ -42,6 +42,27 @@ Reason = Literal[
 Flag = Literal["money", "commitment", "complaint"]
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=3000)]
 
+# job BR: why a message the channel accepted did not reach the customer (the `reason` of a `delivery_failed` step); closed words, one fixed sentence each
+DELIVERY_TEXT: dict[str, str] = {
+    "window_closed": "WhatsApp only allows an approved template after 24 hours of silence from the customer.",
+    "unreachable": "WhatsApp could not deliver it to that number (not on WhatsApp, or an old version).",
+    "not_delivered_health": "WhatsApp held it back to keep conversations healthy.",
+    "rate_limited": "WhatsApp is limiting how fast this number can send.",
+    "throughput": "WhatsApp is limiting how fast this number can send.",
+    "spam_limited": "WhatsApp limited this number for too many messages that were not wanted.",
+    "opted_out_marketing": "The customer stopped marketing messages on WhatsApp.",
+    "unsupported_type": "The customer's WhatsApp cannot show this kind of message.",
+    "media_error": "WhatsApp could not fetch the photo.",
+    "template_params": "The template's words did not fit.",
+    "template_missing": "WhatsApp does not know that template.",
+    "template_paused": "WhatsApp paused that template.",
+    "template_disabled": "WhatsApp disabled that template.",
+    "token_expired": "The connection to WhatsApp has expired. The Owner must reconnect it.",
+    "bad_request": "WhatsApp did not accept the message.",
+    "other_error": "WhatsApp could not deliver it.",
+}
+
+
 REASON_TEXT: dict[str, str] = {
     "auto_allowed": "Allowed to go automatically.",
     "quiet_hours": "Waiting for the morning: this business sends no messages during its quiet hours (India time).",
@@ -116,6 +137,10 @@ EventKind = Literal[
     "blocked",
     "sent",
     "failed",
+    # job BR: what the channel reports after a message was handed over
+    "delivered",
+    "read",
+    "delivery_failed",
 ]
 ActorKind = Literal["person", "assistant", "worker", "system"]
 
@@ -161,7 +186,19 @@ class OutboxMessageOut(_Strict):
     edited_at: datetime | None
     decided_at: datetime | None
     sent_at: datetime | None
-    failure_code: Literal["adapter_error", "timeout", "rejected"] | None
+    failure_code: (
+        Literal[
+            "adapter_error",
+            "timeout",
+            "rejected",
+            "window_closed",
+            "template_required",
+            "recipient_unreachable",
+            "rate_limited",
+            "not_configured",
+        ]
+        | None
+    )
     keep_record: bool
     media: list[MediaOut]
     # the English gloss of `text`, or null

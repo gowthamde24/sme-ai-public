@@ -82,6 +82,10 @@ from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
 from app.voice.routes import router as voice_router
+from app.whatsapp.repository import WhatsAppStateError
+from app.whatsapp.routes import public_router as whatsapp_public_router
+from app.whatsapp.routes import router as whatsapp_router
+from app.whatsapp.wiring import build_whatsapp
 
 SERVICE_NAME = "ai-api"
 SERVICE_VERSION = "0.1.0"
@@ -101,7 +105,7 @@ class HealthResponse(BaseModel):
 def _outbox_adapter(settings: Settings) -> ChannelAdapter:
     """The outbox's channel adapter: only the local fake exists; any other name stops us."""
     try:
-        return build_adapter(settings.outbox_adapter)
+        return build_adapter(settings.outbox_adapter, settings)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
 
@@ -126,6 +130,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         settings.terms_effective_from,
         settings.privacy_effective_from,
     )
+    key_ring = build_key_ring(settings)
     return Runtime(
         verifier=TokenVerifier.from_config(config),
         repository=PostgrestTenantRepository(config.rest_url, config.anon_key),
@@ -139,7 +144,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         orders=PostgrestOrdersRepository(config.rest_url, config.anon_key),
         pricelists=PostgrestPriceListRepository(config.rest_url, config.anon_key),
         suppression=PostgrestSuppressionRepository(config.rest_url, config.anon_key),
-        key_ring=build_key_ring(settings),
+        key_ring=key_ring,
         followups=PostgrestFollowupsRepository(config.rest_url, config.anon_key),
         today=PostgrestTodayRepository(config.rest_url, config.anon_key),
         outbox=PostgrestOutboxRepository(config.rest_url, config.anon_key),
@@ -154,6 +159,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         policies=policies,
         privacy=PostgrestPrivacyRepository(config.rest_url, config.anon_key),
         policy_gate=PolicyGate(policies, enforce=settings.policy_enforce),
+        whatsapp=build_whatsapp(settings, config, key_ring),
     )
 
 
@@ -358,6 +364,12 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     privacy_errors.ConfirmationError: ApiError(
         422, "confirmation_mismatch", "What you typed does not match. Check it and try again."
+    ),
+    # WhatsApp (job BR, ADR 0076). Fixed message: nothing from the data layer reaches a client.
+    WhatsAppStateError: ApiError(
+        409,
+        "whatsapp_state",
+        "That cannot be done in the state it is in now. A template under review is not edited.",
     ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
@@ -575,6 +587,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(policy_router)
     app.include_router(privacy_me_router)
     app.include_router(privacy_router)
+    app.include_router(whatsapp_public_router)
+    app.include_router(whatsapp_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

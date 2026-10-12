@@ -15,7 +15,7 @@ import hashlib
 import threading
 import uuid
 from dataclasses import dataclass, field
-from typing import Protocol
+from typing import Any, Protocol
 
 
 @dataclass(frozen=True)
@@ -31,12 +31,34 @@ class MediaRef:
 
 
 @dataclass(frozen=True)
+class TemplateRef:
+    """An APPROVED message template the database named for this message (job BR): the guard is in the database, the adapter only uses what it is handed."""
+
+    name: str
+    language: str
+    body: str = field(repr=False)
+
+
+@dataclass(frozen=True)
+class SendContext:
+    """What the database tells a real channel about one claimed message (job BR): which number to send from, whose secret holds its token, whether the customer's 24-hour window is open, the approved template (if any)."""
+
+    phone_number_id: str
+    token_ref: str
+    window_open: bool
+    template: TemplateRef | None = None
+    coexistence: bool = False
+
+
+@dataclass(frozen=True)
 class OutgoingMessage:
     message_id: uuid.UUID
     to_phone: str = field(repr=False)
     body: str = field(repr=False)
     language: str
     media: tuple[MediaRef, ...] = ()
+    attempts: int = 1
+    wa: SendContext | None = None
 
     @property
     def idempotency_key(self) -> str:
@@ -52,7 +74,10 @@ class OutgoingMessage:
 class SendResult:
     ok: bool
     adapter_message_id: str | None = None
-    failure_code: str | None = None  # adapter_error | timeout | rejected
+    # adapter_error | timeout | rejected | window_closed | template_required | recipient_unreachable | rate_limited | not_configured
+    failure_code: str | None = None
+    # a transient trouble (the provider is busy or unreachable): the message is not marked failed, it is offered again when its claim lapses, up to MAX_SEND_ATTEMPTS times
+    retry: bool = False
 
 
 class ChannelAdapter(Protocol):
@@ -86,8 +111,13 @@ class LocalFakeAdapter:
         return SendResult(True, f"fake-{digest}", None)
 
 
-def build_adapter(name: str) -> ChannelAdapter:
-    """The adapter named by OUTBOX_ADAPTER. Only `fake` exists: anything else stops the process at start rather than silently sending nowhere or somewhere."""
+def build_adapter(name: str, settings: Any = None) -> ChannelAdapter:
+    """The adapter named by OUTBOX_ADAPTER: `fake` (the default) or `whatsapp` (job BR; needs the WHATSAPP_* settings and the owner's written approval, ADR 0017). Anything else stops the process
+    at start rather than silently sending nowhere or somewhere."""
     if name == "fake":
         return LocalFakeAdapter()
-    raise ValueError("OUTBOX_ADAPTER must be 'fake': no real channel exists yet")
+    if name == "whatsapp":
+        from app.whatsapp.factory import build_whatsapp_adapter
+
+        return build_whatsapp_adapter(settings)
+    raise ValueError("OUTBOX_ADAPTER must be 'fake' or 'whatsapp'")

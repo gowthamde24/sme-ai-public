@@ -127,7 +127,7 @@ def build_worker(settings: Settings) -> Worker:
         raise ConfigurationError("invalid scheduler configuration: " + "; ".join(problems))
     config = build_auth_config(settings)
     try:
-        adapter = build_adapter(settings.outbox_adapter)
+        adapter = build_adapter(settings.outbox_adapter, settings)
     except ValueError as exc:
         raise ConfigurationError(str(exc)) from None
     assert settings.scheduler_email is not None and settings.scheduler_password is not None  # noqa: S101
