@@ -27,6 +27,8 @@ export function ProblemView({ kind, labels, action, reference, tag: Tag = "main"
       <h1 className={notFoundTitle}>{word(labels, e.titleKey, e.title)}</h1>
       <p className={mutedText}>{word(labels, e.bodyKey, e.body)}</p>
       {action}
+      {/* a plain link on purpose: a failed screen reloads cleanly and the root error page has no router */}
+      {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
       <a href="/app" className={action ? "inline-flex min-h-11 items-center rounded-lg text-base font-semibold text-brand-text hover:underline" : notFoundBack}>
         {word(labels, "problem.home", word(labels, "notfound.back", "Back to your workspaces"))}
       </a>
