@@ -350,8 +350,11 @@ await step("D3", "the customer filter and the dates are done by the SERVER (name
   await page.waitForSelector("[data-screen=outbox]");
   const kavitha = await page.locator("li[data-status]").count();
   await page.goto(out("?tab=waiting&q=Lakshmi"));
+  await page.waitForSelector("[data-screen=outbox]");
   const lakshmi = await page.locator("li[data-status]").count();
   await page.goto(out("?tab=waiting&q=zzzz-nobody"));
+  await page.waitForSelector("[data-screen=outbox]");
+  await page.getByText("No message matches these filters").waitFor({ timeout: 20000 }).catch(() => null); // the list is drawn after the page loads
   const nobody = await page.locator("li[data-status]").count();
   must(nobody === 0 && /No message matches these filters/.test(await text(page)), "an unknown name should match nothing");
   const tomorrow = new Date(Date.now() + 2 * 86400_000).toISOString().slice(0, 10);
@@ -491,6 +494,8 @@ await step("G1", "Catalogue: add a saree with a REAL photo (shrunk in the browse
   await page.waitForURL(/\/catalogue\/[0-9a-f-]{36}\?saved=1/, { timeout: 60000 });
   itemUrl = page.url().split("?")[0];
   await page.waitForLoadState("networkidle");
+  await page.locator("[data-part=slides] img").first().waitFor({ timeout: 30000 }); // the gallery is drawn by the browser: judge the picture once it is there and has had time to load
+  await page.waitForFunction(() => [...document.querySelectorAll("[data-part=slides] img")].every((e) => e.complete), null, { timeout: 30000 }).catch(() => null);
   const loaded = await page.locator("[data-part=slides] img").evaluateAll((els) => els.map((e) => e.naturalWidth > 0 && /\/storage\/v1\//.test(e.src)));
   must(loaded.length === 1 && loaded.every(Boolean), `the uploaded photo did not load from storage: ${JSON.stringify(loaded)}`);
   must(/Saved\./.test(await text(page)), "no saved banner");
