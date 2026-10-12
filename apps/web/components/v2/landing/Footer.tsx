@@ -5,9 +5,12 @@ import type { LandingKey, LandingT } from "@/i18n/landing";
 import type { Lang } from "@/i18n/lang";
 
 const LINKS: [string, LandingKey][] = [
+  ["#shop", "nav.shop"],
+  ["#whatsapp", "nav.whatsapp"],
   ["#how", "nav.how"],
-  ["#control", "nav.control"],
+  ["#languages", "nav.languages"],
   ["#privacy", "nav.privacy"],
+  ["#pricing", "nav.pricing"],
   ["#faq", "nav.faq"],
 ];
 const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text-ink";

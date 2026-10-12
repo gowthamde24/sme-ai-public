@@ -56,8 +56,8 @@ export const STRUCTURE = `(() => { ${HELPERS}
   if (info.main !== 1) problems.push('expected one main, found ' + info.main);
   if (info.contentinfo !== 1) problems.push('expected one footer, found ' + info.contentinfo);
   for (const n of document.querySelectorAll('nav')) if (!n.getAttribute('aria-label') && !n.getAttribute('aria-labelledby')) problems.push('nav without a name: ' + label(n));
-  info.v2Roots = document.querySelectorAll('[data-ui="v2"]').length;
-  if (info.v2Roots !== 1) problems.push('expected one [data-ui="v2"] root, found ' + info.v2Roots);
+  info.v2Roots = document.querySelectorAll('[data-screen="landing"]').length; // the page's own root (the cookie notice of the root layout is a second [data-ui="v2"] wrapper, job BH)
+  if (info.v2Roots !== 1) problems.push('expected one landing root, found ' + info.v2Roots);
   info.rootLang = root.getAttribute('lang'); info.htmlLang = document.documentElement.lang;
   // unique ids, resolvable references
   const ids = {}; for (const e of document.querySelectorAll('[id]')) ids[e.id] = (ids[e.id] || 0) + 1;
@@ -91,7 +91,7 @@ export const STRUCTURE = `(() => { ${HELPERS}
   info.ogImage = !!document.querySelector('meta[property="og:image"]'); info.jsonLd = document.querySelectorAll('script[type="application/ld+json"]').length;
   if (!document.title.trim()) problems.push('empty title');
   if (!/noindex/.test(info.robots || '')) problems.push('robots meta is not noindex: ' + info.robots);
-  if (info.ogImage) problems.push('og:image present'); if (info.jsonLd) problems.push('JSON-LD present');
+  if (!info.ogImage) problems.push('no og:image (the share picture, job BS)'); if (!document.querySelector('meta[name="twitter:card"]')) problems.push('no twitter:card'); if (!document.querySelector('link[rel="canonical"]')) problems.push('no canonical link'); if (document.querySelectorAll('link[rel="alternate"][hreflang]').length < 4) problems.push('fewer than four hreflang alternates'); if (info.jsonLd) problems.push('JSON-LD present');
   return { problems, info };
 })()`;
 
@@ -148,7 +148,7 @@ export const LAYOUT = `(() => { ${HELPERS}
   const flow = [...document.querySelectorAll('[data-flow]')].find(vis);
   const card = flow && flow.querySelector('[data-card="0"]');
   const first = (e) => { if (!e) return null; const r = e.getBoundingClientRect(); return Math.round(r.bottom); };
-  return { viewportW: w, viewportH: h, docScrollWidth: doc, offenders: offenders.slice(0, 6), h1Bottom: first(document.querySelector('h1')), ctaBottom: first(document.querySelector('a[href="#early-access"]')), cardBottom: first(card), mode: flow ? flow.getAttribute('data-mode') : null };
+  return { viewportW: w, viewportH: h, docScrollWidth: doc, offenders: offenders.slice(0, 6), h1Bottom: first(document.querySelector('h1')), ctaBottom: first(document.querySelector('main a[href="/signup"]')), cardBottom: first(document.querySelector('#shop h2')), mode: flow ? flow.getAttribute('data-mode') : 'page' };
 })()`;
 
 /** One tab stop: what has focus and how it looks. */
@@ -206,7 +206,7 @@ export const AUTH_STRUCTURE = (opts) => `(() => { ${HELPERS}
   if (!main || main.id !== 'main') problems.push('the main has no id="main" (the skip link target)');
   info.banner = count('body header:not(section header):not(article header)'); if (info.banner !== 1) problems.push('expected one banner, found ' + info.banner);
   const skips = [...document.querySelectorAll('a[href="#main"]')]; info.skipLinks = skips.length; if (skips.length !== 1) problems.push('expected one skip link, found ' + skips.length);
-  info.v2Roots = document.querySelectorAll('[data-ui="v2"]').length; if (info.v2Roots !== 1) problems.push('expected one [data-ui="v2"] root, found ' + info.v2Roots);
+  info.v2Roots = document.querySelectorAll('[data-screen="landing"]').length; if (info.v2Roots !== 1) problems.push('expected one landing root, found ' + info.v2Roots);
   info.rootLang = root ? root.getAttribute('lang') : null; if (info.rootLang !== opts.lang) problems.push('wrapper lang is "' + info.rootLang + '", expected "' + opts.lang + '"');
   const region = main && main.parentElement; info.regionLang = region ? region.getAttribute('lang') : null;
   if (info.regionLang !== 'en') problems.push('the form region has lang="' + info.regionLang + '", expected "en"');

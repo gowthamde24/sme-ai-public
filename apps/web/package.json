@@ -20,7 +20,8 @@
     "i18n:export": "node scripts/i18n-export.mjs",
     "i18n:first-pass": "node scripts/i18n-export.mjs --first-pass",
     "i18n:import": "node scripts/i18n-import.mjs",
-    "pwa:icons": "node scripts/pwa-icons.mjs"
+    "pwa:icons": "node scripts/pwa-icons.mjs",
+    "og:images": "node scripts/og-images.mjs"
   },
   "dependencies": {
     "@react-three/drei": "10.7.9",

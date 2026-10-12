@@ -5,7 +5,7 @@ vi.mock("next/headers", () => ({
   cookies: async () => ({ get: (name: string) => (name in cookieValues ? { name, value: cookieValues[name] } : undefined) }),
 }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn(), push: vi.fn() }), usePathname: () => "/" }));
 
 import LandingPage, { generateMetadata } from "./page";
 
@@ -28,20 +28,23 @@ describe("/landing route", () => {
     cookieValues.sme_theme = "<script>";
     expect((await LandingPage()).props).toEqual({ lang: "en", theme: undefined });
   });
-  it("sets a localized plain title and description, noindex, and no og:image and no JSON-LD", async () => {
+  it("sets a localized plain title and description, noindex until launch, a share picture with the owl, and no JSON-LD", async () => {
     cookieValues.sme_lang = "hi";
     const m = await generateMetadata();
     expect(String(m.title)).toMatch(/[ऀ-ॿ]/);
     expect(String(m.title)).not.toContain("⁠");
     expect(String(m.title)).toContain("Sme-AI (working name)");
     expect(m.robots).toEqual({ index: false, follow: false });
-    expect(m.openGraph).not.toHaveProperty("images");
-    expect(JSON.stringify(m)).not.toMatch(/ld\+json|schema\.org|og-image|example\.invalid/);
+    expect(m.openGraph).toMatchObject({ images: [{ url: "/og/og-hi.png", width: 1200, height: 630 }] });
+    expect(m.twitter).toMatchObject({ card: "summary_large_image", images: ["/og/og-hi.png"] });
+    expect(m.alternates?.canonical).toBe("/");
+    expect(Object.keys(m.alternates?.languages ?? {})).toEqual(["en-IN", "te-IN", "hi-IN", "kn-IN", "x-default"]);
+    expect(JSON.stringify(m)).not.toMatch(/ld\+json|schema\.org|example\.invalid/);
     expect(String(m.description)).not.toContain("⁠");
   });
-  it("the English description keeps the honest promise: drafts and approval (sign-up is open, so no invitation-only line)", async () => {
+  it("the English description keeps the honest promise: money talk waits for the owner's OK (sign-up is open, so no invitation-only line)", async () => {
     const m = await generateMetadata();
-    expect(String(m.description)).toMatch(/draft you approve/i);
+    expect(String(m.description)).toMatch(/waits for your OK/i);
     expect(String(m.description)).not.toMatch(/invitation/i);
   });
 });

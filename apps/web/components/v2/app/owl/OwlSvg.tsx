@@ -9,8 +9,7 @@ import type { OwlMood } from "./owl-mood";
  * device is slow or the person wants less motion. Decorative by default (`aria-hidden`): the name beside it is the label. The five moods and `still` are in design/owl.css.
  * No ids inside (several owls share a page), no script, no three.js.
  */
-/** `box` places the owl inside another SVG (the landing illustration): its x, y and size in that drawing's units. */
-export function OwlSvg({ agent = "main", mood = "idle", still = false, className = "size-12", box }: { agent?: string; mood?: OwlMood; still?: boolean; className?: string; box?: { x: number; y: number; width: number } }) {
+export function OwlSvg({ agent = "main", mood = "idle", still = false, className = "size-12" }: { agent?: string; mood?: OwlMood; still?: boolean; className?: string }) {
   const p = paletteOf(agent);
   const vars = {
     "--owl-cap": p.cap,
@@ -26,7 +25,7 @@ export function OwlSvg({ agent = "main", mood = "idle", still = false, className
     "--owl-cheek": OWL_BODY.cheek,
   } as CSSProperties;
   return (
-    <svg viewBox="0 0 240 250" {...(box ? { x: box.x, y: box.y, width: box.width, height: (box.width * 250) / 240 } : {})} className={`owl shrink-0 ${box ? "" : className}`} data-state={mood} data-still={still ? "true" : undefined} data-owl={agent} aria-hidden="true" focusable="false">
+    <svg viewBox="0 0 240 250" className={`owl shrink-0 ${className}`} data-state={mood} data-still={still ? "true" : undefined} data-owl={agent} aria-hidden="true" focusable="false">
       <g style={vars}>
       <circle className="ring" cx="120" cy="130" r="112" />
       <g className="whole">

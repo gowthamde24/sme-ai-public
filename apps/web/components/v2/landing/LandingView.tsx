@@ -1,13 +1,13 @@
-import { Control } from "@/components/v2/landing/Control";
 import { Faq } from "@/components/v2/landing/Faq";
 import { Footer } from "@/components/v2/landing/Footer";
 import { Header } from "@/components/v2/landing/Header";
 import { Hero } from "@/components/v2/landing/Hero";
 import { How } from "@/components/v2/landing/How";
 import { LanguagesSection } from "@/components/v2/landing/LanguagesSection";
+import { Pricing } from "@/components/v2/landing/Pricing";
 import { Privacy } from "@/components/v2/landing/Privacy";
-import { Problem } from "@/components/v2/landing/Problem";
-import { TeamSection } from "@/components/v2/landing/TeamSection";
+import { Shop } from "@/components/v2/landing/Shop";
+import { Whatsapp } from "@/components/v2/landing/Whatsapp";
 import { V2Root } from "@/components/v2/V2Root";
 import { landingT } from "@/i18n/landing";
 import type { Lang } from "@/i18n/lang";
@@ -30,14 +30,19 @@ export function LandingView({ lang, theme }: { lang: Lang; theme?: Theme }) {
           {t("skip")}
         </a>
         <Header t={t} lang={lang} theme={theme} />
+        {lang !== "en" ? (
+          <p role="note" className="border-b border-line bg-surface-2 px-4 py-2 text-center text-sm text-muted">
+            {t("draft.banner")}
+          </p>
+        ) : null}
         <main id="main">
           <Hero t={t} />
-          <Problem t={t} />
+          <Shop t={t} />
+          <Whatsapp t={t} />
           <How t={t} />
-          <Control t={t} />
-          <TeamSection t={t} />
           <LanguagesSection t={t} />
           <Privacy t={t} />
+          <Pricing t={t} />
           <Faq t={t} />
         </main>
         <Footer t={t} lang={lang} />
