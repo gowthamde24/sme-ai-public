@@ -12,6 +12,7 @@ vi.mock("next/navigation", () => ({
 import { AccountMenu } from "./AccountMenu";
 import { NO_FRAME_DATA, FRAME_LOADING, type FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
+import { useLabels } from "./robust/labels-context";
 import { FrameDataSlot } from "./frame-store";
 import { SideNav } from "./SideNav";
 import { TabBar } from "./TabBar";
@@ -198,6 +199,11 @@ describe("AccountMenu", () => {
   });
 });
 
+function ShowsLabel() {
+  const labels = useLabels();
+  return <p data-testid="label">{labels?.["problem.retry"] ? "Try again|" : "missing"}</p>;
+}
+
 describe("AppFrame", () => {
   const frame = (memberships: Membership[] | null) =>
     render(
@@ -225,6 +231,17 @@ describe("AppFrame", () => {
     expect(screen.getAllByRole("combobox")).toHaveLength(1); // the language select
     expect(screen.getByRole("button", { name: /light/i })).toBeInTheDocument();
     expect(container.querySelector("[data-frame='app']")).not.toBeNull();
+  });
+  it("keeps the page working when the world does not (job BW): the guard sits under the top bar, before the page, and the page gets the frame's words", () => {
+    const { container } = render(
+      <AppFrame lang="te" theme="dark" email="o@example.test" memberships={owner} signOut={noSignOut}>
+        <ShowsLabel />
+      </AppFrame>,
+    );
+    const shell = container.querySelector('[data-robust="shell"]') as HTMLElement;
+    expect(shell).not.toBeNull();
+    expect(shell.compareDocumentPosition(container.querySelector("#main-content")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(screen.getByTestId("label")).toHaveTextContent("Try again|"); // English dictionary key from the Telugu frame: present (a machine draft), not empty
   });
   it("with no memberships (the API could not be read) it draws the account part only and still shows the page", () => {
     nav.pathname = "/app";

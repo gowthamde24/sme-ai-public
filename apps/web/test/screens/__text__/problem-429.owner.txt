@@ -1,0 +1,5 @@
+# Too many tries
+Please wait a minute, then try again. Nothing you typed is lost.
+[button type=button: Try again]
+{role=status}
+[Back to your workspaces](/app)

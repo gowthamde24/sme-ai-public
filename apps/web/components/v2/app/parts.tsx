@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { makeT, type Words } from "./words";
+import { RefreshRetry } from "./robust/RetryButton";
 
 import { alertBox, backLink, link, mutedText, noteBox, okBox, pageH1, pageMain, pillAmber, pillBrand, pillGreen, pillInfo, pillNeutral, pillRed, surface, tabsBar, tabsItem, tabsItemIdle, tabsItemOn } from "./ui";
 
@@ -18,7 +19,10 @@ export function ApiDownV2({ words }: { words?: Words }) {
       <p role="alert" className={alertBox}>
         {t("parts.api_down")}
       </p>
-      <p className="mt-4">
+      <div className="mt-4">
+        <RefreshRetry />
+      </div>
+      <p className="mt-2">
         <Link href="/app" className={link}>
           {t("parts.back_workspaces")}
         </Link>
