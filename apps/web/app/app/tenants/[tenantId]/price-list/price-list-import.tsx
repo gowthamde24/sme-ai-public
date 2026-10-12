@@ -8,6 +8,8 @@ import { formatBps, formatRupees } from "@/lib/api/quotes";
 
 import type { CommitState, PreviewState } from "./price-list-actions";
 import { alertBox, btnMain, bulletList, codeInline, dataTable, dataTd, dataThCol, dataTr, fieldInput, fieldLabel, fieldMono, formCardWide, link, mutedText, noteBox, okBox, pageH2, plainText, tableWrap } from "@/components/v2/app/ui";
+import { Rich } from "@/components/v2/app/rich";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Previewed = { state: PreviewState; checked: { csv: string; date: string; versionId: string } } | undefined;
 type PreviewAction = (prev: PreviewState, formData: FormData) => Promise<PreviewState>;
@@ -26,13 +28,14 @@ export function PriceListImport({
   preview,
   commit,
   today,
-  secondFactorMissing,
+  secondFactorMissing, words,
 }: {
   preview: PreviewAction;
   commit: CommitAction;
   today: string;
-  secondFactorMissing: boolean;
+  secondFactorMissing: boolean; words?: Words;
 }) {
+  const t = makeT(words);
   // a check is tied to the EXACT text and date it was made for (and carries the id of the version it would save): the verdict and the save button belong to that text and date and to nothing else
   const checkThis = async (prev: Previewed, formData: FormData): Promise<Previewed> => {
     const state = await preview(prev?.state, formData);
@@ -66,7 +69,7 @@ export function PriceListImport({
     <div>
       <form action={previewAction} className={formCardWide}>
         <label htmlFor="pl-file" className={fieldLabel}>
-        Choose a CSV file
+        {t("pl.choose_a_csv_file")}
       </label>
         <input id="pl-file" type="file" accept=".csv,text/csv,text/plain" onChange={onFile} className={fieldInput} />
         {fileError ? (
@@ -75,15 +78,14 @@ export function PriceListImport({
           </p>
         ) : null}
         <label htmlFor="pl-csv" className={fieldLabel}>
-        Or paste the file&apos;s text
+        {t("pl.or_paste_the_file_s_text")}
       </label>
         <textarea id="pl-csv" name="csv" rows={10} value={csv} onChange={(e) => setCsv(e.target.value)} spellCheck={false} placeholder="sku,name,unit_price,moq,tax_bps" className={fieldMono} />
         <p className={mutedText}>
-          Columns: <code className={codeInline}>sku, name, unit_price, moq, tax_bps</code> and, optionally, <code className={codeInline}>min_qty_1, price_1</code> up to <code className={codeInline}>min_qty_5, price_5</code>. Prices are in rupees (4200 or 1,200.50). Every sku must already be a
-          product in your catalog.
+          <Rich t={t} k="pl.columns_line" with={{ cols: <code className={codeInline}>sku, name, unit_price, moq, tax_bps</code>, first: <code className={codeInline}>min_qty_1, price_1</code>, last: <code className={codeInline}>min_qty_5, price_5</code> }} />
         </p>
         <label htmlFor="pl-date" className={fieldLabel}>
-        The price list starts on
+        {t("pl.the_price_list_starts_on")}
       </label>
         <input id="pl-date" name="effective_from" type="date" value={date} onChange={(e) => setDate(e.target.value)} required className={fieldInput} />
         <button
@@ -99,9 +101,9 @@ export function PriceListImport({
             setFileError(null);
           }}
         >
-          {checking ? "Checking..." : "Check the file"}
+          {checking ? t("pl.checking") : t("pl.check_the_file")}
         </button>
-        <p className={mutedText}>Checking writes nothing.</p>
+        <p className={mutedText}>{t("pl.checking_writes_nothing")}</p>
         {previewState?.error ? (
           <p role="alert" className={alertBox}>
             {previewState.error}
@@ -109,12 +111,12 @@ export function PriceListImport({
         ) : null}
       </form>
 
-      {stale ? <p className={mutedText}>The text or the date changed since the last check: its result is not shown. Check the file again.</p> : null}
+      {stale ? <p className={mutedText}>{t("pl.the_text_or_the_date_changed")}</p> : null}
       {result ? (
         <section aria-labelledby="pl-result" className={formCardWide}>
-          <h2 id="pl-result" className={pageH2}>{result.ok ? "The file is good" : "The file has problems"}</h2>
+          <h2 id="pl-result" className={pageH2}>{result.ok ? t("pl.the_file_is_good") : t("pl.the_file_has_problems")}</h2>
           {result.issues.length > 0 ? (
-            <ul aria-label="Problems in the file" className={bulletList}>
+            <ul aria-label={t("pl.problems_in_the_file")} className={bulletList}>
               {result.issues.map((issue, i) => (
                 <li key={`${issue.row}-${issue.column}-${issue.code}-${i}`}>{issueText(issue)}</li>
               ))}
@@ -122,45 +124,45 @@ export function PriceListImport({
           ) : null}
           {result.items.length > 0 ? (
             <div className={tableWrap}>
-              <table aria-label="What the file would become" className={dataTable}>
+              <table aria-label={t("pl.what_the_file_would_become")} className={dataTable}>
                 <thead>
                   <tr>
-                    <th scope="col" className={dataThCol}>sku</th>
-                    <th scope="col" className={dataThCol}>Name in the file</th>
-                    <th scope="col" className={dataThCol}>Name in the catalog</th>
-                    <th scope="col" className={dataThCol}>Price</th>
-                    <th scope="col" className={dataThCol}>Minimum</th>
-                    <th scope="col" className={dataThCol}>GST</th>
-                    <th scope="col" className={dataThCol}>Price breaks</th>
+                    <th scope="col" className={dataThCol}>{t("pl.sku")}</th>
+                    <th scope="col" className={dataThCol}>{t("pl.name_in_the_file")}</th>
+                    <th scope="col" className={dataThCol}>{t("pl.name_in_the_catalog")}</th>
+                    <th scope="col" className={dataThCol}>{t("pl.price")}</th>
+                    <th scope="col" className={dataThCol}>{t("pl.minimum")}</th>
+                    <th scope="col" className={dataThCol}>{t("pl.gst")}</th>
+                    <th scope="col" className={dataThCol}>{t("pl.price_breaks")}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {result.items.map((item) => (
                     <tr key={item.sku} className={dataTr}>
-                      <td data-label="sku" className={`${dataTd} ${plainText}`}>{item.sku}</td>
-                      <td data-label="Name in the file" className={`${dataTd} ${plainText}`}>{item.name}</td>
-                      <td data-label="Name in the catalog" className={`${dataTd} ${plainText}`}>{item.catalog_name ?? "not in the catalog"}{item.catalog_name && !item.name_matches ? " (differs)" : ""}</td>
-                      <td data-label="Price" className={dataTd}>
+                      <td data-label={t("pl.col_sku")} className={`${dataTd} ${plainText}`}>{item.sku}</td>
+                      <td data-label={t("pl.col_name_in_the_file")} className={`${dataTd} ${plainText}`}>{item.name}</td>
+                      <td data-label={t("pl.col_name_in_the_catalog")} className={`${dataTd} ${plainText}`}>{item.catalog_name ?? t("pl.not_in_the_catalog")}{item.catalog_name && !item.name_matches ? " " + t("pl.differs") : ""}</td>
+                      <td data-label={t("pl.col_price")} className={dataTd}>
                         {formatRupees(item.unit_price_paise)}
                         {item.sale_unit ? ` per ${item.sale_unit}` : ""}
                       </td>
-                      <td data-label="Minimum" className={dataTd}>{item.minimum_order_quantity}</td>
-                      <td data-label="GST" className={dataTd}>{formatBps(item.tax_bps)}</td>
-                      <td data-label="Price breaks" className={dataTd}>{breaksText(item)}</td>
+                      <td data-label={t("pl.col_minimum")} className={dataTd}>{item.minimum_order_quantity}</td>
+                      <td data-label={t("pl.col_gst")} className={dataTd}>{formatBps(item.tax_bps)}</td>
+                      <td data-label={t("pl.col_price_breaks")} className={dataTd}>{breaksText(item)}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
           ) : null}
-          {result.ok ? <p className={mutedText}>{result.items.length} products. Starts on this date; the catalog&apos;s names stay as they are (the file&apos;s names are only a check).</p> : null}
+          {result.ok ? <p className={mutedText}>{t("pl.preview_note", { n: result.items.length })}</p> : null}
         </section>
       ) : null}
 
       {previewState?.preview?.ok || checking ? (
         secondFactorMissing ? (
           <p role="note" className={noteBox}>
-            Saving a price list needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
+            {t("pl.mfa_saving_a_price_list")} <Link href="/app/security" className={link}>{t("pl.set_it_up_on_the_security")}</Link>{t("pl.mfa_b")}
           </p>
         ) : (
           <form className={formCardWide}>
@@ -168,10 +170,10 @@ export function PriceListImport({
             <input type="hidden" name="csv" value={csv} />
             <input type="hidden" name="effective_from" value={date} />
             <button type="submit" formAction={commitAction} className={btnMain} disabled={saving || checking || !current}>
-              {saving ? "Saving..." : "Save as a new price list version"}
+              {saving ? t("pl.saving") : t("pl.save_as_a_new_price_list")}
             </button>
-            {!current && !checking ? <p className={mutedText}>The text or the date changed since the check. Check the file again to save it.</p> : null}
-            <p className={mutedText}>Saving makes a new version in force from the date above. Earlier quotes keep the version they were made with. Nothing is sent to anyone.</p>
+            {!current && !checking ? <p className={mutedText}>{t("pl.the_text_or_the_date_changed_2")}</p> : null}
+            <p className={mutedText}>{t("pl.saving_makes_a_new_version_in")}</p>
           </form>
         )
       ) : null}

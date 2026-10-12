@@ -2,6 +2,8 @@ import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { makeT, type Words } from "./words";
+
 import { alertBox, backLink, link, mutedText, noteBox, okBox, pageH1, pageMain, pillAmber, pillBrand, pillGreen, pillInfo, pillNeutral, pillRed, surface, tabsBar, tabsItem, tabsItemIdle, tabsItemOn } from "./ui";
 
 /**
@@ -9,15 +11,16 @@ import { alertBox, backLink, link, mutedText, noteBox, okBox, pageH1, pageMain, 
  * (ApiDown, NotShown, Notice, ActionResult): the SAME words, the new look. Nothing here reads data or decides access.
  * A migrated screen wraps its content in <V2Root> (its folder layout) and then uses these.
  */
-export function ApiDownV2() {
+export function ApiDownV2({ words }: { words?: Words }) {
+  const t = makeT(words);
   return (
     <main className={pageMain}>
       <p role="alert" className={alertBox}>
-        Could not load this from the API. Try again shortly.
+        {t("parts.api_down")}
       </p>
       <p className="mt-4">
         <Link href="/app" className={link}>
-          Back to your workspaces
+          {t("parts.back_workspaces")}
         </Link>
       </p>
     </main>

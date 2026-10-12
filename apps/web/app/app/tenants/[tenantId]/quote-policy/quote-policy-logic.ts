@@ -7,6 +7,7 @@
  */
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { POLICY_LIMITS, type QuotePolicyInput } from "@/lib/api/quote-policies";
+import { makeT, type Say } from "@/components/v2/app/words";
 
 /** The names of the form's fields (the same in the form and in the server action). */
 export const FIELD_NAMES = ["effective_from", "validity_days", "new_advance", "repeat_advance", "new_net_days", "repeat_net_days", "gst_rate", "credit_limit", "seller_state", "discount_ceiling"] as const;
@@ -125,7 +126,6 @@ export function policyFromForm(values: PolicyValues, id: string, today: string):
 }
 
 // ----------------------------------------------------------------------------- refusals
-const SAFE_AGAIN = "Nothing is published twice if you press the button again.";
 
 export type Refusal = { error: string; reason?: "mfa" };
 
@@ -133,23 +133,21 @@ export type Refusal = { error: string; reason?: "mfa" };
  * ONE sentence of OUR wording for each closed code the policy routes return. Nothing the API, the database or the person typed is repeated. `reason: "mfa"` tells the screen to add the link to the
  * second-factor page.
  */
-export function publishRefusal(status: number, code: string): Refusal {
-  if (code === "mfa_required") return { reason: "mfa", error: "Publishing a policy needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was published." };
-  if (code === "forbidden") return { error: "Your role cannot publish a quote policy. Only an owner or an admin can." };
-  if (code === "validation_error") return { error: "A number or a date was not accepted. Check every field against the limits shown, then try again. Nothing was published." };
-  if (code === "invalid_value") return { error: "The start date was not accepted. It cannot be earlier than today or earlier than the start date of the newest published version. Nothing was published." };
-  if (code === "conflict") return { error: "This form was already saved with different values. Reload the page and fill it in again. Nothing is published twice." };
-  if (code === "not_found" || status === 404) return { error: "This workspace is not available." };
-  if (status === 429 || code === "rate_limited") return { error: `Too many requests. Wait a moment and try again. ${SAFE_AGAIN}` };
-  if (code === "token_expiring") return { error: "Your session is about to expire. Sign in again, then try once more." };
+export function publishRefusal(status: number, code: string, t: Say = makeT()): Refusal {
+  if (code === "mfa_required") return { reason: "mfa", error: t("qp.publishing_a_policy_needs_your_authenticator") };
+  if (code === "forbidden") return { error: t("qp.your_role_cannot_publish_a_quote") };
+  if (code === "validation_error") return { error: t("qp.a_number_or_a_date_was") };
+  if (code === "invalid_value") return { error: t("qp.the_start_date_was_not_accepted") };
+  if (code === "conflict") return { error: t("qp.this_form_was_already_saved_with") };
+  if (code === "not_found" || status === 404) return { error: t("qp.this_workspace_is_not_available") };
+  if (status === 429 || code === "rate_limited") return { error: t("qp.too_many") };
+  if (code === "token_expiring") return { error: t("qp.your_session_is_about_to_expire") };
   if (status === 503 || status === 502 || code === "quotes_unavailable" || code === "upstream_error" || code === "api_unreachable")
-    return { error: `Quote policies are not available right now. Try again shortly. ${SAFE_AGAIN}` };
-  return { error: `Could not publish this. Try again. ${SAFE_AGAIN}` };
+    return { error: t("qp.not_available_now") };
+  return { error: t("qp.could_not_publish") };
 }
 
 /** The sentence after a saved version: the number and the start date, and a replay says so. */
-export function publishedSentence(versionNo: number, effectiveFrom: string, replayed: boolean, formatDate: (iso: string) => string): string {
-  return replayed
-    ? `Version ${versionNo} was already published, starting on ${formatDate(effectiveFrom)}. Nothing was published twice.`
-    : `Published version ${versionNo}, starting on ${formatDate(effectiveFrom)}.`;
+export function publishedSentence(versionNo: number, effectiveFrom: string, replayed: boolean, formatDate: (iso: string) => string, t: Say = makeT()): string {
+  return t(replayed ? "qp.already_published" : "qp.published_version", { n: versionNo, date: formatDate(effectiveFrom) });
 }

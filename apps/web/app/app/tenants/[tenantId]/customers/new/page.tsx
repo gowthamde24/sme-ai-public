@@ -8,6 +8,9 @@ import { addCustomerAction } from "./actions";
 import { CustomerForm } from "./customer-form";
 import { bodyText, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Add a customer · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -20,6 +23,9 @@ const WRITERS = ["owner", "admin", "sales"];
  * user's own token. Anyone else sees a plain notice and the API is not asked anything for them; the API and the database enforce the role regardless.
  */
 export default async function NewCustomerPage({ params }: PageProps<"/app/tenants/[tenantId]/customers/new">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["cust."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -30,24 +36,24 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   if (!WRITERS.includes(tenant.role))
     return (
-      <main className={pageMain}>
-        <h1 className={pageH1}>Add a customer</h1>
-        <p className={bodyText}>An owner, an admin or a sales person adds customers.</p>
+      <main className={pageMain} lang={lang}>
+        <h1 className={pageH1}>{t("cust.add_a_customer")}</h1>
+        <p className={bodyText}>{t("cust.an_owner_an_admin_or_a")}</p>
       </main>
     );
   // one set of ids per render: a second press of the button is a retry. The key remounts the form for the next customer, so its state starts clean.
   const ids = { company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() };
   return (
-    <main className={pageMain}>
-      <h1 className={pageH1}>Add a customer</h1>
+    <main className={pageMain} lang={lang}>
+      <h1 className={pageH1}>{t("cust.add_a_customer")}</h1>
       <p className={mutedText}>
-        A customer is a person with a phone number, and a lead for them. Nothing is sent to anyone. Consent is not recorded here: you record it on the next screen, when the customer has told you.
+        {t("cust.a_customer_is_a_person_with")}
       </p>
-      <CustomerForm key={`${ids.company}|${ids.contact}|${ids.lead}`} action={addCustomerAction.bind(null, tenantId)} tenantId={tenantId} ids={ids} />
+      <CustomerForm words={words} key={`${ids.company}|${ids.contact}|${ids.lead}`} action={addCustomerAction.bind(null, tenantId)} tenantId={tenantId} ids={ids} />
     </main>
   );
 }

@@ -14,6 +14,7 @@ import { OUTBOX_CATEGORIES, OUTBOX_LANGUAGES, createCallRequest, submitOutboxMes
 import { requireUser } from "@/lib/auth/session";
 
 import { sentRefusal } from "../../followups/sent-refusal";
+import type { Say } from "@/components/v2/app/words";
 
 const WORDS_MIN = 2;
 const WORDS_MAX = 3000;
@@ -82,7 +83,7 @@ export async function contactWhatsAppAction(
       revalidatePath(`/app/tenants/${tenantId}/followups`);
     } catch (error) {
       record = "failed";
-      recordError = sentRefusal(error)?.error ?? t("today.err.generic");
+      recordError = sentRefusal(error, undefined, ((key, vars) => t(key as Parameters<Words>[0], vars)) as Say)?.error ?? t("today.err.generic");
     }
   }
   revalidatePath(`/app/tenants/${tenantId}`);

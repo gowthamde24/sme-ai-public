@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError, createTenant } from "@/lib/api/client";
 import { requireUser } from "@/lib/auth/session";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { serverT } from "@/i18n/server-t";
 
 export type TenantFormState = { error?: string } | undefined;
 
@@ -20,16 +21,17 @@ export async function createTenantAction(
   _prev: TenantFormState,
   formData: FormData,
 ): Promise<TenantFormState> {
+  const t = await serverT(["acct."]);
   const user = await requireUser();
 
   const name = field(formData, "name");
   const slug = field(formData, "slug");
   if (name.length < 1 || name.length > 120)
-    return { error: "Enter a name (up to 120 characters)." };
+    return { error: t("acct.enter_a_name_up_to_120") };
   if (!SLUG.test(slug)) {
     return {
       error:
-        "URL name must be 3-40 characters: lowercase letters, digits and hyphens.",
+        t("acct.url_name_must_be_3_40"),
     };
   }
 
@@ -45,11 +47,11 @@ export async function createTenantAction(
       // The free trial includes one workspace per owner (job AD, D1). The API's sentence is fixed and plain.
       failure = { error: error.message };
     } else if (error instanceof ApiRequestError && error.status === 409) {
-      failure = { error: "That URL name is not available." };
+      failure = { error: t("acct.that_url_name_is_not_available") };
     } else if (error instanceof ApiRequestError && error.status === 422) {
-      failure = { error: "Check the name and URL name and try again." };
+      failure = { error: t("acct.check_the_name_and_url_name") };
     } else {
-      failure = { error: "Could not create the workspace. Try again." };
+      failure = { error: t("acct.could_not_create_the_workspace_try") };
     }
   }
   if (failure) return failure;

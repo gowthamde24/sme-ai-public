@@ -26,13 +26,13 @@ const SOURCE = [...sourceFiles(path.join(WEB, "app")), ...sourceFiles(path.join(
   .replaceAll("&quot;", '"');
 const QUOTED = [...readFileSync(DOC, "utf8").matchAll(/"([^"\n]+)"/g)].map((m) => m[1]);
 
-/** A phrase is on a screen if it is in the source verbatim, or if the screen builds it with a number (touch ${n}) where the checklist shows one. */
+/** A phrase is on a screen if it is in the source verbatim, or if the screen builds it with a number (touch ${n}, or a {n} placeholder of the string store) where the checklist shows one. */
 function onAScreen(phrase: string): boolean {
   if (SOURCE.includes(phrase)) return true;
   if (!/\d/.test(phrase)) return false;
   const pattern = phrase
     .split(/(\d+)/)
-    .map((part, i) => (i % 2 === 1 ? "\\$\\{[^}]+\\}" : part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")))
+    .map((part, i) => (i % 2 === 1 ? "(?:\\$\\{[^}]+\\}|\\{\\w+\\})" : part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")))
     .join("");
   return new RegExp(pattern).test(SOURCE);
 }

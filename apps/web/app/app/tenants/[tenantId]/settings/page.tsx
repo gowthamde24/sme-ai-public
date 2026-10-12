@@ -25,6 +25,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 import { agentWords } from "./agent-words";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -64,7 +65,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const t = appT(lang);
@@ -117,7 +118,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.settings")} />
-      <SectionTabs label="Parts of Settings" items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
+      <SectionTabs label={t("settings.parts_label")} items={tabs.map((x) => ({ key: x.key, label: x.label, href: `${base}/settings?section=${x.key}`, current: x.key === section }))} />
       <div className="mt-6 max-w-3xl space-y-4">
         {section === "business" ? (
           <>

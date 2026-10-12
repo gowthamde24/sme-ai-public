@@ -51,7 +51,7 @@ describe("labelLeadAction", () => {
       {},
       form({ label_id: LABEL_ID, label: "good" }),
     );
-    expect(res).toEqual({ ok: true, message: "Lead marked as good." });
+    expect(res).toEqual({ ok: true, message: "Lead marked as Good." });
     expect(createLeadLabel).toHaveBeenCalledWith("tok", TENANT, LEAD_ID, {
       id: LABEL_ID,
       label: "good",
@@ -84,7 +84,7 @@ describe("labelLeadAction", () => {
       {},
       form({ label_id: LABEL_ID, label: "bad", reason_code: "not_our_market" }),
     );
-    expect(res).toEqual({ ok: true, message: "Lead marked as bad." });
+    expect(res).toEqual({ ok: true, message: "Lead marked as Bad." });
     expect(createLeadLabel).toHaveBeenCalledWith("tok", TENANT, LEAD_ID, {
       id: LABEL_ID,
       label: "bad",

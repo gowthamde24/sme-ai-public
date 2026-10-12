@@ -7,6 +7,10 @@ import { ApiAuthError, fetchMe } from "@/lib/api/client";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageMain, rowBetween, sectionBlock, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
+import { Rich } from "@/components/v2/app/rich";
+import { makeT } from "@/components/v2/app/words";
+import { getLang } from "@/i18n/get-lang";
+import { wordsFor } from "@/i18n/app-words";
 
 import { signOut } from "./actions";
 import { CreateTenantForm } from "./create-tenant-form";
@@ -17,6 +21,9 @@ export const dynamic = "force-dynamic";
 
 export default async function AppPage() {
   const user = await requireUser();
+  const lang = await getLang();
+  const words = wordsFor(lang, ["acct."]);
+  const t = makeT(words);
 
   let me: Me | null = null;
   try {
@@ -42,49 +49,48 @@ export default async function AppPage() {
   }
 
   return (
-    <main className={pageMain}>
+    <main className={pageMain} lang={lang}>
       <header className={rowBetween}>
-        <h1 className={pageH1}>Workspaces</h1>
+        <h1 className={pageH1}>{t("acct.workspaces")}</h1>
         <form action={signOut}>
           <button type="submit" className={btnQuiet}>
-            Sign out
+            {t("acct.sign_out")}
           </button>
         </form>
       </header>
       <p className={bodyText}>
-        Signed in as {user.email ?? "your account"}. <Link href="/app/security" className={inlineLink}>Security</Link>
+        <Rich t={t} k="acct.signed_in_as" vars={{ email: user.email ?? t("acct.your_account") }} /> <Link href="/app/security" className={inlineLink}>{t("acct.security")}</Link>
       </p>
       {me?.memberships.some((m) => m.role === "owner" || m.role === "admin") &&
         !user.hasSecondFactor && (
           <p role="note" className={warnBox}>
-            <strong>Set up your authenticator app.</strong> As an owner or admin you need it to erase data, export, change members or roles, and
-            change workspace settings. <Link href="/app/security" className={inlineLink}>Set it up</Link>
+            <strong>{t("acct.set_up_your_authenticator_app")}</strong> {t("acct.owner_notice")} <Link href="/app/security" className={inlineLink}>{t("acct.set_it_up")}</Link>
           </p>
         )}
 
       {me === null ? (
         <p role="alert" className={alertBox}>
-          Could not load your workspaces from the API. Try again shortly.
+          {t("acct.could_not_load_your_workspaces_from")}
         </p>
       ) : me.memberships.length === 0 ? (
-        <p className={bodyText}>You do not belong to a workspace yet. Create one to get started.</p>
+        <p className={bodyText}>{t("acct.you_do_not_belong_to_a")}</p>
       ) : (
         <table className={`mt-4 ${dataTable}`}>
           <thead>
             <tr>
-              <th className={dataThCol}>Workspace</th>
-              <th className={dataThCol}>URL name</th>
-              <th className={dataThCol}>Your role</th>
+              <th className={dataThCol}>{t("acct.workspace")}</th>
+              <th className={dataThCol}>{t("acct.url_name")}</th>
+              <th className={dataThCol}>{t("acct.your_role")}</th>
             </tr>
           </thead>
           <tbody>
             {me.memberships.map(({ tenant, role }) => (
               <tr key={tenant.id} className={dataTr}>
-                <td data-label="Workspace" className={dataTd}>
+                <td data-label={t("acct.workspace")} className={dataTd}>
                   <Link href={`/app/tenants/${tenant.id}`} className={inlineLink}>{tenant.name}</Link>
                 </td>
-                <td data-label="URL name" className={dataTd}>{tenant.slug}</td>
-                <td data-label="Your role" className={dataTd}>{role}</td>
+                <td data-label={t("acct.url_name")} className={dataTd}>{tenant.slug}</td>
+                <td data-label={t("acct.your_role")} className={dataTd}>{role}</td>
               </tr>
             ))}
           </tbody>
@@ -92,8 +98,8 @@ export default async function AppPage() {
       )}
 
       <div id="create-workspace" className={sectionBlock}>
-        <AddButton key={me?.memberships.length ?? 0} label="Add a workspace">
-          <CreateTenantForm />
+        <AddButton key={me?.memberships.length ?? 0} label={t("acct.add_a_workspace")}>
+          <CreateTenantForm words={words} />
         </AddButton>
       </div>
     </main>

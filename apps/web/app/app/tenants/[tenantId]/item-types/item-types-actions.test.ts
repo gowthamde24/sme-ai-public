@@ -20,7 +20,6 @@ vi.mock("@/lib/api/item-types", async (importOriginal) => ({
 import { parseItemTypes } from "@/lib/api/item-types";
 
 import { addItemTypeAction, saveItemTypeAction } from "./item-types-actions";
-import { TEXT } from "./item-types-logic";
 
 const CANARY = "CANARY-9a8b7c";
 const PAGE = `/app/tenants/${TENANT}/item-types`;
@@ -54,7 +53,7 @@ describe("addItemTypeAction", () => {
     expect(api.saveItemType.mock.calls[0][2]).toMatchObject({ minPricePaise: null, maxPricePaise: null });
   });
   it("a code that already exists is refused BEFORE the save, because the API call would replace that record", async () => {
-    expect(await add({ code: "A" })).toEqual({ ok: false, error: TEXT.exists });
+    expect(await add({ code: "A" })).toEqual({ ok: false, error: "Another item type already has that code. Pick another code, or edit that item type below." });
     expect(api.saveItemType).not.toHaveBeenCalled();
   });
   it("a code that is added by someone else in the meantime is said plainly (the API replaced it)", async () => {
@@ -115,7 +114,7 @@ describe("saveItemTypeAction", () => {
     expect((api.saveItemType.mock.calls[0][2] as { code: string }).code).toBe("A");
   });
   it("a code that is not in the list is refused (an edit never creates a type)", async () => {
-    expect(await edit("Q")).toEqual({ ok: false, error: TEXT.unknown });
+    expect(await edit("Q")).toEqual({ ok: false, error: "That item type is not in the list. Reload the page." });
     expect(api.saveItemType).not.toHaveBeenCalled();
   });
   it("refuses a bad field with a sentence of ours before any request", async () => {

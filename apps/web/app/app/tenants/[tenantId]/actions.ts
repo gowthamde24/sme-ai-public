@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { createCompany, isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { serverT } from "@/i18n/server-t";
 
 export type CompanyFormState = { error?: string } | undefined;
 
@@ -30,6 +31,7 @@ export async function createCompanyAction(
   _prev: CompanyFormState,
   formData: FormData,
 ): Promise<CompanyFormState> {
+  const t = await serverT(["ws."]);
   const user = await requireUser();
 
   const id = field(formData, "id");
@@ -41,19 +43,19 @@ export async function createCompanyAction(
   const industry = field(formData, "industry");
 
   if (!isCanonicalUuid(tenantId))
-    return { error: "This workspace is not available." };
-  if (!isCanonicalUuid(id)) return { error: "Reload the page and try again." };
+    return { error: t("ws.this_workspace_is_not_available") };
+  if (!isCanonicalUuid(id)) return { error: t("ws.reload_the_page_and_try_again") };
   if (name.length < 1 || name.length > 200) {
-    return { error: "Enter a company name (up to 200 characters)." };
+    return { error: t("ws.enter_a_company_name_up_to") };
   }
   if (!(TYPES as readonly string[]).includes(type)) {
-    return { error: "Choose a company type." };
+    return { error: t("ws.choose_a_company_type") };
   }
   if (
     website.length > 200 ||
     [country, city, industry].some((v) => v.length > 100)
   ) {
-    return { error: "One of the values is too long." };
+    return { error: t("ws.one_of_the_values_is_too") };
   }
 
   try {
@@ -70,19 +72,19 @@ export async function createCompanyAction(
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
       if (error.status === 403)
-        return { error: "Your role cannot create companies." };
+        return { error: t("ws.your_role_cannot_create_companies") };
       if (error.status === 404)
-        return { error: "This workspace is not available." };
+        return { error: t("ws.this_workspace_is_not_available") };
       if (error.status === 409) {
         return {
           error:
-            "That form was already used for a different company. Reload the page and try again.",
+            t("ws.that_form_was_already_used_for"),
         };
       }
       if (error.status === 422)
-        return { error: "Check the values and try again." };
+        return { error: t("ws.check_the_values_and_try_again") };
     }
-    return { error: "Could not save the company. Try again." };
+    return { error: t("ws.could_not_save_the_company_try") };
   }
 
   revalidatePath(`/app/tenants/${tenantId}`);

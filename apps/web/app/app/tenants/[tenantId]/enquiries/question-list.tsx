@@ -3,15 +3,17 @@
 import { useState } from "react";
 
 import { btnQuiet, hintInline, listItemCard, listPlain, mutedText, plainText } from "@/components/v2/app/ui";
-import { FIELD_LABELS, type Question } from "@/lib/api/enquiries";
+import { type Question } from "@/lib/api/enquiries";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 /**
  * Clarifying questions, as DRAFT TEXT for a person to copy. They are derived from what is missing or doubtful, from fixed templates:
  * nothing the customer wrote is in them, nothing is stored, and nothing is ever sent from this application.
  */
-export function QuestionList({ questions }: { questions: Question[] }) {
+export function QuestionList({ questions, words }: { questions: Question[]; words?: Words; }) {
+  const t = makeT(words);
   const [copied, setCopied] = useState<string | null>(null);
-  if (questions.length === 0) return <p className={mutedText}>Nothing to ask: every needed field is present.</p>;
+  if (questions.length === 0) return <p className={mutedText}>{t("enq.nothing_to_ask_every_needed_field")}</p>;
   async function copy(q: Question) {
     try {
       await navigator.clipboard.writeText(q.text);
@@ -27,14 +29,14 @@ export function QuestionList({ questions }: { questions: Question[] }) {
         return (
           <li key={key} className={listItemCard}>
             <p className={hintInline}>
-              {FIELD_LABELS[q.field_key]}
+              {t(`enq.field.${q.field_key}`)}
               {q.line_no ? `, line ${q.line_no}` : ""}
             </p>
             <p className={`mt-1 mb-2 ${plainText}`}>
               {q.text}
             </p>
             <button type="button" className={btnQuiet} onClick={() => copy(q)}>
-              {copied === key ? "Copied" : "Copy"}
+              {copied === key ? t("enq.copied") : t("enq.copy")}
             </button>
           </li>
         );

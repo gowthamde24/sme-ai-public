@@ -6,6 +6,7 @@
 import { PRICE_LIMITS, type ItemType, type SaveItemTypeInput } from "@/lib/api/item-types";
 
 import { priceToPaise } from "../enquiries/manual-quote-logic";
+import { makeT, type Say } from "@/components/v2/app/words";
 
 export const CODE_PATTERN = /^[0-9A-Za-z][0-9A-Za-z_-]{0,19}$/;
 export const MAX_NAME = 200;
@@ -29,8 +30,6 @@ export const TEXT = {
   lowest: "Lowest price: leave it empty for none, or enter rupees with at most two digits after the point, from 0.01 to 10,00,000.",
   highest: "Highest price: leave it empty for none, or enter rupees with at most two digits after the point, from 0.01 to 10,00,000.",
   order: "The lowest price must not be above the highest price.",
-  exists: "That code is already used by another item type. Pick another code, or edit that item type below.",
-  unknown: "That item type is not in the list. Reload the page.",
 } as const;
 export const OUT_OF_DATE = "This form is out of date. Reload the page and try again.";
 export const NOT_AVAILABLE = "This workspace is not available.";
@@ -81,14 +80,14 @@ export function inListOrder(types: ItemType[]): ItemType[] {
 export type Refusal = { error: string; reason?: "mfa" };
 
 /** ONE sentence of OUR wording for each closed code the item-type routes return. Nothing the API, the database or the person typed is repeated. */
-export function saveRefusal(status: number, code: string): Refusal {
-  if (code === "mfa_required") return { reason: "mfa", error: "Changing item types needs your authenticator app. Set it up on the Security page, sign in again with its code, and try once more. Nothing was saved." };
-  if (code === "forbidden") return { error: "Your role cannot change item types. Only an owner or an admin can." };
-  if (code === "validation_error") return { error: "A name, a number or a price was not accepted. Check every field against the limits shown, then try again. Nothing was saved." };
-  if (code === "invalid_value") return { error: "The lowest price is above the highest, or a value is outside the limits. Nothing was saved." };
-  if (code === "not_found" || status === 404) return { error: NOT_AVAILABLE };
-  if (status === 429 || code === "rate_limited") return { error: "Too many requests. Wait a moment and try again." };
-  if (code === "token_expiring") return { error: "Your session is about to expire. Sign in again, then try once more." };
-  if (status === 503 || status === 502 || code === "quotes_unavailable" || code === "upstream_error" || code === "api_unreachable") return { error: "Item types are not available right now. Try again shortly." };
-  return { error: "Could not save this. Try again." };
+export function saveRefusal(status: number, code: string, t: Say = makeT()): Refusal {
+  if (code === "mfa_required") return { reason: "mfa", error: t("it.changing_item_types_needs_your_authenticator") };
+  if (code === "forbidden") return { error: t("it.your_role_cannot_change_item_types") };
+  if (code === "validation_error") return { error: t("it.a_name_a_number_or_a") };
+  if (code === "invalid_value") return { error: t("it.the_lowest_price_is_above_the") };
+  if (code === "not_found" || status === 404) return { error: t("it.workspace_not_available") };
+  if (status === 429 || code === "rate_limited") return { error: t("it.too_many_requests_wait_a_moment") };
+  if (code === "token_expiring") return { error: t("it.your_session_is_about_to_expire") };
+  if (status === 503 || status === 502 || code === "quotes_unavailable" || code === "upstream_error" || code === "api_unreachable") return { error: t("it.item_types_are_not_available_right") };
+  return { error: t("it.could_not_save_this_try_again") };
 }

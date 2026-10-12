@@ -19,12 +19,13 @@ import {
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { serverT } from "@/i18n/server-t";
+import type { Say } from "@/components/v2/app/words";
 
 export type EnquiryActionState = { ok?: boolean; error?: string; message?: string } | undefined;
 
 const MAX_TEXT = 200_000;
 const MAX_SUBJECT = 2000;
-const WRITE_ROLES_MESSAGE = "Only an owner, admin or sales user can do this.";
 
 function field(formData: FormData, name: string): string {
   const value = formData.get(name);
@@ -33,48 +34,47 @@ function field(formData: FormData, name: string): string {
 const trimmed = (formData: FormData, name: string) => field(formData, name).trim();
 
 /** Every failure becomes a short sentence of OUR wording; nothing the API or the customer wrote is echoed. */
-function describe(error: unknown): string {
+function describe(error: unknown, t: Say): string {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
-    if (error.status === 403) return WRITE_ROLES_MESSAGE;
-    if (error.status === 404) return "This record is not available.";
+    if (error.status === 403) return t("enq.write_roles");
+    if (error.status === 404) return t("enq.this_record_is_not_available");
     switch (error.code) {
       case "requirement_confirmed":
-        return "This enquiry already has an approved requirement. Discard it first to change it.";
+        return t("enq.this_enquiry_already_has_an_approved");
       case "discard_draft_to_rerun":
-        return "Discard the current draft to re-run.";
+        return t("enq.discard_the_current_draft_to_re");
       case "requirement_not_draft":
-        return "This requirement is no longer a draft. Reload the page.";
+        return t("enq.this_requirement_is_no_longer_a");
       case "not_confirmable":
-        return "Approve a saree type and a quantity for at least one line first.";
+        return t("enq.approve_a_saree_type_and_a");
       case "value_not_accepted":
-        return "That value could not be read, or is outside the limits. Write it the way the enquiry does, for example 20, next Friday, Rs 5k each.";
+        return t("enq.that_value_could_not_be_read");
       case "quote_not_found":
-        return "That quote is not in the enquiry text, word for word.";
+        return t("enq.that_quote_is_not_in_the");
       case "invalid_line":
-        return "Saree type, fabric, colour and quantity need a line (1 to 5); the other fields have none.";
+        return t("enq.saree_type_fabric_colour_and_quantity");
       case "invalid_value":
-        return "That field already has a value on this requirement. Correct it instead.";
+        return t("enq.that_field_already_has_a_value");
       case "empty_enquiry":
-        return "There is no text left to store after cleaning it.";
+        return t("enq.there_is_no_text_left_to");
       case "received_in_future":
-        return "An enquiry cannot be received in the future.";
+        return t("enq.an_enquiry_cannot_be_received_in");
       case "ai_paused_until":
-        return "AI help is paused because this workspace's AI allowance for the period is used up. Everything else keeps working. Try again later.";
+        return t("enq.ai_help_is_paused_because_this");
       case "agents_disabled":
-        return "Agents are not enabled for this workspace.";
+        return t("enq.agents_are_not_enabled_for_this");
       case "conflict":
-        return "This form is out of date. Reload the page and try again.";
+        return t("enq.this_form_is_out_of_date");
     }
-    if (error.status === 429) return "Too many requests. Try again later.";
-    if (error.status === 503) return "This is not available right now. Try again shortly.";
-    if (error.status === 409) return "That is not possible right now. Reload the page and try again.";
-    if (error.status === 422) return "That input was not accepted.";
+    if (error.status === 429) return t("enq.too_many_requests_try_again_later");
+    if (error.status === 503) return t("enq.this_is_not_available_right_now");
+    if (error.status === 409) return t("enq.that_is_not_possible_right_now");
+    if (error.status === 422) return t("enq.that_input_was_not_accepted");
   }
-  return "Could not save. Try again.";
+  return t("enq.could_not_save_try_again");
 }
 
-const OUT_OF_DATE = "This form is out of date. Reload the page and try again.";
 
 /** Paste an enquiry onto a lead. The API strips invisible characters and removes contact details BEFORE storing; the original is kept nowhere. */
 export async function captureEnquiryAction(
@@ -83,19 +83,20 @@ export async function captureEnquiryAction(
   _prev: EnquiryActionState,
   formData: FormData,
 ): Promise<EnquiryActionState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
-  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(leadId)) return { ok: false, error: "This lead is not available." };
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(leadId)) return { ok: false, error: t("enq.this_lead_is_not_available") };
   const id = trimmed(formData, "enquiry_id");
-  if (!isCanonicalUuid(id)) return { ok: false, error: OUT_OF_DATE };
+  if (!isCanonicalUuid(id)) return { ok: false, error: t("enq.this_form_is_out_of_date") };
   const channel = trimmed(formData, "channel");
-  if (!(CHANNELS as readonly string[]).includes(channel)) return { ok: false, error: "Choose where the enquiry came from." };
+  if (!(CHANNELS as readonly string[]).includes(channel)) return { ok: false, error: t("enq.choose_where_the_enquiry_came_from") };
   const text = field(formData, "text");
-  if (text.trim() === "") return { ok: false, error: "Paste the enquiry text." };
-  if (text.length > MAX_TEXT) return { ok: false, error: "That text is too long to paste." };
+  if (text.trim() === "") return { ok: false, error: t("enq.paste_the_enquiry_text") };
+  if (text.length > MAX_TEXT) return { ok: false, error: t("enq.that_text_is_too_long_to") };
   const subject = trimmed(formData, "subject");
-  if (subject.length > MAX_SUBJECT) return { ok: false, error: "That subject is too long." };
+  if (subject.length > MAX_SUBJECT) return { ok: false, error: t("enq.that_subject_is_too_long") };
   const received = new Date(trimmed(formData, "received_at"));
-  if (Number.isNaN(received.getTime())) return { ok: false, error: "Say when the enquiry was received." };
+  if (Number.isNaN(received.getTime())) return { ok: false, error: t("enq.say_when_the_enquiry_was_received") };
 
   let captured;
   try {
@@ -107,7 +108,7 @@ export async function captureEnquiryAction(
       text,
     });
   } catch (error) {
-    return { ok: false, error: describe(error) };
+    return { ok: false, error: describe(error, t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/leads/${leadId}`);
   const notice = captured.truncated ? "truncated" : captured.text_changed ? "changed" : "stored";
@@ -121,17 +122,18 @@ export async function extractRequirementAction(
   _prev: EnquiryActionState,
   formData: FormData,
 ): Promise<EnquiryActionState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
-  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: "This enquiry is not available." };
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: t("enq.this_enquiry_is_not_available") };
   const id = trimmed(formData, "run_id");
-  if (!isCanonicalUuid(id)) return { ok: false, error: OUT_OF_DATE };
+  if (!isCanonicalUuid(id)) return { ok: false, error: t("enq.this_form_is_out_of_date") };
   try {
     await startRequirementRun(user.accessToken, tenantId, { id, enquiryId });
   } catch (error) {
-    return { ok: false, error: describe(error) };
+    return { ok: false, error: describe(error, t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
-  return { ok: true, message: "Started. The suggestions appear on this page when the run is Completed: reload in a moment." };
+  return { ok: true, message: t("enq.started_the_suggestions_appear_on_this") };
 }
 
 /** Confirm, correct or reject ONE field. A correction is written in the person's own words and read by the same rules as the agent's. */
@@ -142,25 +144,26 @@ export async function decideFieldAction(
   _prev: EnquiryActionState,
   formData: FormData,
 ): Promise<EnquiryActionState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId) || !isCanonicalUuid(fieldId))
-    return { ok: false, error: "This field is not available." };
+    return { ok: false, error: t("enq.this_field_is_not_available") };
   const decision = trimmed(formData, "decision");
   let input;
   if (decision === "confirm" || decision === "reject") input = { decision } as const;
   else if (decision === "correct") {
     const value = trimmed(formData, "value");
-    if (value === "") return { ok: false, error: "Write the corrected value." };
-    if (value.length > 120) return { ok: false, error: "That value is too long." };
+    if (value === "") return { ok: false, error: t("enq.write_the_corrected_value") };
+    if (value.length > 120) return { ok: false, error: t("enq.that_value_is_too_long") };
     input = { decision, value } as const;
-  } else return { ok: false, error: "Choose confirm, correct or reject." };
+  } else return { ok: false, error: t("enq.choose_confirm_correct_or_reject") };
   try {
     await decideField(user.accessToken, tenantId, fieldId, input);
   } catch (error) {
-    return { ok: false, error: describe(error) };
+    return { ok: false, error: describe(error, t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
-  return { ok: true, message: decision === "confirm" ? "Approved." : decision === "reject" ? "Rejected." : "Corrected and approved." };
+  return { ok: true, message: decision === "confirm" ? t("enq.done.approved") : decision === "reject" ? t("enq.done.rejected") : t("enq.done.corrected") };
 }
 
 /** Add a field the extraction missed. */
@@ -170,28 +173,29 @@ export async function addFieldAction(
   _prev: EnquiryActionState,
   formData: FormData,
 ): Promise<EnquiryActionState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
-  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: "This enquiry is not available." };
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: t("enq.this_enquiry_is_not_available") };
   const key = trimmed(formData, "field");
-  if (!(FIELD_KEYS as readonly string[]).includes(key)) return { ok: false, error: "Choose a field." };
+  if (!(FIELD_KEYS as readonly string[]).includes(key)) return { ok: false, error: t("enq.choose_a_field") };
   const fieldKey = key as FieldKey;
   const rawLine = trimmed(formData, "line");
   let line: number | null = null;
   if (LINE_FIELD_KEYS.includes(fieldKey)) {
     line = Number(rawLine);
-    if (!Number.isInteger(line) || line < 1 || line > 5) return { ok: false, error: "Choose the line (1 to 5)." };
+    if (!Number.isInteger(line) || line < 1 || line > 5) return { ok: false, error: t("enq.choose_the_line_1_to_5") };
   }
   const value = trimmed(formData, "value");
-  if (value === "" || value.length > 120) return { ok: false, error: "Write the value, in at most 120 characters." };
+  if (value === "" || value.length > 120) return { ok: false, error: t("enq.write_the_value_in_at_most") };
   const quote = trimmed(formData, "quote");
-  if (quote.length > 300) return { ok: false, error: "That quote is too long (at most 300 characters)." };
+  if (quote.length > 300) return { ok: false, error: t("enq.that_quote_is_too_long_at") };
   try {
     await addField(user.accessToken, tenantId, enquiryId, { line, field: fieldKey, value, quote: quote === "" ? null : quote });
   } catch (error) {
-    return { ok: false, error: describe(error) };
+    return { ok: false, error: describe(error, t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
-  return { ok: true, message: "Added and approved." };
+  return { ok: true, message: t("enq.added_and_approved") };
 }
 
 export async function confirmRequirementAction(
@@ -199,16 +203,17 @@ export async function confirmRequirementAction(
   enquiryId: string,
   requirementId: string,
 ): Promise<EnquiryActionState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId) || !isCanonicalUuid(requirementId))
-    return { ok: false, error: "This requirement is not available." };
+    return { ok: false, error: t("enq.this_requirement_is_not_available") };
   try {
     await confirmRequirement(user.accessToken, tenantId, requirementId);
   } catch (error) {
-    return { ok: false, error: describe(error) };
+    return { ok: false, error: describe(error, t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
-  return { ok: true, message: "Approved. Nothing was sent to anyone." };
+  return { ok: true, message: t("enq.approved_nothing_was_sent_to_anyone") };
 }
 
 export async function discardRequirementAction(
@@ -216,14 +221,15 @@ export async function discardRequirementAction(
   enquiryId: string,
   requirementId: string,
 ): Promise<EnquiryActionState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId) || !isCanonicalUuid(requirementId))
-    return { ok: false, error: "This requirement is not available." };
+    return { ok: false, error: t("enq.this_requirement_is_not_available") };
   try {
     await discardRequirement(user.accessToken, tenantId, requirementId);
   } catch (error) {
-    return { ok: false, error: describe(error) };
+    return { ok: false, error: describe(error, t) };
   }
   revalidatePath(`/app/tenants/${tenantId}/enquiries/${enquiryId}`);
-  return { ok: true, message: "Discarded." };
+  return { ok: true, message: t("enq.done.discarded") };
 }

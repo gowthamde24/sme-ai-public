@@ -1,5 +1,5 @@
 # Security
-Signed in as owner@example.test . Session: password only .
+Signed in as owner@example.test. Session: password only .
 {label="Authenticator app"}
 ## Authenticator app
 Not set up. Owners and Admins need an authenticator app to erase data, export, change members or roles, and change workspace settings. It takes a minute.

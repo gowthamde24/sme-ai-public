@@ -15,6 +15,7 @@ import { requireUser } from "@/lib/auth/session";
 
 import { removePhotoAction, reorderPhotosAction, saveItemAction } from "../catalogue-actions";
 import { catalogueWords } from "../catalogue-words";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Add a saree · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
@@ -30,7 +31,7 @@ export default async function NewCatalogueItemPage({ params }: PageProps<"/app/t
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const base = `/app/tenants/${tenantId}`;
   if (tenant.role !== "owner" && tenant.role !== "admin") redirect(`${base}/catalogue`);

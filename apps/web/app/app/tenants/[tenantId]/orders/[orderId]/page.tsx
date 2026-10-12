@@ -6,6 +6,9 @@ import { SECOND_FACTOR_EVENTS, eventsOffered, fetchMembers, fetchOrder, type Mem
 import { ApiDownV2, BackLink } from "@/components/v2/app/parts";
 import { mutedText, pageMain } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 import { EventForm } from "../event-form";
 import { recordEventAction } from "../order-actions";
@@ -29,6 +32,9 @@ function todayInIndia(now: Date): string {
 export default async function OrderPage({ params }: PageProps<"/app/tenants/[tenantId]/orders/[orderId]">) {
   const user = await requireUser();
   const { tenantId, orderId } = await params;
+  const lang = await getLang();
+  const words = wordsFor(lang, ["orders.", "enq."]);
+  const t = makeT(words);
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(orderId)) notFound();
 
   let tenant;
@@ -37,12 +43,12 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   if (!ORDER_ROLES.includes(tenant.role))
     return (
-      <main className={pageMain}>
-        <p className={mutedText}>Orders are shown to owners, admins and sales users.</p>
+      <main className={pageMain} lang={lang}>
+        <p className={mutedText}>{t("orders.orders_are_shown_to_owners_admins")}</p>
       </main>
     );
 
@@ -53,7 +59,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   try {
     members = await fetchMembers(user.accessToken, tenantId); // names are a nicety: the order never depends on them
@@ -66,13 +72,14 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   const secondFactorMissing = user.aal !== "aal2";
   const forms =
     offered.length === 0 ? (
-      <p className={mutedText}>{order.allowed_next_events.length === 0 ? "Nothing more can be recorded: this order is closed." : "Nothing is left for your role to record. An owner or admin records the rest."}</p>
+      <p className={mutedText}>{order.allowed_next_events.length === 0 ? t("orders.nothing_more") : t("orders.nothing_left")}</p>
     ) : (
       <div>
-        <p className={mutedText}>These are the entries the rules allow now. They are guidance: the database decides again when you save.</p>
+        <p className={mutedText}>{t("orders.these_are_the_entries_the_rules")}</p>
         {offered.map((type) => (
           <EventForm
             key={type}
+            words={words}
             type={type}
             action={recordEventAction.bind(null, tenantId, orderId, type)}
             secondFactorMissing={secondFactorMissing && SECOND_FACTOR_EVENTS.includes(type)}
@@ -82,9 +89,9 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
       </div>
     );
   return (
-    <main className={pageMain}>
-      <BackLink href={`/app/tenants/${tenantId}/orders`} label="All orders" />
-      <OrderView tenantId={tenantId} order={order} members={members} forms={forms} />
+    <main className={pageMain} lang={lang}>
+      <BackLink href={`/app/tenants/${tenantId}/orders`} label={t("orders.all_orders")} />
+      <OrderView tenantId={tenantId} order={order} members={members} forms={forms} words={words} />
     </main>
   );
 }

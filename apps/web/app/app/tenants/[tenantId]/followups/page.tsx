@@ -7,9 +7,12 @@ import { fetchDueList, isDueCursor, type DueList } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
 
 import { DueView } from "./due-view";
-import { FOLLOWUP_ROLES, NOTHING_SENT } from "./page-parts";
+import { FOLLOWUP_ROLES } from "./page-parts";
 import { ApiDownV2, LeadsTabs, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { link, pageMain } from "@/components/v2/app/ui";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Follow-ups due · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -17,6 +20,9 @@ export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/followups: one page of the due list (`?after=` is the cursor of the previous page). A Viewer sees nothing and nothing is asked of the API for them. */
 export default async function FollowupsPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/followups">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["fu."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
   const query = await searchParams;
@@ -30,26 +36,26 @@ export default async function FollowupsPage({ params, searchParams }: PageProps<
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
-  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Follow-ups due" message="Follow-ups are shown to owners, admins and sales users." />;
+  if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("fu.follow_ups_due")} message={t("fu.follow_ups_are_shown_to_owners")} />;
 
   let list: DueList;
   try {
     list = await fetchDueList(user.accessToken, tenantId, after);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   return (
-    <main className={pageMain}>
+    <main className={pageMain} lang={lang}>
       <p>
         <Link href={`/app/tenants/${tenantId}/followups/policy`} className={link}>
-          The follow-up policy
+          {t("fu.the_follow_up_policy")}
         </Link>
       </p>
-      <NoticeV2>{NOTHING_SENT}</NoticeV2>
-      <DueView tenantId={tenantId} list={list} tabs={<LeadsTabs tenantId={tenantId} role={tenant.role} current="followups" />} />
+      <NoticeV2>{t("fu.nothing_sent")}</NoticeV2>
+      <DueView words={words} tenantId={tenantId} list={list} tabs={<LeadsTabs tenantId={tenantId} role={tenant.role} current="followups" />} />
     </main>
   );
 }

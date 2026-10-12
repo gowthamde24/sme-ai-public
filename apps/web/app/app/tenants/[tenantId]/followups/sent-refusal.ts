@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import type { TouchChannel } from "@/lib/api/followups";
+import { makeT, type Say } from "@/components/v2/app/words";
 
 /**
  * Shared by the two places that record "I sent a message" as an outgoing touch: the lead page (leads/[leadId]/sent-message-actions.ts) and the approved quote (enquiries/sent-on-whatsapp-actions.ts). A plain module, not a
@@ -14,44 +15,43 @@ import type { TouchChannel } from "@/lib/api/followups";
 export type SentMessageState = { ok?: boolean; error?: string; reason?: "consent"; channel?: TouchChannel; at?: string } | undefined;
 
 export const NOT_AVAILABLE = "This lead is not available.";
-const SAFE_AGAIN = "Nothing is recorded twice if you press the button again.";
 
 /** The person's own words for a refusal of the database, chosen by the API's closed code and reason. Nothing from the server's text is used. */
-export function sentRefusal(error: unknown, notAvailable: string = NOT_AVAILABLE): SentMessageState {
+export function sentRefusal(error: unknown, notAvailable?: string, t: Say = makeT()): SentMessageState {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
     const { status, code, reason } = error;
     if (code === "contact_blocked") {
       switch (reason) {
         case "contact":
-          return { ok: false, error: "This person has asked not to be contacted, so a message to them cannot be recorded as sent." };
+          return { ok: false, error: t("fu.this_person_has_asked_not_to") };
         case "key":
         case "erased_key":
-          return { ok: false, error: "This phone number or e-mail is on the do-not-contact list, so a message to it cannot be recorded as sent." };
+          return { ok: false, error: t("fu.this_phone_number_or_e_mail") };
         case "erased":
-          return { ok: false, error: "This person's details were erased, so nothing new can be recorded about them." };
+          return { ok: false, error: t("fu.this_person_s_details_were_erased") };
         case "consent":
           return {
             ok: false,
             reason: "consent",
-            error: "There is no recorded consent for this channel, or this person has no number or e-mail for it. Record consent first, or check their details. Nothing was recorded.",
+            error: t("fu.there_is_no_recorded_consent_for"),
           };
         default:
-          return { ok: false, error: "This person cannot be contacted, so nothing was recorded." };
+          return { ok: false, error: t("fu.this_person_cannot_be_contacted_so") };
       }
     }
     if (code === "no_suppression_key")
-      return { ok: false, error: "This person's number or e-mail has no suppression key yet, so nothing can be recorded as sent. The owner records keys on the Suppression keys page." };
-    if (code === "no_followup_policy") return { ok: false, error: "No follow-up policy is in force. The owner must publish one before follow-ups can start." };
-    if (code === "followup_limit") return { ok: false, error: "This lead has reached the limit of recorded touches." };
-    if (code === "token_expiring") return { ok: false, error: "Your session is about to expire. Sign in again, then try once more." };
-    if (code === "conflict") return { ok: false, error: "This was already recorded with a different channel or time. Reload the page and look at the lead's follow-up before recording again." };
+      return { ok: false, error: t("fu.this_person_s_number_or_e") };
+    if (code === "no_followup_policy") return { ok: false, error: t("fu.no_follow_up_policy_is_in") };
+    if (code === "followup_limit") return { ok: false, error: t("fu.this_lead_has_reached_the_limit") };
+    if (code === "token_expiring") return { ok: false, error: t("fu.your_session_is_about_to_expire") };
+    if (code === "conflict") return { ok: false, error: t("fu.this_was_already_recorded_with_a") };
     if (code === "invalid_value" || code === "validation_error")
-      return { ok: false, error: "That channel or time was not accepted. A time cannot be in the future, more than 7 days back, or before this lead was made. Leave it empty for now." };
-    if (status === 403) return { ok: false, error: "Your role cannot record that a message was sent." };
-    if (status === 404) return { ok: false, error: notAvailable };
-    if (status === 429) return { ok: false, error: `Too many requests. Wait a moment and try again. ${SAFE_AGAIN}` };
-    if (status === 503 || code === "followups_unavailable" || code === "followup_cadence_unavailable") return { ok: false, error: `Follow-ups are not available right now. Try again shortly. ${SAFE_AGAIN}` };
+      return { ok: false, error: t("fu.that_channel_or_time_was_not") };
+    if (status === 403) return { ok: false, error: t("fu.your_role_cannot_record_that_a") };
+    if (status === 404) return { ok: false, error: notAvailable ?? t("fu.lead_not_available") };
+    if (status === 429) return { ok: false, error: t("fu.too_many") };
+    if (status === 503 || code === "followups_unavailable" || code === "followup_cadence_unavailable") return { ok: false, error: t("fu.not_available_now") };
   }
-  return { ok: false, error: `Could not record this. Try again. ${SAFE_AGAIN}` };
+  return { ok: false, error: t("fu.could_not_record") };
 }

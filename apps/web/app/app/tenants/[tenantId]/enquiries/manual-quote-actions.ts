@@ -9,6 +9,8 @@ import { CUSTOMER_KINDS, createManualQuote, type CustomerKind } from "@/lib/api/
 import { requireUser } from "@/lib/auth/session";
 
 import { CHOOSE_KIND, EMPTY_LINE, MAX_LINES, OUT_OF_DATE, linesFromForm, type LineValues } from "./manual-quote-logic";
+import { serverT } from "@/i18n/server-t";
+import type { Say } from "@/components/v2/app/words";
 
 /**
  * What the form shows after a press: a sentence of OUR wording (never text from the API, the database or the customer). `blocked` means "pressing again cannot help"
@@ -24,7 +26,7 @@ function text(formData: FormData, name: string): string {
 }
 
 /** Every failure becomes a short sentence of OUR wording. */
-function describe(error: unknown): ManualQuoteState {
+function describe(error: unknown, t: Say): ManualQuoteState {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
     switch (error.code) {
@@ -33,34 +35,34 @@ function describe(error: unknown): ManualQuoteState {
           ok: false,
           blocked: true,
           error:
-            "This enquiry already has a requirement from the line-by-line flow, so a quote with typed prices cannot be made on it. Discard that requirement first (in the requirement section above), then reload this page.",
+            t("enq.this_enquiry_already_has_a_requirement"),
         };
       case "price_not_typed_by_person":
-        return { ok: false, error: "Only a person can type a price." };
+        return { ok: false, error: t("enq.only_a_person_can_type_a") };
       case "quote_input_missing":
         return { ok: false, error: NO_RATE };
       case "invalid_reference":
-        return { ok: false, error: "One of the item types is not available. Reload the page and choose again." };
+        return { ok: false, error: t("enq.one_of_the_item_types_is") };
       case "invalid_value":
-        return { ok: false, error: "An item type that is no longer sold, or a value that is not allowed, was sent. Reload the page and choose again." };
+        return { ok: false, error: t("enq.an_item_type_that_is_no") };
       case "validation_error":
-        return { ok: false, error: "A quantity, a price or a choice was not accepted. Check every line." };
+        return { ok: false, error: t("enq.a_quantity_a_price_or_a") };
       case "quote_mismatch":
-        return { ok: false, error: "The draft did not match the database's own check, so nothing was saved. Reload the page and try again." };
+        return { ok: false, error: t("enq.the_draft_did_not_match_the") };
       case "quote_stale":
-        return { ok: false, error: "The quote policy changed while you were typing. Reload the page and try again." };
+        return { ok: false, error: t("enq.the_quote_policy_changed_while_you") };
       case "conflict":
         return { ok: false, error: OUT_OF_DATE };
       case "forbidden":
-        return { ok: false, error: "Only an owner or an admin can make a quote with typed prices." };
+        return { ok: false, error: t("enq.only_an_owner_or_an_admin") };
     }
-    if (error.status === 403) return { ok: false, error: "Only an owner or an admin can make a quote with typed prices." };
-    if (error.status === 404) return { ok: false, error: "This enquiry is not available." };
-    if (error.status === 503 || error.status === 502) return { ok: false, error: "Quotes are not available right now. Try again shortly." };
-    if (error.status === 409) return { ok: false, error: "That is not possible right now. Reload the page and try again." };
-    if (error.status === 422) return { ok: false, error: "That input was not accepted." };
+    if (error.status === 403) return { ok: false, error: t("enq.only_an_owner_or_an_admin") };
+    if (error.status === 404) return { ok: false, error: t("enq.this_enquiry_is_not_available") };
+    if (error.status === 503 || error.status === 502) return { ok: false, error: t("enq.quotes_are_not_available_right_now") };
+    if (error.status === 409) return { ok: false, error: t("enq.that_is_not_possible_right_now") };
+    if (error.status === 422) return { ok: false, error: t("enq.that_input_was_not_accepted") };
   }
-  return { ok: false, error: "Could not save. Try again." };
+  return { ok: false, error: t("enq.could_not_save_try_again") };
 }
 
 const page = (tenantId: string, enquiryId: string) => `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
@@ -71,8 +73,9 @@ const page = (tenantId: string, enquiryId: string) => `/app/tenants/${tenantId}/
  * works out GST or a total: the API and the database do, and the database decides. The id comes from the page, so a retry replays instead of duplicating.
  */
 export async function createManualQuoteAction(tenantId: string, enquiryId: string, _prev: ManualQuoteState, formData: FormData): Promise<ManualQuoteState> {
+  const t = await serverT(["enq."]);
   const user = await requireUser();
-  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: "This enquiry is not available." };
+  if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(enquiryId)) return { ok: false, error: t("enq.this_enquiry_is_not_available") };
   const id = text(formData, "quote_id").trim();
   if (!isCanonicalUuid(id)) return { ok: false, error: OUT_OF_DATE };
   const kind = text(formData, "customer_kind").trim();
@@ -94,7 +97,7 @@ export async function createManualQuoteAction(tenantId: string, enquiryId: strin
       lines: lines.lines,
     });
   } catch (error) {
-    return describe(error);
+    return describe(error, t);
   }
   revalidatePath(page(tenantId, enquiryId));
   redirect(`${page(tenantId, enquiryId)}?quote=${quote.id}`);

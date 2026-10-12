@@ -11,6 +11,7 @@ import {
   validateEvidenceForm,
 } from "@/lib/api/evidence";
 import { requireUser } from "@/lib/auth/session";
+import { serverT } from "@/i18n/server-t";
 
 export type EvidenceFormState = { error?: string } | undefined;
 
@@ -40,6 +41,7 @@ export async function addEvidenceAction(
   _prev: EvidenceFormState,
   formData: FormData,
 ): Promise<EvidenceFormState> {
+  const t = await serverT(["ws."]);
   const user = await requireUser();
 
   if (
@@ -47,9 +49,9 @@ export async function addEvidenceAction(
     !isCanonicalUuid(targetId) ||
     !TARGETS.includes(target)
   )
-    return { error: "This record is not available." };
+    return { error: t("ws.this_record_is_not_available") };
   const id = field(formData, "id");
-  if (!isCanonicalUuid(id)) return { error: "Reload the page and try again." };
+  if (!isCanonicalUuid(id)) return { error: t("ws.reload_the_page_and_try_again") };
 
   const checked = validateEvidenceForm({
     kind: field(formData, "kind"),
@@ -69,23 +71,23 @@ export async function addEvidenceAction(
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
       if (error.status === 403)
-        return { error: "Your role cannot add evidence." };
+        return { error: t("ws.your_role_cannot_add_evidence") };
       if (error.status === 404)
-        return { error: "This record is not available." };
+        return { error: t("ws.this_record_is_not_available") };
       if (error.status === 409 && error.code === "archived")
         return {
-          error: "This record is archived, so it takes no new evidence.",
+          error: t("ws.this_record_is_archived_so_it"),
         };
       if (error.status === 409) {
         return {
           error:
-            "That form was already used for different evidence. Reload the page and try again.",
+            t("ws.that_form_was_already_used_for_2"),
         };
       }
       if (error.status === 422)
-        return { error: "Check the values and try again." };
+        return { error: t("ws.check_the_values_and_try_again") };
     }
-    return { error: "Could not save the evidence. Try again." };
+    return { error: t("ws.could_not_save_the_evidence_try") };
   }
 
   const back = `/app/tenants/${tenantId}/${target}/${targetId}`;

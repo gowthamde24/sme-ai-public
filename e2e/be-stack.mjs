@@ -690,6 +690,75 @@ await step("O1", "the Office in 3D (WebGL in the test browser): the room draws a
   must(clock.length === 0, `the Clock deprecation is still in the console: ${clock[0]}`);
 }, page);
 
+// ---- 8a. the older screens in Telugu (job BK): every workspace screen says its words through the string store; no raw key and no English sentence is left on the page --------------------
+await step("K1", "the older screens (leads, customers, enquiries, quotes, orders, follow-ups, price list, policies, privacy, agents, suppression, security) in English and in Telugu: no raw key, Telugu letters on the page, no console problems", async () => {
+  const before = problems.length;
+  const lead = customers.lakshmi;
+  const list = await api("GET", `${T()}/leads/${lead.lead}/enquiries`, null, ownerToken);
+  const enquiry = (list.body?.enquiries ?? list.body ?? [])[0]?.id;
+  const pages = [
+    ["home", `${BASE}/app/tenants/${tenant}`],
+    ["customers-new", `${BASE}/app/tenants/${tenant}/customers/new`],
+    ["products-new", `${BASE}/app/tenants/${tenant}/products/new`],
+    ["company", `${BASE}/app/tenants/${tenant}/companies/${lead.company}`],
+    ["lead", `${BASE}/app/tenants/${tenant}/leads/${lead.lead}`],
+    ["lead-followup", `${BASE}/app/tenants/${tenant}/leads/${lead.lead}/followup`],
+    ["consent", `${BASE}/app/tenants/${tenant}/contacts/${lead.contact}/consent`],
+    ...(enquiry ? [["enquiry", `${BASE}/app/tenants/${tenant}/enquiries/${enquiry}`]] : []),
+    ["quotes", `${BASE}/app/tenants/${tenant}/quotes`],
+    ["orders", `${BASE}/app/tenants/${tenant}/orders`],
+    ["followups", `${BASE}/app/tenants/${tenant}/followups`],
+    ["followups-policy", `${BASE}/app/tenants/${tenant}/followups/policy`],
+    ["review", `${BASE}/app/tenants/${tenant}/review`],
+    ["suggestions", `${BASE}/app/tenants/${tenant}/suggestions`],
+    ["price-list", `${BASE}/app/tenants/${tenant}/price-list`],
+    ["quote-policy", `${BASE}/app/tenants/${tenant}/quote-policy`],
+    ["item-types", `${BASE}/app/tenants/${tenant}/item-types`],
+    ["agents", `${BASE}/app/tenants/${tenant}/agents`],
+    ["suppression", `${BASE}/app/tenants/${tenant}/suppression`],
+    ["privacy", `${BASE}/app/tenants/${tenant}/privacy`],
+    ["security", `${BASE}/app/security`],
+  ];
+  const RAW = /\b(?:enq|orders|lead|cust|cont|comp|fu|prod|pl|it|qp|rev|supp|prv|ag|sug|ws|acct|parts|settings)\.[a-z0-9]+_[a-z0-9_]+\b|\b(?:enq|orders|fu|ws|lead|rev)\.(?:state|channel|status|kind|field|reason|band|flag|run|confidence|scope)\.[a-z_]+/;
+  const shown = [];
+  for (const lang of ["en", "te"]) {
+    await context.addCookies([{ name: "sme_lang", value: lang, url: BASE }]);
+    for (const [name, url] of pages) {
+      const r = await page.goto(url, { waitUntil: "networkidle" });
+      must(r && r.status() < 400, `${name} (${lang}): HTTP ${r?.status()}`);
+      const body = await text(page);
+      const raw = RAW.exec(body);
+      must(!raw, `${name} (${lang}) shows a raw key: ${raw?.[0]}`);
+      must(!/Application error|This page could not be found/i.test(body), `${name} (${lang}) did not draw`);
+      if (lang === "te" && !["security"].includes(name)) must(/[\u0C00-\u0C7F]/.test(body), `${name} (te) has no Telugu on it`);
+      await shot(page, `K-${name}-${lang}`);
+      shown.push(`${name}/${lang}`);
+    }
+  }
+  await context.addCookies([{ name: "sme_lang", value: "en", url: BASE }]);
+  must(problems.length === before, `console problems: ${problems.slice(before).join(" | ")}`);
+  return `${shown.length} page views`;
+}, page);
+
+// the same pages on the code BEFORE job BK (optional: E2E_BEFORE_URL is a second web from origin/main, started by hand on its own port; same Supabase, so the same session): Telugu screenshots to compare
+if (process.env.E2E_BEFORE_URL) {
+  await step("K2", "the same screens on the code before job BK, in Telugu (for the before/after pictures)", async () => {
+    const BEFORE = process.env.E2E_BEFORE_URL.replace(/\/$/, "");
+    await context.addCookies([{ name: "sme_lang", value: "te", url: BEFORE }]);
+    const lead = customers.lakshmi;
+    const list = await api("GET", `${T()}/leads/${lead.lead}/enquiries`, null, ownerToken);
+    const enquiry = (list.body?.enquiries ?? list.body ?? [])[0]?.id;
+    const t = `${BEFORE}/app/tenants/${tenant}`;
+    const pages = [["home", t], ["customers-new", `${t}/customers/new`], ["lead", `${t}/leads/${lead.lead}`], ["lead-followup", `${t}/leads/${lead.lead}/followup`], ...(enquiry ? [["enquiry", `${t}/enquiries/${enquiry}`]] : []), ["quotes", `${t}/quotes`], ["orders", `${t}/orders`], ["followups", `${t}/followups`], ["price-list", `${t}/price-list`], ["agents", `${t}/agents`], ["privacy", `${t}/privacy`], ["security", `${BEFORE}/app/security`]];
+    for (const [name, url] of pages) {
+      await page.goto(url, { waitUntil: "networkidle" });
+      await shot(page, `K-BEFORE-${name}-te`);
+    }
+    await context.addCookies([{ name: "sme_lang", value: "en", url: BEFORE }]);
+    return `${pages.length} pages`;
+  }, page);
+}
+
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
 await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hours) and the saree page at 360 px and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";

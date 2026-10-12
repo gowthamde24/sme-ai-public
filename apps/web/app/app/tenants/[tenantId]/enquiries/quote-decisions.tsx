@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { useActionState } from "react";
 
-import { REJECT_CODES, REJECT_LABELS, WITHDRAW_CODES, WITHDRAW_LABELS, type Outcome } from "@/lib/api/quotes";
+import { REJECT_CODES, WITHDRAW_CODES, type Outcome } from "@/lib/api/quotes";
 
 import { ActionResultV2 } from "@/components/v2/app/parts";
 import { btnMain, btnQuiet, detailsBox, fieldInput, fieldLabel, formStack, link, mutedText, noteBox, summaryLine } from "@/components/v2/app/ui";
 import type { QuoteActionState } from "./quote-actions";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Action = (prev: QuoteActionState, formData: FormData) => Promise<QuoteActionState>;
 
@@ -22,7 +23,7 @@ export function QuoteDecisions({
   outcome,
   role,
   needsOwnerApproval,
-  secondFactorMissing,
+  secondFactorMissing, words,
 }: {
   approve: Action;
   reject: Action;
@@ -30,8 +31,9 @@ export function QuoteDecisions({
   outcome: Outcome;
   role: string;
   needsOwnerApproval: boolean;
-  secondFactorMissing: boolean;
+  secondFactorMissing: boolean; words?: Words;
 }) {
+  const t = makeT(words);
   const [approveState, approveAction, approving] = useActionState(approve, undefined);
   const [rejectState, rejectAction, rejecting] = useActionState(reject, undefined);
   const [withdrawState, withdrawAction, withdrawing] = useActionState(withdraw, undefined);
@@ -45,35 +47,35 @@ export function QuoteDecisions({
         {decider ? (
           <>
             {adminBlocked ? (
-              <p role="note" className={noteBox}>This quote carries a flag, so only the owner can approve it. You can reject it.</p>
+              <p role="note" className={noteBox}>{t("enq.this_quote_carries_a_flag_so")}</p>
             ) : secondFactorMissing ? (
               <p role="note" className={noteBox}>
-                Approving needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
+                {t("enq.approve_mfa_a")} <Link href="/app/security" className={link}>{t("enq.set_it_up_on_the_security")}</Link>{t("enq.mfa_b")}
               </p>
             ) : (
               <form action={approveAction} className={formStack}>
                 <button type="submit" className={btnMain} disabled={busy}>
-                  {approving ? "Approving..." : "Approve this quote"}
+                  {approving ? t("enq.approving") : t("enq.approve_this_quote")}
                 </button>
-                <p className={mutedText}>Approving records your decision. It does not send anything to the customer.</p>
+                <p className={mutedText}>{t("enq.approving_records_your_decision_it_does")}</p>
                 <ActionResultV2 state={approveState} />
               </form>
             )}
             <details className={detailsBox}>
-              <summary className={summaryLine}>Reject this draft</summary>
+              <summary className={summaryLine}>{t("enq.reject_this_draft")}</summary>
               <form action={rejectAction} className={formStack}>
                 <label htmlFor="reject-code" className={fieldLabel}>
-                  Why
+                  {t("enq.why")}
                 </label>
                 <select id="reject-code" name="code" defaultValue="wrong_prices" disabled={busy} className={fieldInput}>
                   {REJECT_CODES.map((code) => (
                     <option key={code} value={code}>
-                      {REJECT_LABELS[code]}
+                      {t(`enq.reject.${code}`)}
                     </option>
                   ))}
                 </select>
                 <button type="submit" className={btnQuiet} disabled={busy}>
-                  {rejecting ? "Saving..." : "Reject"}
+                  {rejecting ? t("enq.saving") : t("enq.reject")}
                 </button>
                 <ActionResultV2 state={rejectState} />
               </form>
@@ -81,12 +83,12 @@ export function QuoteDecisions({
           </>
         ) : (
           <details className={detailsBox}>
-            <summary className={summaryLine}>Withdraw my draft</summary>
-            <p className={mutedText}>An owner or admin approves a quote. You can withdraw a draft you made yourself.</p>
+            <summary className={summaryLine}>{t("enq.withdraw_my_draft")}</summary>
+            <p className={mutedText}>{t("enq.an_owner_or_admin_approves_a")}</p>
             <form action={rejectAction} className={formStack}>
               <input type="hidden" name="code" value="withdrawn" />
               <button type="submit" className={btnQuiet} disabled={busy}>
-                {rejecting ? "Saving..." : "Withdraw my draft"}
+                {rejecting ? t("enq.saving") : t("enq.withdraw_my_draft")}
               </button>
               <ActionResultV2 state={rejectState} />
             </form>
@@ -98,26 +100,26 @@ export function QuoteDecisions({
   if (outcome === "approved" && decider) {
     return (
       <details className={detailsBox}>
-        <summary className={summaryLine}>Withdraw this approved quote</summary>
-        <p className={mutedText}>A withdrawn quote is kept in the history and can no longer be approved or copied.</p>
+        <summary className={summaryLine}>{t("enq.withdraw_this_approved_quote")}</summary>
+        <p className={mutedText}>{t("enq.a_withdrawn_quote_is_kept_in")}</p>
         {secondFactorMissing ? (
           <p role="note" className={noteBox}>
-            This needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
+            {t("enq.mfa_a")} <Link href="/app/security" className={link}>{t("enq.set_it_up_on_the_security")}</Link>{t("enq.mfa_b")}
           </p>
         ) : (
           <form action={withdrawAction} className={formStack}>
             <label htmlFor="withdraw-code" className={fieldLabel}>
-              Why
+              {t("enq.why")}
             </label>
             <select id="withdraw-code" name="code" defaultValue="price_changed" disabled={busy} className={fieldInput}>
               {WITHDRAW_CODES.map((code) => (
                 <option key={code} value={code}>
-                  {WITHDRAW_LABELS[code]}
+                  {t(`enq.withdraw.${code}`)}
                 </option>
               ))}
             </select>
             <button type="submit" className={btnQuiet} disabled={busy}>
-              {withdrawing ? "Saving..." : "Withdraw"}
+              {withdrawing ? t("enq.saving") : t("enq.withdraw")}
             </button>
             <ActionResultV2 state={withdrawState} />
           </form>

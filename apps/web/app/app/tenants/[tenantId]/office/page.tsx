@@ -10,6 +10,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
 import { readAgentsStatus, readEventLinks } from "./office-data";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Office · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -28,7 +29,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const t = appT(lang);

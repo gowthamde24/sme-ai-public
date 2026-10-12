@@ -4,9 +4,12 @@ import { useActionState, useId } from "react";
 
 import { alertBox, btnMain, fieldInput, fieldLabel, formCard } from "@/components/v2/app/ui";
 
+import { makeT, type Words } from "@/components/v2/app/words";
+
 import { createTenantAction, type TenantFormState } from "./actions";
 
-export function CreateTenantForm() {
+export function CreateTenantForm({ words }: { words?: Words }) {
+  const t = makeT(words);
   // the form is drawn in the side menu and on /app, so two can be open at once: each needs ids of its own (the name= attributes stay as they are)
   const uid = useId();
   const nameId = `${uid}-name`;
@@ -18,11 +21,11 @@ export function CreateTenantForm() {
   return (
     <form className={formCard} action={action}>
       <label htmlFor={nameId} className={fieldLabel}>
-        Workspace name
+        {t("acct.workspace_name")}
       </label>
       <input id={nameId} className={fieldInput} name="name" required maxLength={120} />
       <label htmlFor={slugId} className={fieldLabel}>
-        URL name
+        {t("acct.url_name")}
       </label>
       <input
         id={slugId}
@@ -40,7 +43,7 @@ export function CreateTenantForm() {
         </p>
       )}
       <button type="submit" className={btnMain} disabled={pending}>
-        Create workspace
+        {t("acct.create_workspace")}
       </button>
     </form>
   );

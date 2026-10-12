@@ -12,6 +12,7 @@ import { requireUser } from "@/lib/auth/session";
 import { readLeadLabel } from "../visits/visits-data";
 import { readCatalogue } from "./catalogue-data";
 import { catalogueWords } from "./catalogue-words";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Catalogue · SME AI Revenue Engine" };
 // Per-user data from the API (and links that run out): never statically rendered or cached.
@@ -35,7 +36,7 @@ export default async function CataloguePage({ params, searchParams }: PageProps<
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const query = parseQuery(raw);
