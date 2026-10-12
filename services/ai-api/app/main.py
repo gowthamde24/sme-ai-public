@@ -50,6 +50,9 @@ from app.leads.routes import router as leads_router
 from app.leadtools.repository import PostgrestLeadSearchRepository
 from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
+from app.notifications.routes import me_router as notifications_me_router
+from app.notifications.routes import router as notifications_router
+from app.notifications.wiring import build_notifications
 from app.orders import errors as order_errors
 from app.orders.repository import PostgrestOrdersRepository
 from app.orders.routes import router as orders_router
@@ -72,6 +75,10 @@ from app.scheduler.routes import router as scheduler_router
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
+from app.team import errors as team_errors
+from app.team.repository import PostgrestTeamRepository
+from app.team.routes import public_router as team_public_router
+from app.team.routes import router as team_router
 from app.tenancy import repository as repo
 from app.tenancy.repository import PostgrestTenantRepository
 from app.tenancy.routes import router as tenancy_router
@@ -86,6 +93,8 @@ from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
 from app.whatsapp.routes import router as whatsapp_router
 from app.whatsapp.wiring import build_whatsapp
+from app.workspace.repository import PostgrestWorkspaceRepository
+from app.workspace.routes import router as workspace_router
 
 SERVICE_NAME = "ai-api"
 SERVICE_VERSION = "0.1.0"
@@ -160,6 +169,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         privacy=PostgrestPrivacyRepository(config.rest_url, config.anon_key),
         policy_gate=PolicyGate(policies, enforce=settings.policy_enforce),
         whatsapp=build_whatsapp(settings, config, key_ring),
+        team=PostgrestTeamRepository(config.rest_url, config.anon_key),
+        workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
+        notifications=build_notifications(settings, config),
     )
 
 
@@ -370,6 +382,28 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409,
         "whatsapp_state",
         "That cannot be done in the state it is in now. A template under review is not edited.",
+    ),
+    # The team (job BY, ADR 0077). Fixed messages: no data-layer text reaches clients.
+    team_errors.RoleNotAllowedError: ApiError(
+        403,
+        "role_not_allowed",
+        "You cannot give or change that role. Owners are added by the operator.",
+    ),
+    team_errors.NoSuchMemberError: ApiError(404, "not_found", "Not found."),
+    team_errors.KeepOwnerError: ApiError(
+        409, "keep_owner", "The workspace must keep an Owner. Add another Owner first."
+    ),
+    team_errors.OwnRoleError: ApiError(
+        409, "own_role", "You cannot change your own role. Ask another Owner or Admin."
+    ),
+    team_errors.TooManyPendingError: ApiError(
+        409, "too_many_invitations", "Twenty invitations are waiting. Revoke one first."
+    ),
+    team_errors.AlreadyMemberError: ApiError(
+        409, "already_member", "You are already a member of that workspace."
+    ),
+    team_errors.InvitationNotPendingError: ApiError(
+        409, "invitation_not_pending", "That invitation was already used."
     ),
     # Store visits (job AS, ADR 0067). Fixed messages: nothing from the data layer reaches a client.
     visit_errors.VisitStateError: ApiError(
@@ -589,6 +623,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(privacy_router)
     app.include_router(whatsapp_public_router)
     app.include_router(whatsapp_router)
+    app.include_router(team_router)
+    app.include_router(team_public_router)
+    app.include_router(workspace_router)
+    app.include_router(notifications_router)
+    app.include_router(notifications_me_router)
     app.include_router(suppression_router)
     app.include_router(erasure_router)
     return app

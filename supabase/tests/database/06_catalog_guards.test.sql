@@ -286,7 +286,12 @@ select is(
         'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
         -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
         'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
-        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status')),
+        'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
+        -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
+        'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
+        'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',
+        'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
+        'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -328,7 +333,12 @@ select is(
         'public.privacy_worker_execute_account_deletions', 'public.privacy_worker_expired_exports', 'public.privacy_worker_export_cleaned', 'public.privacy_worker_run_retention',
         -- job BR (ADR 0076): WhatsApp. The business's own calls (role first), the inbox, and the three calls that only the registered channel account may make
                      'public.whatsapp_account_get', 'public.whatsapp_account_save', 'public.whatsapp_account_set_status', 'public.wa_template_save', 'public.wa_template_list', 'public.wa_template_set_status',
-                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status')),
+                     'public.conversation_list', 'public.conversation_thread', 'public.conversation_mark_read', 'public.wa_account_for', 'public.wa_ingest_inbound', 'public.wa_ingest_status',
+                     -- job BY (ADR 0077): the team, the shop's basics, the weekly report, the feed and web-push. Role first in every one; the worker's three (push_worker_*) accept only the registered scheduler account
+                     'public.create_invitation', 'public.accept_invitation', 'public.revoke_invitation', 'public.list_invitations', 'public.change_member_role', 'public.remove_member', 'public.team_members',
+                     'public.workspace_profile_get', 'public.workspace_profile_save', 'public.weekly_report',
+                     'public.notifications_list', 'public.notifications_mark_seen', 'public.push_subscribe', 'public.push_unsubscribe', 'public.push_prefs_get', 'public.push_prefs_set',
+                     'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(

@@ -1,4 +1,4 @@
-# Members and invitations: how a person joins a workspace (PLAN ONLY, nothing built)
+# Members and invitations: how a person joins a workspace (BUILT in job BY, 2026-10-12: see ADR 0077; the direct write grants of `memberships` are still to be revoked)
 
 Status: **Decisions recorded 2026-10-06. Not built. Queued after T011a, before T012.** Written after rehearsal steps 4 and 5 (the rehearsal found that the API has no route to add a member); the owner's decisions and amendments of 2026-10-06 are folded in below.
 Related: ADR 0001 (roles), ADR 0016 (second factor), ADR 0017 (local-first: no e-mail, no SMTP, no hosting yet), `docs/runbooks/add-family-member.md` (the operator's path today), `docs/runbooks/sole-owner-erasure.md`, `docs/pre-pilot-checklist.md`.

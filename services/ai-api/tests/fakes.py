@@ -214,6 +214,9 @@ def make_client(
     privacy: Any = None,
     policy_gate: Any = None,
     whatsapp: Any = None,
+    team: Any = None,
+    workspace: Any = None,
+    notifications: Any = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -254,6 +257,9 @@ def make_client(
             privacy=privacy,
             policy_gate=policy_gate,
             whatsapp=whatsapp,
+            team=team,
+            workspace=workspace,
+            notifications=notifications,
         ),
     )
     return TestClient(app), repo

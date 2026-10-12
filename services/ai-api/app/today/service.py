@@ -94,6 +94,25 @@ def _step_text(kind: str, amount: int | None) -> str:
     return _STEP_TEXT.get(kind, "Order updated")
 
 
+def needs_item(row: dict[str, Any]) -> NeedsYouItem:
+    """One waiting item as the screens show it (shared by Today and the notification feed, job BY)."""
+    try:
+        amount = row.get("amount_paise")
+        return NeedsYouItem(
+            kind=row["kind"],
+            id=row["id"],
+            customer=row.get("customer") or UNKNOWN_CUSTOMER,
+            city=row.get("city"),
+            agent=row["agent"],
+            summary=_summary(row["kind"], str(row["ref"]), amount),
+            at=row["at"],
+            amount_paise=amount,
+            target=Target(type=row["target"]["type"], id=row["target"]["id"]),
+        )
+    except (KeyError, TypeError, ValueError, AttributeError):
+        raise _bad("notification") from None
+
+
 def shape_today(raw: Any) -> TodayOut:
     try:
         return _shape_today(raw)
@@ -105,22 +124,7 @@ def _shape_today(raw: Any) -> TodayOut:
     if not isinstance(raw, dict) or not isinstance(raw.get("cards"), dict):
         raise _bad("Today answer")
     cards = raw["cards"]
-    needs: list[NeedsYouItem] = []
-    for row in raw.get("needs_you") or []:
-        amount = row.get("amount_paise")
-        needs.append(
-            NeedsYouItem(
-                kind=row["kind"],
-                id=row["id"],
-                customer=row.get("customer") or UNKNOWN_CUSTOMER,
-                city=row.get("city"),
-                agent=row["agent"],
-                summary=_summary(row["kind"], str(row["ref"]), amount),
-                at=row["at"],
-                amount_paise=amount,
-                target=Target(type=row["target"]["type"], id=row["target"]["id"]),
-            )
-        )
+    needs: list[NeedsYouItem] = [needs_item(row) for row in raw.get("needs_you") or []]
     recent = [
         RecentStep(
             kind="order_step",
