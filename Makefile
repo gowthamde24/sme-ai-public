@@ -24,7 +24,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -235,6 +235,17 @@ dev-api-local:
 # Needs `make db-start` and `make seed-demo-manual`. See docs/runbooks/main-agent-hosted-free.md.
 dev-api-groq:
 	SME_STACK=$(SERVE_STACK) API_PORT=$(API_PORT) ./scripts/dev-api-hosted-free.sh
+
+# OPT-IN (job CD), LOCAL stack and synthetic data only: the local API with the REAL WhatsApp Cloud API adapter, for Meta's free TEST number. Reads the access token, the app secret and a verify phrase HIDDEN (read -rs),
+# checks the token with Meta, prepares the channel account in the local database and starts the API on API_PORT (default 8000 = the owner's stack). The fake channel stays the default everywhere else.
+# See docs/runbooks/whatsapp-test-number.md.
+dev-api-whatsapp:
+	SME_STACK=$(SERVE_STACK) API_PORT=$(API_PORT) ./scripts/dev-api-whatsapp.sh
+
+# OPT-IN (job CD), local only: connect / inbox / reply / status for the test number, as the Owner of its own local workspace "WA Test (local)". ARGS="connect --waba-id ... --phone-number-id ...", ARGS=inbox,
+# ARGS="reply --lead <id> --text '...'", ARGS=status. Needs `make dev-api-whatsapp` running on API_PORT. See docs/runbooks/whatsapp-test-number.md.
+whatsapp-test:
+	cd $(API) && SME_STACK=$(SERVE_STACK) SEED_API_URL=http://localhost:$(API_PORT) ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/whatsapp_test_local.py $(ARGS)
 
 # Job AW (ADR 0068): the scheduler worker, one process, local stack only. It releases messages held for the morning, queues visit reminders and (if the business asks) marks missed visits. It signs in
 # as its own account, which the first run creates and registers (see scripts/dev_worker_local.py); it acts only while the global outbox switch is on AND the business has automatic sending on, and the only

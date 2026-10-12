@@ -1,0 +1,40 @@
+{
+  "object": "whatsapp_business_account",
+  "entry": [
+    {
+      "id": "102290129340398",
+      "changes": [
+        {
+          "value": {
+            "messaging_product": "whatsapp",
+            "metadata": {
+              "display_phone_number": "15550783881",
+              "phone_number_id": "106540352242922"
+            },
+            "statuses": [
+              {
+                "id": "wamid.HBgMOTE5ODc2NTQzMjEwFQIAEhgU3QTdERDg2RjQ2QzM1NTk5MDA3RkQA24",
+                "status": "failed",
+                "timestamp": "1750263920",
+                "recipient_id": "919876543210",
+                "biz_opaque_callback_data": "11111111-1111-4111-8111-111111111111",
+                "errors": [
+                  {
+                    "code": 132015,
+                    "title": "Template is paused",
+                    "message": "Template is paused due to low quality",
+                    "error_data": {
+                      "details": "Template is paused."
+                    },
+                    "href": "https://developers.facebook.com/docs/whatsapp/cloud-api/support/error-codes/"
+                  }
+                ]
+              }
+            ]
+          },
+          "field": "messages"
+        }
+      ]
+    }
+  ]
+}

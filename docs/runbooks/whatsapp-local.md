@@ -14,6 +14,8 @@ Everything here runs on this machine. Nothing leaves it, nothing is bought, no M
 7. Try: `"text":"STOP"` (the contact is opted out and nothing more is sent), a follow-up 25 hours later with no approved template (`template_required`), `POST /_fake/fail {"to":"0091234500001","status":400,"code":131026}` (the send is refused), `POST /_fake/approve_template {"name":"...","language":"en"}` after approving a template in the API.
 
 ## B. With Meta's free test number (when the owner decides)
+**The step-by-step owner runbook is [whatsapp-test-number.md](whatsapp-test-number.md) (job CD: `make dev-api-whatsapp` reads the secrets hidden, `make whatsapp-test` connects and tests).** The list below is the background.
+
 Nothing here has been done. Facts from Meta's get-started guide (https://developers.facebook.com/docs/whatsapp/cloud-api/get-started/):
 1. Create a Meta developer account and an app, add the WhatsApp product: a **test WhatsApp Business Account and a test phone number** are made for you. The test number can send free messages to **up to 5 recipient numbers** that you verify (WhatsApp > API Setup > Manage phone number list; each gets a code).
 2. In API Setup copy the **Phone number ID**, the **WABA ID** and a **temporary access token** (it expires in about a day; a permanent one needs a System User in Business Settings).
