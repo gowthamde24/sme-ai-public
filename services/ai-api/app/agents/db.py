@@ -219,6 +219,16 @@ class AgentDb:
         mode = result.get("mode")
         return mode if isinstance(mode, str) else "normal"
 
+    # ---- web research tools (job BP, ADR 0078)
+    def web_quota_take(self, model: str) -> None:
+        """Count one web call of this kind against the workspace's daily limit."""
+        self._rpc("web_quota_take", {"p_run_id": str(self._run), "p_model": model})
+
+    def web_query_ok(self, query: str) -> bool:
+        """False when the query names a person who is a contact of this business."""
+        body = {"p_run_id": str(self._run), "p_query": query}
+        return self._call("web_query_check", "POST", "/rpc/web_query_check", body=body) is True
+
     def release_cost(self, step_key: str, *, reason: str) -> None:
         self._rpc(
             "agent_release_cost",

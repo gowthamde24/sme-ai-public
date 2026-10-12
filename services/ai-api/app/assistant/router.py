@@ -36,6 +36,8 @@ CORE: frozenset[str] = frozenset(
 )
 CATALOGUE_TOOLS: frozenset[str] = frozenset({"find_catalogue_items", "send_catalogue_items"})
 VISIT_TOOLS: frozenset[str] = frozenset({"propose_visit"})
+# job BP: the web research tools, offered only when the owner has switched them on AND the question is about the web, the retailers or the gold and silver price
+WEB_TOOLS: frozenset[str] = frozenset({"web_search", "read_page", "find_retailers", "get_metal_prices"})
 
 # Latin-script words: each is matched at a word start (so "photo" finds "photos" and "photograph")
 _LATIN_CATALOGUE = (
@@ -151,6 +153,48 @@ _INDIAN_SHOW = (
     "காட்ட", "அனுப்ப", "இருக்கா",  # Tamil
 )  # fmt: skip
 
+# job BP: the web group. Latin words are matched at a word start; "gold" and "silver" alone are NOT triggers (a silver zari is a saree), only with a rate, a price or "of" in front.
+_LATIN_WEB = (
+    "google",
+    "web search",
+    "search the web",
+    "search online",
+    "search the internet",
+    "on the internet",
+    "online",
+    "internet",
+    "latest news",
+    "news",
+    "gold rate",
+    "gold price",
+    "gold bhav",
+    "silver rate",
+    "silver price",
+    "silver bhav",
+    "rate of gold",
+    "price of gold",
+    "rate of silver",
+    "price of silver",
+    "bullion",
+    "retailer",
+    "wholesaler",
+    "find shops",
+    "find stores",
+    "shops near",
+    "stores near",
+    "competitor",
+)
+_INDIAN_WEB = (
+    # Hindi: google, internet, online, gold/silver rate or price, news, retailer, wholesaler
+    "गूगल", "इंटरनेट", "ऑनलाइन", "सोने का भाव", "सोने का रेट", "सोने की कीमत", "चांदी का भाव", "चाँदी का भाव", "चांदी का रेट", "चांदी की कीमत", "समाचार", "खबर", "रिटेलर", "थोक विक्रेता",
+    # Telugu
+    "గూగుల్", "ఇంటర్నెట్", "ఆన్‌లైన్", "బంగారం ధర", "బంగారం రేటు", "వెండి ధర", "వెండి రేటు", "వార్తలు", "రిటైలర్", "హోల్‌సేలర్",
+    # Kannada
+    "ಗೂಗಲ್", "ಇಂಟರ್ನೆಟ್", "ಆನ್‌ಲೈನ್", "ಚಿನ್ನದ ಬೆಲೆ", "ಚಿನ್ನದ ದರ", "ಬೆಳ್ಳಿ ಬೆಲೆ", "ಬೆಳ್ಳಿಯ ಬೆಲೆ", "ಸುದ್ದಿ", "ರಿಟೇಲರ್",
+    # Tamil
+    "கூகுள்", "இணையம்", "ஆன்லைன்", "தங்கம் விலை", "தங்க விலை", "வெள்ளி விலை", "செய்தி", "சில்லறை விற்பனை",
+)  # fmt: skip
+
 _JOINERS = dict.fromkeys((0x200C, 0x200D))
 
 
@@ -167,6 +211,7 @@ def _latin(words: Iterable[str]) -> re.Pattern[str]:
 
 _CATALOGUE_LATIN = _latin(_LATIN_CATALOGUE)
 _VISIT_LATIN = _latin(_LATIN_VISIT)
+_WEB_LATIN = _latin(_LATIN_WEB)
 _SAREE_LATIN = _latin(_LATIN_SAREE)
 _SHOW_LATIN = _latin(_LATIN_SHOW)
 
@@ -182,6 +227,15 @@ def wants_catalogue(text: str) -> bool:
     saree = bool(_SAREE_LATIN.search(t)) or _has_any(t, _INDIAN_SAREE)
     show = bool(_SHOW_LATIN.search(t)) or _has_any(t, _INDIAN_SHOW)
     return saree and show
+
+
+_WEB_ADDRESS = re.compile(r"https?://", re.IGNORECASE)
+
+
+def wants_web(text: str) -> bool:
+    """A web word in any of the five languages, or a web address typed in the message (the owner pasted a link to be read)."""
+    t = _normal(text)
+    return bool(_WEB_LATIN.search(t)) or bool(_WEB_ADDRESS.search(t)) or _has_any(t, _INDIAN_WEB)
 
 
 def wants_visits(text: str) -> bool:
@@ -275,14 +329,19 @@ def missed_group(
 ALL_TOOLS: frozenset[str] = CORE | CATALOGUE_TOOLS | VISIT_TOOLS
 
 
-def offered_tools(question: str, history: Sequence[Mapping[str, object]] = ()) -> frozenset[str]:
-    """The names of the tools to offer for this question, given the last lines of the chat it continues (a follow-up such as "yes, send them" belongs to the line before). Same input, same answer."""
+def offered_tools(
+    question: str, history: Sequence[Mapping[str, object]] = (), web: frozenset[str] = frozenset()
+) -> frozenset[str]:
+    """The names of the tools to offer for this question, given the last lines of the chat it continues (a follow-up such as "yes, send them" belongs to the line before). Same input, same answer.
+    `web`: the web tools the owner has switched on (job BP); they are offered only to a question that is about the web."""
     texts = [question, *(str(h.get("body") or "") for h in history)]
     offered = set(CORE)
     if any(wants_catalogue(t) for t in texts):
         offered |= CATALOGUE_TOOLS
     if any(wants_visits(t) for t in texts):
         offered |= VISIT_TOOLS
+    if web and any(wants_web(t) for t in texts):
+        offered |= web & WEB_TOOLS
     return frozenset(offered)
 
 
@@ -291,10 +350,12 @@ __all__ = [
     "CATALOGUE_TOOLS",
     "CORE",
     "VISIT_TOOLS",
+    "WEB_TOOLS",
     "could_need",
     "group_of",
     "missed_group",
     "offered_tools",
     "wants_catalogue",
     "wants_visits",
+    "wants_web",
 ]

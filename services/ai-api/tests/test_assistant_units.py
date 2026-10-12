@@ -21,6 +21,7 @@ from app.assistant.models import DraftCardOut, draft_summary
 from app.assistant.prompts import FIXED_NOTES, SYSTEM_PROMPT, build_request, result_block
 from app.assistant.runner import money_amounts
 from app.assistant.tools import ACTION_TOOLS, READ_TOOLS, TOOLS, Item
+from app.assistant.web_tools import WEB_TOOL_NAMES
 
 NOW = datetime(2026, 10, 9, 12, 0, tzinfo=UTC)
 LEAD_ID = uuid.UUID("00000000-0000-0000-0000-000000000001")
@@ -137,7 +138,9 @@ def test_the_request_names_the_language_to_reply_in() -> None:
 
 def test_tool_surface_cannot_send_approve_or_price() -> None:
     names = {t.name for t in TOOLS}
-    assert names == {t.name for t in READ_TOOLS} | {t.name for t in ACTION_TOOLS}
+    # job BP: plus the four web tools (they read the open web and the metal prices; none acts)
+    read, action = {t.name for t in READ_TOOLS}, {t.name for t in ACTION_TOOLS}
+    assert names == read | action | set(WEB_TOOL_NAMES)
     assert len(names) == len(TOOLS)
     for forbidden in ("approve", "set_price", "delete", "pay", "create_order", "update"):
         assert not any(forbidden in n for n in names), forbidden

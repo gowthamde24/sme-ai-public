@@ -58,6 +58,15 @@ class AgentDbPort(Protocol):
 
     def record_usage(self, step_key: str, usage: Usage) -> None: ...
 
+    def web_quota_take(self, model: str) -> None:
+        """Count one web call (web-search, web-page, places-search, metal-price) against the
+        workspace's daily limit; raises WebLimitReached at the limit."""
+        ...
+
+    def web_query_ok(self, query: str) -> bool:
+        """False when the query would name a person the business deals with."""
+        ...
+
     def record_step(
         self,
         step_key: str,

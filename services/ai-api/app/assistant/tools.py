@@ -67,6 +67,9 @@ class State:
     # the handles get_today showed: what is WAITING for the owner (every one must be in an answer about it) and the recent order steps (job AO)
     waiting: list[str] = field(default_factory=list)
     today_recent: list[str] = field(default_factory=list)
+    # job BP: web calls made in this run by kind, and the web addresses the owner typed in the question
+    web_calls: dict[str, int] = field(default_factory=dict)
+    question_urls: frozenset[str] = frozenset()
 
     def add(
         self,
@@ -1036,4 +1039,7 @@ ACTION_TOOLS: tuple[Tool, ...] = (
         True,
     ),
 )
-TOOLS: tuple[Tool, ...] = (*READ_TOOLS, *ACTION_TOOLS)
+# job BP: the web tools import this module's types, so they are added here
+from app.assistant.web_tools import WEB_TOOLS  # noqa: E402
+
+TOOLS: tuple[Tool, ...] = (*READ_TOOLS, *ACTION_TOOLS, *WEB_TOOLS)

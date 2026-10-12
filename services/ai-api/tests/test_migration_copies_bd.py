@@ -11,6 +11,7 @@ from tests.test_migration_copies import definitions, normalised
 
 BD = "20261113090000_bd_voice_run_budget.sql"
 T007 = "20261014090500_t007_cost_cap_review_fixes.sql"
+BP = "20261119090000_bp_research_tools.sql"
 
 DROPPED = {
     "or r.cost_micros_used::numeric + p_cost_micros > r.max_cost_micros then",
@@ -41,14 +42,17 @@ def test_the_bd_copy_is_the_last_definition_and_differs_from_t007_by_exactly_the
     None
 ):
     defs = definitions("public.agent_record_usage")
-    assert defs[-1][0] == BD, (
-        f"agent_record_usage is redefined after job BD's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    names = [d[0] for d in defs]
+    # job BP replaced it once more, as a pinned copy of BD's (tests/test_migration_copies_bp.py); nothing else may follow BD
+    assert names[-1] == BD or names[-2:] == [BD, BP], (
+        f"agent_record_usage is redefined after job BD's migration ({names[-1]}): re-copy it from the latest definition"
     )
-    assert defs[-2][0] == T007
+    at = names.index(BD)
+    assert names[at - 1] == T007
     diff = [
         line
         for line in difflib.unified_diff(
-            normalised(defs[-2][1]), normalised(defs[-1][1]), lineterm="", n=0
+            normalised(defs[at - 1][1]), normalised(defs[at][1]), lineterm="", n=0
         )
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]

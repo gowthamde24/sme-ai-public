@@ -89,6 +89,9 @@ from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
 from app.voice.routes import router as voice_router
+from app.websearch.repository import PostgrestResearchUsageRepository
+from app.websearch.routes import router as research_router
+from app.websearch.wiring import build_research_web
 from app.whatsapp.repository import WhatsAppStateError
 from app.whatsapp.routes import public_router as whatsapp_public_router
 from app.whatsapp.routes import router as whatsapp_router
@@ -172,6 +175,8 @@ def build_runtime(settings: Settings) -> Runtime | None:
         team=PostgrestTeamRepository(config.rest_url, config.anon_key),
         workspace=PostgrestWorkspaceRepository(config.rest_url, config.anon_key),
         notifications=build_notifications(settings, config),
+        research_web=build_research_web(settings),
+        research_usage=PostgrestResearchUsageRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -508,6 +513,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.catalogue,
                 runtime.catalogue_storage,
                 runtime.lead_search,
+                runtime.research_usage,
             ):
                 if isinstance(
                     repository,
@@ -530,7 +536,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestCatalogueRepository
                     | HttpStorageClient
                     | PostgrestLeadSearchRepository
-                    | PostgrestIntegrationsRepository,
+                    | PostgrestIntegrationsRepository
+                    | PostgrestResearchUsageRepository,
                 ):
                     repository.close()
 
@@ -598,6 +605,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
         leadtools_router
     )  # before the generic /leads/{id} routes: /leads/search must not be read as an id
     app.include_router(leads_router)
+    app.include_router(research_router)
     app.include_router(evidence_router)
     app.include_router(contacts_by_phone_router)  # before the generic /contacts/{id} routes
     app.include_router(crm_router)

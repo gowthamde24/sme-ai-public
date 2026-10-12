@@ -41,6 +41,8 @@ from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
 from app.voice.interface import VoiceStack
+from app.websearch.repository import ResearchUsageRepository
+from app.websearch.service import ResearchWeb
 from app.whatsapp.runtime import WhatsAppRuntime
 from app.workspace.repository import WorkspaceRepository
 
@@ -82,6 +84,8 @@ class Runtime:
     team: TeamRepository | None = None
     workspace: WorkspaceRepository | None = None
     notifications: NotificationsRuntime | None = None
+    research_web: ResearchWeb | None = None
+    research_usage: ResearchUsageRepository | None = None
 
 
 @dataclass(frozen=True)
