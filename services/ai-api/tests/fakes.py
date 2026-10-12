@@ -220,6 +220,7 @@ def make_client(
     research_web: Any = None,
     research_usage: Any = None,
     connectors: Any = None,
+    business_profile: Any = None,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -266,6 +267,7 @@ def make_client(
             research_web=research_web,
             research_usage=research_usage,
             connectors=connectors,
+            business_profile=business_profile,
         ),
     )
     return TestClient(app), repo
@@ -292,6 +294,7 @@ _SERVER_DEFAULTS: dict[str, dict[str, _Any]] = {
     "companies": {
         "type": "prospect",
         "website": None,
+        "gstin": None,
         "country": None,
         "region": None,
         "city": None,

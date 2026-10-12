@@ -45,6 +45,12 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/connectors/*" = ["E501"]
 "tests/test_bz_*.py" = ["E501"]
 "../../tests/integration/test_bz_*.py" = ["E501"]
+# job CA: the GSTIN module and the business profile read like their documentation (long lines)
+"app/gstin.py" = ["E501"]
+"app/businessprofile/*" = ["E501"]
+"tests/test_ca_*.py" = ["E501"]
+"tests/test_migration_copies_ca.py" = ["E501"]
+"../../tests/integration/test_ca_*.py" = ["E501"]
 "../../tests/integration/*" = ["S101", "S105", "S106"]
 "../../tests/rehearsal/*" = ["S101"]
 # a script of readable data tables and a long explanatory header

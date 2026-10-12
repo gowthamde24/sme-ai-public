@@ -8,7 +8,8 @@ API: `POST /v1/tenants/{id}/exports/accounting` with `{export_id, format, from_d
 * **Sale**: an order the customer accepted that was not lost since (accepted, advance requested/paid, in preparation, dispatched, delivered, closed paid). Its date is the India day of the acceptance. Voucher number `SO-00012` (the order number). The amounts are the approved quote's: Sales (merchandise), Freight Charges, GST per rate, and `Round Off` for any paisa difference.
 * **GST**: CGST + SGST (half each; an odd paisa to SGST) for an intra-state supply, IGST for inter-state, each at the quote's rate (ledger names like `Output CGST @ 2.5%`).
 * **Payment**: a payment recorded on an order (a Receipt in Tally) or a refund (a Payment). Dated by the India day it happened.
-* **Not included**: GSTIN (none is stored yet; the columns are empty), HSN codes, stock items, customers' contact details, drafts, lost orders.
+* **GSTIN (job CA)**: a customer's GSTIN (set on the customer, `docs/runbooks/gstin.md`) fills the GSTIN column of the CSV and XLSX register and of the Vyapar Parties and Sales sheets; the shop's own is the last column of the CSV and XLSX register (`Seller GSTIN`). The **Tally files do not carry GSTINs**: the names of Tally's XML tags for a ledger's registration details could not be verified, and a wrong tag makes the import fail; set the GSTIN on the party ledger in Tally.
+* **Not included**: HSN codes, stock items, customers' contact details, drafts, lost orders.
 
 ## Tally Prime: step by step
 Source (read 2026-10-11): TallyPrime help, "How to Import Data from JSON or XML into TallyPrime" and "Import Data - FAQ" (help.tallysolutions.com), and Tally's sample XML pages (/sample-xml/, /xml-integration/).
@@ -32,7 +33,7 @@ What Vyapar accepts: **Parties** and **Items** from an Excel template (the app s
 * Honest limit: Vyapar publishes no list of its template's header names, so the names here are the common ones, not verified against a live Vyapar.
 
 ## Plain CSV and Excel
-`csv`: UTF-8 with a byte-order mark (Excel reads Telugu and Hindi names), one register: `Record` (Sale / Payment received / Refund paid), India date `DD/MM/YYYY`, voucher number, order number, party, GSTIN (empty), place of supply, supply type, taxable value, CGST, SGST, IGST, freight, round off, total (all `(INR)`, two decimals, no thousands separators), reference. A text cell that starts with `=`, `+`, `-`, `@` is written with a leading apostrophe so a spreadsheet cannot run it. `xlsx`: the same register plus a sheet of sale lines and a sheet of payments.
+`csv`: UTF-8 with a byte-order mark (Excel reads Telugu and Hindi names), one register: `Record` (Sale / Payment received / Refund paid), India date `DD/MM/YYYY`, voucher number, order number, party, GSTIN (the customer's, empty when none is stored), place of supply, supply type, taxable value, CGST, SGST, IGST, freight, round off, total (all `(INR)`, two decimals, no thousands separators), reference. A text cell that starts with `=`, `+`, `-`, `@` is written with a leading apostrophe so a spreadsheet cannot run it. `xlsx`: the same register plus a sheet of sale lines and a sheet of payments.
 
 ## Safety
 Everything is read for the business in the token (by the database, not by the API); another business's data cannot appear. A request without a second factor, from Sales or a Viewer, or from another business is refused before any data is read, and leaves no export record.

@@ -112,15 +112,21 @@ class QuoteOut(_Strict):
     withdraw_code: WithdrawCode | None
     lines: list[QuoteLineOut]
     unquoted_lines: list[UnquotedLineOut] = Field(default_factory=list)
+    # job CA: the customer's GSTIN (from the company of the lead) and the shop's own, read when shown; null when there is none
+    customer_gstin: str | None = None
+    shop_gstin: str | None = None
 
     @model_serializer(mode="wrap")
     def _leave_out_what_only_a_manual_quote_has(
         self, handler: SerializerFunctionWrapHandler
     ) -> dict[str, Any]:
-        """A list-price quote's JSON is exactly what it was before manual quotes existed: `pricing_kind` is left out when it says "list"."""
+        """A list-price quote's JSON is exactly what it was before manual quotes existed: `pricing_kind` is left out when it says "list". Job CA: the two GSTIN fields are left out when there is none."""
         data: dict[str, Any] = handler(self)
         if self.pricing_kind == "list":
             data.pop("pricing_kind", None)
+        for key in ("customer_gstin", "shop_gstin"):
+            if data.get(key) is None:
+                data.pop(key, None)
         return data
 
 
@@ -139,6 +145,7 @@ class QuoteSummaryOut(_Strict):
     # the customer's company name and city, for the list (null when the lead has no company)
     customer: str | None = None
     city: str | None = None
+    customer_gstin: str | None = None
 
     @model_serializer(mode="wrap")
     def _leave_out_what_only_a_manual_quote_has(
@@ -147,6 +154,8 @@ class QuoteSummaryOut(_Strict):
         data: dict[str, Any] = handler(self)
         if self.pricing_kind == "list":
             data.pop("pricing_kind", None)
+        if data.get("customer_gstin") is None:
+            data.pop("customer_gstin", None)  # job CA: left out when there is none
         return data
 
 

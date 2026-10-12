@@ -15,6 +15,8 @@ from app.agent_runs.wiring import build_agents_runtime
 from app.assistant.routes import router as assistant_router
 from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
+from app.businessprofile.repository import PostgrestBusinessProfileRepository
+from app.businessprofile.routes import router as business_profile_router
 from app.catalogue import errors as catalogue_errors
 from app.catalogue.repository import PostgrestCatalogueRepository
 from app.catalogue.routes import router as catalogue_router
@@ -184,6 +186,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         connectors=build_connectors(
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
+        business_profile=PostgrestBusinessProfileRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -522,6 +525,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.lead_search,
                 runtime.research_usage,
                 runtime.connectors.repo if runtime.connectors is not None else None,
+                runtime.business_profile,
             ):
                 if isinstance(
                     repository,
@@ -546,7 +550,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestLeadSearchRepository
                     | PostgrestIntegrationsRepository
                     | PostgrestResearchUsageRepository
-                    | PostgrestConnectorsRepository,
+                    | PostgrestConnectorsRepository
+                    | PostgrestBusinessProfileRepository,
                 ):
                     repository.close()
 
@@ -633,6 +638,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(voice_router)
     app.include_router(connectors_router)
     app.include_router(webhooks_router)
+    app.include_router(business_profile_router)
     app.include_router(accounting_export_router)
     app.include_router(spreadsheet_import_router)
     app.include_router(calendar_member_router)

@@ -222,6 +222,7 @@ def summary_out(row: dict[str, Any]) -> QuoteSummaryOut:
             "outcome": outcome(row),
             "customer": company.get("name"),
             "city": company.get("city"),
+            "customer_gstin": company.get("gstin"),
         }
     )
 
