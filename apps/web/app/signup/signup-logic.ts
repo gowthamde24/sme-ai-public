@@ -80,7 +80,7 @@ export async function runSignUp(
     return { ok: false, error: "invalid" };
   }
 
-  const { data, error } = result;
+  const { error } = result;
   if (error) {
     switch (error.code) {
       case "user_already_exists":

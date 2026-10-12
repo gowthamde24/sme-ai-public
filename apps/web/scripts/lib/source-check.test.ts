@@ -20,7 +20,8 @@ describe("leak audit: source check", () => {
     expect(names.size).toBeGreaterThan(30);
   });
   it("a class that only appears inside a compound (.sticky-actions.sticky) is a risk only when the whole compound is on one element", () => {
-    const rules = legacyRules(read("app/globals.css"));
+    // (the old `.sticky-actions.sticky` rule was dead markup and was removed in job BM; the same shape is kept here as a fixture)
+    const rules = legacyRules(".sticky-actions { display: flex; }\n@media (max-width: 600px) { .sticky-actions.sticky { position: sticky; } }");
     expect(rules.single.has("sticky")).toBe(false);
     expect(rules.single.has("sticky-actions")).toBe(true);
     expect(rules.multi.some((c: string[]) => c.includes("sticky") && c.includes("sticky-actions"))).toBe(true);

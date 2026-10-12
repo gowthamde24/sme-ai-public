@@ -30,7 +30,6 @@ export type {
 } from "@contracts";
 
 export type RunStatus = RunOut["status"];
-export type ReviewState = ClaimSuggestionOut["review_state"];
 export type ReviewReason = NonNullable<ReviewIn["reason_code"]>;
 export type ReviewConfidence = NonNullable<ReviewIn["confidence"]>;
 export type SuggestionTarget = "companies" | "leads";

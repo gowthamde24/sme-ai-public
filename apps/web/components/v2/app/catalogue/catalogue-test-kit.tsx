@@ -30,16 +30,6 @@ export function fakeSendActions(over: Partial<Record<keyof SendActions, ReturnTy
   return actions as unknown as SendActions & Record<keyof SendActions, ReturnType<typeof vi.fn>>;
 }
 
-/** An uploader that succeeds at once, reporting 50 then 100 percent, and answers with the item's photos plus the new one. */
-export function okUploader(existing: string[] = []): Uploader & ReturnType<typeof vi.fn> {
-  return vi.fn(async (_file: Blob, photoId: string, onProgress: (p: number) => void) => {
-    onProgress(50);
-    onProgress(100);
-    const photos = [...existing, photoId].map((id, i) => parseItem(itemJson({}, [photoJson(id, i + 1)])).photos[0]);
-    return { ok: true as const, photo: photos[photos.length - 1], photos };
-  }) as unknown as Uploader & ReturnType<typeof vi.fn>;
-}
-
 export const file = (name = "saree.jpg", type = "image/jpeg", bytes = 1000): File => new File([new Uint8Array(bytes)], name, { type });
 
 /**

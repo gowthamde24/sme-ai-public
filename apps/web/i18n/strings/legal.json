@@ -77,28 +77,6 @@
    "kn": "draft"
   }
  },
- "legal.privacy.name.short": {
-  "en": "Privacy",
-  "te": "గోప్యత",
-  "hi": "गोपनीयता",
-  "kn": "ಗೌಪ್ಯತೆ",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
- "legal.terms.name.short": {
-  "en": "Terms",
-  "te": "నిబంధనలు",
-  "hi": "शर्तें",
-  "kn": "ನಿಯಮಗಳು",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "legal.cookies.link": {
   "en": "Cookie settings",
   "te": "కుకీ సెట్టింగ్‌లు",

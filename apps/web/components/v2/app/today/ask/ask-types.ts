@@ -30,7 +30,6 @@ export const ERROR_CODES = [
   // voice (job BF): the recording was too long or too short, nothing could be heard, voice is not on, the speech service failed; `network` is made in the browser when the request cannot be made
   "voice_too_long", "voice_too_short", "voice_no_speech", "voice_unavailable", "voice_failed", "network",
 ] as const;
-export type AskErrorCode = (typeof ERROR_CODES)[number];
 
 export type AskRequest = { question: string; lang: string; signal: AbortSignal };
 export type AskTransport = (request: AskRequest) => AsyncIterable<AskEvent>;

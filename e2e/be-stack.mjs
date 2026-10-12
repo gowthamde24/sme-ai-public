@@ -64,7 +64,7 @@ if (busy) {
   process.exit(3);
 }
 // a fake microphone (a test tone) that Chrome opens without asking: the voice steps record from it (job BF)
-const browser = await chromium.launch({ args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream"] });
+const browser = await chromium.launch({ args: ["--use-fake-device-for-media-stream", "--use-fake-ui-for-media-stream", "--use-angle=swiftshader", "--enable-unsafe-swiftshader"] });
 const SLOW = 90_000; // a development server compiles each page the first time it is asked for
 const context = await browser.newContext({ viewport: { width: 1280, height: 900 }, locale: "en-IN", timezoneId: "Asia/Kolkata", permissions: ["microphone"] });
 const page = await context.newPage();
@@ -664,6 +664,30 @@ await step("H7", "voice: a used-up allowance is said in words, and typing still 
   await page.getByRole("alert").filter({ hasText: "spending limit" }).waitFor({ timeout: 30000 });
   await context.unroute("**/ask/voice?*");
   must(await page.locator("#ask-input").isEnabled(), "typing is not available after the refusal");
+}, page);
+
+// ---- 8a. the Office (job BM): the 3D room draws and its owls sit where they should ---------------------------------------------------------------
+await step("O1", "the Office in 3D (WebGL in the test browser): the room draws at 1280 and 360 px, no THREE.Clock deprecation in the console, pictures for the owl size check", async () => {
+  const clock = [];
+  const onConsole = (m) => {
+    if (/Clock: This module has been deprecated/.test(m.text())) clock.push(m.text());
+  };
+  page.on("console", onConsole);
+  try {
+    for (const [name, size] of [["desktop", { width: 1280, height: 900 }], ["phone", { width: 360, height: 740 }]]) {
+      await page.setViewportSize(size);
+      await page.goto(`${BASE}/app/tenants/${tenant}/office`, { waitUntil: "networkidle" });
+      await page.evaluate(() => localStorage.setItem("sme_office_view", "3d"));
+      await page.reload({ waitUntil: "networkidle" });
+      await page.locator("canvas").first().waitFor({ timeout: 60000 });
+      await page.waitForTimeout(2500); // the owls settle into their seats
+      await shot(page, `office-3d-${name}`);
+    }
+  } finally {
+    page.off("console", onConsole);
+    await page.setViewportSize({ width: 1280, height: 900 });
+  }
+  must(clock.length === 0, `the Clock deprecation is still in the console: ${clock[0]}`);
 }, page);
 
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
