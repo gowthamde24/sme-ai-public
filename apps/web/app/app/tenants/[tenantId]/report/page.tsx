@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { ReportNoAccess, ReportView } from "@/components/v2/app/report/ReportView";
 import { pageMain } from "@/components/v2/app/ui";
+import { partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -34,7 +35,7 @@ export default async function ReportPage({ params }: PageProps<"/app/tenants/[te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const labels = reportWords(lang);
