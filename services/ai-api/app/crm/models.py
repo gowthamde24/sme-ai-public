@@ -31,6 +31,7 @@ from pydantic import (
     model_validator,
 )
 
+from app import gstin as gstin_module
 from app.crm.phone import canonical_phone  # noqa: E402
 
 # ----------------------------------------------------------------------------- primitives
@@ -71,6 +72,17 @@ Phone = Annotated[
     StringConstraints(strip_whitespace=True, min_length=3, max_length=32),
     AfterValidator(canonical_phone),  # job BO: an Indian mobile is stored as +91 and ten digits
 ]
+
+
+def _gstin(value: object) -> object:
+    """Spaces, dashes and lower case are forgiven; anything not well formed is a 422."""
+    parsed = gstin_module.parse(value)
+    if parsed is None:
+        raise ValueError("not a valid GSTIN")
+    return parsed
+
+
+Gstin = Annotated[str, BeforeValidator(_gstin)]
 
 # Same shape as the database CHECK on consent_events.evidence_ref.
 EVIDENCE_REF_PATTERN = r"^[a-z][a-z0-9_-]{1,19}:[A-Za-z0-9._#/-]{1,96}$"
@@ -160,6 +172,7 @@ class CompanyOut(_Row):
     name: str
     type: CompanyType
     website: str | None
+    gstin: str | None
     country: str | None
     region: str | None
     city: str | None
@@ -235,6 +248,7 @@ class CompanyCreate(_Strict):
         Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
         | None
     ) = None
+    gstin: Gstin | None = None
     country: Text100 | None = None
     region: Text100 | None = None
     city: Text100 | None = None
@@ -256,6 +270,7 @@ class CompanyUpdate(_Strict):
         Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=200)]
         | None
     ) = None
+    gstin: Gstin | None = None
     country: Text100 | None = None
     region: Text100 | None = None
     city: Text100 | None = None

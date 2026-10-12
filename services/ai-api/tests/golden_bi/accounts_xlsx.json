@@ -16,7 +16,8 @@
    "Freight (INR)",
    "Round Off (INR)",
    "Total (INR)",
-   "Reference"
+   "Reference",
+   "Seller GSTIN"
   ],
   [
    "Sale",
@@ -24,7 +25,7 @@
    "SO-00012",
    "12",
    "Ravi & Sons Silks",
-   "",
+   "36AAACR5055K1Z8",
    "TS",
    "intra-state",
    "68000",
@@ -34,7 +35,8 @@
    "500",
    "0",
    "71925",
-   "quote 7"
+   "quote 7",
+   "36AABCU9603R1ZO"
   ],
   [
    "Sale",
@@ -42,7 +44,7 @@
    "SO-00013",
    "13",
    "శ్రీ లక్ష్మి చీరలు",
-   "",
+   "29AAGCB7383J1Z4",
    "KA",
    "inter-state",
    "15000",
@@ -52,7 +54,8 @@
    "0",
    "0.5",
    "16100.5",
-   "quote 9"
+   "quote 9",
+   "36AABCU9603R1ZO"
   ],
   [
    "Sale",
@@ -70,7 +73,8 @@
    "0",
    "-1",
    "999",
-   "quote 11"
+   "quote 11",
+   "36AABCU9603R1ZO"
   ],
   [
    "Payment received",
@@ -78,7 +82,7 @@
    "RC-00012-aaaaaaaa",
    "12",
    "Ravi & Sons Silks",
-   "",
+   "36AAACR5055K1Z8",
    "",
    "",
    "",
@@ -88,7 +92,8 @@
    "",
    "",
    "10000",
-   "against SO-00012"
+   "against SO-00012",
+   "36AABCU9603R1ZO"
   ],
   [
    "Refund paid",
@@ -106,7 +111,8 @@
    "",
    "",
    "500",
-   "against SO-00013"
+   "against SO-00013",
+   "36AABCU9603R1ZO"
   ]
  ],
  "Sale lines": [

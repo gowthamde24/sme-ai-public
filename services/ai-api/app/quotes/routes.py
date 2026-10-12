@@ -15,6 +15,7 @@ from typing import Annotated, Any
 from fastapi import APIRouter, Depends, Path, Query, Response
 
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
+from app.businessprofile.taxids import tax_ids
 from app.crm.models import parse_uuid
 from app.enquiries.models import EnquiryOut
 from app.errors import ApiError, not_found
@@ -128,7 +129,9 @@ def list_quotes(
 
 @router.get("/quotes/{quote_id}", response_model=QuoteOut)
 def get_quote(quote_id: str, ctx: SalesPlus, runtime: RuntimeDep) -> QuoteOut:
-    return _quote(runtime, ctx, quote_id)
+    quote = _quote(runtime, ctx, quote_id)
+    customer, shop = tax_ids(runtime, ctx, quote.lead_id)
+    return quote.model_copy(update={"customer_gstin": customer, "shop_gstin": shop})
 
 
 @router.get("/quotes/{quote_id}/text", response_model=QuoteTextOut)

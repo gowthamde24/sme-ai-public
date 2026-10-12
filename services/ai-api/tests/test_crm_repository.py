@@ -56,6 +56,7 @@ COMPANY_ROW: dict[str, Any] = {
     "name": "Acme",
     "type": "prospect",
     "website": None,
+    "gstin": None,
     "country": None,
     "region": None,
     "city": None,

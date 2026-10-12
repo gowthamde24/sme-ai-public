@@ -4,7 +4,7 @@ sheet with a mapping screen; headers without dots or dollar signs, dates DD/MM/Y
 kept in ONE table (HEADERS) that is easy to change: compare them with the template the Vyapar app gives you (Import Parties > Download sample) and rename if a header differs.
 
 One workbook, four sheets: Parties, Items, Sales (one row per invoice line, plus one per freight charge), Payments. Rates are the GST percentage; amounts are rupees with two decimals; dates DD/MM/YYYY;
-no header contains a dot or a dollar sign. The GSTIN column is present and empty: the application holds none."""
+no header contains a dot or a dollar sign. The GSTIN columns carry the customer's GSTIN where the application holds one (job CA), and are empty otherwise."""
 
 from __future__ import annotations
 
@@ -28,8 +28,9 @@ def _money(paise: int) -> float:
 
 def workbook(acc: Accounting) -> bytes:
     parties: list[list[Any]] = [HEADERS["Parties"]]
+    gstins = acc.party_gstins()
     for name, city in acc.parties():
-        parties.append([name, "", "", "", city or "", "", ""])
+        parties.append([name, gstins.get(name, ""), "", "", city or "", "", ""])
     items_seen: dict[str, list[Any]] = {}
     sales: list[list[Any]] = [HEADERS["Sales"]]
     for s in acc.sales:

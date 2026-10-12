@@ -150,8 +150,11 @@ def test_the_bb_copy_is_the_last_definition_and_differs_by_exactly_the_named_lin
 ) -> None:
     mig, compared, want_dropped, want_added = BB_CHANGED[name]
     defs = definitions(name)
-    # a later job may copy it again, if ITS pin (test_migration_copies_br.py) says exactly what it changed
-    later = {"app.outbox_claim_due_core": "20261117090000_br_whatsapp.sql"}
+    # a later job may copy it again, if ITS pin says exactly what it changed (BR: test_migration_copies_br.py; CA: test_migration_copies_ca.py)
+    later = {
+        "app.outbox_claim_due_core": "20261117090000_br_whatsapp.sql",
+        "app.erase_company": "20261121090000_ca_gstin.sql",
+    }
     assert defs[-1][0] in (mig, later.get(name)), (
         f"{name} is redefined after job BB's migration ({defs[-1][0]}): re-copy it from the latest definition"
     )

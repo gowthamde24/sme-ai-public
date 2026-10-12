@@ -176,6 +176,9 @@ class OrderDetailOut(OrderOut):
     events: list[OrderEventOut]
     # GUIDANCE from the pinned lifecycle for THIS caller's role, as of now (never approval: the database decides). Empty for a closed order.
     allowed_next_events: list[EventType] = []
+    # job CA: the customer's GSTIN (from the company of the lead) and the shop's own, read when shown; null when there is none
+    customer_gstin: str | None = None
+    shop_gstin: str | None = None
 
 
 class EventResultOut(_Strict):
