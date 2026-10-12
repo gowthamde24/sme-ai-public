@@ -29,7 +29,7 @@ cleanup
 echo "== build (needs the network for pip) =="
 docker build -q -f deploy/Dockerfile.api -t "$IMAGE" . >/dev/null
 size_mb=$(docker image inspect "$IMAGE" --format '{{.Size}}' | awk '{printf "%d", $1/1048576}')
-echo "INFO  image $IMAGE is $size_mb MB (as Docker counts it)"
+echo "INFO  image $IMAGE is $size_mb MB to pull (as Docker reports its content size)"
 check "the image is under 400 MB" "[ $size_mb -lt 400 ]"
 check "it runs as the numeric user 10001, not root" "[ \"\$(docker run --rm --entrypoint id $IMAGE -u)\" = 10001 ]"
 check "no .env file or secret is inside the image" "! docker run --rm --entrypoint sh $IMAGE -c 'find / -xdev \\( -name .env -o -name \"*.pem\" -o -name \"*.key\" \\) -not -path \"*/site-packages/*\" -not -path \"/usr/*\" -not -path \"/etc/*\" -not -path \"/proc/*\" 2>/dev/null | grep -q .'"
