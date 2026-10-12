@@ -135,6 +135,10 @@ class FakeIntegrations:
                 self.accepted.append({"kind": kind, "version": version, "accepted_at": dt.datetime(2026, 10, 5, tzinfo=dt.UTC).isoformat(), "via": via})
         return list(self.accepted)
 
+    def contact_by_phone(self, token: str, tenant_id: uuid.UUID, phone: str) -> dict[str, Any]:
+        self._note("contact_by_phone", token, phone)
+        return {"found": False, "holders": []}
+
     def policy_mine(self, token: str) -> list[dict[str, Any]]:
         self._note("policy_mine", token)
         return list(self.accepted)

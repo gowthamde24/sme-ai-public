@@ -1,0 +1,185 @@
+"""The files of "download my data" (job BN, ADR 0075): a zip of plain JSON and a README, made from what the database hands the caller.
+
+  person     what the account holds about the signed-in person (profile, workspaces and roles, the terms they accepted, the trail of their own actions, their own assistant chat, their exports and deletion requests)
+  workspace  the business's records, table by table, read with the OWNER's own token so row-level security decides what is in the file (an Owner reads their whole business; nobody else's)
+
+The zip is deterministic for the same data (sorted names, a fixed entry time = the generation time, JSON with sorted keys). A table that cannot be read is named in the manifest, never silently left out. Nothing
+here logs a row: counts and sizes only.
+"""
+
+from __future__ import annotations
+
+import hashlib
+import io
+import json
+import logging
+import uuid
+import zipfile
+from collections.abc import Callable
+from dataclasses import dataclass
+from datetime import datetime
+from typing import Any
+
+from app.privacy.repository import PrivacyRepository
+from app.tenancy.repository import RepositoryError, TokenRejected
+
+logger = logging.getLogger("app.privacy.export")
+
+MAX_ZIP_BYTES = 50 * 1024 * 1024  # the Storage bucket's own limit (migration 20261116090000)
+MAX_UNCOMPRESSED_BYTES = 200 * 1024 * 1024
+PAGE = 1000
+
+# Every business table the Owner can read, in the order they appear in the file. The integration test `test_bn_privacy_rights` fails if a tenant table is in neither list, so a new table cannot be forgotten.
+WORKSPACE_TABLES: tuple[str, ...] = (
+    "companies", "contacts", "products", "leads", "opportunities", "lead_labels", "lead_touches", "consent_events",
+    "enquiries", "requirements", "requirement_fields", "requirement_line_picks",
+    "price_lists", "price_list_versions", "price_list_items", "price_list_breaks", "item_types",
+    "quote_policy_versions", "quotes", "quote_lines", "order_policy_versions", "orders", "order_events",
+    "followup_policy_versions", "followup_drafts", "question_drafts", "call_requests",
+    "outbox_settings", "outbox_messages", "outbox_message_media", "outbox_events",
+    "store_settings", "store_visits", "scheduler_settings", "scheduler_runs", "visit_reminders",
+    "catalogue_items", "catalogue_photos",
+    "evidence", "evidence_links", "claims", "claim_reviews", "icp_config_versions", "mapper_config_versions", "import_batches", "import_rows",
+    "assistant_conversations", "assistant_messages", "assistant_reply_drafts",
+    "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
+    "data_exports", "erasure_requests", "memberships", "audit_events",
+)  # fmt: skip
+# the tables whose primary key is the workspace id itself (no `id` column)
+ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings"})
+
+
+@dataclass(frozen=True)
+class BuiltExport:
+    content: bytes
+    sha256: str
+    manifest: dict[str, Any]
+
+    @property
+    def size(self) -> int:
+        return len(self.content)
+
+
+class ExportTooLarge(Exception):
+    """The files would not fit in an export (the bucket's limit)."""
+
+
+def _json_bytes(value: Any) -> bytes:
+    return (json.dumps(value, ensure_ascii=False, indent=1, sort_keys=True, default=str) + "\n").encode("utf-8")
+
+
+def _zip(files: dict[str, bytes], generated_at: datetime) -> bytes:
+    stamp = (max(generated_at.year, 1980), generated_at.month, generated_at.day, generated_at.hour, generated_at.minute, generated_at.second)
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as archive:
+        for name in sorted(files):
+            info = zipfile.ZipInfo(name, date_time=stamp)
+            info.compress_type = zipfile.ZIP_DEFLATED
+            info.external_attr = 0o644 << 16
+            archive.writestr(info, files[name])
+    return buffer.getvalue()
+
+
+def _finish(files: dict[str, bytes], generated_at: datetime, manifest: dict[str, Any]) -> BuiltExport:
+    if sum(len(v) for v in files.values()) > MAX_UNCOMPRESSED_BYTES:
+        raise ExportTooLarge
+    content = _zip(files, generated_at)
+    if len(content) > MAX_ZIP_BYTES:
+        raise ExportTooLarge
+    return BuiltExport(content, hashlib.sha256(content).hexdigest(), manifest)
+
+
+PERSON_README = """YOUR DATA (a copy of what this service holds about you)
+
+Made on {generated_at} (UTC) at your request. The download link you were given worked for a few minutes and the file is deleted from our storage 24 hours after it was made.
+
+What is in this file (plain JSON; open it with any text editor):
+  profile.json            your account: name, e-mail, when it was made
+  workspaces.json         the businesses you belong to and your role in each
+  acceptances.json        the terms and privacy-notice versions you accepted, and when
+  calendar_feeds.json     the calendar feeds you made (no secret link is stored; only dates)
+  my_actions.json         the trail of your own actions in your businesses (when, what kind, which kind of record). It holds no customer details.
+  my_assistant_chat.json  what you typed to the assistant and what it answered
+  my_exports.json         your earlier data downloads
+  my_deletion_requests.json  any request to delete your account
+  manifest.json           the list of files and how many entries each holds
+
+What is NOT in this file: your business's own records (customers, quotes, orders). Those belong to the business; its Owner can download them from the workspace's privacy page. Backups are outside this file.
+
+If something here is wrong, or you want it corrected or erased, tell the business's Owner or use the privacy request form in the app. The service replies within 30 days.
+"""
+
+WORKSPACE_README = """YOUR BUSINESS'S DATA (a copy of the records of {workspace})
+
+Made on {generated_at} (UTC) at the Owner's request. The download link worked for a few minutes and the file is deleted from our storage 24 hours after it was made.
+
+Each file in tables/ is one table, as a JSON list, oldest first. Names, phone numbers and e-mail addresses of your customers are in contacts.json, companies.json and the message tables: treat the file as private.
+Where a record was erased on request or by your retention settings, its text reads erased:1 and the row, its dates and its numbers remain.
+manifest.json lists every table with its row count; a table marked "not_readable" could not be read with your permissions and is not in this file.
+
+Not in this file: the secret keys the system uses to recognise customers who asked us to stop (they are a one-way code, not data about a person), the files of your catalogue photos (their names are in catalogue_photos.json), and backups.
+"""
+
+
+def build_person_export(data: dict[str, Any], generated_at: datetime) -> BuiltExport:
+    parts = {
+        "profile.json": data.get("account") or {},
+        "workspaces.json": data.get("memberships") or [],
+        "acceptances.json": {"terms_at_sign_up": data.get("terms_at_sign_up"), "policies": data.get("policy_acceptances") or []},
+        "calendar_feeds.json": data.get("calendar_feeds") or [],
+        "my_actions.json": data.get("my_actions") or [],
+        "my_assistant_chat.json": data.get("my_assistant_chat") or [],
+        "my_exports.json": data.get("my_exports") or [],
+        "my_deletion_requests.json": data.get("my_deletion_requests") or [],
+    }
+    manifest = {
+        "scope": "person",
+        "generated_at": generated_at.isoformat(),
+        "files": {name: (len(v) if isinstance(v, list) else 1) for name, v in sorted(parts.items())},
+    }
+    files = {name: _json_bytes(value) for name, value in parts.items()}
+    files["manifest.json"] = _json_bytes(manifest)
+    files["README.txt"] = PERSON_README.format(generated_at=generated_at.strftime("%Y-%m-%d %H:%M")).encode("utf-8")
+    return _finish(files, generated_at, manifest)
+
+
+def build_workspace_export(
+    repository: PrivacyRepository,
+    token: str,
+    tenant_id: uuid.UUID,
+    tenant_name: str,
+    generated_at: datetime,
+    *,
+    tables: tuple[str, ...] = WORKSPACE_TABLES,
+    should_stop: Callable[[], bool] = lambda: False,
+) -> BuiltExport:
+    files: dict[str, bytes] = {}
+    counts: dict[str, Any] = {}
+    total = 0
+    for table in tables:
+        if should_stop():
+            raise ExportTooLarge
+        order = "tenant_id" if table in ORDER_BY_TENANT else "id"
+        rows: list[dict[str, Any]] = []
+        try:
+            offset = 0
+            while True:
+                page = repository.read_table_page(token, table, tenant_id, order, offset, PAGE)
+                rows.extend(page)
+                total += sum(len(json.dumps(r, default=str)) for r in page)
+                if total > MAX_UNCOMPRESSED_BYTES:
+                    raise ExportTooLarge
+                if len(page) < PAGE:
+                    break
+                offset += PAGE
+        except TokenRejected:
+            raise
+        except RepositoryError:
+            counts[table] = "not_readable"
+            logger.warning("export: a table could not be read: %s", table)
+            continue
+        counts[table] = len(rows)
+        files[f"tables/{table}.json"] = _json_bytes(rows)
+    manifest = {"scope": "workspace", "workspace": tenant_name, "workspace_id": str(tenant_id), "generated_at": generated_at.isoformat(), "tables": dict(sorted(counts.items()))}
+    files["manifest.json"] = _json_bytes(manifest)
+    files["README.txt"] = WORKSPACE_README.format(workspace=tenant_name, generated_at=generated_at.strftime("%Y-%m-%d %H:%M")).encode("utf-8")
+    return _finish(files, generated_at, manifest)

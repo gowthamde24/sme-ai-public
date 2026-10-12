@@ -174,3 +174,11 @@ class FakeStorage:
         self.calls.append(("remove", token, bucket, list(paths)))
         for p in paths:
             self.objects.pop((bucket, p), None)
+
+    def remove_checked(self, token: str, bucket: str, paths: list[str]) -> bool:
+        self.calls.append(("remove_checked", token, bucket, list(paths)))
+        if getattr(self, "fail_remove", False):
+            return False
+        for p in paths:
+            self.objects.pop((bucket, p), None)
+        return True

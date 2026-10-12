@@ -1,7 +1,9 @@
 import re
+from datetime import date
 from functools import lru_cache
+from typing import Any
 
-from pydantic import SecretStr
+from pydantic import SecretStr, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # Supabase Auth signs access tokens with ES256 (JWKS) by default; legacy projects use HS256.
@@ -131,6 +133,18 @@ class Settings(BaseSettings):
     # an acceptance of any other.
     terms_version: str = "2026-10-01"
     privacy_version: str = "2026-10-01"
+    # Job BN (ADR 0075): the date a new version binds (empty = at once), and whether a person who
+    # has not accepted the binding version is stopped at the workspace routes (403
+    # policy_acceptance_required). Off by default: switch it on when the first real version change
+    # is published.
+    terms_effective_from: date | None = None
+    privacy_effective_from: date | None = None
+    policy_enforce: bool = False
+
+    @field_validator("terms_effective_from", "privacy_effective_from", mode="before")
+    @classmethod
+    def _empty_date_is_none(cls, value: Any) -> Any:
+        return None if isinstance(value, str) and not value.strip() else value
 
     @property
     def cors_origins(self) -> list[str]:
