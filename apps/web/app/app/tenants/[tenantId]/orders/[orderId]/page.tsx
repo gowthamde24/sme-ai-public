@@ -7,7 +7,7 @@ import { ApiDownV2, BackLink } from "@/components/v2/app/parts";
 import { mutedText, pageMain } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 import { makeT } from "@/components/v2/app/words";
-import { wordsFor } from "@/i18n/app-words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
 import { EventForm } from "../event-form";
@@ -33,7 +33,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   const user = await requireUser();
   const { tenantId, orderId } = await params;
   const lang = await getLang();
-  const words = wordsFor(lang, ["orders."]);
+  const words = wordsFor(lang, ["orders.", "enq."]);
   const t = makeT(words);
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(orderId)) notFound();
 
@@ -43,7 +43,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   if (!ORDER_ROLES.includes(tenant.role))
     return (
@@ -59,7 +59,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   try {
     members = await fetchMembers(user.accessToken, tenantId); // names are a nicety: the order never depends on them

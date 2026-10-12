@@ -11,6 +11,9 @@ import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Company · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -35,6 +38,9 @@ export default async function CompanyPage({
   params,
   searchParams,
 }: PageProps<"/app/tenants/[tenantId]/companies/[companyId]">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["comp.", "ag.", "ws."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId, companyId } = await params;
   const query = await searchParams;
@@ -49,7 +55,7 @@ export default async function CompanyPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
 
   const rawCursor = pick(query.cursor);
@@ -87,35 +93,35 @@ export default async function CompanyPage({
   const section: "all" | "details" | "evidence" | "suggestions" = wanted === "evidence" || wanted === "suggestions" || wanted === "details" || wanted === "all" ? wanted : cursor ? "evidence" : "details";
   const here = `/app/tenants/${tenantId}/companies/${companyId}`;
   const parts = [
-    { key: "details", label: "Details", href: `${here}?section=details`, current: section === "details" },
-    { key: "evidence", label: "Evidence", href: `${here}?section=evidence`, current: section === "evidence" },
-    { key: "suggestions", label: claims && claims.length > 0 ? `Suggestions (${claims.length})` : "Suggestions", href: `${here}?section=suggestions`, current: section === "suggestions" },
+    { key: "details", label: t("comp.tab_details"), href: `${here}?section=details`, current: section === "details" },
+    { key: "evidence", label: t("comp.tab_evidence"), href: `${here}?section=evidence`, current: section === "evidence" },
+    { key: "suggestions", label: claims && claims.length > 0 ? t("comp.tab_suggestions_n", { n: claims.length }) : t("comp.tab_suggestions"), href: `${here}?section=suggestions`, current: section === "suggestions" },
   ];
 
   return (
-    <main className={pageMain}>
-      <BackLink href={`/app/tenants/${tenantId}?tab=companies`} label="All customers" />
+    <main className={pageMain} lang={lang}>
+      <BackLink href={`/app/tenants/${tenantId}?tab=companies`} label={t("comp.all_customers")} />
       <h1 className={pageH1}>{company.name}</h1>
 
-      {section !== "all" ? <SectionTabs label="Parts of this company" items={parts} /> : null}
+      {section !== "all" ? <SectionTabs label={t("comp.parts_of_this_company")} items={parts} /> : null}
       {section === "details" || section === "all" ? (
         <>
         <section aria-labelledby="summary-heading">
-          <h2 id="summary-heading" className={pageH2}>Company</h2>
+          <h2 id="summary-heading" className={pageH2}>{t("comp.company")}</h2>
           <dl className={kvList}>
-            <dt>Type</dt>
+            <dt>{t("comp.type")}</dt>
             <dd>{company.type}</dd>
-            <dt>Website</dt>
+            <dt>{t("comp.website")}</dt>
             <dd>{company.website ?? "—"}</dd>
-            <dt>Country</dt>
+            <dt>{t("comp.country")}</dt>
             <dd>{company.country ?? "—"}</dd>
-            <dt>City</dt>
+            <dt>{t("comp.city")}</dt>
             <dd>{company.city ?? "—"}</dd>
-            <dt>Industry</dt>
+            <dt>{t("comp.industry")}</dt>
             <dd>{company.industry ?? "—"}</dd>
-            <dt>Created</dt>
+            <dt>{t("comp.created")}</dt>
             <dd>{indiaDayText(company.created_at)}</dd>
-            <dt>Origin</dt>
+            <dt>{t("comp.origin")}</dt>
             <dd>{company.created_via}</dd>
           </dl>
         </section>

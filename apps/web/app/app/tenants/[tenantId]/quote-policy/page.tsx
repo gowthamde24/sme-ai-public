@@ -14,6 +14,9 @@ import { todayInIndia } from "../followups/page-parts";
 import { publishQuotePolicyAction } from "./quote-policy-actions";
 import { QuotePolicyForm } from "./quote-policy-form";
 import { QuotePolicyView } from "./quote-policy-view";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Quote policy · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -26,6 +29,9 @@ const ROLES = ["owner", "admin"];
  * sentence and nothing else: no list and no form. The page makes ONE new id per render for the form.
  */
 export default async function QuotePolicyPage({ params }: PageProps<"/app/tenants/[tenantId]/quote-policy">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["qp."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -36,13 +42,13 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   if (!ROLES.includes(tenant.role))
     return (
-      <main className={pageMain}>
-        <h1 className={pageH1}>The quote policy</h1>
-        <p className={mutedText}>Only an owner or an admin can see and publish the quote policy.</p>
+      <main className={pageMain} lang={lang}>
+        <h1 className={pageH1}>{t("qp.the_quote_policy")}</h1>
+        <p className={mutedText}>{t("qp.only_an_owner_or_an_admin")}</p>
       </main>
     );
 
@@ -51,7 +57,7 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
     versions = await fetchQuotePolicyVersions(user.accessToken, tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const today = todayInIndia(new Date());
   // A new version cannot start before today or before the newest published version (the database decides again).
@@ -60,22 +66,22 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
   const form =
     user.aal !== "aal2" ? (
       <p role="note" className={noteBox}>
-        Publishing a quote policy needs your authenticator app.{" "}
+        {t("qp.mfa_publishing")}{" "}
         <Link href="/app/security" className={link}>
-          Set it up on the Security page
+          {t("qp.set_it_up_on_the_security")}
         </Link>
-        , then sign in again with its code.
+        {t("qp.mfa_b")}
       </p>
     ) : (
       <div className={spaceTop}>
-        <AddButton label="Publish a new version">
+        <AddButton label={t("qp.publish_a_new_version")}>
           <QuotePolicyForm action={publishQuotePolicyAction.bind(null, tenantId)} policyId={crypto.randomUUID()} today={today} minDate={minDate} />
         </AddButton>
       </div>
     );
   return (
-    <main className={pageMain}>
-      <QuotePolicyView tabs={<CatalogueTabs tenantId={tenantId} role={tenant.role} current="quote-policy" />} versions={versions} today={today} form={form} />
+    <main className={pageMain} lang={lang}>
+      <QuotePolicyView words={words} tabs={<CatalogueTabs tenantId={tenantId} role={tenant.role} current="quote-policy" />} versions={versions} today={today} form={form} />
     </main>
   );
 }

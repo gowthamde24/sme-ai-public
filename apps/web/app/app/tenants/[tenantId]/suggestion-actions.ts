@@ -15,6 +15,8 @@ import {
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { serverT } from "@/i18n/server-t";
+import { makeT, type Say } from "@/components/v2/app/words";
 
 export type ReviewActionState = { ok?: boolean; error?: string; message?: string } | undefined;
 
@@ -46,14 +48,15 @@ export async function reviewClaimAction(
   _prev: ReviewActionState,
   formData: FormData,
 ): Promise<ReviewActionState> {
+  const t = await serverT(["ws."]);
   if (!isCanonicalUuid(targetId) || !TARGETS.includes(target))
-    return { ok: false, error: "This suggestion is not available." };
+    return { ok: false, error: t("ws.this_suggestion_is_not_available") };
   return submitReview(
     tenantId,
     claimId,
     countsTowardScore,
     formData,
-    `/app/tenants/${tenantId}/${target}/${targetId}`,
+    `/app/tenants/${tenantId}/${target}/${targetId}`, t,
   );
 }
 
@@ -65,12 +68,13 @@ export async function reviewQueueClaimAction(
   _prev: ReviewActionState,
   formData: FormData,
 ): Promise<ReviewActionState> {
+  const t = await serverT(["ws."]);
   return submitReview(
     tenantId,
     claimId,
     countsTowardScore,
     formData,
-    `/app/tenants/${tenantId}/suggestions`,
+    `/app/tenants/${tenantId}/suggestions`, t,
   );
 }
 
@@ -79,21 +83,21 @@ async function submitReview(
   claimId: string,
   countsTowardScore: boolean,
   formData: FormData,
-  revalidate: string,
+  revalidate: string, t: Say = makeT(),
 ): Promise<ReviewActionState> {
   const user = await requireUser();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(claimId))
-    return { ok: false, error: "This suggestion is not available." };
+    return { ok: false, error: t("ws.this_suggestion_is_not_available") };
   const id = field(formData, "review_id");
   if (!isCanonicalUuid(id))
-    return { ok: false, error: "This form is out of date. Reload the page and try again." };
+    return { ok: false, error: t("ws.this_form_is_out_of_date") };
 
   const decision = field(formData, "decision");
   let input: ReviewInput;
   if (decision === "accepted") {
     const confidence = field(formData, "confidence");
     if (!(REVIEW_CONFIDENCES as readonly string[]).includes(confidence))
-      return { ok: false, error: "Choose how confident you are: low, medium or high." };
+      return { ok: false, error: t("ws.choose_how_confident_you_are_low") };
     input = { id, decision, confidence: confidence as ReviewConfidence };
   } else if (decision === "rejected") {
     // a rejection needs no reason; one that is given must be one of the closed codes
@@ -101,9 +105,9 @@ async function submitReview(
     if (reason === "") input = { id, decision };
     else if ((REVIEW_REASONS as readonly string[]).includes(reason))
       input = { id, decision, reason_code: reason as ReviewReason };
-    else return { ok: false, error: "That reason is not one of the choices." };
+    else return { ok: false, error: t("ws.that_reason_is_not_one_of") };
   } else {
-    return { ok: false, error: "Choose accept or reject." };
+    return { ok: false, error: t("ws.choose_accept_or_reject") };
   }
 
   try {
@@ -112,18 +116,18 @@ async function submitReview(
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError) {
       if (error.status === 403)
-        return { ok: false, error: "Only an owner or admin can review suggestions." };
-      if (error.status === 404) return { ok: false, error: "This suggestion is not available." };
+        return { ok: false, error: t("ws.only_an_owner_or_admin_can") };
+      if (error.status === 404) return { ok: false, error: t("ws.this_suggestion_is_not_available") };
       if (error.status === 409)
-        return { ok: false, error: "This form is out of date. Reload the page and try again." };
+        return { ok: false, error: t("ws.this_form_is_out_of_date") };
       if (error.status === 422)
         return {
           ok: false,
           error:
-            "That decision is not allowed for this suggestion. Medium and high need supporting evidence: choose Low, or reject it.",
+            t("ws.that_decision_is_not_allowed_for"),
         };
     }
-    return { ok: false, error: "Could not save the review. Try again." };
+    return { ok: false, error: t("ws.could_not_save_the_review_try") };
   }
 
   revalidatePath(revalidate);
@@ -132,8 +136,8 @@ async function submitReview(
     message:
       decision === "accepted"
         ? countsTowardScore
-          ? "Accepted. It now counts toward the score."
-          : "Accepted and recorded as checked by a person. This kind of note is not part of any score yet."
-        : "Rejected.",
+          ? t("ws.accepted_counts")
+          : t("ws.accepted_noscore")
+        : t("ws.rejected_done"),
   };
 }

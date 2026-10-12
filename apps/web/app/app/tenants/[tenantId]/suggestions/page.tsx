@@ -8,6 +8,9 @@ import { requireUser } from "@/lib/auth/session";
 import { ReviewScreen } from "../review-screen";
 import { LeadsTabs } from "@/components/v2/app/parts";
 import { alertBox, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Review suggestions · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -21,6 +24,9 @@ const ADMIN_ROLES = ["owner", "admin"];
  * until a person accepts it here.
  */
 export default async function SuggestionsPage({ params }: PageProps<"/app/tenants/[tenantId]/suggestions">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["sug.", "ag.", "ws."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
@@ -32,9 +38,9 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <main className={pageMain}>
+      <main className={pageMain} lang={lang}>
         <p role="alert" className={alertBox}>
-          Could not load this workspace from the API. Try again shortly.
+          {t("sug.could_not_load_this_workspace_from")}
         </p>
       </main>
     );
@@ -56,14 +62,12 @@ export default async function SuggestionsPage({ params }: PageProps<"/app/tenant
   );
 
   return (
-    <main className={pageMain}>
-      <h1 className={pageH1}>Review suggestions</h1>
+    <main className={pageMain} lang={lang}>
+      <h1 className={pageH1}>{t("sug.review_suggestions")}</h1>
       <LeadsTabs tenantId={tenantId} role={tenant.role} current="suggestions" />
       <p className={mutedText}>
-        An agent only suggests. Each suggestion shows the quote it rests on and where it came from, as plain text. The quote was
-        checked by the agent runtime, not by the database. A suggestion counts toward a score only after an owner or admin
-        accepts it; the newest decision on a suggestion wins.
-        {!canReview && " Only an owner or admin can accept or reject."}
+        {t("sug.intro")}
+        {!canReview && " " + t("sug.only_an_owner_or_admin_can")}
       </p>
       <ReviewScreen tenantId={tenantId} claims={claims} canReview={canReview} reviewIds={reviewIds} />
     </main>

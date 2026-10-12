@@ -1,5 +1,5 @@
 # Security
-Signed in as owner@example.test . Session: verified with your authenticator .
+Signed in as owner@example.test. Session: verified with your authenticator .
 {label="Authenticator app"}
 ## Authenticator app
 On. You type a code from your app after your password.

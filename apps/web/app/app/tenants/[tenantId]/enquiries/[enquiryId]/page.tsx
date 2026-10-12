@@ -16,8 +16,8 @@ import { QuotePanel, type ManualQuoteData } from "../quote-panel";
 import { recordQuoteSentAction } from "../sent-on-whatsapp-actions";
 import { loadWhatsappView, type WhatsappView } from "../whatsapp-view";
 import { RequirementPanel } from "../requirement-panel";
-import { makeT, type Words } from "@/components/v2/app/words";
-import { wordsFor } from "@/i18n/app-words";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Enquiry · SME AI Revenue Engine" };
@@ -40,7 +40,7 @@ function pick(value: string | string[] | undefined): string | undefined {
  */
 export default async function EnquiryPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/enquiries/[enquiryId]">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["enq.", "orders."]);
+  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp."]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId, enquiryId } = await params;
@@ -57,7 +57,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   // A Viewer reads no price and no quote (the API refuses them), so nothing is asked for them. A quote screen that cannot load does not take the enquiry down.
   const canQuote = WRITE_ROLES.includes(tenant.role);

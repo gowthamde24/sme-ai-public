@@ -10,10 +10,13 @@ import { CreateDraftForm } from "../../../followups/create-draft-form";
 import { createDraftAction, recordTouchAction } from "../../../followups/followup-actions";
 import { indiaNowLocal } from "../../../followups/followup-logic";
 import { LeadFollowupView } from "../../../followups/lead-followup-view";
-import { FOLLOWUP_ROLES, NOTHING_SENT } from "../../../followups/page-parts";
+import { FOLLOWUP_ROLES } from "../../../followups/page-parts";
 import { ApiDownV2, NoticeV2, NotShownV2 } from "@/components/v2/app/parts";
 import { TouchForm } from "../../../followups/touch-form";
 import { backLink, link, pageMain } from "@/components/v2/app/ui";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Follow-up · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -28,6 +31,9 @@ function pick(value: string | string[] | undefined): string | undefined {
  * nothing is asked of the API for them). Unknown, malformed and other workspaces' ids produce the SAME not-found page. The page records what a person did and shows closed draft text: it sends nothing.
  */
 export default async function LeadFollowupPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/leads/[leadId]/followup">) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["lead.", "fu."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId, leadId } = await params;
   const query = await searchParams;
@@ -40,12 +46,12 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ApiDownV2 />
+      <ApiDownV2 words={await partsWords()} />
     );
   }
   if (!FOLLOWUP_ROLES.includes(tenant.role))
     return (
-      <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title="Follow-up" message="Follow-ups are shown to owners, admins and sales users." />
+      <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("lead.follow_up")} message={t("lead.follow_ups_are_shown_to_owners")} />
     );
 
   // A channel in the address is honoured; anything else (or nothing) leaves the choice to the API, which answers for the lead's default channel and says which.
@@ -58,7 +64,7 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ApiDownV2 />
+      <ApiDownV2 words={await partsWords()} />
     );
   }
 
@@ -68,11 +74,11 @@ export default async function LeadFollowupPage({ params, searchParams }: PagePro
   const draftForm = <CreateDraftForm key={`draft-${data.channel}`} action={createDraftAction.bind(null, tenantId, leadId)} draftId={crypto.randomUUID()} channel={data.channel} />;
   const touchForm = <TouchForm key={`touch-${data.channel}`} action={recordTouchAction.bind(null, tenantId, leadId)} touchId={crypto.randomUUID()} maxNow={maxNow} channel={data.channel} />;
   return (
-    <main className={pageMain}>
+    <main className={pageMain} lang={lang}>
       <p>
-        <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>← Lead</Link> · <Link href={`/app/tenants/${tenantId}/followups`} className={link}>Follow-ups due</Link>
+        <Link href={`/app/tenants/${tenantId}/leads/${leadId}`} className={backLink}>{t("lead.lead")}</Link> · <Link href={`/app/tenants/${tenantId}/followups`} className={link}>{t("lead.follow_ups_due")}</Link>
       </p>
-      <NoticeV2>{NOTHING_SENT}</NoticeV2>
+      <NoticeV2>{t("fu.nothing_sent")}</NoticeV2>
       <LeadFollowupView tenantId={tenantId} leadId={leadId} data={data} role={tenant.role} userId={user.id} aal={user.aal} ids={ids} draftForm={draftForm} touchForm={touchForm} />
     </main>
   );

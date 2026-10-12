@@ -2,11 +2,13 @@
 
 import { startTransition, useActionState, useState } from "react";
 
-import { BASES, BASIS_LABELS, CHANNELS, CHANNEL_LABELS, EVIDENCE_KINDS, EVIDENCE_LABELS, STATUS_LABELS } from "@/lib/api/consent";
+import { BASES, CHANNELS, EVIDENCE_KINDS } from "@/lib/api/consent";
 
 import { LocalTime } from "../../../../../local-time";
 import type { ConsentFormState } from "./actions";
 import { alertBox, btnMain, fieldInput, fieldLabel, fieldsetPlain, formCardWide, legendText, mutedText, okBox, radioRow } from "@/components/v2/app/ui";
+import { Rich } from "@/components/v2/app/rich";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Action = (prev: ConsentFormState, formData: FormData) => Promise<ConsentFormState>;
 
@@ -14,7 +16,8 @@ type Action = (prev: ConsentFormState, formData: FormData) => Promise<ConsentFor
  * One consent entry. It writes down what the person says and does not check it. After a press it says who recorded it (the signed-in person) and when (the moment this screen sent it), and shows the
  * three states the API holds now. No word here says the entry is valid, lawful or enough, and no number or address is shown.
  */
-export function ConsentForm({ action }: { action: Action }) {
+export function ConsentForm({ action, words }: { action: Action; words?: Words; }) {
+  const t = makeT(words);
   // NOTHING is pre-selected: the person must choose the channel, the status and, for "granted", the basis and the kind of evidence. Pressing Save cannot record anything they did not choose.
   // Every choice is held in state and the form is submitted through onSubmit, not through an `action` prop (React resets the fields of an `action` form when it finishes): a failed submit keeps exactly
   // what the person chose, and a saved entry returns the form to "nothing chosen". The browser's own validation still runs first, so a missing required choice never reaches the action.
@@ -41,65 +44,65 @@ export function ConsentForm({ action }: { action: Action }) {
         const data = new FormData(event.currentTarget);
         startTransition(() => formAction(data));
       }}
-      className={formCardWide} aria-label="Record consent">
+      className={formCardWide} aria-label={t("cont.record_consent")}>
       <label htmlFor="consent-channel" className={fieldLabel}>
-        Channel
+        {t("cont.channel")}
       </label>
       <select id="consent-channel" name="channel" required value={channel} onChange={(e) => setChannel(e.target.value)} disabled={pending} className={fieldInput}>
         <option value="" disabled>
-          Choose one
+          {t("cont.choose_one")}
         </option>
         {CHANNELS.map((c) => (
           <option key={c} value={c}>
-            {CHANNEL_LABELS[c]}
+            {t(`cont.channel.${c}`)}
           </option>
         ))}
       </select>
       <fieldset disabled={pending} className={fieldsetPlain}>
-        <legend className={legendText}>What are you writing down?</legend>
+        <legend className={legendText}>{t("cont.what_are_you_writing_down")}</legend>
         <label className={radioRow}>
-          <input type="radio" name="status" value="granted" required checked={status === "granted"} onChange={() => setStatus("granted")} /> {STATUS_LABELS.granted}
+          <input type="radio" name="status" value="granted" required checked={status === "granted"} onChange={() => setStatus("granted")} /> {t("cont.status.granted")}
         </label>
         <label className={radioRow}>
-          <input type="radio" name="status" value="withdrawn" required checked={status === "withdrawn"} onChange={() => setStatus("withdrawn")} /> {STATUS_LABELS.withdrawn}
+          <input type="radio" name="status" value="withdrawn" required checked={status === "withdrawn"} onChange={() => setStatus("withdrawn")} /> {t("cont.status.withdrawn")}
         </label>
       </fieldset>
       {status === "granted" && (
         <>
           <label htmlFor="consent-basis" className={fieldLabel}>
-        Basis, as you describe it
+        {t("cont.basis_as_you_describe_it")}
       </label>
           <select id="consent-basis" name="basis" required value={basis} onChange={(e) => setBasis(e.target.value)} disabled={pending} className={fieldInput}>
             <option value="" disabled>
-              Choose one
+              {t("cont.choose_one")}
             </option>
             {BASES.map((b) => (
               <option key={b} value={b}>
-                {BASIS_LABELS[b]}
+                {t(`cont.basis.${b}`)}
               </option>
             ))}
           </select>
           <label htmlFor="consent-kind" className={fieldLabel}>
-        Kind of evidence
+        {t("cont.kind_of_evidence")}
       </label>
           <select id="consent-kind" name="evidence_kind" required value={kind} onChange={(e) => setKind(e.target.value)} disabled={pending} className={fieldInput}>
             <option value="" disabled>
-              Choose one
+              {t("cont.choose_one")}
             </option>
             {EVIDENCE_KINDS.map((k) => (
               <option key={k} value={k}>
-                {EVIDENCE_LABELS[k]}
+                {t(`cont.evidence.${k}`)}
               </option>
             ))}
           </select>
           <label htmlFor="consent-label" className={fieldLabel}>
-        A short label for your note
+        {t("cont.a_short_label_for_your_note")}
       </label>
           <input id="consent-label" name="evidence_label" required value={label} onChange={(e) => setLabel(e.target.value)} maxLength={96} autoComplete="off" placeholder="call-2026-10-08" pattern="[A-Za-z0-9._#/\-]{1,96}" disabled={pending} className={fieldInput} />
-          <p className={mutedText}>Letters, digits and . _ # / - only. No names, numbers or addresses: it is only a label so you can find your own note later.</p>
+          <p className={mutedText}>{t("cont.letters_digits_and_only_no_names")}</p>
         </>
       )}
-      <p className={mutedText}>This only writes down what you tell us. It does not check it, and it is not legal advice. If you are not sure, leave it as it is.</p>
+      <p className={mutedText}>{t("cont.this_only_writes_down_what_you")}</p>
       {state?.error && (
         <p role="alert" className={alertBox}>
           {state.error}
@@ -108,15 +111,15 @@ export function ConsentForm({ action }: { action: Action }) {
       {state?.ok && state.channel && state.status && state.at && state.consents && (
         <div role="status" className={okBox}>
           <p>
-            Recorded: {CHANNEL_LABELS[state.channel]}, {STATUS_LABELS[state.status].toLowerCase()}. Recorded by {state.by} at <LocalTime iso={state.at} /> (the time this screen sent it). The system keeps it in the consent history.
+            <Rich t={t} k="cont.recorded_line" vars={{ channel: t(`cont.channel.${state.channel}`), status: t(`cont.status.${state.status}`).toLowerCase(), by: state.by ?? "" }} with={{ time: <LocalTime iso={state.at} /> }} />
           </p>
           <p>
-            Now: {CHANNELS.map((c) => `${CHANNEL_LABELS[c]} ${STATUS_LABELS[state.consents![c]].toLowerCase()}`).join(" · ")}.
+            {t("cont.now_line", { list: CHANNELS.map((c) => `${t(`cont.channel.${c}`)} ${t(`cont.status.${state.consents![c]}`).toLowerCase()}`).join(" · ") })}
           </p>
         </div>
       )}
       <button type="submit" className={btnMain} disabled={pending}>
-        {pending ? "Saving..." : "Record this"}
+        {pending ? t("cont.saving") : t("cont.record_this")}
       </button>
     </form>
   );

@@ -119,7 +119,7 @@ export async function pickProductAction(
     return { ok: false, error: describe(error, t) };
   }
   revalidatePath(page(tenantId, enquiryId));
-  return { ok: true, message: `Line ${line}: product chosen.` };
+  return { ok: true, message: t("enq.line_picked", { n: line }) };
 }
 
 /** Make a DRAFT quote. The figures come from the engine and are checked by the database; nothing is sent and nothing is approved. */

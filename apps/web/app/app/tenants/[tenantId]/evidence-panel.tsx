@@ -1,18 +1,13 @@
 import Link from "next/link";
 import { indiaDayText } from "@/components/v2/app/visits/dates";
 
-import {
-  type EvidenceItem,
-  type EvidencePage,
-  type EvidenceTarget,
-  KIND_LABELS,
-  referenceText,
-} from "@/lib/api/evidence";
+import { type EvidenceItem, type EvidencePage, type EvidenceTarget, referenceText } from "@/lib/api/evidence";
 
 import { LocalTime } from "../../local-time";
 import { AddEvidenceForm } from "./add-evidence-form";
 import { addEvidenceAction } from "./evidence-actions";
 import { alertBox, bodyText, kvList, link, listItemCard, listPlain, mutedText, pageH2, pageH3, plainText, spaceTop } from "@/components/v2/app/ui";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 /**
  * The Evidence section of a company / lead page.
@@ -31,7 +26,7 @@ type Props = {
   page: EvidencePage | null;
   cursor: string | null;
   canWrite: boolean;
-  formId: string;
+  formId: string; words?: Words;
 };
 
 function day(iso: string): string {
@@ -45,28 +40,28 @@ export function EvidencePanel({
   page,
   cursor,
   canWrite,
-  formId,
+  formId, words,
 }: Props) {
+  const t = makeT(words);
   const here = `/app/tenants/${tenantId}/${target}/${targetId}`;
   return (
     <section aria-labelledby="evidence-heading">
       <h2 id="evidence-heading" className={pageH2}>
-        Evidence
+        {t("ws.evidence")}
       </h2>
       <p className={mutedText}>
-        Sources are shown as plain text. They are never opened, fetched or
-        previewed by this application.
+        {t("ws.sources_are_shown_as_plain_text")}
       </p>
       {page === null ? (
         <p role="alert" className={alertBox}>
-          Could not load the evidence from the API. Try again shortly.
+          {t("ws.could_not_load_the_evidence_from")}
         </p>
       ) : page.items.length === 0 ? (
-        <p className={bodyText}>{cursor ? "No more evidence." : "No evidence yet."}</p>
+        <p className={bodyText}>{cursor ? t("ws.no_more_evidence") : t("ws.no_evidence_yet")}</p>
       ) : (
         <ul className={listPlain}>
           {page.items.map((item) => (
-            <EvidenceRow key={item.linkId} item={item} />
+            <EvidenceRow words={words} key={item.linkId} item={item} />
           ))}
         </ul>
       )}
@@ -77,23 +72,23 @@ export function EvidencePanel({
             rel="next"
             className={link}
           >
-            Load more
+            {t("ws.load_more")}
           </Link>
         </p>
       )}
       {cursor && (
         <p>
           <Link href={here} className={link}>
-            Back to the first page
+            {t("ws.back_to_the_first_page")}
           </Link>
         </p>
       )}
       {canWrite && (
         <>
           <h3 id="add-evidence-heading" className={pageH3}>
-            Add evidence
+            {t("ws.add_evidence")}
           </h3>
-          <AddEvidenceForm
+          <AddEvidenceForm words={words}
             action={addEvidenceAction.bind(null, tenantId, target, targetId)}
             formId={formId}
           />
@@ -103,29 +98,30 @@ export function EvidencePanel({
   );
 }
 
-function EvidenceRow({ item }: { item: EvidenceItem }) {
+function EvidenceRow({ item, words }: { item: EvidenceItem; words?: Words; }) {
+  const t = makeT(words);
   return (
     <li className={listItemCard}>
       <dl className={kvList}>
-        <dt>Kind</dt>
-        <dd>{KIND_LABELS[item.kind]}</dd>
-        <dt>Provider</dt>
+        <dt>{t("ws.kind")}</dt>
+        <dd>{t(`ws.evkind.${item.kind}`)}</dd>
+        <dt>{t("ws.provider")}</dt>
         <dd>{item.provider}</dd>
-        <dt>Retrieved</dt>
+        <dt>{t("ws.retrieved")}</dt>
         <dd>
           <LocalTime iso={item.retrievedAt} />
         </dd>
         {item.publishedAt && (
           <>
-            <dt>Published</dt>
+            <dt>{t("ws.published")}</dt>
             <dd>{day(item.publishedAt)}</dd>
           </>
         )}
-        <dt>Added by</dt>
+        <dt>{t("ws.added_by")}</dt>
         <dd>{item.createdVia}</dd>
         {item.url && (
           <>
-            <dt>URL</dt>
+            <dt>{t("ws.url")}</dt>
             <dd className={plainText} data-evidence="url">
               {item.url}
             </dd>
@@ -133,7 +129,7 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
         )}
         {item.reference && (
           <>
-            <dt>Reference</dt>
+            <dt>{t("ws.reference")}</dt>
             <dd className={plainText} data-evidence="reference">
               {referenceText(item)}
             </dd>
@@ -141,7 +137,7 @@ function EvidenceRow({ item }: { item: EvidenceItem }) {
         )}
         {item.snippet && (
           <>
-            <dt>Snippet</dt>
+            <dt>{t("ws.snippet")}</dt>
             <dd className={plainText} data-evidence="snippet">
               {item.snippet}
             </dd>

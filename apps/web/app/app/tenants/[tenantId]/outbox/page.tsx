@@ -15,6 +15,7 @@ import { appT } from "@/i18n/app";
 import { approveFromOutboxAction, dispatchNowAction, outboxDetailAction, editFromOutboxAction, rejectFromOutboxAction } from "./outbox-actions";
 import { readOutbox } from "./outbox-data";
 import { outboxWords } from "./outbox-words";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Outbox · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -41,7 +42,7 @@ export default async function OutboxPage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const t = appT(lang);

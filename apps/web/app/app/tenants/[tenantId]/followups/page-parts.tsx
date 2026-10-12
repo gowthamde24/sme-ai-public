@@ -1,7 +1,7 @@
 
 export const FOLLOWUP_ROLES = ["owner", "admin", "sales"];
 export const NOTHING_SENT =
-  "Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself.";
+  "Follow-ups are drafts for a person to send outside this system. This system sends nothing: it keeps records of what you did and shows the closed text you copy yourself."; // the words are the dictionary key fu.nothing_sent
 
 /** Today's date in India. */
 export function todayInIndia(now: Date): string {

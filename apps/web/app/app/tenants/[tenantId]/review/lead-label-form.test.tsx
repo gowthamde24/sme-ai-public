@@ -44,7 +44,7 @@ describe("LeadLabelForm", () => {
   });
 
   it("a double click is two submissions of the same attempt, never two different ids", async () => {
-    labelLeadAction.mockResolvedValue({ ok: true, message: "Lead marked as maybe." });
+    labelLeadAction.mockResolvedValue({ ok: true, message: "Lead marked as Maybe." });
     render(<LeadLabelForm tenantId={TENANT} leadId={LEAD} labelId={LABEL_ID} />);
     const maybe = screen.getByRole("button", { name: "Maybe" });
     fireEvent.click(maybe);

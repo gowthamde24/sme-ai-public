@@ -32,7 +32,7 @@ describe("CustomerForm", () => {
     expect(status.textContent).not.toMatch(/90000|@/);
   });
   it("after a refusal every field still shows what was typed", async () => {
-    await press({ ok: false, error: "That e-mail is already used by another person." });
+    await press({ ok: false, error: "Another person already has that e-mail." });
     await screen.findByRole("alert");
     expect(screen.getByLabelText("Customer's name")).toHaveValue("Synthetic Asha");
     expect(screen.getByLabelText("WhatsApp or phone number")).toHaveValue("+00 90000 20001");
@@ -41,7 +41,7 @@ describe("CustomerForm", () => {
     const FRESH = "77777777-7777-4777-8777-777777777777";
     const action = vi
       .fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>()
-      .mockResolvedValueOnce({ ok: false, error: "That e-mail is already used by another person.", nextContactId: FRESH })
+      .mockResolvedValueOnce({ ok: false, error: "Another person already has that e-mail.", nextContactId: FRESH })
       .mockResolvedValueOnce({ ok: true, leadId: IDS.lead, contactId: FRESH, name: "Synthetic Asha" });
     const { container } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
     fireEvent.change(screen.getByLabelText("Customer's name"), { target: { value: "Synthetic Asha" } });
@@ -50,7 +50,7 @@ describe("CustomerForm", () => {
     fireEvent.change(screen.getByLabelText("Shop or business name (optional)"), { target: { value: "Asha Silks" } });
     fireEvent.change(screen.getByLabelText("How did the enquiry come?"), { target: { value: "whatsapp" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
-    expect(await screen.findByRole("alert")).toHaveTextContent("That e-mail is already used by another person.");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Another person already has that e-mail.");
     // what was typed is all still there; the person only has to fix the e-mail
     expect(screen.getByLabelText("Customer's name")).toHaveValue("Synthetic Asha");
     expect(screen.getByLabelText("E-mail (optional)")).toHaveValue("dup@x.example.test");
@@ -96,7 +96,7 @@ describe("CustomerForm", () => {
     });
     it("after a duplicate e-mail swapped the contact id, new page ids still win (the swapped id is not carried over)", async () => {
       const FRESH = "77777777-7777-4777-8777-777777777777";
-      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "That e-mail is already used by another person.", nextContactId: FRESH }));
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "Another person already has that e-mail.", nextContactId: FRESH }));
       const { container, rerender } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
       type();
       await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
@@ -145,7 +145,7 @@ describe("CustomerForm", () => {
     });
     it("a re-render with the SAME ids keeps what the person typed and the swapped contact id", async () => {
       const FRESH = "77777777-7777-4777-8777-777777777777";
-      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "That e-mail is already used by another person.", nextContactId: FRESH }));
+      const action = vi.fn<(prev: CustomerFormState, data: FormData) => Promise<CustomerFormState>>(async () => ({ ok: false, error: "Another person already has that e-mail.", nextContactId: FRESH }));
       const { container, rerender } = render(<CustomerForm action={action} tenantId={T} ids={IDS} />);
       type();
       await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));

@@ -31,7 +31,7 @@ describe("ProductForm", () => {
     expect(screen.getByRole("link", { name: "See the products" })).toHaveAttribute("href", `/app/tenants/${T}?tab=products`);
   });
   it("an error is an alert of our wording and the form stays", async () => {
-    await press({ ok: false, error: "That code is already used by another product, or this form was already used. Change the code or reload the page." });
+    await press({ ok: false, error: "Another product already has that code, or this form was already used. Change the code or reload the page." });
     expect(await screen.findByRole("alert")).toHaveTextContent("already used");
     expect(screen.getByRole("button", { name: "Add this product" })).toBeInTheDocument();
   });

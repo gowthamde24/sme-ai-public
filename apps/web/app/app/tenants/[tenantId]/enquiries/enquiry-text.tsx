@@ -22,7 +22,7 @@ export function EnquiryText({ body, fields, words }: { body: string; fields: Req
         s.ids.length === 0 ? (
           <span key={i}>{s.text}</span>
         ) : (
-          <mark key={i} className={markClass} title={`Cited by: ${[...new Set(s.ids.map((id) => labelOf.get(id)))].join(", ")}`}>
+          <mark key={i} className={markClass} title={t("enq.cited_by", { list: [...new Set(s.ids.map((id) => labelOf.get(id)))].join(", ") })}>
             {s.text}
           </mark>
         ),

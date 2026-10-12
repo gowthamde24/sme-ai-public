@@ -9,7 +9,7 @@ import { ApiDownV2, PageTop, SegmentLinks } from "@/components/v2/app/parts";
 import { btnMain, cellRight, figureRow, link, metaLine, mutedText, pageH1, pageMain, pillAmber, pillBrand, pillGreen, spaceTop, surface } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
 import { makeT } from "@/components/v2/app/words";
-import { wordsFor } from "@/i18n/app-words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
 import { LocalTime } from "../../../local-time";
@@ -42,7 +42,7 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   if (!ORDER_ROLES.includes(tenant.role))
     return (
@@ -57,7 +57,7 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
     page = await fetchOrders(user.accessToken, tenantId, { cursor: pick(query.cursor) ?? null });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const filter = FILTERS.some((f) => f.key === pick(query.filter)) ? (pick(query.filter) as FilterKey) : "all";
   const shown = page.items.filter((o) => filter === "all" || (filter === "open" && o.outcome === "open") || (filter === "closed" && o.outcome !== "open") || (filter === "held" && moneyHeld(o) > 0));

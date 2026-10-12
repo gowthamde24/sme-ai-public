@@ -12,6 +12,7 @@ import { fetchLeadContactId } from "@/lib/api/lead-contact";
 import { requireUser } from "@/lib/auth/session";
 import { ContactLead } from "@/components/v2/app/contact/ContactLead";
 import { getLang } from "@/i18n/get-lang";
+import { wordsFor } from "@/i18n/app-words";
 
 import { EnquiriesPanel } from "../../enquiries/enquiries-panel";
 import { indiaNowLocal } from "../../followups/followup-logic";
@@ -23,6 +24,7 @@ import { recordSentMessageAction } from "./sent-message-actions";
 import { SentMessageForm } from "./sent-message-form";
 import { foldBody, foldCard, foldSummary, kvList, link, mutedText, pageH1, pageH2, pageMain, pageSub } from "@/components/v2/app/ui";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Lead · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -62,7 +64,7 @@ export default async function LeadPage({
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     return (
-      <ApiDownV2 />
+      <ApiDownV2 words={await partsWords()} />
     );
   }
 
@@ -115,6 +117,7 @@ export default async function LeadPage({
   const here = `/app/tenants/${tenantId}/leads/${leadId}`;
   const lang = await getLang();
   const t = appT(lang);
+  const words = wordsFor(lang, ["lead.", "ag.", "enq.", "fu.", "ws."]);
   const parts = [
     { key: "overview", label: t("lead.tab.overview"), href: `${here}?section=overview`, current: section === "overview" },
     { key: "evidence", label: t("lead.tab.evidence"), href: `${here}?section=evidence`, current: section === "evidence" },
@@ -183,6 +186,7 @@ export default async function LeadPage({
         </section>
 
         <EnquiriesPanel
+          words={words}
           tenantId={tenantId}
           leadId={leadId}
           enquiries={enquiries}
@@ -196,6 +200,7 @@ export default async function LeadPage({
             <div className={foldBody}>
               <p className={mutedText}>{t("lead.sent.hint")}</p>
             <SentMessageForm
+              words={words}
               key={sentId}
               action={recordSentMessageAction.bind(null, tenantId, leadId)}
               tenantId={tenantId}
@@ -212,6 +217,7 @@ export default async function LeadPage({
       {section === "evidence" || section === "all" ? (
         <>
         <EvidencePanel
+          words={words}
           tenantId={tenantId}
           target="leads"
           targetId={leadId}
@@ -225,6 +231,7 @@ export default async function LeadPage({
       {section === "suggestions" || section === "all" ? (
         <>
         <SuggestionsPanel
+          words={words}
           tenantId={tenantId}
           target="leads"
           targetId={leadId}

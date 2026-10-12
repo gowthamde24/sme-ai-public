@@ -1,4 +1,5 @@
 import type { ClaimSuggestionOut } from "@/lib/api/agents";
+import { makeT, type Say } from "@/components/v2/app/words";
 
 export type ClaimGroup = {
   key: string;
@@ -15,7 +16,7 @@ export type ClaimGroup = {
  * still in play for it, so a reviewer who is about to accept one sees what else was proposed, or already accepted, for
  * the same thing. Newest group first.
  */
-export function groupClaims(claims: ClaimSuggestionOut[]): ClaimGroup[] {
+export function groupClaims(claims: ClaimSuggestionOut[], t: Say = makeT()): ClaimGroup[] {
   const groups = new Map<string, ClaimSuggestionOut[]>();
   for (const claim of claims) {
     if (claim.created_via !== "agent") continue;
@@ -29,7 +30,7 @@ export function groupClaims(claims: ClaimSuggestionOut[]): ClaimGroup[] {
     const inPlay = all.filter((c) => c.review_state === "unreviewed" || c.review_state === "accepted");
     out.push({
       key,
-      company: all.find((c) => c.company_name)?.company_name ?? "Unnamed company",
+      company: all.find((c) => c.company_name)?.company_name ?? t("ws.unnamed_company"),
       predicate: all[0].predicate,
       claims: inPlay,
       conflicting: new Set(inPlay.map((c) => c.value)).size > 1,

@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { startTransition, useActionState, useState } from "react";
 
-import { HOW_IT_CAME, HOW_LABELS } from "@/lib/api/customers";
+import { HOW_IT_CAME } from "@/lib/api/customers";
 
 import type { CustomerFormState } from "./actions";
 import { alertBox, btnMain, fieldInput, fieldLabel, formCardWide, link, mutedText } from "@/components/v2/app/ui";
+import { Rich } from "@/components/v2/app/rich";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Action = (prev: CustomerFormState, formData: FormData) => Promise<CustomerFormState>;
 
@@ -25,7 +27,7 @@ type Ids = { company: string; contact: string; lead: string };
  * remounted whenever the ids change: new ids from a new page render, or the person pressing "Add another customer", which makes fresh ids here and restarts in place. Without this a second
  * customer could be sent with the first customer's contact id and typed values (the page's own `key` is not enough: a component must not rely on its caller for it).
  */
-export function CustomerForm({ action, tenantId, ids: pageIds }: { action: Action; tenantId: string; ids: Ids }) {
+export function CustomerForm({ action, tenantId, ids: pageIds, words }: { action: Action; tenantId: string; ids: Ids; words?: Words; }) {
   const pageKey = `${pageIds.company}|${pageIds.contact}|${pageIds.lead}`;
   const [seenKey, setSeenKey] = useState(pageKey);
   const [ids, setIds] = useState(pageIds);
@@ -40,10 +42,11 @@ export function CustomerForm({ action, tenantId, ids: pageIds }: { action: Actio
     setIds({ company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() });
     setRound((r) => r + 1);
   };
-  return <CustomerFormBody key={`${round}|${ids.company}|${ids.contact}|${ids.lead}`} action={action} tenantId={tenantId} ids={ids} onAnother={another} />;
+  return <CustomerFormBody words={words} key={`${round}|${ids.company}|${ids.contact}|${ids.lead}`} action={action} tenantId={tenantId} ids={ids} onAnother={another} />;
 }
 
-function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action; tenantId: string; ids: Ids; onAnother: () => void }) {
+function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action: Action; tenantId: string; ids: Ids; onAnother: () => void; words?: Words; }) {
+  const t = makeT(words);
   const [contactId, setContactId] = useState(ids.contact);
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
@@ -59,17 +62,17 @@ function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action
     return (
       <div role="status" className={formCardWide}>
         <p>
-          <strong>Added {state.name}.</strong> A lead was made for this customer.
+          <Rich t={t} k="cust.added_line" with={{ name: <strong>{state.name}</strong> }} />
         </p>
-        <p className={mutedText}>No consent is recorded yet, so you cannot record that you contacted them. Record it next, once they have told you.</p>
+        <p className={mutedText}>{t("cust.no_consent_is_recorded_yet_so")}</p>
         <p>
           <Link href={`/app/tenants/${tenantId}/contacts/${state.contactId}/consent`} className={link}>
-            Record consent for this person →
+            {t("cust.record_consent_for_this_person")}
           </Link>
         </p>
         <p>
           <Link href={`/app/tenants/${tenantId}/leads/${state.leadId}`} className={link}>
-            Open the lead →
+            {t("cust.open_the_lead")}
           </Link>
           {" · "}
           <Link
@@ -82,7 +85,7 @@ function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action
               onAnother();
             }}
           >
-            Add another customer
+            {t("cust.add_another_customer")}
           </Link>
         </p>
       </div>
@@ -95,45 +98,45 @@ function CustomerFormBody({ action, tenantId, ids, onAnother }: { action: Action
         startTransition(() => formAction(data));
       }}
       className={formCardWide}
-      aria-label="Add a customer"
+      aria-label={t("cust.add_a_customer")}
     >
       <input type="hidden" name="company_id" value={ids.company} />
       <input type="hidden" name="contact_id" value={contactId} />
       <input type="hidden" name="lead_id" value={ids.lead} />
       <label htmlFor="cust-name" className={fieldLabel}>
-        Customer&apos;s name
+        {t("cust.customer_s_name")}
       </label>
       <input id="cust-name" name="full_name" required value={fullName} onChange={(e) => setFullName(e.target.value)} maxLength={200} disabled={pending} className={fieldInput} />
       <label htmlFor="cust-phone" className={fieldLabel}>
-        WhatsApp or phone number
+        {t("cust.whatsapp_or_phone_number")}
       </label>
       <input id="cust-phone" name="phone" required value={phone} onChange={(e) => setPhone(e.target.value)} minLength={3} maxLength={32} inputMode="tel" autoComplete="off" disabled={pending} className={fieldInput} />
       <label htmlFor="cust-email" className={fieldLabel}>
-        E-mail (optional)
+        {t("cust.e_mail_optional")}
       </label>
       <input id="cust-email" name="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} maxLength={254} autoComplete="off" disabled={pending} className={fieldInput} />
       <label htmlFor="cust-shop" className={fieldLabel}>
-        Shop or business name (optional)
+        {t("cust.shop_or_business_name_optional")}
       </label>
       <input id="cust-shop" name="company_name" value={shop} onChange={(e) => setShop(e.target.value)} maxLength={200} disabled={pending} className={fieldInput} />
       <label htmlFor="cust-how" className={fieldLabel}>
-        How did the enquiry come?
+        {t("cust.how_did_the_enquiry_come")}
       </label>
       <select id="cust-how" name="how" value={how} onChange={(e) => setHow(e.target.value)} disabled={pending} className={fieldInput}>
         {HOW_IT_CAME.map((h) => (
           <option key={h} value={h}>
-            {HOW_LABELS[h]}
+            {t(`cust.how.${h}`)}
           </option>
         ))}
       </select>
-      <p className={mutedText}>If you leave the shop name empty, the customer&apos;s name is used. Look in the Contacts list first: this form does not check whether you already added this person.</p>
+      <p className={mutedText}>{t("cust.if_you_leave_the_shop_name")}</p>
       {state?.error && (
         <p role="alert" className={alertBox}>
           {state.error}
         </p>
       )}
       <button type="submit" className={btnMain} disabled={pending}>
-        {pending ? "Saving..." : "Add this customer"}
+        {pending ? t("cust.saving") : t("cust.add_this_customer")}
       </button>
     </form>
   );

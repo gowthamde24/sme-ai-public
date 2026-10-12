@@ -3,14 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import {
-  fetchActiveIcpConfig,
-  fetchReviewQueue,
-  SCORE_BAND_LABELS,
-  SCORE_BANDS,
-  type PageReviewQueueLeadOut,
-  type ScoreBand,
-} from "@/lib/api/leads";
+import { fetchActiveIcpConfig, fetchReviewQueue, SCORE_BANDS, type PageReviewQueueLeadOut, type ScoreBand } from "@/lib/api/leads";
 import { LeadsTabs, PageTop, Pill } from "@/components/v2/app/parts";
 import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
@@ -18,6 +11,10 @@ import { requireUser } from "@/lib/auth/session";
 import { FactorBreakdown } from "./factor-breakdown";
 import { ImportLeadsForm } from "./import-leads-form";
 import { LeadLabelForm } from "./lead-label-form";
+import { Rich } from "@/components/v2/app/rich";
+import { makeT, type Words } from "@/components/v2/app/words";
+import { wordsFor } from "@/i18n/app-words";
+import { getLang } from "@/i18n/get-lang";
 
 export const metadata = { title: "Lead Review Queue · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
@@ -37,6 +34,9 @@ export default async function ReviewQueuePage({
   params: Promise<{ tenantId: string }>;
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  const lang = await getLang();
+  const words = wordsFor(lang, ["rev.", "lead."]);
+  const t = makeT(words);
   const user = await requireUser();
   const { tenantId } = await params;
   const query = await searchParams;
@@ -49,7 +49,7 @@ export default async function ReviewQueuePage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDown words={words} />;
   }
 
   const rawBlind = pick(query.blind);
@@ -87,7 +87,7 @@ export default async function ReviewQueuePage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDown />;
+    return <ApiDown words={words} />;
   }
 
   // One place builds every link of this page, so a filter (blind, band, unreviewed) is never silently dropped.
@@ -108,13 +108,13 @@ export default async function ReviewQueuePage({
   const canExport = ADMIN_ROLES.includes(tenant.role);
 
   return (
-    <main className={pageMain}>
+    <main className={pageMain} lang={lang}>
 
       <PageTop
-        title="Leads"
+        title={t("rev.leads")}
         sub={
           <>
-            Qualify candidate leads against your Ideal Customer Profile (ICP). Unbiased blind review is {blind ? <strong>enabled</strong> : <span>disabled</span>}.
+            <Rich t={t} k="rev.intro_blind" with={{ state: blind ? <strong>{t("rev.enabled")}</strong> : <span>{t("rev.disabled")}</span> }} />
           </>
         }
       />
@@ -124,28 +124,27 @@ export default async function ReviewQueuePage({
       <div className={`mt-4 ${surfaceFlat}`}>
         <div className={rowBetween}>
           <div>
-            <strong>Active ICP Profile:</strong>{" "}
+            <strong>{t("rev.active_icp_profile")}</strong>{" "}
             {activeIcp ? (
               <span>
-                Version {activeIcp.version_no} (SHA-256: <code className={codeInline}>{activeIcp.config_sha256.slice(0, 12)}...</code>)
+                <Rich t={t} k="rev.icp_version" vars={{ n: activeIcp.version_no }} with={{ hash: <code className={codeInline}>{activeIcp.config_sha256.slice(0, 12)}...</code> }} />
               </span>
             ) : (
-              <span className={hintInline}>No profile published yet (leads remain unscored)</span>
+              <span className={hintInline}>{t("rev.no_profile_published_yet_leads_remain")}</span>
             )}
           </div>
           {canExport && (
             <div>
               <div className={rowWrap}>
                 <a href={`/app/tenants/${tenantId}/review/export?format=csv`} className={pillLinkGreen} download>
-                  Export CSV
+                  {t("rev.export_csv")}
                 </a>
                 <a href={`/app/tenants/${tenantId}/review/export?format=json`} className={pillLinkInfo} download>
-                  Export JSON
+                  {t("rev.export_json")}
                 </a>
               </div>
               <p className={mutedText}>
-                The file lists every label with its reason, score, and the company&apos;s name, city and lead source. Every export
-                is logged (who, when, how many rows).
+                {t("rev.the_file_lists_every_label_with")}
               </p>
             </div>
           )}
@@ -155,19 +154,19 @@ export default async function ReviewQueuePage({
       {/* Filters and Controls */}
       <div className={`${tabRow} items-center justify-between`}>
         <div className={rowWrap}>
-          <span className={hintInline}>Filter:</span>
+          <span className={hintInline}>{t("rev.filter")}</span>
           <Link href={here({ band: null, unreviewed: false })} className={`${tabLink} ${!scoreBand && !unreviewed ? tabLinkOn : ""}`} aria-current={!scoreBand && !unreviewed ? "page" : undefined}>
-            All
+            {t("rev.all")}
           </Link>
           <Link href={here({ unreviewed: true })} className={`${tabLink} ${unreviewed ? tabLinkOn : ""}`} aria-current={unreviewed ? "page" : undefined}>
-            Unreviewed only
+            {t("rev.unreviewed_only")}
           </Link>
           {blind ? (
-            <span className={hintInline}>Score filters are available only with Blind Scoring off.</span>
+            <span className={hintInline}>{t("rev.score_filters_are_available_only_with")}</span>
           ) : (
             SCORE_BANDS.map((band) => (
               <Link key={band} href={here({ band })} className={`${tabLink} ${band === scoreBand ? tabLinkOn : ""}`} aria-current={band === scoreBand ? "page" : undefined}>
-                {SCORE_BAND_LABELS[band]}
+                {t(`lead.band.${band}`)}
               </Link>
             ))
           )}
@@ -175,37 +174,37 @@ export default async function ReviewQueuePage({
 
         <div className={rowWrap}>
           <Link href={here({ blind: !blind })} className={`${pillLinkBase} ${blind ? pillLinkGreenOn : pillLinkQuiet}`}>
-            {blind ? "Blind Scoring: ON" : "Blind Scoring: OFF"}
+            {blind ? t("rev.blind_scoring_on") : t("rev.blind_scoring_off")}
           </Link>
         </div>
       </div>
 
       {/* Import Section (for Owner/Admin/Sales) */}
-      {canWrite && <ImportLeadsForm tenantId={tenantId} />}
+      {canWrite && <ImportLeadsForm words={words} tenantId={tenantId} />}
 
       {/* Queue items */}
       <section aria-labelledby="queue-heading" className={sectionBlock}>
-        <h2 id="queue-heading" className={pageH2}>Candidate Leads ({queue.items.length})</h2>
+        <h2 id="queue-heading" className={pageH2}>{t("rev.candidates_n", { n: queue.items.length })}</h2>
 
         {canWrite && queue.items.length > 0 && (
           <div className={stickyActions}>
             {firstUnreviewed ? (
               <a href={`#lead-${firstUnreviewed.lead_id}`} className={btnMainLink}>
-                Next unreviewed ↓
+                {t("rev.next_unreviewed")}
               </a>
             ) : queue.next_cursor ? (
               <Link href={here({ cursor: queue.next_cursor })} className={btnMainLink}>
-                All reviewed here · load more →
+                {t("rev.all_reviewed_here_load_more")}
               </Link>
             ) : (
-              <span className={hintInline}>Everything in this view is reviewed.</span>
+              <span className={hintInline}>{t("rev.everything_in_this_view_is_reviewed")}</span>
             )}
           </div>
         )}
 
         {queue.items.length === 0 ? (
           <p className={mutedText}>
-            {cursor ? "No more leads in this view." : "No leads in the review queue yet."}
+            {cursor ? t("rev.no_more_leads_in_this_view") : t("rev.no_leads_in_the_review_queue")}
           </p>
         ) : (
           <div className={listPlain}>
@@ -220,10 +219,10 @@ export default async function ReviewQueuePage({
                 <article key={item.lead_id} id={`lead-${item.lead_id}`} className={cardBoxFull}>
                   <div className={rowBetween}>
                     <div>
-                      <h3 className={pageH3}>{String(comp.name || "Unnamed Company")}</h3>
+                      <h3 className={pageH3}>{String(comp.name || t("rev.unnamed"))}</h3>
                       <p className={mutedText}>
                         {String(comp.city || "—")}, {String(comp.country || "—")} ·{" "}
-                        {String(comp.industry || "General")} · Source: {item.source || "import"}
+                        {t("rev.industry_source", { industry: String(comp.industry || t("rev.industry_general")), source: String(item.source || t("rev.source_import")) })}
                       </p>
                     </div>
 
@@ -235,17 +234,17 @@ export default async function ReviewQueuePage({
                           {reason ? ` (${reason})` : ""}
                         </Pill>
                       ) : (
-                        <Pill tone="neutral">Unreviewed</Pill>
+                        <Pill tone="neutral">{t("rev.unreviewed")}</Pill>
                       )}
 
                       {/* Score Badge */}
                       {item.score !== null && item.score !== undefined ? (
                         <Pill tone={BAND_TONE[item.score_band ?? "low_priority"] ?? "neutral"}>
-                          Score: {item.score}/100
+                          {t("rev.score_n", { n: item.score })}
                         </Pill>
                       ) : (
-                        <span title="Hidden to avoid confirmation bias">
-                          <Pill tone="neutral">Score Hidden (Blind)</Pill>
+                        <span title={t("rev.hidden_to_avoid_confirmation_bias")}>
+                          <Pill tone="neutral">{t("rev.score_hidden_blind")}</Pill>
                         </span>
                       )}
                     </div>
@@ -253,11 +252,11 @@ export default async function ReviewQueuePage({
 
                   {/* Summary Details */}
                   <dl className={kvList}>
-                    <dt>Contact</dt>
+                    <dt>{t("rev.contact")}</dt>
                     <dd>
                       {cont ? (
                         <details className={detailsBox}>
-                          <summary className={summaryLine}>Contact details</summary>
+                          <summary className={summaryLine}>{t("rev.contact_details")}</summary>
                           <span>
                             {String(cont.full_name || "—")}{" "}
                             {cont.job_title ? `(${String(cont.job_title)})` : ""} ·{" "}
@@ -265,21 +264,21 @@ export default async function ReviewQueuePage({
                           </span>
                         </details>
                       ) : (
-                        <span className={hintInline}>No contact information attached</span>
+                        <span className={hintInline}>{t("rev.no_contact_information_attached")}</span>
                       )}
                     </dd>
 
-                    <dt>Evidence</dt>
+                    <dt>{t("rev.evidence")}</dt>
                     <dd>
                       <Link href={`/app/tenants/${tenantId}/leads/${item.lead_id}`} className={link}>
-                        View evidence &amp; details →
+                        {t("rev.view_evidence_details")}
                       </Link>
                     </dd>
                   </dl>
 
                   {/* Factor breakdown if score is unblinded */}
                   {item.snapshot && (
-                    <FactorBreakdown
+                    <FactorBreakdown words={words}
                       factors={item.snapshot.factors}
                       flags={item.snapshot.flags}
                       maxReachable={item.score_max_reachable ?? null}
@@ -288,7 +287,7 @@ export default async function ReviewQueuePage({
 
                   {/* Review Labeling Actions */}
                   {canWrite && (
-                    <LeadLabelForm
+                    <LeadLabelForm words={words}
                       tenantId={tenantId}
                       leadId={item.lead_id}
                       labelId={crypto.randomUUID()}
@@ -305,7 +304,7 @@ export default async function ReviewQueuePage({
         {queue.next_cursor && (
           <p className={spaceTop}>
             <Link href={here({ cursor: queue.next_cursor })} rel="next" className={link}>
-              Load more leads
+              {t("rev.load_more_leads")}
             </Link>
           </p>
         )}
@@ -313,7 +312,7 @@ export default async function ReviewQueuePage({
         {cursor && (
           <p className={spaceTop}>
             <Link href={here()} className={link}>
-              Back to first page
+              {t("rev.back_to_first_page")}
             </Link>
           </p>
         )}
@@ -331,10 +330,11 @@ const BAND_TONE: Record<string, "green" | "info" | "amber" | "neutral"> = {
   "low-priority": "neutral",
 };
 
-function ApiDown() {
+function ApiDown({ words }: { words?: Words }) {
+  const t = makeT(words);
   return (
     <p role="alert" className={alertBox}>
-      Could not load the review queue from the API. Try again shortly.
+      {t("rev.could_not_load_the_review_queue")}
     </p>
   );
 }

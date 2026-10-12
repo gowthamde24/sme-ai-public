@@ -10,6 +10,7 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Integrations · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -37,11 +38,11 @@ export default async function IntegrationsPage({ params }: PageProps<"/app/tenan
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const t = appT(lang);
-  if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("nav.item.integrations")} message="Integrations are shown to owners and admins." />;
+  if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("nav.item.integrations")} message={t("int.admins_only")} />;
   return (
     <main className={pageMain} lang={lang}>
       <PageTop title={t("nav.item.integrations")} sub={t("integrations.sub")} />

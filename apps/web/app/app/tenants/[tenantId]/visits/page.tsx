@@ -13,6 +13,7 @@ import { requireUser } from "@/lib/auth/session";
 import { arriveVisitAction, bookVisitAction, cancelVisitAction, completeVisitAction, confirmVisitAction, customersAction, moveVisitAction, noShowVisitAction, saveHoursAction, slotsAction } from "./visits-actions";
 import { readDay, readHours, readLeadLabel, readVisit } from "./visits-data";
 import { visitsWords } from "./visits-words";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Store visits · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -40,7 +41,7 @@ export default async function VisitsPage({ params, searchParams }: PageProps<"/a
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   const now = clock();

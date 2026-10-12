@@ -6,6 +6,7 @@ import { ActionResultV2 } from "@/components/v2/app/parts";
 import type { FollowupActionState } from "./followup-actions";
 import { useFollowupAction } from "./use-followup-action";
 import { btnMain, btnQuiet, fieldInput, link } from "@/components/v2/app/ui";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Action = (prev: FollowupActionState, formData: FormData) => Promise<FollowupActionState>;
 
@@ -13,31 +14,33 @@ type Action = (prev: FollowupActionState, formData: FormData) => Promise<Followu
  * Approve the draft the person is LOOKING AT: the form carries the draft's fingerprint as it was rendered (`state_hash`), so a draft that changed since is refused as stale and the page is read
  * again. Approving does not send anything: it lets a person copy the text and send it themselves. When the session has not used the authenticator app the form is replaced by the notice.
  */
-export function ApproveForm({ action, stateHash, secondFactorMissing }: { action: Action; stateHash: string; secondFactorMissing: boolean }) {
+export function ApproveForm({ action, stateHash, secondFactorMissing, words }: { action: Action; stateHash: string; secondFactorMissing: boolean; words?: Words; }) {
+  const t = makeT(words);
   const { state, formAction, pending } = useFollowupAction(action);
   if (secondFactorMissing)
     return (
       <p role="note">
-        Approving needs your authenticator app. <Link href="/app/security" className={link}>Set it up on the Security page</Link>, then sign in again with its code.
+        {t("fu.mfa_approving")} <Link href="/app/security" className={link}>{t("fu.set_it_up_on_the_security")}</Link>{t("fu.mfa_b")}
       </p>
     );
   return (
-    <form action={formAction} aria-label="Approve this draft">
+    <form action={formAction} aria-label={t("fu.approve_this_draft")}>
       <input type="hidden" name="state_hash" value={stateHash} />
       <button type="submit" className={btnMain} disabled={pending}>
-        {pending ? "Saving..." : "Approve this text"}
+        {pending ? t("fu.saving") : t("fu.approve_this_text")}
       </button>
       <ActionResultV2 state={state} />
     </form>
   );
 }
 
-export function DiscardForm({ action }: { action: Action }) {
+export function DiscardForm({ action, words }: { action: Action; words?: Words; }) {
+  const t = makeT(words);
   const { state, formAction, pending } = useFollowupAction(action);
   return (
-    <form action={formAction} aria-label="Discard this draft">
+    <form action={formAction} aria-label={t("fu.discard_this_draft")}>
       <button type="submit" className={btnQuiet} disabled={pending}>
-        {pending ? "Saving..." : "Discard this draft"}
+        {pending ? t("fu.saving") : t("fu.discard_this_draft")}
       </button>
       <ActionResultV2 state={state} />
     </form>
@@ -45,15 +48,16 @@ export function DiscardForm({ action }: { action: Action }) {
 }
 
 /** "I sent it myself": a person's word, recorded. The time is optional (empty means now; never in the future). The system sent nothing. */
-export function SentForm({ action, touchId, maxNow }: { action: Action; touchId: string; maxNow: string }) {
+export function SentForm({ action, touchId, maxNow, words }: { action: Action; touchId: string; maxNow: string; words?: Words; }) {
+  const t = makeT(words);
   const { state, formAction, pending } = useFollowupAction(action);
   return (
-    <form action={formAction} aria-label="Record that you sent it yourself">
+    <form action={formAction} aria-label={t("fu.record_that_you_sent_it_yourself")}>
       <input type="hidden" name="touch_id" value={touchId} />
-      <label htmlFor={`sent-when-${touchId}`}>When you sent it (India time). Leave it empty for now.</label>
+      <label htmlFor={`sent-when-${touchId}`}>{t("fu.when_you_sent_it_india_time")}</label>
       <input id={`sent-when-${touchId}`} name="happened_at" type="datetime-local" max={maxNow} disabled={pending} className={fieldInput} />
       <button type="submit" className={btnMain} disabled={pending}>
-        {pending ? "Saving..." : "Record: I sent it myself"}
+        {pending ? t("fu.saving") : t("fu.record_i_sent_it_myself")}
       </button>
       <ActionResultV2 state={state} />
     </form>

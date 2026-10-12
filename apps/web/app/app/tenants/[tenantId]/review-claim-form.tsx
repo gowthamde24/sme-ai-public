@@ -2,15 +2,11 @@
 
 import { useActionState } from "react";
 
-import {
-  CONFIDENCE_LABELS,
-  REVIEW_CONFIDENCES,
-  REVIEW_REASON_LABELS,
-  REVIEW_REASONS,
-} from "@/lib/api/agents";
+import { REVIEW_CONFIDENCES, REVIEW_REASONS } from "@/lib/api/agents";
 
 import type { ReviewActionState } from "./suggestion-actions";
 import { alertBox, btnMain, btnQuiet, formsStack, hintInline, inlineForm, okBox, selectInline } from "@/components/v2/app/ui";
+import { makeT, type Words } from "@/components/v2/app/words";
 
 type Action = (prev: ReviewActionState, formData: FormData) => Promise<ReviewActionState>;
 
@@ -40,14 +36,15 @@ export function ReviewClaimForms({
   acceptId,
   rejectId,
   accept,
-  reject,
+  reject, words,
 }: {
   claimId: string;
   acceptId: string;
   rejectId: string;
   accept: Action;
-  reject: Action;
+  reject: Action; words?: Words;
 }) {
+  const t = makeT(words);
   const [acceptState, acceptAction, accepting] = useActionState(accept, undefined);
   const [rejectState, rejectAction, rejecting] = useActionState(reject, undefined);
   return (
@@ -56,20 +53,20 @@ export function ReviewClaimForms({
         <input type="hidden" name="review_id" value={acceptId} />
         <input type="hidden" name="decision" value="accepted" />
         <label htmlFor={`confidence-${claimId}`} className={hintInline}>
-          Accept as
+          {t("ws.accept_as")}
         </label>{" "}
         <select id={`confidence-${claimId}`} name="confidence" defaultValue="" required disabled={accepting} className={selectInline}>
           <option value="" disabled>
-            Choose…
+            {t("ws.choose")}
           </option>
           {REVIEW_CONFIDENCES.map((c) => (
             <option key={c} value={c}>
-              {CONFIDENCE_LABELS[c]}
+              {t(`ag.confidence.${c}`)}
             </option>
           ))}
         </select>{" "}
         <button type="submit" className={btnMain} disabled={accepting || rejecting}>
-          {accepting ? "Saving..." : "Accept"}
+          {accepting ? t("ws.saving") : t("ws.accept")}
         </button>
         <Result state={acceptState} />
       </form>
@@ -77,18 +74,18 @@ export function ReviewClaimForms({
         <input type="hidden" name="review_id" value={rejectId} />
         <input type="hidden" name="decision" value="rejected" />
         <label htmlFor={`reason-${claimId}`} className={hintInline}>
-          Reject (a reason is optional)
+          {t("ws.reject_a_reason_is_optional")}
         </label>{" "}
         <select id={`reason-${claimId}`} name="reason_code" defaultValue="" disabled={rejecting} className={selectInline}>
-          <option value="">No reason</option>
+          <option value="">{t("ws.no_reason")}</option>
           {REVIEW_REASONS.map((r) => (
             <option key={r} value={r}>
-              {REVIEW_REASON_LABELS[r]}
+              {t(`ag.reason.${r}`)}
             </option>
           ))}
         </select>{" "}
         <button type="submit" className={btnQuiet} disabled={accepting || rejecting}>
-          {rejecting ? "Saving..." : "Reject"}
+          {rejecting ? t("ws.saving") : t("ws.reject")}
         </button>
         <Result state={rejectState} />
       </form>

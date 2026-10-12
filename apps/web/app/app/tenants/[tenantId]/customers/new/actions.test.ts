@@ -125,7 +125,7 @@ describe("addCustomerAction", () => {
     expect(api.createLead).not.toHaveBeenCalled();
   });
   it.each([
-    [new ApiRequestError(409, "duplicate_value", CANARY), /^That e-mail is already used by another person\./],
+    [new ApiRequestError(409, "duplicate_value", CANARY), /^Another person already has that e-mail\./],
     [new ApiRequestError(409, "conflict", CANARY), /^This customer was already saved with different details\./],
     [new ApiRequestError(409, "real_data_gate_closed", CANARY), /^This workspace does not accept real phone numbers/],
     [new ApiRequestError(409, "contact_suppressed", CANARY), /^This person is on the do-not-contact list/],
@@ -191,7 +191,7 @@ describe("addCustomerAction", () => {
     api.createContact.mockRejectedValue(new ApiRequestError(409, "duplicate_value", CANARY));
     const r = await run({ email: "dup@x.example.test" });
     expect(r?.ok).toBe(false);
-    expect(r?.error).toMatch(/^That e-mail is already used by another person\./);
+    expect(r?.error).toMatch(/^Another person already has that e-mail\./);
     expect(r?.error).not.toMatch(/already used\. Reload|This form was already used/);
     expect(r?.nextContactId).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/);
     expect(r?.nextContactId).not.toBe(CT);

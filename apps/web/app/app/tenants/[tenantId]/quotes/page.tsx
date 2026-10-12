@@ -9,8 +9,8 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuotes, formatDate, formatRupees } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
-import { makeT, type Words } from "@/components/v2/app/words";
-import { wordsFor } from "@/i18n/app-words";
+import { makeT } from "@/components/v2/app/words";
+import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
 
@@ -37,7 +37,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("enq.quotes")} message={t("enq.quotes_are_shown_to_owners_admins")} />;
 
@@ -46,7 +46,7 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
     quotes = await fetchQuotes(user.accessToken, tenantId, 50);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const base = `/app/tenants/${tenantId}`;
   return (

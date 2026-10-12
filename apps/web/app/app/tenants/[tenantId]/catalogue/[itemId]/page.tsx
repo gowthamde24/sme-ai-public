@@ -13,6 +13,7 @@ import { requireUser } from "@/lib/auth/session";
 import { readLeadLabel } from "../../visits/visits-data";
 import { searchLeadsAction, sendCatalogueAction } from "../catalogue-actions";
 import { catalogueWords } from "../catalogue-words";
+import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Catalogue · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
@@ -34,7 +35,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   let item;
   try {
@@ -42,7 +43,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && (error.status === 404 || error.status === 422)) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const admin = tenant.role === "owner" || tenant.role === "admin";
   // a hidden saree is for the owner and admins only
