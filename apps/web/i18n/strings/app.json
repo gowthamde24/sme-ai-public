@@ -29298,5 +29298,82 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "pwa.hint.label": {
+  "en": "Add to home screen",
+  "te": "హోమ్ స్క్రీన్‌కి చేర్చండి",
+  "hi": "होम स्क्रीन पर जोड़ें",
+  "kn": "ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ಗೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pwa.hint.title": {
+  "en": "Add {brand} to your home screen",
+  "te": "{brand}ని మీ హోమ్ స్క్రీన్‌కి చేర్చండి",
+  "hi": "{brand} को अपनी होम स्क्रीन पर जोड़ें",
+  "kn": "{brand} ಅನ್ನು ನಿಮ್ಮ ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ಗೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pwa.hint.prompt": {
+  "en": "Open it like an app, in one tap.",
+  "te": "యాప్‌లా ఒక్క టాప్‌తో తెరవండి.",
+  "hi": "ऐप की तरह एक टैप में खोलें।",
+  "kn": "ಆ್ಯಪ್‌ನಂತೆ ಒಂದೇ ಟ್ಯಾಪ್‌ನಲ್ಲಿ ತೆರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pwa.hint.ios": {
+  "en": "Tap Share, then Add to Home Screen.",
+  "te": "షేర్ నొక్కండి, తర్వాత \"హోమ్ స్క్రీన్‌కి జోడించు\" ఎంచుకోండి.",
+  "hi": "शेयर दबाएँ, फिर \"होम स्क्रीन पर जोड़ें\" चुनें।",
+  "kn": "ಶೇರ್ ಒತ್ತಿ, ನಂತರ \"ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ಗೆ ಸೇರಿಸಿ\" ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pwa.hint.other": {
+  "en": "Open your browser menu and choose Add to Home screen.",
+  "te": "మీ బ్రౌజర్ మెనూ తెరిచి \"హోమ్ స్క్రీన్‌కి జోడించు\" ఎంచుకోండి.",
+  "hi": "अपने ब्राउज़र का मेन्यू खोलें और \"होम स्क्रीन पर जोड़ें\" चुनें।",
+  "kn": "ನಿಮ್ಮ ಬ್ರೌಸರ್ ಮೆನು ತೆರೆದು \"ಹೋಮ್ ಸ್ಕ್ರೀನ್‌ಗೆ ಸೇರಿಸಿ\" ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pwa.hint.add": {
+  "en": "Add",
+  "te": "చేర్చండి",
+  "hi": "जोड़ें",
+  "kn": "ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "pwa.hint.later": {
+  "en": "Not now",
+  "te": "ఇప్పుడు వద్దు",
+  "hi": "अभी नहीं",
+  "kn": "ಈಗ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

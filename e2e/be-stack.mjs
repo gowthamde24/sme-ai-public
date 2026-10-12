@@ -869,6 +869,87 @@ await step("Q2", "Help on a phone (360 px) and in the dark: the index, a guide, 
   return axe ? "12 page views checked with axe" : "axe-core not installed: that check was skipped";
 }, page);
 
+// ---- 8a. install on a phone and work offline (job BL) -------------------------------------------------------------------------------
+await step("P1", "installable: the manifest is served, the browser finds no installability error, the offline worker takes control, and with no network the offline page speaks the person's language (no page is stored)", async () => {
+  await context.addCookies([{ name: "sme_lang", value: "en", url: BASE }]);
+  const m = await page.request.get(`${BASE}/manifest.webmanifest`);
+  must(m.status() === 200, `manifest HTTP ${m.status()}`);
+  const mj = await m.json();
+  must(mj.name === "Sme-AI" && mj.display === "standalone" && mj.start_url === "/app", "manifest fields");
+  for (const icon of mj.icons) must((await page.request.get(BASE + icon.src)).status() === 200, `icon ${icon.src}`);
+  await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
+  must(await page.evaluate(async () => !!(await navigator.serviceWorker.ready).active), "the worker is not active");
+  await page.reload({ waitUntil: "networkidle" }); // now the page is controlled
+  await page.waitForFunction(() => !!navigator.serviceWorker.controller, null, { timeout: 30000 });
+  const cdp = await context.newCDPSession(page);
+  const errors = (await cdp.send("Page.getInstallabilityErrors")).installabilityErrors;
+  must(errors.length === 0, `installability errors: ${JSON.stringify(errors)}`);
+  const head = await page.evaluate(() => ({ manifest: document.querySelector('link[rel="manifest"]')?.getAttribute("href"), theme: [...document.querySelectorAll('meta[name="theme-color"]')].map((m) => m.getAttribute("content")), apple: document.querySelector('link[rel="apple-touch-icon"]')?.getAttribute("href") }));
+  must(head.manifest === "/manifest.webmanifest" && head.theme.length === 2 && head.apple, `page head: ${JSON.stringify(head)}`);
+  // English first, then Telugu (the worker is told the language by the page)
+  for (const [lang, phrase] of [["en", "You're offline. Agent OWL will catch up when you're back."], ["te", "మీరు ఆఫ్‌లైన్‌లో ఉన్నారు."]]) {
+    await context.addCookies([{ name: "sme_lang", value: lang, url: BASE }]);
+    await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
+    await page.waitForTimeout(500); // the language word reaches the worker
+    await context.setOffline(true);
+    try {
+      await page.goto(`${BASE}/app`).catch(() => null);
+      await page.getByText(phrase).waitFor({ timeout: 20000 });
+      must((await page.locator("h1").innerText()).length > 3, "no heading");
+      await shot(page, `offline-${lang}`);
+    } finally {
+      await context.setOffline(false);
+    }
+  }
+  const names = await page.evaluate(() => caches.keys());
+  must(names.every((n) => /^sme-(shell|static|prefs)/.test(n)), `unexpected caches: ${names}`);
+  const stored = await page.evaluate(async () => {
+    const out = [];
+    for (const n of await caches.keys()) for (const r of await (await caches.open(n)).keys()) out.push(new URL(r.url).pathname);
+    return out;
+  });
+  must(stored.every((u) => /^\/(offline\/|icons\/owl\.svg|__lang|_next\/static\/)/.test(u)), `the worker stored something else: ${stored.join(", ")}`);
+  await context.addCookies([{ name: "sme_lang", value: "en", url: BASE }]);
+  return `${stored.length} stored files, all of the offline shell`;
+}, page);
+
+await step("P2", "the 'Add to home screen' hint on a phone: quiet on the first visits, shown on the third, dismissible, above the bottom bar, 44 px buttons, light and dark", async () => {
+  const phone = await browser.newContext({ viewport: { width: 360, height: 740 }, isMobile: true, hasTouch: true, locale: "en-IN", timezoneId: "Asia/Kolkata", storageState: await context.storageState() });
+  const p = await phone.newPage();
+  p.setDefaultTimeout(SLOW);
+  try {
+    await p.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+    must((await p.locator('[data-part="install-hint"]').count()) === 0, "the hint is shown on the first visit");
+    await p.evaluate(() => localStorage.setItem("sme-install-hint", JSON.stringify({ visits: 2, last: Date.now() - 3 * 3600_000, closedAt: null, installed: false })));
+    await p.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+    const hint = p.locator('[data-part="install-hint"]');
+    await hint.waitFor({ timeout: 30000 });
+    const box = await hint.boundingBox();
+    const bar = await p.locator("nav[aria-label]").last().boundingBox();
+    must(box && bar && box.y + box.height <= bar.y + 1, `the hint overlaps the bottom bar (${JSON.stringify(box)} / ${JSON.stringify(bar)})`);
+    must(box.x >= 0 && box.x + box.width <= 360, "the hint is wider than the phone");
+    for (const b of await hint.getByRole("button").all()) {
+      const bb = await b.boundingBox();
+      must(bb && bb.height >= 44 && bb.width >= 44, `a button of the hint is smaller than 44 px (${JSON.stringify(bb)})`);
+    }
+    await p.screenshot({ path: path.join(SHOTS, "P2-install-hint-phone.png") });
+    await hint.getByRole("button", { name: "Not now" }).first().click();
+    await hint.waitFor({ state: "detached" });
+    await p.reload({ waitUntil: "networkidle" });
+    must((await p.locator('[data-part="install-hint"]').count()) === 0, "it came back after Not now");
+    const state = JSON.parse(await p.evaluate(() => localStorage.getItem("sme-install-hint")));
+    must(state.closedAt > 0, "the choice was not kept");
+    // in the installed app (standalone) it never shows
+    await p.evaluate(() => localStorage.setItem("sme-install-hint", JSON.stringify({ visits: 9, last: 0, closedAt: null, installed: false })));
+    await p.emulateMedia({ colorScheme: "dark" });
+    await p.goto(`${BASE}/app/tenants/${tenant}`, { waitUntil: "networkidle" });
+    await p.locator('[data-part="install-hint"]').waitFor({ timeout: 30000 });
+    await p.screenshot({ path: path.join(SHOTS, "P2-install-hint-phone-dark.png") });
+  } finally {
+    await phone.close();
+  }
+}, page);
+
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
 await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hours) and the saree page at 360 px and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";

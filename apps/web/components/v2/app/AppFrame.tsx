@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
+import { InstallHint } from "@/components/v2/pwa/InstallHint";
 import { V2Root } from "@/components/v2/V2Root";
 import { appT, frameLabels } from "@/i18n/app";
 import { authT } from "@/i18n/auth";
@@ -60,6 +61,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
           </footer>
         </div>
         <div className="fixed inset-x-0 bottom-0 z-40 md:hidden">
+          <InstallHint labels={labels} />
           <TabBar memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} />
         </div>
       </div>

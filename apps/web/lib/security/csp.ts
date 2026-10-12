@@ -11,6 +11,7 @@
  *    (job BC) are signed links into the project's own Storage service, so exactly ONE more origin is allowed for images: the Supabase project's (`imageOrigin`). Never a wildcard, never for scripts,
  *    styles, frames or connections (the browser still talks only to this app).
  *  - media-src 'self' blob: (job BF): the spoken answer of the Ask box is played from a blob: made in the page from the API's audio, never from another address. Nothing else may be played.
+ *  - worker-src 'self' (job BL): the offline worker (/sw.js). With 'strict-dynamic' a host source in script-src is ignored, so the worker needs its own directive; it may only come from this site.
  *  - 'unsafe-eval' only in development (React's debugging needs it), never in production.
  *  - upgrade-insecure-requests only in production, so plain-http local development keeps working.
  */
@@ -23,6 +24,7 @@ export function buildCsp(nonce: string, dev: boolean, imageOrigin: string | null
     "style-src-attr 'unsafe-inline'",
     `img-src 'self' blob: data:${imageOrigin ? ` ${imageOrigin}` : ""}`,
     "media-src 'self' blob:",
+    "worker-src 'self'",
     "font-src 'self'",
     `connect-src 'self'${dev ? " ws: wss:" : ""}`,
     "object-src 'none'",

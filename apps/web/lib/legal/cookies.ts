@@ -31,4 +31,6 @@ export const DEVICE_SETTINGS = [
   { key: "sme.contact.keepRecord", what: "whether 'keep a record' is ticked when you contact a customer" },
   { key: "sme-ask-autoplay", what: "whether spoken answers play automatically" },
   { key: "sme-ask-voice-notice", what: "that you have seen the voice privacy line" },
+  { key: "sme-install-hint", what: "how many times you have visited and whether you closed the 'Add to home screen' hint" },
+  { key: "sme-prefs", what: "the language the offline page is shown in (kept by the offline worker, in this browser's cache)" },
 ] as const;
