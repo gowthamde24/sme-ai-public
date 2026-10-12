@@ -60,11 +60,16 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
     client, _ = make_client()
     public = sorted(path for _, path, deps in _routes(client.app) if not any("get_principal" in d or d.endswith("dependency") for d in deps))
     # a NEW public route fails this test until it is listed here AND has a rule in app/hardening/ratelimit.py (and its path word in logging_safety.ROUTE_WORDS)
-    known = {"/health", "/ready", "/v1/calendar/feed/{token_ics}", "/v1/policies/current"}
+    known = {
+        "/health", "/ready", "/v1/calendar/feed/{token_ics}", "/v1/policies/current",
+        "/v1/push/public-key",  # job BY: the browser's push key (public by design)
+        "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
+        "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",
+    }
     metrics_route = {"/metrics"}
     assert set(public) - metrics_route == known, public
     for path in public:
-        concrete = path.replace("{token_ics}", "abc.ics")
+        concrete = path.replace("{token_ics}", "abc.ics").replace("{token}", "abc")
         assert public_rule(concrete) is not None, f"{path} has no rate rule"
 
 

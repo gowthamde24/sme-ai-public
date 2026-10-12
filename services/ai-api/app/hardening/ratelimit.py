@@ -43,6 +43,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("metrics", "/metrics", True, 30),
     PublicRule("policies", "/v1/policies/current", True, 60),
     PublicRule("calendar_feed", "/v1/calendar/feed/", False, 30),
+    PublicRule("push_key", "/v1/push/public-key", True, 60),
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),

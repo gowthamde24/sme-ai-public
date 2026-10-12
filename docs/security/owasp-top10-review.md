@@ -16,4 +16,4 @@ Scope: `services/ai-api`, the database policies it relies on, and the public edg
 | A10 | Server-side request forgery | The only outbound fetches are the guarded fetcher (scheme, port, DNS and redirect checks, private ranges refused, size/time limits), the web-research handle store (a page is read only from a handle or an owner-typed link), and fixed provider hosts | T007 fetcher tests; BP tests | |
 
 ## Public (no sign-in) routes
-`/health`, `/ready`, `/metrics` (404 without the token), `/v1/policies/current`, `/v1/calendar/feed/{token}.ics`, and the webhooks of the connectors (secret path or signature). Each has a per-IP limit.
+`/health`, `/ready`, `/metrics` (404 without the token), `/v1/policies/current`, `/v1/calendar/feed/{token}.ics`, `/v1/push/public-key` (the browser's push key, public by design), and the webhooks (`/v1/webhooks/whatsapp`, `razorpay`, `cashfree`, `exotel/{secret}/...`: signature, verify token or secret path). Each has a per-IP limit; `tests/test_cb_hardening.py` fails when a new public route appears that is not on its list.
