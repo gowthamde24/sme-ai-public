@@ -418,3 +418,14 @@ Plan only; nothing is built. These rows exist so the three reviews are not forgo
 | [ ] | **Landing FAQ "Nothing is sent automatically"** must change before a real WhatsApp adapter ships (the outbox can send automatically under policy). | job BH, ADR 0066 | Owner | Before a real adapter |
 | [x] | Cookie notice, cookie settings (Analytics off by default, no analytics loaded), footer links, sign-up consent checkbox with the Terms and Privacy Policy linked, and the AI disclosure on the landing page and in the Privacy Policy. | job BH | | Done |
 
+## Hardening and operations (ADR 0082, job CB)
+
+| Status | Item | Source | Owner | When |
+|---|---|---|---|---|
+| [ ] | **Shared rate-limit store** if the API runs more than one worker or instance (the limiter is in process memory). | ADR 0082 | Owner + Claude 1 | Before more than one instance |
+| [ ] | **Set `TRUSTED_PROXY_HOPS`** to the real number of proxies, `METRICS_TOKEN`, `LOG_FORMAT=json`; start uvicorn with `--no-server-header`; use `/ready` for the host health check. | docs/runbooks/hardening.md | Owner | At hosting |
+| [ ] | **Restore drill on a hosted throwaway project** (the local figure, 18.9 s for 2 MB, is plumbing only); record the RTO. | scripts/restore_drill.py | Owner | Before real data |
+| [ ] | **Re-run the load test on hosted infrastructure** with the real model and note p95 per class. | scripts/loadtest.py | Owner + Claude 1 | Before external customers |
+| [ ] | **Re-run `pip-audit` and `npm audit`** before launch and monthly; the 5 dev-only npm advisories (eslint-config-next chain) are open on purpose. | docs/security/owasp-top10-review.md | Claude 1 / Claude 2 | Before launch |
+| [ ] | **Alerting** on 5xx rate, `/ready` failures and 429 spikes. | ADR 0082 | Owner | At hosting |
+| [x] | Security headers, body ceiling, global rate limits, docs off in production, request id and scrubbed access log, `/ready`, `/metrics`, secret scan, restore-drill and load-test scripts. | job CB | |

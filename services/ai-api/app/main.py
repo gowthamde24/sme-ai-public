@@ -36,6 +36,10 @@ from app.followups import errors as followup_errors
 from app.followups.messages import FOLLOWUP_REFUSALS
 from app.followups.repository import PostgrestFollowupsRepository
 from app.followups.routes import router as followups_router
+from app.hardening.headers import SecurityHeadersMiddleware
+from app.hardening.observe import Metrics, ObserveMiddleware, install_logging
+from app.hardening.ops_routes import build_router as build_ops_router
+from app.hardening.ratelimit import RateLimitMiddleware
 from app.integrations import errors as integration_errors
 from app.integrations.policy import PolicyVersions
 from app.integrations.repository import PostgrestIntegrationsRepository
@@ -453,7 +457,17 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 ):
                     repository.close()
 
-    app = FastAPI(title="SME AI Revenue Engine API", version=SERVICE_VERSION, lifespan=lifespan)
+    docs = settings.is_development or settings.expose_api_docs
+    app = FastAPI(
+        title="SME AI Revenue Engine API",
+        version=SERVICE_VERSION,
+        lifespan=lifespan,
+        docs_url="/docs" if docs else None,
+        redoc_url="/redoc" if docs else None,
+        openapi_url="/openapi.json" if docs else None,
+    )
+    metrics = Metrics()
+    install_logging(settings.log_format)
     app.state.runtime = runtime
     install_log_redaction()
     install_error_handlers(app)
@@ -502,6 +516,22 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             allow_credentials=False,
             max_age=600,
         )
+
+    # job CB (ADR 0082): innermost the rate limits, then the security headers and the size limit,
+    # outermost the request id, the access line and the counters
+    if settings.rate_limit_enabled:
+        app.add_middleware(
+            RateLimitMiddleware,
+            trusted_hops=settings.trusted_proxy_hops,
+            on_limited=metrics.limit_hit,
+        )
+    app.add_middleware(SecurityHeadersMiddleware, production=not settings.is_development)
+    app.add_middleware(ObserveMiddleware, metrics=metrics, trusted_hops=settings.trusted_proxy_hops)
+    app.include_router(
+        build_ops_router(
+            metrics, settings.metrics_token.get_secret_value() if settings.metrics_token else None
+        )
+    )
 
     @app.get("/health", response_model=HealthResponse)
     def health() -> HealthResponse:

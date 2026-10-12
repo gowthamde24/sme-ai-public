@@ -211,6 +211,7 @@ def make_client(
     voice: Any = None,
     integrations: Any = None,
     policies: Any = None,
+    rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
     verifier = TokenVerifier(
@@ -221,7 +222,7 @@ def make_client(
         hs256_secret=None,
     )
     app = create_app(
-        Settings(_env_file=None, api_env="development"),  # type: ignore[call-arg]
+        Settings(_env_file=None, api_env="development", rate_limit_enabled=rate_limit),  # type: ignore[call-arg]
         runtime=Runtime(
             verifier=verifier,
             repository=repo,

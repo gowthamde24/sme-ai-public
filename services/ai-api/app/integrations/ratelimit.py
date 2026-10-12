@@ -35,6 +35,17 @@ class SlidingWindow:
             q.append(now)
             return True
 
+    def count(self, key: str) -> int:
+        """How many hits `key` has in the window now (aged hits are dropped first); counts nothing."""
+        now = self._clock()
+        with self._lock:
+            q = self._hits.get(key)
+            if q is None:
+                return 0
+            while q and now - q[0] >= self.window:
+                q.popleft()
+            return len(q)
+
     def retry_after(self, key: str) -> int:
         now = self._clock()
         with self._lock:

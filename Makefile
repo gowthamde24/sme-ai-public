@@ -1,4 +1,4 @@
-.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -44,7 +44,11 @@ test-packages:
 check-leftovers:
 	./scripts/check-no-leftovers.sh
 
-check-fast: check-leftovers lint typecheck test test-packages
+# Job CB (ADR 0082): fails when a tracked file holds the shape of a real credential (provider keys, private-key blocks, a service-role JWT, a long literal assigned to a secret-like name). Prints FILE:LINE and the kind, never the value.
+secret-scan:
+	python3 scripts/secret_scan.py
+
+check-fast: check-leftovers secret-scan lint typecheck test test-packages
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
 # db-reset first: audit rows of earlier integration runs are append-only, so a stale database could trip a pgTAP canary (T008 owner change I).
@@ -204,7 +208,7 @@ dev-web:
 # Agents are OFF unless you start the API with AGENTS_ENABLED=true (and, locally, the scripted fake model):
 #     AGENTS_ENABLED=true make dev-api
 dev-api:
-	cd $(API) && .venv/bin/uvicorn app.main:app --reload --port 8000
+	cd $(API) && .venv/bin/uvicorn app.main:app --reload --no-server-header --port 8000
 
 # The local demo, one command each (see "Run the demo" in README.md). They take the LOCAL stack's URL and PUBLIC key from `supabase status` (never the secret or
 # service-role key), map them to the names each app needs, print nothing, write no file, and refuse unless the Supabase URL is this machine. dev-api and dev-web are unchanged.
@@ -213,7 +217,7 @@ API_PORT ?= 8000
 WEB_PORT ?= 3000
 
 dev-api-local:
-	cd $(API) && SME_STACK=$(SERVE_STACK) ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --port $(API_PORT)
+	cd $(API) && SME_STACK=$(SERVE_STACK) ../../scripts/with-local-demo-env.sh .venv/bin/uvicorn app.main:app --no-server-header --port $(API_PORT)
 
 # OPT-IN (job AN): the local API with the Main agent on a hosted FREE-tier model, Groq openai/gpt-oss-120b (LLM_MODEL=... to choose another). Reads the API key HIDDEN (or takes LLM_API_KEY if it is
 # already set), checks it against Groq's models endpoint and refuses an empty or refused key, records the model's price at the minimum, switches the assistant on for the demo workspace and starts the API on API_PORT with AGENTS_ENABLED=true. Local stack and synthetic data only.
@@ -239,3 +243,14 @@ demo-code:
 # `make db-start`, the API's virtualenv and a browser; it refuses to start while an integration or pgTAP session is using the database. Never uses :3000, :8000 or :8001. See docs/runbooks/e2e-real-stack.md.
 e2e-local:
 	./scripts/e2e-local.sh
+
+# Job CB (ADR 0082), OPT-IN, never in make check. Hardening and operations tools.
+#   make restore-drill            the PLAN for a hosted backup/restore drill (touches nothing); DRILL=local runs a REAL drill on the AGENT stack's database (dump, restore into a scratch database,
+#                                 compare every table's row count and supabase/hosted/verify.sql, time the restore): run `make agent-db-reset` first for a clean database. docs/runbooks/hardening.md
+#   make loadtest SHOPS=50        N shops live a typical day at once against the local stack (the API on :8001, `AGENTS_ENABLED=true make dev-api-local API_PORT=8001`); prints latency and error tables;
+#                                 exit 1 when the p95 or the error rate passes the limit. Synthetic data only; clean up with `make agent-db-reset`.
+restore-drill:
+	@if [ "$(DRILL)" = "local" ]; then python3 scripts/restore_drill.py --local --report "$${REPORT:-/dev/stdout}"; else python3 scripts/restore_drill.py --dry-run; fi
+
+loadtest:
+	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/loadtest.py --shops "$${SHOPS:-50}" --duration "$${DURATION:-60}" $(if $(REPORT),--report "$(REPORT)",) $(LOADTEST_ARGS)
