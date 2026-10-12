@@ -5,6 +5,7 @@ import { HelpGuide } from "@/components/v2/app/help/HelpScreens";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { pageMain } from "@/components/v2/app/ui";
 import { appT } from "@/i18n/app";
+import { partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -24,7 +25,7 @@ export default async function HelpGuidePage({ params }: PageProps<"/app/tenants/
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
-    return <ApiDownV2 />;
+    return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
   return (
