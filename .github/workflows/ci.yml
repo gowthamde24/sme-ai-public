@@ -104,6 +104,8 @@ jobs:
       - run: npx tsc --noEmit -p ../../packages/contracts/tsconfig.json
       - run: npm test
       - run: npm run build
+      # job CF: the gzip JavaScript of every page route against scripts/budget.json (reads the build, no server: about a second)
+      - run: npm run audit:route-js
 
   api:
     runs-on: ubuntu-latest

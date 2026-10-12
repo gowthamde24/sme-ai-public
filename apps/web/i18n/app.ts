@@ -28,12 +28,14 @@ export function appT(lang: Lang): AppT {
 }
 
 /**
- * The words the screens of the workspace (job BK) and the Help guides and tips (`help.*`, job BT: read on the server by the Help screens and the "?" tips) read through `wordsFor` (i18n/app-words.ts): they travel with their own page, so the frame does not carry them on every page.
- * Before this the frame shipped the whole store (about 240 KB in Telugu after job BK) in every page's payload.
+ * The words the frame's own client parts read through `word(labels, key, english)`: the menu (`nav.`), the frame (`frame.`: plan, AI usage, account, workspace switcher), the bell (`notify.`), the offline and session
+ * banners (`robust.`), the problem pages (`problem.`, `notfound.`) and the install hint (`pwa.`). ONLY these travel in every page's payload (job CF: it was every key not named in a deny-list, about 55 KB of
+ * JSON, three quarters of it words of one screen or another). The words of a screen travel with that screen's own page (`wordsFor`, i18n/app-words.ts), and the Help guides and tips (`help.*`) are read on the server.
+ * A client part that needs a word of another prefix takes it as a prop from its page; a test (i18n/app.test.ts) pins that every key the frame's parts look up is in this set.
  */
-const SCREEN_PREFIXES = ["enq.", "orders.", "fu.", "ws.", "rev.", "ag.", "prv.", "qp.", "pl.", "it.", "acct.", "cont.", "cust.", "supp.", "prod.", "comp.", "sug.", "parts.", "int.", "help.", "report.", "apierr.", "dta.", "prx.", "rtl.", "team.", "wa.", "gst.", "acpt."];
+const FRAME_PREFIXES = ["frame.", "nav.", "notify.", "robust.", "problem.", "notfound.", "pwa."];
 
-/** The words of the frame and of the older screens that read the whole store (a few hundred short words, in ONE language), as plain props for the client components. */
+/** The words of the frame (a few hundred short words, in ONE language), as plain props for the client components. */
 export function frameLabels(lang: Lang): Record<string, string> {
-  return Object.fromEntries(Object.entries(appDict(lang)).filter(([key]) => !SCREEN_PREFIXES.some((p) => key.startsWith(p))));
+  return Object.fromEntries(Object.entries(appDict(lang)).filter(([key]) => FRAME_PREFIXES.some((p) => key.startsWith(p))));
 }

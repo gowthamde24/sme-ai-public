@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 import { securityHeaders } from "./lib/security/headers";
 
+const PUBLIC_FILE_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
+
 const nextConfig: NextConfig = {
   // Never advertise the framework.
   poweredByHeader: false,
@@ -19,6 +21,10 @@ const nextConfig: NextConfig = {
           { key: "Service-Worker-Allowed", value: "/" },
         ],
       },
+      // the app icons and the share pictures (job CF): Next serves files of public/ with "max-age=0", so a returning visitor on a slow phone asked for every icon again. They are not fingerprinted (the manifest
+      // and the page heads name them by path), so a day is fresh and a week may be served while it is checked in the background; a changed icon reaches people within a day. The hashed files under /_next/static are already "immutable".
+      { source: "/icons/:path*", headers: [{ key: "Cache-Control", value: PUBLIC_FILE_CACHE }] },
+      { source: "/og/:path*", headers: [{ key: "Cache-Control", value: PUBLIC_FILE_CACHE }] },
     ];
   },
 };

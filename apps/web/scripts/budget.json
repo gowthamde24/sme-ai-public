@@ -10,5 +10,19 @@
   "agentOwl": {
     "_comment": "Job AR: Agent OWL on Today (components/v2/app/owl): the 3D owl's entry (three's shared core + the owl and its canvas), requested after the first paint, never in a first load; the flat SVG owl stands in until it arrives and is the fallback. Measured in a production build. Change only with the owner's approval.",
     "maxGzipBytes": 195000
+  },
+  "routeJs": {
+    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 203 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. The 3D Agent OWL and the 3D office are next/dynamic, loaded after the first paint, and have their own ceilings above (office3d, agentOwl). Raise a number only with a reason in the commit; the owner approves a raised ceiling.",
+    "public": 153000,
+    "app": 186000,
+    "routes": {
+      "/page": 153000,
+      "/login/page": 151000,
+      "/app/tenants/[tenantId]/page": 207000,
+      "/app/tenants/[tenantId]/outbox/page": 184000,
+      "/app/tenants/[tenantId]/catalogue/page": 178000,
+      "/app/tenants/[tenantId]/settings/page": 193000,
+      "/app/tenants/[tenantId]/office/page": 202000
+    }
   }
 }

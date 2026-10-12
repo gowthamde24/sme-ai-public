@@ -17,16 +17,22 @@ function sareePicture(n) {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="600" height="800" viewBox="0 0 600 800"><rect width="600" height="800" fill="${main}"/>${stripes}${motifs}<rect y="700" width="600" height="100" fill="${light}"/><rect y="716" width="600" height="14" fill="${dark}"/></svg>`;
 }
 
-export function startStandIn({ port, certPath, keyPath }) {
+export function startStandIn({ port, certPath, keyPath, delayMs = 0, trace = null }) {
   const misses = new Set();
   const hits = [];
   const server = https.createServer({ key: readFileSync(keyPath), cert: readFileSync(certPath) }, (req, res) => {
+    // `delayMs` (the speed measurement, e2e/perf) stands for the round trip to a real API / Auth server, so sequential reads on the server show up in the page's time; the visual tests leave it at 0
+    if (delayMs > 0) return void setTimeout(() => handle(req, res), delayMs);
+    handle(req, res);
+  });
+  const handle = (req, res) => {
     const url = new URL(req.url, "https://stand-in.invalid");
     const send = (status, body) => {
       res.writeHead(status, { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" });
       res.end(JSON.stringify(body));
     };
     hits.push(`${req.method} ${url.pathname}${url.search}`);
+    if (trace) trace.push([Date.now(), `${req.method} ${url.pathname}`]);
     const picture = /^\/storage\/v1\/object\/sign\/catalogue\/(\d+)\.svg$/.exec(url.pathname);
     if (picture) {
       res.writeHead(200, { "Content-Type": "image/svg+xml", "Cache-Control": "no-store" });
@@ -47,7 +53,7 @@ export function startStandIn({ port, certPath, keyPath }) {
     }
     misses.add(`${req.method} ${url.pathname}`);
     return send(404, { error: { code: "not_found", message: `stand-in: no fixture for ${url.pathname}` } });
-  });
+  };
   return new Promise((resolve, reject) => {
     server.once("error", reject);
     server.listen(port, "127.0.0.1", () => resolve({ server, misses, hits, close: () => new Promise((r) => server.close(() => r())) }));

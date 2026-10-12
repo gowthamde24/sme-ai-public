@@ -59,8 +59,31 @@ describe("the frame's string store (language track L0)", () => {
     const frame = frameLabels("te");
     expect(Object.keys(frame).length).toBeLessThan(keys.length);
     expect(Object.keys(frame).some((k) => /^(enq|orders|fu|ws|rev|ag|prv|qp|pl|it|acct|cont|cust|supp|prod|comp|sug)\./.test(k))).toBe(false);
-    expect(new TextEncoder().encode(JSON.stringify(frame)).length).toBeLessThan(110_000);
+    expect(new TextEncoder().encode(JSON.stringify(frame)).length).toBeLessThan(20_000); // job CF: it was 55 KB when it carried the words of the screens too
     expect(frame["nav.item.today"]).toBeTruthy();
+  });
+  it("carries every word the frame's client parts look up (word(labels, key, english)), so a person who reads Telugu never gets an English fallback for them", () => {
+    const WEB = path.resolve(import.meta.dirname, "..");
+    const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(path.join(dir, e.name)) : [path.join(dir, e.name)]));
+    // the report screen has its own words (reportWords); everything else that looks a word up in `labels` is the frame
+    const files = [...walk(path.join(WEB, "components", "v2", "app")), ...walk(path.join(WEB, "components", "v2", "pwa"))].filter((f) => /\.tsx?$/.test(f) && !/\.test\./.test(f) && !f.includes(`${path.sep}report${path.sep}`));
+    const frame = frameLabels("en");
+    const frameKeys = Object.keys(frame);
+    let literals = 0;
+    let templates = 0;
+    for (const f of files) {
+      const src = fs.readFileSync(f, "utf8");
+      for (const m of src.matchAll(/\bword\((?:labels|labelsRef\.current), *"([a-z]+\.[A-Za-z0-9_.]+)"/g)) {
+        literals += 1;
+        expect(frame[m[1]], `${path.relative(WEB, f)}: ${m[1]}`).toBeTruthy();
+      }
+      for (const m of src.matchAll(/\bword\((?:labels|labelsRef\.current), *`([a-z]+\.[A-Za-z0-9_.]+)\$\{/g)) {
+        templates += 1;
+        expect(frameKeys.some((k) => k.startsWith(m[1])), `${path.relative(WEB, f)}: ${m[1]}\${...}`).toBe(true);
+      }
+    }
+    expect(literals).toBeGreaterThan(60);
+    expect(templates).toBeGreaterThan(5);
   });
   it("is server only: no client component imports it (all four dictionaries would land in the browser bundle)", () => {
     const WEB = path.resolve(import.meta.dirname, "..");

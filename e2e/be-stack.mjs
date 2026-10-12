@@ -11,6 +11,7 @@ import { chromium } from "playwright";
 
 import { SHOTS, factorSecret, passChallenge, confirmEmail } from "./lib.mjs";
 import { ccSteps } from "./cc-steps.mjs";
+import { cfSteps } from "./cf-steps.mjs";
 import { API, BASE, EMAIL, PW, STAMP, aal2Token, api, indiaHour, psql, sharedDatabaseProblem, totp, uuid } from "./be-lib.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -1378,6 +1379,14 @@ await ccSteps({
     return tenant;
   },
   T,
+});
+
+// ---- 8d. job CF: the speed guards on the real stack (e2e/cf-steps.mjs) -------------------------------------------------------------------------------------------------
+await cfSteps({
+  step, page, must, BASE,
+  get tenant() {
+    return tenant;
+  },
 });
 
 // ---- 9. the whole run: no CSP violation, no hydration error ---------------------------------------------------------------
