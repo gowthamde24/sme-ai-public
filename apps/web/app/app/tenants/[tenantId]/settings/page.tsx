@@ -23,16 +23,20 @@ import { fetchMembers, type Member } from "@/lib/api/orders";
 import { getPlan, type Plan } from "@/lib/api/plan";
 import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
+import { DataSection } from "@/components/v2/app/data/DataSection";
+import { getCalendarFeed, getExportFormats, listImportJobs, type CalendarFeed, type ExportFormat, type ImportJob } from "@/lib/api/data";
+import { settle, type Part } from "@/lib/api/part";
 
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
+import { makeCalendarFeedAction, revokeCalendarFeedAction } from "./data-actions";
 import { agentWords } from "./agent-words";
-import { partsWords } from "@/i18n/app-words";
+import { partsWords, wordsFor } from "@/i18n/app-words";
 
 export const metadata = { title: "Settings · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "members", "language", "agent", "security", "privacy"] as const;
+const SECTIONS = ["business", "members", "data", "language", "agent", "security", "privacy"] as const;
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -102,6 +106,17 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       throw error;
     }
   }
+  // Data (job CC): the calendar address is every member's; the import jobs and the export's file types are the Owner's and Admin's. Each read stands alone.
+  let dataParts: { formats: Part<ExportFormat[]> | null; jobs: Part<ImportJob[]> | null; feed: Part<CalendarFeed> } | null = null;
+  if (section === "data") {
+    try {
+      const [formats, jobs, feed] = await Promise.all([admin ? settle(() => getExportFormats(user.accessToken, tenantId)) : null, admin ? settle(() => listImportJobs(user.accessToken, tenantId)) : null, settle(() => getCalendarFeed(user.accessToken, tenantId))]);
+      dataParts = { formats, jobs, feed };
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      throw error;
+    }
+  }
   let theme: ThemePick = "system";
   try {
     theme = readTheme((await cookies()).get(THEME_COOKIE)?.value) ?? "system";
@@ -111,6 +126,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "members", label: t("settings.tab.members") },
+    { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
     { key: "security", label: t("settings.tab.security") },
@@ -169,6 +185,18 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </ul>
             )}
           </section>
+        ) : null}
+        {section === "data" && dataParts ? (
+          <DataSection
+            tenantId={tenantId}
+            words={wordsFor(lang, ["dta.", "apierr.", "problem.", "catalogue.stock."])}
+            admin={admin}
+            formats={dataParts.formats}
+            jobs={dataParts.jobs}
+            feed={dataParts.feed}
+            makeFeed={makeCalendarFeedAction.bind(null, tenantId)}
+            revokeFeed={revokeCalendarFeedAction.bind(null, tenantId)}
+          />
         ) : null}
         {section === "language" ? (
           <section className={surface} aria-label={t("settings.tab.language")}>

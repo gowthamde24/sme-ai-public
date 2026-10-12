@@ -4,11 +4,15 @@ import {
   ApiAuthError,
   ApiContractError,
   ApiRequestError,
+  apiDownloadRequest,
   apiUploadRequest,
   createTenant,
   fetchMe,
   parseMe,
   parseTenantDetail,
+  refusal,
+  retryAfterSeconds,
+  suggestedFilename,
 } from "./client";
 
 const ME = {
@@ -185,5 +189,61 @@ describe("a file as the body of a request (the catalogue's photos)", () => {
       throw new Error("down");
     }) as unknown as typeof fetch;
     await expect(apiUploadRequest("/v1/x", "tok", new Blob(["x"]), "image/png")).rejects.toMatchObject({ status: 503, code: "api_unreachable" });
+  });
+});
+
+describe("a refusal from the rate limiter and the size ceiling (job CC)", () => {
+  const original = globalThis.fetch;
+  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_API_BASE_URL", "http://api.test"));
+  afterEach(() => {
+    globalThis.fetch = original;
+    vi.unstubAllEnvs();
+  });
+
+  it("a 429 carries the seconds of its Retry-After header, and its code even though the API's body is a plain string", async () => {
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ error: "rate_limited" }), { status: 429, headers: { "Retry-After": "42" } })) as unknown as typeof fetch;
+    const error = await fetchMe("tok").catch((e: unknown) => e);
+    expect(error).toBeInstanceOf(ApiRequestError);
+    expect(error).toMatchObject({ status: 429, code: "rate_limited", retryAfter: 42 });
+  });
+  it("a Retry-After that is a date, negative, zero or absurd is not used", () => {
+    expect(retryAfterSeconds("Wed, 21 Oct 2026 07:28:00 GMT")).toBeUndefined();
+    expect(retryAfterSeconds("-5")).toBeUndefined();
+    expect(retryAfterSeconds("0")).toBeUndefined();
+    expect(retryAfterSeconds("999999")).toBeUndefined();
+    expect(retryAfterSeconds(null)).toBeUndefined();
+    expect(retryAfterSeconds("30")).toBe(30);
+  });
+  it("a 429 with no body at all is still rate_limited", async () => {
+    globalThis.fetch = vi.fn(async () => new Response("", { status: 429 })) as unknown as typeof fetch;
+    await expect(fetchMe("tok")).rejects.toMatchObject({ status: 429, code: "rate_limited" });
+  });
+  it("a body over the ceiling is payload_too_large, from the API's plain string", async () => {
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ error: "payload_too_large" }), { status: 413 })) as unknown as typeof fetch;
+    await expect(apiUploadRequest("/v1/x", "tok", new ArrayBuffer(1), "text/csv")).rejects.toMatchObject({ status: 413, code: "payload_too_large" });
+  });
+  it("a plain-string error that is not a closed word is not trusted as a code", () => {
+    expect(refusal(500, { error: "Traceback (most recent call last)" }).code).toBe("http_error");
+    expect(refusal(500, { error: { code: "boom", message: "fixed" } })).toMatchObject({ code: "boom", message: "fixed" });
+  });
+  it("a download is bytes with the file name and the few headers the screen shows; anything else the API sends is dropped", async () => {
+    globalThis.fetch = vi.fn(
+      async () => new Response(new Uint8Array([1, 2, 3]), { status: 200, headers: { "Content-Type": "application/zip", "Content-Disposition": 'attachment; filename="accounts-2026-09.zip"', "X-Export-Sales": "4", "X-Export-Payments": "2", "X-Secret": "no" } }),
+    ) as unknown as typeof fetch;
+    const file = await apiDownloadRequest("/v1/x", "tok", { a: 1 });
+    expect(new Uint8Array(file.bytes)).toEqual(new Uint8Array([1, 2, 3]));
+    expect(file.filename).toBe("accounts-2026-09.zip");
+    expect(file.headers).toEqual({ "x-export-sales": "4", "x-export-payments": "2" });
+  });
+  it("a file name that is not plain is not used", () => {
+    expect(suggestedFilename('attachment; filename="../../etc/passwd"')).toBeNull();
+    expect(suggestedFilename(null)).toBeNull();
+    expect(suggestedFilename("attachment; filename=a.csv")).toBe("a.csv");
+  });
+  it("a refused download is the same error as any other call, and a rejected session is an auth error", async () => {
+    globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ error: { code: "mfa_required", message: "x" } }), { status: 403 })) as unknown as typeof fetch;
+    await expect(apiDownloadRequest("/v1/x", "tok", {})).rejects.toMatchObject({ status: 403, code: "mfa_required" });
+    globalThis.fetch = vi.fn(async () => new Response("", { status: 401 })) as unknown as typeof fetch;
+    await expect(apiDownloadRequest("/v1/x", "tok", {})).rejects.toBeInstanceOf(ApiAuthError);
   });
 });

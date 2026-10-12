@@ -16,6 +16,8 @@ export class ApiRequestError extends Error {
     readonly reason?: string,
     /** `ai_paused_until` only: the ISO time the AI features can be used again (the allowance of the day or the month is used up). */
     readonly until?: string,
+    /** A 429 only: the seconds the API asks the caller to wait (its Retry-After header), when it gave a sensible number. */
+    readonly retryAfter?: number,
   ) {
     super(message);
   }
@@ -100,6 +102,26 @@ function reasonOf(err: ApiError["error"] | null): string | undefined {
   return typeof reason === "string" ? reason : undefined;
 }
 
+
+/** The seconds in a Retry-After header, or undefined (an HTTP date, a negative or an absurd number is not used). */
+export function retryAfterSeconds(value: string | null): number | undefined {
+  if (value === null || !/^\d{1,5}$/.test(value.trim())) return undefined;
+  const n = Number(value.trim());
+  return n >= 1 && n <= 86_400 ? n : undefined;
+}
+
+/**
+ * The error a refused answer becomes (one place for apiRequest, the raw upload and the file download). The API's own refusals carry `{error: {code, message}}`; the rate limiter's 429 is `{error: "rate_limited"}`
+ * with a Retry-After header, and a body over the ceiling is `{error: "payload_too_large"}`: a plain string code. Nothing from the body but a closed code and the API's fixed sentence is kept.
+ */
+export function refusal(status: number, body: unknown, retryAfterHeader: string | null = null): ApiRequestError {
+  const raw = isRecord(body) ? body.error : null;
+  const err = isRecord(raw) ? (raw as ApiError["error"]) : null;
+  const plain = typeof raw === "string" && /^[a-z_]{1,40}$/.test(raw) ? raw : null;
+  const code = err && isString(err.code) ? err.code : (plain ?? (status === 429 ? "rate_limited" : "http_error"));
+  return new ApiRequestError(status, code, err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err), status === 429 ? retryAfterSeconds(retryAfterHeader) : undefined);
+}
+
 export async function apiRequest(
   path: string,
   accessToken: string,
@@ -133,19 +155,7 @@ export async function apiRequest(
 
   if (response.status === 401)
     throw new ApiAuthError("The API rejected the session.");
-  if (!response.ok) {
-    const err =
-      isRecord(body) && isRecord(body.error)
-        ? (body.error as ApiError["error"])
-        : null;
-    throw new ApiRequestError(
-      response.status,
-      err && isString(err.code) ? err.code : "http_error",
-      err && isString(err.message) ? err.message : "Request failed.",
-      reasonOf(err),
-      untilOf(err),
-    );
-  }
+  if (!response.ok) throw refusal(response.status, body, response.headers.get("Retry-After"));
   return body;
 }
 
@@ -257,10 +267,7 @@ export async function apiUploadRequest(path: string, accessToken: string, body: 
     // non-JSON body; handled by the status checks below
   }
   if (response.status === 401) throw new ApiAuthError("The API rejected the session.");
-  if (!response.ok) {
-    const err = isRecord(json) && isRecord(json.error) ? (json.error as ApiError["error"]) : null;
-    throw new ApiRequestError(response.status, err && isString(err.code) ? err.code : "http_error", err && isString(err.message) ? err.message : "Request failed.", reasonOf(err), untilOf(err));
-  }
+  if (!response.ok) throw refusal(response.status, json, response.headers.get("Retry-After"));
   return json;
 }
 
@@ -316,4 +323,53 @@ export async function apiExportRequest(
     response.headers.get("Content-Type") || "text/csv; charset=utf-8";
 
   return { content, sha256, rowCount, contentType };
+}
+
+export interface FileDownload {
+  bytes: ArrayBuffer;
+  contentType: string;
+  /** The file name the API suggested (its Content-Disposition), or null. */
+  filename: string | null;
+  /** The few X- headers the screens show (counts and a hash), by lower-case name. */
+  headers: Record<string, string>;
+}
+
+const SHOWN_HEADERS = ["x-export-id", "x-export-sales", "x-export-payments", "x-content-sha256"] as const;
+
+/** The name in a Content-Disposition header, only if it is a plain safe file name (letters, digits, dot, dash, underscore). */
+export function suggestedFilename(disposition: string | null): string | null {
+  const m = disposition ? /filename="?([A-Za-z0-9._-]{1,120})"?\s*(?:;|$)/.exec(disposition) : null;
+  return m && /[A-Za-z0-9]/.test(m[1]) ? m[1] : null;
+}
+
+/** A POST (JSON body) whose good answer is a FILE, as bytes. The status is judged first, exactly as apiRequest does. */
+export async function apiDownloadRequest(path: string, accessToken: string, body: unknown): Promise<FileDownload> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, { method: "POST", cache: "no-store", headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` }, body: JSON.stringify(body) });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  }
+  if (response.status === 401) throw new ApiAuthError("The API rejected the session.");
+  if (!response.ok) {
+    let errBody: unknown = null;
+    try {
+      errBody = await response.json();
+    } catch {
+      // non-JSON body
+    }
+    throw refusal(response.status, errBody, response.headers.get("Retry-After"));
+  }
+  const headers: Record<string, string> = {};
+  for (const name of SHOWN_HEADERS) {
+    const v = response.headers.get(name);
+    if (v !== null && v.length <= 100) headers[name] = v;
+  }
+  return { bytes: await response.arrayBuffer(), contentType: response.headers.get("Content-Type") ?? "application/octet-stream", filename: suggestedFilename(response.headers.get("Content-Disposition")), headers };
+}
+
+/** The API's public address, as a calendar app or a phone must be given it (the browser never calls the API itself; this is only for a link a person copies). */
+export function publicApiBase(): string {
+  return apiBaseUrl();
 }

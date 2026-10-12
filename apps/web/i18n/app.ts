@@ -31,7 +31,7 @@ export function appT(lang: Lang): AppT {
  * The words the screens of the workspace (job BK) and the Help guides and tips (`help.*`, job BT: read on the server by the Help screens and the "?" tips) read through `wordsFor` (i18n/app-words.ts): they travel with their own page, so the frame does not carry them on every page.
  * Before this the frame shipped the whole store (about 240 KB in Telugu after job BK) in every page's payload.
  */
-const SCREEN_PREFIXES = ["enq.", "orders.", "fu.", "ws.", "rev.", "ag.", "prv.", "qp.", "pl.", "it.", "acct.", "cont.", "cust.", "supp.", "prod.", "comp.", "sug.", "parts.", "int.", "help.", "report."];
+const SCREEN_PREFIXES = ["enq.", "orders.", "fu.", "ws.", "rev.", "ag.", "prv.", "qp.", "pl.", "it.", "acct.", "cont.", "cust.", "supp.", "prod.", "comp.", "sug.", "parts.", "int.", "help.", "report.", "apierr.", "dta.", "prx.", "rtl.", "team.", "wa.", "gst."];
 
 /** The words of the frame and of the older screens that read the whole store (a few hundred short words, in ONE language), as plain props for the client components. */
 export function frameLabels(lang: Lang): Record<string, string> {

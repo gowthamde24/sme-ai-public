@@ -13,6 +13,9 @@ const fetchTenant = vi.fn();
 const fetchMembers = vi.fn();
 const getPlan = vi.fn();
 const getAiUsage = vi.fn();
+const getCalendarFeed = vi.fn();
+const getExportFormats = vi.fn();
+const listImportJobs = vi.fn();
 const getOutboxSettings = vi.fn();
 const getSchedulerSettings = vi.fn();
 const getSchedulerStatus = vi.fn();
@@ -25,6 +28,7 @@ vi.mock("@/lib/api/plan", () => ({ getPlan: (...a: unknown[]) => getPlan(...a) }
 vi.mock("@/lib/api/outbox", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/outbox")>()), getOutboxSettings: (...a: unknown[]) => getOutboxSettings(...a) }));
 vi.mock("@/lib/api/scheduler", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/scheduler")>()), getSchedulerSettings: (...a: unknown[]) => getSchedulerSettings(...a), getSchedulerStatus: (...a: unknown[]) => getSchedulerStatus(...a) }));
 vi.mock("@/lib/api/ai-usage", () => ({ getAiUsage: (...a: unknown[]) => getAiUsage(...a) }));
+vi.mock("@/lib/api/data", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/data")>()), getCalendarFeed: (...a: unknown[]) => getCalendarFeed(...a), getExportFormats: (...a: unknown[]) => getExportFormats(...a), listImportJobs: (...a: unknown[]) => listImportJobs(...a) }));
 
 import SettingsPage from "./page";
 
@@ -41,13 +45,16 @@ beforeEach(() => {
   getOutboxSettings.mockResolvedValue({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3 });
   getSchedulerSettings.mockResolvedValue(SETTINGS_JSON);
   getSchedulerStatus.mockResolvedValue({ ...STATUS_JSON, last_run_at: new Date().toISOString(), next_run_at: null });
+  getCalendarFeed.mockResolvedValue({ active: false, created_at: null, last_used_at: null });
+  getExportFormats.mockResolvedValue(["tally_zip", "csv"]);
+  listImportJobs.mockResolvedValue([]);
   getAiUsage.mockResolvedValue({ today_percent: 7, month_percent: 3, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" });
 });
 
 describe("Settings, one part at a time", () => {
   it("opens on the business: its name, URL name, plan and today's AI usage from the API; the members are not asked for", async () => {
     render(await SettingsPage(props()));
-    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Language and look", "Agent OWL", "Security", "Privacy"]);
+    expect(tabs().getAllByRole("link").map((a) => a.textContent)).toEqual(["Business and plan", "Members", "Data", "Language and look", "Agent OWL", "Security", "Privacy"]);
     expect(tabs().getByRole("link", { name: "Business and plan" })).toHaveAttribute("aria-current", "page");
     expect(screen.getByText("Acme Silks")).toBeInTheDocument();
     expect(screen.getByText("acme-silks")).toBeInTheDocument();
@@ -167,5 +174,38 @@ describe("Settings: Agent OWL (the Owner only)", () => {
   it("a rejected session goes to sign-in", async () => {
     getSchedulerStatus.mockRejectedValue(new ApiAuthError("x"));
     await expect(SettingsPage(props({ section: "agent" }))).rejects.toThrow("NEXT_REDIRECT:/login");
+  });
+});
+
+describe("Settings > Data (job CC)", () => {
+  it("an owner sees the import, the export and the calendar, each read on its own with the person's token", async () => {
+    render(await SettingsPage(props({ section: "data" })));
+    expect(tabs().getByRole("link", { name: "Data" })).toHaveAttribute("aria-current", "page");
+    for (const name of ["Bring in a spreadsheet", "Send your books to your accountant", "Visits in your phone's calendar"]) expect(screen.getByRole("heading", { name })).toBeInTheDocument();
+    expect(getExportFormats).toHaveBeenCalledWith("tok", TENANT);
+    expect(listImportJobs).toHaveBeenCalledWith("tok", TENANT);
+    expect(getCalendarFeed).toHaveBeenCalledWith("tok", TENANT);
+  });
+  it("a salesperson gets the calendar only, and the API is not asked for the admin parts", async () => {
+    fetchTenant.mockResolvedValue(tenant("sales"));
+    render(await SettingsPage(props({ section: "data" })));
+    expect(screen.queryByRole("heading", { name: "Bring in a spreadsheet" })).toBeNull();
+    expect(screen.getByRole("heading", { name: "Visits in your phone's calendar" })).toBeInTheDocument();
+    expect(getExportFormats).not.toHaveBeenCalled();
+    expect(listImportJobs).not.toHaveBeenCalled();
+  });
+  it("a read that is refused (403) or limited (429) says so in its place; the others still show", async () => {
+    getExportFormats.mockRejectedValue(new ApiRequestError(403, "forbidden", "x"));
+    listImportJobs.mockRejectedValue(new ApiRequestError(429, "rate_limited", "x", undefined, undefined, 30));
+    getCalendarFeed.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await SettingsPage(props({ section: "data" })));
+    expect(screen.getByText("Your role does not include this page. Ask the owner if you need it.")).toBeInTheDocument();
+    expect(screen.getByText(/Wait 30 seconds/)).toBeInTheDocument();
+    expect(screen.getByText("This part could not be loaded. The rest of the page is fine.")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Bring in a spreadsheet" })).toBeInTheDocument();
+  });
+  it("a rejected session on a read goes to sign-in", async () => {
+    getCalendarFeed.mockRejectedValue(new ApiAuthError("x"));
+    await expect(SettingsPage(props({ section: "data" }))).rejects.toThrow("/login");
   });
 });
