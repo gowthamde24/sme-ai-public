@@ -15,8 +15,16 @@ from typing import Any, Protocol
 
 from app.catalogue.storage import CHANNEL_URL_SECONDS, StorageClient
 from app.errors import ApiError
-from app.outbox.adapter import ChannelAdapter, MediaRef, OutgoingMessage, SendResult
+from app.outbox.adapter import (
+    ChannelAdapter,
+    MediaRef,
+    OutgoingMessage,
+    SendContext,
+    SendResult,
+    TemplateRef,
+)
 from app.outbox.models import (
+    DELIVERY_TEXT,
     REASON_TEXT,
     ActorOut,
     CallRequestOut,
@@ -30,6 +38,8 @@ from app.tenancy.repository import RepositoryError, UpstreamError
 logger = logging.getLogger("app.outbox.service")
 
 DISPATCH_BATCH = 20
+# a message whose provider was busy or unreachable is offered again when its claim lapses, this many times; then it is marked failed
+MAX_SEND_ATTEMPTS = 5
 
 # gives each photo of a message a signed address the channel can fetch it from (raises if it cannot for any of them)
 MediaSigner = Callable[[str, list[MediaRef]], list[MediaRef]]
@@ -80,6 +90,23 @@ def _customer(row: dict[str, Any]) -> tuple[str | None, str | None]:
     return (name if isinstance(name, str) else None, city if isinstance(city, str) else None)
 
 
+def _send_context(raw: Any) -> SendContext | None:
+    """The database's note on a claimed message for a real channel (null for the fake, or when the business has no active number)."""
+    if not isinstance(raw, dict):
+        return None
+    try:
+        template = raw.get("template")
+        return SendContext(
+            phone_number_id=str(raw["phone_number_id"]),
+            token_ref=str(raw["token_ref"]),
+            window_open=raw.get("window_open") is True,
+            template=TemplateRef(str(template["name"]), str(template["language"]), str(template["body"])) if isinstance(template, dict) else None,
+            coexistence=raw.get("coexistence") is True,
+        )
+    except (KeyError, TypeError):
+        return None
+
+
 def media_photos(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """The photo records (bucket, thumb_path) of the messages' media, for one batch of signing."""
     return [
@@ -109,7 +136,7 @@ def event_out(row: dict[str, Any], names: dict[str, str]) -> EventOut:
         return EventOut(
             kind=row["kind"],
             reason=reason,
-            reason_text=REASON_TEXT.get(reason) if isinstance(reason, str) else None,
+            reason_text=(REASON_TEXT.get(reason) or DELIVERY_TEXT.get(reason)) if isinstance(reason, str) else None,
             at=row["at"],
             actor=ActorOut(
                 kind=row["actor_kind"],
@@ -241,6 +268,8 @@ def dispatch_due(
                     )
                     for m in (item.get("media") or [])
                 ),
+                int(item.get("attempts") or 1),
+                _send_context(item.get("wa")),
             )
         except (KeyError, ValueError):
             logger.error("outbox claim had an unexpected shape")
@@ -265,6 +294,10 @@ def dispatch_due(
         ) as exc:  # an adapter bug must not leave the batch half-told: only its class is kept
             logger.error("outbox adapter raised: %s", exc.__class__.__name__)
             result = SendResult(False, None, "adapter_error")
+        if not result.ok and result.retry and outgoing.attempts < MAX_SEND_ATTEMPTS:
+            logger.warning("outbox: the channel was busy or unreachable; offered again later")
+            retry_later += 1
+            continue
         try:
             if result.ok and result.adapter_message_id:
                 repository.mark(

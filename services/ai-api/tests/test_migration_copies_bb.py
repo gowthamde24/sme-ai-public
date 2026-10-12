@@ -150,7 +150,9 @@ def test_the_bb_copy_is_the_last_definition_and_differs_by_exactly_the_named_lin
 ) -> None:
     mig, compared, want_dropped, want_added = BB_CHANGED[name]
     defs = definitions(name)
-    assert defs[-1][0] == mig, (
+    # a later job may copy it again, if ITS pin (test_migration_copies_br.py) says exactly what it changed
+    later = {"app.outbox_claim_due_core": "20261117090000_br_whatsapp.sql"}
+    assert defs[-1][0] in (mig, later.get(name)), (
         f"{name} is redefined after job BB's migration ({defs[-1][0]}): re-copy it from the latest definition"
     )
     before = [d for d in defs if d[0] == compared]
@@ -162,7 +164,7 @@ def test_the_bb_copy_is_the_last_definition_and_differs_by_exactly_the_named_lin
     diff = [
         line
         for line in difflib.unified_diff(
-            normalised(before[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+            normalised(before[-1][1]), normalised([d for d in defs if d[0] == mig][-1][1]), lineterm="", n=0
         )
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]

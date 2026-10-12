@@ -146,6 +146,23 @@ class Settings(BaseSettings):
     def _empty_date_is_none(cls, value: Any) -> Any:
         return None if isinstance(value, str) and not value.strip() else value
 
+    # Job BR (ADR 0076): WhatsApp (Meta's Cloud API). All of it is off until the owner sets
+    # these: OUTBOX_ADAPTER=whatsapp turns real sending on; the webhook answers only with the app
+    # secret and the verify token set. Secrets come ONLY from the environment (or the host's
+    # secret manager); none is stored in the database, logged or returned.
+    whatsapp_api_base: str = "https://graph.facebook.com"
+    whatsapp_graph_version: str = "v25.0"
+    whatsapp_app_secret: SecretStr | None = None
+    whatsapp_verify_token: SecretStr | None = None
+    # the access token used for every business unless WHATSAPP_ACCESS_TOKENS names its own
+    whatsapp_access_token: SecretStr | None = None
+    # a JSON object {"token_ref": "token", ...}; a business's token_ref names its entry
+    whatsapp_access_tokens: SecretStr | None = None
+    # the account the API signs in as to hand a webhook to the database (registered by the
+    # operator; belongs to no workspace)
+    channel_agent_email: str | None = None
+    channel_agent_password: SecretStr | None = None
+
     @property
     def cors_origins(self) -> list[str]:
         """The validated list. A wildcard, a path, a trailing slash or (outside development) a

@@ -39,6 +39,7 @@ from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
 from app.voice.interface import VoiceStack
+from app.whatsapp.runtime import WhatsAppRuntime
 
 logger = logging.getLogger("app.auth")
 
@@ -74,6 +75,7 @@ class Runtime:
     policies: PolicyVersions | None = None
     privacy: PrivacyRepository | None = None
     policy_gate: PolicyGate | None = None
+    whatsapp: WhatsAppRuntime | None = None
 
 
 @dataclass(frozen=True)

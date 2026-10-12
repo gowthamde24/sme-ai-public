@@ -73,6 +73,11 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "app/privacy/*" = ["E501"]
 "tests/test_privacy_*.py" = ["E501"]
 "tests/privacy_fakes.py" = ["E501"]
+# job BR: WhatsApp (long explanatory docstrings, one-line payload tables)
+"app/whatsapp/*" = ["E501"]
+"tests/test_whatsapp_*.py" = ["E501"]
+"tests/whatsapp_fakes.py" = ["E501"]
+"../../scripts/fake_whatsapp_server.py" = ["E501"]
 "tests/integrations_fakes.py" = ["E501"]
 # job AS: store visits (fixed message templates in five languages, long explanatory docstrings)
 "app/visits/*" = ["E501"]
