@@ -11,6 +11,9 @@ import { confirmPlace, getResearchStatus, mapsLink, parseResearchStatus, queryPr
 const T = "22222222-2222-4222-8222-222222222222";
 const M = "33333333-3333-4333-8333-333333333333";
 const P1 = "3b1c0000-0000-4000-8000-000000000001";
+/** Google's own place IDs (the shape: letters, digits, `_` and `-`), as the stream's `place_id` carries them (job CE). */
+const G1 = "ChIJFIXTURE000000001";
+const G2 = "ChIJFIXTURE000000002";
 const sse = (events: [string, unknown][]) => new Response(events.map(([n, d]) => `event: ${n}\ndata: ${JSON.stringify({ type: n, ...(d as object) })}\n\n`).join(""), { status: 200 });
 beforeEach(() => vi.clearAllMocks());
 
@@ -53,20 +56,21 @@ describe("searching", () => {
     apiStreamRequest.mockResolvedValue(
       sse([
         ["text", { delta: "I found two shops (see the cards)." }],
-        ["source", { kind: "place", id: P1, label: "Balaji Sarees", target: null, url: "https://maps.google.com/?cid=2" }],
+        ["source", { kind: "place", id: P1, label: "Balaji Sarees", target: null, url: "https://maps.google.com/?cid=2", place_id: G1 }],
         ["source", { kind: "web", id: "3b1c0000-0000-4000-8000-000000000002", label: "A page", target: null, url: "https://news.example/a" }],
-        ["source", { kind: "place", id: "3b1c0000-0000-4000-8000-000000000003", label: "No Link Silks", target: null, url: "https://evil.test/x" }],
+        ["source", { kind: "place", id: "3b1c0000-0000-4000-8000-000000000003", label: "No Link Silks", target: null, url: "https://evil.test/x", place_id: G2 }],
         ["done", { conversation_id: M, message_id: M, language: "en", kind: "answer" }],
       ]),
     );
     const r = await searchRetailers("tok", T, { messageId: M, text: "Find retailers: saree in Guntur" });
-    expect(r.cards).toEqual([{ id: P1, label: "Balaji Sarees", url: "https://maps.google.com/?cid=2" }, { id: "3b1c0000-0000-4000-8000-000000000003", label: "No Link Silks", url: null }]);
+    // the card's id IS Google's place ID (not the stream's uuid), so the screen sends it unchanged to confirmPlace
+    expect(r.cards).toEqual([{ id: G1, label: "Balaji Sarees", url: "https://maps.google.com/?cid=2" }, { id: G2, label: "No Link Silks", url: null }]);
     expect(r.text).toBe("I found two shops (see the cards).");
     expect(r.error).toBeNull();
     expect(apiStreamRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/assistant/messages`, "tok", { message_id: M, text: "Find retailers: saree in Guntur" });
   });
   it("shows at most ten cards", async () => {
-    apiStreamRequest.mockResolvedValue(sse(Array.from({ length: 14 }, (_, i): [string, unknown] => ["source", { kind: "place", id: `3b1c0000-0000-4000-8000-${String(i).padStart(12, "0")}`, label: `Shop ${i}`, target: null, url: null }])));
+    apiStreamRequest.mockResolvedValue(sse(Array.from({ length: 14 }, (_, i): [string, unknown] => ["source", { kind: "place", id: `3b1c0000-0000-4000-8000-${String(i).padStart(12, "0")}`, label: `Shop ${i}`, target: null, url: null, place_id: `ChIJFIXTURE${String(i).padStart(9, "0")}` }])));
     expect((await searchRetailers("tok", T, { messageId: M, text: "x" })).cards).toHaveLength(10);
   });
   it("an assistant refusal is a closed code, not a message", async () => {
@@ -75,8 +79,21 @@ describe("searching", () => {
     expect(r.error).toBe("ai_paused_until");
     expect(JSON.stringify(r)).not.toContain("SECRET");
   });
-  it("a place whose id is not a uuid is a contract error", async () => {
-    apiStreamRequest.mockResolvedValue(sse([["source", { kind: "place", id: "nope", label: "x", target: null, url: null }]]));
+  it("a place card without a well-formed place ID cannot be confirmed, so it is left out (never replaced by the uuid)", async () => {
+    apiStreamRequest.mockResolvedValue(
+      sse([
+        ["source", { kind: "place", id: P1, label: "Older API", target: null, url: null }],
+        ["source", { kind: "place", id: P1, label: "Null", target: null, url: null, place_id: null }],
+        ["source", { kind: "place", id: P1, label: "Too short", target: null, url: null, place_id: "short" }],
+        ["source", { kind: "place", id: P1, label: "Spaces", target: null, url: null, place_id: "a b c d e f g h i j" }],
+        ["source", { kind: "place", id: P1, label: "Too long", target: null, url: null, place_id: "x".repeat(91) }],
+        ["source", { kind: "place", id: P1, label: "Fine", target: null, url: null, place_id: G1 }],
+      ]),
+    );
+    expect((await searchRetailers("tok", T, { messageId: M, text: "x" })).cards.map((c) => c.label)).toEqual(["Fine"]);
+  });
+  it("a place whose label is not text is a contract error", async () => {
+    apiStreamRequest.mockResolvedValue(sse([["source", { kind: "place", id: P1, label: 5, target: null, url: null, place_id: G1 }]]));
     await expect(searchRetailers("tok", T, { messageId: M, text: "x" })).rejects.toThrow(ApiContractError);
   });
   it("refuses ids that are not uuids before asking", async () => {
@@ -88,12 +105,13 @@ describe("searching", () => {
 describe("saving a shop as a lead", () => {
   it("sends what the person typed and the card's id, and says whether it was new", async () => {
     apiRequest.mockResolvedValue({ company_id: P1, lead_id: M, created: true });
-    const r = await confirmPlace("tok", T, { placeId: P1, companyName: " Balaji Sarees ", city: "Guntur", region: "" });
+    const r = await confirmPlace("tok", T, { placeId: G1, companyName: " Balaji Sarees ", city: "Guntur", region: "" });
     expect(r).toEqual({ company_id: P1, lead_id: M, created: true });
-    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/places/confirm`, "tok", { method: "POST", body: JSON.stringify({ place_id: P1, company_name: "Balaji Sarees", city: "Guntur" }) });
+    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/places/confirm`, "tok", { method: "POST", body: JSON.stringify({ place_id: G1, company_name: "Balaji Sarees", city: "Guntur" }) });
   });
   it("refuses a place id of the wrong shape", async () => {
     await expect(confirmPlace("tok", T, { placeId: "short", companyName: "x" })).rejects.toThrow(ApiContractError);
     await expect(confirmPlace("tok", T, { placeId: "a b c d e f g h i j", companyName: "x" })).rejects.toThrow(ApiContractError);
+    await expect(confirmPlace("tok", T, { placeId: "x".repeat(91), companyName: "x" })).rejects.toThrow(ApiContractError);
   });
 });

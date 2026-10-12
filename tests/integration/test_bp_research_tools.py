@@ -170,6 +170,11 @@ def test_the_metal_price_and_the_places_are_ledgered_and_not_stored(app: TestCli
     r = say(app, world, "find wholesalers in Guntur and the gold rate today")
     evts = events(r)
     assert [s["kind"] for s in sources_of(evts)] == ["place"], evts
+    # job CE: the card carries Google's real place ID, which is what POST /places/confirm takes; it is not in anything stored
+    (card,) = sources_of(evts)
+    assert card["place_id"] == PLACE and card["id"] != PLACE
+    assert PLACE not in operator_sql.sql(f"select string_agg(body || coalesce(sources::text, ''), ' ') from public.assistant_messages where conversation_id = '{conversation_of(evts)}'")
+    # (test_confirming_a_place_... below confirms exactly this ID through the route, so the card's value is what the route takes)
     stored = operator_sql.sql(f"select body from public.assistant_messages where conversation_id = '{conversation_of(evts)}' and role = 'assistant'")
     assert "Balaji" not in stored and "(see the cards)" in stored
     assert used_today(world.a, "places-search") >= 1 and used_today(world.a, "metal-price") >= 1

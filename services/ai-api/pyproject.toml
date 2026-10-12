@@ -64,6 +64,9 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../scripts/loadtest.py" = ["E501"]
 "../../scripts/restore_drill.py" = ["E501"]
 "../../scripts/secret_scan.py" = ["E501"]
+# job CE: the hosting tests and the smoke script read like the runbooks they check (long lines)
+"tests/test_ce_*.py" = ["E501"]
+"../../scripts/hosted_smoke.py" = ["E501"]
 "../../tests/integration/*" = ["S101", "S105", "S106"]
 "../../tests/rehearsal/*" = ["S101"]
 # a script of readable data tables and a long explanatory header

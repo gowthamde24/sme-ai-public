@@ -1,6 +1,6 @@
 # Runbook: putting the app on the internet, step by step (the owner's checklist; job BG)
 
-**Nothing here has been run.** No account exists, nothing is deployed, nothing is bought. This is the plan in [ADR 0072](../adr/0072-hosting-free-tier-first.md) (read its short table first: Supabase Mumbai + Google Cloud Run Mumbai, free at first, Pro before real data). It builds on `hosting-deploy.md` (the commands), `hosted-auth-settings.md` (the Supabase checklist), `backup-restore-drill.md` and `scripts/verify_hosted.py`. ADR 0017 applies: **any step that costs money needs your written approval first**, and the real-data gate stays closed until all four of its prerequisites exist.
+**Nothing here has been run.** No account exists, nothing is deployed, nothing is bought. **Start with the rehearsal, [`hosting-rehearsal-owner.md`](hosting-rehearsal-owner.md) (job CE): the same steps with synthetic data, a 10 EUR budget alert first, a smoke test, and a teardown. Every setting by name: [`hosting-env-and-secrets.md`](hosting-env-and-secrets.md).** This is the plan in [ADR 0072](../adr/0072-hosting-free-tier-first.md) (read its short table first: Supabase Mumbai + Google Cloud Run Mumbai, free at first, Pro before real data). It builds on `hosting-deploy.md` (the commands), `hosted-auth-settings.md` (the Supabase checklist), `backup-restore-drill.md` and `scripts/verify_hosted.py`. ADR 0017 applies: **any step that costs money needs your written approval first**, and the real-data gate stays closed until all four of its prerequisites exist.
 
 Legend. **[OWNER ONLY]**: only you can do it (an account, a payment, a secret only you hold, a DNS change, a decision). **[ANY AGENT CAN PREPARE]**: the command or file is in the repository and can be dry-run for you, but you press the button. Every script is a **dry run unless you add `--execute`**.
 
@@ -122,10 +122,10 @@ It runs as a **Cloud Run job started by Cloud Scheduler**, one tick each time, s
 export SCHEDULER_EMAIL=scheduler@<your domain>
 export SCHEDULER_SA=<service account email Cloud Scheduler will use; grant it roles/run.invoker on the job>
 ./deploy/cloudrun.sh worker              # dry run
-./deploy/cloudrun.sh worker --execute    # creates the job sme-worker and the schedule sme-worker-tick (every 5 minutes, India time)
+./deploy/cloudrun.sh worker --execute    # creates the job sme-worker and the schedule sme-worker-tick (every `WORKER_EVERY_MINUTES`, default 5, India time)
 gcloud run jobs execute sme-worker --region asia-south1 --wait      # one tick now; read its log in Cloud Run > Jobs
 ```
-Cloud Scheduler gives 3 free jobs per billing account. Change the frequency with `WORKER_SCHEDULE='* * * * *'` (every minute) and `gcloud scheduler jobs update http`. The same code also runs as one always-on process (`python -m app.scheduler.worker`, tick every `SCHEDULER_INTERVAL_SECONDS`), which is only worth it at stage 2 beside the API.
+Cloud Scheduler gives 3 free jobs per billing account. Change the frequency with `WORKER_EVERY_MINUTES=1` (every minute; it sets the schedule and the worker's own interval together) and run `./deploy/cloudrun.sh worker --execute` again (use `gcloud scheduler jobs update http` if the schedule job exists). The same code also runs as one always-on process (`python -m app.scheduler.worker`, tick every `SCHEDULER_INTERVAL_SECONDS`), which is only worth it at stage 2 beside the API.
 
 ## Part H: backups [OWNER ONLY for the password; the script is prepared]
 

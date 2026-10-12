@@ -18,7 +18,8 @@ from app.websearch import clean
 
 logger = logging.getLogger("app.websearch.places")
 
-PLACE_ID = re.compile(r"^[A-Za-z0-9_-]{10,200}$")
+# at most 90: the lead made from a confirmed place has source "places:<ID>" in a column of 100 characters, so a card whose ID could not be confirmed is never shown
+PLACE_ID = re.compile(r"^[A-Za-z0-9_-]{10,90}$")
 FIELD_MASK_PRO = "places.id,places.displayName,places.formattedAddress,places.googleMapsUri,places.businessStatus"
 FIELD_MASK_IDS = "places.id"
 

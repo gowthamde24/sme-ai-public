@@ -1,4 +1,4 @@
-.PHONY: visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -285,3 +285,15 @@ restore-drill:
 
 loadtest:
 	cd $(API) && ../../scripts/with-local-supabase-env.sh .venv/bin/python ../../scripts/loadtest.py --shops "$${SHOPS:-50}" --duration "$${DURATION:-60}" $(if $(REPORT),--report "$(REPORT)",) $(LOADTEST_ARGS)
+
+# Job CE (ADR 0072), OPT-IN, never in make check. Hosting readiness.
+#   make container-smoke          builds deploy/Dockerfile.api and proves on THIS machine (Docker, the AGENT stack, port 8001) that the image runs as a non-root user, refuses to start unconfigured, answers /health and /ready,
+#                                 ignores a forged X-Forwarded-For, stops cleanly on SIGTERM, and runs the scheduler worker for one tick. docs/runbooks/hosting-env-and-secrets.md
+#   make hosted-smoke URL=https://app.example.com API_URL=https://api.example.com   checks a RUNNING deployment (yours, hosted): health, readiness, the login page, the Host header the app sees, one API call, the error shape,
+#                                 CORS, and the scheduler status (the last needs SMOKE_EMAIL; the password is typed hidden). Read-only. Exit 0 = no FAIL. docs/runbooks/hosting-rehearsal-owner.md
+container-smoke:
+	./deploy/container-smoke.sh
+
+hosted-smoke:
+	@test -n "$(URL)" || { echo 'usage: make hosted-smoke URL=https://<web address> [API_URL=https://<api address>] (see docs/runbooks/hosting-rehearsal-owner.md)'; exit 2; }
+	$(PY)/python scripts/hosted_smoke.py --web "$(URL)" $(if $(API_URL),--api "$(API_URL)",) $(SMOKE_ARGS)
