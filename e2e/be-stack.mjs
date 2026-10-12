@@ -950,6 +950,110 @@ await step("P2", "the 'Add to home screen' hint on a phone: quiet on the first v
   }
 }, page);
 
+// ---- 8a2. the notifications bell (job BU): a count of what is new on THIS device, a panel of links, no push service, nothing named in a pop-up --------------------------
+await step("N1", "the bell: count, panel, deep link, per-device unread, polling asks only the app's own route, 360 px dark has no sideways scroll, targets >= 44 px, axe finds nothing", async () => {
+  let axe = "";
+  try {
+    axe = readFileSync(path.join(here, "..", "apps", "web", "node_modules", "axe-core", "axe.min.js"), "utf8");
+  } catch {
+    // axe-core is the web app's dev dependency: without it that one check is skipped and said so
+  }
+  const before = problems.length;
+  const asked = [];
+  const onRequest = (r) => {
+    if (/\/notifications(\?|$)/.test(r.url())) asked.push(r.url());
+  };
+  page.on("request", onRequest);
+  const here2 = `${BASE}/app/tenants/${tenant}`;
+  const at = new Date(Date.now() - 5 * 60_000).toISOString();
+  const synthetic = [
+    { id: "message_blocked:e2e-1", code: "message_blocked", who: "Synthetic Customer", at, href: `/app/tenants/${tenant}/outbox?tab=blocked` },
+    { id: "visit_here:e2e-2", code: "visit_here", who: "Synthetic Visitor", at, href: `/app/tenants/${tenant}/visits` },
+  ];
+  await page.route(/\/notifications$/, (route) => route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify({ items: synthetic }) }));
+  try {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto(`${here2}`, { waitUntil: "networkidle" });
+    await page.evaluate((id) => window.localStorage.removeItem(`sme-notify-seen:${id}`), tenant);
+    await page.reload({ waitUntil: "networkidle" });
+    const bell = page.locator('[data-notify="bell"]');
+    await bell.waitFor();
+    must(/Notifications, 2 new/.test((await bell.getAttribute("aria-label")) || ""), `the bell does not say 2 new: ${await bell.getAttribute("aria-label")}`);
+    must(asked.every((u) => u.startsWith(`${BASE}/app/tenants/${tenant}/`)), `the bell asked somewhere else: ${asked.join(", ")}`);
+    await bell.click();
+    const panel = page.locator('[data-notify="panel"]');
+    await panel.waitFor();
+    must((await panel.locator("a[data-notice]").count()) === 2, "the panel does not list 2 notices");
+    must(!(await panel.innerText()).includes("push"), "the panel mentions push");
+    await page.screenshot({ path: path.join(SHOTS, "N-panel-desktop.png") });
+    // opening counted them seen on this device: a reload shows none new; another device (empty storage) shows 2 again
+    await page.reload({ waitUntil: "networkidle" });
+    must(/^Notifications$/.test((await page.locator('[data-notify="bell"]').getAttribute("aria-label")) || ""), "after viewing, the bell still shows new ones");
+    await page.evaluate((id) => window.localStorage.removeItem(`sme-notify-seen:${id}`), tenant);
+    await page.reload({ waitUntil: "networkidle" });
+    must(/2 new/.test((await page.locator('[data-notify="bell"]').getAttribute("aria-label")) || ""), "a device with nothing remembered does not show 2 new");
+    // the deep link goes to the page that decides it, and the panel closes
+    await page.locator('[data-notify="bell"]').click();
+    await page.locator('[data-notice="message_blocked"]').click();
+    await page.waitForURL(/\/outbox\?tab=blocked/);
+    must((await page.locator('[data-notify="panel"]').count()) === 0, "the panel stayed open on the new page");
+    // a hidden tab asks no more
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { configurable: true, get: () => true });
+      document.dispatchEvent(new Event("visibilitychange"));
+    });
+    const quiet = asked.length;
+    await page.waitForTimeout(3000);
+    must(asked.length === quiet, "the bell asked while the tab was hidden");
+    await page.evaluate(() => {
+      Object.defineProperty(document, "hidden", { configurable: true, get: () => false });
+    });
+    // a phone, dark: the bar, the panel
+    await page.setViewportSize({ width: 360, height: 780 });
+    await page.emulateMedia({ colorScheme: "dark", reducedMotion: "reduce" });
+    await page.goto(`${here2}`, { waitUntil: "networkidle" });
+    await page.evaluate((id) => window.localStorage.removeItem(`sme-notify-seen:${id}`), tenant);
+    await page.reload({ waitUntil: "networkidle" });
+    await page.locator('[data-notify="bell"]').click();
+    await page.locator('[data-notify="panel"]').waitFor();
+    await page.waitForTimeout(400);
+    await page.screenshot({ path: path.join(SHOTS, "N-panel-phone-dark.png") });
+    const m = await page.evaluate(() => {
+      const bad = [];
+      for (const el of document.querySelectorAll('[data-notify="panel"] a, [data-notify="panel"] button, [data-notify="bell"]')) {
+        const r = el.getBoundingClientRect();
+        if (r.width === 0 || r.height === 0) continue;
+        if (r.height < 43.5 || r.width < 43.5) bad.push(`${el.tagName.toLowerCase()} "${(el.getAttribute("aria-label") || el.textContent || "").trim().slice(0, 24)}" ${Math.round(r.width)}x${Math.round(r.height)}`);
+      }
+      const small = new Set();
+      for (const el of document.querySelectorAll('[data-notify="panel"] *')) {
+        if (![...el.childNodes].some((n) => n.nodeType === 3 && n.textContent.trim())) continue;
+        const fs = parseFloat(getComputedStyle(el).fontSize);
+        if (fs < 13.99) small.add(`${el.tagName.toLowerCase()} ${fs}px`);
+      }
+      const pr = document.querySelector('[data-notify="panel"]').getBoundingClientRect();
+      return { scrollW: document.documentElement.scrollWidth, clientW: document.documentElement.clientWidth, bad: bad.slice(0, 5), small: [...small].slice(0, 4), inside: pr.left >= 0 && pr.right <= window.innerWidth };
+    });
+    must(m.scrollW <= m.clientW, `sideways scroll ${m.scrollW}>${m.clientW}`);
+    must(m.bad.length === 0, `small targets ${m.bad.join("; ")}`);
+    must(m.small.length === 0, `small text ${m.small.join("; ")}`);
+    must(m.inside, "the panel runs off the screen");
+    if (axe) {
+      await page.evaluate(axe);
+      const v = await page.evaluate(async () => (await window.axe.run(document, { resultTypes: ["violations"] })).violations.filter((x) => !/nextjs|portal/.test(JSON.stringify(x.nodes[0]?.target ?? ""))).map((x) => `${x.id}(${x.nodes.length})`));
+      must(v.length === 0, `axe ${v.join(", ")}`);
+    }
+    must(problems.length === before, `console problems: ${problems.slice(before).join(" | ")}`);
+  } finally {
+    page.off("request", onRequest);
+    await page.unroute(/\/notifications$/).catch(() => null);
+    await page.emulateMedia({ colorScheme: null, reducedMotion: null }).catch(() => null);
+    await page.setViewportSize({ width: 1280, height: 900 }).catch(() => null);
+    await page.evaluate((id) => window.localStorage.removeItem(`sme-notify-seen:${id}`), tenant).catch(() => null);
+  }
+  return axe ? "bell, panel, deep link, per-device unread, 360 px dark, axe" : "bell checked; axe-core not installed: that check was skipped";
+}, page);
+
 // ---- 8b. the new screens on a phone (360 px) and in the dark: no sideways scroll, targets of 44 px, no accessibility violation --------------------------
 await step("V1", "Outbox (gloss, history, filters, counts), Settings (quiet hours) and the saree page at 360 px and in the dark: no sideways scroll, targets >= 44 px, text >= 14 px, axe finds nothing", async () => {
   let axe = "";

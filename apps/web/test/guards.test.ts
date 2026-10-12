@@ -201,11 +201,14 @@ describe("server-only code stays on the server", () => {
       .map(rel);
     // The one other caller is the Ask box's transport in the BROWSER: it posts to this app's own route (a path it is given, `<workspace>/ask`), never to the API, and holds no token.
     const ASK_TRANSPORT = path.join("components", "v2", "app", "today", "ask", "transport.ts");
-    expect(callers).toEqual([ASK_TRANSPORT, path.join("lib", "api", "client.ts")].sort());
+    // The other is the notification bell's poll (job BU): it asks this app's own `<workspace>/notifications` route, never the API, and holds no token.
+    const BELL_POLL = path.join("components", "v2", "app", "notify", "use-notifications.ts");
+    expect(callers).toEqual([ASK_TRANSPORT, BELL_POLL, path.join("lib", "api", "client.ts")].sort());
     const client = read(path.join(WEB_ROOT, "lib/api/client.ts"));
     expect(client).toMatch(/fetch\(`\$\{base\}\$\{path\}`/);
     const transport = read(path.join(WEB_ROOT, ASK_TRANSPORT));
     expect(transport).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API|https?:\/\//i);
+    expect(read(path.join(WEB_ROOT, BELL_POLL))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API|https?:\/\//i);
   });
 
   it("the Supabase client is imported only by the auth plumbing, never by CRM pages or clients", () => {

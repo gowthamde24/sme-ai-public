@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { AccountMenu } from "./AccountMenu";
+import { NotificationBell } from "./notify/NotificationBell";
 import { BrandMark } from "./frame-parts";
 import type { Labels } from "./labels";
 import { useWorkspace, type Membership } from "./use-workspace";
@@ -20,6 +21,7 @@ export function TopBar({ memberships, labels, email, signOut, children }: { memb
         <BrandMark className="size-9" />
       </Link>
       <div className="ml-auto flex items-center gap-2">
+        {current ? <NotificationBell key={current.id} tenantId={current.id} labels={labels} /> : null}
         {children}
         {current ? null : (
           <div className="md:hidden">
