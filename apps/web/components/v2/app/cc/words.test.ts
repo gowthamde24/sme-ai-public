@@ -18,7 +18,7 @@ import { FAILURE_KEY } from "./kit";
  *  2. every key built from a closed word (`dta.status.${code}`) exists for every word of the closed list.
  */
 const WEB = process.cwd();
-const FOLDERS = ["components/v2/app/cc", "components/v2/app/data", "components/v2/app/privacy", "components/v2/app/retailers", "components/v2/app/team", "components/v2/app/whatsapp", "components/v2/app/gstin"];
+const FOLDERS = ["components/v2/app/cc", "components/v2/app/data", "components/v2/app/privacy", "components/v2/app/retailers", "components/v2/app/team", "components/v2/app/whatsapp", "components/v2/app/gstin", "components/v2/app/accept"];
 function files(dir: string): string[] {
   if (!fs.existsSync(dir)) return [];
   return fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? files(path.join(dir, e.name)) : /\.tsx?$/.test(e.name) && !/\.test\./.test(e.name) ? [path.join(dir, e.name)] : []));
@@ -61,6 +61,7 @@ describe("the words of the job CC screens", () => {
       ...["waba", "phone", "token"].map((s) => `wa.form.bad.${s}`),
       ...[1, 2, 3, 4].map((n) => `wa.steps.${n}`),
       ...["length", "shape", "check"].map((p) => `gst.bad.${p}`),
+      ...["terms", "privacy"].flatMap((k) => [`acpt.${k}`, `acpt.read.${k}`, `acpt.agree.${k}`]),
       ...["dta.fmt.csv"]];
     expect(need.filter((k) => !(k in en))).toEqual([]);
   });

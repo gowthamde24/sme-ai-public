@@ -8,6 +8,7 @@ import { btnMain, pageMain, tileBadge, tileCard, tileGrid, tileIcon } from "@/co
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { partsWords } from "@/i18n/app-words";
@@ -39,6 +40,7 @@ export default async function IntegrationsPage({ params }: PageProps<"/app/tenan
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();

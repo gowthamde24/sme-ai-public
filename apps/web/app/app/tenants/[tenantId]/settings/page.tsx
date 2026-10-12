@@ -16,6 +16,7 @@ import { THEME_COOKIE, readTheme } from "@/i18n/preferences";
 import { SchedulerCard, SystemSwitchCard } from "@/components/v2/app/agent-settings/AgentStatusCards";
 import { QuietHoursForm, RemindersForm, SendingForm } from "@/components/v2/app/agent-settings/AgentSettingsForms";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
 import { getSchedulerSettings, getSchedulerStatus, type SchedulerSettings, type SchedulerStatus } from "@/lib/api/scheduler";
 import { isCanonicalUuid } from "@/lib/api/crm";
@@ -78,6 +79,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
@@ -105,6 +107,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       [plan, usage, profile] = await Promise.all([getPlan(user.accessToken, tenantId).catch(rethrowAuth), admin ? getAiUsage(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
       throw error;
     }
   }
@@ -117,6 +120,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       [sending, reminders, scheduler] = await Promise.all([getOutboxSettings(user.accessToken, tenantId).catch(rethrowAuth), getSchedulerSettings(user.accessToken, tenantId).catch(rethrowAuth), getSchedulerStatus(user.accessToken, tenantId).catch(rethrowAuth)]);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
       throw error;
     }
   }
@@ -128,6 +132,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       dataParts = { formats, jobs, feed };
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
       throw error;
     }
   }
@@ -144,6 +149,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
       privacy = { exports, mine, space, consent };
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
       throw error;
     }
   }

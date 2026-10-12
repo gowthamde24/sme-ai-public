@@ -10,6 +10,7 @@ import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { settle } from "@/lib/api/part";
 import { getWhatsappAccount, listTemplates } from "@/lib/api/whatsapp";
@@ -35,6 +36,7 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
@@ -45,6 +47,7 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
     [account, templates] = await Promise.all([settle(() => getWhatsappAccount(user.accessToken, tenantId)), settle(() => listTemplates(user.accessToken, tenantId))]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     throw error;
   }
   const words = wordsFor(lang, ["wa.", "apierr.", "problem.", "today.lang."], ["dta.btn.working"]);

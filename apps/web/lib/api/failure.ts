@@ -70,6 +70,8 @@ export function failureOf(error: unknown, t: AppT): Failure {
 export function escalate(error: unknown): void {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
+    // a changed Terms or Privacy Policy that has not been accepted yet (POLICY_ENFORCE): the person is asked, not told they have no role
+    if (error.status === 403 && error.code === "policy_acceptance_required") redirect("/app/accept");
     if (error.status === 403) redirect("/app/problem/403");
     if (error.status === 429) redirect("/app/problem/429");
   }

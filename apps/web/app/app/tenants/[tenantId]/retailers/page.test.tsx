@@ -62,3 +62,10 @@ describe("/retailers", () => {
     expect(screen.getByRole("alert")).toBeInTheDocument();
   });
 });
+
+describe("a refused or rate-limited read goes to the friendly pages (job CC, screen 7)", () => {
+  it.each([[403, "/app/problem/403"], [429, "/app/problem/429"]])("the workspace read answering %i goes to %s", async (status, to) => {
+    fetchTenant.mockRejectedValue(new ApiRequestError(status, status === 429 ? "rate_limited" : "forbidden", "x"));
+    await expect(RetailersPage(props())).rejects.toThrow(`NEXT_REDIRECT:${to}`);
+  });
+});

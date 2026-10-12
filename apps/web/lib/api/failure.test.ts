@@ -62,6 +62,9 @@ describe("a page that failed to read", () => {
     expect(() => escalate(new ApiRequestError(429, "rate_limited", "x"))).toThrow("NEXT_REDIRECT:/app/problem/429");
     expect(() => escalate(new ApiAuthError("x"))).toThrow("NEXT_REDIRECT:/login");
   });
+  it("sends a person whose Terms or Privacy Policy changed to the page where they accept it, not to 'not open to you'", () => {
+    expect(() => escalate(new ApiRequestError(403, "policy_acceptance_required", "x"))).toThrow("NEXT_REDIRECT:/app/accept");
+  });
   it("lets anything else return, for the page to say what it says", () => {
     expect(() => escalate(new ApiRequestError(503, "api_unreachable", "x"))).not.toThrow();
     expect(() => escalate(new ApiRequestError(404, "not_found", "x"))).not.toThrow();

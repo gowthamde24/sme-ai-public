@@ -7,6 +7,7 @@ import { pageMain } from "@/components/v2/app/ui";
 import { getLang } from "@/i18n/get-lang";
 import { getCatalogueItem } from "@/lib/api/catalogue";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
@@ -35,6 +36,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   let item;
@@ -43,6 +45,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && (error.status === 404 || error.status === 422)) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const admin = tenant.role === "owner" || tenant.role === "admin";
@@ -57,6 +60,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
       lead = await readLeadLabel(user.accessToken, tenantId, leadParam);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
+      escalate(error);
       throw error;
     }
   }

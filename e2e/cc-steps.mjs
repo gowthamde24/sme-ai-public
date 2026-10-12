@@ -409,4 +409,69 @@ export async function ccSteps(c) {
     must(audit.length === 0, `phone: ${audit.join(" | ")}`);
     return "shop number: bad stopped, good saved with state Maharashtra; customer number set (Karnataka), removed; the new-customer form keeps one; phone and dark clean";
   }, page);
+
+  // ---- CC7. Refusals: a viewer meets every new screen; the accept page; the friendly pages ---------------------------------------------------------------------
+  await step("CC7", "Refusals: a viewer (made by an invitation) is told, in words, what is not theirs on every new screen; the real API refuses them too; /app/accept says 'up to date'; the 403 and 429 pages open", async () => {
+    const token = await aal2Token();
+    const T = `/v1/tenants/${c.tenant}`;
+    const invite = await api("POST", `${T}/invitations`, { invitation_id: c.uuid(), role: "viewer", days: 3, label: "for the e2e viewer" }, token);
+    must(invite.status === 201 && invite.body.invitation.code, `invitation: HTTP ${invite.status}`);
+    const email = `e2e-view-${stamp}@e2e.example.test`;
+    must((await gotrue("POST", "/auth/v1/signup", { email, password: PW })).status === 200, "could not make the viewer's account");
+    confirmEmail(email);
+    const signed = await gotrue("POST", "/auth/v1/token?grant_type=password", { email, password: PW });
+    must(signed.status === 200, `viewer sign-in HTTP ${signed.status}`);
+    const vt = signed.body.access_token;
+    const joined = await api("POST", "/v1/invitations/accept", { code: invite.body.invitation.code }, vt);
+    must(joined.status === 200 && joined.body.role === "viewer", `accept: HTTP ${joined.status}`);
+    // the API refuses a viewer on the owner's parts
+    for (const [method, route] of [["GET", `${T}/whatsapp/account`], ["GET", `${T}/research/status`], ["GET", `${T}/invitations`], ["GET", `${T}/imports/spreadsheet/jobs`], ["GET", `${T}/conversations`]]) {
+      const r = await api(method, route, null, vt);
+      must(r.status === 403, `${route}: the API answered ${r.status} to a viewer`);
+    }
+    const ctx2 = await c.browser.newContext({ viewport: { width: 1280, height: 900 }, locale: "en-IN", timezoneId: "Asia/Kolkata" });
+    const p2 = await ctx2.newPage();
+    p2.setDefaultTimeout(c.SLOW);
+    p2.setDefaultNavigationTimeout(c.SLOW);
+    const bodyOf = async (url) => {
+      await p2.goto(`${c.BASE}${url}`, { waitUntil: "networkidle" });
+      return (await p2.locator("body").innerText()).replace(/\s+/g, " ");
+    };
+    try {
+      await p2.goto(`${c.BASE}/login`);
+      await p2.fill('input[name="email"]', email);
+      await p2.fill('input[name="password"]', PW);
+      await p2.click('button:has-text("Sign in")');
+      await p2.waitForURL(/\/(setup|app)/, { timeout: 30000 });
+      const t = `/app/tenants/${c.tenant}`;
+      let b = await bodyOf(`${t}/settings?section=data`);
+      must(b.includes("Visits in your phone's calendar") && !b.includes("Bring in a spreadsheet") && b.includes("Importing and exporting is for the owner and admins"), "the viewer's Data tab is wrong");
+      b = await bodyOf(`${t}/settings?section=privacy`);
+      must(b.includes("Download my data") && !b.includes("Delete this workspace") && !b.includes("Consent and opt-out list"), "the viewer's Privacy tab is wrong");
+      b = await bodyOf(`${t}/team`);
+      must(b.includes("People") && !b.includes("Invite a person"), "the viewer's Team page is wrong");
+      b = await bodyOf(`${t}/retailers`);
+      must(b.includes("Finding retailers is for the owner, admins and sales."), "the viewer's Find retailers page is wrong");
+      b = await bodyOf(`${t}/chats`);
+      must(b.includes("Customer chats are for the owner, admins and sales."), "the viewer's chats page is wrong");
+      b = await bodyOf(`${t}/integrations/whatsapp`);
+      must(b.includes("Integrations are shown to owners and admins."), "the viewer's Connect WhatsApp page is wrong");
+      await p2.screenshot({ path: path.join(SHOTS, "CC7-viewer-connect-whatsapp.png"), fullPage: true });
+      b = await bodyOf(`/app/accept`);
+      must(b.includes("You are up to date. There is nothing to accept."), `the accept page says: ${b.slice(0, 120)}`);
+      await p2.screenshot({ path: path.join(SHOTS, "CC7-accept.png"), fullPage: true });
+      for (const [code, title] of [[403, "This is not open to you"], [429, "Too many tries"]]) {
+        b = await bodyOf(`/app/problem/${code}`);
+        must(b.includes(title), `/app/problem/${code} says: ${b.slice(0, 100)}`);
+        await p2.screenshot({ path: path.join(SHOTS, `CC7-problem-${code}.png`), fullPage: true });
+      }
+    } finally {
+      await ctx2.close();
+    }
+    // the viewer is removed again (the owner's Team page)
+    const me = await gotrue("GET", "/auth/v1/user", null, vt);
+    const removed = await api("POST", `${T}/members/${me.body.id}/remove`, { reason: "access_no_longer_needed" }, token);
+    must(removed.status === 200, `removing the viewer: HTTP ${removed.status}`);
+    return "a viewer is told, in words, what is not theirs on Data, Privacy, Team, Find retailers, Customer chats and Connect WhatsApp, and the API agrees (403); the accept page and the 403 and 429 pages open";
+  }, page);
 }

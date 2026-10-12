@@ -9,6 +9,7 @@ import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { getOutboxSettings } from "@/lib/api/outbox";
 import { settle } from "@/lib/api/part";
@@ -37,6 +38,7 @@ export default async function ChatPage({ params }: PageProps<"/app/tenants/[tena
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
@@ -48,6 +50,7 @@ export default async function ChatPage({ params }: PageProps<"/app/tenants/[tena
     [thread, settings] = await Promise.all([settle(() => getThread(user.accessToken, tenantId, leadId)), settle(() => getOutboxSettings(user.accessToken, tenantId))]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     throw error;
   }
   if (!thread.ok && thread.kind === "not_found") notFound();

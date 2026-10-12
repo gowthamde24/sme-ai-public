@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 
 import { fetchAgentCost, fetchAgentSettings, fetchRuns, RUN_ERROR_LABELS, type AgentCostOut, type AgentSettingsOut, type PageRunOut } from "@/lib/api/agents";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
@@ -49,6 +50,7 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
 

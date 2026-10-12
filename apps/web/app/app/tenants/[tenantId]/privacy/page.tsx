@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
 import { confirmationPhrase, fetchErasureRequests, type PageErasureRequestOut } from "@/lib/api/erasure";
 import { requireUser } from "@/lib/auth/session";
@@ -52,6 +53,7 @@ export default async function PrivacyPage({
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   if (!ADMIN_ROLES.includes(tenant.role)) {

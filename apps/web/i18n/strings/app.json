@@ -36298,5 +36298,185 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "acpt.title": {
+  "en": "Terms and Privacy Policy",
+  "te": "Terms and Privacy Policy",
+  "hi": "Terms and Privacy Policy",
+  "kn": "Terms and Privacy Policy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.intro": {
+  "en": "We changed these. Please read what changed and say yes to continue. Nothing is ticked for you.",
+  "te": "We changed these. Please read what changed and say yes to continue. Nothing is ticked for you.",
+  "hi": "We changed these. Please read what changed and say yes to continue. Nothing is ticked for you.",
+  "kn": "We changed these. Please read what changed and say yes to continue. Nothing is ticked for you.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.terms": {
+  "en": "Terms of use",
+  "te": "Terms of use",
+  "hi": "Terms of use",
+  "kn": "Terms of use",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.privacy": {
+  "en": "Privacy Policy",
+  "te": "Privacy Policy",
+  "hi": "Privacy Policy",
+  "kn": "Privacy Policy",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.version": {
+  "en": "Version {version}",
+  "te": "Version {version}",
+  "hi": "Version {version}",
+  "kn": "Version {version}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.from": {
+  "en": "in force from {date}",
+  "te": "in force from {date}",
+  "hi": "in force from {date}",
+  "kn": "in force from {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.read.terms": {
+  "en": "Read the Terms (opens in a new tab)",
+  "te": "Read the Terms (opens in a new tab)",
+  "hi": "Read the Terms (opens in a new tab)",
+  "kn": "Read the Terms (opens in a new tab)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.read.privacy": {
+  "en": "Read the Privacy Policy (opens in a new tab)",
+  "te": "Read the Privacy Policy (opens in a new tab)",
+  "hi": "Read the Privacy Policy (opens in a new tab)",
+  "kn": "Read the Privacy Policy (opens in a new tab)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.agree.terms": {
+  "en": "I have read the Terms and I agree.",
+  "te": "I have read the Terms and I agree.",
+  "hi": "I have read the Terms and I agree.",
+  "kn": "I have read the Terms and I agree.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.agree.privacy": {
+  "en": "I have read the Privacy Policy and I agree.",
+  "te": "I have read the Privacy Policy and I agree.",
+  "hi": "I have read the Privacy Policy and I agree.",
+  "kn": "I have read the Privacy Policy and I agree.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.button": {
+  "en": "Accept and continue",
+  "te": "Accept and continue",
+  "hi": "Accept and continue",
+  "kn": "Accept and continue",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.nothing": {
+  "en": "You are up to date. There is nothing to accept.",
+  "te": "You are up to date. There is nothing to accept.",
+  "hi": "You are up to date. There is nothing to accept.",
+  "kn": "You are up to date. There is nothing to accept.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.continue": {
+  "en": "Continue",
+  "te": "Continue",
+  "hi": "Continue",
+  "kn": "Continue",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.outdated": {
+  "en": "These were changed again while this page was open. Reload, read them and accept again.",
+  "te": "These were changed again while this page was open. Reload, read them and accept again.",
+  "hi": "These were changed again while this page was open. Reload, read them and accept again.",
+  "kn": "These were changed again while this page was open. Reload, read them and accept again.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "acpt.reload": {
+  "en": "Reload the page",
+  "te": "Reload the page",
+  "hi": "Reload the page",
+  "kn": "Reload the page",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

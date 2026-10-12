@@ -10,6 +10,7 @@ import { appT } from "@/i18n/app";
 import { partsWords, wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { settle } from "@/lib/api/part";
 import { getTeam, listInvitations } from "@/lib/api/team";
@@ -35,6 +36,7 @@ export default async function TeamPage({ params }: PageProps<"/app/tenants/[tena
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
@@ -45,6 +47,7 @@ export default async function TeamPage({ params }: PageProps<"/app/tenants/[tena
     [team, invitations] = await Promise.all([settle(() => getTeam(user.accessToken, tenantId)), admin ? settle(() => listInvitations(user.accessToken, tenantId)) : null]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     throw error;
   }
   const words = wordsFor(lang, ["team.", "apierr.", "problem."], ["dta.btn.working", "dta.btn.copied", "dta.cal.copy_failed"]);

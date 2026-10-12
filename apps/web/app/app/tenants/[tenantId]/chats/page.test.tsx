@@ -58,3 +58,15 @@ describe("/chats", () => {
     await expect(ChatsPage(props())).rejects.toThrow("NEXT_NOT_FOUND");
   });
 });
+
+describe("a refused or rate-limited read goes to the friendly pages (job CC, screen 7)", () => {
+  it.each([[403, "/app/problem/403"], [429, "/app/problem/429"]])("the workspace read answering %i goes to %s", async (status, to) => {
+    fetchTenant.mockRejectedValue(new ApiRequestError(status, status === 429 ? "rate_limited" : "forbidden", "x"));
+    await expect(ChatsPage(props())).rejects.toThrow(`NEXT_REDIRECT:${to}`);
+  });
+  it("an unreachable service still says so on the page", async () => {
+    fetchTenant.mockRejectedValue(new ApiRequestError(503, "api_unreachable", "x"));
+    render(await ChatsPage(props()));
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+  });
+});

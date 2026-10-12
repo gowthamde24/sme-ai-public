@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchPolicyVersions, type PolicyVersion } from "@/lib/api/followups";
 import { requireUser } from "@/lib/auth/session";
@@ -35,6 +36,7 @@ export default async function PolicyPage({ params }: PageProps<"/app/tenants/[te
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   if (!FOLLOWUP_ROLES.includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("fu.the_follow_up_policy")} message={t("fu.follow_ups_are_shown_to_owners")} />;
@@ -44,6 +46,7 @@ export default async function PolicyPage({ params }: PageProps<"/app/tenants/[te
     versions = await fetchPolicyVersions(user.accessToken, tenantId);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
+    escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
   const today = todayInIndia(new Date());

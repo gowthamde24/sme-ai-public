@@ -32,6 +32,7 @@ import { parseMembers, parseOrderDetail, parseOrderPage } from "@/lib/api/orders
 import { DETAIL_JSON, MEMBERS_JSON, ORDER_JSON } from "@/lib/api/orders-fixtures";
 import { parsePage } from "@/lib/api/crm";
 import { CLAIM, CLAIM_ACCEPTED, COMPANY, COMPANY2_JSON, COMPANY_JSON, CONTACT, CONTACT_JSON, ENQ, ENQUIRY, EVIDENCE_PAGE, LEAD, LEAD_JSON, OPPORTUNITY_JSON, PRODUCT_JSON, REQUIREMENT, REQUIREMENT_CONFIRMED, REQUIREMENT_DRAFT, TENANT, requirementJson } from "./fixtures";
+import { parsePolicyStatus } from "@/lib/api/policy";
 import { parseAccount, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
 import type { Handler } from "./state";
 
@@ -725,3 +726,7 @@ const THREAD = { lead_id: LEAD_ID, contact_id: "x", name: "Ravi Kumar", phone: "
 const chatHandlers = (role: Role, thread: Record<string, unknown> = THREAD) => ({ ...base(role), getThread: () => parseThread(thread), getOutboxSettings: () => ({ platform_switch_on: true, auto_send_enabled: false, per_customer_daily_limit: 3, quiet_hours_start: 21, quiet_hours_end: 9 }) });
 add({ id: "chat", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID })), handlers: (role) => chatHandlers(role) });
 add({ id: "chat-stopped", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/chats/[leadId]/page")).default(props({ leadId: LEAD_ID })), handlers: (role) => chatHandlers(role, { ...THREAD, stopped: true, window_open: false, items: [{ ...THREAD.items[0], status: "blocked", reason: "stopped" }, THREAD.items[2]] }) });
+
+// ---- accepting a changed Terms or Privacy Policy (job CC) ----------------------------------------------------------------------
+const POLICY = { current: { terms: { version: "2026-11-01", effective_from: "2026-11-10" }, privacy: { version: "2026-10-01" } }, accepted: [], needs_acceptance: { terms: true, privacy: true }, blocking: true };
+add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/app/accept/page")).default({ searchParams: Promise.resolve({}) }), handlers: (role) => ({ ...base(role), getPolicyStatus: () => parsePolicyStatus(POLICY) }) });
