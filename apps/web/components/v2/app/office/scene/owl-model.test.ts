@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { OWL_PALETTE } from "./owl-colors";
+import { OWL_PALETTE } from "../../owl/owl-colors";
 import { createOwl, moodTargets } from "./owl-model";
 
 beforeEach(() => {

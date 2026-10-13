@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import * as React from "react";
 
-import type { Detail } from "../owl/owl-model";
+import type { Detail } from "./scene/owl-model";
 import { ALL_AGENT_IDS, type AgentId, type Pose } from "./scene/ids";
 import { SceneLabels, type LabelPositions } from "./scene/SceneLabels";
 import { useDark } from "./scene/use-dark";

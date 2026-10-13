@@ -118,7 +118,7 @@ describe("landing page: structure and honesty", () => {
     const rendered = text(html("en"));
     expect(rendered).toContain(en["chat.example"]);
     expect(rendered).not.toMatch(/Pooja|Ananya|Lakshmi|Sample Silks|Example Textiles/);
-    expect(html("en")).not.toMatch(/<img/);
+    expect(html("en").replace(/<img[^>]*owlet-full-512\.webp[^>]*>/g, "")).not.toMatch(/<img/); // no picture of a person or a logo: the only one is the owl's own still
   });
   it("uses the brand constant for its name", () => {
     expect(text(html("en"))).toContain("Sme-AI");
@@ -135,12 +135,14 @@ describe("landing page: the saree and textile shop page (job BS)", () => {
     expect(h).not.toContain('id="control"');
     expect(h).not.toContain('id="team"');
   });
-  it("the first screen has the promise, Agent OWL (3D with the flat owl standing in), and a made-up conversation that says so", () => {
+  it("the first screen has the promise, Agent OWL (the plush owlet: its still picture from the server), and a made-up conversation that says so", () => {
     const h = html("en");
     const hero = h.slice(h.indexOf('aria-labelledby="h1"'), h.indexOf('id="shop"'));
     expect(hero).toContain(en["hero.h1"]);
     expect(hero).toMatch(/role="img" aria-label="Agent OWL, ready to help"/);
-    expect(hero).toContain('data-owl-render="svg"'); // the server draws the flat owl; the 3D chunk is requested in the browser when idle
+    expect(hero).toContain('data-plush="still"'); // the server sends the still picture; the layers are requested in the browser when idle
+    expect(hero).toContain('src="/owl/owlet-full-512.webp"');
+    expect(hero).toContain('width="512" height="512"');
     expect(hero).toContain(en["chat.example"]);
     expect(hero).toContain(en["chat.owl"]); // the owl's lines say who wrote them
   });

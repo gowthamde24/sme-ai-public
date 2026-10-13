@@ -7,8 +7,8 @@
  */
 import * as THREE from "three";
 
-import { OWL_BODY, type OwlPalette } from "./owl-colors";
-import type { OwlMood } from "./owl-mood";
+import { OWL_BODY, type OwlPalette } from "../../owl/owl-colors";
+import type { OwlMood } from "../../owl/owl-mood";
 
 export type Detail = "high" | "medium" | "low";
 
