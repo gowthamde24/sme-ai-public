@@ -4,6 +4,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
 import { confirmationPhrase, fetchErasureRequests, type PageErasureRequestOut } from "@/lib/api/erasure";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../local-time";
@@ -70,23 +71,27 @@ export default async function PrivacyPage({
   let contacts: { id: string; name: string }[] = [];
   let companies: { id: string; name: string }[] = [];
   const phrases = new Map<string, string>();
+  // After the role is known (an Owner or Admin: checked above, before anything is read), the three lists do not depend on each other: asked at the same time (job CH, before: one after another), and the Owner's
+  // confirmation phrases, one per pending request, at the same time as each other (before: one per round trip).
+  const [requestsRead, contactsRead, companiesRead] = await Promise.allSettled([
+    fetchErasureRequests(user.accessToken, tenantId),
+    fetchPage(user.accessToken, tenantId, "contacts"),
+    fetchPage(user.accessToken, tenantId, "companies"),
+  ]);
   try {
-    requests = await fetchErasureRequests(user.accessToken, tenantId);
-    if (isOwner)
-      for (const request of requests.items)
-        if (request.status === "pending")
-          phrases.set(request.id, await confirmationPhrase(user.accessToken, tenantId, request));
-    const contactPage = await fetchPage(user.accessToken, tenantId, "contacts");
+    requests = take(requestsRead);
+    if (isOwner) {
+      const pending = requests.items.filter((request) => request.status === "pending");
+      const read = await Promise.all(pending.map((request) => confirmationPhrase(user.accessToken, tenantId, request)));
+      pending.forEach((request, i) => phrases.set(request.id, read[i]));
+    }
+    const contactPage = take(contactsRead);
     if (contactPage.entity === "contacts")
       contacts = contactPage.items.map((row) => ({
         id: row.id,
         name: row.full_name,
       }));
-    const companyPage = await fetchPage(
-      user.accessToken,
-      tenantId,
-      "companies",
-    );
+    const companyPage = take(companiesRead);
     if (companyPage.entity === "companies")
       companies = companyPage.items.map((row) => ({
         id: row.id,

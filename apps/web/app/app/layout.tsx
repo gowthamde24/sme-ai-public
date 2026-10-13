@@ -4,11 +4,11 @@ import type { ReactNode } from "react";
 
 import { AppFrame } from "@/components/v2/app/AppFrame";
 import type { Membership } from "@/components/v2/app/use-workspace";
-import { fetchMe } from "@/lib/api/client";
 import { requireUser } from "@/lib/auth/session";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
 
 import { signOut } from "./actions";
+import { readMeCached } from "./me-read";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -25,7 +25,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const theme = readTheme(jar.get(THEME_COOKIE)?.value);
   let memberships: Membership[] | null = null;
   try {
-    const me = await fetchMe(user.accessToken);
+    const me = await readMeCached(user.accessToken);
     if (me.user_id === user.id) memberships = me.memberships.map((m) => ({ id: m.tenant.id, name: m.tenant.name, role: m.role }));
   } catch {
     // the API is down, or the session was rejected (the page then redirects to sign in): the account part only

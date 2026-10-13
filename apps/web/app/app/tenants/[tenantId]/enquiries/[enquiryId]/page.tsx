@@ -8,6 +8,7 @@ import { fetchEnquiryQuotes, fetchQuote, fetchQuoteSetup, fetchQuoteText, type Q
 import { fetchOrders, type Order } from "@/lib/api/orders";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
 import { alertBox, kvList, mutedText, noteBox, pageH1, pageH2, pageMain, plainText } from "@/components/v2/app/ui";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../../local-time";
@@ -52,9 +53,11 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   let enquiry: Enquiry;
   let view: RequirementView;
   try {
-    tenant = await fetchTenant(user.accessToken, tenantId);
-    enquiry = await fetchEnquiry(user.accessToken, tenantId, enquiryId);
-    view = await fetchRequirement(user.accessToken, tenantId, enquiryId);
+    tenant = await fetchTenant(user.accessToken, tenantId); // first: nothing else is asked about a workspace the person cannot see
+    // the enquiry and its requirement do not depend on each other: asked at the same time (job CH)
+    const [enquiryRead, requirementRead] = await Promise.allSettled([fetchEnquiry(user.accessToken, tenantId, enquiryId), fetchRequirement(user.accessToken, tenantId, enquiryId)]);
+    enquiry = take(enquiryRead);
+    view = take(requirementRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -72,21 +75,29 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   let quotesDown = false;
   let order: Order | null = null;
   let manual: ManualQuoteData | null = null;
+  let manualRead: Promise<ManualQuoteData> | null = null;
   if (canQuote) {
     try {
       [setup, quotes] = await Promise.all([fetchQuoteSetup(user.accessToken, tenantId, enquiryId), fetchEnquiryQuotes(user.accessToken, tenantId, enquiryId)]);
+      // the typed-price form's data needs only the setup, so it is read while the chosen quote is (job CH); its own failure is handled after, as before. The no-op catch only keeps an early exit from leaving an unhandled rejection.
+      if (setup && TYPED_PRICE_ROLES.includes(tenant.role)) {
+        manualRead = loadManualQuoteData(user.accessToken, tenantId, setup.today, crypto.randomUUID());
+        manualRead.catch(() => undefined);
+      }
       const wanted = pick(query.quote);
       const chosen = wanted && isCanonicalUuid(wanted) && quotes.some((q) => q.id === wanted) ? wanted : quotes[0]?.id;
       selected = chosen ? await fetchQuote(user.accessToken, tenantId, chosen) : null;
       if (selected?.outcome === "approved") {
+        // the order and the customer's text do not depend on each other: asked at the same time (job CH)
+        const [orderRead, textRead] = await Promise.allSettled([fetchOrders(user.accessToken, tenantId, { quoteId: selected.id, limit: 1 }), fetchQuoteText(user.accessToken, tenantId, selected.id)]);
         try {
           // the order already started from this quote (if any): a nicety, the quote screen never depends on it
-          order = (await fetchOrders(user.accessToken, tenantId, { quoteId: selected.id, limit: 1 })).items[0] ?? null;
+          order = take(orderRead).items[0] ?? null;
         } catch (error) {
           if (error instanceof ApiAuthError) redirect("/login");
         }
         try {
-          text = await fetchQuoteText(user.accessToken, tenantId, selected.id);
+          text = take(textRead);
         } catch (error) {
           if (error instanceof ApiAuthError) redirect("/login");
           textError = error instanceof ApiRequestError ? error.code : "unavailable";
@@ -97,9 +108,9 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
       if (error instanceof ApiAuthError) redirect("/login");
       quotesDown = true;
     }
-    if (setup && TYPED_PRICE_ROLES.includes(tenant.role)) {
+    if (manualRead) {
       try {
-        manual = await loadManualQuoteData(user.accessToken, tenantId, setup.today, crypto.randomUUID());
+        manual = await manualRead;
       } catch (error) {
         if (error instanceof ApiAuthError) redirect("/login");
         manual = { unavailable: true }; // the rest of the quote screen does not depend on it

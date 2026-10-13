@@ -146,6 +146,27 @@ describe("the quote section of /app/tenants/[tenantId]/enquiries/[enquiryId]", (
     expect(ordersApi.fetchOrders).toHaveBeenCalledWith("tok", TENANT, { quoteId: OLDER, limit: 1 });
   });
 
+  it("job CH: the order and the customer's text of an approved quote are asked at the same time, and the enquiry and its requirement are too (not one after the other)", async () => {
+    quotesApi.fetchQuote.mockResolvedValue(parseQuote(approvedJson));
+    const held: Array<() => void> = [];
+    const later = <T,>(value: T) => new Promise<T>((resolve) => held.push(() => resolve(value)));
+    ordersApi.fetchOrders.mockImplementation(() => later({ items: [], next_cursor: null }));
+    quotesApi.fetchQuoteText.mockImplementation(() => later(parseQuoteText(TEXT_JSON)));
+    fetchEnquiry.mockImplementation(() => later(enquiry));
+    fetchRequirement.mockImplementation(() => later(view));
+    const drawn = EnquiryPage(props());
+    const waitForHeld = async (n: number) => {
+      for (let i = 0; i < 50 && held.length < n; i++) await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(held).toHaveLength(n);
+    };
+    await waitForHeld(2); // the enquiry and its requirement are both in flight before either answers
+    held.splice(0).forEach((release) => release());
+    await waitForHeld(2); // the order and the text are both in flight before either answers
+    held.splice(0).forEach((release) => release());
+    render(await drawn);
+    expect(screen.getByRole("heading", { name: "Quote 3" })).toBeInTheDocument();
+  });
+
   it("a draft does not ask for an order or for text", async () => {
     await show();
     expect(ordersApi.fetchOrders).not.toHaveBeenCalled();

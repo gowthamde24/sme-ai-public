@@ -21,9 +21,11 @@ import { getOutboxSettings, type OutboxSettings } from "@/lib/api/outbox";
 import { getSchedulerSettings, getSchedulerStatus, type SchedulerSettings, type SchedulerStatus } from "@/lib/api/scheduler";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchMembers, type Member } from "@/lib/api/orders";
-import { getPlan, type Plan } from "@/lib/api/plan";
-import { getAiUsage, type AiUsage } from "@/lib/api/ai-usage";
+import { type Plan } from "@/lib/api/plan";
+import { type AiUsage } from "@/lib/api/ai-usage";
 import { requireUser } from "@/lib/auth/session";
+
+import { readPlanCached, readUsageCached } from "../../../frame-data";
 import { PartProblem } from "@/components/v2/app/cc/PartProblem";
 import { DataSection } from "@/components/v2/app/data/DataSection";
 import { GstinForm } from "@/components/v2/app/gstin/GstinForm";
@@ -104,7 +106,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   let profile: Part<Awaited<ReturnType<typeof getBusinessProfile>>> | null = null;
   if (section === "business") {
     try {
-      [plan, usage, profile] = await Promise.all([getPlan(user.accessToken, tenantId).catch(rethrowAuth), admin ? getAiUsage(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
+      [plan, usage, profile] = await Promise.all([readPlanCached(user.accessToken, tenantId).catch(rethrowAuth), admin ? readUsageCached(user.accessToken, tenantId).catch(rethrowAuth) : null, settle(() => getBusinessProfile(user.accessToken, tenantId))]);
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       escalate(error);
