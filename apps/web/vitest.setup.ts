@@ -14,6 +14,7 @@ vi.mock("next/font/google", () => {
   const font = () => () => ({ variable: "font-var", className: "font-class" });
   return { Plus_Jakarta_Sans: font(), Bricolage_Grotesque: font(), Noto_Sans_Telugu: font(), Noto_Sans_Devanagari: font(), Noto_Sans_Kannada: font(), Geist: font(), Geist_Mono: font() };
 });
+vi.mock("next/font/local", () => ({ default: () => ({ variable: "font-var", className: "font-class" }) }));
 
 afterEach(() => {
   cleanup();
