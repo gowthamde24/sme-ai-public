@@ -26,8 +26,16 @@ describe("next.config", () => {
       const rule = rules.find((r) => r.source === source);
       expect(rule?.headers, source).toEqual([{ key: "Cache-Control", value: "public, max-age=86400, stale-while-revalidate=604800" }]);
     }
-    // only these two folders and the worker have a Cache-Control rule: a page must never be given one here (pages carry customer data and a nonce)
-    expect(rules.filter((r) => r.headers.some((h) => h.key === "Cache-Control")).map((r) => r.source).sort()).toEqual(["/icons/:path*", "/og/:path*", "/sw.js"]);
+    // only these folders and the worker have a Cache-Control rule: a page must never be given one here (pages carry customer data and a nonce)
+    expect(rules.filter((r) => r.headers.some((h) => h.key === "Cache-Control")).map((r) => r.source).sort()).toEqual(["/icons/:path*", "/og/:path*", "/owl/:path*", "/sw.js"]);
+  });
+
+  it("lets the plush owlet's pictures be kept for a year, as immutable (job CI follow-up): they live in a versioned folder, so a changed picture has a new address", async () => {
+    const rules = await (nextConfig.headers as () => Promise<{ source: string; headers: { key: string; value: string }[] }[]>)();
+    expect(rules.find((r) => r.source === "/owl/:path*")?.headers).toEqual([{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }]);
+    // every file the owl component asks for is under /owl/v<N>/ (an unversioned name could never be changed once cached)
+    const rig = readFileSync(new URL("./components/v2/app/owl/plush-rig.ts", import.meta.url), "utf8");
+    expect(rig).toMatch(/export const OWL_DIR = "\/owl\/v\d+";/);
   });
 
   it("renders every page per request: a nonce CSP cannot work on statically prerendered HTML", () => {

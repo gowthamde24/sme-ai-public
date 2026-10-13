@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./lib/security/headers";
 
 const PUBLIC_FILE_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
+// the plush owlet's pictures (job CI follow-up) live under /owl/v2/: a changed picture goes to /owl/v3/ (components/v2/app/owl/plush-rig.ts OWL_DIR), so a year and "immutable" is safe
+const OWL_FILE_CACHE = "public, max-age=31536000, immutable";
 
 const nextConfig: NextConfig = {
   // Never advertise the framework.
@@ -25,6 +27,7 @@ const nextConfig: NextConfig = {
       // and the page heads name them by path), so a day is fresh and a week may be served while it is checked in the background; a changed icon reaches people within a day. The hashed files under /_next/static are already "immutable".
       { source: "/icons/:path*", headers: [{ key: "Cache-Control", value: PUBLIC_FILE_CACHE }] },
       { source: "/og/:path*", headers: [{ key: "Cache-Control", value: PUBLIC_FILE_CACHE }] },
+      { source: "/owl/:path*", headers: [{ key: "Cache-Control", value: OWL_FILE_CACHE }] },
     ];
   },
 };

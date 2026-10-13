@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
 import type { Slots, StoreSettings, Visit } from "@/lib/api/visits";
 
 import { say, type TodayWords } from "../today/today-words";
@@ -115,7 +115,7 @@ export function VisitsView(p: VisitsViewProps) {
                 </div>
               ) : p.visits.length === 0 ? (
                 <div className={`${card} flex-row items-center`} data-empty="visits">
-                  <OwlSvg agent="main" mood="idle" still className="size-14" />
+                  <PlushStill px={56} mood={"idle"} className="size-14" />
                   <p className="font-medium">{say(words, day < today ? "visits.empty.past" : "visits.empty")}</p>
                 </div>
               ) : (

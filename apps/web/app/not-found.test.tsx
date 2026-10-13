@@ -15,7 +15,7 @@ describe("not-found page", () => {
   });
   it("is drawn in the app's look, with the owl, and in the person's language", async () => {
     const { container } = render(await NotFound());
-    expect(container.querySelector('[data-ui="v2"] svg')).not.toBeNull();
+    expect(container.querySelector('[data-ui="v2"] img[data-plush-avatar]')).not.toBeNull();
     expect(screen.getByRole("link").className).toContain("min-h-12");
     getLang.mockResolvedValueOnce("te");
     document.body.innerHTML = "";

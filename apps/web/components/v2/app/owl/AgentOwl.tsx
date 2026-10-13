@@ -11,7 +11,7 @@ import type { OwlMood } from "./owl-mood";
 export function AgentOwl({ mood, name, moodText, className = "", priority = false }: { mood: OwlMood; name: string; moodText: string; className?: string; /** The first thing on the page: its still picture is fetched at once (landing hero, Today card). */ priority?: boolean }) {
   return (
     <>
-      <PlushOwl mood={mood} priority={priority} label={`${name}, ${moodText}`} className={`size-[120px] shrink-0 sm:size-40 ${className}`} />
+      <PlushOwl mood={mood} priority={priority} sizes="(min-width: 640px) 160px, 120px" label={`${name}, ${moodText}`} className={`size-[120px] shrink-0 sm:size-40 ${className}`} />
       <span aria-live="polite" className="sr-only">
         {moodText}
       </span>

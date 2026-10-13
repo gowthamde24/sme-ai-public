@@ -187,7 +187,7 @@ async function main() {
             const name = `${screen.id}-${sizeName}-${scheme}-${lang}`;
             const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport, deviceScaleFactor: 1, colorScheme: scheme, reducedMotion: "reduce", locale: lang === "te" ? "te-IN" : "en-IN", timezoneId: "Asia/Kolkata", isMobile: sizeName === "phone", hasTouch: sizeName === "phone" });
             // the plush owlet (job CI) is drawn as its still picture: its layer files are refused, so the owl never starts to move and a picture cannot differ from run to run
-            await context.route(/\/owl\/owlet-(head|body|beak|wing-left|wing-right)\.webp/, (route) => route.abort());
+            await context.route(/\/owl\/v\d+\/owlet-(head|body|beak|wing-left|wing-right)-512\.webp/, (route) => route.abort());
             await context.addCookies([
               { name: "sme_consent", value: "1.a0", url: WEB_URL },
               { name: "sme_lang", value: lang, url: WEB_URL },

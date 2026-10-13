@@ -9,13 +9,18 @@ import { owlMood } from "./owl-mood";
 // ---- what the server sends (and what a browser with no script shows) ------------------------------------------------------------------------------------------------------------------------------
 describe("PlushOwl from the server: one still picture, with the owl's name", () => {
   const html = renderToStaticMarkup(<PlushOwl mood="idle" label="Agent OWL, ready" size={160} />);
-  it("is the 512 still, in a square box with its size given, with the same name as alt text", () => {
-    expect(html).toContain('src="/owl/owlet-full-512.webp"');
+  it("is the still in three sizes (the browser takes one by the size it is drawn at), in a square box with its size given, with the same name as alt text", () => {
+    expect(html).toContain('src="/owl/v2/owlet-full-256.webp"');
+    expect(html).toContain('srcSet="/owl/v2/owlet-full-128.webp 128w, /owl/v2/owlet-full-256.webp 256w, /owl/v2/owlet-full-512.webp 512w"');
+    expect(html).toContain('sizes="160px"');
     expect(html).toContain('width="512"');
     expect(html).toContain('height="512"');
     expect(html).toContain('alt="Agent OWL, ready"');
     expect(html).toContain('loading="lazy"');
     expect(html).toContain("width:160px;height:160px");
+  });
+  it("takes the sizes it is given (the Agent OWL: 120 px on a phone, 160 px from 640 px up)", () => {
+    expect(renderToStaticMarkup(<AgentOwl mood="idle" name="Agent OWL" moodText="ready" />)).toContain('sizes="(min-width: 640px) 160px, 120px"');
   });
   it("is an image with the name, and nothing of the layers is in it", () => {
     expect(html).toContain('role="img"');
@@ -114,7 +119,7 @@ function stubBrowser(opts: { reduced?: boolean } = {}) {
   vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(fakeCtx as unknown as CanvasRenderingContext2D);
   // every <img> counts as loaded, as if it came from the cache
   Object.defineProperty(HTMLImageElement.prototype, "complete", { configurable: true, get: () => true });
-  Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", { configurable: true, get: () => 1024 });
+  Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", { configurable: true, get: () => 512 });
 }
 const intersect = async (isIntersecting: boolean) => {
   await act(async () => io?.cb([{ isIntersecting }]));
@@ -175,19 +180,28 @@ describe("PlushOwl in the browser", () => {
     const { container } = render(<PlushOwl mood="idle" label="Agent OWL" />);
     await intersect(true);
     expect(stage(container)).toBe("loading");
-    const layers = ["head", "body", "beak"].map((n) => container.querySelector<HTMLImageElement>(`img[src="/owl/owlet-${n}.webp"]`));
+    const layers = ["head", "body", "beak"].map((n) => container.querySelector<HTMLImageElement>(`img[src="/owl/v2/owlet-${n}-512.webp"]`));
     for (const img of layers) {
       expect(img).not.toBeNull();
       expect(img!.getAttribute("loading")).toBe("lazy");
-      expect(img!.getAttribute("width")).toBe("1024");
-      expect(img!.getAttribute("height")).toBe("1024");
+      expect(img!.getAttribute("width")).toBe("512");
+      expect(img!.getAttribute("height")).toBe("512");
       expect(img!.getAttribute("alt")).toBe("");
     }
-    expect(wingImages.map((i) => i.src).sort()).toEqual(["/owl/owlet-wing-left.webp", "/owl/owlet-wing-right.webp"]);
+    expect(wingImages.map((i) => i.src).sort()).toEqual(["/owl/v2/owlet-wing-left-512.webp", "/owl/v2/owlet-wing-right-512.webp"]);
     await loadWings();
     expect(stage(container)).toBe("live");
     expect(container.querySelector(".plush-still")?.getAttribute("data-hidden")).toBe("true");
     expect(container.querySelector("canvas")).not.toBeNull();
+  });
+
+  it("cuts each wing out of its 512 px layer with the rig's 1024-space box halved (the layers are half the size of the rig's space)", async () => {
+    render(<PlushOwl mood="idle" label="Agent OWL" />);
+    await intersect(true);
+    await loadWings();
+    const ctx = vi.mocked(HTMLCanvasElement.prototype.getContext).mock.results[0].value as { drawImage: ReturnType<typeof vi.fn> };
+    // the left wing box is x 160 to 302 and y 440 to 818 in the rig's space
+    expect(ctx.drawImage).toHaveBeenCalledWith(expect.anything(), 80, 220, 71, 189, 0, 0, 71, 189);
   });
 
   it("keeps the still picture if a layer fails", async () => {
