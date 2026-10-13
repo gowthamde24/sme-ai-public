@@ -2,6 +2,7 @@ import { ArrowRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
+import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 import { pageH1, pageSub, surface } from "@/components/v2/app/ui";
 import type { AppKey, AppT } from "@/i18n/app";
 import type { Lang } from "@/i18n/lang";
@@ -17,7 +18,7 @@ export function HelpIndex({ t, base, lang }: { t: AppT; base: string; lang: Lang
   return (
     <div data-screen="help" className="flex flex-col gap-6">
       <header className="flex items-center gap-4">
-        <OwlSvg mood="answering" still className="size-20 shrink-0 sm:size-24" />
+        <PlushStill px={80} smPx={96} mood={"answering"} className="size-20 shrink-0 sm:size-24" />
         <div className="min-w-0">
           <h1 className={`${pageH1} mt-0`}>{t("help.title")}</h1>
           <p className={pageSub}>{t("help.sub")}</p>
@@ -54,7 +55,7 @@ export function HelpGuide({ id, t, base, lang, role }: { id: GuideId; t: AppT; b
         {t("help.back")}
       </Link>
       <header className="flex items-center gap-4">
-        <OwlSvg mood={g.mood} still className="size-24 shrink-0 sm:size-28" />
+        <PlushStill px={96} smPx={112} mood={g.mood} className="size-24 shrink-0 sm:size-28" />
         <div className="min-w-0">
           <h1 className={`${pageH1} mt-0`}>{t(key(`help.guide.${id}.t`))}</h1>
           <p className={pageSub}>{t(key(`help.guide.${id}.s`))}</p>

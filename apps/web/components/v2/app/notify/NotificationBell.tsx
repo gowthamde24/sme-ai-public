@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 
-import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
+import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 import { markAllSeen, parseSeen, toAnnounce, unreadOf, type Notice, type NoticeCode } from "@/lib/notifications/model";
 
 import { announcedIds, browserOptInRaw, seenRaw, setBrowserOptIn, subscribeDevice, writeAnnounced, writeSeen } from "./device";
@@ -190,7 +190,7 @@ export function NotificationBell({ tenantId, labels }: { tenantId: string; label
               ) : null}
               {items.length === 0 ? (
                 <div className="mt-3 flex items-center gap-3">
-                  <OwlSvg mood="resting" still className="size-14 shrink-0" />
+                  <PlushStill px={56} mood={"resting"} className="size-14 shrink-0" />
                   <p className="text-base text-muted">{status === "loading" ? word(labels, "notify.loading", "Checking…") : word(labels, "notify.empty", "Nothing needs you right now.")}</p>
                 </div>
               ) : (

@@ -9,7 +9,7 @@ import { formatINR } from "@/design/format";
 
 import { FreshPhotos } from "../catalogue/FreshPhotos";
 import { MessagePhotos } from "../catalogue/MessagePhotos";
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
 import { dayShort, todayInIndia } from "../visits/dates";
 import { SlotPicker, type SlotChoice } from "../visits/SlotPicker";
 import type { DecisionResult, TodayActions } from "./actions-types";
@@ -430,7 +430,7 @@ export function NeedsYou({ words, role, actions, now, lang = "en" }: { words: To
         </div>
       ) : cards.length === 0 ? (
         <div className={`${card} flex-row items-center`} data-empty="needs">
-          <OwlSvg agent="main" mood="idle" still className="size-14" />
+          <PlushStill px={56} mood={"idle"} className="size-14" />
           <p className="font-medium">{say(words, "today.empty")}</p>
         </div>
       ) : (

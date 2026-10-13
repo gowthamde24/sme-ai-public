@@ -8,7 +8,7 @@ import * as React from "react";
 import type { OutboxEvent, OutboxMessage, OutboxSummary } from "@/lib/api/outbox";
 
 import { MessagePhotos } from "../catalogue/MessagePhotos";
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
 import type { DecisionResult } from "../today/actions-types";
 import { say, type TodayWords } from "../today/today-words";
 import type { Role } from "../today/types";
@@ -320,7 +320,7 @@ export function OutboxList({ items, tab, role, words, lang, now, actions, leadBa
       </div>
       {shown.length === 0 ? (
         <div className={`${card} flex-row items-center`} data-empty={tab}>
-          <OwlSvg agent="main" mood="idle" still className="size-14" />
+          <PlushStill px={56} mood={"idle"} className="size-14" />
           <p className="font-medium">{say(words, filtered ? "outbox.empty.filtered" : `outbox.empty.${tab}`)}</p>
         </div>
       ) : (

@@ -7,11 +7,14 @@ import {
   BLINK_SECONDS,
   EYES,
   FLUTTER_SECONDS,
+  LAYER_FILE_PX,
   LAYER_PX,
   OWL_FILES,
   REST_POSE,
   SHUT_ARC,
   STILL_PX,
+  stillFile,
+  stillSrcSet,
   WING_LEFT,
   WING_RIGHT,
   beakTarget,
@@ -34,7 +37,7 @@ import {
 } from "./plush-rig";
 
 /**
- * The layered owlet (123 KB of pictures) is requested only after the still picture is in, the page has finished loading, a moment has passed and the browser is idle (requestIdleCallback; a short timer where it
+ * The layered owlet (43 KB of pictures) is requested only after the still picture is in, the page has finished loading, a moment has passed and the browser is idle (requestIdleCallback; a short timer where it
  * has none), and only while the owl is on screen: it never competes with the first paint or with the still, which is the owl on a slow phone until then.
  */
 export const LAYER_DELAY_MS = 1200;
@@ -55,18 +58,20 @@ const POINTER_FRESH_MS = 3000;
 
 type Crops = { l: HTMLCanvasElement; r: HTMLCanvasElement };
 
-/** A picture of one wing, cut out of its 1024 x 1024 layer: the mesh only ever draws from this box, never from the whole layer. */
+/** A picture of one wing, cut out of its layer: the mesh only ever draws from this box, never from the whole layer. The wing boxes are in the 1024 space of the rig; the layer file is smaller (LAYER_FILE_PX), so the box is scaled by `k`. */
 function cropWing(img: HTMLImageElement, wing: Wing): HTMLCanvasElement {
+  const k = (img.naturalWidth || LAYER_FILE_PX) / LAYER_PX;
   const c = document.createElement("canvas");
-  c.width = wing.x1 - wing.x0;
-  c.height = wing.y1 - wing.y0;
-  c.getContext("2d")?.drawImage(img, wing.x0, wing.y0, c.width, c.height, 0, 0, c.width, c.height);
+  c.width = Math.max(1, Math.round((wing.x1 - wing.x0) * k));
+  c.height = Math.max(1, Math.round((wing.y1 - wing.y0) * k));
+  c.getContext("2d")?.drawImage(img, wing.x0 * k, wing.y0 * k, c.width, c.height, 0, 0, c.width, c.height);
   return c;
 }
 
 function drawWing(ctx: CanvasRenderingContext2D, crop: HTMLCanvasElement, wing: Wing, deg: number, scale: number, mesh: MeshSize) {
+  const k = crop.width / (wing.x1 - wing.x0); // crop pixels per rig unit
   for (const tri of wingTriangles(wingGrid(wing, deg, mesh))) {
-    const s = tri.map((p) => [p.src[0] - wing.x0, p.src[1] - wing.y0] as [number, number]);
+    const s = tri.map((p) => [(p.src[0] - wing.x0) * k, (p.src[1] - wing.y0) * k] as [number, number]);
     const d = tri.map((p) => [p.dst[0] * scale, p.dst[1] * scale] as [number, number]);
     // each drawn triangle is pushed out by a little under a pixel, so no seam shows between neighbours
     const cx = (d[0][0] + d[1][0] + d[2][0]) / 3;
@@ -99,17 +104,19 @@ export type PlushOwlProps = {
   /** The owl is the first thing on the page (the landing hero, the Today card): its still picture is fetched at once, at high priority, instead of lazily. */
   priority?: boolean;
   className?: string;
+  /** The width the still picture is drawn at, as the `sizes` of an image (for example "(min-width: 640px) 160px, 120px"): the browser picks the 128, 256 or 512 px file by it. Without it, `size` (or 160 px). */
+  sizes?: string;
   /** The name a screen reader says (the box is an image with this name). Without it the owl is decorative and hidden from them. */
   label?: string;
 };
 
 /**
- * The plush owlet (job CI), the Agent OWL. From the server, and with no script, it is one still picture (owlet-full-512.webp) in a square box. In the browser, once the page is idle and the owl is on screen,
+ * The plush owlet (job CI), the Agent OWL. From the server, and with no script, it is one still picture (owlet-full-128/256/512.webp, chosen by the size it is drawn at) in a square box. In the browser, once the page is idle and the owl is on screen,
  * the layers (head, body, beak, two wings) are fetched and the owl comes alive on plain DOM and CSS plus one small canvas for the wings: it breathes, blinks, follows the pointer and acts out the five moods the
  * Ask box gives it (idle, listening, thinking, answering, resting). The animation runs only while the owl is on screen and the tab is visible. With prefers-reduced-motion every movement is a third as big and
  * there are no wing flutter bursts. The thinking dots and the "z z z" are hidden from screen readers. Numbers: plush-rig.ts; styles: design/owl.css.
  */
-export function PlushOwl({ mood, size, priority = false, className = "", label }: PlushOwlProps) {
+export function PlushOwl({ mood, size, priority = false, className = "", sizes, label }: PlushOwlProps) {
   const [visible, setVisible] = React.useState(false);
   const [tabHidden, setTabHidden] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
@@ -242,7 +249,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", label }
     let scale = 1;
     let mesh = meshFor(0);
     const fit = () => {
-      const px = Math.max(128, Math.min(LAYER_PX, Math.round(el.clientWidth * Math.min(window.devicePixelRatio || 1, 2))));
+      const px = Math.max(128, Math.min(LAYER_FILE_PX, Math.round(el.clientWidth * Math.min(window.devicePixelRatio || 1, 2))));
       if (g.width !== px) g.width = g.height = px;
       scale = g.width / LAYER_PX;
       mesh = meshFor(g.width);
@@ -395,14 +402,14 @@ export function PlushOwl({ mood, size, priority = false, className = "", label }
     >
       {/* from the server and with no script: this picture, and nothing else; it keeps the owl's name as its alt text (the box around it is the image a screen reader finds, so this one is hidden from it: no double reading) */}
       {/* eslint-disable-next-line @next/next/no-img-element -- a fixed local file with its size given; next/image would add a server round trip for nothing */}
-      <img ref={still} src={OWL_FILES.still} width={STILL_PX} height={STILL_PX} alt={label ?? ""} aria-hidden={label ? true : undefined} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding="async" draggable={false} className="plush-still" data-hidden={ready && !failed ? "true" : undefined} />
+      <img ref={still} src={stillFile(256)} srcSet={stillSrcSet()} sizes={sizes ?? `${size ?? 160}px`} width={STILL_PX} height={STILL_PX} alt={label ?? ""} aria-hidden={label ? true : undefined} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding="async" draggable={false} className="plush-still" data-hidden={ready && !failed ? "true" : undefined} />
       {armed && !failed ? (
         <div className="plush-live" data-ready={ready ? "true" : undefined}>
           <div ref={shadow} className="plush-shadow" />
           <div ref={rig} className="plush-rig">
             <div ref={head} className="plush-head">
               {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-              <img ref={(i) => void (layers.current.head = i)} src={OWL_FILES.head} width={LAYER_PX} height={LAYER_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+              <img ref={(i) => void (layers.current.head = i)} src={OWL_FILES.head} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
               {EYES.map((_, i) => (
                 <div key={i} className={`plush-lid plush-eye-${i}`}>
                   <i className="plush-lid-up" />
@@ -417,12 +424,12 @@ export function PlushOwl({ mood, size, priority = false, className = "", label }
               <div ref={mouth} className="plush-mouth" />
               <div ref={beak} className="plush-beak">
                 {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-                <img ref={(i) => void (layers.current.beak = i)} src={OWL_FILES.beak} width={LAYER_PX} height={LAYER_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+                <img ref={(i) => void (layers.current.beak = i)} src={OWL_FILES.beak} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
               </div>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-            <img ref={(i) => void (layers.current.body = i)} src={OWL_FILES.body} width={LAYER_PX} height={LAYER_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
-            <canvas ref={canvas} width={LAYER_PX / 2} height={LAYER_PX / 2} className="plush-wings" />
+            <img ref={(i) => void (layers.current.body = i)} src={OWL_FILES.body} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+            <canvas ref={canvas} width={LAYER_FILE_PX / 2} height={LAYER_FILE_PX / 2} className="plush-wings" />
           </div>
         </div>
       ) : null}

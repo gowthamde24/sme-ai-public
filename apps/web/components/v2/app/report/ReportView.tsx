@@ -1,4 +1,4 @@
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
 import { word, type Labels } from "../labels";
 import { bodyText, mutedText, pageH1, surface, warnBox } from "../ui";
 import { weekdayWord } from "../date-words";
@@ -30,7 +30,7 @@ function Unreadable({ labels }: { labels: Labels }) {
 function Empty({ text }: { text: string }) {
   return (
     <div className="mt-3 flex items-center gap-3">
-      <OwlSvg mood="resting" still className="size-14 shrink-0" />
+      <PlushStill px={56} mood={"resting"} className="size-14 shrink-0" />
       <p className="text-base text-muted">{text}</p>
     </div>
   );
@@ -181,7 +181,7 @@ export function ReportView({ data, labels, lang }: { data: ReportData; labels: L
 export function ReportNoAccess({ labels }: { labels: Labels }) {
   return (
     <div className={`${surface} flex items-center gap-3`}>
-      <OwlSvg mood="resting" still className="size-14 shrink-0" />
+      <PlushStill px={56} mood={"resting"} className="size-14 shrink-0" />
       <div>
         <h1 className="font-display text-xl font-bold">{word(labels, "report.noaccess.title", "This page is for the owner and admins")}</h1>
         <p className="mt-1">{word(labels, "report.noaccess.body", "Ask the owner to share the week's numbers with you.")}</p>

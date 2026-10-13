@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
 import { word, type Labels } from "../labels";
 import { mutedText, notFoundBack, notFoundOwl, notFoundTitle } from "../ui";
 
@@ -23,7 +23,7 @@ export function ProblemView({ kind, labels, action, reference, tag: Tag = "main"
   const e = ENGLISH[kind];
   return (
     <Tag data-problem={kind} className={className ?? "mx-auto flex min-h-[60dvh] w-full max-w-md flex-col items-center justify-center gap-4 px-6 py-10 text-center"}>
-      <OwlSvg agent="main" mood={kind === 500 ? "resting" : "idle"} still className={notFoundOwl} />
+      <PlushStill px={96} mood={kind === 500 ? "resting" : "idle"} className={notFoundOwl} />
       <h1 className={notFoundTitle}>{word(labels, e.titleKey, e.title)}</h1>
       <p className={mutedText}>{word(labels, e.bodyKey, e.body)}</p>
       {action}

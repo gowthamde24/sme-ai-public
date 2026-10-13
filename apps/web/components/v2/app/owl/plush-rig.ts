@@ -9,16 +9,25 @@ import type { OwlMood } from "./owl-mood";
 export const REDUCED_SCALE = 0.35;
 export const motionScale = (reduced: boolean): number => (reduced ? REDUCED_SCALE : 1);
 
+/** The pictures live under a versioned folder (job CI follow-up): next.config.ts serves /owl/ as "immutable" for a year, so a changed picture goes in /owl/v3/ and every name below moves with it. */
+export const OWL_DIR = "/owl/v2";
 export const OWL_FILES = {
-  still: "/owl/owlet-full-512.webp",
-  head: "/owl/owlet-head.webp",
-  body: "/owl/owlet-body.webp",
-  beak: "/owl/owlet-beak.webp",
-  wingLeft: "/owl/owlet-wing-left.webp",
-  wingRight: "/owl/owlet-wing-right.webp",
+  head: `${OWL_DIR}/owlet-head-512.webp`,
+  body: `${OWL_DIR}/owlet-body-512.webp`,
+  beak: `${OWL_DIR}/owlet-beak-512.webp`,
+  wingLeft: `${OWL_DIR}/owlet-wing-left-512.webp`,
+  wingRight: `${OWL_DIR}/owlet-wing-right-512.webp`,
 } as const;
-/** The layers are 1024 x 1024; the still is 512 x 512. Both are drawn in a square box, so the box is the same size before and after the layers arrive (no layout shift). */
+/** The still picture in three sizes: the browser picks by the size the owl is drawn at (srcset + sizes), so a 56 px avatar never downloads the 512 px file. */
+export const STILL_WIDTHS = [128, 256, 512] as const;
+export const stillFile = (width: (typeof STILL_WIDTHS)[number]): string => `${OWL_DIR}/owlet-full-${width}.webp`;
+export const stillSrcSet = (widths: readonly (typeof STILL_WIDTHS)[number][] = STILL_WIDTHS): string => widths.map((w) => `${stillFile(w)} ${w}w`).join(", ");
+/**
+ * The rig numbers (the wing boxes, the pivots, the mesh) are in the 1024 x 1024 space of the first art; the layer files are 512 x 512 now (no owl is drawn above 360 CSS pixels, so a 1024 px layer was only weight).
+ * Everything else is in percent of the box, so it did not change; the wing pictures are cut out with the scale LAYER_FILE_PX / LAYER_PX (PlushOwl.tsx).
+ */
 export const LAYER_PX = 1024;
+export const LAYER_FILE_PX = 512;
 export const STILL_PX = 512;
 
 /** Eyelid boxes (left, top, width, height in percent of the owl's box), the left eye then the right. */

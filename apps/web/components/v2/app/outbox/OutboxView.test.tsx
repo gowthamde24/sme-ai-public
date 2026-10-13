@@ -167,6 +167,6 @@ describe("the Outbox page: the list", () => {
   });
   it("an empty tab has the happy owl", async () => {
     await show({ items: [], tab: "sent", counts: counts() });
-    expect(document.querySelector('[data-empty="sent"] svg')).not.toBeNull();
+    expect(document.querySelector('[data-empty="sent"] img[data-plush-avatar]')).not.toBeNull();
   });
 });

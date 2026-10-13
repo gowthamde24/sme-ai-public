@@ -244,10 +244,10 @@ describe("Needs you: the count is the cards", () => {
 });
 
 describe("Needs you: empty, unreadable, and the phone", () => {
-  it("nothing waiting is the owl's happy line, a flat owl and no people", () => {
+  it("nothing waiting is the owl's happy line, the plush owl and no people", () => {
     const { container } = board([]);
     expect(screen.getByText("All clear. I will tell you the moment something needs you.")).toBeInTheDocument();
-    expect(container.querySelector('[data-empty="needs"] svg[data-owl="main"]')).not.toBeNull();
+    expect(container.querySelector('[data-empty="needs"] img[data-plush-avatar]')).not.toBeNull();
     expect(screen.queryByRole("article")).toBeNull();
     expect(count()).toHaveTextContent("0");
   });

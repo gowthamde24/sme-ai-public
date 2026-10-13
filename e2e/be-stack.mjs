@@ -1283,7 +1283,7 @@ await step("W1", "robustness: friendly 404 and 403 pages, a skeleton while a scr
   await page.goto(`${BASE}/app/tenants/${uuid()}/orders`, { waitUntil: "networkidle" });
   await page.getByRole("heading", { level: 1, name: "Not found" }).waitFor({ timeout: 20000 }).catch(() => null);
   must((await page.getByRole("heading", { level: 1, name: "Not found" }).count()) === 1, "no friendly 404 heading");
-  must((await page.locator('[data-problem="404"] svg').count()) > 0, "the 404 has no owl");
+  must((await page.locator('[data-problem="404"] img[data-plush-avatar]').count()) > 0, "the 404 has no owl");
   await page.goto(`${BASE}/app/problem/403`, { waitUntil: "networkidle" });
   await page.getByRole("heading", { level: 1, name: "This is not open to you" }).waitFor({ timeout: 20000 }).catch(() => null);
   must((await page.getByRole("heading", { level: 1, name: "This is not open to you" }).count()) === 1, "no friendly 403");
