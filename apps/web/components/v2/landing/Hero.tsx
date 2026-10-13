@@ -1,7 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { AgentOwl3D } from "@/components/v2/app/owl/AgentOwl3D";
+import { AgentOwl } from "@/components/v2/app/owl/AgentOwl";
 import { btnPrimary, container } from "@/components/v2/landing/ui";
 import type { LandingT } from "@/i18n/landing";
 
@@ -33,7 +33,7 @@ export function Hero({ t }: { t: LandingT }) {
       </div>
       <div className="relative">
         <div className="flex justify-center lg:justify-end">
-          <AgentOwl3D mood="idle" name="Agent OWL" moodText={t("hero.owl.mood")} className="size-[168px]! sm:size-56!" />
+          <AgentOwl priority mood="idle" name="Agent OWL" moodText={t("hero.owl.mood")} className="size-[168px]! sm:size-56!" />
         </div>
         <figure aria-label={t("chat.label")} className="mt-2 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
           <figcaption className="flex flex-wrap items-center justify-between gap-2 text-sm text-muted">

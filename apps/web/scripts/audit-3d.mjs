@@ -1,6 +1,6 @@
 // npm run audit:3d (run `npm run build` first): the build check of the 3D Office (docs/plans/office-3d-proposal.md, "Lazy-loading plan" 4).
-//   1. three.js (its core, marked `__THREE__`) is in exactly ONE client chunk, shared by the two `next/dynamic` entries that need it: the Office's 3D view and Agent OWL on Today;
-//   2. each entry (all the chunks one dynamic import loads) is within its own budget (scripts/budget.json, "office3d" and "agentOwl": gzip level 9, the way audit:budget measures);
+//   1. three.js (its core, marked `__THREE__`) is in exactly ONE client chunk, loaded by the one `next/dynamic` entry that needs it: the Office's 3D view (job CI: Agent OWL is the plush owlet now, plain DOM, CSS and a canvas, so nothing else may load three);
+//   2. each entry (all the chunks one dynamic import loads) is within its own budget (scripts/budget.json, "office3d": gzip level 9, the way audit:budget measures);
 //   3. no page's first load names any of those chunks: they appear in the routes' react-loadable manifests (fetched on demand) and in no client-reference or build manifest.
 // No dependency: Node's fs and zlib. Exit 1 on any violation. It reads files only; it starts nothing.
 import fs from "node:fs";
@@ -29,7 +29,7 @@ const core = chunks.filter((f) => fs.readFileSync(f, "utf8").includes("__THREE__
 console.log(`client chunks: ${chunks.length}; with three's core: ${core.length}`);
 if (core.length !== 1) fail(`three.js must be in exactly one client chunk, found ${core.length}: ${core.map((f) => path.basename(f)).join(", ")}`);
 
-// Every lazy entry (a next/dynamic import) that loads the core, per route. Two exist: the 3D Office (three + fiber + drei + the scene, `office3d` budget) and Agent OWL on Today (three + the owl, `agentOwl` budget).
+// Every lazy entry (a next/dynamic import) that loads the core, per route. Exactly one may exist: the 3D Office (three + fiber + drei + the scene, `office3d` budget). Any other lazy entry that loads three (an owl on Today, say) fails.
 const loadable = walk(path.join(NEXT, "server")).filter((f) => f.endsWith("react-loadable-manifest.json"));
 const entries = new Map(); // key = the sorted file list; value = { files, routes }
 for (const m of loadable) {
@@ -49,7 +49,11 @@ const budgets = JSON.parse(fs.readFileSync(path.join(WEB, "scripts/budget.json")
 const seen = new Set();
 for (const { files, routes } of entries.values()) {
   const isOffice = files.some((f) => fs.readFileSync(f, "utf8").includes("OrbitControls"));
-  const which = isOffice ? "office3d" : "agentOwl";
+  if (!isOffice) {
+    fail(`a lazy entry other than the 3D Office loads three.js (${files.map((f) => path.basename(f)).join(", ")}, by ${[...routes].join(", ")}): only the Office may`);
+    continue;
+  }
+  const which = "office3d";
   seen.add(which);
   const budget = budgets[which].maxGzipBytes;
   const gz = files.reduce((n, f) => n + gzip(f), 0);
@@ -61,7 +65,7 @@ for (const { files, routes } of entries.values()) {
     if (first.length) fail(`${name} (${which}) is part of a first load: ${first.map((m) => path.relative(NEXT, m)).join(", ")}`);
   }
 }
-for (const need of ["office3d", "agentOwl"]) if (!seen.has(need)) fail(`no route lazy-loads the ${need} entry (is it wired?)`);
+for (const need of ["office3d"]) if (!seen.has(need)) fail(`no route lazy-loads the ${need} entry (is it wired?)`);
 console.log(`first-load manifests that name any of them: none (checked ${manifests.length})`);
 if (failed) process.exit(1);
-console.log("OK  three.js is one shared core, loaded lazily by the 3D Office and by Agent OWL, each within budget, in no first load");
+console.log("OK  three.js is one core, loaded lazily by the 3D Office only, within budget, in no first load");

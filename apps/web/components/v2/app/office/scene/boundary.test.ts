@@ -28,21 +28,21 @@ describe("the seven helpers", () => {
 describe("three.js stays in its own chunks", () => {
   const files = walk(WEB).filter(source);
   const importsThree = (f: string) => /from\s+["'](three|three\/|@react-three\/)/.test(fs.readFileSync(f, "utf8"));
-  it("only the Office scene and the owl's 3D files import it", () => {
+  it("only the Office scene's own files import it (the Agent OWL is the plush owlet: plain DOM, CSS and a canvas; job CI)", () => {
     const found = files.filter(importsThree).map(rel).sort();
-    expect(found.every((f) => f.startsWith("components/v2/app/office/scene/") || ["components/v2/app/owl/owl-model.ts", "components/v2/app/owl/AgentOwlScene.tsx"].includes(f)), found.join(", ")).toBe(true);
+    expect(found.every((f) => f.startsWith("components/v2/app/office/scene/")), found.join(", ")).toBe(true);
     expect(found).toContain("components/v2/app/office/scene/Office3D.tsx");
-    expect(found).toContain("components/v2/app/owl/owl-model.ts");
-    expect(found).toContain("components/v2/app/owl/AgentOwlScene.tsx");
+    expect(found).toContain("components/v2/app/office/scene/owl-model.ts");
   });
-  it("and the rest of the app reaches them only through next/dynamic (never a static import of Office3D, owl-model or AgentOwlScene)", () => {
-    const heavy = /from\s+["'][^"']*\/(scene\/Office3D|owl-model|AgentOwlScene)["']/;
-    const bad = files.filter((f) => !f.includes("/office/scene/") && !/\/owl\/(owl-model|AgentOwlScene)\.tsx?$/.test(f)).filter((f) => heavy.test(fs.readFileSync(f, "utf8").replace(/import type[^;]*;/g, "")));
+  it("nothing in the owl folder imports three or the office scene, and the rest of the app reaches the scene only through next/dynamic (never a static import of Office3D or owl-model)", () => {
+    const owlFiles = files.filter((f) => f.includes("/components/v2/app/owl/"));
+    expect(owlFiles.length).toBeGreaterThan(3);
+    for (const f of owlFiles) expect(fs.readFileSync(f, "utf8"), rel(f)).not.toMatch(/from\s+["'](three|@react-three\/|[^"']*\/office\/)/);
+    const heavy = /from\s+["'][^"']*\/(scene\/Office3D|scene\/owl-model|owl-model)["']/;
+    const bad = files.filter((f) => !f.includes("/office/scene/")).filter((f) => heavy.test(fs.readFileSync(f, "utf8").replace(/import type[^;]*;/g, "")));
     expect(bad.map((f) => path.relative(WEB, f))).toEqual([]);
     const stage = fs.readFileSync(path.join(WEB, "components/v2/app/office/OfficeStage.tsx"), "utf8");
     expect(stage).toMatch(/dynamic\(\(\) => import\("\.\/scene\/Office3D"\), \{\s*ssr: false/);
-    const owl = fs.readFileSync(path.join(WEB, "components/v2/app/owl/AgentOwl3D.tsx"), "utf8");
-    expect(owl).toMatch(/dynamic\(\(\) => import\("\.\/AgentOwlScene"\), \{\s*ssr: false/);
   });
 });
 

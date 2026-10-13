@@ -4,7 +4,7 @@ import { ArrowRight, Mic, Send, Square, Volume2, X } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
-import { AgentOwl3D } from "../../owl/AgentOwl3D";
+import { AgentOwl } from "../../owl/AgentOwl";
 import { owlMood, type OwlMood } from "../../owl/owl-mood";
 import { defaultAutoplay, makeAnswerPlayer, markNoticeSeen, noticeSeen, readAutoplay, saveAutoplay, subscribeStore, type AnswerPlayer } from "./answer-audio";
 import { ERROR_CODES, type AskDraft, type AskEvent, type AskSource, type AskTransport, type Availability, type VoiceStatus, type VoiceTransport } from "./ask-types";
@@ -154,7 +154,7 @@ export function AskTeam({ lang, base, words, availability, transport: given, voi
   const hero = variant === "hero";
   const title = hero ? null : (
     <div className="flex items-center gap-3 sm:gap-4">
-      <AgentOwl3D mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
+      <AgentOwl mood={mood} name={w("agent.main")} moodText={w(`owl.mood.${mood}`)} />
       <div className="min-w-0">
         <h2 id="ask-heading" className="font-display text-xl font-semibold leading-tight">
           {w("ask.title")}

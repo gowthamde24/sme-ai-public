@@ -1,5 +1,5 @@
 /**
- * The 3D agent office. With the owl code in components/v2/app/owl/ (owl-model.ts) this is the ONLY code that imports three / react-three-fiber / drei, and it is loaded with
+ * The 3D agent office. With the 3D owl model next to it (owl-model.ts) this is the ONLY code that imports three / react-three-fiber / drei, and it is loaded with
  * `next/dynamic` only when the person is shown the 3D view (OfficeRoom.tsx), so no other screen ships three.js (a build check, scripts/audit-3d.mjs, keeps it that way).
  * Everything is built from code primitives: no models, no textures, no licence risk. Each helper is an owl (the same bird as Agent OWL, a colour of its own from owl-colors.ts); there are
  * no human figures. What is NOT ported from the design lab: the simulated event stream, the speech bubbles it drove, the paper handed from desk to desk and the debug close-up cameras.
@@ -12,7 +12,7 @@ import { OrbitControls, PerformanceMonitor } from "@react-three/drei";
 import * as THREE from "three";
 import { OWL_PALETTE } from "../../owl/owl-colors";
 import type { OwlMood } from "../../owl/owl-mood";
-import { createOwl, type Detail } from "../../owl/owl-model";
+import { createOwl, type Detail } from "./owl-model";
 import { quietThreeClockWarning } from "./quiet-three";
 import { SEATS, TABLE_HEIGHT, TABLE_RADIUS, owlYaw, type Seat } from "./seats";
 import { ALL_AGENT_IDS, type AgentId, type Pose, type RoomState } from "./ids";

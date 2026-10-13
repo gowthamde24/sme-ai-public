@@ -2,7 +2,7 @@ import { ArrowRight, Armchair } from "lucide-react";
 import Link from "next/link";
 
 import { pageH1 } from "../ui";
-import { ago } from "../today/TodayView";
+import { ago } from "../today/time";
 import type { AgentRow, T } from "../today/types";
 import { OfficeRoom, type RoomRow, type Words } from "./OfficeRoom";
 import { ALL_AGENT_IDS, type AgentId } from "./scene/ids";

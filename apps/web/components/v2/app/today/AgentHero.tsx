@@ -2,7 +2,7 @@
 
 import * as React from "react";
 
-import { AgentOwl3D } from "../owl/AgentOwl3D";
+import { AgentOwl } from "../owl/AgentOwl";
 import type { OwlMood } from "../owl/owl-mood";
 import { AskTeam } from "./ask/AskTeam";
 import type { AskWords } from "./ask/ask-words";
@@ -30,7 +30,7 @@ function Headline({ words }: { words: TodayWords }) {
 }
 
 /**
- * The Agent OWL card of Today (job AU): the 3D owl and a mood pill on the left (the flat owl wherever the 3D one is not allowed, see AgentOwl3D); on the right the name, ONE sentence built from the real
+ * The Agent OWL card of Today (job AU): the plush owlet and a mood pill on the left (see AgentOwl); on the right the name, ONE sentence built from the real
  * list ("3 things need you. The rest is handled." / "Nothing needs you right now."), the overnight line from the outbox log, the Ask box and three suggestion chips. The owl's mood follows the Ask box
  * (typing, the microphone, the request, the streaming answer, a refusal), exactly as before. On a phone the card is compact (the owl beside the sentence) and the question line is fixed above the
  * bottom bar; the answer opens under the card, full width.
@@ -48,7 +48,7 @@ export function AgentHero({ lang, base, availability, askWords, words, chips, di
   return (
     <section aria-labelledby="agent-owl-heading" data-part="agent-owl" className="grid grid-cols-[120px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 rounded-3xl border border-line bg-surface p-4 md:grid-cols-[220px_minmax(0,1fr)] md:gap-x-8 md:gap-y-4 md:rounded-[28px] md:p-8">
       <div className="flex flex-col items-center gap-3 md:row-span-2 md:self-center">
-        <AgentOwl3D mood={mood} name={say(words, "agent.main")} moodText={moodText} className="md:size-[220px]" />
+        <AgentOwl priority mood={mood} name={say(words, "agent.main")} moodText={moodText} className="md:size-[220px]" />
         <span className="max-md:hidden">{pill}</span>
       </div>
       <div className="flex min-w-0 flex-col gap-1.5 md:gap-4 md:self-end">

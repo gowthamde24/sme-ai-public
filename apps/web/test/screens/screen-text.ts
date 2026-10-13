@@ -144,6 +144,8 @@ export function screenText(container: Element): string {
       return;
     }
     if (tag === "IMG") {
+      // a picture hidden from screen readers (aria-hidden: the owl's still, which the box around it already names) is not on the screen's text (job CI)
+      if (el.getAttribute("aria-hidden") === "true") return;
       put(`[image: ${el.getAttribute("alt") ?? ""}]`);
       return;
     }

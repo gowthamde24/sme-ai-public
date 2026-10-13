@@ -87,9 +87,9 @@ async function waitForPort(port, ms = 60_000) {
 
 // installed before any page script runs
 const OBSERVERS = `(() => {
-  const p = (window.__perf = { lcp: 0, fcp: 0, shifts: [], long: [], inp: 0 });
+  const p = (window.__perf = { lcp: 0, fcp: 0, shifts: [], long: [], inp: 0, lcpList: [] });
   const watch = (type, fn, extra) => { try { new PerformanceObserver((l) => l.getEntries().forEach(fn)).observe({ type, buffered: true, ...extra }); } catch {} };
-  watch("largest-contentful-paint", (e) => { p.lcp = e.startTime; });
+  watch("largest-contentful-paint", (e) => { p.lcp = e.startTime; p.lcpList.push([Math.round(e.startTime), e.size, (e.url || "").split("/").pop() || (e.element ? e.element.tagName + "." + String(e.element.className).slice(0, 30) : "")]); });
   watch("paint", (e) => { if (e.name === "first-contentful-paint") p.fcp = e.startTime; });
   watch("layout-shift", (e) => { if (!e.hadRecentInput) p.shifts.push([e.startTime, e.value]); });
   watch("longtask", (e) => { p.long.push([e.startTime, e.duration]); });
@@ -207,6 +207,7 @@ async function measureOnce(browser, route, cookie) {
     ttfb: nav.ttfb,
     fcp: perf.fcp,
     lcp: perf.lcp,
+    lcpList: perf.lcpList,
     tbt,
     inp: perf.inp || NaN,
     cls: cls(perf.shifts),
@@ -279,11 +280,13 @@ async function main() {
       results[route.id] = {
         label: route.label,
         status: runs[0].status,
+        lcpElements: flag("lcp-detail") ? runs[0].lcpList : undefined, // --lcp-detail: which element was the largest paint, and when (the first run)
         ttfb: m("ttfb"), fcp: m("fcp"), lcp: m("lcp"), tbt: m("tbt"), inp: m("inp"), cls: m("cls"), requests: m("requests"), prefetches: m("prefetches"), errors: m("errors"), firstError: runs.find((r) => r.firstError)?.firstError ?? "",
         kb: { script: kb("script"), stylesheet: kb("stylesheet"), font: kb("font"), image: kb("image"), document: kb("document") },
         files: runs[0].files,
       };
       const r = results[route.id];
+      if (flag("lcp-detail")) console.log(`  largest paints of ${route.label} (ms, size, file): ${JSON.stringify(results[route.id].lcpElements)}`);
       console.log(`${route.label.padEnd(18)} HTTP ${r.status}  TTFB ${r.ttfb.toFixed(0)}  FCP ${r.fcp.toFixed(0)}  LCP ${r.lcp.toFixed(0)}  TBT ${r.tbt.toFixed(0)}  INP ${Number.isNaN(r.inp) ? "n/a" : r.inp.toFixed(0)}  CLS ${r.cls.toFixed(3)}  JS ${r.kb.script.toFixed(1)} KB  CSS ${r.kb.stylesheet.toFixed(1)}  font ${r.kb.font.toFixed(1)}  img ${r.kb.image.toFixed(1)}  doc ${r.kb.document.toFixed(1)}  req ${r.requests} (${r.prefetches} prefetch)${r.errors ? `  CONSOLE ERRORS ${r.errors}: ${r.firstError}` : ""}`);
     }
     await browser.close();
