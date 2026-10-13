@@ -6,6 +6,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { SECOND_FACTOR_EVENTS, eventsOffered, fetchMembers, fetchOrder, type Member, type OrderDetail } from "@/lib/api/orders";
 import { ApiDownV2, BackLink } from "@/components/v2/app/parts";
 import { mutedText, pageMain } from "@/components/v2/app/ui";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
@@ -54,10 +55,12 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
       </main>
     );
 
+  // the order and the names of the members do not depend on each other: asked at the same time (job CH). The role was checked above, before anything was read.
+  const [orderRead, membersRead] = await Promise.allSettled([fetchOrder(user.accessToken, tenantId, orderId), fetchMembers(user.accessToken, tenantId)]);
   let order: OrderDetail;
   let members: Member[] = [];
   try {
-    order = await fetchOrder(user.accessToken, tenantId, orderId);
+    order = take(orderRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -65,7 +68,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
     return <ApiDownV2 words={await partsWords()} />;
   }
   try {
-    members = await fetchMembers(user.accessToken, tenantId); // names are a nicety: the order never depends on them
+    members = take(membersRead); // names are a nicety: the order never depends on them
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
   }

@@ -366,6 +366,21 @@ describe("/app/tenants/[tenantId]/leads/[leadId]", () => {
     expect(screen.getByRole("button", { name: "Add enquiry" })).toBeInTheDocument();
   });
 
+  it("job CH: after the workspace and the lead are known, the evidence, the suggestions and the enquiries are all asked before any of them answers (not one after the other)", async () => {
+    const answers: Array<(v: unknown) => void> = [];
+    const later = (v: unknown) => new Promise((resolve) => answers.push(() => resolve(v)));
+    fetchEvidencePage.mockImplementation(() => later(evidence));
+    fetchClaims.mockImplementation(() => later([suggestion]));
+    fetchLeadEnquiries.mockImplementation(() => later([]));
+    const drawn = LeadPage(props());
+    for (let i = 0; i < 50 && answers.length < 3; i++) await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(answers).toHaveLength(3); // all three are in flight and none has answered
+    expect(fetchTenant).toHaveBeenCalledTimes(1);
+    for (const answer of answers) answer(undefined);
+    render(await drawn);
+    expect(screen.getByText("Catalogue says <b>silk</b>")).toBeInTheDocument();
+  });
+
   it("an API failure on the enquiries shows an error in that section only", async () => {
     fetchLeadEnquiries.mockRejectedValue(new ApiRequestError(502, "upstream_error", "x"));
     render(await LeadPage(props()));

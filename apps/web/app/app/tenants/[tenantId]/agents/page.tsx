@@ -5,6 +5,7 @@ import { fetchAgentCost, fetchAgentSettings, fetchRuns, RUN_ERROR_LABELS, type A
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { fetchPage, isCanonicalUuid } from "@/lib/api/crm";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
 import { LocalTime } from "../../../local-time";
@@ -54,18 +55,27 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
     return <ApiDownV2 words={await partsWords()} />;
   }
 
+  // Once the workspace is known, the page's reads do not depend on each other: asked at the same time (job CH, before: five in a row), and handled below in the order they were. The cost is read only for a role that may see it.
+  const canManage = ADMIN_ROLES.includes(tenant.role);
+  const [settingsRead, runsRead, companiesRead, leadsRead, costRead] = await Promise.allSettled([
+    fetchAgentSettings(user.accessToken, tenantId),
+    fetchRuns(user.accessToken, tenantId),
+    fetchPage(user.accessToken, tenantId, "companies"),
+    fetchPage(user.accessToken, tenantId, "leads"),
+    canManage ? fetchAgentCost(user.accessToken, tenantId) : Promise.resolve(null),
+  ]);
   let settings: AgentSettingsOut | null = null;
   let runs: PageRunOut | null = null;
   let companies: { id: string; name: string }[] = [];
   let leads: { id: string; label: string }[] = [];
   let cost: AgentCostOut | null = null;
   try {
-    settings = await fetchAgentSettings(user.accessToken, tenantId);
-    runs = await fetchRuns(user.accessToken, tenantId);
-    const page = await fetchPage(user.accessToken, tenantId, "companies");
+    settings = take(settingsRead);
+    runs = take(runsRead);
+    const page = take(companiesRead);
     if (page.entity === "companies")
       companies = page.items.map((row) => ({ id: row.id, name: row.name }));
-    const leadPage = await fetchPage(user.accessToken, tenantId, "leads");
+    const leadPage = take(leadsRead);
     if (leadPage.entity === "leads") {
       const names = new Map(companies.map((c) => [c.id, c.name]));
       // a lead with no company has nothing to research: it is not offered
@@ -79,14 +89,11 @@ export default async function AgentsPage({ params }: PageProps<"/app/tenants/[te
     // anything else: the sections below show an error, never placeholder data
   }
 
-  const canManage = ADMIN_ROLES.includes(tenant.role);
-  if (canManage) {
-    try {
-      cost = await fetchAgentCost(user.accessToken, tenantId);
-    } catch (error) {
-      if (error instanceof ApiAuthError) redirect("/login");
-      // anything else: the panel says so, never placeholder numbers
-    }
+  try {
+    cost = take(costRead);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    // anything else: the panel says so, never placeholder numbers
   }
   const canStart = START_ROLES.includes(tenant.role);
 

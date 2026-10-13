@@ -9,6 +9,7 @@ import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type Enquiry, fetchLeadEnquiries } from "@/lib/api/enquiries";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { fetchLeadContactId } from "@/lib/api/lead-contact";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 import { ContactLead } from "@/components/v2/app/contact/ContactLead";
 import { getLang } from "@/i18n/get-lang";
@@ -68,17 +69,21 @@ export default async function LeadPage({
     );
   }
 
+  // The workspace and the lead are read first, one after the other: nothing else is asked about a workspace or a lead the person cannot see (pinned by page.test.tsx). Everything after them does not depend on
+  // anything else, so it is asked at the same time (job CH), and each failure is handled below where it was when they ran one after another. Before: six reads in a row; now three steps.
   const rawCursor = pick(query.cursor);
   const cursor = rawCursor && rawCursor.length <= MAX_CURSOR ? rawCursor : null;
+  const [evidenceRead, claimsRead, enquiriesRead, contactRead, companyRead] = await Promise.allSettled([
+    fetchEvidencePage(user.accessToken, tenantId, "leads", leadId, cursor),
+    fetchClaims(user.accessToken, tenantId, "leads", leadId),
+    fetchLeadEnquiries(user.accessToken, tenantId, leadId),
+    // the contact is asked only for a role that writes (known from the workspace read); the customer's name needs the lead
+    WRITE_ROLES.includes(tenant.role) ? fetchLeadContactId(user.accessToken, tenantId, leadId) : Promise.resolve(undefined),
+    lead.company_id ? fetchCompany(user.accessToken, tenantId, lead.company_id) : Promise.resolve(null),
+  ]);
   let page: EvidencePage | null = null;
   try {
-    page = await fetchEvidencePage(
-      user.accessToken,
-      tenantId,
-      "leads",
-      leadId,
-      cursor,
-    );
+    page = take(evidenceRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -88,7 +93,7 @@ export default async function LeadPage({
   // Agent suggestions: a failure here shows an error in that section only, never placeholder data.
   let claims: ClaimSuggestionOut[] | null = null;
   try {
-    claims = await fetchClaims(user.accessToken, tenantId, "leads", leadId);
+    claims = take(claimsRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -96,19 +101,17 @@ export default async function LeadPage({
   // Enquiries pasted onto this lead: a failure shows an error in that section only.
   let enquiries: Enquiry[] | null = null;
   try {
-    enquiries = await fetchLeadEnquiries(user.accessToken, tenantId, leadId);
+    enquiries = take(enquiriesRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
   }
   // The contact this lead is linked to (only to point at its consent page): null = none, undefined = could not be read (the form is still offered; the database decides).
   let contactId: string | null | undefined;
-  if (WRITE_ROLES.includes(tenant.role)) {
-    try {
-      contactId = await fetchLeadContactId(user.accessToken, tenantId, leadId);
-    } catch (error) {
-      if (error instanceof ApiAuthError) redirect("/login");
-    }
+  try {
+    contactId = take(contactRead);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
   }
   // One part of the screen at a time (Job X): the summary with what to do next, the evidence, the suggestions. A paged evidence list opens on the evidence.
   const wanted = pick(query.section);
@@ -125,12 +128,10 @@ export default async function LeadPage({
   ];
   // The customer's name is the page's title ("Lead" says nothing to the person); a read that fails falls back to the plain word.
   let company: { name: string; city: string | null } | null = null;
-  if (lead.company_id) {
-    try {
-      company = await fetchCompany(user.accessToken, tenantId, lead.company_id);
-    } catch (error) {
-      if (error instanceof ApiAuthError) redirect("/login");
-    }
+  try {
+    company = take(companyRead);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
   }
   const statusKey = `lead.status.${lead.status}` as "lead.status.new";
   const originKey = `lead.origin.${lead.created_via}` as "lead.origin.manual";

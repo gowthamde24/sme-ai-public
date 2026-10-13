@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 import { fetchAccountSetup, type AccountSetup } from "@/lib/api/account";
-import { ApiAuthError, fetchMe } from "@/lib/api/client";
+import { ApiAuthError } from "@/lib/api/client";
 import { AddButton } from "@/components/v2/app/AddButton";
 import { alertBox, bodyText, btnQuiet, dataTable, dataTd, dataThCol, dataTr, inlineLink, pageH1, pageMain, rowBetween, sectionBlock, warnBox } from "@/components/v2/app/ui";
 import { requireUser } from "@/lib/auth/session";
@@ -14,6 +14,7 @@ import { wordsFor } from "@/i18n/app-words";
 
 import { signOut } from "./actions";
 import { CreateTenantForm } from "./create-tenant-form";
+import { readMeCached } from "./me-read";
 
 export const metadata = { title: "Workspaces · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -27,7 +28,7 @@ export default async function AppPage() {
 
   let me: Me | null = null;
   try {
-    me = await fetchMe(user.accessToken);
+    me = await readMeCached(user.accessToken);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     // API down or misbehaving: say so. We show real backend state or nothing.

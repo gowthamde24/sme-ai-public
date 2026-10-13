@@ -15,7 +15,7 @@ import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { API_ROUTES, FIXED_NOW, SESSION_USER, TENANT } from "../visual/fixtures.mjs";
+import { API_ROUTES, FIXED_NOW, LEAD, SESSION_USER, TENANT } from "../visual/fixtures.mjs";
 import { startStandIn } from "../visual/stand-in.mjs";
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -52,6 +52,8 @@ const ROUTES = [
   { id: "outbox", label: "Outbox", path: `${T}/outbox`, signedIn: true, tap: '[data-notify="bell"]' },
   { id: "catalogue", label: "Catalogue", path: `${T}/catalogue`, signedIn: true, tap: '[data-notify="bell"]' },
   { id: "data", label: "Settings > Data", path: `${T}/settings?section=data`, signedIn: true, tap: '[data-notify="bell"]' },
+  // job CH: a detail page that reads the lead, its evidence, suggestions, enquiries and customer (the server reads it starts at the same time are what --api-delay shows)
+  { id: "lead", label: "Lead page", path: `${T}/leads/${LEAD}`, signedIn: true, tap: '[data-notify="bell"]' },
 ];
 
 // the Settings > Data reads the visual stand-in does not know: small invented answers, so the page draws its real content

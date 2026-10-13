@@ -7,6 +7,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchActiveIcpConfig, fetchReviewQueue, SCORE_BANDS, type PageReviewQueueLeadOut, type ScoreBand } from "@/lib/api/leads";
 import { LeadsTabs, PageTop, Pill } from "@/components/v2/app/parts";
 import { alertBox, btnMainLink, cardBoxFull, codeInline, detailsBox, hintInline, kvList, link, listPlain, mutedText, pageH2, pageH3, pageMain, pillLinkBase, pillLinkGreen, pillLinkGreenOn, pillLinkInfo, pillLinkQuiet, rowBetween, rowWrap, sectionBlock, spaceTop, stickyActions, summaryLine, surfaceFlat, tabLink, tabLinkOn, tabRow } from "@/components/v2/app/ui";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
 import { FactorBreakdown } from "./factor-breakdown";
@@ -70,22 +71,27 @@ export default async function ReviewQueuePage({
   const rawCursor = pick(query.cursor);
   const cursor = rawCursor && rawCursor.length <= MAX_CURSOR ? rawCursor : null;
 
+  // the profile banner and the queue do not depend on each other: asked at the same time (job CH, before: one after the other)
+  const [icpRead, queueRead] = await Promise.allSettled([
+    fetchActiveIcpConfig(user.accessToken, tenantId),
+    fetchReviewQueue(user.accessToken, tenantId, {
+      limit: 20,
+      cursor,
+      score_band: scoreBand,
+      blind,
+      unreviewed,
+    }),
+  ]);
   let activeIcp = null;
   try {
-    activeIcp = await fetchActiveIcpConfig(user.accessToken, tenantId);
+    activeIcp = take(icpRead);
   } catch {
     // If ICP fetch fails, continue without active profile banner
   }
 
   let queue: PageReviewQueueLeadOut | null = null;
   try {
-    queue = await fetchReviewQueue(user.accessToken, tenantId, {
-      limit: 20,
-      cursor,
-      score_band: scoreBand,
-      blind,
-      unreviewed,
-    });
+    queue = take(queueRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();

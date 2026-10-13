@@ -6,6 +6,7 @@ import { fetchCompany, isCanonicalUuid } from "@/lib/api/crm";
 import { type ClaimSuggestionOut, fetchClaims } from "@/lib/api/agents";
 import { type EvidencePage, fetchEvidencePage } from "@/lib/api/evidence";
 import { indiaDayText } from "@/components/v2/app/visits/dates";
+import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
 
 import { GstinForm } from "@/components/v2/app/gstin/GstinForm";
@@ -63,17 +64,16 @@ export default async function CompanyPage({
     return <ApiDownV2 words={await partsWords()} />;
   }
 
+  // After the workspace and the company are known (nothing else is asked about one the person cannot see), the evidence and the suggestions are asked at the same time (job CH); each failure is handled below where it was.
   const rawCursor = pick(query.cursor);
   const cursor = rawCursor && rawCursor.length <= MAX_CURSOR ? rawCursor : null;
+  const [evidenceRead, claimsRead] = await Promise.allSettled([
+    fetchEvidencePage(user.accessToken, tenantId, "companies", companyId, cursor),
+    fetchClaims(user.accessToken, tenantId, "companies", companyId),
+  ]);
   let page: EvidencePage | null = null;
   try {
-    page = await fetchEvidencePage(
-      user.accessToken,
-      tenantId,
-      "companies",
-      companyId,
-      cursor,
-    );
+    page = take(evidenceRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
@@ -83,7 +83,7 @@ export default async function CompanyPage({
   // Agent suggestions: a failure here shows an error in that section only, never placeholder data.
   let claims: ClaimSuggestionOut[] | null = null;
   try {
-    claims = await fetchClaims(user.accessToken, tenantId, "companies", companyId);
+    claims = take(claimsRead);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     if (error instanceof ApiRequestError && error.status === 404) notFound();
