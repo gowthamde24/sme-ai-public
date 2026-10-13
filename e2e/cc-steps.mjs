@@ -204,7 +204,7 @@ export async function ccSteps(c) {
   await step("CC4", "Team: the people with their owls, an invitation code shown once, a second person joins with it from the link (the code leaves the address bar), the owner changes their role and removes them", async () => {
     await page.goto(`${base()}/team`, { waitUntil: "networkidle" });
     await page.getByRole("heading", { level: 1, name: "Team" }).waitFor();
-    must((await page.locator("[data-team=members] svg.owl").count()) >= 1, "no owl on the owner's row");
+    must((await page.locator("[data-team=members] img[data-plush-avatar]").count()) >= 1, "no owl on the owner's row");
     must((await text(page)).includes("(you)"), "'you' is not marked");
     must((await text(page)).includes("Owners are added by the operator, not here."), "the owner note is missing");
     await page.screenshot({ path: path.join(SHOTS, "CC4-team-desktop.png"), fullPage: true });
