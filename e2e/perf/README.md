@@ -5,7 +5,7 @@ How fast the main screens load on a mid-range Android phone on slow 4G, measured
 ```
 make perf                                  # builds the web app, measures six screens, prints a table
 make perf ARGS="--no-build --only landing,today --runs 5 --out /tmp/result.json"
-make perf ARGS="--no-build --lang te"      # a Telugu visitor (the Telugu font is 122 KB on its own)
+make perf ARGS="--no-build --lang te"      # a Telugu visitor (the cut Telugu font is 67 KB; --lang hi and --lang kn too)
 make perf ARGS="--no-build --api-delay 100 --trace --only today"   # 100 ms per backend read, and the order of the reads of one page load
 make perf ARGS="--no-build --waterfall --only landing"             # when each file started, got its first byte and finished
 make perf-budget                           # the cheap guard, after `npm run build`: gzip JS of every page route against apps/web/scripts/budget.json (CI runs it)
@@ -17,7 +17,7 @@ make perf-budget                           # the cheap guard, after `npm run bui
 - Per route, in a new browser context each time (cold cache, 360 x 780 phone, touch, device scale 2): Network 150 ms round trip, 1.6 Mbit/s down, 750 kbit/s up, CPU 4x slower (the settings Lighthouse uses for "mobile").
 - Records **FCP, LCP** (PerformanceObserver), **TBT** (long tasks after the first paint, over 50 ms), **INP** (one real tap on the first control of the page), **CLS** (worst 5 s session window), the **gzip bytes** that crossed the wire by type (script, CSS, font, image, document), the request count and how many were the router's background reads of the menu pages (`?_rsc=`).
 - The median of `--runs` runs (default 3) after one warm-up that is not counted.
-- Routes: landing `/`, sign-in `/login`, Today, Outbox, Catalogue (with its photos), Settings > Data. The signed-in ones use a cookie session the stand-in accepts, and a clock pinned to 14 Oct 2026.
+- Routes: landing `/`, sign-in `/login`, Today, Outbox, Catalogue (with its photos), Settings > Data, and (job CH) a Lead page (a detail page that reads the lead, its evidence, suggestions, enquiries and customer: with `--api-delay 100 --trace` it shows how many steps the server takes). The signed-in ones use a cookie session the stand-in accepts, and a clock pinned to 14 Oct 2026.
 
 ## What it does not do
 

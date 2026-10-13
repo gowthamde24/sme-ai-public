@@ -12,6 +12,7 @@ import { chromium } from "playwright";
 import { SHOTS, factorSecret, passChallenge, confirmEmail } from "./lib.mjs";
 import { ccSteps } from "./cc-steps.mjs";
 import { cfSteps } from "./cf-steps.mjs";
+import { chSteps } from "./ch-steps.mjs";
 import { API, BASE, EMAIL, PW, STAMP, aal2Token, api, indiaHour, psql, sharedDatabaseProblem, totp, uuid } from "./be-lib.mjs";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
@@ -1386,6 +1387,20 @@ await cfSteps({
   step, page, must, BASE,
   get tenant() {
     return tenant;
+  },
+});
+
+// ---- 8e. job CH: the speed follow-ups on the real stack (e2e/ch-steps.mjs): the cut Indic fonts, and the pages that start their reads together -----------------------------------
+await chSteps({
+  step, page, must, BASE, context, api, T,
+  get tenant() {
+    return tenant;
+  },
+  get customers() {
+    return customers;
+  },
+  get ownerToken() {
+    return ownerToken;
   },
 });
 
