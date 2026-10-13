@@ -49,6 +49,7 @@ const SCREENS = [
   { id: "catalogue", path: `/app/tenants/${TENANT}/catalogue`, signedIn: true },
   { id: "lead", path: `/app/tenants/${TENANT}/leads/${LEAD}`, signedIn: true },
   { id: "settings", path: `/app/tenants/${TENANT}/settings`, signedIn: true },
+  { id: "office", path: `/app/tenants/${TENANT}/office`, signedIn: true }, // the plush office (job CJ): stills only here (the layer files are refused), so the picture is the same every run
   { id: "landing", path: "/", signedIn: false },
 ];
 const SIZES = { phone: { width: 360, height: 780 }, desktop: { width: 1280, height: 800 } };
@@ -187,7 +188,7 @@ async function main() {
             const name = `${screen.id}-${sizeName}-${scheme}-${lang}`;
             const context = await browser.newContext({ ignoreHTTPSErrors: true, viewport, deviceScaleFactor: 1, colorScheme: scheme, reducedMotion: "reduce", locale: lang === "te" ? "te-IN" : "en-IN", timezoneId: "Asia/Kolkata", isMobile: sizeName === "phone", hasTouch: sizeName === "phone" });
             // the plush owlet (job CI) is drawn as its still picture: its layer files are refused, so the owl never starts to move and a picture cannot differ from run to run
-            await context.route(/\/owl\/v\d+\/owlet-(head|body|beak|wing-left|wing-right)-512\.webp/, (route) => route.abort());
+            await context.route(/\/owl\/v\d+\/[a-z_]+\/owlet-(head|body|beak|wing-left|wing-right)-512\.webp/, (route) => route.abort());
             await context.addCookies([
               { name: "sme_consent", value: "1.a0", url: WEB_URL },
               { name: "sme_lang", value: lang, url: WEB_URL },
