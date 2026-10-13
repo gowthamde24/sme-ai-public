@@ -2,11 +2,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import manifest, { APP_NAME } from "@/app/manifest";
-import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
 
 const WEB = path.resolve(import.meta.dirname, "../..");
 const pub = (p: string) => path.join(WEB, "public", p);
@@ -50,10 +48,9 @@ describe("the web app manifest (installability)", () => {
 });
 
 describe("the owl svg that the icons are drawn from", () => {
-  it("is the same bird as the app's own owl (every shape of OwlSvg is in the file)", () => {
+  // job CJ: the flat owl component (OwlSvg) is gone; the install icons, the favicon source and the share picture are still the flat drawing, as files. Making them from the plush owlet is a design call for the owner.
+  it("is a plain svg file with no script and no outside address", () => {
     const file = readFileSync(pub("icons/owl.svg"), "utf8");
-    const app = renderToStaticMarkup(<OwlSvg agent="main" still />);
-    for (const m of app.matchAll(/ (d|cx|cy|r|rx|ry|transform)="([^"]+)"/g)) expect(file, `${m[1]}=${m[2]}`).toContain(` ${m[1]}="${m[2].replaceAll("&#x27;", "'")}"`);
     expect(file).toMatch(/^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
     expect(file).not.toMatch(/<script|href=|onload/i);
   });

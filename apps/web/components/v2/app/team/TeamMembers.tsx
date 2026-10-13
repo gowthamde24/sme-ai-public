@@ -8,7 +8,7 @@ import type { Member } from "@/lib/api/team";
 
 import { FailureNote } from "../cc/FailureNote";
 import { card, danger, h2, help, label as labelClass, okLine, pillClass, primary, quiet, secondary, selectClass, type Failed } from "../cc/kit";
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
 import { makeT, type Words } from "../words";
 import { canRemove, changeableTo, owlOf, REASONS, roleWord, teamSentence } from "./team-model";
 import type { TeamActions } from "./team-types";
@@ -96,7 +96,7 @@ function MemberRow({ words, member, myRole, actions, onRole, onGone }: { words: 
   return (
     <li className="flex flex-col gap-3 py-4" data-member={member.role}>
       <div className="flex items-center gap-3">
-        <OwlSvg agent={owlOf(member.user_id)} mood="idle" still className="size-12" />
+        <PlushStill agent={owlOf(member.user_id)} px={48} mood="idle" className="size-12" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-base font-semibold">
             {name}

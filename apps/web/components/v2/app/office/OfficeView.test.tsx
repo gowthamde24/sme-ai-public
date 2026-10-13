@@ -7,10 +7,10 @@ import { AGENT_KEYS } from "@/lib/api/today";
 import type { AgentRow } from "../today/types";
 import { OfficeView } from "./OfficeView";
 
-// a weak device: the List is the first view (the 3D view is tested in OfficeRoom.test.tsx)
-vi.mock("./scene/capability", async (orig) => ({
-  ...(await orig<typeof import("./scene/capability")>()),
-  readClientEnv: () => ({ defaultView: "list", weak: true, webgl: false, reducedMotion: false, remembered: null, coarse: false, phone: false }),
+// a person who last chose the List: it is the first view (the room is tested in OfficeRoom.test.tsx)
+vi.mock("./view", async (orig) => ({
+  ...(await orig<typeof import("./view")>()),
+  readClientEnv: () => ({ reducedMotion: false, lite: false, remembered: "list" }),
 }));
 
 const en = appT("en");
@@ -30,7 +30,7 @@ describe("OfficeView", () => {
     view(null);
     expect(screen.getAllByText("Not available yet")).toHaveLength(1);
     expect(screen.queryByRole("list")).toBeNull();
-    expect(screen.queryByRole("button", { name: "3D view" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Office view" })).toBeNull();
     expect(screen.getByRole("link", { name: /Runs and cost/ })).toHaveAttribute("href", "/app/tenants/T/agents");
   });
   it("draws one card per agent, by name, with its state, what it does and its last event; each is a real link to its own detail", () => {

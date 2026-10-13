@@ -10,8 +10,8 @@ import { owlMood } from "./owl-mood";
 describe("PlushOwl from the server: one still picture, with the owl's name", () => {
   const html = renderToStaticMarkup(<PlushOwl mood="idle" label="Agent OWL, ready" size={160} />);
   it("is the still in three sizes (the browser takes one by the size it is drawn at), in a square box with its size given, with the same name as alt text", () => {
-    expect(html).toContain('src="/owl/v2/owlet-full-256.webp"');
-    expect(html).toContain('srcSet="/owl/v2/owlet-full-128.webp 128w, /owl/v2/owlet-full-256.webp 256w, /owl/v2/owlet-full-512.webp 512w"');
+    expect(html).toContain('src="/owl/v3/main/owlet-full-256.webp"');
+    expect(html).toContain('srcSet="/owl/v3/main/owlet-full-128.webp 128w, /owl/v3/main/owlet-full-256.webp 256w, /owl/v3/main/owlet-full-512.webp 512w"');
     expect(html).toContain('sizes="160px"');
     expect(html).toContain('width="512"');
     expect(html).toContain('height="512"');
@@ -28,6 +28,14 @@ describe("PlushOwl from the server: one still picture, with the owl's name", () 
     for (const layer of ["owlet-head", "owlet-body", "owlet-beak", "owlet-wing"]) expect(html).not.toContain(layer);
     expect(html).not.toContain("<canvas");
     expect(html).toContain('data-plush="still"');
+  });
+  it("takes the pictures of the agent it is given (a helper's own colours), and Agent OWL's for no agent or an unknown one", () => {
+    const own = renderToStaticMarkup(<PlushOwl mood="idle" agent="quote_writer" size={96} />);
+    expect(own).toContain('src="/owl/v3/quote_writer/owlet-full-256.webp"');
+    expect(own).toContain('data-agent="quote_writer"');
+    expect(own).not.toContain("/owl/v3/main/");
+    expect(renderToStaticMarkup(<PlushOwl mood="idle" agent="nobody" />)).toContain('data-agent="main"');
+    expect(renderToStaticMarkup(<PlushOwl mood="idle" />)).toContain('src="/owl/v3/main/');
   });
   it("without a label it is decorative: hidden from screen readers, empty alt", () => {
     const d = renderToStaticMarkup(<PlushOwl mood="idle" />);
@@ -180,7 +188,7 @@ describe("PlushOwl in the browser", () => {
     const { container } = render(<PlushOwl mood="idle" label="Agent OWL" />);
     await intersect(true);
     expect(stage(container)).toBe("loading");
-    const layers = ["head", "body", "beak"].map((n) => container.querySelector<HTMLImageElement>(`img[src="/owl/v2/owlet-${n}-512.webp"]`));
+    const layers = ["head", "body", "beak"].map((n) => container.querySelector<HTMLImageElement>(`img[src="/owl/v3/main/owlet-${n}-512.webp"]`));
     for (const img of layers) {
       expect(img).not.toBeNull();
       expect(img!.getAttribute("loading")).toBe("lazy");
@@ -188,7 +196,7 @@ describe("PlushOwl in the browser", () => {
       expect(img!.getAttribute("height")).toBe("512");
       expect(img!.getAttribute("alt")).toBe("");
     }
-    expect(wingImages.map((i) => i.src).sort()).toEqual(["/owl/v2/owlet-wing-left-512.webp", "/owl/v2/owlet-wing-right-512.webp"]);
+    expect(wingImages.map((i) => i.src).sort()).toEqual(["/owl/v3/main/owlet-wing-left-512.webp", "/owl/v3/main/owlet-wing-right-512.webp"]);
     await loadWings();
     expect(stage(container)).toBe("live");
     expect(container.querySelector(".plush-still")?.getAttribute("data-hidden")).toBe("true");
@@ -202,6 +210,31 @@ describe("PlushOwl in the browser", () => {
     const ctx = vi.mocked(HTMLCanvasElement.prototype.getContext).mock.results[0].value as { drawImage: ReturnType<typeof vi.fn> };
     // the left wing box is x 160 to 302 and y 440 to 818 in the rig's space
     expect(ctx.drawImage).toHaveBeenCalledWith(expect.anything(), 80, 220, 71, 189, 0, 0, 71, 189);
+  });
+
+  it("loads the layers of the agent it is given, from its own folder", async () => {
+    render(<PlushOwl mood="idle" agent="researcher" />);
+    await intersect(true);
+    expect(document.querySelector('img[src="/owl/v3/researcher/owlet-head-512.webp"]')).not.toBeNull();
+    expect(wingImages.map((i) => i.src).sort()).toEqual(["/owl/v3/researcher/owlet-wing-left-512.webp", "/owl/v3/researcher/owlet-wing-right-512.webp"]);
+  });
+
+  it("`still` is the still picture only: no layer is ever requested, however long it is on screen", async () => {
+    const { container } = render(<PlushOwl mood="idle" still />);
+    await intersect(true);
+    await act(async () => void (await vi.advanceTimersByTimeAsync(LAYER_DELAY_MS * 3)));
+    expect(stage(container)).toBe("still");
+    expect(container.querySelector(".plush-live")).toBeNull();
+    expect(wingImages).toHaveLength(0);
+  });
+
+  it("`working` is a marker on the box (the typing pose is drawn by the loop), and the loop runs for it", async () => {
+    const { container } = render(<PlushOwl mood="idle" working follow={false} />);
+    expect(container.querySelector(".plush")!.getAttribute("data-working")).toBe("true");
+    await intersect(true);
+    await loadWings();
+    expect(stage(container)).toBe("live");
+    expect(rafCalls).toBeGreaterThan(0);
   });
 
   it("keeps the still picture if a layer fails", async () => {

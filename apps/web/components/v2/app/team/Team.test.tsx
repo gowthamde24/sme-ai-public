@@ -80,7 +80,7 @@ describe("the people", () => {
   const members = [member(1, { role: "owner", is_you: true, display_name: "Asha" }), member(2, { role: "sales" }), member(3, { role: "admin" }), member(4, { role: "viewer", display_name: null })];
   it("shows each person with an owl, their role in words, 'you' on one's own row", () => {
     const { container } = render(<TeamMembers words={WORDS} members={members} myRole="owner" actions={actions()} />);
-    expect(container.querySelectorAll("svg.owl")).toHaveLength(4);
+    expect(container.querySelectorAll("img[data-plush-avatar]")).toHaveLength(4);
     expect(screen.getByText("Asha")).toBeInTheDocument();
     expect(screen.getByText("(you)")).toBeInTheDocument();
     expect(screen.getByText("Team member")).toBeInTheDocument(); // a person with no name

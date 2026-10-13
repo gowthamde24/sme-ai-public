@@ -51,7 +51,7 @@ describe("the Help screens", () => {
     const links = within(list).getAllByRole("link");
     expect(links).toHaveLength(8);
     expect(links.map((a) => a.getAttribute("href"))).toEqual(GUIDE_IDS.map((id) => `${BASE}/help/${id}`));
-    expect(list.querySelectorAll("svg.owl").length).toBe(8);
+    expect(list.querySelectorAll("img[data-plush-avatar]").length).toBe(8);
   });
   it("a guide has numbered steps, a button to its screen for a role that has it, and the next guide", () => {
     render(<HelpGuide id="visits" t={appT("en")} base={BASE} lang="en" role="sales" />);

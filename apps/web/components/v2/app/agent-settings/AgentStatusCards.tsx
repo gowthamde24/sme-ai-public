@@ -1,3 +1,5 @@
+import { PlushStill } from "../owl/PlushStill";
+import { StateDot } from "../owl/StateDot";
 import { schedulerView } from "../outbox/scheduler-line";
 import { indiaClock } from "../today/time";
 import { say, type TodayWords } from "../today/today-words";
@@ -29,9 +31,13 @@ export function SchedulerCard({ words, status, now }: { words: TodayWords; statu
   const v = status ? schedulerView(status, now) : null;
   return (
     <section aria-labelledby="sched-heading" className={card} data-card="scheduler">
-      <h2 id="sched-heading" className="font-display text-xl font-semibold">
-        {say(words, "agentset.sched.title")}
-      </h2>
+      <div className="flex items-center gap-3">
+        <PlushStill px={56} mood={status?.active ? "thinking" : "resting"} off={status !== null && !status.active} className="size-14" />
+        <h2 id="sched-heading" className="font-display text-xl font-semibold">
+          {say(words, "agentset.sched.title")}
+        </h2>
+        {status ? <StateDot state={status.active ? "working" : "off"} /> : null}
+      </div>
       {status === null || v === null ? (
         <p className="text-sm text-muted">{say(words, "frame.notyet")}</p>
       ) : (

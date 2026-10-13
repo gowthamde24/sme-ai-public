@@ -9,7 +9,11 @@ import {
   FLUTTER_SECONDS,
   LAYER_FILE_PX,
   LAYER_PX,
-  OWL_FILES,
+  WORK_BOB,
+  WORK_LOOK,
+  owlAgent,
+  owlFiles,
+  workWings,
   REST_POSE,
   SHUT_ARC,
   STILL_PX,
@@ -104,6 +108,14 @@ export type PlushOwlProps = {
   /** The owl is the first thing on the page (the landing hero, the Today card): its still picture is fetched at once, at high priority, instead of lazily. */
   priority?: boolean;
   className?: string;
+  /** Which of the seven owls (default Agent OWL, sky blue): its own folder of pictures, /owl/v3/<agent>/. An id this app does not know is Agent OWL. */
+  agent?: string;
+  /** Only the still picture, never the layers and never a movement (the Office draws a switched-off helper like this). */
+  still?: boolean;
+  /** The Office: the owl sits at its laptop: head down, a small bob, the wings typing. Not given with reduced motion (the Office draws the still pose then). */
+  working?: boolean;
+  /** Whether the head follows the pointer (default yes). */
+  follow?: boolean;
   /** The width the still picture is drawn at, as the `sizes` of an image (for example "(min-width: 640px) 160px, 120px"): the browser picks the 128, 256 or 512 px file by it. Without it, `size` (or 160 px). */
   sizes?: string;
   /** The name a screen reader says (the box is an image with this name). Without it the owl is decorative and hidden from them. */
@@ -116,7 +128,8 @@ export type PlushOwlProps = {
  * Ask box gives it (idle, listening, thinking, answering, resting). The animation runs only while the owl is on screen and the tab is visible. With prefers-reduced-motion every movement is a third as big and
  * there are no wing flutter bursts. The thinking dots and the "z z z" are hidden from screen readers. Numbers: plush-rig.ts; styles: design/owl.css.
  */
-export function PlushOwl({ mood, size, priority = false, className = "", sizes, label }: PlushOwlProps) {
+export function PlushOwl({ mood, size, priority = false, className = "", sizes, label, agent, still: stillOnly = false, working = false, follow = true }: PlushOwlProps) {
+  const files = owlFiles(agent);
   const [visible, setVisible] = React.useState(false);
   const [tabHidden, setTabHidden] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
@@ -136,12 +149,16 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
   const wings = React.useRef<{ l: HTMLImageElement; r: HTMLImageElement } | null>(null);
   const crops = React.useRef<Crops | null>(null);
   const moodRef = React.useRef(mood);
+  const workingRef = React.useRef(working);
+  const followRef = React.useRef(follow);
   const reducedRef = React.useRef(reduced);
   // the loop reads the mood and the motion setting from here, so a change never restarts it
   React.useEffect(() => {
     moodRef.current = mood;
     reducedRef.current = reduced;
-  }, [mood, reduced]);
+    workingRef.current = working;
+    followRef.current = follow;
+  }, [mood, reduced, working, follow]);
 
   // less motion: read once, and follow the setting if it changes
   React.useEffect(() => {
@@ -176,7 +193,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
 
   // the layers are requested once: the owl is on screen, its still picture is in, the page has loaded, a moment has passed and the browser is idle
   React.useEffect(() => {
-    if (armed || failed || !visible) return;
+    if (armed || failed || !visible || stillOnly) return;
     let off: (() => void) | null = null;
     let gone = false;
     const cleanups: (() => void)[] = [];
@@ -203,7 +220,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
       cleanups.forEach((c) => c());
       off?.();
     };
-  }, [armed, failed, visible]);
+  }, [armed, failed, visible, stillOnly]);
 
   const checkReady = React.useCallback(() => {
     const L = layers.current;
@@ -227,12 +244,12 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
     l.onload = r.onload = one;
     l.onerror = r.onerror = () => !gone && setFailed(true);
     l.decoding = r.decoding = "async";
-    l.src = OWL_FILES.wingLeft;
-    r.src = OWL_FILES.wingRight;
+    l.src = files.wingLeft;
+    r.src = files.wingRight;
     return () => {
       gone = true;
     };
-  }, [armed, failed, checkReady]);
+  }, [armed, failed, checkReady, files.wingLeft, files.wingRight]);
   React.useEffect(() => {
     if (armed) checkReady(); // layers that came from the cache before their handlers were attached
   }, [armed, checkReady]);
@@ -297,8 +314,10 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
         lastMood = mood;
       }
       // where it looks: the pointer when it moved lately, else its own wandering
+      const sits = workingRef.current && mood !== "resting"; // at its laptop (the Office)
       let look = wander;
-      if (now - ptr.at < POINTER_FRESH_MS) {
+      if (sits) look = { ...WORK_LOOK, until: 0 };
+      else if (followRef.current && now - ptr.at < POINTER_FRESH_MS) {
         ptr.look = pointerLook(ptr.cx, ptr.cy, el.getBoundingClientRect());
         look = { ...ptr.look, until: 0 };
       } else if (t > wander.until) {
@@ -308,6 +327,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
         wander.until = t + 1.8 + Math.random() * 2.5;
       }
       const T = poseTarget(mood, look, t, m);
+      if (sits) T.bob = WORK_BOB;
       // blinks: 0.2 s, never while resting
       if (mood !== "resting") {
         if (blinkT < 0 && t > nextBlink) blinkT = 0;
@@ -340,7 +360,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
       if (mood === "answering") talk += dt * talkRate(t);
       beakNow = ease(beakNow, beakTarget(mood, talk, t), 1 - Math.exp(-dt * 28));
       const br = Math.sin(t * P.brF * 1.3) * P.breathe * m;
-      const hop = mood === "answering" ? Math.abs(Math.sin(t * 4.2)) * P.bob * m : 0;
+      const hop = mood === "answering" || sits ? Math.abs(Math.sin(t * (sits ? 5.4 : 4.2))) * P.bob * m : 0;
       const sway = Math.sin(t * 0.7) * 1.2 * m;
       if (rig.current) rig.current.style.transform = `translateY(${-hop * 100}%) scale(${1 + br * 0.5 + P.lean},${1 + br + P.lean})`;
       if (head.current) head.current.style.transform = `translate(${P.dx / 10.24}%,${P.dy / 10.24}%) rotate(${P.tilt + sway}deg)`;
@@ -356,8 +376,8 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
       if (mouth.current) mouth.current.style.transform = `scaleY(${beakNow})`;
       if (beak.current) beak.current.style.transform = `translateY(${-beakNow * 0.35}%)`;
       // the wings: the angle the mood wants, a burst now and then, and (not with reduced motion) nothing sudden
-      const wt = wingTargets(mood, t, talk, P.brF);
-      if (!reducedRef.current && mood === "idle" && flutterT < 0 && t > flutterNext) flutterT = 0;
+      const wt = sits ? workWings(t) : wingTargets(mood, t, talk, P.brF);
+      if (!reducedRef.current && !sits && mood === "idle" && flutterT < 0 && t > flutterNext) flutterT = 0;
       let fl = 0;
       if (flutterT >= 0) {
         flutterT += dt;
@@ -397,19 +417,21 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
       {...(fixed ? { style: fixed } : {})}
       data-plush={stage}
       data-mood={mood}
+      data-agent={owlAgent(agent)}
+      data-working={working ? "true" : undefined}
       data-motion={reduced ? "reduced" : "full"}
       {...(label ? { role: "img", "aria-label": label } : { "aria-hidden": true })}
     >
       {/* from the server and with no script: this picture, and nothing else; it keeps the owl's name as its alt text (the box around it is the image a screen reader finds, so this one is hidden from it: no double reading) */}
       {/* eslint-disable-next-line @next/next/no-img-element -- a fixed local file with its size given; next/image would add a server round trip for nothing */}
-      <img ref={still} src={stillFile(256)} srcSet={stillSrcSet()} sizes={sizes ?? `${size ?? 160}px`} width={STILL_PX} height={STILL_PX} alt={label ?? ""} aria-hidden={label ? true : undefined} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding="async" draggable={false} className="plush-still" data-hidden={ready && !failed ? "true" : undefined} />
+      <img ref={still} src={stillFile(256, agent)} srcSet={stillSrcSet(undefined, agent)} sizes={sizes ?? `${size ?? 160}px`} width={STILL_PX} height={STILL_PX} alt={label ?? ""} aria-hidden={label ? true : undefined} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : undefined} decoding="async" draggable={false} className="plush-still" data-hidden={ready && !failed ? "true" : undefined} />
       {armed && !failed ? (
         <div className="plush-live" data-ready={ready ? "true" : undefined}>
           <div ref={shadow} className="plush-shadow" />
           <div ref={rig} className="plush-rig">
             <div ref={head} className="plush-head">
               {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-              <img ref={(i) => void (layers.current.head = i)} src={OWL_FILES.head} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+              <img ref={(i) => void (layers.current.head = i)} src={files.head} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
               {EYES.map((_, i) => (
                 <div key={i} className={`plush-lid plush-eye-${i}`}>
                   <i className="plush-lid-up" />
@@ -424,11 +446,11 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
               <div ref={mouth} className="plush-mouth" />
               <div ref={beak} className="plush-beak">
                 {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-                <img ref={(i) => void (layers.current.beak = i)} src={OWL_FILES.beak} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+                <img ref={(i) => void (layers.current.beak = i)} src={files.beak} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
               </div>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-            <img ref={(i) => void (layers.current.body = i)} src={OWL_FILES.body} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+            <img ref={(i) => void (layers.current.body = i)} src={files.body} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
             <canvas ref={canvas} width={LAYER_FILE_PX / 2} height={LAYER_FILE_PX / 2} className="plush-wings" />
           </div>
         </div>

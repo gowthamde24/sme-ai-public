@@ -24,7 +24,7 @@ export function dayLine(now: number, lang: string): string {
 }
 
 /**
- * The Today screen (job AU), as the owner-approved design draws it: the date and greeting with the usage card; the Agent OWL card (the 3D owl and its mood, one sentence built from the real list,
+ * The Today screen (job AU), as the owner-approved design draws it: the date and greeting with the usage card; the Agent OWL card (the plush owl and its mood, one sentence built from the real list,
  * the overnight line, the Ask box and three chips); "Needs you" with one card per thing that waits (WhatsApp messages held for approval, calls, and the older kinds); and, beside it (below it on a
  * phone), "At the store today", "Done while you slept" and "Your team". It only draws what `data` holds: a null part says "Not available yet"; a section with no data is not drawn. `actions` are the
  * server actions the cards call (null: the cards offer no buttons); `role` decides which buttons are shown. `now` (ms) pins the clock for the times on the screen. `name` null = the plain greeting.

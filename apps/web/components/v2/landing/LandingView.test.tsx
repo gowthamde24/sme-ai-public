@@ -141,7 +141,7 @@ describe("landing page: the saree and textile shop page (job BS)", () => {
     expect(hero).toContain(en["hero.h1"]);
     expect(hero).toMatch(/role="img" aria-label="Agent OWL, ready to help"/);
     expect(hero).toContain('data-plush="still"'); // the server sends the still picture; the layers are requested in the browser when idle
-    expect(hero).toContain('src="/owl/v2/owlet-full-256.webp"');
+    expect(hero).toContain('src="/owl/v3/main/owlet-full-256.webp"');
     expect(hero).toContain('width="512" height="512"');
     expect(hero).toContain(en["chat.example"]);
     expect(hero).toContain(en["chat.owl"]); // the owl's lines say who wrote them

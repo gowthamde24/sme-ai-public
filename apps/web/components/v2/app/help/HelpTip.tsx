@@ -4,7 +4,7 @@ import { CircleHelp, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
-import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
+import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 
 /**
  * The "?" tip of a screen (job BT): a small button with the words "Help for this screen" that opens three short lines about the screen and a link to its full guide. It opens under the heading, in the page's
@@ -35,7 +35,7 @@ export function HelpTip({ screen, label, lines, moreHref, moreLabel, closeLabel 
       </button>
       {open ? (
         <div id={id} role="region" aria-label={label} className="flex w-full max-w-2xl gap-3 rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)]">
-          <OwlSvg mood="answering" still className="size-12 shrink-0" />
+          <PlushStill px={48} mood="answering" className="size-12" />
           <div className="min-w-0 flex-1">
             <ul className="list-disc space-y-1.5 pl-5 text-base marker:text-brand-text">
               {lines.map((l) => (

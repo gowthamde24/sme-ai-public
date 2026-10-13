@@ -4,7 +4,7 @@ import { Check, CircleHelp, Minus, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
-import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
+import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 
 import type { AskWords } from "./ask-words";
 
@@ -42,7 +42,7 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
       {open ? (
         <section id={id} aria-label={w("ask.can.title")} className="w-full rounded-2xl border border-line bg-surface p-4 shadow-[var(--v2-shadow)] sm:p-5">
           <div className="flex items-start gap-3">
-            <OwlSvg mood="answering" still className="size-12 shrink-0" />
+            <PlushStill px={48} mood="answering" className="size-12" />
             <h3 className="min-w-0 flex-1 pt-1 font-display text-xl font-semibold leading-tight">{w("ask.can.title")}</h3>
             <button type="button" onClick={() => setOpen(false)} aria-label={w("ask.can.close")} className="grid size-11 shrink-0 place-items-center rounded-lg text-muted hover:bg-surface-2">
               <X className="size-5" aria-hidden="true" />

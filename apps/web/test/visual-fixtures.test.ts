@@ -9,6 +9,7 @@ import { parseAiUsage } from "@/lib/api/ai-usage";
 import { parseCallRequestPage, parseOutboxPage, parseOutboxSettings, parseOutboxSummary } from "@/lib/api/outbox";
 import { parseItemPage } from "@/lib/api/catalogue";
 import { parseMembers } from "@/lib/api/orders";
+import { parseInvitations, parseTeam } from "@/lib/api/team";
 import { parseTenantDetail } from "@/lib/api/client";
 import { parsePlan } from "@/lib/api/plan";
 import { parseQuoteSummary } from "@/lib/api/quotes";
@@ -44,6 +45,8 @@ describe("the visual tests' fixtures are in the API's contract", () => {
   });
   it("members and quotes", async () => {
     expect(parseMembers(await answer("/members")).length).toBe(2);
+    expect(parseInvitations(await answer("/invitations"))).toEqual([]);
+    expect(parseTeam(await answer("/team")).members).toHaveLength(4);
     for (const q of (await answer("/quotes")) as unknown[]) expect(parseQuoteSummary(q).quote_no).toBe(3);
   });
   it("the Outbox: messages by tab, the counts, the settings, the approvals and the call requests", async () => {
