@@ -60,3 +60,35 @@ describe("runCompleteSetup", () => {
     expect(await runCompleteSetup({ businessType: "other", language: "en" }, { token: "t", submit: other })).toEqual({ ok: false, error: SETUP_TEXT.generic });
   });
 });
+
+describe("recording the Terms and Privacy Policy accepted at sign-up (job CF)", () => {
+  const POL = { terms: "2026-11-01", privacy: "2026-10-01" };
+  it("sends the two versions with the setup", async () => {
+    const submit = ok();
+    await runCompleteSetup({ businessType: "textiles", language: "te" }, { token: "tok", submit, policies: POL });
+    expect(submit).toHaveBeenCalledWith("tok", { businessType: "textiles", language: "te", acceptedTerms: "2026-11-01", acceptedPrivacy: "2026-10-01" });
+  });
+  it("sends none when the account kept none, or only one of the two", async () => {
+    const submit = ok();
+    await runCompleteSetup({ businessType: "other", language: "en" }, { token: "t", submit });
+    await runCompleteSetup({ businessType: "other", language: "en" }, { token: "t", submit, policies: { terms: "x" } });
+    expect(submit).toHaveBeenNthCalledWith(1, "t", { businessType: "other", language: "en" });
+    expect(submit).toHaveBeenNthCalledWith(2, "t", { businessType: "other", language: "en" });
+  });
+  it("a version that changed since sign-up still makes the business, and nothing is recorded for a version the person did not see", async () => {
+    const submit = vi.fn(async (_t: string, choices: object) => {
+      if ("acceptedTerms" in choices) throw new ApiRequestError(409, "policy_version_outdated", "x");
+      return { tenantId: TENANT, created: true };
+    });
+    expect(await runCompleteSetup({ businessType: "other", language: "en" }, { token: "t", submit, policies: POL })).toEqual({ ok: true });
+    expect(submit).toHaveBeenCalledTimes(2);
+    expect(submit).toHaveBeenLastCalledWith("t", { businessType: "other", language: "en" });
+  });
+  it("any other refusal is not retried", async () => {
+    const submit = vi.fn(async () => {
+      throw new ApiRequestError(409, "workspace_limit_reached", "Too many.");
+    });
+    expect(await runCompleteSetup({ businessType: "other", language: "en" }, { token: "t", submit, policies: POL })).toEqual({ ok: false, error: "Too many." });
+    expect(submit).toHaveBeenCalledTimes(1);
+  });
+});

@@ -160,3 +160,26 @@ describe("requireUser", () => {
     });
   });
 });
+
+describe("the policy versions kept with the account at sign-up (job CF)", () => {
+  const withMeta = (meta: Record<string, unknown>) =>
+    createClient.mockResolvedValue(
+      fakeSupabase({
+        getUser: vi.fn(async () => ({ data: { user: { ...USER, user_metadata: meta } }, error: null })),
+        getSession: vi.fn(async () => ({ data: { session: { access_token: "tok" } } })),
+      }),
+    );
+  it("reads the two versions from the account's metadata", async () => {
+    withMeta({ accepted_terms_version: "2026-11-01", accepted_privacy_version: "2026-10-01" });
+    expect((await requireUser()).signupPolicies).toEqual({ terms: "2026-11-01", privacy: "2026-10-01" });
+  });
+  it.each([
+    ["none", {}],
+    ["only one", { accepted_terms_version: "2026-11-01" }],
+    ["one that is not well formed", { accepted_terms_version: "<b>", accepted_privacy_version: "2026-10-01" }],
+    ["numbers", { accepted_terms_version: 1, accepted_privacy_version: 2 }],
+  ])("%s: no versions (the person is asked on the accept page)", async (_n, meta) => {
+    withMeta(meta);
+    expect((await requireUser()).signupPolicies).toBeUndefined();
+  });
+});

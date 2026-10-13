@@ -28,7 +28,9 @@ export async function runCompleteSetup(
   input: unknown,
   deps: {
     token: string;
-    submit: (token: string, choices: CompleteSetupInput) => Promise<SetupResult>;
+    submit: (token: string, choices: CompleteSetupInput & { acceptedTerms?: string; acceptedPrivacy?: string }) => Promise<SetupResult>;
+    /** The versions the person accepted on the sign-up page (kept with the account, job CF): recorded, as accepted at sign-up, before the business is made. */
+    policies?: { terms?: string; privacy?: string };
   },
 ): Promise<CompleteSetupResult> {
   const raw = typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
@@ -40,7 +42,14 @@ export async function runCompleteSetup(
     : null;
   if (!businessType || !language) return { ok: false, error: SETUP_TEXT.invalid };
   try {
-    await deps.submit(deps.token, { businessType, language });
+    const shown = deps.policies?.terms && deps.policies.privacy ? { acceptedTerms: deps.policies.terms, acceptedPrivacy: deps.policies.privacy } : {};
+    try {
+      await deps.submit(deps.token, { businessType, language, ...shown });
+    } catch (error) {
+      // a version changed between the sign-up page and now: the business is still made, and the accept page asks for the new version (nothing is recorded for a version the person did not see)
+      if (Object.keys(shown).length > 0 && error instanceof ApiRequestError && error.code === "policy_version_outdated") await deps.submit(deps.token, { businessType, language });
+      else throw error;
+    }
     return { ok: true };
   } catch (error) {
     if (error instanceof ApiAuthError) return { ok: false, error: SETUP_TEXT.session };

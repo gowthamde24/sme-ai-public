@@ -2,6 +2,7 @@ import type { SignUpResult } from "@/lib/api/signup";
 import { padTo } from "@/lib/auth/otp";
 import { validateNewPassword } from "@/lib/auth/password-policy";
 import type { SignupLimiter } from "@/lib/auth/signup-limit";
+import { POLICY_VERSION } from "@/lib/api/policy";
 import { TERMS_VERSION } from "@/lib/auth/terms";
 
 // The input, error and result types live in lib/api/signup.ts so the screens import them from there.
@@ -58,6 +59,9 @@ export async function runSignUp(
     return { ok: false, error: "invalid" };
   }
   if (raw.acceptTerms !== true) return { ok: false, error: "terms_required" };
+  // the versions the page showed (job CF): only well-formed ones are kept; anything else is left out (the person is then asked on the accept page, which is safe)
+  const shown = typeof raw.policyVersions === "object" && raw.policyVersions !== null ? (raw.policyVersions as Record<string, unknown>) : null;
+  const versions = shown && typeof shown.terms === "string" && typeof shown.privacy === "string" && POLICY_VERSION.test(shown.terms) && POLICY_VERSION.test(shown.privacy) ? { terms: shown.terms, privacy: shown.privacy } : null;
   if (validateNewPassword(password, password, email) !== null) return { ok: false, error: "weak_password" };
   if (!deps.limiter.allow(deps.ip)) return { ok: false, error: "too_many_signups" };
 
@@ -73,7 +77,7 @@ export async function runSignUp(
       email,
       password,
       options: {
-        data: { display_name: name, business_name: businessName, terms_version: TERMS_VERSION },
+        data: { display_name: name, business_name: businessName, terms_version: TERMS_VERSION, ...(versions ? { accepted_terms_version: versions.terms, accepted_privacy_version: versions.privacy } : {}) },
       },
     });
   } catch {

@@ -375,3 +375,22 @@ export async function apiDownloadRequest(path: string, accessToken: string, body
 export function publicApiBase(): string {
   return apiBaseUrl();
 }
+
+/** A GET of a public route (no sign-in: `GET /v1/policies/current`): no Authorization header. The status is judged as for every other request; a rejected session cannot happen here, so a 401 is just a refusal. */
+export async function apiPublicRequest(path: string): Promise<unknown> {
+  const base = apiBaseUrl();
+  let response: Response;
+  try {
+    response = await fetch(`${base}${path}`, { cache: "no-store" });
+  } catch {
+    throw new ApiRequestError(503, "api_unreachable", "The API is unreachable.");
+  }
+  let body: unknown = null;
+  try {
+    body = await response.json();
+  } catch {
+    // non-JSON body; handled by the status check below
+  }
+  if (!response.ok) throw refusal(response.status, body, response.headers.get("Retry-After"));
+  return body;
+}

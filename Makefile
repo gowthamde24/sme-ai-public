@@ -1,4 +1,4 @@
-.PHONY: container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -265,6 +265,15 @@ demo-code:
 # `make db-start`, the API's virtualenv and a browser; it refuses to start while an integration or pgTAP session is using the database. Never uses :3000, :8000 or :8001. See docs/runbooks/e2e-real-stack.md.
 e2e-local:
 	./scripts/e2e-local.sh
+
+# Speed (job CF, e2e/perf/README.md). `make perf` is OPT-IN, never in make check: it builds the web app against the visual tests' stand-in backend and measures LCP, FCP, TBT, INP, CLS and the bytes of six screens in a throttled
+# phone-sized Chromium (slow 4G, 4x slower CPU); ports 54999 and 3016 only, nothing of the owner's. ARGS="--no-build --only landing,today --runs 5 --lang te --api-delay 100 --out result.json".
+# `make perf-budget` is the cheap guard (about a second, after `npm run build`): the gzip JavaScript of every page route against scripts/budget.json; CI runs it after the build.
+perf:
+	node e2e/perf/measure.mjs $(ARGS)
+
+perf-budget:
+	cd $(WEB) && npm run audit:route-js
 
 # The visual tests (job BX, e2e/visual/README.md): pictures of Today, Visits, Outbox, Catalogue, a lead page, Settings and the landing page at 360 px and on a desktop, light and dark, English and Telugu, compared with the baselines of this
 # system. They run on an invented stand-in backend (no database, no keys, no Docker, nothing of the owner's): ports 54999 and 3014 only. `make visual` builds the web app once and compares (exit 1 if a picture changed; the changed

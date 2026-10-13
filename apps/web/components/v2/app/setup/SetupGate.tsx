@@ -8,10 +8,37 @@ import type { Uploader } from "../catalogue/catalogue-types";
 import type { preparePhoto } from "../catalogue/prepare-photo";
 import { say, type TodayWords } from "../today/today-words";
 import { SetupChecklist } from "./SetupChecklist";
-import { SetupWizard } from "./SetupWizard";
+import type { SetupWizard as SetupWizardType } from "./SetupWizard";
 import { firstOpenStep, isFresh, itemsOf, STEPS, viewOf, type Local } from "./setup-logic";
 import { readLocal, subscribeLocal, writeLocal } from "./setup-store";
 import type { SetupActions, SetupFacts } from "./types";
+
+// The wizard (its two big steps, the hours and the saree photo) is about 7 KB of gzip JavaScript that a business sees once, while Today is opened every day: it is its own chunk, fetched when the gate
+// first shows it (job CF). Until it arrives the same "getting things ready" line stands in. `preloadSetupWizard` lets a test (or a caller that knows) have it ready, so the first render is complete.
+let loadedWizard: typeof SetupWizardType | null = null;
+export function preloadSetupWizard(): Promise<void> {
+  return import("./SetupWizard").then((m) => {
+    loadedWizard = m.SetupWizard;
+  });
+}
+function LazyWizard(props: React.ComponentProps<typeof SetupWizardType>) {
+  const [Wizard, setWizard] = React.useState<typeof SetupWizardType | null>(() => loadedWizard);
+  React.useEffect(() => {
+    if (Wizard) return;
+    let live = true;
+    void preloadSetupWizard().then(() => live && setWizard(() => loadedWizard));
+    return () => {
+      live = false;
+    };
+  }, [Wizard]);
+  return Wizard ? (
+    <Wizard {...props} />
+  ) : (
+    <div role="status" aria-live="polite" data-setup="loading" className="flex min-h-[40dvh] items-center justify-center text-base text-muted">
+      {say(props.words, "setup.loading")}
+    </div>
+  );
+}
 
 /**
  * What the Owner sees on Today (job BJ): the setup wizard instead of an empty Today for a brand-new workspace, the checklist card above Today while items are left, or Today as it is. The facts come from the
@@ -43,7 +70,7 @@ export function SetupGate({ tenantId, base, lang, facts, words, actions, childre
   if (view === "wizard") {
     const step = reopened ?? local.step;
     return (
-      <SetupWizard
+      <LazyWizard
         base={base}
         lang={lang}
         facts={facts}

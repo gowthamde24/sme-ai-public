@@ -6,6 +6,8 @@ const signUp = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 vi.mock("./actions", () => ({ signUp: (...a: unknown[]) => signUp(...a) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
+const currentPolicies = vi.fn();
+vi.mock("@/lib/api/policy", async (orig) => ({ ...(await orig<typeof import("@/lib/api/policy")>()), getCurrentPolicies: () => currentPolicies() }));
 
 import CheckEmailPage from "./check-email/page";
 import { SignUpForm, type SignUpWords } from "./sign-up-form";
@@ -25,7 +27,10 @@ const fill = (accept = true) => {
   if (accept) fireEvent.click(screen.getByRole("checkbox"));
 };
 
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => {
+  vi.clearAllMocks();
+  currentPolicies.mockResolvedValue({ terms: "2026-11-01", privacy: "2026-10-01" });
+});
 afterEach(cleanup);
 
 describe("SignUpForm", () => {
@@ -137,5 +142,33 @@ describe("the pages", () => {
     expect(screen.getByRole("heading", { level: 1, name: "Check your email" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Back to sign in" })).toHaveAttribute("href", "/login");
     expect(document.body.textContent).not.toMatch(/@/);
+  });
+});
+
+describe("the Terms and Privacy Policy versions at sign-up (job CF)", () => {
+  it("the form sends the versions the page showed with the sign-up", async () => {
+    signUp.mockResolvedValue({ ok: true, next: "check-email" });
+    render(<SignUpForm words={words} action={(i) => signUp(i)} policyVersions={{ terms: "2026-11-01", privacy: "2026-10-01" }} />);
+    fill();
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }));
+    await waitFor(() => expect(signUp).toHaveBeenCalled());
+    expect(signUp.mock.calls[0][0]).toMatchObject({ acceptTerms: true, policyVersions: { terms: "2026-11-01", privacy: "2026-10-01" } });
+  });
+  it("without versions (the page could not read them) it sends none, and the sign-up still goes", async () => {
+    signUp.mockResolvedValue({ ok: true, next: "check-email" });
+    render(<SignUpForm words={words} action={(i) => signUp(i)} />);
+    fill();
+    fireEvent.click(screen.getByRole("button", { name: "Create account" }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/signup/check-email"));
+    expect("policyVersions" in signUp.mock.calls[0][0]).toBe(false);
+  });
+  it("the page reads the versions in force; when it cannot, the form is still there", async () => {
+    render(await SignupPage());
+    expect(currentPolicies).toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: /Create account/i })).toBeInTheDocument();
+    cleanup();
+    currentPolicies.mockRejectedValue(new Error("down"));
+    render(await SignupPage());
+    expect(screen.getByRole("button", { name: /Create account/i })).toBeInTheDocument();
   });
 });

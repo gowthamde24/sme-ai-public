@@ -20,7 +20,7 @@ export type SignUpWords = { name: string; email: string; password: string; passw
  * The sign-up form. `action` is the server action `signUp` (Job AD). A refusal shows the sentence of its error code (an unknown code, the generic one); success goes to the screen the answer names
  * ("check your email"). The page passes the words in the visitor's language (this component imports no dictionary).
  */
-export function SignUpForm({ action, words }: { action: SignUpAction; words: SignUpWords }) {
+export function SignUpForm({ action, words, policyVersions }: { action: SignUpAction; words: SignUpWords; policyVersions?: { terms: string; privacy: string } }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, start] = useTransition();
@@ -36,7 +36,7 @@ export function SignUpForm({ action, words }: { action: SignUpAction; words: Sig
         setError(null);
         start(async () => {
           try {
-            const result = await action({ name: String(form.get("name") ?? "").trim(), email: String(form.get("email") ?? "").trim(), password: String(form.get("password") ?? ""), businessName: String(form.get("business") ?? "").trim(), acceptTerms: true });
+            const result = await action({ name: String(form.get("name") ?? "").trim(), email: String(form.get("email") ?? "").trim(), password: String(form.get("password") ?? ""), businessName: String(form.get("business") ?? "").trim(), acceptTerms: true, ...(policyVersions ? { policyVersions } : {}) });
             if (result.ok) router.push(`/signup/${result.next}`);
             else setError(words.errors[result.error] ?? words.errors.unknown);
           } catch {

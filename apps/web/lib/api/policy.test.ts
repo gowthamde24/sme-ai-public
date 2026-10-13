@@ -38,3 +38,14 @@ describe("the policies a person accepted", () => {
     expect(apiRequest).not.toHaveBeenCalled();
   });
 });
+
+describe("the versions in force (job CF)", () => {
+  it("are read from the public route", async () => {
+    const { parseCurrentPolicies } = await import("./policy");
+    expect(parseCurrentPolicies({ terms: { version: "2026-11-01", effective_from: "2026-11-10" }, privacy: { version: "2026-10-01" } })).toEqual({ terms: "2026-11-01", privacy: "2026-10-01" });
+  });
+  it("a version the API would refuse is a contract error", async () => {
+    const { parseCurrentPolicies } = await import("./policy");
+    expect(() => parseCurrentPolicies({ terms: { version: "a b" }, privacy: { version: "2026-10-01" } })).toThrow(ApiContractError);
+  });
+});
