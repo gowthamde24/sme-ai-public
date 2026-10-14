@@ -402,7 +402,7 @@ def test_no_model_path_reads_a_custom_value() -> None:
     """ADR 0084 principle 6: a model never sees a field the business marked personal and never any child's field. Today NOTHING outside the custom-field routes, the import and the wiring reads these values."""
     app_dir = ROOT / "services" / "ai-api" / "app"
     allowed = {"customfields", "packs"}
-    allowed_files = {app_dir / "main.py", app_dir / "auth" / "deps.py", app_dir / "integrations" / "routes_import.py", app_dir / "integrations" / "importer.py", app_dir / "integrations" / "mapping.py"}
+    allowed_files = {app_dir / "main.py", app_dir / "auth" / "deps.py", app_dir / "integrations" / "routes_import.py", app_dir / "integrations" / "importer.py", app_dir / "integrations" / "mapping.py", app_dir / "privacy" / "export_builder.py"}  # (the export is the owner's own download of their data)
     pattern = re.compile(r"custom_field_values|custom_values_|customfields|custom_fields")
     offenders = []
     for path in app_dir.rglob("*.py"):
