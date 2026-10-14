@@ -16,6 +16,7 @@ What it proves (also run as a unit test, services/ai-api/tests/test_ck_packs_dat
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -167,12 +168,12 @@ WEB_SKIP_PARTS = {"node_modules", ".next", "test", "__text__", "e2e"}
 
 def _code_files() -> list[Path]:
     files = [p for p in API_APP.rglob("*.py") if "__pycache__" not in p.parts]
-    for ext in ("*.ts", "*.tsx"):
-        for p in WEB.rglob(ext):
-            rel = p.relative_to(WEB)
-            if WEB_SKIP_PARTS & set(rel.parts) or ".test." in p.name or p.name.endswith((".d.ts", ".test.ts", ".test.tsx")):
-                continue
-            files.append(p)
+    # the web: walk it pruning the folders that hold no source of ours (node_modules alone has tens of thousands of files)
+    for root, dirs, names in os.walk(WEB):
+        dirs[:] = [d for d in dirs if d not in WEB_SKIP_PARTS and not d.startswith(".")]
+        for name in names:
+            if name.endswith((".ts", ".tsx")) and ".test." not in name and not name.endswith(".d.ts"):
+                files.append(Path(root) / name)
     return files
 
 

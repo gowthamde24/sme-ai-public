@@ -23,7 +23,7 @@ ROUTE_WORDS = frozenset(
         "v1", "me", "tenants", "members", "audit-events", "health",
         # job CK
         "packs", "auth", "providers", "pack", "modules", "example-data",
-        "custom-fields", "custom", "security",
+        "custom-fields", "custom", "security", "remove",
         "account", "setup", "today", "ai-usage", "agents", "assistant", "messages", "conversations",
         "companies", "contacts", "products", "leads", "opportunities",
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
