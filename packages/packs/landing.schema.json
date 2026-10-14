@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "landing.schema.json",
+  "title": "The public page of a business type (job CM, blueprint sections 7 and 13)",
+  "description": "packages/packs/<id>/landing.json: the words and blocks of the PUBLIC marketing page of one business type (its own page, e.g. /construction). It sits NEXT TO pack.json and is not part of it: pack.json is synced into the database as an immutable, versioned manifest (a change there is a new version and a migration), while the public page is website copy that changes without touching any workspace. The page also reads the pack's own names, summary, accent, owl prop and owl-team labels from pack.json, so nothing is said twice. A pack without a landing.json has no public page. Every text is {en, te, hi, kn}: English is required, the other languages fall back to English per text (a test flags a missing one). {brand} in a text is replaced by the product name. A text never holds a price, a percentage, a rating or a customer count (the site's honesty tests refuse them). The only code the page needs per business type is a BLOCK from the closed list below (calculator, fee_preview, children_promise): a block is present when its key is present, so a new business type that needs no new block is data only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["pack", "slug", "meta", "hero", "problem", "day", "features", "faq", "plan_fit"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "pack": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$", "description": "The folder name and the pack id this page describes." },
+    "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,30}$", "description": "The public address: /<slug> (English) and /te/<slug>, /hi/<slug>, /kn/<slug>. Not the pack id: the address is for people." },
+    "meta": { "type": "object", "additionalProperties": false, "required": ["title", "description"], "properties": { "title": { "$ref": "#/$defs/text" }, "description": { "$ref": "#/$defs/text" } } },
+    "hero": { "type": "object", "additionalProperties": false, "required": ["eyebrow", "h1", "sub"], "properties": { "eyebrow": { "$ref": "#/$defs/text" }, "h1": { "$ref": "#/$defs/text" }, "sub": { "$ref": "#/$defs/text" } } },
+    "problem": { "type": "object", "additionalProperties": false, "required": ["title", "points"], "properties": { "title": { "$ref": "#/$defs/text" }, "points": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/text" } } } },
+    "day": {
+      "type": "object", "additionalProperties": false, "required": ["title", "steps"],
+      "properties": {
+        "title": { "$ref": "#/$defs/text" },
+        "steps": { "type": "array", "minItems": 3, "maxItems": 6, "items": { "type": "object", "additionalProperties": false, "required": ["owl", "time", "text"], "properties": { "owl": { "enum": ["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"] }, "time": { "type": "string", "pattern": "^[0-9]{1,2}:[0-9]{2}$" }, "text": { "$ref": "#/$defs/text" } } } }
+      }
+    },
+    "features": {
+      "type": "object", "additionalProperties": false, "required": ["title", "items"],
+      "properties": {
+        "title": { "$ref": "#/$defs/text" },
+        "items": { "type": "array", "minItems": 4, "maxItems": 6, "items": { "type": "object", "additionalProperties": false, "required": ["icon", "title", "body"], "properties": { "icon": { "enum": ["message", "file", "bell", "truck", "calendar", "wallet", "users", "image", "calculator", "shield"] }, "title": { "$ref": "#/$defs/text" }, "body": { "$ref": "#/$defs/text" } } } }
+      }
+    },
+    "faq": { "type": "array", "minItems": 3, "maxItems": 6, "items": { "type": "object", "additionalProperties": false, "required": ["q", "a"], "properties": { "q": { "$ref": "#/$defs/text" }, "a": { "$ref": "#/$defs/text" } } } },
+    "plan_fit": { "type": "object", "additionalProperties": false, "required": ["starter", "growth", "business"], "description": "One line each for the pricing page: what kind of business of this type each plan fits.", "properties": { "starter": { "$ref": "#/$defs/text" }, "growth": { "$ref": "#/$defs/text" }, "business": { "$ref": "#/$defs/text" } } },
+    "calculator": {
+      "type": "object", "additionalProperties": false, "required": ["title", "intro", "products", "default_wastage_bps", "truck_capacity_pieces", "note"],
+      "description": "BLOCK: the public quantity calculator (packages/quote-engine/ts/construction.ts, the same code as the app). Figures are typical, not a seller's.",
+      "properties": {
+        "title": { "$ref": "#/$defs/text" }, "intro": { "$ref": "#/$defs/text" }, "note": { "$ref": "#/$defs/text" },
+        "products": { "type": "array", "minItems": 1, "maxItems": 6, "items": { "type": "object", "additionalProperties": false, "required": ["id", "name", "pieces_per_area_x1000", "pieces_per_pallet"], "properties": { "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$" }, "name": { "$ref": "#/$defs/text" }, "pieces_per_area_x1000": { "type": "integer", "minimum": 100, "maximum": 100000, "description": "Pieces per square foot, in thousandths (4.5 = 4500)." }, "pieces_per_pallet": { "type": "integer", "minimum": 1, "maximum": 100000 } } } },
+        "default_wastage_bps": { "type": "integer", "minimum": 0, "maximum": 2000 },
+        "truck_capacity_pieces": { "type": "integer", "minimum": 1, "maximum": 100000 }
+      }
+    },
+    "fee_preview": {
+      "type": "object", "additionalProperties": false, "required": ["title", "label", "messages", "note"],
+      "description": "BLOCK: a WhatsApp conversation mock of a reminder, labelled as an example. A message from the business is `school`, from the other person `parent` (the names are the mock's two sides).",
+      "properties": {
+        "title": { "$ref": "#/$defs/text" }, "label": { "$ref": "#/$defs/text" }, "note": { "$ref": "#/$defs/text" },
+        "messages": { "type": "array", "minItems": 1, "maxItems": 5, "items": { "type": "object", "additionalProperties": false, "required": ["from", "text"], "properties": { "from": { "enum": ["school", "parent"] }, "text": { "$ref": "#/$defs/text" } } } }
+      }
+    },
+    "children_promise": {
+      "type": "object", "additionalProperties": false, "required": ["title", "points", "note"],
+      "description": "BLOCK: the promise about children's data (ADR 0084 part 5). It states rules the tools are built to follow, and says what is not live yet.",
+      "properties": { "title": { "$ref": "#/$defs/text" }, "points": { "type": "array", "minItems": 3, "maxItems": 5, "items": { "$ref": "#/$defs/text" } }, "note": { "$ref": "#/$defs/text" } }
+    }
+  },
+  "$defs": {
+    "text": {
+      "type": "object", "additionalProperties": false, "required": ["en"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1, "maxLength": 400 },
+        "te": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "hi": { "type": "string", "minLength": 1, "maxLength": 700 },
+        "kn": { "type": "string", "minLength": 1, "maxLength": 700 }
+      }
+    }
+  }
+}

@@ -6,7 +6,10 @@ import { describe, expect, it } from "vitest";
 
 import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
-import { LANDING_LANGS, OG_SIZE, SITE_LIVE, isRouteLang, landingPath, ogImagePath } from "./site";
+import { SITE_PACKS } from "@/lib/site/packs";
+import { allTargets } from "@/lib/site/routes";
+import { sitePath } from "@/lib/site/paths";
+import { LANDING_LANGS, OG_SIZE, SITE_LIVE, isRouteLang, landingPath, ogImagePath, ogImagePathForSlug } from "./site";
 
 const WEB = path.resolve(import.meta.dirname, "../..");
 const pngSize = (rel: string) => {
@@ -18,6 +21,10 @@ const pngSize = (rel: string) => {
 describe("SEO (job BS)", () => {
   it("has a share picture for every language at the size Open Graph asks for", () => {
     for (const l of LANDING_LANGS) expect(pngSize(ogImagePath(l)), l).toEqual(OG_SIZE);
+  });
+  it("has a share picture for every business type page in every language (a page of its own, with that type's colour)", () => {
+    expect(SITE_PACKS.length).toBeGreaterThanOrEqual(3);
+    for (const p of SITE_PACKS) for (const l of LANDING_LANGS) expect(pngSize(ogImagePathForSlug(p.slug, l)), `${p.slug} ${l}`).toEqual(OG_SIZE);
   });
   it("English is '/', the others have '/te', '/hi', '/kn'", () => {
     expect(LANDING_LANGS.map(landingPath)).toEqual(["/", "/te", "/hi", "/kn"]);
@@ -51,7 +58,14 @@ describe("SEO with the launch switch on", () => {
     expect(rule.allow).toEqual(expect.arrayContaining(["/", "/te", "/hi", "/kn"]));
     expect(rule.disallow).toEqual(expect.arrayContaining(["/app", "/auth", "/api", "/login", "/signup"]));
     expect(r.sitemap).toBe("https://shop.example/sitemap.xml");
-    expect(s.map((e) => e.url)).toEqual(["https://shop.example/", "https://shop.example/te", "https://shop.example/hi", "https://shop.example/kn", "https://shop.example/privacy", "https://shop.example/terms"]);
+    const urls = s.map((e) => e.url);
+    // every page of the site in every language, then the two legal pages
+    const expected = allTargets().flatMap((t) => LANDING_LANGS.map((l) => `https://shop.example${sitePath(l, t) === "/" ? "/" : sitePath(l, t)}`));
+    expect(urls).toEqual([...expected, "https://shop.example/privacy", "https://shop.example/terms"]);
+    expect(urls).toEqual(expect.arrayContaining(["https://shop.example/pricing", "https://shop.example/te/pricing", "https://shop.example/hi/construction", "https://shop.example/kn/education", "https://shop.example/textiles"]));
+    expect(new Set(urls).size).toBe(urls.length);
+    for (const e of s.filter((x) => x.url.includes("/pricing"))) expect(Object.keys(e.alternates?.languages ?? {}).sort()).toEqual(["en-IN", "hi-IN", "kn-IN", "te-IN"]);
+    expect(s.find((e) => e.url === "https://shop.example/te/pricing")?.alternates?.languages).toMatchObject({ "en-IN": "https://shop.example/pricing", "kn-IN": "https://shop.example/kn/pricing" });
     expect(s[0].alternates?.languages).toMatchObject({ "te-IN": "https://shop.example/te", "en-IN": "https://shop.example/" });
   });
 });

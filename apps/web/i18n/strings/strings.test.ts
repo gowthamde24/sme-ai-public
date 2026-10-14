@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import landing from "@/i18n/strings/landing.json";
+import site from "@/i18n/strings/site.json";
 import legal from "@/i18n/strings/legal.json";
 import login from "@/i18n/strings/login.json";
 import { LANGS } from "@/i18n/lang";
@@ -7,7 +7,7 @@ import { TRANSLATED_LANGS, dictFor, keepHyphenatedWordsWhole } from "@/i18n/stri
 import { FORBIDDEN_CLAIMS as FORBIDDEN } from "@/i18n/strings/forbidden";
 
 type Entry = { en: string; te: string; hi: string; kn: string; status: Record<string, string>; only?: string[] };
-const SETS: Record<string, Record<string, Entry>> = { landing, login, legal } as never;
+const SETS: Record<string, Record<string, Entry>> = { site, login, legal } as never;
 const langsOf = (e: Entry) => e.only ?? [...TRANSLATED_LANGS];
 const placeholders = (s: string) => [...s.matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
 
@@ -27,7 +27,7 @@ describe("string store: four languages", () => {
     });
     it(`${name}: the other languages use their own script`, () => {
       const script = { te: /[ఀ-౿]/, hi: /[ऀ-ॿ]/, kn: /[ಀ-೿]/ } as const;
-      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
+      const exempt = /^(langs\.sample\.|theme\.|meta\.description|foot\.copy|legal\.draft\.banner|role\.main\.t$|nav\.whatsapp$|owl\.name\.)/; // intentionally Latin or numeric (role.main.t is the product name "Agent OWL")
       for (const lang of ["te", "hi", "kn"] as const) {
         const missing = keys.filter((k) => !exempt.test(k) && !script[lang].test(dicts[lang][k]));
         expect(missing, `${name}:${lang}`).toEqual([]);
@@ -48,26 +48,27 @@ describe("honesty: no claims we cannot prove today", () => {
       });
     }
   }
-  const en = dictFor(landing, "en") as Record<string, string>;
-  it("the English landing copy says what it must: money talk waits for the owner, sending is automatic only when switched on, and that sign-up is open and free (job BS)", () => {
+  const en = dictFor(site, "en") as Record<string, string>;
+  it("the English home copy says what it must: money talk waits for the owner, sending is automatic only when switched on, and that sign-up is open and free", () => {
     expect(en["hero.sub"]).toMatch(/price, promises or complaints waits for your OK/i);
     expect(en["faq.1.a"]).toMatch(/Only if you switch automatic sending on/);
-    expect(en["faq.1.a"]).toMatch(/waits for your OK/);
-    expect(en["shop.5.d"]).toMatch(/never sets or changes a price/);
+    expect(en["faq.1.a"]).toMatch(/waits for your OK, and calls always wait/);
+    expect(en["faq.3.a"]).toMatch(/does not calculate or change a price/);
     expect(en["hero.note"]).toBe("You can sign up and try it free. Nothing is charged.");
-    expect(en["faq.7.a"]).toMatch(/try it free/i);
-    expect(en["faq.7.a"]).toMatch(/not final/i); // the price is not decided: the page says so
     for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/invitation only|by invitation|early access/i); // sign-up is open (Job AC review)
-    expect(en["hero.cta"]).toBe("Sign up"); // Job AC C5: the main button on the home page goes to the sign-up screen
+    expect(en["hero.cta"]).toBe("Start free, choose your business");
   });
-  it("the pricing copy never counts questions and never states a price (the price is the placeholder)", () => {
-    expect(en["price.sub"]).toMatch(/no question counts/i);
-    expect(en["price.shop.p"]).toBe("[PRICE] a month");
-    for (const k of Object.keys(en).filter((x) => x.startsWith("price."))) expect(en[k], k).not.toMatch(/₹|\d/);
+  it("the pricing copy never counts questions, says billing is off, and holds no price inside a sentence (the prices are numbers in lib/site/plans.ts)", () => {
+    expect(en["price.sub"]).toMatch(/No charge for each question/);
+    expect(en["price.billing"]).toMatch(/Billing is not switched on yet/);
+    expect(en["price.faq.3.a"]).toMatch(/Billing is off/);
+    for (const k of Object.keys(en).filter((x) => x.startsWith("price.") || x.startsWith("teaser."))) expect(en[k], k).not.toMatch(/₹|\d{3}/);
   });
-  it("the privacy copy claims only what exists and says what does not", () => {
-    expect(en["priv.3.d"]).toMatch(/not had an independent review/);
-    expect(`${en["priv.3.t"]} ${en["priv.3.d"]}`).not.toMatch(/compliant|certified|audited/i);
+  it("the security copy claims only what exists and says what does not", () => {
+    expect(en["sec.rights.d"]).toMatch(/not had an independent review/);
+    expect(en["sec.where.d"]).toMatch(/not hosted for real customers yet/);
+    expect(en["sec.kids.d"]).toMatch(/waits for a legal review/);
+    for (const k of Object.keys(en).filter((x) => x.startsWith("sec."))) expect(en[k], k).not.toMatch(/compliant|certified|audited|encrypted/i);
   });
 });
 
@@ -125,10 +126,10 @@ describe("string store: no bad hyphen wrap", () => {
     expect(keepHyphenatedWordsWhole("फ़ॉलो-अप")).toBe("फ़ॉलो-⁠अप");
     expect(keepHyphenatedWordsWhole("ఫాలో-అప్ డ్రాఫ్ట్")).toBe("ఫాలో-⁠అప్ డ్రాఫ్ట్");
     expect(keepHyphenatedWordsWhole("GST 5% - ok")).toBe("GST 5% - ok");
-    expect(dictFor(landing, "en")["nav.how"]).toBe(landing["nav.how"].en);
+    expect(dictFor(site, "en")["nav.how"]).toBe(site["nav.how"].en);
   });
   it("inserts only U+2060 (word joiner), never ZWJ or ZWNJ: without it every built string equals the stored text", () => {
-    for (const [set, data] of Object.entries({ landing, login })) {
+    for (const [set, data] of Object.entries({ site, login })) {
       for (const l of ["te", "hi", "kn"] as const) {
         const d = dictFor(data as never, l) as Record<string, string>;
         for (const [k, v] of Object.entries(d)) {
@@ -141,7 +142,7 @@ describe("string store: no bad hyphen wrap", () => {
   });
   it("leaves no breakable hyphen between letters in any built dictionary", () => {
     const bad: string[] = [];
-    for (const [set, data] of Object.entries({ landing, login })) {
+    for (const [set, data] of Object.entries({ site, login })) {
       for (const l of ["te", "hi", "kn"] as const) {
         const d = dictFor(data as never, l) as Record<string, string>;
         for (const [k, v] of Object.entries(d)) if (/[\p{L}\p{M}]-[\p{L}\p{M}]/u.test(v)) bad.push(`${set}.${k}:${l}`);

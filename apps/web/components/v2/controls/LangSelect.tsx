@@ -12,7 +12,7 @@ import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
  * The language control. It writes the functional cookie `sme_lang` and asks the server to render the page again; the
  * response is already in the chosen language (no client-side dictionary, no flash). `label` comes from the server.
  */
-export function LangSelect({ lang, label, landingRoutes = false }: { lang: Lang; label: string; /** On the public page the choice is also an address ("/", "/te", "/hi", "/kn"), so a language has a link that can be shared and found. */ landingRoutes?: boolean }) {
+export function LangSelect({ lang, label, landingRoutes = false, hrefs }: { lang: Lang; label: string; /** On the public page the choice is also an address ("/", "/te", "/hi", "/kn"), so a language has a link that can be shared and found. */ landingRoutes?: boolean; /** On a page of the public site (job CM): the address of THIS page in each language ("/pricing", "/te/pricing"); the choice goes there. */ hrefs?: Readonly<Record<Lang, string>> }) {
   const router = useRouter();
   const [value, setValue] = useState<Lang>(lang);
   const [, startTransition] = useTransition();
@@ -27,6 +27,7 @@ export function LangSelect({ lang, label, landingRoutes = false }: { lang: Lang;
           setValue(next);
           document.cookie = serializePreference(LANG_COOKIE, next, window.location.protocol === "https:");
           const address = next === "en" ? "/" : `/${next}`;
+          if (hrefs) return startTransition(() => router.push(hrefs[next]));
           startTransition(() => (landingRoutes && ["/", "/te", "/hi", "/kn"].includes(window.location.pathname) && window.location.pathname !== address ? router.push(address) : router.refresh()));
         }}
         className={`${control} shrink-0 appearance-none pl-8 pr-2 text-sm font-medium sm:pl-9 sm:pr-3`}

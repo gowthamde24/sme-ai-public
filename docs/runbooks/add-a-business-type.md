@@ -61,3 +61,7 @@ Before you write a new module, check whether one of these fits. They are generic
 | `dues` | invoices, payments, FIFO allocation, ageing, a credit limit and a credit warning | construction materials (the shared ledger of job CP generalises it) |
 
 A pack that sells by area or weight and delivers by truck (bricks, tiles, steel, timber, sanitary ware) is only a new pack file plus the owner's numbers. A business with no such need (a clinic, a school) switches none of them on; they are refused in the database for it.
+
+## 7. Give it a public page (job CM, optional)
+
+A business type can have its own page on the public website (`/<slug>`, in four languages, with its own share picture). It is **only a new file**: copy `packages/packs/textiles/landing.json`, change the words and the `slug`, then run `make site-packs` (it rebuilds `apps/web/lib/site/site-packs.generated.json`; commit it) and `npm run og:images` in `apps/web` (the 4 share pictures). `make packs-check` validates the file (`packages/packs/landing.schema.json`: closed owl and icon lists, texts in all four languages, only `{brand}` as a placeholder, no price or percentage; a `calculator` block needs the `quotes` module, a `fee_preview` block needs `fees`). The file is separate from `pack.json` on purpose: `pack.json` is hash-synced into the database, the landing words are not. No web code changes. See `docs/runbooks/public-site.md` and ADR 0086.

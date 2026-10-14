@@ -2,7 +2,8 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const refresh = vi.fn();
-vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh }) }));
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh, push }) }));
 
 import { LangSelect } from "@/components/v2/controls/LangSelect";
 import { ThemeButton } from "@/components/v2/controls/ThemeButton";
@@ -15,6 +16,7 @@ const system = (dark: boolean) => {
 };
 beforeEach(() => {
   refresh.mockClear();
+  push.mockClear();
   clearCookies();
   system(false);
 });
@@ -32,6 +34,14 @@ describe("LangSelect", () => {
     fireEvent.change(screen.getByLabelText("Language"), { target: { value: "te" } });
     expect(document.cookie).toContain("sme_lang=te");
     await vi.waitFor(() => expect(refresh).toHaveBeenCalledTimes(1));
+  });
+  it("on a page of the public site, the choice goes to the same page in that language (an address, not a refresh)", async () => {
+    const hrefs = { en: "/pricing", te: "/te/pricing", hi: "/hi/pricing", kn: "/kn/pricing" } as const;
+    render(<LangSelect lang="en" label="Language" hrefs={hrefs} />);
+    fireEvent.change(screen.getByLabelText("Language"), { target: { value: "kn" } });
+    await vi.waitFor(() => expect(push).toHaveBeenCalledWith("/kn/pricing"));
+    expect(refresh).not.toHaveBeenCalled();
+    expect(document.cookie).toContain("sme_lang=kn");
   });
   it("never writes a value outside the allow-list", () => {
     render(<LangSelect lang="en" label="Language" />);

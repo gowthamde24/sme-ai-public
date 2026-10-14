@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import { LandingView } from "@/components/v2/landing/LandingView";
+import { SitePage } from "@/components/v2/site/SitePage";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
-import { landingMetadata } from "@/lib/seo/landing-metadata";
+import { siteMetadata } from "@/lib/seo/site-metadata";
+import { chatAvailable } from "@/lib/site/whatsapp";
+
+import { prepareContactChat, prepareQuoteChat } from "../site-actions";
 
 /**
- * The public landing page (design v2, Stage 2). Dynamically rendered under the nonce CSP (ADR 0060): it reads the two
- * functional preference cookies, so the first response is already in the visitor's language and theme.
- * The head (title, description, share picture, alternates, noindex until launch) is lib/seo/landing-metadata.ts (job BS).
+ * The public home page at "/" (design v2, Stage 2; rebuilt by job CM as the first page of a small site). Dynamically rendered under the nonce CSP (ADR 0060): it reads the two functional preference cookies, so the first
+ * response is already in the visitor's language and theme. "/" and "/landing" are the same page; "/te", "/hi", "/kn" are the home page in one language (app/[first]). The head is lib/seo/site-metadata.ts.
  */
 export async function generateMetadata(): Promise<Metadata> {
   const jar = await cookies();
-  return landingMetadata(readLang(jar.get(LANG_COOKIE)?.value), "/");
+  return siteMetadata(readLang(jar.get(LANG_COOKIE)?.value), { kind: "home" }, "/");
 }
 
 export default async function LandingPage() {
   const jar = await cookies();
-  return <LandingView lang={readLang(jar.get(LANG_COOKIE)?.value)} theme={readTheme(jar.get(THEME_COOKIE)?.value)} />;
+  return <SitePage lang={readLang(jar.get(LANG_COOKIE)?.value)} theme={readTheme(jar.get(THEME_COOKIE)?.value)} target={{ kind: "home" }} actions={{ contactChat: prepareContactChat, quoteChat: prepareQuoteChat, chatAvailable: chatAvailable() }} />;
 }

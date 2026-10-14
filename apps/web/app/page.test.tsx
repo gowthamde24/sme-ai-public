@@ -32,9 +32,9 @@ describe('"/" is the landing page', () => {
 
   it("follows the language cookie, ignores a value outside the allow-list", async () => {
     cookieValues.sme_lang = "kn";
-    expect((await Home()).props).toEqual({ lang: "kn", theme: undefined });
+    expect((await Home()).props).toMatchObject({ lang: "kn", theme: undefined, target: { kind: "home" } });
     cookieValues.sme_lang = "fr";
-    expect((await Home()).props).toEqual({ lang: "en", theme: undefined });
+    expect((await Home()).props).toMatchObject({ lang: "en", theme: undefined, target: { kind: "home" } });
   });
 
   it("keeps the pre-launch rules: noindex (the launch switch is off), a share picture, no JSON-LD", async () => {
