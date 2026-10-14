@@ -566,6 +566,9 @@ begin
     (tests.rid(p || '_er_trip'), t, tests.rid(p || '_er_mo'), 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = t), current_date, 'QV09 AB 1234', 'Zed Qxjv', '+91 98765 43210', tests.uid(p || '_owner'));
   insert into public.delivery_proofs (id, trip_id, tenant_id, received_by, photo_id, bucket, path, width, height, bytes, recorded_by) values
     (tests.rid(p || '_er_pod'), tests.rid(p || '_er_trip'), t, 'Zed Qxjv', tests.rid(p || '_er_podphoto'), app.pod_bucket(t), tests.rid(p || '_er_trip')::text || '/' || tests.rid(p || '_er_podphoto')::text || '.jpg', 640, 640, 1000, tests.uid(p || '_owner'));
+  -- job CP: a campaign's name and text are the owner's own words, not tied to one person (a campaign has many people): they carry a business canary, erased with the workspace and swept
+  insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values
+    (tests.rid(p || '_er_cmp'), t, 'Cmpq7 reminder', 'payment_due', 'en', 'Dear {{name}}, Cmpq7 shop reminds you of {{amount}} due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, tests.uid(p || '_owner'));
 end $$;
 
 -- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).
@@ -658,4 +661,16 @@ create or replace function tests.as_aal(p text) returns void
 language plpgsql as $$
 begin
   perform set_config('tests.jwt_aal', p, true);
+end $$;
+
+-- job CP: put fixture tenant p on the newest version of pack `code` (construction_materials, education or textiles), with its custom fields, as a sign-up does.
+drop function if exists tests.cp_pack(text, text);
+create function tests.cp_pack(p text, p_code text) returns void
+language plpgsql as $$
+declare
+  v packs.pack_versions;
+begin
+  select * into v from packs.pack_versions x where x.code = p_code order by x.version desc limit 1;
+  update packs.workspace_pack w set pack_code = v.code, pack_version = v.version, source = 'operator' where w.tenant_id = tests.tid(p);
+  perform app.apply_pack_fields(tests.tid(p), v.code, v.version, tests.uid(p || '_owner'));
 end $$;

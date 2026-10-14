@@ -49,7 +49,7 @@ The web needs no change to **show** a new type: the sign-up cards come from `GET
 * removing the example data is one button; real rows are never touched;
 * moving a business between packs later is an operator act with a dry-run diff, not a button (ADR 0084 part 1).
 
-## 6. What a new pack can reuse today (job CN)
+## 6. What a new pack can reuse today (jobs CN and CP)
 
 Before you write a new module, check whether one of these fits. They are generic and switched on by a pack, never by its name:
 
@@ -58,6 +58,8 @@ Before you write a new module, check whether one of these fits. They are generic
 | `materials` | items by area, pallet or unit with the owner's own GST rate and HSN; the owner's quoting rules (wastage, freight, laying); the deterministic calculator and material quotes; the materials requirement fields and analyst | construction materials |
 | `sites` | a customer has many sites (address, PIN, map pin, distance, access notes, a site contact) | construction materials |
 | `deliveries` | trips against an order, status, proof of delivery, delivery note, a trip update through the outbox | construction materials |
-| `dues` | invoices, payments, FIFO allocation, ageing, a credit limit and a credit warning | construction materials (the shared ledger of job CP generalises it) |
+| `dues` | the shared receivables ledger (job CP, ADR 0086): accounts for a company or a contact, charges (invoices, fee instalments), payments with receipt numbers, adjustments, concessions, FIFO allocation, ageing by age and by days past due, imports, a credit limit and a credit warning | construction materials; education (fees) |
+| `campaigns` | reminder campaigns: a fixed text with merge fields, steps as offsets from each person's date, one approval by the Owner for the whole campaign, the worker, results; the kinds `payment_due` (needs `dues`), `delivery_update` (`deliveries`), `fee_due` (`fees`), `event`, `exam`, `holiday` (`programmes`) | construction materials; education |
+| `call_list` | the people to call (after a campaign reminder with no reply and no payment) through the bridge, with outcomes | every pack (campaign items need `campaigns`) |
 
 A pack that sells by area or weight and delivers by truck (bricks, tiles, steel, timber, sanitary ware) is only a new pack file plus the owner's numbers. A business with no such need (a clinic, a school) switches none of them on; they are refused in the database for it.

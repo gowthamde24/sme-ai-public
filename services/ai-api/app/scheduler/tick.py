@@ -1,5 +1,5 @@
-"""One tick of the scheduler (job AW, ADR 0068): for every business the database lists (both switches on), queue the visit reminders that are due, release the messages that are due through the
-outbox's own dispatch loop, and mark the visits that were not shown up for (a setting, off by default). Then tell the database what happened: counts only.
+"""One tick of the scheduler (job AW, ADR 0068): for every business the database lists (both switches on), queue the visit reminders that are due, hand the approved CAMPAIGN steps that are due to the outbox
+(job CP, ADR 0086), release the messages that are due through the outbox's own dispatch loop, and mark the visits that were not shown up for (a setting, off by default). Then tell the database what happened: counts only.
 
 The database decides EVERYTHING about time and about whether to act: this module has no clock, no policy and no switch of its own. It asks, it carries out what it is handed, and it reports. A phase that
 fails is counted and the next phase still runs; a business that fails does not stop the others; a tick that fails does not stop the next one (worker.py).
@@ -35,12 +35,14 @@ class Tally:
     reminders: int = 0
     no_shows: int = 0
     errors: int = 0
+    # campaign steps handed to the outbox (queued, held for a person or blocked by a per-message rule): reported with the reminders, which they are
+    campaign_steps: int = 0
 
     def as_dict(self) -> dict[str, int]:
         return {
             "sent": self.sent,
             "failed": self.failed,
-            "reminders": self.reminders,
+            "reminders": self.reminders + self.campaign_steps,
             "no_shows": self.no_shows,
             "errors": self.errors,
         }
@@ -49,6 +51,7 @@ class Tally:
         self.sent += other.sent
         self.failed += other.failed
         self.reminders += other.reminders
+        self.campaign_steps += other.campaign_steps
         self.no_shows += other.no_shows
         self.errors += other.errors
 
@@ -114,6 +117,13 @@ def _queue_reminders(
             tally.reminders += 1
 
 
+def _campaigns(repository: SchedulerRepository, token: str, tenant_id: uuid.UUID, tally: Tally) -> None:
+    """The campaign steps that are due, then the call list. The database does it all in one call (and nothing here knows a name, an amount or a word): it answers with counts."""
+    done = repository.campaign_run(token, tenant_id)
+    tally.campaign_steps += done["queued"] + done["held"] + done["blocked"]
+    tally.errors += done["errors"]
+
+
 def _release(
     repository: SchedulerRepository,
     adapter: ChannelAdapter,
@@ -148,10 +158,11 @@ def run_tenant(
     tenant_id: uuid.UUID,
     sign_media: MediaSigner | None = None,
 ) -> Tally:
-    """The three phases for one business, each on its own: a failure in one is counted and the others still run. A refused token ends the tick (the worker signs in again)."""
+    """The four phases for one business, each on its own: a failure in one is counted and the others still run. A refused token ends the tick (the worker signs in again)."""
     tally = Tally()
     phases: tuple[tuple[str, Any], ...] = (
         ("reminders", lambda: _queue_reminders(repository, token, tenant_id, tally)),
+        ("campaigns", lambda: _campaigns(repository, token, tenant_id, tally)),
         ("release", lambda: _release(repository, adapter, token, tenant_id, tally, sign_media)),
         ("no_shows", lambda: _no_shows(repository, token, tenant_id, tally)),
     )

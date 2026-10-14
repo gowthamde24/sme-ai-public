@@ -13,6 +13,10 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool, StrictInt, String
 
 Language = Literal["en", "te", "hi", "kn", "ta"]
 Category = Literal["reply_to_inbound", "info", "visit", "followup", "order_status", "other"]
+# what a message can BE once made: the same list plus the reminder a campaign's worker makes (job CP); a client may not ask for it (`Category` is what a client may send)
+MessageCategory = Literal[
+    "reply_to_inbound", "info", "visit", "followup", "order_status", "other", "campaign_reminder"
+]
 Source = Literal["assistant", "owner"]
 Status = Literal["queued", "needs_approval", "sent", "blocked", "failed"]
 Tab = Literal["waiting", "scheduled", "sent", "blocked"]
@@ -38,6 +42,7 @@ Reason = Literal[
     "daily_limit",
     "owner_rejected",
     "send_failed",
+    "campaign_approved",
 ]
 Flag = Literal["money", "commitment", "complaint"]
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=2, max_length=3000)]
@@ -85,6 +90,7 @@ REASON_TEXT: dict[str, str] = {
     "daily_limit": "The customer already has the daily limit of messages today.",
     "owner_rejected": "A person rejected it.",
     "send_failed": "The channel could not deliver it.",
+    "campaign_approved": "Part of a reminder campaign that the Owner approved.",
 }
 
 
@@ -172,7 +178,7 @@ class OutboxMessageOut(_Strict):
     channel: Literal["whatsapp"]
     text: str
     language: Language
-    category: Category
+    category: MessageCategory
     source: Literal["assistant", "owner", "system"]
     status: Status
     reason: Reason

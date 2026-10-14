@@ -47,6 +47,7 @@ class FakeScheduler:
         self.due: dict[uuid.UUID, list[dict[str, Any]]] = {}
         self.queue_answer: dict[str, Any] = {"status": "queued", "replayed": False}
         self.no_shows: dict[uuid.UUID, int] = {}
+        self.campaign: dict[uuid.UUID, dict[str, int]] = {}  # tenant -> the counts of the campaign run
         self.fail: dict[str, Exception] = {}  # function -> raise this (once, unless sticky)
         self.fail_for: dict[tuple[str, uuid.UUID], Exception] = {}
         self.on_call: Callable[[str], None] | None = None
@@ -119,6 +120,13 @@ class FakeScheduler:
     def mark_no_shows(self, token: str, tenant_id: uuid.UUID) -> int:
         self._log("scheduler_mark_no_shows", token, {"tenant": str(tenant_id)}, tenant_id)
         return self.no_shows.get(tenant_id, 0)
+
+    def campaign_run(self, token: str, tenant_id: uuid.UUID) -> dict[str, int]:
+        self._log("scheduler_campaign_run", token, {"tenant": str(tenant_id)}, tenant_id)
+        return {
+            "queued": 0, "held": 0, "blocked": 0, "skipped": 0, "errors": 0, "calls": 0, "done": 0,
+            **self.campaign.get(tenant_id, {}),
+        }  # fmt: skip
 
     def record(self, token: str, tenant_id: uuid.UUID, counts: dict[str, int]) -> None:
         self._log("scheduler_record", token, {"tenant": str(tenant_id), **counts}, tenant_id)

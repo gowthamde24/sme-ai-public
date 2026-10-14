@@ -355,7 +355,7 @@ def test_the_dues_ledger_ages_the_oldest_invoice_first_and_warns_before_a_new_or
     one = {"company_id": company, "invoice_no": "CN-INV-1", "invoice_date": "2026-08-01", "due_date": "2026-08-31", "amount_paise": 5_000_000}
     two = {"company_id": company, "invoice_no": "CN-INV-2", "invoice_date": "2026-10-05", "due_date": "2026-11-04", "amount_paise": 3_000_000}
     assert w.client.put(url(a, f"/dues/invoices/{inv1}"), json=one, headers=bearer(viewer)).status_code == 403  # a viewer reads no money and records none
-    assert w.client.put(url(a, f"/dues/invoices/{inv1}"), json=one, headers=bearer(sales)).json() == {"id": inv1, "replayed": False}
+    assert w.client.put(url(a, f"/dues/invoices/{inv1}"), json=one, headers=bearer(sales)).json() == {"id": inv1, "replayed": False, "receipt_no": None}
     assert w.client.put(url(a, f"/dues/invoices/{inv1}"), json=one, headers=bearer(sales)).json()["replayed"] is True
     assert w.client.put(url(a, f"/dues/invoices/{uid()}"), json=one, headers=bearer(sales)).status_code == 409  # the invoice number is used
     assert w.client.put(url(a, f"/dues/invoices/{inv2}"), json=two, headers=bearer(admin)).status_code == 200

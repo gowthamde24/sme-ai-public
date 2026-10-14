@@ -230,10 +230,10 @@ def test_an_invoice_and_a_payment_are_recorded_with_the_callers_ids() -> None:
     client, _ = make_client(dues=fake)
     iid, pid = U(int=0x81), U(int=0x82)
     r = client.put(url(f"/dues/invoices/{iid}"), json={"company_id": COMPANY, "invoice_no": "INV-9", "invoice_date": "2026-10-01", "due_date": "2026-10-31", "amount_paise": 500000}, headers=auth("a_sales"))
-    assert r.status_code == 200 and r.json() == {"id": str(iid), "replayed": False}
+    assert r.status_code == 200 and r.json() == {"id": str(iid), "replayed": False, "receipt_no": None}
     assert fake.calls[-1][1][1]["p_source"] == "manual" and fake.calls[-1][1][1]["p_invoice_date"] == "2026-10-01"
     r = client.put(url(f"/dues/payments/{pid}"), json={"company_id": COMPANY, "received_on": "2026-10-02", "amount_paise": 777, "method": "upi"}, headers=auth("a_sales"))
-    assert r.status_code == 200 and r.json() == {"id": str(pid), "replayed": True}
+    assert r.status_code == 200 and r.json() == {"id": str(pid), "replayed": True, "receipt_no": None}
     for bad in ({"amount_paise": 0}, {"method": "barter"}, {"received_on": "yesterday"}, {"amount_paise": 1.5}):
         body = {"company_id": COMPANY, "received_on": "2026-10-02", "amount_paise": 100, "method": "cash", **bad}
         assert client.put(url(f"/dues/payments/{pid}"), json=body, headers=auth("a_owner")).status_code == 422, bad

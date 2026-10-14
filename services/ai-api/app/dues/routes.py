@@ -36,6 +36,7 @@ from app.dues.models import (
     InvoicesImportOut,
     LedgerOut,
     OpenInvoiceOut,
+    OverdueAgeingOut,
     PaymentIn,
     RecordedOut,
     SkippedRowOut,
@@ -71,7 +72,12 @@ def _row_id(raw: str) -> uuid.UUID:
 
 
 def _statement(row: dict[str, Any]) -> dict[str, Any]:
-    return {**row, "ageing": AgeingOut.model_validate(row["ageing"]), "open_invoices": [OpenInvoiceOut.model_validate(x) for x in row.get("open_invoices") or []]}
+    return {
+        **row,
+        "ageing": AgeingOut.model_validate(row["ageing"]),
+        "overdue_ageing": OverdueAgeingOut.model_validate(row["overdue_ageing"]) if row.get("overdue_ageing") else None,
+        "open_invoices": [OpenInvoiceOut.model_validate(x) for x in row.get("open_invoices") or []],
+    }
 
 
 def encode_cursor(paise: int, company_id: uuid.UUID) -> str:
@@ -93,7 +99,8 @@ def decode_cursor(raw: str | None) -> tuple[int, uuid.UUID] | None:
 def summary(ctx: Reader, runtime: RuntimeDep, as_of: date | None = None, after: str | None = None, limit: Limit = 50) -> SummaryOut:
     rows = _repo(runtime).summary(ctx.principal.token, ctx.tenant.id, as_of, limit, decode_cursor(after))
     items = [SummaryRowOut(**_statement(r)) for r in rows]
-    cursor = encode_cursor(items[-1].outstanding_paise, items[-1].company_id) if len(items) >= limit else None
+    last_company = items[-1].company_id if items else None
+    cursor = encode_cursor(items[-1].outstanding_paise, last_company) if last_company is not None and len(items) >= limit else None
     return SummaryOut(items=items, next_cursor=cursor)
 
 
@@ -165,7 +172,7 @@ def put_payment(payment_id: str, body: PaymentIn, ctx: Reader, runtime: RuntimeD
             "p_invoice_id": str(body.invoice_id) if body.invoice_id else None,
         },
     )
-    return RecordedOut(id=pid, replayed=row.get("replayed") is True)
+    return RecordedOut(id=pid, replayed=row.get("replayed") is True, receipt_no=row.get("receipt_no"))
 
 
 @router.post("/payments/{payment_id}/void", response_model=VoidedOut)

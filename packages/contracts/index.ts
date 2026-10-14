@@ -106,3 +106,6 @@ export * from "./erasure";
  * A pack is DATA: render words from `labels` and gate screens on `modules`; never branch on a pack id. */
 export * from "./packs";
 export * from "./materials";
+
+/** Reminder campaigns, the call list and the shared ledger (job CP, ADR 0086): generated from the API models by `make contracts`. A campaign is approved once by the Owner, for the samples they saw. */
+export * from "./campaigns";

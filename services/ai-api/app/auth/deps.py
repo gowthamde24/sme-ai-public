@@ -13,6 +13,7 @@ from fastapi import Depends, Request
 from app.agent_runs.wiring import AgentsRuntime
 from app.auth.jwt import AuthError, Principal, TokenVerifier
 from app.businessprofile.repository import BusinessProfileRepository
+from app.campaigns.repository import CampaignsRepository
 from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
 from app.connectors.runtime import Connectors
@@ -109,6 +110,8 @@ class Runtime:
     dues: DuesRepository | None = None
     materials: MaterialsRepository | None = None
     deliveries: DeliveriesRepository | None = None
+    # job CP: reminder campaigns and the call list (modules campaigns, call_list)
+    campaigns: CampaignsRepository | None = None
 
 
 @dataclass(frozen=True)

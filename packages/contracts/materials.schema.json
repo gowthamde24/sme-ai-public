@@ -1479,8 +1479,15 @@
           "type": "string"
         },
         "invoice_no": {
-          "title": "Invoice No",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Invoice No"
         },
         "invoice_date": {
           "format": "date",
@@ -1599,6 +1606,18 @@
             }
           ],
           "title": "Invoice Id"
+        },
+        "receipt_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receipt No"
         },
         "voided": {
           "title": "Voided",
@@ -2678,9 +2697,58 @@
           "title": "Invoice Id",
           "type": "string"
         },
+        "entry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry Id"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "charge",
+                "adjustment"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        },
         "invoice_no": {
-          "title": "Invoice No",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice No"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
         },
         "invoice_date": {
           "format": "date",
@@ -2711,7 +2779,6 @@
       },
       "required": [
         "invoice_id",
-        "invoice_no",
         "invoice_date",
         "due_date",
         "amount_paise",
@@ -2776,6 +2843,41 @@
         "order_id"
       ],
       "title": "OrderFromQuoteIn",
+      "type": "object"
+    },
+    "OverdueAgeingOut": {
+      "additionalProperties": false,
+      "description": "What is still open, by how many days it is past its DUE date (`not_due` is not yet due).",
+      "properties": {
+        "not_due": {
+          "title": "Not Due",
+          "type": "integer"
+        },
+        "d1_30": {
+          "title": "D1 30",
+          "type": "integer"
+        },
+        "d31_60": {
+          "title": "D31 60",
+          "type": "integer"
+        },
+        "d61_90": {
+          "title": "D61 90",
+          "type": "integer"
+        },
+        "d90_plus": {
+          "title": "D90 Plus",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "not_due",
+        "d1_30",
+        "d31_60",
+        "d61_90",
+        "d90_plus"
+      ],
+      "title": "OverdueAgeingOut",
       "type": "object"
     },
     "PaymentIn": {
@@ -3468,6 +3570,18 @@
         "replayed": {
           "title": "Replayed",
           "type": "boolean"
+        },
+        "receipt_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Receipt No"
         }
       },
       "required": [
@@ -3919,10 +4033,44 @@
     "StatementOut": {
       "additionalProperties": false,
       "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
         "company_id": {
-          "format": "uuid",
-          "title": "Company Id",
-          "type": "string"
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
         },
         "as_of": {
           "format": "date",
@@ -3935,6 +4083,21 @@
         },
         "paid_paise": {
           "title": "Paid Paise",
+          "type": "integer"
+        },
+        "payments_paise": {
+          "default": 0,
+          "title": "Payments Paise",
+          "type": "integer"
+        },
+        "concessions_paise": {
+          "default": 0,
+          "title": "Concessions Paise",
+          "type": "integer"
+        },
+        "adjustments_paise": {
+          "default": 0,
+          "title": "Adjustments Paise",
           "type": "integer"
         },
         "outstanding_paise": {
@@ -3951,6 +4114,17 @@
         },
         "ageing": {
           "$ref": "#/$defs/AgeingOut"
+        },
+        "overdue_ageing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OverdueAgeingOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "open_invoices": {
           "items": {
@@ -3976,7 +4150,6 @@
         }
       },
       "required": [
-        "company_id",
         "as_of",
         "invoiced_paise",
         "paid_paise",
@@ -4023,10 +4196,44 @@
     "SummaryRowOut": {
       "additionalProperties": false,
       "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
         "company_id": {
-          "format": "uuid",
-          "title": "Company Id",
-          "type": "string"
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
         },
         "as_of": {
           "format": "date",
@@ -4039,6 +4246,21 @@
         },
         "paid_paise": {
           "title": "Paid Paise",
+          "type": "integer"
+        },
+        "payments_paise": {
+          "default": 0,
+          "title": "Payments Paise",
+          "type": "integer"
+        },
+        "concessions_paise": {
+          "default": 0,
+          "title": "Concessions Paise",
+          "type": "integer"
+        },
+        "adjustments_paise": {
+          "default": 0,
+          "title": "Adjustments Paise",
           "type": "integer"
         },
         "outstanding_paise": {
@@ -4055,6 +4277,17 @@
         },
         "ageing": {
           "$ref": "#/$defs/AgeingOut"
+        },
+        "overdue_ageing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OverdueAgeingOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
         },
         "open_invoices": {
           "items": {
@@ -4079,12 +4312,47 @@
           "type": "boolean"
         },
         "company_name": {
-          "title": "Company Name",
-          "type": "string"
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Name"
+        },
+        "party_kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "contact"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party Kind"
+        },
+        "party_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party Name"
         }
       },
       "required": [
-        "company_id",
         "as_of",
         "invoiced_paise",
         "paid_paise",
@@ -4094,8 +4362,7 @@
         "ageing",
         "open_invoices",
         "credit_limit_paise",
-        "over_limit",
-        "company_name"
+        "over_limit"
       ],
       "title": "SummaryRowOut",
       "type": "object"
