@@ -38,7 +38,7 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "followup_policy_versions", "followup_drafts", "question_drafts", "call_requests",
     "outbox_settings", "outbox_messages", "outbox_message_media", "outbox_events",
     "store_settings", "store_visits", "scheduler_settings", "scheduler_runs", "visit_reminders",
-    "catalogue_items", "catalogue_photos",
+    "catalogue_items", "catalogue_photos", "custom_field_defs", "custom_field_values",
     "evidence", "evidence_links", "claims", "claim_reviews", "icp_config_versions", "mapper_config_versions", "import_batches", "import_rows",
     "assistant_conversations", "assistant_messages", "assistant_reply_drafts",
     "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
