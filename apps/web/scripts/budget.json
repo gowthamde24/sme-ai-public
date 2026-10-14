@@ -3,12 +3,8 @@
   "route": "/landing",
   "baselineGzipBytes": 177009,
   "allowanceGzipBytes": 40000,
-  "office3d": {
-    "_comment": "docs/plans/office-3d-proposal.md, decision 5: the 3D Office entry (every chunk its next/dynamic import loads: three's shared core + fiber + drei + the scene + the owl), loaded only when the 3D view is shown. Job AR: the people were replaced by owls (smaller than before: the figure code is gone), so this entry is measured as the sum of its chunks. Job CI: Agent OWL is now the plush owlet (plain DOM, CSS and a canvas, no three.js), so the 3D Office is the ONLY entry that loads three. Change only with the owner's approval.",
-    "maxGzipBytes": 267431
-  },
   "routeJs": {
-    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 197 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. The 3D office is next/dynamic, loaded after the first paint, and has its own ceiling above (office3d); Agent OWL (the plush owlet, job CI) is in the page itself and its pictures are lazy files, not script. Raise a number only with a reason in the commit; the owner approves a raised ceiling.",
+    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 197 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. Job CJ: the Office is a plain plush room (no three.js: its 3D chunk and its own office3d ceiling are gone), and Agent OWL and the Office owls (the plush owlets, jobs CI and CJ) are in the page itself; their pictures are lazy files, not script. Measured 13 Oct 2026 after job CJ: Today 200,190, the Office 182,479, the landing page 152,718 (margin 282). Raise a number only with a reason in the commit; the owner approves a raised ceiling.",
     "public": 153000,
     "app": 186000,
     "routes": {

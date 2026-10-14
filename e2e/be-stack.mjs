@@ -692,28 +692,53 @@ await step("H7", "voice: a used-up allowance is said in words, and typing still 
   must(await page.locator("#ask-input").isEnabled(), "typing is not available after the refusal");
 }, page);
 
-// ---- 8a. the Office (job BM): the 3D room draws and its owls sit where they should ---------------------------------------------------------------
-await step("O1", "the Office in 3D (WebGL in the test browser): the room draws at 1280 and 360 px, no THREE.Clock deprecation in the console, pictures for the owl size check", async () => {
-  const clock = [];
-  const onConsole = (m) => {
-    if (/Clock: This module has been deprecated/.test(m.text())) clock.push(m.text());
-  };
-  page.on("console", onConsole);
+// ---- 8a. the Office (job BM, plush since job CJ): the seven owls sit round the table, and nothing of three.js or WebGL is on the page ------------------------------------------------------
+await step("O1", "the Office as the plush room: seven owls round the table with their names and states, the pictures load (stills, then the layers), two rows at 360 px with no sideways scroll, a tap on an owl opens its panel, the List is one press away, no console problem", async () => {
+  const asked = [];
+  const onRequest = (r) => asked.push(r.url());
+  page.on("request", onRequest);
   try {
     for (const [name, size] of [["desktop", { width: 1280, height: 900 }], ["phone", { width: 360, height: 740 }]]) {
       await page.setViewportSize(size);
       await page.goto(`${BASE}/app/tenants/${tenant}/office`, { waitUntil: "networkidle" });
-      await page.evaluate(() => localStorage.setItem("sme_office_view", "3d"));
+      await page.evaluate(() => localStorage.removeItem("sme_office_view"));
       await page.reload({ waitUntil: "networkidle" });
-      await page.locator("canvas").first().waitFor({ timeout: 60000 });
-      await page.waitForTimeout(2500); // the owls settle into their seats
-      await shot(page, `office-3d-${name}`);
+      await page.locator("[data-office=plush] .office-seat").first().waitFor({ timeout: 60000 });
+      must((await page.locator("[data-office=plush] .office-seat").count()) === 7, "the room does not have seven owls");
+      must((await page.locator("[data-office=plush] .office-tag").count()) === 7, "not every owl has its name and state");
+      // the stills are in; the layers come after the page is idle (give them time), for every owl that is not switched off
+      await page.waitForFunction(() => [...document.querySelectorAll(".office-owl img.plush-still")].every((i) => i.complete && i.naturalWidth > 0), null, { timeout: 30000 });
+      for (const seat of await page.locator(".office-seat").all()) await seat.scrollIntoViewIfNeeded(); // the layers load only for an owl that is on screen
+      await page.waitForFunction(() => [...document.querySelectorAll(".office-seat:not([data-pose=off]) .plush")].every((e) => e.getAttribute("data-plush") === "live"), null, { timeout: 45000 }).catch(() => {});
+      await page.locator(".office-room").scrollIntoViewIfNeeded();
+      const stages = await page.locator(".office-owl .plush").evaluateAll((els) => els.map((e) => e.getAttribute("data-plush")));
+      must(stages.length === 7, `seven plush owls expected, found ${stages.length}`);
+      const moving = await page.locator(".office-seat:not([data-pose=off]) .plush").evaluateAll((els) => els.map((e) => e.getAttribute("data-plush")));
+      must(moving.every((x) => x === "live"), `an owl that is not off did not come alive: ${moving.join(",")}`);
+      const still = await page.locator(".office-seat[data-pose=off] .plush").evaluateAll((els) => els.map((e) => e.getAttribute("data-plush")));
+      must(still.every((x) => x === "still"), `an owl that is off moved or loaded layers: ${still.join(",")}`);
+      const tops = await page.locator(".office-seat").evaluateAll((els) => els.map((e) => Math.round(e.getBoundingClientRect().top / 10)));
+      if (name === "phone") {
+        const rows = new Set(tops);
+        must(rows.size === 2, `at 360 px the room should be two rows, found ${rows.size}: ${tops.join(",")}`);
+        must(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth), "the Office scrolls sideways on a phone");
+      } else must(new Set(tops).size >= 3, "at 1280 px the owls should stand on an arc");
+      await shot(page, `office-room-${name}`);
     }
+    // a tap on an owl opens its panel; the List is one press away and keeps working
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.locator(".office-seat[data-agent=quote_writer] .office-tag").click();
+    await page.getByRole("heading", { level: 2, name: "Quote Writer" }).waitFor({ timeout: 10000 });
+    await page.getByRole("button", { name: "List view" }).click();
+    must((await page.getByRole("region", { name: "Agent office" }).getByRole("listitem").count()) === 7, "the List does not have seven cards");
+    await page.getByRole("button", { name: "Office view" }).click();
+    await page.evaluate(() => localStorage.removeItem("sme_office_view"));
   } finally {
-    page.off("console", onConsole);
+    page.off("request", onRequest);
     await page.setViewportSize({ width: 1280, height: 900 });
   }
-  must(clock.length === 0, `the Clock deprecation is still in the console: ${clock[0]}`);
+  must(!asked.some((u) => /three|webgl|office3d/i.test(u)), `a three.js file was asked for: ${asked.find((u) => /three|webgl|office3d/i.test(u))}`);
+  must(asked.some((u) => /\/owl\/v3\/lead_finder\//.test(u)) || asked.some((u) => /\/owl\/v3\/quote_writer\//.test(u)), "no helper's own pictures were asked for");
 }, page);
 
 // ---- 8a. the older screens in Telugu (job BK): every workspace screen says its words through the string store; no raw key and no English sentence is left on the page --------------------

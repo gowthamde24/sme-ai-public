@@ -1,16 +1,16 @@
 "use client";
 
-import { ArrowRight, Armchair, Boxes, Info, List, TriangleAlert } from "lucide-react";
+import { ArrowRight, Armchair, Boxes, Info, List } from "lucide-react";
 import Link from "next/link";
 import * as React from "react";
 
 import { pageH1 } from "../ui";
-import { OwlSvg } from "../owl/OwlSvg";
-import type { OwlMood } from "../owl/owl-mood";
-import { readClientEnv, rememberView, type ClientEnv, type View } from "./scene/capability";
-import { ALL_AGENT_IDS, type AgentId, type Pose } from "./scene/ids";
-import { webglAvailable } from "./scene/webgl";
-import { OfficeStage } from "./OfficeStage";
+import { PlushStill } from "../owl/PlushStill";
+import { StateDot } from "../owl/StateDot";
+import { ALL_AGENT_IDS, type AgentId, type Pose } from "./ids";
+import { poseOf } from "./pose";
+import { PlushOffice } from "./PlushOffice";
+import { readClientEnv, rememberView, type ClientEnv, type View } from "./view";
 
 /** One helper as the room and the list draw it: the API's row (`getAgentsStatus()`), and the "how long ago" worked out on the server so the first paint and the hydrated page agree. */
 export type RoomRow = { agent: AgentId; state: "idle" | "working" | "switched_off" | "not_available"; job: string; event: { text: string; ago: string; at: string; /** The page the event is about, inside this workspace; null = it has none (no link). */ href?: string | null } | null };
@@ -22,16 +22,14 @@ const pill = "inline-flex items-center rounded-md border px-2 py-0.5 text-sm fon
 const STATE_PILL = { working: "border-brand-edge bg-brand-bg text-brand-text", idle: "border-line bg-surface-2 text-muted", switched_off: "border-line bg-surface-2 text-ink", not_available: "border-line bg-surface-2 text-ink" } as const;
 const noSubscribe = () => () => {};
 
-/** The mood a helper's avatar is drawn in: working thinks, not built or switched off rests, idle is calm. A still picture: only the Ask box's owl moves. */
-const moodOf = (s: RoomRow["state"]): OwlMood => (s === "working" ? "thinking" : s === "idle" ? "idle" : "resting");
-
-const poseOf = (s: RoomRow["state"]): Pose => (s === "working" ? "working" : s === "idle" ? "idle" : "off");
+/** The state dot beside a helper's still picture in the List and the panel (the still has one pose). */
+const dotOf = (s: RoomRow["state"]) => (s === "working" ? "working" : s === "idle" ? "idle" : "off");
 
 /**
- * The Office: the room (3D) or the list, the chosen helper's panel and the event feed. Every fact is `getAgentsStatus()`'s: the state on each tag, the job, the latest event; the room
- * has no events of its own. The server draws the List (every device can show it, and it works without script); on the client the 3D view is the first view on a device that can clearly
- * run it, and the List on a weak one, with reduced motion, or when WebGL is missing (scene/capability.ts). Three.js is a separate chunk, requested only when the 3D view is shown.
- * Choosing a helper (a tap on the person or on a tag, or a card of the list) shows their panel and writes `?agent=` into the address, which is also a real link.
+ * The Office: the plush room or the list, the chosen helper's panel and the event feed. Every fact is `getAgentsStatus()`'s: the state on each tag, the job, the latest event; the room
+ * has no events of its own. The room is plain DOM and CSS (PlushOffice.tsx), so the server draws it and every device can: the room is the first view, the List is one press away and is remembered
+ * if chosen (view.ts). With reduced motion or a data saver the owls are still pictures. Choosing a helper (a tap on the owl or on a tag, or a card of the list) shows their panel and writes
+ * `?agent=` into the address, which is also a real link.
  */
 export function OfficeRoom({ rows, selected: given, base, words }: { rows: readonly RoomRow[]; selected: AgentId | null; base: string; words: Words }) {
   const w = (key: string) => words[key] ?? key;
@@ -39,20 +37,11 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
   const env = React.useSyncExternalStore(noSubscribe, () => (cache.current ??= readClientEnv()), () => null);
   const [choice, setChoice] = React.useState<View | null>(null);
   const [selected, setSelected] = React.useState<AgentId | null>(given);
-  const [fallback, setFallback] = React.useState<"webgl" | "error" | null>(null);
-  const [probe, setProbe] = React.useState<boolean | null>(null);
 
-  const view: View = choice ?? env?.remembered ?? env?.defaultView ?? "list";
-  const webglOk = env !== null && (probe ?? env.webgl);
-  const show3d = view === "3d" && env !== null && webglOk && fallback === null;
-  const noticeWebgl = view === "3d" && env !== null && (!webglOk || fallback === "webgl");
-  const noticeError = view === "3d" && fallback === "error";
+  const view: View = choice ?? env?.remembered ?? "room";
+  const showRoom = view === "room";
 
   const chooseView = (v: View) => {
-    if (v === "3d") {
-      setFallback(null); // look again, do not trust an old answer
-      setProbe(webglAvailable());
-    }
     setChoice(v);
     rememberView(v);
   };
@@ -76,39 +65,31 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
   const feed = rows.filter((r) => r.event).sort((a, b) => Date.parse(b.event!.at) - Date.parse(a.event!.at)).slice(0, 6);
 
   return (
-    <div data-screen="office" data-view={show3d ? "3d" : "list"}>
+    <div data-screen="office" data-view={showRoom ? "room" : "list"}>
       <header className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div>
           <h1 className={pageH1}>{w("office.title")}</h1>
           <p className="text-base text-muted">{w("office.sub")}</p>
         </div>
         <div role="group" aria-label={w("office.viewswitch")} className="inline-flex shrink-0 self-start rounded-xl border border-edge bg-surface p-1">
-          {(["3d", "list"] as const).map((v) => {
-            const on = (v === "3d") === show3d;
+          {(["room", "list"] as const).map((v) => {
+            const on = (v === "room") === showRoom;
             return (
               <button
                 key={v}
                 type="button"
                 aria-pressed={on}
                 onClick={() => chooseView(v)}
-                onPointerEnter={v === "3d" ? () => void import("./scene/Office3D") : undefined}
-                onFocus={v === "3d" ? () => void import("./scene/Office3D") : undefined}
                 className={`inline-flex min-h-11 items-center rounded-lg px-4 text-base font-semibold ${on ? "bg-charcoal text-on-charcoal" : "text-ink hover:bg-surface-2"}`}
               >
-                {v === "3d" ? w("office.view3d") : w("office.viewlist")}
+                {v === "room" ? w("office.viewroom") : w("office.viewlist")}
               </button>
             );
           })}
         </div>
       </header>
 
-      {noticeWebgl || noticeError ? (
-        <p role="status" data-fallback={noticeError ? "error" : "webgl"} className="mt-4 flex items-start gap-2 rounded-lg border border-amber-text bg-amber-bg p-3 text-amber-text">
-          <TriangleAlert className="mt-0.5 size-5 shrink-0" aria-hidden="true" />
-          <span className="font-medium">{noticeError ? w("office.loaderror") : w("office.nowebgl")}</span>
-        </p>
-      ) : null}
-      {show3d && env?.reducedMotion ? (
+      {showRoom && env?.reducedMotion ? (
         <p className="mt-4 flex items-center gap-2 text-sm text-muted">
           <Info className="size-4 shrink-0" aria-hidden="true" />
           {w("office.still")}
@@ -117,8 +98,8 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12">
         <div className="space-y-6 lg:col-span-8">
-          {show3d && env ? (
-            <OfficeStage poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} reduced={env.reducedMotion} coarse={env.coarse} phone={env.phone} hint={w("office.hint")} loadingText={w("office.loading")} onFail={setFallback} />
+          {showRoom ? (
+            <PlushOffice poses={poses} names={names} stateText={tagText} selected={selected} onSelect={select} lite={env?.lite ?? false} label={w("office.title")} hint={w("office.hint")} />
           ) : (
             <section aria-label={w("office.title")}>
               <p className="mb-3 flex items-center gap-2 text-base text-muted">
@@ -142,7 +123,8 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
                     >
                       <span className="flex items-start justify-between gap-2">
                         <span className="flex min-w-0 items-center gap-2">
-                          <OwlSvg agent={a.agent} mood={moodOf(a.state)} still className="size-11" />
+                          <PlushStill agent={a.agent} px={44} mood={a.state === "working" ? "thinking" : "idle"} off={dotOf(a.state) === "off"} className="size-11" />
+                          <StateDot state={dotOf(a.state)} />
                           <span className="font-display text-lg font-semibold">{w(`agent.${a.agent}`)}</span>
                         </span>
                         <span className={`${pill} ${STATE_PILL[a.state]}`}>{stateText(a.state)}</span>
@@ -182,7 +164,8 @@ export function OfficeRoom({ rows, selected: given, base, words }: { rows: reado
               <>
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <h2 className="flex items-center gap-2 font-display text-xl font-semibold">
-                    <OwlSvg agent={chosen.agent} mood={moodOf(chosen.state)} still className="size-11" />
+                    <PlushStill agent={chosen.agent} px={44} mood={chosen.state === "working" ? "thinking" : "idle"} off={dotOf(chosen.state) === "off"} className="size-11" />
+                    <StateDot state={dotOf(chosen.state)} />
                     {w(`agent.${chosen.agent}`)}
                   </h2>
                   <span className={`${pill} ${STATE_PILL[chosen.state]}`}>{stateText(chosen.state)}</span>

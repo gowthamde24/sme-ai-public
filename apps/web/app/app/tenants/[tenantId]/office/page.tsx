@@ -19,7 +19,7 @@ export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
-/** /app/tenants/[tenantId]/office: the AI team as a 3D room or a list (every member may see it), and each helper's latest event, linked to the page it is about. */
+/** /app/tenants/[tenantId]/office: the AI team as a plush room or a list (every member may see it), and each helper's latest event, linked to the page it is about. */
 export default async function OfficePage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/office">) {
   const user = await requireUser();
   const { tenantId } = await params;

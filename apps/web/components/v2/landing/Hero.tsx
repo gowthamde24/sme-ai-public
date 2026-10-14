@@ -8,7 +8,7 @@ import type { LandingT } from "@/i18n/landing";
 const bubble = "max-w-[92%] rounded-2xl px-4 py-3 text-base leading-snug";
 
 /**
- * The first screen (job BS): the promise in one sentence, the sign-up button, and Agent OWL itself (the 3D owl, which falls back to the flat one on a weak device or a slow connection and loads only
+ * The first screen (job BS): the promise in one sentence, the sign-up button, and Agent OWL itself (the plush owlet: its still picture from the server, the layers only
  * when the page is idle, so the headline is the first thing painted) beside an example conversation that is labelled as made up.
  */
 export function Hero({ t }: { t: LandingT }) {

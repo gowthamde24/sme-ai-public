@@ -1,7 +1,6 @@
 import { ArrowRight, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
-import { OwlSvg } from "@/components/v2/app/owl/OwlSvg";
 import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 import { pageH1, pageSub, surface } from "@/components/v2/app/ui";
 import type { AppKey, AppT } from "@/i18n/app";
@@ -28,7 +27,7 @@ export function HelpIndex({ t, base, lang }: { t: AppT; base: string; lang: Lang
         {GUIDES.map((g) => (
           <li key={g.id}>
             <Link href={`${base}/help/${g.id}`} className={card}>
-              <OwlSvg mood={g.mood} still className="size-12" />
+              <PlushStill px={48} mood={g.mood} className="size-12" />
               <span className="font-display text-xl font-semibold leading-tight">{t(key(`help.guide.${g.id}.t`))}</span>
               <span className="text-base text-muted">{t(key(`help.guide.${g.id}.s`))}</span>
               {g.englishOnly && lang !== "en" ? <span lang="en" className="mt-auto text-sm text-muted">English</span> : null}

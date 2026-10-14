@@ -1,4 +1,4 @@
-/** The moods of Agent OWL, as the Ask box drives them: the same five on the flat and the 3D owl. */
+/** The moods of Agent OWL, as the Ask box drives them: the five of the plush owlet (PlushOwl). */
 export type OwlMood = "idle" | "listening" | "thinking" | "answering" | "resting";
 
 /** The codes of a refused answer after which the owl rests: the AI is paused, the agents are off, or the run limit is reached. */

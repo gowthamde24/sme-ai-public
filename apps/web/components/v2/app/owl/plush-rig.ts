@@ -9,31 +9,48 @@ import type { OwlMood } from "./owl-mood";
 export const REDUCED_SCALE = 0.35;
 export const motionScale = (reduced: boolean): number => (reduced ? REDUCED_SCALE : 1);
 
-/** The pictures live under a versioned folder (job CI follow-up): next.config.ts serves /owl/ as "immutable" for a year, so a changed picture goes in /owl/v3/ and every name below moves with it. */
-export const OWL_DIR = "/owl/v2";
-export const OWL_FILES = {
-  head: `${OWL_DIR}/owlet-head-512.webp`,
-  body: `${OWL_DIR}/owlet-body-512.webp`,
-  beak: `${OWL_DIR}/owlet-beak-512.webp`,
-  wingLeft: `${OWL_DIR}/owlet-wing-left-512.webp`,
-  wingRight: `${OWL_DIR}/owlet-wing-right-512.webp`,
-} as const;
+/**
+ * The pictures live under a versioned folder: next.config.ts serves /owl/ as "immutable" for a year, so a changed picture goes in a new folder (/owl/v4/) and every name below moves with it. v3 (job CJ): the faces look
+ * straight at the viewer and each of the seven agents has its own folder, /owl/v3/<agent>/ (owlet-{head,body,wing-left,wing-right,beak}-512.webp and owlet-full-{128,256,512}.webp).
+ */
+export const OWL_DIR = "/owl/v3";
+/** The seven owls, in the order of the API's agent list (lib/api/today.ts AGENT_KEYS; a test keeps them equal): Agent OWL (sky blue) and the six helpers, each with a collar, ears and wings in a colour of their own. */
+export const OWL_AGENTS = ["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"] as const;
+export type OwlAgent = (typeof OWL_AGENTS)[number];
+/** An id this app does not know gets Agent OWL (never a made-up owl, never a broken picture). */
+export const owlAgent = (agent: string | undefined): OwlAgent => ((OWL_AGENTS as readonly string[]).includes(agent ?? "") ? (agent as OwlAgent) : "main");
+export const owlDir = (agent?: string): string => `${OWL_DIR}/${owlAgent(agent)}`;
+/** The five layers of one agent's owl. */
+export const owlFiles = (agent?: string) => {
+  const d = owlDir(agent);
+  return {
+    head: `${d}/owlet-head-512.webp`,
+    body: `${d}/owlet-body-512.webp`,
+    beak: `${d}/owlet-beak-512.webp`,
+    wingLeft: `${d}/owlet-wing-left-512.webp`,
+    wingRight: `${d}/owlet-wing-right-512.webp`,
+  } as const;
+};
 /** The still picture in three sizes: the browser picks by the size the owl is drawn at (srcset + sizes), so a 56 px avatar never downloads the 512 px file. */
 export const STILL_WIDTHS = [128, 256, 512] as const;
-export const stillFile = (width: (typeof STILL_WIDTHS)[number]): string => `${OWL_DIR}/owlet-full-${width}.webp`;
-export const stillSrcSet = (widths: readonly (typeof STILL_WIDTHS)[number][] = STILL_WIDTHS): string => widths.map((w) => `${stillFile(w)} ${w}w`).join(", ");
+export const stillFile = (width: (typeof STILL_WIDTHS)[number], agent?: string): string => `${owlDir(agent)}/owlet-full-${width}.webp`;
+export const stillSrcSet = (widths: readonly (typeof STILL_WIDTHS)[number][] = STILL_WIDTHS, agent?: string): string => widths.map((w) => `${stillFile(w, agent)} ${w}w`).join(", ");
 /**
- * The rig numbers (the wing boxes, the pivots, the mesh) are in the 1024 x 1024 space of the first art; the layer files are 512 x 512 now (no owl is drawn above 360 CSS pixels, so a 1024 px layer was only weight).
- * Everything else is in percent of the box, so it did not change; the wing pictures are cut out with the scale LAYER_FILE_PX / LAYER_PX (PlushOwl.tsx).
+ * The rig numbers (the wing boxes, the pivots, the mesh) are in the 1024 x 1024 space of the first art; the layer files are 512 x 512 (no owl is drawn above 360 CSS pixels, so a 1024 px layer was only weight).
+ * Everything else is in percent of the box; the wing pictures are cut out with the scale LAYER_FILE_PX / LAYER_PX (PlushOwl.tsx).
  */
 export const LAYER_PX = 1024;
 export const LAYER_FILE_PX = 512;
 export const STILL_PX = 512;
 
+/** v3: the face was moved to the middle of the head, so the head turns about x = 519 (50.7 %, was 555), the mouth is at 49.3 % and the eyes are 3.5 points further left. design/owl.css carries the same figures. */
+export const HEAD_PIVOT = { x: 50.7, y: 49.8 } as const;
+export const MOUTH = { left: 49.3, top: 38.6, width: 3.2, height: 1.6 } as const;
+
 /** Eyelid boxes (left, top, width, height in percent of the owl's box), the left eye then the right. */
 export const EYES = [
-  { left: 37.6, top: 23.9, width: 11.7, height: 11.9 },
-  { left: 59.0, top: 24.5, width: 10.9, height: 11.4 },
+  { left: 34.1, top: 23.9, width: 11.7, height: 11.9 },
+  { left: 55.5, top: 24.5, width: 10.9, height: 11.4 },
 ] as const;
 /** The closed-eye arc, in the eye box's own 100 x 100 space. */
 export const SHUT_ARC = "M24 50 Q50 70 76 50";
@@ -116,6 +133,17 @@ export function wingTargets(mood: OwlMood, t: number, talk: number, brF: number)
   return { l, r };
 }
 
+/**
+ * The Office (job CJ): a helper that is working sits at its laptop. The head is down toward the screen, the body bobs a little (WORK_BOB, half the answering hop) and the wings type, one after the other, about
+ * 1.7 times a second; with reduced motion the Office draws the still poses instead (the owl is not given `working`).
+ */
+export const WORK_BOB = 0.006;
+export const WORK_LOOK = { x: 0, y: 0.8 } as const;
+export function workWings(t: number): { l: number; r: number } {
+  const k = t * 10.8;
+  return { l: 7 + Math.sin(k) * 7, r: 7 + Math.sin(k + Math.PI) * 7 };
+}
+
 /** The beak's opening, 0 to 1: only while answering (the talking phase `talk` runs at about 10 radians a second). */
 export function beakTarget(mood: OwlMood, talk: number, t: number): number {
   if (mood !== "answering") return 0;
@@ -137,10 +165,10 @@ export const nextBlinkIn = (r1: number, r2: number): number => (r2 < 0.2 ? 0.3 :
 /** Where the owl wanders when nobody is pointing at it: a new look every 1.8 to 4.3 s. */
 export const wanderLook = (r1: number, r2: number): { x: number; y: number } => ({ x: (r1 * 2 - 1) * 0.6, y: (r2 * 2 - 1) * 0.3 });
 
-/** The pointer, as the owl sees it: -1 to 1 on each axis, measured from the owl's box (the head is a little right of and above the middle). */
+/** The pointer, as the owl sees it: -1 to 1 on each axis, measured from the owl's box (the head is in the middle and a little above it). */
 export function pointerLook(clientX: number, clientY: number, box: { left: number; top: number; width: number; height: number }): { x: number; y: number } {
   const clamp = (v: number) => Math.max(-1, Math.min(1, v));
-  return { x: clamp((clientX - (box.left + box.width * 0.54)) / (box.width * 0.6)), y: clamp((clientY - (box.top + box.height * 0.3)) / (box.height * 0.6)) };
+  return { x: clamp((clientX - (box.left + box.width * 0.507)) / (box.width * 0.6)), y: clamp((clientY - (box.top + box.height * 0.3)) / (box.height * 0.6)) };
 }
 
 export const ease = (cur: number, target: number, k: number): number => cur + (target - cur) * k;

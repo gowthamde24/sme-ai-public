@@ -1,80 +1,5 @@
 /* ==========================================================================
-   The flat owl (job AR): one SVG, five moods, pure CSS. Every selector starts with [data-ui="v2"] (audit:leaks). The colours are set on the SVG itself
-   (components/v2/app/owl/owl-colors.ts is the one map: --owl-cap and --owl-cap-deep differ per agent). The global reduced-motion rule in base.css stops the movement;
-   `data-still` stops it for the avatars in lists and cards, where only the Ask box's owl should move.
-   idle: breathes and blinks | listening: ear tufts up, ring pulses | thinking: head tilt, eyes look around, three dots
-   answering: small nods, glow ring, happy eyes now and then | resting (switched off, paused, not built): sleepy eyes, slow sway, faded
-   ========================================================================== */
-[data-ui="v2"] .owl { overflow: visible; }
-[data-ui="v2"] .owl .ring { fill: none; stroke: var(--owl-accent); stroke-width: 3; opacity: 0; transform-origin: 120px 130px; }
-[data-ui="v2"] .owl .body { fill: var(--owl-cream); }
-[data-ui="v2"] .owl .chest { fill: var(--owl-cream-light); }
-[data-ui="v2"] .owl .scallops { fill: none; stroke: var(--owl-cream-deep); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-[data-ui="v2"] .owl .wing ellipse { fill: var(--owl-cap); }
-[data-ui="v2"] .owl .wing ellipse.deep { fill: var(--owl-cap-deep); }
-[data-ui="v2"] .owl .tuft { fill: none; stroke: var(--owl-cap); stroke-width: 15; stroke-linecap: round; stroke-linejoin: round; }
-[data-ui="v2"] .owl .cap,
-[data-ui="v2"] .owl .brow { fill: var(--owl-cap); }
-[data-ui="v2"] .owl .socket { fill: var(--owl-socket); }
-[data-ui="v2"] .owl .iris { fill: var(--owl-iris); }
-[data-ui="v2"] .owl .iris-light { fill: var(--owl-iris-light); opacity: 0.55; }
-[data-ui="v2"] .owl .pupil { fill: var(--owl-pupil); }
-[data-ui="v2"] .owl .glint { fill: #fff6ec; }
-[data-ui="v2"] .owl .rim { fill: none; stroke: var(--owl-accent); stroke-width: 7; }
-[data-ui="v2"] .owl .lid { fill: var(--owl-cream); transform-box: fill-box; transform-origin: 50% 0; transform: scaleY(0); }
-[data-ui="v2"] .owl .happy { fill: none; stroke: var(--owl-pupil); stroke-width: 5; stroke-linecap: round; opacity: 0; }
-[data-ui="v2"] .owl .cheek { fill: var(--owl-cheek); opacity: 0.75; }
-[data-ui="v2"] .owl .beak,
-[data-ui="v2"] .owl .feet ellipse { fill: var(--owl-accent); }
-[data-ui="v2"] .owl .dots { opacity: 0; }
-[data-ui="v2"] .owl .dot { fill: var(--owl-accent); }
-
-[data-ui="v2"] .owl .whole { transform-origin: 120px 210px; animation: owl-breathe 4s ease-in-out infinite; }
-[data-ui="v2"] .owl .eyes { transform-box: view-box; }
-[data-ui="v2"] .owl .lid { animation: owl-blink 5s infinite; }
-@keyframes owl-breathe { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.015, 0.985); } }
-@keyframes owl-blink { 0%, 92%, 100% { transform: scaleY(0); } 95% { transform: scaleY(1); } }
-
-[data-ui="v2"] .owl[data-state="listening"] .tufts { animation: owl-perk 0.6s ease-out forwards; }
-[data-ui="v2"] .owl[data-state="listening"] .ring { animation: owl-voice 1.1s ease-in-out infinite; }
-@keyframes owl-perk { to { transform: translateY(-5px); } }
-@keyframes owl-voice { 0%, 100% { opacity: 0.25; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.06); } }
-
-[data-ui="v2"] .owl[data-state="thinking"] .whole { animation: owl-tilt 2.4s ease-in-out infinite; }
-[data-ui="v2"] .owl[data-state="thinking"] .eyes { animation: owl-look 2.4s ease-in-out infinite; }
-[data-ui="v2"] .owl[data-state="thinking"] .dots { opacity: 1; }
-[data-ui="v2"] .owl[data-state="thinking"] .dot { animation: owl-dot 1.2s ease-in-out infinite; }
-[data-ui="v2"] .owl[data-state="thinking"] .dot:nth-child(2) { animation-delay: 0.2s; }
-[data-ui="v2"] .owl[data-state="thinking"] .dot:nth-child(3) { animation-delay: 0.4s; }
-@keyframes owl-tilt { 0%, 100% { transform: rotate(-4deg); } 50% { transform: rotate(4deg); } }
-@keyframes owl-look { 0%, 100% { transform: translate(-3px, -4px); } 50% { transform: translate(3px, -4px); } }
-@keyframes owl-dot { 0%, 100% { opacity: 0.25; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-5px); } }
-
-[data-ui="v2"] .owl[data-state="answering"] .whole { animation: owl-nod 0.9s ease-in-out infinite; }
-[data-ui="v2"] .owl[data-state="answering"] .ring { opacity: 0.9; animation: owl-glow 1.8s ease-in-out infinite; }
-[data-ui="v2"] .owl[data-state="answering"] .happy { animation: owl-happy 3.2s ease-in-out infinite; }
-[data-ui="v2"] .owl[data-state="answering"] .socket,
-[data-ui="v2"] .owl[data-state="answering"] .iris,
-[data-ui="v2"] .owl[data-state="answering"] .iris-light,
-[data-ui="v2"] .owl[data-state="answering"] .pupil,
-[data-ui="v2"] .owl[data-state="answering"] .glint { animation: owl-eyes-away 3.2s ease-in-out infinite; }
-@keyframes owl-nod { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
-@keyframes owl-glow { 0%, 100% { stroke-width: 3; } 50% { stroke-width: 6; } }
-@keyframes owl-happy { 0%, 42%, 100% { opacity: 0; } 46%, 90% { opacity: 1; } }
-@keyframes owl-eyes-away { 0%, 42%, 100% { opacity: 1; } 46%, 90% { opacity: 0; } }
-
-[data-ui="v2"] .owl[data-state="resting"] { opacity: 0.7; }
-[data-ui="v2"] .owl[data-state="resting"] .lid { animation: none; transform: scaleY(0.6); }
-[data-ui="v2"] .owl[data-state="resting"] .tufts { transform: translateY(3px); }
-[data-ui="v2"] .owl[data-state="resting"] .whole { animation: owl-sway 6s ease-in-out infinite; }
-@keyframes owl-sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
-
-/* an avatar in a list or a card: the pose of its mood, no movement */
-[data-ui="v2"] .owl[data-still="true"],
-[data-ui="v2"] .owl[data-still="true"] * { animation: none !important; }
-
-/* ==========================================================================
-   The plush owlet (job CI): the Agent OWL where it talks (components/v2/app/owl/PlushOwl.tsx; the numbers are in plush-rig.ts, from the approved prototype).
+   The plush owlet (job CI, job CJ): the seven owls, Agent OWL where it talks and the six helpers in the Office and on the cards (components/v2/app/owl/PlushOwl.tsx; the numbers are in plush-rig.ts, from the approved prototype).
    A square box. Inside: the still picture (the only thing from the server and with no script), then, once the layers are in, the live owl: head (with the lids, the closed-eye arcs, the mouth and the beak),
    body, and a canvas for the wings. The thinking dots and the "z z z" are plain elements. Every selector starts with [data-ui="v2"] (audit:leaks).
    ========================================================================== */
@@ -90,7 +15,7 @@
 [data-ui="v2"] .plush-live[data-ready="true"] { opacity: 1; }
 [data-ui="v2"] .plush-shadow { position: absolute; left: 22%; right: 22%; top: 88%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, var(--plush-shadow), transparent); }
 [data-ui="v2"] .plush-rig { position: absolute; inset: 0; transform-origin: 50% 92%; will-change: transform; }
-[data-ui="v2"] .plush-head { position: absolute; inset: 0; transform-origin: 54.2% 49.8%; will-change: transform; }
+[data-ui="v2"] .plush-head { position: absolute; inset: 0; transform-origin: 50.7% 49.8%; will-change: transform; }
 [data-ui="v2"] .plush-beak { position: absolute; inset: 0; will-change: transform; }
 [data-ui="v2"] .plush-wings { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
 /* eyelids: feathered with a mask, an upper and a lower; the closed-eye arc fades in when the lids are nearly shut */
@@ -99,7 +24,7 @@
 [data-ui="v2"] .plush-lid-up { top: 0; background: linear-gradient(#e3c4ae, #dfc0a9 85%); border-radius: 0 0 50% 50% / 0 0 26% 26%; transform: translateY(-104%); }
 [data-ui="v2"] .plush-lid-lo { bottom: 0; background: linear-gradient(#dfc0a9, #ddbba3); transform: translateY(104%); }
 [data-ui="v2"] .plush-shut { position: absolute; opacity: 0; overflow: visible; }
-[data-ui="v2"] .plush-mouth { position: absolute; left: 52.8%; top: 38.6%; width: 3.2%; height: 1.6%; border-radius: 0 0 50% 50%; background: #5a3328; transform-origin: 50% 0; transform: scaleY(0); }
+[data-ui="v2"] .plush-mouth { position: absolute; left: 49.3%; top: 38.6%; width: 3.2%; height: 1.6%; border-radius: 0 0 50% 50%; background: #5a3328; transform-origin: 50% 0; transform: scaleY(0); }
 /* thinking: three dots in a bubble; resting: z z z. Both are decorative (aria-hidden in the markup) */
 [data-ui="v2"] .plush-bubble { position: absolute; right: 4%; top: 4%; display: flex; gap: 5px; padding: 7px 10px; border: 1px solid var(--v2-border); border-radius: 999px; background: var(--v2-surface); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06); opacity: 0; transition: opacity 0.4s; }
 [data-ui="v2"] .plush-bubble[data-on="true"] { opacity: 1; }
@@ -123,5 +48,45 @@
   [data-ui="v2"] .plush-zz span:nth-child(3) { transform: translate(30px, -30px); }
 }
 /* the two eyes' boxes, in percent of the owl's box (the rig sheet: left, top, width, height) */
-[data-ui="v2"] .plush-eye-0 { left: 37.6%; top: 23.9%; width: 11.7%; height: 11.9%; }
-[data-ui="v2"] .plush-eye-1 { left: 59%; top: 24.5%; width: 10.9%; height: 11.4%; }
+[data-ui="v2"] .plush-eye-0 { left: 34.1%; top: 23.9%; width: 11.7%; height: 11.9%; }
+[data-ui="v2"] .plush-eye-1 { left: 55.5%; top: 24.5%; width: 10.9%; height: 11.4%; }
+
+/* ==========================================================================
+   The plush office (job CJ, components/v2/app/office/PlushOffice.tsx): seven PlushOwls around a flat round table. Replaces the 3D room: plain DOM and CSS, no WebGL.
+   Desktop: the owls stand on an arc round the table (--x, --y are set per seat from seats.ts). A 390 px phone (the room's own width under 520 px, by container query) gets two rows: --pc, --ps, --pr.
+   A working helper has a glowing laptop; the glow pulses unless the person asked for less motion. Every selector starts with [data-ui="v2"] (audit:leaks).
+   ========================================================================== */
+[data-ui="v2"] .office-wrap { container-type: inline-size; --office-floor-1: #fff6ea; --office-floor-2: #f1dcc3; --office-table: #e8c9a3; --office-table-hi: #f6e3c8; --office-table-edge: #c99f6e; --office-glow: rgba(255, 138, 61, 0.55); --office-glow-core: #ffb36b; }
+[data-ui="v2"][data-theme="dark"] .office-wrap { --office-floor-1: #2d2433; --office-floor-2: #17131c; --office-table: #6a4c38; --office-table-hi: #86624a; --office-table-edge: #4a3425; --office-glow: rgba(255, 138, 61, 0.5); }
+@media (prefers-color-scheme: dark) {
+  [data-ui="v2"]:not([data-theme="light"]) .office-wrap { --office-floor-1: #2d2433; --office-floor-2: #17131c; --office-table: #6a4c38; --office-table-hi: #86624a; --office-table-edge: #4a3425; --office-glow: rgba(255, 138, 61, 0.5); }
+}
+[data-ui="v2"] .office-room { position: relative; width: 100%; aspect-ratio: 1 / 0.96; overflow: hidden; border: 1px solid var(--v2-border); border-radius: 0.75rem; background: radial-gradient(120% 90% at 50% 18%, var(--office-floor-1) 0%, var(--office-floor-2) 100%); --owl: clamp(60px, 14cqw, 120px); }
+[data-ui="v2"] .office-table { position: absolute; left: 50%; top: 54%; width: 46%; height: 36%; transform: translate(-50%, -50%); border-radius: 50%; border: 3px solid var(--office-table-edge); background: radial-gradient(closest-side at 50% 36%, var(--office-table-hi), var(--office-table)); box-shadow: 0 10px 0 -2px var(--office-table-edge), 0 26px 28px -10px rgba(40, 25, 15, 0.35); }
+[data-ui="v2"] .office-table::after { content: ""; position: absolute; inset: 14% 16%; border-radius: 50%; border: 2px solid var(--office-table-edge); opacity: 0.35; }
+[data-ui="v2"] .office-seat { position: absolute; left: var(--x); top: var(--y); transform: translate(-50%, -50%); display: flex; flex-direction: column; align-items: center; gap: 2px; width: max-content; max-width: 12rem; }
+[data-ui="v2"] .office-seat[data-agent="main"] { --owl: clamp(68px, 16.5cqw, 140px); }
+[data-ui="v2"] .office-owl { position: relative; width: var(--owl); aspect-ratio: 1 / 1; cursor: pointer; }
+[data-ui="v2"] .office-tag { display: flex; flex-direction: column; align-items: center; min-height: 2.75rem; max-width: 100%; padding: 2px 10px; border: 1px solid var(--v2-border); border-radius: 0.75rem; background: var(--v2-surface); color: var(--v2-ink); text-align: center; line-height: 1.2; box-shadow: var(--v2-shadow); }
+[data-ui="v2"] .office-name { font-size: 0.875rem; font-weight: 600; white-space: nowrap; }
+[data-ui="v2"] .office-state { font-size: 0.875rem; color: var(--v2-muted); white-space: nowrap; }
+[data-ui="v2"] .office-seat[data-agent="main"] .office-tag { border-color: var(--v2-brand); }
+[data-ui="v2"] .office-seat[data-selected="true"] .office-tag { border-color: var(--v2-brand); background: var(--v2-brand); color: var(--v2-on-brand, #fff); }
+[data-ui="v2"] .office-seat[data-selected="true"] .office-state { color: inherit; opacity: 0.9; }
+[data-ui="v2"] .office-seat[data-pose="off"] .office-tag { opacity: 0.85; }
+/* the laptop: seen from behind (the owl faces us, the laptop faces the owl): a dark lid with a lit mark, and a glow on the table */
+[data-ui="v2"] .office-laptop { position: absolute; left: 50%; bottom: -3%; z-index: 2; width: 42%; height: 24%; transform: translateX(-50%); border: 2px solid #1d1f27; border-radius: 9% / 14%; background: linear-gradient(#444955, #2b2e38); box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 18px 6px var(--office-glow); animation: office-glow 1.6s ease-in-out infinite alternate; }
+[data-ui="v2"] .office-laptop::after { content: ""; position: absolute; left: 50%; top: 50%; width: 20%; height: 34%; transform: translate(-50%, -50%); border-radius: 50%; background: var(--office-glow-core); box-shadow: 0 0 8px 2px var(--office-glow-core); }
+@keyframes office-glow { from { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 10px 3px var(--office-glow); } to { box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0 22px 8px var(--office-glow); } }
+@media (prefers-reduced-motion: reduce) {
+  [data-ui="v2"] .office-laptop { animation: none; }
+}
+/* a phone: two rows of owls (Agent OWL in the middle of the far row), the table between them: a grid of three rows, the middle one only the table's height */
+@container (max-width: 519px) {
+  [data-ui="v2"] .office-room { aspect-ratio: auto; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); grid-template-rows: auto 3rem auto; padding: 1rem 0.25rem 0.75rem; --owl: clamp(56px, 21cqw, 96px); }
+  [data-ui="v2"] .office-table { position: relative; left: auto; top: auto; transform: none; grid-column: 2 / span 10; grid-row: 2; align-self: center; width: auto; height: 190%; z-index: 0; }
+  [data-ui="v2"] .office-seat { position: static; transform: none; width: auto; max-width: none; grid-column: var(--pc) / span var(--ps); grid-row: calc(var(--pr) * 2 - 1); z-index: 1; }
+  [data-ui="v2"] .office-seat[data-agent="main"] { --owl: clamp(64px, 25cqw, 108px); }
+  [data-ui="v2"] .office-tag { padding: 2px 3px; }
+  [data-ui="v2"] .office-name, [data-ui="v2"] .office-state { white-space: normal; overflow-wrap: break-word; line-height: 1.15; }
+}

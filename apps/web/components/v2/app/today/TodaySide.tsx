@@ -1,7 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { OwlSvg } from "../owl/OwlSvg";
+import { PlushStill } from "../owl/PlushStill";
+import { StateDot } from "../owl/StateDot";
 import { ago, indiaClock } from "./time";
 import type { AgentRow, StoreVisit, T, TodayData } from "./types";
 
@@ -80,7 +81,7 @@ function statusLine(a: AgentRow, t: T, now: number): string {
 }
 
 /**
- * "Your team" (job AU): the six helpers as owls in their own colours (owl-colors.ts), the name and ONE live status line each, from the helpers' status (`GET /agents/status`): working, switched off, not
+ * "Your team" (job AU): the six helpers as plush owls in their own colours (owl/v3/<agent>/), each with a dot for its state, the name and ONE live status line each, from the helpers' status (`GET /agents/status`): working, switched off, not
  * available, or the last thing the helper did and how long ago. Agent OWL itself is the card above, so it is not repeated here. `team` null (could not be read) says so; the link opens the Office.
  */
 export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] | null; base: string; t: T; now: number }) {
@@ -104,8 +105,11 @@ export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] 
         <ul className="grid grid-cols-2 gap-3 min-[420px]:grid-cols-3">
           {helpers.map((a) => (
             <li key={a.agent} className="flex min-w-0 flex-col items-center gap-1 text-center">
-              <OwlSvg agent={a.agent} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} still className="size-12" />
-              <span className="text-sm font-semibold">{t(`agent.${a.agent}`)}</span>
+              <PlushStill agent={a.agent} px={48} off={a.state !== "working" && a.state !== "idle"} mood={a.state === "working" ? "thinking" : a.state === "idle" ? "idle" : "resting"} className="size-12" />
+              <span className="inline-flex items-center gap-1.5 text-sm font-semibold">
+                <StateDot state={a.state === "working" ? "working" : a.state === "idle" ? "idle" : "off"} />
+                {t(`agent.${a.agent}`)}
+              </span>
               <span className={`line-clamp-2 text-sm leading-snug [overflow-wrap:anywhere] ${a.state === "working" ? "font-semibold text-brand-text" : "text-muted"}`}>{statusLine(a, t, now)}</span>
             </li>
           ))}

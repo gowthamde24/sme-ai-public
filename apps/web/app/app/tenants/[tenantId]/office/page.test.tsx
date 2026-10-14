@@ -18,10 +18,10 @@ vi.mock("@/lib/api/today", async (importOriginal) => ({ ...(await importOriginal
 
 vi.mock("@/lib/api/quotes", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/quotes")>()), fetchQuotes: (...a: unknown[]) => fetchQuotes(...a), fetchQuote: (...a: unknown[]) => fetchQuote(...a) }));
 
-// the device: a weak one, so the List is the first view (the 3D view is tested in OfficeRoom.test.tsx)
-vi.mock("@/components/v2/app/office/scene/capability", async (orig) => ({
-  ...(await orig<typeof import("@/components/v2/app/office/scene/capability")>()),
-  readClientEnv: () => ({ defaultView: "list", weak: true, webgl: false, reducedMotion: false, remembered: null, coarse: false, phone: false }),
+// the device: one that remembers the List, so the List is the first view (the room is tested in OfficeRoom.test.tsx)
+vi.mock("@/components/v2/app/office/view", async (orig) => ({
+  ...(await orig<typeof import("@/components/v2/app/office/view")>()),
+  readClientEnv: () => ({ reducedMotion: false, lite: false, remembered: "list" }),
 }));
 
 import OfficePage from "./page";
@@ -61,7 +61,7 @@ describe("the Office", () => {
     render(await OfficePage(props()));
     expect(screen.getAllByText("Not available yet")).toHaveLength(1);
     expect(screen.queryByRole("list")).toBeNull();
-    expect(screen.queryByRole("button", { name: "3D view" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Office view" })).toBeNull();
   });
   it("sends a rejected session to sign in and a missing workspace to not-found", async () => {
     getAgentsStatus.mockRejectedValue(new ApiAuthError("rejected"));

@@ -63,10 +63,10 @@ vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await 
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
 vi.mock("@/lib/api/suppression", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/suppression")>(), ["fetchSuppressionStatus"]));
 
-// The Office decides on the device which view to draw first (scene/capability.ts); the plain-text snapshot is the List, which every device can show.
-vi.mock("@/components/v2/app/office/scene/capability", async (orig) => ({
-  ...(await orig<typeof import("@/components/v2/app/office/scene/capability")>()),
-  readClientEnv: () => ({ defaultView: "list", weak: true, webgl: false, reducedMotion: false, remembered: null, coarse: false, phone: false }),
+// The Office decides on the device which view to draw first (office/view.ts); the plain-text snapshot is the List, which every device can show.
+vi.mock("@/components/v2/app/office/view", async (orig) => ({
+  ...(await orig<typeof import("@/components/v2/app/office/view")>()),
+  readClientEnv: () => ({ reducedMotion: false, lite: false, remembered: "list" }),
 }));
 
 const DIR = path.join(import.meta.dirname, "__text__");

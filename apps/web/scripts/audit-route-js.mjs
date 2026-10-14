@@ -1,8 +1,7 @@
 // npm run audit:route-js (job CF): the JavaScript budget of EVERY page route, from the build alone. No server, no browser, no network: about a second after `npm run build`.
 // What a route loads on a first visit is the framework's root files (build-manifest.json "rootMainFiles") plus the chunks of every layout, loading, error and page segment on its way (the "entryJSFiles" of the route's
 // page_client-reference-manifest.js); this is the very list Next puts in the page as <script src>, so the sum matches what a phone downloads (checked against a throttled browser run: within 3%). Each file is gzipped at
-// level 9 (the way scripts/audit-budget.mjs and the Stage 0 baseline were measured). The 3D office is loaded with next/dynamic after the first paint (the Agent OWL is the plush owlet since job CI: plain DOM, CSS and a canvas, its pictures are lazy files, not script), so they are NOT in this list; its own
-// ceiling is scripts/audit-3d.mjs and `office3d` in scripts/budget.json.
+// level 9 (the way scripts/audit-budget.mjs and the Stage 0 baseline were measured). The Office is plain DOM and CSS since job CJ (no three.js anywhere: scripts/audit-3d.mjs), so its page is measured like any other. Nothing for it is lazy-loaded with next/dynamic.
 //
 // Budgets: scripts/budget.json "routeJs". An explicit entry for a route wins; otherwise a public route (no /app prefix) is held to `public`, a signed-in route to `app`. Over its budget, exit 1.
 // Change a number only with a reason in the commit (a route that grew on purpose); the owner approves a raise of a ceiling.

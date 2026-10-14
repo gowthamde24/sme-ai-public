@@ -1,6 +1,6 @@
 // The JavaScript every page route loads on a first visit, from the build alone (job CF; used by scripts/audit-route-js.mjs and its test).
 // A route loads the framework's root files (build-manifest.json "rootMainFiles") plus the chunks of every layout, loading, error and page segment on its way (the "entryJSFiles" of the route's
-// page_client-reference-manifest.js): the very list Next puts in the page as <script src>. Chunks that are loaded later with next/dynamic (the 3D owl, the 3D office) are not in it.
+// page_client-reference-manifest.js): the very list Next puts in the page as <script src>. Chunks that are loaded later with next/dynamic are not in it (since job CJ the app has none for the owl or the Office).
 import fs from "node:fs";
 import path from "node:path";
 import zlib from "node:zlib";

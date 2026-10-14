@@ -119,7 +119,7 @@ describe("wings, beak, blink, pointer", () => {
   });
   it("the pointer is read from the owl's box and kept between -1 and 1", () => {
     const box = { left: 100, top: 100, width: 200, height: 200 };
-    expect(pointerLook(100 + 200 * 0.54, 100 + 200 * 0.3, box)).toEqual({ x: 0, y: 0 });
+    expect(pointerLook(100 + 200 * 0.507, 100 + 200 * 0.3, box)).toEqual({ x: 0, y: 0 });
     expect(pointerLook(9999, -9999, box)).toEqual({ x: 1, y: -1 });
   });
 });

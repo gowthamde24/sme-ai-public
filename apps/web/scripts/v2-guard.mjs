@@ -40,17 +40,18 @@ const say = (s) => console.log(s);
 // 1. forbidden paths (test files may change, in their own commits; that is checked by the commit rules, not here)
 const changed = git("diff", "--name-status", `${base}...HEAD`).trim().split("\n").filter(Boolean).map((l) => l.split("\t"));
 const touched = changed.flatMap((c) => c.slice(1));
-// The one exception (job CI follow-up, owner decision): next.config.ts may gain the cache rule for /owl/ (a year, "immutable", the pictures are versioned by folder) and nothing else. It passes only when the diff REMOVES no line and every line it
-// ADDS is the comment, the constant or the rule below; any other change to the file is still forbidden.
+// The one exception (job CI follow-up, owner decision; job CJ moved the folder from /owl/v2/ to /owl/v3/<agent>/): next.config.ts may gain, or re-word the version in, the cache rule for /owl/ (a year, "immutable", the pictures are versioned
+// by folder) and nothing else. It passes only when every line the diff ADDS is the comment, the constant or the rule below, and every line it REMOVES is the comment (the old version's wording); any other change to the file is still forbidden.
 const NEXT_CONFIG = "apps/web/next.config.ts";
+const OWL_COMMENT = /^\/\/ the plush owlets?'s? pictures \(job[^)]*\) live under \/owl\/v\d+\/(<agent>\/)?: .*$/;
 const OWL_CACHE_LINES = [
-  /^\/\/ the plush owlet's pictures \(job CI follow-up\) live under \/owl\/v\d+\/:.*$/,
+  OWL_COMMENT,
   /^const OWL_FILE_CACHE = "public, max-age=31536000, immutable";$/,
   /^\{ source: "\/owl\/:path\*", headers: \[\{ key: "Cache-Control", value: OWL_FILE_CACHE \}\] \},$/,
 ];
 const onlyOwlCacheRule = () => {
   const lines = git("diff", "-U0", `${base}...HEAD`, "--", NEXT_CONFIG).split("\n").filter((l) => /^[+-]/.test(l) && !/^(\+\+\+|---)/.test(l));
-  return lines.length > 0 && lines.every((l) => l.startsWith("+") && OWL_CACHE_LINES.some((r) => r.test(l.slice(1).trim())));
+  return lines.length > 0 && lines.every((l) => (l.startsWith("+") ? OWL_CACHE_LINES : [OWL_COMMENT]).some((r) => r.test(l.slice(1).trim())));
 };
 const bad = touched.filter((p) => FORBIDDEN.some((r) => r.test(p)) && !allowRes.some((r) => r.test(p)) && !/\.test\.tsx?$/.test(p) && !(p === NEXT_CONFIG && onlyOwlCacheRule()));
 say(`forbidden-path diff against ${base}: ${bad.length === 0 ? "empty (ok)" : "NOT EMPTY"}`);
