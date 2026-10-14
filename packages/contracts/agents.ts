@@ -2,7 +2,7 @@
 
 export interface AddFieldIn {
   line?: number | null;
-  field: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms";
+  field: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms" | "application" | "product_type" | "thickness" | "area" | "length" | "width" | "site_location" | "laying";
   value: string;
   quote?: string | null;
 }
@@ -114,7 +114,7 @@ export interface FieldValueOut {
 
 export interface FlagOut {
   kind: "missing" | "low_certainty" | "conflicting";
-  field_key: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms";
+  field_key: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms" | "application" | "product_type" | "thickness" | "area" | "length" | "width" | "site_location" | "laying";
   line_no: number | null;
 }
 
@@ -134,7 +134,7 @@ export interface PageRunOut {
 export interface QuestionOut {
   code: string;
   text: string;
-  field_key: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms";
+  field_key: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms" | "application" | "product_type" | "thickness" | "area" | "length" | "width" | "site_location" | "laying";
   line_no: number | null;
 }
 
@@ -147,7 +147,7 @@ export interface RequirementActionOut {
 export interface RequirementFieldOut {
   id: string;
   line_no: number | null;
-  field_key: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms";
+  field_key: "saree_type" | "fabric" | "colour" | "quantity" | "budget" | "deadline" | "delivery_city" | "payment_terms" | "application" | "product_type" | "thickness" | "area" | "length" | "width" | "site_location" | "laying";
   value: FieldValueOut;
   display: string;
   certainty: "stated" | "implied" | "ambiguous";

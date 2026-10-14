@@ -7,6 +7,7 @@ import copy
 import io
 import json
 import uuid
+from collections.abc import Callable
 from typing import Any
 
 import pytest
@@ -439,11 +440,11 @@ def test_a_request_the_calculator_rejects_is_a_422_with_its_code_and_nothing_is_
         built["request"]["laying"] = True
         return built
 
-    cf.build_worked = with_laying  # type: ignore[assignment]
+    cf.build_worked = with_laying
     try:
         r = client.post(url(f"/materials/requirements/{REQ}/quotes"), json={"quote_id": str(U(int=0xB3)), "picks": PICKS}, headers=auth("a_owner"))
     finally:
-        cf.build_worked = original  # type: ignore[assignment]
+        cf.build_worked = original
     assert r.status_code == 422 and r.json()["error"]["code"] == "quote_not_computable" and r.json()["error"]["reason"] == "LAYING_RATE_MISSING"
     assert "quote_draft" not in fake.names()
 
@@ -564,7 +565,8 @@ def test_trips_are_planned_listed_and_read_by_owner_admin_and_sales_but_not_a_vi
     assert client.get(url("/trips?date=2026-10-20&status=planned"), headers=auth("a_admin")).status_code == 200
     detail = client.get(url(f"/trips/{tid}"), headers=auth("a_sales")).json()
     assert detail["events"] == [{"seq": 1, "from_status": None, "to_status": "planned", "problem_code": None, "recorded_at": "2026-10-14T09:00:00Z"}]
-    for call in (lambda h: client.post(url(f"/orders/{ORDER}/trips"), json=plan_body(U(int=0xE2)), headers=h), lambda h: client.get(url(f"/trips/{tid}"), headers=h), lambda h: client.get(url("/trips"), headers=h)):
+    calls: list[Callable[[dict[str, str]], Any]] = [lambda h: client.post(url(f"/orders/{ORDER}/trips"), json=plan_body(U(int=0xE2)), headers=h), lambda h: client.get(url(f"/trips/{tid}"), headers=h), lambda h: client.get(url("/trips"), headers=h)]
+    for call in calls:
         assert call(auth("a_viewer")).status_code == 403
         assert call(auth("b_owner")).status_code == 404
         assert call({}).status_code == 401
@@ -572,7 +574,8 @@ def test_trips_are_planned_listed_and_read_by_owner_admin_and_sales_but_not_a_vi
 
 def test_a_trip_body_is_closed_and_validated_before_the_database() -> None:
     client, _ = make_client(deliveries=FakeDeliveries())
-    for bad in ({"vehicle_no": "ab"}, {"driver_phone": "call me"}, {"lines": []}, {"lines": [{"line_no": 1, "quantity": 0}]}, {"lines": [{"line_no": 9, "quantity": 1}]}, {"planned_date": "soon"}, {"status": "delivered"}, {"challan_no": 5}):
+    bad_bodies: list[dict[str, Any]] = [{"vehicle_no": "ab"}, {"driver_phone": "call me"}, {"lines": []}, {"lines": [{"line_no": 1, "quantity": 0}]}, {"lines": [{"line_no": 9, "quantity": 1}]}, {"planned_date": "soon"}, {"status": "delivered"}, {"challan_no": 5}]
+    for bad in bad_bodies:
         r = client.post(url(f"/orders/{ORDER}/trips"), json=plan_body(U(int=0xE3), **bad), headers=auth("a_owner"))
         assert r.status_code == 422, (bad, r.text)
 

@@ -28,6 +28,7 @@ class RunTask:
     run_id: uuid.UUID
     token: str = field(repr=False)
     agent: str = "selftest"
+    version: str = ""  # a variant (requirement, materials); empty: the default
 
 
 class RunSubmitter(Protocol):

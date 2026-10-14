@@ -19,7 +19,7 @@ This writes `packages/packs/clinics/pack.json` as a `draft` that already passes 
 
 | Part | What to decide | Rules the checker enforces |
 | --- | --- | --- |
-| `modules` | which of the 25 in `packages/packs/modules.json` are ON; everything else is OFF | every code is in `modules.json`; `core_tab` is one of them |
+| `modules` | which of the 26 in `packages/packs/modules.json` are ON; everything else is OFF | every code is in `modules.json`; `core_tab` is one of them |
 | `labels` | the words, from the CLOSED list in `packages/packs/labels.json` (40 keys); English carries all of them, te, hi and kn may be partial | no key outside the list; mark `language_review` `draft` until a native reader has read it |
 | `units` | the selling units the catalogue offers (`sq_ft`, `sq_m`, `piece`, `box`, `bag`, `tonne`, `cft`, `truckload`, `set`) | a pack with the `catalogue` module needs units and a default; one without needs none |
 | `custom_fields` | extra fields on contacts and catalogue items | at most 20 per entity; unique codes; class `none` only (a child's data is never a custom field on a contact); no field the lawyer has not cleared |
@@ -48,3 +48,16 @@ The web needs no change to **show** a new type: the sign-up cards come from `GET
 * the pack is a **suggestion of words and switches**, not a rule engine: prices, tax and terms come from the owner and the accountant;
 * removing the example data is one button; real rows are never touched;
 * moving a business between packs later is an operator act with a dry-run diff, not a button (ADR 0084 part 1).
+
+## 6. What a new pack can reuse today (job CN)
+
+Before you write a new module, check whether one of these fits. They are generic and switched on by a pack, never by its name:
+
+| Module | What it gives | Used by |
+| --- | --- | --- |
+| `materials` | items by area, pallet or unit with the owner's own GST rate and HSN; the owner's quoting rules (wastage, freight, laying); the deterministic calculator and material quotes; the materials requirement fields and analyst | construction materials |
+| `sites` | a customer has many sites (address, PIN, map pin, distance, access notes, a site contact) | construction materials |
+| `deliveries` | trips against an order, status, proof of delivery, delivery note, a trip update through the outbox | construction materials |
+| `dues` | invoices, payments, FIFO allocation, ageing, a credit limit and a credit warning | construction materials (the shared ledger of job CP generalises it) |
+
+A pack that sells by area or weight and delivers by truck (bricks, tiles, steel, timber, sanitary ware) is only a new pack file plus the owner's numbers. A business with no such need (a clinic, a school) switches none of them on; they are refused in the database for it.

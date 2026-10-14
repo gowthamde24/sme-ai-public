@@ -35,7 +35,8 @@ from app.agents.llm.openai_compat import (
     sarvam_config,
 )
 from app.agents.llm.routing import ModelRouter
-from app.agents.registry import AGENTS
+from app.agents.registry import spec_for
+from app.agents.requirement_materials import VERSION as REQUIREMENT_MATERIALS_VERSION
 from app.agents.runtime import AgentRunner
 from app.assistant.db import AssistantDb
 from app.assistant.dev_model import DevAssistantModel
@@ -291,7 +292,7 @@ def build_agents_runtime(settings: Settings, config: AuthConfig) -> AgentsRuntim
     fixtures = research_fixture_root(settings)
 
     def execute(task: RunTask) -> None:
-        spec = AGENTS.get(task.agent)
+        spec = spec_for(task.agent, task.version)
         if spec is None:
             return  # an agent this process does not know: nothing runs (the run expires)
         db = AgentDb(
@@ -314,7 +315,9 @@ def build_agents_runtime(settings: Settings, config: AuthConfig) -> AgentsRuntim
             elif spec.target_kind == "enquiry":
                 # the scripted model under the fake provider (development only); else the adapter
                 llm = (
-                    FakeProvider(requirement_script())
+                    FakeProvider(
+                        requirement_script(materials=spec.version == REQUIREMENT_MATERIALS_VERSION)
+                    )
                     if settings.llm_provider == "fake"
                     else factory()
                 )

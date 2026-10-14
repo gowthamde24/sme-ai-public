@@ -48,7 +48,8 @@ def url(tenant: Any, tail: str) -> str:
 
 # ============================================================================================================ the pack rows are the pack files
 def test_the_pack_rows_in_the_database_are_byte_for_byte_the_pack_files(stack: Stack) -> None:
-    rows = operator_sql.sql("select code || '|' || version || '|' || status || '|' || is_default::text || '|' || manifest_sha256 from packs.pack_versions order by code, version").splitlines()
+    # the files hold each pack's CURRENT version; an older, synced version stays in the database (a synced version is never edited), so only the latest of each pack is compared
+    rows = operator_sql.sql("select code || '|' || version || '|' || status || '|' || is_default::text || '|' || manifest_sha256 from packs.pack_versions v where version = (select max(version) from packs.pack_versions x where x.code = v.code) order by code, version").splitlines()
     packs = pc.load_packs()
     want = sorted(f"{p['id']}|{p['version']}|{p['status']}|{str(bool(p.get('default_for_existing_workspaces'))).lower()}|{pm.manifest_sha256(pm.manifest_of(p))}" for p in packs.values())
     assert sorted(rows) == want
@@ -83,7 +84,7 @@ def test_a_workspace_made_through_the_api_runs_todays_textile_behaviour(eval_wor
     assert body["units"] == ["piece", "set"] and body["core_tab"] == "quotes" and len(body["modules"]) == 17
     mods = w.client.get(url(a, "/modules"), headers=bearer(owner))
     conforms(mods.json(), "WorkspaceModulesOut")
-    assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 17 and len(mods.json()["modules"]) == 25
+    assert sum(1 for m in mods.json()["modules"] if m["enabled"]) == 17 and len(mods.json()["modules"]) == 26
     assert w.client.get(url(a, "/custom-fields"), headers=bearer(owner)).json() == {"fields": []}
     for role in ("admin", "sales", "viewer"):
         assert w.client.get(url(a, "/pack"), headers=bearer(a.users[role])).status_code == 200, role

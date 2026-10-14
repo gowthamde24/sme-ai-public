@@ -56,7 +56,8 @@ class CaptureOut(_Strict):
 
 # ----------------------------------------------------------------------------- the requirement of an enquiry
 FieldKey = Literal[
-    "saree_type", "fabric", "colour", "quantity", "budget", "deadline", "delivery_city", "payment_terms"
+    "saree_type", "fabric", "colour", "quantity", "budget", "deadline", "delivery_city", "payment_terms",
+    "application", "product_type", "thickness", "area", "length", "width", "site_location", "laying",
 ]  # fmt: skip
 Certainty = Literal["stated", "implied", "ambiguous"]
 FieldState = Literal["proposed", "confirmed", "corrected", "rejected"]

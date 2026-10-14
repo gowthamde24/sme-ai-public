@@ -43,11 +43,13 @@ from app.agents.inputs import (
     input_sha256,
     model_input_from_company,
 )
-from app.agents.registry import AGENTS
+from app.agents.registry import AGENTS, VARIANTS
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import CursorError, Page, decode_cursor, parse_uuid
+from app.enquiries.profile import profile_of
 from app.errors import ApiError, not_found
 from app.leads.scoring import scored_attributes
+from app.requirements.profile import MATERIALS
 from app.tenancy.models import Role
 
 logger = logging.getLogger("app.agent_runs.routes")
@@ -134,6 +136,10 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     if not agents.executor.has_capacity():
         raise ApiError(503, "agents_busy", "Agents are busy. Try again shortly.")
     spec = AGENTS[body.agent]
+    if spec.target_kind == "enquiry":
+        profile = profile_of(runtime.packs, ctx.principal.token, ctx.tenant.id)
+        if profile == MATERIALS:  # the requirement agent of a building-materials workspace
+            spec = next((v for (name, _), v in VARIANTS.items() if name == spec.name), spec)
     # the requirement agent works on an enquiry and every other agent on a company or a lead: a
     # mismatch is refused BEFORE the run exists
     if (spec.target_kind == "enquiry") != (body.target_kind == "enquiry"):
@@ -170,7 +176,12 @@ def start_run(body: RunStart, ctx: SalesPlus, runtime: RuntimeDep, response: Res
     if not started.replayed:
         try:
             agents.executor.submit(
-                RunTask(run_id=started.run_id, token=ctx.principal.token, agent=spec.name)
+                RunTask(
+                    run_id=started.run_id,
+                    token=ctx.principal.token,
+                    agent=spec.name,
+                    version=spec.version,
+                )
             )
         except ExecutorBusy:
             logger.warning("agent run %s could not be queued; cancelling it", started.run_id)

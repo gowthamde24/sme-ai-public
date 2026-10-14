@@ -17,7 +17,8 @@ SCHEMA = json.loads((CONTRACTS / "materials.schema.json").read_text())
 
 
 def definition(name: str) -> dict[str, Any]:
-    return SCHEMA["$defs"][name]
+    found: dict[str, Any] = SCHEMA["$defs"][name]
+    return found
 
 
 def test_the_schema_and_the_typescript_are_up_to_date() -> None:

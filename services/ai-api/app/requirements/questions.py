@@ -103,6 +103,14 @@ def _render(flag: Flag, fields: list[FieldView], multi: bool) -> Question:
     return Question(code=code, text=text, key=key, line=line)
 
 
-def derive_questions(fields: list[FieldView], assessment: Assessment) -> list[Question]:
+def derive_questions(fields: list[FieldView], assessment: Assessment, profile: str = "saree") -> list[Question]:
     multi = len(assessment.lines) > 1
+    if profile == "materials":
+        from app.requirements import materials
+
+        out = []
+        for flag in assessment.flags:
+            code, text = materials.render_question(flag, fields, multi)
+            out.append(Question(code=code, text=text, key=flag.key, line=flag.line))
+        return out
     return [_render(flag, fields, multi) for flag in assessment.flags]

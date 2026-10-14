@@ -10,7 +10,8 @@ const file = path.resolve(import.meta.dirname, "../../../../packages/quote-engin
 const doc = JSON.parse(readFileSync(file, "utf-8")) as { engine_version: string; vectors: Vector[] };
 
 function withoutHash(x: Record<string, unknown>): Record<string, unknown> {
-  const { canonical_hash: _ignored, ...rest } = x;
+  const rest = { ...x };
+  delete rest.canonical_hash;
   return rest;
 }
 
