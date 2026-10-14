@@ -279,8 +279,9 @@ async function checkWorkspace(u, label, { offPath }) {
     await page.getByRole("button", { name: "Add this customer" }).click();
     if (!withCompanies) {
       // this business type has no companies, and the form makes a company first: it says so in one sentence (not "your role cannot"), and nothing is made. The parents and students form is job CR/CS.
-      await page.getByRole("alert").waitFor({ timeout: 60000 });
-      must(/does not use this form/.test(await page.getByRole("alert").innerText()), `the sentence is "${await page.getByRole("alert").innerText()}"`);
+      const alert = page.locator("form [role=alert]"); // not the framework's own empty route announcer
+      await alert.waitFor({ timeout: 60000 });
+      must(/does not use this form/.test(await alert.innerText()), `the sentence is "${await alert.innerText()}"`);
       must(psql(`select count(*) from public.contacts where tenant_id = '${u.tenant}' and full_name = 'E2E ${label} Customer'`) === "0", "a contact was made");
       await shot(page, `${label}-custom-field-no-companies`);
       return "the field is on the form; the form is switched off for a business type with no companies (said plainly)";
