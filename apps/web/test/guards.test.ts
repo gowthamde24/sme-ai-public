@@ -479,11 +479,19 @@ describe("sign-up is open only through the one signUp action, and the page stays
     for (const file of code) expect(read(file), rel(file)).not.toMatch(/signInWithOtp|shouldCreateUser|admin\.createUser/);
   });
 
-  it("no component injects raw HTML or an inline script", () => {
+  it("no component injects raw HTML or an inline script (the one exception: schema.org data, a JSON script that is data and never runs)", () => {
+    // Job CM: components/v2/site/JsonLd.tsx writes `<script type="application/ld+json">` for search engines. React would HTML-escape JSON given as a child, so it is set as text with `<` escaped.
+    const jsonLd = path.join("components", "v2", "site", "JsonLd.tsx");
     for (const file of code) {
+      if (rel(file) === jsonLd) continue;
       expect(read(file), rel(file)).not.toMatch(/dangerouslySetInnerHTML/);
       expect(read(file), rel(file)).not.toMatch(/<script[\s>]/);
     }
+    const own = read(path.join(WEB_ROOT, jsonLd)).split("\n").filter((l) => !/^\s*(\/\/|\*|\/\*)/.test(l)).join("\n");
+    expect((own.match(/dangerouslySetInnerHTML/g) ?? []).length).toBe(1);
+    expect((own.match(/<script[\s>]/g) ?? []).length).toBe(1);
+    expect(own).toMatch(/<script type="application\/ld\+json"/);
+    expect(own).toMatch(/replace\(\/<\/g/);
   });
 
   it("only the confirm, forgot and security flows talk to the Auth server's factor and recovery endpoints", () => {

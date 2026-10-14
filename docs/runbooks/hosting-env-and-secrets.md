@@ -171,6 +171,8 @@ The web has **no server secret**: everything it needs is public. The `NEXT_PUBLI
 | `NEXT_PUBLIC_SITE_URL` | plain | BUILD | `https://app.<domain>`: the address the pages are served from (sitemap, share pictures). Without it the build says `http://localhost:3000`. |
 | `NEXT_PUBLIC_SITE_LIVE` | plain | BUILD | `0`/unset until the public launch: every page says noindex and robots.txt turns crawlers away. `1` is the launch switch. |
 | `SIGNUP_MAX_PER_HOUR` | plain | RUN | Default 5. A brake in one server instance's memory. |
+| `STACK19_WHATSAPP` | plain | RUN | Job CM: OUR OWN WhatsApp number (digits with the country code, for example `919876543210`), for the public site's contact form and the calculator's "Get exact quote on WhatsApp". It is a public number, read on the server only (not `NEXT_PUBLIC_`, so it is not in any page's HTML until a visitor has ticked consent and asked for the chat). Unset: the pages say chat is not set up and show no button. |
+| `SITE_LEAD_MAX_PER_HOUR` | plain | RUN | Job CM: how many times one address may ask for that chat in an hour (default 10). A brake in one server instance's memory, like `SIGNUP_MAX_PER_HOUR`. |
 | `TZ` | plain | RUN | Optional `Asia/Kolkata`. The screens format times in India time explicitly, so it is a belt, not a need. |
 | `PUBLIC_LAUNCH_REQUIRES_REVIEWED` | plain | BUILD | Optional. Set to `1` on the build to FAIL it while any translation is still a draft (the owner's launch gate). |
 | `NODE_ENV` | plain | RUN | `production`, set by `next start` and the Dockerfile. It makes the session cookie `Secure`. |

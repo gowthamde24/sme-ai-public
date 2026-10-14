@@ -1,3 +1,5 @@
+import path from "node:path";
+
 import type { NextConfig } from "next";
 
 import { securityHeaders } from "./lib/security/headers";
@@ -11,6 +13,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   // job CL: `forbidden()` (a 403 page for a part the business type does not have, app/app/tenants/[tenantId]/template.tsx) is Next.js 16 experimental and off until asked for
   experimental: { authInterrupts: true },
+  // job CM: the public paver calculator imports the quote engine's TypeScript (packages/quote-engine/ts, one level above this app, alias @quote-engine/construction); the bundler only reads files inside its root, so the root is the repository
+  turbopack: { root: path.resolve(import.meta.dirname, "../..") },
   async headers() {
     return [
       {

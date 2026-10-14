@@ -47,6 +47,9 @@ const T = `/app/tenants/${TENANT}`;
 // `tap` is what a person touches first on the page: the interaction whose delay (INP) is measured
 const ROUTES = [
   { id: "landing", label: "Landing (/)", path: "/", signedIn: false, tap: "button" },
+  // job CM: a business type's page (it carries the calculator) and the pricing page, in the same cold-phone conditions; the tap is the first button or link
+  { id: "construction", label: "Business type (/construction)", path: "/construction", signedIn: false, tap: "summary" },
+  { id: "pricing", label: "Pricing (/pricing)", path: "/pricing", signedIn: false, tap: "summary" },
   { id: "signin", label: "Sign-in (/login)", path: "/login", signedIn: false, tap: "input" },
   { id: "today", label: "Today", path: T, signedIn: true, tap: '[data-notify="bell"]' },
   { id: "outbox", label: "Outbox", path: `${T}/outbox`, signedIn: true, tap: '[data-notify="bell"]' },

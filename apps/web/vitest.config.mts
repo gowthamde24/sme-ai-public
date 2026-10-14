@@ -12,7 +12,7 @@ process.env.TZ = "Asia/Kolkata";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: { "@": path.resolve(import.meta.dirname) },
+    alias: { "@": path.resolve(import.meta.dirname), "@quote-engine/construction": path.resolve(import.meta.dirname, "../../packages/quote-engine/ts/construction.ts") },
   },
   test: {
     environment: "jsdom",

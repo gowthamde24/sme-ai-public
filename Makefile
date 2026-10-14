@@ -1,4 +1,4 @@
-.PHONY: packs-check pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -54,6 +54,10 @@ secret-scan:
 packs-check:
 	$(PY)/python scripts/packs_check.py
 	$(PY)/python scripts/pack_migration.py --check
+	node $(WEB)/scripts/site-packs.mjs --check   # job CM: the public site's copy of the landing blocks is fresh (`make site-packs` writes it)
+
+site-packs:
+	node $(WEB)/scripts/site-packs.mjs
 
 pack-migration:
 	$(PY)/python scripts/pack_migration.py
@@ -303,6 +307,12 @@ visual:
 
 visual-update:
 	node e2e/visual/run.mjs --update $(ARGS)
+
+# Job CM: pictures of the public website (home, the three business types, pricing, how it works, security, contact, help; English, and Telugu/Hindi/Kannada for a few), light and dark, laptop and 390 px phone, from the real web
+# app with no backend (the public pages need none) and a made-up WhatsApp number for the chat forms; it also checks the calculator, the language switch and the menu. OPT-IN, never in make check. Port 3016.
+#   make site-shots ARGS="--no-build --out /some/folder"
+site-shots:
+	node e2e/cm-shots.mjs $(ARGS)
 
 # Job CL: pictures of the three business types (sign-up steps, Today, the phone's bar, Customers, Settings -> Fields, Start, Fees, Office, the 403 page), light and dark, laptop and 390 px phone, on the same invented
 # backend; it also checks the menu of each business type and that a part a business type does not have answers 403 (typed address and a move inside the app). OPT-IN, never in make check. Ports 54999 and 3016.

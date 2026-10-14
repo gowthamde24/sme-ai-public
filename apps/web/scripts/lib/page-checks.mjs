@@ -91,7 +91,7 @@ export const STRUCTURE = `(() => { ${HELPERS}
   info.ogImage = !!document.querySelector('meta[property="og:image"]'); info.jsonLd = document.querySelectorAll('script[type="application/ld+json"]').length;
   if (!document.title.trim()) problems.push('empty title');
   if (!/noindex/.test(info.robots || '')) problems.push('robots meta is not noindex: ' + info.robots);
-  if (!info.ogImage) problems.push('no og:image (the share picture, job BS)'); if (!document.querySelector('meta[name="twitter:card"]')) problems.push('no twitter:card'); if (!document.querySelector('link[rel="canonical"]')) problems.push('no canonical link'); if (document.querySelectorAll('link[rel="alternate"][hreflang]').length < 4) problems.push('fewer than four hreflang alternates'); if (info.jsonLd) problems.push('JSON-LD present');
+  if (!info.ogImage) problems.push('no og:image (the share picture, job BS)'); if (!document.querySelector('meta[name="twitter:card"]')) problems.push('no twitter:card'); if (!document.querySelector('link[rel="canonical"]')) problems.push('no canonical link'); if (document.querySelectorAll('link[rel="alternate"][hreflang]').length < 4) problems.push('fewer than four hreflang alternates'); for (const ld of document.querySelectorAll('script[type="application/ld+json"]')) { try { const j = JSON.parse(ld.textContent); if (!/schema\.org/.test(j['@context'] || '')) problems.push('JSON-LD without a schema.org context'); } catch (e) { problems.push('JSON-LD is not valid JSON'); } }
   return { problems, info };
 })()`;
 
@@ -148,7 +148,7 @@ export const LAYOUT = `(() => { ${HELPERS}
   const flow = [...document.querySelectorAll('[data-flow]')].find(vis);
   const card = flow && flow.querySelector('[data-card="0"]');
   const first = (e) => { if (!e) return null; const r = e.getBoundingClientRect(); return Math.round(r.bottom); };
-  return { viewportW: w, viewportH: h, docScrollWidth: doc, offenders: offenders.slice(0, 6), h1Bottom: first(document.querySelector('h1')), ctaBottom: first(document.querySelector('main a[href="/signup"]')), cardBottom: first(document.querySelector('#shop h2')), mode: flow ? flow.getAttribute('data-mode') : 'page' };
+  return { viewportW: w, viewportH: h, docScrollWidth: doc, offenders: offenders.slice(0, 6), h1Bottom: first(document.querySelector('h1')), ctaBottom: first(document.querySelector('main a[href="/signup"]')), pageKind: (document.querySelector('[data-page]') || { getAttribute: () => null }).getAttribute('data-page'), cardBottom: first(document.querySelector('#shop h2')), mode: flow ? flow.getAttribute('data-mode') : 'page' };
 })()`;
 
 /** One tab stop: what has focus and how it looks. */
@@ -166,7 +166,12 @@ export const FOCUS_STATE = `(() => { ${HELPERS}
 })()`;
 
 export const FOCUSABLE_COUNT = `(() => { ${HELPERS}
-  return [...document.querySelectorAll('a[href],button:not(:disabled),select,input:not([type=hidden]):not(:disabled),textarea,summary,[tabindex="0"]')].filter((e) => vis(e) && !srOnly(e) && !e.closest('[inert]')).length;
+  return [...document.querySelectorAll('a[href],button:not(:disabled),select,input:not([type=hidden]):not(:disabled),textarea,summary,[tabindex="0"]')].filter((e) => vis(e) && !srOnly(e) && !e.closest('[inert]') && !e.closest('details:not([open]) > :not(summary)')).length;
+})()`;
+
+/** The names of those same controls (as FOCUS_STATE names a stop), so a run can say WHICH ones the Tab key did not reach. */
+export const FOCUSABLE_NAMES = `(() => { ${HELPERS}
+  return [...document.querySelectorAll('a[href],button:not(:disabled),select,input:not([type=hidden]):not(:disabled),textarea,summary,[tabindex="0"]')].filter((e) => vis(e) && !srOnly(e) && !e.closest('[inert]') && !e.closest('details:not([open]) > :not(summary)')).map((e) => label(e));
 })()`;
 
 /** Which animated properties exist right now (running CSS animations and transitions). */

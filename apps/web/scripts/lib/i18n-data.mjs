@@ -9,8 +9,8 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "
 export const STRINGS_DIR = path.join(ROOT, "i18n/strings");
 export const LANGS = ["te", "hi", "kn"];
 export const LANG_NAMES = { te: "Telugu", hi: "Hindi", kn: "Kannada" };
-/** The string sets carried so far (landing, login, and app: the workspace frame). New sets are added with the stage that uses them. */
-export const SETS = ["landing", "login", "app"];
+/** The string sets carried so far (site: the public website (job CM, it replaced the one-page "landing" set), login, and app: the workspace frame). New sets are added with the stage that uses them. */
+export const SETS = ["site", "login", "app"];
 
 export function loadSets(dir = STRINGS_DIR) {
   const out = {};
@@ -63,22 +63,23 @@ export function countStatus(sets) {
 }
 
 // ------------------------------------------------------------------ where a string appears
-const LANDING = [
-  [/^skip$/, "Landing page: skip link"],
-  [/^(lang|theme)\./, "Landing page: header, language and theme buttons"],
-  [/^nav\./, "Landing page: header menu"],
-  [/^hero\./, "Landing page: top section (hero)"],
-  [/^(anim|flow|card)\./, "Landing page: the moving flow strip under the hero"],
-  [/^problem\./, "Landing page: \"does this happen to you\" section"],
-  [/^(how|step)\./, "Landing page: how it works (six steps)"],
-  [/^(control|ctl|life)\./, "Landing page: you stay in control"],
-  [/^(team|role)\./, "Landing page: the team"],
-  [/^langs\./, "Landing page: languages"],
-  [/^(privacy|priv)\./, "Landing page: privacy"],
-  [/^early\./, "Landing page: early access box"],
-  [/^faq\./, "Landing page: questions and answers"],
-  [/^foot\./, "Landing page: footer"],
-  [/^meta\./, "Landing page: browser tab title and search description"],
+const SITE = [
+  [/^(skip|page\.)/, "Website: skip link and page names"],
+  [/^(lang|theme)\./, "Website: header, language and theme buttons"],
+  [/^nav\./, "Website: header menu"],
+  [/^hero\./, "Website: home page, top section (hero)"],
+  [/^(packs|owls?)\./, "Website: home page, the business cards and the owl team"],
+  [/^(steps?|trust|teaser|cta)\./, "Website: home page, steps, trust, pricing teaser and call to action"],
+  [/^faq\./, "Website: questions and answers"],
+  [/^price\./, "Website: pricing page"],
+  [/^how\./, "Website: how it works page"],
+  [/^sec\./, "Website: security page"],
+  [/^contact\./, "Website: contact page"],
+  [/^help\./, "Website: help page"],
+  [/^calc\./, "Website: the paver calculator"],
+  [/^preview\./, "Website: the WhatsApp preview"],
+  [/^foot\./, "Website: footer"],
+  [/^(meta|draft)\./, "Website: browser tab titles, search descriptions and the machine-translation note"],
 ];
 const LOGIN = [
   [/^(skip|home|lang|theme)/, "Login page: header and links"],
@@ -89,7 +90,7 @@ const LOGIN = [
   [/^meta\./, "Login page: browser tab title and search description"],
 ];
 export function whereIs(set, key) {
-  const table = { landing: LANDING, login: LOGIN }[set];
+  const table = { site: SITE, landing: SITE, login: LOGIN }[set];
   return table?.find(([re]) => re.test(key))?.[1] ?? `${set}`;
 }
 
@@ -139,14 +140,14 @@ export function sensitivityNote(en) {
   return notes.length ? `OWNER/LEGAL-SENSITIVE (${notes.join("; ")}): final wording must match the CA/lawyer's view` : "";
 }
 
-/** What a visitor sees on the landing and sign-in pages (everything carried so far). */
-export const isFirstPass = (set, key) => (set === "landing" || set === "login") && typeof key === "string";
+/** What a visitor sees on the website and the sign-in pages (everything carried so far). */
+export const isFirstPass = (set, key) => (set === "site" || set === "landing" || set === "login") && typeof key === "string";
 
 export const REVIEW_HEADER = ["key", "language", "where it appears", "English", "current text", "new draft", "owner-edit", "status"];
 
 /**
  * previous: optional { set: { key: { te, hi, kn } } } snapshot of the text before the register change.
- * firstPass: only what a visitor sees on landing + sign-in, each string's three languages side by side.
+ * firstPass: only what a visitor sees on the website + sign-in, each string's three languages side by side.
  * An extra last column "note" flags owner/legal-sensitive wording; the importer ignores it.
  */
 export function buildReviewCsv(sets, previous = {}, { firstPass = false } = {}) {
@@ -156,8 +157,8 @@ export function buildReviewCsv(sets, previous = {}, { firstPass = false } = {}) 
     return csvLine([`${set}.${key}`, lang, whereIs(set, key), entry.en, prev ?? entry[lang], entry[lang], "", entry.status?.[lang] ?? "draft", sensitivityNote(entry.en)]);
   };
   if (firstPass) {
-    for (const set of ["landing", "login"]) {
-      for (const [key, entry] of Object.entries(sets[set])) {
+    for (const set of ["site", "login"]) {
+      for (const [key, entry] of Object.entries(sets[set] ?? {})) {
         if (!isFirstPass(set, key)) continue;
         for (const lang of langsOf(entry)) lines.push(row(set, key, lang, entry));
       }
@@ -196,7 +197,7 @@ export function applyReviewCsv(sets, csvText) {
         continue;
       }
       entry[lang] = edit;
-      if (entry.only && entry.only.length) for (const l of ["en", "te", "hi", "kn"]) if (set === "landing") entry[l] = edit;
+      if (entry.only && entry.only.length) for (const l of ["en", "te", "hi", "kn"]) if (set === "site" || set === "landing") entry[l] = edit;
       entry.status[lang] = "reviewed";
       changed++;
     } else if (status === "reviewed" && entry.status[lang] !== "reviewed") {

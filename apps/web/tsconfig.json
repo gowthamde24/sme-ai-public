@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"],
-      "@contracts": ["../../packages/contracts/index.ts"]
+      "@contracts": ["../../packages/contracts/index.ts"],
+      "@quote-engine/construction": ["../../packages/quote-engine/ts/construction.ts"]
     }
   },
   "include": [

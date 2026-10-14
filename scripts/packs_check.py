@@ -10,6 +10,7 @@ What it proves (also run as a unit test, services/ai-api/tests/test_ck_packs_dat
   * a pack with a catalogue offers units, one without offers none; the core tab is one of the pack's modules
   * custom fields: at most 20 per entity, unique codes, choices unique, catalogue-item fields only where the pack has a catalogue
   * example data: the keys resolve, a sample contact has no phone or e-mail, and nothing needs a module the pack does not have
+  * a landing.json next to a pack.json (the public page of the business type, job CM) is valid against landing.schema.json and its own rules (slug, blocks, four languages, no price)
   * NO PACK ID IN CODE: no string literal equal to a pack id in the API's application code or in the web's non-test code (modules are the only extension point)
 """
 
@@ -131,6 +132,67 @@ def check_pack(name: str, pack: dict[str, Any], modules: dict[str, bool], keys: 
     return errs
 
 
+# The first path segments the web app already owns (job CM): a business type's public address must not take one of them.
+RESERVED_SLUGS = frozenset({"app", "api", "auth", "login", "signup", "setup", "landing", "privacy", "terms", "pricing", "how-it-works", "security", "contact", "help", "te", "hi", "kn", "en", "og", "owl", "icons", "offline", "sitemap", "robots", "manifest", "favicon", "_next"})
+LANDING_LANGS = ("en", "te", "hi", "kn")
+
+
+def _landing_texts(node: Any) -> list[dict[str, Any]]:
+    """Every {en, te, hi, kn} text object inside a landing file."""
+    if isinstance(node, dict):
+        if "en" in node and isinstance(node["en"], str):
+            return [node]
+        return [t for v in node.values() for t in _landing_texts(v)]
+    if isinstance(node, list):
+        return [t for v in node for t in _landing_texts(v)]
+    return []
+
+
+def check_landing(packs: dict[str, dict[str, Any]], packs_dir: Path = PACKS) -> list[str]:
+    """The public page of a business type (job CM): packages/packs/<id>/landing.json against landing.schema.json, plus the rules a schema cannot say. A pack without a landing.json has no public page (not an error)."""
+    schema_file = packs_dir / "landing.schema.json"
+    if not schema_file.is_file():
+        return []
+    import jsonschema  # a dev dependency; the runtime never imports this module
+
+    schema = load_json(schema_file)
+    errs: list[str] = []
+    slugs: dict[str, str] = {}
+    for name in packs:
+        file = packs_dir / name / "landing.json"
+        if not file.is_file():
+            continue
+        landing = load_json(file)
+        validator = jsonschema.Draft202012Validator(schema)
+        found = [f"{name}/landing.json: schema: {'/'.join(str(p) for p in e.absolute_path) or '(root)'}: {e.message[:160]}" for e in sorted(validator.iter_errors(landing), key=lambda e: list(e.absolute_path))]
+        errs.extend(found)
+        if found:
+            continue
+        if landing["pack"] != name:
+            errs.append(f"{name}/landing.json: `pack` must equal the folder name ({landing['pack']!r})")
+        slug = landing["slug"]
+        if slug in RESERVED_SLUGS:
+            errs.append(f"{name}/landing.json: the address /{slug} belongs to another page of the site")
+        if slug in slugs:
+            errs.append(f"{name}/landing.json: the address /{slug} is also used by {slugs[slug]}")
+        slugs[slug] = name
+        if "calculator" in landing and "quotes" not in packs[name].get("modules", []):
+            errs.append(f"{name}/landing.json: the calculator block needs the pack to have the quotes module")
+        if "fee_preview" in landing and "fees" not in packs[name].get("modules", []):
+            errs.append(f"{name}/landing.json: the fee_preview block needs the pack to have the fees module")
+        texts = _landing_texts({k: v for k, v in landing.items() if k not in ("$schema", "pack", "slug")})
+        for t in texts:
+            for lang in LANDING_LANGS:
+                if lang not in t:
+                    errs.append(f"{name}/landing.json: a text has no {lang}: {t['en'][:50]!r}")
+            for placeholder in re.findall(r"\{(\w+)\}", t["en"]):
+                if placeholder != "brand":
+                    errs.append(f"{name}/landing.json: only {{brand}} may be a placeholder ({placeholder!r} in {t['en'][:40]!r})")
+            if re.search(r"\d\s?%|₹\s?\d", t["en"]):
+                errs.append(f"{name}/landing.json: a text states a price or a percentage ({t['en'][:50]!r})")
+    return errs
+
+
 def check_all(packs_dir: Path = PACKS) -> list[str]:
     errs: list[str] = []
     schema = load_json(packs_dir / "pack.schema.json")
@@ -147,6 +209,7 @@ def check_all(packs_dir: Path = PACKS) -> list[str]:
         errs.extend(schema_errs)
         if not schema_errs:
             errs.extend(check_pack(name, pack, modules, keys))
+    errs.extend(check_landing(packs, packs_dir))
     defaults = [n for n, p in packs.items() if p.get("default_for_existing_workspaces")]
     if len(defaults) != 1:
         errs.append(f"exactly one pack must be the default for existing workspaces, found {defaults}")

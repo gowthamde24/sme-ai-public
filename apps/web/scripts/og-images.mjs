@@ -1,7 +1,8 @@
-// npm run og:images (job BS): draws the share pictures (1200 x 630, Open Graph and Twitter) with a real browser: the owl, the headline of the landing page in each language and the product name.
-//   public/og/og-en.png, og-te.png, og-hi.png, og-kn.png
-// The words are the landing page's own (i18n/strings/landing.json: hero.h1), so a picture never says what the page does not. The generated files are committed; run this when the headline, the owl or
-// the brand colour changes. A test (lib/seo/seo.test.ts) checks the four exist at 1200 x 630.
+// npm run og:images (job BS, extended by job CM): draws the share pictures (1200 x 630, Open Graph and Twitter) with a real browser: the plush owl, the headline and the product name.
+//   public/og/og-<lang>.png            (4)  the home page and the fixed pages
+//   public/og/og-<slug>-<lang>.png     (12) one business type's page, in that type's colour
+// The words are the pages' own (i18n/strings/site.json hero.h1 / hero.eyebrow, and each business type's landing hero in lib/site/site-packs.generated.json, which `make site-packs` builds), so a picture never says what the page
+// does not. The generated files are committed; run this when a headline, the owl or a colour changes. A test (lib/seo/seo.test.ts) checks every file exists at 1200 x 630.
 import { mkdirSync, readFileSync } from "node:fs";
 import { createRequire } from "node:module";
 import path from "node:path";
@@ -12,27 +13,38 @@ const web = path.resolve(here, "..");
 const require = createRequire(path.resolve(web, "../../e2e/package.json"));
 const { chromium } = require("playwright");
 
-const landing = JSON.parse(readFileSync(path.join(web, "i18n/strings/landing.json"), "utf8"));
+const site = JSON.parse(readFileSync(path.join(web, "i18n/strings/site.json"), "utf8"));
+const packs = JSON.parse(readFileSync(path.join(web, "lib/site/site-packs.generated.json"), "utf8")).packs;
 const brand = /BRAND_NAME = "([^"]+)"/.exec(readFileSync(path.join(web, "design/brand.ts"), "utf8"))[1].split(" ")[0];
-const owl = readFileSync(path.join(web, "scripts/assets/owl.svg"), "utf8").replace(' width="240" height="250"', ' width="100%" height="100%"');
+const owl = `data:image/webp;base64,${readFileSync(path.join(web, "public/owl/v3/main/owlet-full-512.webp")).toString("base64")}`;
 const out = path.join(web, "public/og");
 mkdirSync(out, { recursive: true });
 
+// the accent tokens of design/tokens.css (--v2-pack-*-edge / -text), light theme
+const ACCENT = { rose_silk: { edge: "#be3455", text: "#9f1d3d" }, terracotta: { edge: "#b4532a", text: "#8f3c14" }, sky_blue: { edge: "#2f7db5", text: "#14527f" } };
+const HOME = { edge: "#ff773c", text: "#c2410c" };
+const clean = (s) => s.replaceAll("⁠", "").replaceAll("&", "&amp;").replaceAll("<", "&lt;");
 const fonts = { en: "system-ui, sans-serif", te: "'Noto Sans Telugu', 'Telugu MN', system-ui, sans-serif", hi: "'Noto Sans Devanagari', 'Devanagari Sangam MN', system-ui, sans-serif", kn: "'Noto Sans Kannada', 'Kannada Sangam MN', system-ui, sans-serif" };
+
+const jobs = [];
+for (const lang of ["en", "te", "hi", "kn"]) {
+  jobs.push({ file: `og-${lang}.png`, lang, eyebrow: site["hero.eyebrow"][lang], h1: site["hero.h1"][lang], colour: HOME });
+  for (const p of packs) jobs.push({ file: `og-${p.slug}-${lang}.png`, lang, eyebrow: p.hero.eyebrow[lang] ?? p.hero.eyebrow.en, h1: p.hero.h1[lang] ?? p.hero.h1.en, colour: ACCENT[p.accent] ?? HOME });
+}
+
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1200, height: 630 } });
-for (const lang of ["en", "te", "hi", "kn"]) {
-  const h1 = landing["hero.h1"][lang].replaceAll("⁠", "");
-  const eyebrow = landing["hero.eyebrow"][lang].replaceAll("⁠", "");
+for (const { file, lang, eyebrow, h1, colour } of jobs) {
+  const size = h1.length > 60 ? (lang === "en" ? 50 : 44) : lang === "en" ? 58 : 50;
   await page.setContent(`<!doctype html><html lang="${lang}"><body style="margin:0;width:1200px;height:630px;background:#f9f8f6;font-family:${fonts[lang]};color:#1e1e24;display:grid;grid-template-columns:420px 1fr;align-items:center;position:relative;overflow:hidden">
-<div style="position:absolute;left:0;top:0;bottom:0;width:420px;background:#ff773c"></div>
-<div style="position:relative;display:grid;place-items:center;height:630px"><div style="width:300px;height:312px">${owl}</div></div>
+<div style="position:absolute;left:0;top:0;bottom:0;width:420px;background:${colour.edge}"></div>
+<div style="position:relative;display:grid;place-items:center;height:630px"><img src="${owl}" width="340" height="340" alt="" style="display:block"></div>
 <div style="padding:0 64px 0 56px">
-<p style="margin:0 0 18px;font-size:28px;font-weight:600;color:#c2410c">${eyebrow}</p>
-<h1 style="margin:0;font-size:${lang === "en" ? 58 : 50}px;line-height:1.22;font-weight:800;letter-spacing:-0.5px">${h1}</h1>
-<p style="margin:32px 0 0;font-size:34px;font-weight:700;color:#1e1e24"><span style="color:#ff773c">●</span> ${brand}</p>
+<p style="margin:0 0 18px;font-size:28px;font-weight:600;color:${colour.text}">${clean(eyebrow)}</p>
+<h1 style="margin:0;font-size:${size}px;line-height:1.22;font-weight:800;letter-spacing:-0.5px">${clean(h1)}</h1>
+<p style="margin:32px 0 0;font-size:34px;font-weight:700;color:#1e1e24"><span style="color:${colour.edge}">●</span> ${brand}</p>
 </div></body></html>`);
-  await page.screenshot({ path: path.join(out, `og-${lang}.png`) });
-  console.log(`og-${lang}.png`);
+  await page.screenshot({ path: path.join(out, file) });
+  console.log(file);
 }
 await browser.close();

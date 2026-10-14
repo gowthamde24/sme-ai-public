@@ -1,0 +1,2427 @@
+{
+ "skip": {
+  "en": "Skip to content",
+  "te": "కంటెంట్‌కి వెళ్ళండి",
+  "hi": "सीधे कंटेंट पर जाएँ",
+  "kn": "ಕಂಟೆಂಟ್‌ಗೆ ಹೋಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.businesses": {
+  "en": "Businesses",
+  "te": "వ్యాపారాలు",
+  "hi": "कारोबार",
+  "kn": "ವ್ಯಾಪಾರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.pricing": {
+  "en": "Pricing",
+  "te": "ధరలు",
+  "hi": "कीमतें",
+  "kn": "ಬೆಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.how": {
+  "en": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
+  "hi": "यह कैसे काम करता है",
+  "kn": "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.security": {
+  "en": "Security",
+  "te": "సెక్యూరిటీ",
+  "hi": "सिक्योरिटी",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.contact": {
+  "en": "Contact",
+  "te": "సంప్రదించండి",
+  "hi": "संपर्क",
+  "kn": "ಸಂಪರ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.help": {
+  "en": "Help",
+  "te": "సహాయం",
+  "hi": "मदद",
+  "kn": "ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.signin": {
+  "en": "Sign in",
+  "te": "సైన్ ఇన్",
+  "hi": "साइन इन",
+  "kn": "ಸೈನ್ ಇನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.start": {
+  "en": "Start free",
+  "te": "ఉచితంగా మొదలుపెట్టండి",
+  "hi": "मुफ़्त शुरू करें",
+  "kn": "ಉಚಿತವಾಗಿ ಶುರು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.menu": {
+  "en": "Menu",
+  "te": "మెనూ",
+  "hi": "मेन्यू",
+  "kn": "ಮೆನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.sections": {
+  "en": "Main pages",
+  "te": "ముఖ్య పేజీలు",
+  "hi": "मुख्य पेज",
+  "kn": "ಮುಖ್ಯ ಪುಟಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "lang.label": {
+  "en": "Language",
+  "te": "భాష",
+  "hi": "भाषा",
+  "kn": "ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "theme.toDark": {
+  "en": "Switch to dark mode",
+  "te": "డార్క్ మోడ్ పెట్టండి",
+  "hi": "डार्क मोड लगाएँ",
+  "kn": "ಡಾರ್ಕ್ ಮೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "theme.toLight": {
+  "en": "Switch to light mode",
+  "te": "లైట్ మోడ్ పెట్టండి",
+  "hi": "लाइट मोड लगाएँ",
+  "kn": "ಲೈಟ್ ಮೋಡ್ ಹಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "draft.banner": {
+  "en": "This page's text is a machine-written draft. Please tell us if something reads wrongly.",
+  "te": "ఈ పేజీలోని టెక్స్ట్ మెషీన్ రాసిన డ్రాఫ్ట్. ఏదైనా తప్పుగా ఉంటే చెప్పండి.",
+  "hi": "इस पेज का टेक्स्ट मशीन का लिखा ड्राफ़्ट है। कुछ गलत लगे तो बताइए।",
+  "kn": "ಈ ಪುಟದ ಪಠ್ಯ ಮೆಷಿನ್ ಬರೆದ ಡ್ರಾಫ್ಟ್. ಏನಾದರೂ ತಪ್ಪಾಗಿದ್ದರೆ ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.note": {
+  "en": "Made-up example data is labelled wherever it appears.",
+  "te": "కల్పిత ఉదాహరణ డేటా ఎక్కడ కనిపించినా దాని మీద లేబుల్ ఉంటుంది.",
+  "hi": "बनाया हुआ उदाहरण डेटा जहाँ भी दिखता है, उस पर लेबल होता है।",
+  "kn": "ಕಲ್ಪಿತ ಉದಾಹರಣೆ ಡೇಟಾ ಎಲ್ಲಿ ಕಾಣಿಸಿದರೂ ಅದರ ಮೇಲೆ ಲೇಬಲ್ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.pages": {
+  "en": "Pages",
+  "te": "పేజీలు",
+  "hi": "पेज",
+  "kn": "ಪುಟಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.businesses": {
+  "en": "For your business",
+  "te": "మీ వ్యాపారానికి",
+  "hi": "आपके कारोबार के लिए",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "foot.copy": {
+  "en": "© {year} {brand}",
+  "te": "© {year} {brand}",
+  "hi": "© {year} {brand}",
+  "kn": "© {year} {brand}",
+  "status": {},
+  "only": []
+ },
+ "page.home": {
+  "en": "Home",
+  "te": "హోమ్",
+  "hi": "होम",
+  "kn": "ಹೋಮ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.eyebrow": {
+  "en": "AI helpers for Indian small businesses",
+  "te": "భారతీయ చిన్న వ్యాపారాలకు AI సహాయకులు",
+  "hi": "भारतीय छोटे कारोबारों के लिए AI मददगार",
+  "kn": "ಭಾರತೀಯ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳಿಗೆ AI ಸಹಾಯಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.h1": {
+  "en": "Your AI team for WhatsApp sales and payments.",
+  "te": "వాట్సాప్ అమ్మకాలు, పేమెంట్ల కోసం మీ AI టీమ్.",
+  "hi": "व्हाट्सऐप बिक्री और पेमेंट के लिए आपकी AI टीम।",
+  "kn": "ವಾಟ್ಸಾಪ್ ಮಾರಾಟ, ಪೇಮೆಂಟ್‌ಗಳಿಗೆ ನಿಮ್ಮ AI ತಂಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.sub": {
+  "en": "Seven plush owls answer enquiries, prepare quotes, chase follow-ups and tell you each morning what needs you. Anything about price, promises or complaints waits for your OK.",
+  "te": "ఏడు ముద్దు గుడ్లగూబలు ఎంక్వయిరీలకు జవాబిస్తాయి, కోట్లు తయారు చేస్తాయి, ఫాలో-అప్ చేస్తాయి, ప్రతి ఉదయం మీకు ఏం చూడాలో చెబుతాయి. ధర, ప్రామిస్, కంప్లైంట్ గురించిన ఏదైనా మీ ఓకే కోసం ఆగుతుంది.",
+  "hi": "सात प्यारे उल्लू पूछताछ का जवाब देते हैं, कोटेशन बनाते हैं, फ़ॉलो-अप करते हैं और हर सुबह बताते हैं कि आपको क्या देखना है। कीमत, वादे या शिकायत की कोई भी बात आपके ओके का इंतज़ार करती है।",
+  "kn": "ಏಳು ಮುದ್ದಾದ ಗೂಬೆಗಳು ವಿಚಾರಣೆಗೆ ಉತ್ತರ ಕೊಡುತ್ತವೆ, ಕೊಟೇಶನ್ ಮಾಡುತ್ತವೆ, ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತವೆ, ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ನಿಮಗೆ ಏನು ನೋಡಬೇಕೆಂದು ಹೇಳುತ್ತವೆ. ಬೆಲೆ, ಮಾತು, ದೂರಿನ ಯಾವುದೇ ವಿಷಯ ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.cta": {
+  "en": "Start free, choose your business",
+  "te": "ఉచితంగా మొదలుపెట్టండి, మీ వ్యాపారం ఎంచుకోండి",
+  "hi": "मुफ़्त शुरू करें, अपना कारोबार चुनें",
+  "kn": "ಉಚಿತವಾಗಿ ಶುರು ಮಾಡಿ, ನಿಮ್ಮ ವ್ಯಾಪಾರ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.secondary": {
+  "en": "See how it works",
+  "te": "ఇది ఎలా పనిచేస్తుందో చూడండి",
+  "hi": "देखें यह कैसे काम करता है",
+  "kn": "ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.note": {
+  "en": "You can sign up and try it free. Nothing is charged.",
+  "te": "మీరు సైన్ అప్ అయి ఉచితంగా ప్రయత్నించవచ్చు. ఏమీ ఛార్జ్ చేయరు.",
+  "hi": "आप साइन अप करके मुफ़्त आज़मा सकते हैं। कुछ चार्ज नहीं होता।",
+  "kn": "ನೀವು ಸೈನ್ ಅಪ್ ಆಗಿ ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಬಹುದು. ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "hero.owl.mood": {
+  "en": "ready to help",
+  "te": "సహాయం చేయడానికి సిద్ధం",
+  "hi": "मदद के लिए तैयार",
+  "kn": "ಸಹಾಯಕ್ಕೆ ಸಿದ್ಧ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "packs.title": {
+  "en": "Choose your kind of business",
+  "te": "మీ వ్యాపార రకం ఎంచుకోండి",
+  "hi": "अपने कारोबार का प्रकार चुनें",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ರೀತಿ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "packs.sub": {
+  "en": "Each one has its own screens, words and helpers.",
+  "te": "ప్రతిదానికి దాని స్వంత స్క్రీన్లు, పదాలు, సహాయకులు ఉంటాయి.",
+  "hi": "हर एक के अपने स्क्रीन, शब्द और मददगार हैं।",
+  "kn": "ಪ್ರತಿಯೊಂದಕ್ಕೂ ತನ್ನದೇ ಸ್ಕ್ರೀನ್, ಪದ, ಸಹಾಯಕರಿದ್ದಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "packs.see": {
+  "en": "See {name}",
+  "te": "{name} చూడండి",
+  "hi": "{name} देखें",
+  "kn": "{name} ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "packs.notValidated": {
+  "en": "Not validated by a real owner yet",
+  "te": "నిజమైన యజమాని ఇంకా చూడలేదు",
+  "hi": "किसी असली मालिक ने अभी तक जाँचा नहीं है",
+  "kn": "ನಿಜವಾದ ಮಾಲೀಕರು ಇನ್ನೂ ನೋಡಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owls.title": {
+  "en": "Meet the owl team",
+  "te": "గుడ్లగూబల టీమ్‌ని కలవండి",
+  "hi": "उल्लू टीम से मिलिए",
+  "kn": "ಗೂಬೆಗಳ ತಂಡವನ್ನು ಭೇಟಿಯಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owls.sub": {
+  "en": "Seven helpers, one job each. They prepare, you decide.",
+  "te": "ఏడుగురు సహాయకులు, ఒక్కొక్కరికి ఒక పని. వాళ్ళు సిద్ధం చేస్తారు, మీరు ఓకే చేస్తారు.",
+  "hi": "सात मददगार, हर एक का एक काम। वे तैयार करते हैं, आप ओके करते हैं।",
+  "kn": "ಏಳು ಸಹಾಯಕರು, ಪ್ರತಿಯೊಬ್ಬರಿಗೂ ಒಂದು ಕೆಲಸ. ಅವರು ಸಿದ್ಧಪಡಿಸುತ್ತಾರೆ, ನೀವು ಓಕೆ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.main": {
+  "en": "Answers customers on WhatsApp and tells you each morning what needs you.",
+  "te": "వాట్సాప్‌లో కస్టమర్లకు జవాబిస్తుంది, ప్రతి ఉదయం మీకు ఏం చూడాలో చెబుతుంది.",
+  "hi": "व्हाट्सऐप पर ग्राहकों को जवाब देता है और हर सुबह बताता है कि आपको क्या देखना है।",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಗ್ರಾಹಕರಿಗೆ ಉತ್ತರ ಕೊಡುತ್ತದೆ, ಪ್ರತಿ ಬೆಳಿಗ್ಗೆ ನಿಮಗೆ ಏನು ನೋಡಬೇಕೆಂದು ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.lead_finder": {
+  "en": "Finds new enquiries and leads worth your time.",
+  "te": "మీ సమయానికి తగిన కొత్త ఎంక్వయిరీలు, లీడ్‌లను కనుగొంటుంది.",
+  "hi": "आपके समय के लायक नई पूछताछ और लीड ढूँढता है।",
+  "kn": "ನಿಮ್ಮ ಸಮಯಕ್ಕೆ ತಕ್ಕ ಹೊಸ ವಿಚಾರಣೆ, ಲೀಡ್ ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.researcher": {
+  "en": "Looks up a business before you call it.",
+  "te": "మీరు కాల్ చేసే ముందు ఆ వ్యాపారం గురించి చూస్తుంది.",
+  "hi": "आपके कॉल करने से पहले उस कारोबार के बारे में देखता है।",
+  "kn": "ನೀವು ಕರೆ ಮಾಡುವ ಮೊದಲು ಆ ವ್ಯಾಪಾರದ ಬಗ್ಗೆ ನೋಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.requirement_analyst": {
+  "en": "Works out what the customer needs.",
+  "te": "కస్టమర్‌కి ఏం కావాలో లెక్కిస్తుంది.",
+  "hi": "पता करता है कि ग्राहक को क्या चाहिए।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಏನು ಬೇಕೆಂದು ಲೆಕ್ಕ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.quote_writer": {
+  "en": "Prepares quotes from your price list, by fixed rules.",
+  "te": "మీ ధరల జాబితా నుండి నియమాల ప్రకారం కోట్లు తయారు చేస్తుంది.",
+  "hi": "आपकी प्राइस लिस्ट से तय नियमों से कोटेशन बनाता है।",
+  "kn": "ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿಯಿಂದ ನಿಯಮಗಳಂತೆ ಕೊಟೇಶನ್ ಮಾಡುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.followup_desk": {
+  "en": "Drafts polite follow-ups and reminders, never at night.",
+  "te": "మర్యాదైన ఫాలో-అప్‌లు, రిమైండర్లు డ్రాఫ్ట్ చేస్తుంది, రాత్రి ఎప్పుడూ కాదు.",
+  "hi": "विनम्र फ़ॉलो-अप और रिमाइंडर का ड्राफ़्ट बनाता है, रात में कभी नहीं।",
+  "kn": "ವಿನಯದ ಫಾಲೋ-ಅಪ್, ರಿಮೈಂಡರ್ ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತದೆ, ರಾತ್ರಿ ಎಂದೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.order_desk": {
+  "en": "Turns an approved quote into an order and shows what is still due.",
+  "te": "ఓకే చేసిన కోట్‌ని ఆర్డర్‌గా మారుస్తుంది, ఇంకా ఎంత రావాలో చూపిస్తుంది.",
+  "hi": "ओके किए कोटेशन को ऑर्डर बनाता है और दिखाता है कि कितना बाकी है।",
+  "kn": "ಒಪ್ಪಿದ ಕೊಟೇಶನ್ ಅನ್ನು ಆರ್ಡರ್ ಮಾಡುತ್ತದೆ, ಇನ್ನೂ ಎಷ್ಟು ಬರಬೇಕೆಂದು ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "owl.name.main": {
+  "en": "Agent OWL",
+  "te": "Agent OWL",
+  "hi": "Agent OWL",
+  "kn": "Agent OWL",
+  "status": {},
+  "only": []
+ },
+ "steps.title": {
+  "en": "How it works, in three steps",
+  "te": "మూడు స్టెప్పుల్లో ఇది ఎలా పనిచేస్తుంది",
+  "hi": "तीन स्टेप में यह कैसे काम करता है",
+  "kn": "ಮೂರು ಹಂತಗಳಲ್ಲಿ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "steps.sub": {
+  "en": "You set up once. The owls do the daily work.",
+  "te": "మీరు ఒక్కసారి సెటప్ చేస్తారు. రోజువారీ పని గుడ్లగూబలు చేస్తాయి.",
+  "hi": "आप एक बार सेटअप करते हैं। रोज़ का काम उल्लू करते हैं।",
+  "kn": "ನೀವು ಒಮ್ಮೆ ಸೆಟಪ್ ಮಾಡುತ್ತೀರಿ. ದಿನದ ಕೆಲಸ ಗೂಬೆಗಳು ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.1.t": {
+  "en": "Connect WhatsApp",
+  "te": "వాట్సాప్ కనెక్ట్ చేయండి",
+  "hi": "व्हाट्सऐप जोड़ें",
+  "kn": "ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.1.d": {
+  "en": "Sign up, choose your kind of business, add your prices and connect your number.",
+  "te": "సైన్ అప్ అయి, మీ వ్యాపార రకం ఎంచుకుని, ధరలు చేర్చి, మీ నంబర్ కనెక్ట్ చేయండి.",
+  "hi": "साइन अप करें, अपने कारोबार का प्रकार चुनें, कीमतें जोड़ें और अपना नंबर जोड़ें।",
+  "kn": "ಸೈನ್ ಅಪ್ ಆಗಿ, ನಿಮ್ಮ ವ್ಯಾಪಾರದ ರೀತಿ ಆರಿಸಿ, ಬೆಲೆ ಸೇರಿಸಿ, ನಿಮ್ಮ ನಂಬರ್ ಸಂಪರ್ಕಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.2.t": {
+  "en": "The owls answer and prepare",
+  "te": "గుడ్లగూబలు జవాబిస్తాయి, సిద్ధం చేస్తాయి",
+  "hi": "उल्लू जवाब देते हैं और तैयारी करते हैं",
+  "kn": "ಗೂಬೆಗಳು ಉತ್ತರ ಕೊಡುತ್ತವೆ, ಸಿದ್ಧಪಡಿಸುತ್ತವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.2.d": {
+  "en": "Customers write. The owls reply, prepare quotes and drafts, and show you all of it on Today.",
+  "te": "కస్టమర్లు రాస్తారు. గుడ్లగూబలు జవాబిస్తాయి, కోట్లు, డ్రాఫ్ట్‌లు సిద్ధం చేస్తాయి, అన్నీ టుడేలో చూపిస్తాయి.",
+  "hi": "ग्राहक लिखते हैं। उल्लू जवाब देते हैं, कोटेशन और ड्राफ़्ट बनाते हैं, और सब कुछ आज की स्क्रीन पर दिखाते हैं।",
+  "kn": "ಗ್ರಾಹಕರು ಬರೆಯುತ್ತಾರೆ. ಗೂಬೆಗಳು ಉತ್ತರ ಕೊಡುತ್ತವೆ, ಕೊಟೇಶನ್, ಡ್ರಾಫ್ಟ್ ಮಾಡುತ್ತವೆ, ಎಲ್ಲವನ್ನೂ ಟುಡೇನಲ್ಲಿ ತೋರಿಸುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.3.t": {
+  "en": "You approve the money",
+  "te": "డబ్బు విషయాలను మీరు ఓకే చేస్తారు",
+  "hi": "पैसे की बातें आप ओके करते हैं",
+  "kn": "ಹಣದ ವಿಷಯಗಳನ್ನು ನೀವು ಓಕೆ ಮಾಡುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "step.3.d": {
+  "en": "Prices, promises and complaints wait for you. You decide, and your customers hear from you.",
+  "te": "ధరలు, ప్రామిస్‌లు, కంప్లైంట్‌లు మీ కోసం ఆగుతాయి. మీరు ఓకే చేస్తారు, కస్టమర్లకు మీ నుండే వెళ్తుంది.",
+  "hi": "कीमतें, वादे और शिकायतें आपके लिए रुकती हैं। आप ओके करते हैं और ग्राहकों तक आपकी बात जाती है।",
+  "kn": "ಬೆಲೆ, ಮಾತು, ದೂರುಗಳು ನಿಮಗಾಗಿ ಕಾಯುತ್ತವೆ. ನೀವು ಓಕೆ ಮಾಡುತ್ತೀರಿ, ಗ್ರಾಹಕರಿಗೆ ನಿಮ್ಮಿಂದಲೇ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.title": {
+  "en": "Built to be trusted",
+  "te": "నమ్మకానికి తగ్గట్టు తయారైంది",
+  "hi": "भरोसे के लिए बना",
+  "kn": "ನಂಬಿಕೆಗೆ ತಕ್ಕಂತೆ ರೂಪಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.1.t": {
+  "en": "You approve every rupee",
+  "te": "ప్రతి రూపాయిని మీరే ఓకే చేస్తారు",
+  "hi": "हर रुपया आप ही ओके करते हैं",
+  "kn": "ಪ್ರತಿ ರೂಪಾಯಿಯನ್ನು ನೀವೇ ಓಕೆ ಮಾಡುತ್ತೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.1.d": {
+  "en": "Prices, discounts, advances and refunds always wait for your OK.",
+  "te": "ధరలు, డిస్కౌంట్లు, అడ్వాన్సులు, రీఫండ్‌లు ఎప్పుడూ మీ ఓకే కోసం ఆగుతాయి.",
+  "hi": "कीमतें, डिस्काउंट, एडवांस और रिफ़ंड हमेशा आपके ओके का इंतज़ार करते हैं।",
+  "kn": "ಬೆಲೆ, ಡಿಸ್ಕೌಂಟ್, ಅಡ್ವಾನ್ಸ್, ರೀಫಂಡ್ ಯಾವಾಗಲೂ ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.2.t": {
+  "en": "Stop means stop",
+  "te": "స్టాప్ అంటే స్టాప్",
+  "hi": "स्टॉप का मतलब स्टॉप",
+  "kn": "ಸ್ಟಾಪ್ ಅಂದರೆ ಸ್ಟಾಪ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.2.d": {
+  "en": "A customer who asks us to stop is not messaged again. Consent is recorded.",
+  "te": "ఆపమన్న కస్టమర్‌కి మళ్ళీ మెసేజ్ పంపరు. అంగీకారం రికార్డ్ అవుతుంది.",
+  "hi": "रुकने को कहने वाले ग्राहक को दोबारा मैसेज नहीं जाता। सहमति दर्ज रहती है।",
+  "kn": "ನಿಲ್ಲಿಸಲು ಹೇಳಿದ ಗ್ರಾಹಕರಿಗೆ ಮತ್ತೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ. ಒಪ್ಪಿಗೆ ಬರೆದಿಟ್ಟಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.3.t": {
+  "en": "Every business kept apart",
+  "te": "ప్రతి వ్యాపారం వేరుగా",
+  "hi": "हर कारोबार अलग रखा जाता है",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರ ಪ್ರತ್ಯೇಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.3.d": {
+  "en": "Your customers' details belong to your business, apart from every other business.",
+  "te": "మీ కస్టమర్ల వివరాలు మీ వ్యాపారానివే, ఇతర వ్యాపారాల నుండి వేరుగా.",
+  "hi": "आपके ग्राहकों की जानकारी आपके कारोबार की है, दूसरे कारोबारों से अलग।",
+  "kn": "ನಿಮ್ಮ ಗ್ರಾಹಕರ ವಿವರಗಳು ನಿಮ್ಮ ವ್ಯಾಪಾರದ್ದು, ಬೇರೆ ವ್ಯಾಪಾರಗಳಿಂದ ಪ್ರತ್ಯೇಕ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.4.t": {
+  "en": "AI is always labelled",
+  "te": "AI అని ఎప్పుడూ చెబుతుంది",
+  "hi": "AI हमेशा बताया जाता है",
+  "kn": "AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.4.d": {
+  "en": "Every message the owls write says it was written by an AI assistant.",
+  "te": "గుడ్లగూబలు రాసే ప్రతి మెసేజ్‌లో AI అసిస్టెంట్ రాసిందని ఉంటుంది.",
+  "hi": "उल्लुओं का लिखा हर मैसेज बताता है कि उसे AI असिस्टेंट ने लिखा है।",
+  "kn": "ಗೂಬೆಗಳು ಬರೆದ ಪ್ರತಿ ಮೆಸೇಜ್‌ನಲ್ಲಿ AI ಅಸಿಸ್ಟೆಂಟ್ ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "trust.more": {
+  "en": "Read how we keep data safe",
+  "te": "డేటాను ఎలా భద్రంగా ఉంచుతామో చదవండి",
+  "hi": "पढ़ें कि हम डेटा कैसे सुरक्षित रखते हैं",
+  "kn": "ಡೇಟಾ ಹೇಗೆ ಸುರಕ್ಷಿತವಾಗಿಡುತ್ತೇವೆ ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "teaser.title": {
+  "en": "Simple pricing",
+  "te": "సులభమైన ధరలు",
+  "hi": "सीधी कीमतें",
+  "kn": "ಸರಳ ಬೆಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "teaser.sub": {
+  "en": "Try free for 30 days, no card. Then plans from {from} a month, with AI included.",
+  "te": "30 రోజులు ఉచితంగా ప్రయత్నించండి, కార్డ్ అవసరం లేదు. తర్వాత నెలకు {from} నుండి ప్లాన్లు, AI కలిపి.",
+  "hi": "30 दिन मुफ़्त आज़माएँ, कार्ड नहीं। फिर महीने के {from} से प्लान, AI शामिल।",
+  "kn": "30 ದಿನ ಉಚಿತವಾಗಿ ಪ್ರಯತ್ನಿಸಿ, ಕಾರ್ಡ್ ಬೇಡ. ನಂತರ ತಿಂಗಳಿಗೆ {from} ರಿಂದ ಪ್ಲಾನ್, AI ಸೇರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "teaser.cta": {
+  "en": "See the plans",
+  "te": "ప్లాన్లు చూడండి",
+  "hi": "प्लान देखें",
+  "kn": "ಪ್ಲಾನ್ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.title": {
+  "en": "Questions, answered calmly",
+  "te": "ప్రశ్నలు, ప్రశాంతంగా జవాబులు",
+  "hi": "सवाल, शांति से जवाब",
+  "kn": "ಪ್ರಶ್ನೆಗಳು, ಶಾಂತವಾಗಿ ಉತ್ತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.1.q": {
+  "en": "Do the owls send messages by themselves?",
+  "te": "గుడ్లగూబలు తమంతట తాముగా మెసేజ్‌లు పంపుతాయా?",
+  "hi": "क्या उल्लू अपने आप मैसेज भेजते हैं?",
+  "kn": "ಗೂಬೆಗಳು ತಾವಾಗಿಯೇ ಮೆಸೇಜ್ ಕಳುಹಿಸುತ್ತವೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.1.a": {
+  "en": "Only if you switch automatic sending on. Even then, anything about price, promises or complaints waits for your OK, and calls always wait. You can switch it off at any time.",
+  "te": "మీరు ఆటోమేటిక్ పంపడం ఆన్ చేస్తేనే. అప్పుడు కూడా ధర, ప్రామిస్, కంప్లైంట్ గురించిన ఏదైనా మీ ఓకే కోసం ఆగుతుంది, కాల్స్ కూడా ఎప్పుడూ ఆగుతాయి. ఎప్పుడైనా ఆఫ్ చేయవచ్చు.",
+  "hi": "तभी, जब आप ऑटोमैटिक भेजना चालू करें। तब भी कीमत, वादे या शिकायत की बात आपके ओके का इंतज़ार करती है, और कॉल हमेशा रुकते हैं। आप कभी भी बंद कर सकते हैं।",
+  "kn": "ನೀವು ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದನ್ನು ಆನ್ ಮಾಡಿದರೆ ಮಾತ್ರ. ಆಗಲೂ ಬೆಲೆ, ಮಾತು, ದೂರಿನ ವಿಷಯ ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುತ್ತದೆ, ಕರೆಗಳು ಯಾವಾಗಲೂ ಕಾಯುತ್ತವೆ. ಯಾವಾಗ ಬೇಕಾದರೂ ಆಫ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.2.q": {
+  "en": "Who is it for?",
+  "te": "ఇది ఎవరి కోసం?",
+  "hi": "यह किसके लिए है?",
+  "kn": "ಇದು ಯಾರಿಗಾಗಿ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.2.a": {
+  "en": "Small businesses that sell on WhatsApp: saree and textile shops, construction material sellers, and schools, colleges and coaching institutes.",
+  "te": "వాట్సాప్‌లో అమ్మే చిన్న వ్యాపారాలు: చీరలు, టెక్స్‌టైల్ షాపులు, నిర్మాణ సామగ్రి అమ్మకందారులు, పాఠశాలలు, కళాశాలలు, కోచింగ్ సంస్థలు.",
+  "hi": "व्हाट्सऐप पर बेचने वाले छोटे कारोबार: साड़ी और टेक्सटाइल दुकानें, निर्माण सामग्री बेचने वाले, और स्कूल, कॉलेज व कोचिंग संस्थान।",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಮಾರುವ ಸಣ್ಣ ವ್ಯಾಪಾರಗಳು: ಸೀರೆ, ಟೆಕ್ಸ್‌ಟೈಲ್ ಅಂಗಡಿಗಳು, ನಿರ್ಮಾಣ ಸಾಮಗ್ರಿ ಮಾರಾಟಗಾರರು, ಶಾಲೆ, ಕಾಲೇಜು, ಕೋಚಿಂಗ್ ಸಂಸ್ಥೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.3.q": {
+  "en": "Can the AI change my prices?",
+  "te": "AI నా ధరలను మార్చగలదా?",
+  "hi": "क्या AI मेरी कीमतें बदल सकता है?",
+  "kn": "AI ನನ್ನ ಬೆಲೆಗಳನ್ನು ಬದಲಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.3.a": {
+  "en": "No. Prices come from your price list by fixed rules. The AI does not calculate or change a price.",
+  "te": "లేదు. ధరలు మీ జాబితా నుండి ఖచ్చితమైన నియమాలతో వస్తాయి. AI ధరను లెక్కించదు, మార్చదు.",
+  "hi": "नहीं। कीमतें आपकी लिस्ट से तय नियमों से आती हैं। AI कीमत न निकालता है, न बदलता है।",
+  "kn": "ಇಲ್ಲ. ಬೆಲೆಗಳು ನಿಮ್ಮ ಪಟ್ಟಿಯಿಂದ ನಿಗದಿತ ನಿಯಮಗಳಂತೆ ಬರುತ್ತವೆ. AI ಬೆಲೆ ಲೆಕ್ಕ ಮಾಡುವುದಿಲ್ಲ, ಬದಲಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.4.q": {
+  "en": "Which languages work?",
+  "te": "ఏ భాషలు పనిచేస్తాయి?",
+  "hi": "कौन सी भाषाएँ चलती हैं?",
+  "kn": "ಯಾವ ಭಾಷೆಗಳು ಕೆಲಸ ಮಾಡುತ್ತವೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.4.a": {
+  "en": "English, Telugu, Hindi and Kannada, in the app, on this website and in the drafts. The Telugu, Hindi and Kannada text is machine-written and should be read by someone who knows the language.",
+  "te": "ఇంగ్లీష్, తెలుగు, హిందీ, కన్నడ, యాప్‌లో, ఈ వెబ్‌సైట్‌లో, డ్రాఫ్ట్‌లలో. తెలుగు, హిందీ, కన్నడ టెక్స్ట్ మెషీన్ రాసింది, ఆ భాష తెలిసినవారు చదవాలి.",
+  "hi": "अंग्रेज़ी, तेलुगु, हिंदी और कन्नड़, ऐप में, इस वेबसाइट पर और ड्राफ़्ट में। तेलुगु, हिंदी और कन्नड़ का टेक्स्ट मशीन का लिखा है, उसे भाषा जानने वाले को पढ़ना चाहिए।",
+  "kn": "ಇಂಗ್ಲಿಷ್, ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ, ಆ್ಯಪ್‌ನಲ್ಲಿ, ಈ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ, ಡ್ರಾಫ್ಟ್‌ಗಳಲ್ಲಿ. ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡ ಪಠ್ಯ ಮೆಷಿನ್ ಬರೆದದ್ದು, ಆ ಭಾಷೆ ಗೊತ್ತಿರುವವರು ಓದಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.5.q": {
+  "en": "What happens to my customers' data?",
+  "te": "నా కస్టమర్ల డేటాకి ఏమవుతుంది?",
+  "hi": "मेरे ग्राहकों के डेटा का क्या होता है?",
+  "kn": "ನನ್ನ ಗ್ರಾಹಕರ ಡೇಟಾಗೆ ಏನಾಗುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.5.a": {
+  "en": "It stays in your business's own records, kept apart from other businesses. Consent and do-not-contact lists are built in. Read the Security page for the details and for what we have not done yet.",
+  "te": "ఇది మీ వ్యాపారం సొంత రికార్డుల్లో, ఇతర వ్యాపారాల నుండి వేరుగా ఉంటుంది. అంగీకారం, సంప్రదించవద్దు జాబితాలు ఉన్నాయి. వివరాల కోసం, ఇంకా మేము చేయనివి తెలుసుకోవడానికి సెక్యూరిటీ పేజీ చూడండి.",
+  "hi": "यह आपके कारोबार के अपने रिकॉर्ड में रहता है, दूसरे कारोबारों से अलग। सहमति और संपर्क न करने की सूचियाँ बनी हुई हैं। ब्योरे और हमने जो अभी नहीं किया, उसके लिए सिक्योरिटी पेज पढ़ें।",
+  "kn": "ಇದು ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಸ್ವಂತ ದಾಖಲೆಗಳಲ್ಲಿ, ಬೇರೆ ವ್ಯಾಪಾರಗಳಿಂದ ಪ್ರತ್ಯೇಕವಾಗಿ ಇರುತ್ತದೆ. ಒಪ್ಪಿಗೆ, ಸಂಪರ್ಕಿಸಬೇಡಿ ಪಟ್ಟಿಗಳಿವೆ. ವಿವರ, ನಾವು ಇನ್ನೂ ಮಾಡದ್ದರ ಬಗ್ಗೆ ಸೆಕ್ಯುರಿಟಿ ಪುಟ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.6.q": {
+  "en": "Is my WhatsApp number safe?",
+  "te": "నా వాట్సాప్ నంబర్ సురక్షితమేనా?",
+  "hi": "क्या मेरा व्हाट्सऐप नंबर सुरक्षित है?",
+  "kn": "ನನ್ನ ವಾಟ್ಸಾಪ್ ನಂಬರ್ ಸುರಕ್ಷಿತವೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "faq.6.a": {
+  "en": "The owls follow the habits that keep a number in good standing: only customers who agreed, stop means stop, a daily limit and quiet hours. No tool can promise how WhatsApp treats a number.",
+  "te": "గుడ్లగూబలు నంబర్ మంచి స్థితిలో ఉంచే అలవాట్లు పాటిస్తాయి: అంగీకరించిన కస్టమర్లకే, స్టాప్ అంటే స్టాప్, రోజువారీ పరిమితి, రాత్రి నిశ్శబ్ద సమయం. వాట్సాప్ నంబర్‌ని ఎలా చూస్తుందో ఏ టూల్ ప్రామిస్ ఇవ్వలేదు.",
+  "hi": "उल्लू वे आदतें निभाते हैं जो नंबर को अच्छी हालत में रखती हैं: सिर्फ़ सहमत ग्राहक, स्टॉप का मतलब स्टॉप, रोज़ की सीमा और रात की शांति के घंटे। व्हाट्सऐप किसी नंबर के साथ कैसे पेश आएगा, यह कोई टूल पक्का नहीं कह सकता।",
+  "kn": "ಗೂಬೆಗಳು ನಂಬರ್ ಚೆನ್ನಾಗಿರುವಂತೆ ಇಡುವ ಅಭ್ಯಾಸ ಪಾಲಿಸುತ್ತವೆ: ಒಪ್ಪಿದ ಗ್ರಾಹಕರಿಗೆ ಮಾತ್ರ, ಸ್ಟಾಪ್ ಅಂದರೆ ಸ್ಟಾಪ್, ದಿನದ ಮಿತಿ, ರಾತ್ರಿ ಶಾಂತ ಸಮಯ. ವಾಟ್ಸಾಪ್ ನಂಬರ್‌ನೊಂದಿಗೆ ಹೇಗೆ ನಡೆದುಕೊಳ್ಳುತ್ತದೆ ಎಂದು ಯಾವ ಟೂಲ್ ಕೂಡ ಖಚಿತವಾಗಿ ಹೇಳಲಾರದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cta.title": {
+  "en": "Start free, choose your business",
+  "te": "ఉచితంగా మొదలుపెట్టండి, మీ వ్యాపారం ఎంచుకోండి",
+  "hi": "मुफ़्त शुरू करें, अपना कारोबार चुनें",
+  "kn": "ಉಚಿತವಾಗಿ ಶುರು ಮಾಡಿ, ನಿಮ್ಮ ವ್ಯಾಪಾರ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "cta.sub": {
+  "en": "It takes two taps to sign up. Nothing is charged during the trial.",
+  "te": "సైన్ అప్ కావడానికి రెండు ట్యాప్‌లు చాలు. ట్రయల్‌లో ఏమీ ఛార్జ్ చేయరు.",
+  "hi": "साइन अप के लिए दो टैप काफ़ी हैं। ट्रायल में कुछ चार्ज नहीं होता।",
+  "kn": "ಸೈನ್ ಅಪ್ ಆಗಲು ಎರಡು ಟ್ಯಾಪ್ ಸಾಕು. ಟ್ರಯಲ್‌ನಲ್ಲಿ ಏನೂ ಚಾರ್ಜ್ ಆಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.title": {
+  "en": "Simple pricing, AI included",
+  "te": "సులభమైన ధరలు, AI కలిపి",
+  "hi": "सीधी कीमतें, AI शामिल",
+  "kn": "ಸರಳ ಬೆಲೆ, AI ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.sub": {
+  "en": "One price a month for your business. No charge for each question. AI is included, under fair use.",
+  "te": "మీ వ్యాపారానికి నెలకు ఒకే ధర. ప్రతి ప్రశ్నకి ఛార్జ్ లేదు. AI కలిపి, ఫెయిర్ యూజ్‌తో.",
+  "hi": "आपके कारोबार के लिए महीने की एक कीमत। हर सवाल का चार्ज नहीं। AI शामिल है, फ़ेयर यूज़ के साथ।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ತಿಂಗಳಿಗೆ ಒಂದೇ ಬೆಲೆ. ಪ್ರತಿ ಪ್ರಶ್ನೆಗೆ ಚಾರ್ಜ್ ಇಲ್ಲ. AI ಸೇರಿದೆ, ಫೇರ್ ಯೂಸ್‌ನೊಂದಿಗೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.billing": {
+  "en": "Billing is not switched on yet. The trial is free, and you will be told before anything is ever charged. These are the prices we plan to charge.",
+  "te": "బిల్లింగ్ ఇంకా ఆన్ కాలేదు. ట్రయల్ ఉచితం, ఏదైనా ఛార్జ్ చేసే ముందు మీకు చెబుతాం. ఇవి మేము ఛార్జ్ చేయాలనుకున్న ధరలు.",
+  "hi": "बिलिंग अभी चालू नहीं है। ट्रायल मुफ़्त है, और कभी कुछ चार्ज करने से पहले आपको बताया जाएगा। ये वे कीमतें हैं जो हम लेना चाहते हैं।",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ. ಟ್ರಯಲ್ ಉಚಿತ, ಏನಾದರೂ ಚಾರ್ಜ್ ಮಾಡುವ ಮೊದಲು ನಿಮಗೆ ಹೇಳುತ್ತೇವೆ. ಇವು ನಾವು ಚಾರ್ಜ್ ಮಾಡಲು ಯೋಜಿಸಿದ ಬೆಲೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.trial.t": {
+  "en": "Free trial",
+  "te": "ఉచిత ట్రయల్",
+  "hi": "मुफ़्त ट्रायल",
+  "kn": "ಉಚಿತ ಟ್ರಯಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.trial.d": {
+  "en": "{days} days, no card. Try the whole app with your own business.",
+  "te": "{days} రోజులు, కార్డ్ అవసరం లేదు. మీ సొంత వ్యాపారంతో మొత్తం యాప్ ప్రయత్నించండి.",
+  "hi": "{days} दिन, कार्ड नहीं। अपने कारोबार के साथ पूरा ऐप आज़माएँ।",
+  "kn": "{days} ದಿನ, ಕಾರ್ಡ್ ಬೇಡ. ನಿಮ್ಮ ಸ್ವಂತ ವ್ಯಾಪಾರದೊಂದಿಗೆ ಇಡೀ ಆ್ಯಪ್ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.starter.t": {
+  "en": "Starter",
+  "te": "స్టార్టర్",
+  "hi": "स्टार्टर",
+  "kn": "ಸ್ಟಾರ್ಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.growth.t": {
+  "en": "Growth",
+  "te": "గ్రోత్",
+  "hi": "ग्रोथ",
+  "kn": "ಗ್ರೋತ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.business.t": {
+  "en": "Business",
+  "te": "బిజినెస్",
+  "hi": "बिज़नेस",
+  "kn": "ಬಿಸಿನೆಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.permonth": {
+  "en": "a month",
+  "te": "నెలకు",
+  "hi": "महीना",
+  "kn": "ತಿಂಗಳಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.free": {
+  "en": "Free",
+  "te": "ఉచితం",
+  "hi": "मुफ़्त",
+  "kn": "ಉಚಿತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.gst": {
+  "en": "GST included",
+  "te": "GST కలిపి",
+  "hi": "GST शामिल",
+  "kn": "GST ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fits": {
+  "en": "Fits",
+  "te": "సరిపోయేది",
+  "hi": "किसके लिए ठीक",
+  "kn": "ಯಾರಿಗೆ ಸರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.dfy.t": {
+  "en": "Done-for-you setup",
+  "te": "మేమే సెటప్ చేసి ఇస్తాం",
+  "hi": "हम आपके लिए सेटअप करते हैं",
+  "kn": "ನಾವೇ ಸೆಟಪ್ ಮಾಡಿ ಕೊಡುತ್ತೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.dfy.d": {
+  "en": "One call: we import your price list or student list, set your rules and connect WhatsApp. Paid once.",
+  "te": "ఒక్క కాల్: మీ ధరల జాబితా లేదా విద్యార్థుల జాబితా ఇంపోర్ట్ చేసి, నియమాలు సెట్ చేసి, వాట్సాప్ కనెక్ట్ చేస్తాం. ఒక్కసారే పేమెంట్.",
+  "hi": "एक कॉल: हम आपकी प्राइस लिस्ट या विद्यार्थियों की सूची इंपोर्ट करते हैं, नियम तय करते हैं और व्हाट्सऐप जोड़ते हैं। एक ही बार का पेमेंट।",
+  "kn": "ಒಂದು ಕರೆ: ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿ ಅಥವಾ ವಿದ್ಯಾರ್ಥಿ ಪಟ್ಟಿ ಇಂಪೋರ್ಟ್ ಮಾಡಿ, ನಿಯಮ ಹೊಂದಿಸಿ, ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕಿಸುತ್ತೇವೆ. ಒಮ್ಮೆ ಮಾತ್ರ ಪೇಮೆಂಟ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.dfy.once": {
+  "en": "one time",
+  "te": "ఒక్కసారి",
+  "hi": "एक बार",
+  "kn": "ಒಮ್ಮೆ ಮಾತ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.founding.t": {
+  "en": "Founding offer",
+  "te": "ఫౌండింగ్ ఆఫర్",
+  "hi": "फ़ाउंडिंग ऑफ़र",
+  "kn": "ಫೌಂಡಿಂಗ್ ಆಫರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.founding.d": {
+  "en": "The first businesses to join get a founding offer. Ask us on WhatsApp for the details.",
+  "te": "మొదట చేరే వ్యాపారాలకు ఫౌండింగ్ ఆఫర్ ఉంటుంది. వివరాల కోసం వాట్సాప్‌లో అడగండి.",
+  "hi": "सबसे पहले जुड़ने वाले कारोबारों को फ़ाउंडिंग ऑफ़र मिलता है। ब्योरे के लिए व्हाट्सऐप पर पूछें।",
+  "kn": "ಮೊದಲು ಸೇರುವ ವ್ಯಾಪಾರಗಳಿಗೆ ಫೌಂಡಿಂಗ್ ಆಫರ್ ಇದೆ. ವಿವರಕ್ಕೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.terms.t": {
+  "en": "The small print, plainly",
+  "te": "చిన్న అక్షరాలు, సరళంగా",
+  "hi": "छोटे अक्षर, सीधे शब्दों में",
+  "kn": "ಸಣ್ಣ ಅಕ್ಷರ, ಸರಳವಾಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.terms.1": {
+  "en": "Cancel any time.",
+  "te": "ఎప్పుడైనా రద్దు చేయవచ్చు.",
+  "hi": "कभी भी रद्द करें।",
+  "kn": "ಯಾವಾಗ ಬೇಕಾದರೂ ರದ್ದು ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.terms.2": {
+  "en": "A 7-day refund after you first pay.",
+  "te": "మొదటిసారి కట్టాక 7 రోజులు రీఫండ్.",
+  "hi": "पहली बार पेमेंट के बाद 7 दिन में रिफ़ंड।",
+  "kn": "ಮೊದಲ ಪೇಮೆಂಟ್ ನಂತರ 7 ದಿನ ರೀಫಂಡ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.terms.3": {
+  "en": "Prices include GST.",
+  "te": "ధరల్లో GST కలిపి ఉంది.",
+  "hi": "कीमतों में GST शामिल है।",
+  "kn": "ಬೆಲೆಗಳಲ್ಲಿ GST ಸೇರಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.terms.4": {
+  "en": "Plan limits are still being set. We will show them here before billing opens.",
+  "te": "ప్లాన్ పరిమితులు ఇంకా సెట్ కాలేదు.",
+  "hi": "प्लान की सीमाएँ अभी तय हो रही हैं। बिलिंग शुरू होने से पहले हम उन्हें यहाँ दिखाएँगे।",
+  "kn": "ಪ್ಲಾನ್ ಮಿತಿಗಳು ಇನ್ನೂ ಹೊಂದಿಸುತ್ತಿದ್ದೇವೆ. ಬಿಲ್ಲಿಂಗ್ ತೆರೆಯುವ ಮೊದಲು ಇಲ್ಲಿ ತೋರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.t": {
+  "en": "How fair use works",
+  "te": "ఫెయిర్ యూజ్ ఎలా పనిచేస్తుంది",
+  "hi": "फ़ेयर यूज़ कैसे काम करता है",
+  "kn": "ಫೇರ್ ಯೂಸ್ ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.1": {
+  "en": "A usage meter shows today's and this month's use.",
+  "te": "యూసేజ్ మీటర్ ఈ రోజు, ఈ నెల వాడకాన్ని చూపిస్తుంది.",
+  "hi": "यूसेज मीटर आज और इस महीने का इस्तेमाल दिखाता है।",
+  "kn": "ಯೂಸೇಜ್ ಮೀಟರ್ ಇಂದು, ಈ ತಿಂಗಳ ಬಳಕೆ ತೋರಿಸುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.2": {
+  "en": "When you are near the top, the app tells you.",
+  "te": "పైకి దగ్గరగా వచ్చినప్పుడు యాప్ మీకు చెబుతుంది.",
+  "hi": "सीमा के पास पहुँचने पर ऐप आपको बताता है।",
+  "kn": "ಮಿತಿಯ ಹತ್ತಿರ ಬಂದಾಗ ಆ್ಯಪ್ ನಿಮಗೆ ಹೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.fair.3": {
+  "en": "At the limit, Agent OWL switches to a lighter mode until midnight. Quotes, orders and customers keep working.",
+  "te": "పరిమితి దగ్గర Agent OWL అర్ధరాత్రి వరకు తేలికైన మోడ్‌లోకి మారుతుంది. కోట్లు, ఆర్డర్లు, కస్టమర్లు పనిచేస్తూనే ఉంటాయి.",
+  "hi": "सीमा पर Agent OWL आधी रात तक हल्के मोड में चला जाता है। कोटेशन, ऑर्डर और ग्राहक चलते रहते हैं।",
+  "kn": "ಮಿತಿಯಲ್ಲಿ Agent OWL ಮಧ್ಯರಾತ್ರಿವರೆಗೆ ಹಗುರ ಮೋಡ್‌ಗೆ ಹೋಗುತ್ತದೆ. ಕೊಟೇಶನ್, ಆರ್ಡರ್, ಗ್ರಾಹಕರು ಕೆಲಸ ಮಾಡುತ್ತಲೇ ಇರುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.examples.t": {
+  "en": "What each plan fits, by kind of business",
+  "te": "వ్యాపార రకం వారీగా ఏ ప్లాన్ ఎవరికి సరిపోతుంది",
+  "hi": "कारोबार के प्रकार के हिसाब से कौन सा प्लान किसके लिए",
+  "kn": "ವ್ಯಾಪಾರದ ರೀತಿಯ ಪ್ರಕಾರ ಯಾವ ಪ್ಲಾನ್ ಯಾರಿಗೆ ಸರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.faq.1.q": {
+  "en": "Can I change plan later?",
+  "te": "తర్వాత ప్లాన్ మార్చుకోవచ్చా?",
+  "hi": "क्या मैं बाद में प्लान बदल सकता हूँ?",
+  "kn": "ನಂತರ ಪ್ಲಾನ್ ಬದಲಿಸಬಹುದೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.faq.1.a": {
+  "en": "Yes. You can move up or down, and cancel any time.",
+  "te": "అవును. పైకి లేదా కిందకి మారవచ్చు, ఎప్పుడైనా రద్దు చేయవచ్చు.",
+  "hi": "हाँ। ऊपर या नीचे के प्लान में जा सकते हैं, और कभी भी रद्द कर सकते हैं।",
+  "kn": "ಹೌದು. ಮೇಲಕ್ಕೆ ಅಥವಾ ಕೆಳಕ್ಕೆ ಬದಲಿಸಬಹುದು, ಯಾವಾಗ ಬೇಕಾದರೂ ರದ್ದು ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.faq.2.q": {
+  "en": "Is AI really included?",
+  "te": "AI నిజంగా కలిపి ఉందా?",
+  "hi": "क्या AI सच में शामिल है?",
+  "kn": "AI ನಿಜಕ್ಕೂ ಸೇರಿದೆಯೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.faq.2.a": {
+  "en": "Yes. There is no charge for each question. A fair-use meter keeps the load reasonable, and quotes, orders and customers keep working at the limit.",
+  "te": "అవును. ప్రతి ప్రశ్నకి ఛార్జ్ లేదు. ఫెయిర్ యూజ్ మీటర్ లోడ్‌ని సరిగా ఉంచుతుంది, పరిమితి దగ్గర కూడా కోట్లు, ఆర్డర్లు, కస్టమర్లు పనిచేస్తాయి.",
+  "hi": "हाँ। हर सवाल का कोई चार्ज नहीं। फ़ेयर यूज़ मीटर लोड को ठीक रखता है, और सीमा पर भी कोटेशन, ऑर्डर और ग्राहक चलते रहते हैं।",
+  "kn": "ಹೌದು. ಪ್ರತಿ ಪ್ರಶ್ನೆಗೆ ಚಾರ್ಜ್ ಇಲ್ಲ. ಫೇರ್ ಯೂಸ್ ಮೀಟರ್ ಹೊರೆಯನ್ನು ಸರಿಯಾಗಿ ಇಡುತ್ತದೆ, ಮಿತಿಯಲ್ಲೂ ಕೊಟೇಶನ್, ಆರ್ಡರ್, ಗ್ರಾಹಕರು ಕೆಲಸ ಮಾಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.faq.3.q": {
+  "en": "When does billing start?",
+  "te": "బిల్లింగ్ ఎప్పుడు మొదలవుతుంది?",
+  "hi": "बिलिंग कब शुरू होती है?",
+  "kn": "ಬಿಲ್ಲಿಂಗ್ ಯಾವಾಗ ಶುರುವಾಗುತ್ತದೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "price.faq.3.a": {
+  "en": "Not yet. Billing is off. We will tell you well before anything is charged.",
+  "te": "ఇంకా లేదు. బిల్లింగ్ ఆఫ్‌లో ఉంది. ఏదైనా ఛార్జ్ చేసే చాలా ముందు మీకు చెబుతాం.",
+  "hi": "अभी नहीं। बिलिंग बंद है। कुछ भी चार्ज करने से काफ़ी पहले हम आपको बताएँगे।",
+  "kn": "ಇನ್ನೂ ಇಲ್ಲ. ಬಿಲ್ಲಿಂಗ್ ಆಫ್ ಆಗಿದೆ. ಏನಾದರೂ ಚಾರ್ಜ್ ಮಾಡುವ ಬಹಳ ಮೊದಲು ನಿಮಗೆ ಹೇಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.title": {
+  "en": "How it works",
+  "te": "ఇది ఎలా పనిచేస్తుంది",
+  "hi": "यह कैसे काम करता है",
+  "kn": "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ్ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.sub": {
+  "en": "Seven owl helpers do the daily work on WhatsApp. They prepare, you decide.",
+  "te": "ఏడుగురు గుడ్లగూబ సహాయకులు వాట్సాప్‌లో రోజువారీ పని చేస్తారు. వాళ్ళు సిద్ధం చేస్తారు, మీరు ఓకే చేస్తారు.",
+  "hi": "सात उल्लू मददगार व्हाट्सऐप पर रोज़ का काम करते हैं। वे तैयार करते हैं, आप ओके करते हैं।",
+  "kn": "ಏಳು ಗೂಬೆ ಸಹಾಯಕರು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ದಿನದ ಕೆಲಸ ಮಾಡುತ್ತಾರೆ. ಅವರು ಸಿದ್ಧಪಡಿಸುತ್ತಾರೆ, ನೀವು ಓಕೆ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.owls.t": {
+  "en": "The seven owls",
+  "te": "ఏడు గుడ్లగూబలు",
+  "hi": "सात उल्लू",
+  "kn": "ಏಳು ಗೂಬೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.calledIn": {
+  "en": "In {name}:",
+  "te": "{name} లో:",
+  "hi": "{name} में:",
+  "kn": "{name} ನಲ್ಲಿ:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.waits.t": {
+  "en": "What always waits for you",
+  "te": "ఎప్పుడూ మీ కోసం ఆగేవి",
+  "hi": "जो हमेशा आपके लिए रुकता है",
+  "kn": "ಯಾವಾಗಲೂ ನಿಮಗಾಗಿ ಕಾಯುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.waits.1": {
+  "en": "Prices, discounts, advances and refunds",
+  "te": "ధరలు, డిస్కౌంట్లు, అడ్వాన్సులు, రీఫండ్‌లు",
+  "hi": "कीमतें, डिस्काउंट, एडवांस और रिफ़ंड",
+  "kn": "ಬೆಲೆ, ಡಿಸ್ಕೌಂಟ್, ಅಡ್ವಾನ್ಸ್, ರೀಫಂಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.waits.2": {
+  "en": "Promises, such as a delivery date or that stock will be there",
+  "te": "ప్రామిస్‌లు, డెలివరీ తేదీ లేదా స్టాక్ గురించి చెప్పేవి",
+  "hi": "वादे, जैसे डिलीवरी की तारीख़ या स्टॉक की बात",
+  "kn": "ಮಾತುಗಳು, ಡೆಲಿವರಿ ದಿನಾಂಕ ಅಥವಾ ಸ್ಟಾಕ್ ಬಗ್ಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.waits.3": {
+  "en": "Complaints and anything upset",
+  "te": "కంప్లైంట్‌లు, కోపంగా ఉన్న ఏదైనా",
+  "hi": "शिकायतें और कोई भी नाराज़गी",
+  "kn": "ದೂರುಗಳು ಮತ್ತು ಕೋಪದ ಯಾವುದೇ ವಿಷಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.waits.4": {
+  "en": "Calls: the owl asks you first",
+  "te": "కాల్స్: గుడ్లగూబ ముందు మిమ్మల్ని అడుగుతుంది",
+  "hi": "कॉल: उल्लू पहले आपसे पूछता है",
+  "kn": "ಕರೆಗಳು: ಗೂಬೆ ಮೊದಲು ನಿಮ್ಮನ್ನು ಕೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.waits.5": {
+  "en": "Campaigns: one approval for the whole campaign",
+  "te": "క్యాంపెయిన్‌లు: మొత్తం క్యాంపెయిన్‌కి ఒకే ఓకే",
+  "hi": "कैंपेन: पूरे कैंपेन के लिए एक ओके",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು: ಇಡೀ ಕ್ಯಾಂಪೇನ್‌ಗೆ ಒಂದೇ ಓಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.t": {
+  "en": "Habits that keep your number safe",
+  "te": "మీ నంబర్‌ని భద్రంగా ఉంచే అలవాట్లు",
+  "hi": "वे आदतें जो आपके नंबर को सुरक्षित रखती हैं",
+  "kn": "ನಿಮ್ಮ ನಂಬರ್ ಸುರಕ್ಷಿತವಾಗಿಡುವ ಅಭ್ಯಾಸಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.1": {
+  "en": "Only customers who agreed are messaged, and the agreement is recorded.",
+  "te": "అంగీకరించిన కస్టమర్లకే మెసేజ్ వెళ్తుంది, అంగీకారం రికార్డ్ అవుతుంది.",
+  "hi": "सिर्फ़ सहमत ग्राहकों को मैसेज जाता है, और सहमति दर्ज रहती है।",
+  "kn": "ಒಪ್ಪಿದ ಗ್ರಾಹಕರಿಗೆ ಮಾತ್ರ ಮೆಸೇಜ್ ಹೋಗುತ್ತದೆ, ಒಪ್ಪಿಗೆ ಬರೆದಿಟ್ಟಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.2": {
+  "en": "Stop means stop: a customer who says stop is not messaged again.",
+  "te": "స్టాప్ అంటే స్టాప్: ఆపమన్న కస్టమర్‌కి మళ్ళీ మెసేజ్ వెళ్ళదు.",
+  "hi": "स्टॉप का मतलब स्टॉप: स्टॉप कहने वाले को दोबारा मैसेज नहीं जाता।",
+  "kn": "ಸ್ಟಾಪ್ ಅಂದರೆ ಸ್ಟಾಪ್: ನಿಲ್ಲಿಸಲು ಹೇಳಿದ ಗ್ರಾಹಕರಿಗೆ ಮತ್ತೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.3": {
+  "en": "A daily limit for each customer, and quiet hours at night.",
+  "te": "ప్రతి కస్టమర్‌కి రోజువారీ పరిమితి, రాత్రి నిశ్శబ్ద సమయం.",
+  "hi": "हर ग्राहक के लिए रोज़ की सीमा, और रात में शांति के घंटे।",
+  "kn": "ಪ್ರತಿ ಗ್ರಾಹಕರಿಗೆ ದಿನದ ಮಿತಿ, ರಾತ್ರಿ ಶಾಂತ ಸಮಯ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.4": {
+  "en": "Every message says it was written by an AI assistant.",
+  "te": "ప్రతి మెసేజ్‌లో AI అసిస్టెంట్ రాసిందని ఉంటుంది.",
+  "hi": "हर मैसేज बताता है कि उसे AI असिस्टेंट ने लिखा है।",
+  "kn": "ಪ್ರತಿ ಮೆಸೇಜ್‌ನಲ್ಲಿ AI ಅಸಿಸ್ಟೆಂಟ್ ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.5": {
+  "en": "One switch turns automatic sending off. Then every message waits for you.",
+  "te": "ఒక్క స్విచ్‌తో ఆటోమేటిక్ పంపడం ఆఫ్ అవుతుంది. అప్పుడు ప్రతి మెసేజ్ మీ కోసం ఆగుతుంది.",
+  "hi": "एक स्विच से ऑटोमैटिक भेजना बंद हो जाता है। तब हर मैसेज आपके लिए रुकता है।",
+  "kn": "ಒಂದು ಸ್ವಿಚ್‌ನಿಂದ ಆಟೋಮ್ಯಾಟಿಕ್ ಕಳುಹಿಸುವುದು ಆಫ್ ಆಗುತ್ತದೆ. ಆಗ ಪ್ರತಿ ಮೆಸೇಜ್ ನಿಮಗಾಗಿ ಕಾಯುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "how.habits.note": {
+  "en": "No tool can promise how WhatsApp treats a number. These are the habits that keep it in good standing.",
+  "te": "వాట్సాప్ నంబర్‌ని ఎలా చూస్తుందో ఏ టూల్ ప్రామిస్ చేయలేదు. నంబర్‌ని మంచి స్థితిలో ఉంచే అలవాట్లు ఇవి.",
+  "hi": "व्हाट्सऐप किसी नंबर के साथ कैसे पेश आएगा, यह कोई टूल पक्का नहीं कह सकता। ये वे आदतें हैं जो नंबर को अच्छी हालत में रखती हैं।",
+  "kn": "ವಾಟ್ಸಾಪ್ ನಂಬರ್‌ನೊಂದಿಗೆ ಹೇಗೆ ನಡೆದುಕೊಳ್ಳುತ್ತದೆ ಎಂದು ಯಾವ ಟೂಲ್ ಕೂಡ ಖಚಿತವಾಗಿ ಹೇಳಲಾರದು. ನಂಬರ್ ಚೆನ್ನಾಗಿರುವಂತೆ ಇಡುವ ಅಭ್ಯಾಸಗಳಿವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.title": {
+  "en": "Security and privacy, in plain words",
+  "te": "సెక్యూరిటీ, ప్రైవసీ, సరళమైన మాటల్లో",
+  "hi": "सिक्योरिटी और प्राइवेसी, सीधे शब्दों में",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ, ಪ್ರೈವೆಸಿ, ಸರಳ ಮಾತುಗಳಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.sub": {
+  "en": "What we do, what we plan, and what we have not done yet.",
+  "te": "మేము ఏం చేస్తున్నాం, ఏం ప్లాన్ చేస్తున్నాం, ఇంకా ఏం చేయలేదు.",
+  "hi": "हम क्या करते हैं, क्या सोच रहे हैं, और क्या अभी नहीं किया।",
+  "kn": "ನಾವು ಏನು ಮಾಡುತ್ತೇವೆ, ಏನು ಯೋಜಿಸಿದ್ದೇವೆ, ಇನ್ನೂ ಏನು ಮಾಡಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.apart.t": {
+  "en": "Each business kept apart",
+  "te": "ప్రతి వ్యాపారం వేరుగా",
+  "hi": "हर कारोबार अलग",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರ ಪ್ರತ್ಯೇಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.apart.d": {
+  "en": "Every business's records are kept apart from every other business. This is enforced in the database, not only on screen.",
+  "te": "ప్రతి వ్యాపారం రికార్డులు ఇతర వ్యాపారాల నుండి వేరుగా ఉంటాయి. ఇది స్క్రీన్‌లోనే కాదు, డేటాబేస్‌లోనే అమలవుతుంది.",
+  "hi": "हर कारोबार के रिकॉर्ड दूसरे कारोबारों से अलग रखे जाते हैं। यह सिर्फ़ स्क्रीन पर नहीं, डेटाबेस में लागू है।",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರದ ದಾಖಲೆಗಳು ಬೇರೆ ವ್ಯಾಪಾರಗಳಿಂದ ಪ್ರತ್ಯೇಕ. ಇದು ಸ್ಕ್ರೀನ್‌ನಲ್ಲಷ್ಟೇ ಅಲ್ಲ, ಡೇಟಾಬೇಸ್‌ನಲ್ಲೇ ಜಾರಿಯಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.who.t": {
+  "en": "Who sees what",
+  "te": "ఎవరికి ఏం కనిపిస్తుంది",
+  "hi": "किसे क्या दिखता है",
+  "kn": "ಯಾರಿಗೆ ಏನು ಕಾಣುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.who.d": {
+  "en": "Each person in your business has a role: Owner, Admin, Sales or Viewer. The role decides what they can see and do. Money actions need a second step (an authenticator code).",
+  "te": "మీ వ్యాపారంలో ప్రతి వ్యక్తికి ఒక రోల్ ఉంటుంది: ఓనర్, అడ్మిన్, సేల్స్ లేదా వ్యూయర్. ఏం చూడగలరో, ఏం చేయగలరో రోల్ తేలుస్తుంది. డబ్బు పనులకు రెండో స్టెప్ (ఆథెంటికేటర్ కోడ్) కావాలి.",
+  "hi": "आपके कारोबार में हर व्यक्ति का एक रोल होता है: ओनर, एडमिन, सेल्स या व्यूअर। रोल तय करता है कि वह क्या देख और कर सकता है। पैसे के काम के लिए दूसरा स्टेप (ऑथेंटिकेटर कोड) चाहिए।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದಲ್ಲಿ ಪ್ರತಿ ವ್ಯಕ್ತಿಗೆ ಒಂದು ರೋಲ್ ಇರುತ್ತದೆ: ಓನರ್, ಅಡ್ಮಿನ್, ಸೇಲ್ಸ್ ಅಥವಾ ವ್ಯೂವರ್. ಏನು ನೋಡಬಹುದು, ಏನು ಮಾಡಬಹುದು ಎಂದು ರೋಲ್ ಹೇಳುತ್ತದೆ. ಹಣದ ಕೆಲಸಗಳಿಗೆ ಎರಡನೇ ಹಂತ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.rights.t": {
+  "en": "Your rights over your data",
+  "te": "మీ డేటాపై మీ హక్కులు",
+  "hi": "आपके डेटा पर आपके अधिकार",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ಮೇಲೆ ನಿಮ್ಮ ಹಕ್ಕುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.rights.d": {
+  "en": "The app can export your records and remove a person's details when they ask. We built it with India's DPDP Act in mind. We have not had an independent review yet.",
+  "te": "యాప్ మీ రికార్డులను ఎక్స్‌పోర్ట్ చేయగలదు, ఒక వ్యక్తి అడిగినప్పుడు వారి వివరాలు తొలగించగలదు. భారతదేశ DPDP చట్టాన్ని దృష్టిలో ఉంచుకుని తయారు చేశాం. ఇంకా స్వతంత్ర సమీక్ష జరగలేదు.",
+  "hi": "ऐप आपके रिकॉर्ड एक्सपोर्ट कर सकता है और किसी व्यक्ति के कहने पर उसकी जानकारी हटा सकता है। हमने इसे भारत के DPDP क़ानून को ध्यान में रखकर बनाया है। अभी कोई स्वतंत्र जाँच नहीं हुई है।",
+  "kn": "ಆ್ಯಪ್ ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು, ಒಬ್ಬ ವ್ಯಕ್ತಿ ಕೇಳಿದಾಗ ಅವರ ವಿವರ ತೆಗೆಯಬಹುದು. ಭಾರತದ DPDP ಕಾಯ್ದೆಯನ್ನು ಗಮನದಲ್ಲಿಟ್ಟು ರೂಪಿಸಿದ್ದೇವೆ. ಇನ್ನೂ ಸ್ವತಂತ್ರ ಪರೀಕ್ಷೆ ನಡೆದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.ai.t": {
+  "en": "AI is always labelled",
+  "te": "AI అని ఎప్పుడూ చెబుతుంది",
+  "hi": "AI हमेशा बताया जाता है",
+  "kn": "AI ಎಂದು ಯಾವಾಗಲೂ ಹೇಳುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.ai.d": {
+  "en": "Messages the owls write say they were written by an AI assistant. Web pages and incoming messages are treated as untrusted text and cannot give the owls orders.",
+  "te": "గుడ్లగూబలు రాసే మెసేజ్‌లలో AI అసిస్టెంట్ రాసిందని ఉంటుంది. వెబ్ పేజీలు, వచ్చే మెసేజ్‌లను నమ్మదగని టెక్స్ట్‌గా చూస్తాం, అవి గుడ్లగూబలకు ఆదేశాలు ఇవ్వలేవు.",
+  "hi": "उल्लुओं के लिखे मैसेज में बताया जाता है कि उन्हें AI असिस्टेंट ने लिखा है। वेब पेज और आने वाले मैसेज को भरोसे के लायक नहीं माना जाता, वे उल्लुओं को आदेश नहीं दे सकते।",
+  "kn": "ಗೂಬೆಗಳು ಬರೆದ ಮೆಸೇಜ್‌ಗಳಲ್ಲಿ AI ಅಸಿಸ್ಟೆಂಟ್ ಬರೆದಿದೆ ಎಂದು ಇರುತ್ತದೆ. ವೆಬ್ ಪುಟ, ಬರುವ ಮೆಸೇಜ್‌ಗಳನ್ನು ನಂಬಲಾಗದ ಪಠ್ಯವೆಂದು ನೋಡುತ್ತೇವೆ, ಅವು ಗೂಬೆಗಳಿಗೆ ಆದೇಶ ಕೊಡಲಾರವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.kids.t": {
+  "en": "Children's data (education)",
+  "te": "పిల్లల డేటా (విద్య)",
+  "hi": "बच्चों का डेटा (शिक्षा)",
+  "kn": "ಮಕ್ಕಳ ಡೇಟಾ (ಶಿಕ್ಷಣ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.kids.d": {
+  "en": "Only what a fee reminder needs, never given to an AI model, messages only to parents. Real student data waits for a legal review of children's data.",
+  "te": "ఫీజు రిమైండర్‌కి కావలసినవే, AI మోడల్‌కి ఎప్పుడూ ఇవ్వరు, మెసేజ్‌లు తల్లిదండ్రులకే. నిజమైన విద్యార్థుల డేటా కోసం ముందు పిల్లల డేటా న్యాయ సమీక్ష జరగాలి.",
+  "hi": "सिर्फ़ वही जो फ़ीस रिमाइंडर के लिए चाहिए, AI मॉडल को कभी नहीं दिया जाता, मैसेज सिर्फ़ अभिभावकों को। असली विद्यार्थियों का डेटा बच्चों के डेटा की कानूनी जाँच के बाद ही आएगा।",
+  "kn": "ಫೀಸ್ ರಿಮೈಂಡರ್‌ಗೆ ಬೇಕಾದದ್ದು ಮಾತ್ರ, AI ಮಾಡೆಲ್‌ಗೆ ಎಂದೂ ಕೊಡುವುದಿಲ್ಲ, ಮೆಸೇಜ್ ಪೋಷಕರಿಗೆ ಮಾತ್ರ. ನಿಜವಾದ ವಿದ್ಯಾರ್ಥಿ ಡೇಟಾ ಬರುವ ಮೊದಲು ಮಕ್ಕಳ ಡೇಟಾದ ಕಾನೂನು ಪರೀಕ್ಷೆ ನಡೆಯಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.where.t": {
+  "en": "Where your data is kept",
+  "te": "మీ డేటా ఎక్కడ ఉంటుంది",
+  "hi": "आपका डेटा कहाँ रखा जाता है",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ಎಲ್ಲಿ ಇರುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.where.d": {
+  "en": "The product is not hosted for real customers yet; it runs on test systems with made-up data. Before any real customer data is stored, we will name the hosting region here. We plan a region in India.",
+  "te": "ప్రొడక్ట్ ఇంకా నిజమైన కస్టమర్ల కోసం హోస్ట్ కాలేదు; కల్పిత డేటాతో టెస్ట్ సిస్టమ్‌లలో నడుస్తోంది. నిజమైన కస్టమర్ డేటా నిల్వ చేసే ముందు హోస్టింగ్ ప్రాంతాన్ని ఇక్కడ చెబుతాం. భారతదేశంలో ఒక ప్రాంతం ప్లాన్ చేస్తున్నాం.",
+  "hi": "प्रोडक्ट अभी असली ग्राहकों के लिए होस्ट नहीं हुआ है; वह बनाए हुए डेटा के साथ टेस्ट सिस्टम पर चलता है। असली ग्राहक डेटा रखने से पहले हम यहाँ होस्टिंग का क्षेत्र बताएँगे। हम भारत में एक क्षेत्र सोच रहे हैं।",
+  "kn": "ಪ್ರೊಡಕ್ಟ್ ಇನ್ನೂ ನಿಜವಾದ ಗ್ರಾಹಕರಿಗೆ ಹೋಸ್ಟ್ ಆಗಿಲ್ಲ; ಕಲ್ಪಿತ ಡೇಟಾದೊಂದಿಗೆ ಟೆಸ್ಟ್ ಸಿಸ್ಟಮ್‌ಗಳಲ್ಲಿ ನಡೆಯುತ್ತಿದೆ. ನಿಜವಾದ ಗ್ರಾಹಕ ಡೇಟಾ ಇಡುವ ಮೊದಲು ಹೋಸ್ಟಿಂಗ್ ಪ್ರದೇಶವನ್ನು ಇಲ್ಲಿ ಹೇಳುತ್ತೇವೆ. ಭಾರತದಲ್ಲಿ ಒಂದು ಪ್ರದೇಶ ಯೋಜಿಸಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.notyet.t": {
+  "en": "What we have not done yet",
+  "te": "మేము ఇంకా చేయనివి",
+  "hi": "जो हमने अभी नहीं किया",
+  "kn": "ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.notyet.1": {
+  "en": "An independent review of our data practices.",
+  "te": "మా డేటా పద్ధతులపై స్వతంత్ర సమీక్ష.",
+  "hi": "हमारे डेटा तरीक़ों की स्वतंत्र जाँच।",
+  "kn": "ನಮ್ಮ ಡೇಟಾ ವಿಧಾನಗಳ ಸ್ವತಂತ್ರ ಪರೀಕ್ಷೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.notyet.2": {
+  "en": "Real customer data in a hosted system.",
+  "te": "హోస్ట్ చేసిన సిస్టమ్‌లో నిజమైన కస్టమర్ డేటా.",
+  "hi": "होस्ट किए सिस्टम में असली ग्राहक डेटा।",
+  "kn": "ಹೋಸ್ಟ್ ಮಾಡಿದ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ನಿಜವಾದ ಗ್ರಾಹಕ ಡೇಟಾ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.notyet.3": {
+  "en": "The legal review of children's data.",
+  "te": "పిల్లల డేటా న్యాయ సమీక్ష.",
+  "hi": "बच्चों के डेटा की कानूनी जाँच।",
+  "kn": "ಮಕ್ಕಳ ಡೇಟಾದ ಕಾನೂನು ಪರೀಕ್ಷೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.more": {
+  "en": "Read the Privacy Policy and the Terms",
+  "te": "ప్రైవసీ పాలసీ, నిబంధనలు చదవండి",
+  "hi": "प्राइवेसी पॉलिसी और शर्तें पढ़ें",
+  "kn": "ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ, ನಿಯಮಗಳನ್ನು ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.ask": {
+  "en": "Questions about your data? Write to us on WhatsApp.",
+  "te": "మీ డేటా గురించి ప్రశ్నలా? వాట్సాప్‌లో రాయండి.",
+  "hi": "अपने डेटा के बारे में सवाल? हमें व्हाट्सऐप पर लिखें।",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ಬಗ್ಗೆ ಪ್ರಶ್ನೆಗಳೇ? ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.title": {
+  "en": "Talk to us on WhatsApp",
+  "te": "వాట్సాప్‌లో మాతో మాట్లాడండి",
+  "hi": "हमसे व्हाट्सऐप पर बात करें",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ನಮ್ಮೊಂದಿಗೆ ಮಾತನಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.sub": {
+  "en": "Ask a question, ask for a demo, or ask about the founding offer. We answer on WhatsApp, in your language.",
+  "te": "ప్రశ్న అడగండి, డెమో అడగండి, లేదా ఫౌండింగ్ ఆఫర్ గురించి అడగండి. మేము వాట్సాప్‌లో, మీ భాషలో జవాబిస్తాం.",
+  "hi": "सवाल पूछें, डेमो माँगें, या फ़ाउंडिंग ऑफ़र के बारे में पूछें। हम व्हाट्सऐप पर, आपकी भाषा में जवाब देते हैं।",
+  "kn": "ಪ್ರಶ್ನೆ ಕೇಳಿ, ಡೆಮೊ ಕೇಳಿ, ಅಥವಾ ಫೌಂಡಿಂಗ್ ಆಫರ್ ಬಗ್ಗೆ ಕೇಳಿ. ನಾವು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ, ನಿಮ್ಮ ಭಾಷೆಯಲ್ಲಿ ಉತ್ತರಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.chat": {
+  "en": "Open WhatsApp",
+  "te": "వాట్సాప్ తెరవండి",
+  "hi": "व्हाट्सऐप खोलें",
+  "kn": "ವಾಟ್ಸಾಪ್ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.form.title": {
+  "en": "Or tell us a little first",
+  "te": "లేదా ముందు కొంచెం చెప్పండి",
+  "hi": "या पहले थोड़ा बताइए",
+  "kn": "ಅಥವಾ ಮೊದಲು ಸ್ವಲ್ಪ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.type": {
+  "en": "Your kind of business",
+  "te": "మీ వ్యాపార రకం",
+  "hi": "आपके कारोबार का प्रकार",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ರೀತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.type.other": {
+  "en": "Something else",
+  "te": "ఇంకేదైనా",
+  "hi": "कुछ और",
+  "kn": "ಬೇರೇನಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.what": {
+  "en": "What would you like to ask? (optional)",
+  "te": "మీరు ఏం అడగాలనుకుంటున్నారు? (ఐచ్ఛికం)",
+  "hi": "आप क्या पूछना चाहते हैं? (वैकल्पिक)",
+  "kn": "ನೀವು ಏನು ಕೇಳಲು ಬಯಸುತ್ತೀರಿ? (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.consent": {
+  "en": "I agree that {brand} may reply to me on WhatsApp about this. I have read the Privacy Policy.",
+  "te": "దీని గురించి {brand} నాకు వాట్సాప్‌లో జవాబివ్వవచ్చని అంగీకరిస్తున్నాను. ప్రైవసీ పాలసీ చదివాను.",
+  "hi": "मैं मानता हूँ कि {brand} इस बारे में मुझे व्हाट्सऐप पर जवाब दे सकता है। मैंने प्राइवेसी पॉलिसी पढ़ी है।",
+  "kn": "ಈ ಬಗ್ಗೆ {brand} ನನಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಉತ್ತರ ಕೊಡಬಹುದು ಎಂದು ಒಪ್ಪುತ್ತೇನೆ. ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ ಓದಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.privacy": {
+  "en": "Privacy Policy",
+  "te": "ప్రైవసీ పాలసీ",
+  "hi": "प्राइवेसी पॉलिसी",
+  "kn": "ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.submit": {
+  "en": "Continue on WhatsApp",
+  "te": "వాట్సాప్‌లో కొనసాగండి",
+  "hi": "व्हाट्सऐप पर आगे बढ़ें",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಮುಂದುವರಿಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.nosave": {
+  "en": "Nothing you type here is saved on this website. It only fills in your WhatsApp message, which you send yourself.",
+  "te": "ఇక్కడ మీరు టైప్ చేసేది ఈ వెబ్‌సైట్‌లో సేవ్ కాదు. అది మీ వాట్సాప్ మెసేజ్‌ని మాత్రమే నింపుతుంది, దాన్ని మీరే పంపుతారు.",
+  "hi": "आप यहाँ जो लिखते हैं वह इस वेबसाइट पर सेव नहीं होता। वह सिर्फ़ आपका व्हाट्सऐप मैसेज भरता है, जिसे आप खुद भेजते हैं।",
+  "kn": "ನೀವು ಇಲ್ಲಿ ಬರೆದದ್ದು ಈ ವೆಬ್‌ಸೈಟ್‌ನಲ್ಲಿ ಸೇವ್ ಆಗುವುದಿಲ್ಲ. ಅದು ನಿಮ್ಮ ವಾಟ್ಸಾಪ್ ಮೆಸೇಜ್ ಅನ್ನು ಮಾತ್ರ ತುಂಬುತ್ತದೆ, ಅದನ್ನು ನೀವೇ ಕಳುಹಿಸುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.unavailable": {
+  "en": "Our WhatsApp number is not set up on this site yet. Please check back soon.",
+  "te": "మా వాట్సాప్ నంబర్ ఈ సైట్‌లో ఇంకా సెట్ కాలేదు. కొంచెం సేపటి తర్వాత చూడండి.",
+  "hi": "हमारा व्हाट्सऐप नंबर इस साइट पर अभी सेट नहीं हुआ है। थोड़ी देर बाद देखें।",
+  "kn": "ನಮ್ಮ ವಾಟ್ಸಾಪ್ ನಂಬರ್ ಈ ಸೈಟ್‌ನಲ್ಲಿ ಇನ್ನೂ ಹೊಂದಿಸಿಲ್ಲ. ಸ್ವಲ್ಪ ಹೊತ್ತಿನ ನಂತರ ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.consent": {
+  "en": "Please tick the box so we may reply to you.",
+  "te": "మేము మీకు జవాబివ్వడానికి బాక్స్ టిక్ చేయండి.",
+  "hi": "हम जवाब दे सकें, इसके लिए बॉक्स पर टिक करें।",
+  "kn": "ನಾವು ಉತ್ತರ ಕೊಡಲು ಬಾಕ್ಸ್ ಟಿಕ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.name": {
+  "en": "Please type your name.",
+  "te": "మీ పేరు టైప్ చేయండి.",
+  "hi": "अपना नाम लिखें।",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.rate": {
+  "en": "Too many tries. Wait a little and try again.",
+  "te": "చాలాసార్లు ప్రయత్నించారు. కొంచెం ఆగి మళ్ళీ ప్రయత్నించండి.",
+  "hi": "बहुत बार कोशिश हो गई। थोड़ा रुककर फिर कोशिश करें।",
+  "kn": "ತುಂಬಾ ಬಾರಿ ಪ್ರಯತ್ನಿಸಿದ್ದೀರಿ. ಸ್ವಲ್ಪ ನಿಲ್ಲಿ, ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.err.generic": {
+  "en": "That did not work. Try again.",
+  "te": "అది పనిచేయలేదు. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो पाया। फिर कोशिश करें।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.msg": {
+  "en": "Hello {brand}. My name is {name}. My business is: {type}. {what}",
+  "te": "నమస్కారం {brand}. నా పేరు {name}. నా వ్యాపారం: {type}. {what}",
+  "hi": "नमस्ते {brand}। मेरा नाम {name} है। मेरा कारोबार: {type}। {what}",
+  "kn": "ನಮಸ್ಕಾರ {brand}. ನನ್ನ ಹೆಸರು {name}. ನನ್ನ ವ್ಯಾಪಾರ: {type}. {what}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.hours": {
+  "en": "We reply on WhatsApp, usually the same day.",
+  "te": "మేము వాట్సాప్‌లో జవాబిస్తాం, సాధారణంగా అదే రోజు.",
+  "hi": "हम व्हाट्सऐप पर जवाब देते हैं, आम तौर पर उसी दिन।",
+  "kn": "ನಾವು ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಉತ್ತರ ಕೊಡುತ್ತೇವೆ, ಸಾಮಾನ್ಯವಾಗಿ ಅದೇ ದಿನ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.title": {
+  "en": "Help",
+  "te": "సహాయం",
+  "hi": "मदद",
+  "kn": "ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.sub": {
+  "en": "Short answers, and where to read more. Still stuck? Ask us on WhatsApp.",
+  "te": "చిన్న జవాబులు, ఇంకా ఎక్కడ చదవాలో. ఇంకా ఇరుక్కుంటే వాట్సాప్‌లో అడగండి.",
+  "hi": "छोटे जवाब, और आगे कहाँ पढ़ें। फिर भी अटके हैं? हमसे व्हाट्सऐप पर पूछें।",
+  "kn": "ಚಿಕ್ಕ ಉತ್ತರಗಳು, ಇನ್ನಷ್ಟು ಎಲ್ಲಿ ಓದಬೇಕು. ಇನ್ನೂ ಸಿಕ್ಕಿಹಾಕಿಕೊಂಡಿದ್ದೀರಾ? ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಕೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.1.t": {
+  "en": "Getting started",
+  "te": "మొదలుపెట్టడం",
+  "hi": "शुरू करना",
+  "kn": "ಶುರು ಮಾಡುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.1.d": {
+  "en": "Sign up, choose your kind of business, and follow the checklist on Today. Each step asks only what it needs.",
+  "te": "సైన్ అప్ అయి, మీ వ్యాపార రకం ఎంచుకుని, టుడేలోని చెక్‌లిస్ట్ అనుసరించండి. ప్రతి స్టెప్ అవసరమైనదే అడుగుతుంది.",
+  "hi": "साइन अप करें, अपने कारोबार का प्रकार चुनें और आज की स्क्रीन की चेकलिस्ट देखें। हर स्टेप सिर्फ़ ज़रूरी बात पूछता है।",
+  "kn": "ಸೈನ್ ಅಪ್ ಆಗಿ, ನಿಮ್ಮ ವ್ಯಾಪಾರದ ರೀತಿ ಆರಿಸಿ, ಟುಡೇನ ಚೆಕ್‌ಲಿಸ್ಟ್ ಅನುಸರಿಸಿ. ಪ್ರತಿ ಹಂತ ಬೇಕಾದದ್ದನ್ನು ಮಾತ್ರ ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.2.t": {
+  "en": "Connecting WhatsApp",
+  "te": "వాట్సాప్ కనెక్ట్ చేయడం",
+  "hi": "व्हाट्सऐप जोड़ना",
+  "kn": "ವಾಟ್ಸಾಪ್ ಸಂಪರ್ಕಿಸುವುದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.2.d": {
+  "en": "You connect your own business number. The app asks for a second step (an authenticator code) first.",
+  "te": "మీ సొంత బిజినెస్ నంబర్ కనెక్ట్ చేస్తారు. యాప్ ముందు రెండో స్టెప్ (ఆథెంటికేటర్ కోడ్) అడుగుతుంది.",
+  "hi": "आप अपना बिज़नेस नंबर जोड़ते हैं। ऐप पहले दूसरा स्टेप (ऑथेंटिकेटर कोड) माँगता है।",
+  "kn": "ನಿಮ್ಮ ಸ್ವಂತ ಬಿಸಿನೆಸ್ ನಂಬರ್ ಸಂಪರ್ಕಿಸುತ್ತೀರಿ. ಆ್ಯಪ್ ಮೊದಲು ಎರಡನೇ ಹಂತ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಕೇಳುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.3.t": {
+  "en": "Prices and quotes",
+  "te": "ధరలు, కోట్లు",
+  "hi": "कीमतें और कोटेशन",
+  "kn": "ಬೆಲೆ ಮತ್ತು ಕೊಟೇಶನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.3.d": {
+  "en": "Quotes come from your price list by fixed rules. The AI never sets a price, and you approve each quote.",
+  "te": "కోట్లు మీ ధరల జాబితా నుండి నియమాల ప్రకారం వస్తాయి. AI ఎప్పుడూ ధర పెట్టదు, ప్రతి కోట్‌ని మీరు ఓకే చేస్తారు.",
+  "hi": "कोटेशन आपकी प्राइस लिस्ट से तय नियमों से बनते हैं। AI कभी कीमत तय नहीं करता, और हर कोटेशन आप ओके करते हैं।",
+  "kn": "ಕೊಟೇಶನ್ ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿಯಿಂದ ನಿಯಮಗಳಂತೆ ಬರುತ್ತದೆ. AI ಎಂದೂ ಬೆಲೆ ಹಾಕುವುದಿಲ್ಲ, ಪ್ರತಿ ಕೊಟೇಶನ್ ನೀವು ಓಕೆ ಮಾಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.4.t": {
+  "en": "Follow-ups and STOP",
+  "te": "ఫాలో-అప్‌లు, STOP",
+  "hi": "फ़ॉलो-अप और STOP",
+  "kn": "ಫಾಲೋ-ಅಪ್, STOP",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.4.d": {
+  "en": "Reminders are drafts you approve. A customer who says STOP is not messaged again.",
+  "te": "రిమైండర్లు మీరు ఓకే చేసే డ్రాఫ్ట్‌లు. STOP అన్న కస్టమర్‌కి మళ్ళీ మెసేజ్ వెళ్ళదు.",
+  "hi": "रिमाइंडर ऐसे ड्राफ़्ट हैं जिन्हें आप ओके करते हैं। STOP कहने वाले ग्राहक को दोबारा मैसेज नहीं जाता।",
+  "kn": "ರಿಮೈಂಡರ್‌ಗಳು ನೀವು ಓಕೆ ಮಾಡುವ ಡ್ರಾಫ್ಟ್‌ಗಳು. STOP ಎಂದ ಗ್ರಾಹಕರಿಗೆ ಮತ್ತೆ ಮೆಸೇಜ್ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.5.t": {
+  "en": "Languages",
+  "te": "భాషలు",
+  "hi": "भाषाएँ",
+  "kn": "ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.5.d": {
+  "en": "The app, this website and the drafts work in English, Telugu, Hindi and Kannada.",
+  "te": "యాప్, ఈ వెబ్‌సైట్, డ్రాఫ్ట్‌లు ఇంగ్లీష్, తెలుగు, హిందీ, కన్నడలో పనిచేస్తాయి.",
+  "hi": "ऐप, यह वेबसाइट और ड्राफ़्ट अंग्रेज़ी, तेलुगु, हिंदी और कन्नड़ में चलते हैं।",
+  "kn": "ಆ್ಯಪ್, ಈ ವೆಬ್‌ಸೈಟ್, ಡ್ರಾಫ್ಟ್‌ಗಳು ಇಂಗ್ಲಿಷ್, ತೆಲುಗು, ಹಿಂದಿ, ಕನ್ನಡದಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.6.t": {
+  "en": "Your data and privacy",
+  "te": "మీ డేటా, ప్రైవసీ",
+  "hi": "आपका डेटा और प्राइवेसी",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ಮತ್ತು ಪ್ರೈವೆಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.6.d": {
+  "en": "Each business is kept apart. You can export your records and remove a person's details when they ask.",
+  "te": "ప్రతి వ్యాపారం వేరుగా ఉంటుంది. మీ రికార్డులు ఎక్స్‌పోర్ట్ చేయవచ్చు, ఒకరు అడిగినప్పుడు వారి వివరాలు తొలగించవచ్చు.",
+  "hi": "हर कारोबार अलग रहता है। आप अपने रिकॉर्ड एक्सपोर्ट कर सकते हैं और किसी के कहने पर उसकी जानकारी हटा सकते हैं।",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರ ಪ್ರತ್ಯೇಕ ಇರುತ್ತದೆ. ನಿಮ್ಮ ದಾಖಲೆಗಳನ್ನು ಎಕ್ಸ್‌ಪೋರ್ಟ್ ಮಾಡಬಹುದು, ಒಬ್ಬರು ಕೇಳಿದಾಗ ಅವರ ವಿವರ ತೆಗೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.7.t": {
+  "en": "Plans and billing",
+  "te": "ప్లాన్లు, బిల్లింగ్",
+  "hi": "प्लान और बिलिंग",
+  "kn": "ಪ್ಲಾನ್ ಮತ್ತು ಬಿಲ್ಲಿಂಗ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.7.d": {
+  "en": "The trial is free for 30 days. Billing is not on yet, and we will tell you before anything is charged.",
+  "te": "ట్రయల్ 30 రోజులు ఉచితం. బిల్లింగ్ ఇంకా ఆన్ కాలేదు, ఏదైనా ఛార్జ్ చేసే ముందు చెబుతాం.",
+  "hi": "ट्रायल 30 दिन मुफ़्त है। बिलिंग अभी चालू नहीं है, और कुछ चार्ज करने से पहले हम बताएँगे।",
+  "kn": "ಟ್ರಯಲ್ 30 ದಿನ ಉಚಿತ. ಬಿಲ್ಲಿಂಗ್ ಇನ್ನೂ ಆನ್ ಆಗಿಲ್ಲ, ಏನಾದರೂ ಚಾರ್ಜ್ ಮಾಡುವ ಮೊದಲು ಹೇಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.more": {
+  "en": "Read more",
+  "te": "ఇంకా చదవండి",
+  "hi": "और पढ़ें",
+  "kn": "ಇನ್ನಷ್ಟು ಓದಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.area": {
+  "en": "Area to cover",
+  "te": "కవర్ చేయాల్సిన ఏరియా",
+  "hi": "ढकने का एरिया",
+  "kn": "ಮುಚ್ಚಬೇಕಾದ ಏರಿಯಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.unit": {
+  "en": "Unit",
+  "te": "యూనిట్",
+  "hi": "इकाई",
+  "kn": "ಯೂನಿಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.unit.sq_ft": {
+  "en": "sq ft",
+  "te": "చ.అ.",
+  "hi": "वर्ग फ़ुट",
+  "kn": "ಚ.ಅ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.unit.sq_m": {
+  "en": "sq m",
+  "te": "చ.మీ.",
+  "hi": "वर्ग मीटर",
+  "kn": "ಚ.ಮೀ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.product": {
+  "en": "Paver type",
+  "te": "పేవర్ రకం",
+  "hi": "पेवर का प्रकार",
+  "kn": "ಪೇವರ್ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.wastage": {
+  "en": "Extra for breakage and cuts",
+  "te": "విరగడం, కటింగ్‌కి అదనం",
+  "hi": "टूट-फूट और कटाई का अतिरिक्त",
+  "kn": "ಒಡೆಯುವಿಕೆ, ಕಟಿಂಗ್‌ಗೆ ಹೆಚ್ಚುವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.price": {
+  "en": "Your price per {unit} (optional)",
+  "te": "మీ {unit} ధర (ఐచ్ఛికం)",
+  "hi": "आपकी प्रति {unit} कीमत (वैकल्पिक)",
+  "kn": "ನಿಮ್ಮ {unit} ಬೆಲೆ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.price.help": {
+  "en": "Type a price you were quoted to see the material amount. We do not know any seller's price.",
+  "te": "మీకు చెప్పిన ధర టైప్ చేస్తే మెటీరియల్ మొత్తం కనిపిస్తుంది. ఏ అమ్మకందారు ధరా మాకు తెలియదు.",
+  "hi": "आपको बताई गई कीमत लिखें तो मटीरियल की रकम दिखेगी। हमें किसी विक्रेता की कीमत नहीं पता।",
+  "kn": "ನಿಮಗೆ ಹೇಳಿದ ಬೆಲೆ ಬರೆದರೆ ಮೆಟೀರಿಯಲ್ ಮೊತ್ತ ಕಾಣುತ್ತದೆ. ನಮಗೆ ಯಾವ ಮಾರಾಟಗಾರರ ಬೆಲೆಯೂ ಗೊತ್ತಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.result": {
+  "en": "You need about",
+  "te": "మీకు సుమారుగా కావాలి",
+  "hi": "आपको लगभग चाहिए",
+  "kn": "ನಿಮಗೆ ಸುಮಾರು ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.pieces": {
+  "en": "blocks",
+  "te": "బ్లాకులు",
+  "hi": "ब्लॉक",
+  "kn": "ಬ್ಲಾಕ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.pallets": {
+  "en": "pallets",
+  "te": "ప్యాలెట్లు",
+  "hi": "पैलेट",
+  "kn": "ಪ್ಯಾಲೆಟ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.trips": {
+  "en": "truck trips",
+  "te": "ట్రక్ ట్రిప్పులు",
+  "hi": "ट्रक ट्रिप",
+  "kn": "ಟ್ರಕ್ ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.withWastage": {
+  "en": "including the extra for breakage and cuts",
+  "te": "విరగడం, కటింగ్ అదనంతో కలిపి",
+  "hi": "टूट-फूट और कटाई के अतिरिक्त समेत",
+  "kn": "ಒಡೆಯುವಿಕೆ, ಕಟಿಂಗ್ ಹೆಚ್ಚುವರಿ ಸೇರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.material": {
+  "en": "Material amount, before GST and transport",
+  "te": "మెటీరియల్ మొత్తం, GST, ట్రాన్స్‌పోర్ట్‌కి ముందు",
+  "hi": "मटीरियल की रकम, GST और ट्रांसपोर्ट से पहले",
+  "kn": "ಮೆಟೀರಿಯಲ್ ಮೊತ್ತ, GST, ಸಾಗಣೆಗೆ ಮೊದಲು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.delivered": {
+  "en": "Area covered by the blocks",
+  "te": "బ్లాకులు కవర్ చేసే ఏరియా",
+  "hi": "ब्लॉकों से ढका एरिया",
+  "kn": "ಬ್ಲಾಕ್‌ಗಳು ಮುಚ್ಚುವ ಏರಿಯಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.bad": {
+  "en": "Type an area between 1 and 100,000.",
+  "te": "1 నుండి 100,000 మధ్య ఏరియా టైప్ చేయండి.",
+  "hi": "1 से 100,000 के बीच एरिया लिखें।",
+  "kn": "1 ರಿಂದ 100,000 ನಡುವೆ ಏರಿಯಾ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.cta": {
+  "en": "Get exact quote on WhatsApp",
+  "te": "WhatsAppలో కచ్చితమైన కోట్ పొందండి",
+  "hi": "WhatsApp पर सही कोटेशन पाएँ",
+  "kn": "WhatsApp ನಲ್ಲಿ ನಿಖರ ಕೊಟೇಶನ್ ಪಡೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.cta.help": {
+  "en": "This opens WhatsApp with your numbers filled in. A seller who uses {brand} can then quote exactly.",
+  "te": "ఇది మీ అంకెలతో వాట్సాప్ తెరుస్తుంది. {brand} వాడే అమ్మకందారు కచ్చితంగా కోట్ ఇవ్వగలరు.",
+  "hi": "यह आपके आँकड़ों के साथ व्हाट्सऐप खोलता है। {brand} इस्तेमाल करने वाला विक्रेता फिर सही कोटेशन दे सकता है।",
+  "kn": "ಇದು ನಿಮ್ಮ ಅಂಕಿಗಳೊಂದಿಗೆ ವಾಟ್ಸಾಪ್ ತೆರೆಯುತ್ತದೆ. {brand} ಬಳಸುವ ಮಾರಾಟಗಾರರು ನಿಖರವಾಗಿ ಕೊಟೇಶನ್ ಕೊಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.lead.name": {
+  "en": "Your name",
+  "te": "మీ పేరు",
+  "hi": "आपका नाम",
+  "kn": "ನಿಮ್ಮ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.lead.city": {
+  "en": "City or town (optional)",
+  "te": "నగరం లేదా ఊరు (ఐచ్ఛికం)",
+  "hi": "शहर या कस्बा (वैकल्पिक)",
+  "kn": "ನಗರ ಅಥವಾ ಊರು (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.lead.consent": {
+  "en": "I agree that {brand} may reply to me on WhatsApp about this quote. I have read the Privacy Policy.",
+  "te": "ఈ కోట్ గురించి {brand} నాకు వాట్సాప్‌లో జవాబివ్వవచ్చని అంగీకరిస్తున్నాను. ప్రైవసీ పాలసీ చదివాను.",
+  "hi": "मैं मानता हूँ कि {brand} इस कोटेशन के बारे में मुझे व्हाट्सऐप पर जवाब दे सकता है। मैंने प्राइवेसी पॉलिसी पढ़ी है।",
+  "kn": "ಈ ಕೊಟೇಶನ್ ಬಗ್ಗೆ {brand} ನನಗೆ ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಉತ್ತರ ಕೊಡಬಹುದು ಎಂದು ಒಪ್ಪುತ್ತೇನೆ. ಪ್ರೈವೆಸಿ ಪಾಲಿಸಿ ಓದಿದ್ದೇನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.lead.msg": {
+  "en": "Hello {brand}. I used the paver calculator: {area} {unit} of {product}, about {pieces} blocks and {trips} truck trips. I would like an exact quote. My name is {name}. {city}",
+  "te": "నమస్కారం {brand}. నేను పేవర్ కాలిక్యులేటర్ వాడాను: {product}, {area} {unit}, సుమారు {pieces} బ్లాకులు, {trips} ట్రక్ ట్రిప్పులు. కచ్చితమైన కోట్ కావాలి. నా పేరు {name}. {city}",
+  "hi": "नमस्ते {brand}। मैंने पेवर कैलकुलेटर इस्तेमाल किया: {product}, {area} {unit}, लगभग {pieces} ब्लॉक और {trips} ट्रक ट्रिप। मुझे सही कोटेशन चाहिए। मेरा नाम {name} है। {city}",
+  "kn": "ನಮಸ್ಕಾರ {brand}. ನಾನು ಪೇವರ್ ಕ್ಯಾಲ್ಕುಲೇಟರ್ ಬಳಸಿದೆ: {product}, {area} {unit}, ಸುಮಾರು {pieces} ಬ್ಲಾಕ್, {trips} ಟ್ರಕ್ ಟ್ರಿಪ್. ನಿಖರ ಕೊಟೇಶನ್ ಬೇಕು. ನನ್ನ ಹೆಸರು {name}. {city}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "calc.lead.cityIn": {
+  "en": "City: {city}.",
+  "te": "నగరం: {city}.",
+  "hi": "शहर: {city}।",
+  "kn": "ನಗರ: {city}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.school": {
+  "en": "School",
+  "te": "స్కూల్",
+  "hi": "स्कूल",
+  "kn": "ಶಾಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.parent": {
+  "en": "Parent",
+  "te": "తల్లి/తండ్రి",
+  "hi": "अभिभावक",
+  "kn": "ಪೋಷಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "preview.title": {
+  "en": "WhatsApp preview",
+  "te": "వాట్సాప్ ప్రివ్యూ",
+  "hi": "व्हाट्सऐप प्रिव्यू",
+  "kn": "ವಾಟ್ಸಾಪ್ ಪ್ರಿವ್ಯೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.title": {
+  "en": "{brand}: your AI team for WhatsApp sales and payments",
+  "te": "{brand}: వాట్సాప్ అమ్మకాలు, పేమెంట్ల కోసం మీ AI టీమ్",
+  "hi": "{brand}: व्हाट्सऐप बिक्री और पेमेंट के लिए आपकी AI टीम",
+  "kn": "{brand}: ವಾಟ್ಸಾಪ್ ಮಾರಾಟ, ಪೇಮೆಂಟ್‌ಗಳಿಗೆ ನಿಮ್ಮ AI ತಂಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.description": {
+  "en": "Seven plush owl helpers answer WhatsApp enquiries, prepare quotes, chase follow-ups and tell you each morning what needs you. For saree shops, construction material sellers and schools. You approve every price and promise.",
+  "te": "ఏడు ముద్దు గుడ్లగూబ సహాయకులు వాట్సాప్ ఎంక్వయిరీలకు జవాబిస్తారు, కోట్లు తయారు చేస్తారు, ఫాలో-అప్ చేస్తారు. చీరల షాపులు, నిర్మాణ సామగ్రి అమ్మకందారులు, పాఠశాలల కోసం. ప్రతి ధర, ప్రామిస్ మీరే ఓకే చేస్తారు.",
+  "hi": "सात प्यारे उल्लू मददगार व्हाट्सऐप पूछताछ का जवाब देते हैं, कोटेशन बनाते हैं और फ़ॉलो-अप करते हैं। साड़ी दुकानों, निर्माण सामग्री विक्रेताओं और स्कूलों के लिए। हर कीमत और वादा आप ही ओके करते हैं।",
+  "kn": "ಏಳು ಮುದ್ದಾದ ಗೂಬೆ ಸಹಾಯಕರು ವಾಟ್ಸಾಪ್ ವಿಚಾರಣೆಗೆ ಉತ್ತರ ಕೊಡುತ್ತಾರೆ, ಕೊಟೇಶನ್ ಮಾಡುತ್ತಾರೆ, ಫಾಲೋ-ಅಪ್ ಮಾಡುತ್ತಾರೆ. ಸೀರೆ ಅಂಗಡಿ, ನಿರ್ಮಾಣ ಸಾಮಗ್ರಿ ಮಾರಾಟಗಾರರು, ಶಾಲೆಗಳಿಗಾಗಿ. ಪ್ರತಿ ಬೆಲೆ, ಮಾತನ್ನು ನೀವೇ ಒಪ್ಪುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.pricing.title": {
+  "en": "Pricing: {brand}",
+  "te": "ధరలు: {brand}",
+  "hi": "कीमतें: {brand}",
+  "kn": "ಬೆಲೆಗಳು: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.pricing.description": {
+  "en": "A free 30-day trial, then simple monthly plans with AI included under fair use. GST included, cancel any time.",
+  "te": "30 రోజుల ఉచిత ట్రయల్, తర్వాత AI కలిపి సులభమైన నెలవారీ ప్లాన్లు. GST కలిపి, ఎప్పుడైనా రద్దు.",
+  "hi": "30 दिन का मुफ़्त ट्रायल, फिर AI शामिल सीधे मासिक प्लान। GST शामिल, कभी भी रद्द।",
+  "kn": "30 ದಿನ ಉಚಿತ ಟ್ರಯಲ್, ನಂತರ AI ಸೇರಿದ ಸರಳ ತಿಂಗಳ ಪ್ಲಾನ್. GST ಸೇರಿ, ಯಾವಾಗ ಬೇಕಾದರೂ ರದ್ದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.how.title": {
+  "en": "How it works: {brand}",
+  "te": "ఇది ఎలా పనిచేస్తుంది: {brand}",
+  "hi": "यह कैसे काम करता है: {brand}",
+  "kn": "ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.how.description": {
+  "en": "The seven owl helpers, what each does for your business, and what always waits for your OK.",
+  "te": "ఏడు గుడ్లగూబ సహాయకులు, ప్రతి ఒక్కరు మీ వ్యాపారానికి ఏం చేస్తారు, ఎప్పుడూ మీ ఓకే కోసం ఆగేవి ఏవి.",
+  "hi": "सात उल्लू मददगार, हर एक आपके कारोबार के लिए क्या करता है, और क्या हमेशा आपके ओके का इंतज़ार करता है।",
+  "kn": "ಏಳು ಗೂಬೆ ಸಹಾಯಕರು, ಪ್ರತಿಯೊಬ್ಬರೂ ನಿಮ್ಮ ವ್ಯಾಪಾರಕ್ಕೆ ಏನು ಮಾಡುತ್ತಾರೆ, ಯಾವಾಗಲೂ ನಿಮ್ಮ ಓಕೆಗಾಗಿ ಕಾಯುವುದು ಯಾವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.security.title": {
+  "en": "Security and privacy: {brand}",
+  "te": "సెక్యూరిటీ, ప్రైవసీ: {brand}",
+  "hi": "सिक्योरिटी और प्राइवेसी: {brand}",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ, ಪ್ರೈವೆಸಿ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.security.description": {
+  "en": "How each business is kept apart, who sees what, how AI is labelled, children's data, and what we have not done yet.",
+  "te": "ప్రతి వ్యాపారం ఎలా వేరుగా ఉంటుంది, ఎవరికి ఏం కనిపిస్తుంది, AI ఎలా లేబుల్ అవుతుంది, పిల్లల డేటా, ఇంకా మేము చేయనివి.",
+  "hi": "हर कारोबार कैसे अलग रहता है, किसे क्या दिखता है, AI कैसे लेबल होता है, बच्चों का डेटा, और हमने क्या नहीं किया।",
+  "kn": "ಪ್ರತಿ ವ್ಯಾಪಾರ ಹೇಗೆ ಪ್ರತ್ಯೇಕ, ಯಾರಿಗೆ ಏನು ಕಾಣುತ್ತದೆ, AI ಹೇಗೆ ಲೇಬಲ್ ಆಗುತ್ತದೆ, ಮಕ್ಕಳ ಡೇಟಾ, ನಾವು ಇನ್ನೂ ಮಾಡದ್ದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.contact.title": {
+  "en": "Contact: {brand}",
+  "te": "సంప్రదించండి: {brand}",
+  "hi": "संपर्क: {brand}",
+  "kn": "ಸಂಪರ್ಕ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.contact.description": {
+  "en": "Ask us a question or ask for a demo on WhatsApp, in English, Telugu, Hindi or Kannada.",
+  "te": "వాట్సాప్‌లో ప్రశ్న లేదా డెమో అడగండి, ఇంగ్లీష్, తెలుగు, హిందీ లేదా కన్నడలో.",
+  "hi": "व्हाट्सऐप पर सवाल पूछें या डेमो माँगें, अंग्रेज़ी, तेलुगु, हिंदी या कन्नड़ में।",
+  "kn": "ವಾಟ್ಸಾಪ್‌ನಲ್ಲಿ ಪ್ರಶ್ನೆ ಅಥವಾ ಡೆಮೊ ಕೇಳಿ, ಇಂಗ್ಲಿಷ್, ತೆಲುಗು, ಹಿಂದಿ ಅಥವಾ ಕನ್ನಡದಲ್ಲಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.help.title": {
+  "en": "Help: {brand}",
+  "te": "సహాయం: {brand}",
+  "hi": "मदद: {brand}",
+  "kn": "ಸಹಾಯ: {brand}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "meta.help.description": {
+  "en": "Short answers about getting started, WhatsApp, quotes, follow-ups, languages, privacy and plans.",
+  "te": "మొదలుపెట్టడం, వాట్సాప్, కోట్లు, ఫాలో-అప్‌లు, భాషలు, ప్రైవసీ, ప్లాన్ల గురించి చిన్న జవాబులు.",
+  "hi": "शुरू करने, व्हाट्सऐप, कोटेशन, फ़ॉलो-अप, भाषाओं, प्राइवेसी और प्लान के बारे में छोटे जवाब।",
+  "kn": "ಶುರು ಮಾಡುವುದು, ವಾಟ್ಸಾಪ್, ಕೊಟೇಶನ್, ಫಾಲೋ-ಅಪ್, ಭಾಷೆ, ಪ್ರೈವೆಸಿ, ಪ್ಲಾನ್ ಬಗ್ಗೆ ಚಿಕ್ಕ ಉತ್ತರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ }
+}

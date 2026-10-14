@@ -16,4 +16,6 @@ export const isRouteLang = (v: string): v is RouteLang => (ROUTE_LANGS as readon
 
 export const landingPath = (lang: LandingLang): string => (lang === "en" ? "/" : `/${lang}`);
 export const ogImagePath = (lang: LandingLang): string => `/og/og-${lang}.png`;
+/** The share picture of one business type's page in one language (job CM: `scripts/og-images.mjs` draws one for every page of the site that has a `slug`). */
+export const ogImagePathForSlug = (slug: string, lang: LandingLang): string => `/og/og-${slug}-${lang}.png`;
 export const OG_SIZE = { width: 1200, height: 630 } as const;

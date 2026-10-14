@@ -1,11 +1,11 @@
-// npm run audit:landing [-- --engine chrome|webkit|firefox] [-- --path /]: the page checks for the public landing page (/landing) on the real,
+// npm run audit:landing [-- --engine chrome|webkit|firefox] [-- --path /]: the page checks for a page of the public site (default "/", the home page; job CM: any of /pricing, /how-it-works, /security, /contact, /help and a business type's page) on the real,
 // compiled page served by `next start` (run `npm run build` first). NOT part of `npm test` and NOT in CI (it needs a
 // browser); run it at every stage STOP. Chrome (default): the system Chrome over the DevTools Protocol, no dependency.
 // webkit (the Safari engine, not Safari itself) and firefox: through the playwright-core devDependency, local only,
 // after `npx playwright-core install webkit firefox` (scripts/lib/engines-playwright.mjs; those two are served over
 // https by a local proxy because Safari's engine upgrades http://127.0.0.1 under the production CSP). It checks, in four languages (en, te, hi, kn), light and dark:
 //   structure   one h1, heading order, landmarks, unique ids, resolvable references, accessible names, noindex, the share picture,
-//               canonical and language alternates, no JSON-LD, the wrapper's lang attribute
+//               canonical and language alternates, any JSON-LD valid and about schema.org, the wrapper's lang attribute
 //   layout      no horizontal scroll at 360, 390, 768, 1024 and 1440 px; the h1 and the sign-up button
 //               inside the first screen at five sizes
 //   text        every visible text at least 14 px; contrast of every visible text node against its effective background
@@ -17,11 +17,13 @@
 import { chromeEngine } from "./lib/engines.mjs";
 import { LANGS, startNext } from "./lib/next-server.mjs";
 import { startTlsProxy } from "./lib/tls-proxy.mjs";
-import { FOCUSABLE_COUNT, FOCUS_STATE, LAYOUT, STRUCTURE, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
+import { FOCUSABLE_COUNT, FOCUSABLE_NAMES, FOCUS_STATE, LAYOUT, STRUCTURE, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
 
 const argv = process.argv.slice(2);
 const engineName = argv.includes("--engine") ? argv[argv.indexOf("--engine") + 1] : "chrome";
-const route = argv.includes("--path") ? argv[argv.indexOf("--path") + 1] : "/landing"; // "/" is the same page since the flip
+const route = argv.includes("--path") ? argv[argv.indexOf("--path") + 1] : "/"; // "/" and "/landing" follow the language cookie; every other page has the language in its address ("/te/pricing")
+const byCookie = route === "/" || route === "/landing";
+const addressFor = (lang) => (byCookie ? route : lang === "en" ? route : `/${lang}${route}`);
 const SIZES = [[360, 780], [390, 844], [768, 1024], [1024, 768], [1440, 800]];
 
 let failed = false;
@@ -47,13 +49,13 @@ const tls = engine.needsHttps ? await startTlsProxy(app.base) : null;
 const base = tls ? tls.base : app.base;
 if (tls) console.log(`served over https for this engine through a local proxy at ${base} (self-signed certificate, see scripts/lib/tls-proxy.mjs)`);
 
-/** Opens /landing with the given language, size and scheme; runs fn(page); records CSP violations and console output. */
+/** Opens the page with the given language, size and scheme; runs fn(page); records CSP violations and console output. */
 async function withPage(opts, fn) {
   const { lang = "en", width = 1440, height = 900, dark = false, reduced = false, settle = 900 } = opts;
   const page = await engine.open({ width, height, dark, reducedMotion: reduced });
   try {
     await page.setCookie(base, "sme_lang", lang);
-    await page.goto(`${base}${route}`, settle);
+    await page.goto(`${base}${addressFor(lang)}`, settle);
     const result = await fn(page);
     const csp = await page.csp();
     const logs = page.getLogs();
@@ -82,7 +84,9 @@ try {
       const problems = [];
       if (r.docScrollWidth > r.viewportW) problems.push(`the page scrolls sideways: scrollWidth ${r.docScrollWidth} > ${r.viewportW}`);
       problems.push(...r.offenders.map((o) => `sticks out of the screen: ${o}`));
-      for (const [what, bottom] of [["h1", r.h1Bottom], ["sign-up button", r.ctaBottom]]) {
+      // the sign-up button belongs in the first screen of the home page and of a business type's page (their hero has it); the other pages (pricing, how it works, security, contact, help) have it lower down or in the header
+      const heroHasCta = r.pageKind === null || r.pageKind === "home" || r.pageKind === "business";
+      for (const [what, bottom] of [["h1", r.h1Bottom], ...(heroHasCta ? [["sign-up button", r.ctaBottom]] : [])]) {
         if (bottom == null) problems.push(`${what} not found`);
         else if (bottom > height) problems.push(`${what} ends at ${bottom}, below the first screen (${height})`);
       }
@@ -115,6 +119,7 @@ try {
   for (const run of focusRuns) {
     const r = await withPage({ ...run, reduced: true }, async (p) => {
       const total = await p.eval(FOCUSABLE_COUNT);
+      const names = await p.eval(FOCUSABLE_NAMES);
       const stops = [];
       for (let i = 0; i < total + 4; i++) {
         await p.pressTab();
@@ -123,14 +128,14 @@ try {
         if (stops.length && stops[0].name === s.name) break; // wrapped
         stops.push(s);
       }
-      return { total, stops };
+      return { total, stops, names };
     });
     const problems = [];
     for (const s of r.stops) {
       if (!s.hasOutline && !s.hasShadow) problems.push(`no visible focus ring on ${s.name}`);
       else if (s.hasOutline && s.ratio < 3) problems.push(`focus ring contrast ${s.ratio}:1 on ${s.name}`);
     }
-    if (r.stops.length < r.total) problems.push(`the Tab key reached ${r.stops.length} of ${r.total} controls`);
+    if (r.stops.length < r.total) problems.push(`the Tab key reached ${r.stops.length} of ${r.total} controls; not reached: ${r.names.filter((n) => !r.stops.some((s) => s.name === n)).join(" | ")}`);
     report(`focus ${run.lang} ${run.dark ? "dark" : "light"} ${run.width}px: ${r.stops.length} tab stops of ${r.total} controls; lowest ring contrast ${Math.min(...r.stops.filter((s) => s.hasOutline).map((s) => s.ratio)).toFixed(2)}:1`, problems);
   }
 

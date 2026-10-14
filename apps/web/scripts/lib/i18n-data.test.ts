@@ -86,21 +86,20 @@ describe("review sheet", () => {
     expect(s.login["err.network"].status.te).toBe("draft");
   });
   it("says where each kind of string appears", () => {
-    expect(whereIs("landing", "hero.h1")).toMatch(/hero/);
+    expect(whereIs("site", "hero.h1")).toMatch(/hero/);
     expect(whereIs("login", "err.network")).toMatch(/error/i);
   });
 });
 
 describe("first-pass sheet and sensitive wording", () => {
-  it("lists landing and sign-in strings, three languages side by side", () => {
+  it("lists the website and sign-in strings, three languages side by side", () => {
     const rows = parseCsv(buildReviewCsv(loadSets(), {}, { firstPass: true }));
     const body = rows.slice(1);
     expect(body.length).toBeGreaterThan(300);
-    for (const r of body) expect(/^(landing|login)\./.test(r[0]), r[0]).toBe(true);
-    expect(body.some((r) => r[0] === "landing.foot.copy")).toBe(false);
-    const i = body.findIndex((r) => r[0] === "landing.hero.h1");
+    for (const r of body) expect(/^(site|login)\./.test(r[0]), r[0]).toBe(true);
+    expect(body.some((r) => r[0] === "site.foot.copy")).toBe(false);
+    const i = body.findIndex((r) => r[0] === "site.hero.h1");
     expect(body.slice(i, i + 3).map((r) => r[1])).toEqual(["te", "hi", "kn"]);
-    expect(body.filter((r) => r[0] === "landing.langs.sample.te")).toHaveLength(1);
     expect(isFirstPass("app", "nav.today")).toBe(false);
   });
   it("flags money-held, workspace, refund, advance, consent, payment and GST wording, and nothing else", () => {
@@ -115,7 +114,7 @@ describe("first-pass sheet and sensitive wording", () => {
     expect(sensitivityNote("Request early access")).toBe("");
     expect(sensitivityNote("Turn enquiries into orders")).toBe("");
     const rows = parseCsv(buildReviewCsv(loadSets(), {}, { firstPass: true }));
-    expect(cell(rows, "landing.priv.2.t", "te", 8)).toMatch(/consent/);
+    expect(cell(rows, "site.trust.2.d", "te", 8)).toMatch(/consent/);
   });
 });
 
