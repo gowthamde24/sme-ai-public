@@ -62,6 +62,12 @@ export async function setCustomFieldActive(accessToken: string, tenantId: string
   return parseFieldDef(await apiRequest(`${base(tenantId)}/custom-fields/${encodeURIComponent(fieldId)}`, accessToken, { method: "PATCH", body: JSON.stringify({ active }) }));
 }
 
+/** Change what may change on a field (a field's code, kind and record type never do; choices only grow): its words, whether a record needs it, more choices. `label` is the WHOLE set of words by language. */
+export async function updateCustomField(accessToken: string, tenantId: string, fieldId: string, patch: { label?: Readonly<Record<string, string>>; required?: boolean; addChoices?: readonly { code: string; label: string }[] }): Promise<WorkspaceField> {
+  const body = { ...(patch.label ? { label: patch.label } : {}), ...(patch.required !== undefined ? { required: patch.required } : {}), ...(patch.addChoices && patch.addChoices.length > 0 ? { add_choices: patch.addChoices.map((c) => ({ code: c.code, label: { en: c.label } })) } : {}) };
+  return parseFieldDef(await apiRequest(`${base(tenantId)}/custom-fields/${encodeURIComponent(fieldId)}`, accessToken, { method: "PATCH", body: JSON.stringify(body) }));
+}
+
 export async function getContactCustom(accessToken: string, tenantId: string, contactId: string): Promise<CustomValues> {
   return parseValues(await apiRequest(`${base(tenantId)}/contacts/${encodeURIComponent(contactId)}/custom`, accessToken));
 }

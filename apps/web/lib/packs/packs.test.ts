@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import app from "@/i18n/strings/app.json";
 import { NAV, barItems, coreItem, footItems, visibleGroups, type PackFrame, type Role } from "@/components/v2/app/nav";
 
-import { allModules, defaultPackId, otherPackIds, packFiles, workspacePack } from "./pack-test-kit";
+import { allModules, defaultPackId, otherPackIds, PACKS_DIR, packFiles, workspacePack } from "./pack-test-kit";
 import { packFrame, packWords, withPackT, withPackWords } from "./resolve";
 
 const WEB = path.resolve(import.meta.dirname, "..", "..");
@@ -59,6 +59,33 @@ describe("the default pack is the product as it was (equivalence: textiles must 
     expect(ids(frame)).not.toContain("fees");
     expect(ids(frame)).not.toContain("campaigns");
     expect(ids(null)).not.toContain("fees");
+  });
+});
+
+describe("every pack file, whatever it is (blueprint 13: a new business type is mostly data; `make new-pack` starts one)", () => {
+  const all = Object.values(packFiles());
+  it.each(all.map((p) => [p.id]))("%s: draws a menu, a phone bar and a sign-up card in all four languages without a crash, with English where a text is missing", (id) => {
+    const pack = workspacePack(id, "signup");
+    for (const lang of ["en", "te", "hi", "kn", "ta"]) {
+      const frame = packFrame(pack, lang);
+      for (const role of ROLES) {
+        expect(ids(frame, role).length).toBeGreaterThan(0);
+        expect(barItems(role, frame).length).toBeLessThanOrEqual(5);
+      }
+      for (const text of Object.values(frame.labels)) expect(text.length).toBeGreaterThan(0);
+      expect(frame.name.length).toBeGreaterThan(0);
+    }
+  });
+  it("flags a language that is only partly translated: a pack may not call a language native-reviewed while it misses keys English has", () => {
+    for (const p of all) for (const lang of ["te", "hi", "kn"]) {
+      const missing = Object.keys(p.labels.en).filter((k) => !(k in (p.labels[lang] ?? {})));
+      const review = (p.language_review as Record<string, string>)[lang];
+      if (missing.length > 0) expect(review, `${p.id}:${lang} misses ${missing.join(", ")}`).not.toBe("native_reviewed");
+    }
+  });
+  it("a pack changes words and switches modules only: its labels name no key outside the closed list, so no screen gets text a pack invented", () => {
+    const closed = JSON.parse(fs.readFileSync(path.join(PACKS_DIR, "labels.json"), "utf8")).labels.map((l: { key: string }) => l.key);
+    for (const p of all) for (const lang of Object.keys(p.labels)) for (const key of Object.keys(p.labels[lang])) expect(closed, `${p.id}:${lang}:${key}`).toContain(key);
   });
 });
 

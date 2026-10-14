@@ -3,7 +3,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { appT } from "@/i18n/app";
 import { redirectMock } from "@/test/helpers";
 
-vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
+vi.mock("next/navigation", () => ({
+  redirect: (to: string) => redirectMock(to),
+  forbidden: () => {
+    throw new Error("NEXT_HTTP_ERROR_FALLBACK;403");
+  },
+}));
 
 import { ApiAuthError, ApiRequestError } from "./client";
 import { escalate, failureOf, kindOf, rateSentence } from "./failure";
@@ -51,6 +56,13 @@ describe("the sentence for it", () => {
     expect(failureOf(new ApiRequestError(422, "file_malformed_csv", "x"), t).code).toBe("file_malformed_csv");
     expect(failureOf(new ApiRequestError(422, "<script>", "x"), t).code).toBeUndefined();
   });
+  it("says in a form that the business type does not have this part when the API says `module_off`, not that the role cannot", () => {
+    const f = failureOf(new ApiRequestError(403, "module_off", "SECRET"), t);
+    expect(f).toMatchObject({ ok: false, kind: "forbidden", code: "module_off" });
+    expect(f.error).toBe(t("apierr.module_off"));
+    expect(f.error).not.toContain("SECRET");
+    expect(f.error).not.toBe(t("apierr.forbidden"));
+  });
   it("sends a rejected session to sign-in", () => {
     expect(() => failureOf(new ApiAuthError("x"), t)).toThrow("NEXT_REDIRECT:/login");
   });
@@ -61,6 +73,10 @@ describe("a page that failed to read", () => {
     expect(() => escalate(new ApiRequestError(403, "forbidden", "x"))).toThrow("NEXT_REDIRECT:/app/problem/403");
     expect(() => escalate(new ApiRequestError(429, "rate_limited", "x"))).toThrow("NEXT_REDIRECT:/app/problem/429");
     expect(() => escalate(new ApiAuthError("x"))).toThrow("NEXT_REDIRECT:/login");
+  });
+  it("draws the 403 page of a part the business type does not have when the API says `module_off` (the same page as a typed address), not the plain 'not open to you' page", () => {
+    expect(() => escalate(new ApiRequestError(403, "module_off", "x"))).toThrow("NEXT_HTTP_ERROR_FALLBACK;403");
+    expect(() => escalate(new ApiRequestError(403, "forbidden", "x"))).toThrow("NEXT_REDIRECT:/app/problem/403");
   });
   it("sends a person whose Terms or Privacy Policy changed to the page where they accept it, not to 'not open to you'", () => {
     expect(() => escalate(new ApiRequestError(403, "policy_acceptance_required", "x"))).toThrow("NEXT_REDIRECT:/app/accept");

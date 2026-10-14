@@ -6,9 +6,10 @@ import { redirect } from "next/navigation";
 import { MAX_FIELDS_PER_ENTITY, type FieldNotice } from "@/components/v2/app/fields/FieldsSection";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { createCustomField, listCustomFields, setCustomFieldActive, type NewField } from "@/lib/api/custom-fields";
+import { createCustomField, listCustomFields, setCustomFieldActive, updateCustomField, type NewField } from "@/lib/api/custom-fields";
+import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
-import { codeOf, parseChoices } from "@/lib/packs/field-codes";
+import { codeOf, parseChoices, parseMoreChoices } from "@/lib/packs/field-codes";
 import type { FieldEntity, FieldKind } from "@/lib/packs/types";
 
 const KINDS: readonly FieldKind[] = ["text", "number", "date", "choice", "yes_no"];
@@ -79,6 +80,36 @@ export async function setFieldActiveAction(tenantId: string, formData: FormData)
   if (id.length < 1 || id.length > 64) return done(tenantId, "invalid");
   try {
     await setCustomFieldActive(user.accessToken, tenantId, id, formData.get("active") === "yes");
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return done(tenantId, noticeOf(error));
+  }
+  return done(tenantId, "updated");
+}
+
+/**
+ * Change a field: its words (in the language the person is reading; the other languages stay as they are), whether a record needs it, and more choices for a choice field (choices only grow; a field's code, kind and record
+ * type never change). Owner or Admin (the API wants the second factor).
+ */
+export async function updateFieldAction(tenantId: string, formData: FormData): Promise<void> {
+  const user = await managerOf(tenantId).catch(() => redirect("/login"));
+  if (!user) return done(tenantId, "role");
+  const id = String(formData.get("field_id") ?? "");
+  const text = String(formData.get("label") ?? "").trim();
+  if (id.length < 1 || id.length > 64 || text.length < 1 || text.length > 60) return done(tenantId, "invalid");
+  let current;
+  try {
+    current = (await listCustomFields(user.accessToken, tenantId)).find((f) => f.id === id);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return done(tenantId, noticeOf(error));
+  }
+  if (!current) return done(tenantId, "invalid");
+  const more = current.kind === "choice" || current.kind === "multi_choice" ? parseMoreChoices(String(formData.get("choices") ?? ""), (current.choices ?? []).map((c) => c.code)) : [];
+  if (more === null) return done(tenantId, "invalid");
+  const lang = await getLang();
+  try {
+    await updateCustomField(user.accessToken, tenantId, id, { label: { ...current.label, [lang]: text }, required: formData.get("required") === "on", addChoices: more });
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     return done(tenantId, noticeOf(error));

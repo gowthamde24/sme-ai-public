@@ -14,7 +14,7 @@ const ENTITIES: readonly FieldEntity[] = ["contact", "catalogue_item"];
  * only hidden); the owner may add more (at most 20 for each; a field is never deleted, it is hidden). A personal-details field is marked, and the screen says what not to type. A server component with plain forms
  * posting to server actions (no script). While the server cannot store fields (`available` is false: it did not answer the field routes) the controls say "Not available yet": nothing is pretended.
  */
-export function FieldsSection({ fields, entities, available, canEdit, notice, lang, add, setActive, t }: { fields: readonly WorkspaceField[]; entities: readonly FieldEntity[]; available: boolean; canEdit: boolean; notice: FieldNotice; lang: string; add: (formData: FormData) => Promise<void>; setActive: (formData: FormData) => Promise<void>; t: AppT }) {
+export function FieldsSection({ fields, entities, available, canEdit, notice, lang, add, setActive, update, t }: { fields: readonly WorkspaceField[]; entities: readonly FieldEntity[]; available: boolean; canEdit: boolean; notice: FieldNotice; lang: string; add: (formData: FormData) => Promise<void>; setActive: (formData: FormData) => Promise<void>; update: (formData: FormData) => Promise<void>; t: AppT }) {
   const editable = canEdit && available;
   const message: Record<Exclude<FieldNotice, null>, [string, boolean]> = {
     added: [t("fields.notice.added"), true],
@@ -61,6 +61,37 @@ export function FieldsSection({ fields, entities, available, canEdit, notice, la
                           {f.active ? t("fields.hide") : t("fields.show")}
                         </button>
                       </form>
+                    ) : null}
+                    {editable ? (
+                      <details className="basis-full">
+                        <summary className={`${secondary} cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>{t("fields.edit")}</summary>
+                        <form action={update} className="mt-3 flex flex-col gap-3">
+                          <input type="hidden" name="field_id" value={f.id} />
+                          <div>
+                            <label htmlFor={`fe-${f.id}`} className={label}>
+                              {t("fields.add.label")}
+                            </label>
+                            <input id={`fe-${f.id}`} name="label" required maxLength={60} defaultValue={textIn(f.label, lang)} className={field} />
+                          </div>
+                          {f.kind === "choice" || f.kind === "multi_choice" ? (
+                            <div>
+                              <label htmlFor={`fc-${f.id}`} className={label}>
+                                {t("fields.edit.choices")}
+                              </label>
+                              <textarea id={`fc-${f.id}`} name="choices" rows={3} maxLength={600} className={`${field} py-2`} />
+                            </div>
+                          ) : null}
+                          <label className="flex min-h-11 items-center gap-3 text-base">
+                            <input type="checkbox" name="required" defaultChecked={f.required} className="size-6 shrink-0 accent-brand-text" />
+                            {t("fields.add.required")}
+                          </label>
+                          <div>
+                            <button type="submit" className={primary}>
+                              {t("fields.edit.save")}
+                            </button>
+                          </div>
+                        </form>
+                      </details>
                     ) : null}
                   </li>
                 ))}

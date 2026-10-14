@@ -1,3 +1,5 @@
+import { getAccountSecurity } from "@/lib/api/pack";
+import { SecondStepNotice } from "@/components/v2/app/security/SecondStepNotice";
 import { notFound, redirect } from "next/navigation";
 
 import { PartProblem } from "@/components/v2/app/cc/PartProblem";
@@ -42,9 +44,9 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
   const lang = await getLang();
   const t = appT(lang);
   if (!(ADMINS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("wa.title")} message={t("int.admins_only")} />;
-  let account, templates;
+  let account, templates, security;
   try {
-    [account, templates] = await Promise.all([settle(() => getWhatsappAccount(user.accessToken, tenantId)), settle(() => listTemplates(user.accessToken, tenantId))]);
+    [account, templates, security] = await Promise.all([settle(() => getWhatsappAccount(user.accessToken, tenantId)), settle(() => listTemplates(user.accessToken, tenantId)), getAccountSecurity(user.accessToken).catch(() => null)]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
@@ -56,6 +58,7 @@ export default async function ConnectWhatsappPage({ params }: PageProps<"/app/te
       <BackLink href={`/app/tenants/${tenantId}/integrations`} label={t("nav.item.integrations")} />
       <PageTop title={t("wa.title")} sub={t("wa.sub")} />
       <div className="mt-6 flex max-w-3xl flex-col gap-5">
+        {security?.level === "aal1" && security.neededFor.includes("whatsapp_connect") && tenant.role === "owner" ? <SecondStepNotice message={t("sec.notice.whatsapp")} t={t} /> : null}
         {account.ok ? (
           <ConnectWhatsapp
             words={words}

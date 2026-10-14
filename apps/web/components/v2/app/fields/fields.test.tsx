@@ -20,7 +20,7 @@ const contactFields = fields.filter((f) => f.entity === "contact");
 const owner = (over: Partial<WorkspaceField>): WorkspaceField => ({ id: "x1", entity: "contact", code: "gate_code", kind: "text", label: { en: "Gate code" }, choices: null, required: false, position: 99, piiClass: "none", mergeable: false, active: true, source: "owner", ...over });
 
 const section = (over: Partial<React.ComponentProps<typeof FieldsSection>> = {}) =>
-  render(<FieldsSection fields={fields} entities={["contact", "catalogue_item"]} available canEdit notice={null} lang="en" add={vi.fn(async () => undefined)} setActive={vi.fn(async () => undefined)} t={t} {...over} />);
+  render(<FieldsSection fields={fields} entities={["contact", "catalogue_item"]} available canEdit notice={null} lang="en" add={vi.fn(async () => undefined)} setActive={vi.fn(async () => undefined)} update={vi.fn(async () => undefined)} t={t} {...over} />);
 
 describe("Settings → Fields", () => {
   it("lists the fields of each kind of record with their kind, a mark for the ones that came with the business type, required, and personal data", () => {
@@ -40,6 +40,21 @@ describe("Settings → Fields", () => {
     const first = document.querySelector(`[data-field='${contactFields[0].code}']`)!;
     expect(first.querySelector("button")).toHaveTextContent("Hide");
     expect(first.querySelector("input[name='field_id']")).toHaveAttribute("value", contactFields[0].id);
+  });
+  it("each field has an Edit part: its name in the person's language, 'required', and (for a choice field) more choices; hidden from someone who may not change fields", () => {
+    const { container } = section();
+    const choice = itemFields.find((f) => f.kind === "choice")!;
+    const row = container.querySelector(`[data-field='${choice.code}']`)!;
+    const edit = within(row as HTMLElement);
+    expect(row.querySelector("details summary")).toHaveTextContent("Edit");
+    expect((row.querySelector("input[name=label]") as HTMLInputElement).value).toBe(choice.label.en);
+    expect(row.querySelector("textarea[name=choices]")).not.toBeNull();
+    expect(edit.getByRole("button", { name: "Save changes" })).toBeInTheDocument();
+    const text = itemFields.find((f) => f.kind === "text")!;
+    expect(container.querySelector(`[data-field='${text.code}'] textarea`)).toBeNull(); // no choices on a text field
+    cleanup();
+    const view = section({ canEdit: false });
+    expect(view.container.querySelector("details")).toBeNull();
   });
   it("counts the fields in use against the limit of 20", () => {
     section();

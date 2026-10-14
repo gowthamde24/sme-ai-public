@@ -9,10 +9,11 @@ Used in your messages and quotes.
 [button type=submit: Save]
 {label="Get started"}
 ## Get started
-1 of 5 done
+1 of 6 done
 - Tell us your business name and city Done
 - Import your students and guardians Not available yet
 - Set your fee plan Not available yet
+- [Set up your second step An authenticator code, asked before you approve anything or connect WhatsApp. To do](/app/security)
 - [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 - Approve your first fee-reminder campaign Not available yet
-[Continue](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+[Continue](/app/security)

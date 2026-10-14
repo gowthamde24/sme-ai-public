@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { SITE_URL } from "@/lib/seo/site";
+import { providerIsOn } from "@/lib/supabase/authorize-probe";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { listPacks } from "@/lib/api/pack";
 import { pickSignupPack, SIGNUP_PACK_COOKIE, SOCIAL_PROVIDERS, type SocialProvider } from "@/lib/packs/signup";
@@ -25,5 +26,8 @@ export async function continueWithProvider(formData: FormData): Promise<void> {
   const supabase = await createSupabaseServerClient();
   const { data, error } = await supabase.auth.signInWithOAuth({ provider: provider as SocialProvider, options: { redirectTo: `${SITE_URL}/auth/callback`, skipBrowserRedirect: true } });
   if (error || !data?.url) redirect(`/signup?type=${pack}&error=provider`);
+  // `signInWithOAuth` only BUILDS the address: whether the Auth server has the provider switched on shows when the address is followed (found by the real-stack run: the browser landed on a JSON 400 page). So the address is
+  // asked once from here, without following it: a provider that is on answers with a redirect to the provider, one that is off with a refusal, and the person goes back to step 2 with one sentence instead.
+  if (!(await providerIsOn(data.url))) redirect(`/signup?type=${pack}&error=provider`);
   redirect(data.url);
 }

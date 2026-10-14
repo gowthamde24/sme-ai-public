@@ -740,6 +740,7 @@ const CONSTRUCTION = otherPackIds().find((i) => workspacePack(i).modules.include
 const EDUCATION = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
 const packOf = (id: string, source: "signup" | "default" | "legacy" = "signup") => () => workspacePack(id, source);
 const fieldsOf = (id: string) => () => packFields(id);
+const SECURITY_FIRST_LEVEL = () => ({ level: "aal1" as const, neededFor: ["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"] });
 const SAMPLE_NONE = () => ({ loaded: false, counts: { companies: 0, contacts: 0, leads: 0, products: 0 } });
 const SAMPLE_LOADED = () => ({ loaded: true, counts: { companies: 2, contacts: 3, leads: 3, products: 4 } });
 const PROFILE_DONE = () => parseProfile({ name: "Pavers Corner (synthetic)", town: "Guntur", languages: ["en", "te"], setup_complete: true });
@@ -748,10 +749,10 @@ const todayBase = SCENARIO_LIST.find((s) => s.id === "today")!.handlers;
 const startPage = async () => (await import("@/app/app/tenants/[tenantId]/start/page")).default(props({}));
 const todayPage = (query: Record<string, string> = {}) => async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, query));
 add({ id: "start-classic", roles: ["owner"], render: startPage, handlers: (role) => ({ ...base(role), getProfile: PROFILE_NEW }) });
-add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), getProfile: PROFILE_NEW }) });
-add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), getProfile: PROFILE_DONE }) });
+add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), getProfile: PROFILE_NEW, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
+add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-default-pack", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
-add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
@@ -762,3 +763,4 @@ add({ id: "settings-fields-not-saved-yet", roles: ["owner"], render: async () =>
 add({ id: "customers-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/customers/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), listCustomFields: fieldsOf(EDUCATION) }) });
 add({ id: "catalogue-new-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
 add({ id: "office-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus(), getWorkspacePack: packOf(CONSTRUCTION) }) });
+add({ id: "whatsapp-second-step", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => ({ ...waHandlers(role, { configured: false, status: "none" }), listTemplates: () => parseTemplates({ templates: [] }), getAccountSecurity: SECURITY_FIRST_LEVEL }) });

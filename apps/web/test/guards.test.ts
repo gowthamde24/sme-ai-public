@@ -206,7 +206,10 @@ describe("server-only code stays on the server", () => {
     const SESSION_CHECK = path.join("components", "v2", "app", "robust", "RobustShell.tsx");
     // And the transport of the screens of job CC (the import's file, the export's download, a thread's reply): this app's own routes by a relative path, no token, no API address.
     const CC_POST = path.join("components", "v2", "app", "cc", "post.ts");
-    expect(callers).toEqual([ASK_TRANSPORT, BELL_POLL, CC_POST, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    // And the probe of the sign-in-with-a-provider address (job CL): the Auth server's own address, asked once from the server without following it, no token, never the API.
+    const AUTHORIZE_PROBE = path.join("lib", "supabase", "authorize-probe.ts");
+    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    expect(read(path.join(WEB_ROOT, AUTHORIZE_PROBE))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     const client = read(path.join(WEB_ROOT, "lib/api/client.ts"));
     expect(client).toMatch(/fetch\(`\$\{base\}\$\{path\}`/);
     const transport = read(path.join(WEB_ROOT, ASK_TRANSPORT));

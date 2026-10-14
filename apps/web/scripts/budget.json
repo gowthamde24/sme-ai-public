@@ -4,13 +4,13 @@
   "baselineGzipBytes": 177009,
   "allowanceGzipBytes": 40000,
   "routeJs": {
-    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 197 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. Job CJ: the Office is a plain plush room (no three.js: its 3D chunk and its own office3d ceiling are gone), and Agent OWL and the Office owls (the plush owlets, jobs CI and CJ) are in the page itself; their pictures are lazy files, not script. Measured 13 Oct 2026 after job CJ: Today 200,190, the Office 182,479, the landing page 152,718 (margin 282). Raise a number only with a reason in the commit; the owner approves a raised ceiling.",
+    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 197 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. Job CJ: the Office is a plain plush room (no three.js: its 3D chunk and its own office3d ceiling are gone), and Agent OWL and the Office owls (the plush owlets, jobs CI and CJ) are in the page itself; their pictures are lazy files, not script. Measured 13 Oct 2026 after job CJ: Today 200,190, the Office 182,479, the landing page 152,718 (margin 282). Raise a number only with a reason in the commit; the owner approves a raised ceiling. Owner decision 14 Oct 2026 (job CL, after CK): Today 201,000 -> 204,000 and the landing page 153,000 -> 156,000, headroom for waves 2 and 3 while the pack-aware frame (menu words, module gate, core tab) landed; a later trim job takes the weight out again.",
     "public": 153000,
     "app": 186000,
     "routes": {
-      "/page": 153000,
+      "/page": 156000,
       "/login/page": 151000,
-      "/app/tenants/[tenantId]/page": 201000,
+      "/app/tenants/[tenantId]/page": 204000,
       "/app/tenants/[tenantId]/outbox/page": 184000,
       "/app/tenants/[tenantId]/catalogue/page": 178000,
       "/app/tenants/[tenantId]/settings/page": 193000,

@@ -10,11 +10,31 @@ form:
 <hidden name=field_id value=construction_materials-customer_kind>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-customer_kind>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Customer type>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Usually buys for Several choices From your business type
 form:
 <hidden name=field_id value=construction_materials-typical_application>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-typical_application>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Usually buys for>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 {label="Catalogue items"}
 ## Catalogue items
 14 of 20 in use
@@ -23,71 +43,189 @@ form:
 <hidden name=field_id value=construction_materials-product_type>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-product_type>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Product type>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Size (for example 200x100 mm) Text From your business type
 form:
 <hidden name=field_id value=construction_materials-size>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-size>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Size (for example 200x100 mm)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Thickness (mm) Choice From your business type
 form:
 <hidden name=field_id value=construction_materials-thickness_mm>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-thickness_mm>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Thickness (mm)>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Shape or pattern Text From your business type
 form:
 <hidden name=field_id value=construction_materials-shape_pattern>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-shape_pattern>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Shape or pattern>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Colour Text From your business type
 form:
 <hidden name=field_id value=construction_materials-colour>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-colour>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Colour>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Finish Text From your business type
 form:
 <hidden name=field_id value=construction_materials-finish>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-finish>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Finish>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Grade or strength (for example M30) Text From your business type
 form:
 <hidden name=field_id value=construction_materials-grade>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-grade>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Grade or strength (for example M30)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Pieces per sq ft or sq m Number From your business type
 form:
 <hidden name=field_id value=construction_materials-pieces_per_area>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-pieces_per_area>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Pieces per sq ft or sq m>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Pieces per pallet Number From your business type
 form:
 <hidden name=field_id value=construction_materials-pieces_per_pallet>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-pieces_per_pallet>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Pieces per pallet>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Minimum order Number From your business type
 form:
 <hidden name=field_id value=construction_materials-minimum_order>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-minimum_order>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Minimum order>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Stock Choice From your business type
 form:
 <hidden name=field_id value=construction_materials-stock_note>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-stock_note>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Stock>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - Lead days when made to order Number From your business type
 form:
 <hidden name=field_id value=construction_materials-lead_days>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-lead_days>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Lead days when made to order>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - HSN code (from your accountant) Text From your business type
 form:
 <hidden name=field_id value=construction_materials-hsn_code>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-hsn_code>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=HSN code (from your accountant)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 - GST rate in percent (from your accountant) Number From your business type
 form:
 <hidden name=field_id value=construction_materials-gst_rate_percent>
 <hidden name=active value=no>
 [button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-gst_rate_percent>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=GST rate in percent (from your accountant)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
 {label="Add a field"}
 ## Add a field
 Do not use fields for health, religion, caste, income, Aadhaar or other private details.

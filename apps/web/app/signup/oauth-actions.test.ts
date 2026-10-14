@@ -31,8 +31,12 @@ const where = async (data: FormData) => {
   return null;
 };
 
+const probe = vi.fn();
+vi.stubGlobal("fetch", (...a: unknown[]) => probe(...a)); // the probe of lib/supabase/authorize-probe.ts goes through fetch
+
 beforeEach(() => {
   vi.clearAllMocks();
+  probe.mockResolvedValue({ status: 302 }); // the Auth server redirects to the provider: it is on
   signInWithOAuth.mockResolvedValue({ data: { url: "https://accounts.example.test/o/oauth2/auth?x=1" }, error: null });
   packList.mockResolvedValue(packsWire().packs.map(parsePackSummary));
 });
@@ -61,6 +65,14 @@ describe("Continue with Google / Facebook (step 2 of the sign-up)", () => {
     expect(await where(form({ type: THIRD }))).toBe(`/signup?type=${THIRD}`);
     expect(signInWithOAuth).not.toHaveBeenCalled();
     expect(cookieSet).not.toHaveBeenCalled();
+  });
+  it("asks the authorize address once WITHOUT following it, and goes back to step 2 when the Auth server refuses it (the address is only built by signInWithOAuth; a provider that is off shows when it is followed)", async () => {
+    probe.mockResolvedValue({ status: 400 });
+    expect(await where(form({ provider: "google", type: SECOND }))).toBe(`/signup?type=${SECOND}&error=provider`);
+    expect(probe.mock.calls[0][0]).toBe("https://accounts.example.test/o/oauth2/auth?x=1");
+    expect(probe.mock.calls[0][1]).toMatchObject({ redirect: "manual" });
+    probe.mockRejectedValue(new Error("network"));
+    expect(await where(form({ provider: "facebook", type: SECOND }))).toBe(`/signup?type=${SECOND}&error=provider`);
   });
   it("goes back to step 2 with one closed word when the provider is not switched on (nothing is created)", async () => {
     signInWithOAuth.mockResolvedValue({ data: { url: null }, error: { message: "Unsupported provider: provider is not enabled" } });

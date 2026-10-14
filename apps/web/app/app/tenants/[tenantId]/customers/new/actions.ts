@@ -46,6 +46,8 @@ function retryNote(error: unknown, step: number, t: Say): string {
 function describe(error: unknown, t: Say = makeT()): string {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
+    // a part the business type does not have (job CK `module_off`, here the companies this form makes first): not a question of the person's role
+    if (error.status === 403 && error.code === "module_off") return t("cust.not_switched_on");
     if (error.status === 403) return t("cust.your_role_cannot_add_customers");
     if (error.status === 404) return t("cust.this_workspace_is_not_available");
     if (error.status === 429) return t("cust.too_many_requests_wait_a_moment");

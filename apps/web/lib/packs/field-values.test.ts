@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { codeOf, parseChoices } from "./field-codes";
+import { codeOf, parseChoices, parseMoreChoices } from "./field-codes";
 import { normaliseValues } from "./field-values";
 import { formFields } from "./form-fields";
 import { packFields, packWithFields } from "./pack-test-kit";
@@ -87,5 +87,12 @@ describe("the code of a field an owner adds", () => {
     expect(parseChoices("only one")).toBeNull();
     expect(parseChoices(Array.from({ length: 21 }, (_, i) => `c${i}`).join("\n"))).toBeNull();
     expect(parseChoices(`ok\n${"x".repeat(61)}`)).toBeNull();
+  });
+  it("makes only the new choices when more are added: the ones it has (by code) are left out, 20 at most, none over 60 characters", () => {
+    expect(parseMoreChoices("Red\nBlue\nGreen", ["red", "blue"])).toEqual([{ code: "green", label: "Green" }]);
+    expect(parseMoreChoices("", ["red"])).toEqual([]);
+    expect(parseMoreChoices("only one", [])).toEqual([{ code: "only_one", label: "only one" }]); // one new choice is fine
+    expect(parseMoreChoices(Array.from({ length: 21 }, (_, i) => `c${i}`).join("\n"), [])).toBeNull();
+    expect(parseMoreChoices(`x\n${"y".repeat(61)}`, [])).toBeNull();
   });
 });

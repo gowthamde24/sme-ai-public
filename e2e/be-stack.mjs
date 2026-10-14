@@ -93,14 +93,15 @@ const quiet = () => {
 };
 
 // ---- 1. sign up, confirm, sign in, set up the business ---------------------------------------------------------------------
-if (!(await step("A1", "sign up with the real sign-up page (name, e-mail, password, business, terms)", async () => {
+if (!(await step("A1", "sign up with the real two-step sign-up page (the kind of business, then the e-mail way with an address and a password; the terms are the line 'By continuing you agree')", async () => {
   await page.goto(`${BASE}/signup`);
-  await page.fill("#signup-name", "E2E Owner");
+  const card = page.locator("[data-pack-card]").first(); // the first card the API lists: the reviewed business type, the one the product always was
+  await card.waitFor();
+  await Promise.all([page.waitForURL(/\/signup\?type=/, { timeout: 30000 }), card.click()]);
+  await page.locator("details[data-signup=email] summary").click();
   await page.fill("#signup-email", EMAIL);
   await page.fill("#signup-password", PW);
-  await page.fill("#signup-business", `E2E Silks ${STAMP}`);
-  await page.check('input[name="terms"]');
-  await Promise.all([page.waitForURL(/\/signup\/check-email/, { timeout: 30000 }), page.click('button[type="submit"]')]);
+  await Promise.all([page.waitForURL(/\/signup\/check-email/, { timeout: 30000 }), page.click('details[data-signup=email] button[type="submit"]')]);
   return "ends on 'check your e-mail'";
 }, page))) process.exit(finish());
 
@@ -113,14 +114,32 @@ await step("A2", "the local stack asks for e-mail confirmation: confirm the thro
   await page.waitForURL(/\/setup/, { timeout: 30000 }); // a confirmed account with no business goes to the set-up screen
 }, page);
 
-await step("A3", "first-login setup makes the business with this person as Owner", async () => {
-  await Promise.all([page.waitForURL(/\/app(\/tenants|$)/, { timeout: 30000 }), page.click('button[type="submit"]')]);
+await step("A3", "first-login setup makes the business by itself, with the kind chosen on the sign-up page, this person as Owner, and lands on Today", async () => {
+  await page.waitForURL(/\/app(\/tenants|$)/, { timeout: 60000 });
   const link = page.locator('a[href^="/app/tenants/"]').first();
   if (/\/app$/.test(page.url())) await link.waitFor({ timeout: 15000 });
   const row = psql(`select t.id || '|' || t.slug from public.tenants t join public.memberships m on m.tenant_id = t.id join auth.users u on u.id = m.user_id where u.email = '${EMAIL}'`);
   [tenant, slug] = row.split("|");
-  must(/^[0-9a-f-]{36}$/.test(tenant) && slug.startsWith("e2e-"), `workspace not found (${row})`);
+  // the business has no name yet ("My business": the checklist asks for the real one) and a slug that is not ours: the throwaway workspace is renamed so the clean-up (which only removes e2e- workspaces named "E2E Silks ...") can find it. LOCAL database only.
+  psql(`begin; set local session_replication_role = replica; update public.tenants set name = 'E2E Silks ${STAMP}', slug = 'e2e-${STAMP}' where id = '${tenant}'; commit;`);
+  slug = `e2e-${STAMP}`;
+  must(/^[0-9a-f-]{36}$/.test(tenant), `workspace not found (${row})`);
   return slug;
+}, page);
+
+await step("A3a", "the workspace runs the business type chosen on the sign-up page (pinned version, source 'signup'), and nothing else was asked", async () => {
+  const row = psql(`select w.pack_code || '|' || w.source from packs.workspace_pack w where w.tenant_id = '${tenant}'`);
+  const [code, source] = row.split("|");
+  const api1 = await fetch(`${API}/v1/packs`).then((r) => r.json());
+  must(code === api1.packs[0].pack_id && source === "signup", `the workspace's pack is "${row}", wanted ${api1.packs[0].pack_id}|signup`);
+  return row;
+}, page);
+
+// The J steps below are about the first-run wizard a workspace made WITHOUT choosing a business type has always shown (a workspace made at sign-up gets the checklist instead: e2e/cl-signup.mjs covers that). So the throwaway
+// workspace is put in that state: source 'default'. LOCAL database only.
+await step("A3c", "(local) put the throwaway workspace in the state of one made without choosing a business type, so the classic first-run wizard of the J steps is what Today shows", async () => {
+  psql(`update packs.workspace_pack set source = 'default' where tenant_id = '${tenant}'`);
+  return "source = default";
 }, page);
 
 await step("A3b", "the Terms and the Privacy Policy accepted on the sign-up page are recorded at the first-login setup (via setup, the versions the API has in force), so the accept page has nothing to ask (job CF)", async () => {

@@ -241,6 +241,17 @@ describe("addCustomerAction", () => {
   });
 });
 
+describe("a business type with no companies (job CL, found by the real-stack run)", () => {
+  it("says the form is switched off for this kind of business, not that the person's role cannot add customers, and makes nothing after the refused company", async () => {
+    api.createCustomerCompany.mockRejectedValueOnce(new ApiRequestError(403, "module_off", CANARY));
+    const r = await run();
+    expect(r?.ok).toBe(false);
+    expect(r?.error).toMatch(/does not use this form/);
+    expect(r?.error).not.toContain(CANARY);
+    expect(api.createContact).not.toHaveBeenCalled();
+  });
+});
+
 describe("a business customer's GSTIN (job CC)", () => {
   it("is sent to the company in its plain form when it is well formed", async () => {
     await run({ gstin: " 29aagcb-7383 j1z4 " });

@@ -1,5 +1,6 @@
 import { ApiAuthError } from "@/lib/api/client";
 import { listCatalogueItems } from "@/lib/api/catalogue";
+import { getAccountSecurity } from "@/lib/api/pack";
 import { getProfile } from "@/lib/api/profile";
 import { fetchQuotePolicyVersions } from "@/lib/api/quote-policies";
 import { fetchQuotes } from "@/lib/api/quotes";
@@ -21,6 +22,8 @@ export async function readFacts(accessToken: string, tenantId: string, checks: r
   const want = new Set(checks);
   const reads: Partial<Record<StepCheck, () => Promise<boolean>>> = {
     business_profile: async () => (await getProfile(accessToken, tenantId)).town !== null,
+    // the session is at the second level only when an authenticator code was given: the person has set it up (a status the server cannot give counts as not done)
+    second_factor_set: async () => (await getAccountSecurity(accessToken))?.level === "aal2",
     catalogue_has_items: async () => (await listCatalogueItems(accessToken, tenantId, { limit: 1, includeInactive: true })).items.length > 0,
     quote_rules_set: async () => (await fetchQuotePolicyVersions(accessToken, tenantId)).length > 0,
     whatsapp_connected: async () => {

@@ -70,10 +70,6 @@ Engineering baseline, not legal advice. India: DPDP Rules 2025 and TRAI UCC/cons
 
 UI-0 tables/forms -> UI-1 Revenue department agent cards -> UI-2 Owner/Brain card -> UI-3 Doing/Next/Done/Waiting Approval/Failed counters -> UI-4 Operations/Finance (only when built) -> UI-5 visual "AI company" view (original design, only once it reflects real capabilities).
 
-## Business types (packs)
-
-A business type is data: one folder of `packages/packs/<id>/pack.json` (words, modules, extra fields, first-run checklist), checked in CI against a JSON Schema. No pack id is named in code; modules are the only code extension point; a module that is off is hidden in the menu, answers a 403 page on a direct address and is refused by the database (default deny). The default pack is the product as it was before packs existed. ADR 0085 (the web shell), ADR 0084 (the platform parts), `docs/runbooks/add-a-business-type.md`.
-
 ## Decisions
 
 Architecture decision records live in `docs/adr/`. Add one whenever a decision above changes.

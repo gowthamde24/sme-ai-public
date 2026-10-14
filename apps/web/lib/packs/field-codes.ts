@@ -12,6 +12,21 @@ export function codeOf(label: string): string {
   return /^[a-z]/.test(base) && base.length >= 2 ? base : `field_${Math.abs([...label].reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7)).toString(36).slice(0, 6)}`;
 }
 
+/** New choices for a field that has some: one per line, none that it has already (by code), at most 20 new and none over 60 characters. Null when a line is too long or there are too many; an empty list when there is nothing new. */
+export function parseMoreChoices(text: string, existing: readonly string[]): { code: string; label: string }[] | null {
+  const lines = [...new Set(text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean))];
+  if (lines.length > 20 || lines.some((l) => l.length > 60)) return null;
+  const seen = new Set(existing);
+  const out: { code: string; label: string }[] = [];
+  for (const l of lines) {
+    const code = codeOf(l).slice(0, 36);
+    if (seen.has(code)) continue; // the same words again: already there
+    seen.add(code);
+    out.push({ code, label: l });
+  }
+  return out;
+}
+
 /** Up to 20 choices, one per line, each at most 60 characters; the code is made from the words and kept unique. */
 export function parseChoices(text: string): { code: string; label: string }[] | null {
   const lines = [...new Set(text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean))];

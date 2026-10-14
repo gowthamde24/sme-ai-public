@@ -42,7 +42,7 @@ import { listCustomFields } from "@/lib/api/custom-fields";
 import { usesChecklist } from "@/lib/packs/activation";
 import type { FieldEntity, WorkspaceField } from "@/lib/packs/types";
 
-import { addFieldAction, setFieldActiveAction } from "./field-actions";
+import { addFieldAction, setFieldActiveAction, updateFieldAction } from "./field-actions";
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 import { makeCalendarFeedAction, revokeCalendarFeedAction } from "./data-actions";
 import { saveShopGstinAction } from "./gstin-actions";
@@ -255,6 +255,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
             lang={lang}
             add={addFieldAction.bind(null, tenantId)}
             setActive={setFieldActiveAction.bind(null, tenantId)}
+            update={updateFieldAction.bind(null, tenantId)}
             t={t}
           />
         ) : null}

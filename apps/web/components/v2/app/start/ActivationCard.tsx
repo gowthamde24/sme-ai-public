@@ -11,6 +11,9 @@ import { card, primary } from "../visits/styles";
  * (the questions are asked on the Start page, one at a time, when the person gets to them: progressive profiling). A step whose screen is not built yet says "Not available yet" and is never shown as done. It disappears when
  * every step is done: that is "activated". `base` = `/app/tenants/<id>`.
  */
+/** A step inside the workspace is relative to it; an account page (a path that starts with /app) is used as it is. */
+const hrefOf = (base: string, href: string) => (href.startsWith("/app") ? href : `${base}${href}`);
+
 export function ActivationCard({ activation, base, t }: { activation: Activation; base: string; t: AppT }) {
   if (activation.steps.length === 0 || activation.done === activation.total) return null;
   const next = activation.next;
@@ -39,7 +42,7 @@ export function ActivationCard({ activation, base, t }: { activation: Activation
           return (
             <li key={s.id} data-step={s.id} data-state={s.state}>
               {s.href && s.state === "todo" ? (
-                <Link href={`${base}${s.href}`} className={`${cls} hover:bg-surface-2`}>
+                <Link href={hrefOf(base, s.href)} className={`${cls} hover:bg-surface-2`}>
                   {body}
                 </Link>
               ) : (
@@ -51,7 +54,7 @@ export function ActivationCard({ activation, base, t }: { activation: Activation
       </ul>
       {next?.href ? (
         <div>
-          <Link href={`${base}${next.href}`} className={primary}>
+          <Link href={hrefOf(base, next.href)} className={primary}>
             {t("start.next")}
           </Link>
         </div>

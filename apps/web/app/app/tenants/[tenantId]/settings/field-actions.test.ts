@@ -8,14 +8,17 @@ const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const createField = vi.fn();
 const setActive = vi.fn();
+const updateField = vi.fn();
 const listFields = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
-vi.mock("@/lib/api/custom-fields", () => ({ createCustomField: (...a: unknown[]) => createField(...a), setCustomFieldActive: (...a: unknown[]) => setActive(...a), listCustomFields: (...a: unknown[]) => listFields(...a) }));
+vi.mock("@/lib/api/custom-fields", () => ({ createCustomField: (...a: unknown[]) => createField(...a), setCustomFieldActive: (...a: unknown[]) => setActive(...a), updateCustomField: (...a: unknown[]) => updateField(...a), listCustomFields: (...a: unknown[]) => listFields(...a) }));
 
-import { addFieldAction, setFieldActiveAction } from "./field-actions";
+vi.mock("@/i18n/get-lang", () => ({ getLang: async () => "te" }));
+
+import { addFieldAction, setFieldActiveAction, updateFieldAction } from "./field-actions";
 
 const T = "22222222-2222-2222-2222-222222222222";
 const form = (o: Record<string, string>) => {
@@ -42,6 +45,7 @@ beforeEach(() => {
   listFields.mockResolvedValue(PACK_FIELDS);
   createField.mockResolvedValue({});
   setActive.mockResolvedValue({});
+  updateField.mockResolvedValue({});
 });
 
 describe("adding a field", () => {
@@ -118,5 +122,40 @@ describe("hiding and showing a field", () => {
     fetchTenant.mockResolvedValue({ id: T, role: "owner" });
     expect(await note(() => setFieldActiveAction(T, form({ active: "no" })))).toBe("invalid");
     expect(setActive).not.toHaveBeenCalled();
+  });
+});
+
+describe("changing a field", () => {
+  const choice = () => PACK_FIELDS.find((f) => f.kind === "choice")!;
+  it("sends the new words for the language the person reads (the others stay), 'required', and only the choices that are new", async () => {
+    const f = choice();
+    expect(await note(() => updateFieldAction(T, form({ field_id: f.id, label: " Kind of customer ", required: "on", choices: `${f.choices![0].label.en}\nA brand new one\n\nA brand new one` })))).toBe("updated");
+    const [token, tenant, id, patch] = updateField.mock.calls[0];
+    expect([token, tenant, id]).toEqual(["tok", T, f.id]);
+    expect(patch.label).toEqual({ ...f.label, te: "Kind of customer" });
+    expect(patch.required).toBe(true);
+    expect(patch.addChoices).toEqual([{ code: "a_brand_new_one", label: "A brand new one" }]); // the choice it has already is not sent again
+  });
+  it("turns 'required' off when the box is not ticked, and sends no choices for a field that has none", async () => {
+    const text = PACK_FIELDS.find((f) => f.kind !== "choice" && f.kind !== "multi_choice") ?? { ...choice(), kind: "text" as const, choices: null, id: "t1" };
+    listFields.mockResolvedValue([text]);
+    expect(await note(() => updateFieldAction(T, form({ field_id: text.id, label: "Name", choices: "ignored" })))).toBe("updated");
+    expect(updateField.mock.calls[0][3]).toMatchObject({ required: false, addChoices: [] });
+  });
+  it("is for the Owner and an Admin only, needs an id and a name, and refuses a field the workspace does not have", async () => {
+    fetchTenant.mockResolvedValue({ id: T, role: "sales" });
+    expect(await note(() => updateFieldAction(T, form({ field_id: choice().id, label: "x" })))).toBe("role");
+    fetchTenant.mockResolvedValue({ id: T, role: "owner" });
+    for (const bad of [{ label: "x" }, { field_id: choice().id }, { field_id: choice().id, label: "x".repeat(61) }, { field_id: "not-a-field-of-ours", label: "x" }]) expect(await note(() => updateFieldAction(T, form(bad as Record<string, string>))), JSON.stringify(bad)).toBe("invalid");
+    expect(await note(() => updateFieldAction(T, form({ field_id: choice().id, label: "ok", choices: Array.from({ length: 21 }, (_, i) => `c${i}`).join("\n") })))).toBe("invalid");
+    expect(updateField).not.toHaveBeenCalled();
+  });
+  it("tells the person why the API said no", async () => {
+    updateField.mockRejectedValueOnce(new ApiRequestError(403, "mfa_required", "x"));
+    expect(await note(() => updateFieldAction(T, form({ field_id: choice().id, label: "ok" })))).toBe("mfa");
+    updateField.mockRejectedValueOnce(new ApiRequestError(422, "custom_value_invalid", "x"));
+    expect(await note(() => updateFieldAction(T, form({ field_id: choice().id, label: "ok" })))).toBe("invalid");
+    updateField.mockRejectedValueOnce(new ApiAuthError("x"));
+    expect(await note(() => updateFieldAction(T, form({ field_id: choice().id, label: "ok" })))).toBe("/login");
   });
 });

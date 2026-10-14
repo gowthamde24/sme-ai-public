@@ -21866,6 +21866,17 @@
    "kn": "draft"
   }
  },
+ "cust.not_switched_on": {
+  "en": "Your kind of business does not use this form (it makes a company, a person and a lead), so it is switched off.",
+  "te": "మీ రకం వ్యాపారం ఈ ఫారమ్‌ను వాడదు (ఇది కంపెనీ, వ్యక్తి, లీడ్‌ను చేస్తుంది), అందుకే ఇది ఆఫ్‌లో ఉంది.",
+  "hi": "आपके तरह के व्यापार में यह फ़ॉर्म इस्तेमाल नहीं होता (यह कंपनी, व्यक्ति और लीड बनाता है), इसलिए यह बंद है।",
+  "kn": "ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರದಲ್ಲಿ ಈ ಫಾರ್ಮ್ ಬಳಕೆಯಾಗುವುದಿಲ್ಲ (ಇದು ಕಂಪನಿ, ವ್ಯಕ್ತಿ ಮತ್ತು ಲೀಡ್ ಮಾಡುತ್ತದೆ), ಆದ್ದರಿಂದ ಇದು ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "cust.this_workspace_is_not_available": {
   "en": "This workspace is not available.",
   "te": "ఈ వర్క్‌స్పేస్ అందుబాటులో లేదు.",
@@ -36545,6 +36556,50 @@
    "kn": "draft"
   }
  },
+ "start.check.second_factor_set.title": {
+  "en": "Set up your second step",
+  "te": "మీ రెండో దశను సెట్ చేయండి",
+  "hi": "अपना दूसरा चरण सेट करें",
+  "kn": "ನಿಮ್ಮ ಎರಡನೇ ಹಂತವನ್ನು ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.second_factor_set.hint": {
+  "en": "An authenticator code, asked before you approve anything or connect WhatsApp.",
+  "te": "ఏదైనా ఆమోదించే ముందు లేదా WhatsApp కనెక్ట్ చేసే ముందు అడిగే ఆథెంటికేటర్ కోడ్.",
+  "hi": "एक ऑथेंटिकेटर कोड, जो कुछ भी मंज़ूर करने या WhatsApp जोड़ने से पहले माँगा जाता है।",
+  "kn": "ಏನನ್ನಾದರೂ ಅನುಮೋದಿಸುವ ಮೊದಲು ಅಥವಾ WhatsApp ಸಂಪರ್ಕಿಸುವ ಮೊದಲು ಕೇಳುವ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.notice.whatsapp": {
+  "en": "Connecting WhatsApp needs your second step first (an authenticator code). Set it up in Security, then come back here.",
+  "te": "WhatsApp కనెక్ట్ చేసే ముందు మీ రెండో దశ (ఆథెంటికేటర్ కోడ్) అవసరం. సెక్యూరిటీలో సెట్ చేసి, ఇక్కడికి తిరిగి రండి.",
+  "hi": "WhatsApp जोड़ने से पहले आपका दूसरा चरण (ऑथेंटिकेटर कोड) ज़रूरी है। सिक्योरिटी में सेट करें, फिर यहाँ लौटें।",
+  "kn": "WhatsApp ಸಂಪರ್ಕಿಸುವ ಮೊದಲು ನಿಮ್ಮ ಎರಡನೇ ಹಂತ (ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್) ಬೇಕು. ಸೆಕ್ಯುರಿಟಿಯಲ್ಲಿ ಹೊಂದಿಸಿ, ನಂತರ ಇಲ್ಲಿಗೆ ಬನ್ನಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "sec.notice.link": {
+  "en": "Open Security",
+  "te": "సెక్యూరిటీ తెరవండి",
+  "hi": "सिक्योरिटी खोलें",
+  "kn": "ಸೆಕ್ಯುರಿಟಿ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "start.check.catalogue_has_items.title": {
   "en": "Add your first products",
   "te": "మీ మొదటి ఉత్పత్తులను చేర్చండి",
@@ -37084,17 +37139,6 @@
    "kn": "draft"
   }
  },
- "fields.fixture": {
-  "en": "Your own fields cannot be saved yet on this system, so adding and hiding are switched off. The fields below come with your kind of business.",
-  "te": "ఈ సిస్టమ్‌లో మీ సొంత ఫీల్డ్‌లను ఇంకా సేవ్ చేయలేం, అందుకే చేర్చడం, దాచడం ఆఫ్‌లో ఉన్నాయి. కింది ఫీల్డ్‌లు మీ రకం వ్యాపారంతో వస్తాయి.",
-  "hi": "इस सिस्टम में आपके अपने फ़ील्ड अभी सेव नहीं हो सकते, इसलिए जोड़ना और छिपाना बंद है। नीचे के फ़ील्ड आपके तरह के व्यापार के साथ आते हैं।",
-  "kn": "ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ನಿಮ್ಮದೇ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಇನ್ನೂ ಉಳಿಸಲಾಗುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಸೇರಿಸುವುದು, ಮರೆಮಾಡುವುದು ಆಫ್ ಆಗಿವೆ. ಕೆಳಗಿನ ಫೀಲ್ಡ್‌ಗಳು ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರದ ಜೊತೆ ಬರುತ್ತವೆ.",
-  "status": {
-   "te": "draft",
-   "hi": "draft",
-   "kn": "draft"
-  }
- },
  "fields.entity.contact": {
   "en": "Customers and contacts",
   "te": "కస్టమర్లు, కాంటాక్టులు",
@@ -37238,22 +37282,44 @@
    "kn": "draft"
   }
  },
- "fields.pii.child": {
-  "en": "Child data",
-  "te": "పిల్లల సమాచారం",
-  "hi": "बच्चों की जानकारी",
-  "kn": "ಮಕ್ಕಳ ಮಾಹಿತಿ",
+ "fields.hide": {
+  "en": "Hide",
+  "te": "దాచండి",
+  "hi": "छिपाइए",
+  "kn": "ಮರೆಮಾಡಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
    "kn": "draft"
   }
  },
- "fields.hide": {
-  "en": "Hide",
-  "te": "దాచండి",
-  "hi": "छिपाइए",
-  "kn": "ಮರೆಮಾಡಿ",
+ "fields.edit": {
+  "en": "Edit",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.edit.choices": {
+  "en": "More choices (one per line; the ones it has stay)",
+  "te": "మరిన్ని ఎంపికలు (ఒక్కో లైన్‌కి ఒకటి; ఉన్నవి అలాగే ఉంటాయి)",
+  "hi": "और विकल्प (हर पंक्ति में एक; जो हैं वे रहेंगे)",
+  "kn": "ಇನ್ನಷ್ಟು ಆಯ್ಕೆಗಳು (ಪ್ರತಿ ಸಾಲಿಗೆ ಒಂದು; ಇರುವವು ಹಾಗೆಯೇ ಇರುತ್ತವೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.edit.save": {
+  "en": "Save changes",
+  "te": "మార్పులను సేవ్ చేయండి",
+  "hi": "बदलाव सहेजें",
+  "kn": "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ",
   "status": {
    "te": "draft",
    "hi": "draft",
