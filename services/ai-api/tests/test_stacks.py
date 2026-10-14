@@ -250,6 +250,37 @@ def test_two_syncs_at_once_do_not_trample_each_other() -> None:
     assert not list(synced.parent.glob(".*.new")), "no staging folder is left behind"
 
 
+def test_the_mail_template_keeps_its_file_through_every_sync(tmp_path: Path) -> None:
+    # job CN: Kong bind-mounts the single FILE templates/confirmation.html; a mount follows the inode, so a sync that replaced the file left Kong holding a deleted one (sign-up mail with the stock link after every `db reset`)
+    source, target = tmp_path / "src", tmp_path / "dst"
+    (source / "sub").mkdir(parents=True)
+    (source / "confirmation.html").write_text("<p>one</p>")
+    (source / "sub" / "x.html").write_text("x")
+    gen.sync_in_place(source, target)
+    mounted = target / "confirmation.html"
+    inode = mounted.stat().st_ino
+    gen.sync_in_place(source, target)  # nothing changed: nothing is touched
+    assert mounted.stat().st_ino == inode
+    (source / "confirmation.html").write_text("<p>two, longer</p>")
+    gen.sync_in_place(source, target)  # changed bytes: rewritten through the same file
+    assert mounted.stat().st_ino == inode and mounted.read_text() == "<p>two, longer</p>"
+    (source / "confirmation.html").write_text("<p>3</p>")
+    gen.sync_in_place(source, target)  # a shorter file is truncated, not padded
+    assert mounted.read_text() == "<p>3</p>"
+    (source / "sub" / "x.html").unlink()
+    (source / "sub").rmdir()
+    gen.sync_in_place(source, target)  # a file that left the source leaves the copy; the emptied folder too
+    assert not (target / "sub").exists() and mounted.stat().st_ino == inode
+
+
+def test_the_real_sync_leaves_the_mounted_template_alone() -> None:
+    template = ROOT / "stacks" / "sme-ai-agent" / "supabase" / "templates" / "confirmation.html"
+    gen.sync()
+    inode = template.stat().st_ino
+    gen.sync()
+    assert template.stat().st_ino == inode, "a second sync must not replace the file Kong has mounted"
+
+
 def test_sb_status_on_the_agent_stack_copies_nothing(fake_cli: tuple[dict[str, str], Path]) -> None:
     env, log = fake_cli
     marker = ROOT / "stacks" / "sme-ai-agent" / "supabase" / "migrations"
