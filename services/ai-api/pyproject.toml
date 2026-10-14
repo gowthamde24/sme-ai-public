@@ -77,6 +77,11 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/cp_fakes.py" = ["E501"]
 "tests/test_migration_copies_cp.py" = ["E501"]
 "../../tests/integration/test_cp_*.py" = ["E501"]
+# job CR: the education pack and its tests read like the ADR they implement (long lines)
+"app/education/*" = ["E501"]
+"tests/test_cr_*.py" = ["E501"]
+"tests/test_migration_copies_cr.py" = ["E501"]
+"../../tests/integration/test_cr_*.py" = ["E501"]
 "tests/test_cb_*.py" = ["E501"]
 "../../tests/integration/test_cb_*.py" = ["E501"]
 # job CD: the error module, the WhatsApp tooling and their tests read like their documentation (long lines)

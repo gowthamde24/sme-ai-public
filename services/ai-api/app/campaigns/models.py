@@ -146,11 +146,11 @@ class RecipientsIn(_Strict):
 
 
 class LedgerFilterIn(_Strict):
-    """The ledger list: every party with money open on claims due between `due_from` and `due_to` (at most 400 days), optionally only companies or contacts, optionally only at least `min_open_paise`."""
+    """The ledger list: every party with money open on claims due between `due_from` and `due_to` (at most 400 days), optionally only companies, contacts or education students (a guardian's students are ONE person: one message with the total), optionally only at least `min_open_paise`."""
 
     due_from: date
     due_to: date
-    party: Literal["company", "contact"] | None = None
+    party: Literal["company", "contact", "student"] | None = None
     min_open_paise: Annotated[StrictInt, Field(ge=1, le=100_000_000_000)] | None = None
 
 

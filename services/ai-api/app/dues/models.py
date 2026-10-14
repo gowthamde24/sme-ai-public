@@ -114,6 +114,8 @@ class StatementOut(_Strict):
     account_id: uuid.UUID | None = None
     company_id: uuid.UUID | None = None
     contact_id: uuid.UUID | None = None
+    # an education student's own account (job CR); the construction and contact routes never carry one
+    student_id: uuid.UUID | None = None
     as_of: date
     # every claim (charges and debit adjustments) and every credit (payments, concessions, credit adjustments)
     invoiced_paise: int
