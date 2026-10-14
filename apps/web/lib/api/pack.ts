@@ -1,129 +1,158 @@
-import { isKnownPack, MODULES, packById, defaultPack } from "@/lib/packs/registry";
-import type { FieldDef, FieldEntity, FieldKind, PackDef, PackText, PiiClass, WorkspaceField } from "@/lib/packs/types";
+import type { AccountSecurity, AuthProviders, PackStatus, PackSummary, Words, WorkspacePack } from "@/lib/packs/types";
 
-import { ApiAuthError, ApiContractError, ApiRequestError, apiRequest } from "./client";
+import { ApiAuthError, ApiContractError, ApiRequestError, apiPublicRequest, apiRequest } from "./client";
 
 /**
- * The business type of a workspace (job CL), behind ONE adapter. The contract is the shape ADR 0084 part 1 sketches for `GET /v1/tenants/{id}/pack` (job CK builds it):
+ * Business types, modules and sign-in options (job CL on top of job CK, ADR 0084 part 1), behind ONE adapter. The contract is packages/contracts/packs.ts (generated from the API models):
  *
- *   { "pack": "<code>", "version": 1, "modules": ["today", ...], "fields": [{ "id", "entity", "code", "kind", "label", "choices"?, "required", "pii_class", "source": "pack"|"owner", "active" }],
- *     "example_data": { "available": bool, "loaded": bool } }
+ *   GET /v1/packs                    no sign-in: the business types a new person may choose (the sign-up cards)
+ *   GET /v1/auth/providers           no sign-in: which ways to sign up are on (e-mail always; Google and Facebook only when the server has their keys)
+ *   GET /v1/account/security         the session's second-factor level and which groups of actions need one
+ *   GET /v1/tenants/{id}/pack        any member: the business type of this workspace (pinned version), its words, units and default modules
+ *   GET /v1/tenants/{id}/modules     any member: the modules and which are ON (the answer that counts: default deny, set in the database)
  *
- * Only `pack` is needed; everything else is read when it is there. The WORDS of a pack are not asked of the API: they are the pack files in the repository (packages/packs), looked up by `pack`.
- * `modules` is the API's own answer to "which modules are on" (pack default AND plan AND operator override, default deny): when it is given it wins over the pack file. Until job CK lands, an API that
- * has no such route answers 404 and the workspace is drawn with the DEFAULT pack from its file (`source: "fixture"`): nothing changes for a business that exists today, and nothing is invented.
- * Server side only, with the signed-in person's own token. Every field of the answer is validated; a malformed one is an error, never rendered.
+ * The web keeps no copy of the pack files and no list of business types: what it draws comes from these answers. Every field is validated; a malformed answer is an error, never rendered. A server without the
+ * pack routes (404/501/503 `packs_unavailable`) gives `null`: the menu is then the one the product always had. Server side only; the workspace reads use the signed-in person's own token.
  */
-export type ExampleState = "none" | "available" | "loaded";
-export type WorkspacePack = {
-  def: PackDef;
-  version: number;
-  modules: readonly string[];
-  fields: readonly WorkspaceField[];
-  example: ExampleState;
-  /** `api`: answered by the server. `fixture`: the API has no such route yet; the default pack's file stands in (nothing can be saved, so the screens that edit fields say so). */
-  source: "api" | "fixture";
-};
-
 type Rec = Record<string, unknown>;
 const isRecord = (v: unknown): v is Rec => typeof v === "object" && v !== null && !Array.isArray(v);
 const bad = (what: string): never => {
   throw new ApiContractError(`Unexpected ${what} in a pack response.`);
 };
 
-const KINDS: readonly FieldKind[] = ["text", "number", "date", "choice", "multi_choice", "yes_no"];
-const ENTITIES: readonly FieldEntity[] = ["contact", "catalogue_item"];
-const PII: readonly PiiClass[] = ["none", "personal", "child"];
-const CODE = /^[a-z][a-z0-9_]{1,31}$/;
+const STATUSES: readonly PackStatus[] = ["draft", "preview", "published"];
+const SOURCES = ["signup", "default", "legacy", "operator"] as const;
+const CODE = /^[a-z][a-z0-9_]{1,30}$/;
+const LABEL_KEY = /^[a-z][a-z0-9_]*\.[a-z][a-z0-9_.]*$/;
+const LANGS = ["en", "te", "hi", "kn"] as const;
 
-/** A label as the API may give it: one string (used in every language) or { en, te?, hi?, kn? }. */
-function parseText(v: unknown, what: string): PackText {
-  if (typeof v === "string" && v.trim().length >= 1 && v.length <= 160) return { en: v, te: v, hi: v, kn: v };
-  if (isRecord(v) && typeof v.en === "string" && v.en.length >= 1 && v.en.length <= 160) {
-    const pick = (k: string) => (typeof v[k] === "string" && (v[k] as string).length >= 1 && (v[k] as string).length <= 240 ? (v[k] as string) : (v.en as string));
-    return { en: v.en, te: pick("te"), hi: pick("hi"), kn: pick("kn") };
+/** `{ en, te?, hi?, kn? }`: only the languages the product has, every text non-empty and short. English must be there. */
+export function parseWords(v: unknown, what: string, max = 240): Words {
+  if (!isRecord(v) || typeof v.en !== "string" || v.en.length < 1) return bad(what);
+  const out: Record<string, string> = {};
+  for (const lang of LANGS) {
+    const w = v[lang];
+    if (w === undefined) continue;
+    if (typeof w !== "string" || w.length < 1 || w.length > max) return bad(what);
+    out[lang] = w;
   }
-  return bad(what);
+  return out;
 }
 
-export function parseField(json: unknown): WorkspaceField {
-  if (!isRecord(json)) return bad("field");
-  const { id, entity, code, kind, label, required, pii_class: pii, choices, source, active, unit } = json;
-  if (!ENTITIES.includes(entity as FieldEntity)) return bad("field entity");
-  if (typeof code !== "string" || !CODE.test(code)) return bad("field code");
-  if (!KINDS.includes(kind as FieldKind)) return bad("field kind");
-  if (!PII.includes(pii as PiiClass)) return bad("field pii_class");
-  const isChoice = kind === "choice" || kind === "multi_choice";
-  let parsed: FieldDef["choices"];
-  if (isChoice) {
-    if (!Array.isArray(choices) || choices.length < 1 || choices.length > 50) return bad("field choices");
-    parsed = choices.map((c) => {
-      if (!isRecord(c) || typeof c.code !== "string" || !/^[a-z0-9][a-z0-9_]{0,31}$/.test(c.code)) return bad("choice code");
-      return { code: c.code, label: parseText(c.label, "choice label") };
-    });
-  } else if (choices !== undefined && choices !== null) return bad("field choices");
-  if (id !== undefined && id !== null && (typeof id !== "string" || id.length > 64)) return bad("field id");
-  if (source !== undefined && source !== "pack" && source !== "owner") return bad("field source");
-  if (active !== undefined && typeof active !== "boolean") return bad("field active");
+function parseCode(v: unknown, what: string): string {
+  return typeof v === "string" && CODE.test(v) ? v : bad(what);
+}
+
+export function parsePackSummary(json: unknown): PackSummary {
+  if (!isRecord(json)) return bad("pack");
+  if (typeof json.version !== "number" || !Number.isSafeInteger(json.version) || json.version < 1) return bad("version");
+  if (!STATUSES.includes(json.status as PackStatus)) return bad("status");
+  if (typeof json.validated !== "boolean") return bad("validated");
   return {
-    id: typeof id === "string" ? id : null,
-    entity: entity as FieldEntity,
-    code,
-    kind: kind as FieldKind,
-    label: parseText(label, "field label"),
-    ...(typeof unit === "string" && unit.length <= 12 ? { unit } : {}),
-    required: required === true,
-    pii_class: pii as PiiClass,
-    ...(parsed ? { choices: parsed } : {}),
-    source: source === "owner" ? "owner" : "pack",
-    active: active !== false,
+    packId: parseCode(json.pack_id, "pack_id"),
+    version: json.version,
+    status: json.status as PackStatus,
+    validated: json.validated,
+    names: parseWords(json.names, "names"),
+    summary: parseWords(json.summary, "summary"),
+    accent: parseCode(json.accent, "accent"),
+    owlProp: parseCode(json.owl_prop, "owl_prop"),
   };
 }
 
-export function parseWorkspacePack(json: unknown): WorkspacePack {
-  if (!isRecord(json)) return bad("body");
-  if (typeof json.pack !== "string" || json.pack.length > 40) return bad("pack");
-  // an id this build does not know (a newer API than this web app) is drawn with the default pack's words; the modules and fields the API sends still decide what is on
-  const def = isKnownPack(json.pack) ? packById(json.pack) : defaultPack();
-  const version = typeof json.version === "number" && Number.isSafeInteger(json.version) && json.version >= 1 ? json.version : def.version;
-  let modules: readonly string[] = def.modules;
-  if (json.modules !== undefined) {
-    if (!Array.isArray(json.modules) || json.modules.length > 60 || json.modules.some((m) => typeof m !== "string")) return bad("modules");
-    modules = (json.modules as string[]).filter((m) => MODULES.includes(m)); // an unknown module name is not something this build can draw
-  }
-  let fields: readonly WorkspaceField[];
-  if (json.fields === undefined) fields = fromPack(def);
-  else {
-    if (!Array.isArray(json.fields) || json.fields.length > 80) return bad("fields");
-    fields = json.fields.map(parseField);
-  }
-  let example: ExampleState = "none";
-  if (isRecord(json.example_data)) example = json.example_data.loaded === true ? "loaded" : json.example_data.available === true ? "available" : "none";
-  return { def, version, modules, fields, example, source: "api" };
+/** `GET /v1/packs`. An answer with no business type at all is an error (a sign-up page with no cards helps nobody). */
+export async function listPacks(): Promise<PackSummary[]> {
+  const json = await apiPublicRequest("/v1/packs");
+  if (!isRecord(json) || !Array.isArray(json.packs) || json.packs.length < 1 || json.packs.length > 40) return bad("packs");
+  return json.packs.map(parsePackSummary);
 }
 
-/** The pack file's own fields, as a workspace has them before the owner adds any. */
-export function fromPack(def: PackDef): WorkspaceField[] {
-  return def.fields.map((f) => ({ ...f, id: null, source: "pack" as const, active: true }));
-}
-
-/** What stands in until the API has the route: the default pack, from its file. */
-export function fixtureWorkspacePack(): WorkspacePack {
-  const def = defaultPack();
-  return { def, version: def.version, modules: def.modules, fields: fromPack(def), example: "none", source: "fixture" };
-}
-
-/** `GET /v1/tenants/{id}/pack`. A 404 means the route does not exist yet (or the workspace is not the caller's, which the page has already settled): the fixture stands in. Any other failure is raised. */
-export async function getWorkspacePack(accessToken: string, tenantId: string): Promise<WorkspacePack> {
+/** `GET /v1/auth/providers`: Google and Facebook are offered only when the server says so. Anything unreadable counts as "off" (e-mail is always there). */
+export async function getAuthProviders(): Promise<AuthProviders> {
   try {
-    return parseWorkspacePack(await apiRequest(`/v1/tenants/${encodeURIComponent(tenantId)}/pack`, accessToken));
+    const json = await apiPublicRequest("/v1/auth/providers");
+    return isRecord(json) ? { google: json.google === true, facebook: json.facebook === true } : { google: false, facebook: false };
+  } catch {
+    return { google: false, facebook: false };
+  }
+}
+
+const AAL = ["aal1", "aal2"] as const;
+/** `GET /v1/account/security`. A server without the route (or an unreadable answer) gives null: no notice is drawn, and the actions that need a second factor keep refusing at the database (SM306). */
+export async function getAccountSecurity(accessToken: string): Promise<AccountSecurity | null> {
+  try {
+    const json = await apiRequest("/v1/account/security", accessToken);
+    if (!isRecord(json) || !AAL.includes(json.session_level as (typeof AAL)[number]) || !Array.isArray(json.needed_for)) return null;
+    return { level: json.session_level as AccountSecurity["level"], neededFor: json.needed_for.filter((x): x is string => typeof x === "string" && CODE.test(x)) };
   } catch (error) {
     if (error instanceof ApiAuthError) throw error;
-    if (error instanceof ApiRequestError && (error.status === 404 || error.status === 501)) return fixtureWorkspacePack();
-    throw error;
+    return null;
   }
 }
 
-export function moduleOn(pack: Pick<WorkspacePack, "modules">, module: string): boolean {
-  return pack.modules.includes(module);
+function parseLabels(v: unknown): WorkspacePack["labels"] {
+  if (!isRecord(v) || !isRecord(v.en)) return bad("labels");
+  const out: Record<string, Record<string, string>> = {};
+  for (const [lang, words] of Object.entries(v)) {
+    if (!(LANGS as readonly string[]).includes(lang)) continue; // a language this build does not have is not something it can draw
+    if (!isRecord(words) || Object.keys(words).length > 200) return bad("labels");
+    out[lang] = {};
+    for (const [key, text] of Object.entries(words)) {
+      if (!LABEL_KEY.test(key) || typeof text !== "string" || text.length < 1 || text.length > 80) return bad("label");
+      out[lang][key] = text;
+    }
+  }
+  return out;
+}
+
+export function parseWorkspacePack(json: unknown): WorkspacePack {
+  const summary = parsePackSummary(json);
+  const r = json as Rec;
+  if (!SOURCES.includes(r.source as (typeof SOURCES)[number])) return bad("source");
+  if (!Array.isArray(r.modules) || r.modules.length > 60) return bad("modules");
+  if (!Array.isArray(r.units) || r.units.length > 20 || r.units.some((u) => typeof u !== "string")) return bad("units");
+  if (r.default_unit !== null && r.default_unit !== undefined && typeof r.default_unit !== "string") return bad("default_unit");
+  return {
+    ...summary,
+    source: r.source as WorkspacePack["source"],
+    coreTab: parseCode(r.core_tab, "core_tab"),
+    modules: (r.modules as unknown[]).map((m) => parseCode(m, "module")),
+    units: r.units as string[],
+    defaultUnit: typeof r.default_unit === "string" ? r.default_unit : null,
+    labels: parseLabels(r.labels),
+  };
+}
+
+/** `GET /v1/tenants/{id}/modules` -> the modules that are ON. */
+export function parseEnabledModules(json: unknown): string[] {
+  if (!isRecord(json) || !Array.isArray(json.modules) || json.modules.length > 60) return bad("modules");
+  return json.modules.map((m) => {
+    if (!isRecord(m) || typeof m.enabled !== "boolean") return bad("module");
+    return { code: parseCode(m.module, "module"), enabled: m.enabled };
+  }).filter((m) => m.enabled).map((m) => m.code);
+}
+
+/** A server that does not have the pack routes: the answer is "no business type", never a crash. */
+const noPackRoute = (error: unknown): boolean =>
+  error instanceof ApiRequestError && (error.status === 404 || error.status === 501 || (error.status === 503 && error.code === "packs_unavailable"));
+
+/**
+ * The business type of a workspace and its modules, two reads together. The modules answer (the one the database enforces) wins over the pack's default list; if only that read fails the pack's own list stands in. A server
+ * without the routes gives null. Any other failure is raised (the callers decide how much of a page a failed read may take down).
+ */
+export async function getWorkspacePack(accessToken: string, tenantId: string): Promise<WorkspacePack | null> {
+  const base = `/v1/tenants/${encodeURIComponent(tenantId)}`;
+  const [pack, modules] = await Promise.allSettled([apiRequest(`${base}/pack`, accessToken), apiRequest(`${base}/modules`, accessToken)]);
+  for (const r of [pack, modules]) if (r.status === "rejected" && r.reason instanceof ApiAuthError) throw r.reason;
+  if (pack.status === "rejected") {
+    if (noPackRoute(pack.reason)) return null;
+    throw pack.reason;
+  }
+  const parsed = parseWorkspacePack(pack.value);
+  if (modules.status === "fulfilled") return { ...parsed, modules: parseEnabledModules(modules.value) };
+  return parsed;
+}
+
+export function moduleOn(pack: Pick<WorkspacePack, "modules"> | null | undefined, module: string): boolean {
+  return !pack || pack.modules.includes(module);
 }

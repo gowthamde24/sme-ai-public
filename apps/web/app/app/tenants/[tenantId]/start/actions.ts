@@ -41,25 +41,35 @@ export async function saveProfileAction(tenantId: string, _prev: ProfileState, f
   }
 }
 
-async function exampleAction(tenantId: string, run: (token: string, id: string) => Promise<ExampleResult>, done: "loaded" | "removed"): Promise<void> {
+async function exampleAction(tenantId: string, run: (token: string, id: string) => Promise<{ result: ExampleResult; kept?: number }>, done: "loaded" | "removed"): Promise<void> {
   let notice: string = "failed";
+  let kept = 0;
   try {
     const who = await adminOf(tenantId);
     if (who) {
-      const result = await run(who.user.accessToken, tenantId);
-      notice = result === "ok" ? done : result === "unavailable" ? "unavailable" : "failed";
+      const out = await run(who.user.accessToken, tenantId);
+      notice = out.result === "ok" ? done : out.result === "unavailable" ? "unavailable" : "failed";
+      kept = out.kept ?? 0;
     }
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
   }
   revalidatePath(`/app/tenants/${tenantId}`, "layout");
-  redirect(`/app/tenants/${tenantId}?example=${notice}`);
+  redirect(`/app/tenants/${tenantId}?example=${notice}${kept > 0 ? `&kept=${kept}` : ""}`);
 }
 /** "Load example data" (blueprint 3.2). Safe to press twice: the server keeps one sample set. */
 export async function loadExampleAction(tenantId: string): Promise<void> {
-  return exampleAction(tenantId, loadExampleData, "loaded");
+  return exampleAction(tenantId, async (token, id) => ({ result: await loadExampleData(token, id) }), "loaded");
 }
-/** "Remove example data": removes only the sample's own rows. */
+/** "Remove example data": removes only the sample's own rows that nobody has used; the others stay and are counted. */
 export async function removeExampleAction(tenantId: string): Promise<void> {
-  return exampleAction(tenantId, removeExampleData, "removed");
+  return exampleAction(
+    tenantId,
+    async (token, id) => {
+      const out = await removeExampleData(token, id);
+      const k = out.removed?.kept;
+      return { result: out.result, kept: k ? k.companies + k.contacts + k.leads + k.products : 0 };
+    },
+    "removed",
+  );
 }

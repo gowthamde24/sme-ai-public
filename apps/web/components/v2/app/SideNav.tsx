@@ -30,7 +30,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const aria = word(labels, "frame.menu.workspace", "Workspace menu");
   const help = word(labels, "frame.help", "Help");
   const foot = current ? footItems(current.role) : [];
-  const badge = frame.pack && !frame.pack.isDefault ? frame.pack : null;
+  const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-64"}`}>
       <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} />

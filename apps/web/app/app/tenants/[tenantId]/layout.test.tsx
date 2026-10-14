@@ -31,11 +31,11 @@ describe("the workspace layout", () => {
     expect(readFrameData).not.toHaveBeenCalled();
     expect(slot).toHaveBeenLastCalledWith({ data: NO_FRAME_DATA });
   });
-  it("puts the module gate (the 403 page for a move inside the app) only around the page of a business type that is not the default", async () => {
-    const { parseWorkspacePack } = await import("@/lib/api/pack");
+  it("puts the module gate (the 403 page for a move inside the app) around the page of a workspace that has a business type, and judges the path against its modules", async () => {
+    const { workspacePack, otherPackIds } = await import("@/lib/packs/pack-test-kit");
     const { packFrame } = await import("@/lib/packs/resolve");
-    const education = parseWorkspacePack({ pack: "education", modules: ["today", "fees"] });
-    readFrameData.mockResolvedValue({ ...NO_FRAME_DATA, pack: packFrame(education.def, education.modules, "en") });
+    const education = workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!, "signup", ["today", "fees"]);
+    readFrameData.mockResolvedValue({ ...NO_FRAME_DATA, pack: packFrame(education, "en") });
     nav.pathname = `/app/tenants/${T}/orders`;
     const { queryByText, rerender } = render(await TenantLayout(props(T)));
     expect(queryByText("page")).toBeNull(); // the gate drew the 403 page
@@ -43,10 +43,9 @@ describe("the workspace layout", () => {
     nav.pathname = `/app/tenants/${T}/fees`;
     rerender(await TenantLayout(props(T)));
     expect(queryByText("page")).not.toBeNull();
-    const plain = parseWorkspacePack({ pack: "textiles" });
-    readFrameData.mockResolvedValue({ ...NO_FRAME_DATA, pack: packFrame(plain.def, plain.modules, "en") });
-    nav.pathname = `/app/tenants/${T}/fees`;
+    readFrameData.mockResolvedValue({ ...NO_FRAME_DATA, pack: null });
+    nav.pathname = `/app/tenants/${T}/orders`;
     rerender(await TenantLayout(props(T)));
-    expect(queryByText("page")).not.toBeNull(); // no gate for the default business type
+    expect(queryByText("page")).not.toBeNull(); // a server with no pack routes: no gate, the product as it always was
   });
 });

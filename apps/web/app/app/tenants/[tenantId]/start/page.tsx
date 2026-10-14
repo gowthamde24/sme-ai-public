@@ -10,7 +10,7 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
 import { getProfile, type BusinessProfile } from "@/lib/api/profile";
 import { requireUser } from "@/lib/auth/session";
-import { readActivation } from "@/lib/packs/activation";
+import { readActivation, usesChecklist } from "@/lib/packs/activation";
 import { readPackCached } from "@/lib/packs/read";
 
 import { saveProfileAction } from "./actions";
@@ -20,7 +20,7 @@ export const dynamic = "force-dynamic";
 
 /**
  * /app/tenants/[tenantId]/start (job CL): the activation checklist of a business type and its first question, the business name and the city, asked here and nowhere else (blueprint 3.3, progressive profiling).
- * Only a business type whose pack has a checklist of its own has this page (the others keep the first-run wizard they always had: 404). Owner or Admin; anyone else sees a plain sentence. Server side;
+ * Only a workspace made with a chosen business type has this page (one that existed before, or was made without choosing, keeps the first-run wizard it always had: 404). Owner or Admin; anyone else sees a plain sentence. Server side;
  * requireUser() runs first and every call carries the person's own token.
  */
 export default async function StartPage({ params }: PageProps<"/app/tenants/[tenantId]/start">) {
@@ -39,7 +39,7 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
     throw error;
   }
   const pack = await readPackCached(user.accessToken, tenantId);
-  if (pack.def.activation.style !== "steps") notFound();
+  if (!pack || !usesChecklist(pack)) notFound();
   const base = `/app/tenants/${tenantId}`;
   if (role !== "owner" && role !== "admin") {
     return (
@@ -55,7 +55,7 @@ export default async function StartPage({ params }: PageProps<"/app/tenants/[ten
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
   }
-  const activation = await readActivation(user.accessToken, tenantId, pack.def, lang);
+  const activation = await readActivation(user.accessToken, tenantId, pack, t);
   const dict = appDict(lang) as Record<string, string>;
   const words = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("start.")));
   return (

@@ -1,5 +1,5 @@
 import type { AppT } from "@/i18n/app";
-import { textIn } from "@/lib/packs/registry";
+import { textIn } from "@/lib/packs/text";
 import type { FieldEntity, FieldKind, WorkspaceField } from "@/lib/packs/types";
 
 import { card, errorLine, field, help, label, okLine, primary, secondary } from "../visits/styles";
@@ -11,11 +11,11 @@ const ENTITIES: readonly FieldEntity[] = ["contact", "catalogue_item"];
 
 /**
  * Settings → Fields (job CL, blueprint section 6): the extra details a business keeps about its customers and its products. The business type comes with some (shown as "From your business type": they cannot be removed,
- * only hidden); the owner may add more (at most 20 for each; a field is never deleted, it is hidden). Personal and child fields are marked, and the screen says what not to type. A server component with plain forms
- * posting to server actions (no script). While the server cannot store fields yet (`source` is "fixture") the list is shown and the controls say "Not available yet": nothing is pretended.
+ * only hidden); the owner may add more (at most 20 for each; a field is never deleted, it is hidden). A personal-details field is marked, and the screen says what not to type. A server component with plain forms
+ * posting to server actions (no script). While the server cannot store fields (`available` is false: it did not answer the field routes) the controls say "Not available yet": nothing is pretended.
  */
-export function FieldsSection({ fields, entities, source, canEdit, notice, lang, add, setActive, t }: { fields: readonly WorkspaceField[]; entities: readonly FieldEntity[]; source: "api" | "fixture"; canEdit: boolean; notice: FieldNotice; lang: string; add: (formData: FormData) => Promise<void>; setActive: (formData: FormData) => Promise<void>; t: AppT }) {
-  const editable = canEdit && source === "api";
+export function FieldsSection({ fields, entities, available, canEdit, notice, lang, add, setActive, t }: { fields: readonly WorkspaceField[]; entities: readonly FieldEntity[]; available: boolean; canEdit: boolean; notice: FieldNotice; lang: string; add: (formData: FormData) => Promise<void>; setActive: (formData: FormData) => Promise<void>; t: AppT }) {
+  const editable = canEdit && available;
   const message: Record<Exclude<FieldNotice, null>, [string, boolean]> = {
     added: [t("fields.notice.added"), true],
     updated: [t("fields.notice.updated"), true],
@@ -34,7 +34,6 @@ export function FieldsSection({ fields, entities, source, canEdit, notice, lang,
           {message[notice][0]}
         </p>
       ) : null}
-      {source === "fixture" ? <p className="text-sm text-muted">{t("fields.fixture")}</p> : null}
       {ENTITIES.filter((e) => entities.includes(e)).map((entity) => {
         const mine = fields.filter((f) => f.entity === entity);
         return (
@@ -53,8 +52,8 @@ export function FieldsSection({ fields, entities, source, canEdit, notice, lang,
                     <span className="text-sm text-muted">{t(`fields.kind.${f.kind}` as "fields.kind.text")}</span>
                     {f.source === "pack" ? <span className="rounded-full border border-line bg-surface-2 px-2 text-sm text-muted">{t("fields.from_pack")}</span> : null}
                     {f.required ? <span className="rounded-full border border-line bg-surface-2 px-2 text-sm text-muted">{t("fields.required")}</span> : null}
-                    {f.pii_class !== "none" ? <span className="rounded-full border border-amber-text bg-amber-bg px-2 text-sm font-medium text-amber-text">{t(f.pii_class === "child" ? "fields.pii.child" : "fields.pii.personal")}</span> : null}
-                    {editable && f.id ? (
+                    {f.piiClass !== "none" ? <span className="rounded-full border border-amber-text bg-amber-bg px-2 text-sm font-medium text-amber-text">{t("fields.pii.personal")}</span> : null}
+                    {editable ? (
                       <form action={setActive}>
                         <input type="hidden" name="field_id" value={f.id} />
                         <input type="hidden" name="active" value={f.active ? "no" : "yes"} />

@@ -18,7 +18,7 @@ import { removePhotoAction, reorderPhotosAction, saveItemAction, saveItemCustomA
 import { catalogueWords } from "../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
 import { formFields } from "@/lib/packs/form-fields";
-import { readPackCached } from "@/lib/packs/read";
+import { listCustomFields } from "@/lib/api/custom-fields";
 
 export const metadata = { title: "Add a saree · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
@@ -42,9 +42,8 @@ export default async function NewCatalogueItemPage({ params }: PageProps<"/app/t
   const lang = await getLang();
   const t = appT(lang);
   const itemId = randomUUID();
-  // the extra fields of the business type (job CL): drawn only where the server can keep them
-  const pack = await readPackCached(user.accessToken, tenantId);
-  const fields = pack.source === "api" ? formFields(pack.fields, "catalogue_item", lang) : [];
+  // the extra fields of the business (job CL): drawn only when the server can list them
+  const fields = formFields(await listCustomFields(user.accessToken, tenantId, "catalogue_item").catch((e) => (e instanceof ApiAuthError ? redirect("/login") : [])), "catalogue_item", lang);
   const actions: EditorActions = { ...(fields.length > 0 ? { saveCustom: saveItemCustomAction.bind(null, tenantId) } : {}), save: saveItemAction.bind(null, tenantId), remove: removePhotoAction.bind(null, tenantId), reorder: reorderPhotosAction.bind(null, tenantId) };
   return (
     <main className={pageMain} lang={lang}>

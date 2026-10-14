@@ -9,6 +9,9 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ refresh: vi.fn() }),
 }));
 
+import { defaultWorkspacePack, otherPackIds, workspacePack } from "@/lib/packs/pack-test-kit";
+import { packFrame } from "@/lib/packs/resolve";
+
 import { AccountMenu } from "./AccountMenu";
 import { NO_FRAME_DATA, FRAME_LOADING, type FrameData } from "./contract";
 import { AppFrame } from "./AppFrame";
@@ -254,34 +257,46 @@ describe("AppFrame", () => {
 });
 
 describe("the menu of a business type (job CL)", () => {
-  const view = (over: Partial<import("./nav").PackFrame> = {}): FrameData => ({ ...NO_FRAME_DATA, pack: { id: "demo", name: "Construction materials", isDefault: false, accent: "terracotta", modules: ["today", "inbox", "contacts", "orders", "quotes", "office", "outbox", "team", "integrations", "visits", "enquiries", "campaigns"], bar: ["today", "chats", "orders", "customers"], labels: { "nav.item.orders": "Orders & deliveries", "nav.item.customers": "Customers & sites" }, ...over } });
+  // a business type that sells products and delivers them (its core tab is Orders & deliveries), built from the real pack file through the API's shapes
+  const kind = otherPackIds().find((i) => workspacePack(i).coreTab === "orders")!;
+  const real = packFrame(workspacePack(kind, "signup"), "en");
+  const view = (over: Partial<import("./nav").PackFrame> = {}): FrameData => ({ ...NO_FRAME_DATA, pack: { ...real, ...over } });
   const names = () => within(screen.getByRole("navigation", { name: "Workspace menu" })).getAllByRole("link").map((a) => a.textContent);
   it("shows the pack's words, leaves out the modules it does not have, and offers what only a pack brings", () => {
     side(only("owner"), view());
-    expect(names()).toEqual(["Today", "Leads", "Quotes", "Store visits", "Orders & deliveries", "Campaigns", "Outbox", "Customer chats", "Customers & sites", "Prices and products", "Team", "Office", "Integrations"]);
-    expect(names()).not.toContain("Catalogue");
-    expect(names()).not.toContain("Find retailers");
+    expect(names()).toContain(real.labels["nav.item.orders"]);
+    expect(names()).toContain(real.labels["nav.item.customers"]);
+    expect(names()).toContain("Campaigns");
+    expect(names()).not.toContain("Fees");
+    expect(names()).not.toContain("Orders"); // the pack's word replaces the plain one
+    expect(names()).not.toContain("Catalogue"); // the pack here has the catalogue module: it is "Products" in its own words
   });
-  it("marks the business type under the name (a small badge), but not for the default one", () => {
+  it("leaves out a part whose module is off", () => {
+    side(only("owner"), view({ modules: real.modules.filter((m) => m !== "catalogue" && m !== "lead_finder") }));
+    expect(names()).not.toContain(real.labels["nav.item.sarees"]);
+    expect(names()).not.toContain(real.labels["nav.item.retailers"]);
+  });
+  it("marks a business type no real owner has reviewed under the name (a small badge in its accent), but not a reviewed one", () => {
     const { container, unmount } = side(only("owner"), view());
-    expect(container.querySelector("[data-pack='demo']")).toHaveTextContent("Construction materials");
+    expect(container.querySelector("[data-accent]")).toHaveTextContent(real.name);
+    expect(container.querySelector("[data-accent]")).toHaveAttribute("data-accent", real.accent);
     unmount();
-    const again = side(only("owner"), view({ isDefault: true, labels: {} }));
-    expect(again.container.querySelector("[data-pack]")).toBeNull();
+    const again = side(only("owner"), view({ validated: true }));
+    expect(again.container.querySelector("[data-accent]")).toBeNull();
   });
-  it("draws the phone's tabs the pack names, with its words (Orders & deliveries is the core tab), then More with the rest", () => {
+  it("draws the phone's tabs with the core tab in the pack's own word, then More with the rest", () => {
     bar(only("owner"), view());
     const tabs = within(screen.getByRole("navigation", { name: "Quick menu" }));
-    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customer chats", "Orders & deliveries", "Customers & sites"]);
+    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", real.labels["nav.item.leads"], real.labels["pack.core_tab"], real.labels["nav.tab.visits"], "Office"]);
     expect(tabs.getByRole("button", { name: "More" })).toBeInTheDocument();
     fireEvent.click(tabs.getByRole("button", { name: "More" }));
     const sheet = within(screen.getByRole("dialog"));
     expect(sheet.getByRole("link", { name: "Campaigns" })).toBeInTheDocument();
-    expect(sheet.getByRole("link", { name: "Quotes" })).toBeInTheDocument();
-    expect(sheet.queryByRole("link", { name: "Orders & deliveries" })).toBeNull(); // it is a tab, not in the sheet
+    expect(sheet.getByRole("link", { name: real.labels["nav.item.quotes"] })).toBeInTheDocument();
+    expect(sheet.queryByRole("link", { name: real.labels["pack.core_tab"] })).toBeNull(); // it is a tab, not in the sheet
   });
   it("the default pack's frame is the menu the product always had, with the same five tabs", () => {
-    const defaultView = view({ id: "d", isDefault: true, name: "Textiles", labels: {}, modules: ["today", "inbox", "contacts", "companies", "enquiries", "catalogue", "quotes", "orders", "followups", "visits", "reports", "office", "integrations", "outbox", "team", "lead_finder", "research", "call_list"], bar: ["today", "leads", "quotes", "visits", "office"] });
+    const defaultView = { ...NO_FRAME_DATA, pack: packFrame(defaultWorkspacePack(), "en") };
     const first = side(owner);
     const plain = names();
     first.unmount();
@@ -294,9 +309,9 @@ describe("the menu of a business type (job CL)", () => {
   it("is what the workspace's slot brought in that wins over what the first paint had (no flash of the wrong menu after the client takes over)", async () => {
     const { act } = await import("@testing-library/react");
     render(<SideNav memberships={only("owner")} frame={view()} email="o@example.test" signOut={noSignOut} />);
-    expect(names()).toContain("Orders & deliveries");
+    expect(names()).toContain(real.labels["nav.item.orders"]);
     await act(async () => {
-      render(<FrameDataSlot data={view({ labels: { "nav.item.orders": "Dispatch" } })} />);
+      render(<FrameDataSlot data={view({ labels: { ...real.labels, "nav.item.orders": "Dispatch" } })} />);
     });
     expect(names()).toContain("Dispatch");
   });

@@ -38,7 +38,7 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
   const lang = await getLang();
   // the helpers carry the names of the business type ("Site Measurer", "Fee Desk"; job CL)
   const pack = await readPackCached(user.accessToken, tenantId);
-  const t = withPackT(appT(lang), pack.def, lang);
+  const t = pack ? withPackT(appT(lang), pack, lang) : appT(lang);
   let agents;
   let links: Record<string, string>;
   try {

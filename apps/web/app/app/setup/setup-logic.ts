@@ -1,7 +1,7 @@
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import type { CompleteSetupInput, CompleteSetupResult } from "@/lib/api/signup";
+import { PACK_CODE } from "@/lib/packs/signup";
 import {
-  BUSINESS_TYPES,
   SETUP_LANGUAGES,
   type BusinessType,
   type SetupLanguage,
@@ -18,10 +18,10 @@ export const SETUP_TEXT = {
   generic: "Could not finish setting up. Try again.",
 } as const;
 
-const EXPLAINED = new Set(["terms_required", "email_not_confirmed", "workspace_limit_reached"]);
+const EXPLAINED = new Set(["terms_required", "email_not_confirmed", "workspace_limit_reached", "business_type_unavailable"]);
 
 /**
- * The first-login setup. The two choices are checked here and again by the database; the business name comes from the sign-up and cannot be
+ * The first-login setup. The two choices are checked here (the shape of the business type) and again by the database (it must be one a person may choose); the business name comes from the sign-up and cannot be
  * sent from here. Idempotent: pressing twice, or doing it in a second tab, ends with the same single business and `{ ok: true }` both times.
  */
 export async function runCompleteSetup(
@@ -34,9 +34,7 @@ export async function runCompleteSetup(
   },
 ): Promise<CompleteSetupResult> {
   const raw = typeof input === "object" && input !== null ? (input as Record<string, unknown>) : {};
-  const businessType = (BUSINESS_TYPES as readonly unknown[]).includes(raw.businessType)
-    ? (raw.businessType as BusinessType)
-    : null;
+  const businessType = typeof raw.businessType === "string" && PACK_CODE.test(raw.businessType) ? (raw.businessType as BusinessType) : null;
   const language = (SETUP_LANGUAGES as readonly unknown[]).includes(raw.language)
     ? (raw.language as SetupLanguage)
     : null;

@@ -33,7 +33,7 @@ import { DETAIL_JSON, MEMBERS_JSON, ORDER_JSON } from "@/lib/api/orders-fixtures
 import { parsePage } from "@/lib/api/crm";
 import { CLAIM, CLAIM_ACCEPTED, COMPANY, COMPANY2_JSON, COMPANY_JSON, CONTACT, CONTACT_JSON, ENQ, ENQUIRY, EVIDENCE_PAGE, LEAD, LEAD_JSON, OPPORTUNITY_JSON, PRODUCT_JSON, REQUIREMENT, REQUIREMENT_CONFIRMED, REQUIREMENT_DRAFT, TENANT, requirementJson } from "./fixtures";
 import { parsePolicyStatus } from "@/lib/api/policy";
-import { parseWorkspacePack } from "@/lib/api/pack";
+import { defaultPackId, otherPackIds, packFields, workspacePack } from "@/lib/packs/pack-test-kit";
 import { parseProfile } from "@/lib/api/profile";
 import { parseAccount, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
 import type { Handler } from "./state";
@@ -734,22 +734,31 @@ const POLICY = { current: { terms: { version: "2026-11-01", effective_from: "202
 add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/app/accept/page")).default({ searchParams: Promise.resolve({}) }), handlers: (role) => ({ ...base(role), getPolicyStatus: () => parsePolicyStatus(POLICY) }) });
 
 // ---- business types (job CL): the same screens for a construction and an education workspace ---------------------------------------------------------------
-// The default business type is every scenario above (the server has no pack route in these fixtures, so the default pack's file stands in): nothing about them changed.
-const packOf = (id: string, extra: Record<string, unknown> = {}) => () => parseWorkspacePack({ pack: id, ...extra });
+// The words, modules and fields are the real files of packages/packs through the API's shapes (lib/packs/pack-test-kit). Every scenario above runs with NO pack handler (a server with no pack routes: the product as it
+// always was), and `today-default-pack` below runs the default business type of an existing workspace and must read exactly like `today`.
+const CONSTRUCTION = otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!;
+const EDUCATION = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
+const packOf = (id: string, source: "signup" | "default" | "legacy" = "signup") => () => workspacePack(id, source);
+const fieldsOf = (id: string) => () => packFields(id);
+const SAMPLE_NONE = () => ({ loaded: false, counts: { companies: 0, contacts: 0, leads: 0, products: 0 } });
+const SAMPLE_LOADED = () => ({ loaded: true, counts: { companies: 2, contacts: 3, leads: 3, products: 4 } });
 const PROFILE_DONE = () => parseProfile({ name: "Pavers Corner (synthetic)", town: "Guntur", languages: ["en", "te"], setup_complete: true });
 const PROFILE_NEW = () => parseProfile({ name: "My business", town: null, languages: ["en"], setup_complete: false });
 const todayBase = SCENARIO_LIST.find((s) => s.id === "today")!.handlers;
 const startPage = async () => (await import("@/app/app/tenants/[tenantId]/start/page")).default(props({}));
+const todayPage = (query: Record<string, string> = {}) => async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, query));
 add({ id: "start-classic", roles: ["owner"], render: startPage, handlers: (role) => ({ ...base(role), getProfile: PROFILE_NEW }) });
-add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("construction"), getProfile: PROFILE_NEW }) });
-add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("education"), getProfile: PROFILE_DONE }) });
-add({ id: "today-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, {})), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf("construction", { example_data: { available: true, loaded: false } }), getProfile: PROFILE_DONE }) });
-add({ id: "today-education-example-loaded", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, { example: "loaded" })), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf("education", { example_data: { available: true, loaded: true } }), getProfile: PROFILE_DONE }) });
-add({ id: "today-example-failed", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/page")).default(props({}, { example: "unavailable" })), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf("construction", { example_data: { available: true, loaded: false } }), getProfile: PROFILE_DONE }) });
-add({ id: "fees-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/fees/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("education") }) });
-add({ id: "campaigns-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("construction") }) });
-add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("construction") }) });
-add({ id: "settings-fields-not-saved-yet", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields", fieldnote: "unavailable" })), handlers: (role) => ({ ...base(role), getWorkspacePack: () => { throw new ApiRequestError(404, "not_found", "x"); } }) });
-add({ id: "customers-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/customers/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("education") }) });
-add({ id: "catalogue-new-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf("construction") }) });
-add({ id: "office-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus(), getWorkspacePack: packOf("construction") }) });
+add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), getProfile: PROFILE_NEW }) });
+add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), getProfile: PROFILE_DONE }) });
+add({ id: "today-default-pack", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
+add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "fees-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/fees/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) }) });
+add({ id: "campaigns-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
+add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
+add({ id: "settings-fields-not-saved-yet", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields", fieldnote: "unavailable" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: () => { throw new ApiRequestError(404, "not_found", "x"); } }) });
+add({ id: "customers-new-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/customers/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), listCustomFields: fieldsOf(EDUCATION) }) });
+add({ id: "catalogue-new-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
+add({ id: "office-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus(), getWorkspacePack: packOf(CONSTRUCTION) }) });

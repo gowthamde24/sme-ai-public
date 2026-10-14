@@ -10,9 +10,8 @@ import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { COLOURS, FABRICS, MAX_BORDER, MAX_COLOURS, MAX_NAME, MAX_OCCASIONS, MAX_PRICE_PAISE, MIN_PRICE_PAISE, OCCASIONS, PRICE_BANDS, STOCK_STATUSES, ZARIS, putCatalogueItem, removeCataloguePhoto, reorderCataloguePhotos, type ItemInput } from "@/lib/api/catalogue";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { putCatalogueCustom } from "@/lib/api/custom-fields";
+import { listCustomFields, putCatalogueCustom } from "@/lib/api/custom-fields";
 import { normaliseValues } from "@/lib/packs/field-values";
-import { readPackCached } from "@/lib/packs/read";
 import { searchLeads } from "@/lib/api/lead-search";
 import { OUTBOX_LANGUAGES, submitOutboxMessage, type OutboxLanguage, type OutboxMessage } from "@/lib/api/outbox";
 import { requireUser } from "@/lib/auth/session";
@@ -164,17 +163,23 @@ export async function sendCatalogueAction(tenantId: string, input: SendInput): P
 export async function saveItemCustomAction(tenantId: string, itemId: string, values: unknown): Promise<{ ok: true } | { ok: false; error: string }> {
   const { user, t } = await context();
   if (!isCanonicalUuid(tenantId) || !isCanonicalUuid(itemId)) return { ok: false, error: t("catalogue.err.invalid") };
-  const pack = await readPackCached(user.accessToken, tenantId);
-  const { values: clean, issues } = normaliseValues(pack.fields, "catalogue_item", values);
+  let defs;
+  try {
+    defs = await listCustomFields(user.accessToken, tenantId, "catalogue_item");
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return { ok: false, error: t("fields.form.unsaved", { reason: t("fields.form.reason.unavailable") }) };
+  }
+  const { values: clean, issues } = normaliseValues(defs, "catalogue_item", values);
   const bad = Object.entries(issues)[0];
-  if (bad) return { ok: false, error: `${pack.fields.find((f) => f.code === bad[0])?.label.en ?? bad[0]} ${t(`fields.issue.${bad[1]}` as "fields.issue.required")}` };
+  if (bad) return { ok: false, error: `${defs.find((f) => f.code === bad[0])?.label.en ?? bad[0]} ${t(`fields.issue.${bad[1]}` as "fields.issue.required")}` };
   if (Object.keys(clean).length === 0) return { ok: true };
   try {
     await putCatalogueCustom(user.accessToken, tenantId, itemId, clean);
     return { ok: true };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
-    const reason = error instanceof ApiRequestError && (error.status === 404 || error.status === 501) ? "unavailable" : error instanceof ApiRequestError && (error.status === 400 || error.status === 409 || error.status === 422) ? "invalid" : "failed";
+    const reason = error instanceof ApiRequestError && (error.status === 404 || error.status === 501 || error.code === "module_off") ? "unavailable" : error instanceof ApiRequestError && (error.status === 400 || error.status === 409 || error.status === 422) ? "invalid" : "failed";
     return { ok: false, error: t("fields.form.unsaved", { reason: t(`fields.form.reason.${reason}` as "fields.form.reason.failed") }) };
   }
 }

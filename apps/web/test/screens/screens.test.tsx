@@ -62,6 +62,8 @@ vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(awa
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
 vi.mock("@/lib/api/pack", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/pack")>(), ["getWorkspacePack"]));
+vi.mock("@/lib/api/custom-fields", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/custom-fields")>(), ["listCustomFields", "getCatalogueCustom", "getContactCustom"]));
+vi.mock("@/lib/api/example-data", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/example-data")>(), ["getExampleStatus"]));
 vi.mock("@/lib/api/profile", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/profile")>(), ["getProfile"]));
 vi.mock("@/lib/api/suppression", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/suppression")>(), ["fetchSuppressionStatus"]));
 
@@ -138,5 +140,13 @@ describe("the snapshot covers every screen", () => {
   it("renders every scenario for the roles it lists, and the four roles for most", () => {
     expect(SCENARIOS.length).toBeGreaterThan(50);
     expect(new Set(SCENARIOS.map((s) => s.id)).size).toBe(SCENARIOS.length);
+  });
+});
+
+describe("the default business type is the product as it was (job CL: textiles must look exactly as today)", () => {
+  it("Today of a workspace that runs the default business type, with its pack read from the API, reads exactly like Today with no pack at all", async () => {
+    const fs = await import("node:fs");
+    const read = (id: string) => fs.readFileSync(path.join(DIR, `${id}.owner.txt`), "utf8");
+    expect(read("today-default-pack")).toBe(read("today"));
   });
 });

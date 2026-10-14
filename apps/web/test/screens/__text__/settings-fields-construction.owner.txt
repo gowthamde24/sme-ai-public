@@ -6,25 +6,88 @@ Fields hold the extra details you keep about your customers and your products. Y
 ## Customers and contacts
 2 of 20 in use
 - Customer type Choice From your business type
-- Credit days agreed Number From your business type
+form:
+<hidden name=field_id value=construction_materials-customer_kind>
+<hidden name=active value=no>
+[button type=submit: Hide]
+- Usually buys for Several choices From your business type
+form:
+<hidden name=field_id value=construction_materials-typical_application>
+<hidden name=active value=no>
+[button type=submit: Hide]
 {label="Catalogue items"}
 ## Catalogue items
-15 of 20 in use
-- Product type Choice From your business type Required
+14 of 20 in use
+- Product type Choice From your business type
+form:
+<hidden name=field_id value=construction_materials-product_type>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Size (for example 200x100 mm) Text From your business type
+form:
+<hidden name=field_id value=construction_materials-size>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Thickness (mm) Choice From your business type
+form:
+<hidden name=field_id value=construction_materials-thickness_mm>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Shape or pattern Text From your business type
+form:
+<hidden name=field_id value=construction_materials-shape_pattern>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Colour Text From your business type
+form:
+<hidden name=field_id value=construction_materials-colour>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Finish Text From your business type
+form:
+<hidden name=field_id value=construction_materials-finish>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Grade or strength (for example M30) Text From your business type
-- Selling unit Choice From your business type Required
-- Pieces per sq ft Number From your business type
+form:
+<hidden name=field_id value=construction_materials-grade>
+<hidden name=active value=no>
+[button type=submit: Hide]
+- Pieces per sq ft or sq m Number From your business type
+form:
+<hidden name=field_id value=construction_materials-pieces_per_area>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Pieces per pallet Number From your business type
+form:
+<hidden name=field_id value=construction_materials-pieces_per_pallet>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Minimum order Number From your business type
+form:
+<hidden name=field_id value=construction_materials-minimum_order>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - Stock Choice From your business type
-- Lead days (made to order) Number From your business type
-- GST rate % (from your accountant) Number From your business type
+form:
+<hidden name=field_id value=construction_materials-stock_note>
+<hidden name=active value=no>
+[button type=submit: Hide]
+- Lead days when made to order Number From your business type
+form:
+<hidden name=field_id value=construction_materials-lead_days>
+<hidden name=active value=no>
+[button type=submit: Hide]
 - HSN code (from your accountant) Text From your business type
+form:
+<hidden name=field_id value=construction_materials-hsn_code>
+<hidden name=active value=no>
+[button type=submit: Hide]
+- GST rate in percent (from your accountant) Number From your business type
+form:
+<hidden name=field_id value=construction_materials-gst_rate_percent>
+<hidden name=active value=no>
+[button type=submit: Hide]
 {label="Add a field"}
 ## Add a field
 Do not use fields for health, religion, caste, income, Aadhaar or other private details.

@@ -29,6 +29,6 @@ export async function readFrameData(accessToken: string, tenantId: string, lang 
     showUsage: !(usage.status === "rejected" && usage.reason instanceof ApiRequestError && usage.reason.status === 403),
     waiting: today.status === "fulfilled" ? today.value.cards.waiting : null,
     ready: true,
-    pack: pack.status === "fulfilled" ? packFrame(pack.value.def, pack.value.modules, lang) : null,
+    pack: pack.status === "fulfilled" && pack.value ? packFrame(pack.value, lang) : null,
   };
 }

@@ -1,4 +1,4 @@
-import { textIn } from "./registry";
+import { textIn } from "./text";
 import type { FieldEntity, FieldKind, PiiClass, WorkspaceField } from "./types";
 
 /** A field as a form draws it: already in the person's language (the form is a client component and must not carry four languages). */
@@ -6,7 +6,6 @@ export type FormField = {
   code: string;
   kind: FieldKind;
   label: string;
-  unit?: string;
   required: boolean;
   pii: PiiClass;
   choices?: readonly { code: string; label: string }[];
@@ -20,9 +19,8 @@ export function formFields(fields: readonly WorkspaceField[], entity: FieldEntit
       code: f.code,
       kind: f.kind,
       label: textIn(f.label, lang),
-      ...(f.unit ? { unit: f.unit } : {}),
-      required: f.required === true,
-      pii: f.pii_class,
+      required: f.required,
+      pii: f.piiClass,
       ...(f.choices ? { choices: f.choices.map((c) => ({ code: c.code, label: textIn(c.label, lang) })) } : {}),
     }));
 }

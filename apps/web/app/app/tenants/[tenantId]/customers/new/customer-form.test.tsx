@@ -200,7 +200,7 @@ describe("CustomerForm", () => {
 describe("the extra fields of the business type (job CL)", () => {
   const fields = [
     { code: "customer_type", kind: "choice" as const, label: "Customer type", required: false, pii: "none" as const, choices: [{ code: "builder", label: "Builder" }, { code: "dealer", label: "Dealer" }] },
-    { code: "credit_days", kind: "number" as const, label: "Credit days agreed", unit: "days", required: false, pii: "none" as const },
+    { code: "credit_days", kind: "number" as const, label: "Credit days agreed", required: false, pii: "none" as const },
   ];
   const fieldWords = { title: "More details", yes: "Yes", no: "No", pick: "Choose…" };
   it("draws nothing for a business type with no fields", () => {
@@ -214,13 +214,13 @@ describe("the extra fields of the business type (job CL)", () => {
     fireEvent.change(screen.getByLabelText("Customer's name"), { target: { value: "Synthetic Asha" } });
     fireEvent.change(screen.getByLabelText("WhatsApp or phone number"), { target: { value: "+00 90000 20001" } });
     fireEvent.change(screen.getByLabelText("Customer type"), { target: { value: "builder" } });
-    fireEvent.change(screen.getByLabelText("Credit days agreed (days)"), { target: { value: "30" } });
+    fireEvent.change(screen.getByLabelText("Credit days agreed"), { target: { value: "30" } });
     await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
     await screen.findByRole("alert");
     const data = action.mock.calls[0][1];
     expect(JSON.parse(String(data.get("custom")))).toEqual({ customer_type: "builder", credit_days: "30" });
     expect(screen.getByLabelText("Customer type")).toHaveValue("builder");
-    expect(screen.getByLabelText("Credit days agreed (days)")).toHaveValue("30");
+    expect(screen.getByLabelText("Credit days agreed")).toHaveValue("30");
   });
   it("says in one sentence when the customer is saved but the extra details were not", async () => {
     await act(async () => void render(<CustomerForm action={vi.fn(async () => ({ ok: true, leadId: IDS.lead, contactId: IDS.contact, name: "Asha", fieldsNote: "Saved, but the extra details were not: this system cannot keep them yet" }))} tenantId={T} ids={IDS} fields={fields} fieldWords={fieldWords} />));

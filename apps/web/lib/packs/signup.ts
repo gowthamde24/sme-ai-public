@@ -1,24 +1,33 @@
-import { signupPacks, textIn } from "./registry";
-import type { Accent } from "./types";
+import { textIn } from "./text";
+import type { PackSummary } from "./types";
 
-/** What a sign-up card needs (plain, in one language). */
-export type SignupCard = { id: string; name: string; tagline: string; icon: "fabric" | "block" | "cap"; accent: Accent };
+/** What a sign-up card needs (plain, in one language). Built from `GET /v1/packs`: the web keeps no list of business types. */
+export type SignupCard = { id: string; name: string; tagline: string; accent: string; owlProp: string; validated: boolean };
 
-export function signupCards(lang: string): SignupCard[] {
-  return signupPacks().map((p) => ({ id: p.id, name: textIn(p.name, lang), tagline: textIn(p.tagline, lang), icon: p.signup.icon, accent: p.signup.accent }));
+export function signupCards(packs: readonly PackSummary[], lang: string): SignupCard[] {
+  return packs.map((p) => ({ id: p.packId, name: textIn(p.names, lang), tagline: textIn(p.summary, lang), accent: p.accent, owlProp: p.owlProp, validated: p.validated }));
 }
 
-/** The pack id out of an address or a cookie, only if a person may pick it at sign-up; anything else is null (never trusted, never echoed). */
+/** A pack code: lower case, digits and underscores (the API's own rule). */
+export const PACK_CODE = /^[a-z][a-z0-9_]{1,30}$/;
+
+/**
+ * The pack code out of an address, a cookie or an account's metadata: only its SHAPE is checked here (nothing is echoed that is not a plain code). Whether a person may choose it is the API's answer, twice: the cards come from
+ * `GET /v1/packs`, and the first-login setup refuses a code that is not selectable (422 `business_type_unavailable`).
+ */
 export function parseSignupPack(value: unknown): string | null {
   const v = Array.isArray(value) ? value[0] : value;
-  return typeof v === "string" && signupPacks().some((p) => p.id === v) ? v : null;
+  return typeof v === "string" && PACK_CODE.test(v) ? v : null;
 }
 
-/** The name a new business gets until the owner is asked (the first step of the checklist), in the person's language. */
-export function defaultBusinessName(id: string, lang: string): string {
-  const p = signupPacks().find((x) => x.id === id);
-  return p ? textIn(p.business_name_default, lang) : "My business";
+/** The code of a card the list offers, else null. */
+export function pickSignupPack(packs: readonly PackSummary[], value: unknown): string | null {
+  const code = parseSignupPack(value);
+  return code !== null && packs.some((p) => p.packId === code) ? code : null;
 }
+
+/** The name a new business gets until the checklist asks the real one (the e-mail way carries it with the account; the database names a social account's business the same). */
+export const DEFAULT_BUSINESS_NAME = "My business";
 
 /** The browser keeps the kind of business for the minutes Google or Facebook take (they cannot carry it back); `/setup` reads it. A convenience cookie, not an authority: the pack is checked again where it is used. */
 export const SIGNUP_PACK_COOKIE = "s19_signup_pack";

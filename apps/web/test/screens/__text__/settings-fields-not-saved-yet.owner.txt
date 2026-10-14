@@ -1,19 +1,14 @@
 # Settings
 [button type=button: Help for this screen]
-{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
-{label="Business and plan"}
-Business
-Demo Silks (synthetic)
-Plan
-Free trial plan
-URL name
-demo-silks
-## Our GSTIN
-This part could not be loaded. The rest of the page is fine.
-[button type=button: Try again]
-{role=status}
-{label="AI usage today"}
-## AI usage today
-AI usage today 7% used
-{role=meter label="AI usage today"}
-3% of this month
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Fields](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=fields current=page) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+Fields hold the extra details you keep about your customers and your products. Your kind of business comes with some; you can add your own.
+{role=alert} Fields cannot be saved yet on this system.
+{label="Customers and contacts"}
+## Customers and contacts
+0 of 20 in use No extra fields yet.
+{label="Catalogue items"}
+## Catalogue items
+0 of 20 in use No extra fields yet.
+{label="Add a field"}
+## Add a field
+Do not use fields for health, religion, caste, income, Aadhaar or other private details. Not available yet

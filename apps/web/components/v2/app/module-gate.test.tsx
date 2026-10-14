@@ -8,7 +8,7 @@ import { ModuleGate } from "./frame-store";
 import type { PackFrame } from "./nav";
 
 const T = "22222222-2222-2222-2222-222222222222";
-const pack = (modules: string[]): PackFrame => ({ id: "x", name: "X", isDefault: false, accent: "sky", modules, bar: ["today"], labels: {} });
+const pack = (modules: string[]): PackFrame => ({ name: "X", accent: "sky_blue", validated: false, coreTab: "fees", modules, labels: {} });
 const at = (p: string) => {
   nav.pathname = `/app/tenants/${T}${p}`;
 };

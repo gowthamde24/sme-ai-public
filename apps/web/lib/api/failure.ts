@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { forbidden, redirect } from "next/navigation";
 
 import type { AppT } from "@/i18n/app";
 
@@ -60,7 +60,9 @@ export function failureOf(error: unknown, t: AppT): Failure {
   const api = error instanceof ApiRequestError ? error : null;
   const retryAfter = kind === "rate_limited" ? api?.retryAfter : undefined;
   const code = api && /^[a-z_]{1,40}$/.test(api.code) ? api.code : undefined;
-  return { ok: false, kind, error: kind === "rate_limited" ? rateSentence(t, retryAfter) : t(KEY[kind]), ...(kind === "mfa" ? { mfa: true } : {}), ...(retryAfter !== undefined ? { retryAfter } : {}), ...(code ? { code } : {}) };
+  // a 403 `module_off` (job CK) says the business type does not have this part (default deny, SM701), not "your role cannot"
+  return { ok: false, kind, error: kind === "rate_limited" ? rateSentence(t, retryAfter) : code === "module_off" ? t("apierr.module_off") : t(KEY[kind]),
+ ...(kind === "mfa" ? { mfa: true } : {}), ...(retryAfter !== undefined ? { retryAfter } : {}), ...(code ? { code } : {}) };
 }
 
 /**
@@ -72,6 +74,8 @@ export function escalate(error: unknown): void {
   if (error instanceof ApiRequestError) {
     // a changed Terms or Privacy Policy that has not been accepted yet (POLICY_ENFORCE): the person is asked, not told they have no role
     if (error.status === 403 && error.code === "policy_acceptance_required") redirect("/app/accept");
+    // a part the business type does not have (job CK `module_off`): the same 403 page the workspace's guard shows for a typed address (app/app/forbidden.tsx)
+    if (error.status === 403 && error.code === "module_off") forbidden();
     if (error.status === 403) redirect("/app/problem/403");
     if (error.status === 429) redirect("/app/problem/429");
   }

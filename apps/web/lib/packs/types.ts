@@ -1,43 +1,53 @@
 /**
- * The shapes of a business-type pack (job CL, blueprint section 13). The files are packages/packs/<id>/pack.json, checked against packages/packs/pack.schema.json in CI; `make packs` bundles them into
- * lib/packs/packs.generated.json. A pack is DATA: words, which modules are on, extra fields, the first-run steps. No pack id is written anywhere in the code (a test greps for them): code asks the
- * registry (registry.ts), which is SERVER ONLY, and the client gets plain objects (`PackFrame` in components/v2/app/nav.ts).
+ * The shapes the web uses for a business type (job CL, blueprint section 13). A business type is DATA owned by the API (packages/packs/<id>/pack.json, loaded into the database by job CK): the web asks
+ * `GET /v1/packs` (the sign-up cards) and `GET /v1/tenants/{id}/pack` and `.../modules` (a workspace) and never holds a copy of the files or a list of business types. No pack id is written anywhere
+ * in the code; a screen asks "is this module on?" and "what is this word?".
  */
 export type PackLang = "en" | "te" | "hi" | "kn";
-export type PackText = Readonly<Record<PackLang, string>>;
+/** A text in the languages the product has: `en` is always there, the others may be missing (the reader falls back to English). */
+export type Words = Readonly<Record<string, string>>;
 export type FieldKind = "text" | "number" | "date" | "choice" | "multi_choice" | "yes_no";
 export type FieldEntity = "contact" | "catalogue_item";
-export type PiiClass = "none" | "personal" | "child";
-export type Choice = { readonly code: string; readonly label: PackText };
-export type FieldDef = {
+/** `personal`: a field that holds a person's detail (a Viewer does not see it). A child's data is never a custom field on a contact. */
+export type PiiClass = "none" | "personal";
+export type Choice = { readonly code: string; readonly label: Words };
+/** A custom field of ONE workspace, as the API gives it: the pack's fields (`source: "pack"`) and the ones the owner added (`"owner"`), active or not. */
+export type WorkspaceField = {
+  readonly id: string;
   readonly entity: FieldEntity;
   readonly code: string;
   readonly kind: FieldKind;
-  readonly label: PackText;
-  readonly unit?: string;
-  readonly required?: boolean;
-  readonly pii_class: PiiClass;
-  readonly choices?: readonly Choice[];
+  readonly label: Words;
+  readonly choices: readonly Choice[] | null;
+  readonly required: boolean;
+  readonly position: number;
+  readonly piiClass: PiiClass;
+  readonly mergeable: boolean;
+  readonly active: boolean;
+  readonly source: "pack" | "owner";
 };
-export type StepCheck = "business_profile" | "catalogue_has_items" | "quote_rules_set" | "delivery_rule_set" | "students_imported" | "fee_plan_set" | "whatsapp_connected" | "first_quote_sent" | "first_campaign_approved";
-export type ActivationStep = { readonly id: string; readonly check: StepCheck; readonly title: PackText; readonly hint: PackText };
-export type Accent = "rose" | "terracotta" | "sky";
-export type PackDef = {
-  readonly id: string;
-  readonly version: number;
-  readonly default: boolean;
-  readonly signup: { readonly order: number; readonly show: boolean; readonly icon: "fabric" | "block" | "cap"; readonly accent: Accent };
-  readonly name: PackText;
-  readonly tagline: PackText;
-  readonly business_name_default: PackText;
-  readonly modules: readonly string[];
-  readonly nav: { readonly bar: readonly string[] };
-  readonly labels: Readonly<Record<string, PackText>>;
-  readonly fields: readonly FieldDef[];
-  readonly activation: { readonly style: "classic" | "steps"; readonly steps: readonly ActivationStep[] };
-  readonly example_data: boolean;
-};
-export type PackBundle = { readonly languages: readonly PackLang[]; readonly modules: readonly string[]; readonly packs: readonly PackDef[] };
 
-/** A custom field as the API gives it for ONE workspace: the pack's fields plus the ones the owner added (`source`). */
-export type WorkspaceField = FieldDef & { readonly id: string | null; readonly source: "pack" | "owner"; readonly active: boolean };
+export type PackStatus = "draft" | "preview" | "published";
+/** A business type a new person may choose (a sign-up card). `validated`: a real owner of this kind of business has reviewed it; if not the card says so. */
+export type PackSummary = {
+  readonly packId: string;
+  readonly version: number;
+  readonly status: PackStatus;
+  readonly validated: boolean;
+  readonly names: Words;
+  readonly summary: Words;
+  readonly accent: string;
+  readonly owlProp: string;
+};
+/** The business type of one workspace (pinned to the version it chose). `modules` is what the workspace has ON (the API's own answer, default deny); `packModules` is the pack's default set. */
+export type WorkspacePack = PackSummary & {
+  readonly source: "signup" | "default" | "legacy" | "operator";
+  readonly coreTab: string;
+  readonly modules: readonly string[];
+  readonly units: readonly string[];
+  readonly defaultUnit: string | null;
+  /** Words by language, then key (`nav.item.quotes`, `word.customer`, `pack.core_tab`, ...). English carries every key; the others may be partial. */
+  readonly labels: Readonly<Record<string, Readonly<Record<string, string>>>>;
+};
+export type AuthProviders = { readonly google: boolean; readonly facebook: boolean };
+export type AccountSecurity = { readonly level: "aal1" | "aal2"; readonly neededFor: readonly string[] };

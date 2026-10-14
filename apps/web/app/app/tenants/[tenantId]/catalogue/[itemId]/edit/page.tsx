@@ -16,9 +16,8 @@ import { requireUser } from "@/lib/auth/session";
 import { removePhotoAction, reorderPhotosAction, saveItemAction, saveItemCustomAction } from "../../catalogue-actions";
 import { catalogueWords } from "../../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
-import { getCatalogueCustom } from "@/lib/api/custom-fields";
+import { getCatalogueCustom, listCustomFields } from "@/lib/api/custom-fields";
 import { formFields } from "@/lib/packs/form-fields";
-import { readPackCached } from "@/lib/packs/read";
 
 export const metadata = { title: "Edit a saree · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
@@ -50,9 +49,8 @@ export default async function EditCatalogueItemPage({ params }: PageProps<"/app/
   }
   const lang = await getLang();
   const t = appT(lang);
-  // the extra fields of the business type (job CL): drawn only where the server can keep them
-  const pack = await readPackCached(user.accessToken, tenantId);
-  const fields = pack.source === "api" ? formFields(pack.fields, "catalogue_item", lang) : [];
+  // the extra fields of the business (job CL): drawn only when the server can list them
+  const fields = formFields(await listCustomFields(user.accessToken, tenantId, "catalogue_item").catch((e) => (e instanceof ApiAuthError ? redirect("/login") : [])), "catalogue_item", lang);
   const custom = fields.length > 0 ? await getCatalogueCustom(user.accessToken, tenantId, itemId).catch(() => ({})) : {};
   const actions: EditorActions = { ...(fields.length > 0 ? { saveCustom: saveItemCustomAction.bind(null, tenantId) } : {}), save: saveItemAction.bind(null, tenantId), remove: removePhotoAction.bind(null, tenantId), reorder: reorderPhotosAction.bind(null, tenantId) };
   return (

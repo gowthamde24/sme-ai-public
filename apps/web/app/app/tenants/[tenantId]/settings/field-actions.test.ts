@@ -1,20 +1,19 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
-import { fixtureWorkspacePack, parseWorkspacePack } from "@/lib/api/pack";
+import { packFields, packWithFields } from "@/lib/packs/pack-test-kit";
 import { redirectMock } from "@/test/helpers";
 
 const requireUser = vi.fn();
 const fetchTenant = vi.fn();
 const createField = vi.fn();
 const setActive = vi.fn();
-const readPack = vi.fn();
+const listFields = vi.fn();
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/client", async (orig) => ({ ...(await orig<typeof import("@/lib/api/client")>()), fetchTenant: (...a: unknown[]) => fetchTenant(...a) }));
-vi.mock("@/lib/api/custom-fields", () => ({ createCustomField: (...a: unknown[]) => createField(...a), setCustomFieldActive: (...a: unknown[]) => setActive(...a) }));
-vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
+vi.mock("@/lib/api/custom-fields", () => ({ createCustomField: (...a: unknown[]) => createField(...a), setCustomFieldActive: (...a: unknown[]) => setActive(...a), listCustomFields: (...a: unknown[]) => listFields(...a) }));
 
 import { addFieldAction, setFieldActiveAction } from "./field-actions";
 
@@ -33,13 +32,14 @@ const note = async (run: () => Promise<unknown>) => {
   }
   return null;
 };
+const PACK_FIELDS = packFields(packWithFields("contact", 1));
 const NEW = { entity: "contact", label: "Gate code", kind: "text" };
 
 beforeEach(() => {
   vi.clearAllMocks();
   requireUser.mockResolvedValue({ id: "u", accessToken: "tok" });
   fetchTenant.mockResolvedValue({ id: T, role: "owner" });
-  readPack.mockResolvedValue(parseWorkspacePack({ pack: "construction" }));
+  listFields.mockResolvedValue(PACK_FIELDS);
   createField.mockResolvedValue({});
   setActive.mockResolvedValue({});
 });
@@ -67,21 +67,23 @@ describe("adding a field", () => {
     for (const bad of [{ ...NEW, kind: "multi_choice" }, { ...NEW, kind: "colour" }, { ...NEW, entity: "order" }, { ...NEW, label: "" }, { ...NEW, label: "x".repeat(61) }]) expect(await note(() => addFieldAction(T, form(bad))), JSON.stringify(bad)).toBe("invalid");
     expect(createField).not.toHaveBeenCalled();
   });
-  it("says 'not saved yet' while the server cannot keep fields (the stand-in pack), and never pretends", async () => {
-    readPack.mockResolvedValue(fixtureWorkspacePack());
+  it("says 'not saved yet' while the server cannot list or keep fields (a server without the routes), and never pretends", async () => {
+    listFields.mockRejectedValue(new ApiRequestError(404, "not_found", "x"));
     expect(await note(() => addFieldAction(T, form(NEW)))).toBe("unavailable");
     expect(createField).not.toHaveBeenCalled();
+    listFields.mockRejectedValue(new ApiAuthError("x"));
+    expect(await note(() => addFieldAction(T, form(NEW)))).toBe("/login");
   });
   it("stops at 20 fields for one kind of record", async () => {
-    const many = Array.from({ length: 20 }, (_, i) => ({ id: `f${i}`, entity: "contact", code: `field_${i}x`, kind: "text", label: "x", pii_class: "none", source: "owner", active: true }));
-    readPack.mockResolvedValue(parseWorkspacePack({ pack: "construction", fields: many }));
+    const many = Array.from({ length: 20 }, (_, i) => ({ ...PACK_FIELDS[0], id: `f${i}`, entity: "contact" as const, code: `field_${i}x`, kind: "text" as const, choices: null, active: true }));
+    listFields.mockResolvedValue(many);
     expect(await note(() => addFieldAction(T, form(NEW)))).toBe("limit");
     expect(createField).not.toHaveBeenCalled();
   });
   it("keeps a code unique when the words give one the workspace already has", async () => {
-    readPack.mockResolvedValue(parseWorkspacePack({ pack: "construction" }));
-    expect(await note(() => addFieldAction(T, form({ entity: "contact", label: "Customer type", kind: "text" })))).toBe("added");
-    expect(createField.mock.calls[0][2].code).not.toBe("customer_type");
+    const taken = PACK_FIELDS.find((f) => f.entity === "contact")!;
+    expect(await note(() => addFieldAction(T, form({ entity: "contact", label: taken.label.en, kind: "text" })))).toBe("added");
+    expect(createField.mock.calls[0][2].code).not.toBe(taken.code);
   });
   it("tells the person why the API said no: the second factor, the role, a bad value, a missing route, anything else", async () => {
     createField.mockRejectedValueOnce(new ApiRequestError(403, "mfa_required", "x"));
@@ -90,6 +92,10 @@ describe("adding a field", () => {
     expect(await note(() => addFieldAction(T, form(NEW)))).toBe("role");
     createField.mockRejectedValueOnce(new ApiRequestError(409, "duplicate_value", "x"));
     expect(await note(() => addFieldAction(T, form(NEW)))).toBe("invalid");
+    createField.mockRejectedValueOnce(new ApiRequestError(409, "custom_field_limit", "x"));
+    expect(await note(() => addFieldAction(T, form(NEW)))).toBe("limit");
+    createField.mockRejectedValueOnce(new ApiRequestError(403, "module_off", "x"));
+    expect(await note(() => addFieldAction(T, form(NEW)))).toBe("unavailable");
     createField.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
     expect(await note(() => addFieldAction(T, form(NEW)))).toBe("unavailable");
     createField.mockRejectedValueOnce(new ApiRequestError(500, "x", "x"));

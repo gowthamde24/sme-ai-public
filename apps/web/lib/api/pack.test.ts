@@ -1,92 +1,122 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { defaultPackId, modulesWire, otherPackIds, packFiles, packsWire, packWire, selectableIds } from "@/lib/packs/pack-test-kit";
+
 import { ApiAuthError, ApiContractError, ApiRequestError } from "./client";
 
 const apiRequest = vi.fn();
-vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a) }));
+const apiPublicRequest = vi.fn();
+vi.mock("./client", async (importOriginal) => ({ ...(await importOriginal<typeof import("./client")>()), apiRequest: (...a: unknown[]) => apiRequest(...a), apiPublicRequest: (...a: unknown[]) => apiPublicRequest(...a) }));
 
-import { fixtureWorkspacePack, getWorkspacePack, moduleOn, parseField, parseWorkspacePack } from "./pack";
+import { getAccountSecurity, getAuthProviders, getWorkspacePack, listPacks, moduleOn, parseEnabledModules, parsePackSummary, parseWorkspacePack, parseWords } from "./pack";
 
 const T = "22222222-2222-4222-8222-222222222222";
-beforeEach(() => vi.clearAllMocks());
+beforeEach(() => vi.resetAllMocks());
 
-describe("the pack of a workspace", () => {
-  it("needs only the pack code: the words, modules and fields of that pack come from its file", () => {
-    const p = parseWorkspacePack({ pack: "construction" });
-    expect(p.def.id).toBe("construction");
-    expect(p.source).toBe("api");
-    expect(p.version).toBe(p.def.version);
-    expect(p.modules).toEqual(p.def.modules);
-    expect(p.fields.map((f) => `${f.entity}.${f.code}`)).toContain("catalogue_item.selling_unit");
-    expect(p.fields.every((f) => f.source === "pack" && f.active && f.id === null)).toBe(true);
-    expect(p.example).toBe("none");
+describe("the business types a new person may choose (GET /v1/packs)", () => {
+  it("reads the cards the API offers, with the names in every language and the accent and owl prop tokens", async () => {
+    apiPublicRequest.mockResolvedValue(packsWire());
+    const packs = await listPacks();
+    expect(apiPublicRequest).toHaveBeenCalledWith("/v1/packs");
+    expect(packs.map((p) => p.packId)).toEqual(selectableIds());
+    expect(packs[0].validated).toBe(true); // the reviewed type comes first
+    for (const p of packs) expect(p).toMatchObject({ names: { en: expect.any(String), te: expect.any(String) }, accent: expect.stringMatching(/^[a-z_]+$/), owlProp: expect.stringMatching(/^[a-z_]+$/) });
+    expect(packs.find((p) => p.packId === defaultPackId())?.validated).toBe(true);
   });
-  it("lets the API's module list win over the file's (pack default AND plan AND operator override), dropping a name this build does not know", () => {
-    const p = parseWorkspacePack({ pack: "construction", modules: ["today", "orders", "a_module_from_the_future"] });
-    expect(p.modules).toEqual(["today", "orders"]);
-    expect(moduleOn(p, "orders")).toBe(true);
-    expect(moduleOn(p, "quotes")).toBe(false); // default deny
+  it.each([[null], [{}], [{ packs: [] }], [{ packs: [{ pack_id: "Bad Id" }] }], [{ packs: [{ ...packsWire().packs[0], status: "live" }] }], [{ packs: [{ ...packsWire().packs[0], names: { te: "x" } }] }], [{ packs: [{ ...packsWire().packs[0], validated: "yes" }] }]])("%j is a contract error, never a card", async (body) => {
+    apiPublicRequest.mockResolvedValue(body);
+    await expect(listPacks()).rejects.toThrow(ApiContractError);
   });
-  it("draws a pack code this build does not know with the default pack's words, but keeps the modules the API sent", () => {
-    const p = parseWorkspacePack({ pack: "hospitality", modules: ["today", "fees"] });
-    expect(p.def.default).toBe(true);
-    expect(p.modules).toEqual(["today", "fees"]);
+  it("keeps only the languages the product has", () => {
+    expect(parseWords({ en: "a", te: "b", xx: "c" }, "w")).toEqual({ en: "a", te: "b" });
+    expect(() => parseWords({ en: "" }, "w")).toThrow(ApiContractError);
+    expect(() => parseWords({ en: "a", hi: 4 }, "w")).toThrow(ApiContractError);
+    expect(parsePackSummary(packsWire().packs[0]).packId).toBe(packsWire().packs[0].pack_id);
   });
-  it("reads the workspace's fields: the pack's and the owner's own, with their ids, a plain-string label and the active flag", () => {
-    const p = parseWorkspacePack({
-      pack: "construction",
-      fields: [
-        { id: "f1", entity: "contact", code: "gate_code", kind: "text", label: "Gate code", required: false, pii_class: "none", source: "owner", active: false },
-        { entity: "contact", code: "customer_type", kind: "choice", label: { en: "Customer type", hi: "ग्राहक" }, pii_class: "none", choices: [{ code: "builder", label: "Builder" }, { code: "dealer", label: { en: "Dealer" } }] },
-      ],
-      example_data: { available: true, loaded: false },
-    });
-    expect(p.fields[0]).toMatchObject({ id: "f1", source: "owner", active: false, label: { en: "Gate code", te: "Gate code", hi: "Gate code", kn: "Gate code" } });
-    expect(p.fields[1].label).toMatchObject({ en: "Customer type", hi: "ग्राहक", te: "Customer type" }); // a missing language falls back to English
-    expect(p.fields[1].choices?.map((c) => c.code)).toEqual(["builder", "dealer"]);
-    expect(p.example).toBe("available");
-    expect(parseWorkspacePack({ pack: "education", example_data: { available: true, loaded: true } }).example).toBe("loaded");
+});
+
+describe("which ways to sign up are on (GET /v1/auth/providers)", () => {
+  it("offers Google and Facebook only when the server says so", async () => {
+    apiPublicRequest.mockResolvedValue({ email: true, google: true, facebook: false });
+    expect(await getAuthProviders()).toEqual({ google: true, facebook: false });
   });
-  it.each([
-    [null], ["x"], [[]], [{}], [{ pack: 3 }], [{ pack: "x".repeat(41) }],
-    [{ pack: "construction", modules: "today" }], [{ pack: "construction", modules: [1] }], [{ pack: "construction", fields: "no" }],
-    [{ pack: "construction", fields: [{ entity: "order", code: "ab", kind: "text", label: "x", pii_class: "none" }] }],
-    [{ pack: "construction", fields: [{ entity: "contact", code: "Bad Code", kind: "text", label: "x", pii_class: "none" }] }],
-    [{ pack: "construction", fields: [{ entity: "contact", code: "ab", kind: "color", label: "x", pii_class: "none" }] }],
-    [{ pack: "construction", fields: [{ entity: "contact", code: "ab", kind: "text", label: "x", pii_class: "secret" }] }],
-    [{ pack: "construction", fields: [{ entity: "contact", code: "ab", kind: "choice", label: "x", pii_class: "none" }] }],
-    [{ pack: "construction", fields: [{ entity: "contact", code: "ab", kind: "text", label: "x", pii_class: "none", choices: [] }] }],
-    [{ pack: "construction", fields: [{ entity: "contact", code: "ab", kind: "text", label: "", pii_class: "none" }] }],
-  ])("%j is a contract error", (json) => {
-    expect(() => parseWorkspacePack(json)).toThrow(ApiContractError);
+  it("counts anything unreadable, or a failed call, as off: e-mail is always there", async () => {
+    for (const answer of [null, "x", { google: "yes", facebook: 1 }]) {
+      apiPublicRequest.mockResolvedValueOnce(answer);
+      expect(await getAuthProviders()).toEqual({ google: false, facebook: false });
+    }
+    apiPublicRequest.mockRejectedValueOnce(new ApiRequestError(503, "api_unreachable", "x"));
+    expect(await getAuthProviders()).toEqual({ google: false, facebook: false });
   });
-  it("parses one field on its own (used by the add and hide calls)", () => {
-    expect(parseField({ id: "x1", entity: "catalogue_item", code: "weight", kind: "number", label: "Weight", unit: "kg", pii_class: "none", source: "owner" })).toMatchObject({ id: "x1", unit: "kg", required: false, active: true });
-    expect(() => parseField({ id: 12, entity: "contact", code: "ab", kind: "text", label: "x", pii_class: "none" })).toThrow(ApiContractError);
-    expect(() => parseField({ entity: "contact", code: "ab", kind: "text", label: "x", pii_class: "none", source: "someone" })).toThrow(ApiContractError);
-    expect(() => parseField({ entity: "contact", code: "ab", kind: "text", label: "x", pii_class: "none", active: "yes" })).toThrow(ApiContractError);
+});
+
+describe("where the session stands on the second factor (GET /v1/account/security)", () => {
+  it("reads the level and the groups of actions that need one", async () => {
+    apiRequest.mockResolvedValue({ session_level: "aal1", asked_at_sign_up: false, needed_for: ["approvals", "whatsapp_connect"] });
+    expect(await getAccountSecurity("tok")).toEqual({ level: "aal1", neededFor: ["approvals", "whatsapp_connect"] });
+    expect(apiRequest).toHaveBeenCalledWith("/v1/account/security", "tok");
   });
-  it("is read with the person's token from the workspace's own path", async () => {
-    apiRequest.mockResolvedValue({ pack: "education" });
-    expect((await getWorkspacePack("tok", T)).def.id).toBe("education");
+  it("is null for a server without the route or an unreadable answer; a rejected session is passed on", async () => {
+    apiRequest.mockResolvedValueOnce({ session_level: "aal3", needed_for: [] });
+    expect(await getAccountSecurity("tok")).toBeNull();
+    apiRequest.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
+    expect(await getAccountSecurity("tok")).toBeNull();
+    apiRequest.mockRejectedValueOnce(new ApiAuthError("no"));
+    await expect(getAccountSecurity("tok")).rejects.toBeInstanceOf(ApiAuthError);
+  });
+});
+
+describe("the business type of a workspace (GET .../pack and .../modules)", () => {
+  const other = otherPackIds()[0];
+  const answer = (path: string, id: string, source: "signup" | "default" | "legacy" = "signup", enabled?: string[]) => (path.endsWith("/pack") ? packWire(id, source) : modulesWire(enabled ?? packFiles()[id].modules));
+  it("reads the pack, its words by language and the modules that are ON (the modules answer wins)", async () => {
+    const enabled = packFiles()[other].modules.filter((m) => m !== "campaigns");
+    apiRequest.mockImplementation(async (path: string) => answer(path, other, "signup", enabled));
+    const p = (await getWorkspacePack("tok", T))!;
     expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/pack`, "tok");
+    expect(apiRequest).toHaveBeenCalledWith(`/v1/tenants/${T}/modules`, "tok");
+    expect(p).toMatchObject({ packId: other, source: "signup", coreTab: packFiles()[other].core_tab });
+    expect(p.modules).toEqual(enabled);
+    expect(p.modules).not.toContain("campaigns");
+    expect(p.labels.en["pack.core_tab"]).toBe(packFiles()[other].labels.en["pack.core_tab"]);
+    expect(Object.keys(p.labels)).toEqual(expect.arrayContaining(["en", "te", "hi", "kn"]));
   });
-  it("stands in with the default pack's file while the route does not exist (404 or 501), and says it is a stand-in", async () => {
-    for (const status of [404, 501]) {
-      apiRequest.mockRejectedValueOnce(new ApiRequestError(status, "not_found", "x"));
-      const p = await getWorkspacePack("tok", T);
-      expect(p).toEqual(fixtureWorkspacePack());
-      expect(p.source).toBe("fixture");
-      expect(p.def.default).toBe(true);
-      expect(p.example).toBe("none");
+  it("uses the pack's own list when only the modules read fails", async () => {
+    apiRequest.mockImplementation(async (path: string) => {
+      if (path.endsWith("/modules")) throw new ApiRequestError(500, "internal", "x");
+      return answer(path, other);
+    });
+    expect((await getWorkspacePack("tok", T))!.modules).toEqual(packFiles()[other].modules);
+  });
+  it("is null for a server without the pack routes (404, 501, 503 packs_unavailable): the product as it always was", async () => {
+    for (const e of [new ApiRequestError(404, "not_found", "x"), new ApiRequestError(501, "not_implemented", "x"), new ApiRequestError(503, "packs_unavailable", "x")]) {
+      apiRequest.mockReset();
+      apiRequest.mockRejectedValue(e);
+      expect(await getWorkspacePack("tok", T)).toBeNull();
     }
   });
-  it("does not hide a real failure behind the stand-in: a server error, a bad answer and a rejected session are raised", async () => {
-    apiRequest.mockRejectedValueOnce(new ApiRequestError(500, "internal", "x"));
-    await expect(getWorkspacePack("tok", T)).rejects.toThrow(ApiRequestError);
-    apiRequest.mockResolvedValueOnce({ pack: 7 });
-    await expect(getWorkspacePack("tok", T)).rejects.toThrow(ApiContractError);
-    apiRequest.mockRejectedValueOnce(new ApiAuthError("no"));
-    await expect(getWorkspacePack("tok", T)).rejects.toThrow(ApiAuthError);
+  it("raises a real failure and passes a rejected session on", async () => {
+    apiRequest.mockRejectedValue(new ApiRequestError(500, "internal", "x"));
+    await expect(getWorkspacePack("tok", T)).rejects.toBeInstanceOf(ApiRequestError);
+    apiRequest.mockReset();
+    apiRequest.mockRejectedValue(new ApiAuthError("no"));
+    await expect(getWorkspacePack("tok", T)).rejects.toBeInstanceOf(ApiAuthError);
+  });
+  it("validates every field: a malformed answer is an error, never rendered", () => {
+    const good = packWire(other, "signup");
+    for (const bad of [null, [], { ...good, source: "magic" }, { ...good, modules: "all" }, { ...good, core_tab: "Bad Tab" }, { ...good, units: [1] }, { ...good, labels: {} }, { ...good, labels: { en: { "bad key": "x" } } }, { ...good, labels: { en: { "nav.item.today": "" } } }, { ...good, version: 0 }]) {
+      expect(() => parseWorkspacePack(bad), JSON.stringify(bad)?.slice(0, 80)).toThrow(ApiContractError);
+    }
+    expect(() => parseEnabledModules({ modules: [{ module: "today", enabled: "yes" }] })).toThrow(ApiContractError);
+    expect(parseEnabledModules(modulesWire(["today", "inbox"]))).toEqual(["today", "inbox"]);
+  });
+  it("ignores a language this build does not have, and an unknown module simply is not drawn", () => {
+    const p = parseWorkspacePack({ ...packWire(other), labels: { ...(packWire(other).labels as Record<string, unknown>), ta: { "nav.item.today": "x" } } });
+    expect(Object.keys(p.labels)).not.toContain("ta");
+  });
+  it("moduleOn: with no pack everything is on; with one only its modules", () => {
+    expect(moduleOn(null, "anything")).toBe(true);
+    expect(moduleOn({ modules: ["today"] }, "today")).toBe(true);
+    expect(moduleOn({ modules: ["today"] }, "fees")).toBe(false);
   });
 });

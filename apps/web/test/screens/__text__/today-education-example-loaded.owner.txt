@@ -9,10 +9,10 @@ This removes only the example rows. Your own work stays.
 {label="Get started"}
 ## Get started
 1 of 5 done
-- Tell us your institution's name and city Done
+- Tell us your business name and city Done
 - Import your students and guardians Not available yet
 - Set your fee plan Not available yet
-- [Connect WhatsApp Your institution's name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 - Approve your first fee-reminder campaign Not available yet
 [Continue](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
 Tuesday, 6 October

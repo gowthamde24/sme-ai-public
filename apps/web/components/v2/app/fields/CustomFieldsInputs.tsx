@@ -23,7 +23,7 @@ export function CustomFieldsInputs({ fields, values, onChange, words, idPrefix, 
       {fields.map((f) => {
         const id = `${idPrefix}-${f.code}`;
         const v = values[f.code];
-        const name = `${f.label}${f.unit ? ` (${f.unit})` : ""}`;
+        const name = f.label;
         return (
           <div key={f.code} data-field={f.code}>
             {f.kind === "multi_choice" ? (

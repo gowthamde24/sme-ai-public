@@ -12,7 +12,7 @@ import { ApiDownV2 } from "@/components/v2/app/parts";
 import { makeT } from "@/components/v2/app/words";
 import { appT } from "@/i18n/app";
 import { formFields } from "@/lib/packs/form-fields";
-import { readPackCached } from "@/lib/packs/read";
+import { listCustomFields } from "@/lib/api/custom-fields";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
@@ -52,9 +52,8 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
     );
   // one set of ids per render: a second press of the button is a retry. The key remounts the form for the next customer, so its state starts clean.
   const ids = { company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() };
-  // the extra fields of the business type (job CL): drawn only where the server can keep them
-  const pack = await readPackCached(user.accessToken, tenantId);
-  const fields = pack.source === "api" ? formFields(pack.fields, "contact", lang) : [];
+  // the extra fields of the business (job CL): drawn only when the server can list them (a server without the field routes draws none, and nothing is pretended saved)
+  const fields = formFields(await listCustomFields(user.accessToken, tenantId, "contact").catch((e) => (e instanceof ApiAuthError ? redirect("/login") : [])), "contact", lang);
   const a = appT(lang);
   return (
     <main className={pageMain} lang={lang}>

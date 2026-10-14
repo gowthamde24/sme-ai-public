@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
-import { MODULES } from "./registry";
+import { allModules } from "./pack-test-kit";
 import { moduleForPath } from "./guard";
 
 const T = "22222222-2222-2222-2222-222222222222";
@@ -50,7 +50,7 @@ describe("which module a page needs", () => {
     const routes = walk(TENANT).map((f) => "/" + path.relative(TENANT, path.dirname(f)).replace(/\\/g, "/").replace(/\[[a-zA-Z]+\]/g, "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa")).map((r) => (r === "/." ? "" : r));
     for (const r of routes) {
       const m = at(r);
-      if (m) expect(MODULES, r).toContain(m);
+      if (m) expect(allModules(), r).toContain(m);
     }
   });
 });
@@ -63,8 +63,8 @@ describe("every page of a workspace has been decided (a new page must say whethe
   const sample = (r: string) => r.replace(/\[[a-zA-Z]+\]/g, "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa");
   const at = (p: string) => moduleForPath(`/app/tenants/${T}${p}`)?.module ?? null;
   const routes = walk(TENANT).map((f) => "/" + path.relative(TENANT, path.dirname(f)).replace(/\\/g, "/")).map((r) => (r === "/" ? "" : r));
-  // Pages that need NO module on purpose: Today and its Start page, Settings, Help, the privacy and suppression pages: the places every business type has.
-  const OPEN = ["", "/help", "/help/[guide]", "/privacy", "/settings", "/start", "/suppression"];
+  // Pages that need NO module on purpose: Today and its Start page, Settings, Help, the privacy and suppression pages, the team, the outbox: the places every business type has (the closed module list of packages/packs has no module for them).
+  const OPEN = ["", "/help", "/help/[guide]", "/outbox", "/privacy", "/settings", "/start", "/suppression", "/team"];
   it("finds the pages", () => {
     expect(routes.length).toBeGreaterThan(30);
   });
@@ -79,7 +79,6 @@ describe("every page of a workspace has been decided (a new page must say whethe
     expect(guarded["/chats/[leadId]"]).toBe("inbox");
     expect(guarded["/review"]).toBe("enquiries");
     expect(guarded["/leads/[leadId]"]).toBe("enquiries");
-    expect(guarded["/team"]).toBe("team");
     expect(at("/fees")).toBe("fees");
     expect(at("/campaigns")).toBe("campaigns");
   });

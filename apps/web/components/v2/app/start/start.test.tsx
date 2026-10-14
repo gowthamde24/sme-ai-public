@@ -60,16 +60,17 @@ describe("the example-data banner", () => {
     expect(screen.getByText("This removes only the example rows. Your own work stays.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Yes, remove the example data" })).toBeInTheDocument();
   });
-  it("draws nothing when the business type has no sample, and says plainly when it is not available or failed", () => {
+  it("says plainly when it is not available or failed, and what stayed when some example rows were already used", () => {
     const a = actions();
-    const { container, rerender } = render(<ExampleBanner state="none" notice={null} load={a.load} remove={a.remove} t={t} />);
-    expect(container).toBeEmptyDOMElement();
+    const { rerender } = render(<ExampleBanner state="available" notice={null} load={a.load} remove={a.remove} t={t} />);
     rerender(<ExampleBanner state="available" notice="unavailable" load={a.load} remove={a.remove} t={t} />);
     expect(screen.getByRole("alert")).toHaveTextContent("Example data is not available yet.");
     rerender(<ExampleBanner state="available" notice="failed" load={a.load} remove={a.remove} t={t} />);
     expect(screen.getByRole("alert")).toHaveTextContent("Could not do that. Try again.");
     rerender(<ExampleBanner state="available" notice="removed" load={a.load} remove={a.remove} t={t} />);
     expect(screen.getByRole("status")).toHaveTextContent("Example data removed.");
+    rerender(<ExampleBanner state="available" notice="removed" kept={3} load={a.load} remove={a.remove} t={t} />);
+    expect(screen.getByRole("status")).toHaveTextContent("3 example rows stay because you have used them.");
   });
 });
 

@@ -81,14 +81,14 @@ describe("the items only a business type brings (job CL)", () => {
     for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
   });
   it("show when the pack has the module on, and only then", () => {
-    const view = { id: "x", name: "X", isDefault: false, accent: "sky", modules: ["fees"], bar: ["today", "fees"], labels: {} };
+    const view = { name: "X", accent: "sky_blue", validated: false, coreTab: "fees", modules: ["today", "enquiries", "visits", "office", "fees"], labels: {} };
     const ids = visibleGroups("owner", view).flatMap((g) => g.items.map((i) => i.id));
     expect(ids).toContain("fees");
     expect(ids).not.toContain("campaigns");
-    expect(barItems("owner", view).map((i) => i.id)).toEqual(["today", "fees"]);
+    expect(barItems("owner", view).map((i) => i.id)).toEqual(["today", "leads", "fees", "visits", "office"]); // the core tab (Fees) takes the Quotes slot
   });
   it("every item that has a module is hidden when the pack does not have it", () => {
-    const none = { id: "x", name: "X", isDefault: false, accent: "sky", modules: ["today"], bar: ["today"], labels: {} };
+    const none = { name: "X", accent: "sky_blue", validated: false, coreTab: "fees", modules: ["today"], labels: {} };
     const ids = visibleGroups("owner", none).flatMap((g) => g.items.map((i) => i.id));
     expect(ids).toEqual(flat.filter((i) => !i.module).map((i) => i.id));
   });

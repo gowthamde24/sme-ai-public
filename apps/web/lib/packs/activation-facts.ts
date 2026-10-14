@@ -5,7 +5,7 @@ import { fetchQuotePolicyVersions } from "@/lib/api/quote-policies";
 import { fetchQuotes } from "@/lib/api/quotes";
 import { getWhatsappAccount } from "@/lib/api/whatsapp";
 
-import type { StepCheck } from "./types";
+import type { StepCheck } from "./activation";
 
 async function yes(read: () => Promise<boolean>): Promise<boolean> {
   try {

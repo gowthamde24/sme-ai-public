@@ -11,18 +11,27 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push }), redirect: (to: 
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/account", async (importOriginal) => ({ ...(await importOriginal<typeof import("@/lib/api/account")>()), fetchAccountSetup: (...a: unknown[]) => fetchAccountSetup(...a) }));
 vi.mock("../app/setup/actions", () => ({ completeSetup: (...a: unknown[]) => completeSetup(...a) }));
+// the kinds of business come from the API (GET /v1/packs, job CK): here the real pack files through the API's shapes
+const packList = vi.fn();
+vi.mock("@/lib/api/pack", async (orig) => ({ ...(await orig<typeof import("@/lib/api/pack")>()), listPacks: () => packList() }));
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import type { CompleteSetupResult } from "@/lib/api/signup";
 
+import { parsePackSummary } from "@/lib/api/pack";
+import { packsWire, selectableIds } from "@/lib/packs/pack-test-kit";
+
 import SetupPage from "./page";
 import { SetupForm, type SetupWords } from "./setup-form";
 
+const SUMMARIES = packsWire().packs.map(parsePackSummary);
+const IDS = selectableIds();
 const words: SetupWords = { type: "What kind of business is it?", types: [{ value: "textiles", label: "Textiles" }, { value: "other", label: "Other" }], language: "Which language should the app use?", submit: "Continue", error: "Something went wrong." };
 
 beforeEach(() => {
   vi.clearAllMocks();
   requireUser.mockResolvedValue({ id: "u", accessToken: "t" });
+  packList.mockResolvedValue(SUMMARIES);
   fetchAccountSetup.mockResolvedValue({ state: "needed", tenantId: null, businessName: "Asha Silks" });
 });
 afterEach(cleanup);
@@ -67,14 +76,14 @@ describe("/setup", () => {
     render(await SetupPage());
     expect(requireUser).toHaveBeenCalled();
     expect(screen.getByRole("heading", { level: 1, name: "Set up your business" })).toBeInTheDocument();
-    expect(screen.getAllByRole("radio").length).toBe(3 + 4); // three kinds of business (textiles, construction, other), four languages
+    expect(screen.getAllByRole("radio").length).toBe(IDS.length + 4); // the kinds of business the API offers, four languages
     expect(fetchAccountSetup).toHaveBeenCalledWith("t");
   });
   it("is wired to the real completeSetup action", async () => {
     completeSetup.mockResolvedValue({ ok: true });
     render(await SetupPage());
     fireEvent.submit(screen.getByRole("button", { name: "Continue" }).closest("form")!);
-    await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: "textiles", language: "en" }));
+    await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: IDS[0], language: "en" }));
   });
   it("sends a person it has nothing to do for on to /app: the business exists, or an invited person", async () => {
     fetchAccountSetup.mockResolvedValue({ state: "done", tenantId: "22222222-2222-2222-2222-222222222222", businessName: null });
@@ -95,20 +104,31 @@ describe("/setup", () => {
   });
 });
 
+describe("/setup when the server cannot list the business types", () => {
+  it("still draws the automatic setup for a kind the account carries (the database decides), and the questions with no kinds otherwise", async () => {
+    packList.mockRejectedValue(new Error("down"));
+    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: IDS[1] });
+    completeSetup.mockResolvedValue({ ok: true });
+    render(await SetupPage());
+    expect(screen.queryByRole("radio")).toBeNull();
+    await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: IDS[1], language: "en" }));
+  });
+});
+
 describe("the automatic setup (job CL): the kind of business was chosen on the first sign-up step", () => {
   it("makes the business with that kind and the language the person reads, asks nothing, and goes to Today", async () => {
     const action = vi.fn(async (): Promise<CompleteSetupResult> => ({ ok: true }));
-    render(<SetupForm words={{ ...words, working: "Setting up your workspace…", retry: "Try again" }} lang="hi" action={action} auto="construction" />);
+    render(<SetupForm words={{ ...words, working: "Setting up your workspace…", retry: "Try again" }} lang="hi" action={action} auto={IDS[1]} />);
     expect(screen.queryByRole("radio")).toBeNull();
     expect(screen.getByRole("status")).toHaveTextContent("Setting up your workspace…");
     await waitFor(() => expect(push).toHaveBeenCalledWith("/app"));
     expect(action).toHaveBeenCalledTimes(1); // once, even though React runs effects twice in development
-    expect(action).toHaveBeenCalledWith({ businessType: "construction", language: "hi" });
+    expect(action).toHaveBeenCalledWith({ businessType: IDS[1], language: "hi" });
     expect(document.cookie).toContain("sme_lang=hi");
   });
   it("says why it stopped and tries again on the button (the same call: one business per account)", async () => {
     const action = vi.fn(async (): Promise<CompleteSetupResult> => ({ ok: false, error: "Could not finish setting up. Try again." }));
-    render(<SetupForm words={{ ...words, working: "Setting up…", retry: "Try again" }} lang="en" action={action} auto="education" />);
+    render(<SetupForm words={{ ...words, working: "Setting up…", retry: "Try again" }} lang="en" action={action} auto={IDS[2]} />);
     expect(await screen.findByRole("alert")).toHaveTextContent("Could not finish setting up. Try again.");
     action.mockResolvedValue({ ok: true });
     fireEvent.click(screen.getByRole("button", { name: "Try again" }));
@@ -116,16 +136,20 @@ describe("the automatic setup (job CL): the kind of business was chosen on the f
     expect(action).toHaveBeenCalledTimes(2);
   });
   it("/setup reads the kind from the account (the e-mail way) and draws the automatic setup instead of the questions", async () => {
-    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: "construction" });
+    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: IDS[1] });
     completeSetup.mockResolvedValue({ ok: true });
     render(await SetupPage());
     expect(screen.getByRole("heading", { level: 1, name: "Setting up your workspace" })).toBeInTheDocument();
     expect(screen.queryByRole("radio")).toBeNull();
-    await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: "construction", language: "en" }));
+    await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: IDS[1], language: "en" }));
   });
   it("an unknown or hidden kind is not trusted: the questions are drawn", async () => {
-    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: "nonsense" });
+    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: "a_type_nobody_offers" });
     render(await SetupPage());
-    expect(screen.getAllByRole("radio").length).toBe(3 + 4);
+    expect(screen.getAllByRole("radio").length).toBe(IDS.length + 4);
+    cleanup();
+    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: "Not A Code" });
+    render(await SetupPage());
+    expect(screen.getAllByRole("radio").length).toBe(IDS.length + 4);
   });
 });

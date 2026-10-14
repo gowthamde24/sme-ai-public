@@ -7,12 +7,11 @@ const requireUser = vi.fn();
 const api = { createCustomerCompany: vi.fn(), createContact: vi.fn(), createLead: vi.fn() };
 const revalidatePath = vi.fn();
 const putCustom = vi.fn();
-const readPack = vi.fn();
+const listFields = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("next/cache", () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
-vi.mock("@/lib/api/custom-fields", () => ({ putContactCustom: (...a: unknown[]) => putCustom(...a) }));
-vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
+vi.mock("@/lib/api/custom-fields", () => ({ putContactCustom: (...a: unknown[]) => putCustom(...a), listCustomFields: (...a: unknown[]) => listFields(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/customers", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/customers")>()),
@@ -21,7 +20,7 @@ vi.mock("@/lib/api/customers", async (importOriginal) => ({
   createLead: (...a: unknown[]) => api.createLead(...a),
 }));
 
-import { parseWorkspacePack } from "@/lib/api/pack";
+import { packFields, packWithFields } from "@/lib/packs/pack-test-kit";
 
 import { addCustomerAction } from "./actions";
 
@@ -31,6 +30,11 @@ const CT = "44444444-4444-4444-4444-444444444444";
 const LD = "55555555-5555-4555-8555-555555555555";
 const CANARY = "CANARY-c1a77e";
 const PHONE = "+00 90000 20001";
+// the real contact fields of a business type that has some (packages/packs)
+const CONTACT_FIELDS = packFields(packWithFields("contact", 2)).filter((f) => f.entity === "contact");
+const CHOICE = CONTACT_FIELDS.find((f) => f.kind === "choice")!;
+const MULTI = CONTACT_FIELDS.find((f) => f.kind === "multi_choice")!;
+const PICK = CHOICE.choices![1].code;
 
 function form(over: Record<string, string> = {}): FormData {
   const data = new FormData();
@@ -46,7 +50,7 @@ beforeEach(() => {
   api.createCustomerCompany.mockResolvedValue(undefined);
   api.createContact.mockResolvedValue(CT);
   api.createLead.mockResolvedValue(LD);
-  readPack.mockResolvedValue(parseWorkspacePack({ pack: "construction" }));
+  listFields.mockResolvedValue(CONTACT_FIELDS);
   putCustom.mockResolvedValue({});
 });
 
@@ -253,39 +257,53 @@ describe("a business customer's GSTIN (job CC)", () => {
   });
 });
 
-describe("the extra fields of the business type (job CL)", () => {
+describe("the extra fields of the business (job CL)", () => {
   const custom = (v: unknown) => ({ custom: JSON.stringify(v) });
-  it("keeps the values on the contact that was just made, after the customer is saved", async () => {
-    const r = await run(custom({ customer_type: "builder", credit_days: "30", nonsense: "x" }));
+  it("keeps the values on the contact that was just made, after the customer is saved, checked against the workspace's own definitions", async () => {
+    const r = await run(custom({ [CHOICE.code]: PICK, [MULTI.code]: [MULTI.choices![0].code, MULTI.choices![0].code], nonsense: "x" }));
     expect(r).toEqual({ ok: true, leadId: LD, contactId: CT, name: "Synthetic Asha" });
-    expect(putCustom).toHaveBeenCalledWith("tok", T, CT, { customer_type: "builder", credit_days: 30 });
+    expect(listFields).toHaveBeenCalledWith("tok", T, "contact");
+    expect(putCustom).toHaveBeenCalledWith("tok", T, CT, { [CHOICE.code]: PICK, [MULTI.code]: [MULTI.choices![0].code] });
   });
   it("asks the API nothing about fields when none were filled in", async () => {
     await run(custom({}));
+    expect(putCustom).not.toHaveBeenCalled();
+    listFields.mockClear();
     await run({});
     expect(putCustom).not.toHaveBeenCalled();
+    expect(listFields).not.toHaveBeenCalled();
   });
   it("refuses a wrong value BEFORE anything is made, naming the field (so nothing is half saved)", async () => {
-    const r = await run(custom({ customer_type: "alien" }));
+    const r = await run(custom({ [CHOICE.code]: "alien" }));
     expect(r).toMatchObject({ ok: false });
-    expect(r?.error).toMatch(/Customer type is not one of the choices/);
+    expect(r?.error).toContain(CHOICE.label.en);
+    expect(r?.error).toMatch(/is not one of the choices/);
     expect(api.createCustomerCompany).not.toHaveBeenCalled();
     expect((await run({ custom: "{not json" }))?.error).toBeTruthy();
     expect(api.createCustomerCompany).not.toHaveBeenCalled();
   });
+  it("makes nothing and says so when the definitions cannot be read", async () => {
+    listFields.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "x"));
+    expect((await run(custom({ [CHOICE.code]: PICK })))?.ok).toBe(false);
+    expect(api.createCustomerCompany).not.toHaveBeenCalled();
+    listFields.mockRejectedValueOnce(new ApiAuthError("x"));
+    await expect(run(custom({ [CHOICE.code]: PICK }))).rejects.toThrow(/login/);
+  });
   it("keeps the customer when the extra details cannot be kept, and says so in one sentence of ours", async () => {
     putCustom.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "SECRET text from the API"));
-    const r = await run(custom({ customer_type: "builder" }));
+    const r = await run(custom({ [CHOICE.code]: PICK }));
     expect(r).toMatchObject({ ok: true, leadId: LD });
     expect(r?.fieldsNote).toMatch(/Saved, but the extra details were not: this system cannot keep them yet/);
     expect(r?.fieldsNote).not.toContain("SECRET");
-    putCustom.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
-    expect((await run(custom({ customer_type: "builder" })))?.fieldsNote).toMatch(/a value was not accepted/);
+    putCustom.mockRejectedValueOnce(new ApiRequestError(403, "module_off", "x"));
+    expect((await run(custom({ [CHOICE.code]: PICK })))?.fieldsNote).toMatch(/cannot keep them yet/);
+    putCustom.mockRejectedValueOnce(new ApiRequestError(422, "custom_value_invalid", "x"));
+    expect((await run(custom({ [CHOICE.code]: PICK })))?.fieldsNote).toMatch(/a value was not accepted/);
     putCustom.mockRejectedValueOnce(new Error("boom"));
-    expect((await run(custom({ customer_type: "builder" })))?.fieldsNote).toMatch(/try again from the record/);
+    expect((await run(custom({ [CHOICE.code]: PICK })))?.fieldsNote).toMatch(/try again from the record/);
   });
   it("sends a rejected session to sign in", async () => {
     putCustom.mockRejectedValueOnce(new ApiAuthError("x"));
-    await expect(run(custom({ customer_type: "builder" }))).rejects.toThrow(/login/);
+    await expect(run(custom({ [CHOICE.code]: PICK }))).rejects.toThrow(/login/);
   });
 });

@@ -30327,6 +30327,17 @@
    "kn": "draft"
   }
  },
+ "apierr.module_off": {
+  "en": "Your kind of business does not use this part, so it is switched off.",
+  "te": "మీ రకం వ్యాపారం ఈ భాగాన్ని వాడదు, అందుకే ఇది ఆఫ్‌లో ఉంది.",
+  "hi": "आपके तरह के व्यापार में यह हिस्सा इस्तेमाल नहीं होता, इसलिए यह बंद है।",
+  "kn": "ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರದಲ್ಲಿ ಈ ಭಾಗ ಬಳಕೆಯಾಗುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಇದು ಆಫ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "apierr.mfa": {
   "en": "This needs your second step. Open Security, enter your authenticator code, then try again.",
   "te": "This needs your second step. Open Security, enter your authenticator code, then try again.",
@@ -36512,6 +36523,204 @@
    "kn": "draft"
   }
  },
+ "start.check.business_profile.title": {
+  "en": "Tell us your business name and city",
+  "te": "మీ వ్యాపారం పేరు, నగరం చెప్పండి",
+  "hi": "अपने व्यापार का नाम और शहर बताइए",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರು, ನಗರ ಹೇಳಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.business_profile.hint": {
+  "en": "Two answers, then you are set.",
+  "te": "రెండు జవాబులు, అంతే.",
+  "hi": "दो जवाब, बस।",
+  "kn": "ಎರಡು ಉತ್ತರ, ಅಷ್ಟೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.catalogue_has_items.title": {
+  "en": "Add your first products",
+  "te": "మీ మొదటి ఉత్పత్తులను చేర్చండి",
+  "hi": "अपने पहले प्रोडक्ट जोड़ें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಉತ್ಪನ್ನಗಳನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.catalogue_has_items.hint": {
+  "en": "One by one, or import your price list.",
+  "te": "ఒక్కొక్కటిగా చేర్చండి, లేదా మీ ధరల జాబితాను ఇంపోర్ట్ చేయండి.",
+  "hi": "एक-एक करके जोड़ें, या अपनी प्राइस लिस्ट इंपोर्ट करें।",
+  "kn": "ಒಂದೊಂದಾಗಿ ಸೇರಿಸಿ, ಅಥವಾ ನಿಮ್ಮ ಬೆಲೆ ಪಟ್ಟಿಯನ್ನು ಇಂಪೋರ್ಟ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.quote_rules_set.title": {
+  "en": "Set your quote rules",
+  "te": "మీ కొటేషన్ నియమాలు సెట్ చేయండి",
+  "hi": "अपने कोटेशन के नियम तय करें",
+  "kn": "ನಿಮ್ಮ ಕೊಟೇಶನ್ ನಿಯಮಗಳನ್ನು ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.quote_rules_set.hint": {
+  "en": "Your margin and the GST rate for each item, as your accountant tells you.",
+  "te": "మార్జిన్, ప్రతి వస్తువుకు GST రేటు: మీ అకౌంటెంట్ చెప్పినట్టు.",
+  "hi": "मार्जिन और हर आइटम का GST रेट, जैसा आपका अकाउंटेंट बताए।",
+  "kn": "ಮಾರ್ಜಿನ್, ಪ್ರತಿ ವಸ್ತುವಿನ GST ದರ: ನಿಮ್ಮ ಅಕೌಂಟೆಂಟ್ ಹೇಳಿದಂತೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.delivery_rule_set.title": {
+  "en": "Set your delivery charge and advance",
+  "te": "మీ డెలివరీ ఛార్జ్, అడ్వాన్స్ సెట్ చేయండి",
+  "hi": "अपना डिलीवरी चार्ज और एडवांस तय करें",
+  "kn": "ನಿಮ್ಮ ಡೆಲಿವರಿ ಶುಲ್ಕ, ಅಡ್ವಾನ್ಸ್ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.delivery_rule_set.hint": {
+  "en": "How a truck trip is priced and how much you take before dispatch.",
+  "te": "ట్రక్కు ట్రిప్ ధర, డిస్పాచ్ ముందు ఎంత తీసుకుంటారు.",
+  "hi": "ट्रक ट्रिप की कीमत और डिस्पैच से पहले कितना लेते हैं।",
+  "kn": "ಟ್ರಕ್ ಟ್ರಿಪ್ ಬೆಲೆ, ಡಿಸ್ಪ್ಯಾಚ್ ಮೊದಲು ಎಷ್ಟು ತೆಗೆದುಕೊಳ್ಳುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.students_imported.title": {
+  "en": "Import your students and guardians",
+  "te": "మీ విద్యార్థులు, సంరక్షకులను ఇంపోర్ట్ చేయండి",
+  "hi": "अपने विद्यार्थी और अभिभावक इंपोर्ट करें",
+  "kn": "ನಿಮ್ಮ ವಿದ್ಯಾರ್ಥಿಗಳು, ಪೋಷಕರನ್ನು ಇಂಪೋರ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.students_imported.hint": {
+  "en": "From a CSV or Excel file.",
+  "te": "CSV లేదా Excel ఫైల్ నుండి.",
+  "hi": "CSV या Excel फ़ाइल से।",
+  "kn": "CSV ಅಥವಾ Excel ಫೈಲ್‌ನಿಂದ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.fee_plan_set.title": {
+  "en": "Set your fee plan",
+  "te": "మీ ఫీజు ప్లాన్ సెట్ చేయండి",
+  "hi": "अपना फ़ीस प्लान तय करें",
+  "kn": "ನಿಮ್ಮ ಶುಲ್ಕ ಯೋಜನೆ ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.fee_plan_set.hint": {
+  "en": "Fee heads, instalments and due dates.",
+  "te": "ఫీజు విభాగాలు, వాయిదాలు, గడువు తేదీలు.",
+  "hi": "फ़ीस की मदें, किश्तें और देय तिथियाँ।",
+  "kn": "ಶುಲ್ಕದ ವಿಭಾಗಗಳು, ಕಂತುಗಳು, ಕೊನೆಯ ದಿನಾಂಕಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.whatsapp_connected.title": {
+  "en": "Connect WhatsApp",
+  "te": "WhatsApp కనెక్ట్ చేయండి",
+  "hi": "WhatsApp कनेक्ट करें",
+  "kn": "WhatsApp ಸಂಪರ್ಕಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.whatsapp_connected.hint": {
+  "en": "Your business name is confirmed here.",
+  "te": "మీ వ్యాపారం పేరు ఇక్కడ నిర్ధారణ అవుతుంది.",
+  "hi": "आपके व्यापार का नाम यहाँ पक्का होता है।",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಹೆಸರು ಇಲ್ಲಿ ದೃಢವಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.first_quote_sent.title": {
+  "en": "Send your first quote",
+  "te": "మీ మొదటి కొటేషన్ పంపండి",
+  "hi": "अपना पहला कोटेशन भेजें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಕೊಟೇಶನ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.first_quote_sent.hint": {
+  "en": "Draft it, check the figures, approve it, then send it yourself.",
+  "te": "డ్రాఫ్ట్ చేయండి, అంకెలు చూడండి, ఆమోదించండి, తర్వాత మీరే పంపండి.",
+  "hi": "ड्राफ़्ट करें, आँकड़े जाँचें, मंज़ूर करें, फिर खुद भेजें।",
+  "kn": "ಡ್ರಾಫ್ಟ್ ಮಾಡಿ, ಅಂಕಿಗಳನ್ನು ನೋಡಿ, ಅನುಮೋದಿಸಿ, ನಂತರ ನೀವೇ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.first_campaign_approved.title": {
+  "en": "Approve your first fee-reminder campaign",
+  "te": "మీ మొదటి ఫీజు రిమైండర్ క్యాంపెయిన్‌ను ఆమోదించండి",
+  "hi": "अपना पहला फ़ीस रिमाइंडर कैंपेन मंज़ूर करें",
+  "kn": "ನಿಮ್ಮ ಮೊದಲ ಶುಲ್ಕ ರಿಮೈಂಡರ್ ಕ್ಯಾಂಪೇನ್ ಅನುಮೋದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.first_campaign_approved.hint": {
+  "en": "One approval for the whole campaign.",
+  "te": "మొత్తం క్యాంపెయిన్‌కి ఒకే ఆమోదం.",
+  "hi": "पूरे कैंपेन के लिए एक मंज़ूरी।",
+  "kn": "ಇಡೀ ಕ್ಯಾಂಪೇನ್‌ಗೆ ಒಂದೇ ಅನುಮೋದನೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "start.step.done": {
   "en": "Done",
   "te": "అయింది",
@@ -36814,6 +37023,17 @@
   "te": "ఉదాహరణ డేటా తీసేశాం.",
   "hi": "उदाहरण डेटा हटा दिया।",
   "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ತೆಗೆದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.done.kept": {
+  "en": "The example data is removed. {n} example rows stay because you have used them.",
+  "te": "ఉదాహరణ డేటా తొలగించబడింది. మీరు వాడినందున {n} ఉదాహరణ వరుసలు అలాగే ఉన్నాయి.",
+  "hi": "उदाहरण डेटा हटा दिया गया। {n} उदाहरण पंक्तियाँ रहती हैं क्योंकि आपने उन्हें इस्तेमाल किया है।",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ತೆಗೆದುಹಾಕಲಾಗಿದೆ. ನೀವು ಬಳಸಿದ್ದರಿಂದ {n} ಉದಾಹರಣೆ ಸಾಲುಗಳು ಉಳಿದಿವೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",

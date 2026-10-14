@@ -6,8 +6,8 @@ import { signupT } from "@/i18n/signup";
 import { ApiAuthError } from "@/lib/api/client";
 import { fetchAccountSetup, type AccountSetup } from "@/lib/api/account";
 import { requireUser } from "@/lib/auth/session";
-import { parseSignupPack, SIGNUP_PACK_COOKIE } from "@/lib/packs/signup";
-import { signupPacks, textIn } from "@/lib/packs/registry";
+import { listPacks } from "@/lib/api/pack";
+import { parseSignupPack, pickSignupPack, signupCards, SIGNUP_PACK_COOKIE } from "@/lib/packs/signup";
 import { cookies } from "next/headers";
 
 
@@ -45,8 +45,10 @@ export default async function SetupPage() {
   if (state !== null && state !== "needed") redirect("/app");
   const lang = await getLang();
   const t = signupT(lang);
-  // the kind of business chosen on the first sign-up step (job CL): in the account's metadata (e-mail way) or the cookie of the browser that went to Google or Facebook; checked against the packs again here
-  const chosen = parseSignupPack(user.signupPack) ?? parseSignupPack(await packCookie());
+  // the kind of business chosen on the first sign-up step (job CL): in the account's metadata (e-mail way) or the cookie of the browser that went to Google or Facebook; checked against the cards `GET /v1/packs` offers (and again by the database)
+  const packs = await listPacks().catch(() => []);
+  const remembered = user.signupPack ?? (await packCookie());
+  const chosen = packs.length > 0 ? pickSignupPack(packs, remembered) : parseSignupPack(remembered);
   return (
     <main id="main" className={authMain} lang={lang}>
       <h1 className={authH1}>{chosen ? t("setup.auto.title") : t("setup.title")}</h1>
@@ -55,7 +57,7 @@ export default async function SetupPage() {
         action={completeSetup}
         lang={lang}
         auto={chosen}
-        words={{ type: t("setup.type"), types: signupPacks().map((p) => ({ value: p.id, label: textIn(p.name, lang) })), language: t("setup.language"), submit: t("setup.submit"), error: t("setup.err.unknown"), retry: t("setup.auto.retry"), working: t("setup.auto.working") }}
+        words={{ type: t("setup.type"), types: signupCards(packs, lang).map((c) => ({ value: c.id, label: c.name })), language: t("setup.language"), submit: t("setup.submit"), error: t("setup.err.unknown"), retry: t("setup.auto.retry"), working: t("setup.auto.working") }}
       />
     </main>
   );

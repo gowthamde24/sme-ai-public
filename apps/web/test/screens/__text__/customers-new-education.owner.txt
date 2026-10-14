@@ -21,9 +21,11 @@ If you leave the shop name empty, the customer's name is used. Look in the Conta
 legend: More details
 Relation to the student
 <select label="Relation to the student">
-  options: Choose…=* | Mother=mother | Father=father | Guardian=guardian | The student (adult)=self
-Preferred language for messages
-<select label="Preferred language for messages">
-  options: Choose…=* | English=en | Telugu=te | Hindi=hi | Kannada=kn
+  options: Choose…=* | Mother=mother | Father=father | Guardian=guardian | The student (adult)=self | Other=other
+Language for messages
+<select label="Language for messages">
+  options: Choose…=* | English=en | Telugu=te | Hindi=hi | Kannada=kn | Tamil=ta
+Programme interested in
+<text label="Programme interested in" maxlength=100 autocomplete=off>
 <hidden name=custom value={}>
 [button type=submit: Add this customer]

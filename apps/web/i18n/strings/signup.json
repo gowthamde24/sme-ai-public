@@ -388,6 +388,28 @@
    "kn": "draft"
   }
  },
+ "signup.pack.preview": {
+  "en": "Not validated by a real owner yet",
+  "te": "నిజమైన యజమాని ఇంకా ధృవీకరించలేదు",
+  "hi": "किसी असली मालिक ने अभी तक जाँचा नहीं है",
+  "kn": "ನಿಜವಾದ ಮಾಲೀಕರು ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.unavailable": {
+  "en": "Sign-up is not available right now. Please try again in a few minutes.",
+  "te": "సైన్-అప్ ఇప్పుడు అందుబాటులో లేదు. కొన్ని నిమిషాల తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "साइन-अप अभी उपलब्ध नहीं है। कुछ मिनट बाद फिर कोशिश करें।",
+  "kn": "ಸೈನ್-ಅಪ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "signup.pack.change": {
   "en": "Change",
   "te": "మార్చండి",

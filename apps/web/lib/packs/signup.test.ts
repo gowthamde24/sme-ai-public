@@ -1,26 +1,33 @@
 import { describe, expect, it } from "vitest";
 
-import { defaultBusinessName, parseSignupPack, signupCards } from "./signup";
+import { parsePackSummary } from "@/lib/api/pack";
+import { packsWire, selectableIds } from "@/lib/packs/pack-test-kit";
+
+import { DEFAULT_BUSINESS_NAME, parseSignupPack, pickSignupPack, signupCards } from "./signup";
+
+const packs = packsWire().packs.map(parsePackSummary);
 
 describe("the sign-up cards", () => {
-  it("are the packs a person may pick, in order, in the person's language", () => {
-    expect(signupCards("en").map((c) => [c.id, c.name, c.icon, c.accent])).toEqual([
-      ["textiles", "Textiles", "fabric", "rose"],
-      ["construction", "Construction materials", "block", "terracotta"],
-      ["education", "Education", "cap", "sky"],
-    ]);
-    expect(signupCards("te")[1].name).toBe("నిర్మాణ సామగ్రి");
-    expect(signupCards("ta")[2].name).toBe("Education"); // a language with no text yet reads English
+  it("are the business types the API offers, in its order, in the person's language, with their accent and owl prop", () => {
+    const cards = signupCards(packs, "en");
+    expect(cards.map((c) => c.id)).toEqual(selectableIds());
+    for (const c of cards) expect(c).toMatchObject({ name: expect.any(String), tagline: expect.any(String), accent: expect.stringMatching(/^[a-z_]+$/), owlProp: expect.stringMatching(/^[a-z_]+$/) });
+    expect(signupCards(packs, "te")[1].name).toBe(packs[1].names.te);
+    expect(signupCards(packs, "ta")[1].name).toBe(packs[1].names.en); // a language with no text yet reads English
   });
-  it("accept a kind of business only when it is a card: an address or a cookie is never trusted", () => {
-    expect(parseSignupPack("education")).toBe("education");
-    expect(parseSignupPack(["construction", "x"])).toBe("construction");
-    for (const bad of [undefined, null, "", "other", "Textiles", "textiles ", "../x", "<b>", 7, {}, ["nope"]]) expect(parseSignupPack(bad), JSON.stringify(bad)).toBeNull();
+  it("say which types no real owner has reviewed yet", () => {
+    expect(signupCards(packs, "en").some((c) => !c.validated)).toBe(true);
+    expect(signupCards(packs, "en").some((c) => c.validated)).toBe(true);
+  });
+  it("accept a kind of business by its shape, and only a card the API offers once the cards are known: an address or a cookie is never trusted", () => {
+    const id = selectableIds()[1];
+    expect(parseSignupPack(id)).toBe(id);
+    expect(parseSignupPack([id, "x"])).toBe(id);
+    expect(pickSignupPack(packs, id)).toBe(id);
+    expect(pickSignupPack(packs, "a_type_nobody_offers")).toBeNull();
+    for (const bad of [undefined, null, "", "Textiles", "x", "textiles ", "../x", "<b>", 7, {}, ["Nope"], "a".repeat(40)]) expect(parseSignupPack(bad), JSON.stringify(bad)).toBeNull();
   });
   it("name a new business neutrally until the checklist asks the real name", () => {
-    expect(defaultBusinessName("construction", "en")).toBe("My business");
-    expect(defaultBusinessName("education", "en")).toBe("My institution");
-    expect(defaultBusinessName("education", "hi")).toBe("मेरा संस्थान");
-    expect(defaultBusinessName("nope", "en")).toBe("My business");
+    expect(DEFAULT_BUSINESS_NAME).toBe("My business");
   });
 });

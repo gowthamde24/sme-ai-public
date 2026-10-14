@@ -41,7 +41,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
     const here = workspaceOf(((await headers()).get("x-sme-path") ?? "").split("?")[0]);
     if (here && isCanonicalUuid(here.tenantId) && memberships?.some((m) => m.id.toLowerCase() === here.tenantId.toLowerCase())) {
       const pack = await readPackCached(user.accessToken, here.tenantId);
-      frame = { ...FRAME_LOADING, pack: packFrame(pack.def, pack.modules, lang) };
+      if (pack) frame = { ...FRAME_LOADING, pack: packFrame(pack, lang) };
     }
   } catch {
     // no pack to draw: the menu the product always had

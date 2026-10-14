@@ -25,8 +25,8 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
   return (
     <>
       <FrameDataSlot data={data} />
-      {/* the business type the product always had needs no gate: every page it has is on (Fees and Campaigns are not offered to it) */}
-      {data.pack && !data.pack.isDefault ? (
+      {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
+      {data.pack ? (
         <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
           {children}
         </ModuleGate>

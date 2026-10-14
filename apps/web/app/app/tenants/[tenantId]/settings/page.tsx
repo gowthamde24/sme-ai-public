@@ -38,7 +38,9 @@ import { settle, type Part } from "@/lib/api/part";
 
 import { FieldsSection } from "@/components/v2/app/fields/FieldsSection";
 import { readPackCached } from "@/lib/packs/read";
-import type { FieldEntity } from "@/lib/packs/types";
+import { listCustomFields } from "@/lib/api/custom-fields";
+import { usesChecklist } from "@/lib/packs/activation";
+import type { FieldEntity, WorkspaceField } from "@/lib/packs/types";
 
 import { addFieldAction, setFieldActiveAction } from "./field-actions";
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
@@ -98,9 +100,10 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const admin = tenant.role === "owner" || tenant.role === "admin";
   // the extra fields of the business type (job CL): a part of Settings for the people who run the business, only when the business has customers or a catalogue to put them on
   const pack = await readPackCached(user.accessToken, tenantId);
-  const fieldEntities = ([pack.modules.includes("contacts") ? "contact" : null, pack.modules.includes("catalogue") ? "catalogue_item" : null].filter(Boolean)) as FieldEntity[];
-  // the default business type has no fields of its own: until the server can keep an owner's fields, its Settings stay exactly as they were
-  const hasFields = admin && fieldEntities.length > 0 && (pack.source === "api" || pack.fields.length > 0);
+  const fieldEntities = pack ? (([pack.modules.includes("contacts") ? "contact" : null, pack.modules.includes("catalogue") ? "catalogue_item" : null].filter(Boolean)) as FieldEntity[]) : [];
+  const fieldList: WorkspaceField[] | null = admin && fieldEntities.length > 0 ? await listCustomFields(user.accessToken, tenantId).catch((e) => (e instanceof ApiAuthError ? redirect("/login") : null)) : null;
+  // a workspace that existed before business types and has no field of its own keeps the Settings it always had; one made with a chosen business type, or that has fields, gets the tab
+  const hasFields = admin && fieldEntities.length > 0 && (usesChecklist(pack) || (fieldList !== null && fieldList.length > 0));
   const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) ? (wanted as Section) : "business";
 
   let members: Member[] | null = null;
@@ -244,9 +247,9 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         ) : null}
         {section === "fields" ? (
           <FieldsSection
-            fields={pack.fields}
+            fields={fieldList ?? []}
             entities={fieldEntities}
-            source={pack.source}
+            available={fieldList !== null}
             canEdit={admin}
             notice={(["added", "updated", "unavailable", "mfa", "invalid", "role", "limit", "failed"] as const).find((n) => n === pick(query.fieldnote)) ?? null}
             lang={lang}

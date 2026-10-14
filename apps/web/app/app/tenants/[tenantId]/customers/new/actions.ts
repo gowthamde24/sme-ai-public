@@ -7,11 +7,10 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { createContact, createCustomerCompany, createLead, HOW_IT_CAME, type HowItCame } from "@/lib/api/customers";
-import { putContactCustom, type CustomValue } from "@/lib/api/custom-fields";
+import { listCustomFields, putContactCustom, type CustomValue } from "@/lib/api/custom-fields";
 import { gstinProblem, normaliseGstin } from "@/lib/gstin";
 import { normaliseValues } from "@/lib/packs/field-values";
-import { readPackCached } from "@/lib/packs/read";
-import { textIn } from "@/lib/packs/registry";
+import { textIn } from "@/lib/packs/text";
 import { appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
@@ -104,17 +103,23 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
   let custom: Record<string, CustomValue> = {};
   const rawCustom = field(formData, "custom");
   if (rawCustom !== "") {
-    const pack = await readPackCached(user.accessToken, tenantId);
+    let defs;
+    try {
+      defs = await listCustomFields(user.accessToken, tenantId, "contact");
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      return { ok: false, error: t("cust.a_value_was_not_accepted_check") };
+    }
     let parsed: unknown = null;
     try {
       parsed = JSON.parse(rawCustom);
     } catch {
       return { ok: false, error: t("cust.a_value_was_not_accepted_check") };
     }
-    const { values, issues } = normaliseValues(pack.fields, "contact", parsed);
+    const { values, issues } = normaliseValues(defs, "contact", parsed);
     const bad = Object.entries(issues)[0];
     if (bad) {
-      const fl = pack.fields.find((f) => f.code === bad[0]);
+      const fl = defs.find((f) => f.code === bad[0]);
       const lang = await getLang();
       const a = appT(lang);
       return { ok: false, error: `${fl ? textIn(fl.label, lang) : bad[0]} ${a(`fields.issue.${bad[1]}` as "fields.issue.required")}` };
@@ -143,7 +148,7 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
     } catch (error) {
       if (error instanceof ApiAuthError) redirect("/login");
       const a = appT(await getLang());
-      const reason = error instanceof ApiRequestError && (error.status === 404 || error.status === 501) ? "unavailable" : error instanceof ApiRequestError && (error.status === 400 || error.status === 409 || error.status === 422) ? "invalid" : "failed";
+      const reason = error instanceof ApiRequestError && (error.status === 404 || error.status === 501 || error.code === "module_off") ? "unavailable" : error instanceof ApiRequestError && (error.status === 400 || error.status === 409 || error.status === 422) ? "invalid" : "failed";
       fieldsNote = a("fields.form.unsaved", { reason: a(`fields.form.reason.${reason}` as "fields.form.reason.failed") });
     }
   }

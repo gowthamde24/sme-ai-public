@@ -1,17 +1,16 @@
 import type { AppT } from "@/i18n/app";
-import type { ExampleState } from "@/lib/api/pack";
 
 import { card, danger, help, primary, secondary, errorLine, okLine } from "../visits/styles";
 
+export type ExampleState = "available" | "loaded";
 export type ExampleNotice = "loaded" | "removed" | "unavailable" | "failed" | null;
 
 /**
  * "See how it works with example data" (job CL, blueprint 3.2): a banner at the top of Today. One press loads a small sample workspace that is clearly labelled as example; another removes it (after one confirming
- * press: it deletes rows). Two plain forms posting to server actions: no script. Drawn only when the server says the business type has a sample (`available`) or one is loaded; nothing is invented. `notice` = the
- * result of the last press (carried in the address by the action).
+ * press: it deletes rows, and only the sample's own rows that nobody has used; the others stay, and `kept` says how many). Two plain forms posting to server actions: no script. Drawn only when the server can say whether a
+ * sample is loaded; nothing is invented. `notice` = the result of the last press (carried in the address by the action).
  */
-export function ExampleBanner({ state, notice, load, remove, t }: { state: ExampleState; notice: ExampleNotice; load: () => Promise<void>; remove: () => Promise<void>; t: AppT }) {
-  if (state === "none") return null;
+export function ExampleBanner({ state, notice, kept = 0, load, remove, t }: { state: ExampleState; notice: ExampleNotice; /** How many sample rows stayed because they were used (with `removed`). */ kept?: number; load: () => Promise<void>; remove: () => Promise<void>; t: AppT }) {
   const message =
     notice === "loaded" ? (
       <p role="status" className={okLine}>
@@ -19,7 +18,7 @@ export function ExampleBanner({ state, notice, load, remove, t }: { state: Examp
       </p>
     ) : notice === "removed" ? (
       <p role="status" className={okLine}>
-        {t("start.example.done.removed")}
+        {kept > 0 ? t("start.example.done.kept", { n: kept }) : t("start.example.done.removed")}
       </p>
     ) : notice === "unavailable" ? (
       <p role="alert" className={errorLine}>

@@ -6,7 +6,7 @@ import type { BusinessType, SetupLanguage } from "./account";
  * (app/app/setup/actions.ts).
  */
 export type { BusinessType, SetupLanguage } from "./account";
-export { BUSINESS_TYPES, SETUP_LANGUAGES } from "./account";
+export { SETUP_LANGUAGES } from "./account";
 
 /**
  * Exactly these four, in this order. There is no "email taken": a sign-up with an address that already has an account answers

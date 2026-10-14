@@ -74,7 +74,7 @@ async function load(strict: boolean): Promise<AuthenticatedUser> {
     aal,
     hasSecondFactor,
     ...(signupPolicies.terms && signupPolicies.privacy ? { signupPolicies } : {}),
-    ...(typeof meta.business_type === "string" && /^[a-z][a-z0-9_]{2,23}$/.test(meta.business_type) ? { signupPack: meta.business_type } : {}),
+    ...(typeof meta.business_type === "string" && /^[a-z][a-z0-9_]{1,30}$/.test(meta.business_type) ? { signupPack: meta.business_type } : {}),
   };
 }
 

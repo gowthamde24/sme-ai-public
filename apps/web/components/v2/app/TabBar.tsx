@@ -10,7 +10,7 @@ import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
 import { NavIcon } from "./icons";
 import { word, withPackWords, type Labels } from "./labels";
-import { barItems, footItems, hrefOf, visibleGroups } from "./nav";
+import { barItems, coreItem, footItems, hrefOf, visibleGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const cell = "relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 pb-1 pt-1.5 text-center text-sm font-medium leading-tight transition-colors duration-150 ease-out active:bg-surface-2";
@@ -49,6 +49,8 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
   }, [open]);
   if (!current) return null;
   const tabs = barItems(current.role, frame.pack);
+  const core = frame.pack ? coreItem(frame.pack) : null;
+  const coreWord = frame.pack?.labels["pack.core_tab"]; // the business type's own word for its core tab (it comes with the pack, not from the string store)
   const rest = [...visibleGroups(current.role, frame.pack).flatMap((g) => g.items), ...footItems(current.role)].filter((i) => !tabs.some((t) => t.id === i.id));
   const moreOn = active ? rest.some((i) => i.id === active.item.id) : false;
   const mark = <span aria-hidden="true" className="absolute inset-x-3 top-0 h-0.5 rounded-b-full bg-brand-edge" />;
@@ -70,7 +72,7 @@ export function TabBar({ memberships, labels: given_labels, frame: given, email,
                   </span>
                 ) : null}
               </span>
-              <span className="max-w-full break-words">{word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
+              <span className="max-w-full break-words">{core?.id === i.id && coreWord ? coreWord : word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
             </Link>
           );
         })}

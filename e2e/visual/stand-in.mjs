@@ -6,7 +6,7 @@
 import { readFileSync } from "node:fs";
 import https from "node:https";
 
-import { API_ROUTES, SESSION_USER } from "./fixtures.mjs";
+import { API_ROUTES, PUBLIC_API_PATHS, SESSION_USER } from "./fixtures.mjs";
 
 const PALETTES = [["#9b1c2e", "#d4a33b", "#5e0f1b"], ["#1f5f8b", "#7fb7d6", "#123a57"], ["#e7a1b8", "#f6d3df", "#b9667f"], ["#2f7d4f", "#9fd3a8", "#1d4d31"]];
 /** A draped-cloth picture (stripes, a border and a few motifs) in a palette: invented, deterministic, 600x800. */
@@ -42,7 +42,7 @@ export function startStandIn({ port, certPath, keyPath, delayMs = 0, trace = nul
       return /^Bearer .+/.test(req.headers.authorization ?? "") ? send(200, SESSION_USER) : send(401, { msg: "no token" });
     }
     if (!url.pathname.startsWith("/v1/")) return send(404, { error: { code: "not_found", message: "stand-in: not an API path" } });
-    if (!/^Bearer .+/.test(req.headers.authorization ?? "")) return send(401, { error: { code: "unauthorized", message: "stand-in: no token" } });
+    if (!PUBLIC_API_PATHS.has(url.pathname) && !/^Bearer .+/.test(req.headers.authorization ?? "")) return send(401, { error: { code: "unauthorized", message: "stand-in: no token" } });
     if (req.method !== "GET") return send(405, { error: { code: "method_not_allowed", message: "stand-in: the visual tests only look" } });
     for (const [pattern, answer] of API_ROUTES) {
       const m = pattern.exec(url.pathname);

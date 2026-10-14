@@ -19,6 +19,8 @@ vi.mock("@/lib/api/example-data", () => ({ loadExampleData: (...a: unknown[]) =>
 import { loadExampleAction, removeExampleAction, saveProfileAction } from "./actions";
 
 const T = "22222222-2222-2222-2222-222222222222";
+const NONE = { companies: 0, contacts: 0, leads: 0, products: 0 };
+const COUNTS = { companies: 2, contacts: 3, leads: 3, products: 4 };
 const form = (o: Record<string, string>) => {
   const f = new FormData();
   for (const [k, v] of Object.entries(o)) f.set(k, v);
@@ -39,7 +41,7 @@ beforeEach(() => {
   fetchTenant.mockResolvedValue({ id: T, name: "x", slug: "x", role: "owner" });
   saveProfile.mockResolvedValue({ name: "A", town: "B", setupComplete: true });
   loadExample.mockResolvedValue("ok");
-  removeExample.mockResolvedValue("ok");
+  removeExample.mockResolvedValue({ result: "ok", removed: { removed: COUNTS, kept: NONE } });
 });
 
 describe("saving the business name and city (the first checklist question)", () => {
@@ -80,6 +82,10 @@ describe("example data", () => {
     expect(loadExample).toHaveBeenCalledWith("tok", T);
     expect(await target(() => removeExampleAction(T))).toBe(`/app/tenants/${T}?example=removed`);
     expect(removeExample).toHaveBeenCalledWith("tok", T);
+  });
+  it("says how many sample rows stayed because they were used (the API keeps them and counts them)", async () => {
+    removeExample.mockResolvedValueOnce({ result: "ok", removed: { removed: COUNTS, kept: { ...NONE, products: 2, leads: 1 } } });
+    expect(await target(() => removeExampleAction(T))).toBe(`/app/tenants/${T}?example=removed&kept=3`);
   });
   it("says 'unavailable' when the server has no such route, and 'failed' for a refusal or a failure", async () => {
     loadExample.mockResolvedValueOnce("unavailable");

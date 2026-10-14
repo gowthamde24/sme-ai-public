@@ -4,187 +4,116 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import app from "@/i18n/strings/app.json";
-import { FOOT, NAV, barItems, footItems, visibleGroups, type Role } from "@/components/v2/app/nav";
-import { buildBundle, checkAll, packIds, PACKS_DIR, readAll, readSchema, validate } from "../../../../packages/packs/validate.mjs";
+import { NAV, barItems, coreItem, footItems, visibleGroups, type PackFrame, type Role } from "@/components/v2/app/nav";
 
-import { PACKS, defaultPack, isKnownPack, MODULES, packById, signupPacks, textIn } from "./registry";
+import { allModules, defaultPackId, otherPackIds, packFiles, workspacePack } from "./pack-test-kit";
 import { packFrame, packWords, withPackT, withPackWords } from "./resolve";
 
 const WEB = path.resolve(import.meta.dirname, "..", "..");
-const MENU = NAV.flatMap((g) => g.items.map((i) => i.id));
-const schema = readSchema();
-const clone = <T,>(v: T): T => JSON.parse(JSON.stringify(v));
 const ROLES: Role[] = ["owner", "admin", "sales", "viewer"];
+const dict = app as unknown as Record<string, Record<string, string>>;
+const ids = (f: PackFrame | null, role: Role = "owner") => visibleGroups(role, f).flatMap((g) => g.items.map((i) => i.id));
 
-describe("the validator", () => {
-  const s = { type: "object", additionalProperties: false, required: ["a"], properties: { a: { type: "string", pattern: "^x", maxLength: 3 }, b: { enum: [1, 2] }, c: { type: "array", items: { type: "integer" }, maxItems: 2, uniqueItems: true } } };
-  it("accepts a good value and names each fault with its path", () => {
-    expect(validate({ a: "xy", b: 1, c: [1, 2] }, s)).toEqual([]);
-    expect(validate({ b: 3, z: 1, c: [1, 1, 2, "q"] }, s).join("\n")).toMatch(/"a" is required[\s\S]*not one of 1, 2[\s\S]*"z" is not allowed[\s\S]*more than 2 items[\s\S]*not unique[\s\S]*c\[3\]: expected integer/);
-    expect(validate({ a: "abcd" }, s).join("\n")).toMatch(/longer than 3[\s\S]*does not match/);
+describe("the web reads the business types from packages/packs through the API's shapes (one source of truth)", () => {
+  it("every module the menu names is a module of the closed list in packages/packs/modules.json", () => {
+    const modules = allModules();
+    for (const i of [...NAV.flatMap((g) => g.items), ...footItems("owner")]) if (i.module) expect(modules, i.id).toContain(i.module);
   });
-  it("refuses a schema keyword it does not know, instead of half-checking", () => {
-    expect(validate({}, { type: "object", oneOf: [] } as never)[0]).toMatch(/does not know the schema keyword "oneOf"/);
+  it("every core tab a pack names has a menu item that holds it (or the default tab stays)", () => {
+    for (const p of Object.values(packFiles())) expect(coreItem(packFrame(workspacePack(p.id), "en"))?.id, p.id).toBeTruthy();
   });
-  it("resolves $ref into $defs and reports one it cannot", () => {
-    expect(validate("q", { $defs: { t: { type: "string", minLength: 2 } }, $ref: "#/$defs/t" })).toEqual(["$: shorter than 2"]);
-    expect(validate("q", { $ref: "#/$defs/nope" })[0]).toMatch(/cannot resolve/);
+  it("a word a pack changes is one the app dictionary already has, or one of the pack's own kinds (word.*, pack.*)", () => {
+    for (const p of Object.values(packFiles())) for (const key of Object.keys(p.labels.en)) expect(key.startsWith("word.") || key.startsWith("pack.") || key in dict, `${p.id}:${key}`).toBe(true);
   });
-});
-
-describe("the pack files (CI check, blueprint section 13)", () => {
-  const packs = readAll() as Record<string, never>;
-  it("are in packages/packs, one folder each, and there are three business types", () => {
-    expect(packIds()).toEqual(["construction", "education", "textiles"]);
-    expect(PACKS.map((p) => p.id)).toEqual(["textiles", "construction", "education"]); // sign-up order
-  });
-  it("all pass the JSON Schema and the cross-file rules", () => {
-    expect(checkAll(packs, schema, MENU)).toEqual([]);
-  });
-  it("say every text in English, Telugu, Hindi and Kannada", () => {
-    for (const p of PACKS) {
-      const texts = [p.name, p.tagline, p.business_name_default, ...Object.values(p.labels), ...p.fields.flatMap((f) => [f.label, ...(f.choices ?? []).map((c) => c.label)]), ...p.activation.steps.flatMap((x) => [x.title, x.hint])];
-      for (const t of texts) for (const l of ["en", "te", "hi", "kn"] as const) expect(t[l]?.trim().length, `${p.id}:${t.en}:${l}`).toBeGreaterThan(0);
-      for (const [lang, script] of [["te", /[ఀ-౿]/], ["hi", /[ऀ-ॿ]/], ["kn", /[ಀ-೿]/]] as const) expect(texts.filter((t) => !script.test(t[lang]) && !/^[\d\s%()]+$/.test(t.en) && !/^\d+$/.test(t.en)).map((t) => t.en), `${p.id}:${lang} not in its own script`).toEqual([]);
+  it("the default pack says in every language exactly the words the app dictionary already says for the same keys (textiles must look as today)", () => {
+    const base = packFiles()[defaultPackId()];
+    for (const lang of ["en", "te", "hi", "kn"]) {
+      for (const [key, text] of Object.entries(base.labels[lang] ?? {})) if (key in dict && !key.startsWith("word.") && !key.startsWith("pack.")) expect(text, `${lang}:${key}`).toBe(dict[key][lang]);
     }
-  });
-  it("change only words that exist in the app dictionary (a pack changes words, it does not add text)", () => {
-    for (const p of PACKS) for (const k of Object.keys(p.labels)) expect(Object.keys(app), `${p.id}:${k}`).toContain(k);
-  });
-  it("name only modules and menu items that exist", () => {
-    for (const p of PACKS) {
-      for (const m of p.modules) expect(MODULES, `${p.id}:${m}`).toContain(m);
-      for (const b of p.nav.bar) expect(MENU, `${p.id}:${b}`).toContain(b);
-    }
-    for (const i of [...NAV.flatMap((g) => g.items), ...FOOT]) if (i.module) expect(MODULES, i.id).toContain(i.module);
-  });
-  it("have exactly one default, and a sign-up card each", () => {
-    expect(PACKS.filter((p) => p.default)).toHaveLength(1);
-    expect(defaultPack().id).toBe(PACKS[0].id);
-    expect(signupPacks()).toHaveLength(3);
-    expect(isKnownPack(PACKS[1].id)).toBe(true);
-    expect(isKnownPack("nope")).toBe(false);
-    expect(packById("nope").default).toBe(true); // an id this build does not know is drawn with the default pack, never a crash
-    expect(packById(undefined).default).toBe(true);
-  });
-  it("keep personal and child data out of the fields a model could see: child fields do not exist on contacts or items of any pack yet, and personal ones are marked", () => {
-    expect(PACKS.flatMap((p) => p.fields).filter((f) => f.pii_class === "child")).toEqual([]);
-    expect(PACKS.flatMap((p) => p.fields).filter((f) => f.pii_class === "personal").map((f) => f.code)).toEqual(["relation"]);
-  });
-  it("the generated bundle the web app imports is fresh (run `make packs`)", () => {
-    const want = `${JSON.stringify(buildBundle(readAll(), schema), null, 1)}\n`;
-    expect(fs.readFileSync(path.join(WEB, "lib", "packs", "packs.generated.json"), "utf8")).toBe(want);
-  });
-  it("a fault in a pack is caught", () => {
-    const bad = clone(packs);
-    delete (bad.construction as { name: { te?: string } }).name.te;
-    (bad.education as { modules: string[] }).modules.push("nonsense");
-    (bad.textiles as { nav: { bar: string[] } }).nav.bar.push("nope");
-    (bad.education as { default: boolean }).default = true;
-    (bad.construction as { labels: Record<string, unknown> }).labels["settings.title"] = { en: "x", te: "x", hi: "x", kn: "x" };
-    const errors = checkAll(bad, schema, MENU).join("\n");
-    expect(errors).toMatch(/construction: \$\.name: "te" is required/);
-    expect(errors).toMatch(/education: \$\.modules\[\d+\]: "nonsense" is not one of/);
-    expect(errors).toMatch(/textiles: nav.bar "nope" is not a menu item/);
-    expect(errors).toMatch(/exactly one pack must have "default": true/);
-    expect(errors).toMatch(/construction: \$\.labels: "settings.title" is not allowed here/);
-  });
-  it("cross-file rules: choices belong to choice fields, codes are unique, a contact field needs the contacts module", () => {
-    const bad = clone(packs) as Record<string, { fields: { entity: string; code: string; kind: string; label: unknown; pii_class: string; choices?: unknown }[]; modules: string[] }>;
-    bad.construction.fields.push({ entity: "contact", code: "customer_type", kind: "text", label: bad.construction.fields[0].label, pii_class: "none", choices: [{}, {}] });
-    bad.education.modules = bad.education.modules.filter((m: string) => m !== "contacts");
-    const errors = checkAll(bad as never, schema, MENU).join("\n");
-    expect(errors).toMatch(/field contact.customer_type is defined twice/);
-    expect(errors).toMatch(/"choices" belong to choice and multi_choice fields only/);
-    expect(errors).toMatch(/education: field contact\.relation: a contact field needs the "contacts" module/);
   });
 });
 
 describe("the default pack is the product as it was (equivalence: textiles must look exactly as today)", () => {
-  const base = defaultPack();
-  const frame = packFrame(base, base.modules, "en");
-  it("changes no word and is not badged", () => {
-    expect(frame.labels).toEqual({});
-    expect(frame.isDefault).toBe(true);
-    expect(packWords(base, "en")).toEqual({});
-    const words = { "nav.item.orders": "Orders" };
-    expect(withPackWords(words, base, "te")).toBe(words);
-    const t = (k: string) => k;
-    expect(withPackT(t as never, base, "en")).toBe(t);
+  const pack = workspacePack(defaultPackId(), "legacy");
+  const frame = packFrame(pack, "en");
+  it("changes no word of the app dictionary and is not badged", () => {
+    expect(frame.validated).toBe(true);
+    for (const lang of ["en", "te", "hi", "kn"]) {
+      const words = Object.fromEntries(Object.entries(dict).map(([k, v]) => [k, v[lang]]));
+      const out = withPackWords(words, pack, lang);
+      expect(Object.keys(out).filter((k) => out[k] !== words[k]), lang).toEqual([]);
+    }
+    const t = ((k: string) => dict[k]?.en ?? k) as never;
+    const wrapped = withPackT(t, pack, "en") as unknown as (k: string) => string;
+    expect(wrapped("nav.item.today")).toBe("Today");
   });
   it.each(ROLES)("offers a %s the same menu, in the same order, with and without the pack", (role) => {
-    const ids = (g: ReturnType<typeof visibleGroups>) => g.map((x) => [x.id, x.items.map((i) => i.id)]);
-    expect(ids(visibleGroups(role, frame))).toEqual(ids(visibleGroups(role)));
-    expect(barItems(role, frame).map((i) => i.id)).toEqual(barItems(role).map((i) => i.id));
-    expect(footItems(role).length).toBeLessThanOrEqual(1);
+    const shape = (f: PackFrame | null) => visibleGroups(role, f).map((g) => [g.id, g.items.map((i) => i.id)]);
+    expect(shape(frame)).toEqual(shape(null));
+    expect(barItems(role, frame).map((i) => i.id)).toEqual(barItems(role, null).map((i) => i.id));
   });
   it("keeps the phone's five tabs: Today, Leads, Quotes, Visits, Office", () => {
     expect(barItems("owner", frame).map((i) => i.id)).toEqual(["today", "leads", "quotes", "visits", "office"]);
   });
   it("hides the items only a pack brings (Fees, Campaigns)", () => {
-    const all = visibleGroups("owner", frame).flatMap((g) => g.items.map((i) => i.id));
-    expect(all).not.toContain("fees");
-    expect(all).not.toContain("campaigns");
-    expect(visibleGroups("owner").flatMap((g) => g.items.map((i) => i.id))).not.toContain("fees");
+    expect(ids(frame)).not.toContain("fees");
+    expect(ids(frame)).not.toContain("campaigns");
+    expect(ids(null)).not.toContain("fees");
   });
 });
 
 describe("the other business types", () => {
-  const frameOf = (index: number, lang = "en") => packFrame(PACKS[index], PACKS[index].modules, lang);
-  const idsOf = (f: ReturnType<typeof frameOf>, role: Role = "owner") => visibleGroups(role, f).flatMap((g) => g.items.map((i) => i.id));
-  it("construction: Orders & deliveries is the core tab; Quotes, Catalogue and the finder stay; the words are its own", () => {
-    const f = frameOf(1);
-    expect(barItems("owner", f).map((i) => i.id)).toEqual(["today", "chats", "orders", "customers"]);
-    expect(f.labels["nav.item.orders"]).toBe("Orders & deliveries");
-    expect(f.labels["nav.item.customers"]).toBe("Customers & sites");
-    expect(f.labels["nav.item.visits"]).toBe("Site visits");
-    expect(idsOf(f)).toEqual(expect.arrayContaining(["quotes", "orders", "sarees", "retailers", "campaigns"]));
-    expect(idsOf(f)).not.toContain("fees");
-    expect(packWords(PACKS[1], "en")["agent.requirement_analyst"]).toBe("Site Measurer");
-  });
-  it("education: Fees is the core tab; no Quotes, Orders, Catalogue or finder; Campaigns and Fees are there", () => {
-    const f = frameOf(2);
-    expect(barItems("owner", f).map((i) => i.id)).toEqual(["today", "chats", "fees", "customers"]);
-    expect(idsOf(f)).toEqual(expect.arrayContaining(["fees", "campaigns", "customers", "visits", "chats"]));
-    for (const gone of ["quotes", "orders", "sarees", "catalogue", "retailers"]) expect(idsOf(f), gone).not.toContain(gone);
-    expect(f.labels["nav.item.customers"]).toBe("Parents & students");
-    expect(f.labels["nav.item.visits"]).toBe("Campus visits");
-    expect(packWords(PACKS[2], "en")["agent.quote_writer"]).toBe("Fee Desk");
-  });
+  for (const id of otherPackIds()) {
+    const m = packFiles()[id];
+    describe(`${m.id}`, () => {
+      const pack = workspacePack(id, "signup");
+      const frame = packFrame(pack, "en");
+      it("shows exactly the menu its modules allow (default deny), and nothing of a module that is off", () => {
+        const shown = new Set(ids(frame));
+        for (const i of NAV.flatMap((g) => g.items)) if (i.module && !m.modules.includes(i.module) && i.roles.includes("owner")) expect(shown.has(i.id), i.id).toBe(false);
+        for (const i of NAV.flatMap((g) => g.items)) if ((!i.module || m.modules.includes(i.module)) && i.roles.includes("owner")) expect(shown.has(i.id), i.id).toBe(true);
+      });
+      it("puts its core tab on the phone's bar in the core slot and calls it by the pack's own word", () => {
+        const core = coreItem(frame);
+        expect(barItems("owner", frame).map((i) => i.id)).toContain(core!.id);
+        expect(frame.labels["pack.core_tab"]).toBe(m.labels.en["pack.core_tab"]);
+        expect(barItems("owner", frame)).toHaveLength(5);
+      });
+      it("speaks the person's language, English when a text is missing", () => {
+        expect(packFrame(pack, "te").name).toBe((m.names as Record<string, string>).te);
+        expect(packFrame(pack, "ta").name).toBe((m.names as Record<string, string>).en);
+        expect(packWords(pack, "ta")["nav.item.today"]).toBe(m.labels.en["nav.item.today"]);
+      });
+    });
+  }
   it("a role that may not open an item does not get its tab, whatever the pack says", () => {
-    expect(barItems("viewer", frameOf(1)).map((i) => i.id)).toEqual(["today", "customers"]);
-    expect(barItems("sales", frameOf(2)).map((i) => i.id)).toEqual(["today", "chats", "fees", "customers"]);
-  });
-  it("speaks the person's language, English when a text is missing", () => {
-    expect(frameOf(1, "hi").labels["nav.item.orders"]).toBe("ऑर्डर और डिलीवरी");
-    expect(textIn(PACKS[1].name, "ta")).toBe("Construction materials");
-    expect(frameOf(1, "te").name).toBe("నిర్మాణ సామగ్రి");
+    for (const id of otherPackIds()) expect(barItems("viewer", packFrame(workspacePack(id), "en")).map((i) => i.id)).toEqual(["today", "leads", "visits", "office"].filter((x) => ids(packFrame(workspacePack(id), "en"), "viewer").includes(x)));
   });
   it("overlays words on a page only for keys the page already has", () => {
-    const words = { "agent.order_desk": "Order Desk", "agent.lead_finder": "Lead Finder" };
-    expect(withPackWords(words, PACKS[1], "en")).toEqual({ "agent.order_desk": "Dispatch Desk", "agent.lead_finder": "Lead Finder" });
-    expect(Object.keys(withPackWords({ "other.key": "x" }, PACKS[1], "en"))).toEqual(["other.key"]);
-    const t = withPackT(((k: string, v?: unknown) => (v ? `${k}!` : k)) as never, PACKS[1], "en") as unknown as (k: string, v?: unknown) => string;
-    expect(t("agent.order_desk")).toBe("Dispatch Desk");
-    expect(t("agent.order_desk", { n: 1 })).toBe("agent.order_desk!");
-    expect(t("agent.researcher")).toBe("agent.researcher");
+    const pack = workspacePack(otherPackIds()[0]);
+    const own = packWords(pack, "en");
+    const key = Object.keys(own).find((k) => k.startsWith("agent.") && own[k] !== dict[k]?.en)!;
+    expect(withPackWords({ [key]: "x", "other.key": "y" }, pack, "en")).toEqual({ [key]: own[key], "other.key": "y" });
+    expect(Object.keys(withPackWords({ "other.key": "x" }, pack, "en"))).toEqual(["other.key"]);
+    const t = withPackT(((k: string, v?: unknown) => (v ? `${k}!` : k)) as never, pack, "en") as unknown as (k: string, v?: unknown) => string;
+    expect(t(key)).toBe(own[key]);
+    expect(t(key, { n: 1 })).toBe(`${key}!`);
+    expect(t("agent.nope")).toBe("agent.nope");
   });
 });
 
-describe("no pack id in code, and the registry stays on the server", () => {
+describe("the web never holds a copy of the packs, and the files are read by server code only", () => {
   const walk = (dir: string): string[] =>
     fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? (["node_modules", ".next", "test"].includes(e.name) ? [] : walk(path.join(dir, e.name))) : [path.join(dir, e.name)]));
-  const source = ["app", "components", "lib", "i18n"].flatMap((d) => walk(path.join(WEB, d))).filter((f) => /\.(ts|tsx|mjs)$/.test(f) && !/\.test\.|-test-kit\.|fixtures?\.(ts|mjs)$|-fixtures\./.test(f));
-  it("finds source files to look at", () => {
-    expect(source.length).toBeGreaterThan(300);
+  const source = ["app", "components", "lib", "i18n"].flatMap((d) => walk(path.join(WEB, d))).filter((f) => /\.(ts|tsx|mjs)$/.test(f) && !/\.test\.|test-kit\.|fixtures?\.(ts|mjs)$|-fixtures\./.test(f));
+  it("has no generated bundle and no registry of the pack files inside apps/web", () => {
+    expect(fs.existsSync(path.join(WEB, "lib", "packs", "packs.generated.json"))).toBe(false);
+    expect(fs.existsSync(path.join(WEB, "lib", "packs", "registry.ts"))).toBe(false);
+    // nothing imports or reads a pack file (a comment may say where they live)
+    expect(source.filter((f) => /(from\s+|import\(|require\(|readFile\w*\(|join\()[^;\n]*["'`][^"'`]*packages\/packs/.test(fs.readFileSync(f, "utf8"))).map((f) => path.relative(WEB, f))).toEqual([]);
   });
-  it("names no business type in any application source file (the ids are the folders of packages/packs)", () => {
-    const ids = fs.readdirSync(PACKS_DIR, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name);
-    const re = new RegExp(`["'\`](${ids.join("|")})["'\`]`);
-    expect(source.filter((f) => re.test(fs.readFileSync(f, "utf8"))).map((f) => path.relative(WEB, f))).toEqual([]);
-  });
-  it("is imported by no client component (it holds all four languages of every pack)", () => {
+  it("is used by no client component (the server turns what a screen needs into plain props)", () => {
     const clients = source.filter((f) => /^\s*["']use client["']/.test(fs.readFileSync(f, "utf8")));
-    for (const f of clients) expect(fs.readFileSync(f, "utf8"), path.relative(WEB, f)).not.toMatch(/@\/lib\/packs\/(registry|packs\.generated|resolve|signup|read|activation)|@\/lib\/api\/pack"/);
+    for (const f of clients) expect(fs.readFileSync(f, "utf8"), path.relative(WEB, f)).not.toMatch(/@\/lib\/packs\/(resolve|signup|read|activation|activation-facts)|@\/lib\/api\/pack"/);
   });
 });

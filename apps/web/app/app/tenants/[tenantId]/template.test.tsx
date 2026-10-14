@@ -13,7 +13,7 @@ vi.mock("next/headers", () => ({ headers: async () => ({ get: (k: string) => (k 
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
 
-import { fixtureWorkspacePack, parseWorkspacePack } from "@/lib/api/pack";
+import { defaultWorkspacePack, otherPackIds, workspacePack } from "@/lib/packs/pack-test-kit";
 
 import WorkspaceTemplate from "./template";
 
@@ -23,7 +23,7 @@ const draw = async () => render(await WorkspaceTemplate({ children: <p>the page<
 beforeEach(() => {
   vi.clearAllMocks();
   requireUser.mockResolvedValue({ id: "u", accessToken: "tok" });
-  readPack.mockResolvedValue(parseWorkspacePack({ pack: "education", modules: ["today", "fees", "contacts"] }));
+  readPack.mockResolvedValue(workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!, "signup", ["today", "fees", "contacts"]));
 });
 
 describe("the module guard of a workspace", () => {
@@ -56,6 +56,13 @@ describe("the module guard of a workspace", () => {
     expect(readPack).not.toHaveBeenCalled();
     expect(requireUser).not.toHaveBeenCalled();
   });
+  it("judges nothing when there is no pack (a server with no pack routes, or a failed read): the API and the database still refuse", async () => {
+    readPack.mockResolvedValue(null);
+    headerValue.mockReturnValue(`/app/tenants/${T}/orders`);
+    await draw();
+    expect(forbidden).not.toHaveBeenCalled();
+    expect(screen.getByText("the page")).toBeInTheDocument();
+  });
   it("does nothing without a path from the proxy (a test, a request the proxy did not see)", async () => {
     headerValue.mockReturnValue(null);
     await draw();
@@ -63,7 +70,7 @@ describe("the module guard of a workspace", () => {
     expect(screen.getByText("the page")).toBeInTheDocument();
   });
   it("the default business type keeps every page it always had, and refuses the ones only a pack brings", async () => {
-    readPack.mockResolvedValue(fixtureWorkspacePack());
+    readPack.mockResolvedValue(defaultWorkspacePack());
     for (const p of ["/orders", "/quotes", "/catalogue", "/retailers", "/chats", "/visits", "/outbox", "/report", "/integrations", "/office", "?tab=companies", "?tab=leads"]) {
       headerValue.mockReturnValue(`/app/tenants/${T}${p}`);
       await draw();

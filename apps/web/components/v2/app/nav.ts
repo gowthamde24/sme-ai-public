@@ -24,6 +24,8 @@ export type NavItem = {
   also?: readonly string[];
   /** A tab of the phone's bottom bar (the rest are in "More"). */
   bar?: boolean;
+  /** The bar tab that holds the business type's core work (job CL, blueprint 2): in a workspace whose core tab is another item's module, that item takes this tab's place; without a business type it is itself. */
+  core?: boolean;
   /** The shorter word the phone's bottom bar uses for the item ("Visits" for "Store visits"); without it the bar uses `label`. */
   short?: string;
   roles: readonly Role[];
@@ -50,14 +52,14 @@ export const NAV: readonly NavGroup[] = [
     items: [
       { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start"], bar: true, roles: ALL_ROLES },
       { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, module: "enquiries", roles: ALL_ROLES },
-      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, module: "quotes", roles: WRITERS },
+      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, core: true, module: "quotes", roles: WRITERS },
       { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, module: "visits", roles: ALL_ROLES },
       // job CL: the fee page of the education business type (blueprint 2, the phone's core tab); only a pack whose modules include "fees" offers it
       { id: "fees", label: "Fees", icon: "fees", path: "/fees", module: "fees", packOnly: true, roles: WRITERS },
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", module: "orders", roles: WRITERS },
       // job CL: reminder campaigns (construction dues, education fees); the screens come with the campaign jobs
       { id: "campaigns", label: "Campaigns", icon: "campaigns", path: "/campaigns", module: "campaigns", packOnly: true, roles: ADMINS },
-      { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", module: "outbox", roles: WRITERS },
+      { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
       { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
       { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
@@ -80,7 +82,7 @@ export const NAV: readonly NavGroup[] = [
     label: "Your team",
     items: [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
-      { id: "team", label: "Team", icon: "team", path: "/team", module: "team", roles: ALL_ROLES },
+      { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
       { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, module: "office", roles: ALL_ROLES },
     ],
   },
@@ -99,18 +101,19 @@ export const FOOT: readonly NavItem[] = [
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
 /**
- * What the menu needs to know about the workspace's business type (job CL; a plain object, so the client never imports the pack files): the modules that are on, the tabs of the phone's bottom bar,
- * the words the pack changes (by dictionary key, already in the person's language) and a few facts for a badge. With NO pack (`undefined`/`null`: not read yet, or no API for it) the menu is the one the product always
- * had; `PACK_FRAME_LEGACY` in the tests pins that the default pack gives the same menu, word for word.
+ * What the menu needs to know about the workspace's business type (job CL; a plain object, so the client never imports more than it draws): the modules that are ON (the API's answer), the module of the phone's
+ * core tab, the words the business type changes (the `nav.*` and `pack.core_tab` keys, already in the person's language) and a few facts for a badge. With NO pack (`undefined`/`null`: not read yet, or a server that
+ * has no pack routes) the menu is the one the product always had. Nothing here names a business type.
  */
 export type PackFrame = {
-  id: string;
   name: string;
-  /** The pack the product was before packs: no badge is drawn for it, so its screens look exactly as they did. */
-  isDefault: boolean;
+  /** The accent token the pack names (`data-accent`); an unknown one draws the default look. */
   accent: string;
+  /** A real owner of this kind of business has reviewed the pack; the badge says so when it is not. */
+  validated: boolean;
+  /** The module of the phone's core tab (Quotes, Orders & deliveries, Fees ...). */
+  coreTab: string;
   modules: readonly string[];
-  bar: readonly string[];
   labels: Readonly<Record<string, string>>;
 };
 
@@ -130,12 +133,22 @@ export function footItems(role: Role): NavItem[] {
   return FOOT.filter((i) => i.roles.includes(role));
 }
 
-/** The items that are tabs of the phone's bottom bar (then "More" holds the rest), only those the role is offered. */
+/** The item that holds the core work of a business type: the first menu item of its module (Quotes for `quotes`, Orders for `orders`, Fees for `fees`). Null when no screen has that module yet. */
+export function coreItem(view: PackFrame): NavItem | null {
+  return NAV.flatMap((g) => g.items).find((i) => i.module === view.coreTab) ?? null;
+}
+
+/**
+ * The items that are tabs of the phone's bottom bar (then "More" holds the rest), only those the role is offered. The bar is Today, Leads, the CORE tab, Visits and Office (blueprint 2: a business type's core tab,
+ * Quotes / Orders & deliveries / Fees, has its place on the bar); the core tab takes the place of the Quotes slot when the business type's core module is another one, and with no business type the bar is the one the product always had.
+ */
 export function barItems(role: Role, view?: PackFrame | null): NavItem[] {
   const all = NAV.flatMap((g) => g.items);
-  if (!view) return all.filter((i) => i.bar && i.roles.includes(role) && offered(i, view));
-  // the pack names its tabs and their order (blueprint 2: Today, Inbox, the pack's core tab, Contacts, More); a tab the pack has switched off, or the role may not open, is left out
-  return view.bar.flatMap((id) => all.filter((i) => i.id === id && i.roles.includes(role) && offered(i, view)));
+  const core = view ? coreItem(view) : null;
+  return all
+    .filter((i) => i.bar)
+    .map((i) => (i.core && core ? core : i))
+    .filter((i) => i.roles.includes(role) && offered(i, view));
 }
 
 /** Where a nav item goes, for a workspace. */

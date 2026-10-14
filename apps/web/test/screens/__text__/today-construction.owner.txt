@@ -7,10 +7,10 @@ form:
 ## Get started
 1 of 5 done
 - Tell us your business name and city Done
-- [Add your products with unit and price Or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
+- [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 - Set your delivery charge and advance Not available yet
 - [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
-- [Send your first quote With the area calculator. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
+- [Send your first quote Draft it, check the figures, approve it, then send it yourself. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
 [Continue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
 Tuesday, 6 October
 # Good morning

@@ -6,9 +6,8 @@ import { redirect } from "next/navigation";
 import { MAX_FIELDS_PER_ENTITY, type FieldNotice } from "@/components/v2/app/fields/FieldsSection";
 import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
-import { createCustomField, setCustomFieldActive, type NewField } from "@/lib/api/custom-fields";
+import { createCustomField, listCustomFields, setCustomFieldActive, type NewField } from "@/lib/api/custom-fields";
 import { requireUser } from "@/lib/auth/session";
-import { readPackCached } from "@/lib/packs/read";
 import { codeOf, parseChoices } from "@/lib/packs/field-codes";
 import type { FieldEntity, FieldKind } from "@/lib/packs/types";
 
@@ -32,8 +31,11 @@ async function managerOf(tenantId: string) {
 
 function noticeOf(error: unknown): Exclude<FieldNotice, null> {
   if (error instanceof ApiRequestError) {
-    if (error.status === 404 || error.status === 501) return "unavailable";
-    if (error.status === 403) return /mfa|second/i.test(`${error.code} ${error.reason ?? ""}`) ? "mfa" : "role";
+    if (error.status === 404 || error.status === 501 || error.status === 503) return "unavailable";
+    if (error.code === "mfa_required") return "mfa";
+    if (error.code === "module_off") return "unavailable";
+    if (error.status === 403) return "role";
+    if (error.code === "custom_field_limit") return "limit";
     if (error.status === 400 || error.status === 409 || error.status === 422) return "invalid";
   }
   return "failed";
@@ -50,11 +52,16 @@ export async function addFieldAction(tenantId: string, formData: FormData): Prom
   const needsChoices = kind === "choice";
   const choices = needsChoices ? parseChoices(String(formData.get("choices") ?? "")) : null;
   if (needsChoices && !choices) return done(tenantId, "invalid");
-  const pack = await readPackCached(user.accessToken, tenantId);
-  if (pack.source !== "api") return done(tenantId, "unavailable");
-  if (pack.fields.filter((f) => f.entity === entity && f.active).length >= MAX_FIELDS_PER_ENTITY) return done(tenantId, "limit");
+  let existing;
+  try {
+    existing = await listCustomFields(user.accessToken, tenantId, entity as FieldEntity);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return done(tenantId, noticeOf(error));
+  }
+  if (existing.filter((f) => f.active).length >= MAX_FIELDS_PER_ENTITY) return done(tenantId, "limit");
   const input: NewField = { entity: entity as FieldEntity, code: codeOf(label), kind: kind as FieldKind, label, required: formData.get("required") === "on", ...(choices ? { choices } : {}) };
-  if (pack.fields.some((f) => f.entity === input.entity && f.code === input.code)) input.code = `${input.code.slice(0, 24)}_${pack.fields.length}`;
+  if (existing.some((f) => f.code === input.code)) input.code = `${input.code.slice(0, 33)}_${existing.length}`;
   try {
     await createCustomField(user.accessToken, tenantId, input);
   } catch (error) {
