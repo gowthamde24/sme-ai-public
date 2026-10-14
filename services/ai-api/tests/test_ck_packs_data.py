@@ -41,6 +41,7 @@ def _load(name: str) -> ModuleType:
 
 pc = _load("packs_check")
 pm = _load("pack_migration")
+np = _load("new_pack")
 
 
 def test_every_pack_is_valid() -> None:
@@ -278,3 +279,50 @@ def test_the_folder_must_be_named_after_the_id(tmp_path: Path) -> None:
     shutil.copytree(pc.PACKS, fake)
     shutil.copytree(fake / "education", fake / "school")
     assert any("folder name must equal the id" in e for e in pc.check_all(fake))
+
+
+# ------------------------------------------------------------------------------------------------------ `make new-pack ID=<id>`
+def test_a_new_pack_starts_as_a_valid_draft_with_the_smallest_set_of_modules(tmp_path: Path) -> None:
+    fake = tmp_path / "packs"
+    shutil.copytree(pc.PACKS, fake)
+    path = np.create_pack("clinics", fake)
+    assert path == fake / "clinics" / "pack.json"
+    pack = json.loads(path.read_text(encoding="utf-8"))
+    assert pack["status"] == "draft" and pack["version"] == 1 and pack["default_for_existing_workspaces"] is False and pack["reviewed_by"] is None
+    assert pack["modules"] == np.BASE_MODULES and pack["units"] == [] and pack["custom_fields"] == [] and pack["example_data"] == {}
+    assert set(pack["labels"]["en"]) == set(pc.label_keys())
+    assert pc.check_all(fake) == [], "a freshly made pack already passes the checks"
+    _, todo, problems = pm.pending(fake, pm.MIGRATIONS)
+    assert problems == [] and [(p["id"], p["version"]) for p in todo] == [("clinics", 1)]
+
+
+def test_the_smallest_set_of_modules_is_what_every_real_pack_has() -> None:
+    for name, pack in pc.load_packs().items():
+        assert set(np.BASE_MODULES) <= set(pack["modules"]), name
+
+
+def test_new_pack_refuses_a_bad_or_a_taken_id(tmp_path: Path) -> None:
+    fake = tmp_path / "packs"
+    shutil.copytree(pc.PACKS, fake)
+    for bad in ("Clinics", "1clinics", "a", "has space", "x" * 40, "../escape"):
+        with pytest.raises(SystemExit):
+            np.create_pack(bad, fake)
+    with pytest.raises(SystemExit):
+        np.create_pack("education", fake)
+    assert sorted(p.name for p in fake.iterdir() if p.is_dir()) == ["construction_materials", "education", "textiles"]
+
+
+def test_a_draft_pack_is_never_offered_at_sign_up(tmp_path: Path) -> None:
+    from app.packs.registry import PackRegistry
+
+    fake = tmp_path / "packs"
+    shutil.copytree(pc.PACKS, fake)
+    np.create_pack("clinics", fake)
+    assert "clinics" not in [p.pack_id for p in PackRegistry(fake).selectable().packs]
+
+
+def test_the_makefile_runs_the_pack_checks_in_check_fast() -> None:
+    make = (ROOT / "Makefile").read_text(encoding="utf-8")
+    assert re.search(r"^check-fast:.*\bpacks-check\b", make, re.M)
+    for target in ("packs-check:", "pack-migration:", "new-pack:"):
+        assert target in make

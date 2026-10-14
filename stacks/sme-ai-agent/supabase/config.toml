@@ -355,6 +355,29 @@ skip_nonce_check = false
 # If enabled, it will allow the user to successfully authenticate when the provider does not return an email address.
 email_optional = false
 
+# Job CK (blueprint section 3.1): Google and Facebook sign-up. OFF in this committed file: a local stack never needs a provider, and the Supabase CLI refuses to start a provider that is switched on without its keys.
+# The id and the SECRET come from the environment only (never a literal here, never committed). To try one on a local stack: set both variables, change `enabled` to true in YOUR copy, restart, and set the same
+# public id in the API (AUTH_GOOGLE_CLIENT_ID / AUTH_FACEBOOK_APP_ID) so the sign-up page offers the button. The HOSTED project is set by hand (docs/runbooks/social-sign-up.md); never `supabase config push` this file.
+# An account is linked to an existing one by e-mail ONLY when the provider says the address is verified (Supabase's own rule); `enable_manual_linking` above stays false, and the setup refuses an
+# unverified address (SM309).
+[auth.external.google]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+email_optional = false
+
+[auth.external.facebook]
+enabled = false
+client_id = "env(SUPABASE_AUTH_EXTERNAL_FACEBOOK_APP_ID)"
+secret = "env(SUPABASE_AUTH_EXTERNAL_FACEBOOK_SECRET)"
+redirect_uri = ""
+url = ""
+skip_nonce_check = false
+email_optional = false
+
 # Allow Solana wallet holders to sign in to your project via the Sign in with Solana (SIWS, EIP-4361) standard.
 # You can configure "web3" rate limit in the [auth.rate_limit] section and set up [auth.captcha] if self-hosting.
 [auth.web3.solana]

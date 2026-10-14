@@ -254,8 +254,8 @@ as $$
   select coalesce(jsonb_agg(jsonb_build_object(
            'code', d.code, 'kind', d.kind, 'active', d.active,
            'value', case when p_hide_personal and d.pii_class = 'personal' then null
-                         else case d.kind when 'text' then to_jsonb(v.value_text) when 'number' then to_jsonb(v.value_number) when 'date' then to_jsonb(v.value_date)
-                                          when 'yes_no' then to_jsonb(v.value_bool) else to_jsonb(v.value_choices) end end)
+                         else case d.kind when 'text' then to_jsonb(v.value_text) when 'choice' then to_jsonb(v.value_text) when 'number' then to_jsonb(v.value_number)
+                                          when 'date' then to_jsonb(v.value_date) when 'yes_no' then to_jsonb(v.value_bool) else to_jsonb(v.value_choices) end end)
          order by d.position, d.code), '[]'::jsonb)
     from public.custom_field_defs d
     left join public.custom_field_values v on v.tenant_id = d.tenant_id and v.field_id = d.id
