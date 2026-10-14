@@ -9,7 +9,7 @@ import { WORDS } from "./today-test-kit";
 import type { TodayData } from "./types";
 
 const usage = (over: Partial<AiUsage> = {}): AiUsage => ({ today_percent: 7, month_percent: 38, resets_at_today: "2026-10-11T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok", ...over });
-const frame = (over: Partial<{ usage: AiUsage | null; ready: boolean; showUsage: boolean }> = {}) => ({ plan: null, usage: usage(), waiting: null, ready: true, showUsage: true, ...over });
+const frame = (over: Partial<{ usage: AiUsage | null; ready: boolean; showUsage: boolean }> = {}) => ({ plan: null, usage: usage(), waiting: null, ready: true, showUsage: true, pack: null, ...over });
 const show = async (data: ReturnType<typeof frame>, week: TodayData["week"] = { percent: 38 }) => {
   await act(async () => {
     render(

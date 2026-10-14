@@ -18,6 +18,8 @@ export const SESSION_USER = {
   updated_at: "2026-01-01T00:00:00Z",
 };
 
+import { defaultPackId, fieldsWire, modulesWire, packFiles, packsWire, packWire } from "./packs-wire.mjs";
+
 const ok = (body) => body;
 const T = `/v1/tenants/${TENANT}`;
 const route = (suffix, answer) => [new RegExp(`^${T}${suffix}$`), answer];
@@ -106,10 +108,37 @@ const COMPANY = "55555555-5555-4555-8555-555555555551";
 const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00" };
 const COMPANY_JSON = { id: COMPANY, name: "Sri Lakshmi Silks", type: "customer", website: "https://sri-lakshmi.example.test", country: "India", city: "Hyderabad", industry: "Textiles", created_via: "manual", created_at: "2026-10-01T05:00:00+00:00" };
 
+// ---- the business type of the workspace (job CL, on top of job CK) --------------------------------------------------------------------------------
+// The workspace runs the DEFAULT business type, as a workspace that existed before business types does (`source: "legacy"`): the pictures of every older screen stay exactly as they were. The pack pictures
+// (e2e/cl-shots.mjs) set `pack` to another business type's id and `source: "signup"`; `example` ("none" | "loaded") says whether the sample is loaded, `town` is the business profile's city, `providers` which
+// sign-up buttons the server offers, `ownerFields` fields an owner added. The words, modules and fields are the real files of packages/packs through the API's shapes (packs-wire.mjs).
+export const PACK_STATE = { pack: defaultPackId(), source: "legacy", modules: null, example: "none", town: null, providers: { google: false, facebook: false }, level: "aal2", ownerFields: [] };
+/** Paths the API answers without a sign-in (the stand-in does not ask for a token here). */
+export const PUBLIC_API_PATHS = new Set(["/v1/packs", "/v1/auth/providers", "/v1/policies/current"]);
+const COUNTS_NONE = { companies: 0, contacts: 0, leads: 0, products: 0 };
+const exampleStatus = () => (PACK_STATE.example === "loaded"
+  ? { loaded: true, batch_id: "99999999-9999-4999-8999-999999999901", pack_id: PACK_STATE.pack, loaded_at: "2026-10-14T04:00:00Z", removed_at: null, counts: { companies: 2, contacts: 3, leads: 3, products: 4 } }
+  : { loaded: false, batch_id: null, pack_id: null, loaded_at: null, removed_at: null, counts: COUNTS_NONE });
+const customFields = (url) => {
+  const entity = url.searchParams.get("entity");
+  return { fields: [...fieldsWire(PACK_STATE.pack).fields, ...PACK_STATE.ownerFields].filter((f) => !entity || f.entity === entity) };
+};
+
 // ---- the route table ---------------------------------------------------------------------------------------------------------------------
 export const API_ROUTES = [
   [/^\/v1\/me$/, ok({ user_id: USER_ID, memberships: [{ role: "owner", tenant: { id: TENANT, name: "Sri Visual Silks", slug: "sri-visual-silks" } }] })],
   [new RegExp(`^/v1/tenants/${TENANT}$`), ok({ id: TENANT, name: "Sri Visual Silks", slug: "sri-visual-silks", role: "owner", plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-09-20T00:00:00Z" })],
+  [/^\/v1\/packs$/, () => packsWire()],
+  [/^\/v1\/auth\/providers$/, () => ({ email: true, ...PACK_STATE.providers })],
+  [/^\/v1\/policies\/current$/, ok({ terms: { version: "2026-10", effective_from: "2026-10-01" }, privacy: { version: "2026-10", effective_from: "2026-10-01" } })],
+  [/^\/v1\/account\/security$/, () => ({ session_level: PACK_STATE.level, asked_at_sign_up: false, needed_for: ["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"] })],
+  route("/pack", () => packWire(PACK_STATE.pack, PACK_STATE.source)),
+  route("/modules", () => modulesWire(PACK_STATE.modules ?? packFiles()[PACK_STATE.pack].modules)),
+  route("/example-data", () => exampleStatus()),
+  route("/custom-fields", ({ url }) => customFields(url)),
+  route("/contacts/[0-9a-f-]{36}/custom", ({ match }) => ({ entity: "contact", entity_id: match[0].split("/")[5], values: [] })),
+  route("/catalogue/[0-9a-f-]{36}/custom", ({ match }) => ({ entity: "catalogue_item", entity_id: match[0].split("/")[5], values: [] })),
+  route("/profile", () => ({ name: "Sri Visual Silks", town: PACK_STATE.town, languages: ["en"], setup_complete: PACK_STATE.town !== null })),
   route("/today", TODAY),
   route("/agents/status", AGENTS),
   route("/ai-usage", { today_percent: 12, month_percent: 31, resets_at_today: "2026-10-14T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }),

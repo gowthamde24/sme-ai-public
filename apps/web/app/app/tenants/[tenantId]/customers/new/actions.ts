@@ -7,14 +7,19 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { createContact, createCustomerCompany, createLead, HOW_IT_CAME, type HowItCame } from "@/lib/api/customers";
+import { listCustomFields, putContactCustom, type CustomValue } from "@/lib/api/custom-fields";
 import { gstinProblem, normaliseGstin } from "@/lib/gstin";
+import { normaliseValues } from "@/lib/packs/field-values";
+import { textIn } from "@/lib/packs/text";
+import { appT } from "@/i18n/app";
+import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
 import { serverT } from "@/i18n/server-t";
 import { makeT, type Say } from "@/components/v2/app/words";
 
 /** What the screen shows after a press. It never carries the phone number or the e-mail back. */
 export type CustomerFormState =
-  | { ok?: boolean; error?: string; leadId?: string; contactId?: string; name?: string; nextContactId?: string }
+  | { ok?: boolean; error?: string; leadId?: string; contactId?: string; name?: string; nextContactId?: string; /** The customer is saved but the extra details were not (job CL): one sentence of ours. */ fieldsNote?: string }
   | undefined;
 
 function field(formData: FormData, name: string): string {
@@ -41,6 +46,8 @@ function retryNote(error: unknown, step: number, t: Say): string {
 function describe(error: unknown, t: Say = makeT()): string {
   if (error instanceof ApiAuthError) redirect("/login");
   if (error instanceof ApiRequestError) {
+    // a part the business type does not have (job CK `module_off`, here the companies this form makes first): not a question of the person's role
+    if (error.status === 403 && error.code === "module_off") return t("cust.not_switched_on");
     if (error.status === 403) return t("cust.your_role_cannot_add_customers");
     if (error.status === 404) return t("cust.this_workspace_is_not_available");
     if (error.status === 429) return t("cust.too_many_requests_wait_a_moment");
@@ -94,6 +101,34 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
   // a business customer's GSTIN is optional; when it is given it must be well formed (the API and the database check it again)
   if (gstinProblem(gstin) !== null) return { ok: false, error: t("gst.bad.shape") };
 
+  // the extra fields of the business type (job CL): checked BEFORE anything is made, so a wrong value is fixed on the form and nothing is half-saved
+  let custom: Record<string, CustomValue> = {};
+  const rawCustom = field(formData, "custom");
+  if (rawCustom !== "") {
+    let defs;
+    try {
+      defs = await listCustomFields(user.accessToken, tenantId, "contact");
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      return { ok: false, error: t("cust.a_value_was_not_accepted_check") };
+    }
+    let parsed: unknown = null;
+    try {
+      parsed = JSON.parse(rawCustom);
+    } catch {
+      return { ok: false, error: t("cust.a_value_was_not_accepted_check") };
+    }
+    const { values, issues } = normaliseValues(defs, "contact", parsed);
+    const bad = Object.entries(issues)[0];
+    if (bad) {
+      const fl = defs.find((f) => f.code === bad[0]);
+      const lang = await getLang();
+      const a = appT(lang);
+      return { ok: false, error: `${fl ? textIn(fl.label, lang) : bad[0]} ${a(`fields.issue.${bad[1]}` as "fields.issue.required")}` };
+    }
+    custom = values;
+  }
+
   let step = 0;
   try {
     await createCustomerCompany(user.accessToken, tenantId, { id: companyId, name: shop || fullName, gstin: gstin === "" ? null : gstin });
@@ -107,5 +142,17 @@ export async function addCustomerAction(tenantId: string, _prev: CustomerFormSta
     return { ok: false, error: describe(error, t) + retryNote(error, step, t), ...(duplicateEmail && { nextContactId: randomUUID() }) };
   }
   // No revalidatePath here (job CC): it makes Next draw this page again with NEW ids, which remounts the form and wipes the confirmation the person was about to read (found by the real-stack run). The pages that list customers are dynamic and read fresh.
-  return { ok: true, leadId, contactId, name: fullName };
+  // the extra details go to the contact that was just made; if they cannot be kept the customer still stands, and the screen says so
+  let fieldsNote: string | undefined;
+  if (Object.keys(custom).length > 0) {
+    try {
+      await putContactCustom(user.accessToken, tenantId, contactId, custom);
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+      const a = appT(await getLang());
+      const reason = error instanceof ApiRequestError && (error.status === 404 || error.status === 501 || error.code === "module_off") ? "unavailable" : error instanceof ApiRequestError && (error.status === 400 || error.status === 409 || error.status === 422) ? "invalid" : "failed";
+      fieldsNote = a("fields.form.unsaved", { reason: a(`fields.form.reason.${reason}` as "fields.form.reason.failed") });
+    }
+  }
+  return { ok: true, leadId, contactId, name: fullName, ...(fieldsNote ? { fieldsNote } : {}) };
 }

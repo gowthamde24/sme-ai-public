@@ -9,8 +9,8 @@ import type { FrameData } from "./contract";
 import { useFrameData } from "./frame-store";
 import { UsageCard } from "./frame-parts";
 import { NavIcon } from "./icons";
-import { word, type Labels } from "./labels";
-import { barItems, footItems, hrefOf, visibleGroups } from "./nav";
+import { word, withPackWords, type Labels } from "./labels";
+import { barItems, coreItem, footItems, hrefOf, visibleGroups } from "./nav";
 import { useWorkspace, type Membership } from "./use-workspace";
 
 const cell = "relative flex min-h-16 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 pb-1 pt-1.5 text-center text-sm font-medium leading-tight transition-colors duration-150 ease-out active:bg-surface-2";
@@ -22,9 +22,10 @@ const row = "flex min-h-12 w-full items-center gap-3 rounded-lg border border-li
  * each only when the role may open it) and "More", which opens a sheet with the rest of the menu (Customers, Catalogue and prices, Integrations, Settings),
  * the person, the AI usage card, Help ("Not available yet") and Sign out. Respects the phone's safe area. Outside a workspace the bar is not drawn.
  */
-export function TabBar({ memberships, labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
+export function TabBar({ memberships, labels: given_labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
   const { current, pathname, active } = useWorkspace(memberships);
   const frame = useFrameData(given);
+  const labels = withPackWords(given_labels, frame.pack);
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const moreRef = useRef<HTMLButtonElement>(null);
@@ -47,8 +48,10 @@ export function TabBar({ memberships, labels, frame: given, email, signOut }: { 
     return () => document.removeEventListener("keydown", onKey);
   }, [open]);
   if (!current) return null;
-  const tabs = barItems(current.role);
-  const rest = [...visibleGroups(current.role).flatMap((g) => g.items), ...footItems(current.role)].filter((i) => !tabs.some((t) => t.id === i.id));
+  const tabs = barItems(current.role, frame.pack);
+  const core = frame.pack ? coreItem(frame.pack) : null;
+  const coreWord = frame.pack?.labels["pack.core_tab"]; // the business type's own word for its core tab (it comes with the pack, not from the string store)
+  const rest = [...visibleGroups(current.role, frame.pack).flatMap((g) => g.items), ...footItems(current.role)].filter((i) => !tabs.some((t) => t.id === i.id));
   const moreOn = active ? rest.some((i) => i.id === active.item.id) : false;
   const mark = <span aria-hidden="true" className="absolute inset-x-3 top-0 h-0.5 rounded-b-full bg-brand-edge" />;
   const help = word(labels, "frame.help", "Help");
@@ -69,7 +72,7 @@ export function TabBar({ memberships, labels, frame: given, email, signOut }: { 
                   </span>
                 ) : null}
               </span>
-              <span className="max-w-full break-words">{i.short ? word(labels, `nav.tab.${i.id}`, i.short) : word(labels, `nav.item.${i.id}`, i.label)}</span>
+              <span className="max-w-full break-words">{core?.id === i.id && coreWord ? coreWord : word(labels, `nav.tab.${i.id}`, i.short ?? word(labels, `nav.item.${i.id}`, i.label))}</span>
             </Link>
           );
         })}

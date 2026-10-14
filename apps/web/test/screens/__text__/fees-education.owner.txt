@@ -1,0 +1,2 @@
+# Fees
+Not available yet Fee plans, the fee ledger, receipts and the collection screen are being built. Nothing is shown here until they work. [Back to Today](/app/tenants/22222222-2222-2222-2222-222222222222)

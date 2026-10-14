@@ -1,0 +1,246 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Fields](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=fields current=page) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+Fields hold the extra details you keep about your customers and your products. Your kind of business comes with some; you can add your own.
+{label="Customers and contacts"}
+## Customers and contacts
+2 of 20 in use
+- Customer type Choice From your business type
+form:
+<hidden name=field_id value=construction_materials-customer_kind>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-customer_kind>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Customer type>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Usually buys for Several choices From your business type
+form:
+<hidden name=field_id value=construction_materials-typical_application>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-typical_application>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Usually buys for>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+{label="Catalogue items"}
+## Catalogue items
+14 of 20 in use
+- Product type Choice From your business type
+form:
+<hidden name=field_id value=construction_materials-product_type>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-product_type>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Product type>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Size (for example 200x100 mm) Text From your business type
+form:
+<hidden name=field_id value=construction_materials-size>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-size>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Size (for example 200x100 mm)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Thickness (mm) Choice From your business type
+form:
+<hidden name=field_id value=construction_materials-thickness_mm>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-thickness_mm>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Thickness (mm)>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Shape or pattern Text From your business type
+form:
+<hidden name=field_id value=construction_materials-shape_pattern>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-shape_pattern>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Shape or pattern>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Colour Text From your business type
+form:
+<hidden name=field_id value=construction_materials-colour>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-colour>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Colour>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Finish Text From your business type
+form:
+<hidden name=field_id value=construction_materials-finish>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-finish>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Finish>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Grade or strength (for example M30) Text From your business type
+form:
+<hidden name=field_id value=construction_materials-grade>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-grade>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Grade or strength (for example M30)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Pieces per sq ft or sq m Number From your business type
+form:
+<hidden name=field_id value=construction_materials-pieces_per_area>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-pieces_per_area>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Pieces per sq ft or sq m>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Pieces per pallet Number From your business type
+form:
+<hidden name=field_id value=construction_materials-pieces_per_pallet>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-pieces_per_pallet>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Pieces per pallet>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Minimum order Number From your business type
+form:
+<hidden name=field_id value=construction_materials-minimum_order>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-minimum_order>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Minimum order>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Stock Choice From your business type
+form:
+<hidden name=field_id value=construction_materials-stock_note>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-stock_note>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Stock>
+More choices (one per line; the ones it has stay)
+<textarea name=choices label="More choices (one per line; the ones it has stay)" maxlength=600>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- Lead days when made to order Number From your business type
+form:
+<hidden name=field_id value=construction_materials-lead_days>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-lead_days>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=Lead days when made to order>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- HSN code (from your accountant) Text From your business type
+form:
+<hidden name=field_id value=construction_materials-hsn_code>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-hsn_code>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=HSN code (from your accountant)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+- GST rate in percent (from your accountant) Number From your business type
+form:
+<hidden name=field_id value=construction_materials-gst_rate_percent>
+<hidden name=active value=no>
+[button type=submit: Hide]
+summary: Edit
+form:
+<hidden name=field_id value=construction_materials-gst_rate_percent>
+Name of the field
+<text name=label label="Name of the field" required maxlength=60 value=GST rate in percent (from your accountant)>
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Save changes]
+{label="Add a field"}
+## Add a field
+Do not use fields for health, religion, caste, income, Aadhaar or other private details.
+form:
+Add it to
+<select name=entity label="Add it to">
+  options: Customers and contacts=contact* | Catalogue items=catalogue_item
+Name of the field
+<text name=label label="Name of the field" required maxlength=60>
+Kind of answer
+<select name=kind label="Kind of answer">
+  options: Text=text* | Number=number | Date=date | Choice=choice | Yes or no=yes_no
+Choices (one per line, for a choice field)
+<textarea name=choices label="Choices (one per line, for a choice field)" maxlength=600>
+At least two. A choice that has been used is never removed.
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Add field]

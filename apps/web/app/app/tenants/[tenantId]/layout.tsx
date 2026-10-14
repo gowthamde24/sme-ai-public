@@ -1,6 +1,10 @@
 import { NO_FRAME_DATA } from "@/components/v2/app/contract";
+import { ModuleGate } from "@/components/v2/app/frame-store";
+import { ProblemView } from "@/components/v2/app/robust/ProblemView";
+import { appDict } from "@/i18n/app";
 import { FrameDataSlot } from "@/components/v2/app/frame-store";
 import { isCanonicalUuid } from "@/lib/api/crm";
+import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
 
 import { readFrameData } from "../../frame-data";
@@ -13,11 +17,22 @@ import { readFrameData } from "../../frame-data";
 export default async function TenantLayout({ children, params }: LayoutProps<"/app/tenants/[tenantId]">) {
   const { tenantId } = await params;
   const user = await requireUser();
-  const data = isCanonicalUuid(tenantId) ? await readFrameData(user.accessToken, tenantId) : NO_FRAME_DATA;
+  const lang = await getLang();
+  const data = isCanonicalUuid(tenantId) ? await readFrameData(user.accessToken, tenantId, lang) : NO_FRAME_DATA;
+  // the 403 page for a MOVE inside the app to a part the business type does not have (job CL; a typed address is judged by template.tsx): made here, in the person's language, and drawn by the gate only when needed
+  const dict = appDict(lang) as Record<string, string>;
+  const labels = Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("problem.")));
   return (
     <>
       <FrameDataSlot data={data} />
-      {children}
+      {/* a server with no pack routes gives no pack: the product as it always was, every page on */}
+      {data.pack ? (
+        <ModuleGate modules={data.pack.modules} fallback={<ProblemView kind={403} variant="module" labels={labels} homeHref={`/app/tenants/${tenantId}`} />}>
+          {children}
+        </ModuleGate>
+      ) : (
+        children
+      )}
     </>
   );
 }

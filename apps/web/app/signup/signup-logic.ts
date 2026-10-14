@@ -4,6 +4,7 @@ import { validateNewPassword } from "@/lib/auth/password-policy";
 import type { SignupLimiter } from "@/lib/auth/signup-limit";
 import { POLICY_VERSION } from "@/lib/api/policy";
 import { TERMS_VERSION } from "@/lib/auth/terms";
+import { parseSignupPack } from "@/lib/packs/signup";
 
 // The input, error and result types live in lib/api/signup.ts so the screens import them from there.
 export type { SignUpError, SignUpInput, SignUpResult } from "@/lib/api/signup";
@@ -50,6 +51,8 @@ export async function runSignUp(
   const email = text(raw.email).toLowerCase();
   const businessName = text(raw.businessName);
   const password = typeof raw.password === "string" ? raw.password : "";
+  // the kind of business chosen on the first step (job CL): only a pack a person may pick is kept; the first-login setup reads it from the account
+  const businessType = parseSignupPack(raw.businessType);
 
   if (
     name.length < 1 || name.length > MAX_NAME ||
@@ -77,7 +80,7 @@ export async function runSignUp(
       email,
       password,
       options: {
-        data: { display_name: name, business_name: businessName, terms_version: TERMS_VERSION, ...(versions ? { accepted_terms_version: versions.terms, accepted_privacy_version: versions.privacy } : {}) },
+        data: { display_name: name, business_name: businessName, ...(businessType ? { business_type: businessType } : {}), terms_version: TERMS_VERSION, ...(versions ? { accepted_terms_version: versions.terms, accepted_privacy_version: versions.privacy } : {}) },
       },
     });
   } catch {

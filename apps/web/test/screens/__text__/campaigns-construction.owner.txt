@@ -1,0 +1,2 @@
+# Campaigns
+Not available yet Reminder campaigns (a payment due, a fee due, a delivery) are being built. Nothing is sent from here, and nothing is shown until they work. [Back to Today](/app/tenants/22222222-2222-2222-2222-222222222222)

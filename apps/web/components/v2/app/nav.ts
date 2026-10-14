@@ -8,7 +8,7 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns";
 
 export type NavItem = {
   id: string;
@@ -24,9 +24,18 @@ export type NavItem = {
   also?: readonly string[];
   /** A tab of the phone's bottom bar (the rest are in "More"). */
   bar?: boolean;
+  /** The bar tab that holds the business type's core work (job CL, blueprint 2): in a workspace whose core tab is another item's module, that item takes this tab's place; without a business type it is itself. */
+  core?: boolean;
   /** The shorter word the phone's bottom bar uses for the item ("Visits" for "Store visits"); without it the bar uses `label`. */
   short?: string;
   roles: readonly Role[];
+  /**
+   * The module a business type must have switched ON for this item to show (blueprint section 4; the pack's `modules`). Absent = every business type has it. Visibility is a convenience only: the page
+   * (`requireModule`, lib/packs/guard.ts) answers 403 and the database refuses the work; the menu just does not offer what the business does not have.
+   */
+  module?: string;
+  /** An item no business had before packs existed (Fees, Campaigns): it is offered only when a pack's modules include its module. With no pack at all the menu is the one the product always had. */
+  packOnly?: boolean;
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
@@ -41,18 +50,22 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", bar: true, roles: ALL_ROLES },
-      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, roles: ALL_ROLES },
-      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, roles: WRITERS },
-      { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, roles: ALL_ROLES },
-      { id: "orders", label: "Orders", icon: "orders", path: "/orders", roles: WRITERS },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start"], bar: true, roles: ALL_ROLES },
+      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, module: "enquiries", roles: ALL_ROLES },
+      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, core: true, module: "quotes", roles: WRITERS },
+      { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, module: "visits", roles: ALL_ROLES },
+      // job CL: the fee page of the education business type (blueprint 2, the phone's core tab); only a pack whose modules include "fees" offers it
+      { id: "fees", label: "Fees", icon: "fees", path: "/fees", module: "fees", packOnly: true, roles: WRITERS },
+      { id: "orders", label: "Orders", icon: "orders", path: "/orders", module: "orders", roles: WRITERS },
+      // job CL: reminder campaigns (construction dues, education fees); the screens come with the campaign jobs
+      { id: "campaigns", label: "Campaigns", icon: "campaigns", path: "/campaigns", module: "campaigns", packOnly: true, roles: ADMINS },
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
-      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", roles: WRITERS },
-      { id: "report", label: "This week", icon: "report", path: "/report", roles: ADMINS },
-      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
+      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
+      { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
+      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
       // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
-      { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", roles: WRITERS },
+      { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
     ],
   },
   {
@@ -60,8 +73,8 @@ export const NAV: readonly NavGroup[] = [
     label: "Your business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
-      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", roles: ALL_ROLES },
-      { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], roles: WRITERS },
+      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", module: "catalogue", roles: ALL_ROLES },
+      { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
     ],
   },
   {
@@ -70,13 +83,13 @@ export const NAV: readonly NavGroup[] = [
     items: [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
       { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
-      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES },
+      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, module: "office", roles: ALL_ROLES },
     ],
   },
   {
     id: "connect",
     label: "Connect",
-    items: [{ id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", roles: ADMINS }],
+    items: [{ id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", module: "integrations", roles: ADMINS }],
   },
 ];
 
@@ -87,9 +100,32 @@ export const FOOT: readonly NavItem[] = [
 
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
+/**
+ * What the menu needs to know about the workspace's business type (job CL; a plain object, so the client never imports more than it draws): the modules that are ON (the API's answer), the module of the phone's
+ * core tab, the words the business type changes (the `nav.*` and `pack.core_tab` keys, already in the person's language) and a few facts for a badge. With NO pack (`undefined`/`null`: not read yet, or a server that
+ * has no pack routes) the menu is the one the product always had. Nothing here names a business type.
+ */
+export type PackFrame = {
+  name: string;
+  /** The accent token the pack names (`data-accent`); an unknown one draws the default look. */
+  accent: string;
+  /** A real owner of this kind of business has reviewed the pack; the badge says so when it is not. */
+  validated: boolean;
+  /** The module of the phone's core tab (Quotes, Orders & deliveries, Fees ...). */
+  coreTab: string;
+  modules: readonly string[];
+  labels: Readonly<Record<string, string>>;
+};
+
+/** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
+export function offered(item: NavItem, view?: PackFrame | null): boolean {
+  if (!view) return !item.packOnly;
+  return item.module === undefined || view.modules.includes(item.module);
+}
+
 /** The groups (and, inside them, the items) a role is offered. A group with no visible item is hidden. */
-export function visibleGroups(role: Role): VisibleGroup[] {
-  return NAV.map((g) => ({ id: g.id, label: g.label, items: g.items.filter((i) => i.roles.includes(role)) })).filter((g) => g.items.length > 0);
+export function visibleGroups(role: Role, view?: PackFrame | null): VisibleGroup[] {
+  return NAV.map((g) => ({ id: g.id, label: g.label, items: g.items.filter((i) => i.roles.includes(role) && offered(i, view)) })).filter((g) => g.items.length > 0);
 }
 
 /** The items under the scrolling part (Settings) a role is offered. */
@@ -97,9 +133,22 @@ export function footItems(role: Role): NavItem[] {
   return FOOT.filter((i) => i.roles.includes(role));
 }
 
-/** The items that are tabs of the phone's bottom bar (then "More" holds the rest), only those the role is offered. */
-export function barItems(role: Role): NavItem[] {
-  return NAV.flatMap((g) => g.items).filter((i) => i.bar && i.roles.includes(role));
+/** The item that holds the core work of a business type: the first menu item of its module (Quotes for `quotes`, Orders for `orders`, Fees for `fees`). Null when no screen has that module yet. */
+export function coreItem(view: PackFrame): NavItem | null {
+  return NAV.flatMap((g) => g.items).find((i) => i.module === view.coreTab) ?? null;
+}
+
+/**
+ * The items that are tabs of the phone's bottom bar (then "More" holds the rest), only those the role is offered. The bar is Today, Leads, the CORE tab, Visits and Office (blueprint 2: a business type's core tab,
+ * Quotes / Orders & deliveries / Fees, has its place on the bar); the core tab takes the place of the Quotes slot when the business type's core module is another one, and with no business type the bar is the one the product always had.
+ */
+export function barItems(role: Role, view?: PackFrame | null): NavItem[] {
+  const all = NAV.flatMap((g) => g.items);
+  const core = view ? coreItem(view) : null;
+  return all
+    .filter((i) => i.bar)
+    .map((i) => (i.core && core ? core : i))
+    .filter((i) => i.roles.includes(role) && offered(i, view));
 }
 
 /** Where a nav item goes, for a workspace. */

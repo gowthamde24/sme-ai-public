@@ -153,3 +153,20 @@ describe("the loading skeleton", () => {
     expect(screen.getByRole("status")).toHaveTextContent("లోడ్ అవుతోంది…");
   });
 });
+
+describe("the 403 of a part the business type does not have (job CL)", () => {
+  it("has its own sentence, the module variant of the 403 page, and goes back to Today of the workspace", () => {
+    const { container } = render(<ProblemView kind={403} variant="module" homeHref="/app/tenants/T" />);
+    expect(container.querySelector("[data-problem='403']")).not.toBeNull();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("This part is not switched on");
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/app/tenants/T");
+  });
+  it("speaks the person's language from the labels, and the plain 403 is unchanged", () => {
+    const { unmount } = render(<ProblemView kind={403} variant="module" labels={{ "problem.module.title": "ఈ భాగం ఆన్‌లో లేదు" }} />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("ఈ భాగం ఆన్‌లో లేదు");
+    unmount();
+    render(<ProblemView kind={403} />);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("This is not open to you");
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/app");
+  });
+});

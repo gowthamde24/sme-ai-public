@@ -1,4 +1,4 @@
-.PHONY: packs-check pack-migration new-pack perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: packs-check pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -280,6 +280,12 @@ demo-code:
 e2e-local:
 	./scripts/e2e-local.sh
 
+# Job CL, OPT-IN, never in make check or CI: the business-type sign-up on the real stack (the same start-up, clean-up and guards as e2e-local): the two-step sign-up by e-mail for each business type, the setup by itself, Today in its words,
+# the module guard, the checklist, example data, the second step, custom fields; and the Google path as far as it can go without the owner's own Google account (docs/runbooks/social-sign-up.md). The two ids are PUBLIC placeholders so the
+# API offers the buttons; the local Auth server has the providers off, which is what the run checks.
+e2e-packs:
+	E2E_SCRIPT=cl-signup.mjs AUTH_GOOGLE_CLIENT_ID=local-public-placeholder AUTH_FACEBOOK_APP_ID=local-public-placeholder ./scripts/e2e-local.sh
+
 # Speed (job CF, e2e/perf/README.md). `make perf` is OPT-IN, never in make check: it builds the web app against the visual tests' stand-in backend and measures LCP, FCP, TBT, INP, CLS and the bytes of six screens in a throttled
 # phone-sized Chromium (slow 4G, 4x slower CPU); ports 54999 and 3016 only, nothing of the owner's. ARGS="--no-build --only landing,today --runs 5 --lang te --api-delay 100 --out result.json".
 # `make perf-budget` is the cheap guard (about a second, after `npm run build`): the gzip JavaScript of every page route against scripts/budget.json; CI runs it after the build.
@@ -297,6 +303,12 @@ visual:
 
 visual-update:
 	node e2e/visual/run.mjs --update $(ARGS)
+
+# Job CL: pictures of the three business types (sign-up steps, Today, the phone's bar, Customers, Settings -> Fields, Start, Fees, Office, the 403 page), light and dark, laptop and 390 px phone, on the same invented
+# backend; it also checks the menu of each business type and that a part a business type does not have answers 403 (typed address and a move inside the app). OPT-IN, never in make check. Ports 54999 and 3016.
+#   make pack-shots ARGS="--no-build --only today,guard --out /some/folder"
+pack-shots:
+	node e2e/cl-shots.mjs $(ARGS)
 
 # Job CB (ADR 0082), OPT-IN, never in make check. Hardening and operations tools.
 #   make restore-drill            the PLAN for a hosted backup/restore drill (touches nothing); DRILL=local runs a REAL drill on the AGENT stack's database (dump, restore into a scratch database,

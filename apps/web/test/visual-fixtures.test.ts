@@ -16,10 +16,15 @@ import { parseQuoteSummary } from "@/lib/api/quotes";
 import { parseSettings, parseSlots, parseTodayVisits, parseVisitList, parseWeek } from "@/lib/api/visits";
 import { parseEvidencePage } from "@/lib/api/evidence";
 import { parseClaim } from "@/lib/api/agents";
+import { parseEnabledModules, parsePackSummary, parseWorkspacePack } from "@/lib/api/pack";
+import { parseFieldDef } from "@/lib/api/field-def";
+import { parseStatus } from "@/lib/api/example-data";
+import { defaultPackId, otherPackIds, packFiles, selectableIds } from "@/lib/packs/pack-test-kit";
+import { parseProfile } from "@/lib/api/profile";
 
 import * as fixtures from "../../../e2e/visual/fixtures.mjs";
 
-type Fixtures = { API_ROUTES: [RegExp, unknown][]; TENANT: string; LEAD: string; FIXED_NOW: string };
+type Fixtures = { API_ROUTES: [RegExp, unknown][]; TENANT: string; LEAD: string; FIXED_NOW: string; PACK_STATE: { pack: string; source: string; example: string; town: string | null } };
 const load = async (): Promise<Fixtures> => fixtures as unknown as Fixtures;
 
 async function answer(suffix: string, query = ""): Promise<unknown> {
@@ -63,6 +68,40 @@ describe("the visual tests' fixtures are in the API's contract", () => {
     expect(parseVisitList(await answer("/visits", "?status=booked")).items.every((v) => v.status === "booked")).toBe(true);
     expect(parseSlots(await answer("/visits/slots", "?date=2026-10-14")).open).toBe(true);
     expect(parseSettings(await answer("/visits/settings")).slot_minutes).toBe(30);
+  });
+  it("the business type: the default one at first (as a workspace that existed before business types has it), then the pack the pictures set, with its modules, fields and sample, and the profile", async () => {
+    const { PACK_STATE } = await load();
+    const first = parseWorkspacePack(await answer("/pack"));
+    expect(first).toMatchObject({ source: "legacy", packId: defaultPackId() });
+    expect(parseEnabledModules(await answer("/modules"))).toEqual(first.modules);
+    const other = otherPackIds().find((i) => packFiles()[i].custom_fields.length > 3)!;
+    PACK_STATE.pack = other;
+    PACK_STATE.source = "signup";
+    PACK_STATE.example = "loaded";
+    PACK_STATE.town = "Guntur";
+    try {
+      const p = parseWorkspacePack(await answer("/pack"));
+      expect(p).toMatchObject({ packId: other, source: "signup" });
+      expect(parseEnabledModules(await answer("/modules"))).toEqual(packFiles()[other].modules);
+      expect(parseStatus(await answer("/example-data")).loaded).toBe(true);
+      expect(((await answer("/custom-fields")) as { fields: unknown[] }).fields.map(parseFieldDef).length).toBe(packFiles()[other].custom_fields.length);
+      expect(parseProfile(await answer("/profile")).town).toBe("Guntur");
+    } finally {
+      PACK_STATE.pack = defaultPackId();
+      PACK_STATE.source = "legacy";
+      PACK_STATE.example = "none";
+      PACK_STATE.town = null;
+    }
+    expect(parseProfile(await answer("/profile")).setupComplete).toBe(false);
+    expect(parseStatus(await answer("/example-data")).loaded).toBe(false);
+  });
+  it("the sign-up pages' public answers: the cards, the providers (off), the policy versions; and the second-factor status", async () => {
+    const packs = ((await answer("/v1/packs")) as { packs: unknown[] }).packs.map(parsePackSummary);
+    expect(packs.map((p) => p.packId)).toEqual(selectableIds()); // reviewed types first, then by id: the API's own order
+    expect(await answer("/v1/auth/providers")).toEqual({ email: true, google: false, facebook: false });
+    expect(await answer("/v1/account/security")).toMatchObject({ session_level: "aal2", asked_at_sign_up: false });
+    const { PUBLIC_API_PATHS } = fixtures as unknown as { PUBLIC_API_PATHS: Set<string> };
+    expect([...PUBLIC_API_PATHS].sort()).toEqual(["/v1/auth/providers", "/v1/packs", "/v1/policies/current"]);
   });
   it("the saree catalogue", async () => {
     expect(parseItemPage(await answer("/catalogue/items")).items).toHaveLength(4);

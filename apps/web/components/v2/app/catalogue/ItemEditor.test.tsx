@@ -390,3 +390,36 @@ describe("the exact price is the owner's alone", () => {
     expect(actions.save).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("the extra fields of the business type (job CL)", () => {
+  const fields = [
+    { code: "size", kind: "text" as const, label: "Size", required: false, pii: "none" as const },
+    { code: "selling_unit", kind: "choice" as const, label: "Selling unit", required: true, pii: "none" as const, choices: [{ code: "sqft", label: "sq ft" }, { code: "piece", label: "piece" }] },
+  ];
+  it("draws nothing extra for a business type with no fields", () => {
+    show();
+    expect(document.querySelector("[data-part=custom-fields]")).toBeNull();
+  });
+  it("draws the fields (starting from the item's values), and keeps them right after the details are saved", async () => {
+    const world = makeWorld(null);
+    const saveCustom = vi.fn(async () => ({ ok: true as const }));
+    const { go } = show({ fields, custom: { size: "200x100" }, actions: { ...world.actions, saveCustom } as never });
+    expect(screen.getByRole("group", { name: "More details" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Size")).toHaveValue("200x100");
+    fill();
+    fireEvent.change(screen.getByLabelText("Selling unit"), { target: { value: "sqft" } });
+    await save();
+    expect(saveCustom).toHaveBeenCalledWith(ID, { size: "200x100", selling_unit: "sqft" });
+    expect(go).toHaveBeenCalledWith(expect.stringContaining(`/catalogue/${ID}?saved=1`));
+  });
+  it("when they cannot be kept it stays on the form with the sentence, and the item was saved all the same", async () => {
+    const world = makeWorld(null);
+    const saveCustom = vi.fn(async () => ({ ok: false as const, error: "Saved, but the extra details were not: this system cannot keep them yet" }));
+    const { go } = show({ fields, actions: { ...world.actions, saveCustom } as never });
+    fill();
+    await save();
+    expect(await screen.findByText(/the extra details were not: this system cannot keep them yet/)).toBeInTheDocument();
+    expect(go).not.toHaveBeenCalled();
+    expect(world.actions.save).toHaveBeenCalled();
+  });
+});

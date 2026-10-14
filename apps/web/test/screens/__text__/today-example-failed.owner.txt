@@ -1,0 +1,117 @@
+{label="See how it works with example data"}
+## See how it works with example data
+One tap loads a small sample workspace, clearly marked as example. You can remove it any time.
+{role=alert} Example data is not available yet.
+form:
+[button type=submit: Load example data]
+{label="Get started"}
+## Get started
+1 of 6 done
+- Tell us your business name and city Done
+- [Add your first products One by one, or import your price list. To do](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
+- Set your delivery charge and advance Not available yet
+- [Set up your second step An authenticator code, asked before you approve anything or connect WhatsApp. To do](/app/security)
+- [Connect WhatsApp Your business name is confirmed here. To do](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp)
+- [Send your first quote Draft it, check the figures, approve it, then send it yourself. To do](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
+[Continue](/app/tenants/22222222-2222-2222-2222-222222222222/catalogue/new)
+Tuesday, 6 October
+# Good morning
+Agent OWL this week 88% left
+{role=meter label="Agent OWL usage this week: 88% left"}
+[88 %](/app/tenants/22222222-2222-2222-2222-222222222222/settings label="Agent OWL usage this week: 88% left")
+[button type=button: Help for this screen]
+{role=status} Sending is stopped Nothing goes out and everything waits until the operator switches sending back on. You can still read and edit messages.
+{label="6 things need you. The rest is handled."}
+{role=img label="Agent OWL, Resting"}
+Resting Resting Resting Agent OWL
+## 6 things need you. The rest is handled.
+Overnight on WhatsApp: 3 sent, 1 held for your OK. Not available yet Speak or type in Telugu, Hindi, Kannada or English. Agent OWL answers in writing, and out loud if you turn voice on.
+{label="Needs you"}
+## Needs you
+6 6 waiting for you
+[button type=button: See all (6)]
+Messages about money, promises or complaints, and calls, always wait for you.
+-
+{label="Reply to Synthetic Buyer · Hyderabad"} Price · needs your OK 10:15
+### Reply to Synthetic Buyer · Hyderabad
+ఈ చీర ధర 500 రూపాయలు మాత్రమే. ఈ సందేశం వ్యాపారం యొక్క AI సహాయకుడి నుండి వచ్చింది. Goes out in Telugu Why it waits: It mentions money (a price, an amount, a discount, GST, an advance, a payment...). A person decides.
+[button type=button: Approve and send]
+[button type=button: Edit]
+[button type=button: Not now]
+-
+{label="Synthetic Buyer asked for a call · Hyderabad"} Call · needs your OK 10:10
+### Synthetic Buyer asked for a call · Hyderabad
+The customer asked for a call about a large wedding order.
+[button type=button: Approve call]
+[button type=button: Offer a store visit]
+-
+{label="Synthetic Buyer"} Follow-up draft 10:00
+### Synthetic Buyer
+Follow-up Desk · 1m A follow-up message (number 2) is drafted and waiting for your approval.
+Customer
+Synthetic Buyer
+When
+1m
+[Check the follow-up](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333) Nothing is sent, approved or recorded by opening this.
+-
+{label="Synthetic Buyer, Hyderabad"} Order: money still held 8:30
+### Synthetic Buyer , Hyderabad
+Dispatch Desk · 2h Order 1 is closed but still holds ₹400.00. A refund may be owed.
+Customer
+Synthetic Buyer
+City
+Hyderabad
+Amount
+₹400.00
+When
+2h
+[Check the order](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1) Nothing is sent, approved or recorded by opening this.
+-
+{label="Synthetic Buyer, Hyderabad"} Quote draft 7:30
+### Synthetic Buyer , Hyderabad
+Quote Writer · 3h Quote 1 for ₹50,400.00 is ready for your approval.
+Customer
+Synthetic Buyer
+City
+Hyderabad
+Amount
+₹50,400.00
+When
+3h
+[Check the quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) [Open](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444?quote=88888888-8888-4888-8888-888888888888) Nothing is sent, approved or recorded by opening this.
+-
+{label="Agent OWL proposed a visit for Priya S. · Hyderabad"} Visit · needs your OK 9:00
+### Agent OWL proposed a visit for Priya S. · Hyderabad
+When
+Thu, 8 Oct, 11:00
+People
+3 people
+For
+Bridal sarees
+Booked, but not confirmed with the customer yet. Nothing was sent to the customer.
+[button type=button: Confirm the visit]
+[button type=button: Change time]
+[button type=button: Cancel the visit]
+{role=status}
+{label="At the store today"}
+## At the store today
+3 visits
+- 10:30 Anita R. Waiting for the customer
+- 12:00 Priya S. + 2 Bridal sarees Confirmed
+- 16:00 Lakshmi Textiles Silk saree wholesale Reminder sent
+Next free time today: 10:00 [Open the visit calendar](/app/tenants/22222222-2222-2222-2222-222222222222/visits) [Book a visit](/app/tenants/22222222-2222-2222-2222-222222222222/visits#book)
+{label="Done while you slept"}
+## Done while you slept
+- Replied to 2 customers on WhatsApp
+- Sent shop information to 1 customer
+- Held 1 message until 12:00 (quiet hours)
+[See everything in the outbox](/app/tenants/22222222-2222-2222-2222-222222222222/outbox?tab=sent)
+{label="Your team"}
+## Your team
+[Open the office](/app/tenants/22222222-2222-2222-2222-222222222222/office)
+- Lead Finder Not available yet
+- Researcher Idle
+- Site Measurer Working
+- Quote Writer Prepared quote 3 · 2h
+- Follow-up Desk Drafted follow-up message number 2 · 1m
+- Dispatch Desk Order started · 30m

@@ -14,13 +14,24 @@ describe("runCompleteSetup", () => {
     expect(submit).toHaveBeenCalledWith("tok", { businessType: "textiles", language: "te" });
   });
 
+  it("sends a well-formed business type to the API, which refuses one a person may not choose: its fixed sentence is shown", async () => {
+    const submit = vi.fn(async () => {
+      throw new ApiRequestError(422, "business_type_unavailable", "That kind of business is not available yet. Choose one of the kinds on the sign-up page.");
+    });
+    expect(await runCompleteSetup({ businessType: "bakery", language: "en" }, { token: "t", submit })).toEqual({ ok: false, error: "That kind of business is not available yet. Choose one of the kinds on the sign-up page." });
+    expect(submit).toHaveBeenCalledTimes(1);
+  });
+
   it("is ok again for a repeat (the API says nothing new was made)", async () => {
     const submit = vi.fn(async () => ({ tenantId: TENANT, created: false }));
     expect(await runCompleteSetup({ businessType: "other", language: "en" }, { token: "t", submit })).toEqual({ ok: true });
   });
 
   it.each([
-    [{ businessType: "bakery", language: "en" }],
+    [{ businessType: "Bakery Shop", language: "en" }],
+    [{ businessType: "../x", language: "en" }],
+    [{ businessType: "a".repeat(40), language: "en" }],
+    [{ businessType: "x", language: "en" }],
     [{ businessType: "other", language: "fr" }],
     [{ businessType: "other" }],
     [{ language: "en" }],

@@ -9,6 +9,8 @@ import type { CustomerFormState } from "./actions";
 import { alertBox, btnMain, fieldInput, fieldLabel, formCardWide, link, mutedText } from "@/components/v2/app/ui";
 import { Rich } from "@/components/v2/app/rich";
 import { makeT, type Words } from "@/components/v2/app/words";
+import { CustomFieldsInputs, type FieldInputWords, type FieldValues } from "@/components/v2/app/fields/CustomFieldsInputs";
+import type { FormField } from "@/lib/packs/form-fields";
 
 type Action = (prev: CustomerFormState, formData: FormData) => Promise<CustomerFormState>;
 
@@ -27,7 +29,7 @@ type Ids = { company: string; contact: string; lead: string };
  * remounted whenever the ids change: new ids from a new page render, or the person pressing "Add another customer", which makes fresh ids here and restarts in place. Without this a second
  * customer could be sent with the first customer's contact id and typed values (the page's own `key` is not enough: a component must not rely on its caller for it).
  */
-export function CustomerForm({ action, tenantId, ids: pageIds, words }: { action: Action; tenantId: string; ids: Ids; words?: Words; }) {
+export function CustomerForm({ action, tenantId, ids: pageIds, words, fields = [], fieldWords }: { action: Action; tenantId: string; ids: Ids; words?: Words; /** The extra fields of the business type (job CL), already in the person's language. */ fields?: readonly FormField[]; fieldWords?: FieldInputWords }) {
   const pageKey = `${pageIds.company}|${pageIds.contact}|${pageIds.lead}`;
   const [seenKey, setSeenKey] = useState(pageKey);
   const [ids, setIds] = useState(pageIds);
@@ -42,10 +44,10 @@ export function CustomerForm({ action, tenantId, ids: pageIds, words }: { action
     setIds({ company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() });
     setRound((r) => r + 1);
   };
-  return <CustomerFormBody words={words} key={`${round}|${ids.company}|${ids.contact}|${ids.lead}`} action={action} tenantId={tenantId} ids={ids} onAnother={another} />;
+  return <CustomerFormBody fields={fields} fieldWords={fieldWords} words={words} key={`${round}|${ids.company}|${ids.contact}|${ids.lead}`} action={action} tenantId={tenantId} ids={ids} onAnother={another} />;
 }
 
-function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action: Action; tenantId: string; ids: Ids; onAnother: () => void; words?: Words; }) {
+function CustomerFormBody({ action, tenantId, ids, onAnother, words, fields, fieldWords }: { action: Action; tenantId: string; ids: Ids; onAnother: () => void; words?: Words; fields: readonly FormField[]; fieldWords?: FieldInputWords }) {
   const t = makeT(words);
   const [contactId, setContactId] = useState(ids.contact);
   const [fullName, setFullName] = useState("");
@@ -54,6 +56,7 @@ function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action:
   const [shop, setShop] = useState("");
   const [gstin, setGstin] = useState("");
   const [how, setHow] = useState("phone_call");
+  const [custom, setCustom] = useState<FieldValues>({});
   const [state, formAction, pending] = useActionState(async (prev: CustomerFormState, formData: FormData) => {
     const next = await action(prev, formData);
     if (next?.nextContactId) setContactId(next.nextContactId);
@@ -65,6 +68,7 @@ function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action:
         <p>
           <Rich t={t} k="cust.added_line" with={{ name: <strong>{state.name}</strong> }} />
         </p>
+        {state.fieldsNote ? <p role="alert" className={mutedText}>{state.fieldsNote}</p> : null}
         <p className={mutedText}>{t("cust.no_consent_is_recorded_yet_so")}</p>
         <p>
           <Link href={`/app/tenants/${tenantId}/contacts/${state.contactId}/consent`} className={link}>
@@ -138,6 +142,12 @@ function CustomerFormBody({ action, tenantId, ids, onAnother, words }: { action:
         ))}
       </select>
       <p className={mutedText}>{t("cust.if_you_leave_the_shop_name")}</p>
+      {fields.length > 0 && fieldWords ? (
+        <>
+          <CustomFieldsInputs fields={fields} values={custom} onChange={setCustom} words={fieldWords} idPrefix="cust-cf" disabled={pending} />
+          <input type="hidden" name="custom" value={JSON.stringify(custom)} />
+        </>
+      ) : null}
       {state?.error && (
         <p role="alert" className={alertBox}>
           {state.error}

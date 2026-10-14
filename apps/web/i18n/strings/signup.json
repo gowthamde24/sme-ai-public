@@ -343,5 +343,182 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "signup.step": {
+  "en": "Step {n} of 2",
+  "te": "{n}వ దశ, మొత్తం 2",
+  "hi": "चरण {n} / 2",
+  "kn": "ಹಂತ {n} / 2",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.pack.title": {
+  "en": "What kind of business do you run?",
+  "te": "మీరు ఏ రకం వ్యాపారం చేస్తున్నారు?",
+  "hi": "आप किस तरह का व्यापार करते हैं?",
+  "kn": "ನೀವು ಯಾವ ರೀತಿಯ ವ್ಯಾಪಾರ ಮಾಡುತ್ತೀರಿ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.pack.sub": {
+  "en": "Choose the closest one. We set up the screens and words to match.",
+  "te": "దగ్గరగా ఉన్నది ఎంచుకోండి. స్క్రీన్లు, పదాలు దానికి తగ్గట్టు సెట్ చేస్తాం.",
+  "hi": "सबसे करीबी चुनिए। स्क्रीन और शब्द उसी के हिसाब से सेट कर देंगे।",
+  "kn": "ಹತ್ತಿರದ್ದನ್ನು ಆರಿಸಿ. ಸ್ಕ್ರೀನ್‌ಗಳು, ಪದಗಳನ್ನು ಅದಕ್ಕೆ ತಕ್ಕಂತೆ ಹೊಂದಿಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.pack.choose": {
+  "en": "Choose {name}",
+  "te": "{name} ఎంచుకోండి",
+  "hi": "{name} चुनिए",
+  "kn": "{name} ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.pack.preview": {
+  "en": "Not validated by a real owner yet",
+  "te": "నిజమైన యజమాని ఇంకా ధృవీకరించలేదు",
+  "hi": "किसी असली मालिक ने अभी तक जाँचा नहीं है",
+  "kn": "ನಿಜವಾದ ಮಾಲೀಕರು ಇನ್ನೂ ಪರಿಶೀಲಿಸಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.err.unavailable": {
+  "en": "Sign-up is not available right now. Please try again in a few minutes.",
+  "te": "సైన్-అప్ ఇప్పుడు అందుబాటులో లేదు. కొన్ని నిమిషాల తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "साइन-अप अभी उपलब्ध नहीं है। कुछ मिनट बाद फिर कोशिश करें।",
+  "kn": "ಸೈನ್-ಅಪ್ ಈಗ ಲಭ್ಯವಿಲ್ಲ. ಕೆಲವು ನಿಮಿಷಗಳ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.pack.change": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलिए",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.google": {
+  "en": "Continue with Google",
+  "te": "Google తో కొనసాగండి",
+  "hi": "Google से आगे बढ़िए",
+  "kn": "Google ಮೂಲಕ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.facebook": {
+  "en": "Continue with Facebook",
+  "te": "Facebook తో కొనసాగండి",
+  "hi": "Facebook से आगे बढ़िए",
+  "kn": "Facebook ಮೂಲಕ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.email.cta": {
+  "en": "Continue with e-mail",
+  "te": "ఇమెయిల్‌తో కొనసాగండి",
+  "hi": "ईमेल से आगे बढ़िए",
+  "kn": "ಇಮೇಲ್ ಮೂಲಕ ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "signup.terms.continue": {
+  "en": "By continuing you agree to the {terms} and the {privacy}.",
+  "te": "By continuing you agree to the {terms} and the {privacy}.",
+  "hi": "By continuing you agree to the {terms} and the {privacy}.",
+  "kn": "By continuing you agree to the {terms} and the {privacy}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "signup.err.provider": {
+  "en": "That way of signing in is not available yet. Use your e-mail address for now.",
+  "te": "ఆ విధంగా సైన్ ఇన్ చేయడం ఇంకా అందుబాటులో లేదు. ప్రస్తుతానికి మీ ఇమెయిల్ వాడండి.",
+  "hi": "साइन इन का वह तरीका अभी उपलब्ध नहीं है। अभी अपना ईमेल इस्तेमाल कीजिए।",
+  "kn": "ಆ ರೀತಿಯಲ್ಲಿ ಸೈನ್ ಇನ್ ಮಾಡುವುದು ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ. ಸದ್ಯಕ್ಕೆ ನಿಮ್ಮ ಇಮೇಲ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.auto.title": {
+  "en": "Setting up your workspace",
+  "te": "మీ వర్క్‌స్పేస్ సెట్ చేస్తున్నాం",
+  "hi": "आपका वर्कस्पेस सेट कर रहे हैं",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಹೊಂದಿಸುತ್ತಿದ್ದೇವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.auto.sub": {
+  "en": "One moment. You will land on Today.",
+  "te": "ఒక్క నిమిషం. మీరు ఈరోజు స్క్రీన్‌కి వెళ్తారు.",
+  "hi": "बस एक पल। आप सीधे आज की स्क्रीन पर पहुँचेंगे।",
+  "kn": "ಒಂದು ನಿಮಿಷ. ನೀವು ಇಂದು ಸ್ಕ್ರೀನ್‌ಗೆ ಹೋಗುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.auto.working": {
+  "en": "Setting up your workspace…",
+  "te": "మీ వర్క్‌స్పేస్ సెట్ చేస్తున్నాం…",
+  "hi": "आपका वर्कस्पेस सेट कर रहे हैं…",
+  "kn": "ನಿಮ್ಮ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಹೊಂದಿಸುತ್ತಿದ್ದೇವೆ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "setup.auto.retry": {
+  "en": "Try again",
+  "te": "మళ్ళీ ప్రయత్నించండి",
+  "hi": "फिर कोशिश कीजिए",
+  "kn": "ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

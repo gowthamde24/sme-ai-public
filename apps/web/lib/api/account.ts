@@ -5,9 +5,9 @@ import { isCanonicalUuid } from "./crm";
  * What a new account still has to do after sign-up, and the first-login setup itself (job AD / D2). Server side only, with the signed-in
  * user's own token. The business name is never sent from here: the database takes it from the sign-up.
  */
-export const BUSINESS_TYPES = ["textiles", "construction", "other"] as const;
+// the business type is a pack code from GET /v1/packs (job CK); the database refuses one a person may not choose (422 `business_type_unavailable`)
 export const SETUP_LANGUAGES = ["en", "te", "hi", "kn"] as const;
-export type BusinessType = (typeof BUSINESS_TYPES)[number];
+export type BusinessType = string;
 export type SetupLanguage = (typeof SETUP_LANGUAGES)[number];
 
 /** `needed`: confirmed, terms accepted, no business yet. `done`: the business exists (tenantId). `none`: nothing to do (an invited person). */

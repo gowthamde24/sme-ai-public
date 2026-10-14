@@ -6,6 +6,9 @@ import * as React from "react";
 
 import { COLOURS, FABRICS, MAX_BORDER, MAX_COLOURS, MAX_NAME, MAX_OCCASIONS, MAX_PHOTOS, OCCASIONS, PHOTO_TYPES, PRICE_BANDS, STOCK_STATUSES, ZARIS, type Colour, type Fabric, type Item, type Occasion, type Photo, type PriceBand, type StockStatus, type Zari } from "@/lib/api/catalogue";
 
+import type { FormField } from "@/lib/packs/form-fields";
+
+import { CustomFieldsInputs, type FieldValues } from "../fields/CustomFieldsInputs";
 import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, okLine, primary, quiet } from "../visits/styles";
 import { FreshPhotos } from "./FreshPhotos";
@@ -37,6 +40,9 @@ export type ItemEditorProps = {
   uploader?: Uploader;
   prepare?: typeof preparePhoto;
   go?: (href: string) => void;
+  /** The extra fields of the business type for a catalogue item (job CL), in the person's language, and the values this item has now. */
+  fields?: readonly FormField[];
+  custom?: FieldValues;
 };
 
 const CHECK_CHIP =
@@ -69,6 +75,7 @@ export function ItemEditor(p: ItemEditorProps) {
   const [band, setBand] = React.useState<PriceBand>(item?.price_band ?? "10k_25k");
   const [stock, setStock] = React.useState<StockStatus>(item?.stock_status ?? "in_stock");
   const [active, setActive] = React.useState(item?.active ?? false);
+  const [custom, setCustom] = React.useState<FieldValues>(p.custom ?? {});
   const [priceText, setPriceText] = React.useState("");
   const [clearPrice, setClearPrice] = React.useState(false);
   const [slots, setSlots] = React.useState<Slot[]>(() => (item?.photos ?? []).map((ph) => ({ key: ph.id, kind: "saved" as const, photoId: ph.id })));
@@ -186,6 +193,12 @@ export function ItemEditor(p: ItemEditorProps) {
     const first = await p.actions.save(p.itemId, { ...base, active: shownNow, ...(price ? { price } : {}) });
     if (!first.ok) return refuse(first);
     let current: Item = first.item;
+    // the extra fields of the business type go next; they do not stop the photos (a refusal is shown at the end)
+    let customProblem: string | null = null;
+    if (p.fields && p.fields.length > 0 && p.actions.saveCustom) {
+      const kept = await p.actions.saveCustom(p.itemId, custom as Record<string, never>);
+      if (!kept.ok) customProblem = kept.error;
+    }
     setServer(current);
     setClearPrice(false);
     setPriceText("");
@@ -237,8 +250,8 @@ export function ItemEditor(p: ItemEditorProps) {
     setKnown((cur) => new Map([...cur, ...current.photos.map((ph) => [ph.id, ph] as const)]));
     setStep(null);
     setBusy(false);
-    if (failed > 0) {
-      setNote(say(words, "catalogue.saved.partial"));
+    if (failed > 0 || customProblem) {
+      setNote([failed > 0 ? say(words, "catalogue.saved.partial") : null, customProblem].filter(Boolean).join(" "));
       return;
     }
     go(`${p.base}/catalogue/${p.itemId}?saved=1`);
@@ -364,6 +377,8 @@ export function ItemEditor(p: ItemEditorProps) {
             </select>
           </div>
         </div>
+
+        {p.fields && p.fields.length > 0 ? <CustomFieldsInputs fields={p.fields} values={custom} onChange={setCustom} words={{ title: say(words, "fields.form.title"), yes: say(words, "fields.form.yes"), no: say(words, "fields.form.no"), pick: say(words, "fields.form.pick") }} idPrefix="cat-cf" disabled={busy} /> : null}
 
         <div data-part="exact-price" className="rounded-2xl border border-line p-4">
           {owner ? (

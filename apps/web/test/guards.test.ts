@@ -206,7 +206,10 @@ describe("server-only code stays on the server", () => {
     const SESSION_CHECK = path.join("components", "v2", "app", "robust", "RobustShell.tsx");
     // And the transport of the screens of job CC (the import's file, the export's download, a thread's reply): this app's own routes by a relative path, no token, no API address.
     const CC_POST = path.join("components", "v2", "app", "cc", "post.ts");
-    expect(callers).toEqual([ASK_TRANSPORT, BELL_POLL, CC_POST, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    // And the probe of the sign-in-with-a-provider address (job CL): the Auth server's own address, asked once from the server without following it, no token, never the API.
+    const AUTHORIZE_PROBE = path.join("lib", "supabase", "authorize-probe.ts");
+    expect(callers).toEqual([ASK_TRANSPORT, AUTHORIZE_PROBE, BELL_POLL, CC_POST, SESSION_CHECK, path.join("lib", "api", "client.ts")].sort());
+    expect(read(path.join(WEB_ROOT, AUTHORIZE_PROBE))).not.toMatch(/Authorization|apiBaseUrl|NEXT_PUBLIC_API/i);
     const client = read(path.join(WEB_ROOT, "lib/api/client.ts"));
     expect(client).toMatch(/fetch\(`\$\{base\}\$\{path\}`/);
     const transport = read(path.join(WEB_ROOT, ASK_TRANSPORT));
@@ -227,12 +230,14 @@ describe("server-only code stays on the server", () => {
         path.join("app", "app", "actions.ts"),
         path.join("app", "app", "security", "actions.ts"),
         path.join("app", "app", "session", "route.ts"),
+        path.join("app", "auth", "callback", "route.ts"), // job CL: the return of Google / Facebook swaps its one-time code for a session
         path.join("app", "auth", "confirm", "actions.ts"),
         path.join("app", "auth", "forgot", "actions.ts"),
         path.join("app", "auth", "mfa", "actions.ts"),
         path.join("app", "auth", "set-password", "actions.ts"),
         path.join("app", "login", "actions.ts"),
         path.join("app", "signup", "actions.ts"),
+        path.join("app", "signup", "oauth-actions.ts"), // job CL: "Continue with Google / Facebook" asks the Auth server for the provider's address
         path.join("lib", "auth", "session.ts"),
         "proxy.ts",
       ].sort(),

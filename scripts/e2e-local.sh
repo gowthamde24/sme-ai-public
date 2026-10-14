@@ -3,6 +3,7 @@
 # sign-up, sign-in with the authenticator, Today, the Outbox, Settings, Visits and the saree Catalogue (with a real photo upload), prints one PASS/FAIL line per step, stops what it started (by PID) and removes its
 # throwaway workspace. Local only, invented data, nothing leaves this machine. Never uses ports 3000, 8000 or 8001 and never stops a process it did not start. Not part of `make check`, not in CI (it needs Docker,
 # the local Supabase stack and a browser). See docs/runbooks/e2e-real-stack.md.
+# E2E_SCRIPT=cl-signup.mjs runs the business-type sign-up flows instead (job CL, `make e2e-packs`); AUTH_GOOGLE_CLIENT_ID / AUTH_FACEBOOK_APP_ID in the environment reach the API (public ids only).
 set -uo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$(pwd)"
@@ -56,7 +57,7 @@ wait_for "http://localhost:$WEB_PORT/login" "the web" || exit 1
 cd e2e
 [ -d node_modules ] || npm ci
 export E2E_WEB_URL="http://localhost:$WEB_PORT" E2E_API_URL="http://localhost:$API_PORT"
-node be-stack.mjs
+node "${E2E_SCRIPT:-be-stack.mjs}"
 status=$?
 echo "e2e-local: exit $status (screenshots: ${E2E_SHOTS:-e2e/shots-be})"
 exit $status

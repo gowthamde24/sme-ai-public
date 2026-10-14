@@ -1,0 +1,14 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Fields](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=fields current=page) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+Fields hold the extra details you keep about your customers and your products. Your kind of business comes with some; you can add your own.
+{role=alert} Fields cannot be saved yet on this system.
+{label="Customers and contacts"}
+## Customers and contacts
+0 of 20 in use No extra fields yet.
+{label="Catalogue items"}
+## Catalogue items
+0 of 20 in use No extra fields yet.
+{label="Add a field"}
+## Add a field
+Do not use fields for health, religion, caste, income, Aadhaar or other private details. Not available yet

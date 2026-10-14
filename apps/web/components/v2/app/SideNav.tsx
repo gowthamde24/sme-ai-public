@@ -9,7 +9,7 @@ import { useFrameData } from "./frame-store";
 import { frameBand } from "./frame-style";
 import { UsageCard } from "./frame-parts";
 import { itemBase, itemCurrent, itemIdle, NavGroups, NavLink } from "./NavGroups";
-import { word, type Labels } from "./labels";
+import { word, withPackWords, type Labels } from "./labels";
 import { footItems, visibleGroups } from "./nav";
 import { useCollapsed } from "./use-collapsed";
 import { useWorkspace, type Membership } from "./use-workspace";
@@ -22,19 +22,21 @@ export { itemCurrent };
  * (nav.ts), each row only for the roles that may open it; and, fixed below, the AI usage card, Settings, Help ("Not available yet"), the user card and "Collapse menu".
  * Outside a workspace (the workspaces page, the security page) the groups give way to the two account pages.
  */
-export function SideNav({ memberships, labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
+export function SideNav({ memberships, labels: given_labels, frame: given, email, signOut }: { memberships: readonly Membership[]; labels?: Labels; frame: FrameData; email: string | null; signOut: () => Promise<void> }) {
   const { current, pathname, active } = useWorkspace(memberships);
   const frame = useFrameData(given);
+  const labels = withPackWords(given_labels, frame.pack);
   const [collapsed, toggle] = useCollapsed();
   const aria = word(labels, "frame.menu.workspace", "Workspace menu");
   const help = word(labels, "frame.help", "Help");
   const foot = current ? footItems(current.role) : [];
+  const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
     <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-64"}`}>
-      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} />
+      <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} />
       <nav aria-label={aria} className="min-h-0 flex-1 overflow-y-auto p-2">
         {current ? (
-          <NavGroups groups={visibleGroups(current.role)} tenantId={current.id} activeItemId={active?.item.id ?? null} labels={labels} waiting={frame.waiting} collapsed={collapsed} />
+          <NavGroups groups={visibleGroups(current.role, frame.pack)} tenantId={current.id} activeItemId={active?.item.id ?? null} labels={labels} waiting={frame.waiting} collapsed={collapsed} />
         ) : (
           <div className="space-y-1">
             {[

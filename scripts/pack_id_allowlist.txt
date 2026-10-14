@@ -1,2 +1,1 @@
 # Files that still hold a pack id as a string literal and belong to another lane (scripts/packs_check.py). One path per line, then the reason. Remove a line when its file is fixed.
-apps/web/lib/api/account.ts   the sign-up's old three-value business type list; the web job CL replaces it with the list from GET /v1/packs
