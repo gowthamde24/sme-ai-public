@@ -741,8 +741,8 @@ begin
     end if;
     if v_area is not null then
       -- by area: the item must count its pieces in this area unit and be sold by the piece or by this area unit
-      v_ppa := app.cq_spec_int(p_tenant, v_item.id, 'pieces_per_area', 1000, 1, 1000000, 'pieces_per_area');
       if v_item.area_unit is distinct from v_unit or v_item.sell_unit not in ('piece', v_unit) then perform app.cq_error('SM762', 'unit'); end if;
+      v_ppa := app.cq_spec_int(p_tenant, v_item.id, 'pieces_per_area', 1000, 1, 1000000, 'pieces_per_area');
       v_one := jsonb_build_object('sku', v_sku, 'name', v_item.name, 'mode', 'area', 'sold_per', v_item.sell_unit, 'unit_price_paise', v_item.price_paise, 'gst_bps', v_gst,
                                   'area_unit', v_unit, 'area_x100', v_area, 'pieces_per_area_x1000', v_ppa);
       if v_ppp is not null then v_one := v_one || jsonb_build_object('pieces_per_pallet', v_ppp); end if;

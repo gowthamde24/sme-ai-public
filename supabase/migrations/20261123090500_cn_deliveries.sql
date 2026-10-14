@@ -648,7 +648,7 @@ set search_path = ''
 as $$
 declare
   v_uid     uuid := auth.uid();
-  v_now     timestamptz := now();
+  v_now     timestamptz := app.outbox_now();  -- the outbox's own clock seam (the policy depends on the hour in India)
   v_text    text := btrim(coalesce(p_body, ''));
   t         public.delivery_trips;
   o         public.orders;
