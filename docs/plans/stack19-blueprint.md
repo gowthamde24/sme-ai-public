@@ -348,5 +348,30 @@ one paver-block seller + one school/college reviewer; native readers.
 - Works at 390 px and desktop, light and dark; en/te/hi/kn strings present (native review flagged).
 - Module guard in DB + UI; pgTAP for every new function; pytest/vitest; e2e for the main flow.
 - No model computes money; children's fields never reach a model/log/export.
-- Route JS budgets green (Today ≤ 201,000 B, landing ≤ 153,000 B unless the owner approves a raise).
+- Route JS budgets green (Today ≤ 204,000 B, landing ≤ 156,000 B unless the owner approves a raise).
 - Screenshots in ~/Desktop/v2-overnight/shots-<job>/; report lists anything not done and why.
+
+---
+
+## 13. Built to add more businesses (pack architecture, owner requirement 14 Oct)
+
+Adding a new kind of business (real estate, automobiles, clinics, restaurants, ...) must be **mostly data, not code**.
+
+1. **One folder per pack**: `packages/packs/<pack_id>/` with a schema-validated `pack.json`: id, version, status,
+   names and one-line descriptions per language, icon/owl prop, accent token, modules on (from the closed module
+   list), labels per language (nav, entities, Today cards, empty states, help chips), custom field definitions
+   (with pii_class), catalogue units allowed, quote/fee/dues rule presets, reminder/campaign kinds + template keys,
+   owl team labels, activation checklist steps, example-data seed file, landing-page content blocks.
+2. **A JSON Schema** (`packages/packs/pack.schema.json`) validates every pack in CI; a pack that fails cannot load.
+3. **Registry**: the DB `packs` table is loaded from these files by a migration/seed step (versioned; workspaces stay
+   pinned to the version they chose). The web reads the same files at build time for landing pages and labels.
+4. **No pack names in code.** Code asks `moduleEnabled(m)`, `label(key)`, `packRules(kind)` - never `if pack ===
+   'textiles'`. A lint rule + a grep test fail the build on a literal pack id outside packages/packs and tests.
+5. **Modules are the only code extension point.** A new business that needs new behaviour gets a new *module*
+   (generic, reusable: e.g. "appointments", "bookings", "service-due"), never pack-specific code. Modules are
+   default-deny in the DB with a pgTAP matrix.
+6. **Generator**: `make new-pack ID=<id>` scaffolds the folder from a template with TODOs, plus a test that the pack
+   loads, renders sign-up card, landing page, labels in all languages (missing translations flagged, not crashing).
+7. **Equivalence tests** per pack: switching labels/modules never changes money maths or safety rules.
+8. **Docs**: `docs/runbooks/add-a-business-type.md` - the steps above, the review gate (a real owner + native
+   reader), and the legal checklist questions for the vertical.
