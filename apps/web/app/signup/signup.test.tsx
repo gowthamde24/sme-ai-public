@@ -1,10 +1,12 @@
-import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const push = vi.fn();
 const signUp = vi.fn();
+const providerAction = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 vi.mock("./actions", () => ({ signUp: (...a: unknown[]) => signUp(...a) }));
+vi.mock("./oauth-actions", () => ({ continueWithProvider: (...a: unknown[]) => providerAction(...a) }));
 vi.mock("@/design/fonts", () => ({ v2FontClassName: () => "font-vars" }));
 const currentPolicies = vi.fn();
 vi.mock("@/lib/api/policy", async (orig) => ({ ...(await orig<typeof import("@/lib/api/policy")>()), getCurrentPolicies: () => currentPolicies() }));
@@ -15,17 +17,14 @@ import SignupPage from "./page";
 import type { SignUpResult } from "@/lib/api/signup";
 
 const words: SignUpWords = {
-  name: "Your name", email: "Email", password: "Password", passwordHint: "At least 12 characters.", business: "Business name", terms: "I agree to the {terms} and the {privacy}.", termsLink: "Terms", privacyLink: "Privacy Policy",
-  submit: "Create account", have: "Already have an account?", signin: "Sign in",
+  email: "Email", password: "Password", passwordHint: "At least 12 characters.", submit: "Create account",
   errors: { weak_password: "Choose a stronger password.", terms_required: "You need to agree to the Terms and the Privacy Policy.", unknown: "Something went wrong." },
 };
-const fill = (accept = true) => {
-  fireEvent.change(screen.getByLabelText("Your name"), { target: { value: " Asha " } });
-  fireEvent.change(screen.getByLabelText("Email"), { target: { value: "asha@example.test" } });
+const fill = () => {
+  fireEvent.change(screen.getByLabelText("Email"), { target: { value: " asha@example.test " } });
   fireEvent.change(screen.getByLabelText("Password"), { target: { value: "a-long-password-1" } });
-  fireEvent.change(screen.getByLabelText("Business name"), { target: { value: "Asha Silks" } });
-  if (accept) fireEvent.click(screen.getByRole("checkbox"));
 };
+const props = (query: Record<string, string | string[] | undefined> = {}) => ({ searchParams: Promise.resolve(query), params: Promise.resolve({}) }) as never;
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -33,55 +32,27 @@ beforeEach(() => {
 });
 afterEach(cleanup);
 
-describe("SignUpForm", () => {
+describe("SignUpForm (the e-mail way of step 2)", () => {
   const ok = async (): Promise<SignUpResult> => ({ ok: true, next: "check-email" });
-  it("the consent checkbox is required and NOT ticked, with the Terms and the Privacy Policy linked (new tab, no opener) (job BH)", () => {
-    render(<SignUpForm words={words} action={ok} />);
-    const box = screen.getByRole("checkbox");
-    expect(box).not.toBeChecked();
-    expect(box).toBeRequired();
-    expect(box.closest("label")).toHaveTextContent("I agree to the Terms (opens in a new tab) and the Privacy Policy (opens in a new tab).");
-    const terms = screen.getByRole("link", { name: /^Terms/ });
-    const privacy = screen.getByRole("link", { name: /^Privacy Policy/ });
-    expect(terms).toHaveAttribute("href", "/terms");
-    expect(privacy).toHaveAttribute("href", "/privacy");
-    for (const a of [terms, privacy]) {
-      expect(a).toHaveAttribute("target", "_blank");
-      expect(a.getAttribute("rel")).toContain("noopener");
-    }
-    expect(box.closest("label")!.className).toContain("min-h-11");
-  });
-  it("without the tick nothing is sent, and a click on a link does not tick the box (job BH)", async () => {
-    const action = vi.fn(async (): Promise<SignUpResult> => ({ ok: true, next: "check-email" }));
-    render(<SignUpForm words={words} action={action} />);
-    fill(false);
-    fireEvent.click(screen.getByRole("link", { name: /^Terms/ }));
-    expect(screen.getByRole("checkbox")).not.toBeChecked();
-    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
-    expect(await screen.findByRole("alert")).toHaveTextContent("agree to the Terms");
-    expect(action).not.toHaveBeenCalled();
-  });
-  it("is drawn with a way back to sign in, and no 'Not available yet'", () => {
-    render(<SignUpForm words={words} action={ok} />);
+  it("asks an address and a password, nothing else: no name, no business name, no tick box", () => {
+    render(<SignUpForm words={words} action={ok} businessType="construction" />);
+    expect(screen.getAllByRole("textbox")).toHaveLength(1); // the address (a password field has no textbox role)
+    expect(screen.getByLabelText("Password")).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox")).toBeNull();
+    expect(screen.queryByLabelText(/name/i)).toBeNull();
     expect(screen.getByRole("button", { name: "Create account" })).toBeEnabled();
-    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
-    expect(screen.queryByText(/Not available yet/)).toBeNull();
   });
-  it("sends the five inputs of the contract and goes to 'check your email' on success; the terms must be accepted first", async () => {
+  it("sends the address, the password, the kind of business chosen on step 1 and the acceptance, and goes to 'check your email'", async () => {
     const action = vi.fn(ok);
-    render(<SignUpForm words={words} action={action} />);
-    fill(false);
-    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
-    expect(await screen.findByRole("alert")).toHaveTextContent("You need to agree to the Terms and the Privacy Policy.");
-    expect(action).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("checkbox"));
+    render(<SignUpForm words={words} action={action} businessType="education" />);
+    fill();
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
     await waitFor(() => expect(push).toHaveBeenCalledWith("/signup/check-email"));
-    expect(action).toHaveBeenCalledWith({ name: "Asha", email: "asha@example.test", password: "a-long-password-1", businessName: "Asha Silks", acceptTerms: true });
+    expect(action).toHaveBeenCalledWith({ email: "asha@example.test", password: "a-long-password-1", businessType: "education", acceptTerms: true });
   });
   it("shows the sentence of an error code, and the generic one for a code it does not know; nothing else happens", async () => {
     const action = vi.fn(async (): Promise<SignUpResult> => ({ ok: false, error: "weak_password" }));
-    render(<SignUpForm words={words} action={action} />);
+    render(<SignUpForm words={words} action={action} businessType="textiles" />);
     fill();
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
     expect(await screen.findByRole("alert")).toHaveTextContent("Choose a stronger password.");
@@ -94,81 +65,125 @@ describe("SignUpForm", () => {
     const action = vi.fn(async (): Promise<SignUpResult> => {
       throw new Error("network");
     });
-    render(<SignUpForm words={words} action={action} />);
+    render(<SignUpForm words={words} action={action} businessType="textiles" />);
     fill();
     fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
     expect(await screen.findByRole("alert")).toHaveTextContent("Something went wrong.");
     expect(push).not.toHaveBeenCalled();
   });
   it("the fields carry the password rule of the app (12 to 72 characters) and the right autocomplete", () => {
-    render(<SignUpForm words={words} action={ok} />);
+    render(<SignUpForm words={words} action={ok} businessType="textiles" />);
     const pw = screen.getByLabelText("Password");
     expect(pw).toHaveAttribute("minlength", "12");
     expect(pw).toHaveAttribute("maxlength", "72");
     expect(pw).toHaveAttribute("autocomplete", "new-password");
     expect(screen.getByLabelText("Email")).toHaveAttribute("type", "email");
   });
-});
-
-describe("the pages", () => {
-  it("/signup knows exactly the four refusals the action can give, and 'email taken' is not one of them", async () => {
-    signUp.mockResolvedValue({ ok: false, error: "weak_password" });
-    render(await SignupPage());
-    fill();
-    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
-    expect(await screen.findByRole("alert")).toHaveTextContent("Choose a stronger password: at least 12 characters");
-    for (const [code, text] of [["terms_required", /agree to the Terms/], ["too_many_signups", /Too many tries/], ["invalid", /Check your name/]] as const) {
-      signUp.mockResolvedValue({ ok: false, error: code });
-      fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
-      await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(text));
-    }
+  it("sends the Terms and Privacy Policy versions the page showed (job CF), or none when the page could not read them", async () => {
     signUp.mockResolvedValue({ ok: true, next: "check-email" });
-    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/signup/check-email"));
-  });
-  it("/signup draws the title, the form and the hint with the minimum length; the terms sentence stays English", async () => {
-    render(await SignupPage());
-    expect(screen.getByRole("heading", { level: 1, name: "Create your account" })).toBeInTheDocument();
-    expect(screen.getByText("At least 12 characters.")).toBeInTheDocument();
-    const line = screen.getByRole("checkbox").closest("label")!.querySelector("span")!;
-    expect(line).toHaveAttribute("lang", "en");
-    expect(line.textContent).toContain("I agree to the Terms");
-    expect(line.textContent).toContain("and the Privacy Policy");
-    expect(screen.queryByText(/Not available yet/)).toBeNull();
-    expect(screen.getByRole("button", { name: "Create account" })).toBeEnabled(); // wired to the real action
-  });
-  it("/signup/check-email says where to look and names no address", async () => {
-    render(await CheckEmailPage());
-    expect(screen.getByRole("heading", { level: 1, name: "Check your email" })).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Back to sign in" })).toHaveAttribute("href", "/login");
-    expect(document.body.textContent).not.toMatch(/@/);
-  });
-});
-
-describe("the Terms and Privacy Policy versions at sign-up (job CF)", () => {
-  it("the form sends the versions the page showed with the sign-up", async () => {
-    signUp.mockResolvedValue({ ok: true, next: "check-email" });
-    render(<SignUpForm words={words} action={(i) => signUp(i)} policyVersions={{ terms: "2026-11-01", privacy: "2026-10-01" }} />);
+    const { unmount } = render(<SignUpForm words={words} action={(i) => signUp(i)} businessType="textiles" policyVersions={{ terms: "2026-11-01", privacy: "2026-10-01" }} />);
     fill();
     fireEvent.click(screen.getByRole("button", { name: "Create account" }));
     await waitFor(() => expect(signUp).toHaveBeenCalled());
     expect(signUp.mock.calls[0][0]).toMatchObject({ acceptTerms: true, policyVersions: { terms: "2026-11-01", privacy: "2026-10-01" } });
-  });
-  it("without versions (the page could not read them) it sends none, and the sign-up still goes", async () => {
-    signUp.mockResolvedValue({ ok: true, next: "check-email" });
-    render(<SignUpForm words={words} action={(i) => signUp(i)} />);
+    unmount();
+    signUp.mockClear();
+    render(<SignUpForm words={words} action={(i) => signUp(i)} businessType="textiles" />);
     fill();
     fireEvent.click(screen.getByRole("button", { name: "Create account" }));
     await waitFor(() => expect(push).toHaveBeenCalledWith("/signup/check-email"));
     expect("policyVersions" in signUp.mock.calls[0][0]).toBe(false);
   });
-  it("the page reads the versions in force; when it cannot, the form is still there", async () => {
-    render(await SignupPage());
+});
+
+describe("/signup step 1: what kind of business do you run?", () => {
+  it("shows a card for each kind of business as a plain link to step 2, and nothing else to fill in", async () => {
+    render(await SignupPage(props()));
+    expect(screen.getByRole("heading", { level: 1, name: "What kind of business do you run?" })).toBeInTheDocument();
+    expect(screen.getByText("Step 1 of 2")).toBeInTheDocument();
+    const cards = screen.getAllByRole("link").filter((a) => a.hasAttribute("data-pack-card"));
+    expect(cards.map((a) => a.getAttribute("href"))).toEqual(["/signup?type=textiles", "/signup?type=construction", "/signup?type=education"]);
+    expect(within(cards[1]).getByText("Construction materials")).toBeInTheDocument();
+    expect(within(cards[2]).getByText("Schools, colleges, universities and coaching institutes")).toBeInTheDocument();
+    expect(screen.queryByRole("textbox")).toBeNull();
+    expect(screen.queryByRole("button")).toBeNull();
+    expect(screen.getByRole("link", { name: "Sign in" })).toHaveAttribute("href", "/login");
+  });
+  it("is the first step for a type it does not know (an address is never trusted, never echoed)", async () => {
+    render(await SignupPage(props({ type: "<script>" })));
+    expect(screen.getByText("Step 1 of 2")).toBeInTheDocument();
+    expect(document.body.innerHTML).not.toContain("<script>");
+  });
+});
+
+describe("/signup step 2: Google, Facebook or e-mail, and the terms line", () => {
+  it("names the chosen kind, offers the three ways in, and says 'by continuing you agree' with both links in a new tab", async () => {
+    render(await SignupPage(props({ type: "construction" })));
+    expect(screen.getByText("Step 2 of 2")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Create your account" })).toBeInTheDocument();
+    expect(document.querySelector("[data-chosen-pack]")).toHaveTextContent("Construction materials");
+    expect(screen.getByRole("link", { name: "Change" })).toHaveAttribute("href", "/signup");
+    expect(screen.getByRole("button", { name: "Continue with Google" })).toHaveAttribute("value", "google");
+    expect(screen.getByRole("button", { name: "Continue with Facebook" })).toHaveAttribute("value", "facebook");
+    expect(screen.getByText("Continue with e-mail")).toBeInTheDocument();
+    const hidden = document.querySelector('form input[name="type"]') as HTMLInputElement;
+    expect(hidden.value).toBe("construction");
+    const line = screen.getByText(/By continuing you agree/).closest("p")!;
+    expect(line).toHaveAttribute("lang", "en"); // the terms sentence stays English until a person reviews the translation
+    expect(within(line).getByRole("link", { name: /^Terms/ })).toHaveAttribute("href", "/terms");
+    expect(within(line).getByRole("link", { name: /^Privacy Policy/ })).toHaveAttribute("href", "/privacy");
+    for (const a of within(line).getAllByRole("link")) {
+      expect(a).toHaveAttribute("target", "_blank");
+      expect(a.getAttribute("rel")).toContain("noopener");
+    }
+    expect(screen.queryByRole("checkbox")).toBeNull();
+  });
+  it("puts the e-mail form behind the third button (a native disclosure: no script needed) and wires it to the real action", async () => {
+    signUp.mockResolvedValue({ ok: true, next: "check-email" });
+    render(await SignupPage(props({ type: "education" })));
+    const details = document.querySelector("details[data-signup='email']") as HTMLDetailsElement;
+    expect(details).not.toBeNull();
+    expect(details.open).toBe(false);
+    expect(within(details).getByText("At least 12 characters.")).toBeInTheDocument();
+    fill();
+    fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/signup/check-email"));
+    expect(signUp.mock.calls[0][0]).toMatchObject({ businessType: "education", acceptTerms: true, policyVersions: { terms: "2026-11-01", privacy: "2026-10-01" } });
+  });
+  it("knows exactly the four refusals the action can give, and 'email taken' is not one of them", async () => {
+    render(await SignupPage(props({ type: "textiles" })));
+    fill();
+    for (const [code, text] of [["weak_password", "Choose a stronger password: at least 12 characters"], ["terms_required", /agree to the Terms/], ["too_many_signups", /Too many tries/], ["invalid", /Check your/]] as const) {
+      signUp.mockResolvedValue({ ok: false, error: code });
+      fireEvent.submit(screen.getByRole("button", { name: "Create account" }).closest("form")!);
+      await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(text));
+    }
+  });
+  it("says in one sentence when a provider is not available yet, and keeps the e-mail way", async () => {
+    render(await SignupPage(props({ type: "textiles", error: "provider" })));
+    expect(screen.getByRole("alert")).toHaveTextContent("That way of signing in is not available yet");
+    expect(screen.getByText("Continue with e-mail")).toBeInTheDocument();
+  });
+  it("reads the versions in force; when it cannot, the form is still there", async () => {
+    render(await SignupPage(props({ type: "textiles" })));
     expect(currentPolicies).toHaveBeenCalled();
-    expect(screen.getByRole("button", { name: /Create account/i })).toBeInTheDocument();
     cleanup();
     currentPolicies.mockRejectedValue(new Error("down"));
-    render(await SignupPage());
+    render(await SignupPage(props({ type: "textiles" })));
     expect(screen.getByRole("button", { name: /Create account/i })).toBeInTheDocument();
+  });
+  it("shows no 'Not available yet' and is wired (the buttons are real submit buttons)", async () => {
+    render(await SignupPage(props({ type: "textiles" })));
+    expect(screen.queryByText(/Not available yet/)).toBeNull();
+    for (const name of ["Continue with Google", "Continue with Facebook"]) expect(screen.getByRole("button", { name })).toHaveAttribute("type", "submit");
+  });
+});
+
+describe("the check-your-email page", () => {
+  it("says where to look and names no address", async () => {
+    render(await CheckEmailPage());
+    expect(screen.getByRole("heading", { level: 1, name: "Check your email" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to sign in" })).toHaveAttribute("href", "/login");
+    expect(document.body.textContent).not.toMatch(/@/);
   });
 });

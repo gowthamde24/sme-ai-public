@@ -61,6 +61,8 @@ vi.mock("@/lib/api/team", async (orig) => (await import("./state")).wrap(await o
 vi.mock("@/lib/api/whatsapp", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/whatsapp")>(), ["getWhatsappAccount", "listTemplates", "listConversations", "getThread"]));
 vi.mock("@/lib/api/gstin", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/gstin")>(), ["getBusinessProfile"]));
 vi.mock("@/lib/api/policy", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/policy")>(), ["getPolicyStatus"]));
+vi.mock("@/lib/api/pack", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/pack")>(), ["getWorkspacePack"]));
+vi.mock("@/lib/api/profile", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/profile")>(), ["getProfile"]));
 vi.mock("@/lib/api/suppression", async (orig) => (await import("./state")).wrap(await orig<typeof import("@/lib/api/suppression")>(), ["fetchSuppressionStatus"]));
 
 // The Office decides on the device which view to draw first (office/view.ts); the plain-text snapshot is the List, which every device can show.

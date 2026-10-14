@@ -16,10 +16,12 @@ import { parseQuoteSummary } from "@/lib/api/quotes";
 import { parseSettings, parseSlots, parseTodayVisits, parseVisitList, parseWeek } from "@/lib/api/visits";
 import { parseEvidencePage } from "@/lib/api/evidence";
 import { parseClaim } from "@/lib/api/agents";
+import { parseWorkspacePack } from "@/lib/api/pack";
+import { parseProfile } from "@/lib/api/profile";
 
 import * as fixtures from "../../../e2e/visual/fixtures.mjs";
 
-type Fixtures = { API_ROUTES: [RegExp, unknown][]; TENANT: string; LEAD: string; FIXED_NOW: string };
+type Fixtures = { API_ROUTES: [RegExp, unknown][]; TENANT: string; LEAD: string; FIXED_NOW: string; PACK_STATE: { pack: string | null; example: string; town: string | null } };
 const load = async (): Promise<Fixtures> => fixtures as unknown as Fixtures;
 
 async function answer(suffix: string, query = ""): Promise<unknown> {
@@ -63,6 +65,24 @@ describe("the visual tests' fixtures are in the API's contract", () => {
     expect(parseVisitList(await answer("/visits", "?status=booked")).items.every((v) => v.status === "booked")).toBe(true);
     expect(parseSlots(await answer("/visits/slots", "?date=2026-10-14")).open).toBe(true);
     expect(parseSettings(await answer("/visits/settings")).slot_minutes).toBe(30);
+  });
+  it("the business type: no route at first (a 404, so the default one is drawn from its file), then the pack the pictures set, and the profile", async () => {
+    const { PACK_STATE } = await load();
+    expect(await answer("/pack")).toMatchObject({ __status: 404 });
+    PACK_STATE.pack = "construction";
+    PACK_STATE.example = "available";
+    PACK_STATE.town = "Guntur";
+    try {
+      const p = parseWorkspacePack(await answer("/pack"));
+      expect(p.def.id).toBe("construction");
+      expect(p.example).toBe("available");
+      expect(parseProfile(await answer("/profile")).town).toBe("Guntur");
+    } finally {
+      PACK_STATE.pack = null;
+      PACK_STATE.example = "none";
+      PACK_STATE.town = null;
+    }
+    expect(parseProfile(await answer("/profile")).setupComplete).toBe(false);
   });
   it("the saree catalogue", async () => {
     expect(parseItemPage(await answer("/catalogue/items")).items).toHaveLength(4);

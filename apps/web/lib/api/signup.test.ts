@@ -8,7 +8,7 @@ describe("the sign-up and setup types the screens import", () => {
     expect(SIGNUP_ERRORS as readonly string[]).not.toContain("email_taken");
   });
   it("has exactly the contract's business types and languages", () => {
-    expect([...BUSINESS_TYPES]).toEqual(["textiles", "construction", "other"]);
+    expect([...BUSINESS_TYPES]).toEqual(["textiles", "construction", "education", "other"]); // the packs in sign-up order, then the "other" the database always accepted
     expect([...SETUP_LANGUAGES]).toEqual(["en", "te", "hi", "kn"]);
   });
   it("the union types accept the contract's values (a compile-time check, run by tsc)", () => {

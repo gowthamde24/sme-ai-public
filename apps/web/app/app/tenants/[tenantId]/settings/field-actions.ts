@@ -1,0 +1,80 @@
+"use server";
+
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
+
+import { MAX_FIELDS_PER_ENTITY, type FieldNotice } from "@/components/v2/app/fields/FieldsSection";
+import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
+import { isCanonicalUuid } from "@/lib/api/crm";
+import { createCustomField, setCustomFieldActive, type NewField } from "@/lib/api/custom-fields";
+import { requireUser } from "@/lib/auth/session";
+import { readPackCached } from "@/lib/packs/read";
+import { codeOf, parseChoices } from "@/lib/packs/field-codes";
+import type { FieldEntity, FieldKind } from "@/lib/packs/types";
+
+const KINDS: readonly FieldKind[] = ["text", "number", "date", "choice", "yes_no"];
+const ENTITIES: readonly FieldEntity[] = ["contact", "catalogue_item"];
+
+function done(tenantId: string, notice: Exclude<FieldNotice, null>): never {
+  revalidatePath(`/app/tenants/${tenantId}/settings`);
+  redirect(`/app/tenants/${tenantId}/settings?section=fields&fieldnote=${notice}`);
+}
+
+async function managerOf(tenantId: string) {
+  const user = await requireUser();
+  if (!isCanonicalUuid(tenantId)) return null;
+  const tenant = await fetchTenant(user.accessToken, tenantId).catch((e) => {
+    if (e instanceof ApiAuthError) throw e;
+    return null;
+  });
+  return tenant && (tenant.role === "owner" || tenant.role === "admin") ? user : null;
+}
+
+function noticeOf(error: unknown): Exclude<FieldNotice, null> {
+  if (error instanceof ApiRequestError) {
+    if (error.status === 404 || error.status === 501) return "unavailable";
+    if (error.status === 403) return /mfa|second/i.test(`${error.code} ${error.reason ?? ""}`) ? "mfa" : "role";
+    if (error.status === 400 || error.status === 409 || error.status === 422) return "invalid";
+  }
+  return "failed";
+}
+
+/** Add a field of the owner's own (Owner or Admin; the API wants the second factor and checks the rest). At most 20 for each kind of record. */
+export async function addFieldAction(tenantId: string, formData: FormData): Promise<void> {
+  const user = await managerOf(tenantId).catch(() => redirect("/login"));
+  if (!user) return done(tenantId, "role");
+  const entity = String(formData.get("entity") ?? "");
+  const kind = String(formData.get("kind") ?? "");
+  const label = String(formData.get("label") ?? "").trim();
+  if (!(ENTITIES as readonly string[]).includes(entity) || !(KINDS as readonly string[]).includes(kind) || label.length < 1 || label.length > 60) return done(tenantId, "invalid");
+  const needsChoices = kind === "choice";
+  const choices = needsChoices ? parseChoices(String(formData.get("choices") ?? "")) : null;
+  if (needsChoices && !choices) return done(tenantId, "invalid");
+  const pack = await readPackCached(user.accessToken, tenantId);
+  if (pack.source !== "api") return done(tenantId, "unavailable");
+  if (pack.fields.filter((f) => f.entity === entity && f.active).length >= MAX_FIELDS_PER_ENTITY) return done(tenantId, "limit");
+  const input: NewField = { entity: entity as FieldEntity, code: codeOf(label), kind: kind as FieldKind, label, required: formData.get("required") === "on", ...(choices ? { choices } : {}) };
+  if (pack.fields.some((f) => f.entity === input.entity && f.code === input.code)) input.code = `${input.code.slice(0, 24)}_${pack.fields.length}`;
+  try {
+    await createCustomField(user.accessToken, tenantId, input);
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return done(tenantId, noticeOf(error));
+  }
+  return done(tenantId, "added");
+}
+
+/** Hide a field, or show it again. Nothing is deleted: the values already kept stay. */
+export async function setFieldActiveAction(tenantId: string, formData: FormData): Promise<void> {
+  const user = await managerOf(tenantId).catch(() => redirect("/login"));
+  if (!user) return done(tenantId, "role");
+  const id = String(formData.get("field_id") ?? "");
+  if (id.length < 1 || id.length > 64) return done(tenantId, "invalid");
+  try {
+    await setCustomFieldActive(user.accessToken, tenantId, id, formData.get("active") === "yes");
+  } catch (error) {
+    if (error instanceof ApiAuthError) redirect("/login");
+    return done(tenantId, noticeOf(error));
+  }
+  return done(tenantId, "updated");
+}

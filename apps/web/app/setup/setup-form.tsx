@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { authAlert, authChoice, authChoices, authForm, authLabel, authRow, authSubmit } from "@/components/v2/auth/ui";
 import { LANGS, LANGUAGE_NAMES, type Lang } from "@/i18n/lang";
@@ -9,7 +9,7 @@ import { LANG_COOKIE, readLang, serializePreference } from "@/i18n/preferences";
 import type { CompleteSetupInput, CompleteSetupResult } from "@/lib/api/signup";
 
 export type CompleteSetupAction = (input: CompleteSetupInput) => Promise<CompleteSetupResult>;
-export type SetupWords = { type: string; types: { value: string; label: string }[]; language: string; submit: string; error: string };
+export type SetupWords = { type: string; types: { value: string; label: string }[]; language: string; submit: string; error: string; /** "Try again" and "Setting up your workspace" of the automatic setup (job CL). */ retry?: string; working?: string };
 
 /** The chosen language becomes the one the app speaks (the same functional cookie the language control writes). */
 function rememberLanguage(lang: Lang) {
@@ -20,10 +20,53 @@ function rememberLanguage(lang: Lang) {
  * The first-login set-up: the kind of business and the language, then Today. `action` is the server action `completeSetup` (Job AD); pressing twice or in a second tab ends with the
  * same single business. A refusal the API explains is shown as it sent it (plain English); any other failure, the generic sentence. Language names are each language's own word for itself.
  */
-export function SetupForm({ action, words, lang }: { action: CompleteSetupAction; words: SetupWords; lang: Lang }) {
+export function SetupForm({ action, words, lang, auto = null }: { action: CompleteSetupAction; words: SetupWords; lang: Lang; /** The kind of business chosen at sign-up (job CL): nothing is asked, the business is made with it and the language the person is reading, and the person lands on Today. */ auto?: string | null }) {
   const router = useRouter();
   const [error, setError] = useState<{ text: string; english: boolean } | null>(null);
   const [pending, start] = useTransition();
+  const fired = useRef(false);
+  const run = (type: string, chosen: Lang) =>
+    start(async () => {
+      setError(null);
+      try {
+        const result = await action({ businessType: type, language: chosen });
+        if (result.ok) {
+          rememberLanguage(chosen);
+          router.push("/app");
+        } else setError(result.error ? { text: result.error, english: true } : { text: words.error, english: false }); // the API's own sentence is plain English
+      } catch {
+        setError({ text: words.error, english: false }); // the server could not be reached: nothing was saved
+      }
+    });
+  // the automatic setup runs once; the action is safe to repeat (one business per account), and "Try again" is the same call
+  useEffect(() => {
+    if (!auto || fired.current) return;
+    fired.current = true;
+    run(auto, lang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once, on arrival
+  }, []);
+  if (auto) {
+    return (
+      <div className={authForm} data-setup="auto">
+        {error ? (
+          <>
+            <p role="alert" lang={error.english ? "en" : undefined} className={authAlert}>
+              {error.text}
+            </p>
+            <div className={authRow}>
+              <button type="button" disabled={pending} onClick={() => run(auto, lang)} className={authSubmit}>
+                {words.retry ?? words.submit}
+              </button>
+            </div>
+          </>
+        ) : (
+          <p role="status" aria-live="polite" className="text-base text-muted">
+            {words.working ?? words.submit}
+          </p>
+        )}
+      </div>
+    );
+  }
   return (
     <form
       className={authForm}
@@ -34,7 +77,7 @@ export function SetupForm({ action, words, lang }: { action: CompleteSetupAction
         start(async () => {
           try {
             const chosen = readLang(String(form.get("language") ?? lang));
-            const result = await action({ businessType: String(form.get("type") ?? "") as CompleteSetupInput["businessType"], language: chosen });
+            const result = await action({ businessType: String(form.get("type") ?? ""), language: chosen });
             if (result.ok) {
               rememberLanguage(chosen);
               router.push("/app");

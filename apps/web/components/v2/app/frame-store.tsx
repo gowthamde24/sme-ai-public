@@ -1,6 +1,9 @@
 "use client";
 
-import { useEffect, useSyncExternalStore } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+
+import { moduleForPath } from "@/lib/packs/guard";
 
 import type { FrameData } from "./contract";
 
@@ -33,4 +36,14 @@ export function FrameDataSlot({ data }: { data: FrameData }) {
     return () => set(null);
   }, [data]);
   return null;
+}
+
+/**
+ * The module guard for a MOVE inside the app (job CL). A typed address or a reload is judged on the server (the workspace's template answers the 403 page); a move by a link or the router does not run the server's
+ * template again, so this part of the layout, which stays mounted, judges every new address against `modules` (the ones the workspace's layout read from the API): when the page's module is off it draws `fallback` (the
+ * 403 page, made by the server in the person's language) instead of the page. It judges the path only (the home's `?tab=` pages are judged by the server on a reload; every business type has Customers and Leads today). The page's own reads still happen and the API and the database refuse regardless; this only keeps the screen honest.
+ */
+export function ModuleGate({ modules, fallback, children }: { modules: readonly string[]; fallback: ReactNode; children: ReactNode }) {
+  const need = moduleForPath(usePathname() ?? "");
+  return <>{need && !modules.includes(need.module) ? fallback : children}</>;
 }

@@ -46,6 +46,9 @@
   --color-amber-bg: var(--v2-amber-bg);
   --color-red-text: var(--v2-red-text);
   --color-red-bg: var(--v2-red-bg);
+  --color-pack-text: var(--pack-text, var(--v2-brand-text));
+  --color-pack-bg: var(--pack-bg, var(--v2-brand-bg));
+  --color-pack-edge: var(--pack-edge, var(--v2-brand-edge));
 
   /* Type scale: body 16px, nothing smaller than 14px. Even text-xs resolves to 14px. */
   --text-xs: 0.875rem;
@@ -59,3 +62,8 @@
   --radius-lg: 12px;
   --radius-xl: 16px;
 }
+
+/* job CL: the accent of a business type, set by data-accent on the element that wears it (the badge, a sign-up card). The tokens are in tokens.css (and audited by scripts/contrast.mjs). */
+[data-ui="v2"] [data-accent="rose"] { --pack-text: var(--v2-pack-rose-text); --pack-bg: var(--v2-pack-rose-bg); --pack-edge: var(--v2-pack-rose-edge); }
+[data-ui="v2"] [data-accent="terracotta"] { --pack-text: var(--v2-pack-terracotta-text); --pack-bg: var(--v2-pack-terracotta-bg); --pack-edge: var(--v2-pack-terracotta-edge); }
+[data-ui="v2"] [data-accent="sky"] { --pack-text: var(--v2-pack-sky-text); --pack-bg: var(--v2-pack-sky-bg); --pack-edge: var(--v2-pack-sky-edge); }

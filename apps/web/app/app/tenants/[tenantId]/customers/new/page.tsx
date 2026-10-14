@@ -10,6 +10,9 @@ import { CustomerForm } from "./customer-form";
 import { bodyText, mutedText, pageH1, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2 } from "@/components/v2/app/parts";
 import { makeT } from "@/components/v2/app/words";
+import { appT } from "@/i18n/app";
+import { formFields } from "@/lib/packs/form-fields";
+import { readPackCached } from "@/lib/packs/read";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
 
@@ -49,13 +52,17 @@ export default async function NewCustomerPage({ params }: PageProps<"/app/tenant
     );
   // one set of ids per render: a second press of the button is a retry. The key remounts the form for the next customer, so its state starts clean.
   const ids = { company: crypto.randomUUID(), contact: crypto.randomUUID(), lead: crypto.randomUUID() };
+  // the extra fields of the business type (job CL): drawn only where the server can keep them
+  const pack = await readPackCached(user.accessToken, tenantId);
+  const fields = pack.source === "api" ? formFields(pack.fields, "contact", lang) : [];
+  const a = appT(lang);
   return (
     <main className={pageMain} lang={lang}>
       <h1 className={pageH1}>{t("cust.add_a_customer")}</h1>
       <p className={mutedText}>
         {t("cust.a_customer_is_a_person_with")}
       </p>
-      <CustomerForm words={words} key={`${ids.company}|${ids.contact}|${ids.lead}`} action={addCustomerAction.bind(null, tenantId)} tenantId={tenantId} ids={ids} />
+      <CustomerForm words={words} key={`${ids.company}|${ids.contact}|${ids.lead}`} action={addCustomerAction.bind(null, tenantId)} tenantId={tenantId} ids={ids} fields={fields} fieldWords={{ title: a("fields.form.title"), yes: a("fields.form.yes"), no: a("fields.form.no"), pick: a("fields.form.pick") }} />
     </main>
   );
 }

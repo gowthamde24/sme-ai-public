@@ -1,0 +1,14 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business current=page) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+{label="Business and plan"}
+Business
+Demo Silks (synthetic)
+Plan
+Free trial plan
+URL name
+demo-silks
+## Our GSTIN
+This part could not be loaded. The rest of the page is fine.
+[button type=button: Try again]
+{role=status}

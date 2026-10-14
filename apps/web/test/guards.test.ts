@@ -227,12 +227,14 @@ describe("server-only code stays on the server", () => {
         path.join("app", "app", "actions.ts"),
         path.join("app", "app", "security", "actions.ts"),
         path.join("app", "app", "session", "route.ts"),
+        path.join("app", "auth", "callback", "route.ts"), // job CL: the return of Google / Facebook swaps its one-time code for a session
         path.join("app", "auth", "confirm", "actions.ts"),
         path.join("app", "auth", "forgot", "actions.ts"),
         path.join("app", "auth", "mfa", "actions.ts"),
         path.join("app", "auth", "set-password", "actions.ts"),
         path.join("app", "login", "actions.ts"),
         path.join("app", "signup", "actions.ts"),
+        path.join("app", "signup", "oauth-actions.ts"), // job CL: "Continue with Google / Facebook" asks the Auth server for the provider's address
         path.join("lib", "auth", "session.ts"),
         "proxy.ts",
       ].sort(),

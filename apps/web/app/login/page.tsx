@@ -8,6 +8,7 @@ export const metadata = { title: "Sign in · SME AI Revenue Engine" };
 const NOTICES: Record<string, string> = {
   link: "That link has expired or was already used. Request a new one from \"Forgot your password?\".",
   reset: "Your password was changed. Sign in with the new one.",
+  provider: "We could not sign you in with that provider. Try again, or use your e-mail address.",
 };
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {

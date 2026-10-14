@@ -196,3 +196,37 @@ describe("CustomerForm", () => {
     expect(screen.getByRole("button", { name: "Add this customer" })).toBeInTheDocument();
   });
 });
+
+describe("the extra fields of the business type (job CL)", () => {
+  const fields = [
+    { code: "customer_type", kind: "choice" as const, label: "Customer type", required: false, pii: "none" as const, choices: [{ code: "builder", label: "Builder" }, { code: "dealer", label: "Dealer" }] },
+    { code: "credit_days", kind: "number" as const, label: "Credit days agreed", unit: "days", required: false, pii: "none" as const },
+  ];
+  const fieldWords = { title: "More details", yes: "Yes", no: "No", pick: "Choose…" };
+  it("draws nothing for a business type with no fields", () => {
+    const { container } = render(<CustomerForm action={vi.fn()} tenantId={T} ids={IDS} />);
+    expect(container.querySelector("[data-part=custom-fields]")).toBeNull();
+    expect(container.querySelector("input[name=custom]")).toBeNull();
+  });
+  it("sends what was filled in as one JSON field of the form, and keeps it after a refusal", async () => {
+    const action = vi.fn(async (...args: [CustomerFormState, FormData]): Promise<CustomerFormState> => (void args, { ok: false, error: "Another person already has that e-mail." }));
+    render(<CustomerForm action={action} tenantId={T} ids={IDS} fields={fields} fieldWords={fieldWords} />);
+    fireEvent.change(screen.getByLabelText("Customer's name"), { target: { value: "Synthetic Asha" } });
+    fireEvent.change(screen.getByLabelText("WhatsApp or phone number"), { target: { value: "+00 90000 20001" } });
+    fireEvent.change(screen.getByLabelText("Customer type"), { target: { value: "builder" } });
+    fireEvent.change(screen.getByLabelText("Credit days agreed (days)"), { target: { value: "30" } });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+    await screen.findByRole("alert");
+    const data = action.mock.calls[0][1];
+    expect(JSON.parse(String(data.get("custom")))).toEqual({ customer_type: "builder", credit_days: "30" });
+    expect(screen.getByLabelText("Customer type")).toHaveValue("builder");
+    expect(screen.getByLabelText("Credit days agreed (days)")).toHaveValue("30");
+  });
+  it("says in one sentence when the customer is saved but the extra details were not", async () => {
+    await act(async () => void render(<CustomerForm action={vi.fn(async () => ({ ok: true, leadId: IDS.lead, contactId: IDS.contact, name: "Asha", fieldsNote: "Saved, but the extra details were not: this system cannot keep them yet" }))} tenantId={T} ids={IDS} fields={fields} fieldWords={fieldWords} />));
+    fireEvent.change(screen.getByLabelText("Customer's name"), { target: { value: "Asha" } });
+    fireEvent.change(screen.getByLabelText("WhatsApp or phone number"), { target: { value: "+00 90000 20001" } });
+    await act(async () => fireEvent.click(screen.getByRole("button", { name: "Add this customer" })));
+    expect(await screen.findByText(/the extra details were not: this system cannot keep them yet/)).toBeInTheDocument();
+  });
+});

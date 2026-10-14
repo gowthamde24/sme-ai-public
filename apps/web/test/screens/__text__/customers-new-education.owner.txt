@@ -1,0 +1,29 @@
+# Add a customer
+A customer is a person with a phone number, and a lead for them. Nothing is sent to anyone. Consent is not recorded here: you record it on the next screen, when the customer has told you.
+{label="Add a customer"}
+<hidden name=company_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=contact_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=lead_id value=77777777-7777-4777-8777-777777777777>
+Customer's name
+<text name=full_name label="Customer's name" required maxlength=200>
+WhatsApp or phone number
+<text name=phone label="WhatsApp or phone number" required maxlength=32 minlength=3 inputmode=tel autocomplete=off>
+E-mail (optional)
+<email name=email label="E-mail (optional)" maxlength=254 autocomplete=off>
+Shop or business name (optional)
+<text name=company_name label="Shop or business name (optional)" maxlength=200>
+GSTIN (for a business, optional)
+<text name=gstin label="GSTIN (for a business, optional)" maxlength=30 autocomplete=off described-by="Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor.">
+Only if the customer gave it to you. A GSTIN holds the owner's PAN, so it is personal data of a sole proprietor. How did the enquiry come?
+<select name=how label="How did the enquiry come?">
+  options: Phone call=phone_call* | WhatsApp=whatsapp
+If you leave the shop name empty, the customer's name is used. Look in the Contacts list first: this form does not check whether you already added this person.
+legend: More details
+Relation to the student
+<select label="Relation to the student">
+  options: Choose…=* | Mother=mother | Father=father | Guardian=guardian | The student (adult)=self
+Preferred language for messages
+<select label="Preferred language for messages">
+  options: Choose…=* | English=en | Telugu=te | Hindi=hi | Kannada=kn
+<hidden name=custom value={}>
+[button type=submit: Add this customer]

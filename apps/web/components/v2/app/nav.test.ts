@@ -34,7 +34,8 @@ const ROLES: Role[] = ["owner", "admin", "sales", "viewer"];
 describe("the menu table", () => {
   it("has exactly the groups and items of the plan, in order, with the same words", () => {
     expect(NAV.map((g) => g.label)).toEqual(Object.keys(PLAN));
-    for (const g of NAV) expect(g.items.map((i) => [i.label, i.path, i.id]), g.label).toEqual(PLAN[g.label].map(([l, p, id]) => [l, p, id]));
+    // the two items only a business type brings (job CL: Fees, Campaigns) are not part of the plan the product always had; they are pinned below
+    for (const g of NAV) expect(g.items.filter((i) => !i.packOnly).map((i) => [i.label, i.path, i.id]), g.label).toEqual(PLAN[g.label].map(([l, p, id]) => [l, p, id]));
     expect(FOOT.map((i) => [i.label, i.path, i.id])).toEqual([[PLAN_FOOT[0], PLAN_FOOT[1], PLAN_FOOT[2]]]);
   });
 
@@ -70,6 +71,26 @@ describe("the menu table", () => {
     expect(hrefOf(flat.find((i) => i.id === "today")!, T)).toBe(`/app/tenants/${T}`);
     expect(hrefOf(flat.find((i) => i.id === "leads")!, T)).toBe(`/app/tenants/${T}/review`);
     expect(hrefOf(FOOT[0], T)).toBe(`/app/tenants/${T}/settings`);
+  });
+});
+
+describe("the items only a business type brings (job CL)", () => {
+  const flat = NAV.flatMap((g) => g.items);
+  it("are Fees and Campaigns, each tied to a module, and absent from the menu of a workspace with no pack", () => {
+    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["fees", "/fees", "fees"], ["campaigns", "/campaigns", "campaigns"]]);
+    for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
+  });
+  it("show when the pack has the module on, and only then", () => {
+    const view = { id: "x", name: "X", isDefault: false, accent: "sky", modules: ["fees"], bar: ["today", "fees"], labels: {} };
+    const ids = visibleGroups("owner", view).flatMap((g) => g.items.map((i) => i.id));
+    expect(ids).toContain("fees");
+    expect(ids).not.toContain("campaigns");
+    expect(barItems("owner", view).map((i) => i.id)).toEqual(["today", "fees"]);
+  });
+  it("every item that has a module is hidden when the pack does not have it", () => {
+    const none = { id: "x", name: "X", isDefault: false, accent: "sky", modules: ["today"], bar: ["today"], labels: {} };
+    const ids = visibleGroups("owner", none).flatMap((g) => g.items.map((i) => i.id));
+    expect(ids).toEqual(flat.filter((i) => !i.module).map((i) => i.id));
   });
 });
 

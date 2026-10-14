@@ -1,3 +1,5 @@
+import { PACKS } from "@/lib/packs/registry";
+
 import { ApiContractError, apiRequest } from "./client";
 import { isCanonicalUuid } from "./crm";
 
@@ -5,9 +7,10 @@ import { isCanonicalUuid } from "./crm";
  * What a new account still has to do after sign-up, and the first-login setup itself (job AD / D2). Server side only, with the signed-in
  * user's own token. The business name is never sent from here: the database takes it from the sign-up.
  */
-export const BUSINESS_TYPES = ["textiles", "construction", "other"] as const;
+// the business types are the packs (packages/packs; job CL), plus the "other" the database has always accepted
+export const BUSINESS_TYPES: readonly string[] = [...PACKS.map((p) => p.id), "other"];
 export const SETUP_LANGUAGES = ["en", "te", "hi", "kn"] as const;
-export type BusinessType = (typeof BUSINESS_TYPES)[number];
+export type BusinessType = string;
 export type SetupLanguage = (typeof SETUP_LANGUAGES)[number];
 
 /** `needed`: confirmed, terms accepted, no business yet. `done`: the business exists (tenantId). `none`: nothing to do (an invited person). */

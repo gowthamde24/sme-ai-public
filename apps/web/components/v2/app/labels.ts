@@ -8,3 +8,9 @@ export function word(labels: Labels, key: string, english: string, vars?: Record
   const text = labels?.[key] ?? english;
   return vars ? text.replace(/\{(\w+)\}/g, (m, name: string) => (name in vars ? String(vars[name]) : m)) : text;
 }
+
+/** The frame's words with the business type's own words on top (job CL: "Orders & deliveries", "Parents & students"). With no pack, or no change, the same object comes back. */
+export function withPackWords(labels: Labels, pack: { labels: Readonly<Record<string, string>> } | null | undefined): Labels {
+  if (!pack || Object.keys(pack.labels).length === 0) return labels;
+  return { ...labels, ...pack.labels };
+}

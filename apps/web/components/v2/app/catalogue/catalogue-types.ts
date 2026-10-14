@@ -22,6 +22,8 @@ export type SaveInput = {
 export type ItemOutcome = { ok: true; item: Item } | Refused;
 
 export type EditorActions = {
+  /** The extra fields of the business type (job CL), kept after the details are saved. Absent where the business type has none. */
+  saveCustom?: (itemId: string, values: Record<string, import("@/lib/api/custom-fields").CustomValue>) => Promise<{ ok: true } | { ok: false; error: string }>;
   save: (itemId: string, input: SaveInput) => Promise<ItemOutcome>;
   remove: (photoId: string) => Promise<ItemOutcome>;
   reorder: (itemId: string, photoIds: string[]) => Promise<ItemOutcome>;

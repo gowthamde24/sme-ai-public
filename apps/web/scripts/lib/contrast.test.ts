@@ -14,7 +14,7 @@ describe("design v2 tokens: contrast", () => {
   it("every check passes in light and dark", () => {
     const r = runContrast(css);
     expect(r.rows.filter((x) => !x.ok).map((x) => `${x.mode} ${x.label} ${x.ratio.toFixed(2)}`)).toEqual([]);
-    expect(r.total).toBe(52);
+    expect(r.total).toBe(70); // 26 checks of the orange theme and 9 of the three business-type accents (job CL), in both modes
   });
   it("the dark tokens are the same in the attribute block and in the media-query block", () => {
     expect(runContrast(css).mediaMatchesDark).toBe(true);

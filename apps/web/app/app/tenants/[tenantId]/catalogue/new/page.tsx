@@ -14,9 +14,11 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 
-import { removePhotoAction, reorderPhotosAction, saveItemAction } from "../catalogue-actions";
+import { removePhotoAction, reorderPhotosAction, saveItemAction, saveItemCustomAction } from "../catalogue-actions";
 import { catalogueWords } from "../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
+import { formFields } from "@/lib/packs/form-fields";
+import { readPackCached } from "@/lib/packs/read";
 
 export const metadata = { title: "Add a saree · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
@@ -40,7 +42,10 @@ export default async function NewCatalogueItemPage({ params }: PageProps<"/app/t
   const lang = await getLang();
   const t = appT(lang);
   const itemId = randomUUID();
-  const actions: EditorActions = { save: saveItemAction.bind(null, tenantId), remove: removePhotoAction.bind(null, tenantId), reorder: reorderPhotosAction.bind(null, tenantId) };
+  // the extra fields of the business type (job CL): drawn only where the server can keep them
+  const pack = await readPackCached(user.accessToken, tenantId);
+  const fields = pack.source === "api" ? formFields(pack.fields, "catalogue_item", lang) : [];
+  const actions: EditorActions = { ...(fields.length > 0 ? { saveCustom: saveItemCustomAction.bind(null, tenantId) } : {}), save: saveItemAction.bind(null, tenantId), remove: removePhotoAction.bind(null, tenantId), reorder: reorderPhotosAction.bind(null, tenantId) };
   return (
     <main className={pageMain} lang={lang}>
       <p>
@@ -49,7 +54,7 @@ export default async function NewCatalogueItemPage({ params }: PageProps<"/app/t
         </Link>
       </p>
       <h1 className="mb-4 mt-2 font-display text-[26px] font-semibold leading-[1.15] md:text-4xl">{t("catalogue.new.title")}</h1>
-      <ItemEditor base={base} itemId={itemId} item={null} role={tenant.role} words={catalogueWords(lang)} actions={actions} uploadUrl={`${base}/catalogue/${itemId}/photos`} />
+      <ItemEditor base={base} itemId={itemId} item={null} role={tenant.role} words={catalogueWords(lang)} actions={actions} fields={fields} uploadUrl={`${base}/catalogue/${itemId}/photos`} />
     </main>
   );
 }

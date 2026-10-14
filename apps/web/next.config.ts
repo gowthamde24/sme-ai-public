@@ -9,6 +9,8 @@ const OWL_FILE_CACHE = "public, max-age=31536000, immutable";
 const nextConfig: NextConfig = {
   // Never advertise the framework.
   poweredByHeader: false,
+  // job CL: `forbidden()` (a 403 page for a part the business type does not have, app/app/tenants/[tenantId]/template.tsx) is Next.js 16 experimental and off until asked for
+  experimental: { authInterrupts: true },
   async headers() {
     return [
       {

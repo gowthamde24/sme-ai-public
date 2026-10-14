@@ -36,6 +36,11 @@ import { listMyDeletions, listMyExports, listWorkspaceDeletions } from "@/lib/ap
 import { getCalendarFeed, getExportFormats, listImportJobs, type CalendarFeed, type ExportFormat, type ImportJob } from "@/lib/api/data";
 import { settle, type Part } from "@/lib/api/part";
 
+import { FieldsSection } from "@/components/v2/app/fields/FieldsSection";
+import { readPackCached } from "@/lib/packs/read";
+import type { FieldEntity } from "@/lib/packs/types";
+
+import { addFieldAction, setFieldActiveAction } from "./field-actions";
 import { saveQuietHoursAction, saveRemindersAction, saveSendingAction } from "./agent-settings-actions";
 import { makeCalendarFeedAction, revokeCalendarFeedAction } from "./data-actions";
 import { saveShopGstinAction } from "./gstin-actions";
@@ -47,7 +52,7 @@ export const metadata = { title: "Settings · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 
-const SECTIONS = ["business", "members", "data", "language", "agent", "security", "privacy"] as const;
+const SECTIONS = ["business", "members", "fields", "data", "language", "agent", "security", "privacy"] as const;
 type Section = (typeof SECTIONS)[number];
 /** The moment the page is drawn (ms), read once. */
 const clock = (): number => Date.now();
@@ -88,10 +93,15 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const t = appT(lang);
   const labels = frameLabels(lang);
   const wanted = pick(query.section);
-  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") ? (wanted as Section) : "business";
   const base = `/app/tenants/${tenantId}`;
   const words = agentWords(lang);
   const admin = tenant.role === "owner" || tenant.role === "admin";
+  // the extra fields of the business type (job CL): a part of Settings for the people who run the business, only when the business has customers or a catalogue to put them on
+  const pack = await readPackCached(user.accessToken, tenantId);
+  const fieldEntities = ([pack.modules.includes("contacts") ? "contact" : null, pack.modules.includes("catalogue") ? "catalogue_item" : null].filter(Boolean)) as FieldEntity[];
+  // the default business type has no fields of its own: until the server can keep an owner's fields, its Settings stay exactly as they were
+  const hasFields = admin && fieldEntities.length > 0 && (pack.source === "api" || pack.fields.length > 0);
+  const section: Section = (SECTIONS as readonly string[]).includes(wanted ?? "") && !(wanted === "agent" && tenant.role !== "owner") && !(wanted === "fields" && !hasFields) ? (wanted as Section) : "business";
 
   let members: Member[] | null = null;
   if (section === "members") {
@@ -164,6 +174,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
   const tabs = [
     { key: "business", label: t("settings.tab.business") },
     { key: "members", label: t("settings.tab.members") },
+    ...(hasFields ? [{ key: "fields", label: t("settings.tab.fields") }] : []),
     { key: "data", label: t("settings.tab.data") },
     { key: "language", label: t("settings.tab.language") },
     ...(tenant.role === "owner" ? [{ key: "agent", label: t("settings.tab.agent") }] : []),
@@ -230,6 +241,19 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
               </ul>
             )}
           </section>
+        ) : null}
+        {section === "fields" ? (
+          <FieldsSection
+            fields={pack.fields}
+            entities={fieldEntities}
+            source={pack.source}
+            canEdit={admin}
+            notice={(["added", "updated", "unavailable", "mfa", "invalid", "role", "limit", "failed"] as const).find((n) => n === pick(query.fieldnote)) ?? null}
+            lang={lang}
+            add={addFieldAction.bind(null, tenantId)}
+            setActive={setFieldActiveAction.bind(null, tenantId)}
+            t={t}
+          />
         ) : null}
         {section === "data" && dataParts ? (
           <DataSection

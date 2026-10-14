@@ -39,6 +39,17 @@
   --v2-red-text: #b91c1c;
   --v2-red-bg: #fdeaea;
 
+  /* job CL: a small touch of colour per business type (the badge, the sign-up cards, empty-state props): not a new theme */
+  --v2-pack-rose-text: #9f1d3d;
+  --v2-pack-rose-bg: #fdecef;
+  --v2-pack-rose-edge: #be3455;
+  --v2-pack-terracotta-text: #8f3c14;
+  --v2-pack-terracotta-bg: #fbeee6;
+  --v2-pack-terracotta-edge: #b4532a;
+  --v2-pack-sky-text: #14527f;
+  --v2-pack-sky-bg: #e6f2fb;
+  --v2-pack-sky-edge: #2f7db5;
+
   --v2-dot: rgba(30, 30, 36, 0.07);
   --v2-shadow: 0 1px 2px rgba(30, 30, 36, 0.06), 0 4px 16px rgba(30, 30, 36, 0.05);
   --v2-shadow-pop: 0 8px 32px rgba(30, 30, 36, 0.16);
@@ -83,6 +94,16 @@
   --v2-red-text: #f87171;
   --v2-red-bg: #3a1717;
 
+  --v2-pack-rose-text: #f5a3b8;
+  --v2-pack-rose-bg: #3a1b24;
+  --v2-pack-rose-edge: #e0607f;
+  --v2-pack-terracotta-text: #f1a67d;
+  --v2-pack-terracotta-bg: #3a2418;
+  --v2-pack-terracotta-edge: #d9774a;
+  --v2-pack-sky-text: #8cc7ee;
+  --v2-pack-sky-bg: #14293a;
+  --v2-pack-sky-edge: #4a9ad0;
+
   --v2-dot: rgba(244, 242, 238, 0.045);
   --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);
   --v2-shadow-pop: 0 8px 32px rgba(0, 0, 0, 0.55);
@@ -120,6 +141,16 @@
     --v2-amber-bg: #36290d;
     --v2-red-text: #f87171;
     --v2-red-bg: #3a1717;
+
+    --v2-pack-rose-text: #f5a3b8;
+    --v2-pack-rose-bg: #3a1b24;
+    --v2-pack-rose-edge: #e0607f;
+    --v2-pack-terracotta-text: #f1a67d;
+    --v2-pack-terracotta-bg: #3a2418;
+    --v2-pack-terracotta-edge: #d9774a;
+    --v2-pack-sky-text: #8cc7ee;
+    --v2-pack-sky-bg: #14293a;
+    --v2-pack-sky-edge: #4a9ad0;
 
     --v2-dot: rgba(244, 242, 238, 0.045);
     --v2-shadow: 0 1px 2px rgba(0, 0, 0, 0.4), 0 4px 16px rgba(0, 0, 0, 0.3);

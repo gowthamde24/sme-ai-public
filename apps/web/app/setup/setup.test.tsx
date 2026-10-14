@@ -94,3 +94,38 @@ describe("/setup", () => {
     await expect(SetupPage()).rejects.toThrow();
   });
 });
+
+describe("the automatic setup (job CL): the kind of business was chosen on the first sign-up step", () => {
+  it("makes the business with that kind and the language the person reads, asks nothing, and goes to Today", async () => {
+    const action = vi.fn(async (): Promise<CompleteSetupResult> => ({ ok: true }));
+    render(<SetupForm words={{ ...words, working: "Setting up your workspace…", retry: "Try again" }} lang="hi" action={action} auto="construction" />);
+    expect(screen.queryByRole("radio")).toBeNull();
+    expect(screen.getByRole("status")).toHaveTextContent("Setting up your workspace…");
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/app"));
+    expect(action).toHaveBeenCalledTimes(1); // once, even though React runs effects twice in development
+    expect(action).toHaveBeenCalledWith({ businessType: "construction", language: "hi" });
+    expect(document.cookie).toContain("sme_lang=hi");
+  });
+  it("says why it stopped and tries again on the button (the same call: one business per account)", async () => {
+    const action = vi.fn(async (): Promise<CompleteSetupResult> => ({ ok: false, error: "Could not finish setting up. Try again." }));
+    render(<SetupForm words={{ ...words, working: "Setting up…", retry: "Try again" }} lang="en" action={action} auto="education" />);
+    expect(await screen.findByRole("alert")).toHaveTextContent("Could not finish setting up. Try again.");
+    action.mockResolvedValue({ ok: true });
+    fireEvent.click(screen.getByRole("button", { name: "Try again" }));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/app"));
+    expect(action).toHaveBeenCalledTimes(2);
+  });
+  it("/setup reads the kind from the account (the e-mail way) and draws the automatic setup instead of the questions", async () => {
+    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: "construction" });
+    completeSetup.mockResolvedValue({ ok: true });
+    render(await SetupPage());
+    expect(screen.getByRole("heading", { level: 1, name: "Setting up your workspace" })).toBeInTheDocument();
+    expect(screen.queryByRole("radio")).toBeNull();
+    await waitFor(() => expect(completeSetup).toHaveBeenCalledWith({ businessType: "construction", language: "en" }));
+  });
+  it("an unknown or hidden kind is not trusted: the questions are drawn", async () => {
+    requireUser.mockResolvedValue({ id: "u", accessToken: "t", signupPack: "nonsense" });
+    render(await SetupPage());
+    expect(screen.getAllByRole("radio").length).toBe(3 + 4);
+  });
+});

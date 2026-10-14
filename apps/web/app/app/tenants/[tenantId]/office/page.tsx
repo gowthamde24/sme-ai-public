@@ -12,6 +12,8 @@ import { requireUser } from "@/lib/auth/session";
 
 import { readAgentsStatus, readEventLinks } from "./office-data";
 import { partsWords } from "@/i18n/app-words";
+import { readPackCached } from "@/lib/packs/read";
+import { withPackT } from "@/lib/packs/resolve";
 
 export const metadata = { title: "Office · SME AI Revenue Engine" };
 // Per-user data from the API: never statically rendered or cached.
@@ -34,7 +36,9 @@ export default async function OfficePage({ params, searchParams }: PageProps<"/a
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
-  const t = appT(lang);
+  // the helpers carry the names of the business type ("Site Measurer", "Fee Desk"; job CL)
+  const pack = await readPackCached(user.accessToken, tenantId);
+  const t = withPackT(appT(lang), pack.def, lang);
   let agents;
   let links: Record<string, string>;
   try {

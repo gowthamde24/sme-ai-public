@@ -36445,5 +36445,1006 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "nav.item.fees": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फ़ीस",
+  "kn": "ಶುಲ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.campaigns": {
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్లు",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.module.title": {
+  "en": "This part is not switched on",
+  "te": "ఈ భాగం ఆన్‌లో లేదు",
+  "hi": "यह हिस्सा चालू नहीं है",
+  "kn": "ಈ ಭಾಗ ಆನ್ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "problem.module.body": {
+  "en": "Your kind of business does not use this part of the app. Go back to Today.",
+  "te": "మీ రకం వ్యాపారం యాప్‌లో ఈ భాగాన్ని వాడదు. ఈరోజు స్క్రీన్‌కి తిరిగి వెళ్ళండి.",
+  "hi": "आपके तरह के व्यापार में ऐप का यह हिस्सा इस्तेमाल नहीं होता। आज की स्क्रीन पर वापस जाइए।",
+  "kn": "ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರದಲ್ಲಿ ಆ್ಯಪ್‌ನ ಈ ಭಾಗ ಬಳಕೆಯಾಗುವುದಿಲ್ಲ. ಇಂದು ಸ್ಕ್ರೀನ್‌ಗೆ ಹಿಂತಿರುಗಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.title": {
+  "en": "Get started",
+  "te": "మొదలుపెడదాం",
+  "hi": "शुरू करें",
+  "kn": "ಶುರು ಮಾಡೋಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.count": {
+  "en": "{done} of {total} done",
+  "te": "{total}లో {done} అయ్యాయి",
+  "hi": "{total} में से {done} पूरे",
+  "kn": "{total} ರಲ್ಲಿ {done} ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.step.done": {
+  "en": "Done",
+  "te": "అయింది",
+  "hi": "हो गया",
+  "kn": "ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.step.todo": {
+  "en": "To do",
+  "te": "చేయాలి",
+  "hi": "करना है",
+  "kn": "ಮಾಡಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.step.unavailable": {
+  "en": "Not available yet",
+  "te": "ఇంకా అందుబాటులో లేదు",
+  "hi": "अभी उपलब्ध नहीं",
+  "kn": "ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.next": {
+  "en": "Continue",
+  "te": "కొనసాగండి",
+  "hi": "आगे बढ़िए",
+  "kn": "ಮುಂದುವರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.back": {
+  "en": "Back to Today",
+  "te": "ఈరోజు స్క్రీన్‌కి తిరిగి",
+  "hi": "आज की स्क्रीन पर वापस",
+  "kn": "ಇಂದು ಸ್ಕ್ರೀನ್‌ಗೆ ಹಿಂತಿರುಗಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.page.title": {
+  "en": "Get started",
+  "te": "మొదలుపెడదాం",
+  "hi": "शुरू करें",
+  "kn": "ಶುರು ಮಾಡೋಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.page.sub": {
+  "en": "A few answers, asked once, when you need them.",
+  "te": "కొన్ని జవాబులు, అవసరమైనప్పుడు ఒక్కసారి అడుగుతాం.",
+  "hi": "कुछ जवाब, ज़रूरत पड़ने पर बस एक बार पूछते हैं।",
+  "kn": "ಕೆಲವು ಉತ್ತರಗಳು, ಬೇಕಾದಾಗ ಒಂದೇ ಬಾರಿ ಕೇಳುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.page.role": {
+  "en": "Only the owner or an admin can answer these.",
+  "te": "వీటికి యజమాని లేదా అడ్మిన్ మాత్రమే జవాబివ్వగలరు.",
+  "hi": "इनका जवाब सिर्फ़ मालिक या एडमिन दे सकते हैं।",
+  "kn": "ಇವಕ್ಕೆ ಮಾಲೀಕ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಉತ್ತರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.title": {
+  "en": "Your business",
+  "te": "మీ వ్యాపారం",
+  "hi": "आपका व्यापार",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.name": {
+  "en": "Business name",
+  "te": "వ్యాపారం పేరు",
+  "hi": "व्यापार का नाम",
+  "kn": "ವ್ಯಾಪಾರದ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.town": {
+  "en": "City or town",
+  "te": "నగరం లేదా పట్టణం",
+  "hi": "शहर या कस्बा",
+  "kn": "ನಗರ ಅಥವಾ ಪಟ್ಟಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.town.help": {
+  "en": "Used in your messages and quotes.",
+  "te": "మీ సందేశాలు, కొటేషన్లలో వాడతాం.",
+  "hi": "आपके संदेशों और कोटेशन में इस्तेमाल होगा।",
+  "kn": "ನಿಮ್ಮ ಸಂದೇಶಗಳು, ಕೊಟೇಶನ್‌ಗಳಲ್ಲಿ ಬಳಸುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सेव करें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सेव हो गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.err.invalid": {
+  "en": "Please give a name and a city.",
+  "te": "దయచేసి పేరు, నగరం ఇవ్వండి.",
+  "hi": "कृपया नाम और शहर बताइए।",
+  "kn": "ದಯವಿಟ್ಟು ಹೆಸರು, ನಗರ ಕೊಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.err.role": {
+  "en": "Only the owner or an admin can change this.",
+  "te": "దీన్ని యజమాని లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "इसे सिर्फ़ मालिक या एडमिन बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.err.session": {
+  "en": "Your session ended. Sign in again.",
+  "te": "మీ సెషన్ ముగిసింది. మళ్ళీ సైన్ ఇన్ చేయండి.",
+  "hi": "आपका सेशन खत्म हो गया। फिर से साइन इन कीजिए।",
+  "kn": "ನಿಮ್ಮ ಸೆಶನ್ ಮುಗಿದಿದೆ. ಮತ್ತೆ ಸೈನ್ ಇನ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.profile.err.failed": {
+  "en": "Could not save. Try again.",
+  "te": "సేవ్ చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "सेव नहीं हो सका। फिर कोशिश कीजिए।",
+  "kn": "ಉಳಿಸಲು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.title": {
+  "en": "See how it works with example data",
+  "te": "ఉదాహరణ డేటాతో ఇది ఎలా పనిచేస్తుందో చూడండి",
+  "hi": "उदाहरण डेटा के साथ देखिए यह कैसे काम करता है",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾದೊಂದಿಗೆ ಇದು ಹೇಗೆ ಕೆಲಸ ಮಾಡುತ್ತದೆ ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.body": {
+  "en": "One tap loads a small sample workspace, clearly marked as example. You can remove it any time.",
+  "te": "ఒక్క టాప్‌తో చిన్న నమూనా వర్క్‌స్పేస్ వస్తుంది, ఉదాహరణ అని స్పష్టంగా గుర్తు ఉంటుంది. ఎప్పుడైనా తీసేయవచ్చు.",
+  "hi": "एक टैप से छोटा नमूना वर्कस्पेस आ जाता है, जिस पर साफ़ लिखा होता है कि यह उदाहरण है। कभी भी हटा सकते हैं।",
+  "kn": "ಒಂದು ಟ್ಯಾಪ್‌ನಲ್ಲಿ ಚಿಕ್ಕ ಮಾದರಿ ವರ್ಕ್‌ಸ್ಪೇಸ್ ಬರುತ್ತದೆ, ಉದಾಹರಣೆ ಎಂದು ಸ್ಪಷ್ಟವಾಗಿ ಗುರುತಿರುತ್ತದೆ. ಯಾವಾಗ ಬೇಕಾದರೂ ತೆಗೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.load": {
+  "en": "Load example data",
+  "te": "ఉదాహరణ డేటా తీసుకురండి",
+  "hi": "उदाहरण डेटा लाइए",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ತನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.loaded.title": {
+  "en": "You are looking at example data",
+  "te": "మీరు ఉదాహరణ డేటా చూస్తున్నారు",
+  "hi": "आप उदाहरण डेटा देख रहे हैं",
+  "kn": "ನೀವು ಉದಾಹರಣೆ ಡೇಟಾ ನೋಡುತ್ತಿದ್ದೀರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.loaded.body": {
+  "en": "Everything marked Example is made up. Remove it when you are ready to use your own.",
+  "te": "ఉదాహరణ అని గుర్తు ఉన్నవన్నీ కల్పితం. మీ సొంత డేటా వాడటానికి సిద్ధమైనప్పుడు తీసేయండి.",
+  "hi": "जिस पर उदाहरण लिखा है वह सब बनावटी है। अपना डेटा इस्तेमाल करने को तैयार हों तो इसे हटा दीजिए।",
+  "kn": "ಉದಾಹರಣೆ ಎಂದು ಗುರುತಿರುವುದೆಲ್ಲ ಕಲ್ಪಿತ. ನಿಮ್ಮ ಸ್ವಂತ ಡೇಟಾ ಬಳಸಲು ಸಿದ್ಧರಾದಾಗ ತೆಗೆದುಹಾಕಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.remove": {
+  "en": "Remove example data",
+  "te": "ఉదాహరణ డేటా తీసేయండి",
+  "hi": "उदाहरण डेटा हटाइए",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.confirm": {
+  "en": "This removes only the example rows. Your own work stays.",
+  "te": "ఇది ఉదాహరణ అడ్డు వరుసలను మాత్రమే తీసేస్తుంది. మీ సొంత పని అలాగే ఉంటుంది.",
+  "hi": "यह सिर्फ़ उदाहरण वाली पंक्तियाँ हटाता है। आपका अपना काम वैसा ही रहता है।",
+  "kn": "ಇದು ಉದಾಹರಣೆ ಸಾಲುಗಳನ್ನು ಮಾತ್ರ ತೆಗೆಯುತ್ತದೆ. ನಿಮ್ಮ ಸ್ವಂತ ಕೆಲಸ ಹಾಗೆಯೇ ಇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.confirm.go": {
+  "en": "Yes, remove the example data",
+  "te": "అవును, ఉదాహరణ డేటా తీసేయండి",
+  "hi": "हाँ, उदाहरण डेटा हटाइए",
+  "kn": "ಹೌದು, ಉದಾಹರಣೆ ಡೇಟಾ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.done.loaded": {
+  "en": "Example data loaded.",
+  "te": "ఉదాహరణ డేటా వచ్చింది.",
+  "hi": "उदाहरण डेटा आ गया।",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ಬಂದಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.done.removed": {
+  "en": "Example data removed.",
+  "te": "ఉదాహరణ డేటా తీసేశాం.",
+  "hi": "उदाहरण डेटा हटा दिया।",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ತೆಗೆದಿದ್ದೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.unavailable": {
+  "en": "Example data is not available yet.",
+  "te": "ఉదాహరణ డేటా ఇంకా అందుబాటులో లేదు.",
+  "hi": "उदाहरण डेटा अभी उपलब्ध नहीं है।",
+  "kn": "ಉದಾಹರಣೆ ಡೇಟಾ ಇನ್ನೂ ಲಭ್ಯವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.example.failed": {
+  "en": "Could not do that. Try again.",
+  "te": "అది చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। फिर कोशिश कीजिए।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "settings.tab.fields": {
+  "en": "Fields",
+  "te": "ఫీల్డ్‌లు",
+  "hi": "फ़ील्ड",
+  "kn": "ಫೀಲ್ಡ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.intro": {
+  "en": "Fields hold the extra details you keep about your customers and your products. Your kind of business comes with some; you can add your own.",
+  "te": "ఫీల్డ్‌లలో మీ కస్టమర్లు, ఉత్పత్తుల గురించి మీరు ఉంచే అదనపు వివరాలు ఉంటాయి. మీ రకం వ్యాపారానికి కొన్ని వస్తాయి; మీ సొంతవి చేర్చవచ్చు.",
+  "hi": "फ़ील्ड में आपके ग्राहकों और प्रोडक्ट के बारे में अलग से रखी जाने वाली जानकारी होती है। आपके तरह के व्यापार के साथ कुछ आते हैं; अपने भी जोड़ सकते हैं।",
+  "kn": "ಫೀಲ್ಡ್‌ಗಳಲ್ಲಿ ನಿಮ್ಮ ಗ್ರಾಹಕರು, ಉತ್ಪನ್ನಗಳ ಬಗ್ಗೆ ನೀವು ಇಡುವ ಹೆಚ್ಚುವರಿ ವಿವರಗಳಿರುತ್ತವೆ. ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರದ ಜೊತೆ ಕೆಲವು ಬರುತ್ತವೆ; ನಿಮ್ಮದೂ ಸೇರಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.fixture": {
+  "en": "Your own fields cannot be saved yet on this system, so adding and hiding are switched off. The fields below come with your kind of business.",
+  "te": "ఈ సిస్టమ్‌లో మీ సొంత ఫీల్డ్‌లను ఇంకా సేవ్ చేయలేం, అందుకే చేర్చడం, దాచడం ఆఫ్‌లో ఉన్నాయి. కింది ఫీల్డ్‌లు మీ రకం వ్యాపారంతో వస్తాయి.",
+  "hi": "इस सिस्टम में आपके अपने फ़ील्ड अभी सेव नहीं हो सकते, इसलिए जोड़ना और छिपाना बंद है। नीचे के फ़ील्ड आपके तरह के व्यापार के साथ आते हैं।",
+  "kn": "ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ನಿಮ್ಮದೇ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಇನ್ನೂ ಉಳಿಸಲಾಗುವುದಿಲ್ಲ, ಆದ್ದರಿಂದ ಸೇರಿಸುವುದು, ಮರೆಮಾಡುವುದು ಆಫ್ ಆಗಿವೆ. ಕೆಳಗಿನ ಫೀಲ್ಡ್‌ಗಳು ನಿಮ್ಮ ರೀತಿಯ ವ್ಯಾಪಾರದ ಜೊತೆ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.entity.contact": {
+  "en": "Customers and contacts",
+  "te": "కస్టమర్లు, కాంటాక్టులు",
+  "hi": "ग्राहक और संपर्क",
+  "kn": "ಗ್ರಾಹಕರು ಮತ್ತು ಸಂಪರ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.entity.catalogue_item": {
+  "en": "Catalogue items",
+  "te": "కేటలాగ్ ఐటమ్‌లు",
+  "hi": "कैटलॉग आइटम",
+  "kn": "ಕ್ಯಾಟಲಾಗ್ ಐಟಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.count": {
+  "en": "{n} of {max} in use",
+  "te": "{max}లో {n} వాడుకలో ఉన్నాయి",
+  "hi": "{max} में से {n} इस्तेमाल में",
+  "kn": "{max} ರಲ್ಲಿ {n} ಬಳಕೆಯಲ್ಲಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.none": {
+  "en": "No extra fields yet.",
+  "te": "అదనపు ఫీల్డ్‌లు ఇంకా లేవు.",
+  "hi": "अभी कोई अलग फ़ील्ड नहीं है।",
+  "kn": "ಹೆಚ್ಚುವರಿ ಫೀಲ್ಡ್‌ಗಳು ಇನ್ನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.kind.text": {
+  "en": "Text",
+  "te": "టెక్స్ట్",
+  "hi": "टेक्स्ट",
+  "kn": "ಪಠ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.kind.number": {
+  "en": "Number",
+  "te": "సంఖ్య",
+  "hi": "संख्या",
+  "kn": "ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.kind.date": {
+  "en": "Date",
+  "te": "తేదీ",
+  "hi": "तारीख",
+  "kn": "ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.kind.choice": {
+  "en": "Choice",
+  "te": "ఎంపిక",
+  "hi": "विकल्प",
+  "kn": "ಆಯ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.kind.multi_choice": {
+  "en": "Several choices",
+  "te": "అనేక ఎంపికలు",
+  "hi": "कई विकल्प",
+  "kn": "ಹಲವು ಆಯ್ಕೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.kind.yes_no": {
+  "en": "Yes or no",
+  "te": "అవును లేదా కాదు",
+  "hi": "हाँ या नहीं",
+  "kn": "ಹೌದು ಅಥವಾ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.from_pack": {
+  "en": "From your business type",
+  "te": "మీ వ్యాపార రకం నుండి",
+  "hi": "आपके व्यापार के प्रकार से",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರ ಪ್ರಕಾರದಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.required": {
+  "en": "Required",
+  "te": "తప్పనిసరి",
+  "hi": "ज़रूरी",
+  "kn": "ಕಡ್ಡಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.pii.personal": {
+  "en": "Personal data",
+  "te": "వ్యక్తిగత సమాచారం",
+  "hi": "निजी जानकारी",
+  "kn": "ವೈಯಕ್ತಿಕ ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.pii.child": {
+  "en": "Child data",
+  "te": "పిల్లల సమాచారం",
+  "hi": "बच्चों की जानकारी",
+  "kn": "ಮಕ್ಕಳ ಮಾಹಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.hide": {
+  "en": "Hide",
+  "te": "దాచండి",
+  "hi": "छिपाइए",
+  "kn": "ಮರೆಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.show": {
+  "en": "Show again",
+  "te": "మళ్ళీ చూపండి",
+  "hi": "फिर दिखाइए",
+  "kn": "ಮತ್ತೆ ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.title": {
+  "en": "Add a field",
+  "te": "ఫీల్డ్ చేర్చండి",
+  "hi": "फ़ील्ड जोड़िए",
+  "kn": "ಫೀಲ್ಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.warn": {
+  "en": "Do not use fields for health, religion, caste, income, Aadhaar or other private details.",
+  "te": "ఆరోగ్యం, మతం, కులం, ఆదాయం, ఆధార్ లేదా ఇతర ప్రైవేట్ వివరాలకు ఫీల్డ్‌లు వాడకండి.",
+  "hi": "सेहत, धर्म, जाति, आमदनी, आधार या दूसरी निजी जानकारी के लिए फ़ील्ड मत बनाइए।",
+  "kn": "ಆರೋಗ್ಯ, ಧರ್ಮ, ಜಾತಿ, ಆದಾಯ, ಆಧಾರ್ ಅಥವಾ ಇತರ ಖಾಸಗಿ ವಿವರಗಳಿಗೆ ಫೀಲ್ಡ್ ಬಳಸಬೇಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.entity": {
+  "en": "Add it to",
+  "te": "దీన్ని ఎక్కడ చేర్చాలి",
+  "hi": "इसे कहाँ जोड़ना है",
+  "kn": "ಇದನ್ನು ಎಲ್ಲಿ ಸೇರಿಸಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.label": {
+  "en": "Name of the field",
+  "te": "ఫీల్డ్ పేరు",
+  "hi": "फ़ील्ड का नाम",
+  "kn": "ಫೀಲ್ಡ್ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.kind": {
+  "en": "Kind of answer",
+  "te": "జవాబు రకం",
+  "hi": "जवाब का प्रकार",
+  "kn": "ಉತ್ತರದ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.choices": {
+  "en": "Choices (one per line, for a choice field)",
+  "te": "ఎంపికలు (ఒక్కో లైన్‌కి ఒకటి, ఎంపిక ఫీల్డ్ కోసం)",
+  "hi": "विकल्प (हर लाइन में एक, विकल्प वाले फ़ील्ड के लिए)",
+  "kn": "ಆಯ್ಕೆಗಳು (ಒಂದು ಸಾಲಿಗೆ ಒಂದು, ಆಯ್ಕೆ ಫೀಲ್ಡ್‌ಗೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.choices.help": {
+  "en": "At least two. A choice that has been used is never removed.",
+  "te": "కనీసం రెండు. వాడిన ఎంపికను ఎప్పుడూ తీసివేయం.",
+  "hi": "कम से कम दो। जो विकल्प इस्तेमाल हो चुका है उसे कभी हटाया नहीं जाता।",
+  "kn": "ಕನಿಷ್ಠ ಎರಡು. ಬಳಸಿದ ಆಯ್ಕೆಯನ್ನು ಎಂದಿಗೂ ತೆಗೆಯುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.required": {
+  "en": "Required when adding a record",
+  "te": "రికార్డ్ చేర్చేటప్పుడు తప్పనిసరి",
+  "hi": "रिकॉर्ड जोड़ते समय ज़रूरी",
+  "kn": "ದಾಖಲೆ ಸೇರಿಸುವಾಗ ಕಡ್ಡಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.add.save": {
+  "en": "Add field",
+  "te": "ఫీల్డ్ చేర్చండి",
+  "hi": "फ़ील्ड जोड़िए",
+  "kn": "ಫೀಲ್ಡ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.added": {
+  "en": "Field added.",
+  "te": "ఫీల్డ్ చేర్చాం.",
+  "hi": "फ़ील्ड जुड़ गया।",
+  "kn": "ಫೀಲ್ಡ್ ಸೇರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.updated": {
+  "en": "Field updated.",
+  "te": "ఫీల్డ్ అప్‌డేట్ అయింది.",
+  "hi": "फ़ील्ड बदल गया।",
+  "kn": "ಫೀಲ್ಡ್ ಅಪ್‌ಡೇಟ್ ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.unavailable": {
+  "en": "Fields cannot be saved yet on this system.",
+  "te": "ఈ సిస్టమ్‌లో ఫీల్డ్‌లను ఇంకా సేవ్ చేయలేం.",
+  "hi": "इस सिस्टम में फ़ील्ड अभी सेव नहीं हो सकते।",
+  "kn": "ಈ ಸಿಸ್ಟಮ್‌ನಲ್ಲಿ ಫೀಲ್ಡ್‌ಗಳನ್ನು ಇನ್ನೂ ಉಳಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.mfa": {
+  "en": "Turn on your authenticator app first (Security), then try again.",
+  "te": "ముందు మీ ఆథెంటికేటర్ యాప్ ఆన్ చేయండి (సెక్యూరిటీ), తర్వాత మళ్ళీ ప్రయత్నించండి.",
+  "hi": "पहले अपना ऑथेंटिकेटर ऐप चालू कीजिए (सिक्योरिटी), फिर कोशिश कीजिए।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಆಥೆಂಟಿಕೇಟರ್ ಆ್ಯಪ್ ಆನ್ ಮಾಡಿ (ಸೆಕ್ಯುರಿಟಿ), ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.invalid": {
+  "en": "That was not accepted. Check the name, the kind and the choices.",
+  "te": "అది అంగీకరించలేదు. పేరు, రకం, ఎంపికలు చూడండి.",
+  "hi": "यह मंज़ूर नहीं हुआ। नाम, प्रकार और विकल्प देखिए।",
+  "kn": "ಅದನ್ನು ಒಪ್ಪಲಿಲ್ಲ. ಹೆಸರು, ಪ್ರಕಾರ, ಆಯ್ಕೆಗಳನ್ನು ನೋಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.role": {
+  "en": "Only the owner or an admin can change fields.",
+  "te": "ఫీల్డ్‌లను యజమాని లేదా అడ్మిన్ మాత్రమే మార్చగలరు.",
+  "hi": "फ़ील्ड सिर्फ़ मालिक या एडमिन बदल सकते हैं।",
+  "kn": "ಫೀಲ್ಡ್‌ಗಳನ್ನು ಮಾಲೀಕ ಅಥವಾ ಅಡ್ಮಿನ್ ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.limit": {
+  "en": "You have reached the most fields for this kind of record. Hide one to add another.",
+  "te": "ఈ రకం రికార్డ్‌కి గరిష్ట ఫీల్డ్‌లకు చేరుకున్నారు. మరొకటి చేర్చడానికి ఒకదాన్ని దాచండి.",
+  "hi": "इस तरह के रिकॉर्ड के लिए फ़ील्ड की अधिकतम गिनती हो गई है। नया जोड़ने के लिए एक छिपाइए।",
+  "kn": "ಈ ರೀತಿಯ ದಾಖಲೆಗೆ ಗರಿಷ್ಠ ಫೀಲ್ಡ್‌ಗಳನ್ನು ತಲುಪಿದ್ದೀರಿ. ಇನ್ನೊಂದು ಸೇರಿಸಲು ಒಂದನ್ನು ಮರೆಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.notice.failed": {
+  "en": "Could not do that. Try again.",
+  "te": "అది చేయలేకపోయాం. మళ్ళీ ప్రయత్నించండి.",
+  "hi": "यह नहीं हो सका। फिर कोशिश कीजिए।",
+  "kn": "ಅದು ಆಗಲಿಲ್ಲ. ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.title": {
+  "en": "More details",
+  "te": "మరిన్ని వివరాలు",
+  "hi": "और जानकारी",
+  "kn": "ಇನ್ನಷ್ಟು ವಿವರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.yes": {
+  "en": "Yes",
+  "te": "అవును",
+  "hi": "हाँ",
+  "kn": "ಹೌದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.no": {
+  "en": "No",
+  "te": "కాదు",
+  "hi": "नहीं",
+  "kn": "ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.pick": {
+  "en": "Choose…",
+  "te": "ఎంచుకోండి…",
+  "hi": "चुनिए…",
+  "kn": "ಆರಿಸಿ…",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.unsaved": {
+  "en": "Saved, but the extra details were not: {reason}",
+  "te": "సేవ్ అయింది, కానీ అదనపు వివరాలు కాలేదు: {reason}",
+  "hi": "सेव हो गया, पर अलग जानकारी सेव नहीं हुई: {reason}",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ, ಆದರೆ ಹೆಚ್ಚುವರಿ ವಿವರಗಳು ಉಳಿಯಲಿಲ್ಲ: {reason}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.reason.unavailable": {
+  "en": "this system cannot keep them yet",
+  "te": "ఈ సిస్టమ్ వాటిని ఇంకా ఉంచలేదు",
+  "hi": "यह सिस्टम उन्हें अभी नहीं रख सकता",
+  "kn": "ಈ ಸಿಸ್ಟಮ್ ಅವುಗಳನ್ನು ಇನ್ನೂ ಇಡಲಾರದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.reason.invalid": {
+  "en": "a value was not accepted",
+  "te": "ఒక విలువను అంగీకరించలేదు",
+  "hi": "एक मान स्वीकार नहीं हुआ",
+  "kn": "ಒಂದು ಮೌಲ್ಯವನ್ನು ಒಪ್ಪಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.form.reason.failed": {
+  "en": "try again from the record",
+  "te": "రికార్డ్ నుండి మళ్ళీ ప్రయత్నించండి",
+  "hi": "रिकॉर्ड से फिर कोशिश कीजिए",
+  "kn": "ದಾಖಲೆಯಿಂದ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.issue.required": {
+  "en": "is required",
+  "te": "తప్పనిసరి",
+  "hi": "ज़रूरी है",
+  "kn": "ಕಡ್ಡಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.issue.bad_number": {
+  "en": "is not a number",
+  "te": "సంఖ్య కాదు",
+  "hi": "संख्या नहीं है",
+  "kn": "ಸಂಖ್ಯೆ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.issue.bad_date": {
+  "en": "is not a date",
+  "te": "తేదీ కాదు",
+  "hi": "तारीख नहीं है",
+  "kn": "ದಿನಾಂಕ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.issue.not_a_choice": {
+  "en": "is not one of the choices",
+  "te": "ఎంపికల్లో ఒకటి కాదు",
+  "hi": "विकल्पों में से नहीं है",
+  "kn": "ಆಯ್ಕೆಗಳಲ್ಲಿ ಒಂದಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.issue.too_long": {
+  "en": "is too long",
+  "te": "చాలా పొడవుగా ఉంది",
+  "hi": "बहुत लंबा है",
+  "kn": "ತುಂಬಾ ಉದ್ದವಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fields.issue.bad_value": {
+  "en": "is not accepted",
+  "te": "అంగీకరించలేదు",
+  "hi": "स्वीकार नहीं है",
+  "kn": "ಒಪ್ಪಲಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "soon.fees.title": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फ़ीस",
+  "kn": "ಶುಲ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "soon.fees.body": {
+  "en": "Fee plans, the fee ledger, receipts and the collection screen are being built. Nothing is shown here until they work.",
+  "te": "ఫీజు ప్లాన్లు, ఫీజు ఖాతా, రసీదులు, వసూలు స్క్రీన్ తయారవుతున్నాయి. అవి పనిచేసే వరకు ఇక్కడ ఏమీ చూపించం.",
+  "hi": "फ़ीस प्लान, फ़ीस का खाता, रसीदें और वसूली की स्क्रीन बन रही हैं। जब तक वे काम नहीं करतीं, यहाँ कुछ नहीं दिखाते।",
+  "kn": "ಶುಲ್ಕ ಯೋಜನೆಗಳು, ಶುಲ್ಕದ ಖಾತೆ, ರಸೀದಿಗಳು, ವಸೂಲಿ ಸ್ಕ್ರೀನ್ ತಯಾರಾಗುತ್ತಿವೆ. ಅವು ಕೆಲಸ ಮಾಡುವವರೆಗೆ ಇಲ್ಲಿ ಏನನ್ನೂ ತೋರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "soon.campaigns.title": {
+  "en": "Campaigns",
+  "te": "క్యాంపెయిన్లు",
+  "hi": "कैंपेन",
+  "kn": "ಕ್ಯಾಂಪೇನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "soon.campaigns.body": {
+  "en": "Reminder campaigns (a payment due, a fee due, a delivery) are being built. Nothing is sent from here, and nothing is shown until they work.",
+  "te": "రిమైండర్ క్యాంపెయిన్లు (చెల్లింపు గడువు, ఫీజు గడువు, డెలివరీ) తయారవుతున్నాయి. ఇక్కడ నుండి ఏదీ పంపం, అవి పనిచేసే వరకు ఏమీ చూపించం.",
+  "hi": "रिमाइंडर कैंपेन (पेमेंट की तारीख, फ़ीस की तारीख, डिलीवरी) बन रहे हैं। यहाँ से कुछ नहीं भेजा जाता, और जब तक वे काम नहीं करते कुछ नहीं दिखाते।",
+  "kn": "ರಿಮೈಂಡರ್ ಕ್ಯಾಂಪೇನ್‌ಗಳು (ಪಾವತಿ ಗಡುವು, ಶುಲ್ಕ ಗಡುವು, ಡೆಲಿವರಿ) ತಯಾರಾಗುತ್ತಿವೆ. ಇಲ್ಲಿಂದ ಏನನ್ನೂ ಕಳುಹಿಸುವುದಿಲ್ಲ, ಅವು ಕೆಲಸ ಮಾಡುವವರೆಗೆ ಏನನ್ನೂ ತೋರಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.tab.customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

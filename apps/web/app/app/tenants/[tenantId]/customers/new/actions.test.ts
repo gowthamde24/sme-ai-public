@@ -6,9 +6,13 @@ import { redirectMock, redirectTarget } from "@/test/helpers";
 const requireUser = vi.fn();
 const api = { createCustomerCompany: vi.fn(), createContact: vi.fn(), createLead: vi.fn() };
 const revalidatePath = vi.fn();
+const putCustom = vi.fn();
+const readPack = vi.fn();
 
 vi.mock("next/navigation", () => ({ redirect: (to: string) => redirectMock(to) }));
 vi.mock("next/cache", () => ({ revalidatePath: (p: string) => revalidatePath(p) }));
+vi.mock("@/lib/api/custom-fields", () => ({ putContactCustom: (...a: unknown[]) => putCustom(...a) }));
+vi.mock("@/lib/packs/read", () => ({ readPackCached: (...a: unknown[]) => readPack(...a) }));
 vi.mock("@/lib/auth/session", () => ({ requireUser: () => requireUser() }));
 vi.mock("@/lib/api/customers", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/api/customers")>()),
@@ -16,6 +20,8 @@ vi.mock("@/lib/api/customers", async (importOriginal) => ({
   createContact: (...a: unknown[]) => api.createContact(...a),
   createLead: (...a: unknown[]) => api.createLead(...a),
 }));
+
+import { parseWorkspacePack } from "@/lib/api/pack";
 
 import { addCustomerAction } from "./actions";
 
@@ -40,6 +46,8 @@ beforeEach(() => {
   api.createCustomerCompany.mockResolvedValue(undefined);
   api.createContact.mockResolvedValue(CT);
   api.createLead.mockResolvedValue(LD);
+  readPack.mockResolvedValue(parseWorkspacePack({ pack: "construction" }));
+  putCustom.mockResolvedValue({});
 });
 
 describe("addCustomerAction", () => {
@@ -242,5 +250,42 @@ describe("a business customer's GSTIN (job CC)", () => {
   it("nothing typed is none", async () => {
     await run({ gstin: "   " });
     expect(api.createCustomerCompany).toHaveBeenCalledWith("tok", T, { id: CO, name: "Synthetic Asha", gstin: null });
+  });
+});
+
+describe("the extra fields of the business type (job CL)", () => {
+  const custom = (v: unknown) => ({ custom: JSON.stringify(v) });
+  it("keeps the values on the contact that was just made, after the customer is saved", async () => {
+    const r = await run(custom({ customer_type: "builder", credit_days: "30", nonsense: "x" }));
+    expect(r).toEqual({ ok: true, leadId: LD, contactId: CT, name: "Synthetic Asha" });
+    expect(putCustom).toHaveBeenCalledWith("tok", T, CT, { customer_type: "builder", credit_days: 30 });
+  });
+  it("asks the API nothing about fields when none were filled in", async () => {
+    await run(custom({}));
+    await run({});
+    expect(putCustom).not.toHaveBeenCalled();
+  });
+  it("refuses a wrong value BEFORE anything is made, naming the field (so nothing is half saved)", async () => {
+    const r = await run(custom({ customer_type: "alien" }));
+    expect(r).toMatchObject({ ok: false });
+    expect(r?.error).toMatch(/Customer type is not one of the choices/);
+    expect(api.createCustomerCompany).not.toHaveBeenCalled();
+    expect((await run({ custom: "{not json" }))?.error).toBeTruthy();
+    expect(api.createCustomerCompany).not.toHaveBeenCalled();
+  });
+  it("keeps the customer when the extra details cannot be kept, and says so in one sentence of ours", async () => {
+    putCustom.mockRejectedValueOnce(new ApiRequestError(404, "not_found", "SECRET text from the API"));
+    const r = await run(custom({ customer_type: "builder" }));
+    expect(r).toMatchObject({ ok: true, leadId: LD });
+    expect(r?.fieldsNote).toMatch(/Saved, but the extra details were not: this system cannot keep them yet/);
+    expect(r?.fieldsNote).not.toContain("SECRET");
+    putCustom.mockRejectedValueOnce(new ApiRequestError(422, "validation_error", "x"));
+    expect((await run(custom({ customer_type: "builder" })))?.fieldsNote).toMatch(/a value was not accepted/);
+    putCustom.mockRejectedValueOnce(new Error("boom"));
+    expect((await run(custom({ customer_type: "builder" })))?.fieldsNote).toMatch(/try again from the record/);
+  });
+  it("sends a rejected session to sign in", async () => {
+    putCustom.mockRejectedValueOnce(new ApiAuthError("x"));
+    await expect(run(custom({ customer_type: "builder" }))).rejects.toThrow(/login/);
   });
 });

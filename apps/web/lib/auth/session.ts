@@ -16,6 +16,8 @@ export type AuthenticatedUser = {
   hasSecondFactor: boolean;
   /** The Terms and Privacy Policy versions the person accepted on the sign-up page, kept with the account (job CF); read from what the Auth server just validated. Each is absent unless it is a well-formed version. */
   signupPolicies?: { terms?: string; privacy?: string };
+  /** The kind of business chosen on the first sign-up step (job CL), kept in the account's metadata by the e-mail way. A pack id as written; the reader checks it against the packs. */
+  signupPack?: string;
 };
 
 type Factor = { status?: string; factor_type?: string };
@@ -72,6 +74,7 @@ async function load(strict: boolean): Promise<AuthenticatedUser> {
     aal,
     hasSecondFactor,
     ...(signupPolicies.terms && signupPolicies.privacy ? { signupPolicies } : {}),
+    ...(typeof meta.business_type === "string" && /^[a-z][a-z0-9_]{2,23}$/.test(meta.business_type) ? { signupPack: meta.business_type } : {}),
   };
 }
 

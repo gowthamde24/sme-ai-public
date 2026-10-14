@@ -69,7 +69,7 @@ export default async function TenantPage({
 
   const requestedTab = pick(query.tab);
   // no tab: Today (Job AC, C2). The records tables are reached with ?tab= (Customers: companies and contacts; Leads: leads).
-  if (requestedTab === undefined) return TodayScreen({ accessToken: user.accessToken, userId: user.id, tenantId, role: tenant.role, shop: tenant.name });
+  if (requestedTab === undefined) return TodayScreen({ accessToken: user.accessToken, userId: user.id, tenantId, role: tenant.role, shop: tenant.name, example: pick(query.example) ?? null });
   const tab: EntityKey = (ENTITY_KEYS as readonly string[]).includes(
     requestedTab ?? "",
   )

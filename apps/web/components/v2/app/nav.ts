@@ -8,7 +8,7 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns";
 
 export type NavItem = {
   id: string;
@@ -27,6 +27,13 @@ export type NavItem = {
   /** The shorter word the phone's bottom bar uses for the item ("Visits" for "Store visits"); without it the bar uses `label`. */
   short?: string;
   roles: readonly Role[];
+  /**
+   * The module a business type must have switched ON for this item to show (blueprint section 4; the pack's `modules`). Absent = every business type has it. Visibility is a convenience only: the page
+   * (`requireModule`, lib/packs/guard.ts) answers 403 and the database refuses the work; the menu just does not offer what the business does not have.
+   */
+  module?: string;
+  /** An item no business had before packs existed (Fees, Campaigns): it is offered only when a pack's modules include its module. With no pack at all the menu is the one the product always had. */
+  packOnly?: boolean;
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
@@ -41,18 +48,22 @@ export const NAV: readonly NavGroup[] = [
     id: "work",
     label: "Work",
     items: [
-      { id: "today", label: "Today", icon: "today", path: "", tab: "", bar: true, roles: ALL_ROLES },
-      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, roles: ALL_ROLES },
-      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, roles: WRITERS },
-      { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, roles: ALL_ROLES },
-      { id: "orders", label: "Orders", icon: "orders", path: "/orders", roles: WRITERS },
-      { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
+      { id: "today", label: "Today", icon: "today", path: "", tab: "", also: ["/start"], bar: true, roles: ALL_ROLES },
+      { id: "leads", label: "Leads", icon: "leads", path: "/review", tabs: ["leads"], also: ["/leads", "/followups", "/suggestions", "/requirements"], bar: true, module: "enquiries", roles: ALL_ROLES },
+      { id: "quotes", label: "Quotes", icon: "quotes", path: "/quotes", also: ["/enquiries"], bar: true, module: "quotes", roles: WRITERS },
+      { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, module: "visits", roles: ALL_ROLES },
+      // job CL: the fee page of the education business type (blueprint 2, the phone's core tab); only a pack whose modules include "fees" offers it
+      { id: "fees", label: "Fees", icon: "fees", path: "/fees", module: "fees", packOnly: true, roles: WRITERS },
+      { id: "orders", label: "Orders", icon: "orders", path: "/orders", module: "orders", roles: WRITERS },
+      // job CL: reminder campaigns (construction dues, education fees); the screens come with the campaign jobs
+      { id: "campaigns", label: "Campaigns", icon: "campaigns", path: "/campaigns", module: "campaigns", packOnly: true, roles: ADMINS },
+      { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", module: "outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
-      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", roles: WRITERS },
-      { id: "report", label: "This week", icon: "report", path: "/report", roles: ADMINS },
-      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], roles: ALL_ROLES },
+      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
+      { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
+      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
       // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
-      { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", roles: WRITERS },
+      { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
     ],
   },
   {
@@ -60,8 +71,8 @@ export const NAV: readonly NavGroup[] = [
     label: "Your business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
-      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", roles: ALL_ROLES },
-      { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], roles: WRITERS },
+      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", module: "catalogue", roles: ALL_ROLES },
+      { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
     ],
   },
   {
@@ -69,14 +80,14 @@ export const NAV: readonly NavGroup[] = [
     label: "Your team",
     items: [
       // job CC: the people in the business, with their owls; everyone sees who is on the team, the Owner and Admin manage it
-      { id: "team", label: "Team", icon: "team", path: "/team", roles: ALL_ROLES },
-      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, roles: ALL_ROLES },
+      { id: "team", label: "Team", icon: "team", path: "/team", module: "team", roles: ALL_ROLES },
+      { id: "office", label: "Office", icon: "office", path: "/office", also: ["/agents"], bar: true, module: "office", roles: ALL_ROLES },
     ],
   },
   {
     id: "connect",
     label: "Connect",
-    items: [{ id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", roles: ADMINS }],
+    items: [{ id: "integrations", label: "Integrations", icon: "integrations", path: "/integrations", module: "integrations", roles: ADMINS }],
   },
 ];
 
@@ -87,9 +98,31 @@ export const FOOT: readonly NavItem[] = [
 
 export type VisibleGroup = { id: string; label: string; items: NavItem[] };
 
+/**
+ * What the menu needs to know about the workspace's business type (job CL; a plain object, so the client never imports the pack files): the modules that are on, the tabs of the phone's bottom bar,
+ * the words the pack changes (by dictionary key, already in the person's language) and a few facts for a badge. With NO pack (`undefined`/`null`: not read yet, or no API for it) the menu is the one the product always
+ * had; `PACK_FRAME_LEGACY` in the tests pins that the default pack gives the same menu, word for word.
+ */
+export type PackFrame = {
+  id: string;
+  name: string;
+  /** The pack the product was before packs: no badge is drawn for it, so its screens look exactly as they did. */
+  isDefault: boolean;
+  accent: string;
+  modules: readonly string[];
+  bar: readonly string[];
+  labels: Readonly<Record<string, string>>;
+};
+
+/** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
+export function offered(item: NavItem, view?: PackFrame | null): boolean {
+  if (!view) return !item.packOnly;
+  return item.module === undefined || view.modules.includes(item.module);
+}
+
 /** The groups (and, inside them, the items) a role is offered. A group with no visible item is hidden. */
-export function visibleGroups(role: Role): VisibleGroup[] {
-  return NAV.map((g) => ({ id: g.id, label: g.label, items: g.items.filter((i) => i.roles.includes(role)) })).filter((g) => g.items.length > 0);
+export function visibleGroups(role: Role, view?: PackFrame | null): VisibleGroup[] {
+  return NAV.map((g) => ({ id: g.id, label: g.label, items: g.items.filter((i) => i.roles.includes(role) && offered(i, view)) })).filter((g) => g.items.length > 0);
 }
 
 /** The items under the scrolling part (Settings) a role is offered. */
@@ -98,8 +131,11 @@ export function footItems(role: Role): NavItem[] {
 }
 
 /** The items that are tabs of the phone's bottom bar (then "More" holds the rest), only those the role is offered. */
-export function barItems(role: Role): NavItem[] {
-  return NAV.flatMap((g) => g.items).filter((i) => i.bar && i.roles.includes(role));
+export function barItems(role: Role, view?: PackFrame | null): NavItem[] {
+  const all = NAV.flatMap((g) => g.items);
+  if (!view) return all.filter((i) => i.bar && i.roles.includes(role) && offered(i, view));
+  // the pack names its tabs and their order (blueprint 2: Today, Inbox, the pack's core tab, Contacts, More); a tab the pack has switched off, or the role may not open, is left out
+  return view.bar.flatMap((id) => all.filter((i) => i.id === id && i.roles.includes(role) && offered(i, view)));
 }
 
 /** Where a nav item goes, for a workspace. */

@@ -32,7 +32,7 @@ beforeEach(() => {
 afterEach(cleanup);
 
 const none: FrameData = NO_FRAME_DATA;
-const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true };
+const loaded: FrameData = { plan: { plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-10-09T10:00:00Z" }, usage: { today_percent: 38, month_percent: 12, resets_at_today: "2026-10-10T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }, waiting: 5, ready: true, showUsage: true, pack: null };
 const noSignOut = async () => undefined;
 const side = (memberships: Membership[], frame = none, email: string | null = "o@example.test") => render(<SideNav memberships={memberships} frame={frame} email={email} signOut={noSignOut} />);
 const bar = (memberships: Membership[], frame = none) => render(<TabBar memberships={memberships} frame={frame} email="o@example.test" signOut={noSignOut} />);
@@ -250,5 +250,54 @@ describe("AppFrame", () => {
     expect(within(screen.getByRole("navigation", { name: "Workspace menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["All workspaces", "Security"]);
     expect(screen.getByText("The page")).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Sign out" }).length).toBeGreaterThan(0);
+  });
+});
+
+describe("the menu of a business type (job CL)", () => {
+  const view = (over: Partial<import("./nav").PackFrame> = {}): FrameData => ({ ...NO_FRAME_DATA, pack: { id: "demo", name: "Construction materials", isDefault: false, accent: "terracotta", modules: ["today", "inbox", "contacts", "orders", "quotes", "office", "outbox", "team", "integrations", "visits", "enquiries", "campaigns"], bar: ["today", "chats", "orders", "customers"], labels: { "nav.item.orders": "Orders & deliveries", "nav.item.customers": "Customers & sites" }, ...over } });
+  const names = () => within(screen.getByRole("navigation", { name: "Workspace menu" })).getAllByRole("link").map((a) => a.textContent);
+  it("shows the pack's words, leaves out the modules it does not have, and offers what only a pack brings", () => {
+    side(only("owner"), view());
+    expect(names()).toEqual(["Today", "Leads", "Quotes", "Store visits", "Orders & deliveries", "Campaigns", "Outbox", "Customer chats", "Customers & sites", "Prices and products", "Team", "Office", "Integrations"]);
+    expect(names()).not.toContain("Catalogue");
+    expect(names()).not.toContain("Find retailers");
+  });
+  it("marks the business type under the name (a small badge), but not for the default one", () => {
+    const { container, unmount } = side(only("owner"), view());
+    expect(container.querySelector("[data-pack='demo']")).toHaveTextContent("Construction materials");
+    unmount();
+    const again = side(only("owner"), view({ isDefault: true, labels: {} }));
+    expect(again.container.querySelector("[data-pack]")).toBeNull();
+  });
+  it("draws the phone's tabs the pack names, with its words (Orders & deliveries is the core tab), then More with the rest", () => {
+    bar(only("owner"), view());
+    const tabs = within(screen.getByRole("navigation", { name: "Quick menu" }));
+    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Customer chats", "Orders & deliveries", "Customers & sites"]);
+    expect(tabs.getByRole("button", { name: "More" })).toBeInTheDocument();
+    fireEvent.click(tabs.getByRole("button", { name: "More" }));
+    const sheet = within(screen.getByRole("dialog"));
+    expect(sheet.getByRole("link", { name: "Campaigns" })).toBeInTheDocument();
+    expect(sheet.getByRole("link", { name: "Quotes" })).toBeInTheDocument();
+    expect(sheet.queryByRole("link", { name: "Orders & deliveries" })).toBeNull(); // it is a tab, not in the sheet
+  });
+  it("the default pack's frame is the menu the product always had, with the same five tabs", () => {
+    const defaultView = view({ id: "d", isDefault: true, name: "Textiles", labels: {}, modules: ["today", "inbox", "contacts", "companies", "enquiries", "catalogue", "quotes", "orders", "followups", "visits", "reports", "office", "integrations", "outbox", "team", "lead_finder", "research", "call_list"], bar: ["today", "leads", "quotes", "visits", "office"] });
+    const first = side(owner);
+    const plain = names();
+    first.unmount();
+    side(owner, defaultView);
+    expect(names()).toEqual(plain);
+    cleanup();
+    bar(owner, defaultView);
+    expect(within(screen.getByRole("navigation", { name: "Quick menu" })).getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Leads", "Quotes", "Visits", "Office"]);
+  });
+  it("is what the workspace's slot brought in that wins over what the first paint had (no flash of the wrong menu after the client takes over)", async () => {
+    const { act } = await import("@testing-library/react");
+    render(<SideNav memberships={only("owner")} frame={view()} email="o@example.test" signOut={noSignOut} />);
+    expect(names()).toContain("Orders & deliveries");
+    await act(async () => {
+      render(<FrameDataSlot data={view({ labels: { "nav.item.orders": "Dispatch" } })} />);
+    });
+    expect(names()).toContain("Dispatch");
   });
 });

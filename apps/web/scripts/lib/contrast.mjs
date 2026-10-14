@@ -59,6 +59,12 @@ export const CHECKS = [
   ["primary button edge on page", "brand-edge", "bg", 3],
   ["primary button edge on surface", "brand-edge", "surface", 3],
   ["meter / progress fill on surface-2 track", "brand-text", "surface-2", 3],
+  // job CL: the business-type accents (badge, sign-up cards)
+  ...["rose", "terracotta", "sky"].flatMap((a) => [
+    [`${a} accent text on its tint`, `pack-${a}-text`, `pack-${a}-bg`, 4.5],
+    [`${a} accent text on surface`, `pack-${a}-text`, "surface", 4.5],
+    [`${a} accent edge on surface`, `pack-${a}-edge`, "surface", 3],
+  ]),
 ];
 
 /** Runs every check in both modes. Returns { rows, failures, total, mediaMatchesDark }. */

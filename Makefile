@@ -1,4 +1,4 @@
-.PHONY: packs-check pack-migration new-pack perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: packs-check pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -297,6 +297,12 @@ visual:
 
 visual-update:
 	node e2e/visual/run.mjs --update $(ARGS)
+
+# Job CL: pictures of the three business types (sign-up steps, Today, the phone's bar, Customers, Settings -> Fields, Start, Fees, Office, the 403 page), light and dark, laptop and 390 px phone, on the same invented
+# backend; it also checks the menu of each business type and that a part a business type does not have answers 403 (typed address and a move inside the app). OPT-IN, never in make check. Ports 54999 and 3016.
+#   make pack-shots ARGS="--no-build --only today,guard --out /some/folder"
+pack-shots:
+	node e2e/cl-shots.mjs $(ARGS)
 
 # Job CB (ADR 0082), OPT-IN, never in make check. Hardening and operations tools.
 #   make restore-drill            the PLAN for a hosted backup/restore drill (touches nothing); DRILL=local runs a REAL drill on the AGENT stack's database (dump, restore into a scratch database,

@@ -1,0 +1,45 @@
+# Settings
+[button type=button: Help for this screen]
+{label="Parts of Settings"} [Business and plan](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=business) [Members](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=members) [Fields](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=fields current=page) [Data](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=data) [Language and look](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=language) [Agent OWL](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=agent) [Security](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=security) [Privacy](/app/tenants/22222222-2222-2222-2222-222222222222/settings?section=privacy)
+Fields hold the extra details you keep about your customers and your products. Your kind of business comes with some; you can add your own.
+{label="Customers and contacts"}
+## Customers and contacts
+2 of 20 in use
+- Customer type Choice From your business type
+- Credit days agreed Number From your business type
+{label="Catalogue items"}
+## Catalogue items
+15 of 20 in use
+- Product type Choice From your business type Required
+- Size (for example 200x100 mm) Text From your business type
+- Thickness (mm) Choice From your business type
+- Shape or pattern Text From your business type
+- Colour Text From your business type
+- Finish Text From your business type
+- Grade or strength (for example M30) Text From your business type
+- Selling unit Choice From your business type Required
+- Pieces per sq ft Number From your business type
+- Pieces per pallet Number From your business type
+- Minimum order Number From your business type
+- Stock Choice From your business type
+- Lead days (made to order) Number From your business type
+- GST rate % (from your accountant) Number From your business type
+- HSN code (from your accountant) Text From your business type
+{label="Add a field"}
+## Add a field
+Do not use fields for health, religion, caste, income, Aadhaar or other private details.
+form:
+Add it to
+<select name=entity label="Add it to">
+  options: Customers and contacts=contact* | Catalogue items=catalogue_item
+Name of the field
+<text name=label label="Name of the field" required maxlength=60>
+Kind of answer
+<select name=kind label="Kind of answer">
+  options: Text=text* | Number=number | Date=date | Choice=choice | Yes or no=yes_no
+Choices (one per line, for a choice field)
+<textarea name=choices label="Choices (one per line, for a choice field)" maxlength=600>
+At least two. A choice that has been used is never removed.
+<checkbox name=required label="Required when adding a record">
+Required when adding a record
+[button type=submit: Add field]

@@ -106,10 +106,17 @@ const COMPANY = "55555555-5555-4555-8555-555555555551";
 const LEAD_JSON = { id: LEAD, company_id: COMPANY, contact_id: CONTACT, status: "in_review", source: "csv import", created_via: "import", created_at: "2026-10-02T05:00:00+00:00" };
 const COMPANY_JSON = { id: COMPANY, name: "Sri Lakshmi Silks", type: "customer", website: "https://sri-lakshmi.example.test", country: "India", city: "Hyderabad", industry: "Textiles", created_via: "manual", created_at: "2026-10-01T05:00:00+00:00" };
 
+// ---- the business type of the workspace (job CL) -------------------------------------------------------------------------------------------------
+// `pack: null` = the server has no such route yet (a 404): the web app draws the default business type from its file, exactly as every picture before this job did. The pack pictures (e2e/cl-shots.mjs) set `pack`
+// to a business type's id, `example` to "none" | "available" | "loaded", and `town` (the business profile's city) before they look.
+export const PACK_STATE = { pack: null, example: "none", town: null };
+
 // ---- the route table ---------------------------------------------------------------------------------------------------------------------
 export const API_ROUTES = [
   [/^\/v1\/me$/, ok({ user_id: USER_ID, memberships: [{ role: "owner", tenant: { id: TENANT, name: "Sri Visual Silks", slug: "sri-visual-silks" } }] })],
   [new RegExp(`^/v1/tenants/${TENANT}$`), ok({ id: TENANT, name: "Sri Visual Silks", slug: "sri-visual-silks", role: "owner", plan: "free_trial", workspace_limit: 1, trial_started_at: "2026-09-20T00:00:00Z" })],
+  route("/pack", () => (PACK_STATE.pack ? { pack: PACK_STATE.pack, version: 1, example_data: { available: PACK_STATE.example !== "none", loaded: PACK_STATE.example === "loaded" } } : { __status: 404, body: { error: { code: "not_found", message: "stand-in: no pack route yet" } } })),
+  route("/profile", () => ({ name: "Sri Visual Silks", town: PACK_STATE.town, languages: ["en"], setup_complete: PACK_STATE.town !== null })),
   route("/today", TODAY),
   route("/agents/status", AGENTS),
   route("/ai-usage", { today_percent: 12, month_percent: 31, resets_at_today: "2026-10-14T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }),
