@@ -211,16 +211,22 @@ end;
 $$;
 revoke all on function app.module_guard_agent() from public;
 
--- A product's selling unit must be one of the closed list when it is written or changed (an older row with another word stays readable and can be saved without touching the unit).
+-- A product's selling unit, when written or changed: a business on the DEFAULT pack keeps today's behaviour (any short word, as before: the demo sells fabric by the "metre"); a business on any other
+-- pack may use only the units ITS pack offers (a pack can only make a business stricter). An older row with another word stays readable and can be saved without touching the unit.
 create function app.products_unit_check() returns trigger
 language plpgsql
 security definer
 set search_path = ''
 as $$
+declare
+  v packs.pack_versions;
 begin
-  if new.unit is not null and (tg_op = 'INSERT' or new.unit is distinct from old.unit)
-     and not exists (select 1 from packs.units u where u.code = new.unit) then
-    perform app.pack_error('invalid');
+  if new.unit is not null and (tg_op = 'INSERT' or new.unit is distinct from old.unit) then
+    select pv.* into v from packs.workspace_pack w join packs.pack_versions pv on pv.code = w.pack_code and pv.version = w.pack_version where w.tenant_id = new.tenant_id;
+    if found and not v.is_default
+       and not exists (select 1 from jsonb_array_elements_text(v.manifest -> 'units') u join packs.units k on k.code = u where u = new.unit) then
+      perform app.pack_error('invalid');
+    end if;
   end if;
   return new;
 end;

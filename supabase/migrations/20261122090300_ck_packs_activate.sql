@@ -128,7 +128,7 @@ revoke all on function app.module_guard_companies() from public;
 create trigger aa_module_guard before insert on public.companies for each row execute function app.module_guard_companies();
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
--- 4. selling units
+-- 4. selling units (the default pack: any short word as before; another pack: only the units it offers)
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- AFTER, so the table's own CHECKs (text hygiene) answer first with their own error
 create trigger products_unit_check after insert or update of unit on public.products for each row execute function app.products_unit_check();

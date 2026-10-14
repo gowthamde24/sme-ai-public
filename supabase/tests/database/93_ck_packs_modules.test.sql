@@ -164,16 +164,23 @@ select is(tests.sqlstate_as(null, 'select public.pack_catalogue()'), '42501', 'G
 select is(has_function_privilege('anon', 'public.pack_catalogue()', 'execute'), false, 'G14 anon cannot execute the catalogue');
 
 -- ============================================================================ H. units
-select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-1', 'Unit test', 'truckload')$$, tests.tid('a'))), 'ok', 'H1 a product can be sold by the truckload');
-select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-2', 'Unit test', 'bunch')$$, tests.tid('a'))), '22023', 'H2 a unit outside the list is refused');
-select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-3', 'Unit test', null)$$, tests.tid('a'))), 'ok', 'H3 no unit at all is still fine');
-select is(pg_temp.sc(format($$update public.products set unit = 'tonne' where tenant_id = %L and sku = 'U-3'$$, tests.tid('a'))), 'ok', 'H4 a unit can be set later');
-select is(pg_temp.sc(format($$update public.products set unit = 'bunch' where tenant_id = %L and sku = 'U-3'$$, tests.tid('a'))), '22023', 'H5 but not to a word outside the list');
+-- the default pack keeps today's behaviour: any short word (the demo sells fabric by the metre)
+select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-M', 'Fabric', 'metre')$$, tests.tid('a'))), 'ok', 'H1 a textile business can still sell by the "metre" (today''s behaviour)');
+select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-T', 'Truck', 'truckload')$$, tests.tid('a'))), 'ok', 'H2 and by any listed unit');
+-- a construction business may use only the units its pack offers
+select pg_temp.set_pack('b', 'construction_materials');
+select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-1', 'Unit test', 'truckload')$$, tests.tid('b'))), 'ok', 'H3 a construction product can be sold by the truckload');
+select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-2', 'Unit test', 'bunch')$$, tests.tid('b'))), '22023', 'H4 a unit outside the list is refused');
+select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-2b', 'Unit test', 'set')$$, tests.tid('b'))), '22023', 'H5 and so is a unit the pack does not offer (`set` is a textile unit)');
+select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'U-3', 'Unit test', null)$$, tests.tid('b'))), 'ok', 'H6 no unit at all is still fine');
+select is(pg_temp.sc(format($$update public.products set unit = 'tonne' where tenant_id = %L and sku = 'U-3'$$, tests.tid('b'))), 'ok', 'H7 a unit can be set later');
+select is(pg_temp.sc(format($$update public.products set unit = 'bunch' where tenant_id = %L and sku = 'U-3'$$, tests.tid('b'))), '22023', 'H8 but not to a word outside the list');
 alter table public.products disable trigger products_unit_check;
-insert into public.products (tenant_id, sku, name, unit) values (tests.tid('a'), 'U-OLD', 'Legacy unit', 'metres');
+insert into public.products (tenant_id, sku, name, unit) values (tests.tid('b'), 'U-OLD', 'Legacy unit', 'metres');
 alter table public.products enable trigger products_unit_check;
-select is(pg_temp.sc(format($$update public.products set name = 'Legacy renamed' where tenant_id = %L and sku = 'U-OLD'$$, tests.tid('a'))), 'ok', 'H6 a row with an older unit word can still be saved without touching the unit');
-select is(pg_temp.sc($$select 'tonne'::public.quote_sale_unit, 'sq_ft'::public.quote_sale_unit, 'truckload'::public.quote_sale_unit$$), 'ok', 'H7 the new sale units are accepted by the quote sale unit enum');
+select is(pg_temp.sc(format($$update public.products set name = 'Legacy renamed' where tenant_id = %L and sku = 'U-OLD'$$, tests.tid('b'))), 'ok', 'H9 a row with an older unit word can still be saved without touching the unit');
+select is(pg_temp.sc($$select 'tonne'::public.quote_sale_unit, 'sq_ft'::public.quote_sale_unit, 'truckload'::public.quote_sale_unit$$), 'ok', 'H10 the new sale units are accepted by the quote sale unit enum');
+select pg_temp.set_pack('b', 'textiles');
 
 -- ============================================================================ I. the default-pack trigger
 select is((select source from packs.workspace_pack where tenant_id = tests.tid('a')), 'default', 'I1 a business gets the default pack the moment it is made');
