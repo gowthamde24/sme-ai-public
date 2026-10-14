@@ -648,7 +648,8 @@ def test_nothing_is_reachable_that_should_not_be(ow: OrderWorld) -> None:
     names = operator_sql.sql(
         "select string_agg(p.proname, ',' order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace where n.nspname = 'public' and p.proname like '%order%' and p.prosecdef"
     )
-    assert names == "catalogue_photos_reorder,create_order_from_quote,create_order_policy_version,record_order_event"
+    # create_order_from_material_quote (job CN, ADR 0085) is the same door for a material quote: Owner/Admin with a second factor, role proven first (pgTAP 98)
+    assert names == "catalogue_photos_reorder,create_order_from_material_quote,create_order_from_quote,create_order_policy_version,record_order_event"
     # and it is closed to the anonymous caller and to a member who is not Owner or Admin
     sales = ow.users["sales"]
     assert pg(ow.w.stack, None, "POST", "/rpc/catalogue_photos_reorder", json={"p_tenant_id": str(ow.t.id), "p_item_id": uid(), "p_photo_ids": []}).status_code in (401, 403)

@@ -210,17 +210,92 @@ _MONTH_WORDS = (
 )  # fmt: skip
 
 
+_AREA_RE = re.compile(r"(\d[\d,]*(?:\.\d+)?)\s*(?:sq\.?\s*ft|sqft|sft|sq\.?\s*m|sqm|square\s+(?:feet|meters|metres))\b", re.I)
+_LXW_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(?:ft|feet|m)?\s*(?:x|by|\*)\s*(\d+(?:\.\d+)?)\s*(ft|feet|m|metres|meters)\b", re.I)
+_THICK_RE = re.compile(r"(\d{2,3})\s*mm\b", re.I)
+_QTY_RE = re.compile(r"(\d[\d,]*)\s*(?:bags?|tonnes?|tons?|cft|truck\s?loads?|trucks?|pcs|pieces|nos)\b", re.I)
+_SITE_RE = re.compile(r"\b(?i:site|deliver(?:y|ed)?|located)\s+(?i:is\s+)?(?i:at|in|to|near)\s+([A-Z][A-Za-z'-]*(?:\s+[A-Z][A-Za-z'-]*){0,3})")
+_NO_LAYING_RE = re.compile(r"\b(?:no laying|without laying|supply only|material only|laying not (?:needed|required)|we will lay)\b", re.I)
+_LAYING_RE = re.compile(r"\b(?:with laying|laying (?:also )?(?:needed|required)|supply and (?:laying|fixing)|need laying)\b", re.I)
+
+
+def _material_plan(text: str) -> list[ToolCall]:  # noqa: C901 - a deliberately blunt rule list
+    from app.requirements import materials as M
+
+    calls: list[ToolCall] = []
+    text = re.split(r"(?:^|\s)>\s", text, maxsplit=1)[0]
+    clauses = [c for c in re.split(r"(?<=[.!?;])\s+|\s+\|\s+", text) if c.strip()]
+    clauses = [c for c in clauses if not _ADDRESSED_TO_AN_AI.search(c)]
+    product_words = _alternation([w for ws in M.SYNONYMS["product_type"].values() for w in ws])
+    application_words = _alternation([w for ws in M.SYNONYMS["application"].values() for w in ws])
+    product_re = re.compile(rf"\b(?:{product_words})\b", re.I)
+    application_re = re.compile(rf"\b(?:{application_words})\b", re.I)
+
+    def prop(field: str, value: str, quote: str, line: int | None = None, certainty: str = "stated") -> None:
+        args: dict[str, str | int] = {"field": field, "value": value, "certainty": certainty, "quote": quote}
+        if line is not None:
+            args["line"] = line
+        calls.append(call("propose_field", **args))
+
+    line = 0
+    seen: set[tuple[str, str]] = set()
+    for clause in clauses:
+        products = list(product_re.finditer(clause))
+        if products:
+            line = min(line + 1, 5) if len(products) == 1 else line
+        n = max(line, 1)
+        for index, m in enumerate(products):
+            if index and line < 5:
+                line += 1
+                n = line
+            elif index == 0 and len(products) > 1:
+                line = min(line + 1, 5)
+                n = line
+            prop("product_type", m.group(0), m.group(0), n)
+        area = _AREA_RE.search(clause)
+        lxw = _LXW_RE.search(clause)
+        if lxw is not None:
+            unit = lxw.group(3)
+            prop("length", f"{lxw.group(1)} {unit}", lxw.group(0), n)
+            prop("width", f"{lxw.group(2)} {unit}", lxw.group(0), n)
+        elif area is not None:
+            prop("area", area.group(0), area.group(0), n, "implied" if re.search(r"\b(?:about|around|approx|nearly|roughly)\b", clause, re.I) else "stated")
+        thick = _THICK_RE.search(clause)
+        if thick is not None:
+            prop("thickness", thick.group(0), thick.group(0), n)
+        qty = _QTY_RE.search(clause)
+        if qty is not None and area is None and lxw is None:
+            prop("quantity", qty.group(0), qty.group(0), n)
+        am = application_re.search(clause)
+        if am is not None and ("application", am.group(0).casefold()) not in seen:
+            seen.add(("application", am.group(0).casefold()))
+            prop("application", am.group(0), am.group(0))
+        sm = _SITE_RE.search(clause)
+        if sm is not None and ("site_location", sm.group(1).casefold()) not in seen:
+            seen.add(("site_location", sm.group(1).casefold()))
+            prop("site_location", sm.group(1), sm.group(1))
+        lay = _NO_LAYING_RE.search(clause) or _LAYING_RE.search(clause)
+        if lay is not None and ("laying", lay.group(0).casefold()) not in seen:
+            seen.add(("laying", lay.group(0).casefold()))
+            prop("laying", lay.group(0), lay.group(0))
+    # budget, deadline and payment terms: the saree flow's rules read them the same way
+    calls.extend(c for c in _requirement_plan(text) if c.arguments.get("field") in ("budget", "deadline", "payment_terms"))
+    return calls
+
+
 class _EnquiryReader:
     """Plans once, hands the calls out twelve at a time (a turn may carry twelve); the last chunk carries the final result."""
 
-    def __init__(self) -> None:
+    def __init__(self, materials: bool = False) -> None:
         self._chunks: list[list[ToolCall]] | None = None
         self._next = 0
+        self._materials = materials
 
     def __call__(self, request: LlmRequest) -> LlmResponse:
         if self._chunks is None:
             found = _enquiry_blocks(request)
-            calls = _requirement_plan(found[1]) if found else []
+            plan = _material_plan if self._materials else _requirement_plan
+            calls = plan(found[1]) if found else []
             self._chunks = [calls[i : i + 12] for i in range(0, len(calls), 12)] or [[]]
         chunk = self._chunks[self._next] if self._next < len(self._chunks) else []
         self._next += 1
@@ -235,6 +310,6 @@ class _EnquiryReader:
         )
 
 
-def requirement_script() -> list[Step]:
-    reader = _EnquiryReader()
+def requirement_script(materials: bool = False) -> list[Step]:
+    reader = _EnquiryReader(materials)
     return [reader, reader, reader]

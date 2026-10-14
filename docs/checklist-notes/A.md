@@ -302,3 +302,13 @@ The SQL mutants of T010 part 2 (588) were NOT re-run: no existing function, tabl
 ## Job CK: packs, modules, custom fields, social sign-up (2026-10-14)
 
 Ticket: wave 1, C1 of `docs/plans/stack19-blueprint.md`. Checklist rows: "Packs, modules, custom fields and social sign-up (job CK)" in `docs/pre-pilot-checklist.md`. Evidence: pgTAP 93 (packs, module matrix, the equivalence proof, every tenant table guarded or exempt), 94 (custom fields), 95 (sign-up with the business type only, Google and Facebook accounts, the second factor, example data, erasure of custom values); `services/ai-api/tests/test_ck_*.py` and `test_migration_copies_ck.py`; `tests/integration/test_ck_packs_api.py` on the real stack (the pack rows equal the files, module-off reaches the caller as a plain 403, a 5,000-row import in ten parts with custom columns). Unresolved risks: the checklist section above (real owner reviews, native readers, a real Google and Facebook round trip, leads without a company for admissions, the saree-shaped catalogue, no contact export).
+
+## Job CN: the construction-materials core (2026-10-14)
+
+Ticket: wave 2, C1 of `docs/plans/stack19-blueprint.md`. ADR 0085. Checklist rows: "Construction materials core (job CN)" in `docs/pre-pilot-checklist.md`. Evidence: pgTAP 96 (catalogue kinds, sites, requirement fields), 97 (dues ledger), 98 (material quotes and the SQL twin), 99 (deliveries, proof, outbox); the 44 golden vectors in Python, TypeScript and SQL; `tests/integration/test_cn_construction.py` and `test_cn_requirement_agent.py` on the real stack; route, engine-port, contract and requirement unit tests (`tests/test_cn_*.py`).
+
+**Lane note.** The job text puts the calculator in `packages/quote-engine`, which `lanes.json` denies to lane A. The owner's instruction was followed; `scripts/check-lane-paths.sh a origin/main` flags exactly those files, and PRs from `api/*` branches are not path-guarded. Reported to the owner.
+
+**Mutation pass: not run for this job** (it is opt-in and about 45 minutes for the follow-up modules; nothing here changes the follow-up engine).
+
+**Findings on the way.** (1) The agent stack's Kong mounted the sign-up mail template as a single file, and the stack generator replaced the folder, so the mount kept a deleted file after `db-reset`: fixed by syncing the templates in place (tests in `test_stacks.py`). (2) The web's TypeScript target was ES2017 and could not read the BigInt twin of the calculator: raised to ES2020 (type-check only). (3) A trip may be loaded before the order is dispatched but not leave: the order's own advance rule is the gate. (4) A "delay" message is flagged as a complaint by the outbox's rules, so it is always held for a person.

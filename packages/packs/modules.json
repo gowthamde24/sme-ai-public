@@ -44,6 +44,12 @@
       "guard": "tables"
     },
     {
+      "code": "materials",
+      "exists_today": false,
+      "description": "Building materials: items sold by area or weight, specs, area-to-quantity quotes with transport rules",
+      "guard": "tables"
+    },
+    {
       "code": "orders",
       "exists_today": true,
       "description": "Orders from approved quotes",
@@ -52,14 +58,14 @@
     {
       "code": "deliveries",
       "exists_today": false,
-      "description": "Deliveries, trips and delivery notes (construction, wave 2)",
-      "guard": "future"
+      "description": "Deliveries: trips, vehicles, delivery notes (challan) and proof of delivery",
+      "guard": "tables"
     },
     {
       "code": "sites",
       "exists_today": false,
-      "description": "Customer sites (construction, wave 2)",
-      "guard": "future"
+      "description": "Customer sites: address, pin, map pin, site contact and truck access notes",
+      "guard": "tables"
     },
     {
       "code": "programmes",
@@ -76,8 +82,8 @@
     {
       "code": "dues",
       "exists_today": false,
-      "description": "Receivables: invoiced, paid, balance, ageing (wave 3)",
-      "guard": "future"
+      "description": "Receivables: invoices entered, payments recorded, balance, ageing and the credit-limit warning",
+      "guard": "tables"
     },
     {
       "code": "followups",

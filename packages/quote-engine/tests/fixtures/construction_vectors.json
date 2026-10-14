@@ -1,0 +1,5512 @@
+{
+ "engine_version": "1.0.0",
+ "vectors": [
+  {
+   "expected": {
+    "canonical_hash": "d1590de3e45a51fd320ba7e33df32423f4557740cedb9c0feaf7a5a75f8c8c43",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4439750,
+     "balance": 4439750,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8879500,
+     "total_low": 8496000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 7525000,
+     "tax": 1354500,
+     "total": 8879500,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 4439750,
+       "advance_bps": 5000,
+       "balance": 4439750,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8879500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4439750,\"advance_bps\":5000,\"balance\":4439750,\"credit_days\":0,\"due_date\":null,\"total\":8879500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "worked_example_1000_sqft_80mm_paver_2_trips",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "26d19cefe3b033271dae797b4804dda9190a173ce4315cfd11710fa598557a9e",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "piece",
+      "billed_quantity": 5000,
+      "delivered_area_x100": 111112,
+      "gross": 9735000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 5000,
+      "material": 8250000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 5000,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1485000,
+      "unit_price_paise": 1650
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 5280500,
+     "balance": 5280500,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 10561000,
+     "total_low": 9587500
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1485000,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 8250000,
+     "subtotal": 8950000,
+     "tax": 1611000,
+     "total": 10561000,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 111112,
+       "pallet_rounding": true,
+       "pallets": 10,
+       "pieces": 5000,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":111112,\"pallet_rounding\":true,\"pallets\":10,\"pieces\":5000,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "material": 8250000,
+       "quantity": 5000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 1650
+      },
+      "rule_id": "material.per_piece",
+      "text": "material.per_piece: {\"material\":8250000,\"quantity\":5000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":1650}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 8250000,
+       "sku": "PV80-GREY",
+       "tax": 1485000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":8250000,\"sku\":\"PV80-GREY\",\"tax\":1485000}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 5000,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":5000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 5280500,
+       "advance_bps": 5000,
+       "balance": 5280500,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 10561000
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":5280500,\"advance_bps\":5000,\"balance\":5280500,\"credit_days\":0,\"due_date\":null,\"total\":10561000}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "sold_per_piece_rounded_up_to_pallets",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "piece",
+      "unit_price_paise": 1650
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": true,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "669ab3d28dd32bd44c8abe867a6c3094170c499a9b682908454e4fd37cc1380f",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 100000,
+      "delivered_area_x100": 105000,
+      "gross": 7670000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6500000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1170000,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4248000,
+     "balance": 4248000,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8496000,
+     "total_low": 8496000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1170000,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6500000,
+     "subtotal": 7200000,
+     "tax": 1296000,
+     "total": 8496000,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": false,
+       "billed_area_x100": 100000,
+       "material": 6500000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":false,\"billed_area_x100\":100000,\"material\":6500000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6500000,
+       "sku": "PV80-GREY",
+       "tax": 1170000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6500000,\"sku\":\"PV80-GREY\",\"tax\":1170000}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 4248000,
+       "advance_bps": 5000,
+       "balance": 4248000,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8496000
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4248000,\"advance_bps\":5000,\"balance\":4248000,\"credit_days\":0,\"due_date\":null,\"total\":8496000}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "area_price_bills_only_the_customers_area",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": false,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "e40c8315066fe866bfd1c46f41917612461b08d65b1b295038f5327a80541758",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 100000,
+      "delivered_area_x100": 100000,
+      "gross": 7670000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4500,
+      "material": 6500000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 9,
+      "pieces": 4500,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1170000,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4248000,
+     "balance": 4248000,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8496000,
+     "total_low": 8496000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1170000,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6500000,
+     "subtotal": 7200000,
+     "tax": 1296000,
+     "total": 8496000,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 100000,
+       "pallet_rounding": false,
+       "pallets": 9,
+       "pieces": 4500,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 0
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":100000,\"pallet_rounding\":false,\"pallets\":9,\"pieces\":4500,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":0}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 100000,
+       "material": 6500000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":100000,\"material\":6500000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6500000,
+       "sku": "PV80-GREY",
+       "tax": 1170000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6500000,\"sku\":\"PV80-GREY\",\"tax\":1170000}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4500,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4500,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 4248000,
+       "advance_bps": 5000,
+       "balance": 4248000,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8496000
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4248000,\"advance_bps\":5000,\"balance\":4248000,\"credit_days\":0,\"due_date\":null,\"total\":8496000}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "no_wastage_at_all",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 0,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "00e8b62852ddbe4bbf04f4fe258bfc90354a7138a3c0fcb25d146acfcbe68d23",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 110000,
+      "delivered_area_x100": 110000,
+      "gross": 8437000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4950,
+      "material": 7150000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4950,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1287000,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4631500,
+     "balance": 4631500,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 9263000,
+     "total_low": 8496000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1287000,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 7150000,
+     "subtotal": 7850000,
+     "tax": 1413000,
+     "total": 9263000,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 110000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4950,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 1000
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":110000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4950,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":1000}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 110000,
+       "material": 7150000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":110000,\"material\":7150000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 7150000,
+       "sku": "PV80-GREY",
+       "tax": 1287000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":7150000,\"sku\":\"PV80-GREY\",\"tax\":1287000}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4950,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4950,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 4631500,
+       "advance_bps": 5000,
+       "balance": 4631500,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 9263000
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4631500,\"advance_bps\":5000,\"balance\":4631500,\"credit_days\":0,\"due_date\":null,\"total\":9263000}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "line_wastage_overrides_the_default",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500,
+      "wastage_bps": 1000
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "501f6c6c157c4117e954f02c0cd1a2c5f59bbbea91928fdb7786330c878506b3",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "piece",
+      "billed_quantity": 5000,
+      "delivered_area_x100": 111112,
+      "gross": 9735000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 5000,
+      "material": 8250000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 5000,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1485000,
+      "unit_price_paise": 1650
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 5280500,
+     "balance": 5280500,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 10561000,
+     "total_low": 9587500
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1485000,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 8250000,
+     "subtotal": 8950000,
+     "tax": 1611000,
+     "total": 10561000,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 111112,
+       "pallet_rounding": true,
+       "pallets": 10,
+       "pieces": 5000,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":111112,\"pallet_rounding\":true,\"pallets\":10,\"pieces\":5000,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "material": 8250000,
+       "quantity": 5000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 1650
+      },
+      "rule_id": "material.per_piece",
+      "text": "material.per_piece: {\"material\":8250000,\"quantity\":5000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":1650}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 8250000,
+       "sku": "PV80-GREY",
+       "tax": 1485000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":8250000,\"sku\":\"PV80-GREY\",\"tax\":1485000}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 5000,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":5000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 5280500,
+       "advance_bps": 5000,
+       "balance": 5280500,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 10561000
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":5280500,\"advance_bps\":5000,\"balance\":5280500,\"credit_days\":0,\"due_date\":null,\"total\":10561000}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "per_line_pallet_choice",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "round_to_pallet": true,
+      "sku": "PV80-GREY",
+      "sold_per": "piece",
+      "unit_price_paise": 1650
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "a9c95c613034c590557da1ba7462982a569ed411c5b1541af84215d7a5ee5e62",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4498750,
+     "balance": 4498750,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8997500,
+     "total_low": 8614000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 7625000,
+     "tax": 1372500,
+     "total": 8997500,
+     "transport": 800000,
+     "transport_tax": 144000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "charge_per_trip_paise": 400000,
+       "distance_km": 18,
+       "transport": 800000,
+       "trips": 2,
+       "up_to_km": 25
+      },
+      "rule_id": "transport.km_slab",
+      "text": "transport.km_slab: {\"charge_per_trip_paise\":400000,\"distance_km\":18,\"transport\":800000,\"trips\":2,\"up_to_km\":25}"
+     },
+     {
+      "inputs": {
+       "advance": 4498750,
+       "advance_bps": 5000,
+       "balance": 4498750,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8997500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4498750,\"advance_bps\":5000,\"balance\":4498750,\"credit_days\":0,\"due_date\":null,\"total\":8997500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "km_slab_second_slab_two_trips",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "distance_km": 18,
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_km_slab",
+      "slabs": [
+       {
+        "charge_paise": 250000,
+        "up_to_km": 10
+       },
+       {
+        "charge_paise": 400000,
+        "up_to_km": 25
+       },
+       {
+        "charge_paise": 650000,
+        "up_to_km": 50
+       }
+      ],
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "f9e6f065d86e8d232bc2f8ca8e36b4dd30a2b18c9f13b7d546e90c09ea33a793",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4026750,
+     "balance": 4026750,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8053500,
+     "total_low": 7670000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 6825000,
+     "tax": 1228500,
+     "total": 8053500,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "free": true,
+       "free_above_paise": 6000000,
+       "material": 6825000
+      },
+      "rule_id": "transport.free_above",
+      "text": "transport.free_above: {\"free\":true,\"free_above_paise\":6000000,\"material\":6825000}"
+     },
+     {
+      "inputs": {
+       "advance": 4026750,
+       "advance_bps": 5000,
+       "balance": 4026750,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8053500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4026750,\"advance_bps\":5000,\"balance\":4026750,\"credit_days\":0,\"due_date\":null,\"total\":8053500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "freight_free_above_the_material_amount",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "free_above_paise": 6000000,
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "fedcb14a68a0c374e2c280fad166d51b47c55e92c91976834f98e46d86759ea3",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4439750,
+     "balance": 4439750,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8879500,
+     "total_low": 8496000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 7525000,
+     "tax": 1354500,
+     "total": 8879500,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "free": false,
+       "free_above_paise": 6825000,
+       "material": 6825000
+      },
+      "rule_id": "transport.free_above",
+      "text": "transport.free_above: {\"free\":false,\"free_above_paise\":6825000,\"material\":6825000}"
+     },
+     {
+      "inputs": {
+       "advance": 4439750,
+       "advance_bps": 5000,
+       "balance": 4439750,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8879500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4439750,\"advance_bps\":5000,\"balance\":4439750,\"credit_days\":0,\"due_date\":null,\"total\":8879500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "freight_not_free_at_exactly_the_amount",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "free_above_paise": 6825000,
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "cc592bdec61f899e263d4b4434a1aa8533d5bfdac67575ac990f6cd3c65cd3b8",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4026750,
+     "balance": 4026750,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8053500,
+     "total_low": 7670000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 6825000,
+     "tax": 1228500,
+     "total": 8053500,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2000,
+       "load": 4725,
+       "trips": 3
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2000,\"load\":4725,\"trips\":3}"
+     },
+     {
+      "inputs": {
+       "advance": 4026750,
+       "advance_bps": 5000,
+       "balance": 4026750,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8053500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4026750,\"advance_bps\":5000,\"balance\":4026750,\"credit_days\":0,\"due_date\":null,\"total\":8053500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 3,
+    "valid_until": "2026-10-21"
+   },
+   "name": "freight_none_but_trips_known",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "kind": "none",
+      "truck_capacity": 2000
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "b56df3acdfb801255fd4446c79c9f9489cd1401eb974585c769ad7a80ca2b76e",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4380750,
+     "balance": 4380750,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 8761500,
+     "total_low": 8378000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 7425000,
+     "tax": 1336500,
+     "total": 8761500,
+     "transport": 600000,
+     "transport_tax": 108000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "area",
+       "capacity": 60000,
+       "load": 105000,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"area\",\"capacity\":60000,\"load\":105000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 300000,
+       "transport": 600000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":300000,\"transport\":600000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 4380750,
+       "advance_bps": 5000,
+       "balance": 4380750,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 8761500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4380750,\"advance_bps\":5000,\"balance\":4380750,\"credit_days\":0,\"due_date\":null,\"total\":8761500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "capacity_in_area",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "area",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 300000,
+      "truck_capacity": 600
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "390a2b20fba797b7c3ec38a2eeabd5499304ec11f015a43bbbdb94176f527dc4",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 5832150,
+     "balance": 5832150,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 11664300,
+     "total_low": 11280800
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 160000,
+     "handling_tax": 28800,
+     "item_tax": 1228500,
+     "laying": 2200000,
+     "laying_tax": 396000,
+     "material": 6825000,
+     "subtotal": 9885000,
+     "tax": 1779300,
+     "total": 11664300,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "amount_paise": 80000,
+       "handling": 160000,
+       "per": "trip",
+       "tax": 28800,
+       "trips": 2
+      },
+      "rule_id": "handling",
+      "text": "handling: {\"amount_paise\":80000,\"handling\":160000,\"per\":\"trip\",\"tax\":28800,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "laying": 2200000,
+       "rate_paise_per_area": 2200,
+       "tax": 396000
+      },
+      "rule_id": "laying",
+      "text": "laying: {\"area_x100\":100000,\"laying\":2200000,\"rate_paise_per_area\":2200,\"tax\":396000}"
+     },
+     {
+      "inputs": {
+       "advance": 5832150,
+       "advance_bps": 5000,
+       "balance": 5832150,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 11664300
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":5832150,\"advance_bps\":5000,\"balance\":5832150,\"credit_days\":0,\"due_date\":null,\"total\":11664300}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "handling_per_trip_and_laying",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "laying": true,
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "handling": {
+      "amount_paise": 80000,
+      "gst_bps": 1800,
+      "per": "trip"
+     },
+     "laying": {
+      "gst_bps": 1800,
+      "rate_paise_per_area": 2200
+     },
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "fdadc951d90ef161abcc8baa20f6834e349ca39f69fbf125586864796af2dc05",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 4510550,
+     "balance": 4510550,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 9021100,
+     "total_low": 8637600
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 120000,
+     "handling_tax": 21600,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 7645000,
+     "tax": 1376100,
+     "total": 9021100,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "amount_paise": 120000,
+       "handling": 120000,
+       "per": "order",
+       "tax": 21600,
+       "trips": 2
+      },
+      "rule_id": "handling",
+      "text": "handling: {\"amount_paise\":120000,\"handling\":120000,\"per\":\"order\",\"tax\":21600,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 4510550,
+       "advance_bps": 5000,
+       "balance": 4510550,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 9021100
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":4510550,\"advance_bps\":5000,\"balance\":4510550,\"credit_days\":0,\"due_date\":null,\"total\":9021100}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "handling_per_order",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "handling": {
+      "amount_paise": 120000,
+      "gst_bps": 1800,
+      "per": "order"
+     },
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "eda10e50b0fb16ad600ba699d960211c3da60766f819fc9a8fd3961cd3d90f9f",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": [
+      {
+       "code": "BELOW_MINIMUM_ORDER_QUANTITY",
+       "sku": "PV60-RED"
+      },
+      {
+       "code": "CREDIT_LIMIT_EXCEEDED",
+       "credit_limit_paise": 5000000,
+       "exposure": 20005030
+      }
+     ]
+    },
+    "lines": [
+     {
+      "billed_per": "sq_m",
+      "billed_quantity": 26305,
+      "delivered_area_x100": 26305,
+      "gross": 22038329,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 11574,
+      "material": 18676550,
+      "mode": "area",
+      "name": "Paver block 60 mm red",
+      "pallets": 20,
+      "pieces": 11574,
+      "pieces_without_wastage": 11022,
+      "sku": "PV60-RED",
+      "tax": 3361779,
+      "unit_price_paise": 71000
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 6859299,
+     "balance": 16005030,
+     "balance_on": "credit_days",
+     "credit_days": 30,
+     "due_date": "2026-11-13"
+    },
+    "range": {
+     "total_high": 22864329,
+     "total_low": 21812890
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 3361779,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 18676550,
+     "subtotal": 19376550,
+     "tax": 3487779,
+     "total": 22864329,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 25050,
+       "delivered_area_x100": 26305,
+       "pallet_rounding": false,
+       "pallets": 20,
+       "pieces": 11574,
+       "pieces_per_area_x1000": 44000,
+       "pieces_per_pallet": 600,
+       "pieces_without_wastage": 11022,
+       "sku": "PV60-RED",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":25050,\"delivered_area_x100\":26305,\"pallet_rounding\":false,\"pallets\":20,\"pieces\":11574,\"pieces_per_area_x1000\":44000,\"pieces_per_pallet\":600,\"pieces_without_wastage\":11022,\"sku\":\"PV60-RED\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 26305,
+       "material": 18676550,
+       "sku": "PV60-RED",
+       "unit_price_paise": 71000
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":26305,\"material\":18676550,\"sku\":\"PV60-RED\",\"unit_price_paise\":71000}"
+     },
+     {
+      "inputs": {
+       "minimum": 500,
+       "quantity": 264,
+       "sku": "PV60-RED"
+      },
+      "rule_id": "quantity.minimum",
+      "text": "quantity.minimum: {\"minimum\":500,\"quantity\":264,\"sku\":\"PV60-RED\"}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 18676550,
+       "sku": "PV60-RED",
+       "tax": 3361779
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":18676550,\"sku\":\"PV60-RED\",\"tax\":3361779}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 8000,
+       "load": 11574,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":8000,\"load\":11574,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "balance": 16005030,
+       "credit_limit_paise": 5000000,
+       "exposure": 20005030,
+       "outstanding_paise": 4000000
+      },
+      "rule_id": "credit.limit",
+      "text": "credit.limit: {\"balance\":16005030,\"credit_limit_paise\":5000000,\"exposure\":20005030,\"outstanding_paise\":4000000}"
+     },
+     {
+      "inputs": {
+       "advance": 6859299,
+       "advance_bps": 3000,
+       "balance": 16005030,
+       "credit_days": 30,
+       "due_date": "2026-11-13",
+       "total": 22864329
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":6859299,\"advance_bps\":3000,\"balance\":16005030,\"credit_days\":30,\"due_date\":\"2026-11-13\",\"total\":22864329}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "square_metres_credit_terms_and_credit_flag",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "credit_limit_paise": 5000000,
+     "outstanding_paise": 4000000
+    },
+    "lines": [
+     {
+      "area_unit": "sq_m",
+      "area_x100": 25050,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "min_order_qty": 500,
+      "mode": "area",
+      "name": "Paver block 60 mm red",
+      "pieces_per_area_x1000": 44000,
+      "pieces_per_pallet": 600,
+      "sku": "PV60-RED",
+      "sold_per": "sq_m",
+      "unit_price_paise": 71000
+     }
+    ],
+    "policy": {
+     "advance_bps": 3000,
+     "bill_wastage": true,
+     "credit_days": 30,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 8000
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "6bab10c71343bc38ed09bb8fdd28b95b54ff84365d63225eb13c1e9a1d98de1a",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": [
+      {
+       "code": "BELOW_MINIMUM_ORDER_QUANTITY",
+       "sku": "PV80-GREY"
+      }
+     ]
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 10512,
+      "delivered_area_x100": 10512,
+      "gross": 806270,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 473,
+      "material": 683280,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 1,
+      "pieces": 473,
+      "pieces_without_wastage": 450,
+      "sku": "PV80-GREY",
+      "tax": 122990,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 609635,
+     "balance": 609635,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 1219270,
+     "total_low": 1180000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 122990,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 683280,
+     "subtotal": 1033280,
+     "tax": 185990,
+     "total": 1219270,
+     "transport": 350000,
+     "transport_tax": 63000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 10000,
+       "delivered_area_x100": 10512,
+       "pallet_rounding": false,
+       "pallets": 1,
+       "pieces": 473,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 450,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":10000,\"delivered_area_x100\":10512,\"pallet_rounding\":false,\"pallets\":1,\"pieces\":473,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":450,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 10512,
+       "material": 683280,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":10512,\"material\":683280,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "minimum": 500,
+       "quantity": 106,
+       "sku": "PV80-GREY"
+      },
+      "rule_id": "quantity.minimum",
+      "text": "quantity.minimum: {\"minimum\":500,\"quantity\":106,\"sku\":\"PV80-GREY\"}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 683280,
+       "sku": "PV80-GREY",
+       "tax": 122990
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":683280,\"sku\":\"PV80-GREY\",\"tax\":122990}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 473,
+       "trips": 1
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":473,\"trips\":1}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 350000,
+       "trips": 1
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":350000,\"trips\":1}"
+     },
+     {
+      "inputs": {
+       "advance": 609635,
+       "advance_bps": 5000,
+       "balance": 609635,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 1219270
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":609635,\"advance_bps\":5000,\"balance\":609635,\"credit_days\":0,\"due_date\":null,\"total\":1219270}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 1,
+    "valid_until": "2026-10-21"
+   },
+   "name": "below_minimum_order_flag",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 10000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "min_order_qty": 500,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "3ffaabdba52997e4c092c0fec00e59f04aa39132bd7b68c362da9f3055b1a3f3",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": [
+      {
+       "code": "LINE_NOT_COUNTED_IN_TRIPS",
+       "sku": "CEM-53"
+      }
+     ]
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     },
+     {
+      "billed_per": "bag",
+      "billed_quantity": 120,
+      "delivered_area_x100": null,
+      "gross": 5836800,
+      "gst_bps": 2800,
+      "hsn": "2523",
+      "load": 0,
+      "material": 4560000,
+      "mode": "direct",
+      "name": "Cement 53 grade 50 kg bag",
+      "pallets": null,
+      "pieces": null,
+      "pieces_without_wastage": null,
+      "sku": "CEM-53",
+      "tax": 1276800,
+      "unit_price_paise": 38000
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 7358150,
+     "balance": 7358150,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 14716300,
+     "total_low": 14332800
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 2505300,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 11385000,
+     "subtotal": 12085000,
+     "tax": 2631300,
+     "total": 14716300,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "material": 4560000,
+       "quantity": 120,
+       "quantity_billed": 120,
+       "sku": "CEM-53",
+       "unit_price_paise": 38000,
+       "wastage_bps": 0
+      },
+      "rule_id": "material.direct",
+      "text": "material.direct: {\"material\":4560000,\"quantity\":120,\"quantity_billed\":120,\"sku\":\"CEM-53\",\"unit_price_paise\":38000,\"wastage_bps\":0}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 2800,
+       "material": 4560000,
+       "sku": "CEM-53",
+       "tax": 1276800
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":2800,\"material\":4560000,\"sku\":\"CEM-53\",\"tax\":1276800}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 7358150,
+       "advance_bps": 5000,
+       "balance": 7358150,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 14716300
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":7358150,\"advance_bps\":5000,\"balance\":7358150,\"credit_days\":0,\"due_date\":null,\"total\":14716300}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "direct_bags_of_cement_not_counted_in_trips",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     },
+     {
+      "gst_bps": 2800,
+      "hsn": "2523",
+      "mode": "direct",
+      "name": "Cement 53 grade 50 kg bag",
+      "quantity": 120,
+      "sku": "CEM-53",
+      "sold_per": "bag",
+      "unit_price_paise": 38000
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "3e63ab2e4422dc9092dc597ce1a2131316ce1bbfe07c54abe967e9347491477b",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     },
+     {
+      "billed_per": "piece",
+      "billed_quantity": 306,
+      "delivered_area_x100": null,
+      "gross": 3430260,
+      "gst_bps": 1800,
+      "hsn": null,
+      "load": 306,
+      "material": 2907000,
+      "mode": "direct",
+      "name": "Kerb stone",
+      "pallets": null,
+      "pieces": 306,
+      "pieces_without_wastage": null,
+      "sku": "KERB-1",
+      "tax": 523260,
+      "unit_price_paise": 9500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 6361380,
+     "balance": 6361380,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 12722760,
+     "total_low": 11859000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1751760,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 9732000,
+     "subtotal": 10782000,
+     "tax": 1940760,
+     "total": 12722760,
+     "transport": 1050000,
+     "transport_tax": 189000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "material": 2907000,
+       "quantity": 300,
+       "quantity_billed": 306,
+       "sku": "KERB-1",
+       "unit_price_paise": 9500,
+       "wastage_bps": 200
+      },
+      "rule_id": "material.direct",
+      "text": "material.direct: {\"material\":2907000,\"quantity\":300,\"quantity_billed\":306,\"sku\":\"KERB-1\",\"unit_price_paise\":9500,\"wastage_bps\":200}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 2907000,
+       "sku": "KERB-1",
+       "tax": 523260
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":2907000,\"sku\":\"KERB-1\",\"tax\":523260}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 5031,
+       "trips": 3
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":5031,\"trips\":3}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 1050000,
+       "trips": 3
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":1050000,\"trips\":3}"
+     },
+     {
+      "inputs": {
+       "advance": 6361380,
+       "advance_bps": 5000,
+       "balance": 6361380,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 12722760
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":6361380,\"advance_bps\":5000,\"balance\":6361380,\"credit_days\":0,\"due_date\":null,\"total\":12722760}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 3,
+    "valid_until": "2026-10-21"
+   },
+   "name": "direct_pieces_count_in_trips",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     },
+     {
+      "gst_bps": 1800,
+      "mode": "direct",
+      "name": "Kerb stone",
+      "quantity": 300,
+      "sku": "KERB-1",
+      "sold_per": "piece",
+      "unit_price_paise": 9500,
+      "wastage_bps": 200
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "962fa4693101e954cd665b25024806aeb763013fd59536fe6aeaf92e67e5c748",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "bag",
+      "billed_quantity": 1,
+      "delivered_area_x100": null,
+      "gross": 138,
+      "gst_bps": 1000,
+      "hsn": null,
+      "load": 0,
+      "material": 125,
+      "mode": "direct",
+      "name": "One bag",
+      "pallets": null,
+      "pieces": null,
+      "pieces_without_wastage": null,
+      "sku": "HALF",
+      "tax": 13,
+      "unit_price_paise": 125
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 69,
+     "balance": 69,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 138,
+     "total_low": 138
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 13,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 125,
+     "subtotal": 125,
+     "tax": 13,
+     "total": 138,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "material": 125,
+       "quantity": 1,
+       "quantity_billed": 1,
+       "sku": "HALF",
+       "unit_price_paise": 125,
+       "wastage_bps": 0
+      },
+      "rule_id": "material.direct",
+      "text": "material.direct: {\"material\":125,\"quantity\":1,\"quantity_billed\":1,\"sku\":\"HALF\",\"unit_price_paise\":125,\"wastage_bps\":0}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1000,
+       "material": 125,
+       "sku": "HALF",
+       "tax": 13
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1000,\"material\":125,\"sku\":\"HALF\",\"tax\":13}"
+     },
+     {
+      "inputs": {
+       "advance": 69,
+       "advance_bps": 5000,
+       "balance": 69,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 138
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":69,\"advance_bps\":5000,\"balance\":69,\"credit_days\":0,\"due_date\":null,\"total\":138}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 1,
+    "valid_until": "2026-10-21"
+   },
+   "name": "rounding_half_up_at_exactly_half",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "gst_bps": 1000,
+      "mode": "direct",
+      "name": "One bag",
+      "quantity": 1,
+      "sku": "HALF",
+      "sold_per": "bag",
+      "unit_price_paise": 125
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "kind": "none"
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "84adc34914b981dc730c38ea71c9fee8c91f7ae77d9e29e9b8d66c7ff1ae9d9f",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "bag",
+      "billed_quantity": 1,
+      "delivered_area_x100": null,
+      "gross": 137,
+      "gst_bps": 1000,
+      "hsn": null,
+      "load": 0,
+      "material": 125,
+      "mode": "direct",
+      "name": "One bag",
+      "pallets": null,
+      "pieces": null,
+      "pieces_without_wastage": null,
+      "sku": "HALF",
+      "tax": 12,
+      "unit_price_paise": 125
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 68,
+     "balance": 69,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 137,
+     "total_low": 137
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 12,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 125,
+     "subtotal": 125,
+     "tax": 12,
+     "total": 137,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "material": 125,
+       "quantity": 1,
+       "quantity_billed": 1,
+       "sku": "HALF",
+       "unit_price_paise": 125,
+       "wastage_bps": 0
+      },
+      "rule_id": "material.direct",
+      "text": "material.direct: {\"material\":125,\"quantity\":1,\"quantity_billed\":1,\"sku\":\"HALF\",\"unit_price_paise\":125,\"wastage_bps\":0}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1000,
+       "material": 125,
+       "sku": "HALF",
+       "tax": 12
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1000,\"material\":125,\"sku\":\"HALF\",\"tax\":12}"
+     },
+     {
+      "inputs": {
+       "advance": 68,
+       "advance_bps": 5000,
+       "balance": 69,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 137
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":68,\"advance_bps\":5000,\"balance\":69,\"credit_days\":0,\"due_date\":null,\"total\":137}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 1,
+    "valid_until": "2026-10-21"
+   },
+   "name": "rounding_half_even_at_exactly_half",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "gst_bps": 1000,
+      "mode": "direct",
+      "name": "One bag",
+      "quantity": 1,
+      "sku": "HALF",
+      "sold_per": "bag",
+      "unit_price_paise": 125
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_even",
+     "transport": {
+      "kind": "none"
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "b89fd3ae2da5feaaa90ba1ce90ee731678d9632e99540ac6fe903f7923948d98",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "bag",
+      "billed_quantity": 1,
+      "delivered_area_x100": null,
+      "gross": 137,
+      "gst_bps": 1000,
+      "hsn": null,
+      "load": 0,
+      "material": 125,
+      "mode": "direct",
+      "name": "One bag",
+      "pallets": null,
+      "pieces": null,
+      "pieces_without_wastage": null,
+      "sku": "HALF",
+      "tax": 12,
+      "unit_price_paise": 125
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 68,
+     "balance": 69,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 137,
+     "total_low": 137
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 12,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 125,
+     "subtotal": 125,
+     "tax": 12,
+     "total": 137,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "material": 125,
+       "quantity": 1,
+       "quantity_billed": 1,
+       "sku": "HALF",
+       "unit_price_paise": 125,
+       "wastage_bps": 0
+      },
+      "rule_id": "material.direct",
+      "text": "material.direct: {\"material\":125,\"quantity\":1,\"quantity_billed\":1,\"sku\":\"HALF\",\"unit_price_paise\":125,\"wastage_bps\":0}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1000,
+       "material": 125,
+       "sku": "HALF",
+       "tax": 12
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1000,\"material\":125,\"sku\":\"HALF\",\"tax\":12}"
+     },
+     {
+      "inputs": {
+       "advance": 68,
+       "advance_bps": 5000,
+       "balance": 69,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 137
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":68,\"advance_bps\":5000,\"balance\":69,\"credit_days\":0,\"due_date\":null,\"total\":137}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 1,
+    "valid_until": "2026-10-21"
+   },
+   "name": "rounding_down_at_exactly_half",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "gst_bps": 1000,
+      "mode": "direct",
+      "name": "One bag",
+      "quantity": 1,
+      "sku": "HALF",
+      "sold_per": "bag",
+      "unit_price_paise": 125
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "down",
+     "transport": {
+      "kind": "none"
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "ad7a018c13c6ca406be8f41c0ebf518c55b42a14f2ede40bf22c78165c931b5b",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "bag",
+      "billed_quantity": 1,
+      "delivered_area_x100": null,
+      "gross": 193,
+      "gst_bps": 1000,
+      "hsn": null,
+      "load": 0,
+      "material": 175,
+      "mode": "direct",
+      "name": "One bag",
+      "pallets": null,
+      "pieces": null,
+      "pieces_without_wastage": null,
+      "sku": "HALF",
+      "tax": 18,
+      "unit_price_paise": 175
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 96,
+     "balance": 97,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 193,
+     "total_low": 193
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 18,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 175,
+     "subtotal": 175,
+     "tax": 18,
+     "total": 193,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "material": 175,
+       "quantity": 1,
+       "quantity_billed": 1,
+       "sku": "HALF",
+       "unit_price_paise": 175,
+       "wastage_bps": 0
+      },
+      "rule_id": "material.direct",
+      "text": "material.direct: {\"material\":175,\"quantity\":1,\"quantity_billed\":1,\"sku\":\"HALF\",\"unit_price_paise\":175,\"wastage_bps\":0}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1000,
+       "material": 175,
+       "sku": "HALF",
+       "tax": 18
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1000,\"material\":175,\"sku\":\"HALF\",\"tax\":18}"
+     },
+     {
+      "inputs": {
+       "advance": 96,
+       "advance_bps": 5000,
+       "balance": 97,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 193
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":96,\"advance_bps\":5000,\"balance\":97,\"credit_days\":0,\"due_date\":null,\"total\":193}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 1,
+    "valid_until": "2026-10-21"
+   },
+   "name": "rounding_half_even_rounds_to_the_odd_neighbour",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "gst_bps": 1000,
+      "mode": "direct",
+      "name": "One bag",
+      "quantity": 1,
+      "sku": "HALF",
+      "sold_per": "bag",
+      "unit_price_paise": 175
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_even",
+     "transport": {
+      "kind": "none"
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "7146ed2f81bd305979b26b45639e819c7d6f9208215c70ec4e0142c96227a9ea",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 105000,
+      "delivered_area_x100": 105000,
+      "gross": 8053500,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 4725,
+      "material": 6825000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 10,
+      "pieces": 4725,
+      "pieces_without_wastage": 4500,
+      "sku": "PV80-GREY",
+      "tax": 1228500,
+      "unit_price_paise": 6500
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 0,
+     "balance": 8879500,
+     "balance_on": "credit_days",
+     "credit_days": 45,
+     "due_date": "2026-11-28"
+    },
+    "range": {
+     "total_high": 8879500,
+     "total_low": 8496000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1228500,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 6825000,
+     "subtotal": 7525000,
+     "tax": 1354500,
+     "total": 8879500,
+     "transport": 700000,
+     "transport_tax": 126000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "advance": 0,
+       "advance_bps": 0,
+       "balance": 8879500,
+       "credit_days": 45,
+       "due_date": "2026-11-28",
+       "total": 8879500
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":0,\"advance_bps\":0,\"balance\":8879500,\"credit_days\":45,\"due_date\":\"2026-11-28\",\"total\":8879500}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 2,
+    "valid_until": "2026-10-21"
+   },
+   "name": "zero_advance_all_on_credit",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 0,
+     "bill_wastage": true,
+     "credit_days": 45,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "1563ee9145a89415113797a38c7eed98735fbc417e5fd0df509f674f5f8c164e",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "sq_ft",
+      "billed_quantity": 134208,
+      "delivered_area_x100": 134208,
+      "gross": 10250304,
+      "gst_bps": 1250,
+      "hsn": "68101990",
+      "load": 5069,
+      "material": 9111381,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 37,
+      "pieces": 5069,
+      "pieces_without_wastage": 4663,
+      "sku": "PV80-GREY",
+      "tax": 1138923,
+      "unit_price_paise": 6789
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 5744652,
+     "balance": 5744652,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 11489304,
+     "total_low": 10255260
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 1138923,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 9111381,
+     "subtotal": 10161381,
+     "tax": 1327923,
+     "total": 11489304,
+     "transport": 1050000,
+     "transport_tax": 189000
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 123457,
+       "delivered_area_x100": 134208,
+       "pallet_rounding": true,
+       "pallets": 37,
+       "pieces": 5069,
+       "pieces_per_area_x1000": 3777,
+       "pieces_per_pallet": 137,
+       "pieces_without_wastage": 4663,
+       "sku": "PV80-GREY",
+       "wastage_bps": 733
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":123457,\"delivered_area_x100\":134208,\"pallet_rounding\":true,\"pallets\":37,\"pieces\":5069,\"pieces_per_area_x1000\":3777,\"pieces_per_pallet\":137,\"pieces_without_wastage\":4663,\"sku\":\"PV80-GREY\",\"wastage_bps\":733}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 134208,
+       "material": 9111381,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6789
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":134208,\"material\":9111381,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6789}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1250,
+       "material": 9111381,
+       "sku": "PV80-GREY",
+       "tax": 1138923
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1250,\"material\":9111381,\"sku\":\"PV80-GREY\",\"tax\":1138923}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 5069,
+       "trips": 3
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":5069,\"trips\":3}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 1050000,
+       "trips": 3
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":1050000,\"trips\":3}"
+     },
+     {
+      "inputs": {
+       "advance": 5744652,
+       "advance_bps": 5000,
+       "balance": 5744652,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 11489304
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":5744652,\"advance_bps\":5000,\"balance\":5744652,\"credit_days\":0,\"due_date\":null,\"total\":11489304}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 3,
+    "valid_until": "2026-10-21"
+   },
+   "name": "odd_numbers_that_round",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 123457,
+      "gst_bps": 1250,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 3777,
+      "pieces_per_pallet": 137,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6789
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 733,
+     "round_to_pallet": true,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "83527a621b7a707110a6d00a121b410e063b1a84e5acdf0252ee4133ad3b158c",
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "lines": [
+     {
+      "billed_per": "piece",
+      "billed_quantity": 9450000,
+      "delivered_area_x100": 105000000,
+      "gross": 111510000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "load": 9450000,
+      "material": 94500000,
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pallets": 9450,
+      "pieces": 9450000,
+      "pieces_without_wastage": 9000000,
+      "sku": "PV80-GREY",
+      "tax": 17010000,
+      "unit_price_paise": 10
+     }
+    ],
+    "payment_terms": {
+     "advance_amount": 55755000,
+     "balance": 55755000,
+     "balance_on": "delivery",
+     "credit_days": 0,
+     "due_date": null
+    },
+    "range": {
+     "total_high": 111510000,
+     "total_low": 106200000
+    },
+    "status": "draft",
+    "totals": {
+     "handling": 0,
+     "handling_tax": 0,
+     "item_tax": 17010000,
+     "laying": 0,
+     "laying_tax": 0,
+     "material": 94500000,
+     "subtotal": 94500000,
+     "tax": 17010000,
+     "total": 111510000,
+     "transport": 0,
+     "transport_tax": 0
+    },
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 99999999,
+       "delivered_area_x100": 105000000,
+       "pallet_rounding": false,
+       "pallets": 9450,
+       "pieces": 9450000,
+       "pieces_per_area_x1000": 9000,
+       "pieces_per_pallet": 1000,
+       "pieces_without_wastage": 9000000,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":99999999,\"delivered_area_x100\":105000000,\"pallet_rounding\":false,\"pallets\":9450,\"pieces\":9450000,\"pieces_per_area_x1000\":9000,\"pieces_per_pallet\":1000,\"pieces_without_wastage\":9000000,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "material": 94500000,
+       "quantity": 9450000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 10
+      },
+      "rule_id": "material.per_piece",
+      "text": "material.per_piece: {\"material\":94500000,\"quantity\":9450000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":10}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 94500000,
+       "sku": "PV80-GREY",
+       "tax": 17010000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":94500000,\"sku\":\"PV80-GREY\",\"tax\":17010000}"
+     },
+     {
+      "inputs": {
+       "advance": 55755000,
+       "advance_bps": 5000,
+       "balance": 55755000,
+       "credit_days": 0,
+       "due_date": null,
+       "total": 111510000
+      },
+      "rule_id": "payment.terms",
+      "text": "payment.terms: {\"advance\":55755000,\"advance_bps\":5000,\"balance\":55755000,\"credit_days\":0,\"due_date\":null,\"total\":111510000}"
+     },
+     {
+      "inputs": {
+       "as_of": "2026-10-14",
+       "valid_until": "2026-10-21",
+       "validity_days": 7
+      },
+      "rule_id": "quote.validity",
+      "text": "quote.validity: {\"as_of\":\"2026-10-14\",\"valid_until\":\"2026-10-21\",\"validity_days\":7}"
+     }
+    ],
+    "trips": 1,
+    "valid_until": "2026-10-21"
+   },
+   "name": "intermediate_product_above_2_pow_53",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 99999999,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 9000,
+      "pieces_per_pallet": 1000,
+      "sku": "PV80-GREY",
+      "sold_per": "piece",
+      "unit_price_paise": 10
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "kind": "none"
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "1fcc9be60a86fe4f32302a9cd13078cbe20999c9c9a9f21fc0cf225414389658",
+    "codes": [
+     "DISTANCE_BEYOND_SLABS"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": [
+      {
+       "code": "DISTANCE_BEYOND_SLABS",
+       "distance_km": 80
+      }
+     ]
+    },
+    "status": "rejected",
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     }
+    ]
+   },
+   "name": "distance_beyond_the_last_slab",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "distance_km": 80,
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_km_slab",
+      "slabs": [
+       {
+        "charge_paise": 250000,
+        "up_to_km": 10
+       }
+      ],
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "8fdce8405b92e48765a5a9e530f99a6029283df5cca748c281ec06f5ee46a20e",
+    "codes": [
+     "DISTANCE_MISSING"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     }
+    ]
+   },
+   "name": "distance_missing_for_slabs",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_km_slab",
+      "slabs": [
+       {
+        "charge_paise": 250000,
+        "up_to_km": 10
+       }
+      ],
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "177be83043f26d8de58055916c2a0739b5bccc7e216062d5c3627338e0f9350c",
+    "codes": [
+     "LAYING_RATE_MISSING"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 100000,
+       "delivered_area_x100": 105000,
+       "pallet_rounding": false,
+       "pallets": 10,
+       "pieces": 4725,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4500,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":100000,\"delivered_area_x100\":105000,\"pallet_rounding\":false,\"pallets\":10,\"pieces\":4725,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4500,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 105000,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 6500
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":105000,\"material\":6825000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":6500}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 6825000,
+       "sku": "PV80-GREY",
+       "tax": 1228500
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":6825000,\"sku\":\"PV80-GREY\",\"tax\":1228500}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4725,
+       "trips": 2
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4725,\"trips\":2}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 700000,
+       "trips": 2
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":700000,\"trips\":2}"
+     }
+    ]
+   },
+   "name": "laying_without_a_rate",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "laying": true,
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "31acc5fa0189739a3662187af99207e3c68d0511db8f8271d4c732c1148bb5cd",
+    "codes": [
+     "MISSING_GST_RATE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "missing_gst_rate_is_never_assumed",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "51947ab0e5942786d53dd3e573551bc1781b4f755a7e1d54ac57751f71172250",
+    "codes": [
+     "MISSING_GST_RATE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "freight_without_a_gst_rate",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "29b2833f4d3d8171ee4528fc249e546585737ef45107862b5f81778abc5f95bd",
+    "codes": [
+     "MIXED_AREA_UNITS"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "mixed_area_units",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     },
+     {
+      "area_unit": "sq_m",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "X",
+      "sold_per": "sq_m",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "35585c5b01122498f4cacc38a1ea0f2ddb4b585ef649efa8aa8b0b333691a7bf",
+    "codes": [
+     "INVALID_SOLD_PER"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "sold_per_does_not_fit_the_area",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_m",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "ef8e0cca9aa611568a63f0efd40f8f75d1addc63a384acb687352bbb6243303d",
+    "codes": [
+     "INVALID_SOLD_PER"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "direct_line_sold_per_area",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "gst_bps": 500,
+      "mode": "direct",
+      "name": "Sand",
+      "quantity": 5,
+      "sku": "S",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 100
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "58a7fc9a03a21dd749772f6302394bcefd740b4649647a1e4045443d19d24391",
+    "codes": [
+     "EMPTY_ORDER"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "empty_order",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "7717788ffa30a7d28a91478b632cfa8f2b5863139d96741487c994628f3481ee",
+    "codes": [
+     "DUPLICATE_SKU"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "duplicate_sku",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     },
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "058743a20cb7026d044a6b9ada770988c47579b63aa050d1d657cb782d965d6c",
+    "codes": [
+     "INVALID_HSN"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "hsn_must_be_digits",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68X1",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "e77bf25487c55763df3b22716ad899ace924bf9e37a0c6388e91d5d0f10b2eaf",
+    "codes": [
+     "OUT_OF_RANGE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "area_over_the_limit",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000001,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "dc838f35d57e9c0d575232cc061f48cea814d5d4cfe41ff259c2705dec3d6f04",
+    "codes": [
+     "TOTAL_TOO_LARGE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": [
+     {
+      "inputs": {
+       "area_x100": 90000000,
+       "delivered_area_x100": 94500000,
+       "pallet_rounding": false,
+       "pallets": 8505,
+       "pieces": 4252500,
+       "pieces_per_area_x1000": 4500,
+       "pieces_per_pallet": 500,
+       "pieces_without_wastage": 4050000,
+       "sku": "PV80-GREY",
+       "wastage_bps": 500
+      },
+      "rule_id": "quantity.area",
+      "text": "quantity.area: {\"area_x100\":90000000,\"delivered_area_x100\":94500000,\"pallet_rounding\":false,\"pallets\":8505,\"pieces\":4252500,\"pieces_per_area_x1000\":4500,\"pieces_per_pallet\":500,\"pieces_without_wastage\":4050000,\"sku\":\"PV80-GREY\",\"wastage_bps\":500}"
+     },
+     {
+      "inputs": {
+       "bill_wastage": true,
+       "billed_area_x100": 94500000,
+       "material": 85050000000,
+       "sku": "PV80-GREY",
+       "unit_price_paise": 90000
+      },
+      "rule_id": "material.per_area",
+      "text": "material.per_area: {\"bill_wastage\":true,\"billed_area_x100\":94500000,\"material\":85050000000,\"sku\":\"PV80-GREY\",\"unit_price_paise\":90000}"
+     },
+     {
+      "inputs": {
+       "gst_bps": 1800,
+       "material": 85050000000,
+       "sku": "PV80-GREY",
+       "tax": 15309000000
+      },
+      "rule_id": "tax.item",
+      "text": "tax.item: {\"gst_bps\":1800,\"material\":85050000000,\"sku\":\"PV80-GREY\",\"tax\":15309000000}"
+     },
+     {
+      "inputs": {
+       "basis": "pieces",
+       "capacity": 2500,
+       "load": 4252500,
+       "trips": 1701
+      },
+      "rule_id": "trips",
+      "text": "trips: {\"basis\":\"pieces\",\"capacity\":2500,\"load\":4252500,\"trips\":1701}"
+     },
+     {
+      "inputs": {
+       "rate_per_trip_paise": 350000,
+       "transport": 595350000,
+       "trips": 1701
+      },
+      "rule_id": "transport.per_trip",
+      "text": "transport.per_trip: {\"rate_per_trip_paise\":350000,\"transport\":595350000,\"trips\":1701}"
+     }
+    ]
+   },
+   "name": "total_over_the_orders_limit",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 90000000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 90000
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "3c4eeb2efecf6aad57b4949689cff320ae72188b20ed13c09a72e2a4ac373950",
+    "codes": [
+     "OUT_OF_RANGE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "too_many_pieces",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 200000,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "abbfedb52f1f0805f802ab9dcfaa0aae183e970cda7aadce87aec22b93d27a52",
+    "codes": [
+     "INVALID_DATE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "date_out_of_range",
+   "request": {
+    "as_of": "2019-12-31",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "15d05d00ab7df89063ea6c1553af617c84fe8b76a47cde0ee199e4c13dc49983",
+    "codes": [
+     "INVALID_DATE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "date_not_iso",
+   "request": {
+    "as_of": "14/10/2026",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "170a85ea0b1a9454353f97296ee46317dd7baacb6bb797422688c4f3b3d0481c",
+    "codes": [
+     "INVALID_FIELDS"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "per_trip_without_capacity",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 1
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "f2c81d3a2ef2a3d74bd2611424b75c69181fdc1864fe8da4b50dab92635ca7ae",
+    "codes": [
+     "INVALID_SLABS"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "slabs_not_increasing",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "distance_km": 5,
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "gst_bps": 1800,
+      "kind": "per_km_slab",
+      "slabs": [
+       {
+        "charge_paise": 1,
+        "up_to_km": 10
+       },
+       {
+        "charge_paise": 2,
+        "up_to_km": 10
+       }
+      ]
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "ece5ba50ea97520063dbfebc78bcf226a69366104d9f05f098bab0bc96315744",
+    "codes": [
+     "INVALID_FIELDS"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "unknown_field_refused",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "extra": 1,
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 500,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  },
+  {
+   "expected": {
+    "canonical_hash": "532b0ddc3475203dc22a7771bcf7a2cf75bc6ebdb29c59d0bdf45779f930fac8",
+    "codes": [
+     "OUT_OF_RANGE"
+    ],
+    "engine_version": "1.0.0",
+    "flags": {
+     "needs_owner_approval": true,
+     "reasons": []
+    },
+    "status": "rejected",
+    "trace": []
+   },
+   "name": "wastage_above_the_limit",
+   "request": {
+    "as_of": "2026-10-14",
+    "customer": {
+     "outstanding_paise": 0
+    },
+    "lines": [
+     {
+      "area_unit": "sq_ft",
+      "area_x100": 100000,
+      "gst_bps": 1800,
+      "hsn": "68101990",
+      "mode": "area",
+      "name": "Paver block 80 mm grey",
+      "pieces_per_area_x1000": 4500,
+      "pieces_per_pallet": 500,
+      "sku": "PV80-GREY",
+      "sold_per": "sq_ft",
+      "unit_price_paise": 6500
+     }
+    ],
+    "policy": {
+     "advance_bps": 5000,
+     "bill_wastage": true,
+     "credit_days": 0,
+     "default_wastage_bps": 5001,
+     "round_to_pallet": false,
+     "rounding_mode": "half_up",
+     "transport": {
+      "capacity_basis": "pieces",
+      "gst_bps": 1800,
+      "kind": "per_trip",
+      "rate_per_trip_paise": 350000,
+      "truck_capacity": 2500
+     },
+     "validity_days": 7
+    }
+   }
+  }
+ ]
+}

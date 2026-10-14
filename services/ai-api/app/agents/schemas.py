@@ -136,3 +136,27 @@ class ProposeFieldArgs(_Closed):
         if (self.field in LINE_KEYS) != (self.line is not None):
             raise ValueError("line fields need a line (1-5); order fields have none")
         return self
+
+
+# the building-materials profile (job CN): the same closed shape, the material field names.
+# Lines carry a product (and its thickness and measure); the order carries the application, the
+# site, whether laying is needed, and the date, budget and payment terms.
+MaterialFieldName = Literal[
+    "product_type", "thickness", "area", "length", "width", "quantity", "application",
+    "site_location", "laying", "budget", "deadline", "payment_terms",
+]  # fmt: skip
+_MATERIAL_LINE_KEYS = ("product_type", "thickness", "area", "length", "width", "quantity")
+
+
+class ProposeMaterialFieldArgs(_Closed):
+    line: Annotated[StrictInt, Field(ge=1, le=5)] | None = None
+    field: MaterialFieldName
+    value: FieldValue
+    certainty: Literal["stated", "implied", "ambiguous"]
+    quote: FieldQuote
+
+    @model_validator(mode="after")
+    def _a_line_field_names_its_line_and_an_order_field_does_not(self) -> ProposeMaterialFieldArgs:
+        if (self.field in _MATERIAL_LINE_KEYS) != (self.line is not None):
+            raise ValueError("line fields need a line (1-5); order fields have none")
+        return self

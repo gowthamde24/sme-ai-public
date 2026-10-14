@@ -21,12 +21,12 @@ select is((select count(*) from pg_namespace where nspname = 'packs'), 1::bigint
 select is((select count(*) from unnest(array['anon', 'authenticated', 'service_role']) r where has_schema_privilege(r, 'packs', 'usage')), 0::bigint, 'A2 no client role has usage on the packs schema');
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'packs' and grantee in ('anon', 'authenticated', 'service_role', 'public')), 0::bigint, 'A3 no client role holds a privilege on any packs table');
 select is((select count(*) from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'packs' and c.relkind = 'r' and c.relrowsecurity and c.relforcerowsecurity), 8::bigint, 'A4 RLS is enabled and forced on all eight packs tables');
-select is((select count(*) from packs.modules), 25::bigint, 'A5 twenty-five modules');
+select is((select count(*) from packs.modules), 26::bigint, 'A5 twenty-six modules (job CN added `materials`)');
 select is((select count(*) from packs.modules where guard not in ('tables', 'agents', 'flag', 'future')), 0::bigint, 'A6 every module says how the database refuses it');
 select is((select string_agg(code, ',' order by position) from packs.units), 'piece,set,sq_ft,sq_m,box,bag,tonne,cft,truckload', 'A7 the closed list of selling units');
 select is((select string_agg(enumlabel, ',' order by enumlabel) from pg_enum where enumtypid = 'public.quote_sale_unit'::regtype), (select string_agg(code, ',' order by code) from packs.units), 'A8 the quote sale unit enum carries exactly the same units');
-select is((select count(*) from packs.pack_versions), 3::bigint, 'A9 three packs (textiles, construction_materials, education)');
-select is((select string_agg(code || ':' || version || ':' || status, ',' order by code) from packs.pack_versions), 'construction_materials:1:preview,education:1:preview,textiles:1:published', 'A10 textiles is published, the two new business types are previews');
+select is((select count(*) from packs.pack_versions), 4::bigint, 'A9 three packs, four versions (construction_materials has a second version: job CN)');
+select is((select string_agg(code || ':' || version || ':' || status, ',' order by code) from packs.pack_versions), 'construction_materials:1:preview,construction_materials:2:preview,education:1:preview,textiles:1:published', 'A10 textiles is published, the two new business types are previews');
 select is((select count(*) from packs.pack_versions where is_default), 1::bigint, 'A11 exactly one default pack');
 select is((select code from packs.pack_versions where is_default), 'textiles', 'A12 and it is textiles (today''s behaviour)');
 select is((select count(*) from packs.pack_versions where manifest ->> 'id' <> code or (manifest ->> 'version')::integer <> version or manifest ->> 'status' <> status), 0::bigint, 'A13 each manifest agrees with its row');
@@ -77,7 +77,8 @@ select n.nspname || '.' || c.relname, 'companies'
   from pg_trigger t join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
  where t.tgfoid = 'app.module_guard_companies()'::regprocedure and not t.tgisinternal;
 select cmp_ok((select count(*) from guards), '>=', 30::bigint, 'D8 the guard list is not vacuous');
-select is((select count(*) from guards g where not app.module_enabled(tests.tid('a'), g.module)), 0::bigint, 'D9 every guarded module is ON for the default pack: the guards are a no-op for it');
+-- (job CN: the modules of sites, dues, materials and deliveries are new, are NOT in the default pack and have guards: so the rule is that every guard of a module that EXISTS TODAY is on for the default pack)
+select is((select count(*) from guards g where not app.module_enabled(tests.tid('a'), g.module) and g.module in (select code from packs.modules where exists_today)), 0::bigint, 'D9 every guarded module that exists today is ON for the default pack: those guards are a no-op for it');
 select is((select count(*) from guards g where g.module not in (select code from packs.modules where guard = 'tables')), 0::bigint, 'D10 every guard names a module whose guard kind is `tables`');
 select is((select count(*) from packs.modules x where x.guard = 'tables' and not exists (select 1 from guards g where g.module = x.code)), 0::bigint, 'D11 and every module of kind `tables` has at least one guarded table');
 select is((select count(*) from packs.modules x where x.guard = 'future' and exists (select 1 from guards g where g.module = x.code)), 0::bigint, 'D12 a `future` module has no guard yet (its job registers them)');
@@ -156,7 +157,7 @@ select is(tests.sqlstate_as(tests.uid('b_owner'), format($$select public.workspa
 select is(tests.sqlstate_as(tests.uid('outsider'), format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G6 DENY: an outsider');
 select is(tests.sqlstate_as(null, format($$select public.workspace_pack_get(%L)$$, tests.tid('a'))), '42501', 'G7 DENY: no identity');
 select is((tests.scalar_as(tests.uid('a_viewer'), format($$select (select count(*) from jsonb_array_elements(public.workspace_modules(%L)) e where (e ->> 'enabled')::boolean)::text$$, tests.tid('a')))), '17', 'G8 the modules list says which are on');
-select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '25', 'G9 and lists all twenty-five');
+select is((tests.scalar_as(tests.uid('a_viewer'), format($$select jsonb_array_length(public.workspace_modules(%L))::text$$, tests.tid('a')))), '26', 'G9 and lists all twenty-six');
 select is(tests.sqlstate_as(tests.uid('b_viewer'), format($$select public.workspace_modules(%L)$$, tests.tid('a'))), '42501', 'G10 DENY: another business reads no module list');
 select is((tests.scalar_as(tests.uid('outsider'), $$select jsonb_array_length(public.pack_catalogue())::text$$)), '3', 'G11 any signed-in person sees the three business types');
 select is((tests.scalar_as(tests.uid('outsider'), $$select (select e ->> 'validated' from jsonb_array_elements(public.pack_catalogue()) e where e ->> 'pack_id' = 'education')$$)), 'false', 'G12 and which have been validated by a real owner (education has not)');

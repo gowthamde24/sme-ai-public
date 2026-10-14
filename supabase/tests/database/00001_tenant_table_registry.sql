@@ -326,7 +326,98 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
           r as (insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, conversation_id, expires_at, input_sha256) select %2$L, %1$L, %5$L, 'assistant', 'assistant-1', c.id, now() + interval '15 minutes', repeat('a', 64) from c returning id)
      insert into public.assistant_reply_drafts (id, tenant_id, conversation_id, run_id, lead_id, language, body, gloss_en, created_by)
        select %2$L, %1$L, %2$L, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'en', 'Thank you for your enquiry', 'Thank you for your enquiry', %5$L from r$$,
-   'status = status', $$delete from public.assistant_reply_drafts where id = %2$L$$, true);
+   'status = status', $$delete from public.assistant_reply_drafts where id = %2$L$$, true),
+  -- job CN: sites, dues, material quotes and deliveries. Written only by definer functions: no role inserts, updates or deletes directly. The modules that guard them are OFF for the default pack the
+  -- fixture tenants run, so 11 and 12 call tests.cn_guards_off() first (their own rules are proved in 96 to 99).
+  ('customer_sites',
+   $$insert into public.customer_sites (id, tenant_id, company_id, name, created_by) values (%2$L, %1$L, %3$L, 'Generic site', %5$L)$$,
+   'name = name', $$delete from public.customer_sites where id = %2$L$$, true),
+  ('customer_invoices',
+   $$insert into public.customer_invoices (id, tenant_id, company_id, invoice_no, invoice_date, due_date, amount_paise, source, recorded_by) values (%2$L, %1$L, %3$L, 'G-' || left(%2$L, 8), date '2026-10-01', date '2026-10-31', 1000, 'manual', %5$L)$$,
+   'amount_paise = amount_paise', $$delete from public.customer_invoices where id = %2$L$$, false),
+  ('customer_payments',
+   $$insert into public.customer_payments (id, tenant_id, company_id, received_on, amount_paise, method, recorded_by) values (%2$L, %1$L, %3$L, date '2026-10-02', 500, 'cash', %5$L)$$,
+   'amount_paise = amount_paise', $$delete from public.customer_payments where id = %2$L$$, false),
+  ('customer_credit_limits',
+   $$insert into public.customer_credit_limits (id, tenant_id, company_id, limit_paise, set_by) values (%2$L, %1$L, %3$L, 100000, %5$L) on conflict (tenant_id, company_id) do nothing$$,
+   'limit_paise = limit_paise', $$delete from public.customer_credit_limits where id = %2$L$$, false),
+  ('material_quote_policies',
+   $$insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64))$$,
+   'version_no = version_no', $$delete from public.material_quote_policies where id = %2$L$$, false),
+  ('material_quotes',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          mp as (insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64)) returning id),
+          mq as (insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips, material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.material_quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', mp.id, '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, mp returning id)
+     select 1 from mq$$,
+   'status = status', $$delete from public.material_quotes where id = %2$L$$, true),
+  ('material_quote_lines',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          mp as (insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64)) returning id),
+          mq as (insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips, material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.material_quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', mp.id, '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, mp returning id),
+          ci as (insert into public.catalogue_items (id, tenant_id, name, item_kind, sell_unit, area_unit, created_by) values (%2$L, %1$L, 'Generic material', 'material', 'sq_ft', 'sq_ft', %5$L) returning id),
+          ql as (insert into public.material_quote_lines (id, tenant_id, quote_id, line_no, catalogue_item_id, name, mode, sold_per, unit_price_paise, gst_bps, billed_quantity, material_paise, tax_paise)
+                select %2$L, %1$L, mq.id, 1, ci.id, 'Generic material', 'direct', 'bag', 0, 0, 0, 0, 0 from mq, ci returning id)
+     select 1 from ql$$,
+   'name = name', $$delete from public.material_quote_lines where id = %2$L$$, false),
+  ('delivery_trips',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          mp as (insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64)) returning id),
+          mq as (insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips, material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.material_quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', mp.id, '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, mp returning id),
+          op as (insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64)) returning id),
+          o as (insert into public.orders (id, tenant_id, order_no, quote_id, material_quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+                select %2$L, %1$L, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = %1$L), null, mq.id, e.id, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 0, 0, current_date, op.id from mq, e, r, op returning id),
+          t as (insert into public.delivery_trips (id, tenant_id, order_id, trip_no, challan_no, planned_date, created_by)
+                select %2$L, %1$L, o.id, 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = %1$L), current_date, %5$L from o returning id)
+     select 1 from t$$,
+   'status = status', $$delete from public.delivery_trips where id = %2$L$$, true),
+  ('delivery_trip_lines',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          mp as (insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64)) returning id),
+          mq as (insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips, material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.material_quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', mp.id, '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, mp returning id),
+          ci as (insert into public.catalogue_items (id, tenant_id, name, item_kind, sell_unit, area_unit, created_by) values (%2$L, %1$L, 'Generic material', 'material', 'sq_ft', 'sq_ft', %5$L) returning id),
+          ql as (insert into public.material_quote_lines (id, tenant_id, quote_id, line_no, catalogue_item_id, name, mode, sold_per, unit_price_paise, gst_bps, billed_quantity, material_paise, tax_paise)
+                select %2$L, %1$L, mq.id, 1, ci.id, 'Generic material', 'direct', 'bag', 0, 0, 0, 0, 0 from mq, ci returning id),
+          op as (insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64)) returning id),
+          o as (insert into public.orders (id, tenant_id, order_no, quote_id, material_quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+                select %2$L, %1$L, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = %1$L), null, mq.id, e.id, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 0, 0, current_date, op.id from mq, e, r, op returning id),
+          t as (insert into public.delivery_trips (id, tenant_id, order_id, trip_no, challan_no, planned_date, created_by)
+                select %2$L, %1$L, o.id, 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = %1$L), current_date, %5$L from o returning id)
+     insert into public.delivery_trip_lines (id, tenant_id, trip_id, quote_line_id, quantity) select %2$L, %1$L, t.id, ql.id, 1 from t, ql$$,
+   'quantity = quantity', $$delete from public.delivery_trip_lines where id = %2$L$$, false),
+  ('delivery_trip_events',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          mp as (insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64)) returning id),
+          mq as (insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips, material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.material_quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', mp.id, '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, mp returning id),
+          op as (insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64)) returning id),
+          o as (insert into public.orders (id, tenant_id, order_no, quote_id, material_quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+                select %2$L, %1$L, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = %1$L), null, mq.id, e.id, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 0, 0, current_date, op.id from mq, e, r, op returning id),
+          t as (insert into public.delivery_trips (id, tenant_id, order_id, trip_no, challan_no, planned_date, created_by)
+                select %2$L, %1$L, o.id, 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = %1$L), current_date, %5$L from o returning id)
+     insert into public.delivery_trip_events (id, tenant_id, trip_id, seq, to_status) select %2$L, %1$L, t.id, 1, 'planned' from t$$,
+   'seq = seq', $$delete from public.delivery_trip_events where id = %2$L$$, false),
+  ('delivery_proofs',
+   $$with e as (insert into public.enquiries (id, tenant_id, lead_id, channel, received_at, body) values (%2$L, %1$L, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'email', now() - interval '1 hour', 'Need 20 kanjivaram sarees') returning id),
+          r as (insert into public.requirements (id, tenant_id, enquiry_id) select %2$L, %1$L, e.id from e returning id),
+          mp as (insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.material_quote_policies where tenant_id = %1$L), current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64)) returning id),
+          mq as (insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips, material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+                select %2$L, %1$L, (select coalesce(max(quote_no), 0) + 1 from public.material_quotes where tenant_id = %1$L), r.id, e.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 'rejected', mp.id, '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1, 0, 0, 0, 0, 0, 0, 0, 0, false, %5$L, now(), 'other' from e, r, mp returning id),
+          op as (insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256) values (%2$L, %1$L, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = %1$L), current_date, true, true, 'in_preparation', false, repeat('4', 64)) returning id),
+          o as (insert into public.orders (id, tenant_id, order_no, quote_id, material_quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+                select %2$L, %1$L, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = %1$L), null, mq.id, e.id, r.id, (select id from public.leads where tenant_id = %1$L order by id limit 1), 0, 0, current_date, op.id from mq, e, r, op returning id),
+          t as (insert into public.delivery_trips (id, tenant_id, order_id, trip_no, challan_no, planned_date, created_by)
+                select %2$L, %1$L, o.id, 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = %1$L), current_date, %5$L from o returning id)
+     insert into public.delivery_proofs (id, trip_id, tenant_id, received_by, photo_id, bucket, path, width, height, bytes, recorded_by) select %2$L, t.id, %1$L, 'Generic receiver', %2$L, app.pod_bucket(%1$L), t.id::text || '/' || %2$L::text || '.jpg', 640, 640, 1000, %5$L from t$$,
+   'received_by = received_by', $$delete from public.delivery_proofs where id = %2$L$$, false);
 
 insert into tests.role_matrix (table_name, role, can_select, can_insert, can_update, can_delete)
 select t, r, s, i, u, d from (values
@@ -468,6 +559,29 @@ select t, r, s, i, u, d from (values
   ('visit_reminders',      'sales', true, false, false, false), ('visit_reminders',      'viewer', false, false, false, false),
   ('scheduler_runs',       'owner', true, false, false, false), ('scheduler_runs',       'admin', true, false, false, false),
   ('scheduler_runs',       'sales', false, false, false, false), ('scheduler_runs',       'viewer', false, false, false, false),
+  -- job CN: money and delivery tables are read by Owner / Admin / Sales (a Viewer reads none); the sites are read by every member; nobody writes directly.
+  ('customer_sites', 'owner', true, false, false, false), ('customer_sites', 'admin', true, false, false, false),
+  ('customer_sites', 'sales', true, false, false, false), ('customer_sites', 'viewer', true, false, false, false),
+  ('customer_invoices', 'owner', true, false, false, false), ('customer_invoices', 'admin', true, false, false, false),
+  ('customer_invoices', 'sales', true, false, false, false), ('customer_invoices', 'viewer', false, false, false, false),
+  ('customer_payments', 'owner', true, false, false, false), ('customer_payments', 'admin', true, false, false, false),
+  ('customer_payments', 'sales', true, false, false, false), ('customer_payments', 'viewer', false, false, false, false),
+  ('customer_credit_limits', 'owner', true, false, false, false), ('customer_credit_limits', 'admin', true, false, false, false),
+  ('customer_credit_limits', 'sales', true, false, false, false), ('customer_credit_limits', 'viewer', false, false, false, false),
+  ('material_quote_policies', 'owner', true, false, false, false), ('material_quote_policies', 'admin', true, false, false, false),
+  ('material_quote_policies', 'sales', true, false, false, false), ('material_quote_policies', 'viewer', false, false, false, false),
+  ('material_quotes', 'owner', true, false, false, false), ('material_quotes', 'admin', true, false, false, false),
+  ('material_quotes', 'sales', true, false, false, false), ('material_quotes', 'viewer', false, false, false, false),
+  ('material_quote_lines', 'owner', true, false, false, false), ('material_quote_lines', 'admin', true, false, false, false),
+  ('material_quote_lines', 'sales', true, false, false, false), ('material_quote_lines', 'viewer', false, false, false, false),
+  ('delivery_trips', 'owner', true, false, false, false), ('delivery_trips', 'admin', true, false, false, false),
+  ('delivery_trips', 'sales', true, false, false, false), ('delivery_trips', 'viewer', false, false, false, false),
+  ('delivery_trip_lines', 'owner', true, false, false, false), ('delivery_trip_lines', 'admin', true, false, false, false),
+  ('delivery_trip_lines', 'sales', true, false, false, false), ('delivery_trip_lines', 'viewer', false, false, false, false),
+  ('delivery_trip_events', 'owner', true, false, false, false), ('delivery_trip_events', 'admin', true, false, false, false),
+  ('delivery_trip_events', 'sales', true, false, false, false), ('delivery_trip_events', 'viewer', false, false, false, false),
+  ('delivery_proofs', 'owner', true, false, false, false), ('delivery_proofs', 'admin', true, false, false, false),
+  ('delivery_proofs', 'sales', true, false, false, false), ('delivery_proofs', 'viewer', false, false, false, false),
   -- T002 tables
   ('memberships',   'owner',  true, true,  true,  true ), ('memberships',   'admin',  true, true,  true,  true ),
   ('memberships',   'sales',  true, false, false, false), ('memberships',   'viewer', true, false, false, false),

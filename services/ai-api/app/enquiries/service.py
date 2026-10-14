@@ -58,7 +58,7 @@ def field_out(row: dict[str, Any]) -> RequirementFieldOut:
 
 
 def build_view(
-    requirement: dict[str, Any] | None, rows: list[dict[str, Any]]
+    requirement: dict[str, Any] | None, rows: list[dict[str, Any]], profile: str = "saree"
 ) -> RequirementViewOut:
     fields = [field_out(r) for r in rows]
     views = [
@@ -73,8 +73,8 @@ def build_view(
         )
         for f, r in zip(fields, rows, strict=True)
     ]
-    assessment = assess(views)
-    questions = derive_questions(views, assessment)
+    assessment = assess(views, profile)
+    questions = derive_questions(views, assessment, profile)
     return RequirementViewOut(
         requirement=RequirementOut.model_validate(requirement) if requirement else None,
         fields=sorted(fields, key=lambda f: (f.line_no is not None, f.line_no or 0, f.field_key)),

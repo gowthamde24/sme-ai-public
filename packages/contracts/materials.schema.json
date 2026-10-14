@@ -1,0 +1,5041 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "materials.schema.json",
+  "title": "Building-materials contracts: calculator, quotes, sites, dues and deliveries (job CN)",
+  "description": "Generated from services/ai-api/app/{materials,sites,dues,deliveries}/models.py by `make contracts`. POST /v1/calculate/materials needs no sign-in. Requests forbid unknown properties: a total, a tax rate the owner did not enter, a tenant or a storage path can never be sent.",
+  "$defs": {
+    "AgeingOut": {
+      "additionalProperties": false,
+      "description": "What is still open, by how old the invoice is (days since the invoice date).",
+      "properties": {
+        "d0_30": {
+          "title": "D0 30",
+          "type": "integer"
+        },
+        "d31_60": {
+          "title": "D31 60",
+          "type": "integer"
+        },
+        "d61_90": {
+          "title": "D61 90",
+          "type": "integer"
+        },
+        "d90_plus": {
+          "title": "D90 Plus",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "d0_30",
+        "d31_60",
+        "d61_90",
+        "d90_plus"
+      ],
+      "title": "AgeingOut",
+      "type": "object"
+    },
+    "CalcCustomerIn": {
+      "additionalProperties": false,
+      "properties": {
+        "outstanding_paise": {
+          "default": 0,
+          "maximum": 1000000000,
+          "minimum": 0,
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "maximum": 1000000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credit Limit Paise"
+        }
+      },
+      "title": "CalcCustomerIn",
+      "type": "object"
+    },
+    "CalcFlagOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "sku": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sku"
+        },
+        "exposure": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Exposure"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credit Limit Paise"
+        },
+        "distance_km": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Km"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "CalcFlagOut",
+      "type": "object"
+    },
+    "CalcFlagsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "needs_owner_approval": {
+          "title": "Needs Owner Approval",
+          "type": "boolean"
+        },
+        "reasons": {
+          "items": {
+            "$ref": "#/$defs/CalcFlagOut"
+          },
+          "title": "Reasons",
+          "type": "array"
+        }
+      },
+      "required": [
+        "needs_owner_approval",
+        "reasons"
+      ],
+      "title": "CalcFlagsOut",
+      "type": "object"
+    },
+    "CalcIn": {
+      "additionalProperties": false,
+      "description": "The public calculator and the owner's preview: no business data is read or stored. `as_of` is today in India when left out.",
+      "properties": {
+        "as_of": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "As Of"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/CalcLineIn"
+          },
+          "maxItems": 20,
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        },
+        "policy": {
+          "$ref": "#/$defs/PolicyBody",
+          "default": {
+            "default_wastage_bps": 500,
+            "round_to_pallet": false,
+            "bill_wastage": true,
+            "transport": {
+              "capacity_basis": null,
+              "free_above_paise": null,
+              "gst_bps": null,
+              "kind": "none",
+              "rate_per_trip_paise": null,
+              "slabs": null,
+              "truck_capacity": null
+            },
+            "handling": null,
+            "laying": null,
+            "advance_bps": 5000,
+            "credit_days": 0,
+            "validity_days": 7,
+            "rounding_mode": "half_up"
+          }
+        },
+        "customer": {
+          "$ref": "#/$defs/CalcCustomerIn",
+          "default": {
+            "outstanding_paise": 0,
+            "credit_limit_paise": null
+          }
+        },
+        "laying": {
+          "default": false,
+          "title": "Laying",
+          "type": "boolean"
+        },
+        "distance_km": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Km"
+        }
+      },
+      "required": [
+        "lines"
+      ],
+      "title": "CalcIn",
+      "type": "object"
+    },
+    "CalcLineIn": {
+      "additionalProperties": false,
+      "description": "One product line. `area` lines are sold per piece or per the area unit and count pieces from the area; `direct` lines (bags, tonnes, a truckload) are a quantity times a price.",
+      "properties": {
+        "sku": {
+          "maxLength": 128,
+          "minLength": 1,
+          "title": "Sku",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "area",
+            "direct"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "sold_per": {
+          "enum": [
+            "piece",
+            "sq_ft",
+            "sq_m",
+            "box",
+            "bag",
+            "tonne",
+            "cft",
+            "truckload"
+          ],
+          "title": "Sold Per",
+          "type": "string"
+        },
+        "unit_price_paise": {
+          "maximum": 100000000,
+          "minimum": 0,
+          "title": "Unit Price Paise",
+          "type": "integer"
+        },
+        "gst_bps": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Gst Bps",
+          "type": "integer"
+        },
+        "hsn": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{4,8}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Hsn"
+        },
+        "area_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sq_ft",
+                "sq_m"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area Unit"
+        },
+        "area_x100": {
+          "anyOf": [
+            {
+              "maximum": 100000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area X100"
+        },
+        "pieces_per_area_x1000": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pieces Per Area X1000"
+        },
+        "pieces_per_pallet": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pieces Per Pallet"
+        },
+        "quantity": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Quantity"
+        },
+        "min_order_qty": {
+          "anyOf": [
+            {
+              "maximum": 10000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Order Qty"
+        },
+        "wastage_bps": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wastage Bps"
+        },
+        "round_to_pallet": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Round To Pallet"
+        }
+      },
+      "required": [
+        "sku",
+        "name",
+        "mode",
+        "sold_per",
+        "unit_price_paise",
+        "gst_bps"
+      ],
+      "title": "CalcLineIn",
+      "type": "object"
+    },
+    "CalcLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "sku": {
+          "title": "Sku",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "hsn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Hsn"
+        },
+        "mode": {
+          "enum": [
+            "area",
+            "direct"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "unit_price_paise": {
+          "title": "Unit Price Paise",
+          "type": "integer"
+        },
+        "gst_bps": {
+          "title": "Gst Bps",
+          "type": "integer"
+        },
+        "pieces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pieces"
+        },
+        "pieces_without_wastage": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pieces Without Wastage"
+        },
+        "pallets": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pallets"
+        },
+        "delivered_area_x100": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delivered Area X100"
+        },
+        "billed_quantity": {
+          "title": "Billed Quantity",
+          "type": "integer"
+        },
+        "billed_per": {
+          "enum": [
+            "piece",
+            "sq_ft",
+            "sq_m",
+            "box",
+            "bag",
+            "tonne",
+            "cft",
+            "truckload"
+          ],
+          "title": "Billed Per",
+          "type": "string"
+        },
+        "load": {
+          "title": "Load",
+          "type": "integer"
+        },
+        "material": {
+          "title": "Material",
+          "type": "integer"
+        },
+        "tax": {
+          "title": "Tax",
+          "type": "integer"
+        },
+        "gross": {
+          "title": "Gross",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "sku",
+        "name",
+        "hsn",
+        "mode",
+        "unit_price_paise",
+        "gst_bps",
+        "pieces",
+        "pieces_without_wastage",
+        "pallets",
+        "delivered_area_x100",
+        "billed_quantity",
+        "billed_per",
+        "load",
+        "material",
+        "tax",
+        "gross"
+      ],
+      "title": "CalcLineOut",
+      "type": "object"
+    },
+    "CalcOut": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "draft",
+            "rejected"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "engine_version": {
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "canonical_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Canonical Hash"
+        },
+        "codes": {
+          "default": [],
+          "items": {
+            "type": "string"
+          },
+          "title": "Codes",
+          "type": "array"
+        },
+        "lines": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CalcLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "trips": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trips"
+        },
+        "totals": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CalcTotalsOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "payment_terms": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CalcTermsOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid_until": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Valid Until"
+        },
+        "flags": {
+          "$ref": "#/$defs/CalcFlagsOut"
+        },
+        "range": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CalcRangeOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "trace": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/CalcTraceOut"
+          },
+          "title": "Trace",
+          "type": "array"
+        }
+      },
+      "required": [
+        "status",
+        "engine_version",
+        "canonical_hash",
+        "flags"
+      ],
+      "title": "CalcOut",
+      "type": "object"
+    },
+    "CalcRangeOut": {
+      "additionalProperties": false,
+      "description": "The estimate a customer is shown before an exact quote: LOW has no wastage and no pallet rounding, HIGH is the quote itself. Both include GST.",
+      "properties": {
+        "total_low": {
+          "title": "Total Low",
+          "type": "integer"
+        },
+        "total_high": {
+          "title": "Total High",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total_low",
+        "total_high"
+      ],
+      "title": "CalcRangeOut",
+      "type": "object"
+    },
+    "CalcTermsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "advance_amount": {
+          "title": "Advance Amount",
+          "type": "integer"
+        },
+        "balance": {
+          "title": "Balance",
+          "type": "integer"
+        },
+        "credit_days": {
+          "title": "Credit Days",
+          "type": "integer"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Due Date"
+        },
+        "balance_on": {
+          "enum": [
+            "delivery",
+            "credit_days"
+          ],
+          "title": "Balance On",
+          "type": "string"
+        }
+      },
+      "required": [
+        "advance_amount",
+        "balance",
+        "credit_days",
+        "due_date",
+        "balance_on"
+      ],
+      "title": "CalcTermsOut",
+      "type": "object"
+    },
+    "CalcTotalsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "material": {
+          "title": "Material",
+          "type": "integer"
+        },
+        "transport": {
+          "title": "Transport",
+          "type": "integer"
+        },
+        "handling": {
+          "title": "Handling",
+          "type": "integer"
+        },
+        "laying": {
+          "title": "Laying",
+          "type": "integer"
+        },
+        "subtotal": {
+          "title": "Subtotal",
+          "type": "integer"
+        },
+        "item_tax": {
+          "title": "Item Tax",
+          "type": "integer"
+        },
+        "transport_tax": {
+          "title": "Transport Tax",
+          "type": "integer"
+        },
+        "handling_tax": {
+          "title": "Handling Tax",
+          "type": "integer"
+        },
+        "laying_tax": {
+          "title": "Laying Tax",
+          "type": "integer"
+        },
+        "tax": {
+          "title": "Tax",
+          "type": "integer"
+        },
+        "total": {
+          "title": "Total",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "material",
+        "transport",
+        "handling",
+        "laying",
+        "subtotal",
+        "item_tax",
+        "transport_tax",
+        "handling_tax",
+        "laying_tax",
+        "tax",
+        "total"
+      ],
+      "title": "CalcTotalsOut",
+      "type": "object"
+    },
+    "CalcTraceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "rule_id": {
+          "title": "Rule Id",
+          "type": "string"
+        },
+        "inputs": {
+          "additionalProperties": true,
+          "title": "Inputs",
+          "type": "object"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id",
+        "inputs",
+        "text"
+      ],
+      "title": "CalcTraceOut",
+      "type": "object"
+    },
+    "ChallanContactOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Phone"
+        }
+      },
+      "required": [
+        "name",
+        "phone"
+      ],
+      "title": "ChallanContactOut",
+      "type": "object"
+    },
+    "ChallanLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "line_no": {
+          "title": "Line No",
+          "type": "integer"
+        },
+        "description": {
+          "title": "Description",
+          "type": "string"
+        },
+        "quantity": {
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        },
+        "hsn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Hsn"
+        }
+      },
+      "required": [
+        "line_no",
+        "description",
+        "quantity",
+        "unit",
+        "hsn"
+      ],
+      "title": "ChallanLineOut",
+      "type": "object"
+    },
+    "ChallanOut": {
+      "additionalProperties": false,
+      "description": "The delivery note: who, what, where, how. No amounts, no rates, no GST.",
+      "properties": {
+        "challan_no": {
+          "title": "Challan No",
+          "type": "integer"
+        },
+        "trip_no": {
+          "title": "Trip No",
+          "type": "integer"
+        },
+        "order_no": {
+          "title": "Order No",
+          "type": "integer"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        },
+        "business": {
+          "title": "Business",
+          "type": "string"
+        },
+        "customer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Customer"
+        },
+        "site": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChallanSiteOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "site_contact": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ChallanContactOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "vehicle_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Vehicle No"
+        },
+        "driver_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Driver Name"
+        },
+        "driver_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Driver Phone"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "loaded",
+            "on_the_way",
+            "delivered",
+            "problem",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/ChallanLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "received_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Received By"
+        },
+        "received_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Received At"
+        }
+      },
+      "required": [
+        "challan_no",
+        "trip_no",
+        "order_no",
+        "date",
+        "business",
+        "customer",
+        "site",
+        "site_contact",
+        "vehicle_no",
+        "driver_name",
+        "driver_phone",
+        "status",
+        "lines",
+        "received_by",
+        "received_at"
+      ],
+      "title": "ChallanOut",
+      "type": "object"
+    },
+    "ChallanSiteOut": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "address_line": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Address Line"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        },
+        "pin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pin"
+        },
+        "access_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Access Notes"
+        }
+      },
+      "required": [
+        "name",
+        "address_line",
+        "city",
+        "pin",
+        "access_notes"
+      ],
+      "title": "ChallanSiteOut",
+      "type": "object"
+    },
+    "CreditCheckIn": {
+      "additionalProperties": false,
+      "properties": {
+        "amount_paise": {
+          "maximum": 100000000000,
+          "minimum": 0,
+          "title": "Amount Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "amount_paise"
+      ],
+      "title": "CreditCheckIn",
+      "type": "object"
+    },
+    "CreditCheckOut": {
+      "additionalProperties": false,
+      "description": "A WARNING before a new order, never a block.",
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Credit Limit Paise"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "new_amount_paise": {
+          "title": "New Amount Paise",
+          "type": "integer"
+        },
+        "would_be_paise": {
+          "title": "Would Be Paise",
+          "type": "integer"
+        },
+        "has_limit": {
+          "title": "Has Limit",
+          "type": "boolean"
+        },
+        "exceeded": {
+          "title": "Exceeded",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "company_id",
+        "credit_limit_paise",
+        "outstanding_paise",
+        "new_amount_paise",
+        "would_be_paise",
+        "has_limit",
+        "exceeded"
+      ],
+      "title": "CreditCheckOut",
+      "type": "object"
+    },
+    "CreditLimitIn": {
+      "additionalProperties": false,
+      "description": "The customer's credit limit in paise, or `null` to remove it. The Owner's, with a second factor.",
+      "properties": {
+        "limit_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limit Paise"
+        }
+      },
+      "required": [
+        "limit_paise"
+      ],
+      "title": "CreditLimitIn",
+      "type": "object"
+    },
+    "CreditLimitOut": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Limit Paise"
+        }
+      },
+      "required": [
+        "company_id",
+        "limit_paise"
+      ],
+      "title": "CreditLimitOut",
+      "type": "object"
+    },
+    "CreditWarningOut": {
+      "additionalProperties": false,
+      "properties": {
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Credit Limit Paise"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "would_be_paise": {
+          "title": "Would Be Paise",
+          "type": "integer"
+        },
+        "exceeded": {
+          "title": "Exceeded",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "credit_limit_paise",
+        "outstanding_paise",
+        "would_be_paise",
+        "exceeded"
+      ],
+      "title": "CreditWarningOut",
+      "type": "object"
+    },
+    "HandlingIn": {
+      "additionalProperties": false,
+      "description": "Loading and unloading: a flat amount per order or per trip.",
+      "properties": {
+        "per": {
+          "enum": [
+            "order",
+            "trip"
+          ],
+          "title": "Per",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000,
+          "minimum": 0,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "gst_bps": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Gst Bps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "per",
+        "amount_paise",
+        "gst_bps"
+      ],
+      "title": "HandlingIn",
+      "type": "object"
+    },
+    "InvoiceIn": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "invoice_no": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+          "title": "Invoice No",
+          "type": "string"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "invoice_no",
+        "invoice_date",
+        "due_date",
+        "amount_paise"
+      ],
+      "title": "InvoiceIn",
+      "type": "object"
+    },
+    "InvoiceRowIn": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "invoice_no": {
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+          "title": "Invoice No",
+          "type": "string"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id",
+        "invoice_no",
+        "invoice_date",
+        "due_date",
+        "amount_paise"
+      ],
+      "title": "InvoiceRowIn",
+      "type": "object"
+    },
+    "InvoicesImportIn": {
+      "additionalProperties": false,
+      "description": "An export from the owner's accounting system, already read into rows (at most 5,000). `batch_id` is the caller's: the same file sent again adds nothing.",
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/InvoiceRowIn"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "rows"
+      ],
+      "title": "InvoicesImportIn",
+      "type": "object"
+    },
+    "InvoicesImportOut": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "added": {
+          "title": "Added",
+          "type": "integer"
+        },
+        "skipped": {
+          "items": {
+            "$ref": "#/$defs/SkippedRowOut"
+          },
+          "title": "Skipped",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "added",
+        "skipped"
+      ],
+      "title": "InvoicesImportOut",
+      "type": "object"
+    },
+    "LayingIn": {
+      "additionalProperties": false,
+      "description": "Laying: a rate per area unit (sq ft or sq m, the unit of the quote's area).",
+      "properties": {
+        "rate_paise_per_area": {
+          "maximum": 100000000,
+          "minimum": 0,
+          "title": "Rate Paise Per Area",
+          "type": "integer"
+        },
+        "gst_bps": {
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Gst Bps",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "rate_paise_per_area",
+        "gst_bps"
+      ],
+      "title": "LayingIn",
+      "type": "object"
+    },
+    "LedgerInvoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "invoice_no": {
+          "title": "Invoice No",
+          "type": "string"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Order Id"
+        },
+        "source": {
+          "enum": [
+            "manual",
+            "import"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "invoice_no",
+        "invoice_date",
+        "due_date",
+        "amount_paise",
+        "order_id",
+        "source",
+        "voided"
+      ],
+      "title": "LedgerInvoiceOut",
+      "type": "object"
+    },
+    "LedgerOut": {
+      "additionalProperties": false,
+      "properties": {
+        "invoices": {
+          "items": {
+            "$ref": "#/$defs/LedgerInvoiceOut"
+          },
+          "title": "Invoices",
+          "type": "array"
+        },
+        "payments": {
+          "items": {
+            "$ref": "#/$defs/LedgerPaymentOut"
+          },
+          "title": "Payments",
+          "type": "array"
+        }
+      },
+      "required": [
+        "invoices",
+        "payments"
+      ],
+      "title": "LedgerOut",
+      "type": "object"
+    },
+    "LedgerPaymentOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "received_on": {
+          "format": "date",
+          "title": "Received On",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "cash",
+            "upi",
+            "bank_transfer",
+            "cheque",
+            "card",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Invoice Id"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "received_on",
+        "amount_paise",
+        "method",
+        "invoice_id",
+        "voided"
+      ],
+      "title": "LedgerPaymentOut",
+      "type": "object"
+    },
+    "MaterialInputsOut": {
+      "additionalProperties": false,
+      "description": "What a quote reads from the item, exactly as it will read it, and what is still missing. A missing GST rate or price is never assumed.",
+      "properties": {
+        "price_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Paise"
+        },
+        "gst_bps": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Gst Bps"
+        },
+        "hsn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Hsn"
+        },
+        "pieces_per_area_x1000": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pieces Per Area X1000"
+        },
+        "pieces_per_pallet": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pieces Per Pallet"
+        },
+        "min_order_qty": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min Order Qty"
+        },
+        "lead_days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lead Days"
+        },
+        "missing_for_area": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing For Area",
+          "type": "array"
+        },
+        "missing_for_quantity": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Missing For Quantity",
+          "type": "array"
+        }
+      },
+      "required": [
+        "price_paise",
+        "gst_bps",
+        "hsn",
+        "pieces_per_area_x1000",
+        "pieces_per_pallet",
+        "min_order_qty",
+        "lead_days",
+        "missing_for_area",
+        "missing_for_quantity"
+      ],
+      "title": "MaterialInputsOut",
+      "type": "object"
+    },
+    "MaterialItemIn": {
+      "additionalProperties": false,
+      "description": "The whole item at once; the same id again changes it. The size, thickness, pieces per area and per pallet, minimum order, lead days, GST rate and HSN code are the pack's custom fields of the item\n(PUT .../catalogue custom values), entered by the owner: nothing is assumed. `price_paise` is the EXACT price per selling unit: leave the field OUT to keep it; send a number to set it or `null` to clear it.\nOnly the Owner, with a second factor, may send it at all. `active` can be true only while the item has a photo.",
+      "properties": {
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "sell_unit": {
+          "enum": [
+            "piece",
+            "sq_ft",
+            "sq_m",
+            "box",
+            "bag",
+            "tonne",
+            "cft",
+            "truckload"
+          ],
+          "title": "Sell Unit",
+          "type": "string"
+        },
+        "area_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sq_ft",
+                "sq_m"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Area Unit"
+        },
+        "stock_status": {
+          "default": "in_stock",
+          "enum": [
+            "in_stock",
+            "few_left",
+            "made_to_order"
+          ],
+          "title": "Stock Status",
+          "type": "string"
+        },
+        "active": {
+          "default": false,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "price_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000,
+              "minimum": 100,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Price Paise"
+        }
+      },
+      "required": [
+        "name",
+        "sell_unit"
+      ],
+      "title": "MaterialItemIn",
+      "type": "object"
+    },
+    "MaterialItemListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/MaterialItemSummaryOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "MaterialItemListOut",
+      "type": "object"
+    },
+    "MaterialItemOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "sell_unit": {
+          "enum": [
+            "piece",
+            "sq_ft",
+            "sq_m",
+            "box",
+            "bag",
+            "tonne",
+            "cft",
+            "truckload"
+          ],
+          "title": "Sell Unit",
+          "type": "string"
+        },
+        "area_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sq_ft",
+                "sq_m"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Area Unit"
+        },
+        "stock_status": {
+          "enum": [
+            "in_stock",
+            "few_left",
+            "made_to_order"
+          ],
+          "title": "Stock Status",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "price_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Paise"
+        },
+        "price_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Text"
+        },
+        "photo_count": {
+          "title": "Photo Count",
+          "type": "integer"
+        },
+        "photos": {
+          "items": {
+            "$ref": "#/$defs/MaterialPhotoOut"
+          },
+          "title": "Photos",
+          "type": "array"
+        },
+        "inputs": {
+          "$ref": "#/$defs/MaterialInputsOut"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "sell_unit",
+        "area_unit",
+        "stock_status",
+        "active",
+        "price_paise",
+        "price_text",
+        "photo_count",
+        "photos",
+        "inputs",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "MaterialItemOut",
+      "type": "object"
+    },
+    "MaterialItemSavedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "item": {
+          "$ref": "#/$defs/MaterialItemOut"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item",
+        "created"
+      ],
+      "title": "MaterialItemSavedOut",
+      "type": "object"
+    },
+    "MaterialItemSummaryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "sell_unit": {
+          "enum": [
+            "piece",
+            "sq_ft",
+            "sq_m",
+            "box",
+            "bag",
+            "tonne",
+            "cft",
+            "truckload"
+          ],
+          "title": "Sell Unit",
+          "type": "string"
+        },
+        "area_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sq_ft",
+                "sq_m"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Area Unit"
+        },
+        "stock_status": {
+          "enum": [
+            "in_stock",
+            "few_left",
+            "made_to_order"
+          ],
+          "title": "Stock Status",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "price_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Paise"
+        },
+        "price_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Text"
+        },
+        "photo_count": {
+          "title": "Photo Count",
+          "type": "integer"
+        },
+        "cover": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MaterialPhotoOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "sell_unit",
+        "area_unit",
+        "stock_status",
+        "active",
+        "price_paise",
+        "price_text",
+        "photo_count",
+        "cover"
+      ],
+      "title": "MaterialItemSummaryOut",
+      "type": "object"
+    },
+    "MaterialPhotoOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "position": {
+          "title": "Position",
+          "type": "integer"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Url"
+        },
+        "thumb_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Thumb Url"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        },
+        "bytes": {
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "expires_in_seconds": {
+          "title": "Expires In Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "position",
+        "url",
+        "thumb_url",
+        "width",
+        "height",
+        "bytes",
+        "expires_in_seconds"
+      ],
+      "title": "MaterialPhotoOut",
+      "type": "object"
+    },
+    "MaterialPhotoResultOut": {
+      "additionalProperties": false,
+      "properties": {
+        "photo": {
+          "$ref": "#/$defs/MaterialPhotoOut"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        },
+        "item": {
+          "$ref": "#/$defs/MaterialItemOut"
+        }
+      },
+      "required": [
+        "photo",
+        "replayed",
+        "item"
+      ],
+      "title": "MaterialPhotoResultOut",
+      "type": "object"
+    },
+    "MaterialQuoteDetailOut": {
+      "additionalProperties": false,
+      "description": "A quote with the rule trace the calculator wrote (why each number is what it is).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "quote_no": {
+          "title": "Quote No",
+          "type": "integer"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "enquiry_id": {
+          "format": "uuid",
+          "title": "Enquiry Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Id"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "rejected",
+            "superseded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "policy_version_id": {
+          "format": "uuid",
+          "title": "Policy Version Id",
+          "type": "string"
+        },
+        "engine_version": {
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "canonical_hash": {
+          "title": "Canonical Hash",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "title": "Valid Until",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Due Date"
+        },
+        "trips": {
+          "title": "Trips",
+          "type": "integer"
+        },
+        "material_paise": {
+          "title": "Material Paise",
+          "type": "integer"
+        },
+        "transport_paise": {
+          "title": "Transport Paise",
+          "type": "integer"
+        },
+        "handling_paise": {
+          "title": "Handling Paise",
+          "type": "integer"
+        },
+        "laying_paise": {
+          "title": "Laying Paise",
+          "type": "integer"
+        },
+        "tax_paise": {
+          "title": "Tax Paise",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "advance_paise": {
+          "title": "Advance Paise",
+          "type": "integer"
+        },
+        "balance_paise": {
+          "title": "Balance Paise",
+          "type": "integer"
+        },
+        "flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "needs_owner_approval": {
+          "title": "Needs Owner Approval",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved At"
+        },
+        "rejected_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rejected At"
+        },
+        "reject_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "wrong_prices",
+                "customer_changed",
+                "duplicate",
+                "withdrawn",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reject Code"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/QuoteLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "trace": {
+          "items": {
+            "$ref": "#/$defs/CalcTraceOut"
+          },
+          "title": "Trace",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "quote_no",
+        "requirement_id",
+        "enquiry_id",
+        "lead_id",
+        "site_id",
+        "status",
+        "policy_version_id",
+        "engine_version",
+        "canonical_hash",
+        "as_of",
+        "valid_until",
+        "due_date",
+        "trips",
+        "material_paise",
+        "transport_paise",
+        "handling_paise",
+        "laying_paise",
+        "tax_paise",
+        "total_paise",
+        "advance_paise",
+        "balance_paise",
+        "flags",
+        "needs_owner_approval",
+        "created_at",
+        "approved_at",
+        "rejected_at",
+        "reject_code",
+        "lines",
+        "trace"
+      ],
+      "title": "MaterialQuoteDetailOut",
+      "type": "object"
+    },
+    "MaterialQuoteListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/MaterialQuoteOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "MaterialQuoteListOut",
+      "type": "object"
+    },
+    "MaterialQuoteOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "quote_no": {
+          "title": "Quote No",
+          "type": "integer"
+        },
+        "requirement_id": {
+          "format": "uuid",
+          "title": "Requirement Id",
+          "type": "string"
+        },
+        "enquiry_id": {
+          "format": "uuid",
+          "title": "Enquiry Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Id"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "rejected",
+            "superseded"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "policy_version_id": {
+          "format": "uuid",
+          "title": "Policy Version Id",
+          "type": "string"
+        },
+        "engine_version": {
+          "title": "Engine Version",
+          "type": "string"
+        },
+        "canonical_hash": {
+          "title": "Canonical Hash",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "title": "Valid Until",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Due Date"
+        },
+        "trips": {
+          "title": "Trips",
+          "type": "integer"
+        },
+        "material_paise": {
+          "title": "Material Paise",
+          "type": "integer"
+        },
+        "transport_paise": {
+          "title": "Transport Paise",
+          "type": "integer"
+        },
+        "handling_paise": {
+          "title": "Handling Paise",
+          "type": "integer"
+        },
+        "laying_paise": {
+          "title": "Laying Paise",
+          "type": "integer"
+        },
+        "tax_paise": {
+          "title": "Tax Paise",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "advance_paise": {
+          "title": "Advance Paise",
+          "type": "integer"
+        },
+        "balance_paise": {
+          "title": "Balance Paise",
+          "type": "integer"
+        },
+        "flags": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Flags",
+          "type": "array"
+        },
+        "needs_owner_approval": {
+          "title": "Needs Owner Approval",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved At"
+        },
+        "rejected_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Rejected At"
+        },
+        "reject_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "wrong_prices",
+                "customer_changed",
+                "duplicate",
+                "withdrawn",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reject Code"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/QuoteLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "quote_no",
+        "requirement_id",
+        "enquiry_id",
+        "lead_id",
+        "site_id",
+        "status",
+        "policy_version_id",
+        "engine_version",
+        "canonical_hash",
+        "as_of",
+        "valid_until",
+        "due_date",
+        "trips",
+        "material_paise",
+        "transport_paise",
+        "handling_paise",
+        "laying_paise",
+        "tax_paise",
+        "total_paise",
+        "advance_paise",
+        "balance_paise",
+        "flags",
+        "needs_owner_approval",
+        "created_at",
+        "approved_at",
+        "rejected_at",
+        "reject_code",
+        "lines"
+      ],
+      "title": "MaterialQuoteOut",
+      "type": "object"
+    },
+    "NotifyOut": {
+      "additionalProperties": false,
+      "description": "What the outbox did with the message: queued (it goes by itself), needs_approval (a person decides first) or blocked (and why).",
+      "properties": {
+        "message_id": {
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "queued",
+            "needs_approval",
+            "blocked",
+            "sent",
+            "failed"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id",
+        "status",
+        "reason",
+        "text",
+        "replayed"
+      ],
+      "title": "NotifyOut",
+      "type": "object"
+    },
+    "OpenInvoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "invoice_id": {
+          "format": "uuid",
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "invoice_no": {
+          "title": "Invoice No",
+          "type": "string"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "open_paise": {
+          "title": "Open Paise",
+          "type": "integer"
+        },
+        "age_days": {
+          "title": "Age Days",
+          "type": "integer"
+        },
+        "overdue_days": {
+          "title": "Overdue Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "invoice_no",
+        "invoice_date",
+        "due_date",
+        "amount_paise",
+        "open_paise",
+        "age_days",
+        "overdue_days"
+      ],
+      "title": "OpenInvoiceOut",
+      "type": "object"
+    },
+    "OrderCreatedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "format": "uuid",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "order_no": {
+          "title": "Order No",
+          "type": "integer"
+        },
+        "state": {
+          "title": "State",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        },
+        "credit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CreditWarningOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "order_id",
+        "order_no",
+        "state",
+        "replayed",
+        "credit"
+      ],
+      "title": "OrderCreatedOut",
+      "type": "object"
+    },
+    "OrderFromQuoteIn": {
+      "additionalProperties": false,
+      "properties": {
+        "order_id": {
+          "format": "uuid",
+          "title": "Order Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "order_id"
+      ],
+      "title": "OrderFromQuoteIn",
+      "type": "object"
+    },
+    "PaymentIn": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "received_on": {
+          "format": "date",
+          "title": "Received On",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "cash",
+            "upi",
+            "bank_transfer",
+            "cheque",
+            "card",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "invoice_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice Id"
+        }
+      },
+      "required": [
+        "company_id",
+        "received_on",
+        "amount_paise",
+        "method"
+      ],
+      "title": "PaymentIn",
+      "type": "object"
+    },
+    "PickIn": {
+      "additionalProperties": false,
+      "description": "The person's choice of the catalogue item that answers requirement line `line_no`.",
+      "properties": {
+        "line_no": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Line No",
+          "type": "integer"
+        },
+        "item_id": {
+          "format": "uuid",
+          "title": "Item Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "line_no",
+        "item_id"
+      ],
+      "title": "PickIn",
+      "type": "object"
+    },
+    "PolicyBody": {
+      "additionalProperties": false,
+      "description": "The rules a quote follows. Wastage is added to the pieces (default 5 %); the pieces are rounded UP once, at the end, and to whole pallets only if the owner chose that; the area-priced material bills the area\nthe delivered pieces cover (`bill_wastage`), or only the customer's own area when turned off. Advance default 50 %, balance on delivery or on credit days, valid 7 days.",
+      "properties": {
+        "default_wastage_bps": {
+          "default": 500,
+          "maximum": 5000,
+          "minimum": 0,
+          "title": "Default Wastage Bps",
+          "type": "integer"
+        },
+        "round_to_pallet": {
+          "default": false,
+          "title": "Round To Pallet",
+          "type": "boolean"
+        },
+        "bill_wastage": {
+          "default": true,
+          "title": "Bill Wastage",
+          "type": "boolean"
+        },
+        "transport": {
+          "$ref": "#/$defs/TransportIn",
+          "default": {
+            "kind": "none",
+            "capacity_basis": null,
+            "truck_capacity": null,
+            "rate_per_trip_paise": null,
+            "slabs": null,
+            "free_above_paise": null,
+            "gst_bps": null
+          }
+        },
+        "handling": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HandlingIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "laying": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LayingIn"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "advance_bps": {
+          "default": 5000,
+          "maximum": 10000,
+          "minimum": 0,
+          "title": "Advance Bps",
+          "type": "integer"
+        },
+        "credit_days": {
+          "default": 0,
+          "maximum": 180,
+          "minimum": 0,
+          "title": "Credit Days",
+          "type": "integer"
+        },
+        "validity_days": {
+          "default": 7,
+          "maximum": 365,
+          "minimum": 0,
+          "title": "Validity Days",
+          "type": "integer"
+        },
+        "rounding_mode": {
+          "default": "half_up",
+          "enum": [
+            "half_up",
+            "half_even",
+            "down"
+          ],
+          "title": "Rounding Mode",
+          "type": "string"
+        }
+      },
+      "title": "PolicyBody",
+      "type": "object"
+    },
+    "PolicyIn": {
+      "additionalProperties": false,
+      "description": "A new version of the rules (the Owner, with a second factor). `version_id` is the caller's, so a retry is safe; `effective_from` is today or later (today when left out).",
+      "properties": {
+        "version_id": {
+          "format": "uuid",
+          "title": "Version Id",
+          "type": "string"
+        },
+        "effective_from": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Effective From"
+        },
+        "policy": {
+          "$ref": "#/$defs/PolicyBody"
+        }
+      },
+      "required": [
+        "version_id",
+        "policy"
+      ],
+      "title": "PolicyIn",
+      "type": "object"
+    },
+    "PolicyOut": {
+      "additionalProperties": false,
+      "properties": {
+        "current": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/PolicyVersionOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "versions": {
+          "items": {
+            "$ref": "#/$defs/PolicyVersionRefOut"
+          },
+          "title": "Versions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "current",
+        "versions"
+      ],
+      "title": "PolicyOut",
+      "type": "object"
+    },
+    "PolicySavedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "version_id": {
+          "format": "uuid",
+          "title": "Version Id",
+          "type": "string"
+        },
+        "version_no": {
+          "title": "Version No",
+          "type": "integer"
+        },
+        "effective_from": {
+          "format": "date",
+          "title": "Effective From",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "version_id",
+        "version_no",
+        "effective_from",
+        "replayed"
+      ],
+      "title": "PolicySavedOut",
+      "type": "object"
+    },
+    "PolicyVersionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "version_id": {
+          "format": "uuid",
+          "title": "Version Id",
+          "type": "string"
+        },
+        "version_no": {
+          "title": "Version No",
+          "type": "integer"
+        },
+        "effective_from": {
+          "format": "date",
+          "title": "Effective From",
+          "type": "string"
+        },
+        "policy": {
+          "$ref": "#/$defs/PolicyBody"
+        }
+      },
+      "required": [
+        "version_id",
+        "version_no",
+        "effective_from",
+        "policy"
+      ],
+      "title": "PolicyVersionOut",
+      "type": "object"
+    },
+    "PolicyVersionRefOut": {
+      "additionalProperties": false,
+      "properties": {
+        "version_id": {
+          "format": "uuid",
+          "title": "Version Id",
+          "type": "string"
+        },
+        "version_no": {
+          "title": "Version No",
+          "type": "integer"
+        },
+        "effective_from": {
+          "format": "date",
+          "title": "Effective From",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "version_id",
+        "version_no",
+        "effective_from",
+        "created_at"
+      ],
+      "title": "PolicyVersionRefOut",
+      "type": "object"
+    },
+    "ProofOut": {
+      "additionalProperties": false,
+      "properties": {
+        "received_by": {
+          "title": "Received By",
+          "type": "string"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        },
+        "width": {
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "title": "Height",
+          "type": "integer"
+        },
+        "bytes": {
+          "title": "Bytes",
+          "type": "integer"
+        },
+        "photo_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Photo Url"
+        },
+        "expires_in_seconds": {
+          "title": "Expires In Seconds",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "received_by",
+        "recorded_at",
+        "width",
+        "height",
+        "bytes",
+        "photo_url",
+        "expires_in_seconds"
+      ],
+      "title": "ProofOut",
+      "type": "object"
+    },
+    "QuoteDraftIn": {
+      "additionalProperties": false,
+      "description": "Make a draft. `quote_id` is the caller's: a retry replays. The figures are never sent: the database builds the request from the confirmed requirement, your picks, the owner's prices and rules, and the\nsite's distance, and refuses any figure that is not its own.",
+      "properties": {
+        "quote_id": {
+          "format": "uuid",
+          "title": "Quote Id",
+          "type": "string"
+        },
+        "picks": {
+          "items": {
+            "$ref": "#/$defs/PickIn"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Picks",
+          "type": "array"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        }
+      },
+      "required": [
+        "quote_id",
+        "picks"
+      ],
+      "title": "QuoteDraftIn",
+      "type": "object"
+    },
+    "QuoteDraftOut": {
+      "additionalProperties": false,
+      "properties": {
+        "quote": {
+          "$ref": "#/$defs/MaterialQuoteOut"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "quote",
+        "replayed"
+      ],
+      "title": "QuoteDraftOut",
+      "type": "object"
+    },
+    "QuoteLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "line_no": {
+          "title": "Line No",
+          "type": "integer"
+        },
+        "catalogue_item_id": {
+          "format": "uuid",
+          "title": "Catalogue Item Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "mode": {
+          "enum": [
+            "area",
+            "direct"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "sold_per": {
+          "enum": [
+            "piece",
+            "sq_ft",
+            "sq_m",
+            "box",
+            "bag",
+            "tonne",
+            "cft",
+            "truckload"
+          ],
+          "title": "Sold Per",
+          "type": "string"
+        },
+        "unit_price_paise": {
+          "title": "Unit Price Paise",
+          "type": "integer"
+        },
+        "gst_bps": {
+          "title": "Gst Bps",
+          "type": "integer"
+        },
+        "hsn": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Hsn"
+        },
+        "area_x100": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Area X100"
+        },
+        "area_unit": {
+          "anyOf": [
+            {
+              "enum": [
+                "sq_ft",
+                "sq_m"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Area Unit"
+        },
+        "pieces": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pieces"
+        },
+        "pallets": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pallets"
+        },
+        "delivered_area_x100": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delivered Area X100"
+        },
+        "billed_quantity": {
+          "title": "Billed Quantity",
+          "type": "integer"
+        },
+        "material_paise": {
+          "title": "Material Paise",
+          "type": "integer"
+        },
+        "tax_paise": {
+          "title": "Tax Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "line_no",
+        "catalogue_item_id",
+        "name",
+        "mode",
+        "sold_per",
+        "unit_price_paise",
+        "gst_bps",
+        "hsn",
+        "area_x100",
+        "area_unit",
+        "pieces",
+        "pallets",
+        "delivered_area_x100",
+        "billed_quantity",
+        "material_paise",
+        "tax_paise"
+      ],
+      "title": "QuoteLineOut",
+      "type": "object"
+    },
+    "QuotePreviewIn": {
+      "additionalProperties": false,
+      "properties": {
+        "picks": {
+          "items": {
+            "$ref": "#/$defs/PickIn"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Picks",
+          "type": "array"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        }
+      },
+      "required": [
+        "picks"
+      ],
+      "title": "QuotePreviewIn",
+      "type": "object"
+    },
+    "QuotePreviewOut": {
+      "additionalProperties": false,
+      "description": "The calculator's answer for a requirement and picks, and the database's agreement with it. Nothing is stored.",
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "title": "Valid Until",
+          "type": "string"
+        },
+        "result": {
+          "$ref": "#/$defs/CalcOut"
+        },
+        "database_agrees": {
+          "title": "Database Agrees",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "as_of",
+        "valid_until",
+        "result",
+        "database_agrees"
+      ],
+      "title": "QuotePreviewOut",
+      "type": "object"
+    },
+    "QuoteTextOut": {
+      "additionalProperties": false,
+      "description": "The quote as a message to the customer: a clear table of words and numbers, made by fixed templates from the stored figures (no model). English is the reviewed text; the others are drafts.",
+      "properties": {
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "language_review": {
+          "enum": [
+            "reviewed",
+            "draft"
+          ],
+          "title": "Language Review",
+          "type": "string"
+        },
+        "text": {
+          "title": "Text",
+          "type": "string"
+        }
+      },
+      "required": [
+        "language",
+        "language_review",
+        "text"
+      ],
+      "title": "QuoteTextOut",
+      "type": "object"
+    },
+    "RecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "replayed"
+      ],
+      "title": "RecordedOut",
+      "type": "object"
+    },
+    "RejectIn": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "enum": [
+            "wrong_prices",
+            "customer_changed",
+            "duplicate",
+            "withdrawn",
+            "other"
+          ],
+          "title": "Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "code"
+      ],
+      "title": "RejectIn",
+      "type": "object"
+    },
+    "SiteIn": {
+      "additionalProperties": false,
+      "description": "The whole site at once; the same id again changes it (the customer never changes). `distance_km` is the distance from the yard, entered by the owner: freight by the kilometre reads it. A map pin is both numbers or neither.",
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "name": {
+          "maxLength": 120,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "address_line": {
+          "anyOf": [
+            {
+              "maxLength": 300,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Address Line"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "City"
+        },
+        "pin": {
+          "anyOf": [
+            {
+              "pattern": "^[1-9][0-9]{5}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pin"
+        },
+        "map_lat": {
+          "anyOf": [
+            {
+              "maximum": 90,
+              "minimum": -90,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Map Lat"
+        },
+        "map_lng": {
+          "anyOf": [
+            {
+              "maximum": 180,
+              "minimum": -180,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Map Lng"
+        },
+        "distance_km": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Distance Km"
+        },
+        "lane_width_ft": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lane Width Ft"
+        },
+        "night_delivery": {
+          "default": false,
+          "title": "Night Delivery",
+          "type": "boolean"
+        },
+        "unloading_help": {
+          "default": false,
+          "title": "Unloading Help",
+          "type": "boolean"
+        },
+        "access_notes": {
+          "anyOf": [
+            {
+              "maxLength": 500,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Access Notes"
+        },
+        "site_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Contact Id"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "company_id",
+        "name"
+      ],
+      "title": "SiteIn",
+      "type": "object"
+    },
+    "SiteListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SiteOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "SiteListOut",
+      "type": "object"
+    },
+    "SiteOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "address_line": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Address Line"
+        },
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        },
+        "pin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pin"
+        },
+        "map_lat": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Map Lat"
+        },
+        "map_lng": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Map Lng"
+        },
+        "distance_km": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Distance Km"
+        },
+        "lane_width_ft": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lane Width Ft"
+        },
+        "night_delivery": {
+          "title": "Night Delivery",
+          "type": "boolean"
+        },
+        "unloading_help": {
+          "title": "Unloading Help",
+          "type": "boolean"
+        },
+        "access_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Access Notes"
+        },
+        "site_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Contact Id"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "company_id",
+        "name",
+        "address_line",
+        "city",
+        "pin",
+        "map_lat",
+        "map_lng",
+        "distance_km",
+        "lane_width_ft",
+        "night_delivery",
+        "unloading_help",
+        "access_notes",
+        "site_contact_id",
+        "active",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "SiteOut",
+      "type": "object"
+    },
+    "SiteSaveOut": {
+      "additionalProperties": false,
+      "properties": {
+        "site": {
+          "$ref": "#/$defs/SiteOut"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "site",
+        "created"
+      ],
+      "title": "SiteSaveOut",
+      "type": "object"
+    },
+    "SkippedRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "reason": {
+          "enum": [
+            "customer_not_found",
+            "invoice_number_used",
+            "invalid_row"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row",
+        "reason"
+      ],
+      "title": "SkippedRowOut",
+      "type": "object"
+    },
+    "SlabIn": {
+      "additionalProperties": false,
+      "properties": {
+        "up_to_km": {
+          "maximum": 5000,
+          "minimum": 0,
+          "title": "Up To Km",
+          "type": "integer"
+        },
+        "charge_paise": {
+          "maximum": 100000000,
+          "minimum": 0,
+          "title": "Charge Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "up_to_km",
+        "charge_paise"
+      ],
+      "title": "SlabIn",
+      "type": "object"
+    },
+    "StatementOut": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "invoiced_paise": {
+          "title": "Invoiced Paise",
+          "type": "integer"
+        },
+        "paid_paise": {
+          "title": "Paid Paise",
+          "type": "integer"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "credit_paise": {
+          "title": "Credit Paise",
+          "type": "integer"
+        },
+        "overdue_paise": {
+          "title": "Overdue Paise",
+          "type": "integer"
+        },
+        "ageing": {
+          "$ref": "#/$defs/AgeingOut"
+        },
+        "open_invoices": {
+          "items": {
+            "$ref": "#/$defs/OpenInvoiceOut"
+          },
+          "title": "Open Invoices",
+          "type": "array"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Credit Limit Paise"
+        },
+        "over_limit": {
+          "title": "Over Limit",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "company_id",
+        "as_of",
+        "invoiced_paise",
+        "paid_paise",
+        "outstanding_paise",
+        "credit_paise",
+        "overdue_paise",
+        "ageing",
+        "open_invoices",
+        "credit_limit_paise",
+        "over_limit"
+      ],
+      "title": "StatementOut",
+      "type": "object"
+    },
+    "SummaryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/SummaryRowOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "SummaryOut",
+      "type": "object"
+    },
+    "SummaryRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "format": "uuid",
+          "title": "Company Id",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "invoiced_paise": {
+          "title": "Invoiced Paise",
+          "type": "integer"
+        },
+        "paid_paise": {
+          "title": "Paid Paise",
+          "type": "integer"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "credit_paise": {
+          "title": "Credit Paise",
+          "type": "integer"
+        },
+        "overdue_paise": {
+          "title": "Overdue Paise",
+          "type": "integer"
+        },
+        "ageing": {
+          "$ref": "#/$defs/AgeingOut"
+        },
+        "open_invoices": {
+          "items": {
+            "$ref": "#/$defs/OpenInvoiceOut"
+          },
+          "title": "Open Invoices",
+          "type": "array"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Credit Limit Paise"
+        },
+        "over_limit": {
+          "title": "Over Limit",
+          "type": "boolean"
+        },
+        "company_name": {
+          "title": "Company Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "company_id",
+        "as_of",
+        "invoiced_paise",
+        "paid_paise",
+        "outstanding_paise",
+        "credit_paise",
+        "overdue_paise",
+        "ageing",
+        "open_invoices",
+        "credit_limit_paise",
+        "over_limit",
+        "company_name"
+      ],
+      "title": "SummaryRowOut",
+      "type": "object"
+    },
+    "TransportIn": {
+      "additionalProperties": false,
+      "description": "The owner's freight rule: none, per trip (a truck carries `truck_capacity` pieces or area) or per kilometre slab (a charge per trip by distance); optionally free above an amount of material.\nThe freight's GST rate is required for any freight that is charged.",
+      "properties": {
+        "kind": {
+          "default": "none",
+          "enum": [
+            "none",
+            "per_trip",
+            "per_km_slab"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "capacity_basis": {
+          "anyOf": [
+            {
+              "enum": [
+                "pieces",
+                "area"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Capacity Basis"
+        },
+        "truck_capacity": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Truck Capacity"
+        },
+        "rate_per_trip_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Rate Per Trip Paise"
+        },
+        "slabs": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SlabIn"
+              },
+              "maxItems": 10,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slabs"
+        },
+        "free_above_paise": {
+          "anyOf": [
+            {
+              "maximum": 1000000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Free Above Paise"
+        },
+        "gst_bps": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Gst Bps"
+        }
+      },
+      "title": "TransportIn",
+      "type": "object"
+    },
+    "TripDetailOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "order_id": {
+          "format": "uuid",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "order_no": {
+          "title": "Order No",
+          "type": "integer"
+        },
+        "trip_no": {
+          "title": "Trip No",
+          "type": "integer"
+        },
+        "challan_no": {
+          "title": "Challan No",
+          "type": "integer"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Id"
+        },
+        "site_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Contact Id"
+        },
+        "planned_date": {
+          "format": "date",
+          "title": "Planned Date",
+          "type": "string"
+        },
+        "vehicle_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Vehicle No"
+        },
+        "driver_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Driver Name"
+        },
+        "driver_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Driver Phone"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "loaded",
+            "on_the_way",
+            "delivered",
+            "problem",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "problem_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "truck_breakdown",
+                "customer_not_ready",
+                "site_closed",
+                "wrong_material",
+                "road_blocked",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Problem Code"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "delivered_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delivered At"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/TripLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "proof": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProofOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/TripEventOut"
+          },
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "order_id",
+        "order_no",
+        "trip_no",
+        "challan_no",
+        "site_id",
+        "site_contact_id",
+        "planned_date",
+        "vehicle_no",
+        "driver_name",
+        "driver_phone",
+        "status",
+        "problem_code",
+        "created_at",
+        "updated_at",
+        "delivered_at",
+        "lines",
+        "proof",
+        "events"
+      ],
+      "title": "TripDetailOut",
+      "type": "object"
+    },
+    "TripEventOut": {
+      "additionalProperties": false,
+      "properties": {
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "from_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "planned",
+                "loaded",
+                "on_the_way",
+                "delivered",
+                "problem",
+                "cancelled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "From Status"
+        },
+        "to_status": {
+          "enum": [
+            "planned",
+            "loaded",
+            "on_the_way",
+            "delivered",
+            "problem",
+            "cancelled"
+          ],
+          "title": "To Status",
+          "type": "string"
+        },
+        "problem_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "truck_breakdown",
+                "customer_not_ready",
+                "site_closed",
+                "wrong_material",
+                "road_blocked",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Problem Code"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "seq",
+        "from_status",
+        "to_status",
+        "problem_code",
+        "recorded_at"
+      ],
+      "title": "TripEventOut",
+      "type": "object"
+    },
+    "TripLineIn": {
+      "additionalProperties": false,
+      "description": "`line_no` is the line of the order's quote; `quantity` is in pieces for a piece or area line and in the sold unit (bags, tonnes) for the others.",
+      "properties": {
+        "line_no": {
+          "maximum": 5,
+          "minimum": 1,
+          "title": "Line No",
+          "type": "integer"
+        },
+        "quantity": {
+          "maximum": 10000000,
+          "minimum": 1,
+          "title": "Quantity",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "line_no",
+        "quantity"
+      ],
+      "title": "TripLineIn",
+      "type": "object"
+    },
+    "TripLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "quote_line_id": {
+          "format": "uuid",
+          "title": "Quote Line Id",
+          "type": "string"
+        },
+        "line_no": {
+          "title": "Line No",
+          "type": "integer"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "quantity": {
+          "title": "Quantity",
+          "type": "integer"
+        },
+        "unit": {
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "quote_line_id",
+        "line_no",
+        "name",
+        "quantity",
+        "unit"
+      ],
+      "title": "TripLineOut",
+      "type": "object"
+    },
+    "TripListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/TripOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "TripListOut",
+      "type": "object"
+    },
+    "TripNotifyIn": {
+      "additionalProperties": false,
+      "description": "Tell the site contact how the trip is going. The words are fixed templates (no amounts, no model); `message_id` is the caller's, so a retry is safe. The outbox's own rules apply to it (consent, the\nnumber's suppression key, quiet hours, the daily limit); it goes by itself only when the owner has switched automatic sending on.",
+      "properties": {
+        "message_id": {
+          "format": "uuid",
+          "title": "Message Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "left",
+            "soon",
+            "delivered",
+            "delay"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "eta": {
+          "anyOf": [
+            {
+              "pattern": "^[0-9]{1,2}(:[0-9]{2})?( ?[ap]m)?$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Eta"
+        },
+        "language": {
+          "default": "en",
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "kind"
+      ],
+      "title": "TripNotifyIn",
+      "type": "object"
+    },
+    "TripOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "order_id": {
+          "format": "uuid",
+          "title": "Order Id",
+          "type": "string"
+        },
+        "order_no": {
+          "title": "Order No",
+          "type": "integer"
+        },
+        "trip_no": {
+          "title": "Trip No",
+          "type": "integer"
+        },
+        "challan_no": {
+          "title": "Challan No",
+          "type": "integer"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Id"
+        },
+        "site_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Site Contact Id"
+        },
+        "planned_date": {
+          "format": "date",
+          "title": "Planned Date",
+          "type": "string"
+        },
+        "vehicle_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Vehicle No"
+        },
+        "driver_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Driver Name"
+        },
+        "driver_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Driver Phone"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "loaded",
+            "on_the_way",
+            "delivered",
+            "problem",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "problem_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "truck_breakdown",
+                "customer_not_ready",
+                "site_closed",
+                "wrong_material",
+                "road_blocked",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Problem Code"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "delivered_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Delivered At"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/TripLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        },
+        "proof": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProofOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "order_id",
+        "order_no",
+        "trip_no",
+        "challan_no",
+        "site_id",
+        "site_contact_id",
+        "planned_date",
+        "vehicle_no",
+        "driver_name",
+        "driver_phone",
+        "status",
+        "problem_code",
+        "created_at",
+        "updated_at",
+        "delivered_at",
+        "lines",
+        "proof"
+      ],
+      "title": "TripOut",
+      "type": "object"
+    },
+    "TripPlanIn": {
+      "additionalProperties": false,
+      "description": "Plan a trip. `trip_id` is the caller's, so a retry is safe. The site is the order's unless another is given. The trips of an order never carry more of a line than the order holds.",
+      "properties": {
+        "trip_id": {
+          "format": "uuid",
+          "title": "Trip Id",
+          "type": "string"
+        },
+        "planned_date": {
+          "format": "date",
+          "title": "Planned Date",
+          "type": "string"
+        },
+        "vehicle_no": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9 -]{2,19}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vehicle No"
+        },
+        "driver_name": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Driver Name"
+        },
+        "driver_phone": {
+          "anyOf": [
+            {
+              "pattern": "^[+]?[0-9][0-9 -]{6,18}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Driver Phone"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        },
+        "site_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Contact Id"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/TripLineIn"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "trip_id",
+        "planned_date",
+        "lines"
+      ],
+      "title": "TripPlanIn",
+      "type": "object"
+    },
+    "TripStatusIn": {
+      "additionalProperties": false,
+      "description": "planned -> loaded -> on_the_way (delivered has its own call: it needs the proof). `problem` needs a reason from the closed list; a problem goes back to `planned` when rescheduled.",
+      "properties": {
+        "status": {
+          "enum": [
+            "planned",
+            "loaded",
+            "on_the_way",
+            "problem",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "problem_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "truck_breakdown",
+                "customer_not_ready",
+                "site_closed",
+                "wrong_material",
+                "road_blocked",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Problem Code"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "TripStatusIn",
+      "type": "object"
+    },
+    "TripUpdateIn": {
+      "additionalProperties": false,
+      "description": "Change a trip that is planned or in problem (the whole set of details; `lines`, when sent, replaces the quantities).",
+      "properties": {
+        "planned_date": {
+          "format": "date",
+          "title": "Planned Date",
+          "type": "string"
+        },
+        "vehicle_no": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9 -]{2,19}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Vehicle No"
+        },
+        "driver_name": {
+          "anyOf": [
+            {
+              "maxLength": 80,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Driver Name"
+        },
+        "driver_phone": {
+          "anyOf": [
+            {
+              "pattern": "^[+]?[0-9][0-9 -]{6,18}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Driver Phone"
+        },
+        "site_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Id"
+        },
+        "site_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Site Contact Id"
+        },
+        "lines": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/TripLineIn"
+              },
+              "maxItems": 5,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lines"
+        }
+      },
+      "required": [
+        "planned_date"
+      ],
+      "title": "TripUpdateIn",
+      "type": "object"
+    },
+    "VoidedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "voided"
+      ],
+      "title": "VoidedOut",
+      "type": "object"
+    }
+  }
+}

@@ -74,7 +74,11 @@ def _slot(fields: list[FieldView], key: str, line: int | None) -> FieldView | No
     return next((f for f in fields if f.live and f.key == key and f.line == line), None)
 
 
-def assess(fields: list[FieldView]) -> Assessment:
+def assess(fields: list[FieldView], profile: str = "saree") -> Assessment:
+    if profile == "materials":
+        from app.requirements import materials
+
+        return materials.assess(fields)
     live = [f for f in fields if f.live]
     lines = tuple(sorted({f.line for f in live if f.line is not None}))
     asked_lines = lines or (1,)

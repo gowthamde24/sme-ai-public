@@ -47,6 +47,7 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("push_key", "/v1/push/public-key", True, 60),
     PublicRule("packs", "/v1/packs", True, 60),  # job CK: the sign-up cards
     PublicRule("auth_providers", "/v1/auth/providers", True, 60),  # job CK: which sign-up buttons to show
+    PublicRule("calculate_materials", "/v1/calculate/materials", True, 30),  # job CN: the public paver calculator (pure; no business data)
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),

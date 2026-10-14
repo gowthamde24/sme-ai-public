@@ -6,6 +6,7 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+select tests.cn_guards_off();  -- job CN: the module guards of sites, dues, materials and deliveries are proved in 96 to 99; here the generic loop builds fixtures
 select tests.seed_crm();
 select tests.seed_evidence();
 select tests.seed_t005();
@@ -34,6 +35,19 @@ values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', 
 insert into public.catalogue_photos (id, tenant_id, item_id, position, bucket, path, thumb_path, width, height, bytes, thumb_bytes, created_by)
 values (tests.rid('b_fk_photo'), tests.tid('b'), tests.rid('b_fk_item'), 1, app.catalogue_bucket(tests.tid('b')), tests.rid('b_fk_item')::text || '/' || tests.rid('b_fk_photo')::text || '.jpg',
         tests.rid('b_fk_item')::text || '/' || tests.rid('b_fk_photo')::text || '_t.jpg', 640, 640, 1000, 100, tests.uid('b_owner'));
+
+-- job CN: sites, invoices, payments, material quotes and their lines, trips and proofs reference each other and the tenant's orders and items; the generic attack needs tenant-B rows of each kind to aim at
+-- (the registry's own fixture builders, run for tenant B)
+do $$
+declare
+  r record;
+begin
+  for r in select * from tests.tenant_table_registry
+            where table_name in ('customer_sites', 'customer_invoices', 'customer_payments', 'material_quote_policies', 'material_quotes', 'material_quote_lines', 'delivery_trips', 'delivery_trip_lines', 'delivery_trip_events')
+            order by table_name loop
+    execute format(r.insert_sql, tests.tid('b'), gen_random_uuid(), tests.rid('b_company'), tests.rid('b_contact'), tests.pool_uid(3));
+  end loop;
+end $$;
 
 -- privileged equivalent of tests.error_shape_as
 create function pg_temp.err_shape(p_sql text) returns text
@@ -115,7 +129,9 @@ begin
                                 and fp.pronamespace = 'app'::regnamespace
                                 and fp.proname in ('append_only', 'guard_immutable_record', 'quote_guard_update', 'order_guard_update',
                                                             'followup_drafts_guard_update', 'question_drafts_guard_update', 'outbox_messages_guard_update', 'call_requests_guard_update', 'store_visits_guard_update', 'visit_reminders_guard_update',
-                                                            'catalogue_items_guard_update', 'catalogue_photos_guard_update', 'outbox_message_media_guard', 'outbox_events_guard'));
+                                                            'catalogue_items_guard_update', 'catalogue_photos_guard_update', 'outbox_message_media_guard', 'outbox_events_guard',
+                                                            -- job CN: invoices and payments, material quotes and their lines, trip events, proofs and policy versions refuse every update
+                                                            'dues_rows_guard', 'material_quotes_guard', 'material_quote_lines_guard', 'delivery_events_guard', 'delivery_proofs_guard', 'material_policy_immutable'));
     -- agent_runs.lead_id / enquiry_id / conversation_id: the fixture run already has a company target, so re-pointing lead_id trips the exactly-one-target
     -- CHECK (23514) before the foreign key; foreign and missing still fail identically (next assertion). The INSERT path of the
     -- same references is attacked in 30_agent_runs_schema.

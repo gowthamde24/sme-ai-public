@@ -78,7 +78,40 @@ def generate(source: str) -> str:
     return HEADER + "\n".join(out) + "\n"
 
 
-SYNCED = ("migrations", "tests", "templates")
+SYNCED = ("migrations", "tests")
+# Job CN: `templates` is synced IN PLACE, never replaced. The Supabase CLI hands Kong the mail template as a bind mount of the single FILE (kong:/home/kong/templates/email/confirmation.html); a mount follows the
+# file's inode, so a folder that is rebuilt and renamed into place (what migrations and tests are fine with: nothing mounts them) leaves Kong holding a deleted file, the stack's sign-up mail gets the stock link and
+# the sign-up tests fail after every `db reset` until Kong is restarted by hand. A file whose bytes are already right is not touched at all; a changed file is rewritten through the same inode.
+IN_PLACE = ("templates",)
+
+
+def sync_in_place(source: Path, target: Path) -> None:
+    """Make `target` an exact copy of `source` WITHOUT replacing any file or folder that is already right: same bytes -> untouched; other bytes -> rewritten through the same inode; a file that is gone from
+    the source is removed (and an emptied folder); a missing file or folder is created."""
+    if target.is_symlink() or target.is_file():
+        target.unlink()
+    target.mkdir(parents=True, exist_ok=True)
+    wanted = {p.relative_to(source) for p in source.rglob("*") if p.is_file()}
+    for rel in sorted(wanted):
+        src, dst = source / rel, target / rel
+        data = src.read_bytes()
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        if dst.is_symlink():
+            dst.unlink()
+        elif dst.is_dir():
+            shutil.rmtree(dst)
+        if not dst.exists():
+            dst.write_bytes(data)
+        elif dst.read_bytes() != data:
+            with open(dst, "r+b") as handle:  # r+b keeps the inode; "wb" would too, but this never leaves an empty file visible longer than the write
+                handle.write(data)
+                handle.truncate()
+    for path in sorted(target.rglob("*"), key=lambda p: len(p.parts), reverse=True):
+        if path.is_file() or path.is_symlink():
+            if path.relative_to(target) not in wanted:
+                path.unlink()
+        elif path.is_dir() and not any(path.iterdir()):
+            path.rmdir()
 
 
 def sync() -> None:
@@ -98,6 +131,8 @@ def sync() -> None:
             elif target.is_dir():
                 shutil.rmtree(target)
             staging.rename(target)
+        for name in IN_PLACE:
+            sync_in_place(ROOT / "supabase" / name, AGENT.parent / name)
 
 
 def ensure_config() -> None:

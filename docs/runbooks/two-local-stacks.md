@@ -78,3 +78,13 @@ CI has one stack per runner, a plain `supabase start` of the repository's own `s
 * `docker volume ls | grep sme-ai-agent` shows the agent stack's volumes; `make agent-db-down` keeps them, `supabase stop --no-backup --workdir stacks/sme-ai-agent` removes them.
 * A script of yours that ran `supabase status` or used `supabase_db_sme-ai` directly keeps working on the owner's stack. For the agent stack use `scripts/sb status -o env` (it prints keys: redirect it) and `$SME_DB_CONTAINER` after `. scripts/stack.sh`.
 * Regenerate the agent config after a change to `supabase/config.toml`: `python3 scripts/gen_agent_stack.py` (`--check` is the test).
+
+## The sign-up mail template and Kong (job CN)
+
+Symptom (seen after the repository moved to the external SSD): after `make db-reset` the agent stack's sign-up mail carried the stock Supabase link, and `test_open_signup.py` and the demo-seed tests failed (the auth log showed a 404 for the template URL). The only cure was `docker restart supabase_kong_sme-ai-agent`.
+
+Cause: the Supabase CLI gives Kong the mail template as a bind mount of the single **file** `stacks/sme-ai-agent/supabase/templates/confirmation.html`. A mount follows the file's inode. `scripts/gen_agent_stack.py --sync` (run by `scripts/sb` before every `start`, `db reset` and `test db`) used to rebuild the whole `templates` folder and rename it into place, so the file got a new inode while Kong kept the deleted one.
+
+Fix: `templates` is now synced **in place** (`sync_in_place`): a file whose bytes are already right is not touched, a changed file is rewritten through the same inode, a file that left `supabase/templates` is removed. `migrations` and `tests` are still replaced as folders (nothing mounts them). `tests/test_stacks.py` pins the inode.
+
+One-time step: a Kong container that was started *before* this fix may still hold a stale file. Recreate it once with `make agent-db-down` then `make agent-db-up` (or `docker restart supabase_kong_sme-ai-agent`); after that, resets need no manual step. If the template is ever *edited*, the edit is written through the same inode, so Kong sees it without a restart.

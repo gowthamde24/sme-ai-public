@@ -29,12 +29,13 @@ from app.enquiries.models import (
     RequirementActionOut,
     RequirementViewOut,
 )
+from app.enquiries.profile import profile_of
 from app.enquiries.service import build_view
 from app.errors import ApiError, not_found
 from app.requirements.capture_text import prepare_body, prepare_subject
-from app.requirements.normalise import Refused, Value, normalise
+from app.requirements.normalise import Refused, Value
+from app.requirements.profile import line_keys, normalise_for
 from app.requirements.quote import find_quote
-from app.requirements.vocabulary import LINE_KEYS
 from app.tenancy.models import Role
 
 router = APIRouter(prefix="/v1/tenants/{tenant_id}")
@@ -80,10 +81,14 @@ def _visible_enquiry(runtime: Runtime, ctx: TenantContext, raw_id: str) -> Enqui
     return result
 
 
-def _typed(field: str, raw: str, received_at: datetime) -> dict[str, Any]:
+def _profile(runtime: Runtime, ctx: TenantContext) -> str:
+    return profile_of(runtime.packs, ctx.principal.token, ctx.tenant.id)
+
+
+def _typed(field: str, raw: str, received_at: datetime, profile: str = "saree") -> dict[str, Any]:
     """The value the person wrote, read by the SAME normalisers as the agent's, as the database function's arguments."""
     try:
-        got = normalise(field, raw, received_at)
+        got = normalise_for(profile, field, raw, received_at)
     except Refused as refused:
         message = _REFUSED.get(refused.reason, _REFUSED["unparsed"])
         raise ApiError(422, "value_not_accepted", message) from None
@@ -162,7 +167,7 @@ def get_requirement(enquiry_id: str, ctx: AnyMember, runtime: RuntimeDep) -> Req
     requirement, rows = _repo(runtime).get_requirement(
         ctx.principal.token, ctx.tenant.id, enquiry.id
     )
-    return build_view(requirement, rows)
+    return build_view(requirement, rows, _profile(runtime, ctx))
 
 
 @router.post("/enquiries/{enquiry_id}/requirement-fields", response_model=FieldAddedOut)
@@ -171,7 +176,8 @@ def add_field(
 ) -> FieldAddedOut:
     """A person adds a field the extraction missed."""
     enquiry = _visible_enquiry(runtime, ctx, enquiry_id)
-    if (body.field in LINE_KEYS) != (body.line is not None):
+    profile = _profile(runtime, ctx)
+    if (body.field in line_keys(profile)) != (body.line is not None):
         raise ApiError(
             422, "invalid_line", "Line fields need a line (1 to 5); order fields have none."
         )
@@ -179,7 +185,7 @@ def add_field(
         "p_enquiry_id": str(enquiry.id),
         "p_line": body.line,
         "p_key": body.field,
-        **{f"p_{k}": v for k, v in _typed(body.field, body.value, enquiry.received_at).items()},
+        **{f"p_{k}": v for k, v in _typed(body.field, body.value, enquiry.received_at, profile).items()},
         "p_quote": None,
         "p_start": None,
         "p_end": None,
@@ -216,7 +222,7 @@ def decide_field(
         )
         if enquiry is None:
             raise not_found()
-        value = _typed(field["field_key"], body.value, enquiry.received_at)
+        value = _typed(field["field_key"], body.value, enquiry.received_at, _profile(runtime, ctx))
     return FieldDecisionOut.model_validate(
         repo.decide(ctx.principal.token, fid, body.decision, value)
     )

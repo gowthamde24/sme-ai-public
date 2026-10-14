@@ -143,7 +143,7 @@ class FakeCatalogue:
         return dict(self.items[str(item_id)])
 
     def search(
-        self, token: str, tenant_id: uuid.UUID, args: dict[str, Any]
+        self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], kind: str = "saree"
     ) -> list[dict[str, Any]]:
         self._log("catalogue_search", token, args)
         rows = [r for r in self.items.values() if r["active"] or args["p_include_inactive"]]

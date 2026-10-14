@@ -9,6 +9,7 @@
 begin;
 select no_plan();
 select tests.seed_two_tenants();
+select tests.cn_guards_off();  -- job CN: the module guards of sites, dues, materials and deliveries are proved in 96 to 99; here the generic loop builds fixtures
 select tests.seed_crm();
 select tests.make_pool_users(60);
 

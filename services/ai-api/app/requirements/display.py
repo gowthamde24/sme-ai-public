@@ -6,6 +6,7 @@ field of an enquiry. Money is the customer's STATED budget in paise, never a pri
 
 from __future__ import annotations
 
+from app.requirements import materials
 from app.requirements.normalise import Value
 from app.requirements.questions import LABELS, MONTHS
 
@@ -39,6 +40,8 @@ def rupees(paise: int) -> str:
 
 
 def display(key: str, value: Value) -> str:
+    if key in materials.ONLY_KEYS or (key == "quantity" and value.basis not in (None, "piece", "set")):
+        return materials.display(key, value)
     if key in ("saree_type", "fabric", "colour"):
         return label(value.code)
     if key == "quantity" and value.int_value is not None:

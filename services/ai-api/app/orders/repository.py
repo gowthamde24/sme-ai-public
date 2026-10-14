@@ -21,7 +21,7 @@ from app.tenancy.repository import MfaRequired, UpstreamError
 
 logger = logging.getLogger("app.orders.repository")
 
-ORDER_COLUMNS = "id,order_no,quote_id,enquiry_id,requirement_id,lead_id,state,order_total_paise,advance_paise,valid_until,policy_version_id,created_at,closed_at"
+ORDER_COLUMNS = "id,order_no,quote_id,material_quote_id,site_id,enquiry_id,requirement_id,lead_id,state,order_total_paise,advance_paise,valid_until,policy_version_id,created_at,closed_at"
 LEDGER_COLUMNS = (
     "order_id,paid_paise,refunded_paise,net_paise,balance_paise,event_count,lost_reason"
 )

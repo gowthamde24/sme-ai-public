@@ -152,7 +152,11 @@ class OrderEventOut(_Strict):
 class OrderOut(_Strict):
     id: uuid.UUID
     order_no: int
-    quote_id: uuid.UUID
+    # an order comes from a saree quote (`quote_id`) or from a building-materials quote (`material_quote_id`): exactly one of the two is set
+    quote_id: uuid.UUID | None = None
+    material_quote_id: uuid.UUID | None = None
+    # the site a material order is delivered to (module `sites`)
+    site_id: uuid.UUID | None = None
     enquiry_id: uuid.UUID
     requirement_id: uuid.UUID
     lead_id: uuid.UUID

@@ -18,10 +18,13 @@ No tool writes a question, a flag, a confirmation, a status or any free text.
 
 from __future__ import annotations
 
+from typing import Any
+
 from app.agents.errors import ValueRefused
 from app.agents.notes import NOTE_QUOTE_REFUSED, NOTE_RECORDED, NOTE_REFUSED, NOTE_VALUE_REFUSED
-from app.agents.schemas import ProposeFieldArgs
+from app.agents.schemas import ProposeFieldArgs, ProposeMaterialFieldArgs
 from app.agents.tools import Proposal, Tool, ToolContext
+from app.requirements import materials
 from app.requirements.normalise import Refused, normalise, worse
 from app.requirements.policy import QUESTION_ORDER
 from app.requirements.quote import find_quote, normalise_ws
@@ -32,6 +35,14 @@ MAX_PROPOSALS = 60  # every call counted, so a loop cannot spin
 
 
 def _propose_field(ctx: ToolContext, args: ProposeFieldArgs) -> str:
+    return _propose(ctx, args, normalise, supports, ("quantity", "budget", "payment_terms"))
+
+
+def _propose_material_field(ctx: ToolContext, args: ProposeMaterialFieldArgs) -> str:
+    return _propose(ctx, args, materials.normalise_material, materials.supports, materials.RANGE_KEYS)
+
+
+def _propose(ctx: ToolContext, args: ProposeFieldArgs | ProposeMaterialFieldArgs, read: Any, check: Any, range_keys: tuple[str, ...]) -> str:
     state, enquiry = ctx.state, ctx.state.enquiry
     if enquiry is None or state.proposal_count >= MAX_PROPOSALS:
         return NOTE_REFUSED
@@ -43,15 +54,13 @@ def _propose_field(ctx: ToolContext, args: ProposeFieldArgs) -> str:
         return NOTE_QUOTE_REFUSED
     quote = normalise_ws(args.quote)
     try:
-        normalised = normalise(args.field, args.value, enquiry.received_at)
+        normalised = read(args.field, args.value, enquiry.received_at)
     except Refused:
         return NOTE_VALUE_REFUSED
-    if not supports(args.field, normalised.value, quote, enquiry.received_at):
+    if not check(args.field, normalised.value, quote, enquiry.received_at):
         return NOTE_VALUE_REFUSED
     certainty = worse(args.certainty, normalised.certainty)
-    if args.field in ("quantity", "budget", "payment_terms") and in_range_context(
-        enquiry.body, *span
-    ):
+    if args.field in range_keys and in_range_context(enquiry.body, *span):
         certainty = worse(certainty, "ambiguous")  # one end of a range is not a stated number
     proposal = Proposal(
         value=normalised.value,
@@ -72,8 +81,9 @@ def flush_proposals(ctx: ToolContext) -> int:
     refuses (it checks the quote and the value again) is skipped and counted; any other failure ends the run."""
     refused = 0
     order = {key: i for i, key in enumerate(QUESTION_ORDER)}
+    order.update({key: i for i, key in enumerate(materials.QUESTION_ORDER) if key not in order})
     for (line, key), items in sorted(
-        ctx.state.proposals.items(), key=lambda kv: (kv[0][0] or 0, order[kv[0][1]])
+        ctx.state.proposals.items(), key=lambda kv: (kv[0][0] or 0, order.get(kv[0][1], 99))
     ):
         first = items[0]
         conflict = len(items) > 1  # proposals are kept only when their values differ
@@ -108,4 +118,15 @@ PROPOSE_FIELD = Tool(
     "the enquiry that say it. If the enquiry does not say, propose nothing.",
     ProposeFieldArgs,
     _propose_field,
+)
+
+
+PROPOSE_MATERIAL_FIELD = Tool(
+    "propose_field",
+    "Propose ONE field of the customer's order for building materials. line: 1-5 for product_type, thickness, area, length, width and quantity "
+    "(one number per product); leave it out for application, site_location, laying, deadline, budget and payment_terms. "
+    "value: the value as the enquiry words it ('1000 sq ft', 'paver blocks', '80 mm', '40 ft', 'Kukatpally, Hyderabad', 'laying needed', 'next Friday'). "
+    "certainty: stated, implied or ambiguous. quote: words copied EXACTLY from the enquiry that say it. If the enquiry does not say, propose nothing.",
+    ProposeMaterialFieldArgs,
+    _propose_material_field,
 )

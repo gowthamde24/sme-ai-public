@@ -31,7 +31,15 @@
             "budget",
             "deadline",
             "delivery_city",
-            "payment_terms"
+            "payment_terms",
+            "application",
+            "product_type",
+            "thickness",
+            "area",
+            "length",
+            "width",
+            "site_location",
+            "laying"
           ],
           "title": "Field",
           "type": "string"
@@ -803,7 +811,15 @@
             "budget",
             "deadline",
             "delivery_city",
-            "payment_terms"
+            "payment_terms",
+            "application",
+            "product_type",
+            "thickness",
+            "area",
+            "length",
+            "width",
+            "site_location",
+            "laying"
           ],
           "title": "Field Key",
           "type": "string"
@@ -923,7 +939,15 @@
             "budget",
             "deadline",
             "delivery_city",
-            "payment_terms"
+            "payment_terms",
+            "application",
+            "product_type",
+            "thickness",
+            "area",
+            "length",
+            "width",
+            "site_location",
+            "laying"
           ],
           "title": "Field Key",
           "type": "string"
@@ -1009,7 +1033,15 @@
             "budget",
             "deadline",
             "delivery_city",
-            "payment_terms"
+            "payment_terms",
+            "application",
+            "product_type",
+            "thickness",
+            "area",
+            "length",
+            "width",
+            "site_location",
+            "laying"
           ],
           "title": "Field Key",
           "type": "string"

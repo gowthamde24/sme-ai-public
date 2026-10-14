@@ -359,19 +359,21 @@ def test_the_small_fixes_copy_of_add_requirement_field_is_the_last_definition_an
     None
 ):
     defs = definitions("public.add_requirement_field")
-    assert defs[-1][0] == SMALL, (
+    # job CN replaces it once more (test_migration_copies_cn.py pins what changed): this test pins the small fixes' own copy
+    assert defs[-1][0] in (SMALL, "20261123090200_cn_requirements.sql"), (
         f"add_requirement_field is redefined after the small fixes ({defs[-1][0]}): re-copy it from the latest definition"
     )
+    mine = [d for d in defs if d[0] == SMALL]
     earlier = [d for d in defs if d[0] < SMALL]
-    assert earlier
+    assert earlier and mine
     removed = [
         line[1:].strip()
         for line in difflib.unified_diff(
-            normalised(earlier[-1][1]), normalised(defs[-1][1]), lineterm="", n=0
+            normalised(earlier[-1][1]), normalised(mine[-1][1]), lineterm="", n=0
         )
         if line.startswith("-") and not line.startswith("---")
     ]
-    kept = {line.strip() for line in defs[-1][1].split("\n")}
+    kept = {line.strip() for line in mine[-1][1].split("\n")}
     assert [line for line in removed if line not in kept] == []
 
 
