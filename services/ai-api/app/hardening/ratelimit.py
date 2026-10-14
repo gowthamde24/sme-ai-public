@@ -45,6 +45,8 @@ PUBLIC_RULES: tuple[PublicRule, ...] = (
     PublicRule("policies", "/v1/policies/current", True, 60),
     PublicRule("calendar_feed", "/v1/calendar/feed/", False, 30),
     PublicRule("push_key", "/v1/push/public-key", True, 60),
+    PublicRule("packs", "/v1/packs", True, 60),  # job CK: the sign-up cards
+    PublicRule("auth_providers", "/v1/auth/providers", True, 60),  # job CK: which sign-up buttons to show
     PublicRule("webhooks", "/v1/webhooks/", False, 300),
     PublicRule("docs", "/docs", False, 20),
     PublicRule("redoc", "/redoc", False, 20),

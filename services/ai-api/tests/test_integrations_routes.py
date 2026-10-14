@@ -170,8 +170,8 @@ def test_file_problems_are_reported_per_row_by_code_only(w: World) -> None:
 
 @pytest.mark.parametrize(
     ("data", "ctype", "status", "code"),
-    [(b"", "text/csv", 422, "file_empty"), (b"a,b\n\x80\x81,1\n", "text/csv", 422, "file_not_utf8"), (b"x" * 2_100_000, "text/csv", 413, "file_too_large"),
-     (b"PK\x03\x04junk", "application/octet-stream", 415, "file_not_xlsx"), (b"n\n" + b"x\n" * 501, "text/csv", 422, "file_too_many_rows")],
+    [(b"", "text/csv", 422, "file_empty"), (b"a,b\n\x80\x81,1\n", "text/csv", 422, "file_not_utf8"), (b"x" * 3_100_000, "text/csv", 413, "file_too_large"),
+     (b"PK\x03\x04junk", "application/octet-stream", 415, "file_not_xlsx"), (b"n\n" + b"x\n" * 5001, "text/csv", 422, "file_too_many_rows")],
 )  # fmt: skip
 def test_bad_files_are_refused_with_closed_codes(w: World, data: bytes, ctype: str, status: int, code: str) -> None:
     r = w.upload(S + "/inspect?kind=customers", "a_owner", data, ctype)

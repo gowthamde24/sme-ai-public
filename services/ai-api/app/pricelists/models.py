@@ -11,6 +11,7 @@ from pydantic import AfterValidator, ConfigDict, StringConstraints
 
 from app.crm.models import ApiUuid, _Strict
 from app.pricelists.csv_port import COLUMNS, PARSER_CODES
+from app.units import SaleUnit
 
 # the parser's closed codes plus the API's own: a product the workspace does not have, a name with a hidden character, an empty or oversized list, a catalog that cannot be read
 API_CODES: tuple[str, ...] = ("UNKNOWN_SKU", "HIDDEN_CHARACTERS", "NO_ITEMS", "TOO_MANY_ITEMS")
@@ -68,7 +69,7 @@ class PreviewItemOut(_ExactTypes):
     name: str
     catalog_name: str | None  # the product's name in the catalog (None for an unknown sku)
     name_matches: bool
-    sale_unit: Literal["piece", "set"] | None
+    sale_unit: SaleUnit | None
     unit_price_paise: int
     minimum_order_quantity: int
     tax_bps: int

@@ -17,6 +17,7 @@ from app.catalogue.repository import CatalogueRepository
 from app.catalogue.storage import StorageClient
 from app.connectors.runtime import Connectors
 from app.crm.repository import CrmRepository
+from app.customfields.repository import CustomFieldsRepository
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
@@ -30,6 +31,9 @@ from app.notifications.runtime import NotificationsRuntime
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
 from app.outbox.repository import OutboxRepository
+from app.packs.models import AuthProvidersOut
+from app.packs.registry import PackRegistry
+from app.packs.repository import PacksRepository
 from app.pricelists.repository import PriceListRepository
 from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PrivacyRepository
@@ -90,6 +94,12 @@ class Runtime:
     research_usage: ResearchUsageRepository | None = None
     connectors: Connectors | None = None
     business_profile: BusinessProfileRepository | None = None
+    # job CK: packs and modules (the database), the sign-up cards (the files), custom fields,
+    # and which sign-up providers are on
+    packs: PacksRepository | None = None
+    pack_registry: PackRegistry | None = None
+    custom_fields: CustomFieldsRepository | None = None
+    auth_providers: AuthProvidersOut | None = None
 
 
 @dataclass(frozen=True)

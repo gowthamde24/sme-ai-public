@@ -336,7 +336,8 @@ def test_a_needed_account_gets_its_business_name_and_the_setup_is_idempotent() -
         {},
         {"business_type": "textiles"},
         {"language": "en"},
-        {"business_type": "bakery", "language": "en"},
+        # job CK: any pack-shaped code passes; the database says whether it is selectable
+        {"business_type": "Bakery Shop!", "language": "en"},
         {"business_type": "other", "language": "fr"},
         {"business_type": "other", "language": "en", "business_name": "Mine"},
         {"business_type": "other", "language": "en", "tenant_id": str(uuid.uuid4())},

@@ -222,6 +222,10 @@ def make_client(
     research_usage: Any = None,
     connectors: Any = None,
     business_profile: Any = None,
+    packs: Any = None,
+    pack_registry: Any = None,
+    custom_fields: Any = None,
+    auth_providers: Any = None,
     rate_limit: bool = False,
 ) -> tuple[TestClient, FakeRepository]:
     repo = repo or seeded_repository()
@@ -270,6 +274,10 @@ def make_client(
             research_usage=research_usage,
             connectors=connectors,
             business_profile=business_profile,
+            packs=packs,
+            pack_registry=pack_registry,
+            custom_fields=custom_fields,
+            auth_providers=auth_providers,
         ),
     )
     # a FIXED request id on every request: the error body carries it, and the tests that prove two

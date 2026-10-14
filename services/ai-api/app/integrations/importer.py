@@ -15,6 +15,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from app.crm.phone import canonical_phone
+from app.customfields import importing as custom
 from app.integrations.mapping import normalise
 from app.integrations.sheet import MAX_CELL, Grid
 from app.leads.csv_rows import _formula_like
@@ -23,6 +24,7 @@ from app.text_rules import has_hidden_characters
 
 ISSUE_CODES = (
     "formula_cell", "formula_like", "hidden_characters", "cell_too_long", "company_name_missing", "item_name_missing", "duplicate_in_file", "quantity_invalid", "status_unknown", "no_status_or_quantity",
+    *custom.ISSUE_CODES,
 )  # fmt: skip
 _NUMBER = re.compile(r"^-?[0-9]+([.,][0-9]+)?$")  # a plain number (even a negative one) is a number to a spreadsheet, not a formula
 OUT_OF_STOCK = frozenset(normalise(w) for w in ("out of stock", "sold out", "no stock", "nil", "none", "స్టాక్ లేదు", "అయిపోయింది", "खत्म", "स्टॉक नहीं"))
@@ -40,6 +42,7 @@ class Issue:
 class Prepared:
     rows: list[dict[str, Any]] = field(default_factory=list)  # import rows (customers) or {"name", "stock_status"} (stock), only the usable ones
     lines: list[int] = field(default_factory=list)  # the file line of each usable row
+    customs: list[dict[str, Any]] = field(default_factory=list)  # per usable row: {custom field code: parsed value} for the custom columns (customers only; job CK)
     notes: list[str | None] = field(default_factory=list)  # a closed note per usable row, or None
     issues: list[Issue] = field(default_factory=list)
     blank: int = 0
@@ -58,21 +61,39 @@ def _check_cell(grid: Grid, ri: int, ci: int, name: str, line: int) -> tuple[str
     return cell, None
 
 
-def prepare_customers(grid: Grid, mapping: dict[str, int]) -> Prepared:
+def prepare_customers(grid: Grid, mapping: dict[str, int], custom_defs: dict[str, dict[str, Any]] | None = None) -> Prepared:
+    """`custom_defs`: the business's ACTIVE contact custom fields by code. A mapped `custom:<code>` column is parsed by the field's kind; a required field with an empty cell is an issue whether or not
+    its column is mapped. A row with any issue is skipped whole (nothing is guessed)."""
     out = Prepared()
+    defs = custom_defs or {}
     for ri, row in enumerate(grid.rows):
         line = grid.lines[ri]
         if not any(row[ci].strip() for ci in mapping.values()) and not any((ri, ci) in grid.formulas for ci in mapping.values()):
             out.blank += 1
             continue
         item: dict[str, Any] = {}
+        cells: dict[str, str] = {}
         issue: Issue | None = None
         for fname, ci in mapping.items():
             cell, issue = _check_cell(grid, ri, ci, fname, line)
             if issue:
                 break
-            if cell:
+            code = custom.code_of(fname)
+            if code is not None:
+                cells[code] = cell
+            elif cell:
                 item[fname] = cell
+        values: dict[str, Any] = {}
+        if issue is None:
+            for code, d in defs.items():
+                value, bad = custom.parse_cell(d, cells.get(code, ""))
+                if bad is None and value is None and d["required"]:
+                    bad = "required_missing"
+                if bad:
+                    issue = Issue(line, bad, custom.target(code))
+                    break
+                if value is not None:
+                    values[code] = value
         if issue is None and not item.get("company_name"):
             issue = Issue(line, "company_name_missing", "company_name")
         if issue:
@@ -94,6 +115,7 @@ def prepare_customers(grid: Grid, mapping: dict[str, int]) -> Prepared:
         out.rows.append(item)
         out.lines.append(line)
         out.notes.append(note)
+        out.customs.append(values)
     return out
 
 

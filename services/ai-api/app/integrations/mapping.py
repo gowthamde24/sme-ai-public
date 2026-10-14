@@ -120,14 +120,16 @@ def mapping_from(suggestions: list[Suggestion]) -> dict[str, int]:
     return {s.field: s.index for s in suggestions if s.field}
 
 
-def validate_mapping(mapping: object, kind: str, width: int) -> dict[str, int]:
-    """A mapping from the client: {field: column index}. Every field must be known, every index inside the file, no column used twice, the required field present."""
+def validate_mapping(mapping: object, kind: str, width: int, custom_codes: frozenset[str] = frozenset()) -> dict[str, int]:
+    """A mapping from the client: {field: column index}. Every field must be known, every index inside the file, no column used twice, the required field present.
+    A customers file may also map `custom:<code>` for an active contact custom field (job CK, ADR 0084 part 2); `custom_codes` is the list of those codes."""
     fields = FIELDS[kind]
     if not isinstance(mapping, dict) or not mapping:
         raise ValueError("mapping_invalid")
     out: dict[str, int] = {}
     for f, idx in mapping.items():
-        if f not in fields or isinstance(idx, bool) or not isinstance(idx, int) or not 0 <= idx < width:
+        known = f in fields or (kind == "customers" and isinstance(f, str) and f.startswith("custom:") and f[len("custom:") :] in custom_codes)
+        if not known or isinstance(idx, bool) or not isinstance(idx, int) or not 0 <= idx < width:
             raise ValueError("mapping_invalid")
         out[f] = idx
     if len(set(out.values())) != len(out):

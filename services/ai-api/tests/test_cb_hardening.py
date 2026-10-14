@@ -63,6 +63,7 @@ def test_every_route_without_a_sign_in_has_a_rate_rule_and_is_on_the_known_list(
     known = {
         "/health", "/ready", "/v1/calendar/feed/{token_ics}", "/v1/policies/current",
         "/v1/push/public-key",  # job BY: the browser's push key (public by design)
+        "/v1/packs", "/v1/auth/providers",  # job CK: the sign-up cards and the sign-up providers (public by design, no tenant data)
         "/v1/webhooks/whatsapp", "/v1/webhooks/razorpay", "/v1/webhooks/cashfree", "/v1/webhooks/fake-payments",  # jobs BR, BZ: signed or secret-path webhooks
         "/v1/webhooks/exotel/{token}/missed-call", "/v1/webhooks/exotel/{token}/call-status",
     }

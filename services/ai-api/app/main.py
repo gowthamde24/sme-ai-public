@@ -1,6 +1,7 @@
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -29,6 +30,9 @@ from app.connectors.wiring import build_connectors
 from app.crm import repository as crm_repo
 from app.crm.repository import PostgrestCrmRepository
 from app.crm.routes import router as crm_router
+from app.customfields.errors import CustomFieldLimitError, CustomValueInvalidError
+from app.customfields.repository import PostgrestCustomFieldsRepository
+from app.customfields.routes import router as custom_fields_router
 from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.enquiries.routes import router as enquiries_router
@@ -70,6 +74,12 @@ from app.outbox import errors as outbox_errors
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.repository import PostgrestOutboxRepository
 from app.outbox.routes import router as outbox_router
+from app.packs.errors import ExampleAlreadyLoadedError, ModuleOffError
+from app.packs.providers import providers_from_settings
+from app.packs.registry import PackRegistry, default_directory
+from app.packs.repository import PostgrestPacksRepository
+from app.packs.routes import public_router as packs_public_router
+from app.packs.routes import router as packs_router
 from app.pricelists.repository import PostgrestPriceListRepository
 from app.pricelists.routes import router as pricelists_router
 from app.privacy import errors as privacy_errors
@@ -191,6 +201,12 @@ def build_runtime(settings: Settings) -> Runtime | None:
             settings, config.rest_url, f"{config.supabase_url}/auth/v1", config.anon_key
         ),
         business_profile=PostgrestBusinessProfileRepository(config.rest_url, config.anon_key),
+        packs=PostgrestPacksRepository(config.rest_url, config.anon_key),
+        pack_registry=PackRegistry(
+            Path(settings.packs_dir) if settings.packs_dir else default_directory()
+        ),
+        custom_fields=PostgrestCustomFieldsRepository(config.rest_url, config.anon_key),
+        auth_providers=providers_from_settings(settings),
     )
 
 
@@ -231,6 +247,24 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     repo.EmailNotConfirmed: ApiError(
         403, "email_not_confirmed", "Confirm your email address first: use the link we sent you."
+    ),
+    repo.BusinessTypeUnavailable: ApiError(
+        422,
+        "business_type_unavailable",
+        "That kind of business is not available yet. Choose one of the kinds on the sign-up page.",
+    ),
+    # Packs and custom fields (job CK). Fixed sentences: nothing from the data layer.
+    ModuleOffError: ApiError(
+        403, "module_off", "That is not part of this kind of business, so it is switched off."
+    ),
+    ExampleAlreadyLoadedError: ApiError(
+        409, "example_data_loaded", "The example data is already loaded."
+    ),
+    CustomValueInvalidError: ApiError(
+        422, "custom_value_invalid", "That value does not fit this field."
+    ),
+    CustomFieldLimitError: ApiError(
+        409, "custom_field_limit", "This business has the most fields it can have for that."
     ),
     repo.WorkspaceLimitReached: ApiError(
         409,
@@ -530,6 +564,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.research_usage,
                 runtime.connectors.repo if runtime.connectors is not None else None,
                 runtime.business_profile,
+                runtime.packs,
+                runtime.custom_fields,
             ):
                 if isinstance(
                     repository,
@@ -555,7 +591,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestIntegrationsRepository
                     | PostgrestResearchUsageRepository
                     | PostgrestConnectorsRepository
-                    | PostgrestBusinessProfileRepository,
+                    | PostgrestBusinessProfileRepository
+                    | PostgrestPacksRepository
+                    | PostgrestCustomFieldsRepository,
                 ):
                     repository.close()
 
@@ -673,6 +711,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(connectors_router)
     app.include_router(webhooks_router)
     app.include_router(business_profile_router)
+    app.include_router(packs_public_router)
+    app.include_router(packs_router)
+    app.include_router(custom_fields_router)
     app.include_router(accounting_export_router)
     app.include_router(spreadsheet_import_router)
     app.include_router(calendar_member_router)

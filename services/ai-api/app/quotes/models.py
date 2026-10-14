@@ -20,9 +20,11 @@ from pydantic import (
 )
 
 from app.crm.models import ApiUuid, _Strict
+from app.units import (
+    SaleUnit,  # job CK: the closed list of selling units (the database copy is packs.units)
+)
 
 CustomerKind = Literal["new", "repeat"]
-SaleUnit = Literal["piece", "set"]
 RejectCode = Literal["wrong_prices", "customer_changed", "duplicate", "withdrawn", "other"]
 WithdrawCode = Literal["price_changed", "customer_cancelled", "entered_in_error", "other"]
 QuoteStatus = Literal["draft", "approved", "rejected", "superseded"]

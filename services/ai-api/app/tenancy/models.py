@@ -60,8 +60,9 @@ class TenantWithPlanOut(TenantDetailOut, TenantPlanOut):
 class AccountSetupOut(_Out):
     """What this account still has to do after sign-up (job AD / D2).
 
-    `needed`: confirmed, terms accepted (or a Google / Facebook account), no business yet. `done`: the
-    setup was done (tenant_id says which business). `none`: nothing to do (an invited person).
+    `needed`: confirmed, terms accepted (or a Google / Facebook account), no business yet.
+    `done`: the setup was done (tenant_id says which business). `none`: nothing to do (an
+    invited person).
     """
 
     state: Literal["none", "needed", "done"]
@@ -70,10 +71,11 @@ class AccountSetupOut(_Out):
 
 
 class AccountSetupIn(BaseModel):
-    """The two choices of the first-login setup: the business type (a pack code from GET /v1/packs; the database
-    refuses one that is not selectable, SM702) and the language. The business type is the ONLY thing sign-up asks
-    (job CK); a business name typed at an e-mail sign-up is used if present, otherwise the business is called
-    "My business" until the activation checklist asks."""
+    """The two choices of the first-login setup: the business type (a pack code from
+    GET /v1/packs; the database refuses one that is not selectable, SM702) and the language.
+    The business type is the ONLY thing sign-up asks (job CK); a business name typed at an
+    e-mail sign-up is used if present, otherwise the business is called "My business" until
+    the activation checklist asks."""
 
     model_config = ConfigDict(extra="forbid")
 
