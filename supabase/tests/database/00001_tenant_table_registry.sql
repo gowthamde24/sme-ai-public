@@ -332,12 +332,43 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('customer_sites',
    $$insert into public.customer_sites (id, tenant_id, company_id, name, created_by) values (%2$L, %1$L, %3$L, 'Generic site', %5$L)$$,
    'name = name', $$delete from public.customer_sites where id = %2$L$$, true),
-  ('customer_invoices',
-   $$insert into public.customer_invoices (id, tenant_id, company_id, invoice_no, invoice_date, due_date, amount_paise, source, recorded_by) values (%2$L, %1$L, %3$L, 'G-' || left(%2$L, 8), date '2026-10-01', date '2026-10-31', 1000, 'manual', %5$L)$$,
-   'amount_paise = amount_paise', $$delete from public.customer_invoices where id = %2$L$$, false),
-  ('customer_payments',
-   $$insert into public.customer_payments (id, tenant_id, company_id, received_on, amount_paise, method, recorded_by) values (%2$L, %1$L, %3$L, date '2026-10-02', 500, 'cash', %5$L)$$,
-   'amount_paise = amount_paise', $$delete from public.customer_payments where id = %2$L$$, false),
+  -- job CP: the shared ledger (accounts and entries) replaced CN's two tables; each builder makes its own company so the one-account-per-party rule is never hit
+  ('ledger_accounts',
+   $$with c as (insert into public.companies (id, tenant_id, name) values (%2$L, %1$L, 'Ledger Co') returning id)
+     insert into public.ledger_accounts (id, tenant_id, company_id) select %2$L, %1$L, c.id from c$$,
+   'company_id = company_id', $$delete from public.ledger_accounts where id = %2$L$$, false),
+  ('ledger_entries',
+   $$with c as (insert into public.companies (id, tenant_id, name) values (%2$L, %1$L, 'Ledger Co') returning id),
+          a as (insert into public.ledger_accounts (id, tenant_id, company_id) select %2$L, %1$L, c.id from c returning id)
+     insert into public.ledger_entries (id, tenant_id, account_id, kind, direction, amount_paise, entry_date, due_date, invoice_no, source, recorded_by)
+       select %2$L, %1$L, a.id, 'charge', 'debit', 1000, date '2026-10-01', date '2026-10-31', 'G-' || left(%2$L, 8), 'manual', %5$L from a$$,
+   'amount_paise = amount_paise', $$delete from public.ledger_entries where id = %2$L$$, false),
+  -- job CP: campaigns, their lists and steps, and the call list. Written only by definer functions; the modules that guard them are OFF for the default pack of the fixture tenants (tests 11 and 12 call
+  -- tests.cn_guards_off() first); their own rules are proved in 100 to 103.
+  ('campaigns',
+   $$insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values (%2$L, %1$L, 'Generic campaign', 'payment_due', 'en', 'Payment of {{amount}} is due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, %5$L)$$,
+   'name = name', $$delete from public.campaigns where id = %2$L$$, true),
+  ('campaign_recipients',
+   $$with cmp as (insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values (%2$L, %1$L, 'Generic campaign', 'payment_due', 'en', 'Payment of {{amount}} is due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, %5$L) returning id)
+     insert into public.campaign_recipients (id, tenant_id, campaign_id, contact_id, lead_id, due_date, amount_paise, row_hash, created_by)
+       select %2$L, %1$L, cmp.id, %4$L, (select l.id from public.leads l where l.tenant_id = %1$L order by l.id limit 1), date '2026-10-01', 1000, repeat('a', 64), %5$L from cmp$$,
+   'row_hash = row_hash', $$delete from public.campaign_recipients where id = %2$L$$, false),
+  ('campaign_steps',
+   $$with cmp as (insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values (%2$L, %1$L, 'Generic campaign', 'payment_due', 'en', 'Payment of {{amount}} is due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, %5$L) returning id),
+          rcp as (insert into public.campaign_recipients (id, tenant_id, campaign_id, contact_id, lead_id, due_date, amount_paise, row_hash, created_by)
+                    select %2$L, %1$L, cmp.id, %4$L, (select l.id from public.leads l where l.tenant_id = %1$L order by l.id limit 1), date '2026-10-01', 1000, repeat('a', 64), %5$L from cmp returning id)
+     insert into public.campaign_steps (id, tenant_id, campaign_id, recipient_id, step_no, scheduled_for) select %2$L, %1$L, cmp.id, rcp.id, 1, now() + interval '1 day' from cmp, rcp$$,
+   'step_no = step_no', $$delete from public.campaign_steps where id = %2$L$$, false),
+  ('call_list_items',
+   $$with cmp as (insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values (%2$L, %1$L, 'Generic campaign', 'payment_due', 'en', 'Payment of {{amount}} is due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, %5$L) returning id),
+          ld as (select l.id as lead_id from public.leads l where l.tenant_id = %1$L order by l.id limit 1),
+          rcp as (insert into public.campaign_recipients (id, tenant_id, campaign_id, contact_id, lead_id, due_date, amount_paise, row_hash, created_by)
+                    select %2$L, %1$L, cmp.id, %4$L, ld.lead_id, date '2026-10-01', 1000, repeat('a', 64), %5$L from cmp, ld returning id),
+          cr as (insert into public.call_requests (id, tenant_id, lead_id, contact_id, reason, script_draft, language, request_sha256, requested_by)
+                   select %2$L, %1$L, ld.lead_id, %4$L, 'Generic reason', 'Generic script', 'en', repeat('b', 64), %5$L from ld returning id)
+     insert into public.call_list_items (id, tenant_id, campaign_id, recipient_id, call_request_id, lead_id, contact_id, step_no)
+       select %2$L, %1$L, cmp.id, rcp.id, cr.id, ld.lead_id, %4$L, 1 from cmp, rcp, cr, ld$$,
+   'attempts = attempts', $$delete from public.call_list_items where id = %2$L$$, true),
   ('customer_credit_limits',
    $$insert into public.customer_credit_limits (id, tenant_id, company_id, limit_paise, set_by) values (%2$L, %1$L, %3$L, 100000, %5$L) on conflict (tenant_id, company_id) do nothing$$,
    'limit_paise = limit_paise', $$delete from public.customer_credit_limits where id = %2$L$$, false),
@@ -562,10 +593,18 @@ select t, r, s, i, u, d from (values
   -- job CN: money and delivery tables are read by Owner / Admin / Sales (a Viewer reads none); the sites are read by every member; nobody writes directly.
   ('customer_sites', 'owner', true, false, false, false), ('customer_sites', 'admin', true, false, false, false),
   ('customer_sites', 'sales', true, false, false, false), ('customer_sites', 'viewer', true, false, false, false),
-  ('customer_invoices', 'owner', true, false, false, false), ('customer_invoices', 'admin', true, false, false, false),
-  ('customer_invoices', 'sales', true, false, false, false), ('customer_invoices', 'viewer', false, false, false, false),
-  ('customer_payments', 'owner', true, false, false, false), ('customer_payments', 'admin', true, false, false, false),
-  ('customer_payments', 'sales', true, false, false, false), ('customer_payments', 'viewer', false, false, false, false),
+  ('ledger_accounts', 'owner', true, false, false, false), ('ledger_accounts', 'admin', true, false, false, false),
+  ('ledger_accounts', 'sales', true, false, false, false), ('ledger_accounts', 'viewer', false, false, false, false),
+  ('ledger_entries', 'owner', true, false, false, false), ('ledger_entries', 'admin', true, false, false, false),
+  ('ledger_entries', 'sales', true, false, false, false), ('ledger_entries', 'viewer', false, false, false, false),
+  ('campaigns', 'owner', true, false, false, false), ('campaigns', 'admin', true, false, false, false),
+  ('campaigns', 'sales', true, false, false, false), ('campaigns', 'viewer', false, false, false, false),
+  ('campaign_recipients', 'owner', true, false, false, false), ('campaign_recipients', 'admin', true, false, false, false),
+  ('campaign_recipients', 'sales', true, false, false, false), ('campaign_recipients', 'viewer', false, false, false, false),
+  ('campaign_steps', 'owner', true, false, false, false), ('campaign_steps', 'admin', true, false, false, false),
+  ('campaign_steps', 'sales', true, false, false, false), ('campaign_steps', 'viewer', false, false, false, false),
+  ('call_list_items', 'owner', true, false, false, false), ('call_list_items', 'admin', true, false, false, false),
+  ('call_list_items', 'sales', true, false, false, false), ('call_list_items', 'viewer', false, false, false, false),
   ('customer_credit_limits', 'owner', true, false, false, false), ('customer_credit_limits', 'admin', true, false, false, false),
   ('customer_credit_limits', 'sales', true, false, false, false), ('customer_credit_limits', 'viewer', false, false, false, false),
   ('material_quote_policies', 'owner', true, false, false, false), ('material_quote_policies', 'admin', true, false, false, false),

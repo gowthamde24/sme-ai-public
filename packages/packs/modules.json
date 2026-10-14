@@ -100,8 +100,8 @@
     {
       "code": "campaigns",
       "exists_today": false,
-      "description": "Reminder campaigns, one approval per campaign (wave 3)",
-      "guard": "future"
+      "description": "Reminder campaigns: one approval per campaign, a call list and results (reminders only, no promotions)",
+      "guard": "tables"
     },
     {
       "code": "call_list",
