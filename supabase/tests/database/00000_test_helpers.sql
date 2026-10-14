@@ -546,6 +546,55 @@ begin
     (tests.rid(p || '_er_cv3'), t, tests.rid(p || '_er_cf3'), 'contact', k, null, null, date '1980-05-17', null, null),
     (tests.rid(p || '_er_cv4'), t, tests.rid(p || '_er_cf4'), 'contact', k, null, null, null, true, null),
     (tests.rid(p || '_er_cv5'), t, tests.rid(p || '_er_cf5'), 'contact', k, null, null, null, null, array['a1', 'b2']);
+  -- job CN: a site of the company (its words are the COMPANY's canary, never the person's), and one trip with a proof (the driver's and the receiver's names and the driver's phone are the person's canary,
+  -- as a whole field or a number). The modules that guard these tables are off for the fixture tenant, so their guards are switched off inside this transaction.
+  perform tests.cn_guards_off();
+  insert into public.customer_sites (id, tenant_id, company_id, name, address_line, city, pin, map_lat, map_lng, access_notes, site_contact_id, created_by) values
+    (tests.rid(p || '_er_site'), t, c, 'Kzv9 site', 'Plot 9, Kzv9pur', 'Kzv9pur', '500001', 17.385044, 78.486671, 'Lane behind the Kzv9 temple', k, tests.uid(p || '_owner'));
+  insert into public.material_quote_policies (id, tenant_id, version_no, effective_from, policy, content_sha256) values
+    (tests.rid(p || '_er_mp'), t, 1, current_date, '{"default_wastage_bps":500,"round_to_pallet":false,"bill_wastage":true,"transport":{"kind":"none"},"advance_bps":5000,"credit_days":0,"validity_days":7,"rounding_mode":"half_up"}'::jsonb, repeat('5', 64));
+  insert into public.material_quotes (id, tenant_id, quote_no, requirement_id, enquiry_id, lead_id, status, policy_version_id, engine_version, request_text, result_text, canonical_hash, as_of, valid_until, trips,
+                                      material_paise, transport_paise, handling_paise, laying_paise, tax_paise, total_paise, advance_paise, balance_paise, needs_owner_approval, rejected_by, rejected_at, reject_code)
+  values (tests.rid(p || '_er_mq'), t, 1, tests.rid(p || '_er_req'), tests.rid(p || '_er_enq'), l, 'rejected', tests.rid(p || '_er_mp'), '1.0.0', '{}', '{}', repeat('6', 64), current_date, current_date, 1,
+          0, 0, 0, 0, 0, 0, 0, 0, false, tests.uid(p || '_owner'), now(), 'other');
+  insert into public.order_policy_versions (id, tenant_id, version_no, effective_from, advance_required, dispatch_requires_advance, cancel_allowed_until_state, allow_zero_value_orders, content_sha256)
+  values (tests.rid(p || '_er_op'), t, (select coalesce(max(version_no), 0) + 1 from public.order_policy_versions where tenant_id = t), current_date, true, true, 'in_preparation', false, repeat('4', 64));
+  insert into public.orders (id, tenant_id, order_no, quote_id, material_quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
+  values (tests.rid(p || '_er_mo'), t, (select coalesce(max(order_no), 0) + 1 from public.orders where tenant_id = t), null, tests.rid(p || '_er_mq'), tests.rid(p || '_er_enq'), tests.rid(p || '_er_req'), l, 0, 0, current_date,
+          tests.rid(p || '_er_op'));
+  insert into public.delivery_trips (id, tenant_id, order_id, trip_no, challan_no, planned_date, vehicle_no, driver_name, driver_phone, created_by) values
+    (tests.rid(p || '_er_trip'), t, tests.rid(p || '_er_mo'), 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = t), current_date, 'QV09 AB 1234', 'Zed Qxjv', '+91 98765 43210', tests.uid(p || '_owner'));
+  insert into public.delivery_proofs (id, trip_id, tenant_id, received_by, photo_id, bucket, path, width, height, bytes, recorded_by) values
+    (tests.rid(p || '_er_pod'), tests.rid(p || '_er_trip'), t, 'Zed Qxjv', tests.rid(p || '_er_podphoto'), app.pod_bucket(t), tests.rid(p || '_er_trip')::text || '/' || tests.rid(p || '_er_podphoto')::text || '.jpg', 640, 640, 1000, tests.uid(p || '_owner'));
+end $$;
+
+-- job CN: the generic registry tests (11, 12) and the erasure planter insert into tables guarded by modules that are OFF for the default pack the fixture tenants run (sites, dues, materials, deliveries).
+-- Inside the calling transaction (DDL is transactional) the guards of every module that is off for tenant 'a' are switched off; the guards themselves are proved in 96 to 99.
+create or replace function tests.cn_guards_off() returns void
+language plpgsql as $$
+declare
+  g record;
+begin
+  for g in
+    select n.nspname as sch, c.relname as tbl
+      from pg_trigger t join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
+     where t.tgname = 'module_guard' and not t.tgisinternal and t.tgenabled <> 'D'
+       and not app.module_enabled(tests.tid('a'), (string_to_array(encode(t.tgargs, 'escape'), '\000'))[1])
+  loop
+    execute format('alter table %I.%I disable trigger module_guard', g.sch, g.tbl);
+  end loop;
+  alter table public.catalogue_items disable trigger catalogue_items_kind_insert;  -- the same guard for a material item (its function is the catalogue's own)
+end $$;
+
+-- job CN: put fixture tenant p on the building-materials pack (the newest version) with its custom fields, as a sign-up does.
+create or replace function tests.cn_construction(p text) returns void
+language plpgsql as $$
+declare
+  v packs.pack_versions;
+begin
+  select * into v from packs.pack_versions x where x.code = 'construction_materials' order by x.version desc limit 1;
+  update packs.workspace_pack w set pack_code = v.code, pack_version = v.version, source = 'operator' where w.tenant_id = tests.tid(p);
+  perform app.apply_pack_fields(tests.tid(p), v.code, v.version, tests.uid(p || '_owner'));
 end $$;
 
 -- Every place a pattern still appears in tenant p, as 'table.column#row id' strings (text, text[] and jsonb columns of EVERY table with a

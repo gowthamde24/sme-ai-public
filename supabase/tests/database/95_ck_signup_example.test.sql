@@ -49,7 +49,7 @@ select pg_temp.ident('joined', 'google', '{"email": "joined@signup.test", "email
 
 -- ============================================================================ A. the pack is chosen at sign-up
 select is(tests.scalar_as(tests.uid('con'), $$select (public.complete_setup('construction_materials', 'en') ->> 'created')$$), 'true', 'A1 ALLOW: a construction business signs up with its business type');
-select is((select pack_code || ':' || pack_version || ':' || source from packs.workspace_pack where tenant_id = pg_temp.biz('con')), 'construction_materials:1:signup', 'A2 and runs that pack (source signup)');
+select is((select pack_code || ':' || pack_version || ':' || source from packs.workspace_pack where tenant_id = pg_temp.biz('con')), 'construction_materials:2:signup', 'A2 and runs that pack (source signup)');
 select is((select business_type from public.account_setups where user_id = tests.uid('con')), 'construction_materials', 'A3 the pack code is the recorded business type');
 select is((select t.name from public.tenants t where t.id = pg_temp.biz('con')), 'Sai Constructions', 'A4 the name typed at an e-mail sign-up is still used when there is one');
 select is((select count(*) from public.custom_field_defs where tenant_id = pg_temp.biz('con') and entity = 'contact' and source = 'pack'), 2::bigint, 'A5 the pack''s two contact fields were made for the business');
