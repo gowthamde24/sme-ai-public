@@ -34,10 +34,10 @@ create function pg_temp.bucket(p_company uuid, p_key text, p_as_of text default 
 $$;
 
 -- ============================================================================ A. structure, grants, RLS, module
-select is((select count(*) from pg_class where relname in ('customer_invoices', 'customer_payments', 'customer_credit_limits') and relkind = 'r' and relrowsecurity and relforcerowsecurity), 3::bigint, 'A1 RLS is enabled and forced on the three tables');
-select is((select count(*) from information_schema.role_table_grants where table_schema = 'public' and table_name in ('customer_invoices', 'customer_payments', 'customer_credit_limits') and grantee = 'authenticated' and privilege_type <> 'SELECT'), 0::bigint, 'A2 a client can only read them');
-select is((select count(*) from information_schema.role_table_grants where table_schema = 'public' and table_name in ('customer_invoices', 'customer_payments', 'customer_credit_limits') and grantee in ('anon', 'public')), 0::bigint, 'A3 anon and PUBLIC hold nothing');
-select is(pg_temp.try('a_owner', format($$insert into public.customer_invoices (id, tenant_id, company_id, invoice_no, invoice_date, due_date, amount_paise, source, recorded_by) values (gen_random_uuid(), %L, %L, 'X-1', date '2026-10-01', date '2026-10-02', 100, 'manual', %L)$$, tests.tid('a'), tests.rid('a_company'), tests.uid('a_owner'))), '42501', 'A4 DENY: a client cannot write an invoice directly');
+select is((select count(*) from pg_class where relname in ('ledger_accounts', 'ledger_entries', 'customer_credit_limits') and relkind = 'r' and relrowsecurity and relforcerowsecurity), 3::bigint, 'A1 RLS is enabled and forced on the three tables');
+select is((select count(*) from information_schema.role_table_grants where table_schema = 'public' and table_name in ('ledger_accounts', 'ledger_entries', 'customer_credit_limits') and grantee = 'authenticated' and privilege_type <> 'SELECT'), 0::bigint, 'A2 a client can only read them');
+select is((select count(*) from information_schema.role_table_grants where table_schema = 'public' and table_name in ('ledger_accounts', 'ledger_entries', 'customer_credit_limits') and grantee in ('anon', 'public')), 0::bigint, 'A3 anon and PUBLIC hold nothing');
+select is(pg_temp.try('a_owner', format($$insert into public.ledger_entries (id, tenant_id, account_id, kind, direction, amount_paise, entry_date, due_date, invoice_no, source, recorded_by) values (gen_random_uuid(), %L, gen_random_uuid(), 'charge', 'debit', 100, date '2026-10-01', date '2026-10-02', 'X-1', 'manual', %L)$$, tests.tid('a'), tests.uid('a_owner'))), '42501', 'A4 DENY: a client cannot write an invoice directly');
 select is(pg_temp.inv('b_owner', 'b', tests.rid('b_inv'), tests.rid('b_company'), 'B-1', '2026-10-01', '2026-10-31', 10000), 'SM701', 'A5 textiles: dues are not on (SM701)');
 select is(pg_temp.pay('b_owner', 'b', tests.rid('b_pay'), tests.rid('b_company'), '2026-10-01', 10000), 'SM701', 'A6 nor payments');
 select is(pg_temp.try('b_owner', format($$select public.dues_statement(%L, %L)$$, tests.tid('b'), tests.rid('b_company'))), 'SM701', 'A7 nor the statement');
@@ -59,14 +59,14 @@ select is(pg_temp.inv('a_owner', 'a', tests.rid('i5'), tests.rid('a_company'), '
 select is(pg_temp.inv('a_owner', 'a', tests.rid('i5'), tests.rid('a_company'), 'INV-5', '2019-12-31', '2026-11-10', 100), '22023', 'B13 a date before 2020 is invalid');
 select is(pg_temp.inv('a_owner', 'a', tests.rid('i1'), tests.rid('a_company'), 'INV-1', '2026-06-01', '2026-07-01', 1000000), 'ok', 'B14 an exact repeat replays');
 select is(pg_temp.inv('a_owner', 'a', tests.rid('i1'), tests.rid('a_company'), 'INV-1', '2026-06-01', '2026-07-01', 1000001), '23505', 'B15 the same id with other figures is the constant conflict');
-select is((select count(*) from public.customer_invoices where tenant_id = tests.tid('a')), 4::bigint, 'B16 four invoices, none from a refusal');
+select is((select count(*) from public.ledger_entries where tenant_id = tests.tid('a') and kind = 'charge'), 4::bigint, 'B16 four invoices, none from a refusal');
 select is(pg_temp.try('a_owner', format($$select public.invoice_record(%L, %L, %L, 'INV-X', date '2026-10-01', date '2026-10-31', 100, %L)$$, tests.rid('i6'), tests.tid('a'), tests.rid('a_company'), gen_random_uuid())), '23503', 'B17 an order that is not this business''s cannot be linked');
-select is(pg_temp.val('a_viewer', format($$select count(*)::text from public.customer_invoices where tenant_id = %L$$, tests.tid('a'))), '0', 'B18 a Viewer reads no invoice (money)');
-select is(pg_temp.val('a_sales', format($$select count(*)::text from public.customer_invoices where tenant_id = %L$$, tests.tid('a'))), '4', 'B19 Sales do');
-select is(pg_temp.val('b_owner', format($$select count(*)::text from public.customer_invoices where tenant_id = %L$$, tests.tid('a'))), '0', 'B20 another business sees none');
-select is(pg_temp.try('a_owner', format($$update public.customer_invoices set amount_paise = 1 where id = %L$$, tests.rid('i1'))), '42501', 'B21 DENY: an invoice is never edited by a client');
-select is(pg_temp.sc(format($$update public.customer_invoices set amount_paise = 1 where id = %L$$, tests.rid('i1'))), '42501', 'B22 nor by any session: only voiding changes a row');
-select is(pg_temp.sc($$delete from public.customer_invoices$$), '42501', 'B23 nor deleted');
+select is(pg_temp.val('a_viewer', format($$select count(*)::text from public.ledger_entries where kind = 'charge' and tenant_id = %L$$, tests.tid('a'))), '0', 'B18 a Viewer reads no invoice (money)');
+select is(pg_temp.val('a_sales', format($$select count(*)::text from public.ledger_entries where kind = 'charge' and tenant_id = %L$$, tests.tid('a'))), '4', 'B19 Sales do');
+select is(pg_temp.val('b_owner', format($$select count(*)::text from public.ledger_entries where kind = 'charge' and tenant_id = %L$$, tests.tid('a'))), '0', 'B20 another business sees none');
+select is(pg_temp.try('a_owner', format($$update public.ledger_entries set amount_paise = 1 where id = %L$$, tests.rid('i1'))), '42501', 'B21 DENY: an invoice is never edited by a client');
+select is(pg_temp.sc(format($$update public.ledger_entries set amount_paise = 1 where id = %L$$, tests.rid('i1'))), '42501', 'B22 nor by any session: only voiding changes a row');
+select is(pg_temp.sc($$delete from public.ledger_entries$$), '42501', 'B23 nor deleted');
 
 -- ============================================================================ C. payments and voiding
 select is(pg_temp.pay('a_owner', 'a', tests.rid('p1'), tests.rid('a_company'), '2026-09-01', 1200000), 'ok', 'C1 ALLOW: a payment of Rs 12,000 on 1 Sept');
@@ -83,7 +83,7 @@ select is(pg_temp.try('a_sales', format($$select public.payment_void(%L, %L)$$, 
 select is(pg_temp.try('a_admin', format($$select public.payment_void(%L, %L)$$, tests.tid('a'), tests.rid('p2'))), 'ok', 'C12 ALLOW: the Admin voids a payment');
 select is(pg_temp.try('a_admin', format($$select public.payment_void(%L, %L)$$, tests.tid('a'), tests.rid('p2'))), 'SM782', 'C13 a payment is voided once (SM782)');
 select is(pg_temp.try('b_owner', format($$select public.payment_void(%L, %L)$$, tests.tid('b'), tests.rid('p1'))), '23503', 'C14 another business cannot void it (not found)');
-select is(pg_temp.sc(format($$update public.customer_payments set amount_paise = 1 where id = %L$$, tests.rid('p2'))), '42501', 'C15 a voided payment never changes again');
+select is(pg_temp.sc(format($$update public.ledger_entries set amount_paise = 1 where id = %L$$, tests.rid('p2'))), '42501', 'C15 a voided payment never changes again');
 
 -- ============================================================================ D. the ledger rules, worked by hand
 -- INV-1 Rs 10,000 (1 Jun, due 1 Jul), INV-2 Rs 20,000 (1 Aug, due 1 Sep), INV-3 Rs 5,000 (20 Sep, due 20 Oct), INV-4 Rs 1,000 (10 Oct, due 10 Nov); paid Rs 12,000 on 1 Sept.
@@ -150,7 +150,7 @@ select is(pg_temp.try('a_owner', format($$select public.invoices_import(%L, %L, 
     jsonb_build_object('company_id', tests.rid('b_company'), 'invoice_no', 'T-102', 'invoice_date', '2026-09-03', 'due_date', '2026-10-02', 'amount_paise', 5),
     jsonb_build_object('company_id', tests.rid('a_company2'), 'invoice_no', 'T-103', 'invoice_date', 'not a date', 'due_date', '2026-10-02', 'amount_paise', 5),
     jsonb_build_object('company_id', tests.rid('a_company2'), 'invoice_no', 'T-104', 'invoice_date', '2026-09-03', 'due_date', '2026-09-02', 'amount_paise', 5))::text)), 'ok', 'F1 ALLOW: an export of six rows is read');
-select is((select count(*) from public.customer_invoices where tenant_id = tests.tid('a') and source = 'import'), 2::bigint, 'F2 two rows were added; the others were skipped, not fatal');
+select is((select count(*) from public.ledger_entries where tenant_id = tests.tid('a') and kind = 'charge' and source = 'import'), 2::bigint, 'F2 two rows were added; the others were skipped, not fatal');
 select is(pg_temp.val('a_owner', format($$select (public.invoices_import(%L, %L, %L::jsonb) ->> 'added')$$, tests.tid('a'), tests.rid('batch1'),
   jsonb_build_array(
     jsonb_build_object('company_id', tests.rid('a_company2'), 'invoice_no', 'T-100', 'invoice_date', '2026-09-01', 'due_date', '2026-09-30', 'amount_paise', 100000),
@@ -159,7 +159,7 @@ select is(pg_temp.val('a_owner', format($$select (public.invoices_import(%L, %L,
     jsonb_build_object('company_id', tests.rid('b_company'), 'invoice_no', 'T-102', 'invoice_date', '2026-09-03', 'due_date', '2026-10-02', 'amount_paise', 5),
     jsonb_build_object('company_id', tests.rid('a_company2'), 'invoice_no', 'T-103', 'invoice_date', 'not a date', 'due_date', '2026-10-02', 'amount_paise', 5),
     jsonb_build_object('company_id', tests.rid('a_company2'), 'invoice_no', 'T-104', 'invoice_date', '2026-09-03', 'due_date', '2026-09-02', 'amount_paise', 5))::text)), '0', 'F3 the same file again adds nothing (a retry)');
-select is((select count(*) from public.customer_invoices where tenant_id = tests.tid('a') and source = 'import'), 2::bigint, 'F4 ... and nothing is added');
+select is((select count(*) from public.ledger_entries where tenant_id = tests.tid('a') and kind = 'charge' and source = 'import'), 2::bigint, 'F4 ... and nothing is added');
 select is(pg_temp.val('a_owner', format($$select (select string_agg(e ->> 'reason', ',' order by (e ->> 'row')::int) from jsonb_array_elements(public.invoices_import(%L, %L, %L::jsonb) -> 'skipped') e)$$, tests.tid('a'), tests.rid('batch2'),
   jsonb_build_array(
     jsonb_build_object('company_id', tests.rid('a_company2'), 'invoice_no', 'T-101', 'invoice_date', '2026-09-02', 'due_date', '2026-10-01', 'amount_paise', 200000),
