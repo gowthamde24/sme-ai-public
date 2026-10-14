@@ -2,12 +2,12 @@
 -- its manifest), another removes it.
 --
 --   packs.example_batches   one row per load: who, when, from which pack version, and when it was removed. At most ONE batch is live per business.
---   packs.example_rows      every row a load made (table and id) with the `updated_at` it had when it was made. Ids only: no personal data. No client grant.
+--   packs.example_rows      every row a load made (table and id) with a fingerprint (MD5 of the row's contents without `updated_at`) taken when it was made. Ids and a hash only: no personal data. No client grant.
 --
 -- Clearly labelled, three ways: every sample name starts with "Example:", a sample lead's source is "Example data", and the batch is recorded and listed by GET .../example-data.
 -- A sample contact has NO phone number and NO e-mail address: nothing can ever be sent to it (the outbox needs a way to reach a person), and nothing in it could be real.
 --
--- Removable, and safe to remove: the removal deletes ONLY the rows the load made, ONLY while they are unchanged since the load (same updated_at) and ONLY while nothing else points at them (a quote, an
+-- Removable, and safe to remove: the removal deletes ONLY the rows the load made, ONLY while they are unchanged since the load (the same fingerprint of the row's contents, `updated_at` aside) and ONLY while nothing else points at them (a quote, an
 -- order or a message that uses a sample row keeps it). A row the person changed or used is KEPT and reported, never deleted. Owner or Admin; the delete is of sample rows by a person's explicit act, which is
 -- the approval path (non-negotiable 3).
 --
@@ -36,7 +36,7 @@ create table packs.example_rows (
   tenant_id  uuid not null references public.tenants (id) on delete restrict,
   table_name text not null check (table_name in ('companies', 'contacts', 'leads', 'products')),
   row_id     uuid not null,
-  made_at    timestamptz not null,
+  made_hash  text not null check (made_hash ~ '^[0-9a-f]{32}$'),
   primary key (batch_id, table_name, row_id)
 );
 create index example_rows_tenant_idx on packs.example_rows (tenant_id, batch_id);
@@ -118,14 +118,14 @@ begin
 
   for e in select * from jsonb_array_elements(coalesce(v_m -> 'companies', '[]'::jsonb)) loop
     insert into public.companies (tenant_id, name, type, city) values (p_tenant_id, e ->> 'name', (e ->> 'type')::public.company_type, e ->> 'city') returning id into v_id;
-    insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_at) select v_batch.id, p_tenant_id, 'companies', c.id, c.updated_at from public.companies c where c.id = v_id;
+    insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_hash) select v_batch.id, p_tenant_id, 'companies', c.id, md5((to_jsonb(c) - 'updated_at')::text) from public.companies c where c.id = v_id;
     v_ids := v_ids || jsonb_build_object('company:' || (e ->> 'key'), v_id);
     v_counts := jsonb_set(v_counts, '{companies}', to_jsonb((v_counts ->> 'companies')::integer + 1));
   end loop;
   for e in select * from jsonb_array_elements(coalesce(v_m -> 'contacts', '[]'::jsonb)) loop
     v_co := case when e ->> 'company' is null then null else (v_ids ->> ('company:' || (e ->> 'company')))::uuid end;
     insert into public.contacts (tenant_id, company_id, full_name) values (p_tenant_id, v_co, e ->> 'full_name') returning id into v_id;
-    insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_at) select v_batch.id, p_tenant_id, 'contacts', c.id, c.updated_at from public.contacts c where c.id = v_id;
+    insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_hash) select v_batch.id, p_tenant_id, 'contacts', c.id, md5((to_jsonb(c) - 'updated_at')::text) from public.contacts c where c.id = v_id;
     v_ids := v_ids || jsonb_build_object('contact:' || (e ->> 'key'), v_id);
     v_counts := jsonb_set(v_counts, '{contacts}', to_jsonb((v_counts ->> 'contacts')::integer + 1));
   end loop;
@@ -133,14 +133,14 @@ begin
     v_co := case when e ->> 'company' is null then null else (v_ids ->> ('company:' || (e ->> 'company')))::uuid end;
     v_ct := case when e ->> 'contact' is null then null else (v_ids ->> ('contact:' || (e ->> 'contact')))::uuid end;
     insert into public.leads (tenant_id, company_id, contact_id, source) values (p_tenant_id, v_co, v_ct, e ->> 'source') returning id into v_id;
-    insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_at) select v_batch.id, p_tenant_id, 'leads', l.id, l.updated_at from public.leads l where l.id = v_id;
+    insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_hash) select v_batch.id, p_tenant_id, 'leads', l.id, md5((to_jsonb(l) - 'updated_at')::text) from public.leads l where l.id = v_id;
     v_counts := jsonb_set(v_counts, '{leads}', to_jsonb((v_counts ->> 'leads')::integer + 1));
   end loop;
   for e in select * from jsonb_array_elements(coalesce(v_m -> 'products', '[]'::jsonb)) loop
     insert into public.products (tenant_id, sku, name, unit, category) values (p_tenant_id, e ->> 'sku', e ->> 'name', e ->> 'unit', e ->> 'category')
     on conflict do nothing returning id into v_id;
     if v_id is not null then
-      insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_at) select v_batch.id, p_tenant_id, 'products', p.id, p.updated_at from public.products p where p.id = v_id;
+      insert into packs.example_rows (batch_id, tenant_id, table_name, row_id, made_hash) select v_batch.id, p_tenant_id, 'products', p.id, md5((to_jsonb(p) - 'updated_at')::text) from public.products p where p.id = v_id;
       v_counts := jsonb_set(v_counts, '{products}', to_jsonb((v_counts ->> 'products')::integer + 1));
     end if;
     v_id := null;
@@ -165,7 +165,7 @@ declare
   r         record;
   v_removed jsonb := jsonb_build_object('companies', 0, 'contacts', 0, 'leads', 0, 'products', 0);
   v_kept    jsonb := jsonb_build_object('companies', 0, 'contacts', 0, 'leads', 0, 'products', 0);
-  v_updated timestamptz;
+  v_hash    text;
   v_ok      boolean;
 begin
   if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin']::public.app_role[]) then
@@ -178,15 +178,15 @@ begin
   end if;
   -- dependants first: leads, contacts, companies, products
   for r in
-    select x.table_name, x.row_id, x.made_at from packs.example_rows x where x.batch_id = v_batch.id
+    select x.table_name, x.row_id, x.made_hash from packs.example_rows x where x.batch_id = v_batch.id
      order by case x.table_name when 'leads' then 1 when 'contacts' then 2 when 'companies' then 3 else 4 end, x.row_id
   loop
-    execute format('select updated_at from public.%I where tenant_id = $1 and id = $2', r.table_name) into v_updated using p_tenant_id, r.row_id;
-    if v_updated is null then
+    execute format('select md5((to_jsonb(t) - ''updated_at'')::text) from public.%I t where t.tenant_id = $1 and t.id = $2', r.table_name) into v_hash using p_tenant_id, r.row_id;
+    if v_hash is null then
       continue;  -- already gone
     end if;
     v_ok := false;
-    if v_updated = r.made_at then
+    if v_hash = r.made_hash then
       begin
         execute format('delete from public.%I where tenant_id = $1 and id = $2', r.table_name) using p_tenant_id, r.row_id;
         v_ok := true;
