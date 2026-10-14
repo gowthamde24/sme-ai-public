@@ -53,6 +53,16 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "../../tests/integration/test_ca_*.py" = ["E501"]
 # job CB: the hardening layer is documented in long lines
 "app/hardening/*" = ["E501"]
+# job CK: packs, custom fields and their tests read like the blueprint and the ADR they implement (long lines)
+"app/packs/*" = ["E501"]
+"app/customfields/*" = ["E501"]
+"app/units.py" = ["E501"]
+"tests/test_ck_*.py" = ["E501"]
+"tests/test_migration_copies_ck.py" = ["E501"]
+"../../tests/integration/test_ck_*.py" = ["E501"]
+"../../scripts/packs_check.py" = ["E501"]
+"../../scripts/pack_migration.py" = ["E501"]
+"../../scripts/new_pack.py" = ["E501"]
 "tests/test_cb_*.py" = ["E501"]
 "../../tests/integration/test_cb_*.py" = ["E501"]
 # job CD: the error module, the WhatsApp tooling and their tests read like their documentation (long lines)

@@ -10,6 +10,8 @@ new pack is a NEW migration. Every synced module and pack carries a marker comme
 The manifest stored in the database is the pack.json content without its `$schema` line; its SHA-256 is taken over the canonical JSON (sorted keys, no spaces, UTF-8), so the integration test and this
 script agree on the same bytes."""
 
+# ruff: noqa: S608 - this script WRITES a migration file from reviewed JSON; it executes no SQL
+
 from __future__ import annotations
 
 import argparse

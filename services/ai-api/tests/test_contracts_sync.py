@@ -1,6 +1,7 @@
 """packages/contracts/crm.schema.json and crm.ts are generated from the API models."""
 
 import json
+import re
 from pathlib import Path
 
 from app.crm.contracts import schema_text, ts_text
@@ -197,3 +198,62 @@ def test_an_erasure_result_cannot_carry_a_value() -> None:
     result = defs["ErasureResultOut"]["properties"]
     assert result["counts"]["additionalProperties"] == {"type": "integer"}
     assert set(defs["ReviewItem"]["properties"]) == {"table", "column", "id"}
+
+
+# ==== packs, modules, custom fields, example data and sign-up providers (job CK) ====
+def test_packs_schema_and_typescript_are_up_to_date() -> None:
+    from app.packs import contracts
+
+    assert (CONTRACTS / "packs.schema.json").read_text() == contracts.schema_text(), (
+        "run `make contracts`"
+    )
+    assert (CONTRACTS / "packs.ts").read_text() == contracts.ts_text(), "run `make contracts`"
+
+
+def test_the_packs_barrel_has_no_duplicate_names() -> None:
+    packs = set(
+        re.findall(r"export (?:interface|type) (\w+)", (CONTRACTS / "packs.ts").read_text())
+    )
+    for other in ("crm", "evidence", "leads", "agents", "erasure"):
+        names = set(
+            re.findall(r"export (?:interface|type) (\w+)", (CONTRACTS / f"{other}.ts").read_text())
+        )
+        assert not packs & names, (
+            f"duplicate export names with {other} break the barrel: {packs & names}"
+        )
+    assert 'export * from "./packs";' in (CONTRACTS / "index.ts").read_text()
+
+
+def test_the_custom_field_requests_forbid_unknown_and_server_owned_properties() -> None:
+    defs = json.loads((CONTRACTS / "packs.schema.json").read_text())["$defs"]
+    for name in ("CustomFieldCreateIn", "CustomFieldPatchIn", "CustomValuesIn"):
+        assert defs[name]["additionalProperties"] is False, name
+    # personal-data class, source, tenant and position of a new field are never sent by a client
+    assert not set(defs["CustomFieldCreateIn"]["properties"]) & {
+        "pii_class",
+        "source",
+        "tenant_id",
+        "mergeable",
+        "position",
+        "active",
+        "id",
+    }
+    # a field's code, kind and entity never change
+    assert not set(defs["CustomFieldPatchIn"]["properties"]) & {
+        "code",
+        "kind",
+        "entity",
+        "pii_class",
+        "source",
+        "choices",
+    }
+
+
+def test_a_pack_response_names_modules_and_labels_never_a_code_branch() -> None:
+    defs = json.loads((CONTRACTS / "packs.schema.json").read_text())["$defs"]
+    pack = defs["WorkspacePackOut"]
+    assert {"pack_id", "version", "modules", "labels", "core_tab", "units", "validated"} <= set(
+        pack["required"]
+    )
+    assert pack["additionalProperties"] is False
+    assert defs["AuthProvidersOut"]["required"] == ["email", "google", "facebook"]

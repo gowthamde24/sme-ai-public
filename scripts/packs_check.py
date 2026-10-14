@@ -194,7 +194,8 @@ def pack_ids_in_code(packs_dir: Path = PACKS) -> list[str]:
     ids = pack_ids(packs_dir)
     if not ids:
         return []
-    literal = re.compile(r"""(["'`])(%s)\1""" % "|".join(re.escape(i) for i in ids))
+    alternatives = "|".join(re.escape(i) for i in ids)
+    literal = re.compile(rf"""(["'`])({alternatives})\1""")
     hits: list[str] = []
     allowed = _allowed()
     for path in _code_files():

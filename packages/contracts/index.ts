@@ -48,7 +48,8 @@ export interface AccountSetup {
   business_name: string | null;
 }
 
-/** POST /v1/account/setup body is exactly { business_type: "textiles" | "construction" | "other", language: "en" | "te" | "hi" | "kn" }. */
+/** POST /v1/account/setup body is exactly { business_type: string, language: "en" | "te" | "hi" | "kn", accepted_terms_version?: string, accepted_privacy_version?: string }.
+ * `business_type` is a pack id from GET /v1/packs (job CK): sign-up asks the business type and nothing else. A type that is not selectable is a 422 `business_type_unavailable`. */
 export interface AccountSetupResult {
   tenant_id: string;
   /** false for a repeat (double click, second tab): the same business, nothing new */
@@ -100,3 +101,7 @@ export * from "./agents";
 /** Erasure contracts (T006b, ADR 0014): generated from the API models by `make contracts`. A result holds counts
  * per column and row ids for manual review, never a value. */
 export * from "./erasure";
+
+/** Packs, modules, custom fields, example data and sign-up provider contracts (job CK, ADR 0084 parts 1 and 2): generated from the API models by `make contracts`.
+ * A pack is DATA: render words from `labels` and gate screens on `modules`; never branch on a pack id. */
+export * from "./packs";
