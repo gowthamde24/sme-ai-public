@@ -24,7 +24,7 @@ class TemplateIn(_Strict):
     name: Annotated[str, StringConstraints(pattern=r"^[a-z][a-z0-9_]{0,59}$")]
     language: Language
     category: Literal["utility", "marketing", "authentication"]
-    purpose: Literal["visit", "followup", "order_status", "info"]
+    purpose: Literal["visit", "followup", "order_status", "info", "reminder"]
     # one variable, {{1}}, with words before and after it
     body: Annotated[str, StringConstraints(strip_whitespace=True, min_length=10, max_length=1024)]
 

@@ -71,6 +71,12 @@ select = ["E", "F", "I", "B", "UP", "S"]
 "tests/test_cn_*.py" = ["E501"]
 "tests/test_migration_copies_cn.py" = ["E501"]
 "../../tests/integration/test_cn_*.py" = ["E501"]
+# job CP: campaigns, the shared ledger's new routes and their tests read like the ADR they implement (long lines)
+"app/campaigns/*" = ["E501"]
+"tests/test_cp_*.py" = ["E501"]
+"tests/cp_fakes.py" = ["E501"]
+"tests/test_migration_copies_cp.py" = ["E501"]
+"../../tests/integration/test_cp_*.py" = ["E501"]
 "tests/test_cb_*.py" = ["E501"]
 "../../tests/integration/test_cb_*.py" = ["E501"]
 # job CD: the error module, the WhatsApp tooling and their tests read like their documentation (long lines)

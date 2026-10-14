@@ -1,0 +1,2299 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "campaigns.schema.json",
+  "title": "Reminder campaigns, the call list and the shared ledger (job CP)",
+  "description": "Generated from services/ai-api/app/{campaigns,dues}/models.py by `make contracts`. Requests forbid unknown properties: a status, an approver, a sender, a rendered text or an amount a model made can never be sent.",
+  "$defs": {
+    "ApproveIn": {
+      "additionalProperties": false,
+      "description": "The hash of the samples the Owner SAW: if the campaign changed since, the approval is refused (409 `samples_changed`).",
+      "properties": {
+        "samples_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Samples Sha256",
+          "type": "string"
+        }
+      },
+      "required": [
+        "samples_sha256"
+      ],
+      "title": "ApproveIn",
+      "type": "object"
+    },
+    "ApprovedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign": {
+          "$ref": "#/$defs/CampaignOut"
+        },
+        "planned_steps": {
+          "title": "Planned Steps",
+          "type": "integer"
+        },
+        "past_steps": {
+          "title": "Past Steps",
+          "type": "integer"
+        },
+        "sending_on": {
+          "title": "Sending On",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign",
+        "planned_steps",
+        "past_steps",
+        "sending_on"
+      ],
+      "title": "ApprovedOut",
+      "type": "object"
+    },
+    "CallItemOut": {
+      "additionalProperties": false,
+      "description": "One person to call. The number is never shown: the call goes through the bridge (`call_request_id` is the approved request to start it with).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "campaign_name": {
+          "title": "Campaign Name",
+          "type": "string"
+        },
+        "recipient_id": {
+          "format": "uuid",
+          "title": "Recipient Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "amount_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Amount Paise"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reference"
+        },
+        "step_no": {
+          "title": "Step No",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "done"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "promised",
+                "call_later",
+                "wrong_number",
+                "stop"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Outcome"
+        },
+        "promised_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Promised On"
+        },
+        "call_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Call After"
+        },
+        "attempts": {
+          "title": "Attempts",
+          "type": "integer"
+        },
+        "call_request_id": {
+          "format": "uuid",
+          "title": "Call Request Id",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "sort_at": {
+          "format": "date-time",
+          "title": "Sort At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "campaign_id",
+        "campaign_name",
+        "recipient_id",
+        "contact_id",
+        "contact_name",
+        "amount_paise",
+        "due_date",
+        "reference",
+        "step_no",
+        "status",
+        "outcome",
+        "promised_on",
+        "call_after",
+        "attempts",
+        "call_request_id",
+        "created_at",
+        "sort_at"
+      ],
+      "title": "CallItemOut",
+      "type": "object"
+    },
+    "CallListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CallItemOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "CallListOut",
+      "type": "object"
+    },
+    "CampaignDetailOut": {
+      "additionalProperties": false,
+      "description": "One campaign, with what still stands between a draft and its approval (closed words, each with a fixed sentence in `issue_text`) and whether the worker may send (both switches on).",
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "payment_due",
+            "delivery_update",
+            "fee_due",
+            "event",
+            "exam",
+            "holiday"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "running",
+            "paused",
+            "done",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "wa_template_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Wa Template Id"
+        },
+        "message_text": {
+          "title": "Message Text",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/StepOut"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "call_after_step": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Call After Step"
+        },
+        "call_wait_hours": {
+          "title": "Call Wait Hours",
+          "type": "integer"
+        },
+        "audience_kind": {
+          "enum": [
+            "import",
+            "filter"
+          ],
+          "title": "Audience Kind",
+          "type": "string"
+        },
+        "audience_filter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Audience Filter"
+        },
+        "approved_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved By"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved At"
+        },
+        "approved_recipients": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved Recipients"
+        },
+        "approved_total_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved Total Paise"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "paused_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paused At"
+        },
+        "cancelled_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cancelled At"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Completed At"
+        },
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        },
+        "total_amount_paise": {
+          "title": "Total Amount Paise",
+          "type": "integer"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "issue_text": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Issue Text",
+          "type": "object"
+        },
+        "sending_on": {
+          "title": "Sending On",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "status",
+        "language",
+        "wa_template_id",
+        "message_text",
+        "steps",
+        "call_after_step",
+        "call_wait_hours",
+        "audience_kind",
+        "audience_filter",
+        "approved_by",
+        "approved_at",
+        "approved_recipients",
+        "approved_total_paise",
+        "created_at",
+        "updated_at",
+        "paused_at",
+        "cancelled_at",
+        "completed_at",
+        "recipients",
+        "total_amount_paise",
+        "issues",
+        "issue_text",
+        "sending_on"
+      ],
+      "title": "CampaignDetailOut",
+      "type": "object"
+    },
+    "CampaignIn": {
+      "additionalProperties": false,
+      "description": "The whole campaign (a PUT: the same id again changes it). The kind never changes. A change to a campaign that was approved sends it back to draft.",
+      "properties": {
+        "name": {
+          "maxLength": 100,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "payment_due",
+            "delivery_update",
+            "fee_due",
+            "event",
+            "exam",
+            "holiday"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "wa_template_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Wa Template Id"
+        },
+        "message_text": {
+          "maxLength": 600,
+          "minLength": 8,
+          "title": "Message Text",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/StepIn"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Steps",
+          "type": "array"
+        },
+        "call_after_step": {
+          "anyOf": [
+            {
+              "maximum": 5,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Call After Step"
+        },
+        "call_wait_hours": {
+          "default": 24,
+          "maximum": 168,
+          "minimum": 1,
+          "title": "Call Wait Hours",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "language",
+        "message_text",
+        "steps"
+      ],
+      "title": "CampaignIn",
+      "type": "object"
+    },
+    "CampaignListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CampaignOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "CampaignListOut",
+      "type": "object"
+    },
+    "CampaignOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "payment_due",
+            "delivery_update",
+            "fee_due",
+            "event",
+            "exam",
+            "holiday"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "running",
+            "paused",
+            "done",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "wa_template_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Wa Template Id"
+        },
+        "message_text": {
+          "title": "Message Text",
+          "type": "string"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/StepOut"
+          },
+          "title": "Steps",
+          "type": "array"
+        },
+        "call_after_step": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Call After Step"
+        },
+        "call_wait_hours": {
+          "title": "Call Wait Hours",
+          "type": "integer"
+        },
+        "audience_kind": {
+          "enum": [
+            "import",
+            "filter"
+          ],
+          "title": "Audience Kind",
+          "type": "string"
+        },
+        "audience_filter": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Audience Filter"
+        },
+        "approved_by": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved By"
+        },
+        "approved_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved At"
+        },
+        "approved_recipients": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved Recipients"
+        },
+        "approved_total_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Approved Total Paise"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "paused_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paused At"
+        },
+        "cancelled_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Cancelled At"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Completed At"
+        },
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        },
+        "total_amount_paise": {
+          "title": "Total Amount Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "status",
+        "language",
+        "wa_template_id",
+        "message_text",
+        "steps",
+        "call_after_step",
+        "call_wait_hours",
+        "audience_kind",
+        "audience_filter",
+        "approved_by",
+        "approved_at",
+        "approved_recipients",
+        "approved_total_paise",
+        "created_at",
+        "updated_at",
+        "paused_at",
+        "cancelled_at",
+        "completed_at",
+        "recipients",
+        "total_amount_paise"
+      ],
+      "title": "CampaignOut",
+      "type": "object"
+    },
+    "CampaignSavedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign": {
+          "$ref": "#/$defs/CampaignOut"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        },
+        "back_to_draft": {
+          "title": "Back To Draft",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign",
+        "created",
+        "back_to_draft"
+      ],
+      "title": "CampaignSavedOut",
+      "type": "object"
+    },
+    "ChargeRowIn": {
+      "additionalProperties": false,
+      "properties": {
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "entry_date": {
+          "format": "date",
+          "title": "Entry Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "invoice_no": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice No"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "entry_date",
+        "due_date",
+        "amount_paise"
+      ],
+      "title": "ChargeRowIn",
+      "type": "object"
+    },
+    "ChargeSkippedRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "reason": {
+          "enum": [
+            "invoice_number_used",
+            "party_not_found",
+            "invalid_row"
+          ],
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row",
+        "reason"
+      ],
+      "title": "ChargeSkippedRowOut",
+      "type": "object"
+    },
+    "ChargesImportIn": {
+      "additionalProperties": false,
+      "description": "A fee list or an accounting export, already read into rows (at most 5,000). `batch_id` is the caller's: the same file sent again adds nothing.",
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/ChargeRowIn"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "rows"
+      ],
+      "title": "ChargesImportIn",
+      "type": "object"
+    },
+    "ChargesImportOut": {
+      "additionalProperties": false,
+      "properties": {
+        "batch_id": {
+          "format": "uuid",
+          "title": "Batch Id",
+          "type": "string"
+        },
+        "added": {
+          "title": "Added",
+          "type": "integer"
+        },
+        "skipped": {
+          "items": {
+            "$ref": "#/$defs/ChargeSkippedRowOut"
+          },
+          "title": "Skipped",
+          "type": "array"
+        }
+      },
+      "required": [
+        "batch_id",
+        "added",
+        "skipped"
+      ],
+      "title": "ChargesImportOut",
+      "type": "object"
+    },
+    "EntriesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Account Id"
+        },
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/EntryOut"
+          },
+          "title": "Entries",
+          "type": "array"
+        }
+      },
+      "required": [
+        "account_id",
+        "entries"
+      ],
+      "title": "EntriesOut",
+      "type": "object"
+    },
+    "EntryIn": {
+      "additionalProperties": false,
+      "description": "One entry. A CHARGE has a due date (and may carry the owner's invoice number or a short label such as a fee head); a PAYMENT names its method; an ADJUSTMENT says debit or credit and why; a CONCESSION says\nwhy. Adjustments and concessions are the Owner's or Admin's, with a second factor (the database decides). The amount is a number someone entered.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "charge",
+            "payment",
+            "adjustment",
+            "concession"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "entry_date": {
+          "format": "date",
+          "title": "Entry Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "enum": [
+                "debit",
+                "credit"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Direction"
+        },
+        "invoice_no": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice No"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "cash",
+                "upi",
+                "bank_transfer",
+                "cheque",
+                "card",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Method"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "correction",
+                "late_fee",
+                "waiver",
+                "rounding",
+                "scholarship",
+                "sibling",
+                "staff_ward",
+                "hardship",
+                "merit",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason Code"
+        },
+        "against_entry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Against Entry Id"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Order Id"
+        }
+      },
+      "required": [
+        "kind",
+        "entry_date",
+        "amount_paise"
+      ],
+      "title": "EntryIn",
+      "type": "object"
+    },
+    "EntryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "charge",
+            "payment",
+            "adjustment",
+            "concession"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "debit",
+            "credit"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "entry_date": {
+          "format": "date",
+          "title": "Entry Date",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Due Date"
+        },
+        "invoice_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Invoice No"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reference"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "cash",
+                "upi",
+                "bank_transfer",
+                "cheque",
+                "card",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Method"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "enum": [
+                "correction",
+                "late_fee",
+                "waiver",
+                "rounding",
+                "scholarship",
+                "sibling",
+                "staff_ward",
+                "hardship",
+                "merit",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason Code"
+        },
+        "receipt_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Receipt No"
+        },
+        "against_entry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Against Entry Id"
+        },
+        "order_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Order Id"
+        },
+        "source": {
+          "enum": [
+            "manual",
+            "import"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "direction",
+        "amount_paise",
+        "entry_date",
+        "due_date",
+        "invoice_no",
+        "reference",
+        "method",
+        "reason_code",
+        "receipt_no",
+        "against_entry_id",
+        "order_id",
+        "source",
+        "voided"
+      ],
+      "title": "EntryOut",
+      "type": "object"
+    },
+    "EntryRecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "account_id": {
+          "format": "uuid",
+          "title": "Account Id",
+          "type": "string"
+        },
+        "receipt_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Receipt No"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "account_id",
+        "receipt_no",
+        "replayed"
+      ],
+      "title": "EntryRecordedOut",
+      "type": "object"
+    },
+    "EntryVoidedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "format": "uuid",
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "charge",
+            "payment",
+            "adjustment",
+            "concession"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entry_id",
+        "kind",
+        "voided"
+      ],
+      "title": "EntryVoidedOut",
+      "type": "object"
+    },
+    "LedgerFilterIn": {
+      "additionalProperties": false,
+      "description": "The ledger list: every party with money open on claims due between `due_from` and `due_to` (at most 400 days), optionally only companies or contacts, optionally only at least `min_open_paise`.",
+      "properties": {
+        "due_from": {
+          "format": "date",
+          "title": "Due From",
+          "type": "string"
+        },
+        "due_to": {
+          "format": "date",
+          "title": "Due To",
+          "type": "string"
+        },
+        "party": {
+          "anyOf": [
+            {
+              "enum": [
+                "company",
+                "contact"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Party"
+        },
+        "min_open_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Min Open Paise"
+        }
+      },
+      "required": [
+        "due_from",
+        "due_to"
+      ],
+      "title": "LedgerFilterIn",
+      "type": "object"
+    },
+    "OutcomeIn": {
+      "additionalProperties": false,
+      "description": "What happened on the call: `paid`, `promised` (with a date from today to 60 days), `call_later` (with a time within 30 days), `wrong_number` or `stop` (the person is put on the do-not-contact list).",
+      "properties": {
+        "outcome": {
+          "enum": [
+            "paid",
+            "promised",
+            "call_later",
+            "wrong_number",
+            "stop"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "promised_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Promised On"
+        },
+        "call_after": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Call After"
+        }
+      },
+      "required": [
+        "outcome"
+      ],
+      "title": "OutcomeIn",
+      "type": "object"
+    },
+    "OutcomeRecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "open",
+            "done"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "outcome": {
+          "enum": [
+            "paid",
+            "promised",
+            "call_later",
+            "wrong_number",
+            "stop"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "outcome",
+        "replayed"
+      ],
+      "title": "OutcomeRecordedOut",
+      "type": "object"
+    },
+    "PreviewOut": {
+      "additionalProperties": false,
+      "description": "What the Owner sees before approving: the count, the total, the dates, the rendered samples (the first, the longest, the highest amount and three at random) and the hash of what was shown. The first message\nto a person also carries `disclosure`.",
+      "properties": {
+        "campaign": {
+          "$ref": "#/$defs/CampaignOut"
+        },
+        "samples": {
+          "items": {
+            "$ref": "#/$defs/SampleOut"
+          },
+          "title": "Samples",
+          "type": "array"
+        },
+        "samples_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Samples Sha256",
+          "type": "string"
+        },
+        "content_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "title": "Content Sha256",
+          "type": "string"
+        },
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        },
+        "total_amount_paise": {
+          "title": "Total Amount Paise",
+          "type": "integer"
+        },
+        "first_due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "First Due"
+        },
+        "last_due": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Last Due"
+        },
+        "disclosure": {
+          "title": "Disclosure",
+          "type": "string"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "issue_text": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Issue Text",
+          "type": "object"
+        },
+        "sending_on": {
+          "title": "Sending On",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "campaign",
+        "samples",
+        "samples_sha256",
+        "content_sha256",
+        "recipients",
+        "total_amount_paise",
+        "first_due",
+        "last_due",
+        "disclosure",
+        "issues",
+        "issue_text",
+        "sending_on"
+      ],
+      "title": "PreviewOut",
+      "type": "object"
+    },
+    "ReceiptOut": {
+      "additionalProperties": false,
+      "description": "A receipt, ready to print or to send: the number, the date, the amount, the method, who paid, what it was set against and the balance after it.",
+      "properties": {
+        "receipt_no": {
+          "title": "Receipt No",
+          "type": "string"
+        },
+        "received_on": {
+          "format": "date",
+          "title": "Received On",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "cash",
+            "upi",
+            "bank_transfer",
+            "cheque",
+            "card",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        },
+        "business_name": {
+          "title": "Business Name",
+          "type": "string"
+        },
+        "party_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Party Name"
+        },
+        "party_kind": {
+          "enum": [
+            "company",
+            "contact"
+          ],
+          "title": "Party Kind",
+          "type": "string"
+        },
+        "against": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Against"
+        },
+        "balance_after_paise": {
+          "title": "Balance After Paise",
+          "type": "integer"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receipt_no",
+        "received_on",
+        "amount_paise",
+        "method",
+        "voided",
+        "business_name",
+        "party_name",
+        "party_kind",
+        "against",
+        "balance_after_paise",
+        "recorded_at"
+      ],
+      "title": "ReceiptOut",
+      "type": "object"
+    },
+    "RecipientOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "seq": {
+          "title": "Seq",
+          "type": "integer"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Amount Paise"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reference"
+        },
+        "closed_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "paid",
+                "promised",
+                "wrong_number",
+                "stopped"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Closed Reason"
+        },
+        "promised_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Promised On"
+        },
+        "steps": {
+          "items": {
+            "$ref": "#/$defs/StepStateOut"
+          },
+          "title": "Steps",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "seq",
+        "contact_id",
+        "contact_name",
+        "due_date",
+        "amount_paise",
+        "reference",
+        "closed_reason",
+        "promised_on",
+        "steps"
+      ],
+      "title": "RecipientOut",
+      "type": "object"
+    },
+    "RecipientRowIn": {
+      "additionalProperties": false,
+      "description": "One person by contact id or by phone number (the number only FINDS an existing contact of this business; it is not stored), with the date the reminder is about, an amount for a money reminder and a short\nlabel (an invoice number, a fee head) when the text uses one.",
+      "properties": {
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "maxLength": 20,
+              "minLength": 10,
+              "pattern": "^[0-9+ ()-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Amount Paise"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "due_date"
+      ],
+      "title": "RecipientRowIn",
+      "type": "object"
+    },
+    "RecipientsAddedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "added": {
+          "title": "Added",
+          "type": "integer"
+        },
+        "skipped": {
+          "items": {
+            "$ref": "#/$defs/SkippedOut"
+          },
+          "title": "Skipped",
+          "type": "array"
+        },
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "added",
+        "skipped",
+        "recipients"
+      ],
+      "title": "RecipientsAddedOut",
+      "type": "object"
+    },
+    "RecipientsIn": {
+      "additionalProperties": false,
+      "properties": {
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/RecipientRowIn"
+          },
+          "maxItems": 5000,
+          "minItems": 1,
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "rows"
+      ],
+      "title": "RecipientsIn",
+      "type": "object"
+    },
+    "RemovedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "removed": {
+          "title": "Removed",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "removed"
+      ],
+      "title": "RemovedOut",
+      "type": "object"
+    },
+    "ResultsOut": {
+      "additionalProperties": false,
+      "description": "Counts derived from the outbox and the WhatsApp status table. States: planned, skipped (a reason), held (waiting for a person), waiting (queued), sent, delivered, read, failed, blocked (a reason).",
+      "properties": {
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "approved",
+            "running",
+            "paused",
+            "done",
+            "cancelled"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        },
+        "by_state": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By State",
+          "type": "object"
+        },
+        "by_reason": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "By Reason",
+          "type": "object"
+        },
+        "by_day": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "By Day",
+          "type": "array"
+        },
+        "delivered_total": {
+          "title": "Delivered Total",
+          "type": "integer"
+        },
+        "replied": {
+          "title": "Replied",
+          "type": "integer"
+        },
+        "paid_after_reminder": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Paid After Reminder",
+          "type": "object"
+        },
+        "closed": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "title": "Closed",
+          "type": "object"
+        },
+        "calls": {
+          "additionalProperties": true,
+          "title": "Calls",
+          "type": "object"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "status",
+        "recipients",
+        "by_state",
+        "by_reason",
+        "by_day",
+        "delivered_total",
+        "replied",
+        "paid_after_reminder",
+        "closed",
+        "calls"
+      ],
+      "title": "ResultsOut",
+      "type": "object"
+    },
+    "SampleOut": {
+      "additionalProperties": false,
+      "properties": {
+        "recipient_id": {
+          "format": "uuid",
+          "title": "Recipient Id",
+          "type": "string"
+        },
+        "labels": {
+          "items": {
+            "enum": [
+              "first",
+              "longest",
+              "highest_amount",
+              "random"
+            ],
+            "type": "string"
+          },
+          "title": "Labels",
+          "type": "array"
+        },
+        "body": {
+          "title": "Body",
+          "type": "string"
+        },
+        "amount_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Amount Paise"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient_id",
+        "labels",
+        "body",
+        "amount_paise",
+        "due_date"
+      ],
+      "title": "SampleOut",
+      "type": "object"
+    },
+    "SkippedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "reason": {
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "row",
+        "reason"
+      ],
+      "title": "SkippedOut",
+      "type": "object"
+    },
+    "StepIn": {
+      "additionalProperties": false,
+      "description": "One step: `offset_days` from the person's own date (negative is before, 0 the day itself) and the time of day, India time, as HH:MM. At most five steps, in order.",
+      "properties": {
+        "offset_days": {
+          "maximum": 180,
+          "minimum": -60,
+          "title": "Offset Days",
+          "type": "integer"
+        },
+        "time": {
+          "title": "Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "offset_days",
+        "time"
+      ],
+      "title": "StepIn",
+      "type": "object"
+    },
+    "StepOut": {
+      "additionalProperties": false,
+      "properties": {
+        "offset_days": {
+          "title": "Offset Days",
+          "type": "integer"
+        },
+        "time": {
+          "title": "Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "offset_days",
+        "time"
+      ],
+      "title": "StepOut",
+      "type": "object"
+    },
+    "StepStateOut": {
+      "additionalProperties": false,
+      "properties": {
+        "step_no": {
+          "title": "Step No",
+          "type": "integer"
+        },
+        "scheduled_for": {
+          "format": "date-time",
+          "title": "Scheduled For",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "planned",
+            "submitted",
+            "skipped"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "step_no",
+        "scheduled_for",
+        "status",
+        "reason"
+      ],
+      "title": "StepStateOut",
+      "type": "object"
+    }
+  }
+}

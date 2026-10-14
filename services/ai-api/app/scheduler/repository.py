@@ -31,6 +31,7 @@ class SchedulerRepository(Protocol):
     def due_reminders(self, token: str, tenant_id: uuid.UUID) -> list[dict[str, Any]]: ...
     def queue_reminder(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def mark_no_shows(self, token: str, tenant_id: uuid.UUID) -> int: ...
+    def campaign_run(self, token: str, tenant_id: uuid.UUID) -> dict[str, int]: ...
     def record(self, token: str, tenant_id: uuid.UUID, counts: dict[str, int]) -> None: ...
 
     # the Owner's and Admin's calls (their own token)
@@ -130,6 +131,14 @@ class PostgrestSchedulerRepository:
         if not isinstance(value, int):
             raise UpstreamError("unexpected function result")
         return value
+
+    def campaign_run(self, token: str, tenant_id: uuid.UUID) -> dict[str, int]:
+        """Job CP: hand the approved campaign steps that are due to the outbox (the database decides everything: both switches, the module, the approval, each person's consent and STOP), then the call list. Counts only."""
+        out = self._object(token, "scheduler_campaign_run", {"p_tenant_id": str(tenant_id), "p_limit": 50})
+        counts = {k: out.get(k) for k in ("queued", "held", "blocked", "skipped", "errors", "calls", "done")}
+        if not all(isinstance(v, int) for v in counts.values()):
+            raise UpstreamError("unexpected function result")
+        return {k: int(v) for k, v in counts.items() if isinstance(v, int)}
 
     def record(self, token: str, tenant_id: uuid.UUID, counts: dict[str, int]) -> None:
         self._call(

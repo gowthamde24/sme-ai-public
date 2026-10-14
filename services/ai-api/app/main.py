@@ -18,6 +18,9 @@ from app.auth.deps import Runtime
 from app.auth.jwt import TokenVerifier
 from app.businessprofile.repository import PostgrestBusinessProfileRepository
 from app.businessprofile.routes import router as business_profile_router
+from app.campaigns import errors as campaign_errors
+from app.campaigns.repository import PostgrestCampaignsRepository
+from app.campaigns.routes import router as campaigns_router
 from app.catalogue import errors as catalogue_errors
 from app.catalogue.repository import PostgrestCatalogueRepository
 from app.catalogue.routes import router as catalogue_router
@@ -37,6 +40,7 @@ from app.deliveries import errors as delivery_errors
 from app.deliveries.repository import PostgrestDeliveriesRepository
 from app.deliveries.routes import router as deliveries_router
 from app.dues import errors as dues_errors
+from app.dues.ledger_routes import router as ledger_router
 from app.dues.repository import PostgrestDuesRepository
 from app.dues.routes import router as dues_router
 from app.enquiries import repository as enquiries_repo
@@ -224,6 +228,7 @@ def build_runtime(settings: Settings) -> Runtime | None:
         dues=PostgrestDuesRepository(config.rest_url, config.anon_key),
         materials=PostgrestMaterialsRepository(config.rest_url, config.anon_key),
         deliveries=PostgrestDeliveriesRepository(config.rest_url, config.anon_key),
+        campaigns=PostgrestCampaignsRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -316,6 +321,20 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
         409, "invoice_number_used", "That invoice number is already used."
     ),
     dues_errors.AlreadyVoidedError: ApiError(409, "already_voided", "That was already voided."),
+    # Reminder campaigns (job CP). Fixed sentences: nothing from the data layer.
+    # SM803 also gives a closed `reason`.
+    campaign_errors.CampaignStateError: ApiError(
+        409, "campaign_state", "The campaign is not in a state that allows this."
+    ),
+    campaign_errors.CampaignStaleError: ApiError(
+        409,
+        "samples_changed",
+        "The campaign changed since you looked at the samples. "
+        "Look at them again before approving.",
+    ),
+    campaign_errors.CampaignNotReadyError: ApiError(
+        409, "campaign_not_ready", "The campaign is not ready to approve."
+    ),
     material_errors.MaterialQuoteMismatchError: ApiError(
         409,
         "quote_mismatch",
@@ -670,6 +689,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.dues,
                 runtime.materials,
                 runtime.deliveries,
+                runtime.campaigns,
             ):
                 if isinstance(
                     repository,
@@ -701,7 +721,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestSitesRepository
                     | PostgrestDuesRepository
                     | PostgrestMaterialsRepository
-                    | PostgrestDeliveriesRepository,
+                    | PostgrestDeliveriesRepository
+                    | PostgrestCampaignsRepository,
                 ):
                     repository.close()
 
@@ -750,6 +771,13 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             )
             reason = exc.detail if exc.detail in table else "other"
             mapped = ApiError(422, mapped.code if mapped else "quote_input_missing", table[reason])
+        if isinstance(exc, campaign_errors.CampaignNotReadyError):  # SM803: first thing in the way
+            reason = exc.detail if exc.detail in campaign_errors.NOT_READY_TEXT else "other"
+            mapped = ApiError(
+                409,
+                "campaign_not_ready",
+                campaign_errors.NOT_READY_TEXT.get(reason, "The campaign is not ready to approve."),
+            )
         if isinstance(exc, crm_repo.DuplicateValueError):
             mapped = ApiError(
                 409, "duplicate_value", f"That {exc.field} is already used.", headers={}
@@ -835,6 +863,8 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(custom_fields_router)
     app.include_router(sites_router)
     app.include_router(dues_router)
+    app.include_router(ledger_router)
+    app.include_router(campaigns_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
     app.include_router(deliveries_router)

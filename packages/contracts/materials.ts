@@ -231,7 +231,7 @@ export interface LayingIn {
 
 export interface LedgerInvoiceOut {
   id: string;
-  invoice_no: string;
+  invoice_no: string | null;
   invoice_date: string;
   due_date: string;
   amount_paise: number;
@@ -251,6 +251,7 @@ export interface LedgerPaymentOut {
   amount_paise: number;
   method: "cash" | "upi" | "bank_transfer" | "cheque" | "card" | "other";
   invoice_id: string | null;
+  receipt_no?: string | null;
   voided: boolean;
 }
 
@@ -410,7 +411,10 @@ export interface NotifyOut {
 
 export interface OpenInvoiceOut {
   invoice_id: string;
-  invoice_no: string;
+  entry_id?: string | null;
+  kind?: "charge" | "adjustment" | null;
+  invoice_no?: string | null;
+  reference?: string | null;
   invoice_date: string;
   due_date: string;
   amount_paise: number;
@@ -429,6 +433,14 @@ export interface OrderCreatedOut {
 
 export interface OrderFromQuoteIn {
   order_id: string;
+}
+
+export interface OverdueAgeingOut {
+  not_due: number;
+  d1_30: number;
+  d31_60: number;
+  d61_90: number;
+  d90_plus: number;
 }
 
 export interface PaymentIn {
@@ -550,6 +562,7 @@ export interface QuoteTextOut {
 export interface RecordedOut {
   id: string;
   replayed: boolean;
+  receipt_no?: string | null;
 }
 
 export interface RejectIn {
@@ -614,14 +627,20 @@ export interface SlabIn {
 }
 
 export interface StatementOut {
-  company_id: string;
+  account_id?: string | null;
+  company_id?: string | null;
+  contact_id?: string | null;
   as_of: string;
   invoiced_paise: number;
   paid_paise: number;
+  payments_paise?: number;
+  concessions_paise?: number;
+  adjustments_paise?: number;
   outstanding_paise: number;
   credit_paise: number;
   overdue_paise: number;
   ageing: AgeingOut;
+  overdue_ageing?: OverdueAgeingOut | null;
   open_invoices: OpenInvoiceOut[];
   credit_limit_paise: number | null;
   over_limit: boolean;
@@ -633,18 +652,26 @@ export interface SummaryOut {
 }
 
 export interface SummaryRowOut {
-  company_id: string;
+  account_id?: string | null;
+  company_id?: string | null;
+  contact_id?: string | null;
   as_of: string;
   invoiced_paise: number;
   paid_paise: number;
+  payments_paise?: number;
+  concessions_paise?: number;
+  adjustments_paise?: number;
   outstanding_paise: number;
   credit_paise: number;
   overdue_paise: number;
   ageing: AgeingOut;
+  overdue_ageing?: OverdueAgeingOut | null;
   open_invoices: OpenInvoiceOut[];
   credit_limit_paise: number | null;
   over_limit: boolean;
-  company_name: string;
+  company_name?: string | null;
+  party_kind?: "company" | "contact" | null;
+  party_name?: string | null;
 }
 
 export interface TransportIn {

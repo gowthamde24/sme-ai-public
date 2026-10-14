@@ -312,3 +312,16 @@ Ticket: wave 2, C1 of `docs/plans/stack19-blueprint.md`. ADR 0085. Checklist row
 **Mutation pass: not run for this job** (it is opt-in and about 45 minutes for the follow-up modules; nothing here changes the follow-up engine).
 
 **Findings on the way.** (1) The agent stack's Kong mounted the sign-up mail template as a single file, and the stack generator replaced the folder, so the mount kept a deleted file after `db-reset`: fixed by syncing the templates in place (tests in `test_stacks.py`). (2) The web's TypeScript target was ES2017 and could not read the BigInt twin of the calculator: raised to ES2020 (type-check only). (3) A trip may be loaded before the order is dispatched but not leave: the order's own advance rule is the gate. (4) A "delay" message is flagged as a complaint by the outbox's rules, so it is always held for a person.
+
+## Job CP: the shared ledger and reminder campaigns (2026-10-14)
+
+Ticket: wave 3, C1 of `docs/plans/stack19-blueprint.md`. ADR 0086. Checklist rows: "Reminder campaigns and the shared ledger (job CP)" in `docs/pre-pilot-checklist.md`. Evidence: pgTAP 100 (the ledger), 101 (campaigns: gates, text, list, samples, the approval rule, going back to draft), 102 (the runner under the per-message rules), 103 (the call list and the results); `tests/integration/test_cp_campaigns.py` on the real stack; `tests/test_cp_routes.py`, `test_cp_contracts.py`, `test_cp_scheduler_tick.py`, `test_migration_copies_cp.py`.
+
+**Decision recorded.** The campaign money rule is ACCEPTED by the owner, pending the lawyer's confirmation (ADR 0086 point 12, ADR 0066 addendum). No real contact can exist while the real-data gate is closed, so no real campaign can run; opening the gate for a workspace that will run one waits for the answer.
+
+**Findings on the way.** (1) The API has a rule, tested, that it has no DELETE operation at all; taking people off a draft list is therefore a POST action. (2) The first erasure canary for a campaign's name put a person's name in it and the contact erasure listed it for manual review: a campaign's words are the owner's, not one person's, so they carry a business canary and are erased with the workspace and swept. (3) A promise made on a call must silence only the reminders BEFORE its date: the first runner treated any closed person as finished and skipped a reminder due after the promised date; fixed and tested (pgTAP 103 F1). (4) The consent ledger's evidence reference has a strict `type:value` pattern, which the call-list "stop" outcome's first reference did not follow; found by the pgTAP run. (5) Several tests pinned things this job legitimately changes: the scheduler function count (14 to 15), the module-guard kinds (`campaigns` now guards tables), the outbox reason list (one added) and the route-word allow-list.
+
+**Lane note.** All files are under `services/ai-api`, `supabase`, `tests`, `docs`, `packages/contracts` and `packages/packs/modules.json` (a guard kind and a description, mirrored in the migration), as lane A may touch them; `scripts/check-lane-paths.sh a origin/main` is run before the commit.
+
+**Mutation pass: not run for this job** (it is opt-in and about 45 minutes for the follow-up modules; nothing here changes the follow-up engine).
+
