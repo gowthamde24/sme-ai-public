@@ -178,7 +178,7 @@ def test_pressing_twice_or_using_a_second_tab_makes_one_business(client: TestCli
 
     def press(language: str) -> Any:
         barrier.wait(timeout=10)
-        return client.post("/v1/account/setup", json={"business_type": "other", "language": language}, headers=bearer(confirmed))
+        return client.post("/v1/account/setup", json={"business_type": "education", "language": language}, headers=bearer(confirmed))
 
     with ThreadPoolExecutor(max_workers=2) as pool:
         responses = [f.result(timeout=60) for f in [pool.submit(press, "en"), pool.submit(press, "hi")]]
@@ -188,7 +188,7 @@ def test_pressing_twice_or_using_a_second_tab_makes_one_business(client: TestCli
     assert operator_sql.sql(f"select count(*) from public.memberships where user_id = '{confirmed.id}' and role = 'owner'") == "1"
     assert operator_sql.sql(f"select count(*) from public.tenants t join public.account_setups s on s.created_tenant_id = t.id where s.user_id = '{confirmed.id}'") == "1"
     # a later press, from either tab, still lands on the same business and changes nothing
-    again = client.post("/v1/account/setup", json={"business_type": "construction", "language": "kn"}, headers=bearer(confirmed))
+    again = client.post("/v1/account/setup", json={"business_type": "construction_materials", "language": "kn"}, headers=bearer(confirmed))
     assert again.status_code == 200 and again.json() == {"tenant_id": responses[0].json()["tenant_id"], "created": False}
 
 
@@ -198,7 +198,7 @@ def test_a_person_without_the_terms_in_their_sign_up_cannot_do_the_setup(stack: 
     session = confirm_with_the_link(stack, email)
     person = account(session)
     assert client.get("/v1/account/setup", headers=bearer(person)).json()["state"] == "none"
-    refused = client.post("/v1/account/setup", json={"business_type": "other", "language": "en"}, headers=bearer(person))
+    refused = client.post("/v1/account/setup", json={"business_type": "textiles", "language": "en"}, headers=bearer(person))
     assert refused.status_code == 403 and refused.json()["error"]["code"] == "terms_required"
     assert client.get("/v1/me", headers=bearer(person)).json()["memberships"] == []
 
@@ -206,7 +206,7 @@ def test_a_person_without_the_terms_in_their_sign_up_cannot_do_the_setup(stack: 
 def test_an_account_that_already_owns_a_workspace_is_refused_the_setup(client: TestClient, confirmed: User) -> None:
     mine = client.post("/v1/tenants", json={"name": "Already Mine", "slug": unique_slug("it-own")}, headers=bearer(confirmed))
     assert mine.status_code == 200
-    refused = client.post("/v1/account/setup", json={"business_type": "other", "language": "en"}, headers=bearer(confirmed))
+    refused = client.post("/v1/account/setup", json={"business_type": "textiles", "language": "en"}, headers=bearer(confirmed))
     assert refused.status_code == 409 and refused.json()["error"]["code"] == "workspace_limit_reached"
     assert len(client.get("/v1/me", headers=bearer(confirmed)).json()["memberships"]) == 1
 
@@ -228,14 +228,14 @@ def test_nobody_without_a_session_reaches_the_setup(client: TestClient) -> None:
 
 
 def test_someone_elses_new_business_is_invisible_to_a_stranger(client: TestClient, confirmed: User, signup: Any) -> None:
-    tenant_id = client.post("/v1/account/setup", json={"business_type": "other", "language": "en"}, headers=bearer(confirmed)).json()["tenant_id"]
+    tenant_id = client.post("/v1/account/setup", json={"business_type": "education", "language": "en"}, headers=bearer(confirmed)).json()["tenant_id"]
     stranger = signup("open-stranger")
     assert client.get(f"/v1/tenants/{tenant_id}", headers=bearer(stranger)).status_code == 404
     assert client.get("/v1/account/setup", headers=bearer(stranger)).json()["state"] == "none"
 
 
 def test_the_setup_rows_are_private_to_their_person_through_postgrest_directly(stack: Stack, client: TestClient, confirmed: User, signup: Any) -> None:
-    client.post("/v1/account/setup", json={"business_type": "other", "language": "en"}, headers=bearer(confirmed))
+    client.post("/v1/account/setup", json={"business_type": "education", "language": "en"}, headers=bearer(confirmed))
     other = signup("open-peek")
     for table in ("account_setups", "terms_acceptances"):
         seen = httpx.get(f"{stack.rest}/{table}?select=user_id", headers=stack.headers(other.token), timeout=15)
