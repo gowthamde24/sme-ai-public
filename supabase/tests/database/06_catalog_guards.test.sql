@@ -298,7 +298,12 @@ select is(
         -- job BZ (ADR 0080): the connectors. A person's functions check a workspace role first; the scheduler_* ones check the worker account
         'public.indiamart_pull_begin', 'public.indiamart_pull_finish', 'public.payment_link_begin', 'public.payment_link_attach', 'public.payment_link_fail', 'public.payment_link_list', 'public.payment_link_get', 'public.payment_link_mark_recorded', 'public.scheduler_payment_event', 'public.scheduler_missed_call', 'public.missed_call_list', 'public.missed_call_handle', 'public.call_bridge_prepare', 'public.call_bridge_finish', 'public.scheduler_call_status', 'public.connectors_status',
         -- job CA (ADR 0081): the shop's own GSTIN (Owner or Admin, second factor)
-        'public.business_profile_set')),
+        'public.business_profile_set',
+        -- job CK (ADR 0084 parts 1 and 2): the pack a business runs and its modules (every member reads), the packs a person may choose, custom fields (Owner / Admin with a second factor to define; the roles that may edit the
+        -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
+        'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
+        'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
+        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove')),
   '', 'authenticated can execute only the allow-listed functions');
 select is(
   (select coalesce(string_agg(sig, ', '), '') from our_functions
@@ -348,7 +353,12 @@ select is(
                      'public.push_worker_pending', 'public.push_worker_mark', 'public.push_worker_report',
                      'public.web_quota_take', 'public.web_usage_today', 'public.web_query_check',
                      'public.indiamart_pull_begin', 'public.indiamart_pull_finish', 'public.payment_link_begin', 'public.payment_link_attach', 'public.payment_link_fail', 'public.payment_link_list', 'public.payment_link_get', 'public.payment_link_mark_recorded', 'public.scheduler_payment_event', 'public.scheduler_missed_call', 'public.missed_call_list', 'public.missed_call_handle', 'public.call_bridge_prepare', 'public.call_bridge_finish', 'public.scheduler_call_status', 'public.connectors_status',
-                     'public.business_profile_set')),
+                     'public.business_profile_set',
+        -- job CK (ADR 0084 parts 1 and 2): the pack a business runs and its modules (every member reads), the packs a person may choose, custom fields (Owner / Admin with a second factor to define; the roles that may edit the
+        -- entity to fill in), and the example data (Owner / Admin). Each proves the role first; the pack tables themselves have no client grant.
+        'public.workspace_pack_get', 'public.workspace_modules', 'public.pack_catalogue',
+        'public.custom_field_defs_list', 'public.custom_field_def_create', 'public.custom_field_def_update', 'public.custom_values_get', 'public.custom_values_set', 'public.custom_values_set_many',
+        'public.example_data_status', 'public.example_data_load', 'public.example_data_remove')),
   '', 'the only SECURITY DEFINER functions in the API schema are create_tenant, the three consent functions, import_lead_rows, the thirteen agent functions (ADR 0013, T007), the five requirement functions (T008), the three quote reference-data functions and the four quote functions (T009) the three erasure functions (ADR 0014) and the two open sign-up functions (job AD / D2) and the fourteen integration functions (job BI)');
 -- Nothing in the private schema that is operator-only may be callable by a client.
 select is(
@@ -361,6 +371,9 @@ select is(
                  'app.operator_open_real_data_gate', 'app.operator_close_real_data_gate', 'app.operator_add_member',
                  'app.operator_add_owner_exception', 'app.real_data_gate_open', 'app.guard_real_data',
                  'app.operator_reset_mfa', 'app.require_aal2', 'app.guard_aal2_client_write',
+                 -- job CK: the module checks, the pack applier, the default-pack trigger and the custom-field writers are callable by no client role
+                 'app.module_enabled', 'app.require_module', 'app.module_guard', 'app.module_guard_agent', 'app.assign_default_pack', 'app.apply_pack_fields',
+                 'app.cf_put_value', 'app.cf_check_entity', 'app.cf_values_json', 'app.account_email_verified',
                  'app.operator_enable_requirement', 'app.requirement_deny', 'app.requirement_error', 'app.requirement_ws',
                  'app.requirement_confirmable', 'app.enquiry_set_context')
       and (has_function_privilege('authenticated', oid, 'execute') or has_function_privilege('anon', oid, 'execute'))),

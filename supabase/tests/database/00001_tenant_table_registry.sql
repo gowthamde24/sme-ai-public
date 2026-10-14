@@ -249,6 +249,14 @@ insert into tests.tenant_table_registry (table_name, insert_sql, update_set, del
   ('business_profile',
    $$insert into public.business_profile (tenant_id, gstin) values (%1$L, null) on conflict (tenant_id) do update set gstin = null$$,
    'gstin = gstin', $$delete from public.business_profile where tenant_id = %1$L$$, false),
+  -- job CK: custom fields. Definitions and values are written only by SECURITY DEFINER functions (no role inserts, updates or deletes directly); a value row is built with its own definition in the same statement
+  ('custom_field_defs',
+   $$insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source) values (%2$L, %1$L, 'contact', 'g_' || left(replace(%2$L, '-', ''), 12), '{"en": "Generic field"}'::jsonb, 'text', 'owner')$$,
+   'required = required', $$delete from public.custom_field_defs where id = %2$L$$, false),
+  ('custom_field_values',
+   $$with d as (insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source) values (%2$L, %1$L, 'contact', 'v_' || left(replace(%2$L, '-', ''), 12), '{"en": "Generic value field"}'::jsonb, 'text', 'owner') returning id)
+     insert into public.custom_field_values (id, tenant_id, field_id, entity, contact_id, value_text) select %2$L, %1$L, d.id, 'contact', %4$L, 'generic' from d$$,
+   'entity = entity', $$delete from public.custom_field_values where id = %2$L$$, false),
   ('outbox_messages',
    $$insert into public.outbox_messages (id, tenant_id, lead_id, contact_id, channel, body, language, category, status, reason, request_sha256, created_by)
      select %2$L, %1$L, l.id, l.contact_id, 'whatsapp', 'Synthetic generic message', 'en', 'info', 'needs_approval', 'category_other', repeat('1', 64), %5$L
@@ -432,6 +440,11 @@ select t, r, s, i, u, d from (values
   ('outbox_settings',      'sales', true, false, false, false), ('outbox_settings',      'viewer', false, false, false, false),
   ('business_profile',     'owner', true, false, false, false), ('business_profile',     'admin', true, false, false, false),
   ('business_profile',     'sales', true, false, false, false), ('business_profile',     'viewer', true, false, false, false),
+  -- job CK: every member reads the definitions; the values are read directly by Owner / Admin / Sales (a Viewer reads them through public.custom_values_get, which hides the personal ones); nobody writes directly
+  ('custom_field_defs',    'owner', true, false, false, false), ('custom_field_defs',    'admin', true, false, false, false),
+  ('custom_field_defs',    'sales', true, false, false, false), ('custom_field_defs',    'viewer', true, false, false, false),
+  ('custom_field_values',  'owner', true, false, false, false), ('custom_field_values',  'admin', true, false, false, false),
+  ('custom_field_values',  'sales', true, false, false, false), ('custom_field_values',  'viewer', false, false, false, false),
   ('outbox_messages',      'owner', true, false, false, false), ('outbox_messages',      'admin', true, false, false, false),
   ('outbox_messages',      'sales', true, false, false, false), ('outbox_messages',      'viewer', false, false, false, false),
   ('call_requests',        'owner', true, false, false, false), ('call_requests',        'admin', true, false, false, false),

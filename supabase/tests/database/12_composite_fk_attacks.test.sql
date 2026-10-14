@@ -24,6 +24,10 @@ insert into public.store_visits (id, tenant_id, lead_id, contact_id, visit_date,
 select tests.rid('b_fk_visit'), tests.tid('b'), l.id, l.contact_id, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', repeat('6', 64), tests.uid('b_owner')
   from (select id, contact_id from public.leads where tenant_id = tests.tid('b') order by id limit 1) l;
 
+-- job CK: a custom field value references its definition; the generic attack needs a tenant-B definition to aim at
+insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source)
+values (tests.rid('b_fk_def'), tests.tid('b'), 'contact', 'b_fk_def', '{"en": "Synthetic field"}'::jsonb, 'text', 'owner');
+
 -- job AY: the photos of a message reference a catalogue photo of the business, and a photo its item; the generic attack needs a tenant-B item and photo to aim at
 insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by)
 values (tests.rid('b_fk_item'), tests.tid('b'), 'Synthetic saree', 'soft_silk', array['red'], '5k_10k', tests.uid('b_owner'));
@@ -117,6 +121,8 @@ begin
     -- same references is attacked in 30_agent_runs_schema.
     return next ok(p_foreign like (case when immutable_row then '42501:%'
                                         when k.child = 'agent_runs' and k.child_col in ('lead_id', 'enquiry_id', 'conversation_id') then '23514:%'
+                                        -- job CK: a contact's value re-pointed at an item trips the exactly-one-entity CHECK first (the insert path of the same reference is attacked in section B)
+                                        when k.child = 'custom_field_values' and k.child_col = 'catalogue_item_id' then '23514:%'
                                         else '23503:%' end),
                    label || ': privileged re-point at tenant B is refused (' || p_foreign || ')');
     return next is(p_foreign, p_missing, label || ': privileged, foreign id fails exactly like a nonexistent id');
@@ -211,6 +217,19 @@ select is(pg_temp.err_shape(format(
 select is(pg_temp.err_shape(format(
   $$insert into public.opportunities (tenant_id, company_id, contact_id, title) values (%L, %L, %L, 'ok')$$, tests.tid('a'), tests.rid('a_company2'), tests.rid('a_contact2'))),
   'ok', 'ALLOW: opportunity with the contact''s own company');
+
+-- job CK: the three references of a custom field value, attacked on the INSERT path (a tenant-A value pointing at tenant B's definition, contact or item)
+insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, source)
+values (tests.rid('a_fk_def'), tests.tid('a'), 'contact', 'a_fk_def', '{"en": "Synthetic field"}'::jsonb, 'text', 'owner');
+-- (these tables are written only by SECURITY DEFINER functions, so a tenant-A owner is refused by the missing grant (42501) before any foreign key is consulted; the privileged insert reaches the foreign key)
+select is(pg_temp.err_shape(format($$insert into public.custom_field_values (tenant_id, field_id, entity, contact_id, value_text) values (%L, %L, 'contact', %L, 'x')$$, tests.tid('a'), tests.rid('b_fk_def'), tests.rid('a_contact'))) like '23503:%', true,
+  'custom value in A pointing at a B definition [privileged] -> 23503');
+select is(pg_temp.err_shape(format($$insert into public.custom_field_values (tenant_id, field_id, entity, contact_id, value_text) values (%L, %L, 'contact', %L, 'x')$$, tests.tid('a'), tests.rid('a_fk_def'), tests.rid('b_contact'))) like '23503:%', true,
+  'custom value in A pointing at a B contact [privileged] -> 23503');
+select is(pg_temp.err_shape(format($$insert into public.custom_field_values (tenant_id, field_id, entity, catalogue_item_id, value_text) values (%L, %L, 'catalogue_item', %L, 'x')$$, tests.tid('a'), tests.rid('a_fk_def'), tests.rid('b_fk_item'))) like '23503:%', true,
+  'custom value in A pointing at a B catalogue item [privileged] -> 23503');
+select is(tests.error_shape_as(tests.uid('a_owner'), format($$insert into public.custom_field_values (tenant_id, field_id, entity, contact_id, value_text) values (%L, %L, 'contact', %L, 'x')$$, tests.tid('a'), tests.rid('a_fk_def'), tests.rid('a_contact'))) like '42501%', true,
+  'a tenant-A owner cannot write a custom value directly at all (42501): the functions are the only way');
 
 -- ===================== E. re-parenting cannot break an existing link (NO ACTION, never cascade)
 select is(pg_temp.err_shape(format($$update public.contacts set company_id = %L where id = %L$$, tests.rid('a_company'), tests.rid('a_contact2'))),

@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "pack.schema.json",
+  "title": "A business-type pack (ADR 0084 part 1, blueprint section 13)",
+  "description": "A pack is DATA: a static, reviewed, versioned bundle in packages/packs/<id>/pack.json. It chooses among existing rules (modules, units, words, extra fields, example data); it can never add a rule that touches money, consent or sending, and it can only make a business stricter. Code never mentions a pack id: modules are the only extension point. CI checks every pack.json against this schema and against modules.json and labels.json (services/ai-api/tests/test_ck_packs_data.py, tools/packs/check.py).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "version", "status", "names", "summary", "accent", "owl_prop", "core_tab", "modules", "units", "labels", "language_review", "custom_fields", "example_data"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "id": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$", "description": "Also the folder name and the value stored as the business type." },
+    "version": { "type": "integer", "minimum": 1, "description": "A published version is never edited; a change is a new version (a new migration, a new folder under versions/ for the old one)." },
+    "status": { "enum": ["draft", "preview", "published"], "description": "draft: not selectable. preview: selectable, labelled 'Not validated by a real owner yet'. published: a real owner of this kind of business reviewed it (reviewed_by)." },
+    "default_for_existing_workspaces": { "type": "boolean", "description": "Exactly one pack is the default: every workspace that exists without a pack, and every workspace made without choosing one, runs it (today's behaviour)." },
+    "reviewed_by": { "type": ["string", "null"], "maxLength": 200, "description": "Who, of the business's kind, reviewed the pack. Required for published." },
+    "names": { "$ref": "#/$defs/translated_60" },
+    "summary": { "$ref": "#/$defs/translated_120" },
+    "accent": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,20}$", "description": "A pack accent token the web knows (small touches only: badge, empty-state props, landing hero)." },
+    "owl_prop": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$" },
+    "core_tab": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$", "description": "A module of this pack: the phone tab that holds its core work." },
+    "modules": {
+      "type": "array", "uniqueItems": true, "minItems": 1, "maxItems": 40,
+      "items": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,30}$" },
+      "description": "The modules that are ON by default for a workspace of this pack. Everything not listed is OFF (default deny), in the database and in the screens. Every code must be in modules.json."
+    },
+    "units": {
+      "type": "array", "uniqueItems": true, "maxItems": 9,
+      "items": { "enum": ["sq_ft", "sq_m", "piece", "box", "bag", "tonne", "cft", "truckload", "set"] },
+      "description": "The selling units this pack offers in the catalogue (empty when the pack has no catalogue)."
+    },
+    "default_unit": { "enum": ["sq_ft", "sq_m", "piece", "box", "bag", "tonne", "cft", "truckload", "set", null] },
+    "labels": {
+      "type": "object", "additionalProperties": false, "required": ["en"],
+      "properties": {
+        "en": { "$ref": "#/$defs/label_set" },
+        "te": { "$ref": "#/$defs/label_set" },
+        "hi": { "$ref": "#/$defs/label_set" },
+        "kn": { "$ref": "#/$defs/label_set" }
+      },
+      "description": "Words per language from the CLOSED key list in labels.json. English must carry every key; the other languages may be partial and fall back to English per key."
+    },
+    "language_review": {
+      "type": "object", "additionalProperties": false, "required": ["te", "hi", "kn"],
+      "properties": {
+        "te": { "enum": ["draft", "web_dictionary", "native_reviewed"] },
+        "hi": { "enum": ["draft", "web_dictionary", "native_reviewed"] },
+        "kn": { "enum": ["draft", "web_dictionary", "native_reviewed"] }
+      },
+      "description": "draft: machine-written, waiting for a native reader. web_dictionary: taken from the web app's own reviewed dictionary."
+    },
+    "custom_fields": {
+      "type": "array", "maxItems": 40,
+      "items": { "$ref": "#/$defs/custom_field" },
+      "description": "Custom field definitions made for a workspace when it takes this pack (source 'pack'). At most 20 per entity."
+    },
+    "example_data": { "$ref": "#/$defs/example_data" }
+  },
+  "allOf": [
+    { "if": { "properties": { "status": { "const": "published" } } }, "then": { "required": ["reviewed_by"], "properties": { "reviewed_by": { "type": "string", "minLength": 3 } } } },
+    { "if": { "required": ["default_for_existing_workspaces"], "properties": { "default_for_existing_workspaces": { "const": true } } }, "then": { "properties": { "status": { "const": "published" } } } }
+  ],
+  "$defs": {
+    "translated_60": {
+      "type": "object", "additionalProperties": false, "required": ["en"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "te": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "hi": { "type": "string", "minLength": 1, "maxLength": 60 },
+        "kn": { "type": "string", "minLength": 1, "maxLength": 60 }
+      }
+    },
+    "translated_120": {
+      "type": "object", "additionalProperties": false, "required": ["en"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "te": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "hi": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "kn": { "type": "string", "minLength": 1, "maxLength": 120 }
+      }
+    },
+    "label_set": {
+      "type": "object",
+      "propertyNames": { "pattern": "^[a-z][a-z0-9_]*\\.[a-z][a-z0-9_.]*$" },
+      "additionalProperties": { "type": "string", "minLength": 1, "maxLength": 80 }
+    },
+    "translated_label": {
+      "type": "object", "additionalProperties": false, "required": ["en"],
+      "properties": {
+        "en": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "te": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "hi": { "type": "string", "minLength": 1, "maxLength": 80 },
+        "kn": { "type": "string", "minLength": 1, "maxLength": 80 }
+      }
+    },
+    "custom_field": {
+      "type": "object", "additionalProperties": false,
+      "required": ["entity", "code", "kind", "label", "required", "pii_class", "mergeable"],
+      "properties": {
+        "entity": { "enum": ["contact", "catalogue_item"] },
+        "code": { "type": "string", "pattern": "^[a-z][a-z0-9_]{1,39}$" },
+        "kind": { "enum": ["text", "number", "date", "choice", "multi_choice", "yes_no"] },
+        "label": { "$ref": "#/$defs/translated_label" },
+        "choices": {
+          "type": "array", "minItems": 1, "maxItems": 30,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["code", "label"],
+            "properties": { "code": { "type": "string", "pattern": "^[a-z0-9][a-z0-9_]{0,39}$" }, "label": { "$ref": "#/$defs/translated_label" } }
+          }
+        },
+        "required": { "type": "boolean" },
+        "pii_class": { "enum": ["none", "personal"], "description": "Set by the pack, changed only by an operator. 'child' arrives with the dependants table (job CR); a child field is never a custom field on a contact." },
+        "mergeable": { "type": "boolean", "description": "May a campaign template use it. Only choice, number and date fields (and short hygiene-checked text) can be." }
+      },
+      "allOf": [
+        { "if": { "properties": { "kind": { "enum": ["choice", "multi_choice"] } } }, "then": { "required": ["choices"] }, "else": { "not": { "required": ["choices"] } } }
+      ]
+    },
+    "example_data": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "companies": {
+          "type": "array", "maxItems": 10,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["key", "name", "type"],
+            "properties": {
+              "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,9}$" },
+              "name": { "type": "string", "pattern": "^Example: .{3,100}$" },
+              "type": { "enum": ["prospect", "customer", "supplier", "other"] },
+              "city": { "type": "string", "minLength": 1, "maxLength": 60 }
+            }
+          }
+        },
+        "contacts": {
+          "type": "array", "maxItems": 10,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["key", "company", "full_name"],
+            "properties": {
+              "key": { "type": "string", "pattern": "^[a-z][a-z0-9_]{0,9}$" },
+              "company": { "type": ["string", "null"] },
+              "full_name": { "type": "string", "pattern": "^Example: .{3,100}$" }
+            }
+          },
+          "description": "A sample contact has NO e-mail address and NO phone number: nothing can ever be sent to it."
+        },
+        "leads": {
+          "type": "array", "maxItems": 10,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["company", "contact", "source"],
+            "properties": {
+              "company": { "type": ["string", "null"] },
+              "contact": { "type": ["string", "null"] },
+              "source": { "const": "Example data" }
+            }
+          }
+        },
+        "products": {
+          "type": "array", "maxItems": 12,
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["sku", "name", "unit"],
+            "properties": {
+              "sku": { "type": "string", "pattern": "^EX-[A-Z0-9-]{2,40}$" },
+              "name": { "type": "string", "pattern": "^Example: .{3,150}$" },
+              "unit": { "enum": ["sq_ft", "sq_m", "piece", "box", "bag", "tonne", "cft", "truckload", "set"] },
+              "category": { "type": "string", "minLength": 1, "maxLength": 60 }
+            }
+          }
+        }
+      }
+    }
+  }
+}

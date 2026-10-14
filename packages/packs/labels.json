@@ -1,0 +1,165 @@
+{
+  "$comment": "The CLOSED list of label keys a pack may set (ADR 0084 part 1: about 40 keys). Keys named nav.* and agent.* are the web dictionary's own keys (apps/web/i18n/strings/app.json): a pack value REPLACES the dictionary value on screens that read pack labels, and the textiles pack carries exactly today's words (a test proves it). word.* and pack.* are new. A pack MUST give every key in English; te, hi and kn are optional and fall back to English per key.",
+  "labels": [
+    {
+      "key": "nav.item.today",
+      "description": "Navigation: the Today screen"
+    },
+    {
+      "key": "nav.item.leads",
+      "description": "Navigation: leads or enquiries or admissions"
+    },
+    {
+      "key": "nav.item.quotes",
+      "description": "Navigation: quotes (the core tab of the pack that quotes)"
+    },
+    {
+      "key": "nav.item.orders",
+      "description": "Navigation: orders"
+    },
+    {
+      "key": "nav.item.customers",
+      "description": "Navigation: the people list"
+    },
+    {
+      "key": "nav.item.catalogue",
+      "description": "Navigation: prices and products"
+    },
+    {
+      "key": "nav.item.sarees",
+      "description": "Navigation: the catalogue with photos"
+    },
+    {
+      "key": "nav.item.visits",
+      "description": "Navigation: visits (long)"
+    },
+    {
+      "key": "nav.tab.visits",
+      "description": "Navigation: visits (phone tab)"
+    },
+    {
+      "key": "nav.item.chats",
+      "description": "Navigation: customer chats"
+    },
+    {
+      "key": "nav.item.retailers",
+      "description": "Navigation: the lead finder"
+    },
+    {
+      "key": "nav.item.report",
+      "description": "Navigation: the weekly report"
+    },
+    {
+      "key": "nav.item.team",
+      "description": "Navigation: the team"
+    },
+    {
+      "key": "nav.item.office",
+      "description": "Navigation: the office"
+    },
+    {
+      "key": "nav.item.integrations",
+      "description": "Navigation: integrations"
+    },
+    {
+      "key": "nav.item.settings",
+      "description": "Navigation: settings"
+    },
+    {
+      "key": "agent.lead_finder",
+      "description": "Owl team: the lead finder slot"
+    },
+    {
+      "key": "agent.researcher",
+      "description": "Owl team: the researcher slot"
+    },
+    {
+      "key": "agent.requirement_analyst",
+      "description": "Owl team: the requirement analyst slot"
+    },
+    {
+      "key": "agent.quote_writer",
+      "description": "Owl team: the quote writer slot"
+    },
+    {
+      "key": "agent.followup_desk",
+      "description": "Owl team: the follow-up desk slot"
+    },
+    {
+      "key": "agent.order_desk",
+      "description": "Owl team: the order desk slot"
+    },
+    {
+      "key": "word.customer",
+      "description": "Word: one person the business deals with"
+    },
+    {
+      "key": "word.customers",
+      "description": "Word: the people the business deals with"
+    },
+    {
+      "key": "word.lead",
+      "description": "Word: one lead"
+    },
+    {
+      "key": "word.leads",
+      "description": "Word: leads"
+    },
+    {
+      "key": "word.enquiry",
+      "description": "Word: one enquiry"
+    },
+    {
+      "key": "word.enquiries",
+      "description": "Word: enquiries"
+    },
+    {
+      "key": "word.item",
+      "description": "Word: one catalogue item"
+    },
+    {
+      "key": "word.items",
+      "description": "Word: catalogue items"
+    },
+    {
+      "key": "word.quote",
+      "description": "Word: one quote"
+    },
+    {
+      "key": "word.quotes",
+      "description": "Word: quotes"
+    },
+    {
+      "key": "word.order",
+      "description": "Word: one order"
+    },
+    {
+      "key": "word.orders",
+      "description": "Word: orders"
+    },
+    {
+      "key": "word.visit",
+      "description": "Word: one visit"
+    },
+    {
+      "key": "word.visits",
+      "description": "Word: visits"
+    },
+    {
+      "key": "word.contact",
+      "description": "Word: one contact"
+    },
+    {
+      "key": "word.contacts",
+      "description": "Word: contacts"
+    },
+    {
+      "key": "pack.core_tab",
+      "description": "The phone tab that holds the pack's core work (Quotes, Orders and deliveries, Fees)"
+    },
+    {
+      "key": "pack.not_validated",
+      "description": "The label shown on a business type that no real owner has reviewed yet"
+    }
+  ]
+}
