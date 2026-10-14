@@ -45,7 +45,7 @@ select is(tests.rows_as(tests.uid('ok1'), format($$select 1 from public.terms_ac
 select is(tests.sqlstate_as(tests.uid('ok1'), format($$insert into public.terms_acceptances (user_id, terms_version) values (%L, 'draft-1')$$, tests.uid('invited'))), '42501', 'DENY: a client cannot write a terms row');
 select is(tests.sqlstate_as(tests.uid('ok1'), $$update public.terms_acceptances set terms_version = 'draft-2'$$), '42501', 'DENY: a client cannot change the terms row');
 select is(tests.sqlstate_as(tests.uid('ok1'), $$delete from public.terms_acceptances$$), '42501', 'DENY: a client cannot delete the terms row');
-select is(tests.sqlstate_as(tests.uid('ok1'), format($$insert into public.account_setups (user_id, created_tenant_id, business_type, language) values (%L, %L, 'other', 'en')$$, tests.uid('ok1'), tests.tid('a'))),
+select is(tests.sqlstate_as(tests.uid('ok1'), format($$insert into public.account_setups (user_id, created_tenant_id, business_type, language) values (%L, %L, 'textiles', 'en')$$, tests.uid('ok1'), tests.tid('a'))),
   '42501', 'DENY: a client cannot write a setup row (the only way is complete_setup)');
 select is(tests.sqlstate_as(null, 'select * from public.terms_acceptances'), '42501', 'DENY: anon has no access to the terms table');
 select is(has_function_privilege('anon', 'public.complete_setup(text, text)', 'execute'), false, 'anon cannot execute complete_setup');
@@ -60,17 +60,18 @@ select is(tests.sqlstate_as(null, 'select public.get_account_setup()'), '42501',
 
 -- ---- complete_setup: the refusals first
 select is(tests.sqlstate_as(null, $$select public.complete_setup('textiles', 'en')$$), '42501', 'DENY: no identity');
-select is(tests.sqlstate_as(tests.uid('ok1'), $$select public.complete_setup('bakery', 'en')$$), '22023', 'DENY: a business type outside the list');
+select is(tests.sqlstate_as(tests.uid('ok1'), $$select public.complete_setup('bakery', 'en')$$), 'SM702', 'DENY: a business type that is not a pack (job CK: the list is the packs, not three words)');
+select is(tests.sqlstate_as(tests.uid('ok1'), $$select public.complete_setup('Bakery!', 'en')$$), '22023', 'DENY: a business type that is not even shaped like a code');
+select is(tests.sqlstate_as(tests.uid('ok1'), $$select public.complete_setup('other', 'en')$$), 'SM702', 'DENY: the older word `other` is not a business type any more');
 select is(tests.sqlstate_as(tests.uid('ok1'), $$select public.complete_setup('textiles', 'fr')$$), '22023', 'DENY: a language outside the list');
 select is(tests.sqlstate_as(tests.uid('ok1'), $$select public.complete_setup(null, null)$$), '22023', 'DENY: nothing chosen');
 select is(tests.sqlstate_as(tests.uid('unconf'), $$select public.complete_setup('textiles', 'en')$$), 'SM309', 'DENY: the e-mail is not confirmed');
 select is(tests.sqlstate_as(tests.uid('noterms'), $$select public.complete_setup('textiles', 'en')$$), 'SM308', 'DENY: the terms were not accepted at sign-up');
 select is(tests.sqlstate_as(tests.uid('badterms'), $$select public.complete_setup('textiles', 'en')$$), 'SM308', 'DENY: a malformed terms version counts as not accepted');
-select is(tests.sqlstate_as(tests.uid('noname'), $$select public.complete_setup('textiles', 'en')$$), '22023', 'DENY: no business name from sign-up');
 select is(tests.sqlstate_as(tests.uid('longname'), $$select public.complete_setup('textiles', 'en')$$), '22023', 'DENY: a business name over 120 characters');
 -- (only THIS file's fixture people are counted: account_setups has no foreign key, so a real sign-up that another session made and deleted on the same local database leaves a row behind, which made
 -- the old global count fail at random; found in job BO)
-select is((select count(*) from public.account_setups where user_id in (tests.uid('ok1'), tests.uid('unconf'), tests.uid('noterms'), tests.uid('badterms'), tests.uid('noname'), tests.uid('longname'))), 0::bigint,
+select is((select count(*) from public.account_setups where user_id in (tests.uid('ok1'), tests.uid('unconf'), tests.uid('noterms'), tests.uid('badterms'), tests.uid('longname'))), 0::bigint,
   'none of the refusals left a setup row');
 
 -- ---- complete_setup: the first call
@@ -91,7 +92,7 @@ select is(tests.rows_as(tests.uid('ok2'), 'select 1 from public.account_setups')
 
 -- ---- complete_setup: a repeat (double click, second tab, retry) changes nothing
 select is(tests.scalar_as(tests.uid('ok1'), $$select (public.complete_setup('textiles', 'te') ->> 'created')$$), 'false', 'a repeat says nothing new was made');
-select is(tests.scalar_as(tests.uid('ok1'), $$select (public.complete_setup('construction', 'hi') ->> 'tenant_id')$$), (select created_tenant_id::text from public.account_setups where user_id = tests.uid('ok1')),
+select is(tests.scalar_as(tests.uid('ok1'), $$select (public.complete_setup('construction_materials', 'hi') ->> 'tenant_id')$$), (select created_tenant_id::text from public.account_setups where user_id = tests.uid('ok1')),
   'a repeat with other choices returns the same business');
 select is((select business_type || ':' || language from public.account_setups where user_id = tests.uid('ok1')), 'textiles:te', 'and the first choices stand');
 -- (counts below look only at THIS file's fixture people: the local database is shared with other sessions whose businesses may carry the same names; job CD)
@@ -99,16 +100,22 @@ select is((select count(*) from public.memberships m join public.tenants t on t.
 select is((select count(*) from public.memberships where user_id = tests.uid('ok1') and role = 'owner'), 1::bigint, 'still one owner row');
 
 -- ---- two people with the same business name get two businesses with different addresses
-select is(tests.scalar_as(tests.uid('ok2'), $$select (public.complete_setup('other', 'en') ->> 'created')$$), 'true', 'a second person with the same business name is set up');
+select is(tests.scalar_as(tests.uid('ok2'), $$select (public.complete_setup('textiles', 'en') ->> 'created')$$), 'true', 'a second person with the same business name is set up');
 select is((select count(distinct t.slug) from public.tenants t join public.memberships m on m.tenant_id = t.id where m.user_id in (tests.uid('ok1'), tests.uid('ok2')) and t.name = 'Sri Lakshmi Silks'), 2::bigint, 'with a different web address');
 
 -- ---- a name with no latin letters still gets a valid address
-select is(tests.scalar_as(tests.uid('telugu'), $$select (public.complete_setup('other', 'te') ->> 'created')$$), 'true', 'a business named in Telugu is set up');
+select is(tests.scalar_as(tests.uid('telugu'), $$select (public.complete_setup('textiles', 'te') ->> 'created')$$), 'true', 'a business named in Telugu is set up');
 select matches((select t.slug from public.tenants t join public.account_setups s on s.created_tenant_id = t.id where s.user_id = tests.uid('telugu')), '^business-[0-9a-f]{8}$', 'its address falls back to "business"');
+
+-- ---- job CK: sign-up asks ONLY the business type. No business name is fine: the business is named "My business" until the activation checklist asks.
+select is(tests.scalar_as(tests.uid('noname'), $$select (public.complete_setup('education', 'en') ->> 'created')$$), 'true', 'job CK ALLOW: no business name from sign-up still makes the business');
+select is((select t.name from public.tenants t join public.account_setups s on s.created_tenant_id = t.id where s.user_id = tests.uid('noname')), 'My business', 'and it is called "My business" for now');
+select matches((select t.slug from public.tenants t join public.account_setups s on s.created_tenant_id = t.id where s.user_id = tests.uid('noname')), '^my-business-[0-9a-f]{8}$', 'with a readable web address');
+select is((select business_type from public.account_setups where user_id = tests.uid('noname')), 'education', 'and the chosen business type is recorded');
 
 -- ---- one business per account: an account that already owns a workspace is refused, and nothing is left behind
 select is(tests.sqlstate_as(tests.uid('owner_already'), $$select public.create_tenant('Already Mine', 'already-mine')$$), 'ok', 'set-up: this account already owns a workspace');
-select is(tests.sqlstate_as(tests.uid('owner_already'), $$select public.complete_setup('other', 'en')$$), 'SM307', 'DENY: an account that already owns a workspace cannot also be set up');
+select is(tests.sqlstate_as(tests.uid('owner_already'), $$select public.complete_setup('textiles', 'en')$$), 'SM307', 'DENY: an account that already owns a workspace cannot also be set up');
 select is((select count(*) from public.tenants where name = 'Second Try Co' and created_at >= now()), 0::bigint, 'no business was left behind');
 select is((select count(*) from public.account_setups where user_id = tests.uid('owner_already')), 0::bigint, 'and no setup row');
 

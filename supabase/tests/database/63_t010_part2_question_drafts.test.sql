@@ -66,7 +66,7 @@ update public.requirements set status = 'superseded' where id = tests.rid('r4');
 
 -- ============================================================================ A. catalog
 select is((select count(*) from pg_proc p where p.pronamespace = 'app'::regnamespace and p.proname like 'question\_drafts\_%'), 2::bigint, 'A1 the two guard functions exist');
-select is((select count(*) from pg_trigger t where t.tgrelid = 'public.question_drafts'::regclass and not t.tgisinternal and t.tgenabled = 'O'), 8::bigint, 'A2 eight enabled triggers on question_drafts (tenant, created meta, updated at, two guards, delete, truncate, audit)');
+select is((select count(*) from pg_trigger t where t.tgrelid = 'public.question_drafts'::regclass and not t.tgisinternal and t.tgenabled = 'O'), 9::bigint, 'A2 nine enabled triggers on question_drafts (tenant, created meta, updated at, two guards, delete, truncate, audit, and job CK''s module guard)');
 select is((select string_agg(e.enumlabel, ',' order by e.enumsortorder) from pg_enum e where e.enumtypid = 'public.question_draft_status'::regtype), 'draft,approved,discarded', 'A3 the states');
 select is((select string_agg(e.enumlabel, ',' order by e.enumsortorder) from pg_enum e where e.enumtypid = 'public.question_discard_code'::regtype), 'person,resolved,superseded', 'A4 the discard reasons');
 select is((select indexdef from pg_indexes where indexname = 'question_drafts_one_active_key') ~ 'UNIQUE.*\(tenant_id, requirement_id, question_code, line_no\).*WHERE', true, 'A5 one ACTIVE question per (tenant, requirement, code, line)');

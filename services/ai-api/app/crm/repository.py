@@ -190,6 +190,10 @@ def classify_error(status: int, body: Any) -> Exception:
         return ContactSuppressedError(code)
     if code == "SM401":
         return RealDataGateError(code)
+    if code == "SM701":  # job CK: the module is off for this business (default deny)
+        from app.packs.errors import ModuleOffError
+
+        return ModuleOffError(code)
     if code == "23514":
         return InvalidValueError(code)
     if code in _VALUE_CODES:

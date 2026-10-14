@@ -18,10 +18,10 @@ from typing import Any
 from xml.etree import ElementTree as ET  # noqa: S405 - input is screened for DOCTYPE / ENTITY first
 from xml.sax.saxutils import escape
 
-MAX_ZIP_BYTES = 2_000_000
+MAX_ZIP_BYTES = 3_000_000
 MAX_UNCOMPRESSED = 20_000_000
 MAX_MEMBERS = 100
-MAX_ROWS = 2_000
+MAX_ROWS = 5_200  # job CK: 5,000 data rows, the header and a few formatted blank rows
 MAX_COLS = 60
 MAX_CELL = 2_000
 

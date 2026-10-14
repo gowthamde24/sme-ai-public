@@ -66,6 +66,10 @@ class EmailNotConfirmed(RepositoryError):
     """SM309: the account's e-mail address is not confirmed."""
 
 
+class BusinessTypeUnavailable(RepositoryError):
+    """SM702: the business type is not a pack that a new person may choose."""
+
+
 class UpstreamError(RepositoryError):
     pass
 
@@ -156,6 +160,8 @@ class PostgrestTenantRepository:
             raise TermsNotAccepted(code)
         if code == "SM309":
             raise EmailNotConfirmed(code)
+        if code == "SM702":
+            raise BusinessTypeUnavailable(code)
         if code == "23505":
             raise SlugUnavailable(code)
         if code in {"22023", "23514", "22P02"}:

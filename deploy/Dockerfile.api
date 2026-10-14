@@ -12,6 +12,9 @@ COPY services/ai-api/app ./app
 COPY packages/quote-engine/src ./packages/quote-engine/src
 COPY packages/pure ./packages/pure
 ENV PYTHONPATH=/srv/packages/quote-engine/src:/srv/packages/pure
+# Job CK: the business-type packs (data). GET /v1/packs serves the sign-up cards from these files; PACKS_DIR points at them.
+COPY packages/packs ./packages/packs
+ENV PACKS_DIR=/srv/packages/packs
 # Not root: a fixed numeric user with no home and no shell; the code in /srv belongs to root and is read-only to it.
 RUN pip install . && useradd --system --no-create-home --shell /usr/sbin/nologin --uid 10001 api
 USER 10001

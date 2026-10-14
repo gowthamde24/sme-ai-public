@@ -120,6 +120,9 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `WHATSAPP_ACCESS_TOKENS` | secret | api | A JSON object `{token_ref: token}` when workspaces have their own numbers. |
 | `CHANNEL_AGENT_EMAIL` | plain | api | The registered account the API signs in as to hand a webhook to the database (belongs to no workspace). |
 | `CHANNEL_AGENT_PASSWORD` | secret | api | Its password. |
+| `PACKS_DIR` | plain | api | Where `packages/packs` lives. Unset is right in the container image (`/srv/packages/packs`, set by the Dockerfile) and in a checkout. `GET /v1/packs` serves the sign-up cards from it. |
+| `AUTH_GOOGLE_CLIENT_ID` | plain | api | The PUBLIC Google client id. Set only when Google sign-up is turned on in Supabase Auth (docs/runbooks/social-sign-up.md); unset = the button is not offered. The secret lives in Supabase, never here. |
+| `AUTH_FACEBOOK_APP_ID` | plain | api | The PUBLIC Facebook app id, same rule. |
 | `INTEGRATIONS_TENANT_ID` | plain | api | The ONE workspace the installation's connector credentials belong to. |
 | `INDIAMART_PROVIDER` | plain | api | `off` (default) | `fake` | `real`. |
 | `INDIAMART_CRM_KEY` | secret | api | Only with `real`. |

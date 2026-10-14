@@ -92,7 +92,7 @@ def test_not_a_zip_and_too_many_parts_and_no_sheet() -> None:
 
 def test_too_many_rows_and_columns_in_a_sheet() -> None:
     with pytest.raises(XlsxRefused) as e:
-        read_xlsx(write_xlsx([("S", [["a"]] + [["x"]] * 2100)]))
+        read_xlsx(write_xlsx([("S", [["a"]] + [["x"]] * 5300)]))
     assert e.value.code == "too_many_rows"
     with pytest.raises(XlsxRefused) as e2:
         read_xlsx(write_xlsx([("S", [[f"c{i}" for i in range(70)]])]))
@@ -119,7 +119,7 @@ def test_xlsx_goes_through_the_same_grid() -> None:
     ("data", "code"),
     [
         (b"", "empty"), (b"   \n\n", "empty"), (b"a,b\n\x80\x81,2\n", "not_utf8"), (b'a,b\n"unterminated,2\n', "malformed_csv"),
-        (b"x" * 1_000_001, "too_large"), (b"PK" + b"0" * 2_000_001, "too_large"), (b",,\n", "empty"),
+        (b"x" * 2_000_001, "too_large"), (b"PK" + b"0" * 3_000_001, "too_large"), (b",,\n", "empty"),
     ],
 )  # fmt: skip
 def test_refusals_are_closed_codes(data: bytes, code: str) -> None:

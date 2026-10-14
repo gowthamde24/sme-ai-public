@@ -1,5 +1,5 @@
-"""Write packages/contracts/{crm,evidence,leads,agents,erasure}.schema.json and
-{crm,evidence,leads,agents,erasure}.ts from the API models.
+"""Write packages/contracts/{crm,evidence,leads,agents,erasure,packs}.schema.json and
+{crm,evidence,leads,agents,erasure,packs}.ts from the API models.
 Run through `make contracts` (uses the API virtualenv)."""
 
 from pathlib import Path
@@ -9,6 +9,7 @@ from app.crm.contracts import schema_text, ts_text
 from app.erasure import contracts as erasure
 from app.evidence import contracts as evidence
 from app.leads import contracts as leads
+from app.packs import contracts as packs
 
 ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/crm.schema.json").write_text(schema_text())
@@ -21,7 +22,9 @@ ROOT = Path(__file__).resolve().parents[1]
 (ROOT / "packages/contracts/agents.ts").write_text(agents.ts_text())
 (ROOT / "packages/contracts/erasure.schema.json").write_text(erasure.schema_text())
 (ROOT / "packages/contracts/erasure.ts").write_text(erasure.ts_text())
+(ROOT / "packages/contracts/packs.schema.json").write_text(packs.schema_text())
+(ROOT / "packages/contracts/packs.ts").write_text(packs.ts_text())
 print(
-    "wrote packages/contracts/{crm,evidence,leads,agents,erasure}.schema.json "
-    "and {crm,evidence,leads,agents,erasure}.ts"
+    "wrote packages/contracts/{crm,evidence,leads,agents,erasure,packs}.schema.json "
+    "and {crm,evidence,leads,agents,erasure,packs}.ts"
 )

@@ -112,6 +112,13 @@ class Settings(BaseSettings):
     # so no other workspace may use them. Keys come from the environment only (never logged, never
     # returned, never in the database). The webhooks sign in as the registered worker account above.
     integrations_tenant_id: str | None = None
+    # Job CK: packs and sign-up providers. PACKS_DIR is where packages/packs lives (unset: the
+    # checkout's, then /srv/packages/packs in the image). A sign-up provider is OFFERED only when
+    # its public client id is set here (the id and the SECRET are set in Supabase Auth; the API
+    # never holds the secret). Environment only; unset = off.
+    packs_dir: str | None = None
+    auth_google_client_id: str | None = None
+    auth_facebook_app_id: str | None = None
     indiamart_provider: str = "off"  # off | fake | real
     indiamart_crm_key: SecretStr | None = None
     payments_provider: str = "off"  # off | fake | razorpay | cashfree

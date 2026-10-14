@@ -533,6 +533,19 @@ begin
   insert into public.store_visits (id, tenant_id, lead_id, contact_id, company_id, visit_date, starts_at, ends_at, purpose, note, request_sha256, created_by)
   values (tests.rid(p || '_er_sv'), t, l, k, c, date '2026-10-06', timestamptz '2026-10-06 11:00+05:30', timestamptz '2026-10-06 11:30+05:30', 'Bridal sarees for Zed Qxjv', 'Call 98765 43210 before the visit', repeat('5', 64), tests.uid(p || '_owner'));
   update public.store_visits set status = 'cancelled', closed_at = now(), cancel_reason = 'Zed Qxjv wrote from zed.qxjv@canary.test' where id = tests.rid(p || '_er_sv');
+  -- job CK: five custom field values on the contact, one per value column (a personal-class text field that names them, a number, a date, a yes/no and a choice list)
+  insert into public.custom_field_defs (id, tenant_id, entity, code, label, kind, choices, pii_class, source) values
+    (tests.rid(p || '_er_cf1'), t, 'contact', 'er_note',   '{"en": "Note"}',   'text',         null, 'personal', 'owner'),
+    (tests.rid(p || '_er_cf2'), t, 'contact', 'er_number', '{"en": "Number"}', 'number',       null, 'personal', 'owner'),
+    (tests.rid(p || '_er_cf3'), t, 'contact', 'er_date',   '{"en": "Date"}',   'date',         null, 'personal', 'owner'),
+    (tests.rid(p || '_er_cf4'), t, 'contact', 'er_flag',   '{"en": "Flag"}',   'yes_no',       null, 'personal', 'owner'),
+    (tests.rid(p || '_er_cf5'), t, 'contact', 'er_multi',  '{"en": "Multi"}',  'multi_choice', '[{"code": "a1", "label": {"en": "A"}}, {"code": "b2", "label": {"en": "B"}}]'::jsonb, 'personal', 'owner');
+  insert into public.custom_field_values (id, tenant_id, field_id, entity, contact_id, value_text, value_number, value_date, value_bool, value_choices) values
+    (tests.rid(p || '_er_cv1'), t, tests.rid(p || '_er_cf1'), 'contact', k, 'Zed Qxjv, call 98765 43210', null, null, null, null),
+    (tests.rid(p || '_er_cv2'), t, tests.rid(p || '_er_cf2'), 'contact', k, null, 98765, null, null, null),
+    (tests.rid(p || '_er_cv3'), t, tests.rid(p || '_er_cf3'), 'contact', k, null, null, date '1980-05-17', null, null),
+    (tests.rid(p || '_er_cv4'), t, tests.rid(p || '_er_cf4'), 'contact', k, null, null, null, true, null),
+    (tests.rid(p || '_er_cv5'), t, tests.rid(p || '_er_cf5'), 'contact', k, null, null, null, null, array['a1', 'b2']);
 end $$;
 
 -- Every place a pattern still appears in tenant p, as 'table.column#row id' strings (text, text[] and jsonb columns of EVERY table with a

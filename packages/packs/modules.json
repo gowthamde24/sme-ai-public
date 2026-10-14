@@ -1,0 +1,155 @@
+{
+  "$comment": "The CLOSED list of modules (blueprint section 4, ADR 0084 part 1). A module is the ONLY code extension point of a pack: a pack turns modules on, code reads module flags, nothing reads a pack id. Adding a module is a code change (a migration for packs.modules, a guard where it owns tables); adding a business type is data only. `exists_today` is true when the repository already has working code and tables for the module: the default pack (textiles) must keep every such module on. `guard` says how the database refuses a module that is off: tables (a before-insert trigger on each table the module owns), agents (an agent run of a mapped agent is refused), flag (no table of its own: the screens and the API read the flag; its output lands in guarded tables), future (the module's tables arrive with its job and register their guards then; the module is on only in packs that list it).",
+  "modules": [
+    {
+      "code": "today",
+      "exists_today": true,
+      "description": "Today screen, Agent OWL and the Ask box",
+      "guard": "agents"
+    },
+    {
+      "code": "inbox",
+      "exists_today": true,
+      "description": "WhatsApp chats and suggested replies",
+      "guard": "flag"
+    },
+    {
+      "code": "contacts",
+      "exists_today": true,
+      "description": "People: customers, guardians, adult students",
+      "guard": "tables"
+    },
+    {
+      "code": "companies",
+      "exists_today": true,
+      "description": "Companies: shops, contractors, builders",
+      "guard": "tables"
+    },
+    {
+      "code": "enquiries",
+      "exists_today": true,
+      "description": "Leads, enquiries and requirement capture",
+      "guard": "tables"
+    },
+    {
+      "code": "catalogue",
+      "exists_today": true,
+      "description": "Catalogue and products with units and photos",
+      "guard": "tables"
+    },
+    {
+      "code": "quotes",
+      "exists_today": true,
+      "description": "Deterministic quotes, price lists and quote policy",
+      "guard": "tables"
+    },
+    {
+      "code": "orders",
+      "exists_today": true,
+      "description": "Orders from approved quotes",
+      "guard": "tables"
+    },
+    {
+      "code": "deliveries",
+      "exists_today": false,
+      "description": "Deliveries, trips and delivery notes (construction, wave 2)",
+      "guard": "future"
+    },
+    {
+      "code": "sites",
+      "exists_today": false,
+      "description": "Customer sites (construction, wave 2)",
+      "guard": "future"
+    },
+    {
+      "code": "programmes",
+      "exists_today": false,
+      "description": "Programmes, classes and minimal student records (education, wave 4)",
+      "guard": "future"
+    },
+    {
+      "code": "fees",
+      "exists_today": false,
+      "description": "Fee plans, fee ledger and receipts (education, wave 4)",
+      "guard": "future"
+    },
+    {
+      "code": "dues",
+      "exists_today": false,
+      "description": "Receivables: invoiced, paid, balance, ageing (wave 3)",
+      "guard": "future"
+    },
+    {
+      "code": "followups",
+      "exists_today": true,
+      "description": "Follow-up cadence and drafts",
+      "guard": "tables"
+    },
+    {
+      "code": "visits",
+      "exists_today": true,
+      "description": "Store, site or campus visits",
+      "guard": "tables"
+    },
+    {
+      "code": "campaigns",
+      "exists_today": false,
+      "description": "Reminder campaigns, one approval per campaign (wave 3)",
+      "guard": "future"
+    },
+    {
+      "code": "call_list",
+      "exists_today": true,
+      "description": "Human call list through the call bridge",
+      "guard": "tables"
+    },
+    {
+      "code": "lead_finder",
+      "exists_today": true,
+      "description": "Retailer and lead finder",
+      "guard": "flag"
+    },
+    {
+      "code": "research",
+      "exists_today": true,
+      "description": "Research agent and web research tools",
+      "guard": "agents"
+    },
+    {
+      "code": "voice_notes",
+      "exists_today": false,
+      "description": "WhatsApp audio reminders (wave 5)",
+      "guard": "future"
+    },
+    {
+      "code": "ai_calls",
+      "exists_today": false,
+      "description": "AI outbound calls (off everywhere, legal-gated)",
+      "guard": "future"
+    },
+    {
+      "code": "reports",
+      "exists_today": true,
+      "description": "Weekly report and pack reports",
+      "guard": "flag"
+    },
+    {
+      "code": "office",
+      "exists_today": true,
+      "description": "The plush team room",
+      "guard": "flag"
+    },
+    {
+      "code": "integrations",
+      "exists_today": true,
+      "description": "Tally, Vyapar and Excel exports and imports, calendar",
+      "guard": "tables"
+    },
+    {
+      "code": "payment_links",
+      "exists_today": true,
+      "description": "UPI and card payment links through a provider (ADR 0080)",
+      "guard": "tables"
+    }
+  ]
+}

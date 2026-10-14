@@ -1,0 +1,902 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "packs.schema.json",
+  "title": "Packs, modules, custom fields, example data and sign-up contracts (job CK)",
+  "description": "Generated from services/ai-api/app/packs/models.py and app/customfields/models.py by `make contracts`. GET /v1/packs and GET /v1/auth/providers need no sign-in. Requests forbid unknown properties: a tenant, a pack id or a personal-data class can never be sent.",
+  "$defs": {
+    "AccountSecurityOut": {
+      "additionalProperties": false,
+      "description": "GET /v1/account/security: where the second factor stands for this session. It is NOT asked at sign-up; it is asked at the first action that needs one.",
+      "properties": {
+        "session_level": {
+          "enum": [
+            "aal1",
+            "aal2"
+          ],
+          "title": "Session Level",
+          "type": "string"
+        },
+        "asked_at_sign_up": {
+          "const": false,
+          "title": "Asked At Sign Up",
+          "type": "boolean"
+        },
+        "needed_for": {
+          "items": {
+            "enum": [
+              "approvals",
+              "whatsapp_connect",
+              "rules_and_prices",
+              "imports_and_exports",
+              "team_and_privacy"
+            ],
+            "type": "string"
+          },
+          "title": "Needed For",
+          "type": "array"
+        }
+      },
+      "required": [
+        "session_level",
+        "asked_at_sign_up",
+        "needed_for"
+      ],
+      "title": "AccountSecurityOut",
+      "type": "object"
+    },
+    "AuthProvidersOut": {
+      "additionalProperties": false,
+      "description": "GET /v1/auth/providers (no sign-in): which ways to sign up this system offers. A provider is on only when its keys are configured (env); e-mail is always on.",
+      "properties": {
+        "email": {
+          "const": true,
+          "title": "Email",
+          "type": "boolean"
+        },
+        "google": {
+          "title": "Google",
+          "type": "boolean"
+        },
+        "facebook": {
+          "title": "Facebook",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "email",
+        "google",
+        "facebook"
+      ],
+      "title": "AuthProvidersOut",
+      "type": "object"
+    },
+    "ChoiceIn": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "pattern": "^[a-z0-9][a-z0-9_]{0,39}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "label"
+      ],
+      "title": "ChoiceIn",
+      "type": "object"
+    },
+    "ChoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        }
+      },
+      "required": [
+        "code",
+        "label"
+      ],
+      "title": "ChoiceOut",
+      "type": "object"
+    },
+    "CustomFieldCreateIn": {
+      "additionalProperties": false,
+      "description": "POST /v1/tenants/{id}/custom-fields (Owner or Admin, second factor).",
+      "properties": {
+        "entity": {
+          "enum": [
+            "contact",
+            "catalogue_item"
+          ],
+          "title": "Entity",
+          "type": "string"
+        },
+        "code": {
+          "pattern": "^[a-z][a-z0-9_]{1,39}$",
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "number",
+            "date",
+            "choice",
+            "multi_choice",
+            "yes_no"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "choices": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ChoiceIn"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Choices"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entity",
+        "code",
+        "label",
+        "kind"
+      ],
+      "title": "CustomFieldCreateIn",
+      "type": "object"
+    },
+    "CustomFieldDefOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "entity": {
+          "enum": [
+            "contact",
+            "catalogue_item"
+          ],
+          "title": "Entity",
+          "type": "string"
+        },
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "label": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Label",
+          "type": "object"
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "number",
+            "date",
+            "choice",
+            "multi_choice",
+            "yes_no"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "choices": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ChoiceOut"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Choices"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean"
+        },
+        "position": {
+          "title": "Position",
+          "type": "integer"
+        },
+        "pii_class": {
+          "enum": [
+            "none",
+            "personal"
+          ],
+          "title": "Pii Class",
+          "type": "string"
+        },
+        "mergeable": {
+          "title": "Mergeable",
+          "type": "boolean"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "pack",
+            "owner"
+          ],
+          "title": "Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "entity",
+        "code",
+        "label",
+        "kind",
+        "choices",
+        "required",
+        "position",
+        "pii_class",
+        "mergeable",
+        "active",
+        "source"
+      ],
+      "title": "CustomFieldDefOut",
+      "type": "object"
+    },
+    "CustomFieldListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "fields": {
+          "items": {
+            "$ref": "#/$defs/CustomFieldDefOut"
+          },
+          "title": "Fields",
+          "type": "array"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "CustomFieldListOut",
+      "type": "object"
+    },
+    "CustomFieldPatchIn": {
+      "additionalProperties": false,
+      "description": "PATCH /v1/tenants/{id}/custom-fields/{field_id}: a field's label, required flag, order and active flag change; its choices only GROW; its code, kind and entity never change.",
+      "properties": {
+        "label": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label"
+        },
+        "required": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Required"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Position"
+        },
+        "add_choices": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/ChoiceIn"
+              },
+              "maxItems": 30,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Add Choices"
+        }
+      },
+      "title": "CustomFieldPatchIn",
+      "type": "object"
+    },
+    "CustomValueOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "text",
+            "number",
+            "date",
+            "choice",
+            "multi_choice",
+            "yes_no"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "code",
+        "kind",
+        "active",
+        "value"
+      ],
+      "title": "CustomValueOut",
+      "type": "object"
+    },
+    "CustomValuesIn": {
+      "additionalProperties": false,
+      "description": "PUT .../contacts/{id}/custom and .../catalogue/{id}/custom: {code: value}. All or nothing.",
+      "properties": {
+        "values": {
+          "maxProperties": 40,
+          "patternProperties": {
+            "^[a-z][a-z0-9_]{1,39}$": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "boolean"
+                },
+                {
+                  "items": {
+                    "type": "string"
+                  },
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "title": "Values",
+          "type": "object"
+        }
+      },
+      "required": [
+        "values"
+      ],
+      "title": "CustomValuesIn",
+      "type": "object"
+    },
+    "CustomValuesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "entity": {
+          "enum": [
+            "contact",
+            "catalogue_item"
+          ],
+          "title": "Entity",
+          "type": "string"
+        },
+        "entity_id": {
+          "format": "uuid",
+          "title": "Entity Id",
+          "type": "string"
+        },
+        "values": {
+          "items": {
+            "$ref": "#/$defs/CustomValueOut"
+          },
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "required": [
+        "entity",
+        "entity_id",
+        "values"
+      ],
+      "title": "CustomValuesOut",
+      "type": "object"
+    },
+    "ExampleCountsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "companies": {
+          "title": "Companies",
+          "type": "integer"
+        },
+        "contacts": {
+          "title": "Contacts",
+          "type": "integer"
+        },
+        "leads": {
+          "title": "Leads",
+          "type": "integer"
+        },
+        "products": {
+          "title": "Products",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "companies",
+        "contacts",
+        "leads",
+        "products"
+      ],
+      "title": "ExampleCountsOut",
+      "type": "object"
+    },
+    "ExampleDataRemoveOut": {
+      "additionalProperties": false,
+      "description": "DELETE /v1/tenants/{id}/example-data: what was removed, and what was KEPT because it was changed or is in use.",
+      "properties": {
+        "batch_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Batch Id"
+        },
+        "removed": {
+          "$ref": "#/$defs/ExampleCountsOut"
+        },
+        "kept": {
+          "$ref": "#/$defs/ExampleCountsOut"
+        }
+      },
+      "required": [
+        "batch_id",
+        "removed",
+        "kept"
+      ],
+      "title": "ExampleDataRemoveOut",
+      "type": "object"
+    },
+    "ExampleDataStatusOut": {
+      "additionalProperties": false,
+      "description": "GET/POST /v1/tenants/{id}/example-data: is the labelled sample loaded.",
+      "properties": {
+        "loaded": {
+          "title": "Loaded",
+          "type": "boolean"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Batch Id"
+        },
+        "pack_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pack Id"
+        },
+        "loaded_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Loaded At"
+        },
+        "removed_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Removed At"
+        },
+        "counts": {
+          "$ref": "#/$defs/ExampleCountsOut"
+        }
+      },
+      "required": [
+        "loaded",
+        "batch_id",
+        "pack_id",
+        "loaded_at",
+        "removed_at",
+        "counts"
+      ],
+      "title": "ExampleDataStatusOut",
+      "type": "object"
+    },
+    "ModuleStateOut": {
+      "additionalProperties": false,
+      "properties": {
+        "module": {
+          "title": "Module",
+          "type": "string"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "reason": {
+          "const": "pack",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "module",
+        "enabled",
+        "reason"
+      ],
+      "title": "ModuleStateOut",
+      "type": "object"
+    },
+    "PackListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "packs": {
+          "items": {
+            "$ref": "#/$defs/PackSummaryOut"
+          },
+          "title": "Packs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "packs"
+      ],
+      "title": "PackListOut",
+      "type": "object"
+    },
+    "PackSummaryOut": {
+      "additionalProperties": false,
+      "description": "One business type as the sign-up card shows it (GET /v1/packs, no sign-in).",
+      "properties": {
+        "pack_id": {
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "preview",
+            "published"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "validated": {
+          "title": "Validated",
+          "type": "boolean"
+        },
+        "names": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Names",
+          "type": "object"
+        },
+        "summary": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Summary",
+          "type": "object"
+        },
+        "accent": {
+          "title": "Accent",
+          "type": "string"
+        },
+        "owl_prop": {
+          "title": "Owl Prop",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pack_id",
+        "version",
+        "status",
+        "validated",
+        "names",
+        "summary",
+        "accent",
+        "owl_prop"
+      ],
+      "title": "PackSummaryOut",
+      "type": "object"
+    },
+    "WorkspaceModulesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "modules": {
+          "items": {
+            "$ref": "#/$defs/ModuleStateOut"
+          },
+          "title": "Modules",
+          "type": "array"
+        }
+      },
+      "required": [
+        "modules"
+      ],
+      "title": "WorkspaceModulesOut",
+      "type": "object"
+    },
+    "WorkspacePackOut": {
+      "additionalProperties": false,
+      "description": "GET /v1/tenants/{id}/pack: the pack this business runs, pinned to the version it chose.",
+      "properties": {
+        "pack_id": {
+          "title": "Pack Id",
+          "type": "string"
+        },
+        "version": {
+          "title": "Version",
+          "type": "integer"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "preview",
+            "published"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "validated": {
+          "title": "Validated",
+          "type": "boolean"
+        },
+        "source": {
+          "enum": [
+            "signup",
+            "default",
+            "legacy",
+            "operator"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "chosen_at": {
+          "format": "date-time",
+          "title": "Chosen At",
+          "type": "string"
+        },
+        "names": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Names",
+          "type": "object"
+        },
+        "summary": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Summary",
+          "type": "object"
+        },
+        "accent": {
+          "title": "Accent",
+          "type": "string"
+        },
+        "owl_prop": {
+          "title": "Owl Prop",
+          "type": "string"
+        },
+        "core_tab": {
+          "title": "Core Tab",
+          "type": "string"
+        },
+        "modules": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Modules",
+          "type": "array"
+        },
+        "units": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Units",
+          "type": "array"
+        },
+        "default_unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Default Unit"
+        },
+        "labels": {
+          "additionalProperties": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "title": "Labels",
+          "type": "object"
+        },
+        "language_review": {
+          "additionalProperties": {
+            "enum": [
+              "draft",
+              "web_dictionary",
+              "native_reviewed"
+            ],
+            "type": "string"
+          },
+          "title": "Language Review",
+          "type": "object"
+        }
+      },
+      "required": [
+        "pack_id",
+        "version",
+        "status",
+        "validated",
+        "source",
+        "chosen_at",
+        "names",
+        "summary",
+        "accent",
+        "owl_prop",
+        "core_tab",
+        "modules",
+        "units",
+        "default_unit",
+        "labels",
+        "language_review"
+      ],
+      "title": "WorkspacePackOut",
+      "type": "object"
+    }
+  }
+}

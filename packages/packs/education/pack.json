@@ -1,0 +1,329 @@
+{
+  "$schema": "../pack.schema.json",
+  "id": "education",
+  "version": 1,
+  "status": "preview",
+  "default_for_existing_workspaces": false,
+  "reviewed_by": null,
+  "names": {
+    "en": "Education",
+    "te": "విద్య",
+    "hi": "शिक्षा",
+    "kn": "ಶಿಕ್ಷಣ"
+  },
+  "summary": {
+    "en": "Schools, colleges, universities, coaching and training institutes",
+    "te": "పాఠశాలలు, కళాశాలలు, విశ్వవిద్యాలయాలు, కోచింగ్ సంస్థలు",
+    "hi": "स्कूल, कॉलेज, विश्वविद्यालय, कोचिंग संस्थान",
+    "kn": "ಶಾಲೆ, ಕಾಲೇಜು, ವಿಶ್ವವಿದ್ಯಾಲಯ, ಕೋಚಿಂಗ್ ಸಂಸ್ಥೆಗಳು"
+  },
+  "accent": "sky_blue",
+  "owl_prop": "graduation_cap",
+  "core_tab": "fees",
+  "modules": [
+    "today",
+    "inbox",
+    "contacts",
+    "enquiries",
+    "programmes",
+    "fees",
+    "dues",
+    "followups",
+    "visits",
+    "campaigns",
+    "call_list",
+    "voice_notes",
+    "reports",
+    "office",
+    "integrations"
+  ],
+  "units": [],
+  "default_unit": null,
+  "labels": {
+    "en": {
+      "nav.item.today": "Today",
+      "nav.item.chats": "Customer chats",
+      "nav.item.report": "This week",
+      "nav.item.team": "Team",
+      "nav.item.office": "Office",
+      "nav.item.integrations": "Integrations",
+      "nav.item.settings": "Settings",
+      "agent.researcher": "Researcher",
+      "agent.followup_desk": "Follow-up Desk",
+      "word.contact": "Contact",
+      "word.contacts": "Contacts",
+      "pack.not_validated": "Not validated by a real owner yet",
+      "nav.item.leads": "Admissions",
+      "nav.item.quotes": "Fees",
+      "nav.item.orders": "Announcements",
+      "nav.item.customers": "Parents & students",
+      "nav.item.catalogue": "Programmes",
+      "nav.item.sarees": "Programmes",
+      "nav.item.visits": "Campus visits",
+      "nav.tab.visits": "Campus visits",
+      "nav.item.retailers": "Find leads",
+      "agent.lead_finder": "Admissions Desk",
+      "agent.requirement_analyst": "Enquiry Analyst",
+      "agent.quote_writer": "Fee Desk",
+      "agent.order_desk": "Notice Desk",
+      "word.customer": "Parent or student",
+      "word.customers": "Parents & students",
+      "word.lead": "Admission enquiry",
+      "word.leads": "Admissions",
+      "word.enquiry": "Admission enquiry",
+      "word.enquiries": "Admission enquiries",
+      "word.item": "Programme",
+      "word.items": "Programmes",
+      "word.quote": "Fee",
+      "word.quotes": "Fees",
+      "word.order": "Announcement",
+      "word.orders": "Announcements",
+      "word.visit": "Campus visit",
+      "word.visits": "Campus visits",
+      "pack.core_tab": "Fees"
+    },
+    "te": {
+      "nav.item.today": "ఈరోజు",
+      "nav.item.chats": "కస్టమర్ చాట్‌లు",
+      "nav.item.report": "ఈ వారం",
+      "nav.item.team": "టీమ్",
+      "nav.item.office": "ఆఫీస్",
+      "nav.item.integrations": "ఇంటిగ్రేషన్లు",
+      "nav.item.settings": "సెట్టింగ్స్",
+      "agent.researcher": "రీసెర్చర్",
+      "agent.followup_desk": "ఫాలో-అప్ డెస్క్",
+      "word.contact": "సంప్రదింపు",
+      "word.contacts": "సంప్రదింపులు",
+      "nav.item.leads": "అడ్మిషన్లు",
+      "nav.item.quotes": "ఫీజులు",
+      "nav.item.orders": "ప్రకటనలు",
+      "nav.item.customers": "తల్లిదండ్రులు, విద్యార్థులు",
+      "nav.item.catalogue": "కోర్సులు",
+      "nav.item.sarees": "కోర్సులు",
+      "nav.item.visits": "క్యాంపస్ సందర్శనలు",
+      "nav.tab.visits": "క్యాంపస్ సందర్శనలు",
+      "agent.lead_finder": "అడ్మిషన్స్ డెస్క్",
+      "agent.requirement_analyst": "ఎంక్వైరీ అనలిస్ట్",
+      "agent.quote_writer": "ఫీజ్ డెస్క్",
+      "agent.order_desk": "నోటీస్ డెస్క్",
+      "word.customer": "తల్లిదండ్రి లేదా విద్యార్థి",
+      "word.customers": "తల్లిదండ్రులు, విద్యార్థులు",
+      "word.lead": "అడ్మిషన్ ఎంక్వైరీ",
+      "word.leads": "అడ్మిషన్లు",
+      "word.enquiry": "అడ్మిషన్ ఎంక్వైరీ",
+      "word.enquiries": "అడ్మిషన్ ఎంక్వైరీలు",
+      "word.item": "కోర్సు",
+      "word.items": "కోర్సులు",
+      "word.quote": "ఫీజు",
+      "word.quotes": "ఫీజులు",
+      "word.order": "ప్రకటన",
+      "word.orders": "ప్రకటనలు",
+      "word.visit": "క్యాంపస్ సందర్శన",
+      "word.visits": "క్యాంపస్ సందర్శనలు",
+      "pack.core_tab": "ఫీజులు"
+    },
+    "hi": {
+      "nav.item.today": "आज",
+      "nav.item.chats": "कस्टमर चैट",
+      "nav.item.report": "इस हफ़्ते",
+      "nav.item.team": "टीम",
+      "nav.item.office": "ऑफ़िस",
+      "nav.item.integrations": "इंटीग्रेशन",
+      "nav.item.settings": "सेटिंग्स",
+      "agent.researcher": "रिसर्चर",
+      "agent.followup_desk": "फ़ॉलो-अप डेस्क",
+      "word.contact": "संपर्क",
+      "word.contacts": "संपर्क",
+      "nav.item.leads": "प्रवेश",
+      "nav.item.quotes": "फ़ीस",
+      "nav.item.orders": "सूचनाएँ",
+      "nav.item.customers": "अभिभावक और छात्र",
+      "nav.item.catalogue": "पाठ्यक्रम",
+      "nav.item.sarees": "पाठ्यक्रम",
+      "nav.item.visits": "कैंपस विज़िट",
+      "nav.tab.visits": "कैंपस विज़िट",
+      "agent.lead_finder": "एडमिशन डेस्क",
+      "agent.requirement_analyst": "पूछताछ एनालिस्ट",
+      "agent.quote_writer": "फ़ीस डेस्क",
+      "agent.order_desk": "नोटिस डेस्क",
+      "word.customer": "अभिभावक या छात्र",
+      "word.customers": "अभिभावक और छात्र",
+      "word.lead": "प्रवेश पूछताछ",
+      "word.leads": "प्रवेश",
+      "word.enquiry": "प्रवेश पूछताछ",
+      "word.enquiries": "प्रवेश पूछताछें",
+      "word.item": "पाठ्यक्रम",
+      "word.items": "पाठ्यक्रम",
+      "word.quote": "फ़ीस",
+      "word.quotes": "फ़ीस",
+      "word.order": "सूचना",
+      "word.orders": "सूचनाएँ",
+      "word.visit": "कैंपस विज़िट",
+      "word.visits": "कैंपस विज़िट",
+      "pack.core_tab": "फ़ीस"
+    },
+    "kn": {
+      "nav.item.today": "ಇಂದು",
+      "nav.item.chats": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
+      "nav.item.report": "ಈ ವಾರ",
+      "nav.item.team": "ಟೀಮ್",
+      "nav.item.office": "ಆಫೀಸ್",
+      "nav.item.integrations": "ಇಂಟಿಗ್ರೇಷನ್‌ಗಳು",
+      "nav.item.settings": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+      "agent.researcher": "ರಿಸರ್ಚರ್",
+      "agent.followup_desk": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
+      "word.contact": "ಸಂಪರ್ಕ",
+      "word.contacts": "ಸಂಪರ್ಕಗಳು",
+      "nav.item.leads": "ಪ್ರವೇಶಗಳು",
+      "nav.item.quotes": "ಶುಲ್ಕ",
+      "nav.item.orders": "ಪ್ರಕಟಣೆಗಳು",
+      "nav.item.customers": "ಪೋಷಕರು ಮತ್ತು ವಿದ್ಯಾರ್ಥಿಗಳು",
+      "nav.item.catalogue": "ಕೋರ್ಸ್‌ಗಳು",
+      "nav.item.sarees": "ಕೋರ್ಸ್‌ಗಳು",
+      "nav.item.visits": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+      "nav.tab.visits": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+      "agent.lead_finder": "ಅಡ್ಮಿಷನ್ಸ್ ಡೆಸ್ಕ್",
+      "agent.requirement_analyst": "ವಿಚಾರಣೆ ಅನಲಿಸ್ಟ್",
+      "agent.quote_writer": "ಶುಲ್ಕ ಡೆಸ್ಕ್",
+      "agent.order_desk": "ನೋಟಿಸ್ ಡೆಸ್ಕ್",
+      "word.customer": "ಪೋಷಕ ಅಥವಾ ವಿದ್ಯಾರ್ಥಿ",
+      "word.customers": "ಪೋಷಕರು ಮತ್ತು ವಿದ್ಯಾರ್ಥಿಗಳು",
+      "word.lead": "ಪ್ರವೇಶ ವಿಚಾರಣೆ",
+      "word.leads": "ಪ್ರವೇಶಗಳು",
+      "word.enquiry": "ಪ್ರವೇಶ ವಿಚಾರಣೆ",
+      "word.enquiries": "ಪ್ರವೇಶ ವಿಚಾರಣೆಗಳು",
+      "word.item": "ಕೋರ್ಸ್",
+      "word.items": "ಕೋರ್ಸ್‌ಗಳು",
+      "word.quote": "ಶುಲ್ಕ",
+      "word.quotes": "ಶುಲ್ಕ",
+      "word.order": "ಪ್ರಕಟಣೆ",
+      "word.orders": "ಪ್ರಕಟಣೆಗಳು",
+      "word.visit": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿ",
+      "word.visits": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+      "pack.core_tab": "ಶುಲ್ಕ"
+    }
+  },
+  "language_review": {
+    "te": "draft",
+    "hi": "draft",
+    "kn": "draft"
+  },
+  "custom_fields": [
+    {
+      "entity": "contact",
+      "code": "relation",
+      "kind": "choice",
+      "label": {
+        "en": "Relation to the student"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "mother",
+          "label": {
+            "en": "Mother"
+          }
+        },
+        {
+          "code": "father",
+          "label": {
+            "en": "Father"
+          }
+        },
+        {
+          "code": "guardian",
+          "label": {
+            "en": "Guardian"
+          }
+        },
+        {
+          "code": "self",
+          "label": {
+            "en": "The student (adult)"
+          }
+        },
+        {
+          "code": "other",
+          "label": {
+            "en": "Other"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "preferred_language",
+      "kind": "choice",
+      "label": {
+        "en": "Language for messages"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "en",
+          "label": {
+            "en": "English"
+          }
+        },
+        {
+          "code": "te",
+          "label": {
+            "en": "Telugu"
+          }
+        },
+        {
+          "code": "hi",
+          "label": {
+            "en": "Hindi"
+          }
+        },
+        {
+          "code": "kn",
+          "label": {
+            "en": "Kannada"
+          }
+        },
+        {
+          "code": "ta",
+          "label": {
+            "en": "Tamil"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "programme_interested",
+      "kind": "text",
+      "label": {
+        "en": "Programme interested in"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    }
+  ],
+  "example_data": {
+    "contacts": [
+      {
+        "key": "p1",
+        "company": null,
+        "full_name": "Example: Guardian A (sample contact)"
+      },
+      {
+        "key": "p2",
+        "company": null,
+        "full_name": "Example: Guardian B (sample contact)"
+      },
+      {
+        "key": "p3",
+        "company": null,
+        "full_name": "Example: Adult student C (sample contact)"
+      }
+    ]
+  }
+}

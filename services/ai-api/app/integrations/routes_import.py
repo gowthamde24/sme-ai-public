@@ -27,11 +27,12 @@ from fastapi import APIRouter, Depends, Query, Request
 from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_role
 from app.crm.models import parse_uuid
 from app.crm.repository import InvalidReferenceError
+from app.customfields import importing as custom_import
 from app.errors import ApiError, not_found
 from app.integrations import importer
 from app.integrations import mapping as mapping_mod
 from app.integrations.repository import IntegrationsRepository
-from app.integrations.sheet import MAX_UPLOAD_BYTES, Grid, SheetRefused, load_grid
+from app.integrations.sheet import MAX_UPLOAD_BYTES, PART_ROWS, Grid, SheetRefused, load_grid
 from app.leads.routes import commit_import_batch
 from app.tenancy.models import Role
 
@@ -45,10 +46,10 @@ Kind = Literal["customers", "stock"]
 
 FILE_REFUSALS: dict[str, tuple[int, str]] = {
     "empty": (422, "That file is empty."),
-    "too_large": (413, "That file is too big. Keep it under 2 MB (a CSV under 1 MB)."),
+    "too_large": (413, "That file is too big. Keep it under 3 MB (a CSV under 2 MB)."),
     "not_utf8": (422, "That file is not UTF-8 text. In Excel use Save As > CSV UTF-8, or upload the .xlsx."),
     "malformed_csv": (422, "That CSV could not be read. Check for a stray quotation mark."),
-    "too_many_rows": (422, "That file has more than 500 rows. Split it and import in parts."),
+    "too_many_rows": (422, "That file has more than 5,000 rows. Split it and import in parts."),
     "too_many_columns": (422, "That file has too many columns."),
     "no_header": (422, "The first row must be the column names."),
     "not_xlsx": (415, "That is not a CSV or an Excel (.xlsx) file."),
@@ -92,15 +93,33 @@ def _grid(data: bytes) -> Grid:
         raise ApiError(*_refusal(exc.code)) from None
 
 
-def _mapping(raw: str | None, kind: str, grid: Grid) -> dict[str, int]:
+def _custom_defs(runtime: Runtime, ctx: TenantContext, kind: str) -> dict[str, dict[str, Any]]:
+    """The business's ACTIVE contact custom fields (job CK): the extra targets a customers file may map. None for a stock file or when custom fields are not wired."""
+    if kind != "customers" or runtime.custom_fields is None:
+        return {}
+    return custom_import.active_contact_defs(runtime.custom_fields.defs_list(ctx.principal.token, ctx.tenant.id, "contact"))
+
+
+def _suggestions(grid: Grid, kind: str, defs: dict[str, dict[str, Any]]) -> list[mapping_mod.Suggestion]:
+    if not defs:
+        return mapping_mod.suggest(grid.header, kind)
+    # a header that IS a custom field's label (or code) belongs to that field: it wins over a partial match with a built-in field ("Customer type" is not the line of business)
+    by_column = {ci: f for f, ci in custom_import.suggest(grid.header, defs, set()).items()}
+    masked = ["" if i in by_column else h for i, h in enumerate(grid.header)]
+    found = mapping_mod.suggest(masked, kind)
+    return [mapping_mod.Suggestion(s.index, grid.header[s.index][:60], by_column[s.index], "exact") if s.index in by_column else s for s in found]
+
+
+def _mapping(raw: str | None, kind: str, grid: Grid, defs: dict[str, dict[str, Any]] | None = None) -> dict[str, int]:
+    codes = frozenset(defs or {})
     if raw is None:
-        found = mapping_mod.mapping_from(mapping_mod.suggest(grid.header, kind))
+        found = mapping_mod.mapping_from(_suggestions(grid, kind, defs or {}))
         try:
-            return mapping_mod.validate_mapping(found, kind, len(grid.header))
+            return mapping_mod.validate_mapping(found, kind, len(grid.header), codes)
         except ValueError:
             raise ApiError(422, "mapping_required_missing", "Say which column holds the customer name." if kind == "customers" else "Say which column holds the saree name.") from None
     try:
-        return mapping_mod.validate_mapping(json.loads(raw), kind, len(grid.header))
+        return mapping_mod.validate_mapping(json.loads(raw), kind, len(grid.header), codes)
     except (ValueError, TypeError) as exc:
         code = "mapping_required_missing" if str(exc) == "mapping_required_missing" else "mapping_invalid"
         raise ApiError(422, code, "The column choices are not valid.") from None
@@ -121,16 +140,27 @@ def _issues(items: list[importer.Issue]) -> list[dict[str, Any]]:
     return [{"line": i.line, "code": i.code, "field": i.field} for i in items[:200]]
 
 
-def _fields(kind: str) -> list[dict[str, Any]]:
-    return [{"field": f, "label": label, "required": req} for f, (label, req, _s) in mapping_mod.FIELDS[kind].items()]
+def _fields(kind: str, defs: dict[str, dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    built_in = [{"field": f, "label": label, "required": req} for f, (label, req, _s) in mapping_mod.FIELDS[kind].items()]
+    return built_in + custom_import.import_fields(defs or {})  # a custom target also says its `kind`
+
+
+def _part_id(job_id: uuid.UUID, index: int) -> uuid.UUID:
+    """The batch id of part `index` of a job: part 0 IS the job id (a file of 500 rows or fewer behaves exactly as before), the others are derived, so a retry repeats no part."""
+    return job_id if index == 0 else uuid.uuid5(job_id, f"part-{index}")
+
+
+def _parts(rows: list[dict[str, Any]]) -> list[tuple[int, int, list[dict[str, Any]]]]:
+    return [(i, start, rows[start : start + PART_ROWS]) for i, start in enumerate(range(0, len(rows), PART_ROWS))]
 
 
 # ----------------------------------------------------------------------------------------------------------------------------- inspect
 @router.post("/inspect")
-async def inspect(request: Request, ctx: AdminPlus, kind: Kind) -> dict[str, Any]:
+async def inspect(request: Request, ctx: AdminPlus, runtime: RuntimeDep, kind: Kind) -> dict[str, Any]:
     data = await _read_body(request)
     grid = _grid(data)
-    suggestions = mapping_mod.suggest(grid.header, kind)
+    defs = _custom_defs(runtime, ctx, kind)
+    suggestions = _suggestions(grid, kind, defs)
     return {
         "kind": kind,
         "file_sha256": hashlib.sha256(data).hexdigest(),
@@ -138,7 +168,7 @@ async def inspect(request: Request, ctx: AdminPlus, kind: Kind) -> dict[str, Any
         "rows": len(grid.rows),
         "columns": [{"index": s.index, "header": s.header, "suggested_field": s.field, "confidence": s.confidence} for s in suggestions],
         "suggested_mapping": mapping_mod.mapping_from(suggestions),
-        "fields": _fields(kind),
+        "fields": _fields(kind, defs),
         "sample": [r[:20] for r in grid.rows[:3]],
         "cut_cells": grid.cut_cells,
     }
@@ -148,11 +178,11 @@ async def inspect(request: Request, ctx: AdminPlus, kind: Kind) -> dict[str, Any
 def _customer_preview(runtime: Runtime, ctx: TenantContext, job_id: uuid.UUID, prepared: importer.Prepared) -> tuple[dict[str, int], list[dict[str, Any]]]:
     counts = {"will_create": 0, "duplicate": 0, "needs_review": 0, "rejected": 0}
     rows: list[dict[str, Any]] = []
-    if prepared.rows:
-        report = runtime.leads.import_leads(ctx.principal.token, ctx.tenant.id, job_id, prepared.rows, dry_run=True, label=None)
-        by_row = {o.row: o for o in report.rows}
-    else:
-        by_row = {}
+    by_row: dict[int, Any] = {}
+    # parts of 500 (job CK): the database takes at most 500 rows per call. A row that repeats a row of an EARLIER part is only found when the parts run for real (it then shows as a duplicate)
+    for index, start, part in _parts(prepared.rows):
+        report = runtime.leads.import_leads(ctx.principal.token, ctx.tenant.id, _part_id(job_id, index), part, dry_run=True, label=None)
+        by_row.update({start + o.row: o for o in report.rows})
     for n, (row, line, note) in enumerate(zip(prepared.rows, prepared.lines, prepared.notes, strict=True), start=1):
         out = by_row.get(n)
         verdict = "rejected"
@@ -179,9 +209,10 @@ async def preview(request: Request, ctx: AdminPlus, runtime: RuntimeDep, kind: K
     data = await _read_body(request)
     jid = _job_id(job_id)
     grid = _grid(data)
-    cols = _mapping(mapping, kind, grid)
+    defs = _custom_defs(runtime, ctx, kind)
+    cols = _mapping(mapping, kind, grid, defs)
     if kind == "customers":
-        prepared = importer.prepare_customers(grid, cols)
+        prepared = importer.prepare_customers(grid, cols, defs)
         counts, rows = _customer_preview(runtime, ctx, jid, prepared)
     else:
         prepared = importer.prepare_stock(grid, cols)
@@ -194,7 +225,10 @@ async def preview(request: Request, ctx: AdminPlus, runtime: RuntimeDep, kind: K
             "p_mapping_sha256": mapping_sha(cols), "p_rows": len(grid.rows), "p_counts": counts, "p_issues": _issues(prepared.issues),
         },
     )  # fmt: skip
-    return {"job": job, "counts": counts, "rows": rows, "issues": _issues(prepared.issues), "mapping": cols}
+    out: dict[str, Any] = {"job": job, "counts": counts, "rows": rows, "issues": _issues(prepared.issues), "mapping": cols}
+    if len(prepared.rows) > PART_ROWS:
+        out["parts"] = len(_parts(prepared.rows))  # the file runs in parts of 500 rows, one after the other
+    return out
 
 
 # ----------------------------------------------------------------------------------------------------------------------------- confirm
@@ -215,11 +249,12 @@ async def confirm(job_id: str, request: Request, ctx: AdminStrong, runtime: Runt
     cols = {str(k): int(v) for k, v in job["mapping"].items()}
     kind = job["kind"]
     try:
-        cols = mapping_mod.validate_mapping(cols, kind, len(grid.header))
+        defs = _custom_defs(runtime, ctx, kind)
+        cols = mapping_mod.validate_mapping(cols, kind, len(grid.header), frozenset(defs))
         if mapping_sha(cols) != job["mapping_sha256"]:
             raise ApiError(409, "import_file_changed", "This is not the file that was checked. Check it again.")
         if kind == "customers":
-            prepared = importer.prepare_customers(grid, cols)
+            prepared = importer.prepare_customers(grid, cols, defs)
             counts, result_rows = _run_customers(runtime, ctx, jid, prepared)
         else:
             prepared = importer.prepare_stock(grid, cols)
@@ -238,17 +273,33 @@ async def confirm(job_id: str, request: Request, ctx: AdminStrong, runtime: Runt
 
 
 def _run_customers(runtime: Runtime, ctx: TenantContext, jid: uuid.UUID, prepared: importer.Prepared) -> tuple[dict[str, int], list[dict[str, Any]]]:
-    if not prepared.rows:
-        return {"created": 0, "skipped_duplicate": 0, "ambiguous": 0, "rejected": 0, "companies_created": 0, "contacts_created": 0}, []
-    report = commit_import_batch(runtime, ctx.principal.token, ctx.tenant.id, jid, prepared.rows, None)
-    c = report.counts
-    counts = {"created": c.created, "skipped_duplicate": c.skipped_duplicate, "ambiguous": c.ambiguous, "rejected": c.rejected, "companies_created": c.companies_created, "contacts_created": c.contacts_created}
-    rows = [
-        {"line": prepared.lines[o.row - 1], "status": o.outcome.value, "reason": o.reason, "label": prepared.rows[o.row - 1]["company_name"], "lead_id": str(o.lead_id) if o.lead_id else None}
-        for o in report.rows
-        if 1 <= o.row <= len(prepared.rows)
-    ]
-    return counts, rows
+    totals = {"created": 0, "skipped_duplicate": 0, "ambiguous": 0, "rejected": 0, "companies_created": 0, "contacts_created": 0}
+    result_rows: list[dict[str, Any]] = []
+    custom_set = custom_failed = 0
+    with_custom = any(prepared.customs)
+    for index, start, part in _parts(prepared.rows):
+        # each part is its own transaction with its own batch id: a retry of the job replays the parts that ran and runs the rest
+        report = commit_import_batch(runtime, ctx.principal.token, ctx.tenant.id, _part_id(jid, index), part, None)
+        c = report.counts
+        for key, n in (("created", c.created), ("skipped_duplicate", c.skipped_duplicate), ("ambiguous", c.ambiguous), ("rejected", c.rejected), ("companies_created", c.companies_created), ("contacts_created", c.contacts_created)):
+            totals[key] += n
+        items: list[dict[str, Any]] = []
+        for o in report.rows:
+            if not 1 <= o.row <= len(part):
+                continue
+            n = start + o.row - 1
+            result_rows.append({"line": prepared.lines[n], "status": o.outcome.value, "reason": o.reason, "label": prepared.rows[n]["company_name"], "lead_id": str(o.lead_id) if o.lead_id else None})
+            # custom values go only to a contact this import CREATED: an existing customer is never changed by an import
+            if o.contact_created and o.contact_id is not None and prepared.customs[n]:
+                items.append({"id": str(o.contact_id), "values": prepared.customs[n]})
+        if items and runtime.custom_fields is not None:
+            done = runtime.custom_fields.values_set_many(ctx.principal.token, ctx.tenant.id, items)
+            custom_set += int(done.get("set", 0))
+            custom_failed += len(done.get("failed") or [])
+    if with_custom:
+        totals["custom_values_set"] = custom_set  # the number of contacts that got values
+        totals["custom_values_failed"] = custom_failed
+    return totals, result_rows
 
 
 def _run_stock(runtime: Runtime, ctx: TenantContext, jid: uuid.UUID, prepared: importer.Prepared) -> tuple[dict[str, int], list[dict[str, Any]]]:

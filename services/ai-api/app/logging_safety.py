@@ -21,6 +21,9 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "v1", "me", "tenants", "members", "audit-events", "health",
+        # job CK
+        "packs", "auth", "providers", "pack", "modules", "example-data",
+        "custom-fields", "custom", "security", "remove",
         "account", "setup", "today", "ai-usage", "agents", "assistant", "messages", "conversations",
         "companies", "contacts", "products", "leads", "opportunities",
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
@@ -49,7 +52,7 @@ ROUTE_WORDS = frozenset(
         "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
-        "scheduler", "catalogue", "items", "photos", "order", "remove", "search", "draft-message",
+        "scheduler", "catalogue", "items", "photos", "order", "search", "draft-message",
         "summary", "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
         "connectors", "indiamart", "pull", "payment-links", "send", "record",

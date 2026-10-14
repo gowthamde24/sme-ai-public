@@ -1,4 +1,4 @@
-.PHONY: perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: packs-check pack-migration new-pack perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -24,7 +24,7 @@ install:
 
 lint:
 	cd $(WEB) && npm run lint
-	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
+	cd $(API) && .venv/bin/ruff check . ../../tests/integration ../../tests/rehearsal ../../scripts/seed_demo.py ../../scripts/seed_demo_manual.py ../../scripts/seed_demo_outbox.py ../../scripts/seed_demo_catalogue.py ../../scripts/local_confirm.py ../../scripts/demo_code.py ../../scripts/dev_worker_local.py ../../scripts/prepare_channel_agent.py ../../scripts/whatsapp_test_local.py ../../scripts/gen_match_key_fixture.py ../../scripts/smoke_fetch.py ../../scripts/stack_env.py ../../scripts/gen_agent_stack.py ../../scripts/packs_check.py ../../scripts/pack_migration.py ../../scripts/new_pack.py ../../scripts/fake_whatsapp_server.py ../../tools/mutation-followups
 
 typecheck:
 	cd $(WEB) && npm run typecheck
@@ -48,7 +48,21 @@ check-leftovers:
 secret-scan:
 	python3 scripts/secret_scan.py
 
-check-fast: check-leftovers secret-scan lint typecheck test test-packages
+# Job CK (blueprint section 13): the business-type packs are DATA in packages/packs/<id>/pack.json. `packs-check` validates every pack against packages/packs/pack.schema.json, the closed lists (modules.json,
+# labels.json), the rules (the default pack keeps every module that exists today, custom fields, example data) and that NO string literal in the API or the web's non-test code is a pack id; it also fails
+# when a pack or module is not in a migration yet (`make pack-migration` writes it). `new-pack ID=<id>` starts a new business type as a draft. See docs/runbooks/add-a-business-type.md.
+packs-check:
+	$(PY)/python scripts/packs_check.py
+	$(PY)/python scripts/pack_migration.py --check
+
+pack-migration:
+	$(PY)/python scripts/pack_migration.py
+
+new-pack:
+	@test -n "$(ID)" || { echo "usage: make new-pack ID=<id>   (lower case, for example clinics)"; exit 2; }
+	$(PY)/python scripts/new_pack.py "$(ID)"
+
+check-fast: check-leftovers secret-scan packs-check lint typecheck test test-packages
 
 # Definition of done. Needs Docker + the Supabase CLI (the DB isolation tests are the security gate).
 # db-reset first: audit rows of earlier integration runs are append-only, so a stale database could trip a pgTAP canary (T008 owner change I).

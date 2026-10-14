@@ -44,6 +44,10 @@ scripts/
 
 tenants, users, companies, contacts, products, leads, opportunities, requirements, quotes, quote_lines, orders, messages, documents, tasks, approvals, agent_runs, audit_events. Every business-owned row carries `tenant_id`. Extracted facts keep source IDs and confidence.
 
+## Packs and modules (job CK, ADR 0084 parts 1 and 2)
+
+A business type is **data**: `packages/packs/<id>/pack.json` (checked in CI), synced into the `packs` schema by generated migrations (a synced version is never edited). Each workspace is pinned to one pack version. A pack switches **modules** on; everything else is off and **refused in the database** (`app.module_enabled`, a before-insert guard on every module-owned table, SQLSTATE SM701). No code reads a pack id; modules are the only extension point. The default pack (textiles) is today's behaviour, and every workspace that existed before runs it. Custom fields, selling units, the labelled example data and a 5,000-row import are the first things built on it. See `docs/runbooks/add-a-business-type.md`.
+
 ## Quote engine
 
 source requirement -> validated structured fields -> approved catalog/rule/history lookup -> deterministic calculation service -> AI explains assumptions and missing inputs -> human review -> versioned approval -> PDF/email draft. Semantic similarity never chooses a price. Every quote line records its rule/source. Discount authority belongs to RBAC/policy.

@@ -1,0 +1,303 @@
+{
+  "$schema": "../pack.schema.json",
+  "id": "textiles",
+  "version": 1,
+  "status": "published",
+  "default_for_existing_workspaces": true,
+  "reviewed_by": "Customer Zero: the family silk-saree wholesale business, in daily use since the first release",
+  "names": {
+    "en": "Textiles",
+    "te": "టెక్స్‌టైల్స్",
+    "hi": "टेक्सटाइल",
+    "kn": "ಟೆಕ್ಸ್‌ಟೈಲ್"
+  },
+  "summary": {
+    "en": "Saree and fabric wholesalers and retailers",
+    "te": "చీరలు, వస్త్రాల హోల్‌సేల్, రిటైల్ వ్యాపారులు",
+    "hi": "साड़ी और कपड़े के थोक और खुदरा व्यापारी",
+    "kn": "ಸೀರೆ ಮತ್ತು ಬಟ್ಟೆಯ ಸಗಟು ಮತ್ತು ಚಿಲ್ಲರೆ ವ್ಯಾಪಾರಿಗಳು"
+  },
+  "accent": "rose_silk",
+  "owl_prop": "fabric_roll",
+  "core_tab": "quotes",
+  "modules": [
+    "today",
+    "inbox",
+    "contacts",
+    "companies",
+    "enquiries",
+    "catalogue",
+    "quotes",
+    "orders",
+    "followups",
+    "visits",
+    "call_list",
+    "lead_finder",
+    "research",
+    "reports",
+    "office",
+    "integrations",
+    "payment_links"
+  ],
+  "units": [
+    "piece",
+    "set"
+  ],
+  "default_unit": "piece",
+  "labels": {
+    "en": {
+      "nav.item.today": "Today",
+      "nav.item.leads": "Leads",
+      "nav.item.quotes": "Quotes",
+      "nav.item.orders": "Orders",
+      "nav.item.customers": "Customers",
+      "nav.item.catalogue": "Prices and products",
+      "nav.item.sarees": "Catalogue",
+      "nav.item.visits": "Store visits",
+      "nav.tab.visits": "Visits",
+      "nav.item.chats": "Customer chats",
+      "nav.item.retailers": "Find retailers",
+      "nav.item.report": "This week",
+      "nav.item.team": "Team",
+      "nav.item.office": "Office",
+      "nav.item.integrations": "Integrations",
+      "nav.item.settings": "Settings",
+      "agent.lead_finder": "Lead Finder",
+      "agent.researcher": "Researcher",
+      "agent.requirement_analyst": "Requirement Analyst",
+      "agent.quote_writer": "Quote Writer",
+      "agent.followup_desk": "Follow-up Desk",
+      "agent.order_desk": "Order Desk",
+      "word.customer": "Customer",
+      "word.customers": "Customers",
+      "word.lead": "Lead",
+      "word.leads": "Leads",
+      "word.enquiry": "Enquiry",
+      "word.enquiries": "Enquiries",
+      "word.item": "Saree",
+      "word.items": "Sarees",
+      "word.quote": "Quote",
+      "word.quotes": "Quotes",
+      "word.order": "Order",
+      "word.orders": "Orders",
+      "word.visit": "Visit",
+      "word.visits": "Visits",
+      "word.contact": "Contact",
+      "word.contacts": "Contacts",
+      "pack.core_tab": "Quotes",
+      "pack.not_validated": "Not validated by a real owner yet"
+    },
+    "te": {
+      "nav.item.today": "ఈరోజు",
+      "nav.item.leads": "లీడ్‌లు",
+      "nav.item.quotes": "కొటేషన్లు",
+      "nav.item.orders": "ఆర్డర్లు",
+      "nav.item.customers": "కస్టమర్లు",
+      "nav.item.catalogue": "ధరలు, ప్రొడక్ట్స్",
+      "nav.item.sarees": "క్యాటలాగ్",
+      "nav.item.visits": "షాప్ విజిట్లు",
+      "nav.tab.visits": "విజిట్లు",
+      "nav.item.chats": "కస్టమర్ చాట్‌లు",
+      "nav.item.retailers": "రిటైలర్లను వెతకండి",
+      "nav.item.report": "ఈ వారం",
+      "nav.item.team": "టీమ్",
+      "nav.item.office": "ఆఫీస్",
+      "nav.item.integrations": "ఇంటిగ్రేషన్లు",
+      "nav.item.settings": "సెట్టింగ్స్",
+      "agent.lead_finder": "లీడ్ ఫైండర్",
+      "agent.researcher": "రీసెర్చర్",
+      "agent.requirement_analyst": "రిక్వైర్మెంట్ అనలిస్ట్",
+      "agent.quote_writer": "కోట్ రైటర్",
+      "agent.followup_desk": "ఫాలో-అప్ డెస్క్",
+      "agent.order_desk": "ఆర్డర్ డెస్క్",
+      "word.customer": "కస్టమర్",
+      "word.customers": "కస్టమర్లు",
+      "word.lead": "లీడ్",
+      "word.leads": "లీడ్‌లు",
+      "word.enquiry": "ఎంక్వైరీ",
+      "word.enquiries": "ఎంక్వైరీలు",
+      "word.item": "చీర",
+      "word.items": "చీరలు",
+      "word.quote": "కోటేషన్",
+      "word.quotes": "కొటేషన్లు",
+      "word.order": "ఆర్డర్",
+      "word.orders": "ఆర్డర్లు",
+      "word.visit": "విజిట్",
+      "word.visits": "విజిట్లు",
+      "word.contact": "సంప్రదింపు",
+      "word.contacts": "సంప్రదింపులు",
+      "pack.core_tab": "కొటేషన్లు"
+    },
+    "hi": {
+      "nav.item.today": "आज",
+      "nav.item.leads": "लीड",
+      "nav.item.quotes": "कोटेशन",
+      "nav.item.orders": "ऑर्डर",
+      "nav.item.customers": "ग्राहक",
+      "nav.item.catalogue": "दाम और प्रोडक्ट",
+      "nav.item.sarees": "कैटलॉग",
+      "nav.item.visits": "दुकान की विज़िट",
+      "nav.tab.visits": "विज़िट",
+      "nav.item.chats": "कस्टमर चैट",
+      "nav.item.retailers": "रिटेलर खोजें",
+      "nav.item.report": "इस हफ़्ते",
+      "nav.item.team": "टीम",
+      "nav.item.office": "ऑफ़िस",
+      "nav.item.integrations": "इंटीग्रेशन",
+      "nav.item.settings": "सेटिंग्स",
+      "agent.lead_finder": "लीड फ़ाइंडर",
+      "agent.researcher": "रिसर्चर",
+      "agent.requirement_analyst": "रिक्वायरमेंट एनालिस्ट",
+      "agent.quote_writer": "कोट राइटर",
+      "agent.followup_desk": "फ़ॉलो-अप डेस्क",
+      "agent.order_desk": "ऑर्डर डेस्क",
+      "word.customer": "ग्राहक",
+      "word.customers": "ग्राहक",
+      "word.lead": "लीड",
+      "word.leads": "लीड",
+      "word.enquiry": "पूछताछ",
+      "word.enquiries": "पूछताछें",
+      "word.item": "साड़ी",
+      "word.items": "साड़ियाँ",
+      "word.quote": "कोटेशन",
+      "word.quotes": "कोटेशन",
+      "word.order": "ऑर्डर",
+      "word.orders": "ऑर्डर",
+      "word.visit": "विज़िट",
+      "word.visits": "विज़िट",
+      "word.contact": "संपर्क",
+      "word.contacts": "संपर्क",
+      "pack.core_tab": "कोटेशन"
+    },
+    "kn": {
+      "nav.item.today": "ಇಂದು",
+      "nav.item.leads": "ಲೀಡ್‌ಗಳು",
+      "nav.item.quotes": "ಕೊಟೇಶನ್‌ಗಳು",
+      "nav.item.orders": "ಆರ್ಡರ್‌ಗಳು",
+      "nav.item.customers": "ಗ್ರಾಹಕರು",
+      "nav.item.catalogue": "ಬೆಲೆ ಮತ್ತು ಪ್ರಾಡಕ್ಟ್ಸ್",
+      "nav.item.sarees": "ಕ್ಯಾಟಲಾಗ್",
+      "nav.item.visits": "ಅಂಗಡಿ ಭೇಟಿಗಳು",
+      "nav.tab.visits": "ಭೇಟಿಗಳು",
+      "nav.item.chats": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
+      "nav.item.retailers": "ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+      "nav.item.report": "ಈ ವಾರ",
+      "nav.item.team": "ಟೀಮ್",
+      "nav.item.office": "ಆಫೀಸ್",
+      "nav.item.integrations": "ಇಂಟಿಗ್ರೇಷನ್‌ಗಳು",
+      "nav.item.settings": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+      "agent.lead_finder": "ಲೀಡ್ ಫೈಂಡರ್",
+      "agent.researcher": "ರಿಸರ್ಚರ್",
+      "agent.requirement_analyst": "ರಿಕ್ವೈರ್ಮೆಂಟ್ ಅನಲಿಸ್ಟ್",
+      "agent.quote_writer": "ಕೋಟ್ ರೈಟರ್",
+      "agent.followup_desk": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
+      "agent.order_desk": "ಆರ್ಡರ್ ಡೆಸ್ಕ್",
+      "word.customer": "ಗ್ರಾಹಕ",
+      "word.customers": "ಗ್ರಾಹಕರು",
+      "word.lead": "ಲೀಡ್",
+      "word.leads": "ಲೀಡ್‌ಗಳು",
+      "word.enquiry": "ವಿಚಾರಣೆ",
+      "word.enquiries": "ವಿಚಾರಣೆಗಳು",
+      "word.item": "ಸೀರೆ",
+      "word.items": "ಸೀರೆಗಳು",
+      "word.quote": "ಕೊಟೇಶನ್",
+      "word.quotes": "ಕೊಟೇಶನ್‌ಗಳು",
+      "word.order": "ಆರ್ಡರ್",
+      "word.orders": "ಆರ್ಡರ್‌ಗಳು",
+      "word.visit": "ಭೇಟಿ",
+      "word.visits": "ಭೇಟಿಗಳು",
+      "word.contact": "ಸಂಪರ್ಕ",
+      "word.contacts": "ಸಂಪರ್ಕಗಳು",
+      "pack.core_tab": "ಕೊಟೇಶನ್‌ಗಳು"
+    }
+  },
+  "language_review": {
+    "te": "web_dictionary",
+    "hi": "web_dictionary",
+    "kn": "web_dictionary"
+  },
+  "custom_fields": [],
+  "example_data": {
+    "companies": [
+      {
+        "key": "c1",
+        "name": "Example: Sri Lakshmi Silks (sample shop)",
+        "type": "customer",
+        "city": "Dharmavaram"
+      },
+      {
+        "key": "c2",
+        "name": "Example: Padma Sarees (sample shop)",
+        "type": "prospect",
+        "city": "Hyderabad"
+      },
+      {
+        "key": "c3",
+        "name": "Example: Vasantha Textiles (sample shop)",
+        "type": "prospect",
+        "city": "Vijayawada"
+      }
+    ],
+    "contacts": [
+      {
+        "key": "p1",
+        "company": "c1",
+        "full_name": "Example: Lakshmi (sample contact)"
+      },
+      {
+        "key": "p2",
+        "company": "c2",
+        "full_name": "Example: Padma (sample contact)"
+      },
+      {
+        "key": "p3",
+        "company": "c3",
+        "full_name": "Example: Vasantha (sample contact)"
+      }
+    ],
+    "leads": [
+      {
+        "company": "c2",
+        "contact": "p2",
+        "source": "Example data"
+      },
+      {
+        "company": "c3",
+        "contact": "p3",
+        "source": "Example data"
+      }
+    ],
+    "products": [
+      {
+        "sku": "EX-SILK-01",
+        "name": "Example: Kanjivaram silk saree (sample)",
+        "unit": "piece",
+        "category": "silk"
+      },
+      {
+        "sku": "EX-SILK-02",
+        "name": "Example: Dharmavaram silk saree (sample)",
+        "unit": "piece",
+        "category": "silk"
+      },
+      {
+        "sku": "EX-COT-01",
+        "name": "Example: Cotton saree (sample)",
+        "unit": "piece",
+        "category": "cotton"
+      },
+      {
+        "sku": "EX-SET-01",
+        "name": "Example: Saree and blouse set (sample)",
+        "unit": "set",
+        "category": "silk"
+      },
+      {
+        "sku": "EX-COT-02",
+        "name": "Example: Cotton dupatta (sample)",
+        "unit": "piece",
+        "category": "cotton"
+      }
+    ]
+  }
+}

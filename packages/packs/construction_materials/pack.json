@@ -1,0 +1,649 @@
+{
+  "$schema": "../pack.schema.json",
+  "id": "construction_materials",
+  "version": 1,
+  "status": "preview",
+  "default_for_existing_workspaces": false,
+  "reviewed_by": null,
+  "names": {
+    "en": "Construction materials",
+    "te": "నిర్మాణ సామగ్రి",
+    "hi": "निर्माण सामग्री",
+    "kn": "ನಿರ್ಮಾಣ ಸಾಮಗ್ರಿ"
+  },
+  "summary": {
+    "en": "Paver blocks, bricks, kerb stones, tiles, cement, sand and aggregate sellers",
+    "te": "పేవర్ బ్లాకులు, ఇటుకలు, టైల్స్, సిమెంట్, ఇసుక అమ్మేవారు",
+    "hi": "पेवर ब्लॉक, ईंट, टाइल, सीमेंट, रेत बेचने वाले",
+    "kn": "ಪೇವರ್ ಬ್ಲಾಕ್, ಇಟ್ಟಿಗೆ, ಟೈಲ್ಸ್, ಸಿಮೆಂಟ್, ಮರಳು ಮಾರಾಟಗಾರರು"
+  },
+  "accent": "terracotta",
+  "owl_prop": "hard_hat_paver_block",
+  "core_tab": "orders",
+  "modules": [
+    "today",
+    "inbox",
+    "contacts",
+    "companies",
+    "enquiries",
+    "catalogue",
+    "quotes",
+    "orders",
+    "deliveries",
+    "sites",
+    "dues",
+    "followups",
+    "visits",
+    "campaigns",
+    "call_list",
+    "lead_finder",
+    "research",
+    "reports",
+    "office",
+    "integrations"
+  ],
+  "units": [
+    "sq_ft",
+    "sq_m",
+    "piece",
+    "box",
+    "bag",
+    "tonne",
+    "cft",
+    "truckload"
+  ],
+  "default_unit": "sq_ft",
+  "labels": {
+    "en": {
+      "nav.item.today": "Today",
+      "nav.item.chats": "Customer chats",
+      "nav.item.retailers": "Find retailers",
+      "nav.item.report": "This week",
+      "nav.item.team": "Team",
+      "nav.item.office": "Office",
+      "nav.item.integrations": "Integrations",
+      "nav.item.settings": "Settings",
+      "agent.lead_finder": "Lead Finder",
+      "agent.researcher": "Researcher",
+      "agent.quote_writer": "Quote Writer",
+      "agent.followup_desk": "Follow-up Desk",
+      "word.customer": "Customer",
+      "word.customers": "Customers & sites",
+      "word.quote": "Quote",
+      "word.quotes": "Quotes",
+      "word.contact": "Contact",
+      "word.contacts": "Contacts",
+      "pack.not_validated": "Not validated by a real owner yet",
+      "nav.item.leads": "Enquiries",
+      "nav.item.quotes": "Quotes",
+      "nav.item.orders": "Orders & deliveries",
+      "nav.item.customers": "Customers & sites",
+      "nav.item.catalogue": "Products and prices",
+      "nav.item.sarees": "Products",
+      "nav.item.visits": "Site visits",
+      "nav.tab.visits": "Site visits",
+      "agent.requirement_analyst": "Site Measurer",
+      "agent.order_desk": "Dispatch Desk",
+      "word.lead": "Enquiry",
+      "word.leads": "Enquiries",
+      "word.enquiry": "Enquiry",
+      "word.enquiries": "Enquiries",
+      "word.item": "Product",
+      "word.items": "Products",
+      "word.order": "Order",
+      "word.orders": "Orders & deliveries",
+      "word.visit": "Site visit",
+      "word.visits": "Site visits",
+      "pack.core_tab": "Orders & deliveries"
+    },
+    "te": {
+      "nav.item.today": "ఈరోజు",
+      "nav.item.chats": "కస్టమర్ చాట్‌లు",
+      "nav.item.retailers": "రిటైలర్లను వెతకండి",
+      "nav.item.report": "ఈ వారం",
+      "nav.item.team": "టీమ్",
+      "nav.item.office": "ఆఫీస్",
+      "nav.item.integrations": "ఇంటిగ్రేషన్లు",
+      "nav.item.settings": "సెట్టింగ్స్",
+      "agent.lead_finder": "లీడ్ ఫైండర్",
+      "agent.researcher": "రీసెర్చర్",
+      "agent.quote_writer": "కోట్ రైటర్",
+      "agent.followup_desk": "ఫాలో-అప్ డెస్క్",
+      "word.customer": "కస్టమర్",
+      "word.customers": "కస్టమర్లు, సైట్లు",
+      "word.quote": "కోటేషన్",
+      "word.quotes": "కొటేషన్లు",
+      "word.contact": "సంప్రదింపు",
+      "word.contacts": "సంప్రదింపులు",
+      "nav.item.leads": "ఎంక్వైరీలు",
+      "nav.item.quotes": "కోటేషన్లు",
+      "nav.item.orders": "ఆర్డర్లు, డెలివరీలు",
+      "nav.item.customers": "కస్టమర్లు, సైట్లు",
+      "nav.item.catalogue": "ఉత్పత్తులు, ధరలు",
+      "nav.item.sarees": "ఉత్పత్తులు",
+      "nav.item.visits": "సైట్ సందర్శనలు",
+      "nav.tab.visits": "సైట్ సందర్శనలు",
+      "agent.requirement_analyst": "సైట్ మెజరర్",
+      "agent.order_desk": "డిస్పాచ్ డెస్క్",
+      "word.lead": "ఎంక్వైరీ",
+      "word.leads": "ఎంక్వైరీలు",
+      "word.enquiry": "ఎంక్వైరీ",
+      "word.enquiries": "ఎంక్వైరీలు",
+      "word.item": "ఉత్పత్తి",
+      "word.items": "ఉత్పత్తులు",
+      "word.order": "ఆర్డర్",
+      "word.orders": "ఆర్డర్లు, డెలివరీలు",
+      "word.visit": "సైట్ సందర్శన",
+      "word.visits": "సైట్ సందర్శనలు",
+      "pack.core_tab": "ఆర్డర్లు, డెలివరీలు"
+    },
+    "hi": {
+      "nav.item.today": "आज",
+      "nav.item.chats": "कस्टमर चैट",
+      "nav.item.retailers": "रिटेलर खोजें",
+      "nav.item.report": "इस हफ़्ते",
+      "nav.item.team": "टीम",
+      "nav.item.office": "ऑफ़िस",
+      "nav.item.integrations": "इंटीग्रेशन",
+      "nav.item.settings": "सेटिंग्स",
+      "agent.lead_finder": "लीड फ़ाइंडर",
+      "agent.researcher": "रिसर्चर",
+      "agent.quote_writer": "कोट राइटर",
+      "agent.followup_desk": "फ़ॉलो-अप डेस्क",
+      "word.customer": "ग्राहक",
+      "word.customers": "ग्राहक और साइट",
+      "word.quote": "कोटेशन",
+      "word.quotes": "कोटेशन",
+      "word.contact": "संपर्क",
+      "word.contacts": "संपर्क",
+      "nav.item.leads": "पूछताछ",
+      "nav.item.quotes": "कोटेशन",
+      "nav.item.orders": "ऑर्डर और डिलीवरी",
+      "nav.item.customers": "ग्राहक और साइट",
+      "nav.item.catalogue": "उत्पाद और दाम",
+      "nav.item.sarees": "उत्पाद",
+      "nav.item.visits": "साइट विज़िट",
+      "nav.tab.visits": "साइट विज़िट",
+      "agent.requirement_analyst": "साइट मेज़रर",
+      "agent.order_desk": "डिस्पैच डेस्क",
+      "word.lead": "पूछताछ",
+      "word.leads": "पूछताछें",
+      "word.enquiry": "पूछताछ",
+      "word.enquiries": "पूछताछें",
+      "word.item": "उत्पाद",
+      "word.items": "उत्पाद",
+      "word.order": "ऑर्डर",
+      "word.orders": "ऑर्डर और डिलीवरी",
+      "word.visit": "साइट विज़िट",
+      "word.visits": "साइट विज़िट",
+      "pack.core_tab": "ऑर्डर और डिलीवरी"
+    },
+    "kn": {
+      "nav.item.today": "ಇಂದು",
+      "nav.item.chats": "ಕಸ್ಟಮರ್ ಚಾಟ್‌ಗಳು",
+      "nav.item.retailers": "ರಿಟೇಲರ್‌ಗಳನ್ನು ಹುಡುಕಿ",
+      "nav.item.report": "ಈ ವಾರ",
+      "nav.item.team": "ಟೀಮ್",
+      "nav.item.office": "ಆಫೀಸ್",
+      "nav.item.integrations": "ಇಂಟಿಗ್ರೇಷನ್‌ಗಳು",
+      "nav.item.settings": "ಸೆಟ್ಟಿಂಗ್ಸ್",
+      "agent.lead_finder": "ಲೀಡ್ ಫೈಂಡರ್",
+      "agent.researcher": "ರಿಸರ್ಚರ್",
+      "agent.quote_writer": "ಕೋಟ್ ರೈಟರ್",
+      "agent.followup_desk": "ಫಾಲೋ-ಅಪ್ ಡೆಸ್ಕ್",
+      "word.customer": "ಗ್ರಾಹಕ",
+      "word.customers": "ಗ್ರಾಹಕರು ಮತ್ತು ಸೈಟ್‌ಗಳು",
+      "word.quote": "ಕೊಟೇಶನ್",
+      "word.quotes": "ಕೊಟೇಶನ್‌ಗಳು",
+      "word.contact": "ಸಂಪರ್ಕ",
+      "word.contacts": "ಸಂಪರ್ಕಗಳು",
+      "nav.item.leads": "ವಿಚಾರಣೆಗಳು",
+      "nav.item.quotes": "ಕೊಟೇಶನ್‌ಗಳು",
+      "nav.item.orders": "ಆರ್ಡರ್ ಮತ್ತು ಡೆಲಿವರಿ",
+      "nav.item.customers": "ಗ್ರಾಹಕರು ಮತ್ತು ಸೈಟ್‌ಗಳು",
+      "nav.item.catalogue": "ಉತ್ಪನ್ನ ಮತ್ತು ಬೆಲೆ",
+      "nav.item.sarees": "ಉತ್ಪನ್ನಗಳು",
+      "nav.item.visits": "ಸೈಟ್ ಭೇಟಿಗಳು",
+      "nav.tab.visits": "ಸೈಟ್ ಭೇಟಿಗಳು",
+      "agent.requirement_analyst": "ಸೈಟ್ ಮೆಜರರ್",
+      "agent.order_desk": "ಡಿಸ್ಪ್ಯಾಚ್ ಡೆಸ್ಕ್",
+      "word.lead": "ವಿಚಾರಣೆ",
+      "word.leads": "ವಿಚಾರಣೆಗಳು",
+      "word.enquiry": "ವಿಚಾರಣೆ",
+      "word.enquiries": "ವಿಚಾರಣೆಗಳು",
+      "word.item": "ಉತ್ಪನ್ನ",
+      "word.items": "ಉತ್ಪನ್ನಗಳು",
+      "word.order": "ಆರ್ಡರ್",
+      "word.orders": "ಆರ್ಡರ್ ಮತ್ತು ಡೆಲಿವರಿ",
+      "word.visit": "ಸೈಟ್ ಭೇಟಿ",
+      "word.visits": "ಸೈಟ್ ಭೇಟಿಗಳು",
+      "pack.core_tab": "ಆರ್ಡರ್ ಮತ್ತು ಡೆಲಿವರಿ"
+    }
+  },
+  "language_review": {
+    "te": "draft",
+    "hi": "draft",
+    "kn": "draft"
+  },
+  "custom_fields": [
+    {
+      "entity": "contact",
+      "code": "customer_kind",
+      "kind": "choice",
+      "label": {
+        "en": "Customer type"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "contractor",
+          "label": {
+            "en": "Contractor"
+          }
+        },
+        {
+          "code": "builder",
+          "label": {
+            "en": "Builder"
+          }
+        },
+        {
+          "code": "homeowner",
+          "label": {
+            "en": "Homeowner"
+          }
+        },
+        {
+          "code": "architect",
+          "label": {
+            "en": "Architect"
+          }
+        },
+        {
+          "code": "dealer",
+          "label": {
+            "en": "Dealer"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "contact",
+      "code": "typical_application",
+      "kind": "multi_choice",
+      "label": {
+        "en": "Usually buys for"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false,
+      "choices": [
+        {
+          "code": "driveway",
+          "label": {
+            "en": "Driveway"
+          }
+        },
+        {
+          "code": "footpath",
+          "label": {
+            "en": "Footpath"
+          }
+        },
+        {
+          "code": "parking",
+          "label": {
+            "en": "Parking"
+          }
+        },
+        {
+          "code": "industrial_yard",
+          "label": {
+            "en": "Industrial yard"
+          }
+        },
+        {
+          "code": "garden",
+          "label": {
+            "en": "Garden"
+          }
+        },
+        {
+          "code": "road",
+          "label": {
+            "en": "Road"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "product_type",
+      "kind": "choice",
+      "label": {
+        "en": "Product type"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "paver_block",
+          "label": {
+            "en": "Paver block"
+          }
+        },
+        {
+          "code": "kerb_stone",
+          "label": {
+            "en": "Kerb stone"
+          }
+        },
+        {
+          "code": "brick",
+          "label": {
+            "en": "Brick"
+          }
+        },
+        {
+          "code": "tile",
+          "label": {
+            "en": "Tile"
+          }
+        },
+        {
+          "code": "cement",
+          "label": {
+            "en": "Cement"
+          }
+        },
+        {
+          "code": "sand",
+          "label": {
+            "en": "Sand"
+          }
+        },
+        {
+          "code": "aggregate",
+          "label": {
+            "en": "Aggregate"
+          }
+        },
+        {
+          "code": "other",
+          "label": {
+            "en": "Other"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "size",
+      "kind": "text",
+      "label": {
+        "en": "Size (for example 200x100 mm)"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "thickness_mm",
+      "kind": "choice",
+      "label": {
+        "en": "Thickness (mm)"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "60",
+          "label": {
+            "en": "60 mm"
+          }
+        },
+        {
+          "code": "80",
+          "label": {
+            "en": "80 mm"
+          }
+        },
+        {
+          "code": "100",
+          "label": {
+            "en": "100 mm"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "shape_pattern",
+      "kind": "text",
+      "label": {
+        "en": "Shape or pattern"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "colour",
+      "kind": "text",
+      "label": {
+        "en": "Colour"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "finish",
+      "kind": "text",
+      "label": {
+        "en": "Finish"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "grade",
+      "kind": "text",
+      "label": {
+        "en": "Grade or strength (for example M30)"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "pieces_per_area",
+      "kind": "number",
+      "label": {
+        "en": "Pieces per sq ft or sq m"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "pieces_per_pallet",
+      "kind": "number",
+      "label": {
+        "en": "Pieces per pallet"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "minimum_order",
+      "kind": "number",
+      "label": {
+        "en": "Minimum order"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "stock_note",
+      "kind": "choice",
+      "label": {
+        "en": "Stock"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true,
+      "choices": [
+        {
+          "code": "in_stock",
+          "label": {
+            "en": "In stock"
+          }
+        },
+        {
+          "code": "made_to_order",
+          "label": {
+            "en": "Made to order"
+          }
+        }
+      ]
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "lead_days",
+      "kind": "number",
+      "label": {
+        "en": "Lead days when made to order"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "hsn_code",
+      "kind": "text",
+      "label": {
+        "en": "HSN code (from your accountant)"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": false
+    },
+    {
+      "entity": "catalogue_item",
+      "code": "gst_rate_percent",
+      "kind": "number",
+      "label": {
+        "en": "GST rate in percent (from your accountant)"
+      },
+      "required": false,
+      "pii_class": "none",
+      "mergeable": true
+    }
+  ],
+  "example_data": {
+    "companies": [
+      {
+        "key": "c1",
+        "name": "Example: Sai Constructions (sample contractor)",
+        "type": "customer",
+        "city": "Hyderabad"
+      },
+      {
+        "key": "c2",
+        "name": "Example: Green Valley Builders (sample builder)",
+        "type": "prospect",
+        "city": "Vijayawada"
+      },
+      {
+        "key": "c3",
+        "name": "Example: Ravi Interlock Dealers (sample dealer)",
+        "type": "prospect",
+        "city": "Guntur"
+      }
+    ],
+    "contacts": [
+      {
+        "key": "p1",
+        "company": "c1",
+        "full_name": "Example: Sai (sample contact)"
+      },
+      {
+        "key": "p2",
+        "company": "c2",
+        "full_name": "Example: Green Valley site engineer (sample contact)"
+      },
+      {
+        "key": "p3",
+        "company": "c3",
+        "full_name": "Example: Ravi (sample contact)"
+      }
+    ],
+    "leads": [
+      {
+        "company": "c1",
+        "contact": "p1",
+        "source": "Example data"
+      },
+      {
+        "company": "c2",
+        "contact": "p2",
+        "source": "Example data"
+      }
+    ],
+    "products": [
+      {
+        "sku": "EX-PAVER-60",
+        "name": "Example: Paver block 200x100 mm, 60 mm (sample)",
+        "unit": "sq_ft",
+        "category": "paver_block"
+      },
+      {
+        "sku": "EX-PAVER-80",
+        "name": "Example: Paver block 200x100 mm, 80 mm (sample)",
+        "unit": "sq_ft",
+        "category": "paver_block"
+      },
+      {
+        "sku": "EX-KERB-01",
+        "name": "Example: Kerb stone (sample)",
+        "unit": "piece",
+        "category": "kerb_stone"
+      },
+      {
+        "sku": "EX-CEMENT-01",
+        "name": "Example: Cement 50 kg bag (sample)",
+        "unit": "bag",
+        "category": "cement"
+      },
+      {
+        "sku": "EX-SAND-01",
+        "name": "Example: River sand (sample)",
+        "unit": "tonne",
+        "category": "sand"
+      },
+      {
+        "sku": "EX-AGG-01",
+        "name": "Example: 20 mm aggregate, one truck (sample)",
+        "unit": "truckload",
+        "category": "aggregate"
+      }
+    ]
+  }
+}

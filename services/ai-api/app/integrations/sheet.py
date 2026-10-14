@@ -12,9 +12,11 @@ from dataclasses import dataclass, field
 
 from app.integrations.xlsx import MAX_COLS, MAX_ROWS, XlsxRefused, read_xlsx
 
-MAX_UPLOAD_BYTES = 2_000_000
-MAX_CSV_BYTES = 1_000_000
-MAX_DATA_ROWS = 500  # the lead import's own batch limit
+# job CK (blueprint section 6): 5,000 data rows. The database takes at most 500 per call (the lead import's own batch limit), so the import runs a larger file in PARTS of 500 (routes_import.py)
+MAX_UPLOAD_BYTES = 3_000_000
+MAX_CSV_BYTES = 2_000_000
+MAX_DATA_ROWS = 5_000
+PART_ROWS = 500
 MAX_CELL = 500
 
 REFUSALS = (
