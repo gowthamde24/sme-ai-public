@@ -185,5 +185,21 @@ select is((tests.scalar_as(tests.uid('a_owner'), format('select public.execute_e
 select is((select count(*) from public.custom_field_values where tenant_id = tests.tid('a') and contact_id = tests.rid('a_contact')), 0::bigint, 'E4 every custom value of the contact is gone');
 select is(tests.er_hits('a', 'qxjv') = '{}'::text[] or not exists (select 1 from unnest(tests.er_hits('a', 'qxjv')) h where h like 'custom_field_values%'), true, 'E5 and no trace of the person remains in the custom values');
 
+-- ============================================================================ F. an inbound WhatsApp message is NEVER refused by a module guard (education has no companies module)
+do $$ begin perform app.operator_register_channel_agent('X6@test.local'); end $$;
+update packs.workspace_pack set pack_code = 'education', pack_version = 1 where tenant_id = tests.tid('b');
+do $$ begin
+  perform pg_temp.val('b_owner', format($q$select public.whatsapp_account_save(%L, '200000000000771', '100000000000771', '+91 98765 43210', true, 'shop_edu')$q$, tests.tid('b')));
+  perform pg_temp.val('b_owner', format($q$select public.whatsapp_account_set_status(%L, 'active')$q$, tests.tid('b')));
+end $$;
+select is(app.module_enabled(tests.tid('b'), 'companies'), false, 'F1 the business is on the education pack: no companies module');
+select is(tests.sqlstate_as(tests.uid('x6'), format($q$select public.wa_ingest_inbound('100000000000771', 'wamid.edu.1', '0091234567801', 'Parent Ravi', 'text', 'Hello, fees?', now(), %L, 1, false)$q$, md5('edu1') || md5('edu1x'))), 'ok',
+  'F2 ALLOW: a parent writes from a new number and the message is taken (the placeholder company is the one exemption)');
+select is((select count(*) from public.contacts where tenant_id = tests.tid('b') and phone is not null and full_name = 'Parent Ravi'), 1::bigint, 'F3 the contact was made');
+select is((select count(*) from public.leads where tenant_id = tests.tid('b') and source = 'whatsapp'), 1::bigint, 'F4 and a lead for it');
+select is((select count(*) from public.companies where tenant_id = tests.tid('b') and name ~ '^WhatsApp customer [0-9a-f]{6}$'), 1::bigint, 'F5 holding a generic placeholder company (named after nothing personal)');
+select is(pg_temp.at('aal2', 'b_owner', format($$insert into public.companies (tenant_id, name) values (%L, 'WhatsApp customer a1b2c3')$$, tests.tid('b'))), 'SM701', 'F6 DENY: a person cannot use the exemption (they cannot set created_via)');
+update packs.workspace_pack set pack_code = 'textiles', pack_version = 1 where tenant_id = tests.tid('b');
+
 select * from finish();
 rollback;

@@ -20,11 +20,12 @@ def test_only_public_is_exposed() -> None:
 
 
 def test_social_sign_up_is_off_in_the_committed_file_and_never_holds_a_literal_secret() -> None:
-    """Job CK: Google and Facebook are env-configured and OFF when their keys are missing; the committed file never carries a key."""
+    """Job CK: Google and Facebook are env-configured and OFF when their keys are missing."""
     external = tomllib.loads(CONFIG.read_text())["auth"]["external"]
+    prefix = "SUPABASE_AUTH_EXTERNAL_"
     for provider, id_var, secret_var in (
-        ("google", "SUPABASE_AUTH_EXTERNAL_GOOGLE_CLIENT_ID", "SUPABASE_AUTH_EXTERNAL_GOOGLE_SECRET"),
-        ("facebook", "SUPABASE_AUTH_EXTERNAL_FACEBOOK_APP_ID", "SUPABASE_AUTH_EXTERNAL_FACEBOOK_SECRET"),
+        ("google", prefix + "GOOGLE_CLIENT_ID", prefix + "GOOGLE_SECRET"),
+        ("facebook", prefix + "FACEBOOK_APP_ID", prefix + "FACEBOOK_SECRET"),
     ):
         block = external[provider]
         assert block["enabled"] is False

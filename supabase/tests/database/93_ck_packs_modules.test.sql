@@ -70,7 +70,12 @@ select is((select string_agg(distinct source, ',') from packs.workspace_pack whe
 create temp table guards as
 select n.nspname || '.' || c.relname as tbl, (regexp_split_to_array(encode(t.tgargs, 'escape'), '\\000'))[1] as module
   from pg_trigger t join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
- where t.tgfoid = 'app.module_guard()'::regprocedure and not t.tgisinternal;
+ where t.tgfoid = 'app.module_guard()'::regprocedure and not t.tgisinternal
+union all
+-- the companies guard has its one exemption (the WhatsApp placeholder), so it is its own function
+select n.nspname || '.' || c.relname, 'companies'
+  from pg_trigger t join pg_class c on c.oid = t.tgrelid join pg_namespace n on n.oid = c.relnamespace
+ where t.tgfoid = 'app.module_guard_companies()'::regprocedure and not t.tgisinternal;
 select cmp_ok((select count(*) from guards), '>=', 30::bigint, 'D8 the guard list is not vacuous');
 select is((select count(*) from guards g where not app.module_enabled(tests.tid('a'), g.module)), 0::bigint, 'D9 every guarded module is ON for the default pack: the guards are a no-op for it');
 select is((select count(*) from guards g where g.module not in (select code from packs.modules where guard = 'tables')), 0::bigint, 'D10 every guard names a module whose guard kind is `tables`');
@@ -82,11 +87,18 @@ select is(pg_temp.sc(format($$insert into public.companies (tenant_id, name) val
 select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name, unit) values (%L, 'D-1', 'Default pack product', 'piece')$$, tests.tid('a'))), 'ok', 'D15 a product can');
 select is(pg_temp.sc(format($$insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (gen_random_uuid(), %L, 'Saree', 'soft_silk', array['red'], '5k_10k', %L)$$, tests.tid('a'), tests.uid('a_owner'))), 'ok', 'D16 a catalogue item can');
 
+-- the companies guard looks at the created_via the INSERT supplies, so it must fire before the trigger that overwrites it (triggers fire in name order)
+select ok((select tgname from pg_trigger where tgrelid = 'public.companies'::regclass and tgfoid = 'app.module_guard_companies()'::regprocedure) < 'companies_set_created_meta' collate "C", 'D17 the companies guard fires before companies_set_created_meta');
+select is((select has_column_privilege('authenticated', 'public.companies', 'created_via', 'INSERT')), false, 'D18 and no client can supply created_via on a company (so no client can use the exemption)');
+
 -- ============================================================================ E. the guards refuse an off module, on insert only
 -- education: no companies, no catalogue, no products, no quotes, no orders, no research
 select pg_temp.set_pack('b', 'education');
 select is(app.module_enabled(tests.tid('b'), 'companies'), false, 'E1 education has no companies module');
 select is(pg_temp.sc(format($$insert into public.companies (tenant_id, name) values (%L, 'Nope')$$, tests.tid('b'))), 'SM701', 'E2 so a company cannot be made (SM701)');
+select is(pg_temp.sc(format($$insert into public.companies (tenant_id, name, created_via) values (%L, 'WhatsApp customer a1b2c3', 'manual')$$, tests.tid('b'))), 'SM701', 'E2a and the look-alike placeholder name is not enough: only trusted server code (created_via agent) is exempt');
+select is(pg_temp.sc(format($$insert into public.companies (tenant_id, name, created_via) values (%L, 'Another company', 'agent')$$, tests.tid('b'))), 'SM701', 'E2b nor is an agent''s company with another name');
+select is(pg_temp.sc(format($$insert into public.companies (id, tenant_id, name, created_via) values (gen_random_uuid(), %L, 'WhatsApp customer a1b2c3', 'agent')$$, tests.tid('b'))), 'ok', 'E2c BUT the placeholder company that WhatsApp ingestion makes for a new number is allowed: an inbound message is never refused');
 select is(pg_temp.sc(format($$insert into public.products (tenant_id, sku, name) values (%L, 'E-1', 'Nope')$$, tests.tid('b'))), 'SM701', 'E3 nor a product');
 select is(pg_temp.sc(format($$insert into public.catalogue_items (id, tenant_id, name, fabric, colours, price_band, created_by) values (gen_random_uuid(), %L, 'Nope', 'soft_silk', array['red'], '5k_10k', %L)$$, tests.tid('b'), tests.uid('b_owner'))), 'SM701', 'E4 nor a catalogue item');
 select is(pg_temp.sc(format($$insert into public.agent_runs (id, tenant_id, started_by, agent_name, agent_version, company_id, expires_at, input_sha256)
@@ -96,7 +108,7 @@ select is(pg_temp.sc(format($$insert into public.agent_runs (id, tenant_id, star
 select is(pg_temp.sc(format($$insert into public.contacts (tenant_id, full_name) values (%L, 'Example: Guardian')$$, tests.tid('b'))), 'ok', 'E7 contacts are on for education');
 select is(pg_temp.sc(format($$insert into public.leads (tenant_id) values (%L)$$, tests.tid('b'))), 'ok', 'E8 and so are enquiries (a lead that names a contact still needs a company: the table''s own rule, which job CR meets for admissions)');
 select is(pg_temp.sc(format($$update public.products set name = 'Renamed' where tenant_id = %L$$, tests.tid('b'))), 'ok', 'E9 the guard never blocks an update or a read');
-select is((select count(*) from public.companies where tenant_id = tests.tid('b')), 1::bigint, 'E10 the company that existed before the switch is still readable');
+select is((select count(*) from public.companies where tenant_id = tests.tid('b')), 2::bigint, 'E10 the company that existed before the switch (and the placeholder) are still readable');
 -- the same refusal through a client role: a tenant-B owner on the education pack
 select is(tests.sqlstate_as(tests.uid('b_owner'), format($$insert into public.companies (tenant_id, name) values (%L, 'Nope')$$, tests.tid('b'))), 'SM701', 'E11 a client is refused the same way');
 -- construction_materials: companies, catalogue, products, quotes and research are on

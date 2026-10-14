@@ -4,7 +4,8 @@
 --      nothing read it before, "textiles must not change", and moving a business between packs is an operator act (ADR 0084 part 1).
 --   2. EVERY new business gets the default pack the moment its tenants row is inserted (source `default`), whatever path made it (sign-up, POST /v1/tenants, a test, a seed). The sign-up then moves it
 --      to the pack the person chose. A database with no default pack REFUSES to make a business (fail closed).
---   3. THE GUARDS: a BEFORE INSERT trigger (app.module_guard) on every table a module owns. A module that is off for the business cannot create rows (SM701); reads and updates are untouched. Because the
+--   3. THE GUARDS: a BEFORE INSERT trigger (app.module_guard) on every table a module owns. A module that is off for the business cannot create rows (SM701); reads and updates are untouched. One exemption:
+--      the placeholder company that WhatsApp ingestion makes for a new number (see app.module_guard_companies), because an inbound message is never refused. Because the
 --      default pack lists every module that exists today, the guards are a no-op for the default pack: that is the equivalence proof (supabase/tests/database/93_ck_modules.test.sql).
 --   4. UNITS: a product's selling unit must be one of packs.units when written or changed.
 --   5. SIGN-UP: the business type is the ONLY thing sign-up needs. complete_setup(business_type, language) takes a PACK CODE (SM702 when it is not selectable), the business name is optional (the activation
@@ -65,7 +66,6 @@ begin
   for g in
     select * from (values
       ('contacts',     'public', 'contacts'),
-      ('companies',    'public', 'companies'),
       ('enquiries',    'public', 'leads'),
       ('enquiries',    'public', 'opportunities'),
       ('enquiries',    'public', 'enquiries'),
@@ -104,6 +104,28 @@ begin
 end;
 $$;
 create trigger module_guard_agent before insert on public.agent_runs for each row execute function app.module_guard_agent();
+
+-- The ONE exemption (inbound messages are never refused): when a customer writes from a number nobody has, WhatsApp ingestion makes a contact and a lead, and a lead that holds a contact needs a company, so it
+-- also makes a generic placeholder company named "WhatsApp customer <6 characters>" with created_via = 'agent' (migration 20261117090000). That placeholder is not the business using the companies module, and
+-- refusing it would drop the customer's message in a business whose pack has no companies (education). The test is on the created_via the INSERT SUPPLIES, so this trigger is named to fire BEFORE
+-- companies_set_created_meta (which overwrites it from the session); a client has no INSERT right on created_via, so only trusted server code can supply 'agent', and only that exact name passes.
+create function app.module_guard_companies() returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.created_via = 'agent' and new.name ~ '^WhatsApp customer [0-9a-f]{6}$' then
+    return new;
+  end if;
+  if not app.module_enabled(new.tenant_id, 'companies') then
+    perform app.pack_error('module_off');
+  end if;
+  return new;
+end;
+$$;
+revoke all on function app.module_guard_companies() from public;
+create trigger aa_module_guard before insert on public.companies for each row execute function app.module_guard_companies();
 
 -- ---------------------------------------------------------------------------------------------------------------------------------
 -- 4. selling units
