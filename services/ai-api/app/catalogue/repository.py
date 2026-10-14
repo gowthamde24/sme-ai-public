@@ -34,7 +34,7 @@ class CatalogueRepository(Protocol):
     ) -> dict[str, Any]: ...
     def get_item(self, token: str, tenant_id: uuid.UUID, item_id: uuid.UUID) -> dict[str, Any]: ...
     def search(
-        self, token: str, tenant_id: uuid.UUID, args: dict[str, Any]
+        self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], kind: str = "saree"
     ) -> list[dict[str, Any]]: ...
 
 
@@ -123,9 +123,12 @@ class PostgrestCatalogueRepository:
         )
 
     def search(
-        self, token: str, tenant_id: uuid.UUID, args: dict[str, Any]
+        self, token: str, tenant_id: uuid.UUID, args: dict[str, Any], kind: str = "saree"
     ) -> list[dict[str, Any]]:
-        result = self._rpc(token, "catalogue_search", {"p_tenant_id": str(tenant_id), **args})
+        # job CN: the catalogue holds two kinds of item; the saree screens and the assistant's tool ask for sarees, the materials screens for materials
+        result = self._rpc(
+            token, "catalogue_search", {"p_tenant_id": str(tenant_id), "p_item_kind": kind, **args}
+        )
         if not isinstance(result, list) or any(not isinstance(r, dict) for r in result):
             raise UpstreamError("unexpected search shape")
         return result

@@ -21,6 +21,10 @@ from typing import Any
 ROUTE_WORDS = frozenset(
     {
         "v1", "me", "tenants", "members", "audit-events", "health",
+        # job CN: sites, dues, material quotes, deliveries, the public calculator
+        "calculate", "materials", "sites", "dues", "customers", "invoices", "payments",
+        "credit-limit", "credit-check", "ledger", "items", "photos", "order", "trips", "delivered",
+        "challan", "notify", "policy", "orders", "catalogue", "void",
         # job CK
         "packs", "auth", "providers", "pack", "modules", "example-data",
         "custom-fields", "custom", "security", "remove",
@@ -45,14 +49,14 @@ ROUTE_WORDS = frozenset(
         # job BY: the team, the shop's basics, the report, notifications and push
         "team", "invitations", "accept", "role", "reports", "weekly", "profile",
         "notifications", "seen", "push", "push-subscriptions", "public-key",
-        "orders", "events", "order-policy-versions", "quote-policy-versions", "price-lists",
+        "events", "order-policy-versions", "quote-policy-versions", "price-lists",
         "item-types", "manual-quotes",
         "followup", "followups", "followup-drafts", "followup-policy-versions", "question-drafts",
         "touches", "due", "sent", "sync",
         "erasure-requests", "execute", "data-policy",
         "outbox", "approvals", "dispatch", "edit", "settings", "call-requests",
         "visits", "slots", "change", "arrive", "no-show", "complete", "offer-visit", "week",
-        "scheduler", "catalogue", "items", "photos", "order", "search", "draft-message",
+        "scheduler", "search", "draft-message",
         "summary", "voice", "research", "places", "business-profile", "ready", "metrics",
         # job BZ: connectors and webhooks (a secret in an address is never a word: always redacted)
         "connectors", "indiamart", "pull", "payment-links", "send", "record",

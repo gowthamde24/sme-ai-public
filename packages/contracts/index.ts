@@ -105,3 +105,4 @@ export * from "./erasure";
 /** Packs, modules, custom fields, example data and sign-up provider contracts (job CK, ADR 0084 parts 1 and 2): generated from the API models by `make contracts`.
  * A pack is DATA: render words from `labels` and gate screens on `modules`; never branch on a pack id. */
 export * from "./packs";
+export * from "./materials";

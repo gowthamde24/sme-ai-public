@@ -52,6 +52,8 @@ def _row_id(raw: str) -> uuid.UUID:
 
 def _item(runtime: Runtime, ctx: TenantContext, item_id: uuid.UUID) -> CatalogueItemOut:
     row = _repo(runtime).get_item(ctx.principal.token, ctx.tenant.id, item_id)
+    if row.get("item_kind") == "material":  # job CN: a building material has its own screens (/materials/items); it is not a saree
+        raise not_found()
     urls = service.sign_urls(
         runtime.catalogue_storage, ctx.principal.token, row.get("photos") or []
     )

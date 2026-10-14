@@ -785,6 +785,51 @@ end;
 $$;
 revoke all on function app.cq_build(uuid, uuid, date, uuid, jsonb, uuid, jsonb) from public;
 
+-- What a quote will read from an item, as the quote will read it, and what is still missing (so the owner is told BEFORE a quote is refused). Every member reads (the price is in the catalogue for every member).
+create function public.material_item_inputs(p_tenant_id uuid, p_item_id uuid) returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  i      public.catalogue_items;
+  v_gst  numeric := (app.cq_spec(p_tenant_id, p_item_id, 'gst_rate_percent')).value_number * 100;
+  v_ppa  numeric := (app.cq_spec(p_tenant_id, p_item_id, 'pieces_per_area')).value_number * 1000;
+  v_ppp  numeric := (app.cq_spec(p_tenant_id, p_item_id, 'pieces_per_pallet')).value_number;
+  v_min  numeric := (app.cq_spec(p_tenant_id, p_item_id, 'minimum_order')).value_number;
+  v_lead numeric := (app.cq_spec(p_tenant_id, p_item_id, 'lead_days')).value_number;
+  v_hsn  text := (app.cq_spec(p_tenant_id, p_item_id, 'hsn_code')).value_text;
+  v_gst_i integer;
+  v_ppa_i bigint;
+  v_ppp_i bigint;
+  v_min_i bigint;
+  v_lead_i integer;
+begin
+  if auth.uid() is null or p_tenant_id is null or not app.is_tenant_member(p_tenant_id) then
+    perform app.cq_error('deny');
+  end if;
+  perform app.require_module(p_tenant_id, 'materials');
+  select * into i from public.catalogue_items x where x.tenant_id = p_tenant_id and x.id = p_item_id and x.item_kind = 'material';
+  if not found then
+    perform app.cq_error('reference');
+  end if;
+  v_gst_i := case when v_gst is not null and v_gst = trunc(v_gst) and v_gst between 0 and 10000 then v_gst::integer end;
+  v_ppa_i := case when v_ppa is not null and v_ppa = trunc(v_ppa) and v_ppa between 1 and 1000000 then v_ppa::bigint end;
+  v_ppp_i := case when v_ppp is not null and v_ppp = trunc(v_ppp) and v_ppp between 1 and 10000000 then v_ppp::bigint end;
+  v_min_i := case when v_min is not null and v_min = trunc(v_min) and v_min between 1 and 10000000 then v_min::bigint end;
+  v_lead_i := case when v_lead is not null and v_lead = trunc(v_lead) and v_lead between 0 and 365 then v_lead::integer end;
+  return jsonb_build_object(
+    'price_paise', i.price_paise, 'gst_bps', v_gst_i, 'hsn', case when v_hsn ~ '^[0-9]{4,8}$' then v_hsn end, 'pieces_per_area_x1000', v_ppa_i, 'pieces_per_pallet', v_ppp_i,
+    'min_order_qty', v_min_i, 'lead_days', v_lead_i,
+    'missing_for_area', to_jsonb(array_remove(array[case when i.price_paise is null then 'price' end, case when v_gst_i is null then 'gst_rate' end,
+                                                    case when v_ppa_i is null then 'pieces_per_area' end, case when i.area_unit is null then 'area_unit' end], null)),
+    'missing_for_quantity', to_jsonb(array_remove(array[case when i.price_paise is null then 'price' end, case when v_gst_i is null then 'gst_rate' end], null)));
+end;
+$$;
+revoke all on function public.material_item_inputs(uuid, uuid) from public, anon;
+grant execute on function public.material_item_inputs(uuid, uuid) to authenticated;
+
 create function app.cq_flag_codes(p_flags jsonb) returns text[]
 language sql
 immutable
@@ -1057,7 +1102,7 @@ begin
   if auth.uid() is null or p_tenant_id is null or not app.has_tenant_role(p_tenant_id, array['owner', 'admin', 'sales']::public.app_role[]) then perform app.cq_error('deny'); end if;
   select * into z from public.material_quotes x where x.tenant_id = p_tenant_id and x.id = p_quote_id;
   if not found then perform app.cq_error('reference'); end if;
-  return app.material_quote_json(z) || jsonb_build_object('result_text', z.result_text);
+  return app.material_quote_json(z) || jsonb_build_object('request_text', z.request_text, 'result_text', z.result_text);
 end;
 $$;
 revoke all on function public.material_quote_get(uuid, uuid) from public, anon;

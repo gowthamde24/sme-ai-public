@@ -42,11 +42,15 @@ CA_CHANGED: dict[str, tuple[str, set[str], set[str]]] = {
 def test_the_ca_copy_is_the_last_definition_and_differs_by_exactly_the_named_lines(name: str) -> None:
     compared, want_dropped, want_added = CA_CHANGED[name]
     defs = definitions(name)
-    assert defs[-1][0] == CA, f"{name} is redefined after job CA's migration ({defs[-1][0]}): re-copy it from the latest definition"
-    assert defs[-2][0] == compared, f"{name}: the definition before this copy is not in {compared}"
+    # job CN replaces app.erase_company once more (test_migration_copies_cn.py pins what it added)
+    later = {"app.erase_company": "20261123090600_cn_erasure.sql"}
+    assert defs[-1][0] in (CA, later.get(name)), f"{name} is redefined after job CA's migration ({defs[-1][0]}): re-copy it from the latest definition"
+    mine = [d for d in defs if d[0] == CA]
+    prior = [d for d in defs if d[0] < CA]
+    assert prior[-1][0] == compared, f"{name}: the definition before this copy is not in {compared}"
     diff = [
         line
-        for line in difflib.unified_diff(normalised(defs[-2][1]), normalised(defs[-1][1]), lineterm="", n=0)
+        for line in difflib.unified_diff(normalised(prior[-1][1]), normalised(mine[-1][1]), lineterm="", n=0)
         if line[:1] in "+-" and not line.startswith(("---", "+++"))
     ]
     assert {line[1:].strip() for line in diff if line[0] == "-"} == {w.strip() for w in want_dropped}, f"{name}: dropped lines differ"

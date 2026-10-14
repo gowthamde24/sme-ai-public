@@ -33,6 +33,12 @@ from app.crm.routes import router as crm_router
 from app.customfields.errors import CustomFieldLimitError, CustomValueInvalidError
 from app.customfields.repository import PostgrestCustomFieldsRepository
 from app.customfields.routes import router as custom_fields_router
+from app.deliveries import errors as delivery_errors
+from app.deliveries.repository import PostgrestDeliveriesRepository
+from app.deliveries.routes import router as deliveries_router
+from app.dues import errors as dues_errors
+from app.dues.repository import PostgrestDuesRepository
+from app.dues.routes import router as dues_router
 from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.enquiries.routes import router as enquiries_router
@@ -64,6 +70,10 @@ from app.leads.routes import router as leads_router
 from app.leadtools.repository import PostgrestLeadSearchRepository
 from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
+from app.materials import errors as material_errors
+from app.materials.repository import PostgrestMaterialsRepository
+from app.materials.routes import public_router as materials_public_router
+from app.materials.routes import router as materials_router
 from app.notifications.routes import me_router as notifications_me_router
 from app.notifications.routes import router as notifications_router
 from app.notifications.wiring import build_notifications
@@ -92,6 +102,9 @@ from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
+from app.sites import errors as site_errors
+from app.sites.repository import PostgrestSitesRepository
+from app.sites.routes import router as sites_router
 from app.suppression.repository import PostgrestSuppressionRepository
 from app.suppression.routes import router as suppression_router
 from app.suppression.wiring import build_key_ring
@@ -207,6 +220,10 @@ def build_runtime(settings: Settings) -> Runtime | None:
         ),
         custom_fields=PostgrestCustomFieldsRepository(config.rest_url, config.anon_key),
         auth_providers=providers_from_settings(settings),
+        sites=PostgrestSitesRepository(config.rest_url, config.anon_key),
+        dues=PostgrestDuesRepository(config.rest_url, config.anon_key),
+        materials=PostgrestMaterialsRepository(config.rest_url, config.anon_key),
+        deliveries=PostgrestDeliveriesRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -229,6 +246,30 @@ ORDER_REASON_TEXT: dict[str, str] = {
     "INVALID_EVENT": "The rules do not know that event.",
     "OUT_OF_RANGE": "A value is outside the allowed range.",
     "OTHER": "The order rules refuse this event.",
+}
+
+# SM762 / SM766: the closed reasons of a material quote that cannot be made, said once in plain
+# words (the code itself is returned as `reason`)
+MATERIAL_MISSING_TEXT: dict[str, str] = {
+    "pick": "Choose a catalogue item for every line of the requirement.",
+    "measure": "A line needs an area, a length and a width, or a quantity that a person confirmed.",
+    "product_type": "A line needs its product type confirmed.",
+    "price": "An item has no price yet: the Owner sets it.",
+    "gst_rate": "An item has no GST rate: enter it (it is never assumed).",
+    "pieces_per_area": "An item sold by area needs its pieces per sq ft or sq m.",
+    "unit": "The item's unit does not match what the customer asked for.",
+    "hsn": "An item's HSN code is not a valid code.",
+    "policy": "The owner has not set the quoting rules yet.",
+    "duplicate_item": "The same item is on two lines.",
+    "other": "Something the quote needs is missing.",
+}
+MATERIAL_NOT_COMPUTABLE_TEXT: dict[str, str] = {
+    "DISTANCE_MISSING": "Freight by distance needs the site's distance: choose a site with one.",
+    "DISTANCE_BEYOND_SLABS": "The site is further than the owner's freight slabs.",
+    "LAYING_RATE_MISSING": "Laying is needed but the owner has not set a laying rate.",
+    "TOTAL_TOO_LARGE": "The total is larger than a single order can hold.",
+    "OUT_OF_RANGE": "A quantity or an amount is outside the allowed range.",
+    "other": "A quote cannot be computed from these inputs.",
 }
 
 _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
@@ -265,6 +306,65 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     CustomFieldLimitError: ApiError(
         409, "custom_field_limit", "This business has the most fields it can have for that."
+    ),
+    # Sites, dues, material quotes and deliveries (job CN). Fixed sentences: nothing from the
+    # data layer.
+    site_errors.SiteContactError: ApiError(
+        422, "site_contact_invalid", "That site contact is not a contact of this business."
+    ),
+    dues_errors.InvoiceNumberUsedError: ApiError(
+        409, "invoice_number_used", "That invoice number is already used."
+    ),
+    dues_errors.AlreadyVoidedError: ApiError(409, "already_voided", "That was already voided."),
+    material_errors.MaterialQuoteMismatchError: ApiError(
+        409,
+        "quote_mismatch",
+        "This quote does not match the database's own recomputation. Nothing was changed: "
+        "make a new draft.",
+    ),
+    material_errors.MaterialInputMissingError: ApiError(
+        422, "quote_input_missing", "Something the quote needs is missing."
+    ),
+    material_errors.MaterialQuoteNotDraftError: ApiError(
+        409, "quote_not_draft", "That quote is not a draft any more."
+    ),
+    material_errors.MaterialQuoteStaleError: ApiError(
+        409,
+        "quote_stale",
+        "The inputs of this quote have changed (a price, an item, the rules, the requirement), "
+        "or the quote expired: make a new draft.",
+    ),
+    material_errors.MaterialOwnerApprovalError: ApiError(
+        403, "owner_approval_required", "This quote needs the Owner's approval."
+    ),
+    material_errors.MaterialNotComputableError: ApiError(
+        422, "quote_not_computable", "A quote cannot be computed from these inputs."
+    ),
+    delivery_errors.TripStateError: ApiError(
+        409,
+        "trip_state",
+        "That cannot be done in the state the trip is in now. Reload and look again.",
+    ),
+    delivery_errors.OrderNotDispatchedError: ApiError(
+        409, "order_not_dispatched", "The truck cannot leave before the order is dispatched."
+    ),
+    delivery_errors.QuantityExceedsOrderError: ApiError(
+        409,
+        "quantity_exceeds_order",
+        "That is more than the order holds, counting the other trips.",
+    ),
+    delivery_errors.OrderNotDeliverableError: ApiError(
+        409,
+        "order_not_deliverable",
+        "This order cannot have trips: it must be an accepted materials order that is not closed.",
+    ),
+    delivery_errors.NoSiteContactError: ApiError(
+        422, "no_site_contact", "This trip has no site contact to tell."
+    ),
+    delivery_errors.ProofIncompleteError: ApiError(
+        422,
+        "proof_incomplete",
+        "A proof of delivery needs a photo and the name of the person who received the goods.",
     ),
     repo.WorkspaceLimitReached: ApiError(
         409,
@@ -566,6 +666,10 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.business_profile,
                 runtime.packs,
                 runtime.custom_fields,
+                runtime.sites,
+                runtime.dues,
+                runtime.materials,
+                runtime.deliveries,
             ):
                 if isinstance(
                     repository,
@@ -593,7 +697,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestConnectorsRepository
                     | PostgrestBusinessProfileRepository
                     | PostgrestPacksRepository
-                    | PostgrestCustomFieldsRepository,
+                    | PostgrestCustomFieldsRepository
+                    | PostgrestSitesRepository
+                    | PostgrestDuesRepository
+                    | PostgrestMaterialsRepository
+                    | PostgrestDeliveriesRepository,
                 ):
                     repository.close()
 
@@ -631,6 +739,17 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
             status, code, texts = FOLLOWUP_REFUSALS[exc.sqlstate]
             reason = exc.reason
             mapped = ApiError(status, code, texts[reason if reason is not None else "-"])
+        if isinstance(
+            exc,
+            material_errors.MaterialInputMissingError | material_errors.MaterialNotComputableError,
+        ):
+            table = (
+                MATERIAL_MISSING_TEXT
+                if isinstance(exc, material_errors.MaterialInputMissingError)
+                else MATERIAL_NOT_COMPUTABLE_TEXT
+            )
+            reason = exc.detail if exc.detail in table else "other"
+            mapped = ApiError(422, mapped.code if mapped else "quote_input_missing", table[reason])
         if isinstance(exc, crm_repo.DuplicateValueError):
             mapped = ApiError(
                 409, "duplicate_value", f"That {exc.field} is already used.", headers={}
@@ -714,6 +833,11 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(packs_public_router)
     app.include_router(packs_router)
     app.include_router(custom_fields_router)
+    app.include_router(sites_router)
+    app.include_router(dues_router)
+    app.include_router(materials_public_router)
+    app.include_router(materials_router)
+    app.include_router(deliveries_router)
     app.include_router(accounting_export_router)
     app.include_router(spreadsheet_import_router)
     app.include_router(calendar_member_router)

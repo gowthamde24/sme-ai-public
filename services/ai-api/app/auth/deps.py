@@ -18,6 +18,8 @@ from app.catalogue.storage import StorageClient
 from app.connectors.runtime import Connectors
 from app.crm.repository import CrmRepository
 from app.customfields.repository import CustomFieldsRepository
+from app.deliveries.repository import DeliveriesRepository
+from app.dues.repository import DuesRepository
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
@@ -27,6 +29,7 @@ from app.integrations.policy import PolicyVersions
 from app.integrations.repository import IntegrationsRepository
 from app.leads.repository import LeadsRepository
 from app.leadtools.repository import LeadSearchRepository
+from app.materials.repository import MaterialsRepository
 from app.notifications.runtime import NotificationsRuntime
 from app.orders.repository import OrdersRepository
 from app.outbox.adapter import ChannelAdapter
@@ -39,6 +42,7 @@ from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PrivacyRepository
 from app.quotes.repository import QuotesRepository
 from app.scheduler.repository import SchedulerRepository
+from app.sites.repository import SitesRepository
 from app.suppression.keys import KeyRing
 from app.suppression.repository import SuppressionRepository
 from app.team.repository import TeamRepository
@@ -100,6 +104,11 @@ class Runtime:
     pack_registry: PackRegistry | None = None
     custom_fields: CustomFieldsRepository | None = None
     auth_providers: AuthProvidersOut | None = None
+    # job CN: sites, dues, material quotes, deliveries (each a module of the pack)
+    sites: SitesRepository | None = None
+    dues: DuesRepository | None = None
+    materials: MaterialsRepository | None = None
+    deliveries: DeliveriesRepository | None = None
 
 
 @dataclass(frozen=True)

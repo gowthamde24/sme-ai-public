@@ -4,6 +4,7 @@ by SQLSTATE only (`errors` maps a code to an exception class); data-layer text i
 from __future__ import annotations
 
 import logging
+import re
 from collections.abc import Mapping
 from typing import Any
 
@@ -27,7 +28,12 @@ class RpcClient:
     def _classify(self, status: int, body: Any) -> Exception:
         code = str(body.get("code", "")) if isinstance(body, dict) else ""
         if code in self._errors:
-            return self._errors[code](code)
+            exc = self._errors[code](code)
+            if getattr(exc, "carries_detail", False):
+                # the database's DETAIL is a CLOSED code the function chose itself ("price", "DISTANCE_MISSING"): kept only when it has exactly that shape, never any other text
+                raw = str(body.get("details") or "") if isinstance(body, dict) else ""
+                exc.detail = raw if re.fullmatch(r"[A-Za-z][A-Za-z0-9_]{0,39}", raw) else None  # type: ignore[attr-defined]
+            return exc
         if code == "SM306":
             return MfaRequired(code)
         if code == "23503":
