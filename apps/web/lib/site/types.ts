@@ -31,6 +31,8 @@ export type SitePack = {
   hero: { eyebrow: Text; h1: Text; sub: Text };
   /** The plain card of the home page's "Currently built for" row. Optional: without it the card shows the name and the hero eyebrow. */
   home_card?: { title: Text; line: Text; link: Text };
+  /** This business type's own words for any of the six steps (job CZ), keyed "1" to "6"; a step it does not list reads the shared words. */
+  steps?: Partial<Record<"1" | "2" | "3" | "4" | "5" | "6", { title: Text; text: Text }>>;
   problem: { title: Text; points: readonly Text[] };
   day: { title: Text; steps: readonly { owl: OwlId; time: string; text: Text }[] };
   features: { title: Text; items: readonly { icon: IconId; title: Text; body: Text }[] };

@@ -1,11 +1,14 @@
-import { CtaBand, OWLS, Section } from "@/components/v2/site/sections";
-import { SiteOwl } from "@/components/v2/site/SiteOwl";
+import { Repeat } from "lucide-react";
+
+import { PlushStill } from "@/components/v2/app/owl/PlushStill";
+import { CtaBand, Section } from "@/components/v2/site/sections";
+import { TeamLead, sixSteps } from "@/components/v2/site/steps";
 import { card, container, lead } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { SITE_PACKS, owlName, textIn } from "@/lib/site/packs";
+import { SITE_PACKS, owlName, say, textIn } from "@/lib/site/packs";
 
-/** How it works (job CM): the seven owls and what each does, in each kind of business's own words, then what always waits for the owner and the habits that keep a WhatsApp number safe. */
+/** How it works (job CM, the six steps since job CZ): Agent OWL as the team lead and the six steps, each with its helper owl and, where a kind of business uses other words, those words (a school's own steps 1 and 2, the helper's name in each pack), then what always waits for the owner and the habits that keep a WhatsApp number safe. */
 export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
   return (
     <>
@@ -16,24 +19,49 @@ export function HowPage({ t, lang }: { t: SiteT; lang: Lang }) {
         <p className={lead}>{t("how.sub")}</p>
       </section>
       <Section id="owls" title={t("how.owls.t")}>
-        <ul className="flex flex-col gap-3" data-part="owls">
-          {OWLS.map((o) => (
-            <li key={o} className={`${card} flex items-start gap-4`}>
-              <SiteOwl agent={o} px={64} className="size-16" />
+        <TeamLead t={t} />
+        <ol className="mt-4 flex flex-col gap-3" data-part="steps">
+          {sixSteps(t).map((s) => (
+            <li key={s.n} data-step={s.n} data-owl={s.owl} className={`${card} flex items-start gap-4`}>
+              <PlushStill agent={s.owl} px={64} className="size-16" />
               <div className="min-w-0">
-                <h3 className="text-lg font-semibold">{owlName(SITE_PACKS[0], o, lang) ?? t("owl.name.main")}</h3>
-                <p className="mt-0.5 text-base text-muted">{t(`owl.${o}`)}</p>
+                <h3 className="text-lg font-semibold">
+                  <span aria-hidden="true" className="mr-1.5 font-display font-extrabold text-muted">
+                    {s.n}
+                  </span>
+                  {s.title}
+                </h3>
+                <p className="text-base font-bold text-brand-text">{s.helper}</p>
+                <p className="mt-0.5 text-base text-muted">{s.text}</p>
+                <p className="mt-0.5 text-sm font-bold text-muted">{s.you}</p>
                 <ul className="mt-2 flex flex-col gap-0.5 text-sm text-muted">
-                  {SITE_PACKS.filter((p) => owlName(p, o, lang) && owlName(p, o, lang) !== owlName(SITE_PACKS[0], o, lang)).map((p) => (
-                    <li key={p.slug}>
-                      {t("how.calledIn", { name: textIn(p.names, lang) })} <span className="font-semibold text-ink">{owlName(p, o, lang)}</span>
-                    </li>
-                  ))}
+                  {SITE_PACKS.map((p) => {
+                    const own = p.steps?.[s.n as "1"];
+                    const name = owlName(p, s.owl, lang);
+                    const differs = name && name !== s.helper;
+                    if (!own && !differs) return null;
+                    return (
+                      <li key={p.slug} data-pack-step={p.slug}>
+                        {t("how.calledIn", { name: textIn(p.names, lang) })}{" "}
+                        {differs ? <span className="font-semibold text-ink">{name}</span> : null}
+                        {differs && own ? " · " : null}
+                        {own ? (
+                          <>
+                            <span className="font-semibold text-ink">{say(own.title, lang)}</span>. {say(own.text, lang)}
+                          </>
+                        ) : null}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </li>
           ))}
-        </ul>
+        </ol>
+        <p className="mt-4 flex items-center gap-2.5 text-base font-semibold text-ink" data-part="loop">
+          <Repeat className="size-5 shrink-0 text-brand-text" aria-hidden="true" />
+          {t("home.how.loop")}
+        </p>
       </Section>
       <Section id="waits" title={t("how.waits.t")} tone="soft" narrow>
         <ul className="flex flex-col gap-3" data-part="waits">

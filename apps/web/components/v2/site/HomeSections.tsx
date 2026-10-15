@@ -1,8 +1,9 @@
-import { ArrowRight, Check, Clock, PhoneCall } from "lucide-react";
+import { ArrowRight, Check, Clock, PhoneCall, Repeat } from "lucide-react";
 import Link from "next/link";
 import type { ReactNode } from "react";
 
 import { HowSteps } from "@/components/v2/site/HowSteps";
+import { TeamLead, sixSteps } from "@/components/v2/site/steps";
 import { LanguageChats, type SampleChat } from "@/components/v2/site/LanguageChats";
 import { btnPrimary, container } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
@@ -11,7 +12,6 @@ import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
 import { sitePath } from "@/lib/site/paths";
 
 const kicker = "text-sm font-extrabold uppercase tracking-[0.12em]";
-const SIX = [1, 2, 3, 4, 5, 6] as const;
 const CHAT_LANGS = ["te", "hi", "kn", "en"] as const;
 const outline = "inline-flex min-h-14 items-center justify-center rounded-lg border-[1.5px] border-edge px-5 text-base font-bold text-ink hover:bg-surface-2";
 
@@ -45,9 +45,8 @@ export function BuiltFor({ t, lang }: { t: SiteT; lang: Lang }) {
   );
 }
 
-/** The six steps, each with what the owner does ("You: ..."), animated by the client component. */
+/** Agent OWL as the team lead, the six steps (one helper owl each, what the owner does as "You: ..."), animated by the client component, and the loop back to step 1. */
 export function HowSection({ t }: { t: SiteT }) {
-  const steps = SIX.map((n) => ({ n: String(n), title: t(`home.how.${n}.t`), text: t(`home.how.${n}.d`), you: t(`home.how.${n}.y`) }));
   return (
     <section id="how" aria-labelledby="how-h" className={`${container} flex scroll-mt-20 flex-col gap-7 py-14 sm:py-[72px]`}>
       <div className="flex max-w-3xl flex-col gap-2.5">
@@ -56,7 +55,12 @@ export function HowSection({ t }: { t: SiteT }) {
           {t("home.how.title")}
         </h2>
       </div>
-      <HowSteps steps={steps} words={{ list: t("home.how.list"), pause: t("home.how.pause"), play: t("home.how.play") }} />
+      <TeamLead t={t} />
+      <HowSteps steps={sixSteps(t)} words={{ list: t("home.how.list"), pause: t("home.how.pause"), play: t("home.how.play") }} />
+      <p data-part="loop" className="flex items-center gap-2.5 text-base font-semibold text-ink">
+        <Repeat className="size-5 shrink-0 text-brand-text" aria-hidden="true" />
+        {t("home.how.loop")}
+      </p>
     </section>
   );
 }

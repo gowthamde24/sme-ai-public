@@ -17,6 +17,8 @@ export const OWL_DIR = "/owl/v3";
 /** The seven owls, in the order of the API's agent list (lib/api/today.ts AGENT_KEYS; a test keeps them equal): Agent OWL (sky blue) and the six helpers, each with a collar, ears and wings in a colour of their own. */
 export const OWL_AGENTS = ["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"] as const;
 export type OwlAgent = (typeof OWL_AGENTS)[number];
+/** The six helpers in the order of the six steps (job CZ): Find leads, Research, Understand, Quote, Follow up, Close & collect. Agent OWL leads them and is not a step. */
+export const HELPER_AGENTS = OWL_AGENTS.slice(1) as readonly OwlAgent[];
 /** An id this app does not know gets Agent OWL (never a made-up owl, never a broken picture). */
 export const owlAgent = (agent: string | undefined): OwlAgent => ((OWL_AGENTS as readonly string[]).includes(agent ?? "") ? (agent as OwlAgent) : "main");
 export const owlDir = (agent?: string): string => `${OWL_DIR}/${owlAgent(agent)}`;
@@ -33,8 +35,12 @@ export const owlFiles = (agent?: string) => {
 };
 /** The still picture in three sizes: the browser picks by the size the owl is drawn at (srcset + sizes), so a 56 px avatar never downloads the 512 px file. */
 export const STILL_WIDTHS = [128, 256, 512] as const;
-export const stillFile = (width: (typeof STILL_WIDTHS)[number], agent?: string): string => `${owlDir(agent)}/owlet-full-${width}.webp`;
-export const stillSrcSet = (widths: readonly (typeof STILL_WIDTHS)[number][] = STILL_WIDTHS, agent?: string): string => widths.map((w) => `${stillFile(w, agent)} ${w}w`).join(", ");
+/** Agent OWL alone also has a 1024 px still (job CZ), for where the owl is drawn large on a sharp screen (the home page's hero). The six helpers are never drawn that big, so they have no 1024 px file. */
+export const BIG_STILL_WIDTH = 1024;
+export const BIG_STILL_AGENT: OwlAgent = "main";
+export type StillWidth = (typeof STILL_WIDTHS)[number] | typeof BIG_STILL_WIDTH;
+export const stillFile = (width: StillWidth, agent?: string): string => `${owlDir(agent)}/owlet-full-${width}.webp`;
+export const stillSrcSet = (widths: readonly StillWidth[] = STILL_WIDTHS, agent?: string): string => widths.map((w) => `${stillFile(w, agent)} ${w}w`).join(", ");
 /**
  * The rig numbers (the wing boxes, the pivots, the mesh) are in the 1024 x 1024 space of the first art; the layer files are 512 x 512 (no owl is drawn above 360 CSS pixels, so a 1024 px layer was only weight).
  * Everything else is in percent of the box; the wing pictures are cut out with the scale LAYER_FILE_PX / LAYER_PX (PlushOwl.tsx).
