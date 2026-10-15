@@ -19,7 +19,8 @@ import { chromium } from "playwright";
 import { confirmEmail, factorSecret, passChallenge } from "./lib.mjs";
 import { API, BASE, PW, STAMP, aal2Token, api, gotrue, psql, sharedDatabaseProblem, totp, uuid } from "./be-lib.mjs";
 
-const OUT = process.env.E2E_SHOTS || path.join(os.homedir(), "Desktop", "v2-overnight", "shots-night");
+// the pictures go to NIGHT_SHOTS (E2E_SHOTS is the run-wide folder of be-env.mjs and keeps the failure pictures of the classic steps)
+const OUT = process.env.NIGHT_SHOTS || path.join(os.homedir(), "Desktop", "v2-overnight", "shots-night");
 mkdirSync(OUT, { recursive: true });
 const results = [];
 const must = (cond, what) => {
@@ -214,6 +215,7 @@ async function education() {
     await sheet(page).getByRole("button", { name: "Admit", exact: true }).click();
     await page.waitForURL(/\/students\/[0-9a-f-]{36}\?saved=1/, { timeout: 90000 });
     edu.student = /students\/([0-9a-f-]{36})/.exec(page.url())[1];
+    await page.locator('[data-screen="student"]').waitFor();
     must((await text(page)).includes("Asha"), "the student page does not show the first name");
     const students = await api("GET", `/v1/tenants/${t}/institution/students`, null, u.token);
     must(students.body?.items?.length === 1 && students.body.items[0].display_name === "Asha" && students.body.items[0].group_label === "A", `the students are ${JSON.stringify(students.body).slice(0, 200)}`);
@@ -268,18 +270,21 @@ async function education() {
 
   await step("EDU-6", "the students file: choose a CSV, say which column is which, see every row, import with the second factor (a parent is found or made, never a child's name in the preview)", async () => {
     await go(u, "/students/import");
-    const csv = ["Parent name,Parent phone,Class,Section,Student,Admission no", "Lakshmi Devi (e2e),+00 22222 22222,Class 5,B,Kiran,B-2001", "Suresh Babu (e2e),+00 33333 33333,Class 9,A,Meena,C-3001"].join("\n");
+    const csv = ["Parent name,Parent phone,Class,Section,Student,Admission no", "Lakshmi Devi (e2e),+00 90000 20002,Class 5,B,Kiran,B-2001", "Suresh Babu (e2e),+00 90000 20003,Class 9,A,Meena,C-3001"].join("\n");
     await page.setInputFiles('input[type="file"]', { name: "students.csv", mimeType: "text/csv", buffer: Buffer.from(csv) });
     await page.getByRole("button", { name: "Check the file" }).click();
-    await page.getByText("Which column is which?").waitFor();
+    await page.getByRole("heading", { name: "Which column is which?" }).waitFor();
+    const mapping = await text(page);
+    must(!mapping.includes("Kiran") && !mapping.includes("Meena"), "a child's name is on the mapping step");
     await page.getByRole("button", { name: "Show what would happen" }).click();
-    await page.getByText("What would happen").waitFor();
+    await page.getByRole("heading", { name: "What would happen" }).waitFor();
     const preview = await text(page);
     must(!preview.includes("Kiran") && !preview.includes("Meena"), "a child's name is in the preview");
     must(/Lakshmi Devi \(e2e\)/.test(preview), "the parent is not in the preview");
-    must(/needs review|Needs review/i.test(preview), "the class the school does not have is not flagged");
+    must(/Needs a look/.test(preview), "the class the school does not have is not flagged");
     await page.getByRole("button", { name: "Import", exact: true }).click();
-    await page.getByText("Import finished").waitFor();
+    await page.getByText("Import finished").first().waitFor();
+    must(!(await text(page)).match(/Kiran|Meena/), "a child's name is in the result");
     const students = await api("GET", `/v1/tenants/${t}/institution/students`, null, u.token);
     must(students.body?.items?.length === 2, `${students.body?.items?.length} students after the import (one row names a class the school does not have)`);
     return "1 student created, 1 row needing review (a class the school does not have: never invented)";
@@ -347,11 +352,17 @@ async function construction() {
     con.company = uuid();
     const made = await api("POST", `/v1/tenants/${t}/companies`, { id: con.company, name: "Sri Rama Builders (e2e)", type: "customer", country: "IN", city: "Guntur" }, u.token);
     must(made.status === 200 || made.status === 201, `company: HTTP ${made.status} ${JSON.stringify(made.body).slice(0, 120)}`);
+    // the person a reminder goes to: a contact of the customer who agreed to WhatsApp (synthetic number)
+    con.contact = uuid();
+    const person = await api("POST", `/v1/tenants/${t}/contacts`, { id: con.contact, company_id: con.company, full_name: "Ravi Kumar (e2e)", phone: "+00 90000 20011" }, u.token);
+    must(person.status === 200 || person.status === 201, `contact: HTTP ${person.status} ${JSON.stringify(person.body).slice(0, 120)}`);
+    const agreed = await api("POST", `/v1/tenants/${t}/contacts/${con.contact}/record-consent`, { channel: "whatsapp", status: "granted", basis: "explicit_consent", evidence_type: "web_form", evidence_ref: "e2e:con" }, u.token);
+    must(agreed.status === 200, `consent: HTTP ${agreed.status}`);
     await go(u, "/materials/new");
     await page.fill("#mat-name", "Paver block 200x100 (e2e)");
     await page.selectOption("#mat-unit", "sq_ft");
     if (await page.locator("#mat-price").count()) await page.fill("#mat-price", "42.50");
-    await page.locator("form button[type=submit]").click();
+    await page.getByRole("button", { name: "Save", exact: true }).click();
     await page.waitForURL(/\/materials\/[0-9a-f-]{36}/, { timeout: 90000 });
     con.item = /materials\/([0-9a-f-]{36})/.exec(page.url())[1];
     await go(u, "/materials");
@@ -403,12 +414,17 @@ async function construction() {
     const tpl = uuid();
     const put = await api("PUT", `/v1/tenants/${t}/whatsapp/templates/${tpl}`, { name: "payment_reminder_e2e", language: "en", category: "utility", purpose: "reminder", body: "Hello, a payment reminder: {{1}}. Thank you." }, u.token);
     must(put.status === 200, `template: HTTP ${put.status} ${JSON.stringify(put.body).slice(0, 120)}`);
-    const ok = await api("POST", `/v1/tenants/${t}/whatsapp/templates/${tpl}/status`, { status: "approved" }, u.token);
-    must(ok.status === 200, `template status: HTTP ${ok.status} ${JSON.stringify(ok.body).slice(0, 120)}`);
+    for (const status of ["submitted", "approved"]) {
+      const ok = await api("POST", `/v1/tenants/${t}/whatsapp/templates/${tpl}/status`, { status }, u.token);
+      must(ok.status === 200, `template ${status}: HTTP ${ok.status} ${JSON.stringify(ok.body).slice(0, 160)}`);
+    }
     await go(u, "/campaigns/new");
     await page.fill("#cf-name", "October payment reminders (e2e)");
-    await page.fill("#cf-text", "Hello {{name}}, a payment of {{amount}} for {{reference}} is due on {{due_date}}. {{business}}");
+    await page.fill("#cf-text", "Hello {{name}}, a payment of {{amount}} is due on {{due_date}}. {{business}}");
     await page.selectOption("#cf-template", tpl);
+    // the steps count from each person's own due date (the earliest invoice fell due 9 days ago): put both ahead, so something is still to be sent
+    await page.fill("#cf-off-0", "20");
+    await page.fill("#cf-off-1", "25");
     await page.getByRole("button", { name: "Save the draft" }).click();
     await page.waitForURL(/\/campaigns\/[0-9a-f-]{36}\?saved=1/, { timeout: 60000 });
     con.campaign = /campaigns\/([0-9a-f-]{36})/.exec(page.url())[1];
@@ -418,12 +434,14 @@ async function construction() {
     await page.fill("#al-from", from);
     await page.fill("#al-to", to);
     await page.getByRole("button", { name: "Add from the ledger" }).click();
-    await page.getByRole("status").filter({ hasText: "people added" }).waitFor().catch(() => null);
+    await page.locator("[data-part=audience] [role=status]:has-text('people added'), [data-part=audience] [role=alert]").first().waitFor();
+    const added = await text(page);
+    must(/\d+ people added/.test(added), `the audience was not built: ${added.slice(0, 200)}`);
     await go(u, `/campaigns/${con.campaign}?tab=approve`);
     await page.locator("[data-part=approval]").waitFor();
     const before = await text(page);
     must(/₹1,30,000\.00|₹130,000/.test(before) || /1,30,000/.test(before), `the total is not 1,30,000 (${before.slice(0, 300)})`);
-    must(/Reply STOP/.test(before), "the disclosure line is not shown");
+    must(/from the business.s AI assistant/.test(before), "the disclosure line is not shown");
     await page.getByRole("button", { name: "Approve this campaign" }).click();
     await sheet(page).getByRole("checkbox").check();
     await sheet(page).getByRole("button", { name: "Approve", exact: true }).click();
@@ -496,6 +514,7 @@ async function pictures(u, label, paths) {
   for (const scheme of ["light", "dark"]) {
     for (const [sizeName, size] of Object.entries(SIZES)) {
       const context = await browser.newContext({ storageState: state, viewport: { width: size.width, height: size.height }, deviceScaleFactor: size.scale, colorScheme: scheme, reducedMotion: "reduce", locale: "en-IN", timezoneId: "Asia/Kolkata", isMobile: sizeName === "phone", hasTouch: sizeName === "phone" });
+      await context.addCookies([{ name: "sme_consent", value: "1.a0", url: BASE }]); // the cookie notice is answered, so it does not cover the picture
       const page = await context.newPage();
       watch(page);
       for (const [slug, p] of paths) {

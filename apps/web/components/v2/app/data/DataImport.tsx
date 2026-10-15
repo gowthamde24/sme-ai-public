@@ -215,7 +215,7 @@ export function DataImport({ tenantId, words, kinds = KINDS_DEFAULT }: { tenantI
                       <tr key={i}>
                         {step.inspected.columns.map((c) => (
                           <td key={c.index} className="max-w-48 truncate border-b border-line px-3 py-2">
-                            {row[c.index] ?? ""}
+                            {step.inspected.kind === "students" && (c.suggested_field === "child_label" || step.choices.child_label === String(c.index)) ? "•••" : (row[c.index] ?? "")}
                           </td>
                         ))}
                       </tr>
@@ -223,6 +223,7 @@ export function DataImport({ tenantId, words, kinds = KINDS_DEFAULT }: { tenantI
                   </tbody>
                 </table>
               </div>
+              {step.inspected.kind === "students" ? <p className={help}>{t("dta.map.childhidden")}</p> : null}
             </div>
           ) : null}
           <FailureNote failure={failure} words={words} own={own} />
