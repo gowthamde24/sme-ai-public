@@ -287,6 +287,11 @@ e2e-local:
 # Job CL, OPT-IN, never in make check or CI: the business-type sign-up on the real stack (the same start-up, clean-up and guards as e2e-local): the two-step sign-up by e-mail for each business type, the setup by itself, Today in its words,
 # the module guard, the checklist, example data, the second step, custom fields; and the Google path as far as it can go without the owner's own Google account (docs/runbooks/social-sign-up.md). The two ids are PUBLIC placeholders so the
 # API offers the buttons; the local Auth server has the providers off, which is what the run checks.
+# Night run C2 (jobs CO, CQ, CS, CU), OPT-IN, never in make check or CI: the screens of the construction, campaign and education jobs through a real browser on the real stack (the same start-up, clean-up and guards as e2e-local),
+# for a school, a builder and the saree shop, and pictures of every pack's screens (light and dark, laptop and 390 px phone) into E2E_SHOTS (default ~/Desktop/v2-overnight/shots-night).
+e2e-c2:
+	E2E_SCRIPT=night-c2-flows.mjs ./scripts/e2e-local.sh
+
 e2e-packs:
 	E2E_SCRIPT=cl-signup.mjs AUTH_GOOGLE_CLIENT_ID=local-public-placeholder AUTH_FACEBOOK_APP_ID=local-public-placeholder ./scripts/e2e-local.sh
 

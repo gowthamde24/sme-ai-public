@@ -143,6 +143,8 @@ export const API_ROUTES = [
   route("/agents/status", AGENTS),
   route("/ai-usage", { today_percent: 12, month_percent: 31, resets_at_today: "2026-10-14T18:30:00Z", resets_at_month: "2026-10-31T18:30:00Z", state: "ok" }),
   route("/ai-usage/week", { week_percent: 18, resets_at_week: "2026-10-18T18:30:00Z" }),
+  // job CU: the Settings page also reads the business profile (the GSTIN card)
+  route("/business-profile", { gstin: null, state: null }),
   route("/members", { members: [{ user_id: USER_ID, role: "owner", display_name: "Visual Owner" }, { user_id: "22222222-2222-4222-8222-222222222299", role: "sales", display_name: "Ravi Kumar" }] }),
   route("/team", { members: [{ user_id: USER_ID, role: "owner", display_name: "Visual Owner", joined_at: "2026-09-01T05:00:00Z", is_you: true }, { user_id: "22222222-2222-4222-8222-222222222299", role: "admin", display_name: "Ravi Kumar", joined_at: "2026-09-12T05:00:00Z", is_you: false }, { user_id: "22222222-2222-4222-8222-222222222298", role: "sales", display_name: "Meena Rao", joined_at: "2026-09-20T05:00:00Z", is_you: false }, { user_id: "22222222-2222-4222-8222-222222222297", role: "viewer", display_name: "Sunil Verma", joined_at: "2026-10-02T05:00:00Z", is_you: false }], pending_invitations: 0 }), // the team page (e2e/cj-shots.mjs)
   route("/invitations", { invitations: [] }), // the team page (e2e/cj-shots.mjs); no invitation is waiting

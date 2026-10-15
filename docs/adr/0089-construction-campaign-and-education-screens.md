@@ -1,6 +1,6 @@
-# ADR 0089: the construction, campaign and education screens (jobs CO, CQ, CS; night run C2)
+# ADR 0089: the construction, campaign and education screens, and the polish (jobs CO, CQ, CS, CU; night run C2)
 
-Status: **BUILT (night run C2, 2026-10-15), for the owner's review.** The web lane only: **no backend, database or API change** (the screens read the APIs of ADRs 0085, 0086, 0087 and 0088). Builds on ADR 0084 (packs and modules; reminder campaigns; children's data), ADR 0085 (the building-materials core), ADR 0086 (the shared ledger and the campaign engine), ADR 0087 (the education core) and the blueprint's sections 5 and 6. The job that polishes and reports (CU) is added to this record when it lands.
+Status: **BUILT (night run C2, 2026-10-15), for the owner's review.** The web lane only: **no backend, database or API change** (the screens read the APIs of ADRs 0085, 0086, 0087 and 0088). Builds on ADR 0084 (packs and modules; reminder campaigns; children's data), ADR 0085 (the building-materials core), ADR 0086 (the shared ledger and the campaign engine), ADR 0087 (the education core) and the blueprint's sections 5 and 6. Job CU (the polish and the reports screens) is at the end.
 
 ## Rules every screen of the night obeys
 
@@ -20,6 +20,13 @@ The list, a form (kind by module, merge fields from buttons, steps in days from 
 
 ### CS: education screens
 The institution and its programmes, the students (a list, one student, add and change, mark as left, erase one child on request, the students file through the same guarded import with a mapping step), fee plans (heads, instalments with due dates, a late-fee rule; a held plan is read only and is copied), the student's fee account (give a plan, take a payment with its receipt, a concession by amount or percent, an adjustment, void; print or copy a receipt), the collection screen ("pending", never a harsher word), the pending list, late fees (looked at, then posted by the Owner or an Admin with the second factor), the admissions board (enquiry, campus visit, application, admitted, lost; admit makes the student and gives the plan in one go), announcements (event, exam, holiday campaigns whose audience is chosen from the students: one message per parent), a fee reminder campaign built from the ledger with the students' parents as ONE person each, Today cards (fees collected today, reminders running, campus visits today) and the first-run steps (the institution, the students file, a fee plan, the first approved campaign).
+
+### CU: the polish and the reports screens
+* **Reports per business type.** `/report` keeps the weekly page; below it the business type's own reports are listed from the one reports API (`GET /reports/catalogue`, the codes the modules allow) and each opens at `/report/[code]` with a start and end (India days) or one day. A figure, a column or a bar is drawn by its TYPE; the words come from `rep.*` strings by key (the units, statuses and methods fall back on words other screens already have; a code with no words is a plain name, never an underscore). A business without a catalogue (a school) has no "sarees sent most" card, and a builder's says "products". The saree shop's page is unchanged (its catalogue lists only the weekly report).
+* **The phone's bottom bar is a pack setting.** A business type whose core tab is the quotes keeps today's five tabs (Today, Leads, Quotes, Visits, Office); one whose core tab is another (Orders & deliveries, Fees) gets the blueprint's four (Today, Inbox, its core tab, Contacts) and More. The pack files carry no bar field yet (adding one changes their hash, which the database copies: a pack-version job), so the core tab decides.
+* **Words by module for a translation function** (`withModuleT`): Today's "What can Agent OWL do?" panel and chips and the help guides say "products" to a builder and talk about parents and enquiries to a school, and say that a child's record is kept out of Agent OWL's reach. Only what the assistant can really do is claimed.
+* **String completeness is a test** (`i18n/used-keys.test.ts`): every key these jobs name in a screen exists in four languages, and every family a key is built from has members.
+* **Budgets and speed.** `npm run audit:route-js` passes on all 103 routes; `make visual` and `make perf` were run under the heavy-test lock (see the report for the numbers).
 
 ## Decisions taken
 

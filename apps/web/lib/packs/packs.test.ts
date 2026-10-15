@@ -7,7 +7,7 @@ import app from "@/i18n/strings/app.json";
 import { NAV, barItems, coreItem, footItems, visibleGroups, type PackFrame, type Role } from "@/components/v2/app/nav";
 
 import { allModules, defaultPackId, otherPackIds, PACKS_DIR, packFiles, workspacePack } from "./pack-test-kit";
-import { packFrame, packWords, withPackT, withPackWords } from "./resolve";
+import { packFrame, packWords, phoneBar, withPackT, withPackWords } from "./resolve";
 
 const WEB = path.resolve(import.meta.dirname, "..", "..");
 const ROLES: Role[] = ["owner", "admin", "sales", "viewer"];
@@ -104,7 +104,9 @@ describe("the other business types", () => {
         const core = coreItem(frame);
         expect(barItems("owner", frame).map((i) => i.id)).toContain(core!.id);
         expect(frame.labels["pack.core_tab"]).toBe(m.labels.en["pack.core_tab"]);
-        expect(barItems("owner", frame)).toHaveLength(5);
+        // job CU: a business type whose core tab is not the quotes gets the blueprint's bar (Today, Inbox, the core tab, Contacts), the saree shop keeps its five
+        expect(frame.bar).toBe("core");
+        expect(barItems("owner", frame).map((i) => i.id)).toEqual(["today", "chats", core!.id, "customers"]);
       });
       it("speaks the person's language, English when a text is missing", () => {
         expect(packFrame(pack, "te").name).toBe((m.names as Record<string, string>).te);
@@ -113,8 +115,16 @@ describe("the other business types", () => {
       });
     });
   }
+  it("the phone's bar is a pack setting: the saree shop keeps its five tabs, the others get the blueprint's four (job CU)", () => {
+    expect(packFrame(workspacePack(defaultPackId()), "en").bar).toBe("classic");
+    expect(barItems("owner", packFrame(workspacePack(defaultPackId()), "en")).map((i) => i.id)).toEqual(["today", "leads", "quotes", "visits", "office"]);
+    for (const id of otherPackIds()) expect(packFrame(workspacePack(id), "en").bar).toBe("core");
+    expect(phoneBar({ coreTab: "quotes" })).toBe("classic");
+    expect(phoneBar({ coreTab: "orders" })).toBe("core");
+    expect(phoneBar({ coreTab: "fees" })).toBe("core");
+  });
   it("a role that may not open an item does not get its tab, whatever the pack says", () => {
-    for (const id of otherPackIds()) expect(barItems("viewer", packFrame(workspacePack(id), "en")).map((i) => i.id)).toEqual(["today", "leads", "visits", "office"].filter((x) => ids(packFrame(workspacePack(id), "en"), "viewer").includes(x)));
+    for (const id of otherPackIds()) expect(barItems("viewer", packFrame(workspacePack(id), "en")).map((i) => i.id)).toEqual(["today", "customers"].filter((x) => ids(packFrame(workspacePack(id), "en"), "viewer").includes(x)));
   });
   it("overlays words on a page only for keys the page already has", () => {
     const pack = workspacePack(otherPackIds()[0]);

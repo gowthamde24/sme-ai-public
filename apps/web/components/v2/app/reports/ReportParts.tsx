@@ -14,7 +14,7 @@ export function formatValue(value: number | null, unit: ReportKpi["unit"] | Repo
   if (unit === "paise") return formatRupees(value);
   if (unit === "percent") return `${Number.isInteger(value) ? value : value.toFixed(1)}%`;
   if (unit === "seconds") return `${Math.round(value)}`;
-  return groupIndian(Math.round(value));
+  return Number.isInteger(value) ? groupIndian(value) : value.toFixed(2);
 }
 
 /** The bar widths are classes the stylesheet knows (no inline style): the nearest of ten steps, never less than one. */
@@ -37,9 +37,17 @@ export function KpiCards({ kpis, words, only }: { kpis: readonly ReportKpi[]; wo
   );
 }
 
+/** Other tables of words a column's codes may already have (the units and statuses of the product, quote and trip screens), tried after the report's own. */
+const ALSO: Readonly<Record<string, readonly string[]>> = { status: ["mat.status", "trip.status"], unit: ["mat.unit"], method: ["due.method"] };
+const CODE = /^[a-z0-9]+(_[a-z0-9]+)*$/;
+
 function cellText(cell: Cell, type: ReportTable["columns"][number]["type"], key: string, words: TodayWords): string {
   if (cell === null) return "—";
-  if (type === "text") return typeof cell === "string" ? (words[`rep.val.${key}.${cell}`] ?? cell) : String(cell);
+  if (type === "text") {
+    if (typeof cell !== "string") return String(cell);
+    for (const prefix of [`rep.val.${key}`, ...(ALSO[key] ?? [])]) if (words[`${prefix}.${cell}`] !== undefined) return words[`${prefix}.${cell}`];
+    return CODE.test(cell) && cell.includes("_") ? cell.replace(/_/g, " ") : cell; // a closed code with no words is a plain name, never an underscore
+  }
   return typeof cell === "number" ? formatValue(cell, type) : "—";
 }
 

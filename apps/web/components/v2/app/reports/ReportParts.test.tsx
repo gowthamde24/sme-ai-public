@@ -8,7 +8,7 @@ import { WORDS } from "../materials/mat-test-kit";
 import { KpiCards, ReportTableView, SeriesBars, formatValue } from "./ReportParts";
 
 describe("drawing a figure by its type", () => {
-  it.each([[1250000, "paise", "₹12,500.00"], [87.2, "percent", "87.2%"], [90, "percent", "90%"], [31, "count", "31"], [1234567, "count", "12,34,567"], [null, "percent", "—"], [null, "paise", "—"]] as const)("%s as %s is %s", (value, unit, want) => {
+  it.each([[1250000, "paise", "₹12,500.00"], [87.2, "percent", "87.2%"], [90, "percent", "90%"], [31, "count", "31"], [1234567, "count", "12,34,567"], [12.5, "count", "12.50"], [null, "percent", "—"], [null, "paise", "—"]] as const)("%s as %s is %s", (value, unit, want) => {
     expect(formatValue(value, unit)).toBe(want);
   });
 });
@@ -28,6 +28,15 @@ describe("a report", () => {
     expect(screen.getByText("WhatsApp")).toBeInTheDocument();
     expect(screen.getByText("Walk-in")).toBeInTheDocument();
     expect(screen.getByRole("columnheader", { name: "Where from" })).toBeInTheDocument();
+  });
+  it("a code with no words of the report's own falls back on the unit, status and method words other screens already have, and then on a plain name", () => {
+    const table = { key: "t", columns: [{ key: "status", type: "text" as const }, { key: "unit", type: "text" as const }, { key: "bucket", type: "text" as const }], rows: [["on_the_way", "sq_ft", "d31_60"], ["a_brand_new_one", "kg", "Class 5"]] };
+    render(<ReportTableView table={table} words={WORDS} id="t" />);
+    expect(screen.getByText("On the way")).toBeInTheDocument();
+    expect(screen.getByText("sq ft")).toBeInTheDocument();
+    expect(screen.getByText("31 to 60 days late")).toBeInTheDocument();
+    expect(screen.getByText("a brand new one")).toBeInTheDocument();
+    expect(screen.getByText("Class 5")).toBeInTheDocument();
   });
   it("a table with no rows says so", () => {
     render(<ReportTableView table={{ key: "by_method", columns: [{ key: "method", type: "text" }], rows: [] }} words={WORDS} id="t" />);

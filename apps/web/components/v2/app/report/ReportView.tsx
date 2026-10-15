@@ -40,7 +40,7 @@ function Empty({ text }: { text: string }) {
  * "This week" (job BV): the owner's week at a glance, from `readReport`. Every number is a real count from the API; a part that could not be read says so in its own card and never draws a zero. Bars carry their number
  * in words beside the name, so no figure depends on colour or length alone; the charts are plain CSS and work at 360 px. No money and no customer's name appears here.
  */
-export function ReportView({ data, labels, lang }: { data: ReportData; labels: Labels; lang: string }) {
+export function ReportView({ data, labels, lang, catalogue = true, more = null }: { data: ReportData; labels: Labels; lang: string; /** The business keeps a catalogue (a business without one has no "sent most" card). */ catalogue?: boolean; /** The pack's own reports (job CU): drawn after the week. */ more?: React.ReactNode }) {
   const { range } = data;
   const rangeText = word(labels, "report.range", "{from} to {to}", { from: dayShort(range.from, lang), to: dayShort(range.to, lang) });
   const days = Array.from({ length: 7 }, (_, i) => weekdayWord(lang, i, "short"));
@@ -126,6 +126,7 @@ export function ReportView({ data, labels, lang }: { data: ReportData; labels: L
           </section>
         </div>
 
+        {catalogue ? (
         <section aria-labelledby="rp-sarees" className={surface}>
           <h2 id="rp-sarees" className={h2}>
             {word(labels, "report.sarees.title", "Sarees sent most")}
@@ -155,6 +156,7 @@ export function ReportView({ data, labels, lang }: { data: ReportData; labels: L
             </>
           )}
         </section>
+        ) : null}
 
         <section aria-labelledby="rp-usage" className={surface}>
           <h2 id="rp-usage" className={h2}>
@@ -173,6 +175,7 @@ export function ReportView({ data, labels, lang }: { data: ReportData; labels: L
           )}
         </section>
       </div>
+      {more}
     </div>
   );
 }

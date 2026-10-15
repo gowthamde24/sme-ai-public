@@ -44,7 +44,8 @@ import {
   parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
 } from "@/lib/api/education";
 import * as EDU from "@/lib/api/education-fixtures";
-import { parseReport } from "@/lib/api/reports";
+import { parseCatalogue, parseReport } from "@/lib/api/reports";
+import * as RPT from "@/lib/api/reports-fixtures";
 import { CALL_LIST_JSON, CAMPAIGN, DETAIL_ISSUES_JSON, DETAIL_JSON as CAMPAIGN_DETAIL_JSON, DETAIL_RUNNING_JSON, LIST_JSON, PREVIEW_ISSUES_JSON, PREVIEW_JSON, RECIPIENTS_JSON, RESULTS_JSON } from "@/lib/api/campaigns-fixtures";
 import { SITE as SITE_ID, SITE_JSON, SITE_LIST_JSON } from "@/lib/api/sites-fixtures";
 import { parseChallan, parseTripDetail, parseTripList } from "@/lib/api/deliveries";
@@ -587,6 +588,7 @@ const reportHandlers = (role: Role): Record<string, Handler> => ({
   getOutboxSummary: () => parseOutboxSummary({ waiting: 1, scheduled: 1, sent: 7, blocked: 2, due_now: 0, held_for_later: 1 }),
   listOutboxMessages: () => parseOutboxPage(outboxPage([{ ...SENT_JSON, reason: "owner_approved", created_at: "2026-10-06T01:00:00Z", decided_at: "2026-10-06T01:20:00Z", sent_at: "2026-10-06T01:21:00Z" }])),
   getAiUsageWeek: () => ({ week_percent: 37, resets_at_week: "2026-10-11T18:30:00Z" }),
+  getReportCatalogue: () => parseCatalogue(RPT.CATALOGUE_WEEKLY_JSON),
 });
 add({ id: "report", render: async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({})), handlers: reportHandlers });
 add({
@@ -936,3 +938,16 @@ add({ id: "announcement-new-education", roles: ["owner"], render: edu("announcem
 const eduCampaign = (json: unknown): Record<string, Handler> => ({ getCampaign: () => parseDetail(json), listRecipients: () => parseRecipients(RECIPIENTS_JSON), listProgrammes: () => parseProgrammes(EDU.PROGRAMMES_JSON) });
 add({ id: "campaign-audience-announcement-education", roles: ["owner"], render: campaignOf("audience"), handlers: (role) => ({ ...school(role), ...eduCampaign({ ...CAMPAIGN_DETAIL_JSON, ...CAMPAIGN_EVENT }) }) });
 add({ id: "campaign-audience-fees-education", roles: ["owner"], render: campaignOf("audience"), handlers: (role) => ({ ...school(role), ...eduCampaign({ ...CAMPAIGN_DETAIL_JSON, kind: "fee_due" }) }) });
+const reportPage = async () => (await import("@/app/app/tenants/[tenantId]/report/page")).default(props({}));
+add({ id: "report-construction", roles: ["owner", "admin"], render: reportPage, handlers: (role) => ({ ...reportHandlers(role), getWorkspacePack: packOf(CONSTRUCTION), getReportCatalogue: () => parseCatalogue(RPT.CATALOGUE_CONSTRUCTION_JSON) }) });
+add({ id: "report-education", roles: ["owner"], render: reportPage, handlers: (role) => ({ ...reportHandlers(role), getWorkspacePack: packOf(EDUCATION), getReportCatalogue: () => parseCatalogue(RPT.CATALOGUE_EDUCATION_JSON) }) });
+const runPage = (code: string, query: Record<string, string> = {}) => async () => (await import("@/app/app/tenants/[tenantId]/report/[code]/page")).default(props({ code }, query));
+const run = (catalogue: unknown, json: unknown, pack: () => unknown = packOf(CONSTRUCTION)) => (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: pack as Handler, getReportCatalogue: () => parseCatalogue(catalogue), runReport: () => parseReport(json) });
+add({ id: "report-run-quotes", roles: ["owner", "sales"], render: runPage("construction.quotes"), handlers: run(RPT.CATALOGUE_CONSTRUCTION_JSON, RPT.QUOTES_REPORT_JSON) });
+add({ id: "report-run-revenue", roles: ["owner"], render: runPage("construction.revenue_by_product", { from: "2026-09-15", to: "2026-10-14" }), handlers: run(RPT.CATALOGUE_CONSTRUCTION_JSON, RPT.REVENUE_REPORT_JSON) });
+add({ id: "report-run-trips", roles: ["owner"], render: runPage("construction.trips_per_day"), handlers: run(RPT.CATALOGUE_CONSTRUCTION_JSON, RPT.TRIPS_REPORT_JSON) });
+add({ id: "report-run-dues", roles: ["owner"], render: runPage("construction.dues_ageing"), handlers: run(RPT.CATALOGUE_CONSTRUCTION_JSON, RPT.DUES_REPORT_JSON) });
+add({ id: "report-run-top-customers", roles: ["admin"], render: runPage("construction.top_customers"), handlers: run(RPT.CATALOGUE_CONSTRUCTION_JSON, RPT.TOP_CUSTOMERS_REPORT_JSON) });
+add({ id: "report-run-collection", roles: ["owner"], render: runPage("education.collection"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.COLLECTION_REPORT_JSON, packOf(EDUCATION)) });
+add({ id: "report-run-today", roles: ["owner"], render: runPage("education.today"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.TODAY_REPORT_JSON, packOf(EDUCATION)) });
+add({ id: "report-run-funnel", roles: ["admin"], render: runPage("education.funnel"), handlers: run(RPT.CATALOGUE_EDUCATION_JSON, EDU.FUNNEL_REPORT_JSON, packOf(EDUCATION)) });

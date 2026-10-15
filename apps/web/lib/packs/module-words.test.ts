@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { appDict } from "@/i18n/app";
 import { LANGS } from "@/i18n/lang";
 
-import { withModuleWords } from "./module-words";
+import { withModuleT, withModuleWords } from "./module-words";
 
 describe("words by module", () => {
   const words = { "a.b": "saree", "a.b@materials": "product", "c.d": "same", "x.y@materials": "no base key" };
@@ -30,5 +30,28 @@ describe("words by module", () => {
         expect(ph(dict[key]), `${lang}:${key}`).toEqual(ph(en[base]));
       }
     }
+  });
+});
+
+describe("a translation function by module (job CU)", () => {
+  const dict = { "a.b": "saree", "a.b@materials": "product", "n.m": "{n} sarees", "n.m@materials": "{n} products", "c.d": "same" };
+  const t = ((key: keyof typeof dict, vars?: { n: number }) => dict[key].replace("{n}", String(vars?.n ?? ""))) as unknown as (key: never, vars?: never) => string;
+  it("answers the variant for a business type with the module, filled the way the plain one is", () => {
+    const w = withModuleT(t, { modules: ["materials"] }, dict) as unknown as (k: string, v?: { n: number }) => string;
+    expect(w("a.b")).toBe("product");
+    expect(w("n.m", { n: 3 })).toBe("3 products");
+    expect(w("c.d")).toBe("same");
+  });
+  it("no pack, or a pack without the module, or nothing to replace: the same function", () => {
+    expect(withModuleT(t, null, dict)).toBe(t);
+    expect(withModuleT(t, { modules: ["today"] }, dict)).toBe(t);
+  });
+  it("the real store: a school and a builder do not hear about sarees from Agent OWL", () => {
+    const en = appDict("en") as Record<string, string>;
+    const real = (modules: string[]) => withModuleT(((k: string) => en[k]) as never, { modules }, en) as unknown as (k: string) => string;
+    expect(real(["today"])("ask.can.y3")).toMatch(/sarees/);
+    expect(real(["materials"])("ask.can.y3")).not.toMatch(/saree/);
+    expect(real(["programmes"])("ask.can.y2")).toMatch(/enquiry/);
+    expect(real(["programmes"])("ask.can.n3")).toMatch(/child's record/);
   });
 });

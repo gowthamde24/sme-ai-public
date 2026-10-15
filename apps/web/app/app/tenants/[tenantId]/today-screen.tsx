@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { TodayView } from "@/components/v2/app/today/TodayView";
 import type { TodayActions } from "@/components/v2/app/today/actions-types";
 import type { Role } from "@/components/v2/app/today/types";
-import { appT } from "@/i18n/app";
+import { appDict, appT } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { ApiAuthError } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
@@ -17,6 +17,7 @@ import { readPackCached } from "@/lib/packs/read";
 import { readPackCards } from "@/lib/packs/pack-cards";
 import { PackCards } from "@/components/v2/app/today/PackCards";
 import { formatRupees } from "@/lib/money";
+import { withModuleT } from "@/lib/packs/module-words";
 import { withPackT } from "@/lib/packs/resolve";
 import { loadExampleAction, removeExampleAction } from "./start/actions";
 
@@ -42,7 +43,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const lang = await getLang();
   // the business type (job CL): once per request (the frame asked already). Its own words (the helpers' names) go on top of the dictionary; a business type with a checklist of its own shows it instead of the first-run wizard
   const pack = await readPackCached(accessToken, tenantId);
-  const t = pack ? withPackT(appT(lang), pack, lang) : appT(lang);
+  const t = pack ? withPackT(withModuleT(appT(lang), pack, appDict(lang)), pack, lang) : appT(lang);
   const now = clock();
   let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   const manages = role === "owner" || role === "admin";

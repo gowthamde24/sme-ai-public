@@ -52011,5 +52011,996 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "help.guide.catalogue.t@materials": {
+  "en": "Your products",
+  "te": "మీ ఉత్పత్తులు",
+  "hi": "आपके उत्पाद",
+  "kn": "ನಿಮ್ಮ ಉತ್ಪನ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.1@materials": {
+  "en": "Open Products and press Add a product. Give it a name, how it is sold (per piece, per sq ft, per bag ...) and a few details.",
+  "te": "ఉత్పత్తులను తెరిచి ఉత్పత్తిని జోడించండి నొక్కండి. పేరు, ఎలా అమ్ముతారో (ముక్కకు, చదరపు అడుగుకు, బస్తాకు ...), కొన్ని వివరాలు ఇవ్వండి.",
+  "hi": "उत्पाद खोलें और उत्पाद जोड़ें दबाएँ। नाम, वह कैसे बिकता है (प्रति नग, प्रति वर्ग फुट, प्रति बोरी ...) और कुछ जानकारी दें।",
+  "kn": "ಉತ್ಪನ್ನಗಳನ್ನು ತೆರೆದು ಉತ್ಪನ್ನ ಸೇರಿಸಿ ಒತ್ತಿ. ಹೆಸರು, ಹೇಗೆ ಮಾರಾಟ (ತುಂಡಿಗೆ, ಚದರ ಅಡಿಗೆ, ಚೀಲಕ್ಕೆ ...) ಮತ್ತು ಕೆಲವು ವಿವರಗಳನ್ನು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.3@materials": {
+  "en": "Say if it is In stock, Few left or Made to order. A hidden product is not shown to customers.",
+  "te": "స్టాక్‌లో ఉంది, కొన్ని మాత్రమే మిగిలాయి లేదా ఆర్డర్‌పై తయారు అని చెప్పండి. దాచిన ఉత్పత్తి కస్టమర్లకు కనిపించదు.",
+  "hi": "बताएँ कि यह स्टॉक में है, कुछ बचे हैं या ऑर्डर पर बनता है। छिपा हुआ उत्पाद ग्राहकों को नहीं दिखता।",
+  "kn": "ಸ್ಟಾಕ್‌ನಲ್ಲಿದೆ, ಕೆಲವೇ ಉಳಿದಿವೆ ಅಥವಾ ಆರ್ಡರ್ ಮೇಲೆ ತಯಾರಿ ಎಂದು ಹೇಳಿ. ಅಡಗಿಸಿದ ಉತ್ಪನ್ನ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.4@materials": {
+  "en": "To send a product to a customer, open it, choose the customer and check the message before it goes.",
+  "te": "ఉత్పత్తిని కస్టమర్‌కు పంపడానికి, దాన్ని తెరిచి, కస్టమర్‌ను ఎంచుకుని, వెళ్లే ముందు సందేశాన్ని చూడండి.",
+  "hi": "किसी ग्राहक को उत्पाद भेजने के लिए उसे खोलें, ग्राहक चुनें और भेजने से पहले संदेश जाँचें।",
+  "kn": "ಗ್ರಾಹಕರಿಗೆ ಉತ್ಪನ್ನ ಕಳುಹಿಸಲು, ಅದನ್ನು ತೆರೆದು, ಗ್ರಾಹಕರನ್ನು ಆರಿಸಿ, ಹೋಗುವ ಮೊದಲು ಸಂದೇಶವನ್ನು ಪರಿಶೀಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.guide.catalogue.go@materials": {
+  "en": "Open Products",
+  "te": "ఉత్పత్తులను తెరవండి",
+  "hi": "उत्पाद खोलें",
+  "kn": "ಉತ್ಪನ್ನಗಳನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.catalogue.1@materials": {
+  "en": "Add products with photos. A hidden product is not shown to customers.",
+  "te": "ఫోటోలతో ఉత్పత్తులను జోడించండి. దాచిన ఉత్పత్తి కస్టమర్లకు కనిపించదు.",
+  "hi": "फ़ोटो के साथ उत्पाद जोड़ें। छिपा हुआ उत्पाद ग्राहकों को नहीं दिखता।",
+  "kn": "ಫೋಟೋಗಳೊಂದಿಗೆ ಉತ್ಪನ್ನಗಳನ್ನು ಸೇರಿಸಿ. ಅಡಗಿಸಿದ ಉತ್ಪನ್ನ ಗ್ರಾಹಕರಿಗೆ ಕಾಣುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.catalogue.2@materials": {
+  "en": "Open a product to edit it, add photos or send it to a customer.",
+  "te": "ఉత్పత్తిని తెరిచి మార్చండి, ఫోటోలు జోడించండి లేదా కస్టమర్‌కు పంపండి.",
+  "hi": "किसी उत्पाद को खोलकर बदलें, फ़ोटो जोड़ें या ग्राहक को भेजें।",
+  "kn": "ಉತ್ಪನ್ನವನ್ನು ತೆರೆದು ಬದಲಿಸಿ, ಫೋಟೋ ಸೇರಿಸಿ ಅಥವಾ ಗ್ರಾಹಕರಿಗೆ ಕಳುಹಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "help.tip.catalogue.3@materials": {
+  "en": "Use the filters (type, size, use, stock) to find one quickly.",
+  "te": "ఒకదాన్ని త్వరగా కనుగొనడానికి ఫిల్టర్లు (రకం, సైజు, వినియోగం, స్టాక్) వాడండి.",
+  "hi": "जल्दी ढूँढने के लिए फ़िल्टर (प्रकार, आकार, उपयोग, स्टॉक) लगाएँ।",
+  "kn": "ಒಂದನ್ನು ಬೇಗ ಹುಡುಕಲು ಫಿಲ್ಟರ್‌ಗಳನ್ನು (ಪ್ರಕಾರ, ಗಾತ್ರ, ಬಳಕೆ, ಸ್ಟಾಕ್) ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y3@materials": {
+  "en": "Find products in your catalogue by type, size or use.",
+  "te": "మీ కేటలాగ్‌లో రకం, సైజు లేదా వినియోగం ప్రకారం ఉత్పత్తులను కనుగొనడం.",
+  "hi": "आपके कैटलॉग में प्रकार, आकार या उपयोग से उत्पाद ढूँढना।",
+  "kn": "ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನಲ್ಲಿ ಪ್ರಕಾರ, ಗಾತ್ರ ಅಥವಾ ಬಳಕೆಯ ಮೂಲಕ ಉತ್ಪನ್ನಗಳನ್ನು ಹುಡುಕುವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y2@programmes": {
+  "en": "Find a parent, an admission enquiry or a campus visit in your records.",
+  "te": "మీ రికార్డులలో తల్లిదండ్రి, అడ్మిషన్ ఎంక్వైరీ లేదా క్యాంపస్ సందర్శనను కనుగొనడం.",
+  "hi": "आपके रिकॉर्ड में अभिभावक, प्रवेश पूछताछ या कैंपस दौरा ढूँढना।",
+  "kn": "ನಿಮ್ಮ ದಾಖಲೆಗಳಲ್ಲಿ ಪೋಷಕರು, ಪ್ರವೇಶ ವಿಚಾರಣೆ ಅಥವಾ ಕ್ಯಾಂಪಸ್ ಭೇಟಿಯನ್ನು ಹುಡುಕುವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.y3@programmes": {
+  "en": "Tell you which admission enquiries are waiting for an answer.",
+  "te": "ఏ అడ్మిషన్ ఎంక్వైరీలు జవాబు కోసం వేచి ఉన్నాయో చెప్పడం.",
+  "hi": "कौन सी प्रवेश पूछताछ जवाब का इंतज़ार कर रही हैं, यह बताना।",
+  "kn": "ಯಾವ ಪ್ರವೇಶ ವಿಚಾರಣೆಗಳು ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುತ್ತಿವೆ ಎಂದು ಹೇಳುವುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.quotes@programmes": {
+  "en": "Which admission enquiries are waiting for me?",
+  "te": "ఏ అడ్మిషన్ ఎంక్వైరీలు నా కోసం వేచి ఉన్నాయి?",
+  "hi": "कौन सी प्रवेश पूछताछ मेरा इंतज़ार कर रही हैं?",
+  "kn": "ಯಾವ ಪ್ರವೇಶ ವಿಚಾರಣೆಗಳು ನನಗಾಗಿ ಕಾಯುತ್ತಿವೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.chip.money@programmes": {
+  "en": "Who needs a call back today?",
+  "te": "ఈ రోజు ఎవరికి తిరిగి కాల్ చేయాలి?",
+  "hi": "आज किसे वापस कॉल करना है?",
+  "kn": "ಇಂದು ಯಾರಿಗೆ ಮರಳಿ ಕರೆ ಮಾಡಬೇಕು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "report.sarees.title@materials": {
+  "en": "Products sent most",
+  "te": "ఎక్కువగా పంపిన ఉత్పత్తులు",
+  "hi": "सबसे ज़्यादा भेजे गए उत्पाद",
+  "kn": "ಅತಿ ಹೆಚ್ಚು ಕಳುಹಿಸಿದ ಉತ್ಪನ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "report.sarees.empty@materials": {
+  "en": "No product photos were sent this week yet.",
+  "te": "ఈ వారం ఇంకా ఉత్పత్తి ఫోటోలు పంపలేదు.",
+  "hi": "इस हफ़्ते अभी कोई उत्पाद फ़ोटो नहीं भेजी गई।",
+  "kn": "ಈ ವಾರ ಇನ್ನೂ ಉತ್ಪನ್ನ ಫೋಟೋಗಳನ್ನು ಕಳುಹಿಸಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "report.sarees.unmatched@materials": {
+  "en": "{n} sent messages had photos we could not match to a product in your catalogue.",
+  "te": "పంపిన {n} సందేశాల్లో మీ కేటలాగ్‌లోని ఉత్పత్తికి సరిపోల్చలేని ఫోటోలున్నాయి.",
+  "hi": "भेजे गए {n} संदेशों में ऐसी फ़ोटो थीं जिन्हें हम आपके कैटलॉग के किसी उत्पाद से नहीं मिला सके।",
+  "kn": "ಕಳುಹಿಸಿದ {n} ಸಂದೇಶಗಳಲ್ಲಿ ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನ ಉತ್ಪನ್ನಕ್ಕೆ ಹೊಂದಿಸಲಾಗದ ಫೋಟೋಗಳಿದ್ದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "report.sarees.unmatched.one@materials": {
+  "en": "1 sent message had photos we could not match to a product in your catalogue.",
+  "te": "పంపిన 1 సందేశంలో మీ కేటలాగ్‌లోని ఉత్పత్తికి సరిపోల్చలేని ఫోటోలున్నాయి.",
+  "hi": "भेजे गए 1 संदेश में ऐसी फ़ोटो थीं जिन्हें हम आपके कैटलॉग के किसी उत्पाद से नहीं मिला सके।",
+  "kn": "ಕಳುಹಿಸಿದ 1 ಸಂದೇಶದಲ್ಲಿ ನಿಮ್ಮ ಕ್ಯಾಟಲಾಗ್‌ನ ಉತ್ಪನ್ನಕ್ಕೆ ಹೊಂದಿಸಲಾಗದ ಫೋಟೋಗಳಿದ್ದವು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.hub.title": {
+  "en": "More reports for your business",
+  "te": "మీ వ్యాపారానికి మరిన్ని నివేదికలు",
+  "hi": "आपके व्यवसाय के और रिपोर्ट",
+  "kn": "ನಿಮ್ಮ ವ್ಯಾಪಾರದ ಇನ್ನಷ್ಟು ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.hub.sub": {
+  "en": "Every figure is a count or a sum of the entries you and your team made.",
+  "te": "ప్రతి అంకె మీరు, మీ బృందం చేసిన నమోదుల లెక్క లేదా మొత్తం.",
+  "hi": "हर आँकड़ा आपके और आपकी टीम के दर्ज किए प्रविष्टियों की गिनती या जोड़ है।",
+  "kn": "ಪ್ರತಿ ಅಂಕಿಯು ನೀವು ಮತ್ತು ನಿಮ್ಮ ತಂಡ ಮಾಡಿದ ನಮೂದುಗಳ ಎಣಿಕೆ ಅಥವಾ ಮೊತ್ತ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.window.range": {
+  "en": "For the dates you choose",
+  "te": "మీరు ఎంచుకునే తేదీలకు",
+  "hi": "आपकी चुनी तारीख़ों के लिए",
+  "kn": "ನೀವು ಆರಿಸುವ ದಿನಾಂಕಗಳಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.window.day": {
+  "en": "For one day",
+  "te": "ఒక రోజుకు",
+  "hi": "एक दिन के लिए",
+  "kn": "ಒಂದು ದಿನಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.window.week": {
+  "en": "For one week",
+  "te": "ఒక వారానికి",
+  "hi": "एक हफ़्ते के लिए",
+  "kn": "ಒಂದು ವಾರಕ್ಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.back": {
+  "en": "All reports",
+  "te": "అన్ని నివేదికలు",
+  "hi": "सभी रिपोर्ट",
+  "kn": "ಎಲ್ಲಾ ವರದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.range": {
+  "en": "From {from} to {to}",
+  "te": "{from} నుండి {to} వరకు",
+  "hi": "{from} से {to} तक",
+  "kn": "{from} ರಿಂದ {to} ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.form": {
+  "en": "Choose the dates",
+  "te": "తేదీలను ఎంచుకోండి",
+  "hi": "तारीख़ें चुनें",
+  "kn": "ದಿನಾಂಕಗಳನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.from": {
+  "en": "From",
+  "te": "నుండి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.to": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.day": {
+  "en": "Day",
+  "te": "రోజు",
+  "hi": "दिन",
+  "kn": "ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.show": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.reset": {
+  "en": "Reset",
+  "te": "రీసెట్",
+  "hi": "रीसेट",
+  "kn": "ಮರುಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.problem": {
+  "en": "Those dates cannot be used. Choose a start that is not after the end, and not later than today.",
+  "te": "ఆ తేదీలను వాడలేం. ప్రారంభం ముగింపు తర్వాత కాకుండా, ఈ రోజు కంటే తర్వాత కాకుండా ఎంచుకోండి.",
+  "hi": "वे तारीख़ें इस्तेमाल नहीं हो सकतीं। ऐसी शुरुआत चुनें जो अंत के बाद न हो और आज से आगे न हो।",
+  "kn": "ಆ ದಿನಾಂಕಗಳನ್ನು ಬಳಸಲಾಗದು. ಆರಂಭ ಅಂತ್ಯದ ನಂತರ ಇರದಂತೆ ಮತ್ತು ಇಂದಿನ ನಂತರ ಇರದಂತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.loaderr": {
+  "en": "Could not read this report. Try again in a moment.",
+  "te": "ఈ నివేదికను చదవలేకపోయాం. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "यह रिपोर्ट पढ़ी नहीं जा सकी। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಈ ವರದಿಯನ್ನು ಓದಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.note": {
+  "en": "A figure with a dash could not be worked out, for example a percentage of nothing.",
+  "te": "డాష్ ఉన్న అంకెను లెక్కించలేకపోయాం, ఉదాహరణకు సున్నాలో శాతం.",
+  "hi": "डैश वाला आँकड़ा निकाला नहीं जा सका, जैसे शून्य का प्रतिशत।",
+  "kn": "ಡ್ಯಾಶ್ ಇರುವ ಅಂಕಿಯನ್ನು ಲೆಕ್ಕ ಹಾಕಲಾಗಲಿಲ್ಲ, ಉದಾಹರಣೆಗೆ ಸೊನ್ನೆಯ ಶೇಕಡಾ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.construction.quotes": {
+  "en": "Quotes made, approved and won",
+  "te": "చేసిన, ఆమోదించిన, గెలిచిన కొటేషన్లు",
+  "hi": "बनाए, मंज़ूर और जीते गए कोटेशन",
+  "kn": "ಮಾಡಿದ, ಒಪ್ಪಿದ ಮತ್ತು ಗೆದ್ದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.construction.revenue_by_product": {
+  "en": "Sales by product",
+  "te": "ఉత్పత్తి వారీగా అమ్మకాలు",
+  "hi": "उत्पाद के अनुसार बिक्री",
+  "kn": "ಉತ್ಪನ್ನವಾರು ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.construction.trips_per_day": {
+  "en": "Trips each day",
+  "te": "రోజుకు ట్రిప్పులు",
+  "hi": "रोज़ की ट्रिप",
+  "kn": "ದಿನಕ್ಕೆ ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.construction.dues_ageing": {
+  "en": "Money owed, by how old it is",
+  "te": "రావాల్సిన సొమ్ము, ఎంత పాతదో ప్రకారం",
+  "hi": "बकाया पैसा, कितना पुराना है उसके अनुसार",
+  "kn": "ಬರಬೇಕಾದ ಹಣ, ಎಷ್ಟು ಹಳೆಯದು ಎಂಬುದರ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.construction.top_customers": {
+  "en": "Customers who buy the most",
+  "te": "ఎక్కువగా కొనే కస్టమర్లు",
+  "hi": "सबसे ज़्यादा खरीदने वाले ग्राहक",
+  "kn": "ಅತಿ ಹೆಚ್ಚು ಖರೀದಿಸುವ ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.education.collection": {
+  "en": "Fee collection",
+  "te": "ఫీజు వసూళ్లు",
+  "hi": "फीस वसूली",
+  "kn": "ಶುಲ್ಕ ವಸೂಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.education.today": {
+  "en": "Fees collected today",
+  "te": "ఈ రోజు వసూలైన ఫీజులు",
+  "hi": "आज वसूली गई फीस",
+  "kn": "ಇಂದು ವಸೂಲಾದ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.education.pending": {
+  "en": "Fees pending",
+  "te": "పెండింగ్ ఫీజులు",
+  "hi": "बकाया फीस",
+  "kn": "ಬಾಕಿ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.name.education.funnel": {
+  "en": "Admissions: from enquiry to joined",
+  "te": "అడ్మిషన్లు: ఎంక్వైరీ నుండి చేరే వరకు",
+  "hi": "प्रवेश: पूछताछ से शामिल होने तक",
+  "kn": "ಪ್ರವೇಶಗಳು: ವಿಚಾರಣೆಯಿಂದ ಸೇರುವವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.quotes_made": {
+  "en": "Quotes made",
+  "te": "చేసిన కొటేషన్లు",
+  "hi": "बनाए गए कोटेशन",
+  "kn": "ಮಾಡಿದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.quotes_approved": {
+  "en": "Quotes approved",
+  "te": "ఆమోదించిన కొటేషన్లు",
+  "hi": "मंज़ूर कोटेशन",
+  "kn": "ಒಪ್ಪಿದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.quotes_won": {
+  "en": "Quotes that became orders",
+  "te": "ఆర్డర్లుగా మారిన కొటేషన్లు",
+  "hi": "ऑर्डर बने कोटेशन",
+  "kn": "ಆರ್ಡರ್‌ಗಳಾದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.win_rate_pct": {
+  "en": "Approved quotes that became orders",
+  "te": "ఆర్డర్లుగా మారిన ఆమోదిత కొటేషన్లు",
+  "hi": "ऑर्डर बने मंज़ूर कोटेशन",
+  "kn": "ಆರ್ಡರ್‌ಗಳಾದ ಒಪ್ಪಿದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.approved_value_paise": {
+  "en": "Value of approved quotes",
+  "te": "ఆమోదిత కొటేషన్ల విలువ",
+  "hi": "मंज़ूर कोटेशन का मूल्य",
+  "kn": "ಒಪ್ಪಿದ ಕೊಟೇಶನ್‌ಗಳ ಮೌಲ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.won_value_paise": {
+  "en": "Value of quotes that became orders",
+  "te": "ఆర్డర్లుగా మారిన కొటేషన్ల విలువ",
+  "hi": "ऑर्डर बने कोटेशन का मूल्य",
+  "kn": "ಆರ್ಡರ್‌ಗಳಾದ ಕೊಟೇಶನ್‌ಗಳ ಮೌಲ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.orders": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.order_value_paise": {
+  "en": "Order value",
+  "te": "ఆర్డర్ విలువ",
+  "hi": "ऑर्डर का मूल्य",
+  "kn": "ಆರ್ಡರ್ ಮೌಲ್ಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.material_paise": {
+  "en": "Of which material",
+  "te": "అందులో సామగ్రి",
+  "hi": "जिसमें सामग्री",
+  "kn": "ಅದರಲ್ಲಿ ಸಾಮಗ್ರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.trips": {
+  "en": "Trips",
+  "te": "ట్రిప్పులు",
+  "hi": "ट्रिप",
+  "kn": "ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.delivered": {
+  "en": "Delivered",
+  "te": "డెలివరీ అయినవి",
+  "hi": "डिलीवर हुए",
+  "kn": "ಡೆಲಿವರಿ ಆದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.problems": {
+  "en": "With a problem",
+  "te": "సమస్య ఉన్నవి",
+  "hi": "समस्या वाले",
+  "kn": "ಸಮಸ್ಯೆ ಇರುವವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.cancelled": {
+  "en": "Cancelled",
+  "te": "రద్దయినవి",
+  "hi": "रद्द",
+  "kn": "ರದ್ದಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.delivered_pct": {
+  "en": "Trips delivered",
+  "te": "డెలివరీ అయిన ట్రిప్పులు",
+  "hi": "डिलीवर हुई ट्रिप",
+  "kn": "ಡೆಲಿವರಿ ಆದ ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.outstanding_paise": {
+  "en": "Owed in all",
+  "te": "మొత్తం రావాల్సినది",
+  "hi": "कुल बकाया",
+  "kn": "ಒಟ್ಟು ಬರಬೇಕಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.overdue_paise": {
+  "en": "Past its due date",
+  "te": "గడువు దాటినది",
+  "hi": "देय तिथि के बाद",
+  "kn": "ಬಾಕಿ ದಿನಾಂಕ ಮೀರಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.customers_owing": {
+  "en": "Customers who owe",
+  "te": "బాకీ ఉన్న కస్టమర్లు",
+  "hi": "बकाया वाले ग्राहक",
+  "kn": "ಬಾಕಿ ಇರುವ ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.overdue_pct": {
+  "en": "Of what is owed, past its due date",
+  "te": "రావాల్సిన దానిలో గడువు దాటినది",
+  "hi": "बकाया में से देय तिथि के बाद का",
+  "kn": "ಬರಬೇಕಾದದ್ದರಲ್ಲಿ ಬಾಕಿ ದಿನಾಂಕ ಮೀರಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.customers": {
+  "en": "Customers",
+  "te": "కస్టమర్లు",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_product": {
+  "en": "By product",
+  "te": "ఉత్పత్తి వారీగా",
+  "hi": "उत्पाद के अनुसार",
+  "kn": "ಉತ್ಪನ್ನವಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_status": {
+  "en": "By state",
+  "te": "స్థితి వారీగా",
+  "hi": "स्थिति के अनुसार",
+  "kn": "ಸ್ಥಿತಿವಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.ageing": {
+  "en": "By how old",
+  "te": "ఎంత పాతదో ప్రకారం",
+  "hi": "कितना पुराना, उसके अनुसार",
+  "kn": "ಎಷ್ಟು ಹಳೆಯದು ಎಂಬುದರ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.top_debtors": {
+  "en": "Customers who owe the most",
+  "te": "ఎక్కువ బాకీ ఉన్న కస్టమర్లు",
+  "hi": "सबसे ज़्यादा बकाया वाले ग्राहक",
+  "kn": "ಅತಿ ಹೆಚ್ಚು ಬಾಕಿ ಇರುವ ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.top_customers": {
+  "en": "Customers who buy the most",
+  "te": "ఎక్కువగా కొనే కస్టమర్లు",
+  "hi": "सबसे ज़्यादा खरीदने वाले ग्राहक",
+  "kn": "ಅತಿ ಹೆಚ್ಚು ಖರೀದಿಸುವ ಗ್ರಾಹಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.series.quotes_by_day": {
+  "en": "Quotes made, day by day",
+  "te": "రోజువారీ చేసిన కొటేషన్లు",
+  "hi": "दिन-ब-दिन बने कोटेशन",
+  "kn": "ದಿನದಿಂದ ದಿನಕ್ಕೆ ಮಾಡಿದ ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.series.trips_by_day": {
+  "en": "Trips, day by day",
+  "te": "రోజువారీ ట్రిప్పులు",
+  "hi": "दिन-ब-दिन ट्रिप",
+  "kn": "ದಿನದಿಂದ ದಿನಕ್ಕೆ ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.series.delivered_by_day": {
+  "en": "Delivered, day by day",
+  "te": "రోజువారీ డెలివరీలు",
+  "hi": "दिन-ब-दिन डिलीवरी",
+  "kn": "ದಿನದಿಂದ ದಿನಕ್ಕೆ ಡೆಲಿವರಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.status": {
+  "en": "State",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.quotes": {
+  "en": "Quotes",
+  "te": "కొటేషన్లు",
+  "hi": "कोटेशन",
+  "kn": "ಕೊಟೇಶನ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.total_paise": {
+  "en": "Total",
+  "te": "మొత్తం",
+  "hi": "कुल",
+  "kn": "ಒಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.product": {
+  "en": "Product",
+  "te": "ఉత్పత్తి",
+  "hi": "उत्पाद",
+  "kn": "ಉತ್ಪನ್ನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.unit": {
+  "en": "Sold per",
+  "te": "దేని చొప్పున",
+  "hi": "प्रति इकाई",
+  "kn": "ಯಾವುದರ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.quantity": {
+  "en": "Quantity",
+  "te": "పరిమాణం",
+  "hi": "मात्रा",
+  "kn": "ಪ್ರಮಾಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.revenue_paise": {
+  "en": "Sales",
+  "te": "అమ్మకాలు",
+  "hi": "बिक्री",
+  "kn": "ಮಾರಾಟ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.bucket": {
+  "en": "Age",
+  "te": "వయసు",
+  "hi": "आयु",
+  "kn": "ವಯಸ್ಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.paise": {
+  "en": "Amount",
+  "te": "మొత్తం",
+  "hi": "राशि",
+  "kn": "ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.customer": {
+  "en": "Customer",
+  "te": "కస్టమర్",
+  "hi": "ग्राहक",
+  "kn": "ಗ್ರಾಹಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.outstanding_paise": {
+  "en": "Owed",
+  "te": "రావాల్సినది",
+  "hi": "बकाया",
+  "kn": "ಬರಬೇಕಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.overdue_paise": {
+  "en": "Past due date",
+  "te": "గడువు దాటినది",
+  "hi": "देय तिथि के बाद",
+  "kn": "ಬಾಕಿ ದಿನಾಂಕ ಮೀರಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.orders": {
+  "en": "Orders",
+  "te": "ఆర్డర్లు",
+  "hi": "ऑर्डर",
+  "kn": "ಆರ್ಡರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.trips": {
+  "en": "Trips",
+  "te": "ట్రిప్పులు",
+  "hi": "ट्रिप",
+  "kn": "ಟ್ರಿಪ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.bucket.not_due": {
+  "en": "Not due yet",
+  "te": "ఇంకా గడువు రాలేదు",
+  "hi": "अभी देय नहीं",
+  "kn": "ಇನ್ನೂ ಬಾಕಿ ಆಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.bucket.d1_30": {
+  "en": "1 to 30 days late",
+  "te": "1 నుండి 30 రోజులు ఆలస్యం",
+  "hi": "1 से 30 दिन देरी",
+  "kn": "1 ರಿಂದ 30 ದಿನ ತಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.bucket.d31_60": {
+  "en": "31 to 60 days late",
+  "te": "31 నుండి 60 రోజులు ఆలస్యం",
+  "hi": "31 से 60 दिन देरी",
+  "kn": "31 ರಿಂದ 60 ದಿನ ತಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.bucket.d61_90": {
+  "en": "61 to 90 days late",
+  "te": "61 నుండి 90 రోజులు ఆలస్యం",
+  "hi": "61 से 90 दिन देरी",
+  "kn": "61 ರಿಂದ 90 ದಿನ ತಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.bucket.d90_plus": {
+  "en": "Over 90 days late",
+  "te": "90 రోజులకు పైగా ఆలస్యం",
+  "hi": "90 दिन से ज़्यादा देरी",
+  "kn": "90 ದಿನಕ್ಕಿಂತ ಹೆಚ್ಚು ತಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "ask.can.n3@programmes": {
+  "en": "Show it a child's record. Children's details are kept out of its reach.",
+  "te": "Show it a child's record. Children's details are kept out of its reach.",
+  "hi": "Show it a child's record. Children's details are kept out of its reach.",
+  "kn": "Show it a child's record. Children's details are kept out of its reach.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "nav.tab.chats": {
+  "en": "Inbox",
+  "te": "ఇన్‌బాక్స్",
+  "hi": "इनबॉक्स",
+  "kn": "ಇನ್‌ಬಾಕ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

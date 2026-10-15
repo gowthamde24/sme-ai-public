@@ -1,3 +1,5 @@
+import { fill, type Vars } from "@/i18n/fill";
+
 import type { WorkspacePack } from "./types";
 
 /**
@@ -17,4 +19,16 @@ export function withModuleWords<T extends Record<string, string>>(words: T, pack
     out[base] = words[key];
   }
   return (out ?? words) as T;
+}
+
+/**
+ * The same variants for a translation FUNCTION (job CU): `t("ask.can.y3")` answers `ask.can.y3@materials` for a business type that has the module `materials`. Used where a screen takes a `t` (Today, the help guides) instead of a
+ * table of words. `dict` is the language's own table (it says which variants exist); a key with variables is filled the way the plain one is. Nothing here names a business type.
+ */
+export function withModuleT<F extends (key: never, vars?: never) => string>(t: F, pack: Pick<WorkspacePack, "modules"> | null | undefined, dict: Readonly<Record<string, string>>): F {
+  if (!pack) return t;
+  const over = withModuleWords({ ...dict }, pack);
+  const changed = new Set(Object.keys(over).filter((k) => over[k] !== dict[k]));
+  if (changed.size === 0) return t;
+  return (((key: never, vars?: never) => (typeof key === "string" && changed.has(key) ? fill(over[key], vars as Vars | undefined) : t(key, vars))) as unknown) as F;
 }

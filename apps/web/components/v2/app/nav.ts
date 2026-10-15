@@ -69,9 +69,9 @@ export const NAV: readonly NavGroup[] = [
       { id: "calllist", label: "Call list", icon: "calls", path: "/call-list", module: "campaigns", packOnly: true, roles: WRITERS },
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
-      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
+      { id: "chats", label: "Customer chats", short: "Inbox", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
       { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
-      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
+      { id: "customers", label: "Customers", short: "Contacts", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
       // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
       { id: "sites", label: "Sites", icon: "sites", path: "/sites", module: "sites", packOnly: true, roles: ALL_ROLES },
       { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
@@ -128,6 +128,8 @@ export type PackFrame = {
   coreTab: string;
   modules: readonly string[];
   labels: Readonly<Record<string, string>>;
+  /** The phone's bottom bar (job CU, blueprint 2): "classic" = Today, Leads, the core tab, Visits, Office (what the product always had); "core" = Today, Inbox, the core tab, Contacts, then More. Absent = classic. */
+  bar?: "classic" | "core";
 };
 
 /** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
@@ -159,6 +161,11 @@ export function coreItem(view: PackFrame): NavItem | null {
 export function barItems(role: Role, view?: PackFrame | null): NavItem[] {
   const all = NAV.flatMap((g) => g.items);
   const core = view ? coreItem(view) : null;
+  if (view?.bar === "core") {
+    // Today, Inbox, the business type's core tab, Contacts (and More): the four tabs of blueprint 2, only those the role is offered
+    const pick = (id: string) => all.find((i) => i.id === id);
+    return [pick("today"), pick("chats"), core, pick("customers")].filter((i): i is NavItem => !!i && i.roles.includes(role) && offered(i, view));
+  }
   return all
     .filter((i) => i.bar)
     .map((i) => (i.core && core ? core : i))
