@@ -1,6 +1,6 @@
 import type { InvitedRole, Member, MemberRole } from "@/lib/api/team";
 import { whatsappShareLink } from "@/lib/whatsapp/share";
-import { OWL_AGENTS } from "../owl/plush-rig";
+import { OWL_AGENTS } from "../owl/owl-files";
 
 import type { Say } from "../words";
 

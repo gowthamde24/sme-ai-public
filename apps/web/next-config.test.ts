@@ -34,7 +34,7 @@ describe("next.config", () => {
     const rules = await (nextConfig.headers as () => Promise<{ source: string; headers: { key: string; value: string }[] }[]>)();
     expect(rules.find((r) => r.source === "/owl/:path*")?.headers).toEqual([{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }]);
     // every file the owl component asks for is under /owl/v<N>/ (an unversioned name could never be changed once cached)
-    const rig = readFileSync(new URL("./components/v2/app/owl/plush-rig.ts", import.meta.url), "utf8");
+    const rig = readFileSync(new URL("./components/v2/app/owl/owl-files.ts", import.meta.url), "utf8");
     expect(rig).toMatch(/export const OWL_DIR = "\/owl\/v\d+";/);
   });
 

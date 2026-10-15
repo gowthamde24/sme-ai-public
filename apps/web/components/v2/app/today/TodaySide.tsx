@@ -81,7 +81,7 @@ function statusLine(a: AgentRow, t: T, now: number): string {
 }
 
 /**
- * "Your team" (job AU): the six helpers as plush owls in their own colours (owl/v3/<agent>/), each with a dot for its state, the name and ONE live status line each, from the helpers' status (`GET /agents/status`): working, switched off, not
+ * "Your team" (job AU): the six helpers as plush owls in their own colours (owl/v4/<agent>/), each with a dot for its state, the name and ONE live status line each, from the helpers' status (`GET /agents/status`): working, switched off, not
  * available, or the last thing the helper did and how long ago. Agent OWL itself is the card above, so it is not repeated here. `team` null (could not be read) says so; the link opens the Office.
  */
 export function TeamSection({ team, base, t, now }: { team: readonly AgentRow[] | null; base: string; t: T; now: number }) {

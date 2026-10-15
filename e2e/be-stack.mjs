@@ -757,7 +757,7 @@ await step("O1", "the Office as the plush room: seven owls round the table with 
     await page.setViewportSize({ width: 1280, height: 900 });
   }
   must(!asked.some((u) => /three|webgl|office3d/i.test(u)), `a three.js file was asked for: ${asked.find((u) => /three|webgl|office3d/i.test(u))}`);
-  must(asked.some((u) => /\/owl\/v3\/lead_finder\//.test(u)) || asked.some((u) => /\/owl\/v3\/quote_writer\//.test(u)), "no helper's own pictures were asked for");
+  must(asked.some((u) => /\/owl\/v4\/lead_finder\//.test(u)) || asked.some((u) => /\/owl\/v4\/quote_writer\//.test(u)), "no helper's own pictures were asked for");
 }, page);
 
 // ---- 8a. the older screens in Telugu (job BK): every workspace screen says its words through the string store; no raw key and no English sentence is left on the page --------------------

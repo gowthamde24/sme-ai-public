@@ -1,4 +1,9 @@
+import rigData from "../../../../public/owl/v4/rig.json";
+
 import type { OwlMood } from "./owl-mood";
+import { LAYER_PX } from "./owl-files";
+
+export * from "./owl-files";
 
 /**
  * The numbers and the pure maths of the plush owlet (job CI). Ported from the approved prototype (owlet-prototype.html) and the rig sheet (owlet-assets/README.md): every figure is in the 1024 x 1024 canvas of the
@@ -9,57 +14,44 @@ import type { OwlMood } from "./owl-mood";
 export const REDUCED_SCALE = 0.35;
 export const motionScale = (reduced: boolean): number => (reduced ? REDUCED_SCALE : 1);
 
-/**
- * The pictures live under a versioned folder: next.config.ts serves /owl/ as "immutable" for a year, so a changed picture goes in a new folder (/owl/v4/) and every name below moves with it. v3 (job CJ): the faces look
- * straight at the viewer and each of the seven agents has its own folder, /owl/v3/<agent>/ (owlet-{head,body,wing-left,wing-right,beak}-512.webp and owlet-full-{128,256,512}.webp).
- */
-export const OWL_DIR = "/owl/v3";
-/** The seven owls, in the order of the API's agent list (lib/api/today.ts AGENT_KEYS; a test keeps them equal): Agent OWL (sky blue) and the six helpers, each with a collar, ears and wings in a colour of their own. */
-export const OWL_AGENTS = ["main", "lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"] as const;
-export type OwlAgent = (typeof OWL_AGENTS)[number];
-/** The six helpers in the order of the six steps (job CZ): Find leads, Research, Understand, Quote, Follow up, Close & collect. Agent OWL leads them and is not a step. */
-export const HELPER_AGENTS = OWL_AGENTS.slice(1) as readonly OwlAgent[];
-/** An id this app does not know gets Agent OWL (never a made-up owl, never a broken picture). */
-export const owlAgent = (agent: string | undefined): OwlAgent => ((OWL_AGENTS as readonly string[]).includes(agent ?? "") ? (agent as OwlAgent) : "main");
-export const owlDir = (agent?: string): string => `${OWL_DIR}/${owlAgent(agent)}`;
-/** The five layers of one agent's owl. */
-export const owlFiles = (agent?: string) => {
-  const d = owlDir(agent);
-  return {
-    head: `${d}/owlet-head-512.webp`,
-    body: `${d}/owlet-body-512.webp`,
-    beak: `${d}/owlet-beak-512.webp`,
-    wingLeft: `${d}/owlet-wing-left-512.webp`,
-    wingRight: `${d}/owlet-wing-right-512.webp`,
-  } as const;
+// ---- the numbers of the art: all from /owl/v4/rig.json ------------------------------------------------------------------------------------------------------------------------------------------------------
+type Box = { left: number; top: number; width: number; height: number };
+const RIG = rigData as unknown as {
+  canvas: number;
+  head_pivot_pct: [number, number];
+  breathing_pivot: [number, number];
+  eyelids: { left: Box; right: Box };
+  eye_centres: { left: [number, number]; right: [number, number] };
+  mouth: Box;
+  beak_box: [number, number, number, number];
+  wing_left: { box: [number, number, number, number]; inner_edge: number; pivot: [number, number] };
+  wing_right: { box: [number, number, number, number]; inner_edge: number; pivot: [number, number] };
 };
-/** The still picture in three sizes: the browser picks by the size the owl is drawn at (srcset + sizes), so a 56 px avatar never downloads the 512 px file. */
-export const STILL_WIDTHS = [128, 256, 512] as const;
-/** Agent OWL alone also has a 1024 px still (job CZ), for where the owl is drawn large on a sharp screen (the home page's hero). The six helpers are never drawn that big, so they have no 1024 px file. */
-export const BIG_STILL_WIDTH = 1024;
-export const BIG_STILL_AGENT: OwlAgent = "main";
-export type StillWidth = (typeof STILL_WIDTHS)[number] | typeof BIG_STILL_WIDTH;
-export const stillFile = (width: StillWidth, agent?: string): string => `${owlDir(agent)}/owlet-full-${width}.webp`;
-export const stillSrcSet = (widths: readonly StillWidth[] = STILL_WIDTHS, agent?: string): string => widths.map((w) => `${stillFile(w, agent)} ${w}w`).join(", ");
-/**
- * The rig numbers (the wing boxes, the pivots, the mesh) are in the 1024 x 1024 space of the first art; the layer files are 512 x 512 (no owl is drawn above 360 CSS pixels, so a 1024 px layer was only weight).
- * Everything else is in percent of the box; the wing pictures are cut out with the scale LAYER_FILE_PX / LAYER_PX (PlushOwl.tsx).
- */
-export const LAYER_PX = 1024;
-export const LAYER_FILE_PX = 512;
-export const STILL_PX = 512;
+// (a test checks that rig.json is for the LAYER_PX canvas: a statement here would keep the whole file in every page that uses a still)
 
-/** v3: the face was moved to the middle of the head, so the head turns about x = 519 (50.7 %, was 555), the mouth is at 49.3 % and the eyes are 3.5 points further left. design/owl.css carries the same figures. */
-export const HEAD_PIVOT = { x: 50.7, y: 49.8 } as const;
-export const MOUTH = { left: 49.3, top: 38.6, width: 3.2, height: 1.6 } as const;
+/** The head turns about this point (percent of the owl's box); the body breathes about BREATHING_PIVOT (percent). design/owl.css carries the same figures. */
+export const HEAD_PIVOT = { x: RIG.head_pivot_pct[0], y: RIG.head_pivot_pct[1] } as const;
+export const BREATHING_PIVOT = { x: (RIG.breathing_pivot[0] / LAYER_PX) * 100, y: Math.round((RIG.breathing_pivot[1] / LAYER_PX) * 1000) / 10 } as const;
+/** The mouth behind the beak (percent of the owl's box); it opens (scaleY) while the owl talks and the beak lifts a little. */
+export const MOUTH = RIG.mouth;
+/** The beak in the 1024 space (x0, y0, x1, y1): the mouth sits at its lower edge. */
+export const BEAK_BOX = RIG.beak_box;
+/** While the owl talks the beak lifts by up to this much (percent of the owl's box) and shows the mouth under it. */
+export const BEAK_LIFT_PCT = 0.35;
 
 /** Eyelid boxes (left, top, width, height in percent of the owl's box), the left eye then the right. */
-export const EYES = [
-  { left: 34.1, top: 23.9, width: 11.7, height: 11.9 },
-  { left: 55.5, top: 24.5, width: 10.9, height: 11.4 },
-] as const;
-/** The closed-eye arc, in the eye box's own 100 x 100 space. */
-export const SHUT_ARC = "M24 50 Q50 70 76 50";
+export const EYES = [RIG.eyelids.left, RIG.eyelids.right] as const;
+/** The eyes' centres in the 1024 space, the left eye then the right: the closed-eye arc is drawn about them. */
+export const EYE_CENTRES = [RIG.eye_centres.left, RIG.eye_centres.right] as const;
+/** The closed-eye arc of eye `i`, in the eye box's own 100 x 100 space: a smile-shaped curve 52 wide about the centre of that eye (the numbers come from rig.json, so the arc sits on the eye whatever the art). */
+export function shutArc(i: number): string {
+  const box = EYES[i];
+  const [ex, ey] = EYE_CENTRES[i];
+  const cx = ((ex / LAYER_PX) * 100 - box.left) / (box.width / 100);
+  const cy = ((ey / LAYER_PX) * 100 - box.top) / (box.height / 100);
+  const f = (n: number) => Math.round(n * 10) / 10;
+  return `M${f(cx - 26)} ${f(cy)} Q${f(cx)} ${f(cy + 20)} ${f(cx + 26)} ${f(cy)}`;
+}
 
 /** What the head, the lids and the body are doing, in the units the component writes to the DOM. dx and dy are canvas pixels; tilt is degrees; lid and lidLo 0 (open) to 1 (shut); the rest are fractions. */
 export type Pose = { tilt: number; dx: number; dy: number; lid: number; lidLo: number; bob: number; breathe: number; brF: number; lean: number };
@@ -174,7 +166,7 @@ export const wanderLook = (r1: number, r2: number): { x: number; y: number } => 
 /** The pointer, as the owl sees it: -1 to 1 on each axis, measured from the owl's box (the head is in the middle and a little above it). */
 export function pointerLook(clientX: number, clientY: number, box: { left: number; top: number; width: number; height: number }): { x: number; y: number } {
   const clamp = (v: number) => Math.max(-1, Math.min(1, v));
-  return { x: clamp((clientX - (box.left + box.width * 0.507)) / (box.width * 0.6)), y: clamp((clientY - (box.top + box.height * 0.3)) / (box.height * 0.6)) };
+  return { x: clamp((clientX - (box.left + (box.width * HEAD_PIVOT.x) / 100)) / (box.width * 0.6)), y: clamp((clientY - (box.top + box.height * 0.3)) / (box.height * 0.6)) };
 }
 
 export const ease = (cur: number, target: number, k: number): number => cur + (target - cur) * k;
@@ -182,9 +174,10 @@ export const ease = (cur: number, target: number, k: number): number => cur + (t
 // ---- the wings: a bending mesh, not a stiff rotation, so the root stays attached to the body ---------------------------------------------------------------------------------------------------------
 
 export type Wing = { x0: number; x1: number; y0: number; y1: number; inner: number; px: number; py: number; left: boolean };
-/** Left source box x 160..302, inner edge x 302, pivot (296, 505); right x 732..874, inner edge 732, pivot (738, 505); both y 440..818. */
-export const WING_LEFT: Wing = { x0: 160, x1: 302, y0: 440, y1: 818, inner: 302, px: 296, py: 505, left: true };
-export const WING_RIGHT: Wing = { x0: 732, x1: 874, y0: 440, y1: 818, inner: 732, px: 738, py: 505, left: false };
+/** The wing source boxes, inner edges and pivots, from rig.json (1024 space): the left wing's box x 172..286 with its inner edge at 286 and pivot (280, 540); the right x 749..860, inner edge 749, pivot (755, 538). */
+const wingOf = (w: { box: [number, number, number, number]; inner_edge: number; pivot: [number, number] }, left: boolean): Wing => ({ x0: w.box[0], y0: w.box[1], x1: w.box[2], y1: w.box[3], inner: w.inner_edge, px: w.pivot[0], py: w.pivot[1], left });
+export const WING_LEFT: Wing = /* @__PURE__ */ wingOf(RIG.wing_left, true);
+export const WING_RIGHT: Wing = /* @__PURE__ */ wingOf(RIG.wing_right, false);
 export const WING_COLS = 6;
 export const WING_ROWS = 14;
 export type MeshSize = { cols: number; rows: number };

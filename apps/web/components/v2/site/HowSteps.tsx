@@ -3,7 +3,7 @@
 import { Pause, Play } from "lucide-react";
 import type { ReactNode } from "react";
 
-import type { OwlAgent } from "@/components/v2/app/owl/plush-rig";
+import type { OwlAgent } from "@/components/v2/app/owl/owl-files";
 import { useAutoplay } from "@/components/v2/site/useAutoplay";
 
 export type HowStep = { n: string; /** The helper that does this step (an owl id) and its name. */ owl: OwlAgent; /** The helper's picture, drawn on the server (a client file that imported the owl module would carry its whole rig). */ picture: ReactNode; helper: string; title: string; text: string; you: string };

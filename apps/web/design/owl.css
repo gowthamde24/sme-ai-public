@@ -1,5 +1,5 @@
 /* ==========================================================================
-   The plush owlet (job CI, job CJ): the seven owls, Agent OWL where it talks and the six helpers in the Office and on the cards (components/v2/app/owl/PlushOwl.tsx; the numbers are in plush-rig.ts, from the approved prototype).
+   The plush owlet (job CI, job CJ): the seven owls, Agent OWL where it talks and the six helpers in the Office and on the cards (components/v2/app/owl/PlushOwl.tsx; the numbers are in plush-rig.ts and come from public/owl/v4/rig.json).
    A square box. Inside: the still picture (the only thing from the server and with no script), then, once the layers are in, the live owl: head (with the lids, the closed-eye arcs, the mouth and the beak),
    body, and a canvas for the wings. The thinking dots and the "z z z" are plain elements. Every selector starts with [data-ui="v2"] (audit:leaks).
    ========================================================================== */
@@ -14,17 +14,17 @@
 [data-ui="v2"] .plush-live { position: absolute; inset: 0; overflow: clip; opacity: 0; transition: opacity 0.25s; }
 [data-ui="v2"] .plush-live[data-ready="true"] { opacity: 1; }
 [data-ui="v2"] .plush-shadow { position: absolute; left: 22%; right: 22%; top: 88%; height: 7%; border-radius: 50%; background: radial-gradient(closest-side, var(--plush-shadow), transparent); }
-[data-ui="v2"] .plush-rig { position: absolute; inset: 0; transform-origin: 50% 92%; will-change: transform; }
-[data-ui="v2"] .plush-head { position: absolute; inset: 0; transform-origin: 50.7% 49.8%; will-change: transform; }
+[data-ui="v2"] .plush-rig { position: absolute; inset: 0; transform-origin: 50% 92.2%; will-change: transform; }
+[data-ui="v2"] .plush-head { position: absolute; inset: 0; transform-origin: 50.3% 49.9%; will-change: transform; }
 [data-ui="v2"] .plush-beak { position: absolute; inset: 0; will-change: transform; }
 [data-ui="v2"] .plush-wings { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-/* eyelids: feathered with a mask, an upper and a lower; the closed-eye arc fades in when the lids are nearly shut */
-[data-ui="v2"] .plush-lid { position: absolute; border-radius: 50%; overflow: hidden; -webkit-mask-image: radial-gradient(closest-side, #000 80%, transparent 100%); mask-image: radial-gradient(closest-side, #000 80%, transparent 100%); }
+/* eyelids: an upper and a lower, drawn 20 % bigger than the eye box of rig.json and feathered with a mask (opaque to 84 % of the radius, so the whole eye is covered and the edge is soft); the colours are the fur round the eyes in the v4 head picture; the closed-eye arc fades in when the lids are nearly shut */
+[data-ui="v2"] .plush-lid { position: absolute; border-radius: 50%; overflow: hidden; transform: scale(1.2); -webkit-mask-image: radial-gradient(closest-side, #000 84%, transparent 100%); mask-image: radial-gradient(closest-side, #000 84%, transparent 100%); }
 [data-ui="v2"] .plush-lid i { position: absolute; left: -8%; right: -8%; height: 100%; display: block; }
-[data-ui="v2"] .plush-lid-up { top: 0; background: linear-gradient(#e3c4ae, #dfc0a9 85%); border-radius: 0 0 50% 50% / 0 0 26% 26%; transform: translateY(-104%); }
-[data-ui="v2"] .plush-lid-lo { bottom: 0; background: linear-gradient(#dfc0a9, #ddbba3); transform: translateY(104%); }
+[data-ui="v2"] .plush-lid-up { top: 0; background: linear-gradient(#e4c7b3, #e1c1ad 85%); border-radius: 0 0 50% 50% / 0 0 8% 8%; transform: translateY(-104%); }
+[data-ui="v2"] .plush-lid-lo { bottom: 0; background: linear-gradient(#e0bda8, #ddb9a2); transform: translateY(104%); }
 [data-ui="v2"] .plush-shut { position: absolute; opacity: 0; overflow: visible; }
-[data-ui="v2"] .plush-mouth { position: absolute; left: 49.3%; top: 38.6%; width: 3.2%; height: 1.6%; border-radius: 0 0 50% 50%; background: #5a3328; transform-origin: 50% 0; transform: scaleY(0); }
+[data-ui="v2"] .plush-mouth { position: absolute; left: 49.4%; top: 39%; width: 3.2%; height: 1.6%; border-radius: 0 0 50% 50%; background: #5a3328; transform-origin: 50% 0; transform: scaleY(0); }
 /* thinking: three dots in a bubble; resting: z z z. Both are decorative (aria-hidden in the markup) */
 [data-ui="v2"] .plush-bubble { position: absolute; right: 4%; top: 4%; display: flex; gap: 5px; padding: 7px 10px; border: 1px solid var(--v2-border); border-radius: 999px; background: var(--v2-surface); box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06); opacity: 0; transition: opacity 0.4s; }
 [data-ui="v2"] .plush-bubble[data-on="true"] { opacity: 1; }
@@ -47,9 +47,9 @@
   [data-ui="v2"] .plush-zz span:nth-child(2) { transform: translate(14px, -14px); }
   [data-ui="v2"] .plush-zz span:nth-child(3) { transform: translate(30px, -30px); }
 }
-/* the two eyes' boxes, in percent of the owl's box (the rig sheet: left, top, width, height) */
-[data-ui="v2"] .plush-eye-0 { left: 34.1%; top: 23.9%; width: 11.7%; height: 11.9%; }
-[data-ui="v2"] .plush-eye-1 { left: 55.5%; top: 24.5%; width: 10.9%; height: 11.4%; }
+/* the two eyes' boxes, in percent of the owl's box (public/owl/v4/rig.json "eyelids": left, top, width, height) */
+[data-ui="v2"] .plush-eye-0 { left: 34.8%; top: 24.2%; width: 10.4%; height: 11.2%; }
+[data-ui="v2"] .plush-eye-1 { left: 55.9%; top: 24.7%; width: 9.9%; height: 11%; }
 
 /* ==========================================================================
    The plush office (job CJ, components/v2/app/office/PlushOffice.tsx): seven PlushOwls around a flat round table. Replaces the 3D room: plain DOM and CSS, no WebGL.

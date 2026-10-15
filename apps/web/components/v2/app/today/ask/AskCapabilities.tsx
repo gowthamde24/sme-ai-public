@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
 import { PlushStill } from "@/components/v2/app/owl/PlushStill";
-import { HELPER_AGENTS } from "@/components/v2/app/owl/plush-rig";
+import { HELPER_AGENTS } from "@/components/v2/app/owl/owl-files";
 
 import type { AskWords } from "./ask-words";
 

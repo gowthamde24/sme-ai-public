@@ -26,4 +26,4 @@ The six steps are the core revenue engine, one step for each helper, and Agent O
 2. **A school's own words are data.** `landing.json` gets an optional `steps` ("1" to "6", each {title, text}); education sets 1 and 2 ("Admission enquiries captured", "Know who's asking": it never searches the web for students). `/how-it-works` shows them under the shared step; the app uses the existing `key@programmes` variants, and a test keeps the two equal. No code names a business type. `pack.json` is untouched.
 3. **A sharper hero owl.** Agent OWL alone has a 1024 px still (`owlet-full-1024.webp`, 51 KB), built from the 1024 px art with the sky-blue recolour of the current 512 px still (CY's new art will replace it); the hero offers 256, 512 and 1024. The six helpers are never drawn that large, so they have no 1024 px file.
 4. The owls of "Currently built for" stay out (still no picture on those cards); the small stills of the steps and the team lead are the only owls on the home page besides the hero.
-
+5. (Job DA, ADR 0091) The 1024 px still is no longer Agent OWL's alone: the v4 art has 128, 256, 512 and 1024 px stills for all seven owls.

@@ -1,5 +1,5 @@
 import { PlushStill } from "@/components/v2/app/owl/PlushStill";
-import { HELPER_AGENTS } from "@/components/v2/app/owl/plush-rig";
+import { HELPER_AGENTS } from "@/components/v2/app/owl/owl-files";
 import type { HowStep } from "@/components/v2/site/HowSteps";
 import type { SiteT } from "@/i18n/site";
 

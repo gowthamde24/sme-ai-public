@@ -7,7 +7,7 @@ import {
   BLINK_SECONDS,
   EYES,
   FLUTTER_SECONDS,
-  LAYER_FILE_PX,
+  BEAK_LIFT_PCT,
   LAYER_PX,
   WORK_BOB,
   WORK_LOOK,
@@ -15,7 +15,9 @@ import {
   owlFiles,
   workWings,
   REST_POSE,
-  SHUT_ARC,
+  shutArc,
+  layerSizeFor,
+  type LayerSize,
   STILL_PX,
   stillFile,
   stillSrcSet,
@@ -41,7 +43,7 @@ import {
 } from "./plush-rig";
 
 /**
- * The layered owlet (43 KB of pictures) is requested only after the still picture is in, the page has finished loading, a moment has passed and the browser is idle (requestIdleCallback; a short timer where it
+ * The layered owlet (about 50 KB of 512 px pictures, 100 KB of 1024 px ones on a sharp screen) is requested only after the still picture is in, the page has finished loading, a moment has passed and the browser is idle (requestIdleCallback; a short timer where it
  * has none), and only while the owl is on screen: it never competes with the first paint or with the still, which is the owl on a slow phone until then.
  */
 export const LAYER_DELAY_MS = 1200;
@@ -62,9 +64,9 @@ const POINTER_FRESH_MS = 3000;
 
 type Crops = { l: HTMLCanvasElement; r: HTMLCanvasElement };
 
-/** A picture of one wing, cut out of its layer: the mesh only ever draws from this box, never from the whole layer. The wing boxes are in the 1024 space of the rig; the layer file is smaller (LAYER_FILE_PX), so the box is scaled by `k`. */
+/** A picture of one wing, cut out of its layer: the mesh only ever draws from this box, never from the whole layer. The wing boxes are in the 1024 space of the rig; the layer file may be smaller (the 512 px one), so the box is scaled by `k`. */
 function cropWing(img: HTMLImageElement, wing: Wing): HTMLCanvasElement {
-  const k = (img.naturalWidth || LAYER_FILE_PX) / LAYER_PX;
+  const k = (img.naturalWidth || LAYER_PX / 2) / LAYER_PX;
   const c = document.createElement("canvas");
   c.width = Math.max(1, Math.round((wing.x1 - wing.x0) * k));
   c.height = Math.max(1, Math.round((wing.y1 - wing.y0) * k));
@@ -108,7 +110,7 @@ export type PlushOwlProps = {
   /** The owl is the first thing on the page (the landing hero, the Today card): its still picture is fetched at once, at high priority, instead of lazily. */
   priority?: boolean;
   className?: string;
-  /** Which of the seven owls (default Agent OWL, sky blue): its own folder of pictures, /owl/v3/<agent>/. An id this app does not know is Agent OWL. */
+  /** Which of the seven owls (default Agent OWL, sky blue): its own folder of pictures, /owl/v4/<agent>/. An id this app does not know is Agent OWL. */
   agent?: string;
   /** Only the still picture, never the layers and never a movement (the Office draws a switched-off helper like this). */
   still?: boolean;
@@ -116,20 +118,23 @@ export type PlushOwlProps = {
   working?: boolean;
   /** Whether the head follows the pointer (default yes). */
   follow?: boolean;
-  /** The width the still picture is drawn at, as the `sizes` of an image (for example "(min-width: 640px) 160px, 120px"): the browser picks the 128, 256 or 512 px file by it. Without it, `size` (or 160 px). */
+  /** The width the still picture is drawn at, as the `sizes` of an image (for example "(min-width: 640px) 160px, 120px"): the browser picks the 128, 256, 512 or 1024 px file by it and the screen. Without it, `size` (or 160 px). */
   sizes?: string;
   /** The name a screen reader says (the box is an image with this name). Without it the owl is decorative and hidden from them. */
   label?: string;
 };
 
 /**
- * The plush owlet (job CI), the Agent OWL. From the server, and with no script, it is one still picture (owlet-full-128/256/512.webp, chosen by the size it is drawn at) in a square box. In the browser, once the page is idle and the owl is on screen,
+ * The plush owlet (job CI), the Agent OWL. From the server, and with no script, it is one still picture (owlet-full-128/256/512/1024.webp, chosen by the size it is drawn at and the screen) in a square box. In the browser, once the page is idle and the owl is on screen,
  * the layers (head, body, beak, two wings) are fetched and the owl comes alive on plain DOM and CSS plus one small canvas for the wings: it breathes, blinks, follows the pointer and acts out the five moods the
  * Ask box gives it (idle, listening, thinking, answering, resting). The animation runs only while the owl is on screen and the tab is visible. With prefers-reduced-motion every movement is a third as big and
  * there are no wing flutter bursts. The thinking dots and the "z z z" are hidden from screen readers. Numbers: plush-rig.ts; styles: design/owl.css.
  */
 export function PlushOwl({ mood, size, priority = false, className = "", sizes, label, agent, still: stillOnly = false, working = false, follow = true }: PlushOwlProps) {
-  const files = owlFiles(agent);
+  // which layer files: the 512 px ones, or the 1024 px ones for an owl that fills more than 512 device pixels (chosen once, when the layers are first requested; never a small file stretched)
+  const [layerSize, setLayerSize] = React.useState<LayerSize>(512);
+  const layerSizeRef = React.useRef<LayerSize>(512);
+  const files = owlFiles(agent, layerSize);
   const [visible, setVisible] = React.useState(false);
   const [tabHidden, setTabHidden] = React.useState(false);
   const [armed, setArmed] = React.useState(false);
@@ -204,7 +209,14 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
     const idle = () => {
       if (gone) return;
       const timer = window.setTimeout(() => {
-        if (!gone) off = whenIdle(() => !gone && setArmed(true));
+        if (!gone)
+          off = whenIdle(() => {
+            if (gone) return;
+            const size = layerSizeFor(root.current?.clientWidth ?? 160, window.devicePixelRatio || 1);
+            layerSizeRef.current = size;
+            setLayerSize(size);
+            setArmed(true);
+          });
       }, LAYER_DELAY_MS);
       cleanups.push(() => window.clearTimeout(timer));
     };
@@ -266,7 +278,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
     let scale = 1;
     let mesh = meshFor(0);
     const fit = () => {
-      const px = Math.max(128, Math.min(LAYER_FILE_PX, Math.round(el.clientWidth * Math.min(window.devicePixelRatio || 1, 2))));
+      const px = Math.max(128, Math.min(layerSizeRef.current, Math.round(el.clientWidth * Math.min(window.devicePixelRatio || 1, 3))));
       if (g.width !== px) g.width = g.height = px;
       scale = g.width / LAYER_PX;
       mesh = meshFor(g.width);
@@ -370,11 +382,11 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
       }
       for (let i = 0; i < ups.length; i++) {
         ups[i].style.transform = `translateY(${-104 + 58 * P.lid}%)`;
-        los[i].style.transform = `translateY(${104 - 56 * P.lidLo}%)`;
+        los[i].style.transform = `translateY(${104 - 60 * P.lidLo}%)`; // the lower lid shuts to 44 % of the box and the upper to 54 %: they overlap by 10 %, so no part of the eye shows at the sides where the upper lid's corners curve up
         shuts[i].style.opacity = String(Math.max(0, Math.min(1, (P.lid - 0.8) * 5)));
       }
       if (mouth.current) mouth.current.style.transform = `scaleY(${beakNow})`;
-      if (beak.current) beak.current.style.transform = `translateY(${-beakNow * 0.35}%)`;
+      if (beak.current) beak.current.style.transform = `translateY(${-beakNow * BEAK_LIFT_PCT}%)`;
       // the wings: the angle the mood wants, a burst now and then, and (not with reduced motion) nothing sudden
       const wt = sits ? workWings(t) : wingTargets(mood, t, talk, P.brF);
       if (!reducedRef.current && !sits && mood === "idle" && flutterT < 0 && t > flutterNext) flutterT = 0;
@@ -431,7 +443,7 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
           <div ref={rig} className="plush-rig">
             <div ref={head} className="plush-head">
               {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-              <img ref={(i) => void (layers.current.head = i)} src={files.head} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+              <img ref={(i) => void (layers.current.head = i)} src={files.head} width={layerSize} height={layerSize} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
               {EYES.map((_, i) => (
                 <div key={i} className={`plush-lid plush-eye-${i}`}>
                   <i className="plush-lid-up" />
@@ -440,18 +452,18 @@ export function PlushOwl({ mood, size, priority = false, className = "", sizes, 
               ))}
               {EYES.map((_, i) => (
                 <svg key={i} className={`plush-shut plush-eye-${i}`} viewBox="0 0 100 100" aria-hidden="true" focusable="false">
-                  <path d={SHUT_ARC} fill="none" stroke="#6e5143" strokeWidth="5.5" strokeLinecap="round" />
+                  <path d={shutArc(i)} fill="none" stroke="#6e5143" strokeWidth="5.5" strokeLinecap="round" />
                 </svg>
               ))}
               <div ref={mouth} className="plush-mouth" />
               <div ref={beak} className="plush-beak">
                 {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-                <img ref={(i) => void (layers.current.beak = i)} src={files.beak} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+                <img ref={(i) => void (layers.current.beak = i)} src={files.beak} width={layerSize} height={layerSize} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
               </div>
             </div>
             {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
-            <img ref={(i) => void (layers.current.body = i)} src={files.body} width={LAYER_FILE_PX} height={LAYER_FILE_PX} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
-            <canvas ref={canvas} width={LAYER_FILE_PX / 2} height={LAYER_FILE_PX / 2} className="plush-wings" />
+            <img ref={(i) => void (layers.current.body = i)} src={files.body} width={layerSize} height={layerSize} alt="" loading="lazy" decoding="async" draggable={false} onLoad={checkReady} onError={() => setFailed(true)} />
+            <canvas ref={canvas} width={256} height={256} className="plush-wings" />
           </div>
         </div>
       ) : null}
