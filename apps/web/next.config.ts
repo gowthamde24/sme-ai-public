@@ -5,7 +5,7 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./lib/security/headers";
 
 const PUBLIC_FILE_CACHE = "public, max-age=86400, stale-while-revalidate=604800";
-// the plush owlets' pictures (jobs CI and CJ) live under /owl/v3/<agent>/: a changed picture goes to /owl/v4/ (components/v2/app/owl/plush-rig.ts OWL_DIR), so a year and "immutable" is safe
+// the plush owlets' pictures (jobs CI and CJ) live under /owl/v4/<agent>/ (job DA): a changed picture goes to /owl/v5/ (components/v2/app/owl/owl-files.ts OWL_DIR), so a year and "immutable" is safe
 const OWL_FILE_CACHE = "public, max-age=31536000, immutable";
 
 const nextConfig: NextConfig = {

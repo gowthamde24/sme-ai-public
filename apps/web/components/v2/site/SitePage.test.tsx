@@ -91,10 +91,13 @@ describe("the home page (job CX)", () => {
     for (const href of ['href="#how"', 'href="#languages"', 'href="#business"', 'href="#pricing"', 'href="/login"', 'href="/signup"']) expect(nav, href).toContain(href);
     expect(nav).toMatch(/<svg[^>]*aria-hidden="true"/); // the Layers mark
   });
-  it("shows Agent OWL large in the hero (eager, high priority, a srcset up to the 1024 px still); the only other owls are the team lead and the six helpers of the steps (small stills); the three business cards have no picture", () => {
+  it("shows Agent OWL large in the hero (eager, high priority, a srcset of the 512 and 1024 px stills); the only other owls are the team lead and the six helpers of the steps (small stills); the three business cards have no picture", () => {
     expect(home.match(/data-site-owl=/g)).toHaveLength(1);
     expect(home.match(/<img[^>]*fetchPriority="high"[^>]*>/g)).toHaveLength(1);
-    expect(home).toMatch(/srcSet="[^"]*256w[^"]*512w[^"]*1024w/);
+    expect(home).toMatch(/srcSet="[^"]*512w[^"]*1024w/);
+    expect(home).toContain('sizes="(min-width: 640px) 340px, 240px"'); // a 2x screen needs 480 or 680 device pixels: the 1024 px file; a 1x phone takes the 512 px one
+    expect(home).toMatch(/<img[^>]*data-site-owl="main"[^>]*>/);
+    expect(home).toContain('src="/owl/v4/main/owlet-full-512.webp"');
     expect(home.match(/data-plush-avatar=/g)).toHaveLength(7);
     expect(home.match(/<img/g)).toHaveLength(8);
     const cards = home.match(/<ul[^>]*data-part="pack-cards"[\s\S]*?<\/ul>/)![0];

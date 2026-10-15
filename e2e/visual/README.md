@@ -40,5 +40,5 @@ Fonts and anti-aliasing differ between macOS and Linux, so pictures taken on one
 ## Known limits
 
 - First screenful only (the tab bar and menus are fixed, so a full-page capture would put them in the middle).
-- The Agent OWL (the plush owlet, job CI) is drawn as its still picture: the run refuses the layer files it animates from (`/owl/v3/<agent>/owlet-head|body|beak|wing-*-512.webp`), so the owl never moves and a picture cannot differ from run to run. Its moods are checked by `e2e/ci-owl-shots.mjs` and the unit tests, not here. Animated parts are frozen.
+- The Agent OWL (the plush owlet, job CI) is drawn as its still picture: the run refuses the layer files it animates from (`/owl/v4/<agent>/owlet-head|body|beak|wing-*-{512,1024}.webp`), so the owl never moves and a picture cannot differ from run to run. Its moods are checked by `e2e/ci-owl-shots.mjs` and the unit tests, not here. Animated parts are frozen.
 - A real change that is below the threshold (a one-pixel line, a faint colour) will not be caught: this is a safety net for layout, not an exact diff.

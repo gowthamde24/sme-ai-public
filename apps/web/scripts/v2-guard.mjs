@@ -40,7 +40,7 @@ const say = (s) => console.log(s);
 // 1. forbidden paths (test files may change, in their own commits; that is checked by the commit rules, not here)
 const changed = git("diff", "--name-status", `${base}...HEAD`).trim().split("\n").filter(Boolean).map((l) => l.split("\t"));
 const touched = changed.flatMap((c) => c.slice(1));
-// The one exception (job CI follow-up, owner decision; job CJ moved the folder from /owl/v2/ to /owl/v3/<agent>/): next.config.ts may gain, or re-word the version in, the cache rule for /owl/ (a year, "immutable", the pictures are versioned
+// The one exception (job CI follow-up, owner decision; job CJ moved the folder from /owl/v2/ to /owl/v3/<agent>/, job DA to /owl/v4/<agent>/): next.config.ts may gain, or re-word the version in, the cache rule for /owl/ (a year, "immutable", the pictures are versioned
 // by folder) and nothing else. It passes only when every line the diff ADDS is the comment, the constant or the rule below, and every line it REMOVES is the comment (the old version's wording); any other change to the file is still forbidden.
 const NEXT_CONFIG = "apps/web/next.config.ts";
 const OWL_COMMENT = /^\/\/ the plush owlets?'s? pictures \(job[^)]*\) live under \/owl\/v\d+\/(<agent>\/)?: .*$/;

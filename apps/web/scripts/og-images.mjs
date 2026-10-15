@@ -16,7 +16,7 @@ const { chromium } = require("playwright");
 const site = JSON.parse(readFileSync(path.join(web, "i18n/strings/site.json"), "utf8"));
 const packs = JSON.parse(readFileSync(path.join(web, "lib/site/site-packs.generated.json"), "utf8")).packs;
 const brand = /BRAND_NAME = "([^"]+)"/.exec(readFileSync(path.join(web, "design/brand.ts"), "utf8"))[1].split(" ")[0];
-const owl = `data:image/webp;base64,${readFileSync(path.join(web, "public/owl/v3/main/owlet-full-512.webp")).toString("base64")}`;
+const owl = `data:image/webp;base64,${readFileSync(path.join(web, "public/owl/v4/main/owlet-full-512.webp")).toString("base64")}`;
 const out = path.join(web, "public/og");
 mkdirSync(out, { recursive: true });
 
