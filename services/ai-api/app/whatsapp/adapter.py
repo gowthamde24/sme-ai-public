@@ -27,6 +27,8 @@ from app.whatsapp.tokens import TokenResolver
 
 logger = logging.getLogger("app.whatsapp.adapter")
 
+# what WhatsApp accepts as audio (a WAV is not among them): a provider's note in any other form is left out and the text goes alone (ADR 0088)
+AUDIO_TYPES = {"audio/ogg", "audio/mpeg", "audio/aac", "audio/mp4", "audio/amr"}
 CAPTION_MAX = 1024  # Meta: image caption
 TEMPLATE_PARAM_MAX = 1000
 _SPACES = re.compile(r"\s+")
@@ -50,6 +52,10 @@ def image_payload(to: str, link: str, caption: str | None, callback: str) -> dic
     if caption:
         image["caption"] = caption
     return {"messaging_product": "whatsapp", "recipient_type": "individual", "to": to, "type": "image", "image": image, "biz_opaque_callback_data": callback}
+
+
+def audio_payload(to: str, media_id: str, callback: str) -> dict[str, Any]:
+    return {"messaging_product": "whatsapp", "recipient_type": "individual", "to": to, "type": "audio", "audio": {"id": media_id}, "biz_opaque_callback_data": callback}
 
 
 def template_payload(to: str, name: str, language: str, variable: str, callback: str) -> dict[str, Any]:
@@ -125,4 +131,19 @@ class WhatsAppCloudAdapter:
             if not result.ok or not result.wamid:
                 return failure_of(result)
             first = first or result.wamid
+        self._voice_note(message, phone_number_id, token, to)
         return SendResult(True, first)
+
+    def _voice_note(self, message: OutgoingMessage, phone_number_id: str, token: str, to: str) -> None:
+        """The spoken copy, AFTER the text has gone (job CV): only inside the 24-hour window, only in a form WhatsApp accepts, and best effort: a refusal is logged by its code and never changes the outcome of the message."""
+        clip = message.audio
+        if clip is None or clip.content_type not in AUDIO_TYPES:
+            return
+        uploaded = self._graph.upload_media(phone_number_id, token, clip.audio, clip.content_type)
+        media_id = uploaded.body.get("id") if uploaded.ok else None
+        if not isinstance(media_id, str) or not media_id:
+            logger.warning("whatsapp: a voice note could not be uploaded (http=%s)", uploaded.status)
+            return
+        sent = self._graph.post_message(phone_number_id, token, audio_payload(to, media_id, message.audio_key))
+        if not sent.ok:
+            logger.warning("whatsapp: a voice note was refused (http=%s)", sent.status)

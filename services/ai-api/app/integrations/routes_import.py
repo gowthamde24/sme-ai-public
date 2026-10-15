@@ -1,6 +1,6 @@
 """Spreadsheet import (job BI, ADR 0073): customers/leads and catalogue stock from a CSV or XLSX file (Google Sheets > File > Download works). Owner or Admin.
 
-  POST /v1/tenants/{t}/imports/spreadsheet/inspect?kind=customers|stock            body: the file (raw bytes)
+  POST /v1/tenants/{t}/imports/spreadsheet/inspect?kind=customers|stock|students   body: the file (raw bytes)
         -> the columns with a suggested meaning (English, Telugu, Hindi, Kannada and Tamil headers), the fields to fill, three sample rows. Changes nothing, stores nothing.
   POST /v1/tenants/{t}/imports/spreadsheet/preview?kind=&job_id=&mapping={"field": column index}   body: the file
         -> a dry run: one verdict per row (will create / duplicate / needs review / rejected, or the problem with the row), the counts, and a JOB (job_id, a uuid the client makes) that remembers the
@@ -11,7 +11,9 @@
   GET  /v1/tenants/{t}/imports/spreadsheet/jobs, .../jobs/{job_id}                  the jobs and their results.
 
 NEVER OVERWRITES: an existing customer (same match keys as the lead import) is reported as a duplicate and left alone; stock changes only set the status of items you named, and the preview shows old
-and new. The file is held in memory for the request and never stored; the job keeps hashes, column numbers, counts and line numbers, and no cell value. Cells that look like formulas, hidden characters,
+and new. A STUDENTS file (job CR; a school) holds the parent or guardian (name and WhatsApp number), the class or course, optionally the section/year/batch, the student's first name or initials, the admission
+number and the day they joined: classes and sections must already exist (a row naming one the school does not have is reported, never invented); a guardian is found by phone number or made, and gets their
+suppression keys; the response and the job never echo a child's label. The file is held in memory for the request and never stored; the job keeps hashes, column numbers, counts and line numbers, and no cell value. Cells that look like formulas, hidden characters,
 oversized files and over-long cells are refused with closed codes."""
 
 from __future__ import annotations
@@ -28,12 +30,14 @@ from app.auth.deps import Runtime, TenantContext, get_runtime, require_tenant_ro
 from app.crm.models import parse_uuid
 from app.crm.repository import InvalidReferenceError
 from app.customfields import importing as custom_import
+from app.education.repository import EducationRepository
 from app.errors import ApiError, not_found
 from app.integrations import importer
 from app.integrations import mapping as mapping_mod
 from app.integrations.repository import IntegrationsRepository
 from app.integrations.sheet import MAX_UPLOAD_BYTES, PART_ROWS, Grid, SheetRefused, load_grid
 from app.leads.routes import commit_import_batch
+from app.suppression import service as suppression
 from app.tenancy.models import Role
 
 logger = logging.getLogger("app.integrations.import")
@@ -42,7 +46,7 @@ router = APIRouter(prefix="/v1/tenants/{tenant_id}/imports/spreadsheet", tags=["
 RuntimeDep = Annotated[Runtime, Depends(get_runtime)]
 AdminPlus = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN))]
 AdminStrong = Annotated[TenantContext, Depends(require_tenant_role(Role.OWNER, Role.ADMIN, strong=True))]
-Kind = Literal["customers", "stock"]
+Kind = Literal["customers", "stock", "students"]
 
 FILE_REFUSALS: dict[str, tuple[int, str]] = {
     "empty": (422, "That file is empty."),
@@ -117,12 +121,19 @@ def _mapping(raw: str | None, kind: str, grid: Grid, defs: dict[str, dict[str, A
         try:
             return mapping_mod.validate_mapping(found, kind, len(grid.header), codes)
         except ValueError:
-            raise ApiError(422, "mapping_required_missing", "Say which column holds the customer name." if kind == "customers" else "Say which column holds the saree name.") from None
+            raise ApiError(422, "mapping_required_missing", _MISSING_TEXT[kind]) from None
     try:
         return mapping_mod.validate_mapping(json.loads(raw), kind, len(grid.header), codes)
     except (ValueError, TypeError) as exc:
         code = "mapping_required_missing" if str(exc) == "mapping_required_missing" else "mapping_invalid"
         raise ApiError(422, code, "The column choices are not valid.") from None
+
+
+_MISSING_TEXT = {
+    "customers": "Say which column holds the customer name.",
+    "stock": "Say which column holds the saree name.",
+    "students": "Say which columns hold the parent's name, the parent's WhatsApp number and the class or course.",
+}
 
 
 def mapping_sha(mapping: dict[str, int]) -> str:
@@ -195,6 +206,43 @@ def _customer_preview(runtime: Runtime, ctx: TenantContext, job_id: uuid.UUID, p
     return counts, rows
 
 
+def _education(runtime: Runtime) -> EducationRepository:
+    if runtime.education is None:
+        raise ApiError(503, "education_unavailable", "Education is not available right now.")
+    return runtime.education
+
+
+def _students_preview(runtime: Runtime, ctx: TenantContext, prepared: importer.Prepared) -> tuple[dict[str, int], list[dict[str, Any]]]:
+    """A dry run that needs no database function: the programmes and sections the school has are read, each row is matched to them, and repeats INSIDE the file are found. A student the school already holds
+    (the same admission number or the same child of the same guardian) is found when the file runs for real and is then reported as a duplicate. The rows name the GUARDIAN, never the child."""
+    programmes = {str(p["name"]).lower(): p for p in _education(runtime).programmes(ctx.principal.token, ctx.tenant.id, False)}
+    counts = {"will_create": 0, "duplicate": 0, "needs_review": 0, "rejected": 0}
+    rows: list[dict[str, Any]] = []
+    seen_numbers: set[str] = set()
+    seen_children: set[tuple[str, str, str]] = set()
+    for row, line in zip(prepared.rows, prepared.lines, strict=True):
+        status, reason = "will_create", None
+        programme = programmes.get(str(row["programme"]).lower())
+        if programme is None:
+            status, reason = "needs_review", "programme_not_found"
+        elif row.get("group") and str(row["group"]).lower() not in {str(g["label"]).lower() for g in programme["groups"]}:
+            status, reason = "needs_review", "group_not_found"
+        else:
+            number = str(row.get("admission_no") or "").lower()
+            child = (str(row["guardian_phone"]), str(row.get("child_label") or "").lower(), str(row["programme"]).lower())
+            if number and number in seen_numbers:
+                status, reason = "duplicate", "admission_no"
+            elif child in seen_children:
+                status, reason = "duplicate", "same_child"
+            else:
+                if number:
+                    seen_numbers.add(number)
+                seen_children.add(child)
+        counts[status] += 1
+        rows.append({"line": line, "status": status, "reason": reason, "label": row["guardian_name"], "city": None, "note": None})
+    return counts, rows
+
+
 def _stock_preview(runtime: Runtime, ctx: TenantContext, prepared: importer.Prepared) -> tuple[dict[str, int], list[dict[str, Any]], list[dict[str, Any]]]:
     matched = importer.match_catalogue(prepared, _repo(runtime).stock_list(ctx.principal.token, ctx.tenant.id))
     counts = {"will_change": 0, "unchanged": 0, "not_found": 0, "ambiguous": 0}
@@ -214,6 +262,9 @@ async def preview(request: Request, ctx: AdminPlus, runtime: RuntimeDep, kind: K
     if kind == "customers":
         prepared = importer.prepare_customers(grid, cols, defs)
         counts, rows = _customer_preview(runtime, ctx, jid, prepared)
+    elif kind == "students":
+        prepared = importer.prepare_students(grid, cols)
+        counts, rows = _students_preview(runtime, ctx, prepared)
     else:
         prepared = importer.prepare_stock(grid, cols)
         counts, rows, _ = _stock_preview(runtime, ctx, prepared)
@@ -256,6 +307,9 @@ async def confirm(job_id: str, request: Request, ctx: AdminStrong, runtime: Runt
         if kind == "customers":
             prepared = importer.prepare_customers(grid, cols, defs)
             counts, result_rows = _run_customers(runtime, ctx, jid, prepared)
+        elif kind == "students":
+            prepared = importer.prepare_students(grid, cols)
+            counts, result_rows = _run_students(runtime, ctx, jid, prepared)
         else:
             prepared = importer.prepare_stock(grid, cols)
             counts, result_rows = _run_stock(runtime, ctx, jid, prepared)
@@ -299,6 +353,27 @@ def _run_customers(runtime: Runtime, ctx: TenantContext, jid: uuid.UUID, prepare
     if with_custom:
         totals["custom_values_set"] = custom_set  # the number of contacts that got values
         totals["custom_values_failed"] = custom_failed
+    return totals, result_rows
+
+
+def _run_students(runtime: Runtime, ctx: TenantContext, jid: uuid.UUID, prepared: importer.Prepared) -> tuple[dict[str, int], list[dict[str, Any]]]:
+    """Parts of 500, each its own transaction with its own derived batch id (a retry repeats no part). The guardians a part MADE get their suppression keys (ADR 0020), as for every import; a failure while
+    keying never fails the import."""
+    edu = _education(runtime)
+    totals = {"created": 0, "skipped_duplicate": 0, "rejected": 0, "contacts_created": 0}
+    result_rows: list[dict[str, Any]] = []
+    for index, start, part in _parts(prepared.rows):
+        report = edu.students_import(ctx.principal.token, ctx.tenant.id, _part_id(jid, index), part)
+        for key in ("created", "skipped_duplicate", "rejected"):
+            totals[key] += int((report.get("counts") or {}).get(key, 0))
+        for out in report.get("rows") or []:
+            n = start + int(out["row"]) - 1
+            if not 0 <= n < len(prepared.rows):
+                continue
+            result_rows.append({"line": prepared.lines[n], "status": out["outcome"], "reason": out.get("reason"), "label": prepared.rows[n]["guardian_name"], "lead_id": None})
+            if out["outcome"] == "created" and out.get("contact_created") and out.get("contact_id"):
+                totals["contacts_created"] += 1
+                suppression.record_for_contact(runtime.suppression, runtime.key_ring, ctx.principal.token, uuid.UUID(str(out["contact_id"])), None, prepared.rows[n]["guardian_phone"])
     return totals, result_rows
 
 

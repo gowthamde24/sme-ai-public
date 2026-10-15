@@ -2191,6 +2191,23 @@
           },
           "title": "Open Invoices",
           "type": "array"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credit Limit Paise"
+        },
+        "over_limit": {
+          "default": false,
+          "title": "Over Limit",
+          "type": "boolean"
         }
       },
       "required": [
@@ -2508,7 +2525,8 @@
           "enum": [
             "paise",
             "count",
-            "percent"
+            "percent",
+            "seconds"
           ],
           "title": "Unit",
           "type": "string"
@@ -3295,7 +3313,7 @@
     },
     "ReportOut": {
       "additionalProperties": false,
-      "description": "The shape of EVERY pack's report: figures (`kpis`), tables with typed columns (a row is an array in the order of the columns) and series by day. All figures are sums of entries a person made.",
+      "description": "Figures, typed tables and series by day. `from` and `to` are the India days the figures cover (`as_of` the day they are as of).",
       "properties": {
         "report": {
           "title": "Report",

@@ -502,6 +502,9 @@ class FeeStatementBody(_Strict):
     ageing: AgeingOut
     overdue_ageing: OverdueAgeingOut | None = None
     open_invoices: list[OpenInvoiceOut] = []
+    # (the shared statement carries a credit limit for a construction customer; a student never has one)
+    credit_limit_paise: int | None = None
+    over_limit: bool = False
 
 
 class FeeStatementOut(_Strict):
@@ -622,42 +625,3 @@ class AudienceAddedOut(_Strict):
     recipients: int
 
 
-class KpiOut(_Strict):
-    key: str
-    value: float | int | None
-    unit: Literal["paise", "count", "percent"]
-
-
-class ColumnOut(_Strict):
-    key: str
-    type: Literal["text", "count", "paise", "percent"]
-
-
-class TableOut(_Strict):
-    key: str
-    columns: list[ColumnOut]
-    rows: list[list[Any]]
-
-
-class PointOut(_Strict):
-    day: date
-    value: int
-
-
-class SeriesOut(_Strict):
-    key: str
-    points: list[PointOut]
-
-
-class ReportOut(_Strict):
-    """The shape of EVERY pack's report: figures (`kpis`), tables with typed columns (a row is an array in the order of the columns) and series by day. All figures are sums of entries a person made."""
-
-    report: str
-    as_of: date
-    from_: date = Field(alias="from")
-    to: date
-    kpis: list[KpiOut]
-    tables: list[TableOut]
-    series: list[SeriesOut]
-
-    model_config = ConfigDict(extra="forbid", populate_by_name=True)

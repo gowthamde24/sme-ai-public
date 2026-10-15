@@ -20,10 +20,13 @@ from app.integrations.mapping import normalise
 from app.integrations.sheet import MAX_CELL, Grid
 from app.leads.csv_rows import _formula_like
 from app.leads.keys import match_key
+from app.suppression.keys import normalise_phone
 from app.text_rules import has_hidden_characters
 
 ISSUE_CODES = (
     "formula_cell", "formula_like", "hidden_characters", "cell_too_long", "company_name_missing", "item_name_missing", "duplicate_in_file", "quantity_invalid", "status_unknown", "no_status_or_quantity",
+    # job CR: a students file
+    "guardian_name_missing", "guardian_phone_missing", "guardian_phone_invalid", "programme_missing", "child_label_missing", "child_label_invalid", "admission_no_invalid", "adult_unknown", "date_invalid",
     *custom.ISSUE_CODES,
 )  # fmt: skip
 _NUMBER = re.compile(r"^-?[0-9]+([.,][0-9]+)?$")  # a plain number (even a negative one) is a number to a spreadsheet, not a formula
@@ -206,3 +209,90 @@ def match_catalogue(prepared: Prepared, catalogue: list[dict[str, Any]]) -> list
             same = item["stock_status"] == row["stock_status"]
             results.append({**base, "action": "unchanged" if same else "will_change", "item_id": item["id"], "old_status": item["stock_status"]})
     return results
+
+
+# ------------------------------------------------------------------------------------------------------------------------------- students (job CR)
+_YES = frozenset(normalise(w) for w in ("yes", "y", "true", "1", "adult", "అవును", "हाँ", "हां", "ಹೌದು", "ஆம்"))
+_NO = frozenset(normalise(w) for w in ("no", "n", "false", "0", "child", "కాదు", "नहीं", "ಇಲ್ಲ", "இல்லை", ""))
+_ADMISSION_NO = re.compile(r"^[A-Za-z0-9][A-Za-z0-9/._-]{0,29}$")
+_DATE_ISO = re.compile(r"^(\d{4})-(\d{2})-(\d{2})$")
+_DATE_DMY = re.compile(r"^(\d{1,2})[/.-](\d{1,2})[/.-](\d{4})$")
+
+
+def _iso_date(text: str) -> str | None:
+    from datetime import date
+
+    m = _DATE_ISO.match(text)
+    parts = (int(m[1]), int(m[2]), int(m[3])) if m else None
+    if parts is None:
+        d = _DATE_DMY.match(text)
+        parts = (int(d[3]), int(d[2]), int(d[1])) if d else None
+    if parts is None:
+        return None
+    try:
+        return date(*parts).isoformat()
+    except ValueError:
+        return None
+
+
+def prepare_students(grid: Grid, mapping: dict[str, int]) -> Prepared:
+    """A students-and-guardians file becomes the rows `students_import` takes: the guardian (name and WhatsApp number), the class or course, optionally the section/year/batch, the student's FIRST NAME OR INITIALS
+    (a child's label: no digits, no e-mail address; empty only for an adult student), the school's admission number and the day they joined. A row with any issue is skipped whole and reported by line number and
+    a closed code; no cell is echoed. A phone number that is not an Indian mobile number is an issue (`guardian_phone_invalid`): the guardian is the person we write to."""
+    out = Prepared()
+    for ri, row in enumerate(grid.rows):
+        line = grid.lines[ri]
+        if not any(row[ci].strip() for ci in mapping.values()) and not any((ri, ci) in grid.formulas for ci in mapping.values()):
+            out.blank += 1
+            continue
+        item: dict[str, Any] = {}
+        issue: Issue | None = None
+        for fname, ci in mapping.items():
+            cell, issue = _check_cell(grid, ri, ci, fname, line)
+            if issue:
+                break
+            if cell:
+                item[fname] = cell.strip()
+        if issue is None:
+            raw_adult = normalise(item.pop("is_adult", ""))
+            if raw_adult in _YES:
+                item["is_adult"] = True
+            elif raw_adult in _NO:
+                item["is_adult"] = False
+            else:
+                issue = Issue(line, "adult_unknown", "is_adult")
+        if issue is None and not item.get("guardian_name"):
+            issue = Issue(line, "guardian_name_missing", "guardian_name")
+        if issue is None and not item.get("guardian_phone"):
+            issue = Issue(line, "guardian_phone_missing", "guardian_phone")
+        if issue is None:
+            if normalise_phone(item["guardian_phone"]) is None:
+                issue = Issue(line, "guardian_phone_invalid", "guardian_phone")
+            else:
+                item["guardian_phone"] = canonical_phone(item["guardian_phone"])  # an Indian mobile becomes +91 and ten digits
+        if issue is None and not item.get("programme"):
+            issue = Issue(line, "programme_missing", "programme")
+        if issue is None:
+            label = item.get("child_label", "")
+            if item["is_adult"]:
+                item.pop("child_label", None)
+            elif not label:
+                issue = Issue(line, "child_label_missing", "child_label")
+            elif len(label) > 30 or any(ch.isdigit() for ch in label) or "@" in label:
+                issue = Issue(line, "child_label_invalid", "child_label")
+        if issue is None and item.get("admission_no") and not _ADMISSION_NO.match(item["admission_no"]):
+            issue = Issue(line, "admission_no_invalid", "admission_no")
+        if issue is None and item.get("joined_on"):
+            iso = _iso_date(item["joined_on"])
+            if iso is None:
+                issue = Issue(line, "date_invalid", "joined_on")
+            else:
+                item["joined_on"] = iso
+        if issue:
+            out.issues.append(issue)
+            continue
+        out.rows.append(item)
+        out.lines.append(line)
+        out.notes.append(None)
+        out.customs.append({})
+    return out

@@ -80,6 +80,27 @@ class GraphClient:
     def post_message(self, phone_number_id: str, token: str, payload: dict[str, Any]) -> GraphResult:
         return self._post(f"{phone_number_id}/messages", token, payload)
 
+    def upload_media(self, phone_number_id: str, token: str, content: bytes, content_type: str) -> GraphResult:
+        """Job CV: upload a voice note to Meta (multipart: messaging_product, type, file); a success carries the media id in `body["id"]` (there is no wamid here, so `ok` is judged on the HTTP status)."""
+        url = f"{self._base}/{self._version}/{phone_number_id}/media"
+        try:
+            response = self._client.post(
+                url,
+                data={"messaging_product": "whatsapp", "type": content_type},
+                files={"file": ("voice-note", content, content_type)},
+                headers={"Authorization": f"Bearer {token}"},
+            )
+        except httpx.HTTPError as exc:
+            logger.error("whatsapp unreachable: %s", exc.__class__.__name__)
+            return GraphResult(False, 0, transient=True)
+        try:
+            body = response.json()
+        except ValueError:
+            body = {}
+        body = body if isinstance(body, dict) else {}
+        code = _error_of(body).get("code")
+        return GraphResult(response.is_success and isinstance(body.get("id"), str), response.status_code, error_code=code if isinstance(code, int) else None, transient=response.status_code == 429 or response.status_code >= 500, body=body)
+
     def create_template(self, waba_id: str, token: str, payload: dict[str, Any]) -> GraphResult:
         """Ask Meta to review a template. A success carries Meta's template id in `body["id"]` (there is no wamid here, so `ok` is judged on the HTTP status)."""
         url = f"{self._base}/{self._version}/{waba_id}/message_templates"

@@ -1,0 +1,442 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "voice_notes.schema.json",
+  "title": "Voice notes: settings, voices, the spoken disclosure, the fair-use meter (job CV)",
+  "description": "Generated from services/ai-api/app/voice_notes/models.py by `make contracts`.",
+  "$defs": {
+    "CampaignVoiceIn": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "enabled"
+      ],
+      "title": "CampaignVoiceIn",
+      "type": "object"
+    },
+    "CampaignVoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "campaign_id": {
+          "format": "uuid",
+          "title": "Campaign Id",
+          "type": "string"
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "voice_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voice Code"
+        },
+        "disclosure": {
+          "$ref": "#/$defs/DisclosureOut"
+        },
+        "issues": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Issues",
+          "type": "array"
+        },
+        "usage": {
+          "$ref": "#/$defs/UsageOut"
+        },
+        "changed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Changed"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "enabled",
+        "language",
+        "disclosure",
+        "issues",
+        "usage"
+      ],
+      "title": "CampaignVoiceOut",
+      "type": "object"
+    },
+    "DisclosureOut": {
+      "additionalProperties": false,
+      "description": "The line spoken first in every voice note, in the business's name. `usable` is false until a native speaker has reviewed the wording (a draft may be spoken only while the workspace holds synthetic data).",
+      "properties": {
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Version"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "draft",
+                "reviewed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Text"
+        },
+        "usable": {
+          "title": "Usable",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "language",
+        "usable"
+      ],
+      "title": "DisclosureOut",
+      "type": "object"
+    },
+    "PreviewIn": {
+      "additionalProperties": false,
+      "properties": {
+        "preview_id": {
+          "format": "uuid",
+          "title": "Preview Id",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        }
+      },
+      "required": [
+        "preview_id",
+        "language"
+      ],
+      "title": "PreviewIn",
+      "type": "object"
+    },
+    "PreviewOut": {
+      "additionalProperties": false,
+      "description": "A short spoken sample of the disclosure line in the chosen voice.",
+      "properties": {
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "voice_code": {
+          "title": "Voice Code",
+          "type": "string"
+        },
+        "content_type": {
+          "title": "Content Type",
+          "type": "string"
+        },
+        "encoding": {
+          "const": "base64",
+          "title": "Encoding",
+          "type": "string"
+        },
+        "data": {
+          "title": "Data",
+          "type": "string"
+        },
+        "seconds": {
+          "title": "Seconds",
+          "type": "integer"
+        },
+        "usage": {
+          "$ref": "#/$defs/UsageOut"
+        }
+      },
+      "required": [
+        "language",
+        "voice_code",
+        "content_type",
+        "encoding",
+        "data",
+        "seconds",
+        "usage"
+      ],
+      "title": "PreviewOut",
+      "type": "object"
+    },
+    "UsageOut": {
+      "additionalProperties": false,
+      "properties": {
+        "today_seconds": {
+          "title": "Today Seconds",
+          "type": "integer"
+        },
+        "month_seconds": {
+          "title": "Month Seconds",
+          "type": "integer"
+        },
+        "day_percent": {
+          "title": "Day Percent",
+          "type": "integer"
+        },
+        "month_percent": {
+          "title": "Month Percent",
+          "type": "integer"
+        },
+        "state": {
+          "enum": [
+            "ok",
+            "warn",
+            "paused"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "today_seconds",
+        "month_seconds",
+        "day_percent",
+        "month_percent",
+        "state"
+      ],
+      "title": "UsageOut",
+      "type": "object"
+    },
+    "VoiceChoiceIn": {
+      "additionalProperties": false,
+      "properties": {
+        "voice_code": {
+          "anyOf": [
+            {
+              "pattern": "^[a-z][a-z0-9_-]{2,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voice Code"
+        }
+      },
+      "title": "VoiceChoiceIn",
+      "type": "object"
+    },
+    "VoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "language": {
+          "enum": [
+            "en",
+            "te",
+            "hi",
+            "kn",
+            "ta"
+          ],
+          "title": "Language",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "synthetic": {
+          "title": "Synthetic",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "code",
+        "language",
+        "label",
+        "synthetic"
+      ],
+      "title": "VoiceOut",
+      "type": "object"
+    },
+    "VoiceSettingsIn": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "speed": {
+          "maximum": 1.25,
+          "minimum": 0.75,
+          "title": "Speed",
+          "type": "number"
+        },
+        "call_from_hour": {
+          "maximum": 21,
+          "minimum": 9,
+          "title": "Call From Hour",
+          "type": "integer"
+        },
+        "call_to_hour": {
+          "maximum": 21,
+          "minimum": 9,
+          "title": "Call To Hour",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "enabled",
+        "speed",
+        "call_from_hour",
+        "call_to_hour"
+      ],
+      "title": "VoiceSettingsIn",
+      "type": "object"
+    },
+    "VoiceSettingsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean"
+        },
+        "speed": {
+          "title": "Speed",
+          "type": "number"
+        },
+        "call_from_hour": {
+          "title": "Call From Hour",
+          "type": "integer"
+        },
+        "call_to_hour": {
+          "title": "Call To Hour",
+          "type": "integer"
+        },
+        "recording": {
+          "title": "Recording",
+          "type": "boolean"
+        },
+        "choices": {
+          "additionalProperties": {
+            "type": "string"
+          },
+          "title": "Choices",
+          "type": "object"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        }
+      },
+      "required": [
+        "enabled",
+        "speed",
+        "call_from_hour",
+        "call_to_hour",
+        "recording",
+        "choices"
+      ],
+      "title": "VoiceSettingsOut",
+      "type": "object"
+    },
+    "VoicesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/VoiceOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "VoicesOut",
+      "type": "object"
+    }
+  }
+}

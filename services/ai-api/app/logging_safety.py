@@ -28,6 +28,12 @@ ROUTE_WORDS = frozenset(
         # job CP: the shared ledger, reminder campaigns, the call list
         "statement", "entries", "charges", "receipts", "campaigns", "recipients", "from-ledger",
         "clear", "pause", "resume", "results", "call-list", "outcome",
+        # job CR: the education pack (the school's own vocabulary, never a person)
+        "institution", "programmes", "groups", "students", "admissions", "stage", "admit",
+        "erase", "fee-plans", "fee-assignments", "fees", "adjustments", "concessions",
+        "guardians", "late-fees", "post", "pending", "announcements", "audience",
+        # job CV: the one reports API and the voice notes
+        "run", "choices", "preview", "usage", "disclosure", "notes", "voice-notes", "voices",
         # job CK
         "packs", "auth", "providers", "pack", "modules", "example-data",
         "custom-fields", "custom", "security", "remove",
@@ -35,7 +41,7 @@ ROUTE_WORDS = frozenset(
         "companies", "contacts", "products", "leads", "opportunities",
         "archive", "restore", "record-consent", "suppress", "lift-suppression",
         "evidence", "evidence-links",
-        "icp-configs", "active", "import", "preview", "review-queue", "labels", "exports",
+        "icp-configs", "active", "import", "review-queue", "labels", "exports",
         "agent-claims", "agent-cost", "agent-runs", "agent-settings", "cancel", "claims", "reviews",
         "enquiries", "requirement", "requirement-fields", "requirements",
         "confirm", "decision", "discard",

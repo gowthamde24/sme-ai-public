@@ -308,6 +308,8 @@ export interface FeeStatementBody {
   ageing: AgeingOut;
   overdue_ageing?: OverdueAgeingOut | null;
   open_invoices?: OpenInvoiceOut[];
+  credit_limit_paise?: number | null;
+  over_limit?: boolean;
 }
 
 export interface FeeStatementOut {
@@ -364,7 +366,7 @@ export interface ImportRowOut {
 export interface KpiOut {
   key: string;
   value: number | null;
-  unit: "paise" | "count" | "percent";
+  unit: "paise" | "count" | "percent" | "seconds";
 }
 
 export interface LateFeeRowOut {
