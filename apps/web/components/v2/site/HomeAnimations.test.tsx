@@ -1,10 +1,12 @@
 import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { HELPER_AGENTS } from "@/components/v2/app/owl/plush-rig";
+
 import { HowSteps, type HowStep } from "./HowSteps";
 import { LanguageChats, type SampleChat } from "./LanguageChats";
 
-const steps: HowStep[] = ["Answer", "Understand", "Quote", "Follow up", "Collect", "Grow"].map((title, i) => ({ n: String(i + 1), title, text: `${title} text`, you: `You: ${i}` }));
+const steps: HowStep[] = (["Find leads", "Research", "Understand", "Quote", "Follow up", "Close & collect"] as const).map((title, i) => ({ n: String(i + 1), owl: HELPER_AGENTS[i], picture: <span data-plush-avatar="true" />, helper: `Helper ${i + 1}`, title, text: `${title} text`, you: `You: ${i}` }));
 const how = { list: "The six steps", pause: "Pause the steps", play: "Play the steps" };
 const chats: SampleChat[] = (["te", "hi", "kn", "en"] as const).map((code) => ({ code, label: code.toUpperCase(), shop: `Shop ${code}`, q: `q ${code}`, a: `a ${code}`, tag: `tag ${code}`, q2: `q2 ${code}` }));
 const words = { tabs: "Choose a language", panel: "Sample chat", online: "online", note: "Sample chats.", pause: "Pause the chats", play: "Play the chats" };

@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { AGENT_KEYS } from "@/lib/api/today";
 
-import { EYES, HEAD_PIVOT, MOUTH, OWL_AGENTS, OWL_DIR, STILL_WIDTHS, WORK_BOB, WORK_LOOK, owlAgent, owlDir, owlFiles, stillFile, stillSrcSet, workWings } from "./plush-rig";
+import { BIG_STILL_AGENT, BIG_STILL_WIDTH, EYES, HEAD_PIVOT, HELPER_AGENTS, MOUTH, OWL_AGENTS, OWL_DIR, STILL_WIDTHS, WORK_BOB, WORK_LOOK, owlAgent, owlDir, owlFiles, stillFile, stillSrcSet, workWings } from "./plush-rig";
 
 const PUBLIC = path.resolve(import.meta.dirname, "../../../../public");
 const onDisk = (url: string) => fs.existsSync(path.join(PUBLIC, url));
@@ -21,6 +21,17 @@ describe("which pictures an agent's owl uses", () => {
       expect(Object.values(f)).toEqual(["head", "body", "beak", "wing-left", "wing-right"].map((n) => `/owl/v3/${a}/owlet-${n}-512.webp`));
       for (const url of [...Object.values(f), ...STILL_WIDTHS.map((w) => stillFile(w, a))]) expect(onDisk(url), url).toBe(true);
     }
+  });
+  it("Agent OWL alone has a 1024 px still (job CZ) for where the owl is drawn large; the six helpers are never that big, so they have none", () => {
+    expect(BIG_STILL_AGENT).toBe("main");
+    expect(onDisk(stillFile(BIG_STILL_WIDTH, "main"))).toBe(true);
+    expect(stillSrcSet([256, 512, 1024], "main")).toBe("/owl/v3/main/owlet-full-256.webp 256w, /owl/v3/main/owlet-full-512.webp 512w, /owl/v3/main/owlet-full-1024.webp 1024w");
+    expect(fs.statSync(path.join(PUBLIC, stillFile(BIG_STILL_WIDTH, "main"))).size).toBeLessThan(60 * 1024);
+    for (const a of OWL_AGENTS.filter((x) => x !== "main")) expect(onDisk(stillFile(BIG_STILL_WIDTH, a)), a).toBe(false);
+  });
+  it("the six helpers, in the order of the six steps, are the API's helpers after Agent OWL", () => {
+    expect([...HELPER_AGENTS]).toEqual(["lead_finder", "researcher", "requirement_analyst", "quote_writer", "followup_desk", "order_desk"]);
+    expect([...OWL_AGENTS]).toEqual(["main", ...HELPER_AGENTS]);
   });
   it("no two agents share a picture (each owl has its own colours), and the six helpers differ from Agent OWL's sky blue", () => {
     const bytes = (a: string) => fs.readFileSync(path.join(PUBLIC, owlFiles(a).body.slice(1))).toString("base64");

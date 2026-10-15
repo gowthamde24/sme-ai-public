@@ -8,6 +8,7 @@ vi.mock("./LazyIslands", async () => ({ PaverCalculator: (await import("./PaverC
 
 import { renderToStaticMarkup } from "react-dom/server";
 
+import { HELPER_AGENTS } from "@/components/v2/app/owl/plush-rig";
 import { LANGS, type Lang } from "@/i18n/lang";
 import { siteDict } from "@/i18n/site";
 import { sitePath, type SiteTarget } from "@/lib/site/paths";
@@ -90,23 +91,31 @@ describe("the home page (job CX)", () => {
     for (const href of ['href="#how"', 'href="#languages"', 'href="#business"', 'href="#pricing"', 'href="/login"', 'href="/signup"']) expect(nav, href).toContain(href);
     expect(nav).toMatch(/<svg[^>]*aria-hidden="true"/); // the Layers mark
   });
-  it("shows ONE owl (the hero's: eager, high priority, a srcset with the 256 and 512 px files); the three business cards have no picture", () => {
+  it("shows Agent OWL large in the hero (eager, high priority, a srcset up to the 1024 px still); the only other owls are the team lead and the six helpers of the steps (small stills); the three business cards have no picture", () => {
     expect(home.match(/data-site-owl=/g)).toHaveLength(1);
     expect(home.match(/<img[^>]*fetchPriority="high"[^>]*>/g)).toHaveLength(1);
-    expect(home).toMatch(/srcSet="[^"]*256w[^"]*512w/);
-    expect(home.match(/<img/g)).toHaveLength(1);
+    expect(home).toMatch(/srcSet="[^"]*256w[^"]*512w[^"]*1024w/);
+    expect(home.match(/data-plush-avatar=/g)).toHaveLength(7);
+    expect(home.match(/<img/g)).toHaveLength(8);
     const cards = home.match(/<ul[^>]*data-part="pack-cards"[\s\S]*?<\/ul>/)![0];
     expect(cards).not.toContain("<img");
     expect(cards.match(/data-pack-card=/g)).toHaveLength(SITE_PACKS.length);
     for (const p of SITE_PACKS) expect(cards, p.slug).toContain(`href="/${p.slug}"`);
     expect(text(cards)).toContain("Try the paver calculator");
   });
-  it("has six steps, each with its You: line, the first one current (aria-current), and a pause button", () => {
+  it("has six steps (one helper owl each), each with its You: line, the first one current (aria-current), and a pause button; Agent OWL heads them as the team lead", () => {
+    const section = home.match(/<section id="how"[\s\S]*?<\/section>/)![0];
+    expect(section).toContain('data-part="team-lead"');
+    expect(text(section)).toContain("Agent OWL is the team lead");
     const steps = home.match(/<ol[^>]*aria-label="The six steps"[\s\S]*?<\/ol>/)![0];
     expect(steps.match(/<li/g)).toHaveLength(6);
     expect(steps.match(/aria-current="step"/g)).toHaveLength(1);
     expect(text(steps).match(/You:/g)).toHaveLength(6);
-    for (const w of ["Answer", "Understand", "Quote", "Follow up", "Collect", "Grow"]) expect(steps, w).toContain(w);
+    for (const w of ["Find leads", "Research", "Understand", "Quote", "Follow up", "Close &amp; collect"]) expect(steps, w).toContain(w);
+    for (const w of ["Lead Finder", "Researcher", "Requirement Analyst", "Quote Writer", "Follow-up Desk", "Order Desk"]) expect(steps, w).toContain(w);
+    expect([...steps.matchAll(/data-owl="(\w+)"/g)].map((m) => m[1])).toEqual([...HELPER_AGENTS]);
+    expect(steps).not.toMatch(/Answer|Grow/);
+    expect(text(section)).toContain("the loop starts again");
     expect(home).toContain("Pause the steps");
   });
   it("has the languages band: a tablist of four tabs (te, hi, kn, en), the sample chat, the note, and no moving part drawn until a script runs", () => {
@@ -166,6 +175,36 @@ describe("the pricing page", () => {
     expect(text).toContain("Start your trial");
     expect(text).not.toMatch(/₹/);
     expect(html).not.toMatch(/guarantee/i);
+  });
+});
+
+describe("how it works (job CZ): the same six steps as the home page", () => {
+  const html = render("en", { kind: "page", page: "how-it-works" });
+  const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
+  const list = html.match(/<ol[^>]*data-part="steps"[\s\S]*?<\/ol>/)![0];
+  it("has Agent OWL as the team lead above six steps, each with its helper owl, in the home page's order", () => {
+    expect(html).toContain('data-part="team-lead"');
+    expect(list.match(/data-step=/g)).toHaveLength(6);
+    expect([...list.matchAll(/data-owl="(\w+)"/g)].map((m) => m[1])).toEqual([...HELPER_AGENTS]);
+    for (const s of ["Find leads", "Research", "Understand", "Quote", "Follow up", "Close &amp; collect"]) expect(list, s).toContain(s);
+    expect(text).toContain("Then the loop starts again");
+    expect(text).not.toMatch(/seven|Seven/);
+  });
+  it("a school's own words for steps 1 and 2 are the pack's (landing.json steps), and no other business type changes a step", () => {
+    const edu = SITE_PACKS.find((p) => p.id === "education")!;
+    const lines = [...list.matchAll(/data-pack-step="([\w-]+)"[^>]*>([\s\S]*?)<\/li>/g)];
+    const stepsOf = (slug: string) => lines.filter((m) => m[1] === slug).map((m) => m[2].replace(/<[^>]+>/g, " ").replace(/\s+/g, " "));
+    const own = stepsOf(edu.slug).filter((l) => /Admission enquiries captured|Know who/.test(l));
+    expect(own).toHaveLength(2);
+    expect(own.join(" ")).toContain("never searches the web for students");
+    for (const p of SITE_PACKS.filter((x) => !x.steps)) expect(stepsOf(p.slug).join(" "), p.slug).not.toMatch(/captured|Know who/);
+  });
+  it("reads the same six steps in every language (te, hi, kn are drafts) and never an English fallback key", () => {
+    for (const lang of ["te", "hi", "kn"] as const) {
+      const h = render(lang, { kind: "page", page: "how-it-works" });
+      expect(h.match(/<ol[^>]*data-part="steps"[\s\S]*?<\/ol>/)![0].match(/data-step=/g), lang).toHaveLength(6);
+      expect(h, lang).not.toMatch(/home\.how\.|owl\.name\./);
+    }
   });
 });
 

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 
 import { PlushStill } from "@/components/v2/app/owl/PlushStill";
+import { HELPER_AGENTS } from "@/components/v2/app/owl/plush-rig";
 
 import type { AskWords } from "./ask-words";
 
@@ -13,7 +14,7 @@ const CANNOT = ["ask.can.n1", "ask.can.n2", "ask.can.n3", "ask.can.n4"] as const
 
 /**
  * "What can Agent OWL do?" (job BT): a button under the Ask box that opens a short card in the page's own flow: what it can do (read your records, find a saree, write a draft for you to check), what it
- * cannot (change records or prices, send or approve from this box, answer from outside your records, decide for you), three questions to try (tap one to ask it) and a link to the guide. The words come
+ * cannot (change records or prices, send or approve from this box, answer from outside your records, decide for you), the six steps of the team with each helper (job CZ), three questions to try (tap one to ask it) and a link to the guide. The words come
  * with the Ask box (ask-words.ts). It sends nothing and remembers nothing.
  */
 export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: string) => string; examples: readonly string[]; onTry: (question: string) => void; guideHref: string }) {
@@ -71,6 +72,27 @@ export function AskCapabilities({ w, examples, onTry, guideHref }: { w: (key: st
                 ))}
               </ul>
             </div>
+          </div>
+          <div className="mt-5" data-ask-can="steps">
+            <h4 className="text-base font-semibold">{w("ask.can.steps")}</h4>
+            <ol className="mt-2 grid gap-2 sm:grid-cols-2">
+              {HELPER_AGENTS.map((owl, i) => (
+                <li key={owl} data-step={i + 1} data-owl={owl} className="flex items-start gap-3 rounded-xl border border-line bg-surface-2 p-3">
+                  <PlushStill agent={owl} px={48} className="size-12" />
+                  <div className="min-w-0 text-sm">
+                    <p className="text-base font-semibold leading-tight">
+                      <span aria-hidden="true" className="mr-1 text-muted">
+                        {i + 1}
+                      </span>
+                      {w(`ask.can.step.${i + 1}.t`)}
+                    </p>
+                    <p className="font-semibold text-brand-text">{w(`agent.${owl}`)}</p>
+                    <p className="text-muted">{w(`ask.can.step.${i + 1}.d`)}</p>
+                    <p className="font-semibold text-muted">{w(`ask.can.step.${i + 1}.y`)}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
           <div className="mt-5">
             <h4 className="text-base font-semibold">{w("ask.can.try")}</h4>

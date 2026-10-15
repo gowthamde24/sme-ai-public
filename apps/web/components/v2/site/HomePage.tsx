@@ -45,7 +45,7 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
           </p>
         </div>
         <div className="flex min-w-0 flex-[0_1_380px] justify-center">
-          <SiteOwl agent="main" px={240} smPx={340} widths={[256, 512]} priority className="size-60 sm:size-[340px]" />
+          <SiteOwl agent="main" px={240} smPx={340} widths={[256, 512, 1024]} priority className="size-60 sm:size-[340px]" />
           <span className="sr-only">{t("owl.name.main")}, {t("hero.owl.mood")}</span>
         </div>
       </section>
