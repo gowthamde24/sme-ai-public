@@ -46,7 +46,30 @@ STOCK_FIELDS: dict[str, tuple[str, bool, tuple[str, ...]]] = {
         "qty", "quantity", "pieces", "pcs", "no of pieces", "count", "balance", "closing stock", "stock qty", "stock quantity", "units",
         "సంఖ్య", "పరిమాణం", "ముక్కలు", "మిగిలిన", "मात्रा", "संख्या", "नग", "पीस", "बचे", "शेष", "ಪ್ರಮಾಣ", "அளவு", "எண்ணிக்கை")),
 }  # fmt: skip
-FIELDS = {"customers": CUSTOMER_FIELDS, "stock": STOCK_FIELDS}
+# job CR: a school's students-and-guardians file. The guardian is the ADULT we write to (their name and WhatsApp number); the child is a first name or initials, never a phone number or anything else
+# about them. The Telugu, Hindi, Kannada and Tamil headers are a first draft that waits for a native reader.
+STUDENT_FIELDS: dict[str, tuple[str, bool, tuple[str, ...]]] = {
+    "guardian_name": ("Parent or guardian name", True, (
+        "guardian", "guardian name", "parent", "parent name", "parents name", "father", "father name", "father's name", "mother", "mother name", "mother's name", "name",
+        "తల్లిదండ్రులు", "తల్లిదండ్రుల పేరు", "తండ్రి పేరు", "తల్లి పేరు", "अभिभावक", "अभिभावक का नाम", "माता पिता", "पिता का नाम", "माता का नाम", "ಪೋಷಕರ ಹೆಸರು", "ಪಾಲಕರು", "பெற்றோர்", "பெற்றோர் பெயர்")),
+    "guardian_phone": ("Parent's WhatsApp or mobile number", True, (
+        "phone", "phone no", "phone number", "mobile", "mobile no", "mobile number", "whatsapp", "whatsapp no", "whatsapp number", "parent phone", "parent mobile", "guardian phone", "guardian mobile", "contact no",
+        "ఫోన్", "మొబైల్", "వాట్సాప్", "फोन", "फ़ोन", "मोबाइल", "मोबाइल नंबर", "व्हाट्सएप", "ಫೋನ್", "ಮೊಬೈಲ್", "தொலைபேசி", "மொபைல்")),
+    "programme": ("Class or course", True, (
+        "class", "grade", "standard", "std", "course", "programme", "program", "year", "branch", "class name", "course name",
+        "తరగతి", "క్లాస్", "कक्षा", "क्लास", "पाठ्यक्रम", "ತರಗತಿ", "ಕ್ಲಾಸ್", "வகுப்பு")),
+    "group": ("Section, year, semester or batch", False, (
+        "section", "sec", "batch", "division", "semester", "sem", "group", "సెక్షన్", "బ్యాచ్", "अनुभाग", "सेक्शन", "बैच", "ವಿಭಾಗ", "பிரிவு")),
+    "child_label": ("Student's first name or initials", False, (
+        "student", "student name", "pupil", "pupil name", "child", "child name", "first name", "ward", "ward name",
+        "విద్యార్థి", "విద్యార్థి పేరు", "छात्र", "छात्र का नाम", "विद्यार्थी", "विद्यार्थी का नाम", "ವಿದ್ಯಾರ್ಥಿ", "மாணவர்", "மாணவர் பெயர்")),
+    "admission_no": ("Admission number", False, (
+        "admission no", "admission number", "admission", "adm no", "adm number", "roll no", "id", "reg no", "registration no", "student id",
+        "ప్రవేశ సంఖ్య", "प्रवेश संख्या", "प्रवेश क्रमांक", "ಪ್ರವೇಶ ಸಂಖ್ಯೆ", "சேர்க்கை எண்")),
+    "is_adult": ("Adult student (yes or no)", False, ("adult", "adult student", "is adult", "18+", "adult yes no")),
+    "joined_on": ("Joined on", False, ("joined", "joined on", "joining date", "date of joining", "admission date", "date of admission")),
+}  # fmt: skip
+FIELDS = {"customers": CUSTOMER_FIELDS, "stock": STOCK_FIELDS, "students": STUDENT_FIELDS}
 
 _PUNCT = re.compile(r"[^\w\s]|_", re.UNICODE)
 
@@ -99,7 +122,7 @@ def suggest(headers: list[str], kind: str) -> list[Suggestion]:
             continue
         chosen[f] = (ci, -neg)
         used_cols.add(ci)
-    first = "company_name" if kind == "customers" else "item_name"
+    first = {"customers": "company_name", "stock": "item_name", "students": "guardian_name"}[kind]
     second = "contact_name" if kind == "customers" else None
     # a lone generic "name" column is the main name
     if first not in chosen and second and second in chosen and normalise(headers[chosen[second][0]]) in {"name", "full name", "పేరు", "नाम", "ಹೆಸರು", "பெயர்"}:

@@ -566,6 +566,10 @@ begin
     (tests.rid(p || '_er_trip'), t, tests.rid(p || '_er_mo'), 1, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = t), current_date, 'QV09 AB 1234', 'Zed Qxjv', '+91 98765 43210', tests.uid(p || '_owner'));
   insert into public.delivery_proofs (id, trip_id, tenant_id, received_by, photo_id, bucket, path, width, height, bytes, recorded_by) values
     (tests.rid(p || '_er_pod'), tests.rid(p || '_er_trip'), t, 'Zed Qxjv', tests.rid(p || '_er_podphoto'), app.pod_bucket(t), tests.rid(p || '_er_trip')::text || '/' || tests.rid(p || '_er_podphoto')::text || '.jpg', 640, 640, 1000, tests.uid(p || '_owner'));
+  -- job CR: a student of the canary contact (the label and the admission number are PII columns; the programme name is the school's own word, not a person's)
+  insert into public.programmes (id, tenant_id, name, kind, group_kind, created_by) values (tests.rid(p || '_er_prog'), t, 'Class Five', 'class', 'section', tests.uid(p || '_owner'));
+  insert into public.students (id, tenant_id, contact_id, is_adult, child_label, programme_id, admission_no, created_by)
+  values (tests.rid(p || '_er_student'), t, k, false, 'Qxjvkid', tests.rid(p || '_er_prog'), 'QXJV-1234', tests.uid(p || '_owner'));
   -- job CP: a campaign's name and text are the owner's own words, not tied to one person (a campaign has many people): they carry a business canary, erased with the workspace and swept
   insert into public.campaigns (id, tenant_id, name, kind, language, message_text, steps, created_by) values
     (tests.rid(p || '_er_cmp'), t, 'Cmpq7 reminder', 'payment_due', 'en', 'Dear {{name}}, Cmpq7 shop reminds you of {{amount}} due on {{due_date}}', '[{"offset_days": 0, "time": "10:00"}]'::jsonb, tests.uid(p || '_owner'));
@@ -652,7 +656,9 @@ create or replace function tests.open_gate(p text) returns void
 language plpgsql as $$
 begin
   perform app.operator_open_real_data_gate((select slug from public.tenants where id = tests.tid(p)),
-    'adr:0014', 'doc:hosting-staging', 'doc:dpdp-review', 'doc:restore-drill');
+    'adr:0014', 'doc:hosting-staging',
+    -- job CR: a workspace that keeps student records (module `programmes`) opens only with the CHILDREN's review reference
+    case when app.module_enabled(tests.tid(p), 'programmes') then 'dpdp-children:review' else 'doc:dpdp-review' end, 'doc:restore-drill');
 end $$;
 
 

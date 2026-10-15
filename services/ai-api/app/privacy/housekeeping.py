@@ -3,6 +3,7 @@
   1. accounts whose 14-day cooling-off has ended are deleted (the database decides which, and refuses an account that has become the only Owner of a workspace)
   2. export files past their 24 hours are deleted from storage, and only then marked removed (so a failed delete is tried again)
   3. the retention clean-up: old chats, voice transcripts, enquiries, scheduler rows and audit rows, for the workspaces whose Owner set an age (the database throttles it to once an hour per workspace)
+  4. job CR: the students who left more than the school's retention months ago are erased (the label and the admission number; the money records stay)
 
 Counts only are logged. A failing step is counted and the next one still runs; a refused token ends the pass (the worker signs in again)."""
 
@@ -33,18 +34,19 @@ class HousekeepingResult:
     export_files_removed: int = 0
     export_files_failed: int = 0
     retention_workspaces: int = 0
+    students_erased: int = 0
     errors: int = 0
 
     def line(self) -> str:
         return (
             f"privacy housekeeping: accounts_deleted={self.accounts_deleted} accounts_blocked={self.accounts_blocked} "
             f"export_files_removed={self.export_files_removed} export_files_failed={self.export_files_failed} "
-            f"retention_workspaces={self.retention_workspaces} errors={self.errors}"
+            f"retention_workspaces={self.retention_workspaces} students_erased={self.students_erased} errors={self.errors}"
         )
 
     def idle(self) -> bool:
         return not any(
-            (self.accounts_deleted, self.accounts_blocked, self.export_files_removed, self.export_files_failed, self.retention_workspaces, self.errors)
+            (self.accounts_deleted, self.accounts_blocked, self.export_files_removed, self.export_files_failed, self.retention_workspaces, self.students_erased, self.errors)
         )
 
 
@@ -78,6 +80,7 @@ class Housekeeping:
             ("accounts", lambda: self._accounts(token, result)),
             ("exports", lambda: self._exports(token, result)),
             ("retention", lambda: self._retention(token, result)),
+            ("students", lambda: self._students(token, result)),
         )
         for name, step in steps:
             try:
@@ -113,3 +116,7 @@ class Housekeeping:
     def _retention(self, token: str, result: HousekeepingResult) -> None:
         answer = self._repository.run_retention(token, RETENTION_WORKSPACES_PER_PASS)
         result.retention_workspaces += int(answer.get("workspaces", 0))
+
+    def _students(self, token: str, result: HousekeepingResult) -> None:
+        answer = self._repository.run_students_retention(token, RETENTION_WORKSPACES_PER_PASS)
+        result.students_erased += int(answer.get("erased", 0))

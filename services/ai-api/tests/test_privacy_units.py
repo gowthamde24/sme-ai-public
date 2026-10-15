@@ -166,7 +166,7 @@ def test_housekeeping_asks_for_the_three_things_and_counts() -> None:
     storage = FakeStorage()
     result = _house(db, storage).run(TOKEN)
     assert (result.accounts_deleted, result.accounts_blocked, result.export_files_removed, result.retention_workspaces, result.errors) == (2, 1, 2, 3, 0)
-    assert [c[0] for c in db.calls] == ["execute_account_deletions", "expired_exports", "export_cleaned", "export_cleaned", "run_retention"]
+    assert [c[0] for c in db.calls] == ["execute_account_deletions", "expired_exports", "export_cleaned", "export_cleaned", "run_retention", "run_students_retention"]
     assert db.cleaned == [str(e1), str(e2)] and set(db.tokens) == {TOKEN}
     assert [c for c in storage.calls if c[0] == "remove_checked"][0][1:3] == (TOKEN, "exp-u")
 
@@ -225,7 +225,7 @@ def test_the_worker_does_the_housekeeping_after_its_tick_even_with_nothing_to_se
     privacy = FakePrivacy()
     result = _worker(FakeScheduler(), _house(privacy)).tick_once()
     assert result is not None
-    assert [c[0] for c in privacy.calls] == ["execute_account_deletions", "expired_exports", "run_retention"]
+    assert [c[0] for c in privacy.calls] == ["execute_account_deletions", "expired_exports", "run_retention", "run_students_retention"]
 
 
 def test_a_housekeeping_crash_does_not_fail_the_tick(caplog: pytest.LogCaptureFixture) -> None:

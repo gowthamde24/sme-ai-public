@@ -46,6 +46,7 @@ class FakeScheduler:
         ] = {}  # tenant -> the answer of each successive claim
         self.due: dict[uuid.UUID, list[dict[str, Any]]] = {}
         self.queue_answer: dict[str, Any] = {"status": "queued", "replayed": False}
+        self.voice_plans: dict[uuid.UUID, dict[str, Any]] = {}  # message id -> what scheduler_voice_plan answers (job CV)
         self.no_shows: dict[uuid.UUID, int] = {}
         self.campaign: dict[uuid.UUID, dict[str, int]] = {}  # tenant -> the counts of the campaign run
         self.fail: dict[str, Exception] = {}  # function -> raise this (once, unless sticky)
@@ -116,6 +117,15 @@ class FakeScheduler:
     def queue_reminder(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
         self._log("scheduler_queue_reminder", token, args)
         return dict(self.queue_answer)
+
+    # job CV: the voice note of a claimed message
+    def voice_plan(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> dict[str, Any]:
+        self._log("scheduler_voice_plan", token, {"tenant": str(tenant_id), "message": str(message_id)}, tenant_id)
+        return dict(self.voice_plans.get(message_id, {"voice": False, "reason": "voice_off"}))
+
+    def voice_record(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        self._log("scheduler_voice_record", token, args)
+        return {"state": "ok"}
 
     def mark_no_shows(self, token: str, tenant_id: uuid.UUID) -> int:
         self._log("scheduler_mark_no_shows", token, {"tenant": str(tenant_id)}, tenant_id)

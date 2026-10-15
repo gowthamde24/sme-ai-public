@@ -1,0 +1,4174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "education.schema.json",
+  "title": "The education pack: programmes, students, admissions, fees (job CR)",
+  "description": "Generated from services/ai-api/app/education/models.py by `make contracts`. Requests forbid unknown properties: a date of birth, a photograph, an address, an identity number, a note or an amount a model made can never be sent.",
+  "$defs": {
+    "AdjustmentIn": {
+      "additionalProperties": false,
+      "properties": {
+        "direction": {
+          "enum": [
+            "debit",
+            "credit"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 10000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "reason_code": {
+          "enum": [
+            "correction",
+            "waiver",
+            "rounding",
+            "other"
+          ],
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Due Date"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "direction",
+        "amount_paise",
+        "reason_code"
+      ],
+      "title": "AdjustmentIn",
+      "type": "object"
+    },
+    "AdjustmentRecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "format": "uuid",
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entry_id",
+        "replayed"
+      ],
+      "title": "AdjustmentRecordedOut",
+      "type": "object"
+    },
+    "AdmissionCreatedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "source": {
+          "enum": [
+            "whatsapp",
+            "walk_in",
+            "website",
+            "ad",
+            "referral",
+            "other"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "admitted",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lost Reason"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Student Id"
+        },
+        "stage_at": {
+          "format": "date-time",
+          "title": "Stage At",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "visits": {
+          "title": "Visits",
+          "type": "integer"
+        },
+        "next_visit": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Visit"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "contact_id",
+        "contact_name",
+        "programme_id",
+        "programme_name",
+        "source",
+        "stage",
+        "lost_reason",
+        "student_id",
+        "stage_at",
+        "created_at",
+        "visits",
+        "next_visit",
+        "created"
+      ],
+      "title": "AdmissionCreatedOut",
+      "type": "object"
+    },
+    "AdmissionDetailOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "source": {
+          "enum": [
+            "whatsapp",
+            "walk_in",
+            "website",
+            "ad",
+            "referral",
+            "other"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "admitted",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lost Reason"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Student Id"
+        },
+        "stage_at": {
+          "format": "date-time",
+          "title": "Stage At",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "visits": {
+          "title": "Visits",
+          "type": "integer"
+        },
+        "next_visit": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Visit"
+        },
+        "events": {
+          "items": {
+            "$ref": "#/$defs/AdmissionEventOut"
+          },
+          "title": "Events",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "contact_id",
+        "contact_name",
+        "programme_id",
+        "programme_name",
+        "source",
+        "stage",
+        "lost_reason",
+        "student_id",
+        "stage_at",
+        "created_at",
+        "visits",
+        "next_visit",
+        "events"
+      ],
+      "title": "AdmissionDetailOut",
+      "type": "object"
+    },
+    "AdmissionEventOut": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "admitted",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lost Reason"
+        },
+        "at": {
+          "format": "date-time",
+          "title": "At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stage",
+        "lost_reason",
+        "at"
+      ],
+      "title": "AdmissionEventOut",
+      "type": "object"
+    },
+    "AdmissionIn": {
+      "additionalProperties": false,
+      "description": "Start an enquiry for a parent or guardian: an existing contact (`contact_id`), or a new one (`guardian_name` and `guardian_phone`; the number is the parent's, never a child's). No child is stored until admitted.",
+      "properties": {
+        "source": {
+          "enum": [
+            "whatsapp",
+            "walk_in",
+            "website",
+            "ad",
+            "referral",
+            "other"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Programme Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "guardian_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guardian Name"
+        },
+        "guardian_phone": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 3,
+              "pattern": "^[0-9+ ()-]+$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guardian Phone"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "title": "AdmissionIn",
+      "type": "object"
+    },
+    "AdmissionOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "source": {
+          "enum": [
+            "whatsapp",
+            "walk_in",
+            "website",
+            "ad",
+            "referral",
+            "other"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "admitted",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lost Reason"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Student Id"
+        },
+        "stage_at": {
+          "format": "date-time",
+          "title": "Stage At",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "visits": {
+          "title": "Visits",
+          "type": "integer"
+        },
+        "next_visit": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Visit"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "contact_id",
+        "contact_name",
+        "programme_id",
+        "programme_name",
+        "source",
+        "stage",
+        "lost_reason",
+        "student_id",
+        "stage_at",
+        "created_at",
+        "visits",
+        "next_visit"
+      ],
+      "title": "AdmissionOut",
+      "type": "object"
+    },
+    "AdmissionsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/AdmissionOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "AdmissionsOut",
+      "type": "object"
+    },
+    "AdmitIn": {
+      "additionalProperties": false,
+      "description": "Admitted: the enquiry becomes a student (the guardian is the enquiry's contact; an adult student IS that contact) and, with `plan_id`, the fee plan is assigned. Both ids are the caller's, so a retry is safe.",
+      "properties": {
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "is_adult": {
+          "default": false,
+          "title": "Is Adult",
+          "type": "boolean"
+        },
+        "child_label": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Child Label"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "admission_no": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._-]{0,29}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Admission No"
+        },
+        "plan_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plan Id"
+        },
+        "assignment_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assignment Id"
+        },
+        "joined_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Joined On"
+        }
+      },
+      "required": [
+        "student_id",
+        "programme_id"
+      ],
+      "title": "AdmitIn",
+      "type": "object"
+    },
+    "AdmittedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "source": {
+          "enum": [
+            "whatsapp",
+            "walk_in",
+            "website",
+            "ad",
+            "referral",
+            "other"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "admitted",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lost Reason"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Student Id"
+        },
+        "stage_at": {
+          "format": "date-time",
+          "title": "Stage At",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "visits": {
+          "title": "Visits",
+          "type": "integer"
+        },
+        "next_visit": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Visit"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        },
+        "student_created": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Created"
+        },
+        "fee_assignment": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Fee Assignment"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "contact_id",
+        "contact_name",
+        "programme_id",
+        "programme_name",
+        "source",
+        "stage",
+        "lost_reason",
+        "student_id",
+        "stage_at",
+        "created_at",
+        "visits",
+        "next_visit",
+        "replayed"
+      ],
+      "title": "AdmittedOut",
+      "type": "object"
+    },
+    "AgeingOut": {
+      "additionalProperties": false,
+      "description": "What is still open, by how old the invoice is (days since the invoice date).",
+      "properties": {
+        "d0_30": {
+          "title": "D0 30",
+          "type": "integer"
+        },
+        "d31_60": {
+          "title": "D31 60",
+          "type": "integer"
+        },
+        "d61_90": {
+          "title": "D61 90",
+          "type": "integer"
+        },
+        "d90_plus": {
+          "title": "D90 Plus",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "d0_30",
+        "d31_60",
+        "d61_90",
+        "d90_plus"
+      ],
+      "title": "AgeingOut",
+      "type": "object"
+    },
+    "AssignIn": {
+      "additionalProperties": false,
+      "properties": {
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "assigned_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Assigned On"
+        }
+      },
+      "required": [
+        "student_id",
+        "plan_id"
+      ],
+      "title": "AssignIn",
+      "type": "object"
+    },
+    "AssignedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "assignment_id": {
+          "format": "uuid",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "charges": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Charges"
+        },
+        "total_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Total Paise"
+        },
+        "voided": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Voided"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "student_id",
+        "plan_id",
+        "replayed"
+      ],
+      "title": "AssignedOut",
+      "type": "object"
+    },
+    "AssignmentOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "plan_id": {
+          "format": "uuid",
+          "title": "Plan Id",
+          "type": "string"
+        },
+        "academic_year": {
+          "title": "Academic Year",
+          "type": "string"
+        },
+        "assigned_on": {
+          "format": "date",
+          "title": "Assigned On",
+          "type": "string"
+        },
+        "plan_name": {
+          "title": "Plan Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "plan_id",
+        "academic_year",
+        "assigned_on",
+        "plan_name"
+      ],
+      "title": "AssignmentOut",
+      "type": "object"
+    },
+    "AssignmentVoidedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "assignment_id": {
+          "format": "uuid",
+          "title": "Assignment Id",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        },
+        "charges_voided": {
+          "title": "Charges Voided",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "assignment_id",
+        "voided",
+        "charges_voided"
+      ],
+      "title": "AssignmentVoidedOut",
+      "type": "object"
+    },
+    "AudienceAddedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "added": {
+          "title": "Added",
+          "type": "integer"
+        },
+        "skipped": {
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Skipped",
+          "type": "array"
+        },
+        "recipients": {
+          "title": "Recipients",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "added",
+        "skipped",
+        "recipients"
+      ],
+      "title": "AudienceAddedOut",
+      "type": "object"
+    },
+    "AudienceIn": {
+      "additionalProperties": false,
+      "description": "Who an announcement goes to: every guardian of the students in a section/batch (`group`), a programme, or the whole institution (`all`), with the date of the event, exam or holiday. One message per guardian.",
+      "properties": {
+        "scope": {
+          "enum": [
+            "all",
+            "programme",
+            "group"
+          ],
+          "title": "Scope",
+          "type": "string"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Programme Id"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "date": {
+          "format": "date",
+          "title": "Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope",
+        "date"
+      ],
+      "title": "AudienceIn",
+      "type": "object"
+    },
+    "ColumnOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "text",
+            "count",
+            "paise",
+            "percent"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ],
+      "title": "ColumnOut",
+      "type": "object"
+    },
+    "ConcessionIn": {
+      "additionalProperties": false,
+      "description": "An amount, or a percentage (1 to 100) of what was charged to the student; a reason code. The Owner or an Admin, with a second factor.",
+      "properties": {
+        "mode": {
+          "enum": [
+            "amount",
+            "percent"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "value": {
+          "maximum": 10000000000,
+          "minimum": 1,
+          "title": "Value",
+          "type": "integer"
+        },
+        "reason_code": {
+          "enum": [
+            "scholarship",
+            "sibling",
+            "staff_ward",
+            "hardship",
+            "merit",
+            "other"
+          ],
+          "title": "Reason Code",
+          "type": "string"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._ -]{0,39}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        }
+      },
+      "required": [
+        "mode",
+        "value",
+        "reason_code"
+      ],
+      "title": "ConcessionIn",
+      "type": "object"
+    },
+    "ConcessionRecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "format": "uuid",
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entry_id",
+        "amount_paise",
+        "replayed"
+      ],
+      "title": "ConcessionRecordedOut",
+      "type": "object"
+    },
+    "ErasedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "erased": {
+          "title": "Erased",
+          "type": "boolean"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "student_id",
+        "erased",
+        "replayed"
+      ],
+      "title": "ErasedOut",
+      "type": "object"
+    },
+    "FeeEntriesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Account Id"
+        },
+        "entries": {
+          "items": {
+            "$ref": "#/$defs/FeeEntryOut"
+          },
+          "title": "Entries",
+          "type": "array"
+        }
+      },
+      "required": [
+        "account_id",
+        "entries"
+      ],
+      "title": "FeeEntriesOut",
+      "type": "object"
+    },
+    "FeeEntryOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "charge",
+            "payment",
+            "adjustment",
+            "concession"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "direction": {
+          "enum": [
+            "debit",
+            "credit"
+          ],
+          "title": "Direction",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "entry_date": {
+          "format": "date",
+          "title": "Entry Date",
+          "type": "string"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Due Date"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reference"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "cash",
+                "upi",
+                "bank_transfer",
+                "cheque",
+                "card",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Method"
+        },
+        "reason_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason Code"
+        },
+        "receipt_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Receipt No"
+        },
+        "against_entry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Against Entry Id"
+        },
+        "source": {
+          "enum": [
+            "manual",
+            "import"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "kind",
+        "direction",
+        "amount_paise",
+        "entry_date",
+        "due_date",
+        "reference",
+        "method",
+        "reason_code",
+        "receipt_no",
+        "against_entry_id",
+        "source",
+        "voided"
+      ],
+      "title": "FeeEntryOut",
+      "type": "object"
+    },
+    "FeeLineIn": {
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "enum": [
+            "tuition",
+            "admission",
+            "transport",
+            "hostel",
+            "exam",
+            "books",
+            "other"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "instalment_no": {
+          "maximum": 24,
+          "minimum": 1,
+          "title": "Instalment No",
+          "type": "integer"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 100000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "head",
+        "instalment_no",
+        "due_date",
+        "amount_paise"
+      ],
+      "title": "FeeLineIn",
+      "type": "object"
+    },
+    "FeeLineOut": {
+      "additionalProperties": false,
+      "properties": {
+        "head": {
+          "enum": [
+            "tuition",
+            "admission",
+            "transport",
+            "hostel",
+            "exam",
+            "books",
+            "other"
+          ],
+          "title": "Head",
+          "type": "string"
+        },
+        "instalment_no": {
+          "title": "Instalment No",
+          "type": "integer"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "head",
+        "instalment_no",
+        "due_date",
+        "amount_paise"
+      ],
+      "title": "FeeLineOut",
+      "type": "object"
+    },
+    "FeePlanDetailOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Id"
+        },
+        "academic_year": {
+          "title": "Academic Year",
+          "type": "string"
+        },
+        "late_fee_kind": {
+          "enum": [
+            "none",
+            "fixed",
+            "per_day"
+          ],
+          "title": "Late Fee Kind",
+          "type": "string"
+        },
+        "late_fee_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Late Fee Paise"
+        },
+        "late_fee_grace_days": {
+          "title": "Late Fee Grace Days",
+          "type": "integer"
+        },
+        "late_fee_cap_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Late Fee Cap Paise"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "assigned": {
+          "title": "Assigned",
+          "type": "integer"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/FeeLineOut"
+          },
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "programme_id",
+        "group_id",
+        "academic_year",
+        "late_fee_kind",
+        "late_fee_paise",
+        "late_fee_grace_days",
+        "late_fee_cap_paise",
+        "active",
+        "created_at",
+        "total_paise",
+        "assigned",
+        "lines"
+      ],
+      "title": "FeePlanDetailOut",
+      "type": "object"
+    },
+    "FeePlanIn": {
+      "additionalProperties": false,
+      "description": "A plan for a programme (and optionally one group) in an academic year: the heads, the instalments with their due dates, and an optional late-fee rule. `fixed` = one amount per late instalment; `per_day` =\nthat amount for each day late, never above `late_fee_cap_paise`. A plan that a student has been assigned cannot change (make a new plan).",
+      "properties": {
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "academic_year": {
+          "pattern": "^20[0-9]{2}-[0-9]{2}$",
+          "title": "Academic Year",
+          "type": "string"
+        },
+        "late_fee_kind": {
+          "default": "none",
+          "enum": [
+            "none",
+            "fixed",
+            "per_day"
+          ],
+          "title": "Late Fee Kind",
+          "type": "string"
+        },
+        "late_fee_paise": {
+          "anyOf": [
+            {
+              "maximum": 100000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Late Fee Paise"
+        },
+        "late_fee_grace_days": {
+          "default": 0,
+          "maximum": 60,
+          "minimum": 0,
+          "title": "Late Fee Grace Days",
+          "type": "integer"
+        },
+        "late_fee_cap_paise": {
+          "anyOf": [
+            {
+              "maximum": 1000000000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Late Fee Cap Paise"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        },
+        "lines": {
+          "items": {
+            "$ref": "#/$defs/FeeLineIn"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Lines",
+          "type": "array"
+        }
+      },
+      "required": [
+        "name",
+        "programme_id",
+        "academic_year",
+        "lines"
+      ],
+      "title": "FeePlanIn",
+      "type": "object"
+    },
+    "FeePlanOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Id"
+        },
+        "academic_year": {
+          "title": "Academic Year",
+          "type": "string"
+        },
+        "late_fee_kind": {
+          "enum": [
+            "none",
+            "fixed",
+            "per_day"
+          ],
+          "title": "Late Fee Kind",
+          "type": "string"
+        },
+        "late_fee_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Late Fee Paise"
+        },
+        "late_fee_grace_days": {
+          "title": "Late Fee Grace Days",
+          "type": "integer"
+        },
+        "late_fee_cap_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Late Fee Cap Paise"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "assigned": {
+          "title": "Assigned",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "programme_id",
+        "group_id",
+        "academic_year",
+        "late_fee_kind",
+        "late_fee_paise",
+        "late_fee_grace_days",
+        "late_fee_cap_paise",
+        "active",
+        "created_at",
+        "total_paise",
+        "assigned"
+      ],
+      "title": "FeePlanOut",
+      "type": "object"
+    },
+    "FeePlansOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/FeePlanOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "FeePlansOut",
+      "type": "object"
+    },
+    "FeeReceiptOut": {
+      "additionalProperties": false,
+      "description": "A fee receipt, ready to print or to send: the number, the date, the amount, the method, who paid (the guardian), for whom (the student), what it was set against and the balance after it.",
+      "properties": {
+        "receipt_no": {
+          "title": "Receipt No",
+          "type": "string"
+        },
+        "received_on": {
+          "format": "date",
+          "title": "Received On",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "cash",
+            "upi",
+            "bank_transfer",
+            "cheque",
+            "card",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "voided": {
+          "title": "Voided",
+          "type": "boolean"
+        },
+        "business_name": {
+          "title": "Business Name",
+          "type": "string"
+        },
+        "paid_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Paid By"
+        },
+        "student": {
+          "$ref": "#/$defs/StudentOut"
+        },
+        "against": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Against"
+        },
+        "balance_after_paise": {
+          "title": "Balance After Paise",
+          "type": "integer"
+        },
+        "recorded_at": {
+          "format": "date-time",
+          "title": "Recorded At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "receipt_no",
+        "received_on",
+        "amount_paise",
+        "method",
+        "voided",
+        "business_name",
+        "paid_by",
+        "student",
+        "against",
+        "balance_after_paise",
+        "recorded_at"
+      ],
+      "title": "FeeReceiptOut",
+      "type": "object"
+    },
+    "FeeStatementBody": {
+      "additionalProperties": false,
+      "properties": {
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Id"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Id"
+        },
+        "company_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Company Id"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Contact Id"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "invoiced_paise": {
+          "title": "Invoiced Paise",
+          "type": "integer"
+        },
+        "paid_paise": {
+          "title": "Paid Paise",
+          "type": "integer"
+        },
+        "payments_paise": {
+          "default": 0,
+          "title": "Payments Paise",
+          "type": "integer"
+        },
+        "concessions_paise": {
+          "default": 0,
+          "title": "Concessions Paise",
+          "type": "integer"
+        },
+        "adjustments_paise": {
+          "default": 0,
+          "title": "Adjustments Paise",
+          "type": "integer"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "credit_paise": {
+          "title": "Credit Paise",
+          "type": "integer"
+        },
+        "overdue_paise": {
+          "title": "Overdue Paise",
+          "type": "integer"
+        },
+        "ageing": {
+          "$ref": "#/$defs/AgeingOut"
+        },
+        "overdue_ageing": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/OverdueAgeingOut"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "open_invoices": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/OpenInvoiceOut"
+          },
+          "title": "Open Invoices",
+          "type": "array"
+        },
+        "credit_limit_paise": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Credit Limit Paise"
+        },
+        "over_limit": {
+          "default": false,
+          "title": "Over Limit",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "as_of",
+        "invoiced_paise",
+        "paid_paise",
+        "outstanding_paise",
+        "credit_paise",
+        "overdue_paise",
+        "ageing"
+      ],
+      "title": "FeeStatementBody",
+      "type": "object"
+    },
+    "FeeStatementOut": {
+      "additionalProperties": false,
+      "properties": {
+        "student": {
+          "$ref": "#/$defs/StudentOut"
+        },
+        "assignment": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/AssignmentOut"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "statement": {
+          "$ref": "#/$defs/FeeStatementBody"
+        }
+      },
+      "required": [
+        "student",
+        "assignment",
+        "statement"
+      ],
+      "title": "FeeStatementOut",
+      "type": "object"
+    },
+    "GroupIn": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 30,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "timing": {
+          "anyOf": [
+            {
+              "maxLength": 40,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Timing"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "GroupIn",
+      "type": "object"
+    },
+    "GroupOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "timing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timing"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "students": {
+          "title": "Students",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "label",
+        "timing",
+        "active",
+        "students"
+      ],
+      "title": "GroupOut",
+      "type": "object"
+    },
+    "GroupSavedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "timing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Timing"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "programme_id",
+        "label",
+        "timing",
+        "active",
+        "created"
+      ],
+      "title": "GroupSavedOut",
+      "type": "object"
+    },
+    "GuardianFeesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "students": {
+          "items": {
+            "$ref": "#/$defs/GuardianStudentFeesOut"
+          },
+          "title": "Students",
+          "type": "array"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "overdue_paise": {
+          "title": "Overdue Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "contact_id",
+        "as_of",
+        "students",
+        "outstanding_paise",
+        "overdue_paise"
+      ],
+      "title": "GuardianFeesOut",
+      "type": "object"
+    },
+    "GuardianStudentFeesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Display Name"
+        },
+        "outstanding_paise": {
+          "title": "Outstanding Paise",
+          "type": "integer"
+        },
+        "overdue_paise": {
+          "title": "Overdue Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "student_id",
+        "display_name",
+        "outstanding_paise",
+        "overdue_paise"
+      ],
+      "title": "GuardianStudentFeesOut",
+      "type": "object"
+    },
+    "ImportRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "row": {
+          "title": "Row",
+          "type": "integer"
+        },
+        "outcome": {
+          "enum": [
+            "created",
+            "skipped_duplicate",
+            "rejected"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reason"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Id"
+        }
+      },
+      "required": [
+        "row",
+        "outcome"
+      ],
+      "title": "ImportRowOut",
+      "type": "object"
+    },
+    "KpiOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "enum": [
+            "paise",
+            "count",
+            "percent",
+            "seconds"
+          ],
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "unit"
+      ],
+      "title": "KpiOut",
+      "type": "object"
+    },
+    "LateFeeRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "charge_id": {
+          "format": "uuid",
+          "title": "Charge Id",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "days_late": {
+          "title": "Days Late",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "student_id",
+        "charge_id",
+        "amount_paise",
+        "days_late"
+      ],
+      "title": "LateFeeRowOut",
+      "type": "object"
+    },
+    "LateFeesPostedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "posted": {
+          "title": "Posted",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "as_of",
+        "posted",
+        "total_paise"
+      ],
+      "title": "LateFeesPostedOut",
+      "type": "object"
+    },
+    "LateFeesPreviewOut": {
+      "additionalProperties": false,
+      "properties": {
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "count": {
+          "title": "Count",
+          "type": "integer"
+        },
+        "total_paise": {
+          "title": "Total Paise",
+          "type": "integer"
+        },
+        "rows": {
+          "items": {
+            "$ref": "#/$defs/LateFeeRowOut"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "as_of",
+        "count",
+        "total_paise",
+        "rows"
+      ],
+      "title": "LateFeesPreviewOut",
+      "type": "object"
+    },
+    "OpenInvoiceOut": {
+      "additionalProperties": false,
+      "properties": {
+        "invoice_id": {
+          "format": "uuid",
+          "title": "Invoice Id",
+          "type": "string"
+        },
+        "entry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entry Id"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "enum": [
+                "charge",
+                "adjustment"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Kind"
+        },
+        "invoice_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Invoice No"
+        },
+        "reference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reference"
+        },
+        "invoice_date": {
+          "format": "date",
+          "title": "Invoice Date",
+          "type": "string"
+        },
+        "due_date": {
+          "format": "date",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "amount_paise": {
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "open_paise": {
+          "title": "Open Paise",
+          "type": "integer"
+        },
+        "age_days": {
+          "title": "Age Days",
+          "type": "integer"
+        },
+        "overdue_days": {
+          "title": "Overdue Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "invoice_id",
+        "invoice_date",
+        "due_date",
+        "amount_paise",
+        "open_paise",
+        "age_days",
+        "overdue_days"
+      ],
+      "title": "OpenInvoiceOut",
+      "type": "object"
+    },
+    "OverdueAgeingOut": {
+      "additionalProperties": false,
+      "description": "What is still open, by how many days it is past its DUE date (`not_due` is not yet due).",
+      "properties": {
+        "not_due": {
+          "title": "Not Due",
+          "type": "integer"
+        },
+        "d1_30": {
+          "title": "D1 30",
+          "type": "integer"
+        },
+        "d31_60": {
+          "title": "D31 60",
+          "type": "integer"
+        },
+        "d61_90": {
+          "title": "D61 90",
+          "type": "integer"
+        },
+        "d90_plus": {
+          "title": "D90 Plus",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "not_due",
+        "d1_30",
+        "d31_60",
+        "d61_90",
+        "d90_plus"
+      ],
+      "title": "OverdueAgeingOut",
+      "type": "object"
+    },
+    "PaymentIn": {
+      "additionalProperties": false,
+      "properties": {
+        "received_on": {
+          "format": "date",
+          "title": "Received On",
+          "type": "string"
+        },
+        "amount_paise": {
+          "maximum": 10000000000,
+          "minimum": 1,
+          "title": "Amount Paise",
+          "type": "integer"
+        },
+        "method": {
+          "enum": [
+            "cash",
+            "upi",
+            "bank_transfer",
+            "cheque",
+            "card",
+            "other"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "against_entry_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Against Entry Id"
+        }
+      },
+      "required": [
+        "received_on",
+        "amount_paise",
+        "method"
+      ],
+      "title": "PaymentIn",
+      "type": "object"
+    },
+    "PaymentRecordedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "entry_id": {
+          "format": "uuid",
+          "title": "Entry Id",
+          "type": "string"
+        },
+        "receipt_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Receipt No"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "entry_id",
+        "receipt_no",
+        "replayed"
+      ],
+      "title": "PaymentRecordedOut",
+      "type": "object"
+    },
+    "PendingListOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/PendingRowOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "PendingListOut",
+      "type": "object"
+    },
+    "PendingRowOut": {
+      "additionalProperties": false,
+      "properties": {
+        "student_id": {
+          "format": "uuid",
+          "title": "Student Id",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Display Name"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "group_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Label"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "pending_paise": {
+          "title": "Pending Paise",
+          "type": "integer"
+        },
+        "due_paise": {
+          "title": "Due Paise",
+          "type": "integer"
+        },
+        "overdue_days": {
+          "title": "Overdue Days",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "student_id",
+        "display_name",
+        "programme_name",
+        "group_label",
+        "contact_id",
+        "contact_name",
+        "pending_paise",
+        "due_paise",
+        "overdue_days"
+      ],
+      "title": "PendingRowOut",
+      "type": "object"
+    },
+    "PointOut": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "format": "date",
+          "title": "Day",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "day",
+        "value"
+      ],
+      "title": "PointOut",
+      "type": "object"
+    },
+    "ProfileIn": {
+      "additionalProperties": false,
+      "description": "The institution: its type, the month its academic year starts, up to six terms, the languages parents use, and (optional, the Owner's, with a second factor) how many months after a student leaves their record\nis erased automatically (null = never automatically; the lawyer sets the number).",
+      "properties": {
+        "institution_type": {
+          "enum": [
+            "school",
+            "junior_college",
+            "degree_college",
+            "university",
+            "coaching",
+            "training"
+          ],
+          "title": "Institution Type",
+          "type": "string"
+        },
+        "year_start_month": {
+          "maximum": 12,
+          "minimum": 1,
+          "title": "Year Start Month",
+          "type": "integer"
+        },
+        "terms": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TermIn"
+          },
+          "maxItems": 6,
+          "title": "Terms",
+          "type": "array"
+        },
+        "parent_languages": {
+          "items": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn",
+              "ta"
+            ],
+            "type": "string"
+          },
+          "maxItems": 5,
+          "minItems": 1,
+          "title": "Parent Languages",
+          "type": "array"
+        },
+        "student_retention_months": {
+          "anyOf": [
+            {
+              "maximum": 120,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Retention Months"
+        }
+      },
+      "required": [
+        "institution_type",
+        "year_start_month",
+        "parent_languages"
+      ],
+      "title": "ProfileIn",
+      "type": "object"
+    },
+    "ProfileOut": {
+      "additionalProperties": false,
+      "properties": {
+        "configured": {
+          "title": "Configured",
+          "type": "boolean"
+        },
+        "institution_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "school",
+                "junior_college",
+                "degree_college",
+                "university",
+                "coaching",
+                "training"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Institution Type"
+        },
+        "year_start_month": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Year Start Month"
+        },
+        "terms": {
+          "default": [],
+          "items": {
+            "$ref": "#/$defs/TermOut"
+          },
+          "title": "Terms",
+          "type": "array"
+        },
+        "parent_languages": {
+          "default": [],
+          "items": {
+            "enum": [
+              "en",
+              "te",
+              "hi",
+              "kn",
+              "ta"
+            ],
+            "type": "string"
+          },
+          "title": "Parent Languages",
+          "type": "array"
+        },
+        "student_retention_months": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Retention Months"
+        },
+        "updated_at": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Updated At"
+        }
+      },
+      "required": [
+        "configured"
+      ],
+      "title": "ProfileOut",
+      "type": "object"
+    },
+    "ProgrammeIn": {
+      "additionalProperties": false,
+      "description": "A class set (Class 1 to 12) or a course (B.Com). `group_kind` says what it is divided into: sections (A, B), years, semesters, batches (with a timing) or `none`. The kind never changes.",
+      "properties": {
+        "name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "class",
+            "course"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "group_kind": {
+          "enum": [
+            "section",
+            "year",
+            "semester",
+            "batch",
+            "none"
+          ],
+          "title": "Group Kind",
+          "type": "string"
+        },
+        "active": {
+          "default": true,
+          "title": "Active",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "kind",
+        "group_kind"
+      ],
+      "title": "ProgrammeIn",
+      "type": "object"
+    },
+    "ProgrammeOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "class",
+            "course"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "group_kind": {
+          "enum": [
+            "section",
+            "year",
+            "semester",
+            "batch",
+            "none"
+          ],
+          "title": "Group Kind",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "students": {
+          "title": "Students",
+          "type": "integer"
+        },
+        "groups": {
+          "items": {
+            "$ref": "#/$defs/GroupOut"
+          },
+          "title": "Groups",
+          "type": "array"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "group_kind",
+        "active",
+        "students",
+        "groups"
+      ],
+      "title": "ProgrammeOut",
+      "type": "object"
+    },
+    "ProgrammeSavedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "kind": {
+          "enum": [
+            "class",
+            "course"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "group_kind": {
+          "enum": [
+            "section",
+            "year",
+            "semester",
+            "batch",
+            "none"
+          ],
+          "title": "Group Kind",
+          "type": "string"
+        },
+        "active": {
+          "title": "Active",
+          "type": "boolean"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "kind",
+        "group_kind",
+        "active",
+        "created"
+      ],
+      "title": "ProgrammeSavedOut",
+      "type": "object"
+    },
+    "ProgrammesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/ProgrammeOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "ProgrammesOut",
+      "type": "object"
+    },
+    "ReportOut": {
+      "additionalProperties": false,
+      "description": "Figures, typed tables and series by day. `from` and `to` are the India days the figures cover (`as_of` the day they are as of).",
+      "properties": {
+        "report": {
+          "title": "Report",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "from": {
+          "format": "date",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "format": "date",
+          "title": "To",
+          "type": "string"
+        },
+        "kpis": {
+          "items": {
+            "$ref": "#/$defs/KpiOut"
+          },
+          "title": "Kpis",
+          "type": "array"
+        },
+        "tables": {
+          "items": {
+            "$ref": "#/$defs/TableOut"
+          },
+          "title": "Tables",
+          "type": "array"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/SeriesOut"
+          },
+          "title": "Series",
+          "type": "array"
+        }
+      },
+      "required": [
+        "report",
+        "as_of",
+        "from",
+        "to",
+        "kpis",
+        "tables",
+        "series"
+      ],
+      "title": "ReportOut",
+      "type": "object"
+    },
+    "SeriesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/PointOut"
+          },
+          "title": "Points",
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "points"
+      ],
+      "title": "SeriesOut",
+      "type": "object"
+    },
+    "StageChangedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "lead_id": {
+          "format": "uuid",
+          "title": "Lead Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "programme_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "source": {
+          "enum": [
+            "whatsapp",
+            "walk_in",
+            "website",
+            "ad",
+            "referral",
+            "other"
+          ],
+          "title": "Source",
+          "type": "string"
+        },
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "admitted",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lost Reason"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Student Id"
+        },
+        "stage_at": {
+          "format": "date-time",
+          "title": "Stage At",
+          "type": "string"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "visits": {
+          "title": "Visits",
+          "type": "integer"
+        },
+        "next_visit": {
+          "anyOf": [
+            {
+              "format": "date-time",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Visit"
+        },
+        "replayed": {
+          "title": "Replayed",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "lead_id",
+        "contact_id",
+        "contact_name",
+        "programme_id",
+        "programme_name",
+        "source",
+        "stage",
+        "lost_reason",
+        "student_id",
+        "stage_at",
+        "created_at",
+        "visits",
+        "next_visit",
+        "replayed"
+      ],
+      "title": "StageChangedOut",
+      "type": "object"
+    },
+    "StageIn": {
+      "additionalProperties": false,
+      "properties": {
+        "stage": {
+          "enum": [
+            "enquiry",
+            "campus_visit",
+            "application",
+            "lost"
+          ],
+          "title": "Stage",
+          "type": "string"
+        },
+        "lost_reason": {
+          "anyOf": [
+            {
+              "enum": [
+                "fees",
+                "distance",
+                "other_school",
+                "not_interested",
+                "no_response",
+                "other"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Lost Reason"
+        }
+      },
+      "required": [
+        "stage"
+      ],
+      "title": "StageIn",
+      "type": "object"
+    },
+    "StatusIn": {
+      "additionalProperties": false,
+      "properties": {
+        "status": {
+          "enum": [
+            "active",
+            "left"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "left_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Left On"
+        }
+      },
+      "required": [
+        "status"
+      ],
+      "title": "StatusIn",
+      "type": "object"
+    },
+    "StudentIn": {
+      "additionalProperties": false,
+      "description": "A student. `contact_id` is the ADULT we write to: the guardian of a child, or the adult student themself (`is_adult` true, no label). A child needs a `child_label` (a first name or initials; no digits). The\ncontact, the kind and the id never change.",
+      "properties": {
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "is_adult": {
+          "default": false,
+          "title": "Is Adult",
+          "type": "boolean"
+        },
+        "child_label": {
+          "anyOf": [
+            {
+              "maxLength": 30,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Child Label"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Id"
+        },
+        "admission_no": {
+          "anyOf": [
+            {
+              "pattern": "^[A-Za-z0-9][A-Za-z0-9/._-]{0,29}$",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Admission No"
+        },
+        "guardian_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guardian Contact Id"
+        },
+        "joined_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Joined On"
+        }
+      },
+      "required": [
+        "contact_id",
+        "programme_id"
+      ],
+      "title": "StudentIn",
+      "type": "object"
+    },
+    "StudentOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "is_adult": {
+          "title": "Is Adult",
+          "type": "boolean"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Display Name"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "guardian_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Guardian Contact Id"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "group_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Label"
+        },
+        "admission_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Admission No"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "left"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "joined_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Joined On"
+        },
+        "left_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Left On"
+        },
+        "erased": {
+          "title": "Erased",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "contact_id",
+        "is_adult",
+        "display_name",
+        "contact_name",
+        "guardian_contact_id",
+        "programme_id",
+        "group_id",
+        "programme_name",
+        "group_label",
+        "admission_no",
+        "status",
+        "joined_on",
+        "left_on",
+        "erased",
+        "created_at",
+        "updated_at"
+      ],
+      "title": "StudentOut",
+      "type": "object"
+    },
+    "StudentSavedOut": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "format": "uuid",
+          "title": "Id",
+          "type": "string"
+        },
+        "contact_id": {
+          "format": "uuid",
+          "title": "Contact Id",
+          "type": "string"
+        },
+        "is_adult": {
+          "title": "Is Adult",
+          "type": "boolean"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Display Name"
+        },
+        "contact_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Contact Name"
+        },
+        "guardian_contact_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Guardian Contact Id"
+        },
+        "programme_id": {
+          "format": "uuid",
+          "title": "Programme Id",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Id"
+        },
+        "programme_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Programme Name"
+        },
+        "group_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Group Label"
+        },
+        "admission_no": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Admission No"
+        },
+        "status": {
+          "enum": [
+            "active",
+            "left"
+          ],
+          "title": "Status",
+          "type": "string"
+        },
+        "joined_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Joined On"
+        },
+        "left_on": {
+          "anyOf": [
+            {
+              "format": "date",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Left On"
+        },
+        "erased": {
+          "title": "Erased",
+          "type": "boolean"
+        },
+        "created_at": {
+          "format": "date-time",
+          "title": "Created At",
+          "type": "string"
+        },
+        "updated_at": {
+          "format": "date-time",
+          "title": "Updated At",
+          "type": "string"
+        },
+        "created": {
+          "title": "Created",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "id",
+        "contact_id",
+        "is_adult",
+        "display_name",
+        "contact_name",
+        "guardian_contact_id",
+        "programme_id",
+        "group_id",
+        "programme_name",
+        "group_label",
+        "admission_no",
+        "status",
+        "joined_on",
+        "left_on",
+        "erased",
+        "created_at",
+        "updated_at",
+        "created"
+      ],
+      "title": "StudentSavedOut",
+      "type": "object"
+    },
+    "StudentsOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/StudentOut"
+          },
+          "title": "Items",
+          "type": "array"
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "items",
+        "next_cursor"
+      ],
+      "title": "StudentsOut",
+      "type": "object"
+    },
+    "TableOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColumnOut"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "items": {},
+            "type": "array"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "columns",
+        "rows"
+      ],
+      "title": "TableOut",
+      "type": "object"
+    },
+    "TermIn": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "maxLength": 40,
+          "minLength": 1,
+          "title": "Label",
+          "type": "string"
+        },
+        "start_month": {
+          "maximum": 12,
+          "minimum": 1,
+          "title": "Start Month",
+          "type": "integer"
+        },
+        "end_month": {
+          "maximum": 12,
+          "minimum": 1,
+          "title": "End Month",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "label",
+        "start_month",
+        "end_month"
+      ],
+      "title": "TermIn",
+      "type": "object"
+    },
+    "TermOut": {
+      "additionalProperties": false,
+      "properties": {
+        "label": {
+          "title": "Label",
+          "type": "string"
+        },
+        "start_month": {
+          "title": "Start Month",
+          "type": "integer"
+        },
+        "end_month": {
+          "title": "End Month",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "label",
+        "start_month",
+        "end_month"
+      ],
+      "title": "TermOut",
+      "type": "object"
+    }
+  }
+}

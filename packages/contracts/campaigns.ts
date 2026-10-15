@@ -196,7 +196,7 @@ export interface EntryVoidedOut {
 export interface LedgerFilterIn {
   due_from: string;
   due_to: string;
-  party?: "company" | "contact" | null;
+  party?: "company" | "contact" | "student" | null;
   min_open_paise?: number | null;
 }
 

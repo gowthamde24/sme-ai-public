@@ -630,6 +630,7 @@ export interface StatementOut {
   account_id?: string | null;
   company_id?: string | null;
   contact_id?: string | null;
+  student_id?: string | null;
   as_of: string;
   invoiced_paise: number;
   paid_paise: number;
@@ -655,6 +656,7 @@ export interface SummaryRowOut {
   account_id?: string | null;
   company_id?: string | null;
   contact_id?: string | null;
+  student_id?: string | null;
   as_of: string;
   invoiced_paise: number;
   paid_paise: number;

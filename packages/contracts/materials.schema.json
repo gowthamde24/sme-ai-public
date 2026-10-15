@@ -4072,6 +4072,19 @@
           "default": null,
           "title": "Contact Id"
         },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Id"
+        },
         "as_of": {
           "format": "date",
           "title": "As Of",
@@ -4234,6 +4247,19 @@
           ],
           "default": null,
           "title": "Contact Id"
+        },
+        "student_id": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Student Id"
         },
         "as_of": {
           "format": "date",

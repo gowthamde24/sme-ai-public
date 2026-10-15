@@ -16,7 +16,7 @@ from datetime import datetime
 from typing import Any
 
 from app.outbox.adapter import ChannelAdapter
-from app.outbox.service import DISPATCH_BATCH, MediaSigner, dispatch_due
+from app.outbox.service import DISPATCH_BATCH, MediaSigner, VoiceMaker, dispatch_due
 from app.scheduler.repository import SchedulerRepository
 from app.tenancy.repository import TokenRejected
 from app.visits import texts
@@ -131,10 +131,17 @@ def _release(
     tenant_id: uuid.UUID,
     tally: Tally,
     sign_media: MediaSigner | None = None,
+    voice: VoiceMaker | None = None,
 ) -> None:
     for _ in range(MAX_BATCHES):
         done = dispatch_due(
-            repository, adapter, token, tenant_id, limit=DISPATCH_BATCH, sign_media=sign_media
+            repository,
+            adapter,
+            token,
+            tenant_id,
+            limit=DISPATCH_BATCH,
+            sign_media=sign_media,
+            voice=voice,
         )
         tally.sent += done.sent
         tally.failed += done.failed
@@ -157,13 +164,14 @@ def run_tenant(
     token: str,
     tenant_id: uuid.UUID,
     sign_media: MediaSigner | None = None,
+    voice: VoiceMaker | None = None,
 ) -> Tally:
     """The four phases for one business, each on its own: a failure in one is counted and the others still run. A refused token ends the tick (the worker signs in again)."""
     tally = Tally()
     phases: tuple[tuple[str, Any], ...] = (
         ("reminders", lambda: _queue_reminders(repository, token, tenant_id, tally)),
         ("campaigns", lambda: _campaigns(repository, token, tenant_id, tally)),
-        ("release", lambda: _release(repository, adapter, token, tenant_id, tally, sign_media)),
+        ("release", lambda: _release(repository, adapter, token, tenant_id, tally, sign_media, voice)),
         ("no_shows", lambda: _no_shows(repository, token, tenant_id, tally)),
     )
     for name, phase in phases:
@@ -184,6 +192,7 @@ def run_tick(
     *,
     interval_seconds: int,
     sign_media: MediaSigner | None = None,
+    voice: VoiceMaker | None = None,
 ) -> TickResult:
     """One pass over every business the database lists. Returns what was done (also reported to the database). Raises only TokenRejected."""
     result = TickResult()
@@ -197,7 +206,7 @@ def run_tick(
         logger.error("scheduler could not list the businesses: %s", exc.__class__.__name__)
     result.tenants = len(tenants)
     for tenant_id in tenants:
-        tally = run_tenant(repository, adapter, token, tenant_id, sign_media)
+        tally = run_tenant(repository, adapter, token, tenant_id, sign_media, voice)
         try:
             repository.record(token, tenant_id, tally.as_dict())
         except TokenRejected:

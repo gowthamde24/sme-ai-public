@@ -20,6 +20,7 @@ from typing import Any
 import httpx
 
 _MESSAGES = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/messages$")
+_MEDIA = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/media$")
 _TEMPLATES = re.compile(r"^/(?P<version>v[0-9.]+)/(?P<id>[0-9]+)/message_templates$")
 
 
@@ -35,6 +36,7 @@ class FakeGraph:
         self.sent: list[dict[str, Any]] = []  # every accepted attempt: {phone_number_id, to, type, payload, wamid}
         self.refused: list[dict[str, Any]] = []
         self.templates_created: list[dict[str, Any]] = []
+        self.media_uploaded: list[dict[str, Any]] = []  # {phone_number_id, content_type, size, id}: the bytes themselves are not kept
         self.approved_templates: set[tuple[str, str]] = set()
         self._last_inbound: dict[str, datetime] = {}
         self._fail: dict[str, list[tuple[int, int]]] = {}
@@ -64,6 +66,9 @@ class FakeGraph:
             return _error(401, 190, "Invalid OAuth access token.")
         if method != "POST":
             return _error(405, 100, "Unsupported request.")
+        media = _MEDIA.match(path)
+        if media:
+            return self._media(media.group("id"), headers, body)
         try:
             payload = json.loads(body)
         except ValueError:
@@ -95,6 +100,10 @@ class FakeGraph:
                 return _error(400, 100, "Invalid parameter: image.")
             if isinstance(image.get("caption"), str) and len(image["caption"]) > 1024:
                 return _error(400, 100, "Invalid parameter: image.caption.")
+        elif kind == "audio":
+            audio = p.get("audio")
+            if not isinstance(audio, dict) or not isinstance(audio.get("id"), str) or audio["id"] not in {m["id"] for m in self.media_uploaded}:
+                return _error(400, 100, "Invalid parameter: audio.")
         elif kind == "template":
             template = p.get("template")
             if not isinstance(template, dict) or not isinstance(template.get("name"), str) or not isinstance(template.get("language"), dict) or not isinstance(template["language"].get("code"), str):
@@ -124,6 +133,21 @@ class FakeGraph:
             wamid = f"wamid.FAKE{self._counter:06d}"
             self.sent.append({"phone_number_id": phone_number_id, "to": digits, "type": kind, "payload": p, "wamid": wamid})
         return 200, {"messaging_product": "whatsapp", "contacts": [{"input": to, "wa_id": digits}], "messages": [{"id": wamid}]}
+
+    def _media(self, phone_number_id: str, headers: dict[str, str], body: bytes) -> tuple[int, dict[str, Any]]:
+        """A multipart upload: accepted when it names messaging_product whatsapp and carries a file of an audio type WhatsApp takes; only its size and type are kept."""
+        content_type = headers.get("content-type", "")
+        if not content_type.startswith("multipart/form-data") or b'name="messaging_product"' not in body or b"whatsapp" not in body or b'name="file"' not in body:
+            return _error(400, 100, "Invalid media upload.")
+        found = re.search(rb'name="file".*?Content-Type: ([a-z/+.-]+)\r\n\r\n', body, re.S)
+        kind = found.group(1).decode() if found else ""
+        if kind not in ("audio/ogg", "audio/mpeg", "audio/aac", "audio/mp4", "audio/amr"):
+            return _error(400, 131053, "Media upload error: unsupported type.")
+        with self._lock:
+            self._counter += 1
+            media_id = f"media.FAKE{self._counter:06d}"
+            self.media_uploaded.append({"phone_number_id": phone_number_id, "content_type": kind, "size": len(body), "id": media_id})
+        return 200, {"id": media_id}
 
     def _template(self, p: dict[str, Any]) -> tuple[int, dict[str, Any]]:
         if not isinstance(p.get("name"), str) or not re.fullmatch(r"[a-z][a-z0-9_]{0,59}", p["name"]) or p.get("category") not in ("UTILITY", "MARKETING", "AUTHENTICATION") or not isinstance(p.get("language"), str):

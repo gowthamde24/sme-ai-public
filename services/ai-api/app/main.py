@@ -43,6 +43,9 @@ from app.dues import errors as dues_errors
 from app.dues.ledger_routes import router as ledger_router
 from app.dues.repository import PostgrestDuesRepository
 from app.dues.routes import router as dues_router
+from app.education import errors as education_errors
+from app.education.repository import PostgrestEducationRepository
+from app.education.routes import router as education_router
 from app.enquiries import repository as enquiries_repo
 from app.enquiries.repository import PostgrestEnquiriesRepository
 from app.enquiries.routes import router as enquiries_router
@@ -104,6 +107,8 @@ from app.privacy.routes import router as privacy_router
 from app.quotes import errors as quote_errors
 from app.quotes.repository import PostgrestQuotesRepository
 from app.quotes.routes import router as quotes_router
+from app.reports.repository import PostgrestReportsRepository
+from app.reports.routes import router as reports_router
 from app.scheduler.repository import PostgrestSchedulerRepository
 from app.scheduler.routes import router as scheduler_router
 from app.sites import errors as site_errors
@@ -126,6 +131,8 @@ from app.visits.repository import PostgrestVisitsRepository
 from app.visits.routes import router as visits_router
 from app.voice.factory import build_voice
 from app.voice.routes import router as voice_router
+from app.voice_notes.repository import PostgrestVoiceNotesRepository
+from app.voice_notes.routes import router as voice_notes_router
 from app.websearch.repository import PostgrestResearchUsageRepository
 from app.websearch.routes import router as research_router
 from app.websearch.wiring import build_research_web
@@ -229,6 +236,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         materials=PostgrestMaterialsRepository(config.rest_url, config.anon_key),
         deliveries=PostgrestDeliveriesRepository(config.rest_url, config.anon_key),
         campaigns=PostgrestCampaignsRepository(config.rest_url, config.anon_key),
+        education=PostgrestEducationRepository(config.rest_url, config.anon_key),
+        reports=PostgrestReportsRepository(config.rest_url, config.anon_key),
+        voice_notes=PostgrestVoiceNotesRepository(config.rest_url, config.anon_key),
     )
 
 
@@ -334,6 +344,22 @@ _REPOSITORY_ERRORS: dict[type[Exception], ApiError] = {
     ),
     campaign_errors.CampaignNotReadyError: ApiError(
         409, "campaign_not_ready", "The campaign is not ready to approve."
+    ),
+    # Education: programmes, students, admissions, fees (job CR). Fixed sentences only.
+    education_errors.AdmissionNumberUsedError: ApiError(
+        409, "admission_no_used", "That admission number is already used by another student."
+    ),
+    education_errors.AdmissionStageError: ApiError(
+        409, "admission_stage", "The enquiry cannot move to that stage from where it is."
+    ),
+    education_errors.FeePlanInUseError: ApiError(
+        409, "fee_plan_in_use", "A student has this fee plan, so it cannot change. Make a new plan."
+    ),
+    education_errors.FeePlanExistsError: ApiError(
+        409, "fee_plan_exists", "The student already has a fee plan for that year."
+    ),
+    education_errors.StudentInactiveError: ApiError(
+        409, "student_not_active", "The student left or was erased, so this cannot be done."
     ),
     material_errors.MaterialQuoteMismatchError: ApiError(
         409,
@@ -690,6 +716,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                 runtime.materials,
                 runtime.deliveries,
                 runtime.campaigns,
+                runtime.education,
+                runtime.reports,
+                runtime.voice_notes,
             ):
                 if isinstance(
                     repository,
@@ -722,7 +751,10 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
                     | PostgrestDuesRepository
                     | PostgrestMaterialsRepository
                     | PostgrestDeliveriesRepository
-                    | PostgrestCampaignsRepository,
+                    | PostgrestCampaignsRepository
+                    | PostgrestEducationRepository
+                    | PostgrestReportsRepository
+                    | PostgrestVoiceNotesRepository,
                 ):
                     repository.close()
 
@@ -865,6 +897,9 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(dues_router)
     app.include_router(ledger_router)
     app.include_router(campaigns_router)
+    app.include_router(education_router)
+    app.include_router(reports_router)
+    app.include_router(voice_notes_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
     app.include_router(deliveries_router)
