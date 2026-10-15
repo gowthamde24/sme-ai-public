@@ -17,8 +17,7 @@ import { PhotoTray, type TraySlot } from "./PhotoTray";
 import { BAND_WORDS, moveItem, rupeesToPaise, soonestExpiry } from "./catalogue-logic";
 import type { EditorActions, ItemOutcome, SaveInput, Uploader } from "./catalogue-types";
 import { photoErrorKey } from "./photo-errors";
-import { preparePhoto } from "./prepare-photo";
-import { uploaderFor } from "./upload-client";
+import type { preparePhoto } from "./prepare-photo";
 
 type Slot =
   | { key: string; kind: "saved"; photoId: string }
@@ -62,8 +61,12 @@ export function ItemEditor(p: ItemEditorProps) {
   const { words, item } = p;
   const router = useRouter();
   const go = p.go ?? ((href: string) => router.push(href));
-  const upload = React.useMemo(() => p.uploader ?? uploaderFor(p.uploadUrl), [p.uploader, p.uploadUrl]);
-  const prepare = p.prepare ?? preparePhoto;
+  // the picture shrinker and the uploader are loaded when the first photo is picked, not with the page (a saree route's first-visit JavaScript has a budget)
+  const upload = React.useMemo<Uploader>(
+    () => p.uploader ?? ((file, photoId, onProgress) => import("./upload-client").then((m) => m.uploaderFor(p.uploadUrl)(file, photoId, onProgress)).catch(() => ({ ok: false as const, code: "network" as const }))),
+    [p.uploader, p.uploadUrl],
+  );
+  const prepare: typeof preparePhoto = p.prepare ?? ((file) => import("./prepare-photo").then((m) => m.preparePhoto(file)).catch(() => ({ ok: false as const, code: "photo_type_unsupported" as const })));
   const owner = p.role === "owner";
 
   const [name, setName] = React.useState(item?.name ?? "");
