@@ -19,11 +19,12 @@ import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 import { getCallList, getCampaign, getPreview, getResults, listCampaigns, listRecipients } from "@/lib/api/campaigns";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { escalate } from "@/lib/api/failure";
+import { listProgrammes } from "@/lib/api/education";
 import { listTemplates } from "@/lib/api/whatsapp";
 import { clock } from "@/lib/clock";
 import { hasModule } from "@/lib/packs/has";
 
-import { addFromLedgerAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction } from "./actions";
+import { addFromLedgerAction, announceAudienceAction, approveCampaignAction, callOutcomeAction, campaignStateAction, clearRecipientsAction, connectCallAction, importRecipientsAction, removeRecipientAction, saveCampaignAction } from "./actions";
 import { campaignWords } from "./campaign-words";
 import type { CampaignContext } from "./prelude";
 
@@ -31,6 +32,9 @@ type Raw = Record<string, string | string[] | undefined>;
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 const PAGE = 50;
 const MAX_CURSOR = 400;
+const ANNOUNCE_KINDS: readonly string[] = ["event", "exam", "holiday"];
+
+const money = (kind: string) => kind === "payment_due" || kind === "fee_due";
 
 const signedOut = (error: unknown): never => {
   if (error instanceof ApiAuthError) redirect("/login");
@@ -39,7 +43,7 @@ const signedOut = (error: unknown): never => {
 };
 
 /** The list of campaigns. */
-export async function CampaignsListPage({ accessToken, tenantId, tenant, raw }: CampaignContext & { raw: Raw }) {
+export async function CampaignsListPage({ accessToken, tenantId, tenant, raw, announcements = false }: CampaignContext & { raw: Raw; announcements?: boolean }) {
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
   const rawAfter = pick(raw.after);
@@ -47,13 +51,14 @@ export async function CampaignsListPage({ accessToken, tenantId, tenant, raw }: 
   let page: Awaited<ReturnType<typeof listCampaigns>> | null = null;
   try {
     page = await listCampaigns(accessToken, tenantId, { after });
+    if (announcements) page = { ...page, items: page.items.filter((c) => ANNOUNCE_KINDS.includes(c.kind)) };
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
     escalate(error);
   }
   return (
     <main className={pageMain} lang={lang}>
-      <CampaignsView base={base} words={campaignWords(lang)} role={tenant.role} campaigns={page?.items ?? null} more={page?.next_cursor ? `${base}/campaigns?after=${encodeURIComponent(page.next_cursor)}` : null} saved={pick(raw.saved) === "1"} />
+      <CampaignsView base={base} words={campaignWords(lang)} role={tenant.role} campaigns={page?.items ?? null} more={page?.next_cursor ? `${base}/${announcements ? "announcements" : "campaigns"}?after=${encodeURIComponent(page.next_cursor)}` : null} saved={pick(raw.saved) === "1"} announcements={announcements} />
     </main>
   );
 }
@@ -68,11 +73,11 @@ async function templatesFor(ctx: CampaignContext) {
 }
 
 /** The form to make a campaign (campaignId = null) or change one. The page makes the id of a new one, so pressing Save twice is a retry. */
-export async function CampaignFormPage(ctx: CampaignContext & { campaignId: string | null }) {
+export async function CampaignFormPage(ctx: CampaignContext & { campaignId: string | null; announcements?: boolean }) {
   const { accessToken, tenantId, pack } = ctx;
   const lang = await getLang();
   const base = `/app/tenants/${tenantId}`;
-  const kinds = kindsFor(pack?.modules ?? []);
+  const kinds = kindsFor(pack?.modules ?? []).filter((k) => !ctx.announcements || ANNOUNCE_KINDS.includes(k));
   if (kinds.length === 0) notFound();
   let campaign = null;
   if (ctx.campaignId) {
@@ -88,8 +93,8 @@ export async function CampaignFormPage(ctx: CampaignContext & { campaignId: stri
   const templates = await templatesFor(ctx);
   return (
     <main className={pageMain} lang={lang}>
-      <h1 className="mb-4 font-display text-[26px] font-semibold leading-[1.15] md:text-4xl">{campaignWords(lang)[campaign ? "camp.edit.title" : "camp.new.title"]}</h1>
-      <CampaignForm base={base} campaignId={id} campaign={campaign} kinds={kinds} templates={templates} words={campaignWords(lang)} actions={{ save: saveCampaignAction.bind(null, tenantId) }} />
+      <h1 className="mb-4 font-display text-[26px] font-semibold leading-[1.15] md:text-4xl">{campaignWords(lang)[campaign ? "camp.edit.title" : ctx.announcements ? "camp.ann.add" : "camp.new.title"]}</h1>
+      <CampaignForm base={base} campaignId={id} campaign={campaign} kinds={kinds} templates={templates} words={campaignWords(lang)} actions={{ save: saveCampaignAction.bind(null, tenantId) }} {...(ctx.announcements ? { afterTab: "audience" } : {})} />
     </main>
   );
 }
@@ -111,7 +116,7 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     return signedOut(error);
   }
   const canEdit = campaign.status === "draft" || campaign.status === "approved";
-  type Data = { tab: "overview" } | { tab: "audience"; rows: Awaited<ReturnType<typeof listRecipients>> } | { tab: "approve"; preview: Awaited<ReturnType<typeof getPreview>> } | { tab: "results"; results: Awaited<ReturnType<typeof getResults>> };
+  type Data = { tab: "overview" } | { tab: "audience"; rows: Awaited<ReturnType<typeof listRecipients>>; programmes: Awaited<ReturnType<typeof listProgrammes>> } | { tab: "approve"; preview: Awaited<ReturnType<typeof getPreview>> } | { tab: "results"; results: Awaited<ReturnType<typeof getResults>> };
   let data: Data | null;
   try {
     if (tab === "overview") {
@@ -119,7 +124,12 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     } else if (tab === "audience") {
       const rawAfter = Number(pick(raw.after));
       const after = Number.isInteger(rawAfter) && rawAfter > 0 ? rawAfter : undefined;
-      data = { tab, rows: await listRecipients(accessToken, tenantId, campaignId, { limit: PAGE, ...(after !== undefined ? { after } : {}) }) };
+      const school = hasModule(pack, "programmes");
+      data = {
+        tab,
+        rows: await listRecipients(accessToken, tenantId, campaignId, { limit: PAGE, ...(after !== undefined ? { after } : {}) }),
+        programmes: school && !money(campaign.kind) ? await listProgrammes(accessToken, tenantId).catch((e) => { if (e instanceof ApiAuthError) throw e; return []; }) : [],
+      };
     } else if (tab === "approve") {
       data = { tab, preview: await getPreview(accessToken, tenantId, campaignId) };
     } else {
@@ -139,8 +149,10 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
     ) : data.tab === "audience" ? (
       <AudiencePanel
         status={campaign.status}
-        money={campaign.kind === "payment_due" || campaign.kind === "fee_due"}
+        money={money(campaign.kind)}
         fromLedger={hasModule(pack, "dues") || hasModule(pack, "fees")}
+        studentParty={hasModule(pack, "programmes") && money(campaign.kind)}
+        programmes={data.programmes}
         recipients={data.rows}
         total={campaign.recipients}
         words={words}
@@ -151,6 +163,7 @@ export async function CampaignPage({ accessToken, tenantId, tenant, pack, campai
           importList: importRecipientsAction.bind(null, tenantId, campaignId),
           clear: clearRecipientsAction.bind(null, tenantId, campaignId),
           remove: removeRecipientAction.bind(null, tenantId, campaignId),
+          ...(hasModule(pack, "programmes") && !money(campaign.kind) ? { announce: announceAudienceAction.bind(null, tenantId, campaignId) } : {}),
         }}
       />
     ) : data.tab === "approve" ? (

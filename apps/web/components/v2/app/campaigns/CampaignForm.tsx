@@ -24,7 +24,7 @@ const EXAMPLE: Record<Field, string> = { name: "Ravi Kumar", amount: "₹12,500.
  * changes once made. The text is one fixed line with merge fields (name, amount, due date, reference, business): the amount is a number from your list or ledger, never made up. Steps are days from each person's own date
  * and a time of day. A money reminder may add a call step for a person who did not reply and has not paid. Saving an approved campaign sends it back to draft: it has to be checked and approved again.
  */
-export function CampaignForm(p: { base: string; campaignId: string; campaign: CampaignOut | null; kinds: readonly Kind[]; templates: readonly TemplateChoice[]; words: TodayWords; actions: CampaignFormActions; go?: (href: string) => void }) {
+export function CampaignForm(p: { base: string; campaignId: string; campaign: CampaignOut | null; kinds: readonly Kind[]; templates: readonly TemplateChoice[]; words: TodayWords; actions: CampaignFormActions; go?: (href: string) => void; afterTab?: string }) {
   const { words, campaign } = p;
   const router = useRouter();
   const go = p.go ?? ((href: string) => router.push(href));
@@ -72,7 +72,7 @@ export function CampaignForm(p: { base: string; campaignId: string; campaign: Ca
     const out = await p.actions.save(p.campaignId, { name: name.trim(), kind, language, waTemplateId: template || null, messageText: text.trim(), steps: read.steps, callAfterStep: after, callWaitHours: after === null ? 24 : hours });
     setBusy(false);
     if (!out.ok) return setProblem({ text: out.error, ...(out.mfa ? { mfa: true } : {}) });
-    go(`${p.base}/campaigns/${out.campaignId}${out.backToDraft ? "?back=1" : "?saved=1"}`);
+    go(`${p.base}/campaigns/${out.campaignId}${out.backToDraft ? "?back=1" : "?saved=1"}${p.afterTab && !campaign ? `&tab=${p.afterTab}` : ""}`);
   }
 
   return (

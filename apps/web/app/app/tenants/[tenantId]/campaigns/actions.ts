@@ -12,6 +12,7 @@ import {
   KINDS, LANGUAGES, MAX_PAISE, MAX_ROWS, OUTCOMES, addRecipients, addRecipientsFromLedger, approveCampaign, clearRecipients, connectCall, putCampaign, recordOutcome, removeRecipient, setCampaignState,
   type LedgerFilter, type Outcome, type RecipientRow,
 } from "@/lib/api/campaigns";
+import { putAnnouncementAudience } from "@/lib/api/education";
 import { requireUser } from "@/lib/auth/session";
 
 import { campaignRefusalOf } from "./campaign-refusals";
@@ -66,7 +67,7 @@ type Added = { ok: true; added: number; skipped: { row: number; reason: string }
 export async function addFromLedgerAction(tenantId: string, campaignId: string, filter: LedgerFilter): Promise<Added> {
   const { user, t } = await context();
   const ok =
-    isCanonicalUuid(tenantId) && isCanonicalUuid(campaignId) && validDay(filter?.due_from) && validDay(filter?.due_to) && filter.due_from <= filter.due_to && (filter.party === undefined || filter.party === "company" || filter.party === "contact") &&
+    isCanonicalUuid(tenantId) && isCanonicalUuid(campaignId) && validDay(filter?.due_from) && validDay(filter?.due_to) && filter.due_from <= filter.due_to && (filter.party === undefined || filter.party === "company" || filter.party === "contact" || filter.party === "student") &&
     (filter.min_open_paise === undefined || (Number.isInteger(filter.min_open_paise) && filter.min_open_paise >= 0 && filter.min_open_paise <= MAX_PAISE));
   if (!ok) return { ok: false, error: t("camp.err.invalid") };
   try {
@@ -168,6 +169,25 @@ export async function connectCallAction(tenantId: string, callRequestId: string)
   try {
     const out = await connectCall(user.accessToken, tenantId, callRequestId);
     return { ok: true, replayed: out.replayed };
+  } catch (error) {
+    return failed(error, t);
+  }
+}
+
+/**
+ * A school's announcement audience (Owner, Admin, Sales): everyone, one programme or one section. One message per guardian however many children; the API skips a guardian with no number or an erased contact and counts them. The
+ * day is the date each person's steps count from. Checked again here.
+ */
+export async function announceAudienceAction(tenantId: string, campaignId: string, input: { scope: "all" | "programme" | "group"; programmeId: string; groupId: string; date: string }): Promise<Added> {
+  const { user, t } = await context();
+  const scope = input?.scope;
+  const ok =
+    isCanonicalUuid(tenantId) && isCanonicalUuid(campaignId) && validDay(input?.date) && (scope === "all" || (scope === "programme" && isCanonicalUuid(input.programmeId)) || (scope === "group" && isCanonicalUuid(input.groupId)));
+  if (!ok) return { ok: false, error: t("camp.err.invalid") };
+  try {
+    const out = await putAnnouncementAudience(user.accessToken, tenantId, campaignId, scope === "all" ? { scope, date: input.date } : scope === "programme" ? { scope, programmeId: input.programmeId, date: input.date } : { scope, groupId: input.groupId, date: input.date });
+    refresh(tenantId, campaignId);
+    return { ok: true, added: out.added, skipped: out.skipped.map((s) => ({ row: typeof s.row === "number" ? s.row : 0, reason: typeof s.reason === "string" ? s.reason : "other" })), recipients: out.recipients };
   } catch (error) {
     return failed(error, t);
   }

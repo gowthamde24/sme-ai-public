@@ -61,7 +61,7 @@ export function StatementView({ statement, entries, words, base, receiptBase, ca
             {entries.map((e) => (
               <li key={e.id} className={`flex flex-wrap items-center justify-between gap-x-3 gap-y-1 rounded-xl border bg-surface px-3 py-2 ${e.voided ? "border-dashed border-edge opacity-70" : "border-line"}`} data-entry={e.id} data-kind={e.kind} data-voided={e.voided ? "true" : undefined}>
                 <span className="min-w-0">
-                  <span className="font-semibold">{say(words, `due.kind.${e.kind}`)}</span>
+                  <span className="font-semibold">{words[`${prefix}.kind.${e.kind}`] ?? say(words, `due.kind.${e.kind}`)}</span>
                   <span className="block text-sm text-muted [overflow-wrap:anywhere]">
                     {[e.entry_date, e.invoice_no ?? e.reference, e.method ? say(words, `due.method.${e.method}`) : null, e.reason_code ? say(words, `due.reason.${e.reason_code}`) : null].filter(Boolean).join(" · ")}
                   </span>

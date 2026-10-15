@@ -6,6 +6,8 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn(), refresh }
 
 import { parseRecipients } from "@/lib/api/campaigns";
 import { RECIPIENTS_JSON } from "@/lib/api/campaigns-fixtures";
+import { parseProgrammes } from "@/lib/api/education";
+import { GROUP, PROGRAMME, PROGRAMMES_JSON } from "@/lib/api/education-fixtures";
 
 import { WORDS } from "../materials/mat-test-kit";
 import { AudiencePanel, type AudienceActions } from "./AudiencePanel";
@@ -82,5 +84,42 @@ describe("who the campaign is for", () => {
     expect(a.clear).not.toHaveBeenCalled();
     await act(async () => void fireEvent.click(screen.getAllByRole("button", { name: "Remove everyone" })[1]));
     expect(a.clear).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("a school's audiences", () => {
+  it("a fee reminder is built from the ledger with the students' parents as the only party", async () => {
+    const a = show({ studentParty: true });
+    expect(screen.getByLabelText("Who owes")).toBeDisabled();
+    expect(screen.getByRole("option", { name: /Students' parents/ })).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Due from"), { target: { value: "2026-10-01" } });
+    fireEvent.change(screen.getByLabelText("Due until"), { target: { value: "2026-10-31" } });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Add from the ledger" })));
+    expect(a.fromLedger).toHaveBeenCalledWith({ due_from: "2026-10-01", due_to: "2026-10-31", party: "student" });
+  });
+  it("an announcement is built from the students: everyone, a class or a section, one message per parent", async () => {
+    const announce = vi.fn(async () => ({ ok: true as const, added: 28, skipped: [{ row: 3, reason: "no_phone" }], recipients: 28 }));
+    show({ money: false, fromLedger: false, programmes: parseProgrammes(PROGRAMMES_JSON) }, { announce });
+    expect(screen.queryByLabelText("Or paste the list here")).toBeNull();
+    fireEvent.change(screen.getByLabelText("The day to count the steps from"), { target: { value: "2026-10-20" } });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Add the parents" })));
+    expect(announce).toHaveBeenCalledWith({ scope: "all", programmeId: "", groupId: "", date: "2026-10-20" });
+    expect(screen.getByRole("status")).toHaveTextContent("28 people added.");
+    fireEvent.change(screen.getByLabelText("Who"), { target: { value: "group" } });
+    fireEvent.change(screen.getByLabelText("Class or course"), { target: { value: PROGRAMME } });
+    fireEvent.change(screen.getByLabelText("Section"), { target: { value: GROUP } });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Add the parents" })));
+    expect(announce).toHaveBeenLastCalledWith({ scope: "group", programmeId: PROGRAMME, groupId: GROUP, date: "2026-10-20" });
+  });
+  it("an announcement needs a day, and a class or section when it is for one", async () => {
+    const announce = vi.fn(async () => ({ ok: true as const, added: 0, skipped: [], recipients: 0 }));
+    show({ money: false, fromLedger: false, programmes: parseProgrammes(PROGRAMMES_JSON) }, { announce });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Add the parents" })));
+    expect(screen.getByRole("alert")).toHaveTextContent("Choose the day");
+    fireEvent.change(screen.getByLabelText("The day to count the steps from"), { target: { value: "2026-10-20" } });
+    fireEvent.change(screen.getByLabelText("Who"), { target: { value: "programme" } });
+    await act(async () => void fireEvent.click(screen.getByRole("button", { name: "Add the parents" })));
+    expect(screen.getByRole("alert")).toHaveTextContent("Choose a class or course");
+    expect(announce).not.toHaveBeenCalled();
   });
 });

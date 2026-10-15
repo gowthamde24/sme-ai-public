@@ -47262,5 +47262,4754 @@
    "kn": "draft"
   },
   "humanOnly": true
+ },
+ "nav.item.students": {
+  "en": "Students",
+  "te": "విద్యార్థులు",
+  "hi": "विद्यार्थी",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.admissions": {
+  "en": "Admission board",
+  "te": "అడ్మిషన్ బోర్డు",
+  "hi": "प्रवेश बोर्ड",
+  "kn": "ಪ್ರವೇಶ ಬೋರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.announcements": {
+  "en": "Announcements",
+  "te": "ప్రకటనలు",
+  "hi": "घोषणाएँ",
+  "kn": "ಪ್ರಕಟಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "nav.item.programmes": {
+  "en": "Programmes",
+  "te": "ప్రోగ్రామ్‌లు",
+  "hi": "पाठ्यक्रम",
+  "kn": "ಕಾರ್ಯಕ್ರಮಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.loaderr": {
+  "en": "Could not load this. Try again in a moment.",
+  "te": "దీన్ని లోడ్ చేయలేకపోయాం. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "इसे लोड नहीं कर सके। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಇದನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.back": {
+  "en": "All students",
+  "te": "అందరు విద్యార్థులు",
+  "hi": "सभी विद्यार्थी",
+  "kn": "ಎಲ್ಲಾ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.edit": {
+  "en": "Change",
+  "te": "మార్చండి",
+  "hi": "बदलें",
+  "kn": "ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.active": {
+  "en": "Active (uncheck to put it away)",
+  "te": "చురుగ్గా ఉంది (పక్కన పెట్టాలంటే టిక్ తీయండి)",
+  "hi": "सक्रिय (हटाने के लिए टिक हटाएँ)",
+  "kn": "ಸಕ್ರಿಯ (ಬದಿಗಿಡಲು ಟಿಕ್ ತೆಗೆಯಿರಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.inactive": {
+  "en": "Inactive",
+  "te": "చురుగ్గా లేదు",
+  "hi": "निष्क्रिय",
+  "kn": "ನಿಷ್ಕ್ರಿಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.readonly": {
+  "en": "Only the Owner and Admins can change this.",
+  "te": "దీన్ని యజమాని, అడ్మిన్‌లు మాత్రమే మార్చగలరు.",
+  "hi": "इसे केवल मालिक और एडमिन बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.type.school": {
+  "en": "School",
+  "te": "పాఠశాల",
+  "hi": "विद्यालय",
+  "kn": "ಶಾಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.type.junior_college": {
+  "en": "Junior college",
+  "te": "జూనియర్ కళాశాల",
+  "hi": "जूनियर कॉलेज",
+  "kn": "ಜೂನಿಯರ್ ಕಾಲೇಜು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.type.degree_college": {
+  "en": "Degree college",
+  "te": "డిగ్రీ కళాశాల",
+  "hi": "डिग्री कॉलेज",
+  "kn": "ಪದವಿ ಕಾಲೇಜು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.type.university": {
+  "en": "University",
+  "te": "విశ్వవిద్యాలయం",
+  "hi": "विश्वविद्यालय",
+  "kn": "ವಿಶ್ವವಿದ್ಯಾಲಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.type.coaching": {
+  "en": "Coaching centre",
+  "te": "కోచింగ్ సెంటర్",
+  "hi": "कोचिंग सेंटर",
+  "kn": "ಕೋಚಿಂಗ್ ಕೇಂದ್ರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.type.training": {
+  "en": "Training institute",
+  "te": "శిక్షణ సంస్థ",
+  "hi": "प्रशिक्षण संस्थान",
+  "kn": "ತರಬೇತಿ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.1": {
+  "en": "January",
+  "te": "జనవరి",
+  "hi": "जनवरी",
+  "kn": "ಜನವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.2": {
+  "en": "February",
+  "te": "ఫిబ్రవరి",
+  "hi": "फ़रवरी",
+  "kn": "ಫೆಬ್ರವರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.3": {
+  "en": "March",
+  "te": "మార్చి",
+  "hi": "मार्च",
+  "kn": "ಮಾರ್ಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.4": {
+  "en": "April",
+  "te": "ఏప్రిల్",
+  "hi": "अप्रैल",
+  "kn": "ಏಪ್ರಿಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.5": {
+  "en": "May",
+  "te": "మే",
+  "hi": "मई",
+  "kn": "ಮೇ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.6": {
+  "en": "June",
+  "te": "జూన్",
+  "hi": "जून",
+  "kn": "ಜೂನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.7": {
+  "en": "July",
+  "te": "జూలై",
+  "hi": "जुलाई",
+  "kn": "ಜುಲೈ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.8": {
+  "en": "August",
+  "te": "ఆగస్టు",
+  "hi": "अगस्त",
+  "kn": "ಆಗಸ್ಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.9": {
+  "en": "September",
+  "te": "సెప్టెంబర్",
+  "hi": "सितंबर",
+  "kn": "ಸೆಪ್ಟೆಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.10": {
+  "en": "October",
+  "te": "అక్టోబర్",
+  "hi": "अक्टूबर",
+  "kn": "ಅಕ್ಟೋಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.11": {
+  "en": "November",
+  "te": "నవంబర్",
+  "hi": "नवंबर",
+  "kn": "ನವೆಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.month.12": {
+  "en": "December",
+  "te": "డిసెంబర్",
+  "hi": "दिसंबर",
+  "kn": "ಡಿಸೆಂಬರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.kind.class": {
+  "en": "Classes",
+  "te": "తరగతులు",
+  "hi": "कक्षाएँ",
+  "kn": "ತರಗತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.kind.course": {
+  "en": "Course",
+  "te": "కోర్సు",
+  "hi": "पाठ्यक्रम",
+  "kn": "ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.divided.section": {
+  "en": "Section",
+  "te": "సెక్షన్",
+  "hi": "अनुभाग",
+  "kn": "ವಿಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.divided.year": {
+  "en": "Year",
+  "te": "సంవత్సరం",
+  "hi": "वर्ष",
+  "kn": "ವರ್ಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.divided.semester": {
+  "en": "Semester",
+  "te": "సెమిస్టర్",
+  "hi": "सेमेस्टर",
+  "kn": "ಸೆಮಿಸ್ಟರ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.divided.batch": {
+  "en": "Batch",
+  "te": "బ్యాచ్",
+  "hi": "बैच",
+  "kn": "ಬ್ಯಾಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.divided.none": {
+  "en": "Not divided",
+  "te": "విభజన లేదు",
+  "hi": "विभाजित नहीं",
+  "kn": "ವಿಭಾಗವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.section": {
+  "en": "Sections",
+  "te": "సెక్షన్లు",
+  "hi": "अनुभाग",
+  "kn": "ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.year": {
+  "en": "Years",
+  "te": "సంవత్సరాలు",
+  "hi": "वर्ष",
+  "kn": "ವರ್ಷಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.semester": {
+  "en": "Semesters",
+  "te": "సెమిస్టర్లు",
+  "hi": "सेमेस्टर",
+  "kn": "ಸೆಮಿಸ್ಟರ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.batch": {
+  "en": "Batches",
+  "te": "బ్యాచ్‌లు",
+  "hi": "बैच",
+  "kn": "ಬ್ಯಾಚ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.add.section": {
+  "en": "Add a section",
+  "te": "సెక్షన్ జోడించండి",
+  "hi": "अनुभाग जोड़ें",
+  "kn": "ವಿಭಾಗ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.add.year": {
+  "en": "Add a year",
+  "te": "సంవత్సరం జోడించండి",
+  "hi": "वर्ष जोड़ें",
+  "kn": "ವರ್ಷ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.add.semester": {
+  "en": "Add a semester",
+  "te": "సెమిస్టర్ జోడించండి",
+  "hi": "सेमेस्टर जोड़ें",
+  "kn": "ಸೆಮಿಸ್ಟರ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.add.batch": {
+  "en": "Add a batch",
+  "te": "బ్యాచ్ జోడించండి",
+  "hi": "बैच जोड़ें",
+  "kn": "ಬ್ಯಾಚ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.none": {
+  "en": "None yet.",
+  "te": "ఇంకా లేవు.",
+  "hi": "अभी कोई नहीं।",
+  "kn": "ಇನ್ನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.groups.edit": {
+  "en": "Change {label}",
+  "te": "{label} ను మార్చండి",
+  "hi": "{label} बदलें",
+  "kn": "{label} ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.group.new": {
+  "en": "New group in {programme}",
+  "te": "{programme} లో కొత్త గ్రూప్",
+  "hi": "{programme} में नया समूह",
+  "kn": "{programme} ನಲ್ಲಿ ಹೊಸ ಗುಂಪು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.group.edit": {
+  "en": "Change a group in {programme}",
+  "te": "{programme} లో గ్రూప్‌ను మార్చండి",
+  "hi": "{programme} में समूह बदलें",
+  "kn": "{programme} ನಲ್ಲಿ ಗುಂಪು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.group.label": {
+  "en": "Name (for example A, Year 2, Batch 6 am)",
+  "te": "పేరు (ఉదా. A, 2వ సంవత్సరం, ఉదయం 6 బ్యాచ్)",
+  "hi": "नाम (जैसे A, वर्ष 2, सुबह 6 बजे का बैच)",
+  "kn": "ಹೆಸರು (ಉದಾ. A, 2ನೇ ವರ್ಷ, ಬೆಳಿಗ್ಗೆ 6 ಬ್ಯಾಚ್)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.group.timing": {
+  "en": "Timing (optional)",
+  "te": "సమయం (ఐచ్ఛికం)",
+  "hi": "समय (वैकल्पिक)",
+  "kn": "ಸಮಯ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.sub": {
+  "en": "The institution, its classes and courses, and what each is divided into. Nothing is deleted: put it away instead.",
+  "te": "సంస్థ, దాని తరగతులు, కోర్సులు, ప్రతిదీ ఏ భాగాలుగా విభజించబడిందో. ఏదీ తొలగించం: బదులుగా పక్కన పెట్టండి.",
+  "hi": "संस्था, उसकी कक्षाएँ और पाठ्यक्रम, और हर एक किसमें बँटा है। कुछ मिटता नहीं: उसकी जगह हटाकर रखें।",
+  "kn": "ಸಂಸ್ಥೆ, ಅದರ ತರಗತಿಗಳು ಮತ್ತು ಕೋರ್ಸ್‌ಗಳು, ಪ್ರತಿಯೊಂದೂ ಯಾವುದರಲ್ಲಿ ಹಂಚಲ್ಪಟ್ಟಿದೆ. ಏನೂ ಅಳಿಸುವುದಿಲ್ಲ: ಬದಲಿಗೆ ಬದಿಗಿಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.title": {
+  "en": "Your institution",
+  "te": "మీ సంస్థ",
+  "hi": "आपकी संस्था",
+  "kn": "ನಿಮ್ಮ ಸಂಸ್ಥೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.new": {
+  "en": "Not set up yet. Say what kind of place this is and when your academic year starts.",
+  "te": "ఇంకా ఏర్పాటు చేయలేదు. ఇది ఏ రకమైన సంస్థో, విద్యా సంవత్సరం ఎప్పుడు మొదలవుతుందో చెప్పండి.",
+  "hi": "अभी सेट नहीं है। बताइए यह किस तरह की संस्था है और शैक्षणिक वर्ष कब शुरू होता है।",
+  "kn": "ಇನ್ನೂ ಹೊಂದಿಸಿಲ್ಲ. ಇದು ಯಾವ ರೀತಿಯ ಸಂಸ್ಥೆ ಮತ್ತು ಶೈಕ್ಷಣಿಕ ವರ್ಷ ಯಾವಾಗ ಆರಂಭ ಎಂದು ಹೇಳಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.type": {
+  "en": "Kind of institution",
+  "te": "సంస్థ రకం",
+  "hi": "संस्था का प्रकार",
+  "kn": "ಸಂಸ್ಥೆಯ ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.start": {
+  "en": "Academic year starts in",
+  "te": "విద్యా సంవత్సరం మొదలయ్యే నెల",
+  "hi": "शैक्षणिक वर्ष शुरू होता है",
+  "kn": "ಶೈಕ್ಷಣಿಕ ವರ್ಷ ಆರಂಭವಾಗುವ ತಿಂಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.terms": {
+  "en": "Terms (up to six)",
+  "te": "టర్మ్‌లు (ఆరు వరకు)",
+  "hi": "सत्र (छह तक)",
+  "kn": "ಅವಧಿಗಳು (ಆರರವರೆಗೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.terms.none": {
+  "en": "No terms set. They are optional.",
+  "te": "టర్మ్‌లు లేవు. అవి ఐచ్ఛికం.",
+  "hi": "कोई सत्र नहीं। वे वैकल्पिक हैं।",
+  "kn": "ಅವಧಿಗಳಿಲ್ಲ. ಅವು ಐಚ್ಛಿಕ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.term": {
+  "en": "Term {n}",
+  "te": "టర్మ్ {n}",
+  "hi": "सत्र {n}",
+  "kn": "ಅವಧಿ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.from": {
+  "en": "From",
+  "te": "నుండి",
+  "hi": "से",
+  "kn": "ಇಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.to": {
+  "en": "To",
+  "te": "వరకు",
+  "hi": "तक",
+  "kn": "ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.term.add": {
+  "en": "Add a term",
+  "te": "టర్మ్ జోడించండి",
+  "hi": "सत्र जोड़ें",
+  "kn": "ಅವಧಿ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.term.remove": {
+  "en": "Remove term {n}",
+  "te": "టర్మ్ {n} తొలగించండి",
+  "hi": "सत्र {n} हटाएँ",
+  "kn": "ಅವಧಿ {n} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.langs": {
+  "en": "Languages parents use",
+  "te": "తల్లిదండ్రులు వాడే భాషలు",
+  "hi": "अभिभावकों की भाषाएँ",
+  "kn": "ಪೋಷಕರು ಬಳಸುವ ಭಾಷೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.langs.help": {
+  "en": "Messages to parents can be written in these.",
+  "te": "తల్లిదండ్రులకు సందేశాలు వీటిలో రాయవచ్చు.",
+  "hi": "अभिभावकों को संदेश इनमें लिखे जा सकते हैं।",
+  "kn": "ಪೋಷಕರಿಗೆ ಸಂದೇಶಗಳನ್ನು ಇವುಗಳಲ್ಲಿ ಬರೆಯಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.retention": {
+  "en": "Erase a student's record this many months after they leave (optional)",
+  "te": "విద్యార్థి వెళ్లిపోయిన ఇన్ని నెలల తర్వాత వారి రికార్డును తొలగించండి (ఐచ్ఛికం)",
+  "hi": "विद्यार्थी के जाने के इतने महीने बाद उसका रिकॉर्ड मिटाएँ (वैकल्पिक)",
+  "kn": "ವಿದ್ಯಾರ್ಥಿ ಬಿಟ್ಟು ಹೋದ ಇಷ್ಟು ತಿಂಗಳ ನಂತರ ಅವರ ದಾಖಲೆ ಅಳಿಸಿ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.retention.help": {
+  "en": "Leave empty to keep records until you erase them. Only you, with the authenticator code, can change this.",
+  "te": "మీరు తొలగించే వరకు రికార్డులు ఉంచాలంటే ఖాళీగా వదలండి. దీన్ని ఆథెంటికేటర్ కోడ్‌తో మీరు మాత్రమే మార్చగలరు.",
+  "hi": "खाली छोड़ें तो रिकॉर्ड तब तक रहेंगे जब तक आप न मिटाएँ। इसे केवल आप, ऑथेंटिकेटर कोड से, बदल सकते हैं।",
+  "kn": "ಅಳಿಸುವವರೆಗೆ ದಾಖಲೆಗಳನ್ನು ಇಡಲು ಖಾಲಿ ಬಿಡಿ. ಇದನ್ನು ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ನೀವು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.retention.owner": {
+  "en": "Only the Owner, with the authenticator code, can change this.",
+  "te": "దీన్ని ఆథెంటికేటర్ కోడ్‌తో యజమాని మాత్రమే మార్చగలరు.",
+  "hi": "इसे केवल मालिक, ऑथेंटिकेटर कोड से, बदल सकते हैं।",
+  "kn": "ಇದನ್ನು ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ಮಾಲೀಕರು ಮಾತ್ರ ಬದಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.save": {
+  "en": "Save the institution",
+  "te": "సంస్థను సేవ్ చేయండి",
+  "hi": "संस्था सहेजें",
+  "kn": "ಸಂಸ್ಥೆಯನ್ನು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.profile.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सहेज लिया गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.title": {
+  "en": "Classes and courses",
+  "te": "తరగతులు, కోర్సులు",
+  "hi": "कक्षाएँ और पाठ्यक्रम",
+  "kn": "ತರಗತಿಗಳು ಮತ್ತು ಕೋರ್ಸ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.add": {
+  "en": "Add a class or course",
+  "te": "తరగతి లేదా కోర్సు జోడించండి",
+  "hi": "कक्षा या पाठ्यक्रम जोड़ें",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.new": {
+  "en": "New class or course",
+  "te": "కొత్త తరగతి లేదా కోర్సు",
+  "hi": "नई कक्षा या पाठ्यक्रम",
+  "kn": "ಹೊಸ ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.edit": {
+  "en": "Change a class or course",
+  "te": "తరగతి లేదా కోర్సును మార్చండి",
+  "hi": "कक्षा या पाठ्यक्रम बदलें",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.empty": {
+  "en": "Nothing here yet. Add your first class or course, then its sections.",
+  "te": "ఇక్కడ ఇంకా ఏమీ లేదు. మొదటి తరగతి లేదా కోర్సు, తర్వాత దాని సెక్షన్లు జోడించండి.",
+  "hi": "यहाँ अभी कुछ नहीं। पहली कक्षा या पाठ्यक्रम जोड़ें, फिर उसके अनुभाग।",
+  "kn": "ಇಲ್ಲಿ ಇನ್ನೂ ಏನೂ ಇಲ್ಲ. ಮೊದಲ ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಸೇರಿಸಿ, ನಂತರ ಅದರ ವಿಭಾಗಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.name": {
+  "en": "Name (for example Class 5, B.Com)",
+  "te": "పేరు (ఉదా. 5వ తరగతి, B.Com)",
+  "hi": "नाम (जैसे कक्षा 5, B.Com)",
+  "kn": "ಹೆಸರು (ಉದಾ. 5ನೇ ತರಗತಿ, B.Com)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.kind": {
+  "en": "Kind",
+  "te": "రకం",
+  "hi": "प्रकार",
+  "kn": "ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.divided": {
+  "en": "Divided into",
+  "te": "ఏ భాగాలుగా విభజన",
+  "hi": "किसमें बँटा है",
+  "kn": "ಯಾವುದರಲ್ಲಿ ವಿಭಜನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.note": {
+  "en": "Students are placed in a class or course and, where there are any, in a section, year, semester or batch.",
+  "te": "విద్యార్థులను తరగతి లేదా కోర్సులో, ఉంటే సెక్షన్, సంవత్సరం, సెమిస్టర్ లేదా బ్యాచ్‌లో ఉంచుతారు.",
+  "hi": "विद्यार्थियों को कक्षा या पाठ्यक्रम में, और जहाँ हों वहाँ अनुभाग, वर्ष, सेमेस्टर या बैच में रखा जाता है।",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್‌ನಲ್ಲಿ, ಇದ್ದರೆ ವಿಭಾಗ, ವರ್ಷ, ಸೆಮಿಸ್ಟರ್ ಅಥವಾ ಬ್ಯಾಚ್‌ನಲ್ಲಿ ಇಡಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.students": {
+  "en": "{n} students",
+  "te": "{n} విద్యార్థులు",
+  "hi": "{n} विद्यार्थी",
+  "kn": "{n} ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.prog.see": {
+  "en": "See students",
+  "te": "విద్యార్థులను చూడండి",
+  "hi": "विद्यार्थी देखें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.progname": {
+  "en": "Give the class or course a name.",
+  "te": "తరగతి లేదా కోర్సుకు పేరు ఇవ్వండి.",
+  "hi": "कक्षा या पाठ्यक्रम को एक नाम दें।",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್‌ಗೆ ಹೆಸರು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.grouplabel": {
+  "en": "Give it a name.",
+  "te": "దానికి పేరు ఇవ్వండి.",
+  "hi": "इसे एक नाम दें।",
+  "kn": "ಅದಕ್ಕೆ ಹೆಸರು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.termname": {
+  "en": "Every term needs a name.",
+  "te": "ప్రతి టర్మ్‌కు పేరు కావాలి.",
+  "hi": "हर सत्र का एक नाम होना चाहिए।",
+  "kn": "ಪ್ರತಿ ಅವಧಿಗೂ ಹೆಸರು ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.langs": {
+  "en": "Choose at least one language.",
+  "te": "కనీసం ఒక భాషను ఎంచుకోండి.",
+  "hi": "कम से कम एक भाषा चुनें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಭಾಷೆಯನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.retention": {
+  "en": "Months must be a whole number from 1 to 240, or empty.",
+  "te": "నెలలు 1 నుండి 240 మధ్య పూర్తి సంఖ్య కావాలి, లేదా ఖాళీ.",
+  "hi": "महीने 1 से 240 के बीच पूरी संख्या हों, या खाली।",
+  "kn": "ತಿಂಗಳುಗಳು 1 ರಿಂದ 240 ರ ನಡುವೆ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಅಥವಾ ಖಾಲಿ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.invalid": {
+  "en": "That was not accepted. Check the details and try again. Nothing was changed.",
+  "te": "అది అంగీకరించలేదు. వివరాలు చూసి మళ్లీ ప్రయత్నించండి. ఏమీ మారలేదు.",
+  "hi": "यह स्वीकार नहीं हुआ। जानकारी जाँचकर फिर कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಅದನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ. ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.unavailable": {
+  "en": "This is not available right now. Try again later.",
+  "te": "ఇది ఇప్పుడు అందుబాటులో లేదు. తర్వాత ప్రయత్నించండి.",
+  "hi": "यह अभी उपलब्ध नहीं है। बाद में कोशिश करें।",
+  "kn": "ಇದು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.admissionno": {
+  "en": "That admission number belongs to another student.",
+  "te": "ఆ అడ్మిషన్ నంబర్ మరో విద్యార్థిది.",
+  "hi": "वह प्रवेश संख्या किसी और विद्यार्थी की है।",
+  "kn": "ಆ ಪ್ರವೇಶ ಸಂಖ್ಯೆ ಇನ್ನೊಬ್ಬ ವಿದ್ಯಾರ್ಥಿಯದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.stage": {
+  "en": "The enquiry cannot move that way. Refresh the page.",
+  "te": "ఎంక్వైరీ ఆ విధంగా కదలదు. పేజీని రిఫ్రెష్ చేయండి.",
+  "hi": "पूछताछ उस तरह आगे नहीं बढ़ सकती। पेज रिफ़्रेश करें।",
+  "kn": "ವಿಚಾರಣೆ ಆ ರೀತಿ ಚಲಿಸಲಾಗದು. ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.planinuse": {
+  "en": "A student already holds this plan, so it cannot change. Make a copy instead.",
+  "te": "ఒక విద్యార్థికి ఇప్పటికే ఈ ప్లాన్ ఉంది, కాబట్టి మార్చలేరు. బదులుగా కాపీ చేయండి.",
+  "hi": "एक विद्यार्थी के पास यह योजना है, इसलिए बदली नहीं जा सकती। इसकी जगह प्रति बनाएँ।",
+  "kn": "ಒಬ್ಬ ವಿದ್ಯಾರ್ಥಿಯ ಬಳಿ ಈ ಯೋಜನೆ ಇದೆ, ಆದ್ದರಿಂದ ಬದಲಿಸಲಾಗದು. ಬದಲಿಗೆ ಪ್ರತಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.planexists": {
+  "en": "This student already has a fee plan for that year.",
+  "te": "ఈ విద్యార్థికి ఆ సంవత్సరానికి ఇప్పటికే ఫీజు ప్లాన్ ఉంది.",
+  "hi": "इस विद्यार्थी की उस वर्ष की फीस योजना पहले से है।",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಗೆ ಆ ವರ್ಷಕ್ಕೆ ಈಗಾಗಲೇ ಶುಲ್ಕ ಯೋಜನೆ ಇದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.notactive": {
+  "en": "This student has left, so that cannot be done.",
+  "te": "ఈ విద్యార్థి వెళ్లిపోయారు, కాబట్టి అది చేయలేం.",
+  "hi": "यह विद्यार्थी जा चुका है, इसलिए यह नहीं हो सकता।",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿ ಬಿಟ್ಟು ಹೋಗಿದ್ದಾರೆ, ಆದ್ದರಿಂದ ಅದನ್ನು ಮಾಡಲಾಗದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.sub": {
+  "en": "The minimum record: a first name or initials, the class and section, the admission number and the adult we write to.",
+  "te": "కనీస రికార్డు: మొదటి పేరు లేదా మొదటి అక్షరాలు, తరగతి, సెక్షన్, అడ్మిషన్ నంబర్, మనం రాసే పెద్దవారు.",
+  "hi": "न्यूनतम रिकॉर्ड: पहला नाम या आद्याक्षर, कक्षा और अनुभाग, प्रवेश संख्या और वह वयस्क जिसे हम लिखते हैं।",
+  "kn": "ಕನಿಷ್ಠ ದಾಖಲೆ: ಮೊದಲ ಹೆಸರು ಅಥವಾ ಮೊದಲಕ್ಷರಗಳು, ತರಗತಿ, ವಿಭಾಗ, ಪ್ರವೇಶ ಸಂಖ್ಯೆ ಮತ್ತು ನಾವು ಬರೆಯುವ ವಯಸ್ಕರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.add": {
+  "en": "Add a student",
+  "te": "విద్యార్థిని జోడించండి",
+  "hi": "विद्यार्थी जोड़ें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.import": {
+  "en": "Import a file",
+  "te": "ఫైల్‌ను దిగుమతి చేయండి",
+  "hi": "फ़ाइल आयात करें",
+  "kn": "ಫೈಲ್ ಆಮದು ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सहेज लिया गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.imported": {
+  "en": "The file was imported.",
+  "te": "ఫైల్ దిగుమతి అయింది.",
+  "hi": "फ़ाइल आयात हो गई।",
+  "kn": "ಫೈಲ್ ಆಮದು ಆಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.filters": {
+  "en": "Filter the students",
+  "te": "విద్యార్థులను ఫిల్టర్ చేయండి",
+  "hi": "विद्यार्थियों को छानें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ಫಿಲ್ಟರ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.programme": {
+  "en": "Class or course",
+  "te": "తరగతి లేదా కోర్సు",
+  "hi": "कक्षा या पाठ्यक्रम",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.status": {
+  "en": "Status",
+  "te": "స్థితి",
+  "hi": "स्थिति",
+  "kn": "ಸ್ಥಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.all": {
+  "en": "All",
+  "te": "అన్నీ",
+  "hi": "सभी",
+  "kn": "ಎಲ್ಲಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.filter": {
+  "en": "Show",
+  "te": "చూపించు",
+  "hi": "दिखाएँ",
+  "kn": "ತೋರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.clear": {
+  "en": "Clear",
+  "te": "తొలగించండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆರವುಗೊಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.none.title": {
+  "en": "No students yet",
+  "te": "ఇంకా విద్యార్థులు లేరు",
+  "hi": "अभी कोई विद्यार्थी नहीं",
+  "kn": "ಇನ್ನೂ ವಿದ್ಯಾರ್ಥಿಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.none.body": {
+  "en": "Bring them in from a spreadsheet, or admit them from an admission enquiry.",
+  "te": "స్ప్రెడ్‌షీట్ నుండి తీసుకురండి, లేదా అడ్మిషన్ ఎంక్వైరీ నుండి చేర్చుకోండి.",
+  "hi": "उन्हें स्प्रेडशीट से लाएँ, या प्रवेश पूछताछ से दाख़िल करें।",
+  "kn": "ಅವರನ್ನು ಸ್ಪ್ರೆಡ್‌ಶೀಟ್‌ನಿಂದ ತನ್ನಿ, ಅಥವಾ ಪ್ರವೇಶ ವಿಚಾರಣೆಯಿಂದ ಪ್ರವೇಶ ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.none.filtered": {
+  "en": "No students match.",
+  "te": "సరిపోలే విద్యార్థులు లేరు.",
+  "hi": "कोई विद्यार्थी मेल नहीं खाता।",
+  "kn": "ಹೊಂದುವ ವಿದ್ಯಾರ್ಥಿಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.erased": {
+  "en": "Erased",
+  "te": "తొలగించారు",
+  "hi": "मिटाया गया",
+  "kn": "ಅಳಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.adult": {
+  "en": "Adult student",
+  "te": "వయోజన విద్యార్థి",
+  "hi": "वयस्क विद्यार्थी",
+  "kn": "ವಯಸ್ಕ ವಿದ್ಯಾರ್ಥಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.admno": {
+  "en": "No. {no}",
+  "te": "నం. {no}",
+  "hi": "क्र. {no}",
+  "kn": "ಸಂ. {no}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stu.guardian": {
+  "en": "Parent or guardian: {name}",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకులు: {name}",
+  "hi": "अभिभावक: {name}",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರು: {name}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.status.active": {
+  "en": "Here",
+  "te": "ఉన్నారు",
+  "hi": "यहाँ हैं",
+  "kn": "ಇದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.status.left": {
+  "en": "Left",
+  "te": "వెళ్లిపోయారు",
+  "hi": "चले गए",
+  "kn": "ಬಿಟ್ಟು ಹೋಗಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.guardian": {
+  "en": "Parent or guardian",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకులు",
+  "hi": "अभिभावक",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.find": {
+  "en": "Type part of the name to find them",
+  "te": "కనుగొనడానికి పేరులో కొంత టైప్ చేయండి",
+  "hi": "ढूँढने के लिए नाम का कुछ हिस्सा लिखें",
+  "kn": "ಹುಡುಕಲು ಹೆಸರಿನ ಭಾಗವನ್ನು ಟೈಪ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.guardian.pick": {
+  "en": "Choose the parent or guardian",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకులను ఎంచుకోండి",
+  "hi": "अभिभावक चुनें",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರನ್ನು ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.choose": {
+  "en": "Choose",
+  "te": "ఎంచుకోండి",
+  "hi": "चुनें",
+  "kn": "ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.guardian.help": {
+  "en": "From the 100 newest people in your list. A new parent arrives with an admission enquiry or the students file.",
+  "te": "మీ జాబితాలోని 100 కొత్త వ్యక్తుల నుండి. కొత్త తల్లిదండ్రి అడ్మిషన్ ఎంక్వైరీ లేదా విద్యార్థుల ఫైల్‌తో వస్తారు.",
+  "hi": "आपकी सूची के 100 सबसे नए लोगों में से। नया अभिभावक प्रवेश पूछताछ या विद्यार्थी फ़ाइल से आता है।",
+  "kn": "ನಿಮ್ಮ ಪಟ್ಟಿಯ 100 ಹೊಸ ವ್ಯಕ್ತಿಗಳಿಂದ. ಹೊಸ ಪೋಷಕರು ಪ್ರವೇಶ ವಿಚಾರಣೆ ಅಥವಾ ವಿದ್ಯಾರ್ಥಿಗಳ ಫೈಲ್‌ನೊಂದಿಗೆ ಬರುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.adult": {
+  "en": "An adult student (the parent or guardian above is the student)",
+  "te": "వయోజన విద్యార్థి (పైన ఉన్న వ్యక్తే విద్యార్థి)",
+  "hi": "वयस्क विद्यार्थी (ऊपर का व्यक्ति ही विद्यार्थी है)",
+  "kn": "ವಯಸ್ಕ ವಿದ್ಯಾರ್ಥಿ (ಮೇಲಿನ ವ್ಯಕ್ತಿಯೇ ವಿದ್ಯಾರ್ಥಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.adult.help": {
+  "en": "An adult student has no separate name here: they are the person above.",
+  "te": "వయోజన విద్యార్థికి ఇక్కడ ప్రత్యేక పేరు ఉండదు: వారే పైన ఉన్న వ్యక్తి.",
+  "hi": "वयस्क विद्यार्थी का यहाँ अलग नाम नहीं होता: वे ऊपर वाले व्यक्ति ही हैं।",
+  "kn": "ವಯಸ್ಕ ವಿದ್ಯಾರ್ಥಿಗೆ ಇಲ್ಲಿ ಪ್ರತ್ಯೇಕ ಹೆಸರಿಲ್ಲ: ಅವರೇ ಮೇಲಿನ ವ್ಯಕ್ತಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.label": {
+  "en": "First name or initials",
+  "te": "మొదటి పేరు లేదా మొదటి అక్షరాలు",
+  "hi": "पहला नाम या आद्याक्षर",
+  "kn": "ಮೊದಲ ಹೆಸರು ಅಥವಾ ಮೊದಲಕ್ಷರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.label.help": {
+  "en": "Up to 30 letters. No digits and no e-mail address: this is all we keep of the child's name.",
+  "te": "30 అక్షరాల వరకు. అంకెలు, ఇ-మెయిల్ చిరునామా వద్దు: బిడ్డ పేరులో మేము ఉంచేది ఇంతే.",
+  "hi": "30 अक्षर तक। कोई अंक या ई-मेल पता नहीं: बच्चे के नाम का हम बस इतना ही रखते हैं।",
+  "kn": "30 ಅಕ್ಷರಗಳವರೆಗೆ. ಅಂಕೆಗಳು ಅಥವಾ ಇ-ಮೇಲ್ ವಿಳಾಸ ಬೇಡ: ಮಗುವಿನ ಹೆಸರಿನಲ್ಲಿ ನಾವು ಇಡುವುದು ಇಷ್ಟೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.programme": {
+  "en": "Class or course",
+  "te": "తరగతి లేదా కోర్సు",
+  "hi": "कक्षा या पाठ्यक्रम",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.admno": {
+  "en": "Admission number (optional)",
+  "te": "అడ్మిషన్ నంబర్ (ఐచ్ఛికం)",
+  "hi": "प्रवेश संख्या (वैकल्पिक)",
+  "kn": "ಪ್ರವೇಶ ಸಂಖ್ಯೆ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.joined": {
+  "en": "Joined on (optional)",
+  "te": "చేరిన తేదీ (ఐచ్ఛికం)",
+  "hi": "शामिल होने की तारीख़ (वैकल्पिक)",
+  "kn": "ಸೇರಿದ ದಿನಾಂಕ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.minimum": {
+  "en": "Only this is kept about a student. There is no place for a date of birth, a photograph, an address, an identity number, health, marks or notes.",
+  "te": "విద్యార్థి గురించి ఇంతే ఉంచుతాం. పుట్టిన తేదీ, ఫోటో, చిరునామా, గుర్తింపు నంబర్, ఆరోగ్యం, మార్కులు, నోట్స్‌కు చోటు లేదు.",
+  "hi": "विद्यार्थी के बारे में बस इतना ही रखा जाता है। जन्मतिथि, फ़ोटो, पता, पहचान संख्या, स्वास्थ्य, अंक या टिप्पणी के लिए जगह नहीं है।",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯ ಬಗ್ಗೆ ಇಷ್ಟೇ ಇಡಲಾಗುತ್ತದೆ. ಹುಟ್ಟಿದ ದಿನಾಂಕ, ಫೋಟೋ, ವಿಳಾಸ, ಗುರುತಿನ ಸಂಖ್ಯೆ, ಆರೋಗ್ಯ, ಅಂಕಗಳು ಅಥವಾ ಟಿಪ್ಪಣಿಗಳಿಗೆ ಜಾಗವಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.save.new": {
+  "en": "Add the student",
+  "te": "విద్యార్థిని జోడించండి",
+  "hi": "विद्यार्थी जोड़ें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sf.save.edit": {
+  "en": "Change the student",
+  "te": "విద్యార్థిని మార్చండి",
+  "hi": "विद्यार्थी बदलें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.guardian": {
+  "en": "Choose the parent or guardian first.",
+  "te": "ముందు తల్లిదండ్రి లేదా సంరక్షకులను ఎంచుకోండి.",
+  "hi": "पहले अभिभावक चुनें।",
+  "kn": "ಮೊದಲು ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.programme": {
+  "en": "Choose a class or course.",
+  "te": "తరగతి లేదా కోర్సును ఎంచుకోండి.",
+  "hi": "कक्षा या पाठ्यक्रम चुनें।",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.group": {
+  "en": "Choose the {kind}.",
+  "te": "{kind} ను ఎంచుకోండి.",
+  "hi": "{kind} चुनें।",
+  "kn": "{kind} ಅನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.label.empty": {
+  "en": "Give a first name or initials.",
+  "te": "మొదటి పేరు లేదా మొదటి అక్షరాలు ఇవ్వండి.",
+  "hi": "पहला नाम या आद्याक्षर दें।",
+  "kn": "ಮೊದಲ ಹೆಸರು ಅಥವಾ ಮೊದಲಕ್ಷರಗಳನ್ನು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.label.long": {
+  "en": "At most 30 letters.",
+  "te": "గరిష్టంగా 30 అక్షరాలు.",
+  "hi": "अधिकतम 30 अक्षर।",
+  "kn": "ಗರಿಷ್ಠ 30 ಅಕ್ಷರಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.label.chars": {
+  "en": "A first name or initials only: no digits and no e-mail address.",
+  "te": "మొదటి పేరు లేదా మొదటి అక్షరాలు మాత్రమే: అంకెలు, ఇ-మెయిల్ చిరునామా వద్దు.",
+  "hi": "केवल पहला नाम या आद्याक्षर: कोई अंक या ई-मेल पता नहीं।",
+  "kn": "ಮೊದಲ ಹೆಸರು ಅಥವಾ ಮೊದಲಕ್ಷರಗಳು ಮಾತ್ರ: ಅಂಕೆಗಳು ಅಥವಾ ಇ-ಮೇಲ್ ವಿಳಾಸ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.record": {
+  "en": "The record",
+  "te": "రికార్డు",
+  "hi": "रिकॉर्ड",
+  "kn": "ದಾಖಲೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.group": {
+  "en": "Section, year or batch",
+  "te": "సెక్షన్, సంవత్సరం లేదా బ్యాచ్",
+  "hi": "अनुभाग, वर्ष या बैच",
+  "kn": "ವಿಭಾಗ, ವರ್ಷ ಅಥವಾ ಬ್ಯಾಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.leftOn": {
+  "en": "Left on",
+  "te": "వెళ్లిపోయిన తేదీ",
+  "hi": "जाने की तारीख़",
+  "kn": "ಬಿಟ್ಟು ಹೋದ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.markleft": {
+  "en": "Mark as left",
+  "te": "వెళ్లిపోయినట్లు గుర్తించండి",
+  "hi": "चले गए के रूप में चिह्नित करें",
+  "kn": "ಬಿಟ್ಟು ಹೋದರು ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.markback": {
+  "en": "Mark as here again",
+  "te": "మళ్లీ ఉన్నట్లు గుర్తించండి",
+  "hi": "फिर से यहाँ के रूप में चिह्नित करें",
+  "kn": "ಮತ್ತೆ ಇದ್ದಾರೆ ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.sibling": {
+  "en": "Add another child of this parent",
+  "te": "ఈ తల్లిదండ్రి మరో బిడ్డను జోడించండి",
+  "hi": "इसी अभिभावक का एक और बच्चा जोड़ें",
+  "kn": "ಈ ಪೋಷಕರ ಇನ್ನೊಬ್ಬ ಮಗುವನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.left.title": {
+  "en": "Mark this student as left?",
+  "te": "ఈ విద్యార్థి వెళ్లిపోయినట్లు గుర్తించాలా?",
+  "hi": "इस विद्यार्थी को चले गए के रूप में चिह्नित करें?",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿ ಬಿಟ್ಟು ಹೋದರು ಎಂದು ಗುರುತಿಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.left.body": {
+  "en": "The record stays. If you set a retention period, it counts from this day.",
+  "te": "రికార్డు అలాగే ఉంటుంది. నిలుపుదల వ్యవధి పెట్టి ఉంటే, అది ఈ రోజు నుండి లెక్కిస్తుంది.",
+  "hi": "रिकॉर्ड रहता है। अगर आपने अवधि तय की है तो वह इसी दिन से गिनी जाएगी।",
+  "kn": "ದಾಖಲೆ ಉಳಿಯುತ್ತದೆ. ನೀವು ಅವಧಿ ನಿಗದಿಪಡಿಸಿದ್ದರೆ, ಅದು ಈ ದಿನದಿಂದ ಎಣಿಕೆಯಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.left.go": {
+  "en": "Mark as left",
+  "te": "వెళ్లిపోయినట్లు గుర్తించండి",
+  "hi": "चले गए चिह्नित करें",
+  "kn": "ಬಿಟ್ಟು ಹೋದರು ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.active.title": {
+  "en": "Mark this student as here again?",
+  "te": "ఈ విద్యార్థి మళ్లీ ఉన్నట్లు గుర్తించాలా?",
+  "hi": "इस विद्यार्थी को फिर से यहाँ चिह्नित करें?",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿ ಮತ್ತೆ ಇದ್ದಾರೆ ಎಂದು ಗುರುತಿಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.active.body": {
+  "en": "The day they left is cleared.",
+  "te": "వారు వెళ్లిన తేదీ తొలగిస్తాం.",
+  "hi": "उनके जाने की तारीख़ हटा दी जाएगी।",
+  "kn": "ಅವರು ಬಿಟ್ಟು ಹೋದ ದಿನಾಂಕವನ್ನು ತೆಗೆಯಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.active.go": {
+  "en": "Mark as here",
+  "te": "ఉన్నట్లు గుర్తించండి",
+  "hi": "यहाँ चिह्नित करें",
+  "kn": "ಇದ್ದಾರೆ ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.fees": {
+  "en": "Fees of this family",
+  "te": "ఈ కుటుంబం ఫీజులు",
+  "hi": "इस परिवार की फीस",
+  "kn": "ಈ ಕುಟುಂಬದ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.total": {
+  "en": "Pending in all",
+  "te": "మొత్తం పెండింగ్",
+  "hi": "कुल बकाया",
+  "kn": "ಒಟ್ಟು ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.openfees": {
+  "en": "Open this student's fees",
+  "te": "ఈ విద్యార్థి ఫీజులను తెరవండి",
+  "hi": "इस विद्यार्थी की फीस खोलें",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಯ ಶುಲ್ಕ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.erase.title": {
+  "en": "Erase this child",
+  "te": "ఈ బిడ్డను తొలగించండి",
+  "hi": "इस बच्चे को मिटाएँ",
+  "kn": "ಈ ಮಗುವನ್ನು ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.erase.help": {
+  "en": "On a parent's request. The name and the admission number are removed for good; the row and the money records stay, because accounts point to them.",
+  "te": "తల్లిదండ్రి కోరితే. పేరు, అడ్మిషన్ నంబర్ శాశ్వతంగా తొలగిస్తాం; ఖాతాలు వాటిని సూచిస్తాయి కాబట్టి వరుస, డబ్బు రికార్డులు ఉంటాయి.",
+  "hi": "अभिभावक के अनुरोध पर। नाम और प्रवेश संख्या हमेशा के लिए हटा दी जाती है; पंक्ति और पैसे के रिकॉर्ड रहते हैं क्योंकि खाते उन्हें दर्शाते हैं।",
+  "kn": "ಪೋಷಕರ ಕೋರಿಕೆಯ ಮೇರೆಗೆ. ಹೆಸರು ಮತ್ತು ಪ್ರವೇಶ ಸಂಖ್ಯೆಯನ್ನು ಶಾಶ್ವತವಾಗಿ ತೆಗೆಯಲಾಗುತ್ತದೆ; ಖಾತೆಗಳು ಅವನ್ನು ಸೂಚಿಸುವುದರಿಂದ ಸಾಲು ಮತ್ತು ಹಣದ ದಾಖಲೆಗಳು ಉಳಿಯುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.erase": {
+  "en": "Erase this child",
+  "te": "ఈ బిడ్డను తొలగించండి",
+  "hi": "इस बच्चे को मिटाएँ",
+  "kn": "ಈ ಮಗುವನ್ನು ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.erase.body": {
+  "en": "This cannot be undone. The name and admission number of this child are removed for good.",
+  "te": "దీన్ని వెనక్కి తీసుకోలేరు. ఈ బిడ్డ పేరు, అడ్మిషన్ నంబర్ శాశ్వతంగా తొలగిస్తాం.",
+  "hi": "इसे वापस नहीं किया जा सकता। इस बच्चे का नाम और प्रवेश संख्या हमेशा के लिए हटा दी जाएगी।",
+  "kn": "ಇದನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗದು. ಈ ಮಗುವಿನ ಹೆಸರು ಮತ್ತು ಪ್ರವೇಶ ಸಂಖ್ಯೆಯನ್ನು ಶಾಶ್ವತವಾಗಿ ತೆಗೆಯಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.sd.erase.go": {
+  "en": "Erase for good",
+  "te": "శాశ్వతంగా తొలగించండి",
+  "hi": "हमेशा के लिए मिटाएँ",
+  "kn": "ಶಾಶ್ವತವಾಗಿ ಅಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.sub": {
+  "en": "From the first enquiry to admission: enquiry, campus visit, application, admitted or lost.",
+  "te": "మొదటి ఎంక్వైరీ నుండి అడ్మిషన్ వరకు: ఎంక్వైరీ, క్యాంపస్ సందర్శన, దరఖాస్తు, చేరారు లేదా కోల్పోయారు.",
+  "hi": "पहली पूछताछ से प्रवेश तक: पूछताछ, कैंपस दौरा, आवेदन, दाख़िल या खो गए।",
+  "kn": "ಮೊದಲ ವಿಚಾರಣೆಯಿಂದ ಪ್ರವೇಶದವರೆಗೆ: ವಿಚಾರಣೆ, ಕ್ಯಾಂಪಸ್ ಭೇಟಿ, ಅರ್ಜಿ, ಪ್ರವೇಶ ಅಥವಾ ಕಳೆದುಕೊಂಡದ್ದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.add": {
+  "en": "New enquiry",
+  "te": "కొత్త ఎంక్వైరీ",
+  "hi": "नई पूछताछ",
+  "kn": "ಹೊಸ ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सहेज लिया गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.source": {
+  "en": "Where it came from",
+  "te": "ఎక్కడి నుండి వచ్చింది",
+  "hi": "कहाँ से आई",
+  "kn": "ಎಲ್ಲಿಂದ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.none.title": {
+  "en": "No enquiries yet",
+  "te": "ఇంకా ఎంక్వైరీలు లేవు",
+  "hi": "अभी कोई पूछताछ नहीं",
+  "kn": "ಇನ್ನೂ ವಿಚಾರಣೆಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.none.body": {
+  "en": "When a parent asks about admission, add the enquiry here and follow it to the end.",
+  "te": "తల్లిదండ్రి అడ్మిషన్ గురించి అడిగినప్పుడు, ఎంక్వైరీని ఇక్కడ జోడించి చివరి వరకు అనుసరించండి.",
+  "hi": "जब कोई अभिभावक प्रवेश के बारे में पूछे, पूछताछ यहाँ जोड़ें और अंत तक उसका पीछा करें।",
+  "kn": "ಪೋಷಕರು ಪ್ರವೇಶದ ಬಗ್ಗೆ ಕೇಳಿದಾಗ, ವಿಚಾರಣೆಯನ್ನು ಇಲ್ಲಿ ಸೇರಿಸಿ ಕೊನೆಯವರೆಗೆ ಅನುಸರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.col.empty": {
+  "en": "None",
+  "te": "ఏమీ లేవు",
+  "hi": "कोई नहीं",
+  "kn": "ಯಾವುದೂ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.unknown": {
+  "en": "Parent or guardian",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకులు",
+  "hi": "अभिभावक",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.nextvisit": {
+  "en": "Visit on {date}",
+  "te": "{date} న సందర్శన",
+  "hi": "{date} को दौरा",
+  "kn": "{date} ರಂದು ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.more": {
+  "en": "Only the newest 100 enquiries are shown. Use the filters to narrow them.",
+  "te": "కొత్త 100 ఎంక్వైరీలు మాత్రమే చూపిస్తున్నాం. తగ్గించడానికి ఫిల్టర్లు వాడండి.",
+  "hi": "केवल सबसे नई 100 पूछताछ दिखाई गई हैं। कम करने के लिए फ़िल्टर लगाएँ।",
+  "kn": "ಹೊಸ 100 ವಿಚಾರಣೆಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಲಾಗಿದೆ. ಕಡಿಮೆ ಮಾಡಲು ಫಿಲ್ಟರ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.asked": {
+  "en": "Class or course asked about",
+  "te": "అడిగిన తరగతి లేదా కోర్సు",
+  "hi": "जिस कक्षा या पाठ्यक्रम के बारे में पूछा",
+  "kn": "ಕೇಳಿದ ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.notsure": {
+  "en": "Not sure yet",
+  "te": "ఇంకా తెలియదు",
+  "hi": "अभी पक्का नहीं",
+  "kn": "ಇನ್ನೂ ಖಚಿತವಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.guardian": {
+  "en": "The parent or guardian",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకులు",
+  "hi": "अभिभावक",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.new": {
+  "en": "A new person",
+  "te": "కొత్త వ్యక్తి",
+  "hi": "नया व्यक्ति",
+  "kn": "ಹೊಸ ವ್ಯಕ್ತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.existing": {
+  "en": "Someone already in my list",
+  "te": "నా జాబితాలో ఇప్పటికే ఉన్నవారు",
+  "hi": "मेरी सूची में पहले से मौजूद",
+  "kn": "ನನ್ನ ಪಟ್ಟಿಯಲ್ಲಿ ಈಗಾಗಲೇ ಇರುವವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.gname": {
+  "en": "Parent or guardian's name",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకుల పేరు",
+  "hi": "अभिभावक का नाम",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.gphone": {
+  "en": "Their WhatsApp number",
+  "te": "వారి WhatsApp నంబర్",
+  "hi": "उनका WhatsApp नंबर",
+  "kn": "ಅವರ WhatsApp ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.gphone.help": {
+  "en": "The parent's own number, never the child's. We write only to this number.",
+  "te": "తల్లిదండ్రి సొంత నంబర్, బిడ్డది ఎప్పుడూ కాదు. మేము ఈ నంబర్‌కు మాత్రమే రాస్తాం.",
+  "hi": "अभिभावक का अपना नंबर, कभी बच्चे का नहीं। हम केवल इसी नंबर पर लिखते हैं।",
+  "kn": "ಪೋಷಕರ ಸ್ವಂತ ಸಂಖ್ಯೆ, ಎಂದಿಗೂ ಮಗುವಿನದಲ್ಲ. ನಾವು ಈ ಸಂಖ್ಯೆಗೆ ಮಾತ್ರ ಬರೆಯುತ್ತೇವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.nochild": {
+  "en": "No child is stored until the enquiry is admitted.",
+  "te": "ఎంక్వైరీకి అడ్మిషన్ ఇచ్చే వరకు ఏ బిడ్డ వివరాలూ ఉంచం.",
+  "hi": "पूछताछ में दाख़िला होने तक कोई बच्चा सहेजा नहीं जाता।",
+  "kn": "ವಿಚಾರಣೆಗೆ ಪ್ರವೇಶ ನೀಡುವವರೆಗೆ ಯಾವ ಮಗುವನ್ನೂ ಉಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.save": {
+  "en": "Save the enquiry",
+  "te": "ఎంక్వైరీని సేవ్ చేయండి",
+  "hi": "पूछताछ सहेजें",
+  "kn": "ವಿಚಾರಣೆಯನ್ನು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.gname": {
+  "en": "Give the parent or guardian's name.",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకుల పేరు ఇవ్వండి.",
+  "hi": "अभिभावक का नाम दें।",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರ ಹೆಸರು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.gphone": {
+  "en": "Give a phone number: digits, spaces, plus, brackets and dashes only.",
+  "te": "ఫోన్ నంబర్ ఇవ్వండి: అంకెలు, ఖాళీలు, ప్లస్, బ్రాకెట్లు, డాష్‌లు మాత్రమే.",
+  "hi": "फ़ोन नंबर दें: केवल अंक, स्पेस, प्लस, कोष्ठक और डैश।",
+  "kn": "ಫೋನ್ ಸಂಖ್ಯೆ ನೀಡಿ: ಅಂಕೆಗಳು, ಖಾಲಿ ಜಾಗ, ಪ್ಲಸ್, ಆವರಣ ಮತ್ತು ಡ್ಯಾಶ್ ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.back": {
+  "en": "All enquiries",
+  "te": "అన్ని ఎంక్వైరీలు",
+  "hi": "सभी पूछताछ",
+  "kn": "ಎಲ್ಲಾ ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.history": {
+  "en": "History",
+  "te": "చరిత్ర",
+  "hi": "इतिहास",
+  "kn": "ಇತಿಹಾಸ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.visits": {
+  "en": "Campus visits: {n}",
+  "te": "క్యాంపస్ సందర్శనలు: {n}",
+  "hi": "कैंपस दौरे: {n}",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.next": {
+  "en": "What next",
+  "te": "తర్వాత ఏమిటి",
+  "hi": "आगे क्या",
+  "kn": "ಮುಂದೇನು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.book": {
+  "en": "Book a campus visit",
+  "te": "క్యాంపస్ సందర్శనను బుక్ చేయండి",
+  "hi": "कैंपस दौरा बुक करें",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿ ಬುಕ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.move.campus_visit": {
+  "en": "Visited the campus",
+  "te": "క్యాంపస్ సందర్శించారు",
+  "hi": "कैंपस आए",
+  "kn": "ಕ್ಯಾಂಪಸ್‌ಗೆ ಬಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.move.application": {
+  "en": "Application received",
+  "te": "దరఖాస్తు వచ్చింది",
+  "hi": "आवेदन मिला",
+  "kn": "ಅರ್ಜಿ ಬಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.admit": {
+  "en": "Admit",
+  "te": "అడ్మిషన్ ఇవ్వండి",
+  "hi": "दाख़िल करें",
+  "kn": "ಪ್ರವೇಶ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.admit.owner": {
+  "en": "Only the Owner and Admins can admit.",
+  "te": "అడ్మిషన్ యజమాని, అడ్మిన్‌లు మాత్రమే ఇవ్వగలరు.",
+  "hi": "दाख़िला केवल मालिक और एडमिन कर सकते हैं।",
+  "kn": "ಪ್ರವೇಶವನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ನೀಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.lost": {
+  "en": "Lost",
+  "te": "కోల్పోయాం",
+  "hi": "खो गई",
+  "kn": "ಕಳೆದುಕೊಂಡೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.reopen": {
+  "en": "Re-open",
+  "te": "మళ్లీ తెరవండి",
+  "hi": "फिर से खोलें",
+  "kn": "ಮತ್ತೆ ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.openstudent": {
+  "en": "Open the student",
+  "te": "విద్యార్థిని తెరవండి",
+  "hi": "विद्यार्थी खोलें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯನ್ನು ತೆರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.lost.title": {
+  "en": "Lost: why?",
+  "te": "కోల్పోయాం: ఎందుకు?",
+  "hi": "खो गई: क्यों?",
+  "kn": "ಕಳೆದುಕೊಂಡೆವು: ಏಕೆ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.lost.reason": {
+  "en": "Reason",
+  "te": "కారణం",
+  "hi": "कारण",
+  "kn": "ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.lost.go": {
+  "en": "Mark as lost",
+  "te": "కోల్పోయినట్లు గుర్తించండి",
+  "hi": "खो गई चिह्नित करें",
+  "kn": "ಕಳೆದುಕೊಂಡೆವು ಎಂದು ಗುರುತಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.reopen.title": {
+  "en": "Re-open this enquiry?",
+  "te": "ఈ ఎంక్వైరీని మళ్లీ తెరవాలా?",
+  "hi": "यह पूछताछ फिर से खोलें?",
+  "kn": "ಈ ವಿಚಾರಣೆಯನ್ನು ಮತ್ತೆ ತೆರೆಯಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.reopen.body": {
+  "en": "It goes back to the first stage.",
+  "te": "ఇది మొదటి దశకు వెళ్తుంది.",
+  "hi": "यह पहले चरण में लौट जाती है।",
+  "kn": "ಇದು ಮೊದಲ ಹಂತಕ್ಕೆ ಹಿಂತಿರುಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.admit.title": {
+  "en": "Admit this student",
+  "te": "ఈ విద్యార్థికి అడ్మిషన్ ఇవ్వండి",
+  "hi": "इस विद्यार्थी को दाख़िल करें",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಗೆ ಪ್ರವೇಶ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.admit.body": {
+  "en": "This makes the student and, if you choose a fee plan, gives it too. If anything is wrong, nothing is made.",
+  "te": "ఇది విద్యార్థిని చేస్తుంది, ఫీజు ప్లాన్ ఎంచుకుంటే దాన్ని కూడా ఇస్తుంది. ఏదైనా తప్పు ఉంటే ఏమీ చేయదు.",
+  "hi": "इससे विद्यार्थी बनता है और अगर आप फीस योजना चुनें तो वह भी दी जाती है। कुछ भी ग़लत हो तो कुछ नहीं बनता।",
+  "kn": "ಇದು ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಮಾಡುತ್ತದೆ ಮತ್ತು ನೀವು ಶುಲ್ಕ ಯೋಜನೆ ಆರಿಸಿದರೆ ಅದನ್ನೂ ನೀಡುತ್ತದೆ. ಏನಾದರೂ ತಪ್ಪಿದ್ದರೆ ಏನೂ ಮಾಡುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.plan": {
+  "en": "Fee plan (optional)",
+  "te": "ఫీజు ప్లాన్ (ఐచ్ఛికం)",
+  "hi": "फीस योजना (वैकल्पिक)",
+  "kn": "ಶುಲ್ಕ ಯೋಜನೆ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.plan.none": {
+  "en": "No plan now",
+  "te": "ఇప్పుడు ప్లాన్ వద్దు",
+  "hi": "अभी कोई योजना नहीं",
+  "kn": "ಈಗ ಯೋಜನೆ ಬೇಡ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.adm.admit.go": {
+  "en": "Admit",
+  "te": "అడ్మిషన్ ఇవ్వండి",
+  "hi": "दाख़िल करें",
+  "kn": "ಪ್ರವೇಶ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stage.enquiry": {
+  "en": "Enquiry",
+  "te": "ఎంక్వైరీ",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stage.campus_visit": {
+  "en": "Campus visit",
+  "te": "క్యాంపస్ సందర్శన",
+  "hi": "कैंपस दौरा",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stage.application": {
+  "en": "Application",
+  "te": "దరఖాస్తు",
+  "hi": "आवेदन",
+  "kn": "ಅರ್ಜಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stage.admitted": {
+  "en": "Admitted",
+  "te": "చేరారు",
+  "hi": "दाख़िल",
+  "kn": "ಪ್ರವೇಶ ಪಡೆದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.stage.lost": {
+  "en": "Lost",
+  "te": "కోల్పోయాం",
+  "hi": "खो गई",
+  "kn": "ಕಳೆದುಕೊಂಡೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.source.whatsapp": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "edu.source.walk_in": {
+  "en": "Walk-in",
+  "te": "నేరుగా వచ్చారు",
+  "hi": "सीधे आए",
+  "kn": "ನೇರವಾಗಿ ಬಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.source.website": {
+  "en": "Website",
+  "te": "వెబ్‌సైట్",
+  "hi": "वेबसाइट",
+  "kn": "ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.source.ad": {
+  "en": "Advertisement",
+  "te": "ప్రకటన",
+  "hi": "विज्ञापन",
+  "kn": "ಜಾಹೀರಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.source.referral": {
+  "en": "Referral",
+  "te": "సిఫార్సు",
+  "hi": "सिफ़ारिश",
+  "kn": "ಶಿಫಾರಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.source.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.lost.fees": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फीस",
+  "kn": "ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.lost.distance": {
+  "en": "Distance",
+  "te": "దూరం",
+  "hi": "दूरी",
+  "kn": "ದೂರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.lost.other_school": {
+  "en": "Joined another school",
+  "te": "మరో పాఠశాలలో చేరారు",
+  "hi": "दूसरे स्कूल में गए",
+  "kn": "ಬೇರೆ ಶಾಲೆಗೆ ಸೇರಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.lost.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "रुचि नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.lost.no_response": {
+  "en": "No response",
+  "te": "స్పందన లేదు",
+  "hi": "कोई जवाब नहीं",
+  "kn": "ಪ್ರತಿಕ್ರಿಯೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.lost.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.sub": {
+  "en": "What has fallen due, what is collected and what is pending, by class and section.",
+  "te": "చెల్లించాల్సినవి, వసూలైనవి, పెండింగ్‌లో ఉన్నవి తరగతి, సెక్షన్ వారీగా.",
+  "hi": "क्या देय हुआ, क्या वसूला गया और क्या बकाया है, कक्षा और अनुभाग के अनुसार।",
+  "kn": "ಬಾಕಿಯಾದದ್ದು, ವಸೂಲಾದದ್ದು ಮತ್ತು ಬಾಕಿ ಉಳಿದದ್ದು, ತರಗತಿ ಮತ್ತು ವಿಭಾಗವಾರು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.pending": {
+  "en": "Who has fees pending",
+  "te": "ఎవరి ఫీజులు పెండింగ్‌లో ఉన్నాయి",
+  "hi": "किसकी फीस बकाया है",
+  "kn": "ಯಾರ ಶುಲ್ಕ ಬಾಕಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.plans": {
+  "en": "Fee plans",
+  "te": "ఫీజు ప్లాన్లు",
+  "hi": "फीस योजनाएँ",
+  "kn": "ಶುಲ್ಕ ಯೋಜನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.remind": {
+  "en": "Send a reminder campaign",
+  "te": "రిమైండర్ ప్రచారం చేయండి",
+  "hi": "रिमाइंडर अभियान बनाएँ",
+  "kn": "ನೆನಪೋಲೆ ಅಭಿಯಾನ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.back": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फीस",
+  "kn": "ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.student": {
+  "en": "The student",
+  "te": "విద్యార్థి",
+  "hi": "विद्यार्थी",
+  "kn": "ವಿದ್ಯಾರ್ಥಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.noplans.title": {
+  "en": "No fee plan yet",
+  "te": "ఇంకా ఫీజు ప్లాన్ లేదు",
+  "hi": "अभी कोई फीस योजना नहीं",
+  "kn": "ಇನ್ನೂ ಶುಲ್ಕ ಯೋಜನೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.noplans.body": {
+  "en": "Make a plan with its instalments and due dates, then give it to your students. The figures here come from that.",
+  "te": "వాయిదాలు, గడువు తేదీలతో ప్లాన్ చేసి, విద్యార్థులకు ఇవ్వండి. ఇక్కడి అంకెలు దాని నుండే వస్తాయి.",
+  "hi": "किस्तों और देय तिथियों के साथ एक योजना बनाएँ, फिर उसे अपने विद्यार्थियों को दें। यहाँ के आँकड़े उसी से आते हैं।",
+  "kn": "ಕಂತುಗಳು ಮತ್ತು ಬಾಕಿ ದಿನಾಂಕಗಳೊಂದಿಗೆ ಯೋಜನೆ ಮಾಡಿ, ನಂತರ ಅದನ್ನು ನಿಮ್ಮ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ನೀಡಿ. ಇಲ್ಲಿನ ಅಂಕಿಗಳು ಅದರಿಂದಲೇ ಬರುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.window": {
+  "en": "From {from} to {to}",
+  "te": "{from} నుండి {to} వరకు",
+  "hi": "{from} से {to} तक",
+  "kn": "{from} ರಿಂದ {to} ವರೆಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.note": {
+  "en": "Only fees that have fallen due are counted. A concession counts as settled, so the percentage can rise without money coming in.",
+  "te": "గడువు వచ్చిన ఫీజులు మాత్రమే లెక్కిస్తాం. రాయితీ చెల్లించినట్లే లెక్క, కాబట్టి డబ్బు రాకుండానే శాతం పెరగవచ్చు.",
+  "hi": "केवल देय हो चुकी फीस गिनी जाती है। रियायत चुकता मानी जाती है, इसलिए पैसे आए बिना भी प्रतिशत बढ़ सकता है।",
+  "kn": "ಬಾಕಿಯಾದ ಶುಲ್ಕವನ್ನು ಮಾತ್ರ ಎಣಿಸಲಾಗುತ್ತದೆ. ರಿಯಾಯಿತಿ ಇತ್ಯರ್ಥವೆಂದು ಎಣಿಕೆ, ಆದ್ದರಿಂದ ಹಣ ಬರದೆಯೂ ಶೇಕಡಾ ಹೆಚ್ಚಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.today": {
+  "en": "Collected today",
+  "te": "ఈ రోజు వసూలైనది",
+  "hi": "आज वसूला गया",
+  "kn": "ಇಂದು ವಸೂಲಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fees.receipts": {
+  "en": "{n} receipts",
+  "te": "{n} రసీదులు",
+  "hi": "{n} रसीदें",
+  "kn": "{n} ರಸೀದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.pending.title": {
+  "en": "Fees pending",
+  "te": "పెండింగ్ ఫీజులు",
+  "hi": "बकाया फीस",
+  "kn": "ಬಾಕಿ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.pending.sub": {
+  "en": "Money that has fallen due and is not yet paid or conceded, the largest first.",
+  "te": "గడువు వచ్చి ఇంకా చెల్లించని లేదా రాయితీ ఇవ్వని సొమ్ము, పెద్దది ముందు.",
+  "hi": "जो पैसा देय हो चुका और अब तक चुकाया या रियायत में नहीं गया, सबसे बड़ा पहले।",
+  "kn": "ಬಾಕಿಯಾಗಿ ಇನ್ನೂ ಪಾವತಿಸದ ಅಥವಾ ರಿಯಾಯಿತಿ ನೀಡದ ಹಣ, ದೊಡ್ಡದು ಮೊದಲು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.pending.none": {
+  "en": "Nothing is pending. Every fee that has fallen due is paid or conceded.",
+  "te": "ఏదీ పెండింగ్‌లో లేదు. గడువు వచ్చిన ప్రతి ఫీజు చెల్లించారు లేదా రాయితీ ఇచ్చారు.",
+  "hi": "कुछ बकाया नहीं। देय हो चुकी हर फीस चुका दी गई है या रियायत में है।",
+  "kn": "ಏನೂ ಬಾಕಿ ಇಲ್ಲ. ಬಾಕಿಯಾದ ಪ್ರತಿ ಶುಲ್ಕವನ್ನು ಪಾವತಿಸಲಾಗಿದೆ ಅಥವಾ ರಿಯಾಯಿತಿ ನೀಡಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.pending.due": {
+  "en": "Fallen due: {amount}",
+  "te": "గడువు వచ్చినది: {amount}",
+  "hi": "देय हुआ: {amount}",
+  "kn": "ಬಾಕಿಯಾದದ್ದು: {amount}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plans.sub": {
+  "en": "Heads, instalments and due dates for a class or course in one academic year.",
+  "te": "ఒక విద్యా సంవత్సరంలో తరగతి లేదా కోర్సుకు హెడ్లు, వాయిదాలు, గడువు తేదీలు.",
+  "hi": "एक शैक्षणिक वर्ष में किसी कक्षा या पाठ्यक्रम के मद, किस्तें और देय तिथियाँ।",
+  "kn": "ಒಂದು ಶೈಕ್ಷಣಿಕ ವರ್ಷದಲ್ಲಿ ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್‌ನ ಶುಲ್ಕ ಹೆಡ್‌ಗಳು, ಕಂತುಗಳು ಮತ್ತು ಬಾಕಿ ದಿನಾಂಕಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plans.none.title": {
+  "en": "No fee plans yet",
+  "te": "ఇంకా ఫీజు ప్లాన్లు లేవు",
+  "hi": "अभी कोई फीस योजना नहीं",
+  "kn": "ಇನ್ನೂ ಶುಲ್ಕ ಯೋಜನೆಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plans.none.body": {
+  "en": "A plan lists the heads (tuition, transport ...) and when each instalment falls due.",
+  "te": "ప్లాన్‌లో హెడ్లు (ట్యూషన్, రవాణా ...), ప్రతి వాయిదా ఎప్పుడు వస్తుందో ఉంటాయి.",
+  "hi": "योजना में मद (ट्यूशन, परिवहन ...) और हर किस्त कब देय होती है, लिखा होता है।",
+  "kn": "ಯೋಜನೆಯಲ್ಲಿ ಹೆಡ್‌ಗಳು (ಟ್ಯೂಷನ್, ಸಾರಿಗೆ ...) ಮತ್ತು ಪ್ರತಿ ಕಂತು ಯಾವಾಗ ಬಾಕಿಯಾಗುತ್ತದೆ ಎಂಬುದಿರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.add": {
+  "en": "Make a fee plan",
+  "te": "ఫీజు ప్లాన్ చేయండి",
+  "hi": "फीस योजना बनाएँ",
+  "kn": "ಶುಲ್ಕ ಯೋಜನೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.back": {
+  "en": "All fee plans",
+  "te": "అన్ని ఫీజు ప్లాన్లు",
+  "hi": "सभी फीस योजनाएँ",
+  "kn": "ಎಲ್ಲಾ ಶುಲ್ಕ ಯೋಜನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.holders": {
+  "en": "{n} students hold it",
+  "te": "{n} విద్యార్థులకు ఉంది",
+  "hi": "{n} विद्यार्थियों के पास है",
+  "kn": "{n} ವಿದ್ಯಾರ್ಥಿಗಳ ಬಳಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सहेज लिया गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.name": {
+  "en": "Name of the plan",
+  "te": "ప్లాన్ పేరు",
+  "hi": "योजना का नाम",
+  "kn": "ಯೋಜನೆಯ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.group": {
+  "en": "Section (optional)",
+  "te": "సెక్షన్ (ఐచ్ఛికం)",
+  "hi": "अनुभाग (वैकल्पिक)",
+  "kn": "ವಿಭಾಗ (ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.allgroups": {
+  "en": "The whole class or course",
+  "te": "మొత్తం తరగతి లేదా కోర్సు",
+  "hi": "पूरी कक्षा या पाठ्यक्रम",
+  "kn": "ಇಡೀ ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.year": {
+  "en": "Academic year",
+  "te": "విద్యా సంవత్సరం",
+  "hi": "शैक्षणिक वर्ष",
+  "kn": "ಶೈಕ್ಷಣಿಕ ವರ್ಷ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.year.help": {
+  "en": "Written like 2026-27.",
+  "te": "2026-27 లా రాయండి.",
+  "hi": "2026-27 की तरह लिखें।",
+  "kn": "2026-27 ರಂತೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.lines": {
+  "en": "Instalments",
+  "te": "వాయిదాలు",
+  "hi": "किस्तें",
+  "kn": "ಕಂತುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.lines.help": {
+  "en": "One row for each head and instalment: what it is, its number, when it falls due and the amount in rupees.",
+  "te": "ప్రతి హెడ్, వాయిదాకు ఒక వరుస: ఏమిటి, దాని నంబర్, ఎప్పుడు గడువు, రూపాయల్లో మొత్తం.",
+  "hi": "हर मद और किस्त की एक पंक्ति: वह क्या है, उसका क्रम, कब देय है और रुपयों में राशि।",
+  "kn": "ಪ್ರತಿ ಹೆಡ್ ಮತ್ತು ಕಂತಿಗೆ ಒಂದು ಸಾಲು: ಅದೇನು, ಅದರ ಸಂಖ್ಯೆ, ಯಾವಾಗ ಬಾಕಿ ಮತ್ತು ರೂಪಾಯಿಗಳಲ್ಲಿ ಮೊತ್ತ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.head": {
+  "en": "Head",
+  "te": "హెడ్",
+  "hi": "मद",
+  "kn": "ಹೆಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.no": {
+  "en": "No.",
+  "te": "నం.",
+  "hi": "क्र.",
+  "kn": "ಸಂ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.due": {
+  "en": "Falls due on",
+  "te": "గడువు తేదీ",
+  "hi": "देय तिथि",
+  "kn": "ಬಾಕಿ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.amount": {
+  "en": "Amount (₹)",
+  "te": "మొత్తం (₹)",
+  "hi": "राशि (₹)",
+  "kn": "ಮೊತ್ತ (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.remove": {
+  "en": "Remove row {n}",
+  "te": "వరుస {n} తొలగించండి",
+  "hi": "पंक्ति {n} हटाएँ",
+  "kn": "ಸಾಲು {n} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.addrow": {
+  "en": "Add a row",
+  "te": "వరుస జోడించండి",
+  "hi": "पंक्ति जोड़ें",
+  "kn": "ಸಾಲು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.total": {
+  "en": "Total",
+  "te": "మొత్తం",
+  "hi": "कुल",
+  "kn": "ಒಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late": {
+  "en": "Late fee",
+  "te": "ఆలస్య రుసుము",
+  "hi": "विलंब शुल्क",
+  "kn": "ತಡ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.help": {
+  "en": "A rule only. Nothing is added to a parent's account by looking at it or by the clock: a person posts the late fees.",
+  "te": "ఇది నియమం మాత్రమే. చూడడం వల్ల, గడియారం వల్ల తల్లిదండ్రి ఖాతాకు ఏమీ చేరదు: ఆలస్య రుసుములను ఒక వ్యక్తి పోస్ట్ చేస్తారు.",
+  "hi": "यह केवल नियम है। देखने से या घड़ी से अभिभावक के खाते में कुछ नहीं जुड़ता: विलंब शुल्क कोई व्यक्ति पोस्ट करता है।",
+  "kn": "ಇದು ನಿಯಮ ಮಾತ್ರ. ನೋಡುವುದರಿಂದ ಅಥವಾ ಗಡಿಯಾರದಿಂದ ಪೋಷಕರ ಖಾತೆಗೆ ಏನೂ ಸೇರುವುದಿಲ್ಲ: ತಡ ಶುಲ್ಕಗಳನ್ನು ಒಬ್ಬ ವ್ಯಕ್ತಿ ಪೋಸ್ಟ್ ಮಾಡುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.none": {
+  "en": "No late fee",
+  "te": "ఆలస్య రుసుము లేదు",
+  "hi": "कोई विलंब शुल्क नहीं",
+  "kn": "ತಡ ಶುಲ್ಕ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.fixed": {
+  "en": "One amount for each instalment still open after the grace days",
+  "te": "గడువు రోజుల తర్వాత కూడా తెరిచి ఉన్న ప్రతి వాయిదాకు ఒక మొత్తం",
+  "hi": "छूट के दिनों के बाद भी खुली हर किस्त पर एक राशि",
+  "kn": "ವಿನಾಯಿತಿ ದಿನಗಳ ನಂತರವೂ ತೆರೆದಿರುವ ಪ್ರತಿ ಕಂತಿಗೆ ಒಂದು ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.per_day": {
+  "en": "An amount for each day late (with a most)",
+  "te": "ఆలస్యమైన ప్రతి రోజుకు ఒక మొత్తం (గరిష్ఠ పరిమితితో)",
+  "hi": "देरी के हर दिन के लिए एक राशि (अधिकतम सीमा के साथ)",
+  "kn": "ತಡವಾದ ಪ್ರತಿ ದಿನಕ್ಕೆ ಒಂದು ಮೊತ್ತ (ಗರಿಷ್ಠ ಮಿತಿಯೊಂದಿಗೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.amount.fixed": {
+  "en": "Late fee for each instalment (₹)",
+  "te": "ప్రతి వాయిదాకు ఆలస్య రుసుము (₹)",
+  "hi": "हर किस्त का विलंब शुल्क (₹)",
+  "kn": "ಪ್ರತಿ ಕಂತಿಗೆ ತಡ ಶುಲ್ಕ (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.amount.day": {
+  "en": "Late fee for each day (₹)",
+  "te": "ప్రతి రోజుకు ఆలస్య రుసుము (₹)",
+  "hi": "हर दिन का विलंब शुल्क (₹)",
+  "kn": "ಪ್ರತಿ ದಿನಕ್ಕೆ ತಡ ಶುಲ್ಕ (₹)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.grace": {
+  "en": "Grace days",
+  "te": "వెసులుబాటు రోజులు",
+  "hi": "छूट के दिन",
+  "kn": "ವಿನಾಯಿತಿ ದಿನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.cap": {
+  "en": "Most for one instalment (₹, optional)",
+  "te": "ఒక వాయిదాకు గరిష్ఠం (₹, ఐచ్ఛికం)",
+  "hi": "एक किस्त का अधिकतम (₹, वैकल्पिक)",
+  "kn": "ಒಂದು ಕಂತಿಗೆ ಗರಿಷ್ಠ (₹, ಐಚ್ಛಿಕ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.fixed.line": {
+  "en": "{amount} for each instalment still open after {days} grace days.",
+  "te": "{days} వెసులుబాటు రోజుల తర్వాత కూడా తెరిచి ఉన్న ప్రతి వాయిదాకు {amount}.",
+  "hi": "{days} छूट के दिनों के बाद भी खुली हर किस्त पर {amount}।",
+  "kn": "{days} ವಿನಾಯಿತಿ ದಿನಗಳ ನಂತರವೂ ತೆರೆದಿರುವ ಪ್ರತಿ ಕಂತಿಗೆ {amount}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.day.line": {
+  "en": "{amount} for each day late, after {days} grace days.",
+  "te": "{days} వెసులుబాటు రోజుల తర్వాత ఆలస్యమైన ప్రతి రోజుకు {amount}.",
+  "hi": "{days} छूट के दिनों के बाद देरी के हर दिन पर {amount}।",
+  "kn": "{days} ವಿನಾಯಿತಿ ದಿನಗಳ ನಂತರ ತಡವಾದ ಪ್ರತಿ ದಿನಕ್ಕೆ {amount}.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.late.cap.line": {
+  "en": "Never more than {amount} for one instalment.",
+  "te": "ఒక వాయిదాకు ఎప్పుడూ {amount} కంటే ఎక్కువ కాదు.",
+  "hi": "एक किस्त पर कभी {amount} से अधिक नहीं।",
+  "kn": "ಒಂದು ಕಂತಿಗೆ ಎಂದಿಗೂ {amount} ಕ್ಕಿಂತ ಹೆಚ್ಚಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.active": {
+  "en": "Active (uncheck to put the plan away)",
+  "te": "చురుగ్గా ఉంది (ప్లాన్‌ను పక్కన పెట్టాలంటే టిక్ తీయండి)",
+  "hi": "सक्रिय (योजना हटाने के लिए टिक हटाएँ)",
+  "kn": "ಸಕ್ರಿಯ (ಯೋಜನೆಯನ್ನು ಬದಿಗಿಡಲು ಟಿಕ್ ತೆಗೆಯಿರಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.save.new": {
+  "en": "Save the plan",
+  "te": "ప్లాన్‌ను సేవ్ చేయండి",
+  "hi": "योजना सहेजें",
+  "kn": "ಯೋಜನೆಯನ್ನು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.save.edit": {
+  "en": "Save the changes",
+  "te": "మార్పులను సేవ్ చేయండి",
+  "hi": "बदलाव सहेजें",
+  "kn": "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.copy": {
+  "en": "Make a copy as a new plan",
+  "te": "కొత్త ప్లాన్‌గా కాపీ చేయండి",
+  "hi": "नई योजना के रूप में प्रति बनाएँ",
+  "kn": "ಹೊಸ ಯೋಜನೆಯಾಗಿ ಪ್ರತಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.copynote": {
+  "en": "This is a copy of another plan. Change the year, the dates and the amounts, then save it as a new plan.",
+  "te": "ఇది మరో ప్లాన్ కాపీ. సంవత్సరం, తేదీలు, మొత్తాలు మార్చి కొత్త ప్లాన్‌గా సేవ్ చేయండి.",
+  "hi": "यह दूसरी योजना की प्रति है। वर्ष, तारीख़ें और राशियाँ बदलें, फिर नई योजना के रूप में सहेजें।",
+  "kn": "ಇದು ಇನ್ನೊಂದು ಯೋಜನೆಯ ಪ್ರತಿ. ವರ್ಷ, ದಿನಾಂಕಗಳು ಮತ್ತು ಮೊತ್ತಗಳನ್ನು ಬದಲಿಸಿ, ಹೊಸ ಯೋಜನೆಯಾಗಿ ಉಳಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.plan.locked": {
+  "en": "Students hold this plan, so it cannot change. Make a copy for next year or for a change.",
+  "te": "విద్యార్థులకు ఈ ప్లాన్ ఉంది, కాబట్టి మార్చలేరు. వచ్చే సంవత్సరానికి లేదా మార్పుకు కాపీ చేయండి.",
+  "hi": "विद्यार्थियों के पास यह योजना है, इसलिए यह बदली नहीं जा सकती। अगले वर्ष या बदलाव के लिए प्रति बनाएँ।",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳ ಬಳಿ ಈ ಯೋಜನೆ ಇದೆ, ಆದ್ದರಿಂದ ಬದಲಿಸಲಾಗದು. ಮುಂದಿನ ವರ್ಷಕ್ಕೆ ಅಥವಾ ಬದಲಾವಣೆಗೆ ಪ್ರತಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.planname": {
+  "en": "Give the plan a name.",
+  "te": "ప్లాన్‌కు పేరు ఇవ్వండి.",
+  "hi": "योजना को एक नाम दें।",
+  "kn": "ಯೋಜನೆಗೆ ಹೆಸರು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.year": {
+  "en": "Write the academic year like 2026-27.",
+  "te": "విద్యా సంవత్సరాన్ని 2026-27 లా రాయండి.",
+  "hi": "शैक्षणिक वर्ष 2026-27 की तरह लिखें।",
+  "kn": "ಶೈಕ್ಷಣಿಕ ವರ್ಷವನ್ನು 2026-27 ರಂತೆ ಬರೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.lines.none": {
+  "en": "Add at least one instalment.",
+  "te": "కనీసం ఒక వాయిదా జోడించండి.",
+  "hi": "कम से कम एक किस्त जोड़ें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಕಂತು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.lines.many": {
+  "en": "A plan can have at most 100 rows.",
+  "te": "ఒక ప్లాన్‌కు గరిష్ఠంగా 100 వరుసలు.",
+  "hi": "एक योजना में अधिकतम 100 पंक्तियाँ हो सकती हैं।",
+  "kn": "ಒಂದು ಯೋಜನೆಯಲ್ಲಿ ಗರಿಷ್ಠ 100 ಸಾಲುಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.lines.no": {
+  "en": "Row {row}: the number must be a whole number from 1 to 60.",
+  "te": "వరుస {row}: నంబర్ 1 నుండి 60 మధ్య పూర్తి సంఖ్య కావాలి.",
+  "hi": "पंक्ति {row}: क्रम 1 से 60 के बीच पूरी संख्या होना चाहिए।",
+  "kn": "ಸಾಲು {row}: ಸಂಖ್ಯೆ 1 ರಿಂದ 60 ರ ನಡುವೆ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.lines.due": {
+  "en": "Row {row}: choose the day it falls due.",
+  "te": "వరుస {row}: గడువు తేదీని ఎంచుకోండి.",
+  "hi": "पंक्ति {row}: देय तिथि चुनें।",
+  "kn": "ಸಾಲು {row}: ಬಾಕಿ ದಿನಾಂಕವನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.lines.amount": {
+  "en": "Row {row}: the amount must be in rupees, more than nothing and at most ten lakh.",
+  "te": "వరుస {row}: మొత్తం రూపాయల్లో, సున్నా కంటే ఎక్కువ, గరిష్ఠంగా పది లక్షలు ఉండాలి.",
+  "hi": "पंक्ति {row}: राशि रुपयों में, शून्य से अधिक और अधिकतम दस लाख होनी चाहिए।",
+  "kn": "ಸಾಲು {row}: ಮೊತ್ತ ರೂಪಾಯಿಗಳಲ್ಲಿ, ಸೊನ್ನೆಗಿಂತ ಹೆಚ್ಚು ಮತ್ತು ಗರಿಷ್ಠ ಹತ್ತು ಲಕ್ಷ ಇರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.lines.twice": {
+  "en": "Row {row}: this head and number are already in the plan.",
+  "te": "వరుస {row}: ఈ హెడ్, నంబర్ ఇప్పటికే ప్లాన్‌లో ఉన్నాయి.",
+  "hi": "पंक्ति {row}: यह मद और क्रम योजना में पहले से हैं।",
+  "kn": "ಸಾಲು {row}: ಈ ಹೆಡ್ ಮತ್ತು ಸಂಖ್ಯೆ ಈಗಾಗಲೇ ಯೋಜನೆಯಲ್ಲಿವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.late.amount": {
+  "en": "Give the late fee as an amount in rupees.",
+  "te": "ఆలస్య రుసుమును రూపాయల్లో మొత్తంగా ఇవ్వండి.",
+  "hi": "विलंब शुल्क रुपयों में राशि के रूप में दें।",
+  "kn": "ತಡ ಶುಲ್ಕವನ್ನು ರೂಪಾಯಿಗಳಲ್ಲಿ ಮೊತ್ತವಾಗಿ ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.late.grace": {
+  "en": "Grace days must be a whole number from 0 to 60.",
+  "te": "వెసులుబాటు రోజులు 0 నుండి 60 మధ్య పూర్తి సంఖ్య కావాలి.",
+  "hi": "छूट के दिन 0 से 60 के बीच पूरी संख्या हों।",
+  "kn": "ವಿನಾಯಿತಿ ದಿನಗಳು 0 ರಿಂದ 60 ರ ನಡುವೆ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.err.late.cap": {
+  "en": "The most for one instalment must be an amount in rupees.",
+  "te": "ఒక వాయిదాకు గరిష్ఠం రూపాయల్లో మొత్తం కావాలి.",
+  "hi": "एक किस्त का अधिकतम रुपयों में राशि होनी चाहिए।",
+  "kn": "ಒಂದು ಕಂತಿಗೆ ಗರಿಷ್ಠ ರೂಪಾಯಿಗಳಲ್ಲಿ ಮೊತ್ತ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.tuition": {
+  "en": "Tuition",
+  "te": "ట్యూషన్",
+  "hi": "ट्यूशन",
+  "kn": "ಟ್ಯೂಷನ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.admission": {
+  "en": "Admission",
+  "te": "అడ్మిషన్",
+  "hi": "प्रवेश",
+  "kn": "ಪ್ರವೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.transport": {
+  "en": "Transport",
+  "te": "రవాణా",
+  "hi": "परिवहन",
+  "kn": "ಸಾರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.hostel": {
+  "en": "Hostel",
+  "te": "హాస్టల్",
+  "hi": "छात्रावास",
+  "kn": "ಹಾಸ್ಟೆಲ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.exam": {
+  "en": "Exam",
+  "te": "పరీక్ష",
+  "hi": "परीक्षा",
+  "kn": "ಪರೀಕ್ಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.books": {
+  "en": "Books",
+  "te": "పుస్తకాలు",
+  "hi": "पुस्तकें",
+  "kn": "ಪುಸ್ತಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.head.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.title": {
+  "en": "Fee plan of this student",
+  "te": "ఈ విద్యార్థి ఫీజు ప్లాన్",
+  "hi": "इस विद्यार्थी की फीस योजना",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಯ ಶುಲ್ಕ ಯೋಜನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.since": {
+  "en": "given on {date}",
+  "te": "{date} న ఇచ్చారు",
+  "hi": "{date} को दी गई",
+  "kn": "{date} ರಂದು ನೀಡಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.none": {
+  "en": "This student holds no fee plan yet. Giving one writes its instalments on the student's own account.",
+  "te": "ఈ విద్యార్థికి ఇంకా ఫీజు ప్లాన్ లేదు. ఒకటి ఇస్తే దాని వాయిదాలు విద్యార్థి సొంత ఖాతాలో నమోదవుతాయి.",
+  "hi": "इस विद्यार्थी के पास अभी कोई फीस योजना नहीं। एक देने पर उसकी किस्तें विद्यार्थी के अपने खाते में लिखी जाती हैं।",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಯ ಬಳಿ ಇನ್ನೂ ಶುಲ್ಕ ಯೋಜನೆ ಇಲ್ಲ. ಒಂದನ್ನು ನೀಡಿದರೆ ಅದರ ಕಂತುಗಳು ವಿದ್ಯಾರ್ಥಿಯ ಸ್ವಂತ ಖಾತೆಯಲ್ಲಿ ದಾಖಲಾಗುತ್ತವೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.none.readonly": {
+  "en": "This student holds no fee plan yet.",
+  "te": "ఈ విద్యార్థికి ఇంకా ఫీజు ప్లాన్ లేదు.",
+  "hi": "इस विद्यार्थी के पास अभी कोई फीस योजना नहीं।",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಯ ಬಳಿ ಇನ್ನೂ ಶುಲ್ಕ ಯೋಜನೆ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.noplans": {
+  "en": "There is no active plan for this class yet.",
+  "te": "ఈ తరగతికి ఇంకా చురుకైన ప్లాన్ లేదు.",
+  "hi": "इस कक्षा के लिए अभी कोई सक्रिय योजना नहीं।",
+  "kn": "ಈ ತರಗತಿಗೆ ಇನ್ನೂ ಸಕ್ರಿಯ ಯೋಜನೆ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.choose": {
+  "en": "Choose a plan",
+  "te": "ప్లాన్ ఎంచుకోండి",
+  "hi": "योजना चुनें",
+  "kn": "ಯೋಜನೆ ಆರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.assign": {
+  "en": "Give this plan",
+  "te": "ఈ ప్లాన్ ఇవ్వండి",
+  "hi": "यह योजना दें",
+  "kn": "ಈ ಯೋಜನೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.assign.title": {
+  "en": "Give this fee plan?",
+  "te": "ఈ ఫీజు ప్లాన్ ఇవ్వాలా?",
+  "hi": "यह फीस योजना दें?",
+  "kn": "ಈ ಶುಲ್ಕ ಯೋಜನೆ ನೀಡಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.assign.go": {
+  "en": "Give the plan",
+  "te": "ప్లాన్ ఇవ్వండి",
+  "hi": "योजना दें",
+  "kn": "ಯೋಜನೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.void": {
+  "en": "Take the plan off",
+  "te": "ప్లాన్‌ను తొలగించండి",
+  "hi": "योजना हटाएँ",
+  "kn": "ಯೋಜನೆಯನ್ನು ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.void.title": {
+  "en": "Take this plan off the student?",
+  "te": "ఈ ప్లాన్‌ను విద్యార్థి నుండి తొలగించాలా?",
+  "hi": "यह योजना विद्यार्थी से हटाएँ?",
+  "kn": "ಈ ಯೋಜನೆಯನ್ನು ವಿದ್ಯಾರ್ಥಿಯಿಂದ ತೆಗೆಯಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.fa.void.go": {
+  "en": "Take it off",
+  "te": "తొలగించండి",
+  "hi": "हटाएँ",
+  "kn": "ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.title": {
+  "en": "Late fees",
+  "te": "ఆలస్య రుసుములు",
+  "hi": "विलंब शुल्क",
+  "kn": "ತಡ ಶುಲ್ಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.help": {
+  "en": "The fee plans have their own rules. This shows what they give today. Looking changes nothing.",
+  "te": "ఫీజు ప్లాన్‌లకు సొంత నియమాలున్నాయి. ఈ రోజు అవి ఇచ్చేది ఇది. చూడటం వల్ల ఏమీ మారదు.",
+  "hi": "फीस योजनाओं के अपने नियम हैं। यह दिखाता है कि आज वे क्या देते हैं। देखने से कुछ नहीं बदलता।",
+  "kn": "ಶುಲ್ಕ ಯೋಜನೆಗಳಿಗೆ ತಮ್ಮದೇ ನಿಯಮಗಳಿವೆ. ಇಂದು ಅವು ಏನು ನೀಡುತ್ತವೆ ಎಂದು ಇದು ತೋರಿಸುತ್ತದೆ. ನೋಡುವುದರಿಂದ ಏನೂ ಬದಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.none": {
+  "en": "No instalment is late under its plan's rule today.",
+  "te": "ఈ రోజు ఏ వాయిదా కూడా ప్లాన్ నియమం ప్రకారం ఆలస్యం కాలేదు.",
+  "hi": "आज कोई किस्त अपनी योजना के नियम के अनुसार देरी से नहीं है।",
+  "kn": "ಇಂದು ಯಾವುದೇ ಕಂತು ತನ್ನ ಯೋಜನೆಯ ನಿಯಮದ ಪ್ರಕಾರ ತಡವಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.count": {
+  "en": "late instalments, which come to",
+  "te": "ఆలస్యమైన వాయిదాలు, మొత్తం",
+  "hi": "देरी से किस्तें, कुल",
+  "kn": "ತಡವಾದ ಕಂತುಗಳು, ಒಟ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.post": {
+  "en": "Post these late fees",
+  "te": "ఈ ఆలస్య రుసుములను పోస్ట్ చేయండి",
+  "hi": "ये विलंब शुल्क पोस्ट करें",
+  "kn": "ಈ ತಡ ಶುಲ್ಕಗಳನ್ನು ಪೋಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.owner": {
+  "en": "Only the Owner and Admins can post late fees, with the authenticator code.",
+  "te": "ఆలస్య రుసుములను యజమాని, అడ్మిన్‌లు మాత్రమే ఆథెంటికేటర్ కోడ్‌తో పోస్ట్ చేయగలరు.",
+  "hi": "विलंब शुल्क केवल मालिक और एडमिन ऑथेंटिकेटर कोड से पोस्ट कर सकते हैं।",
+  "kn": "ತಡ ಶುಲ್ಕಗಳನ್ನು ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ಪೋಸ್ಟ್ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.sheet.title": {
+  "en": "Post the late fees?",
+  "te": "ఆలస్య రుసుములను పోస్ట్ చేయాలా?",
+  "hi": "विलंब शुल्क पोस्ट करें?",
+  "kn": "ತಡ ಶುಲ್ಕಗಳನ್ನು ಪೋಸ್ಟ್ ಮಾಡಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.sheet.go": {
+  "en": "Post the late fees",
+  "te": "ఆలస్య రుసుములను పోస్ట్ చేయండి",
+  "hi": "विलंब शुल्क पोस्ट करें",
+  "kn": "ತಡ ಶುಲ್ಕಗಳನ್ನು ಪೋಸ್ಟ್ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.err.percent": {
+  "en": "A percentage is a whole number from 1 to 100.",
+  "te": "శాతం 1 నుండి 100 మధ్య పూర్తి సంఖ్య.",
+  "hi": "प्रतिशत 1 से 100 के बीच पूरी संख्या होती है।",
+  "kn": "ಶೇಕಡಾ 1 ರಿಂದ 100 ರ ನಡುವೆ ಪೂರ್ಣ ಸಂಖ್ಯೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.s.mode": {
+  "en": "How much is conceded",
+  "te": "ఎంత రాయితీ",
+  "hi": "कितनी रियायत",
+  "kn": "ಎಷ್ಟು ರಿಯಾಯಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.s.mode.amount": {
+  "en": "An amount in rupees",
+  "te": "రూపాయల్లో మొత్తం",
+  "hi": "रुपयों में राशि",
+  "kn": "ರೂಪಾಯಿಗಳಲ್ಲಿ ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.s.mode.percent": {
+  "en": "A percentage of what was charged to this student",
+  "te": "ఈ విద్యార్థికి విధించిన దానిలో శాతం",
+  "hi": "इस विद्यार्थी पर लगाई गई राशि का प्रतिशत",
+  "kn": "ಈ ವಿದ್ಯಾರ್ಥಿಗೆ ವಿಧಿಸಿದ್ದರ ಶೇಕಡಾ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.s.percent": {
+  "en": "Percentage (1 to 100)",
+  "te": "శాతం (1 నుండి 100)",
+  "hi": "प्रतिशत (1 से 100)",
+  "kn": "ಶೇಕಡಾ (1 ರಿಂದ 100)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.receipt.student": {
+  "en": "Student",
+  "te": "విద్యార్థి",
+  "hi": "विद्यार्थी",
+  "kn": "ವಿದ್ಯಾರ್ಥಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.receipt.copy": {
+  "en": "Copy as a message",
+  "te": "సందేశంగా కాపీ చేయండి",
+  "hi": "संदेश के रूप में कॉपी करें",
+  "kn": "ಸಂದೇಶವಾಗಿ ನಕಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.receipt.copied": {
+  "en": "Copied. Paste it into WhatsApp yourself.",
+  "te": "కాపీ అయింది. WhatsApp లో మీరే పేస్ట్ చేయండి.",
+  "hi": "कॉपी हो गया। इसे WhatsApp में खुद चिपकाएँ।",
+  "kn": "ನಕಲಾಗಿದೆ. ಅದನ್ನು WhatsApp ನಲ್ಲಿ ನೀವೇ ಅಂಟಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.receipt.text": {
+  "en": "{business}: receipt {no} for {amount} received on {date} for {student}. Thank you.",
+  "te": "{business}: {student} కోసం {date} న అందిన {amount} రసీదు {no}. ధన్యవాదాలు.",
+  "hi": "{business}: {student} के लिए {date} को मिले {amount} की रसीद {no}। धन्यवाद।",
+  "kn": "{business}: {student} ಗಾಗಿ {date} ರಂದು ಸ್ವೀಕರಿಸಿದ {amount} ರಸೀದಿ {no}. ಧನ್ಯವಾದಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ann.sub": {
+  "en": "Messages to parents about an event, an exam or a holiday. You write it, choose who it is for, and approve it once.",
+  "te": "కార్యక్రమం, పరీక్ష లేదా సెలవు గురించి తల్లిదండ్రులకు సందేశాలు. మీరు రాసి, ఎవరికో ఎంచుకుని, ఒకసారి ఆమోదిస్తారు.",
+  "hi": "किसी कार्यक्रम, परीक्षा या छुट्टी के बारे में अभिभावकों को संदेश। आप लिखते हैं, चुनते हैं किसके लिए है, और एक बार मंज़ूर करते हैं।",
+  "kn": "ಕಾರ್ಯಕ್ರಮ, ಪರೀಕ್ಷೆ ಅಥವಾ ರಜೆಯ ಬಗ್ಗೆ ಪೋಷಕರಿಗೆ ಸಂದೇಶಗಳು. ನೀವು ಬರೆಯುತ್ತೀರಿ, ಯಾರಿಗೆ ಎಂದು ಆರಿಸುತ್ತೀರಿ ಮತ್ತು ಒಮ್ಮೆ ಒಪ್ಪಿಗೆ ನೀಡುತ್ತೀರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ann.add": {
+  "en": "New announcement",
+  "te": "కొత్త ప్రకటన",
+  "hi": "नई घोषणा",
+  "kn": "ಹೊಸ ಪ್ರಕಟಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ann.empty.title": {
+  "en": "No announcements yet",
+  "te": "ఇంకా ప్రకటనలు లేవు",
+  "hi": "अभी कोई घोषणा नहीं",
+  "kn": "ಇನ್ನೂ ಪ್ರಕಟಣೆಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ann.empty.body": {
+  "en": "Tell parents about a parents' meeting, an exam or a holiday. A parent with several children gets one message.",
+  "te": "తల్లిదండ్రుల సమావేశం, పరీక్ష లేదా సెలవు గురించి తల్లిదండ్రులకు చెప్పండి. చాలామంది పిల్లలున్న తల్లిదండ్రికి ఒకే సందేశం వస్తుంది.",
+  "hi": "अभिभावक बैठक, परीक्षा या छुट्टी के बारे में अभिभावकों को बताएँ। कई बच्चों वाले अभिभावक को एक ही संदेश मिलता है।",
+  "kn": "ಪೋಷಕರ ಸಭೆ, ಪರೀಕ್ಷೆ ಅಥವಾ ರಜೆಯ ಬಗ್ಗೆ ಪೋಷಕರಿಗೆ ತಿಳಿಸಿ. ಹಲವು ಮಕ್ಕಳಿರುವ ಪೋಷಕರಿಗೆ ಒಂದೇ ಸಂದೇಶ ಬರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.party.student": {
+  "en": "Students' parents (one message each, with the total)",
+  "te": "విద్యార్థుల తల్లిదండ్రులు (ఒక్కొక్కరికి ఒక సందేశం, మొత్తంతో)",
+  "hi": "विद्यार्थियों के अभिभावक (हर एक को एक संदेश, कुल राशि के साथ)",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳ ಪೋಷಕರು (ಒಬ್ಬೊಬ್ಬರಿಗೆ ಒಂದು ಸಂದೇಶ, ಒಟ್ಟು ಮೊತ್ತದೊಂದಿಗೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.title": {
+  "en": "From the students",
+  "te": "విద్యార్థుల నుండి",
+  "hi": "विद्यार्थियों से",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.help": {
+  "en": "One message for each parent however many children they have. A parent with no number is skipped and counted.",
+  "te": "ఎంతమంది పిల్లలున్నా ప్రతి తల్లిదండ్రికి ఒకే సందేశం. నంబర్ లేని తల్లిదండ్రిని వదిలి లెక్కిస్తాం.",
+  "hi": "कितने भी बच्चे हों, हर अभिभावक को एक संदेश। जिसका नंबर नहीं, उसे छोड़कर गिना जाता है।",
+  "kn": "ಎಷ್ಟೇ ಮಕ್ಕಳಿದ್ದರೂ ಪ್ರತಿ ಪೋಷಕರಿಗೆ ಒಂದೇ ಸಂದೇಶ. ಸಂಖ್ಯೆ ಇಲ್ಲದ ಪೋಷಕರನ್ನು ಬಿಟ್ಟು ಎಣಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.scope": {
+  "en": "Who",
+  "te": "ఎవరికి",
+  "hi": "किसके लिए",
+  "kn": "ಯಾರಿಗೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.all": {
+  "en": "Every student's parent",
+  "te": "ప్రతి విద్యార్థి తల్లిదండ్రి",
+  "hi": "हर विद्यार्थी का अभिभावक",
+  "kn": "ಪ್ರತಿ ವಿದ್ಯಾರ್ಥಿಯ ಪೋಷಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.programme": {
+  "en": "One class or course",
+  "te": "ఒక తరగతి లేదా కోర్సు",
+  "hi": "एक कक्षा या पाठ्यक्रम",
+  "kn": "ಒಂದು ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.group": {
+  "en": "One section, year or batch",
+  "te": "ఒక సెక్షన్, సంవత్సరం లేదా బ్యాచ్",
+  "hi": "एक अनुभाग, वर्ष या बैच",
+  "kn": "ಒಂದು ವಿಭಾಗ, ವರ್ಷ ಅಥವಾ ಬ್ಯಾಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.date": {
+  "en": "The day to count the steps from",
+  "te": "దశలను లెక్కించే తేదీ",
+  "hi": "चरणों की गिनती जिस दिन से हो",
+  "kn": "ಹಂತಗಳನ್ನು ಎಣಿಸುವ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.students.go": {
+  "en": "Add the parents",
+  "te": "తల్లిదండ్రులను జోడించండి",
+  "hi": "अभिभावकों को जोड़ें",
+  "kn": "ಪೋಷಕರನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.err.date": {
+  "en": "Choose the day to count the steps from.",
+  "te": "దశలను లెక్కించే తేదీని ఎంచుకోండి.",
+  "hi": "चरणों की गिनती का दिन चुनें।",
+  "kn": "ಹಂತಗಳನ್ನು ಎಣಿಸುವ ದಿನಾಂಕವನ್ನು ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.err.programme": {
+  "en": "Choose a class or course.",
+  "te": "తరగతి లేదా కోర్సును ఎంచుకోండి.",
+  "hi": "कक्षा या पाठ्यक्रम चुनें।",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.err.group": {
+  "en": "Choose the section, year or batch.",
+  "te": "సెక్షన్, సంవత్సరం లేదా బ్యాచ్‌ను ఎంచుకోండి.",
+  "hi": "अनुभाग, वर्ष या बैच चुनें।",
+  "kn": "ವಿಭಾಗ, ವರ್ಷ ಅಥವಾ ಬ್ಯಾಚ್ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.empty": {
+  "en": "Nothing to show yet.",
+  "te": "ఇంకా చూపించడానికి ఏమీ లేదు.",
+  "hi": "अभी दिखाने को कुछ नहीं।",
+  "kn": "ಇನ್ನೂ ತೋರಿಸಲು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.due_paise": {
+  "en": "Fallen due",
+  "te": "గడువు వచ్చినవి",
+  "hi": "देय हुआ",
+  "kn": "ಬಾಕಿಯಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.pending_paise": {
+  "en": "Pending",
+  "te": "పెండింగ్",
+  "hi": "बकाया",
+  "kn": "ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.collected_paise": {
+  "en": "Collected",
+  "te": "వసూలైనవి",
+  "hi": "वसूला गया",
+  "kn": "ವಸೂಲಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.concessions_paise": {
+  "en": "Conceded",
+  "te": "రాయితీ ఇచ్చినవి",
+  "hi": "रियायत दी गई",
+  "kn": "ರಿಯಾಯಿತಿ ನೀಡಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.collection_pct": {
+  "en": "Collected so far",
+  "te": "ఇప్పటివరకు వసూలైనది",
+  "hi": "अब तक वसूला",
+  "kn": "ಇಲ್ಲಿಯವರೆಗೆ ವಸೂಲಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.students_pending": {
+  "en": "Students with fees pending",
+  "te": "ఫీజులు పెండింగ్‌లో ఉన్న విద్యార్థులు",
+  "hi": "बकाया फीस वाले विद्यार्थी",
+  "kn": "ಶುಲ್ಕ ಬಾಕಿ ಇರುವ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.receipts": {
+  "en": "Receipts",
+  "te": "రసీదులు",
+  "hi": "रसीदें",
+  "kn": "ರಸೀದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.enquiries": {
+  "en": "Enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.campus_visits": {
+  "en": "Campus visits",
+  "te": "క్యాంపస్ సందర్శనలు",
+  "hi": "कैंपस दौरे",
+  "kn": "ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.applications": {
+  "en": "Applications",
+  "te": "దరఖాస్తులు",
+  "hi": "आवेदन",
+  "kn": "ಅರ್ಜಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.admitted": {
+  "en": "Admitted",
+  "te": "చేరినవారు",
+  "hi": "दाख़िल",
+  "kn": "ಪ್ರವೇಶ ಪಡೆದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.lost": {
+  "en": "Lost",
+  "te": "కోల్పోయినవి",
+  "hi": "खो गईं",
+  "kn": "ಕಳೆದುಕೊಂಡವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.kpi.conversion_pct": {
+  "en": "Enquiries that became admissions",
+  "te": "అడ్మిషన్లుగా మారిన ఎంక్వైరీలు",
+  "hi": "प्रवेश में बदली पूछताछ",
+  "kn": "ಪ್ರವೇಶಗಳಾಗಿ ಬದಲಾದ ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_programme": {
+  "en": "By class or course",
+  "te": "తరగతి లేదా కోర్సు వారీగా",
+  "hi": "कक्षा या पाठ्यक्रम के अनुसार",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ವಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_group": {
+  "en": "By section, year or batch",
+  "te": "సెక్షన్, సంవత్సరం లేదా బ్యాచ్ వారీగా",
+  "hi": "अनुभाग, वर्ष या बैच के अनुसार",
+  "kn": "ವಿಭಾಗ, ವರ್ಷ ಅಥವಾ ಬ್ಯಾಚ್ ವಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_method": {
+  "en": "By how it was paid",
+  "te": "చెల్లింపు విధానం వారీగా",
+  "hi": "भुगतान के तरीके के अनुसार",
+  "kn": "ಪಾವತಿ ವಿಧಾನ ವಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_source": {
+  "en": "By where it came from",
+  "te": "ఎక్కడి నుండి వచ్చిందో దాని వారీగా",
+  "hi": "कहाँ से आई उसके अनुसार",
+  "kn": "ಎಲ್ಲಿಂದ ಬಂತು ಎಂಬುದರ ವಾರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.table.by_lost_reason": {
+  "en": "Why enquiries were lost",
+  "te": "ఎంక్వైరీలు ఎందుకు కోల్పోయాం",
+  "hi": "पूछताछ क्यों खोई",
+  "kn": "ವಿಚಾರಣೆಗಳನ್ನು ಏಕೆ ಕಳೆದುಕೊಂಡೆವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.series.collection_by_day": {
+  "en": "Collected, day by day",
+  "te": "రోజువారీగా వసూలైనది",
+  "hi": "दिन-ब-दिन वसूली",
+  "kn": "ದಿನದಿಂದ ದಿನಕ್ಕೆ ವಸೂಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.programme": {
+  "en": "Class or course",
+  "te": "తరగతి లేదా కోర్సు",
+  "hi": "कक्षा या पाठ्यक्रम",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.group": {
+  "en": "Section",
+  "te": "సెక్షన్",
+  "hi": "अनुभाग",
+  "kn": "ವಿಭಾಗ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.students": {
+  "en": "Students",
+  "te": "విద్యార్థులు",
+  "hi": "विद्यार्थी",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.students_pending": {
+  "en": "Students pending",
+  "te": "పెండింగ్ విద్యార్థులు",
+  "hi": "बकाया वाले विद्यार्थी",
+  "kn": "ಬಾಕಿ ವಿದ್ಯಾರ್ಥಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.due_paise": {
+  "en": "Fallen due",
+  "te": "గడువు వచ్చినవి",
+  "hi": "देय हुआ",
+  "kn": "ಬಾಕಿಯಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.pending_paise": {
+  "en": "Pending",
+  "te": "పెండింగ్",
+  "hi": "बकाया",
+  "kn": "ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.collection_pct": {
+  "en": "Collected",
+  "te": "వసూలైనది",
+  "hi": "वसूला",
+  "kn": "ವಸೂಲಾದದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.method": {
+  "en": "How paid",
+  "te": "ఎలా చెల్లించారు",
+  "hi": "कैसे चुकाया",
+  "kn": "ಹೇಗೆ ಪಾವತಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.receipts": {
+  "en": "Receipts",
+  "te": "రసీదులు",
+  "hi": "रसीदें",
+  "kn": "ರಸೀದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.amount_paise": {
+  "en": "Amount",
+  "te": "మొత్తం",
+  "hi": "राशि",
+  "kn": "ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.source": {
+  "en": "Where from",
+  "te": "ఎక్కడి నుండి",
+  "hi": "कहाँ से",
+  "kn": "ಎಲ್ಲಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.enquiries": {
+  "en": "Enquiries",
+  "te": "ఎంక్వైరీలు",
+  "hi": "पूछताछ",
+  "kn": "ವಿಚಾರಣೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.admitted": {
+  "en": "Admitted",
+  "te": "చేరినవారు",
+  "hi": "दाख़िल",
+  "kn": "ಪ್ರವೇಶ ಪಡೆದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.reason": {
+  "en": "Reason",
+  "te": "కారణం",
+  "hi": "कारण",
+  "kn": "ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.col.count": {
+  "en": "How many",
+  "te": "ఎన్ని",
+  "hi": "कितने",
+  "kn": "ಎಷ್ಟು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.method.cash": {
+  "en": "Cash",
+  "te": "నగదు",
+  "hi": "नकद",
+  "kn": "ನಗದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.method.upi": {
+  "en": "UPI",
+  "te": "UPI",
+  "hi": "UPI",
+  "kn": "UPI",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rep.val.method.bank_transfer": {
+  "en": "Bank transfer",
+  "te": "బ్యాంక్ బదిలీ",
+  "hi": "बैंक हस्तांतरण",
+  "kn": "ಬ್ಯಾಂಕ್ ವರ್ಗಾವಣೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.method.cheque": {
+  "en": "Cheque",
+  "te": "చెక్",
+  "hi": "चेक",
+  "kn": "ಚೆಕ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.method.card": {
+  "en": "Card",
+  "te": "కార్డ్",
+  "hi": "कार्ड",
+  "kn": "ಕಾರ್ಡ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.method.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.source.whatsapp": {
+  "en": "WhatsApp",
+  "te": "WhatsApp",
+  "hi": "WhatsApp",
+  "kn": "WhatsApp",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "rep.val.source.walk_in": {
+  "en": "Walk-in",
+  "te": "నేరుగా వచ్చారు",
+  "hi": "सीधे आए",
+  "kn": "ನೇರವಾಗಿ ಬಂದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.source.website": {
+  "en": "Website",
+  "te": "వెబ్‌సైట్",
+  "hi": "वेबसाइट",
+  "kn": "ವೆಬ್‌ಸೈಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.source.ad": {
+  "en": "Advertisement",
+  "te": "ప్రకటన",
+  "hi": "विज्ञापन",
+  "kn": "ಜಾಹೀರಾತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.source.referral": {
+  "en": "Referral",
+  "te": "సిఫార్సు",
+  "hi": "सिफ़ारिश",
+  "kn": "ಶಿಫಾರಸು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.source.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.reason.fees": {
+  "en": "Fees",
+  "te": "ఫీజులు",
+  "hi": "फीस",
+  "kn": "ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.reason.distance": {
+  "en": "Distance",
+  "te": "దూరం",
+  "hi": "दूरी",
+  "kn": "ದೂರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.reason.other_school": {
+  "en": "Joined another school",
+  "te": "మరో పాఠశాలలో చేరారు",
+  "hi": "दूसरे स्कूल में गए",
+  "kn": "ಬೇರೆ ಶಾಲೆಗೆ ಸೇರಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.reason.not_interested": {
+  "en": "Not interested",
+  "te": "ఆసక్తి లేదు",
+  "hi": "रुचि नहीं",
+  "kn": "ಆಸಕ್ತಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.reason.no_response": {
+  "en": "No response",
+  "te": "స్పందన లేదు",
+  "hi": "कोई जवाब नहीं",
+  "kn": "ಪ್ರತಿಕ್ರಿಯೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "rep.val.reason.other": {
+  "en": "Other",
+  "te": "ఇతర",
+  "hi": "अन्य",
+  "kn": "ಇತರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.late.done": {
+  "en": "Posted {n} late fees, {amount} in all. Posting again adds nothing twice.",
+  "te": "Posted {n} late fees, {amount} in all. Posting again adds nothing twice.",
+  "hi": "Posted {n} late fees, {amount} in all. Posting again adds nothing twice.",
+  "kn": "Posted {n} late fees, {amount} in all. Posting again adds nothing twice.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "edu.late.sheet.body": {
+  "en": "{n} late fees will be written on the students' accounts, each against its instalment.",
+  "te": "{n} late fees will be written on the students' accounts, each against its instalment.",
+  "hi": "{n} late fees will be written on the students' accounts, each against its instalment.",
+  "kn": "{n} late fees will be written on the students' accounts, each against its instalment.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "edu.late.sheet.note": {
+  "en": "Posting twice adds nothing twice. A wrong one can be voided afterwards. Nothing is sent to anyone.",
+  "te": "Posting twice adds nothing twice. A wrong one can be voided afterwards. Nothing is sent to anyone.",
+  "hi": "Posting twice adds nothing twice. A wrong one can be voided afterwards. Nothing is sent to anyone.",
+  "kn": "Posting twice adds nothing twice. A wrong one can be voided afterwards. Nothing is sent to anyone.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "edu.fa.assign.body": {
+  "en": "Each instalment of {plan} is written as a charge on this student's own account. Giving it twice writes nothing twice.",
+  "te": "Each instalment of {plan} is written as a charge on this student's own account. Giving it twice writes nothing twice.",
+  "hi": "Each instalment of {plan} is written as a charge on this student's own account. Giving it twice writes nothing twice.",
+  "kn": "Each instalment of {plan} is written as a charge on this student's own account. Giving it twice writes nothing twice.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "edu.fa.void.body": {
+  "en": "The charges from this plan are voided, not deleted: the account is worked out again without them. A payment already taken stays.",
+  "te": "The charges from this plan are voided, not deleted: the account is worked out again without them. A payment already taken stays.",
+  "hi": "The charges from this plan are voided, not deleted: the account is worked out again without them. A payment already taken stays.",
+  "kn": "The charges from this plan are voided, not deleted: the account is worked out again without them. A payment already taken stays.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "dta.kind.students": {
+  "en": "Students and parents",
+  "te": "విద్యార్థులు, తల్లిదండ్రులు",
+  "hi": "विद्यार्थी और अभिभावक",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳು ಮತ್ತು ಪೋಷಕರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.import.title.students": {
+  "en": "Bring in your students",
+  "te": "మీ విద్యార్థులను తీసుకురండి",
+  "hi": "अपने विद्यार्थियों को लाएँ",
+  "kn": "ನಿಮ್ಮ ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ತನ್ನಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.import.intro.students": {
+  "en": "Choose a CSV or Excel file with one row for each student. You say which column is which, you see what would happen to every row, and nothing is saved until the last button.",
+  "te": "ప్రతి విద్యార్థికి ఒక వరుస ఉన్న CSV లేదా Excel ఫైల్‌ను ఎంచుకోండి. ఏ కాలమ్ ఏదో మీరు చెబుతారు, ప్రతి వరుసకు ఏమవుతుందో చూస్తారు, చివరి బటన్ వరకు ఏదీ సేవ్ కాదు.",
+  "hi": "हर विद्यार्थी की एक पंक्ति वाली CSV या Excel फ़ाइल चुनें। आप बताते हैं कौन सा कॉलम क्या है, हर पंक्ति के साथ क्या होगा यह देखते हैं, और आख़िरी बटन तक कुछ सहेजा नहीं जाता।",
+  "kn": "ಪ್ರತಿ ವಿದ್ಯಾರ್ಥಿಗೆ ಒಂದು ಸಾಲಿನ CSV ಅಥವಾ Excel ಫೈಲ್ ಆರಿಸಿ. ಯಾವ ಕಾಲಮ್ ಯಾವುದು ಎಂದು ನೀವು ಹೇಳುತ್ತೀರಿ, ಪ್ರತಿ ಸಾಲಿಗೆ ಏನಾಗುತ್ತದೆ ಎಂದು ನೋಡುತ್ತೀರಿ, ಕೊನೆಯ ಬಟನ್‌ವರೆಗೆ ಏನೂ ಉಳಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.done.students": {
+  "en": "See the students",
+  "te": "విద్యార్థులను చూడండి",
+  "hi": "विद्यार्थी देखें",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ನೋಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "edu.imp.note": {
+  "en": "Only these are read: the parent's name and WhatsApp number, the class and section, a first name or initials, the admission number and the joining day. Anything else in the file is ignored.",
+  "te": "వీటిని మాత్రమే చదువుతాం: తల్లిదండ్రి పేరు, WhatsApp నంబర్, తరగతి, సెక్షన్, మొదటి పేరు లేదా మొదటి అక్షరాలు, అడ్మిషన్ నంబర్, చేరిన రోజు. ఫైల్‌లోని మిగతావన్నీ వదిలేస్తాం.",
+  "hi": "केवल यही पढ़ा जाता है: अभिभावक का नाम और WhatsApp नंबर, कक्षा और अनुभाग, पहला नाम या आद्याक्षर, प्रवेश संख्या और शामिल होने का दिन। फ़ाइल में बाकी सब छोड़ दिया जाता है।",
+  "kn": "ಇವುಗಳನ್ನು ಮಾತ್ರ ಓದಲಾಗುತ್ತದೆ: ಪೋಷಕರ ಹೆಸರು ಮತ್ತು WhatsApp ಸಂಖ್ಯೆ, ತರಗತಿ ಮತ್ತು ವಿಭಾಗ, ಮೊದಲ ಹೆಸರು ಅಥವಾ ಮೊದಲಕ್ಷರಗಳು, ಪ್ರವೇಶ ಸಂಖ್ಯೆ ಮತ್ತು ಸೇರಿದ ದಿನ. ಫೈಲ್‌ನಲ್ಲಿರುವ ಉಳಿದದ್ದನ್ನು ಬಿಡಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.guardian_name": {
+  "en": "Parent or guardian name",
+  "te": "తల్లిదండ్రి లేదా సంరక్షకుల పేరు",
+  "hi": "अभिभावक का नाम",
+  "kn": "ಪೋಷಕರು ಅಥವಾ ಪಾಲಕರ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.guardian_phone": {
+  "en": "Parent's WhatsApp or mobile number",
+  "te": "తల్లిదండ్రి WhatsApp లేదా మొబైల్ నంబర్",
+  "hi": "अभिभावक का WhatsApp या मोबाइल नंबर",
+  "kn": "ಪೋಷಕರ WhatsApp ಅಥವಾ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.programme": {
+  "en": "Class or course",
+  "te": "తరగతి లేదా కోర్సు",
+  "hi": "कक्षा या पाठ्यक्रम",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.group": {
+  "en": "Section, year, semester or batch",
+  "te": "సెక్షన్, సంవత్సరం, సెమిస్టర్ లేదా బ్యాచ్",
+  "hi": "अनुभाग, वर्ष, सेमेस्टर या बैच",
+  "kn": "ವಿಭಾಗ, ವರ್ಷ, ಸೆಮಿಸ್ಟರ್ ಅಥವಾ ಬ್ಯಾಚ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.child_label": {
+  "en": "Student's first name or initials",
+  "te": "విద్యార్థి మొదటి పేరు లేదా మొదటి అక్షరాలు",
+  "hi": "विद्यार्थी का पहला नाम या आद्याक्षर",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯ ಮೊದಲ ಹೆಸರು ಅಥವಾ ಮೊದಲಕ್ಷರಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.admission_no": {
+  "en": "Admission number",
+  "te": "అడ్మిషన్ నంబర్",
+  "hi": "प्रवेश संख्या",
+  "kn": "ಪ್ರವೇಶ ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.is_adult": {
+  "en": "Adult student (yes or no)",
+  "te": "వయోజన విద్యార్థి (అవును లేదా కాదు)",
+  "hi": "वयस्क विद्यार्थी (हाँ या नहीं)",
+  "kn": "ವಯಸ್ಕ ವಿದ್ಯಾರ್ಥಿ (ಹೌದು ಅಥವಾ ಇಲ್ಲ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.field.joined_on": {
+  "en": "Joined on",
+  "te": "చేరిన తేదీ",
+  "hi": "शामिल होने की तारीख़",
+  "kn": "ಸೇರಿದ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.reason.programme_not_found": {
+  "en": "The school has no class or course with this name",
+  "te": "పాఠశాలలో ఈ పేరుతో తరగతి లేదా కోర్సు లేదు",
+  "hi": "विद्यालय में इस नाम की कक्षा या पाठ्यक्रम नहीं है",
+  "kn": "ಶಾಲೆಯಲ್ಲಿ ಈ ಹೆಸರಿನ ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.reason.group_not_found": {
+  "en": "The class has no section, year or batch with this name",
+  "te": "తరగతిలో ఈ పేరుతో సెక్షన్, సంవత్సరం లేదా బ్యాచ్ లేదు",
+  "hi": "कक्षा में इस नाम का अनुभाग, वर्ष या बैच नहीं है",
+  "kn": "ತರಗತಿಯಲ್ಲಿ ಈ ಹೆಸರಿನ ವಿಭಾಗ, ವರ್ಷ ಅಥವಾ ಬ್ಯಾಚ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.reason.admission_no": {
+  "en": "This admission number is in the file twice",
+  "te": "ఈ అడ్మిషన్ నంబర్ ఫైల్‌లో రెండుసార్లు ఉంది",
+  "hi": "यह प्रवेश संख्या फ़ाइल में दो बार है",
+  "kn": "ಈ ಪ್ರವೇಶ ಸಂಖ್ಯೆ ಫೈಲ್‌ನಲ್ಲಿ ಎರಡು ಬಾರಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.reason.same_child": {
+  "en": "The same child of the same parent is in the file twice",
+  "te": "ఒకే తల్లిదండ్రి ఒకే బిడ్డ ఫైల్‌లో రెండుసార్లు ఉన్నారు",
+  "hi": "एक ही अभिभावक का वही बच्चा फ़ाइल में दो बार है",
+  "kn": "ಒಂದೇ ಪೋಷಕರ ಅದೇ ಮಗು ಫೈಲ್‌ನಲ್ಲಿ ಎರಡು ಬಾರಿ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.guardian_name_missing": {
+  "en": "the parent's name is missing",
+  "te": "తల్లిదండ్రి పేరు లేదు",
+  "hi": "अभिभावक का नाम नहीं है",
+  "kn": "ಪೋಷಕರ ಹೆಸರು ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.guardian_phone_missing": {
+  "en": "the parent's number is missing",
+  "te": "తల్లిదండ్రి నంబర్ లేదు",
+  "hi": "अभिभावक का नंबर नहीं है",
+  "kn": "ಪೋಷಕರ ಸಂಖ್ಯೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.guardian_phone_invalid": {
+  "en": "the parent's number is not a mobile number",
+  "te": "తల్లిదండ్రి నంబర్ మొబైల్ నంబర్ కాదు",
+  "hi": "अभिभावक का नंबर मोबाइल नंबर नहीं है",
+  "kn": "ಪೋಷಕರ ಸಂಖ್ಯೆ ಮೊಬೈಲ್ ಸಂಖ್ಯೆ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.programme_missing": {
+  "en": "the class or course is missing",
+  "te": "తరగతి లేదా కోర్సు లేదు",
+  "hi": "कक्षा या पाठ्यक्रम नहीं है",
+  "kn": "ತರಗತಿ ಅಥವಾ ಕೋರ್ಸ್ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.child_label_missing": {
+  "en": "the student's first name is missing",
+  "te": "విద్యార్థి మొదటి పేరు లేదు",
+  "hi": "विद्यार्थी का पहला नाम नहीं है",
+  "kn": "ವಿದ್ಯಾರ್ಥಿಯ ಮೊದಲ ಹೆಸರು ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.child_label_invalid": {
+  "en": "the first name has a digit, an @ or is too long",
+  "te": "మొదటి పేరులో అంకె, @ ఉంది లేదా చాలా పొడవుగా ఉంది",
+  "hi": "पहले नाम में अंक या @ है या वह बहुत लंबा है",
+  "kn": "ಮೊದಲ ಹೆಸರಿನಲ್ಲಿ ಅಂಕೆ, @ ಇದೆ ಅಥವಾ ತುಂಬಾ ಉದ್ದವಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.admission_no_invalid": {
+  "en": "the admission number has characters that are not allowed",
+  "te": "అడ్మిషన్ నంబర్‌లో అనుమతించని అక్షరాలున్నాయి",
+  "hi": "प्रवेश संख्या में अमान्य अक्षर हैं",
+  "kn": "ಪ್ರವೇಶ ಸಂಖ್ಯೆಯಲ್ಲಿ ಅನುಮತಿಸದ ಅಕ್ಷರಗಳಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.adult_unknown": {
+  "en": "the adult column is not yes or no",
+  "te": "వయోజన కాలమ్ అవును లేదా కాదు కాదు",
+  "hi": "वयस्क कॉलम हाँ या नहीं नहीं है",
+  "kn": "ವಯಸ್ಕ ಕಾಲಮ್ ಹೌದು ಅಥವಾ ಇಲ್ಲ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "dta.issue.date_invalid": {
+  "en": "the joining day cannot be read",
+  "te": "చేరిన రోజు చదవలేకపోయాం",
+  "hi": "शामिल होने का दिन पढ़ा नहीं जा सका",
+  "kn": "ಸೇರಿದ ದಿನ ಓದಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.collection.title": {
+  "en": "Fees collected today",
+  "te": "ఈ రోజు వసూలైన ఫీజులు",
+  "hi": "आज वसूली गई फीस",
+  "kn": "ಇಂದು ವಸೂಲಾದ ಶುಲ್ಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.collection.none": {
+  "en": "No receipt yet today",
+  "te": "ఈ రోజు ఇంకా రసీదు లేదు",
+  "hi": "आज अभी कोई रसीद नहीं",
+  "kn": "ಇಂದು ಇನ್ನೂ ರಸೀದಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.collection.sub": {
+  "en": "{n} receipts today",
+  "te": "ఈ రోజు {n} రసీదులు",
+  "hi": "आज {n} रसीदें",
+  "kn": "ಇಂದು {n} ರಸೀದಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.reminders.title": {
+  "en": "Reminders running",
+  "te": "నడుస్తున్న రిమైండర్లు",
+  "hi": "चल रहे रिमाइंडर",
+  "kn": "ನಡೆಯುತ್ತಿರುವ ನೆನಪೋಲೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.reminders.none": {
+  "en": "No reminder campaign is running",
+  "te": "ఏ రిమైండర్ ప్రచారం నడవడం లేదు",
+  "hi": "कोई रिमाइंडर अभियान नहीं चल रहा",
+  "kn": "ಯಾವ ನೆನಪೋಲೆ ಅಭಿಯಾನವೂ ನಡೆಯುತ್ತಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.reminders.sub": {
+  "en": "{n} campaigns are sending on their days",
+  "te": "{n} ప్రచారాలు తమ రోజుల్లో పంపుతున్నాయి",
+  "hi": "{n} अभियान अपने दिनों पर भेज रहे हैं",
+  "kn": "{n} ಅಭಿಯಾನಗಳು ತಮ್ಮ ದಿನಗಳಲ್ಲಿ ಕಳುಹಿಸುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.campus.title": {
+  "en": "Campus visits today",
+  "te": "ఈ రోజు క్యాంపస్ సందర్శనలు",
+  "hi": "आज के कैंपस दौरे",
+  "kn": "ಇಂದಿನ ಕ್ಯಾಂಪಸ್ ಭೇಟಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.campus.none": {
+  "en": "No campus visit today",
+  "te": "ఈ రోజు క్యాంపస్ సందర్శన లేదు",
+  "hi": "आज कोई कैंपस दौरा नहीं",
+  "kn": "ಇಂದು ಕ್ಯಾಂಪಸ್ ಭೇಟಿ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "today.pack.campus.sub": {
+  "en": "{n} families are coming",
+  "te": "{n} కుటుంబాలు వస్తున్నాయి",
+  "hi": "{n} परिवार आ रहे हैं",
+  "kn": "{n} ಕುಟುಂಬಗಳು ಬರುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.institution_set.title": {
+  "en": "Set up your institution",
+  "te": "మీ సంస్థను ఏర్పాటు చేయండి",
+  "hi": "अपनी संस्था सेट करें",
+  "kn": "ನಿಮ್ಮ ಸಂಸ್ಥೆಯನ್ನು ಹೊಂದಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "start.check.institution_set.hint": {
+  "en": "The kind of place, when the year starts and your classes or courses.",
+  "te": "సంస్థ రకం, సంవత్సరం ఎప్పుడు మొదలవుతుంది, మీ తరగతులు లేదా కోర్సులు.",
+  "hi": "संस्था का प्रकार, वर्ष कब शुरू होता है और आपकी कक्षाएँ या पाठ्यक्रम।",
+  "kn": "ಸಂಸ್ಥೆಯ ಪ್ರಕಾರ, ವರ್ಷ ಯಾವಾಗ ಆರಂಭ ಮತ್ತು ನಿಮ್ಮ ತರಗತಿಗಳು ಅಥವಾ ಕೋರ್ಸ್‌ಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.kind.charge": {
+  "en": "Fee instalment",
+  "te": "ఫీజు వాయిదా",
+  "hi": "फीस की किस्त",
+  "kn": "ಶುಲ್ಕ ಕಂತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.kind.payment": {
+  "en": "Fee received",
+  "te": "ఫీజు అందింది",
+  "hi": "फीस प्राप्त",
+  "kn": "ಶುಲ್ಕ ಸ್ವೀಕರಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.kind.adjustment": {
+  "en": "Adjustment",
+  "te": "సవరణ",
+  "hi": "समायोजन",
+  "kn": "ಹೊಂದಾಣಿಕೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "fee.kind.concession": {
+  "en": "Concession",
+  "te": "రాయితీ",
+  "hi": "रियायत",
+  "kn": "ರಿಯಾಯಿತಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

@@ -1,0 +1,14 @@
+[All fee plans](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans)
+{role=status} Saved.
+# Class 5 fees 2026-27 (synthetic)
+2026-27 Class 5 (synthetic) · 31 students hold it
+{label="Instalments"}
+## Instalments
+- Transport 1 due 2026-06-15 ₹7,000.00
+- Tuition 1 due 2026-06-15 ₹25,000.00
+- Tuition 2 due 2026-10-15 ₹15,000.00
+- Tuition 3 due 2027-01-15 ₹15,000.00
+Total ₹62,000.00
+{label="Late fee"}
+## Late fee
+₹200.00 for each instalment still open after 5 grace days.

@@ -80,3 +80,32 @@ describe("who may write what", () => {
     expect(record).not.toHaveBeenCalled();
   });
 });
+
+describe("a school's account (fee words)", () => {
+  const feeKinds = ["payment", "concession", "adjustment"] as readonly EntryKind[];
+  it("a concession by percent takes a whole number 1 to 100 and sends the mode", async () => {
+    const record = show({ kinds: feeKinds, prefix: "fee" });
+    await click("Give a concession");
+    fireEvent.click(screen.getByRole("radio", { name: /A percentage of what was charged/ }));
+    fireEvent.change(screen.getByLabelText("Percentage (1 to 100)"), { target: { value: "101" } });
+    await click(/Give the concession|Write down the concession/);
+    expect(screen.getByRole("alert")).toHaveTextContent("whole number from 1 to 100");
+    expect(record).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText("Percentage (1 to 100)"), { target: { value: "10" } });
+    await click(/Give the concession|Write down the concession/);
+    expect(record.mock.calls[0][0]).toMatchObject({ kind: "concession", amount: "10", mode: "percent", reasonCode: "scholarship" });
+  });
+  it("a concession by amount still shows the amount in words", async () => {
+    show({ kinds: feeKinds, prefix: "fee" });
+    await click("Give a concession");
+    fireEvent.change(screen.getByLabelText(/^Amount/), { target: { value: "2000" } });
+    expect(screen.getByText(/Two Thousand/i)).toBeInTheDocument();
+  });
+  it("an adjustment starts as a correction and a late fee is not on the list a person may choose", async () => {
+    show({ kinds: feeKinds, prefix: "fee" });
+    await click("Adjust the account");
+    const select = screen.getByLabelText("Reason") as HTMLSelectElement;
+    expect(select.value).toBe("correction");
+    expect(within(select).queryByRole("option", { name: /late fee/i })).toBeNull();
+  });
+});

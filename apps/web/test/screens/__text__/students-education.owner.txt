@@ -1,0 +1,12 @@
+# Students
+The minimum record: a first name or initials, the class and section, the admission number and the adult we write to. [Import a file](/app/tenants/22222222-2222-2222-2222-222222222222/students/import) [Add a student](/app/tenants/22222222-2222-2222-2222-222222222222/students/new)
+{role=status} Saved.
+{label="Filter the students"} Class or course
+<select name=programme label="Class or course">
+  options: All=* | Class 5 (synthetic)=bb000000-0000-4000-8000-000000000001 | B.Com (synthetic)=bb000000-0000-4000-8000-000000000002
+Status
+<select name=status label="Status">
+  options: All=* | Here=active | Left=left
+[button type=submit: Show]
+- [Asha (synthetic) Class 5 (synthetic) · A · No. A-1001 Parent or guardian: Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/students/5d000000-0000-4000-8000-000000000001)
+- [Kiran (synthetic) Class 5 (synthetic) · B Parent or guardian: Ravi Kumar (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/students/5d000000-0000-4000-8000-000000000002)

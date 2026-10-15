@@ -1,16 +1,19 @@
 import { addDays, dayInIndia } from "@/components/v2/app/deliveries/trip-logic";
 import { ApiAuthError } from "@/lib/api/client";
 import { listTrips } from "@/lib/api/deliveries";
+import { listCampaigns } from "@/lib/api/campaigns";
 import { getLedgerSummary } from "@/lib/api/ledger";
 import { listMaterialQuotes } from "@/lib/api/materials";
 import { settle } from "@/lib/api/part";
+import { runReport } from "@/lib/api/reports";
+import { listVisits } from "@/lib/api/visits";
 import type { WorkspacePack } from "@/lib/packs/types";
 
 import { hasModule } from "./has";
 
 /**
- * The cards a business type adds to Today (blueprint 6, jobs CO and CS): construction shows today's trips, quotes waiting and what falls due this week; education will show today's collection, reminders running and
- * campus visits (job CS). A card exists only when the business type has the module behind it and the person's role may read the numbers; each card is read on its own and says "not available" when its read fails, so one
+ * The cards a business type adds to Today (blueprint 6, jobs CO and CS): construction shows today's trips, quotes waiting and what falls due this week; education shows today's collection, the reminder campaigns running and
+ * the campus visits of the day (job CS). A card exists only when the business type has the module behind it and the person's role may read the numbers; each card is read on its own and says "not available" when its read fails, so one
  * slow part never blanks Today. The numbers are what the API holds (counted, never guessed); the money is the ledger's own. Nothing here names a business type.
  */
 export type PackCard = {
@@ -69,6 +72,37 @@ export async function readPackCards(input: PackCardInput): Promise<PackCard[]> {
           for (const o of row.open_invoices) if (o.due_date >= today && o.due_date <= week) dueWeek += o.open_paise;
         }
         return { id: "dues", titleKey: "today.pack.dues.title", value: money(input)(dueWeek), subKey: overdue > 0 ? "today.pack.dues.overdue" : "today.pack.dues.fine", subVars: { amount: money(input)(overdue) }, href: `${base}/dues`, tone: overdue > 0 ? "red" : "neutral" };
+      }),
+    );
+  }
+  if (hasModule(pack, "fees")) {
+    jobs.push(
+      settle(() => runReport(accessToken, tenantId, "education.today")).then((r): PackCard => {
+        const href = `${base}/fees`;
+        if (!r.ok) return { id: "collection", titleKey: "today.pack.collection.title", value: null, subKey: null, subVars: {}, href, tone: "neutral" };
+        const collected = r.data.kpis.find((k) => k.key === "collected_paise")?.value ?? 0;
+        const receipts = r.data.kpis.find((k) => k.key === "receipts")?.value ?? 0;
+        return { id: "collection", titleKey: "today.pack.collection.title", value: money(input)(collected), subKey: receipts === 0 ? "today.pack.collection.none" : "today.pack.collection.sub", subVars: { n: receipts }, href, tone: "neutral" };
+      }),
+    );
+  }
+  if (hasModule(pack, "programmes") && hasModule(pack, "campaigns") && role !== "sales") {
+    jobs.push(
+      settle(() => listCampaigns(accessToken, tenantId, { status: "running", limit: 50 })).then((r): PackCard => {
+        const href = `${base}/campaigns`;
+        if (!r.ok) return { id: "reminders", titleKey: "today.pack.reminders.title", value: null, subKey: null, subVars: {}, href, tone: "neutral" };
+        const n = r.data.items.length;
+        return { id: "reminders", titleKey: "today.pack.reminders.title", value: String(n), subKey: n === 0 ? "today.pack.reminders.none" : "today.pack.reminders.sub", subVars: { n }, href, tone: "neutral" };
+      }),
+    );
+  }
+  if (hasModule(pack, "programmes") && hasModule(pack, "visits")) {
+    jobs.push(
+      settle(() => listVisits(accessToken, tenantId, { from: today, to: today })).then((r): PackCard => {
+        const href = `${base}/visits`;
+        if (!r.ok) return { id: "campus", titleKey: "today.pack.campus.title", value: null, subKey: null, subVars: {}, href, tone: "neutral" };
+        const n = r.data.items.filter((v) => v.status !== "cancelled" && v.status !== "no_show").length;
+        return { id: "campus", titleKey: "today.pack.campus.title", value: String(n), subKey: n === 0 ? "today.pack.campus.none" : "today.pack.campus.sub", subVars: { n }, href, tone: "neutral" };
       }),
     );
   }

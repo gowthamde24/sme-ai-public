@@ -1,0 +1,72 @@
+# Make a fee plan
+form:
+{role=note} This is a copy of another plan. Change the year, the dates and the amounts, then save it as a new plan.
+Name of the plan
+<text label="Name of the plan" maxlength=80 value=Class 5 fees 2026-27 (synthetic)>
+Class or course
+<select label="Class or course">
+  options: Class 5 (synthetic)=bb000000-0000-4000-8000-000000000001* | B.Com (synthetic)=bb000000-0000-4000-8000-000000000002
+Section (optional)
+<select label="Section (optional)">
+  options: The whole class or course=* | A=bb100000-0000-4000-8000-000000000001 | B=bb100000-0000-4000-8000-000000000002
+Academic year
+<text label="Academic year" maxlength=7 value=2026-27 described-by="Written like 2026-27.">
+Written like 2026-27.
+legend: Instalments
+One row for each head and instalment: what it is, its number, when it falls due and the amount in rupees. Head
+<select label="Head">
+  options: Tuition=tuition* | Admission=admission | Transport=transport | Hostel=hostel | Exam=exam | Books=books | Other=other
+No.
+<text label="No." inputmode=numeric value=1>
+Falls due on
+<date label="Falls due on" value=2026-06-15>
+Amount (₹)
+<text label="Amount (₹)" inputmode=decimal autocomplete=off value=25000>
+[button type=button: Remove row 1]
+Head
+<select label="Head">
+  options: Tuition=tuition* | Admission=admission | Transport=transport | Hostel=hostel | Exam=exam | Books=books | Other=other
+No.
+<text label="No." inputmode=numeric value=2>
+Falls due on
+<date label="Falls due on" value=2026-10-15>
+Amount (₹)
+<text label="Amount (₹)" inputmode=decimal autocomplete=off value=15000>
+[button type=button: Remove row 2]
+Head
+<select label="Head">
+  options: Tuition=tuition* | Admission=admission | Transport=transport | Hostel=hostel | Exam=exam | Books=books | Other=other
+No.
+<text label="No." inputmode=numeric value=3>
+Falls due on
+<date label="Falls due on" value=2027-01-15>
+Amount (₹)
+<text label="Amount (₹)" inputmode=decimal autocomplete=off value=15000>
+[button type=button: Remove row 3]
+Head
+<select label="Head">
+  options: Tuition=tuition | Admission=admission | Transport=transport* | Hostel=hostel | Exam=exam | Books=books | Other=other
+No.
+<text label="No." inputmode=numeric value=1>
+Falls due on
+<date label="Falls due on" value=2026-06-15>
+Amount (₹)
+<text label="Amount (₹)" inputmode=decimal autocomplete=off value=7000>
+[button type=button: Remove row 4]
+[button type=button: Add a row]
+Total : ₹62,000.00
+legend: Late fee
+A rule only. Nothing is added to a parent's account by looking at it or by the clock: a person posts the late fees.
+{role=radiogroup label="Late fee"}
+<radio name=late label="No late fee">
+No late fee
+<radio name=late label="One amount for each instalment still open after the grace days" checked>
+One amount for each instalment still open after the grace days
+<radio name=late label="An amount for each day late (with a most)">
+An amount for each day late (with a most)
+Late fee for each instalment (₹)
+<text label="Late fee for each instalment (₹)" inputmode=decimal value=200>
+Grace days
+<text label="Grace days" inputmode=numeric value=5>
+[button type=submit: Save the plan]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans)

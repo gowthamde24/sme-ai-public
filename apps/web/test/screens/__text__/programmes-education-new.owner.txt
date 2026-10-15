@@ -1,0 +1,35 @@
+# Programmes
+The institution, its classes and courses, and what each is divided into. Nothing is deleted: put it away instead.
+{label="Your institution"}
+## Your institution
+{role=note} Not set up yet. Say what kind of place this is and when your academic year starts.
+form:
+Kind of institution
+<select label="Kind of institution">
+  options: School=school* | Junior college=junior_college | Degree college=degree_college | University=university | Coaching centre=coaching | Training institute=training
+Academic year starts in
+<select label="Academic year starts in">
+  options: January=1 | February=2 | March=3 | April=4 | May=5 | June=6* | July=7 | August=8 | September=9 | October=10 | November=11 | December=12
+legend: Terms (up to six)
+No terms set. They are optional.
+[button type=button: Add a term]
+legend: Languages parents use
+Messages to parents can be written in these.
+<checkbox label="English" checked>
+English
+<checkbox label="Telugu">
+Telugu
+<checkbox label="Hindi">
+Hindi
+<checkbox label="Kannada">
+Kannada
+<checkbox label="Tamil">
+Tamil
+Erase a student's record this many months after they leave (optional)
+<text label="Erase a student's record this many months after they leave (optional)" inputmode=numeric described-by="Leave empty to keep records until you erase them. Only you, with the authenticator code, can change this.">
+Leave empty to keep records until you erase them. Only you, with the authenticator code, can change this.
+[button type=submit: Save the institution]
+{label="Classes and courses"}
+## Classes and courses
+[button type=button: Add a class or course]
+Nothing here yet. Add your first class or course, then its sections.

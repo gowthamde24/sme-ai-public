@@ -1,0 +1,3 @@
+[Fees](/app/tenants/22222222-2222-2222-2222-222222222222/fees)
+# Fee plans
+Heads, instalments and due dates for a class or course in one academic year. No fee plans yet A plan lists the heads (tuition, transport ...) and when each instalment falls due. [Make a fee plan](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans/new)

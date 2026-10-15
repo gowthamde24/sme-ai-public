@@ -1,0 +1,5 @@
+[Fees](/app/tenants/22222222-2222-2222-2222-222222222222/fees)
+# Fee plans
+Heads, instalments and due dates for a class or course in one academic year. [Make a fee plan](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans/new)
+- [Class 5 fees 2026-27 (synthetic) 2026-27 Class 5 (synthetic) · 31 students hold it ₹62,000.00](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans/fa000000-0000-4000-8000-000000000001)
+- [B.Com year 1 (synthetic) 2026-27 B.Com (synthetic) · 0 students hold it ₹45,000.00](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans/fa000000-0000-4000-8000-000000000002)

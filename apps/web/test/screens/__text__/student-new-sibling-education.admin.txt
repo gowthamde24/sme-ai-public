@@ -1,0 +1,19 @@
+# Add a student
+form:
+Parent or guardian Ravi Kumar (synthetic)
+<checkbox label="An adult student (the parent or guardian above is the student)">
+An adult student (the parent or guardian above is the student) First name or initials
+<text label="First name or initials" maxlength=30 autocomplete=off described-by="Up to 30 letters. No digits and no e-mail address: this is all we keep of the child's name.">
+Up to 30 letters. No digits and no e-mail address: this is all we keep of the child's name. Class or course
+<select label="Class or course">
+  options: Class 5 (synthetic)=bb000000-0000-4000-8000-000000000001* | B.Com (synthetic)=bb000000-0000-4000-8000-000000000002
+Section
+<select label="Section">
+  options: Choose=* | A=bb100000-0000-4000-8000-000000000001 | B=bb100000-0000-4000-8000-000000000002
+Admission number (optional)
+<text label="Admission number (optional)" maxlength=30>
+Joined on (optional)
+<date label="Joined on (optional)">
+{role=note} Only this is kept about a student. There is no place for a date of birth, a photograph, an address, an identity number, health, marks or notes.
+[button type=submit: Add the student]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/students)

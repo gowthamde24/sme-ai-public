@@ -1,0 +1,23 @@
+[All students](/app/tenants/22222222-2222-2222-2222-222222222222/students)
+# Kiran (synthetic)
+Left
+{label="The record"}
+## The record
+Class or course
+Class 5 (synthetic)
+Section, year or batch
+B
+Joined on (optional)
+2026-06-10
+Left on
+2026-09-30
+Parent or guardian
+Ravi Kumar (synthetic)
+Only this is kept about a student. There is no place for a date of birth, a photograph, an address, an identity number, health, marks or notes. [Change](/app/tenants/22222222-2222-2222-2222-222222222222/students/5d000000-0000-4000-8000-000000000002/edit)
+[button type=button: Mark as here again]
+[Add another child of this parent](/app/tenants/22222222-2222-2222-2222-222222222222/students/new?contact=22222222-2222-4222-8222-2222222222aa)
+{label="Fees of this family"}
+## Fees of this family
+- [Asha (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000001) ₹13,000.00
+- [Kiran (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000002) ₹24,000.00
+Pending in all ₹37,000.00 [Open this student's fees](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000002)

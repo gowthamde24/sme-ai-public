@@ -7,7 +7,7 @@ import { guard, json, NO_STORE, run } from "../../route-kit";
 
 export const dynamic = "force-dynamic";
 
-const KINDS = ["customers", "stock"];
+const KINDS = ["customers", "stock", "students"];
 
 /** The mapping the screen sends: {field: column number}, small, closed field words. Anything else is not sent on. */
 function parseMapping(raw: string | null): Record<string, number> | null | "bad" {

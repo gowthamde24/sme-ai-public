@@ -1,0 +1,52 @@
+# Programmes
+The institution, its classes and courses, and what each is divided into. Nothing is deleted: put it away instead.
+{label="Your institution"}
+## Your institution
+form:
+Kind of institution
+<select label="Kind of institution" disabled>
+  options: School=school* | Junior college=junior_college | Degree college=degree_college | University=university | Coaching centre=coaching | Training institute=training
+Academic year starts in
+<select label="Academic year starts in" disabled>
+  options: January=1 | February=2 | March=3 | April=4 | May=5 | June=6* | July=7 | August=8 | September=9 | October=10 | November=11 | December=12
+legend: Terms (up to six)
+Term 1
+<text label="Term 1" maxlength=40 value=Term 1>
+From
+<select label="From">
+  options: January=1 | February=2 | March=3 | April=4 | May=5 | June=6* | July=7 | August=8 | September=9 | October=10 | November=11 | December=12
+To
+<select label="To">
+  options: January=1 | February=2 | March=3 | April=4 | May=5 | June=6 | July=7 | August=8 | September=9* | October=10 | November=11 | December=12
+[button type=button: Remove term 1]
+Term 2
+<text label="Term 2" maxlength=40 value=Term 2>
+From
+<select label="From">
+  options: January=1 | February=2 | March=3 | April=4 | May=5 | June=6 | July=7 | August=8 | September=9 | October=10* | November=11 | December=12
+To
+<select label="To">
+  options: January=1 | February=2 | March=3* | April=4 | May=5 | June=6 | July=7 | August=8 | September=9 | October=10 | November=11 | December=12
+[button type=button: Remove term 2]
+[button type=button: Add a term]
+legend: Languages parents use
+Messages to parents can be written in these.
+<checkbox label="English" checked>
+English
+<checkbox label="Telugu" checked>
+Telugu
+<checkbox label="Hindi">
+Hindi
+<checkbox label="Kannada">
+Kannada
+<checkbox label="Tamil">
+Tamil
+Erase a student's record this many months after they leave (optional)
+<text label="Erase a student's record this many months after they leave (optional)" disabled inputmode=numeric described-by="Only the Owner, with the authenticator code, can change this.">
+Only the Owner, with the authenticator code, can change this. Only the Owner and Admins can change this.
+{label="Classes and courses"}
+## Classes and courses
+- Class 5 (synthetic) Classes · 31 students [See students](/app/tenants/22222222-2222-2222-2222-222222222222/students?programme=bb000000-0000-4000-8000-000000000001) Sections
+- A 16
+- B 15
+- B.Com (synthetic) Course · 0 students [See students](/app/tenants/22222222-2222-2222-2222-222222222222/students?programme=bb000000-0000-4000-8000-000000000002) Years None yet.

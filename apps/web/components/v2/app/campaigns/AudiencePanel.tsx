@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import * as React from "react";
 
 import type { RecipientOut } from "@contracts";
+import type { ProgrammeOut } from "@contracts/education";
 
 import { formatRupees, rupeesToPaise } from "@/lib/money";
 import type { LedgerFilter, RecipientRow } from "@/lib/api/campaigns";
@@ -22,21 +23,28 @@ export type AudienceActions = {
   importList: (rows: RecipientRow[]) => Promise<Added>;
   clear: () => Promise<{ ok: true; removed: number } | Refused>;
   remove: (recipientId: string) => Promise<{ ok: true } | Refused>;
+  /** A school's announcement: everyone, one programme or one section (one message per guardian however many children). */
+  announce?: (a: AnnounceInput) => Promise<Added>;
 };
+export type AnnounceInput = { scope: "all" | "programme" | "group"; programmeId: string; groupId: string; date: string };
 
 /**
  * Who a campaign is for (job CQ). People come from the ledger (everyone with money open on claims due in a range: the amount is the OPEN total and the date the earliest due date, checked again before each message) or from a
  * list pasted or uploaded (one person per line: phone number or contact id, date, amount in rupees for a money reminder, a reference if the text uses one). A phone number only FINDS an existing contact of the business; a
  * person with no recorded consent is stopped message by message, not here. Every line is checked before it is sent and a line that cannot be read is named, never guessed. Changing the list of an approved campaign sends it back to draft.
  */
-export function AudiencePanel({ status, money, fromLedger, recipients, total, words, actions, canEdit, moreHref }: { status: string; money: boolean; fromLedger: boolean; recipients: readonly RecipientOut[]; total: number; words: TodayWords; actions: AudienceActions; canEdit: boolean; moreHref: string | null }) {
+export function AudiencePanel({ status, money, fromLedger, studentParty = false, programmes = [], recipients, total, words, actions, canEdit, moreHref }: { status: string; money: boolean; fromLedger: boolean; studentParty?: boolean; programmes?: readonly ProgrammeOut[]; recipients: readonly RecipientOut[]; total: number; words: TodayWords; actions: AudienceActions; canEdit: boolean; moreHref: string | null }) {
   const router = useRouter();
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<{ text: string; mfa?: boolean } | null>(null);
   const [done, setDone] = React.useState<{ added: number; skipped: { row: number; reason: string }[] } | null>(null);
   const [from, setFrom] = React.useState("");
   const [to, setTo] = React.useState("");
-  const [party, setParty] = React.useState<"" | "company" | "contact">("");
+  const [party, setParty] = React.useState<"" | "company" | "contact" | "student">(studentParty ? "student" : "");
+  const [scope, setScope] = React.useState<"all" | "programme" | "group">("all");
+  const [progId, setProgId] = React.useState("");
+  const [groupId, setGroupId] = React.useState("");
+  const [asOf, setAsOf] = React.useState("");
   const [min, setMin] = React.useState("");
   const [text, setText] = React.useState("");
   const [read, setRead] = React.useState<ParsedList | null>(null);
@@ -96,6 +104,22 @@ export function AudiencePanel({ status, money, fromLedger, recipients, total, wo
     router.refresh();
   }
 
+  async function announce() {
+    setProblem(null);
+    setDone(null);
+    if (!actions.announce) return;
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(asOf)) return setProblem({ text: say(words, "camp.aud.err.date") });
+    if (scope === "programme" && progId === "") return setProblem({ text: say(words, "camp.aud.err.programme") });
+    if (scope === "group" && groupId === "") return setProblem({ text: say(words, "camp.aud.err.group") });
+    setBusy(true);
+    const out = await actions.announce({ scope, programmeId: progId, groupId, date: asOf });
+    setBusy(false);
+    if (!out.ok) return fail(out);
+    setDone({ added: out.added, skipped: out.skipped });
+    router.refresh();
+  }
+  const programme = programmes.find((p) => p.id === progId) ?? null;
+
   return (
     <div data-part="audience" className="flex flex-col gap-5">
       {canEdit && fresh ? <p role="note" className="rounded-lg border border-amber-text bg-amber-bg p-3 text-sm font-medium text-amber-text">{say(words, "camp.aud.backtodraft")}</p> : null}
@@ -108,10 +132,16 @@ export function AudiencePanel({ status, money, fromLedger, recipients, total, wo
             <div><label htmlFor="al-to" className={label}>{say(words, "camp.aud.to")}</label><input id="al-to" type="date" value={to} disabled={busy} onChange={(e) => setTo(e.target.value)} className={field} /></div>
             <div>
               <label htmlFor="al-party" className={label}>{say(words, "camp.aud.party")}</label>
-              <select id="al-party" value={party} disabled={busy} onChange={(e) => setParty(e.target.value as typeof party)} className={field}>
-                <option value="">{say(words, "camp.aud.party.any")}</option>
-                <option value="company">{say(words, "camp.aud.party.company")}</option>
-                <option value="contact">{say(words, "camp.aud.party.contact")}</option>
+              <select id="al-party" value={party} disabled={busy || studentParty} onChange={(e) => setParty(e.target.value as typeof party)} className={field}>
+                {studentParty ? (
+                  <option value="student">{say(words, "camp.aud.party.student")}</option>
+                ) : (
+                  <>
+                    <option value="">{say(words, "camp.aud.party.any")}</option>
+                    <option value="company">{say(words, "camp.aud.party.company")}</option>
+                    <option value="contact">{say(words, "camp.aud.party.contact")}</option>
+                  </>
+                )}
               </select>
             </div>
             <div><label htmlFor="al-min" className={label}>{say(words, "camp.aud.min")}</label><input id="al-min" inputMode="decimal" value={min} disabled={busy} onChange={(e) => setMin(e.target.value)} className={field} /></div>
@@ -119,7 +149,46 @@ export function AudiencePanel({ status, money, fromLedger, recipients, total, wo
           <div><button type="button" className={primary} disabled={busy} onClick={() => void ledger()}>{busy ? say(words, "today.act.working") : say(words, "camp.aud.ledger.go")}</button></div>
         </section>
       ) : null}
-      {canEdit ? (
+      {canEdit && actions.announce ? (
+        <section aria-labelledby="aud-students" className="flex flex-col gap-3 rounded-2xl border border-line p-4" data-part="students-audience">
+          <h2 id="aud-students" className="font-display text-xl font-bold">{say(words, "camp.aud.students.title")}</h2>
+          <p className={help}>{say(words, "camp.aud.students.help")}</p>
+          <div className="grid grid-cols-1 gap-4 min-[480px]:grid-cols-2">
+            <div>
+              <label htmlFor="as-scope" className={label}>{say(words, "camp.aud.students.scope")}</label>
+              <select id="as-scope" value={scope} disabled={busy} onChange={(e) => { setScope(e.target.value as typeof scope); setProgId(""); setGroupId(""); }} className={field}>
+                <option value="all">{say(words, "camp.aud.students.all")}</option>
+                <option value="programme">{say(words, "camp.aud.students.programme")}</option>
+                <option value="group">{say(words, "camp.aud.students.group")}</option>
+              </select>
+            </div>
+            {scope !== "all" ? (
+              <div>
+                <label htmlFor="as-prog" className={label}>{say(words, "edu.sf.programme")}</label>
+                <select id="as-prog" value={progId} disabled={busy} onChange={(e) => { setProgId(e.target.value); setGroupId(""); }} className={field}>
+                  <option value="">{say(words, "edu.sf.choose")}</option>
+                  {programmes.filter((p) => p.active && (scope === "programme" || p.groups.length > 0)).map((p) => (<option key={p.id} value={p.id}>{p.name}</option>))}
+                </select>
+              </div>
+            ) : null}
+            {scope === "group" && programme ? (
+              <div>
+                <label htmlFor="as-group" className={label}>{say(words, `edu.divided.${programme.group_kind === "none" ? "section" : programme.group_kind}`)}</label>
+                <select id="as-group" value={groupId} disabled={busy} onChange={(e) => setGroupId(e.target.value)} className={field}>
+                  <option value="">{say(words, "edu.sf.choose")}</option>
+                  {programme.groups.filter((g) => g.active).map((g) => (<option key={g.id} value={g.id}>{g.label}</option>))}
+                </select>
+              </div>
+            ) : null}
+            <div>
+              <label htmlFor="as-date" className={label}>{say(words, "camp.aud.students.date")}</label>
+              <input id="as-date" type="date" value={asOf} disabled={busy} onChange={(e) => setAsOf(e.target.value)} className={field} />
+            </div>
+          </div>
+          <div><button type="button" className={primary} disabled={busy} onClick={() => void announce()}>{busy ? say(words, "today.act.working") : say(words, "camp.aud.students.go")}</button></div>
+        </section>
+      ) : null}
+      {canEdit && !actions.announce ? (
         <section aria-labelledby="aud-import" className="flex flex-col gap-3 rounded-2xl border border-line p-4">
           <h2 id="aud-import" className="font-display text-xl font-bold">{say(words, "camp.aud.import.title")}</h2>
           <p className={help}>{say(words, money ? "camp.aud.import.help.money" : "camp.aud.import.help")}</p>

@@ -1,6 +1,9 @@
 import { ApiAuthError } from "@/lib/api/client";
+import { listCampaigns } from "@/lib/api/campaigns";
 import { listCatalogueItems } from "@/lib/api/catalogue";
+import { getInstitutionProfile, listFeePlans, listStudents } from "@/lib/api/education";
 import { getAccountSecurity } from "@/lib/api/pack";
+import { getMaterialPolicy } from "@/lib/api/materials";
 import { getProfile } from "@/lib/api/profile";
 import { fetchQuotePolicyVersions } from "@/lib/api/quote-policies";
 import { fetchQuotes } from "@/lib/api/quotes";
@@ -22,6 +25,13 @@ export async function readFacts(accessToken: string, tenantId: string, checks: r
   const want = new Set(checks);
   const reads: Partial<Record<StepCheck, () => Promise<boolean>>> = {
     business_profile: async () => (await getProfile(accessToken, tenantId)).town !== null,
+    // job CS: the school is set up once its institution profile is saved; the students file has brought in at least one student; a fee plan exists; the first reminder campaign was approved (not still a draft)
+    institution_set: async () => (await getInstitutionProfile(accessToken, tenantId)).configured,
+    students_imported: async () => (await listStudents(accessToken, tenantId, { limit: 1 })).items.length > 0,
+    fee_plan_set: async () => (await listFeePlans(accessToken, tenantId, { includeInactive: true })).length > 0,
+    first_campaign_approved: async () => (await listCampaigns(accessToken, tenantId, { limit: 50 })).items.some((c) => c.status !== "draft"),
+    // the building-materials quote rules (delivery, transport and rounding) are in force
+    delivery_rule_set: async () => (await getMaterialPolicy(accessToken, tenantId)).current !== null,
     // the session is at the second level only when an authenticator code was given: the person has set it up (a status the server cannot give counts as not done)
     second_factor_set: async () => (await getAccountSecurity(accessToken))?.level === "aal2",
     catalogue_has_items: async () => (await listCatalogueItems(accessToken, tenantId, { limit: 1, includeInactive: true })).items.length > 0,

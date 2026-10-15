@@ -40,6 +40,11 @@ import { parseItem as parseMaterialItem, parseItemList as parseMaterialItemList,
 import { ITEM_BARE_JSON, ITEM_JSON as MATERIAL_ITEM_JSON, LIST_JSON as MATERIAL_LIST_JSON, POLICY_JSON as MATERIAL_POLICY_JSON, QUOTE_APPROVED_JSON, QUOTE_DETAIL_JSON, QUOTE_FLAGGED_JSON, QUOTE_LIST_JSON, QUOTE as MATERIAL_QUOTE } from "@/lib/api/materials-fixtures";
 import { parseSite, parseSiteList } from "@/lib/api/sites";
 import { parseCallList, parseCampaignList, parseDetail, parsePreview, parseRecipients, parseResults } from "@/lib/api/campaigns";
+import {
+  parseAdmissionDetail, parseAdmissionList, parseFeeEntries, parseFeePlan, parseFeePlanList, parseFeeReceipt, parseFeeStatement, parseGuardianFees, parseLateFeesPreview, parsePending, parseProfile as parseInstitution, parseProgrammes, parseStudent, parseStudentList,
+} from "@/lib/api/education";
+import * as EDU from "@/lib/api/education-fixtures";
+import { parseReport } from "@/lib/api/reports";
 import { CALL_LIST_JSON, CAMPAIGN, DETAIL_ISSUES_JSON, DETAIL_JSON as CAMPAIGN_DETAIL_JSON, DETAIL_RUNNING_JSON, LIST_JSON, PREVIEW_ISSUES_JSON, PREVIEW_JSON, RECIPIENTS_JSON, RESULTS_JSON } from "@/lib/api/campaigns-fixtures";
 import { SITE as SITE_ID, SITE_JSON, SITE_LIST_JSON } from "@/lib/api/sites-fixtures";
 import { parseChallan, parseTripDetail, parseTripList } from "@/lib/api/deliveries";
@@ -769,10 +774,83 @@ add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, ha
 add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-default-pack", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
-add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
+add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), ...eduCardReads, getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
-add({ id: "fees-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/fees/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) }) });
+const school = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) });
+const eduCardReads: Record<string, Handler> = {
+  runReport: (_t: unknown, _tenant: unknown, code: unknown) => parseReport(code === "education.today" ? EDU.TODAY_REPORT_JSON : code === "education.funnel" ? EDU.FUNNEL_REPORT_JSON : EDU.COLLECTION_REPORT_JSON),
+  listCampaigns: () => parseCampaignList(LIST_JSON),
+  listVisits: () => ({ from: "2026-10-06", to: "2026-10-06", items: [] }),
+};
+const edu = (path: "programmes" | "students" | "students/new" | "students/import" | "students/[studentId]" | "students/[studentId]/edit" | "admissions" | "admissions/new" | "admissions/[admissionId]" | "announcements" | "announcements/new" | "fees" | "fees/pending" | "fees/plans" | "fees/plans/new" | "fees/plans/[planId]" | "fees/plans/[planId]/edit" | "fees/students/[studentId]" | "fees/receipt/[entryId]", params: Record<string, string> = {}, query: Record<string, string> = {}) => async () => {
+  const loaders = {
+    programmes: () => import("@/app/app/tenants/[tenantId]/programmes/page"),
+    students: () => import("@/app/app/tenants/[tenantId]/students/page"),
+    "students/new": () => import("@/app/app/tenants/[tenantId]/students/new/page"),
+    "students/import": () => import("@/app/app/tenants/[tenantId]/students/import/page"),
+    "students/[studentId]": () => import("@/app/app/tenants/[tenantId]/students/[studentId]/page"),
+    "students/[studentId]/edit": () => import("@/app/app/tenants/[tenantId]/students/[studentId]/edit/page"),
+    admissions: () => import("@/app/app/tenants/[tenantId]/admissions/page"),
+    "admissions/new": () => import("@/app/app/tenants/[tenantId]/admissions/new/page"),
+    "admissions/[admissionId]": () => import("@/app/app/tenants/[tenantId]/admissions/[admissionId]/page"),
+    announcements: () => import("@/app/app/tenants/[tenantId]/announcements/page"),
+    "announcements/new": () => import("@/app/app/tenants/[tenantId]/announcements/new/page"),
+    fees: () => import("@/app/app/tenants/[tenantId]/fees/page"),
+    "fees/pending": () => import("@/app/app/tenants/[tenantId]/fees/pending/page"),
+    "fees/plans": () => import("@/app/app/tenants/[tenantId]/fees/plans/page"),
+    "fees/plans/new": () => import("@/app/app/tenants/[tenantId]/fees/plans/new/page"),
+    "fees/plans/[planId]": () => import("@/app/app/tenants/[tenantId]/fees/plans/[planId]/page"),
+    "fees/plans/[planId]/edit": () => import("@/app/app/tenants/[tenantId]/fees/plans/[planId]/edit/page"),
+    "fees/students/[studentId]": () => import("@/app/app/tenants/[tenantId]/fees/students/[studentId]/page"),
+    "fees/receipt/[entryId]": () => import("@/app/app/tenants/[tenantId]/fees/receipt/[entryId]/page"),
+  } as const;
+  return ((await loaders[path]()) as unknown as { default: (p: unknown) => Promise<React.ReactElement> }).default(props(params, query));
+};
+const eduReads = (over: Record<string, Handler> = {}): Record<string, Handler> => ({
+  getInstitutionProfile: () => parseInstitution(EDU.PROFILE_JSON),
+  listProgrammes: () => parseProgrammes(EDU.PROGRAMMES_JSON),
+  listContactNames: () => [{ id: EDU.GUARDIAN, name: "Ravi Kumar (synthetic)" }, { id: "22222222-2222-4222-8222-2222222222ab", name: "Lakshmi Devi (synthetic)" }],
+  ...over,
+});
+add({ id: "programmes-education", roles: ["owner", "sales"], render: edu("programmes"), handlers: (role) => ({ ...school(role), ...eduReads() }) });
+add({ id: "programmes-education-new", roles: ["owner"], render: edu("programmes"), handlers: (role) => ({ ...school(role), ...eduReads({ getInstitutionProfile: () => parseInstitution(EDU.PROFILE_NONE_JSON), listProgrammes: () => [] }) }) });
+add({ id: "students-education", roles: ["owner", "sales"], render: edu("students", {}, { saved: "1" }), handlers: (role) => ({ ...school(role), ...eduReads({ listStudents: () => parseStudentList(EDU.STUDENT_LIST_JSON) }) }) });
+add({ id: "students-education-empty", roles: ["owner"], render: edu("students"), handlers: (role) => ({ ...school(role), ...eduReads({ listStudents: () => parseStudentList({ items: [], next_cursor: null }) }) }) });
+add({ id: "students-education-filtered", roles: ["admin"], render: edu("students", {}, { programme: EDU.PROGRAMME, status: "left" }), handlers: (role) => ({ ...school(role), ...eduReads({ listStudents: () => parseStudentList({ items: [EDU.STUDENT_LEFT_JSON], next_cursor: "c1" }) }) }) });
+add({ id: "student-new-education", roles: ["owner"], render: edu("students/new"), handlers: (role) => ({ ...school(role), ...eduReads() }) });
+add({ id: "student-new-sibling-education", roles: ["admin"], render: edu("students/new", {}, { contact: EDU.GUARDIAN }), handlers: (role) => ({ ...school(role), ...eduReads(), fetchContact: () => ({ id: EDU.GUARDIAN, full_name: "Ravi Kumar (synthetic)" }) }) });
+add({ id: "student-edit-education", roles: ["owner"], render: edu("students/[studentId]/edit", { studentId: EDU.STUDENT }), handlers: (role) => ({ ...school(role), ...eduReads({ getStudent: () => parseStudent(EDU.STUDENT_JSON) }) }) });
+add({ id: "students-import-education", roles: ["owner"], render: edu("students/import"), handlers: (role) => ({ ...school(role) }) });
+const studentRead = (json: unknown) => ({ getStudent: () => parseStudent(json), getGuardianFees: () => parseGuardianFees(EDU.GUARDIAN_FEES_JSON) });
+add({ id: "student-detail-education", roles: ["owner", "sales"], render: edu("students/[studentId]", { studentId: EDU.STUDENT }, { saved: "1" }), handlers: (role) => ({ ...school(role), ...studentRead(EDU.STUDENT_JSON) }) });
+add({ id: "student-detail-left-education", roles: ["admin"], render: edu("students/[studentId]", { studentId: EDU.STUDENT2 }), handlers: (role) => ({ ...school(role), ...studentRead(EDU.STUDENT_LEFT_JSON) }) });
+add({ id: "student-detail-erased-education", roles: ["owner"], render: edu("students/[studentId]", { studentId: EDU.STUDENT2 }), handlers: (role) => ({ ...school(role), ...studentRead(EDU.STUDENT_ERASED_JSON) }) });
+add({ id: "fees-education", roles: ["owner", "sales"], render: edu("fees"), handlers: (role) => ({ ...school(role), ...eduCardReads, listFeePlans: () => parseFeePlanList(EDU.PLAN_LIST_JSON), getLateFeesPreview: () => parseLateFeesPreview(EDU.LATE_FEES_JSON) }) });
+add({ id: "fees-education-noplans", roles: ["owner"], render: edu("fees"), handlers: (role) => ({ ...school(role), ...eduCardReads, listFeePlans: () => [], getLateFeesPreview: () => parseLateFeesPreview({ ...EDU.LATE_FEES_JSON, count: 0, total_paise: 0, rows: [] }) }) });
+add({ id: "fees-pending-education", roles: ["owner", "sales"], render: edu("fees/pending"), handlers: (role) => ({ ...school(role), ...eduReads(), listPending: () => parsePending(EDU.PENDING_JSON) }) });
+add({ id: "fees-pending-education-empty", roles: ["owner"], render: edu("fees/pending", {}, { programme: EDU.PROGRAMME }), handlers: (role) => ({ ...school(role), ...eduReads(), listPending: () => parsePending({ items: [], next_cursor: null }) }) });
+add({ id: "fee-plans-education", roles: ["owner", "sales"], render: edu("fees/plans"), handlers: (role) => ({ ...school(role), ...eduReads(), listFeePlans: () => parseFeePlanList(EDU.PLAN_LIST_JSON) }) });
+add({ id: "fee-plans-education-empty", roles: ["owner"], render: edu("fees/plans"), handlers: (role) => ({ ...school(role), ...eduReads(), listFeePlans: () => [] }) });
+add({ id: "fee-plan-new-education", roles: ["owner"], render: edu("fees/plans/new"), handlers: (role) => ({ ...school(role), ...eduReads() }) });
+add({ id: "fee-plan-copy-education", roles: ["admin"], render: edu("fees/plans/new", {}, { from: EDU.PLAN }), handlers: (role) => ({ ...school(role), ...eduReads(), getFeePlan: () => parseFeePlan(EDU.PLAN_DETAIL_JSON) }) });
+add({ id: "fee-plan-detail-education", roles: ["owner", "sales"], render: edu("fees/plans/[planId]", { planId: EDU.PLAN }, { saved: "1" }), handlers: (role) => ({ ...school(role), ...eduReads(), getFeePlan: () => parseFeePlan(EDU.PLAN_DETAIL_JSON) }) });
+add({ id: "fee-plan-detail-free-education", roles: ["owner"], render: edu("fees/plans/[planId]", { planId: EDU.PLAN }), handlers: (role) => ({ ...school(role), ...eduReads(), getFeePlan: () => parseFeePlan({ ...EDU.PLAN_DETAIL_JSON, assigned: 0, late_fee_kind: "per_day", late_fee_paise: 5000, late_fee_cap_paise: 100000 }) }) });
+add({ id: "fee-plan-edit-education", roles: ["owner"], render: edu("fees/plans/[planId]/edit", { planId: EDU.PLAN }), handlers: (role) => ({ ...school(role), ...eduReads(), getFeePlan: () => parseFeePlan({ ...EDU.PLAN_DETAIL_JSON, assigned: 0 }) }) });
+const feeReads = (statement: unknown = EDU.FEE_STATEMENT_JSON): Record<string, Handler> => ({ getStudentFees: () => parseFeeStatement(statement), getStudentFeeEntries: () => parseFeeEntries(EDU.FEE_ENTRIES_JSON), listFeePlans: () => parseFeePlanList(EDU.PLAN_LIST_JSON) });
+add({ id: "fees-student-education", roles: ["owner", "sales"], render: edu("fees/students/[studentId]", { studentId: EDU.STUDENT }), handlers: (role) => ({ ...school(role), ...feeReads() }) });
+add({ id: "fees-student-noplan-education", roles: ["owner", "sales"], render: edu("fees/students/[studentId]", { studentId: EDU.STUDENT }), handlers: (role) => ({ ...school(role), ...feeReads({ ...EDU.FEE_STATEMENT_JSON, assignment: null }) }) });
+add({ id: "fees-receipt-education", roles: ["owner", "sales"], render: edu("fees/receipt/[entryId]", { entryId: EDU.FEE_PAYMENT }), handlers: (role) => ({ ...school(role), getFeeReceipt: () => parseFeeReceipt(EDU.FEE_RECEIPT_JSON) }) });
+add({ id: "admissions-education", roles: ["owner", "sales"], render: edu("admissions", {}, { saved: "1" }), handlers: (role) => ({ ...school(role), ...eduReads({ listAdmissions: () => parseAdmissionList(EDU.ADMISSIONS_JSON) }) }) });
+add({ id: "admissions-education-empty", roles: ["owner"], render: edu("admissions"), handlers: (role) => ({ ...school(role), ...eduReads({ listAdmissions: () => parseAdmissionList({ items: [], next_cursor: null }) }) }) });
+add({ id: "admission-new-education", roles: ["owner", "sales"], render: edu("admissions/new"), handlers: (role) => ({ ...school(role), ...eduReads() }) });
+const admissionRead = (json: unknown): Record<string, Handler> => ({ getAdmission: () => parseAdmissionDetail(json), ...eduReads(), listFeePlans: () => parseFeePlanList(EDU.PLAN_LIST_JSON) });
+add({ id: "admission-detail-campus-education", roles: ["owner", "sales"], render: edu("admissions/[admissionId]", { admissionId: EDU.ADMISSION }, { saved: "1" }), handlers: (role) => ({ ...school(role), ...admissionRead(EDU.ADMISSION_DETAIL_JSON) }) });
+add({ id: "admission-detail-application-education", roles: ["owner", "sales"], render: edu("admissions/[admissionId]", { admissionId: EDU.ADMISSION }), handlers: (role) => ({ ...school(role), ...admissionRead({ ...EDU.ADMISSION_DETAIL_JSON, stage: "application", events: [...EDU.ADMISSION_DETAIL_JSON.events, { stage: "application", lost_reason: null, at: "2026-10-12T05:00:00+00:00" }] }) }) });
+add({ id: "admission-detail-lost-education", roles: ["owner"], render: edu("admissions/[admissionId]", { admissionId: EDU.ADMISSION }), handlers: (role) => ({ ...school(role), ...admissionRead({ ...EDU.ADMISSION_DETAIL_JSON, stage: "lost", lost_reason: "fees", events: [...EDU.ADMISSION_DETAIL_JSON.events, { stage: "lost", lost_reason: "fees", at: "2026-10-13T05:00:00+00:00" }] }) }) });
+add({ id: "admission-detail-admitted-education", roles: ["admin"], render: edu("admissions/[admissionId]", { admissionId: EDU.ADMISSION }), handlers: (role) => ({ ...school(role), ...admissionRead({ ...EDU.ADMISSION_DETAIL_JSON, stage: "admitted", student_id: EDU.STUDENT }) }) });
+const CAMPAIGN_EVENT = { kind: "event", name: "Parents meeting (synthetic)", message_text: "Hello {{name}}, the parents meeting is on {{due_date}}. {{business}}", call_after_step: null, steps: [{ offset_days: -2, time: "10:00" }] };
+const CAMPAIGN_JSON_EVENT = { ...CAMPAIGN_DETAIL_JSON, ...CAMPAIGN_EVENT, issues: undefined, issue_text: undefined, sending_on: undefined, total_amount_paise: 0 };
 const campaignsPage = async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({}, { saved: "1" }));
 const campaignOf = (tab: string | null, extra: Record<string, string> = {}) => async () => (await import("@/app/app/tenants/[tenantId]/campaigns/[campaignId]/page")).default(props({ campaignId: CAMPAIGN }, { ...(tab ? { tab } : {}), ...extra }));
 const campaignReads = (detail: unknown = CAMPAIGN_DETAIL_JSON): Record<string, Handler> => ({ getCampaign: () => parseDetail(detail), listRecipients: () => parseRecipients(RECIPIENTS_JSON), getPreview: () => parsePreview(PREVIEW_JSON), getResults: () => parseResults(RESULTS_JSON) });
@@ -852,3 +930,9 @@ add({ id: "dues-construction-empty", roles: ["owner"], render: async () => (awai
 add({ id: "dues-customer-construction", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/dues/[companyId]/page")).default(props({ companyId: LEDGER_COMPANY })), handlers: (role) => ({ ...cons(role), getLedgerStatement: () => parseLedgerStatement(STATEMENT_JSON), getLedgerEntries: () => parseLedgerEntries(ENTRIES_JSON), ...leadSide }) });
 add({ id: "dues-receipt-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/dues/receipt/[entryId]/page")).default(props({ entryId: ENTRY_PAYMENT })), handlers: (role) => ({ ...cons(role), getLedgerReceipt: () => parseLedgerReceipt(RECEIPT_JSON) }) });
 add({ id: "product-new-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/new/page")).default(props({})), handlers: (role) => ({ ...cons(role) }) });
+add({ id: "announcements-education", roles: ["owner", "sales"], render: edu("announcements"), handlers: (role) => ({ ...school(role), listCampaigns: () => parseCampaignList({ items: [{ ...CAMPAIGN_JSON_EVENT }], next_cursor: null }) }) });
+add({ id: "announcements-education-empty", roles: ["owner"], render: edu("announcements"), handlers: (role) => ({ ...school(role), listCampaigns: () => parseCampaignList({ items: [], next_cursor: null }) }) });
+add({ id: "announcement-new-education", roles: ["owner"], render: edu("announcements/new"), handlers: (role) => ({ ...school(role), listTemplates: () => parseTemplates({ templates: [{ id: "7e000000-0000-4000-8000-000000000001", name: "parents_notice_en", language: "en", purpose: "reminder", status: "approved" }] }) }) });
+const eduCampaign = (json: unknown): Record<string, Handler> => ({ getCampaign: () => parseDetail(json), listRecipients: () => parseRecipients(RECIPIENTS_JSON), listProgrammes: () => parseProgrammes(EDU.PROGRAMMES_JSON) });
+add({ id: "campaign-audience-announcement-education", roles: ["owner"], render: campaignOf("audience"), handlers: (role) => ({ ...school(role), ...eduCampaign({ ...CAMPAIGN_DETAIL_JSON, ...CAMPAIGN_EVENT }) }) });
+add({ id: "campaign-audience-fees-education", roles: ["owner"], render: campaignOf("audience"), handlers: (role) => ({ ...school(role), ...eduCampaign({ ...CAMPAIGN_DETAIL_JSON, kind: "fee_due" }) }) });

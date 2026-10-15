@@ -11,7 +11,7 @@ import { say, type TodayWords } from "../today/today-words";
 import { errorLine, field, help, label, okLine, primary, quiet, secondary } from "../visits/styles";
 
 export type EntryKind = "payment" | "charge" | "adjustment" | "concession";
-export type EntryFormInput = { entryId: string; kind: EntryKind; amount: string; entryDate: string; dueDate: string; invoiceNo: string; reference: string; method: string; reasonCode: string; direction: "debit" | "credit" };
+export type EntryFormInput = { entryId: string; kind: EntryKind; amount: string; entryDate: string; dueDate: string; invoiceNo: string; reference: string; method: string; reasonCode: string; direction: "debit" | "credit"; mode?: "amount" | "percent" };
 type Refused = { ok: false; error: string; mfa?: boolean };
 export type RecordAction = (input: EntryFormInput) => Promise<{ ok: true; receiptNo: string | null; entryId: string; replayed: boolean } | Refused>;
 
@@ -30,19 +30,23 @@ export function EntrySheet({ kinds, prefix, words, record, today, receiptBase, s
   const [busy, setBusy] = React.useState(false);
   const [problem, setProblem] = React.useState<{ text: string; mfa?: boolean } | null>(null);
   const [done, setDone] = React.useState<null | { kind: EntryKind; receiptNo: string | null; entryId: string }>(null);
-  const fresh = (kind: EntryKind): EntryFormInput => ({ entryId: crypto.randomUUID(), kind, amount: "", entryDate: today, dueDate: today, invoiceNo: "", reference: "", method: "cash", reasonCode: kind === "concession" ? "scholarship" : kind === "adjustment" ? "late_fee" : "", direction: "debit" });
+  const fresh = (kind: EntryKind): EntryFormInput => ({ entryId: crypto.randomUUID(), kind, amount: "", entryDate: today, dueDate: today, invoiceNo: "", reference: "", method: "cash", reasonCode: kind === "concession" ? "scholarship" : kind === "adjustment" ? (prefix === "fee" ? "correction" : "late_fee") : "", direction: "debit", mode: "amount" });
   const [f, setF] = React.useState<EntryFormInput>(fresh("payment"));
   const set = <K extends keyof EntryFormInput>(k: K, v: EntryFormInput[K]) => setF((c) => ({ ...c, [k]: v }));
   const approverOnly = (k: EntryKind) => k === "adjustment" || k === "concession";
   const can = (k: EntryKind) => role !== "viewer" && (!approverOnly(k) || role === "owner" || role === "admin");
-  const paise = rupeesToPaise(f.amount);
+  const percent = f.kind === "concession" && f.mode === "percent";
+  const paise = percent ? null : rupeesToPaise(f.amount);
+  const percentValue = percent && /^\d{1,3}$/.test(f.amount.trim()) ? Number(f.amount.trim()) : null;
   const close = () => { if (!busy) { setOpen(null); setProblem(null); } };
   const start = (k: EntryKind) => { setF(fresh(k)); setProblem(null); setDone(null); setOpen(k); };
 
   async function save() {
     if (busy || !open) return;
     setProblem(null);
-    if (paise === null || paise < 100) return setProblem({ text: say(words, "due.err.amount") });
+    if (open === "concession" && percent) {
+      if (percentValue === null || percentValue < 1 || percentValue > 100) return setProblem({ text: say(words, "fee.err.percent") });
+    } else if (paise === null || paise < 100) return setProblem({ text: say(words, "due.err.amount") });
     if (open === "charge" && f.dueDate < f.entryDate) return setProblem({ text: say(words, "due.err.duedate") });
     setBusy(true);
     const out = await record(f);
@@ -82,8 +86,18 @@ export function EntrySheet({ kinds, prefix, words, record, today, receiptBase, s
               ))}
             </div>
           ) : null}
+          {k === "concession" && prefix === "fee" ? (
+            <div role="radiogroup" aria-label={say(words, "fee.s.mode")} className="flex flex-col gap-1">
+              {(["amount", "percent"] as const).map((m) => (
+                <label key={m} className="flex min-h-11 items-center gap-3 text-base">
+                  <input type="radio" name="mode" className="size-5 shrink-0 accent-brand-text" checked={(f.mode ?? "amount") === m} disabled={busy} onChange={() => set("mode", m)} />
+                  {say(words, `fee.s.mode.${m}`)}
+                </label>
+              ))}
+            </div>
+          ) : null}
           <div>
-            <label htmlFor={`amt-${k}`} className={label}>{say(words, "due.s.amount")} (₹)</label>
+            <label htmlFor={`amt-${k}`} className={label}>{k === "concession" && percent ? say(words, "fee.s.percent") : `${say(words, "due.s.amount")} (₹)`}</label>
             <input id={`amt-${k}`} data-autofocus inputMode="decimal" autoComplete="off" value={f.amount} disabled={busy} aria-describedby={`amt-${k}-words`} onChange={(e) => set("amount", e.target.value)} className={`${field} max-w-60`} />
             <p id={`amt-${k}-words`} className="mt-1.5 min-h-5 text-sm font-semibold" data-part="in-words" aria-live="polite">{paise !== null && paise > 0 ? `${rupeesInWords(paise)} (${formatRupees(paise)})` : ""}</p>
           </div>
@@ -110,7 +124,7 @@ export function EntrySheet({ kinds, prefix, words, record, today, receiptBase, s
               <div>
                 <label htmlFor={`reason-${k}`} className={label}>{say(words, "due.s.reason")}</label>
                 <select id={`reason-${k}`} value={f.reasonCode} disabled={busy} onChange={(e) => set("reasonCode", e.target.value)} className={field}>
-                  {(k === "concession" ? CONCESSION_REASONS : ADJUST_REASONS).map((r) => (<option key={r} value={r}>{say(words, `due.reason.${r}`)}</option>))}
+                  {(k === "concession" ? CONCESSION_REASONS : prefix === "fee" ? ADJUST_REASONS.filter((r) => r !== "late_fee") : ADJUST_REASONS).map((r) => (<option key={r} value={r}>{say(words, `due.reason.${r}`)}</option>))}
                 </select>
               </div>
             ) : null}

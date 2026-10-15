@@ -263,7 +263,7 @@ export async function addRecipients(accessToken: string, tenantId: string, id: s
   if (rows.length < 1 || rows.length > MAX_ROWS) throw new ApiContractError("rows");
   return parseAdded(await apiRequest(base(tenantId, `campaigns/${idOf(id)}/recipients`), accessToken, send("POST", { rows })));
 }
-export type LedgerFilter = { due_from: string; due_to: string; party?: "company" | "contact"; min_open_paise?: number };
+export type LedgerFilter = { due_from: string; due_to: string; party?: "company" | "contact" | "student"; min_open_paise?: number };
 export async function addRecipientsFromLedger(accessToken: string, tenantId: string, id: string, f: LedgerFilter) {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(f.due_from) || !/^\d{4}-\d{2}-\d{2}$/.test(f.due_to)) throw new ApiContractError("date");
   return parseAdded(await apiRequest(base(tenantId, `campaigns/${idOf(id)}/recipients/from-ledger`), accessToken, send("POST", f)));

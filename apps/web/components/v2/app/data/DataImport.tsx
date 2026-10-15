@@ -18,18 +18,20 @@ type Step =
   | { name: "done"; confirmed: Confirmed; kind: ImportKind };
 
 const SOURCES: readonly Source[] = ["tally", "vyapar", "sheet"];
+const KINDS_DEFAULT: readonly ImportKind[] = ["customers", "stock"];
 
 /**
  * Settings > Data > "Bring in a spreadsheet" (job CC): pick a file (a Tally or Vyapar export, or any CSV or Excel sheet), see which column is which, see what would happen to every row, then import. The File stays in this
  * page's memory between the steps and is sent as it is each time (the API holds it for one request and never stores it). Nothing is saved before the last button; people and sarees already in the list are never changed.
  * Owner and Admin only; the last step needs the second factor, and a refusal says so and keeps everything.
  */
-export function DataImport({ tenantId, words }: { tenantId: string; words: Words }) {
+export function DataImport({ tenantId, words, kinds = KINDS_DEFAULT }: { tenantId: string; words: Words; kinds?: readonly ImportKind[] }) {
   const t = makeT(words);
   const id = useId();
   const input = useRef<HTMLInputElement>(null);
   const [source, setSource] = useState<Source>("sheet");
-  const [kind, setKind] = useState<ImportKind>("customers");
+  const [kind, setKind] = useState<ImportKind>(kinds[0] ?? "customers");
+  const schoolFile = kinds.length === 1 && kinds[0] === "students";
   const [file, setFile] = useState<File | null>(null);
   const [step, setStep] = useState<Step>({ name: "pick" });
   const [busy, setBusy] = useState<"check" | "preview" | "import" | null>(null);
@@ -97,12 +99,13 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
   return (
     <section className={card} aria-labelledby={`${id}-h`} data-data="import">
       <h2 id={`${id}-h`} className={h2}>
-        {t("dta.import.title")}
+        {t(schoolFile ? "dta.import.title.students" : "dta.import.title")}
       </h2>
-      <p className="text-base text-muted">{t("dta.import.intro")}</p>
+      <p className="text-base text-muted">{t(schoolFile ? "dta.import.intro.students" : "dta.import.intro")}</p>
 
       {step.name === "pick" ? (
         <div className="flex flex-col gap-4">
+          {schoolFile ? null : (
           <fieldset className="flex flex-col gap-2 border-0 p-0">
             <legend className={labelClass}>{t("dta.src.label")}</legend>
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("dta.src.label")}>
@@ -115,10 +118,12 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
             </div>
             <p className={help}>{t(`dta.src.tip.${source}`)}</p>
           </fieldset>
+          )}
+          {kinds.length < 2 ? null : (
           <fieldset className="flex flex-col gap-2 border-0 p-0">
             <legend className={labelClass}>{t("dta.kind.label")}</legend>
             <div className="flex flex-wrap gap-2" role="radiogroup" aria-label={t("dta.kind.label")}>
-              {(["customers", "stock"] as const).map((k) => (
+              {kinds.map((k) => (
                 <label key={k} className={`inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-full border px-4 text-base font-semibold ${kind === k ? "border-brand-edge bg-brand-bg text-brand-text" : "border-edge bg-surface text-ink"}`}>
                   <input type="radio" name="dta-kind" value={k} checked={kind === k} onChange={() => setKind(k)} className="size-5 accent-brand-text" />
                   {t(`dta.kind.${k}`)}
@@ -126,6 +131,7 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
               ))}
             </div>
           </fieldset>
+          )}
           <div>
             <label htmlFor={`${id}-file`} className={labelClass}>
               {t("dta.file.label")}
@@ -243,7 +249,7 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
           <p className={help}>{t("dta.import.mfa")}</p>
           <FailureNote failure={failure} words={words} own={own} />
           <div className="flex flex-wrap gap-3">
-            <button type="button" onClick={() => run(step)} disabled={busy !== null || (step.previewed.counts[step.inspected.kind === "customers" ? "will_create" : "will_change"] ?? 0) === 0} className={primary}>
+            <button type="button" onClick={() => run(step)} disabled={busy !== null || (step.previewed.counts[step.inspected.kind === "stock" ? "will_change" : "will_create"] ?? 0) === 0} className={primary}>
               {busy === "import" ? t("dta.btn.importing") : t("dta.btn.import")}
             </button>
             <button type="button" onClick={() => setStep({ name: "map", file: step.file, inspected: step.inspected, choices: step.choices })} disabled={busy !== null} className={secondary}>
@@ -269,10 +275,15 @@ export function DataImport({ tenantId, words }: { tenantId: string; words: Words
               <RowsTable rows={step.confirmed.result.rows} kind={step.kind} t={t} />
             </>
           ) : null}
-          <div>
+          <div className="flex flex-wrap gap-3">
             <button type="button" onClick={reset} className={secondary}>
               {t("dta.done.again")}
             </button>
+            {schoolFile ? (
+              <a href={`/app/tenants/${tenantId}/students?imported=1`} className={primary}>
+                {t("dta.done.students")}
+              </a>
+            ) : null}
           </div>
         </div>
       ) : null}
@@ -326,9 +337,11 @@ function RowsTable({ rows, kind, t }: { rows: PreviewRow[]; kind: ImportKind; t:
             <th scope="col" className={dataThCol}>
               {t("dta.col.name")}
             </th>
-            <th scope="col" className={dataThCol}>
-              {kind === "customers" ? t("dta.col.city") : t("dta.col.change")}
-            </th>
+            {kind === "students" ? null : (
+              <th scope="col" className={dataThCol}>
+                {kind === "customers" ? t("dta.col.city") : t("dta.col.change")}
+              </th>
+            )}
             <th scope="col" className={dataThCol}>
               {t("dta.col.result")}
             </th>
@@ -346,9 +359,11 @@ function RowsTable({ rows, kind, t }: { rows: PreviewRow[]; kind: ImportKind; t:
               <td data-label={t("dta.col.name")} className={`${dataTd} break-words`}>
                 {r.label}
               </td>
-              <td data-label={kind === "customers" ? t("dta.col.city") : t("dta.col.change")} className={dataTd}>
-                {kind === "customers" ? (r.city ?? "") : r.old_status || r.new_status ? `${stock(r.old_status)} → ${stock(r.new_status)}` : ""}
-              </td>
+              {kind === "students" ? null : (
+                <td data-label={kind === "customers" ? t("dta.col.city") : t("dta.col.change")} className={dataTd}>
+                  {kind === "customers" ? (r.city ?? "") : r.old_status || r.new_status ? `${stock(r.old_status)} → ${stock(r.new_status)}` : ""}
+                </td>
+              )}
               <td data-label={t("dta.col.result")} className={dataTd}>
                 {status(r.status)}
               </td>

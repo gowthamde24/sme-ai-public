@@ -1,0 +1,22 @@
+[All students](/app/tenants/22222222-2222-2222-2222-222222222222/students)
+{role=status} Saved.
+# Asha (synthetic)
+Here
+{label="The record"}
+## The record
+Class or course
+Class 5 (synthetic)
+Section, year or batch
+A
+Admission number (optional)
+A-1001
+Joined on (optional)
+2026-06-10
+Parent or guardian
+Ravi Kumar (synthetic)
+Only this is kept about a student. There is no place for a date of birth, a photograph, an address, an identity number, health, marks or notes.
+{label="Fees of this family"}
+## Fees of this family
+- [Asha (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000001) ₹13,000.00
+- [Kiran (synthetic)](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000002) ₹24,000.00
+Pending in all ₹37,000.00 [Open this student's fees](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000001)

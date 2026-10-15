@@ -1,0 +1,11 @@
+[All enquiries](/app/tenants/22222222-2222-2222-2222-222222222222/admissions)
+# Ravi Kumar (synthetic)
+Admitted Class 5 (synthetic) · WhatsApp
+{label="History"}
+## History
+- Enquiry 2026-10-08
+- Campus visit 2026-10-10
+Campus visits: 1
+{label="What next"}
+## What next
+[Open the student](/app/tenants/22222222-2222-2222-2222-222222222222/students/5d000000-0000-4000-8000-000000000001)

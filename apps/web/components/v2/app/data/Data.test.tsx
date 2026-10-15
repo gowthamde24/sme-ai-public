@@ -371,3 +371,17 @@ describe("the Data part of Settings", () => {
     expect(screen.getByText("No imports yet.")).toBeInTheDocument();
   });
 });
+
+describe("bringing in students (job CS)", () => {
+  it("a school's file has no Tally or Vyapar choice and no kind to pick, and says what it reads", () => {
+    render(<DataImport tenantId="t" words={WORDS} kinds={["students"]} />);
+    expect(screen.getByRole("heading", { name: "Bring in your students" })).toBeInTheDocument();
+    expect(screen.queryByRole("radio", { name: "Tally" })).toBeNull();
+    expect(screen.queryByRole("radio", { name: "Customers" })).toBeNull();
+  });
+  it("the settings page still offers customers and stock, and no students", () => {
+    render(<DataImport tenantId="t" words={WORDS} />);
+    expect(screen.getAllByRole("radio").map((r) => (r as HTMLInputElement).value)).toEqual(expect.arrayContaining(["customers", "stock"]));
+    expect(screen.queryByRole("radio", { name: /student/i })).toBeNull();
+  });
+});
