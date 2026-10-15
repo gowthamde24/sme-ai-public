@@ -3,7 +3,7 @@ import type { MetadataRoute } from "next";
 import { SHORT_NAME } from "@/design/brand";
 
 /**
- * The web app manifest (job BL): what the phone needs to install Sme-AI to the home screen. The icons are the Agent OWL set drawn from the owl SVG (public/icons, scripts/pwa-icons.mjs); the colours are
+ * The web app manifest (job BL): what the phone needs to install Stack19 to the home screen. The icons are the Agent OWL set drawn from the owl SVG (public/icons, scripts/pwa-icons.mjs); the colours are
  * the v2 tokens (design/tokens.css: --v2-bg, --v2-brand). It opens on /app: a signed-out visitor is sent to sign in, a signed-in one lands on their workspace. No customer data is in it.
  * The name has no language of its own (a product name), the description is English.
  */

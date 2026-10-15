@@ -25,7 +25,8 @@ describe('"/" is the landing page', () => {
   it("renders the landing: one h1, the product name, a Sign in link to /login, and none of the old placeholder", async () => {
     const html = renderToStaticMarkup(await Home());
     expect(html.match(/<h1[\s>]/g)).toHaveLength(1);
-    expect(html).toMatch(/Sme-.AI \(working name\)/);
+    expect(html).toMatch(/Stack19/);
+    expect(html).not.toMatch(/working name|Sme-.?AI/i);
     expect(html).toMatch(/<a[^>]*href="\/login"/);
     expect(html).not.toMatch(/Foundation build|No business features yet|T002/);
   });

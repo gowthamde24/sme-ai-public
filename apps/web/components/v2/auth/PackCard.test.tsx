@@ -10,7 +10,7 @@ import { PackCard } from "./PackCard";
 const cards = signupCards(packsWire().packs.map(parsePackSummary), "en");
 
 describe("a kind of business on the first sign-up step", () => {
-  it("is a link to step 2 with the name, the line, the plush owl and the trade's prop in the pack's colour; the hint is only for a screen reader", () => {
+  it("is a link to step 2 with the name, the line and the trade's prop in the pack's colour (no owl on it); the hint is only for a screen reader", () => {
     const card = cards.find((c) => !c.validated)!;
     const { container } = render(<PackCard card={card} href={`/signup?type=${card.id}`} hint={`Choose ${card.name}`} notValidated="Not validated by a real owner yet" />);
     const link = screen.getByRole("link");
@@ -18,7 +18,7 @@ describe("a kind of business on the first sign-up step", () => {
     expect(link).toHaveAttribute("data-pack-card", card.id);
     expect(link).toHaveTextContent(card.name);
     expect(link).toHaveTextContent(card.tagline);
-    expect(container.querySelector("img[data-plush-avatar]")).not.toBeNull();
+    expect(container.querySelector("img")).toBeNull(); // job CX: the sign-up picker has no owl picture
     expect(container.querySelector(`[data-accent='${card.accent}'] svg`)).not.toBeNull();
     expect(container.querySelector(".sr-only")).toHaveTextContent(`Choose ${card.name}`);
     expect(link.className).toContain("min-h-24"); // a big target: 96 px

@@ -1,71 +1,60 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 
-import { JsonLd, faqLd } from "@/components/v2/site/JsonLd";
-import { CtaBand, FaqList, OwlTeam, PackCards, Section, Steps, TrustStrip } from "@/components/v2/site/sections";
+import { JsonLd } from "@/components/v2/site/JsonLd";
+import { BuiltFor, CallsSection, FinalCta, HowSection, LanguagesSection, PricingBox } from "@/components/v2/site/HomeSections";
 import { SiteOwl } from "@/components/v2/site/SiteOwl";
-import { btnPrimary, container, eyebrow, linkQuiet } from "@/components/v2/site/ui";
+import { btnPrimary, container } from "@/components/v2/site/ui";
 import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { LOWEST_PLAN_RUPEES, PLANS, formatRupees } from "@/lib/site/plans";
-import { sitePath } from "@/lib/site/paths";
 import { SITE_URL } from "@/lib/seo/site";
+import { sitePath } from "@/lib/site/paths";
 
-const FAQ = [1, 2, 3, 4, 5, 6] as const;
+const badge = "inline-flex items-center text-sm font-semibold text-muted";
 
-/** The home page (job CM, blueprint section 7): hero with the owl, the business cards (the pack switcher), the owl team, three steps, the trust strip, a pricing teaser, the questions, and the one call to action. */
+/**
+ * The home page (job CX, from the approved design): the hero with the one owl of the page (Agent OWL), the business types it is built for (three plain cards), the six steps (animated, still with reduced motion), the dark
+ * band of sample chats in the four languages, the phone line (what is available and what is coming), the trial box (no price anywhere: the plans are announced later), and the last call to action. Every word is a string
+ * of i18n/strings/site.json or a field of a business type's landing.json; the two animated blocks are the only client code.
+ */
 export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
-  const faq = FAQ.map((n) => ({ q: t(`faq.${n}.q`), a: t(`faq.${n}.a`) }));
   return (
     <>
-      <section aria-labelledby="h1" className={`${container} grid items-center gap-8 pb-10 pt-6 sm:pt-10 lg:grid-cols-[1.2fr_1fr] lg:gap-12 lg:pb-16`}>
-        <div>
-          <p className={eyebrow}>{t("hero.eyebrow")}</p>
-          <h1 id="h1" className="mt-2 max-w-3xl font-display text-3xl font-bold leading-hero tracking-tight sm:text-5xl xl:text-6xl">
+      <section aria-labelledby="h1" className={`${container} flex flex-wrap items-center gap-10 pb-10 pt-10 sm:pb-12 sm:pt-16`}>
+        <div className="flex min-w-0 flex-[1_1_540px] flex-col items-start gap-5">
+          <p className="inline-flex rounded-full bg-brand-bg px-3.5 py-1.5 text-sm font-bold text-brand-text">{t("hero.eyebrow")}</p>
+          <h1 id="h1" className="font-display text-[2.5rem] font-extrabold leading-[1.04] tracking-tight [text-wrap:balance] sm:text-5xl lg:text-6xl">
             {t("hero.h1")}
           </h1>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">{t("hero.sub")}</p>
-          <div className="mt-6 flex flex-wrap items-center gap-x-5 gap-y-2">
-            <Link href="/signup" className={`${btnPrimary} max-sm:min-h-12`}>
+          <p className="max-w-[34em] text-lg leading-relaxed text-muted sm:text-xl">{t("hero.sub")}</p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Link href="/signup" className={`${btnPrimary} font-extrabold max-sm:w-full`}>
               {t("hero.cta")}
               <ArrowRight className="size-5" aria-hidden="true" />
             </Link>
-            <Link href={sitePath(lang, { kind: "page", page: "how-it-works" })} className={linkQuiet}>
+            <Link href="#how" className="inline-flex min-h-14 items-center justify-center rounded-lg border-[1.5px] border-edge px-5 text-base font-bold text-ink hover:bg-surface-2 max-sm:w-full">
               {t("hero.secondary")}
             </Link>
           </div>
-          <p className="mt-3 text-sm text-muted">{t("hero.note")}</p>
+          <p className="flex flex-wrap gap-x-5 gap-y-2" data-part="badges">
+            <span className={badge}>{t("hero.badge.channels")}</span>
+            <span className={badge}>{t("hero.badge.langs")}</span>
+            <span className={badge}>{t("hero.badge.evening")}</span>
+          </p>
         </div>
-        <div className="flex justify-center lg:justify-end">
-          <SiteOwl agent="main" px={176} smPx={224} priority className="size-44 sm:size-56" />
+        <div className="flex min-w-0 flex-[0_1_380px] justify-center">
+          <SiteOwl agent="main" px={240} smPx={340} widths={[256, 512]} priority className="size-60 sm:size-[340px]" />
           <span className="sr-only">{t("owl.name.main")}, {t("hero.owl.mood")}</span>
         </div>
       </section>
-
-      <Section id="businesses" title={t("packs.title")} sub={t("packs.sub")}>
-        <PackCards t={t} lang={lang} />
-      </Section>
-      <Section id="owls" title={t("owls.title")} sub={t("owls.sub")} tone="soft">
-        <OwlTeam t={t} lang={lang} />
-      </Section>
-      <Section id="steps" title={t("steps.title")} sub={t("steps.sub")}>
-        <Steps t={t} />
-      </Section>
-      <Section id="trust" title={t("trust.title")} tone="soft">
-        <TrustStrip t={t} lang={lang} />
-      </Section>
-      <Section id="pricing" title={t("teaser.title")} sub={t("teaser.sub", { from: formatRupees(LOWEST_PLAN_RUPEES) })}>
-        <Link href={sitePath(lang, { kind: "page", page: "pricing" })} className={btnPrimary}>
-          {t("teaser.cta")}
-        </Link>
-      </Section>
-      <Section id="faq" title={t("faq.title")} narrow>
-        <FaqList items={faq} />
-      </Section>
-      <CtaBand t={t} />
-      <JsonLd data={faqLd(faq.map((f) => ({ q: fillPlain(f.q), a: fillPlain(f.a) })))} />
+      <BuiltFor t={t} lang={lang} />
+      <HowSection t={t} />
+      <LanguagesSection t={t} />
+      <CallsSection t={t} />
+      <PricingBox t={t} lang={lang} />
+      <FinalCta t={t} lang={lang} />
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -76,7 +65,6 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
           url: SITE_URL + sitePath(lang, { kind: "home" }),
           description: fillPlain(t("meta.description")),
           inLanguage: ["en-IN", "te-IN", "hi-IN", "kn-IN"],
-          offers: [{ "@type": "Offer", name: "Free trial", price: 0, priceCurrency: "INR" }, ...PLANS.map((p) => ({ "@type": "Offer", name: p.id, price: p.rupees, priceCurrency: "INR" }))],
         }}
       />
     </>

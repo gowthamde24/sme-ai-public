@@ -946,7 +946,7 @@ await step("P1", "installable: the manifest is served, the browser finds no inst
   const m = await page.request.get(`${BASE}/manifest.webmanifest`);
   must(m.status() === 200, `manifest HTTP ${m.status()}`);
   const mj = await m.json();
-  must(mj.name === "Sme-AI" && mj.display === "standalone" && mj.start_url === "/app", "manifest fields");
+  must(mj.name === "Stack19" && mj.display === "standalone" && mj.start_url === "/app", "manifest fields");
   for (const icon of mj.icons) must((await page.request.get(BASE + icon.src)).status() === 200, `icon ${icon.src}`);
   await page.goto(`${BASE}/login`, { waitUntil: "networkidle" });
   must(await page.evaluate(async () => !!(await navigator.serviceWorker.ready).active), "the worker is not active");

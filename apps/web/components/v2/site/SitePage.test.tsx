@@ -69,25 +69,102 @@ describe("the business type pages come from the pack data", () => {
   });
 });
 
-describe("the home page", () => {
+describe("the home page (job CX)", () => {
   const home = render("en", { kind: "home" });
-  it("has the pack switcher, the owl team, three steps, the trust strip, the pricing teaser and the questions, with FAQ and application data", () => {
-    for (const id of ["businesses", "owls", "steps", "trust", "pricing", "faq"]) expect(home, id).toContain(`id="${id}"`);
-    expect(home).toContain('"@type":"FAQPage"');
-    expect(home).toContain('"@type":"SoftwareApplication"');
+  const text = (html: string) => html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ").replace(/&#x27;/g, "'");
+  it("has the eight sections in order: hero, built for, six steps, languages, calls, trial box, last call to action, then the footer", () => {
+    const at = ["h1", "business", "how", "languages", "calls-h", "pricing", "start"].map((id) => home.indexOf(`id="${id}"`));
+    expect(at.every((i) => i > 0)).toBe(true);
+    expect([...at].sort((x, y) => x - y)).toEqual(at);
+    expect(home.indexOf("<footer")).toBeGreaterThan(at[6]);
   });
-  it("loads one owl first (eager, high priority, a srcset) and the others lazily", () => {
-    expect(home.match(/<img[^>]*fetchPriority="high"[^>]*>/g)?.length ?? home.match(/<img[^>]*fetchpriority="high"[^>]*>/gi)?.length).toBe(1);
-    expect(home).toMatch(/srcSet="[^"]*128w[^"]*256w|srcset="[^"]*128w[^"]*256w/i);
-    expect(home.match(/loading="lazy"/g)!.length).toBeGreaterThanOrEqual(4);
+  it("says the approved headline, the two buttons and the three badges, and brands itself Stack19 (no working name)", () => {
+    const t = text(home);
+    expect(t).toContain("Every enquiry answered. Every quote sent. Every rupee followed up.");
+    for (const s of ["Start your 30-day trial", "See how it works", "WhatsApp + phone calls", "Set up in one evening", "Start trial", "Sign in", "Stack19"]) expect(t, s).toContain(s);
+    expect(t).not.toMatch(/working name|Sme-?AI/i);
+  });
+  it("has the sticky nav: the mark, How it works, Languages, Businesses, Pricing, Sign in and Start trial", () => {
+    const nav = home.match(/<header[\s\S]*?<\/header>/)![0];
+    expect(nav).toMatch(/\[position:sticky\]/);
+    for (const href of ['href="#how"', 'href="#languages"', 'href="#business"', 'href="#pricing"', 'href="/login"', 'href="/signup"']) expect(nav, href).toContain(href);
+    expect(nav).toMatch(/<svg[^>]*aria-hidden="true"/); // the Layers mark
+  });
+  it("shows ONE owl (the hero's: eager, high priority, a srcset with the 256 and 512 px files); the three business cards have no picture", () => {
+    expect(home.match(/data-site-owl=/g)).toHaveLength(1);
+    expect(home.match(/<img[^>]*fetchPriority="high"[^>]*>/g)).toHaveLength(1);
+    expect(home).toMatch(/srcSet="[^"]*256w[^"]*512w/);
+    expect(home.match(/<img/g)).toHaveLength(1);
+    const cards = home.match(/<ul[^>]*data-part="pack-cards"[\s\S]*?<\/ul>/)![0];
+    expect(cards).not.toContain("<img");
+    expect(cards.match(/data-pack-card=/g)).toHaveLength(SITE_PACKS.length);
+    for (const p of SITE_PACKS) expect(cards, p.slug).toContain(`href="/${p.slug}"`);
+    expect(text(cards)).toContain("Try the paver calculator");
+  });
+  it("has six steps, each with its You: line, the first one current (aria-current), and a pause button", () => {
+    const steps = home.match(/<ol[^>]*aria-label="The six steps"[\s\S]*?<\/ol>/)![0];
+    expect(steps.match(/<li/g)).toHaveLength(6);
+    expect(steps.match(/aria-current="step"/g)).toHaveLength(1);
+    expect(text(steps).match(/You:/g)).toHaveLength(6);
+    for (const w of ["Answer", "Understand", "Quote", "Follow up", "Collect", "Grow"]) expect(steps, w).toContain(w);
+    expect(home).toContain("Pause the steps");
+  });
+  it("has the languages band: a tablist of four tabs (te, hi, kn, en), the sample chat, the note, and no moving part drawn until a script runs", () => {
+    const band = home.match(/<section id="languages"[\s\S]*?<\/section>/)![0];
+    expect(band).toContain('role="tablist"');
+    expect(band.match(/role="tab"/g)).toHaveLength(4);
+    expect(band.match(/aria-selected="true"/g)).toHaveLength(1);
+    expect(band).toContain("Sample chats");
+    expect(band).toContain('role="tabpanel"');
+    expect(band).toContain("Sri Lakshmi Pavers");
+  });
+  it("says which call features are available and which are coming soon", () => {
+    const calls = home.match(/<ul[^>]*data-part="calls"[\s\S]*?<\/ul>\s*<\/section>/)![0];
+    expect(calls.match(/data-calls=/g)).toHaveLength(3);
+    expect(text(calls).match(/Available/g)).toHaveLength(1);
+    expect(text(calls).match(/Coming soon/g)).toHaveLength(2);
+    expect(text(calls)).toMatch(/says it is an AI/);
+    expect(text(calls)).toMatch(/Only with your approval and within calling rules/);
+  });
+  it("has the trial box with its four promises and two buttons, and no price", () => {
+    const box = home.match(/<section id="pricing"[\s\S]*?<\/section>/)![0];
+    expect(text(box)).toContain("30-day free trial");
+    expect(text(box)).toContain("Cancel before the trial ends and you pay nothing");
+    for (const s of ["You approve every rupee", "STOP always works", "AI always labelled", "Your data kept apart", "Start your trial", "See all plans"]) expect(text(box), s).toContain(s);
+    expect(box).toContain('href="/pricing"');
+  });
+  it("has the dark last call to action and the footer with the four languages", () => {
+    const end = home.match(/<section id="start"[\s\S]*?<\/section>/)![0];
+    expect(text(end)).toContain("Your next customer is messaging you right now.");
+    expect(text(end)).toContain("Talk to us on WhatsApp or call");
+    const foot = home.match(/<footer[\s\S]*?<\/footer>/)![0];
+    for (const l of ["English", "తెలుగు", "हिन्दी", "ಕನ್ನಡ"]) expect(foot, l).toContain(l);
+  });
+  it("carries application data and no FAQ data or offers (there is no FAQ and no price)", () => {
+    expect(home).toContain('"@type":"SoftwareApplication"');
+    expect(home).not.toContain("FAQPage");
+    expect(home).not.toContain("offers");
+  });
+});
+
+describe("no price and no 'no card' anywhere on the public site (job CX: the owner decides prices after usage tests; the trial takes a payment method)", () => {
+  it.each(cases)("%s: no amount, no price word with a number, no card claim", (_n, lang, target) => {
+    const html = render(lang, target);
+    const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<style[\s\S]*?<\/style>/g, "").replace(/<[^>]+>/g, " ");
+    expect(text).not.toMatch(/₹|\bRs\.?\s?\d|\bINR\b|रुपये\s?\d|\d\s?रुपये|రూపాయలు\s?\d/);
+    expect(text).not.toMatch(/\bno card\b|without a card|no credit card/i);
+    expect(html).not.toMatch(/"price"|priceCurrency/);
   });
 });
 
 describe("the pricing page", () => {
   const html = render("en", { kind: "page", page: "pricing" });
-  it("shows the plans from the one price file, in rupees, and says billing is not on yet", () => {
-    for (const s of ["₹499", "₹1,499", "₹3,999", "₹2,999"]) expect(html, s).toContain(s);
-    expect(html).toMatch(/billing/i);
+  const text = html.replace(/<script[\s\S]*?<\/script>/g, "").replace(/<[^>]+>/g, " ");
+  it("keeps the plan names and what every plan includes, and says 'Pricing announced soon' for each plan and the setup (no amount)", () => {
+    for (const s of ["Starter", "Growth", "Business", "Done-for-you setup", "Founding offer", "AI is included, under fair use", "Cancel any time"]) expect(text, s).toContain(s);
+    expect(text.match(/Pricing announced soon/g)!.length).toBeGreaterThanOrEqual(4);
+    expect(text).toContain("Start your trial");
+    expect(text).not.toMatch(/₹/);
     expect(html).not.toMatch(/guarantee/i);
   });
 });

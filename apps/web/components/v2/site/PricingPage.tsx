@@ -7,15 +7,15 @@ import { btnPrimary, btnSecondary, card, chip, container, h2, lead, section } fr
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { DONE_FOR_YOU_RUPEES, PLANS, TRIAL_DAYS, formatRupees, type PlanId } from "@/lib/site/plans";
+import { PLANS, TRIAL_DAYS, type PlanId } from "@/lib/site/plans";
 import { SITE_PACKS, say, textIn } from "@/lib/site/packs";
 import { sitePath } from "@/lib/site/paths";
 
 const NAME: Record<PlanId, "price.starter.t" | "price.growth.t" | "price.business.t"> = { starter: "price.starter.t", growth: "price.growth.t", business: "price.business.t" };
 
 /**
- * Pricing (job CM, the owner's pricing decision): the free trial, Starter, Growth and Business by the month with GST included, the founding offer, the done-for-you setup, how fair use works, and for each kind of business what
- * each plan fits. Billing is OFF and the page says so; no plan limit is stated because none is decided. The prices are numbers in lib/site/plans.ts, never inside a sentence.
+ * Pricing (jobs CM, CX): the 30-day trial, the plans Starter, Growth and Business with what every plan includes, the founding offer, the done-for-you setup, how fair use works, and for each kind of business what each
+ * plan fits. NO amount is shown anywhere: the owner decides the prices after usage tests, so each plan says "Pricing announced soon". No plan limit is stated because none is decided.
  */
 export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
   const faq = ([1, 2, 3] as const).map((n) => ({ q: t(`price.faq.${n}.q`), a: t(`price.faq.${n}.a`) }));
@@ -35,19 +35,19 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
         <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" data-part="plans">
           <li className={`${card} flex flex-col`} data-plan="trial">
             <h2 className="text-xl font-semibold">{t("price.trial.t")}</h2>
-            <p className="mt-2 font-display text-3xl font-bold">{t("price.free")}</p>
-            <p className="mt-1 text-base text-muted">{t("price.trial.d", { days: String(TRIAL_DAYS) })}</p>
-            <Link href="/signup" className={`${btnPrimary} mt-auto`}>
-              {t("hero.cta")}
-            </Link>
+            <p className="mt-2 text-base text-muted">{t("price.trial.d", { days: String(TRIAL_DAYS) })}</p>
+            <div className="mt-auto pt-4">
+              <Link href="/signup" className={`${btnPrimary} w-full`}>
+                {t("cta.start")}
+              </Link>
+            </div>
           </li>
           {PLANS.map((p) => (
             <li key={p.id} className={`${card} flex flex-col`} data-plan={p.id}>
               <h2 className="text-xl font-semibold">{t(NAME[p.id])}</h2>
-              <p className="mt-2 font-display text-3xl font-bold tabular-nums">
-                {formatRupees(p.rupees)} <span className="text-base font-semibold text-muted">{t("price.permonth")}</span>
+              <p className="mt-2 font-display text-xl font-bold" data-part="soon">
+                {t("price.soon")}
               </p>
-              <p className="mt-1 text-sm text-muted">{t("price.gst")}</p>
               <ul className="mt-3 flex flex-col gap-1.5 text-base">
                 {([1, 2, 3] as const).map((n) => (
                   <li key={n} className="flex items-start gap-2">
@@ -70,9 +70,7 @@ export function PricingPage({ t, lang }: { t: SiteT; lang: Lang }) {
           </article>
           <article className={card} data-part="done-for-you">
             <h2 className="text-xl font-semibold">{t("price.dfy.t")}</h2>
-            <p className="mt-2 font-display text-2xl font-bold tabular-nums">
-              {formatRupees(DONE_FOR_YOU_RUPEES)} <span className="text-base font-semibold text-muted">{t("price.dfy.once")}</span>
-            </p>
+            <p className="mt-2 font-display text-xl font-bold">{t("price.soon")}</p>
             <p className="mt-2 text-base text-muted">{t("price.dfy.d")}</p>
           </article>
         </div>

@@ -6,12 +6,16 @@ import { Wordmark } from "@/components/v2/Wordmark";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
-import { sitePath, SITE_PAGES, type SitePage } from "@/lib/site/paths";
+import { LANGS } from "@/i18n/lang";
+import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";
 
 const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text-ink hover:underline";
 const LABEL: Record<SitePage, "nav.pricing" | "nav.how" | "nav.security" | "nav.contact" | "nav.help"> = { pricing: "nav.pricing", "how-it-works": "nav.how", security: "nav.security", contact: "nav.contact", help: "nav.help" };
 
-export function SiteFooter({ t, lang }: { t: SiteT; lang: Lang }) {
+/** The name of each language in that language, for the footer's language links (the same page in each). */
+const LANG_NAME: Record<(typeof LANGS)[number], string> = { en: "English", te: "తెలుగు", hi: "हिन्दी", kn: "ಕನ್ನಡ" };
+
+export function SiteFooter({ t, lang, target = { kind: "home" } }: { t: SiteT; lang: Lang; target?: SiteTarget }) {
   return (
     <footer className="border-t border-line bg-surface">
       <div className={`${container} grid gap-8 py-10 md:grid-cols-4`}>
@@ -47,7 +51,20 @@ export function SiteFooter({ t, lang }: { t: SiteT; lang: Lang }) {
           <LegalLinks lang={lang} direction="column" />
         </div>
       </div>
-      <p className={`${container} border-t border-line py-5 text-sm text-muted`}>{t("foot.copy")}</p>
+      <div className={`${container} flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-line py-4 text-sm text-muted`}>
+        <p>{t("foot.copy")}</p>
+        <nav aria-label={t("nav.languages")} className="ml-auto">
+          <ul className="flex flex-wrap" data-part="foot-langs">
+            {LANGS.map((l) => (
+              <li key={l}>
+                <Link href={sitePath(l, target)} lang={l} hrefLang={l} aria-current={l === lang ? "true" : undefined} className={`inline-flex min-h-11 min-w-11 items-center justify-center px-2 font-medium text-ink hover:underline ${l === lang ? "font-bold" : ""}`}>
+                  {LANG_NAME[l]}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </footer>
   );
 }

@@ -29,6 +29,13 @@
   --v2-charcoal: #312f2f;
   --v2-on-charcoal: #f9f8f6;
 
+  /* the dark bands of the public home page (the languages and the last call to action): the same in both themes, a shade deeper in the dark one so the band still reads as a band */
+  --v2-night: #17161a;
+  --v2-on-night: #f2f0ec;
+  --v2-night-muted: #c9c6cf;
+  --v2-night-2: #232227;
+  --v2-night-line: #4a4752;
+
   --v2-info-text: #3950e6;
   --v2-info-bg: #eaedfd;
 
@@ -84,6 +91,12 @@
   --v2-charcoal: #312f2f;
   --v2-on-charcoal: #f4f2ee;
 
+  --v2-night: #0e0d11;
+  --v2-on-night: #f2f0ec;
+  --v2-night-muted: #c9c6cf;
+  --v2-night-2: #1b1a1f;
+  --v2-night-line: #4a4752;
+
   --v2-info-text: #9aa8ff;
   --v2-info-bg: #1d2247;
 
@@ -131,6 +144,12 @@
 
     --v2-charcoal: #312f2f;
     --v2-on-charcoal: #f4f2ee;
+
+    --v2-night: #0e0d11;
+    --v2-on-night: #f2f0ec;
+    --v2-night-muted: #c9c6cf;
+    --v2-night-2: #1b1a1f;
+    --v2-night-line: #4a4752;
 
     --v2-info-text: #9aa8ff;
     --v2-info-bg: #1d2247;
