@@ -43,13 +43,17 @@ WORKSPACE_TABLES: tuple[str, ...] = (
     "campaigns", "campaign_recipients", "campaign_steps", "call_list_items",
     "material_quote_policies", "material_quotes", "material_quote_lines",
     "delivery_trips", "delivery_trip_lines", "delivery_trip_events", "delivery_proofs",
+    "institution_profiles", "programmes", "programme_groups", "students", "admissions", "admission_events", "fee_plans", "fee_plan_lines", "fee_assignments",
+    "voice_settings", "voice_choices", "campaign_voice", "voice_note_usage",
     "evidence", "evidence_links", "claims", "claim_reviews", "icp_config_versions", "mapper_config_versions", "import_batches", "import_rows",
     "assistant_conversations", "assistant_messages", "assistant_reply_drafts",
     "agent_runs", "agent_run_steps", "agent_cost_reservations", "tenant_agent_settings", "tenant_data_policy",
     "data_exports", "erasure_requests", "memberships", "audit_events", "business_profile",
 )  # fmt: skip
 # the tables whose primary key is the workspace id itself (no `id` column)
-ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile"})
+ORDER_BY_TENANT = frozenset({"tenant_agent_settings", "tenant_data_policy", "outbox_settings", "store_settings", "scheduler_settings", "business_profile", "institution_profiles", "voice_settings"})
+# the tables whose key is not `id`: the column that is unique within one workspace (job CV)
+ORDER_BY_OTHER = {"voice_choices": "language", "voice_note_usage": "ref_id"}
 
 
 @dataclass(frozen=True)
@@ -118,6 +122,7 @@ Made on {generated_at} (UTC) at the Owner's request. The download link worked fo
 
 Each file in tables/ is one table, as a JSON list, oldest first. Names, phone numbers and e-mail addresses of your customers are in contacts.json, companies.json and the message tables: treat the file as private.
 Where a record was erased on request or by your retention settings, its text reads erased:1 and the row, its dates and its numbers remain.
+If your business keeps students (a school or college), students.json holds each student's first name or initials and admission number: they are children's data, so keep this file as private as you would the register itself.
 manifest.json lists every table with its row count; a table marked "not_readable" could not be read with your permissions and is not in this file.
 
 Not in this file: the secret keys the system uses to recognise customers who asked us to stop (they are a one-way code, not data about a person), the files of your catalogue photos (their names are in catalogue_photos.json), and backups.
@@ -162,7 +167,7 @@ def build_workspace_export(
     for table in tables:
         if should_stop():
             raise ExportTooLarge
-        order = "tenant_id" if table in ORDER_BY_TENANT else "id"
+        order = "tenant_id" if table in ORDER_BY_TENANT else ORDER_BY_OTHER.get(table, "id")
         rows: list[dict[str, Any]] = []
         try:
             offset = 0

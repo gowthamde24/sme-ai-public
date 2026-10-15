@@ -101,6 +101,12 @@ def v(tenant: Any, tail: str) -> str:
     return f"/v1/tenants/{tenant.id}/voice-notes{tail}"
 
 
+def mine(adapter: Any, tenant: Any) -> list[Any]:
+    """What the fake channel was handed for THIS business (the worker serves every business in the database that has automatic sending on, other test modules' included)."""
+    ids = set(operator_sql.sql(f"select id from public.outbox_messages where tenant_id = '{tenant.id}'").split())
+    return [m for m in adapter.sent if str(m.message_id) in ids]
+
+
 def make_worker(sched: Any, voice: bool = True) -> tuple[Worker, Any]:
     worker, adapter = sched.worker()
     repo = sched.repo()
@@ -217,7 +223,7 @@ def test_the_worker_sends_the_text_with_a_spoken_copy_and_counts_the_seconds_onc
     a = eval_world.a
     worker, adapter = make_worker(sched)
     pin(BASE - timedelta(days=1), "12:00")
-    assert worker.tick_once() is not None and adapter.sent == []
+    assert worker.tick_once() is not None and mine(adapter, a) == []
     pin(BASE, "10:30")
     before = app.get(v(a, "/usage"), headers=bearer(a.users["owner"])).json()
     assert before["today_seconds"] == 0, "a new India day: the previews of yesterday are not today's"
@@ -282,7 +288,7 @@ def test_a_worker_without_a_speech_provider_sends_only_text(scene: Any, eval_wor
     worker, adapter = make_worker(sched, voice=False)
     pin(BASE + timedelta(days=5), "11:30")
     assert worker.tick_once() is not None
-    assert all(m.audio is None for m in adapter.sent)
+    assert all(m.audio is None for m in adapter.sent), "no speech provider in the worker: nothing carries audio"
 
 
 # ============================================================================================================ reports

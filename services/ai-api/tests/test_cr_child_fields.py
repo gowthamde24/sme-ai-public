@@ -35,6 +35,7 @@ ALLOWED = {
     "integrations/mapping.py": "which column is which",
     "privacy/housekeeping.py": "the retention step erases students; it reads no label",
     "privacy/repository.py": "the worker's call of that step",
+    "privacy/export_builder.py": "the Owner's own data download lists the business's tables, the students included (Owner only, second factor, deleted after 24 hours; ADR 0087): it reads rows as the Owner and names no column",
     "campaigns/models.py": "the ledger filter can name `student` as a party kind: a word, never a label",
     "dues/models.py": "the statement of a student's own ledger account carries a student_id: an id, never a label",
     "logging_safety.py": "route words only",
