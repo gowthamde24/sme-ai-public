@@ -26,7 +26,7 @@ export function SiteShell({ lang, theme, t, target, children }: { lang: Lang; th
           </p>
         ) : null}
         <main id="main">{children}</main>
-        <SiteFooter t={t} lang={lang} />
+        <SiteFooter t={t} lang={lang} target={target} />
       </div>
     </V2Root>
   );

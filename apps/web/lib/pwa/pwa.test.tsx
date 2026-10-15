@@ -18,7 +18,7 @@ const tokens = readFileSync(path.join(WEB, "design/tokens.css"), "utf8");
 describe("the web app manifest (installability)", () => {
   const m = manifest();
   it("has what a browser asks for before it offers to install", () => {
-    expect(m.name).toBe("Sme-AI");
+    expect(m.name).toBe("Stack19");
     expect(m.short_name).toBe(APP_NAME);
     expect(m.start_url).toBe("/app");
     expect(m.scope).toBe("/");

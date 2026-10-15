@@ -49,20 +49,31 @@ describe("honesty: no claims we cannot prove today", () => {
     }
   }
   const en = dictFor(site, "en") as Record<string, string>;
-  it("the English home copy says what it must: money talk waits for the owner, sending is automatic only when switched on, and that sign-up is open and free", () => {
-    expect(en["hero.sub"]).toMatch(/price, promises or complaints waits for your OK/i);
-    expect(en["faq.1.a"]).toMatch(/Only if you switch automatic sending on/);
-    expect(en["faq.1.a"]).toMatch(/waits for your OK, and calls always wait/);
-    expect(en["faq.3.a"]).toMatch(/does not calculate or change a price/);
-    expect(en["hero.note"]).toBe("You can sign up and try it free. Nothing is charged.");
+  it("the English home copy says what it must: money talk waits for the owner, the trial can be cancelled before it ends, and sign-up is open", () => {
+    expect(en["hero.sub"]).toMatch(/Anything about money waits for your OK/);
+    expect(en["hero.h1"]).toBe("Every enquiry answered. Every quote sent. Every rupee followed up.");
+    expect(en["home.price.text"]).toMatch(/Cancel before the trial ends and you pay nothing/);
+    expect(en["hero.note"]).toMatch(/Cancel before the trial ends and you pay nothing/);
     for (const k of Object.keys(en)) expect(en[k], k).not.toMatch(/invitation only|by invitation|early access/i); // sign-up is open (Job AC review)
-    expect(en["hero.cta"]).toBe("Start free, choose your business");
+    expect(en["hero.cta"]).toBe("Start your 30-day trial");
+    expect(en["cta.start"]).toBe("Start your trial");
   });
-  it("the pricing copy never counts questions, says billing is off, and holds no price inside a sentence (the prices are numbers in lib/site/plans.ts)", () => {
+  it("never says the trial needs no card, and holds no price in any website or sign-in string (job CX: the owner decides prices after usage tests)", () => {
+    for (const set of [site, login] as unknown as Record<string, Entry>[])
+      for (const lang of LANGS) {
+        const d = dictFor(set as never, lang) as Record<string, string>;
+        for (const [k, v] of Object.entries(d)) {
+          expect(v, `${lang}:${k}`).not.toMatch(/\bno card\b|without a card|no credit card|Nothing is charged|₹/i);
+          expect(v, `${lang}:${k}`).not.toMatch(/Sme-?AI|working name/i);
+        }
+      }
+  });
+  it("the pricing copy never counts questions, says pricing is announced soon, and holds no price", () => {
     expect(en["price.sub"]).toMatch(/No charge for each question/);
-    expect(en["price.billing"]).toMatch(/Billing is not switched on yet/);
-    expect(en["price.faq.3.a"]).toMatch(/Billing is off/);
-    for (const k of Object.keys(en).filter((x) => x.startsWith("price.") || x.startsWith("teaser."))) expect(en[k], k).not.toMatch(/₹|\d{3}/);
+    expect(en["price.billing"]).toMatch(/Pricing announced soon/);
+    expect(en["price.soon"]).toBe("Pricing announced soon");
+    expect(en["price.faq.3.a"]).toMatch(/Pricing will be announced soon/);
+    for (const k of Object.keys(en).filter((x) => x.startsWith("price.") || x.startsWith("home.price."))) expect(en[k], k).not.toMatch(/₹|\d{3}|\bGST\b/);
   });
   it("the security copy claims only what exists and says what does not", () => {
     expect(en["sec.rights.d"]).toMatch(/not had an independent review/);

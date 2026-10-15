@@ -38,6 +38,11 @@
   --color-ring: var(--v2-ring);
   --color-charcoal: var(--v2-charcoal);
   --color-on-charcoal: var(--v2-on-charcoal);
+  --color-night: var(--v2-night);
+  --color-on-night: var(--v2-on-night);
+  --color-night-muted: var(--v2-night-muted);
+  --color-night-2: var(--v2-night-2);
+  --color-night-line: var(--v2-night-line);
   --color-info-text: var(--v2-info-text);
   --color-info-bg: var(--v2-info-bg);
   --color-green-text: var(--v2-green-text);

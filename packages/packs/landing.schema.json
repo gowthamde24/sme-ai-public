@@ -12,6 +12,7 @@
     "slug": { "type": "string", "pattern": "^[a-z][a-z0-9-]{1,30}$", "description": "The public address: /<slug> (English) and /te/<slug>, /hi/<slug>, /kn/<slug>. Not the pack id: the address is for people." },
     "meta": { "type": "object", "additionalProperties": false, "required": ["title", "description"], "properties": { "title": { "$ref": "#/$defs/text" }, "description": { "$ref": "#/$defs/text" } } },
     "hero": { "type": "object", "additionalProperties": false, "required": ["eyebrow", "h1", "sub"], "properties": { "eyebrow": { "$ref": "#/$defs/text" }, "h1": { "$ref": "#/$defs/text" }, "sub": { "$ref": "#/$defs/text" } } },
+    "home_card": { "description": "The plain card of this business type on the home page (\"Currently built for\"): who it is for, what it does in one line, and the words of the link to its page (a type with a calculator names it in the link). Optional: without it the card shows the pack name and its hero eyebrow.", "type": "object", "additionalProperties": false, "required": ["title", "line", "link"], "properties": { "title": { "$ref": "#/$defs/text" }, "line": { "$ref": "#/$defs/text" }, "link": { "$ref": "#/$defs/text" } } },
     "problem": { "type": "object", "additionalProperties": false, "required": ["title", "points"], "properties": { "title": { "$ref": "#/$defs/text" }, "points": { "type": "array", "minItems": 3, "maxItems": 3, "items": { "$ref": "#/$defs/text" } } } },
     "day": {
       "type": "object", "additionalProperties": false, "required": ["title", "steps"],

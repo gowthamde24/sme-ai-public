@@ -4,8 +4,6 @@ import { createElement } from "react";
 
 import type { SignupCard } from "@/lib/packs/signup";
 
-import { PlushStill } from "../app/owl/PlushStill";
-
 /** The art for each owl prop a business type names (`owl_prop` of its pack). A prop this build has no art for draws a neutral shop until the art job gives the owl real props. */
 export const PROPS: Readonly<Record<string, LucideIcon>> = { fabric_roll: Spool, hard_hat_paver_block: BrickWall, graduation_cap: GraduationCap };
 
@@ -18,16 +16,13 @@ export function PackProp({ owlProp, className }: { owlProp: string; className?: 
 }
 
 /**
- * One kind of business on the first sign-up step (job CL, blueprint 3.1): the plush owl with a prop of that trade (a reel of fabric, a paver block, a graduation cap: drawn here with an icon until the art job gives the owl real props), the name and one line. A plain link to step 2 (`/signup?type=<id>`): no script, back button and refresh work, and the choice is in the address. The accent colour is a small touch (the prop's disc), not a theme.
+ * One kind of business on the first sign-up step (job CL, blueprint 3.1): the prop of that trade (a reel of fabric, a paver block, a graduation cap: drawn with an icon) in the business type's accent colour, the name and one line. Job CX took the owl off the card. A plain link to step 2 (`/signup?type=<id>`): no script, back button and refresh work, and the choice is in the address. The accent colour is a small touch (the prop's tile), not a theme.
  */
 export function PackCard({ card, href, hint, notValidated }: { card: SignupCard; href: string; hint: string; /** The line for a type no real owner of that trade has reviewed yet ("Not validated by a real owner yet"). */ notValidated?: string }) {
   return (
     <Link href={href} data-pack-card={card.id} className="group flex min-h-24 items-center gap-4 rounded-2xl border border-edge bg-surface p-4 transition-colors duration-150 ease-out hover:bg-surface-2 active:bg-line">
-      <span className="relative shrink-0">
-        <PlushStill px={72} agent="main" className="size-[72px]" />
-        <span data-accent={card.accent} aria-hidden="true" className="absolute -bottom-1 -right-2 grid size-9 place-items-center rounded-full border-2 border-surface bg-pack-bg text-pack-text">
-          <PackProp owlProp={card.owlProp} className="size-5" />
-        </span>
+      <span data-accent={card.accent} aria-hidden="true" className="grid size-14 shrink-0 place-items-center rounded-2xl bg-pack-bg text-pack-text">
+        <PackProp owlProp={card.owlProp} className="size-7" />
       </span>
       <span className="min-w-0 flex-1">
         <span className="block font-display text-xl font-semibold leading-tight">{card.name}</span>

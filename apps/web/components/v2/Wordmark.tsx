@@ -1,17 +1,22 @@
 import { BRAND_NAME } from "@/design/brand";
 
-/** The wordmark: the name from the one brand constant, with a "(working name)" tail set smaller. Takes no name prop on purpose. */
-export function Wordmark() {
-  const i = BRAND_NAME.indexOf(" (");
-  const main = i === -1 ? BRAND_NAME : BRAND_NAME.slice(0, i);
-  const tail = i === -1 ? "" : BRAND_NAME.slice(i + 1);
+/** The Layers mark: three stacked rounded bars (the middle one in ink, the outer two in the brand colour). Decorative: the name beside it carries the meaning. */
+export function LayersMark({ className = "size-7" }: { className?: string }) {
   return (
-    <span className="inline-flex flex-col leading-tight">
-      <span className="font-display text-xl font-bold tracking-tight">
-        {main}
-        <span className="text-brand-text">.</span>
-      </span>
-      {tail && <span className="text-sm text-muted">{tail}</span>}
+    <svg viewBox="0 0 96 96" aria-hidden="true" focusable="false" className={`shrink-0 ${className}`}>
+      <rect x="14" y="14" width="46" height="18" rx="9" className="fill-brand" />
+      <rect x="14" y="39" width="68" height="18" rx="9" className="fill-ink" />
+      <rect x="36" y="64" width="46" height="18" rx="9" className="fill-brand" fillOpacity="0.55" />
+    </svg>
+  );
+}
+
+/** The wordmark: the Layers mark and the name from the one brand constant. Takes no name prop on purpose. */
+export function Wordmark() {
+  return (
+    <span className="inline-flex items-center gap-2.5 leading-tight">
+      <LayersMark />
+      <span className="font-display text-2xl font-extrabold tracking-tight">{BRAND_NAME}</span>
     </span>
   );
 }

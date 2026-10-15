@@ -29,6 +29,8 @@ export type SitePack = {
   slug: string;
   meta: { title: Text; description: Text };
   hero: { eyebrow: Text; h1: Text; sub: Text };
+  /** The plain card of the home page's "Currently built for" row. Optional: without it the card shows the name and the hero eyebrow. */
+  home_card?: { title: Text; line: Text; link: Text };
   problem: { title: Text; points: readonly Text[] };
   day: { title: Text; steps: readonly { owl: OwlId; time: string; text: Text }[] };
   features: { title: Text; items: readonly { icon: IconId; title: Text; body: Text }[] };
