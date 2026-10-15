@@ -1,0 +1,9 @@
+[All quotes](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+# Enquiry
+{label="Parts of this enquiry"} [Request](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) [Quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444/quote current=page)
+{label="Quote"}
+## Quote
+### Quotes already made
+- [Quote 12 ₹88,795.00 Draft](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/c1c1c1c1-c1c1-4c1c-8c1c-c1c1c1c1c1c1)
+- [Quote 11 ₹24,500.00 Approved](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/c2c2c2c2-c2c2-4c2c-8c2c-c2c2c2c2c2c2)
+{role=note} Your quote rules are not set yet (wastage, freight, advance ...). [Set the quote rules](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)

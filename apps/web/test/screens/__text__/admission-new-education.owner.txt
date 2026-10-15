@@ -1,0 +1,22 @@
+# New enquiry
+form:
+Where it came from
+<select label="Where it came from">
+  options: WhatsApp=whatsapp | Walk-in=walk_in* | Website=website | Advertisement=ad | Referral=referral | Other=other
+Class or course asked about
+<select label="Class or course asked about">
+  options: Not sure yet=* | Class 5 (synthetic)=bb000000-0000-4000-8000-000000000001 | B.Com (synthetic)=bb000000-0000-4000-8000-000000000002
+legend: The parent or guardian
+{role=radiogroup label="The parent or guardian"}
+<radio name=gmode label="A new person" checked>
+A new person
+<radio name=gmode label="Someone already in my list">
+Someone already in my list
+Parent or guardian's name
+<text label="Parent or guardian's name" maxlength=200>
+Their WhatsApp number
+<text label="Their WhatsApp number" maxlength=32 inputmode=tel autocomplete=off described-by="The parent's own number, never the child's. We write only to this number.">
+The parent's own number, never the child's. We write only to this number.
+{role=note} No child is stored until the enquiry is admitted.
+[button type=submit: Save the enquiry]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/admissions)

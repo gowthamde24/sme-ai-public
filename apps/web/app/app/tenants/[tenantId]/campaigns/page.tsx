@@ -1,22 +1,13 @@
-import { notFound } from "next/navigation";
-
-import { SoonPage } from "@/components/v2/app/start/SoonPage";
-import { appT } from "@/i18n/app";
-import { getLang } from "@/i18n/get-lang";
-import { isCanonicalUuid } from "@/lib/api/crm";
-import { requireUser } from "@/lib/auth/session";
+import { CampaignsListPage } from "./pages";
+import { campaignContext } from "./prelude";
 
 export const metadata = { title: "Campaigns · SME AI Revenue Engine" };
 export const dynamic = "force-dynamic";
 
-/**
- * /app/tenants/[tenantId]/campaigns: a part the business type has switched on and that is not built yet (job CL). The module guard of the workspace's template has already answered 403 for a business type without it. Says
- * "Not available yet" and nothing else.
- */
-export default async function Page({ params }: PageProps<"/app/tenants/[tenantId]/campaigns">) {
-  await requireUser();
+/** /app/tenants/[tenantId]/campaigns: the reminder campaigns (job CQ; module `campaigns`, checked by the workspace's module guard). Owner, Admin and Sales read and make drafts; the Owner approves. */
+export default async function CampaignsRoute({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/campaigns">) {
   const { tenantId } = await params;
-  if (!isCanonicalUuid(tenantId)) notFound();
-  const lang = await getLang();
-  return <SoonPage which="campaigns" base={`/app/tenants/${tenantId}`} lang={lang} t={appT(lang)} />;
+  const got = await campaignContext(tenantId);
+  if (!got.ok) return got.page;
+  return CampaignsListPage({ ...got.ctx, raw: await searchParams });
 }

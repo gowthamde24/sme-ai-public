@@ -1,0 +1,12 @@
+[All enquiries](/app/tenants/22222222-2222-2222-2222-222222222222/admissions)
+# Ravi Kumar (synthetic)
+Lost Class 5 (synthetic) · WhatsApp
+{label="History"}
+## History
+- Enquiry 2026-10-08
+- Campus visit 2026-10-10
+- Lost · Fees 2026-10-13
+Campus visits: 1
+{label="What next"}
+## What next
+[button type=button: Re-open]

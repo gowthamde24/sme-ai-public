@@ -21,6 +21,7 @@ from app.crm.repository import CrmRepository
 from app.customfields.repository import CustomFieldsRepository
 from app.deliveries.repository import DeliveriesRepository
 from app.dues.repository import DuesRepository
+from app.education.repository import EducationRepository
 from app.enquiries.repository import EnquiriesRepository
 from app.erasure.repository import ErasureRepository
 from app.errors import ApiError, forbidden, mfa_required, not_found, unauthorized
@@ -42,6 +43,7 @@ from app.pricelists.repository import PriceListRepository
 from app.privacy.policy_gate import PolicyGate
 from app.privacy.repository import PrivacyRepository
 from app.quotes.repository import QuotesRepository
+from app.reports.repository import ReportsRepository
 from app.scheduler.repository import SchedulerRepository
 from app.sites.repository import SitesRepository
 from app.suppression.keys import KeyRing
@@ -52,6 +54,7 @@ from app.tenancy.repository import TenantRepository
 from app.today.repository import TodayRepository
 from app.visits.repository import VisitsRepository
 from app.voice.interface import VoiceStack
+from app.voice_notes.repository import VoiceNotesRepository
 from app.websearch.repository import ResearchUsageRepository
 from app.websearch.service import ResearchWeb
 from app.whatsapp.runtime import WhatsAppRuntime
@@ -112,6 +115,12 @@ class Runtime:
     deliveries: DeliveriesRepository | None = None
     # job CP: reminder campaigns and the call list (modules campaigns, call_list)
     campaigns: CampaignsRepository | None = None
+    # job CR: the education pack; no agent or assistant path reads it (children's data)
+    education: EducationRepository | None = None
+    # job CV: the reports of every pack, in one shape
+    reports: ReportsRepository | None = None
+    # job CV: voice notes (settings, voices, the spoken disclosure, the fair-use meter)
+    voice_notes: VoiceNotesRepository | None = None
 
 
 @dataclass(frozen=True)

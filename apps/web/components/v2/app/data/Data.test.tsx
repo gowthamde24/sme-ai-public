@@ -371,3 +371,57 @@ describe("the Data part of Settings", () => {
     expect(screen.getByText("No imports yet.")).toBeInTheDocument();
   });
 });
+
+describe("bringing in students (job CS)", () => {
+  it("a school's file has no Tally or Vyapar choice and no kind to pick, and says what it reads", () => {
+    render(<DataImport tenantId="t" words={WORDS} kinds={["students"]} />);
+    expect(screen.getByRole("heading", { name: "Bring in your students" })).toBeInTheDocument();
+    expect(screen.queryByRole("radio", { name: "Tally" })).toBeNull();
+    expect(screen.queryByRole("radio", { name: "Customers" })).toBeNull();
+  });
+  it("the settings page still offers customers and stock, and no students", () => {
+    render(<DataImport tenantId="t" words={WORDS} />);
+    expect(screen.getAllByRole("radio").map((r) => (r as HTMLInputElement).value)).toEqual(expect.arrayContaining(["customers", "stock"]));
+    expect(screen.queryByRole("radio", { name: /student/i })).toBeNull();
+  });
+});
+
+describe("the students file: a child's name is never drawn (job CS)", () => {
+  const STUDENTS = {
+    kind: "students", file_kind: "csv", rows: 1,
+    columns: [
+      { index: 0, header: "Parent name", suggested_field: "guardian_name", confidence: "exact" }, { index: 1, header: "Parent phone", suggested_field: "guardian_phone", confidence: "exact" },
+      { index: 2, header: "Class", suggested_field: "programme", confidence: "exact" }, { index: 3, header: "Student", suggested_field: "child_label", confidence: "exact" },
+    ],
+    suggested_mapping: { guardian_name: 0, guardian_phone: 1, programme: 2, child_label: 3 },
+    fields: [
+      { field: "guardian_name", label: "Parent or guardian name", required: true }, { field: "guardian_phone", label: "Parent's WhatsApp or mobile number", required: true },
+      { field: "programme", label: "Class or course", required: true }, { field: "child_label", label: "Student's first name or initials", required: false },
+    ],
+    sample: [["Lakshmi Devi", "98765 43210", "Class 5", "Kiran"]],
+    cut_cells: 0,
+  };
+  it("the sample rows show the parent, the number and the class, and hide the column mapped to the student", async () => {
+    mockRoutes({ "/import/inspect": () => json({ ok: true, data: STUDENTS }) });
+    render(<DataImport tenantId={T} words={WORDS} kinds={["students"]} />);
+    pickFile("students.csv", "Parent name,Parent phone,Class,Student\nLakshmi Devi,98765 43210,Class 5,Kiran");
+    await press("Check the file");
+    expect(screen.getByText("Lakshmi Devi")).toBeInTheDocument();
+    expect(screen.getByText("Class 5")).toBeInTheDocument();
+    expect(screen.queryByText("Kiran")).toBeNull();
+    expect(screen.getByText("•••")).toBeInTheDocument();
+    expect(screen.getByText(/A student's name is not shown on this screen/)).toBeInTheDocument();
+    // choosing "Not used" for the student column does not bring the names back: the column the API recognised as the student's stays hidden
+    fireEvent.change(screen.getByLabelText(/Student's first name or initials/), { target: { value: "" } });
+    expect(screen.queryByText("Kiran")).toBeNull();
+    expect(screen.getByText("•••")).toBeInTheDocument();
+  });
+  it("a customers or stock file is drawn as before", async () => {
+    mockRoutes({ "/import/inspect": () => json({ ok: true, data: INSPECT }) });
+    render(<DataImport tenantId={T} words={WORDS} />);
+    pickFile();
+    await press("Check the file");
+    expect(screen.getByText("Ravi Silks")).toBeInTheDocument();
+    expect(screen.queryByText("•••")).toBeNull();
+  });
+});

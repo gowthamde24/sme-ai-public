@@ -10,6 +10,8 @@ import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
 import { alertBox, kvList, mutedText, noteBox, pageH1, pageH2, pageMain, plainText } from "@/components/v2/app/ui";
 import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
 
 import { LocalTime } from "../../../../local-time";
 import { EnquiryText } from "../enquiry-text";
@@ -42,7 +44,7 @@ function pick(value: string | string[] | undefined): string | undefined {
  */
 export default async function EnquiryPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/enquiries/[enquiryId]">) {
   const lang = await getLang();
-  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp."], ["gst.customer", "gst.ours"]);
+  const words = wordsFor(lang, ["enq.", "orders.", "fu.", "qp.", "mat.", "today.err.", "today.lang."], ["gst.customer", "gst.ours", "today.act.working", "today.act.cancel", "site.customer.unknown", "frame.notyet", "nav.item.quotes", "nav.item.sites", "catalogue.photo.none"]);
   const t = makeT(words);
   const user = await requireUser();
   const { tenantId, enquiryId } = await params;
@@ -64,6 +66,8 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
+  // A business that sells by area, weight or piece (module `materials`, job CO) quotes with the building-materials engine; everything about saree quotes below is then left alone.
+  const materials = hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials");
   // A Viewer reads no price and no quote (the API refuses them), so nothing is asked for them. A quote screen that cannot load does not take the enquiry down.
   const canQuote = WRITE_ROLES.includes(tenant.role);
   let setup: QuoteSetup | null = null;
@@ -76,7 +80,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   let order: Order | null = null;
   let manual: ManualQuoteData | null = null;
   let manualRead: Promise<ManualQuoteData> | null = null;
-  if (canQuote) {
+  if (canQuote && !materials) {
     try {
       [setup, quotes] = await Promise.all([fetchQuoteSetup(user.accessToken, tenantId, enquiryId), fetchEnquiryQuotes(user.accessToken, tenantId, enquiryId)]);
       // the typed-price form's data needs only the setup, so it is read while the chosen quote is (job CH); its own failure is handled after, as before. The no-op catch only keeps an early exit from leaving an unhandled rejection.
@@ -124,6 +128,7 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
   const canView = canQuote && selected !== null;
   const canMake = canQuote && setup !== null;
   const wanted = pick(query.section);
+  if (materials) return MaterialEnquiry({ t, words, lang, tenant, tenantId, enquiry, enquiryId, view, notice, canQuote });
   // `?section=all` draws every part on one page (the way the screen was before it was split, for printing and for the tests that pin the whole screen).
   const section: "all" | "request" | "make" | "view" | "send" =
     wanted === "all" ? "all" : wanted === "send" && canSend ? "send" : wanted === "view" && canView ? "view" : wanted === "make" && canMake ? "make" : wanted === "request" ? "request" : pick(query.whatsapp) && canSend ? "send" : canView ? "view" : "request";
@@ -202,6 +207,55 @@ export default async function EnquiryPage({ params, searchParams }: PageProps<"/
           part={section === "all" ? undefined : section}
         />
       ) : null}
+    </main>
+  );
+}
+
+/**
+ * The enquiry of a business that sells building materials (job CO): the customer's words and the requirement as before (with the vocabulary of area, thickness and site), then "Quote": the builder and the quotes made.
+ * The saree quote parts are not drawn.
+ */
+function MaterialEnquiry({ t, words, lang, tenant, tenantId, enquiry, enquiryId, view, notice, canQuote }: { t: ReturnType<typeof makeT>; words: Record<string, string>; lang: string; tenant: { role: "owner" | "admin" | "sales" | "viewer" }; tenantId: string; enquiry: Enquiry; enquiryId: string; view: RequirementView; notice: string | undefined; canQuote: boolean }) {
+  const base = `/app/tenants/${tenantId}/enquiries/${enquiryId}`;
+  const parts = [
+    { key: "request", label: t("enq.part.request"), href: base, current: true },
+    ...(canQuote ? [{ key: "quote", label: t("mat.part.quote"), href: `${base}/quote`, current: false }] : []),
+  ];
+  return (
+    <main className={pageMain} lang={lang}>
+      <BackLink href={`/app/tenants/${tenantId}/quotes`} label={t("enq.all_quotes")} then={{ href: `/app/tenants/${tenantId}/leads/${enquiry.lead_id}`, label: t("enq.the_lead") }} />
+      <h1 className={pageH1}>{t("enq.enquiry")}</h1>
+      {notice ? (
+        <p role="status" className={noteBox}>
+          {notice}
+        </p>
+      ) : null}
+      {parts.length > 1 ? <SectionTabs label={t("enq.parts_of_this_enquiry")} items={parts} /> : null}
+      <>
+          <section aria-labelledby="enquiry-heading">
+            <h2 id="enquiry-heading" className={pageH2}>
+              {t("enq.what_the_customer_wrote")}
+            </h2>
+            <dl className={kvList}>
+              <dt>{t("enq.channel")}</dt>
+              <dd>{t(`enq.channel.${enquiry.channel}`)}</dd>
+              <dt>{t("enq.received")}</dt>
+              <dd>
+                <LocalTime iso={enquiry.received_at} />
+              </dd>
+              {enquiry.subject ? (
+                <>
+                  <dt>{t("enq.subject")}</dt>
+                  <dd className={plainText}>{enquiry.subject}</dd>
+                </>
+              ) : null}
+            </dl>
+            <EnquiryText words={words} body={enquiry.body} fields={view.fields} />
+            <p className={mutedText}>{t("enq.customer_text_note", { cut: enquiry.truncated_from ? t("enq.cut_from", { n: enquiry.truncated_from }) : "" })}</p>
+          </section>
+          <RequirementPanel words={words} tenantId={tenantId} enquiry={enquiry} view={view} canWrite={WRITE_ROLES.includes(tenant.role)} runId={crypto.randomUUID()} materials />
+          {!canQuote ? <p className={mutedText}>{t("enq.quotes_are_shown_to_owners_admins")}</p> : null}
+      </>
     </main>
   );
 }

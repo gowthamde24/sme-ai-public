@@ -99,7 +99,7 @@ export function OrderView({ tenantId, order, members, forms, words }: { tenantId
       <h2 className={pageH2}>{t("orders.where_it_came_from")}</h2>
       <ul>
         <li>
-          <Link href={`${base}/enquiries/${order.enquiry_id}?quote=${order.quote_id}`} className={link}>
+          <Link href={order.material_quote_id ? `${base}/quotes/${order.material_quote_id}` : `${base}/enquiries/${order.enquiry_id}?quote=${order.quote_id}`} className={link}>
             {t("orders.the_approved_quote")}
           </Link>
         </li>

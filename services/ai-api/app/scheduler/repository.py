@@ -32,6 +32,8 @@ class SchedulerRepository(Protocol):
     def queue_reminder(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def mark_no_shows(self, token: str, tenant_id: uuid.UUID) -> int: ...
     def campaign_run(self, token: str, tenant_id: uuid.UUID) -> dict[str, int]: ...
+    def voice_plan(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> dict[str, Any]: ...
+    def voice_record(self, token: str, args: dict[str, Any]) -> dict[str, Any]: ...
     def record(self, token: str, tenant_id: uuid.UUID, counts: dict[str, int]) -> None: ...
 
     # the Owner's and Admin's calls (their own token)
@@ -139,6 +141,13 @@ class PostgrestSchedulerRepository:
         if not all(isinstance(v, int) for v in counts.values()):
             raise UpstreamError("unexpected function result")
         return {k: int(v) for k, v in counts.items() if isinstance(v, int)}
+
+    def voice_plan(self, token: str, tenant_id: uuid.UUID, message_id: uuid.UUID) -> dict[str, Any]:
+        """Job CV: is this claimed message a voice note, and if so what is to be spoken (the database decides: module, switches, voice, disclosure, allowance)."""
+        return self._object(token, "scheduler_voice_plan", {"p_tenant_id": str(tenant_id), "p_message_id": str(message_id)})
+
+    def voice_record(self, token: str, args: dict[str, Any]) -> dict[str, Any]:
+        return self._object(token, "scheduler_voice_record", args)
 
     def record(self, token: str, tenant_id: uuid.UUID, counts: dict[str, int]) -> None:
         self._call(

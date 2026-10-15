@@ -1,0 +1,26 @@
+[All quotes](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+# Enquiry
+{label="Parts of this enquiry"} [Request](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444 current=page) [Quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444/quote)
+{label="What the customer wrote"}
+## What the customer wrote
+Channel
+WhatsApp
+Enquiry received
+Oct 5, 2026, 3:30 PM (18 hours ago)
+Need paver blocks 1,000 sq ft for a driv eway at Ku k atpally. No laying. This is the customer's text, shown as plain text. Contact details were removed before it was saved. Marked words are the ones a field relies on.
+{label="Requirement"}
+## Requirement
+Approved Cannot approve yet Ready for a quote Approving needs a saree type and a quantity on the same line, approved by a person. "Ready for a quote" also needs the delivery city, the date it is needed and the payment terms. Nothing here is ever sent. [Stored questions for the customer →](/app/tenants/22222222-2222-2222-2222-222222222222/requirements/66666666-6666-4666-8666-666666666666/questions)
+### Line 1
+- Product Approved paver block suggested by the assistant ; stated in the enquiry From the enquiry: paver blocks
+- Area Approved 1,000 sq ft suggested by the assistant ; stated in the enquiry From the enquiry: 1,000 sq ft
+### The whole order
+- Site location Approved Kukatpally suggested by the assistant ; stated in the enquiry From the enquiry: Kukatpally
+- Laying Approved Laying not needed suggested by the assistant ; stated in the enquiry From the enquiry: no laying
+### Questions you may want to ask the customer
+Draft wording only: copy it into your own message. This application does not send anything. Nothing to ask: every needed field is present.
+### This requirement is approved
+summary: Discard this requirement
+A discarded requirement can be replaced by a new suggestion run. It is kept in the history.
+form:
+[button type=submit: Discard]

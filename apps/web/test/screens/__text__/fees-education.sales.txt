@@ -1,0 +1,42 @@
+# Fees
+What has fallen due, what is collected and what is pending, by class and section. [Who has fees pending](/app/tenants/22222222-2222-2222-2222-222222222222/fees/pending) [Fee plans](/app/tenants/22222222-2222-2222-2222-222222222222/fees/plans) From 2026-06-01 to 2026-10-14
+Fallen due
+₹5,80,000.00
+Pending
+₹74,000.00
+Collected
+₹4,90,000.00
+Conceded
+₹16,000.00
+Collected so far
+87.2%
+Students with fees pending
+9
+Only fees that have fallen due are counted. A concession counts as settled, so the percentage can rise without money coming in.
+{label="Collected today"}
+## Collected today
+₹37,000.00 4 receipts
+{label="By how it was paid"}
+## By how it was paid
+table:
+  | th How paid | th Receipts | th Amount |
+  | Cash | 1 | ₹7,000.00 |
+  | UPI | 3 | ₹30,000.00 |
+{label="By class or course"}
+## By class or course
+table:
+  | th Class or course | th Students | th Fallen due | th Pending | th Collected |
+  | Class 5 (synthetic) | 31 | ₹5,80,000.00 | ₹74,000.00 | 87.2% |
+{label="By section, year or batch"}
+## By section, year or batch
+table:
+  | th Class or course | th Section | th Students | th Fallen due | th Pending | th Collected |
+  | Class 5 (synthetic) | A | 16 | ₹3,00,000.00 | ₹30,000.00 | 90% |
+  | Class 5 (synthetic) | B | 15 | ₹2,80,000.00 | ₹44,000.00 | 84.3% |
+{label="Late fees"}
+## Late fees
+The fee plans have their own rules. This shows what they give today. Looking changes nothing. 2 late instalments, which come to ₹400.00 Only the Owner and Admins can post late fees, with the authenticator code.
+{label="Collected, day by day"}
+## Collected, day by day
+- 2026-10-12 ₹25,000.00
+- 2026-10-13 ₹12,000.00

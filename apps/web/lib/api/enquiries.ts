@@ -18,9 +18,12 @@ export const CHANNEL_LABELS: Record<Channel, string> = {
   other: "Other",
 };
 
-export const FIELD_KEYS = ["saree_type", "fabric", "colour", "quantity", "budget", "deadline", "delivery_city", "payment_terms"] as const;
+export const FIELD_KEYS = ["saree_type", "fabric", "colour", "quantity", "budget", "deadline", "delivery_city", "payment_terms", "product_type", "thickness", "area", "length", "width", "application", "site_location", "laying"] as const;
 export type FieldKey = (typeof FIELD_KEYS)[number];
-export const LINE_FIELD_KEYS: readonly FieldKey[] = ["saree_type", "fabric", "colour", "quantity"];
+export const LINE_FIELD_KEYS: readonly FieldKey[] = ["saree_type", "fabric", "colour", "quantity", "product_type", "thickness", "area", "length", "width"];
+/** The fields a person may add to a requirement, by what the workspace sells (job CO: the API's two vocabularies; the profile is chosen by the module `materials`, never by a business type's name). */
+export const SAREE_FIELD_KEYS: readonly FieldKey[] = ["saree_type", "fabric", "colour", "quantity", "budget", "deadline", "delivery_city", "payment_terms"];
+export const MATERIAL_FIELD_KEYS: readonly FieldKey[] = ["product_type", "area", "length", "width", "quantity", "thickness", "site_location", "laying", "application", "deadline", "budget", "payment_terms"];
 export const FIELD_LABELS: Record<FieldKey, string> = {
   saree_type: "Saree type",
   fabric: "Fabric",
@@ -30,6 +33,14 @@ export const FIELD_LABELS: Record<FieldKey, string> = {
   deadline: "Needed by",
   delivery_city: "Delivery city",
   payment_terms: "Payment terms",
+  product_type: "Product",
+  thickness: "Thickness",
+  area: "Area",
+  length: "Length",
+  width: "Width",
+  application: "Used for",
+  site_location: "Site location",
+  laying: "Laying",
 };
 export const CERTAINTIES = ["stated", "implied", "ambiguous"] as const;
 export type Certainty = (typeof CERTAINTIES)[number];

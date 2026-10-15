@@ -36,6 +36,11 @@ beforeEach(() => {
 });
 
 describe("POST data/import/<step>", () => {
+  it("inspect: a school's students file is a kind of ours (job CS)", async () => {
+    const r = await post("inspect", "?kind=students");
+    expect(r.status).toBe(200);
+    expect(h.inspect.mock.calls[0].slice(0, 3)).toEqual(["person-token", T, "students"]);
+  });
   it("inspect: sends the raw file, its type and the kind with the person's own token, and answers {ok, data}", async () => {
     const r = await post("inspect", "?kind=stock");
     expect(r.status).toBe(200);

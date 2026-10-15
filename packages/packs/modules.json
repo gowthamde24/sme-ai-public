@@ -70,14 +70,14 @@
     {
       "code": "programmes",
       "exists_today": false,
-      "description": "Programmes, classes and minimal student records (education, wave 4)",
-      "guard": "future"
+      "description": "Institution profile, programmes, classes, sections and minimal student records (education)",
+      "guard": "tables"
     },
     {
       "code": "fees",
       "exists_today": false,
-      "description": "Fee plans, fee ledger and receipts (education, wave 4)",
-      "guard": "future"
+      "description": "Fee plans, the fee ledger per student and receipts (education)",
+      "guard": "tables"
     },
     {
       "code": "dues",

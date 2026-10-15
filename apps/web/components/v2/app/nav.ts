@@ -8,7 +8,7 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns" | "sites" | "dues" | "calls" | "students" | "admissions" | "announcements" | "programmes";
 
 export type NavItem = {
   id: string;
@@ -36,6 +36,8 @@ export type NavItem = {
   module?: string;
   /** An item no business had before packs existed (Fees, Campaigns): it is offered only when a pack's modules include its module. With no pack at all the menu is the one the product always had. */
   packOnly?: boolean;
+  /** Hidden when the business type has this module ON: Dues is the education Fees page's own ledger, so a business with `fees` is not offered it twice (jobs CO and CS). */
+  unlessModule?: string;
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
@@ -56,14 +58,23 @@ export const NAV: readonly NavGroup[] = [
       { id: "visits", label: "Store visits", short: "Visits", icon: "visits", path: "/visits", bar: true, module: "visits", roles: ALL_ROLES },
       // job CL: the fee page of the education business type (blueprint 2, the phone's core tab); only a pack whose modules include "fees" offers it
       { id: "fees", label: "Fees", icon: "fees", path: "/fees", module: "fees", packOnly: true, roles: WRITERS },
+      // job CS: the school's own pages (module `programmes`): the students (the minimum record), the admissions board and the messages to parents
+      { id: "students", label: "Students", icon: "students", path: "/students", module: "programmes", packOnly: true, roles: WRITERS },
+      { id: "admissions", label: "Admission board", icon: "admissions", path: "/admissions", module: "programmes", packOnly: true, roles: WRITERS },
+      { id: "announcements", label: "Announcements", icon: "announcements", path: "/announcements", module: "programmes", packOnly: true, roles: WRITERS },
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", module: "orders", roles: WRITERS },
       // job CL: reminder campaigns (construction dues, education fees); the screens come with the campaign jobs
       { id: "campaigns", label: "Campaigns", icon: "campaigns", path: "/campaigns", module: "campaigns", packOnly: true, roles: ADMINS },
+      // job CQ: the people a money reminder did not reach, who have not paid
+      { id: "calllist", label: "Call list", icon: "calls", path: "/call-list", module: "campaigns", packOnly: true, roles: WRITERS },
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
-      { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
+      { id: "chats", label: "Customer chats", short: "Inbox", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
       { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
-      { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
+      { id: "customers", label: "Customers", short: "Contacts", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
+      // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
+      { id: "sites", label: "Sites", icon: "sites", path: "/sites", module: "sites", packOnly: true, roles: ALL_ROLES },
+      { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
       // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
       { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
     ],
@@ -73,8 +84,10 @@ export const NAV: readonly NavGroup[] = [
     label: "Your business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
-      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", module: "catalogue", roles: ALL_ROLES },
+      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
       { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
+      // job CS: the institution, its programmes, classes and sections
+      { id: "programmes", label: "Programmes", icon: "programmes", path: "/programmes", module: "programmes", packOnly: true, roles: WRITERS },
     ],
   },
   {
@@ -115,11 +128,14 @@ export type PackFrame = {
   coreTab: string;
   modules: readonly string[];
   labels: Readonly<Record<string, string>>;
+  /** The phone's bottom bar (job CU, blueprint 2): "classic" = Today, Leads, the core tab, Visits, Office (what the product always had); "core" = Today, Inbox, the core tab, Contacts, then More. Absent = classic. */
+  bar?: "classic" | "core";
 };
 
 /** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
 export function offered(item: NavItem, view?: PackFrame | null): boolean {
   if (!view) return !item.packOnly;
+  if (item.unlessModule !== undefined && view.modules.includes(item.unlessModule)) return false;
   return item.module === undefined || view.modules.includes(item.module);
 }
 
@@ -145,6 +161,11 @@ export function coreItem(view: PackFrame): NavItem | null {
 export function barItems(role: Role, view?: PackFrame | null): NavItem[] {
   const all = NAV.flatMap((g) => g.items);
   const core = view ? coreItem(view) : null;
+  if (view?.bar === "core") {
+    // Today, Inbox, the business type's core tab, Contacts (and More): the four tabs of blueprint 2, only those the role is offered
+    const pick = (id: string) => all.find((i) => i.id === id);
+    return [pick("today"), pick("chats"), core, pick("customers")].filter((i): i is NavItem => !!i && i.roles.includes(role) && offered(i, view));
+  }
   return all
     .filter((i) => i.bar)
     .map((i) => (i.core && core ? core : i))

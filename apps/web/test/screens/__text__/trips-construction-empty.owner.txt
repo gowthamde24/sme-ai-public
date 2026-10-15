@@ -1,0 +1,5 @@
+# Deliveries
+The trucks of the day: load, send, deliver with a photo, and tell the site.
+{label="Day"} [←](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-05 label="Day before") Today, 2026-10-06 [→](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-07 label="Next day")
+## No trip on this day
+Open an order and plan a trip: the date, the truck and how much goes on it. [Go to the orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)

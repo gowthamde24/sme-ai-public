@@ -1,0 +1,22 @@
+# Quote rules
+How your quotes are worked out: wastage, freight, loading, laying, advance and how long a quote is good for. The calculator follows these rules exactly.
+{label="Rules in force: version 2, from 2026-10-10"}
+## Rules in force: version 2, from 2026-10-10
+Wastage added to the pieces (percent)
+5%
+Round up to whole pallets
+fields.form.no
+Transport
+₹3,500.00 per trip; a truck carries 2,500 (A number of pieces)
+Loading and unloading
+No charge
+Laying
+Not charged
+Advance before dispatch (percent)
+50%
+Credit days for the balance
+0 days
+A quote is good for (days)
+7 days
+2 versions are kept. Older quotes keep the rules they were made with.
+{role=note} Only the Owner changes the quote rules.

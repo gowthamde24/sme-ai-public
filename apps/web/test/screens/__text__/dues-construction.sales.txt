@@ -1,0 +1,16 @@
+# Dues
+What your customers owe: how old it is, who is over the credit limit, and where to write down a payment.
+{label="Owed to you"}
+## Owed to you
+Owed to you ₹1,75,000.00 Overdue ₹50,000.00 1 over the credit limit
+{role=img label="What is owed, by how old it is"}
+0 to 30 days
+₹1,25,000.00
+31 to 60 days
+₹50,000.00
+61 to 90 days
+₹0.00
+Over 90 days
+₹0.00
+- [Sri Rama Builders (synthetic) ₹1,30,000.00 Overdue ₹50,000.00](/app/tenants/22222222-2222-2222-2222-222222222222/dues/11111111-1111-4111-8111-111111111111)
+- [Lakshmi Constructions (synthetic) Over the limit ₹45,000.00 Nothing overdue](/app/tenants/22222222-2222-2222-2222-222222222222/dues/11111111-1111-4111-8111-111111111112)

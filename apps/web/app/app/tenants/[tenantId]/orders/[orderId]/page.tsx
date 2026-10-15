@@ -11,6 +11,12 @@ import { requireUser } from "@/lib/auth/session";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { OrderDeliveries } from "@/components/v2/app/deliveries/OrderDeliveries";
+import { listOrderTrips } from "@/lib/api/deliveries";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
+
+import { tripWords } from "../trips/trip-words";
 
 import { EventForm } from "../event-form";
 import { recordEventAction } from "../order-actions";
@@ -73,6 +79,16 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
     if (error instanceof ApiAuthError) redirect("/login");
   }
 
+  // the deliveries of a building-materials order (module `deliveries`, job CO): its trips, and a button to plan the next
+  const deliveries = order.material_quote_id && hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "deliveries");
+  let trips = null;
+  if (deliveries) {
+    try {
+      trips = (await listOrderTrips(user.accessToken, tenantId, orderId)).items;
+    } catch (error) {
+      if (error instanceof ApiAuthError) redirect("/login");
+    }
+  }
   const now = new Date();
   const offered = eventsOffered({ role: tenant.role, allowed: order.allowed_next_events, order });
   const secondFactorMissing = user.aal !== "aal2";
@@ -98,6 +114,7 @@ export default async function OrderPage({ params }: PageProps<"/app/tenants/[ten
     <main className={pageMain} lang={lang}>
       <BackLink href={`/app/tenants/${tenantId}/orders`} label={t("orders.all_orders")} />
       <OrderView tenantId={tenantId} order={order} members={members} forms={forms} words={words} />
+      {deliveries ? <OrderDeliveries base={`/app/tenants/${tenantId}`} orderId={orderId} trips={trips} words={tripWords(lang)} canPlan={order.outcome === "open"} /> : null}
     </main>
   );
 }

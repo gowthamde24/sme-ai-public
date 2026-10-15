@@ -4,7 +4,7 @@
   "baselineGzipBytes": 177009,
   "allowanceGzipBytes": 40000,
   "routeJs": {
-    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 197 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. Job CJ: the Office is a plain plush room (no three.js: its 3D chunk and its own office3d ceiling are gone), and Agent OWL and the Office owls (the plush owlets, jobs CI and CJ) are in the page itself; their pictures are lazy files, not script. Measured 13 Oct 2026 after job CJ: Today 200,190, the Office 182,479, the landing page 152,718 (margin 282). Raise a number only with a reason in the commit; the owner approves a raised ceiling. Owner decision 14 Oct 2026 (job CL, after CK): Today 201,000 -> 204,000 and the landing page 153,000 -> 156,000, headroom for waves 2 and 3 while the pack-aware frame (menu words, module gate, core tab) landed; a later trim job takes the weight out again.",
+    "_comment": "Job CF: the gzip JavaScript every page route loads on a first visit (scripts/audit-route-js.mjs, from the build alone; `npm run audit:route-js`, run by CI after the build). Measured 12 Oct 2026 in a production build: the public pages 146 to 150 KB (React and the Next.js client are about 112 KB of it), the signed-in pages 172 to 197 KB. Each number is the measured size plus about 2%: a route that grows past it fails. `routes` names the pages people open most and the few that are larger than the rest; `public` and `app` are the ceilings of every other page. Job CJ: the Office is a plain plush room (no three.js: its 3D chunk and its own office3d ceiling are gone), and Agent OWL and the Office owls (the plush owlets, jobs CI and CJ) are in the page itself; their pictures are lazy files, not script. Measured 13 Oct 2026 after job CJ: Today 200,190, the Office 182,479, the landing page 152,718 (margin 282). Raise a number only with a reason in the commit; the owner approves a raised ceiling. Owner decision 14 Oct 2026 (job CL, after CK): Today 201,000 -> 204,000 and the landing page 153,000 -> 156,000, headroom for waves 2 and 3 while the pack-aware frame (menu words, module gate, core tab) landed; a later trim job takes the weight out again. Job CO (night run C2, 15 Oct 2026): the four new building-materials product routes (/materials, /materials/new, /materials/[itemId], /materials/[itemId]/edit) carry the product editor (photos, extra details) and measure 187,805 B, about 1.8 KB over the signed-in default; they are new routes of a new feature, not a raise of an existing ceiling, and the saree catalogue routes stay under their own (the materials screens are on their own routes so that a saree workspace never downloads them). Each is set to 190,000. A trim job can share the photo code of the two editors. Job CQ (night run C2, 15 Oct 2026): the five new campaign routes (/campaigns, /campaigns/new, /campaigns/[campaignId], /campaigns/[campaignId]/edit, /call-list) share one client chunk set of 187,196 B (the form, the people list with its list reader, the approval sheet, the results and the call list); job CS adds the school's audience (students' parents) and the two announcement routes (/announcements, /announcements/new) on the same set, now 187,920 B, about 1.2 KB over the signed-in default; they are new routes of a new feature, not a raise of an existing ceiling. Each is set to 190,000.",
     "public": 153000,
     "app": 186000,
     "routes": {
@@ -14,7 +14,18 @@
       "/app/tenants/[tenantId]/outbox/page": 184000,
       "/app/tenants/[tenantId]/catalogue/page": 178000,
       "/app/tenants/[tenantId]/settings/page": 193000,
-      "/app/tenants/[tenantId]/office/page": 184000
+      "/app/tenants/[tenantId]/office/page": 184000,
+      "/app/tenants/[tenantId]/materials/page": 190000,
+      "/app/tenants/[tenantId]/materials/new/page": 190000,
+      "/app/tenants/[tenantId]/materials/[itemId]/page": 190000,
+      "/app/tenants/[tenantId]/materials/[itemId]/edit/page": 190000,
+      "/app/tenants/[tenantId]/campaigns/page": 190000,
+      "/app/tenants/[tenantId]/campaigns/new/page": 190000,
+      "/app/tenants/[tenantId]/campaigns/[campaignId]/page": 190000,
+      "/app/tenants/[tenantId]/campaigns/[campaignId]/edit/page": 190000,
+      "/app/tenants/[tenantId]/call-list/page": 190000,
+      "/app/tenants/[tenantId]/announcements/page": 190000,
+      "/app/tenants/[tenantId]/announcements/new/page": 190000
     }
   }
 }

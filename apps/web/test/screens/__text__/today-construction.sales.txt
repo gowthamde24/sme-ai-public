@@ -24,6 +24,7 @@ Booked, but not confirmed with the customer yet. Nothing was sent to the custome
 [button type=button: Change time]
 [button type=button: Cancel the visit]
 {role=status}
+{label="Your business today"} [Trips today 2 1 on the way · 0 delivered](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips) [Quotes waiting 1 1 drafts wait for the Owner or an Admin](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [Dues this week ₹80,000.00 Already overdue: ₹50,000.00](/app/tenants/22222222-2222-2222-2222-222222222222/dues)
 {label="At the store today"}
 ## At the store today
 3 visits

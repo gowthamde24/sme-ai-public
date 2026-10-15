@@ -62,6 +62,7 @@ class PrivacyRepository(Protocol):
     def expired_exports(self, token: str, limit: int) -> list[dict[str, Any]]: ...
     def export_cleaned(self, token: str, export_id: uuid.UUID) -> None: ...
     def run_retention(self, token: str, limit: int) -> dict[str, Any]: ...
+    def run_students_retention(self, token: str, limit: int) -> dict[str, Any]: ...
 
 
 class PostgrestPrivacyRepository:
@@ -203,3 +204,7 @@ class PostgrestPrivacyRepository:
 
     def run_retention(self, token: str, limit: int) -> dict[str, Any]:
         return self._object(token, "privacy_worker_run_retention", {"p_limit": limit})
+
+    def run_students_retention(self, token: str, limit: int) -> dict[str, Any]:
+        """Job CR (ADR 0087): erase the students who left more than the school's retention months ago (the database decides which; counts only)."""
+        return self._object(token, "scheduler_students_retention", {"p_limit": limit})

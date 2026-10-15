@@ -1,0 +1,20 @@
+[← Order 7](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1)
+# Plan a trip
+form:
+Date
+<date label="Date" min=2026-10-06 value=2026-10-06>
+legend: What goes on this truck
+Paver block 80 mm grey (synthetic) ( piece )
+<text label="Paver block 80 mm grey (synthetic) (piece)" inputmode=numeric value=2500 described-by="Ordered 4,725, on other trips 0, left 4,725">
+Ordered 4,725, on other trips 0, left 4,725
+Vehicle number
+<text label="Vehicle number" maxlength=20 described-by="For example: TS 09 UA 1234">
+For example: TS 09 UA 1234 Driver's name
+<text label="Driver's name" maxlength=80>
+Driver's phone number
+<text label="Driver's phone number" maxlength=20 inputmode=tel>
+Site
+<select label="Site">
+  options: The order's site= | Kukatpally villa (synthetic), Hyderabad=5a5a5a5a-5a5a-45a5-85a5-5a5a5a5a5a5a*
+[button type=submit: Save the trip]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1)

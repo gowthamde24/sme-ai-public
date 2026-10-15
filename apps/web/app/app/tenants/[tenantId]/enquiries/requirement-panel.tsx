@@ -19,6 +19,8 @@ type Props = {
   canWrite: boolean;
   runId: string;
   words?: Words;
+  /** The workspace sells by area, weight or piece (module `materials`): the add-a-field form offers that vocabulary. */
+  materials?: boolean;
 };
 
 function Badge({ children, tone }: { children: React.ReactNode; tone: "good" | "plain" | "warn" }) {
@@ -43,7 +45,7 @@ function groups(fields: RequirementField[], t: Say): { title: string; fields: Re
  * missing, and clarifying questions to copy. EVERYTHING that came from the enquiry text (a quote, a city) is untrusted and shown as plain text.
  * "Suggested" means nobody has checked it; "Approved" is only ever a person's decision. Nothing on this page sends anything.
  */
-export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId, words }: Props) {
+export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId, words, materials = false }: Props) {
   const t = makeT(words);
   const requirement = view.requirement;
   const status = requirement?.status ?? null;
@@ -159,7 +161,7 @@ export function RequirementPanel({ tenantId, enquiry, view, canWrite, runId, wor
       {canWrite && status !== "confirmed" ? (
         <div>
           <h3 className={pageH3}>{t("enq.add_a_field_the_suggestions_missed")}</h3>
-          <AddFieldForm words={words} add={addFieldAction.bind(null, tenantId, enquiry.id)} />
+          <AddFieldForm words={words} materials={materials} add={addFieldAction.bind(null, tenantId, enquiry.id)} />
         </div>
       ) : null}
 

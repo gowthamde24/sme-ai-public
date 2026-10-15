@@ -77,12 +77,7 @@ CK_CHANGED: dict[str, tuple[str, str, set[str], set[str]]] = {
             "return jsonb_build_object('state', 'none', 'tenant_id', null, 'business_name', null);",
         },
     ),
-    "public.import_job_preview_save": (
-        IMPORT,
-        BI,
-        {"or p_mapping is null or p_mapping_sha256 is null or p_mapping_sha256 !~ '^[0-9a-f]{64}$' or p_rows is null or p_rows not between 0 and 500"},
-        {"or p_mapping is null or p_mapping_sha256 is null or p_mapping_sha256 !~ '^[0-9a-f]{64}$' or p_rows is null or p_rows not between 0 and 5000"},
-    ),
+    # public.import_job_preview_save: replaced again by job CR (the kind `students`); tests/test_migration_copies_cr.py pins that copy against this one
 }
 
 

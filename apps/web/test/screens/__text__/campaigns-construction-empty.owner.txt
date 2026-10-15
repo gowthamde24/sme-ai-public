@@ -1,0 +1,2 @@
+# Campaigns
+Reminder messages for payments, deliveries, fees and events. You check every message, then approve once. No campaigns yet A campaign is a short reminder sent to a list of people on set days. Make one, check the messages, then approve. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)

@@ -1,0 +1,10 @@
+[Fees](/app/tenants/22222222-2222-2222-2222-222222222222/fees)
+# Fees pending
+Money that has fallen due and is not yet paid or conceded, the largest first.
+{label="Filter the students"} Class or course
+<select name=programme label="Class or course">
+  options: All=* | Class 5 (synthetic)=bb000000-0000-4000-8000-000000000001 | B.Com (synthetic)=bb000000-0000-4000-8000-000000000002
+[button type=submit: Show]
+- [Kiran (synthetic) ₹9,000.00 Class 5 (synthetic) · B Parent or guardian: Ravi Kumar (synthetic) Fallen due: ₹24,000.00 12 days late](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000002)
+- [Asha (synthetic) ₹4,000.00 Class 5 (synthetic) · A Parent or guardian: Ravi Kumar (synthetic) Fallen due: ₹25,000.00 3 days late](/app/tenants/22222222-2222-2222-2222-222222222222/fees/students/5d000000-0000-4000-8000-000000000001)
+[Show more](/app/tenants/22222222-2222-2222-2222-222222222222/fees/pending?after=p%3A400000%3A5d000000-0000-4000-8000-000000000001)

@@ -1,0 +1,31 @@
+[All campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns)
+# Parents meeting (synthetic)
+Draft Event · 18 people · ₹4,12,500.00
+{label="Campaign sections"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001) [People](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=audience current=page) [Check and approve](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=approve) [Results](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=results)
+{label="From the ledger"}
+## From the ledger
+Everyone with money still open on claims due in the range. The amount is what is open today and the date is the earliest due date. It is checked again before each message. Due from
+<date label="Due from">
+Due until
+<date label="Due until">
+Who owes
+<select label="Who owes">
+  options: Anyone=* | Companies=company | People=contact
+Smallest amount open (rupees)
+<text label="Smallest amount open (rupees)" inputmode=decimal>
+[button type=button: Add from the ledger]
+{label="From the students"}
+## From the students
+One message for each parent however many children they have. A parent with no number is skipped and counted. Who
+<select label="Who">
+  options: Every student's parent=all* | One class or course=programme | One section, year or batch=group
+The day to count the steps from
+<date label="The day to count the steps from">
+[button type=button: Add the parents]
+{label="People in this campaign: 18"}
+## People in this campaign: 18
+[button type=button: Remove everyone]
+- Ravi Kumar (synthetic) 2026-10-20 · INV-1001 ₹1,25,000.00
+[button type=button: Remove Ravi Kumar (synthetic)]
+- Lakshmi Constructions (synthetic) 2026-10-20 · INV-1007 ₹2,300.00 Paid
+[button type=button: Remove Lakshmi Constructions (synthetic)]

@@ -6,6 +6,9 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuotePolicyVersions, type QuotePolicyVersion } from "@/lib/api/quote-policies";
 import { requireUser } from "@/lib/auth/session";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
+import { MaterialPolicyPage } from "./material-policy-page";
 
 import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
 import { AddButton } from "@/components/v2/app/AddButton";
@@ -29,7 +32,7 @@ const ROLES = ["owner", "admin"];
  * /app/tenants/[tenantId]/quote-policy: the published quote policy versions, and (for an owner or an admin, with the authenticator app) a form to publish a new one. Every other role gets one plain
  * sentence and nothing else: no list and no form. The page makes ONE new id per render for the form.
  */
-export default async function QuotePolicyPage({ params }: PageProps<"/app/tenants/[tenantId]/quote-policy">) {
+export default async function QuotePolicyPage({ params, searchParams }: PageProps<"/app/tenants/[tenantId]/quote-policy">) {
   const lang = await getLang();
   const words = wordsFor(lang, ["qp."]);
   const t = makeT(words);
@@ -45,6 +48,11 @@ export default async function QuotePolicyPage({ params }: PageProps<"/app/tenant
     if (error instanceof ApiRequestError && error.status === 404) notFound();
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
+  }
+  // a business that sells by area, weight or piece (module `materials`, job CO) has its own rules: wastage, freight, loading, laying, advance, credit days, validity
+  if (hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) {
+    const query = await searchParams;
+    return MaterialPolicyPage({ accessToken: user.accessToken, tenantId, role: tenant.role, aal2: user.aal === "aal2", lang, saved: (Array.isArray(query.saved) ? query.saved[0] : query.saved) === "1" });
   }
   if (!ROLES.includes(tenant.role))
     return (

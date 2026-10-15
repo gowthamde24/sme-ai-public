@@ -113,7 +113,11 @@ export interface OrderEvent {
 export interface Order {
   id: string;
   order_no: number;
-  quote_id: string;
+  /** The saree quote the order came from; null for an order from a building-materials quote (`material_quote_id`). Exactly one of the two is set. */
+  quote_id: string | null;
+  material_quote_id: string | null;
+  /** The site a material order is delivered to. */
+  site_id: string | null;
   enquiry_id: string;
   requirement_id: string;
   lead_id: string;
@@ -257,7 +261,9 @@ export function parseOrder(json: unknown): Order {
   return {
     id: str(json, "id"),
     order_no: int(json, "order_no"),
-    quote_id: str(json, "quote_id"),
+    quote_id: json.quote_id === null || json.quote_id === undefined ? null : str(json, "quote_id"),
+    material_quote_id: json.material_quote_id === null || json.material_quote_id === undefined ? null : str(json, "material_quote_id"),
+    site_id: json.site_id === null || json.site_id === undefined ? null : str(json, "site_id"),
     enquiry_id: str(json, "enquiry_id"),
     requirement_id: str(json, "requirement_id"),
     lead_id: str(json, "lead_id"),

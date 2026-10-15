@@ -1,0 +1,20 @@
+[All campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns)
+# October payment reminders (synthetic)
+Draft Payment due · 18 people · ₹4,12,500.00
+{label="Campaign sections"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001) [People](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=audience) [Check and approve](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=approve current=page) [Results](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=results)
+People
+18
+Total amount
+₹4,12,500.00
+Due dates
+2026-10-20 – 2026-10-31
+Steps
+3
+{label="Messages to read before you approve"}
+## Messages to read before you approve
+The first person, the longest message, the highest amount and three picked at random, exactly as each person will read it.
+- First Highest amount ₹1,25,000.00 Hello Ravi Kumar (synthetic), a payment of ₹1,25,000.00 for INV-1001 is due on 2026-10-20.
+- Longest ₹2,300.00 Hello Lakshmi Constructions Private Limited (synthetic), a payment of ₹2,300.00 for INV-1007 is due on 2026-10-27.
+- Picked at random ₹48,000.00 Hello Suresh (synthetic), a payment of ₹48,000.00 for INV-1003 is due on 2026-10-22.
+Every message tells the person it comes from the business's AI assistant and how to stop. It reads: This message is from the business's AI assistant. Reply STOP to stop messages.
+{role=note} Only the Owner can approve, with the authenticator code. You can read the messages and fix what is missing.

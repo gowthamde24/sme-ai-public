@@ -67,3 +67,9 @@ A pack that sells by area or weight and delivers by truck (bricks, tiles, steel,
 ## 7. Give it a public page (job CM, optional)
 
 A business type can have its own page on the public website (`/<slug>`, in four languages, with its own share picture). It is **only a new file**: copy `packages/packs/textiles/landing.json`, change the words and the `slug`, then run `make site-packs` (it rebuilds `apps/web/lib/site/site-packs.generated.json`; commit it) and `npm run og:images` in `apps/web` (the 4 share pictures). `make packs-check` validates the file (`packages/packs/landing.schema.json`: closed owl and icon lists, texts in all four languages, only `{brand}` as a placeholder, no price or percentage; a `calculator` block needs the `quotes` module, a `fee_preview` block needs `fees`). The file is separate from `pack.json` on purpose: `pack.json` is hash-synced into the database, the landing words are not. No web code changes. See `docs/runbooks/public-site.md` and ADR 0086.
+
+## 8. What the web shows for a new pack without any new code (job CU)
+
+* **The phone's bottom bar** follows the pack's `core_tab`: the quotes keep the five tabs the saree shop has; any other core tab gets Today, Inbox, the core tab and Contacts, then More. (`lib/packs/resolve.ts`, `phoneBar`.)
+* **Reports:** the pack's reports appear under "More reports for your business" on the Reports page when the API's report catalogue offers them (they need the modules they name). A new report only needs its words: `rep.name.<code>`, `rep.kpi.<key>`, `rep.col.<key>`, `rep.table.<key>`, `rep.series.<key>` and `rep.val.<column>.<value>` in `apps/web/i18n/strings/app.json` (four languages). `i18n/used-keys.test.ts` fails when a screen names a key that does not exist.
+* **Words that depend on what the business sells:** add `some.key@<module>` next to `some.key`; a business with that module hears the variant (a table of words uses `withModuleWords`, a translation function `withModuleT`).

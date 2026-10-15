@@ -203,6 +203,10 @@ class FakePrivacy:
         self._note("export_cleaned", token, str(export_id))
         self.cleaned.append(str(export_id))
 
+    def run_students_retention(self, token: str, limit: int) -> dict[str, Any]:
+        self._note("run_students_retention", token, limit)
+        return {"businesses": 0, "erased": 0}
+
     def run_retention(self, token: str, limit: int) -> dict[str, Any]:
         self._note("run_retention", token, limit)
         return dict(self.worker_answers["retention"])

@@ -2,11 +2,14 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
-const reads = { getProfile: vi.fn(), listCatalogueItems: vi.fn(), fetchQuotePolicyVersions: vi.fn(), getWhatsappAccount: vi.fn(), fetchQuotes: vi.fn(), getAccountSecurity: vi.fn() };
+const reads = { getProfile: vi.fn(), listCatalogueItems: vi.fn(), fetchQuotePolicyVersions: vi.fn(), getWhatsappAccount: vi.fn(), fetchQuotes: vi.fn(), getAccountSecurity: vi.fn(), getInstitutionProfile: vi.fn(), listStudents: vi.fn(), listFeePlans: vi.fn(), listCampaigns: vi.fn(), getMaterialPolicy: vi.fn() };
 vi.mock("@/lib/api/profile", () => ({ getProfile: (...a: unknown[]) => reads.getProfile(...a) }));
 vi.mock("@/lib/api/catalogue", () => ({ listCatalogueItems: (...a: unknown[]) => reads.listCatalogueItems(...a) }));
 vi.mock("@/lib/api/quote-policies", () => ({ fetchQuotePolicyVersions: (...a: unknown[]) => reads.fetchQuotePolicyVersions(...a) }));
 vi.mock("@/lib/api/whatsapp", () => ({ getWhatsappAccount: (...a: unknown[]) => reads.getWhatsappAccount(...a) }));
+vi.mock("@/lib/api/education", () => ({ getInstitutionProfile: (...a: unknown[]) => reads.getInstitutionProfile(...a), listStudents: (...a: unknown[]) => reads.listStudents(...a), listFeePlans: (...a: unknown[]) => reads.listFeePlans(...a) }));
+vi.mock("@/lib/api/campaigns", () => ({ listCampaigns: (...a: unknown[]) => reads.listCampaigns(...a) }));
+vi.mock("@/lib/api/materials", () => ({ getMaterialPolicy: (...a: unknown[]) => reads.getMaterialPolicy(...a) }));
 vi.mock("@/lib/api/quotes", () => ({ fetchQuotes: (...a: unknown[]) => reads.fetchQuotes(...a) }));
 vi.mock("@/lib/api/pack", async (orig) => ({ ...(await orig<typeof import("@/lib/api/pack")>()), getAccountSecurity: (...a: unknown[]) => reads.getAccountSecurity(...a) }));
 
@@ -26,6 +29,11 @@ beforeEach(() => {
   reads.getWhatsappAccount.mockResolvedValue({ configured: false });
   reads.fetchQuotes.mockResolvedValue([]);
   reads.getAccountSecurity.mockResolvedValue({ level: "aal1", neededFor: ["approvals", "whatsapp_connect"] });
+  reads.getInstitutionProfile.mockResolvedValue({ configured: false });
+  reads.listStudents.mockResolvedValue({ items: [], next_cursor: null });
+  reads.listFeePlans.mockResolvedValue([]);
+  reads.listCampaigns.mockResolvedValue({ items: [], next_cursor: null });
+  reads.getMaterialPolicy.mockResolvedValue({ current: null, versions: [] });
 });
 
 describe("the activation facts", () => {
@@ -71,7 +79,7 @@ describe("the first-run steps come from the modules a workspace has (blueprint 3
     expect(stepChecks(modulesOf(construction))).toEqual(["business_profile", "catalogue_has_items", "delivery_rule_set", "second_factor_set", "whatsapp_connected", "first_quote_sent"]);
   });
   it("one with programmes and fees and no quotes: people, the fee plan, the second step, WhatsApp, the first reminder campaign", () => {
-    expect(stepChecks(modulesOf(education))).toEqual(["business_profile", "students_imported", "fee_plan_set", "second_factor_set", "whatsapp_connected", "first_campaign_approved"]);
+    expect(stepChecks(modulesOf(education))).toEqual(["business_profile", "institution_set", "students_imported", "fee_plan_set", "second_factor_set", "whatsapp_connected", "first_campaign_approved"]);
   });
   it("a bare workspace has the one step every business has; the second step is asked only where something needs it (an inbox, quotes or campaigns)", () => {
     expect(stepChecks(["today"])).toEqual(["business_profile"]);
@@ -95,13 +103,13 @@ describe("the activation checklist of a workspace", () => {
     reads.getProfile.mockResolvedValue({ name: "x", town: "Guntur", setupComplete: true });
     const construction = workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!);
     const a = await readActivation("tok", T, construction, t);
-    expect(a.steps.map((s) => [s.id, s.state])).toEqual([["business_profile", "done"], ["catalogue_has_items", "todo"], ["delivery_rule_set", "unavailable"], ["second_factor_set", "todo"], ["whatsapp_connected", "todo"], ["first_quote_sent", "todo"]]);
+    expect(a.steps.map((s) => [s.id, s.state])).toEqual([["business_profile", "done"], ["catalogue_has_items", "todo"], ["delivery_rule_set", "todo"], ["second_factor_set", "todo"], ["whatsapp_connected", "todo"], ["first_quote_sent", "todo"]]);
     expect(a.done).toBe(1);
     expect(a.total).toBe(6);
     expect(a.next?.id).toBe("catalogue_has_items");
     expect(a.steps[3].href).toBe("/app/security"); // an account page, not a page of the workspace
     expect(a.steps[1].href).toBe("/catalogue/new");
-    expect(a.steps[2].href).toBeNull(); // no screen yet
+    expect(a.steps[2].href).toBe("/quote-policy");
     expect(a.steps[0].title).toBe("Tell us your business name and city");
   });
   it("speaks the person's language", async () => {
@@ -109,20 +117,33 @@ describe("the activation checklist of a workspace", () => {
     const a = await readActivation("tok", T, workspacePack(defaultPackId()), hi);
     expect(a.steps[0].title).toBe("अपने व्यापार का नाम और शहर बताइए");
   });
-  it("never counts a step whose screen is not built as done, and a school has three of them", async () => {
+  it("a school starts with nothing done: every step has a screen, and the first to do is the name and city", async () => {
     const education = workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!);
     const a = await readActivation("tok", T, education, t);
-    expect(a.steps.filter((s) => s.state === "unavailable").map((s) => s.id)).toEqual(["students_imported", "fee_plan_set", "first_campaign_approved"]);
+    expect(a.steps.map((s) => [s.id, s.state, s.href])).toEqual([
+      ["business_profile", "todo", "/start"], ["institution_set", "todo", "/programmes"], ["students_imported", "todo", "/students/import"], ["fee_plan_set", "todo", "/fees/plans"],
+      ["second_factor_set", "todo", "/app/security"], ["whatsapp_connected", "todo", "/integrations/whatsapp"], ["first_campaign_approved", "todo", "/campaigns"],
+    ]);
+    expect(a.steps.filter((s) => s.state === "unavailable")).toEqual([]);
     expect(a.next?.id).toBe("business_profile");
     expect(a.done).toBe(0);
   });
-  it("has no next step when only unavailable ones are left", async () => {
+  it("a school's steps are done by what the school has: a saved institution, a student, a fee plan, an approved campaign (a draft does not count)", async () => {
     reads.getProfile.mockResolvedValue({ name: "x", town: "Guntur", setupComplete: true });
-    reads.getWhatsappAccount.mockResolvedValue({ configured: true, status: "active" });
-    reads.getAccountSecurity.mockResolvedValue({ level: "aal2", neededFor: [] });
+    reads.getInstitutionProfile.mockResolvedValue({ configured: true });
+    reads.listStudents.mockResolvedValue({ items: [{}], next_cursor: null });
+    reads.listFeePlans.mockResolvedValue([{}]);
+    reads.listCampaigns.mockResolvedValue({ items: [{ status: "draft" }], next_cursor: null });
     const education = workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!);
     const a = await readActivation("tok", T, education, t);
-    expect(a.next).toBeNull();
-    expect(a.done).toBe(3);
+    expect(a.steps.map((s) => [s.id, s.state])).toEqual([["business_profile", "done"], ["institution_set", "done"], ["students_imported", "done"], ["fee_plan_set", "done"], ["second_factor_set", "todo"], ["whatsapp_connected", "todo"], ["first_campaign_approved", "todo"]]);
+    reads.listCampaigns.mockResolvedValue({ items: [{ status: "draft" }, { status: "running" }], next_cursor: null });
+    expect((await readActivation("tok", T, education, t)).steps.at(-1)?.state).toBe("done");
+  });
+  it("a construction business is done with its delivery rule once a policy is in force", async () => {
+    const construction = workspacePack(otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!);
+    reads.getMaterialPolicy.mockResolvedValue({ current: { version_id: "v" }, versions: [] });
+    const a = await readActivation("tok", T, construction, t);
+    expect(a.steps.find((s) => s.id === "delivery_rule_set")?.state).toBe("done");
   });
 });

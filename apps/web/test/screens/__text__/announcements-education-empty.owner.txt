@@ -1,0 +1,2 @@
+# nav.item.announcements
+Messages to parents about an event, an exam or a holiday. You write it, choose who it is for, and approve it once. No announcements yet Tell parents about a parents' meeting, an exam or a holiday. A parent with several children gets one message. [New announcement](/app/tenants/22222222-2222-2222-2222-222222222222/announcements/new)

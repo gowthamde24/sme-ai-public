@@ -1,0 +1,55 @@
+[All orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)
+{label="Order 7Open · Advance received"}
+# Order 7 Open · Advance received
+{role=note} Nothing is sent by this system: every entry here is a record of something that happened outside it.
+Order total ₹1,50,000.00 Received ₹0.00 Balance ₹1,50,000.00 Money held ₹0.00
+## Where it stands
+{label="The steps of an order"}
+- Quote marked as sent
+- Accepted by the customer
+- Advance asked for
+- Advance received
+- In preparation Not reached
+- Dispatched Not reached
+- Delivered Not reached
+- Closed, fully paid Not reached
+You record each step yourself, after it happens outside this app.
+## The money
+Advance asked for
+₹75,000.00
+Refunded
+₹0.00
+Net received
+₹0.00
+Quote valid until
+21 Oct 2026
+Customer GSTIN
+Not given
+Our GSTIN
+Not given
+## What to record next
+These are the entries the rules allow now. They are guidance: the database decides again when you save.
+{label="I sent the quote"}
+#### I sent the quote
+<hidden name=event_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=rendered_at value=2026-10-06T04:30:00.000Z>
+<hidden name=today value=2026-10-06>
+[button type=submit: Record: quote sent]
+{label="Cancel this order"}
+#### Cancel this order
+<hidden name=event_id value=77777777-7777-4777-8777-777777777777>
+<hidden name=rendered_at value=2026-10-06T04:30:00.000Z>
+<hidden name=today value=2026-10-06>
+[button type=submit: Cancel this order]
+## Where it came from
+- [The approved quote](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/c1c1c1c1-c1c1-4c1c-8c1c-c1c1c1c1c1c1)
+- [The enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444)
+- [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+## History
+{label="Events, oldest first"}
+- Order started from the approved quote Quote approved · recorded by Asha (synthetic) (owner) · it happened Oct 6, 2026, 10:30 AM (in 30 minutes) ; recorded Oct 6, 2026, 10:30 AM (in 30 minutes)
+{label="Deliveries"}
+## Deliveries
+[Plan a trip](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1/trips/new) [Deliveries](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips)
+- [Order 7, trip 1 2026-10-20 · 2,500 piece Planned](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1)
+- [Order 7, trip 2 2026-10-20 · 2,225 piece On the way](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d2d2d2d2-d2d2-4d2d-8d2d-d2d2d2d2d2d2)

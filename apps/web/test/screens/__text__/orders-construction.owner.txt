@@ -1,0 +1,18 @@
+{label="Orders and deliveries"} [Orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders current=page) [Deliveries](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips)
+# Orders
+{role=note} Nothing is sent by this system: every entry in an order is a record of something that happened outside it.
+[Start order](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
+{label="Show orders"} [All](/app/tenants/22222222-2222-2222-2222-222222222222/orders current=page) [In progress](/app/tenants/22222222-2222-2222-2222-222222222222/orders?filter=open) [Closed](/app/tenants/22222222-2222-2222-2222-222222222222/orders?filter=closed) [Money held](/app/tenants/22222222-2222-2222-2222-222222222222/orders?filter=held)
+{label="Orders, newest first"}
+- [Order 7](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1) Open · Advance received Started Oct 6, 2026, 10:30 AM (in 30 minutes)
+Total
+₹1,50,000.00
+Received
+₹0.00
+[Details](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb1)
+- [Order 8](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2) Open · Quote approved Started Oct 6, 2026, 10:30 AM (in 30 minutes)
+Total
+₹1,50,000.00
+Received
+₹0.00
+[Details](/app/tenants/22222222-2222-2222-2222-222222222222/orders/bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2)

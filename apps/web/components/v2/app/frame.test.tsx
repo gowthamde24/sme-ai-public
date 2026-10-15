@@ -287,7 +287,7 @@ describe("the menu of a business type (job CL)", () => {
   it("draws the phone's tabs with the core tab in the pack's own word, then More with the rest", () => {
     bar(only("owner"), view());
     const tabs = within(screen.getByRole("navigation", { name: "Quick menu" }));
-    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", real.labels["nav.item.leads"], real.labels["pack.core_tab"], real.labels["nav.tab.visits"], "Office"]);
+    expect(tabs.getAllByRole("link").map((a) => a.textContent)).toEqual(["Today", "Inbox", real.labels["pack.core_tab"], "Contacts"]);
     expect(tabs.getByRole("button", { name: "More" })).toBeInTheDocument();
     fireEvent.click(tabs.getByRole("button", { name: "More" }));
     const sheet = within(screen.getByRole("dialog"));

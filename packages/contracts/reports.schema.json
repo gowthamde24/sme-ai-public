@@ -1,0 +1,258 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "reports.schema.json",
+  "title": "The reports of every pack, in one shape (job CV)",
+  "description": "Generated from services/ai-api/app/reports/models.py by `make contracts`.",
+  "$defs": {
+    "CatalogueItemOut": {
+      "additionalProperties": false,
+      "description": "A report the caller may run: its code, the key of its title (the words are the web's, in four languages), the kind of window it takes and the modules it needs.",
+      "properties": {
+        "code": {
+          "title": "Code",
+          "type": "string"
+        },
+        "title_key": {
+          "title": "Title Key",
+          "type": "string"
+        },
+        "window": {
+          "enum": [
+            "range",
+            "day",
+            "week"
+          ],
+          "title": "Window",
+          "type": "string"
+        },
+        "modules": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Modules",
+          "type": "array"
+        }
+      },
+      "required": [
+        "code",
+        "title_key",
+        "window",
+        "modules"
+      ],
+      "title": "CatalogueItemOut",
+      "type": "object"
+    },
+    "CatalogueOut": {
+      "additionalProperties": false,
+      "properties": {
+        "items": {
+          "items": {
+            "$ref": "#/$defs/CatalogueItemOut"
+          },
+          "title": "Items",
+          "type": "array"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "CatalogueOut",
+      "type": "object"
+    },
+    "ColumnOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "text",
+            "count",
+            "paise",
+            "percent"
+          ],
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "type"
+      ],
+      "title": "ColumnOut",
+      "type": "object"
+    },
+    "KpiOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        },
+        "unit": {
+          "enum": [
+            "paise",
+            "count",
+            "percent",
+            "seconds"
+          ],
+          "title": "Unit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key",
+        "value",
+        "unit"
+      ],
+      "title": "KpiOut",
+      "type": "object"
+    },
+    "PointOut": {
+      "additionalProperties": false,
+      "properties": {
+        "day": {
+          "format": "date",
+          "title": "Day",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "day",
+        "value"
+      ],
+      "title": "PointOut",
+      "type": "object"
+    },
+    "ReportOut": {
+      "additionalProperties": false,
+      "description": "Figures, typed tables and series by day. `from` and `to` are the India days the figures cover (`as_of` the day they are as of).",
+      "properties": {
+        "report": {
+          "title": "Report",
+          "type": "string"
+        },
+        "as_of": {
+          "format": "date",
+          "title": "As Of",
+          "type": "string"
+        },
+        "from": {
+          "format": "date",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "format": "date",
+          "title": "To",
+          "type": "string"
+        },
+        "kpis": {
+          "items": {
+            "$ref": "#/$defs/KpiOut"
+          },
+          "title": "Kpis",
+          "type": "array"
+        },
+        "tables": {
+          "items": {
+            "$ref": "#/$defs/TableOut"
+          },
+          "title": "Tables",
+          "type": "array"
+        },
+        "series": {
+          "items": {
+            "$ref": "#/$defs/SeriesOut"
+          },
+          "title": "Series",
+          "type": "array"
+        }
+      },
+      "required": [
+        "report",
+        "as_of",
+        "from",
+        "to",
+        "kpis",
+        "tables",
+        "series"
+      ],
+      "title": "ReportOut",
+      "type": "object"
+    },
+    "SeriesOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "points": {
+          "items": {
+            "$ref": "#/$defs/PointOut"
+          },
+          "title": "Points",
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "points"
+      ],
+      "title": "SeriesOut",
+      "type": "object"
+    },
+    "TableOut": {
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "title": "Key",
+          "type": "string"
+        },
+        "columns": {
+          "items": {
+            "$ref": "#/$defs/ColumnOut"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "rows": {
+          "items": {
+            "items": {},
+            "type": "array"
+          },
+          "title": "Rows",
+          "type": "array"
+        }
+      },
+      "required": [
+        "key",
+        "columns",
+        "rows"
+      ],
+      "title": "TableOut",
+      "type": "object"
+    }
+  }
+}

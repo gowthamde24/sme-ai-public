@@ -1,0 +1,19 @@
+[button type=button: Print or save as PDF]
+In the print window choose Save as PDF to keep a file. Pavers Corner (synthetic) Receipt
+Receipt no.
+R/2026-27/000012
+Received on
+2026-10-02
+Received from
+Sri Rama Builders (synthetic)
+Amount received
+₹70,000.00
+In words
+Rupees Seventy Thousand Only
+How it was paid
+UPI
+Against
+INV-1001
+Still owed after this receipt
+₹1,30,000.00
+Signature This is a receipt for money received. It is not a GST invoice; invoices come from your accounting program.

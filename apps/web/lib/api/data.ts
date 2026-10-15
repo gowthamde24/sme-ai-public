@@ -6,8 +6,8 @@ import { bad, bool, counts, int, iso, isRec, list, optInt, optIso, optStr, oneOf
  * Settings > Data (job CC, screen 1): the spreadsheet import, the accounting export and the calendar feed (ADR 0073; the contract is in job BI's report). Server side only, with the signed-in person's own token.
  * The import's file is the raw request body; the API holds it in memory for the request and never stores it. Cell values of the file (sample rows, labels) are the person's own data and are drawn as text only.
  */
-export type ImportKind = "customers" | "stock";
-export const IMPORT_KINDS: readonly ImportKind[] = ["customers", "stock"];
+export type ImportKind = "customers" | "stock" | "students";
+export const IMPORT_KINDS: readonly ImportKind[] = ["customers", "stock", "students"];
 /** The API refuses a larger file (a CSV over 1 MB is refused too); the screen checks first. */
 export const MAX_IMPORT_BYTES = 2_000_000;
 export const MAX_CSV_BYTES = 1_000_000;

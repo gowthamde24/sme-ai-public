@@ -6,6 +6,7 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchItemTypes, type ItemType } from "@/lib/api/item-types";
 import { requireUser } from "@/lib/auth/session";
+import { sendMaterialsBusinessTo } from "@/lib/packs/materials-redirect";
 
 import { ApiDownV2, CatalogueTabs } from "@/components/v2/app/parts";
 import { AddButton } from "@/components/v2/app/AddButton";
@@ -35,6 +36,7 @@ export default async function ItemTypesPage({ params }: PageProps<"/app/tenants/
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
+  await sendMaterialsBusinessTo(user.accessToken, tenantId, "/quote-policy");
 
   let tenant;
   try {

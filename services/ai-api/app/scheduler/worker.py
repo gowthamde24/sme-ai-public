@@ -27,12 +27,14 @@ from app.notifications.webpush import WebPushSender
 from app.notifications.wiring import build_vapid
 from app.outbox.adapter import ChannelAdapter, build_adapter
 from app.outbox.service import media_signer
+from app.outbox.voice_hook import VoiceNotes
 from app.privacy.housekeeping import Housekeeping
 from app.privacy.repository import PostgrestPrivacyRepository
 from app.scheduler.repository import PostgrestSchedulerRepository, SchedulerRepository
 from app.scheduler.session import PrincipalSession, SignInError
 from app.scheduler.tick import TickResult, run_tick
 from app.tenancy.repository import TokenRejected
+from app.voice.factory import build_tts
 
 logger = logging.getLogger("app.scheduler.worker")
 
@@ -59,6 +61,7 @@ class Worker:
         storage: StorageClient | None = None,
         housekeeping: Housekeeping | None = None,
         push: PushRunner | None = None,
+        voice: VoiceNotes | None = None,
     ) -> None:
         if not MIN_INTERVAL <= interval_seconds <= MAX_INTERVAL:
             raise ValueError("the interval must be between 5 and 3600 seconds")
@@ -71,6 +74,8 @@ class Worker:
         self._sign_media = media_signer(storage)
         self._housekeeping = housekeeping
         self._push = push
+        # job CV: the spoken copy of a campaign message, made at send time by the text-to-speech provider (None = voice notes are not available in this process)
+        self._voice = voice
 
     def tick_once(self) -> TickResult | None:
         """One tick. Never raises: a failed tick is logged (by class name only) and answered with None."""
@@ -82,6 +87,7 @@ class Worker:
                 token,
                 interval_seconds=self.interval_seconds,
                 sign_media=self._sign_media,
+                voice=self._voice.clip_for if self._voice is not None else None,
             )
             self._privacy_housekeeping(token)
             self._push_to_the_team(token)
@@ -158,14 +164,16 @@ def build_worker(settings: Settings) -> Worker:
     )
     storage = HttpStorageClient(f"{config.supabase_url}/storage/v1", config.anon_key)
     vapid = build_vapid(settings)
+    repository = PostgrestSchedulerRepository(config.rest_url, config.anon_key)
     return Worker(
-        PostgrestSchedulerRepository(config.rest_url, config.anon_key),
+        repository,
         adapter,
         session,
         interval_seconds=settings.scheduler_interval_seconds,
         storage=storage,
         housekeeping=Housekeeping(PostgrestPrivacyRepository(config.rest_url, config.anon_key), storage),
         push=PushRunner(PostgrestNotificationsRepository(config.rest_url, config.anon_key), WebPushSender(vapid)) if vapid is not None else None,
+        voice=VoiceNotes(repository, build_tts(settings)),
     )
 
 

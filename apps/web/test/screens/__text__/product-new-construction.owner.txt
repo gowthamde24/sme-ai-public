@@ -1,0 +1,61 @@
+[← All sarees](/app/tenants/22222222-2222-2222-2222-222222222222/materials)
+# Add a product
+form:
+Name
+<text label="Name" maxlength=120 described-by="For example: Paver block 200x100, 80 mm, grey">
+For example: Paver block 200x100, 80 mm, grey You sell it by
+<select label="You sell it by" described-by="The price below is for one of these.">
+  options: piece | sq ft=sq_ft* | sq m=sq_m | box | bag | tonne | cft | truckload
+The price below is for one of these. Customers give the area in
+<select label="Customers give the area in" described-by="Choose sq ft or sq m for blocks and tiles, so the pieces can be counted from the area.">
+  options: Not by area (a bag, a tonne ...)=* | sq ft=sq_ft | sq m=sq_m
+Choose sq ft or sq m for blocks and tiles, so the pieces can be counted from the area. Stock
+<select label="Stock">
+  options: In stock=in_stock* | Few left=few_left | Made to order=made_to_order
+legend: Details
+Product type
+<select label="Product type">
+  options: Choose…=* | Paver block=paver_block | Kerb stone=kerb_stone | Brick=brick | Tile=tile | Cement=cement | Sand=sand | Aggregate=aggregate | Other=other
+Size (for example 200x100 mm)
+<text label="Size (for example 200x100 mm)" maxlength=100 autocomplete=off>
+Thickness (mm)
+<select label="Thickness (mm)">
+  options: Choose…=* | 60 mm=60 | 80 mm=80 | 100 mm=100
+Shape or pattern
+<text label="Shape or pattern" maxlength=100 autocomplete=off>
+Colour
+<text label="Colour" maxlength=100 autocomplete=off>
+Finish
+<text label="Finish" maxlength=100 autocomplete=off>
+Grade or strength (for example M30)
+<text label="Grade or strength (for example M30)" maxlength=100 autocomplete=off>
+Pieces per sq ft or sq m
+<text label="Pieces per sq ft or sq m" maxlength=20 inputmode=decimal autocomplete=off>
+Pieces per pallet
+<text label="Pieces per pallet" maxlength=20 inputmode=decimal autocomplete=off>
+Minimum order
+<text label="Minimum order" maxlength=20 inputmode=decimal autocomplete=off>
+Stock
+<select label="Stock">
+  options: Choose…=* | In stock=in_stock | Made to order=made_to_order
+Lead days when made to order
+<text label="Lead days when made to order" maxlength=20 inputmode=decimal autocomplete=off>
+HSN code (from your accountant)
+<text label="HSN code (from your accountant)" maxlength=100 autocomplete=off>
+GST rate in percent (from your accountant)
+<text label="GST rate in percent (from your accountant)" maxlength=20 inputmode=decimal autocomplete=off>
+Price per unit (₹)
+<text label="Price per unit (₹)" inputmode=decimal autocomplete=off described-by="Your own price, before GST. Only the owner sets it, with the authenticator code.">
+Your own price, before GST. Only the owner sets it, with the authenticator code.
+{label="Photos"}
+## Photos
+Up to 8 photos. The first one is the cover.
+[button type=button: Take a photo]
+[button type=button: Choose photos]
+<file accept=image/jpeg,image/png,image/webp>
+<file accept=image/jpeg,image/png,image/webp>
+<checkbox label="Show this product to customers" disabled described-by="Add at least one photo to show this saree to customers.">
+Show this product to customers Add at least one photo to show this saree to customers.
+{role=status}
+[button type=submit: Save]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/materials)

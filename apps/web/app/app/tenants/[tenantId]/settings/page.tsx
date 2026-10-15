@@ -38,6 +38,7 @@ import { settle, type Part } from "@/lib/api/part";
 
 import { FieldsSection } from "@/components/v2/app/fields/FieldsSection";
 import { readPackCached } from "@/lib/packs/read";
+import { withModuleWords } from "@/lib/packs/module-words";
 import { listCustomFields } from "@/lib/api/custom-fields";
 import { usesChecklist } from "@/lib/packs/activation";
 import type { FieldEntity, WorkspaceField } from "@/lib/packs/types";
@@ -262,7 +263,7 @@ export default async function SettingsPage({ params, searchParams }: PageProps<"
         {section === "data" && dataParts ? (
           <DataSection
             tenantId={tenantId}
-            words={wordsFor(lang, ["dta.", "apierr.", "problem.", "catalogue.stock."])}
+            words={withModuleWords(wordsFor(lang, ["dta.", "apierr.", "problem.", "catalogue.stock."]), pack)}
             admin={admin}
             formats={dataParts.formats}
             jobs={dataParts.jobs}

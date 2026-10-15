@@ -10,6 +10,9 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { hasModule } from "@/lib/packs/has";
+import { rawQuery } from "@/lib/packs/materials-redirect";
+import { readPackCached } from "@/lib/packs/read";
 
 import { readLeadLabel } from "../visits/visits-data";
 import { readCatalogue } from "./catalogue-data";
@@ -41,6 +44,8 @@ export default async function CataloguePage({ params, searchParams }: PageProps<
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
+  // a business that sells by area, weight or piece (module `materials`, job CO) sees its products here, not the saree photo catalogue
+  if (hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) redirect(`/app/tenants/${tenantId}/materials${rawQuery(raw)}`);
   const lang = await getLang();
   const query = parseQuery(raw);
   const rawAfter = pick(raw.after);

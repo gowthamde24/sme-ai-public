@@ -10,6 +10,9 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { fetchQuotes, formatDate, formatRupees } from "@/lib/api/quotes";
 import { requireUser } from "@/lib/auth/session";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
+import { MaterialQuotesPage } from "./material-pages";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -43,6 +46,8 @@ export default async function QuotesPage({ params }: PageProps<"/app/tenants/[te
   }
   if (!(WRITERS as readonly string[]).includes(tenant.role)) return <NotShownV2 tenantId={tenantId} tenantName={tenant.name} title={t("enq.quotes")} message={t("enq.quotes_are_shown_to_owners_admins")} />;
 
+  // a business that sells by area, weight or piece (module `materials`, job CO) sees its material quotes here
+  if (hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) return MaterialQuotesPage({ accessToken: user.accessToken, tenantId, lang });
   let quotes;
   try {
     quotes = await fetchQuotes(user.accessToken, tenantId, 50);

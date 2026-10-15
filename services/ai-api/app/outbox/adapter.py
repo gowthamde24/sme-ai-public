@@ -51,6 +51,16 @@ class SendContext:
 
 
 @dataclass(frozen=True)
+class AudioClip:
+    """A spoken copy of the message (job CV, ADR 0088): made at send time from the text the Owner approved (preceded by the spoken AI disclosure), held in memory for this one send, never stored,
+    never logged. A channel that can carry audio sends it IN ADDITION to the text; one that cannot (or the customer's 24-hour window is closed) leaves it out and the text still goes."""
+
+    audio: bytes = field(repr=False)
+    content_type: str
+    seconds: int
+
+
+@dataclass(frozen=True)
 class OutgoingMessage:
     message_id: uuid.UUID
     to_phone: str = field(repr=False)
@@ -59,6 +69,7 @@ class OutgoingMessage:
     media: tuple[MediaRef, ...] = ()
     attempts: int = 1
     wa: SendContext | None = None
+    audio: AudioClip | None = None
 
     @property
     def idempotency_key(self) -> str:
@@ -68,6 +79,11 @@ class OutgoingMessage:
     def media_key(self, position: int) -> str:
         """The idempotency key of one photo (1-based position in the message)."""
         return f"{self.message_id}:{position}"
+
+    @property
+    def audio_key(self) -> str:
+        """The idempotency key of the voice note of the message."""
+        return f"{self.message_id}:audio"
 
 
 @dataclass(frozen=True)

@@ -27,8 +27,17 @@ export function withPackT<F extends (key: never, vars?: never) => string>(t: F, 
   return (((key: never, vars?: never) => (typeof key === "string" && key in own && !vars ? own[key] : t(key, vars))) as unknown) as F;
 }
 
+/**
+ * The layout of the phone's bottom bar of a business type (job CU): a PACK SETTING, read from the pack's `core_tab`. A pack whose core tab is the quotes keeps the bar the product always had (the saree shop: Today, Leads, Quotes, Visits,
+ * Office); a pack whose core tab is another one (Orders & deliveries, Fees) gets the blueprint's bar: Today, Inbox, its core tab, Contacts, then More. The pack files do not carry a bar field of their own yet (a new field would change
+ * their hash, which the database copies: a pack-version job); until then the core tab decides. No business type is named here.
+ */
+export function phoneBar(pack: Pick<WorkspacePack, "coreTab">): "classic" | "core" {
+  return pack.coreTab === "quotes" ? "classic" : "core";
+}
+
 /** What the menu needs (a plain object for the client): the modules that are on, the core tab and only the `nav.` words and the core tab's word (the rest travel with the page that uses them). */
 export function packFrame(pack: WorkspacePack, lang: string): PackFrame {
   const labels = Object.fromEntries(Object.entries(packWords(pack, lang)).filter(([k]) => k.startsWith("nav.") || k === "pack.core_tab"));
-  return { name: textIn(pack.names, lang), accent: pack.accent, validated: pack.validated, coreTab: pack.coreTab, modules: pack.modules, labels };
+  return { name: textIn(pack.names, lang), accent: pack.accent, validated: pack.validated, coreTab: pack.coreTab, modules: pack.modules, labels, bar: phoneBar(pack) };
 }

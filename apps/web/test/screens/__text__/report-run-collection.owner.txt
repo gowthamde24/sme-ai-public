@@ -1,0 +1,36 @@
+[All reports](/app/tenants/22222222-2222-2222-2222-222222222222/report)
+# Fee collection
+From 2026-06-01 to 2026-10-14
+{label="Choose the dates"} From
+<date name=from label="From" max=2026-10-06 value=2026-06-01>
+To
+<date name=to label="To" max=2026-10-06 value=2026-10-14>
+[button type=submit: Show]
+Fallen due
+₹5,80,000.00
+Pending
+₹74,000.00
+Collected
+₹4,90,000.00
+Conceded
+₹16,000.00
+Collected so far
+87.2%
+Students with fees pending
+9
+{label="By class or course"}
+## By class or course
+table:
+  | th Class or course | th Students | th Fallen due | th Pending | th Collected |
+  | Class 5 (synthetic) | 31 | ₹5,80,000.00 | ₹74,000.00 | 87.2% |
+{label="By section, year or batch"}
+## By section, year or batch
+table:
+  | th Class or course | th Section | th Students | th Fallen due | th Pending | th Collected |
+  | Class 5 (synthetic) | A | 16 | ₹3,00,000.00 | ₹30,000.00 | 90% |
+  | Class 5 (synthetic) | B | 15 | ₹2,80,000.00 | ₹44,000.00 | 84.3% |
+{label="Collected, day by day"}
+## Collected, day by day
+- 2026-10-12 ₹25,000.00
+- 2026-10-13 ₹12,000.00
+A figure with a dash could not be worked out, for example a percentage of nothing.

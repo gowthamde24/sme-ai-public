@@ -4,7 +4,7 @@ import { readFacts } from "./activation-facts";
 import type { WorkspacePack } from "./types";
 
 /** The checks a first-run step can use (a closed list; each is answered by a real read, activation-facts.ts). */
-export type StepCheck = "business_profile" | "second_factor_set" | "catalogue_has_items" | "quote_rules_set" | "delivery_rule_set" | "students_imported" | "fee_plan_set" | "whatsapp_connected" | "first_quote_sent" | "first_campaign_approved";
+export type StepCheck = "business_profile" | "institution_set" | "second_factor_set" | "catalogue_has_items" | "quote_rules_set" | "delivery_rule_set" | "students_imported" | "fee_plan_set" | "whatsapp_connected" | "first_quote_sent" | "first_campaign_approved";
 export type StepState = "done" | "todo" | "unavailable";
 export type StartStep = { id: string; check: StepCheck; title: string; hint: string; state: StepState; href: string | null };
 export type Activation = { steps: StartStep[]; done: number; total: number; next: StartStep | null };
@@ -16,14 +16,15 @@ export type Activation = { steps: StartStep[]; done: number; total: number; next
 const WHERE: Record<StepCheck, string | null> = {
   business_profile: "/start",
   second_factor_set: "/app/security", // an account page: a path that starts with /app is used as it is
+  institution_set: "/programmes",
   catalogue_has_items: "/catalogue/new",
   quote_rules_set: "/quote-policy",
   whatsapp_connected: "/integrations/whatsapp",
   first_quote_sent: "/quotes",
-  delivery_rule_set: null,
-  students_imported: null,
-  fee_plan_set: null,
-  first_campaign_approved: null,
+  delivery_rule_set: "/quote-policy",
+  students_imported: "/students/import",
+  fee_plan_set: "/fees/plans",
+  first_campaign_approved: "/campaigns",
 };
 
 /**
@@ -35,7 +36,7 @@ export function stepChecks(modules: readonly string[]): StepCheck[] {
   const has = (m: string) => modules.includes(m);
   const steps: StepCheck[] = ["business_profile"];
   if (has("catalogue")) steps.push("catalogue_has_items");
-  else if (has("programmes")) steps.push("students_imported");
+  else if (has("programmes")) steps.push("institution_set", "students_imported");
   if (has("deliveries")) steps.push("delivery_rule_set");
   else if (has("quotes")) steps.push("quote_rules_set");
   else if (has("fees")) steps.push("fee_plan_set");

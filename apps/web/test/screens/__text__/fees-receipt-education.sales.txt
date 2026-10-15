@@ -1,0 +1,22 @@
+[button type=button: Print or save as PDF]
+[button type=button: Copy as a message]
+In the print window choose Save as PDF to keep a file. Greenfield School (synthetic) Receipt
+Receipt no.
+R/2026-27/000003
+Received on
+2026-06-12
+Received from
+Ravi Kumar (synthetic)
+Student
+Asha (synthetic) · Class 5 (synthetic) · A
+Amount received
+₹25,000.00
+In words
+Rupees Twenty-Five Thousand Only
+How it was paid
+UPI
+Against
+Tuition 1
+Pending after this receipt
+₹15,000.00
+Signature This is a receipt for money received. It is not a GST invoice; invoices come from your accounting program.

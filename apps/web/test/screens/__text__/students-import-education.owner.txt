@@ -1,0 +1,8 @@
+[All students](/app/tenants/22222222-2222-2222-2222-222222222222/students)
+{label="Bring in your students"}
+## Bring in your students
+Choose a CSV or Excel file with one row for each student. You say which column is which, you see what would happen to every row, and nothing is saved until the last button. Choose the file
+<file label="Choose the file" accept=.csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet described-by="No file chosen yet. CSV or Excel (.xlsx), up to 2 MB and 500 rows.">
+No file chosen yet. CSV or Excel (.xlsx), up to 2 MB and 500 rows.
+[button type=button disabled: Check the file]
+Only these are read: the parent's name and WhatsApp number, the class and section, a first name or initials, the admission number and the joining day. Anything else in the file is ignored.

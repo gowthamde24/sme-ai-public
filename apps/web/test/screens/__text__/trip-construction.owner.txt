@@ -1,0 +1,13 @@
+[← Deliveries](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-20)
+- [Order 7, trip 1](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1) Delivered 2,500 piece · Paver block 80 mm grey (synthetic) 2026-10-20 · TS 09 UA 1234 · Suresh (synthetic) · Kukatpally villa (synthetic), Hyderabad Received by Ravi (synthetic)
+[button type=button: Tell the site]
+[Delivery note](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1/challan)
+{label="Proof of delivery"}
+## Proof of delivery
+[image: Photo taken when the goods were delivered] Received by Ravi (synthetic)
+{label="What happened"}
+## What happened
+- Planned · 2026-10-14 05:00
+- Loaded · 2026-10-20 04:00
+- On the way · 2026-10-20 05:00
+- Delivered · 2026-10-20 09:00

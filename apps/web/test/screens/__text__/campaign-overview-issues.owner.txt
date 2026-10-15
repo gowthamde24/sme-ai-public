@@ -1,0 +1,15 @@
+[All campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns)
+# October payment reminders (synthetic)
+Draft Payment due · 18 people · ₹4,12,500.00
+{label="Campaign sections"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001 current=page) [People](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=audience) [Check and approve](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=approve) [Results](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=results)
+{label="Not ready yet"}
+## Not ready yet
+- The campaign has no approved WhatsApp template yet.
+- A step is at a time inside this business's quiet hours.
+## The message
+Hello {{name}}, a payment of {{amount}} for {{reference}} is due on {{due_date}}. {{business}} English
+## When the message goes
+- 3 days before , 10:00
+- On the day , 10:00
+- 7 days after , 11:00
+After step 3, if there is no reply and no payment within 24 hours, the person goes on the call list. [Change this campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001/edit)

@@ -165,10 +165,12 @@ insert into public.contacts (id, tenant_id, company_id, full_name, phone) values
 select is(pg_temp.skips('a_owner', 'm1', jsonb_build_array(
   jsonb_build_object('phone', '90002 00001', 'due_date', '2026-11-20', 'amount_paise', 1000, 'reference', 'A'),
   jsonb_build_object('contact_id', tests.rid('nocomp'), 'due_date', '2026-11-20', 'amount_paise', 1000, 'reference', 'A'))),
-  '1=ambiguous_contact,2=no_lead', 'C7 two contacts with the same ten digits are ambiguous (nobody is guessed), and a contact with no company has no lead to send on');
+  '1=ambiguous_contact', 'C7 two contacts with the same ten digits are ambiguous (nobody is guessed); a contact with no company is NOT refused any more (job CR): a generic placeholder company stands in so that they can have a lead');
+select is((select company_id is not null from public.contacts where id = tests.rid('nocomp')), true, 'C7b the contact without a company got a placeholder company, which holds no personal data');
+select is((select name ~ '^Enquiry [0-9a-f]{6}$' from public.companies where id = (select company_id from public.contacts where id = tests.rid('nocomp'))), true, 'C7c named only "Enquiry" and six characters');
 select is(pg_temp.addn('a_owner', 'm1', jsonb_build_array(jsonb_build_object('contact_id', tests.rid('nolead'), 'due_date', '2026-11-20', 'amount_paise', 1000, 'reference', 'INV-109'))), '1', 'C8 a contact of a company with no lead gets one made for the campaign');
 select is((select source from public.leads where contact_id = tests.rid('nolead')), 'campaign', 'C9 ... marked as made for a campaign');
-select is(pg_temp.cnt('m1'), 9::bigint, 'C10 nine on the list');
+select is(pg_temp.cnt('m1'), 10::bigint, 'C10 ten on the list');
 select is(pg_temp.add('a_viewer', 'm1', jsonb_build_array(jsonb_build_object('contact_id', tests.rid('r1'), 'due_date', '2026-11-10'))), 'ERR:42501', 'C11 DENY: a Viewer');
 select is(pg_temp.add('b_owner', 'm1', jsonb_build_array(jsonb_build_object('contact_id', tests.rid('r1'), 'due_date', '2026-11-10'))), 'ERR:42501', 'C12 DENY: another business');
 select is(pg_temp.val('b_owner', format($q$select public.campaign_recipients_add(%L, %L, '[{"contact_id": null}]'::jsonb)::text$q$, tests.tid('b'), gen_random_uuid())), 'ERR:SM701', 'C12b textiles: not on');
@@ -179,7 +181,7 @@ select is(pg_temp.skips('a_owner', 'c2', jsonb_build_array(jsonb_build_object('c
 select is(pg_temp.val('a_owner', format($q$select (public.campaign_recipient_remove(%L, %L, %L)->>'removed')$q$, tests.tid('a'), tests.rid('c2'), (select id from public.campaign_recipients where campaign_id = tests.rid('c2')))), '1', 'C17 a person can be removed');
 select is(pg_temp.val('a_owner', format($q$select public.campaign_recipient_remove(%L, %L, %L)::text$q$, tests.tid('a'), tests.rid('c2'), gen_random_uuid())), 'ERR:23503', 'C18 one who is not on the list is not found');
 select is(pg_temp.val('a_sales', format($q$select jsonb_array_length(public.campaign_recipients_list(%L, %L, 5))::text$q$, tests.tid('a'), tests.rid('m1'))), '5', 'C19 the list is read in the order it was made, a page at a time');
-select is(pg_temp.val('a_sales', format($q$select (public.campaign_recipients_list(%L, %L, 100) -> 0 ->> 'contact_name') || '/' || (public.campaign_recipients_list(%L, %L, 100) -> 8 ->> 'contact_name')$q$, tests.tid('a'), tests.rid('m1'), tests.tid('a'), tests.rid('m1'))), 'Ravi/No lead yet', 'C20 first and last');
+select is(pg_temp.val('a_sales', format($q$select (public.campaign_recipients_list(%L, %L, 100) -> 0 ->> 'contact_name') || '/' || (public.campaign_recipients_list(%L, %L, 100) -> 9 ->> 'contact_name')$q$, tests.tid('a'), tests.rid('m1'), tests.tid('a'), tests.rid('m1'))), 'Ravi/No lead yet', 'C20 first and last');
 select is(pg_temp.val('a_viewer', format($q$select public.campaign_recipients_list(%L, %L)::text$q$, tests.tid('a'), tests.rid('m1'))), 'ERR:42501', 'C21 DENY: a Viewer');
 
 -- ============================================================================ D. the list from the LEDGER
@@ -220,8 +222,8 @@ select is(pg_temp.fromledger('a_viewer', 'l2', jsonb_build_object('due_from', '2
 select is(pg_temp.val('b_owner', format($q$select public.campaign_recipients_from_ledger(%L, %L, '{"due_from": "2026-10-01", "due_to": "2026-11-30"}'::jsonb)::text$q$, tests.tid('b'), gen_random_uuid())), 'ERR:SM701', 'D23 textiles: not on');
 
 -- ============================================================================ E. preview and samples
-select is(pg_temp.prev('m1', 'recipients'), '9', 'E1 the preview counts the people');
-select is(pg_temp.prev('m1', 'total_amount_paise'), '10910900', 'E2 ... and the total of the amounts, from the list (Rs 1,09,109.00)');
+select is(pg_temp.prev('m1', 'recipients'), '10', 'E1 the preview counts the people');
+select is(pg_temp.prev('m1', 'total_amount_paise'), '10911900', 'E2 ... and the total of the amounts, from the list (Rs 1,09,119.00)');
 select is(pg_temp.prev('m1', 'first_due') || ' / ' || pg_temp.prev('m1', 'last_due'), '2026-11-10 / 2026-11-20', 'E3 ... the range of dates');
 select is(pg_temp.prev('m1', 'disclosure'), 'This message is from the business''s AI assistant.', 'E4 and the AI-disclosure line the outbox adds to a person''s first message');
 select is(pg_temp.issues('m1'), 'none', 'E5 nothing stands in the way');
@@ -253,12 +255,12 @@ select is((select count(*) from public.campaign_steps where campaign_id = tests.
 select is(pg_temp.approve('a_owner', 'm1', pg_temp.sha()), 'ok', 'F11 ALLOW: the Owner approves the campaign they saw');
 select is(pg_temp.status('m1'), 'approved', 'F12 it is approved');
 select is((select approved_by = tests.uid('a_owner') and approved_at is not null from public.campaigns where id = tests.rid('m1')), true, 'F13 who and when are recorded');
-select is((select approved_recipients || '/' || approved_total_paise from public.campaigns where id = tests.rid('m1')), '9/10910900', 'F14 and what was approved: nine people, Rs 1,09,109.00');
+select is((select approved_recipients || '/' || approved_total_paise from public.campaigns where id = tests.rid('m1')), '10/10911900', 'F14 and what was approved: ten people, Rs 1,09,119.00');
 select is((select content_sha256 = app.campaign_content_sha(tenant_id, id) and samples_sha256 ~ '^[0-9a-f]{64}$' from public.campaigns where id = tests.rid('m1')), true, 'F15 and the hash of the whole and of the samples');
-select is((select count(*) || '/' || count(*) filter (where status = 'planned') from public.campaign_steps where campaign_id = tests.rid('m1')), '27/27', 'F16 27 steps (nine people x three) are planned; the first at 10:00 on the day three days before each person''s date');
+select is((select count(*) || '/' || count(*) filter (where status = 'planned') from public.campaign_steps where campaign_id = tests.rid('m1')), '30/30', 'F16 30 steps (ten people x three) are planned; the first at 10:00 on the day three days before each person''s date');
 select is((select min(scheduled_for) from public.campaign_steps where campaign_id = tests.rid('m1')), '2026-11-07T10:00:00+05:30'::timestamptz, 'F17 the earliest is 7 Nov, 10:00 India time (3 days before 10 Nov)');
 select is((select max(scheduled_for) from public.campaign_steps where campaign_id = tests.rid('m1')), '2026-11-27T10:00:00+05:30'::timestamptz, 'F18 the latest is 27 Nov (7 days after 20 Nov)');
-select is((select count(*) from public.audit_events where action = 'campaign.approved' and entity_id = tests.rid('m1') and (new_values ->> 'recipients') = '9'), 1::bigint, 'F19 the approval is in the audit trail with the counts and the hashes');
+select is((select count(*) from public.audit_events where action = 'campaign.approved' and entity_id = tests.rid('m1') and (new_values ->> 'recipients') = '10'), 1::bigint, 'F19 the approval is in the audit trail with the counts and the hashes');
 select is(pg_temp.approve('a_owner', 'm1', pg_temp.sha()), 'SM801', 'F20 an approved campaign cannot be approved again (SM801)');
 -- what stands in the way
 select is(pg_temp.save('a_owner', 'p1', 'payment_due', 'Dear {{name}}, {{amount}} is pending, due on {{due_date}}.', p_tpl => 'tpl_draft'), 'ok', 'F21 (setup) a campaign whose template is only a draft');
@@ -295,7 +297,7 @@ select is((select (approved_by is null and approved_at is null and content_sha25
 select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1')), 0::bigint, 'G4 and the planned steps are cancelled');
 select is((select count(*) from public.audit_events where action = 'campaign.back_to_draft' and entity_id = tests.rid('m1') and (new_values ->> 'because') = 'list_changed'), 1::bigint, 'G5 the audit trail says why');
 select is(pg_temp.reapprove(), 'ok', 'G6 the Owner approves what they now see (ten people)');
-select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'planned'), 30::bigint, 'G7 30 steps');
+select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'planned'), 33::bigint, 'G7 33 steps');
 select is(pg_temp.val('a_owner', format($q$select (public.campaign_save(%L, %L, 'October dues', 'payment_due', 'en', %L, %L, '[{"offset_days": -3, "time": "10:00"}, {"offset_days": 0, "time": "10:00"}, {"offset_days": 7, "time": "10:00"}]'::jsonb, null, 24)->>'back_to_draft')$q$,
                               tests.rid('m1'), tests.tid('a'), tests.rid('tpl'), 'Dear {{name}}, payment of {{amount}} for {{reference}} is due on {{due_date}}. Thank you, {{business}}.')), 'false', 'G8 saving the SAME content again changes nothing: still approved');
 select is(pg_temp.status('m1'), 'approved', 'G9 (approved)');
@@ -333,11 +335,11 @@ select is(pg_temp.pin('2026-11-09T12:00:00+05:30'::timestamptz)::text, '', 'H7 (
 select is(pg_temp.state('a_owner', 'm1', 'resume'), 'ok', 'H8 ALLOW: the Owner resumes ...');
 select is(pg_temp.status('m1'), 'approved', 'H9 (approved: nothing was sent yet)');
 select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'skipped' and reason = 'missed'), 2::bigint, 'H10 ... and the two steps that were more than a day late (7 Nov, for the two people due 10 Nov) are skipped as missed, not sent now');
-select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'planned'), 25::bigint, 'H11 the rest stay planned');
+select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'planned'), 28::bigint, 'H11 the rest stay planned');
 select is(pg_temp.state('a_owner', 'm1', 'resume'), 'SM801', 'H12 a campaign that is not paused cannot be resumed');
 select is(pg_temp.state('a_admin', 'm1', 'cancel'), 'ok', 'H13 the Admin cancels');
 select is(pg_temp.status('m1'), 'cancelled', 'H14 (cancelled)');
-select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'skipped' and reason = 'cancelled'), 25::bigint, 'H15 the planned steps are skipped (cancelled)');
+select is((select count(*) from public.campaign_steps where campaign_id = tests.rid('m1') and status = 'skipped' and reason = 'cancelled'), 28::bigint, 'H15 the planned steps are skipped (cancelled)');
 select is(pg_temp.state('a_admin', 'm1', 'cancel'), 'SM801', 'H16 a cancelled campaign stays cancelled');
 select is(pg_temp.msg_m1('Dear {{name}}, another text for {{amount}} due on {{due_date}} with {{reference}}.'), 'SM801', 'H17 and cannot be edited (SM801)');
 select is(pg_temp.addn('a_owner', 'm1', jsonb_build_array(jsonb_build_object('contact_id', tests.rid('r2'), 'due_date', '2026-12-01', 'amount_paise', 100, 'reference', 'A'))), 'ERR:SM801', 'H18 nor its list');

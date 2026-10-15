@@ -16,6 +16,7 @@ from typing import Any, Protocol
 from app.catalogue.storage import CHANNEL_URL_SECONDS, StorageClient
 from app.errors import ApiError
 from app.outbox.adapter import (
+    AudioClip,
     ChannelAdapter,
     MediaRef,
     OutgoingMessage,
@@ -43,6 +44,8 @@ MAX_SEND_ATTEMPTS = 5
 
 # gives each photo of a message a signed address the channel can fetch it from (raises if it cannot for any of them)
 MediaSigner = Callable[[str, list[MediaRef]], list[MediaRef]]
+# makes the spoken copy of a claimed message, or None to send the text alone (job CV): (token, tenant id, message id). It never raises.
+VoiceMaker = Callable[[str, uuid.UUID, uuid.UUID], AudioClip | None]
 
 
 class MediaNotReady(Exception):
@@ -243,13 +246,17 @@ def dispatch_due(
     *,
     limit: int = DISPATCH_BATCH,
     sign_media: MediaSigner | None = None,
+    voice: VoiceMaker | None = None,
 ) -> DispatchOut:
     """Claim what is due (the database re-checks every block first), deliver each through the adapter, tell the database what happened. A message the database did not hand out (blocked at the
     re-check, held for the morning, held by the kill switch) is not touched here. If the database cannot be told, the claim lapses after two minutes and the message is offered again: a real
     adapter must therefore be given the message id as its idempotency key (OutgoingMessage.idempotency_key).
 
     PHOTOS (job BB): a message with photos is handed over only with a signed address for each (`sign_media`, made with the same token that claimed the message). If an address cannot be made, the
-    message is neither sent nor marked: it stays claimed, the claim lapses, and the next round offers it again (`retry_later` counts them)."""
+    message is neither sent nor marked: it stays claimed, the claim lapses, and the next round offers it again (`retry_later` counts them).
+
+    VOICE NOTES (job CV): `voice`, when given, may return the spoken copy of a message (only the worker passes it, and the database decides per message). The audio travels in addition to the
+    text, never instead of it, and a failure to make it only means the text goes alone."""
     sent = failed = retry_later = 0
     for item in repository.claim_due(token, tenant_id, limit):
         try:
@@ -287,6 +294,10 @@ def dispatch_due(
                 )
                 retry_later += 1
                 continue
+        if voice is not None:
+            clip = voice(token, tenant_id, message_id)
+            if clip is not None:
+                outgoing = dataclasses.replace(outgoing, audio=clip)
         try:
             result = adapter.send(outgoing)
         except (

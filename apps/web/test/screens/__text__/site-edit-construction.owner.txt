@@ -1,0 +1,43 @@
+[← Sites](/app/tenants/22222222-2222-2222-2222-222222222222/sites)
+# Change Kukatpally villa (synthetic)
+form:
+Sri Lakshmi Silks (synthetic) · Hyderabad Name of the site
+<text label="Name of the site" maxlength=200 value=Kukatpally villa (synthetic) described-by="For example: Kukatpally villa">
+For example: Kukatpally villa Address
+<text label="Address" maxlength=400 value=Plot 14, Road 3>
+City or town
+<text label="City or town" maxlength=120 value=Hyderabad>
+PIN code
+<text label="PIN code" maxlength=6 inputmode=numeric value=500072>
+legend: Map pin
+Latitude
+<text label="Latitude" inputmode=decimal value=17.4948>
+Longitude
+<text label="Longitude" inputmode=decimal value=78.3996>
+[button type=button: Use my location]
+[Open the map pin](https://www.google.com/maps?q=17.4948,78.3996) Stand at the site and press the button, or type the two numbers from your map app. Only the two numbers are saved.
+legend: For the truck
+Distance from your yard (km)
+<text label="Distance from your yard (km)" inputmode=numeric value=18 described-by="Needed when your transport charge is by the kilometre.">
+Needed when your transport charge is by the kilometre. Width of the lane (feet)
+<text label="Width of the lane (feet)" inputmode=numeric value=12>
+<checkbox label="Night delivery is allowed">
+Night delivery is allowed
+<checkbox label="They help to unload" checked>
+They help to unload Notes for the driver
+<textarea label="Notes for the driver" maxlength=1000 value="Gate on the left, narrow bend after the temple" described-by="For example: gate on the left, narrow bend after the temple. Do not write phone numbers here.">
+For example: gate on the left, narrow bend after the temple. Do not write phone numbers here.
+legend: Who receives the goods
+Now: Ravi Kumar (synthetic)
+{role=radiogroup label="Who receives the goods"}
+<radio name=site-contact label="Keep this person" checked>
+Keep this person
+<radio name=site-contact label="Someone else (type name and number)">
+Someone else (type name and number)
+<radio name=site-contact label="No one yet">
+No one yet
+They are kept as a contact of this customer. Truck updates go to them only if they agreed to messages.
+<checkbox label="This site is in use" checked>
+This site is in use
+[button type=submit: Save the site]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/sites)

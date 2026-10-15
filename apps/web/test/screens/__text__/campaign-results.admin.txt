@@ -1,0 +1,40 @@
+[All campaigns](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns)
+# October payment reminders (synthetic)
+Running Payment due · 18 people · ₹4,12,500.00
+{label="Campaign sections"} [Overview](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001) [People](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=audience) [Check and approve](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=approve) [Results](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001?tab=results current=page)
+[button type=button: Pause]
+[button type=button: Cancel campaign]
+People
+18
+Sent
+29
+Delivered
+20
+Read
+6
+Replied
+4
+Paid after a reminder
+5 · ₹92,000.00
+{label="What happened to each step"}
+## What happened to each step
+- Planned 20
+- Waiting 0
+- Held 0
+- Failed 0
+- Blocked 3
+- Skipped 2
+{label="Why some did not go"}
+## Why some did not go
+- No recorded consent 2
+- Paid already 2
+- The person asked to stop 1
+{label="Day by day"}
+## Day by day
+- 2026-10-17 Sent 9 · Delivered 14 · Read 6
+- 2026-10-18 Blocked 3
+{label="Closed early"}
+## Closed early
+- Paid 5
+- Wrong number 1
+Calls: 3 open, 2 done (Promised a date 1, Paid 1)

@@ -1,0 +1,40 @@
+[← Dues](/app/tenants/22222222-2222-2222-2222-222222222222/dues)
+# Sri Lakshmi Silks (synthetic)
+Hyderabad
+[button type=button: Write down a payment]
+[button type=button: Add an invoice]
+[button type=button: Adjust the account]
+{label="Owed"}
+## Owed
+Owed ₹1,30,000.00 Overdue ₹50,000.00
+Invoiced
+₹2,00,000.00
+Paid
+₹70,000.00
+Credit limit
+₹1,50,000.00
+{role=img label="What is owed, by how old it is"}
+0 to 30 days
+₹80,000.00
+31 to 60 days
+₹50,000.00
+61 to 90 days
+₹0.00
+Over 90 days
+₹0.00
+{label="Invoices still open"}
+## Invoices still open
+- INV-1001 due 2026-10-05 ₹50,000.00 9 days late
+- INV-1002 due 2026-10-09 ₹80,000.00
+{label="Entries, newest first"}
+## Entries, newest first
+- Payment received 2026-10-02 · UPI − ₹70,000.00 [Receipt R/2026-27/000012](/app/tenants/22222222-2222-2222-2222-222222222222/dues/receipt/ee000000-0000-4000-8000-000000000001)
+[button type=button: Void]
+- Invoice 2026-09-20 · INV-1001 ₹1,20,000.00
+[button type=button: Void]
+- Adjustment 2026-09-25 · Waived − ₹1,000.00 Voided
+form:
+Credit limit (₹)
+<text label="Credit limit (₹)" inputmode=decimal value=150000 described-by="Rupees One Lakh Fifty Thousand Only (₹1,50,000.00)">
+Rupees One Lakh Fifty Thousand Only (₹1,50,000.00)
+[button type=submit: Save the limit]

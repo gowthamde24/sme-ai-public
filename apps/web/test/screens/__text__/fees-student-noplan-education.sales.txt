@@ -1,0 +1,32 @@
+[Fees](/app/tenants/22222222-2222-2222-2222-222222222222/fees)
+# Asha (synthetic)
+Class 5 (synthetic) · A · [The student](/app/tenants/22222222-2222-2222-2222-222222222222/students/5d000000-0000-4000-8000-000000000001)
+{label="Fee plan of this student"}
+## Fee plan of this student
+This student holds no fee plan yet.
+[button type=button: Write down a payment]
+{label="Pending"}
+## Pending
+Pending ₹13,000.00 Nothing overdue
+Fees charged
+₹40,000.00
+Fees paid
+₹27,000.00
+{role=img label="What is owed, by how old it is"}
+0 to 30 days
+₹0.00
+31 to 60 days
+₹0.00
+61 to 90 days
+₹0.00
+Over 90 days
+₹13,000.00
+{label="Instalments pending"}
+## Instalments pending
+- Tuition 2 due 2026-10-15 ₹13,000.00
+{label="Entries, newest first"}
+## Entries, newest first
+- Fee received 2026-06-12 · UPI − ₹25,000.00 [Receipt R/2026-27/000003](/app/tenants/22222222-2222-2222-2222-222222222222/fees/receipt/ee000000-0000-4000-8000-0000000000f1)
+- Fee instalment 2026-06-10 · Tuition 1 ₹25,000.00
+- Fee instalment 2026-06-10 · Tuition 2 ₹15,000.00
+- Concession 2026-07-01 · Brother or sister studies here − ₹2,000.00

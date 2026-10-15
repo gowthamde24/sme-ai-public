@@ -1,0 +1,33 @@
+[All reports](/app/tenants/22222222-2222-2222-2222-222222222222/report)
+# Quotes made, approved and won
+From 2026-09-15 to 2026-10-14
+{label="Choose the dates"} From
+<date name=from label="From" max=2026-10-06 value=2026-09-15>
+To
+<date name=to label="To" max=2026-10-06 value=2026-10-14>
+[button type=submit: Show]
+Quotes made
+24
+Quotes approved
+15
+Quotes that became orders
+9
+Approved quotes that became orders
+60%
+Value of approved quotes
+₹18,45,000.00
+Value of quotes that became orders
+₹9,60,000.00
+{label="By state"}
+## By state
+table:
+  | th State | th Quotes | th Total |
+  | Approved | 15 | ₹18,45,000.00 |
+  | Draft | 7 | ₹4,10,000.00 |
+  | Turned down | 2 | ₹90,000.00 |
+{label="Quotes made, day by day"}
+## Quotes made, day by day
+- 2026-10-12 3
+- 2026-10-13 5
+- 2026-10-14 2
+A figure with a dash could not be worked out, for example a percentage of nothing.

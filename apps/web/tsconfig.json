@@ -21,6 +21,8 @@
     "paths": {
       "@/*": ["./*"],
       "@contracts": ["../../packages/contracts/index.ts"],
+      "@contracts/education": ["../../packages/contracts/education.ts"],
+      "@contracts/reports": ["../../packages/contracts/reports.ts"],
       "@quote-engine/construction": ["../../packages/quote-engine/ts/construction.ts"]
     }
   },

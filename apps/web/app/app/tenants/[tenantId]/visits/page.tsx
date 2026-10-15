@@ -15,6 +15,8 @@ import { requireUser } from "@/lib/auth/session";
 import { arriveVisitAction, bookVisitAction, cancelVisitAction, completeVisitAction, confirmVisitAction, customersAction, moveVisitAction, noShowVisitAction, saveHoursAction, slotsAction } from "./visits-actions";
 import { readDay, readHours, readLeadLabel, readVisit } from "./visits-data";
 import { visitsWords } from "./visits-words";
+import { withModuleWords } from "@/lib/packs/module-words";
+import { readPackCached } from "@/lib/packs/read";
 import { partsWords } from "@/i18n/app-words";
 
 export const metadata = { title: "Store visits · SME AI Revenue Engine" };
@@ -47,6 +49,7 @@ export default async function VisitsPage({ params, searchParams }: PageProps<"/a
     return <ApiDownV2 words={await partsWords()} />;
   }
   const lang = await getLang();
+  const pack = await readPackCached(user.accessToken, tenantId).catch(() => null);
   const now = clock();
   const today = todayInIndia(now);
   const view = pick(query.view) === "hours" ? "hours" : "day";
@@ -100,7 +103,7 @@ export default async function VisitsPage({ params, searchParams }: PageProps<"/a
         lang={lang}
         role={tenant.role}
         base={`/app/tenants/${tenantId}`}
-        words={visitsWords(lang)}
+        words={withModuleWords(visitsWords(lang), pack)}
         visits={data.visits}
         slots={data.slots}
         hours={hours}

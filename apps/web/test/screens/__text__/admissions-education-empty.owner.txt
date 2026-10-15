@@ -1,0 +1,10 @@
+# Admission board
+From the first enquiry to admission: enquiry, campus visit, application, admitted or lost. [New enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/admissions/new)
+{label="Filter the students"} Class or course
+<select name=programme label="Class or course">
+  options: All=* | Class 5 (synthetic)=bb000000-0000-4000-8000-000000000001 | B.Com (synthetic)=bb000000-0000-4000-8000-000000000002
+Where it came from
+<select name=source label="Where it came from">
+  options: All=* | WhatsApp=whatsapp | Walk-in=walk_in | Website=website | Advertisement=ad | Referral=referral | Other=other
+[button type=submit: Show]
+No enquiries yet When a parent asks about admission, add the enquiry here and follow it to the end.

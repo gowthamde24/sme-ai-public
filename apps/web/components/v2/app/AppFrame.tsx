@@ -51,7 +51,7 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
           </TopBar>
           <RobustShell labels={labels} />
           {lang !== "en" ? (
-            <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8">
+            <div role="region" aria-label={appT(lang)("frame.draft.label")} lang={lang} className="border-b border-line px-4 py-1.5 text-sm text-muted md:px-8 print:hidden">
               {appT(lang)("frame.draft")}
             </div>
           ) : null}
@@ -59,11 +59,11 @@ export function AppFrame({ lang, theme, email, memberships, signOut, frame = FRA
             <LabelsProvider labels={labels}>{children}</LabelsProvider>
           </div>
           {/* Privacy Policy, Terms and Cookie settings (job BH); above the bottom bar on a phone */}
-          <footer data-frame="legal" className="border-t border-line px-4 pb-20 pt-1 md:px-8 md:pb-2">
+          <footer data-frame="legal" className="border-t border-line px-4 pb-20 pt-1 md:px-8 md:pb-2 print:hidden">
             <LegalLinks lang={lang} />
           </footer>
         </div>
-        <div className="fixed inset-x-0 bottom-0 z-40 md:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 md:hidden print:hidden">
           <InstallHint labels={labels} />
           <TabBar memberships={list} labels={labels} frame={frame} email={email} signOut={signOut} />
         </div>
