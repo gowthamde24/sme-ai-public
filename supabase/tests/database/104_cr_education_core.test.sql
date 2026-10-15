@@ -4,6 +4,8 @@
 --   G erasure    H retention    I guards and audit
 begin;
 select no_plan();
+-- setup calls that return a value are wrapped in q() so no row of theirs reaches the TAP stream (a bare `ok` line would be read as a test)
+create function pg_temp.q(p_value anyelement) returns void language plpgsql as $$ begin end $$;
 select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.cp_pack('a', 'education');
@@ -184,8 +186,8 @@ select is((select app.campaign_lead_for(tests.tid('a'), tests.rid('guard2')) is 
 select is((select count(*) from public.companies where tenant_id = tests.tid('a') and name ~ '^Enquiry '), 2::bigint, 'F11 two placeholder companies in all (one per guardian)');
 
 -- ============================================================================ G. erasure
-select tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'phone', %L))$q$, tests.rid('guard2'), md5('g2a') || md5('g2b')));
-select tests.scalar_as(tests.uid('a_owner'), format('select public.request_erasure(%L, %L, ''contact'', %L)', tests.rid('er1'), tests.tid('a'), tests.rid('guard2')));
+select pg_temp.q(tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'phone', %L))$q$, tests.rid('guard2'), md5('g2a') || md5('g2b'))));
+select pg_temp.q(tests.scalar_as(tests.uid('a_owner'), format('select public.request_erasure(%L, %L, ''contact'', %L)', tests.rid('er1'), tests.tid('a'), tests.rid('guard2'))));
 select is(pg_temp.val('a_owner', format($q$select (public.execute_erasure(%L, false) ->> 'status')$q$, tests.rid('er1'))), 'executed', 'G1 the Owner erases a guardian');
 select results_eq(format($$select child_label, admission_no, erased_at is not null, status from public.students where id = %L$$, tests.rid('s4')),
   $$values ('erased:1'::text, null::text, true, 'active'::text)$$, 'G2 their child''s label is tombstoned, the admission number is gone, and the record is marked erased');
@@ -205,11 +207,11 @@ select is(pg_temp.val('a_owner', format($q$select (public.student_erase(%L, %L) 
 select is((select count(*) from public.audit_events where tenant_id = tests.tid('a') and action = 'student.erase'), 1::bigint, 'G15 the erasure is in the audit trail, without the label');
 
 -- ============================================================================ H. retention
-select pg_temp.stu('a_owner', 'sr1', 'adult1', false, 'Old one', 'p5', null, 'ADM-OLD1');
-select pg_temp.stu('a_owner', 'sr2', 'adult1', false, 'Recent', 'p5', null, 'ADM-NEW1');
-select pg_temp.stu('a_owner', 'sr3', 'adult1', false, 'Active', 'p5', null, 'ADM-ACT1');
-select pg_temp.val('a_owner', format($q$select public.student_set_status(%L, %L, 'left', date '2024-08-01')::text$q$, tests.tid('a'), tests.rid('sr1')));
-select pg_temp.val('a_owner', format($q$select public.student_set_status(%L, %L, 'left', date '2026-06-01')::text$q$, tests.tid('a'), tests.rid('sr2')));
+select pg_temp.q(pg_temp.stu('a_owner', 'sr1', 'adult1', false, 'Old one', 'p5', null, 'ADM-OLD1'));
+select pg_temp.q(pg_temp.stu('a_owner', 'sr2', 'adult1', false, 'Recent', 'p5', null, 'ADM-NEW1'));
+select pg_temp.q(pg_temp.stu('a_owner', 'sr3', 'adult1', false, 'Active', 'p5', null, 'ADM-ACT1'));
+select pg_temp.q(pg_temp.val('a_owner', format($q$select public.student_set_status(%L, %L, 'left', date '2024-08-01')::text$q$, tests.tid('a'), tests.rid('sr1'))));
+select pg_temp.q(pg_temp.val('a_owner', format($q$select public.student_set_status(%L, %L, 'left', date '2026-06-01')::text$q$, tests.tid('a'), tests.rid('sr2'))));
 select is(app.operator_register_scheduler('outsider@test.local'), tests.uid('outsider'), 'H1 (setup) the scheduler account is registered');
 select is(pg_temp.val('a_owner', format($q$select public.scheduler_students_retention()::text$q$)), 'ERR:42501', 'H2 DENY: only the scheduler runs the retention clean-up');
 select is(pg_temp.val('outsider', $q$select (public.scheduler_students_retention() ->> 'erased')$q$), '1', 'H3 ALLOW: the scheduler erases the one student who left more than 24 months ago');

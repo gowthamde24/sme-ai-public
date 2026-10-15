@@ -3,6 +3,8 @@
 -- The clock is NOT pinned here: the funnel counts enquiries made "now". Every date that matters is either far in the past or the day itself (app.dues_today()).
 begin;
 select no_plan();
+-- setup calls that return a value are wrapped in q() so no row of theirs reaches the TAP stream (a bare `ok` line would be read as a test)
+create function pg_temp.q(p_value anyelement) returns void language plpgsql as $$ begin end $$;
 select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.cp_pack('a', 'education');
@@ -209,10 +211,10 @@ select is(pg_temp.try('a_sales', format($q$select public.admission_create(%L, %L
 select is(pg_temp.try('a_sales', format($q$select public.admission_create(%L, %L, %L, %L, 'walk_in')$q$, tests.rid('fa2'), tests.tid('a'), tests.rid('g2'), tests.rid('p5'))), 'ok', 'D38 ... a walk-in');
 select is(pg_temp.try('a_sales', format($q$select public.admission_create(%L, %L, %L, %L, 'whatsapp')$q$, tests.rid('fa3'), tests.tid('a'), tests.rid('g3'), tests.rid('p6'))), 'ok', 'D39 ... ');
 select is(pg_temp.try('a_sales', format($q$select public.admission_create(%L, %L, %L, null, 'ad')$q$, tests.rid('fa4'), tests.tid('a'), tests.rid('g4'))), 'ok', 'D40 ... and one from an advertisement');
-select pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'campus_visit')$q$, tests.tid('a'), tests.rid('fa1')));
-select pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'application')$q$, tests.tid('a'), tests.rid('fa1')));
-select pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'campus_visit')$q$, tests.tid('a'), tests.rid('fa4')));
-select pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'lost', 'fees')$q$, tests.tid('a'), tests.rid('fa2')));
+select pg_temp.q(pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'campus_visit')$q$, tests.tid('a'), tests.rid('fa1'))));
+select pg_temp.q(pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'application')$q$, tests.tid('a'), tests.rid('fa1'))));
+select pg_temp.q(pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'campus_visit')$q$, tests.tid('a'), tests.rid('fa4'))));
+select pg_temp.q(pg_temp.try('a_sales', format($q$select public.admission_stage_set(%L, %L, 'lost', 'fees')$q$, tests.tid('a'), tests.rid('fa2'))));
 select is(pg_temp.try('a_owner', format($q$select public.admission_admit(%L, %L, %L, false, 'Farah', %L, %L, null)$q$, tests.tid('a'), tests.rid('fa1'), tests.rid('sf1'), tests.rid('p5'), tests.rid('g5a'))), 'ok', 'D41 (setup) the first is admitted');
 create temp table rf as select pg_temp.rep('a_sales', 'education.funnel') as j;
 select is(pg_temp.kpi((select j from rf), 'enquiries'), '4', 'D42 four enquiries in the last 90 days');

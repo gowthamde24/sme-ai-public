@@ -3,6 +3,8 @@
 --   A structure, grants, RLS, module    B settings    C voices and choices    D the disclosure    E a campaign's switch and its approval    F the preview and the fair-use ledger    G the worker's plan and record    H guards
 begin;
 select no_plan();
+-- setup calls that return a value are wrapped in q() so no row of theirs reaches the TAP stream (a bare `ok` line would be read as a test)
+create function pg_temp.q(p_value anyelement) returns void language plpgsql as $$ begin end $$;
 select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.cp_pack('a', 'education');
@@ -27,7 +29,7 @@ begin
   execute format('create or replace function app.outbox_now() returns timestamptz language sql stable security definer set search_path = '''' as $b$ select timestamptz %L $b$', p_instant::text);
 end $fn$;
 select pg_temp.pin('2026-10-14T11:00:00+05:30'::timestamptz);
-select app.operator_register_scheduler('outsider@test.local');
+select pg_temp.q(app.operator_register_scheduler('outsider@test.local'));
 
 create function pg_temp.settings(p_user text, p_enabled boolean, p_speed numeric, p_from int, p_to int, p_aal text default 'aal2', p_tenant text default 'a') returns text language sql as $$
   select pg_temp.at(p_aal, p_user, format($q$select public.voice_settings_set(%L, %L, %L, %L, %L)$q$, tests.tid(p_tenant), p_enabled, p_speed, p_from, p_to))
@@ -108,11 +110,11 @@ select app.edu_edit(true);
 insert into public.programmes (id, tenant_id, name, kind, group_kind, created_by) values (tests.rid('prog'), tests.tid('a'), 'Class 5', 'class', 'none', tests.uid('a_owner'));
 insert into public.students (id, tenant_id, contact_id, is_adult, child_label, programme_id, created_by) values (tests.rid('stu'), tests.tid('a'), tests.rid('par'), false, 'Asha', tests.rid('prog'), tests.uid('a_owner'));
 select app.edu_edit(false);
-select tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'phone', %L))$q$, tests.rid('par'), md5('v1') || md5('v2')));
-select tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_consent(%L, %L, 'whatsapp', 'granted', 'explicit_consent', 'web_form', 'form:cv')$q$, tests.tid('a'), tests.rid('par')));
-select pg_temp.try('a_owner', format($q$select public.campaign_save(%L, %L, 'Annual day', 'event', 'en', %L, 'Dear {{name}}, our annual day is on {{due_date}}. We look forward to seeing you.', '[{"offset_days": -2, "time": "10:00"}]'::jsonb, null, 24)$q$,
-                                      tests.rid('cmp'), tests.tid('a'), tests.rid('tpl')));
-select pg_temp.val('a_owner', format($q$select public.campaign_recipients_from_students(%L, %L, '{"scope": "all", "date": "2026-12-20"}'::jsonb)::text$q$, tests.tid('a'), tests.rid('cmp')));
+select pg_temp.q(tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_contact_keys(%L, jsonb_build_object('version', 1, 'phone', %L))$q$, tests.rid('par'), md5('v1') || md5('v2'))));
+select pg_temp.q(tests.scalar_as(tests.uid('a_owner'), format($q$select public.record_consent(%L, %L, 'whatsapp', 'granted', 'explicit_consent', 'web_form', 'form:cv')$q$, tests.tid('a'), tests.rid('par'))));
+select pg_temp.q(pg_temp.try('a_owner', format($q$select public.campaign_save(%L, %L, 'Annual day', 'event', 'en', %L, 'Dear {{name}}, our annual day is on {{due_date}}. We look forward to seeing you.', '[{"offset_days": -2, "time": "10:00"}]'::jsonb, null, 24)$q$,
+                                      tests.rid('cmp'), tests.tid('a'), tests.rid('tpl'))));
+select pg_temp.q(pg_temp.val('a_owner', format($q$select public.campaign_recipients_from_students(%L, %L, '{"scope": "all", "date": "2026-12-20"}'::jsonb)::text$q$, tests.tid('a'), tests.rid('cmp'))));
 create function pg_temp.vset(p_user text, p_on boolean) returns text language sql as $$
   select pg_temp.try(p_user, format($q$select public.campaign_voice_set(%L, %L, %L)$q$, tests.tid('a'), tests.rid('cmp'), p_on))
 $$;
@@ -159,15 +161,15 @@ select is(pg_temp.prev(21), 'ERR:22023', 'F8 a preview is at most 20 seconds');
 select is(pg_temp.prev(20), 'ok', 'F9 a preview of 20 seconds is recorded (17 percent of the day)');
 select is(pg_temp.val('a_owner', format($q$select (public.voice_usage_get(%L) ->> 'day_percent')$q$, tests.tid('a'))), '16', 'F10 16 percent of 120 seconds');
 select is(pg_temp.val('a_owner', format($q$select public.voice_preview_record(%L, %L, 'hi', 5, 10)::text$q$, tests.tid('a'), gen_random_uuid())), 'ERR:23503', 'F11 a preview in a language with no chosen voice cannot be recorded');
-select pg_temp.prev(20, tests.rid('pv_same'));
-select pg_temp.prev(20, tests.rid('pv_same'));
+select pg_temp.q(pg_temp.prev(20, tests.rid('pv_same')));
+select pg_temp.q(pg_temp.prev(20, tests.rid('pv_same')));
 select is(pg_temp.val('a_owner', format($q$select (public.voice_usage_get(%L) ->> 'today_seconds')$q$, tests.tid('a'))), '40', 'F12 the same preview id counts once (a retry)');
-select pg_temp.prev(20);
-select pg_temp.prev(20);
+select pg_temp.q(pg_temp.prev(20));
+select pg_temp.q(pg_temp.prev(20));
 select is(pg_temp.val('a_owner', format($q$select (public.voice_usage_get(%L) ->> 'state') || '/' || (public.voice_usage_get(%L) ->> 'day_percent')$q$, tests.tid('a'), tests.tid('a'))), 'ok/66', 'F13 80 seconds of 120: 66 percent, still ok');
-select pg_temp.prev(20);
+select pg_temp.q(pg_temp.prev(20));
 select is(pg_temp.val('a_owner', format($q$select (public.voice_usage_get(%L) ->> 'state') || '/' || (public.voice_usage_get(%L) ->> 'day_percent')$q$, tests.tid('a'), tests.tid('a'))), 'warn/83', 'F14 100 seconds of 120: 83 percent, from 80 percent the state is `warn`');
-select pg_temp.prev(20);
+select pg_temp.q(pg_temp.prev(20));
 select is(pg_temp.val('a_owner', format($q$select (public.voice_usage_get(%L) ->> 'state')$q$, tests.tid('a'))), 'paused', 'F16 at 120 of 120 seconds voice is PAUSED');
 select is(pg_temp.val('a_owner', format($q$select (public.voice_preview_plan(%L, 'en') ->> 'reason')$q$, tests.tid('a'))), 'allowance_used', 'F17 and a preview has no plan');
 select is(pg_temp.val('a_sales', format($q$select (public.campaign_voice_get(%L, %L) -> 'issues')::text$q$, tests.tid('a'), tests.rid('cmp'))), '["allowance_used"]', 'F18 the campaign says why voice will not go out (the text still does)');
@@ -175,10 +177,10 @@ update public.plan_voice_allowances set daily_seconds = 300, monthly_seconds = 3
 select is(pg_temp.val('a_owner', format($q$select (public.voice_usage_get(%L) ->> 'state')$q$, tests.tid('a'))), 'ok', 'F19 the operator raises the allowance and voice is back');
 select is((select count(*) from public.voice_note_usage where tenant_id = tests.tid('a') and kind = 'preview'), 6::bigint, 'F20 six previews on the ledger');
 -- ten previews an hour
-select pg_temp.prev(1);
-select pg_temp.prev(1);
-select pg_temp.prev(1);
-select pg_temp.prev(1);
+select pg_temp.q(pg_temp.prev(1));
+select pg_temp.q(pg_temp.prev(1));
+select pg_temp.q(pg_temp.prev(1));
+select pg_temp.q(pg_temp.prev(1));
 select is(pg_temp.val('a_owner', format($q$select (public.voice_preview_plan(%L, 'en') ->> 'reason')$q$, tests.tid('a'))), 'too_many_previews', 'F21 at most ten previews an hour');
 
 -- ============================================================================ G. the worker's plan and record
@@ -193,7 +195,7 @@ create function pg_temp.pj(p_json text, p_key text) returns text language sql as
 select is(pg_temp.plan('a_owner'), 'ERR:42501', 'G1 DENY: only the registered scheduler account asks for a plan');
 select is(pg_temp.pj(pg_temp.plan('outsider'), 'reason'), 'campaign_text_only', 'G2 a message that belongs to no voice campaign is text');
 -- link the message to the campaign through a step (a privileged fixture)
-select pg_temp.val('a_sales', format($q$select public.campaign_voice_set(%L, %L, true)::text$q$, tests.tid('a'), tests.rid('cmp')));
+select pg_temp.q(pg_temp.val('a_sales', format($q$select public.campaign_voice_set(%L, %L, true)::text$q$, tests.tid('a'), tests.rid('cmp'))));
 alter table public.campaign_steps disable trigger campaign_steps_guard;
 alter table public.campaign_recipients disable trigger campaign_recipients_guard;
 insert into public.campaign_steps (id, tenant_id, campaign_id, recipient_id, step_no, scheduled_for, status, outbox_message_id, materialised_at)
@@ -206,14 +208,14 @@ select is(pg_temp.pj(pg_temp.plan('outsider'), 'text'), 'This is an automated vo
           'G5 the spoken text is the disclosure first (the REVIEWED wording, naming the business), then the message''s own words; the outbox''s own first-message line is not spoken twice');
 select is(pg_temp.pj(pg_temp.plan('outsider'), 'chars')::int, char_length(pg_temp.pj(pg_temp.plan('outsider'), 'text')), 'G6 and its length is given');
 select is(pg_temp.val('outsider', format($q$select public.scheduler_voice_plan(%L, %L)::text$q$, tests.tid('b'), tests.rid('m1'))), '{"voice": false, "reason": "module_off"}', 'G7 a textile business has no voice: text');
-select pg_temp.settings('a_owner', false, 0.9, 10, 20);
+select pg_temp.q(pg_temp.settings('a_owner', false, 0.9, 10, 20));
 select is(pg_temp.pj(pg_temp.plan('outsider'), 'reason'), 'voice_off', 'G8 with the business''s switch off: text');
-select pg_temp.settings('a_owner', true, 0.9, 10, 20);
-select pg_temp.choose('a_owner', 'en', null);
+select pg_temp.q(pg_temp.settings('a_owner', true, 0.9, 10, 20));
+select pg_temp.q(pg_temp.choose('a_owner', 'en', null));
 select is(pg_temp.pj(pg_temp.plan('outsider'), 'reason'), 'no_voice_for_language', 'G9 with no voice chosen for the language: text');
-select pg_temp.choose('a_owner', 'en', 'fake-en');
+select pg_temp.q(pg_temp.choose('a_owner', 'en', 'fake-en'));
 select app.operator_open_real_data_gate((select slug from public.tenants where id = tests.tid('a')), 'adr:0014', 'doc:hosting', 'dpdp-children:review', 'doc:restore');
-select pg_temp.sc($q$delete from voice.disclosures where language = 'en' and version = 2$q$);
+select pg_temp.q(pg_temp.sc($q$delete from voice.disclosures where language = 'en' and version = 2$q$));
 select is(pg_temp.pj(pg_temp.plan('outsider'), 'reason'), 'disclosure_not_reviewed', 'G10 a draft wording over real data: text');
 select app.operator_close_real_data_gate((select slug from public.tenants where id = tests.tid('a')));
 select is(pg_temp.pj(pg_temp.plan('outsider'), 'voice'), 'true', 'G11 (over synthetic data the draft is spoken)');

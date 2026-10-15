@@ -4,6 +4,8 @@
 -- The clock is NOT pinned: the fixture is made "today" and the windows default to the last 30 days up to today.
 begin;
 select no_plan();
+-- setup calls that return a value are wrapped in q() so no row of theirs reaches the TAP stream (a bare `ok` line would be read as a test)
+create function pg_temp.q(p_value anyelement) returns void language plpgsql as $$ begin end $$;
 select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.cn_construction('a');
@@ -71,10 +73,10 @@ select tests.rid('t' || n), tests.tid('a'), tests.rid('o2'), n, (select coalesce
        case when st = 'delivered' then now() end, tests.uid('a_owner')
   from (values (1, 0, 'delivered', null), (2, -3, 'delivered', null), (3, -2, 'problem', 'truck_breakdown'), (4, -1, 'cancelled', null)) v(n, d, st, pc);
 -- the ledger of the company: invoice 1 (entry 100 days ago, due 70 days ago) Rs 10,000; invoice 2 (due 10 days ago) Rs 5,000; invoice 3 (due in 20 days) Rs 3,000; a payment of Rs 2,000 today
-select pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'charge', %L, null, %L::date, 1000000, %L::date, null, 'R-1')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today() - 100, pg_temp.today() - 70));
-select pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'charge', %L, null, %L::date, 500000, %L::date, null, 'R-2')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today() - 40, pg_temp.today() - 10));
-select pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'charge', %L, null, %L::date, 300000, %L::date, null, 'R-3')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today() - 5, pg_temp.today() + 20));
-select pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'payment', %L, null, %L::date, 200000, null, null, null, null, 'cash')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today()));
+select pg_temp.q(pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'charge', %L, null, %L::date, 1000000, %L::date, null, 'R-1')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today() - 100, pg_temp.today() - 70)));
+select pg_temp.q(pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'charge', %L, null, %L::date, 500000, %L::date, null, 'R-2')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today() - 40, pg_temp.today() - 10)));
+select pg_temp.q(pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'charge', %L, null, %L::date, 300000, %L::date, null, 'R-3')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today() - 5, pg_temp.today() + 20)));
+select pg_temp.q(pg_temp.try('a_owner', format($q$select public.ledger_entry_record(gen_random_uuid(), %L, 'payment', %L, null, %L::date, 200000, null, null, null, null, 'cash')$q$, tests.tid('a'), tests.rid('a_company'), pg_temp.today())));
 
 -- ============================================================================ B. construction.quotes
 create temp table rq as select pg_temp.run('a_sales', 'construction.quotes') as j;

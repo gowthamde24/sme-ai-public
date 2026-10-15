@@ -6,6 +6,7 @@
 --   E the scheduler's voice functions fail closed for a business without the module
 begin;
 select no_plan();
+create function pg_temp.q(p_value anyelement) returns void language plpgsql as $$ begin end $$;
 select tests.seed_two_tenants();
 -- business B has no pack row at all: NOTHING is on (job CK, fail closed)
 delete from packs.workspace_pack where tenant_id = tests.tid('b');
@@ -97,7 +98,7 @@ select is((select count(*) from guards g where g.module in ('programmes', 'fees'
 select is((select count(*) from information_schema.role_table_grants where table_schema = 'voice' and grantee in ('anon', 'authenticated', 'service_role', 'public')), 0::bigint, 'D4 the operator''s voice catalogues are closed to every client role');
 
 -- ============================================================================ E. the worker's voice functions fail closed
-select app.operator_register_scheduler('outsider@test.local');
+select pg_temp.q(app.operator_register_scheduler('outsider@test.local'));
 select is(tests.scalar_as(tests.uid('outsider'), format('select public.scheduler_voice_plan(%L, gen_random_uuid())::text', tests.tid('b'))), '{"voice": false, "reason": "module_off"}', 'E1 the worker is told "module_off" for a business that does not have voice notes');
 select is(tests.sqlstate_as(tests.uid('b_owner'), format('select public.scheduler_voice_plan(%L, gen_random_uuid())', tests.tid('b'))), '42501', 'E2 only the registered scheduler account may ask');
 select is(tests.sqlstate_as(tests.uid('b_owner'), format($$select public.scheduler_voice_record(%L, gen_random_uuid(), 'en', 'fake-en', 3, 40)$$, tests.tid('b'))), '42501', 'E3 nor record');

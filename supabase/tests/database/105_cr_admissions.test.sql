@@ -2,6 +2,8 @@
 --   A structure, grants, RLS, module    B starting an enquiry    C the stages    D a campus visit    E admitted: the student is made    F reading    G guards
 begin;
 select no_plan();
+-- setup calls that return a value are wrapped in q() so no row of theirs reaches the TAP stream (a bare `ok` line would be read as a test)
+create function pg_temp.q(p_value anyelement) returns void language plpgsql as $$ begin end $$;
 select tests.seed_two_tenants();
 select tests.seed_crm();
 select tests.cp_pack('a', 'education');
@@ -131,7 +133,7 @@ select is(pg_temp.stage('a_admin', 'a2', 'enquiry'), 'SM812', 'E14 nor re-opened
 select is(pg_temp.admit('a_owner', 'a3', 'st3', false, 'Dev', 'pbcom', null, 'BC-001'), 'SM811', 'E15 an admission number already used is refused (SM811) and the enquiry stays as it was');
 select is(pg_temp.st('a3'), 'enquiry', 'E16 (still an enquiry)');
 select is((select count(*) from public.students where id = tests.rid('st3')), 0::bigint, 'E17 and no student was made');
-select pg_temp.stage('a_owner', 'a3', 'lost', 'distance');
+select pg_temp.q(pg_temp.stage('a_owner', 'a3', 'lost', 'distance'));
 select is(pg_temp.admit('a_owner', 'a3', 'st3', false, 'Dev', 'pbcom'), 'SM812', 'E18 a lost enquiry cannot be admitted until it is re-opened');
 select is(pg_temp.admit('a_owner', 'a4', 'st4', true, null, 'pbtech'), 'ok', 'E19 an adult student: the enquirer IS the student (no label)');
 select is((select is_adult and child_label is null and contact_id = tests.rid('par4') from public.students where id = tests.rid('st4')), true, 'E20 the contact is the student');
