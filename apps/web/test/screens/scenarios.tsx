@@ -25,7 +25,7 @@ import { CALL_JSON, PRICE_JSON, QUIET_JSON, SENT_JSON, page as outboxPage } from
 import { parseItem, parseItemPage } from "@/lib/api/catalogue";
 import { ITEM_A, ITEM_HIDDEN, SUMMARIES, itemJson, pageJson, photoJson, PHOTO_B1, summaryJson } from "@/lib/api/catalogue-fixtures";
 import { TYPE_A_JSON, TYPE_B_JSON, TYPE_C_JSON } from "@/lib/api/quotes-fixtures";
-import { parseRequirementView } from "@/lib/api/enquiries";
+import { parseEnquiry, parseRequirementView } from "@/lib/api/enquiries";
 import { parseDueList, parseLeadFollowup, parsePolicyVersion, parseQuestionDraft } from "@/lib/api/followups";
 import { BODY_TEXT, DRAFT_JSON, DUE_JSON, FOLLOWUP_JSON, GATE_JSON, POLICY_JSON, QUESTION_JSON, TOUCH_JSON } from "@/lib/api/followups-fixtures";
 import { parseMembers, parseOrderDetail, parseOrderPage } from "@/lib/api/orders";
@@ -36,6 +36,14 @@ import { parsePolicyStatus } from "@/lib/api/policy";
 import { defaultPackId, otherPackIds, packFields, workspacePack } from "@/lib/packs/pack-test-kit";
 import { parseProfile } from "@/lib/api/profile";
 import { parseAccount, parseConversationPage, parseTemplates, parseThread } from "@/lib/api/whatsapp";
+import { parseItem as parseMaterialItem, parseItemList as parseMaterialItemList, parsePolicy as parseMaterialPolicy, parseQuoteDetail as parseMaterialQuoteDetail, parseQuoteList as parseMaterialQuoteList } from "@/lib/api/materials";
+import { ITEM_BARE_JSON, ITEM_JSON as MATERIAL_ITEM_JSON, LIST_JSON as MATERIAL_LIST_JSON, POLICY_JSON as MATERIAL_POLICY_JSON, QUOTE_APPROVED_JSON, QUOTE_DETAIL_JSON, QUOTE_FLAGGED_JSON, QUOTE_LIST_JSON, QUOTE as MATERIAL_QUOTE } from "@/lib/api/materials-fixtures";
+import { parseSite, parseSiteList } from "@/lib/api/sites";
+import { SITE as SITE_ID, SITE_JSON, SITE_LIST_JSON } from "@/lib/api/sites-fixtures";
+import { parseChallan, parseTripDetail, parseTripList } from "@/lib/api/deliveries";
+import { CHALLAN_JSON, TRIP as TRIP_ID, TRIP_DETAIL_JSON, TRIP_LIST_JSON, TRIP_ON_THE_WAY_JSON } from "@/lib/api/deliveries-fixtures";
+import { parseEntries as parseLedgerEntries, parseReceipt as parseLedgerReceipt, parseStatement as parseLedgerStatement, parseSummary as parseLedgerSummary } from "@/lib/api/ledger";
+import { COMPANY as LEDGER_COMPANY, ENTRIES_JSON, ENTRY_PAYMENT, RECEIPT_JSON, STATEMENT_JSON, SUMMARY_JSON as LEDGER_SUMMARY_JSON } from "@/lib/api/ledger-fixtures";
 import type { Handler } from "./state";
 
 export const ROLES = ["owner", "admin", "sales", "viewer"] as const;
@@ -739,6 +747,12 @@ add({ id: "accept", roles: ["owner"], render: async () => (await import("@/app/a
 const CONSTRUCTION = otherPackIds().find((i) => workspacePack(i).modules.includes("deliveries"))!;
 const EDUCATION = otherPackIds().find((i) => workspacePack(i).modules.includes("fees"))!;
 const packOf = (id: string, source: "signup" | "default" | "legacy" = "signup") => () => workspacePack(id, source);
+const packCardReads: Record<string, Handler> = {
+  listTrips: () => parseTripList(TRIP_LIST_JSON),
+  listMaterialQuotes: () => parseMaterialQuoteList(QUOTE_LIST_JSON),
+  getLedgerSummary: () => parseLedgerSummary(LEDGER_SUMMARY_JSON),
+};
+
 const fieldsOf = (id: string) => () => packFields(id);
 const SECURITY_FIRST_LEVEL = () => ({ level: "aal1" as const, neededFor: ["approvals", "whatsapp_connect", "rules_and_prices", "imports_and_exports", "team_and_privacy"] });
 const SAMPLE_NONE = () => ({ loaded: false, counts: { companies: 0, contacts: 0, leads: 0, products: 0 } });
@@ -752,10 +766,10 @@ add({ id: "start-classic", roles: ["owner"], render: startPage, handlers: (role)
 add({ id: "start-construction", roles: ["owner", "sales"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), getProfile: PROFILE_NEW, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "start-education-done-profile", roles: ["admin"], render: startPage, handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION), getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-default-pack", roles: ["owner"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(defaultPackId(), "legacy"), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
-add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
+add({ id: "today-construction", roles: ["owner", "sales"], render: todayPage(), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE, getAccountSecurity: SECURITY_FIRST_LEVEL }) });
 add({ id: "today-education-example-loaded", roles: ["owner"], render: todayPage({ example: "loaded" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(EDUCATION), getExampleStatus: SAMPLE_LOADED, getProfile: PROFILE_DONE }) });
-add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
-add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-example-failed", roles: ["owner"], render: todayPage({ example: "unavailable" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
+add({ id: "today-example-removed-some-kept", roles: ["owner"], render: todayPage({ example: "removed", kept: "3" }), handlers: (role) => ({ ...todayBase(role), getWorkspacePack: packOf(CONSTRUCTION), ...packCardReads, getExampleStatus: SAMPLE_NONE, getProfile: PROFILE_DONE }) });
 add({ id: "fees-education", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/fees/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(EDUCATION) }) });
 add({ id: "campaigns-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/campaigns/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "settings-fields-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/settings/page")).default(props({}, { section: "fields" })), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
@@ -764,3 +778,61 @@ add({ id: "customers-new-education", roles: ["owner"], render: async () => (awai
 add({ id: "catalogue-new-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/catalogue/new/page")).default(props({})), handlers: (role) => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION) }) });
 add({ id: "office-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/office/page")).default(props({})), handlers: (role) => ({ ...base(role), getAgentsStatus: () => agentsStatus(), getWorkspacePack: packOf(CONSTRUCTION) }) });
 add({ id: "whatsapp-second-step", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/integrations/whatsapp/page")).default(props({})), handlers: (role) => ({ ...waHandlers(role, { configured: false, status: "none" }), listTemplates: () => parseTemplates({ templates: [] }), getAccountSecurity: SECURITY_FIRST_LEVEL }) });
+
+
+// ---- building materials (job CO): the screens of a business that sells by area, weight or piece, delivers in trips and bills on credit --------------------------------------------------------------------
+const cons = (role: Role): Record<string, Handler> => ({ ...base(role), getWorkspacePack: packOf(CONSTRUCTION), listCustomFields: fieldsOf(CONSTRUCTION), getCatalogueCustom: () => ({ product_type: "paver_block", size: "200x100 mm", thickness_mm: 80, colour: "grey", gst_rate_percent: 18, hsn_code: "68101990", pieces_per_area: 4.5, pieces_per_pallet: 500 }) });
+const leadSide: Record<string, Handler> = { fetchLead: () => parsePage("leads", { items: [LEAD_JSON], next_cursor: null }).items[0], fetchLeadContactId: () => CONTACT, fetchContact: () => parsePage("contacts", { items: [CONTACT_JSON], next_cursor: null }).items[0], fetchCompany: () => parsePage("companies", { items: [COMPANY_JSON], next_cursor: null }).items[0] };
+const materialRequirement = parseRequirementView(
+  requirementJson("confirmed", {
+    fields: [
+      { id: "m1", line_no: 1, field_key: "product_type", value: { code: "paver_block", int_value: null, date_value: null, text: null, basis: null }, display: "paver block", certainty: "stated", state: "confirmed", conflict: false, created_via: "agent", quote: "paver blocks", quote_start: 5, quote_end: 17, decided_by: null, decided_at: null },
+      { id: "m2", line_no: 1, field_key: "area", value: { code: null, int_value: 100000, date_value: null, text: null, basis: "sq_ft" }, display: "1,000 sq ft", certainty: "stated", state: "confirmed", conflict: false, created_via: "agent", quote: "1,000 sq ft", quote_start: 18, quote_end: 29, decided_by: null, decided_at: null },
+      { id: "m3", line_no: null, field_key: "site_location", value: { code: null, int_value: null, date_value: null, text: "Kukatpally", basis: null }, display: "Kukatpally", certainty: "stated", state: "confirmed", conflict: false, created_via: "agent", quote: "Kukatpally", quote_start: 40, quote_end: 50, decided_by: null, decided_at: null },
+      { id: "m4", line_no: null, field_key: "laying", value: { code: "no", int_value: null, date_value: null, text: null, basis: null }, display: "Laying not needed", certainty: "stated", state: "confirmed", conflict: false, created_via: "agent", quote: "no laying", quote_start: 51, quote_end: 60, decided_by: null, decided_at: null },
+    ],
+    confirmable: false, ready_for_quote: true, flags: [], questions: [],
+  }),
+);
+const materialEnquiry = parseEnquiry({ id: ENQ, lead_id: LEAD, company_id: null, contact_id: null, channel: "whatsapp", received_at: "2026-10-05T10:00:00+00:00", subject: null, body: "Need paver blocks 1,000 sq ft for a driveway at Kukatpally. No laying.", truncated_from: null, created_by: null, created_at: "2026-10-05T10:01:00+00:00", archived_at: null });
+const itemRead = () => parseMaterialItem(MATERIAL_ITEM_JSON);
+const quoteSide2 = (extra: Record<string, Handler> = {}): Record<string, Handler> => ({ getMaterialPolicy: () => parseMaterialPolicy(MATERIAL_POLICY_JSON), listMaterialItems: () => parseMaterialItemList(MATERIAL_LIST_JSON), listMaterialQuotes: () => parseMaterialQuoteList(QUOTE_LIST_JSON), listSites: () => parseSiteList(SITE_LIST_JSON), ...leadSide, ...extra });
+
+add({ id: "products-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/page")).default(props({})), handlers: (role) => ({ ...cons(role), listMaterialItems: () => parseMaterialItemList(MATERIAL_LIST_JSON) }) });
+add({ id: "product-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/[itemId]/page")).default(props({ itemId: MATERIAL_ITEM_JSON.id }, { saved: "1" })), handlers: (role) => ({ ...cons(role), getMaterialItem: itemRead }) });
+add({ id: "product-construction-incomplete", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/[itemId]/page")).default(props({ itemId: ITEM_BARE_JSON.id })), handlers: (role) => ({ ...cons(role), getMaterialItem: () => parseMaterialItem(ITEM_BARE_JSON), getCatalogueCustom: () => ({}) }) });
+add({ id: "product-edit-construction", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/[itemId]/edit/page")).default(props({ itemId: MATERIAL_ITEM_JSON.id })), handlers: (role) => ({ ...cons(role), getMaterialItem: itemRead }) });
+add({ id: "quotes-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/page")).default(props({})), handlers: (role) => ({ ...cons(role), ...quoteSide2() }) });
+add({ id: "quote-rules-construction", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})), handlers: (role) => ({ ...cons(role), getMaterialPolicy: () => parseMaterialPolicy(MATERIAL_POLICY_JSON) }) });
+add({ id: "quote-rules-construction-none", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/quote-policy/page")).default(props({})), handlers: (role) => ({ ...cons(role), getMaterialPolicy: () => parseMaterialPolicy({ current: null, versions: [] }) }) });
+const quotePage = (id: string, quote: object, roles: readonly Role[], search: Record<string, string> = {}, aal?: "aal1" | "aal2") =>
+  add({ id, roles, aal, render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/[quoteId]/page")).default(props({ quoteId: MATERIAL_QUOTE }, search)), handlers: (role) => ({ ...cons(role), getMaterialQuote: () => parseMaterialQuoteDetail(quote), getSite: () => parseSite(SITE_JSON), ...leadSide }) });
+quotePage("quote-construction-draft", QUOTE_DETAIL_JSON, ["owner", "admin", "sales", "viewer"], { made: "1" });
+quotePage("quote-construction-flagged", QUOTE_FLAGGED_JSON, ["owner", "admin"]);
+quotePage("quote-construction-approved", QUOTE_APPROVED_JSON, ["owner"]);
+quotePage("quote-construction-no-second-factor", QUOTE_DETAIL_JSON, ["owner"], {}, "aal1");
+add({ id: "quote-construction-print", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/quotes/[quoteId]/print/page")).default(props({ quoteId: MATERIAL_QUOTE })), handlers: (role) => ({ ...cons(role), getMaterialQuote: () => parseMaterialQuoteDetail(QUOTE_APPROVED_JSON), getSite: () => parseSite(SITE_JSON), ...leadSide }) });
+add({ id: "enquiry-construction-request", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/enquiries/[enquiryId]/page")).default(props({ enquiryId: ENQ }, {})), handlers: (role) => ({ ...cons(role), fetchEnquiry: () => materialEnquiry, fetchRequirement: () => materialRequirement }) });
+add({ id: "enquiry-construction-quote", roles: ["owner", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/enquiries/[enquiryId]/quote/page")).default(props({ enquiryId: ENQ })), handlers: (role) => ({ ...cons(role), fetchEnquiry: () => materialEnquiry, fetchRequirement: () => materialRequirement, ...quoteSide2() }) });
+add({ id: "enquiry-construction-no-rules", roles: ["owner", "admin"], render: async () => (await import("@/app/app/tenants/[tenantId]/enquiries/[enquiryId]/quote/page")).default(props({ enquiryId: ENQ })), handlers: (role) => ({ ...cons(role), fetchEnquiry: () => materialEnquiry, fetchRequirement: () => materialRequirement, ...quoteSide2({ getMaterialPolicy: () => parseMaterialPolicy({ current: null, versions: [] }) }) }) });
+
+add({ id: "sites-construction", roles: ["owner", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/sites/page")).default(props({}, { saved: "1" })), handlers: (role) => ({ ...cons(role), listSites: () => parseSiteList(SITE_LIST_JSON), ...leadSide }) });
+add({ id: "sites-construction-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/sites/page")).default(props({})), handlers: (role) => ({ ...cons(role), listSites: () => parseSiteList({ items: [], next_cursor: null }) }) });
+add({ id: "site-new-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/sites/new/page")).default(props({}, { company: COMPANY })), handlers: (role) => ({ ...cons(role), ...leadSide }) });
+add({ id: "site-edit-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/sites/[siteId]/page")).default(props({ siteId: SITE_ID })), handlers: (role) => ({ ...cons(role), getSite: () => parseSite(SITE_JSON), ...leadSide }) });
+
+const material_order = { ...ORDER_JSON, quote_id: null, material_quote_id: MATERIAL_QUOTE, site_id: SITE_ID, state: "advance_paid" };
+add({ id: "orders-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/page")).default(props({})), handlers: (role) => ({ ...cons(role), fetchOrders: () => parseOrderPage({ items: [material_order, { ...material_order, id: "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbb2", order_no: 8, state: "quote_approved" }], next_cursor: null }) }) });
+add({ id: "order-construction-deliveries", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/[orderId]/page")).default(props({ orderId: ORDER })), handlers: (role) => ({ ...cons(role), fetchOrder: () => parseOrderDetail({ ...DETAIL_JSON, ...material_order }), fetchMembers: () => parseMembers(MEMBERS_JSON), listOrderTrips: () => parseTripList(TRIP_LIST_JSON) }) });
+add({ id: "trips-construction", roles: ["owner", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/trips/page")).default(props({}, { date: "2026-10-20", saved: "1" })), handlers: (role) => ({ ...cons(role), listTrips: () => parseTripList({ items: [...TRIP_LIST_JSON.items, { ...TRIP_ON_THE_WAY_JSON, id: "d3d3d3d3-d3d3-4d3d-8d3d-d3d3d3d3d3d3", trip_no: 3, status: "problem", problem_code: "site_closed" }] }), listSites: () => parseSiteList(SITE_LIST_JSON) }) });
+add({ id: "trips-construction-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/trips/page")).default(props({})), handlers: (role) => ({ ...cons(role), listTrips: () => parseTripList({ items: [] }), listSites: () => parseSiteList({ items: [], next_cursor: null }) }) });
+add({ id: "trip-construction", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/trips/[tripId]/page")).default(props({ tripId: TRIP_ID })), handlers: (role) => ({ ...cons(role), getTrip: () => parseTripDetail(TRIP_DETAIL_JSON), getSite: () => parseSite(SITE_JSON) }) });
+add({ id: "challan-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/trips/[tripId]/challan/page")).default(props({ tripId: TRIP_ID })), handlers: (role) => ({ ...cons(role), getChallan: () => parseChallan(CHALLAN_JSON) }) });
+const planSide = (role: Role): Record<string, Handler> => ({ ...cons(role), fetchOrder: () => parseOrderDetail({ ...DETAIL_JSON, ...material_order }), getMaterialQuote: () => parseMaterialQuoteDetail(QUOTE_APPROVED_JSON), listOrderTrips: () => parseTripList({ items: [] }), getMaterialPolicy: () => parseMaterialPolicy(MATERIAL_POLICY_JSON), ...leadSide, listSites: () => parseSiteList(SITE_LIST_JSON) });
+add({ id: "trip-plan-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/orders/[orderId]/trips/new/page")).default(props({ orderId: ORDER })), handlers: planSide });
+
+add({ id: "dues-construction", roles: ["owner", "sales", "viewer"], render: async () => (await import("@/app/app/tenants/[tenantId]/dues/page")).default(props({})), handlers: (role) => ({ ...cons(role), getLedgerSummary: () => parseLedgerSummary(LEDGER_SUMMARY_JSON) }) });
+add({ id: "dues-construction-empty", roles: ["owner"], render: async () => (await import("@/app/app/tenants/[tenantId]/dues/page")).default(props({})), handlers: (role) => ({ ...cons(role), getLedgerSummary: () => parseLedgerSummary({ items: [], next_cursor: null }) }) });
+add({ id: "dues-customer-construction", roles: ["owner", "admin", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/dues/[companyId]/page")).default(props({ companyId: LEDGER_COMPANY })), handlers: (role) => ({ ...cons(role), getLedgerStatement: () => parseLedgerStatement(STATEMENT_JSON), getLedgerEntries: () => parseLedgerEntries(ENTRIES_JSON), ...leadSide }) });
+add({ id: "dues-receipt-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/dues/receipt/[entryId]/page")).default(props({ entryId: ENTRY_PAYMENT })), handlers: (role) => ({ ...cons(role), getLedgerReceipt: () => parseLedgerReceipt(RECEIPT_JSON) }) });
+add({ id: "product-new-construction", roles: ["owner", "sales"], render: async () => (await import("@/app/app/tenants/[tenantId]/materials/new/page")).default(props({})), handlers: (role) => ({ ...cons(role) }) });

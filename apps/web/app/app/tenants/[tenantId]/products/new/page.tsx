@@ -4,6 +4,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { sendMaterialsBusinessTo } from "@/lib/packs/materials-redirect";
 
 import { addProductAction } from "./actions";
 import { ProductForm } from "./product-form";
@@ -30,6 +31,7 @@ export default async function NewProductPage({ params }: PageProps<"/app/tenants
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
+  await sendMaterialsBusinessTo(user.accessToken, tenantId, "/catalogue/new");
 
   let tenant;
   try {

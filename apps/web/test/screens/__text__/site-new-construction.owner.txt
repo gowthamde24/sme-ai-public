@@ -1,0 +1,40 @@
+[← Sites](/app/tenants/22222222-2222-2222-2222-222222222222/sites)
+# Add a site
+form:
+Sri Lakshmi Silks (synthetic) · Hyderabad
+[button type=button: Change]
+Name of the site
+<text label="Name of the site" maxlength=200 described-by="For example: Kukatpally villa">
+For example: Kukatpally villa Address
+<text label="Address" maxlength=400>
+City or town
+<text label="City or town" maxlength=120>
+PIN code
+<text label="PIN code" maxlength=6 inputmode=numeric>
+legend: Map pin
+Latitude
+<text label="Latitude" inputmode=decimal>
+Longitude
+<text label="Longitude" inputmode=decimal>
+[button type=button: Use my location]
+Stand at the site and press the button, or type the two numbers from your map app. Only the two numbers are saved.
+legend: For the truck
+Distance from your yard (km)
+<text label="Distance from your yard (km)" inputmode=numeric described-by="Needed when your transport charge is by the kilometre.">
+Needed when your transport charge is by the kilometre. Width of the lane (feet)
+<text label="Width of the lane (feet)" inputmode=numeric>
+<checkbox label="Night delivery is allowed">
+Night delivery is allowed
+<checkbox label="They help to unload">
+They help to unload Notes for the driver
+<textarea label="Notes for the driver" maxlength=1000 described-by="For example: gate on the left, narrow bend after the temple. Do not write phone numbers here.">
+For example: gate on the left, narrow bend after the temple. Do not write phone numbers here.
+legend: Who receives the goods
+{role=radiogroup label="Who receives the goods"}
+<radio name=site-contact label="No one yet" checked>
+No one yet
+<radio name=site-contact label="Someone else (type name and number)">
+Someone else (type name and number)
+They are kept as a contact of this customer. Truck updates go to them only if they agreed to messages.
+[button type=submit: Save the site]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/sites)

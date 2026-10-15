@@ -4,6 +4,7 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { sendMaterialsBusinessTo } from "@/lib/packs/materials-redirect";
 
 import { commitPriceListAction, previewPriceListAction } from "./price-list-actions";
 import { PriceListImport } from "./price-list-import";
@@ -33,6 +34,7 @@ export default async function PriceListPage({ params }: PageProps<"/app/tenants/
   const user = await requireUser();
   const { tenantId } = await params;
   if (!isCanonicalUuid(tenantId)) notFound();
+  await sendMaterialsBusinessTo(user.accessToken, tenantId, "/catalogue");
 
   let tenant;
   try {

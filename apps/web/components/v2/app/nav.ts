@@ -8,7 +8,7 @@ export const ALL_ROLES: readonly Role[] = ["owner", "admin", "sales", "viewer"];
 export const WRITERS: readonly Role[] = ["owner", "admin", "sales"];
 export const ADMINS: readonly Role[] = ["owner", "admin"];
 
-export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns";
+export type IconKey = "today" | "leads" | "quotes" | "orders" | "customers" | "catalogue" | "sarees" | "visits" | "outbox" | "office" | "integrations" | "report" | "settings" | "retailers" | "team" | "chats" | "fees" | "campaigns" | "sites" | "dues" | "calls";
 
 export type NavItem = {
   id: string;
@@ -36,6 +36,8 @@ export type NavItem = {
   module?: string;
   /** An item no business had before packs existed (Fees, Campaigns): it is offered only when a pack's modules include its module. With no pack at all the menu is the one the product always had. */
   packOnly?: boolean;
+  /** Hidden when the business type has this module ON: Dues is the education Fees page's own ledger, so a business with `fees` is not offered it twice (jobs CO and CS). */
+  unlessModule?: string;
 };
 export type NavGroup = { id: string; label: string; items: readonly NavItem[] };
 
@@ -64,6 +66,9 @@ export const NAV: readonly NavGroup[] = [
       { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },
       { id: "report", label: "This week", icon: "report", path: "/report", module: "reports", roles: ADMINS },
       { id: "customers", label: "Customers", icon: "customers", path: "", tab: "companies", tabs: ["companies", "contacts"], also: ["/companies", "/contacts", "/customers"], module: "contacts", roles: ALL_ROLES },
+      // job CO: a customer's delivery sites, and what customers owe (the shared ledger, ADR 0086); only a pack with the module offers them
+      { id: "sites", label: "Sites", icon: "sites", path: "/sites", module: "sites", packOnly: true, roles: ALL_ROLES },
+      { id: "dues", label: "Dues", icon: "dues", path: "/dues", module: "dues", unlessModule: "fees", packOnly: true, roles: WRITERS },
       // job CC: look for shops and wholesalers on Google Maps and keep the good ones as leads
       { id: "retailers", label: "Find retailers", icon: "retailers", path: "/retailers", module: "lead_finder", roles: WRITERS },
     ],
@@ -73,7 +78,7 @@ export const NAV: readonly NavGroup[] = [
     label: "Your business",
     items: [
       // the saree photo catalogue (job BC): every member reads it, Owner and Admin keep it. On the phone it lives in "More": the bar is full at five tabs and these are tabs for what needs a person today
-      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", module: "catalogue", roles: ALL_ROLES },
+      { id: "sarees", label: "Catalogue", icon: "sarees", path: "/catalogue", also: ["/materials"], module: "catalogue", roles: ALL_ROLES },
       { id: "catalogue", label: "Prices and products", icon: "catalogue", path: "/item-types", also: ["/price-list", "/products", "/quote-policy"], module: "quotes", roles: WRITERS },
     ],
   },
@@ -120,6 +125,7 @@ export type PackFrame = {
 /** Is this item offered to a business of this type? Absent pack: everything but the items that only exist with a pack. */
 export function offered(item: NavItem, view?: PackFrame | null): boolean {
   if (!view) return !item.packOnly;
+  if (item.unlessModule !== undefined && view.modules.includes(item.unlessModule)) return false;
   return item.module === undefined || view.modules.includes(item.module);
 }
 

@@ -1,0 +1,31 @@
+[button type=button: Print or save as PDF]
+In the print window choose Save as PDF to keep a file. Demo Silks (synthetic) Quotation
+Quote no.
+12
+Made on
+2026-10-14
+Valid until
+2026-10-21
+For
+Ravi Kumar (synthetic)
+Deliver to
+Kukatpally villa (synthetic), Plot 14, Road 3, Hyderabad
+caption: Lines of the quote
+table:
+  | th Product | th Quantity | th Rate | th Amount |
+  | th Paver block 80 mm grey (synthetic) Area 1,000 sq ft · 4,725 pieces · 10 pallets GST 18 percent | 1,05,000 sq ft | ₹65.00 | ₹68,250.00 |
+Material
+₹68,250.00
+Transport (2 trips)
+₹7,000.00
+GST amount
+₹13,545.00
+Total
+₹88,795.00
+Advance before dispatch
+₹44,397.50
+Balance on delivery
+₹44,397.50
+Valid until
+2026-10-21
+In words : Rupees Eighty-Eight Thousand Seven Hundred Ninety-Five Only ( ₹88,795.00 ) Advance ₹44,397.50 before dispatch. Balance ₹44,397.50 as above. This is a quotation, not a GST invoice. The invoice comes from your accounting program.

@@ -1,0 +1,42 @@
+# Quote rules
+How your quotes are worked out: wastage, freight, loading, laying, advance and how long a quote is good for. The calculator follows these rules exactly. No quote rules yet Without rules no quote can be made. The Owner sets them once and changes them when prices or freight change.
+{label="Change the rules"}
+## Change the rules
+form:
+legend: Quantity
+Wastage added to the pieces (percent)
+<text label="Wastage added to the pieces (percent)" inputmode=decimal value=5 aria-invalid=false described-by="Usually 5. Breakage and cuts. It is the owner's number.">
+Usually 5. Breakage and cuts. It is the owner's number.
+<checkbox label="Round up to whole pallets">
+Round up to whole pallets
+<checkbox label="Bill the area the delivered pieces cover" checked>
+Bill the area the delivered pieces cover Off: the customer pays only for their own area.
+legend: Transport
+{role=radiogroup label="Transport"}
+<radio name=pol-transport label="No transport charge" checked>
+No transport charge
+<radio name=pol-transport label="A fixed rate for each trip">
+A fixed rate for each trip
+<radio name=pol-transport label="By the kilometre, in slabs">
+By the kilometre, in slabs
+legend: Loading and unloading
+{role=radiogroup label="Loading and unloading"}
+<radio name=pol-handling label="No charge" checked>
+No charge
+<radio name=pol-handling label="A flat amount for the order">
+A flat amount for the order
+<radio name=pol-handling label="A flat amount for each trip">
+A flat amount for each trip
+legend: Laying
+<checkbox label="I charge for laying">
+I charge for laying
+legend: Payment terms
+Advance before dispatch (percent)
+<text label="Advance before dispatch (percent)" inputmode=decimal value=50 aria-invalid=false described-by="Usually 50. The rest is due on delivery, or after the credit days below.">
+Usually 50. The rest is due on delivery, or after the credit days below. Credit days for the balance
+<text label="Credit days for the balance" inputmode=numeric value=0 aria-invalid=false described-by="0 means the balance is due on delivery.">
+0 means the balance is due on delivery. A quote is good for (days)
+<text label="A quote is good for (days)" inputmode=numeric value=7 aria-invalid=false>
+Saving makes a new version that applies from today. Older quotes keep the rules they were made with.
+[button type=submit: Save the rules]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/quote-policy)

@@ -1,0 +1,17 @@
+[All quotes](/app/tenants/22222222-2222-2222-2222-222222222222/quotes) [The lead](/app/tenants/22222222-2222-2222-2222-222222222222/leads/33333333-3333-3333-3333-333333333333)
+# Enquiry
+{label="Parts of this enquiry"} [Request](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444) [Quote](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444/quote current=page)
+{label="Quote"}
+## Quote
+### Quotes already made
+- [Quote 12 ₹88,795.00 Draft](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/c1c1c1c1-c1c1-4c1c-8c1c-c1c1c1c1c1c1)
+- [Quote 11 ₹24,500.00 Approved](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/c2c2c2c2-c2c2-4c2c-8c2c-c2c2c2c2c2c2)
+legend: Line 1
+paver block 1,000 sq ft Product for this line
+<select label="Product for this line">
+  options: Choose a product= | Paver block 80 mm grey (synthetic) · ₹65 per sq ft=a1a1a1a1-a1a1-4a1a-8a1a-a1a1a1a1a1a1*
+Delivery site
+<select label="Delivery site" described-by="The distance of the site decides the freight when freight is by the kilometre.">
+  options: No site chosen=* | Kukatpally villa (synthetic), Hyderabad=5a5a5a5a-5a5a-45a5-85a5-5a5a5a5a5a5a
+The distance of the site decides the freight when freight is by the kilometre.
+[button type=button: Show the figures]

@@ -1,0 +1,53 @@
+[← Quotes](/app/tenants/22222222-2222-2222-2222-222222222222/quotes)
+# Quote 12
+Draft
+Customer
+Ravi Kumar (synthetic)
+Delivery site
+Kukatpally villa (synthetic), Hyderabad
+Made on
+2026-10-14
+Valid until
+2026-10-21
+Enquiry
+[Open the enquiry](/app/tenants/22222222-2222-2222-2222-222222222222/enquiries/44444444-4444-4444-4444-444444444444)
+caption: Lines of the quote
+table:
+  | th Product | th Quantity | th Rate | th Amount |
+  | th Paver block 80 mm grey (synthetic) Area 1,000 sq ft · 4,725 pieces · 10 pallets GST 18 percent | 1,05,000 sq ft | ₹65.00 | ₹68,250.00 |
+Material
+₹68,250.00
+Transport (2 trips)
+₹7,000.00
+GST amount
+₹13,545.00
+Total
+₹88,795.00
+Advance before dispatch
+₹44,397.50
+Balance on delivery
+₹44,397.50
+Valid until
+2026-10-21
+{role=note}
+- The customer would go over their credit limit.
+summary: Why each number is what it is
+- 1,000 needs 4,500 pieces; with 5 percent wastage that is 4,725 pieces (10 pallets).
+- 1,050 billed at ₹65.00 per unit of area = ₹68,250.00.
+- GST 18 percent on the material = ₹12,285.00.
+- Load 4,725; a truck carries 2,500; so 2 trips.
+- 2 trips at ₹3,500.00 = ₹7,000.00.
+- Advance ₹44,397.50; balance ₹44,397.50; credit days 0.
+- Valid until 2026-10-21.
+Worked out by the quote calculator, version 1.0.0. No AI model calculates any figure.
+[button type=button disabled: Check and approve]
+[button type=button: Turn it down]
+This quote has a flag: only the Owner can approve it.
+{label="The WhatsApp message"}
+## The WhatsApp message
+{role=group label="Language of the message"}
+[button type=button: English]
+[button type=button: Telugu]
+[button type=button: Hindi]
+[button type=button: Kannada]
+Choose a language to see the message as the customer would read it. [Open the printable quotation](/app/tenants/22222222-2222-2222-2222-222222222222/quotes/c1c1c1c1-c1c1-4c1c-8c1c-c1c1c1c1c1c1/print)

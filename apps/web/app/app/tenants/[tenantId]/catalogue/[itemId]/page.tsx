@@ -11,6 +11,9 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { take } from "@/lib/api/settled";
 import { requireUser } from "@/lib/auth/session";
+import { hasModule } from "@/lib/packs/has";
+import { rawQuery } from "@/lib/packs/materials-redirect";
+import { readPackCached } from "@/lib/packs/read";
 
 import { readLeadLabel } from "../../visits/visits-data";
 import { searchLeadsAction, sendCatalogueAction } from "../catalogue-actions";
@@ -40,6 +43,7 @@ export default async function CatalogueItemPage({ params, searchParams }: PagePr
     escalate(error);
     return <ApiDownV2 words={await partsWords()} />;
   }
+  if (hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) redirect(`/app/tenants/${tenantId}/materials/${itemId}${rawQuery(raw)}`);
   // the saree and (for a role that may send it) the customer it is being chosen for are asked at the same time (job CH): the role is known from the workspace read above
   const leadParam = pick(raw.lead);
   const writer = tenant.role !== "viewer";

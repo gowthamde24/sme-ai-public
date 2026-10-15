@@ -1,0 +1,23 @@
+[button type=button: Print or save as PDF]
+In the print window choose Save as PDF to keep a file. Pavers Corner (synthetic) Delivery note
+Note no.
+41
+Order / trip
+7 / 1
+Date
+2026-10-20
+For
+Sri Rama Builders (synthetic)
+Deliver to
+Kukatpally villa (synthetic), Plot 14, Road 3, Hyderabad, 500072 Gate on the left
+Site contact
+Ravi (synthetic) , +00 90000 20002
+Vehicle number
+TS 09 UA 1234
+Driver's name
+Suresh (synthetic) , +00 90000 20001
+caption: What is on the truck
+table:
+  | th # | th Product | th Quantity |
+  | 1 | Paver block 80 mm grey (synthetic) HSN 68101990 | 2,500 piece |
+Received by (name and signature) Driver (signature) This is a delivery note. It shows no amounts and no tax; the GST invoice comes from your accounting program.

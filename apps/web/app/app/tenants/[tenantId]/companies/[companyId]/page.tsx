@@ -16,6 +16,10 @@ import { EvidencePanel } from "../../evidence-panel";
 import { SuggestionsPanel } from "../../suggestions-panel";
 import { kvList, pageH1, pageH2, pageMain } from "@/components/v2/app/ui";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
+import { appT } from "@/i18n/app";
+import { CompanyShortcuts } from "@/components/v2/app/sites/CompanyShortcuts";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
@@ -103,10 +107,18 @@ export default async function CompanyPage({
     { key: "suggestions", label: claims && claims.length > 0 ? t("comp.tab_suggestions_n", { n: claims.length }) : t("comp.tab_suggestions"), href: `${here}?section=suggestions`, current: section === "suggestions" },
   ];
 
+  // what a business that delivers and bills on credit does with a customer (jobs CO): their sites, and their account of what is owed. Offered by module, and only to the roles the API lets read money.
+  const pack = await readPackCached(user.accessToken, tenantId).catch(() => null);
+  const at = appT(lang);
+  const shortcuts = [
+    ...(hasModule(pack, "sites") ? [{ href: `/app/tenants/${tenantId}/sites/new?company=${companyId}`, label: at("site.add") }] : []),
+    ...(hasModule(pack, "dues") && !hasModule(pack, "fees") && tenant.role !== "viewer" ? [{ href: `/app/tenants/${tenantId}/dues/${companyId}`, label: at("nav.item.dues") }] : []),
+  ];
   return (
     <main className={pageMain} lang={lang}>
       <BackLink href={`/app/tenants/${tenantId}?tab=companies`} label={t("comp.all_customers")} />
       <h1 className={pageH1}>{company.name}</h1>
+      <CompanyShortcuts links={shortcuts} />
 
       {section !== "all" ? <SectionTabs label={t("comp.parts_of_this_company")} items={parts} /> : null}
       {section === "details" || section === "all" ? (

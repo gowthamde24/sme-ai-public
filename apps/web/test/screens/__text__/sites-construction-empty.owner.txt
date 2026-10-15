@@ -1,0 +1,4 @@
+# Sites
+Where each customer wants the material delivered, and what the truck needs to know.
+## No delivery site yet
+A customer can have many sites, for example a villa and a warehouse. Add the address, a map pin, the person who receives the goods and any notes for the driver. [Add a site](/app/tenants/22222222-2222-2222-2222-222222222222/sites/new)

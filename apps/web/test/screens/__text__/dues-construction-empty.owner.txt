@@ -1,0 +1,4 @@
+# Dues
+What your customers owe: how old it is, who is over the credit limit, and where to write down a payment.
+## Nobody owes you anything right now
+When you make an order, write down the invoice from your accounting program on the customer's account. Payments you receive are written down there too. [Go to the orders](/app/tenants/22222222-2222-2222-2222-222222222222/orders)

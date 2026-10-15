@@ -13,6 +13,8 @@ export function bad(what: string): never {
 export const rec = (v: unknown, what: string): Rec => (isRec(v) ? v : bad(what));
 export const list = (v: unknown, what: string, max = 1000): unknown[] => (Array.isArray(v) && v.length <= max ? v : bad(what));
 export const str = (v: unknown, what: string, max = 2000): string => (typeof v === "string" && v.length <= max ? v : bad(what));
+/** A string that is not empty or blank (a name). */
+export const nstr = (v: unknown, what: string, max = 2000): string => (typeof v === "string" && v.trim() !== "" && v.length <= max ? v : bad(what));
 export const optStr = (v: unknown, what: string, max = 2000): string | null => (v === null || v === undefined ? null : str(v, what, max));
 export const bool = (v: unknown, what: string): boolean => (typeof v === "boolean" ? v : bad(what));
 export const int = (v: unknown, what: string, min = 0, max = Number.MAX_SAFE_INTEGER): number => (typeof v === "number" && Number.isSafeInteger(v) && v >= min && v <= max ? v : bad(what));

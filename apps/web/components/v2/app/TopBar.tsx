@@ -16,7 +16,7 @@ import { useWorkspace, type Membership } from "./use-workspace";
 export function TopBar({ memberships, labels, email, signOut, children }: { memberships: readonly Membership[]; labels?: Labels; email: string | null; signOut: () => Promise<void>; children: ReactNode }) {
   const { current } = useWorkspace(memberships);
   return (
-    <header className="sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-line bg-bg/90 px-4 backdrop-blur md:px-8">
+    <header className="print:hidden sticky top-0 z-30 flex min-h-16 items-center gap-2 border-b border-line bg-bg/90 px-4 backdrop-blur md:px-8">
       <Link href={current ? `/app/tenants/${current.id}` : "/app"} className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg md:hidden" aria-label={current?.name ?? "Home"}>
         <BrandMark className="size-9" />
       </Link>

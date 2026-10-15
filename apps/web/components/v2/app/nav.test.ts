@@ -76,8 +76,8 @@ describe("the menu table", () => {
 
 describe("the items only a business type brings (job CL)", () => {
   const flat = NAV.flatMap((g) => g.items);
-  it("are Fees and Campaigns, each tied to a module, and absent from the menu of a workspace with no pack", () => {
-    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["fees", "/fees", "fees"], ["campaigns", "/campaigns", "campaigns"]]);
+  it("are Fees, Campaigns, Sites and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
+    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["fees", "/fees", "fees"], ["campaigns", "/campaigns", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"]]);
     for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
   });
   it("show when the pack has the module on, and only then", () => {
@@ -133,5 +133,19 @@ describe("which item a page belongs to", () => {
     expect(workspaceOf(`/app/tenants/${T}`)).toEqual({ tenantId: T, rest: "" });
     expect(workspaceOf("/app/tenants/not-an-id/orders")).toBeNull();
     expect(workspaceOf("/login")).toBeNull();
+  });
+});
+
+describe("an item another module replaces (job CO)", () => {
+  const view = (modules: string[]) => ({ name: "X", accent: "sky_blue", validated: false, coreTab: "fees", modules, labels: {} });
+  it("Dues is hidden where Fees is on (the fee ledger is the education screen), and shown where only dues is", () => {
+    const ids = (modules: string[]) => visibleGroups("owner", view(modules)).flatMap((g) => g.items.map((i) => i.id));
+    expect(ids(["today", "dues", "fees"])).not.toContain("dues");
+    expect(ids(["today", "dues"])).toContain("dues");
+    expect(ids(["today"])).not.toContain("dues");
+  });
+  it("Sites needs its module and is absent from the menu of a workspace with no pack", () => {
+    expect(visibleGroups("owner", view(["today", "sites"])).flatMap((g) => g.items.map((i) => i.id))).toContain("sites");
+    expect(visibleGroups("owner").flatMap((g) => g.items.map((i) => i.id))).not.toContain("sites");
   });
 });

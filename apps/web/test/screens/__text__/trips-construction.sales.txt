@@ -1,0 +1,26 @@
+# Deliveries
+The trucks of the day: load, send, deliver with a photo, and tell the site.
+{role=status} The trip is saved.
+{label="Day"} [←](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-19 label="Day before") 2026-10-20 [→](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips?date=2026-10-21 label="Next day") [Back to today](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips)
+{label="On the way (1)"}
+## On the way ( 1 )
+- [Order 7, trip 2](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d2d2d2d2-d2d2-4d2d-8d2d-d2d2d2d2d2d2) On the way 2,225 piece · Paver block 80 mm grey (synthetic) 2026-10-20 · TS 09 UA 1234 · Suresh (synthetic) · Kukatpally villa (synthetic), Hyderabad
+[button type=button: Delivered, add the proof]
+[button type=button: There is a problem]
+[button type=button: Tell the site]
+[Delivery note](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d2d2d2d2-d2d2-4d2d-8d2d-d2d2d2d2d2d2/challan)
+{label="Planned (1)"}
+## Planned ( 1 )
+- [Order 7, trip 1](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1) Planned 2,500 piece · Paver block 80 mm grey (synthetic) 2026-10-20 · TS 09 UA 1234 · Suresh (synthetic) · Kukatpally villa (synthetic), Hyderabad
+[button type=button: Loaded]
+[button type=button: There is a problem]
+[button type=button: Cancel the trip]
+[Change the trip](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1?edit=1) [Delivery note](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d1d1d1d1-d1d1-4d1d-8d1d-d1d1d1d1d1d1/challan)
+{label="Problem (1)"}
+## Problem ( 1 )
+- [Order 7, trip 3](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d3d3d3d3-d3d3-4d3d-8d3d-d3d3d3d3d3d3) Problem 2,225 piece · Paver block 80 mm grey (synthetic) 2026-10-20 · TS 09 UA 1234 · Suresh (synthetic) · Kukatpally villa (synthetic), Hyderabad
+{role=note} The site is closed
+[button type=button: Back to planned]
+[button type=button: Cancel the trip]
+[button type=button: Tell the site]
+[Change the trip](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d3d3d3d3-d3d3-4d3d-8d3d-d3d3d3d3d3d3?edit=1) [Delivery note](/app/tenants/22222222-2222-2222-2222-222222222222/orders/trips/d3d3d3d3-d3d3-4d3d-8d3d-d3d3d3d3d3d3/challan)

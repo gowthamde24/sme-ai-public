@@ -1,0 +1,42 @@
+[← Catalogue](/app/tenants/22222222-2222-2222-2222-222222222222/materials)
+{role=status} Saved.
+# Paver block 80 mm grey (synthetic)
+per sq ft
+{label="Photos of Paver block 80 mm grey (synthetic)"}
+{role=group label="Photo 1 of 1"} [image: Paver block 80 mm grey (synthetic), photo 1]
+Photo 1 of 1
+{label="What a quote needs"}
+## What a quote needs
+Price
+₹65 per sq ft
+GST rate
+18%
+HSN code
+68101990
+Pieces per area
+4.5 / sq ft
+Pieces per pallet
+500
+Minimum order
+500 sq ft
+Lead time
+3 days
+A quote can be made from this product.
+{label="Details"}
+## Details
+Product type
+Paver block
+Size (for example 200x100 mm)
+200x100 mm
+Thickness (mm)
+80
+Colour
+grey
+Pieces per sq ft or sq m
+4.5
+Pieces per pallet
+500
+HSN code (from your accountant)
+68101990
+GST rate in percent (from your accountant)
+18

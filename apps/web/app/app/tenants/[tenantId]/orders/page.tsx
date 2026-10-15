@@ -12,6 +12,10 @@ import { requireUser } from "@/lib/auth/session";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
+import { SectionTabs } from "@/components/v2/app/parts";
+import { appT } from "@/i18n/app";
 
 import { LocalTime } from "../../../local-time";
 
@@ -65,8 +69,12 @@ export default async function OrdersPage({ params, searchParams }: PageProps<"/a
   const filter = FILTERS.some((f) => f.key === pick(query.filter)) ? (pick(query.filter) as FilterKey) : "all";
   const shown = page.items.filter((o) => filter === "all" || (filter === "open" && o.outcome === "open") || (filter === "closed" && o.outcome !== "open") || (filter === "held" && moneyHeld(o) > 0));
   const here = `/app/tenants/${tenantId}/orders`;
+  // a business that delivers (module `deliveries`, job CO) has the trips board beside its orders
+  const tabs = hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "deliveries");
+  const tt = appT(lang);
   return (
     <main className={pageMain} lang={lang}>
+      {tabs ? <SectionTabs label={tt("trip.tabs")} items={[{ key: "orders", label: tt("nav.item.orders"), href: here, current: true }, { key: "trips", label: tt("trip.board.title"), href: `${here}/trips`, current: false }]} /> : null}
       <PageTop
         title={t("orders.orders")}
         sub={<span role="note">{t("orders.nothing_is_sent_by_this_system")}</span>}

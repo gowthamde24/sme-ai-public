@@ -13,6 +13,8 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { hasModule } from "@/lib/packs/has";
+import { readPackCached } from "@/lib/packs/read";
 
 import { removePhotoAction, reorderPhotosAction, saveItemAction, saveItemCustomAction } from "../catalogue-actions";
 import { catalogueWords } from "../catalogue-words";
@@ -38,6 +40,7 @@ export default async function NewCatalogueItemPage({ params }: PageProps<"/app/t
     return <ApiDownV2 words={await partsWords()} />;
   }
   const base = `/app/tenants/${tenantId}`;
+  if (hasModule(await readPackCached(user.accessToken, tenantId).catch(() => null), "materials")) redirect(`/app/tenants/${tenantId}/materials/new`);
   if (tenant.role !== "owner" && tenant.role !== "admin") redirect(`${base}/catalogue`);
   const lang = await getLang();
   const t = appT(lang);

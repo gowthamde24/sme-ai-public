@@ -32,7 +32,7 @@ export function SideNav({ memberships, labels: given_labels, frame: given, email
   const foot = current ? footItems(current.role) : [];
   const badge = frame.pack && !frame.pack.validated ? frame.pack : null;
   return (
-    <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-64"}`}>
+    <aside className={`${frameBand} ${collapsed ? "w-[72px]" : "w-64"} print:hidden`}>
       <WorkspaceSwitcher memberships={memberships} labels={labels} plan={frame.plan} loading={!frame.ready} collapsed={collapsed} pack={badge} />
       <nav aria-label={aria} className="min-h-0 flex-1 overflow-y-auto p-2">
         {current ? (

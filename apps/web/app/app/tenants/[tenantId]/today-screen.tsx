@@ -14,6 +14,9 @@ import { ExampleBanner, type ExampleNotice } from "@/components/v2/app/start/Exa
 import { readActivation, usesChecklist, type Activation } from "@/lib/packs/activation";
 import { getExampleStatus } from "@/lib/api/example-data";
 import { readPackCached } from "@/lib/packs/read";
+import { readPackCards } from "@/lib/packs/pack-cards";
+import { PackCards } from "@/components/v2/app/today/PackCards";
+import { formatRupees } from "@/lib/money";
 import { withPackT } from "@/lib/packs/resolve";
 import { loadExampleAction, removeExampleAction } from "./start/actions";
 
@@ -41,17 +44,18 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
   const pack = await readPackCached(accessToken, tenantId);
   const t = pack ? withPackT(appT(lang), pack, lang) : appT(lang);
   const now = clock();
-  let data, name, setup = null, activation: Activation | null = null, sample = null;
+  let data, name, setup = null, activation: Activation | null = null, sample = null, packCards: Awaited<ReturnType<typeof readPackCards>> = [];
   const manages = role === "owner" || role === "admin";
   const ownSteps = manages && usesChecklist(pack);
   try {
     // the Owner of a workspace that is not set up yet sees the setup wizard / checklist (job BJ): its facts are read here, with existing endpoints only
-    [data, name, setup, activation, sample] = await Promise.all([
+    [data, name, setup, activation, sample, packCards] = await Promise.all([
       readToday(accessToken, tenantId, role),
       readDisplayName(accessToken, tenantId, userId),
       role === "owner" && !usesChecklist(pack) ? readSetupFacts(accessToken, tenantId, shop) : Promise.resolve(null),
       ownSteps && pack ? readActivation(accessToken, tenantId, pack, t) : Promise.resolve(null),
       manages && pack ? getExampleStatus(accessToken, tenantId) : Promise.resolve(null),
+      readPackCards({ accessToken, tenantId, role, pack, now, formatMoney: formatRupees }),
     ]);
   } catch (error) {
     if (error instanceof ApiAuthError) redirect("/login");
@@ -68,7 +72,7 @@ export async function TodayScreen({ accessToken, userId, tenantId, role, shop = 
     visit: { confirm: confirmVisitAction.bind(null, tenantId), move: moveVisitAction.bind(null, tenantId), cancel: cancelVisitAction.bind(null, tenantId), slots: slotsAction.bind(null, tenantId) },
   };
   const view = (
-      <TodayView help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
+      <TodayView packCards={<PackCards cards={packCards} t={(key, vars) => t(key as "frame.notyet", vars)} />} help={helpTipFor(lang, `/app/tenants/${tenantId}`, "today")} data={data} name={name} hour={hourInIndia(new Date(now))} now={now} base={`/app/tenants/${tenantId}`} t={(key, vars) => t(key as "frame.notyet", vars)} lang={lang} role={role} actions={actions} outboxHref={role === "viewer" ? null : `/app/tenants/${tenantId}/outbox?tab=sent`} />
   );
   const setupActions: SetupActions = { saveHours: saveHoursAction.bind(null, tenantId), saveItem: saveItemAction.bind(null, tenantId) };
   // the "example data" banner (blueprint 3.2) is the first-run offer of a workspace made with a chosen business type; a workspace that existed before business types sees it only while a sample is loaded (so it can be removed)
