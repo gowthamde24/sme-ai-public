@@ -1,0 +1,18 @@
+# Call list
+People a money reminder did not reach, who have not paid. Call them and write down how it went.
+{label="Call list sections"} [To call](/app/tenants/22222222-2222-2222-2222-222222222222/call-list current=page) [Done](/app/tenants/22222222-2222-2222-2222-222222222222/call-list?tab=done)
+{role=note} Only the Owner and Admins can ring a customer. You can still write down how a call went.
+- Ravi Kumar (synthetic) October payment reminders (synthetic) · after reminder 3 ₹1,25,000.00 Due 2026-10-20 · INV-1001
+{role=group label="How did the call go?"}
+[button type=button: Paid]
+[button type=button: Promised a date]
+[button type=button: Call later]
+[button type=button: Wrong number]
+[button type=button: Stop contacting]
+- Suresh (synthetic) October payment reminders (synthetic) · after reminder 3 ₹48,000.00 Due 2026-10-20 · INV-1001 · Tries: 1
+{role=group label="How did the call go?"}
+[button type=button: Paid]
+[button type=button: Promised a date]
+[button type=button: Call later]
+[button type=button: Wrong number]
+[button type=button: Stop contacting]

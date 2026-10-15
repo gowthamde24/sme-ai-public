@@ -61,6 +61,8 @@ export const NAV: readonly NavGroup[] = [
       { id: "orders", label: "Orders", icon: "orders", path: "/orders", module: "orders", roles: WRITERS },
       // job CL: reminder campaigns (construction dues, education fees); the screens come with the campaign jobs
       { id: "campaigns", label: "Campaigns", icon: "campaigns", path: "/campaigns", module: "campaigns", packOnly: true, roles: ADMINS },
+      // job CQ: the people a money reminder did not reach, who have not paid
+      { id: "calllist", label: "Call list", icon: "calls", path: "/call-list", module: "campaigns", packOnly: true, roles: WRITERS },
       { id: "outbox", label: "Outbox", icon: "outbox", path: "/outbox", roles: WRITERS },
       // job CC: the customer chat inbox (WhatsApp)
       { id: "chats", label: "Customer chats", icon: "chats", path: "/chats", module: "inbox", roles: WRITERS },

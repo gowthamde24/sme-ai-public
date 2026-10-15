@@ -1,0 +1,4 @@
+# Call list
+People a money reminder did not reach, who have not paid. Call them and write down how it went.
+{label="Call list sections"} [To call](/app/tenants/22222222-2222-2222-2222-222222222222/call-list) [Done](/app/tenants/22222222-2222-2222-2222-222222222222/call-list?tab=done current=page)
+No finished calls yet.

@@ -1,0 +1,47 @@
+# Change campaign
+form:
+Name
+<text label="Name" maxlength=100 value=October payment reminders (synthetic) described-by="Only you see this, for example October payment reminders.">
+Only you see this, for example October payment reminders. Kind
+<select label="Kind" disabled described-by="The kind cannot be changed once the campaign is made.">
+  options: Payment due=payment_due* | Delivery update=delivery_update
+The kind cannot be changed once the campaign is made. Language of the message
+<select label="Language of the message" described-by="The language the people read. The WhatsApp template must be in the same language.">
+  options: English=en* | Telugu=te | Hindi=hi | Kannada=kn
+The language the people read. The WhatsApp template must be in the same language. WhatsApp template
+<select label="WhatsApp template" described-by="No approved reminder template in this language yet. WhatsApp settings">
+  options: Choose later=*
+No approved reminder template in this language yet. [WhatsApp settings](/app/tenants/22222222-2222-2222-2222-222222222222/integrations/whatsapp) Message
+<textarea label="Message" maxlength=600 value="Hello {{name}}, a payment of {{amount}} for {{reference}} is due on {{due_date}}. {{business}}" described-by="One line, 8 to 600 characters. Add the details with the buttons below. No links and no offers.">
+{role=group label="Add a detail to the message"}
+[button type=button: Name]
+[button type=button: Amount]
+[button type=button: Due date]
+[button type=button: Reference]
+[button type=button: Business name]
+One line, 8 to 600 characters. Add the details with the buttons below. No links and no offers. How it reads for one person (example details) Hello Ravi Kumar, a payment of ₹12,500.00 for INV-1001 is due on 20 Oct 2026. Your business
+legend: When the message goes
+Up to 5 steps, counted in days from each person's own date. Times inside quiet hours are refused. Step 1: days from the due date (minus is before)
+<text label="Step 1: days from the due date (minus is before)" inputmode=numeric value=-3>
+3 days before Time (24 hour)
+<time label="Time (24 hour)" value=10:00>
+[button type=button: Remove step 1]
+Step 2: days from the due date (minus is before)
+<text label="Step 2: days from the due date (minus is before)" inputmode=numeric value=0>
+On the day Time (24 hour)
+<time label="Time (24 hour)" value=10:00>
+[button type=button: Remove step 2]
+Step 3: days from the due date (minus is before)
+<text label="Step 3: days from the due date (minus is before)" inputmode=numeric value=7>
+7 days after Time (24 hour)
+<time label="Time (24 hour)" value=11:00>
+[button type=button: Remove step 3]
+[button type=button: Add a step]
+legend: Call plan
+For a person who has not replied and has not paid, a line is added to the call list after a step. Add to the call list after
+<select label="Add to the call list after">
+  options: No call step= | Step 1=1 | Step 2=2 | Step 3=3*
+Hours to wait for a reply first
+<text label="Hours to wait for a reply first" inputmode=numeric value=24>
+[button type=submit: Save changes]
+[Cancel](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)

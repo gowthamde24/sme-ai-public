@@ -1,0 +1,6 @@
+# Campaigns
+Reminder messages for payments, deliveries, fees and events. You check every message, then approve once. [New campaign](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/new)
+{role=status} Saved.
+- [October payment reminders (synthetic) Draft Payment due · 18 people · ₹4,12,500.00](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)
+- [October payment reminders (synthetic) Running Payment due · 18 people · ₹4,12,500.00](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)
+- [September fee reminders (synthetic) Done Fee due · 18 people · ₹4,12,500.00](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000002)

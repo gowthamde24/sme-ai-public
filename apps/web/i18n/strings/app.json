@@ -44491,5 +44491,2776 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "nav.item.calllist": {
+  "en": "Call list",
+  "te": "కాల్ జాబితా",
+  "hi": "कॉल सूची",
+  "kn": "ಕರೆ ಪಟ್ಟಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.sub": {
+  "en": "Reminder messages for payments, deliveries, fees and events. You check every message, then approve once.",
+  "te": "చెల్లింపులు, డెలివరీలు, ఫీజులు, కార్యక్రమాల రిమైండర్ సందేశాలు. ప్రతి సందేశాన్ని మీరు చూసి, ఒకసారి ఆమోదించండి.",
+  "hi": "भुगतान, डिलीवरी, फीस और कार्यक्रमों के रिमाइंडर संदेश। आप हर संदेश देखते हैं, फिर एक बार मंज़ूरी देते हैं।",
+  "kn": "ಪಾವತಿ, ಡೆಲಿವರಿ, ಶುಲ್ಕ ಮತ್ತು ಕಾರ್ಯಕ್ರಮಗಳ ನೆನಪೋಲೆ ಸಂದೇಶಗಳು. ನೀವು ಪ್ರತಿ ಸಂದೇಶವನ್ನು ನೋಡಿ, ಒಮ್ಮೆ ಒಪ್ಪಿಗೆ ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.add": {
+  "en": "New campaign",
+  "te": "కొత్త ప్రచారం",
+  "hi": "नया अभियान",
+  "kn": "ಹೊಸ ಅಭಿಯಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.new.title": {
+  "en": "New campaign",
+  "te": "కొత్త ప్రచారం",
+  "hi": "नया अभियान",
+  "kn": "ಹೊಸ ಅಭಿಯಾನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.edit.title": {
+  "en": "Change campaign",
+  "te": "ప్రచారాన్ని మార్చండి",
+  "hi": "अभियान बदलें",
+  "kn": "ಅಭಿಯಾನ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.saved": {
+  "en": "Saved.",
+  "te": "సేవ్ అయింది.",
+  "hi": "सहेज लिया गया।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.backtodraft": {
+  "en": "Saved. It is a draft again, so it has to be checked and approved again.",
+  "te": "సేవ్ అయింది. ఇది మళ్లీ డ్రాఫ్ట్ అయింది, కాబట్టి మళ్లీ చూసి ఆమోదించాలి.",
+  "hi": "सहेज लिया गया। यह फिर से मसौदा है, इसलिए इसे दोबारा जाँचना और मंज़ूर करना होगा।",
+  "kn": "ಉಳಿಸಲಾಗಿದೆ. ಇದು ಮತ್ತೆ ಕರಡು ಆಗಿದೆ, ಆದ್ದರಿಂದ ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ ಒಪ್ಪಿಗೆ ನೀಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.loaderr": {
+  "en": "Could not load this. Try again in a moment.",
+  "te": "దీన్ని లోడ్ చేయలేకపోయాం. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "इसे लोड नहीं कर सके। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಇದನ್ನು ಲೋಡ್ ಮಾಡಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.empty.title": {
+  "en": "No campaigns yet",
+  "te": "ఇంకా ప్రచారాలు లేవు",
+  "hi": "अभी कोई अभियान नहीं",
+  "kn": "ಇನ್ನೂ ಅಭಿಯಾನಗಳಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.empty.body": {
+  "en": "A campaign is a short reminder sent to a list of people on set days. Make one, check the messages, then approve.",
+  "te": "ప్రచారం అంటే నిర్ణీత రోజుల్లో ఒక జాబితాలోని వారికి పంపే చిన్న రిమైండర్. ఒకటి చేసి, సందేశాలు చూసి, ఆమోదించండి.",
+  "hi": "अभियान लोगों की सूची को तय दिनों पर भेजा जाने वाला छोटा रिमाइंडर है। एक बनाएँ, संदेश देखें, फिर मंज़ूर करें।",
+  "kn": "ಅಭಿಯಾನ ಎಂದರೆ ನಿಗದಿತ ದಿನಗಳಲ್ಲಿ ಜನರ ಪಟ್ಟಿಗೆ ಕಳುಹಿಸುವ ಚಿಕ್ಕ ನೆನಪೋಲೆ. ಒಂದನ್ನು ಮಾಡಿ, ಸಂದೇಶಗಳನ್ನು ನೋಡಿ, ಒಪ್ಪಿಗೆ ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.back": {
+  "en": "All campaigns",
+  "te": "అన్ని ప్రచారాలు",
+  "hi": "सभी अभियान",
+  "kn": "ಎಲ್ಲಾ ಅಭಿಯಾನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.people": {
+  "en": "{n} people",
+  "te": "{n} మంది",
+  "hi": "{n} लोग",
+  "kn": "{n} ಜನರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.tabs": {
+  "en": "Campaign sections",
+  "te": "ప్రచారం విభాగాలు",
+  "hi": "अभियान के हिस्से",
+  "kn": "ಅಭಿಯಾನದ ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.tab.overview": {
+  "en": "Overview",
+  "te": "అవలోకనం",
+  "hi": "सारांश",
+  "kn": "ಅವಲೋಕನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.tab.audience": {
+  "en": "People",
+  "te": "వ్యక్తులు",
+  "hi": "लोग",
+  "kn": "ಜನರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.tab.approve": {
+  "en": "Check and approve",
+  "te": "చూసి ఆమోదించండి",
+  "hi": "जाँचें और मंज़ूर करें",
+  "kn": "ಪರಿಶೀಲಿಸಿ ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.tab.results": {
+  "en": "Results",
+  "te": "ఫలితాలు",
+  "hi": "नतीजे",
+  "kn": "ಫಲಿತಾಂಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.status.draft": {
+  "en": "Draft",
+  "te": "డ్రాఫ్ట్",
+  "hi": "मसौदा",
+  "kn": "ಕರಡು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.status.approved": {
+  "en": "Approved",
+  "te": "ఆమోదించారు",
+  "hi": "मंज़ूर",
+  "kn": "ಒಪ್ಪಿಗೆ ಆಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.status.running": {
+  "en": "Running",
+  "te": "నడుస్తోంది",
+  "hi": "चल रहा है",
+  "kn": "ನಡೆಯುತ್ತಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.status.paused": {
+  "en": "Paused",
+  "te": "ఆపారు",
+  "hi": "रुका हुआ",
+  "kn": "ನಿಲ್ಲಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.status.done": {
+  "en": "Done",
+  "te": "పూర్తయింది",
+  "hi": "पूरा हुआ",
+  "kn": "ಮುಗಿದಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.status.cancelled": {
+  "en": "Cancelled",
+  "te": "రద్దు చేశారు",
+  "hi": "रद्द",
+  "kn": "ರದ್ದಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.payment_due": {
+  "en": "Payment due",
+  "te": "చెల్లింపు గడువు",
+  "hi": "भुगतान देय",
+  "kn": "ಪಾವತಿ ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.delivery_update": {
+  "en": "Delivery update",
+  "te": "డెలివరీ అప్‌డేట్",
+  "hi": "डिलीवरी अपडेट",
+  "kn": "ಡೆಲಿವರಿ ಅಪ್‌ಡೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.fee_due": {
+  "en": "Fee due",
+  "te": "ఫీజు గడువు",
+  "hi": "फीस देय",
+  "kn": "ಶುಲ್ಕ ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.event": {
+  "en": "Event",
+  "te": "కార్యక్రమం",
+  "hi": "कार्यक्रम",
+  "kn": "ಕಾರ್ಯಕ್ರಮ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.exam": {
+  "en": "Exam",
+  "te": "పరీక్ష",
+  "hi": "परीक्षा",
+  "kn": "ಪರೀಕ್ಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.kind.holiday": {
+  "en": "Holiday",
+  "te": "సెలవు",
+  "hi": "छुट्टी",
+  "kn": "ರಜೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.name.help": {
+  "en": "Only you see this, for example October payment reminders.",
+  "te": "ఇది మీకు మాత్రమే కనిపిస్తుంది, ఉదాహరణకు అక్టోబర్ చెల్లింపు రిమైండర్లు.",
+  "hi": "यह केवल आपको दिखता है, जैसे अक्टूबर भुगतान रिमाइंडर।",
+  "kn": "ಇದು ನಿಮಗೆ ಮಾತ್ರ ಕಾಣುತ್ತದೆ, ಉದಾಹರಣೆಗೆ ಅಕ್ಟೋಬರ್ ಪಾವತಿ ನೆನಪೋಲೆಗಳು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.kind": {
+  "en": "Kind",
+  "te": "రకం",
+  "hi": "प्रकार",
+  "kn": "ಪ್ರಕಾರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.kind.help": {
+  "en": "Reminders only, never offers or promotion. The kind cannot be changed later.",
+  "te": "రిమైండర్లు మాత్రమే, ఆఫర్లు లేదా ప్రచారం కాదు. రకాన్ని తర్వాత మార్చలేరు.",
+  "hi": "केवल रिमाइंडर, कभी ऑफ़र या प्रचार नहीं। प्रकार बाद में बदला नहीं जा सकता।",
+  "kn": "ನೆನಪೋಲೆಗಳು ಮಾತ್ರ, ಎಂದಿಗೂ ಆಫರ್ ಅಥವಾ ಪ್ರಚಾರ ಅಲ್ಲ. ಪ್ರಕಾರವನ್ನು ನಂತರ ಬದಲಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.kind.fixed": {
+  "en": "The kind cannot be changed once the campaign is made.",
+  "te": "ప్రచారం చేసిన తర్వాత రకాన్ని మార్చలేరు.",
+  "hi": "अभियान बनने के बाद प्रकार नहीं बदला जा सकता।",
+  "kn": "ಅಭಿಯಾನ ಮಾಡಿದ ನಂತರ ಪ್ರಕಾರವನ್ನು ಬದಲಿಸಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.language": {
+  "en": "Language of the message",
+  "te": "సందేశం భాష",
+  "hi": "संदेश की भाषा",
+  "kn": "ಸಂದೇಶದ ಭಾಷೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.language.help": {
+  "en": "The language the people read. The WhatsApp template must be in the same language.",
+  "te": "వారు చదివే భాష. WhatsApp టెంప్లేట్ కూడా అదే భాషలో ఉండాలి.",
+  "hi": "लोग जिस भाषा में पढ़ते हैं। WhatsApp टेम्पलेट भी उसी भाषा में होना चाहिए।",
+  "kn": "ಜನರು ಓದುವ ಭಾಷೆ. WhatsApp ಟೆಂಪ್ಲೇಟ್ ಸಹ ಅದೇ ಭಾಷೆಯಲ್ಲಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.template": {
+  "en": "WhatsApp template",
+  "te": "WhatsApp టెంప్లేట్",
+  "hi": "WhatsApp टेम्पलेट",
+  "kn": "WhatsApp ಟೆಂಪ್ಲೇಟ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.template.none": {
+  "en": "Choose later",
+  "te": "తర్వాత ఎంచుకుంటాను",
+  "hi": "बाद में चुनें",
+  "kn": "ನಂತರ ಆರಿಸುತ್ತೇನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.template.help": {
+  "en": "Only approved reminder templates are listed. A campaign cannot go out without one.",
+  "te": "ఆమోదించిన రిమైండర్ టెంప్లేట్లు మాత్రమే చూపిస్తాం. ఒకటి లేకుండా ప్రచారం వెళ్లదు.",
+  "hi": "केवल मंज़ूर रिमाइंडर टेम्पलेट दिखाए जाते हैं। एक के बिना अभियान नहीं जा सकता।",
+  "kn": "ಒಪ್ಪಿಗೆ ಪಡೆದ ನೆನಪೋಲೆ ಟೆಂಪ್ಲೇಟ್‌ಗಳನ್ನು ಮಾತ್ರ ತೋರಿಸಲಾಗುತ್ತದೆ. ಒಂದಿಲ್ಲದೆ ಅಭಿಯಾನ ಹೋಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.template.empty": {
+  "en": "No approved reminder template in this language yet.",
+  "te": "ఈ భాషలో ఆమోదించిన రిమైండర్ టెంప్లేట్ ఇంకా లేదు.",
+  "hi": "इस भाषा में अभी कोई मंज़ूर रिमाइंडर टेम्पलेट नहीं है।",
+  "kn": "ಈ ಭಾಷೆಯಲ್ಲಿ ಇನ್ನೂ ಒಪ್ಪಿಗೆ ಪಡೆದ ನೆನಪೋಲೆ ಟೆಂಪ್ಲೇಟ್ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.template.link": {
+  "en": "WhatsApp settings",
+  "te": "WhatsApp సెట్టింగ్‌లు",
+  "hi": "WhatsApp सेटिंग्स",
+  "kn": "WhatsApp ಸೆಟ್ಟಿಂಗ್‌ಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.text": {
+  "en": "Message",
+  "te": "సందేశం",
+  "hi": "संदेश",
+  "kn": "ಸಂದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.text.help": {
+  "en": "One line, 8 to 600 characters. Add the details with the buttons below. No links and no offers.",
+  "te": "ఒకే లైన్, 8 నుండి 600 అక్షరాలు. కింది బటన్లతో వివరాలు జోడించండి. లింకులు, ఆఫర్లు వద్దు.",
+  "hi": "एक पंक्ति, 8 से 600 अक्षर। नीचे के बटनों से जानकारी जोड़ें। कोई लिंक या ऑफ़र नहीं।",
+  "kn": "ಒಂದು ಸಾಲು, 8 ರಿಂದ 600 ಅಕ್ಷರಗಳು. ಕೆಳಗಿನ ಬಟನ್‌ಗಳಿಂದ ವಿವರಗಳನ್ನು ಸೇರಿಸಿ. ಲಿಂಕ್ ಅಥವಾ ಆಫರ್ ಬೇಡ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.field.fields": {
+  "en": "Add a detail to the message",
+  "te": "సందేశానికి వివరం జోడించండి",
+  "hi": "संदेश में जानकारी जोड़ें",
+  "kn": "ಸಂದೇಶಕ್ಕೆ ವಿವರ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.fieldname.name": {
+  "en": "Name",
+  "te": "పేరు",
+  "hi": "नाम",
+  "kn": "ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.fieldname.amount": {
+  "en": "Amount",
+  "te": "మొత్తం",
+  "hi": "राशि",
+  "kn": "ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.fieldname.due_date": {
+  "en": "Due date",
+  "te": "గడువు తేదీ",
+  "hi": "देय तिथि",
+  "kn": "ಬಾಕಿ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.fieldname.reference": {
+  "en": "Reference",
+  "te": "రెఫరెన్స్",
+  "hi": "संदर्भ",
+  "kn": "ಉಲ್ಲೇಖ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.fieldname.business": {
+  "en": "Business name",
+  "te": "వ్యాపారం పేరు",
+  "hi": "व्यवसाय का नाम",
+  "kn": "ವ್ಯಾಪಾರದ ಹೆಸರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.example": {
+  "en": "How it reads for one person (example details)",
+  "te": "ఒక వ్యక్తికి ఇలా కనిపిస్తుంది (ఉదాహరణ వివరాలు)",
+  "hi": "एक व्यक्ति को ऐसा दिखेगा (उदाहरण जानकारी)",
+  "kn": "ಒಬ್ಬ ವ್ಯಕ್ತಿಗೆ ಹೀಗೆ ಕಾಣುತ್ತದೆ (ಉದಾಹರಣೆ ವಿವರಗಳು)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.steps.title": {
+  "en": "When the message goes",
+  "te": "సందేశం ఎప్పుడు వెళ్తుంది",
+  "hi": "संदेश कब जाएगा",
+  "kn": "ಸಂದೇಶ ಯಾವಾಗ ಹೋಗುತ್ತದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.steps.help": {
+  "en": "Up to 5 steps, counted in days from each person's own date. Times inside quiet hours are refused.",
+  "te": "5 దశల వరకు, ప్రతి వ్యక్తి తేదీ నుండి రోజుల్లో లెక్కిస్తాం. నిశ్శబ్ద గంటలలోని సమయాలను అంగీకరించం.",
+  "hi": "5 चरणों तक, हर व्यक्ति की अपनी तारीख़ से दिनों में गिने जाते हैं। शांत घंटों के भीतर के समय स्वीकार नहीं होते।",
+  "kn": "5 ಹಂತಗಳವರೆಗೆ, ಪ್ರತಿ ವ್ಯಕ್ತಿಯ ದಿನಾಂಕದಿಂದ ದಿನಗಳಲ್ಲಿ ಎಣಿಸಲಾಗುತ್ತದೆ. ಮೌನ ಸಮಯದೊಳಗಿನ ಸಮಯಗಳನ್ನು ನಿರಾಕರಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.steps.days": {
+  "en": "Step {n}: days from the due date (minus is before)",
+  "te": "దశ {n}: గడువు తేదీ నుండి రోజులు (మైనస్ అంటే ముందు)",
+  "hi": "चरण {n}: देय तिथि से दिन (ऋण यानी पहले)",
+  "kn": "ಹಂತ {n}: ಬಾಕಿ ದಿನಾಂಕದಿಂದ ದಿನಗಳು (ಮೈನಸ್ ಎಂದರೆ ಮುಂಚೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.steps.time": {
+  "en": "Time (24 hour)",
+  "te": "సమయం (24 గంటలు)",
+  "hi": "समय (24 घंटे)",
+  "kn": "ಸಮಯ (24 ಗಂಟೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.steps.remove": {
+  "en": "Remove step {n}",
+  "te": "దశ {n} తొలగించండి",
+  "hi": "चरण {n} हटाएँ",
+  "kn": "ಹಂತ {n} ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.steps.add": {
+  "en": "Add a step",
+  "te": "దశను జోడించండి",
+  "hi": "चरण जोड़ें",
+  "kn": "ಹಂತ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.step.before": {
+  "en": "{n} days before",
+  "te": "{n} రోజుల ముందు",
+  "hi": "{n} दिन पहले",
+  "kn": "{n} ದಿನ ಮುಂಚೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.step.on": {
+  "en": "On the day",
+  "te": "ఆ రోజున",
+  "hi": "उसी दिन",
+  "kn": "ಅದೇ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.step.after": {
+  "en": "{n} days after",
+  "te": "{n} రోజుల తర్వాత",
+  "hi": "{n} दिन बाद",
+  "kn": "{n} ದಿನ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.call.title": {
+  "en": "Call plan",
+  "te": "కాల్ ప్రణాళిక",
+  "hi": "कॉल योजना",
+  "kn": "ಕರೆ ಯೋಜನೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.call.help": {
+  "en": "For a person who has not replied and has not paid, a line is added to the call list after a step.",
+  "te": "జవాబివ్వని, చెల్లించని వ్యక్తికి ఒక దశ తర్వాత కాల్ జాబితాలో ఒక వరుస చేరుతుంది.",
+  "hi": "जिसने जवाब नहीं दिया और भुगतान नहीं किया, उसके लिए एक चरण के बाद कॉल सूची में एक पंक्ति जुड़ती है।",
+  "kn": "ಉತ್ತರಿಸದ, ಪಾವತಿಸದ ವ್ಯಕ್ತಿಗೆ ಒಂದು ಹಂತದ ನಂತರ ಕರೆ ಪಟ್ಟಿಗೆ ಒಂದು ಸಾಲು ಸೇರುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.call.after": {
+  "en": "Add to the call list after",
+  "te": "ఆ తర్వాత కాల్ జాబితాలో చేర్చండి",
+  "hi": "इसके बाद कॉल सूची में जोड़ें",
+  "kn": "ಇದರ ನಂತರ ಕರೆ ಪಟ್ಟಿಗೆ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.call.none": {
+  "en": "No call step",
+  "te": "కాల్ దశ లేదు",
+  "hi": "कोई कॉल चरण नहीं",
+  "kn": "ಕರೆ ಹಂತ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.call.step": {
+  "en": "Step {n}",
+  "te": "దశ {n}",
+  "hi": "चरण {n}",
+  "kn": "ಹಂತ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.call.wait": {
+  "en": "Hours to wait for a reply first",
+  "te": "ముందు జవాబు కోసం వేచి ఉండే గంటలు",
+  "hi": "पहले जवाब के लिए इंतज़ार के घंटे",
+  "kn": "ಮೊದಲು ಉತ್ತರಕ್ಕಾಗಿ ಕಾಯುವ ಗಂಟೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.save.new": {
+  "en": "Save the draft",
+  "te": "డ్రాఫ్ట్ సేవ్ చేయండి",
+  "hi": "मसौदा सहेजें",
+  "kn": "ಕರಡು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.save.edit": {
+  "en": "Save changes",
+  "te": "మార్పులను సేవ్ చేయండి",
+  "hi": "बदलाव सहेजें",
+  "kn": "ಬದಲಾವಣೆಗಳನ್ನು ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.save.backtodraft": {
+  "en": "Saving sends this campaign back to draft. It has to be checked and approved again.",
+  "te": "సేవ్ చేస్తే ఈ ప్రచారం మళ్లీ డ్రాఫ్ట్‌కు వెళ్తుంది. మళ్లీ చూసి ఆమోదించాలి.",
+  "hi": "सहेजने पर यह अभियान फिर मसौदे में चला जाएगा। दोबारा जाँचना और मंज़ूर करना होगा।",
+  "kn": "ಉಳಿಸಿದರೆ ಈ ಅಭಿಯಾನ ಮತ್ತೆ ಕರಡಿಗೆ ಹೋಗುತ್ತದೆ. ಮತ್ತೆ ಪರಿಶೀಲಿಸಿ ಒಪ್ಪಿಗೆ ನೀಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.name": {
+  "en": "Give the campaign a name.",
+  "te": "ప్రచారానికి పేరు ఇవ్వండి.",
+  "hi": "अभियान को एक नाम दें।",
+  "kn": "ಅಭಿಯಾನಕ್ಕೆ ಹೆಸರು ನೀಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.text": {
+  "en": "The message must be 8 to 600 characters.",
+  "te": "సందేశం 8 నుండి 600 అక్షరాలు ఉండాలి.",
+  "hi": "संदेश 8 से 600 अक्षरों का होना चाहिए।",
+  "kn": "ಸಂದೇಶ 8 ರಿಂದ 600 ಅಕ್ಷರಗಳಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.field": {
+  "en": "The message has a detail that does not exist: {name}. Use the buttons to add details.",
+  "te": "సందేశంలో లేని వివరం ఉంది: {name}. వివరాలను బటన్లతో జోడించండి.",
+  "hi": "संदेश में ऐसी जानकारी है जो मौजूद नहीं: {name}। जानकारी बटनों से जोड़ें।",
+  "kn": "ಸಂದೇಶದಲ್ಲಿ ಇಲ್ಲದ ವಿವರ ಇದೆ: {name}. ಬಟನ್‌ಗಳಿಂದ ವಿವರ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.amount": {
+  "en": "This kind of campaign has no amount. Take the amount out of the message.",
+  "te": "ఈ రకం ప్రచారానికి మొత్తం ఉండదు. సందేశం నుండి మొత్తాన్ని తీసివేయండి.",
+  "hi": "इस प्रकार के अभियान में राशि नहीं होती। संदेश से राशि हटाएँ।",
+  "kn": "ಈ ಪ್ರಕಾರದ ಅಭಿಯಾನಕ್ಕೆ ಮೊತ್ತ ಇರುವುದಿಲ್ಲ. ಸಂದೇಶದಿಂದ ಮೊತ್ತವನ್ನು ತೆಗೆಯಿರಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.steps.none": {
+  "en": "Add at least one step.",
+  "te": "కనీసం ఒక దశను జోడించండి.",
+  "hi": "कम से कम एक चरण जोड़ें।",
+  "kn": "ಕನಿಷ್ಠ ಒಂದು ಹಂತ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.steps.offset": {
+  "en": "Each step needs a whole number of days from minus 60 to 180.",
+  "te": "ప్రతి దశకు మైనస్ 60 నుండి 180 మధ్య పూర్తి రోజుల సంఖ్య కావాలి.",
+  "hi": "हर चरण के लिए ऋण 60 से 180 के बीच पूरे दिन चाहिए।",
+  "kn": "ಪ್ರತಿ ಹಂತಕ್ಕೆ ಮೈನಸ್ 60 ರಿಂದ 180 ರ ನಡುವೆ ಪೂರ್ಣ ದಿನಗಳು ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.steps.time": {
+  "en": "Each step needs a time like 10:00.",
+  "te": "ప్రతి దశకు 10:00 వంటి సమయం కావాలి.",
+  "hi": "हर चरण के लिए 10:00 जैसा समय चाहिए।",
+  "kn": "ಪ್ರತಿ ಹಂತಕ್ಕೆ 10:00 ನಂತಹ ಸಮಯ ಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.steps.order": {
+  "en": "Steps must go in order, each later than the one before.",
+  "te": "దశలు క్రమంలో ఉండాలి, ప్రతిది ముందుదాని కంటే తర్వాత.",
+  "hi": "चरण क्रम में होने चाहिए, हर एक पिछले से बाद का।",
+  "kn": "ಹಂತಗಳು ಕ್ರಮದಲ್ಲಿರಬೇಕು, ಪ್ರತಿಯೊಂದು ಹಿಂದಿನದಕ್ಕಿಂತ ನಂತರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.callplan": {
+  "en": "The call step must be one of the steps.",
+  "te": "కాల్ దశ ఉన్న దశలలో ఒకటి కావాలి.",
+  "hi": "कॉल चरण मौजूद चरणों में से एक होना चाहिए।",
+  "kn": "ಕರೆ ಹಂತ ಇರುವ ಹಂತಗಳಲ್ಲಿ ಒಂದಾಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.wait": {
+  "en": "Hours to wait must be a whole number from 1 to 168.",
+  "te": "వేచి ఉండే గంటలు 1 నుండి 168 మధ్య పూర్తి సంఖ్య కావాలి.",
+  "hi": "इंतज़ार के घंटे 1 से 168 के बीच पूरी संख्या होनी चाहिए।",
+  "kn": "ಕಾಯುವ ಗಂಟೆಗಳು 1 ರಿಂದ 168 ರ ನಡುವೆ ಪೂರ್ಣ ಸಂಖ್ಯೆ ಆಗಿರಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.invalid": {
+  "en": "That was not accepted. Check the details and try again. Nothing was changed.",
+  "te": "అది అంగీకరించలేదు. వివరాలు చూసి మళ్లీ ప్రయత్నించండి. ఏమీ మారలేదు.",
+  "hi": "यह स्वीकार नहीं हुआ। जानकारी जाँचकर फिर कोशिश करें। कुछ नहीं बदला।",
+  "kn": "ಅದನ್ನು ಸ್ವೀಕರಿಸಲಿಲ್ಲ. ವಿವರಗಳನ್ನು ಪರಿಶೀಲಿಸಿ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ಏನೂ ಬದಲಾಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.changed": {
+  "en": "The campaign changed after you read the messages. Read them again before approving.",
+  "te": "మీరు సందేశాలు చదివిన తర్వాత ప్రచారం మారింది. ఆమోదించే ముందు మళ్లీ చదవండి.",
+  "hi": "संदेश पढ़ने के बाद अभियान बदल गया। मंज़ूर करने से पहले उन्हें फिर पढ़ें।",
+  "kn": "ನೀವು ಸಂದೇಶಗಳನ್ನು ಓದಿದ ನಂತರ ಅಭಿಯಾನ ಬದಲಾಯಿತು. ಒಪ್ಪಿಗೆ ನೀಡುವ ಮೊದಲು ಮತ್ತೆ ಓದಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.notready": {
+  "en": "The campaign is not ready. The page lists what is missing.",
+  "te": "ప్రచారం సిద్ధంగా లేదు. లేనివి పేజీలో ఉన్నాయి.",
+  "hi": "अभियान तैयार नहीं है। क्या कमी है, पेज पर लिखा है।",
+  "kn": "ಅಭಿಯಾನ ಸಿದ್ಧವಾಗಿಲ್ಲ. ಏನು ಕಡಿಮೆ ಇದೆ ಎಂದು ಪುಟದಲ್ಲಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.state": {
+  "en": "The campaign is not in a state for that. Refresh the page.",
+  "te": "ప్రచారం ఆ పనికి తగిన స్థితిలో లేదు. పేజీని రిఫ్రెష్ చేయండి.",
+  "hi": "अभियान इस काम की स्थिति में नहीं है। पेज रिफ़्रेश करें।",
+  "kn": "ಅಭಿಯಾನ ಅದಕ್ಕೆ ತಕ್ಕ ಸ್ಥಿತಿಯಲ್ಲಿಲ್ಲ. ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.toomany": {
+  "en": "A campaign can have at most 5,000 people.",
+  "te": "ఒక ప్రచారానికి గరిష్టంగా 5,000 మంది మాత్రమే.",
+  "hi": "एक अभियान में अधिकतम 5,000 लोग हो सकते हैं।",
+  "kn": "ಒಂದು ಅಭಿಯಾನದಲ್ಲಿ ಗರಿಷ್ಠ 5,000 ಜನರು ಮಾತ್ರ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.unavailable": {
+  "en": "Campaigns are not available right now. Try again later.",
+  "te": "ప్రచారాలు ఇప్పుడు అందుబాటులో లేవు. తర్వాత ప్రయత్నించండి.",
+  "hi": "अभियान अभी उपलब्ध नहीं हैं। बाद में कोशिश करें।",
+  "kn": "ಅಭಿಯಾನಗಳು ಈಗ ಲಭ್ಯವಿಲ್ಲ. ನಂತರ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.callstate": {
+  "en": "That call is not in a state for this. Refresh the page.",
+  "te": "ఆ కాల్ ఈ పనికి తగిన స్థితిలో లేదు. పేజీని రిఫ్రెష్ చేయండి.",
+  "hi": "वह कॉल इस काम की स्थिति में नहीं है। पेज रिफ़्रेश करें।",
+  "kn": "ಆ ಕರೆ ಇದಕ್ಕೆ ತಕ್ಕ ಸ್ಥಿತಿಯಲ್ಲಿಲ್ಲ. ಪುಟವನ್ನು ರಿಫ್ರೆಶ್ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.hours": {
+  "en": "Calls can only be made from 9 am to 9 pm India time.",
+  "te": "కాల్స్ ఉదయం 9 నుండి రాత్రి 9 వరకు (భారత సమయం) మాత్రమే చేయగలం.",
+  "hi": "कॉल केवल सुबह 9 से रात 9 बजे (भारतीय समय) के बीच हो सकती हैं।",
+  "kn": "ಕರೆಗಳನ್ನು ಬೆಳಿಗ್ಗೆ 9 ರಿಂದ ರಾತ್ರಿ 9 ರವರೆಗೆ (ಭಾರತೀಯ ಸಮಯ) ಮಾತ್ರ ಮಾಡಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.phone": {
+  "en": "This person's number cannot be called. Mark it as a wrong number.",
+  "te": "ఈ వ్యక్తి నంబర్‌కు కాల్ చేయలేం. తప్పు నంబర్‌గా గుర్తించండి.",
+  "hi": "इस व्यक्ति के नंबर पर कॉल नहीं हो सकती। इसे ग़लत नंबर के रूप में चिह्नित करें।",
+  "kn": "ಈ ವ್ಯಕ್ತಿಯ ಸಂಖ್ಯೆಗೆ ಕರೆ ಮಾಡಲಾಗುವುದಿಲ್ಲ. ತಪ್ಪು ಸಂಖ್ಯೆ ಎಂದು ಗುರುತಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.err.callfailed": {
+  "en": "The call could not be started. Try again in a moment.",
+  "te": "కాల్ ప్రారంభించలేకపోయాం. కాసేపట్లో మళ్లీ ప్రయత్నించండి.",
+  "hi": "कॉल शुरू नहीं हो सकी। थोड़ी देर में फिर कोशिश करें।",
+  "kn": "ಕರೆ ಪ್ರಾರಂಭಿಸಲಾಗಲಿಲ್ಲ. ಸ್ವಲ್ಪ ಸಮಯದ ನಂತರ ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ov.text": {
+  "en": "The message",
+  "te": "సందేశం",
+  "hi": "संदेश",
+  "kn": "ಸಂದೇಶ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ov.call": {
+  "en": "After step {step}, if there is no reply and no payment within {hours} hours, the person goes on the call list.",
+  "te": "{step}వ దశ తర్వాత, {hours} గంటలలో జవాబు, చెల్లింపు లేకపోతే వ్యక్తి కాల్ జాబితాలోకి వెళ్తారు.",
+  "hi": "चरण {step} के बाद, {hours} घंटे में जवाब या भुगतान न मिले तो व्यक्ति कॉल सूची में जाता है।",
+  "kn": "{step}ನೇ ಹಂತದ ನಂತರ, {hours} ಗಂಟೆಗಳಲ್ಲಿ ಉತ್ತರ ಅಥವಾ ಪಾವತಿ ಇಲ್ಲದಿದ್ದರೆ ವ್ಯಕ್ತಿ ಕರೆ ಪಟ್ಟಿಗೆ ಹೋಗುತ್ತಾರೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ov.nocall": {
+  "en": "No call step.",
+  "te": "కాల్ దశ లేదు.",
+  "hi": "कोई कॉल चरण नहीं।",
+  "kn": "ಕರೆ ಹಂತ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ov.edit": {
+  "en": "Change this campaign",
+  "te": "ఈ ప్రచారాన్ని మార్చండి",
+  "hi": "यह अभियान बदलें",
+  "kn": "ಈ ಅಭಿಯಾನ ಬದಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.pause": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.resume": {
+  "en": "Resume",
+  "te": "మళ్లీ మొదలుపెట్టండి",
+  "hi": "फिर शुरू करें",
+  "kn": "ಮತ್ತೆ ಆರಂಭಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.cancel": {
+  "en": "Cancel campaign",
+  "te": "ప్రచారాన్ని రద్దు చేయండి",
+  "hi": "अभियान रद्द करें",
+  "kn": "ಅಭಿಯಾನ ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.pause.title": {
+  "en": "Pause this campaign?",
+  "te": "ఈ ప్రచారాన్ని ఆపాలా?",
+  "hi": "यह अभियान रोकें?",
+  "kn": "ಈ ಅಭಿಯಾನವನ್ನು ನಿಲ್ಲಿಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.pause.body": {
+  "en": "Steps that have not gone yet wait. You can resume later.",
+  "te": "ఇంకా వెళ్లని దశలు ఆగుతాయి. తర్వాత మళ్లీ మొదలుపెట్టవచ్చు.",
+  "hi": "जो चरण अभी नहीं गए वे रुकेंगे। आप बाद में फिर शुरू कर सकते हैं।",
+  "kn": "ಇನ್ನೂ ಹೋಗದ ಹಂತಗಳು ಕಾಯುತ್ತವೆ. ನಂತರ ಮತ್ತೆ ಆರಂಭಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.pause.go": {
+  "en": "Pause",
+  "te": "ఆపండి",
+  "hi": "रोकें",
+  "kn": "ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.resume.title": {
+  "en": "Resume this campaign?",
+  "te": "ఈ ప్రచారాన్ని మళ్లీ మొదలుపెట్టాలా?",
+  "hi": "यह अभियान फिर शुरू करें?",
+  "kn": "ಈ ಅಭಿಯಾನವನ್ನು ಮತ್ತೆ ಆರಂಭಿಸಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.resume.body": {
+  "en": "Steps that are still ahead go on as planned. Steps whose time has passed are skipped.",
+  "te": "ఇంకా రాబోయే దశలు ప్రణాళిక ప్రకారం కొనసాగుతాయి. సమయం గడిచిన దశలను వదిలేస్తాం.",
+  "hi": "जो चरण आगे हैं वे योजना के अनुसार चलेंगे। जिनका समय बीत गया उन्हें छोड़ दिया जाएगा।",
+  "kn": "ಮುಂದಿರುವ ಹಂತಗಳು ಯೋಜನೆಯಂತೆ ಮುಂದುವರಿಯುತ್ತವೆ. ಸಮಯ ಕಳೆದ ಹಂತಗಳನ್ನು ಬಿಡಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.resume.go": {
+  "en": "Resume",
+  "te": "మళ్లీ మొదలుపెట్టండి",
+  "hi": "फिर शुरू करें",
+  "kn": "ಮತ್ತೆ ಆರಂಭಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.cancel.title": {
+  "en": "Cancel this campaign?",
+  "te": "ఈ ప్రచారాన్ని రద్దు చేయాలా?",
+  "hi": "यह अभियान रद्द करें?",
+  "kn": "ಈ ಅಭಿಯಾನವನ್ನು ರದ್ದುಮಾಡಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.cancel.body": {
+  "en": "Steps that have not gone yet are dropped for good. Messages already sent stay sent. This cannot be undone.",
+  "te": "ఇంకా వెళ్లని దశలు శాశ్వతంగా వదిలేస్తాం. ఇప్పటికే వెళ్లిన సందేశాలు అలాగే ఉంటాయి. దీన్ని వెనక్కి తీసుకోలేరు.",
+  "hi": "जो चरण अभी नहीं गए वे हमेशा के लिए हट जाएँगे। जो संदेश जा चुके हैं वे वैसे ही रहेंगे। इसे वापस नहीं किया जा सकता।",
+  "kn": "ಇನ್ನೂ ಹೋಗದ ಹಂತಗಳನ್ನು ಶಾಶ್ವತವಾಗಿ ಬಿಡಲಾಗುತ್ತದೆ. ಈಗಾಗಲೇ ಹೋದ ಸಂದೇಶಗಳು ಹಾಗೆಯೇ ಇರುತ್ತವೆ. ಇದನ್ನು ಹಿಂತೆಗೆದುಕೊಳ್ಳಲಾಗುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ctl.cancel.go": {
+  "en": "Cancel campaign",
+  "te": "ప్రచారాన్ని రద్దు చేయండి",
+  "hi": "अभियान रद्द करें",
+  "kn": "ಅಭಿಯಾನ ರದ್ದುಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.issues": {
+  "en": "Not ready yet",
+  "te": "ఇంకా సిద్ధంగా లేదు",
+  "hi": "अभी तैयार नहीं",
+  "kn": "ಇನ್ನೂ ಸಿದ್ಧವಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.issue.other": {
+  "en": "Something else needs fixing.",
+  "te": "ఇంకొకటి సరిచేయాలి.",
+  "hi": "कुछ और ठीक करना है।",
+  "kn": "ಇನ್ನೊಂದನ್ನು ಸರಿಪಡಿಸಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.people": {
+  "en": "People",
+  "te": "వ్యక్తులు",
+  "hi": "लोग",
+  "kn": "ಜನರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.total": {
+  "en": "Total amount",
+  "te": "మొత్తం సొమ్ము",
+  "hi": "कुल राशि",
+  "kn": "ಒಟ್ಟು ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.dates": {
+  "en": "Due dates",
+  "te": "గడువు తేదీలు",
+  "hi": "देय तिथियाँ",
+  "kn": "ಬಾಕಿ ದಿನಾಂಕಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.steps": {
+  "en": "Steps",
+  "te": "దశలు",
+  "hi": "चरण",
+  "kn": "ಹಂತಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.samples": {
+  "en": "Messages to read before you approve",
+  "te": "ఆమోదించే ముందు చదవాల్సిన సందేశాలు",
+  "hi": "मंज़ूरी से पहले पढ़ने के संदेश",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡುವ ಮೊದಲು ಓದಬೇಕಾದ ಸಂದೇಶಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.samples.help": {
+  "en": "The first person, the longest message, the highest amount and three picked at random, exactly as each person will read it.",
+  "te": "మొదటి వ్యక్తి, పొడవైన సందేశం, అత్యధిక మొత్తం, యాదృచ్ఛికంగా మూడు, ప్రతి వ్యక్తి చదివేలాగే.",
+  "hi": "पहला व्यक्ति, सबसे लंबा संदेश, सबसे बड़ी राशि और तीन अचानक चुने गए, ठीक वैसे जैसे हर व्यक्ति पढ़ेगा।",
+  "kn": "ಮೊದಲ ವ್ಯಕ್ತಿ, ಅತಿ ಉದ್ದದ ಸಂದೇಶ, ಅತಿ ಹೆಚ್ಚು ಮೊತ್ತ ಮತ್ತು ಯಾದೃಚ್ಛಿಕವಾಗಿ ಮೂರು, ಪ್ರತಿ ವ್ಯಕ್ತಿ ಓದುವಂತೆಯೇ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.nosamples": {
+  "en": "No people yet, so there is nothing to read.",
+  "te": "ఇంకా వ్యక్తులు లేరు, కాబట్టి చదవడానికి ఏమీ లేదు.",
+  "hi": "अभी कोई व्यक्ति नहीं, इसलिए पढ़ने को कुछ नहीं।",
+  "kn": "ಇನ್ನೂ ಜನರಿಲ್ಲ, ಆದ್ದರಿಂದ ಓದಲು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.sample.first": {
+  "en": "First",
+  "te": "మొదటి",
+  "hi": "पहला",
+  "kn": "ಮೊದಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.sample.longest": {
+  "en": "Longest",
+  "te": "పొడవైనది",
+  "hi": "सबसे लंबा",
+  "kn": "ಅತಿ ಉದ್ದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.sample.highest_amount": {
+  "en": "Highest amount",
+  "te": "అత్యధిక మొత్తం",
+  "hi": "सबसे बड़ी राशि",
+  "kn": "ಅತಿ ಹೆಚ್ಚು ಮೊತ್ತ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.sample.random": {
+  "en": "Picked at random",
+  "te": "యాదృచ్ఛికంగా ఎంచుకున్నది",
+  "hi": "अचानक चुना गया",
+  "kn": "ಯಾದೃಚ್ಛಿಕವಾಗಿ ಆರಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.approve": {
+  "en": "Approve this campaign",
+  "te": "ఈ ప్రచారాన్ని ఆమోదించండి",
+  "hi": "इस अभियान को मंज़ूर करें",
+  "kn": "ಈ ಅಭಿಯಾನಕ್ಕೆ ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.notready": {
+  "en": "Fix what is listed above first.",
+  "te": "ముందు పైన ఉన్నవి సరిచేయండి.",
+  "hi": "पहले ऊपर लिखी बातें ठीक करें।",
+  "kn": "ಮೊದಲು ಮೇಲೆ ಪಟ್ಟಿ ಮಾಡಿದ್ದನ್ನು ಸರಿಪಡಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.nopeople": {
+  "en": "Add people first.",
+  "te": "ముందు వ్యక్తులను జోడించండి.",
+  "hi": "पहले लोगों को जोड़ें।",
+  "kn": "ಮೊದಲು ಜನರನ್ನು ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.ownerOnly": {
+  "en": "Only the Owner can approve, with the authenticator code. You can read the messages and fix what is missing.",
+  "te": "యజమాని మాత్రమే ఆథెంటికేటర్ కోడ్‌తో ఆమోదించగలరు. మీరు సందేశాలు చదివి, లేనివి సరిచేయవచ్చు.",
+  "hi": "केवल मालिक ऑथेंटिकेटर कोड से मंज़ूरी दे सकते हैं। आप संदेश पढ़ सकते हैं और जो कमी है उसे ठीक कर सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಮಾತ್ರ ಆಥೆಂಟಿಕೇಟರ್ ಕೋಡ್‌ನೊಂದಿಗೆ ಒಪ್ಪಿಗೆ ನೀಡಬಹುದು. ನೀವು ಸಂದೇಶಗಳನ್ನು ಓದಿ, ಕೊರತೆಯನ್ನು ಸರಿಪಡಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.already": {
+  "en": "This campaign is {status}, so there is nothing to approve.",
+  "te": "ఈ ప్రచారం {status}, కాబట్టి ఆమోదించడానికి ఏమీ లేదు.",
+  "hi": "यह अभियान {status} है, इसलिए मंज़ूर करने को कुछ नहीं।",
+  "kn": "ಈ ಅಭಿಯಾನ {status}, ಆದ್ದರಿಂದ ಒಪ್ಪಿಗೆ ನೀಡಲು ಏನೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.s.title": {
+  "en": "Approve this campaign?",
+  "te": "ఈ ప్రచారాన్ని ఆమోదించాలా?",
+  "hi": "इस अभियान को मंज़ूर करें?",
+  "kn": "ಈ ಅಭಿಯಾನಕ್ಕೆ ಒಪ್ಪಿಗೆ ನೀಡಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.s.go": {
+  "en": "Approve",
+  "te": "ఆమోదించండి",
+  "hi": "मंज़ूर करें",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.people": {
+  "en": "People",
+  "te": "వ్యక్తులు",
+  "hi": "लोग",
+  "kn": "ಜನರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.sent": {
+  "en": "Sent",
+  "te": "పంపినవి",
+  "hi": "भेजे गए",
+  "kn": "ಕಳುಹಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.delivered": {
+  "en": "Delivered",
+  "te": "చేరినవి",
+  "hi": "पहुँचे",
+  "kn": "ತಲುಪಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.read": {
+  "en": "Read",
+  "te": "చదివినవి",
+  "hi": "पढ़े गए",
+  "kn": "ಓದಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.replied": {
+  "en": "Replied",
+  "te": "జవాబిచ్చినవారు",
+  "hi": "जवाब दिया",
+  "kn": "ಉತ್ತರಿಸಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.paid": {
+  "en": "Paid after a reminder",
+  "te": "రిమైండర్ తర్వాత చెల్లించినవారు",
+  "hi": "रिमाइंडर के बाद भुगतान",
+  "kn": "ನೆನಪೋಲೆಯ ನಂತರ ಪಾವತಿಸಿದವರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.steps": {
+  "en": "What happened to each step",
+  "te": "ప్రతి దశకు ఏమైంది",
+  "hi": "हर चरण का क्या हुआ",
+  "kn": "ಪ್ರತಿ ಹಂತಕ್ಕೆ ಏನಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.none": {
+  "en": "Nothing has gone yet.",
+  "te": "ఇంకా ఏమీ వెళ్లలేదు.",
+  "hi": "अभी कुछ नहीं गया।",
+  "kn": "ಇನ್ನೂ ಏನೂ ಹೋಗಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.planned": {
+  "en": "Planned",
+  "te": "ప్రణాళికలో",
+  "hi": "योजना में",
+  "kn": "ಯೋಜನೆಯಲ್ಲಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.waiting": {
+  "en": "Waiting",
+  "te": "వేచి ఉన్నవి",
+  "hi": "इंतज़ार में",
+  "kn": "ಕಾಯುತ್ತಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.held": {
+  "en": "Held",
+  "te": "ఆపినవి",
+  "hi": "रोके गए",
+  "kn": "ತಡೆದಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.sent": {
+  "en": "Sent",
+  "te": "పంపినవి",
+  "hi": "भेजे गए",
+  "kn": "ಕಳುಹಿಸಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.delivered": {
+  "en": "Delivered",
+  "te": "చేరినవి",
+  "hi": "पहुँचे",
+  "kn": "ತಲುಪಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.read": {
+  "en": "Read",
+  "te": "చదివినవి",
+  "hi": "पढ़े गए",
+  "kn": "ಓದಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.failed": {
+  "en": "Failed",
+  "te": "విఫలమైనవి",
+  "hi": "विफल",
+  "kn": "ವಿಫಲವಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.blocked": {
+  "en": "Blocked",
+  "te": "ఆపివేసినవి",
+  "hi": "अवरुद्ध",
+  "kn": "ತಡೆಹಿಡಿದಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.state.skipped": {
+  "en": "Skipped",
+  "te": "వదిలేసినవి",
+  "hi": "छोड़े गए",
+  "kn": "ಬಿಟ್ಟಿದ್ದು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.why": {
+  "en": "Why some did not go",
+  "te": "కొన్ని ఎందుకు వెళ్లలేదు",
+  "hi": "कुछ क्यों नहीं गए",
+  "kn": "ಕೆಲವು ಏಕೆ ಹೋಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.days": {
+  "en": "Day by day",
+  "te": "రోజు వారీగా",
+  "hi": "दिन-ब-दिन",
+  "kn": "ದಿನದಿಂದ ದಿನ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.closed": {
+  "en": "Closed early",
+  "te": "ముందే ముగిసినవి",
+  "hi": "पहले बंद हुए",
+  "kn": "ಮುಂಚೆಯೇ ಮುಗಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.res.calls": {
+  "en": "Calls: {open} open, {done} done",
+  "te": "కాల్స్: {open} తెరిచి ఉన్నవి, {done} పూర్తయినవి",
+  "hi": "कॉल: {open} खुली, {done} पूरी",
+  "kn": "ಕರೆಗಳು: {open} ತೆರೆದಿವೆ, {done} ಮುಗಿದಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.recipient_closed": {
+  "en": "The person was closed (paid, stopped or wrong number)",
+  "te": "వ్యక్తిని మూసివేశారు (చెల్లించారు, ఆపారు లేదా తప్పు నంబర్)",
+  "hi": "व्यक्ति को बंद कर दिया (भुगतान, रोक या ग़लत नंबर)",
+  "kn": "ವ್ಯಕ್ತಿಯನ್ನು ಮುಚ್ಚಲಾಯಿತು (ಪಾವತಿಸಿದ್ದಾರೆ, ನಿಲ್ಲಿಸಿದ್ದಾರೆ ಅಥವಾ ತಪ್ಪು ಸಂಖ್ಯೆ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.missed": {
+  "en": "The time had already passed",
+  "te": "సమయం ఇప్పటికే గడిచిపోయింది",
+  "hi": "समय पहले ही बीत चुका था",
+  "kn": "ಸಮಯ ಈಗಾಗಲೇ ಕಳೆದಿತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.cancelled": {
+  "en": "The campaign was cancelled",
+  "te": "ప్రచారం రద్దయింది",
+  "hi": "अभियान रद्द हुआ",
+  "kn": "ಅಭಿಯಾನ ರದ್ದಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.past": {
+  "en": "The step was already in the past when approved",
+  "te": "ఆమోదించినప్పుడే ఆ దశ గతంలో ఉంది",
+  "hi": "मंज़ूरी के समय चरण बीत चुका था",
+  "kn": "ಒಪ್ಪಿಗೆ ನೀಡಿದಾಗಲೇ ಆ ಹಂತ ಹಿಂದೆ ಇತ್ತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.template": {
+  "en": "The WhatsApp template was not usable",
+  "te": "WhatsApp టెంప్లేట్ ఉపయోగించలేకపోయాం",
+  "hi": "WhatsApp टेम्पलेट उपयोग योग्य नहीं था",
+  "kn": "WhatsApp ಟೆಂಪ್ಲೇಟ್ ಬಳಸಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.paid": {
+  "en": "Paid already",
+  "te": "ఇప్పటికే చెల్లించారు",
+  "hi": "पहले ही भुगतान कर दिया",
+  "kn": "ಈಗಾಗಲೇ ಪಾವತಿಸಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.promised": {
+  "en": "Promised a date",
+  "te": "తేదీ చెప్పారు",
+  "hi": "तारीख़ का वादा किया",
+  "kn": "ದಿನಾಂಕ ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.balance_changed": {
+  "en": "The balance changed",
+  "te": "బాకీ మారింది",
+  "hi": "बकाया बदल गया",
+  "kn": "ಬಾಕಿ ಬದಲಾಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.quiet_hours": {
+  "en": "Quiet hours",
+  "te": "నిశ్శబ్ద గంటలు",
+  "hi": "शांत घंटे",
+  "kn": "ಮೌನ ಸಮಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.no_opt_in": {
+  "en": "No recorded consent",
+  "te": "నమోదైన సమ్మతి లేదు",
+  "hi": "दर्ज सहमति नहीं",
+  "kn": "ದಾಖಲಾದ ಒಪ್ಪಿಗೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.stopped": {
+  "en": "The person asked to stop",
+  "te": "ఆపమని వ్యక్తి కోరారు",
+  "hi": "व्यक्ति ने रोकने को कहा",
+  "kn": "ವ್ಯಕ್ತಿ ನಿಲ್ಲಿಸಲು ಕೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.daily_limit": {
+  "en": "Daily limit reached",
+  "te": "రోజువారీ పరిమితి చేరింది",
+  "hi": "दैनिक सीमा पूरी हुई",
+  "kn": "ದೈನಂದಿನ ಮಿತಿ ತಲುಪಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.switch_off": {
+  "en": "Sending is switched off",
+  "te": "పంపడం ఆఫ్‌లో ఉంది",
+  "hi": "भेजना बंद है",
+  "kn": "ಕಳುಹಿಸುವುದು ಆಫ್ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.no_phone": {
+  "en": "No phone number",
+  "te": "ఫోన్ నంబర్ లేదు",
+  "hi": "फ़ोन नंबर नहीं",
+  "kn": "ಫೋನ್ ಸಂಖ್ಯೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.no_key": {
+  "en": "No stop-list key recorded",
+  "te": "స్టాప్-జాబితా కీ నమోదు కాలేదు",
+  "hi": "रोक-सूची की कुंजी दर्ज नहीं",
+  "kn": "ನಿಲ್ಲಿಸುವ ಪಟ್ಟಿಯ ಕೀ ದಾಖಲಾಗಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.erased": {
+  "en": "The person's details were erased",
+  "te": "వ్యక్తి వివరాలు తొలగించారు",
+  "hi": "व्यक्ति का विवरण मिटा दिया गया",
+  "kn": "ವ್ಯಕ್ತಿಯ ವಿವರಗಳನ್ನು ಅಳಿಸಲಾಗಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.send_failed": {
+  "en": "WhatsApp could not deliver it",
+  "te": "WhatsApp దీన్ని చేర్చలేకపోయింది",
+  "hi": "WhatsApp इसे पहुँचा नहीं सका",
+  "kn": "WhatsApp ಇದನ್ನು ತಲುಪಿಸಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.owner_rejected": {
+  "en": "The Owner rejected it",
+  "te": "యజమాని తిరస్కరించారు",
+  "hi": "मालिक ने अस्वीकार किया",
+  "kn": "ಮಾಲೀಕರು ತಿರಸ್ಕರಿಸಿದರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.reason.other": {
+  "en": "Another reason",
+  "te": "ఇంకో కారణం",
+  "hi": "कोई और कारण",
+  "kn": "ಇನ್ನೊಂದು ಕಾರಣ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.closed.paid": {
+  "en": "Paid",
+  "te": "చెల్లించారు",
+  "hi": "भुगतान किया",
+  "kn": "ಪಾವತಿಸಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.closed.promised": {
+  "en": "Promised a date",
+  "te": "తేదీ చెప్పారు",
+  "hi": "तारीख़ का वादा किया",
+  "kn": "ದಿನಾಂಕ ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.closed.wrong_number": {
+  "en": "Wrong number",
+  "te": "తప్పు నంబర్",
+  "hi": "ग़लत नंबर",
+  "kn": "ತಪ್ಪು ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.closed.stopped": {
+  "en": "Asked to stop",
+  "te": "ఆపమని కోరారు",
+  "hi": "रोकने को कहा",
+  "kn": "ನಿಲ್ಲಿಸಲು ಕೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.backtodraft": {
+  "en": "Changing the people sends an approved campaign back to draft. It has to be approved again.",
+  "te": "వ్యక్తులను మారిస్తే ఆమోదించిన ప్రచారం మళ్లీ డ్రాఫ్ట్‌కు వెళ్తుంది. మళ్లీ ఆమోదించాలి.",
+  "hi": "लोगों को बदलने पर मंज़ूर अभियान फिर मसौदे में चला जाता है। उसे दोबारा मंज़ूर करना होगा।",
+  "kn": "ಜನರನ್ನು ಬದಲಿಸಿದರೆ ಒಪ್ಪಿಗೆ ಪಡೆದ ಅಭಿಯಾನ ಮತ್ತೆ ಕರಡಿಗೆ ಹೋಗುತ್ತದೆ. ಮತ್ತೆ ಒಪ್ಪಿಗೆ ನೀಡಬೇಕು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.ledger.title": {
+  "en": "From the ledger",
+  "te": "ఖాతా పుస్తకం నుండి",
+  "hi": "खाता-बही से",
+  "kn": "ಲೆಡ್ಜರ್‌ನಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.ledger.help": {
+  "en": "Everyone with money still open on claims due in the range. The amount is what is open today and the date is the earliest due date. It is checked again before each message.",
+  "te": "ఆ పరిధిలో గడువున్న బాకీలలో ఇంకా సొమ్ము మిగిలి ఉన్న అందరూ. మొత్తం ఈ రోజు మిగిలినది, తేదీ తొలి గడువు. ప్రతి సందేశం ముందు మళ్లీ చూస్తాం.",
+  "hi": "उस दायरे में देय दावों पर जिनका पैसा अब भी बकाया है, वे सब। राशि आज की बकाया है और तारीख़ सबसे पहली देय तिथि। हर संदेश से पहले फिर जाँच होती है।",
+  "kn": "ಆ ವ್ಯಾಪ್ತಿಯಲ್ಲಿ ಬಾಕಿ ಇರುವ ಕ್ಲೇಮ್‌ಗಳಲ್ಲಿ ಇನ್ನೂ ಹಣ ಉಳಿದಿರುವ ಎಲ್ಲರೂ. ಮೊತ್ತ ಇಂದು ಉಳಿದಿರುವುದು, ದಿನಾಂಕ ಮೊದಲ ಬಾಕಿ ದಿನಾಂಕ. ಪ್ರತಿ ಸಂದೇಶದ ಮೊದಲು ಮತ್ತೆ ಪರಿಶೀಲಿಸಲಾಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.from": {
+  "en": "Due from",
+  "te": "ఈ తేదీ నుండి గడువు",
+  "hi": "देय तिथि से",
+  "kn": "ಈ ದಿನಾಂಕದಿಂದ ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.to": {
+  "en": "Due until",
+  "te": "ఈ తేదీ వరకు గడువు",
+  "hi": "देय तिथि तक",
+  "kn": "ಈ ದಿನಾಂಕದವರೆಗೆ ಬಾಕಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.party": {
+  "en": "Who owes",
+  "te": "ఎవరు బాకీ",
+  "hi": "कौन देनदार",
+  "kn": "ಯಾರು ಬಾಕಿದಾರರು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.party.any": {
+  "en": "Anyone",
+  "te": "ఎవరైనా",
+  "hi": "कोई भी",
+  "kn": "ಯಾರಾದರೂ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.party.company": {
+  "en": "Companies",
+  "te": "కంపెనీలు",
+  "hi": "कंपनियाँ",
+  "kn": "ಕಂಪನಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.party.contact": {
+  "en": "People",
+  "te": "వ్యక్తులు",
+  "hi": "लोग",
+  "kn": "ವ್ಯಕ್ತಿಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.min": {
+  "en": "Smallest amount open (rupees)",
+  "te": "కనీసం మిగిలిన మొత్తం (రూపాయలు)",
+  "hi": "न्यूनतम बकाया राशि (रुपये)",
+  "kn": "ಕನಿಷ್ಠ ಉಳಿದ ಮೊತ್ತ (ರೂಪಾಯಿ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.ledger.go": {
+  "en": "Add from the ledger",
+  "te": "ఖాతా పుస్తకం నుండి జోడించండి",
+  "hi": "खाता-बही से जोड़ें",
+  "kn": "ಲೆಡ್ಜರ್‌ನಿಂದ ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.err.range": {
+  "en": "Choose a start date that is not after the end date.",
+  "te": "ప్రారంభ తేదీ ముగింపు తేదీ తర్వాత కాకుండా ఎంచుకోండి.",
+  "hi": "ऐसी आरंभ तिथि चुनें जो अंतिम तिथि के बाद न हो।",
+  "kn": "ಆರಂಭ ದಿನಾಂಕ ಅಂತ್ಯ ದಿನಾಂಕದ ನಂತರ ಇರದಂತೆ ಆರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.err.big": {
+  "en": "That amount is not allowed. Use rupees, for example 500.",
+  "te": "ఆ మొత్తం అనుమతించం. రూపాయల్లో రాయండి, ఉదాహరణకు 500.",
+  "hi": "यह राशि मान्य नहीं। रुपये में लिखें, जैसे 500।",
+  "kn": "ಆ ಮೊತ್ತ ಅನುಮತಿಸಲಾಗುವುದಿಲ್ಲ. ರೂಪಾಯಿಗಳಲ್ಲಿ ಬರೆಯಿರಿ, ಉದಾಹರಣೆಗೆ 500.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.import.title": {
+  "en": "From a list",
+  "te": "జాబితా నుండి",
+  "hi": "सूची से",
+  "kn": "ಪಟ್ಟಿಯಿಂದ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.import.help": {
+  "en": "One person per line: phone number or contact id, due date, and a reference if the message uses one. A phone number only finds a contact you already have.",
+  "te": "ప్రతి లైన్‌కు ఒక వ్యక్తి: ఫోన్ నంబర్ లేదా కాంటాక్ట్ ఐడి, గడువు తేదీ, సందేశం వాడితే రెఫరెన్స్. ఫోన్ నంబర్ మీకున్న కాంటాక్ట్‌ను మాత్రమే కనుగొంటుంది.",
+  "hi": "हर पंक्ति में एक व्यक्ति: फ़ोन नंबर या संपर्क आईडी, देय तिथि, और संदेश में हो तो संदर्भ। फ़ोन नंबर केवल आपके पास मौजूद संपर्क को ढूँढता है।",
+  "kn": "ಪ್ರತಿ ಸಾಲಿಗೆ ಒಬ್ಬ ವ್ಯಕ್ತಿ: ಫೋನ್ ಸಂಖ್ಯೆ ಅಥವಾ ಸಂಪರ್ಕ ಐಡಿ, ಬಾಕಿ ದಿನಾಂಕ, ಮತ್ತು ಸಂದೇಶ ಬಳಸಿದರೆ ಉಲ್ಲೇಖ. ಫೋನ್ ಸಂಖ್ಯೆ ನಿಮ್ಮಲ್ಲಿರುವ ಸಂಪರ್ಕವನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.import.help.money": {
+  "en": "One person per line: phone number or contact id, due date, amount in rupees, and a reference if the message uses one. A phone number only finds a contact you already have.",
+  "te": "ప్రతి లైన్‌కు ఒక వ్యక్తి: ఫోన్ నంబర్ లేదా కాంటాక్ట్ ఐడి, గడువు తేదీ, రూపాయల్లో మొత్తం, సందేశం వాడితే రెఫరెన్స్. ఫోన్ నంబర్ మీకున్న కాంటాక్ట్‌ను మాత్రమే కనుగొంటుంది.",
+  "hi": "हर पंक्ति में एक व्यक्ति: फ़ोन नंबर या संपर्क आईडी, देय तिथि, रुपयों में राशि, और संदेश में हो तो संदर्भ। फ़ोन नंबर केवल आपके पास मौजूद संपर्क को ढूँढता है।",
+  "kn": "ಪ್ರತಿ ಸಾಲಿಗೆ ಒಬ್ಬ ವ್ಯಕ್ತಿ: ಫೋನ್ ಸಂಖ್ಯೆ ಅಥವಾ ಸಂಪರ್ಕ ಐಡಿ, ಬಾಕಿ ದಿನಾಂಕ, ರೂಪಾಯಿಗಳಲ್ಲಿ ಮೊತ್ತ, ಮತ್ತು ಸಂದೇಶ ಬಳಸಿದರೆ ಉಲ್ಲೇಖ. ಫೋನ್ ಸಂಖ್ಯೆ ನಿಮ್ಮಲ್ಲಿರುವ ಸಂಪರ್ಕವನ್ನು ಮಾತ್ರ ಹುಡುಕುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.file": {
+  "en": "Choose a file (CSV or text)",
+  "te": "ఫైల్ ఎంచుకోండి (CSV లేదా టెక్స్ట్)",
+  "hi": "फ़ाइल चुनें (CSV या टेक्स्ट)",
+  "kn": "ಫೈಲ್ ಆರಿಸಿ (CSV ಅಥವಾ ಪಠ್ಯ)",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.paste": {
+  "en": "Or paste the list here",
+  "te": "లేదా జాబితాను ఇక్కడ పేస్ట్ చేయండి",
+  "hi": "या सूची यहाँ चिपकाएँ",
+  "kn": "ಅಥವಾ ಪಟ್ಟಿಯನ್ನು ಇಲ್ಲಿ ಅಂಟಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.check": {
+  "en": "Check the list",
+  "te": "జాబితాను చూడండి",
+  "hi": "सूची जाँचें",
+  "kn": "ಪಟ್ಟಿಯನ್ನು ಪರಿಶೀಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.read": {
+  "en": "{ok} lines can be added, {bad} cannot be read.",
+  "te": "{ok} లైన్లను జోడించవచ్చు, {bad} చదవలేకపోయాం.",
+  "hi": "{ok} पंक्तियाँ जोड़ी जा सकती हैं, {bad} पढ़ी नहीं जा सकीं।",
+  "kn": "{ok} ಸಾಲುಗಳನ್ನು ಸೇರಿಸಬಹುದು, {bad} ಓದಲಾಗಲಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.line": {
+  "en": "Line {n}: {why}",
+  "te": "లైన్ {n}: {why}",
+  "hi": "पंक्ति {n}: {why}",
+  "kn": "ಸಾಲು {n}: {why}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.more": {
+  "en": "and {n} more",
+  "te": "ఇంకా {n}",
+  "hi": "और {n}",
+  "kn": "ಇನ್ನೂ {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.why.columns": {
+  "en": "needs at least a person and a date",
+  "te": "కనీసం వ్యక్తి, తేదీ కావాలి",
+  "hi": "कम से कम व्यक्ति और तारीख़ चाहिए",
+  "kn": "ಕನಿಷ್ಠ ವ್ಯಕ್ತಿ ಮತ್ತು ದಿನಾಂಕ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.why.who": {
+  "en": "the person is not a phone number or contact id",
+  "te": "వ్యక్తి ఫోన్ నంబర్ లేదా కాంటాక్ట్ ఐడి కాదు",
+  "hi": "व्यक्ति फ़ोन नंबर या संपर्क आईडी नहीं है",
+  "kn": "ವ್ಯಕ್ತಿ ಫೋನ್ ಸಂಖ್ಯೆ ಅಥವಾ ಸಂಪರ್ಕ ಐಡಿ ಅಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.why.date": {
+  "en": "the date cannot be read",
+  "te": "తేదీ చదవలేకపోయాం",
+  "hi": "तारीख़ पढ़ी नहीं जा सकी",
+  "kn": "ದಿನಾಂಕ ಓದಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.why.amount": {
+  "en": "the amount is missing, wrong, or not needed for this kind",
+  "te": "మొత్తం లేదు, తప్పు, లేదా ఈ రకానికి అవసరం లేదు",
+  "hi": "राशि नहीं है, ग़लत है, या इस प्रकार के लिए ज़रूरी नहीं",
+  "kn": "ಮೊತ್ತ ಇಲ್ಲ, ತಪ್ಪಾಗಿದೆ, ಅಥವಾ ಈ ಪ್ರಕಾರಕ್ಕೆ ಬೇಕಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.why.reference": {
+  "en": "the reference has characters that are not allowed",
+  "te": "రెఫరెన్స్‌లో అనుమతించని అక్షరాలు ఉన్నాయి",
+  "hi": "संदर्भ में अमान्य अक्षर हैं",
+  "kn": "ಉಲ್ಲೇಖದಲ್ಲಿ ಅನುಮತಿಸದ ಅಕ್ಷರಗಳಿವೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.contact_not_found": {
+  "en": "no contact with that number",
+  "te": "ఆ నంబర్‌తో కాంటాక్ట్ లేదు",
+  "hi": "इस नंबर का कोई संपर्क नहीं",
+  "kn": "ಆ ಸಂಖ್ಯೆಯ ಸಂಪರ್ಕ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.ambiguous_contact": {
+  "en": "more than one contact has that number",
+  "te": "ఆ నంబర్ ఒకటి కంటే ఎక్కువ కాంటాక్ట్‌లకు ఉంది",
+  "hi": "इस नंबर के एक से अधिक संपर्क हैं",
+  "kn": "ಆ ಸಂಖ್ಯೆ ಒಂದಕ್ಕಿಂತ ಹೆಚ್ಚು ಸಂಪರ್ಕಗಳಿಗೆ ಇದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.duplicate": {
+  "en": "already in the list",
+  "te": "ఇప్పటికే జాబితాలో ఉంది",
+  "hi": "पहले से सूची में है",
+  "kn": "ಈಗಾಗಲೇ ಪಟ್ಟಿಯಲ್ಲಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.amount_required": {
+  "en": "an amount is needed",
+  "te": "మొత్తం కావాలి",
+  "hi": "राशि चाहिए",
+  "kn": "ಮೊತ್ತ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.amount_not_allowed": {
+  "en": "this kind has no amount",
+  "te": "ఈ రకానికి మొత్తం ఉండదు",
+  "hi": "इस प्रकार में राशि नहीं होती",
+  "kn": "ಈ ಪ್ರಕಾರಕ್ಕೆ ಮೊತ್ತ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.amount_over_cap": {
+  "en": "the amount is above the limit",
+  "te": "మొత్తం పరిమితి కంటే ఎక్కువ",
+  "hi": "राशि सीमा से अधिक है",
+  "kn": "ಮೊತ್ತ ಮಿತಿಗಿಂತ ಹೆಚ್ಚು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.reference_required": {
+  "en": "a reference is needed",
+  "te": "రెఫరెన్స్ కావాలి",
+  "hi": "संदर्भ चाहिए",
+  "kn": "ಉಲ್ಲೇಖ ಬೇಕು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.list_full": {
+  "en": "the list is full",
+  "te": "జాబితా నిండింది",
+  "hi": "सूची भर गई है",
+  "kn": "ಪಟ್ಟಿ ತುಂಬಿದೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.invalid_row": {
+  "en": "the line is not valid",
+  "te": "లైన్ చెల్లదు",
+  "hi": "पंक्ति मान्य नहीं",
+  "kn": "ಸಾಲು ಮಾನ್ಯವಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.no_lead": {
+  "en": "no customer record for this person",
+  "te": "ఈ వ్యక్తికి కస్టమర్ రికార్డ్ లేదు",
+  "hi": "इस व्यक्ति का कोई ग्राहक रिकॉर्ड नहीं",
+  "kn": "ಈ ವ್ಯಕ್ತಿಗೆ ಗ್ರಾಹಕ ದಾಖಲೆ ಇಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.skip.other": {
+  "en": "could not be added",
+  "te": "జోడించలేకపోయాం",
+  "hi": "जोड़ा नहीं जा सका",
+  "kn": "ಸೇರಿಸಲಾಗಲಿಲ್ಲ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.add": {
+  "en": "Add {n} people",
+  "te": "{n} మందిని జోడించండి",
+  "hi": "{n} लोगों को जोड़ें",
+  "kn": "{n} ಜನರನ್ನು ಸೇರಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.added": {
+  "en": "{n} people added.",
+  "te": "{n} మందిని జోడించాం.",
+  "hi": "{n} लोग जोड़े गए।",
+  "kn": "{n} ಜನರನ್ನು ಸೇರಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.list": {
+  "en": "People in this campaign: {n}",
+  "te": "ఈ ప్రచారంలో వ్యక్తులు: {n}",
+  "hi": "इस अभियान में लोग: {n}",
+  "kn": "ಈ ಅಭಿಯಾನದಲ್ಲಿರುವ ಜನರು: {n}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.empty": {
+  "en": "No people yet. Add them from the ledger or from a list.",
+  "te": "ఇంకా వ్యక్తులు లేరు. ఖాతా పుస్తకం లేదా జాబితా నుండి జోడించండి.",
+  "hi": "अभी कोई व्यक्ति नहीं। खाता-बही या सूची से जोड़ें।",
+  "kn": "ಇನ್ನೂ ಜನರಿಲ್ಲ. ಲೆಡ್ಜರ್ ಅಥವಾ ಪಟ್ಟಿಯಿಂದ ಸೇರಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.remove": {
+  "en": "Remove {name}",
+  "te": "{name} ను తొలగించండి",
+  "hi": "{name} को हटाएँ",
+  "kn": "{name} ಅವರನ್ನು ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.clear": {
+  "en": "Remove everyone",
+  "te": "అందరినీ తొలగించండి",
+  "hi": "सबको हटाएँ",
+  "kn": "ಎಲ್ಲರನ್ನೂ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.clear.title": {
+  "en": "Remove everyone from the list?",
+  "te": "జాబితా నుండి అందరినీ తొలగించాలా?",
+  "hi": "सूची से सबको हटाएँ?",
+  "kn": "ಪಟ್ಟಿಯಿಂದ ಎಲ್ಲರನ್ನೂ ತೆಗೆಯಬೇಕೇ?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.clear.body": {
+  "en": "All {n} people are taken off this campaign. The people themselves are not deleted.",
+  "te": "ఈ ప్రచారం నుండి మొత్తం {n} మందిని తీసివేస్తాం. వ్యక్తులను తొలగించం.",
+  "hi": "इस अभियान से सभी {n} लोग हटा दिए जाएँगे। लोगों का रिकॉर्ड नहीं मिटता।",
+  "kn": "ಈ ಅಭಿಯಾನದಿಂದ ಎಲ್ಲಾ {n} ಜನರನ್ನು ತೆಗೆಯಲಾಗುತ್ತದೆ. ವ್ಯಕ್ತಿಗಳನ್ನು ಅಳಿಸುವುದಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.aud.clear.go": {
+  "en": "Remove everyone",
+  "te": "అందరినీ తొలగించండి",
+  "hi": "सबको हटाएँ",
+  "kn": "ಎಲ್ಲರನ್ನೂ ತೆಗೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.sub": {
+  "en": "People a money reminder did not reach, who have not paid. Call them and write down how it went.",
+  "te": "మనీ రిమైండర్ చేరని, చెల్లించని వ్యక్తులు. వారికి కాల్ చేసి ఎలా జరిగిందో నమోదు చేయండి.",
+  "hi": "जिन तक पैसे का रिमाइंडर नहीं पहुँचा और जिन्होंने भुगतान नहीं किया। उन्हें कॉल करें और नतीजा लिखें।",
+  "kn": "ಹಣದ ನೆನಪೋಲೆ ತಲುಪದ, ಪಾವತಿಸದ ಜನರು. ಅವರಿಗೆ ಕರೆ ಮಾಡಿ, ಹೇಗೆ ನಡೆಯಿತು ಎಂದು ದಾಖಲಿಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.tabs": {
+  "en": "Call list sections",
+  "te": "కాల్ జాబితా విభాగాలు",
+  "hi": "कॉल सूची के हिस्से",
+  "kn": "ಕರೆ ಪಟ್ಟಿಯ ವಿಭಾಗಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.tab.open": {
+  "en": "To call",
+  "te": "కాల్ చేయాల్సినవి",
+  "hi": "कॉल करने हैं",
+  "kn": "ಕರೆ ಮಾಡಬೇಕಾದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.tab.done": {
+  "en": "Done",
+  "te": "పూర్తయినవి",
+  "hi": "पूरे हुए",
+  "kn": "ಮುಗಿದವು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.empty": {
+  "en": "Nobody to call right now.",
+  "te": "ఇప్పుడు కాల్ చేయాల్సిన వారు ఎవరూ లేరు.",
+  "hi": "अभी कॉल करने को कोई नहीं।",
+  "kn": "ಈಗ ಕರೆ ಮಾಡಬೇಕಾದವರು ಯಾರೂ ಇಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.emptydone": {
+  "en": "No finished calls yet.",
+  "te": "ఇంకా పూర్తయిన కాల్స్ లేవు.",
+  "hi": "अभी कोई पूरी कॉल नहीं।",
+  "kn": "ಇನ್ನೂ ಮುಗಿದ ಕರೆಗಳಿಲ್ಲ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.nocall": {
+  "en": "Only the Owner and Admins can ring a customer. You can still write down how a call went.",
+  "te": "యజమాని, అడ్మిన్‌లు మాత్రమే కస్టమర్‌కు కాల్ చేయగలరు. కాల్ ఎలా జరిగిందో మీరు నమోదు చేయవచ్చు.",
+  "hi": "केवल मालिक और एडमिन ग्राहक को कॉल कर सकते हैं। कॉल कैसी रही, यह आप फिर भी लिख सकते हैं।",
+  "kn": "ಮಾಲೀಕರು ಮತ್ತು ಅಡ್ಮಿನ್‌ಗಳು ಮಾತ್ರ ಗ್ರಾಹಕರಿಗೆ ಕರೆ ಮಾಡಬಹುದು. ಕರೆ ಹೇಗೆ ನಡೆಯಿತು ಎಂದು ನೀವು ದಾಖಲಿಸಬಹುದು.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.step": {
+  "en": "after reminder {n}",
+  "te": "రిమైండర్ {n} తర్వాత",
+  "hi": "रिमाइंडर {n} के बाद",
+  "kn": "ನೆನಪೋಲೆ {n} ರ ನಂತರ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.due": {
+  "en": "Due {date}",
+  "te": "గడువు {date}",
+  "hi": "देय {date}",
+  "kn": "ಬಾಕಿ {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.overdue": {
+  "en": "Was due {date}",
+  "te": "గడువు {date} నాడే",
+  "hi": "देय थी {date}",
+  "kn": "ಬಾಕಿ ಇತ್ತು {date}",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.attempts": {
+  "en": "Tries: {n}",
+  "te": "{n} ప్రయత్నాలు",
+  "hi": "{n} कोशिशें",
+  "kn": "{n} ಪ್ರಯತ್ನಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.call": {
+  "en": "Call",
+  "te": "కాల్ చేయండి",
+  "hi": "कॉल करें",
+  "kn": "ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.ringing": {
+  "en": "Your phone will ring first. When you pick up, {name} is called.",
+  "te": "ముందు మీ ఫోన్ మోగుతుంది. మీరు ఎత్తగానే {name} కు కాల్ వెళ్తుంది.",
+  "hi": "पहले आपका फ़ोन बजेगा। आप उठाएँगे तो {name} को कॉल लगेगी।",
+  "kn": "ಮೊದಲು ನಿಮ್ಮ ಫೋನ್ ರಿಂಗ್ ಆಗುತ್ತದೆ. ನೀವು ಎತ್ತಿದಾಗ {name} ಅವರಿಗೆ ಕರೆ ಹೋಗುತ್ತದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.how": {
+  "en": "How did the call go?",
+  "te": "కాల్ ఎలా జరిగింది?",
+  "hi": "कॉल कैसी रही?",
+  "kn": "ಕರೆ ಹೇಗೆ ನಡೆಯಿತು?",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.saved": {
+  "en": "Saved for {name}.",
+  "te": "{name} కోసం సేవ్ చేశాం.",
+  "hi": "{name} के लिए सहेजा गया।",
+  "kn": "{name} ಅವರಿಗಾಗಿ ಉಳಿಸಲಾಗಿದೆ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.promised": {
+  "en": "Promised on {date}",
+  "te": "{date} నాటికి చెప్పారు",
+  "hi": "{date} का वादा",
+  "kn": "{date} ರಂದು ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.promise.title": {
+  "en": "Promised a date",
+  "te": "తేదీ చెప్పారు",
+  "hi": "तारीख़ का वादा",
+  "kn": "ದಿನಾಂಕ ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.promise.date": {
+  "en": "The date they promised to pay",
+  "te": "చెల్లిస్తామని చెప్పిన తేదీ",
+  "hi": "भुगतान का वादा की गई तारीख़",
+  "kn": "ಪಾವತಿಸುವುದಾಗಿ ಹೇಳಿದ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.later.title": {
+  "en": "Call later",
+  "te": "తర్వాత కాల్ చేయండి",
+  "hi": "बाद में कॉल करें",
+  "kn": "ನಂತರ ಕರೆ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.later.date": {
+  "en": "Call again on",
+  "te": "మళ్లీ కాల్ చేసే తేదీ",
+  "hi": "फिर कॉल करने की तारीख़",
+  "kn": "ಮತ್ತೆ ಕರೆ ಮಾಡುವ ದಿನಾಂಕ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.cl.save": {
+  "en": "Save",
+  "te": "సేవ్ చేయండి",
+  "hi": "सहेजें",
+  "kn": "ಉಳಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.out.paid": {
+  "en": "Paid",
+  "te": "చెల్లించారు",
+  "hi": "भुगतान किया",
+  "kn": "ಪಾವತಿಸಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.out.promised": {
+  "en": "Promised a date",
+  "te": "తేదీ చెప్పారు",
+  "hi": "तारीख़ का वादा किया",
+  "kn": "ದಿನಾಂಕ ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.out.call_later": {
+  "en": "Call later",
+  "te": "తర్వాత కాల్",
+  "hi": "बाद में कॉल",
+  "kn": "ನಂತರ ಕರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.out.wrong_number": {
+  "en": "Wrong number",
+  "te": "తప్పు నంబర్",
+  "hi": "ग़लत नंबर",
+  "kn": "ತಪ್ಪು ಸಂಖ್ಯೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.out.stop": {
+  "en": "Stop contacting",
+  "te": "సంప్రదించడం ఆపండి",
+  "hi": "संपर्क बंद करें",
+  "kn": "ಸಂಪರ್ಕಿಸುವುದನ್ನು ನಿಲ್ಲಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "camp.ap.disclosure": {
+  "en": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
+  "te": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
+  "hi": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
+  "kn": "Every message tells the person it comes from the business's AI assistant and how to stop. It reads:",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.ap.done": {
+  "en": "Approved. {planned} message steps are planned. Nothing was sent just now: each message still goes out at its own time, and only if the person has not paid, stopped or been blocked.",
+  "te": "Approved. {planned} message steps are planned. Nothing was sent just now: each message still goes out at its own time, and only if the person has not paid, stopped or been blocked.",
+  "hi": "Approved. {planned} message steps are planned. Nothing was sent just now: each message still goes out at its own time, and only if the person has not paid, stopped or been blocked.",
+  "kn": "Approved. {planned} message steps are planned. Nothing was sent just now: each message still goes out at its own time, and only if the person has not paid, stopped or been blocked.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.ap.past": {
+  "en": "{n} steps were already in the past and will not be sent.",
+  "te": "{n} steps were already in the past and will not be sent.",
+  "hi": "{n} steps were already in the past and will not be sent.",
+  "kn": "{n} steps were already in the past and will not be sent.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.ap.switchoff": {
+  "en": "Automatic sending is switched off, so these messages wait until it is switched on.",
+  "te": "Automatic sending is switched off, so these messages wait until it is switched on.",
+  "hi": "Automatic sending is switched off, so these messages wait until it is switched on.",
+  "kn": "Automatic sending is switched off, so these messages wait until it is switched on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.ap.switchoff.now": {
+  "en": "Automatic sending is switched off for this business. You can still approve; the messages will wait until it is switched on.",
+  "te": "Automatic sending is switched off for this business. You can still approve; the messages will wait until it is switched on.",
+  "hi": "Automatic sending is switched off for this business. You can still approve; the messages will wait until it is switched on.",
+  "kn": "Automatic sending is switched off for this business. You can still approve; the messages will wait until it is switched on.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.s.body": {
+  "en": "You have read the messages for {n} people. Approving covers the whole campaign, once.",
+  "te": "You have read the messages for {n} people. Approving covers the whole campaign, once.",
+  "hi": "You have read the messages for {n} people. Approving covers the whole campaign, once.",
+  "kn": "You have read the messages for {n} people. Approving covers the whole campaign, once.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.s.note": {
+  "en": "Approving sends nothing by itself. Each message goes out at its own time and is still checked for consent, STOP, quiet hours and the daily limit.",
+  "te": "Approving sends nothing by itself. Each message goes out at its own time and is still checked for consent, STOP, quiet hours and the daily limit.",
+  "hi": "Approving sends nothing by itself. Each message goes out at its own time and is still checked for consent, STOP, quiet hours and the daily limit.",
+  "kn": "Approving sends nothing by itself. Each message goes out at its own time and is still checked for consent, STOP, quiet hours and the daily limit.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.s.checked": {
+  "en": "I have read the {n} sample messages above and the total.",
+  "te": "I have read the {n} sample messages above and the total.",
+  "hi": "I have read the {n} sample messages above and the total.",
+  "kn": "I have read the {n} sample messages above and the total.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.aud.example": {
+  "en": "9XXXXXXXXX, 2026-10-20, INV-1001",
+  "te": "9XXXXXXXXX, 2026-10-20, INV-1001",
+  "hi": "9XXXXXXXXX, 2026-10-20, INV-1001",
+  "kn": "9XXXXXXXXX, 2026-10-20, INV-1001",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
+ },
+ "camp.aud.example.money": {
+  "en": "9XXXXXXXXX, 2026-10-20, 12500, INV-1001",
+  "te": "9XXXXXXXXX, 2026-10-20, 12500, INV-1001",
+  "hi": "9XXXXXXXXX, 2026-10-20, 12500, INV-1001",
+  "kn": "9XXXXXXXXX, 2026-10-20, 12500, INV-1001",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  },
+  "humanOnly": true
  }
 }

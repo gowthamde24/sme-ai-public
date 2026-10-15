@@ -77,7 +77,7 @@ describe("the menu table", () => {
 describe("the items only a business type brings (job CL)", () => {
   const flat = NAV.flatMap((g) => g.items);
   it("are Fees, Campaigns, Sites and Dues, each tied to a module, and absent from the menu of a workspace with no pack", () => {
-    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["fees", "/fees", "fees"], ["campaigns", "/campaigns", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"]]);
+    expect(flat.filter((i) => i.packOnly).map((i) => [i.id, i.path, i.module])).toEqual([["fees", "/fees", "fees"], ["campaigns", "/campaigns", "campaigns"], ["calllist", "/call-list", "campaigns"], ["sites", "/sites", "sites"], ["dues", "/dues", "dues"]]);
     for (const role of ROLES) expect(visibleGroups(role).flatMap((g) => g.items.map((i) => i.id))).not.toEqual(expect.arrayContaining(["fees"]));
   });
   it("show when the pack has the module on, and only then", () => {
