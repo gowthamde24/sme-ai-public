@@ -228,12 +228,12 @@ select is(pg_temp.val('a_owner', format($q$select count(*)::text from jsonb_arra
 -- Asha: nothing late (her only open claim, tuition 2 due 10 Oct, is inside the 5-day grace on 14 Oct). Bala: tuition 1, transport and books are open and long late; Rs 50 a day, capped at Rs 500, for each.
 select is(pg_temp.val('a_sales', format($q$select (public.fee_late_fees_preview(%L) ->> 'count')$q$, tests.tid('a'))), '4', 'G1 the rule gives four late fees on 14 Oct: Bala''s three long-late instalments and Dev''s fixed one');
 select is(pg_temp.val('a_sales', format($q$select (public.fee_late_fees_preview(%L) ->> 'total_paise')$q$, tests.tid('a'))), '160000', 'G2 Rs 500 each at the cap for Bala (Rs 1,500) and Rs 100 fixed for Dev: Rs 1,600');
-select is((select count(*) from public.ledger_entries where reason_code = 'late_fee'), 0::bigint, 'G3 looking adds nothing to anyone''s account');
+select is((select count(*) from public.ledger_entries where tenant_id = tests.tid('a') and reason_code = 'late_fee'), 0::bigint, 'G3 looking adds nothing to anyone''s account');
 select is(pg_temp.val('a_viewer', format($q$select public.fee_late_fees_preview(%L)::text$q$, tests.tid('a'))), 'ERR:42501', 'G4 DENY: a Viewer');
 select is(pg_temp.try('a_sales', format($q$select public.fee_late_fees_post(%L)$q$, tests.tid('a'))), '42501', 'G5 DENY: Sales cannot post them');
 select is(pg_temp.at('aal1', 'a_owner', format($q$select public.fee_late_fees_post(%L)$q$, tests.tid('a'))), 'SM306', 'G6 posting needs a second factor');
 select is(pg_temp.val('a_owner', format($q$select (public.fee_late_fees_post(%L) ->> 'posted')$q$, tests.tid('a'))), '4', 'G7 ALLOW: the Owner posts them');
-select is((select count(*) from public.ledger_entries where reason_code = 'late_fee' and kind = 'adjustment' and direction = 'debit'), 4::bigint, 'G8 four debit adjustments, each against its own instalment');
+select is((select count(*) from public.ledger_entries where tenant_id = tests.tid('a') and reason_code = 'late_fee' and kind = 'adjustment' and direction = 'debit'), 4::bigint, 'G8 four debit adjustments, each against its own instalment');
 select is((select count(*) from public.ledger_entries e where e.reason_code = 'late_fee' and e.against_entry_id is not null and e.due_date = date '2026-10-14' and e.reference = 'Late fee'), 4::bigint, 'G9 due the day they were posted');
 select is(pg_temp.val('a_owner', format($q$select (public.fee_late_fees_post(%L) ->> 'posted')$q$, tests.tid('a'))), '0', 'G10 posting again adds nothing');
 select is(pg_temp.stmt('s2', 'outstanding_paise'), '3350000', 'G12 Bala owes Rs 33,500: Rs 35,000 - Rs 3,000 paid + Rs 1,500 late fees');
