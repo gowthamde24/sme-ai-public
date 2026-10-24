@@ -12,8 +12,8 @@ import os from "node:os";
 const GCP_PROJECT = "project-2757c07e-37d2-4167-88f";
 const WEB = (process.argv[2] || "").replace(/\/$/, "");
 const SHOTS = process.argv[3] || path.join(os.tmpdir(), "staging-shots") // never inside the repository;
-if (!/^https:\/\/sme-web-620338396268\.asia-south1\.run\.app$/.test(WEB)) {
-  console.error("staging-smoke: refusing to run: the first argument must be the stack19-staging web address.");
+if (!/^https:\/\/(sme-web-620338396268\.asia-south1\.run\.app|staging\.stack19\.com)$/.test(WEB)) {
+  console.error("staging-smoke: refusing to run: the first argument must be the stack19-staging web address (the run.app one or https://staging.stack19.com).");
   process.exit(2);
 }
 mkdirSync(SHOTS, { recursive: true });

@@ -60,7 +60,7 @@ SUPABASE_PUBLISHABLE_KEY="$(supabase projects api-keys --project-ref "$SUPABASE_
 [ -n "$SUPABASE_PUBLISHABLE_KEY" ] || { echo "could not read the publishable key: run \`supabase login\`" >&2; exit 1; }
 export SUPABASE_URL SUPABASE_PUBLISHABLE_KEY
 export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
-export WEB_ORIGIN="${WEB_ORIGIN:-https://sme-web-$PROJECT_NUMBER.$REGION.run.app}"   # the address the web is served from (CORS fence, sitemap): the run.app one until a custom domain exists
+export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"
 export TAG="$(git rev-parse --short HEAD)$dirty"

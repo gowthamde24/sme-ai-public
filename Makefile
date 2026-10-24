@@ -350,7 +350,7 @@ container-smoke:
 #   make staging-smoke                                      the checks of a live staging: hosted-smoke, the API flows (quotes, campaigns) and the browser flow (sign-in, second factor, Today, sign-out)
 #   make staging-backup / make staging-drill FILE=<dump>    a pg_dump to /Volumes/Stack19/stack19/staging-backups and the restore into a scratch database on the local AGENT stack
 STAGING_API = https://sme-api-620338396268.asia-south1.run.app
-STAGING_WEB = https://sme-web-620338396268.asia-south1.run.app
+STAGING_WEB = https://staging.stack19.com
 STAGING_REF = uiallwgywitryxatcqxf
 deploy-staging:
 	./deploy/staging.sh deploy $(or $(WHAT),all) $(if $(DRY),--dry-run,)
