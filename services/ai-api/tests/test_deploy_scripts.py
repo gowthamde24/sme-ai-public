@@ -76,8 +76,17 @@ def test_the_api_is_a_dry_run_by_default_in_mumbai_with_the_suppression_key_as_a
     assert "SUPABASE_JWT_ALGORITHMS=ES256" in out and "AGENTS_ENABLED=false" in out
 
 
-def test_execute_runs_the_build_and_the_deploy_in_order(box: dict[str, object]) -> None:
+def test_execute_runs_the_remote_build_and_the_deploy_in_order(box: dict[str, object]) -> None:
+    """Job DC: the default build is Cloud Build (remote), not Docker on the laptop."""
     result = run(CLOUDRUN, ["api", "--execute"], box, {**BASE, "TAG": "t1"})
+    assert result.returncode == 0, result.stderr
+    kinds = [c.split()[0] + " " + c.split()[1] for c in calls(box)]
+    assert kinds == ["gcloud builds", "gcloud run"]
+    assert "--config deploy/cloudbuild-api.yaml" in calls(box)[0] and "_IMAGE=asia-south1-docker.pkg.dev/sme-test/sme/api:t1" in calls(box)[0]
+
+
+def test_execute_with_build_docker_builds_on_this_machine(box: dict[str, object]) -> None:
+    result = run(CLOUDRUN, ["api", "--execute"], box, {**BASE, "TAG": "t1", "BUILD": "docker"})
     assert result.returncode == 0, result.stderr
     kinds = [c.split()[0] + " " + c.split()[1] for c in calls(box)]
     assert kinds == ["docker build", "docker push", "gcloud run"]
@@ -111,7 +120,9 @@ def test_the_web_needs_an_https_api_address(box: dict[str, object]) -> None:
     assert run(CLOUDRUN, ["web"], box, BASE).returncode != 0
     assert run(CLOUDRUN, ["web"], box, {**BASE, "API_URL": "http://api.example"}).returncode == 2
     out = run(CLOUDRUN, ["web"], box, {**BASE, "API_URL": "https://api.example.run.app"}).stdout
-    assert "NEXT_PUBLIC_API_BASE_URL=https://api.example.run.app" in out and "sme-web" in out
+    assert "_API_URL=https://api.example.run.app" in out and "--config deploy/cloudbuild-web.yaml" in out and "sme-web" in out
+    docker = run(CLOUDRUN, ["web"], box, {**BASE, "API_URL": "https://api.example.run.app", "BUILD": "docker"}).stdout
+    assert "NEXT_PUBLIC_API_BASE_URL=https://api.example.run.app" in docker
 
 
 def test_the_worker_is_a_job_started_by_the_scheduler_and_carries_no_password(box: dict[str, object]) -> None:
