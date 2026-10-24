@@ -16,7 +16,6 @@ if (!/^https:\/\/(sme-web-620338396268\.asia-south1\.run\.app|staging\.stack19\.
   console.error("staging-smoke: refusing to run: the first argument must be the stack19-staging web address (the run.app one or https://staging.stack19.com).");
   process.exit(2);
 }
-mkdirSync(SHOTS, { recursive: true });
 
 const PACKS = ["textiles", "construction_materials", "education"];
 const secret = (name) => execFileSync("gcloud", ["secrets", "versions", "access", "latest", `--secret=${name}`, `--project=${GCP_PROJECT}`], { encoding: "utf8" });
@@ -59,6 +58,7 @@ export async function signIn(page, pack) {
 }
 
 export async function main() {
+  mkdirSync(SHOTS, { recursive: true });
   const browser = await chromium.launch();
   for (const pack of PACKS) {
     const context = await browser.newContext({ viewport: { width: 390, height: 844 } }); // a phone
