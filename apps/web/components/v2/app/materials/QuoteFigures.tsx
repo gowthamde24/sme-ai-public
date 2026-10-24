@@ -7,6 +7,14 @@ import { FLAG_CODES, type Figures } from "./figures";
 const row = "flex items-baseline justify-between gap-3 py-1.5";
 
 /**
+ * What is billed on a line, as a person reads it (job DF). For a product sold by area the engine bills in hundredths of a unit (105000 is 1,050 sq ft: `billed_quantity` is `delivered_area_x100` or the plain area x100), exactly like the
+ * customer text the API writes (`app/materials/text.py`); a product sold by the piece, the bag or the tonne bills whole units. Showing the raw 105000 next to a rate of ₹65.00 made a line look like ₹68 lakh.
+ */
+export function billedText(l: Pick<Figures["lines"][number], "soldPer" | "billedQuantity" | "deliveredAreaX100">): string {
+  return (l.soldPer === "sq_ft" || l.soldPer === "sq_m") && l.deliveredAreaX100 !== null ? areaText(l.billedQuantity) : groupIndian(l.billedQuantity);
+}
+
+/**
  * The figures of a material quote as a person reads them (job CO): each line with its measure, pieces, pallets and amount; then material, transport, loading, laying, GST and the total; then the advance and the balance
  * and how long the quote is good for. The same component draws a preview and a stored quote. Amounts are the engine's, written with the Indian grouping; nothing is calculated here.
  */
@@ -37,7 +45,7 @@ export function QuoteFigures({ figures, words }: { figures: Figures; words: Toda
                   </span>
                   <span className="block text-sm font-normal text-muted">{say(words, "mat.q.gst", { n: percentFromBps(l.gstBps) })}</span>
                 </th>
-                <td className="px-3 py-2 text-right tabular-nums">{groupIndian(l.billedQuantity)} {unitWord(words, l.soldPer)}</td>
+                <td className="px-3 py-2 text-right tabular-nums">{billedText(l)} {unitWord(words, l.soldPer)}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{formatRupees(l.unitPricePaise)}</td>
                 <td className="px-3 py-2 text-right tabular-nums">{formatRupees(l.materialPaise)}</td>
               </tr>
