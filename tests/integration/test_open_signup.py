@@ -108,7 +108,7 @@ def test_the_confirmation_mail_lands_in_the_local_catcher_and_links_to_the_apps_
     email, password = fresh()
     assert sign_up(stack, email, password).status_code == 200
     messages = mails_to(email)
-    assert len(messages) == 1 and messages[0]["Subject"] == "Confirm your email"
+    assert len(messages) == 1 and messages[0]["Subject"] == "Confirm your Stack19 email"
     token_hash_from_mail(email)  # the link has the app's /auth/confirm shape: token_hash, type=email, next=/app
 
 
