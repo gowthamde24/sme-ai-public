@@ -116,7 +116,10 @@ def construction_quote(o: Owner) -> None:
     picks = [{"line_no": 1, "item_id": item}]
     o.ok("preview", "POST", f"/materials/requirements/{req}/preview", {"picks": picks})
     o.ok("draft", "POST", f"/materials/requirements/{req}/quotes", {"quote_id": req_quote, "picks": picks})
-    done = o.ok("approve materials quote", "POST", f"/materials/quotes/{req_quote}/approve")
+    done = o.ok("approve materials quote", "POST", f"/materials/quotes/{req_quote}/approve", want=(200, 201, 409))
+    if isinstance(done, dict) and done.get("error", {}).get("code") == "quote_not_draft":  # a second run on the same day: this quote is already approved
+        record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "PASS", "already approved earlier today (replay)")
+        return
     record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "PASS", f"status={done.get('status')}, total_paise={done.get('total_paise')}")
 
 
