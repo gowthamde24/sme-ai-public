@@ -10,8 +10,9 @@ import { ApiAuthError, ApiRequestError, fetchTenant } from "@/lib/api/client";
 import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Help · SME AI Revenue Engine" };
+export const metadata = { title: `Help · ${BRAND_NAME}` };
 // Per-user: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

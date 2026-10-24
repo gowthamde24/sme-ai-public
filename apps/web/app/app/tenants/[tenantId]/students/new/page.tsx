@@ -13,8 +13,9 @@ import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../../education-kit";
 import { saveStudentAction } from "../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Add a student · SME AI Revenue Engine" };
+export const metadata = { title: `Add a student · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

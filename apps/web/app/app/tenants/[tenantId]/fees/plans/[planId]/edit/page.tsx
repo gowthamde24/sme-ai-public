@@ -10,8 +10,9 @@ import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../../../../education-kit";
 import { saveFeePlanAction } from "../../../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Change a fee plan · SME AI Revenue Engine" };
+export const metadata = { title: `Change a fee plan · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/fees/plans/[planId]/edit: change a fee plan nobody holds yet (job CS; Owner and Admin). A held plan goes back to its page: it cannot change, make a copy. */

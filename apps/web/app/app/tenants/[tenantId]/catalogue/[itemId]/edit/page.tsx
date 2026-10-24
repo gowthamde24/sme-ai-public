@@ -20,8 +20,9 @@ import { catalogueWords } from "../../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
 import { getCatalogueCustom, listCustomFields } from "@/lib/api/custom-fields";
 import { formFields } from "@/lib/packs/form-fields";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Edit a saree · SME AI Revenue Engine" };
+export const metadata = { title: `Edit a saree · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/catalogue/[itemId]/edit: change a saree and its photos (Owner and Admin; anyone else is sent to the saree's page). */

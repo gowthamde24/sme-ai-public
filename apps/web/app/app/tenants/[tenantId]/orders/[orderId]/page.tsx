@@ -21,8 +21,9 @@ import { tripWords } from "../trips/trip-words";
 import { EventForm } from "../event-form";
 import { recordEventAction } from "../order-actions";
 import { OrderView } from "../order-view";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Order · SME AI Revenue Engine" };
+export const metadata = { title: `Order · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

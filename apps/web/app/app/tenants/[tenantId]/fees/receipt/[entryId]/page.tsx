@@ -9,8 +9,9 @@ import { escalate } from "@/lib/api/failure";
 import { formatRupees } from "@/lib/money";
 
 import { eduContext, eduWords } from "../../../education-kit";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Receipt · SME AI Revenue Engine" };
+export const metadata = { title: `Receipt · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/fees/receipt/[entryId]: a fee payment as a receipt to print or save as PDF, and the same words to copy for the guardian (job CS). The system sends nothing; a person pastes the text into WhatsApp. */

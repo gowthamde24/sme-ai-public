@@ -14,8 +14,9 @@ import { getResearchStatus } from "@/lib/api/retailers";
 import { requireUser } from "@/lib/auth/session";
 
 import { confirmPlaceAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Find retailers · SME AI Revenue Engine" };
+export const metadata = { title: `Find retailers · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

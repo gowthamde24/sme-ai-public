@@ -1,7 +1,8 @@
 import { materialsContext } from "../prelude";
 import { MaterialProductEditPage } from "../pages";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Add a product · SME AI Revenue Engine" };
+export const metadata = { title: `Add a product · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/materials/new: add a product (job CO; Owner and Admin; anyone else goes to the list). The page makes the product's id, so pressing Save twice is a retry. */

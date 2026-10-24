@@ -18,8 +18,9 @@ import { requireUser } from "@/lib/auth/session";
 
 import { dueWords } from "../due-words";
 import { recordEntryAction, setCreditLimitAction, voidEntryAction } from "../ledger-actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Account · SME AI Revenue Engine" };
+export const metadata = { title: `Account · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/dues/[companyId]: one customer's account (job CO): what is owed and how old it is, the open invoices, the entries, and the buttons to write down a payment, an invoice or an adjustment. */

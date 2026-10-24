@@ -12,8 +12,9 @@ import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../../education-kit";
 import { saveAdmissionAction } from "../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "New enquiry · SME AI Revenue Engine" };
+export const metadata = { title: `New enquiry · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/admissions/new: start an admission enquiry (job CS; Owner, Admin and Sales). The page makes the enquiry's id, so pressing Save twice is a retry. No child is stored. */

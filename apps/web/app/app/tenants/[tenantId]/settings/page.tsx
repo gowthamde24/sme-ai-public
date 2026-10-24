@@ -50,8 +50,9 @@ import { saveShopGstinAction } from "./gstin-actions";
 import { cancelAccountDeletionAction, cancelWorkspaceDeletionAction, executeWorkspaceDeletionAction, exportLinkAction, getExportAction, requestAccountDeletionAction, requestExportAction, requestWorkspaceDeletionAction } from "./privacy-actions";
 import { agentWords } from "./agent-words";
 import { partsWords, wordsFor } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Settings · SME AI Revenue Engine" };
+export const metadata = { title: `Settings · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

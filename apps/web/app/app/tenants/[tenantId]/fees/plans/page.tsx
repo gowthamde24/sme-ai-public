@@ -8,8 +8,9 @@ import { listFeePlans, listProgrammes } from "@/lib/api/education";
 import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../../education-kit";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Fee plans · SME AI Revenue Engine" };
+export const metadata = { title: `Fee plans · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/fees/plans: the fee plans of the school (job CS). Owner and Admin make plans; Sales read. */

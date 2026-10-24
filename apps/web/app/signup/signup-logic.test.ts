@@ -29,7 +29,7 @@ describe("runSignUp", () => {
       password: GOOD.password,
       options: { data: { display_name: "Asha Rao", business_name: "Sri Lakshmi Silks", terms_version: TERMS_VERSION } },
     });
-    expect(TERMS_VERSION).toBe("2026-10-24");
+    expect(TERMS_VERSION).toBe("2026-10-24.2");
     expect(TERMS_VERSION).toMatch(/^[a-z0-9][a-z0-9.-]{0,29}$/); // the database's own check (public.terms_acceptances)
   });
 

@@ -17,8 +17,9 @@ import { readPackCached } from "@/lib/packs/read";
 import { readLeadLabel } from "../../visits/visits-data";
 import { approveMaterialQuoteAction, materialQuoteTextAction, orderFromMaterialQuoteAction, rejectMaterialQuoteAction } from "../material-actions";
 import { quoteWords } from "../material-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Quote · SME AI Revenue Engine" };
+export const metadata = { title: `Quote · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

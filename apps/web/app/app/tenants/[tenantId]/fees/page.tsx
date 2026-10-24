@@ -10,8 +10,9 @@ import { runReport } from "@/lib/api/reports";
 
 import { eduContext, eduWords } from "../education-kit";
 import { postLateFeesAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Fees · SME AI Revenue Engine" };
+export const metadata = { title: `Fees · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** Each part is read on its own: a part that cannot be read is "could not load" in its place, never a guess. A rejected session still goes to sign-in. */

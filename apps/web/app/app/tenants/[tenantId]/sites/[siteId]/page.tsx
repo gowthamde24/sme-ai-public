@@ -16,8 +16,9 @@ import { requireUser } from "@/lib/auth/session";
 
 import { saveSiteAction, searchCompaniesAction } from "../site-actions";
 import { siteWords } from "../site-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Site · SME AI Revenue Engine" };
+export const metadata = { title: `Site · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/sites/[siteId]: change a site (Owner, Admin, Sales). A Viewer is sent back to the list: the list already shows everything a site holds. */

@@ -12,8 +12,9 @@ import { escalate } from "@/lib/api/failure";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { partsWords } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Integrations · SME AI Revenue Engine" };
+export const metadata = { title: `Integrations · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

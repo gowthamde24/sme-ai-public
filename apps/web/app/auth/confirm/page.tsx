@@ -5,8 +5,9 @@ import { parseConfirmType, parseTokenHash } from "@/lib/auth/otp";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 
 import { ConfirmForm } from "./confirm-form";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Confirm · SME AI Revenue Engine" };
+export const metadata = { title: `Confirm · ${BRAND_NAME}` };
 
 const HEADINGS = {
   invite: "You are invited",

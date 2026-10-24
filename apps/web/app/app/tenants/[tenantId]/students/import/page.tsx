@@ -6,8 +6,9 @@ import { backLink, pageMain } from "@/components/v2/app/ui";
 import { getLang } from "@/i18n/get-lang";
 
 import { eduContext, eduWords } from "../../education-kit";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Import students · SME AI Revenue Engine" };
+export const metadata = { title: `Import students · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**

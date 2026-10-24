@@ -14,8 +14,9 @@ import { readAgentsStatus, readEventLinks } from "./office-data";
 import { partsWords } from "@/i18n/app-words";
 import { readPackCached } from "@/lib/packs/read";
 import { withPackT } from "@/lib/packs/resolve";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Office · SME AI Revenue Engine" };
+export const metadata = { title: `Office · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

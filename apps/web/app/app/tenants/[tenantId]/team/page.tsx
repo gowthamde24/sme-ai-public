@@ -17,8 +17,9 @@ import { getTeam, listInvitations } from "@/lib/api/team";
 import { requireUser } from "@/lib/auth/session";
 
 import { changeRoleAction, inviteAction, removeMemberAction, revokeInvitationAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Team · SME AI Revenue Engine" };
+export const metadata = { title: `Team · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

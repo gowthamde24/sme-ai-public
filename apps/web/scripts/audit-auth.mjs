@@ -11,6 +11,7 @@
 // and 1440 with the h1 and the main action in the first screen, text at least 14px, computed contrast in light and dark,
 // touch targets (44px on a phone), a real Tab-key walk with ring contrast, 0 CSP violations and 0 console messages.
 // Exit 1 on any failure. The numbers are printed, not summarised.
+import { readFileSync } from "node:fs";
 import { chromeEngine } from "./lib/engines.mjs";
 import { LANGS, startNext } from "./lib/next-server.mjs";
 import { AUTH_STRUCTURE, FOCUSABLE_COUNT, FOCUS_STATE, LAYOUT, TEXT_AND_TARGETS } from "./lib/page-checks.mjs";
@@ -20,7 +21,9 @@ const argv = process.argv.slice(2);
 const engineName = argv.includes("--engine") ? argv[argv.indexOf("--engine") + 1] : "chrome";
 const SIZES = [[360, 780], [390, 844], [768, 1024], [1024, 768], [1440, 800]];
 const TOKEN = "a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6";
-const T = " · SME AI Revenue Engine";
+// the page titles end with the product name, read from design/brand.ts (the one place it is written)
+const BRAND = /BRAND_NAME = "([^"]+)"/.exec(readFileSync(new URL("../design/brand.ts", import.meta.url), "utf8"))[1];
+const T = ` · ${BRAND}`;
 
 const SCREENS = [
   { id: "login", path: "/login", title: `Sign in${T}`, forms: 1 },

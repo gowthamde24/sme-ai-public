@@ -18,8 +18,9 @@ import { approveFromOutboxAction, dispatchNowAction, outboxDetailAction, editFro
 import { readOutbox } from "./outbox-data";
 import { outboxWords } from "./outbox-words";
 import { partsWords } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Outbox · SME AI Revenue Engine" };
+export const metadata = { title: `Outbox · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

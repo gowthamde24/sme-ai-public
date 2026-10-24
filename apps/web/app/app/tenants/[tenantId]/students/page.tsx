@@ -9,8 +9,9 @@ import { listProgrammes, listStudents } from "@/lib/api/education";
 import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../education-kit";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Students · SME AI Revenue Engine" };
+export const metadata = { title: `Students · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

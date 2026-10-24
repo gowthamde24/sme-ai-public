@@ -9,8 +9,9 @@ import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../education-kit";
 import { saveGroupAction, saveProfileAction, saveProgrammeAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Programmes · SME AI Revenue Engine" };
+export const metadata = { title: `Programmes · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/programmes: the institution and its programmes, classes and sections (job CS; module `programmes`). Owner and Admin write; Sales read; a Viewer gets "not found". */

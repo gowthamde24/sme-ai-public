@@ -4,8 +4,9 @@ import { hasModule } from "@/lib/packs/has";
 
 import { CampaignFormPage } from "../../campaigns/pages";
 import { campaignContext } from "../../campaigns/prelude";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "New announcement · SME AI Revenue Engine" };
+export const metadata = { title: `New announcement · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/announcements/new: write an announcement (an event, an exam or a holiday) and then choose who it is for (job CS). The page makes the campaign's id, so pressing Save twice is a retry. */

@@ -18,8 +18,9 @@ import { readPackCached } from "@/lib/packs/read";
 import { readReport } from "./report-data";
 import { packReportWords } from "./pack-report-words";
 import { reportWords } from "./report-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "This week · SME AI Revenue Engine" };
+export const metadata = { title: `This week · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

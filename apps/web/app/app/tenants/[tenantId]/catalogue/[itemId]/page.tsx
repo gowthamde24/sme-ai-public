@@ -19,8 +19,9 @@ import { readLeadLabel } from "../../visits/visits-data";
 import { searchLeadsAction, sendCatalogueAction } from "../catalogue-actions";
 import { catalogueWords } from "../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Catalogue · SME AI Revenue Engine" };
+export const metadata = { title: `Catalogue · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

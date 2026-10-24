@@ -13,8 +13,9 @@ import { hasModule } from "@/lib/packs/has";
 import { readPackCached } from "@/lib/packs/read";
 
 import { tripWords } from "../../trip-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Delivery note · SME AI Revenue Engine" };
+export const metadata = { title: `Delivery note · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/orders/trips/[tripId]/challan: the delivery note as a page to print or save as PDF (job CO). It has no amounts and no tax. Owner, Admin and Sales. */

@@ -4,8 +4,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 
 import { materialsContext } from "../prelude";
 import { MaterialProductPage } from "../pages";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Product · SME AI Revenue Engine" };
+export const metadata = { title: `Product · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/materials/[itemId]: one product (job CO). A hidden product is for the Owner and Admin only. */

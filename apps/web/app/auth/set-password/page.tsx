@@ -2,8 +2,9 @@ import { authH1, authMain } from "@/components/v2/auth/ui";
 import { requireUser } from "@/lib/auth/session";
 
 import { SetPasswordForm } from "./set-password-form";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Choose a password · SME AI Revenue Engine" };
+export const metadata = { title: `Choose a password · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** Reached from /auth/confirm after an invite or a reset link. Needs the session that link created; without one it goes to /login. */

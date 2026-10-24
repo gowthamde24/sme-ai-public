@@ -17,8 +17,16 @@ export const BUSINESS = {
   description: "a sole proprietorship of Gowtham Reddy Sodanapalli, registered for GST in Andhra Pradesh, India",
 } as const;
 
-/** The days we take to answer a privacy request or a grievance (the promise made in the Privacy Policy and on the data-deletion page). */
-export const GRIEVANCE_DAYS = 30;
+/**
+ * The days we take to answer (the promise made in the Privacy Policy, on the data-deletion page and on the contact page; owner decision of 24 October, following counsel's note of 8 October):
+ * a request to access, correct or erase personal data in `requests`; any other grievance in `grievances`. These two numbers are written here and nowhere else (a test checks).
+ */
+export const RESPONSE_DAYS = { requests: 7, grievances: 30 } as const;
+/**
+ * The hours we take to act on a withdrawal of consent (owner decision of 24 October, following counsel's note that withdrawal must be as easy as giving consent and acted on quickly): we stop messages, calls and campaigns to that person.
+ * The do-not-contact option inside the app takes effect immediately (the Privacy Policy says so). Written here and nowhere else (a test checks).
+ */
+export const RESPONSE_HOURS = { withdrawal: 48 } as const;
 
 /** The role of each public address, in the order the contact page lists them. */
 export const ADDRESS_KEYS = ["hello", "support", "billing", "privacy"] as const;
@@ -42,6 +50,8 @@ export const LEGAL_TOKENS: Readonly<Record<string, string>> = {
   privacy_email: ADDRESSES.privacy,
   proprietor: BUSINESS.proprietor,
   business_description: BUSINESS.description,
-  grievance_days: String(GRIEVANCE_DAYS),
+  request_days: String(RESPONSE_DAYS.requests),
+  grievance_days: String(RESPONSE_DAYS.grievances),
+  withdrawal_hours: String(RESPONSE_HOURS.withdrawal),
   domain: DOMAIN,
 };

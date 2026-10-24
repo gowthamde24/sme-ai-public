@@ -21,8 +21,9 @@ import { catalogueWords } from "../catalogue-words";
 import { partsWords } from "@/i18n/app-words";
 import { formFields } from "@/lib/packs/form-fields";
 import { listCustomFields } from "@/lib/api/custom-fields";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Add a saree · SME AI Revenue Engine" };
+export const metadata = { title: `Add a saree · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/catalogue/new: add a saree (Owner and Admin; anyone else goes to the catalogue). The page makes the saree's id, so pressing Save twice is a retry and never a second saree. */

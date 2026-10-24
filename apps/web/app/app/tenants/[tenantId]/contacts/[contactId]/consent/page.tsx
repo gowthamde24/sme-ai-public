@@ -14,8 +14,9 @@ import { Rich } from "@/components/v2/app/rich";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Record consent · SME AI Revenue Engine" };
+export const metadata = { title: `Record consent · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

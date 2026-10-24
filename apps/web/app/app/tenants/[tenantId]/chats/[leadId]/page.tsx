@@ -17,8 +17,9 @@ import { getThread } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
 import { approveChatMessageAction, markReadAction, refreshThreadAction, rejectChatMessageAction, replyAction } from "../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Customer chat · SME AI Revenue Engine" };
+export const metadata = { title: `Customer chat · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

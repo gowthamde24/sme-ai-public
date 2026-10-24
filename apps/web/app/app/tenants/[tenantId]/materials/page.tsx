@@ -1,7 +1,8 @@
 import { materialsContext } from "./prelude";
 import { MaterialProductsPage } from "./pages";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Products · SME AI Revenue Engine" };
+export const metadata = { title: `Products · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/materials: the products of a business that sells by area, weight or piece (job CO; module `materials`). The saree catalogue's address sends such a business here. */

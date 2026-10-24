@@ -17,8 +17,9 @@ import { Rich } from "@/components/v2/app/rich";
 import { makeT, type Words } from "@/components/v2/app/words";
 import { wordsFor } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Lead Review Queue · SME AI Revenue Engine" };
+export const metadata = { title: `Lead Review Queue · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const WRITE_ROLES = ["owner", "admin", "sales"];

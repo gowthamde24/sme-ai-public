@@ -18,8 +18,9 @@ import { readLeadLabel } from "../visits/visits-data";
 import { readCatalogue } from "./catalogue-data";
 import { catalogueWords } from "./catalogue-words";
 import { partsWords } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Catalogue · SME AI Revenue Engine" };
+export const metadata = { title: `Catalogue · ${BRAND_NAME}` };
 // Per-user data from the API (and links that run out): never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

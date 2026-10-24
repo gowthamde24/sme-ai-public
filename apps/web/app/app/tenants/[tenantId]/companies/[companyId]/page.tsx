@@ -23,8 +23,9 @@ import { CompanyShortcuts } from "@/components/v2/app/sites/CompanyShortcuts";
 import { makeT } from "@/components/v2/app/words";
 import { wordsFor, partsWords } from "@/i18n/app-words";
 import { getLang } from "@/i18n/get-lang";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Company · SME AI Revenue Engine" };
+export const metadata = { title: `Company · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

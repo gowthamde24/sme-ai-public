@@ -9,8 +9,9 @@ import { getFeePlan, listProgrammes } from "@/lib/api/education";
 import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../../../education-kit";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Fee plan · SME AI Revenue Engine" };
+export const metadata = { title: `Fee plan · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/fees/plans/[planId]: one fee plan, read only (job CS). A plan someone holds cannot change: make a copy. */

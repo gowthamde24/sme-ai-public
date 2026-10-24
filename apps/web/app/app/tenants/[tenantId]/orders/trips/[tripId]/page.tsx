@@ -22,8 +22,9 @@ import { readPackCached } from "@/lib/packs/read";
 import { notifyTripAction, setTripStatusAction, updateTripAction } from "../trip-actions";
 import { loadOrderTrips } from "../trip-data";
 import { tripWords } from "../trip-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Trip · SME AI Revenue Engine" };
+export const metadata = { title: `Trip · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

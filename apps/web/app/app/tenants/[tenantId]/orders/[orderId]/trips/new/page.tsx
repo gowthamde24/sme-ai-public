@@ -20,8 +20,9 @@ import { readPackCached } from "@/lib/packs/read";
 import { planTripAction } from "../../../trips/trip-actions";
 import { loadOrderTrips } from "../../../trips/trip-data";
 import { tripWords } from "../../../trips/trip-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Plan a trip · SME AI Revenue Engine" };
+export const metadata = { title: `Plan a trip · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/orders/[orderId]/trips/new: plan a trip for a building-materials order (job CO). Owner, Admin, Sales. The first truck is filled up to what a truck carries. The page makes the trip's id, so pressing Save twice is a retry. */

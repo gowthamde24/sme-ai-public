@@ -18,8 +18,9 @@ import { visitsWords } from "./visits-words";
 import { withModuleWords } from "@/lib/packs/module-words";
 import { readPackCached } from "@/lib/packs/read";
 import { partsWords } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Store visits · SME AI Revenue Engine" };
+export const metadata = { title: `Store visits · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

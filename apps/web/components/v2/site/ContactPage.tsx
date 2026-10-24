@@ -8,7 +8,7 @@ import { Section } from "@/components/v2/site/sections";
 import { container, lead } from "@/components/v2/site/ui";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { ADDRESSES, ADDRESS_KEYS } from "@/lib/site/business";
+import { ADDRESSES, ADDRESS_KEYS, RESPONSE_DAYS, RESPONSE_HOURS } from "@/lib/site/business";
 import type { LeadResult } from "@/lib/site/lead";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 
@@ -38,6 +38,7 @@ export function ContactPage({ t, lang, chatAvailable, action }: { t: SiteT; lang
               <dt className="text-sm font-semibold text-muted">{t(`contact.addr.${key}`)}</dt>
               <dd className="mt-1">
                 <EmailAddress address={ADDRESSES[key]} words={emailWords(t)} />
+                {key === "privacy" ? <p className="mt-2 text-sm text-muted">{t("contact.addr.privacy.note", { requests: RESPONSE_DAYS.requests, withdrawal: RESPONSE_HOURS.withdrawal, grievances: RESPONSE_DAYS.grievances })}</p> : null}
               </dd>
             </div>
           ))}

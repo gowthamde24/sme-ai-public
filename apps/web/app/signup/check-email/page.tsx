@@ -3,8 +3,9 @@ import Link from "next/link";
 import { authH1, authLead, authLink, authMain, authParagraph } from "@/components/v2/auth/ui";
 import { getLang } from "@/i18n/get-lang";
 import { signupT } from "@/i18n/signup";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Check your email · SME AI Revenue Engine" };
+export const metadata = { title: `Check your email · ${BRAND_NAME}` };
 
 /** Shown after a sign-up: the link was sent to the address given. It names no address (it is not in the URL) and promises nothing but what the link does. */
 export default async function CheckEmailPage() {
