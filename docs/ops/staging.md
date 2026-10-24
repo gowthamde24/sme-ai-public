@@ -9,7 +9,7 @@ Supabase in Mumbai) and `docs/runbooks/hosting-rehearsal-owner.md`; where this p
 |---|---|---|
 | Database, Auth, Storage | Supabase **stack19-staging** (org stack19, Free plan, Mumbai `ap-south-1`) | project ref `uiallwgywitryxatcqxf`, `https://uiallwgywitryxatcqxf.supabase.co` |
 | API (FastAPI) | Google Cloud Run service `sme-api`, `asia-south1` | `https://sme-api-620338396268.asia-south1.run.app` |
-| Web (Next.js) | Cloud Run service `sme-web`, `asia-south1` (runs on Cloud Run, as ADR 0072 decided) | `https://sme-web-620338396268.asia-south1.run.app` |
+| Web (Next.js) | Cloud Run service `sme-web`, `asia-south1` (runs on Cloud Run, as ADR 0072 decided), behind a Cloudflare Worker | **`https://staging.stack19.com`** (the run.app address `https://sme-web-620338396268.asia-south1.run.app` still answers) |
 | Scheduler worker | Cloud Run **job** `sme-worker`, started every 5 minutes by Cloud Scheduler job `sme-worker-tick` | one tick, then exits |
 | Images | Artifact Registry repository `sme` (`asia-south1`), built remotely by Cloud Build | `api:<git tag>`, `web:<git tag>` |
 | Google Cloud project | `project-2757c07e-37d2-4167-88f` (name stack19-staging), India billing account, free-trial credits | |
@@ -89,11 +89,15 @@ Prices read on 2026-10-24 from Google's and Anthropic's pages; Google Cloud has 
 
 What would add a fixed cost (each needs the owner's yes with the number): Supabase Pro USD 25 · a warm API instance (`MIN_INSTANCES=1`) about USD 44 · a warm web instance about USD 8 · Google's load balancer for a custom domain about USD 18 plus traffic.
 
-## Custom domain
+## Custom domain: https://staging.stack19.com (live since 2026-10-24)
 
-`*.run.app` addresses are used until the owner decides. The researched options and the exact steps for `staging.stack19.com` are in the job DC report (`~/Desktop/v2-overnight/job-dc-report.md`) and ADR 0072's addendum:
-Cloud Run domain mappings do not exist in `asia-south1`; Cloudflare Free cannot rewrite the Host header by rule; the cheapest route that can work is a free Cloudflare **Worker** (`deploy/cloudflare-worker-proxy.js`) on the
-domain, which must pass the six checks of ADR 0072 before it is trusted; Google's load balancer is the fallback.
+A Cloudflare **Worker** (`stack19-staging-proxy`, the code in `deploy/cloudflare-worker-proxy.js`, one variable `ORIGIN` = the web's run.app address, Custom Domain `staging.stack19.com` on the stack19.com zone) forwards every
+request to the `sme-web` service; free (Workers Free: 100,000 requests a day, 10 ms CPU a request). Why this and not the others: Cloud Run domain mappings do not exist in `asia-south1`; Firebase Hosting strips every cookie except
+`__session`, so Supabase's sign-in cookies would never reach the app; Cloudflare Free cannot rewrite the Host header by rule (Enterprise only); Google's load balancer works but costs about USD 18 a month (the fallback).
+Set for it: Supabase Site URL `https://staging.stack19.com`, redirect list only `https://staging.stack19.com/auth/confirm`; the web is built with `NEXT_PUBLIC_SITE_URL` = that address and the API's CORS fence is that origin
+(`deploy/staging.sh` defaults `WEB_ORIGIN` to it). The run.app web address still works but sign-in e-mail links and the CORS fence point at the custom domain.
+The six checks of ADR 0072's addendum passed through it: `make hosted-smoke URL=https://staging.stack19.com ...` (1), `e2e/staging-domain-checks.mjs` (2 to 5), curl with forged `X-Forwarded-Host` (6). Re-run them after any change to the
+Worker or the web's host handling. Not covered: an Ask answer far longer than a couple of sentences, and uploads between 4.2 and 5 MB (the one tested was 4.16 MB; the Worker reads a request body whole, and I did not look up Cloudflare's body-size limit for this plan).
 
 ## Take it down (staging is disposable)
 
