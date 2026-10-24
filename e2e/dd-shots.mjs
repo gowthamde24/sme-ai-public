@@ -1,4 +1,4 @@
-// Job DD: a short browser run of the response times and the product name, on a production build against the visual tests' invented backend (the same start-up as e2e/db-shots.mjs):
+// Job DD: a short browser run of the response times (7 days, 30 days, 48 hours for a withdrawal of consent) and the product name, on a production build against the visual tests' invented backend (the same start-up as e2e/db-shots.mjs):
 //   - /privacy and /data-deletion in English, Telugu, Hindi and Kannada say 7 days (access, correct, erase) and 30 days (any other grievance), and the contact page says both;
 //   - three signed-in app pages (the workspace home, Settings, the Office) have titles like "Settings · Stack19", and no page of the run says "SME AI Revenue Engine".
 // 1280 x 900 and 390 px, light and dark; pictures in DIR (default ~/Desktop/v2-overnight/shots-dd). Exit 1 with the list if a check fails. Port 3016 (web) and 54999 (the stand-in), like e2e/cl-shots.mjs: never run them at once.
@@ -116,21 +116,23 @@ async function main() {
         };
         // the response times, in the four languages: 7 for a request to access, correct or erase; 30 for any other grievance. English words, then the numbers next to the day word of each language.
         const DAY = { te: "రోజుల", hi: "दिन", kn: "ದಿನಗಳ" };
+        const HOUR = { te: "గంటల", hi: "घंटे", kn: "ಗಂಟೆಗಳ" };
         for (const url of ["/privacy", "/data-deletion"]) {
           const s = await open(url);
           const text = await basics(s, url);
           if (url === "/privacy") {
-            for (const w of ["within 7 days", "within 30 days"]) check(text.includes(w), `${tag} ${url} (en): "${w}" is missing`);
-            check(/access, correct or erase your data within 7 days, and any other request or complaint within 30 days/.test(text), `${tag} ${url} (en): the rights paragraph does not give both times`);
+            for (const w of ["within 7 days", "within 30 days", "within 48 hours"]) check(text.includes(w), `${tag} ${url} (en): "${w}" is missing`);
+            check(/access, correct or erase your data within 7 days, and any other request or complaint within 30 days\. We act on a withdrawal of consent within 48 hours: we stop messages, calls and campaigns to you\. The do-not-contact option in the app takes effect immediately/.test(text), `${tag} ${url} (en): the rights paragraph does not give the three times`);
           } else {
             check(/delete your data within 7 days\. Any other complaint about your data is answered within 30 days/.test(text), `${tag} ${url} (en): the page does not give both times`);
+            check(/stop messages, calls and campaigns to you within 48 hours\. The do-not-contact option in the app takes effect immediately/.test(text), `${tag} ${url} (en): the page does not give the 48 hours`);
           }
           await save(s.page, url.slice(1), `${url} in English: 7 and 30 days`, { fullPage: true });
           await s.context.close();
           for (const lang of ["te", "hi", "kn"]) {
             const t = await open(url, { lang });
             const tt = await basics(t, `${url} (${lang})`);
-            check(new RegExp(`(?<![\\d,])7\\s*${DAY[lang]}`).test(tt) && new RegExp(`(?<![\\d,])30\\s*${DAY[lang]}`).test(tt), `${tag} ${url} (${lang}): 7 and 30 with the word for days are not both on the page`);
+            check(new RegExp(`(?<![\\d,])7\\s*${DAY[lang]}`).test(tt) && new RegExp(`(?<![\\d,])30\\s*${DAY[lang]}`).test(tt) && new RegExp(`(?<![\\d,])48\\s*${HOUR[lang]}`).test(tt), `${tag} ${url} (${lang}): 7 and 30 with the word for days and 48 with the word for hours are not all on the page`);
             check((await t.page.locator('[data-legal="translated"]').count()) === 1, `${tag} ${url} (${lang}): the machine-written note is missing`);
             if (sizeName === "desktop" || lang === "te") await save(t.page, `${url.slice(1)}-${lang}`, `${url} in ${lang}: 7 and 30 days`, { fullPage: true });
             await t.context.close();
@@ -139,7 +141,7 @@ async function main() {
         {
           const s = await open("/contact");
           const text = await basics(s, "/contact");
-          check(/within 7 days\. Other complaints: within 30 days/.test(text), `${tag} /contact: the response times are missing`);
+          check(/within 7 days\. Withdrawing consent: acted on within 48 hours\. Other complaints: within 30 days/.test(text), `${tag} /contact: the response times are missing`);
           await save(s.page, "contact", "/contact: the response times under the privacy address", { fullPage: true });
           await s.context.close();
         }

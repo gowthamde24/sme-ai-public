@@ -51,15 +51,15 @@ describe("the legal documents in four languages (job DB)", () => {
   });
   it("fillLegal puts the facts of lib/site/business.ts into a text, and leaves an unknown {word} visible", () => {
     expect(fillLegal("Write to {privacy_email} within {grievance_days} days. {brand}. {nope}")).toBe(`Write to ${ADDRESSES.privacy} within 30 days. Stack19. {nope}`);
-    expect(fillLegal("{request_days} and {grievance_days}")).toBe("7 and 30");
+    expect(fillLegal("{request_days} and {grievance_days} and {withdrawal_hours}")).toBe("7 and 30 and 48");
   });
   it("the English texts carry the owner's facts: Mumbai, the Grievance Officer, 7 and 30 days, the three business types, the children's rules, the trial", () => {
     const privacy = fillLegal(strings(legalDocument("privacy", "en").doc).join("\n"));
-    for (const w of ["Mumbai", "Grievance Officer", "Gowtham Reddy Sodanapalli", "privacy@stack19.com", "access, correct or erase your data within 7 days", "any other request or complaint within 30 days", "answer it within 30 days", "Saree and textile wholesale", "Construction materials", "Schools and colleges", "never given to an AI model", "Guardian contact only", "Minimal fields", "nomination", "/data-deletion", "sole proprietorship", "Andhra Pradesh"]) expect(privacy, w).toContain(w);
+    for (const w of ["Mumbai", "Grievance Officer", "Gowtham Reddy Sodanapalli", "privacy@stack19.com", "access, correct or erase your data within 7 days", "any other request or complaint within 30 days", "answer it within 30 days", "We act on a withdrawal of consent within 48 hours", "stop messages, calls and campaigns to you", "do-not-contact option in the app takes effect immediately", "A withdrawal of consent is acted on within 48 hours (section 11)", "Saree and textile wholesale", "Construction materials", "Schools and colleges", "never given to an AI model", "Guardian contact only", "Minimal fields", "nomination", "/data-deletion", "sole proprietorship", "Andhra Pradesh"]) expect(privacy, w).toContain(w);
     const terms = fillLegal(strings(legalDocument("terms", "en").doc).join("\n"));
     for (const w of ["30-day free trial", "add a payment method", "cancel before day 30", "nothing is charged", "prices are not published yet", "Owner, have approved", "No spam", "Consent for messages and calls", "governed by the laws of India", "hello@stack19.com", "support@stack19.com", "billing@stack19.com", "privacy@stack19.com"]) expect(terms.toLowerCase(), w).toContain(w.toLowerCase());
     const deletion = fillLegal(strings(legalDocument("data-deletion", "en").doc).join("\n"));
-    for (const w of ["Settings", "Privacy@stack19.com".toLowerCase(), "14 days", "delete your data within 7 days", "any other complaint about your data is answered within 30 days"]) expect(deletion.toLowerCase(), w).toContain(w.toLowerCase());
+    for (const w of ["Settings", "Privacy@stack19.com".toLowerCase(), "14 days", "delete your data within 7 days", "any other complaint about your data is answered within 30 days", "within 48 hours", "do not have to delete anything"]) expect(deletion.toLowerCase(), w).toContain(w.toLowerCase());
   });
   it("makes no claim the product cannot keep (compliant, certified, guarantee, a percentage)", async () => {
     const { FORBIDDEN_CLAIMS } = await import("@/i18n/strings/forbidden");

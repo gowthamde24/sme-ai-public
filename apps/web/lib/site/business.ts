@@ -22,6 +22,11 @@ export const BUSINESS = {
  * a request to access, correct or erase personal data in `requests`; any other grievance in `grievances`. These two numbers are written here and nowhere else (a test checks).
  */
 export const RESPONSE_DAYS = { requests: 7, grievances: 30 } as const;
+/**
+ * The hours we take to act on a withdrawal of consent (owner decision of 24 October, following counsel's note that withdrawal must be as easy as giving consent and acted on quickly): we stop messages, calls and campaigns to that person.
+ * The do-not-contact option inside the app takes effect immediately (the Privacy Policy says so). Written here and nowhere else (a test checks).
+ */
+export const RESPONSE_HOURS = { withdrawal: 48 } as const;
 
 /** The role of each public address, in the order the contact page lists them. */
 export const ADDRESS_KEYS = ["hello", "support", "billing", "privacy"] as const;
@@ -47,5 +52,6 @@ export const LEGAL_TOKENS: Readonly<Record<string, string>> = {
   business_description: BUSINESS.description,
   request_days: String(RESPONSE_DAYS.requests),
   grievance_days: String(RESPONSE_DAYS.grievances),
+  withdrawal_hours: String(RESPONSE_HOURS.withdrawal),
   domain: DOMAIN,
 };

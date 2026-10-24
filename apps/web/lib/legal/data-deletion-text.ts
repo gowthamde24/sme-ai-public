@@ -30,6 +30,7 @@ export const DATA_DELETION: LegalText = {
         { p: "Write to {privacy_email} from the e-mail address of your account, with the subject \"Delete my data\". Say what you want deleted: your account, a business's records, or the details of one person (a customer or a parent). If you cannot sign in, write from any address and tell us the e-mail address of the account; we will check who you are before we act." },
         { p: "If you are a customer or a parent of a business that uses {brand}, you can also ask us directly. We will pass your request to that business, which decides about your data, and we help it to act." },
         { p: "We answer a request to delete your data within {request_days} days. Any other complaint about your data is answered within {grievance_days} days." },
+        { p: "If you only want to stop being contacted, you do not have to delete anything. Write to {privacy_email} and say so: we stop messages, calls and campaigns to you within {withdrawal_hours} hours. The do-not-contact option in the app takes effect immediately." },
       ],
     },
     {

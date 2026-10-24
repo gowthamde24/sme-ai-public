@@ -175,7 +175,7 @@ describe("in the visitor's language (job DB)", () => {
   it("the data-deletion page tells the two ways: in the app (Settings, Privacy, 14 days) and by e-mail to privacy@", async () => {
     render(await DataDeletionPage());
     const text = document.body.textContent ?? "";
-    for (const w of ["Settings, then Privacy, then delete my account", "after 14 days", "privacy@stack19.com", "Delete my data", "within 7 days", "within 30 days"]) expect(text, w).toContain(w);
+    for (const w of ["Settings, then Privacy, then delete my account", "after 14 days", "privacy@stack19.com", "Delete my data", "within 7 days", "within 30 days", "within 48 hours"]) expect(text, w).toContain(w);
   });
   it("the texts make no claim the product cannot keep (the landing page's own list), and the same words are in the dictionary only once", async () => {
     const { FORBIDDEN_CLAIMS } = await import("@/i18n/strings/forbidden");

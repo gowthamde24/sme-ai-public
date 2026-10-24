@@ -2955,10 +2955,10 @@
   }
  },
  "contact.addr.privacy.note": {
-  "en": "Requests to see, correct or erase your data: answered within {requests} days. Other complaints: within {grievances} days.",
-  "te": "మీ డేటాను చూడటం, సరిదిద్దడం, తొలగించడం గురించి అడిగితే {requests} రోజుల్లో జవాబు. ఇతర ఫిర్యాదులకు {grievances} రోజుల్లో.",
-  "hi": "आपकी जानकारी देखने, सुधारने या मिटाने के बारे में पूछें तो {requests} दिन के अंदर जवाब। दूसरी शिकायतें: {grievances} दिन के अंदर।",
-  "kn": "ನಿಮ್ಮ ಡೇಟಾ ನೋಡಲು, ತಿದ್ದಲು ಅಥವಾ ಅಳಿಸಲು ಕೇಳಿಕೆ: {requests} ದಿನಗಳ ಒಳಗೆ ಉತ್ತರ. ಬೇರೆ ದೂರುಗಳು: {grievances} ದಿನಗಳ ಒಳಗೆ.",
+  "en": "Requests to see, correct or erase your data: answered within {requests} days. Withdrawing consent: acted on within {withdrawal} hours. Other complaints: within {grievances} days.",
+  "te": "మీ డేటాను చూడటం, సరిదిద్దడం, తొలగించడం గురించి అడిగితే {requests} రోజుల్లో జవాబు. సమ్మతి వెనక్కి తీసుకుంటే {withdrawal} గంటల్లో అమలు. ఇతర ఫిర్యాదులకు {grievances} రోజుల్లో.",
+  "hi": "आपकी जानकारी देखने, सुधारने या मिटाने के बारे में पूछें तो {requests} दिन के अंदर जवाब। सहमति वापस लेने पर {withdrawal} घंटे के अंदर अमल। दूसरी शिकायतें: {grievances} दिन के अंदर।",
+  "kn": "ನಿಮ್ಮ ಡೇಟಾ ನೋಡಲು, ತಿದ್ದಲು ಅಥವಾ ಅಳಿಸಲು ಕೇಳಿಕೆ: {requests} ದಿನಗಳ ಒಳಗೆ ಉತ್ತರ. ಒಪ್ಪಿಗೆ ವಾಪಸ್ ಪಡೆದರೆ: {withdrawal} ಗಂಟೆಗಳ ಒಳಗೆ ಕ್ರಮ. ಬೇರೆ ದೂರುಗಳು: {grievances} ದಿನಗಳ ಒಳಗೆ.",
   "status": {
    "te": "draft",
    "hi": "draft",
