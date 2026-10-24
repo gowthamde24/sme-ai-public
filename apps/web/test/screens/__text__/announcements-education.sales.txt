@@ -1,3 +1,3 @@
-# nav.item.announcements
+# Announcements
 Messages to parents about an event, an exam or a holiday. You write it, choose who it is for, and approve it once. [New announcement](/app/tenants/22222222-2222-2222-2222-222222222222/announcements/new)
 - [Parents meeting (synthetic) Draft Event · 18 people](/app/tenants/22222222-2222-2222-2222-222222222222/campaigns/ca000000-0000-4000-8000-000000000001)

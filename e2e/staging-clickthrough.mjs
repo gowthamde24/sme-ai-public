@@ -67,7 +67,7 @@ const sheet = (s) => s.page.getByRole("dialog");
 async function baseline(pack, size) {
   const t0 = Date.now();
   const s = await session(pack, size);
-  await step(s, size, pack, "B1", "sign in with the second factor", async () => ({ noShot: true, note: `password + authenticator in ${s.ms} ms, now at ${new URL(s.page.url()).pathname}` }));
+  await step(s, size, pack, "B1", "sign in with the second factor", async () => ({ noShot: true, note: `password + authenticator in ${s.ms} ms${s.attempts > 1 ? ` (needed ${s.attempts} tries: the first did not answer in time)` : ""}, now at ${new URL(s.page.url()).pathname}` }));
   await step(s, size, pack, "B2", "Today opens", async () => {
     const r = await open(s, "");
     const body = await text(s.page);
@@ -482,27 +482,32 @@ async function educationFees(size) {
 }
 
 // ------------------------------------------------------------------------------------------------------------------------------------ 6. Ask
-const CHIP = /What needs me today\?|Who should I call first\?|How much customer money is held\?|Who needs a call back today\?|What can Agent OWL do\?/;
-/** One question to Agent OWL on Today: the answer text, the time to the answer, and how many different partial states the page showed (more than two means it streamed). */
+const CHIP_ANY = /What needs me today\?|Who should I call first\?|How much customer money is held\?|Who needs a call back today\?|What can Agent OWL do\?|ఈ రోజు నాకు ఏం కావాలి|ముందు ఎవరికి కాల్|आज मुझे क्या|पहले किसे कॉल|ಇಂದು ನನಗೆ ಏನು/;
+/** One question to Agent OWL on Today (any screen language): the answer text, the time to the answer, and how many different partial states the page showed (more than two means it streamed). */
 async function askOnce(s, question) {
   await open(s, "");
   const live = s.page.locator('[data-ask="live"]');
   const before = await live.innerText();
   const t0 = Date.now();
-  await s.page.getByLabel("Your question for Agent OWL").fill(question);
+  await live.locator("input").first().fill(question);
   await live.locator('button[type="submit"]').first().click();
   const states = new Set();
-  let answer = "", doneAt = null;
-  for (let i = 0; i < 360 && doneAt === null; i++) {
+  let answer = "", doneAt = null, lastChange = Date.now(), prev = before;
+  for (let i = 0; i < 480 && doneAt === null; i++) {
     await s.page.waitForTimeout(250);
     const now = await live.innerText();
     states.add(now.length);
-    const at = now.indexOf(`You asked: ${question}`);
+    if (now !== prev) {
+      prev = now;
+      lastChange = Date.now();
+    }
+    const at = now.indexOf(question);
     if (at >= 0) {
-      const rest = now.slice(at + `You asked: ${question}`.length).replace(/\n+/g, " ").trim();
-      const cut = rest.search(CHIP);
+      const rest = now.slice(at + question.length).replace(/\n+/g, " ").trim();
+      const cut = rest.search(CHIP_ANY);
       answer = (cut >= 0 ? rest.slice(0, cut) : rest).trim();
-      if (answer && !/Looking at your records|Working|Thinking/.test(answer) && !(await live.getByRole("button", { name: "Stop" }).count())) doneAt = Date.now() - t0;
+      const working = (await live.getByRole("button", { name: /Stop|ఆపు|रोकें|ನಿಲ್ಲಿಸಿ/ }).count()) > 0;
+      if (answer.length > 3 && !working && Date.now() - lastChange > 2000) doneAt = Date.now() - t0 - 2000;
     }
   }
   return { answer, ms: doneAt, partialStates: states.size - 1 };
@@ -511,7 +516,7 @@ async function ask(pack, size) {
   const s = await session(pack, size);
   const edu = pack === "education";
   const spent = {};
-  await step(s, size, pack, "A1", "Ask 1 (English): a plain question about the business", async () => {
+  if (process.env.DF_ASK_ONLY !== "A2") await step(s, size, pack, "A1", "Ask 1 (English): a plain question about the business", async () => {
     const q = edu ? "Which students have fees pending, and how much in total? Answer in two short sentences." : "How many leads do I have, and who is the newest? Answer in two short sentences.";
     const r = await askOnce(s, q);
     spent.a1 = r;
@@ -625,20 +630,29 @@ async function cold(minutes) {
 const t00 = Date.now();
 const timings = {};
 const extra = {};
+/** A section that cannot start (for example a sign-in that never answers) is one FAIL line, and the next section still runs. */
+const safe = async (name, fn) => {
+  try {
+    return await fn();
+  } catch (e) {
+    record(`${name} could not run`, "FAIL", String(e.message || e).split("\n")[0].slice(0, 240));
+    return null;
+  }
+};
 try {
   for (const size of SIZE_LIST) {
-    if (want("baseline")) for (const pack of PACKS) timings[`${short[pack]}/${size}`] = await baseline(pack, size);
-    if (want("textiles")) await textilesQuote(size);
-    if (want("construction")) await constructionQuote(size);
+    if (want("baseline")) for (const pack of PACKS) timings[`${short[pack]}/${size}`] = await safe(`baseline ${short[pack]}/${size}`, () => baseline(pack, size));
+    if (want("textiles")) await safe(`textiles quote /${size}`, () => textilesQuote(size));
+    if (want("construction")) await safe(`construction quote /${size}`, () => constructionQuote(size));
     if (want("campaigns")) {
-      await campaigns("construction_materials", size);
-      await campaigns("education", size);
+      await safe(`construction campaigns /${size}`, () => campaigns("construction_materials", size));
+      await safe(`education campaigns /${size}`, () => campaigns("education", size));
     }
-    if (want("education")) extra.education = await educationFees(size);
-    if (want("ask")) for (const pack of PACKS) extra[`ask-${short[pack]}-${size}`] = await ask(pack, size);
-    if (want("public")) await publicPages(size);
+    if (want("education")) extra.education = await safe(`education fees /${size}`, () => educationFees(size));
+    if (want("ask")) for (const pack of process.env.DF_PACKS ? process.env.DF_PACKS.split(",") : PACKS) extra[`ask-${short[pack]}-${size}`] = await safe(`ask ${short[pack]}/${size}`, () => ask(pack, size));
+    if (want("public")) await safe(`public pages /${size}`, () => publicPages(size));
   }
-  if (want("cold")) extra.cold = await cold(Number(arg("idle", "20")));
+  if (want("cold")) extra.cold = await safe("cold start", () => cold(Number(arg("idle", "20"))));
 } finally {
   writeFileSync(path.join(SHOTS, `results-${ONLY.join("+")}-${SIZE_LIST.join("+")}.json`), JSON.stringify({ at: new Date().toISOString(), web: WEB, sizes: SIZE_LIST, timings, extra, results }, null, 1));
   console.log(`\n${results.filter((r) => r.status === "PASS").length} PASS, ${results.filter((r) => r.status === "FAIL").length} FAIL, ${results.filter((r) => r.status === "NOTE").length} NOTE in ${Math.round((Date.now() - t00) / 1000)} s`);

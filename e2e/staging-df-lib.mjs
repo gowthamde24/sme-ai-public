@@ -30,24 +30,29 @@ export function record(id, status, note, shot) {
   console.log(`${status.padEnd(5)} ${id} :: ${note}${shot ? "  [" + shot + "]" : ""}`);
 }
 
-/** Password, then the second factor when asked. The secrets live in this function's variables only. */
-export async function signIn(page, pack) {
+/** Password, then the second factor when asked. The secrets live in this function's variables only. One more try if the password step does not move on (a slow cold start of the web or the API). */
+export async function signIn(page, pack, attempt = 1) {
   const email = `demo-${pack.replace(/_/g, "-")}@demo.example.test`;
   const t0 = Date.now();
-  await page.goto(`${WEB}/login`);
-  await page.fill('input[name="email"]', email);
-  await page.fill('input[name="password"]', secret(`sme-demo-${pack}-password`).trim());
-  await page.click('button:has-text("Sign in")');
-  await page.waitForURL(/\/(app|auth\/mfa)/, { timeout: 30000 });
-  if (/\/auth\/mfa/.test(page.url())) {
-    const seed = secret(`sme-demo-${pack}-totp`);
-    for (const offset of [0, 1, -1]) {
-      await page.fill('input[name="code"]', totp(seed, offset));
-      await Promise.all([page.waitForURL(/\/app/, { timeout: 10000 }).catch(() => null), page.click('button:has-text("Verify")')]);
-      if (/\/app/.test(page.url())) break;
+  try {
+    await page.goto(`${WEB}/login`);
+    await page.fill('input[name="email"]', email, { timeout: 45000 });
+    await page.fill('input[name="password"]', secret(`sme-demo-${pack}-password`).trim());
+    await page.click('button:has-text("Sign in")');
+    await page.waitForURL(/\/(app|auth\/mfa)/, { timeout: 45000 });
+    if (/\/auth\/mfa/.test(page.url())) {
+      const seed = secret(`sme-demo-${pack}-totp`);
+      for (const offset of [0, 1, -1]) {
+        await page.fill('input[name="code"]', totp(seed, offset), { timeout: 45000 });
+        await Promise.all([page.waitForURL(/\/app/, { timeout: 15000 }).catch(() => null), page.click('button:has-text("Verify")')]);
+        if (/\/app/.test(page.url())) break;
+      }
     }
+  } catch (e) {
+    if (attempt >= 2) throw e;
+    return signIn(page, pack, attempt + 1); // one more try: a slow cold start of the web or the API at the password or the second-factor step
   }
-  return { ok: /\/app/.test(page.url()), ms: Date.now() - t0 };
+  return { ok: /\/app/.test(page.url()), ms: Date.now() - t0, attempts: attempt };
 }
 
 /** A fresh authenticator code for the second-factor step-up some screens ask for (approving a quote or a campaign). */
@@ -74,7 +79,7 @@ export async function session(pack, size = "desktop", opts = {}) {
   const href = await page.locator('a[href^="/app/tenants/"]').first().getAttribute("href").catch(() => null);
   const tenant = href ? href.split("/")[3] : /\/app\/tenants\/([0-9a-f-]{36})/.exec(page.url())?.[1];
   if (!tenant) throw new Error("no workspace found after sign-in");
-  return { browser, context, page, tenant, base: `${WEB}/app/tenants/${tenant}`, errors, ms: r.ms, own: !opts.browser };
+  return { browser, context, page, tenant, base: `${WEB}/app/tenants/${tenant}`, errors, ms: r.ms, attempts: r.attempts, own: !opts.browser };
 }
 
 export async function go(s, p, { wait = true } = {}) {
