@@ -172,8 +172,15 @@ def test_the_worker_schedule_and_the_workers_interval_are_one_setting() -> None:
 
 def test_the_web_build_gets_the_public_values_and_the_site_address() -> None:
     out = flat(dry("web").stdout)
-    for needed in ("NEXT_PUBLIC_API_BASE_URL=https://api.example.test", "NEXT_PUBLIC_SUPABASE_URL=https://abc.supabase.co", "NEXT_PUBLIC_SITE_URL=https://app.example.test", "NEXT_PUBLIC_SITE_LIVE=0", "--startup-probe=httpGet.path=/login"):
+    # the default build is Cloud Build (job DC): the public values travel as substitutions into deploy/cloudbuild-web.yaml, which passes them as the same build arguments
+    for needed in ("_API_URL=https://api.example.test", "_SUPABASE_URL=https://abc.supabase.co", "_SITE_URL=https://app.example.test", "--startup-probe=httpGet.path=/login"):
         assert needed in out, needed
+    built = (ROOT / "deploy" / "cloudbuild-web.yaml").read_text()
+    for arg in ("NEXT_PUBLIC_API_BASE_URL=${_API_URL}", "NEXT_PUBLIC_SUPABASE_URL=${_SUPABASE_URL}", "NEXT_PUBLIC_SITE_URL=${_SITE_URL}", "NEXT_PUBLIC_SITE_LIVE=0"):
+        assert arg in built, arg
+    local = flat(dry("web", BUILD="docker").stdout)
+    for needed in ("NEXT_PUBLIC_API_BASE_URL=https://api.example.test", "NEXT_PUBLIC_SUPABASE_URL=https://abc.supabase.co", "NEXT_PUBLIC_SITE_URL=https://app.example.test", "NEXT_PUBLIC_SITE_LIVE=0"):
+        assert needed in local, needed
 
 
 def test_the_secrets_step_never_prints_or_takes_a_value_on_a_command_line() -> None:

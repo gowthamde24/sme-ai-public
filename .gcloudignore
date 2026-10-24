@@ -1,0 +1,17 @@
+# What `gcloud builds submit` uploads to Cloud Build (job DC). The image build reads .dockerignore as well; this keeps the upload small and keeps secrets and local files out of it.
+#!include:.gitignore
+.git
+.gitignore
+**/.env
+**/.env.*
+!**/.env.example
+**/node_modules
+**/.venv
+**/.next
+/docs
+/e2e
+/tests
+/supabase
+/scripts
+/.claude
+**/*.log

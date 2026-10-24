@@ -25,8 +25,8 @@ ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
     NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY \
     NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY \
     NEXT_TELEMETRY_DISABLED=1
-# `next build` type-checks every .ts file under apps/web, and a few tests import files from /e2e, which is not (and should not be) in the image: the tests are not part of the running app, so they are removed first.
-RUN cd apps/web && find . -type f -not -path './node_modules/*' \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.test.mts' \) -delete && npm run build
+# `next build` type-checks every .ts file under apps/web, and a few tests import files from /e2e, which is not (and should not be) in the image: the tests are not part of the running app, so they are removed first, with the two test-only support files (apps/web/test and lib/packs/pack-test-kit.ts, which imports /e2e).
+RUN cd apps/web && find . -type f -not -path './node_modules/*' \( -name '*.test.ts' -o -name '*.test.tsx' -o -name '*.test.mts' \) -delete && rm -rf test lib/packs/pack-test-kit.ts && npm run build
 # Smaller to pull on a cold start: the build cache and the development packages are not needed to run `next start`.
 RUN cd apps/web && rm -rf .next/cache && npm prune --omit=dev
 

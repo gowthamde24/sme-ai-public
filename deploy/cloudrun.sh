@@ -16,6 +16,9 @@
 # `make hosted-smoke` and scripts/verify_hosted.py, and last the worker. The full walk-through, with the accounts only the owner can create: docs/runbooks/hosting-owner-runbook.md
 # (the rehearsal with synthetic data: docs/runbooks/hosting-rehearsal-owner.md; every variable and secret: docs/runbooks/hosting-env-and-secrets.md).
 #
+# Optional: WEB_RUN_SA=<service account the WEB runs as; it needs no role at all: the web holds no secret>   (RUN_SA is the API's and the worker's)
+# Optional (api): EXTRA_ENV="A=b,C=d" more PLAIN settings (no secret, no comma inside a value)   EXTRA_SECRETS="NAME=secret:latest,..." secrets from Secret Manager   MIN_INSTANCES=0 with CPU_ALWAYS=true
+# Optional: BUILD_SA=<service account the Cloud Build runs as>   BUILD=docker (build on this machine instead of Cloud Build)
 # Optional, all public values:  RUN_SA=<service account e-mail the service runs as; give it ONLY roles/secretmanager.secretAccessor>   TRUSTED_PROXY_HOPS=1 (how many proxies write X-Forwarded-For; 1 = Cloud Run itself)
 #                               WORKER_EVERY_MINUTES=5 (1 to 59; it is the schedule AND the worker's own interval, which the status card judges "running" by)
 set -euo pipefail
@@ -40,6 +43,29 @@ TAG="${TAG:-$(git rev-parse --short HEAD)}"
 registry="$REGION-docker.pkg.dev/$PROJECT_ID/$REPO"
 
 run() { printf '+'; printf ' %q' "$@"; printf '\n'; if $execute; then "$@"; fi; }
+
+# Images are built REMOTELY by Cloud Build (job DC: not on a small laptop). BUILD_SA (optional) is the service account the build runs as (needs: read the _cloudbuild source bucket, write the Artifact Registry repository, write logs).
+# BUILD=docker builds on THIS machine instead (the old way; needs Docker running and `gcloud auth configure-docker $REGION-docker.pkg.dev`).
+build_api() {
+  if [ "${BUILD:-cloudbuild}" = "docker" ]; then
+    run docker build --platform linux/amd64 -f deploy/Dockerfile.api -t "$1" .
+    run docker push "$1"
+  else
+    run gcloud builds submit --project "$PROJECT_ID" --region "$REGION" ${BUILD_SA:+--service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_SA"} --suppress-logs \
+      --config deploy/cloudbuild-api.yaml --substitutions "_IMAGE=$1" .
+  fi
+}
+build_web() {
+  if [ "${BUILD:-cloudbuild}" = "docker" ]; then
+    run docker build --platform linux/amd64 -f deploy/Dockerfile.web -t "$1" \
+      --build-arg "NEXT_PUBLIC_API_BASE_URL=$API_URL" --build-arg "NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL" \
+      --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" .
+    run docker push "$1"
+  else
+    run gcloud builds submit --project "$PROJECT_ID" --region "$REGION" ${BUILD_SA:+--service-account "projects/$PROJECT_ID/serviceAccounts/$BUILD_SA"} --suppress-logs \
+      --config deploy/cloudbuild-web.yaml --substitutions "_IMAGE=$1,_API_URL=$API_URL,_SUPABASE_URL=$SUPABASE_URL,_PUBLISHABLE_KEY=$PUBLIC_KEY,_SITE_URL=$WEB_ORIGIN" .
+  fi
+}
 
 cd "$(dirname "$0")/.."
 
@@ -94,7 +120,10 @@ if [ "$what" = "worker" ]; then
     ${RUN_SA:+--service-account "$RUN_SA"} \
     --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL" \
     --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest"
-  run gcloud scheduler jobs create http sme-worker-tick --project "$PROJECT_ID" --location "$REGION" --schedule "$SCHEDULE" --time-zone "Asia/Kolkata" \
+  # create the schedule, or update it when it exists (a redeploy must not fail on it)
+  verb=create
+  if $execute && gcloud scheduler jobs describe sme-worker-tick --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then verb=update; fi
+  run gcloud scheduler jobs "$verb" http sme-worker-tick --project "$PROJECT_ID" --location "$REGION" --schedule "$SCHEDULE" --time-zone "Asia/Kolkata" \
     --uri "https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/sme-worker:run" --http-method POST \
     --oauth-service-account-email "$SCHEDULER_SA"
   $execute || echo "(dry run: nothing was run. Add --execute to run the commands above. If the schedule job exists already, use: gcloud scheduler jobs update http ...)"
@@ -112,28 +141,26 @@ if [ "$what" = "api" ]; then
   if [ "$AGENTS" = "true" ] && [ "$CPU_ALWAYS" != "true" ]; then
     echo "AGENTS_ENABLED=true needs CPU_ALWAYS=true (agent threads stall on throttled CPU). See ADR 0015." >&2; exit 2
   fi
-  if [ "$CPU_ALWAYS" = "true" ]; then cpu_flags=(--no-cpu-throttling --min-instances 1); else cpu_flags=(--cpu-throttling --min-instances 0); fi
-  run docker build --platform linux/amd64 -f deploy/Dockerfile.api -t "$image" .
-  run docker push "$image"
+  # MIN_INSTANCES (optional): with CPU_ALWAYS=true the default is one warm instance (about $44 a month, ADR 0072). MIN_INSTANCES=0 keeps CPU allocated while an instance is alive but lets it scale to zero when idle:
+  # no fixed cost, billed only for the time an instance is up (job DC staging).
+  if [ "$CPU_ALWAYS" = "true" ]; then cpu_flags=(--no-cpu-throttling --min-instances "${MIN_INSTANCES:-1}"); else cpu_flags=(--cpu-throttling --min-instances 0); fi
+  build_api "$image"
   # Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
   # address: the browser never calls the API (the web server does, with the person's token), so this is a fence, not a need. TRUSTED_PROXY_HOPS is what lets the rate limits tell callers apart behind Cloud Run.
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     "${cpu_flags[@]}" --cpu 1 --memory 512Mi --max-instances 2 --concurrency 40 --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=3,periodSeconds=5,failureThreshold=12 \
     --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
-    --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}" \
+    --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}" \
     --set-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}"
 else
   : "${API_URL:?set API_URL (the API service URL, https)}"
   case "$API_URL" in https://*) ;; *) echo "API_URL must be https" >&2; exit 2;; esac
   image="$registry/web:$TAG"
-  run docker build --platform linux/amd64 -f deploy/Dockerfile.web -t "$image" \
-    --build-arg "NEXT_PUBLIC_API_BASE_URL=$API_URL" --build-arg "NEXT_PUBLIC_SUPABASE_URL=$SUPABASE_URL" \
-    --build-arg "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLIC_KEY" --build-arg "NEXT_PUBLIC_SITE_URL=$WEB_ORIGIN" --build-arg "NEXT_PUBLIC_SITE_LIVE=${SITE_LIVE:-0}" .
-  run docker push "$image"
+  build_web "$image"
   run gcloud run deploy sme-web --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 300 --port 8080 \
     --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=3,periodSeconds=5,failureThreshold=12 \
-    --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"}
+    --allow-unauthenticated ${WEB_RUN_SA:+--service-account "$WEB_RUN_SA"}
 fi
 $execute || echo "(dry run: nothing was run. Add --execute to run the commands above.)"
