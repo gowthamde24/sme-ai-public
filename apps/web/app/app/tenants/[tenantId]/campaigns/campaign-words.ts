@@ -6,6 +6,6 @@ export function campaignWords(lang: Lang): Record<string, string> {
   const dict = appDict(lang) as Record<string, string>;
   const keep = (k: string) =>
     k.startsWith("camp.") || k.startsWith("edu.sf.") || k.startsWith("edu.divided.") || k.startsWith("today.err.") || k.startsWith("today.lang.") ||
-    ["today.act.working", "today.act.cancel", "due.err.amount", "mat.products.more", "mat.err.moduleoff", "nav.item.campaigns", "nav.item.calllist", "frame.notyet"].includes(k);
+    ["today.act.working", "today.act.cancel", "due.err.amount", "mat.products.more", "mat.err.moduleoff", "nav.item.campaigns", "nav.item.announcements", "nav.item.calllist", "frame.notyet"].includes(k);
   return Object.fromEntries(Object.entries(dict).filter(([k]) => keep(k)));
 }

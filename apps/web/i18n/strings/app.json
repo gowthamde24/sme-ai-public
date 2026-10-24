@@ -46747,6 +46747,17 @@
    "kn": "draft"
   }
  },
+ "camp.aud.skip.no_contact": {
+  "en": "no phone number on file, or this person asked not to be contacted",
+  "te": "ఫోన్ నంబర్ లేదు, లేదా ఈ వ్యక్తి సంప్రదించవద్దని చెప్పారు",
+  "hi": "फ़ोन नंबर नहीं है, या इस व्यक्ति ने संपर्क करने से मना किया है",
+  "kn": "ಫೋನ್ ನಂಬರ್ ಇಲ್ಲ, ಅಥವಾ ಈ ವ್ಯಕ್ತಿ ಸಂಪರ್ಕಿಸಬೇಡಿ ಎಂದು ಹೇಳಿದ್ದಾರೆ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
  "camp.aud.skip.other": {
   "en": "could not be added",
   "te": "జోడించలేకపోయాం",

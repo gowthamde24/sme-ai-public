@@ -14,7 +14,7 @@ Enquiry
 caption: Lines of the quote
 table:
   | th Product | th Quantity | th Rate | th Amount |
-  | th Paver block 80 mm grey (synthetic) Area 1,000 sq ft · 4,725 pieces · 10 pallets GST 18 percent | 1,05,000 sq ft | ₹65.00 | ₹68,250.00 |
+  | th Paver block 80 mm grey (synthetic) Area 1,000 sq ft · 4,725 pieces · 10 pallets GST 18 percent | 1,050 sq ft | ₹65.00 | ₹68,250.00 |
 Material
 ₹68,250.00
 Transport (2 trips)
