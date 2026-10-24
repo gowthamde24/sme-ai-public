@@ -63,7 +63,7 @@ export API_URL="https://sme-api-$PROJECT_NUMBER.$REGION.run.app"
 export WEB_ORIGIN="${WEB_ORIGIN:-https://staging.stack19.com}"   # the address the web is served from (the API's CORS fence, the sitemap): the custom domain, a Cloudflare Worker in front of the run.app address (docs/ops/staging.md)
 export BUILD_SA="sme-build@$PROJECT_ID.iam.gserviceaccount.com"
 dirty=""; git diff --quiet HEAD -- . 2>/dev/null || dirty="-dirty$(date +%H%M%S)"
-export TAG="$(git rev-parse --short HEAD)$dirty"
+export TAG="${TAG:-$(git rev-parse --short HEAD)$dirty}"   # TAG=<tag> names an image that exists (needed for `deploy worker` alone)
 
 if [ "$what" = "api" ] || [ "$what" = "all" ]; then
   # AI: Anthropic's cheapest model, the key from Secret Manager, a low spend (prices in millionths of a rupee per million tokens at 90 rupees to the dollar: Haiku 5.5 is $0.10 in, $0.50 out per million).

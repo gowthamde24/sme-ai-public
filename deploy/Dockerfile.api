@@ -17,6 +17,9 @@ COPY packages/packs ./packages/packs
 ENV PACKS_DIR=/srv/packages/packs
 # Not root: a fixed numeric user with no home and no shell; the code in /srv belongs to root and is read-only to it.
 RUN pip install . && useradd --system --no-create-home --shell /usr/sbin/nologin --uid 10001 api
+# job DE: PYTHONDONTWRITEBYTECODE is on (the image stays small and read-only), and /srv/app is copied as source, so every cold start compiled every module of the app again before the first request. Compile them once, here: Python reads
+# existing .pyc files whatever that variable says. (pip already compiles what it installs into site-packages.)
+RUN python -m compileall -q -j 0 /srv/app /srv/packages
 USER 10001
 
 # Cloud Run sets PORT. API_ENV must NOT be "development" in a deployment: the API then refuses to start unless the Supabase issuer, audience and JWKS settings are present and https, and the suppression key is set.

@@ -82,8 +82,9 @@ def textiles_quote(o: Owner) -> None:
             "new_advance_bps": 5000, "repeat_advance_bps": 2500, "new_net_days": 0, "repeat_net_days": 30,
             "gst_rate_bps": 500,  # DEMO VALUE ONLY, as in seed_demo_manual.py: the product has no default GST rate
             "seller_state": "TG"})
-    lead, enquiry, quote = first_lead(o), sid("tx-enquiry"), sid("tx-quote")
-    o.ok("enquiry", "POST", f"/leads/{lead}/enquiries", {"id": enquiry, "channel": "other", "received_at": "2026-10-01T09:00:00Z", "subject": "Smoke test enquiry (synthetic)", "text": "Smoke test: 10 pieces please (synthetic)."}, want=(200, 201))
+    # a quote carries its date (India's day), so an identical retry is a replay only on the same day: one quote per day
+    lead, enquiry, quote = first_lead(o), sid("tx-enquiry"), sid(f"tx-quote-{datetime.now(IST).date()}")
+    o.ok("enquiry", "POST", f"/leads/{lead}/enquiries", {"id": enquiry, "channel": "other", "received_at": "2026-10-01T09:00:00Z", "subject": "Smoke test enquiry (synthetic)", "text": "Smoke test: 10 pieces please (synthetic)."}, want=(200, 201, 409))
     o.ok("manual quote", "POST", f"/enquiries/{enquiry}/manual-quotes", {"id": quote, "customer_kind": "new", "lines": [{"item_type_code": code, "qty": 10, "unit_price_paise": 120_000}]}, want=(200, 201))
     done = o.ok("approve quote", "POST", f"/quotes/{quote}/approve")
     record("textiles: one quote drafted and approved (second factor)", "PASS", f"status={done.get('status')}, customer text {'rendered' if done.get('text') else 'not rendered: ' + str(done.get('text_error'))}")
@@ -93,8 +94,8 @@ def construction_quote(o: Owner) -> None:
     vectors = json.loads((ROOT / "packages/quote-engine/tests/fixtures/construction_vectors.json").read_text(encoding="utf-8"))["vectors"]
     policy = next(v for v in vectors if v["name"].startswith("worked_example"))["request"]["policy"]
     policy = {k: v for k, v in policy.items() if k != "laying"}  # no laying asked in this enquiry, so no laying rule is needed
-    item, enquiry, req_quote = sid("cm-item"), sid("cm-enquiry"), sid("cm-quote")
-    o.ok("materials policy", "POST", "/materials/policy", {"version_id": sid("cm-policy"), "policy": policy})
+    item, enquiry, req_quote = sid("cm-item"), sid("cm-enquiry"), sid(f"cm-quote-{datetime.now(IST).date()}")
+    o.ok("materials policy", "POST", "/materials/policy", {"version_id": sid("cm-policy"), "policy": policy}, want=(200, 201, 409))
     o.ok("item", "PUT", f"/materials/items/{item}", {"name": "Smoke test paver block 80 mm (synthetic)", "sell_unit": "sq_ft", "area_unit": "sq_ft", "stock_status": "in_stock", "active": False, "price_paise": 6500})
     o.ok("item figures", "PUT", f"/catalogue/{item}/custom", {"values": {"product_type": "paver_block", "thickness_mm": "80", "size": "200 x 100 mm", "pieces_per_area": 4.5, "pieces_per_pallet": 500,
                                                                          "minimum_order": 100, "lead_days": 3, "hsn_code": "68101990", "gst_rate_percent": 18}})
@@ -115,7 +116,10 @@ def construction_quote(o: Owner) -> None:
     picks = [{"line_no": 1, "item_id": item}]
     o.ok("preview", "POST", f"/materials/requirements/{req}/preview", {"picks": picks})
     o.ok("draft", "POST", f"/materials/requirements/{req}/quotes", {"quote_id": req_quote, "picks": picks})
-    done = o.ok("approve materials quote", "POST", f"/materials/quotes/{req_quote}/approve")
+    done = o.ok("approve materials quote", "POST", f"/materials/quotes/{req_quote}/approve", want=(200, 201, 409))
+    if isinstance(done, dict) and done.get("error", {}).get("code") == "quote_not_draft":  # a second run on the same day: this quote is already approved
+        record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "PASS", "already approved earlier today (replay)")
+        return
     record("construction_materials: one materials quote previewed, drafted and approved (second factor)", "PASS", f"status={done.get('status')}, total_paise={done.get('total_paise')}")
 
 

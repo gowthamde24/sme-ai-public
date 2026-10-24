@@ -145,11 +145,12 @@ if [ "$what" = "api" ]; then
   # no fixed cost, billed only for the time an instance is up (job DC staging).
   if [ "$CPU_ALWAYS" = "true" ]; then cpu_flags=(--no-cpu-throttling --min-instances "${MIN_INSTANCES:-1}"); else cpu_flags=(--cpu-throttling --min-instances 0); fi
   build_api "$image"
-  # Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
+  # --execution-environment gen2 (job DE): measured on staging, 3 new instances each: the Python app is ready 6.1 to 6.2 s after the instance starts on gen2, 6.5 to 8.3 s on gen1 (hundreds of small files are read at start). The web showed no difference.
+  # The startup probe asks every 2 seconds, 1 s to answer (job DE: it used to ask every 5 s, so a ready server could wait up to 5 s to be told so; Cloud Run needs the timeout under the period; still 60 s in all before the start is called failed). Two instances at most (--max-instances 2) so a loop cannot run the bill up. The startup probe asks /health (no dependency is touched) until the process answers. API_CORS_ORIGINS is exactly the web's
   # address: the browser never calls the API (the web server does, with the person's token), so this is a fence, not a need. TRUSTED_PROXY_HOPS is what lets the rate limits tell callers apart behind Cloud Run.
   run gcloud run deploy sme-api --project "$PROJECT_ID" --region "$REGION" --image "$image" \
-    "${cpu_flags[@]}" --cpu 1 --memory 512Mi --max-instances 2 --concurrency 40 --timeout 300 --port 8080 \
-    --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=3,periodSeconds=5,failureThreshold=12 \
+    "${cpu_flags[@]}" --execution-environment gen2 --cpu 1 --memory 512Mi --max-instances 2 --concurrency 40 --timeout 300 --port 8080 \
+    --startup-probe=httpGet.path=/health,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
     --allow-unauthenticated ${RUN_SA:+--service-account "$RUN_SA"} \
     --set-env-vars "$(common_env),API_CORS_ORIGINS=$WEB_ORIGIN,AGENTS_ENABLED=$AGENTS,TRUSTED_PROXY_HOPS=${TRUSTED_PROXY_HOPS:-1}${EXTRA_ENV:+,$EXTRA_ENV}" \
     --set-secrets "SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest${EXTRA_SECRETS:+,$EXTRA_SECRETS}"
@@ -160,7 +161,7 @@ else
   build_web "$image"
   run gcloud run deploy sme-web --project "$PROJECT_ID" --region "$REGION" --image "$image" \
     --cpu 1 --memory 512Mi --min-instances 0 --max-instances 3 --concurrency 40 --timeout 300 --port 8080 \
-    --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=3,periodSeconds=5,failureThreshold=12 \
+    --startup-probe=httpGet.path=/login,httpGet.port=8080,timeoutSeconds=1,periodSeconds=2,failureThreshold=30 \
     --allow-unauthenticated ${WEB_RUN_SA:+--service-account "$WEB_RUN_SA"}
 fi
 $execute || echo "(dry run: nothing was run. Add --execute to run the commands above.)"

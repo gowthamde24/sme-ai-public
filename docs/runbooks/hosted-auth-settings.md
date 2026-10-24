@@ -26,9 +26,12 @@ Set in the Supabase dashboard (names are the dashboard's; they move, look for th
 
 ## URLs and e-mail
 - [ ] **Site URL** = the web app's https origin. **Redirect allow-list** = only `https://<web>/auth/confirm`. No wildcards.
-- [ ] **E-mail templates** (Invite, Reset password, Confirm sign-up) link to the app, not to Supabase's verify URL, using the token hash:
-      `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` (and `type=recovery`, `type=email`).
-      The page shows a Continue button and verifies on click, so a mail scanner that opens the link does not use up the one-time token.
+- [ ] **E-mail templates** (Confirm sign-up, Invite, Reset password, Magic link) link to the app, not to Supabase's verify URL, using the token hash. They are FILES (job DE): `supabase/templates/{confirmation,invite,recovery,magic_link}.html`, subjects in
+      `supabase/config.toml` (`[auth.email.template.*]`), the same ones the local stacks send. Links: `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=email&next=/app` (Confirm), `&type=invite`, `&type=recovery`, and for the
+      Magic link `&type=email&next=/app` (the confirm page accepts invite, recovery and email only; GoTrue accepts a magic link's token as type=email). The page shows a Continue button and verifies on click, so a mail scanner that opens the link
+      does not use up the one-time token. Put them on a hosted project with `python3 -I scripts/apply_auth_templates.py --project-ref <ref>` (a dry run: lists what differs), then `--apply`; never `supabase config push`.
+      **Supabase only lets a project change templates on a paid plan or with a custom SMTP provider** (the API answers HTTP 400 on Free with the built-in sender): so on Free (stack19-staging today) the templates stay Supabase's defaults, whose
+      links go to Supabase's own verify address, and invitation and reset e-mails do not work properly there until one of the two is in place. Proven locally instead: `tests/integration/test_auth_templates.py` (real Auth server and mail catcher; confirm, reset and magic-link tokens verified) and a manual invite check.
 - [ ] **Custom SMTP** configured (the built-in sender is heavily limited and not for real users); sender domain verified (SPF, DKIM). The sender e-mail is `noreply@stack19.com` (job DB; locally `env(MAIL_FROM)` in `supabase/config.toml`), never a personal address; sender name `Stack19`. Replies are not read, so the templates point to the support address of `apps/web/lib/site/business.ts`.
 - [ ] E-mail templates say who you are and carry no personal data.
 

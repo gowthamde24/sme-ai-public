@@ -19,7 +19,7 @@ tests/               integration, evals
 
 ## Quick start
 
-Requirements: Node 22.13.0 (pinned in `.nvmrc`; run `nvm install` to match CI), Python 3.11+, Git, Docker (or OrbStack/Colima) and the [Supabase CLI](https://supabase.com/docs/guides/local-development) (`brew install supabase/tap/supabase`).
+Requirements: Node 22.13.0 (pinned in `.nvmrc`; run `nvm install` to match CI), Python 3.11+, Git, Docker through Colima (`brew install colima docker`, then `make docker-up`; [docs/runbooks/colima.md](docs/runbooks/colima.md)) and the [Supabase CLI](https://supabase.com/docs/guides/local-development) (`brew install supabase/tap/supabase`).
 
 ```
 make install

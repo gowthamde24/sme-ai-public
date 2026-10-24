@@ -259,13 +259,22 @@ otp_expiry = 3600
 # The sign-up confirmation links to the app's own confirm page with the token hash (the page asks for a button press, so a mail
 # scanner that opens the link cannot use the token up). Same shape as the hosted template in docs/runbooks/hosted-auth-settings.md.
 [auth.email.template.confirmation]
-subject = "Confirm your email"
+subject = "Confirm your Stack19 email"
 content_path = "./supabase/templates/confirmation.html"
 
-# Uncomment to customize email template
-# [auth.email.template.invite]
-# subject = "You have been invited"
-# content_path = "./supabase/templates/invite.html"
+# Job DE: the other three mails an Auth server sends to a person link to the app's confirm page too, and say Stack19. The same files are put on the hosted projects by scripts/apply_auth_templates.py
+# (docs/runbooks/hosted-auth-settings.md). /auth/confirm accepts type invite, recovery and email only: a magic link is verified as type=email, which GoTrue accepts for its token.
+[auth.email.template.invite]
+subject = "You are invited to Stack19"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.recovery]
+subject = "Reset your Stack19 password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.magic_link]
+subject = "Your Stack19 sign-in link"
+content_path = "./supabase/templates/magic_link.html"
 
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]

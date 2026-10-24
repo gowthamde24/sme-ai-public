@@ -111,7 +111,9 @@ def test_the_web_image_takes_every_public_build_value_and_has_no_secret_argument
     needed = {n for n in doc_rows("## The web (Cloud Run or Vercel)") if n.startswith("NEXT_PUBLIC_")}
     assert needed <= args, sorted(needed - args)
     assert all(a.startswith("NEXT_PUBLIC_") for a in args), "a build argument is visible in the image history: only public values may be one"
-    assert re.search(r"^USER node$", text, re.M) and "exec ./node_modules/.bin/next start" in text
+    # job DE: the final stage runs the traced standalone server as the unprivileged user, as process 1 (exec form), listening on every address (HOSTNAME=0.0.0.0, not Docker's container id)
+    assert re.search(r"^USER node$", text, re.M) and 'CMD ["node", "apps/web/server.js"]' in text
+    assert "NEXT_OUTPUT=standalone" in text and "HOSTNAME=0.0.0.0" in text and ".next/standalone" in text and ".next/static" in text
 
 
 def test_the_dockerignore_keeps_the_context_small_and_free_of_local_files() -> None:
