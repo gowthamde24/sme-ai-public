@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+import { EmailAddress } from "@/components/v2/site/EmailAddress";
+import { emailWords } from "@/components/v2/site/email-words";
 import { LegalLinks } from "@/components/v2/legal/LegalLinks";
 import { container } from "@/components/v2/site/ui";
 import { Wordmark } from "@/components/v2/Wordmark";
@@ -7,6 +9,7 @@ import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
 import { SITE_PACKS, textIn } from "@/lib/site/packs";
 import { LANGS } from "@/i18n/lang";
+import { ADDRESSES } from "@/lib/site/business";
 import { sitePath, SITE_PAGES, type SitePage, type SiteTarget } from "@/lib/site/paths";
 
 const row = "inline-flex min-h-11 min-w-11 items-center text-sm font-medium text-ink hover:underline";
@@ -22,6 +25,8 @@ export function SiteFooter({ t, lang, target = { kind: "home" } }: { t: SiteT; l
         <div>
           <Wordmark />
           <p className="mt-3 text-sm text-muted">{t("foot.note")}</p>
+          <p className="mt-4 text-sm font-semibold text-muted">{t("contact.addr.title")}</p>
+          <EmailAddress address={ADDRESSES.hello} words={emailWords(t)} />
         </div>
         <nav aria-label={t("foot.businesses")}>
           <p className="text-sm font-semibold text-muted">{t("foot.businesses")}</p>
@@ -48,7 +53,7 @@ export function SiteFooter({ t, lang, target = { kind: "home" } }: { t: SiteT; l
           </ul>
         </nav>
         <div>
-          <LegalLinks lang={lang} direction="column" />
+          <LegalLinks lang={lang} direction="column" contact={false} />
         </div>
       </div>
       <div className={`${container} flex flex-wrap items-center gap-x-6 gap-y-1 border-t border-line py-4 text-sm text-muted`}>

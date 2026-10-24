@@ -1,9 +1,10 @@
 import { authH1, authMain } from "@/components/v2/auth/ui";
+import { BRAND_NAME } from "@/design/brand";
 import { safeRedirectPath } from "@/lib/auth/redirect";
 
 import { LoginForm } from "./login-form";
 
-export const metadata = { title: "Sign in · SME AI Revenue Engine" };
+export const metadata = { title: `Sign in · ${BRAND_NAME}` };
 
 const NOTICES: Record<string, string> = {
   link: "That link has expired or was already used. Request a new one from \"Forgot your password?\".",

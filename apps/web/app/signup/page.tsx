@@ -4,6 +4,7 @@ import { EmailDisclosure } from "@/components/v2/auth/EmailDisclosure";
 import { PackCard } from "@/components/v2/auth/PackCard";
 import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 import { authAlert, authH1, authHint, authLead, authLink, authMain, authSecondary } from "@/components/v2/auth/ui";
+import { BRAND_NAME } from "@/design/brand";
 import { getLang } from "@/i18n/get-lang";
 import { signupT } from "@/i18n/signup";
 import { getCurrentPolicies, type CurrentPolicies } from "@/lib/api/policy";
@@ -16,7 +17,7 @@ import { signUp } from "./actions";
 import { continueWithProvider } from "./oauth-actions";
 import { SignUpForm } from "./sign-up-form";
 
-export const metadata = { title: "Create your account · SME AI Revenue Engine" };
+export const metadata = { title: `Create your account · ${BRAND_NAME}` };
 
 /** A link inside a sentence (the terms line): inline text, underlined. */
 const inlineLink = "font-semibold text-brand-text underline underline-offset-2";

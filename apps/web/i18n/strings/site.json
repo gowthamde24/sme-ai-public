@@ -2821,5 +2821,137 @@
    "hi": "draft",
    "kn": "draft"
   }
+ },
+ "contact.addr.title": {
+  "en": "Write to us",
+  "te": "మాకు రాయండి",
+  "hi": "हमें लिखें",
+  "kn": "ನಮಗೆ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.addr.sub": {
+  "en": "Choose the address that fits your question. Select the text to copy it, or use the Copy button.",
+  "te": "మీ ప్రశ్నకు సరిపోయే చిరునామా ఎంచుకోండి. టెక్స్ట్‌ను సెలెక్ట్ చేసి కాపీ చేయవచ్చు, లేదా కాపీ బటన్ వాడండి.",
+  "hi": "अपने सवाल के हिसाब से पता चुनें। लिखे हुए को चुनकर कॉपी करें, या कॉपी बटन दबाएँ।",
+  "kn": "ನಿಮ್ಮ ಪ್ರಶ್ನೆಗೆ ಹೊಂದುವ ವಿಳಾಸ ಆರಿಸಿ. ಬರಹವನ್ನು ಆಯ್ದು ಕಾಪಿ ಮಾಡಬಹುದು, ಅಥವಾ ಕಾಪಿ ಬಟನ್ ಬಳಸಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.addr.hello": {
+  "en": "General questions",
+  "te": "సాధారణ ప్రశ్నలు",
+  "hi": "आम सवाल",
+  "kn": "ಸಾಮಾನ್ಯ ಪ್ರಶ್ನೆಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.addr.support": {
+  "en": "Help with the app",
+  "te": "యాప్‌లో సహాయం",
+  "hi": "ऐप में मदद",
+  "kn": "ಆ್ಯಪ್‌ನಲ್ಲಿ ಸಹಾಯ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.addr.billing": {
+  "en": "Payments and invoices",
+  "te": "పేమెంట్లు, ఇన్వాయిస్‌లు",
+  "hi": "पेमेंट और इनवॉइस",
+  "kn": "ಪೇಮೆಂಟ್ ಮತ್ತು ಇನ್‌ವಾಯ್ಸ್",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.addr.privacy": {
+  "en": "Privacy and complaints",
+  "te": "ప్రైవసీ, ఫిర్యాదులు",
+  "hi": "प्राइवेसी और शिकायतें",
+  "kn": "ಪ್ರೈವಸಿ ಮತ್ತು ದೂರುಗಳು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.copy": {
+  "en": "Copy",
+  "te": "కాపీ",
+  "hi": "कॉपी",
+  "kn": "ಕಾಪಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.copied": {
+  "en": "Copied",
+  "te": "కాపీ అయింది",
+  "hi": "कॉपी हो गया",
+  "kn": "ಕಾಪಿ ಆಯಿತು",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.copy.aria": {
+  "en": "Copy {address}",
+  "te": "{address} కాపీ చేయండి",
+  "hi": "{address} कॉपी करें",
+  "kn": "{address} ಕಾಪಿ ಮಾಡಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.copy.failed": {
+  "en": "Could not copy. Select the address and copy it.",
+  "te": "కాపీ కాలేదు. చిరునామాను సెలెక్ట్ చేసి కాపీ చేయండి.",
+  "hi": "कॉपी नहीं हुआ। पता चुनकर कॉपी करें।",
+  "kn": "ಕಾಪಿ ಆಗಲಿಲ್ಲ. ವಿಳಾಸ ಆಯ್ದು ಕಾಪಿ ಮಾಡಿ.",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.mail": {
+  "en": "E-mail",
+  "te": "ఈమెయిల్ పంపండి",
+  "hi": "ईमेल भेजें",
+  "kn": "ಈಮೇಲ್ ಕಳುಹಿಸಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
+ },
+ "contact.mail.aria": {
+  "en": "Write an e-mail to {address}",
+  "te": "{address}కి ఈమెయిల్ రాయండి",
+  "hi": "{address} को ईमेल लिखें",
+  "kn": "{address} ಗೆ ಈಮೇಲ್ ಬರೆಯಿರಿ",
+  "status": {
+   "te": "draft",
+   "hi": "draft",
+   "kn": "draft"
+  }
  }
 }

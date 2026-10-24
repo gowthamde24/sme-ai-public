@@ -2,7 +2,9 @@
 
 What personal data the system stores, why, for how long, who processes it, where, and how it is deleted. Built from the migrations, the ADRs (0001, 0003, 0005, 0008, 0013, 0014, 0015, 0017, 0020, 0062, 0065, 0066, 0069, 0071), the runbooks and `services/`. **Engineering inventory, not legal advice.** It is the source of the Privacy Policy text (`apps/web/lib/legal/privacy-text.ts`); when the code changes what is stored, change this file and that text, and bump `LEGAL_VERSION`.
 
-State today (2026-10-12): everything runs on a developer machine with invented data; **nothing is deployed**; no real-data gate is open; the only outgoing channel is a local fake (no real WhatsApp, e-mail or SMS adapter exists); the models are scripted, local or a hosted free tier on invented data; no speech provider is switched on. The "where" and "who" columns say what is *planned* (ADR 0015) and what the owner must confirm.
+Job DB (2026-10-24): the Privacy Policy was rewritten from the owner's facts (Stack19, a sole proprietorship; data hosted in India, Mumbai region; providers named by category; per-business-type table; children and schools; DPDP rights; Grievance Officer with a 30-day answer; texts in four languages; `/data-deletion`). New `LEGAL_VERSION` `2026-10-24`. **Still the owner's / a lawyer's:** the written DPDP opinion (`pre-pilot-checklist.md`), the model, speech, e-mail and payment providers (named only by category on the page), and a native reader for the Telugu, Hindi and Kannada texts.
+
+State on 2026-10-12: everything runs on a developer machine with invented data; **nothing is deployed**; no real-data gate is open; the only outgoing channel is a local fake (no real WhatsApp, e-mail or SMS adapter exists); the models are scripted, local or a hosted free tier on invented data; no speech provider is switched on. The "where" and "who" columns say what is *planned* (ADR 0015) and what the owner must confirm.
 
 ## 1. Roles
 * **Account holders** (an Owner, Admin, Sales or Viewer who signs up): we are the data fiduciary (DPDP) / controller (GDPR).

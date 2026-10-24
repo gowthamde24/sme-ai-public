@@ -144,7 +144,8 @@ None is part of the rehearsal. The webhook addresses these providers call are `h
 | `MISSED_CALL_REPLY_LANGUAGE` | plain | api | Default `en`. |
 | `VAPID_PRIVATE_KEY` | secret | api, worker | Web-push (job BY): off until BOTH keys are set. Generate once; typed hidden. |
 | `VAPID_PUBLIC_KEY` | plain | api, worker | The matching public key (reaches the browser). |
-| `VAPID_SUBJECT` | plain | api, worker | `mailto:<an address you read>`. |
+| `VAPID_SUBJECT` | plain | api, worker | `mailto:` plus a role address of the business that someone reads (the support address of `apps/web/lib/site/business.ts`), never a personal address. |
+| `MAIL_FROM` | plain | Supabase Auth (SMTP settings), any future app e-mail | The address app e-mails are sent FROM, e.g. `noreply@stack19.com` (job DB). Set in the Supabase dashboard (Authentication, SMTP: sender e-mail) and, locally, as `env(MAIL_FROM)` in `supabase/config.toml`. Never a personal address, never written in code. The four PUBLIC addresses people write to (hello, support, billing, privacy) are not environment settings: they are in `apps/web/lib/site/business.ts`. |
 
 ## E. Policy versions (public text settings)
 
