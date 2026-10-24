@@ -14,8 +14,9 @@ import { readActivation, usesChecklist } from "@/lib/packs/activation";
 import { readPackCached } from "@/lib/packs/read";
 
 import { saveProfileAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Get started · SME AI Revenue Engine" };
+export const metadata = { title: `Get started · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**

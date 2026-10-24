@@ -15,8 +15,9 @@ import { clock } from "@/lib/clock";
 
 import { eduContext, eduWords } from "../../../education-kit";
 import { saveFeePlanAction } from "../../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "New fee plan · SME AI Revenue Engine" };
+export const metadata = { title: `New fee plan · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

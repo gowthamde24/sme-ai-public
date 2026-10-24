@@ -13,6 +13,7 @@ import { cookies } from "next/headers";
 
 import { completeSetup } from "../app/setup/actions";
 import { SetupForm } from "./setup-form";
+import { BRAND_NAME } from "@/design/brand";
 
 /** The cookie the browser kept while it was away at Google or Facebook; nothing outside a request. */
 async function packCookie(): Promise<string | undefined> {
@@ -23,7 +24,7 @@ async function packCookie(): Promise<string | undefined> {
   }
 }
 
-export const metadata = { title: "Set up your business · SME AI Revenue Engine" };
+export const metadata = { title: `Set up your business · ${BRAND_NAME}` };
 // A person's own screen: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

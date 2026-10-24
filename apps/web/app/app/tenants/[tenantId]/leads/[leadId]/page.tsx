@@ -26,8 +26,9 @@ import { SentMessageForm } from "./sent-message-form";
 import { foldBody, foldCard, foldSummary, kvList, link, mutedText, pageH1, pageH2, pageMain, pageSub } from "@/components/v2/app/ui";
 import { ApiDownV2, BackLink, SectionTabs } from "@/components/v2/app/parts";
 import { partsWords } from "@/i18n/app-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Lead · SME AI Revenue Engine" };
+export const metadata = { title: `Lead · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

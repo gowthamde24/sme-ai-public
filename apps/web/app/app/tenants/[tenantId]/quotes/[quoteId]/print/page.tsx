@@ -15,8 +15,9 @@ import { readPackCached } from "@/lib/packs/read";
 
 import { readLeadLabel } from "../../../visits/visits-data";
 import { quoteWords } from "../../material-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Quotation · SME AI Revenue Engine" };
+export const metadata = { title: `Quotation · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/quotes/[quoteId]/print: the quotation as a page to print or save as PDF (job CO). Owner, Admin and Sales; a Viewer reads no money. */

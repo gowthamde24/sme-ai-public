@@ -1,7 +1,8 @@
 import { CampaignFormPage } from "../pages";
 import { campaignContext } from "../prelude";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "New campaign · SME AI Revenue Engine" };
+export const metadata = { title: `New campaign · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/campaigns/new: make a campaign (job CQ). The page makes the campaign's id, so pressing Save twice is a retry. */

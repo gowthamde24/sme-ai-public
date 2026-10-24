@@ -15,8 +15,9 @@ import { wordsFor } from "@/i18n/app-words";
 import { signOut } from "./actions";
 import { CreateTenantForm } from "./create-tenant-form";
 import { readMeCached } from "./me-read";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Workspaces · SME AI Revenue Engine" };
+export const metadata = { title: `Workspaces · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

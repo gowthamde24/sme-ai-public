@@ -19,8 +19,9 @@ import { getWhatsappAccount, listTemplates } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
 
 import { activateWhatsappAction, disableWhatsappAction, saveWhatsappAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Connect WhatsApp · SME AI Revenue Engine" };
+export const metadata = { title: `Connect WhatsApp · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

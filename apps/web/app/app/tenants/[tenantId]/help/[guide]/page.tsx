@@ -13,8 +13,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
 import { withModuleT } from "@/lib/packs/module-words";
 import { readPackCached } from "@/lib/packs/read";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Help · SME AI Revenue Engine" };
+export const metadata = { title: `Help · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/help/[guide]: one guide (job BT). An unknown guide is the same not-found page as an unknown workspace. */

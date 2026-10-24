@@ -12,8 +12,9 @@ import { getPolicyStatus } from "@/lib/api/policy";
 import { requireUser } from "@/lib/auth/session";
 
 import { acceptPoliciesAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Terms and Privacy Policy · SME AI Revenue Engine" };
+export const metadata = { title: `Terms and Privacy Policy · ${BRAND_NAME}` };
 // Per-person data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

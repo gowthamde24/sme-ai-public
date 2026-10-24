@@ -16,8 +16,9 @@ import { requireUser } from "@/lib/auth/session";
 
 import { reportWords } from "../report-words";
 import { packReportWords } from "../pack-report-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Report · SME AI Revenue Engine" };
+export const metadata = { title: `Report · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

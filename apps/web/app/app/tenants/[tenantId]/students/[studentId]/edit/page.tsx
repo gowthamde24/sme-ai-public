@@ -10,8 +10,9 @@ import { escalate } from "@/lib/api/failure";
 
 import { eduContext, eduWords } from "../../../education-kit";
 import { saveStudentAction } from "../../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Change a student · SME AI Revenue Engine" };
+export const metadata = { title: `Change a student · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/students/[studentId]/edit: change a student's placement, label or admission number (job CS; Owner and Admin). The guardian and the kind never change. An erased student cannot be changed. */

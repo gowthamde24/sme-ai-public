@@ -11,8 +11,9 @@ import { getLedgerReceipt } from "@/lib/api/ledger";
 import { requireUser } from "@/lib/auth/session";
 
 import { dueWords } from "../../due-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Receipt · SME AI Revenue Engine" };
+export const metadata = { title: `Receipt · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/dues/receipt/[entryId]: a payment as a receipt to print or save as PDF (job CO). Owner, Admin and Sales; a Viewer reads no money. */

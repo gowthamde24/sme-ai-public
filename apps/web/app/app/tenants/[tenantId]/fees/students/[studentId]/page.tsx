@@ -20,8 +20,9 @@ import { requireUser } from "@/lib/auth/session";
 import { voidEntryAction } from "../../../dues/ledger-actions";
 import { eduContext, eduWords } from "../../../education-kit";
 import { assignPlanAction, recordFeeEntryAction, voidAssignmentAction } from "../../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Student fees · SME AI Revenue Engine" };
+export const metadata = { title: `Student fees · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**

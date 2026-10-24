@@ -12,8 +12,9 @@ import { listSites } from "@/lib/api/sites";
 import { requireUser } from "@/lib/auth/session";
 
 import { siteWords } from "./site-words";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Sites · SME AI Revenue Engine" };
+export const metadata = { title: `Sites · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 const pick = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);

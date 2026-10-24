@@ -5,8 +5,9 @@ import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
 
 import { acceptInvitationAction } from "./actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Join a business · SME AI Revenue Engine", referrer: "no-referrer" as const };
+export const metadata = { title: `Join a business · ${BRAND_NAME}`, referrer: "no-referrer" as const };
 export const dynamic = "force-dynamic";
 
 /**

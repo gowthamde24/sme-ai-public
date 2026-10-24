@@ -13,8 +13,9 @@ import { hasModule } from "@/lib/packs/has";
 
 import { eduContext, eduWords } from "../../education-kit";
 import { admissionStageAction, admitAction } from "../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Admission · SME AI Revenue Engine" };
+export const metadata = { title: `Admission · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/admissions/[admissionId]: one enquiry with its history, the way forward, and (Owner, Admin) admit (job CS). */

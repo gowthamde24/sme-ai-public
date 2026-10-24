@@ -4,8 +4,9 @@ import { hasModule } from "@/lib/packs/has";
 
 import { CampaignsListPage } from "../campaigns/pages";
 import { campaignContext } from "../campaigns/prelude";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Announcements · SME AI Revenue Engine" };
+export const metadata = { title: `Announcements · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/announcements: messages to parents about an event, an exam or a holiday (job CS; module `programmes`), the service-message campaigns of a school. The Owner approves each once, as for any campaign. */

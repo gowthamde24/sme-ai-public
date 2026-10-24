@@ -4,8 +4,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 
 import { CampaignFormPage } from "../../pages";
 import { campaignContext } from "../../prelude";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Change campaign · SME AI Revenue Engine" };
+export const metadata = { title: `Change campaign · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/campaigns/[campaignId]/edit: change a draft or an approved campaign (an approved one goes back to draft and has to be approved again). */

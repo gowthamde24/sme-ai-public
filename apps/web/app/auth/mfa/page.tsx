@@ -5,8 +5,9 @@ import { safeRedirectPath } from "@/lib/auth/redirect";
 import { requireUserBeforeSecondFactor } from "@/lib/auth/session";
 
 import { MfaForm } from "./mfa-form";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Verify · SME AI Revenue Engine" };
+export const metadata = { title: `Verify · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 export default async function MfaPage({ searchParams }: PageProps<"/auth/mfa">) {

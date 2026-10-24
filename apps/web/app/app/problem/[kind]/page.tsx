@@ -5,8 +5,9 @@ import { RefreshRetry } from "@/components/v2/app/robust/RetryButton";
 import { appDict } from "@/i18n/app";
 import { getLang } from "@/i18n/get-lang";
 import { requireUser } from "@/lib/auth/session";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Something is not right · SME AI Revenue Engine" };
+export const metadata = { title: `Something is not right · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**

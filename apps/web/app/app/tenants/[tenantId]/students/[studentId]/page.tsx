@@ -13,8 +13,9 @@ import { hasModule } from "@/lib/packs/has";
 
 import { eduContext, eduWords } from "../../education-kit";
 import { eraseStudentAction, studentStatusAction } from "../actions";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Student · SME AI Revenue Engine" };
+export const metadata = { title: `Student · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/students/[studentId]: one student (job CS). With the module `fees` it also shows what the guardian owes across their children. */

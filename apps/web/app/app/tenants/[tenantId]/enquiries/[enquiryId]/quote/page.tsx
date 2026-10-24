@@ -15,8 +15,9 @@ import { hasModule } from "@/lib/packs/has";
 import { readPackCached } from "@/lib/packs/read";
 
 import { MaterialQuoteSection } from "../../material-quote-section";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Quote · SME AI Revenue Engine" };
+export const metadata = { title: `Quote · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /**

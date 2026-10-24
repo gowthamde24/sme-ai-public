@@ -1,7 +1,8 @@
 import { CallListPage } from "../campaigns/pages";
 import { campaignContext } from "../campaigns/prelude";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Call list · SME AI Revenue Engine" };
+export const metadata = { title: `Call list · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/call-list: the people a money reminder did not reach, who have not paid (job CQ; module `campaigns`). Owner and Admin can ring them through the shop's own phone; everyone who may read writes down how it went. */

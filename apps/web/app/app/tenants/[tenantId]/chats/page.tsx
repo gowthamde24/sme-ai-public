@@ -14,8 +14,9 @@ import { isCanonicalUuid } from "@/lib/api/crm";
 import { settle } from "@/lib/api/part";
 import { listConversations } from "@/lib/api/whatsapp";
 import { requireUser } from "@/lib/auth/session";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Customer chats · SME AI Revenue Engine" };
+export const metadata = { title: `Customer chats · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

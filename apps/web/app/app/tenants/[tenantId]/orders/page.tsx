@@ -18,8 +18,9 @@ import { SectionTabs } from "@/components/v2/app/parts";
 import { appT } from "@/i18n/app";
 
 import { LocalTime } from "../../../local-time";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Orders · SME AI Revenue Engine" };
+export const metadata = { title: `Orders · ${BRAND_NAME}` };
 // Per-user data from the API: never statically rendered or cached.
 export const dynamic = "force-dynamic";
 

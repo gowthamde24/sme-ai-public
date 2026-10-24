@@ -3,8 +3,9 @@ import Link from "next/link";
 import { authH1, authLead, authLink, authMain, authParagraph } from "@/components/v2/auth/ui";
 
 import { ForgotForm } from "./forgot-form";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Reset your password · SME AI Revenue Engine" };
+export const metadata = { title: `Reset your password · ${BRAND_NAME}` };
 
 export default function ForgotPage() {
   return (

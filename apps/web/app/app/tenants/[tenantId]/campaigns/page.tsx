@@ -1,7 +1,8 @@
 import { CampaignsListPage } from "./pages";
 import { campaignContext } from "./prelude";
+import { BRAND_NAME } from "@/design/brand";
 
-export const metadata = { title: "Campaigns · SME AI Revenue Engine" };
+export const metadata = { title: `Campaigns · ${BRAND_NAME}` };
 export const dynamic = "force-dynamic";
 
 /** /app/tenants/[tenantId]/campaigns: the reminder campaigns (job CQ; module `campaigns`, checked by the workspace's module guard). Owner, Admin and Sales read and make drafts; the Owner approves. */
