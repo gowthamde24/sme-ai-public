@@ -68,6 +68,9 @@ insert into public.material_quote_lines (tenant_id, quote_id, line_no, catalogue
   (tests.tid('a'), tests.rid('q2'), 2, tests.rid('kerb'), 'Kerb B', 'direct', 'piece', 1000, 500, 300, 300000, 20000);
 insert into public.orders (id, tenant_id, order_no, quote_id, material_quote_id, enquiry_id, requirement_id, lead_id, order_total_paise, advance_paise, valid_until, policy_version_id)
 values (tests.rid('o2'), tests.tid('a'), (select max(order_no) + 1 from public.orders where tenant_id = tests.tid('a')), null, tests.rid('q2'), tests.rid('a_er_enq'), tests.rid('a_er_req'), tests.rid('a_lead'), 1000000, 500000, current_date, tests.rid('a_er_op'));
+-- the shared fixture's own planned trip is dated current_date (the database's UTC date), but the reports count in India's day: between 18:30 and midnight UTC those are different days and D7 split in two.
+-- The report's day is the one this file means by "today" everywhere else (pg_temp.today()), so the fixture's trip is put on it.
+update public.delivery_trips set planned_date = pg_temp.today() where id = tests.rid('a_er_trip');
 insert into public.delivery_trips (id, tenant_id, order_id, trip_no, challan_no, planned_date, status, problem_code, delivered_at, created_by)
 select tests.rid('t' || n), tests.tid('a'), tests.rid('o2'), n, (select coalesce(max(challan_no), 0) + 1 from public.delivery_trips where tenant_id = tests.tid('a')) + n, pg_temp.today() + d, st, pc,
        case when st = 'delivered' then now() end, tests.uid('a_owner')
