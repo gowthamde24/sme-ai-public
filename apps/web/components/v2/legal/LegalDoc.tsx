@@ -1,14 +1,19 @@
 import type { ReactNode } from "react";
 
-import { BRAND_TEXT } from "@/design/brand";
 import type { Lang } from "@/i18n/lang";
 import { legalT } from "@/i18n/legal";
-import { LEGAL_IS_DRAFT, LEGAL_VERSION } from "@/lib/legal/version";
-import { PLACEHOLDER, type Block, type LegalText } from "@/lib/legal/types";
+import { fillLegal, legalDocument, type DocId } from "@/lib/legal/documents";
+import { LEGAL_IS_DRAFT, LEGAL_UPDATED, LEGAL_VERSION } from "@/lib/legal/version";
+import { PLACEHOLDER, type Block } from "@/lib/legal/types";
 
-/** A text with {brand} filled and every [PLACEHOLDER] drawn highlighted (the owner must fill them; none may be missed). */
+/** The day of the last change, written in the visitor's language ("24 October 2026"). UTC, so the day does not move with the server's clock. */
+export function updatedOn(iso: string, lang: Lang): string {
+  return new Intl.DateTimeFormat(`${lang}-IN`, { dateStyle: "long", timeZone: "UTC" }).format(new Date(`${iso}T00:00:00Z`));
+}
+
+/** A text with {brand} and the other {tokens} filled (lib/legal/documents.ts) and any [PLACEHOLDER] drawn highlighted (a missing fact must not be missed; no text has one today). */
 export function Rich({ text }: { text: string }): ReactNode {
-  const filled = text.replaceAll("{brand}", BRAND_TEXT);
+  const filled = fillLegal(text);
   const parts: ReactNode[] = [];
   let last = 0;
   for (const m of filled.matchAll(PLACEHOLDER)) {
@@ -71,12 +76,17 @@ function BlockView({ block, label }: { block: Block; label: string }) {
   );
 }
 
+type SummaryKey = "legal.sum.privacy.1" | "legal.sum.privacy.2" | "legal.sum.privacy.3" | "legal.sum.privacy.4" | "legal.sum.privacy.5" | "legal.sum.privacy.6" | "legal.sum.terms.1" | "legal.sum.terms.2" | "legal.sum.terms.3" | "legal.sum.terms.4" | "legal.sum.deletion.1" | "legal.sum.deletion.2" | "legal.sum.deletion.3";
+
 /**
- * A legal page: the title, the version and effective date, the "Draft, pending legal review" banner (while LEGAL_IS_DRAFT), a short plain-language summary in the visitor's language (a machine draft, said so),
- * and the full English text. The English text is never translated by machine; it carries lang="en" inside a page in another language.
+ * A legal page: the title, the version and the day it was last updated, the "Draft, pending legal review" banner (only while LEGAL_IS_DRAFT), a short plain-language summary in the visitor's language and the full text.
+ * The full text is in the visitor's language where one exists (the Privacy Policy and the data-deletion page; a machine-written draft, said so in a note, the English text counts) and in English otherwise (the Terms; then the
+ * summary note says the English text is the one that counts). Every block of text carries the `lang` of the text it holds.
  */
-export function LegalDoc({ doc, summaryKeys, lang }: { doc: LegalText; summaryKeys: readonly ("legal.sum.privacy.1" | "legal.sum.privacy.2" | "legal.sum.privacy.3" | "legal.sum.privacy.4" | "legal.sum.privacy.5" | "legal.sum.terms.1" | "legal.sum.terms.2" | "legal.sum.terms.3" | "legal.sum.terms.4")[]; lang: Lang }) {
+export function LegalDoc({ id, summaryKeys, lang }: { id: DocId; summaryKeys?: readonly SummaryKey[]; lang: Lang }) {
   const t = legalT(lang);
+  const { doc, lang: docLang } = legalDocument(id, lang);
+  const translated = docLang !== "en";
   return (
     <article>
       {LEGAL_IS_DRAFT ? (
@@ -84,26 +94,33 @@ export function LegalDoc({ doc, summaryKeys, lang }: { doc: LegalText; summaryKe
           {legalT("en")("legal.draft.banner")}
         </div>
       ) : null}
-      <h1 lang="en" className="font-display text-3xl font-bold leading-tight sm:text-4xl">
+      <h1 lang={docLang} className="font-display text-3xl font-bold leading-tight sm:text-4xl">
         {doc.title}
       </h1>
-      <p lang="en" className="mt-2 text-sm text-muted">
-        {t("legal.version", { version: LEGAL_VERSION })} · <Rich text="[EFFECTIVE DATE]" />
+      <p lang={lang} className="mt-2 text-sm text-muted">
+        {t("legal.version", { version: LEGAL_VERSION })} · {t("legal.updated", { date: updatedOn(LEGAL_UPDATED, lang) })}
       </p>
+      {translated ? (
+        <p role="note" data-legal="translated" lang={lang} className="mt-3 rounded-lg border border-line bg-surface-2 px-4 py-3 text-sm text-muted">
+          {t("legal.translated.note")}
+        </p>
+      ) : null}
 
-      <section aria-labelledby="summary-h" lang={lang} className="mt-6 rounded-xl border border-line bg-surface p-5">
-        <h2 id="summary-h" className="text-xl font-semibold">
-          {t("legal.summary.title")}
-        </h2>
-        <ul className="mt-3 list-disc space-y-2 pl-6 text-base leading-relaxed">
-          {summaryKeys.map((k) => (
-            <li key={k}>{t(k)}</li>
-          ))}
-        </ul>
-        {lang !== "en" ? <p className="mt-3 text-sm text-muted">{t("legal.summary.note")}</p> : null}
-      </section>
+      {summaryKeys ? (
+        <section aria-labelledby="summary-h" lang={lang} className="mt-6 rounded-xl border border-line bg-surface p-5">
+          <h2 id="summary-h" className="text-xl font-semibold">
+            {t("legal.summary.title")}
+          </h2>
+          <ul className="mt-3 list-disc space-y-2 pl-6 text-base leading-relaxed">
+            {summaryKeys.map((k) => (
+              <li key={k}>{t(k)}</li>
+            ))}
+          </ul>
+          {lang !== "en" && !translated ? <p className="mt-3 text-sm text-muted">{t("legal.summary.note")}</p> : null}
+        </section>
+      ) : null}
 
-      <div lang="en">
+      <div lang={docLang}>
         {doc.intro.map((p) => (
           <p key={p} className="mt-6 text-base leading-relaxed">
             <Rich text={p} />
@@ -113,7 +130,7 @@ export function LegalDoc({ doc, summaryKeys, lang }: { doc: LegalText; summaryKe
 
       <nav aria-label={t("legal.toc")} lang={lang} className="mt-6">
         <h2 className="text-base font-semibold">{t("legal.toc")}</h2>
-        <ol lang="en" className="mt-1 flex flex-wrap gap-x-4">
+        <ol lang={docLang} className="mt-1 flex flex-wrap gap-x-4">
           {doc.sections.map((s) => (
             <li key={s.id}>
               <a href={`#${s.id}`} className="inline-flex min-h-11 items-center text-base font-medium text-brand-text hover:underline">
@@ -124,7 +141,7 @@ export function LegalDoc({ doc, summaryKeys, lang }: { doc: LegalText; summaryKe
         </ol>
       </nav>
 
-      <div lang="en">
+      <div lang={docLang}>
         {doc.sections.map((s) => (
           <section key={s.id} id={s.id} aria-labelledby={`${s.id}-h`} className="mt-8 scroll-mt-20">
             <h2 id={`${s.id}-h`} className="font-display text-2xl font-bold leading-snug">

@@ -250,8 +250,8 @@ otp_expiry = 3600
 # port = 587
 # user = "apikey"
 # pass = "env(SENDGRID_API_KEY)"
-# admin_email = "admin@email.com"
-# sender_name = "Admin"
+# admin_email = "env(MAIL_FROM)"   # job DB: the sender address comes from the environment (noreply@stack19.com), never a personal address
+# sender_name = "Stack19"
 
 # The sign-up confirmation links to the app's own confirm page with the token hash (the page asks for a button press, so a mail
 # scanner that opens the link cannot use the token up). Same shape as the hosted template in docs/runbooks/hosted-auth-settings.md.

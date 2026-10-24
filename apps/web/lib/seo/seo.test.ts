@@ -43,7 +43,7 @@ describe("SEO with the launch switch on", () => {
     // the switch is read when the module loads: load robots and sitemap again with it on
     const prev = process.env.NEXT_PUBLIC_SITE_LIVE;
     process.env.NEXT_PUBLIC_SITE_LIVE = "1";
-    process.env.NEXT_PUBLIC_SITE_URL = "https://shop.example/";
+    process.env.NEXT_PUBLIC_SITE_URL = "https://shop.example/"; // where a deployment is served from: it must NOT change the canonical addresses below
     const { vi } = await import("vitest");
     vi.resetModules();
     const live = await import("@/lib/seo/site");
@@ -53,19 +53,22 @@ describe("SEO with the launch switch on", () => {
     delete process.env.NEXT_PUBLIC_SITE_URL;
     vi.resetModules();
     expect(live.SITE_LIVE).toBe(true);
-    expect(live.SITE_URL).toBe("https://shop.example");
+    expect(live.SITE_URL).toBe("https://shop.example"); // the sign-in redirect
+    expect(live.PUBLIC_URL).toBe("https://stack19.com");
     const rule = Array.isArray(r.rules) ? r.rules[0] : r.rules;
     expect(rule.allow).toEqual(expect.arrayContaining(["/", "/te", "/hi", "/kn"]));
     expect(rule.disallow).toEqual(expect.arrayContaining(["/app", "/auth", "/api", "/login", "/signup"]));
-    expect(r.sitemap).toBe("https://shop.example/sitemap.xml");
+    expect(r.sitemap).toBe("https://stack19.com/sitemap.xml");
+    expect(r.host).toBe("https://stack19.com");
+    expect(rule.allow).toEqual(expect.arrayContaining(["/privacy", "/terms", "/data-deletion"]));
     const urls = s.map((e) => e.url);
-    // every page of the site in every language, then the two legal pages
-    const expected = allTargets().flatMap((t) => LANDING_LANGS.map((l) => `https://shop.example${sitePath(l, t) === "/" ? "/" : sitePath(l, t)}`));
-    expect(urls).toEqual([...expected, "https://shop.example/privacy", "https://shop.example/terms"]);
-    expect(urls).toEqual(expect.arrayContaining(["https://shop.example/pricing", "https://shop.example/te/pricing", "https://shop.example/hi/construction", "https://shop.example/kn/education", "https://shop.example/textiles"]));
+    // every page of the site in every language, then the three legal pages
+    const expected = allTargets().flatMap((t) => LANDING_LANGS.map((l) => `https://stack19.com${sitePath(l, t) === "/" ? "/" : sitePath(l, t)}`));
+    expect(urls).toEqual([...expected, "https://stack19.com/privacy", "https://stack19.com/terms", "https://stack19.com/data-deletion"]);
+    expect(urls).toEqual(expect.arrayContaining(["https://stack19.com/pricing", "https://stack19.com/te/pricing", "https://stack19.com/hi/construction", "https://stack19.com/kn/education", "https://stack19.com/textiles"]));
     expect(new Set(urls).size).toBe(urls.length);
     for (const e of s.filter((x) => x.url.includes("/pricing"))) expect(Object.keys(e.alternates?.languages ?? {}).sort()).toEqual(["en-IN", "hi-IN", "kn-IN", "te-IN"]);
-    expect(s.find((e) => e.url === "https://shop.example/te/pricing")?.alternates?.languages).toMatchObject({ "en-IN": "https://shop.example/pricing", "kn-IN": "https://shop.example/kn/pricing" });
-    expect(s[0].alternates?.languages).toMatchObject({ "te-IN": "https://shop.example/te", "en-IN": "https://shop.example/" });
+    expect(s.find((e) => e.url === "https://stack19.com/te/pricing")?.alternates?.languages).toMatchObject({ "en-IN": "https://stack19.com/pricing", "kn-IN": "https://stack19.com/kn/pricing" });
+    expect(s[0].alternates?.languages).toMatchObject({ "te-IN": "https://stack19.com/te", "en-IN": "https://stack19.com/" });
   });
 });

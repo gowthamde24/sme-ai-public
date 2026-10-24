@@ -10,7 +10,7 @@ import { BRAND_NAME } from "@/design/brand";
 import { fillPlain } from "@/i18n/fill";
 import type { SiteT } from "@/i18n/site";
 import type { Lang } from "@/i18n/lang";
-import { SITE_URL } from "@/lib/seo/site";
+import { PUBLIC_URL } from "@/lib/seo/site";
 import { sitePath } from "@/lib/site/paths";
 
 const badge = "inline-flex items-center text-sm font-semibold text-muted";
@@ -63,7 +63,7 @@ export function HomePage({ t, lang }: { t: SiteT; lang: Lang }) {
           name: BRAND_NAME,
           applicationCategory: "BusinessApplication",
           operatingSystem: "Web",
-          url: SITE_URL + sitePath(lang, { kind: "home" }),
+          url: PUBLIC_URL + sitePath(lang, { kind: "home" }),
           description: fillPlain(t("meta.description")),
           inLanguage: ["en-IN", "te-IN", "hi-IN", "kn-IN"],
         }}

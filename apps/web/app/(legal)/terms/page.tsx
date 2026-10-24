@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 
 import { LegalDoc } from "@/components/v2/legal/LegalDoc";
 import { getLang } from "@/i18n/get-lang";
-import { TERMS } from "@/lib/legal/terms-text";
+import { legalMetadata } from "@/lib/legal/page-metadata";
 
-export const metadata: Metadata = { title: "Terms of Use", description: "The terms for using the service.", robots: { index: false, follow: false } };
+export const metadata: Metadata = legalMetadata("/terms", "Terms of Use", "The terms for using the service: the free trial, payment, cancelling, acceptable use and the law that applies.");
 
-/** /terms (job BH): the Terms of Use. A draft, pending legal review, until the owner switches the banner off (lib/legal/version.ts). */
+/** /terms (jobs BH, DB): the Terms of Use. English text with a summary in the visitor's language. A stable address: Meta and Google review it. */
 export default async function TermsPage() {
-  return <LegalDoc doc={TERMS} lang={await getLang()} summaryKeys={["legal.sum.terms.1", "legal.sum.terms.2", "legal.sum.terms.3", "legal.sum.terms.4"]} />;
+  return <LegalDoc id="terms" lang={await getLang()} summaryKeys={["legal.sum.terms.1", "legal.sum.terms.2", "legal.sum.terms.3", "legal.sum.terms.4"]} />;
 }

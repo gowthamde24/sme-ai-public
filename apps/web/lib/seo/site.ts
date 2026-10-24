@@ -1,10 +1,14 @@
+import { CANONICAL_ORIGIN } from "@/lib/site/business";
+
 /**
  * Where the public site lives and whether it is open to search engines (job BS).
- *  - NEXT_PUBLIC_SITE_URL: the address the pages are served from (links in the sitemap, the share pictures). Until the site is hosted it is the local address.
+ *  - PUBLIC_URL: the address the public site is known by, https://stack19.com (job DB, lib/site/business.ts): the canonical links, the sitemap, robots.txt and the Open Graph addresses. It does not depend on where a copy is served from.
+ *  - NEXT_PUBLIC_SITE_URL: the address THIS deployment is served from (the sign-in redirect back to the app). Until the site is hosted it is the local address.
  *  - NEXT_PUBLIC_SITE_LIVE=1: the launch switch. Until then the pages say noindex, robots.txt turns every crawler away and the sitemap is empty (owner decision of 2026-10-07: not indexed before launch);
  *    the share pictures and titles are there already, so a link sent to a person still shows the owl.
  */
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000").replace(/\/+$/, "");
+export const PUBLIC_URL = CANONICAL_ORIGIN;
 export const SITE_LIVE = process.env.NEXT_PUBLIC_SITE_LIVE === "1";
 
 export const LANDING_LANGS = ["en", "te", "hi", "kn"] as const;

@@ -3,13 +3,13 @@ import { cookies } from "next/headers";
 
 import { CookieConsent } from "@/components/v2/legal/CookieConsent";
 import { COOKIE_WORD_KEYS } from "@/components/v2/legal/cookie-words";
-import { SHORT_NAME } from "@/design/brand";
+import { BRAND_NAME, SHORT_NAME } from "@/design/brand";
 import { ServiceWorker } from "@/components/v2/pwa/ServiceWorker";
 import { V2Root } from "@/components/v2/V2Root";
 import { legalT } from "@/i18n/legal";
 import { LANG_COOKIE, THEME_COOKIE, readLang, readTheme } from "@/i18n/preferences";
 import { CONSENT_COOKIE, readConsent } from "@/lib/consent/consent";
-import { SITE_URL } from "@/lib/seo/site";
+import { PUBLIC_URL } from "@/lib/seo/site";
 
 import "./globals.css";
 
@@ -18,8 +18,8 @@ import "./globals.css";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL), // the share pictures and canonical links are absolute (job BS)
-  title: "SME AI Revenue Engine",
+  metadataBase: new URL(PUBLIC_URL), // the share pictures and canonical links are absolute (job BS)
+  title: BRAND_NAME,
   description: "An AI workforce for SMEs.",
   // installable on a phone (job BL): the manifest is app/manifest.ts; the owl icons are in public/icons
   applicationName: SHORT_NAME,
