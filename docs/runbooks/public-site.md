@@ -24,7 +24,7 @@ SITE_LEAD_MAX_PER_HOUR=10         # optional; the tries one address may make in 
 
 ## Who we are, the domain and the addresses (job DB)
 **One file** says it: `apps/web/lib/site/business.ts` (domain `stack19.com`, the business, the Grievance Officer, the 30-day promise and the four addresses: `hello@` general, `support@` help with the app, `billing@` payments and invoices, `privacy@` privacy and grievances). The contact page, every footer, the Privacy Policy, the Terms, the data-deletion page and the canonical addresses read it; a test (`lib/site/business.test.ts`) fails if an address of the domain, or a personal one, is written in any other source file. No phone number and no postal address are published (owner decision). To change an address, change that one file.
-Addresses are shown as selectable text with a Copy button; `mailto:` is only an extra (`components/v2/site/EmailAddress.tsx`). The address app e-mails are sent FROM is the setting `MAIL_FROM`, not this file (docs/runbooks/hosting-env-and-secrets.md).
+Addresses are shown as selectable text with a Copy button; `mailto:` is only an extra (`components/v2/site/EmailAddress.tsx`). The address app e-mails are sent FROM is a Supabase Auth SMTP setting (`noreply@stack19.com`), not this file and not an API setting (docs/runbooks/hosting-env-and-secrets.md).
 
 **Canonical address.** `https://stack19.com` is `PUBLIC_URL` (`lib/seo/site.ts`): the canonical links, `metadataBase` (so Open Graph and Twitter addresses), the sitemap and `robots.txt` use it whatever address a copy is served from. `NEXT_PUBLIC_SITE_URL` is only where THIS deployment is served from (the sign-in redirect), so a staging copy still signs in on itself.
 

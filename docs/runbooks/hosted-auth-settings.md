@@ -29,7 +29,7 @@ Set in the Supabase dashboard (names are the dashboard's; they move, look for th
 - [ ] **E-mail templates** (Invite, Reset password, Confirm sign-up) link to the app, not to Supabase's verify URL, using the token hash:
       `{{ .SiteURL }}/auth/confirm?token_hash={{ .TokenHash }}&type=invite` (and `type=recovery`, `type=email`).
       The page shows a Continue button and verifies on click, so a mail scanner that opens the link does not use up the one-time token.
-- [ ] **Custom SMTP** configured (the built-in sender is heavily limited and not for real users); sender domain verified (SPF, DKIM). The sender e-mail is `MAIL_FROM` (e.g. `noreply@stack19.com`; job DB), never a personal address; sender name `Stack19`. Replies are not read, so the templates point to the support address of `apps/web/lib/site/business.ts`.
+- [ ] **Custom SMTP** configured (the built-in sender is heavily limited and not for real users); sender domain verified (SPF, DKIM). The sender e-mail is `noreply@stack19.com` (job DB; locally `env(MAIL_FROM)` in `supabase/config.toml`), never a personal address; sender name `Stack19`. Replies are not read, so the templates point to the support address of `apps/web/lib/site/business.ts`.
 - [ ] E-mail templates say who you are and carry no personal data.
 
 ## Web app headers (checked by `verify_hosted.py`, GET/OPTIONS only)
