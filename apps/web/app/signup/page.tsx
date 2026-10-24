@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { EmailDisclosure } from "@/components/v2/auth/EmailDisclosure";
+import { SignupClosed } from "@/components/v2/auth/SignupClosed";
 import { PackCard } from "@/components/v2/auth/PackCard";
 import { PlushStill } from "@/components/v2/app/owl/PlushStill";
 import { authAlert, authH1, authHint, authLead, authLink, authMain, authSecondary } from "@/components/v2/auth/ui";
@@ -10,6 +11,7 @@ import { signupT } from "@/i18n/signup";
 import { getCurrentPolicies, type CurrentPolicies } from "@/lib/api/policy";
 import { SIGNUP_ERRORS } from "@/lib/api/signup";
 import { MIN_PASSWORD } from "@/lib/auth/password-policy";
+import { isSignupOpen } from "@/lib/auth/signup-open";
 import { getAuthProviders, listPacks } from "@/lib/api/pack";
 import { pickSignupPack, signupCards } from "@/lib/packs/signup";
 
@@ -55,6 +57,7 @@ function TermsLine({ text, termsLink, privacyLink }: { text: string; termsLink: 
 export default async function SignupPage({ searchParams }: PageProps<"/signup">) {
   const lang = await getLang();
   const t = signupT(lang);
+  if (!isSignupOpen()) return <SignupClosed lang={lang} />; // job DH: closed sign-up shows the note and the early-access address, and asks the API for nothing
   const query = await searchParams;
   // the business types and the ways to sign in come from the server (job CK); a server that cannot answer shows one plain sentence instead of an empty page
   const packs = await listPacks().catch(() => null);

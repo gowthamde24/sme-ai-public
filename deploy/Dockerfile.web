@@ -18,8 +18,11 @@ ARG NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
 ARG NEXT_PUBLIC_SITE_URL
 ARG NEXT_PUBLIC_SITE_LIVE
+# job DH: "0" closes public sign-up (/signup shows the early-access note); unset leaves it open (apps/web/lib/auth/signup-open.ts)
+ARG NEXT_PUBLIC_SIGNUP_OPEN
 ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL \
-    NEXT_PUBLIC_SITE_LIVE=$NEXT_PUBLIC_SITE_LIVE
+    NEXT_PUBLIC_SITE_LIVE=$NEXT_PUBLIC_SITE_LIVE \
+    NEXT_PUBLIC_SIGNUP_OPEN=$NEXT_PUBLIC_SIGNUP_OPEN
 # job DE: a standalone build (apps/web/next.config.ts): the server and only the files it traces, for a small image and a short cold start
 ENV NEXT_OUTPUT=standalone
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL \
