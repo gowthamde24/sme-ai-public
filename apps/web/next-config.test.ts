@@ -1,10 +1,26 @@
 // @vitest-environment node
 import { readFileSync } from "node:fs";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import nextConfig from "./next.config";
 
 describe("next.config", () => {
+  it("is a standalone build only when asked (job DE: the container image), so dev, start and the demo scripts are unchanged", async () => {
+    expect(nextConfig.output).toBeUndefined();
+    const previous = process.env.NEXT_OUTPUT;
+    process.env.NEXT_OUTPUT = "standalone";
+    try {
+      vi.resetModules();
+      const { default: fresh } = await import("./next.config");
+      expect(fresh.output).toBe("standalone");
+      expect(fresh.outputFileTracingRoot).toBe(new URL("../..", import.meta.url).pathname.replace(/\/$/, "")); // the repository
+    } finally {
+      if (previous === undefined) delete process.env.NEXT_OUTPUT;
+      else process.env.NEXT_OUTPUT = previous;
+      vi.resetModules();
+    }
+  });
+
   it("applies the security headers to every route and hides the framework", async () => {
     const rules = await (nextConfig.headers as () => Promise<{ source: string; headers: { key: string }[] }[]>)();
     expect(rules[0].source).toBe("/:path*");
