@@ -120,7 +120,10 @@ if [ "$what" = "worker" ]; then
     ${RUN_SA:+--service-account "$RUN_SA"} \
     --set-env-vars "$(common_env),OUTBOX_ADAPTER=fake,SCHEDULER_EMAIL=$SCHEDULER_EMAIL,SCHEDULER_INTERVAL_SECONDS=$INTERVAL" \
     --set-secrets "SCHEDULER_PASSWORD=$SECRET_SCHEDULER:latest,SUPPRESSION_HMAC_KEY=$SECRET_SUPPRESSION:latest"
-  run gcloud scheduler jobs create http sme-worker-tick --project "$PROJECT_ID" --location "$REGION" --schedule "$SCHEDULE" --time-zone "Asia/Kolkata" \
+  # create the schedule, or update it when it exists (a redeploy must not fail on it)
+  verb=create
+  if $execute && gcloud scheduler jobs describe sme-worker-tick --project "$PROJECT_ID" --location "$REGION" >/dev/null 2>&1; then verb=update; fi
+  run gcloud scheduler jobs "$verb" http sme-worker-tick --project "$PROJECT_ID" --location "$REGION" --schedule "$SCHEDULE" --time-zone "Asia/Kolkata" \
     --uri "https://run.googleapis.com/v2/projects/$PROJECT_ID/locations/$REGION/jobs/sme-worker:run" --http-method POST \
     --oauth-service-account-email "$SCHEDULER_SA"
   $execute || echo "(dry run: nothing was run. Add --execute to run the commands above. If the schedule job exists already, use: gcloud scheduler jobs update http ...)"

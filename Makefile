@@ -1,4 +1,4 @@
-.PHONY: packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -343,6 +343,34 @@ loadtest:
 #                                 CORS, and the scheduler status (the last needs SMOKE_EMAIL; the password is typed hidden). Read-only. Exit 0 = no FAIL. docs/runbooks/hosting-rehearsal-owner.md
 container-smoke:
 	./deploy/container-smoke.sh
+
+# STAGING (job DC, docs/ops/staging.md): the stack19-staging Google Cloud project (Mumbai) + the stack19-staging Supabase project; synthetic data only. Needs `gcloud auth login` and `supabase login`.
+#   make deploy-staging [WHAT=api|web|worker|all] [DRY=1]   remote image build (Cloud Build) + deploy; DRY=1 prints the commands and runs none
+#   make staging-status                                     what runs; make rollback-staging SERVICE=sme-api [REVISION=<name>]   traffic back to the previous (or the named) revision
+#   make staging-smoke                                      the checks of a live staging: hosted-smoke, the API flows (quotes, campaigns) and the browser flow (sign-in, second factor, Today, sign-out)
+#   make staging-backup / make staging-drill FILE=<dump>    a pg_dump to /Volumes/Stack19/stack19/staging-backups and the restore into a scratch database on the local AGENT stack
+STAGING_API = https://sme-api-620338396268.asia-south1.run.app
+STAGING_WEB = https://sme-web-620338396268.asia-south1.run.app
+STAGING_REF = uiallwgywitryxatcqxf
+deploy-staging:
+	./deploy/staging.sh deploy $(or $(WHAT),all) $(if $(DRY),--dry-run,)
+staging-status:
+	./deploy/staging.sh status
+rollback-staging:
+	@test -n "$(SERVICE)" || { echo "usage: make rollback-staging SERVICE=sme-api|sme-web [REVISION=<name>]"; exit 2; }
+	./deploy/staging.sh rollback $(SERVICE) $(REVISION)
+staging-latest:
+	@test -n "$(SERVICE)" || { echo "usage: make staging-latest SERVICE=sme-api|sme-web"; exit 2; }
+	./deploy/staging.sh latest $(SERVICE)
+staging-smoke:
+	$(PY)/python scripts/hosted_smoke.py --web "$(STAGING_WEB)" --api "$(STAGING_API)"
+	python3 scripts/staging_smoke_api.py --i-know-this-is-staging --project-ref $(STAGING_REF) --api-url $(STAGING_API)
+	node e2e/staging-smoke.mjs $(STAGING_WEB)
+staging-backup:
+	python3 scripts/staging_backup.py dump
+staging-drill:
+	@test -n "$(FILE)" || { echo "usage: make staging-drill FILE=/Volumes/Stack19/stack19/staging-backups/<name>.dump"; exit 2; }
+	python3 scripts/staging_backup.py drill "$(FILE)"
 
 hosted-smoke:
 	@test -n "$(URL)" || { echo 'usage: make hosted-smoke URL=https://<web address> [API_URL=https://<api address>] (see docs/runbooks/hosting-rehearsal-owner.md)'; exit 2; }
