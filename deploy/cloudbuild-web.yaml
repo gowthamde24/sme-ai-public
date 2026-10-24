@@ -1,0 +1,25 @@
+# Remote image build for the web, job DC. The NEXT_PUBLIC_* values are PUBLIC by design (they reach the browser); no secret goes through here. Used by deploy/staging.sh:
+#   gcloud builds submit --region asia-south1 --config deploy/cloudbuild-web.yaml --substitutions _IMAGE=...,_API_URL=...,_SUPABASE_URL=...,_PUBLISHABLE_KEY=...,_SITE_URL=... .
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - -f
+      - deploy/Dockerfile.web
+      - -t
+      - ${_IMAGE}
+      - --build-arg
+      - NEXT_PUBLIC_API_BASE_URL=${_API_URL}
+      - --build-arg
+      - NEXT_PUBLIC_SUPABASE_URL=${_SUPABASE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=${_PUBLISHABLE_KEY}
+      - --build-arg
+      - NEXT_PUBLIC_SITE_URL=${_SITE_URL}
+      - --build-arg
+      - NEXT_PUBLIC_SITE_LIVE=0
+      - .
+images: ["${_IMAGE}"]
+options:
+  logging: CLOUD_LOGGING_ONLY
+timeout: 1500s
