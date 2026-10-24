@@ -6,7 +6,7 @@ The plan is in [ADR 0072](../adr/0072-hosting-free-tier-first.md) (read its shor
 
 **Tags used below.** **[NO CARD]** free, no payment details. **[CARD]** asks for a payment card, even if nothing is charged. **[COMPANY?]** a place where a registered business could be asked for; for the rehearsal you do NOT need one (it says what to choose). **[SKIP]** not part of the rehearsal. I have not created any account or run any command below: the screens change, so **trust the screen over this page** and tell me when they differ. Every script is a dry run unless you add `--execute`; read the dry run first.
 
-**What you need on the Mac.** Docker Desktop running (you have it). Already installed here: `supabase` (the Supabase CLI), `make`, Python. **To install: the Google Cloud CLI**: `brew install --cask google-cloud-sdk` (Step 7). Nothing else.
+**What you need on the Mac.** Docker running (Colima; `make docker-up`, docs/runbooks/colima.md). Already installed here: `supabase` (the Supabase CLI), `make`, Python. **To install: the Google Cloud CLI**: `brew install --cask google-cloud-sdk` (Step 7). Nothing else.
 
 ---
 

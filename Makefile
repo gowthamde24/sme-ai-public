@@ -1,4 +1,4 @@
-.PHONY: deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
+.PHONY: docker-up deploy-staging staging-status rollback-staging staging-latest staging-smoke staging-backup staging-drill packs-check site-packs site-shots pack-migration new-pack pack-shots perf perf-budget container-smoke hosted-smoke visual visual-update dev-whatsapp-fake seed-demo-catalogue dev-worker-local install lint typecheck test test-packages check check-fast check-leftovers secret-scan restore-drill loadtest smoke-fetch db-start db-stop db-reset db-test test-integration eval eval-live assistant-smoke model-bakeoff stt-bakeoff bench-rls contracts seed-demo seed-demo-manual seed-demo-outbox seed-quote-data dev-api-local dev-api-groq dev-web-local demo-code rehearse-thin-slice rehearse-prepare-click rehearse-followups rehearse-prepare-followups dev-web dev-api e2e-local e2e-packs agent-db-up agent-db-down agent-db-reset agent-db-test agent-db-status stack-info owner-db-start
 
 WEB := apps/web
 API := services/ai-api
@@ -343,6 +343,10 @@ loadtest:
 #                                 CORS, and the scheduler status (the last needs SMOKE_EMAIL; the password is typed hidden). Read-only. Exit 0 = no FAIL. docs/runbooks/hosting-rehearsal-owner.md
 container-smoke:
 	./deploy/container-smoke.sh
+
+# Docker for the local Supabase stacks is Colima (job DE, docs/runbooks/colima.md): mounts the Stack19 volume, starts Colima if needed, selects its context, starts Supabase containers that died while the engine was away.
+docker-up:
+	./scripts/docker-up.sh
 
 # STAGING (job DC, docs/ops/staging.md): the stack19-staging Google Cloud project (Mumbai) + the stack19-staging Supabase project; synthetic data only. Needs `gcloud auth login` and `supabase login`.
 #   make deploy-staging [WHAT=api|web|worker|all] [DRY=1]   remote image build (Cloud Build) + deploy; DRY=1 prints the commands and runs none
