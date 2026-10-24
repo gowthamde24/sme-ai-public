@@ -1,0 +1,4 @@
+[
+  {"name": "keep-the-three-newest", "action": {"type": "Keep"}, "mostRecentVersions": {"keepCount": 3}},
+  {"name": "delete-the-rest-after-a-week", "action": {"type": "Delete"}, "condition": {"olderThan": "604800s"}}
+]
