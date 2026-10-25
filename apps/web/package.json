@@ -21,6 +21,8 @@
     "i18n:export": "node scripts/i18n-export.mjs",
     "i18n:first-pass": "node scripts/i18n-export.mjs --first-pass",
     "i18n:import": "node scripts/i18n-import.mjs",
+    "i18n:kit-export": "node scripts/review-kit-export.mjs",
+    "i18n:kit-import": "node scripts/review-kit-import.mjs",
     "pwa:icons": "node scripts/pwa-icons.mjs",
     "og:images": "node scripts/og-images.mjs"
   },
