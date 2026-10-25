@@ -175,6 +175,7 @@ declare
   e jsonb;
   d date;
   n integer;
+  v_ok boolean;
 begin
   if p is null or jsonb_typeof(p) <> 'object' then
     perform app.call_settings_error('invalid');
@@ -193,7 +194,8 @@ begin
       end if;
       perform app.call_settings_error('invalid');
     end if;
-    if not case k
+    -- (a CASE expression cannot sit inside the IF itself: plpgsql would end the condition at the first THEN)
+    v_ok := case k
       when 'retry_busy'                      then app.cs_retry(v)
       when 'retry_no_answer'                 then app.cs_retry(v)
       when 'retry_call_later'                then app.cs_retry(v)
@@ -216,7 +218,8 @@ begin
       when 'holidays'                        then jsonb_typeof(v) = 'array' and jsonb_array_length(v) <= 60
       when 'handover'                        then jsonb_typeof(v) = 'array' and jsonb_array_length(v) <= 8
       when 'allowed_purposes'                then jsonb_typeof(v) = 'array' and jsonb_array_length(v) between 1 and 5
-      else false end then
+      else false end;
+    if not coalesce(v_ok, false) then
       perform app.call_settings_error('invalid');
     end if;
   end loop;
