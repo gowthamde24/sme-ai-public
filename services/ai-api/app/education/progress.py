@@ -4,8 +4,8 @@ Why: these messages NAME THE CHILD and carry the child's marks. Children's data 
 values a person at the school supplied from the school's records: the child's first name, the subject, the marks, the maximum, the term. This module imports nothing that talks to a model, a speech engine or the
 network (a test reads its imports), no module of the assistant, the agents or the voice-note path imports it (a test reads theirs), and the assistant has no tool that can reach it (a test reads the tool names).
 
-Nothing is stored here: marks are not kept by the platform (education/models.py: never stored). Where the values come from at send time (a file the school uploads and sees before approving, or a records
-connector) and whether the platform may ever keep them is the owner's decision; the engine is ready for either. The wording of the three languages is a first draft for native review."""
+Nothing is stored here: marks are not kept by the platform (education/models.py: never stored). The values come at send time from a file the school uploads and sees before approving (job DP part 2,
+app/marksmessages, ADR 0096): it is read in memory for one request and never stored; only a send log (guardian, time, template id, status) is kept. The wording of the three languages is a first draft for native review."""
 
 from __future__ import annotations
 

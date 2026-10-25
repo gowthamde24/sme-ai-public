@@ -1,0 +1,111 @@
+{
+  "$comment": "Mock payloads for the marks-messages API (job DP part 2). One per state the school's upload screen shows. Validated against marks_messages.schema.json by a test. Names, numbers and ids are invented. The child's name and marks appear ONLY in `example_text` of a preview (the first ready message, built from the uploaded file and shown to the uploader); the log never has them.",
+  "templates": {
+    "kinds": ["marks", "report_ready"],
+    "languages": ["en", "te", "hi", "kn"],
+    "templates": [
+      {
+        "kind": "marks",
+        "language": "en",
+        "template_id": "marks.en",
+        "columns": ["phone", "student", "subject", "marks", "out_of", "term", "language"],
+        "example_text": "Asha scored 42 out of 50 in Maths (Term 1). - Sample School"
+      },
+      {
+        "kind": "report_ready",
+        "language": "en",
+        "template_id": "report_ready.en",
+        "columns": ["phone", "student", "term", "language"],
+        "example_text": "Asha's progress report for Term 1 is ready. Please collect it from the school. - Sample School"
+      }
+    ],
+    "aliases": {
+      "phone": ["phone", "mobile", "whatsapp"],
+      "student": ["student", "child", "name"],
+      "subject": ["subject"],
+      "marks": ["marks", "score"],
+      "out_of": ["out_of", "max", "total"],
+      "term": ["term", "exam"],
+      "language": ["language", "lang"]
+    },
+    "max_rows": 5000,
+    "max_bytes": 3000000
+  },
+  "preview": {
+    "kind": "marks",
+    "file_sha256": "3b1f0c9e8d7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b7c6d5e4f3a2b1c",
+    "rows": 120,
+    "will_send": 118,
+    "blocked": 1,
+    "unknown_guardian": 1,
+    "invalid": 0,
+    "duplicates": 0,
+    "by_template": {"marks.en": 80, "marks.te": 38},
+    "issues": [
+      {"line": 14, "code": "blocked_guardian", "field": null},
+      {"line": 77, "code": "unknown_guardian", "field": null}
+    ],
+    "issues_truncated": false,
+    "example_text": "Asha scored 42 out of 50 in Maths (Term 1). - Sample School"
+  },
+  "preview_with_problems": {
+    "kind": "marks",
+    "file_sha256": "9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c2d1e0f9a8b",
+    "rows": 6,
+    "will_send": 2,
+    "blocked": 1,
+    "unknown_guardian": 1,
+    "invalid": 1,
+    "duplicates": 1,
+    "by_template": {"marks.en": 2},
+    "issues": [
+      {"line": 4, "code": "blocked_guardian", "field": null},
+      {"line": 5, "code": "unknown_guardian", "field": null},
+      {"line": 6, "code": "bad_value", "field": "marks"},
+      {"line": 7, "code": "duplicate_row", "field": null}
+    ],
+    "issues_truncated": false,
+    "example_text": "Ravi scored 42 out of 50 in Maths (Term 1). - Sample School"
+  },
+  "send_result": {
+    "batch_id": "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11",
+    "kind": "marks",
+    "rows": 120,
+    "sent": 118,
+    "failed": 0,
+    "blocked": 1,
+    "already_handled": 0,
+    "skipped": 2,
+    "file_kept": false
+  },
+  "batches": {
+    "items": [
+      {
+        "batch_id": "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11",
+        "started_at": "2026-10-26T09:30:00Z",
+        "approved_by": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+        "total": 119,
+        "sent": 118,
+        "blocked": 1,
+        "failed": 0,
+        "pending": 0,
+        "templates": ["marks.en", "marks.te"]
+      }
+    ],
+    "next_cursor": null
+  },
+  "batch": {
+    "batch_id": "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11",
+    "started_at": "2026-10-26T09:30:00Z",
+    "approved_by": "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
+    "total": 2,
+    "sent": 1,
+    "blocked": 1,
+    "failed": 0,
+    "pending": 0,
+    "rows": [
+      {"seq": 2, "contact_id": "6d5e4f3a-2b1c-4d0e-9f8a-7b6c5d4e3f22", "guardian_name": "Sunita Rao", "template_id": "marks.en", "status": "sent", "reason": null, "sent_at": "2026-10-26T09:30:02Z"},
+      {"seq": 3, "contact_id": "7e6f5a4b-3c2d-4e1f-8a9b-8c7d6e5f4a33", "guardian_name": "Arif Khan", "template_id": "marks.te", "status": "blocked", "reason": "suppressed", "sent_at": null}
+    ]
+  }
+}

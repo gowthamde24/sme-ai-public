@@ -86,6 +86,10 @@ from app.leads.routes import router as leads_router
 from app.leadtools.repository import PostgrestLeadSearchRepository
 from app.leadtools.routes import router as leadtools_router
 from app.logging_safety import install_log_redaction
+from app.marksmessages.repository import PostgrestMarksSendRepository
+from app.marksmessages.routes import router as marks_messages_router
+from app.marksmessages.sender import FakeGuardianSender
+from app.marksmessages.service import MarksSendService
 from app.materials import errors as material_errors
 from app.materials.repository import PostgrestMaterialsRepository
 from app.materials.routes import public_router as materials_public_router
@@ -266,6 +270,9 @@ def build_runtime(settings: Settings) -> Runtime | None:
         outcomes=PostgrestOutcomesRepository(config.rest_url, config.anon_key),
         assistant_settings=AssistantSettingsService(
             PostgrestAssistantSettingsRepository(config.rest_url, config.anon_key)
+        ),
+        marks_messages=MarksSendService(
+            PostgrestMarksSendRepository(config.rest_url, config.anon_key), FakeGuardianSender()
         ),
     )
 
@@ -956,6 +963,7 @@ def create_app(settings: Settings | None = None, *, runtime: Runtime | None = No
     app.include_router(outcomes_router)
     app.include_router(outcomes_customers_router)
     app.include_router(assistant_settings_router)
+    app.include_router(marks_messages_router)
     app.include_router(materials_public_router)
     app.include_router(materials_router)
     app.include_router(deliveries_router)
