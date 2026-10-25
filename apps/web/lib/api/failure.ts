@@ -60,8 +60,8 @@ export function failureOf(error: unknown, t: AppT): Failure {
   const api = error instanceof ApiRequestError ? error : null;
   const retryAfter = kind === "rate_limited" ? api?.retryAfter : undefined;
   const code = api && /^[a-z_]{1,40}$/.test(api.code) ? api.code : undefined;
-  // a 403 `module_off` (job CK) says the business type does not have this part (default deny, SM701), not "your role cannot"
-  return { ok: false, kind, error: kind === "rate_limited" ? rateSentence(t, retryAfter) : code === "module_off" ? t("apierr.module_off") : t(KEY[kind]),
+  // a 403 `module_off` (job CK) says the business type does not have this part (default deny, SM701), not "your role cannot"; `workspace_read_only` and `waiting_for_whatsapp` (job DP) say why a change or a send is refused, not that the role is wrong
+  return { ok: false, kind, error: kind === "rate_limited" ? rateSentence(t, retryAfter) : code === "module_off" ? t("apierr.module_off") : code === "workspace_read_only" ? t("apierr.read_only") : code === "waiting_for_whatsapp" ? t("apierr.waiting_whatsapp") : t(KEY[kind]),
  ...(kind === "mfa" ? { mfa: true } : {}), ...(retryAfter !== undefined ? { retryAfter } : {}), ...(code ? { code } : {}) };
 }
 

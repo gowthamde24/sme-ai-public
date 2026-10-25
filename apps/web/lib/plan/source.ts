@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 
 import { ApiAuthError, ApiRequestError } from "@/lib/api/client";
 
-import { CHECKOUT_REF, getBilling, getPlans, postCancel, postTrial, toWorkspacePlan as fromApi } from "./api";
+import { CHECKOUT_REF, getBilling, getPlans, postCancel, postResume, postTrial, toWorkspacePlan as fromApi } from "./api";
 import { CATALOGUE, catalogueFrom } from "./catalogue";
 import { planScreens } from "./flag";
 import { MOCK_COOKIE, cancel, encodeMock, endTrial, fixPayment, parseMock, startTrial, toWorkspacePlan, type MockState } from "./mock";
@@ -69,6 +69,13 @@ export async function startPlanTrial(ctx: PlanCtx, planId: string, method: strin
   const ref = CHECKOUT_REF[method];
   if (!ref) return { ok: false, error: "no_payment_method" }; // the trial starts WITH a payment method
   return move(() => postTrial(ctx, planId, ref));
+}
+/** Paying again after a lapse: only the API has it (the fake provider never lapses a plan into "pay again"). */
+export async function resumePlan(ctx: PlanCtx, planId: string, method: string): Promise<PlanResult> {
+  if (planScreens() !== "on") return { ok: false, error: "not_available" };
+  const ref = CHECKOUT_REF[method];
+  if (!ref) return { ok: false, error: "no_payment_method" };
+  return move(() => postResume(ctx, planId, ref));
 }
 export async function cancelPlan(ctx: PlanCtx): Promise<PlanResult> {
   const mode = planScreens();

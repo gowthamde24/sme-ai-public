@@ -31,8 +31,8 @@ afterEach(() => {
 describe("what the billing access answer says (job DP)", () => {
   it("full access is not read-only; read-only carries the day it began, the day the data goes and the days left", () => {
     expect(parseAccess({ access: "full", read_only_since: null, delete_on: null, data_days_left: null })).toEqual({ readOnly: false });
-    expect(parseAccess({ access: "read_only", read_only_since: "2026-10-20", delete_on: "2027-01-18", data_days_left: 85 })).toEqual({ readOnly: true, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85 });
-    expect(parseAccess({ access: "read_only" })).toEqual({ readOnly: true, since: null, deleteOn: null, daysLeft: null });
+    expect(parseAccess({ access: "read_only", read_only_since: "2026-10-20", delete_on: "2027-01-18", data_days_left: 85, can_resume: true })).toEqual({ readOnly: true, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85, canResume: true });
+    expect(parseAccess({ access: "read_only" })).toEqual({ readOnly: true, since: null, deleteOn: null, daysLeft: null, canResume: false });
   });
   it("refuses anything else (never a guess)", () => {
     for (const bad of [null, "x", {}, { access: "paused" }, { access: 1 }]) expect(() => parseAccess(bad)).toThrow();
@@ -82,7 +82,7 @@ describe("switching controls off and on", () => {
 });
 
 describe("the notice", () => {
-  const access = { readOnly: true as const, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85 };
+  const access = { readOnly: true as const, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85, canResume: false };
   it("says what is off, until when the data is kept and how to go on: write to the billing address", () => {
     render(<ReadOnlyBanner words={words} lang="en" access={access} />);
     const banner = document.querySelector("[data-readonly-banner]")!;

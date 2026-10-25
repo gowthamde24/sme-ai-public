@@ -1,5 +1,8 @@
 import { createHash } from "node:crypto";
 
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({ jar: new Map<string, string>() }));
@@ -13,6 +16,17 @@ const bytes = (s: string): ArrayBuffer => new TextEncoder().encode(s).buffer as 
 const FILE = ["phone,student,subject,marks,out of,term", "9876543210,Asha,Maths,45,50,Term 1", "9876543211,Ravi,Maths,38,50,Term 1", "9876540000,Meera,Maths,40,50,Term 1", "9876549999,Kiran,Maths,41,50,Term 1", "98x,Bad,Maths,1,50,Term 1", "9876543212,Over,Maths,60,50,Term 1", "9876543210,Asha,Maths,45,50,Term 1", "=1+1,Cell,Maths,1,50,Term 1"].join("\n");
 
 beforeEach(() => h.jar.clear());
+
+const examples = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "..", "packages", "contracts", "marks_messages.examples.json"), "utf8"));
+
+describe("C1's own example payloads (packages/contracts/marks_messages.examples.json)", () => {
+  it("a preview, a preview with problems (a problem about a whole line has no column), a send and the log are all read", () => {
+    expect(parsePreview(examples.preview)).toMatchObject({ willSend: 118, blocked: 1, unknownGuardian: 1, issues: [{ line: 14, code: "blocked_guardian", field: null }, { line: 77, code: "unknown_guardian", field: null }] });
+    expect(parsePreview(examples.preview_with_problems)).toMatchObject({ willSend: 2, invalid: 1, duplicates: 1, issues: expect.arrayContaining([{ line: 6, code: "bad_value", field: "marks" }]) });
+    expect(parseSent(examples.send_result)).toMatchObject({ sent: 118, failed: 0, blocked: 1, skipped: 2 });
+    expect(parseBatches(examples.batches)).toEqual([{ batchId: "5c4d3e2f-1a0b-4c8d-9e7f-6a5b4c3d2e11", at: "2026-10-26T09:30:00Z", sent: 118, failed: 0, blocked: 1 }]);
+  });
+});
 
 describe("what the API's answers must look like (contract-marks-messages.md)", () => {
   const ok = { rows: 10, will_send: 8, blocked: 1, unknown_guardian: 1, invalid: 0, duplicates: 0, by_template: { "marks.te": 5, "marks.en": 3 }, file_sha256: "a".repeat(64), issues: [{ line: 3, code: "unknown_guardian", field: "phone" }, { line: 5, code: "duplicate_row", field: null }], issues_truncated: false, example_text: "Asha scored 45 out of 50." };

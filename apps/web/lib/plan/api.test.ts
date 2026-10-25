@@ -85,6 +85,11 @@ describe("the billing answer as the screens read it", () => {
     const w = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "trial_pending", trial_ends_at: null, trial_waiting_for: "whatsapp" }), can_start_trial: false })));
     expect(w).toMatchObject({ planId: "growth", state: "trial_pending", trialEndsAt: null, canStartTrial: false, cancelledInTrial: false, access: "full" });
   });
+  it("a lapsed plan can be paid for again: can_resume is carried, and it is false for any other state (job DP)", () => {
+    expect(toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "cancelled" }), can_start_trial: false, can_resume: true, access: "read_only" }))).canResume).toBe(true);
+    expect(toWorkspacePlan(parseBilling(billing())).canResume).toBe(false);
+    expect(toWorkspacePlan(parseBilling(billing({ subscription: sub(), can_start_trial: false }))).canResume).toBe(false);
+  });
   it("a plan that leaves minutes out reads as 0 included (an upgrade prompt, no bar); pay as you go reads as no ceiling", () => {
     const starter = toWorkspacePlan(parseBilling(billing({ subscription: sub({ status: "active", plan_id: "starter", trial_ends_at: null }), usage: { call_minutes: meter("call_minutes", 0, 0, { included: false, state: "stopped" }), whatsapp_messages: meter("whatsapp_messages", 10, 300) } })));
     expect(starter.included).toEqual({ minutes: 0, messages: 300 });

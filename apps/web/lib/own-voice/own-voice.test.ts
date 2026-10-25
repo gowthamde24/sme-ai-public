@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const h = vi.hoisted(() => ({ jar: new Map<string, string>(), get: vi.fn(), sentence: vi.fn(), create: vi.fn(), del: vi.fn() }));
@@ -16,6 +19,19 @@ beforeEach(() => {
   h.jar.clear();
   for (const f of [h.get, h.sentence, h.create, h.del]) f.mockReset();
   vi.unstubAllEnvs();
+});
+
+const examples = JSON.parse(readFileSync(join(__dirname, "..", "..", "..", "..", "packages", "contracts", "own_voice.examples.json"), "utf8"));
+
+describe("C1's own example payloads (packages/contracts/own_voice.examples.json)", () => {
+  it("every state and the sentence are read; the request we send has the fields of the example and no others", () => {
+    expect(parseOwnVoice(examples.voice_none)).toMatchObject({ status: "none", consentingName: null, saysAiAssistant: true, fake: true });
+    expect(parseOwnVoice(examples.voice_ready)).toMatchObject({ status: "ready", consentingName: "Suresh Kumar", sampleSeconds: 32.5, consentSeconds: 6 });
+    expect(parseOwnVoice(examples.voice_deleted)).toMatchObject({ status: "deleted", consentingName: null });
+    expect(parseSentence(examples.sentence)).toBe("I, Suresh Kumar, allow Stack19 to create an AI voice of me for Sri Lakshmi Silks");
+    expect(consentSentence("Suresh Kumar", "Sri Lakshmi Silks")).toBe(examples.sentence.sentence);
+    expect(Object.keys(BODY()).sort()).toEqual(Object.keys(examples.create_request).sort());
+  });
 });
 
 describe("the own-voice answers (contract-own-voice.md)", () => {

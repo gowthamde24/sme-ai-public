@@ -32,11 +32,13 @@ describe("the workspace layout", () => {
   });
   it("a read-only workspace (job DP) gets the one notice at the top and the scope that switches the controls off, and no Ask dock; a full one gets neither; a read that fails is 'full' (the API refuses every change anyway)", async () => {
     readAgents.mockResolvedValue(teamWith("idle"));
-    readAccess.mockResolvedValue({ readOnly: true, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85 });
+    readAccess.mockResolvedValue({ readOnly: true, since: "2026-10-20", deleteOn: "2027-01-18", daysLeft: 85, canResume: true });
     const { rerender } = render(await TenantLayout(props(T)));
     expect(readAccess).toHaveBeenCalledWith("tok", T);
     expect(document.querySelector("[data-readonly-banner]")).toHaveTextContent(/read-only/i);
     expect(document.querySelector("[data-readonly-banner]")).toHaveTextContent("billing@");
+    expect(document.querySelector("[data-readonly-banner] a[href$='/plans']")).toHaveTextContent("Pay again and continue"); // the plan can be paid for again: the way to it
+    expect(document.querySelector("[data-readonly-banner]")).toHaveAttribute("data-read-ok"); // the scope never switches the way out off
     expect(document.querySelector("[data-dock='ask']")).toBeNull();
     expect(document.body.textContent).toContain("page");
     readAccess.mockResolvedValue({ readOnly: false });

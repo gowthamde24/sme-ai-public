@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { ApiAuthError, fetchTenant } from "@/lib/api/client";
 import { isCanonicalUuid } from "@/lib/api/crm";
 import { requireUser } from "@/lib/auth/session";
-import { cancelPlan, endPlanTrial, fixPlanPayment, startPlanTrial } from "@/lib/plan/source";
+import { cancelPlan, endPlanTrial, fixPlanPayment, resumePlan, startPlanTrial } from "@/lib/plan/source";
 import type { PlanCtx, PlanResult } from "@/lib/plan/types";
 
 /**
@@ -38,6 +38,9 @@ async function run(tenantId: string, move: (ctx: PlanCtx) => Promise<PlanResult>
 
 export async function startPlanAction(tenantId: string, planId: string, method: string): Promise<PlanResult> {
   return run(tenantId, (ctx) => startPlanTrial(ctx, String(planId), String(method)));
+}
+export async function resumePlanAction(tenantId: string, planId: string, method: string): Promise<PlanResult> {
+  return run(tenantId, (ctx) => resumePlan(ctx, String(planId), String(method)));
 }
 export async function cancelPlanAction(tenantId: string): Promise<PlanResult> {
   return run(tenantId, cancelPlan);

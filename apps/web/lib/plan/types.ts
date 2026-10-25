@@ -42,6 +42,8 @@ export type WorkspacePlan = {
   periodEndsAt: string | null;
   /** A trial is started once per workspace: false once any plan has been started. */
   canStartTrial: boolean;
+  /** The plan has lapsed (the trial or the paid period ended unpaid, or it was cancelled): there is no new trial, the way back is to pay again (`POST /billing/resume`, job DP). */
+  canResume: boolean;
   usage: { minutes: number; messages: number };
   included: { minutes: number | null; messages: number | null };
   paymentMethod: PaymentMethod;

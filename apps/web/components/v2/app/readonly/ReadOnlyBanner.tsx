@@ -9,12 +9,12 @@ const dayText = (iso: string, lang: string): string => new Intl.DateTimeFormat(`
 
 /**
  * The one explanation on every screen of a read-only workspace (job DP): it says what is switched off, the dates the API gives, and how to go on: write to the billing address, or press the button when the API has a way to
- * pay again (`resume`, a server action; null until it exists). A server component with no script; the controls themselves are switched off by `ReadOnlyScope`.
+ * pay again (`resume`: the way to the plans, shown when the API says the plan can be paid for again). A server component with no script; the controls themselves are switched off by `ReadOnlyScope`.
  */
 export function ReadOnlyBanner({ words, lang, access, resume = null }: { words: Words; lang: string; access: Extract<Access, { readOnly: true }>; resume?: React.ReactNode }) {
   const t = makeT(words);
   return (
-    <section role="status" data-readonly-banner aria-labelledby="ro-h" className={`${alertBox} mx-4 mt-4 md:mx-8`}>
+    <section role="status" data-readonly-banner data-read-ok aria-labelledby="ro-h" className={`${alertBox} mx-4 mt-4 md:mx-8`}>
       <h2 id="ro-h" className="font-semibold">
         {t("ro.title")}
       </h2>

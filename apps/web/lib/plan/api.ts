@@ -86,6 +86,7 @@ export function toWorkspacePlan(b: BillingOut): WorkspacePlan {
     graceUntil: sub?.grace_until ?? null,
     periodEndsAt: `${b.period.end}T12:00:00+05:30`,
     canStartTrial: b.can_start_trial,
+    canResume: b.can_resume === true,
     usage: { minutes: b.usage.call_minutes.used, messages: b.usage.whatsapp_messages.used },
     included: { minutes: includedOf(b.usage.call_minutes), messages: includedOf(b.usage.whatsapp_messages) },
     paymentMethod: sub?.payment_method_on_file ? "test_ok" : "none",
@@ -101,6 +102,9 @@ export const getPlans = async (c: PlanCtx): Promise<PlansOut> => parsePlans(awai
 export const getBilling = async (c: PlanCtx): Promise<BillingOut> => parseBilling(await apiRequest(tenantPath(c), c.token));
 export const postTrial = async (c: PlanCtx, planId: string, checkoutRef: string): Promise<BillingOut> =>
   parseBilling(await apiRequest(`${tenantPath(c)}/trial`, c.token, { method: "POST", body: JSON.stringify({ plan_id: planId, checkout_ref: checkoutRef }) }));
+/** Pay again after a lapse: a paid plan starts at once, no new trial (the Owner, with the second factor). */
+export const postResume = async (c: PlanCtx, planId: string, checkoutRef: string): Promise<BillingOut> =>
+  parseBilling(await apiRequest(`${tenantPath(c)}/resume`, c.token, { method: "POST", body: JSON.stringify({ plan_id: planId, checkout_ref: checkoutRef }) }));
 export const postCancel = async (c: PlanCtx): Promise<BillingOut> => parseBilling(await apiRequest(`${tenantPath(c)}/cancel`, c.token, { method: "POST", body: JSON.stringify({}) }));
 
 /** The test choices the picker offers, and the checkout_ref the fake provider of the API knows each one by. */

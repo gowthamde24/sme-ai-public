@@ -23,7 +23,7 @@ function allowance(t: ReturnType<typeof makeT>, value: number | null, noCap: "pl
  * starts, team members and workspaces; the AI is "included, fair use" and has no number. A business with no plan (or whose plan ended) can choose one and start the 30-day trial with a payment method (a test choice
  * in test mode); one that has had a plan (a trial is started once per workspace) or is not the Owner sees the comparison, its own plan marked, and why it cannot start one.
  */
-export function PlanPicker({ words, main, calls, currentId, canStart, blocked, mock, trialDays, actions, done }: { words: Words; main: readonly PlanDef[]; calls: readonly PlanDef[]; currentId: string | null; canStart: boolean; blocked: "already" | "used" | "forbidden" | null; mock: boolean; trialDays: number; actions: PlanActions; done: string }) {
+export function PlanPicker({ words, main, calls, currentId, canStart, blocked, mock, trialDays, actions, done, resuming = false }: { words: Words; main: readonly PlanDef[]; calls: readonly PlanDef[]; currentId: string | null; canStart: boolean; blocked: "already" | "used" | "forbidden" | null; mock: boolean; trialDays: number; actions: PlanActions; done: string }) {
   const t = makeT(words);
   const [chosen, setChosen] = React.useState<string>("");
   const [method, setMethod] = React.useState<string>("");
@@ -56,7 +56,7 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
         {canStart ? (
           <label className="mt-3 flex min-h-11 items-center gap-3 text-base font-semibold">
             <input type="radio" name="plan" value={p.id} checked={chosen === p.id} onChange={() => setChosen(p.id)} className="size-6 shrink-0 accent-brand-text" />
-            {t("plan.start.for", { name: p.name, days: trialDays })}
+            {t(resuming ? "plan.resume.for" : "plan.start.for", { name: p.name, days: trialDays })}
           </label>
         ) : null}
       </li>
@@ -64,7 +64,7 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
   };
   return (
     <div className="flex flex-col gap-6" data-picker>
-      <p className="max-w-3xl text-base text-muted">{t("plan.picker.sub", { days: trialDays })}</p>
+      <p className="max-w-3xl text-base text-muted">{t(resuming ? "plan.resume.sub" : "plan.picker.sub", { days: trialDays })}</p>
       {mock ? (
         <p role="note" className="rounded-lg border border-amber-text bg-amber-bg px-3 py-2 text-sm font-medium text-amber-text">
           {t("plan.testmode")}
@@ -102,10 +102,10 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
               </label>
             ))}
           </fieldset>
-          <p className={fieldHelp}>{t("plan.picker.sub", { days: trialDays })}</p>
+          <p className={fieldHelp}>{t(resuming ? "plan.resume.sub" : "plan.picker.sub", { days: trialDays })}</p>
           <div className="mt-3">
             <button type="submit" className={btnMain} disabled={busy || !pick}>
-              {pick ? t("plan.start.for", { name: pick.name, days: trialDays }) : t("plan.start.go")}
+              {pick ? t(resuming ? "plan.resume.for" : "plan.start.for", { name: pick.name, days: trialDays }) : t(resuming ? "plan.resume.go" : "plan.start.go")}
             </button>
           </div>
           {error ? (
@@ -117,7 +117,7 @@ export function PlanPicker({ words, main, calls, currentId, canStart, blocked, m
       ) : null}
       {started !== null ? (
         <p role="status" className="rounded-lg border border-green-text bg-green-bg px-3 py-2 text-sm font-medium text-green-text">
-          {t("plan.start.done", { name: started, days: trialDays })} <Link href={done} className="underline">{t("plan.title")}</Link>
+          {t(resuming ? "plan.resume.done" : "plan.start.done", { name: started, days: trialDays })} <Link href={done} className="underline">{t("plan.title")}</Link>
         </p>
       ) : null}
     </div>

@@ -1,4 +1,7 @@
 import { NO_FRAME_DATA } from "@/components/v2/app/contract";
+import Link from "next/link";
+
+import { btnMain } from "@/components/v2/app/ui";
 import { ReadOnlyBanner } from "@/components/v2/app/readonly/ReadOnlyBanner";
 import { ReadOnlyScope } from "@/components/v2/app/readonly/ReadOnlyScope";
 import { ModuleGate } from "@/components/v2/app/frame-store";
@@ -39,7 +42,12 @@ export default async function TenantLayout({ children, params }: LayoutProps<"/a
       <FrameDataSlot data={data} />
       {access.readOnly ? (
         <>
-          <ReadOnlyBanner words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ro.") || k.startsWith("plan.readonly.")))} lang={lang} access={access} />
+          <ReadOnlyBanner
+            words={Object.fromEntries(Object.entries(dict).filter(([k]) => k.startsWith("ro.") || k.startsWith("plan.readonly.")))}
+            lang={lang}
+            access={access}
+            resume={access.canResume ? <Link href={`/app/tenants/${tenantId}/plans`} className={`${btnMain} mt-3`}>{t("ro.resume")}</Link> : null}
+          />
           <ReadOnlyScope why={t("ro.off", { email: ADDRESSES.billing })} />
         </>
       ) : null}
